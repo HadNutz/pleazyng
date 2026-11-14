@@ -10,7 +10,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import call, patch
 import zipfile
 
 
@@ -164,8 +164,9 @@ class NativeRecoveryTest(unittest.TestCase):
     def test_bad_release_asset_rolls_back_manifest_and_package(self):
         self._exercise_recovery(asset_error=True)
 
-    def test_cancelled_active_run_recovers_published_groups_then_builds_public_main(self):
+    def test_waits_for_newer_queued_run_before_recovery_and_rebuild(self):
         active = {"databaseId": 42, "status": "in_progress"}
+        queued = {"databaseId": 43, "status": "pending"}
         native_sha = "c" * 40
 
         def command(args, **kwargs):
@@ -175,10 +176,11 @@ class NativeRecoveryTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             scratch = Path(directory)
             with (patch.object(release, "command", side_effect=command),
-                  patch.object(release, "active_run", return_value=active),
-                  patch.object(release, "wait_for_run", return_value={
-                      "status": "completed", "conclusion": "cancelled",
-                  }) as wait,
+                  patch.object(release, "active_run", side_effect=[active, queued, None]),
+                  patch.object(release, "wait_for_run", side_effect=[
+                      {"status": "completed", "conclusion": "cancelled"},
+                      {"status": "completed", "conclusion": "failure"},
+                  ]) as wait,
                   patch.object(release, "recover_native_groups", return_value=["android", "apple"]) as recover,
                   patch.object(release, "verify_native_groups", side_effect=[False, True]),
                   patch.object(release, "matching_run", return_value=None),
@@ -187,9 +189,14 @@ class NativeRecoveryTest(unittest.TestCase):
                   patch.object(release, "verify_native_release_assets")):
                 checkout, selected_sha = release.prepare_native_checkout(scratch)
 
-        wait.assert_called_once_with(
-            release.MPV_REPO, active, "Native mpv/FFmpeg build", allow_failure=True,
-        )
+        self.assertEqual(wait.call_args_list, [
+            call(
+                release.MPV_REPO, active, "Native mpv/FFmpeg build", allow_failure=True,
+            ),
+            call(
+                release.MPV_REPO, queued, "Native mpv/FFmpeg build", allow_failure=True,
+            ),
+        ])
         recover.assert_called_once_with(checkout, scratch / "native-recovery")
         dispatch.assert_called_once_with(
             release.MPV_REPO,

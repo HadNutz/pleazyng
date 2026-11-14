@@ -944,12 +944,14 @@ def prepare_native_checkout(scratch: Path) -> tuple[Path, str]:
     command(["git", "fetch", "origin", "main"], cwd=checkout)
     command(["git", "checkout", "--detach", "origin/main"], cwd=checkout)
 
-    running = active_run(MPV_REPO, MPV_WORKFLOW, ref="main")
-    if running:
+    while running := active_run(MPV_REPO, MPV_WORKFLOW, ref="main"):
         print(f"Reusing active native build {running['databaseId']} instead of starting a duplicate.")
         # A failed or deliberately drained/cancelled native run may still have
         # complete published groups. Do not abort here: recover_native_groups()
         # validates their source keys and artifacts before reusing any of them.
+        # A newer workflow revision may already be queued behind this run;
+        # keep following active main builds until the queue drains before
+        # attempting artifact recovery or dispatching another build.
         native_run = wait_for_run(
             MPV_REPO, running, "Native mpv/FFmpeg build", allow_failure=True,
         )
