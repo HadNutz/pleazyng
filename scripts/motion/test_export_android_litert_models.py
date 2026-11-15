@@ -1,4 +1,7 @@
 import hashlib
+import os
+import struct
+import sys
 import tempfile
 import unittest
 import types
@@ -132,6 +135,167 @@ class GoogleTensorExportNamingTest(unittest.TestCase):
                 self.assertEqual(result["file"], "anvil-s-720p-google-tensor-g5.tflite")
                 self.assertEqual((root / result["file"]).read_bytes(), b"compiled model")
                 verify.assert_called_once()
+
+
+class GoogleTensorCompilerPayloadTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temporary_directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary_directory.cleanup)
+        self.sdk_libraries = Path(self.temporary_directory.name)
+
+    @staticmethod
+    def _elf_shared_library(
+        *,
+        elf_class: int = 2,
+        byte_order: int = 1,
+        machine: int = 62,
+        elf_type: int = 3,
+        segment_type: int = 1,
+        segment_size: int = 8,
+        truncate_to: int | None = None,
+    ) -> bytes:
+        image = bytearray(128)
+        image[:16] = b"\x7fELF" + bytes((elf_class, byte_order, 1, 0)) + bytes(8)
+        struct.pack_into(
+            "<HHIQQQIHHHHHH",
+            image,
+            16,
+            elf_type,
+            machine,
+            1,
+            0,
+            64,
+            0,
+            0,
+            64,
+            56,
+            1,
+            64,
+            0,
+            0,
+        )
+        struct.pack_into("<IIQQQQQQ", image, 64, segment_type, 5, 120, 0, 0, segment_size, segment_size, 8)
+        return bytes(image[:truncate_to]) if truncate_to is not None else bytes(image)
+
+    def _write_library(self, content: bytes, name: str = "libcompiler.so") -> Path:
+        library = self.sdk_libraries / name
+        library.write_bytes(content)
+        return library
+
+    def test_rejects_missing_empty_and_non_elf_compiler_payloads(self) -> None:
+        with self.assertRaisesRegex(RuntimeError, "GOOGLE_TENSOR_SDK_BETA"):
+            exporter._validate_google_tensor_aot_sdk(None)
+        with self.assertRaisesRegex(RuntimeError, "compiler shared library"):
+            exporter._validate_google_tensor_aot_sdk(self.sdk_libraries / "missing")
+
+        with self.assertRaisesRegex(RuntimeError, "compiler shared library"):
+            exporter._validate_google_tensor_aot_sdk(self.sdk_libraries)
+
+        self._write_library(b"")
+        with self.assertRaisesRegex(RuntimeError, "compiler shared library"):
+            exporter._validate_google_tensor_aot_sdk(self.sdk_libraries)
+
+        self._write_library(b"compiler payload")
+        with self.assertRaisesRegex(RuntimeError, "compiler shared library"):
+            exporter._validate_google_tensor_aot_sdk(self.sdk_libraries)
+
+    def test_rejects_wrong_elf_class_endianness_machine_and_type(self) -> None:
+        invalid_libraries = (
+            self._elf_shared_library(elf_class=1),
+            self._elf_shared_library(byte_order=2),
+            self._elf_shared_library(machine=3),
+            self._elf_shared_library(elf_type=2),
+        )
+        for index, contents in enumerate(invalid_libraries):
+            with self.subTest(index=index):
+                self._write_library(contents)
+                with self.assertRaisesRegex(RuntimeError, "Linux x86_64 ELF"):
+                    exporter._validate_google_tensor_aot_sdk(self.sdk_libraries)
+                (self.sdk_libraries / "libcompiler.so").unlink()
+
+    def test_rejects_truncated_or_non_loadable_elf(self) -> None:
+        invalid_libraries = (
+            self._elf_shared_library(truncate_to=90),
+            self._elf_shared_library(segment_type=2),
+            self._elf_shared_library(segment_size=0),
+        )
+        for index, contents in enumerate(invalid_libraries):
+            with self.subTest(index=index):
+                self._write_library(contents)
+                with self.assertRaisesRegex(RuntimeError, "Linux x86_64 ELF"):
+                    exporter._validate_google_tensor_aot_sdk(self.sdk_libraries)
+                (self.sdk_libraries / "libcompiler.so").unlink()
+
+    def test_accepts_a_linux_x86_64_elf_shared_library(self) -> None:
+        self._write_library(self._elf_shared_library())
+
+        self.assertEqual(exporter._validate_google_tensor_aot_sdk(self.sdk_libraries), self.sdk_libraries)
+
+    def test_configuration_checks_the_sdk_package_payload(self) -> None:
+        aot_compile = object()
+        google_target = object()
+        ai_edge = types.ModuleType("ai_edge_litert")
+        ai_edge.__path__ = []
+        aot = types.ModuleType("ai_edge_litert.aot")
+        aot.__path__ = []
+        aot.aot_compile = aot_compile
+        vendors = types.ModuleType("ai_edge_litert.aot.vendors")
+        vendors.__path__ = []
+        google_tensor = types.ModuleType("ai_edge_litert.aot.vendors.google_tensor")
+        google_tensor.target = google_target
+        sdk = types.ModuleType("ai_edge_litert_sdk_google_tensor")
+        sdk.path_to_sdk_libs = lambda: self.sdk_libraries
+        self._write_library(self._elf_shared_library())
+
+        modules = {
+            "ai_edge_litert": ai_edge,
+            "ai_edge_litert.aot": aot,
+            "ai_edge_litert.aot.vendors": vendors,
+            "ai_edge_litert.aot.vendors.google_tensor": google_tensor,
+            "ai_edge_litert_sdk_google_tensor": sdk,
+        }
+        original_import = __import__
+
+        def check_backend_before_import(module_name, *args, **kwargs):
+            if module_name.startswith("ai_edge_litert"):
+                self.assertEqual(os.environ.get("GOOGLE_TENSOR_BACKEND_ENABLED"), "1")
+            return original_import(module_name, *args, **kwargs)
+
+        with (
+            patch.dict(sys.modules, modules),
+            patch.dict(os.environ),
+            patch("builtins.__import__", side_effect=check_backend_before_import),
+        ):
+            compile_model, configured_target = exporter.configure_google_tensor_aot()
+
+        self.assertIs(compile_model, aot_compile)
+        self.assertIs(configured_target, google_target)
+
+    def test_configuration_reports_unsupported_host_sdk_path(self) -> None:
+        sdk = types.ModuleType("ai_edge_litert_sdk_google_tensor")
+
+        def unsupported_path():
+            raise NotImplementedError("unsupported host")
+
+        sdk.path_to_sdk_libs = unsupported_path
+        modules = {
+            "ai_edge_litert": types.ModuleType("ai_edge_litert"),
+            "ai_edge_litert.aot": types.ModuleType("ai_edge_litert.aot"),
+            "ai_edge_litert.aot.vendors": types.ModuleType("ai_edge_litert.aot.vendors"),
+            "ai_edge_litert.aot.vendors.google_tensor": types.ModuleType(
+                "ai_edge_litert.aot.vendors.google_tensor"
+            ),
+            "ai_edge_litert_sdk_google_tensor": sdk,
+        }
+        modules["ai_edge_litert"].__path__ = []
+        modules["ai_edge_litert.aot"].__path__ = []
+        modules["ai_edge_litert.aot.vendors"].__path__ = []
+        modules["ai_edge_litert.aot"].aot_compile = object()
+        modules["ai_edge_litert.aot.vendors.google_tensor"].target = object()
+
+        with patch.dict(sys.modules, modules), patch.dict(os.environ):
+            with self.assertRaisesRegex(RuntimeError, "supported Linux x86_64 host"):
+                exporter.configure_google_tensor_aot()
 
 if __name__ == "__main__":
     unittest.main()

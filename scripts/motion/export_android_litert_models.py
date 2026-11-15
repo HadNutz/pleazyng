@@ -19,6 +19,7 @@ import io
 import json
 import os
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
@@ -194,8 +195,78 @@ def export_samsung_aot(
     }
 
 
+def _is_linux_x86_64_shared_library(path: Path) -> bool:
+    """Check the ELF header and loadable segment without loading the SDK binary."""
+    try:
+        with path.open("rb") as library:
+            file_size = path.stat().st_size
+            header = library.read(64)
+            if len(header) != 64 or header[:4] != b"\x7fELF":
+                return False
+            if header[4:7] != b"\x02\x01\x01":  # ELF64, little-endian, current version.
+                return False
+
+            (
+                elf_type,
+                machine,
+                version,
+                _entry,
+                program_header_offset,
+                _section_header_offset,
+                _flags,
+                header_size,
+                program_header_size,
+                program_header_count,
+                _section_header_size,
+                _section_header_count,
+                _section_name_index,
+            ) = struct.unpack_from("<HHIQQQIHHHHHH", header, 16)
+            if (
+                elf_type != 3  # ET_DYN
+                or machine != 62  # EM_X86_64
+                or version != 1
+                or header_size != 64
+                or program_header_size < 56
+                or program_header_count == 0
+                or program_header_offset < header_size
+                or program_header_offset + program_header_size * program_header_count > file_size
+            ):
+                return False
+
+            for index in range(program_header_count):
+                library.seek(program_header_offset + index * program_header_size)
+                program_header = library.read(56)
+                if len(program_header) != 56:
+                    return False
+                segment_type, _segment_flags, offset, _virtual, _physical, size, _memory, _alignment = (
+                    struct.unpack("<IIQQQQQQ", program_header)
+                )
+                if segment_type == 1 and size > 0 and offset + size <= file_size:  # PT_LOAD
+                    return True
+    except (OSError, struct.error):
+        return False
+    return False
+
+
+def _validate_google_tensor_aot_sdk(sdk_libs_path: str | Path | None) -> Path:
+    """Require an authorized SDK directory with a usable Linux x86_64 compiler library."""
+    sdk_path = Path(sdk_libs_path) if sdk_libs_path is not None else None
+    has_compiler_library = sdk_path is not None and sdk_path.is_dir() and any(
+        path.is_file() and _is_linux_x86_64_shared_library(path)
+        for path in sdk_path.glob("*.so")
+    )
+    if not has_compiler_library:
+        raise RuntimeError(
+            "Google Tensor SDK has no valid Linux x86_64 ELF compiler shared library. Reinstall "
+            "scripts/motion/requirements-android-litert-google-tensor-aot.txt "
+            "with GOOGLE_TENSOR_SDK_BETA set to the authorized compiler archive on a supported Linux x86_64 host."
+        )
+    assert sdk_path is not None
+    return sdk_path
+
+
 def configure_google_tensor_aot() -> tuple[Any, Any]:
-    """Load LiteRT's Google Tensor AOT compiler after enabling its backend."""
+    """Load LiteRT's Google Tensor AOT compiler and verify its beta SDK payload."""
     # LiteRT hides the experimental Google Tensor backend unless this is set
     # before importing the AOT package. The compiler payload itself is
     # installed from Google's Tensor SDK Beta package by the operator.
@@ -203,12 +274,20 @@ def configure_google_tensor_aot() -> tuple[Any, Any]:
     try:
         from ai_edge_litert.aot import aot_compile as aot_module
         from ai_edge_litert.aot.vendors.google_tensor import target as google_tensor_target
+        import ai_edge_litert_sdk_google_tensor
     except (ImportError, OSError) as error:
         raise RuntimeError(
             "Install scripts/motion/requirements-android-litert-google-tensor-aot.txt "
-            "with the Google Tensor SDK Beta compiler archive configured to enable Tensor AOT export."
+            "with GOOGLE_TENSOR_SDK_BETA set to the authorized compiler archive."
         ) from error
 
+    try:
+        sdk_libs_path = ai_edge_litert_sdk_google_tensor.path_to_sdk_libs()
+    except (NotImplementedError, OSError) as error:
+        raise RuntimeError(
+            "Google Tensor AOT compilation requires the SDK's supported Linux x86_64 host package."
+        ) from error
+    _validate_google_tensor_aot_sdk(sdk_libs_path)
     compile_model = getattr(aot_module, "aot_compile", aot_module)
     return compile_model, google_tensor_target
 
