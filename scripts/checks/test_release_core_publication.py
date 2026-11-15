@@ -45,6 +45,44 @@ class CorePublicationTests(unittest.TestCase):
                                                  packaging_repair=False)
         remote_main.assert_not_called()
 
+    def test_channel_delivery_uses_immutable_source_after_main_advances(self):
+        tag = "v3.0.1"
+        title = f"action:publish-snap:pool:public:tag:{tag}:channel:stable"
+        fields = {"action": "publish-snap", "runner_pool": "public",
+                  "release_tag": tag, "channel": "stable"}
+        product_sha = "a" * 40
+        run = {"databaseId": 42, "status": "queued", "headSha": "b" * 40}
+        with patch.object(release, "ensure_frozen_release_source") as frozen, \
+                patch.object(release, "workflow_runs", return_value=[]), \
+                patch.object(release, "dispatch", return_value=run) as dispatch:
+            result = release.ensure_channel_run(
+                "publish-snap.yml", title, fields, "Snap Store", release_sha=product_sha
+            )
+
+        frozen.assert_called_once_with(tag, product_sha)
+        dispatch.assert_called_once_with(
+            release.PLEZY_REPO, "publish-snap.yml", "main", fields, "Snap Store",
+            expected_title=title,
+        )
+        self.assertEqual(result, run)
+
+    def test_channel_delivery_reuses_successful_attempt_from_an_older_publisher_revision(self):
+        tag = "v3.0.1"
+        title = f"action:publish-snap:pool:public:tag:{tag}:channel:stable"
+        run = {"databaseId": 43, "event": "workflow_dispatch", "displayTitle": title,
+               "status": "completed", "conclusion": "success", "headSha": "b" * 40}
+        with patch.object(release, "ensure_frozen_release_source") as frozen, \
+                patch.object(release, "workflow_runs", return_value=[run]), \
+                patch.object(release, "dispatch") as dispatch:
+            result = release.ensure_channel_run(
+                "publish-snap.yml", title,
+                {"release_tag": tag}, "Snap Store", release_sha="a" * 40,
+            )
+
+        frozen.assert_called_once_with(tag, "a" * 40)
+        dispatch.assert_not_called()
+        self.assertEqual(result, run)
+
     def test_only_channel_metadata_is_optional_and_collected_when_present(self):
         workflow = yaml.safe_load((Path(__file__).resolve().parents[2] / ".github/workflows/build.yml").read_text())
         jobs = workflow["jobs"]
@@ -198,6 +236,27 @@ class CorePublicationTests(unittest.TestCase):
             "DOCKERHUB_TOKEN",
         ):
             self.assertNotIn(secret_name, summary)
+
+    def test_chocolatey_lane_title_includes_the_default_rebuild_input(self):
+        tag = "v3.0.34"
+        assets = {
+            "SHA256SUMS.txt", "pleazyng-windows-installer.exe",
+            "pleazyng.3.0.34.nupkg",
+        }
+        with patch.object(release, "release_metadata", return_value={"assets": [{"name": name} for name in assets]}), \
+                patch.object(release, "configured_repo_names", return_value={"CHOCO_API_KEY"}), \
+                patch.object(release, "configured_repo_variables", return_value={}), \
+                patch.object(release, "ensure_channel_run", return_value={"databaseId": 44}) as dispatch:
+            release.publish_configured_channels(
+                tag, "3.0.34", release_sha="a" * 40, include_webos_release=False
+            )
+
+        chocolatey = next(call for call in dispatch.call_args_list if call.args[3] == "Chocolatey")
+        self.assertEqual(
+            chocolatey.args[1],
+            "action:publish-chocolatey:pool:public:tag:v3.0.34:publish:true:rebuild:false",
+        )
+        self.assertEqual(chocolatey.args[2]["rebuild_package"], "false")
 
     def test_tooling_lookup_and_unexpected_followup_failure_preserve_published_core(self):
         for failure in ('lookup', 'followup'):

@@ -2496,14 +2496,16 @@ def ensure_channel_run(
     *,
     release_sha: str,
 ) -> dict:
+    tag = fields.get("release_tag")
+    if not tag:
+        raise ReleaseError(f"{purpose} has no immutable release tag.")
+    # Channel publishers run from current main and consume the immutable
+    # release. A release-event metadata commit may advance main between lanes;
+    # that does not change the already verified product source or its assets.
+    ensure_frozen_release_source(tag, release_sha)
     for run in workflow_runs(PLEZY_REPO, workflow, ref="main"):
         if run.get("event") != "workflow_dispatch" or run.get("displayTitle") != title:
             continue
-        if run.get("headSha") != release_sha:
-            raise ReleaseError(
-                f"Previous {purpose} run {run['databaseId']} used source "
-                f"{run.get('headSha') or 'unknown'}, not the exact release commit {release_sha}."
-            )
         if run.get("status") == "completed":
             if run.get("conclusion") != "success":
                 raise ReleaseError(
@@ -2513,7 +2515,6 @@ def ensure_channel_run(
             print(f"Reusing successful {purpose} run {run['databaseId']}.")
             return run
         return wait_for_run(PLEZY_REPO, run, purpose)
-    ensure_remote_main_sha(release_sha, f"dispatching {purpose}")
     return dispatch(
         PLEZY_REPO,
         workflow,
@@ -2521,7 +2522,6 @@ def ensure_channel_run(
         fields,
         purpose,
         expected_title=title,
-        expected_sha=release_sha,
     )
 
 
@@ -2622,9 +2622,9 @@ def publish_configured_channels(
         {
             "name": "Chocolatey",
             "workflow": "publish-chocolatey.yml",
-            "title": f"action:publish-chocolatey:pool:public:tag:{tag}:publish:true",
+            "title": f"action:publish-chocolatey:pool:public:tag:{tag}:publish:true:rebuild:false",
             "fields": {"action": "publish-chocolatey", "runner_pool": "public", "release_tag": tag,
-                       "publish": "true"},
+                       "publish": "true", "rebuild_package": "false"},
             "secrets": {"CHOCO_API_KEY"}, "variables": set(),
             "assets": {"pleazyng-windows-installer.exe", "SHA256SUMS.txt"},
             "asset_predicate": lambda name: name.startswith("pleazyng.") and name.endswith(".nupkg"),
@@ -3239,7 +3239,7 @@ def main() -> int:
                                 if frozen or packaging_repair else pin_sha)
                 progress["delivery_tooling_commit"] = delivery_sha
                 followups = post_release_actions(
-                    tag, args.version, release_sha=delivery_sha,
+                    tag, args.version, release_sha=product_sha if packaging_repair else pin_sha,
                     include_webos_release=args.include_webos_release,
                     publish_channels=args.publish,
                     notify_discord=not args.skip_discord_notification,
