@@ -80,6 +80,21 @@ void main() {
     expect(player.state.tracks.audio.last.codec, isNull);
   });
 
+  test('media session identity advances when a source opens or stops', () async {
+    final backend = _LGPlayer();
+    native.VideoPlayerPlatform.instance = backend;
+    final player = PlayerWebOS();
+    addTearDown(player.dispose);
+
+    final initialGeneration = player.mediaSessionGeneration;
+    await player.open(Media('/first.mkv'));
+    expect(player.mediaSessionGeneration, greaterThan(initialGeneration));
+    final openedGeneration = player.mediaSessionGeneration;
+
+    await player.stop();
+    expect(player.mediaSessionGeneration, greaterThan(openedGeneration));
+  });
+
   test('native codec metadata reaches tracks, the audio label and performance stats', () async {
     final backend = _LGPlayer()
       ..audioTracks = [

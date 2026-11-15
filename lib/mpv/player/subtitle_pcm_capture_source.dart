@@ -1,14 +1,21 @@
 import 'player_state.dart';
 
+/// Optional stable identity for the media currently owned by a player.
+///
+/// A new source and an explicit stop must advance this generation so async
+/// subtitle work can avoid applying results to a different playback session.
+abstract interface class PlayerMediaSessionIdentity {
+  int get mediaSessionGeneration;
+}
+
 /// Optional player-owned PCM copy used by local live subtitle capture.
 ///
 /// Implementations must provide bounded, non-blocking native capture and media
 /// presentation timestamps. The transcription service never records a file.
-abstract interface class SubtitlePcmCaptureSource {
+abstract interface class SubtitlePcmCaptureSource implements PlayerMediaSessionIdentity {
   PlayerState get state;
   Duration get currentPosition;
 
-  int get mediaSessionGeneration;
   bool get isLivePlayback;
   bool get disposed;
   String? get subtitlePcmAudioTrackId;

@@ -24,8 +24,16 @@ final class SubtitleLiveCaption {
 /// Opt-in subtitle capture from the active decoded-audio player. PCM remains in a bounded queue
 /// and is transcribed on-device; no recording file is created.
 final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
-  SubtitlePlaybackTranscriptionService._();
+  SubtitlePlaybackTranscriptionService._() : _loadLiveCpuSessionForTesting = null;
+
+  @visibleForTesting
+  SubtitlePlaybackTranscriptionService.forTesting({
+    required Future<whisper.FlutterWhisper> Function() loadLiveCpuSession,
+  }) : _loadLiveCpuSessionForTesting = loadLiveCpuSession;
+
   static final SubtitlePlaybackTranscriptionService instance = SubtitlePlaybackTranscriptionService._();
+
+  final Future<whisper.FlutterWhisper> Function()? _loadLiveCpuSessionForTesting;
 
   static const int _sampleRate = 16000;
   static const int _windowSamples = _sampleRate * 5;
@@ -48,6 +56,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
   bool _running = false;
   bool _starting = false;
   bool _polling = false;
+  bool Function()? _isProfileIdentityCurrent;
   SubtitleCaptureStatus? _status;
   Object? _lastError;
   String _detectedLanguage = 'auto';
@@ -112,7 +121,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       return;
     }
     final player = _player;
-    if (!opened || player == null || player.disposed || !player.isLivePlayback) {
+    if (!opened || player == null || player.disposed || !player.isLivePlayback || !_profileIdentityIsCurrent()) {
       _liveHandoff = null;
       _discardCapturedTimeline();
       await stop();
@@ -134,6 +143,9 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     if (!await player.setSubtitlePcmCaptureEnabled(true)) {
       _running = false;
       await stop();
+    } else if (!_profileIdentityIsCurrent()) {
+      _discardCapturedTimeline();
+      await stop();
     }
   }
 
@@ -141,6 +153,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     SubtitlePcmCaptureSource player, {
     String? languageCode,
     void Function(SubtitleCaptureStatus status)? onProgress,
+    bool Function()? isProfileIdentityCurrent,
   }) async {
     final requestedLanguage = languageCode?.trim().toLowerCase().split(RegExp(r'[-_]')).first ?? '';
     final selectedLanguage = requestedLanguage.isEmpty ? 'auto' : requestedLanguage;
@@ -150,14 +163,29 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     if (_starting || _running || _session != null) {
       throw StateError('A live subtitle capture session is already active.');
     }
+    bool profileIdentityIsCurrent() {
+      try {
+        return isProfileIdentityCurrent?.call() ?? true;
+      } on Object {
+        return false;
+      }
+    }
+
+    if (!profileIdentityIsCurrent()) {
+      throw StateError('The active profile changed. Start live captions again for the current profile.');
+    }
     if (!await player.subtitlePcmCaptureAvailable()) {
       throw UnsupportedError('This player build does not expose decoded PCM to live subtitles.');
+    }
+    if (!profileIdentityIsCurrent()) {
+      throw StateError('The active profile changed. Start live captions again for the current profile.');
     }
     if (_starting || _running || _session != null) {
       throw StateError('A live subtitle capture session is already active.');
     }
 
     _starting = true;
+    _isProfileIdentityCurrent = isProfileIdentityCurrent;
     final startGeneration = player.mediaSessionGeneration;
     final startAudioTrackId = player.subtitlePcmAudioTrackId;
     whisper.FlutterWhisper? loadedSession;
@@ -179,32 +207,41 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       _recentTranscript = null;
       liveCaption.value = null;
 
-      loadedSession = await SubtitleWhisperCppService.instance.loadLiveCpuSession(
-        onProgress: (phase, received, total) {
-          final status = SubtitleCaptureStatus(
-            phase == SubtitleModelLoadPhase.downloading
-                ? SubtitleCapturePhase.downloadingModel
-                : SubtitleCapturePhase.loadingModel,
-            received: received,
-            total: total,
-          );
-          onProgress?.call(status);
-          _setStatus(status);
-        },
-      );
-      if (player.disposed ||
+      void onModelProgress(SubtitleModelLoadPhase phase, int received, int total) {
+        final status = SubtitleCaptureStatus(
+          phase == SubtitleModelLoadPhase.downloading
+              ? SubtitleCapturePhase.downloadingModel
+              : SubtitleCapturePhase.loadingModel,
+          received: received,
+          total: total,
+        );
+        onProgress?.call(status);
+        _setStatus(status);
+      }
+
+      final testSessionLoader = _loadLiveCpuSessionForTesting;
+      loadedSession = testSessionLoader == null
+          ? await SubtitleWhisperCppService.instance.loadLiveCpuSession(onProgress: onModelProgress)
+          : await testSessionLoader();
+      if (!_profileIdentityIsCurrent() ||
+          player.disposed ||
           player.mediaSessionGeneration != startGeneration ||
           player.subtitlePcmAudioTrackId != startAudioTrackId) {
-        throw StateError('Playback changed while Whisper was loading. Start live captions again.');
+        throw StateError(
+          'The active profile or playback changed while Whisper was loading. Start live captions again.',
+        );
       }
       captureEnabled = await player.setSubtitlePcmCaptureEnabled(true);
       if (!captureEnabled) {
         throw UnsupportedError('This player session cannot capture decoded PCM.');
       }
-      if (player.disposed ||
+      if (!_profileIdentityIsCurrent() ||
+          player.disposed ||
           player.mediaSessionGeneration != startGeneration ||
           player.subtitlePcmAudioTrackId != startAudioTrackId) {
-        throw StateError('Playback changed while live capture was starting. Start again on the current audio track.');
+        throw StateError(
+          'The active profile or playback changed while live capture was starting. Start again for the current item.',
+        );
       }
 
       _session = loadedSession;
@@ -236,6 +273,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
         } catch (_) {}
       }
       await loadedSession?.dispose();
+      _isProfileIdentityCurrent = null;
       _setStatus(const SubtitleCaptureStatus(SubtitleCapturePhase.startFailed));
       rethrow;
     } finally {
@@ -321,6 +359,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     _player = null;
     _playerGeneration = null;
     _audioTrackId = null;
+    _isProfileIdentityCurrent = null;
     liveCaption.value = null;
 
     if (_lastError != null) {
@@ -338,6 +377,9 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
   }
 
   SubtitleCaptureStatus? _invalidCaptureSessionReason(SubtitlePcmCaptureSource? player) {
+    if (!_profileIdentityIsCurrent()) {
+      return const SubtitleCaptureStatus(SubtitleCapturePhase.captureStopped);
+    }
     if (player == null) {
       return const SubtitleCaptureStatus(SubtitleCapturePhase.playbackEnded);
     }
@@ -348,6 +390,14 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       return const SubtitleCaptureStatus(SubtitleCapturePhase.audioTrackChanged);
     }
     return null;
+  }
+
+  bool _profileIdentityIsCurrent() {
+    try {
+      return _isProfileIdentityCurrent?.call() ?? true;
+    } on Object {
+      return false;
+    }
   }
 
   bool _isCurrentInference(int generation) =>

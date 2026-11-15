@@ -17,6 +17,7 @@ import '../../../utils/log_redaction_manager.dart';
 import '../../models.dart';
 import '../audio_rendering_mode.dart';
 import '../player_base.dart';
+import '../subtitle_pcm_capture_source.dart';
 import 'webos_media_proxy.dart';
 import 'native_tv_playback_metadata.dart';
 import 'webos_soloud_player.dart';
@@ -26,7 +27,7 @@ import 'webos_pgs_overlay.dart';
 /// bounded supported music files may use Pleazyng's app-owned SoLoud route.
 /// webOS reports itself as Linux through `dart:io`, so select this before the
 /// generic Linux MPV backend.
-class PlayerWebOS extends PlayerBase implements NativeVisualizationAudioSource {
+class PlayerWebOS extends PlayerBase implements NativeVisualizationAudioSource, PlayerMediaSessionIdentity {
   PlayerWebOS({this.audioOnly = false}) : super(listenToNativeEvents: false);
 
   static const _methodChannel = MethodChannel('com.plezy/webos_media');
@@ -46,6 +47,9 @@ class PlayerWebOS extends PlayerBase implements NativeVisualizationAudioSource {
 
   @override
   String get playerType => 'webos';
+
+  @override
+  int get mediaSessionGeneration => _generation;
 
   @override
   bool get supportsSecondarySubtitles => false;
@@ -764,6 +768,7 @@ class PlayerWebOS extends PlayerBase implements NativeVisualizationAudioSource {
     if (disposed) {
       return;
     }
+    ++_generation;
     final sourceId = _sourceId;
     await _releaseSource();
     if (sourceId != null) {

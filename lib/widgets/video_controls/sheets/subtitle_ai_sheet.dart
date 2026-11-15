@@ -46,6 +46,26 @@ enum _SubtitleReviewChoice { discard, exportSrt, exportJson, player, serverAndPl
 
 const _subtitleUndoCheckpointPrefix = 'Undo checkpoint: ';
 
+final class _SubtitleOperationIdentity {
+  const _SubtitleOperationIdentity({
+    required this.player,
+    required this.mediaSessionGeneration,
+    required this.activeProfileId,
+    required this.revisionIdentity,
+    required this.serverId,
+    required this.ratingKey,
+    required this.mediaIndex,
+  });
+
+  final Player player;
+  final int? mediaSessionGeneration;
+  final String? activeProfileId;
+  final SubtitleRevisionIdentity? revisionIdentity;
+  final String? serverId;
+  final String? ratingKey;
+  final int mediaIndex;
+}
+
 class SubtitleAiSheet extends StatefulWidget {
   const SubtitleAiSheet({
     super.key,
@@ -86,7 +106,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
   final Map<String, String> _glossaryDrafts = <String, String>{};
   bool _playbackCaptureSupported = false;
   bool _lastResultUploadedToServer = false;
-  int? _operationPlayerGeneration;
+  _SubtitleOperationIdentity? _operationIdentity;
   String? _status;
   SubtitleSpeechProgress? _speechProgress;
   SubtitleCaptureStatus? _captureStatus;
@@ -160,7 +180,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
       _revisionStatus = null;
     });
     try {
-      _operationPlayerGeneration = _capturePlayerGeneration();
+      _operationIdentity = _captureOperationIdentity();
       await operation();
     } catch (error) {
       if (mounted) {
@@ -173,25 +193,55 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
           _speechProgress = null;
         });
       }
-      _operationPlayerGeneration = null;
+      _operationIdentity = null;
     }
   }
 
-  int? _capturePlayerGeneration() {
+  _SubtitleOperationIdentity _captureOperationIdentity() {
     final player = widget.player;
-    if (player is! SubtitlePcmCaptureSource) return null;
-    final captureSource = player as SubtitlePcmCaptureSource;
-    if (captureSource.disposed) throw StateError('Playback has ended. Reopen subtitle controls for the current item.');
-    return captureSource.mediaSessionGeneration;
+    if (player.disposed) throw StateError('Playback has ended. Reopen subtitle controls for the current item.');
+    final profileId = _activeProfileId?.trim();
+    return _SubtitleOperationIdentity(
+      player: player,
+      mediaSessionGeneration: player is PlayerMediaSessionIdentity
+          ? (player as PlayerMediaSessionIdentity).mediaSessionGeneration
+          : null,
+      activeProfileId: profileId == null || profileId.isEmpty ? null : profileId,
+      revisionIdentity: _revisionIdentity,
+      serverId: widget.serverId?.trim(),
+      ratingKey: widget.ratingKey?.trim(),
+      mediaIndex: widget.mediaIndex,
+    );
   }
 
-  void _ensurePlayerSessionCurrent({int? expectedGeneration}) {
+  bool _operationIdentityIsCurrent(_SubtitleOperationIdentity identity) {
     final player = widget.player;
-    if (player is! SubtitlePcmCaptureSource) return;
-    final captureSource = player as SubtitlePcmCaptureSource;
-    final expected = expectedGeneration ?? _operationPlayerGeneration;
-    if (captureSource.disposed || (expected != null && captureSource.mediaSessionGeneration != expected)) {
-      throw StateError('Playback changed while the subtitle operation was running. Start again for the current item.');
+    if (!mounted || !identical(player, identity.player) || player.disposed) {
+      return false;
+    }
+    if (identity.mediaSessionGeneration != null &&
+        (player is! PlayerMediaSessionIdentity ||
+            (player as PlayerMediaSessionIdentity).mediaSessionGeneration != identity.mediaSessionGeneration)) {
+      return false;
+    }
+    final profileId = _activeProfileId?.trim();
+    final currentProfileId = profileId == null || profileId.isEmpty ? null : profileId;
+    if (currentProfileId != identity.activeProfileId) return false;
+    if (_revisionIdentity?.storageKey != identity.revisionIdentity?.storageKey) return false;
+    if (widget.serverId?.trim() != identity.serverId ||
+        widget.ratingKey?.trim() != identity.ratingKey ||
+        widget.mediaIndex != identity.mediaIndex) {
+      return false;
+    }
+    return true;
+  }
+
+  void _ensurePlayerSessionCurrent({_SubtitleOperationIdentity? expectedIdentity}) {
+    final identity = expectedIdentity ?? _operationIdentity;
+    if (identity == null || !_operationIdentityIsCurrent(identity)) {
+      throw StateError(
+        'Playback or profile changed while the subtitle operation was running. Start again for the current item.',
+      );
     }
   }
 
@@ -237,8 +287,9 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
     if (!SubtitleAiService.supportedPlatform) {
       throw UnsupportedError('Local speech generation is unavailable on this platform.');
     }
+    _ensurePlayerSessionCurrent();
     final languageCode = _speechLanguageCode == 'auto' ? null : _speechLanguageCode;
-    final profileId = _activeProfileId;
+    final profileId = _operationIdentity?.activeProfileId;
     final provider = _provider;
     final identity = await SubtitleSourceTranscriptCacheService.identify(
       profileId: profileId,
@@ -276,6 +327,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
       if (result.translatedToEnglish) {
         throw StateError('A translated-English result cannot be reused as a source-language transcript.');
       }
+      _ensurePlayerSessionCurrent();
       return await SubtitleSourceTranscriptCacheService.store(
         profileId: profileId,
         identity: stableIdentity,
@@ -475,8 +527,9 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
       await _loadGlossaryForCurrentPair();
     }
     final glossary = _parseGlossary();
-    final profileId = _activeProfileId;
+    final profileId = _operationIdentity?.activeProfileId;
     if (profileId != null) {
+      _ensurePlayerSessionCurrent();
       await SubtitleTranslationService.saveGlossaryForProfile(
         profileId: profileId,
         sourceLanguage: sourceLanguage,
@@ -484,6 +537,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         seriesId: _useSeriesGlossary ? widget.seriesKey : null,
         glossary: glossary,
       );
+      _ensurePlayerSessionCurrent();
       _glossaryDrafts[_currentGlossaryDraftKey()] = _glossaryController.text;
     }
     setState(
@@ -622,9 +676,14 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
       setState(() => _captureStatus = service.status);
       return;
     }
+    final operationIdentity = _operationIdentity;
+    if (operationIdentity == null) {
+      throw StateError('The subtitle capture identity could not be established. Start again for the current item.');
+    }
     await service.start(
       captureSource,
       languageCode: _speechLanguageCode == 'auto' ? null : _speechLanguageCode,
+      isProfileIdentityCurrent: () => _operationIdentityIsCurrent(operationIdentity),
       onProgress: (status) {
         if (mounted) {
           setState(() => _captureStatus = status);
@@ -982,8 +1041,10 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
     required String operation,
     String? languageCode,
     required List<SubtitleWordTiming> wordTimings,
+    required _SubtitleOperationIdentity operationIdentity,
   }) async {
-    final identity = _revisionIdentity;
+    _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
+    final identity = operationIdentity.revisionIdentity;
     if (identity == null) {
       if (mounted) {
         setState(() => _revisionStatus = context.t.subtitleAiUi.revisionHistoryNeedsAnActiveProfileAndMediaItem);
@@ -998,7 +1059,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         cues: cues,
         wordTimings: wordTimings,
       );
-      if (mounted) {
+      if (_operationIdentityIsCurrent(operationIdentity)) {
         setState(
           () => _revisionStatus = context.t.subtitleAiUi.savedRevisionToThisDeviceForThisProf_12a75bb7(
             revisionId: revision.id,
@@ -1017,10 +1078,12 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
     required String operation,
     String? languageCode,
     required List<SubtitleWordTiming> wordTimings,
+    required _SubtitleOperationIdentity operationIdentity,
   }) async {
-    final identity = _revisionIdentity;
+    _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
+    final identity = operationIdentity.revisionIdentity;
     if (identity == null) {
-      if (mounted) {
+      if (_operationIdentityIsCurrent(operationIdentity)) {
         setState(() => _revisionStatus = context.t.subtitleAiUi.persistentUndoCheckpointsNeedAStable_cca05e18);
       }
       return true;
@@ -1054,8 +1117,10 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
     required String operation,
     String? languageCode,
     required List<SubtitleWordTiming> wordTimings,
+    required _SubtitleOperationIdentity operationIdentity,
   }) async {
-    final identity = _revisionIdentity;
+    _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
+    final identity = operationIdentity.revisionIdentity;
     if (identity == null || undoHistory.isEmpty) {
       return;
     }
@@ -1069,6 +1134,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
       index >= 0 && saved < SubtitleRevisionService.maximumRevisionsPerItem - 1;
       index--
     ) {
+      _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
       final (cueId, previousCue) = undoHistory[index];
       final cuePosition = snapshot.indexWhere((cue) => cue.id == cueId);
       if (cuePosition < 0) {
@@ -1086,6 +1152,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         operation: operation,
         languageCode: languageCode,
         wordTimings: wordTimings,
+        operationIdentity: operationIdentity,
       );
       if (!persisted) {
         return;
@@ -1094,20 +1161,23 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
     }
   }
 
-  Future<void> _restoreSubtitleRevision(SubtitleRevision revision, {required int? expectedPlayerGeneration}) async {
-    _ensurePlayerSessionCurrent(expectedGeneration: expectedPlayerGeneration);
+  Future<void> _restoreSubtitleRevision(
+    SubtitleRevision revision, {
+    required _SubtitleOperationIdentity expectedIdentity,
+  }) async {
+    _ensurePlayerSessionCurrent(expectedIdentity: expectedIdentity);
     final bytes = SubtitleSyncService.writeSrt(revision.cues);
     final directory = await getTemporaryDirectory();
     final path = p.join(directory.path, 'plezyng_revision_${revision.id}.srt');
     try {
       await File(path).writeAsBytes(bytes, flush: true);
-      _ensurePlayerSessionCurrent(expectedGeneration: expectedPlayerGeneration);
+      _ensurePlayerSessionCurrent(expectedIdentity: expectedIdentity);
       await widget.player.command(['sub-add', path, 'select']);
     } on Object {
       await _deleteTemporarySubtitle(path);
       rethrow;
     }
-    if (mounted) {
+    if (mounted && _operationIdentityIsCurrent(expectedIdentity)) {
       setState(
         () => _status = context.t.subtitleAiUi.attachedReviewedRevisionFrom(
           revisionDate: _formatRevisionDate(revision.createdAt),
@@ -1137,17 +1207,18 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
   }
 
   Future<void> _showRevisionHistory() async {
-    final identity = _revisionIdentity;
+    final expectedIdentity = _captureOperationIdentity();
+    final identity = expectedIdentity.revisionIdentity;
     if (identity == null) {
       setState(() => _revisionStatus = context.t.subtitleAiUi.revisionHistoryNeedsAStableProfileAndMediaItem);
       return;
     }
     try {
-      final playerGeneration = _capturePlayerGeneration();
       var revisions = await SubtitleRevisionService.loadRevisions(identity);
       if (!mounted) {
         return;
       }
+      _ensurePlayerSessionCurrent(expectedIdentity: expectedIdentity);
       await showDialog<void>(
         context: context,
         builder: (dialogContext) => StatefulBuilder(
@@ -1195,10 +1266,8 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
                                         Navigator.of(dialogContext).pop();
                                         unawaited(
                                           _run(
-                                            () => _restoreSubtitleRevision(
-                                              revision,
-                                              expectedPlayerGeneration: playerGeneration,
-                                            ),
+                                            () =>
+                                                _restoreSubtitleRevision(revision, expectedIdentity: expectedIdentity),
                                           ),
                                         );
                                       },
@@ -1223,8 +1292,11 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
                                     ),
                                     TextButton.icon(
                                       onPressed: () async {
+                                        if (!_operationIdentityIsCurrent(expectedIdentity)) {
+                                          return;
+                                        }
                                         await SubtitleRevisionService.deleteRevision(identity, revision.id);
-                                        if (!mounted || !dialogContext.mounted) {
+                                        if (!dialogContext.mounted || !_operationIdentityIsCurrent(expectedIdentity)) {
                                           return;
                                         }
                                         setDialogState(
@@ -1339,7 +1411,8 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
   }
 
   Future<void> _saveGlossary() async {
-    final profileId = _activeProfileId;
+    _ensurePlayerSessionCurrent();
+    final profileId = _operationIdentity?.activeProfileId;
     if (profileId == null) {
       throw StateError('An active profile is required to save a translation glossary.');
     }
@@ -1351,6 +1424,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
       seriesId: _useSeriesGlossary ? widget.seriesKey : null,
       glossary: glossary,
     );
+    _ensurePlayerSessionCurrent();
     _glossaryDrafts[_currentGlossaryDraftKey()] = _glossaryController.text;
     if (mounted) {
       setState(
@@ -1390,8 +1464,9 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
       return;
     }
     final glossary = _parseGlossary();
-    final profileId = _activeProfileId;
+    final profileId = _operationIdentity?.activeProfileId;
     if (profileId != null) {
+      _ensurePlayerSessionCurrent();
       await SubtitleTranslationService.saveGlossaryForProfile(
         profileId: profileId,
         sourceLanguage: _sourceLanguage,
@@ -1399,6 +1474,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         seriesId: _useSeriesGlossary ? widget.seriesKey : null,
         glossary: glossary,
       );
+      _ensurePlayerSessionCurrent();
       _glossaryDrafts[_currentGlossaryDraftKey()] = _glossaryController.text;
     }
     setState(
@@ -1702,9 +1778,15 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
     return RegExp(r'^[a-z]{2,3}$').hasMatch(code) ? code : null;
   }
 
-  Future<void> _uploadSubtitleToServer(Uint8List bytes, String languageCode, String originToken) async {
-    final serverId = widget.serverId;
-    final ratingKey = widget.ratingKey;
+  Future<void> _uploadSubtitleToServer(
+    Uint8List bytes,
+    String languageCode,
+    String originToken, {
+    required _SubtitleOperationIdentity operationIdentity,
+  }) async {
+    _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
+    final serverId = operationIdentity.serverId;
+    final ratingKey = operationIdentity.ratingKey;
     if (serverId == null || serverId.isEmpty || ratingKey == null || ratingKey.isEmpty) {
       throw StateError('This playback item is not linked to a server library entry.');
     }
@@ -1718,7 +1800,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
       fileName: 'Pleazyng.$originToken.$languageCode.srt',
       format: 'srt',
       language: languageCode,
-      mediaIndex: widget.mediaIndex,
+      mediaIndex: operationIdentity.mediaIndex,
     );
     if (!uploaded) {
       throw UnsupportedError('The server refused this subtitle upload or does not support library attachment.');
@@ -1744,7 +1826,11 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
     List<String> reviewWarnings = const [],
     List<SubtitleWordTiming> wordTimings = const <SubtitleWordTiming>[],
   }) async {
-    _ensurePlayerSessionCurrent();
+    final operationIdentity = _operationIdentity;
+    if (operationIdentity == null) {
+      throw StateError('The subtitle operation identity could not be established. Start again for the current item.');
+    }
+    _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
     if (cues.isEmpty || cues.length > SubtitleRetimer.maximumCueCount) {
       throw const FormatException('Subtitle result has no cues or exceeds the 50000 cue processing bound.');
     }
@@ -1764,7 +1850,9 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
     _lastResultUploadedToServer = false;
     final uploadLanguage = _normalizedUploadLanguage(operationLanguageCode);
     final canUploadToServer =
-        uploadLanguage != null && widget.serverId?.isNotEmpty == true && widget.ratingKey?.isNotEmpty == true;
+        uploadLanguage != null &&
+        operationIdentity.serverId?.isNotEmpty == true &&
+        operationIdentity.ratingKey?.isNotEmpty == true;
     final List<int> previewIndexes;
     if (cues.length <= 12) {
       previewIndexes = List<int>.generate(cues.length, (index) => index);
@@ -1968,7 +2056,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
       }
       return false;
     }
-    _ensurePlayerSessionCurrent();
+    _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
     final bytes = SubtitleSyncService.writeSrt(reviewedCues);
     final originToken = _originTokenForOperation(operationLabel);
     if (choice == _SubtitleReviewChoice.exportSrt) {
@@ -1991,6 +2079,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         operation: operationLabel,
         languageCode: operationLanguageCode,
         wordTimings: reviewedWordTimings,
+        operationIdentity: operationIdentity,
       );
       await _storeUndoHistory(
         cues: reviewedCues,
@@ -1998,6 +2087,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         operation: operationLabel,
         languageCode: operationLanguageCode,
         wordTimings: reviewedWordTimings,
+        operationIdentity: operationIdentity,
       );
       if (mounted) {
         setState(() => _status = context.t.subtitleAiUi.reviewedSubtitleExportedAsSRT);
@@ -2066,6 +2156,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         operation: operationLabel,
         languageCode: operationLanguageCode,
         wordTimings: reviewedWordTimings,
+        operationIdentity: operationIdentity,
       );
       await _storeUndoHistory(
         cues: reviewedCues,
@@ -2073,6 +2164,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         operation: operationLabel,
         languageCode: operationLanguageCode,
         wordTimings: reviewedWordTimings,
+        operationIdentity: operationIdentity,
       );
       if (mounted) {
         setState(() => _status = context.t.subtitleAiUi.reviewedSubtitleExportedAsVersionedCueJSON);
@@ -2084,15 +2176,17 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
       if (languageCode == null) {
         throw StateError('The result language could not be identified for server upload.');
       }
-      _ensurePlayerSessionCurrent();
-      await _uploadSubtitleToServer(bytes, languageCode, originToken);
+      _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
+      await _uploadSubtitleToServer(bytes, languageCode, originToken, operationIdentity: operationIdentity);
       _lastResultUploadedToServer = true;
+      _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
     }
     final directory = await getTemporaryDirectory();
     final path = p.join(directory.path, 'plezyng_ai_${originToken}_${DateTime.now().microsecondsSinceEpoch}.srt');
     try {
+      _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
       await File(path).writeAsBytes(bytes, flush: true);
-      _ensurePlayerSessionCurrent();
+      _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
       await widget.player.command(['sub-add', path, 'select']);
     } catch (error) {
       await _deleteTemporarySubtitle(path);
@@ -2102,6 +2196,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
           operation: operationLabel,
           languageCode: operationLanguageCode,
           wordTimings: reviewedWordTimings,
+          operationIdentity: operationIdentity,
         );
         await _storeUndoHistory(
           cues: reviewedCues,
@@ -2109,6 +2204,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
           operation: operationLabel,
           languageCode: operationLanguageCode,
           wordTimings: reviewedWordTimings,
+          operationIdentity: operationIdentity,
         );
         throw StateError('Uploaded to the server library, but could not attach the local copy: $error');
       }
@@ -2119,6 +2215,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
       operation: operationLabel,
       languageCode: operationLanguageCode,
       wordTimings: reviewedWordTimings,
+      operationIdentity: operationIdentity,
     );
     await _storeUndoHistory(
       cues: reviewedCues,
@@ -2126,6 +2223,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
       operation: operationLabel,
       languageCode: operationLanguageCode,
       wordTimings: reviewedWordTimings,
+      operationIdentity: operationIdentity,
     );
     return true;
   }

@@ -34,6 +34,13 @@ Source regression cases cover clock rollback, stale queued packets after a DVR
 seek, pauses and format changes. Device execution, native ABI qualification and
 server DVR handoff execution remain pending.
 
+Asynchronous subtitle operations snapshot the player, media-session generation,
+active profile, revision, and server item before starting. A profile or media
+change stops live capture and discards its pending timeline; stale generated
+results are not written to a new profile's revision or attached to a new player
+item. The webOS player advances its media-session generation when a source is
+opened or stopped.
+
 ## Upstream sources
 
 These authors made the linked contributions or suggestions to upstream Plezy.
