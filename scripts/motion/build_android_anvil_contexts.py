@@ -21,6 +21,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -202,9 +203,23 @@ def clear_executable_stack_if_needed(
     cwd: Path,
 ) -> None:
     """Clear an executable-stack request from QAIRT's generated host wrapper."""
-    patchelf = shutil.which("patchelf")
+    patchelf = shutil.which("patchelf", path=env.get("PATH"))
     if patchelf is None:
         return
+
+    help_result = subprocess.run(
+        [patchelf, "--help"],
+        check=True,
+        capture_output=True,
+        text=True,
+        cwd=cwd,
+        env=env,
+    )
+    if any(flag not in help_result.stdout for flag in ("--print-execstack", "--clear-execstack")):
+        raise RuntimeError(
+            "QAIRT context preparation requires patchelf with --print-execstack and "
+            "--clear-execstack support (0.18.0 or newer)"
+        )
 
     inspection = subprocess.run(
         [patchelf, "--print-execstack", str(model_library)],
@@ -214,7 +229,8 @@ def clear_executable_stack_if_needed(
         cwd=cwd,
         env=env,
     )
-    if not inspection.stdout.strip().endswith("X"):
+    initial_state = _patchelf_execstack_state(inspection.stdout, model_library)
+    if initial_state == "-":
         return
 
     # This is a generated x86_64 model wrapper used only by the host context
@@ -229,9 +245,16 @@ def clear_executable_stack_if_needed(
         cwd=cwd,
         env=env,
     )
-    if not verified.stdout.strip().endswith("-"):
+    if _patchelf_execstack_state(verified.stdout, model_library) != "-":
         raise RuntimeError(f"Could not clear executable-stack request from {model_library}")
     print("Cleared executable-stack request from temporary QNN model library", flush=True)
+
+
+def _patchelf_execstack_state(output: str, model_library: Path) -> str:
+    match = re.search(r"(?:^|\n)execstack:\s*([X-])\s*$", output.strip())
+    if match is None:
+        raise RuntimeError(f"Could not read patchelf executable-stack state for {model_library}: {output!r}")
+    return match.group(1)
 
 
 def calibration_list(calibration_root: Path, resolution: str, work_dir: Path) -> Path:

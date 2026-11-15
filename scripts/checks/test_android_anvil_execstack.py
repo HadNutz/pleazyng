@@ -5,7 +5,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location(
@@ -28,43 +28,99 @@ class AnvilExecStackTest(unittest.TestCase):
 
     def test_missing_patchelf_leaves_generated_library_untouched(self) -> None:
         with (
-            patch.object(BUILDER.shutil, "which", return_value=None),
+            patch.object(BUILDER.shutil, "which", return_value=None) as which,
             patch.object(BUILDER.subprocess, "run") as run,
         ):
             BUILDER.clear_executable_stack_if_needed(self.library, env=self.env, cwd=self.root)
 
+        which.assert_called_once_with("patchelf", path=self.env["PATH"])
         run.assert_not_called()
         self.assertEqual(self.library.read_bytes(), b"generated host wrapper")
 
     def test_non_executable_stack_does_not_run_mutating_command(self) -> None:
+        help_result = subprocess.CompletedProcess(
+            args=[], returncode=0, stdout="--print-execstack\n--clear-execstack\n", stderr=""
+        )
         safe = subprocess.CompletedProcess(args=[], returncode=0, stdout="execstack: -\n", stderr="")
         with (
             patch.object(BUILDER.shutil, "which", return_value="/usr/bin/patchelf"),
-            patch.object(BUILDER.subprocess, "run", return_value=safe) as run,
+            patch.object(BUILDER.subprocess, "run", side_effect=[help_result, safe]) as run,
         ):
             BUILDER.clear_executable_stack_if_needed(self.library, env=self.env, cwd=self.root)
 
-        run.assert_called_once_with(
-            ["/usr/bin/patchelf", "--print-execstack", str(self.library)],
-            check=True,
-            capture_output=True,
-            text=True,
-            cwd=self.root,
-            env=self.env,
+        run.assert_has_calls(
+            [
+                call(
+                    ["/usr/bin/patchelf", "--help"],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    cwd=self.root,
+                    env=self.env,
+                ),
+                call(
+                    ["/usr/bin/patchelf", "--print-execstack", str(self.library)],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    cwd=self.root,
+                    env=self.env,
+                ),
+            ]
         )
+
+    def test_old_patchelf_is_rejected_before_inspection(self) -> None:
+        old_help = subprocess.CompletedProcess(args=[], returncode=0, stdout="--version\n", stderr="")
+        with (
+            patch.object(BUILDER.shutil, "which", return_value="/usr/bin/patchelf"),
+            patch.object(BUILDER.subprocess, "run", return_value=old_help) as run,
+        ):
+            with self.assertRaisesRegex(RuntimeError, "0.18.0 or newer"):
+                BUILDER.clear_executable_stack_if_needed(self.library, env=self.env, cwd=self.root)
+        run.assert_called_once()
+
+    def test_unrecognized_initial_state_is_not_assumed_safe(self) -> None:
+        help_result = subprocess.CompletedProcess(
+            args=[], returncode=0, stdout="--print-execstack\n--clear-execstack\n", stderr=""
+        )
+        unknown = subprocess.CompletedProcess(args=[], returncode=0, stdout="unknown\n", stderr="")
+        with (
+            patch.object(BUILDER.shutil, "which", return_value="/usr/bin/patchelf"),
+            patch.object(BUILDER.subprocess, "run", side_effect=[help_result, unknown]) as run,
+        ):
+            with self.assertRaisesRegex(RuntimeError, "Could not read patchelf executable-stack state"):
+                BUILDER.clear_executable_stack_if_needed(self.library, env=self.env, cwd=self.root)
+        self.assertEqual(run.call_count, 2)
+
+    def test_unrecognized_verified_state_is_a_hard_failure(self) -> None:
+        help_result = subprocess.CompletedProcess(
+            args=[], returncode=0, stdout="--print-execstack\n--clear-execstack\n", stderr=""
+        )
+        executable = subprocess.CompletedProcess(args=[], returncode=0, stdout="execstack: X\n", stderr="")
+        unknown = subprocess.CompletedProcess(args=[], returncode=0, stdout="execstack: ?\n", stderr="")
+        with (
+            patch.object(BUILDER.shutil, "which", return_value="/usr/bin/patchelf"),
+            patch.object(BUILDER.subprocess, "run", side_effect=[help_result, executable, None, unknown]),
+        ):
+            with self.assertRaisesRegex(RuntimeError, "Could not read patchelf executable-stack state"):
+                BUILDER.clear_executable_stack_if_needed(self.library, env=self.env, cwd=self.root)
 
     def test_executable_stack_is_cleared_and_verified(self) -> None:
         executable = subprocess.CompletedProcess(args=[], returncode=0, stdout="execstack: X\n", stderr="")
         safe = subprocess.CompletedProcess(args=[], returncode=0, stdout="execstack: -\n", stderr="")
+        help_result = subprocess.CompletedProcess(
+            args=[], returncode=0, stdout="--print-execstack\n--clear-execstack\n", stderr=""
+        )
         with (
             patch.object(BUILDER.shutil, "which", return_value="/usr/bin/patchelf"),
-            patch.object(BUILDER.subprocess, "run", side_effect=[executable, None, safe]) as run,
+            patch.object(BUILDER.subprocess, "run", side_effect=[help_result, executable, None, safe]) as run,
         ):
             BUILDER.clear_executable_stack_if_needed(self.library, env=self.env, cwd=self.root)
 
         self.assertEqual(
             [item.args[0] for item in run.call_args_list],
             [
+                ["/usr/bin/patchelf", "--help"],
                 ["/usr/bin/patchelf", "--print-execstack", str(self.library)],
                 ["/usr/bin/patchelf", "--clear-execstack", str(self.library)],
                 ["/usr/bin/patchelf", "--print-execstack", str(self.library)],
@@ -73,9 +129,12 @@ class AnvilExecStackTest(unittest.TestCase):
 
     def test_failed_verification_stops_context_generation(self) -> None:
         still_executable = subprocess.CompletedProcess(args=[], returncode=0, stdout="execstack: X\n", stderr="")
+        help_result = subprocess.CompletedProcess(
+            args=[], returncode=0, stdout="--print-execstack\n--clear-execstack\n", stderr=""
+        )
         with (
             patch.object(BUILDER.shutil, "which", return_value="/usr/bin/patchelf"),
-            patch.object(BUILDER.subprocess, "run", side_effect=[still_executable, None, still_executable]),
+            patch.object(BUILDER.subprocess, "run", side_effect=[help_result, still_executable, None, still_executable]),
         ):
             with self.assertRaisesRegex(RuntimeError, "Could not clear executable-stack request"):
                 BUILDER.clear_executable_stack_if_needed(self.library, env=self.env, cwd=self.root)
