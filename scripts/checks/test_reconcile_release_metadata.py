@@ -90,6 +90,12 @@ class MetadataPushTests(unittest.TestCase):
             reconcile.reconcile(self.repo, self.root / "denied")
         self.assertFalse((self.root / "denied/attempt-2").exists())
 
+    def test_release_workflow_uploads_nested_retry_evidence(self):
+        workflow = Path(__file__).resolve().parents[2] / ".github/workflows/refresh-release-metadata.yml"
+        content = workflow.read_text(encoding="utf-8")
+        self.assertIn("${{ runner.temp }}/release-metadata/**/*.json", content)
+        self.assertIn("${{ runner.temp }}/release-metadata/**/*.patch", content)
+
 
 if __name__ == "__main__":
     unittest.main()
