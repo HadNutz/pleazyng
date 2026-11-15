@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Refresh the Google Tensor LiteRT AOT SDK pin to 2.4.0.dev20261112.
+
 - Regenerate vendored wakelock_plus host bindings with Pigeon 30.0.2 and refresh the generator provenance.
 
 - Restore localized subtitle provider-placement and live-capture model/session guidance.
