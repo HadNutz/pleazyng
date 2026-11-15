@@ -1061,7 +1061,7 @@
 			repositoryURL = "https://github.com/snapetech-org/mpv-build";
 			requirement = {
 				kind = revision;
-				revision = 3e674d64a821dd96a41434a03e72ae358977d83a;
+				revision = ed987e6f779d53b65ccecc53602bff73a628a3e3;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
