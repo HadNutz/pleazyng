@@ -83,6 +83,9 @@ abstract final class NeuralModelPackService {
     NeuralInterpolationPreset.quality => _qualityModel,
   };
 
+  /// Stable model-pack identity for the selected desktop Neural preset.
+  static String modelIdForPreset(NeuralInterpolationPreset preset) => _modelForPreset(preset).id;
+
   /// Return the context variant for a Qualcomm target and neural preset.
   /// The current measured targets use 720p on V69 and 1080p on V73/V75.
   static String androidContextModelId(String resolution, NeuralInterpolationPreset preset) {

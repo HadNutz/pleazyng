@@ -53,6 +53,10 @@ final class PlaybackCapabilityReport {
   /// Provider-reported vendor or hardware label for model inference.
   final String? neuralProviderVendor;
 
+  /// Model pack configured for this session. It identifies the app's selected
+  /// model and is independent of [neuralOutputObserved].
+  final String? neuralModelId;
+
   /// Active model-pack download progress for the requested Neural route.
   /// Both values are null when no pack is currently downloading.
   final int? neuralModelDownloadBytesReceived;
@@ -105,6 +109,7 @@ final class PlaybackCapabilityReport {
     this.neuralProviderReady = false,
     this.neuralProvider,
     this.neuralProviderVendor,
+    this.neuralModelId,
     this.neuralModelDownloadBytesReceived,
     this.neuralModelDownloadBytesTotal,
     this.neuralPowerMode,

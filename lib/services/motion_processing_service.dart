@@ -29,6 +29,7 @@ abstract final class MotionProcessingService {
     'motion-processing-android-originals',
   );
   static final Expando<bool> _androidAnvilActive = Expando('motion-processing-android-anvil-active');
+  static final Expando<String> _configuredNeuralModelId = Expando('motion-processing-configured-neural-model-id');
   static final Expando<NeuralInterpolationPreset> _androidAnvilPreset = Expando(
     'motion-processing-android-anvil-preset',
   );
@@ -340,6 +341,10 @@ abstract final class MotionProcessingService {
   /// OS or device did not report a value.
   static String? thermalStatusForPlayer(Player player) => _thermalStatus[player];
 
+  /// Configured model pack for a model-backed Neural session, when selected.
+  /// This does not mean that the provider has produced output.
+  static String? configuredNeuralModelIdForPlayer(Player player) => _configuredNeuralModelId[player];
+
   /// Resolve Android before `loadfile` from its active VO or configured chain.
   /// An explicit eligible MPV request may replace the default
   /// `mediacodec,gpu` priority with the GPU renderer for this session.
@@ -478,6 +483,7 @@ abstract final class MotionProcessingService {
     NeuralInterpolationPreset neuralPreset = NeuralInterpolationPreset.balanced,
   }) async {
     if (!supportsPlayer(player)) return;
+    _configuredNeuralModelId[player] = null;
     _sessionSelectedVersion[player] = selectedVersion;
     _sessionIsLive[player] = isLive;
     _sessionIsTranscoding[player] = isTranscoding;
@@ -1217,6 +1223,7 @@ abstract final class MotionProcessingService {
       await player.command(['vf', 'add', '@plezy-pme:plezy-pme=$filterOptions']);
       _desktopPmeActive[player] = true;
       _desktopPmePreset[player] = neuralPreset;
+      _configuredNeuralModelId[player] = NeuralModelPackService.modelIdForPreset(neuralPreset);
       return true;
     } catch (error, stackTrace) {
       appLogger.w(
@@ -1328,6 +1335,7 @@ abstract final class MotionProcessingService {
   static Future<bool> _removeDesktopPmeFilter(Player player) async {
     try {
       await player.command(['vf', 'remove', '@plezy-pme']);
+      _configuredNeuralModelId[player] = null;
       return true;
     } catch (error) {
       appLogger.d('MotionProcessingService: desktop PME filter was not active', error: error);
@@ -1336,6 +1344,7 @@ abstract final class MotionProcessingService {
   }
 
   static Future<void> _restoreDesktopPme(Player player) async {
+    _configuredNeuralModelId[player] = null;
     final original = _desktopPmeOriginals[player];
     if (original == null) return;
     if (_desktopPmeActive[player] == true) await _removeDesktopPmeFilter(player);
@@ -1599,6 +1608,7 @@ abstract final class MotionProcessingService {
       ]);
       _androidAnvilActive[player] = true;
       _androidAnvilPreset[player] = neuralPreset;
+      _configuredNeuralModelId[player] = modelId;
       _androidMpvOutputActive[player] = false;
       return true;
     } catch (error, stackTrace) {
@@ -1676,6 +1686,7 @@ abstract final class MotionProcessingService {
       await player.command(['vf', 'add', '@plezy-anvil:anvil=$options']);
       _androidAnvilActive[player] = true;
       _androidAnvilPreset[player] = neuralPreset;
+      _configuredNeuralModelId[player] = modelId;
       _androidMpvOutputActive[player] = false;
       return true;
     } catch (error, stackTrace) {
@@ -1764,6 +1775,7 @@ abstract final class MotionProcessingService {
   static Future<bool> _removeAndroidAnvilFilter(Player player) async {
     try {
       await player.command(['vf', 'remove', '@plezy-anvil']);
+      _configuredNeuralModelId[player] = null;
       return true;
     } catch (error) {
       appLogger.d('MotionProcessingService: Android ANVIL filter was not active', error: error);
@@ -1772,6 +1784,7 @@ abstract final class MotionProcessingService {
   }
 
   static Future<void> _restoreAndroidMotionPath(Player player) async {
+    _configuredNeuralModelId[player] = null;
     _androidMpvOutputActive[player] = false;
     final original = _androidOriginals[player];
     if (_androidAnvilActive[player] == true) await _removeAndroidAnvilFilter(player);

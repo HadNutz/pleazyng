@@ -9,6 +9,7 @@ import 'package:plezy/models/motion_processing_mode.dart';
 import 'package:plezy/models/playback_capability_report.dart';
 import 'package:plezy/mpv/mpv.dart';
 import 'package:plezy/services/motion_processing_service.dart';
+import 'package:plezy/services/neural_model_pack_service.dart';
 import 'package:plezy/utils/app_logger.dart';
 import 'package:plezy/widgets/video_controls/widgets/performance_overlay/performance_stats.dart';
 import 'package:plezy/widgets/video_controls/widgets/performance_overlay/performance_stats_service.dart';
@@ -498,6 +499,35 @@ void main() {
       expect(stats.motionProcessingFormatted, contains('WebGPU · GPU'));
       expect(stats.motionProcessingFormatted, contains('AMD Radeon RX 7900 XT · WebGPU · GPU'));
       expect(stats.motionProcessingFormatted, contains('Compute AMD Radeon RX 7900 XT'));
+    });
+
+    test('labels configured model selection without claiming inference output', () {
+      const report = PlaybackCapabilityReport(
+        playerType: 'mpv',
+        neuralModelId: 'anvil-s-1080p',
+        neuralProvider: 'openvino-npu',
+        neuralProviderReady: true,
+      );
+      final stats = PerformanceStats(
+        neuralProvider: 'openvino-npu',
+        motionProcessingResolution: const MotionProcessingResolution(
+          requested: MotionProcessingMode.neural,
+          requestedPreset: NeuralInterpolationPreset.balanced,
+          provider: MotionProcessingProvider.neural,
+        ),
+        playbackCapabilityReport: report,
+      );
+
+      expect(report.neuralModelId, 'anvil-s-1080p');
+      expect(report.hasObservedNeuralOutput, isFalse);
+      expect(stats.motionProcessingFormatted, contains('Configured model anvil-s-1080p'));
+      expect(stats.motionProcessingFormatted, isNot(contains('frames')));
+    });
+
+    test('maps desktop presets to their model pack IDs', () {
+      expect(NeuralModelPackService.modelIdForPreset(NeuralInterpolationPreset.performance), 'anvil-s-540p');
+      expect(NeuralModelPackService.modelIdForPreset(NeuralInterpolationPreset.balanced), 'anvil-s-1080p');
+      expect(NeuralModelPackService.modelIdForPreset(NeuralInterpolationPreset.quality), 'anvil-m-1080p');
     });
   });
 }
