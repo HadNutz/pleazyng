@@ -459,7 +459,7 @@ jobs:
             fi
             VERSION="$RELEASE_TAG"
           fi
-          if [[ "$EXECUTION_PROFILE" == "hybrid" && ( ( ( "$REF_TYPE" != "branch" || "$REF_NAME" != "main" ) && ( "$ACTION" != "release" || "$REF_TYPE" != "tag" || "$REF_NAME" != "$RELEASE_TAG" ) ) || ( "$MODE" != "release" && "$MODE" != "android-validation" && "$MODE" != "macos-validation" ) || "$SUBTITLE_GPU_BACKEND" != "cpu" ) ]]; then
+          if [[ "$EXECUTION_PROFILE" == "hybrid" && ( ( ( "$REF_TYPE" != "branch" || "$REF_NAME" != "main" ) && ( "$ACTION" != "release" || "$REF_TYPE" != "tag" || "$REF_NAME" != "$RELEASE_TAG" ) ) || ( "$MODE" != "release" && "$MODE" != "webos-validation" && "$MODE" != "android-validation" && "$MODE" != "macos-validation" ) || "$SUBTITLE_GPU_BACKEND" != "cpu" ) ]]; then
             echo "The hybrid execution profile requires trusted main or the exact immutable release tag." >&2
             exit 1
           fi

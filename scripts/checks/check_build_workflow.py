@@ -1008,6 +1008,14 @@ require(
     is not None,
     "manual workflow must expose required release and webOS validation modes",
 )
+hybrid_validation_mode_guard = (
+    '"$MODE" != "release" && "$MODE" != "webos-validation" && '
+    '"$MODE" != "android-validation" && "$MODE" != "macos-validation"'
+)
+require(
+    text.count(hybrid_validation_mode_guard) == 1,
+    "webOS-only validation must be accepted by the hybrid-profile check",
+)
 require(
     re.search(
         r"(?ms)^      include_webos_release:\n.*?        type: boolean\n"
