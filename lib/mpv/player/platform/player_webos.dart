@@ -22,6 +22,7 @@ import 'webos_media_proxy.dart';
 import 'native_tv_playback_metadata.dart';
 import 'webos_soloud_player.dart';
 import 'webos_pgs_overlay.dart';
+import 'webos_video_layout.dart';
 
 /// LG's webOS media pipeline. Video and unsupported audio use LG's player;
 /// bounded supported music files may use Pleazyng's app-owned SoLoud route.
@@ -132,25 +133,49 @@ class PlayerWebOS extends PlayerBase implements NativeVisualizationAudioSource, 
     if (audioOnly || controller == null) {
       return const SizedBox.expand();
     }
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        webos_media.VideoPlayer(controller),
-        WebOSPgsOverlay(cue: pgsCue),
-        IgnorePointer(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(32, 16, 32, 36),
-              child: ValueListenableBuilder<String>(
-                valueListenable: caption,
-                builder: (context, text, child) =>
-                    text.isEmpty ? const SizedBox.shrink() : webos_media.ClosedCaption(text: text),
-              ),
-            ),
-          ),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final viewport = Size(constraints.maxWidth, constraints.maxHeight);
+        return ValueListenableBuilder<webos_media.VideoPlayerValue>(
+          valueListenable: controller,
+          builder: (context, value, child) {
+            final aspectRatio = value.aspectRatio;
+            final hasVideoSize = value.isInitialized && aspectRatio.isFinite && aspectRatio > 0;
+            final fittedSize = hasVideoSize ? webOsAspectFitSize(viewport, aspectRatio) : viewport;
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                const ColoredBox(color: Color(0xff000000)),
+                Center(
+                  child: SizedBox.fromSize(
+                    size: fittedSize,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        webos_media.VideoPlayer(controller),
+                        WebOSPgsOverlay(cue: pgsCue),
+                        IgnorePointer(
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(32, 16, 32, 36),
+                              child: ValueListenableBuilder<String>(
+                                valueListenable: caption,
+                                builder: (context, text, child) =>
+                                    text.isEmpty ? const SizedBox.shrink() : webos_media.ClosedCaption(text: text),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 

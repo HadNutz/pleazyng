@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Preserve source aspect ratio on the native webOS video plane and leave black bars inside the player viewport.
+
 - Bound preferred-language subtitle retrieval during startup, let viewers skip it, and expose status with an explicit provider-search retry.
 
 - Report the configured neural model pack separately from provider readiness and generated output.
