@@ -4112,6 +4112,13 @@ class _Translations$subtitleAiUi$cs extends Translations$subtitleAiUi$en {
 	final TranslationsCs _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Náhled kódování titulků';
+	@override String get subtitleEncodingPreviewDescription => 'Vyberte zdrojové kódování a zkontrolujte titulky. Starší kódování se nikdy neodhadují a původní soubor zůstane beze změny.';
+	@override String get subtitleEncodingSourceLabel => 'Zdrojové kódování';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => 'Dekódováno titulků: ${count}';
+	@override String get subtitleEncodingNoCues => 'V tomto kódování nebyly nalezeny čitelné titulky.';
+	@override String get subtitleEncodingDecodeFailed => 'Soubor se nepodařilo dekódovat ve vybraném kódování.';
+	@override String get subtitleEncodingUsePreview => 'Použít tento náhled';
 	@override String get liveCaptureStart => 'Spustit živé titulky';
 	@override String get liveCaptureStop => 'Zastavit živé titulky';
 }
@@ -9425,6 +9432,13 @@ extension on TranslationsCs {
 			'issueReport.openDraft' => 'Otevřít návrh na GitHubu',
 			'podcasts.autoDownloadLatest' => 'Automaticky stahovat nejnovější epizody',
 			'podcasts.removeFinishedAfter' => 'Odstranit dokončená stažení po',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Náhled kódování titulků',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Vyberte zdrojové kódování a zkontrolujte titulky. Starší kódování se nikdy neodhadují a původní soubor zůstane beze změny.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Zdrojové kódování',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => 'Dekódováno titulků: ${count}',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'V tomto kódování nebyly nalezeny čitelné titulky.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Soubor se nepodařilo dekódovat ve vybraném kódování.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Použít tento náhled',
 			'subtitleAiUi.liveCaptureStart' => 'Spustit živé titulky',
 			'subtitleAiUi.liveCaptureStop' => 'Zastavit živé titulky',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9728,6 +9742,8 @@ extension on TranslationsCs {
 			'musicTools.serverAnalysis' => 'Analýza serveru',
 			'musicTools.sonicAnalysis' => 'Zvuková analýza',
 			'musicTools.serverAnalysisScope' => 'Všechny způsobilé hudební knihovny na tomto serveru. Jejich nastavení analýzy se nezmění.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Aktivity serveru',
 			'musicTools.playlistSharing' => 'Přístup k playlistu',
 			'musicTools.playlistRecipient' => 'Uživatelské jméno Plex nebo e-mail',
@@ -9735,8 +9751,6 @@ extension on TranslationsCs {
 			'musicTools.playlistSharingFailed' => 'Nepodařilo se požádat o přístup k playlistu.',
 			'musicTools.playlistSharingAccepted' => 'Plex přijal žádost o přístup.',
 			'musicTools.playlistAccessList' => 'Aktuální přístup',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'K playlistu nebyl udělen žádný přístup',
 			'musicTools.filterType' => 'Typ filtru',
 			'musicTools.peak' => 'Špička',

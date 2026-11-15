@@ -1,7 +1,7 @@
 {
   "locale": "zh-Hant",
   "inherits": null,
-  "catalogSha256": "41d4e70812a478c2e4ad40e2eba46e2cb4f1a61c752c0581ce9a7a5a9751cb41",
+  "catalogSha256": "fc11e8c65638ed18694f2e1921dbb2a942bfbdb72bb177443a9437689fccddf0",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3699,7 +3699,14 @@
     "startup.legacyImportConfirm": "assistant-generated-draft",
     "startup.legacyImportInvalidTitle": "assistant-generated-draft",
     "startup.legacyImportInvalidBody": "assistant-generated-draft",
-    "startup.legacyImportTryAnother": "assistant-generated-draft"
+    "startup.legacyImportTryAnother": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingPreviewTitle": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingPreviewDescription": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingSourceLabel": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingPreviewCueCount": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingNoCues": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingDecodeFailed": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingUsePreview": "assistant-generated-draft"
   },
   "beforeIndependentQaCorrection": {
     "settings.cloudBackupDescription": "m2m100-draft+opencc-s2twp",

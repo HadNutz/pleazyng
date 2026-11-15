@@ -1,7 +1,7 @@
 {
   "locale": "kk",
   "inherits": null,
-  "catalogSha256": "7a950c958515bbe76f83553af1d1a80e6b0e236a38ecd3bdeb1626705ce0ecd4",
+  "catalogSha256": "e4abfd7773909d9d295e0ba9669e9f4e1c43bd6678d9d7375dedfa3eb0cd923a",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3675,7 +3675,14 @@
     "startup.legacyImportConfirm": "assistant-generated-draft",
     "startup.legacyImportInvalidTitle": "assistant-generated-draft",
     "startup.legacyImportInvalidBody": "assistant-generated-draft",
-    "startup.legacyImportTryAnother": "assistant-generated-draft"
+    "startup.legacyImportTryAnother": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingPreviewTitle": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingPreviewDescription": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingSourceLabel": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingPreviewCueCount": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingNoCues": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingDecodeFailed": "assistant-generated-draft",
+    "subtitleAiUi.subtitleEncodingUsePreview": "assistant-generated-draft"
   },
   "beforeIndependentQaCorrection": {
     "collections.deleteConfirm": "existing",

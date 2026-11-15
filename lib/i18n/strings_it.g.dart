@@ -4077,6 +4077,13 @@ class _Translations$subtitleAiUi$it extends Translations$subtitleAiUi$en {
 	final TranslationsIt _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Anteprima della codifica dei sottotitoli';
+	@override String get subtitleEncodingPreviewDescription => 'Scegli la codifica di origine e controlla i sottotitoli. Le codifiche legacy non vengono mai indovinate e il file originale resta invariato.';
+	@override String get subtitleEncodingSourceLabel => 'Codifica di origine';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} righe di sottotitoli decodificate';
+	@override String get subtitleEncodingNoCues => 'Non sono stati trovati sottotitoli leggibili con questa codifica.';
+	@override String get subtitleEncodingDecodeFailed => 'Impossibile decodificare il file con la codifica selezionata.';
+	@override String get subtitleEncodingUsePreview => 'Usa questa anteprima';
 	@override String get liveCaptureStart => 'Avvia sottotitoli in diretta';
 	@override String get liveCaptureStop => 'Interrompi sottotitoli in diretta';
 }
@@ -9388,6 +9395,13 @@ extension on TranslationsIt {
 			'issueReport.openDraft' => 'Apri la bozza GitHub',
 			'podcasts.autoDownloadLatest' => 'Scarica automaticamente gli episodi più recenti',
 			'podcasts.removeFinishedAfter' => 'Rimuovi i download completati dopo',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Anteprima della codifica dei sottotitoli',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Scegli la codifica di origine e controlla i sottotitoli. Le codifiche legacy non vengono mai indovinate e il file originale resta invariato.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Codifica di origine',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} righe di sottotitoli decodificate',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Non sono stati trovati sottotitoli leggibili con questa codifica.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Impossibile decodificare il file con la codifica selezionata.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Usa questa anteprima',
 			'subtitleAiUi.liveCaptureStart' => 'Avvia sottotitoli in diretta',
 			'subtitleAiUi.liveCaptureStop' => 'Interrompi sottotitoli in diretta',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9691,6 +9705,8 @@ extension on TranslationsIt {
 			'musicTools.serverAnalysis' => 'Analisi del server',
 			'musicTools.sonicAnalysis' => 'Analisi sonora',
 			'musicTools.serverAnalysisScope' => 'Tutte le librerie musicali idonee su questo server. Le impostazioni di analisi non vengono modificate.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Attività del server',
 			'musicTools.playlistSharing' => 'Accesso alla playlist',
 			'musicTools.playlistRecipient' => 'Nome utente Plex o email',
@@ -9698,8 +9714,6 @@ extension on TranslationsIt {
 			'musicTools.playlistSharingFailed' => 'Impossibile richiedere l’accesso alla playlist.',
 			'musicTools.playlistSharingAccepted' => 'Plex ha accettato la richiesta di accesso.',
 			'musicTools.playlistAccessList' => 'Accesso attuale',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Nessun accesso concesso alla playlist',
 			'musicTools.filterType' => 'Tipo di filtro',
 			'musicTools.peak' => 'Picco',

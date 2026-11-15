@@ -4047,6 +4047,13 @@ class _Translations$subtitleAiUi$th extends Translations$subtitleAiUi$en {
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'ตัวอย่างการเข้ารหัสคำบรรยาย';
+	@override String get subtitleEncodingPreviewDescription => 'เลือกการเข้ารหัสต้นทางและตรวจดูคำบรรยาย ระบบจะไม่เดาการเข้ารหัสแบบเก่า และไฟล์ต้นฉบับจะไม่เปลี่ยนแปลง';
+	@override String get subtitleEncodingSourceLabel => 'การเข้ารหัสต้นทาง';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => 'ถอดรหัสคำบรรยายแล้ว ${count} รายการ';
+	@override String get subtitleEncodingNoCues => 'ไม่พบคำบรรยายที่อ่านได้ด้วยการเข้ารหัสนี้';
+	@override String get subtitleEncodingDecodeFailed => 'ถอดรหัสไฟล์ด้วยการเข้ารหัสที่เลือกไม่ได้';
+	@override String get subtitleEncodingUsePreview => 'ใช้ตัวอย่างนี้';
 	@override String get liveCaptureStart => 'เริ่มคำบรรยายสด';
 	@override String get liveCaptureStop => 'หยุดคำบรรยายสด';
 }
@@ -9356,6 +9363,13 @@ extension on TranslationsTh {
 			'issueReport.openDraft' => 'เปิดฉบับร่าง GitHub',
 			'podcasts.autoDownloadLatest' => 'ดาวน์โหลดตอนล่าสุดโดยอัตโนมัติ',
 			'podcasts.removeFinishedAfter' => 'ลบไฟล์ดาวน์โหลดที่ฟังจบแล้วหลังจาก',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'ตัวอย่างการเข้ารหัสคำบรรยาย',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'เลือกการเข้ารหัสต้นทางและตรวจดูคำบรรยาย ระบบจะไม่เดาการเข้ารหัสแบบเก่า และไฟล์ต้นฉบับจะไม่เปลี่ยนแปลง',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'การเข้ารหัสต้นทาง',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => 'ถอดรหัสคำบรรยายแล้ว ${count} รายการ',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'ไม่พบคำบรรยายที่อ่านได้ด้วยการเข้ารหัสนี้',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'ถอดรหัสไฟล์ด้วยการเข้ารหัสที่เลือกไม่ได้',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'ใช้ตัวอย่างนี้',
 			'subtitleAiUi.liveCaptureStart' => 'เริ่มคำบรรยายสด',
 			'subtitleAiUi.liveCaptureStop' => 'หยุดคำบรรยายสด',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9659,6 +9673,8 @@ extension on TranslationsTh {
 			'musicTools.serverAnalysis' => 'การวิเคราะห์เซิร์ฟเวอร์',
 			'musicTools.sonicAnalysis' => 'การวิเคราะห์เสียง',
 			'musicTools.serverAnalysisScope' => 'คลังเพลงที่เข้าเกณฑ์ทั้งหมดบนเซิร์ฟเวอร์นี้ การตั้งค่าการวิเคราะห์ของคลังจะไม่เปลี่ยนแปลง',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'กิจกรรมเซิร์ฟเวอร์',
 			'musicTools.playlistSharing' => 'สิทธิ์เข้าถึงเพลย์ลิสต์',
 			'musicTools.playlistRecipient' => 'ชื่อผู้ใช้ Plex หรืออีเมล',
@@ -9666,8 +9682,6 @@ extension on TranslationsTh {
 			'musicTools.playlistSharingFailed' => 'ไม่สามารถขอสิทธิ์เข้าถึงเพลย์ลิสต์ได้',
 			'musicTools.playlistSharingAccepted' => 'Plex ยอมรับคำขอสิทธิ์เข้าถึงแล้ว',
 			'musicTools.playlistAccessList' => 'สิทธิ์เข้าถึงปัจจุบัน',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'ยังไม่มีการให้สิทธิ์เข้าถึงเพลย์ลิสต์',
 			'musicTools.filterType' => 'ประเภทตัวกรอง',
 			'musicTools.peak' => 'พีค',

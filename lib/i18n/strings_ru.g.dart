@@ -4116,6 +4116,13 @@ class _Translations$subtitleAiUi$ru extends Translations$subtitleAiUi$en {
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Предпросмотр кодировки субтитров';
+	@override String get subtitleEncodingPreviewDescription => 'Выберите исходную кодировку и проверьте субтитры. Старые кодировки не угадываются, исходный файл не изменяется.';
+	@override String get subtitleEncodingSourceLabel => 'Исходная кодировка';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => 'Декодировано строк субтитров: ${count}';
+	@override String get subtitleEncodingNoCues => 'В этой кодировке не найдено читаемых субтитров.';
+	@override String get subtitleEncodingDecodeFailed => 'Не удалось декодировать файл с выбранной кодировкой.';
+	@override String get subtitleEncodingUsePreview => 'Использовать предпросмотр';
 	@override String get liveCaptureStart => 'Включить субтитры в реальном времени';
 	@override String get liveCaptureStop => 'Остановить субтитры в реальном времени';
 }
@@ -9431,6 +9438,13 @@ extension on TranslationsRu {
 			'issueReport.openDraft' => 'Открыть черновик GitHub',
 			'podcasts.autoDownloadLatest' => 'Автоматически скачивать последние выпуски',
 			'podcasts.removeFinishedAfter' => 'Удалять завершённые загрузки через',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Предпросмотр кодировки субтитров',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Выберите исходную кодировку и проверьте субтитры. Старые кодировки не угадываются, исходный файл не изменяется.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Исходная кодировка',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => 'Декодировано строк субтитров: ${count}',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'В этой кодировке не найдено читаемых субтитров.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Не удалось декодировать файл с выбранной кодировкой.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Использовать предпросмотр',
 			'subtitleAiUi.liveCaptureStart' => 'Включить субтитры в реальном времени',
 			'subtitleAiUi.liveCaptureStop' => 'Остановить субтитры в реальном времени',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9734,6 +9748,8 @@ extension on TranslationsRu {
 			'musicTools.serverAnalysis' => 'Анализ сервера',
 			'musicTools.sonicAnalysis' => 'Звуковой анализ',
 			'musicTools.serverAnalysisScope' => 'Все подходящие музыкальные библиотеки на этом сервере. Их настройки анализа не изменяются.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Задачи сервера',
 			'musicTools.playlistSharing' => 'Доступ к плейлисту',
 			'musicTools.playlistRecipient' => 'Имя пользователя Plex или эл. почта',
@@ -9741,8 +9757,6 @@ extension on TranslationsRu {
 			'musicTools.playlistSharingFailed' => 'Не удалось запросить доступ к плейлисту.',
 			'musicTools.playlistSharingAccepted' => 'Plex принял запрос на доступ.',
 			'musicTools.playlistAccessList' => 'Текущий доступ',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Доступ к плейлисту никому не предоставлен',
 			'musicTools.filterType' => 'Тип фильтра',
 			'musicTools.peak' => 'Пик',

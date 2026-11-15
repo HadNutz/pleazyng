@@ -4070,6 +4070,13 @@ class _Translations$subtitleAiUi$kk extends Translations$subtitleAiUi$en {
 	final TranslationsKk _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Субтитр кодтамасын алдын ала қарау';
+	@override String get subtitleEncodingPreviewDescription => 'Бастапқы кодтаманы таңдап, субтитрлерді қарап шығыңыз. Ескі кодтамалар болжанбайды, бастапқы файл өзгеріссіз қалады.';
+	@override String get subtitleEncodingSourceLabel => 'Бастапқы кодтама';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} субтитр жолы декодталды';
+	@override String get subtitleEncodingNoCues => 'Бұл кодтамада оқылатын субтитрлер табылмады.';
+	@override String get subtitleEncodingDecodeFailed => 'Файлды таңдалған кодтамамен декодтау мүмкін болмады.';
+	@override String get subtitleEncodingUsePreview => 'Осы алдын ала қарауды пайдалану';
 	@override String get liveCaptureStart => 'Тікелей субтитрлерді бастау';
 	@override String get liveCaptureStop => 'Тікелей субтитрлерді тоқтату';
 }
@@ -9381,6 +9388,13 @@ extension on TranslationsKk {
 			'issueReport.openDraft' => 'GitHub жобасын ашу',
 			'podcasts.autoDownloadLatest' => 'Соңғы эпизодтарды автоматты түрде жүктеп алу',
 			'podcasts.removeFinishedAfter' => 'Аяқталған жүктеулерді кейін жою',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Субтитр кодтамасын алдын ала қарау',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Бастапқы кодтаманы таңдап, субтитрлерді қарап шығыңыз. Ескі кодтамалар болжанбайды, бастапқы файл өзгеріссіз қалады.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Бастапқы кодтама',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} субтитр жолы декодталды',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Бұл кодтамада оқылатын субтитрлер табылмады.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Файлды таңдалған кодтамамен декодтау мүмкін болмады.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Осы алдын ала қарауды пайдалану',
 			'subtitleAiUi.liveCaptureStart' => 'Тікелей субтитрлерді бастау',
 			'subtitleAiUi.liveCaptureStop' => 'Тікелей субтитрлерді тоқтату',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9684,6 +9698,8 @@ extension on TranslationsKk {
 			'musicTools.serverAnalysis' => 'Серверді талдау',
 			'musicTools.sonicAnalysis' => 'Дыбыстық талдау',
 			'musicTools.serverAnalysisScope' => 'Осы сервердегі барлық жарамды музыка кітапханалары. Олардың талдау параметрлері өзгермейді.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Сервер әрекеттері',
 			'musicTools.playlistSharing' => 'Ойнату тізіміне қатынау',
 			'musicTools.playlistRecipient' => 'Plex пайдаланушы аты немесе электрондық пошта',
@@ -9691,8 +9707,6 @@ extension on TranslationsKk {
 			'musicTools.playlistSharingFailed' => 'Тізімге қатынау сұрауын жіберу мүмкін болмады.',
 			'musicTools.playlistSharingAccepted' => 'Plex қатынау сұрауын қабылдады.',
 			'musicTools.playlistAccessList' => 'Ағымдағы қатынау',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Ойнату тізіміне қатынау берілмеген',
 			'musicTools.filterType' => 'Сүзгі түрі',
 			'musicTools.peak' => 'Шың',

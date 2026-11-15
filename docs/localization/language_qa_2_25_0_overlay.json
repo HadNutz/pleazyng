@@ -294,8 +294,8 @@
   ],
   "correctionLedger": "language_qa_2_25_0_corrections.json",
   "correctionLedgerSha256": "4d7e66d711ace12b1c4365717da13bed1b2bafd7afd3e7bbc1795950cabb9c93",
-  "sourcesSha256": "18dfa8d40c949848e52021bf65555467deba6546d86849eba53ba0b54dc7716b",
-  "translationProvenanceSha256": "13c157b8961e7c8f28def14227710e944e42b593d3b62c0232ff386f60abe689",
+  "sourcesSha256": "f708d808e32cad6949a3945fe71b76a3f5120db8733b05c1689a1ee67e7fb7d6",
+  "translationProvenanceSha256": "163b8c09d5d796eb4179bb8dd530c703e0e05c31d81f0935021ec2c0829edee0",
   "additionCandidateCounts": {
     "same_as_english": 324,
     "short_translation": 17
@@ -458,7 +458,7 @@
   "catalogs": {
     "ar": {
       "catalogPath": "lib/i18n/ar.i18n.json",
-      "currentSha256": "76ec4c9d5728e56787a6d1304127ad66508fa1fcbf513dfb7099df10d5a2896e",
+      "currentSha256": "76d43742a65c594a0b4485887e273fdacd14e6c57f50b8d9a0fdb0447c793f26",
       "preOverlaySha256": "c3466d1ad5b9efbbec5b810c765bbc8b787990f25bac119b834c493fbbdd961b",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -1477,11 +1477,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 1
+      "changedMessageCount": 1,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "az": {
       "catalogPath": "lib/i18n/az.i18n.json",
-      "currentSha256": "b39b2a6f16805556db205760b0ba353690908c18a40d7a5f4850eaea31d85f66",
+      "currentSha256": "cf33ff059473ab0b14a0c87a359803c18eccabf4c090ed8e9fea1f25fd767c67",
       "preOverlaySha256": "1fe9099ab1961c2bb548548b5bf15b7f06246b37c4591a5ae20d9152be851668",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -2504,11 +2516,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 64
     },
     "bg": {
       "catalogPath": "lib/i18n/bg.i18n.json",
-      "currentSha256": "3395fce2bdd983ce24eb5fa1363d09f6355d9195422cadb9b1db40b9d227b840",
+      "currentSha256": "869c80fa189efd59e7909d358530db596e347a01e9f3c574a361ad36c6c663de",
       "preOverlaySha256": "aaa4060b34c4e74fed135b42b7cc1950b546c8dc894d87e962995eb523222f48",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -3535,11 +3559,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 3
+      "changedMessageCount": 3,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "bn": {
       "catalogPath": "lib/i18n/bn.i18n.json",
-      "currentSha256": "f15f4b4667abfdcb95a8761ba0e334c1971bd261dfddbaeb657e5b58593ba7dd",
+      "currentSha256": "6a659d1b7e6c153112c3856f515f0ca66b3a57339512ebefaaf2e3f0e9873d64",
       "preOverlaySha256": "dcb6e96f43ea7a510391bfae3686353a8a60228eadb0b97c2ba025421876ecb5",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -4562,11 +4598,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 65
     },
     "cs": {
       "catalogPath": "lib/i18n/cs.i18n.json",
-      "currentSha256": "fc3b5203d54ec881702e68515a8f97e18a13f9fbd8d6a84df89b47f524052f0b",
+      "currentSha256": "39d248d32082ffe47de7d33daa93cd9ddce9b88d852a7fb5dc16f9426c61ce7d",
       "preOverlaySha256": "5a5c526f0e7de5e25a273554085c9ed71b71733c23d763245483d9a345f44143",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -5580,11 +5628,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 0
+      "changedMessageCount": 0,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "da": {
       "catalogPath": "lib/i18n/da.i18n.json",
-      "currentSha256": "be64e20c490d80997a255a9499740e3abaa7bbe355a05fb0baced277e9bfc74e",
+      "currentSha256": "1cfb26726ed0748ac7ae46193360a5cdb66e39f564e460eb09e084431deb10a9",
       "preOverlaySha256": "163a95a357940805f3d465ce011cbf20685a005c55ad66710211624895312a9e",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -6607,11 +6667,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 65
     },
     "de": {
       "catalogPath": "lib/i18n/de.i18n.json",
-      "currentSha256": "df8bdf4b5cad65ca1515637dadb6d647479aceb77455d6f8399f40608ba1083f",
+      "currentSha256": "fdb330aacc99ff29f8216e6576e8b2eb6b48c0220de9f2234d5695dfb7a494b6",
       "preOverlaySha256": "332a80b9154b258ac6ca4f0efa5ff06f00ceb618b45814158311beba0841790f",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -7634,11 +7706,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "en": {
       "catalogPath": "lib/i18n/en.i18n.json",
-      "currentSha256": "ba12bbfaedda99f416dcef414fd38eeb9c81342b46a6066ffd1259b78a0a3a78",
+      "currentSha256": "ef44afe70a7f307329b93e83f2b07bd53aa05a1e7d3efba5c7d50721ecda61c0",
       "preOverlaySha256": "56fd74283f64ae7becdae43fd800208bb035470c8b6e7374040484dca9da9b03",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -8054,11 +8138,25 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 1
+      "changedMessageCount": 1,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 2094,
+      "additionalFeatureRevisedMessageValues": {
+        "audiobook.syncPrivacy": "Cloud sync writes encrypted progress, completion, bookmark and note data to app-owned sync files. Playback media is never uploaded, replaced, renamed or deleted. Account tokens and passwords are not uploaded. Google Drive and OneDrive use app storage; Dropbox uses Pleazyng Sync; WebDAV and S3 use the chosen folder or prefix. Enabling sync may require provider write permission, but the app writes only those state files. Cloud sync and compatible server progress/bookmark sync run independently with separate retries. Conflicts are shown for you to resolve. Turning sync off keeps local history and remote state."
+      },
+      "additionalFeatureChangedMessageCount": 66
     },
     "es": {
       "catalogPath": "lib/i18n/es.i18n.json",
-      "currentSha256": "0690ce69eac3174f36e6579dff41645180b8ef647fbb27447f215c8393cefcf2",
+      "currentSha256": "3f839d5352f11f13154ee31ae62fffd5317ec1df5d00d81e45aca3b38e36d0e3",
       "preOverlaySha256": "930c8f971c1dd1d5e211ffa3ef23bc3ba8fc4ffa2277450200535a34c824677c",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -9081,11 +9179,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1997,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "es-419": {
       "catalogPath": "lib/i18n/es-419.i18n.json",
-      "currentSha256": "6c305e7621e5863787067db6844025b96203fdfa279b9b4e7890aa35ef7198ea",
+      "currentSha256": "ef4604d0bcaa05142425da8204c33e9be1c71c12aa121ce15472b1ef76b2dd08",
       "preOverlaySha256": "291df8a0175d2fde79c0ca642a252acf24431872631e07c4bbc8cb2726d56caa",
       "addedPhysicalKeys": [],
       "removedPhysicalKeys": [],
@@ -9101,11 +9211,17 @@
       "keyOrderRestorations": {},
       "retainedMainNewKeys": [],
       "addedMessageCount": 0,
-      "changedMessageCount": 1
+      "changedMessageCount": 1,
+      "removedRetainedMainNewKeys": [],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 0,
+      "additionalFeatureMessageCount": 395,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 0
     },
     "fa": {
       "catalogPath": "lib/i18n/fa.i18n.json",
-      "currentSha256": "3b0307f1cc549caa4c1c56d5fe592b6b9543a39689e93a60beece9497ec3b3a3",
+      "currentSha256": "13ad6b922188e9ac320a0cc9496fe10d841400e99c66894871ba44ce645a8c22",
       "preOverlaySha256": "97e10dd2b8278ed44359c326d649c0d9289f7d8a9453c042aed49a73e50df282",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -10128,11 +10244,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "fr": {
       "catalogPath": "lib/i18n/fr.i18n.json",
-      "currentSha256": "6304c6eb383af8ece5be26d63d879256bf45c3874e01c909b4d389b98c30173c",
+      "currentSha256": "dd8bf4d29ed7a8799582fe76f44b1d80a748e05784a3849a3a2edf05e30e3e15",
       "preOverlaySha256": "412a35e07494d4c6818d9ba8501d9ea111a6ab394d943c8154688a9649fd2288",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -11151,11 +11279,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 1
+      "changedMessageCount": 1,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "fr-CA": {
       "catalogPath": "lib/i18n/fr-CA.i18n.json",
-      "currentSha256": "9da8a1b7b50f385a667158ce2b52451454a23c7c7196aed68c1a74fdbc5f8418",
+      "currentSha256": "5e0c1fda73e020199cc74d5eeae97959e4ec3fe0084f457a68d60d895289047e",
       "preOverlaySha256": "9da8a1b7b50f385a667158ce2b52451454a23c7c7196aed68c1a74fdbc5f8418",
       "addedPhysicalKeys": [],
       "removedPhysicalKeys": [],
@@ -11166,11 +11306,17 @@
       "keyOrderRestorations": {},
       "retainedMainNewKeys": [],
       "addedMessageCount": 0,
-      "changedMessageCount": 0
+      "changedMessageCount": 0,
+      "removedRetainedMainNewKeys": [],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 0,
+      "additionalFeatureMessageCount": 395,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 0
     },
     "he": {
       "catalogPath": "lib/i18n/he.i18n.json",
-      "currentSha256": "730ef8e904fa4e6389468b54be51e985182184c221ce1e47ca552f5784d2a1a9",
+      "currentSha256": "87a9518152cf33201633f734d4a4eba4be08773aad43abca5f9a52d943d508c2",
       "preOverlaySha256": "cb94f9ca53a1414c68cb4184cf91306a86be4ab954b9f1f2c5374205888fb5c5",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -12205,11 +12351,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 5
+      "changedMessageCount": 5,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "hi": {
       "catalogPath": "lib/i18n/hi.i18n.json",
-      "currentSha256": "92f599250b507e8c1505d89bb500df7b992296c1d3b5239262f64eaf6f6463a7",
+      "currentSha256": "2de370f124e4c6c600c9adbb548fd7d0c5abc48f7a1f169bc487c4c4c23a476d",
       "preOverlaySha256": "b5e3f5b0f5b6d3aa8bf6d9780b762013450f6c60ea172d513e02ca4ac90d7f19",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -13223,11 +13381,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 0
+      "changedMessageCount": 0,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "hu": {
       "catalogPath": "lib/i18n/hu.i18n.json",
-      "currentSha256": "3c4fb86759fabc579b429569fd33baabb0e59fc794e3245cda908e3640286319",
+      "currentSha256": "bbaf3b8af346916908c2ab17966415b2d540da014f577f8597070af2d03dbe82",
       "preOverlaySha256": "3f0f815076fbec2c76cddf467534fef304cb0a693dc29a38cbb52c610f09a9ce",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -14250,11 +14420,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 59
     },
     "id": {
       "catalogPath": "lib/i18n/id.i18n.json",
-      "currentSha256": "2fd7220381a3606c34455731bfa47de0d0c2da332317da6eaa28a3d01298204f",
+      "currentSha256": "7a88ba940f3d3b0b0bc2ca57036cf763cf443bd62a67fb9c40c0742c6bf4518a",
       "preOverlaySha256": "fdc799938b8d2645c5caea1a13d2f77bfe6d91350cbb670894a67e3d948c849d",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -15281,11 +15463,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 3
+      "changedMessageCount": 3,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "it": {
       "catalogPath": "lib/i18n/it.i18n.json",
-      "currentSha256": "c16e558dd4820774eced9e33dfbba8c554c2156f208a6d5471ca452cbe5e6d92",
+      "currentSha256": "e35cf4dc24aa616268a280fac157f930d34877f9fd0b7f06ada57e9442c66248",
       "preOverlaySha256": "ed8d9e5f04ef5edce99cced0d3c50a445484b7b6ae3d534e96c54eb05b9de718",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -16308,11 +16502,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "ja": {
       "catalogPath": "lib/i18n/ja.i18n.json",
-      "currentSha256": "009c5f9bef954f00d0d1001ca1e19d1b75184dea12b8793a670b8ccc363e5aba",
+      "currentSha256": "7de0a7a4cc70f2cd25cf5d860be42cc3bd8134e9f63da100dca5480b9b213f7e",
       "preOverlaySha256": "3c15a3a14d48c5026803b43f567e6fdc3d1f9dcc7545f355c91acb2224153808",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -17355,11 +17561,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 7
+      "changedMessageCount": 7,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 31
     },
     "kk": {
       "catalogPath": "lib/i18n/kk.i18n.json",
-      "currentSha256": "8998f4e3594504601807e6c6b518c3e55ca234a09df575c97264cd46b5d710a4",
+      "currentSha256": "e4abfd7773909d9d295e0ba9669e9f4e1c43bd6678d9d7375dedfa3eb0cd923a",
       "preOverlaySha256": "8b9bee0b97efae27ce77aa5b6d25adefd46d944a26b11dd0193548308b94333d",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -18382,11 +18600,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 64
     },
     "ko": {
       "catalogPath": "lib/i18n/ko.i18n.json",
-      "currentSha256": "3a5e381bfa9e3a3338a662371fbec1bda4675027f00a54ec5fdca2202e065200",
+      "currentSha256": "c331dd5bcbe2b7518708504974320bbf234e39899a0878b6e0187252640966c3",
       "preOverlaySha256": "c32b86b0f3d85e1cde118b41679040cefa68e4ced20c0f02ec3ed8e664b95650",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -19409,11 +19639,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 35
     },
     "ms": {
       "catalogPath": "lib/i18n/ms.i18n.json",
-      "currentSha256": "788e0813dfec2d0a3bd33ec562d637ebb1436d48ba63d581248fe5c0ee1b7a0b",
+      "currentSha256": "c0b950456653e5b5ec7d73de7c5dcc8b803f91698f6335c1eeae2dd4c3951d4b",
       "preOverlaySha256": "07a2986803e66bdcded3e5fea149240e35335a64d5f4adb5ef3ce71ec3394686",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -20427,11 +20669,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 0
+      "changedMessageCount": 0,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "nb": {
       "catalogPath": "lib/i18n/nb.i18n.json",
-      "currentSha256": "6ae508a3b68a4c99b117892778434d645b517ef18a98cac11dc6786bb5bc0f7d",
+      "currentSha256": "30978b9b71ded61db9d48ea8b425f4576698975e8d012a85373faed8668b86ad",
       "preOverlaySha256": "af44ed7047d1a16431df27263af84a11575db6b72a2ab9ee84c591db54deb3f0",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -21454,11 +21708,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "nl": {
       "catalogPath": "lib/i18n/nl.i18n.json",
-      "currentSha256": "7d98535aad60297df8484e8ccaeca75b861c18a6c7c68f91e6606af8373ba689",
+      "currentSha256": "5851f19526f3d79fe5e26b175d257f67b155bf2bda24ca23dce3ad806baf75e0",
       "preOverlaySha256": "ba9bf2a490d158f49b1120c0aa0842e36490945c1679c9981bb89bf181af9891",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -22472,11 +22738,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 0
+      "changedMessageCount": 0,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "pl": {
       "catalogPath": "lib/i18n/pl.i18n.json",
-      "currentSha256": "225c6114b4f4c2d85f3ac2621c9bab4c4ed57fe78c6accc1679a2430abfda907",
+      "currentSha256": "ee28886fd56caa0567e876e33f0100bd87da5ac251927e42de6ce98257131f89",
       "preOverlaySha256": "1a064634dd80103897a4795edf8aeb53a6ecf63f8619f13214bac4781a251d9a",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -23490,11 +23768,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 0
+      "changedMessageCount": 0,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "pt": {
       "catalogPath": "lib/i18n/pt.i18n.json",
-      "currentSha256": "f28fecd4af986a83e58f56ce63c64e38e6371e8324030308295bd6937c93b17d",
+      "currentSha256": "4715bb43a49824545c6cbef859627b10c28c944c6bbcfb3018c6793eb3950641",
       "preOverlaySha256": "44b4aad8abebe0abf98e7e85df889e779fe41e812232af5a436439536affb2c9",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -24513,11 +24803,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 1
+      "changedMessageCount": 1,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "pt-BR": {
       "catalogPath": "lib/i18n/pt-BR.i18n.json",
-      "currentSha256": "ee83cfdf89f3f8ee8db137e551e94d9ddf44b936ee4d019224dc6130df4403c2",
+      "currentSha256": "867ae198b8d1ef143c5032fe309dcef20f7a31d3c7c68df5813c3656629360c8",
       "preOverlaySha256": "bc17369e67e9ecefc82ddcb8d8a38ba11f174edf83d92a35fcd49dd0984df313",
       "addedPhysicalKeys": [],
       "removedPhysicalKeys": [],
@@ -24549,11 +24851,17 @@
       "keyOrderRestorations": {},
       "retainedMainNewKeys": [],
       "addedMessageCount": 0,
-      "changedMessageCount": 5
+      "changedMessageCount": 5,
+      "removedRetainedMainNewKeys": [],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 0,
+      "additionalFeatureMessageCount": 395,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 0
     },
     "pt-PT": {
       "catalogPath": "lib/i18n/pt-PT.i18n.json",
-      "currentSha256": "f5a268eb8094ca1a92ec48ef34c495a6a8a38af9b2c3a006f327e89e278e2e89",
+      "currentSha256": "a924cc08fcb61d11fecd2819a01828adf4cbef6a6731dba716da6bb40def0cd8",
       "preOverlaySha256": "4c839d8fd629823d2d02626fda3b791ff264d62e01fa728b7d069c76ba9e6a2f",
       "addedPhysicalKeys": [
         "sourceSetup.subtitleApplyFailed",
@@ -24574,11 +24882,19 @@
         "sourceSetup.subtitleSearching"
       ],
       "addedMessageCount": 3,
-      "changedMessageCount": 0
+      "changedMessageCount": 0,
+      "removedRetainedMainNewKeys": [
+        "sourceSetup.subtitleDownloading"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 2,
+      "additionalFeatureMessageCount": 397,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 0
     },
     "ru": {
       "catalogPath": "lib/i18n/ru.i18n.json",
-      "currentSha256": "67a2451761ef61ff2e055e0a1878baad70a3906da3c14bbd495aa34807b17ae3",
+      "currentSha256": "a4b1877b8143700fb97cd3cc3f31547d31424bc5177239f319560c691cefb927",
       "preOverlaySha256": "2bef4adddc14ba57de929ccb0868a16943e712fa3366b89a41882ac0acb7887d",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -25605,11 +25921,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 3
+      "changedMessageCount": 3,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "sv": {
       "catalogPath": "lib/i18n/sv.i18n.json",
-      "currentSha256": "4b136d1527bd3fa1bd80859acb4e93cb3f816e6600300d2dba10cd20b2f9e410",
+      "currentSha256": "b199898bcb3527da63068eccbb94b3ea72eb24538a60c045d538b0d426f8c2d9",
       "preOverlaySha256": "c903fc6c1499b813e1140104ea62ba5bc79fa6e5201aa64fbfbd6810d35e635e",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -26632,11 +26960,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 64
     },
     "th": {
       "catalogPath": "lib/i18n/th.i18n.json",
-      "currentSha256": "10359bad2ba8ec308f068debd2e346bcdbf23668472dcbcf980150b68329d829",
+      "currentSha256": "8883e79022b6920fa740bfd5e9db764a269f4e27b01deabed8ca402025e4bab7",
       "preOverlaySha256": "995af426bc69e46393b49caeb7a21f5679e2b7816ba82b9fe8997d11cf7a3fe5",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -27659,11 +27999,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "tr": {
       "catalogPath": "lib/i18n/tr.i18n.json",
-      "currentSha256": "5930fec849fb9028e4661056edd26fc283fd71c2a32f5f049bec80bc17408709",
+      "currentSha256": "fa35e25873a2cd4769db287e48cd01931797432ec49f0104becc08bacfa0ccd8",
       "preOverlaySha256": "9b909e5b15e17e71687b3f83f8ca13cde3571d8d8338ba15ff3fa18fc80a9b00",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -28686,11 +29038,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "uk": {
       "catalogPath": "lib/i18n/uk.i18n.json",
-      "currentSha256": "23b82b9891dc906337fb91adf18245858ee7197e2ff10883b524cca2ad13bfb3",
+      "currentSha256": "0b879b82a0e1c090367e4b9bb9e97b06b2e71cd524300f7a8a8355534e718732",
       "preOverlaySha256": "8d3933105c2e842c5e50f88f2660b8867e68dc819189e8060cf47b4c240f5975",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -29713,11 +30077,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 2
+      "changedMessageCount": 2,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "uz": {
       "catalogPath": "lib/i18n/uz.i18n.json",
-      "currentSha256": "44d48b3f161f059c60ebc709458dab097c16ece10a3f7c83db2ec04a0b6c6523",
+      "currentSha256": "a803f974f02e736ddb8308829a4b692aaff4f0c07b371473c503da43a53cd15b",
       "preOverlaySha256": "e89d79bee634dab4287d41643a81a01596c5d65a19cbd32843d272f60b80f9d1",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -30744,11 +31120,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 3
+      "changedMessageCount": 3,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 64
     },
     "vi": {
       "catalogPath": "lib/i18n/vi.i18n.json",
-      "currentSha256": "7137c5192e136bd965b9ab7d5e934f8b0438b07c1da730e5ddcc995db7f4631e",
+      "currentSha256": "6a8aa3825d29c47530b7fb6d1919ee9d215c2a34de70f266f579e59a553ff52c",
       "preOverlaySha256": "4bd7b285741b40f1f936f786d083c04644f34a9bc85eb232f67493812a97cd94",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -31762,11 +32150,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 0
+      "changedMessageCount": 0,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 66
     },
     "zh": {
       "catalogPath": "lib/i18n/zh.i18n.json",
-      "currentSha256": "4ac2f0e1faa803df0948ceaffe1743b21c9affc759cc353752ff04de2c44a210",
+      "currentSha256": "92232a235c3d82b53025ef9b40b9cdfba2f2c8eb250c7d083610e6795a75a0ea",
       "preOverlaySha256": "bfaad00bba9e4c79a453371184846df05043212cfd722ea9fc6a292540b54624",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -32780,11 +33180,23 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 0
+      "changedMessageCount": 0,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 65
     },
     "zh-Hant": {
       "catalogPath": "lib/i18n/zh-Hant.i18n.json",
-      "currentSha256": "e35899c443ee83881db164625aad93420d6a9f3285f99be0cfe8dff203a23cc7",
+      "currentSha256": "fc11e8c65638ed18694f2e1921dbb2a942bfbdb72bb177443a9437689fccddf0",
       "preOverlaySha256": "1deacd34fdd48ec8357ac22020c5d96aceb8b1aa26b8a519fef65473649d25cb",
       "addedPhysicalKeys": [
         "accessibility.boldTextHint",
@@ -33798,15 +34210,30 @@
         "games.wakeSent"
       ],
       "addedMessageCount": 312,
-      "changedMessageCount": 0
+      "changedMessageCount": 0,
+      "removedRetainedMainNewKeys": [
+        "games.empty",
+        "games.libraryHint",
+        "games.steamLibraryHint",
+        "games.subtitle",
+        "games.touchSetup"
+      ],
+      "fallbackKeysOmittedFromCatalog": [],
+      "currentSourceAdditionCount": 306,
+      "additionalFeatureMessageCount": 1923,
+      "additionalFeatureRevisedMessageValues": {},
+      "additionalFeatureChangedMessageCount": 64
     }
   },
   "automatedAfter": {
     "same_as_english": 3959,
     "short_translation": 23
   },
-  "additionalFeatureMessagesPerBaseLocale": 252,
-  "additionalFeatureMessageKeys": [
+  "retiredEnglishFallbackMessageKeys": [
+    "games.steamAppId"
+  ],
+  "explicitAdditionalFeatureMessagesPerBaseLocale": 259,
+  "explicitAdditionalFeatureMessageKeys": [
     "deepLinks.channelNotFound",
     "deepLinks.copied",
     "deepLinks.copy",
@@ -33825,6 +34252,13 @@
     "deepLinks.showProfileLink",
     "deepLinks.unsupportedItem",
     "music.visualizerLiveAudio",
+    "subtitleAiUi.subtitleEncodingDecodeFailed",
+    "subtitleAiUi.subtitleEncodingNoCues",
+    "subtitleAiUi.subtitleEncodingPreviewCueCount",
+    "subtitleAiUi.subtitleEncodingPreviewDescription",
+    "subtitleAiUi.subtitleEncodingPreviewTitle",
+    "subtitleAiUi.subtitleEncodingSourceLabel",
+    "subtitleAiUi.subtitleEncodingUsePreview",
     "universalMedia.address",
     "universalMedia.addressCopied",
     "universalMedia.addressHelp",
@@ -34060,7 +34494,12 @@
     "videoSettings.videoTrackNumber",
     "videoSettings.videoTrackUnavailable"
   ],
-  "additionalFeatureChangedMessageKeys": [
+  "explicitAdditionalFeatureChangedMessageKeys": [
     "videoSettings.audioEqualizerDescription"
-  ]
+  ],
+  "retiredEnglishFallbackCandidateKinds": {
+    "games.steamAppId": [
+      "same_as_english"
+    ]
+  }
 }

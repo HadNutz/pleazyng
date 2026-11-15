@@ -4104,6 +4104,13 @@ class Translations$subtitleAiUi$fr extends Translations$subtitleAiUi$en {
 	final TranslationsFr _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Aperçu de l’encodage des sous-titres';
+	@override String get subtitleEncodingPreviewDescription => 'Choisissez l’encodage source et vérifiez les sous-titres. Les anciens encodages ne sont jamais devinés et le fichier d’origine reste inchangé.';
+	@override String get subtitleEncodingSourceLabel => 'Encodage source';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} répliques décodées';
+	@override String get subtitleEncodingNoCues => 'Aucune réplique lisible n’a été trouvée avec cet encodage.';
+	@override String get subtitleEncodingDecodeFailed => 'Impossible de décoder ce fichier avec l’encodage sélectionné.';
+	@override String get subtitleEncodingUsePreview => 'Utiliser cet aperçu';
 	@override String get liveCaptureStart => 'Démarrer les sous-titres en direct';
 	@override String get liveCaptureStop => 'Arrêter les sous-titres en direct';
 }
@@ -9445,6 +9452,13 @@ extension on TranslationsFr {
 			'podcasts.syncConsent' => 'Partager les URL des podcasts et la progression d’écoute avec ce serveur',
 			'podcasts.autoDownloadLatest' => 'Télécharger automatiquement les derniers épisodes',
 			'podcasts.removeFinishedAfter' => 'Supprimer les téléchargements terminés après',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Aperçu de l’encodage des sous-titres',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Choisissez l’encodage source et vérifiez les sous-titres. Les anciens encodages ne sont jamais devinés et le fichier d’origine reste inchangé.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Encodage source',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} répliques décodées',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Aucune réplique lisible n’a été trouvée avec cet encodage.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Impossible de décoder ce fichier avec l’encodage sélectionné.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Utiliser cet aperçu',
 			'subtitleAiUi.liveCaptureStart' => 'Démarrer les sous-titres en direct',
 			'subtitleAiUi.liveCaptureStop' => 'Arrêter les sous-titres en direct',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9728,6 +9742,8 @@ extension on TranslationsFr {
 			'musicTools.model' => 'Nom du modèle',
 			'musicTools.consent' => 'Envoyer ma description à ce fournisseur',
 			'musicTools.promptHint' => 'Décrivez la musique souhaitée',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.noHistory' => 'Aucune musique à afficher',
 			'musicTools.historyHint' => 'Historique d’écoute de ce profil',
 			'musicTools.days' => 'Jours',
@@ -9735,8 +9751,6 @@ extension on TranslationsFr {
 			'musicTools.home' => 'Musique',
 			'musicTools.recent' => 'Écoutés récemment',
 			'musicTools.apiKey' => 'Clé API',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N/D',
 			'musicTools.minutes' => 'Minutes',
 			'musicTools.rules' => 'Filtres',

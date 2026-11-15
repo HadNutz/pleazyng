@@ -4070,6 +4070,13 @@ class _Translations$subtitleAiUi$bg extends Translations$subtitleAiUi$en {
 	final TranslationsBg _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Преглед на кодирането на субтитрите';
+	@override String get subtitleEncodingPreviewDescription => 'Изберете кодировката на източника и прегледайте субтитрите. Старите кодировки не се отгатват, а оригиналният файл остава непроменен.';
+	@override String get subtitleEncodingSourceLabel => 'Кодировка на източника';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => 'Декодирани реплики: ${count}';
+	@override String get subtitleEncodingNoCues => 'С тази кодировка не са открити четими субтитри.';
+	@override String get subtitleEncodingDecodeFailed => 'Файлът не може да бъде декодиран с избраната кодировка.';
+	@override String get subtitleEncodingUsePreview => 'Използвай този преглед';
 	@override String get liveCaptureStart => 'Стартиране на субтитри на живо';
 	@override String get liveCaptureStop => 'Спиране на субтитри на живо';
 }
@@ -9381,6 +9388,13 @@ extension on TranslationsBg {
 			'issueReport.openDraft' => 'Отваряне на чернова в GitHub',
 			'podcasts.autoDownloadLatest' => 'Автоматично изтегляне на последните епизоди',
 			'podcasts.removeFinishedAfter' => 'Премахване на завършените изтегляния след',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Преглед на кодирането на субтитрите',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Изберете кодировката на източника и прегледайте субтитрите. Старите кодировки не се отгатват, а оригиналният файл остава непроменен.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Кодировка на източника',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => 'Декодирани реплики: ${count}',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'С тази кодировка не са открити четими субтитри.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Файлът не може да бъде декодиран с избраната кодировка.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Използвай този преглед',
 			'subtitleAiUi.liveCaptureStart' => 'Стартиране на субтитри на живо',
 			'subtitleAiUi.liveCaptureStop' => 'Спиране на субтитри на живо',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9684,6 +9698,8 @@ extension on TranslationsBg {
 			'musicTools.serverAnalysis' => 'Анализ на сървъра',
 			'musicTools.sonicAnalysis' => 'Звуков анализ',
 			'musicTools.serverAnalysisScope' => 'Всички подходящи музикални библиотеки на този сървър. Настройките им за анализ не се променят.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Дейности на сървъра',
 			'musicTools.playlistSharing' => 'Достъп до плейлист',
 			'musicTools.playlistRecipient' => 'Plex потребителско име или имейл',
@@ -9691,8 +9707,6 @@ extension on TranslationsBg {
 			'musicTools.playlistSharingFailed' => 'Неуспешна заявка за достъп до плейлиста.',
 			'musicTools.playlistSharingAccepted' => 'Plex прие заявката за достъп.',
 			'musicTools.playlistAccessList' => 'Текущ достъп',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Няма предоставен достъп до плейлиста',
 			'musicTools.filterType' => 'Тип филтър',
 			'musicTools.peak' => 'Пик',

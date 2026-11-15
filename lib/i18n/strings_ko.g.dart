@@ -4065,6 +4065,13 @@ class _Translations$subtitleAiUi$ko extends Translations$subtitleAiUi$en {
 	final TranslationsKo _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => '자막 인코딩 미리보기';
+	@override String get subtitleEncodingPreviewDescription => '원본 인코딩을 선택하고 자막을 확인하세요. 레거시 인코딩은 추측하지 않으며 원본 파일은 변경되지 않습니다.';
+	@override String get subtitleEncodingSourceLabel => '원본 인코딩';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '자막 ${count}개 디코딩됨';
+	@override String get subtitleEncodingNoCues => '이 인코딩으로 읽을 수 있는 자막이 없습니다.';
+	@override String get subtitleEncodingDecodeFailed => '선택한 인코딩으로 파일을 디코딩할 수 없습니다.';
+	@override String get subtitleEncodingUsePreview => '이 미리보기 사용';
 	@override String get liveCaptureStart => '실시간 자막 시작';
 	@override String get liveCaptureStop => '실시간 자막 중지';
 }
@@ -9376,6 +9383,13 @@ extension on TranslationsKo {
 			'issueReport.openDraft' => 'GitHub 초안 열기',
 			'podcasts.autoDownloadLatest' => '최신 에피소드 자동 다운로드',
 			'podcasts.removeFinishedAfter' => '완료한 다운로드를 다음 기간 후 삭제',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => '자막 인코딩 미리보기',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => '원본 인코딩을 선택하고 자막을 확인하세요. 레거시 인코딩은 추측하지 않으며 원본 파일은 변경되지 않습니다.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => '원본 인코딩',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '자막 ${count}개 디코딩됨',
+			'subtitleAiUi.subtitleEncodingNoCues' => '이 인코딩으로 읽을 수 있는 자막이 없습니다.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => '선택한 인코딩으로 파일을 디코딩할 수 없습니다.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => '이 미리보기 사용',
 			'subtitleAiUi.liveCaptureStart' => '실시간 자막 시작',
 			'subtitleAiUi.liveCaptureStop' => '실시간 자막 중지',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9679,6 +9693,8 @@ extension on TranslationsKo {
 			'musicTools.serverAnalysis' => '서버 분석',
 			'musicTools.sonicAnalysis' => '음향 분석',
 			'musicTools.serverAnalysisScope' => '이 서버에서 분석 가능한 모든 음악 라이브러리에 적용됩니다. 분석 설정은 변경되지 않습니다.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => '서버 작업',
 			'musicTools.playlistSharing' => '재생목록 접근',
 			'musicTools.playlistRecipient' => 'Plex 사용자 이름 또는 이메일',
@@ -9686,8 +9702,6 @@ extension on TranslationsKo {
 			'musicTools.playlistSharingFailed' => '재생목록 접근을 요청할 수 없습니다.',
 			'musicTools.playlistSharingAccepted' => 'Plex가 접근 요청을 접수했습니다.',
 			'musicTools.playlistAccessList' => '현재 접근 권한',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => '부여된 재생목록 접근 권한이 없습니다',
 			'musicTools.filterType' => '필터 유형',
 			'musicTools.peak' => '피크',

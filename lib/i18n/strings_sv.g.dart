@@ -4070,6 +4070,13 @@ class _Translations$subtitleAiUi$sv extends Translations$subtitleAiUi$en {
 	final TranslationsSv _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Förhandsgranska undertextkodning';
+	@override String get subtitleEncodingPreviewDescription => 'Välj källans teckenkodning och granska undertexterna. Äldre kodningar gissas aldrig och originalfilen förblir oförändrad.';
+	@override String get subtitleEncodingSourceLabel => 'Källans teckenkodning';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} undertextrader avkodade';
+	@override String get subtitleEncodingNoCues => 'Inga läsbara undertexter hittades med den här kodningen.';
+	@override String get subtitleEncodingDecodeFailed => 'Filen kunde inte avkodas med den valda kodningen.';
+	@override String get subtitleEncodingUsePreview => 'Använd den här förhandsvisningen';
 	@override String get liveCaptureStart => 'Starta direktextning';
 	@override String get liveCaptureStop => 'Stoppa direktextning';
 }
@@ -9381,6 +9388,13 @@ extension on TranslationsSv {
 			'issueReport.openDraft' => 'Öppna GitHub-utkast',
 			'podcasts.autoDownloadLatest' => 'Ladda ned de senaste avsnitten automatiskt',
 			'podcasts.removeFinishedAfter' => 'Ta bort färdiglyssnade nedladdningar efter',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Förhandsgranska undertextkodning',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Välj källans teckenkodning och granska undertexterna. Äldre kodningar gissas aldrig och originalfilen förblir oförändrad.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Källans teckenkodning',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} undertextrader avkodade',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Inga läsbara undertexter hittades med den här kodningen.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Filen kunde inte avkodas med den valda kodningen.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Använd den här förhandsvisningen',
 			'subtitleAiUi.liveCaptureStart' => 'Starta direktextning',
 			'subtitleAiUi.liveCaptureStop' => 'Stoppa direktextning',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9684,6 +9698,8 @@ extension on TranslationsSv {
 			'musicTools.serverAnalysis' => 'Serveranalys',
 			'musicTools.sonicAnalysis' => 'Ljudanalys',
 			'musicTools.serverAnalysisScope' => 'Alla kvalificerade musikbibliotek på den här servern. Deras analysinställningar ändras inte.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Serveraktiviteter',
 			'musicTools.playlistSharing' => 'Åtkomst till spellista',
 			'musicTools.playlistRecipient' => 'Plex-användarnamn eller e-post',
@@ -9691,8 +9707,6 @@ extension on TranslationsSv {
 			'musicTools.playlistSharingFailed' => 'Kunde inte begära åtkomst till spellistan.',
 			'musicTools.playlistSharingAccepted' => 'Plex tog emot åtkomstbegäran.',
 			'musicTools.playlistAccessList' => 'Nuvarande åtkomst',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Ingen åtkomst till spellistan har beviljats',
 			'musicTools.filterType' => 'Filtertyp',
 			'musicTools.peak' => 'Topp',

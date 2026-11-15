@@ -4047,6 +4047,13 @@ class _Translations$subtitleAiUi$id extends Translations$subtitleAiUi$en {
 	final TranslationsId _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Pratinjau enkode subtitle';
+	@override String get subtitleEncodingPreviewDescription => 'Pilih enkode sumber dan periksa subtitle. Enkode lama tidak pernah ditebak, dan file asli tetap tidak berubah.';
+	@override String get subtitleEncodingSourceLabel => 'Enkode sumber';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} bagian subtitle didekode';
+	@override String get subtitleEncodingNoCues => 'Tidak ditemukan bagian subtitle yang dapat dibaca dengan enkode ini.';
+	@override String get subtitleEncodingDecodeFailed => 'File tidak dapat didekode dengan enkode yang dipilih.';
+	@override String get subtitleEncodingUsePreview => 'Gunakan pratinjau ini';
 	@override String get liveCaptureStart => 'Mulai subtitel langsung';
 	@override String get liveCaptureStop => 'Hentikan subtitel langsung';
 }
@@ -9356,6 +9363,13 @@ extension on TranslationsId {
 			'issueReport.openDraft' => 'Buka draf GitHub',
 			'podcasts.autoDownloadLatest' => 'Unduh episode terbaru secara otomatis',
 			'podcasts.removeFinishedAfter' => 'Hapus unduhan yang selesai setelah',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Pratinjau enkode subtitle',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Pilih enkode sumber dan periksa subtitle. Enkode lama tidak pernah ditebak, dan file asli tetap tidak berubah.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Enkode sumber',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} bagian subtitle didekode',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Tidak ditemukan bagian subtitle yang dapat dibaca dengan enkode ini.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'File tidak dapat didekode dengan enkode yang dipilih.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Gunakan pratinjau ini',
 			'subtitleAiUi.liveCaptureStart' => 'Mulai subtitel langsung',
 			'subtitleAiUi.liveCaptureStop' => 'Hentikan subtitel langsung',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9659,6 +9673,8 @@ extension on TranslationsId {
 			'musicTools.serverAnalysis' => 'Analisis server',
 			'musicTools.sonicAnalysis' => 'Analisis sonik',
 			'musicTools.serverAnalysisScope' => 'Semua pustaka musik yang memenuhi syarat di server ini. Pengaturan analisisnya tidak diubah.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Aktivitas server',
 			'musicTools.playlistSharing' => 'Akses daftar putar',
 			'musicTools.playlistRecipient' => 'Nama pengguna Plex atau email',
@@ -9666,8 +9682,6 @@ extension on TranslationsId {
 			'musicTools.playlistSharingFailed' => 'Tidak dapat meminta akses daftar putar.',
 			'musicTools.playlistSharingAccepted' => 'Plex menerima permintaan akses.',
 			'musicTools.playlistAccessList' => 'Akses saat ini',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Belum ada akses daftar putar yang diberikan',
 			'musicTools.filterType' => 'Jenis filter',
 			'musicTools.peak' => 'Puncak',

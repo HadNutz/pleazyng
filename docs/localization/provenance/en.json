@@ -1,7 +1,7 @@
 {
   "locale": "en",
   "inherits": null,
-  "catalogSha256": "6df900b9912d2b8eeccca844a6eaf7ccc77915cb5b228ef673c750c71011f9d4",
+  "catalogSha256": "ef44afe70a7f307329b93e83f2b07bd53aa05a1e7d3efba5c7d50721ecda61c0",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "source-english",
@@ -3677,7 +3677,14 @@
     "startup.legacyImportConfirm": "source-english",
     "startup.legacyImportInvalidTitle": "source-english",
     "startup.legacyImportInvalidBody": "source-english",
-    "startup.legacyImportTryAnother": "source-english"
+    "startup.legacyImportTryAnother": "source-english",
+    "subtitleAiUi.subtitleEncodingPreviewTitle": "source-english",
+    "subtitleAiUi.subtitleEncodingPreviewDescription": "source-english",
+    "subtitleAiUi.subtitleEncodingSourceLabel": "source-english",
+    "subtitleAiUi.subtitleEncodingPreviewCueCount": "source-english",
+    "subtitleAiUi.subtitleEncodingNoCues": "source-english",
+    "subtitleAiUi.subtitleEncodingDecodeFailed": "source-english",
+    "subtitleAiUi.subtitleEncodingUsePreview": "source-english"
   },
   "beforeIndependentQaCorrection": {
     "mediaMenu.deleteEpisodeCountWarning": "source-english"

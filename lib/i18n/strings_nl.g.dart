@@ -4070,6 +4070,13 @@ class _Translations$subtitleAiUi$nl extends Translations$subtitleAiUi$en {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Voorbeeld van ondertitelcodering';
+	@override String get subtitleEncodingPreviewDescription => 'Kies de broncodering en controleer de ondertitels. Oudere coderingen worden nooit geraden en het oorspronkelijke bestand blijft ongewijzigd.';
+	@override String get subtitleEncodingSourceLabel => 'Broncodering';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} ondertitelregels gedecodeerd';
+	@override String get subtitleEncodingNoCues => 'Er zijn geen leesbare ondertitels gevonden met deze codering.';
+	@override String get subtitleEncodingDecodeFailed => 'Het bestand kon niet met de geselecteerde codering worden gedecodeerd.';
+	@override String get subtitleEncodingUsePreview => 'Dit voorbeeld gebruiken';
 	@override String get liveCaptureStart => 'Liveondertiteling starten';
 	@override String get liveCaptureStop => 'Liveondertiteling stoppen';
 }
@@ -9381,6 +9388,13 @@ extension on TranslationsNl {
 			'issueReport.openDraft' => 'GitHub-concept openen',
 			'podcasts.autoDownloadLatest' => 'Nieuwste afleveringen automatisch downloaden',
 			'podcasts.removeFinishedAfter' => 'Voltooide downloads verwijderen na',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Voorbeeld van ondertitelcodering',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Kies de broncodering en controleer de ondertitels. Oudere coderingen worden nooit geraden en het oorspronkelijke bestand blijft ongewijzigd.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Broncodering',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} ondertitelregels gedecodeerd',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Er zijn geen leesbare ondertitels gevonden met deze codering.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Het bestand kon niet met de geselecteerde codering worden gedecodeerd.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Dit voorbeeld gebruiken',
 			'subtitleAiUi.liveCaptureStart' => 'Liveondertiteling starten',
 			'subtitleAiUi.liveCaptureStop' => 'Liveondertiteling stoppen',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9684,6 +9698,8 @@ extension on TranslationsNl {
 			'musicTools.serverAnalysis' => 'Serveranalyse',
 			'musicTools.sonicAnalysis' => 'Geluidsanalyse',
 			'musicTools.serverAnalysisScope' => 'Alle geschikte muziekbibliotheken op deze server. Hun analyse-instellingen worden niet gewijzigd.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Serveractiviteiten',
 			'musicTools.playlistSharing' => 'Toegang tot afspeellijst',
 			'musicTools.playlistRecipient' => 'Plex-gebruikersnaam of e-mail',
@@ -9691,8 +9707,6 @@ extension on TranslationsNl {
 			'musicTools.playlistSharingFailed' => 'Kon geen toegang tot de afspeellijst aanvragen.',
 			'musicTools.playlistSharingAccepted' => 'Plex heeft het toegangsverzoek geaccepteerd.',
 			'musicTools.playlistAccessList' => 'Huidige toegang',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Er is geen toegang tot deze afspeellijst verleend',
 			'musicTools.filterType' => 'Filtertype',
 			'musicTools.peak' => 'Piek',

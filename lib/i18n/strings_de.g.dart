@@ -4070,6 +4070,13 @@ class _Translations$subtitleAiUi$de extends Translations$subtitleAiUi$en {
 	final TranslationsDe _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Untertitelkodierung anzeigen';
+	@override String get subtitleEncodingPreviewDescription => 'Wähle die Quellkodierung und prüfe die Untertitel. Ältere Kodierungen werden nie erraten, und die Originaldatei bleibt unverändert.';
+	@override String get subtitleEncodingSourceLabel => 'Quellkodierung';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} Untertitelzeilen dekodiert';
+	@override String get subtitleEncodingNoCues => 'Mit dieser Kodierung wurden keine lesbaren Untertitel gefunden.';
+	@override String get subtitleEncodingDecodeFailed => 'Die Datei konnte mit der ausgewählten Kodierung nicht dekodiert werden.';
+	@override String get subtitleEncodingUsePreview => 'Diese Vorschau verwenden';
 	@override String get liveCaptureStart => 'Live-Untertitel starten';
 	@override String get liveCaptureStop => 'Live-Untertitel stoppen';
 }
@@ -9381,6 +9388,13 @@ extension on TranslationsDe {
 			'issueReport.openDraft' => 'GitHub-Entwurf öffnen',
 			'podcasts.autoDownloadLatest' => 'Neueste Folgen automatisch herunterladen',
 			'podcasts.removeFinishedAfter' => 'Fertig gehörte Downloads entfernen nach',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Untertitelkodierung anzeigen',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Wähle die Quellkodierung und prüfe die Untertitel. Ältere Kodierungen werden nie erraten, und die Originaldatei bleibt unverändert.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Quellkodierung',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} Untertitelzeilen dekodiert',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Mit dieser Kodierung wurden keine lesbaren Untertitel gefunden.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Die Datei konnte mit der ausgewählten Kodierung nicht dekodiert werden.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Diese Vorschau verwenden',
 			'subtitleAiUi.liveCaptureStart' => 'Live-Untertitel starten',
 			'subtitleAiUi.liveCaptureStop' => 'Live-Untertitel stoppen',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9684,6 +9698,8 @@ extension on TranslationsDe {
 			'musicTools.serverAnalysis' => 'Serveranalyse',
 			'musicTools.sonicAnalysis' => 'Klanganalyse',
 			'musicTools.serverAnalysisScope' => 'Alle geeigneten Musikbibliotheken auf diesem Server. Ihre Analyseeinstellungen werden nicht geändert.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Serveraktivitäten',
 			'musicTools.playlistSharing' => 'Playlist-Zugriff',
 			'musicTools.playlistRecipient' => 'Plex-Benutzername oder E-Mail',
@@ -9691,8 +9707,6 @@ extension on TranslationsDe {
 			'musicTools.playlistSharingFailed' => 'Playlist-Zugriff konnte nicht angefordert werden.',
 			'musicTools.playlistSharingAccepted' => 'Plex hat die Zugriffsanfrage angenommen.',
 			'musicTools.playlistAccessList' => 'Aktueller Zugriff',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Keine Playlist-Zugriffsrechte vergeben',
 			'musicTools.filterType' => 'Filtertyp',
 			'musicTools.peak' => 'Spitze',

@@ -4066,6 +4066,13 @@ class _Translations$subtitleAiUi$zh_Hant extends Translations$subtitleAiUi$zh {
 	final TranslationsZhHant _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => '預覽字幕編碼';
+	@override String get subtitleEncodingPreviewDescription => '選擇來源編碼並檢查字幕。系統不會猜測舊式編碼，原始檔案會保持不變。';
+	@override String get subtitleEncodingSourceLabel => '來源編碼';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '已解碼 ${count} 行字幕';
+	@override String get subtitleEncodingNoCues => '使用此編碼找不到可讀取的字幕。';
+	@override String get subtitleEncodingDecodeFailed => '無法使用所選編碼解碼此檔案。';
+	@override String get subtitleEncodingUsePreview => '使用此預覽';
 	@override String get liveCaptureStart => '開始即時字幕';
 	@override String get liveCaptureStop => '停止即時字幕';
 }
@@ -9377,6 +9384,13 @@ extension on TranslationsZhHant {
 			'issueReport.openDraft' => '開啟 GitHub 草稿',
 			'podcasts.autoDownloadLatest' => '自動下載最新單集',
 			'podcasts.removeFinishedAfter' => '在以下時間後移除已聽完的下載',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => '預覽字幕編碼',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => '選擇來源編碼並檢查字幕。系統不會猜測舊式編碼，原始檔案會保持不變。',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => '來源編碼',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '已解碼 ${count} 行字幕',
+			'subtitleAiUi.subtitleEncodingNoCues' => '使用此編碼找不到可讀取的字幕。',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => '無法使用所選編碼解碼此檔案。',
+			'subtitleAiUi.subtitleEncodingUsePreview' => '使用此預覽',
 			'subtitleAiUi.liveCaptureStart' => '開始即時字幕',
 			'subtitleAiUi.liveCaptureStop' => '停止即時字幕',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9680,6 +9694,8 @@ extension on TranslationsZhHant {
 			'musicTools.serverAnalysis' => '伺服器分析',
 			'musicTools.sonicAnalysis' => '音訊特徵分析',
 			'musicTools.serverAnalysisScope' => '此伺服器上所有符合條件的音樂資料庫。不會更改其分析設定。',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => '伺服器工作',
 			'musicTools.playlistSharing' => '播放清單存取權',
 			'musicTools.playlistRecipient' => 'Plex 使用者名稱或電子郵件',
@@ -9687,8 +9703,6 @@ extension on TranslationsZhHant {
 			'musicTools.playlistSharingFailed' => '無法請求播放清單存取權。',
 			'musicTools.playlistSharingAccepted' => 'Plex 已接受存取請求。',
 			'musicTools.playlistAccessList' => '目前的存取權',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => '尚未授予播放清單存取權',
 			'musicTools.filterType' => '濾波器類型',
 			'musicTools.peak' => '峰值',

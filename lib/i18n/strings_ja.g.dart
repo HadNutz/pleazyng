@@ -4065,6 +4065,13 @@ class _Translations$subtitleAiUi$ja extends Translations$subtitleAiUi$en {
 	final TranslationsJa _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => '字幕エンコーディングのプレビュー';
+	@override String get subtitleEncodingPreviewDescription => 'ソースのエンコーディングを選び、字幕を確認してください。旧式のエンコーディングは推測せず、元のファイルは変更されません。';
+	@override String get subtitleEncodingSourceLabel => 'ソースのエンコーディング';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count}件の字幕をデコードしました';
+	@override String get subtitleEncodingNoCues => 'このエンコーディングで読める字幕が見つかりませんでした。';
+	@override String get subtitleEncodingDecodeFailed => '選択したエンコーディングでファイルをデコードできませんでした。';
+	@override String get subtitleEncodingUsePreview => 'このプレビューを使用';
 	@override String get liveCaptureStart => 'ライブ字幕を開始';
 	@override String get liveCaptureStop => 'ライブ字幕を停止';
 }
@@ -9376,6 +9383,13 @@ extension on TranslationsJa {
 			'issueReport.openDraft' => 'GitHubの下書きを開く',
 			'podcasts.autoDownloadLatest' => '最新のエピソードを自動ダウンロード',
 			'podcasts.removeFinishedAfter' => '再生済みのダウンロードを削除するまでの期間',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => '字幕エンコーディングのプレビュー',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'ソースのエンコーディングを選び、字幕を確認してください。旧式のエンコーディングは推測せず、元のファイルは変更されません。',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'ソースのエンコーディング',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count}件の字幕をデコードしました',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'このエンコーディングで読める字幕が見つかりませんでした。',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => '選択したエンコーディングでファイルをデコードできませんでした。',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'このプレビューを使用',
 			'subtitleAiUi.liveCaptureStart' => 'ライブ字幕を開始',
 			'subtitleAiUi.liveCaptureStop' => 'ライブ字幕を停止',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9679,6 +9693,8 @@ extension on TranslationsJa {
 			'musicTools.serverAnalysis' => 'サーバー解析',
 			'musicTools.sonicAnalysis' => '音響解析',
 			'musicTools.serverAnalysisScope' => 'このサーバー上の対象となるすべての音楽ライブラリ。解析設定は変更されません。',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'サーバーの処理状況',
 			'musicTools.playlistSharing' => 'プレイリストへのアクセス',
 			'musicTools.playlistRecipient' => 'Plexユーザー名またはメール',
@@ -9686,8 +9702,6 @@ extension on TranslationsJa {
 			'musicTools.playlistSharingFailed' => 'プレイリストへのアクセスをリクエストできませんでした。',
 			'musicTools.playlistSharingAccepted' => 'Plexがアクセスのリクエストを受け付けました。',
 			'musicTools.playlistAccessList' => '現在のアクセス権',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'プレイリストのアクセス権は付与されていません',
 			'musicTools.filterType' => 'フィルターの種類',
 			'musicTools.peak' => 'ピーク',

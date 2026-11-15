@@ -4112,6 +4112,13 @@ class _Translations$subtitleAiUi$uk extends Translations$subtitleAiUi$en {
 	final TranslationsUk _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Попередній перегляд кодування субтитрів';
+	@override String get subtitleEncodingPreviewDescription => 'Виберіть вихідне кодування та перегляньте субтитри. Старі кодування не вгадуються, а оригінальний файл не змінюється.';
+	@override String get subtitleEncodingSourceLabel => 'Вихідне кодування';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => 'Декодовано рядків субтитрів: ${count}';
+	@override String get subtitleEncodingNoCues => 'У цьому кодуванні не знайдено читабельних субтитрів.';
+	@override String get subtitleEncodingDecodeFailed => 'Не вдалося декодувати файл із вибраним кодуванням.';
+	@override String get subtitleEncodingUsePreview => 'Використати цей попередній перегляд';
 	@override String get liveCaptureStart => 'Запустити субтитри наживо';
 	@override String get liveCaptureStop => 'Зупинити субтитри наживо';
 }
@@ -9425,6 +9432,13 @@ extension on TranslationsUk {
 			'issueReport.openDraft' => 'Відкрити чернетку GitHub',
 			'podcasts.autoDownloadLatest' => 'Автоматично завантажувати останні випуски',
 			'podcasts.removeFinishedAfter' => 'Видаляти завершені завантаження через',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Попередній перегляд кодування субтитрів',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Виберіть вихідне кодування та перегляньте субтитри. Старі кодування не вгадуються, а оригінальний файл не змінюється.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Вихідне кодування',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => 'Декодовано рядків субтитрів: ${count}',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'У цьому кодуванні не знайдено читабельних субтитрів.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Не вдалося декодувати файл із вибраним кодуванням.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Використати цей попередній перегляд',
 			'subtitleAiUi.liveCaptureStart' => 'Запустити субтитри наживо',
 			'subtitleAiUi.liveCaptureStop' => 'Зупинити субтитри наживо',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9728,6 +9742,8 @@ extension on TranslationsUk {
 			'musicTools.serverAnalysis' => 'Аналіз сервера',
 			'musicTools.sonicAnalysis' => 'Звуковий аналіз',
 			'musicTools.serverAnalysisScope' => 'Усі відповідні музичні бібліотеки на цьому сервері. Їхні налаштування аналізу не змінюються.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Завдання сервера',
 			'musicTools.playlistSharing' => 'Доступ до списку відтворення',
 			'musicTools.playlistRecipient' => 'Ім’я користувача Plex або ел. пошта',
@@ -9735,8 +9751,6 @@ extension on TranslationsUk {
 			'musicTools.playlistSharingFailed' => 'Не вдалося запросити доступ до списку.',
 			'musicTools.playlistSharingAccepted' => 'Plex прийняв запит на доступ.',
 			'musicTools.playlistAccessList' => 'Поточний доступ',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Доступ до списку нікому не надано',
 			'musicTools.filterType' => 'Тип фільтра',
 			'musicTools.peak' => 'Пік',

@@ -12661,6 +12661,27 @@ class Translations$subtitleAiUi$en {
 	/// en: 'Reference subtitle'
 	String get referenceSubtitle => 'Reference subtitle';
 
+	/// en: 'Preview subtitle encoding'
+	String get subtitleEncodingPreviewTitle => 'Preview subtitle encoding';
+
+	/// en: 'Choose the source encoding and review the cues. Legacy encodings are never guessed, and the original file stays unchanged.'
+	String get subtitleEncodingPreviewDescription => 'Choose the source encoding and review the cues. Legacy encodings are never guessed, and the original file stays unchanged.';
+
+	/// en: 'Source encoding'
+	String get subtitleEncodingSourceLabel => 'Source encoding';
+
+	/// en: '${count} cues decoded'
+	String subtitleEncodingPreviewCueCount({required Object count}) => '${count} cues decoded';
+
+	/// en: 'No readable subtitle cues were found with this encoding.'
+	String get subtitleEncodingNoCues => 'No readable subtitle cues were found with this encoding.';
+
+	/// en: 'This file could not be decoded with the selected encoding.'
+	String get subtitleEncodingDecodeFailed => 'This file could not be decoded with the selected encoding.';
+
+	/// en: 'Use this preview'
+	String get subtitleEncodingUsePreview => 'Use this preview';
+
 	/// en: 'Choose different languages to use translated text for matching.'
 	String get chooseDifferentLanguagesToUseTransla_db4d6e3a => 'Choose different languages to use translated text for matching.';
 
@@ -22569,6 +22590,13 @@ extension on Translations {
 			'subtitleAiUi.subtitleLanguagesForMatching' => 'Subtitle languages for matching',
 			'subtitleAiUi.subtitleToSynchronize' => 'Subtitle to synchronize',
 			'subtitleAiUi.referenceSubtitle' => 'Reference subtitle',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Preview subtitle encoding',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Choose the source encoding and review the cues. Legacy encodings are never guessed, and the original file stays unchanged.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Source encoding',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} cues decoded',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'No readable subtitle cues were found with this encoding.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'This file could not be decoded with the selected encoding.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Use this preview',
 			'subtitleAiUi.chooseDifferentLanguagesToUseTransla_db4d6e3a' => 'Choose different languages to use translated text for matching.',
 			'subtitleAiUi.chooseTheSubtitleThatNeedsSynchronization' => 'Choose the subtitle that needs synchronization…',
 			'subtitleAiUi.chooseASynchronizedSubtitleInAnotherLanguage' => 'Choose a synchronized subtitle in another language…',
@@ -22581,6 +22609,8 @@ extension on Translations {
 			'subtitleAiUi.referenceOperationApplied' => ({required Object operation, required Object matchedCueCount, required Object totalCueCount, required Object confidence, required Object discontinuityCount, required Object referenceSource, required Object originalSource, required Object uploadedNote}) => '${operation} applied to ${matchedCueCount} of ${totalCueCount} cues (${confidence}% match confidence). ${discontinuityCount} timing discontinuities detected. Reference: ${referenceSource}. Original: ${originalSource}.${uploadedNote}',
 			'subtitleAiUi.matchingTheCapturedSpeechAgainstSubtitleText' => 'Matching the captured speech against subtitle text…',
 			'subtitleAiUi.capturedPlaybackOperationApplied' => ({required Object operation, required Object matchedCount, required Object totalCount, required Object confidence, required Object discontinuityCount, required Object evidenceNote, required Object source, required Object uploadedNote}) => 'Captured-playback ${operation} applied to ${matchedCount} of ${totalCount} cues (${confidence}% match confidence). ${discontinuityCount} timing discontinuities detected. ${evidenceNote}Original: ${source}.${uploadedNote}',
+			_ => null,
+		} ?? switch (path) {
 			'subtitleAiUi.revisionHistoryNeedsAnActiveProfileAndMediaItem' => 'Revision history needs an active profile and media item.',
 			'subtitleAiUi.savedRevisionToThisDeviceForThisProf_12a75bb7' => ({required Object revisionId}) => 'Saved revision ${revisionId} to this device for this profile and media item.',
 			'subtitleAiUi.couldNotSaveThisRevisionLocally' => ({required Object error}) => 'Could not save this revision locally: ${error}',
@@ -22588,8 +22618,6 @@ extension on Translations {
 			'subtitleAiUi.savedAnUndoCheckpointToThisDeviceForThisItem' => 'Saved an undo checkpoint to this device for this item.',
 			'subtitleAiUi.couldNotSaveAnUndoCheckpointTheAccep_6f1c79d5' => ({required Object error}) => 'Could not save an undo checkpoint; the accepted revision remains available: ${error}',
 			'subtitleAiUi.attachedReviewedRevisionFrom' => ({required Object revisionDate}) => 'Attached reviewed revision from ${revisionDate}.',
-			_ => null,
-		} ?? switch (path) {
 			'subtitleAiUi.exportReviewedSubtitleRevision' => 'Export reviewed subtitle revision',
 			'subtitleAiUi.reviewedSubtitleRevisionExportedAsSRT' => 'Reviewed subtitle revision exported as SRT.',
 			'subtitleAiUi.revisionHistoryNeedsAStableProfileAndMediaItem' => 'Revision history needs a stable profile and media item.',
@@ -23095,6 +23123,8 @@ extension on Translations {
 			'karaokeUi.scoresStayPrivateLeaderboardsCompareReviewedChartsWithMatching' => 'Scores stay private. Leaderboards compare reviewed charts with matching settings and calibrated, unassisted input. No-score singing is always available.',
 			'karaokeUi.startARoundRobinTournamentWithPresentSingers' => 'Start a round-robin tournament with present singers',
 			'karaokeUi.round' => ({required Object value1}) => 'Round ${value1}',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.match' => ({required Object value1, required Object value2}) => 'Match ${value1}: ${value2}',
 			'karaokeUi.verifiedEligibleScores' => ({required Object value1}) => 'Verified eligible scores · ${value1}',
 			'karaokeUi.eachSingerNeedsACalibratedUnassistedResultOnThe' => 'Each singer needs a calibrated, unassisted result on the same reviewed rendition and settings before this match can be resolved.',
@@ -23102,8 +23132,6 @@ extension on Translations {
 			'karaokeUi.wins' => ({required Object value1}) => '${value1} wins',
 			'karaokeUi.chooseTeam' => 'Choose team',
 			'karaokeUi.average' => ({required Object value1}) => '${value1} average',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.beginAFreshScoreRound' => 'Begin a fresh score round',
 			'karaokeUi.startSectionsFromTheNextQueuedSongs' => 'Start sections from the next queued songs',
 			'karaokeUi.quizInterludes' => 'Quiz interludes',

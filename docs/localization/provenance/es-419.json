@@ -1,7 +1,7 @@
 {
   "locale": "es-419",
   "inherits": "es",
-  "catalogSha256": "72eebf7b594b8ccde2b02dad46332928c140e4308e629f2c8e5cebe546803979",
+  "catalogSha256": "ef4604d0bcaa05142425da8204c33e9be1c71c12aa121ce15472b1ef76b2dd08",
   "nativeSpeakerReviewed": false,
   "messages": {
     "cast.subtitle": "jellyfin-web:Subtitles",

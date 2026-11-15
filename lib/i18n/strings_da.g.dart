@@ -4070,6 +4070,13 @@ class _Translations$subtitleAiUi$da extends Translations$subtitleAiUi$en {
 	final TranslationsDa _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Forhåndsvisning af undertekstkoding';
+	@override String get subtitleEncodingPreviewDescription => 'Vælg kildens tegnkodning, og gennemgå underteksterne. Ældre kodninger gættes aldrig, og originalfilen forbliver uændret.';
+	@override String get subtitleEncodingSourceLabel => 'Kildens tegnkodning';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} undertekstlinjer afkodet';
+	@override String get subtitleEncodingNoCues => 'Der blev ikke fundet læsbare undertekster med denne kodning.';
+	@override String get subtitleEncodingDecodeFailed => 'Filen kunne ikke afkodes med den valgte kodning.';
+	@override String get subtitleEncodingUsePreview => 'Brug denne forhåndsvisning';
 	@override String get liveCaptureStart => 'Start liveundertekster';
 	@override String get liveCaptureStop => 'Stop liveundertekster';
 }
@@ -9381,6 +9388,13 @@ extension on TranslationsDa {
 			'issueReport.openDraft' => 'Åbn GitHub-udkast',
 			'podcasts.autoDownloadLatest' => 'Download automatisk de nyeste episoder',
 			'podcasts.removeFinishedAfter' => 'Fjern færdigafspillede downloads efter',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Forhåndsvisning af undertekstkoding',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Vælg kildens tegnkodning, og gennemgå underteksterne. Ældre kodninger gættes aldrig, og originalfilen forbliver uændret.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Kildens tegnkodning',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} undertekstlinjer afkodet',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Der blev ikke fundet læsbare undertekster med denne kodning.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Filen kunne ikke afkodes med den valgte kodning.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Brug denne forhåndsvisning',
 			'subtitleAiUi.liveCaptureStart' => 'Start liveundertekster',
 			'subtitleAiUi.liveCaptureStop' => 'Stop liveundertekster',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9684,6 +9698,8 @@ extension on TranslationsDa {
 			'musicTools.serverAnalysis' => 'Serveranalyse',
 			'musicTools.sonicAnalysis' => 'Lydanalyse',
 			'musicTools.serverAnalysisScope' => 'Alle egnede musikbiblioteker på denne server. Deres analyseindstillinger ændres ikke.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Serveraktiviteter',
 			'musicTools.playlistSharing' => 'Adgang til afspilningsliste',
 			'musicTools.playlistRecipient' => 'Plex-brugernavn eller e-mail',
@@ -9691,8 +9707,6 @@ extension on TranslationsDa {
 			'musicTools.playlistSharingFailed' => 'Kunne ikke anmode om adgang til afspilningslisten.',
 			'musicTools.playlistSharingAccepted' => 'Plex accepterede adgangsanmodningen.',
 			'musicTools.playlistAccessList' => 'Nuværende adgang',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Ingen har fået adgang til afspilningslisten',
 			'musicTools.filterType' => 'Filtertype',
 			'musicTools.peak' => 'Spids',

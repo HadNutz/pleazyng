@@ -4078,6 +4078,13 @@ class _Translations$subtitleAiUi$he extends Translations$subtitleAiUi$en {
 	final TranslationsHe _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'תצוגה מקדימה של קידוד הכתוביות';
+	@override String get subtitleEncodingPreviewDescription => 'בחרו את קידוד המקור ובדקו את הכתוביות. קידודים ישנים אינם מנוחשים, והקובץ המקורי נשאר ללא שינוי.';
+	@override String get subtitleEncodingSourceLabel => 'קידוד המקור';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => 'פוענחו ${count} כתוביות';
+	@override String get subtitleEncodingNoCues => 'לא נמצאו כתוביות קריאות בקידוד הזה.';
+	@override String get subtitleEncodingDecodeFailed => 'לא ניתן לפענח את הקובץ בקידוד שנבחר.';
+	@override String get subtitleEncodingUsePreview => 'שימוש בתצוגה המקדימה';
 	@override String get liveCaptureStart => 'התחלת כתוביות בזמן אמת';
 	@override String get liveCaptureStop => 'עצירת כתוביות בזמן אמת';
 }
@@ -9389,6 +9396,13 @@ extension on TranslationsHe {
 			'issueReport.openDraft' => 'פתיחת טיוטה ב-GitHub',
 			'podcasts.autoDownloadLatest' => 'הורדה אוטומטית של הפרקים האחרונים',
 			'podcasts.removeFinishedAfter' => 'הסרת הורדות שהושלמו לאחר',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'תצוגה מקדימה של קידוד הכתוביות',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'בחרו את קידוד המקור ובדקו את הכתוביות. קידודים ישנים אינם מנוחשים, והקובץ המקורי נשאר ללא שינוי.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'קידוד המקור',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => 'פוענחו ${count} כתוביות',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'לא נמצאו כתוביות קריאות בקידוד הזה.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'לא ניתן לפענח את הקובץ בקידוד שנבחר.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'שימוש בתצוגה המקדימה',
 			'subtitleAiUi.liveCaptureStart' => 'התחלת כתוביות בזמן אמת',
 			'subtitleAiUi.liveCaptureStop' => 'עצירת כתוביות בזמן אמת',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9692,6 +9706,8 @@ extension on TranslationsHe {
 			'musicTools.serverAnalysis' => 'ניתוח בשרת',
 			'musicTools.sonicAnalysis' => 'ניתוח צליל',
 			'musicTools.serverAnalysisScope' => 'כל ספריות המוזיקה המתאימות בשרת זה. הגדרות הניתוח שלהן לא ישתנו.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'פעילויות השרת',
 			'musicTools.playlistSharing' => 'גישה לרשימת השמעה',
 			'musicTools.playlistRecipient' => 'שם משתמש Plex או דוא״ל',
@@ -9699,8 +9715,6 @@ extension on TranslationsHe {
 			'musicTools.playlistSharingFailed' => 'לא ניתן לבקש גישה לרשימת ההשמעה.',
 			'musicTools.playlistSharingAccepted' => 'Plex קיבל את בקשת הגישה.',
 			'musicTools.playlistAccessList' => 'גישה נוכחית',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'לא הוענקו הרשאות גישה לרשימת ההשמעה',
 			'musicTools.filterType' => 'סוג מסנן',
 			'musicTools.peak' => 'שיא',

@@ -4070,6 +4070,13 @@ class _Translations$subtitleAiUi$bn extends Translations$subtitleAiUi$en {
 	final TranslationsBn _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'সাবটাইটেল এনকোডিং প্রিভিউ';
+	@override String get subtitleEncodingPreviewDescription => 'উৎসের এনকোডিং বেছে নিয়ে সাবটাইটেলগুলো পর্যালোচনা করুন। পুরোনো এনকোডিং অনুমান করা হয় না, আর মূল ফাইল অপরিবর্তিত থাকে।';
+	@override String get subtitleEncodingSourceLabel => 'উৎসের এনকোডিং';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count}টি সাবটাইটেল অংশ ডিকোড করা হয়েছে';
+	@override String get subtitleEncodingNoCues => 'এই এনকোডিংয়ে পড়ার মতো কোনো সাবটাইটেল অংশ পাওয়া যায়নি।';
+	@override String get subtitleEncodingDecodeFailed => 'নির্বাচিত এনকোডিং দিয়ে ফাইলটি ডিকোড করা যায়নি।';
+	@override String get subtitleEncodingUsePreview => 'এই প্রিভিউ ব্যবহার করুন';
 	@override String get liveCaptureStart => 'লাইভ ক্যাপশন শুরু করুন';
 	@override String get liveCaptureStop => 'লাইভ ক্যাপশন বন্ধ করুন';
 }
@@ -9381,6 +9388,13 @@ extension on TranslationsBn {
 			'issueReport.openDraft' => 'GitHub খসড়া খুলুন',
 			'podcasts.autoDownloadLatest' => 'সর্বশেষ পর্বগুলো স্বয়ংক্রিয়ভাবে ডাউনলোড করুন',
 			'podcasts.removeFinishedAfter' => 'শেষ করা ডাউনলোডগুলো এই সময় পরে সরান',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'সাবটাইটেল এনকোডিং প্রিভিউ',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'উৎসের এনকোডিং বেছে নিয়ে সাবটাইটেলগুলো পর্যালোচনা করুন। পুরোনো এনকোডিং অনুমান করা হয় না, আর মূল ফাইল অপরিবর্তিত থাকে।',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'উৎসের এনকোডিং',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count}টি সাবটাইটেল অংশ ডিকোড করা হয়েছে',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'এই এনকোডিংয়ে পড়ার মতো কোনো সাবটাইটেল অংশ পাওয়া যায়নি।',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'নির্বাচিত এনকোডিং দিয়ে ফাইলটি ডিকোড করা যায়নি।',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'এই প্রিভিউ ব্যবহার করুন',
 			'subtitleAiUi.liveCaptureStart' => 'লাইভ ক্যাপশন শুরু করুন',
 			'subtitleAiUi.liveCaptureStop' => 'লাইভ ক্যাপশন বন্ধ করুন',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9684,6 +9698,8 @@ extension on TranslationsBn {
 			'musicTools.serverAnalysis' => 'সার্ভার বিশ্লেষণ',
 			'musicTools.sonicAnalysis' => 'সোনিক বিশ্লেষণ',
 			'musicTools.serverAnalysisScope' => 'এই সার্ভারের সব উপযুক্ত সঙ্গীত লাইব্রেরি। এতে তাদের বিশ্লেষণ সেটিংস বদলাবে না।',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'সার্ভারের কার্যকলাপ',
 			'musicTools.playlistSharing' => 'প্লেলিস্টে প্রবেশাধিকার',
 			'musicTools.playlistRecipient' => 'Plex ব্যবহারকারীর নাম বা ইমেইল',
@@ -9691,8 +9707,6 @@ extension on TranslationsBn {
 			'musicTools.playlistSharingFailed' => 'প্লেলিস্টে প্রবেশাধিকারের অনুরোধ করা যায়নি।',
 			'musicTools.playlistSharingAccepted' => 'Plex প্রবেশাধিকারের অনুরোধ গ্রহণ করেছে।',
 			'musicTools.playlistAccessList' => 'বর্তমান প্রবেশাধিকার',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'প্লেলিস্টে কাউকে প্রবেশাধিকার দেওয়া হয়নি',
 			'musicTools.filterType' => 'ফিল্টারের ধরন',
 			'musicTools.peak' => 'পিক',

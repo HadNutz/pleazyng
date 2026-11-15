@@ -4065,6 +4065,13 @@ class Translations$subtitleAiUi$zh extends Translations$subtitleAiUi$en {
 	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => '预览字幕编码';
+	@override String get subtitleEncodingPreviewDescription => '选择源编码并检查字幕。不会猜测旧编码，原始文件保持不变。';
+	@override String get subtitleEncodingSourceLabel => '源编码';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '已解码 ${count} 条字幕';
+	@override String get subtitleEncodingNoCues => '使用此编码未找到可读取的字幕。';
+	@override String get subtitleEncodingDecodeFailed => '无法使用所选编码解码此文件。';
+	@override String get subtitleEncodingUsePreview => '使用此预览';
 	@override String get liveCaptureStart => '开始实时字幕';
 	@override String get liveCaptureStop => '停止实时字幕';
 }
@@ -9376,6 +9383,13 @@ extension on TranslationsZh {
 			'issueReport.openDraft' => '打开 GitHub 草稿',
 			'podcasts.autoDownloadLatest' => '自动下载最新单集',
 			'podcasts.removeFinishedAfter' => '在以下时间后移除已听完的下载',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => '预览字幕编码',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => '选择源编码并检查字幕。不会猜测旧编码，原始文件保持不变。',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => '源编码',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '已解码 ${count} 条字幕',
+			'subtitleAiUi.subtitleEncodingNoCues' => '使用此编码未找到可读取的字幕。',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => '无法使用所选编码解码此文件。',
+			'subtitleAiUi.subtitleEncodingUsePreview' => '使用此预览',
 			'subtitleAiUi.liveCaptureStart' => '开始实时字幕',
 			'subtitleAiUi.liveCaptureStop' => '停止实时字幕',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9679,6 +9693,8 @@ extension on TranslationsZh {
 			'musicTools.serverAnalysis' => '服务器分析',
 			'musicTools.sonicAnalysis' => '音频特征分析',
 			'musicTools.serverAnalysisScope' => '此服务器上所有符合条件的音乐资料库。不会更改其分析设置。',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => '服务器任务',
 			'musicTools.playlistSharing' => '播放列表访问权限',
 			'musicTools.playlistRecipient' => 'Plex 用户名或电子邮件',
@@ -9686,8 +9702,6 @@ extension on TranslationsZh {
 			'musicTools.playlistSharingFailed' => '无法请求播放列表访问权限。',
 			'musicTools.playlistSharingAccepted' => 'Plex 已接受访问请求。',
 			'musicTools.playlistAccessList' => '当前访问权限',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => '尚未授予播放列表访问权限',
 			'musicTools.filterType' => '滤波器类型',
 			'musicTools.peak' => '峰值',

@@ -4070,6 +4070,13 @@ class _Translations$subtitleAiUi$hi extends Translations$subtitleAiUi$en {
 	final TranslationsHi _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'सबटाइटल एन्कोडिंग का पूर्वावलोकन';
+	@override String get subtitleEncodingPreviewDescription => 'स्रोत एन्कोडिंग चुनें और सबटाइटल की जाँच करें। पुराने एन्कोडिंग का अनुमान नहीं लगाया जाता और मूल फ़ाइल अपरिवर्तित रहती है।';
+	@override String get subtitleEncodingSourceLabel => 'स्रोत एन्कोडिंग';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} सबटाइटल अंश डिकोड हुए';
+	@override String get subtitleEncodingNoCues => 'इस एन्कोडिंग में पढ़े जा सकने वाले सबटाइटल अंश नहीं मिले।';
+	@override String get subtitleEncodingDecodeFailed => 'चुनी गई एन्कोडिंग से फ़ाइल डिकोड नहीं हो सकी।';
+	@override String get subtitleEncodingUsePreview => 'यह पूर्वावलोकन उपयोग करें';
 	@override String get liveCaptureStart => 'लाइव कैप्शन शुरू करें';
 	@override String get liveCaptureStop => 'लाइव कैप्शन रोकें';
 }
@@ -9381,6 +9388,13 @@ extension on TranslationsHi {
 			'issueReport.openDraft' => 'GitHub ड्राफ़्ट खोलें',
 			'podcasts.autoDownloadLatest' => 'नवीनतम एपिसोड अपने आप डाउनलोड करें',
 			'podcasts.removeFinishedAfter' => 'पूरे सुने गए डाउनलोड इतने समय बाद हटाएँ',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'सबटाइटल एन्कोडिंग का पूर्वावलोकन',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'स्रोत एन्कोडिंग चुनें और सबटाइटल की जाँच करें। पुराने एन्कोडिंग का अनुमान नहीं लगाया जाता और मूल फ़ाइल अपरिवर्तित रहती है।',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'स्रोत एन्कोडिंग',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} सबटाइटल अंश डिकोड हुए',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'इस एन्कोडिंग में पढ़े जा सकने वाले सबटाइटल अंश नहीं मिले।',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'चुनी गई एन्कोडिंग से फ़ाइल डिकोड नहीं हो सकी।',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'यह पूर्वावलोकन उपयोग करें',
 			'subtitleAiUi.liveCaptureStart' => 'लाइव कैप्शन शुरू करें',
 			'subtitleAiUi.liveCaptureStop' => 'लाइव कैप्शन रोकें',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9684,6 +9698,8 @@ extension on TranslationsHi {
 			'musicTools.serverAnalysis' => 'सर्वर विश्लेषण',
 			'musicTools.sonicAnalysis' => 'ध्वनि विश्लेषण',
 			'musicTools.serverAnalysisScope' => 'इस सर्वर की सभी पात्र संगीत लाइब्रेरी। इससे उनकी विश्लेषण सेटिंग नहीं बदलती।',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'सर्वर गतिविधियाँ',
 			'musicTools.playlistSharing' => 'प्लेलिस्ट का ऐक्सेस',
 			'musicTools.playlistRecipient' => 'Plex उपयोगकर्ता नाम या ईमेल',
@@ -9691,8 +9707,6 @@ extension on TranslationsHi {
 			'musicTools.playlistSharingFailed' => 'प्लेलिस्ट के ऐक्सेस का अनुरोध नहीं किया जा सका।',
 			'musicTools.playlistSharingAccepted' => 'Plex ने ऐक्सेस अनुरोध स्वीकार कर लिया।',
 			'musicTools.playlistAccessList' => 'मौजूदा ऐक्सेस',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'प्लेलिस्ट का ऐक्सेस किसी को नहीं दिया गया',
 			'musicTools.filterType' => 'फ़िल्टर का प्रकार',
 			'musicTools.peak' => 'शिखर',

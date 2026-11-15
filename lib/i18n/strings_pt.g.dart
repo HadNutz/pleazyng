@@ -4077,6 +4077,13 @@ class Translations$subtitleAiUi$pt extends Translations$subtitleAiUi$en {
 	final TranslationsPt _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Pré-visualização da codificação das legendas';
+	@override String get subtitleEncodingPreviewDescription => 'Escolha a codificação de origem e reveja as legendas. As codificações antigas nunca são adivinhadas e o ficheiro original permanece inalterado.';
+	@override String get subtitleEncodingSourceLabel => 'Codificação de origem';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} linhas de legendas descodificadas';
+	@override String get subtitleEncodingNoCues => 'Não foram encontradas legendas legíveis com esta codificação.';
+	@override String get subtitleEncodingDecodeFailed => 'Não foi possível descodificar o ficheiro com a codificação selecionada.';
+	@override String get subtitleEncodingUsePreview => 'Usar esta pré-visualização';
 	@override String get liveCaptureStart => 'Iniciar legendas em direto';
 	@override String get liveCaptureStop => 'Parar legendas em direto';
 }
@@ -9388,6 +9395,13 @@ extension on TranslationsPt {
 			'issueReport.openDraft' => 'Abrir rascunho do GitHub',
 			'podcasts.autoDownloadLatest' => 'Transferir automaticamente os episódios mais recentes',
 			'podcasts.removeFinishedAfter' => 'Remover transferências concluídas após',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Pré-visualização da codificação das legendas',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Escolha a codificação de origem e reveja as legendas. As codificações antigas nunca são adivinhadas e o ficheiro original permanece inalterado.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Codificação de origem',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} linhas de legendas descodificadas',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Não foram encontradas legendas legíveis com esta codificação.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Não foi possível descodificar o ficheiro com a codificação selecionada.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Usar esta pré-visualização',
 			'subtitleAiUi.liveCaptureStart' => 'Iniciar legendas em direto',
 			'subtitleAiUi.liveCaptureStop' => 'Parar legendas em direto',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9691,6 +9705,8 @@ extension on TranslationsPt {
 			'musicTools.serverAnalysis' => 'Análise do servidor',
 			'musicTools.sonicAnalysis' => 'Análise sonora',
 			'musicTools.serverAnalysisScope' => 'Todas as bibliotecas de música elegíveis neste servidor. As definições de análise não são alteradas.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Atividades do servidor',
 			'musicTools.playlistSharing' => 'Acesso à lista',
 			'musicTools.playlistRecipient' => 'Nome de utilizador Plex ou e-mail',
@@ -9698,8 +9714,6 @@ extension on TranslationsPt {
 			'musicTools.playlistSharingFailed' => 'Não foi possível solicitar acesso à lista.',
 			'musicTools.playlistSharingAccepted' => 'O Plex aceitou o pedido de acesso.',
 			'musicTools.playlistAccessList' => 'Acesso atual',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Não há acessos concedidos à lista',
 			'musicTools.filterType' => 'Tipo de filtro',
 			'musicTools.peak' => 'Pico',

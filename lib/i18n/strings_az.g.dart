@@ -4070,6 +4070,13 @@ class _Translations$subtitleAiUi$az extends Translations$subtitleAiUi$en {
 	final TranslationsAz _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Altyazı kodlamasına baxış';
+	@override String get subtitleEncodingPreviewDescription => 'Mənbə kodlamasını seçin və altyazı sətirlərini nəzərdən keçirin. Köhnə kodlamalar heç vaxt təxmin edilmir və orijinal fayl dəyişdirilmir.';
+	@override String get subtitleEncodingSourceLabel => 'Mənbə kodlaması';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} altyazı sətri oxundu';
+	@override String get subtitleEncodingNoCues => 'Bu kodlamada oxuna bilən altyazı sətirləri tapılmadı.';
+	@override String get subtitleEncodingDecodeFailed => 'Bu faylı seçilmiş kodlama ilə oxumaq mümkün olmadı.';
+	@override String get subtitleEncodingUsePreview => 'Bu önizləməni istifadə et';
 	@override String get liveCaptureStart => 'Canlı subtitrləri başlat';
 	@override String get liveCaptureStop => 'Canlı subtitrləri dayandır';
 }
@@ -9381,6 +9388,13 @@ extension on TranslationsAz {
 			'issueReport.openDraft' => 'GitHub qaralamasını açın',
 			'podcasts.autoDownloadLatest' => 'Ən son epizodları avtomatik endir',
 			'podcasts.removeFinishedAfter' => 'Bitmiş endirmələri bu müddətdən sonra sil',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Altyazı kodlamasına baxış',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Mənbə kodlamasını seçin və altyazı sətirlərini nəzərdən keçirin. Köhnə kodlamalar heç vaxt təxmin edilmir və orijinal fayl dəyişdirilmir.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Mənbə kodlaması',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} altyazı sətri oxundu',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Bu kodlamada oxuna bilən altyazı sətirləri tapılmadı.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Bu faylı seçilmiş kodlama ilə oxumaq mümkün olmadı.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Bu önizləməni istifadə et',
 			'subtitleAiUi.liveCaptureStart' => 'Canlı subtitrləri başlat',
 			'subtitleAiUi.liveCaptureStop' => 'Canlı subtitrləri dayandır',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9684,6 +9698,8 @@ extension on TranslationsAz {
 			'musicTools.serverAnalysis' => 'Server analizi',
 			'musicTools.sonicAnalysis' => 'Səs analizi',
 			'musicTools.serverAnalysisScope' => 'Bu serverdəki bütün uyğun musiqi kitabxanaları. Onların analiz parametrləri dəyişmir.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Server fəaliyyətləri',
 			'musicTools.playlistSharing' => 'Pleylistə giriş',
 			'musicTools.playlistRecipient' => 'Plex istifadəçi adı və ya e-poçt',
@@ -9691,8 +9707,6 @@ extension on TranslationsAz {
 			'musicTools.playlistSharingFailed' => 'Pleylistə giriş istənilə bilmədi.',
 			'musicTools.playlistSharingAccepted' => 'Plex giriş sorğusunu qəbul etdi.',
 			'musicTools.playlistAccessList' => 'Cari giriş',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Pleylistə giriş icazəsi yoxdur',
 			'musicTools.filterType' => 'Filtr növü',
 			'musicTools.peak' => 'Zirvə',

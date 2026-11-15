@@ -4070,6 +4070,13 @@ class _Translations$subtitleAiUi$hu extends Translations$subtitleAiUi$en {
 	final TranslationsHu _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Feliratkódolás előnézete';
+	@override String get subtitleEncodingPreviewDescription => 'Válaszd ki a forrás kódolását, majd ellenőrizd a feliratokat. A régi kódolásokat az alkalmazás nem találgatja, az eredeti fájl változatlan marad.';
+	@override String get subtitleEncodingSourceLabel => 'Forráskódolás';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} feliratrész dekódolva';
+	@override String get subtitleEncodingNoCues => 'Ezzel a kódolással nem találhatók olvasható feliratok.';
+	@override String get subtitleEncodingDecodeFailed => 'A fájl dekódolása nem sikerült a kiválasztott kódolással.';
+	@override String get subtitleEncodingUsePreview => 'Előnézet használata';
 	@override String get liveCaptureStart => 'Élő feliratok indítása';
 	@override String get liveCaptureStop => 'Élő feliratok leállítása';
 }
@@ -9381,6 +9388,13 @@ extension on TranslationsHu {
 			'issueReport.openDraft' => 'GitHub-vázlat megnyitása',
 			'podcasts.autoDownloadLatest' => 'Legújabb epizódok automatikus letöltése',
 			'podcasts.removeFinishedAfter' => 'Befejezett letöltések eltávolítása ennyi idő után',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Feliratkódolás előnézete',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Válaszd ki a forrás kódolását, majd ellenőrizd a feliratokat. A régi kódolásokat az alkalmazás nem találgatja, az eredeti fájl változatlan marad.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Forráskódolás',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} feliratrész dekódolva',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Ezzel a kódolással nem találhatók olvasható feliratok.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'A fájl dekódolása nem sikerült a kiválasztott kódolással.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Előnézet használata',
 			'subtitleAiUi.liveCaptureStart' => 'Élő feliratok indítása',
 			'subtitleAiUi.liveCaptureStop' => 'Élő feliratok leállítása',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9684,6 +9698,8 @@ extension on TranslationsHu {
 			'musicTools.serverAnalysis' => 'Szerverelemzés',
 			'musicTools.sonicAnalysis' => 'Hangelemzés',
 			'musicTools.serverAnalysisScope' => 'A szerver összes alkalmas zenei könyvtára. Az elemzési beállításaik nem változnak.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Szervertevékenységek',
 			'musicTools.playlistSharing' => 'Lejátszási lista elérése',
 			'musicTools.playlistRecipient' => 'Plex-felhasználónév vagy e-mail',
@@ -9691,8 +9707,6 @@ extension on TranslationsHu {
 			'musicTools.playlistSharingFailed' => 'Nem sikerült hozzáférést kérni a listához.',
 			'musicTools.playlistSharingAccepted' => 'A Plex elfogadta a hozzáférési kérést.',
 			'musicTools.playlistAccessList' => 'Jelenlegi hozzáférés',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Nincs megadott hozzáférés a listához',
 			'musicTools.filterType' => 'Szűrő típusa',
 			'musicTools.peak' => 'Csúcs',

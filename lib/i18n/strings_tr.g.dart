@@ -4070,6 +4070,13 @@ class _Translations$subtitleAiUi$tr extends Translations$subtitleAiUi$en {
 	final TranslationsTr _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Altyazı kodlaması önizlemesi';
+	@override String get subtitleEncodingPreviewDescription => 'Kaynak kodlamasını seçin ve altyazıları gözden geçirin. Eski kodlamalar asla tahmin edilmez ve özgün dosya değiştirilmez.';
+	@override String get subtitleEncodingSourceLabel => 'Kaynak kodlaması';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} altyazı satırı çözüldü';
+	@override String get subtitleEncodingNoCues => 'Bu kodlamayla okunabilir altyazı bulunamadı.';
+	@override String get subtitleEncodingDecodeFailed => 'Dosya seçilen kodlamayla çözülemedi.';
+	@override String get subtitleEncodingUsePreview => 'Bu önizlemeyi kullan';
 	@override String get liveCaptureStart => 'Canlı altyazıları başlat';
 	@override String get liveCaptureStop => 'Canlı altyazıları durdur';
 }
@@ -9381,6 +9388,13 @@ extension on TranslationsTr {
 			'issueReport.openDraft' => 'GitHub taslağını aç',
 			'podcasts.autoDownloadLatest' => 'En yeni bölümleri otomatik indir',
 			'podcasts.removeFinishedAfter' => 'Bitirilen indirmeleri şu süreden sonra kaldır',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Altyazı kodlaması önizlemesi',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Kaynak kodlamasını seçin ve altyazıları gözden geçirin. Eski kodlamalar asla tahmin edilmez ve özgün dosya değiştirilmez.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Kaynak kodlaması',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} altyazı satırı çözüldü',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Bu kodlamayla okunabilir altyazı bulunamadı.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Dosya seçilen kodlamayla çözülemedi.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Bu önizlemeyi kullan',
 			'subtitleAiUi.liveCaptureStart' => 'Canlı altyazıları başlat',
 			'subtitleAiUi.liveCaptureStop' => 'Canlı altyazıları durdur',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9684,6 +9698,8 @@ extension on TranslationsTr {
 			'musicTools.serverAnalysis' => 'Sunucu analizi',
 			'musicTools.sonicAnalysis' => 'Ses analizi',
 			'musicTools.serverAnalysisScope' => 'Bu sunucudaki uygun tüm müzik kitaplıkları. Analiz ayarları değiştirilmez.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Sunucu etkinlikleri',
 			'musicTools.playlistSharing' => 'Çalma listesi erişimi',
 			'musicTools.playlistRecipient' => 'Plex kullanıcı adı veya e-posta',
@@ -9691,8 +9707,6 @@ extension on TranslationsTr {
 			'musicTools.playlistSharingFailed' => 'Çalma listesi erişimi istenemedi.',
 			'musicTools.playlistSharingAccepted' => 'Plex erişim isteğini kabul etti.',
 			'musicTools.playlistAccessList' => 'Geçerli erişim',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Çalma listesi erişimi verilmedi',
 			'musicTools.filterType' => 'Filtre türü',
 			'musicTools.peak' => 'Tepe',

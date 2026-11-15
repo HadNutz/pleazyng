@@ -38,6 +38,7 @@ import '../../../widgets/app_icon.dart';
 import '../../../widgets/focusable_list_tile.dart';
 import '../../../widgets/overlay_sheet.dart';
 import 'base_video_control_sheet.dart';
+import 'subtitle_encoding_preview_dialog.dart';
 
 /// Reviewable local subtitle operations. The source file is never modified;
 /// every generated, translated, or synchronized result is written to a new
@@ -403,7 +404,13 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
     if (bytes.isEmpty || bytes.lengthInBytes > SubtitleRetimer.maximumInputBytes) {
       throw const FormatException('Subtitle input must be between 1 byte and 5 MiB.');
     }
-    return (SubtitleRetimer.parseCues(sourceBytes: bytes, extension: extension), file.name);
+    if (!mounted) return null;
+    final preview = await showDialog<SubtitleEncodingPreview>(
+      context: context,
+      builder: (_) => SubtitleEncodingPreviewDialog(sourceBytes: bytes, extension: extension, fileName: file.name),
+    );
+    if (!mounted || preview == null) return null;
+    return (preview.cues, file.name);
   }
 
   Future<void> _transcribe() => _run(() async {

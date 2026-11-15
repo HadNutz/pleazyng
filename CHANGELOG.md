@@ -8,6 +8,7 @@
 
 - Bound preferred-language subtitle retrieval during startup, let viewers skip it, and expose status with an explicit provider-search retry.
 - Calibrate selected main-library subtitle sidecars from up to 12 cue anchors, with scoped native preview/save, exact-byte local history, and separate cut-aware SRT/WebVTT exports that preserve the original. Cues removed before playback require confirmation; see [native sidecar calibration](docs/plezyng/subtitles/NATIVE-CALIBRATION.md) for identity and server-buffer limits.
+- Add an explicit subtitle encoding preview for sync and repair inputs; malformed text fails strictly and the original subtitle bytes remain unchanged.
 
 - Report the configured neural model pack separately from provider readiness and generated output.
 

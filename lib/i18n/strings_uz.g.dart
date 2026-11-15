@@ -4070,6 +4070,13 @@ class _Translations$subtitleAiUi$uz extends Translations$subtitleAiUi$en {
 	final TranslationsUz _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Subtitr kodlashini oldindan ko‘rish';
+	@override String get subtitleEncodingPreviewDescription => 'Manba kodlashini tanlang va subtitrlarni ko‘rib chiqing. Eski kodlashlar taxmin qilinmaydi, asl fayl esa o‘zgartirilmaydi.';
+	@override String get subtitleEncodingSourceLabel => 'Manba kodlashi';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} ta subtitr satri dekodlandi';
+	@override String get subtitleEncodingNoCues => 'Bu kodlashda o‘qiladigan subtitrlar topilmadi.';
+	@override String get subtitleEncodingDecodeFailed => 'Tanlangan kodlash yordamida faylni dekodlab bo‘lmadi.';
+	@override String get subtitleEncodingUsePreview => 'Bu ko‘rinishni ishlatish';
 	@override String get liveCaptureStart => 'Jonli subtitrlarni boshlash';
 	@override String get liveCaptureStop => 'Jonli subtitrlarni to‘xtatish';
 }
@@ -9381,6 +9388,13 @@ extension on TranslationsUz {
 			'issueReport.openDraft' => 'GitHub qoralamasini ochish',
 			'podcasts.autoDownloadLatest' => 'Soʻnggi qismlarni avtomatik yuklab olish',
 			'podcasts.removeFinishedAfter' => 'Tugallangan yuklamalarni quyidagi muddatdan soʻng oʻchirish',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Subtitr kodlashini oldindan ko‘rish',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Manba kodlashini tanlang va subtitrlarni ko‘rib chiqing. Eski kodlashlar taxmin qilinmaydi, asl fayl esa o‘zgartirilmaydi.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Manba kodlashi',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} ta subtitr satri dekodlandi',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Bu kodlashda o‘qiladigan subtitrlar topilmadi.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Tanlangan kodlash yordamida faylni dekodlab bo‘lmadi.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Bu ko‘rinishni ishlatish',
 			'subtitleAiUi.liveCaptureStart' => 'Jonli subtitrlarni boshlash',
 			'subtitleAiUi.liveCaptureStop' => 'Jonli subtitrlarni to‘xtatish',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9684,6 +9698,8 @@ extension on TranslationsUz {
 			'musicTools.serverAnalysis' => 'Server tahlili',
 			'musicTools.sonicAnalysis' => 'Ovoz tahlili',
 			'musicTools.serverAnalysisScope' => 'Ushbu serverdagi barcha mos musiqa kutubxonalari. Ularning tahlil sozlamalari o‘zgarmaydi.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Server faoliyati',
 			'musicTools.playlistSharing' => 'Pleylistga kirish',
 			'musicTools.playlistRecipient' => 'Plex foydalanuvchi nomi yoki email',
@@ -9691,8 +9707,6 @@ extension on TranslationsUz {
 			'musicTools.playlistSharingFailed' => 'Pleylistga kirish so‘rovini yuborib bo‘lmadi.',
 			'musicTools.playlistSharingAccepted' => 'Plex kirish so‘rovini qabul qildi.',
 			'musicTools.playlistAccessList' => 'Joriy kirish',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Pleylistga kirish ruxsati berilmagan',
 			'musicTools.filterType' => 'Filtr turi',
 			'musicTools.peak' => 'Choʻqqi',

@@ -4070,6 +4070,13 @@ class _Translations$subtitleAiUi$fa extends Translations$subtitleAiUi$en {
 	final TranslationsFa _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'پیش‌نمایش کدگذاری زیرنویس';
+	@override String get subtitleEncodingPreviewDescription => 'کدگذاری منبع را انتخاب کنید و زیرنویس‌ها را مرور کنید. کدگذاری‌های قدیمی حدس زده نمی‌شوند و فایل اصلی بدون تغییر می‌ماند.';
+	@override String get subtitleEncodingSourceLabel => 'کدگذاری منبع';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} بخش زیرنویس رمزگشایی شد';
+	@override String get subtitleEncodingNoCues => 'با این کدگذاری زیرنویس خوانایی پیدا نشد.';
+	@override String get subtitleEncodingDecodeFailed => 'رمزگشایی فایل با کدگذاری انتخاب‌شده ممکن نشد.';
+	@override String get subtitleEncodingUsePreview => 'استفاده از این پیش‌نمایش';
 	@override String get liveCaptureStart => 'شروع زیرنویس زنده';
 	@override String get liveCaptureStop => 'توقف زیرنویس زنده';
 }
@@ -9381,6 +9388,13 @@ extension on TranslationsFa {
 			'issueReport.openDraft' => 'باز کردن پیش‌نویس GitHub',
 			'podcasts.autoDownloadLatest' => 'بارگیری خودکار تازه‌ترین قسمت‌ها',
 			'podcasts.removeFinishedAfter' => 'حذف بارگیری‌های تمام‌شده پس از',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'پیش‌نمایش کدگذاری زیرنویس',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'کدگذاری منبع را انتخاب کنید و زیرنویس‌ها را مرور کنید. کدگذاری‌های قدیمی حدس زده نمی‌شوند و فایل اصلی بدون تغییر می‌ماند.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'کدگذاری منبع',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} بخش زیرنویس رمزگشایی شد',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'با این کدگذاری زیرنویس خوانایی پیدا نشد.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'رمزگشایی فایل با کدگذاری انتخاب‌شده ممکن نشد.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'استفاده از این پیش‌نمایش',
 			'subtitleAiUi.liveCaptureStart' => 'شروع زیرنویس زنده',
 			'subtitleAiUi.liveCaptureStop' => 'توقف زیرنویس زنده',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9684,6 +9698,8 @@ extension on TranslationsFa {
 			'musicTools.serverAnalysis' => 'تحلیل سرور',
 			'musicTools.sonicAnalysis' => 'تحلیل صوتی',
 			'musicTools.serverAnalysisScope' => 'همهٔ کتابخانه‌های موسیقی واجد شرایط در این سرور. تنظیمات تحلیل آن‌ها تغییر نمی‌کند.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'فعالیت‌های سرور',
 			'musicTools.playlistSharing' => 'دسترسی به فهرست پخش',
 			'musicTools.playlistRecipient' => 'نام کاربری Plex یا ایمیل',
@@ -9691,8 +9707,6 @@ extension on TranslationsFa {
 			'musicTools.playlistSharingFailed' => 'درخواست دسترسی به فهرست پخش ممکن نشد.',
 			'musicTools.playlistSharingAccepted' => 'Plex درخواست دسترسی را پذیرفت.',
 			'musicTools.playlistAccessList' => 'دسترسی فعلی',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'هیچ دسترسی به فهرست پخش داده نشده است',
 			'musicTools.filterType' => 'نوع فیلتر',
 			'musicTools.peak' => 'اوج',

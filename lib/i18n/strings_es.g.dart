@@ -4087,6 +4087,13 @@ class Translations$subtitleAiUi$es extends Translations$subtitleAiUi$en {
 	final TranslationsEs _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Vista previa de la codificación de subtítulos';
+	@override String get subtitleEncodingPreviewDescription => 'Elige la codificación de origen y revisa los subtítulos. Nunca se adivinan las codificaciones antiguas y el archivo original no cambia.';
+	@override String get subtitleEncodingSourceLabel => 'Codificación de origen';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} subtítulos decodificados';
+	@override String get subtitleEncodingNoCues => 'No se encontraron subtítulos legibles con esta codificación.';
+	@override String get subtitleEncodingDecodeFailed => 'No se pudo decodificar el archivo con la codificación seleccionada.';
+	@override String get subtitleEncodingUsePreview => 'Usar esta vista previa';
 	@override String get liveCaptureStart => 'Iniciar subtítulos en directo';
 	@override String get liveCaptureStop => 'Detener subtítulos en directo';
 }
@@ -9532,6 +9539,13 @@ extension on TranslationsEs {
 			'issueReport.openDraft' => 'Abrir borrador de GitHub',
 			'podcasts.autoDownloadLatest' => 'Descargar automáticamente los episodios más recientes',
 			'podcasts.removeFinishedAfter' => 'Eliminar las descargas terminadas después de',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Vista previa de la codificación de subtítulos',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Elige la codificación de origen y revisa los subtítulos. Nunca se adivinan las codificaciones antiguas y el archivo original no cambia.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Codificación de origen',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} subtítulos decodificados',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'No se encontraron subtítulos legibles con esta codificación.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'No se pudo decodificar el archivo con la codificación seleccionada.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Usar esta vista previa',
 			'subtitleAiUi.liveCaptureStart' => 'Iniciar subtítulos en directo',
 			'subtitleAiUi.liveCaptureStop' => 'Detener subtítulos en directo',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9808,6 +9822,8 @@ extension on TranslationsEs {
 			'bonusExtras.resume' => 'Reanudar extra',
 			'bonusExtras.restricted' => 'Los extras en línea no están disponibles para este perfil.',
 			'bonusExtras.kind.makingOf' => 'Cómo se hizo',
+			_ => null,
+		} ?? switch (path) {
 			'bonusExtras.kind.effects' => 'Efectos y escenas de riesgo',
 			'bonusExtras.kind.makeup' => 'Maquillaje y vestuario',
 			'bonusExtras.kind.interview' => 'Entrevistas',
@@ -9815,8 +9831,6 @@ extension on TranslationsEs {
 			'bonusExtras.kind.bloopers' => 'Tomas falsas',
 			'bonusExtras.kind.commentary' => 'Comentarios',
 			'bonusExtras.kind.trailer' => 'Tráilers',
-			_ => null,
-		} ?? switch (path) {
 			'bonusExtras.kind.analysis' => 'Análisis cinematográfico',
 			'bonusExtras.kind.other' => 'Otros extras',
 			'bonusExtras.setupHint' => 'Conecta un servidor de descubrimiento en Ajustes de extras para encontrar extras verificados en línea. Los extras de la biblioteca funcionan sin él.',

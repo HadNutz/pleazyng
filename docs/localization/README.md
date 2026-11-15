@@ -92,7 +92,7 @@ English fallback for non-English catalogs until reviewed translations are availa
 or native-speaker review. The practice-metronome title and guidance have
 assistant-generated drafts in all 32 non-English base locales; no independent
 or native-speaker review is claimed. Regional locales inherit from their
-language-only parent.
+language-only parent. The subtitle encoding preview also has assistant-generated drafts for all seven new messages in the 32 non-English base locales; regional locales inherit. No independent or native-speaker review is claimed.
 
 `sources.json` records source blob identifiers, model provenance and licenses.
 `translation-provenance.json` records message origins and review status;

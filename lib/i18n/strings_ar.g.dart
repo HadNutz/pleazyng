@@ -4162,6 +4162,13 @@ class _Translations$subtitleAiUi$ar extends Translations$subtitleAiUi$en {
 	final TranslationsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'معاينة ترميز الترجمة';
+	@override String get subtitleEncodingPreviewDescription => 'اختر ترميز المصدر وراجع مقاطع الترجمة. لا يتم تخمين الترميزات القديمة مطلقًا، ويظل الملف الأصلي دون تغيير.';
+	@override String get subtitleEncodingSourceLabel => 'ترميز المصدر';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => 'تم فك ترميز ${count} مقطع ترجمة';
+	@override String get subtitleEncodingNoCues => 'لم يتم العثور على مقاطع ترجمة قابلة للقراءة بهذا الترميز.';
+	@override String get subtitleEncodingDecodeFailed => 'تعذّر فك ترميز هذا الملف باستخدام الترميز المحدد.';
+	@override String get subtitleEncodingUsePreview => 'استخدام هذه المعاينة';
 	@override String get liveCaptureStart => 'بدء الترجمة النصية المباشرة';
 	@override String get liveCaptureStop => 'إيقاف الترجمة النصية المباشرة';
 }
@@ -9481,6 +9488,13 @@ extension on TranslationsAr {
 			'issueReport.openDraft' => 'فتح مسودة GitHub',
 			'podcasts.autoDownloadLatest' => 'تنزيل أحدث الحلقات تلقائيًا',
 			'podcasts.removeFinishedAfter' => 'إزالة التنزيلات المنتهية بعد',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'معاينة ترميز الترجمة',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'اختر ترميز المصدر وراجع مقاطع الترجمة. لا يتم تخمين الترميزات القديمة مطلقًا، ويظل الملف الأصلي دون تغيير.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'ترميز المصدر',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => 'تم فك ترميز ${count} مقطع ترجمة',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'لم يتم العثور على مقاطع ترجمة قابلة للقراءة بهذا الترميز.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'تعذّر فك ترميز هذا الملف باستخدام الترميز المحدد.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'استخدام هذه المعاينة',
 			'subtitleAiUi.liveCaptureStart' => 'بدء الترجمة النصية المباشرة',
 			'subtitleAiUi.liveCaptureStop' => 'إيقاف الترجمة النصية المباشرة',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9784,6 +9798,8 @@ extension on TranslationsAr {
 			'musicTools.serverAnalysis' => 'تحليل الخادم',
 			'musicTools.sonicAnalysis' => 'التحليل الصوتي',
 			'musicTools.serverAnalysisScope' => 'كل مكتبات الموسيقى المؤهلة على هذا الخادم. لا يغيّر هذا إعدادات التحليل الخاصة بها.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'أنشطة الخادم',
 			'musicTools.playlistSharing' => 'الوصول إلى قائمة التشغيل',
 			'musicTools.playlistRecipient' => 'اسم مستخدم Plex أو البريد الإلكتروني',
@@ -9791,8 +9807,6 @@ extension on TranslationsAr {
 			'musicTools.playlistSharingFailed' => 'تعذر طلب الوصول إلى قائمة التشغيل.',
 			'musicTools.playlistSharingAccepted' => 'قبل Plex طلب الوصول.',
 			'musicTools.playlistAccessList' => 'الوصول الحالي',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'لا توجد أذونات للوصول إلى قائمة التشغيل',
 			'musicTools.filterType' => 'نوع المرشح',
 			'musicTools.peak' => 'ذروة',

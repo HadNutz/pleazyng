@@ -4047,6 +4047,13 @@ class _Translations$subtitleAiUi$vi extends Translations$subtitleAiUi$en {
 	final TranslationsVi _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Xem trước bảng mã phụ đề';
+	@override String get subtitleEncodingPreviewDescription => 'Chọn bảng mã nguồn và xem lại phụ đề. Bảng mã cũ không bao giờ được đoán và tệp gốc vẫn nguyên vẹn.';
+	@override String get subtitleEncodingSourceLabel => 'Bảng mã nguồn';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => 'Đã giải mã ${count} dòng phụ đề';
+	@override String get subtitleEncodingNoCues => 'Không tìm thấy phụ đề có thể đọc được bằng bảng mã này.';
+	@override String get subtitleEncodingDecodeFailed => 'Không thể giải mã tệp bằng bảng mã đã chọn.';
+	@override String get subtitleEncodingUsePreview => 'Dùng bản xem trước này';
 	@override String get liveCaptureStart => 'Bắt đầu phụ đề trực tiếp';
 	@override String get liveCaptureStop => 'Dừng phụ đề trực tiếp';
 }
@@ -9356,6 +9363,13 @@ extension on TranslationsVi {
 			'issueReport.openDraft' => 'Mở bản nháp GitHub',
 			'podcasts.autoDownloadLatest' => 'Tự động tải các tập mới nhất',
 			'podcasts.removeFinishedAfter' => 'Xóa bản tải xuống đã nghe xong sau',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Xem trước bảng mã phụ đề',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Chọn bảng mã nguồn và xem lại phụ đề. Bảng mã cũ không bao giờ được đoán và tệp gốc vẫn nguyên vẹn.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Bảng mã nguồn',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => 'Đã giải mã ${count} dòng phụ đề',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Không tìm thấy phụ đề có thể đọc được bằng bảng mã này.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Không thể giải mã tệp bằng bảng mã đã chọn.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Dùng bản xem trước này',
 			'subtitleAiUi.liveCaptureStart' => 'Bắt đầu phụ đề trực tiếp',
 			'subtitleAiUi.liveCaptureStop' => 'Dừng phụ đề trực tiếp',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9659,6 +9673,8 @@ extension on TranslationsVi {
 			'musicTools.serverAnalysis' => 'Phân tích máy chủ',
 			'musicTools.sonicAnalysis' => 'Phân tích âm thanh',
 			'musicTools.serverAnalysisScope' => 'Tất cả thư viện nhạc đủ điều kiện trên máy chủ này. Không thay đổi cài đặt phân tích của chúng.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Hoạt động máy chủ',
 			'musicTools.playlistSharing' => 'Quyền truy cập danh sách phát',
 			'musicTools.playlistRecipient' => 'Tên người dùng Plex hoặc email',
@@ -9666,8 +9682,6 @@ extension on TranslationsVi {
 			'musicTools.playlistSharingFailed' => 'Không thể yêu cầu truy cập danh sách phát.',
 			'musicTools.playlistSharingAccepted' => 'Plex đã tiếp nhận yêu cầu truy cập.',
 			'musicTools.playlistAccessList' => 'Quyền truy cập hiện tại',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Chưa cấp quyền truy cập danh sách phát',
 			'musicTools.filterType' => 'Loại bộ lọc',
 			'musicTools.peak' => 'Đỉnh',

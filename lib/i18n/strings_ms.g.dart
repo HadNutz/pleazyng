@@ -4047,6 +4047,13 @@ class _Translations$subtitleAiUi$ms extends Translations$subtitleAiUi$en {
 	final TranslationsMs _root; // ignore: unused_field
 
 	// Translations
+	@override String get subtitleEncodingPreviewTitle => 'Pratonton pengekodan sari kata';
+	@override String get subtitleEncodingPreviewDescription => 'Pilih pengekodan sumber dan semak sari kata. Pengekodan lama tidak akan diteka, dan fail asal kekal tanpa perubahan.';
+	@override String get subtitleEncodingSourceLabel => 'Pengekodan sumber';
+	@override String subtitleEncodingPreviewCueCount({required Object count}) => '${count} baris sari kata dinyahkod';
+	@override String get subtitleEncodingNoCues => 'Tiada sari kata yang boleh dibaca ditemui dengan pengekodan ini.';
+	@override String get subtitleEncodingDecodeFailed => 'Fail tidak dapat dinyahkod menggunakan pengekodan yang dipilih.';
+	@override String get subtitleEncodingUsePreview => 'Gunakan pratonton ini';
 	@override String get liveCaptureStart => 'Mulakan sari kata langsung';
 	@override String get liveCaptureStop => 'Hentikan sari kata langsung';
 }
@@ -9356,6 +9363,13 @@ extension on TranslationsMs {
 			'issueReport.openDraft' => 'Buka draf GitHub',
 			'podcasts.autoDownloadLatest' => 'Muat turun episod terkini secara automatik',
 			'podcasts.removeFinishedAfter' => 'Alih keluar muat turun yang selesai selepas',
+			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Pratonton pengekodan sari kata',
+			'subtitleAiUi.subtitleEncodingPreviewDescription' => 'Pilih pengekodan sumber dan semak sari kata. Pengekodan lama tidak akan diteka, dan fail asal kekal tanpa perubahan.',
+			'subtitleAiUi.subtitleEncodingSourceLabel' => 'Pengekodan sumber',
+			'subtitleAiUi.subtitleEncodingPreviewCueCount' => ({required Object count}) => '${count} baris sari kata dinyahkod',
+			'subtitleAiUi.subtitleEncodingNoCues' => 'Tiada sari kata yang boleh dibaca ditemui dengan pengekodan ini.',
+			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'Fail tidak dapat dinyahkod menggunakan pengekodan yang dipilih.',
+			'subtitleAiUi.subtitleEncodingUsePreview' => 'Gunakan pratonton ini',
 			'subtitleAiUi.liveCaptureStart' => 'Mulakan sari kata langsung',
 			'subtitleAiUi.liveCaptureStop' => 'Hentikan sari kata langsung',
 			'romm.chooseFile' => 'Choose a game file',
@@ -9659,6 +9673,8 @@ extension on TranslationsMs {
 			'musicTools.serverAnalysis' => 'Analisis pelayan',
 			'musicTools.sonicAnalysis' => 'Analisis sonik',
 			'musicTools.serverAnalysisScope' => 'Semua pustaka muzik yang layak pada pelayan ini. Tetapan analisisnya tidak diubah.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Aktiviti pelayan',
 			'musicTools.playlistSharing' => 'Akses senarai main',
 			'musicTools.playlistRecipient' => 'Nama pengguna Plex atau e-mel',
@@ -9666,8 +9682,6 @@ extension on TranslationsMs {
 			'musicTools.playlistSharingFailed' => 'Tidak dapat meminta akses senarai main.',
 			'musicTools.playlistSharingAccepted' => 'Plex menerima permintaan akses.',
 			'musicTools.playlistAccessList' => 'Akses semasa',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Tiada akses senarai main diberikan',
 			'musicTools.filterType' => 'Jenis penapis',
 			'musicTools.peak' => 'Puncak',

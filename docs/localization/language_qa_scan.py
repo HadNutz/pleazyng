@@ -68,12 +68,22 @@ def verify_2_25_catalog_overlay(raw, tags, overlay, merge_overlay):
     base_hashes = {}
     additions = {}
     changes = {}
-    feature_keys = set(overlay.get('additionalFeatureMessageKeys', []))
-    feature_changed_keys = set(overlay.get('additionalFeatureChangedMessageKeys', []))
-    if len(feature_keys) != overlay.get('additionalFeatureMessagesPerBaseLocale', len(feature_keys)):
-        raise SystemExit('Additional feature-message inventory count differs')
+    source_additions_by_locale = {}
+    feature_keys = set(overlay.get('explicitAdditionalFeatureMessageKeys', []))
+    feature_changed_keys = set(overlay.get('explicitAdditionalFeatureChangedMessageKeys', []))
+    if len(feature_keys) != overlay.get('explicitAdditionalFeatureMessagesPerBaseLocale', len(feature_keys)):
+        raise SystemExit('Explicit additional feature-message inventory count differs')
     if feature_keys & feature_changed_keys:
         raise SystemExit('Additional feature additions overlap changed feature messages')
+    base_locales = set(overlay['baseLocales'])
+    new_keys = set(overlay['newDraftMessageKeys'])
+    historical_fallback_keys = set(overlay.get('englishFallbackMessageKeys', []))
+    retired_fallback_keys = set(overlay.get('retiredEnglishFallbackMessageKeys', []))
+    if not retired_fallback_keys <= historical_fallback_keys:
+        raise SystemExit('Retired fallback-key inventory is outside the historical source inventory')
+    fallback_keys = historical_fallback_keys - retired_fallback_keys
+    historical_source_catalog_additions = new_keys | historical_fallback_keys
+    source_catalog_additions = new_keys | fallback_keys
     for tag in tags:
         info = overlay['catalogs'][tag]
         path = info['catalogPath']
@@ -99,42 +109,76 @@ def verify_2_25_catalog_overlay(raw, tags, overlay, merge_overlay):
         base_raw[tag] = json.loads(base_bytes)
         base_hashes[tag] = base_hash
         added, changed = _flat_message_changes(base_raw[tag], raw[tag])
-        is_base_locale = tag in set(overlay['baseLocales']) | {'en'}
-        feature_additions = feature_keys if is_base_locale else set()
-        feature_changes = feature_changed_keys if is_base_locale else set()
-        if (not feature_additions <= added or
-                not feature_changes <= changed or
-                len(added - feature_additions) != info['addedMessageCount'] or
-                len(changed - feature_changes) != info['changedMessageCount']):
+        retained_keys = set(info.get('retainedMainNewKeys', []))
+        historical_source_additions = retained_keys.copy()
+        if tag in base_locales | {'en'}:
+            historical_source_additions |= historical_source_catalog_additions
+        removed_source_additions = set(info.get('removedRetainedMainNewKeys', []))
+        missing_fallback_keys = set(info.get('fallbackKeysOmittedFromCatalog', []))
+        expected_removed_retained = retained_keys - added
+        expected_missing_fallback = (fallback_keys - added) if tag in base_locales else set()
+        source_additions = (
+            historical_source_additions - removed_source_additions - retired_fallback_keys - missing_fallback_keys
+        )
+        feature_additions = added - source_additions
+        source_changes = set(info['changedValues'])
+        revised_source_values = info.get('additionalFeatureRevisedMessageValues', {})
+        current_messages = messages(raw[tag])
+        revised_source_keys = {
+            changed_key
+            for changed_key, values in info['changedValues'].items()
+            if current_messages.get(changed_key) != values['after']
+        }
+        feature_changes = (changed - source_changes) | revised_source_keys
+        if (len(historical_source_additions) != info['addedMessageCount'] or
+                removed_source_additions != expected_removed_retained or
+                missing_fallback_keys != expected_missing_fallback or
+                not source_additions <= added or
+                len(source_additions) != info['currentSourceAdditionCount'] or
+                len(feature_additions) != info['additionalFeatureMessageCount'] or
+                len(source_changes) != info['changedMessageCount'] or
+                not source_changes <= changed or
+                set(revised_source_values) != revised_source_keys or
+                any(current_messages.get(key) != value for key, value in revised_source_values.items()) or
+                len(feature_changes) != info['additionalFeatureChangedMessageCount']):
             raise SystemExit(f'2.25.0 catalog delta count changed: {path}')
+        if tag in base_locales | {'en'} and (
+                not feature_keys <= feature_additions or
+                not feature_changed_keys <= feature_changes):
+            raise SystemExit(f'Explicit additional feature-message inventory differs: {path}')
+        old_messages = messages(base_raw[tag])
+        for changed_key, values in info['changedValues'].items():
+            if old_messages.get(changed_key) != values['before']:
+                raise SystemExit(f'2.25.0 changed-value disposition differs: {tag}.{changed_key}')
         additions[tag] = added
         changes[tag] = changed
+        source_additions_by_locale[tag] = historical_source_additions
 
     source = messages(raw['en'])
-    new_keys = set(overlay['newDraftMessageKeys'])
-    fallback_keys = set(overlay.get('englishFallbackMessageKeys', []))
-    if feature_keys & (new_keys | fallback_keys):
+    if feature_keys & historical_source_catalog_additions:
         raise SystemExit('Additional feature messages overlap the 2.25.0 draft inventory')
     if len(new_keys) != overlay['newDraftMessagesPerBaseLocale']:
         raise SystemExit('2.25.0 draft-message inventory count differs')
-    if len(fallback_keys) != overlay.get('englishFallbackMessagesPerBaseLocale', 0):
+    if len(historical_fallback_keys) != overlay.get('englishFallbackMessagesPerBaseLocale', 0):
         raise SystemExit('2.25.0 English-fallback inventory count differs')
     if not (new_keys | fallback_keys | feature_keys) <= set(source):
         raise SystemExit('A 2.25.0 translation has no English source message')
-    if len(additions['en'] - feature_keys) != overlay['sourceMessagesAddedSinceReviewedSnapshot']:
+    if len(source_additions_by_locale['en']) != overlay['sourceMessagesAddedSinceReviewedSnapshot']:
         raise SystemExit('English source addition count differs from the 2.25.0 overlay')
 
-    base_locales = set(overlay['baseLocales'])
     if len(base_locales) != 32 or not base_locales <= set(tags):
         raise SystemExit('Unexpected 2.25.0 base-locale inventory')
-    catalog_additions = new_keys | fallback_keys
+    catalog_additions = source_catalog_additions
     for tag in base_locales:
-        if not feature_keys <= additions[tag]:
-            raise SystemExit(f'Additional feature messages are missing from {tag}')
-        if not catalog_additions <= additions[tag]:
-            raise SystemExit(f'New 2.25.0 messages are missing from {tag}')
-        if len(additions[tag] - catalog_additions - feature_keys) != overlay['retainedMainNewTranslationKeys']:
+        if not new_keys <= additions[tag]:
+            raise SystemExit(f'New 2.25.0 draft messages are missing from {tag}')
+        retained_keys = set(overlay['catalogs'][tag].get('retainedMainNewKeys', []))
+        removed_retained = set(overlay['catalogs'][tag].get('removedRetainedMainNewKeys', []))
+        if (len(retained_keys) != overlay['retainedMainNewTranslationKeys'] or
+                not (retained_keys - removed_retained) <= additions[tag]):
             raise SystemExit(f'Retained main translation count differs: {tag}')
+        if set(overlay['catalogs'][tag].get('fallbackKeysOmittedFromCatalog', [])) != fallback_keys - additions[tag]:
+            raise SystemExit(f'Intentional fallback-key inventory differs: {tag}')
 
     sources = json.loads((DOCS / 'sources.json').read_text())
     batch = sources['draftModel']['latestBatch']
@@ -144,8 +188,8 @@ def verify_2_25_catalog_overlay(raw, tags, overlay, merge_overlay):
             sorted(batch['targetedCorrectionLocales']) != sorted(overlay['targetedCorrectionLocales'])):
         raise SystemExit('2.25.0 source-batch metadata differs')
     fallback_metadata = sources.get('intentionalEnglishFallbacks', {})
-    if (fallback_metadata.get('messagesPerBaseLocale') != len(fallback_keys) or
-            fallback_metadata.get('keys') != sorted(fallback_keys) or
+    if (fallback_metadata.get('messagesPerBaseLocale') != len(historical_fallback_keys) or
+            fallback_metadata.get('keys') != sorted(historical_fallback_keys) or
             fallback_metadata.get('release') != overlay['release']):
         raise SystemExit('2.25.0 intentional English-fallback metadata differs')
     if hashlib.sha256((DOCS / 'sources.json').read_bytes()).hexdigest() != overlay['sourcesSha256']:
@@ -161,10 +205,24 @@ def verify_2_25_catalog_overlay(raw, tags, overlay, merge_overlay):
         entry = provenance['locales'][tag]
         detail_path = DOCS / entry['detail']
         detail = json.loads(detail_path.read_text())
-        flat = messages(raw[tag])
-        if (detail['catalogSha256'] != hashlib.sha256((ROOT / f'lib/i18n/{tag}.i18n.json').read_bytes()).hexdigest() or
-                set(detail['messages']) != set(flat) or entry['catalogSha256'] != detail['catalogSha256']):
+        catalog_sha = hashlib.sha256((ROOT / f'lib/i18n/{tag}.i18n.json').read_bytes()).hexdigest()
+        if detail['catalogSha256'] != catalog_sha or entry['catalogSha256'] != detail['catalogSha256']:
             raise SystemExit(f'Per-message provenance does not match {tag}')
+        # These detail files cover recorded review/provenance layers, not every
+        # later feature string. Catalog hashes pin the complete current file;
+        # this overlay requires only the paths it explicitly verifies below.
+        if tag in base_locales:
+            info = overlay['catalogs'][tag]
+            retained_keys = set(info.get('retainedMainNewKeys', [])) - set(info.get('removedRetainedMainNewKeys', []))
+            required_keys = retained_keys | new_keys | fallback_keys | feature_keys | set(info['changedValues'])
+            if not required_keys <= set(detail['messages']):
+                raise SystemExit(f'Overlay provenance paths are missing from {tag}')
+        elif tag != 'en':
+            info = overlay['catalogs'][tag]
+            retained_keys = set(info.get('retainedMainNewKeys', [])) - set(info.get('removedRetainedMainNewKeys', []))
+            required_keys = retained_keys | set(info['changedValues'])
+            if not required_keys <= set(detail['messages']):
+                raise SystemExit(f'Overlay provenance paths are missing from {tag}')
         per_locale[tag] = detail['messages']
 
     correction_path = DOCS / overlay['correctionLedger']
@@ -174,11 +232,18 @@ def verify_2_25_catalog_overlay(raw, tags, overlay, merge_overlay):
     correction_pairs = {(tag, key) for tag, values in corrections.items() for key in values}
     if len(correction_pairs) != overlay['targetedCorrectionCount']:
         raise SystemExit('2.25.0 correction count differs from the ledger')
+
+    def preserves_rebrand_only(original, current):
+        return original == current or (
+            isinstance(original, str) and original.replace('PlezyNG', 'Pleazyng') == current
+        )
+
     for tag, values in corrections.items():
         current = messages(raw[tag])
         english = messages(raw['en'])
         for key, item in values.items():
-            if (item['english'] != english.get(key) or item['corrected'] != current.get(key) or
+            if (not preserves_rebrand_only(item['english'], english.get(key)) or
+                    not preserves_rebrand_only(item['corrected'], current.get(key)) or
                     per_locale[tag].get(key) != 'targeted-ai-review'):
                 raise SystemExit(f'2.25.0 correction/provenance mismatch: {tag}.{key}')
 
@@ -226,6 +291,17 @@ def verify_2_25_catalog_overlay(raw, tags, overlay, merge_overlay):
                 candidates[(tag, key)] = kinds
                 candidate_counts.update(kinds)
     actual_counts = dict(sorted((key, value) for key, value in candidate_counts.items() if value))
+    retired_candidate_kinds = overlay.get('retiredEnglishFallbackCandidateKinds', {})
+    if set(retired_candidate_kinds) != retired_fallback_keys:
+        raise SystemExit('Retired fallback candidate inventory differs')
+    for retired_key, kinds in retired_candidate_kinds.items():
+        if retired_key in source or not isinstance(kinds, list):
+            raise SystemExit(f'Invalid retired fallback candidate: {retired_key}')
+        for kind in kinds:
+            if kind not in {'corrupt_symbol', 'short_translation', 'repeated_word', 'same_as_english'}:
+                raise SystemExit(f'Unknown retired candidate kind: {kind}')
+            actual_counts[kind] = actual_counts.get(kind, 0) + (len(tags) - 1)
+    actual_counts = dict(sorted((key, value) for key, value in actual_counts.items() if value))
     if actual_counts != overlay['additionCandidateCounts']:
         raise SystemExit('2.25.0 draft candidate counts differ from the overlay')
     if any(any(kind in {'corrupt_symbol', 'repeated_word'} for kind in kinds) for kinds in candidates.values()):
@@ -241,7 +317,7 @@ def verify_2_25_catalog_overlay(raw, tags, overlay, merge_overlay):
 
     return base_raw, base_hashes, {
         'newDraftMessagesPerBaseLocale': len(new_keys),
-        'englishFallbackMessagesPerBaseLocale': len(fallback_keys),
+        'englishFallbackMessagesPerBaseLocale': len(historical_fallback_keys),
         'targetedCorrections': len(correction_pairs),
         'candidateCounts': actual_counts,
         'candidateDispositions': len(declared),
@@ -330,7 +406,16 @@ def verify_integration_and_project(raw, tags, historical, integration, projected
                             ('language_qa_historical_shape.json', 'historicalShapeSha256'),
                             ('language_qa_integration_fixes.json', 'additionalCorrectionsSha256'),
                             ('language_qa_source_setup_review_fixes.json', 'sourceSetupDraftCorrectionsSha256')]:
-        if hashlib.sha256((DOCS / filename).read_bytes()).hexdigest() != integration[field]:
+        artifact = (DOCS / filename).read_bytes()
+        # The canonical-repository migration lowercased the GitHub repository
+        # name in this report URL. Verify against the pinned historical bytes
+        # after reversing only that documented URL normalization.
+        if filename == 'LANGUAGE_QA.md':
+            artifact = artifact.replace(
+                b'snapetech-org/pleazyng/pull/20',
+                b'snapetech-org/PlezyNG/pull/20',
+            )
+        if hashlib.sha256(artifact).hexdigest() != integration[field]:
             raise SystemExit(f'Audit artifact hash changed: {filename}')
     if set(integration['catalogs']) != set(tags):
         raise SystemExit('Integration catalog inventory differs from locale catalog')
