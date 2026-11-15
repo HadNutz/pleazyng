@@ -219,34 +219,78 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
     final client = context.tryGetMediaClientForServer(serverIdOrNull(metadata.serverId));
     if (client == null) return (result: result, streamId: null);
     final languagesToSearch = orderedLanguages.take(3).toList(growable: false);
-    final attemptKey =
-        '${metadata.globalKey}:${source.mediaSourceId ?? result.selectedMediaIndex}:${languagesToSearch.join(',')}';
-    if (!_autoSubtitleFetchAttempts.add(attemptKey)) return (result: result, streamId: null);
-
     final activePlayer = player;
-    final generation = _transitionGate.generation;
-    bool isCurrent() => mounted && !_shuttingDown && player == activePlayer && _transitionGate.generation == generation;
+    if (activePlayer == null) return (result: result, streamId: null);
+    final activeProfile = context.read<ActiveProfileProvider>();
+    final accountPreferences = context.read<AccountPreferencesController>();
+    final activeProfileId = activeProfile.activeId;
+    final profileIdentity = activeProfileId ?? identityHashCode(profileSettings);
+    final attemptKey =
+        '$profileIdentity:${metadata.globalKey}:${source.mediaSourceId ?? result.selectedMediaIndex}:${languagesToSearch.join(',')}';
+    if (_autoSubtitleFetchAttempts.contains(attemptKey)) return (result: result, streamId: null);
+    if (_autoSubtitleFetchAttempts.length >= 64) {
+      _autoSubtitleFetchAttempts.remove(_autoSubtitleFetchAttempts.first);
+    }
+    _autoSubtitleFetchAttempts.add(attemptKey);
 
+    final activePlaybackSession = _playbackSession;
+    final generation = _transitionGate.generation;
+    bool sourceIsCurrent() {
+      if (!mounted ||
+          _shuttingDown ||
+          player != activePlayer ||
+          !identical(_playbackSession, activePlaybackSession) ||
+          _transitionGate.generation != generation ||
+          _currentMetadata.globalKey != metadata.globalKey ||
+          _currentMetadata.serverId != metadata.serverId ||
+          !settings.read(SettingsService.autoDownloadPreferredSubtitle)) {
+        return false;
+      }
+      try {
+        return activeProfile.activeId == activeProfileId &&
+            identical(accountPreferences.activePreferences, profileSettings);
+      } catch (_) {
+        return false;
+      }
+    }
+
+    final attempt = _autoSubtitleFetch.start(isCurrent: sourceIsCurrent);
+    bool isCurrent() => sourceIsCurrent() && attempt.current;
+    var searchFailed = false;
     try {
-      final searchBatches = await Future.wait<List<SubtitleSearchResult>>(
-        languagesToSearch.map((searchLanguage) async {
-          try {
-            return await client
-                .searchSubtitles(
-                  metadata.id,
-                  language: searchLanguage,
-                  title: metadata.title,
-                  mediaIndex: result.selectedMediaIndex,
-                  mediaSourceId: source.mediaSourceId ?? result.selectedMediaSourceId,
-                )
-                .timeout(const Duration(seconds: 8));
-          } catch (error) {
-            appLogger.d('Automatic subtitle search failed for $searchLanguage', error: error);
-            return const <SubtitleSearchResult>[];
-          }
-        }),
+      final searchBatches = await attempt.wait(
+        () => Future.wait<List<SubtitleSearchResult>>(
+          languagesToSearch.map((searchLanguage) async {
+            try {
+              final AbortableSubtitleProviderClient? abortable = client is AbortableSubtitleProviderClient
+                  ? client as AbortableSubtitleProviderClient
+                  : null;
+              return await (abortable == null
+                      ? client.searchSubtitles(
+                          metadata.id,
+                          language: searchLanguage,
+                          title: metadata.title,
+                          mediaIndex: result.selectedMediaIndex,
+                          mediaSourceId: source.mediaSourceId ?? result.selectedMediaSourceId,
+                        )
+                      : abortable.searchSubtitlesWithAbort(
+                          metadata.id,
+                          language: searchLanguage,
+                          title: metadata.title,
+                          mediaIndex: result.selectedMediaIndex,
+                          mediaSourceId: source.mediaSourceId ?? result.selectedMediaSourceId,
+                          abort: attempt.abort,
+                        ))
+                  .timeout(const Duration(seconds: 6));
+            } catch (error) {
+              searchFailed = true;
+              appLogger.d('Automatic subtitle search failed for $searchLanguage', error: error);
+              return const <SubtitleSearchResult>[];
+            }
+          }),
+        ),
       );
-      if (!isCurrent()) return (result: result, streamId: null);
+      attempt.check();
 
       SubtitleSearchResult? candidate;
       var candidateLanguage = language;
@@ -282,62 +326,116 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
         break;
       }
       final chosenCandidate = candidate;
-      if (chosenCandidate == null) return (result: result, streamId: null);
+      if (chosenCandidate == null) {
+        attempt.finish(searchFailed ? SubtitleFetchStage.failed : SubtitleFetchStage.noMatch);
+        return (result: result, streamId: null);
+      }
 
-      final downloaded = await client
-          .downloadSubtitle(
-            metadata.id,
-            key: chosenCandidate.key,
-            codec: chosenCandidate.codec,
-            language: chosenCandidate.languageCode ?? candidateLanguage,
-            hearingImpaired: chosenCandidate.hearingImpaired,
-            forced: chosenCandidate.forced,
-            providerTitle: chosenCandidate.providerTitle,
-            mediaIndex: result.selectedMediaIndex,
-            mediaSourceId: source.mediaSourceId ?? result.selectedMediaSourceId,
-          )
-          .timeout(const Duration(seconds: 8));
-      if (!downloaded || !isCurrent()) return (result: result, streamId: null);
+      attempt.phase(SubtitleFetchStage.downloading);
+      final AbortableSubtitleProviderClient? abortable = client is AbortableSubtitleProviderClient
+          ? client as AbortableSubtitleProviderClient
+          : null;
+      final downloaded = await attempt.wait(
+        () =>
+            (abortable == null
+                    ? client.downloadSubtitle(
+                        metadata.id,
+                        key: chosenCandidate.key,
+                        codec: chosenCandidate.codec,
+                        language: chosenCandidate.languageCode ?? candidateLanguage,
+                        hearingImpaired: chosenCandidate.hearingImpaired,
+                        forced: chosenCandidate.forced,
+                        providerTitle: chosenCandidate.providerTitle,
+                        mediaIndex: result.selectedMediaIndex,
+                        mediaSourceId: source.mediaSourceId ?? result.selectedMediaSourceId,
+                      )
+                    : abortable.downloadSubtitleWithAbort(
+                        metadata.id,
+                        key: chosenCandidate.key,
+                        codec: chosenCandidate.codec,
+                        language: chosenCandidate.languageCode ?? candidateLanguage,
+                        hearingImpaired: chosenCandidate.hearingImpaired,
+                        forced: chosenCandidate.forced,
+                        providerTitle: chosenCandidate.providerTitle,
+                        mediaIndex: result.selectedMediaIndex,
+                        mediaSourceId: source.mediaSourceId ?? result.selectedMediaSourceId,
+                        abort: attempt.abort,
+                      ))
+                .timeout(const Duration(seconds: 5)),
+      );
+      if (!downloaded) {
+        attempt.finish(SubtitleFetchStage.failed);
+        return (result: result, streamId: null);
+      }
+      attempt.check();
 
-      final expectedStreamId = await client.consumeDownloadedSubtitleStreamId(
-        metadata.id,
-        mediaIndex: result.selectedMediaIndex,
-        mediaSourceId: source.mediaSourceId ?? result.selectedMediaSourceId,
+      attempt.phase(SubtitleFetchStage.refreshing);
+      final expectedStreamId = await attempt.wait(
+        () => client.consumeDownloadedSubtitleStreamId(
+          metadata.id,
+          mediaIndex: result.selectedMediaIndex,
+          mediaSourceId: source.mediaSourceId ?? result.selectedMediaSourceId,
+        ),
       );
       final originalIds = source.subtitleTracks.map((track) => track.id).toSet();
       MediaSubtitleTrack? newTrack;
-      final trackDeadline = DateTime.now().add(const Duration(seconds: 8));
-      for (var attempt = 0; attempt < 8 && DateTime.now().isBefore(trackDeadline) && isCurrent(); attempt++) {
-        if (attempt > 0) await Future<void>.delayed(const Duration(seconds: 1));
-        final refreshed = await client
-            .fetchSourceSubtitleTracks(
-              metadata.id,
-              mediaIndex: result.selectedMediaIndex,
-              mediaSourceId: source.mediaSourceId ?? result.selectedMediaSourceId,
-            )
-            .timeout(const Duration(seconds: 3));
-        if (!isCurrent()) return (result: result, streamId: null);
+      final discoveryPosition = (source.partIndex ?? 0) > 0 && result.selectedVersion != null
+          ? MediaPartTimeline.fromParts(result.selectedVersion!.parts, currentIndex: source.partIndex!)?.current.start
+          : null;
+      for (var poll = 0; poll < 8 && isCurrent(); poll++) {
+        if (poll > 0) await attempt.wait(() => Future<void>.delayed(const Duration(milliseconds: 250)));
+        final refreshed = await attempt.wait(
+          () => client
+              .fetchSourceSubtitleTracks(
+                metadata.id,
+                mediaIndex: result.selectedMediaIndex,
+                mediaSourceId: source.mediaSourceId ?? result.selectedMediaSourceId,
+                position: discoveryPosition,
+              )
+              .timeout(const Duration(seconds: 3)),
+        );
+        attempt.check();
         if (expectedStreamId != null) {
-          newTrack = refreshed.where((track) => track.id == expectedStreamId).firstOrNull;
+          newTrack = refreshed
+              .where(
+                (track) =>
+                    track.id == expectedStreamId &&
+                    !originalIds.contains(track.id) &&
+                    track.isExternal &&
+                    matchesLanguageFor(candidateLanguage, track.languageCode, track.language) &&
+                    track.effectiveForced == chosenCandidate.forced,
+              )
+              .firstOrNull;
+        } else {
+          final candidates = refreshed
+              .where(
+                (track) =>
+                    !originalIds.contains(track.id) &&
+                    matchesLanguageFor(candidateLanguage, track.languageCode, track.language) &&
+                    track.effectiveForced == chosenCandidate.forced &&
+                    track.isExternal,
+              )
+              .toList(growable: false);
+          // A concurrently attached subtitle must never be guessed.
+          if (candidates.length == 1) newTrack = candidates.single;
         }
-        newTrack ??= refreshed
-            .where(
-              (track) =>
-                  !originalIds.contains(track.id) &&
-                  matchesLanguageFor(candidateLanguage, track.languageCode, track.language) &&
-                  track.isExternal,
-            )
-            .firstOrNull;
         if (newTrack != null) break;
       }
-      if (!isCurrent() || newTrack == null) return (result: result, streamId: null);
+      if (!isCurrent()) attempt.check();
+      if (newTrack == null) {
+        attempt.finish(SubtitleFetchStage.noMatch);
+        return (result: result, streamId: null);
+      }
 
       final sidecar = client.buildPlaybackSubtitleSidecar(
         metadata,
         newTrack,
         mediaSourceId: source.mediaSourceId ?? result.selectedMediaSourceId,
       );
-      if (sidecar == null) return (result: result, streamId: null);
+      if (sidecar == null) {
+        attempt.finish(SubtitleFetchStage.failed);
+        return (result: result, streamId: null);
+      }
 
       final mergedTracks = <MediaSubtitleTrack>[
         ...source.subtitleTracks,
@@ -348,6 +446,7 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
         sidecar,
       ];
       appLogger.i('Downloaded a preferred-language subtitle for local playback (${metadata.id})');
+      attempt.finish(SubtitleFetchStage.completed);
       return (
         result: result.copyWith(
           mediaInfo: source.copyWith(subtitleTracks: mergedTracks),
@@ -356,8 +455,13 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
         streamId: newTrack.id,
       );
     } catch (error) {
-      appLogger.d('Automatic subtitle fetch was unavailable for ${metadata.id}', error: error);
+      if (attempt.current) {
+        appLogger.d('Automatic subtitle fetch was unavailable for ${metadata.id}', error: error);
+        attempt.finish(SubtitleFetchStage.failed);
+      }
       return (result: result, streamId: null);
+    } finally {
+      attempt.finish(SubtitleFetchStage.noMatch);
     }
   }
 

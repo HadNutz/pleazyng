@@ -5,6 +5,7 @@ import '../services/playback_launch_observer.dart';
 import '../media/ids.dart';
 
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -24,6 +25,8 @@ import '../mpv/player/platform/player_android.dart';
 import '../services/subtitle_playback_transcription_service.dart';
 import '../mpv/player/subtitle_pcm_capture_source.dart';
 import '../services/subtitle_rejection_service.dart';
+import '../services/subtitle_automatic_fetch.dart';
+import '../widgets/subtitle_automatic_fetch_status.dart';
 import '../models/subtitles/subtitle_search_result.dart';
 import '../mpv/player/player_native.dart';
 
@@ -888,6 +891,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   /// Prevent repeated provider searches for the same media source and language
   /// during track-driven reloads in one player session.
   final Set<String> _autoSubtitleFetchAttempts = <String>{};
+  final SubtitleAutomaticFetch _autoSubtitleFetch = SubtitleAutomaticFetch();
   // Fired in parallel with MPV setup so the OS audio-focus negotiation
   // (~90ms on Android) doesn't sit on the critical path. Awaited before
   // `player.open()` so the semantics are unchanged — we just eat the cost
@@ -3099,6 +3103,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
     _retireLaunchObserver();
     _playerInitializationGeneration++;
     _frameRate.dispose();
+    _autoSubtitleFetch.dispose();
     WidgetsBinding.instance.removeObserver(this);
     CarUxRestrictionsService.instance.listenable.removeListener(_handleCarRestrictionsChanged);
 
@@ -3722,6 +3727,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Future<void> _onSubtitleTrackChanged(SubtitleTrack track, {int? sourceStreamId}) async {
+    _autoSubtitleFetch.cancel();
     _cancelSubtitleMuteRestoreForUserChoice(track);
     _rememberNativeSubtitleSelection(track, sourceStreamId: sourceStreamId);
     await _trackManager?.onSubtitleTrackSelectedByUser(track, sourceStreamId: sourceStreamId);

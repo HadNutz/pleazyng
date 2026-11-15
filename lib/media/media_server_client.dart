@@ -28,6 +28,37 @@ import 'media_playlist.dart';
 import 'playback_report_metadata.dart';
 import 'server_capabilities.dart';
 
+/// Optional cancellation-aware transport for the two provider operations used
+/// by automatic subtitle retrieval. Keeping this separate from
+/// [MediaServerClient] avoids expanding the server-client surface for backends
+/// and test doubles that do not proxy remote subtitle providers.
+abstract interface class AbortableSubtitleProviderClient {
+  Future<List<SubtitleSearchResult>> searchSubtitlesWithAbort(
+    String ratingKey, {
+    required String language,
+    String? title,
+    int mediaIndex = 0,
+    String? mediaSourceId,
+    bool? perfectMatch,
+    bool? forced,
+    bool? hearingImpaired,
+    AbortController? abort,
+  });
+
+  Future<bool> downloadSubtitleWithAbort(
+    String ratingKey, {
+    required String key,
+    String? codec,
+    String? language,
+    bool hearingImpaired = false,
+    bool forced = false,
+    String? providerTitle,
+    int mediaIndex = 0,
+    String? mediaSourceId,
+    AbortController? abort,
+  });
+}
+
 /// Default number of items requested for horizontal hub previews.
 const int defaultHubPreviewLimit = 20;
 

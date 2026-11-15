@@ -8,6 +8,7 @@ import '../../../mpv/mpv.dart';
 import '../../../services/playback_initialization_types.dart';
 import '../../../services/playback_subtitle_resolver.dart';
 import '../../../services/shader_service.dart';
+import '../../../services/subtitle_automatic_fetch.dart';
 import '../helpers/track_filter_helper.dart';
 
 enum SubtitleDownloadApplyOutcome { applied, timedOut, busy, superseded, unavailable, failed }
@@ -93,6 +94,7 @@ class TrackControlsState {
   /// equivalent. The track sheet hides the "Search subtitles" tile when
   /// this is false.
   final bool subtitleSearchSupported;
+  final SubtitleAutomaticFetch? autoSubtitleFetch;
 
   const TrackControlsState({
     this.availableVersions = const [],
@@ -152,6 +154,7 @@ class TrackControlsState {
     this.mediaTitle,
     this.onSubtitleDownloaded,
     this.subtitleSearchSupported = true,
+    this.autoSubtitleFetch,
   });
 
   /// Transcoded subtitle choices must be negotiated with the server and

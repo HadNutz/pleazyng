@@ -18,11 +18,13 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:rate_limiter/rate_limiter.dart';
 import 'package:flutter/services.dart'
     show LogicalKeyboardKey, PhysicalKeyboardKey, KeyEvent, KeyDownEvent, KeyUpEvent, KeyRepeatEvent, HardwareKeyboard;
+
 import '../../services/fullscreen_state_manager.dart';
 import '../../services/macos_window_service.dart';
 import '../../services/pip_service.dart';
 import '../../services/playback_initialization_types.dart';
 import '../../services/playback_subtitle_resolver.dart';
+
 import 'package:window_manager/window_manager.dart';
 
 import '../../mixins/listenable_bindings_mixin.dart';
@@ -90,12 +92,14 @@ import 'widgets/performance_overlay/performance_overlay.dart';
 import '../rasterized_gradient.dart';
 import 'mobile_video_controls.dart';
 import 'desktop_video_controls.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../models/shader_preset.dart';
 import '../../providers/playback_state_provider.dart';
 import '../../providers/shader_provider.dart';
 import '../../services/shader_service.dart';
+import '../../services/subtitle_automatic_fetch.dart';
 import '../../watch_together/providers/watch_together_provider.dart';
 import '../../utils/error_message_utils.dart';
 
@@ -735,6 +739,7 @@ class PlexVideoControls extends StatefulWidget {
 
   /// Toast controller for VLC-style in-player notifications (rate changes, backend switch).
   final PlayerToastController toastController;
+  final SubtitleAutomaticFetch? autoSubtitleFetch;
 
   /// Seeds the chapter list so widget tests can exercise chapter-dependent
   /// behaviour without a media-server client. Production always loads through
@@ -754,6 +759,7 @@ class PlexVideoControls extends StatefulWidget {
     required this.volumeController,
     required this.metadata,
     required this.toastController,
+    this.autoSubtitleFetch,
     this.initialChapters,
     this.initialMarkers,
     this.onNext,

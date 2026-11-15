@@ -11,6 +11,27 @@ mixin _JellyfinSubtitleSearchMethods on _JellyfinClientInternals {
     bool? perfectMatch,
     bool? forced,
     bool? hearingImpaired,
+  }) => searchSubtitlesWithAbort(
+    ratingKey,
+    language: language,
+    title: title,
+    mediaIndex: mediaIndex,
+    mediaSourceId: mediaSourceId,
+    perfectMatch: perfectMatch,
+    forced: forced,
+    hearingImpaired: hearingImpaired,
+  );
+
+  Future<List<SubtitleSearchResult>> searchSubtitlesWithAbort(
+    String ratingKey, {
+    required String language,
+    String? title,
+    int mediaIndex = 0,
+    String? mediaSourceId,
+    bool? perfectMatch,
+    bool? forced,
+    bool? hearingImpaired,
+    AbortController? abort,
   }) async {
     final sourceId = dialect == MediaBrowserDialect.emby
         ? await _resolveSubtitleMediaSourceId(ratingKey, mediaIndex: mediaIndex, mediaSourceId: mediaSourceId)
@@ -27,6 +48,7 @@ mixin _JellyfinSubtitleSearchMethods on _JellyfinClientInternals {
         if (dialect == MediaBrowserDialect.emby) 'IsForced': ?forced,
         if (dialect == MediaBrowserDialect.emby) 'IsHearingImpaired': ?hearingImpaired,
       },
+      abort: abort,
     );
     throwIfHttpError(response);
 
@@ -92,6 +114,29 @@ mixin _JellyfinSubtitleSearchMethods on _JellyfinClientInternals {
     String? providerTitle,
     int mediaIndex = 0,
     String? mediaSourceId,
+  }) => downloadSubtitleWithAbort(
+    ratingKey,
+    key: key,
+    codec: codec,
+    language: language,
+    hearingImpaired: hearingImpaired,
+    forced: forced,
+    providerTitle: providerTitle,
+    mediaIndex: mediaIndex,
+    mediaSourceId: mediaSourceId,
+  );
+
+  Future<bool> downloadSubtitleWithAbort(
+    String ratingKey, {
+    required String key,
+    String? codec,
+    String? language,
+    bool hearingImpaired = false,
+    bool forced = false,
+    String? providerTitle,
+    int mediaIndex = 0,
+    String? mediaSourceId,
+    AbortController? abort,
   }) async {
     final sourceId = dialect == MediaBrowserDialect.emby
         ? await _resolveSubtitleMediaSourceId(ratingKey, mediaIndex: mediaIndex, mediaSourceId: mediaSourceId)
@@ -100,6 +145,7 @@ mixin _JellyfinSubtitleSearchMethods on _JellyfinClientInternals {
     final response = await _http.post(
       '/Items/${_segment(ratingKey)}/RemoteSearch/Subtitles/${_segment(key)}',
       queryParameters: {'MediaSourceId': ?sourceId},
+      abort: abort,
     );
     throwIfHttpError(response);
 

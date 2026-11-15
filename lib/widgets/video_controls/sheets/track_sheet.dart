@@ -30,6 +30,7 @@ import '../../../utils/snackbar_helper.dart';
 import '../../../widgets/app_icon.dart';
 import '../../../widgets/focusable_list_tile.dart';
 import '../../../widgets/overlay_sheet.dart';
+import '../../../widgets/subtitle_automatic_fetch_status.dart';
 import 'base_video_control_sheet.dart';
 import 'sheet_selection_column.dart';
 import 'sheet_split_columns.dart';
@@ -593,6 +594,26 @@ Future<void> _configureSubtitleReplayPreroll(BuildContext context) async {
 
 List<Widget> _buildSubtitleFooter(BuildContext context, TrackControlsState state, Player player) {
   final actions = <Widget>[];
+  final autoSubtitleFetch = state.autoSubtitleFetch;
+  if (autoSubtitleFetch != null) {
+    actions.add(
+      SubtitleAutomaticFetchStatus(
+        controller: autoSubtitleFetch,
+        onSearchAgain: state.canSearchSubtitles
+            ? () => OverlaySheetController.of(context).push(
+                builder: (_) => SubtitleSearchSheet(
+                  ratingKey: state.ratingKey,
+                  serverId: state.serverId!,
+                  mediaIndex: state.selectedMediaIndex,
+                  mediaTitle: state.mediaTitle,
+                  onSubtitleDownloaded: state.onSubtitleDownloaded,
+                ),
+              )
+            : null,
+      ),
+    );
+  }
+
   if (player.supportsSecondarySubtitles) {
     actions.add(
       FocusableListTile(

@@ -1,14 +1,17 @@
 import 'music/server_music_radio.dart';
 import 'music/music_account_scope.dart';
 import 'music/music_discovery.dart';
+
 import 'dart:async';
 import 'dart:convert';
+
 import '../media/tizen_playback_profile.dart';
 import '../media/webos_playback_profile.dart';
 import '../utils/serial_future_queue.dart';
 import '../utils/platform_detector.dart';
 import '../utils/isolate_helper.dart';
 import '../utils/json_utils.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
@@ -478,7 +481,8 @@ class PlexClient
         PlaylistArtworkClient,
         PlexLoudnessProfileClient,
         SonicMusicClient,
-        ArtistAlbumPagingClient {
+        ArtistAlbumPagingClient,
+        AbortableSubtitleProviderClient {
   @override
   PlexConfig config;
 
@@ -1679,6 +1683,28 @@ class PlexClient
     bool? perfectMatch,
     bool? forced,
     bool? hearingImpaired,
+  }) => searchSubtitlesWithAbort(
+    ratingKey,
+    language: language,
+    title: title,
+    mediaIndex: mediaIndex,
+    mediaSourceId: mediaSourceId,
+    perfectMatch: perfectMatch,
+    forced: forced,
+    hearingImpaired: hearingImpaired,
+  );
+
+  @override
+  Future<List<SubtitleSearchResult>> searchSubtitlesWithAbort(
+    String ratingKey, {
+    required String language,
+    String? title,
+    int mediaIndex = 0,
+    String? mediaSourceId,
+    bool? perfectMatch,
+    bool? forced,
+    bool? hearingImpaired,
+    AbortController? abort,
   }) async {
     return _wrapListApiCall<SubtitleSearchResult>(
       () => _http.get(
@@ -1690,6 +1716,7 @@ class PlexClient
           if (forced != null) 'forced': forced ? 1 : 0,
           if (perfectMatch != null) 'perfectMatch': perfectMatch ? 1 : 0,
         },
+        abort: abort,
       ),
       (response) {
         final container = _getMediaContainer(response);
@@ -1713,6 +1740,30 @@ class PlexClient
     String? providerTitle,
     int mediaIndex = 0,
     String? mediaSourceId,
+  }) => downloadSubtitleWithAbort(
+    ratingKey,
+    key: key,
+    codec: codec,
+    language: language,
+    hearingImpaired: hearingImpaired,
+    forced: forced,
+    providerTitle: providerTitle,
+    mediaIndex: mediaIndex,
+    mediaSourceId: mediaSourceId,
+  );
+
+  @override
+  Future<bool> downloadSubtitleWithAbort(
+    String ratingKey, {
+    required String key,
+    String? codec,
+    String? language,
+    bool hearingImpaired = false,
+    bool forced = false,
+    String? providerTitle,
+    int mediaIndex = 0,
+    String? mediaSourceId,
+    AbortController? abort,
   }) async {
     final response = await _http.put(
       '/library/metadata/$ratingKey/subtitles',
@@ -1724,6 +1775,7 @@ class PlexClient
         'forced': forced ? 1 : 0,
         if (providerTitle != null && providerTitle.isNotEmpty) 'providerTitle': providerTitle,
       },
+      abort: abort,
     );
     throwIfHttpError(response);
     return response.statusCode >= 200 && response.statusCode < 300;

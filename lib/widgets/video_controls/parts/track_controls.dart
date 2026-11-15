@@ -222,6 +222,7 @@ extension _PlexVideoControlsTrackMethods on _PlexVideoControlsState {
       onSubtitleDownloaded: _onSubtitleDownloaded,
       // Search Subtitles is gated by backend capabilities (Plex, Emby).
       subtitleSearchSupported: _supportsSubtitleSearch(),
+      autoSubtitleFetch: widget.autoSubtitleFetch,
     );
   }
 

@@ -90,9 +90,17 @@ extension _VideoPlayerBuildMethods on VideoPlayerScreenState {
   }
 
   Widget _buildLoadingSpinner() {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.black,
-      body: Center(child: PlayerLoadingIndicator()),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const PlayerLoadingIndicator(),
+            SubtitleAutomaticFetchStatus(controller: _autoSubtitleFetch),
+          ],
+        ),
+      ),
     );
   }
 
@@ -376,6 +384,7 @@ extension _VideoPlayerBuildMethods on VideoPlayerScreenState {
                             ? _visualEffects.toggleAmbientLighting
                             : null,
                         toastController: _toastController,
+                        autoSubtitleFetch: _autoSubtitleFetch,
                       ),
                     );
                   },
@@ -447,6 +456,21 @@ extension _VideoPlayerBuildMethods on VideoPlayerScreenState {
                 isBuffering: _isBuffering,
                 hasFirstFrame: _firstFrame.uiReady,
                 isExiting: _isExiting,
+              ),
+              ListenableBuilder(
+                listenable: _autoSubtitleFetch,
+                builder: (context, _) => _autoSubtitleFetch.busy
+                    ? Positioned(
+                        top: 80,
+                        left: 24,
+                        right: 24,
+                        child: Material(
+                          color: Colors.black87,
+                          borderRadius: BorderRadius.circular(8),
+                          child: SubtitleAutomaticFetchStatus(controller: _autoSubtitleFetch),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
               ),
               // Watch Together overlays (isolated from video surface repaints)
               const VideoPlayerWatchTogetherOverlays(),

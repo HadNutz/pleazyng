@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Bound preferred-language subtitle retrieval during startup, let viewers skip it, and expose status with an explicit provider-search retry.
+
 - Report the configured neural model pack separately from provider readiness and generated output.
 
 - Stop subtitle capture and reject stale AI subtitle results when the active profile or playback session changes.

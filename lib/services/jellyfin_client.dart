@@ -1,4 +1,5 @@
 import '../extras/extras_policy.dart' show mediaBrowserAllowsExternalExtras;
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -302,6 +303,7 @@ class JellyfinClient
         _JellyfinMetadataEditMethods
     implements
         MediaServerClient,
+        AbortableSubtitleProviderClient,
         LibraryGenreProvider,
         ConvertedDownloadClient,
         SeasonEpisodePagingClient,
