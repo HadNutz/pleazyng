@@ -26,14 +26,17 @@ import '../../../media/media_server_client.dart';
 import '../../../media/playback_rate.dart';
 import '../../../mpv/mpv.dart';
 import '../../../mpv/player/player_native.dart';
+import '../../../profiles/active_profile_provider.dart';
 import '../../../providers/shader_provider.dart';
 import '../../../screens/settings/settings_utils.dart' show DialogOption;
 import '../../../services/file_picker_service.dart';
 import '../../../services/scoped_player_prefs.dart';
+import '../../../services/subtitle_calibration_source.dart';
 import '../../../services/player_sync_offsets.dart';
 import '../../../services/motion_clarity_service.dart';
 import '../../../services/settings_service.dart';
 import '../../../services/motion_processing_service.dart';
+import '../../../services/playback_initialization_types.dart';
 import '../../../services/sleep_timer_service.dart';
 import '../../../services/video_filter_manager.dart';
 import '../../../utils/dialogs.dart';
@@ -693,6 +696,10 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
     // Created here so it can be passed as the overlay's initial focus target.
     // The creator disposes it after the overlay's lifecycle completes.
     final sliderFocusNode = FocusNode(debugLabel: 'SyncSlider');
+    final subtitleCalibrationRequest = isSubtitle
+        ? _subtitleCalibrationRequest(isSecondary: isSecondarySubtitle)
+        : null;
+    final syncMetadata = _state.metadata;
 
     // show() with new alignment replaces the current sheet (completing the
     // settings sheet future, which restarts the auto-hide timer via
@@ -712,15 +719,16 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
             sliderFocusNode: sliderFocusNode,
             initialSubtitleRate: ScopedPlayerPrefs.resolve(ScopedPlayerPrefs.subtitleSyncRate, _state.metadata),
             onSubtitleRateChanged: isSubtitle && !isSecondarySubtitle
-                ? (rate) => ScopedPlayerPrefs.write(ScopedPlayerPrefs.subtitleSyncRate, _state.metadata, rate)
+                ? (rate) => ScopedPlayerPrefs.write(ScopedPlayerPrefs.subtitleSyncRate, syncMetadata, rate)
                 : null,
+            subtitleCalibrationRequest: subtitleCalibrationRequest,
             onOffsetChanged: (offset) async {
               final pref = isSecondarySubtitle
                   ? ScopedPlayerPrefs.secondarySubtitleSyncOffset
                   : isSubtitle
                   ? ScopedPlayerPrefs.subtitleSyncOffset
                   : ScopedPlayerPrefs.audioSyncOffset;
-              await ScopedPlayerPrefs.write(pref, _state.metadata, offset);
+              await ScopedPlayerPrefs.write(pref, syncMetadata, offset);
             },
           ),
         )
@@ -734,6 +742,122 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
     // to run after that microtask.
     Future.microtask(() => _state.onCancelAutoHide?.call());
   }
+
+  SubtitleCalibrationRequest? _subtitleCalibrationRequest({required bool isSecondary}) {
+    final activeProfile = context.read<ActiveProfileProvider?>();
+    final profileId = activeProfile?.activeId?.trim();
+    final metadata = _state.metadata;
+    final serverId = _state.serverId?.trim();
+    final ratingKey = _state.ratingKey.trim();
+    final mediaIndex = _state.selectedMediaIndex;
+    final partOffsetMs = widget.player.timelineOffset.inMilliseconds;
+    final lane = isSecondary ? 'secondary' : 'primary';
+    final nativeSubtitle = isSecondary
+        ? widget.player.state.track.secondarySubtitle
+        : widget.player.state.track.subtitle;
+    final uriText = nativeSubtitle?.uri;
+    if (profileId == null ||
+        profileId.isEmpty ||
+        metadata == null ||
+        serverId == null ||
+        serverId.isEmpty ||
+        ratingKey.isEmpty ||
+        mediaIndex < 0 ||
+        partOffsetMs < 0 ||
+        nativeSubtitle == null ||
+        nativeSubtitle.id == SubtitleTrack.off.id ||
+        uriText == null ||
+        uriText.isEmpty) {
+      return null;
+    }
+    final uri = Uri.tryParse(uriText);
+    if (uri == null || !uri.isAbsolute || !const {'http', 'https', 'file'}.contains(uri.scheme)) return null;
+    final extensionHint = _subtitleExtensionForCodec(nativeSubtitle.codec);
+    if (extensionHint == null) return null;
+    PlaybackSubtitleSidecar? sidecar;
+    for (final candidate in _state.sourceSubtitleSidecars) {
+      if (candidate.track.uri == uriText) {
+        sidecar = candidate;
+        break;
+      }
+    }
+    if (sidecar == null) return null;
+    final selectedSourceStreamId = isSecondary
+        ? _state.selectedSecondarySubtitleStreamId
+        : _state.selectedSubtitleChoice?.sourceStreamId;
+    if (selectedSourceStreamId != null && sidecar.sourceStreamId != selectedSourceStreamId) return null;
+    final nativeAudio = widget.player.state.track.audio?.id.toString();
+    final audioTrackIdentity = _state.selectedAudioStreamId?.toString() ?? nativeAudio;
+    if (audioTrackIdentity == null || audioTrackIdentity.isEmpty) return null;
+    final subtitleTrackIdentity = sidecar.sourceStreamId?.toString() ?? nativeSubtitle.id;
+    final partId = _state.sourcePartId?.toString() ?? 'media-index:$mediaIndex';
+    final itemKey = metadata.globalKey;
+    final nativeSubtitleId = nativeSubtitle.id;
+    final expectedAudioNativeId = nativeAudio;
+    final expectedSubtitleUri = uriText;
+    final expectedPartOffset = partOffsetMs;
+    final expectedSourceStreamId = sidecar.sourceStreamId;
+    final expectedSelectedAudioId = _state.selectedAudioStreamId;
+    final expectedRatingKey = ratingKey;
+    final expectedServerId = serverId;
+    final expectedPartId = _state.sourcePartId;
+    final expectedMediaIndex = mediaIndex;
+    final expectedMetadataKey = itemKey;
+    return SubtitleCalibrationRequest(
+      uri: uri,
+      profileId: profileId,
+      serverId: serverId,
+      ratingKey: ratingKey,
+      mediaIndex: mediaIndex,
+      partId: partId,
+      partOffsetMs: partOffsetMs,
+      audioTrackIdentity: audioTrackIdentity,
+      subtitleTrackIdentity: subtitleTrackIdentity,
+      lane: lane,
+      extensionHint: extensionHint,
+      displayName: uri.pathSegments.isEmpty ? 'subtitle$extensionHint' : uri.pathSegments.last,
+      isCurrent: () async {
+        if (!mounted ||
+            activeProfile?.activeId?.trim() != profileId ||
+            widget.player.disposed ||
+            widget.player.timelineOffset.inMilliseconds != expectedPartOffset) {
+          return false;
+        }
+        final currentState = _state;
+        final currentMetadata = currentState.metadata;
+        if (currentMetadata == null ||
+            currentMetadata.globalKey != expectedMetadataKey ||
+            currentState.serverId?.trim() != expectedServerId ||
+            currentState.ratingKey.trim() != expectedRatingKey ||
+            currentState.selectedMediaIndex != expectedMediaIndex ||
+            currentState.sourcePartId != expectedPartId ||
+            currentState.selectedAudioStreamId != expectedSelectedAudioId) {
+          return false;
+        }
+        final currentSubtitle = isSecondary
+            ? widget.player.state.track.secondarySubtitle
+            : widget.player.state.track.subtitle;
+        if (currentSubtitle?.id != nativeSubtitleId || currentSubtitle?.uri != expectedSubtitleUri) return false;
+        if (widget.player.state.track.audio?.id.toString() != expectedAudioNativeId) return false;
+        final currentSourceId = isSecondary
+            ? currentState.selectedSecondarySubtitleStreamId
+            : currentState.selectedSubtitleChoice?.sourceStreamId;
+        if (expectedSourceStreamId != null && currentSourceId != expectedSourceStreamId) return false;
+        return currentState.sourceSubtitleSidecars.any(
+          (candidate) =>
+              candidate.track.uri == expectedSubtitleUri && candidate.sourceStreamId == expectedSourceStreamId,
+        );
+      },
+    );
+  }
+
+  String? _subtitleExtensionForCodec(String? codec) => switch (codec?.toLowerCase()) {
+    'subrip' || 'srt' => '.srt',
+    'webvtt' || 'vtt' => '.vtt',
+    'ass' => '.ass',
+    'ssa' => '.ssa',
+    _ => null,
+  };
 
   void _navigateBack() {
     setState(() {
@@ -2754,6 +2878,7 @@ class _CompactSyncBar extends StatefulWidget {
   final int initialOffset;
   final double initialSubtitleRate;
   final Future<void> Function(double rate)? onSubtitleRateChanged;
+  final SubtitleCalibrationRequest? subtitleCalibrationRequest;
   final Future<void> Function(int offset) onOffsetChanged;
   final FocusNode sliderFocusNode;
 
@@ -2766,6 +2891,7 @@ class _CompactSyncBar extends StatefulWidget {
     required this.initialOffset,
     required this.initialSubtitleRate,
     required this.onSubtitleRateChanged,
+    required this.subtitleCalibrationRequest,
     required this.onOffsetChanged,
     required this.sliderFocusNode,
   });
@@ -2801,6 +2927,7 @@ class _CompactSyncBarState extends State<_CompactSyncBar> {
             initialOffset: widget.initialOffset,
             initialSubtitleRate: widget.initialSubtitleRate,
             onSubtitleRateChanged: widget.onSubtitleRateChanged,
+            subtitleCalibrationRequest: widget.subtitleCalibrationRequest,
             onOffsetChanged: widget.onOffsetChanged,
             sliderFocusNode: widget.sliderFocusNode,
             resetFocusNode: _resetFocusNode,

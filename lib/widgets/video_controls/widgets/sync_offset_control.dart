@@ -11,7 +11,9 @@ import '../../../focus/focusable_wrapper.dart';
 import '../../../mpv/mpv.dart';
 import '../../../services/player_sync_offsets.dart';
 import '../../../services/scoped_player_prefs.dart';
+import '../../../services/subtitle_calibration_source.dart';
 import '../../../services/subtitle_sync_calibration.dart';
+import '../sheets/subtitle_calibration_dialog.dart';
 import '../../../theme/mono_tokens.dart';
 import '../../../utils/formatters.dart';
 import '../../../utils/app_logger.dart';
@@ -25,6 +27,7 @@ class SyncOffsetControl extends StatefulWidget {
   final int initialOffset;
   final double initialSubtitleRate;
   final Future<void> Function(double rate)? onSubtitleRateChanged;
+  final SubtitleCalibrationRequest? subtitleCalibrationRequest;
   final Future<void> Function(int offset) onOffsetChanged;
 
   /// Focus node for the reset button. When provided from the parent, allows
@@ -47,6 +50,7 @@ class SyncOffsetControl extends StatefulWidget {
     required this.initialOffset,
     this.initialSubtitleRate = 1.0,
     this.onSubtitleRateChanged,
+    this.subtitleCalibrationRequest,
     required this.onOffsetChanged,
     this.resetFocusNode,
     this.closeFocusNode,
@@ -459,7 +463,61 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
     await _saveSubtitleCalibrationWithUndo(calibration);
   }
 
-  Future<void> _saveSubtitleCalibrationWithUndo(SubtitleSyncCalibration calibration) async {
+  Future<void> _openSidecarCalibration() async {
+    final request = widget.subtitleCalibrationRequest;
+    if (request == null || !await request.isCurrent() || !mounted) return;
+    var previewApplied = false;
+    var saved = false;
+    final result = await showDialog<SubtitleSyncCalibrationFit>(
+      context: context,
+      builder: (dialogContext) => SubtitleCalibrationDialog(
+        player: widget.player,
+        request: request,
+        previousRate: _confirmedSubtitleRate,
+        previousDelayMs: _confirmedOffset.round(),
+        canApplyNative: request.lane == 'primary' && _canUseSubtitleDriftCorrection,
+        onPreview: (fit) async {
+          if (!await request.isCurrent()) return false;
+          final applied = await _previewSubtitleCalibration(fit.calibration);
+          previewApplied = applied;
+          return applied;
+        },
+        onSave: (fit) async {
+          if (!await request.isCurrent()) return false;
+          final applied = await _saveSubtitleCalibrationWithUndo(fit.calibration);
+          saved = applied;
+          return applied;
+        },
+      ),
+    );
+    if (!mounted) return;
+    if (result == null && previewApplied && !saved) await _rollbackSubtitlePreview();
+  }
+
+  Widget _buildSidecarCalibrationButton() => FocusableWrapper(
+    onSelect: _openSidecarCalibration,
+    borderRadius: 8,
+    autoScroll: false,
+    useBackgroundFocus: true,
+    child: Tooltip(
+      message: context.t.videoSettings.subtitleDriftCalibration,
+      child: Semantics(
+        button: true,
+        label: context.t.videoSettings.subtitleDriftCalibration,
+        child: GestureDetector(
+          onTap: _openSidecarCalibration,
+          child: Container(
+            height: 36,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            alignment: Alignment.center,
+            child: Text(context.t.videoSettings.subtitleDriftCalibration),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  Future<bool> _saveSubtitleCalibrationWithUndo(SubtitleSyncCalibration calibration) async {
     final previous = SubtitleSyncCalibration(
       timestampMultiplier: _confirmedSubtitleRate,
       delayMs: _confirmedOffset.round(),
@@ -467,12 +525,13 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
     final changed =
         previous.delayMs != calibration.delayMs ||
         (previous.timestampMultiplier - calibration.timestampMultiplier).abs() > 0.001;
-    await _applySubtitleCalibration(calibration);
-    if (!mounted) return;
+    final saved = await _applySubtitleCalibration(calibration);
+    if (!mounted || !saved) return false;
     final applied =
         _confirmedOffset.round() == calibration.delayMs &&
         (_confirmedSubtitleRate - calibration.timestampMultiplier).abs() <= 0.001;
     setState(() => _undoSubtitleCalibration = changed && applied ? previous : null);
+    return applied;
   }
 
   Future<void> _undoLastSubtitleCalibration() async {
@@ -492,6 +551,7 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
 
   Future<bool> _previewSubtitleCalibration(SubtitleSyncCalibration calibration) async {
     if (!_canUseSubtitleDriftCorrection) return false;
+    if (!await _calibrationContextIsCurrent()) return false;
 
     final targetPlayer = widget.player;
     final propertyName = widget.propertyName;
@@ -504,6 +564,7 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
 
     try {
       final committed = await coordinator.commitIfLatest(propertyName, writeToken, () async {
+        if (!await _calibrationContextIsCurrent()) throw StateError('The selected subtitle changed.');
         rollbackOffset = _confirmedOffset.round();
         rollbackRate = _confirmedSubtitleRate;
         final offsets = PlayerSyncOffsets.of(targetPlayer);
@@ -526,21 +587,24 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
               (appliedDelay * 1000 - calibration.delayMs).abs() > 2) {
             throw StateError('The player did not apply the subtitle preview.');
           }
+          if (!await _calibrationContextIsCurrent()) throw StateError('The selected subtitle changed.');
 
           offsets.recordSubtitleRate(appliedRate);
           offsets.recordApplied(propertyName, (appliedDelay * 1000).round());
         } catch (_) {
-          try {
-            await targetPlayer.setProperty(PlayerSyncOffsets.subtitleRateProperty, rollbackRate.toStringAsFixed(6));
-            await targetPlayer.setProperty(propertyName, (rollbackOffset / 1000.0).toString());
-            offsets.recordSubtitleRate(rollbackRate);
-            offsets.recordApplied(propertyName, rollbackOffset);
-          } catch (rollbackError, rollbackStackTrace) {
-            appLogger.w(
-              'Could not restore subtitle timing after drift preview failed',
-              error: rollbackError,
-              stackTrace: rollbackStackTrace,
-            );
+          if (await _calibrationContextIsCurrent()) {
+            try {
+              await targetPlayer.setProperty(PlayerSyncOffsets.subtitleRateProperty, rollbackRate.toStringAsFixed(6));
+              await targetPlayer.setProperty(propertyName, (rollbackOffset / 1000.0).toString());
+              offsets.recordSubtitleRate(rollbackRate);
+              offsets.recordApplied(propertyName, rollbackOffset);
+            } catch (rollbackError, rollbackStackTrace) {
+              appLogger.w(
+                'Could not restore subtitle timing after drift preview failed',
+                error: rollbackError,
+                stackTrace: rollbackStackTrace,
+              );
+            }
           }
           rethrow;
         }
@@ -576,6 +640,7 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
 
   Future<void> _rollbackSubtitlePreview() async {
     if (!_canUseSubtitleDriftCorrection) return;
+    if (!await _calibrationContextIsCurrent()) return;
 
     final targetPlayer = widget.player;
     final propertyName = widget.propertyName;
@@ -588,6 +653,7 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
 
     try {
       final committed = await coordinator.commitIfLatest(propertyName, writeToken, () async {
+        if (!await _calibrationContextIsCurrent()) return;
         await targetPlayer.setProperty(PlayerSyncOffsets.subtitleRateProperty, rate.toStringAsFixed(6));
         await targetPlayer.setProperty(propertyName, (offset / 1000.0).toString());
         final offsets = PlayerSyncOffsets.of(targetPlayer);
@@ -611,8 +677,8 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
     }
   }
 
-  Future<void> _applySubtitleCalibration(SubtitleSyncCalibration calibration) async {
-    if (!_canUseSubtitleDriftCorrection) return;
+  Future<bool> _applySubtitleCalibration(SubtitleSyncCalibration calibration) async {
+    if (!_canUseSubtitleDriftCorrection || !await _calibrationContextIsCurrent()) return false;
 
     final targetPlayer = widget.player;
     final propertyName = widget.propertyName;
@@ -627,6 +693,7 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
 
     try {
       final committed = await coordinator.commitIfLatest(propertyName, writeToken, () async {
+        if (!await _calibrationContextIsCurrent()) throw StateError('The selected subtitle changed.');
         rollbackOffset = _confirmedOffset.round();
         rollbackRate = _confirmedSubtitleRate;
         final offsets = PlayerSyncOffsets.of(targetPlayer);
@@ -649,6 +716,7 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
               (appliedDelay * 1000 - calibration.delayMs).abs() > 2) {
             throw StateError('The player did not apply the subtitle drift correction.');
           }
+          if (!await _calibrationContextIsCurrent()) throw StateError('The selected subtitle changed.');
 
           final appliedOffsetMs = (appliedDelay * 1000).round();
           offsets.recordSubtitleRate(appliedRate);
@@ -658,27 +726,29 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
           _confirmedOffset = appliedOffsetMs.toDouble();
           _confirmedSubtitleRate = appliedRate;
         } catch (_) {
-          try {
-            await targetPlayer.setProperty(PlayerSyncOffsets.subtitleRateProperty, rollbackRate.toStringAsFixed(6));
-            await targetPlayer.setProperty(propertyName, (rollbackOffset / 1000.0).toString());
-            offsets.recordSubtitleRate(rollbackRate);
-            offsets.recordApplied(propertyName, rollbackOffset);
-          } catch (rollbackError, rollbackStackTrace) {
-            appLogger.w(
-              'Could not restore subtitle timing after drift calibration failed',
-              error: rollbackError,
-              stackTrace: rollbackStackTrace,
-            );
-          }
-          try {
-            await persistRate(rollbackRate);
-            await persistOffset(rollbackOffset);
-          } catch (rollbackError, rollbackStackTrace) {
-            appLogger.w(
-              'Could not restore saved subtitle timing after drift calibration failed',
-              error: rollbackError,
-              stackTrace: rollbackStackTrace,
-            );
+          if (await _calibrationContextIsCurrent()) {
+            try {
+              await targetPlayer.setProperty(PlayerSyncOffsets.subtitleRateProperty, rollbackRate.toStringAsFixed(6));
+              await targetPlayer.setProperty(propertyName, (rollbackOffset / 1000.0).toString());
+              offsets.recordSubtitleRate(rollbackRate);
+              offsets.recordApplied(propertyName, rollbackOffset);
+            } catch (rollbackError, rollbackStackTrace) {
+              appLogger.w(
+                'Could not restore subtitle timing after drift calibration failed',
+                error: rollbackError,
+                stackTrace: rollbackStackTrace,
+              );
+            }
+            try {
+              await persistRate(rollbackRate);
+              await persistOffset(rollbackOffset);
+            } catch (rollbackError, rollbackStackTrace) {
+              appLogger.w(
+                'Could not restore saved subtitle timing after drift calibration failed',
+                error: rollbackError,
+                stackTrace: rollbackStackTrace,
+              );
+            }
           }
           rethrow;
         }
@@ -690,12 +760,13 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
           bindingGeneration != _bindingGeneration ||
           targetPlayer != widget.player ||
           propertyName != widget.propertyName) {
-        return;
+        return false;
       }
       setState(() {
         _currentOffset = _confirmedOffset;
         _currentSubtitleRate = _confirmedSubtitleRate;
       });
+      return true;
     } catch (error, stackTrace) {
       appLogger.w('Could not calibrate subtitle drift', error: error, stackTrace: stackTrace);
       if (!mounted ||
@@ -703,13 +774,19 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
           bindingGeneration != _bindingGeneration ||
           targetPlayer != widget.player ||
           propertyName != widget.propertyName) {
-        return;
+        return false;
       }
       setState(() {
         _currentOffset = _confirmedOffset;
         _currentSubtitleRate = _confirmedSubtitleRate;
       });
+      return false;
     }
+  }
+
+  Future<bool> _calibrationContextIsCurrent() async {
+    final request = widget.subtitleCalibrationRequest;
+    return request == null || await request.isCurrent();
   }
 
   Widget _buildSubtitleDriftButton() {
@@ -1077,6 +1154,7 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
                   _buildSubtitleStepButton(previous: true),
                   _buildSubtitleStepButton(previous: false),
                   if (_supportsSubtitleDriftCalibration) _buildSubtitleDriftButton(),
+                  if (widget.subtitleCalibrationRequest != null) _buildSidecarCalibrationButton(),
                   if (_undoSubtitleCalibration != null) _buildUndoSubtitleDriftButton(),
                 ],
               ),

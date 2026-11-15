@@ -7,6 +7,7 @@
 - Allow trusted-main webOS-only validation builds through the hybrid runner profile so private C6 test packages can be built.
 
 - Bound preferred-language subtitle retrieval during startup, let viewers skip it, and expose status with an explicit provider-search retry.
+- Calibrate selected main-library subtitle sidecars from up to 12 cue anchors, with scoped native preview/save, exact-byte local history, and separate cut-aware SRT/WebVTT exports that preserve the original. Cues removed before playback require confirmation; see [native sidecar calibration](docs/plezyng/subtitles/NATIVE-CALIBRATION.md) for identity and server-buffer limits.
 
 - Report the configured neural model pack separately from provider readiness and generated output.
 
