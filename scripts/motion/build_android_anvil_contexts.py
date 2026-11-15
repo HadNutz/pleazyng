@@ -21,6 +21,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -192,6 +193,45 @@ def publish_manifest(output: Path, manifest: dict[str, Any]) -> Path:
 def run(command: list[str], *, env: dict[str, str], cwd: Path) -> None:
     print("+", " ".join(command), flush=True)
     subprocess.run(command, check=True, cwd=cwd, env=env)
+
+
+def clear_executable_stack_if_needed(
+    model_library: Path,
+    *,
+    env: dict[str, str],
+    cwd: Path,
+) -> None:
+    """Clear an executable-stack request from QAIRT's generated host wrapper."""
+    patchelf = shutil.which("patchelf")
+    if patchelf is None:
+        return
+
+    inspection = subprocess.run(
+        [patchelf, "--print-execstack", str(model_library)],
+        check=True,
+        capture_output=True,
+        text=True,
+        cwd=cwd,
+        env=env,
+    )
+    if not inspection.stdout.strip().endswith("X"):
+        return
+
+    # This is a generated x86_64 model wrapper used only by the host context
+    # generator, not an Android library. Clear its stack request without
+    # weakening the host's executable-stack policy.
+    run([patchelf, "--clear-execstack", str(model_library)], env=env, cwd=cwd)
+    verified = subprocess.run(
+        [patchelf, "--print-execstack", str(model_library)],
+        check=True,
+        capture_output=True,
+        text=True,
+        cwd=cwd,
+        env=env,
+    )
+    if not verified.stdout.strip().endswith("-"):
+        raise RuntimeError(f"Could not clear executable-stack request from {model_library}")
+    print("Cleared executable-stack request from temporary QNN model library", flush=True)
 
 
 def calibration_list(calibration_root: Path, resolution: str, work_dir: Path) -> Path:
@@ -376,6 +416,7 @@ def compile_context(
     model_library = work / "x86_64-linux-clang" / f"lib{graph_name}.so"
     if not model_library.is_file():
         raise RuntimeError(f"QNN model library was not produced: {model_library}")
+    clear_executable_stack_if_needed(model_library, env=env, cwd=work)
 
     target_dir = output / target_id / f"{model_id}-{resolution}"
     target_dir.mkdir(parents=True, exist_ok=True)
