@@ -4079,8 +4079,6 @@ class _Translations$subtitleAiUi$it extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Avvia sottotitoli in diretta';
 	@override String get liveCaptureStop => 'Interrompi sottotitoli in diretta';
-	@override String get inferenceProviderNotice => 'La CPU è la base. GPU, Core ML, QNN e RKNN richiedono i runtime installati, ma non provano l’esecuzione hardware. Le richieste non supportate o non riuscite vengono riprovate sulla CPU; l’esecuzione di ogni singola operazione potrebbe non essere verificata.';
-	@override String get translationProviderNotice => 'Argos non riporta l’esecuzione hardware per ogni sottotitolo e ML Kit non espone la scelta CPU/GPU.';
 }
 
 // Path: romm
@@ -9392,8 +9390,6 @@ extension on TranslationsIt {
 			'podcasts.removeFinishedAfter' => 'Rimuovi i download completati dopo',
 			'subtitleAiUi.liveCaptureStart' => 'Avvia sottotitoli in diretta',
 			'subtitleAiUi.liveCaptureStop' => 'Interrompi sottotitoli in diretta',
-			'subtitleAiUi.inferenceProviderNotice' => 'La CPU è la base. GPU, Core ML, QNN e RKNN richiedono i runtime installati, ma non provano l’esecuzione hardware. Le richieste non supportate o non riuscite vengono riprovate sulla CPU; l’esecuzione di ogni singola operazione potrebbe non essere verificata.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos non riporta l’esecuzione hardware per ogni sottotitolo e ML Kit non espone la scelta CPU/GPU.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9700,10 +9696,10 @@ extension on TranslationsIt {
 			'musicTools.playlistRecipient' => 'Nome utente Plex o email',
 			'musicTools.playlistSharingHint' => 'Concedi l’accesso a questa playlist e ai suoi brani. Il destinatario potrebbe dover accettare un invito.',
 			'musicTools.playlistSharingFailed' => 'Impossibile richiedere l’accesso alla playlist.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex ha accettato la richiesta di accesso.',
 			'musicTools.playlistAccessList' => 'Accesso attuale',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Nessun accesso concesso alla playlist',
 			'musicTools.filterType' => 'Tipo di filtro',
 			'musicTools.peak' => 'Picco',

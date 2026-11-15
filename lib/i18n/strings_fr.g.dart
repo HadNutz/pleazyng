@@ -4106,8 +4106,6 @@ class Translations$subtitleAiUi$fr extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Démarrer les sous-titres en direct';
 	@override String get liveCaptureStop => 'Arrêter les sous-titres en direct';
-	@override String get inferenceProviderNotice => 'Le CPU est la base. GPU, Core ML, QNN et RKNN demandent les environnements installés, sans prouver une exécution matérielle. Les demandes non prises en charge ou en échec sont réessayées sur CPU ; le placement de chaque opération peut rester non vérifié.';
-	@override String get translationProviderNotice => 'Argos ne signale pas le placement matériel pour chaque sous-titre et ML Kit ne précise pas le choix CPU/GPU.';
 }
 
 // Path: romm
@@ -9449,8 +9447,6 @@ extension on TranslationsFr {
 			'podcasts.removeFinishedAfter' => 'Supprimer les téléchargements terminés après',
 			'subtitleAiUi.liveCaptureStart' => 'Démarrer les sous-titres en direct',
 			'subtitleAiUi.liveCaptureStop' => 'Arrêter les sous-titres en direct',
-			'subtitleAiUi.inferenceProviderNotice' => 'Le CPU est la base. GPU, Core ML, QNN et RKNN demandent les environnements installés, sans prouver une exécution matérielle. Les demandes non prises en charge ou en échec sont réessayées sur CPU ; le placement de chaque opération peut rester non vérifié.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos ne signale pas le placement matériel pour chaque sous-titre et ML Kit ne précise pas le choix CPU/GPU.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9737,10 +9733,10 @@ extension on TranslationsFr {
 			'musicTools.days' => 'Jours',
 			'musicTools.albumBlocks' => 'Garder les albums entiers',
 			'musicTools.home' => 'Musique',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'Écoutés récemment',
 			'musicTools.apiKey' => 'Clé API',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.missing' => 'N/D',
 			'musicTools.minutes' => 'Minutes',
 			'musicTools.rules' => 'Filtres',

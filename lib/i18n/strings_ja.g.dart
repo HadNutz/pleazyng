@@ -4067,8 +4067,6 @@ class _Translations$subtitleAiUi$ja extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'ライブ字幕を開始';
 	@override String get liveCaptureStop => 'ライブ字幕を停止';
-	@override String get inferenceProviderNotice => 'CPUが基本です。GPU、Core ML、QNN、RKNNの選択はインストール済みランタイムへの要求であり、ハードウェアで実行された証明ではありません。未対応または失敗した要求はCPUで再試行され、各処理の実行先は確認できない場合があります。';
-	@override String get translationProviderNotice => 'Argosは字幕ごとのハードウェア実行先を報告せず、ML KitはCPU/GPUの選択を公開しません。';
 }
 
 // Path: romm
@@ -9380,8 +9378,6 @@ extension on TranslationsJa {
 			'podcasts.removeFinishedAfter' => '再生済みのダウンロードを削除するまでの期間',
 			'subtitleAiUi.liveCaptureStart' => 'ライブ字幕を開始',
 			'subtitleAiUi.liveCaptureStop' => 'ライブ字幕を停止',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPUが基本です。GPU、Core ML、QNN、RKNNの選択はインストール済みランタイムへの要求であり、ハードウェアで実行された証明ではありません。未対応または失敗した要求はCPUで再試行され、各処理の実行先は確認できない場合があります。',
-			'subtitleAiUi.translationProviderNotice' => 'Argosは字幕ごとのハードウェア実行先を報告せず、ML KitはCPU/GPUの選択を公開しません。',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9688,10 +9684,10 @@ extension on TranslationsJa {
 			'musicTools.playlistRecipient' => 'Plexユーザー名またはメール',
 			'musicTools.playlistSharingHint' => 'このプレイリストと曲へのアクセスを許可します。受信者による招待の承諾が必要な場合があります。',
 			'musicTools.playlistSharingFailed' => 'プレイリストへのアクセスをリクエストできませんでした。',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plexがアクセスのリクエストを受け付けました。',
 			'musicTools.playlistAccessList' => '現在のアクセス権',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'プレイリストのアクセス権は付与されていません',
 			'musicTools.filterType' => 'フィルターの種類',
 			'musicTools.peak' => 'ピーク',

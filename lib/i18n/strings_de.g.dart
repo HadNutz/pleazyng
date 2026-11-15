@@ -4072,8 +4072,6 @@ class _Translations$subtitleAiUi$de extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Live-Untertitel starten';
 	@override String get liveCaptureStop => 'Live-Untertitel stoppen';
-	@override String get inferenceProviderNotice => 'CPU ist die Basis. GPU, Core ML, QNN und RKNN fordern installierte Laufzeitumgebungen an, belegen aber keine Hardwareausführung. Nicht unterstützte oder fehlgeschlagene Anforderungen werden auf der CPU wiederholt; die Ausführung einzelner Vorgänge ist möglicherweise nicht bestätigt.';
-	@override String get translationProviderNotice => 'Argos meldet die Hardwareausführung nicht für jede Untertitelzeile; ML Kit gibt die CPU/GPU-Auswahl nicht an.';
 }
 
 // Path: romm
@@ -9385,8 +9383,6 @@ extension on TranslationsDe {
 			'podcasts.removeFinishedAfter' => 'Fertig gehörte Downloads entfernen nach',
 			'subtitleAiUi.liveCaptureStart' => 'Live-Untertitel starten',
 			'subtitleAiUi.liveCaptureStop' => 'Live-Untertitel stoppen',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU ist die Basis. GPU, Core ML, QNN und RKNN fordern installierte Laufzeitumgebungen an, belegen aber keine Hardwareausführung. Nicht unterstützte oder fehlgeschlagene Anforderungen werden auf der CPU wiederholt; die Ausführung einzelner Vorgänge ist möglicherweise nicht bestätigt.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos meldet die Hardwareausführung nicht für jede Untertitelzeile; ML Kit gibt die CPU/GPU-Auswahl nicht an.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9693,10 +9689,10 @@ extension on TranslationsDe {
 			'musicTools.playlistRecipient' => 'Plex-Benutzername oder E-Mail',
 			'musicTools.playlistSharingHint' => 'Zugriff auf diese Playlist und ihre Titel gewähren. Der Empfänger muss eventuell eine Einladung annehmen.',
 			'musicTools.playlistSharingFailed' => 'Playlist-Zugriff konnte nicht angefordert werden.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex hat die Zugriffsanfrage angenommen.',
 			'musicTools.playlistAccessList' => 'Aktueller Zugriff',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Keine Playlist-Zugriffsrechte vergeben',
 			'musicTools.filterType' => 'Filtertyp',
 			'musicTools.peak' => 'Spitze',

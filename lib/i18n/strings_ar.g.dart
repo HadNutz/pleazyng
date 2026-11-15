@@ -4164,8 +4164,6 @@ class _Translations$subtitleAiUi$ar extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'بدء الترجمة النصية المباشرة';
 	@override String get liveCaptureStop => 'إيقاف الترجمة النصية المباشرة';
-	@override String get inferenceProviderNotice => 'وحدة CPU هي الخيار الافتراضي. اختيارات GPU وCore ML وQNN وRKNN تطلب استخدام بيئات التشغيل المثبتة ولا تثبت التنفيذ على العتاد. عند عدم الدعم أو الفشل، يعاد المحاولة باستخدام CPU؛ وقد لا يمكن التحقق من التنفيذ لكل عملية.';
-	@override String get translationProviderNotice => 'لا يبلّغ Argos عن موضع التنفيذ على العتاد لكل مقطع ترجمة، ولا يكشف ML Kit اختيار CPU أو GPU.';
 }
 
 // Path: romm
@@ -9485,8 +9483,6 @@ extension on TranslationsAr {
 			'podcasts.removeFinishedAfter' => 'إزالة التنزيلات المنتهية بعد',
 			'subtitleAiUi.liveCaptureStart' => 'بدء الترجمة النصية المباشرة',
 			'subtitleAiUi.liveCaptureStop' => 'إيقاف الترجمة النصية المباشرة',
-			'subtitleAiUi.inferenceProviderNotice' => 'وحدة CPU هي الخيار الافتراضي. اختيارات GPU وCore ML وQNN وRKNN تطلب استخدام بيئات التشغيل المثبتة ولا تثبت التنفيذ على العتاد. عند عدم الدعم أو الفشل، يعاد المحاولة باستخدام CPU؛ وقد لا يمكن التحقق من التنفيذ لكل عملية.',
-			'subtitleAiUi.translationProviderNotice' => 'لا يبلّغ Argos عن موضع التنفيذ على العتاد لكل مقطع ترجمة، ولا يكشف ML Kit اختيار CPU أو GPU.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9793,10 +9789,10 @@ extension on TranslationsAr {
 			'musicTools.playlistRecipient' => 'اسم مستخدم Plex أو البريد الإلكتروني',
 			'musicTools.playlistSharingHint' => 'امنح الوصول إلى قائمة التشغيل هذه ومقاطعها. قد يحتاج المستلم إلى قبول دعوة.',
 			'musicTools.playlistSharingFailed' => 'تعذر طلب الوصول إلى قائمة التشغيل.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'قبل Plex طلب الوصول.',
 			'musicTools.playlistAccessList' => 'الوصول الحالي',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'لا توجد أذونات للوصول إلى قائمة التشغيل',
 			'musicTools.filterType' => 'نوع المرشح',
 			'musicTools.peak' => 'ذروة',

@@ -4072,8 +4072,6 @@ class _Translations$subtitleAiUi$tr extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Canlı altyazıları başlat';
 	@override String get liveCaptureStop => 'Canlı altyazıları durdur';
-	@override String get inferenceProviderNotice => 'Temel seçenek CPU’dur. GPU, Core ML, QNN ve RKNN kurulu çalışma ortamlarını kullanma isteğidir; donanımda çalıştığını kanıtlamaz. Desteklenmeyen veya başarısız istekler CPU’da yeniden denenir; her işlemin çalışma yeri doğrulanmamış olabilir.';
-	@override String get translationProviderNotice => 'Argos her altyazı satırı için donanım kullanımını bildirmez; ML Kit CPU/GPU seçimini göstermez.';
 }
 
 // Path: romm
@@ -9385,8 +9383,6 @@ extension on TranslationsTr {
 			'podcasts.removeFinishedAfter' => 'Bitirilen indirmeleri şu süreden sonra kaldır',
 			'subtitleAiUi.liveCaptureStart' => 'Canlı altyazıları başlat',
 			'subtitleAiUi.liveCaptureStop' => 'Canlı altyazıları durdur',
-			'subtitleAiUi.inferenceProviderNotice' => 'Temel seçenek CPU’dur. GPU, Core ML, QNN ve RKNN kurulu çalışma ortamlarını kullanma isteğidir; donanımda çalıştığını kanıtlamaz. Desteklenmeyen veya başarısız istekler CPU’da yeniden denenir; her işlemin çalışma yeri doğrulanmamış olabilir.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos her altyazı satırı için donanım kullanımını bildirmez; ML Kit CPU/GPU seçimini göstermez.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9693,10 +9689,10 @@ extension on TranslationsTr {
 			'musicTools.playlistRecipient' => 'Plex kullanıcı adı veya e-posta',
 			'musicTools.playlistSharingHint' => 'Bu çalma listesine ve parçalarına erişim verin. Alıcının bir daveti kabul etmesi gerekebilir.',
 			'musicTools.playlistSharingFailed' => 'Çalma listesi erişimi istenemedi.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex erişim isteğini kabul etti.',
 			'musicTools.playlistAccessList' => 'Geçerli erişim',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Çalma listesi erişimi verilmedi',
 			'musicTools.filterType' => 'Filtre türü',
 			'musicTools.peak' => 'Tepe',

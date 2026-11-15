@@ -4072,8 +4072,6 @@ class _Translations$subtitleAiUi$fa extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'شروع زیرنویس زنده';
 	@override String get liveCaptureStop => 'توقف زیرنویس زنده';
-	@override String get inferenceProviderNotice => 'CPU گزینهٔ پایه است. انتخاب GPU، Core ML، QNN و RKNN درخواست استفاده از محیط‌های نصب‌شده است و اجرای سخت‌افزاری را ثابت نمی‌کند. درخواست‌های پشتیبانی‌نشده یا ناموفق با CPU دوباره امتحان می‌شوند؛ ممکن است اجرای سخت‌افزاری هر عملیات قابل‌تأیید نباشد.';
-	@override String get translationProviderNotice => 'Argos اجرای سخت‌افزاری هر زیرنویس را گزارش نمی‌کند و ML Kit انتخاب CPU یا GPU را نشان نمی‌دهد.';
 }
 
 // Path: romm
@@ -9385,8 +9383,6 @@ extension on TranslationsFa {
 			'podcasts.removeFinishedAfter' => 'حذف بارگیری‌های تمام‌شده پس از',
 			'subtitleAiUi.liveCaptureStart' => 'شروع زیرنویس زنده',
 			'subtitleAiUi.liveCaptureStop' => 'توقف زیرنویس زنده',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU گزینهٔ پایه است. انتخاب GPU، Core ML، QNN و RKNN درخواست استفاده از محیط‌های نصب‌شده است و اجرای سخت‌افزاری را ثابت نمی‌کند. درخواست‌های پشتیبانی‌نشده یا ناموفق با CPU دوباره امتحان می‌شوند؛ ممکن است اجرای سخت‌افزاری هر عملیات قابل‌تأیید نباشد.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos اجرای سخت‌افزاری هر زیرنویس را گزارش نمی‌کند و ML Kit انتخاب CPU یا GPU را نشان نمی‌دهد.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9693,10 +9689,10 @@ extension on TranslationsFa {
 			'musicTools.playlistRecipient' => 'نام کاربری Plex یا ایمیل',
 			'musicTools.playlistSharingHint' => 'به این فهرست پخش و آهنگ‌های آن دسترسی بدهید. گیرنده ممکن است لازم باشد دعوتی را بپذیرد.',
 			'musicTools.playlistSharingFailed' => 'درخواست دسترسی به فهرست پخش ممکن نشد.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex درخواست دسترسی را پذیرفت.',
 			'musicTools.playlistAccessList' => 'دسترسی فعلی',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'هیچ دسترسی به فهرست پخش داده نشده است',
 			'musicTools.filterType' => 'نوع فیلتر',
 			'musicTools.peak' => 'اوج',

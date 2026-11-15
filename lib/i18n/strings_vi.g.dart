@@ -4049,8 +4049,6 @@ class _Translations$subtitleAiUi$vi extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Bắt đầu phụ đề trực tiếp';
 	@override String get liveCaptureStop => 'Dừng phụ đề trực tiếp';
-	@override String get inferenceProviderNotice => 'CPU là lựa chọn cơ bản. GPU, Core ML, QNN và RKNN là yêu cầu sử dụng môi trường đã cài đặt, không phải bằng chứng xử lý bằng phần cứng. Yêu cầu không được hỗ trợ hoặc thất bại sẽ thử lại bằng CPU; vị trí chạy của từng thao tác có thể chưa được xác minh.';
-	@override String get translationProviderNotice => 'Argos không báo cáo xử lý phần cứng cho từng dòng phụ đề và ML Kit không cho biết lựa chọn CPU/GPU.';
 }
 
 // Path: romm
@@ -9360,8 +9358,6 @@ extension on TranslationsVi {
 			'podcasts.removeFinishedAfter' => 'Xóa bản tải xuống đã nghe xong sau',
 			'subtitleAiUi.liveCaptureStart' => 'Bắt đầu phụ đề trực tiếp',
 			'subtitleAiUi.liveCaptureStop' => 'Dừng phụ đề trực tiếp',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU là lựa chọn cơ bản. GPU, Core ML, QNN và RKNN là yêu cầu sử dụng môi trường đã cài đặt, không phải bằng chứng xử lý bằng phần cứng. Yêu cầu không được hỗ trợ hoặc thất bại sẽ thử lại bằng CPU; vị trí chạy của từng thao tác có thể chưa được xác minh.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos không báo cáo xử lý phần cứng cho từng dòng phụ đề và ML Kit không cho biết lựa chọn CPU/GPU.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9668,10 +9664,10 @@ extension on TranslationsVi {
 			'musicTools.playlistRecipient' => 'Tên người dùng Plex hoặc email',
 			'musicTools.playlistSharingHint' => 'Cấp quyền truy cập danh sách phát này và các bản nhạc. Người nhận có thể cần chấp nhận lời mời.',
 			'musicTools.playlistSharingFailed' => 'Không thể yêu cầu truy cập danh sách phát.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex đã tiếp nhận yêu cầu truy cập.',
 			'musicTools.playlistAccessList' => 'Quyền truy cập hiện tại',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Chưa cấp quyền truy cập danh sách phát',
 			'musicTools.filterType' => 'Loại bộ lọc',
 			'musicTools.peak' => 'Đỉnh',

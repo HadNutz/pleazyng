@@ -4080,8 +4080,6 @@ class _Translations$subtitleAiUi$he extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'התחלת כתוביות בזמן אמת';
 	@override String get liveCaptureStop => 'עצירת כתוביות בזמן אמת';
-	@override String get inferenceProviderNotice => 'המעבד הוא ברירת המחדל. בחירה ב-GPU, ב-Core ML, ב-QNN או ב-RKNN מבקשת להשתמש בסביבת הריצה המותקנת, אך אינה מוכיחה שהחומרה ביצעה את העבודה. בקשה לא נתמכת או כושלת תנסה שוב במעבד; ייתכן שלא ניתן יהיה לאמת את המיקום של כל פעולה.';
-	@override String get translationProviderNotice => 'Argos לא מדווח על מיקום חומרה לכל כתובית, ו-ML Kit לא חושף בחירה בין מעבד ל-GPU.';
 }
 
 // Path: romm
@@ -9393,8 +9391,6 @@ extension on TranslationsHe {
 			'podcasts.removeFinishedAfter' => 'הסרת הורדות שהושלמו לאחר',
 			'subtitleAiUi.liveCaptureStart' => 'התחלת כתוביות בזמן אמת',
 			'subtitleAiUi.liveCaptureStop' => 'עצירת כתוביות בזמן אמת',
-			'subtitleAiUi.inferenceProviderNotice' => 'המעבד הוא ברירת המחדל. בחירה ב-GPU, ב-Core ML, ב-QNN או ב-RKNN מבקשת להשתמש בסביבת הריצה המותקנת, אך אינה מוכיחה שהחומרה ביצעה את העבודה. בקשה לא נתמכת או כושלת תנסה שוב במעבד; ייתכן שלא ניתן יהיה לאמת את המיקום של כל פעולה.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos לא מדווח על מיקום חומרה לכל כתובית, ו-ML Kit לא חושף בחירה בין מעבד ל-GPU.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9701,10 +9697,10 @@ extension on TranslationsHe {
 			'musicTools.playlistRecipient' => 'שם משתמש Plex או דוא״ל',
 			'musicTools.playlistSharingHint' => 'הענקת גישה לרשימה זו ולרצועות שלה. ייתכן שהנמען יצטרך לאשר הזמנה.',
 			'musicTools.playlistSharingFailed' => 'לא ניתן לבקש גישה לרשימת ההשמעה.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex קיבל את בקשת הגישה.',
 			'musicTools.playlistAccessList' => 'גישה נוכחית',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'לא הוענקו הרשאות גישה לרשימת ההשמעה',
 			'musicTools.filterType' => 'סוג מסנן',
 			'musicTools.peak' => 'שיא',

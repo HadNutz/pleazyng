@@ -4072,8 +4072,6 @@ class _Translations$subtitleAiUi$hi extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'लाइव कैप्शन शुरू करें';
 	@override String get liveCaptureStop => 'लाइव कैप्शन रोकें';
-	@override String get inferenceProviderNotice => 'CPU मूल विकल्प है। GPU, Core ML, QNN और RKNN चुने जाने पर इंस्टॉल किए गए रनटाइम का अनुरोध होता है, हार्डवेयर पर चलने का प्रमाण नहीं। असमर्थित या विफल अनुरोध CPU पर दोबारा चलते हैं; हर काम में हार्डवेयर का उपयोग सत्यापित नहीं हो सकता।';
-	@override String get translationProviderNotice => 'Argos हर कैप्शन के लिए हार्डवेयर उपयोग नहीं बताता और ML Kit CPU/GPU चयन नहीं दिखाता।';
 }
 
 // Path: romm
@@ -9385,8 +9383,6 @@ extension on TranslationsHi {
 			'podcasts.removeFinishedAfter' => 'पूरे सुने गए डाउनलोड इतने समय बाद हटाएँ',
 			'subtitleAiUi.liveCaptureStart' => 'लाइव कैप्शन शुरू करें',
 			'subtitleAiUi.liveCaptureStop' => 'लाइव कैप्शन रोकें',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU मूल विकल्प है। GPU, Core ML, QNN और RKNN चुने जाने पर इंस्टॉल किए गए रनटाइम का अनुरोध होता है, हार्डवेयर पर चलने का प्रमाण नहीं। असमर्थित या विफल अनुरोध CPU पर दोबारा चलते हैं; हर काम में हार्डवेयर का उपयोग सत्यापित नहीं हो सकता।',
-			'subtitleAiUi.translationProviderNotice' => 'Argos हर कैप्शन के लिए हार्डवेयर उपयोग नहीं बताता और ML Kit CPU/GPU चयन नहीं दिखाता।',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9693,10 +9689,10 @@ extension on TranslationsHi {
 			'musicTools.playlistRecipient' => 'Plex उपयोगकर्ता नाम या ईमेल',
 			'musicTools.playlistSharingHint' => 'इस प्लेलिस्ट और इसके ट्रैक का ऐक्सेस दें। प्राप्तकर्ता को निमंत्रण स्वीकार करना पड़ सकता है।',
 			'musicTools.playlistSharingFailed' => 'प्लेलिस्ट के ऐक्सेस का अनुरोध नहीं किया जा सका।',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex ने ऐक्सेस अनुरोध स्वीकार कर लिया।',
 			'musicTools.playlistAccessList' => 'मौजूदा ऐक्सेस',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'प्लेलिस्ट का ऐक्सेस किसी को नहीं दिया गया',
 			'musicTools.filterType' => 'फ़िल्टर का प्रकार',
 			'musicTools.peak' => 'शिखर',

@@ -4067,8 +4067,6 @@ class Translations$subtitleAiUi$zh extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => '开始实时字幕';
 	@override String get liveCaptureStop => '停止实时字幕';
-	@override String get inferenceProviderNotice => 'CPU 是基础选项。选择 GPU、Core ML、QNN 或 RKNN 只是请求使用已安装的运行环境，并不能证明由硬件执行。不受支持或失败的请求会改用 CPU 重试；每项操作的实际执行位置可能无法确认。';
-	@override String get translationProviderNotice => 'Argos 不会报告每条字幕的硬件执行位置，ML Kit 也不会公开 CPU/GPU 选择。';
 }
 
 // Path: romm
@@ -9380,8 +9378,6 @@ extension on TranslationsZh {
 			'podcasts.removeFinishedAfter' => '在以下时间后移除已听完的下载',
 			'subtitleAiUi.liveCaptureStart' => '开始实时字幕',
 			'subtitleAiUi.liveCaptureStop' => '停止实时字幕',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU 是基础选项。选择 GPU、Core ML、QNN 或 RKNN 只是请求使用已安装的运行环境，并不能证明由硬件执行。不受支持或失败的请求会改用 CPU 重试；每项操作的实际执行位置可能无法确认。',
-			'subtitleAiUi.translationProviderNotice' => 'Argos 不会报告每条字幕的硬件执行位置，ML Kit 也不会公开 CPU/GPU 选择。',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9688,10 +9684,10 @@ extension on TranslationsZh {
 			'musicTools.playlistRecipient' => 'Plex 用户名或电子邮件',
 			'musicTools.playlistSharingHint' => '授予对此播放列表及其曲目的访问权限。接收者可能需要接受邀请。',
 			'musicTools.playlistSharingFailed' => '无法请求播放列表访问权限。',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex 已接受访问请求。',
 			'musicTools.playlistAccessList' => '当前访问权限',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => '尚未授予播放列表访问权限',
 			'musicTools.filterType' => '滤波器类型',
 			'musicTools.peak' => '峰值',

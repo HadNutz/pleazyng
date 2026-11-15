@@ -4079,8 +4079,6 @@ class Translations$subtitleAiUi$pt extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Iniciar legendas em direto';
 	@override String get liveCaptureStop => 'Parar legendas em direto';
-	@override String get inferenceProviderNotice => 'A CPU é a opção base. GPU, Core ML, QNN e RKNN solicitam os ambientes instalados, mas não comprovam a execução por hardware. Pedidos não suportados ou falhados são repetidos na CPU; a execução de cada operação pode não ser verificada.';
-	@override String get translationProviderNotice => 'O Argos não informa o uso de hardware em cada legenda, e o ML Kit não revela a escolha entre CPU e GPU.';
 }
 
 // Path: romm
@@ -9392,8 +9390,6 @@ extension on TranslationsPt {
 			'podcasts.removeFinishedAfter' => 'Remover transferências concluídas após',
 			'subtitleAiUi.liveCaptureStart' => 'Iniciar legendas em direto',
 			'subtitleAiUi.liveCaptureStop' => 'Parar legendas em direto',
-			'subtitleAiUi.inferenceProviderNotice' => 'A CPU é a opção base. GPU, Core ML, QNN e RKNN solicitam os ambientes instalados, mas não comprovam a execução por hardware. Pedidos não suportados ou falhados são repetidos na CPU; a execução de cada operação pode não ser verificada.',
-			'subtitleAiUi.translationProviderNotice' => 'O Argos não informa o uso de hardware em cada legenda, e o ML Kit não revela a escolha entre CPU e GPU.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9700,10 +9696,10 @@ extension on TranslationsPt {
 			'musicTools.playlistRecipient' => 'Nome de utilizador Plex ou e-mail',
 			'musicTools.playlistSharingHint' => 'Conceda acesso a esta lista e às suas faixas. O destinatário poderá ter de aceitar um convite.',
 			'musicTools.playlistSharingFailed' => 'Não foi possível solicitar acesso à lista.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'O Plex aceitou o pedido de acesso.',
 			'musicTools.playlistAccessList' => 'Acesso atual',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Não há acessos concedidos à lista',
 			'musicTools.filterType' => 'Tipo de filtro',
 			'musicTools.peak' => 'Pico',

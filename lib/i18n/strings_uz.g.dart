@@ -4072,8 +4072,6 @@ class _Translations$subtitleAiUi$uz extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Jonli subtitrlarni boshlash';
 	@override String get liveCaptureStop => 'Jonli subtitrlarni to‘xtatish';
-	@override String get inferenceProviderNotice => 'Asosiy variant — CPU. GPU, Core ML, QNN va RKNN o‘rnatilgan bajarish muhitidan foydalanish so‘rovidir, ammo apparatda bajarilganini isbotlamaydi. Qo‘llab-quvvatlanmagan yoki muvaffaqiyatsiz so‘rovlar CPU’da qayta uriniladi; har bir amalning bajarilish joyi tasdiqlanmasligi mumkin.';
-	@override String get translationProviderNotice => 'Argos har bir subtitr satri uchun apparat ishlatilishini bildirmaydi, ML Kit esa CPU/GPU tanlovini ko‘rsatmaydi.';
 }
 
 // Path: romm
@@ -9385,8 +9383,6 @@ extension on TranslationsUz {
 			'podcasts.removeFinishedAfter' => 'Tugallangan yuklamalarni quyidagi muddatdan soʻng oʻchirish',
 			'subtitleAiUi.liveCaptureStart' => 'Jonli subtitrlarni boshlash',
 			'subtitleAiUi.liveCaptureStop' => 'Jonli subtitrlarni to‘xtatish',
-			'subtitleAiUi.inferenceProviderNotice' => 'Asosiy variant — CPU. GPU, Core ML, QNN va RKNN o‘rnatilgan bajarish muhitidan foydalanish so‘rovidir, ammo apparatda bajarilganini isbotlamaydi. Qo‘llab-quvvatlanmagan yoki muvaffaqiyatsiz so‘rovlar CPU’da qayta uriniladi; har bir amalning bajarilish joyi tasdiqlanmasligi mumkin.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos har bir subtitr satri uchun apparat ishlatilishini bildirmaydi, ML Kit esa CPU/GPU tanlovini ko‘rsatmaydi.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9693,10 +9689,10 @@ extension on TranslationsUz {
 			'musicTools.playlistRecipient' => 'Plex foydalanuvchi nomi yoki email',
 			'musicTools.playlistSharingHint' => 'Bu pleylist va uning treklariga kirishga ruxsat bering. Qabul qiluvchi taklifni qabul qilishi kerak bo‘lishi mumkin.',
 			'musicTools.playlistSharingFailed' => 'Pleylistga kirish so‘rovini yuborib bo‘lmadi.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex kirish so‘rovini qabul qildi.',
 			'musicTools.playlistAccessList' => 'Joriy kirish',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Pleylistga kirish ruxsati berilmagan',
 			'musicTools.filterType' => 'Filtr turi',
 			'musicTools.peak' => 'Choʻqqi',

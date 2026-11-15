@@ -4072,8 +4072,6 @@ class _Translations$subtitleAiUi$sv extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Starta direktextning';
 	@override String get liveCaptureStop => 'Stoppa direktextning';
-	@override String get inferenceProviderNotice => 'CPU är grundläget. GPU, Core ML, QNN och RKNN begär installerade körmiljöer men bevisar inte hårdvarukörning. Begäranden som inte stöds eller misslyckas försöks igen på CPU; placeringen för varje åtgärd kan vara obekräftad.';
-	@override String get translationProviderNotice => 'Argos rapporterar inte hårdvaruplacering per undertextrad och ML Kit visar inte CPU/GPU-valet.';
 }
 
 // Path: romm
@@ -9385,8 +9383,6 @@ extension on TranslationsSv {
 			'podcasts.removeFinishedAfter' => 'Ta bort färdiglyssnade nedladdningar efter',
 			'subtitleAiUi.liveCaptureStart' => 'Starta direktextning',
 			'subtitleAiUi.liveCaptureStop' => 'Stoppa direktextning',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU är grundläget. GPU, Core ML, QNN och RKNN begär installerade körmiljöer men bevisar inte hårdvarukörning. Begäranden som inte stöds eller misslyckas försöks igen på CPU; placeringen för varje åtgärd kan vara obekräftad.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos rapporterar inte hårdvaruplacering per undertextrad och ML Kit visar inte CPU/GPU-valet.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9693,10 +9689,10 @@ extension on TranslationsSv {
 			'musicTools.playlistRecipient' => 'Plex-användarnamn eller e-post',
 			'musicTools.playlistSharingHint' => 'Ge åtkomst till den här spellistan och dess spår. Mottagaren kan behöva godkänna en inbjudan.',
 			'musicTools.playlistSharingFailed' => 'Kunde inte begära åtkomst till spellistan.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex tog emot åtkomstbegäran.',
 			'musicTools.playlistAccessList' => 'Nuvarande åtkomst',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Ingen åtkomst till spellistan har beviljats',
 			'musicTools.filterType' => 'Filtertyp',
 			'musicTools.peak' => 'Topp',

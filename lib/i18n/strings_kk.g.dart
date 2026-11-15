@@ -4072,8 +4072,6 @@ class _Translations$subtitleAiUi$kk extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Тікелей субтитрлерді бастау';
 	@override String get liveCaptureStop => 'Тікелей субтитрлерді тоқтату';
-	@override String get inferenceProviderNotice => 'Негізгі нұсқа — CPU. GPU, Core ML, QNN және RKNN таңдау орнатылған орындау ортасына сұрау жібереді, бірақ аппараттық орындауды дәлелдемейді. Қолдау көрсетілмеген не сәтсіз сұраулар CPU арқылы қайта орындалады; әр операцияның орындалу ортасы расталмауы мүмкін.';
-	@override String get translationProviderNotice => 'Argos әр субтитр бойынша аппараттық орындауды көрсетпейді, ал ML Kit CPU/GPU таңдауын ашпайды.';
 }
 
 // Path: romm
@@ -9385,8 +9383,6 @@ extension on TranslationsKk {
 			'podcasts.removeFinishedAfter' => 'Аяқталған жүктеулерді кейін жою',
 			'subtitleAiUi.liveCaptureStart' => 'Тікелей субтитрлерді бастау',
 			'subtitleAiUi.liveCaptureStop' => 'Тікелей субтитрлерді тоқтату',
-			'subtitleAiUi.inferenceProviderNotice' => 'Негізгі нұсқа — CPU. GPU, Core ML, QNN және RKNN таңдау орнатылған орындау ортасына сұрау жібереді, бірақ аппараттық орындауды дәлелдемейді. Қолдау көрсетілмеген не сәтсіз сұраулар CPU арқылы қайта орындалады; әр операцияның орындалу ортасы расталмауы мүмкін.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos әр субтитр бойынша аппараттық орындауды көрсетпейді, ал ML Kit CPU/GPU таңдауын ашпайды.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9693,10 +9689,10 @@ extension on TranslationsKk {
 			'musicTools.playlistRecipient' => 'Plex пайдаланушы аты немесе электрондық пошта',
 			'musicTools.playlistSharingHint' => 'Осы тізімге және оның тректеріне қатынау беріңіз. Алушы шақыруды қабылдауы қажет болуы мүмкін.',
 			'musicTools.playlistSharingFailed' => 'Тізімге қатынау сұрауын жіберу мүмкін болмады.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex қатынау сұрауын қабылдады.',
 			'musicTools.playlistAccessList' => 'Ағымдағы қатынау',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Ойнату тізіміне қатынау берілмеген',
 			'musicTools.filterType' => 'Сүзгі түрі',
 			'musicTools.peak' => 'Шың',

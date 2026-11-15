@@ -4049,8 +4049,6 @@ class _Translations$subtitleAiUi$ms extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Mulakan sari kata langsung';
 	@override String get liveCaptureStop => 'Hentikan sari kata langsung';
-	@override String get inferenceProviderNotice => 'CPU ialah pilihan asas. GPU, Core ML, QNN dan RKNN meminta penggunaan masa jalan yang dipasang, tetapi tidak membuktikan pemprosesan perkakasan. Permintaan yang tidak disokong atau gagal dicuba semula pada CPU; penggunaan bagi setiap operasi mungkin tidak disahkan.';
-	@override String get translationProviderNotice => 'Argos tidak melaporkan penggunaan perkakasan bagi setiap sari kata, dan ML Kit tidak mendedahkan pilihan CPU/GPU.';
 }
 
 // Path: romm
@@ -9360,8 +9358,6 @@ extension on TranslationsMs {
 			'podcasts.removeFinishedAfter' => 'Alih keluar muat turun yang selesai selepas',
 			'subtitleAiUi.liveCaptureStart' => 'Mulakan sari kata langsung',
 			'subtitleAiUi.liveCaptureStop' => 'Hentikan sari kata langsung',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU ialah pilihan asas. GPU, Core ML, QNN dan RKNN meminta penggunaan masa jalan yang dipasang, tetapi tidak membuktikan pemprosesan perkakasan. Permintaan yang tidak disokong atau gagal dicuba semula pada CPU; penggunaan bagi setiap operasi mungkin tidak disahkan.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos tidak melaporkan penggunaan perkakasan bagi setiap sari kata, dan ML Kit tidak mendedahkan pilihan CPU/GPU.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9668,10 +9664,10 @@ extension on TranslationsMs {
 			'musicTools.playlistRecipient' => 'Nama pengguna Plex atau e-mel',
 			'musicTools.playlistSharingHint' => 'Berikan akses kepada senarai main ini dan lagunya. Penerima mungkin perlu menerima jemputan.',
 			'musicTools.playlistSharingFailed' => 'Tidak dapat meminta akses senarai main.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex menerima permintaan akses.',
 			'musicTools.playlistAccessList' => 'Akses semasa',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Tiada akses senarai main diberikan',
 			'musicTools.filterType' => 'Jenis penapis',
 			'musicTools.peak' => 'Puncak',

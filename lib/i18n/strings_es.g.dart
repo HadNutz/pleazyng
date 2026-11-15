@@ -4089,8 +4089,6 @@ class Translations$subtitleAiUi$es extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Iniciar subtítulos en directo';
 	@override String get liveCaptureStop => 'Detener subtítulos en directo';
-	@override String get inferenceProviderNotice => 'La CPU es la opción base. GPU, Core ML, QNN y RKNN solicitan los entornos instalados, pero no demuestran que se use el hardware. Si una solicitud no es compatible o falla, se vuelve a intentar con la CPU; puede que no se verifique la ejecución de cada operación.';
-	@override String get translationProviderNotice => 'Argos no informa del uso de hardware en cada subtítulo y ML Kit no muestra la selección de CPU o GPU.';
 }
 
 // Path: romm
@@ -9536,8 +9534,6 @@ extension on TranslationsEs {
 			'podcasts.removeFinishedAfter' => 'Eliminar las descargas terminadas después de',
 			'subtitleAiUi.liveCaptureStart' => 'Iniciar subtítulos en directo',
 			'subtitleAiUi.liveCaptureStop' => 'Detener subtítulos en directo',
-			'subtitleAiUi.inferenceProviderNotice' => 'La CPU es la opción base. GPU, Core ML, QNN y RKNN solicitan los entornos instalados, pero no demuestran que se use el hardware. Si una solicitud no es compatible o falla, se vuelve a intentar con la CPU; puede que no se verifique la ejecución de cada operación.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos no informa del uso de hardware en cada subtítulo y ML Kit no muestra la selección de CPU o GPU.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9817,10 +9813,10 @@ extension on TranslationsEs {
 			'bonusExtras.kind.interview' => 'Entrevistas',
 			'bonusExtras.kind.deletedScene' => 'Escenas eliminadas',
 			'bonusExtras.kind.bloopers' => 'Tomas falsas',
-			_ => null,
-		} ?? switch (path) {
 			'bonusExtras.kind.commentary' => 'Comentarios',
 			'bonusExtras.kind.trailer' => 'Tráilers',
+			_ => null,
+		} ?? switch (path) {
 			'bonusExtras.kind.analysis' => 'Análisis cinematográfico',
 			'bonusExtras.kind.other' => 'Otros extras',
 			'bonusExtras.setupHint' => 'Conecta un servidor de descubrimiento en Ajustes de extras para encontrar extras verificados en línea. Los extras de la biblioteca funcionan sin él.',

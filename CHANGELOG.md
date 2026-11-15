@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Restore localized subtitle provider-placement and live-capture model/session guidance.
 - Refresh pinned MPV and FFmpeg artifacts to the verified public native build.
 
 - Route compatible CI, release and package jobs to public GitHub-hosted runners by default; reserve private JIT for requested Apple signing and the verified webOS storage overflow, and fail hosted allocation without an automatic private reroute.

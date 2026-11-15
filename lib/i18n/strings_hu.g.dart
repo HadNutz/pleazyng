@@ -4072,8 +4072,6 @@ class _Translations$subtitleAiUi$hu extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Élő feliratok indítása';
 	@override String get liveCaptureStop => 'Élő feliratok leállítása';
-	@override String get inferenceProviderNotice => 'A CPU az alapértelmezett. A GPU, Core ML, QNN és RKNN telepített futtatókörnyezetet kér, de nem bizonyítja a hardveres végrehajtást. A nem támogatott vagy sikertelen kérések újrapróbálkoznak CPU-n; az egyes műveletek elhelyezése nem feltétlenül ellenőrzött.';
-	@override String get translationProviderNotice => 'Az Argos nem jelzi a hardveres végrehajtást feliratonként, az ML Kit pedig nem közli a CPU/GPU választást.';
 }
 
 // Path: romm
@@ -9385,8 +9383,6 @@ extension on TranslationsHu {
 			'podcasts.removeFinishedAfter' => 'Befejezett letöltések eltávolítása ennyi idő után',
 			'subtitleAiUi.liveCaptureStart' => 'Élő feliratok indítása',
 			'subtitleAiUi.liveCaptureStop' => 'Élő feliratok leállítása',
-			'subtitleAiUi.inferenceProviderNotice' => 'A CPU az alapértelmezett. A GPU, Core ML, QNN és RKNN telepített futtatókörnyezetet kér, de nem bizonyítja a hardveres végrehajtást. A nem támogatott vagy sikertelen kérések újrapróbálkoznak CPU-n; az egyes műveletek elhelyezése nem feltétlenül ellenőrzött.',
-			'subtitleAiUi.translationProviderNotice' => 'Az Argos nem jelzi a hardveres végrehajtást feliratonként, az ML Kit pedig nem közli a CPU/GPU választást.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9693,10 +9689,10 @@ extension on TranslationsHu {
 			'musicTools.playlistRecipient' => 'Plex-felhasználónév vagy e-mail',
 			'musicTools.playlistSharingHint' => 'Adjon hozzáférést ehhez a listához és számaihoz. A címzettnek esetleg el kell fogadnia egy meghívást.',
 			'musicTools.playlistSharingFailed' => 'Nem sikerült hozzáférést kérni a listához.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'A Plex elfogadta a hozzáférési kérést.',
 			'musicTools.playlistAccessList' => 'Jelenlegi hozzáférés',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Nincs megadott hozzáférés a listához',
 			'musicTools.filterType' => 'Szűrő típusa',
 			'musicTools.peak' => 'Csúcs',

@@ -1114,8 +1114,6 @@ class Translations$subtitleAiUi$pt_PT extends Translations$subtitleAiUi$pt {
 	// Translations
 	@override String get liveCaptureStart => 'Iniciar legendas em direto';
 	@override String get liveCaptureStop => 'Parar legendas em direto';
-	@override String get inferenceProviderNotice => 'A CPU é a opção base. GPU, Core ML, QNN e RKNN solicitam os ambientes instalados, mas não comprovam a execução por hardware. Pedidos não suportados ou falhados são repetidos na CPU; a execução de cada operação pode não ser verificada.';
-	@override String get translationProviderNotice => 'O Argos não informa o uso de hardware em cada legenda, e o ML Kit não revela a escolha entre CPU e GPU.';
 }
 
 // Path: common.mediaKind
@@ -2031,8 +2029,6 @@ extension on TranslationsPtPt {
 			'musicExperience.bluetoothDrivingHint' => 'Escolha as saídas Bluetooth ligadas que abrem automaticamente a vista de condução.',
 			'subtitleAiUi.liveCaptureStart' => 'Iniciar legendas em direto',
 			'subtitleAiUi.liveCaptureStop' => 'Parar legendas em direto',
-			'subtitleAiUi.inferenceProviderNotice' => 'A CPU é a opção base. GPU, Core ML, QNN e RKNN solicitam os ambientes instalados, mas não comprovam a execução por hardware. Pedidos não suportados ou falhados são repetidos na CPU; a execução de cada operação pode não ser verificada.',
-			'subtitleAiUi.translationProviderNotice' => 'O Argos não informa o uso de hardware em cada legenda, e o ML Kit não revela a escolha entre CPU e GPU.',
 			_ => null,
 		};
 	}

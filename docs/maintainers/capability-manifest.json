@@ -81,12 +81,12 @@
     "localeChoices": 37,
     "directory": "lib/i18n",
     "filePattern": "*.i18n.json",
-    "qualityStatus": "Structural locale coverage is present: 5,459 messages across 37 locales and 47,662 explicitly allowlisted English-fallback entries. Metronome and legacy-import strings use assistant-generated drafts without independent/native-speaker review; five legacy-link converter labels remain explicit English fallback. Native-speaker fluency review is not established by key counts or generated-file checks.",
-    "messagesPerLocale": 5459,
-    "englishFallbackKeys": 1331,
-    "englishFallbackEntries": 47662,
+    "qualityStatus": "Structural locale coverage is present: 5,464 messages across 37 locales and 47,914 explicitly allowlisted English-fallback entries (1,338 keys), including seven subtitle provider-placement and live-capture guidance messages. Metronome and legacy-import strings use assistant-generated drafts without independent/native-speaker review; five legacy-link converter labels remain explicit English fallback. Native-speaker fluency review is not established by key counts or generated-file checks.",
+    "messagesPerLocale": 5464,
+    "englishFallbackKeys": 1338,
+    "englishFallbackEntries": 47914,
     "coverageReport": "docs/localization/coverage.json",
-    "coverageReviewedOn": "2026-11-13"
+    "coverageReviewedOn": "2026-11-15"
   },
   "productBoundaries": [
     {

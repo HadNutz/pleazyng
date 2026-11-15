@@ -4072,8 +4072,6 @@ class _Translations$subtitleAiUi$nb extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Start direkteteksting';
 	@override String get liveCaptureStop => 'Stopp direkteteksting';
-	@override String get inferenceProviderNotice => 'CPU er grunnvalget. GPU, Core ML, QNN og RKNN ber om installerte kjøremiljøer, men beviser ikke maskinvarekjøring. Forespørsler som ikke støttes eller mislykkes, prøves på nytt med CPU; plasseringen for hver operasjon kan være ubekreftet.';
-	@override String get translationProviderNotice => 'Argos rapporterer ikke maskinvareplassering for hvert tekstsegment, og ML Kit viser ikke CPU/GPU-valget.';
 }
 
 // Path: romm
@@ -9385,8 +9383,6 @@ extension on TranslationsNb {
 			'podcasts.removeFinishedAfter' => 'Fjern ferdigspilte nedlastinger etter',
 			'subtitleAiUi.liveCaptureStart' => 'Start direkteteksting',
 			'subtitleAiUi.liveCaptureStop' => 'Stopp direkteteksting',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU er grunnvalget. GPU, Core ML, QNN og RKNN ber om installerte kjøremiljøer, men beviser ikke maskinvarekjøring. Forespørsler som ikke støttes eller mislykkes, prøves på nytt med CPU; plasseringen for hver operasjon kan være ubekreftet.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos rapporterer ikke maskinvareplassering for hvert tekstsegment, og ML Kit viser ikke CPU/GPU-valget.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9693,10 +9689,10 @@ extension on TranslationsNb {
 			'musicTools.playlistRecipient' => 'Plex-brukernavn eller e-post',
 			'musicTools.playlistSharingHint' => 'Gi tilgang til denne spillelisten og sporene. Mottakeren må kanskje godta en invitasjon.',
 			'musicTools.playlistSharingFailed' => 'Kunne ikke be om tilgang til spillelisten.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex godtok tilgangsforespørselen.',
 			'musicTools.playlistAccessList' => 'Nåværende tilgang',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Ingen har fått tilgang til spillelisten',
 			'musicTools.filterType' => 'Filtertype',
 			'musicTools.peak' => 'Topp',

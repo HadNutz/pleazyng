@@ -4072,8 +4072,6 @@ class _Translations$subtitleAiUi$bn extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'লাইভ ক্যাপশন শুরু করুন';
 	@override String get liveCaptureStop => 'লাইভ ক্যাপশন বন্ধ করুন';
-	@override String get inferenceProviderNotice => 'CPU হলো মূল বিকল্প। GPU, Core ML, QNN ও RKNN নির্বাচন ইনস্টল করা রানটাইম ব্যবহারের অনুরোধ; এটি হার্ডওয়্যারে কাজ হওয়ার প্রমাণ নয়। সমর্থন না থাকলে বা ব্যর্থ হলে CPU-তে আবার চেষ্টা হয়; প্রতিটি কাজের হার্ডওয়্যার ব্যবহার যাচাই করা নাও যেতে পারে।';
-	@override String get translationProviderNotice => 'Argos প্রতিটি ক্যাপশনের হার্ডওয়্যার ব্যবহার জানায় না, আর ML Kit CPU/GPU নির্বাচন প্রকাশ করে না।';
 }
 
 // Path: romm
@@ -9385,8 +9383,6 @@ extension on TranslationsBn {
 			'podcasts.removeFinishedAfter' => 'শেষ করা ডাউনলোডগুলো এই সময় পরে সরান',
 			'subtitleAiUi.liveCaptureStart' => 'লাইভ ক্যাপশন শুরু করুন',
 			'subtitleAiUi.liveCaptureStop' => 'লাইভ ক্যাপশন বন্ধ করুন',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU হলো মূল বিকল্প। GPU, Core ML, QNN ও RKNN নির্বাচন ইনস্টল করা রানটাইম ব্যবহারের অনুরোধ; এটি হার্ডওয়্যারে কাজ হওয়ার প্রমাণ নয়। সমর্থন না থাকলে বা ব্যর্থ হলে CPU-তে আবার চেষ্টা হয়; প্রতিটি কাজের হার্ডওয়্যার ব্যবহার যাচাই করা নাও যেতে পারে।',
-			'subtitleAiUi.translationProviderNotice' => 'Argos প্রতিটি ক্যাপশনের হার্ডওয়্যার ব্যবহার জানায় না, আর ML Kit CPU/GPU নির্বাচন প্রকাশ করে না।',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9693,10 +9689,10 @@ extension on TranslationsBn {
 			'musicTools.playlistRecipient' => 'Plex ব্যবহারকারীর নাম বা ইমেইল',
 			'musicTools.playlistSharingHint' => 'এই প্লেলিস্ট ও এর ট্র্যাকগুলোতে প্রবেশাধিকার দিন। প্রাপককে আমন্ত্রণ গ্রহণ করতে হতে পারে।',
 			'musicTools.playlistSharingFailed' => 'প্লেলিস্টে প্রবেশাধিকারের অনুরোধ করা যায়নি।',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex প্রবেশাধিকারের অনুরোধ গ্রহণ করেছে।',
 			'musicTools.playlistAccessList' => 'বর্তমান প্রবেশাধিকার',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'প্লেলিস্টে কাউকে প্রবেশাধিকার দেওয়া হয়নি',
 			'musicTools.filterType' => 'ফিল্টারের ধরন',
 			'musicTools.peak' => 'পিক',

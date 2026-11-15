@@ -2303,7 +2303,12 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
             ),
           ),
           const SizedBox(height: 6),
-          Text(context.t.subtitleAiUi.inferenceProviderNotice, style: Theme.of(context).textTheme.bodySmall),
+          Text(
+            _provider == SubtitleInferenceProvider.desktopGpu
+                ? context.t.subtitleAiUi.desktopGpuProviderNotice
+                : context.t.subtitleAiUi.cpuBaselineProviderNotice,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
           const SizedBox(height: 12),
           _speechLanguageSelector(),
           const SizedBox(height: 10),
@@ -2372,6 +2377,13 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
                             : (service.isRunning || service.hasActiveSession)
                             ? context.t.subtitleAiUi.liveCaptureStop
                             : context.t.subtitleAiUi.liveCaptureStart,
+                      ),
+                      subtitle: Text(
+                        service.isStarting
+                            ? context.t.subtitleAiUi.liveCaptureLoadingModel
+                            : (service.isRunning || service.hasActiveSession)
+                            ? context.t.subtitleAiUi.liveCaptureStopRetention
+                            : context.t.subtitleAiUi.liveCaptureSessionModel,
                       ),
                       onTap: (_busy || service.isStarting) ? null : () => unawaited(_captureLivePlayback()),
                     ),
@@ -2562,7 +2574,12 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
                 value: _requestTranslationCuda,
                 onChanged: _busy ? null : (value) => setState(() => _requestTranslationCuda = value),
               ),
-            Text(context.t.subtitleAiUi.translationProviderNotice, style: Theme.of(context).textTheme.bodySmall),
+            Text(
+              SubtitleTranslationService.desktopPlatformSupported
+                  ? context.t.subtitleAiUi.argosPlacementNotice
+                  : context.t.subtitleAiUi.mlKitPlacementNotice,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
             FocusableListTile(
               leading: const AppIcon(Symbols.translate_rounded),
               title: Text(context.t.subtitleAiUi.translateAnExistingSubtitle),

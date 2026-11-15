@@ -4072,8 +4072,6 @@ class _Translations$subtitleAiUi$az extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Canlı subtitrləri başlat';
 	@override String get liveCaptureStop => 'Canlı subtitrləri dayandır';
-	@override String get inferenceProviderNotice => 'CPU əsas seçimdir. GPU, Core ML, QNN və RKNN quraşdırılmış icra mühitlərindən istifadə sorğusudur, aparat icrasının sübutu deyil. Dəstəklənməyən və ya uğursuz sorğular CPU ilə yenidən sınanır; hər əməliyyat üzrə icranı təsdiqləmək mümkün olmaya bilər.';
-	@override String get translationProviderNotice => 'Argos hər subtitr sətri üzrə aparat icrasını bildirmir; ML Kit CPU və ya GPU seçimini göstərmir.';
 }
 
 // Path: romm
@@ -9385,8 +9383,6 @@ extension on TranslationsAz {
 			'podcasts.removeFinishedAfter' => 'Bitmiş endirmələri bu müddətdən sonra sil',
 			'subtitleAiUi.liveCaptureStart' => 'Canlı subtitrləri başlat',
 			'subtitleAiUi.liveCaptureStop' => 'Canlı subtitrləri dayandır',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU əsas seçimdir. GPU, Core ML, QNN və RKNN quraşdırılmış icra mühitlərindən istifadə sorğusudur, aparat icrasının sübutu deyil. Dəstəklənməyən və ya uğursuz sorğular CPU ilə yenidən sınanır; hər əməliyyat üzrə icranı təsdiqləmək mümkün olmaya bilər.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos hər subtitr sətri üzrə aparat icrasını bildirmir; ML Kit CPU və ya GPU seçimini göstərmir.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9693,10 +9689,10 @@ extension on TranslationsAz {
 			'musicTools.playlistRecipient' => 'Plex istifadəçi adı və ya e-poçt',
 			'musicTools.playlistSharingHint' => 'Bu pleylistə və treklərinə giriş verin. Alıcı dəvəti qəbul etməli ola bilər.',
 			'musicTools.playlistSharingFailed' => 'Pleylistə giriş istənilə bilmədi.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex giriş sorğusunu qəbul etdi.',
 			'musicTools.playlistAccessList' => 'Cari giriş',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Pleylistə giriş icazəsi yoxdur',
 			'musicTools.filterType' => 'Filtr növü',
 			'musicTools.peak' => 'Zirvə',

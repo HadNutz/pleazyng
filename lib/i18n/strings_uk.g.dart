@@ -4114,8 +4114,6 @@ class _Translations$subtitleAiUi$uk extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Запустити субтитри наживо';
 	@override String get liveCaptureStop => 'Зупинити субтитри наживо';
-	@override String get inferenceProviderNotice => 'Основний варіант — CPU. Вибір GPU, Core ML, QNN або RKNN запитує встановлене середовище, але не доводить виконання на обладнанні. Непідтримувані або невдалі запити повторюються на CPU; місце виконання кожної операції може бути не підтверджене.';
-	@override String get translationProviderNotice => 'Argos не повідомляє про апаратне виконання для кожного рядка субтитрів, а ML Kit не показує вибір CPU/GPU.';
 }
 
 // Path: romm
@@ -9429,8 +9427,6 @@ extension on TranslationsUk {
 			'podcasts.removeFinishedAfter' => 'Видаляти завершені завантаження через',
 			'subtitleAiUi.liveCaptureStart' => 'Запустити субтитри наживо',
 			'subtitleAiUi.liveCaptureStop' => 'Зупинити субтитри наживо',
-			'subtitleAiUi.inferenceProviderNotice' => 'Основний варіант — CPU. Вибір GPU, Core ML, QNN або RKNN запитує встановлене середовище, але не доводить виконання на обладнанні. Непідтримувані або невдалі запити повторюються на CPU; місце виконання кожної операції може бути не підтверджене.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos не повідомляє про апаратне виконання для кожного рядка субтитрів, а ML Kit не показує вибір CPU/GPU.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9737,10 +9733,10 @@ extension on TranslationsUk {
 			'musicTools.playlistRecipient' => 'Ім’я користувача Plex або ел. пошта',
 			'musicTools.playlistSharingHint' => 'Надайте доступ до цього списку та його композицій. Одержувачу може знадобитися прийняти запрошення.',
 			'musicTools.playlistSharingFailed' => 'Не вдалося запросити доступ до списку.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex прийняв запит на доступ.',
 			'musicTools.playlistAccessList' => 'Поточний доступ',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Доступ до списку нікому не надано',
 			'musicTools.filterType' => 'Тип фільтра',
 			'musicTools.peak' => 'Пік',

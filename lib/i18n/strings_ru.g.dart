@@ -4118,8 +4118,6 @@ class _Translations$subtitleAiUi$ru extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Включить субтитры в реальном времени';
 	@override String get liveCaptureStop => 'Остановить субтитры в реальном времени';
-	@override String get inferenceProviderNotice => 'Основной вариант — CPU. Выбор GPU, Core ML, QNN или RKNN запрашивает установленную среду выполнения, но не доказывает обработку на оборудовании. Неподдерживаемые или неудачные запросы повторяются на CPU; место выполнения каждой операции может быть не подтверждено.';
-	@override String get translationProviderNotice => 'Argos не сообщает об аппаратной обработке для каждой строки субтитров, а ML Kit не раскрывает выбор CPU/GPU.';
 }
 
 // Path: romm
@@ -9435,8 +9433,6 @@ extension on TranslationsRu {
 			'podcasts.removeFinishedAfter' => 'Удалять завершённые загрузки через',
 			'subtitleAiUi.liveCaptureStart' => 'Включить субтитры в реальном времени',
 			'subtitleAiUi.liveCaptureStop' => 'Остановить субтитры в реальном времени',
-			'subtitleAiUi.inferenceProviderNotice' => 'Основной вариант — CPU. Выбор GPU, Core ML, QNN или RKNN запрашивает установленную среду выполнения, но не доказывает обработку на оборудовании. Неподдерживаемые или неудачные запросы повторяются на CPU; место выполнения каждой операции может быть не подтверждено.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos не сообщает об аппаратной обработке для каждой строки субтитров, а ML Kit не раскрывает выбор CPU/GPU.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9743,10 +9739,10 @@ extension on TranslationsRu {
 			'musicTools.playlistRecipient' => 'Имя пользователя Plex или эл. почта',
 			'musicTools.playlistSharingHint' => 'Предоставьте доступ к этому плейлисту и его трекам. Получателю может потребоваться принять приглашение.',
 			'musicTools.playlistSharingFailed' => 'Не удалось запросить доступ к плейлисту.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex принял запрос на доступ.',
 			'musicTools.playlistAccessList' => 'Текущий доступ',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Доступ к плейлисту никому не предоставлен',
 			'musicTools.filterType' => 'Тип фильтра',
 			'musicTools.peak' => 'Пик',

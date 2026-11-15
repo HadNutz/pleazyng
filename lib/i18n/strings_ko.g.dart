@@ -4067,8 +4067,6 @@ class _Translations$subtitleAiUi$ko extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => '실시간 자막 시작';
 	@override String get liveCaptureStop => '실시간 자막 중지';
-	@override String get inferenceProviderNotice => '기본 경로는 CPU입니다. GPU, Core ML, QNN, RKNN 선택은 설치된 런타임 사용 요청일 뿐 하드웨어 실행을 증명하지 않습니다. 지원되지 않거나 실패한 요청은 CPU로 다시 시도하며, 작업별 실행 위치는 확인되지 않을 수 있습니다.';
-	@override String get translationProviderNotice => 'Argos는 자막별 하드웨어 실행 위치를 보고하지 않고, ML Kit은 CPU/GPU 선택을 공개하지 않습니다.';
 }
 
 // Path: romm
@@ -9380,8 +9378,6 @@ extension on TranslationsKo {
 			'podcasts.removeFinishedAfter' => '완료한 다운로드를 다음 기간 후 삭제',
 			'subtitleAiUi.liveCaptureStart' => '실시간 자막 시작',
 			'subtitleAiUi.liveCaptureStop' => '실시간 자막 중지',
-			'subtitleAiUi.inferenceProviderNotice' => '기본 경로는 CPU입니다. GPU, Core ML, QNN, RKNN 선택은 설치된 런타임 사용 요청일 뿐 하드웨어 실행을 증명하지 않습니다. 지원되지 않거나 실패한 요청은 CPU로 다시 시도하며, 작업별 실행 위치는 확인되지 않을 수 있습니다.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos는 자막별 하드웨어 실행 위치를 보고하지 않고, ML Kit은 CPU/GPU 선택을 공개하지 않습니다.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9688,10 +9684,10 @@ extension on TranslationsKo {
 			'musicTools.playlistRecipient' => 'Plex 사용자 이름 또는 이메일',
 			'musicTools.playlistSharingHint' => '이 재생목록과 트랙에 대한 접근을 허용합니다. 수신자가 초대를 수락해야 할 수 있습니다.',
 			'musicTools.playlistSharingFailed' => '재생목록 접근을 요청할 수 없습니다.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex가 접근 요청을 접수했습니다.',
 			'musicTools.playlistAccessList' => '현재 접근 권한',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => '부여된 재생목록 접근 권한이 없습니다',
 			'musicTools.filterType' => '필터 유형',
 			'musicTools.peak' => '피크',

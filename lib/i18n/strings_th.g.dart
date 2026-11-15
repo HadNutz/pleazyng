@@ -4049,8 +4049,6 @@ class _Translations$subtitleAiUi$th extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'เริ่มคำบรรยายสด';
 	@override String get liveCaptureStop => 'หยุดคำบรรยายสด';
-	@override String get inferenceProviderNotice => 'CPU เป็นตัวเลือกพื้นฐาน การเลือก GPU, Core ML, QNN หรือ RKNN เป็นการขอใช้รันไทม์ที่ติดตั้งไว้ แต่ไม่ได้ยืนยันว่าประมวลผลบนฮาร์ดแวร์ หากไม่รองรับหรือทำงานล้มเหลว จะลองใหม่ด้วย CPU และอาจตรวจสอบตำแหน่งการทำงานแต่ละรายการไม่ได้';
-	@override String get translationProviderNotice => 'Argos ไม่รายงานตำแหน่งฮาร์ดแวร์ของคำบรรยายแต่ละบรรทัด และ ML Kit ไม่เปิดเผยการเลือก CPU/GPU';
 }
 
 // Path: romm
@@ -9360,8 +9358,6 @@ extension on TranslationsTh {
 			'podcasts.removeFinishedAfter' => 'ลบไฟล์ดาวน์โหลดที่ฟังจบแล้วหลังจาก',
 			'subtitleAiUi.liveCaptureStart' => 'เริ่มคำบรรยายสด',
 			'subtitleAiUi.liveCaptureStop' => 'หยุดคำบรรยายสด',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU เป็นตัวเลือกพื้นฐาน การเลือก GPU, Core ML, QNN หรือ RKNN เป็นการขอใช้รันไทม์ที่ติดตั้งไว้ แต่ไม่ได้ยืนยันว่าประมวลผลบนฮาร์ดแวร์ หากไม่รองรับหรือทำงานล้มเหลว จะลองใหม่ด้วย CPU และอาจตรวจสอบตำแหน่งการทำงานแต่ละรายการไม่ได้',
-			'subtitleAiUi.translationProviderNotice' => 'Argos ไม่รายงานตำแหน่งฮาร์ดแวร์ของคำบรรยายแต่ละบรรทัด และ ML Kit ไม่เปิดเผยการเลือก CPU/GPU',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9668,10 +9664,10 @@ extension on TranslationsTh {
 			'musicTools.playlistRecipient' => 'ชื่อผู้ใช้ Plex หรืออีเมล',
 			'musicTools.playlistSharingHint' => 'ให้สิทธิ์เข้าถึงเพลย์ลิสต์นี้และเพลงในรายการ ผู้รับอาจต้องตอบรับคำเชิญ',
 			'musicTools.playlistSharingFailed' => 'ไม่สามารถขอสิทธิ์เข้าถึงเพลย์ลิสต์ได้',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex ยอมรับคำขอสิทธิ์เข้าถึงแล้ว',
 			'musicTools.playlistAccessList' => 'สิทธิ์เข้าถึงปัจจุบัน',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'ยังไม่มีการให้สิทธิ์เข้าถึงเพลย์ลิสต์',
 			'musicTools.filterType' => 'ประเภทตัวกรอง',
 			'musicTools.peak' => 'พีค',

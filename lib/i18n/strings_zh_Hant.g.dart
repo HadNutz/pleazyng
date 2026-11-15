@@ -4068,8 +4068,6 @@ class _Translations$subtitleAiUi$zh_Hant extends Translations$subtitleAiUi$zh {
 	// Translations
 	@override String get liveCaptureStart => '開始即時字幕';
 	@override String get liveCaptureStop => '停止即時字幕';
-	@override String get inferenceProviderNotice => 'CPU 是基本選項。選擇 GPU、Core ML、QNN 或 RKNN 只是要求使用已安裝的執行環境，不能證明由硬體執行。不支援或失敗的要求會改用 CPU 重試；每項操作的實際執行位置可能無法確認。';
-	@override String get translationProviderNotice => 'Argos 不會回報每行字幕的硬體執行位置，ML Kit 也不會公開 CPU/GPU 選擇。';
 }
 
 // Path: romm
@@ -9381,8 +9379,6 @@ extension on TranslationsZhHant {
 			'podcasts.removeFinishedAfter' => '在以下時間後移除已聽完的下載',
 			'subtitleAiUi.liveCaptureStart' => '開始即時字幕',
 			'subtitleAiUi.liveCaptureStop' => '停止即時字幕',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU 是基本選項。選擇 GPU、Core ML、QNN 或 RKNN 只是要求使用已安裝的執行環境，不能證明由硬體執行。不支援或失敗的要求會改用 CPU 重試；每項操作的實際執行位置可能無法確認。',
-			'subtitleAiUi.translationProviderNotice' => 'Argos 不會回報每行字幕的硬體執行位置，ML Kit 也不會公開 CPU/GPU 選擇。',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9689,10 +9685,10 @@ extension on TranslationsZhHant {
 			'musicTools.playlistRecipient' => 'Plex 使用者名稱或電子郵件',
 			'musicTools.playlistSharingHint' => '授予此播放清單及其曲目的存取權。收件者可能需要接受邀請。',
 			'musicTools.playlistSharingFailed' => '無法請求播放清單存取權。',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex 已接受存取請求。',
 			'musicTools.playlistAccessList' => '目前的存取權',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => '尚未授予播放清單存取權',
 			'musicTools.filterType' => '濾波器類型',
 			'musicTools.peak' => '峰值',

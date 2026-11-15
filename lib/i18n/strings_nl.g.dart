@@ -4072,8 +4072,6 @@ class _Translations$subtitleAiUi$nl extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Liveondertiteling starten';
 	@override String get liveCaptureStop => 'Liveondertiteling stoppen';
-	@override String get inferenceProviderNotice => 'CPU is de basis. GPU, Core ML, QNN en RKNN vragen om geïnstalleerde runtimes, maar bewijzen geen hardware-uitvoering. Niet-ondersteunde of mislukte verzoeken worden opnieuw op de CPU geprobeerd; de uitvoering per bewerking is mogelijk niet geverifieerd.';
-	@override String get translationProviderNotice => 'Argos rapporteert de hardware-uitvoering niet per ondertitel en ML Kit toont de CPU/GPU-keuze niet.';
 }
 
 // Path: romm
@@ -9385,8 +9383,6 @@ extension on TranslationsNl {
 			'podcasts.removeFinishedAfter' => 'Voltooide downloads verwijderen na',
 			'subtitleAiUi.liveCaptureStart' => 'Liveondertiteling starten',
 			'subtitleAiUi.liveCaptureStop' => 'Liveondertiteling stoppen',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU is de basis. GPU, Core ML, QNN en RKNN vragen om geïnstalleerde runtimes, maar bewijzen geen hardware-uitvoering. Niet-ondersteunde of mislukte verzoeken worden opnieuw op de CPU geprobeerd; de uitvoering per bewerking is mogelijk niet geverifieerd.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos rapporteert de hardware-uitvoering niet per ondertitel en ML Kit toont de CPU/GPU-keuze niet.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9693,10 +9689,10 @@ extension on TranslationsNl {
 			'musicTools.playlistRecipient' => 'Plex-gebruikersnaam of e-mail',
 			'musicTools.playlistSharingHint' => 'Geef toegang tot deze afspeellijst en de nummers. De ontvanger moet mogelijk een uitnodiging accepteren.',
 			'musicTools.playlistSharingFailed' => 'Kon geen toegang tot de afspeellijst aanvragen.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex heeft het toegangsverzoek geaccepteerd.',
 			'musicTools.playlistAccessList' => 'Huidige toegang',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Er is geen toegang tot deze afspeellijst verleend',
 			'musicTools.filterType' => 'Filtertype',
 			'musicTools.peak' => 'Piek',

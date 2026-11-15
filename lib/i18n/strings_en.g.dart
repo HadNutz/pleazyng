@@ -12883,17 +12883,32 @@ class Translations$subtitleAiUi$en {
 	/// en: 'Inference backend'
 	String get inferenceBackend => 'Inference backend';
 
+	/// en: 'CPU is the baseline. Core ML/QNN/RKNN are provider requests for the installed native runtime; unsupported requests retry on CPU. The result reports provider initialization/fallback and marks per-operation placement as unverified.'
+	String get cpuBaselineProviderNotice => 'CPU is the baseline. Core ML/QNN/RKNN are provider requests for the installed native runtime; unsupported requests retry on CPU. The result reports provider initialization/fallback and marks per-operation placement as unverified.';
+
+	/// en: 'Desktop GPU uses CUDA or Vulkan only when compiled into the native Whisper runtime. Successful inference does not prove every operation ran on the GPU; placement is unverified and failures restart on CPU.'
+	String get desktopGpuProviderNotice => 'Desktop GPU uses CUDA or Vulkan only when compiled into the native Whisper runtime. Successful inference does not prove every operation ran on the GPU; placement is unverified and failures restart on CPU.';
+
+	/// en: 'Subtitle text stays local. Argos does not report per-cue hardware placement; GPU requests are best-effort.'
+	String get argosPlacementNotice => 'Subtitle text stays local. Argos does not report per-cue hardware placement; GPU requests are best-effort.';
+
+	/// en: 'Translation runs locally through ML Kit. Its CPU/GPU choice is not exposed by the provider.'
+	String get mlKitPlacementNotice => 'Translation runs locally through ML Kit. Its CPU/GPU choice is not exposed by the provider.';
+
 	/// en: 'Start live captions'
 	String get liveCaptureStart => 'Start live captions';
 
 	/// en: 'Stop live captions'
 	String get liveCaptureStop => 'Stop live captions';
 
-	/// en: 'CPU is the baseline. GPU, Core ML, QNN, and RKNN are requests to use installed runtimes, not proof of hardware execution. Unsupported or failed requests retry on CPU; per-operation placement may be unverified.'
-	String get inferenceProviderNotice => 'CPU is the baseline. GPU, Core ML, QNN, and RKNN are requests to use installed runtimes, not proof of hardware execution. Unsupported or failed requests retry on CPU; per-operation placement may be unverified.';
+	/// en: 'Loading the local Whisper model'
+	String get liveCaptureLoadingModel => 'Loading the local Whisper model';
 
-	/// en: 'Argos does not report per-cue hardware placement; GPU requests are best-effort. ML Kit does not expose CPU/GPU selection.'
-	String get translationProviderNotice => 'Argos does not report per-cue hardware placement; GPU requests are best-effort. ML Kit does not expose CPU/GPU selection.';
+	/// en: 'This player session; downloads the local Whisper model on first use'
+	String get liveCaptureSessionModel => 'This player session; downloads the local Whisper model on first use';
+
+	/// en: 'Stop capture and retain the transcript for sync'
+	String get liveCaptureStopRetention => 'Stop capture and retain the transcript for sync';
 
 	/// en: 'Restore, export, or delete reviewed versions stored on this device'
 	String get restoreExportOrDeleteReviewedVersion_e84dffb9 => 'Restore, export, or delete reviewed versions stored on this device';
@@ -22630,10 +22645,15 @@ extension on Translations {
 			'subtitleAiUi.theSelectedAcceleratorUsesAnEnglishO_8735cf91' => 'The selected accelerator uses an English-only model. Choose Whisper CPU or desktop GPU to override language.',
 			'subtitleAiUi.wAVTranscriptionAndAudioSyncUseA16Bi_31205915' => 'WAV transcription and audio sync use a 16-bit PCM WAV from the same title and audio track; subtitle sync can also use an already synchronized same-language reference. Live captions are available only when the active player build exposes its bounded decoded-PCM tap.',
 			'subtitleAiUi.inferenceBackend' => 'Inference backend',
+			'subtitleAiUi.cpuBaselineProviderNotice' => 'CPU is the baseline. Core ML/QNN/RKNN are provider requests for the installed native runtime; unsupported requests retry on CPU. The result reports provider initialization/fallback and marks per-operation placement as unverified.',
+			'subtitleAiUi.desktopGpuProviderNotice' => 'Desktop GPU uses CUDA or Vulkan only when compiled into the native Whisper runtime. Successful inference does not prove every operation ran on the GPU; placement is unverified and failures restart on CPU.',
+			'subtitleAiUi.argosPlacementNotice' => 'Subtitle text stays local. Argos does not report per-cue hardware placement; GPU requests are best-effort.',
+			'subtitleAiUi.mlKitPlacementNotice' => 'Translation runs locally through ML Kit. Its CPU/GPU choice is not exposed by the provider.',
 			'subtitleAiUi.liveCaptureStart' => 'Start live captions',
 			'subtitleAiUi.liveCaptureStop' => 'Stop live captions',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU is the baseline. GPU, Core ML, QNN, and RKNN are requests to use installed runtimes, not proof of hardware execution. Unsupported or failed requests retry on CPU; per-operation placement may be unverified.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos does not report per-cue hardware placement; GPU requests are best-effort. ML Kit does not expose CPU/GPU selection.',
+			'subtitleAiUi.liveCaptureLoadingModel' => 'Loading the local Whisper model',
+			'subtitleAiUi.liveCaptureSessionModel' => 'This player session; downloads the local Whisper model on first use',
+			'subtitleAiUi.liveCaptureStopRetention' => 'Stop capture and retain the transcript for sync',
 			'subtitleAiUi.restoreExportOrDeleteReviewedVersion_e84dffb9' => 'Restore, export, or delete reviewed versions stored on this device',
 			'subtitleAiUi.liveCaptionsFromPlayback' => 'Live captions from playback',
 			'subtitleAiUi.theActivePlayerCopiesBoundedDecodedP_1bef0371' => 'The active player copies bounded decoded PCM with media timestamps. Whisper runs locally on CPU, and the model downloads on first use. Audio is not saved; captions arrive with a short delay and may be unavailable on unsupported audio routes.',
@@ -23082,13 +23102,13 @@ extension on Translations {
 			'karaokeUi.wins' => ({required Object value1}) => '${value1} wins',
 			'karaokeUi.chooseTeam' => 'Choose team',
 			'karaokeUi.average' => ({required Object value1}) => '${value1} average',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.beginAFreshScoreRound' => 'Begin a fresh score round',
 			'karaokeUi.startSectionsFromTheNextQueuedSongs' => 'Start sections from the next queued songs',
 			'karaokeUi.quizInterludes' => 'Quiz interludes',
 			'karaokeUi.addQuestion' => 'Add question',
 			'karaokeUi.closeAndRevealAnswer' => 'Close and reveal answer',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.returnToSingerRotation' => 'Return to singer rotation',
 			'karaokeUi.askPhones' => 'Ask phones',
 			'karaokeUi.recentPrivateScores' => 'Recent private scores',

@@ -4072,8 +4072,6 @@ class _Translations$subtitleAiUi$da extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Start liveundertekster';
 	@override String get liveCaptureStop => 'Stop liveundertekster';
-	@override String get inferenceProviderNotice => 'CPU er standarden. GPU, Core ML, QNN og RKNN anmoder om brug af installerede kørselsmiljøer, men beviser ikke hardwarekørsel. Ikke-understøttede eller mislykkede anmodninger prøves igen på CPU; placeringen kan være ubekræftet for enkelte handlinger.';
-	@override String get translationProviderNotice => 'Argos rapporterer ikke hardwareplacering pr. undertekst, og ML Kit oplyser ikke valget mellem CPU og GPU.';
 }
 
 // Path: romm
@@ -9385,8 +9383,6 @@ extension on TranslationsDa {
 			'podcasts.removeFinishedAfter' => 'Fjern færdigafspillede downloads efter',
 			'subtitleAiUi.liveCaptureStart' => 'Start liveundertekster',
 			'subtitleAiUi.liveCaptureStop' => 'Stop liveundertekster',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU er standarden. GPU, Core ML, QNN og RKNN anmoder om brug af installerede kørselsmiljøer, men beviser ikke hardwarekørsel. Ikke-understøttede eller mislykkede anmodninger prøves igen på CPU; placeringen kan være ubekræftet for enkelte handlinger.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos rapporterer ikke hardwareplacering pr. undertekst, og ML Kit oplyser ikke valget mellem CPU og GPU.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9693,10 +9689,10 @@ extension on TranslationsDa {
 			'musicTools.playlistRecipient' => 'Plex-brugernavn eller e-mail',
 			'musicTools.playlistSharingHint' => 'Giv adgang til denne afspilningsliste og dens numre. Modtageren skal muligvis acceptere en invitation.',
 			'musicTools.playlistSharingFailed' => 'Kunne ikke anmode om adgang til afspilningslisten.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex accepterede adgangsanmodningen.',
 			'musicTools.playlistAccessList' => 'Nuværende adgang',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'Ingen har fået adgang til afspilningslisten',
 			'musicTools.filterType' => 'Filtertype',
 			'musicTools.peak' => 'Spids',

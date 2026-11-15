@@ -4114,8 +4114,6 @@ class _Translations$subtitleAiUi$cs extends Translations$subtitleAiUi$en {
 	// Translations
 	@override String get liveCaptureStart => 'Spustit živé titulky';
 	@override String get liveCaptureStop => 'Zastavit živé titulky';
-	@override String get inferenceProviderNotice => 'CPU je výchozí možnost. Volby GPU, Core ML, QNN a RKNN žádají o použití nainstalovaných běhových prostředí, ale nedokazují hardwarové zpracování. Při nepodporované nebo neúspěšné žádosti se zkouší CPU; použití akcelerátoru u jednotlivých operací nemusí být ověřeno.';
-	@override String get translationProviderNotice => 'Argos neuvádí hardwarové zpracování jednotlivých titulků a ML Kit nezpřístupňuje volbu CPU/GPU.';
 }
 
 // Path: romm
@@ -9429,8 +9427,6 @@ extension on TranslationsCs {
 			'podcasts.removeFinishedAfter' => 'Odstranit dokončená stažení po',
 			'subtitleAiUi.liveCaptureStart' => 'Spustit živé titulky',
 			'subtitleAiUi.liveCaptureStop' => 'Zastavit živé titulky',
-			'subtitleAiUi.inferenceProviderNotice' => 'CPU je výchozí možnost. Volby GPU, Core ML, QNN a RKNN žádají o použití nainstalovaných běhových prostředí, ale nedokazují hardwarové zpracování. Při nepodporované nebo neúspěšné žádosti se zkouší CPU; použití akcelerátoru u jednotlivých operací nemusí být ověřeno.',
-			'subtitleAiUi.translationProviderNotice' => 'Argos neuvádí hardwarové zpracování jednotlivých titulků a ML Kit nezpřístupňuje volbu CPU/GPU.',
 			'romm.chooseFile' => 'Choose a game file',
 			'romm.chooseCopy' => 'Choose an exact game copy',
 			'romm.favorite' => 'Favorite',
@@ -9737,10 +9733,10 @@ extension on TranslationsCs {
 			'musicTools.playlistRecipient' => 'Uživatelské jméno Plex nebo e-mail',
 			'musicTools.playlistSharingHint' => 'Udělte přístup k tomuto playlistu a jeho skladbám. Příjemce možná bude muset přijmout pozvánku.',
 			'musicTools.playlistSharingFailed' => 'Nepodařilo se požádat o přístup k playlistu.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingAccepted' => 'Plex přijal žádost o přístup.',
 			'musicTools.playlistAccessList' => 'Aktuální přístup',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistAccessNone' => 'K playlistu nebyl udělen žádný přístup',
 			'musicTools.filterType' => 'Typ filtru',
 			'musicTools.peak' => 'Špička',
