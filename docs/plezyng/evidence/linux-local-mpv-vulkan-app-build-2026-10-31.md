@@ -32,4 +32,10 @@ The first `bundle-libs.sh` pass exposed that this host installs `gio-launch-desk
 
 This build proves local native linking and packaging with the Vulkan-enabled PME filter. It does not prove that this exact bundle selected the RX 7900 XT at runtime, that the RX 9070 XT presented its frames, or that cadence, image quality, subtitles, thermals, and A/V sync are correct. No CI job was dispatched.
 
+### Historical visible-playback diagnostic (2026-10-30)
+
+A separate MPV 0.41.0 candidate, not Pleazyng's locked libmpv, completed a 60-second visible Wayland/Vulkan run with PME enabled. The RX 9070 XT rendered while PME selected the RX 7900 XT, but PME generated no neural frames and fell back to ordinary playback; the process then hit an unresolved shutdown SIGSEGV. A same-build 60-second visible Vulkan control with PME disabled reached EOF and exited successfully. This narrows the observed shutdown failure to the PME-enabled route, but does not identify its cause.
+
+These candidate runs are negative diagnostic evidence only. They do not qualify Pleazyng playback or any published artifact, and they do not establish that the current locked MPV has this failure. The original operator-local logs and crash artifacts remain outside the repository.
+
 The PlezyNG worktree, app bundle, MPV build clone, source checkout, and build log are retained on `/mnt/disks/scratch`. No task output was written under `/home/keith/.local`, `/home/keith/.codex`, `/home/keith/.cache`, or `/var/tmp`.
