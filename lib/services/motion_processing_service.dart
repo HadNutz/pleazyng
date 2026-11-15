@@ -10,6 +10,7 @@ import '../models/playback_capability_report.dart';
 import '../mpv/models.dart';
 import '../mpv/player/player.dart';
 import '../mpv/player/player_native.dart';
+import 'android_anvil_provider_status.dart';
 import 'neural_model_pack_service.dart';
 import 'power_source_service.dart';
 import 'settings_service.dart';
@@ -29,6 +30,9 @@ abstract final class MotionProcessingService {
     'motion-processing-android-originals',
   );
   static final Expando<bool> _androidAnvilActive = Expando('motion-processing-android-anvil-active');
+  static final Expando<int> _androidAnvilProviderGeneration = Expando('motion-processing-android-provider-generation');
+  static final Expando<_AndroidAnvilBackend> _androidAnvilBackend = Expando('motion-processing-android-backend');
+  static final Expando<int> _androidAnvilRequestGeneration = Expando('motion-processing-android-request-generation');
   static final Expando<String> _configuredNeuralModelId = Expando('motion-processing-configured-neural-model-id');
   static final Expando<NeuralInterpolationPreset> _androidAnvilPreset = Expando(
     'motion-processing-android-anvil-preset',
@@ -426,17 +430,21 @@ abstract final class MotionProcessingService {
     bool isTranscoding = false,
     MediaVersion? selectedVersion,
     NeuralInterpolationPreset neuralPreset = NeuralInterpolationPreset.balanced,
-  }) => _serializePlayerOperation(
-    player,
-    () => _configureForPlayback(
+  }) {
+    _advanceAndroidAnvilRequestGeneration(player);
+    _invalidateAndroidAnvilProviderWatch(player);
+    return _serializePlayerOperation(
       player,
-      mode,
-      isLive: isLive,
-      isTranscoding: isTranscoding,
-      selectedVersion: selectedVersion,
-      neuralPreset: neuralPreset,
-    ),
-  );
+      () => _configureForPlayback(
+        player,
+        mode,
+        isLive: isLive,
+        isTranscoding: isTranscoding,
+        selectedVersion: selectedVersion,
+        neuralPreset: neuralPreset,
+      ),
+    );
+  }
 
   static Future<void> _configureForPlayback(
     Player player,
@@ -552,6 +560,9 @@ abstract final class MotionProcessingService {
           // scheduler paces those frames against the active refresh rate.
           await _applyMpvInterpolation(player);
           _interpolationBufferReady[player] = true;
+          if (player is PlayerNative && selectedVersion != null) {
+            _watchAndroidAnvilProvider(player, selectedVersion: selectedVersion, neuralPreset: neuralPreset);
+          }
           return;
         } catch (_) {
           await _restoreAndroidMotionPath(player);
@@ -674,7 +685,24 @@ abstract final class MotionProcessingService {
     Player player,
     MotionProcessingMode mode, {
     NeuralInterpolationPreset neuralPreset = NeuralInterpolationPreset.balanced,
-  }) => _serializePlayerOperation(player, () => _apply(player, mode, neuralPreset: neuralPreset));
+  }) {
+    _advanceAndroidAnvilRequestGeneration(player);
+    return _serializePlayerOperation(player, () async {
+      await _apply(player, mode, neuralPreset: neuralPreset);
+      final selectedVersion = _sessionSelectedVersion[player];
+      if (Platform.isAndroid &&
+          player is PlayerNative &&
+          _androidAnvilActive[player] == true &&
+          _androidAnvilPreset[player] != null &&
+          selectedVersion != null) {
+        _watchAndroidAnvilProvider(
+          player,
+          selectedVersion: selectedVersion,
+          neuralPreset: _androidAnvilPreset[player]!,
+        );
+      }
+    });
+  }
 
   static Future<void> _apply(
     Player player,
@@ -1472,6 +1500,319 @@ abstract final class MotionProcessingService {
     }
   }
 
+  static int _advanceAndroidAnvilRequestGeneration(Player player) {
+    final generation = (_androidAnvilRequestGeneration[player] ?? 0) + 1;
+    _androidAnvilRequestGeneration[player] = generation;
+    return generation;
+  }
+
+  static void _invalidateAndroidAnvilProviderWatch(Player player) {
+    _androidAnvilProviderGeneration[player] = (_androidAnvilProviderGeneration[player] ?? 0) + 1;
+    _androidAnvilBackend[player] = null;
+  }
+
+  static void _markAndroidAnvilProviderAttached(Player player, _AndroidAnvilBackend backend) {
+    _androidAnvilProviderGeneration[player] = (_androidAnvilProviderGeneration[player] ?? 0) + 1;
+    _androidAnvilBackend[player] = backend;
+  }
+
+  static bool _androidAnvilWatchIsCurrent(
+    PlayerNative player, {
+    required int providerGeneration,
+    required int sessionGeneration,
+    required int requestGeneration,
+    required _AndroidAnvilBackend backend,
+  }) =>
+      !player.disposed &&
+      _androidAnvilProviderGeneration[player] == providerGeneration &&
+      _androidAnvilBackend[player] == backend &&
+      _androidAnvilActive[player] == true &&
+      _motionSessionGeneration[player] == sessionGeneration &&
+      _androidAnvilRequestGeneration[player] == requestGeneration;
+
+  static bool _androidAnvilRequestIsCurrent(
+    PlayerNative player, {
+    required int sessionGeneration,
+    required int requestGeneration,
+  }) =>
+      !player.disposed &&
+      _motionSessionGeneration[player] == sessionGeneration &&
+      _androidAnvilRequestGeneration[player] == requestGeneration;
+
+  static void _watchAndroidAnvilProvider(
+    PlayerNative player, {
+    required MediaVersion selectedVersion,
+    required NeuralInterpolationPreset neuralPreset,
+  }) {
+    final providerGeneration = _androidAnvilProviderGeneration[player];
+    final backend = _androidAnvilBackend[player];
+    if (providerGeneration == null || backend == null || _androidAnvilActive[player] != true) return;
+    final sessionGeneration = _motionSessionGeneration[player] ?? 0;
+    final requestGeneration = _androidAnvilRequestGeneration[player] ?? 0;
+    unawaited(
+      _monitorAndroidAnvilProvider(
+        player,
+        providerGeneration: providerGeneration,
+        sessionGeneration: sessionGeneration,
+        requestGeneration: requestGeneration,
+        backend: backend,
+        selectedVersion: selectedVersion,
+        neuralPreset: neuralPreset,
+      ),
+    );
+  }
+
+  static Future<void> _monitorAndroidAnvilProvider(
+    PlayerNative player, {
+    required int providerGeneration,
+    required int sessionGeneration,
+    required int requestGeneration,
+    required _AndroidAnvilBackend backend,
+    required MediaVersion selectedVersion,
+    required NeuralInterpolationPreset neuralPreset,
+  }) async {
+    final monitor = AndroidAnvilProviderMonitor();
+    final elapsed = Stopwatch()..start();
+    var previousSample = Duration.zero;
+
+    while (_androidAnvilWatchIsCurrent(
+      player,
+      providerGeneration: providerGeneration,
+      sessionGeneration: sessionGeneration,
+      requestGeneration: requestGeneration,
+      backend: backend,
+    )) {
+      await Future<void>.delayed(const Duration(seconds: 1));
+      if (!_androidAnvilWatchIsCurrent(
+        player,
+        providerGeneration: providerGeneration,
+        sessionGeneration: sessionGeneration,
+        requestGeneration: requestGeneration,
+        backend: backend,
+      )) {
+        return;
+      }
+
+      final currentSample = elapsed.elapsed;
+      final activeDelta = currentSample - previousSample;
+      previousSample = currentSample;
+      final observation = await _readAndroidAnvilProviderObservation(player);
+      if (!_androidAnvilWatchIsCurrent(
+        player,
+        providerGeneration: providerGeneration,
+        sessionGeneration: sessionGeneration,
+        requestGeneration: requestGeneration,
+        backend: backend,
+      )) {
+        return;
+      }
+
+      final action = monitor.observe(observation, activeDelta: activeDelta);
+      if (action == AndroidAnvilMonitorAction.pending) continue;
+
+      try {
+        await _serializePlayerOperation(player, () async {
+          if (!_androidAnvilWatchIsCurrent(
+            player,
+            providerGeneration: providerGeneration,
+            sessionGeneration: sessionGeneration,
+            requestGeneration: requestGeneration,
+            backend: backend,
+          )) {
+            return;
+          }
+          await _recoverAndroidAnvilProvider(
+            player,
+            backend: backend,
+            action: action,
+            selectedVersion: selectedVersion,
+            neuralPreset: neuralPreset,
+            sessionGeneration: sessionGeneration,
+            requestGeneration: requestGeneration,
+          );
+        });
+      } catch (error, stackTrace) {
+        appLogger.w('MotionProcessingService: Android neural fallback failed', error: error, stackTrace: stackTrace);
+      }
+      return;
+    }
+  }
+
+  static Future<AndroidAnvilProviderObservation> _readAndroidAnvilProviderObservation(PlayerNative player) async {
+    Future<String?> read(String property) async {
+      try {
+        return await player.getProperty(property);
+      } catch (_) {
+        // Missing metadata stays unknown and must not start the output timeout.
+        return null;
+      }
+    }
+
+    final values = await Future.wait<String?>([
+      read('vf-metadata/plezy-anvil/provider'),
+      read('vf-metadata/plezy-anvil/source-frames'),
+      read('vf-metadata/plezy-anvil/generated-frames'),
+      read('vf-metadata/plezy-anvil/scene-cut-bypasses'),
+      read('pause'),
+      read('paused-for-cache'),
+    ]);
+    return AndroidAnvilProviderObservation(
+      provider: values[0],
+      sourceFrames: int.tryParse(values[1] ?? ''),
+      generatedFrames: int.tryParse(values[2] ?? ''),
+      sceneCutBypasses: int.tryParse(values[3] ?? ''),
+      isPaused: _androidAnvilBoolean(values[4]),
+      isPausedForCache: _androidAnvilBoolean(values[5]),
+    );
+  }
+
+  static bool? _androidAnvilBoolean(String? value) => switch (value?.trim().toLowerCase()) {
+    'yes' || 'true' || '1' => true,
+    'no' || 'false' || '0' => false,
+    _ => null,
+  };
+
+  static Future<void> _recoverAndroidAnvilProvider(
+    PlayerNative player, {
+    required _AndroidAnvilBackend backend,
+    required AndroidAnvilMonitorAction action,
+    required MediaVersion selectedVersion,
+    required NeuralInterpolationPreset neuralPreset,
+    required int sessionGeneration,
+    required int requestGeneration,
+  }) async {
+    if (!_androidAnvilRequestIsCurrent(
+      player,
+      sessionGeneration: sessionGeneration,
+      requestGeneration: requestGeneration,
+    )) {
+      return;
+    }
+
+    appLogger.w(
+      action == AndroidAnvilMonitorAction.noOutputTimeout
+          ? 'MotionProcessingService: Android ANVIL had source-frame progress without generated or scene-cut frames; starting provider fallback.'
+          : 'MotionProcessingService: Android ANVIL provider reported a terminal failure; starting provider fallback.',
+    );
+    await _restoreAndroidMotionPath(player);
+    if (!_androidAnvilRequestIsCurrent(
+      player,
+      sessionGeneration: sessionGeneration,
+      requestGeneration: requestGeneration,
+    )) {
+      return;
+    }
+
+    if (backend == _AndroidAnvilBackend.qnn) {
+      Map<Object?, Object?>? capabilities;
+      try {
+        capabilities = await player.getAndroidMotionRuntimeCapabilities();
+      } catch (error, stackTrace) {
+        appLogger.w(
+          'MotionProcessingService: fresh Android capabilities could not be read for LiteRT recovery',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      }
+      if (!_androidAnvilRequestIsCurrent(
+        player,
+        sessionGeneration: sessionGeneration,
+        requestGeneration: requestGeneration,
+      )) {
+        return;
+      }
+      if (capabilities != null) {
+        try {
+          if (await _configureAndroidAnvilLiteRt(
+            player,
+            capabilities: capabilities,
+            selectedVersion: selectedVersion,
+            neuralPreset: neuralPreset,
+          )) {
+            if (!_androidAnvilRequestIsCurrent(
+              player,
+              sessionGeneration: sessionGeneration,
+              requestGeneration: requestGeneration,
+            )) {
+              return;
+            }
+            await _applyMpvInterpolation(player);
+            if (!_androidAnvilRequestIsCurrent(
+              player,
+              sessionGeneration: sessionGeneration,
+              requestGeneration: requestGeneration,
+            )) {
+              return;
+            }
+            _interpolationBufferReady[player] = true;
+            _watchAndroidAnvilProvider(player, selectedVersion: selectedVersion, neuralPreset: neuralPreset);
+            appLogger.i('MotionProcessingService: Qualcomm HTP failed asynchronously; LiteRT is being tried.');
+            return;
+          }
+        } catch (error, stackTrace) {
+          appLogger.w(
+            'MotionProcessingService: LiteRT fallback after Qualcomm HTP failure could not be configured',
+            error: error,
+            stackTrace: stackTrace,
+          );
+        }
+      }
+    }
+
+    if (!_androidAnvilRequestIsCurrent(
+      player,
+      sessionGeneration: sessionGeneration,
+      requestGeneration: requestGeneration,
+    )) {
+      return;
+    }
+    await _restoreAndroidMotionPath(player);
+    final original = _originals[player];
+    if (original != null) await _restoreOriginalProperties(player, original);
+    if (!_androidAnvilRequestIsCurrent(
+      player,
+      sessionGeneration: sessionGeneration,
+      requestGeneration: requestGeneration,
+    )) {
+      return;
+    }
+    try {
+      if (await _configureAndroidMpvRenderer(
+        player,
+        selectedVersion: selectedVersion,
+        isLive: false,
+        isTranscoding: false,
+      )) {
+        await _applyMpvInterpolation(player);
+        if (!_androidAnvilRequestIsCurrent(
+          player,
+          sessionGeneration: sessionGeneration,
+          requestGeneration: requestGeneration,
+        )) {
+          return;
+        }
+        _interpolationBufferReady[player] = true;
+        appLogger.i('MotionProcessingService: Android Neural provider failed; using MPV smoothing.');
+        return;
+      }
+    } catch (error, stackTrace) {
+      appLogger.w(
+        'MotionProcessingService: Android MPV smoothing fallback could not be applied',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      await _restoreAndroidMotionPath(player);
+      if (original != null) await _restoreOriginalProperties(player, original);
+    }
+    if (_androidAnvilRequestIsCurrent(
+      player,
+      sessionGeneration: sessionGeneration,
+      requestGeneration: requestGeneration,
+    )) {
+      _interpolationBufferReady[player] = false;
+    }
+  }
+
   static Future<bool> _changeAndroidAnvilPreset(Player player, NeuralInterpolationPreset neuralPreset) async {
     final previousPreset = _androidAnvilPreset[player];
     final selectedVersion = _sessionSelectedVersion[player];
@@ -1608,6 +1949,7 @@ abstract final class MotionProcessingService {
       ]);
       _androidAnvilActive[player] = true;
       _androidAnvilPreset[player] = neuralPreset;
+      _markAndroidAnvilProviderAttached(player, _AndroidAnvilBackend.qnn);
       _configuredNeuralModelId[player] = modelId;
       _androidMpvOutputActive[player] = false;
       return true;
@@ -1686,6 +2028,7 @@ abstract final class MotionProcessingService {
       await player.command(['vf', 'add', '@plezy-anvil:anvil=$options']);
       _androidAnvilActive[player] = true;
       _androidAnvilPreset[player] = neuralPreset;
+      _markAndroidAnvilProviderAttached(player, _AndroidAnvilBackend.liteRt);
       _configuredNeuralModelId[player] = modelId;
       _androidMpvOutputActive[player] = false;
       return true;
@@ -1775,6 +2118,7 @@ abstract final class MotionProcessingService {
   static Future<bool> _removeAndroidAnvilFilter(Player player) async {
     try {
       await player.command(['vf', 'remove', '@plezy-anvil']);
+      _invalidateAndroidAnvilProviderWatch(player);
       _configuredNeuralModelId[player] = null;
       return true;
     } catch (error) {
@@ -1784,6 +2128,7 @@ abstract final class MotionProcessingService {
   }
 
   static Future<void> _restoreAndroidMotionPath(Player player) async {
+    _invalidateAndroidAnvilProviderWatch(player);
     _configuredNeuralModelId[player] = null;
     _androidMpvOutputActive[player] = false;
     final original = _androidOriginals[player];
@@ -1856,6 +2201,8 @@ final class _OriginalAppleMotionOptions {
 
   const _OriginalAppleMotionOptions({required this.interpolation, required this.preset, required this.videoSync});
 }
+
+enum _AndroidAnvilBackend { qnn, liteRt }
 
 final class _OriginalAndroidMotionOptions {
   final String? hwdec;

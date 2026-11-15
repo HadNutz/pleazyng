@@ -4,6 +4,8 @@
 
 - Report the configured neural model pack separately from provider readiness and generated output.
 
+- Recover Android ANVIL provider failures with QNN-to-LiteRT retry and MPV smoothing fallback, using a pause-aware source-progress timeout.
+
 - Harden QAIRT context generation on hardened Linux hosts by clearing and verifying executable-stack requests on generated host wrappers.
 
 - Fail early when the authorized Google Tensor AOT SDK package has no compiler shared library.
