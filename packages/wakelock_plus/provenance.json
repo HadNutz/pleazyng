@@ -7,8 +7,8 @@
   },
   "generator": {
     "package": "pigeon",
-    "version": "26.2.3",
-    "archiveSha256": "7bf372b6a1639a09a13204afc6fc6aa3d3ac123988a6e90274c847c17fae9805",
+    "version": "30.0.2",
+    "archiveSha256": "1214707e7b0180fad43d8e4747a892b0f03d84963030048787a0b230e03df5ed",
     "command": "dart run pigeon --input pigeons/messages.dart"
   },
   "externalDartClient": {
@@ -27,15 +27,15 @@
   ],
   "artifacts": {
     "pigeons/messages.dart": "37c48310b98b434673409270dc1272ce01fc1c9655b1eb2f662063529ff54eaf",
-    "android/src/main/kotlin/dev/fluttercommunity/plus/wakelock/WakelockPlusMessages.g.kt": "7dae2bb2ff5e0c0e5e5c4c3d39500bcfb803e0e34fcaf5ba0dae47db4bd17c67",
-    "ios/wakelock_plus/Sources/wakelock_plus/include/wakelock_plus/messages.g.h": "c658260df4ecebbf28ce32022e17ef620104b0c4ee400684aa6af1af86400d0a",
-    "ios/wakelock_plus/Sources/wakelock_plus/messages.g.m": "0f2f741586d2d1298f1b9ba4c19f02c3fde9bac91bec7c5a71cfc5bccf854d7d"
+    "android/src/main/kotlin/dev/fluttercommunity/plus/wakelock/WakelockPlusMessages.g.kt": "a33731e702342c3e9b860dd75e68bfc0784ce98cd86a48c44085c686664ffc11",
+    "ios/wakelock_plus/Sources/wakelock_plus/include/wakelock_plus/messages.g.h": "a293d825097d72ccb515828fcfc86b230f76d23d3af2cd18fd154e21cbabdd34",
+    "ios/wakelock_plus/Sources/wakelock_plus/messages.g.m": "6f6c1a03996faa3483d943b618d11736aaf2ad805972fa1bc42fd874aeffed00"
   },
   "refreshContract": [
     "Audit a new immutable upstream commit and update it together with the package version.",
     "Reapply every Plezy delta and keep the schema host-only; never add dartOut or dartTestOut.",
     "Update exact Pigeon and platform-interface versions and their nested lock checksums together.",
     "Run flutter pub get --enforce-lockfile, regenerate all three host outputs as one set, and update artifact hashes together.",
-    "Run python3 ../../scripts/verify_runtime_inputs.py, compare the external Dart client contract, and smoke Android, iOS, and tvOS before landing."
+    "Run python3 ../../scripts/checks/verify_runtime_inputs.py, compare the external Dart client contract, and smoke Android, iOS, and tvOS before landing."
   ]
 }

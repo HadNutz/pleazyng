@@ -163,7 +163,7 @@ class RuntimeInputVerifierTest(unittest.TestCase):
 
     def test_rejects_generator_and_external_client_lock_drift(self) -> None:
         pubspec = self.root / "packages/wakelock_plus/pubspec.yaml"
-        pubspec.write_text(pubspec.read_text(encoding="utf-8").replace("pigeon: 26.2.3", "pigeon: ^26.2.3"), encoding="utf-8")
+        pubspec.write_text(pubspec.read_text(encoding="utf-8").replace("pigeon: 30.0.2", "pigeon: ^30.0.2"), encoding="utf-8")
         lock = self.root / "packages/wakelock_plus/pubspec.lock"
         lock.write_text(
             lock.read_text(encoding="utf-8").replace(

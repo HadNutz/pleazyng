@@ -8,7 +8,7 @@
 # Refresh atomically: audit a new upstream commit, reapply every delta above,
 # update provenance.json, run `flutter pub get --enforce-lockfile`, run
 # `dart run pigeon --input pigeons/messages.dart`, then run
-# `python3 ../../scripts/verify_runtime_inputs.py` and the platform smoke tests.
+# `python3 ../../scripts/checks/verify_runtime_inputs.py` and the platform smoke tests.
 name: wakelock_plus
 description: >-2
   Plugin that allows you to keep the device screen awake, i.e. prevent the screen from sleeping on

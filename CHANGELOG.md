@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Regenerate vendored wakelock_plus host bindings with Pigeon 30.0.2 and refresh the generator provenance.
+
 - Restore localized subtitle provider-placement and live-capture model/session guidance.
 - Refresh pinned MPV and FFmpeg artifacts to the verified public native build.
 
