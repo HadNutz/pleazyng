@@ -8,19 +8,22 @@ import hashlib
 import json
 import os
 import plistlib
+import posixpath
 import re
 import shutil
 import subprocess
 import sys
+import tarfile
 import tempfile
 import time
 import zipfile
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 
 SOURCE_TAG = "v3.0.36"
 SOURCE_SHA = "2388a06cc74d03e69ac7178fcd927a54460a5e3a"
+WORKFLOW_PATH = ".github/workflows/apple-store-screenshots.yml"
 VERSION = "3.0.36"
 BUILD_NUMBER = "195"
 BUNDLE_ID = "org.snapetech.pleazyng"
@@ -48,7 +51,7 @@ def run(command: list[str], *, capture: bool = False, timeout: int = 300) -> str
 
 
 def require_source(product_root: Path) -> None:
-    head = run(["git", "rev-parse", "HEAD"], capture=True, timeout=20)
+    head = run(["git", "-C", str(product_root), "rev-parse", "HEAD"], capture=True, timeout=20)
     if head != SOURCE_SHA:
         raise ValueError(f"Expected {SOURCE_TAG} at {SOURCE_SHA}, found {head}")
     version_line = next(
@@ -134,6 +137,223 @@ def app_info(app: Path) -> dict[str, str]:
     } or not isinstance(actual["executable"], str) or not actual["executable"]:
         raise ValueError(f"Application identity does not match the v3.0.36 Store build: {actual}")
     return {key: str(value) for key, value in actual.items()}
+
+
+def preserve_build(args: argparse.Namespace) -> None:
+    product_root = args.product_root.resolve(strict=True)
+    require_source(product_root)
+    tool_source_sha = require_capture_tools_sha()
+    app = args.app.resolve(strict=True)
+    identity = app_info(app)
+    executable = app / "Contents" / "MacOS" / identity["executable"] if args.platform == "macos" else app / identity["executable"]
+    if not executable.is_file() or not executable.stat().st_mode & 0o111:
+        raise ValueError(f"Application executable is missing or not executable: {executable}")
+    architecture_output = run(["/usr/bin/lipo", "-archs", str(executable)], capture=True, timeout=60)
+    architectures = sorted(set(architecture_output.split()))
+    if not architectures:
+        raise ValueError(f"No executable architectures found in {executable}")
+    if args.platform in ("ios", "tvos") and "arm64" not in architectures:
+        raise ValueError(f"Simulator build is missing arm64: {architectures}")
+    if args.platform == "macos" and not {"arm64", "x86_64"}.issubset(architectures):
+        raise ValueError(f"Mac App Store candidate is missing universal architectures: {architectures}")
+
+    build_defines = {
+        "ios": IOS_MAC_STORE_DEFINES,
+        "tvos": TVOS_STORE_DEFINES,
+        "macos": IOS_MAC_STORE_DEFINES,
+    }[args.platform]
+    platform_name = {"ios": "iOS Simulator", "tvos": "tvOS Simulator", "macos": "macOS"}[args.platform]
+    producer_repository = os.environ.get("GITHUB_REPOSITORY", "")
+    producer_workflow_ref = os.environ.get("GITHUB_WORKFLOW_REF", "")
+    producer_run_id = os.environ.get("GITHUB_RUN_ID", "")
+    producer_run_attempt = os.environ.get("GITHUB_RUN_ATTEMPT", "")
+    expected_workflow_ref = f"{producer_repository}/{WORKFLOW_PATH}@refs/heads/main"
+    if (producer_repository != "snapetech-org/pleazyng"
+            or producer_workflow_ref != expected_workflow_ref
+            or re.fullmatch(r"[0-9]+", producer_run_id) is None
+            or re.fullmatch(r"[0-9]+", producer_run_attempt) is None):
+        raise ValueError("Build artifacts must be produced by a main-branch Apple screenshot workflow run")
+    receipt = {
+        "schema_version": 1,
+        "product": "Pleazyng",
+        "source_tag": SOURCE_TAG,
+        "source_sha": SOURCE_SHA,
+        "capture_tools_sha": tool_source_sha,
+        "producer_repository": producer_repository,
+        "producer_workflow_ref": producer_workflow_ref,
+        "producer_run_id": producer_run_id,
+        "producer_run_attempt": producer_run_attempt,
+        "product_version": VERSION,
+        "product_build": BUILD_NUMBER,
+        "platform": platform_name,
+        "build_mode": "App Store IAP",
+        "app_bundle_name": app.name,
+        "bundle_id": identity["bundle_id"],
+        "executable": identity["executable"],
+        "architectures": architectures,
+        "build_host_architecture": os.environ.get("RUNNER_ARCH", "unknown"),
+        "build_defines": build_defines,
+        "app_bundle_sha256": sha256_tree(app),
+        "distribution_signing": "disabled",
+        "qualification": "Compiled application bundle only; not a signed or uploadable store product.",
+    }
+    output = args.output_dir.resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    receipt_path = output / "build-provenance.json"
+    archive_path = output / f"pleazyng-apple-store-build-{args.platform}.tar.gz"
+    receipt_path.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+    with tarfile.open(archive_path, mode="w:gz", compresslevel=1) as archive:
+        archive.add(app, arcname=app.name)
+        archive.add(receipt_path, arcname=receipt_path.name)
+    print(f"Preserved {platform_name} app bundle and receipt in {output}")
+
+
+def validate_build_receipt(
+    receipt: dict[str, Any],
+    *,
+    platform: str,
+    producer_repository: str,
+    producer_run_id: str,
+    producer_run_attempt: str,
+    capture_tools_sha: str,
+) -> str:
+    platform_name = {"ios": "iOS Simulator", "tvos": "tvOS Simulator", "macos": "macOS"}[platform]
+    expected_architectures = {"arm64", "x86_64"} if platform == "macos" else {"arm64"}
+    expected_defines = {
+        "ios": IOS_MAC_STORE_DEFINES,
+        "tvos": TVOS_STORE_DEFINES,
+        "macos": IOS_MAC_STORE_DEFINES,
+    }[platform]
+    expected_app_name = {"ios": "Pleazyng.app", "tvos": "Runner.app", "macos": "Pleazyng.app"}[platform]
+    expected = {
+        "schema_version": 1,
+        "product": "Pleazyng",
+        "source_tag": SOURCE_TAG,
+        "source_sha": SOURCE_SHA,
+        "capture_tools_sha": capture_tools_sha,
+        "producer_repository": producer_repository,
+        "producer_workflow_ref": f"{producer_repository}/{WORKFLOW_PATH}@refs/heads/main",
+        "producer_run_id": producer_run_id,
+        "producer_run_attempt": producer_run_attempt,
+        "product_version": VERSION,
+        "product_build": BUILD_NUMBER,
+        "platform": platform_name,
+        "build_mode": "App Store IAP",
+        "app_bundle_name": expected_app_name,
+        "bundle_id": BUNDLE_ID,
+        "build_defines": expected_defines,
+        "distribution_signing": "disabled",
+    }
+    mismatched = {key: (receipt.get(key), value) for key, value in expected.items() if receipt.get(key) != value}
+    if mismatched:
+        raise ValueError(f"Build receipt does not match the expected producer and product: {mismatched}")
+    architectures = receipt.get("architectures")
+    if (not isinstance(architectures, list) or not all(isinstance(item, str) for item in architectures)
+            or architectures != sorted(set(architectures)) or not expected_architectures.issubset(architectures)):
+        raise ValueError(f"Build receipt has unexpected architectures for {platform_name}: {architectures!r}")
+    if re.fullmatch(r"[0-9a-f]{64}", str(receipt.get("app_bundle_sha256", ""))) is None:
+        raise ValueError("Build receipt has an invalid app bundle SHA-256")
+    return expected_app_name
+
+
+def restore_build(args: argparse.Namespace) -> None:
+    product_root = args.product_root.resolve(strict=True)
+    require_source(product_root)
+    expected_tools_sha = args.expected_capture_tools_sha
+    if re.fullmatch(r"[0-9a-f]{40}", expected_tools_sha) is None:
+        raise ValueError("Expected capture-tools SHA must be a full lowercase Git commit")
+    producer_repository = os.environ.get("GITHUB_REPOSITORY", "")
+    if producer_repository != "snapetech-org/pleazyng":
+        raise ValueError("Build artifacts may only be restored within snapetech-org/pleazyng")
+    receipt_path = args.artifact_dir / "build-provenance.json"
+    archive_path = args.artifact_dir / f"pleazyng-apple-store-build-{args.platform}.tar.gz"
+    if receipt_path.is_symlink() or not receipt_path.is_file() or archive_path.is_symlink() or not archive_path.is_file():
+        raise ValueError("Downloaded build artifact must contain a regular receipt and app archive")
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    if not isinstance(receipt, dict):
+        raise ValueError("Downloaded build provenance is not a JSON object")
+    app_name = validate_build_receipt(
+        receipt,
+        platform=args.platform,
+        producer_repository=producer_repository,
+        producer_run_id=args.producer_run_id,
+        producer_run_attempt=args.producer_run_attempt,
+        capture_tools_sha=expected_tools_sha,
+    )
+    output = args.output_dir.resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    with tarfile.open(archive_path, mode="r:gz") as archive:
+        members = archive.getmembers()
+        seen: set[str] = set()
+        for member in members:
+            member_path = PurePosixPath(member.name)
+            if (member_path.is_absolute() or not member_path.parts
+                    or any(part in ("", ".", "..") for part in member_path.parts)):
+                raise ValueError(f"Build archive contains an unsafe path: {member.name!r}")
+            normalized_name = member_path.as_posix()
+            if normalized_name in seen:
+                raise ValueError(f"Build archive contains a duplicate path: {normalized_name}")
+            seen.add(normalized_name)
+            if normalized_name != "build-provenance.json" and member_path.parts[0] != app_name:
+                raise ValueError(f"Build archive contains an unexpected path: {normalized_name}")
+            if normalized_name == "build-provenance.json" and not member.isfile():
+                raise ValueError("Build archive provenance entry is not a regular file")
+            if not (member.isdir() or member.isfile() or member.issym()):
+                raise ValueError(f"Build archive contains an unsupported entry type: {normalized_name}")
+            if member.issym():
+                link = PurePosixPath(member.linkname)
+                if link.is_absolute():
+                    raise ValueError(f"Build archive contains an absolute symlink: {normalized_name}")
+                resolved_link = posixpath.normpath(posixpath.join(member_path.parent.as_posix(), member.linkname))
+                if resolved_link != app_name and not resolved_link.startswith(f"{app_name}/"):
+                    raise ValueError(f"Build archive symlink escapes the app bundle: {normalized_name}")
+
+        if "build-provenance.json" not in seen or app_name not in seen:
+            raise ValueError("Build archive is missing the app bundle or its provenance receipt")
+        archive_receipt_member = next(member for member in members if member.name == "build-provenance.json")
+        archive_receipt_file = archive.extractfile(archive_receipt_member)
+        if archive_receipt_file is None:
+            raise ValueError("Build archive provenance receipt is unreadable")
+        with archive_receipt_file:
+            archive_receipt = json.load(archive_receipt_file)
+        if archive_receipt != receipt:
+            raise ValueError("Build archive receipt differs from the downloaded provenance receipt")
+
+        for member in members:
+            member_path = PurePosixPath(member.name)
+            destination = output.joinpath(*member_path.parts)
+            parent = destination.parent
+            if any(part.is_symlink() for part in (parent, *parent.parents) if part != output.parent):
+                raise ValueError(f"Build archive attempts to write through a symlink: {member.name}")
+            if member.isdir():
+                destination.mkdir(parents=True, exist_ok=True)
+                destination.chmod(member.mode & 0o777)
+            elif member.issym():
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                os.symlink(member.linkname, destination)
+            else:
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                source = archive.extractfile(member)
+                if source is None:
+                    raise ValueError(f"Build archive could not read: {member.name}")
+                with source, destination.open("xb") as target:
+                    shutil.copyfileobj(source, target)
+                destination.chmod(member.mode & 0o777)
+
+    app = output / app_name
+    identity = app_info(app)
+    if (identity["bundle_id"] != receipt["bundle_id"] or identity["executable"] != receipt["executable"]
+            or identity["version"] != VERSION or identity["build_number"] != BUILD_NUMBER):
+        raise ValueError("Restored app identity differs from its build receipt")
+    if sha256_tree(app) != receipt["app_bundle_sha256"]:
+        raise ValueError("Restored app bundle hash differs from its build receipt")
+    executable = app / "Contents" / "MacOS" / identity["executable"] if args.platform == "macos" else app / identity["executable"]
+    if not executable.is_file() or not executable.stat().st_mode & 0o111:
+        raise ValueError(f"Restored application executable is missing or not executable: {executable}")
+    architectures = sorted(set(run(["/usr/bin/lipo", "-archs", str(executable)], capture=True, timeout=60).split()))
+    if architectures != receipt["architectures"]:
+        raise ValueError(f"Restored app architectures differ from its receipt: {architectures}")
+    print(f"Restored validated {receipt['platform']} app at {app}")
 
 
 def version_pair(value: str) -> tuple[int, int]:
@@ -238,7 +458,10 @@ def capture_simulator(
     try:
         run(["xcrun", "simctl", "boot", device["udid"]], timeout=180)
         run(["xcrun", "simctl", "bootstatus", device["udid"], "-b"], timeout=300)
-        run(["xcrun", "simctl", "ui", device["udid"], "appearance", "light"], timeout=60)
+        simulator_appearance = "platform default"
+        if platform == "iOS":
+            run(["xcrun", "simctl", "ui", device["udid"], "appearance", "light"], timeout=60)
+            simulator_appearance = "light"
         run(["xcrun", "simctl", "install", device["udid"], str(app)], timeout=180)
         run(["xcrun", "simctl", "launch", device["udid"], BUNDLE_ID], timeout=120)
         time.sleep(SIMULATOR_SETTLE_SECONDS)
@@ -248,6 +471,7 @@ def capture_simulator(
         return {
             "filename": filename,
             "platform": platform,
+            "simulator_appearance": simulator_appearance,
             "capture_scene": "Fresh install; first-launch onboarding; no media server or account configured.",
             "capture_method": ["xcrun", "simctl", "io", device["udid"], "screenshot", "--type=png"],
             "source_tag": SOURCE_TAG,
@@ -554,6 +778,21 @@ def package_captures(args: argparse.Namespace) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
+    preserve = subparsers.add_parser("preserve-build")
+    preserve.add_argument("--product-root", required=True, type=Path)
+    preserve.add_argument("--app", required=True, type=Path)
+    preserve.add_argument("--platform", required=True, choices=("ios", "tvos", "macos"))
+    preserve.add_argument("--output-dir", required=True, type=Path)
+    preserve.set_defaults(handler=preserve_build)
+    restore = subparsers.add_parser("restore-build")
+    restore.add_argument("--product-root", required=True, type=Path)
+    restore.add_argument("--artifact-dir", required=True, type=Path)
+    restore.add_argument("--platform", required=True, choices=("ios", "tvos", "macos"))
+    restore.add_argument("--producer-run-id", required=True)
+    restore.add_argument("--producer-run-attempt", required=True)
+    restore.add_argument("--expected-capture-tools-sha", required=True)
+    restore.add_argument("--output-dir", required=True, type=Path)
+    restore.set_defaults(handler=restore_build)
     for name, handler in (("capture-ios", capture_ios), ("capture-tvos", capture_tvos), ("capture-macos", capture_macos)):
         command = subparsers.add_parser(name)
         command.add_argument("--product-root", required=True, type=Path)
