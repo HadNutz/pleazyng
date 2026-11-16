@@ -5,6 +5,19 @@ run-name: apple-store-screenshots:v3.0.36
 
 on:
   workflow_dispatch:
+    inputs:
+      target:
+        description: Capture all Apple platforms, or recover only the macOS lane.
+        type: choice
+        options:
+          - all
+          - macos-only
+        default: all
+        required: true
+      artifact_run_id:
+        description: Completed run to reuse iOS and tvOS captures for a macOS-only recovery.
+        type: string
+        required: false
 
 permissions:
   actions: read
@@ -22,7 +35,7 @@ env:
 
 jobs:
   ios:
-    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main'
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == '')
     runs-on: macos-26
     timeout-minutes: 180
     steps:
@@ -124,7 +137,7 @@ jobs:
           retention-days: 7
 
   tvos:
-    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main'
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == '')
     runs-on: macos-26
     timeout-minutes: 180
     steps:
@@ -260,7 +273,7 @@ jobs:
           retention-days: 7
 
   macos:
-    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main'
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'macos-only')
     runs-on: macos-26-intel
     timeout-minutes: 210
     steps:
@@ -355,7 +368,10 @@ jobs:
           retention-days: 7
 
   package:
-    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main'
+    if: >-
+      always() && github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' &&
+      ((inputs.target == 'all' && needs.ios.result == 'success' && needs.tvos.result == 'success' && needs.macos.result == 'success') ||
+       (inputs.target == 'macos-only' && inputs.artifact_run_id != '' && needs.macos.result == 'success'))
     needs: [ios, tvos, macos]
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -372,15 +388,35 @@ jobs:
           persist-credentials: false
 
       - name: Download iOS captures
+        if: inputs.target == 'all' || inputs.target == ''
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: apple-store-captures-ios-v3.0.36
           path: ${{ runner.temp }}/apple-store-captures-ios
 
+      - name: Reuse iOS captures from a completed run
+        if: inputs.target == 'macos-only'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: apple-store-captures-ios-v3.0.36
+          run-id: ${{ inputs.artifact_run_id }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/apple-store-captures-ios
+
       - name: Download tvOS captures
+        if: inputs.target == 'all' || inputs.target == ''
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: apple-store-captures-tvos-v3.0.36
+          path: ${{ runner.temp }}/apple-store-captures-tvos
+
+      - name: Reuse tvOS captures from a completed run
+        if: inputs.target == 'macos-only'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: apple-store-captures-tvos-v3.0.36
+          run-id: ${{ inputs.artifact_run_id }}
+          github-token: ${{ github.token }}
           path: ${{ runner.temp }}/apple-store-captures-tvos
 
       - name: Download macOS captures

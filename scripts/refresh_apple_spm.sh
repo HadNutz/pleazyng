@@ -125,20 +125,19 @@ for platform in "${PLATFORMS[@]}"; do
     echo "reset      $cloned_dir"
   fi
 
-  derived_data_args=()
+  xcodebuild_args=(-project Runner.xcodeproj -resolvePackageDependencies)
   if [[ "${APPLE_SCRATCH_MODE:-}" == "local-xcode" ]]; then
     expected_derived_data="$runner_temp_real/pleazyng-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${platform}-xcode/DerivedData"
     if [[ "${APPLE_DERIVED_DATA_PATH:-}" != "$expected_derived_data" ]]; then
       echo "error: refusing an unscoped Apple DerivedData directory" >&2
       exit 1
     fi
-    derived_data_args=(-scheme Runner -derivedDataPath "$APPLE_DERIVED_DATA_PATH")
+    xcodebuild_args+=(-scheme Runner -derivedDataPath "$APPLE_DERIVED_DATA_PATH")
   fi
+  xcodebuild_args+=(-clonedSourcePackagesDirPath "$cloned_dir")
 
   log="$(mktemp)"
-  if (cd "$platform" && xcodebuild -project Runner.xcodeproj -resolvePackageDependencies \
-    "${derived_data_args[@]}" \
-    -clonedSourcePackagesDirPath "$cloned_dir" >"$log" 2>&1); then
+  if (cd "$platform" && xcodebuild "${xcodebuild_args[@]}" >"$log" 2>&1); then
     echo "resolved   $platform"
     # Only the lines that say what moved; the rest is a list of local plugin packages.
     grep -E '^(Fetching|Updating|Cloning|Creating working copy|Checking out) ' "$log" | sed 's/^/             /' || true
@@ -152,9 +151,7 @@ for platform in "${PLATFORMS[@]}"; do
       echo "retry      $platform after Xcode package-graph crash" >&2
       rm -rf "$cloned_dir"
       : >"$log"
-      if (cd "$platform" && xcodebuild -project Runner.xcodeproj -resolvePackageDependencies \
-        "${derived_data_args[@]}" \
-        -clonedSourcePackagesDirPath "$cloned_dir" >"$log" 2>&1); then
+      if (cd "$platform" && xcodebuild "${xcodebuild_args[@]}" >"$log" 2>&1); then
         echo "resolved   $platform (fresh checkout retry)"
         grep -E '^(Fetching|Updating|Cloning|Creating working copy|Checking out) ' "$log" | sed 's/^/             /' || true
         rm -f "$log"
