@@ -21,16 +21,25 @@ def run(*args: str, cwd: Path | None = None) -> str:
     return subprocess.check_output(args, cwd=cwd, text=True).strip()
 
 
+def appledouble_paths(root: Path):
+    """Yield sidecar paths outside Git metadata without following symlinks."""
+    for directory, subdirectories, files in os.walk(root, topdown=True, followlinks=False):
+        subdirectories[:] = [name for name in subdirectories if name != '.git']
+        for name in (*subdirectories, *files):
+            if name.startswith('._'):
+                yield Path(directory) / name
+
+
 def remove_appledouble_sidecars(root: Path) -> int:
     """Remove Finder metadata files that Xcode would treat as native sources."""
     if root.is_symlink() or not root.is_dir():
         raise ValueError(f'Expected a real prepared Steam source directory: {root}')
     removed = 0
-    for sidecar in root.rglob('._*'):
+    for sidecar in appledouble_paths(root):
         if sidecar.is_file():
             sidecar.unlink()
             removed += 1
-    remaining = next(root.rglob('._*'), None)
+    remaining = next(appledouble_paths(root), None)
     if remaining is not None:
         raise ValueError(f'AppleDouble sidecar remains in prepared Steam sources: {remaining}')
     return removed

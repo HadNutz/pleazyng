@@ -31,10 +31,18 @@ class SourceLockTest(unittest.TestCase):
             nested.mkdir(parents=True)
             (nested / 'crc32.c').write_text('int crc32(void) { return 0; }\n')
             (nested / '._crc32.c').write_bytes(b'AppleDouble metadata')
+            git_admin_sidecar = source / '.git' / '._config'
+            git_admin_sidecar.parent.mkdir()
+            git_admin_sidecar.write_bytes(b'Git administrative metadata')
+            git_object_sidecar = source / '.git' / 'objects' / 'ab' / '._object'
+            git_object_sidecar.parent.mkdir(parents=True)
+            git_object_sidecar.write_bytes(b'Git object metadata')
 
             self.assertEqual(remove_appledouble_sidecars(source), 1)
             self.assertTrue((nested / 'crc32.c').is_file())
             self.assertFalse((nested / '._crc32.c').exists())
+            self.assertEqual(git_admin_sidecar.read_bytes(), b'Git administrative metadata')
+            self.assertEqual(git_object_sidecar.read_bytes(), b'Git object metadata')
 
     def test_opus_cmake_patch_omits_relative_install_prefix(self):
         with tempfile.TemporaryDirectory() as temporary:
