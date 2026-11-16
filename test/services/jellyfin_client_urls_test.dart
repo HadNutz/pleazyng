@@ -14,6 +14,7 @@ import 'package:plezy/media/media_item.dart';
 import 'package:plezy/media/media_kind.dart';
 import 'package:plezy/media/media_playlist.dart';
 import 'package:plezy/media/media_server_client.dart';
+import 'package:plezy/media/runtime_playback_capabilities.dart';
 import 'package:plezy/models/transcode_quality_preset.dart';
 import 'package:plezy/mpv/mpv.dart';
 import 'package:plezy/services/jellyfin_client.dart';
@@ -1025,6 +1026,108 @@ void main() {
         expect(Uri.parse(result.videoUrl!).path, '/Videos/item-1/stream', reason: name);
         expect(result.playMethod, 'DirectPlay', reason: name);
         expect(result.fallbackReason, TranscodeFallbackReason.decisionFailed, reason: name);
+      }
+    });
+
+    test('Original obeys a server direct-play refusal and preserves its conversion URL', () async {
+      final scoped = _clientWithPlaybackInfo(
+        (_) async => jsonResponse({
+          'MediaSources': [
+            {
+              'Id': 'src-1',
+              'SupportsDirectPlay': false,
+              'TranscodingUrl': '/Videos/item-1/master.m3u8?VideoCodec=h264',
+            },
+          ],
+        }),
+      );
+      addTearDown(scoped.close);
+      final result = await scoped.getPlaybackInitialization(
+        PlaybackInitializationOptions(
+          metadata: testMediaItem(
+            id: 'item-1',
+            backend: MediaBackend.jellyfin,
+            kind: MediaKind.movie,
+            serverId: 'srv-1',
+          ),
+          selectedMediaIndex: 0,
+        ),
+      );
+      expect(Uri.parse(result.videoUrl!).path, '/Videos/item-1/master.m3u8');
+      expect(result.isTranscoding, isTrue);
+    });
+
+    test('missing runtime decoder forces video conversion without forcing SDR or losing resume', () async {
+      RuntimePlaybackCapabilities.recordMpvDecoders([
+        {'codec': 'h264', 'driver': 'h264'},
+      ]);
+      addTearDown(RuntimePlaybackCapabilities.reset);
+      late Map<String, dynamic> body;
+      final scoped = _clientWithPlaybackInfo(
+        (request) async {
+          body = jsonDecode(request.body) as Map<String, dynamic>;
+          return jsonResponse({
+            'MediaSources': [
+              {'Id': 'src-1', 'TranscodingUrl': '/Videos/item-1/master.m3u8'},
+            ],
+          });
+        },
+        itemSources: [
+          {
+            'Id': 'src-1',
+            'Container': 'mkv',
+            'MediaStreams': [
+              {'Index': 0, 'Type': 'Video', 'Codec': 'vvc'},
+            ],
+          },
+        ],
+      );
+      addTearDown(scoped.close);
+      final result = await scoped.getPlaybackInitialization(
+        PlaybackInitializationOptions(
+          metadata: testMediaItem(
+            id: 'item-1',
+            backend: MediaBackend.jellyfin,
+            kind: MediaKind.movie,
+            serverId: 'srv-1',
+          ),
+          selectedMediaIndex: 0,
+          startPosition: const Duration(seconds: 42),
+        ),
+      );
+      expect(result.isTranscoding, isTrue);
+      expect(body['EnableDirectPlay'], isFalse);
+      expect(body['AllowVideoStreamCopy'], isFalse);
+      expect(body['StartTimeTicks'], 420000000);
+      expect(body['DeviceProfile']['CodecProfiles'], isEmpty);
+    });
+
+    test('forced compatibility conversion cannot fall back to the rejected file', () async {
+      for (final response in [
+        jsonResponse({
+          'MediaSources': [
+            {'Id': 'src-1'},
+          ],
+        }),
+        http.Response('{}', 500),
+      ]) {
+        final scoped = _clientWithPlaybackInfo((_) async => response);
+        addTearDown(scoped.close);
+        await expectLater(
+          scoped.getPlaybackInitialization(
+            PlaybackInitializationOptions(
+              metadata: testMediaItem(
+                id: 'item-1',
+                backend: MediaBackend.jellyfin,
+                kind: MediaKind.movie,
+                serverId: 'srv-1',
+              ),
+              selectedMediaIndex: 0,
+              forceTranscode: true,
+            ),
+          ),
+          throwsA(isA<PlaybackException>()),
+        );
       }
     });
 

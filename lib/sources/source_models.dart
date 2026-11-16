@@ -1,3 +1,5 @@
+import '../media/codec_catalog.dart';
+
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
@@ -769,65 +771,10 @@ SourceItemKind classifySourceFile(String name, [String mime = '']) {
   if (ext == '.m4b') {
     return SourceItemKind.audiobook;
   }
-  if (contentType.startsWith('audio/') ||
-      const {
-        '.mp3',
-        '.m4a',
-        '.aac',
-        '.flac',
-        '.ogg',
-        '.opus',
-        '.wav',
-        '.aif',
-        '.aiff',
-        '.alac',
-        '.wma',
-        '.amr',
-        '.ac3',
-        '.ape',
-        '.dff',
-        '.dsf',
-        '.mka',
-        '.caf',
-        '.wv',
-        '.mid',
-        '.midi',
-        '.au',
-        '.snd',
-      }.contains(ext)) {
+  if (contentType.startsWith('audio/') || CodecCatalog.audioExtensions.contains(ext)) {
     return SourceItemKind.music;
   }
-  if (contentType.startsWith('video/') ||
-      const {
-        '.mp4',
-        '.mkv',
-        '.mov',
-        '.avi',
-        '.webm',
-        '.m4v',
-        '.ts',
-        '.mpeg',
-        '.mpg',
-        '.mpe',
-        '.m1v',
-        '.m2v',
-        '.m2ts',
-        '.mts',
-        '.3gp',
-        '.3g2',
-        '.ogv',
-        '.vob',
-        '.wmv',
-        '.flv',
-        '.f4v',
-        '.asf',
-        '.dv',
-        '.y4m',
-        '.mxf',
-        '.rm',
-        '.rmvb',
-        '.vro',
-      }.contains(ext)) {
+  if (contentType.startsWith('video/') || CodecCatalog.videoExtensions.contains(ext)) {
     return SourceItemKind.video;
   }
   return SourceItemKind.unknown;

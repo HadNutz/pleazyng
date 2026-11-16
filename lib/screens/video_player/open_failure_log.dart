@@ -1,4 +1,5 @@
 import '../../mpv/models.dart';
+import '../../media/codec_catalog.dart';
 
 // Every line below is quoted verbatim from mpv, where it is the last thing
 // logged before `error_on_track` (player/misc.c) deselects the stream:
@@ -77,6 +78,22 @@ String? dolbyVisionVideoRouteFailureCauseFromLog({
   // mpv's decoder log prefixes are `vd` for video and `ad` for audio.
   if (line.startsWith(_decoderInitFailedPrefix) && prefix.toLowerCase() == 'vd') {
     return PlayerError.dolbyVisionVideoRouteFailed;
+  }
+  return null;
+}
+
+/// An exhausted decoder list is a codec failure; a failed hardware probe,
+/// filter, output device or HTTP request is not.
+String? codecFailureCauseFromLog({required PlayerLogLevel level, required String text}) {
+  if (level != PlayerLogLevel.error && level != PlayerLogLevel.fatal) return null;
+  final line = text.trim();
+  if (line.startsWith(_decoderInitFailedPrefix)) {
+    final match = RegExp(r"^Failed to initialize a decoder for codec '([a-zA-Z0-9_+.-]+)'\.$").firstMatch(line);
+    if (match != null) {
+      final codec = CodecCatalog.normalize(match.group(1)!);
+      if (CodecCatalog.isAudioCodec(codec)) return PlayerError.audioCodecUnsupported;
+      if (CodecCatalog.videoCodecs.contains(codec)) return PlayerError.videoCodecUnsupported;
+    }
   }
   return null;
 }

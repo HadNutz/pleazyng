@@ -90,6 +90,8 @@ sealed class PlayerError with _$PlayerError {
 
   /// The active media path explicitly rejected the selected audio format.
   static const String audioCodecUnsupported = 'audio-codec-unsupported';
+  static const String videoCodecUnsupported = 'video-codec-unsupported';
+  static const String containerUnsupported = 'container-unsupported';
 
   /// HTTP status [logText] reports, or null when it names none.
   ///

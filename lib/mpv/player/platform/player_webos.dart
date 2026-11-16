@@ -693,6 +693,7 @@ class PlayerWebOS extends PlayerBase implements NativeVisualizationAudioSource, 
       'sourceId': sourceId,
       'reason': 'error',
       if (webosMediaErrorRejectsAudio(error)) 'cause': PlayerError.audioCodecUnsupported,
+      if (webosMediaErrorRejectsVideo(error)) 'cause': PlayerError.videoCodecUnsupported,
       // Native error text can include a media URI. Never surface it to logs.
       'message': 'The webOS media player could not load this stream.',
     });

@@ -1,3 +1,4 @@
+import '../media/runtime_playback_capabilities.dart';
 import '../extras/extras_policy.dart' show mediaBrowserAllowsExternalExtras;
 
 import 'dart:async';

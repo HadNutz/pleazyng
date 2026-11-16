@@ -388,6 +388,7 @@ extension _VideoPlayerReloadMethods on VideoPlayerScreenState {
     bool showErrorUi = true,
     bool? forceTranscode,
     bool? forceAudioConversion,
+    bool? forceVideoConversion,
     PlaybackTransitionLease? transitionLease,
     String reason = 'media reload',
   }) async {
@@ -529,6 +530,13 @@ extension _VideoPlayerReloadMethods on VideoPlayerScreenState {
               previousOpenRequest.audioStreamId == targetAudioStreamId &&
               previousOpenRequest.mediaIndex == targetMediaIndex &&
               previousOpenRequest.mediaSourceId == selectedMediaSourceId);
+      final targetForceVideoConversion =
+          forceVideoConversion ??
+          (!isItemChange &&
+              previousOpenRequest != null &&
+              previousOpenRequest.forceVideoConversion &&
+              previousOpenRequest.mediaIndex == targetMediaIndex &&
+              previousOpenRequest.mediaSourceId == selectedMediaSourceId);
       final targetLaunchIdentity = VideoPlayerLaunchIdentity(
         metadata: metadata,
         mediaIndex: targetMediaIndex,
@@ -546,6 +554,7 @@ extension _VideoPlayerReloadMethods on VideoPlayerScreenState {
         resumePosition: resumePosition,
         forceTranscode: targetForceTranscode,
         forceAudioConversion: targetForceAudioConversion,
+        forceVideoConversion: targetForceVideoConversion,
       );
       final preservesRequestedSubtitleSource =
           !isItemChange &&
@@ -646,6 +655,7 @@ extension _VideoPlayerReloadMethods on VideoPlayerScreenState {
               forceServerPlayback: !_offlineLibraryMode && forceServerPlayback,
               forceTranscode: targetForceTranscode,
               forceAudioConversion: targetForceAudioConversion,
+              forceVideoConversion: targetForceVideoConversion,
             ),
             offlineLibraryMode: _offlineLibraryMode,
             downloadOutranksQuality: downloadOutranksQuality,

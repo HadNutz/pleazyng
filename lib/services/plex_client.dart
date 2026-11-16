@@ -4454,6 +4454,10 @@ class PlexClient
           : carriedAudioStreamId;
       final audioCodecRefused = !isTrack && options.forceAudioConversion;
       final sourceCodecRefused = !isTrack && _sourceCodecRefused(data);
+      final forceVideoConversion =
+          !isTrack &&
+          (options.forceVideoConversion ||
+              VideoDecodeCapabilities.sourceDecoderUnavailable(_selectedVersion(data)?.videoCodec));
       final forceCompatibleDolbyVisionTranscode = options.requestsCompatibleDolbyVisionRendition(data.mediaInfo);
       if (forceCompatibleDolbyVisionTranscode &&
           !options.hasServerDolbyVisionSdrRoute(data.mediaInfo, backend: DolbyVisionSdrBackend.plex)) {
@@ -4468,6 +4472,7 @@ class PlexClient
       final wantTranscode = isTrack
           ? !audioPreset.isOriginal
           : sourceCodecRefused ||
+                forceVideoConversion ||
                 audioCodecRefused ||
                 forceCompatibleDolbyVisionTranscode ||
                 options.forceTranscode ||
@@ -4475,7 +4480,9 @@ class PlexClient
       if (forceCompatibleDolbyVisionTranscode) {
         appLogger.i('Dolby Vision profile detected; requesting a server-generated compatibility rendition');
       }
-      if ((audioCodecRefused ||
+      if ((sourceCodecRefused ||
+              forceVideoConversion ||
+              audioCodecRefused ||
               forceCompatibleDolbyVisionTranscode ||
               (PlatformDetector.isTizenBuild() && wantTranscode)) &&
           (options.sessionIdentifier == null || options.transcodeSessionId == null)) {
@@ -4522,7 +4529,7 @@ class PlexClient
           partId: data.mediaInfo?.partId,
           sourceCodecRefused: sourceCodecRefused,
           audioCodecRefused: audioCodecRefused,
-          forceVideoEncode: forceCompatibleDolbyVisionTranscode,
+          forceVideoEncode: forceCompatibleDolbyVisionTranscode || forceVideoConversion,
           withholdDirectPlay: options.forceTranscode || audioCodecRefused,
         );
 
@@ -4554,7 +4561,7 @@ class PlexClient
           );
         }
 
-        if (options.forceTranscode) throw _forcedTranscodeUnavailable(result.outcome);
+        if (options.forceTranscode || forceVideoConversion) throw _forcedTranscodeUnavailable(result.outcome);
         return await _transcodeFallbackResult(
           data,
           result.outcome,
@@ -4563,7 +4570,7 @@ class PlexClient
           audioCodecRefused: audioCodecRefused,
         );
       }
-      if (options.forceTranscode && !isTrack) throw _forcedTranscodeUnavailable(null);
+      if ((options.forceTranscode || forceVideoConversion) && !isTrack) throw _forcedTranscodeUnavailable(null);
 
       await _registerDirectPlay(data, options.metadata, options.sessionIdentifier);
       return PlaybackInitializationResult(
@@ -4651,7 +4658,12 @@ class PlexClient
     if (PlatformDetector.isTizenBuild() && !tizenCanDirectPlayVideo(_selectedVersion(data), data.mediaInfo)) {
       return true;
     }
-    final codec = RankedVideoCodec.fromServerCodec(_selectedVersion(data)?.videoCodec);
+    final sourceCodec = _selectedVersion(data)?.videoCodec;
+    if (VideoDecodeCapabilities.sourceDecoderUnavailable(sourceCodec)) {
+      appLogger.i('Source decoder absent from the loaded engine; requesting conversion');
+      return true;
+    }
+    final codec = RankedVideoCodec.fromServerCodec(sourceCodec);
     if (codec == null || !VideoDecodeCapabilities.isRefusedByUser(codec)) return false;
     appLogger.i('Source codec ${codec.id} is refused in settings; transcoding');
     return true;
@@ -4683,6 +4695,7 @@ class PlexClient
     bool audioCodecRefused = false,
   }) async {
     if (audioCodecRefused ||
+        _sourceCodecRefused(data) ||
         PlatformDetector.isTizenBuild() ||
         options.requestsCompatibleDolbyVisionRendition(data.mediaInfo)) {
       throw PlaybackException(t.messages.playbackFailed, reason: PlaybackFailureReason.noPlayableSource);

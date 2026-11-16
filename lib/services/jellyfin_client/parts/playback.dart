@@ -14,20 +14,8 @@ bool _canUseJellyfinStaticStreamFallback(Object error) {
 /// is the right trade when [VideoDecodeCapabilities] reports no hardware
 /// decoder or the user refused the codec. `h265` is Jellyfin's alternate
 /// spelling of `hevc` and travels with it; the unconditional entries
-/// software-decode cheaply on any device that plays video at all.
-String _jellyfinDirectPlayVideoCodecs() {
-  final hevc = VideoDecodeCapabilities.accepts(RankedVideoCodec.hevc);
-  return [
-    if (hevc) 'hevc',
-    'h264',
-    if (hevc) 'h265',
-    'vp8',
-    'vp9',
-    if (VideoDecodeCapabilities.accepts(RankedVideoCodec.av1)) 'av1',
-    'mpeg4',
-    'mpeg2video',
-  ].join(',');
-}
+/// remain the compatibility baseline until the engine reports its inventory.
+String _jellyfinDirectPlayVideoCodecs() => VideoDecodeCapabilities.directPlayVideoCodecs.join(',');
 
 /// Video codecs the client accepts as a transcode output, best first — unlike
 /// the direct-play list this one is an ordered preference and the server
@@ -297,6 +285,13 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     final wantsOriginal = isTrack ? audioPreset.isOriginal : preset.isOriginal;
     final forceAudioConversion = !isTrack && options.forceAudioConversion;
     final forceCompatibleDolbyVisionTranscode = !isTrack && options.requestsCompatibleDolbyVisionRendition(mediaInfo);
+    final sourceCodec = bundle.availableVersions.isEmpty
+        ? null
+        : bundle.availableVersions[bundle.selectedSourceIndex.clamp(0, bundle.availableVersions.length - 1)].videoCodec;
+    final forceVideoConversion =
+        !isTrack && (options.forceVideoConversion || VideoDecodeCapabilities.sourceDecoderUnavailable(sourceCodec));
+    final requiresConversion =
+        forceAudioConversion || forceCompatibleDolbyVisionTranscode || forceVideoConversion || options.forceTranscode;
     if (forceCompatibleDolbyVisionTranscode &&
         !options.hasServerDolbyVisionSdrRoute(
           mediaInfo,
@@ -348,11 +343,9 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
         // Non-original audio presets always carry a bitrate by construction.
         ? audioPreset.bitrateKbps! * 1000
         : (preset.videoBitrateKbps ?? 100_000) * 1000;
-    final resumeOffsetMs = metadata.viewOffsetMs;
+    final resumeOffsetMs = options.startPosition?.inMilliseconds ?? metadata.viewOffsetMs;
     final int? transcodeStartTimeTicks =
-        (!wantsOriginal || forceCompatibleDolbyVisionTranscode || forceAudioConversion) &&
-            resumeOffsetMs != null &&
-            resumeOffsetMs > 0
+        (!wantsOriginal || requiresConversion) && resumeOffsetMs != null && resumeOffsetMs > 0
         ? msToJellyfinTicks(resumeOffsetMs)
         : null;
     Map<String, dynamic>? negotiation;
@@ -366,21 +359,20 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
         audioStreamIndex: requestedAudioStreamId,
         subtitleStreamIndex: requestedSubtitleStreamId,
         audioProfile: isTrack,
-        enableDirectPlay: forceAudioConversion ? false : null,
-        enableTranscoding: forceAudioConversion ? true : null,
+        enableDirectPlay: requiresConversion ? false : null,
+        enableTranscoding: requiresConversion ? true : null,
         allowAudioStreamCopy: forceAudioConversion ? false : null,
-        forceVideoTranscode: forceCompatibleDolbyVisionTranscode,
+        forceVideoTranscode: forceCompatibleDolbyVisionTranscode || forceVideoConversion,
+        requireSdrOutput: forceCompatibleDolbyVisionTranscode,
         // A capped preset is the only way a transcode is asked for, and on one the server
         // burns the selected embedded stream in rather than serving it as a file the client
         // would fetch as well. A selected external *file* keeps `External`, so it is still
         // delivered as a file - the one case where the client genuinely holds it.
-        burnSubtitles:
-            (!wantsOriginal || forceCompatibleDolbyVisionTranscode || forceAudioConversion) &&
-            !requestedSubtitleIsExternalFile,
+        burnSubtitles: (!wantsOriginal || requiresConversion) && !requestedSubtitleIsExternalFile,
       );
       chosenSource = _selectNegotiatedMediaSource(negotiation['MediaSources'], bundle.selectedSourceId);
     } catch (error, stackTrace) {
-      if (forceAudioConversion || forceCompatibleDolbyVisionTranscode || !_canUseJellyfinStaticStreamFallback(error)) {
+      if (requiresConversion || !_canUseJellyfinStaticStreamFallback(error)) {
         Error.throwWithStackTrace(classifyPlaybackFailure(error), stackTrace);
       }
       appLogger.w(
@@ -391,7 +383,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     }
 
     if (chosenSource == null) {
-      if (forceAudioConversion || forceCompatibleDolbyVisionTranscode) {
+      if (requiresConversion) {
         throw PlaybackException(t.messages.playbackFailed, reason: PlaybackFailureReason.noPlayableSource);
       }
       fallbackReason = TranscodeFallbackReason.decisionFailed;
@@ -411,7 +403,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
       }
 
       final transcodingUrl = chosenSource['TranscodingUrl'];
-      if ((!wantsOriginal || forceCompatibleDolbyVisionTranscode || forceAudioConversion) &&
+      if ((!wantsOriginal || requiresConversion || chosenSource['SupportsDirectPlay'] == false) &&
           transcodingUrl is String &&
           transcodingUrl.isNotEmpty) {
         // TranscodingUrl is server-relative and already encodes container,
@@ -441,7 +433,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
       }
     }
 
-    if ((forceAudioConversion || forceCompatibleDolbyVisionTranscode) && !isTranscoding) {
+    if ((requiresConversion || chosenSource?['SupportsDirectPlay'] == false) && !isTranscoding) {
       throw PlaybackException(t.messages.playbackFailed, reason: PlaybackFailureReason.noPlayableSource);
     }
 
@@ -995,6 +987,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     bool isLiveTv = false,
     bool audioProfile = false,
     bool forceVideoTranscode = false,
+    bool requireSdrOutput = false,
 
     /// Drop `External` subtitle delivery from the profile, so the server burns
     /// the selected subtitle into a transcode instead of serving it alongside.
@@ -1014,7 +1007,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
       'EnableDirectStream': ?(forceVideoTranscode ? false : enableDirectStream),
       'EnableTranscoding': ?(forceVideoTranscode ? true : enableTranscoding),
       'AllowVideoStreamCopy': ?(forceVideoTranscode ? false : allowVideoStreamCopy),
-      'AllowAudioStreamCopy': ?(forceVideoTranscode ? true : allowAudioStreamCopy),
+      'AllowAudioStreamCopy': ?(allowAudioStreamCopy ?? (forceVideoTranscode ? true : null)),
     };
     final response = await _http.post(
       '/Items/${_segment(itemId)}/PlaybackInfo',
@@ -1040,7 +1033,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
           // the selected output codec and forwards VideoRangeType as a
           // transcode target constraint. The server still needs a working DV /
           // HDR tone-mapping path for the selected source profile.
-          'CodecProfiles': forceVideoTranscode
+          'CodecProfiles': requireSdrOutput
               ? <Map<String, Object?>>[
                   {
                     'Type': 'Video',
@@ -1114,7 +1107,9 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
           'DirectPlayProfiles': <Map<String, Object?>>[
             {
               'Type': 'Video',
-              'Container': 'mp4,mkv,m4v,webm,mov,ts,mpegts',
+              'Container': PlatformDetector.isWebOSBuild()
+                  ? 'mp4,mkv,m4v,webm,mov,ts,mpegts'
+                  : RuntimePlaybackCapabilities.mpvVideoContainers.join(','),
               'VideoCodec': _jellyfinDirectPlayVideoCodecs(),
               if (PlatformDetector.isWebOSBuild() && allowAudioStreamCopy == false)
                 'AudioCodec': webosTranscodeAudioCodecs,

@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import '../media/codec_catalog.dart';
+import '../media/runtime_playback_capabilities.dart';
+
 import '../utils/async_singleton.dart';
 import '../utils/device_channel.dart';
 import '../utils/platform_detector.dart';
@@ -26,12 +29,13 @@ enum RankedVideoCodec {
 
   /// The entry a server-reported codec name belongs to, aliases included, or
   /// null for a codec outside the ranked list (VP9, MPEG-2, …).
-  static RankedVideoCodec? fromServerCodec(String? codec) => switch (codec?.toLowerCase()) {
-    'av1' => av1,
-    'hevc' || 'h265' || 'hev1' => hevc,
-    'h264' || 'avc' || 'avc1' => h264,
-    _ => null,
-  };
+  static RankedVideoCodec? fromServerCodec(String? codec) =>
+      switch (codec == null ? null : CodecCatalog.normalize(codec)) {
+        'av1' => av1,
+        'hevc' || 'h265' || 'hev1' => hevc,
+        'h264' || 'avc' || 'avc1' => h264,
+        _ => null,
+      };
 }
 
 /// Which [RankedVideoCodec]s this device accepts from a media server.
@@ -117,6 +121,39 @@ class VideoDecodeCapabilities {
     for (final codec in RankedVideoCodec.values)
       if (accepts(codec)) codec,
   ];
+
+  /// Original-source codecs are not transcode targets. Add the long tail only
+  /// when the bundled decoder reports it, retaining native TV policies.
+  static List<String> get directPlayVideoCodecs {
+    final nativeTv = PlatformDetector.isTizenBuild() || PlatformDetector.isWebOSBuild();
+    final measured = nativeTv ? null : RuntimePlaybackCapabilities.videoDecoders;
+    final candidates = <String>{
+      'hevc',
+      'h264',
+      'h265',
+      'vp8',
+      'vp9',
+      'av1',
+      'mpeg4',
+      'mpeg2video',
+      if (measured != null) ...CodecCatalog.videoCodecs.where(measured.contains),
+    };
+    return [
+      for (final codec in candidates)
+        if ((measured == null || measured.contains(codec)) &&
+            (RankedVideoCodec.fromServerCodec(codec) == null || accepts(RankedVideoCodec.fromServerCodec(codec)!)))
+          codec,
+    ];
+  }
+
+  /// Positive evidence only. Unknown codecs/engines still get a direct attempt;
+  /// absence in a successfully enumerated mpv build is a real incompatibility.
+  static bool sourceDecoderUnavailable(String? codec) {
+    if (codec == null || codec.trim().isEmpty) return false;
+    if (PlatformDetector.isTizenBuild() || PlatformDetector.isWebOSBuild()) return false;
+    final measured = RuntimePlaybackCapabilities.videoDecoders;
+    return measured != null && !measured.contains(codec);
+  }
 
   /// Platform-reported profiles that the current native video path can accept.
   /// This is a decoder/output capability claim, not a pixel-accuracy result.

@@ -25,9 +25,14 @@ extension _VideoPlayerErrorMethods on VideoPlayerScreenState {
     if (_hasFatalPlaybackError) return;
     // The local open has failed and its one compatibility retry owns the
     // player now. Ignore duplicate events from that same failed open.
-    if (_dolbyVisionCompatibilityFallbackInFlight || _audioCompatibilityFallbackInFlight) return;
+    if (_dolbyVisionCompatibilityFallbackInFlight ||
+        _audioCompatibilityFallbackInFlight ||
+        _videoCompatibilityFallbackInFlight) {
+      return;
+    }
     if (_tryAutomaticAudioCompatibilityFallback(err)) return;
     if (_tryAutomaticDolbyVisionCompatibilityFallback(err)) return;
+    if (_tryAutomaticVideoCompatibilityFallback(err)) return;
 
     // A sidecar subtitle fetch can also log a status, but it never raises the
     // end-file error this handler is wired to, so a latched status belongs to
@@ -95,11 +100,64 @@ extension _VideoPlayerErrorMethods on VideoPlayerScreenState {
     }
   }
 
+  bool _tryAutomaticVideoCompatibilityFallback(PlayerError error) {
+    final session = _playbackSession;
+    final request = _currentOpenRequest;
+    if ((error.cause != PlayerError.videoCodecUnsupported && error.cause != PlayerError.containerUnsupported) ||
+        session == null ||
+        request == null ||
+        request.forceVideoConversion ||
+        (error.cause == PlayerError.containerUnsupported && request.forceTranscode) ||
+        session.isOffline ||
+        _offlineLibraryMode ||
+        widget.isLive ||
+        session.reportingClient?.capabilities.videoTranscoding != true ||
+        _fatalHttpStatuses.isNotEmpty ||
+        _transitionGate.transition != PlaybackTransition.idle ||
+        _videoFallbackAttemptedFor?.sameSourceAs(request) == true) {
+      return false;
+    }
+    _videoFallbackAttemptedFor = request;
+    _videoCompatibilityFallbackInFlight = true;
+    unawaited(_openVideoCompatibilityFallback(request, error));
+    return true;
+  }
+
+  Future<void> _openVideoCompatibilityFallback(_PlaybackOpenRequest request, PlayerError error) async {
+    MediaReloadOutcome outcome;
+    try {
+      outcome = await _reloadMediaInPlace(
+        metadata: request.metadata,
+        selectedMediaIndex: request.mediaIndex,
+        selectedMediaSourceId: request.mediaSourceId,
+        qualityPreset: request.qualityPreset,
+        selectedAudioStreamId: request.audioStreamId,
+        useCurrentAudioStreamSelection: false,
+        resumePosition: _firstFrame.rendered
+            ? (player?.state.position ?? request.resumePosition)
+            : request.resumePosition,
+        preferredSubtitleTrackOverride: SubtitlePreference.trackOrNull(
+          _playbackSession?.subtitleSelection.primaryTrack,
+        ),
+        forceServerPlayback: true,
+        forceTranscode: true,
+        forceVideoConversion: error.cause == PlayerError.videoCodecUnsupported,
+        showErrorUi: false,
+        reason: 'codec compatibility fallback',
+      );
+    } catch (failure, stackTrace) {
+      appLogger.w('Codec compatibility fallback failed', error: failure, stackTrace: stackTrace);
+      outcome = MediaReloadOutcome.failed;
+    } finally {
+      _videoCompatibilityFallbackInFlight = false;
+    }
+    if (outcome == MediaReloadOutcome.failed || outcome == MediaReloadOutcome.rejected) _onPlayerError(error);
+  }
+
   bool _tryAutomaticAudioCompatibilityFallback(PlayerError error) {
     final session = _playbackSession;
     final request = _currentOpenRequest;
-    if (!PlatformDetector.isWebOSBuild() ||
-        error.cause != PlayerError.audioCodecUnsupported ||
+    if (error.cause != PlayerError.audioCodecUnsupported ||
         session == null ||
         request == null ||
         request.forceAudioConversion ||
@@ -337,6 +395,7 @@ extension _VideoPlayerErrorMethods on VideoPlayerScreenState {
       qualityPreset: request.qualityPreset,
       forceTranscode: request.forceTranscode,
       forceAudioConversion: request.forceAudioConversion,
+      forceVideoConversion: request.forceVideoConversion,
       selectedAudioStreamId: request.audioStreamId,
       useCurrentAudioStreamSelection: false,
       resumePosition: request.resumePosition,
@@ -374,7 +433,11 @@ extension _VideoPlayerErrorMethods on VideoPlayerScreenState {
       prefix: log.prefix,
       text: log.text,
     );
-    final videoRouteFailureCause = dvFelFailureCause ?? dvVideoFailureCause;
+    final sourceIsDolbyVision = _playbackSession?.mediaInfo?.displayCriteria?.doviProfile != null;
+    final videoRouteFailureCause =
+        dvFelFailureCause ??
+        (sourceIsDolbyVision ? dvVideoFailureCause : null) ??
+        codecFailureCauseFromLog(level: log.level, text: log.text);
     if (videoRouteFailureCause != null &&
         (_playbackAttempt?.isCurrent ?? false) &&
         !_hasFatalPlaybackError &&

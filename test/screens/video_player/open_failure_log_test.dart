@@ -13,6 +13,34 @@ String? classify(String text, {PlayerLogLevel level = PlayerLogLevel.error, Stri
 }
 
 void main() {
+  test('codec recovery requires an exhausted decoder list, not a hardware probe', () {
+    for (final (codec, cause) in [
+      ('hevc', PlayerError.videoCodecUnsupported),
+      ('vvc', PlayerError.videoCodecUnsupported),
+      ('truehd', PlayerError.audioCodecUnsupported),
+      ('pcm_s24le', PlayerError.audioCodecUnsupported),
+    ]) {
+      expect(
+        codecFailureCauseFromLog(
+          level: PlayerLogLevel.error,
+          text: "Failed to initialize a decoder for codec '$codec'.",
+        ),
+        cause,
+      );
+    }
+    for (final message in [
+      'Could not open codec.',
+      'HTTP error 404 Not Found',
+      'Could not initialize video chain.',
+      'Could not open/initialize audio device -> no sound.',
+    ]) {
+      expect(codecFailureCauseFromLog(level: PlayerLogLevel.error, text: message), isNull);
+    }
+    expect(
+      codecFailureCauseFromLog(level: PlayerLogLevel.warn, text: "Failed to initialize a decoder for codec 'hevc'."),
+      isNull,
+    );
+  });
   test('an audio device that would not open is the audio-output failure', () {
     // Same cause the native cores emit for a dead AO, so it inherits that
     // cause's localized copy and its always-fatal policy.

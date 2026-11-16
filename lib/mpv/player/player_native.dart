@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show listEquals, mapEquals, visibleForT
 import 'package:flutter/services.dart';
 
 import '../../models/audio_channel_limit.dart';
+import '../../media/runtime_playback_capabilities.dart';
 import '../../multiview/native_video_window.dart';
 import '../../services/settings_service.dart';
 import '../../utils/platform_detector.dart';
@@ -541,6 +542,16 @@ class PlayerNative extends PlayerBase
       }
       await invoke('setProperty', {'name': 'tls-verify', 'value': 'yes'});
 
+      // Enumerate the engine actually loaded on this architecture. These
+      // read-only properties contain no media paths or credentials. Failed
+      // observations leave coverage unknown and must not break playback.
+      try {
+        await observeProperty('decoder-list', _nodeFormat);
+        await observeProperty('demuxer-lavf-list', _nodeFormat);
+      } on PlatformException {
+        appLogger.d('MPV: runtime codec inventory unavailable');
+      }
+
       // Subscribe to MPV properties before flipping `initialized` so partial
       // failures don't leave us in a half-initialized state that the memoized
       // future would falsely treat as ready.
@@ -1070,6 +1081,14 @@ class PlayerNative extends PlayerBase
 
   @override
   void handlePropertyChange(String name, dynamic value, {int? sourceId}) {
+    if (name == 'decoder-list') {
+      RuntimePlaybackCapabilities.recordMpvDecoders(value);
+      return;
+    }
+    if (name == 'demuxer-lavf-list') {
+      RuntimePlaybackCapabilities.recordMpvDemuxers(value);
+      return;
+    }
     if (audioOnly && name == 'af-metadata/plezy_spectrum') {
       final sample = AudioSpectrumSample.tryParse(value);
       if (sample != null) {

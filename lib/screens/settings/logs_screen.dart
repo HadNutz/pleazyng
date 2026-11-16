@@ -27,6 +27,7 @@ import '../../services/device_performance.dart';
 import '../../services/log_upload_service.dart';
 import '../../services/file_picker_service.dart';
 import '../../services/startup_diagnostics.dart';
+import '../../media/runtime_playback_capabilities.dart';
 import '../../services/video_decode_capabilities.dart';
 import '../../utils/app_logger.dart';
 import '../../utils/formatters.dart';
@@ -238,6 +239,7 @@ class _LogsScreenState extends State<LogsScreen> with MountedSetStateMixin {
       // the buffer died with that process. This is the only place its record
       // can reach a maintainer (#1732).
       ?StartupDiagnosticsStore.pending?.describe(),
+      'Playback engine capabilities: ${jsonEncode(RuntimePlaybackCapabilities.toJson())}',
     ];
     final header = sections.isEmpty ? '' : '${sections.join('\n\n')}\n---\n';
     final logs = StringBuffer();

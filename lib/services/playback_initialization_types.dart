@@ -119,6 +119,10 @@ class PlaybackInitializationOptions {
   /// rejects the original audio format. Preserve compatible video copying.
   final bool forceAudioConversion;
 
+  /// Require a video encode after the local decoder rejects the source.
+  /// Container-only remuxing cannot repair a video decoder failure.
+  final bool forceVideoConversion;
+
   const PlaybackInitializationOptions({
     required this.metadata,
     required this.selectedMediaIndex,
@@ -139,6 +143,7 @@ class PlaybackInitializationOptions {
     this.forceServerPlayback = false,
     this.forceTranscode = false,
     this.forceAudioConversion = false,
+    this.forceVideoConversion = false,
   });
 }
 

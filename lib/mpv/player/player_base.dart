@@ -791,7 +791,11 @@ abstract class PlayerBase
               rawMessage is String && rawMessage.isNotEmpty
                   ? rawMessage
                   : (rawError is int ? _mpvErrorDescription(rawError) : null) ?? 'Playback error',
-              cause: rawCause is String ? rawCause : null,
+              cause: rawCause is String
+                  ? rawCause
+                  : rawError == -17
+                  ? PlayerError.containerUnsupported
+                  : null,
             ),
           );
           if (sourceId != null) {

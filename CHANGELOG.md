@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 - Keep Original Plex video unchanged on Samsung TV when the source fits the native MP4/H.264 and stereo AAC/MP3 profile, rather than forcing every file through a video encode.
+- Enumerate the loaded mpv decoder/demuxer inventory, expand source recognition and direct-play negotiation to measured modern, professional and legacy formats, and include capability evidence in exported diagnostics. Keep native TV and ExoPlayer capabilities separate.
+- Honor required Jellyfin/Emby conversion at Original quality, preserve retry positions, and prevent Plex compatibility negotiation from reopening a source whose decoder is absent. Ordinary codec conversion no longer implicitly requests Dolby Vision-to-SDR output.
 
 - Refresh webOS native video source rectangles when stream dimensions change without a viewport resize, and stop exported-window callbacks after disposal.
 

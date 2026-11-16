@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 
 import '../../models/audio_channel_limit.dart';
 import '../../media/playback_rate.dart';
+import '../../media/runtime_playback_capabilities.dart';
 import '../models.dart';
 import 'audio_rendering_mode.dart';
 import 'platform/player_android.dart';
@@ -439,6 +440,15 @@ abstract class Player {
     final slot = companionSession ? 1 : videoPlayerSlot;
     if (slot < 0 || slot >= videoPlayerSlotCapacity) {
       throw UnsupportedError('This platform does not provide native video slot $slot');
+    }
+    if (slot == 0) {
+      RuntimePlaybackCapabilities.activeVideoEngine = PlatformDetector.isTizenBuild()
+          ? 'tizen'
+          : PlatformDetector.isWebOSBuild()
+          ? 'webos'
+          : Platform.isAndroid && useExoPlayer == true
+          ? 'exoplayer'
+          : 'mpv';
     }
     if (PlatformDetector.isTizenBuild()) return PlayerTizen();
     if (PlatformDetector.isWebOSBuild()) {

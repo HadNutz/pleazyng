@@ -434,6 +434,7 @@ class _PlaybackOpenRequest {
     required this.resumePosition,
     this.forceTranscode = false,
     this.forceAudioConversion = false,
+    this.forceVideoConversion = false,
   });
 
   final MediaItem metadata;
@@ -447,6 +448,7 @@ class _PlaybackOpenRequest {
   /// file itself (HTTP 500); see [PlaybackInitializationOptions.forceTranscode].
   final bool forceTranscode;
   final bool forceAudioConversion;
+  final bool forceVideoConversion;
 
   /// Same item and source selection; where it resumes from is incidental.
   bool sameSourceAs(_PlaybackOpenRequest other) =>
@@ -456,7 +458,8 @@ class _PlaybackOpenRequest {
       qualityPreset == other.qualityPreset &&
       audioStreamId == other.audioStreamId &&
       forceTranscode == other.forceTranscode &&
-      forceAudioConversion == other.forceAudioConversion;
+      forceAudioConversion == other.forceAudioConversion &&
+      forceVideoConversion == other.forceVideoConversion;
 
   _PlaybackOpenRequest resumingAt(Duration? position) => _PlaybackOpenRequest(
     metadata: metadata,
@@ -467,6 +470,7 @@ class _PlaybackOpenRequest {
     resumePosition: position,
     forceTranscode: forceTranscode,
     forceAudioConversion: forceAudioConversion,
+    forceVideoConversion: forceVideoConversion,
   );
 }
 
@@ -1551,6 +1555,8 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   bool _dolbyVisionCompatibilityFallbackInFlight = false;
   _PlaybackOpenRequest? _audioFallbackAttemptedFor;
   bool _audioCompatibilityFallbackInFlight = false;
+  _PlaybackOpenRequest? _videoFallbackAttemptedFor;
+  bool _videoCompatibilityFallbackInFlight = false;
 
   final ValueNotifier<bool> _isExiting = ValueNotifier<bool>(false);
   final PlayerChromeController _chromeController = PlayerChromeController(

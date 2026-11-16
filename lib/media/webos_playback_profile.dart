@@ -12,3 +12,12 @@ bool webosMediaErrorRejectsAudio(Object? error) {
     r'|(?:audio codec|audio format|dts|truehd).{0,48}(?:unsupported|not supported)',
   ).hasMatch(message);
 }
+
+bool webosMediaErrorRejectsVideo(Object? error) {
+  if (error == null) return false;
+  final message = error.toString().toLowerCase().replaceAll(RegExp(r'[_-]'), ' ');
+  return RegExp(
+    r'(?:unsupported|not supported).{0,48}(?:video codec|video format)'
+    r'|(?:video codec|video format).{0,48}(?:unsupported|not supported)',
+  ).hasMatch(message);
+}
