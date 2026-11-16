@@ -182,19 +182,32 @@ abstract final class SubtitleSyncService {
       if (candidates.length > 80) candidates.length = 80;
 
       _SubtitleAnchor? best;
+      var earliestExactMatchTime = SubtitleRetimer.maximumTimeMs;
+      var latestExactMatchTime = 0;
       for (final speechIndex in candidates) {
         comparisons++;
         if (comparisons > _maximumCandidateComparisons) {
           throw const FormatException('Subtitle alignment exceeded its bounded comparison budget.');
         }
-        final confidence = _similarity(terms, speechTerms[speechIndex]);
+        final candidateTerms = speechTerms[speechIndex];
+        final confidence = _similarity(terms, candidateTerms);
         if (confidence < 0.42) continue;
+        if (terms.isNotEmpty && terms.length == candidateTerms.length && terms.containsAll(candidateTerms)) {
+          final candidateTime = orderedSpeech[speechIndex].startMs;
+          if (candidateTime < earliestExactMatchTime) earliestExactMatchTime = candidateTime;
+          if (candidateTime > latestExactMatchTime) latestExactMatchTime = candidateTime;
+        }
         final temporalPenalty = ((speechIndex - expectedIndex).abs() / orderedSpeech.length * 0.025).clamp(0.0, 0.025);
         final adjustedConfidence = confidence - temporalPenalty;
         if (best == null || adjustedConfidence > best.confidence) {
           best = _SubtitleAnchor(subtitleIndex: subIndex, speechIndex: speechIndex, confidence: adjustedConfidence);
         }
       }
+
+      // An exact repeated phrase cannot identify which occurrence is intended
+      // when the candidates imply materially different subtitle offsets. Leave
+      // it unmatched so it cannot create a false cut or distort the global fit.
+      if (latestExactMatchTime - earliestExactMatchTime >= _cutOffsetJumpMs) continue;
 
       if (best != null && best.confidence >= 0.44) {
         anchors.add(best);
