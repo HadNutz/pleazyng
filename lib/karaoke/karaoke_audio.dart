@@ -14,22 +14,69 @@ import '../utils/platform_detector.dart';
 import 'karaoke_scoring.dart';
 import 'karaoke_session.dart';
 
+/// Platform-facing microphone operations used by [KaraokeAudio].
+///
+/// Keeping the recorder behind this small boundary lets capture lifecycle
+/// tests exercise permission, startup, format changes, and teardown without a
+/// host microphone or plugin channel.
+abstract interface class KaraokeCaptureBackend {
+  Future<bool> hasPermission();
+  Future<bool> isEncoderSupported(AudioEncoder encoder);
+  Future<void> setOnConfigChanged(void Function(RecordConfig config)? callback);
+  Future<Stream<Uint8List>> startStream(RecordConfig config);
+  Stream<RecordState> onStateChanged();
+  Future<List<InputDevice>> listInputDevices();
+  Future<void> stop();
+  Future<void> dispose();
+}
+
+class _RecordKaraokeCaptureBackend implements KaraokeCaptureBackend {
+  final AudioRecorder _recorder = AudioRecorder();
+
+  @override
+  Future<bool> hasPermission() => _recorder.hasPermission();
+
+  @override
+  Future<bool> isEncoderSupported(AudioEncoder encoder) => _recorder.isEncoderSupported(encoder);
+
+  @override
+  Future<void> setOnConfigChanged(void Function(RecordConfig config)? callback) =>
+      _recorder.setOnConfigChanged(callback);
+
+  @override
+  Future<Stream<Uint8List>> startStream(RecordConfig config) => _recorder.startStream(config);
+
+  @override
+  Stream<RecordState> onStateChanged() => _recorder.onStateChanged();
+
+  @override
+  Future<List<InputDevice>> listInputDevices() => _recorder.listInputDevices();
+
+  @override
+  Future<void> stop() async {
+    await _recorder.stop();
+  }
+
+  @override
+  Future<void> dispose() => _recorder.dispose();
+}
+
 /// Music capture is separate from Steam's voice/Opus transport. Shared lifetime
 /// rules: explicit permission, a generation lease, bounded buffers, stop on
 /// background/interruption and no automatic microphone resume.
 class KaraokeAudio extends ChangeNotifier with WidgetsBindingObserver {
-  KaraokeAudio(this.session) {
+  KaraokeAudio(this.session, {KaraokeCaptureBackend? captureBackend}) : _backend = captureBackend {
     WidgetsBinding.instance.addObserver(this);
     session.addListener(_sessionChanged);
     session.stopCapture = stop;
   }
   final KaraokeSession session;
-  AudioRecorder? _recorder;
-  AudioRecorder get _capture {
+  KaraokeCaptureBackend? _backend;
+  KaraokeCaptureBackend get _capture {
     if (!supported) {
       throw UnsupportedError('Microphone capture is unavailable');
     }
-    return _recorder ??= AudioRecorder();
+    return _backend ??= _RecordKaraokeCaptureBackend();
   }
 
   // stop() clears and cancels local snapshots before awaiting recorder teardown.
@@ -150,7 +197,7 @@ class KaraokeAudio extends ChangeNotifier with WidgetsBindingObserver {
         ),
       );
       if (_disposed || generation != _generation) {
-        await _recorder?.stop();
+        await _backend?.stop();
         return;
       }
       if (_captureConfigFailure case final failure?) {
@@ -471,12 +518,12 @@ class KaraokeAudio extends ChangeNotifier with WidgetsBindingObserver {
     await samples?.cancel();
     await state?.cancel();
     try {
-      await _recorder?.setOnConfigChanged(null);
+      await _backend?.setOnConfigChanged(null);
     } catch (e) {
       session.report(e);
     }
     try {
-      await _recorder?.stop();
+      await _backend?.stop();
     } catch (e) {
       session.report(e);
     }
@@ -510,7 +557,7 @@ class KaraokeAudio extends ChangeNotifier with WidgetsBindingObserver {
     unawaited(
       stop()
           .whenComplete(() async {
-            await _recorder?.dispose();
+            await _backend?.dispose();
           })
           .catchError((Object e) {
             session.report(e);
