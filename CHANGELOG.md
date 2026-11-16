@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [3.0.37]
+
+- Build authentic Apple Store screenshots with current Flutter, preserve reusable app bundles, and verify their source and capture provenance.
+- Add signed macOS App Store packaging and upload with source, storage, certificate and processing validation.
+- Skip Git metadata during Apple network-storage source cleanup.
 - Include the original EVC/AVS decoder notices and the complete upstream LCEVC notice tree in the app Licenses screen, with one SDK entry.
 - Reject native SDK pin updates when the app's bundled decoder license notices are stale or altered, preserving all platform pins on failure.
 - Retain the pinned LCEVC decoder SDK's original licensing terms in the app Licenses screen; document bundled SDK delivery and pending native artifact qualification.
@@ -24,6 +29,10 @@
 
 - Keep release recovery tooling, product inputs and immutable-tag checks aligned to their verified source identities; preserve independently signed runtime catalog updates outside platform artifacts.
 - Append recovered signed Apple Store packages to an existing release with separate checksum and provenance sidecars, preserving the release's original assets and manifests.
+
+## [3.0.36] - 2026-11-16
+
+### Cumulative updates through this release
 
 - Hide Continue Watching from TV launcher shelves for PIN-protected profiles while startup requires profile selection, independently adapting [Plezy commit 02eeba6972](https://github.com/edde746/plezy/commit/02eeba69723b33f28e6b8ae9dab2ce1c02a1c3cd) by [@edde746](https://github.com/edde746); see [upstream source credit](UPSTREAM_ATTRIBUTION.md#credited-plezy-commits).
 
