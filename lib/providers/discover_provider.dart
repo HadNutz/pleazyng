@@ -157,6 +157,7 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
       onEvent: _onDeletion,
     );
     _libraryEventSubscription = LibraryContentNotifier().stream.listen(_onLibraryContentChanged);
+    _shelfPublicationSubscription = SystemShelfService().publicationResumed.listen(_onShelfPublicationResumed);
   }
 
   final MultiServerProvider _multiServer;
@@ -186,6 +187,7 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
 
   static bool _neverBlocked() => false;
   StreamSubscription<LibraryChangeEvent>? _libraryEventSubscription;
+  StreamSubscription<String>? _shelfPublicationSubscription;
   late final RefreshPacer _libraryEventPacer;
 
   /// Authoritative fetches tell the store which items the server re-observed,
@@ -1304,6 +1306,13 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
 
   // --- Platform launcher shelf ----------------------------------------------
 
+  /// The launcher shelf admitted this profile again after withholding it; sync
+  /// the rows currently loaded in this session.
+  void _onShelfPublicationResumed(String owner) {
+    if (isDisposed || owner != profileId) return;
+    unawaited(_syncSystemShelf(_onDeck));
+  }
+
   /// Sync Continue Watching to the platform launcher shelf. Rapid updates
   /// coalesce: a sync that arrives while one is in flight queues exactly one
   /// follow-up pass with the latest items.
@@ -1402,6 +1411,8 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     _deletionSubscription = null;
     _libraryEventSubscription?.cancel();
     _libraryEventSubscription = null;
+    _shelfPublicationSubscription?.cancel();
+    _shelfPublicationSubscription = null;
     _libraryEventPacer.dispose();
     _loadCoordinator.dispose();
     _pendingSystemShelfItems = null;

@@ -121,6 +121,43 @@ void main() {
     expect((calls.last.arguments as Map)['ownerId'], 'owner-b');
   });
 
+  test('a withheld profile clears its shelf, republishes when admitted, and stays closed after ending', () async {
+    final calls = <MethodCall>[];
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      calls.add(call);
+      return true;
+    });
+    final service = SystemShelfService.forTesting(channel: channel, isSupported: () async => true);
+    var mayPublish = false;
+    service.publicationPolicy = (_) => mayPublish;
+    final resumed = <String>[];
+    final subscription = service.publicationResumed.listen(resumed.add);
+    addTearDown(subscription.cancel);
+
+    service.beginProfileSession('protected');
+    expect(await service.syncFromContinueWatching('protected', const [], (_) => _ShelfClient()), isFalse);
+    await Future<void>.delayed(Duration.zero);
+    expect(calls.map((call) => call.method), ['clear']);
+
+    mayPublish = true;
+    service.refreshPublicationPolicy();
+    expect(await service.syncFromContinueWatching('protected', const [], (_) => _ShelfClient()), isTrue);
+    expect(resumed, ['protected']);
+
+    mayPublish = false;
+    service.refreshPublicationPolicy();
+    expect(await service.syncFromContinueWatching('protected', const [], (_) => _ShelfClient()), isFalse);
+
+    await service.endProfileSession('protected');
+    mayPublish = true;
+    service.refreshPublicationPolicy();
+    await Future<void>.delayed(Duration.zero);
+    expect(service.debugActiveOwner, isNull);
+    expect(resumed, ['protected']);
+    expect(calls.map((call) => call.method), ['clear', 'sync', 'clear']);
+    expect(calls.map((call) => (call.arguments as Map)['ownerId']), everyElement('protected'));
+  });
+
   test('native failure is contained and the ordered tail accepts a later sync', () async {
     var syncCount = 0;
     messenger.setMockMethodCallHandler(channel, (call) async {
