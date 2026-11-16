@@ -1,0 +1,109 @@
+# Untrusted pull-request code runs only on disposable public GitHub-hosted
+# runners, with read-only repository access and no repository secrets.
+name: Pull request checks
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pull-request-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  DASH__SUPPRESS_ANALYTICS: "true"
+  FLUTTER_SUPPRESS_ANALYTICS: "true"
+
+jobs:
+  checks:
+    name: Flutter checks and tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: read
+    steps:
+      - name: Check out pull request merge commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate changelog entry
+        env:
+          CHANGELOG_BASE: ${{ github.event.pull_request.base.sha }}
+          CHANGELOG_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: python3 scripts/changelog.py validate --mode range --base "$CHANGELOG_BASE" --head "$CHANGELOG_HEAD"
+
+      - name: Load pinned Flutter SDK
+        run: python3 scripts/flutter/load_sdk_pin.py --github-env
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          pub-cache: false
+
+      - name: Cache Pub dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pull-request-pub-v1-${{ hashFiles('**/pubspec.yaml', '**/pubspec.lock') }}
+
+      - name: Install system dependencies
+        env:
+          RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          sudo python3 scripts/configure_hosted_apt.py "$RUNNER_ENVIRONMENT"
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang build-essential cmake ffmpeg
+
+      - name: Install Flutter dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Prefetch checksum-pinned host native libraries
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/prepare_native_downloads.py --sqlite-platform linux --arch x64
+
+      - name: Install wakelock_plus development dependencies
+        working-directory: packages/wakelock_plus
+        run: flutter pub get --enforce-lockfile --no-example
+
+      - name: Verify generated files
+        run: scripts/codegen.sh --check
+
+      - name: Verify translation hygiene
+        run: |
+          python3 scripts/checks/clean_translations.py --check --strict
+          python3 scripts/checks/check_localizations.py
+          python3 scripts/codegen/generate_localized_quantities.py --check
+          python3 scripts/codegen/generate_platform_locales.py --check
+
+      - name: Verify workflow and script guards
+        run: bash scripts/ci_guard_checks.sh
+
+      - name: Verify formatting
+        run: bash scripts/format_dart.sh --check
+
+      - name: Verify icon consistency
+        run: dart run scripts/checks/check_icon_consistency.dart
+
+      - name: Analyze code
+        run: dart run scripts/checks/check_analyzer.dart
+
+      - name: Check for unused code and files
+        run: |
+          set -euo pipefail
+          dart run dart_code_linter:metrics check-unused-code lib 2>&1 | tee unused_code.txt
+          grep -qi "no unused code found" unused_code.txt
+          dart run dart_code_linter:metrics check-unused-files lib 2>&1 | tee unused_files.txt
+          grep -qi "no unused files found" unused_files.txt
+
+      - name: Run unit and widget tests
+        run: scripts/run_tests.sh -j 2 --timeout=120s
