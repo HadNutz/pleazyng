@@ -210,7 +210,24 @@ class _SubtitleCalibrationDialogState extends State<SubtitleCalibrationDialog> {
       });
       return;
     }
-    final saved = await widget.onSave(fit);
+    late final bool saved;
+    try {
+      saved = await SubtitleCalibrationHistoryService.saveBeforeApply(
+        identity: identity,
+        observations: List.unmodifiable(_observations),
+        fit: fit,
+        previousRate: widget.previousRate,
+        previousDelayMs: widget.previousDelayMs,
+        apply: () => widget.onSave(fit),
+      );
+    } on Object {
+      if (!mounted) return;
+      setState(() {
+        _working = false;
+        _failure = context.t.common.error;
+      });
+      return;
+    }
     if (!mounted) return;
     if (!saved) {
       setState(() {
@@ -219,31 +236,13 @@ class _SubtitleCalibrationDialogState extends State<SubtitleCalibrationDialog> {
       });
       return;
     }
-    try {
-      await SubtitleCalibrationHistoryService.save(
-        identity: identity,
-        observations: List.unmodifiable(_observations),
-        fit: fit,
-        previousRate: widget.previousRate,
-        previousDelayMs: widget.previousDelayMs,
-      );
-      final history = await SubtitleCalibrationHistoryService.load(identity);
-      if (!mounted) return;
-      setState(() {
-        _history = history;
-        _working = false;
-        _previewActive = false;
-        _status = null;
-      });
-      Navigator.of(context).pop(fit);
-    } on Object {
-      if (!mounted) return;
-      setState(() {
-        _working = false;
-        _previewActive = false;
-        _status = context.t.common.error;
-      });
-    }
+    if (!mounted) return;
+    setState(() {
+      _working = false;
+      _previewActive = false;
+      _status = null;
+    });
+    Navigator.of(context).pop(fit);
   }
 
   Future<void> _exportPiecewise() async {
@@ -312,40 +311,30 @@ class _SubtitleCalibrationDialogState extends State<SubtitleCalibrationDialog> {
         previousRate: widget.previousRate,
         previousDelayMs: widget.previousDelayMs,
       );
-      final path = await FilePickerService.instance.saveFile(
-        dialogTitle: exportTitle,
-        fileName: 'subtitle-calibration.zip',
-        type: FileType.custom,
-        allowedExtensions: const ['zip'],
-        bytes: archive,
+      late final List<SubtitleCalibrationRecord> updatedHistory;
+      final path = await SubtitleCalibrationHistoryService.saveBeforeAction<String?>(
+        identity: identity,
+        observations: List.unmodifiable(_observations),
+        fit: _fit,
+        previousRate: widget.previousRate,
+        previousDelayMs: widget.previousDelayMs,
+        action: () async {
+          updatedHistory = await SubtitleCalibrationHistoryService.load(identity);
+          return FilePickerService.instance.saveFile(
+            dialogTitle: exportTitle,
+            fileName: 'subtitle-calibration.zip',
+            type: FileType.custom,
+            allowedExtensions: const ['zip'],
+            bytes: archive,
+          );
+        },
       );
       if (!mounted) return;
-      if (path == null) {
-        setState(() => _working = false);
-        return;
-      }
-      try {
-        await SubtitleCalibrationHistoryService.save(
-          identity: identity,
-          observations: List.unmodifiable(_observations),
-          fit: _fit,
-          previousRate: widget.previousRate,
-          previousDelayMs: widget.previousDelayMs,
-        );
-        final history = await SubtitleCalibrationHistoryService.load(identity);
-        if (!mounted) return;
-        setState(() {
-          _history = history;
-          _working = false;
-          _status = context.t.videoSettings.subtitleExportSuccess;
-        });
-      } on Object {
-        if (!mounted) return;
-        setState(() {
-          _working = false;
-          _status = context.t.common.error;
-        });
-      }
+      setState(() {
+        _history = updatedHistory;
+        _working = false;
+        _status = path == null ? null : context.t.videoSettings.subtitleExportSuccess;
+      });
     } on Object {
       if (!mounted) return;
       setState(() {

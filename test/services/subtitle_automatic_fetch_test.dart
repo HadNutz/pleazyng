@@ -55,14 +55,14 @@ void main() {
           ),
         ),
       );
-      expect(find.text('Loading...'), findsOneWidget);
-      await tester.tap(find.text('Cancel'));
+      expect(find.text('Looking for subtitles matching your preferred language…'), findsOneWidget);
+      await tester.tap(find.text('Skip'));
       await tester.pump();
       expect(controller.stage, SubtitleFetchStage.cancelled);
-      expect(find.text('Stopped. The server may still finish a download it already accepted.'), findsNothing);
-      expect(find.text('Search Subtitles'), findsOneWidget);
+      expect(find.text('Stopped. The server may still finish a download it already accepted.'), findsOneWidget);
+      expect(find.text('Search subtitles'), findsOneWidget);
 
-      await tester.tap(find.text('Search Subtitles'));
+      await tester.tap(find.text('Search subtitles'));
       expect(retries, 1);
     });
   });

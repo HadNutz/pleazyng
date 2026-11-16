@@ -30,6 +30,7 @@ class MusicSessionSnapshot {
   final bool continuationAlbumRadio;
   final double continuationDistance;
   final Set<String> continuationExcluded;
+  final bool offlineQueue;
 
   const MusicSessionSnapshot({
     required this.queue,
@@ -42,6 +43,7 @@ class MusicSessionSnapshot {
     this.continuationAlbumRadio = false,
     this.continuationDistance = .25,
     this.continuationExcluded = const {},
+    this.offlineQueue = false,
   });
 }
 
@@ -99,6 +101,13 @@ class MusicSessionStore {
         (snapshot.continuationAlbumRadio && snapshot.continuationSeed?.kind != MediaKind.album)) {
       throw ArgumentError('Invalid music continuation');
     }
+    if (snapshot.offlineQueue &&
+        (snapshot.continuationSeed != null ||
+            snapshot.continuationAccount != null ||
+            snapshot.continuationStation != null ||
+            snapshot.continuationServerRadio != null)) {
+      throw ArgumentError('Offline music queue cannot persist online continuation');
+    }
     if (!queue.isValid) {
       throw ArgumentError('Invalid music queue snapshot');
     }
@@ -110,6 +119,7 @@ class MusicSessionStore {
           queueJson: jsonEncode({
             'version': 2,
             'length': queue.items.length,
+            if (snapshot.offlineQueue) 'offlineQueue': true,
             if (snapshot.continuationSeed case final seed?)
               'continuation': {
                 // Persist identities, never a stream URL or authentication data.
@@ -272,11 +282,17 @@ class MusicSessionStore {
         var continuationAlbumRadio = false;
         var continuationDistance = .25;
         var continuationExcluded = <String>{};
+        var offlineQueue = false;
         if (payload is List) {
           // Read v1 rows until their next save; upgrading never loses the old session.
           items.addAll(payload.map((json) => MediaItem.fromJson(json as Map<String, dynamic>)));
           order.replaceWith((jsonDecode(row.orderJson) as List).cast<int>());
         } else if (payload is Map && payload['version'] == 2) {
+          final offlineValue = payload['offlineQueue'];
+          if (offlineValue != null && offlineValue is! bool) {
+            throw const FormatException('Invalid persisted offline music queue');
+          }
+          offlineQueue = offlineValue == true;
           if (payload['continuation'] case final Map continuation) {
             final seed = MediaItem.fromJson(Map<String, dynamic>.from(continuation['seed'] as Map));
             if (seed.serverId != null &&
@@ -315,6 +331,9 @@ class MusicSessionStore {
               if (account is String && account.isNotEmpty && account.length <= 1024) continuationAccount = account;
               continuationExcluded = (continuation['excluded'] as List).cast<String>().toSet();
             }
+          }
+          if (offlineQueue && continuationSeed != null) {
+            throw const FormatException('Offline queue cannot restore online continuation');
           }
           final length = payload['length'] as int;
           if (length <= 0) return null;
@@ -387,6 +406,7 @@ class MusicSessionStore {
           continuationAlbumRadio: continuationAlbumRadio,
           continuationDistance: continuationDistance,
           continuationExcluded: Set.unmodifiable(continuationExcluded),
+          offlineQueue: offlineQueue,
           playContext: row.contextTitle != null && contextKind != null
               ? MusicPlayContext(title: row.contextTitle!, kind: contextKind)
               : null,

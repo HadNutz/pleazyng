@@ -36,6 +36,41 @@ void main() {
   MediaItem track(String id) =>
       testMediaItem(id: id, kind: MediaKind.track, title: 'Track $id', serverId: 'srv', durationMs: 180000);
 
+  test('offline queue mode survives durable restore without online continuation', () async {
+    final session = store();
+    await session.save(
+      MusicSessionSnapshot(
+        queue: MusicQueueState(
+          items: [track('a')],
+          order: [0],
+          cursor: 0,
+          shuffled: false,
+          repeatMode: MusicRepeatMode.off,
+        ),
+        playContext: null,
+        position: const Duration(seconds: 12),
+        offlineQueue: true,
+      ),
+    );
+    final restored = await session.load();
+    expect(restored!.offlineQueue, isTrue);
+    expect(restored.continuationSeed, isNull);
+    expect(restored.position, const Duration(seconds: 12));
+    await expectLater(
+      session.save(
+        MusicSessionSnapshot(
+          queue: restored.queue,
+          playContext: null,
+          position: Duration.zero,
+          offlineQueue: true,
+          continuationSeed: track('seed'),
+          continuationAccount: 'account',
+        ),
+      ),
+      throwsArgumentError,
+    );
+  });
+
   MusicQueueState state({
     required List<MediaItem> items,
     List<int>? order,

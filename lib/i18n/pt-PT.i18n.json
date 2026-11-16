@@ -438,7 +438,16 @@
     "playbackSpeed": "Velocidade de reprodução",
     "hdrToneMappingPlayer": "Leitor",
     "audioOutputStereo": "Estéreo",
-    "audioEqualizerActive": "Personalizado"
+    "audioEqualizerActive": "Personalizado",
+    "subtitleAutoSearching": "",
+    "subtitleAutoDownloading": "",
+    "subtitleAutoRefreshing": "",
+    "subtitleAutoNoMatch": "",
+    "subtitleAutoFailed": "",
+    "subtitleAutoCancelled": "",
+    "subtitleAutoExpired": "",
+    "subtitleAutoSkip": "",
+    "subtitleAutoSearchAgain": ""
   },
   "performanceOverlay": {
     "performance": "Desempenho",
@@ -947,10 +956,21 @@
   },
   "musicExperience": {
     "bluetoothDriving": "Saídas Bluetooth para condução",
-    "bluetoothDrivingHint": "Escolha as saídas Bluetooth ligadas que abrem automaticamente a vista de condução."
+    "bluetoothDrivingHint": "Escolha as saídas Bluetooth ligadas que abrem automaticamente a vista de condução.",
+    "offlineContinuation": "",
+    "offlineEmpty": ""
   },
   "subtitleAiUi": {
     "liveCaptureStart": "Iniciar legendas em direto",
     "liveCaptureStop": "Parar legendas em direto"
+  },
+  "karaokeUi": {
+    "allThemesAndCollections": "",
+    "recommendedThemesAndCollections": "",
+    "searchVisibleMediaServers": "",
+    "noSongsMatchCurrentFilters": "",
+    "preferThisVersion": "",
+    "clearPreferredVersion": "",
+    "preferredVersion": ""
   }
 }

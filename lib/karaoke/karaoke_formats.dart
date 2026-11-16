@@ -16,6 +16,10 @@ class KaraokeTextImport {
 
 /// Deliberately documented subset; originals are retained by the package store.
 class KaraokeFormats {
+  // Stay below 2^43 seconds so the parser's double-based clock conversion
+  // retains millisecond precision on every supported Dart target.
+  static const int _maxPreciseTimeMs = (1 << 43) * 1000 - 1;
+
   static KaraokeTextImport parse(String text, String extension) {
     if (text.length > 8 * 1024 * 1024) {
       throw const FormatException('Lyrics exceed 8 MiB');
@@ -179,6 +183,9 @@ class KaraokeFormats {
     if (root.name.local != 'tt') {
       throw const FormatException('Missing TTML root');
     }
+    const ttmlNamespace = 'http://www.w3.org/ns/ttml';
+    const metadataNamespace = 'http://www.w3.org/ns/ttml#metadata';
+    const xmlNamespace = 'http://www.w3.org/XML/1998/namespace';
     final warnings = <String>{};
     for (final e in root.descendants.whereType<XmlElement>()) {
       if (e.getAttribute('timeContainer') == 'seq') {
@@ -193,6 +200,52 @@ class KaraokeFormats {
         warnings.add('TTML styling is preserved in the original only');
       }
     }
+    final declaredAgentIds = <String>{};
+    final agentNames = <String, String>{};
+    for (final agent in root.descendants.whereType<XmlElement>().where(
+      (e) => e.name.local == 'agent' && e.name.namespaceUri == metadataNamespace,
+    )) {
+      final parent = agent.parent;
+      final head = parent is XmlElement && parent.name.local == 'metadata' ? parent.parent : parent;
+      final significant =
+          head is XmlElement &&
+          head.name.local == 'head' &&
+          head.name.namespaceUri == ttmlNamespace &&
+          parent is XmlElement &&
+          ((parent.name.local == 'head' && parent.name.namespaceUri == ttmlNamespace) ||
+              (parent.name.local == 'metadata' && parent.name.namespaceUri == ttmlNamespace));
+      if (!significant) {
+        continue;
+      }
+      final id = agent.getAttribute('id', namespaceUri: xmlNamespace);
+      if (id == null) {
+        continue;
+      }
+      declaredAgentIds.add(id);
+      for (final child in agent.children.whereType<XmlElement>()) {
+        if (child.name.local == 'name' && child.name.namespaceUri == metadataNamespace) {
+          agentNames[id] = child.innerText;
+          break;
+        }
+      }
+    }
+    String? part(XmlElement element) {
+      final value = element.getAttribute('agent', namespaceUri: metadataNamespace);
+      if (value == null) {
+        return null;
+      }
+      final references = value.trim().split(RegExp(r'\s+'));
+      if (references.length > 1 && references.any(declaredAgentIds.contains)) {
+        throw const FormatException(
+          'Multiple TTML agent references cannot be represented by a single karaoke part label',
+        );
+      }
+      if (references.length == 1) {
+        return agentNames[references.first] ?? value;
+      }
+      return value;
+    }
+
     int begin(XmlElement e) {
       final parent = e.parent;
       return (parent is XmlElement ? begin(parent) : 0) +
@@ -216,14 +269,7 @@ class KaraokeFormats {
       final spans = <LyricSpan>[];
       void visit(XmlNode node, XmlElement owner) {
         if (node is XmlText) {
-          spans.add(
-            LyricSpan(
-              text: node.value,
-              startMs: begin(owner),
-              endMs: end(owner),
-              part: owner.getAttribute('agent', namespaceUri: 'http://www.w3.org/ns/ttml#metadata'),
-            ),
-          );
+          spans.add(LyricSpan(text: node.value, startMs: begin(owner), endMs: end(owner), part: part(owner)));
         } else if (node is XmlElement) {
           if (node.name.local == 'br') {
             spans.add(LyricSpan(text: '\n', startMs: begin(owner), endMs: end(owner)));
@@ -239,17 +285,18 @@ class KaraokeFormats {
         visit(child, p);
       }
       lines.add(
-        LyricLine(
-          text: spans.map((s) => s.text).join(),
-          startMs: begin(p),
-          endMs: end(p),
-          spans: spans,
-          part: p.getAttribute('agent', namespaceUri: 'http://www.w3.org/ns/ttml#metadata'),
-        ),
+        LyricLine(text: spans.map((s) => s.text).join(), startMs: begin(p), endMs: end(p), spans: spans, part: part(p)),
       );
     }
-    lines.sort((a, b) => a.startMs!.compareTo(b.startMs!));
-    return KaraokeTextImport(Lyrics(synced: true, lines: lines), warnings: warnings.toList());
+    final orderedLines = lines.indexed.toList()
+      ..sort((a, b) {
+        final timeOrder = a.$2.startMs!.compareTo(b.$2.startMs!);
+        return timeOrder == 0 ? a.$1.compareTo(b.$1) : timeOrder;
+      });
+    return KaraokeTextImport(
+      Lyrics(synced: true, lines: orderedLines.map((entry) => entry.$2).toList()),
+      warnings: warnings.toList(),
+    );
   }
 
   static KaraokeTextImport _ultraStar(String text) {
@@ -341,6 +388,19 @@ class KaraokeFormats {
   static String _stamp(int ms) =>
       '${(ms ~/ 3600000).toString().padLeft(2, '0')}:${(ms ~/ 60000 % 60).toString().padLeft(2, '0')}:${(ms ~/ 1000 % 60).toString().padLeft(2, '0')}.${(ms % 1000).toString().padLeft(3, '0')}';
   static String _escape(String s) => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+
+  static String _escapeXmlText(String value) {
+    if (value.runes.any(
+      (rune) =>
+          rune != 0x09 &&
+          rune != 0x0a &&
+          rune != 0x0d &&
+          (rune < 0x20 || (rune >= 0xd800 && rune <= 0xdfff) || rune == 0xfffe || rune == 0xffff),
+    )) {
+      throw const FormatException('TTML cannot encode characters that are invalid in XML 1.0');
+    }
+    return _escape(value);
+  }
 
   static void _requireRepresentable(
     Lyrics lyrics,
@@ -460,6 +520,138 @@ class KaraokeFormats {
       out.writeln();
       out.writeln();
     }
+    return out.toString();
+  }
+
+  static String exportTtml(Lyrics lyrics) {
+    if (!lyrics.synced) {
+      throw const FormatException('Untimed lyrics cannot be exported as TTML');
+    }
+    final losses = <String>{};
+    var previousStart = -1;
+    for (final line in lyrics.lines) {
+      final start = line.startMs;
+      if (start == null) {
+        losses.add('untimed lines');
+        continue;
+      }
+      if (start < 0 || start > _maxPreciseTimeMs) {
+        throw const FormatException('TTML line time exceeds the supported precise millisecond range');
+      }
+      if (start < previousStart) {
+        losses.add('line order that differs from chronological order');
+      }
+      previousStart = start;
+      if (line.endMs != null && (line.endMs! <= start || line.endMs! > _maxPreciseTimeMs)) {
+        throw const FormatException('TTML line end must follow its start and stay within the supported time range');
+      }
+      if (line.translation != null) {
+        losses.add('line translations');
+      }
+      if (line.pronunciation != null) {
+        losses.add('line pronunciations');
+      }
+      if (line.spans.isNotEmpty && line.spans.map((span) => span.text).join() != line.text) {
+        losses.add('lyric text outside timed spans');
+      }
+      for (final span in line.spans) {
+        if (span.text.isEmpty) {
+          losses.add('empty timed spans');
+        }
+        if (span.pronunciation != null) {
+          losses.add('span pronunciation readings');
+        }
+        if (span.unit != LyricUnit.word) {
+          losses.add('syllable or token units');
+        }
+        if (span.confidence != null) {
+          losses.add('span confidence values');
+        }
+        if (span.startMs < start) {
+          throw const FormatException('TTML span starts cannot precede their line');
+        }
+        if (span.startMs > _maxPreciseTimeMs) {
+          throw const FormatException('TTML span start exceeds the supported precise millisecond range');
+        }
+        if (span.endMs == null && line.endMs != null) {
+          losses.add('span ends inherited from a line end');
+        }
+        if (line.endMs != null && span.startMs >= line.endMs!) {
+          throw const FormatException('TTML span starts must precede their line end');
+        }
+        if (span.endMs != null && span.endMs! <= span.startMs) {
+          throw const FormatException('TTML span ends must follow their starts');
+        }
+        if (span.endMs != null && line.endMs != null && span.endMs! > line.endMs!) {
+          throw const FormatException('TTML span ends cannot follow their line end');
+        }
+        if (span.endMs != null && span.endMs! > _maxPreciseTimeMs) {
+          throw const FormatException('TTML span end exceeds the supported precise millisecond range');
+        }
+      }
+    }
+    if (losses.isNotEmpty) {
+      throw FormatException('TTML cannot preserve ${losses.join(', ')}. Export a native karaoke package to keep them.');
+    }
+
+    final agentIds = <String, String>{};
+    for (final line in lyrics.lines) {
+      for (final label in [line.part, ...line.spans.map((span) => span.part)]) {
+        if (label == null) {
+          continue;
+        }
+        if (label.isEmpty) {
+          throw const FormatException('TTML part labels cannot be empty');
+        }
+        agentIds.putIfAbsent(label, () => 'agent${agentIds.length + 1}');
+      }
+    }
+
+    final out = StringBuffer(
+      '<?xml version="1.0" encoding="UTF-8"?>\n'
+      '<tt xmlns="http://www.w3.org/ns/ttml" '
+      'xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xml:space="preserve">\n',
+    );
+    if (agentIds.isNotEmpty) {
+      out.write('  <head>\n    <metadata>\n');
+    }
+    for (final entry in agentIds.entries) {
+      out.write(
+        '      <ttm:agent type="group" xml:id="${entry.value}">'
+        '<ttm:name>${_escapeXmlText(entry.key)}</ttm:name></ttm:agent>\n',
+      );
+    }
+    if (agentIds.isNotEmpty) {
+      out.write('    </metadata>\n  </head>\n');
+    }
+    out.write('  <body>\n    <div>\n');
+    for (final line in lyrics.lines) {
+      final start = line.startMs!;
+      out.write('      <p begin="${_stamp(start)}"');
+      if (line.endMs != null) {
+        out.write(' dur="${_stamp(line.endMs! - start)}"');
+      }
+      if (line.part != null) {
+        out.write(' ttm:agent="${agentIds[line.part!]}"');
+      }
+      out.write('>');
+      if (line.spans.isEmpty) {
+        out.write(_escapeXmlText(line.text));
+      } else {
+        for (final span in line.spans) {
+          out.write('<span begin="${_stamp(span.startMs - start)}"');
+          if (span.endMs != null) {
+            out.write(' dur="${_stamp(span.endMs! - span.startMs)}"');
+          }
+          if (span.part != null) {
+            out.write(' ttm:agent="${agentIds[span.part!]}"');
+          }
+          out.write('>${_escapeXmlText(span.text)}</span>');
+        }
+      }
+      out.writeln('</p>');
+    }
+    out.write('    </div>\n  </body>\n</tt>\n');
     return out.toString();
   }
 

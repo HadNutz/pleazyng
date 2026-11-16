@@ -204,6 +204,53 @@ void main() {
       if (await temporary.exists()) await temporary.delete(recursive: true);
     });
 
+    test('history is persisted before an output action and gates that action on I/O failure', () async {
+      final bytes = utf8.encode('sidecar-v1');
+      final identity = _identity(SubtitleCalibrationIdentity.digestBytes(bytes));
+      final anchors = [
+        SubtitleSyncObservation(cueId: cueId('a'), subtitleTimeMs: 60000, playbackTimeMs: 61000),
+        SubtitleSyncObservation(cueId: cueId('b'), subtitleTimeMs: 180000, playbackTimeMs: 181000),
+      ];
+      final fit = SubtitleSyncCalibrationFit.fromObservations(anchors);
+      final events = <String>[];
+
+      final result = await SubtitleCalibrationHistoryService.saveBeforeAction<String>(
+        identity: identity,
+        observations: anchors,
+        fit: fit,
+        previousRate: 1,
+        previousDelayMs: 0,
+        action: () async {
+          events.add('action');
+          expect(await SubtitleCalibrationHistoryService.load(identity), hasLength(1));
+          return 'completed';
+        },
+      );
+      expect(result, 'completed');
+      expect(events, ['action']);
+
+      final blockedRoot = Directory('${temporary.path}/blocked');
+      await blockedRoot.create();
+      final blockedSupportPath = File('${blockedRoot.path}/support');
+      await blockedSupportPath.writeAsString('not a directory');
+      PathProviderPlatform.instance = FakePathProvider(blockedRoot);
+      var actionCalled = false;
+      await expectLater(
+        SubtitleCalibrationHistoryService.saveBeforeAction<void>(
+          identity: identity,
+          observations: anchors,
+          fit: fit,
+          previousRate: 1,
+          previousDelayMs: 0,
+          action: () async {
+            actionCalled = true;
+          },
+        ),
+        throwsA(isA<FileSystemException>()),
+      );
+      expect(actionCalled, isFalse);
+    });
+
     test('history round-trips cue IDs and is separated by exact sidecar bytes', () async {
       final bytes = utf8.encode('sidecar-v1');
       final identity = _identity(SubtitleCalibrationIdentity.digestBytes(bytes));

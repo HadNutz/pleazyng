@@ -591,6 +591,13 @@ class KaraokeSession extends ChangeNotifier {
       }
       final fa = singer?.favorites.contains(a.id) == true ? 0 : 1,
           fb = singer?.favorites.contains(b.id) == true ? 0 : 1;
+      if (a.songId == b.songId) {
+        final preferredA = singer?.preferredVersions[a.songId] == a.id ? 0 : 1;
+        final preferredB = singer?.preferredVersions[b.songId] == b.id ? 0 : 1;
+        if (preferredA != preferredB) {
+          return preferredA.compareTo(preferredB);
+        }
+      }
       return fa != fb ? fa.compareTo(fb) : a.title.toLowerCase().compareTo(b.title.toLowerCase());
     });
     return found;
@@ -662,7 +669,8 @@ class KaraokeSession extends ChangeNotifier {
       if (expectedRevision != revision) {
         throw KaraokeConflict(revision);
       }
-      if (guestSinger != null && !{'request', 'cancel', 'favorite', 'vote', 'missingSong', 'party'}.contains(action)) {
+      if (guestSinger != null &&
+          !{'request', 'cancel', 'favorite', 'preferredVersion', 'vote', 'missingSong', 'party'}.contains(action)) {
         throw StateError('Host permission required');
       }
       final previousShowTemplateState = action == 'showTemplate'
@@ -824,6 +832,25 @@ class KaraokeSession extends ChangeNotifier {
             s.favorites.add(trackId);
           } else {
             s.favorites.remove(trackId);
+          }
+        case 'preferredVersion':
+          final singer = singers.firstWhere((s) => s.id == (guestSinger ?? payload['singerId']));
+          final trackId = payload['trackId'] as String;
+          final track = catalog[trackId];
+          if (track == null) {
+            throw StateError('Unknown song');
+          }
+          final value = payload['value'];
+          if (value is! bool) {
+            throw const FormatException('Preferred version selection must be a boolean');
+          }
+          if (value) {
+            if (singer.preferredVersions.length >= 2000 && !singer.preferredVersions.containsKey(track.songId)) {
+              throw StateError('Preferred version limit reached');
+            }
+            singer.preferredVersions[track.songId] = trackId;
+          } else if (singer.preferredVersions[track.songId] == trackId) {
+            singer.preferredVersions.remove(track.songId);
           }
         case 'vote':
           if (!allowVotes) {

@@ -35,6 +35,40 @@ KaraokeRequest _request(String trackId, {KaraokeRequestState state = KaraokeRequ
     KaraokeRequest(id: 'request-$trackId', trackId: trackId, singers: const [], createdMs: 1, state: state);
 
 void main() {
+  test('guest preferred-version changes stay scoped to that singer and survive restart', () async {
+    final store = _MemoryKaraokeStore();
+    final session = KaraokeSession(music: _UnusedMusicService(), profileId: 'preferences', store: store);
+    await session.ready;
+    session.singers.addAll([KaraokeSinger(id: 'guest', name: 'Guest'), KaraokeSinger(id: 'other', name: 'Other')]);
+    session.catalog.addAll({
+      'version-a': KaraokeTrack(id: 'version-a', songId: 'song', title: 'Song', durationMs: 60000),
+      'version-b': KaraokeTrack(id: 'version-b', songId: 'song', title: 'Song', durationMs: 60000),
+    });
+    await session.command('preferred-0001', session.revision, 'preferredVersion', {
+      'singerId': 'other',
+      'trackId': 'version-b',
+      'value': true,
+    }, guestSinger: 'guest');
+    expect(session.singers.first.preferredVersions, {'song': 'version-b'});
+    expect(session.singers.last.preferredVersions, isEmpty);
+    expect(session.search('Song', singerId: 'guest').first.id, 'version-b');
+    final restored = KaraokeSession(music: _UnusedMusicService(), profileId: 'preferences', store: store);
+    await restored.ready;
+    expect(restored.singers.first.preferredVersions, {'song': 'version-b'});
+    session.dispose();
+    restored.dispose();
+  });
+
+  test('preferred versions persist and reject malformed rendition identities', () {
+    final singer = KaraokeSinger(id: 'singer', name: 'Singer', preferredVersions: {'song': 'rendition-a'});
+    final restored = KaraokeSinger.fromJson(singer.toJson());
+    expect(restored.preferredVersions, {'song': 'rendition-a'});
+    expect(
+      () => KaraokeSinger.fromJson(singer.toJson()..['preferredVersions'] = {'song': '../invalid'}),
+      throwsFormatException,
+    );
+  });
+
   group('Karaoke trim and skip markers', () {
     test('round-trips validated trim markers and rejects an unusable range', () {
       final trimmed = KaraokeTrack.fromJson(

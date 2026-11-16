@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-16",
+  "repository": "snapetech-org/pleazyng",
+  "integrationBase": "587f11ffeb83984ca0e0fee2c418a4be6750330e",
+  "request": "Consolidate dirty and unrelated source work on main; retain no extra branch names; merge open Dependabot PRs.",
+  "remoteBranchesAtStart": [
+    "main"
+  ],
+  "openPullRequestsAtStart": 0,
+  "registeredWorktrees": 367,
+  "dirtyWorktrees": 96,
+  "dirtyPaths": 846,
+  "existingStashesPreserved": 54,
+  "initialFileComparison": {
+    "directory": 2,
+    "threeway-conflict": 410,
+    "identical-main": 227,
+    "added-file-conflict": 30,
+    "already-contained": 87,
+    "clean-threeway": 88,
+    "new-file": 2
+  },
+  "recoveredSource": [
+    "Karaoke preferred versions and theme/collection discovery",
+    "TTML agent/timing import and representable export",
+    "Profile-owned offline music continuation and durable offline queue mode",
+    "Distinct automatic subtitle fetch progress, failure and retry copy",
+    "Persist subtitle calibration history before output actions",
+    "Artist album library-context pagination regression coverage"
+  ],
+  "conflictResolution": [
+    "Preserve current main when an exact historical worktree blob is already in main history or its edits are contained.",
+    "Retain current owner directives instead of older AGENTS.md copies.",
+    "Retain current release provenance, hosted-runner routing, codec, native-interface and bounded-persistence fixes instead of obsolete snapshots.",
+    "Regenerate localization/model outputs from merged maintained source.",
+    "Retain reviewed translations and retired-key removals instead of copying obsolete locale snapshots; register 18 new labels as untranslated English fallback.",
+    "Do not add duplicate imports from an old music metadata copy."
+  ],
+  "preservation": "Original tracked worktree diffs, inventory, classifications and test logs retained privately under the task QA directory; historical worktree files, detached commits, stashes and build artifacts remain unchanged.",
+  "qualification": "Consolidation validation covers repository checks and listed automated regressions; it does not qualify physical TV, mobile, vehicle, provider or distribution behavior."
+}

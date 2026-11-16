@@ -296,6 +296,43 @@ abstract final class SubtitleCalibrationHistoryService {
     return saved;
   }
 
+  /// Requires durable history to succeed before applying player settings or
+  /// writing an export, so history I/O failure cannot follow a completed
+  /// output action.
+  static Future<T> saveBeforeAction<T>({
+    required SubtitleCalibrationIdentity identity,
+    required List<SubtitleSyncObservation> observations,
+    required SubtitleSyncCalibrationFit? fit,
+    required double previousRate,
+    required int previousDelayMs,
+    required Future<T> Function() action,
+  }) async {
+    await save(
+      identity: identity,
+      observations: observations,
+      fit: fit,
+      previousRate: previousRate,
+      previousDelayMs: previousDelayMs,
+    );
+    return action();
+  }
+
+  static Future<bool> saveBeforeApply({
+    required SubtitleCalibrationIdentity identity,
+    required List<SubtitleSyncObservation> observations,
+    required SubtitleSyncCalibrationFit? fit,
+    required double previousRate,
+    required int previousDelayMs,
+    required Future<bool> Function() apply,
+  }) => saveBeforeAction<bool>(
+    identity: identity,
+    observations: observations,
+    fit: fit,
+    previousRate: previousRate,
+    previousDelayMs: previousDelayMs,
+    action: apply,
+  );
+
   static Future<List<SubtitleCalibrationRecord>> load(SubtitleCalibrationIdentity identity) async {
     identity.validate();
     await _writeTail;

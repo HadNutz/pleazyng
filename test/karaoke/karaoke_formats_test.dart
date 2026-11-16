@@ -7,6 +7,35 @@ import 'package:plezy/karaoke/karaoke_midi.dart';
 import 'package:plezy/karaoke/karaoke_models.dart';
 
 void main() {
+  test('TTML resolves declared singer names and preserves them through export', () {
+    const source =
+        '<tt xmlns="http://www.w3.org/ns/ttml" '
+        'xmlns:ttm="http://www.w3.org/ns/ttml#metadata">'
+        '<head><metadata><ttm:agent xml:id="singer"><ttm:name>Alice</ttm:name></ttm:agent>'
+        '</metadata></head><body><div><p begin="1s" end="3s" ttm:agent="singer">'
+        '<span begin="0.25s" end="0.75s" ttm:agent="singer">Hello</span>'
+        '</p></div></body></tt>';
+    final imported = KaraokeFormats.parse(source, '.ttml');
+    final line = imported.lyrics.lines.single;
+    expect(line.part, 'Alice');
+    expect(line.spans.single.part, 'Alice');
+    expect(line.spans.single.startMs, 1250);
+    expect(line.spans.single.endMs, 1750);
+    final restored = KaraokeFormats.parse(KaraokeFormats.exportTtml(imported.lyrics), '.ttml');
+    expect(restored.lyrics.lines.single.part, 'Alice');
+    expect(restored.lyrics.lines.single.spans.single.text, 'Hello');
+    expect(restored.lyrics.lines.single.spans.single.startMs, 1250);
+  });
+
+  test('TTML rejects ambiguous multiple declared singers', () {
+    const source =
+        '<tt xmlns="http://www.w3.org/ns/ttml" '
+        'xmlns:ttm="http://www.w3.org/ns/ttml#metadata">'
+        '<head><metadata><ttm:agent xml:id="a"/><ttm:agent xml:id="b"/></metadata></head>'
+        '<body><div><p begin="1s" end="2s" ttm:agent="a b">Duet</p></div></body></tt>';
+    expect(() => KaraokeFormats.parse(source, '.ttml'), throwsFormatException);
+  });
+
   test('WebVTT preserves singer and source word timings', () {
     final track = KaraokeFormats.parse(
       'WEBVTT\n\n00:01.000 --> 00:03.000\n<v Alice>Hello <00:02.000>world &amp; you</v>\n',

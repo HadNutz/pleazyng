@@ -400,6 +400,7 @@ class KaraokeSinger {
   final Set<String> favorites;
   final Map<String, double> keys;
   final Map<String, double> tempos;
+  final Map<String, String> preferredVersions;
   final List<String> history;
   double? lowMidi, highMidi;
   KaraokeSinger({
@@ -409,12 +410,14 @@ class KaraokeSinger {
     Set<String>? favorites,
     Map<String, double>? keys,
     Map<String, double>? tempos,
+    Map<String, String>? preferredVersions,
     List<String>? history,
     this.lowMidi,
     this.highMidi,
   }) : favorites = favorites ?? {},
        keys = keys ?? {},
        tempos = tempos ?? {},
+       preferredVersions = preferredVersions ?? {},
        history = history ?? [];
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -423,16 +426,28 @@ class KaraokeSinger {
     'favorites': favorites.toList(),
     'keys': keys,
     'tempos': tempos,
+    'preferredVersions': preferredVersions,
     'history': history.take(500).toList(),
     'lowMidi': lowMidi,
     'highMidi': highMidi,
   };
   factory KaraokeSinger.fromJson(Map<String, dynamic> j) {
     final low = (j['lowMidi'] as num?)?.toDouble(), high = (j['highMidi'] as num?)?.toDouble();
+    final rawPreferredVersions = j['preferredVersions'] as Map? ?? const {};
     if ((low != null && (!low.isFinite || low < 24 || low > 108)) ||
         (high != null && (!high.isFinite || high < 24 || high > 108)) ||
         (low != null && high != null && low >= high)) {
       throw const FormatException('Invalid comfortable range');
+    }
+    if (rawPreferredVersions.length > 2000 ||
+        rawPreferredVersions.entries.any(
+          (entry) =>
+              entry.key is! String ||
+              (entry.key as String).length > 256 ||
+              entry.value is! String ||
+              !RegExp(r'^[a-zA-Z0-9_-]{1,128}$').hasMatch(entry.value as String),
+        )) {
+      throw const FormatException('Invalid preferred versions');
     }
     return KaraokeSinger(
       id: j['id'] as String,
@@ -441,6 +456,7 @@ class KaraokeSinger {
       favorites: Set<String>.from(j['favorites'] as List? ?? const []),
       keys: (j['keys'] as Map? ?? {}).map((k, v) => MapEntry(k as String, (v as num).toDouble())),
       tempos: (j['tempos'] as Map? ?? {}).map((k, v) => MapEntry(k as String, (v as num).toDouble())),
+      preferredVersions: Map<String, String>.from(rawPreferredVersions),
       history: List<String>.from(j['history'] as List? ?? const []),
       lowMidi: low,
       highMidi: high,

@@ -19,6 +19,7 @@ import '../../providers/hidden_libraries_provider.dart';
 import '../../providers/multi_server_provider.dart';
 import '../../services/music/music_discovery.dart';
 import '../../services/music/music_account_scope.dart';
+import '../../services/music/music_offline_continuation.dart';
 import '../../services/music/music_playback_service.dart';
 import '../../utils/provider_extensions.dart';
 import '../../utils/snackbar_helper.dart';
@@ -178,6 +179,40 @@ class _MusicDiscoveryScreenState extends State<MusicDiscoveryScreen> {
     }),
   );
 
+  Future<void> _playOfflineContinuation() => _run((generation) async {
+    final downloads = context.read<DownloadProvider?>();
+    final experience = context.read<MusicExperience?>();
+    final service = context.read<MusicPlaybackService>();
+    if (downloads == null || experience == null) throw UnsupportedError('Offline music is unavailable');
+    await downloads.ensureInitialized();
+    bool current() =>
+        _currentProfile &&
+        generation == _generation &&
+        downloads.activeProfileId == _profileId &&
+        identical(context.read<DownloadProvider?>(), downloads) &&
+        identical(context.read<MusicExperience?>(), experience) &&
+        identical(context.read<MusicPlaybackService>(), service);
+    if (!current()) return;
+
+    final tracks = await const MusicOfflineContinuation().generate(
+      seed: widget.seed,
+      downloads: downloads,
+      history: experience.store,
+      excludedTrackKeys: service.queue.map((track) => track.globalKey).toSet(),
+      isCurrent: current,
+    );
+    if (!current()) return;
+    if (tracks.isEmpty) {
+      setState(() => _error = t.musicExperience.offlineEmpty);
+      return;
+    }
+    await service.playFromList(
+      tracks: tracks,
+      playContext: MusicPlayContext(title: t.musicExperience.offlineContinuation, kind: MusicPlayContextKind.mix),
+      offline: true,
+    );
+  });
+
   Future<void> _loadResults(int generation, Future<List<MediaItem>> Function(MediaServerClient) fetch) async {
     await context.read<HiddenLibrariesProvider?>()?.ensureInitialized();
     if (!_currentProfile || generation != _generation) return;
@@ -277,7 +312,9 @@ class _MusicDiscoveryScreenState extends State<MusicDiscoveryScreen> {
       );
     }
     final service = context.watch<MusicPlaybackService>();
+    final downloads = context.watch<DownloadProvider?>();
     final discovery = service is MusicDiscoveryControls ? service as MusicDiscoveryControls : null;
+    final hasOfflineTracks = downloads?.activeProfileId == _profileId && downloads?.downloadedTracks.isNotEmpty == true;
     final preview = _preview?.isCurrent() == true ? _preview!.tracks : const <MediaItem>[];
     return Scaffold(
       appBar: AppBar(title: Text(strings.title)),
@@ -320,6 +357,12 @@ class _MusicDiscoveryScreenState extends State<MusicDiscoveryScreen> {
               ],
             ),
           ],
+          if (downloads != null)
+            OutlinedButton.icon(
+              onPressed: _busy || !hasOfflineTracks ? null : _playOfflineContinuation,
+              icon: const AppIcon(Symbols.offline_bolt_rounded),
+              label: Text(strings.offlineContinuation),
+            ),
           TextField(
             controller: _name,
             enabled: !_busy,

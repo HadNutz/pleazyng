@@ -995,20 +995,29 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
   List<MediaItem> get downloadedTracks =>
       _completedLeaves(isLeaf: (meta) => meta.kind == MediaKind.track, containerOf: _albumLibraryFallbackFor);
 
+  /// Lazily iterates completed, owned track downloads across every album.
+  /// The scan is finite and proportional to metadata rows held by the provider;
+  /// unlike [downloadedTracks], this does not allocate a second full list.
+  Iterable<MediaItem> get downloadedTracksIterable =>
+      _completedLeafIterable(isLeaf: (meta) => meta.kind == MediaKind.track, containerOf: _albumLibraryFallbackFor);
+
   /// Completed, owned downloads matching [isLeaf], watch state applied, with
   /// missing library identity filled from the stored row [containerOf] finds.
   List<MediaItem> _completedLeaves({
     required bool Function(MediaItem meta) isLeaf,
     required MediaItem? Function(MediaItem leaf) containerOf,
-  }) {
-    final leaves = <MediaItem>[];
+  }) => _completedLeafIterable(isLeaf: isLeaf, containerOf: containerOf).toList(growable: false);
+
+  Iterable<MediaItem> _completedLeafIterable({
+    required bool Function(MediaItem meta) isLeaf,
+    required MediaItem? Function(MediaItem leaf) containerOf,
+  }) sync* {
     for (final entry in _metadata.entries) {
       if (!_ownsDownloadKey(entry.key) || _downloads[entry.key]?.status != DownloadStatus.completed) continue;
       if (!isLeaf(entry.value)) continue;
       final leaf = _metadataStore.applyWatchState(entry.value);
-      leaves.add(_withLibraryFallback(leaf, [?containerOf(leaf)]));
+      yield _withLibraryFallback(leaf, [?containerOf(leaf)]);
     }
-    return leaves;
   }
 
   /// Seasons with downloaded episodes across every show, ordered by season

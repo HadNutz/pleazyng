@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Consolidate saved karaoke discovery and preferred-version controls, TTML singer/timing import and export, and profile-owned offline music continuation. Preserve offline queue mode across session restoration and keep its playback local.
+- Give automatic subtitle retrieval distinct progress and failure messages, and save subtitle calibration history before applying settings or exporting an archive. The 18 newly integrated labels use explicit English fallback pending translation review.
+
 - Codec fallback keeps the current audio track and resume position; Android ExoPlayer-to-mpv switches now update measured codec capabilities. Jellyfin/Emby audio negotiation uses enumerated decoders when available.
 
 - Cover the complete reviewed FFmpeg naming catalogue (282 video, 225 audio and 27 subtitle identities) when classifying runtime decoder evidence, including obscure legacy formats. Recognize EVC and AV2 source extensions without claiming an installed decoder.

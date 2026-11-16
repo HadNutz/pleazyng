@@ -70,6 +70,7 @@ class KaraokeCollections {
           s.history.length > 500 ||
           s.keys.length > 2000 ||
           s.tempos.length > 2000 ||
+          s.preferredVersions.length > 2000 ||
           s.keys.values.any((v) => !v.isFinite || v.abs() > 12) ||
           s.tempos.values.any((v) => !v.isFinite || v < .5 || v > 2)) {
         throw const FormatException('Invalid singer preferences');

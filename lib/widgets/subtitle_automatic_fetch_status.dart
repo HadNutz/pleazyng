@@ -14,14 +14,16 @@ class SubtitleAutomaticFetchStatus extends StatelessWidget {
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: controller,
     builder: (context, _) {
+      final copy = t.videoSettings;
       final text = switch (controller.stage) {
         SubtitleFetchStage.idle || SubtitleFetchStage.completed => null,
-        SubtitleFetchStage.searching ||
-        SubtitleFetchStage.downloading ||
-        SubtitleFetchStage.refreshing => t.common.loading,
-        SubtitleFetchStage.noMatch => t.videoControls.noSubtitlesFound,
-        SubtitleFetchStage.failed || SubtitleFetchStage.expired => t.common.error,
-        SubtitleFetchStage.cancelled => null,
+        SubtitleFetchStage.searching => copy.subtitleAutoSearching,
+        SubtitleFetchStage.downloading => copy.subtitleAutoDownloading,
+        SubtitleFetchStage.refreshing => copy.subtitleAutoRefreshing,
+        SubtitleFetchStage.noMatch => copy.subtitleAutoNoMatch,
+        SubtitleFetchStage.failed => copy.subtitleAutoFailed,
+        SubtitleFetchStage.expired => copy.subtitleAutoExpired,
+        SubtitleFetchStage.cancelled => copy.subtitleAutoCancelled,
       };
       final showRetry = !controller.busy && onSearchAgain != null;
       if (text == null && !showRetry) return const SizedBox.shrink();
@@ -45,9 +47,9 @@ class SubtitleAutomaticFetchStatus extends StatelessWidget {
                 ],
               ),
             if (controller.busy)
-              TextButton(onPressed: controller.cancel, child: Text(t.common.cancel))
+              TextButton(onPressed: controller.cancel, child: Text(copy.subtitleAutoSkip))
             else if (showRetry)
-              TextButton(onPressed: onSearchAgain, child: Text(t.videoControls.searchSubtitles)),
+              TextButton(onPressed: onSearchAgain, child: Text(copy.subtitleAutoSearchAgain)),
           ],
         ),
       );

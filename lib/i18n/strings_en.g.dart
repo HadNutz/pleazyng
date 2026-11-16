@@ -7203,6 +7203,33 @@ class Translations$videoSettings$en {
 
 	/// en: 'Replay preroll'
 	String get subtitleReplayPreroll => 'Replay preroll';
+
+	/// en: 'Looking for subtitles matching your preferred language…'
+	String get subtitleAutoSearching => 'Looking for subtitles matching your preferred language…';
+
+	/// en: 'Downloading a preferred-language subtitle…'
+	String get subtitleAutoDownloading => 'Downloading a preferred-language subtitle…';
+
+	/// en: 'Checking whether the subtitle is ready…'
+	String get subtitleAutoRefreshing => 'Checking whether the subtitle is ready…';
+
+	/// en: 'No preferred-language subtitle was found.'
+	String get subtitleAutoNoMatch => 'No preferred-language subtitle was found.';
+
+	/// en: 'Automatic subtitle retrieval did not finish.'
+	String get subtitleAutoFailed => 'Automatic subtitle retrieval did not finish.';
+
+	/// en: 'Stopped. The server may still finish a download it already accepted.'
+	String get subtitleAutoCancelled => 'Stopped. The server may still finish a download it already accepted.';
+
+	/// en: 'Automatic subtitle retrieval took too long.'
+	String get subtitleAutoExpired => 'Automatic subtitle retrieval took too long.';
+
+	/// en: 'Skip'
+	String get subtitleAutoSkip => 'Skip';
+
+	/// en: 'Search subtitles'
+	String get subtitleAutoSearchAgain => 'Search subtitles';
 }
 
 // Path: performanceOverlay
@@ -14482,6 +14509,27 @@ class Translations$karaokeUi$en {
 	/// en: 'All difficulty levels'
 	String get allDifficultyLevels => 'All difficulty levels';
 
+	/// en: 'All themes and collections'
+	String get allThemesAndCollections => 'All themes and collections';
+
+	/// en: 'Recommended themes and collections'
+	String get recommendedThemesAndCollections => 'Recommended themes and collections';
+
+	/// en: 'Search visible media servers'
+	String get searchVisibleMediaServers => 'Search visible media servers';
+
+	/// en: 'No songs match the current search and filters.'
+	String get noSongsMatchCurrentFilters => 'No songs match the current search and filters.';
+
+	/// en: 'Prefer this version'
+	String get preferThisVersion => 'Prefer this version';
+
+	/// en: 'Clear preferred version'
+	String get clearPreferredVersion => 'Clear preferred version';
+
+	/// en: 'Preferred version'
+	String get preferredVersion => 'Preferred version';
+
 	/// en: 'Difficulty ${value1} / 5'
 	String difficulty5({required Object value1}) => 'Difficulty ${value1} / 5';
 
@@ -15032,6 +15080,12 @@ class Translations$musicExperience$en {
 
 	/// en: 'Keep playing similar music'
 	String get continuation => 'Keep playing similar music';
+
+	/// en: 'Play offline continuation'
+	String get offlineContinuation => 'Play offline continuation';
+
+	/// en: 'No additional playable completed downloads were found for this continuation.'
+	String get offlineEmpty => 'No additional playable completed downloads were found for this continuation.';
 
 	/// en: 'Shuffle albums'
 	String get shuffleAlbums => 'Shuffle albums';
@@ -20828,6 +20882,15 @@ extension on Translations {
 			'videoSettings.subtitleCueUnavailable' => 'No suitable subtitle cue is available.',
 			'videoSettings.subtitleCueSeekUnavailable' => 'Could not seek to that subtitle cue.',
 			'videoSettings.subtitleReplayPreroll' => 'Replay preroll',
+			'videoSettings.subtitleAutoSearching' => 'Looking for subtitles matching your preferred language…',
+			'videoSettings.subtitleAutoDownloading' => 'Downloading a preferred-language subtitle…',
+			'videoSettings.subtitleAutoRefreshing' => 'Checking whether the subtitle is ready…',
+			'videoSettings.subtitleAutoNoMatch' => 'No preferred-language subtitle was found.',
+			'videoSettings.subtitleAutoFailed' => 'Automatic subtitle retrieval did not finish.',
+			'videoSettings.subtitleAutoCancelled' => 'Stopped. The server may still finish a download it already accepted.',
+			'videoSettings.subtitleAutoExpired' => 'Automatic subtitle retrieval took too long.',
+			'videoSettings.subtitleAutoSkip' => 'Skip',
+			'videoSettings.subtitleAutoSearchAgain' => 'Search subtitles',
 			'performanceOverlay.color' => 'Color',
 			'performanceOverlay.performance' => 'Performance',
 			'performanceOverlay.buffer' => 'Buffer',
@@ -21058,6 +21121,8 @@ extension on Translations {
 			'seerr.request4kHint' => 'Choose a 4K request in Seerr',
 			'seerr.only4kAvailable' => 'This account can request the 4K version only.',
 			'seerr.cardActionHint' => 'Open the card menu for Seerr request options',
+			_ => null,
+		} ?? switch (path) {
 			'seerr.requestInProgress' => 'Request in progress',
 			'seerr.notifyMe' => 'Notify me when available',
 			'seerr.notifyMe4k' => 'Notify me when 4K is available',
@@ -21067,8 +21132,6 @@ extension on Translations {
 			'seerr.notificationsEnabled4k' => 'We\'ll notify you when the 4K version is available',
 			'seerr.notificationsEnabledSeason' => ({required Object season}) => 'We\'ll notify you when season ${season} is available',
 			'seerr.notificationsDisabled' => 'Availability alert turned off',
-			_ => null,
-		} ?? switch (path) {
 			'seerr.notificationFailed' => 'Couldn\'t update the availability alert',
 			'seerr.seasons' => 'Seasons',
 			'seerr.requestSheetHint' => 'Seerr handles approval and tracks your request.',
@@ -21572,6 +21635,8 @@ extension on Translations {
 			'universalMedia.recordStream' => 'Record live stream',
 			'universalMedia.stopRecording' => 'Stop and save recording',
 			'universalMedia.recordingStarted' => 'Recording is active. Leaving playback stops and saves the recording.',
+			_ => null,
+		} ?? switch (path) {
 			'universalMedia.recordingSaved' => 'Recording finalized and saved.',
 			'universalMedia.recordingActive' => 'Recording to this device. Leaving playback stops and saves it.',
 			'universalMedia.recordingFormatHelp' => 'For video, choose MKV or MPEG-TS. For audio, choose MKA or MKV.',
@@ -21581,8 +21646,6 @@ extension on Translations {
 			'universalMedia.discHelp' => 'Open a disc in this computer’s optical drive. You can also open an ISO image from Device files.',
 			'universalMedia.discs' => 'Optical disc',
 			'universalMedia.editionOrTitle' => 'Edition or disc title',
-			_ => null,
-		} ?? switch (path) {
 			'universalMedia.dvd' => 'DVD',
 			'universalMedia.bluray' => 'Blu-ray',
 			'universalMedia.audioCd' => 'Audio CD',
@@ -22086,6 +22149,8 @@ extension on Translations {
 			'sourceSetup.integerRange' => ({required Object label, required Object min, required Object max}) => 'Enter ${label} from ${min} to ${max}.',
 			'sourceSetup.replaceFile' => ({required Object name}) => 'Replace ${name}',
 			'sourceSetup.selectedIdentity' => ({required Object name}) => 'Selected client identity: ${name}',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.subtitleRating' => ({required Object rating}) => 'Rating ${rating}',
 			'sourceSetup.subtitleDownloading' => ({required Object title}) => 'Downloading subtitle: ${title}',
 			'sourceSetup.sharedEntryPair' => 'Pair this item',
@@ -22095,8 +22160,6 @@ extension on Translations {
 			'sourceSetup.sharedLibraryId' => 'Shared library ID (optional)',
 			'sourceSetup.sharedLibraryHelp' => 'Use the same ID on devices that open the same library. This public ID helps carry reading progress and notes across different source connections; it is not a password. When providers use different item IDs, pair those items from their detail screens.',
 			'sourceSetup.sharedLibraryInvalid' => 'Use 8–100 letters, numbers, dots, underscores or hyphens.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.generateSharedLibraryId' => 'Generate a shared library ID',
 			'sourceSetup.nfsReadAhead' => 'NFS read-ahead requests',
 			'sourceSetup.nfsReadAheadHelp' => 'More parallel reads can improve throughput on a fast NAS or network. Use 1 if the server limits concurrent requests.',
@@ -22600,6 +22663,8 @@ extension on Translations {
 			'subtitleAiUi.chooseDifferentLanguagesToUseTransla_db4d6e3a' => 'Choose different languages to use translated text for matching.',
 			'subtitleAiUi.chooseTheSubtitleThatNeedsSynchronization' => 'Choose the subtitle that needs synchronization…',
 			'subtitleAiUi.chooseASynchronizedSubtitleInAnotherLanguage' => 'Choose a synchronized subtitle in another language…',
+			_ => null,
+		} ?? switch (path) {
 			'subtitleAiUi.translatingTargetCuesLocallyForTextMatching' => 'Translating target cues locally for text matching…',
 			'subtitleAiUi.translatingCuesForAlignment' => ({required Object completed, required Object total}) => 'Translating cues for alignment (${completed}/${total})…',
 			'subtitleAiUi.aligningTranslatedTargetTextAgainstTheReference' => 'Aligning translated target text against the reference…',
@@ -22609,8 +22674,6 @@ extension on Translations {
 			'subtitleAiUi.referenceOperationApplied' => ({required Object operation, required Object matchedCueCount, required Object totalCueCount, required Object confidence, required Object rmsResidualMs, required Object maxResidualMs, required Object discontinuityCount, required Object referenceSource, required Object originalSource, required Object uploadedNote}) => '${operation} applied to ${matchedCueCount} of ${totalCueCount} cues (${confidence}% match confidence; global-fit residual RMS/max ${rmsResidualMs}/${maxResidualMs} ms). ${discontinuityCount} timing discontinuities detected. Reference: ${referenceSource}. Original: ${originalSource}.${uploadedNote}',
 			'subtitleAiUi.matchingTheCapturedSpeechAgainstSubtitleText' => 'Matching the captured speech against subtitle text…',
 			'subtitleAiUi.capturedPlaybackOperationApplied' => ({required Object operation, required Object matchedCount, required Object totalCount, required Object confidence, required Object rmsResidualMs, required Object maxResidualMs, required Object discontinuityCount, required Object evidenceNote, required Object source, required Object uploadedNote}) => 'Captured-playback ${operation} applied to ${matchedCount} of ${totalCount} cues (${confidence}% match confidence; global-fit residual RMS/max ${rmsResidualMs}/${maxResidualMs} ms). ${discontinuityCount} timing discontinuities detected. ${evidenceNote}Original: ${source}.${uploadedNote}',
-			_ => null,
-		} ?? switch (path) {
 			'subtitleAiUi.revisionHistoryNeedsAnActiveProfileAndMediaItem' => 'Revision history needs an active profile and media item.',
 			'subtitleAiUi.savedRevisionToThisDeviceForThisProf_12a75bb7' => ({required Object revisionId}) => 'Saved revision ${revisionId} to this device for this profile and media item.',
 			'subtitleAiUi.couldNotSaveThisRevisionLocally' => ({required Object error}) => 'Could not save this revision locally: ${error}',
@@ -23114,6 +23177,8 @@ extension on Translations {
 			'karaokeUi.referenceNotes' => 'Reference notes',
 			'karaokeUi.midi' => ({required Object value1, required Object value2, required Object value3}) => '${value1} · MIDI ${value2} · ${value3}',
 			'karaokeUi.deleteNote' => 'Delete note',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.deleteShowTemplate' => 'Delete show template',
 			'karaokeUi.addAQuestionYouAuthoredOrMayUse' => 'Add a question you authored or may use',
 			'karaokeUi.triviaLyricCompletionNameThatTunePrompt' => 'Trivia / lyric completion / name that tune prompt',
@@ -23123,8 +23188,6 @@ extension on Translations {
 			'karaokeUi.scoresStayPrivateLeaderboardsCompareReviewedChartsWithMatching' => 'Scores stay private. Leaderboards compare reviewed charts with matching settings and calibrated, unassisted input. No-score singing is always available.',
 			'karaokeUi.startARoundRobinTournamentWithPresentSingers' => 'Start a round-robin tournament with present singers',
 			'karaokeUi.round' => ({required Object value1}) => 'Round ${value1}',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.match' => ({required Object value1, required Object value2}) => 'Match ${value1}: ${value2}',
 			'karaokeUi.verifiedEligibleScores' => ({required Object value1}) => 'Verified eligible scores · ${value1}',
 			'karaokeUi.eachSingerNeedsACalibratedUnassistedResultOnThe' => 'Each singer needs a calibrated, unassisted result on the same reviewed rendition and settings before this match can be resolved.',
@@ -23177,6 +23240,13 @@ extension on Translations {
 			'karaokeUi.allLanguages' => 'All languages',
 			'karaokeUi.allDecades' => 'All decades',
 			'karaokeUi.allDifficultyLevels' => 'All difficulty levels',
+			'karaokeUi.allThemesAndCollections' => 'All themes and collections',
+			'karaokeUi.recommendedThemesAndCollections' => 'Recommended themes and collections',
+			'karaokeUi.searchVisibleMediaServers' => 'Search visible media servers',
+			'karaokeUi.noSongsMatchCurrentFilters' => 'No songs match the current search and filters.',
+			'karaokeUi.preferThisVersion' => 'Prefer this version',
+			'karaokeUi.clearPreferredVersion' => 'Clear preferred version',
+			'karaokeUi.preferredVersion' => 'Preferred version',
 			'karaokeUi.difficulty5' => ({required Object value1}) => 'Difficulty ${value1} / 5',
 			'karaokeUi.requestDuetGroup' => 'Request duet / group',
 			'karaokeUi.prepareBackingTimingAndGuidance' => 'Prepare backing, timing and guidance',
@@ -23364,6 +23434,8 @@ extension on Translations {
 			'musicExperience.empty' => 'No matching music was returned. Sonic features require analysis on your server.',
 			'musicExperience.unsupported' => 'Sonic analysis is not available from this server.',
 			'musicExperience.continuation' => 'Keep playing similar music',
+			'musicExperience.offlineContinuation' => 'Play offline continuation',
+			'musicExperience.offlineEmpty' => 'No additional playable completed downloads were found for this continuation.',
 			'musicExperience.shuffleAlbums' => 'Shuffle albums',
 			'musicExperience.nextAlbum' => 'Next album',
 			'musicExperience.driving' => 'Driving view',

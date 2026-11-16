@@ -812,12 +812,15 @@ class _KaraokeEditorState extends State<KaraokeEditor> {
               child: Text(l10n.t.karaokeUi.tapLine(value1: (_tap + 1).toString())),
             ),
             TextButton(onPressed: () => setState(() => _tap = 0), child: Text(l10n.t.karaokeUi.resetTapCursor)),
-            for (final format in ['lrc', 'vtt'])
+            for (final format in ['lrc', 'vtt', 'ttml'])
               OutlinedButton(
                 onPressed: () => _run(() async {
-                  final output = format == 'lrc'
-                      ? KaraokeFormats.exportLrc(_track.lyrics)
-                      : KaraokeFormats.exportVtt(_track.lyrics);
+                  final output = switch (format) {
+                    'lrc' => KaraokeFormats.exportLrc(_track.lyrics),
+                    'vtt' => KaraokeFormats.exportVtt(_track.lyrics),
+                    'ttml' => KaraokeFormats.exportTtml(_track.lyrics),
+                    _ => throw UnsupportedError('Unsupported lyric export format: $format'),
+                  };
                   final path = await FilePickerService.instance.saveFile(fileName: '${_track.id}.$format');
                   if (path != null) {
                     await File(path).writeAsString(output);

@@ -36,6 +36,8 @@ import 'karaoke_room_server.dart';
 import 'karaoke_stage.dart';
 import 'karaoke_strings.dart';
 
+const _nonThemeKaraokeTags = {'private-take', 'generated-backing', 'review-required'};
+
 Future<void> openKaraoke(BuildContext context, {MediaItem? media}) async {
   final session = context.read<KaraokeSession>();
   final servers = context.read<MultiServerProvider>().serverManager;
@@ -91,7 +93,7 @@ class KaraokeScreen extends StatefulWidget {
 class _KaraokeScreenState extends State<KaraokeScreen> with WidgetsBindingObserver {
   final _query = TextEditingController();
   String? _singer;
-  String _genre = '', _language = '', _decade = '', _difficulty = '';
+  String _genre = '', _language = '', _decade = '', _difficulty = '', _tag = '';
   bool _busy = false,
       _offline = false,
       _duet = false,
@@ -192,6 +194,30 @@ class _KaraokeScreenState extends State<KaraokeScreen> with WidgetsBindingObserv
     }
   }
 
+  Future<void> _searchSuggestion(KaraokeMissingSong suggestion) async {
+    final query = [suggestion.title, suggestion.artist].where((value) => value.trim().isNotEmpty).join(' ').trim();
+    if (_busy || query.length < 2) {
+      return;
+    }
+    setState(() {
+      _query.text = query;
+      _tab = 0;
+      _genre = '';
+      _language = '';
+      _decade = '';
+      _difficulty = '';
+      _tag = '';
+      _offline = false;
+      _duet = false;
+      _scored = false;
+      _fitsRange = false;
+      _favorites = false;
+      _played = false;
+      _recent = false;
+    });
+    await _run(() => widget.searchRemote(query));
+  }
+
   Future<void> _command(String action, [Map<String, dynamic> payload = const {}]) => _run(() async {
     await s.host(action, payload);
   });
@@ -222,6 +248,33 @@ class _KaraokeScreenState extends State<KaraokeScreen> with WidgetsBindingObserv
       final result = await s.host('singer', {'name': name});
       _singer = result['singerId'] as String;
     });
+  }
+
+  List<String> _recommendedThemeTags(List<String> tags) {
+    final singer = s.singers.where((person) => person.id == _singer).firstOrNull;
+    final recent = singer?.history.take(20).toSet() ?? const <String>{};
+    final hasRange = singer?.lowMidi != null && singer?.highMidi != null;
+    final scores = <String, int>{};
+    for (final track in s.catalog.values) {
+      final trackTags = track.tags.where((tag) => tags.contains(tag) && !_nonThemeKaraokeTags.contains(tag)).toSet();
+      if (trackTags.isEmpty) {
+        continue;
+      }
+      final favorite = singer?.favorites.contains(track.id) == true;
+      final preferred = singer?.preferredVersions[track.songId] == track.id;
+      final recentlyPlayed = recent.contains(track.id);
+      final fitsRange = hasRange && s.fitsComfortableRange(track, singerId: _singer);
+      final weight = 1 + (favorite ? 16 : 0) + (preferred ? 12 : 0) + (recentlyPlayed ? 8 : 0) + (fitsRange ? 3 : 0);
+      for (final tag in trackTags) {
+        scores[tag] = (scores[tag] ?? 0) + weight;
+      }
+    }
+    final ranked = scores.entries.toList()
+      ..sort((a, b) {
+        final scoreOrder = b.value.compareTo(a.value);
+        return scoreOrder != 0 ? scoreOrder : a.key.compareTo(b.key);
+      });
+    return ranked.take(5).map((entry) => entry.key).toList();
   }
 
   Future<void> _import() => _run(() async {
@@ -626,6 +679,14 @@ class _KaraokeScreenState extends State<KaraokeScreen> with WidgetsBindingObserv
   );
   Widget _library() {
     final tvScale = PlatformDetector.isTV() ? TvLayoutConstants.scaleOf(context) : 1.0;
+    final tags =
+        s.catalog.values
+            .expand((track) => track.tags)
+            .where((tag) => tag.trim().isNotEmpty && !_nonThemeKaraokeTags.contains(tag.trim()))
+            .toSet()
+            .toList()
+          ..sort();
+    final recommendedThemes = _recommendedThemeTags(tags);
     final tracks = s.search(
       _query.text,
       offline: _offline,
@@ -640,7 +701,22 @@ class _KaraokeScreenState extends State<KaraokeScreen> with WidgetsBindingObserv
       language: _language.isEmpty ? null : _language,
       decade: int.tryParse(_decade),
       difficulty: int.tryParse(_difficulty),
+      tag: tags.contains(_tag) ? _tag : null,
     );
+    final hasFilters =
+        _query.text.trim().isNotEmpty ||
+        _offline ||
+        _duet ||
+        _scored ||
+        _fitsRange ||
+        _favorites ||
+        _played ||
+        _recent ||
+        _genre.isNotEmpty ||
+        _language.isNotEmpty ||
+        _decade.isNotEmpty ||
+        _difficulty.isNotEmpty ||
+        tags.contains(_tag);
     final genres = s.catalog.values.map((t) => t.genre.trim()).where((v) => v.isNotEmpty).toSet().toList()..sort();
     final languages = s.catalog.values.map((t) => t.language.trim()).where((v) => v.isNotEmpty).toSet().toList()
       ..sort();
@@ -711,7 +787,29 @@ class _KaraokeScreenState extends State<KaraokeScreen> with WidgetsBindingObserv
                   ),
                 ],
               ),
-              if (genres.isNotEmpty || languages.isNotEmpty || decades.isNotEmpty || difficulties.isNotEmpty)
+              if (recommendedThemes.isNotEmpty) ...[
+                Align(alignment: Alignment.centerLeft, child: Text(l10n.t.karaokeUi.recommendedThemesAndCollections)),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      for (final themeTag in recommendedThemes)
+                        FilterChip(
+                          label: Text(themeTag),
+                          selected: tags.contains(_tag) && _tag == themeTag,
+                          onSelected: (selected) => setState(() => _tag = selected ? themeTag : ''),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+              if (genres.isNotEmpty ||
+                  languages.isNotEmpty ||
+                  decades.isNotEmpty ||
+                  difficulties.isNotEmpty ||
+                  tags.isNotEmpty)
                 Wrap(
                   spacing: 12,
                   runSpacing: 4,
@@ -757,6 +855,15 @@ class _KaraokeScreenState extends State<KaraokeScreen> with WidgetsBindingObserv
                         ],
                         onChanged: (v) => setState(() => _difficulty = v ?? ''),
                       ),
+                    if (tags.isNotEmpty)
+                      DropdownButton<String>(
+                        value: tags.contains(_tag) ? _tag : '',
+                        items: [
+                          DropdownMenuItem(value: '', child: Text(l10n.t.karaokeUi.allThemesAndCollections)),
+                          ...tags.map((v) => DropdownMenuItem(value: v, child: Text(v))),
+                        ],
+                        onChanged: (v) => setState(() => _tag = v ?? ''),
+                      ),
                   ],
                 ),
             ],
@@ -767,20 +874,25 @@ class _KaraokeScreenState extends State<KaraokeScreen> with WidgetsBindingObserv
               ? Center(
                   child: Padding(
                     padding: const EdgeInsets.all(24),
-                    child: Text(tr('empty'), textAlign: TextAlign.center),
+                    child: Text(
+                      hasFilters ? l10n.t.karaokeUi.noSongsMatchCurrentFilters : tr('empty'),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 )
               : ListView.builder(
                   itemCount: tracks.length,
                   itemBuilder: (context, i) {
-                    final track = tracks[i],
-                        favorite =
-                            s.singers.where((p) => p.id == _singer).firstOrNull?.favorites.contains(track.id) == true;
+                    final track = tracks[i];
+                    final singer = s.singers.where((p) => p.id == _singer).firstOrNull;
+                    final favorite = singer?.favorites.contains(track.id) == true;
+                    final preferred = singer?.preferredVersions[track.songId] == track.id;
                     final suggested = s.suggestedKey(track, singerId: _singer);
                     final details = [
                       track.artist,
                       if (track.genre.isNotEmpty) track.genre,
                       if (track.year != null) '${track.year}',
+                      if (preferred) l10n.t.karaokeUi.preferredVersion,
                       track.singAlongOnly
                           ? 'Sing-along only · original audio'
                           : track.canScore
@@ -875,11 +987,26 @@ class _KaraokeScreenState extends State<KaraokeScreen> with WidgetsBindingObserv
                                   throw StateError(missing.join(', '));
                                 }
                               });
+                            case 'preferredVersion':
+                              if (_singer != null) {
+                                await _command('preferredVersion', {
+                                  'singerId': _singer,
+                                  'trackId': track.id,
+                                  'value': !preferred,
+                                });
+                              }
                           }
                         },
                         itemBuilder: (_) => [
                           PopupMenuItem(value: 'request', child: Text(tr('request'))),
                           PopupMenuItem(value: 'group', child: Text(l10n.t.karaokeUi.requestDuetGroup)),
+                          PopupMenuItem(
+                            value: 'preferredVersion',
+                            enabled: singer != null,
+                            child: Text(
+                              preferred ? l10n.t.karaokeUi.clearPreferredVersion : l10n.t.karaokeUi.preferThisVersion,
+                            ),
+                          ),
                           PopupMenuItem(value: 'editor', child: Text(tr('editor'))),
                           PopupMenuItem(
                             value: 'prepare',
@@ -942,6 +1069,11 @@ class _KaraokeScreenState extends State<KaraokeScreen> with WidgetsBindingObserv
           ),
           trailing: Wrap(
             children: [
+              IconButton(
+                tooltip: l10n.t.karaokeUi.searchVisibleMediaServers,
+                onPressed: _busy || suggestion.title.trim().length < 2 ? null : () => _searchSuggestion(suggestion),
+                icon: const AppIcon(Symbols.cloud_sync_rounded),
+              ),
               IconButton(
                 tooltip: l10n.t.karaokeUi.markSourced,
                 onPressed: _busy

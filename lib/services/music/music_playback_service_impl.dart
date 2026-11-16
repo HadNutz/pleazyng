@@ -1251,6 +1251,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
   }
 
   MediaItem? _continuationSeed;
+  bool _offlineQueue = false;
   String? _continuationAccount;
   MusicStation? _continuationStation;
   ServerMusicRadio? _continuationServerRadio;
@@ -1276,7 +1277,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     _continuationDistance = .25;
     _continuationLoading = false;
     _continuationTask = null;
-    final seed = enabled ? _currentTrack : null;
+    final seed = enabled && !_offlineQueue ? _currentTrack : null;
     final client = seed == null ? null : _clientFor(seed);
     _continuationSeed = client == null || client.isOfflineMode ? null : seed;
     _continuationAccount = _continuationSeed == null ? null : musicAccountScope(client!);
@@ -1318,7 +1319,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
   );
 
   Future<void> _extendStation() {
-    if (_musicGroupFollower) return Future.value();
+    if (_musicGroupFollower || _offlineQueue) return Future.value();
     if (_continuationLoading) return _continuationTask ?? Future.value();
     final seed = _continuationSeed;
     if (seed == null || _disposed || _queue.length - _queue.cursor > 12) {
@@ -1654,6 +1655,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
   @override
   Future<bool> selectOutput(MusicPlaybackOutput? output, {bool resume = true}) async {
     if (_musicDeviceOutput != null) return false;
+    if (_offlineQueue && output != null) return false;
     final request = ++_outputRequest;
     if (_disposed || _currentTrack == null || _player == null) {
       if (output != null) await output.player.dispose();
@@ -2482,6 +2484,10 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     if (tracks.isEmpty || _disposed || sourceCurrent?.call() == false) {
       return;
     }
+    if (offline && _playbackOutput != null) {
+      _errorsController.add(StateError('Offline music requires local playback output'));
+      return;
+    }
     if (launchObserver != null && !launchObserver.isCurrent) {
       return;
     }
@@ -2516,6 +2522,9 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       if (!isPlayIntentCurrent(stoppingIntent) || sourceCurrent?.call() == false) return;
     }
     _queueSessionRevision++;
+    // Queue mode belongs to the queue session, so every new queue explicitly
+    // replaces the prior setting. Online queue replacements clear it here.
+    _offlineQueue = offline;
     _continuationEpoch++;
     _continuationSeed = null;
     _continuationAccount = null;
@@ -2589,7 +2598,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     int generation, {
     bool play = true,
     Duration? initialPosition,
-    bool offline = false,
+    bool? offline,
     MusicSource? preparedSource,
     bool newOccurrence = true,
     bool recoverFailures = true,
@@ -2598,6 +2607,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     if (track == null) {
       return;
     }
+    final offlineOnly = offline ?? _offlineQueue;
     _openingGeneration = generation;
     final observer = _observedGeneration == generation ? _launchObserver : null;
     bool launchCurrent() => generation == _generation && (observer?.isCurrent ?? true);
@@ -2677,10 +2687,13 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       try {
         final output = _playbackOutput;
         if (output != null && !output.available) throw StateError('Music output is no longer available');
+        if (offlineOnly && output != null) {
+          throw StateError('Offline music cannot use a remote playback output');
+        }
         source =
             preparedSource ??
             (output == null
-                ? await _cachedSource(await _resolver.resolve(track, offline: offline))
+                ? await _cachedSource(await _resolver.resolve(track, offline: offlineOnly))
                 : await output.resolve(track));
       } catch (e, st) {
         appLogger.w('Music source resolve failed for ${track.id}', error: e, stackTrace: st);
@@ -2758,7 +2771,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     _pendingRestoreResume = null;
     _queue.jumpTo(cursor);
     _persistSessionProgress(positionOverride: Duration.zero);
-    await _openCurrent(generation, play: play);
+    await _openCurrent(generation, play: play, offline: _offlineQueue);
   }
 
   bool get _albumLevelingContext => !shuffled && _playContext?.kind == MusicPlayContextKind.album;
@@ -2826,7 +2839,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       source = _currentSource!;
     } else {
       try {
-        source = await _cachedSource(await _resolver.resolve(target));
+        source = await _cachedSource(await _resolver.resolve(target, offline: _offlineQueue));
       } catch (e, st) {
         // Fail soft: with nothing armed, the completed event falls back to
         // an explicit open of the next track (which retries the resolve).
@@ -4896,6 +4909,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     _musicGroupFollower = false;
     _cancelOverlap();
     _continuationEpoch++;
+    _offlineQueue = false;
     _continuationSeed = null;
     _continuationAccount = null;
     _continuationStation = null;
@@ -5134,6 +5148,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     _continuationServerRadio = snapshot.continuationServerRadio;
     _continuationAlbumRadio = snapshot.continuationAlbumRadio;
     _continuationDistance = snapshot.continuationDistance;
+    _offlineQueue = snapshot.offlineQueue;
     _continuationSeed = _continuationAccount == null ? null : snapshot.continuationSeed;
     _continuationExcluded
       ..clear()
@@ -5179,6 +5194,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       continuationAlbumRadio: _continuationAlbumRadio,
       continuationDistance: _continuationDistance,
       continuationExcluded: Set.unmodifiable(_continuationExcluded),
+      offlineQueue: _offlineQueue,
     );
     unawaited(
       store.save(snapshot).catchError((Object e, StackTrace st) {
