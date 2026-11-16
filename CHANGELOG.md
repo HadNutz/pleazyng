@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Report subtitle-sync anchor residuals and refuse uncertain global fits before applying a single timing correction.
+
 - Reject repeated subtitle text as a sync anchor when multiple references imply materially different offsets.
 - Include the Sparkle appcast in release checksums and build-provenance attestations.
 - Allow the secret-free pull-request validation workflow to be run manually on its hosted runner.

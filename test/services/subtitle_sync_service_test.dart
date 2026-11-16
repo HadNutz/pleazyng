@@ -19,6 +19,8 @@ void main() {
 
     expect(result.globalOffsetMs, 2000);
     expect(result.appliedRate, closeTo(1, 0.000001));
+    expect(result.globalFitRmsResidualMs, 0);
+    expect(result.globalFitMaxResidualMs, 0);
     expect(result.matchedCueCount, 5);
     expect(result.cues.map((cue) => cue.startMs).toList(), [12000, 42000, 72000, 102000, 132000]);
     expect(result.cues.map((cue) => cue.id), target.map((cue) => cue.id));
@@ -39,6 +41,8 @@ void main() {
 
     expect(result.appliedRate, closeTo(1.02, 0.000001));
     expect(result.globalOffsetMs, 1500);
+    expect(result.globalFitRmsResidualMs, 0);
+    expect(result.globalFitMaxResidualMs, 0);
     expect(result.matchedCueCount, 5);
     expect(result.cues.map((cue) => cue.startMs).toList(), [11700, 42300, 72900, 103500, 134100]);
     expect(result.cues.map((cue) => cue.endMs).toList(), [13740, 44340, 74940, 105540, 136140]);
@@ -57,8 +61,31 @@ void main() {
 
     expect(result.appliedRate, 1);
     expect(result.discontinuityCount, 1);
+    expect(result.globalFitRmsResidualMs, greaterThan(500));
+    expect(result.globalFitMaxResidualMs, greaterThan(1250));
     expect(result.matchedCueCount, 6);
     expect(result.cues.map((cue) => cue.startMs).toList(), [12000, 22000, 32000, 45000, 55000, 65000]);
+  });
+
+  test('refuses a global correction when anchor residuals show an edited cut', () {
+    final target = _readCues('cut-target.srt');
+    final reference = _readCues('cut-reference.srt');
+
+    expect(
+      () => SubtitleSyncService.synchronize(
+        subtitleCues: target,
+        speechCues: reference,
+        mediaDurationMs: 120000,
+        repairCuts: false,
+      ),
+      throwsA(
+        isA<FormatException>().having(
+          (error) => error.message,
+          'message',
+          allOf(contains('single-fit residual RMS'), contains('cut repair')),
+        ),
+      ),
+    );
   });
 
   test('repeated text does not create a false cut when two references are plausible', () {

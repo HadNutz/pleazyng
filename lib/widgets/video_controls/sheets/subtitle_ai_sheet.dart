@@ -654,6 +654,8 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         discontinuityCount: aligned.discontinuityCount,
         rate: aligned.appliedRate.toStringAsFixed(4),
         baseOffset: aligned.globalOffsetMs,
+        rmsResidualMs: aligned.globalFitRmsResidualMs.round(),
+        maxResidualMs: aligned.globalFitMaxResidualMs,
         source: selectedSubtitle.$2,
         uploadedNote: _lastResultUploadedToServer ? context.t.subtitleAiUi.uploadedToServerLibraryNote : '',
       );
@@ -884,6 +886,8 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         sourceLanguage: SubtitleTranslationService.languageLabel(sourceLanguage),
         referenceLanguage: SubtitleTranslationService.languageLabel(referenceLanguage),
         warningNote: warningCount == 0 ? '' : context.t.subtitleAiUi.translationQualityWarnings(count: warningCount),
+        rmsResidualMs: aligned.globalFitRmsResidualMs.round(),
+        maxResidualMs: aligned.globalFitMaxResidualMs,
         uploadedNote: _lastResultUploadedToServer ? context.t.subtitleAiUi.uploadedToServerLibraryNote : '',
       );
     });
@@ -937,6 +941,8 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         totalCueCount: aligned.totalCueCount,
         confidence: percent,
         discontinuityCount: aligned.discontinuityCount,
+        rmsResidualMs: aligned.globalFitRmsResidualMs.round(),
+        maxResidualMs: aligned.globalFitMaxResidualMs,
         referenceSource: reference.$2,
         originalSource: target.$2,
         uploadedNote: _lastResultUploadedToServer ? context.t.subtitleAiUi.uploadedToServerLibraryNote : '',
@@ -983,6 +989,8 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         totalCount: aligned.totalCueCount,
         confidence: percent,
         discontinuityCount: aligned.discontinuityCount,
+        rmsResidualMs: aligned.globalFitRmsResidualMs.round(),
+        maxResidualMs: aligned.globalFitMaxResidualMs,
         evidenceNote: repairCuts ? context.t.subtitleAiUi.capturedEvidenceTimingNote : '',
         source: selected.$2,
         uploadedNote: _lastResultUploadedToServer ? context.t.subtitleAiUi.uploadedToServerLibraryNote : '',

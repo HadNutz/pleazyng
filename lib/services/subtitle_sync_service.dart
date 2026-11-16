@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'subtitle_retimer.dart';
@@ -12,6 +13,8 @@ final class SubtitleSyncResult {
     required this.meanMatchConfidence,
     required this.appliedRate,
     required this.globalOffsetMs,
+    required this.globalFitRmsResidualMs,
+    required this.globalFitMaxResidualMs,
   });
 
   final List<SubtitleCue> cues;
@@ -21,6 +24,12 @@ final class SubtitleSyncResult {
   final double meanMatchConfidence;
   final double appliedRate;
   final int globalOffsetMs;
+
+  /// Anchor residuals against the single affine fit, even when cut repair is
+  /// enabled. A large residual can be expected for edited cuts and explains
+  /// why the piecewise repair path was selected.
+  final double globalFitRmsResidualMs;
+  final int globalFitMaxResidualMs;
 
   double get matchedFraction => totalCueCount == 0 ? 0 : matchedCueCount / totalCueCount;
 }
@@ -34,6 +43,8 @@ abstract final class SubtitleSyncService {
   static const int _minimumMatches = 3;
   static const int _maximumCandidateComparisons = 6000000;
   static const int _cutOffsetJumpMs = 1100;
+  static const double _uncertainGlobalFitRmsResidualMs = 500;
+  static const int _uncertainGlobalFitMaxResidualMs = 1250;
   static const Set<String> _stopWords = {
     'about',
     'after',
@@ -240,6 +251,28 @@ abstract final class SubtitleSyncService {
           )
           .toList(),
     );
+    final globalFitResidualsMs = anchors
+        .map((anchor) {
+          final sourceTime = orderedSubtitles[anchor.subtitleIndex].startMs;
+          final referenceTime = orderedSpeech[anchor.speechIndex].startMs;
+          return referenceTime - (sourceTime * rate).round() - globalOffset;
+        })
+        .toList(growable: false);
+    final globalFitRmsResidualMs = math.sqrt(
+      globalFitResidualsMs.fold<double>(0, (sum, residual) => sum + residual * residual) / globalFitResidualsMs.length,
+    );
+    final globalFitMaxResidualMs = globalFitResidualsMs
+        .map((residual) => residual.abs())
+        .reduce((maximum, value) => maximum > value ? maximum : value);
+    if (!repairCuts &&
+        (globalFitRmsResidualMs > _uncertainGlobalFitRmsResidualMs ||
+            globalFitMaxResidualMs > _uncertainGlobalFitMaxResidualMs)) {
+      throw FormatException(
+        'Alignment remains uncertain: the single-fit residual RMS is '
+        '${globalFitRmsResidualMs.round()} ms and the maximum is $globalFitMaxResidualMs ms. '
+        'Use cut repair or align two cues manually before applying a global correction.',
+      );
+    }
     final discontinuities = repairCuts ? _countDiscontinuities(anchors, orderedSubtitles, orderedSpeech) : 0;
 
     int offsetAt(int sourceTimeMs) {
@@ -327,6 +360,8 @@ abstract final class SubtitleSyncService {
       meanMatchConfidence: meanConfidence,
       appliedRate: rate,
       globalOffsetMs: globalOffset,
+      globalFitRmsResidualMs: globalFitRmsResidualMs,
+      globalFitMaxResidualMs: globalFitMaxResidualMs,
     );
   }
 
