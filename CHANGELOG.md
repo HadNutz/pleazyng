@@ -22,7 +22,7 @@
 
 - Rank an artist's album matches above unrelated titles that merely contain the artist name; adapted independently from [upstream Plezy commit `a597bcbe`](https://github.com/edde746/plezy/commit/a597bcbee228e1f519b5f2a527bc239981fd0672).
 
-- Preserve source aspect ratio on the native webOS video plane and leave black bars inside the player viewport.
+- Fit the native webOS video plane to the source display ratio, centering non-matching frames with black bars in the player viewport.
 
 - Allow trusted-main webOS-only validation builds through the hybrid runner profile so private C6 test packages can be built.
 
