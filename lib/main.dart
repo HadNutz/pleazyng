@@ -1421,6 +1421,11 @@ void _registerAppLicenses() {
   _registerShaderLicenses();
   LicenseRegistry.addLicense(() async* {
     yield LicenseEntryWithLineBreaks(const [
+      'LCEVCdec (V-Nova)',
+    ], await rootBundle.loadString('assets/licenses/LCEVCdec.txt'));
+  });
+  LicenseRegistry.addLicense(() async* {
+    yield LicenseEntryWithLineBreaks(const [
       'AutoEq headphone equalization (Jaakko Pasanen)',
     ], await rootBundle.loadString('assets/licenses/AutoEq_MIT.txt'));
     yield LicenseEntryWithLineBreaks(const [

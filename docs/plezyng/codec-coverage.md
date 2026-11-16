@@ -35,8 +35,8 @@ source. Native webOS, Tizen and ExoPlayer never inherit mpv's inventory.
 - Companion `snapetech-org/mpv-build` preserves the broad built-in FFmpeg
   decoder, demuxer, parser and bitstream-filter sets. Linux packages generate
   a binary-hashed inventory and require a software AV1 implementation.
-  Its Linux recipe also links EVC, AVS2 and AVS3 external decoders. The pinned
-  AVS2 dependency is 8-bit only. Native packages must be rebuilt and consumed
+  Its Linux, Android, Apple and Windows source graphs include EVC, AVS2 and
+  AVS3 external decoders. The pinned AVS2 dependency is 8-bit only. Native packages must be rebuilt and consumed
   before these new dependencies exist in an installed application.
 
 ## Coverage order and remaining qualification
@@ -59,3 +59,23 @@ corrupt or proprietary sources must report the actual limitation.
 Cross-platform native rebuilds, actual bundled inventory reports, representative
 decode/seek fixtures and physical-device HDR/audio tests are release evidence.
 Do not mark this matrix universally qualified from Dart tests or a build alone.
+
+## Bundled SDK delivery
+
+The native producer now builds pinned LCEVCdec 4.3.1 statically for Linux,
+Android, Windows and Apple. No user-installed decoder SDK is required. Its
+FFmpeg integration reconstructs enhancement data through the generic video
+decode path; an `lcevc` entry in a codec-name catalogue is not proof of that
+reconstruction. Base-layer-only decoding must not count as LCEVC qualification.
+
+The SDK's original `COPYING` and `LICENSE.md` are retained in native packages,
+Android AAR assets and the application's Licenses screen. BSD-3-Clause-Clear
+and the additional licensing information remain the SDK's own terms; they
+explicitly exclude a patent license. See the [pinned SDK source and terms](https://github.com/v-novaltd/LCEVCdec/tree/e295d8438ba554bc541fb269baa9cbd567b626a8).
+
+The application remains on its last verified native pin until the producer's
+new all-platform artifacts pass publication and pin verification. These source
+changes do not themselves establish shipped or device-qualified LCEVC support.
+Native webOS/Tizen/ExoPlayer backends do not gain this SDK from mpv packaging.
+AV2 and unavailable proprietary SDKs must retain a truthful unsupported or
+server-conversion route; recognition never substitutes for an implementation.
