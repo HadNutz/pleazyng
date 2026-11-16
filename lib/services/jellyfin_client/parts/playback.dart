@@ -1112,11 +1112,12 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
                   : RuntimePlaybackCapabilities.mpvVideoContainers.join(','),
               'VideoCodec': _jellyfinDirectPlayVideoCodecs(),
               if (PlatformDetector.isWebOSBuild() && allowAudioStreamCopy == false)
-                'AudioCodec': webosTranscodeAudioCodecs,
-              // On MPV targets, no `AudioCodec` means "any codec" to
-              // Jellyfin. mpv decodes every audio codec these containers can
-              // carry and an audio decode is cheap everywhere, so an audio
-              // stream must never be the reason a file cannot direct-play.
+                'AudioCodec': webosTranscodeAudioCodecs
+              else if (RuntimePlaybackCapabilities.videoAudioCodecs case final codecs? when codecs.isNotEmpty)
+                'AudioCodec': codecs.join(','),
+              // Missing inventory preserves the existing unknown-capability
+              // policy. A measured list constrains decoding only; it never
+              // promises passthrough or object-audio reconstruction.
             },
             // Music containers/codecs mpv plays natively everywhere. This one
             // keeps its `AudioCodec` because Jellyfin falls back to the

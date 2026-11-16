@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Codec fallback keeps the current audio track and resume position; Android ExoPlayer-to-mpv switches now update measured codec capabilities. Jellyfin/Emby audio negotiation uses enumerated decoders when available.
+
 - Cover the complete reviewed FFmpeg naming catalogue (282 video, 225 audio and 27 subtitle identities) when classifying runtime decoder evidence, including obscure legacy formats. Recognize EVC and AV2 source extensions without claiming an installed decoder.
 
 - Keep Original Plex video unchanged on Samsung TV when the source fits the native MP4/H.264 and stereo AAC/MP3 profile, rather than forcing every file through a video encode.

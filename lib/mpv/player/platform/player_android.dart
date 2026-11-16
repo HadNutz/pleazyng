@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
 
+import '../../../media/runtime_playback_capabilities.dart';
 import '../../../models/audio_channel_limit.dart';
 import '../../../services/device_performance.dart';
 import '../../../services/settings_service.dart';
@@ -15,8 +16,11 @@ class PlayerAndroid extends PlayerBase implements VideoRectSupport, PlayerAudioF
   static const _channelBase = 'com.plezy/exo_player';
 
   PlayerAndroid({int videoPlayerSlot = 0, bool companionSession = false, super.listenToNativeEvents = true})
-    : methodChannel = MethodChannel(_channelName(companionSession ? 1 : videoPlayerSlot)),
+    : _primaryVideoPlayer = !companionSession && videoPlayerSlot == 0,
+      methodChannel = MethodChannel(_channelName(companionSession ? 1 : videoPlayerSlot)),
       eventChannel = EventChannel('${_channelName(companionSession ? 1 : videoPlayerSlot)}/events');
+
+  final bool _primaryVideoPlayer;
 
   static String _channelName(int videoPlayerSlot) {
     return videoPlayerChannelBase(_channelBase, videoPlayerSlot);
@@ -151,6 +155,7 @@ class PlayerAndroid extends PlayerBase implements VideoRectSupport, PlayerAudioF
       // mpv's track-list instead of immediately applying with ExoPlayer IDs.
       final wasUsingMpvFallback = _usingMpvFallback;
       _usingMpvFallback = true;
+      if (_primaryVideoPlayer) RuntimePlaybackCapabilities.activeVideoEngine = 'mpv';
       if (!wasUsingMpvFallback) {
         clearTracks();
       }
@@ -159,6 +164,19 @@ class PlayerAndroid extends PlayerBase implements VideoRectSupport, PlayerAudioF
     }
 
     super.handlePlayerEvent(name, data);
+  }
+
+  @override
+  void handlePropertyChange(String name, dynamic value, {int? sourceId}) {
+    if (name == 'decoder-list') {
+      RuntimePlaybackCapabilities.recordMpvDecoders(value);
+      return;
+    }
+    if (name == 'demuxer-lavf-list') {
+      RuntimePlaybackCapabilities.recordMpvDemuxers(value);
+      return;
+    }
+    super.handlePropertyChange(name, value, sourceId: sourceId);
   }
 
   // Memoizes the in-flight init Future so concurrent callers share one
@@ -202,6 +220,10 @@ class PlayerAndroid extends PlayerBase implements VideoRectSupport, PlayerAudioF
       // future would falsely treat as ready.
       await observeCoreProperties(trackListFormat: 'string');
       await observeProperty('demuxer-cache-time', 'double');
+      // Native ExoPlayer queues observers and replays them into the mpv core
+      // on fallback. ExoPlayer itself must never inherit mpv capabilities.
+      await observeProperty('decoder-list', 'string');
+      await observeProperty('demuxer-lavf-list', 'string');
       if (disposed) throw StateError('Player was disposed during initialization');
 
       // These settings can be queued before any operation initializes the

@@ -131,7 +131,7 @@ extension _VideoPlayerErrorMethods on VideoPlayerScreenState {
         selectedMediaIndex: request.mediaIndex,
         selectedMediaSourceId: request.mediaSourceId,
         qualityPreset: request.qualityPreset,
-        selectedAudioStreamId: request.audioStreamId,
+        selectedAudioStreamId: _selectedAudioStreamId ?? request.audioStreamId,
         useCurrentAudioStreamSelection: false,
         resumePosition: _firstFrame.rendered
             ? (player?.state.position ?? request.resumePosition)
@@ -185,9 +185,11 @@ extension _VideoPlayerErrorMethods on VideoPlayerScreenState {
         selectedMediaIndex: request.mediaIndex,
         selectedMediaSourceId: request.mediaSourceId,
         qualityPreset: request.qualityPreset,
-        selectedAudioStreamId: request.audioStreamId,
+        selectedAudioStreamId: _selectedAudioStreamId ?? request.audioStreamId,
         useCurrentAudioStreamSelection: false,
-        resumePosition: player?.state.position ?? request.resumePosition,
+        resumePosition: _firstFrame.rendered
+            ? (player?.state.position ?? request.resumePosition)
+            : request.resumePosition,
         preferredSubtitleTrackOverride: SubtitlePreference.trackOrNull(
           _playbackSession?.subtitleSelection.primaryTrack,
         ),
@@ -255,7 +257,7 @@ extension _VideoPlayerErrorMethods on VideoPlayerScreenState {
         selectedMediaIndex: request.mediaIndex,
         selectedMediaSourceId: request.mediaSourceId,
         qualityPreset: request.qualityPreset,
-        selectedAudioStreamId: request.audioStreamId,
+        selectedAudioStreamId: _selectedAudioStreamId ?? request.audioStreamId,
         useCurrentAudioStreamSelection: false,
         resumePosition: _firstFrame.rendered
             ? (player?.state.position ?? request.resumePosition)

@@ -2823,6 +2823,29 @@ void main() {
       expect(capturedUri.toString(), contains('/Items/folder%2Fitem%20%231%3Fx/PlaybackInfo'));
     });
 
+    test('video audio negotiation uses measured decoders without claiming output support', () async {
+      RuntimePlaybackCapabilities.recordMpvDecoders([
+        {'codec': 'h264', 'driver': 'h264'},
+        {'codec': 'aac', 'driver': 'aac'},
+        {'codec': 'metasound', 'driver': 'metasound'},
+      ]);
+      addTearDown(RuntimePlaybackCapabilities.reset);
+      late Map<String, dynamic> profile;
+      final scoped = JellyfinClient.forTesting(
+        connection: _conn(),
+        httpClient: MockClient((request) async {
+          profile = (jsonDecode(request.body) as Map<String, dynamic>)['DeviceProfile'];
+          return jsonResponse({'MediaSources': []});
+        }),
+      );
+      addTearDown(scoped.close);
+      await scoped.getPlaybackInfo('item-1');
+      expect(profile['DirectPlayProfiles'][0]['AudioCodec'], 'aac,metasound');
+      RuntimePlaybackCapabilities.activeVideoEngine = 'exoplayer';
+      await scoped.getPlaybackInfo('item-1');
+      expect(profile['DirectPlayProfiles'][0].containsKey('AudioCodec'), isFalse);
+    });
+
     test('getPlaybackInfo advertises embedded delivery for every format, external for text only', () async {
       Uri? capturedUri;
       String? capturedBody;
@@ -2859,8 +2882,7 @@ void main() {
       expect(profile['DirectPlayProfiles'], isNotEmpty);
       final directPlayProfile = (profile['DirectPlayProfiles'] as List<dynamic>).first as Map<String, dynamic>;
       expect(directPlayProfile['VideoCodec'], contains('mpeg2video'));
-      // An omitted list means "any codec" to Jellyfin, so an audio stream can
-      // never be what blocks direct play.
+      // No runtime inventory was supplied, so preserve the unknown policy.
       expect(directPlayProfile.containsKey('AudioCodec'), isFalse);
       expect(profile['TranscodingProfiles'], isNotEmpty);
       expect(profile['CodecProfiles'], isEmpty);

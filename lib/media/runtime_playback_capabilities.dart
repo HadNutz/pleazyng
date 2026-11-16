@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'codec_catalog.dart';
 import 'decoder_inventory.dart';
 
 /// Process-local facts from the bundled mpv engine. TV native backends must not
@@ -11,6 +12,15 @@ abstract final class RuntimePlaybackCapabilities {
   static DecoderInventory? get mpv => _mpv;
   static DecoderInventory? get videoDecoders => activeVideoEngine == 'mpv' ? _mpv : null;
   static Set<String>? get demuxers => _demuxers;
+
+  /// Null is unknown, not an empty supported list. Audio in a video stream is
+  /// decoded by that video's engine; an unrelated mpv music session is not
+  /// evidence for ExoPlayer or a television's native player.
+  static List<String>? get videoAudioCodecs {
+    final inventory = videoDecoders;
+    if (inventory == null) return null;
+    return inventory.decoders.keys.where(CodecCatalog.isAudioCodec).toList()..sort();
+  }
 
   static void recordMpvDecoders(Object? value) {
     final parsed = DecoderInventory.fromMpv(value);
