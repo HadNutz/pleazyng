@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Include the original EVC/AVS decoder notices and the complete upstream LCEVC notice tree in the app Licenses screen.
+- Include the original EVC/AVS decoder notices and the complete upstream LCEVC notice tree in the app Licenses screen, with one SDK entry.
 - Reject native SDK pin updates when the app's bundled decoder license notices are stale or altered, preserving all platform pins on failure.
 - Retain the pinned LCEVC decoder SDK's original licensing terms in the app Licenses screen; document bundled SDK delivery and pending native artifact qualification.
 - Consolidate saved karaoke discovery and preferred-version controls, TTML singer/timing import and export, and profile-owned offline music continuation. Preserve offline queue mode across session restoration and keep its playback local.

@@ -37,7 +37,7 @@ class LicensesScreen extends StatelessWidget {
       }
     }
 
-    const lcevcPackage = 'LCEVCdec 4.3.1';
+    const lcevcPackage = 'LCEVCdec (V-Nova)';
     final lcevcLicense = await rootBundle.loadString('assets/licenses/LCEVCdec.txt');
     licenseMap[lcevcPackage] = [
       LicenseEntryWithLineBreaks([lcevcPackage], lcevcLicense),
