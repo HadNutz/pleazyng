@@ -54,6 +54,8 @@ Pleazyng independently integrated or adapted these upstream PRs.
 
 These upstream commits supplied additional implementation ideas or code to the November follow-up.
 
+- [commit 408da1ab83](https://github.com/edde746/plezy/commit/408da1ab83b552e8b155aef7dd5f3e4d6892d91b) for [issue #3022](https://github.com/edde746/plezy/issues/3022) — “fix(player): keep the remote working when a reload unmounts the focused control,” contributed upstream by [@edde746](https://github.com/edde746). Pleazyng independently adapts the focus handoff and restores Play/Pause only when an in-place reload removed the focused control, preserving the fork's keyboard-mode and route guards. The upstream author contributed this fix to Plezy; this credit does not claim direct contribution to, endorsement of, or participation in Pleazyng.
+
 - [commit `847842c3d0`](https://github.com/edde746/plezy/commit/847842c3d075b56d686409850e12fa1cca0b19d9) — “perf(player): give mpv a constant title on iOS and tvOS (#3032),” authored upstream by [@edde746](https://github.com/edde746). The upstream author contributed the performance fix to Plezy. Pleazyng independently adapted the constant title for iOS/tvOS mpv contexts and added platform contract coverage; the upstream bench-app CPU result is not claimed as measured in Pleazyng.
 
 - [commit `80c562ff06`](https://github.com/edde746/plezy/commit/80c562ff06db237b48592a89efb0f0b7baeb0e10) — “fix(downloads): stop the free-space guard capping desktop download speed (#2967),” authored upstream by [@edde746](https://github.com/edde746). Pleazyng independently adapted the upstream change.

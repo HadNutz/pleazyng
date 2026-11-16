@@ -6,14 +6,32 @@ extension _PlexVideoControlsVisibilityMethods on _PlexVideoControlsState {
     final hasFrame = widget.hasFirstFrame?.value ?? true;
     widget.chromeController.setHasFirstFrame(hasFrame);
     if (hasFrame) {
+      if (_chromeFocusLostToFirstFrameGate) {
+        _chromeFocusLostToFirstFrameGate = false;
+        _restoreChromeFocusAfterOpen();
+      }
       // Retry with network-first if initial cache-first returned empty
       if (_chapters.isEmpty && _markers.isEmpty) {
         _loadPlaybackExtras(forceRefresh: true);
       }
       _syncCurrentMarkerForCurrentPosition();
     } else {
+      // Capture before FirstFrameGuard removes the transport row under a
+      // focused control on an in-place open.
+      _chromeFocusLostToFirstFrameGate = _chromeScopeNode.hasFocus && !_chromeScopeNode.hasPrimaryFocus;
       _clearCurrentMarker();
     }
+  }
+
+  /// Restores Play/Pause only when this reload displaced a focused control.
+  /// Other focus changes, overlays and routes keep ownership of the remote.
+  void _restoreChromeFocusAfterOpen() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_focusNode.hasPrimaryFocus || _sheetIsOpen()) return;
+      if (ModalRoute.of(context)?.isCurrent != true) return;
+      if (widget.playNextFocusNode != null || widget.playbackPromptOpen || _isSkipMarkerButtonVisible) return;
+      _focusPlayPauseIfKeyboardMode();
+    });
   }
 
   /// Focus Play/Pause when the viewer is already driving with keyboard/D-pad
@@ -317,6 +335,13 @@ extension _PlexVideoControlsVisibilityMethods on _PlexVideoControlsState {
       if (ModalRoute.of(context)?.isCurrent != true) return;
       _focusNode.requestFocus();
     });
+  }
+
+  /// The chrome scope can become primary when its focused child leaves the
+  /// tree, but no player key handler answers there. Hand the remote back to the
+  /// surface just as the chrome hide path does.
+  void _onChromeScopeFocusChanged() {
+    if (_chromeScopeNode.hasPrimaryFocus) _claimPlayerSurfaceFocus();
   }
 
   bool _sheetIsOpen() => OverlaySheetController.maybeOf(context)?.isOpen ?? false;

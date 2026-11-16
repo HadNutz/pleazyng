@@ -739,6 +739,70 @@ void main() {
       },
     );
   });
+
+  group('an in-place player reload that removes the focused control', () {
+    setUp(() async {
+      TvDetectionService.debugSetAppleTVOverride(true);
+      await TvDetectionService.getInstance(forceTv: true);
+      TvDetectionService.setForceTVSync(true);
+      PlatformDetector.debugSetIsDesktopOSOverride(false);
+      await setNavigationEnabled(true);
+    });
+
+    Future<void> focusPlayPause(WidgetTester tester) async {
+      await press(tester, LogicalKeyboardKey.arrowUp);
+      expect(focusLabel(), 'PlayPause', reason: 'precondition: the remote is on Play/Pause');
+    }
+
+    playerTest('the remote waits on the surface and returns to Play/Pause when the frame arrives', (tester) async {
+      await focusPlayPause(tester);
+
+      hasFirstFrame.value = false;
+      await tester.pumpAndSettle();
+      expect(focusLabel(), 'PlayerSurface', reason: 'an empty chrome scope must not keep the remote');
+
+      hasFirstFrame.value = true;
+      await tester.pumpAndSettle();
+      expect(focusLabel(), 'PlayPause', reason: 'the frame restores the control displaced by the reload');
+
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focusLabel(), isNot(anyOf('PlayPause', 'PlayerSurface')), reason: 'arrows traverse the row again');
+    });
+
+    playerTest('OK toggles playback while the in-place reload is still loading', (tester) async {
+      await focusPlayPause(tester);
+      hasFirstFrame.value = false;
+      await tester.pumpAndSettle();
+
+      await press(tester, LogicalKeyboardKey.select);
+
+      expect(toggles, 1, reason: 'OK must still reach playback while the row is gone');
+    });
+
+    playerTest('a remote resting on the surface does not get grabbed when the frame arrives', (tester) async {
+      InputModeTracker.reportNonPointerInput();
+      chrome.show();
+      await tester.pumpAndSettle();
+      expect(focusLabel(), 'PlayerSurface', reason: 'precondition: no chrome control owns focus');
+
+      hasFirstFrame.value = false;
+      await tester.pumpAndSettle();
+      hasFirstFrame.value = true;
+      await tester.pumpAndSettle();
+
+      expect(focusLabel(), 'PlayerSurface', reason: 'the reload must not grab focus it did not displace');
+    });
+
+    playerTest('controls accept focus again after hiding and showing', (tester) async {
+      await focusPlayPause(tester);
+
+      chrome.hide();
+      await tester.pumpAndSettle();
+      expect(focusLabel(), 'PlayerSurface', reason: 'precondition: hidden chrome returned the remote');
+
+      await focusPlayPause(tester);
+    });
+  });
 }
 
 /// Minimal [Player] reporting steady playback; transport is routed to the

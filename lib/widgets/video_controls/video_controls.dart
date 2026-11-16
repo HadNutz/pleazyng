@@ -869,6 +869,14 @@ class _PlexVideoControlsState extends State<PlexVideoControls>
   late bool _chaptersLoaded = widget.initialChapters != null;
   bool _isAlwaysOnTop = false;
   late final FocusNode _focusNode;
+
+  /// The chrome scope can become primary when an in-place player reload
+  /// unmounts the focused transport control. Observe that transition so the
+  /// remote stays on the player surface until a control is available again.
+  late final FocusScopeNode _chromeScopeNode;
+
+  /// True when a chrome control held focus as the first-frame gate closed.
+  bool _chromeFocusLostToFirstFrameGate = false;
   KeyboardShortcutsService? _keyboardService;
   // Live settings — read through the service so a change anywhere in the app
   // reflects here without a manual reload. UI rebuilds are wired via
@@ -1040,6 +1048,7 @@ class _PlexVideoControlsState extends State<PlexVideoControls>
       alsoOwns: (key) => !_showControls && (key.isLeftKey || key.isRightKey),
     );
     _skipMarkerFocusNode = FocusNode(debugLabel: 'SkipMarkerButton');
+    _chromeScopeNode = FocusScopeNode(debugLabel: 'PlayerChrome');
     _seekThrottle = throttle(
       (Duration pos) {
         unawaited(_seekToTimelinePosition(pos));
@@ -1089,6 +1098,7 @@ class _PlexVideoControlsState extends State<PlexVideoControls>
     bindEffect(SettingsService.skipCreditsMode, (_) => _syncCurrentMarkerForCurrentPosition(), fireImmediately: false);
     bindEffect(SettingsService.skipAdsMode, (_) => _syncCurrentMarkerForCurrentPosition(), fireImmediately: false);
     _releaseChromeListener = bindListenable(widget.chromeController, _onChromeChanged);
+    bindListenable(_chromeScopeNode, _onChromeScopeFocusChanged);
     _releaseSyncOffsetsListener = bindListenable(PlayerSyncOffsets.of(widget.player), _onSyncOffsetsChanged);
     _releaseVolumeControllerListener = bindListenable(widget.volumeController, _onSubtitleMuteVolumeChanged);
     bindEffect(SettingsService.subtitleOnMute, (_) => _onSubtitleMuteVolumeChanged(), fireImmediately: false);
@@ -1272,6 +1282,7 @@ class _PlexVideoControlsState extends State<PlexVideoControls>
     _rateSubscription?.cancel();
     _focusNode.dispose();
     _skipMarkerFocusNode.dispose();
+    _chromeScopeNode.dispose();
     _fallbackHasFirstFrame.dispose();
     // Restore original rate if long-press was active when disposed
     if (_isLongPressing && _rateBeforeLongPress != null) {
@@ -1415,8 +1426,13 @@ class _PlexVideoControlsState extends State<PlexVideoControls>
                         : IgnorePointer(
                             ignoring: !_showControls,
                             child: FocusScope(
+                              node: _chromeScopeNode,
                               // Prevent focus from entering controls when hidden
                               canRequestFocus: _showControls,
+                              // Keep descendants eligible after the scope has
+                              // been hidden and shown again. The node outlives
+                              // each visibility transition.
+                              descendantsAreFocusable: true,
                               child: AnimatedOpacity(
                                 opacity: _controlsOpaque ? 1.0 : 0.0,
                                 duration: const Duration(milliseconds: 200),

@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Keep TV remote input working when an in-place player reload removes the focused control, independently adapting [Plezy commit 408da1ab83](https://github.com/edde746/plezy/commit/408da1ab83b552e8b155aef7dd5f3e4d6892d91b) by [@edde746](https://github.com/edde746) for [issue #3022](https://github.com/edde746/plezy/issues/3022); see [upstream source credit](UPSTREAM_ATTRIBUTION.md#credited-plezy-commits).
+
 - Report subtitle-sync anchor residuals and refuse uncertain global fits before applying a single timing correction.
 
 - Reject repeated subtitle text as a sync anchor when multiple references imply materially different offsets.
