@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Include the Sparkle appcast in release checksums and build-provenance attestations.
+- Allow the secret-free pull-request validation workflow to be run manually on its hosted runner.
 
 - Stop paginated loaders at an empty page and trim cached entries beyond the final available item, adapting [upstream commit `8916000299`](https://github.com/edde746/plezy/commit/8916000299dc0106614deede5ca7476d714984c7); see [upstream source credit](UPSTREAM_ATTRIBUTION.md#credited-plezy-commits).
 
