@@ -3925,6 +3925,38 @@ jobs:
             echo EOF
           } >> "$GITHUB_OUTPUT"
 
+      - name: Prepare append-only Apple Store recovery assets
+        if: ${{ inputs.recovery_source_sha != '' }}
+        env:
+          RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.release_tag }}
+          PRODUCT_SOURCE_SHA: ${{ needs.validate-trusted-ref.outputs.release_commit }}
+          PACKAGING_SOURCE_SHA: ${{ inputs.recovery_source_sha }}
+          WORKFLOW_SOURCE_SHA: ${{ github.sha }}
+          SOURCE_RUN_ID: ${{ inputs.reuse_platform_run_id }}
+          ASSEMBLY_RUN_ID: ${{ github.run_id }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 scripts/verify_release_attestation.py artifacts/ios-ipa/pleazyng-ios-appstore.ipa --repo "$GITHUB_REPOSITORY"
+          python3 scripts/verify_release_attestation.py artifacts/tvos-ipa/pleazyng-tvos-appstore.ipa --repo "$GITHUB_REPOSITORY"
+          python3 scripts/append_apple_store_release_assets.py prepare \
+            --repository "$GITHUB_REPOSITORY" \
+            --release-tag "$RELEASE_TAG" \
+            --directory artifacts \
+            --product-source-sha "$PRODUCT_SOURCE_SHA" \
+            --packaging-source-sha "$PACKAGING_SOURCE_SHA" \
+            --workflow-source-sha "$WORKFLOW_SOURCE_SHA" \
+            --source-run-id "$SOURCE_RUN_ID" \
+            --assembly-run-id "$ASSEMBLY_RUN_ID"
+
+      - name: Attest append-only Apple Store recovery assets
+        if: ${{ inputs.recovery_source_sha != '' }}
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: |
+            artifacts/APPLE-STORE-SHA256SUMS.txt
+            artifacts/APPLE-STORE-RECOVERY.json
+
       - name: Verify existing immutable release tag
         env:
           GH_TOKEN: ${{ github.token }}
@@ -3954,10 +3986,34 @@ jobs:
           print(f'Existing {tag} still resolves to the validated source {expected}.')
           PY
 
+      - name: Append signed Apple assets without replacing existing release assets
+        if: ${{ inputs.recovery_source_sha != '' }}
+        env:
+          RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.release_tag }}
+          PRODUCT_SOURCE_SHA: ${{ needs.validate-trusted-ref.outputs.release_commit }}
+          PACKAGING_SOURCE_SHA: ${{ inputs.recovery_source_sha }}
+          WORKFLOW_SOURCE_SHA: ${{ github.sha }}
+          SOURCE_RUN_ID: ${{ inputs.reuse_platform_run_id }}
+          ASSEMBLY_RUN_ID: ${{ github.run_id }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 scripts/append_apple_store_release_assets.py upload \
+            --repository "$GITHUB_REPOSITORY" \
+            --release-tag "$RELEASE_TAG" \
+            --directory artifacts \
+            --product-source-sha "$PRODUCT_SOURCE_SHA" \
+            --packaging-source-sha "$PACKAGING_SOURCE_SHA" \
+            --workflow-source-sha "$WORKFLOW_SOURCE_SHA" \
+            --source-run-id "$SOURCE_RUN_ID" \
+            --assembly-run-id "$ASSEMBLY_RUN_ID"
+
       - name: Create Release
+        if: ${{ inputs.recovery_source_sha == '' }}
         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
         with:
           files: ${{ steps.release-files.outputs.files }}
+          overwrite_files: false
           body_path: release-notes.md
           draft: true
           prerelease: false

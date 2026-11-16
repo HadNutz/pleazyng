@@ -136,6 +136,14 @@ jobs:
             echo "Release $RELEASE_TAG is missing SHA256SUMS.txt." >&2
             exit 1
           fi
+          if [[ "$CHANNEL" == app-store-ios || "$CHANNEL" == app-store-tvos ]]; then
+            for asset in APPLE-STORE-SHA256SUMS.txt APPLE-STORE-RECOVERY.json; do
+              if ! jq -e --arg asset "$asset" '.assets | any(.name == $asset)' <<< "$release_json" >/dev/null; then
+                echo "Release $RELEASE_TAG is missing append-only Apple recovery asset $asset." >&2
+                exit 1
+              fi
+            done
+          fi
           echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
 
   publish-google-play:
@@ -332,20 +340,38 @@ jobs:
           mkdir -p "$RUNNER_TEMP/store-assets"
           gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
             --pattern "$IPA_ASSET" --pattern SHA256SUMS.txt \
+            --pattern APPLE-STORE-SHA256SUMS.txt --pattern APPLE-STORE-RECOVERY.json \
             --dir "$RUNNER_TEMP/store-assets"
           cd "$RUNNER_TEMP/store-assets"
           python3 - <<'PYHASH'
-          import hashlib, os
+          import hashlib, json, os, re
           from pathlib import Path
           asset = os.environ["IPA_ASSET"]
-          entries = [line.split() for line in Path("SHA256SUMS.txt").read_text().splitlines()]
+          release_tag = os.environ["RELEASE_TAG"]
+          entries = [line.split() for line in Path("APPLE-STORE-SHA256SUMS.txt").read_text().splitlines()]
           expected = [parts[0].lower() for parts in entries if len(parts) == 2 and parts[1] == asset]
           with open(asset, "rb") as source:
               actual = hashlib.file_digest(source, "sha256").hexdigest()
           if expected != [actual]:
-              raise SystemExit("Signed IPA checksum missing, ambiguous, or mismatched")
+              raise SystemExit("Signed IPA checksum missing from Apple sidecar, ambiguous, or mismatched")
+          provenance = json.loads(Path("APPLE-STORE-RECOVERY.json").read_text())
+          if (provenance.get("schema_version") != 1
+              or provenance.get("release_tag") != release_tag
+              or not re.fullmatch(r"[0-9a-f]{40}", str(provenance.get("product_source_sha", "")))
+              or not re.fullmatch(r"[0-9a-f]{40}", str(provenance.get("packaging_source_sha", "")))
+              or not re.fullmatch(r"[0-9a-f]{40}", str(provenance.get("workflow_source_sha", "")))
+              or not isinstance(provenance.get("source_run_id"), int)
+              or not isinstance(provenance.get("assembly_run_id"), int)):
+              raise SystemExit("Apple recovery provenance identity is incomplete")
+          outputs = {item.get("name"): item.get("sha256")
+                     for item in provenance.get("signed_store_artifacts", [])
+                     if isinstance(item, dict)}
+          if outputs.get(asset) != actual:
+              raise SystemExit("Apple recovery provenance does not bind the selected IPA bytes")
           PYHASH
           python3 "$GITHUB_WORKSPACE/scripts/verify_release_attestation.py" "$IPA_ASSET" --repo "$GITHUB_REPOSITORY"
+          python3 "$GITHUB_WORKSPACE/scripts/verify_release_attestation.py" APPLE-STORE-SHA256SUMS.txt --repo "$GITHUB_REPOSITORY"
+          python3 "$GITHUB_WORKSPACE/scripts/verify_release_attestation.py" APPLE-STORE-RECOVERY.json --repo "$GITHUB_REPOSITORY"
 
       - uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
         with:

@@ -407,10 +407,14 @@ class FrozenTvosReuseTests(unittest.TestCase):
                     'event': 'workflow_dispatch', 'head_branch': 'main', 'path': '.github/workflows/build.yml',
                     'repository': {'id': 1433487464}, 'head_repository': {'full_name': recovery.REPOSITORY},
                     'run_attempt': 1,
-                    'display_title': 'action:release:pool:private:tag:v3.0.31:repair:' + self.prior_repair}
+                    'display_title': 'action:release:pool:public:tag:v3.0.31:repair:' + self.prior_repair}
         def job(name, conclusion, steps=()):
-            return {'id': len(name), 'name': name, 'status': 'completed', 'conclusion': conclusion,
+            value = {'id': len(name), 'name': name, 'status': 'completed', 'conclusion': conclusion,
                     'steps': [{'name': step, 'status': 'completed', 'conclusion': 'success'} for step in steps]}
+            if name == 'Build tvOS developer package (arm64)':
+                value.update(runner_id=100, runner_name='GitHub Actions 100',
+                             runner_group_name='GitHub Actions', labels=['macos-26'])
+            return value
         self.jobs = [job('Validate release request', 'success', (
             'Verify approved frozen packaging checkout', 'Verify reusable platform source')),
             job('Build tvOS developer package (arm64)', 'success', (
@@ -439,6 +443,19 @@ class FrozenTvosReuseTests(unittest.TestCase):
         self.assertEqual(result['artifact_digest'], self.artifact['digest'])
         self.assertEqual(result['packaging_approval'], self.prior['packaging_approval'])
 
+    def test_explicit_private_apple_route_requires_run_and_job_bound_labels(self):
+        self.jobs[1].update(
+            runner_id=101,
+            runner_name='pleazyng-private-apple-101',
+            runner_group_name='private-apple-builds',
+            labels=['self-hosted', 'macOS', 'ARM64', 'private-apple',
+                    'ng-shared-main-pleazyng', 'ng-main-run-84', 'gha-84-build-tvos'],
+        )
+        self.prove()
+        self.jobs[1]['labels'].remove('gha-84-build-tvos')
+        with self.assertRaisesRegex(recovery.RecoveryError, 'expected public hosted or exact private'):
+            self.prove()
+
     def test_tvos_only_sibling_can_fail_assembly_before_publication(self):
         self.jobs[2]['conclusion'] = 'skipped'
         self.jobs[3]['conclusion'] = 'failure'
@@ -454,7 +471,8 @@ class FrozenTvosReuseTests(unittest.TestCase):
     def test_untrusted_wrong_product_unsigned_and_publication_attempt_sources_are_rejected(self):
         original = {key: copy.deepcopy(getattr(self, key)) for key in ('run', 'jobs', 'artifact', 'prior')}
         for change in ('foreign', 'wrong-product', 'failed-ci', 'missing-signed', 'missing-attestation',
-                       'publication', 'unrelated-built', 'duplicate-tv', 'expired', 'bad-artifact-source'):
+                       'publication', 'unrelated-built', 'duplicate-tv', 'expired', 'bad-artifact-source',
+                       'wrong-runner-route', 'private-run-title'):
             self.__dict__.update(copy.deepcopy(original))
             if change == 'foreign':
                 self.run['head_repository']['full_name'] = 'other/project'
@@ -474,6 +492,10 @@ class FrozenTvosReuseTests(unittest.TestCase):
                 self.artifact['expired'] = True
             elif change == 'bad-artifact-source':
                 self.artifact['workflow_run']['head_sha'] = self.prior_repair
+            elif change == 'wrong-runner-route':
+                self.jobs[1]['labels'] = ['macos-26-intel']
+            elif change == 'private-run-title':
+                self.run['display_title'] = self.run['display_title'].replace('pool:public', 'pool:private')
             with self.subTest(change=change), self.assertRaises(recovery.RecoveryError):
                 self.prove()
 

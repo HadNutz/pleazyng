@@ -22,8 +22,10 @@ POLICY = 'frozen-apple-packaging-v1'
 # deliberately absent. This is not a general executable-script exception.
 ALLOWED_REPAIR_FILES = frozenset({
     '.github/workflows/build.yml',
+    '.github/workflows/publish-app-stores.yml',
     'scripts/release_all_platforms.py',
     'scripts/recover_release_platforms.py',
+    'scripts/append_apple_store_release_assets.py',
     'scripts/build_apple_store_archive.py',
     'scripts/clean_appledouble_sidecars.sh',
     'scripts/checks/test_clean_appledouble_sidecars.py',
@@ -39,6 +41,7 @@ ALLOWED_REPAIR_FILES = frozenset({
     'scripts/checks/test_release_signing_options.py',
     'scripts/checks/test_frozen_release_source.py',
     'scripts/checks/test_apple_packaging_repair_controller.py',
+    'scripts/checks/test_append_apple_store_release_assets.py',
     'scripts/checks/test_macos_packaging_recovery.py',
     'scripts/checks/test_macos_validation_request.py',
     'tools/dv-engine/build_apple_runtime.py',

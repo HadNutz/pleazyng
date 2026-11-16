@@ -20,6 +20,7 @@
 - Replace the Amazon Fire TV listing icon artwork with the approved mark-only dark plate.
 
 - Keep release recovery tooling, product inputs and immutable-tag checks aligned to their verified source identities; preserve independently signed runtime catalog updates outside platform artifacts.
+- Append recovered signed Apple Store packages to an existing release with separate checksum and provenance sidecars, preserving the release's original assets and manifests.
 
 - Hide Continue Watching from TV launcher shelves for PIN-protected profiles while startup requires profile selection, independently adapting [Plezy commit 02eeba6972](https://github.com/edde746/plezy/commit/02eeba69723b33f28e6b8ae9dab2ce1c02a1c3cd) by [@edde746](https://github.com/edde746); see [upstream source credit](UPSTREAM_ATTRIBUTION.md#credited-plezy-commits).
 
