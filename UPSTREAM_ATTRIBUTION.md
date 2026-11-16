@@ -1,6 +1,6 @@
 # Upstream source attribution
 
-This ledger publicly credits 93 source records: 90 from [edde746/plezy](https://github.com/edde746/plezy), one feature request from [advplyr/audiobookshelf-app](https://github.com/advplyr/audiobookshelf-app), one receiver revision from [moonlight-stream/moonlight-android](https://github.com/moonlight-stream/moonlight-android), and one compatibility fix from [superuser404notfound/AetherEngine](https://github.com/superuser404notfound/AetherEngine). They informed, supplied, or were reconciled with behavior, documentation, maintained plans, or feature context in this fork.
+This ledger publicly credits 94 source records: 91 from [edde746/plezy](https://github.com/edde746/plezy), one feature request from [advplyr/audiobookshelf-app](https://github.com/advplyr/audiobookshelf-app), one receiver revision from [moonlight-stream/moonlight-android](https://github.com/moonlight-stream/moonlight-android), and one compatibility fix from [superuser404notfound/AetherEngine](https://github.com/superuser404notfound/AetherEngine). They informed, supplied, or were reconciled with behavior, documentation, maintained plans, or feature context in this fork.
 
 The linked people made their reports, suggestions, discussions, or code contributions to the upstream project. This is source credit only: it does not claim that they contributed directly to this fork, endorsed it, or participated in the fork integration. Fork maintainers adapted, integrated, or verified the resulting behavior separately.
 
@@ -59,6 +59,7 @@ These upstream commits supplied additional implementation ideas or code to the N
 - [commit `80c562ff06`](https://github.com/edde746/plezy/commit/80c562ff06db237b48592a89efb0f0b7baeb0e10) — “fix(downloads): stop the free-space guard capping desktop download speed (#2967),” authored upstream by [@edde746](https://github.com/edde746). Pleazyng independently adapted the upstream change.
 - [commit `0ef47f2711`](https://github.com/edde746/plezy/commit/0ef47f2711ecb5ff30089831410b6f29b580cdcb) — “fix(tv): trigger list tile long-press from D-pad hold-select (#2964),” authored upstream by [@adamsparsons](https://github.com/adamsparsons). Pleazyng independently adapted the upstream change.
 - [commit `d192a726b8`](https://github.com/edde746/plezy/commit/d192a726b8a8dd512d648f5cce9d568508d3ecd3) — “fix(downloads): exclude downloaded media from iCloud Backup on iOS,” authored upstream by [@edde746](https://github.com/edde746). Pleazyng independently adapted the upstream change.
+- [commit `a597bcbe`](https://github.com/edde746/plezy/commit/a597bcbee228e1f519b5f2a527bc239981fd0672) — “fix(search): rank an artist's albums above titles that merely contain the artist,” authored upstream by [@edde746](https://github.com/edde746). The upstream author contributed this ranking fix to Plezy. Pleazyng independently adapts the stronger parent-title weight only for album rows, preserving track and other media ranking, and verifies the result separately; this does not claim direct contribution, endorsement, or participation in Pleazyng.
 
 ## Planned or not-yet-shipped upstream ideas
 

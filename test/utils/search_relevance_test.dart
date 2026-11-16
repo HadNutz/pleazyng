@@ -74,6 +74,16 @@ void main() {
 
       expect(_ids(rankMediaSearchResults(items, 'Target')), ['original', 'parent']);
     });
+
+    test('ranks an artist album above an unrelated title containing the artist', () {
+      final items = [
+        testMediaItem(id: 'substring', title: 'A documentary about Artist Name'),
+        testMediaItem(id: 'album', kind: MediaKind.album, title: 'Other Title', parentTitle: 'Artist Name'),
+        testMediaItem(id: 'track', kind: MediaKind.track, title: 'A song', parentTitle: 'Artist Name'),
+      ];
+
+      expect(_ids(rankMediaSearchResults(items, 'Artist Name')), ['album', 'substring', 'track']);
+    });
   });
 
   group('rankMediaSearchResults', () {
