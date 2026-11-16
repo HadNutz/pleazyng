@@ -60,7 +60,36 @@ Keep `include_apple_store_build=true` for the first coordinated signed qualifica
 
 The helper's public receipt records archive/export completion separately from purchase and application qualification. Run the exact intended release revision through the existing coordinated full build; do not dispatch a duplicate matrix just for these secrets. A signed IPA must still process in App Store Connect and pass actual device, StoreKit purchase/restore, reviewer-access and screenshot checks. `APPLE_STORE_UPLOAD_READY` stays false until that signed-build/upload path is verified. Upload automation is separate from TestFlight tester invitations and App Review submission.
 
-App Store Connect API credentials remain required for uploads. Mac direct Developer ID signing uses its separate `MACOS_CERTIFICATE_*` secrets. A Mac App Store sandbox package is still a separate implementation and qualification task.
+## macOS App Store package
+
+`macos-app-store-signed.yml` is the manual, reusable signed Mac App Store lane.
+It accepts an exact annotated stable version tag, checks that the tag and
+`pubspec.yaml` version match, builds that immutable source with the existing
+IAP build mode, and signs the universal app and installer for the exact bundle
+`org.snapetech.pleazyng`. It uses the configured App Store Connect API key,
+team ID and certificate-password secret; it does not need a new signing secret.
+
+The lane inventories Apple certificates and reuses an exact local identity when
+available. If an active Mac App Distribution or Mac Installer Distribution
+certificate has no local private key, the workflow requests a separate
+certificate through the Apple API. It never revokes or replaces an existing
+certificate. Apple's account certificate limit is an external gate. The CSR
+private key is retained securely across interrupted requests, imported into
+`~/Library/Keychains/Pleazyng-Mac-App-Store.keychain-db`, and the pending copy is
+removed after the key is installed. This dedicated service keychain persists
+between signed releases and is locked when each job ends. The workflow preserves
+the user's original keychain search list and existing provisioning profiles.
+
+The workflow creates or reuses a `MAC_APP_STORE` profile only after checking the
+exact team, bundle ID, macOS platform, selected certificate and expiration. It
+temporarily changes only the macOS Runner Release signing settings, restores the
+project file afterward, verifies the app and installer signatures, uploads the
+package to App Store Connect app `6826955231`, and waits for the exact version
+and build to reach `VALID`. It does not update listing metadata, create or edit
+in-app purchase products, change `pleazyng_lifetime_unlock`, set prices, or
+submit App Review. A processed upload does not qualify sandbox/JIT runtime,
+StoreKit purchase and restore, screenshots, or Apple review. The first signed
+run remains an external signing and account qualification gate.
 
 The explicit `publish-app-stores.yml` Apple lanes inspect the checksum-verified,
 attested IPA's bundle, platform, marketing version, and build number before

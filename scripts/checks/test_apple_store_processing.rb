@@ -10,10 +10,15 @@ class AppleStoreProcessingTest < Minitest::Test
                      :platform, :processing_state, :uploaded_date)
 
   def expected(platform = 'ios')
+    source_platform, = {
+      'ios' => ['iphoneos', 'IOS'],
+      'appletvos' => ['appletvos', 'TV_OS'],
+      'macos' => ['macosx', 'MAC_OS']
+    }.fetch(platform)
     AppleStoreProcessing.expected(plist: {
       'CFBundleIdentifier' => 'org.snapetech.pleazyng',
       'CFBundleShortVersionString' => '3.0.31', 'CFBundleVersion' => '190',
-      'DTPlatformName' => platform == 'ios' ? 'iphoneos' : 'appletvos'
+      'DTPlatformName' => source_platform
     }, platform: platform, release_tag: 'v3.0.31')
   end
 
@@ -27,6 +32,7 @@ class AppleStoreProcessingTest < Minitest::Test
     assert_equal 'TV_OS', expected('appletvos')[:platform]
     AppleStoreProcessing.verify_app!(App.new('6826955231', 'org.snapetech.pleazyng'))
     assert_raises(ArgumentError) { AppleStoreProcessing.verify_app!(App.new('1', 'org.snapetech.pleazyng')) }
+    assert_equal 'MAC_OS', expected('macos')[:platform]
     base = { 'CFBundleIdentifier' => 'org.snapetech.pleazyng',
              'CFBundleShortVersionString' => '3.0.31', 'CFBundleVersion' => '190',
              'DTPlatformName' => 'iphoneos' }
@@ -104,6 +110,23 @@ class AppleStoreProcessingTest < Minitest::Test
       assert receipt[:reused_existing_build]
       assert_equal 'existing_version_build_identity', receipt[:asc_linkage]
       refute_match(/key|token|password|secret/i, receipt.keys.join(' '))
+    end
+  end
+
+  def test_macos_pkg_receipt_uses_generic_asset_digest_without_ipa_fields
+    identity = expected('macos')
+    Tempfile.create('apple-processing-', Dir.pwd) do |pkg|
+      pkg.write('signed pkg fixture bytes')
+      pkg.flush
+      receipt = AppleStoreProcessing.receipt(
+        expected: identity, build: build(identity, 'VALID'), asset_path: pkg.path,
+        release_tag: 'v3.0.31', run_id: '123', run_attempt: '2', uploaded: true
+      )
+      assert_equal 'MAC_OS', receipt[:platform]
+      assert_equal File.basename(pkg.path), receipt[:asset_filename]
+      assert_equal Digest::SHA256.hexdigest('signed pkg fixture bytes'), receipt[:asset_sha256]
+      refute receipt.key?(:ipa_sha256)
+      assert_equal 'transported_this_run', receipt[:asc_linkage]
     end
   end
 end

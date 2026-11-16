@@ -1,4 +1,5 @@
 require_relative 'apple_store_processing'
+require 'json'
 
 default_platform(:android)
 
@@ -95,4 +96,56 @@ platform :ios do
     )
     File.write(ENV.fetch('APPLE_PROCESSING_RECEIPT_PATH'), JSON.pretty_generate(receipt) + "\n")
   end
+end
+
+lane :upload_macos_appstore_build do
+  pkg = ENV.fetch('APPLE_MACOS_PKG_PATH')
+  app_info_path = ENV.fetch('APPLE_MACOS_APP_INFO_PATH')
+  release_tag = ENV.fetch('APPLE_RELEASE_TAG')
+  plist_json = sh('plutil', '-convert', 'json', '-o', '-', app_info_path).strip
+  expected = AppleStoreProcessing.expected(
+    plist: JSON.parse(plist_json), platform: 'macos', release_tag: release_tag
+  )
+  api_key_id = ENV.fetch('APPLE_API_KEY_ID')
+  api_issuer_id = ENV.fetch('APPLE_API_ISSUER_ID')
+  api_key = app_store_connect_api_key(
+    key_id: api_key_id,
+    issuer_id: api_issuer_id,
+    key_content: File.read(ENV.fetch('APPLE_API_KEY_FILE')),
+    is_key_content_base64: false,
+    duration: 1200,
+    in_house: false
+  )
+
+  app = Spaceship::ConnectAPI.get_app(app_id: expected[:app_id]).first
+  AppleStoreProcessing.verify_app!(app)
+  fetch = lambda do |identity|
+    token = Spaceship::ConnectAPI.token
+    token.refresh! if token&.expired?
+    Spaceship::ConnectAPI::Build.all(
+      app_id: identity[:app_id], version: identity[:version],
+      build_number: identity[:build], platform: identity[:platform]
+    )
+  end
+  upload = lambda do
+    sh('xcrun', 'altool', '--validate-app', '-f', pkg,
+       '--type', 'macos', '--apiKey', api_key_id, '--apiIssuer', api_issuer_id,
+       '--output-format', 'json')
+    sh('xcrun', 'altool', '--upload-app', '-f', pkg,
+       '--type', 'macos', '--apiKey', api_key_id, '--apiIssuer', api_issuer_id,
+       '--output-format', 'json')
+  end
+  build, uploaded = AppleStoreProcessing.wait_for_valid(
+    expected: expected, fetch: fetch, upload: upload,
+    clock: -> { Process.clock_gettime(Process::CLOCK_MONOTONIC) },
+    pause: ->(seconds) { sleep(seconds) }
+  )
+  receipt = AppleStoreProcessing.receipt(
+    expected: expected, build: build, asset_path: pkg, release_tag: release_tag,
+    run_id: ENV.fetch('GITHUB_RUN_ID'), run_attempt: ENV.fetch('GITHUB_RUN_ATTEMPT'), uploaded: uploaded
+  )
+  receipt[:workflow_commit] = ENV.fetch('GITHUB_SHA')
+  receipt[:source_commit] = ENV.fetch('APPLE_SOURCE_COMMIT')
+  receipt[:signing_state] = 'Mac App Distribution and Mac Installer Distribution'
+  File.write(ENV.fetch('APPLE_PROCESSING_RECEIPT_PATH'), JSON.pretty_generate(receipt) + "\n")
 end
