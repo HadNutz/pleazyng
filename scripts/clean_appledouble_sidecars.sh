@@ -87,16 +87,19 @@ if [[ ! "$source_sha" =~ ^[0-9a-f]{40}$ || "$(git -C "$workspace" rev-parse HEAD
   exit 1
 fi
 
-before_count="$(/usr/bin/find "$task_root" -name '._*' -print | /usr/bin/wc -l | /usr/bin/tr -d ' ')"
+# Git's object database and administrative files are not compiler inputs.
+# Pruning .git avoids walking every object while keeping source trees checked.
+before_count="$(/usr/bin/find "$task_root" -type d -name '.git' -prune -o -name '._*' -print | /usr/bin/wc -l | /usr/bin/tr -d ' ')"
 if [[ "$before_count" != "0" ]]; then
   echo "Deleting $before_count AppleDouble sidecars from task-owned source workspace: $task_root"
-  /usr/bin/find "$task_root" -type f -name '._*' -delete
+  # `-delete` forces depth-first traversal, which disables `-prune` on macOS.
+  /usr/bin/find "$task_root" -type d -name '.git' -prune -o -type f -name '._*' -exec /bin/rm -f {} +
 fi
 
-remaining="$(/usr/bin/find "$task_root" -name '._*' -print -quit)"
+remaining="$(/usr/bin/find "$task_root" -type d -name '.git' -prune -o -name '._*' -print -quit)"
 if [[ -n "$remaining" ]]; then
   echo "AppleDouble sidecars remain after cleanup; refusing to run Xcode. First remaining paths:" >&2
-  /usr/bin/find "$task_root" -name '._*' -print | /usr/bin/sed -n '1,20p' >&2
+  /usr/bin/find "$task_root" -type d -name '.git' -prune -o -name '._*' -print | /usr/bin/sed -n '1,20p' >&2
   exit 1
 fi
 

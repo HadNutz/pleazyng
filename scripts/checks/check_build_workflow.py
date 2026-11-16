@@ -1505,8 +1505,18 @@ for apple_job_name, workspace_label in (
         f"{workspace_label} NFS source must remove AppleDouble sidecars before Xcode builds",
     )
     clean_appledouble_script = (ROOT / "scripts/clean_appledouble_sidecars.sh").read_text()
+    pruned_appledouble_scan = (
+        '/usr/bin/find "$task_root" -type d -name \'.git\' -prune -o '
+        '-name \'._*\''
+    )
+    pruned_appledouble_files = (
+        '/usr/bin/find "$task_root" -type d -name \'.git\' -prune -o '
+        '-type f -name \'._*\''
+    )
     require(
-        '/usr/bin/find "$task_root" -type f -name \'._*\' -delete' in clean_appledouble_script
+        clean_appledouble_script.count(pruned_appledouble_scan + " -print") >= 3
+        and pruned_appledouble_files + " -exec /bin/rm -f {} +" in clean_appledouble_script
+        and "-type f -name '._*' -delete" not in clean_appledouble_script
         and "dot_clean" not in clean_appledouble_script
         and "run_id=$GITHUB_RUN_ID" in clean_appledouble_script
         and "scratch_mode=local-xcode" in clean_appledouble_script

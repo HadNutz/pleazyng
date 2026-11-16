@@ -18,14 +18,24 @@ class HostedCleanupTests(unittest.TestCase):
         self.workspace.mkdir()
         subprocess.run(['git', 'init', '-q', str(self.workspace)], check=True)
         (self.workspace / 'source').write_text('tracked source')
-        subprocess.run(['git', '-C', str(self.workspace), 'add', 'source'], check=True)
+        source_dir = self.workspace / 'lib'
+        source_dir.mkdir()
+        (source_dir / 'source.dart').write_text('tracked compiler input')
+        subprocess.run(['git', '-C', str(self.workspace), 'add', 'source', 'lib/source.dart'], check=True)
         subprocess.run(['git', '-C', str(self.workspace), '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.test', 'commit', '-qm', 'fixture'], check=True)
         sha = subprocess.check_output(['git', '-C', str(self.workspace), 'rev-parse', 'HEAD'], text=True).strip()
         self.environment = {**os.environ, 'RUNNER_OS': 'macOS', 'RUNNER_ENVIRONMENT': 'github-hosted',
                             'RUNNER_TEMP': str(self.root), 'GITHUB_RUN_ID': '123', 'GITHUB_RUN_ATTEMPT': '1',
                             'GITHUB_JOB': 'build-macos', 'GITHUB_SHA': sha}
-        self.sidecar = self.workspace / '._source'
+        self.sidecar = source_dir / '._source.dart'
         self.sidecar.write_text('task-owned sidecar')
+        self.root_sidecar = self.workspace / '._source'
+        self.root_sidecar.write_text('task-owned root sidecar')
+        self.git_admin_sidecar = self.workspace / '.git' / '._config'
+        self.git_admin_sidecar.write_text('Git administrative sidecar')
+        self.git_object_sidecar = self.workspace / '.git' / 'objects' / 'ab' / '._object'
+        self.git_object_sidecar.parent.mkdir()
+        self.git_object_sidecar.write_text('Git object sidecar')
         self.outside = self.root / 'outside'
         self.outside.mkdir()
         self.protected = self.outside / '._keep'
@@ -40,6 +50,11 @@ class HostedCleanupTests(unittest.TestCase):
         result = self.invoke()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertFalse(self.sidecar.exists())
+        self.assertFalse(self.root_sidecar.exists())
+        self.assertTrue(self.git_admin_sidecar.exists())
+        self.assertEqual(self.git_admin_sidecar.read_text(), 'Git administrative sidecar')
+        self.assertTrue(self.git_object_sidecar.exists())
+        self.assertEqual(self.git_object_sidecar.read_text(), 'Git object sidecar')
         self.assertTrue(self.protected.exists())
 
     def test_repair_checkout_is_distinct_from_workflow_ownership(self):
