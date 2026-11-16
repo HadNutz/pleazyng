@@ -4648,9 +4648,9 @@ class PlexClient
   /// hardware probe reports without a decoder still direct-plays, as it
   /// always has on Plex.
   bool _sourceCodecRefused(PlexVideoPlaybackData data) {
-    // The initial Samsung port uses server-normalized video until direct-play
-    // containers, codecs and audio routes have been qualified on hardware.
-    if (PlatformDetector.isTizenBuild()) return true;
+    if (PlatformDetector.isTizenBuild() && !tizenCanDirectPlayVideo(_selectedVersion(data), data.mediaInfo)) {
+      return true;
+    }
     final codec = RankedVideoCodec.fromServerCodec(_selectedVersion(data)?.videoCodec);
     if (codec == null || !VideoDecodeCapabilities.isRefusedByUser(codec)) return false;
     appLogger.i('Source codec ${codec.id} is refused in settings; transcoding');

@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Keep Original Plex video unchanged on Samsung TV when the source fits the native MP4/H.264 and stereo AAC/MP3 profile, rather than forcing every file through a video encode.
+
 - Refresh webOS native video source rectangles when stream dimensions change without a viewport resize, and stop exported-window callbacks after disposal.
 
 - Preserve the source aspect ratio on Samsung TV's native video plane and report hardware-decoder details as unavailable when native TV players do not expose them.

@@ -1,3 +1,26 @@
+import 'media_source_info.dart';
+import 'media_version.dart';
+
+/// Whether a Plex source fits the formats already advertised by the native
+/// Samsung profile. Unknown dimensions or audio formats retain conversion.
+bool tizenCanDirectPlayVideo(MediaVersion? version, MediaSourceInfo? source) {
+  if (version == null || source == null) return false;
+  if (!const {'mp4', 'm4v'}.contains(version.container?.toLowerCase()) ||
+      !const {'h264', 'avc', 'avc1'}.contains(version.videoCodec?.toLowerCase())) {
+    return false;
+  }
+  final width = version.width;
+  final height = version.height;
+  if (width == null || height == null || width <= 0 || height <= 0 || width > 1920 || height > 1080) return false;
+  return source.audioTracks.every(
+    (track) =>
+        const {'aac', 'mp3'}.contains(track.codec?.toLowerCase()) &&
+        track.channels != null &&
+        track.channels! > 0 &&
+        track.channels! <= 2,
+  );
+}
+
 /// Conservative profile for the unqualified Samsung native-media port.
 /// Expand only after exercising a model/firmware combination on hardware.
 Map<String, Object?> tizenPlaybackProfile({required bool audio, required bool burnSubtitles}) => {
