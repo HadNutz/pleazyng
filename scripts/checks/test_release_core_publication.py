@@ -148,6 +148,103 @@ class CorePublicationTests(unittest.TestCase):
         self.assertFalse(result['discord_notification_requested'])
         self.assertEqual(result['notification_failures'], [])
 
+    def test_unsigned_platform_recovery_publishes_channels_from_immutable_tag_source(self):
+        tag_sha = "a" * 40
+        infrastructure_sha = "b" * 40
+        events = []
+
+        with tempfile.TemporaryDirectory() as scratch, contextlib.ExitStack() as stack:
+            stack.enter_context(patch.object(sys, "argv", [
+                "release", "--version", "3.0.31", "--reuse-platform-run", "42",
+                "--publish", "--skip-discord-notification", "--scratch", scratch,
+            ]))
+            stack.enter_context(patch.object(release, "validate_source_metadata"))
+
+            def command(args, **kwargs):
+                stdout = infrastructure_sha if args[:3] == ["git", "rev-parse", "HEAD"] else ""
+                return subprocess.CompletedProcess(args, 0, stdout, "")
+
+            stack.enter_context(patch.object(release, "command", side_effect=command))
+            worktree = Path(scratch) / "plezyng-main"
+            stack.enter_context(patch.object(release, "create_plezy_worktree", return_value=worktree))
+            stack.enter_context(patch.object(release, "existing_release_tag_commit", return_value=tag_sha))
+            stack.enter_context(patch.object(release, "release_ci_source", return_value="c" * 40))
+            stack.enter_context(patch.object(release, "ensure_remote_main_sha"))
+
+            def verify_recovery(*args, **kwargs):
+                events.append("recovery proof")
+                return {"ci_source_sha": "c" * 40, "ci_run_id": 17, "ci_mode": "standalone"}
+
+            stack.enter_context(patch.object(
+                release, "verify_platform_recovery", side_effect=verify_recovery,
+            ))
+
+            def ensure_build(*args, **kwargs):
+                events.append("release build")
+                return {"databaseId": 99}
+
+            build = stack.enter_context(patch.object(release, "ensure_release", side_effect=ensure_build))
+            stack.enter_context(patch.object(
+                release, "validate_release_outputs", side_effect=lambda *a, **kw: events.append("asset validation"),
+            ))
+            stack.enter_context(patch.object(
+                release, "publish_github_release", side_effect=lambda tag: events.append("GitHub release"),
+            ))
+
+            def publish_channels(*args, **kwargs):
+                events.append("package channels")
+                return ([{"channel": "Snap Store"}], [], [])
+
+            channels = stack.enter_context(patch.object(
+                release, "publish_configured_channels", side_effect=publish_channels,
+            ))
+            original_post_release = release.post_release_actions
+            post_release_calls = []
+
+            def observe_post_release(*args, **kwargs):
+                post_release_calls.append((args, kwargs))
+                return original_post_release(*args, **kwargs)
+
+            stack.enter_context(patch.object(
+                release, "post_release_actions", side_effect=observe_post_release,
+            ))
+            stack.enter_context(patch.object(release, "refresh_published_facts", return_value="d" * 40))
+            stack.enter_context(patch.object(release, "release_metadata", return_value={"assets": []}))
+            stack.enter_context(patch.object(release, "configured_repo_variables", return_value={}))
+            stack.enter_context(patch.object(release, "microsoft_store_status", return_value="Not configured"))
+
+            self.assertEqual(release.main(), 0)
+
+            self.assertEqual(events, [
+                "recovery proof", "release build", "asset validation", "GitHub release", "package channels",
+            ])
+            self.assertEqual(build.call_args.args[1], infrastructure_sha)
+            self.assertEqual(build.call_args.kwargs["reuse_platform_run_id"], 42)
+            self.assertFalse(build.call_args.kwargs["include_apple_store_build"])
+            self.assertFalse(build.call_args.kwargs["prepare_homebrew_cask"])
+            self.assertEqual(post_release_calls[0][1]["release_sha"], tag_sha)
+            channels.assert_called_once_with(
+                "v3.0.31", "3.0.31", release_sha=tag_sha,
+                include_webos_release=True, scratch_dir=Path(scratch),
+            )
+            report = json.loads((Path(scratch) / "release-summary.json").read_text())
+            self.assertTrue(report["release_published"])
+            self.assertEqual(report["published_channels"], [{"channel": "Snap Store"}])
+            self.assertEqual(report["publication_scope"], "github-and-configured-channels")
+
+    def test_standard_platform_channel_publication_keeps_signed_recovery_gate(self):
+        with patch.object(release, "validate_source_metadata"), \
+                patch.object(release, "verify_platform_recovery") as verify:
+            for signing_flag in ("--include-apple-store-build", "--prepare-homebrew-cask"):
+                with self.subTest(signing_flag=signing_flag), patch.object(sys, "argv", [
+                    "release", "--version", "3.0.31", "--reuse-platform-run", "42",
+                    "--publish", signing_flag,
+                ]):
+                    with self.assertRaisesRegex(release.ReleaseError, "approved packaging recovery"):
+                        release.main()
+
+            verify.assert_not_called()
+
     def test_manual_notification_skip_is_explicit_in_release_cli(self):
         with patch.object(sys, 'argv', ['release', '--version', '3.0.31', '--skip-discord-notification']):
             self.assertTrue(release.parse_args().skip_discord_notification)

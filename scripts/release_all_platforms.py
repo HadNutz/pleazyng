@@ -2910,6 +2910,10 @@ def main() -> int:
     if args.execution_profile != "hybrid":
         raise ReleaseError("Complete releases require the hybrid profile, including native Windows ARM64 CI.")
     packaging_repair = bool(args.reuse_platform_run and getattr(args, "source_commit", None))
+    ordinary_unsigned_channel_recovery = (
+        args.publish and not packaging_repair
+        and not args.include_apple_store_build and not args.prepare_homebrew_cask
+    )
     if args.reuse_tvos_run and (args.reuse_tvos_run < 1 or not packaging_repair
                                or (not args.rebuild_ios and not args.reuse_ios_run)
                                or args.rebuild_tvos or args.reuse_repaired_run or args.reuse_macos_run):
@@ -2921,10 +2925,16 @@ def main() -> int:
                             or args.reuse_macos_run or args.reuse_repaired_run):
         raise ReleaseError("Approved packaging recovery rebuilds only requested Apple packages.")
     if args.reuse_platform_run and (
-        args.reuse_platform_run < 1 or ((args.publish or args.include_apple_store_build) and not packaging_repair)
+        args.reuse_platform_run < 1
+        or ((args.publish or args.include_apple_store_build)
+            and not packaging_repair and not ordinary_unsigned_channel_recovery)
         or args.execution_profile != "hybrid"
     ):
-        raise ReleaseError("Platform recovery supports hybrid GitHub-only or draft publication without fresh Apple or Homebrew qualification.")
+        raise ReleaseError(
+            "Platform recovery supports GitHub-only or draft publication; configured package-channel "
+            "publishing requires ordinary unsigned recovery, and signed Apple qualification requires "
+            "approved packaging recovery."
+        )
     if args.reuse_webos_run and (args.reuse_webos_run < 1 or not args.reuse_platform_run or args.reuse_macos_run):
         raise ReleaseError("WebOS reuse requires verified platform recovery without signing-only substitution")
     if args.reuse_repaired_run and (args.reuse_repaired_run < 1 or not args.reuse_platform_run or args.reuse_macos_run or args.rebuild_linux or args.rebuild_macos):
@@ -3272,7 +3282,9 @@ def main() -> int:
                                 if frozen or packaging_repair else pin_sha)
                 progress["delivery_tooling_commit"] = delivery_sha
                 followups = post_release_actions(
-                    tag, args.version, release_sha=product_sha if packaging_repair else pin_sha,
+                    tag, args.version,
+                    release_sha=(product_sha if packaging_repair else
+                                 existing_tag_commit if args.reuse_platform_run else pin_sha),
                     include_webos_release=args.include_webos_release,
                     publish_channels=args.publish,
                     notify_discord=not args.skip_discord_notification,
