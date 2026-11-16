@@ -174,8 +174,7 @@ jobs:
             --dart-define=SUPPORTER_MODE=iap \
             --dart-define=ENABLE_UPDATE_CHECK=false \
             --dart-define=GIT_COMMIT="$SOURCE_SHA" \
-            --dart-define=PLEAZYNG_DISCORD_APPLICATION_ID= \
-            --split-debug-info="$RUNNER_TEMP/ios-app-store-screenshots-debug-info"
+            --dart-define=PLEAZYNG_DISCORD_APPLICATION_ID=
           test -d build/ios/iphonesimulator/Pleazyng.app
 
       - name: Preserve the compiled iOS Simulator app before capture
