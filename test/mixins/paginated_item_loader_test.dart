@@ -80,6 +80,12 @@ LibraryPage<MediaItem> _result({required int start, required int size, required 
   );
 }
 
+int _servedCount(int served, int start, int requested) {
+  final available = served - start;
+  if (available <= 0) return 0;
+  return available < requested ? available : requested;
+}
+
 void main() {
   group('PaginatedItemLoader', () {
     testWidgets('loadInitialPage populates loadedItems and totalSize', (tester) async {
@@ -223,6 +229,61 @@ void main() {
       for (var i = 10; i < 50; i++) {
         expect(state.loadedItems.containsKey(i), isTrue, reason: 'expected index $i loaded');
       }
+    });
+
+    testWidgets('an empty tail page ends at the last served item despite a larger count', (tester) async {
+      late _PaginatedProbeState state;
+      const served = 30;
+      await tester.pumpWidget(
+        _PaginatedProbe(
+          onState: (s) => state = s,
+          fetcher: (start, size, abort) async =>
+              _result(start: start, size: _servedCount(served, start, size), totalSize: 50),
+        ),
+      );
+
+      await state.loadInitialPage(10);
+      await tester.pump();
+      // A previously fetched sparse tail can become stale after the server's
+      // available items shrink during a scan.
+      state.loadedItems[45] = _meta(45);
+
+      await state.ensureRangeLoaded(10, 10);
+      for (var i = 0; i < 10; i++) {
+        await tester.pump();
+      }
+      final settledFetches = state.fetchCalls;
+      for (var i = 0; i < 10; i++) {
+        await tester.pump();
+      }
+
+      expect(state.totalSize, served);
+      expect(state.loadedItems.length, served);
+      expect(state.fetchCalls, settledFetches, reason: 'no request may repeat once the end is known');
+    });
+
+    testWidgets('a skeleton past a short page fetches only the missing suffix', (tester) async {
+      late _PaginatedProbeState state;
+      const served = 90;
+      await tester.pumpWidget(
+        _PaginatedProbe(
+          onState: (s) => state = s,
+          fetcher: (start, size, abort) async =>
+              _result(start: start, size: _servedCount(served, start, size), totalSize: 100),
+        ),
+      );
+
+      await state.loadInitialPage(10);
+      state.ensureIndexLoaded(95, pageSize: 50);
+      await tester.pumpAndSettle();
+      expect(state.loadedItems.containsKey(95), isFalse);
+
+      // The skeleton at 95 rebuilds and asks again.
+      state.ensureIndexLoaded(95, pageSize: 50);
+      await tester.pumpAndSettle();
+
+      expect(state.fetchArgs.skip(1), [(start: 50, size: 50), (start: 90, size: 10)]);
+      expect(state.totalSize, served);
     });
 
     testWidgets('ensureIndexLoaded fetches the page containing the requested index', (tester) async {
