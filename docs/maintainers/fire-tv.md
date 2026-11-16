@@ -115,8 +115,7 @@ proof for Play review. Synthetic interface previews are kept separately.
 
 ## Amazon 3.0.36 corrective resubmission
 
-Amazon rejected version 3.0.33 because its listing did not accurately reflect
-the app. The corrected Amazon copy is in
+The current Amazon copy is in
 [store-listing-copy.md](store-listing-copy.md). Fresh TV and tablet screenshots
 now come from the exact signed 3.0.36 Amazon APK (source
 `2388a06cc74d03e69ac7178fcd927a54460a5e3a`, APK SHA256

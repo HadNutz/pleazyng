@@ -26,10 +26,9 @@ and [aerynOS publication record](aerynos-sync.md).
 
 ## Store listing accuracy audit — 2026-11-16
 
-Amazon rejected the 3.0.33 submission before any territory publication because
-the listing assets did not accurately describe the app. Corrected Fire TV copy
+Current Fire TV copy
 and four TV plus three tablet screenshots are now prepared from the exact signed
-3.0.33 Amazon APK, with per-image provenance. Inspect and replace all attached
+3.0.36 Amazon APK, with per-image provenance. Inspect and replace all attached
 assets in the Developer Console, then resubmit the current 3.0.36 version there. The
 current Amazon-specific copy and capture checklist are in
 [store-listing-copy.md](store-listing-copy.md) and
@@ -62,7 +61,7 @@ and remaining asset checks are recorded in
 | Google Play internal test | New app/package, testing-only service account access, upload workflow and review grant configured | First signed Play AAB, Play App Signing, purchase product and real-device purchase/review-access validation; internal distribution must be explicitly activated |
 | Google Play closed beta | Sign-in/review instructions, privacy, category/contact, rating and other declarations saved | Data safety, listing with three phone/two tablet images, 178 Alpha regions and existing five-member tester list are saved. Remaining: first AAB and requested permissions declarations, tester/country configuration, IAP validation and Google review |
 | Google Play production / open testing | Existing personal developer account; website verified, company display name under review, organization conversion awaits D-U-N-S | Closed-test eligibility and production-access approval. Current personal-account console requires 12 opted-in testers for 14 continuous days; this does not delay starting the closed test. Recheck eligibility after an approved organization conversion |
-| Amazon Fire TV Appstore | Existing app; version 3.0.33 rejected for listing accuracy with no territory publication | Corrected Fire TV copy and four TV/three tablet captures from the exact signed 3.0.36 APK are prepared locally. Inspect the live console slots, replace stale text/images and resubmit through Developer Console. Company/tax verification, declarations and physical-device purchase testing remain separate gates. |
+| Amazon Fire TV Appstore | Existing app; 3.0.36 submission materials prepared | Corrected Fire TV copy and four TV/three tablet captures from the exact signed 3.0.36 APK are prepared locally. Inspect the live console slots, replace stale text/images and resubmit through Developer Console. Company/tax verification, declarations and physical-device purchase testing remain separate gates. |
 | Apple TestFlight | Active Individual Developer Program membership, team `DM9A59DC85`, new identifiers and upload API credentials | English US beta/review information and the automatic-distribution Pleazyng Internal group are saved (zero testers/builds; no invitations sent). Remaining: complete signed iOS/tvOS archive/export and IPA processing, tester assignment, export compliance and external beta review. The existing distribution identity passed native import/signing/strict verification; new-bundle app/extension profiles and the isolated signing path are configured. Validate billing separately before promising full paid-feature testing |
 | Apple iOS / tvOS App Store | Existing app reused, new identifiers and USD $2.99 non-consumable configured; upload automation available | Same signing/build gates plus real screenshots, privacy/review metadata, IAP screenshot and purchase/restore validation, paid agreement activation and Apple review |
 | macOS direct DMG / Sparkle | Universal DMG and appcast pipeline | Developer ID certificate and dedicated secrets now configured; qualified native signing/notarization/Gatekeeper and updater signature verification remain |

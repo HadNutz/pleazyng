@@ -102,7 +102,7 @@ behavior unless that exact build and target device support it.
 
 ## Listing and image audit
 
-- Amazon rejected Pleazyng 3.0.33 for listing accuracy. The committed Amazon TV
+- The committed Amazon TV
   and tablet captures now come from the exact signed 3.0.36 Amazon APK and have
   per-image provenance. The corrected Fire TV text and new image sets are ready
   for the Developer Console. Inspect every icon, promotional-art and screenshot

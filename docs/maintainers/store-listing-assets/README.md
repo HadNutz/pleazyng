@@ -38,8 +38,7 @@ release source, attests both, and includes both in release assets and checksums.
 The coverage gate requires both files. Validate that release build before store
 handoff; do not substitute the older capture APK.
 
-Amazon's 3.0.33 submission was rejected for listing accuracy. The prepared
-correction includes Fire TV-specific short/long copy plus four TV and three
+The 3.0.36 submission pack includes Fire TV-specific short/long copy plus four TV and three
 tablet captures from the exact signed 3.0.36 Amazon APK. Review the app icon and
 promotional artwork, inspect both Fire TV and tablet image slots in the console,
 replace every stale image, and verify the saved text before resubmitting. The

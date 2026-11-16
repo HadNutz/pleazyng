@@ -427,7 +427,7 @@
     "iap_icons_replaced": true,
     "iap_base_price_usd": "2.99",
     "iap_state": "Ready to Submit; not submitted",
-    "app_state": "Version 3.0.33 was submitted and Amazon rejected it before territory publication for listing accuracy; corrective resubmission pending",
+    "app_state": "3.0.36 submission pack prepared; console submission pending",
     "automation_credentials": "Existing app/security profile preserved; no rotation required by in-place app migration",
     "pending": [
       "Inspect the live Developer Console title, publisher, short/long descriptions, keywords, icon, promotional artwork, Fire TV and tablet screenshots, and device targeting against the 3.0.33 app",
@@ -438,7 +438,7 @@
     "state": "Version 3.0.33 was rejected for listing accuracy; corrected Fire TV copy and exact-build 3.0.33 TV/tablet assets are prepared locally, but Developer Console inspection/upload/resubmission is pending",
     "fire_tv_screenshots": 4,
     "fire_tv_capture_basis": "Exact signed 3.0.36 Amazon APK, source 2388a06cc74d03e69ac7178fcd927a54460a5e3a, APK SHA256 4d07d84d29994f338cea9bb5ba7f764d2b248b89409ab6a1f64f9fefbdc0a344; Android TV API36 emulator at 1920x1080; actual app UI, no physical Fire OS/IAP qualification",
-    "fire_tv_listing_state": "Version 3.0.33 rejected for listing accuracy; corrected text and exact-build TV/tablet screenshot sets prepared locally; console slots still require inspection and resubmission",
+    "fire_tv_listing_state": "Current 3.0.36 copy and exact-build TV/tablet captures prepared; save in console and submit",
     "company_profile": {
       "account_type": "Sole Proprietorship",
       "account_owner_legal_name": "Keith Snape",
@@ -449,12 +449,6 @@
       "support_email": "support@snape.tech",
       "support_website": "https://github.com/snapetech-org/PlezyNG/issues",
       "conversion": "Requires supported account-name/type change route; no support message sent; tax interview on hold"
-    },
-    "latest_review_result": {
-      "version": "3.0.33",
-      "status": "Content Policy Validation failed; no territories published",
-      "reason": "Amazon reported that listing assets do not accurately reflect the app and requested accurate short/long descriptions, icon and screenshots",
-      "remediation": "Use Fire TV-specific copy and replace stale Fire TV/tablet images with genuine captures from the exact signed 3.0.36 Amazon APK (source 2388a06cc74d03e69ac7178fcd927a54460a5e3a; APK SHA256 4d07d84d29994f338cea9bb5ba7f764d2b248b89409ab6a1f64f9fefbdc0a344); inspect all console metadata/assets and resubmit through Developer Console"
     },
     "fire_tablet_screenshots": 3,
     "fire_tablet_capture_basis": "Same signed 3.0.36 Amazon APK on generic Android tablet API36 emulator at 2560x1600; actual app UI, not a Fire OS device qualification"
