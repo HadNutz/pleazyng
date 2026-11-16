@@ -133,6 +133,19 @@
         "scripts/release_all_platforms.py": "e71d2f10e75b0182c34d1cfdb08b8dd6b666cd19",
         "scripts/test_build_apple_store_archive.py": "86b0925df94cf3bea211273a7aca74e47cdabd6c"
       }
+    },
+    {
+      "product_source_sha": "6b9e48622befacc9961279a1a1caac1f05d0d4bc",
+      "packaging_source_sha": "12067cf05bc765c1473b0aeac34b9173aba6d30b",
+      "files": {
+        ".github/workflows/build.yml": "68162d8942be652e8adfb2a578a2f8a155b84631",
+        "CHANGELOG.md": "8311c20f7245a38aca1821185c3c9af00eb573c8",
+        "docs/maintainers/full-release-build.md": "958c519609559bd70553a359ccd7bdea3b67bee0",
+        "scripts/build_apple_store_archive.py": "6bcb4a32706bbeac9ce029f7ed0a31fdb0353565",
+        "scripts/checks/check_build_workflow.py": "f87f69687f43d0a5988630f4117f6f16482ca87a",
+        "scripts/checks/test_check_build_workflow.py": "71133e972ad0735997504760365b78881e4dea67",
+        "scripts/test_build_apple_store_archive.py": "8f11b1687977c22384dc9187d5ccb15e95de2c91"
+      }
     }
   ]
 }
