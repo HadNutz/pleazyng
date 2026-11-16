@@ -1801,11 +1801,44 @@ def ensure_release(
             expected_title=(run_title, run_title.replace("pool:public", "pool:private")),
         )
 
+    def failed_run_summary(failed_run: dict) -> str:
+        run_id = failed_run.get("databaseId")
+        conclusion = failed_run.get("conclusion") or failed_run.get("status") or "unknown"
+        jobs = failed_run.get("jobs")
+        if not isinstance(jobs, list) and isinstance(run_id, int):
+            try:
+                details = gh_json(
+                    "run", "view", str(run_id), "--repo", PLEZY_REPO,
+                    "--json", "databaseId,status,conclusion,jobs",
+                )
+                if isinstance(details, dict) and details.get("databaseId") == run_id:
+                    jobs = details.get("jobs")
+            except ReleaseError:
+                return (
+                    f"Release build run {run_id} concluded {conclusion}; "
+                    "failed job details are unavailable"
+                )
+        failed_jobs = []
+        if isinstance(jobs, list):
+            for job in jobs:
+                if (not isinstance(job, dict) or job.get("status") != "completed"
+                        or job.get("conclusion") not in {
+                            "failure", "timed_out", "startup_failure", "action_required", "cancelled",
+                        }):
+                    continue
+                name = job.get("name") or "unnamed job"
+                job_conclusion = job.get("conclusion") or job.get("status") or "unknown"
+                failed_jobs.append(f"{name} ({job_conclusion})")
+        detail = ", ".join(failed_jobs) if failed_jobs else "no completed failing jobs were reported"
+        return f"Release build run {run_id or 'unknown'} concluded {conclusion}; failed job(s): {detail}"
+
     def retry_after_unassigned_tvos(failed_run: dict) -> dict:
+        failure = failed_run_summary(failed_run)
         if not allow_private_apple_retry:
             raise ReleaseError(
-                "Hosted tvOS did not acquire a runner; hosted failures never reroute to private JIT automatically. "
-                "Repair the failed lane explicitly before dispatching a separate signed recovery."
+                f"{failure}. Private Apple recovery is disabled by policy; "
+                "hosted failures never reroute to private JIT automatically. "
+                "repair the failed lane explicitly before dispatching a separate signed recovery."
             )
         source_run_id = failed_run.get("databaseId")
         try:
@@ -1814,8 +1847,8 @@ def ensure_release(
             )
         except RunnerAcquisitionError as error:
             raise ReleaseError(
-                f"Release build run {source_run_id} failed, but GitHub evidence does not prove "
-                f"a tvOS runner-acquisition cancellation ({error})."
+                f"{failure}. GitHub evidence does not prove a tvOS runner-acquisition "
+                f"cancellation ({error}); no private recovery was started."
             ) from error
         print(
             f"GitHub canceled tvOS before assigning a runner in release run {source_run_id}; "

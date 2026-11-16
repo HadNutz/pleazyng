@@ -28,6 +28,7 @@ from release_all_platforms import (  # noqa: E402
     dispatch,
     ensure_candidate_build,
     ensure_ci,
+    ensure_release,
     ensure_tag,
     failed_preflight_ci_run,
     hosted_tvos_workflow_drained,
@@ -613,6 +614,131 @@ class ReleaseCandidateBuildGateTests(unittest.TestCase):
         )
         dispatch.assert_not_called()
         verify.assert_not_called()
+
+    @patch("release_all_platforms.verify_unacquired_hosted_tvos_run")
+    @patch("release_all_platforms.gh_json", return_value={
+        "databaseId": 43826939425,
+        "status": "completed",
+        "conclusion": "failure",
+        "jobs": [{
+            "name": "build-macos",
+            "status": "completed",
+            "conclusion": "timed_out",
+        }],
+    })
+    @patch("release_all_platforms.matching_run")
+    def test_failed_completed_release_reports_the_actual_failed_job_without_retry(
+        self, matching_run, gh_json, verify,
+    ) -> None:
+        matching_run.return_value = {
+            "databaseId": 43826939425,
+            "status": "completed",
+            "conclusion": "failure",
+        }
+
+        with self.assertRaisesRegex(
+            ReleaseError,
+            r"Release build run 43826939425 concluded failure; failed job\(s\): build-macos \(timed_out\)",
+        ):
+            ensure_release("v3.0.36", "c" * 40, include_webos_release=True)
+
+        gh_json.assert_called_once_with(
+            "run", "view", "43826939425", "--repo", "snapetech-org/pleazyng",
+            "--json", "databaseId,status,conclusion,jobs",
+        )
+        verify.assert_not_called()
+
+    @patch("release_all_platforms.verify_unacquired_hosted_tvos_run")
+    @patch("release_all_platforms.matching_run", return_value={
+        "databaseId": 43826939426,
+        "status": "completed",
+        "conclusion": "cancelled",
+        "jobs": [{
+            "name": "Build tvOS developer package (arm64)",
+            "status": "completed",
+            "conclusion": "cancelled",
+        }],
+    })
+    def test_cancelled_completed_release_reports_the_cancelled_job(
+        self, _matching_run, verify,
+    ) -> None:
+        with self.assertRaisesRegex(
+            ReleaseError,
+            r"Release build run 43826939426 concluded cancelled; failed job\(s\): "
+            r"Build tvOS developer package \(arm64\) \(cancelled\)",
+        ):
+            ensure_release("v3.0.36", "c" * 40, include_webos_release=True)
+
+        verify.assert_not_called()
+
+    @patch("release_all_platforms.verify_unacquired_hosted_tvos_run",
+           side_effect=RunnerAcquisitionError("tvOS was not proven canceled before hosted runner acquisition"))
+    @patch("release_all_platforms.matching_run")
+    def test_permitted_retry_still_requires_exact_unassigned_tvos_evidence(
+        self, matching_run, verify,
+    ) -> None:
+        matching_run.return_value = {
+            "databaseId": 43826939425,
+            "status": "completed",
+            "conclusion": "failure",
+            "jobs": [{
+                "name": "build-macos",
+                "status": "completed",
+                "conclusion": "timed_out",
+            }],
+        }
+
+        with self.assertRaisesRegex(
+            ReleaseError,
+            r"build-macos \(timed_out\).*does not prove a tvOS runner-acquisition cancellation.*no private recovery was started",
+        ):
+            ensure_release(
+                "v3.0.36", "c" * 40, include_webos_release=True,
+                allow_private_apple_retry=True,
+            )
+
+        verify.assert_called_once_with(
+            43826939425, "c" * 40, "3.0.36", action="release",
+        )
+
+    @patch("release_all_platforms.ensure_remote_main_sha")
+    @patch("release_all_platforms.dispatch", return_value={
+        "databaseId": 48, "status": "completed", "conclusion": "success",
+    })
+    @patch("release_all_platforms.verify_platform_recovery", return_value={"source_run_id": 47})
+    @patch("release_all_platforms.verify_unacquired_hosted_tvos_run", return_value={"run_id": 47})
+    @patch("release_all_platforms.matching_run")
+    def test_private_recovery_requires_policy_and_verified_unassigned_tvos(
+        self, matching_run, verify_tvos, verify_recovery, dispatch, _ensure_main,
+    ) -> None:
+        matching_run.side_effect = [
+            {
+                "databaseId": 47,
+                "status": "completed",
+                "conclusion": "cancelled",
+                "jobs": [{
+                    "name": "Build tvOS developer package (arm64)",
+                    "status": "completed",
+                    "conclusion": "cancelled",
+                }],
+            },
+            None,
+        ]
+
+        result = ensure_release(
+            "v3.0.36", "c" * 40, include_webos_release=True,
+            allow_private_apple_retry=True,
+        )
+
+        self.assertEqual(result["databaseId"], 48)
+        verify_tvos.assert_called_once_with(47, "c" * 40, "3.0.36", action="release")
+        verify_recovery.assert_called_once_with(
+            47, "c" * 40, "3.0.36", rebuild_tvos=True,
+            webos_run=47, android_run=47,
+        )
+        fields = dispatch.call_args.args[3]
+        self.assertEqual(fields["tvos_runner_pool"], "private")
+        self.assertEqual(fields["reuse_platform_run_id"], "47")
 
 
 class ImmutableReleaseTagTests(unittest.TestCase):
