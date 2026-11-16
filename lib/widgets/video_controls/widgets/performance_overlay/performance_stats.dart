@@ -557,6 +557,12 @@ class PerformanceStats {
 
   /// Format hardware decoding mode.
   String get hwdecFormatted {
+    // The native TV media plugins (webOS and Tizen) do not expose mpv's
+    // hwdec-current property or a decoder name. A missing report is not proof
+    // of software decoding; show the unknown value instead of a false claim.
+    if (playerType == 'webos' || playerType == 'tizen') {
+      return t.common.notAvailable;
+    }
     // For ExoPlayer, use the decoder name
     if (videoDecoderName != null && videoDecoderName!.isNotEmpty) {
       // Check if it's a hardware decoder (contains OMX, c2, or MediaCodec patterns)

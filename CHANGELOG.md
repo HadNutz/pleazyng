@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Preserve the source aspect ratio on Samsung TV's native video plane and report hardware-decoder details as unavailable when native TV players do not expose them.
+
 - Replace the Amazon Fire TV listing icon artwork with the approved mark-only dark plate.
 
 - Keep release recovery tooling, product inputs and immutable-tag checks aligned to their verified source identities; preserve independently signed runtime catalog updates outside platform artifacts.

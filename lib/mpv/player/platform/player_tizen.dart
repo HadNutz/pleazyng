@@ -16,6 +16,7 @@ import '../player_base.dart';
 import '../subtitle_pcm_capture_source.dart';
 import 'webos_media_proxy.dart';
 import 'native_tv_playback_metadata.dart';
+import 'webos_video_layout.dart';
 
 /// Samsung's native media plane. The existing app supplies browsing, focus,
 /// transport controls and watch progress; no browser-hosted UI is involved.
@@ -111,24 +112,48 @@ class PlayerTizen extends PlayerBase implements SubtitlePcmCaptureSource, Native
   Widget videoSurface() {
     final controller = _controller;
     if (audioOnly || controller == null) return const SizedBox.expand();
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        samsung.VideoPlayer(controller),
-        IgnorePointer(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(32, 16, 32, 36),
-              child: ValueListenableBuilder<String>(
-                valueListenable: caption,
-                builder: (context, text, child) =>
-                    text.isEmpty ? const SizedBox.shrink() : samsung.ClosedCaption(text: text),
-              ),
-            ),
-          ),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final viewport = Size(constraints.maxWidth, constraints.maxHeight);
+        return ValueListenableBuilder<samsung.VideoPlayerValue>(
+          valueListenable: controller,
+          builder: (context, value, child) {
+            final aspectRatio = value.aspectRatio;
+            final hasVideoSize = value.isInitialized && aspectRatio.isFinite && aspectRatio > 0;
+            final fittedSize = hasVideoSize ? webOsAspectFitSize(viewport, aspectRatio) : viewport;
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                const ColoredBox(color: Color(0xff000000)),
+                Center(
+                  child: SizedBox.fromSize(
+                    size: fittedSize,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        samsung.VideoPlayer(controller),
+                        IgnorePointer(
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(32, 16, 32, 36),
+                              child: ValueListenableBuilder<String>(
+                                valueListenable: caption,
+                                builder: (context, text, child) =>
+                                    text.isEmpty ? const SizedBox.shrink() : samsung.ClosedCaption(text: text),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
