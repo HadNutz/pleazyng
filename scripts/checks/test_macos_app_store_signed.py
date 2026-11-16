@@ -8,6 +8,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -67,6 +68,23 @@ class MacAppStoreProfileTests(unittest.TestCase):
 
 
 class MacAppStoreSigningGuardTests(unittest.TestCase):
+    def test_capacity_preflight_deduplicates_filesystem_and_rejects_low_space(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            child = root / "child"
+            child.mkdir()
+            enough = SimpleNamespace(f_bavail=35 * 1024 ** 3, f_frsize=1, f_bsize=1)
+            with patch.object(store.os, "statvfs", return_value=enough) as statvfs:
+                result = store.capacity_preflight([("workspace", root), ("runner-temp", child)], 30)
+            self.assertEqual(len(result["filesystems"]), 1)
+            self.assertEqual(result["filesystems"][0]["roles"], ["runner-temp", "workspace"])
+            statvfs.assert_called_once()
+
+            too_little = SimpleNamespace(f_bavail=29 * 1024 ** 3, f_frsize=1, f_bsize=1)
+            with patch.object(store.os, "statvfs", return_value=too_little), \
+                    self.assertRaisesRegex(RuntimeError, "requires at least 30.00 GiB"):
+                store.capacity_preflight([("workspace", root)], 30)
+
     def test_required_sandbox_and_jit_entitlements_are_checked(self):
         entitlements = {
             "com.apple.security.app-sandbox": True,
@@ -112,10 +130,17 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
     def test_workflow_validates_source_before_tagged_tools_and_uses_current_spm_helper(self):
         workflow = (ROOT / ".github/workflows/macos-app-store-signed.yml").read_text(encoding="utf-8")
         validation = workflow.index("- name: Validate immutable release source before running tagged code")
+        capacity = workflow.index("- name: Preflight macOS build disk capacity")
         tagged_tools = workflow.index("- name: Load Flutter version pinned by release source")
         self.assertLess(validation, tagged_tools)
+        self.assertLess(capacity, tagged_tools)
+        self.assertLess(validation, capacity)
         self.assertIn("--validate-source-only", workflow[validation:tagged_tools])
         self.assertIn("--main-commit \"$GITHUB_SHA\"", workflow[validation:tagged_tools])
+        self.assertIn("--minimum-free-gib 30", workflow[capacity:tagged_tools])
+        self.assertIn('--capacity-root "runner-temp=$RUNNER_TEMP"', workflow[capacity:tagged_tools])
+        self.assertIn("capacity_preflight(capacity_roots, EARLY_CAPACITY_GIB)",
+                      (ROOT / "scripts/build_macos_app_store_signed.py").read_text(encoding="utf-8"))
 
         refresh = workflow.index("- name: Refresh pinned mpv Swift packages")
         next_step = workflow.find("\n      - ", refresh + 1)

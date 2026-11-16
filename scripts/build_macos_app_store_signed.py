@@ -45,6 +45,8 @@ PENDING_DIRECTORY = Path("Library/Application Support/Pleazyng/MacAppStoreSignin
 PROFILE_DIRECTORY = Path("Library/MobileDevice/Provisioning Profiles")
 EXPECTED_ARCHITECTURES = {"arm64", "x86_64"}
 STORE_ENTITLEMENTS = Path("macos/Runner/AppStore.entitlements")
+EARLY_CAPACITY_GIB = 30.0
+BUILD_CAPACITY_GIB = 24.0
 
 
 def _capture(command: list[str], *, cwd: Path | None = None, env: dict[str, str] | None = None) -> bytes:
@@ -74,6 +76,52 @@ def _private_directory(path: Path) -> None:
     if path.is_symlink() or not path.is_dir():
         raise ValueError(f"Private signing directory is not a real directory: {path}")
     os.chmod(path, 0o700)
+
+
+def _existing_filesystem_anchor(path: Path) -> Path:
+    candidate = path.expanduser().resolve(strict=False)
+    while not candidate.exists():
+        parent = candidate.parent
+        if parent == candidate:
+            raise ValueError("Could not locate an existing filesystem for a capacity check")
+        candidate = parent
+    return candidate
+
+
+def capacity_preflight(roots: list[tuple[str, Path]], minimum_free_gib: float) -> dict:
+    """Fail early when any filesystem used by the build lacks reserved space."""
+    if minimum_free_gib <= 0:
+        raise ValueError("minimum free disk capacity must be positive")
+    minimum_bytes = int(minimum_free_gib * 1024 ** 3)
+    volumes: dict[int, dict] = {}
+    for label, requested_path in roots:
+        anchor = _existing_filesystem_anchor(requested_path)
+        device = os.stat(anchor).st_dev
+        volume = volumes.get(device)
+        if volume is None:
+            stats = os.statvfs(anchor)
+            available = stats.f_bavail * (stats.f_frsize or stats.f_bsize)
+            volume = {"roles": [], "free_bytes": available}
+            volumes[device] = volume
+        if label not in volume["roles"]:
+            volume["roles"].append(label)
+
+    filesystems = [
+        {"roles": sorted(volume["roles"]), "free_bytes": volume["free_bytes"],
+         "free_gib": round(volume["free_bytes"] / 1024 ** 3, 2)}
+        for volume in volumes.values()
+    ]
+    insufficient = [volume for volume in filesystems if volume["free_bytes"] < minimum_bytes]
+    if insufficient:
+        details = "; ".join(
+            f"{'/'.join(volume['roles'])} filesystem has {volume['free_gib']:.2f} GiB available"
+            for volume in insufficient
+        )
+        raise RuntimeError(
+            f"Insufficient free disk capacity for the Mac App Store build: {details}; "
+            f"requires at least {minimum_free_gib:.2f} GiB on each filesystem"
+        )
+    return {"minimum_free_gib": minimum_free_gib, "filesystems": filesystems}
 
 
 def _keychain_password() -> str:
@@ -734,6 +782,15 @@ def run_build(args: argparse.Namespace) -> int:
         team = os.environ.get(TEAM_SECRET, "")
         if not re.fullmatch(r"[A-Z0-9]{10}", team):
             raise ValueError("APPLE_TEAM_ID is missing or invalid")
+        capacity_roots = [
+            ("source", source_dir),
+            ("package-output", args.output_dir),
+            ("archive", args.archive_path),
+            ("derived-data", args.derived_data),
+            ("runner-temp", Path(tempfile.gettempdir())),
+            ("persistent-keychain", Path.home() / "Library/Keychains"),
+        ]
+        report["capacity_preflights"] = [capacity_preflight(capacity_roots, EARLY_CAPACITY_GIB)]
         with persistent_signing_keychain(report) as keychain:
             with tempfile.TemporaryDirectory(prefix="pleazyng-macos-app-store-") as temporary:
                 stage = Path(temporary)
@@ -751,11 +808,14 @@ def run_build(args: argparse.Namespace) -> int:
                     api, stage, team=team, certificate=app_certificate["der"],
                     certificate_id=app_certificate["id"])
                 report["profile"] = {"type": PROFILE_TYPE, "uuid": profile_uuid}
+                report["capacity_preflights"].append(
+                    capacity_preflight(capacity_roots, BUILD_CAPACITY_GIB))
                 package_path, receipt = build_signed_package(
                     source_dir, source, args.output_dir, args.archive_path, args.derived_data,
                     keychain, team, app_certificate["fingerprint"], installer_certificate["fingerprint"],
                     app_certificate["der"], profile_data, profile_uuid, stage)
                 receipt["workflow_commit"] = os.environ.get("GITHUB_SHA", "")
+                receipt["capacity_preflights"] = report["capacity_preflights"]
                 receipt["signing_material"] = {
                     "persistent_service_keychain": KEYCHAIN_NAME,
                     "locked_after_job": True,
@@ -827,14 +887,25 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--main-commit", help="canonical main commit whose ancestry must include the release tag")
     parser.add_argument("--validate-source-only", action="store_true",
                         help="validate tag identity and main ancestry without running product code or signing")
+    parser.add_argument("--capacity-preflight-only", action="store_true",
+                        help="check free space for the named filesystem roots")
+    parser.add_argument("--capacity-root", action="append", default=[], metavar="LABEL=PATH",
+                        help="filesystem role and path to check; may be supplied more than once")
+    parser.add_argument("--minimum-free-gib", type=float, default=EARLY_CAPACITY_GIB,
+                        help="minimum available GiB required on each filesystem")
     parser.add_argument("--output-dir", type=Path, help="fresh directory for the signed package and receipt")
     parser.add_argument("--archive-path", type=Path, help="fresh runner-temporary Xcode archive path")
     parser.add_argument("--derived-data", type=Path, help="fresh runner-temporary Xcode DerivedData path")
     args = parser.parse_args()
     _safe_tag(args.release_tag)
+    if args.validate_source_only and args.capacity_preflight_only:
+        parser.error("source validation and capacity preflight are separate modes")
     if args.validate_source_only:
         if not args.main_commit:
             parser.error("--main-commit is required with --validate-source-only")
+    elif args.capacity_preflight_only:
+        if not args.capacity_root:
+            parser.error("--capacity-root is required with --capacity-preflight-only")
     elif not all((args.output_dir, args.archive_path, args.derived_data)):
         parser.error("--output-dir, --archive-path, and --derived-data are required for signing")
     return args
@@ -845,5 +916,19 @@ if __name__ == "__main__":
     if arguments.validate_source_only:
         source = validate_release_source(arguments.source_dir, arguments.release_tag, arguments.main_commit)
         print(json.dumps(source, sort_keys=True))
+        raise SystemExit(0)
+    if arguments.capacity_preflight_only:
+        roots: list[tuple[str, Path]] = []
+        for root in arguments.capacity_root:
+            label, separator, path = root.partition("=")
+            if not separator or not label or not path:
+                raise SystemExit("--capacity-root must use LABEL=PATH")
+            roots.append((label, Path(path)))
+        try:
+            result = capacity_preflight(roots, arguments.minimum_free_gib)
+        except (RuntimeError, ValueError, OSError) as error:
+            print(str(error), file=sys.stderr)
+            raise SystemExit(1) from None
+        print(json.dumps(result, sort_keys=True))
         raise SystemExit(0)
     raise SystemExit(run_build(arguments))

@@ -57,6 +57,20 @@ jobs:
             --source-dir "$GITHUB_WORKSPACE/source" \
             --main-commit "$GITHUB_SHA"
 
+      - name: Preflight macOS build disk capacity
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+          python3 scripts/build_macos_app_store_signed.py \
+            --release-tag "$RELEASE_TAG" \
+            --source-dir "$GITHUB_WORKSPACE/source" \
+            --capacity-preflight-only \
+            --minimum-free-gib 30 \
+            --capacity-root "workspace=$GITHUB_WORKSPACE" \
+            --capacity-root "source=$GITHUB_WORKSPACE/source" \
+            --capacity-root "runner-temp=$RUNNER_TEMP"
+
       - name: Load Flutter version pinned by release source
         working-directory: source
         run: python3 scripts/flutter/load_sdk_pin.py --github-env
