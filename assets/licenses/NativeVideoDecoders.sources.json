@@ -1,0 +1,23 @@
+{
+  "xevd": {
+    "commit": "8fa744e865e9bdb94a5d5da6a4ab18268cdc4bb4",
+    "version": "0.8.0",
+    "files": {
+      "COPYING": "9e363659102ec64de3bf8e118da843b5d08e1a4767e719a207a2afead6284347"
+    }
+  },
+  "davs2": {
+    "commit": "b06d7585620f4e90a6d19a2926bb4e59793b8942",
+    "version": "1.7",
+    "files": {
+      "COPYING": "971f09fd8dedc915472df12845fb7c653563689672fb1a658e28004887ba4a07"
+    }
+  },
+  "uavs3d": {
+    "commit": "0e20d2c291853f196c68922a264bcd8471d75b68",
+    "version": "1.2",
+    "files": {
+      "COPYING": "5a8dcb7da222df8a81b6e334000f859248196335e2d28e1db9f3c552827d7cdf"
+    }
+  }
+}

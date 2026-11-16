@@ -1421,6 +1421,13 @@ void _registerAppLicenses() {
   _registerShaderLicenses();
   LicenseRegistry.addLicense(() async* {
     yield LicenseEntryWithLineBreaks(const [
+      'XEVD (MPEG-5 EVC)',
+      'davs2 (AVS2)',
+      'uavs3d (AVS3)',
+    ], await rootBundle.loadString('assets/licenses/NativeVideoDecoders.txt'));
+  });
+  LicenseRegistry.addLicense(() async* {
+    yield LicenseEntryWithLineBreaks(const [
       'LCEVCdec (V-Nova)',
     ], await rootBundle.loadString('assets/licenses/LCEVCdec.txt'));
   });

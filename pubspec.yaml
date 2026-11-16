@@ -282,6 +282,7 @@ flutter:
     - assets/licenses/Libtorrent.txt
     - assets/licenses/koni_rar_NOTICE.txt
     - assets/licenses/LCEVCdec.txt
+    - assets/licenses/NativeVideoDecoders.txt
     - assets/licenses/Boost.txt
     - assets/licenses/JellyfinWebTranslations.txt
     - assets/licenses/MilkRust_Sample_Pack.txt
