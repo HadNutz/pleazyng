@@ -13,7 +13,8 @@ module AppleStoreProcessing
   STATES = %w[PROCESSING FAILED INVALID VALID].freeze
   PLATFORMS = {
     'ios' => ['iphoneos', 'IOS'],
-    'appletvos' => ['appletvos', 'TV_OS']
+    'appletvos' => ['appletvos', 'TV_OS'],
+    'macos' => ['macosx', 'MAC_OS']
   }.freeze
 
   def self.expected(plist:, platform:, release_tag:)
@@ -78,21 +79,27 @@ module AppleStoreProcessing
     end
   end
 
-  def self.receipt(expected:, build:, ipa_path:, release_tag:, run_id:, run_attempt:, uploaded:)
+  def self.receipt(expected:, build:, release_tag:, run_id:, run_attempt:, uploaded:,
+                   ipa_path: nil, asset_path: nil)
     raise ArgumentError, 'GitHub run identity is missing' unless run_id.to_s.match?(/\A[1-9]\d*\z/) &&
       run_attempt.to_s.match?(/\A[1-9]\d*\z/)
     raise ArgumentError, 'Only a valid processed build can produce a receipt' unless build.processing_state == 'VALID'
 
-    { schema_version: 1, release_tag: release_tag, app_id: expected[:app_id],
+    path = asset_path || ipa_path
+    raise ArgumentError, 'An uploaded Apple Store asset path is required' unless path
+    digest = Digest::SHA256.file(path).hexdigest
+    receipt = { schema_version: 1, release_tag: release_tag, app_id: expected[:app_id],
       bundle_id: expected[:bundle_id], platform: expected[:platform],
       marketing_version: expected[:version], build_number: expected[:build],
       asc_build_id: build.id.to_s, processing_state: 'VALID',
-      uploaded_at: build.uploaded_date&.to_s, ipa_sha256: Digest::SHA256.file(ipa_path).hexdigest,
+      uploaded_at: build.uploaded_date&.to_s, asset_filename: File.basename(path), asset_sha256: digest,
       github_run_id: run_id.to_i, github_run_attempt: run_attempt.to_i,
       reused_existing_build: !uploaded,
-      # ASC exposes version/build/processing state, not the uploaded IPA hash.
+      # ASC exposes version/build/processing state, not the uploaded asset hash.
       # Preserve this distinction when reusing a pre-existing exact build.
       asc_linkage: uploaded ? 'transported_this_run' : 'existing_version_build_identity',
       verified_at: Time.now.utc.iso8601 }
+    receipt[:ipa_sha256] = digest if expected[:platform] != 'MAC_OS'
+    receipt
   end
 end
