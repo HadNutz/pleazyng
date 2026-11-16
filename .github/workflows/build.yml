@@ -1846,7 +1846,7 @@ jobs:
   build-macos:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_macos) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'macos-validation') }}
     needs: validate-trusted-ref
-    timeout-minutes: 150
+    timeout-minutes: 210
     runs-on: ${{ needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-build-macos"]}}', github.run_id)) || 'macos-26-intel' }}
     permissions:
       actions: read
@@ -2104,7 +2104,7 @@ jobs:
 
       - name: Build macOS
         if: inputs.macos_compilation_job_id == ''
-        timeout-minutes: 100
+        timeout-minutes: 150
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         env:
           FLUTTER_XCODE_CODE_SIGNING_ALLOWED: "NO"

@@ -121,8 +121,8 @@ require(
 require(
     "timeout-minutes: 240" in job("build-ios")
     and "timeout-minutes: 180" in job("build-tvos")
-    and "timeout-minutes: 150" in job("build-macos")
-    and "timeout-minutes: 100" in named_step(job("build-macos"), "Build macOS"),
+    and "timeout-minutes: 210" in job("build-macos")
+    and "timeout-minutes: 150" in named_step(job("build-macos"), "Build macOS"),
     "Apple package jobs and the macOS compile step must have explicit bounded timeouts",
 )
 release_driver_ast = ast.parse(release_driver_text)
