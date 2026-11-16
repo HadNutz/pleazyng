@@ -37,6 +37,13 @@ class LicensesScreen extends StatelessWidget {
       }
     }
 
+    const lcevcPackage = 'LCEVCdec 4.3.1';
+    final lcevcLicense = await rootBundle.loadString('assets/licenses/LCEVCdec.txt');
+    licenseMap[lcevcPackage] = [
+      LicenseEntryWithLineBreaks([lcevcPackage], lcevcLicense),
+    ];
+    allPackageNames[lcevcPackage] = {lcevcPackage};
+
     final moonlightNotice = await rootBundle.loadString('assets/licenses/Moonlight_NOTICE.txt');
     final moonlightLicense = await rootBundle.loadString('assets/licenses/Moonlight_GPL_3.txt');
     licenseMap['Moonlight'] = [
