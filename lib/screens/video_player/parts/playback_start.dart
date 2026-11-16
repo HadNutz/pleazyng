@@ -126,6 +126,7 @@ extension _VideoPlayerPlaybackStartMethods on VideoPlayerScreenState {
 
         await _initVideoFilterAndPip();
         if (!mounted || !attempt.isCurrent) return;
+        if (player == currentPlayer) _armAutoPip(currentPlayer);
         if (opened) {
           final settingsService = await SettingsService.getInstance();
           if (!attempt.isCurrent) return;
@@ -390,20 +391,7 @@ extension _VideoPlayerPlaybackStartMethods on VideoPlayerScreenState {
           }
 
           if (player == currentPlayer) {
-            // Auto-PiP: set up callback for API 26-30 path and initial state
-            if (_autoPipEnabled) {
-              void autoPipEnteringCallback() {
-                if (!mounted || player != currentPlayer) return;
-                _setAndroidAutoPipTransitionInFlight(true, reason: 'native_auto_pip_entering');
-                _preparePipFiltersForEntry();
-              }
-
-              _autoPipEnteringCallback = autoPipEnteringCallback;
-              PipService.onAutoPipEntering = autoPipEnteringCallback;
-              if (currentPlayer.state.playing) {
-                unawaited(_updateAutoPipState(isPlaying: true));
-              }
-            }
+            _armAutoPip(currentPlayer);
 
             // Video-processing presets: MPV GLSL plus ExoPlayer's Media3 GL resampler.
             _shaderService = ShaderService(currentPlayer);

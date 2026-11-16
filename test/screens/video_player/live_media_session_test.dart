@@ -28,6 +28,7 @@ import 'package:plezy/screens/video_player_screen.dart';
 import 'package:plezy/services/media_controls_manager.dart';
 import 'package:plezy/services/multi_server_manager.dart';
 import 'package:plezy/services/offline_watch_sync_service.dart';
+import 'package:plezy/services/pip_service.dart';
 import 'package:plezy/services/settings_service.dart';
 import 'package:provider/provider.dart';
 
@@ -47,25 +48,37 @@ void main() {
 
   const mediaControlChannel = MethodChannel('com.edde746.os_media_controls/methods');
   const mediaControlEvents = MethodChannel('com.edde746.os_media_controls/events');
+  const pipChannel = MethodChannel('com.plezy/pip');
   final calls = <MethodCall>[];
+  final pipCalls = <MethodCall>[];
 
   setUp(() async {
     resetSharedPreferencesForTest();
     SettingsService.resetForTesting();
     await SettingsService.getInstance();
     calls.clear();
+    pipCalls.clear();
+    PipService.onAutoPipEntering = null;
+    PipService.debugAvailableOverride = null;
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(mediaControlChannel, (call) async {
       calls.add(call);
       return null;
     });
     messenger.setMockMethodCallHandler(mediaControlEvents, (call) async => null);
+    messenger.setMockMethodCallHandler(pipChannel, (call) async {
+      pipCalls.add(call);
+      return null;
+    });
   });
 
   tearDown(() {
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(mediaControlChannel, null);
     messenger.setMockMethodCallHandler(mediaControlEvents, null);
+    messenger.setMockMethodCallHandler(pipChannel, null);
+    PipService.onAutoPipEntering = null;
+    PipService.debugAvailableOverride = null;
   });
 
   testWidgets('a live channel registers a media session titled after the channel', (tester) async {
@@ -286,6 +299,63 @@ void main() {
         // read-ahead had reached, a minute into a Watch from Start.
         expect(player.events, ['open paused', 'frame-step', 'display 50.0', 'seek 1185', 'play']);
       });
+    });
+
+    testWidgets('a live start arms auto-PiP and publishes its initial playing state', (tester) async {
+      PipService.debugAvailableOverride = true;
+
+      const fieldRate = (containerFps: '25.000', tenFrames: Duration(milliseconds: 200));
+      final channel = LiveTvChannel(key: 'ch-1', title: 'Channel 5', serverId: 'srv-1');
+      final player = _PlayingCadenceLivePlayer({'ch-1': fieldRate});
+      addTearDown(player.close);
+      final shell = _LiveShell(client: _LiveMediaServerClient(_ChannelLiveTvSupport()));
+
+      await withMockPlayerChannels(
+        methodChannelName: 'com.plezy/mpv_player',
+        eventChannelName: 'com.plezy/mpv_player/events',
+        methodHandler: (call) async => call.method == 'initialize' ? false : null,
+        testBody: () async {
+          final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+          final workspaceMethodChannel = const MethodChannel('com.plezy/mpv_player/workspace');
+          final workspaceEventChannel = const MethodChannel('com.plezy/mpv_player/workspace/events');
+          messenger.setMockMethodCallHandler(workspaceMethodChannel, (call) async => null);
+          messenger.setMockMethodCallHandler(workspaceEventChannel, (call) async => null);
+          addTearDown(() {
+            messenger.setMockMethodCallHandler(workspaceMethodChannel, null);
+            messenger.setMockMethodCallHandler(workspaceEventChannel, null);
+          });
+
+          final key = GlobalKey<VideoPlayerScreenState>();
+          await tester.pumpWidget(shell.screen(key: key, channel: channel));
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 100));
+
+          final state = key.currentState!..player = player;
+          state.debugSetAutoPipEnabledForTesting(true);
+          await tester.runAsync(state.debugStartPlaybackForTesting);
+          await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+
+          expect(
+            PipService.onAutoPipEntering,
+            isNotNull,
+            reason: 'Live TV must install the native auto-entry callback',
+          );
+          expect(
+            pipCalls.where((call) => call.method == 'setAutoPipReady').map((call) {
+              final arguments = call.arguments as Map;
+              return (
+                ready: arguments['ready'] as bool?,
+                width: arguments['width'] as int?,
+                height: arguments['height'] as int?,
+              );
+            }),
+            contains((ready: true, width: 1920, height: 1080)),
+            reason: 'a live player already playing at open must publish its initial PiP-ready state',
+          );
+
+          await tester.pumpWidget(const SizedBox.shrink());
+        },
+      );
     });
 
     testWidgets('a zap negotiates the display again for the new channel', (tester) async {
@@ -787,6 +857,13 @@ class _CadenceLivePlayer extends _LiveMediaSessionPlayer {
     await _playing.close();
     await _silent.close();
   }
+}
+
+class _PlayingCadenceLivePlayer extends _CadenceLivePlayer {
+  _PlayingCadenceLivePlayer(super.cadences);
+
+  @override
+  PlayerState get state => super.state.copyWith(playing: true);
 }
 
 /// Tunes every channel; each session streams `<channel key>.ts`.

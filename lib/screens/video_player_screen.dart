@@ -1649,6 +1649,11 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   @visibleForTesting
   Future<void> debugStartPlaybackForTesting() => _startPlayback();
 
+  /// Player initialization reads this preference before it opens the core;
+  /// tests that seed a live player directly can set the same startup state.
+  @visibleForTesting
+  void debugSetAutoPipEnabledForTesting(bool enabled) => _autoPipEnabled = enabled;
+
   /// A channel zap, awaited to its end: the transports fire it and forget,
   /// and its display negotiation outlives the zap's own transition.
   @visibleForTesting

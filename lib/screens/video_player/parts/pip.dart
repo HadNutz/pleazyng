@@ -88,6 +88,25 @@ extension _VideoPlayerPipMethods on VideoPlayerScreenState {
     _attachPipStateListener();
   }
 
+  /// Arm auto-PiP for a newly opened player. A player can already be playing
+  /// by the time startup services attach, so initialize native readiness here
+  /// instead of waiting for a later playing-state event.
+  void _armAutoPip(Player currentPlayer) {
+    if (!_autoPipEnabled) return;
+
+    void autoPipEnteringCallback() {
+      if (!mounted || player != currentPlayer) return;
+      _setAndroidAutoPipTransitionInFlight(true, reason: 'native_auto_pip_entering');
+      _preparePipFiltersForEntry();
+    }
+
+    _autoPipEnteringCallback = autoPipEnteringCallback;
+    PipService.onAutoPipEntering = autoPipEnteringCallback;
+    if (currentPlayer.state.playing) {
+      unawaited(_updateAutoPipState(isPlaying: true));
+    }
+  }
+
   Future<void> _togglePIPMode() async {
     if (!_pipInitialized) return;
 

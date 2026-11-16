@@ -6,9 +6,11 @@ import 'package:plezy/i18n/strings.g.dart';
 
 class PipService {
   static const MethodChannel _channel = MethodChannel('com.plezy/pip');
+  @visibleForTesting
+  static bool? debugAvailableOverride;
 
   /// PiP is only implemented natively on Android, iOS, and macOS.
-  static bool get _isAvailable => Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
+  static bool get _isAvailable => debugAvailableOverride ?? (Platform.isAndroid || Platform.isIOS || Platform.isMacOS);
 
   static final PipService _instance = PipService._internal();
   factory PipService() => _instance;
