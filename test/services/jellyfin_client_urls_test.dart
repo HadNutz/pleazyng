@@ -1102,49 +1102,51 @@ void main() {
       expect(result.isTranscoding, isTrue);
     });
 
-    test('missing runtime decoder forces video conversion without forcing SDR or losing resume', () async {
-      RuntimePlaybackCapabilities.recordMpvDecoders([
-        {'codec': 'h264', 'driver': 'h264'},
-      ]);
+    test('missing runtime decoders force conversion for VVC and AV2 without losing resume', () async {
       addTearDown(RuntimePlaybackCapabilities.reset);
-      late Map<String, dynamic> body;
-      final scoped = _clientWithPlaybackInfo(
-        (request) async {
-          body = jsonDecode(request.body) as Map<String, dynamic>;
-          return jsonResponse({
-            'MediaSources': [
-              {'Id': 'src-1', 'TranscodingUrl': '/Videos/item-1/master.m3u8'},
-            ],
-          });
-        },
-        itemSources: [
-          {
-            'Id': 'src-1',
-            'Container': 'mkv',
-            'MediaStreams': [
-              {'Index': 0, 'Type': 'Video', 'Codec': 'vvc'},
-            ],
+      for (final codec in ['vvc', 'av2']) {
+        RuntimePlaybackCapabilities.recordMpvDecoders([
+          {'codec': 'h264', 'driver': 'h264'},
+        ]);
+        late Map<String, dynamic> body;
+        final scoped = _clientWithPlaybackInfo(
+          (request) async {
+            body = jsonDecode(request.body) as Map<String, dynamic>;
+            return jsonResponse({
+              'MediaSources': [
+                {'Id': 'src-1', 'TranscodingUrl': '/Videos/item-1/master.m3u8'},
+              ],
+            });
           },
-        ],
-      );
-      addTearDown(scoped.close);
-      final result = await scoped.getPlaybackInitialization(
-        PlaybackInitializationOptions(
-          metadata: testMediaItem(
-            id: 'item-1',
-            backend: MediaBackend.jellyfin,
-            kind: MediaKind.movie,
-            serverId: 'srv-1',
+          itemSources: [
+            {
+              'Id': 'src-1',
+              'Container': 'mkv',
+              'MediaStreams': [
+                {'Index': 0, 'Type': 'Video', 'Codec': codec},
+              ],
+            },
+          ],
+        );
+        addTearDown(scoped.close);
+        final result = await scoped.getPlaybackInitialization(
+          PlaybackInitializationOptions(
+            metadata: testMediaItem(
+              id: 'item-1',
+              backend: MediaBackend.jellyfin,
+              kind: MediaKind.movie,
+              serverId: 'srv-1',
+            ),
+            selectedMediaIndex: 0,
+            startPosition: const Duration(seconds: 42),
           ),
-          selectedMediaIndex: 0,
-          startPosition: const Duration(seconds: 42),
-        ),
-      );
-      expect(result.isTranscoding, isTrue);
-      expect(body['EnableDirectPlay'], isFalse);
-      expect(body['AllowVideoStreamCopy'], isFalse);
-      expect(body['StartTimeTicks'], 420000000);
-      expect(body['DeviceProfile']['CodecProfiles'], isEmpty);
+        );
+        expect(result.isTranscoding, isTrue, reason: codec);
+        expect(body['EnableDirectPlay'], isFalse, reason: codec);
+        expect(body['AllowVideoStreamCopy'], isFalse, reason: codec);
+        expect(body['StartTimeTicks'], 420000000, reason: codec);
+        expect(body['DeviceProfile']['CodecProfiles'], isEmpty, reason: codec);
+      }
     });
 
     test('forced compatibility conversion cannot fall back to the rejected file', () async {
