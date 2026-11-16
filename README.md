@@ -26,14 +26,14 @@ Select any thumbnail to open the full-resolution image.
 
 <table>
   <tr>
-    <td align="center" valign="top"><a href="docs/maintainers/store-listing-assets/amazon/tv-02-home-1920x1080.png"><img src="docs/maintainers/store-listing-assets/amazon/tv-02-home-1920x1080.png" alt="TV home with featured media and library rows" width="103" loading="lazy"></a><br><sub>TV home</sub></td>
-    <td align="center" valign="top"><a href="docs/maintainers/store-listing-assets/amazon/tv-03-library-1920x1080.png"><img src="docs/maintainers/store-listing-assets/amazon/tv-03-library-1920x1080.png" alt="TV movie library and remote navigation" width="103" loading="lazy"></a><br><sub>TV library</sub></td>
-    <td align="center" valign="top"><a href="docs/maintainers/store-listing-assets/amazon/tv-04-details-1920x1080.png"><img src="docs/maintainers/store-listing-assets/amazon/tv-04-details-1920x1080.png" alt="TV movie details and play action" width="103" loading="lazy"></a><br><sub>TV details</sub></td>
+    <td align="center" valign="top"><a href="docs/maintainers/store-listing-assets/amazon/tv-01-home-3-0-36.png"><img src="docs/maintainers/store-listing-assets/amazon/tv-01-home-3-0-36.png" alt="TV home with featured media and library rows" width="103" loading="lazy"></a><br><sub>TV home</sub></td>
+    <td align="center" valign="top"><a href="docs/maintainers/store-listing-assets/amazon/tv-02-search-3-0-36.png"><img src="docs/maintainers/store-listing-assets/amazon/tv-02-search-3-0-36.png" alt="TV search results and remote navigation" width="103" loading="lazy"></a><br><sub>TV search</sub></td>
+    <td align="center" valign="top"><a href="docs/maintainers/store-listing-assets/amazon/tv-03-title-details-3-0-36.png"><img src="docs/maintainers/store-listing-assets/amazon/tv-03-title-details-3-0-36.png" alt="TV movie details and play action" width="103" loading="lazy"></a><br><sub>TV details</sub></td>
   </tr>
   <tr>
     <td align="center" valign="top"><a href="docs/maintainers/readme-captures/phone-dark-library.png"><img src="docs/maintainers/readme-captures/phone-dark-library.png" alt="Phone movie library browsing" width="56" loading="lazy"></a><br><sub>Phone library</sub></td>
     <td align="center" valign="top"><a href="docs/maintainers/readme-captures/tablet-dark-library.png"><img src="docs/maintainers/readme-captures/tablet-dark-library.png" alt="Tablet movie library with sidebar" width="103" loading="lazy"></a><br><sub>Tablet library</sub></td>
-    <td align="center" valign="top"><a href="docs/maintainers/store-listing-assets/amazon/tv-01-welcome-1920x1080.png"><img src="docs/maintainers/store-listing-assets/amazon/tv-01-welcome-1920x1080.png" alt="TV welcome and source connection choices" width="103" loading="lazy"></a><br><sub>TV connections</sub></td>
+    <td align="center" valign="top"><a href="docs/maintainers/store-listing-assets/amazon/tv-04-player-controls-3-0-36.png"><img src="docs/maintainers/store-listing-assets/amazon/tv-04-player-controls-3-0-36.png" alt="TV playback and media controls" width="103" loading="lazy"></a><br><sub>TV playback</sub></td>
   </tr>
   <tr>
     <td align="center" valign="top"><a href="docs/maintainers/readme-captures/phone-dark-welcome.png"><img src="docs/maintainers/readme-captures/phone-dark-welcome.png" alt="Phone welcome and connection choices" width="56" loading="lazy"></a><br><sub>Phone connections</sub></td>
