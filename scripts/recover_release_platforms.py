@@ -22,7 +22,9 @@ import verify_release_ci as release_ci
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "snapetech-org/pleazyng"
 # Application sources, dependency pins, and native toolchain inputs are excluded.
+# The signed visualizer catalog is published and verified independently at runtime.
 RECOVERY_FILES = frozenset({
+    "content/visualizer-catalog.json",
     "scripts/prepare_android_sdk.py", "scripts/test_prepare_android_sdk.py",
     "tools/webos/NATIVE-PREFLIGHT.md",
     "webos/CMakeLists.txt", "scripts/verify_webos_link_patch.py", "scripts/test_verify_webos_link_patch.py",

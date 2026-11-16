@@ -250,6 +250,8 @@ workflow SHA, then restores release notes, manifests and other product inputs
 from the separately verified product-source SHA. Keep those identities
 separate: an older product run may predate a recovery-verifier fix, while the
 release contents and attribution must still match the immutable product build.
+The authenticated visualizer catalog is a separate signed runtime input; its
+publication does not change the application artifacts.
 
 Native dependency downloads are staged by `scripts/prepare_native_downloads.py`
 after locked Pub resolution and before Dart hooks run. SQLite assets retain the
