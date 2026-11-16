@@ -3324,7 +3324,9 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ inputs.recovery_source_sha || needs.validate-trusted-ref.outputs.android_source_sha || github.sha }}
+          # Recovery tooling must come from this trusted workflow revision;
+          # product files are restored separately from their verified source SHA.
+          ref: ${{ github.sha }}
           sparse-checkout: |
             CHANGELOG.md
             UPSTREAM_ATTRIBUTION.md
@@ -3346,6 +3348,84 @@ jobs:
             Casks/snapetech-pleazyng.rb.template
           sparse-checkout-cone-mode: false
           persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ needs.validate-trusted-ref.outputs.android_source_sha || github.sha }}
+          path: product-source
+          sparse-checkout: |
+            CHANGELOG.md
+            UPSTREAM_ATTRIBUTION.md
+            games-native.lock.json
+            pubspec.yaml
+            docs/games/MOONLIGHT_SOURCE.md
+            assets/licenses/Moonlight_GPL_3.txt
+            assets/licenses/Moonlight_NOTICE.txt
+            android/settings.gradle.kts
+            android/app/build.gradle.kts
+            android/moonlight/**
+            android/app/src/main/kotlin/com/edde746/plezy/GameStreamPlatformViewFactory.kt
+            android/app/src/main/kotlin/com/edde746/plezy/GamesChannel.kt
+            android/app/src/main/kotlin/com/edde746/plezy/PlezyActivity.kt
+            lib/multiview/moonlight_game_workspace_surface.dart
+            lib/screens/games/games_screen.dart
+            docs/maintainers/capability-manifest.json
+            Casks/snapetech-pleazyng.rb.template
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Restore immutable product source files
+        env:
+          PRODUCT_SOURCE_SHA: ${{ needs.validate-trusted-ref.outputs.android_source_sha || github.sha }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import shutil
+          import subprocess
+          from pathlib import Path
+
+          root = Path.cwd()
+          source = root / "product-source"
+          expected = os.environ["PRODUCT_SOURCE_SHA"]
+          actual = subprocess.check_output(
+              ["git", "-C", str(source), "rev-parse", "HEAD"], text=True
+          ).strip()
+          if actual != expected:
+              raise SystemExit(f"Product source checkout mismatch: {actual} != {expected}")
+
+          paths = (
+              "CHANGELOG.md",
+              "UPSTREAM_ATTRIBUTION.md",
+              "games-native.lock.json",
+              "pubspec.yaml",
+              "docs/games/MOONLIGHT_SOURCE.md",
+              "assets/licenses/Moonlight_GPL_3.txt",
+              "assets/licenses/Moonlight_NOTICE.txt",
+              "android/settings.gradle.kts",
+              "android/app/build.gradle.kts",
+              "android/moonlight",
+              "android/app/src/main/kotlin/com/edde746/plezy/GameStreamPlatformViewFactory.kt",
+              "android/app/src/main/kotlin/com/edde746/plezy/GamesChannel.kt",
+              "android/app/src/main/kotlin/com/edde746/plezy/PlezyActivity.kt",
+              "lib/multiview/moonlight_game_workspace_surface.dart",
+              "lib/screens/games/games_screen.dart",
+              "docs/maintainers/capability-manifest.json",
+              "Casks/snapetech-pleazyng.rb.template",
+          )
+          for relative in paths:
+              src = source / relative
+              dst = root / relative
+              if not src.exists():
+                  raise SystemExit(f"Product source file is missing: {relative}")
+              dst.parent.mkdir(parents=True, exist_ok=True)
+              if src.is_dir():
+                  if dst.exists():
+                      shutil.rmtree(dst)
+                  shutil.copytree(src, dst)
+              else:
+                  shutil.copy2(src, dst)
+          print(f"Restored release inputs from product source {expected}")
+          PY
 
       - name: Validate release assembly imports
         run: |

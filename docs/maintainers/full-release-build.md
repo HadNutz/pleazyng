@@ -245,6 +245,11 @@ Explicit platform recovery retains its separate unchanged-product allowlist
 and source-run proof. It may use newer release infrastructure without changing
 the original product bytes. Do not add application source to that allowlist or
 reuse one product's qualification for another. Existing tags are never moved.
+The `create-release` job checks out its recovery scripts at the current
+workflow SHA, then restores release notes, manifests and other product inputs
+from the separately verified product-source SHA. Keep those identities
+separate: an older product run may predate a recovery-verifier fix, while the
+release contents and attribution must still match the immutable product build.
 
 Native dependency downloads are staged by `scripts/prepare_native_downloads.py`
 after locked Pub resolution and before Dart hooks run. SQLite assets retain the

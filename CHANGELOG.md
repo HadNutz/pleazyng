@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Keep release recovery tooling pinned to the trusted workflow revision while release notes and manifests stay tied to the verified product source.
+
 - Hide Continue Watching from TV launcher shelves for PIN-protected profiles while startup requires profile selection, independently adapting [Plezy commit 02eeba6972](https://github.com/edde746/plezy/commit/02eeba69723b33f28e6b8ae9dab2ce1c02a1c3cd) by [@edde746](https://github.com/edde746); see [upstream source credit](UPSTREAM_ATTRIBUTION.md#credited-plezy-commits).
 
 - Keep TV remote input working when an in-place player reload removes the focused control, independently adapting [Plezy commit 408da1ab83](https://github.com/edde746/plezy/commit/408da1ab83b552e8b155aef7dd5f3e4d6892d91b) by [@edde746](https://github.com/edde746) for [issue #3022](https://github.com/edde746/plezy/issues/3022); see [upstream source credit](UPSTREAM_ATTRIBUTION.md#credited-plezy-commits).
