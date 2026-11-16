@@ -13,7 +13,9 @@ import subprocess
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
+SCRIPT_ROOT = Path(__file__).resolve().parents[1]
+PRODUCT_ROOT_OVERRIDE = os.environ.get("PLEAZYNG_APPLE_SOURCE_ROOT", "")
+ROOT = Path(PRODUCT_ROOT_OVERRIDE).resolve(strict=True) if PRODUCT_ROOT_OVERRIDE else SCRIPT_ROOT
 PROJECT_PATH = ROOT / "macos/Runner.xcodeproj/project.pbxproj"
 ENTITLEMENTS_PATH = ROOT / "macos/Runner/AppStore.entitlements"
 OLD_ENTITLEMENT_SETTING = b"CODE_SIGN_ENTITLEMENTS = Runner/Release.entitlements;"
@@ -82,7 +84,7 @@ def build_app(
         "FLUTTER_XCODE_CODE_SIGNING_IDENTITY": "",
     })
     command = [
-        "flutter", "build", "macos", "--release", "--no-codesign", "--config-only", "--verbose",
+        "flutter", "build", "macos", "--release", "--config-only", "--verbose",
         "--dart-define=SUPPORTER_MODE=iap",
         "--dart-define=ENABLE_UPDATE_CHECK=false",
         f"--dart-define=GIT_COMMIT={source_sha}",

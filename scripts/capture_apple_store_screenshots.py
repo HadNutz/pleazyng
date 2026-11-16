@@ -35,6 +35,11 @@ IOS_MAC_STORE_DEFINES = [
     "PLEAZYNG_DISCORD_APPLICATION_ID=",
 ]
 TVOS_STORE_DEFINES = ["TVOS_BUILD=true", *COMMON_STORE_DEFINES]
+BUILD_CONFIGURATION = {
+    "ios": "Debug Simulator",
+    "tvos": "Debug Simulator",
+    "macos": "Release Archive",
+}
 SIMULATOR_SETTLE_SECONDS = 25
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
@@ -187,6 +192,7 @@ def preserve_build(args: argparse.Namespace) -> None:
         "product_build": BUILD_NUMBER,
         "platform": platform_name,
         "build_mode": "App Store IAP",
+        "build_configuration": BUILD_CONFIGURATION[args.platform],
         "app_bundle_name": app.name,
         "bundle_id": identity["bundle_id"],
         "executable": identity["executable"],
@@ -239,6 +245,7 @@ def validate_build_receipt(
         "product_build": BUILD_NUMBER,
         "platform": platform_name,
         "build_mode": "App Store IAP",
+        "build_configuration": BUILD_CONFIGURATION[platform],
         "app_bundle_name": expected_app_name,
         "bundle_id": BUNDLE_ID,
         "build_defines": expected_defines,
@@ -471,6 +478,7 @@ def capture_simulator(
         return {
             "filename": filename,
             "platform": platform,
+            "build_configuration": BUILD_CONFIGURATION["ios" if platform == "iOS" else "tvos"],
             "simulator_appearance": simulator_appearance,
             "capture_scene": "Fresh install; first-launch onboarding; no media server or account configured.",
             "capture_method": ["xcrun", "simctl", "io", device["udid"], "screenshot", "--type=png"],
@@ -505,6 +513,10 @@ def write_capture_manifest(output: Path, platform: str, captures: list[dict[str,
         "product_build": BUILD_NUMBER,
         "platform": platform,
         "build_mode": "App Store IAP",
+        "build_configuration": captures[0].get(
+            "build_configuration",
+            BUILD_CONFIGURATION["tvos" if platform == "tvOS" else "ios" if platform == "iOS and iPadOS" else "macos"],
+        ),
         "build_defines": defines,
         "captures": captures,
         "qualification": "Authentic application screenshots for App Store listing review. The images show first-launch onboarding only; they do not claim media playback, billing, StoreKit, or device qualification.",
@@ -619,6 +631,7 @@ def capture_macos(args: argparse.Namespace) -> None:
     capture = {
         "filename": screenshot.name,
         "platform": "macOS",
+        "build_configuration": BUILD_CONFIGURATION["macos"],
         "capture_scene": "Fresh launch; first-launch onboarding; no media server or account configured.",
         "capture_method": ["/usr/sbin/screencapture", "-x", "-l", window_id],
         "source_tag": SOURCE_TAG,
@@ -741,6 +754,7 @@ def package_captures(args: argparse.Namespace) -> None:
         "product_version": VERSION,
         "product_build": BUILD_NUMBER,
         "build_mode": "App Store IAP",
+        "build_configuration_by_platform": BUILD_CONFIGURATION,
         "packaging_tool_source_sha": require_capture_tools_sha(),
         "capture_tool_source_sha_by_platform": {
             "ios": next(item["capture_tools_sha"] for item in final_captures if item["filename"].startswith("iphone-")),
@@ -765,7 +779,8 @@ def package_captures(args: argparse.Namespace) -> None:
         "Every image shows first-launch onboarding without a server or account. "
         "The set does not demonstrate playback, StoreKit, device qualification, "
         "sandbox runtime, App Store processing, or media content.\n"
-        "See capture-provenance.json for product/tool source revisions, build, simulator, device, dimension, and hash evidence.\n",
+        "iOS/tvOS screenshots use Debug Simulator builds with App Store IAP feature defines; macOS uses an unsigned Release Archive.\n"
+        "See capture-provenance.json for product/tool source revisions, build configuration, simulator, device, dimension, and hash evidence.\n",
         encoding="utf-8",
     )
     archive = output.with_suffix(".zip")
