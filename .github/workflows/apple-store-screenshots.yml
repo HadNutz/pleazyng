@@ -7,15 +7,16 @@ on:
   workflow_dispatch:
     inputs:
       target:
-        description: Capture all Apple platforms, or recover only the macOS lane.
+        description: Capture all Apple platforms or only the named missing lanes.
         type: choice
         options:
           - all
+          - ios-macos-only
           - macos-only
         default: all
         required: true
       artifact_run_id:
-        description: Completed run to reuse iOS and tvOS captures for a macOS-only recovery.
+        description: Completed run whose successful Apple captures should be reused by a partial recovery.
         type: string
         required: false
 
@@ -35,7 +36,7 @@ env:
 
 jobs:
   ios:
-    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == '')
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'ios-macos-only' || inputs.target == '')
     runs-on: macos-26
     timeout-minutes: 180
     steps:
@@ -107,7 +108,9 @@ jobs:
         run: python3 scripts/games/prepare_steam.py
 
       - name: Resolve pinned iOS Swift packages
-        run: scripts/refresh_apple_spm.sh ios
+        env:
+          PLEAZYNG_APPLE_SOURCE_ROOT: ${{ github.workspace }}
+        run: capture-tools/scripts/refresh_apple_spm.sh ios
 
       - name: Build the Store-mode iOS Simulator app
         env:
@@ -123,6 +126,8 @@ jobs:
           test -d build/ios/iphonesimulator/Pleazyng.app
 
       - name: Capture actual iPhone and iPad app screens
+        env:
+          PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
         run: |
           python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-ios \
             --product-root "$GITHUB_WORKSPACE" \
@@ -259,6 +264,8 @@ jobs:
           test -d "$TVOS_DERIVED_DATA/Build/Products/Debug-appletvsimulator/Runner.app"
 
       - name: Capture the actual tvOS app screen
+        env:
+          PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
         run: |
           python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-tvos \
             --product-root "$GITHUB_WORKSPACE" \
@@ -273,7 +280,7 @@ jobs:
           retention-days: 7
 
   macos:
-    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'macos-only')
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'ios-macos-only' || inputs.target == 'macos-only')
     runs-on: macos-26-intel
     timeout-minutes: 210
     steps:
@@ -343,7 +350,9 @@ jobs:
         run: mkdir -p build/macos/SourcePackages
 
       - name: Refresh pinned macOS Swift packages
-        run: scripts/refresh_apple_spm.sh macos
+        env:
+          PLEAZYNG_APPLE_SOURCE_ROOT: ${{ github.workspace }}
+        run: capture-tools/scripts/refresh_apple_spm.sh macos
 
       - name: Build the unsigned Mac App Store candidate
         run: |
@@ -354,6 +363,8 @@ jobs:
             --derived-data-dir "$RUNNER_TEMP/apple-store-macos-derived-data"
 
       - name: Capture the actual macOS app window
+        env:
+          PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
         run: |
           python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-macos \
             --product-root "$GITHUB_WORKSPACE" \
@@ -371,6 +382,7 @@ jobs:
     if: >-
       always() && github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' &&
       ((inputs.target == 'all' && needs.ios.result == 'success' && needs.tvos.result == 'success' && needs.macos.result == 'success') ||
+       (inputs.target == 'ios-macos-only' && inputs.artifact_run_id != '' && needs.ios.result == 'success' && needs.macos.result == 'success') ||
        (inputs.target == 'macos-only' && inputs.artifact_run_id != '' && needs.macos.result == 'success'))
     needs: [ios, tvos, macos]
     runs-on: ubuntu-latest
@@ -387,8 +399,24 @@ jobs:
           path: capture-tools
           persist-credentials: false
 
+      - name: Verify the prior artifact run and record its tool revision
+        id: prior-run
+        if: inputs.artifact_run_id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRIOR_CAPTURE_RUN_ID: ${{ inputs.artifact_run_id }}
+        run: |
+          set -euo pipefail
+          [[ "$PRIOR_CAPTURE_RUN_ID" =~ ^[0-9]+$ ]]
+          workflow_id="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/apple-store-screenshots.yml" --jq .id)"
+          [[ "$workflow_id" =~ ^[0-9]+$ ]]
+          tool_sha="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PRIOR_CAPTURE_RUN_ID" \
+            --jq "if .workflow_id == $workflow_id and .event == \"workflow_dispatch\" and .head_branch == \"main\" and .status == \"completed\" then .head_sha else error(\"prior run is not a completed main-branch Apple Store Screenshots dispatch\") end")"
+          [[ "$tool_sha" =~ ^[0-9a-f]{40}$ ]]
+          echo "tool_sha=$tool_sha" >> "$GITHUB_OUTPUT"
+
       - name: Download iOS captures
-        if: inputs.target == 'all' || inputs.target == ''
+        if: inputs.target == 'all' || inputs.target == 'ios-macos-only' || inputs.target == ''
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: apple-store-captures-ios-v3.0.36
@@ -411,7 +439,7 @@ jobs:
           path: ${{ runner.temp }}/apple-store-captures-tvos
 
       - name: Reuse tvOS captures from a completed run
-        if: inputs.target == 'macos-only'
+        if: inputs.target == 'ios-macos-only' || inputs.target == 'macos-only'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: apple-store-captures-tvos-v3.0.36
@@ -426,12 +454,16 @@ jobs:
           path: ${{ runner.temp }}/apple-store-captures-macos
 
       - name: Verify and package the Apple screenshot set
+        env:
+          PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
+          LEGACY_TOOL_SOURCE_SHA: ${{ steps.prior-run.outputs.tool_sha }}
         run: |
           python3 capture-tools/scripts/capture_apple_store_screenshots.py package \
             --ios-dir "$RUNNER_TEMP/apple-store-captures-ios" \
             --tvos-dir "$RUNNER_TEMP/apple-store-captures-tvos" \
             --macos-dir "$RUNNER_TEMP/apple-store-captures-macos" \
-            --output-dir "$RUNNER_TEMP/apple-store-screenshots-v3.0.36"
+            --output-dir "$RUNNER_TEMP/apple-store-screenshots-v3.0.36" \
+            --legacy-tool-source-sha "$LEGACY_TOOL_SOURCE_SHA"
 
       - name: Attest the screenshot package
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4

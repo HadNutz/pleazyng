@@ -61,6 +61,13 @@ def require_source(product_root: Path) -> None:
         raise ValueError(f"Expected {VERSION}+{BUILD_NUMBER} in pubspec.yaml, found {version_line!r}")
 
 
+def require_capture_tools_sha() -> str:
+    value = os.environ.get("PLEAZYNG_CAPTURE_TOOLS_SHA", "")
+    if re.fullmatch(r"[0-9a-f]{40}", value) is None:
+        raise ValueError("PLEAZYNG_CAPTURE_TOOLS_SHA must identify the capture-tools checkout commit")
+    return value
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as source:
@@ -225,6 +232,7 @@ def capture_simulator(
     attempt: str,
     app_digest: str,
     build_defines: list[str],
+    tool_source_sha: str,
 ) -> dict[str, Any]:
     device = create_simulator(platform, category, run_id, attempt)
     try:
@@ -244,6 +252,7 @@ def capture_simulator(
             "capture_method": ["xcrun", "simctl", "io", device["udid"], "screenshot", "--type=png"],
             "source_tag": SOURCE_TAG,
             "source_sha": SOURCE_SHA,
+            "capture_tools_sha": tool_source_sha,
             "bundle_id": BUNDLE_ID,
             "app_version": VERSION,
             "app_build": BUILD_NUMBER,
@@ -267,6 +276,7 @@ def write_capture_manifest(output: Path, platform: str, captures: list[dict[str,
         "product": "Pleazyng",
         "source_tag": SOURCE_TAG,
         "source_sha": SOURCE_SHA,
+        "capture_tools_sha": captures[0]["capture_tools_sha"],
         "product_version": VERSION,
         "product_build": BUILD_NUMBER,
         "platform": platform,
@@ -281,6 +291,7 @@ def write_capture_manifest(output: Path, platform: str, captures: list[dict[str,
 def capture_ios(args: argparse.Namespace) -> None:
     product_root = args.product_root.resolve(strict=True)
     require_source(product_root)
+    tool_source_sha = require_capture_tools_sha()
     app = args.app.resolve(strict=True)
     identity = app_info(app)
     if identity["bundle_id"] != BUNDLE_ID:
@@ -292,12 +303,12 @@ def capture_ios(args: argparse.Namespace) -> None:
     captures.append(capture_simulator(
         app, output, platform="iOS", category="iphone", filename="iphone-01-onboarding.png",
         run_id=args.run_id, attempt=args.run_attempt, app_digest=app_digest,
-        build_defines=IOS_MAC_STORE_DEFINES,
+        build_defines=IOS_MAC_STORE_DEFINES, tool_source_sha=tool_source_sha,
     ))
     captures.append(capture_simulator(
         app, output, platform="iOS", category="ipad", filename="ipad-01-onboarding.png",
         run_id=args.run_id, attempt=args.run_attempt, app_digest=app_digest,
-        build_defines=IOS_MAC_STORE_DEFINES,
+        build_defines=IOS_MAC_STORE_DEFINES, tool_source_sha=tool_source_sha,
     ))
     write_capture_manifest(output, "iOS and iPadOS", captures)
     print(f"Captured authentic iPhone and iPad app screens in {output}")
@@ -306,6 +317,7 @@ def capture_ios(args: argparse.Namespace) -> None:
 def capture_tvos(args: argparse.Namespace) -> None:
     product_root = args.product_root.resolve(strict=True)
     require_source(product_root)
+    tool_source_sha = require_capture_tools_sha()
     app = args.app.resolve(strict=True)
     identity = app_info(app)
     if identity["bundle_id"] != BUNDLE_ID:
@@ -315,7 +327,7 @@ def capture_tvos(args: argparse.Namespace) -> None:
     capture = capture_simulator(
         app, output, platform="tvOS", category="tvos", filename="tvos-01-onboarding.png",
         run_id=args.run_id, attempt=args.run_attempt, app_digest=sha256_tree(app),
-        build_defines=TVOS_STORE_DEFINES,
+        build_defines=TVOS_STORE_DEFINES, tool_source_sha=tool_source_sha,
     )
     write_capture_manifest(output, "tvOS", [capture])
     print(f"Captured authentic tvOS app screen in {output}")
@@ -344,6 +356,7 @@ print(number.intValue)
 def capture_macos(args: argparse.Namespace) -> None:
     product_root = args.product_root.resolve(strict=True)
     require_source(product_root)
+    tool_source_sha = require_capture_tools_sha()
     app = args.app.resolve(strict=True)
     identity = app_info(app)
     output = args.output_dir.resolve()
@@ -386,6 +399,7 @@ def capture_macos(args: argparse.Namespace) -> None:
         "capture_method": ["/usr/sbin/screencapture", "-x", "-l", window_id],
         "source_tag": SOURCE_TAG,
         "source_sha": SOURCE_SHA,
+        "capture_tools_sha": tool_source_sha,
         "bundle_id": identity["bundle_id"],
         "app_version": identity["version"],
         "app_build": identity["build_number"],
@@ -409,9 +423,13 @@ def load_platform_capture(
     directory: Path,
     expected_platform: str,
     expected_defines: list[str],
+    legacy_tool_source_sha: str | None,
 ) -> tuple[dict[str, Any], list[tuple[Path, dict[str, Any]]]]:
     manifest_path = directory / "capture-provenance.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest_tool_sha = manifest.get("capture_tools_sha") or legacy_tool_source_sha
+    if re.fullmatch(r"[0-9a-f]{40}", manifest_tool_sha or "") is None:
+        raise ValueError(f"Capture tools source SHA is missing or invalid for {expected_platform}")
     if (manifest.get("schema_version") != 1
             or manifest.get("source_tag") != SOURCE_TAG
             or manifest.get("source_sha") != SOURCE_SHA
@@ -428,6 +446,10 @@ def load_platform_capture(
             raise ValueError("Capture receipt contains an invalid filename")
         image = directory / filename
         dimensions = list(png_dimensions(image))
+        capture_tool_sha = capture.get("capture_tools_sha") or manifest_tool_sha
+        if capture_tool_sha != manifest_tool_sha:
+            raise ValueError(f"Capture tools source SHA differs within {expected_platform}: {image}")
+        capture["capture_tools_sha"] = capture_tool_sha
         expected_capture_platform = {
             "iOS and iPadOS": "iOS",
             "tvOS": "tvOS",
@@ -464,8 +486,13 @@ def package_captures(args: argparse.Namespace) -> None:
         "macOS": IOS_MAC_STORE_DEFINES,
     }
     images: list[tuple[Path, dict[str, Any]]] = []
+    legacy_tool_source_sha = args.legacy_tool_source_sha
+    if legacy_tool_source_sha and re.fullmatch(r"[0-9a-f]{40}", legacy_tool_source_sha) is None:
+        raise ValueError("Legacy capture tools source SHA must be a full lowercase Git commit")
     for platform, directory in source_dirs.items():
-        manifest, captures = load_platform_capture(directory, platform, expected_defines[platform])
+        manifest, captures = load_platform_capture(
+            directory, platform, expected_defines[platform], legacy_tool_source_sha,
+        )
         if len(captures) != (2 if platform == "iOS and iPadOS" else 1):
             raise ValueError(f"Unexpected screenshot count for {platform}: {len(captures)}")
         images.extend(captures)
@@ -490,6 +517,12 @@ def package_captures(args: argparse.Namespace) -> None:
         "product_version": VERSION,
         "product_build": BUILD_NUMBER,
         "build_mode": "App Store IAP",
+        "packaging_tool_source_sha": require_capture_tools_sha(),
+        "capture_tool_source_sha_by_platform": {
+            "ios": next(item["capture_tools_sha"] for item in final_captures if item["filename"].startswith("iphone-")),
+            "tvos": next(item["capture_tools_sha"] for item in final_captures if item["filename"].startswith("tvos-")),
+            "macos": next(item["capture_tools_sha"] for item in final_captures if item["filename"].startswith("macos-")),
+        },
         "build_defines_by_platform": {
             "ios": IOS_MAC_STORE_DEFINES,
             "tvos": TVOS_STORE_DEFINES,
@@ -508,7 +541,7 @@ def package_captures(args: argparse.Namespace) -> None:
         "Every image shows first-launch onboarding without a server or account. "
         "The set does not demonstrate playback, StoreKit, device qualification, "
         "sandbox runtime, App Store processing, or media content.\n"
-        "See capture-provenance.json for build, simulator, device, dimension, and hash evidence.\n",
+        "See capture-provenance.json for product/tool source revisions, build, simulator, device, dimension, and hash evidence.\n",
         encoding="utf-8",
     )
     archive = output.with_suffix(".zip")
@@ -535,6 +568,7 @@ def parse_args() -> argparse.Namespace:
     package.add_argument("--tvos-dir", required=True, type=Path)
     package.add_argument("--macos-dir", required=True, type=Path)
     package.add_argument("--output-dir", required=True, type=Path)
+    package.add_argument("--legacy-tool-source-sha", help="Capture-tools commit from a prior run when its receipts lack that field")
     package.set_defaults(handler=package_captures)
     return parser.parse_args()
 

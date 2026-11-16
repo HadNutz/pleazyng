@@ -34,7 +34,15 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+if [[ -n "${PLEAZYNG_APPLE_SOURCE_ROOT:-}" ]]; then
+  if [[ ! -d "$PLEAZYNG_APPLE_SOURCE_ROOT" ]]; then
+    echo "error: PLEAZYNG_APPLE_SOURCE_ROOT is not a directory: $PLEAZYNG_APPLE_SOURCE_ROOT" >&2
+    exit 1
+  fi
+  ROOT="$(cd "$PLEAZYNG_APPLE_SOURCE_ROOT" && pwd -P)"
+else
+  ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+fi
 cd "$ROOT"
 
 SUPPORTED=(ios macos)
