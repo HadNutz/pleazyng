@@ -154,6 +154,11 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         helper = (ROOT / "scripts/refresh_apple_spm.sh").read_text(encoding="utf-8")
         self.assertIn("PLEAZYNG_APPLE_SOURCE_ROOT", helper)
 
+        signed_builder = (ROOT / "scripts/build_macos_app_store_signed.py").read_text(encoding="utf-8")
+        flutter_config_command = signed_builder.split('"flutter", "build", "macos",', 1)[1].split("],", 1)[0]
+        self.assertIn('"--config-only"', flutter_config_command)
+        self.assertNotIn('"--no-codesign"', flutter_config_command)
+
         runner = next(line for line in workflow.splitlines() if "runs-on:" in line)
         self.assertIn('"labels":["self-hosted","macOS","ARM64","private-apple","gha-{0}-macos-app-store"]', runner)
 

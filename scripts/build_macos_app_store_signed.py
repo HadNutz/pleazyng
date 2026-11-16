@@ -669,7 +669,7 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
     build_env = _build_environment()
     source_sha = source["source_commit"]
     _run_visible([
-        "flutter", "build", "macos", "--release", "--no-codesign", "--config-only", "--verbose",
+        "flutter", "build", "macos", "--release", "--config-only", "--verbose",
         "--dart-define=SUPPORTER_MODE=iap", "--dart-define=ENABLE_UPDATE_CHECK=false",
         f"--dart-define=GIT_COMMIT={source_sha}",
         f"--dart-define=PLEAZYNG_DISCORD_APPLICATION_ID={os.environ.get('PLEAZYNG_DISCORD_APPLICATION_ID', '')}",
