@@ -127,9 +127,10 @@ class DvBitstreamSanitizer {
   /**
    * Returns whether the SEI RBSP (starting after the 2-byte HEVC NAL header) begins with an
    * HDR10+ message: user_data_registered_itu_t_t35 with country code 0xB5 (United States),
-   * provider code 0x003C (Samsung), provider oriented code 0x0001, application identifier 4
-   * (ST 2094-40), application version 0 or 1. Malformed/truncated data returns false so the
-   * NAL is kept.
+   * provider code 0x003C (Samsung), and application identifier 4 (ST 2094-40). The oriented
+   * code and application version may vary across Samsung releases, including hybrid HDR10+
+   * messages with oriented code 0x0010 (#3062). A complete seven-byte identifier is still
+   * required; malformed/truncated data returns false so the NAL is kept.
    */
   private fun isHdr10PlusSeiNalUnit(buf: ByteArray, rbspStart: Int, nalEnd: Int): Boolean {
     var pos = rbspStart
@@ -155,18 +156,12 @@ class DvBitstreamSanitizer {
       return false
     }
 
-    // The identifier bytes (B5 00 3C 00 01 04 00/01) cannot contain the 0x000003 emulation
+    // The identifier bytes (B5 00 3C xx xx 04 <version>) cannot contain the 0x000003 emulation
     // prevention pattern, so they can be read without RBSP unescaping.
     val countryCode = buf[pos].toInt() and 0xFF
     val providerCode = ((buf[pos + 1].toInt() and 0xFF) shl 8) or (buf[pos + 2].toInt() and 0xFF)
-    val orientedCode = ((buf[pos + 3].toInt() and 0xFF) shl 8) or (buf[pos + 4].toInt() and 0xFF)
     val appIdentifier = buf[pos + 5].toInt() and 0xFF
-    val appVersion = buf[pos + 6].toInt() and 0xFF
 
-    return countryCode == 0xB5 &&
-      providerCode == 0x003C &&
-      orientedCode == 0x0001 &&
-      appIdentifier == 4 &&
-      (appVersion == 0 || appVersion == 1)
+    return countryCode == 0xB5 && providerCode == 0x003C && appIdentifier == 4
   }
 }

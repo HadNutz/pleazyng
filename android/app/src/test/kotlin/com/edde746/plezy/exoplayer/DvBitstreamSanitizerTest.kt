@@ -52,6 +52,62 @@ class DvBitstreamSanitizerTest {
   }
 
   @Test
+  fun stripsSamsungApplication4SeiWithOrientedCode0010() {
+    // Hybrid HDR10+ releases include this second T.35 message alongside the standard one.
+    val t35 = hex("b5003c0010040100619000080008000c000800050004c002e001d0012000e8009a40")
+    val sei = annexBNal(39, concat(byteArrayOf(0x04, t35.size.toByte()), t35, byteArrayOf(0x80.toByte())))
+    val vcl1 = annexBNal(1, byteArrayOf(0x01, 0x02))
+    val vcl2 = annexBNal(1, byteArrayOf(0x03))
+    val buffer = bufferOf(vcl1, hdr10PlusSei(), sei, vcl2)
+
+    val stripped = sanitizer.sanitize(buffer, stripHdr10PlusSei = true, stripDvRpu = false)
+
+    assertEquals(2, stripped)
+    assertArrayEquals(concat(vcl1, vcl2), remainingBytes(buffer))
+  }
+
+  @Test
+  fun stripsSamsungApplication4AcrossApplicationVersions() {
+    val vcl = annexBNal(1, byteArrayOf(0x01, 0x02))
+
+    for (appVersion in listOf(0x00, 0x01, 0x02, 0xFF)) {
+      val sei = annexBNal(39, hdr10PlusSeiPayload(orientedCode = 0x0010, appVersion = appVersion))
+      val buffer = bufferOf(vcl, sei)
+
+      val stripped = sanitizer.sanitize(buffer, stripHdr10PlusSei = true, stripDvRpu = false)
+
+      assertEquals("application version $appVersion", 1, stripped)
+      assertArrayEquals("application version $appVersion", vcl, remainingBytes(buffer))
+    }
+  }
+
+  @Test
+  fun preservesSamsungT35SeiForAnotherApplication() {
+    val sei = annexBNal(
+      39,
+      byteArrayOf(0x04, 0x07, 0xB5.toByte(), 0x00, 0x3C, 0x00, 0x10, 0x05, 0x00, 0x80.toByte())
+    )
+    val buffer = bufferOf(annexBNal(1, byteArrayOf(0x01)), sei, annexBNal(1, byteArrayOf(0x02)))
+    val original = remainingBytes(buffer)
+
+    sanitizer.sanitize(buffer, stripHdr10PlusSei = true, stripDvRpu = false)
+
+    assertArrayEquals(original, remainingBytes(buffer))
+  }
+
+  @Test
+  fun preservesTruncatedApplicationVersion() {
+    // The six-byte identifier is present, but its declared application-version byte is absent.
+    val truncated = annexBNal(39, byteArrayOf(0x04, 0x06, 0xB5.toByte(), 0x00, 0x3C, 0x00, 0x10, 0x04))
+    val buffer = bufferOf(annexBNal(1, byteArrayOf(0x01)), truncated)
+    val original = remainingBytes(buffer)
+
+    sanitizer.sanitize(buffer, stripHdr10PlusSei = true, stripDvRpu = false)
+
+    assertArrayEquals(original, remainingBytes(buffer))
+  }
+
+  @Test
   fun noOpWithoutSeiNals() {
     val buffer = bufferOf(annexBNal(1, byteArrayOf(0x01, 0x02)), annexBNal(1, byteArrayOf(0x03)))
     val original = remainingBytes(buffer)
@@ -248,13 +304,26 @@ class DvBitstreamSanitizerTest {
 
   /**
    * SEI payload: type 4 (user_data_registered_itu_t_t35), size 7, then the HDR10+
-   * identifiers — country 0xB5, provider 0x003C, oriented code 0x0001, app id 4, version 0 —
+   * identifiers — country 0xB5, provider 0x003C, oriented code, app id 4, application version —
    * closed by the rbsp_trailing_bits stop byte real SEI NALs always end with (a trailing 0x00
    * would otherwise be ambiguous against a following 3-byte start code).
    */
-  private fun hdr10PlusSeiPayload(): ByteArray = byteArrayOf(0x04, 0x07, 0xB5.toByte(), 0x00, 0x3C, 0x00, 0x01, 0x04, 0x00, 0x80.toByte())
+  private fun hdr10PlusSeiPayload(orientedCode: Int = 0x0001, appVersion: Int = 0): ByteArray = byteArrayOf(
+    0x04,
+    0x07,
+    0xB5.toByte(),
+    0x00,
+    0x3C,
+    (orientedCode shr 8).toByte(),
+    orientedCode.toByte(),
+    0x04,
+    appVersion.toByte(),
+    0x80.toByte()
+  )
 
   private fun hdr10PlusSei(): ByteArray = annexBNal(39, hdr10PlusSeiPayload())
+
+  private fun hex(value: String): ByteArray = ByteArray(value.length / 2) { value.substring(it * 2, it * 2 + 2).toInt(16).toByte() }
 
   private fun concat(vararg parts: ByteArray): ByteArray {
     val result = ByteArray(parts.sumOf { it.size })

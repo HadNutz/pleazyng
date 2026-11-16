@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Strip Samsung HDR10+ application-4 SEI messages across oriented-code and version variants before the Android Dolby Vision decoder, while preserving unrelated and truncated SEI data. Pleazyng independently adapted the fix contributed upstream by [@edde746](https://github.com/edde746) in [commit `a4f1b4f313`](https://github.com/edde746/plezy/commit/a4f1b4f313ee166afa0e0339ff7c1ebab7dc1bd6) for [issue #3062](https://github.com/edde746/plezy/issues/3062); see [upstream source credit](UPSTREAM_ATTRIBUTION.md#credited-plezy-commits).
+
 - Rank an artist's album matches above unrelated titles that merely contain the artist name; adapted independently from [upstream Plezy commit `a597bcbe`](https://github.com/edde746/plezy/commit/a597bcbee228e1f519b5f2a527bc239981fd0672).
 
 - Preserve source aspect ratio on the native webOS video plane and leave black bars inside the player viewport.
