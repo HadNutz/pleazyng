@@ -620,6 +620,10 @@ jobs:
           while IFS= read -r changed_file; do
             [[ -z "$changed_file" ]] && continue
             case "$changed_file" in
+              # This signed catalog is fetched and verified at runtime, not
+              # embedded in the immutable platform artifacts.
+              content/visualizer-catalog.json)
+                ;;
               webos/CMakeLists.txt)
                 python3 scripts/verify_webos_link_patch.py "$release_commit" "$GITHUB_SHA"
                 ;;
@@ -1846,7 +1850,7 @@ jobs:
   build-macos:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_macos) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'macos-validation') }}
     needs: validate-trusted-ref
-    timeout-minutes: 150
+    timeout-minutes: 210
     runs-on: ${{ needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-build-macos"]}}', github.run_id)) || 'macos-26-intel' }}
     permissions:
       actions: read
@@ -2104,7 +2108,7 @@ jobs:
 
       - name: Build macOS
         if: inputs.macos_compilation_job_id == ''
-        timeout-minutes: 100
+        timeout-minutes: 150
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         env:
           FLUTTER_XCODE_CODE_SIGNING_ALLOWED: "NO"
@@ -3324,7 +3328,9 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ inputs.recovery_source_sha || needs.validate-trusted-ref.outputs.android_source_sha || github.sha }}
+          # Recovery tooling must come from this trusted workflow revision;
+          # product files are restored separately from their verified source SHA.
+          ref: ${{ github.sha }}
           sparse-checkout: |
             CHANGELOG.md
             UPSTREAM_ATTRIBUTION.md
@@ -3346,6 +3352,84 @@ jobs:
             Casks/snapetech-pleazyng.rb.template
           sparse-checkout-cone-mode: false
           persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ needs.validate-trusted-ref.outputs.android_source_sha || github.sha }}
+          path: product-source
+          sparse-checkout: |
+            CHANGELOG.md
+            UPSTREAM_ATTRIBUTION.md
+            games-native.lock.json
+            pubspec.yaml
+            docs/games/MOONLIGHT_SOURCE.md
+            assets/licenses/Moonlight_GPL_3.txt
+            assets/licenses/Moonlight_NOTICE.txt
+            android/settings.gradle.kts
+            android/app/build.gradle.kts
+            android/moonlight/**
+            android/app/src/main/kotlin/com/edde746/plezy/GameStreamPlatformViewFactory.kt
+            android/app/src/main/kotlin/com/edde746/plezy/GamesChannel.kt
+            android/app/src/main/kotlin/com/edde746/plezy/PlezyActivity.kt
+            lib/multiview/moonlight_game_workspace_surface.dart
+            lib/screens/games/games_screen.dart
+            docs/maintainers/capability-manifest.json
+            Casks/snapetech-pleazyng.rb.template
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Restore immutable product source files
+        env:
+          PRODUCT_SOURCE_SHA: ${{ needs.validate-trusted-ref.outputs.android_source_sha || github.sha }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import shutil
+          import subprocess
+          from pathlib import Path
+
+          root = Path.cwd()
+          source = root / "product-source"
+          expected = os.environ["PRODUCT_SOURCE_SHA"]
+          actual = subprocess.check_output(
+              ["git", "-C", str(source), "rev-parse", "HEAD"], text=True
+          ).strip()
+          if actual != expected:
+              raise SystemExit(f"Product source checkout mismatch: {actual} != {expected}")
+
+          paths = (
+              "CHANGELOG.md",
+              "UPSTREAM_ATTRIBUTION.md",
+              "games-native.lock.json",
+              "pubspec.yaml",
+              "docs/games/MOONLIGHT_SOURCE.md",
+              "assets/licenses/Moonlight_GPL_3.txt",
+              "assets/licenses/Moonlight_NOTICE.txt",
+              "android/settings.gradle.kts",
+              "android/app/build.gradle.kts",
+              "android/moonlight",
+              "android/app/src/main/kotlin/com/edde746/plezy/GameStreamPlatformViewFactory.kt",
+              "android/app/src/main/kotlin/com/edde746/plezy/GamesChannel.kt",
+              "android/app/src/main/kotlin/com/edde746/plezy/PlezyActivity.kt",
+              "lib/multiview/moonlight_game_workspace_surface.dart",
+              "lib/screens/games/games_screen.dart",
+              "docs/maintainers/capability-manifest.json",
+              "Casks/snapetech-pleazyng.rb.template",
+          )
+          for relative in paths:
+              src = source / relative
+              dst = root / relative
+              if not src.exists():
+                  raise SystemExit(f"Product source file is missing: {relative}")
+              dst.parent.mkdir(parents=True, exist_ok=True)
+              if src.is_dir():
+                  if dst.exists():
+                      shutil.rmtree(dst)
+                  shutil.copytree(src, dst)
+              else:
+                  shutil.copy2(src, dst)
+          print(f"Restored release inputs from product source {expected}")
+          PY
 
       - name: Validate release assembly imports
         run: |
@@ -3841,6 +3925,38 @@ jobs:
             echo EOF
           } >> "$GITHUB_OUTPUT"
 
+      - name: Prepare append-only Apple Store recovery assets
+        if: ${{ inputs.recovery_source_sha != '' }}
+        env:
+          RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.release_tag }}
+          PRODUCT_SOURCE_SHA: ${{ needs.validate-trusted-ref.outputs.release_commit }}
+          PACKAGING_SOURCE_SHA: ${{ inputs.recovery_source_sha }}
+          WORKFLOW_SOURCE_SHA: ${{ github.sha }}
+          SOURCE_RUN_ID: ${{ inputs.reuse_platform_run_id }}
+          ASSEMBLY_RUN_ID: ${{ github.run_id }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 scripts/verify_release_attestation.py artifacts/ios-ipa/pleazyng-ios-appstore.ipa --repo "$GITHUB_REPOSITORY"
+          python3 scripts/verify_release_attestation.py artifacts/tvos-ipa/pleazyng-tvos-appstore.ipa --repo "$GITHUB_REPOSITORY"
+          python3 scripts/append_apple_store_release_assets.py prepare \
+            --repository "$GITHUB_REPOSITORY" \
+            --release-tag "$RELEASE_TAG" \
+            --directory artifacts \
+            --product-source-sha "$PRODUCT_SOURCE_SHA" \
+            --packaging-source-sha "$PACKAGING_SOURCE_SHA" \
+            --workflow-source-sha "$WORKFLOW_SOURCE_SHA" \
+            --source-run-id "$SOURCE_RUN_ID" \
+            --assembly-run-id "$ASSEMBLY_RUN_ID"
+
+      - name: Attest append-only Apple Store recovery assets
+        if: ${{ inputs.recovery_source_sha != '' }}
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: |
+            artifacts/APPLE-STORE-SHA256SUMS.txt
+            artifacts/APPLE-STORE-RECOVERY.json
+
       - name: Verify existing immutable release tag
         env:
           GH_TOKEN: ${{ github.token }}
@@ -3870,10 +3986,34 @@ jobs:
           print(f'Existing {tag} still resolves to the validated source {expected}.')
           PY
 
+      - name: Append signed Apple assets without replacing existing release assets
+        if: ${{ inputs.recovery_source_sha != '' }}
+        env:
+          RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.release_tag }}
+          PRODUCT_SOURCE_SHA: ${{ needs.validate-trusted-ref.outputs.release_commit }}
+          PACKAGING_SOURCE_SHA: ${{ inputs.recovery_source_sha }}
+          WORKFLOW_SOURCE_SHA: ${{ github.sha }}
+          SOURCE_RUN_ID: ${{ inputs.reuse_platform_run_id }}
+          ASSEMBLY_RUN_ID: ${{ github.run_id }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 scripts/append_apple_store_release_assets.py upload \
+            --repository "$GITHUB_REPOSITORY" \
+            --release-tag "$RELEASE_TAG" \
+            --directory artifacts \
+            --product-source-sha "$PRODUCT_SOURCE_SHA" \
+            --packaging-source-sha "$PACKAGING_SOURCE_SHA" \
+            --workflow-source-sha "$WORKFLOW_SOURCE_SHA" \
+            --source-run-id "$SOURCE_RUN_ID" \
+            --assembly-run-id "$ASSEMBLY_RUN_ID"
+
       - name: Create Release
+        if: ${{ inputs.recovery_source_sha == '' }}
         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
         with:
           files: ${{ steps.release-files.outputs.files }}
+          overwrite_files: false
           body_path: release-notes.md
           draft: true
           prerelease: false

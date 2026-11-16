@@ -22,7 +22,9 @@ import verify_release_ci as release_ci
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "snapetech-org/pleazyng"
 # Application sources, dependency pins, and native toolchain inputs are excluded.
+# The signed visualizer catalog is published and verified independently at runtime.
 RECOVERY_FILES = frozenset({
+    "content/visualizer-catalog.json",
     "scripts/prepare_android_sdk.py", "scripts/test_prepare_android_sdk.py",
     "tools/webos/NATIVE-PREFLIGHT.md",
     "webos/CMakeLists.txt", "scripts/verify_webos_link_patch.py", "scripts/test_verify_webos_link_patch.py",
@@ -99,6 +101,19 @@ def collection(path, key):
     if not isinstance(values, list) or result.get("total_count", len(values)) > len(values):
         raise RecoveryError(f"Incomplete GitHub {key} inventory; refusing recovery.")
     return values
+
+
+def trusted_versioned_release_title(run, version):
+    """Match a standard release run title emitted by the trusted workflow."""
+    if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", str(version)):
+        return False
+    titles = {
+        f"action:release:pool:{pool}:tag:v{version}"
+        for pool in ("public", "private")
+    }
+    # The workflow adds this prefix when private Apple signing was unavailable.
+    titles.update(f"apple-signing-unavailable:{title}" for title in tuple(titles))
+    return run.get("display_title") in titles
 
 
 def immutable_ci_source(repository, source_sha, version):
@@ -227,7 +242,7 @@ def verify_repaired_run(run_id, head_sha, version, repository, *, allow_pending=
     if (run.get("event") != "workflow_dispatch" or run.get("head_branch") != "main"
         or run.get("head_repository", {}).get("full_name") != repository
         or run.get("path", "").split("@")[0] != ".github/workflows/build.yml"
-        or run.get("display_title") != f"action:release:pool:private:tag:v{version}"
+        or not trusted_versioned_release_title(run, version)
         or not re.fullmatch(r"[a-f0-9]{40}", source_sha)
         or (run.get("status") != "completed" and not pending)):
         raise RecoveryError("Repaired platform source must be a trusted main release for the same version")
@@ -293,7 +308,7 @@ def verify_frozen_tvos_run(run_id, proof, repository=REPOSITORY):
     if repository != REPOSITORY or not str(run_id).isdigit() or int(run_id) < 1:
         raise RecoveryError('Frozen tvOS reuse requires an exact canonical source run')
     run = api(f'repos/{repository}/actions/runs/{run_id}')
-    title = re.fullmatch(r'action:release:pool:private:tag:v' + re.escape(proof['version'])
+    title = re.fullmatch(r'action:release:pool:public:tag:v' + re.escape(proof['version'])
                          + r':repair:([0-9a-f]{40})', run.get('display_title', ''))
     workflow = run.get('head_sha', '')
     if (not title or run.get('id') != int(run_id) or run.get('status') != 'completed'
@@ -321,6 +336,7 @@ def verify_frozen_tvos_run(run_id, proof, repository=REPOSITORY):
                 or matches[0].get('conclusion') != conclusion):
             raise RecoveryError('TV sibling source has an unexpected platform outcome: ' + name)
         selected[name] = matches[0]
+    _verify_frozen_apple_runner(selected[tv_name], int(run_id), 'tvos')
     ios = [job for job in jobs if job.get('name') == 'build-ios']
     if (len(ios) != 1 or ios[0].get('status') != 'completed'
             or ios[0].get('conclusion') not in ('failure', 'skipped')
@@ -378,7 +394,7 @@ def verify_frozen_ios_run(run_id, proof, repository=REPOSITORY):
     if repository != REPOSITORY or not str(run_id).isdigit() or int(run_id) < 1:
         raise RecoveryError('Frozen iOS reuse requires an exact canonical source run')
     run = api(f'repos/{repository}/actions/runs/{run_id}')
-    title = re.fullmatch(r'action:release:pool:private:tag:v' + re.escape(proof['version'])
+    title = re.fullmatch(r'action:release:pool:public:tag:v' + re.escape(proof['version'])
                          + r':repair:([0-9a-f]{40})', run.get('display_title', ''))
     workflow = run.get('head_sha', '')
     if (not title or run.get('id') != int(run_id) or run.get('status') != 'completed'
@@ -404,6 +420,7 @@ def verify_frozen_ios_run(run_id, proof, repository=REPOSITORY):
         if len(matches) != 1 or matches[0].get('status') != 'completed' or matches[0].get('conclusion') != 'success':
             raise RecoveryError('iOS sibling source has an unexpected platform outcome: ' + name)
         selected[name] = matches[0]
+    _verify_frozen_apple_runner(selected['build-ios'], int(run_id), 'ios')
     tv = [job for job in jobs if job.get('name') == 'Build tvOS developer package (arm64)']
     if len(tv) != 1 or tv[0].get('conclusion') != 'skipped' or tv[0].get('steps') != []:
         raise RecoveryError('iOS sibling source unexpectedly built tvOS')
@@ -446,6 +463,32 @@ def verify_frozen_ios_run(run_id, proof, repository=REPOSITORY):
             'job_id': selected['build-ios']['id'], 'run_attempt': run['run_attempt'],
             'packaging_approval': prior['packaging_approval'], 'artifact_id': artifact['id'],
             'artifact_digest': artifact['digest'], 'platforms_complete': True}
+
+
+def _verify_frozen_apple_runner(job, run_id, platform):
+    """Require one of the explicitly supported signed Apple runner routes."""
+    expected_label = 'macos-26-intel' if platform == 'ios' else 'macos-26'
+    labels = job.get('labels')
+    runner_id = job.get('runner_id')
+    runner_name = job.get('runner_name')
+    group = job.get('runner_group_name')
+    if (not isinstance(labels, list) or type(runner_id) is not int or runner_id < 1
+            or not isinstance(runner_name, str) or not runner_name.strip()):
+        raise RecoveryError(f'{platform} signed recovery lacks assigned runner metadata (run {run_id})')
+    if (group == 'GitHub Actions' and labels == [expected_label]
+            and re.fullmatch(r'GitHub Actions [1-9][0-9]*', runner_name)):
+        return
+    private_task_label = f'gha-{run_id}-build-{platform}'
+    private_labels = {
+        'self-hosted', 'macOS', 'ARM64', 'private-apple', 'ng-shared-main-pleazyng',
+        f'ng-main-run-{run_id}', private_task_label,
+    }
+    if group == 'private-apple-builds' and private_labels.issubset(set(labels)):
+        return
+    raise RecoveryError(
+        f'{platform} signed recovery did not use its expected public hosted or exact private Apple runner '
+        f'(run {run_id})'
+    )
 
 
 def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow_pending=False, rebuild_linux=False, rebuild_macos=False, rebuild_tvos=False, rebuild_ios=False, repaired_run=None, require_homebrew_cask=False, packaging_source_sha=None, workflow_source_sha=None, include_apple_store_build=False, tvos_run=None, ios_run=None):
@@ -491,7 +534,7 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
         or source.get("head_branch") != "main"
         or source.get("head_repository", {}).get("full_name") != repository
         or source.get("path", "").split("@")[0] != ".github/workflows/build.yml"
-        or source.get("display_title") != f"action:release:pool:private:tag:v{version}"
+        or not trusted_versioned_release_title(source, version)
         or not re.fullmatch(r"[0-9a-f]{40}", source_sha)):
         raise RecoveryError("Source must be a trusted-main release run for this version, completed before reuse.")
     comparison = api(f"repos/{repository}/compare/{source_sha}...{head_sha}")
@@ -598,7 +641,7 @@ def verify_macos_packaging_recovery(run_id, macos_run, head_sha, version, reposi
             or run.get("head_branch") != "main" or run.get("head_repository", {}).get("full_name") != repository
             or run.get("path", "").split("@")[0] != ".github/workflows/build.yml"):
             raise RecoveryError("Mac recovery requires completed trusted-main workflow runs.")
-    if source.get("display_title") != f"action:release:pool:private:tag:v{version}" or native.get("conclusion") != "success":
+    if not trusted_versioned_release_title(source, version) or native.get("conclusion") != "success":
         raise RecoveryError("Mac packaging recovery must be successful and match the original versioned release.")
     source_sha = source["head_sha"]
     for target in dict.fromkeys((head_sha, native["head_sha"])):
@@ -689,7 +732,7 @@ def verify_android_run(run_id, head_sha, version, repository=REPOSITORY, *, allo
         or source.get("head_branch") != "main"
         or source.get("head_repository", {}).get("full_name") != repository
         or source.get("path", "").split("@")[0] != ".github/workflows/build.yml"
-        or source.get("display_title") != f"action:release:pool:private:tag:v{version}"
+        or not trusted_versioned_release_title(source, version)
         or not re.fullmatch(r"[0-9a-f]{40}", source_sha)):
         raise RecoveryError("Android source must be a completed trusted-main release for this version.")
     comparison = api(f"repos/{repository}/compare/{source_sha}...{head_sha}")

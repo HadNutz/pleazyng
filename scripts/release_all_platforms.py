@@ -67,6 +67,9 @@ NATIVE_FAILED_RUN_QUEUE_TIMEOUT_SECONDS = 15 * 60
 APPLE_JIT_EVIDENCE_ROOT: Path | None = None
 APPLE_JIT_SSH_TARGET = os.environ.get("APPLE_JIT_SSH_TARGET", "keith@100.64.0.3")
 RELEASE_TAG_REUSE_ALLOWLIST = frozenset({
+    # This signed envelope is fetched and verified by the app at runtime; it is
+    # published independently and is not embedded in platform build artifacts.
+    "content/visualizer-catalog.json",
     "tools/webos/NATIVE-PREFLIGHT.md",
     "webos/CMakeLists.txt", "scripts/verify_webos_link_patch.py", "scripts/test_verify_webos_link_patch.py",
     "tools/webos/check_audio_plugin_syntax.sh",
@@ -1801,11 +1804,44 @@ def ensure_release(
             expected_title=(run_title, run_title.replace("pool:public", "pool:private")),
         )
 
+    def failed_run_summary(failed_run: dict) -> str:
+        run_id = failed_run.get("databaseId")
+        conclusion = failed_run.get("conclusion") or failed_run.get("status") or "unknown"
+        jobs = failed_run.get("jobs")
+        if not isinstance(jobs, list) and isinstance(run_id, int):
+            try:
+                details = gh_json(
+                    "run", "view", str(run_id), "--repo", PLEZY_REPO,
+                    "--json", "databaseId,status,conclusion,jobs",
+                )
+                if isinstance(details, dict) and details.get("databaseId") == run_id:
+                    jobs = details.get("jobs")
+            except ReleaseError:
+                return (
+                    f"Release build run {run_id} concluded {conclusion}; "
+                    "failed job details are unavailable"
+                )
+        failed_jobs = []
+        if isinstance(jobs, list):
+            for job in jobs:
+                if (not isinstance(job, dict) or job.get("status") != "completed"
+                        or job.get("conclusion") not in {
+                            "failure", "timed_out", "startup_failure", "action_required", "cancelled",
+                        }):
+                    continue
+                name = job.get("name") or "unnamed job"
+                job_conclusion = job.get("conclusion") or job.get("status") or "unknown"
+                failed_jobs.append(f"{name} ({job_conclusion})")
+        detail = ", ".join(failed_jobs) if failed_jobs else "no completed failing jobs were reported"
+        return f"Release build run {run_id or 'unknown'} concluded {conclusion}; failed job(s): {detail}"
+
     def retry_after_unassigned_tvos(failed_run: dict) -> dict:
+        failure = failed_run_summary(failed_run)
         if not allow_private_apple_retry:
             raise ReleaseError(
-                "Hosted tvOS did not acquire a runner; hosted failures never reroute to private JIT automatically. "
-                "Repair the failed lane explicitly before dispatching a separate signed recovery."
+                f"{failure}. Private Apple recovery is disabled by policy; "
+                "hosted failures never reroute to private JIT automatically. "
+                "repair the failed lane explicitly before dispatching a separate signed recovery."
             )
         source_run_id = failed_run.get("databaseId")
         try:
@@ -1814,8 +1850,8 @@ def ensure_release(
             )
         except RunnerAcquisitionError as error:
             raise ReleaseError(
-                f"Release build run {source_run_id} failed, but GitHub evidence does not prove "
-                f"a tvOS runner-acquisition cancellation ({error})."
+                f"{failure}. GitHub evidence does not prove a tvOS runner-acquisition "
+                f"cancellation ({error}); no private recovery was started."
             ) from error
         print(
             f"GitHub canceled tvOS before assigning a runner in release run {source_run_id}; "
@@ -2094,106 +2130,220 @@ def validate_packaging_repair_proof(proof: dict, tag: str, packaging_sha: str, w
 
 
 def verify_packaging_repair_assembly(scratch: Path, tag: str, source_proof: dict, run: dict) -> dict:
-    """Bind the assembled recovery receipt to its actual workflow and release bytes."""
+    """Verify an append-only Apple recovery while preserving every old release asset."""
     directory = scratch / "packaging-repair-assembly"
     directory.mkdir()
+    names = (
+        "APPLE-STORE-SHA256SUMS.txt", "APPLE-STORE-RECOVERY.json",
+        "pleazyng-ios-appstore.ipa", "pleazyng-tvos-appstore.ipa",
+    )
     command(["gh", "release", "download", tag, "--repo", PLEZY_REPO,
-             "--pattern", "SHA256SUMS.txt", "--pattern", "platform-reuse-provenance.json",
+             *[arg for name in names for arg in ("--pattern", name)],
              "--dir", str(directory)])
-    checksums = directory / "SHA256SUMS.txt"
-    receipt_path = directory / "platform-reuse-provenance.json"
+    proof_path = directory / "APPLE-STORE-RECOVERY.json"
+    checksum_path = directory / "APPLE-STORE-SHA256SUMS.txt"
     workflow_sha = source_proof["workflow_source_sha"]
-    result = command(["gh", "attestation", "verify", str(checksums), "--repo", PLEZY_REPO,
-                      "--signer-workflow", f"{PLEZY_REPO}/.github/workflows/build.yml",
-                      "--source-digest", workflow_sha, "--format", "json"], capture=True)
-    verification = json.loads(result.stdout)
     expected_run = f"https://github.com/{PLEZY_REPO}/actions/runs/{run['databaseId']}"
-    if not isinstance(verification, list) or not any(
-            str(cert.get("sourceRepositoryIdentifier")) == "1433487464"
-            and cert.get("sourceRepositoryDigest") == workflow_sha
-            and re.fullmatch(re.escape(expected_run) + r"(?:/attempts/[1-9][0-9]*)?",
-                             str(cert.get("runInvocationURI", "")))
-            for item in verification for cert in
-            [item.get("verificationResult", {}).get("signature", {}).get("certificate", {})]):
-        raise ReleaseError("Recovery checksums are not attested by the actual assembly run and workflow source.")
-    expected = [line.split()[0] for line in checksums.read_text().splitlines()
-                if len(line.split()) == 2 and line.split()[1].lstrip("*") == receipt_path.name]
-    actual = hashlib.sha256(receipt_path.read_bytes()).hexdigest()
-    if expected != [actual]:
-        raise ReleaseError("Attested recovery checksums do not uniquely bind the assembly receipt.")
-    receipt = json.loads(receipt_path.read_text())
-    validate_packaging_repair_proof(receipt, tag, source_proof["packaging_source_sha"], workflow_sha)
-    if (receipt["product_source_sha"] != source_proof["product_source_sha"]
-            or receipt.get("assembly_run_id") != run["databaseId"]
-            or receipt.get("actual_checkout_sha") != source_proof["packaging_source_sha"]
+
+    def verify_attestation(path: Path) -> None:
+        result = command(["gh", "attestation", "verify", str(path), "--repo", PLEZY_REPO,
+                          "--signer-workflow", f"{PLEZY_REPO}/.github/workflows/build.yml",
+                          "--source-digest", workflow_sha, "--format", "json"], capture=True)
+        verification = json.loads(result.stdout)
+        if not isinstance(verification, list) or not any(
+                str(cert.get("sourceRepositoryIdentifier")) == "1433487464"
+                and cert.get("sourceRepositoryDigest") == workflow_sha
+                and re.fullmatch(re.escape(expected_run) + r"(?:/attempts/[1-9][0-9]*)?",
+                                 str(cert.get("runInvocationURI", "")))
+                for item in verification for cert in
+                [item.get("verificationResult", {}).get("signature", {}).get("certificate", {})]):
+            raise ReleaseError(f"Apple recovery asset is not attested by assembly run {run['databaseId']}.")
+
+    verify_attestation(proof_path)
+    verify_attestation(checksum_path)
+    command([sys.executable, str(ROOT / "scripts" / "verify_release_attestation.py"),
+             str(directory / "pleazyng-ios-appstore.ipa"), "--repo", PLEZY_REPO], capture=True)
+    command([sys.executable, str(ROOT / "scripts" / "verify_release_attestation.py"),
+             str(directory / "pleazyng-tvos-appstore.ipa"), "--repo", PLEZY_REPO], capture=True)
+
+    proof = json.loads(proof_path.read_text(encoding="utf-8"))
+    expected_fields = {
+        "schema_version": 1,
+        "release_tag": tag,
+        "product_source_sha": source_proof.get("product_source_sha"),
+        "packaging_source_sha": source_proof.get("packaging_source_sha"),
+        "workflow_source_sha": workflow_sha,
+        "source_run_id": source_proof.get("source_run_id"),
+        "assembly_run_id": run["databaseId"],
+    }
+    if not isinstance(proof, dict) or any(proof.get(key) != value for key, value in expected_fields.items()):
+        raise ReleaseError("Apple recovery proof differs from its approved source and assembly identities.")
+    receipt = proof.get("platform_reuse_provenance")
+    if (not isinstance(receipt, dict)
+            or receipt.get("recovery_policy") != "frozen-apple-packaging-v1"
+            or receipt.get("product_source_sha") != source_proof.get("product_source_sha")
+            or receipt.get("packaging_source_sha") != source_proof.get("packaging_source_sha")
+            or receipt.get("workflow_source_sha") != workflow_sha
             or receipt.get("source_run_id") != source_proof.get("source_run_id")
+            or receipt.get("assembly_run_id") != run["databaseId"]
+            or receipt.get("actual_checkout_sha") != source_proof.get("packaging_source_sha")
             or receipt.get("packaging_approval") != source_proof.get("packaging_approval")
-            or re.fullmatch(r"[0-9a-f]{64}", str(receipt.get("linux_archive_sha256", ""))) is None
-            or not isinstance(receipt.get("artifacts"), list) or not receipt["artifacts"]):
-        raise ReleaseError("Attested recovery receipt differs from its approved sources or assembly identity.")
-    expected_tv = source_proof.get('tvos_source')
-    actual_tv = receipt.get('tvos_source')
+            or not isinstance(receipt.get("artifacts"), list) or not receipt["artifacts"]
+            or re.fullmatch(r"[0-9a-f]{64}", str(receipt.get("linux_archive_sha256", ""))) is None):
+        raise ReleaseError("Apple recovery proof omits the attested platform reuse record.")
+    validate_packaging_repair_proof(
+        receipt, tag, source_proof["packaging_source_sha"], workflow_sha
+    )
+
+    checksums = {}
+    for line in checksum_path.read_text(encoding="utf-8").splitlines():
+        parts = line.split()
+        if len(parts) != 2 or not re.fullmatch(r"[0-9a-f]{64}", parts[0]):
+            raise ReleaseError("Apple recovery checksum sidecar is malformed.")
+        name = parts[1].lstrip("*")
+        if name in checksums:
+            raise ReleaseError("Apple recovery checksum sidecar has duplicate asset names.")
+        checksums[name] = parts[0]
+    expected_names = {"pleazyng-ios-appstore.ipa", "pleazyng-tvos-appstore.ipa"}
+    if set(checksums) != expected_names:
+        raise ReleaseError("Apple recovery checksums must name exactly the signed iOS and tvOS IPAs.")
+
+    expected_tv = source_proof.get("tvos_source")
+    actual_tv = receipt.get("tvos_source")
     if expected_tv is not None:
         if (not isinstance(actual_tv, dict)
-                or {key: value for key, value in actual_tv.items() if key != 'package_sha256'} != expected_tv):
-            raise ReleaseError('Assembled signed TV source differs from independently approved sibling repair.')
-        hashes = actual_tv.get('package_sha256', {})
-        if set(hashes) != {'pleazyng-tvos-unsigned.ipa', 'pleazyng-tvos-appstore.ipa'}:
-            raise ReleaseError('Assembled TV recovery lacks both original attestation-verified package hashes.')
-        assets = release_metadata(tag).get('assets', [])
-        for name, digest in hashes.items():
-            entries = [line.split()[0] for line in checksums.read_text().splitlines()
-                       if len(line.split()) == 2 and line.split()[1].lstrip('*') == name]
-            published = [asset for asset in assets if asset.get('name') == name]
-            if (re.fullmatch('[0-9a-f]{64}', str(digest)) is None or entries != [digest]
-                    or len(published) != 1 or published[0].get('digest') != 'sha256:' + digest):
-                raise ReleaseError('Published TV package differs from the original attestation-verified recovery bytes.')
+                or {key: value for key, value in actual_tv.items() if key != "package_sha256"} != expected_tv):
+            raise ReleaseError("Assembled signed TV source differs from independently approved sibling repair.")
+        hashes = actual_tv.get("package_sha256", {})
+        if (not isinstance(hashes, dict)
+                or set(hashes) != {"pleazyng-tvos-unsigned.ipa", "pleazyng-tvos-appstore.ipa"}
+                or hashes.get("pleazyng-tvos-appstore.ipa") != checksums.get("pleazyng-tvos-appstore.ipa")):
+            raise ReleaseError("Assembled TV recovery lacks its approved package hashes.")
     elif actual_tv is not None:
-        raise ReleaseError('Assembly introduced an unapproved TV source.')
-    expected_ios = source_proof.get('ios_source')
-    actual_ios = receipt.get('ios_source')
+        raise ReleaseError("Assembly introduced an unapproved TV source.")
+    expected_ios = source_proof.get("ios_source")
+    actual_ios = receipt.get("ios_source")
     if expected_ios is not None:
         if (not isinstance(actual_ios, dict)
-                or {key: value for key, value in actual_ios.items() if key != 'package_sha256'} != expected_ios):
-            raise ReleaseError('Assembled signed iOS source differs from approved sibling repair.')
-        hashes = actual_ios.get('package_sha256', {})
-        if set(hashes) != {'pleazyng-ios-unsigned.ipa', 'pleazyng-ios-appstore.ipa'}:
-            raise ReleaseError('Assembled iOS recovery lacks attestation-verified package hashes.')
-        assets = release_metadata(tag).get('assets', [])
-        for name, digest in hashes.items():
-            entries = [line.split()[0] for line in checksums.read_text().splitlines()
-                       if len(line.split()) == 2 and line.split()[1].lstrip('*') == name]
-            published = [asset for asset in assets if asset.get('name') == name]
-            if (re.fullmatch('[0-9a-f]{64}', str(digest)) is None or entries != [digest]
-                    or len(published) != 1 or published[0].get('digest') != 'sha256:' + digest):
-                raise ReleaseError('Published iOS package differs from attestation-verified recovery bytes.')
+                or {key: value for key, value in actual_ios.items() if key != "package_sha256"} != expected_ios):
+            raise ReleaseError("Assembled signed iOS source differs from independently approved sibling repair.")
+        hashes = actual_ios.get("package_sha256", {})
+        if (not isinstance(hashes, dict)
+                or set(hashes) != {"pleazyng-ios-unsigned.ipa", "pleazyng-ios-appstore.ipa"}
+                or hashes.get("pleazyng-ios-appstore.ipa") != checksums.get("pleazyng-ios-appstore.ipa")):
+            raise ReleaseError("Assembled iOS recovery lacks its approved package hashes.")
     elif actual_ios is not None:
-        raise ReleaseError('Assembly introduced an unapproved iOS source.')
-    names = set()
+        raise ReleaseError("Assembly introduced an unapproved iOS source.")
+
+    signed_records = proof.get("signed_store_artifacts")
+    if not isinstance(signed_records, list) or len(signed_records) != 2:
+        raise ReleaseError("Apple recovery proof lacks both current-run signed package records.")
+    expected_artifacts = {"pleazyng-ios-appstore.ipa": "ios-ipa",
+                          "pleazyng-tvos-appstore.ipa": "tvos-ipa"}
+    artifacts = {}
+    for record in signed_records:
+        if not isinstance(record, dict):
+            raise ReleaseError("Apple recovery artifact record is malformed.")
+        name = record.get("name")
+        workflow_artifact = expected_artifacts.get(name)
+        platform = "ios" if name == "pleazyng-ios-appstore.ipa" else "tvos"
+        sibling = source_proof.get(f"{platform}_source")
+        if sibling is None:
+            producer = {"source_run_id": run["databaseId"], "source_sha": workflow_sha,
+                        "workflow_source_sha": workflow_sha}
+        elif isinstance(sibling, dict):
+            producer = {key: sibling.get(key) for key in
+                        ("source_run_id", "source_sha", "workflow_source_sha", "artifact_id", "artifact_digest")}
+        else:
+            producer = {}
+        digest = record.get("sha256")
+        artifact_id = record.get("artifact_id")
+        artifact_digest = record.get("artifact_digest")
+        if (workflow_artifact is None or name in artifacts
+                or record.get("workflow_artifact_name") != workflow_artifact
+                or any(record.get(key) != value for key, value in producer.items())
+                or not producer
+                or not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest)
+                or type(artifact_id) is not int or artifact_id < 1
+                or not isinstance(artifact_digest, str)
+                or not re.fullmatch(r"sha256:[0-9a-f]{64}", artifact_digest)):
+            raise ReleaseError("Apple signed package record differs from the approved current run.")
+        metadata = gh_json("api", f"repos/{PLEZY_REPO}/actions/artifacts/{artifact_id}")
+        if (metadata.get("id") != artifact_id or metadata.get("name") != workflow_artifact
+                or metadata.get("digest") != artifact_digest or metadata.get("expired") is not False
+                or metadata.get("workflow_run", {}).get("id") != record["source_run_id"]
+                or metadata.get("workflow_run", {}).get("head_sha") != record["workflow_source_sha"]):
+            raise ReleaseError("Apple workflow artifact metadata differs from its signed package record.")
+        path = directory / name
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual != digest or checksums.get(name) != actual:
+            raise ReleaseError("Signed IPA bytes differ from the attested Apple sidecar checksums.")
+        artifacts[name] = record
+
+    reused_names = set()
     for artifact in receipt["artifacts"]:
-        name = artifact.get("name")
-        source = (source_proof.get('tvos_source', source_proof) if name == 'tvos-ipa' else
-                  source_proof.get('ios_source', source_proof) if name == 'ios-ipa' else
+        name = artifact.get("name") if isinstance(artifact, dict) else None
+        source = (source_proof.get("tvos_source", source_proof) if name == "tvos-ipa" else
+                  source_proof.get("ios_source", source_proof) if name == "ios-ipa" else
                   source_proof.get("android_source", source_proof) if name == "android-apk" else
                   source_proof.get("webos_source", source_proof) if name == "webos-ipk" else source_proof)
-        if (not isinstance(name, str) or not name or name in names
-                or artifact.get("source_run_id") != source["source_run_id"]
-                or artifact.get("source_sha") != source["source_sha"]
+        if (not isinstance(name, str) or not name or name in reused_names
+                or artifact.get("source_run_id") != source.get("source_run_id")
+                or artifact.get("source_sha") != source.get("source_sha")
                 or type(artifact.get("artifact_id")) is not int or artifact["artifact_id"] < 1
                 or re.fullmatch(r"sha256:[0-9a-f]{64}", str(artifact.get("digest", ""))) is None):
             raise ReleaseError("Attested recovery artifact record differs from the verified original producer.")
-        if name == 'tvos-ipa' and source_proof.get('tvos_source') and (
-                artifact['artifact_id'] != source['artifact_id'] or artifact['digest'] != source['artifact_digest']):
-            raise ReleaseError('Attested TV artifact differs from the independently approved signed producer.')
-        if name == 'ios-ipa' and source_proof.get('ios_source') and (
-                artifact['artifact_id'] != source['artifact_id'] or artifact['digest'] != source['artifact_digest']):
-            raise ReleaseError('Attested iOS artifact differs from the independently approved signed producer.')
-        names.add(name)
-    linux = [asset for asset in release_metadata(tag).get("assets", [])
-             if asset.get("name") == "pleazyng-linux-x64.tar.gz"]
-    if len(linux) != 1 or linux[0].get("digest") != "sha256:" + receipt["linux_archive_sha256"]:
-        raise ReleaseError("Published Linux archive differs from the attested recovery receipt.")
-    return receipt
+        if name == "tvos-ipa" and source_proof.get("tvos_source") and (
+                artifact["artifact_id"] != source["artifact_id"]
+                or artifact["digest"] != source["artifact_digest"]):
+            raise ReleaseError("Attested TV artifact differs from its approved signed producer.")
+        if name == "ios-ipa" and source_proof.get("ios_source") and (
+                artifact["artifact_id"] != source["artifact_id"]
+                or artifact["digest"] != source["artifact_digest"]):
+            raise ReleaseError("Attested iOS artifact differs from its approved signed producer.")
+        metadata = gh_json("api", f"repos/{PLEZY_REPO}/actions/artifacts/{artifact['artifact_id']}")
+        if (metadata.get("id") != artifact["artifact_id"] or metadata.get("name") != name
+                or metadata.get("digest") != artifact["digest"] or metadata.get("expired") is not False
+                or metadata.get("workflow_run", {}).get("id") != artifact["source_run_id"]
+                or metadata.get("workflow_run", {}).get("head_sha") != artifact["source_sha"]):
+            raise ReleaseError("Reused platform artifact metadata differs from its attested producer.")
+        reused_names.add(name)
+
+    release = release_metadata(tag)
+    current_assets = {
+        asset["name"]: asset.get("digest")
+        for asset in release.get("assets", []) if isinstance(asset, dict) and isinstance(asset.get("name"), str)
+    }
+    prior_assets = proof.get("prior_release_assets")
+    if not isinstance(prior_assets, list):
+        raise ReleaseError("Apple recovery proof lacks the pre-append release asset inventory.")
+    prior = {}
+    for asset in prior_assets:
+        if (not isinstance(asset, dict) or not isinstance(asset.get("name"), str)
+                or not isinstance(asset.get("digest"), str)
+                or not re.fullmatch(r"sha256:[0-9a-f]{64}", asset["digest"])
+                or asset["name"] in prior):
+            raise ReleaseError("Apple recovery prior asset inventory is malformed.")
+        prior[asset["name"]] = asset["digest"]
+    if any(current_assets.get(name) != digest for name, digest in prior.items()):
+        raise ReleaseError("Apple recovery modified a pre-existing published release asset.")
+    appended = {"pleazyng-ios-appstore.ipa", "pleazyng-tvos-appstore.ipa",
+                "APPLE-STORE-SHA256SUMS.txt", "APPLE-STORE-RECOVERY.json"}
+    if set(current_assets) != set(prior) | appended:
+        raise ReleaseError("Apple recovery release contains missing or unexpected appended assets.")
+    expected_new = {
+        "pleazyng-ios-appstore.ipa": checksums["pleazyng-ios-appstore.ipa"],
+        "pleazyng-tvos-appstore.ipa": checksums["pleazyng-tvos-appstore.ipa"],
+        "APPLE-STORE-SHA256SUMS.txt": hashlib.sha256(checksum_path.read_bytes()).hexdigest(),
+        "APPLE-STORE-RECOVERY.json": hashlib.sha256(proof_path.read_bytes()).hexdigest(),
+    }
+    if any(current_assets.get(name) != "sha256:" + digest for name, digest in expected_new.items()):
+        raise ReleaseError("Published Apple append assets differ from their signed workflow outputs.")
+    if prior.get("SHA256SUMS.txt") is None or prior.get("platform-reuse-provenance.json") is None:
+        raise ReleaseError("The original release checksums or platform provenance were not preserved.")
+    if prior.get("pleazyng-linux-x64.tar.gz") != "sha256:" + receipt["linux_archive_sha256"]:
+        raise ReleaseError("Original Linux archive differs from the preserved recovery provenance.")
+    return proof
 
 
 def ensure_frozen_release_source(tag: str, expected_sha: str) -> None:
@@ -2433,7 +2583,8 @@ def validate_release_outputs(
     if all(publication_settings.get(name, "").strip() for name in MSSTORE_BUILD_VARIABLES):
         required.add("pleazyng-windows.msixbundle")
     if include_apple_store_build:
-        required.update({"pleazyng-ios-appstore.ipa", "pleazyng-tvos-appstore.ipa"})
+        required.update({"pleazyng-ios-appstore.ipa", "pleazyng-tvos-appstore.ipa",
+                         "APPLE-STORE-SHA256SUMS.txt", "APPLE-STORE-RECOVERY.json"})
     if prepare_homebrew_cask:
         required.add("snapetech-pleazyng.rb")
 
@@ -2574,7 +2725,8 @@ def publish_configured_channels(
             "fields": {"action": "publish-app-stores", "runner_pool": "public", "release_tag": tag,
                        "channel": "app-store-ios", "play_track": "internal", "play_release_status": "draft"},
             "secrets": {"APPLE_API_KEY_ID", "APPLE_API_ISSUER_ID", "APPLE_API_PRIVATE_KEY"}, "variables": set(),
-            "assets": {"pleazyng-ios-appstore.ipa", "SHA256SUMS.txt"},
+            "assets": {"pleazyng-ios-appstore.ipa", "SHA256SUMS.txt",
+                       "APPLE-STORE-SHA256SUMS.txt", "APPLE-STORE-RECOVERY.json"},
         },
         {
             "name": "Apple App Store Connect tvOS upload",
@@ -2584,7 +2736,8 @@ def publish_configured_channels(
             "fields": {"action": "publish-app-stores", "runner_pool": "public", "release_tag": tag,
                        "channel": "app-store-tvos", "play_track": "internal", "play_release_status": "draft"},
             "secrets": {"APPLE_API_KEY_ID", "APPLE_API_ISSUER_ID", "APPLE_API_PRIVATE_KEY"}, "variables": set(),
-            "assets": {"pleazyng-tvos-appstore.ipa", "SHA256SUMS.txt"},
+            "assets": {"pleazyng-tvos-appstore.ipa", "SHA256SUMS.txt",
+                       "APPLE-STORE-SHA256SUMS.txt", "APPLE-STORE-RECOVERY.json"},
         },
         {
             "name": "AUR",
@@ -2877,6 +3030,10 @@ def main() -> int:
     if args.execution_profile != "hybrid":
         raise ReleaseError("Complete releases require the hybrid profile, including native Windows ARM64 CI.")
     packaging_repair = bool(args.reuse_platform_run and getattr(args, "source_commit", None))
+    ordinary_unsigned_channel_recovery = (
+        args.publish and not packaging_repair
+        and not args.include_apple_store_build and not args.prepare_homebrew_cask
+    )
     if args.reuse_tvos_run and (args.reuse_tvos_run < 1 or not packaging_repair
                                or (not args.rebuild_ios and not args.reuse_ios_run)
                                or args.rebuild_tvos or args.reuse_repaired_run or args.reuse_macos_run):
@@ -2888,10 +3045,16 @@ def main() -> int:
                             or args.reuse_macos_run or args.reuse_repaired_run):
         raise ReleaseError("Approved packaging recovery rebuilds only requested Apple packages.")
     if args.reuse_platform_run and (
-        args.reuse_platform_run < 1 or ((args.publish or args.include_apple_store_build) and not packaging_repair)
+        args.reuse_platform_run < 1
+        or ((args.publish or args.include_apple_store_build)
+            and not packaging_repair and not ordinary_unsigned_channel_recovery)
         or args.execution_profile != "hybrid"
     ):
-        raise ReleaseError("Platform recovery supports hybrid GitHub-only or draft publication without fresh Apple or Homebrew qualification.")
+        raise ReleaseError(
+            "Platform recovery supports GitHub-only or draft publication; configured package-channel "
+            "publishing requires ordinary unsigned recovery, and signed Apple qualification requires "
+            "approved packaging recovery."
+        )
     if args.reuse_webos_run and (args.reuse_webos_run < 1 or not args.reuse_platform_run or args.reuse_macos_run):
         raise ReleaseError("WebOS reuse requires verified platform recovery without signing-only substitution")
     if args.reuse_repaired_run and (args.reuse_repaired_run < 1 or not args.reuse_platform_run or args.reuse_macos_run or args.rebuild_linux or args.rebuild_macos):
@@ -3239,7 +3402,9 @@ def main() -> int:
                                 if frozen or packaging_repair else pin_sha)
                 progress["delivery_tooling_commit"] = delivery_sha
                 followups = post_release_actions(
-                    tag, args.version, release_sha=product_sha if packaging_repair else pin_sha,
+                    tag, args.version,
+                    release_sha=(product_sha if packaging_repair else
+                                 existing_tag_commit if args.reuse_platform_run else pin_sha),
                     include_webos_release=args.include_webos_release,
                     publish_channels=args.publish,
                     notify_discord=not args.skip_discord_notification,

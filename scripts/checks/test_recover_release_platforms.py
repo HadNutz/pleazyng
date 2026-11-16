@@ -36,11 +36,53 @@ class SourceProofTests(unittest.TestCase):
         self.jobs += [{"name": "build-android", "status": "completed", "conclusion": "failure"},
                       {"name": "create-release", "status": "completed", "conclusion": "skipped"}]
 
-    def prove(self, **options):
+    def prove(self, *, run_id=42, head_sha="b" * 40, version="3.0.0", **options):
         with patch.object(recovery, "api", side_effect=[self.source, self.compare]), \
              patch.object(recovery, "collection", return_value=self.jobs), \
              patch.object(recovery, "ci_proof", return_value={"ci_run_id": 23}):
-            return recovery.verify_source_run(42, "b" * 40, "3.0.0", **options)
+            return recovery.verify_source_run(run_id, head_sha, version, **options)
+
+    def test_actual_public_candidate_run_shape_is_accepted_for_mac_rebuild(self):
+        source_sha = "2388a06cc74d03e69ac7178fcd927a54460a5e3a"
+        self.source.update(
+            id=43826939425,
+            head_sha=source_sha,
+            status="completed",
+            conclusion="failure",
+            display_title="action:release:pool:public:tag:v3.0.36",
+        )
+        self.compare = {"status": "identical", "merge_base_commit": {"sha": source_sha}, "files": []}
+        self.jobs = [
+            {"name": name, "status": "completed",
+             "conclusion": "failure" if name == "build-macos" else "success"}
+            for name in recovery.REQUIRED_JOBS
+        ]
+        self.jobs.extend([
+            {"name": "build-android", "status": "completed", "conclusion": "success"},
+            {"name": "Build WebOS TV package (ARMv7)", "status": "completed", "conclusion": "success"},
+            {"name": "create-release", "status": "completed", "conclusion": "skipped"},
+        ])
+
+        proof = self.prove(
+            run_id=43826939425, head_sha=source_sha, version="3.0.36", rebuild_macos=True
+        )
+
+        self.assertEqual(proof["source_sha"], source_sha)
+        self.assertIn("build-macos", proof["rebuilt_jobs"])
+        self.assertNotIn("build-macos", proof["reused_jobs"])
+
+    def test_unexpected_public_title_still_fails_closed(self):
+        for title in (
+            "action:release:pool:public:tag:v3.0.1",
+            "action:release:pool:unknown:tag:v3.0.0",
+            "action:release:pool:public:tag:v3.0.0:recovery:source:42",
+        ):
+            with self.subTest(title=title):
+                original = self.source["display_title"]
+                self.source["display_title"] = title
+                with self.assertRaises(recovery.RecoveryError):
+                    self.prove()
+                self.source["display_title"] = original
 
     def test_all_platforms_can_be_recovered_after_only_bootstrap_fix(self):
         self.assertEqual(self.prove()["source_sha"], "a" * 40)
@@ -365,10 +407,14 @@ class FrozenTvosReuseTests(unittest.TestCase):
                     'event': 'workflow_dispatch', 'head_branch': 'main', 'path': '.github/workflows/build.yml',
                     'repository': {'id': 1433487464}, 'head_repository': {'full_name': recovery.REPOSITORY},
                     'run_attempt': 1,
-                    'display_title': 'action:release:pool:private:tag:v3.0.31:repair:' + self.prior_repair}
+                    'display_title': 'action:release:pool:public:tag:v3.0.31:repair:' + self.prior_repair}
         def job(name, conclusion, steps=()):
-            return {'id': len(name), 'name': name, 'status': 'completed', 'conclusion': conclusion,
+            value = {'id': len(name), 'name': name, 'status': 'completed', 'conclusion': conclusion,
                     'steps': [{'name': step, 'status': 'completed', 'conclusion': 'success'} for step in steps]}
+            if name == 'Build tvOS developer package (arm64)':
+                value.update(runner_id=100, runner_name='GitHub Actions 100',
+                             runner_group_name='GitHub Actions', labels=['macos-26'])
+            return value
         self.jobs = [job('Validate release request', 'success', (
             'Verify approved frozen packaging checkout', 'Verify reusable platform source')),
             job('Build tvOS developer package (arm64)', 'success', (
@@ -397,6 +443,19 @@ class FrozenTvosReuseTests(unittest.TestCase):
         self.assertEqual(result['artifact_digest'], self.artifact['digest'])
         self.assertEqual(result['packaging_approval'], self.prior['packaging_approval'])
 
+    def test_explicit_private_apple_route_requires_run_and_job_bound_labels(self):
+        self.jobs[1].update(
+            runner_id=101,
+            runner_name='pleazyng-private-apple-101',
+            runner_group_name='private-apple-builds',
+            labels=['self-hosted', 'macOS', 'ARM64', 'private-apple',
+                    'ng-shared-main-pleazyng', 'ng-main-run-84', 'gha-84-build-tvos'],
+        )
+        self.prove()
+        self.jobs[1]['labels'].remove('gha-84-build-tvos')
+        with self.assertRaisesRegex(recovery.RecoveryError, 'expected public hosted or exact private'):
+            self.prove()
+
     def test_tvos_only_sibling_can_fail_assembly_before_publication(self):
         self.jobs[2]['conclusion'] = 'skipped'
         self.jobs[3]['conclusion'] = 'failure'
@@ -412,7 +471,8 @@ class FrozenTvosReuseTests(unittest.TestCase):
     def test_untrusted_wrong_product_unsigned_and_publication_attempt_sources_are_rejected(self):
         original = {key: copy.deepcopy(getattr(self, key)) for key in ('run', 'jobs', 'artifact', 'prior')}
         for change in ('foreign', 'wrong-product', 'failed-ci', 'missing-signed', 'missing-attestation',
-                       'publication', 'unrelated-built', 'duplicate-tv', 'expired', 'bad-artifact-source'):
+                       'publication', 'unrelated-built', 'duplicate-tv', 'expired', 'bad-artifact-source',
+                       'wrong-runner-route', 'private-run-title'):
             self.__dict__.update(copy.deepcopy(original))
             if change == 'foreign':
                 self.run['head_repository']['full_name'] = 'other/project'
@@ -432,6 +492,10 @@ class FrozenTvosReuseTests(unittest.TestCase):
                 self.artifact['expired'] = True
             elif change == 'bad-artifact-source':
                 self.artifact['workflow_run']['head_sha'] = self.prior_repair
+            elif change == 'wrong-runner-route':
+                self.jobs[1]['labels'] = ['macos-26-intel']
+            elif change == 'private-run-title':
+                self.run['display_title'] = self.run['display_title'].replace('pool:public', 'pool:private')
             with self.subTest(change=change), self.assertRaises(recovery.RecoveryError):
                 self.prove()
 
@@ -759,10 +823,29 @@ class AndroidSourceTests(unittest.TestCase):
         self.jobs = [{"id": 71, "name": "build-android", "status": "completed", "conclusion": "success"},
                      {"name": "create-release", "conclusion": "skipped"}]
 
-    def prove(self, **options):
+    def prove(self, *, run_id=84, head_sha="b" * 40, version="3.0.0", **options):
         with patch.object(recovery, "api", side_effect=[self.source, self.compare]), \
              patch.object(recovery, "collection", return_value=self.jobs):
-            return recovery.verify_android_run(84, "b" * 40, "3.0.0", **options)
+            return recovery.verify_android_run(run_id, head_sha, version, **options)
+
+    def test_actual_public_candidate_run_shape_is_accepted_for_android_reuse(self):
+        source_sha = "2388a06cc74d03e69ac7178fcd927a54460a5e3a"
+        self.source.update(
+            id=43826939425,
+            head_sha=source_sha,
+            display_title="action:release:pool:public:tag:v3.0.36",
+        )
+        self.compare = {"status": "identical", "merge_base_commit": {"sha": source_sha}, "files": []}
+
+        proof = self.prove(run_id=43826939425, head_sha=source_sha, version="3.0.36")
+
+        self.assertEqual(proof["source_run_id"], 43826939425)
+        self.assertEqual(proof["source_sha"], source_sha)
+
+    def test_android_reuse_rejects_unexpected_public_title(self):
+        self.source["display_title"] = "action:release:pool:public:tag:v3.0.1"
+        with self.assertRaises(recovery.RecoveryError):
+            self.prove()
 
     def test_pending_android_is_deferred_preflight_evidence_and_never_a_final_success(self):
         self.source["status"] = "in_progress"
@@ -819,11 +902,11 @@ class RepairedSourceTests(unittest.TestCase):
                       {"name": "create-release", "status": "completed", "conclusion": "skipped"}]
         self.workflow = 'env:\n  SDK: pinned\njobs:\n  build-macos:\n    run: compile-mac\n  build-linux:\n    run: compile-linux\n  other:\n'
 
-    def prove(self, *, workflows=None, **options):
+    def prove(self, *, workflows=None, run_id=84, head_sha="b" * 40, version="3.0.7", **options):
         with patch.object(recovery, "api", side_effect=[self.run, self.compare]), \
              patch.object(recovery, "collection", return_value=self.jobs), \
              patch.object(recovery, "immutable_content", side_effect=workflows or [self.workflow, self.workflow]):
-            return recovery.verify_repaired_run(84, "b" * 40, "3.0.7", recovery.REPOSITORY, **options)
+            return recovery.verify_repaired_run(run_id, head_sha, version, recovery.REPOSITORY, **options)
 
     def test_unrelated_failure_does_not_erase_the_three_verified_repaired_jobs(self):
         proof = self.prove(require_homebrew_cask=True)
@@ -858,16 +941,31 @@ class RepairedSourceTests(unittest.TestCase):
             self.prove()
 
     def test_webos_can_be_reused_after_assembly_failed_before_publishing(self):
+        source_sha = "2388a06cc74d03e69ac7178fcd927a54460a5e3a"
+        self.run.update(
+            id=43826939425,
+            head_sha=source_sha,
+            conclusion="failure",
+            display_title="action:release:pool:public:tag:v3.0.36",
+        )
+        self.compare = {"status": "identical", "merge_base_commit": {"sha": source_sha}, "files": []}
         self.jobs = [self.jobs[0], {"name": "Build WebOS TV package (ARMv7)", "status": "completed", "conclusion": "success"},
                      {"name": "create-release", "status": "completed", "conclusion": "failure",
                       "steps": [{"name": "Create Release", "conclusion": "skipped"}]}]
         before = 'env:\n  SDK: pinned\njobs:\n  build-webos:\n    if: ${{ trusted }}\n    run: compile-webos\n  other:\n'
         after = before.replace('if: ${{ ', "if: ${{ inputs.reuse_webos_run_id == '' && ")
-        proof = self.prove(workflows=[before, after], webos_only=True)
+        proof = self.prove(workflows=[before, after], webos_only=True,
+                           run_id=43826939425, head_sha=source_sha, version="3.0.36")
         self.assertEqual(proof["reused_jobs"], ["Build WebOS TV package (ARMv7)"])
         self.jobs[-1]["steps"][0]["conclusion"] = "failure"
         with self.assertRaisesRegex(recovery.RecoveryError, "publication"):
-            self.prove(workflows=[before, after], webos_only=True)
+            self.prove(workflows=[before, after], webos_only=True,
+                       run_id=43826939425, head_sha=source_sha, version="3.0.36")
+
+    def test_webos_reuse_rejects_unexpected_public_title(self):
+        self.run["display_title"] = "action:release:pool:public:tag:v3.0.8"
+        with self.assertRaises(recovery.RecoveryError):
+            self.prove(webos_only=True)
 
 
 class AssemblyCheckoutTests(unittest.TestCase):

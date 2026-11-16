@@ -271,54 +271,95 @@ class PackagingRepairControllerTests(unittest.TestCase):
         self.assertTrue(verify.call_args.kwargs['include_apple_store_build'])
 
     def test_assembly_receipt_requires_checksum_certificate_and_exact_approved_run_sources(self):
-        for invalid in (None, 'checksum', 'certificate', 'assembly', 'checkout', 'artifact', 'linux',
-                        'tv-source', 'tv-artifact', 'tv-hash-coverage', 'tv-checksum', 'tv-public-digest'):
+        for invalid in (None, 'checksum', 'certificate', 'assembly', 'checkout', 'artifact', 'linux'):
             with self.subTest(invalid=invalid), tempfile.TemporaryDirectory() as temp:
-                tv = {'source_run_id': 84, 'source_sha': 'd' * 40, 'workflow_source_sha': 'e' * 40,
-                      'artifact_id': 124, 'artifact_digest': 'sha256:' + 'f' * 64}
-                hashes = {'pleazyng-tvos-unsigned.ipa': '1' * 64, 'pleazyng-tvos-appstore.ipa': '2' * 64}
-                source_proof = {**self.proof(), 'tvos_source': tv}
-                receipt = {**source_proof, 'tvos_source': {**tv, 'package_sha256': dict(hashes)},
-                           'assembly_run_id': 99, 'actual_checkout_sha': self.repair,
+                source_proof = self.proof()
+                receipt = {**source_proof, 'assembly_run_id': 99, 'actual_checkout_sha': self.repair,
                            'linux_archive_sha256': 'e' * 64,
                            'artifacts': [{'name': 'linux-x64', 'artifact_id': 123, 'source_run_id': 42,
-                                          'source_sha': self.product, 'digest': 'sha256:' + 'f' * 64},
-                                         {'name': 'tvos-ipa', 'artifact_id': 124, 'source_run_id': 84,
-                                          'source_sha': tv['source_sha'], 'digest': tv['artifact_digest']}]}
+                                          'source_sha': self.product, 'digest': 'sha256:' + 'f' * 64}]}
                 if invalid == 'assembly': receipt['assembly_run_id'] = 100
                 if invalid == 'checkout': receipt['actual_checkout_sha'] = self.workflow
                 if invalid == 'artifact': receipt['artifacts'][0]['source_sha'] = self.workflow
-                if invalid == 'tv-source': receipt['tvos_source']['source_sha'] = self.product
-                if invalid == 'tv-artifact': receipt['artifacts'][1]['artifact_id'] = 125
-                if invalid == 'tv-hash-coverage': receipt['tvos_source']['package_sha256'].pop('pleazyng-tvos-unsigned.ipa')
+                ios_bytes, tvos_bytes = b'signed iOS', b'signed tvOS'
+                checksums = {
+                    'pleazyng-ios-appstore.ipa': hashlib.sha256(ios_bytes).hexdigest(),
+                    'pleazyng-tvos-appstore.ipa': hashlib.sha256(tvos_bytes).hexdigest(),
+                }
+                if invalid == 'checksum': checksums['pleazyng-ios-appstore.ipa'] = '0' * 64
+                apple_checksums = ''.join(f'{checksums[name]}  {name}\n' for name in sorted(checksums))
+                prior = {
+                    'SHA256SUMS.txt': 'sha256:' + 'a' * 64,
+                    'platform-reuse-provenance.json': 'sha256:' + 'b' * 64,
+                    'pleazyng-linux-x64.tar.gz': 'sha256:' + ('0' if invalid == 'linux' else 'e') * 64,
+                }
+                signed_records = []
+                for name, artifact_name, artifact_id, artifact_digest in (
+                        ('pleazyng-ios-appstore.ipa', 'ios-ipa', 124, 'sha256:' + '1' * 64),
+                        ('pleazyng-tvos-appstore.ipa', 'tvos-ipa', 125, 'sha256:' + '2' * 64)):
+                    signed_records.append({
+                        'name': name, 'sha256': checksums[name],
+                        'workflow_artifact_name': artifact_name,
+                        'source_run_id': 99, 'source_sha': self.workflow,
+                        'workflow_source_sha': self.workflow,
+                        'artifact_id': artifact_id, 'artifact_digest': artifact_digest,
+                    })
+                proof = {
+                    'schema_version': 1, 'release_tag': self.tag,
+                    'product_source_sha': self.product, 'packaging_source_sha': self.repair,
+                    'workflow_source_sha': self.workflow, 'source_run_id': 42,
+                    'assembly_run_id': 99,
+                    'prior_release_assets': [{'name': name, 'digest': digest}
+                                             for name, digest in prior.items()],
+                    'signed_store_artifacts': signed_records,
+                    'platform_reuse_provenance': receipt,
+                }
+                if invalid == 'assembly': proof['assembly_run_id'] = 100
                 certificate = {'sourceRepositoryIdentifier': '1433487464', 'sourceRepositoryDigest': self.workflow,
                                'runInvocationURI': f'https://github.com/{release.PLEZY_REPO}/actions/runs/99'}
                 if invalid == 'certificate': certificate['runInvocationURI'] += '0'
                 def command(args, **kwargs):
                     if args[:3] == ['gh', 'release', 'download']:
                         directory = Path(args[args.index('--dir') + 1])
-                        content = json.dumps(receipt).encode()
-                        (directory / 'platform-reuse-provenance.json').write_bytes(content)
-                        checksum = '0' * 64 if invalid == 'checksum' else hashlib.sha256(content).hexdigest()
-                        (directory / 'SHA256SUMS.txt').write_text(checksum + '  platform-reuse-provenance.json\n' +
-                            ''.join(('0' * 64 if invalid == 'tv-checksum' else digest) + '  ' + name + '\n'
-                                    for name, digest in hashes.items()))
+                        (directory / 'APPLE-STORE-RECOVERY.json').write_text(json.dumps(proof))
+                        (directory / 'APPLE-STORE-SHA256SUMS.txt').write_text(apple_checksums)
+                        (directory / 'pleazyng-ios-appstore.ipa').write_bytes(ios_bytes)
+                        (directory / 'pleazyng-tvos-appstore.ipa').write_bytes(tvos_bytes)
                         return subprocess.CompletedProcess(args, 0, '', '')
-                    return subprocess.CompletedProcess(args, 0, json.dumps([{
-                        'verificationResult': {'signature': {'certificate': certificate}}}]), '')
-                metadata = {'assets': [{'name': 'pleazyng-linux-x64.tar.gz',
-                                       'digest': 'sha256:' + ('0' if invalid == 'linux' else 'e') * 64},
-                                      *({'name': name, 'digest': 'sha256:' + ('0' * 64 if invalid == 'tv-public-digest' else digest)}
-                                        for name, digest in hashes.items())]}
+                    if args[:3] == ['gh', 'attestation', 'verify']:
+                        return subprocess.CompletedProcess(args, 0, json.dumps([{
+                            'verificationResult': {'signature': {'certificate': certificate}}}]), '')
+                    return subprocess.CompletedProcess(args, 0, '', '')
+                current = dict(prior)
+                for name, digest in (
+                        ('pleazyng-ios-appstore.ipa', checksums['pleazyng-ios-appstore.ipa']),
+                        ('pleazyng-tvos-appstore.ipa', checksums['pleazyng-tvos-appstore.ipa']),
+                        ('APPLE-STORE-SHA256SUMS.txt', hashlib.sha256(apple_checksums.encode()).hexdigest()),
+                        ('APPLE-STORE-RECOVERY.json', hashlib.sha256(json.dumps(proof).encode()).hexdigest())):
+                    current[name] = 'sha256:' + digest
+                metadata = {'assets': [{'name': name, 'digest': digest} for name, digest in current.items()]}
+                artifact_metadata = {
+                    123: {'id': 123, 'name': 'linux-x64', 'digest': 'sha256:' + 'f' * 64,
+                          'expired': False, 'workflow_run': {'id': 42, 'head_sha': self.product}},
+                    124: {'id': 124, 'name': 'ios-ipa', 'digest': 'sha256:' + '1' * 64,
+                          'expired': False, 'workflow_run': {'id': 99, 'head_sha': self.workflow}},
+                    125: {'id': 125, 'name': 'tvos-ipa', 'digest': 'sha256:' + '2' * 64,
+                          'expired': False, 'workflow_run': {'id': 99, 'head_sha': self.workflow}},
+                }
+                def api(_command, path):
+                    artifact_id = int(path.rsplit('/', 1)[-1])
+                    return artifact_metadata[artifact_id]
                 with patch.object(release, 'command', side_effect=command), \
                         patch.object(release, 'ensure_frozen_release_source'), \
-                        patch.object(release, 'release_metadata', return_value=metadata):
+                        patch.object(release, 'release_metadata', return_value=metadata), \
+                        patch.object(release, 'gh_json', side_effect=api):
                     if invalid:
                         with self.assertRaises(release.ReleaseError):
                             release.verify_packaging_repair_assembly(Path(temp), self.tag, source_proof, {'databaseId': 99})
                     else:
-                        self.assertEqual(release.verify_packaging_repair_assembly(
-                            Path(temp), self.tag, source_proof, {'databaseId': 99}), receipt)
+                        result = release.verify_packaging_repair_assembly(
+                            Path(temp), self.tag, source_proof, {'databaseId': 99})
+                        self.assertEqual(result['platform_reuse_provenance'], receipt)
 
     def test_signed_publication_cli_keeps_product_and_packaging_sources_separate(self):
         self.signed_publication_cli(reuse_tvos=False)

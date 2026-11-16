@@ -245,6 +245,14 @@ Explicit platform recovery retains its separate unchanged-product allowlist
 and source-run proof. It may use newer release infrastructure without changing
 the original product bytes. Do not add application source to that allowlist or
 reuse one product's qualification for another. Existing tags are never moved.
+The `create-release` job checks out its recovery scripts at the current
+workflow SHA, then restores release notes, manifests and other product inputs
+from the separately verified product-source SHA. Keep those identities
+separate: an older product run may predate a recovery-verifier fix, while the
+release contents and attribution must still match the immutable product build.
+The authenticated visualizer catalog is a separate signed runtime input. The
+app verifies it when it is fetched, so catalog-only publication changes do not
+alter or invalidate the immutable application artifacts.
 
 Native dependency downloads are staged by `scripts/prepare_native_downloads.py`
 after locked Pub resolution and before Dart hooks run. SQLite assets retain the
@@ -843,6 +851,24 @@ certificates against their original workflow/run, and publishes a distinct
 The existing workflow `reuse_repaired_run_id` slot carries Apple sibling
 identities in this explicit frozen Apple mode; no additional dispatch input is
 required.
+
+For a recovery against an already-published frozen tag, append the signed iOS
+and tvOS Store IPAs with `scripts/append_apple_store_release_assets.py`. The
+workflow records their hashes in `APPLE-STORE-SHA256SUMS.txt` and producer
+identities in `APPLE-STORE-RECOVERY.json`, then uploads the four Apple assets
+without a clobber option. The prior asset inventory and digests must match before
+and after the append; the original `SHA256SUMS.txt` and
+`platform-reuse-provenance.json` remain intact. The App Store upload workflow
+checks the Apple sidecars and their attestations before sending an IPA to App
+Store Connect. Recovery reuse checks the actual hosted runner labels for iOS
+(`macos-26-intel`) and tvOS (`macos-26`), or exact run- and job-bound labels
+for the explicitly requested private Apple signing runner.
+
+The universal `build-macos` DMG is the direct-distribution artifact. The
+separate `macOS App Store Candidate` workflow produces an unsigned `.pkg` and
+receipt; it is not uploadable to App Store Connect until Mac App Store app and
+installer signing plus sandbox, JIT, and StoreKit qualification are available.
+
 The same slot historically carried a numeric failed-run ID for a private retry
 after hosted tvOS was canceled before runner assignment. Automatic retries are
 now disabled; use explicit recovery only for requested signed Apple work.
