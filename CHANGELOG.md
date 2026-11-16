@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Recheck Live TV access when the Plex Home profile changes without reconnecting, adapting [upstream commit `10bcdf38f3`](https://github.com/edde746/plezy/commit/10bcdf38f327ecbdaef4896b96916ac846a0db64) for [issue #3014](https://github.com/edde746/plezy/issues/3014); see [upstream source credit](UPSTREAM_ATTRIBUTION.md#credited-plezy-commits).
+
 - Defer iOS PiP start until its controller has settled and arm auto-PiP when Live TV starts, adapting [upstream commits `8cda18705d`](https://github.com/edde746/plezy/commit/8cda18705d99ea3b394f883600aa19ce4d1522c7) and [`ca916ebb24`](https://github.com/edde746/plezy/commit/ca916ebb2470166f4e0d2bc884e424af698e38f4) for [issue #3016](https://github.com/edde746/plezy/issues/3016); see [upstream source credit](UPSTREAM_ATTRIBUTION.md#credited-plezy-commits).
 
 - Strip Samsung HDR10+ application-4 SEI messages across oriented-code and version variants before the Android Dolby Vision decoder, while preserving unrelated and truncated SEI data. Pleazyng independently adapted the fix contributed upstream by [@edde746](https://github.com/edde746) in [commit `a4f1b4f313`](https://github.com/edde746/plezy/commit/a4f1b4f313ee166afa0e0339ff7c1ebab7dc1bd6) for [issue #3062](https://github.com/edde746/plezy/issues/3062); see [upstream source credit](UPSTREAM_ATTRIBUTION.md#credited-plezy-commits).
