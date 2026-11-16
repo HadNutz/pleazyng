@@ -146,6 +146,23 @@
         "scripts/checks/test_check_build_workflow.py": "71133e972ad0735997504760365b78881e4dea67",
         "scripts/test_build_apple_store_archive.py": "8f11b1687977c22384dc9187d5ccb15e95de2c91"
       }
+    },
+    {
+      "product_source_sha": "2388a06cc74d03e69ac7178fcd927a54460a5e3a",
+      "packaging_source_sha": "312df6d14938ce530c6eb2c88ef4d6dda0c7610b",
+      "files": {
+        ".github/workflows/build.yml": "4d0727586a69517dd1b27e20bd60eef8fd913241",
+        ".github/workflows/publish-app-stores.yml": "a4c06dfcaaefddf12c8b1697a7ac12a9f0997785",
+        "CHANGELOG.md": "132bc187dbf7cd06442ee0a564e54316bf0a010d",
+        "docs/maintainers/full-release-build.md": "f95b9001c59c7c6fe2bab42701030ee60d71d160",
+        "scripts/append_apple_store_release_assets.py": "cc96ce964425feba93ab94c145989dbd1bbfc7a1",
+        "scripts/checks/test_append_apple_store_release_assets.py": "4db12f66ce9d13bc57fba7b9e01c3846cdc76a38",
+        "scripts/checks/test_apple_packaging_repair_controller.py": "3832f1a2c3b42f0b2dbd3c51eb6e91f0f631e814",
+        "scripts/checks/test_recover_release_platforms.py": "27a4e3a04dba153ae1ebed2be064d56396c3a20d",
+        "scripts/recover_release_platforms.py": "77cf802e9985c24179cece94fdca89682bfacd1c",
+        "scripts/release_all_platforms.py": "d082bb298d15676c8abb375c4400275112275265",
+        "scripts/verify_frozen_packaging_repair.py": "c9286844a353741a58c69d694a3295fd14b19ee1"
+      }
     }
   ]
 }
