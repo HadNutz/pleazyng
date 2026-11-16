@@ -1,3 +1,5 @@
+import 'ffmpeg_codec_names.dart';
+
 /// Names are identities, not claims about a decoder or an output device.
 /// Keep source decoding separate from the much smaller set a server can encode.
 abstract final class CodecCatalog {
@@ -128,9 +130,13 @@ abstract final class CodecCatalog {
     },
   };
 
-  static final Set<String> videoCodecs = Set.unmodifiable(videoPriorities.values.expand((value) => value));
+  static final Set<String> videoCodecs = Set.unmodifiable({
+    ...FfmpegCodecNames.video,
+    ...videoPriorities.values.expand((value) => value),
+  });
 
-  static const audioCodecs = <String>{
+  static final Set<String> audioCodecs = Set.unmodifiable(<String>{
+    ...FfmpegCodecNames.audio,
     'aac',
     'aac_latm',
     'opus',
@@ -185,7 +191,7 @@ abstract final class CodecCatalog {
     'dsd_msbf',
     'dsd_lsbf_planar',
     'dsd_msbf_planar',
-  };
+  });
 
   static bool isAudioCodec(String codec) =>
       audioCodecs.contains(codec) || codec.startsWith('pcm_') || codec.startsWith('adpcm_');
@@ -239,8 +245,9 @@ abstract final class CodecCatalog {
     '.266',
     '.vvc',
     '.av1',
+    '.av2',
+    '.evc',
     '.ivf',
-    '.avs',
     '.avs2',
     '.avs3',
     '.ogm',

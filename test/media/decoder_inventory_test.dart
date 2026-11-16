@@ -73,6 +73,18 @@ void main() {
     expect(VideoDecodeCapabilities.transcodeVideoCodecs.map((codec) => codec.id), isNot(contains('vvc')));
   });
 
+  test('the complete descriptor catalogue includes obscure measured decoders', () {
+    RuntimePlaybackCapabilities.recordMpvDecoders([
+      {'codec': 'interplayvideo', 'driver': 'interplayvideo'},
+      {'codec': 'escape130', 'driver': 'escape130'},
+    ]);
+    expect(VideoDecodeCapabilities.directPlayVideoCodecs, containsAll(['interplayvideo', 'escape130']));
+    expect(CodecCatalog.isAudioCodec('metasound'), isTrue);
+    RuntimePlaybackCapabilities.activeVideoEngine = 'exoplayer';
+    expect(VideoDecodeCapabilities.directPlayVideoCodecs, isNot(contains('escape130')));
+    expect(VideoDecodeCapabilities.sourceDecoderUnavailable('h264'), isFalse);
+  });
+
   test('container aliases follow the actual demuxer inventory', () {
     RuntimePlaybackCapabilities.recordMpvDemuxers(['mov,mp4,m4a,3gp,3g2,mj2', 'avi', 'mpeg']);
     expect(RuntimePlaybackCapabilities.mpvVideoContainers, containsAll(['mp4', 'mov', 'avi', 'vob']));

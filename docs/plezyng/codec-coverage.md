@@ -28,9 +28,16 @@ source. Native webOS, Tizen and ExoPlayer never inherit mpv's inventory.
   credentials or file paths. `executionQualified` remains false.
 - Recognize the expanded modern, professional and historical video/audio
   extensions in all shared file-source browsers.
+- Generate the complete video/audio/subtitle naming catalogue from the pinned
+  FFmpeg descriptors (282 video, 225 audio, 27 subtitle identities). Long-tail
+  video names can enter direct-play negotiation only after runtime enumeration;
+  a generated name alone never advertises an installed decoder.
 - Companion `snapetech-org/mpv-build` preserves the broad built-in FFmpeg
   decoder, demuxer, parser and bitstream-filter sets. Linux packages generate
   a binary-hashed inventory and require a software AV1 implementation.
+  Its Linux recipe also links EVC, AVS2 and AVS3 external decoders. The pinned
+  AVS2 dependency is 8-bit only. Native packages must be rebuilt and consumed
+  before these new dependencies exist in an installed application.
 
 ## Coverage order and remaining qualification
 
