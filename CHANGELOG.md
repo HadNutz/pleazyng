@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Keep recovery tooling pinned to the trusted workflow revision, release inputs tied to the verified product source, and signed runtime catalog updates independent of application artifacts.
+- Keep release recovery tooling, product inputs and immutable-tag checks aligned to their verified source identities; preserve independently signed runtime catalog updates outside platform artifacts.
 
 - Hide Continue Watching from TV launcher shelves for PIN-protected profiles while startup requires profile selection, independently adapting [Plezy commit 02eeba6972](https://github.com/edde746/plezy/commit/02eeba69723b33f28e6b8ae9dab2ce1c02a1c3cd) by [@edde746](https://github.com/edde746); see [upstream source credit](UPSTREAM_ATTRIBUTION.md#credited-plezy-commits).
 

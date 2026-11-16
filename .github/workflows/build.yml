@@ -620,6 +620,10 @@ jobs:
           while IFS= read -r changed_file; do
             [[ -z "$changed_file" ]] && continue
             case "$changed_file" in
+              # This signed catalog is fetched and verified at runtime, not
+              # embedded in the immutable platform artifacts.
+              content/visualizer-catalog.json)
+                ;;
               webos/CMakeLists.txt)
                 python3 scripts/verify_webos_link_patch.py "$release_commit" "$GITHUB_SHA"
                 ;;
