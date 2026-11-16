@@ -11,8 +11,15 @@ from PIL import Image
 
 GROUPS = {
     'amazon-firetv': ({'android-tv-emulator', 'fire-tv-device'}, 3),
+    'amazon-fire-tablet': ({'tablet-emulator'}, 3),
     'google-play-phone': ({'phone-emulator', 'android-device'}, 2),
     'google-play-tablet': ({'tablet-emulator'}, 2),
+}
+MAX_SCREENSHOTS = {
+    'amazon-firetv': 10,
+    'amazon-fire-tablet': 10,
+    'google-play-phone': 8,
+    'google-play-tablet': 8,
 }
 
 
@@ -39,8 +46,9 @@ def package_captures(source: Path, output: Path, group: str) -> Path:
             if 'A' in image.getbands() and image.getchannel('A').getextrema() != (255, 255):
                 raise ValueError('A native screenshot must be opaque; no compositing is performed')
             captures.append((name, image.convert('RGB'), receipt))
-    if not minimum <= len(captures) <= (10 if group == 'amazon-firetv' else 8):
-        raise ValueError(f'{group} requires {minimum} to {10 if group == "amazon-firetv" else 8} distinct captures')
+    maximum = MAX_SCREENSHOTS[group]
+    if not minimum <= len(captures) <= maximum:
+        raise ValueError(f'{group} requires {minimum} to {maximum} distinct captures')
     if len({receipt['capture_sha256'] for _, _, receipt in captures}) != len(captures):
         raise ValueError('Duplicate images do not count as distinct screenshots')
     if len({(receipt['source_sha'], receipt['apk_sha256']) for _, _, receipt in captures}) != 1:

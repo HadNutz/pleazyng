@@ -24,6 +24,29 @@ snapshot, the independent aerynOS preview published and qualified package
 qualification remain separate. See the [current channel guide](linux-distribution-channels.md)
 and [aerynOS publication record](aerynos-sync.md).
 
+## Store listing accuracy audit — 2026-11-16
+
+Amazon rejected the 3.0.33 submission before any territory publication because
+the listing assets did not accurately describe the app. Corrected Fire TV copy
+and four TV plus three tablet screenshots are now prepared from the exact signed
+3.0.33 Amazon APK, with per-image provenance. Inspect and replace all attached
+assets in the Developer Console, then resubmit the current 3.0.36 version there. The
+current Amazon-specific copy and capture checklist are in
+[store-listing-copy.md](store-listing-copy.md) and
+[fire-tv.md](fire-tv.md). Do not describe the Amazon listing as pending review
+until a corrected submission is visible in the console.
+
+The other store audit found that Google Play's saved draft uses the generic
+cross-platform description and screenshots captured from the 3.0.0 Amazon
+flavor. Replace them with Play-build screenshots and reconcile the draft before
+public review. Apple has no submitted version; keep its future metadata focused
+on the submitted Apple product and use matching device captures. Microsoft
+publisher verification is still pending and it has no published listing.
+Samsung Tizen and LG webOS remain manual tester handoffs rather than public
+store listings; use the matching TV build and screen. The channel-specific copy
+and remaining asset checks are recorded in
+[store-listing-copy.md](store-listing-copy.md).
+
 | Channel | Current setup / automation | Remaining before first Pleazyng publication |
 | --- | --- | --- |
 | GitHub Releases / direct downloads | Full platform build and checksum/provenance gates; release orchestrator can publish | Exact intended main revision must pass CI and every required platform build/asset check |
@@ -39,7 +62,7 @@ and [aerynOS publication record](aerynos-sync.md).
 | Google Play internal test | New app/package, testing-only service account access, upload workflow and review grant configured | First signed Play AAB, Play App Signing, purchase product and real-device purchase/review-access validation; internal distribution must be explicitly activated |
 | Google Play closed beta | Sign-in/review instructions, privacy, category/contact, rating and other declarations saved | Data safety, listing with three phone/two tablet images, 178 Alpha regions and existing five-member tester list are saved. Remaining: first AAB and requested permissions declarations, tester/country configuration, IAP validation and Google review |
 | Google Play production / open testing | Existing personal developer account; website verified, company display name under review, organization conversion awaits D-U-N-S | Closed-test eligibility and production-access approval. Current personal-account console requires 12 opted-in testers for 14 continuous days; this does not delay starting the closed test. Recheck eligibility after an approved organization conversion |
-| Amazon Fire TV Appstore | Existing app and entitlement renamed; USD $2.99 IAP and new artwork saved; subsequent binary upload automation configured | Four actual TV screenshots are uploaded/validated. Remaining: qualified APK, company account conversion and tax/payment verification, declarations and purchase testing. Amazon requires first-version submission in Developer Console; later updates can use its API |
+| Amazon Fire TV Appstore | Existing app; version 3.0.33 rejected for listing accuracy with no territory publication | Corrected Fire TV copy and four TV/three tablet captures from the exact signed 3.0.36 APK are prepared locally. Inspect the live console slots, replace stale text/images and resubmit through Developer Console. Company/tax verification, declarations and physical-device purchase testing remain separate gates. |
 | Apple TestFlight | Active Individual Developer Program membership, team `DM9A59DC85`, new identifiers and upload API credentials | English US beta/review information and the automatic-distribution Pleazyng Internal group are saved (zero testers/builds; no invitations sent). Remaining: complete signed iOS/tvOS archive/export and IPA processing, tester assignment, export compliance and external beta review. The existing distribution identity passed native import/signing/strict verification; new-bundle app/extension profiles and the isolated signing path are configured. Validate billing separately before promising full paid-feature testing |
 | Apple iOS / tvOS App Store | Existing app reused, new identifiers and USD $2.99 non-consumable configured; upload automation available | Same signing/build gates plus real screenshots, privacy/review metadata, IAP screenshot and purchase/restore validation, paid agreement activation and Apple review |
 | macOS direct DMG / Sparkle | Universal DMG and appcast pipeline | Developer ID certificate and dedicated secrets now configured; qualified native signing/notarization/Gatekeeper and updater signature verification remain |

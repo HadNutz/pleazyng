@@ -98,18 +98,43 @@ this option `package_name` but forwards it directly into the API's `app_id` URL.
 The lane rejects an Android package name in this setting and explicitly skips
 metadata, changelog, image and screenshot uploads to preserve console edits.
 
-[Amazon requires the first version to be submitted through the Developer Console](https://developer.amazon.com/docs/app-submission-api/overview.html).
-The first draft's APK and screenshot ZIPs are therefore a manual console handoff.
-After that initial submission, the API flow updates subsequent versions using
-the configured Amazon App ID; it leaves review submission to the operator.
-Do not edit the same Amazon draft concurrently through the API and console.
+[Amazon requires the first version to be submitted through the Developer
+Console](https://developer.amazon.com/docs/app-submission-api/overview.html).
+The corrective 3.0.36 submission is a manual console handoff. The configured API
+lane uploads later binaries only; it leaves listing metadata, screenshots and
+review submission to the operator. Do not edit the same Amazon draft
+concurrently through the API and console.
 
 ## Committed capture pack and next release
 
-The [screenshot review pack](store-listing-assets/README.md) contains four TV,
-three phone and two tablet captures, a contact sheet and exact capture-build
-signature/attestation evidence. The README gallery uses these native captures;
-synthetic interface previews are kept separately.
+The [screenshot review pack](store-listing-assets/README.md) contains four
+Amazon Fire TV and three Fire tablet captures from the signed 3.0.36 Amazon APK,
+plus historical Google Play phone/tablet captures, a contact sheet and APK/image
+provenance. The Google Play images are not current and must not be submitted as
+proof for Play review. Synthetic interface previews are kept separately.
+
+## Amazon 3.0.36 corrective resubmission
+
+Amazon rejected version 3.0.33 because its listing did not accurately reflect
+the app. The corrected Amazon copy is in
+[store-listing-copy.md](store-listing-copy.md). Fresh TV and tablet screenshots
+now come from the exact signed 3.0.36 Amazon APK (source
+`2388a06cc74d03e69ac7178fcd927a54460a5e3a`, APK SHA256
+`4d07d84d29994f338cea9bb5ba7f764d2b248b89409ab6a1f64f9fefbdc0a344`). The four
+1920×1080 TV captures show Home, Search, title details and playback controls;
+the three 2560×1600 tablet captures show Home, Search and title details. The
+tablet captures use a generic Android emulator and do not establish Fire OS
+qualification. Review the icon and promotional artwork, inspect every Fire TV
+and tablet image slot in the Developer Console, replace stale items, and verify
+the exact text and assets saved before resubmitting. Do not use welcome-only
+screens, mockups, another store's APK or screenshots from a different form factor
+as substitutes.
+
+Keep the existing product title, SKU and IAP identity unless the console review
+specifically requires a change. The first version and its correction are
+submitted through the Developer Console. After resubmission, update the channel
+record with the console status; uploading an APK through the API does not submit
+it for review.
 
 For the next full release, retain `mode=release` and build a new signed Amazon
 APK from the final release source together with all other required platforms.

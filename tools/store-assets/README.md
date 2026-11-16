@@ -13,7 +13,11 @@ explicit ADB serial and the exact installed APK. See
 `package_captures.py` checks ADB image receipts, rejects mixed builds and duplicate
 frames, validates store dimensions/counts, and exports RGB PNGs without resizing,
 cropping or compositing. It removes alpha only after checking every pixel is
-opaque. The exported sets include provenance and a ZIP for manual console upload.
+opaque. Groups are `amazon-firetv`, `amazon-fire-tablet`, `google-play-phone` and
+`google-play-tablet`; Amazon groups require 3–10 images, while Google Play groups
+require 2–8. The exported sets include provenance and a ZIP for manual console
+upload. Emulator receipts identify the emulator and do not claim Fire OS or
+physical-device qualification.
 
 The opt-in harness also renders subtitle styling sheets and light/dark/OLED
 appearance variants. These use production widgets with simulated state, not a

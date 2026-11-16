@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "artifact": "pleazyng-amazon-firetv.apk",
+  "sha256": "4d07d84d29994f338cea9bb5ba7f764d2b248b89409ab6a1f64f9fefbdc0a344",
+  "size_bytes": 883189225,
+  "package": "org.snapetech.pleazyng",
+  "version": "3.0.36",
+  "signer_sha256": [
+    "bb0faa2caf87c6deb129e994567bc80dcf5c652761b3ab783dd475ccfe51d9ac"
+  ],
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86_64"
+  ],
+  "leanback_launcher": true,
+  "debug_certificate": false,
+  "qualification": "static APK verification; Fire TV device playback and IAP testing still required"
+}
