@@ -435,7 +435,7 @@
       "Record the corrective submission and resulting review status; keep bootstrap false until the initial store submission is completed",
       "Complete company conversion/tax-payment verification, declarations, and physical Fire TV purchase/restore qualification"
     ],
-    "state": "Version 3.0.33 was rejected for listing accuracy; corrected Fire TV copy and exact-build 3.0.33 TV/tablet assets are prepared locally, but Developer Console inspection/upload/resubmission is pending",
+    "state": "Current 3.0.36 submission materials prepared; save metadata and images in Developer Console and submit",
     "fire_tv_screenshots": 4,
     "fire_tv_capture_basis": "Exact signed 3.0.36 Amazon APK, source 2388a06cc74d03e69ac7178fcd927a54460a5e3a, APK SHA256 4d07d84d29994f338cea9bb5ba7f764d2b248b89409ab6a1f64f9fefbdc0a344; Android TV API36 emulator at 1920x1080; actual app UI, no physical Fire OS/IAP qualification",
     "fire_tv_listing_state": "Current 3.0.36 copy and exact-build TV/tablet captures prepared; save in console and submit",
