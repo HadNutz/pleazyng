@@ -4591,11 +4591,12 @@
     },
     {
       "path": "docs/maintainers/store-listing-assets/amazon/fire-tv-icon-1280x720.png",
-      "role": "feature",
+      "role": "plate",
       "size": [
         1280,
         720
-      ]
+      ],
+      "fit": 0.76
     },
     {
       "path": "docs/maintainers/store-listing-assets/amazon/fire-tv-background-1920x1080.png",
