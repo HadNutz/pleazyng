@@ -67,6 +67,9 @@ NATIVE_FAILED_RUN_QUEUE_TIMEOUT_SECONDS = 15 * 60
 APPLE_JIT_EVIDENCE_ROOT: Path | None = None
 APPLE_JIT_SSH_TARGET = os.environ.get("APPLE_JIT_SSH_TARGET", "keith@100.64.0.3")
 RELEASE_TAG_REUSE_ALLOWLIST = frozenset({
+    # This signed envelope is fetched and verified by the app at runtime; it is
+    # published independently and is not embedded in platform build artifacts.
+    "content/visualizer-catalog.json",
     "tools/webos/NATIVE-PREFLIGHT.md",
     "webos/CMakeLists.txt", "scripts/verify_webos_link_patch.py", "scripts/test_verify_webos_link_patch.py",
     "tools/webos/check_audio_plugin_syntax.sh",
