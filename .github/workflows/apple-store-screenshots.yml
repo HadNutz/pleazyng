@@ -1,0 +1,412 @@
+# ng-runner-policy: hosted-default-v2
+# Store screenshots are captured from real app builds on public hosted Macs.
+name: Apple Store Screenshots
+run-name: apple-store-screenshots:v3.0.36
+
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: pleazyng-apple-store-screenshots-v3-0-36
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  PUB_CACHE: ${{ github.workspace }}/.cache/plezy-pub-cache
+  FLUTTER_SUPPRESS_ANALYTICS: "true"
+  DASH__SUPPRESS_ANALYTICS: "true"
+
+jobs:
+  ios:
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main'
+    runs-on: macos-26
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: v3.0.36
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          path: capture-tools
+          persist-credentials: false
+
+      - name: Verify the exact product source
+        env:
+          EXPECTED_SOURCE_SHA: 2388a06cc74d03e69ac7178fcd927a54460a5e3a
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse 'v3.0.36^{commit}')" = "$EXPECTED_SOURCE_SHA"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_SHA"
+
+      - name: Load pinned Flutter SDK
+        run: python3 scripts/flutter/load_sdk_pin.py --github-env
+
+      - name: Setup Flutter
+        uses: ./.github/actions/setup-flutter-apple
+        with:
+          hosted-xcode-version: '26.5'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Cache Pub dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ env.PUB_CACHE }}
+          key: apple-store-v3.0.36-${{ runner.os }}-${{ runner.arch }}-pub-${{ hashFiles('pubspec.yaml', 'pubspec.lock') }}
+
+      - name: Install native build tools
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+          command -v cmake >/dev/null || brew install cmake
+          command -v xcodegen >/dev/null || brew install xcodegen
+          command -v git-lfs >/dev/null || brew install git-lfs
+
+      - name: Install CocoaPods
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/bin:$PATH"
+          gem install cocoapods --version 1.17.0 --no-document \
+            --install-dir "$RUNNER_TEMP/cocoapods-gems" \
+            --bindir "$RUNNER_TEMP/cocoapods-bin"
+          {
+            echo "GEM_HOME=$RUNNER_TEMP/cocoapods-gems"
+            echo "GEM_PATH=$RUNNER_TEMP/cocoapods-gems:$(gem env gempath)"
+          } >> "$GITHUB_ENV"
+          echo "/opt/homebrew/bin" >> "$GITHUB_PATH"
+          echo "$RUNNER_TEMP/cocoapods-bin" >> "$GITHUB_PATH"
+
+      - name: Install locked Flutter dependencies
+        run: flutter pub get --enforce-lockfile --no-example
+
+      - name: Prefetch checksum-pinned iOS native downloads
+        run: python3 scripts/prepare_native_downloads.py --sqlite-platform ios
+
+      - name: Prepare pinned iOS Steam sources
+        env:
+          GIT_TERMINAL_PROMPT: "0"
+        run: python3 scripts/games/prepare_steam.py
+
+      - name: Resolve pinned iOS Swift packages
+        run: scripts/refresh_apple_spm.sh ios
+
+      - name: Build the Store-mode iOS Simulator app
+        env:
+          SOURCE_SHA: 2388a06cc74d03e69ac7178fcd927a54460a5e3a
+        run: |
+          set -euo pipefail
+          flutter build ios --release --simulator --no-codesign --no-pub \
+            --dart-define=SUPPORTER_MODE=iap \
+            --dart-define=ENABLE_UPDATE_CHECK=false \
+            --dart-define=GIT_COMMIT="$SOURCE_SHA" \
+            --dart-define=PLEAZYNG_DISCORD_APPLICATION_ID= \
+            --split-debug-info="$RUNNER_TEMP/ios-app-store-screenshots-debug-info"
+          test -d build/ios/iphonesimulator/Pleazyng.app
+
+      - name: Capture actual iPhone and iPad app screens
+        run: |
+          python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-ios \
+            --product-root "$GITHUB_WORKSPACE" \
+            --app "$GITHUB_WORKSPACE/build/ios/iphonesimulator/Pleazyng.app" \
+            --output-dir "$RUNNER_TEMP/apple-store-captures-ios"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: apple-store-captures-ios-v3.0.36
+          path: ${{ runner.temp }}/apple-store-captures-ios/
+          if-no-files-found: error
+          retention-days: 7
+
+  tvos:
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main'
+    runs-on: macos-26
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: v3.0.36
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          path: capture-tools
+          persist-credentials: false
+
+      - name: Verify the exact product source
+        env:
+          EXPECTED_SOURCE_SHA: 2388a06cc74d03e69ac7178fcd927a54460a5e3a
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse 'v3.0.36^{commit}')" = "$EXPECTED_SOURCE_SHA"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_SHA"
+
+      - name: Setup the pinned tvOS Flutter SDK
+        uses: ./.github/actions/setup-flutter-apple
+        with:
+          hosted-xcode-version: '26.5'
+          flutter-version: '3.47.1'
+
+      - name: Cache Pub dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ env.PUB_CACHE }}
+          key: apple-store-tvos-v3.0.36-${{ runner.os }}-${{ runner.arch }}-pub-${{ hashFiles('pubspec.yaml', 'pubspec.lock', 'pubspec_overrides_tvos.yaml') }}
+
+      - name: Install native build tools
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+          command -v cmake >/dev/null || brew install cmake
+          command -v xcodegen >/dev/null || brew install xcodegen
+          command -v git-lfs >/dev/null || brew install git-lfs
+
+      - name: Install CocoaPods
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/bin:$PATH"
+          gem install cocoapods --version 1.17.0 --no-document \
+            --install-dir "$RUNNER_TEMP/cocoapods-gems" \
+            --bindir "$RUNNER_TEMP/cocoapods-bin"
+          {
+            echo "GEM_HOME=$RUNNER_TEMP/cocoapods-gems"
+            echo "GEM_PATH=$RUNNER_TEMP/cocoapods-gems:$(gem env gempath)"
+          } >> "$GITHUB_ENV"
+          echo "/opt/homebrew/bin" >> "$GITHUB_PATH"
+          echo "$RUNNER_TEMP/cocoapods-bin" >> "$GITHUB_PATH"
+
+      - name: Resolve tvOS dependencies
+        run: tvos/scripts/pub_get.sh
+
+      - name: Prefetch checksum-pinned tvOS native downloads
+        run: python3 scripts/prepare_native_downloads.py --sqlite-platform tvos
+
+      - name: Fetch the checksum-pinned tvOS Flutter engine
+        run: tvos/scripts/fetch_engine.sh
+
+      - name: Install tvOS CocoaPods dependencies
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          umask 077
+          askpass="$RUNNER_TEMP/pleazyng-tvos-git-askpass"
+          trap 'rm -f "$askpass"' EXIT
+          cat > "$askpass" <<'ASKPASS'
+          #!/bin/sh
+          case "$1" in
+            *Username*github.com*) printf '%s\n' x-access-token ;;
+            *Password*github.com*) printf '%s\n' "$GH_TOKEN" ;;
+            *) exit 1 ;;
+          esac
+          ASKPASS
+          chmod 700 "$askpass"
+          export GIT_ASKPASS="$askpass"
+          export GIT_TERMINAL_PROMPT=0
+          tvos/scripts/pod_install.sh
+
+      - name: Resolve pinned tvOS Swift packages
+        env:
+          TVOS_DERIVED_DATA: ${{ runner.temp }}/apple-store-tvos-derived
+          TVOS_SOURCE_PACKAGES: ${{ runner.temp }}/apple-store-tvos-source-packages
+        run: |
+          mkdir -p "$TVOS_DERIVED_DATA" "$TVOS_SOURCE_PACKAGES"
+          xcodebuild -resolvePackageDependencies \
+            -workspace tvos/Runner.xcworkspace \
+            -scheme Runner \
+            -derivedDataPath "$TVOS_DERIVED_DATA" \
+            -clonedSourcePackagesDirPath "$TVOS_SOURCE_PACKAGES"
+          python3 scripts/patch_amsmb2_manifest.py \
+            --source-packages-dir "$TVOS_SOURCE_PACKAGES" \
+            --resolved-package tvos/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+
+      - name: Build the Store-mode tvOS Simulator app
+        env:
+          TVOS_DERIVED_DATA: ${{ runner.temp }}/apple-store-tvos-derived
+          TVOS_SOURCE_PACKAGES: ${{ runner.temp }}/apple-store-tvos-source-packages
+        run: |
+          set -euo pipefail
+          xcodebuild build \
+            -workspace tvos/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Debug \
+            -sdk appletvsimulator \
+            -destination 'generic/platform=tvOS Simulator' \
+            -derivedDataPath "$TVOS_DERIVED_DATA" \
+            -clonedSourcePackagesDirPath "$TVOS_SOURCE_PACKAGES" \
+            ARCHS=arm64 \
+            CODE_SIGNING_ALLOWED=NO \
+            COMPILER_INDEX_STORE_ENABLE=NO
+          test -d "$TVOS_DERIVED_DATA/Build/Products/Debug-appletvsimulator/Runner.app"
+
+      - name: Capture the actual tvOS app screen
+        run: |
+          python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-tvos \
+            --product-root "$GITHUB_WORKSPACE" \
+            --app "$RUNNER_TEMP/apple-store-tvos-derived/Build/Products/Debug-appletvsimulator/Runner.app" \
+            --output-dir "$RUNNER_TEMP/apple-store-captures-tvos"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: apple-store-captures-tvos-v3.0.36
+          path: ${{ runner.temp }}/apple-store-captures-tvos/
+          if-no-files-found: error
+          retention-days: 7
+
+  macos:
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main'
+    runs-on: macos-26-intel
+    timeout-minutes: 210
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: v3.0.36
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          path: capture-tools
+          persist-credentials: false
+
+      - name: Verify the exact product source
+        env:
+          EXPECTED_SOURCE_SHA: 2388a06cc74d03e69ac7178fcd927a54460a5e3a
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse 'v3.0.36^{commit}')" = "$EXPECTED_SOURCE_SHA"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_SHA"
+
+      - name: Load pinned Flutter SDK
+        run: python3 scripts/flutter/load_sdk_pin.py --github-env
+
+      - name: Setup Flutter
+        uses: ./.github/actions/setup-flutter-apple
+        with:
+          hosted-xcode-version: '26.5'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Cache Pub dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ env.PUB_CACHE }}
+          key: apple-store-macos-v3.0.36-${{ runner.os }}-${{ runner.arch }}-pub-${{ hashFiles('pubspec.yaml', 'pubspec.lock') }}
+
+      - name: Install native build tools
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+          command -v cmake >/dev/null || brew install cmake
+          command -v xcodegen >/dev/null || brew install xcodegen
+          command -v git-lfs >/dev/null || brew install git-lfs
+
+      - name: Install CocoaPods
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/bin:$PATH"
+          gem install cocoapods --version 1.17.0 --no-document \
+            --install-dir "$RUNNER_TEMP/cocoapods-gems" \
+            --bindir "$RUNNER_TEMP/cocoapods-bin"
+          {
+            echo "GEM_HOME=$RUNNER_TEMP/cocoapods-gems"
+            echo "GEM_PATH=$RUNNER_TEMP/cocoapods-gems:$(gem env gempath)"
+          } >> "$GITHUB_ENV"
+          echo "/opt/homebrew/bin" >> "$GITHUB_PATH"
+          echo "$RUNNER_TEMP/cocoapods-bin" >> "$GITHUB_PATH"
+
+      - name: Install locked Flutter dependencies
+        run: flutter pub get --enforce-lockfile --no-example
+
+      - name: Prefetch checksum-pinned macOS native downloads
+        run: python3 scripts/prepare_native_downloads.py --sqlite-platform macos
+
+      - name: Prepare run-local Swift package checkout
+        run: mkdir -p build/macos/SourcePackages
+
+      - name: Refresh pinned macOS Swift packages
+        run: scripts/refresh_apple_spm.sh macos
+
+      - name: Build the unsigned Mac App Store candidate
+        run: |
+          set -euo pipefail
+          python3 scripts/build_macos_app_store_candidate.py \
+            --source-sha 2388a06cc74d03e69ac7178fcd927a54460a5e3a \
+            --output-dir "$RUNNER_TEMP/apple-store-macos-candidate" \
+            --derived-data-dir "$RUNNER_TEMP/apple-store-macos-derived-data"
+
+      - name: Capture the actual macOS app window
+        run: |
+          python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-macos \
+            --product-root "$GITHUB_WORKSPACE" \
+            --app "$RUNNER_TEMP/apple-store-macos-candidate/Pleazyng.xcarchive/Products/Applications/Pleazyng.app" \
+            --output-dir "$RUNNER_TEMP/apple-store-captures-macos"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: apple-store-captures-macos-v3.0.36
+          path: ${{ runner.temp }}/apple-store-captures-macos/
+          if-no-files-found: error
+          retention-days: 7
+
+  package:
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main'
+    needs: [ios, tvos, macos]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      attestations: write
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          path: capture-tools
+          persist-credentials: false
+
+      - name: Download iOS captures
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: apple-store-captures-ios-v3.0.36
+          path: ${{ runner.temp }}/apple-store-captures-ios
+
+      - name: Download tvOS captures
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: apple-store-captures-tvos-v3.0.36
+          path: ${{ runner.temp }}/apple-store-captures-tvos
+
+      - name: Download macOS captures
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: apple-store-captures-macos-v3.0.36
+          path: ${{ runner.temp }}/apple-store-captures-macos
+
+      - name: Verify and package the Apple screenshot set
+        run: |
+          python3 capture-tools/scripts/capture_apple_store_screenshots.py package \
+            --ios-dir "$RUNNER_TEMP/apple-store-captures-ios" \
+            --tvos-dir "$RUNNER_TEMP/apple-store-captures-tvos" \
+            --macos-dir "$RUNNER_TEMP/apple-store-captures-macos" \
+            --output-dir "$RUNNER_TEMP/apple-store-screenshots-v3.0.36"
+
+      - name: Attest the screenshot package
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: ${{ runner.temp }}/apple-store-screenshots-v3.0.36.zip
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: pleazyng-apple-store-screenshots-v3.0.36
+          path: |
+            ${{ runner.temp }}/apple-store-screenshots-v3.0.36/
+            ${{ runner.temp }}/apple-store-screenshots-v3.0.36.zip
+          if-no-files-found: error
+          retention-days: 90
