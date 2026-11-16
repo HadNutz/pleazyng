@@ -77,7 +77,18 @@ The application remains on its last verified native pin until the producer's
 new all-platform artifacts pass publication and pin verification. These source
 changes do not themselves establish shipped or device-qualified LCEVC support.
 Native webOS/Tizen/ExoPlayer backends do not gain this SDK from mpv packaging.
-AV2 and unavailable proprietary SDKs must retain a truthful unsupported or
+AV2 v1.0.0 is final, but VideoLAN still describes dav2d as an early
+decoder and advises against production use; its repository roadmap lists the C
+implementation, usable API and platform ports as ongoing work. The pinned
+FFmpeg has no AV2 codec ID or integrated decoder wrapper, so filename or
+server-metadata recognition cannot enable local AV2 playback. Current mpv
+inventories therefore exclude AV2. When a valid inventory shows no source
+decoder, Jellyfin/Emby playback requests a compatible server conversion; if
+none is offered, the client reports the unsupported source instead of retrying
+the same file. Sources: [AV2 v1.0 specification](https://av2.aomedia.org/),
+[VideoLAN dav2d project](https://code.videolan.org/videolan/dav2d).
+
+Unavailable proprietary SDKs must likewise keep an honest unsupported or
 server-conversion route; recognition never substitutes for an implementation.
 
 The native producer's local validation now includes exact upstream YUV hashes
