@@ -80,8 +80,8 @@ def update(root: Path, metadata: dict, commit: str, observed: str) -> list[str]:
 | Samsung Tizen TV | [Experimental ARM tester handoff]({page}); TV qualification and Tizen 10 remain pending. See the [build guide and rollout plan](docs/maintainers/tizen-tv.md). |
 
 """
-    outputs = {manifest_path: json.dumps(manifest, indent=2) + "\n",
-               root / release["evidence"]: json.dumps(snapshot, indent=2) + "\n",
+    outputs = {manifest_path: json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
+               root / release["evidence"]: json.dumps(snapshot, indent=2, ensure_ascii=False) + "\n",
                readme_path: readme[:start] + download + readme[end:]}
     changed = []
     for path, text in outputs.items():

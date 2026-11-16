@@ -13,7 +13,7 @@
     "gated": "The capability intentionally stays disabled or experimental until its stated external or platform evidence exists."
   },
   "release": {
-    "version": "3.0.33",
+    "version": "3.0.34",
     "publicationStatus": "published",
     "publicLatestAvailable": true,
     "releasesPage": "https://github.com/snapetech-org/pleazyng/releases",
@@ -57,10 +57,10 @@
         "Server checks"
       ]
     },
-    "tag": "v3.0.33",
-    "publishedAt": "2026-11-12T01:42:16Z",
-    "sourceCommit": "240994590dd3e5411ee3b02c2bcfc0a1fd51a431",
-    "evidence": "docs/maintainers/releases/v3.0.33.json",
+    "tag": "v3.0.34",
+    "publishedAt": "2026-11-15T09:14:49Z",
+    "sourceCommit": "e9177d2d7aa955b5e96f717be5671dea022a61fd",
+    "evidence": "docs/maintainers/releases/v3.0.34.json",
     "requiredPlatforms": [
       "android",
       "linux-x64",
@@ -233,7 +233,7 @@
         "lib/profiles/active_profile_provider.dart",
         "test/sources/source_controller_startup_test.dart"
       ],
-      "qualification": "Profile data is staged and published as one owner-scoped snapshot; stale loads and adapter callbacks are generation-guarded. The delayed A\u2192B\u2192A completion-order regression passes. Credential-refresh acceptance remains unqualified."
+      "qualification": "Profile data is staged and published as one owner-scoped snapshot; stale loads and adapter callbacks are generation-guarded. The delayed A→B→A completion-order regression passes. Credential-refresh acceptance remains unqualified."
     },
     {
       "id": "F02",
