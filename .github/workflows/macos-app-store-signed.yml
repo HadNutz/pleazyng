@@ -31,7 +31,7 @@ jobs:
   build-upload:
     name: Build and upload signed Mac App Store package
     if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main'
-    runs-on: ${{ fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-macos-app-store"]}}', github.run_id)) }}
+    runs-on: ${{ fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","gha-{0}-macos-app-store"]}}', github.run_id)) }}
     timeout-minutes: 240
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -45,6 +45,17 @@ jobs:
           path: source
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Validate immutable release source before running tagged code
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+          python3 scripts/build_macos_app_store_signed.py \
+            --validate-source-only \
+            --release-tag "$RELEASE_TAG" \
+            --source-dir "$GITHUB_WORKSPACE/source" \
+            --main-commit "$GITHUB_SHA"
 
       - name: Load Flutter version pinned by release source
         working-directory: source
@@ -105,7 +116,8 @@ jobs:
         run: mkdir -p "$GITHUB_WORKSPACE/source/build/macos/SourcePackages"
 
       - name: Refresh pinned mpv Swift packages
-        working-directory: source
+        env:
+          PLEAZYNG_APPLE_SOURCE_ROOT: ${{ github.workspace }}/source
         run: scripts/refresh_apple_spm.sh macos
 
       - uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0

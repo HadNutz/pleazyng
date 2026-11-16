@@ -89,8 +89,9 @@ def _safe_tag(tag: str) -> None:
         raise ValueError("release tag must be an exact stable vMAJOR.MINOR.PATCH tag")
 
 
-def validate_release_source(source_dir: Path, release_tag: str) -> dict[str, str]:
-    """Require an annotated immutable release tag and matching pubspec version."""
+def validate_release_source(source_dir: Path, release_tag: str,
+                            canonical_main_sha: str | None = None) -> dict[str, str]:
+    """Require an annotated, checked-out release tag in canonical main history."""
     _safe_tag(release_tag)
     tag_ref = f"refs/tags/{release_tag}"
     tag_type = _capture(["git", "cat-file", "-t", tag_ref], cwd=source_dir).decode().strip()
@@ -104,6 +105,13 @@ def validate_release_source(source_dir: Path, release_tag: str) -> dict[str, str
         raise ValueError("checked-out product source differs from the selected annotated release tag")
     if _capture(["git", "status", "--porcelain", "--untracked-files=no"], cwd=source_dir).strip():
         raise ValueError("checked-out product source has tracked modifications")
+    if canonical_main_sha is not None:
+        if not re.fullmatch(r"[0-9a-f]{40}", canonical_main_sha):
+            raise ValueError("canonical main workflow commit is missing or invalid")
+        try:
+            _capture(["git", "merge-base", "--is-ancestor", source_sha, canonical_main_sha], cwd=source_dir)
+        except RuntimeError:
+            raise ValueError("selected release tag is not an ancestor of the canonical main workflow commit") from None
     version, build_number = parse_pubspec_version((source_dir / "pubspec.yaml").read_text(encoding="utf-8"))
     marketing_version = version.split("+", 1)[0]
     if marketing_version != release_tag[1:]:
@@ -721,7 +729,7 @@ def run_build(args: argparse.Namespace) -> int:
         if sys.platform != "darwin":
             raise RuntimeError("Mac App Store signing must run on the native private Mac")
         source_dir = args.source_dir.resolve(strict=True)
-        source = validate_release_source(source_dir, args.release_tag)
+        source = validate_release_source(source_dir, args.release_tag, os.environ.get("GITHUB_SHA", ""))
         report.update(source)
         team = os.environ.get(TEAM_SECRET, "")
         if not re.fullmatch(r"[A-Z0-9]{10}", team):
@@ -816,13 +824,26 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--release-tag", required=True, help="immutable annotated version tag, such as v3.0.36")
     parser.add_argument("--source-dir", type=Path, required=True, help="separate checkout of the immutable tagged source")
-    parser.add_argument("--output-dir", type=Path, required=True, help="fresh directory for the signed package and receipt")
-    parser.add_argument("--archive-path", type=Path, required=True, help="fresh runner-temporary Xcode archive path")
-    parser.add_argument("--derived-data", type=Path, required=True, help="fresh runner-temporary Xcode DerivedData path")
+    parser.add_argument("--main-commit", help="canonical main commit whose ancestry must include the release tag")
+    parser.add_argument("--validate-source-only", action="store_true",
+                        help="validate tag identity and main ancestry without running product code or signing")
+    parser.add_argument("--output-dir", type=Path, help="fresh directory for the signed package and receipt")
+    parser.add_argument("--archive-path", type=Path, help="fresh runner-temporary Xcode archive path")
+    parser.add_argument("--derived-data", type=Path, help="fresh runner-temporary Xcode DerivedData path")
     args = parser.parse_args()
     _safe_tag(args.release_tag)
+    if args.validate_source_only:
+        if not args.main_commit:
+            parser.error("--main-commit is required with --validate-source-only")
+    elif not all((args.output_dir, args.archive_path, args.derived_data)):
+        parser.error("--output-dir, --archive-path, and --derived-data are required for signing")
     return args
 
 
 if __name__ == "__main__":
-    raise SystemExit(run_build(parse_args()))
+    arguments = parse_args()
+    if arguments.validate_source_only:
+        source = validate_release_source(arguments.source_dir, arguments.release_tag, arguments.main_commit)
+        print(json.dumps(source, sort_keys=True))
+        raise SystemExit(0)
+    raise SystemExit(run_build(arguments))

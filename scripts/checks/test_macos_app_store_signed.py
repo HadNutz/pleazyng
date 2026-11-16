@@ -92,17 +92,42 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
 
     def test_release_source_requires_the_exact_clean_tag_checkout(self):
         source_sha = "a" * 40
+        main_sha = "b" * 40
         with tempfile.TemporaryDirectory() as temporary:
             source = Path(temporary)
             (source / "pubspec.yaml").write_text("version: 3.0.36+195\n", encoding="utf-8")
             with patch.object(store, "_capture", side_effect=[b"tag", source_sha.encode(),
-                                                                source_sha.encode(), b""]):
-                result = store.validate_release_source(source, "v3.0.36")
+                                                                source_sha.encode(), b"", b""]):
+                result = store.validate_release_source(source, "v3.0.36", main_sha)
             self.assertEqual(result["source_commit"], source_sha)
+            with patch.object(store, "_capture", side_effect=[b"tag", source_sha.encode(),
+                                                                source_sha.encode(), b"", RuntimeError("not an ancestor")]), \
+                    self.assertRaisesRegex(ValueError, "not an ancestor of the canonical main"):
+                store.validate_release_source(source, "v3.0.36", main_sha)
             with patch.object(store, "_capture", side_effect=[b"tag", source_sha.encode(),
                                                                 ("b" * 40).encode()]), \
                     self.assertRaisesRegex(ValueError, "differs from the selected"):
                 store.validate_release_source(source, "v3.0.36")
+
+    def test_workflow_validates_source_before_tagged_tools_and_uses_current_spm_helper(self):
+        workflow = (ROOT / ".github/workflows/macos-app-store-signed.yml").read_text(encoding="utf-8")
+        validation = workflow.index("- name: Validate immutable release source before running tagged code")
+        tagged_tools = workflow.index("- name: Load Flutter version pinned by release source")
+        self.assertLess(validation, tagged_tools)
+        self.assertIn("--validate-source-only", workflow[validation:tagged_tools])
+        self.assertIn("--main-commit \"$GITHUB_SHA\"", workflow[validation:tagged_tools])
+
+        refresh = workflow.index("- name: Refresh pinned mpv Swift packages")
+        next_step = workflow.find("\n      - ", refresh + 1)
+        refresh_step = workflow[refresh:next_step]
+        self.assertNotIn("working-directory: source", refresh_step)
+        self.assertIn("PLEAZYNG_APPLE_SOURCE_ROOT: ${{ github.workspace }}/source", refresh_step)
+        self.assertIn("run: scripts/refresh_apple_spm.sh macos", refresh_step)
+        helper = (ROOT / "scripts/refresh_apple_spm.sh").read_text(encoding="utf-8")
+        self.assertIn("PLEAZYNG_APPLE_SOURCE_ROOT", helper)
+
+        runner = next(line for line in workflow.splitlines() if "runs-on:" in line)
+        self.assertIn('"labels":["self-hosted","macOS","ARM64","private-apple","gha-{0}-macos-app-store"]', runner)
 
     def test_existing_certificate_without_local_key_tries_additive_cert_without_revocation(self):
         certificate = {
