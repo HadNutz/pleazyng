@@ -301,6 +301,7 @@ derives from the URL move in the same pass.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -638,6 +639,22 @@ def build_lock() -> dict | None:
             f"{versions.get('formatVersion')!r}, expected 1"
         )
         return None
+    sdk = versions.get("components", {}).get("lcevc_dec")
+    if sdk:
+        # Static Apple framework resources need not be copied into the app.
+        # Keep the independent Flutter notice payload tied to the SDK source
+        # before moving any platform pin, including future SDK upgrades.
+        try:
+            notice = json.loads(Path("assets/licenses/LCEVCdec.sources.json").read_text())
+            bundle = Path("assets/licenses/LCEVCdec.txt").read_bytes()
+            pins = [sdk, *(sdk.get("overrides") or {}).values()]
+            if (any(pin.get("commit") != notice.get("commit") or
+                    pin.get("version") != notice.get("version") for pin in pins) or
+                    hashlib.sha256(bundle).hexdigest() != notice.get("bundleSha256")):
+                raise ValueError("SDK source pin or notice payload changed")
+        except (OSError, ValueError, TypeError) as error:
+            errors.append(f"LCEVC SDK licensing notices must match the native source pin: {error}")
+            return None
     if manifest.get("schema") != 2:
         errors.append(
             f"artifacts.json at {revision[:12]}: schema is "

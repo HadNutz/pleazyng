@@ -79,3 +79,16 @@ changes do not themselves establish shipped or device-qualified LCEVC support.
 Native webOS/Tizen/ExoPlayer backends do not gain this SDK from mpv packaging.
 AV2 and unavailable proprietary SDKs must retain a truthful unsupported or
 server-conversion route; recognition never substitutes for an implementation.
+
+The native producer's local validation now includes exact upstream YUV hashes
+for AVS2 8-bit and AVS3 8/10-bit, Android final shared FFmpeg links for all four
+ABIs, and a headless VA-API control test for LCEVC. The latter reproduced a
+silent base-layer-only hardware result and verified targeted software replay
+at enhanced resolution while ordinary H.264 retained hardware decoding.
+These are producer validation results; app delivery still requires the verified
+native pin update above. No TV input or visible playback was changed.
+
+`set_native_revision.sh` also checks `LCEVCdec.sources.json` against the SDK
+source commit/version and the exact app notice payload. A future SDK update or
+altered notice fails before any platform pin is written, preventing a static
+framework's resource-copy behavior from dropping its licensing information.

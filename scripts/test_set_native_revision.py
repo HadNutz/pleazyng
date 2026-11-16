@@ -19,6 +19,7 @@ repo flip to edde746/mpv-build: repositoryURL, SwiftPM identity, and the
 pbxproj comment strings move with the revision in one all-or-nothing pass.
 """
 
+import hashlib
 import json
 import http.server
 import os
@@ -281,7 +282,7 @@ class SetNativeRevisionTest(unittest.TestCase):
         return sites
 
     def _make_mpv_build(
-        self, name: str = "mpv-build", *, artifacts: dict | None = None, manifests: bool = True
+        self, name: str = "mpv-build", *, artifacts: dict | None = None, manifests: bool = True, versions: dict | None = None
     ) -> tuple[Path, str]:
         """A real git checkout carrying the manifests, and its HEAD commit."""
         repo = self.temporary / name
@@ -292,7 +293,7 @@ class SetNativeRevisionTest(unittest.TestCase):
                 encoding="utf-8",
             )
             (repo / "versions.json").write_text(
-                json.dumps(VERSIONS_FIXTURE, indent=2, sort_keys=True) + "\n",
+                json.dumps(versions or VERSIONS_FIXTURE, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
             )
         else:
@@ -305,6 +306,37 @@ class SetNativeRevisionTest(unittest.TestCase):
             git[:3] + ["rev-parse", "HEAD"], check=True, capture_output=True, text=True
         ).stdout.strip()
         return repo, head
+
+    def test_sdk_notice_mismatch_preserves_every_native_pin(self):
+        sdk = {'version': '4.3.1', 'commit': 'e' * 40}
+        versions = {'formatVersion': 1, 'components': {'lcevc_dec': sdk}}
+        repo, commit = self._make_mpv_build(versions=versions)
+        directory = self.root / 'assets/licenses'
+        directory.mkdir(parents=True)
+        payload = directory / 'LCEVCdec.txt'
+        payload.write_text('Original SDK terms')
+        metadata = {'version': sdk['version'], 'commit': sdk['commit'],
+                    'bundleSha256': hashlib.sha256(payload.read_bytes()).hexdigest()}
+        (directory / 'LCEVCdec.sources.json').write_text(json.dumps(metadata))
+        payload.write_text('altered terms')
+        before = self._snapshot()
+        result = self._run(commit, '--repo', str(repo))
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('LCEVC SDK licensing notices must match', result.stderr)
+        self.assertEqual(self._snapshot(), before)
+
+    def test_matching_sdk_notice_allows_atomic_native_pin_update(self):
+        sdk = {'version': '4.3.1', 'commit': 'e' * 40}
+        repo, commit = self._make_mpv_build(versions={'formatVersion': 1, 'components': {'lcevc_dec': sdk}})
+        directory = self.root / 'assets/licenses'
+        directory.mkdir(parents=True)
+        payload = directory / 'LCEVCdec.txt'
+        payload.write_text('Original SDK terms')
+        metadata = {**sdk, 'bundleSha256': hashlib.sha256(payload.read_bytes()).hexdigest()}
+        (directory / 'LCEVCdec.sources.json').write_text(json.dumps(metadata))
+        result = self._run(commit, '--repo', str(repo))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads((self.root / 'mpv-build.lock.json').read_text())['commit'], commit)
 
     def _git(self, repo: Path) -> list[str]:
         return [

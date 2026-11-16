@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "component": "lcevc_dec",
+  "version": "4.3.1",
+  "commit": "e295d8438ba554bc541fb269baa9cbd567b626a8",
+  "source": "https://github.com/v-novaltd/LCEVCdec",
+  "bundleSha256": "44a73a9627e2c3340c41bb47331ce0b6f47f8dbf32e0528fd8e1a31a65d2531b",
+  "sourceFiles": {
+    "COPYING": "3afa5369b4fb44e18280b6e0e275971f78bc6eaf5f53553f41f2483fd8b1267e",
+    "LICENSE.md": "14358b0ecf6e7036c211c10f0f25563c94483dee7b8c7c954e09e10f3771d0af"
+  }
+}

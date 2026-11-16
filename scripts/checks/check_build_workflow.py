@@ -1550,7 +1550,7 @@ require(
     and '-derivedDataPath "$APPLE_DERIVED_DATA_PATH"' in named_step(
         job("build-tvos"), "Resolve pinned tvOS Swift packages"
     )
-    and 'derived_data_args=(-scheme Runner -derivedDataPath "$APPLE_DERIVED_DATA_PATH")'
+    and 'xcodebuild_args+=(-scheme Runner -derivedDataPath "$APPLE_DERIVED_DATA_PATH")'
     in (ROOT / "scripts/refresh_apple_spm.sh").read_text(),
     "Apple Swift package resolution must keep DerivedData inside the per-job cleanup root",
 )
