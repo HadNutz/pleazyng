@@ -70,9 +70,11 @@ class PackageTest(unittest.TestCase):
         root = package.ET.parse(staged).getroot()
         names = [item.text for item in root.findall('t:privileges/t:privilege', package.NS)]
         self.assertEqual(names.count('http://developer.samsung.com/privilege/billing'), 1)
+        self.assertEqual(names.count('http://developer.samsung.com/privilege/productinfo'), 1)
         self.assertEqual(names.count('http://developer.samsung.com/privilege/sso.partner'), 1)
         self.assertEqual(names.count('http://tizen.org/privilege/appmanager.launch'), 1)
         self.assertNotIn(b'sso.partner', self.manifest)
+        self.assertNotIn(b'productinfo', self.manifest)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

@@ -611,6 +611,7 @@ def enable_samsung_checkout(manifest):
         privileges = ET.SubElement(root, '{' + NS['t'] + '}privileges')
     existing = {item.text for item in privileges}
     for name in ('http://developer.samsung.com/privilege/billing',
+                 'http://developer.samsung.com/privilege/productinfo',
                  'http://developer.samsung.com/privilege/sso.partner',
                  'http://tizen.org/privilege/appmanager.launch'):
         if name not in existing:
