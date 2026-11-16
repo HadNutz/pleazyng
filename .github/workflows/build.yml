@@ -3666,43 +3666,6 @@ jobs:
           RELEASE_VERSION: ${{ needs.validate-trusted-ref.outputs.version }}
         run: python3 scripts/generate_winget_manifests.py "$RELEASE_VERSION" artifacts/windows-installer/pleazyng-windows-installer.exe artifacts --release-tag "$RELEASE_TAG"
 
-      - name: Generate release SHA-256 checksums
-        run: |
-          python3 scripts/create_release_checksums.py artifacts
-          if [[ -f artifacts/platform-reuse-provenance.json ]]; then
-            (cd artifacts && sha256sum platform-reuse-provenance.json >> SHA256SUMS.txt)
-          fi
-
-      - name: Generate Homebrew Cask candidate
-        if: ${{ needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true' }}
-        env:
-          RELEASE_VERSION: ${{ needs.validate-trusted-ref.outputs.version }}
-        run: |
-          mkdir -p artifacts/homebrew
-          python3 scripts/generate_homebrew_cask.py \
-            --version "$RELEASE_VERSION" \
-            --checksums artifacts/SHA256SUMS.txt \
-            --output artifacts/homebrew/snapetech-pleazyng.rb
-
-      - name: Attest release manifests and checksums
-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
-        with:
-          subject-path: |
-            artifacts/SHA256SUMS.txt
-
-      - name: Attest WinGet manifests
-        if: steps.winget-manifests.outcome == 'success'
-        continue-on-error: true
-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
-        with:
-          subject-path: artifacts/pleazyng-winget-manifests-${{ needs.validate-trusted-ref.outputs.version }}.zip
-
-      - name: Attest Homebrew Cask candidate
-        if: ${{ needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true' }}
-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
-        with:
-          subject-path: artifacts/homebrew/snapetech-pleazyng.rb
-
       - name: Generate appcast.xml
         env:
           RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.release_tag }}
@@ -3730,7 +3693,7 @@ jobs:
             WIN_INSTALLER_SIZE=$(cat artifacts/windows-installer/win-installer-size.txt)
           fi
 
-          cat > appcast.xml << XMLEOF
+          cat > artifacts/appcast.xml << XMLEOF
           <?xml version="1.0" encoding="utf-8"?>
           <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
             <channel>
@@ -3744,7 +3707,7 @@ jobs:
 
           # macOS enclosure
           if [ -n "$MACOS_ED_SIG" ]; then
-            cat >> appcast.xml << XMLEOF
+            cat >> artifacts/appcast.xml << XMLEOF
                 <enclosure url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}/pleazyng-macos.dmg"
                            length="${MACOS_DMG_SIZE}" type="application/octet-stream"
                            sparkle:edSignature="${MACOS_ED_SIG}"
@@ -3754,7 +3717,7 @@ jobs:
 
           # Windows enclosure
           if [ -n "$WIN_ED_SIG" ]; then
-            cat >> appcast.xml << XMLEOF
+            cat >> artifacts/appcast.xml << XMLEOF
                 <enclosure url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}/pleazyng-windows-installer.exe"
                            length="${WIN_INSTALLER_SIZE}" type="application/octet-stream"
                            sparkle:edSignature="${WIN_ED_SIG}"
@@ -3763,17 +3726,59 @@ jobs:
           XMLEOF
           fi
 
-          cat >> appcast.xml << 'XMLEOF'
+          cat >> artifacts/appcast.xml << 'XMLEOF'
               </item>
             </channel>
           </rss>
           XMLEOF
 
           # Clean up leading whitespace from heredoc indentation
-          sed -i 's/^          //' appcast.xml
+          sed -i 's/^          //' artifacts/appcast.xml
 
           echo "Generated appcast.xml:"
-          cat appcast.xml
+          cat artifacts/appcast.xml
+
+      - name: Generate release SHA-256 checksums
+        run: |
+          python3 scripts/create_release_checksums.py artifacts
+          if [[ -f artifacts/platform-reuse-provenance.json ]]; then
+            (cd artifacts && sha256sum platform-reuse-provenance.json >> SHA256SUMS.txt)
+          fi
+
+      - name: Generate Homebrew Cask candidate
+        if: ${{ needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true' }}
+        env:
+          RELEASE_VERSION: ${{ needs.validate-trusted-ref.outputs.version }}
+        run: |
+          mkdir -p artifacts/homebrew
+          python3 scripts/generate_homebrew_cask.py \
+            --version "$RELEASE_VERSION" \
+            --checksums artifacts/SHA256SUMS.txt \
+            --output artifacts/homebrew/snapetech-pleazyng.rb
+
+      - name: Attest release manifests and checksums
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: |
+            artifacts/SHA256SUMS.txt
+
+      - name: Attest Sparkle appcast
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: artifacts/appcast.xml
+
+      - name: Attest WinGet manifests
+        if: steps.winget-manifests.outcome == 'success'
+        continue-on-error: true
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: artifacts/pleazyng-winget-manifests-${{ needs.validate-trusted-ref.outputs.version }}.zip
+
+      - name: Attest Homebrew Cask candidate
+        if: ${{ needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true' }}
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: artifacts/homebrew/snapetech-pleazyng.rb
 
       - name: Collect release files
         id: release-files
@@ -3825,7 +3830,7 @@ jobs:
             echo artifacts/android-apk/pleazyng-amazon-firetv-provenance.json
             echo 'artifacts/linux-x64/*'
             echo 'artifacts/linux-arm64/*'
-            echo appcast.xml
+            echo artifacts/appcast.xml
             echo artifacts/SHA256SUMS.txt
             if [[ -f artifacts/platform-reuse-provenance.json ]]; then
               echo artifacts/platform-reuse-provenance.json

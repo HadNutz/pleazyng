@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Include the Sparkle appcast in release checksums and build-provenance attestations.
+
 - Stop paginated loaders at an empty page and trim cached entries beyond the final available item, adapting [upstream commit `8916000299`](https://github.com/edde746/plezy/commit/8916000299dc0106614deede5ca7476d714984c7); see [upstream source credit](UPSTREAM_ATTRIBUTION.md#credited-plezy-commits).
 
 - Recheck Live TV access when the Plex Home profile changes without reconnecting, adapting [upstream commit `10bcdf38f3`](https://github.com/edde746/plezy/commit/10bcdf38f327ecbdaef4896b96916ac846a0db64) for [issue #3014](https://github.com/edde746/plezy/issues/3014); see [upstream source credit](UPSTREAM_ATTRIBUTION.md#credited-plezy-commits).

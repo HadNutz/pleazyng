@@ -1760,6 +1760,21 @@ require(
     '".ipk"' in checksum_source and '".tpk"' in checksum_source,
     "TV packages must be included in the release-wide checksum manifest",
 )
+appcast_generation = named_step(release, "Generate appcast.xml")
+checksum_generation = named_step(release, "Generate release SHA-256 checksums")
+appcast_attestation = named_step(release, "Attest Sparkle appcast")
+require(
+    "cat > artifacts/appcast.xml" in appcast_generation
+    and release.find(appcast_generation) < release.find(checksum_generation)
+    and "artifacts/appcast.xml" in collect_release_files,
+    "the generated appcast must be included in release checksum and asset collection",
+)
+require(
+    'name == "appcast.xml"' in checksum_source
+    and release.find(checksum_generation) < release.find(appcast_attestation)
+    and "subject-path: artifacts/appcast.xml" in appcast_attestation,
+    "the appcast must be explicitly checksummed and attested before publication",
+)
 
 release_if = re.search(r"(?m)^    if: (.+)$", release)
 require(release_if is not None, "release job must have an explicit condition")

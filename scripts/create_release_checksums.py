@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write SHA256SUMS.txt for the binary assets staged for a GitHub release."""
+"""Write SHA256SUMS.txt for the release assets staged for a GitHub release."""
 
 from __future__ import annotations
 
@@ -33,7 +33,9 @@ ASSET_SUFFIXES = (
 
 def is_release_asset(path: Path) -> bool:
     name = path.name.lower()
-    return name != "sha256sums.txt" and any(name.endswith(suffix) for suffix in ASSET_SUFFIXES)
+    return name != "sha256sums.txt" and (
+        name == "appcast.xml" or any(name.endswith(suffix) for suffix in ASSET_SUFFIXES)
+    )
 
 
 def sha256(path: Path) -> str:
