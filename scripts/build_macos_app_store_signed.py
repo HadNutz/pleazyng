@@ -45,8 +45,9 @@ PENDING_DIRECTORY = Path("Library/Application Support/Pleazyng/MacAppStoreSignin
 PROFILE_DIRECTORY = Path("Library/MobileDevice/Provisioning Profiles")
 EXPECTED_ARCHITECTURES = {"arm64", "x86_64"}
 STORE_ENTITLEMENTS = Path("macos/Runner/AppStore.entitlements")
-EARLY_CAPACITY_GIB = 30.0
-BUILD_CAPACITY_GIB = 24.0
+EARLY_CAPACITY_GIB = 32.0
+SIGNING_CAPACITY_GIB = 20.0
+BUILD_CAPACITY_GIB = 20.0
 
 
 def _capture(command: list[str], *, cwd: Path | None = None, env: dict[str, str] | None = None) -> bytes:
@@ -790,7 +791,7 @@ def run_build(args: argparse.Namespace) -> int:
             ("runner-temp", Path(tempfile.gettempdir())),
             ("persistent-keychain", Path.home() / "Library/Keychains"),
         ]
-        report["capacity_preflights"] = [capacity_preflight(capacity_roots, EARLY_CAPACITY_GIB)]
+        report["capacity_preflights"] = [capacity_preflight(capacity_roots, SIGNING_CAPACITY_GIB)]
         with persistent_signing_keychain(report) as keychain:
             with tempfile.TemporaryDirectory(prefix="pleazyng-macos-app-store-") as temporary:
                 stage = Path(temporary)

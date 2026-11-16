@@ -84,6 +84,9 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
             with patch.object(store.os, "statvfs", return_value=too_little), \
                     self.assertRaisesRegex(RuntimeError, "requires at least 30.00 GiB"):
                 store.capacity_preflight([("workspace", root)], 30)
+        self.assertEqual(store.EARLY_CAPACITY_GIB, 32.0)
+        self.assertEqual(store.SIGNING_CAPACITY_GIB, 20.0)
+        self.assertEqual(store.BUILD_CAPACITY_GIB, 20.0)
 
     def test_required_sandbox_and_jit_entitlements_are_checked(self):
         entitlements = {
@@ -137,9 +140,9 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         self.assertLess(validation, capacity)
         self.assertIn("--validate-source-only", workflow[validation:tagged_tools])
         self.assertIn("--main-commit \"$GITHUB_SHA\"", workflow[validation:tagged_tools])
-        self.assertIn("--minimum-free-gib 30", workflow[capacity:tagged_tools])
+        self.assertIn("--minimum-free-gib 32", workflow[capacity:tagged_tools])
         self.assertIn('--capacity-root "runner-temp=$RUNNER_TEMP"', workflow[capacity:tagged_tools])
-        self.assertIn("capacity_preflight(capacity_roots, EARLY_CAPACITY_GIB)",
+        self.assertIn("capacity_preflight(capacity_roots, SIGNING_CAPACITY_GIB)",
                       (ROOT / "scripts/build_macos_app_store_signed.py").read_text(encoding="utf-8"))
 
         refresh = workflow.index("- name: Refresh pinned mpv Swift packages")

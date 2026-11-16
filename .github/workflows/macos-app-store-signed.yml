@@ -66,7 +66,7 @@ jobs:
             --release-tag "$RELEASE_TAG" \
             --source-dir "$GITHUB_WORKSPACE/source" \
             --capacity-preflight-only \
-            --minimum-free-gib 30 \
+            --minimum-free-gib 32 \
             --capacity-root "workspace=$GITHUB_WORKSPACE" \
             --capacity-root "source=$GITHUB_WORKSPACE/source" \
             --capacity-root "runner-temp=$RUNNER_TEMP"
