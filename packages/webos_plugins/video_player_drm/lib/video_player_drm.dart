@@ -50,11 +50,14 @@ class _VideoWidgetState extends State<_VideoWidget> {
   }
 
   void reExport() {
+    if (!mounted) return;
     _resetRect(true);
+    _exported = false;
     setState(() {});
   }
 
-  void _afterFrameLayout(_) {
+  void _afterFrameLayout(Duration _) {
+    if (!mounted) return;
     bool ready = _pipelines.containsKey(widget.textureId);
     final box = _videoBoxKey.currentContext?.findRenderObject() as RenderBox?;
     if (box != null) {
@@ -74,6 +77,13 @@ class _VideoWidgetState extends State<_VideoWidget> {
       }
     }
     WidgetsBinding.instance.addPostFrameCallback(_afterFrameLayout);
+  }
+
+  @override
+  void dispose() {
+    _resetRect(true);
+    _widgetStates.remove(widget);
+    super.dispose();
   }
 
   final int kMovingTimerMiliseconds = 100;
@@ -125,8 +135,7 @@ class _VideoWidgetState extends State<_VideoWidget> {
     }
     setState(() {});
 
-    _timer =
-        Timer.periodic(Duration(milliseconds: kMovingTimerMiliseconds), (_) {
+    _timer = Timer.periodic(Duration(milliseconds: kMovingTimerMiliseconds), (_) {
       if (_dirty) {
         _dirty = false;
         _timerStage = TimerStage.clearRect;
@@ -188,8 +197,7 @@ class _LifeCycleObserver {
 
       winIds.forEach((texId, winId) async {
         if (winId == null) {
-          String? windowId =
-              await _windowChannel.invokeMethod<String>('create', {});
+          String? windowId = await _windowChannel.invokeMethod<String>('create', {});
           _windowIds[texId] = windowId ?? 'invalid';
 
           _auxChannel.invokeMethod<void>('reload', {
@@ -239,8 +247,7 @@ class _LifeCycleObserver {
         case 'appLifecycleState':
           {
             var state = map['state'] as String;
-            if (state == 'AppLifecycleState.inactive' ||
-                state == 'AppLifecycleState.resumed') {
+            if (state == 'AppLifecycleState.inactive' || state == 'AppLifecycleState.resumed') {
               _didChangeAppLifecycleState(AppLifecycleState.resumed);
             } else if (state == 'AppLifecycleState.hidden') {
               _didChangeAppLifecycleState(AppLifecycleState.hidden);
@@ -410,38 +417,36 @@ class VideoPlayerWebOs extends VideoPlayerPlatform {
 
   @override
   Future<Duration> getPosition(int textureId) async {
-    final PositionMessage response =
-        await _api.position(TextureMessage(textureId: textureId));
+    final PositionMessage response = await _api.position(TextureMessage(textureId: textureId));
     return Duration(milliseconds: response.position);
   }
 
   @override
   Stream<VideoEvent> videoEventsFor(int textureId) {
-    return _eventChannelFor(textureId)
-        .receiveBroadcastStream()
-        .map((dynamic event) {
+    return _eventChannelFor(textureId).receiveBroadcastStream().map((dynamic event) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
       switch (map['event']) {
         case 'initialized':
-          Size size = Size((map['width'] as num?)?.toDouble() ?? 0.0,
-              (map['height'] as num?)?.toDouble() ?? 0.0);
-          // exported window set Size
+          Size size = Size((map['width'] as num?)?.toDouble() ?? 0.0, (map['height'] as num?)?.toDouble() ?? 0.0);
+          final previousSize = _windowSizes[textureId];
           _windowSizes[textureId] = size;
-          final audioTracks = (map['audioTracks'] as List<dynamic>?)
-              ?.map((t) => Map<String, dynamic>.from(t as Map))
-              .toList();
-          final subtitleTracks = (map['subtitleTracks'] as List<dynamic>?)
-              ?.map((t) => Map<String, dynamic>.from(t as Map))
-              .toList();
+          // The source rectangle is independent of the widget's destination
+          // rectangle. Refresh it even when the new source has the same
+          // aspect ratio and Flutter therefore keeps the same layout.
+          if (previousSize != size && _widgets.containsKey(textureId)) {
+            _widgetStates[_widgets[textureId]]?.reExport();
+          }
+          final audioTracks =
+              (map['audioTracks'] as List<dynamic>?)?.map((t) => Map<String, dynamic>.from(t as Map)).toList();
+          final subtitleTracks =
+              (map['subtitleTracks'] as List<dynamic>?)?.map((t) => Map<String, dynamic>.from(t as Map)).toList();
           return VideoEvent(
             eventType: VideoEventType.initialized,
             duration: Duration(milliseconds: map['duration'] as int),
             size: size,
             rotationCorrection: map['rotationCorrection'] as int? ?? 0,
             audioTracks: audioTracks,
-            videoInfo: map['videoInfo'] is Map
-                ? Map<String, dynamic>.from(map['videoInfo'] as Map)
-                : null,
+            videoInfo: map['videoInfo'] is Map ? Map<String, dynamic>.from(map['videoInfo'] as Map) : null,
             subtitleTracks: subtitleTracks,
           );
         case 'completed':
@@ -471,8 +476,7 @@ class VideoPlayerWebOs extends VideoPlayerPlatform {
           return VideoEvent(
             eventType: VideoEventType.trackSelected,
             trackSelectedType: trackType?.toString(),
-            trackSelectedIndex:
-                trackIndex is int ? trackIndex : (trackIndex as num?)?.toInt(),
+            trackSelectedIndex: trackIndex is int ? trackIndex : (trackIndex as num?)?.toInt(),
           );
 
         // webOS Custom Events
@@ -511,8 +515,7 @@ class VideoPlayerWebOs extends VideoPlayerPlatform {
 
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) {
-    return _api
-        .setMixWithOthers(MixWithOthersMessage(mixWithOthers: mixWithOthers));
+    return _api.setMixWithOthers(MixWithOthersMessage(mixWithOthers: mixWithOthers));
   }
 
   @override
@@ -562,8 +565,7 @@ class VideoPlayerWebOs extends VideoPlayerPlatform {
     });
   }
 
-  static const Map<VideoFormat, String> _videoFormatStringMap =
-      <VideoFormat, String>{
+  static const Map<VideoFormat, String> _videoFormatStringMap = <VideoFormat, String>{
     VideoFormat.ss: 'ss',
     VideoFormat.hls: 'hls',
     VideoFormat.dash: 'dash',

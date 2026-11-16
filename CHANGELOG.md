@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Refresh webOS native video source rectangles when stream dimensions change without a viewport resize, and stop exported-window callbacks after disposal.
+
 - Preserve the source aspect ratio on Samsung TV's native video plane and report hardware-decoder details as unavailable when native TV players do not expose them.
 
 - Replace the Amazon Fire TV listing icon artwork with the approved mark-only dark plate.
