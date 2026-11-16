@@ -22,7 +22,7 @@ class MacPackagingProofTests(unittest.TestCase):
         self.workflow=(Path(__file__).resolve().parents[2]/'.github/workflows/build.yml').read_text()
         base={'status':'completed','event':'workflow_dispatch','head_branch':'main',
               'head_repository':{'full_name':recovery.REPOSITORY},'path':'.github/workflows/build.yml'}
-        self.source={**base,'id':42,'head_sha':'a'*40,'display_title':'action:release:pool:private:tag:v3.0.3','conclusion':'failure'}
+        self.source={**base,'id':42,'head_sha':'a'*40,'display_title':'action:release:pool:public:tag:v3.0.3','conclusion':'failure'}
         self.native={**base,'id':43,'head_sha':'b'*40,'display_title':'action:build:pool:private','conclusion':'success'}
         self.compare={'status':'ahead','merge_base_commit':{'sha':'a'*40},'files':[{'filename':'.github/workflows/build.yml'}]}
         names=[n for n in recovery.REQUIRED_JOBS if n!='build-macos']+['build-android','Build WebOS TV package (ARMv7)']
@@ -98,6 +98,10 @@ class MacPackagingProofTests(unittest.TestCase):
                 original=self.native.copy();self.native.update(change)
                 with self.assertRaises(recovery.RecoveryError):self.prove()
                 self.native=original
+
+    def test_wrong_public_source_title_is_rejected(self):
+        self.source['display_title']='action:release:pool:public:tag:v3.0.4'
+        with self.assertRaises(recovery.RecoveryError):self.prove()
 
     def test_receipt_must_bind_old_compilation_and_new_packaging_sources(self):
         proof=self.prove()

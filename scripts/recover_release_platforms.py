@@ -101,6 +101,19 @@ def collection(path, key):
     return values
 
 
+def trusted_versioned_release_title(run, version):
+    """Match a standard release run title emitted by the trusted workflow."""
+    if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", str(version)):
+        return False
+    titles = {
+        f"action:release:pool:{pool}:tag:v{version}"
+        for pool in ("public", "private")
+    }
+    # The workflow adds this prefix when private Apple signing was unavailable.
+    titles.update(f"apple-signing-unavailable:{title}" for title in tuple(titles))
+    return run.get("display_title") in titles
+
+
 def immutable_ci_source(repository, source_sha, version):
     """Resolve exact app CI only after a complete infrastructure-only comparison."""
     if repository != REPOSITORY or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", version):
@@ -227,7 +240,7 @@ def verify_repaired_run(run_id, head_sha, version, repository, *, allow_pending=
     if (run.get("event") != "workflow_dispatch" or run.get("head_branch") != "main"
         or run.get("head_repository", {}).get("full_name") != repository
         or run.get("path", "").split("@")[0] != ".github/workflows/build.yml"
-        or run.get("display_title") != f"action:release:pool:private:tag:v{version}"
+        or not trusted_versioned_release_title(run, version)
         or not re.fullmatch(r"[a-f0-9]{40}", source_sha)
         or (run.get("status") != "completed" and not pending)):
         raise RecoveryError("Repaired platform source must be a trusted main release for the same version")
@@ -491,7 +504,7 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
         or source.get("head_branch") != "main"
         or source.get("head_repository", {}).get("full_name") != repository
         or source.get("path", "").split("@")[0] != ".github/workflows/build.yml"
-        or source.get("display_title") != f"action:release:pool:private:tag:v{version}"
+        or not trusted_versioned_release_title(source, version)
         or not re.fullmatch(r"[0-9a-f]{40}", source_sha)):
         raise RecoveryError("Source must be a trusted-main release run for this version, completed before reuse.")
     comparison = api(f"repos/{repository}/compare/{source_sha}...{head_sha}")
@@ -598,7 +611,7 @@ def verify_macos_packaging_recovery(run_id, macos_run, head_sha, version, reposi
             or run.get("head_branch") != "main" or run.get("head_repository", {}).get("full_name") != repository
             or run.get("path", "").split("@")[0] != ".github/workflows/build.yml"):
             raise RecoveryError("Mac recovery requires completed trusted-main workflow runs.")
-    if source.get("display_title") != f"action:release:pool:private:tag:v{version}" or native.get("conclusion") != "success":
+    if not trusted_versioned_release_title(source, version) or native.get("conclusion") != "success":
         raise RecoveryError("Mac packaging recovery must be successful and match the original versioned release.")
     source_sha = source["head_sha"]
     for target in dict.fromkeys((head_sha, native["head_sha"])):
@@ -689,7 +702,7 @@ def verify_android_run(run_id, head_sha, version, repository=REPOSITORY, *, allo
         or source.get("head_branch") != "main"
         or source.get("head_repository", {}).get("full_name") != repository
         or source.get("path", "").split("@")[0] != ".github/workflows/build.yml"
-        or source.get("display_title") != f"action:release:pool:private:tag:v{version}"
+        or not trusted_versioned_release_title(source, version)
         or not re.fullmatch(r"[0-9a-f]{40}", source_sha)):
         raise RecoveryError("Android source must be a completed trusted-main release for this version.")
     comparison = api(f"repos/{repository}/compare/{source_sha}...{head_sha}")
