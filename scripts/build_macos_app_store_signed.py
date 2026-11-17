@@ -556,9 +556,49 @@ def _local_identity_record(keychain: Path, certificate_type: str, team: str) -> 
         if (match := re.match(r'\s*\d+\) ([0-9A-F]{40}) "([^"]+)"', line))
         and expected in match.group(2) and team in match.group(2)
     ]
+    matches = list({(item["certificate_sha1"], item["name"]): item for item in matches}.values())
     if len(matches) != 1:
         raise ValueError(f"Expected exactly one valid local {certificate_type} identity for the Apple team")
     return matches[0]
+
+
+def _certificate_from_keychain_identity(keychain: Path, identity: dict[str, str]) -> bytes:
+    pem = signing_run(["security", "find-certificate", "-c", identity["name"], "-p", str(keychain)])
+    result = subprocess.run(["openssl", "x509", "-inform", "PEM", "-outform", "DER"],
+                            input=pem, capture_output=True, check=False)
+    if result.returncode:
+        raise ValueError("Could not read the existing installer certificate from the dedicated keychain")
+    certificate_der = result.stdout
+    if certificate_fingerprint(certificate_der) != identity["certificate_sha1"]:
+        raise ValueError("The exported installer certificate did not match its selected keychain identity")
+    return certificate_der
+
+
+def repair_existing_installer_key_access(keychain: Path, identity: dict[str, str], team: str,
+                                         stage: Path) -> dict[str, str]:
+    """Re-import the same retained identity with productsign explicitly trusted, without deletion."""
+    if identity["policy"] != "basic" or team not in identity["name"]:
+        raise ValueError("Refusing to change access for an unexpected installer identity")
+    certificate_der = _certificate_from_keychain_identity(keychain, identity)
+    key_path = _pending_key_for_certificate(INSTALLER_CERTIFICATE_TYPE, certificate_der, stage)
+    if key_path is None:
+        raise ValueError("The matching retained Installer recovery key is unavailable; preserving the keychain")
+    _import_certificate(keychain, certificate_der, key_path, stage, INSTALLER_CERTIFICATE_TYPE)
+    identity_output = signing_run([
+        "security", "find-identity", "-v", "-p", "basic", str(keychain)
+    ]).decode()
+    entries = [match for line in identity_output.splitlines()
+               if (match := re.match(r'\s*\d+\) ([0-9A-F]{40}) "([^"]+)"', line))
+               and match.group(1) == identity["certificate_sha1"]
+               and match.group(2) == identity["name"]]
+    if len(entries) != 1:
+        raise ValueError(
+            "Additive Installer ACL repair did not leave exactly one matching identity entry; "
+            "all keychain items are preserved")
+    repaired_identity = _local_identity_record(keychain, INSTALLER_CERTIFICATE_TYPE, team)
+    if repaired_identity["certificate_sha1"] != identity["certificate_sha1"]:
+        raise ValueError("Installer identity changed during the additive access repair")
+    return repaired_identity
 
 
 def _test_local_signing_identities(keychain: Path, app_identity: dict[str, str],
@@ -635,7 +675,7 @@ def _safe_productsign_diagnostic(stderr: bytes, identity_name: str, team: str) -
 def run_local_signing_preflight(source_dir: Path, source: dict[str, str], team: str,
                                 output_dir: Path, report_path: Path, report: dict,
                                 package_lock_snapshots: tuple[dict, ...]) -> int:
-    """Verify persisted identities without creating Apple certificates or building the app."""
+    """Repair installer key ACL and verify identities without Apple API or product builds."""
     if output_dir.exists() or output_dir.is_symlink():
         raise FileExistsError("Refusing to overwrite a Mac App Store signing preflight output")
     output_dir.mkdir(mode=0o700, parents=True)
@@ -656,6 +696,17 @@ def run_local_signing_preflight(source_dir: Path, source: dict[str, str], team: 
             APP_CERTIFICATE_TYPE: app_identity,
             INSTALLER_CERTIFICATE_TYPE: installer_identity,
         }
+        with tempfile.TemporaryDirectory(prefix="pleazyng-macos-key-access-repair-",
+                                         dir=output_dir) as repair_temporary:
+            installer_identity = repair_existing_installer_key_access(
+                keychain, installer_identity, team, Path(repair_temporary))
+        report["installer_private_key_access_repaired"] = {
+            "certificate_sha1": installer_identity["certificate_sha1"],
+            "same_retained_key_and_certificate": True,
+            "productsign_allowed": True,
+            "prior_identity_deleted": False,
+        }
+        report["signing_identities"][INSTALLER_CERTIFICATE_TYPE] = installer_identity
         with tempfile.TemporaryDirectory(prefix="pleazyng-macos-signing-preflight-",
                                          dir=output_dir) as temporary:
             smoke_tests = _test_local_signing_identities(
@@ -1094,7 +1145,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--capacity-preflight-only", action="store_true",
                         help="check free space for the named filesystem roots")
     parser.add_argument("--local-signing-preflight-only", action="store_true",
-                        help="verify persisted Mac App Store identities with temporary local signing probes")
+                        help="repair the retained installer key ACL and verify identities with local signing probes")
     parser.add_argument("--capacity-root", action="append", default=[], metavar="LABEL=PATH",
                         help="filesystem role and path to check; may be supplied more than once")
     parser.add_argument("--minimum-free-gib", type=float, default=EARLY_CAPACITY_GIB,

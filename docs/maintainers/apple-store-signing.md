@@ -83,9 +83,11 @@ list and existing provisioning profiles.
 Set the manual workflow's `preflight_only` input to verify the existing App and
 Installer identities before an archive. It signs a temporary app bundle and
 installer package locally, verifies both, and uploads only a public preflight
-receipt. It does not create certificates or profiles, build Pleazyng, or call
-App Store Connect. The normal workflow mode performs the signed app build and
-upload after preflight succeeds. Before export, it also checks that the
+receipt. If the existing Installer key needs it, preflight re-imports the same
+certificate and retained private key with `/usr/bin/productsign` access; it
+does not delete the existing identity, create certificates or profiles, build
+Pleazyng, or call App Store Connect. The normal workflow mode performs the
+signed app build and upload after preflight succeeds. Before export, it also checks that the
 embedded `PlezyTorrent.framework` has its expected bundle identity and valid
 `CFBundleShortVersionString` and `CFBundleVersion` metadata.
 

@@ -147,6 +147,27 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         self.assertIn("<installer identity>", diagnostic)
         self.assertIn("<path>", diagnostic)
 
+    def test_installer_acl_repair_reuses_matching_recovery_key_without_deletion(self):
+        fingerprint = "B" * 40
+        identity = {"certificate_sha1": fingerprint,
+                    "name": "3rd Party Mac Developer Installer: Test (DM9A59DC85)",
+                    "policy": "basic"}
+        keychain = Path("/Users/test/Library/Keychains/store.keychain-db")
+        key_path = Path("/Users/test/Library/Application Support/Pleazyng/pending/installer.key.pem")
+        with patch.object(store, "_certificate_from_keychain_identity", return_value=CERTIFICATE), \
+                patch.object(store, "_pending_key_for_certificate", return_value=key_path), \
+                patch.object(store, "_import_certificate", return_value=fingerprint) as importer, \
+                patch.object(store, "_local_identity_record", return_value=identity), \
+                patch.object(store, "signing_run", return_value=(
+                    f'1) {fingerprint} "{identity["name"]}"\n'.encode())) as signing:
+            repaired = store.repair_existing_installer_key_access(
+                keychain, identity, TEAM, Path("/tmp/private-stage"))
+        self.assertEqual(repaired, identity)
+        importer.assert_called_once_with(
+            keychain, CERTIFICATE, key_path, Path("/tmp/private-stage"),
+            store.INSTALLER_CERTIFICATE_TYPE)
+        self.assertIn("find-identity", signing.call_args.args[0])
+
     def test_release_tag_must_be_a_versioned_annotated_tag_with_matching_source(self):
         self.assertIsNone(store._safe_tag("v3.0.36"))
         for tag in ("3.0.36", "v3.0.36-candidate", "--v3.0.36", "v3.0.36+195"):
@@ -174,6 +195,7 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
 
     def test_workflow_validates_source_before_tagged_tools_and_uses_current_spm_helper(self):
         workflow = (ROOT / ".github/workflows/macos-app-store-signed.yml").read_text(encoding="utf-8")
+        signed_builder = (ROOT / "scripts/build_macos_app_store_signed.py").read_text(encoding="utf-8")
         validation = workflow.index("- name: Validate immutable release source before running tagged code")
         capacity = workflow.index("- name: Preflight macOS build disk capacity")
         tagged_tools = workflow.index("- name: Load Flutter version pinned by release source")
@@ -196,6 +218,10 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         self.assertIn("--local-signing-preflight-only", preflight_step)
         self.assertNotIn("APPLE_API_PRIVATE_KEY", preflight_step)
         self.assertIn("if: inputs.preflight_only != true", workflow[workflow.index("- name: Load Flutter version pinned by release source"):])
+        preflight_impl = signed_builder.split("def run_local_signing_preflight(", 1)[1].split("\ndef install_profile", 1)[0]
+        self.assertIn("repair_existing_installer_key_access", preflight_impl)
+        self.assertNotIn("AppleProfileAPI", preflight_impl)
+        self.assertNotIn("ensure_macos_profile", preflight_impl)
 
         refresh = workflow.index("- name: Refresh pinned mpv Swift packages")
         next_step = workflow.find("\n      - ", refresh + 1)
@@ -211,7 +237,6 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
                         preserving_helper.index("subprocess.run"))
         self.assertIn("preserve_macos_package_locks(source_dir)", preserving_helper)
 
-        signed_builder = (ROOT / "scripts/build_macos_app_store_signed.py").read_text(encoding="utf-8")
         flutter_config_command = signed_builder.split('"flutter", "build", "macos",', 1)[1].split("],", 1)[0]
         self.assertIn('"--config-only"', flutter_config_command)
         self.assertNotIn('"--no-codesign"', flutter_config_command)
