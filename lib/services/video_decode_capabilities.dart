@@ -130,7 +130,7 @@ class VideoDecodeCapabilities {
       ? 'tizen'
       : PlatformDetector.isWebOSBuild()
       ? 'webos'
-      : RuntimePlaybackCapabilities.activeVideoEngine;
+      : RuntimePlaybackCapabilities.negotiationEngine;
 
   static bool get _webosModernUhd =>
       _singleton.instance?._webosUhd == true && (_singleton.instance?._webosSdkMajor ?? 0) >= 9;

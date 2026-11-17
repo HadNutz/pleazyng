@@ -99,6 +99,36 @@ void main() {
     expect(VideoDecodeCapabilities.directPlayVideoCodecs, isNot(contains('av1')));
   });
 
+  test('each negotiation keeps its engine across asynchronous work', () async {
+    RuntimePlaybackCapabilities.recordMpvDecoders([
+      {'codec': 'h264', 'driver': 'h264'},
+      {'codec': 'vvc', 'driver': 'vvc'},
+    ]);
+    final native = RuntimePlaybackCapabilities.withVideoEngine('exoplayer', () async {
+      await Future<void>.value();
+      return VideoDecodeCapabilities.directPlayVideoCodecs;
+    });
+    final desktop = RuntimePlaybackCapabilities.withVideoEngine('mpv', () async {
+      await Future<void>.value();
+      return VideoDecodeCapabilities.directPlayVideoCodecs;
+    });
+    expect(await native, ['h264']);
+    expect(await desktop, ['h264', 'vvc']);
+    expect(RuntimePlaybackCapabilities.activeVideoEngine, 'mpv');
+  });
+
+  test('mpv startup waits for decoders and demuxers together', () async {
+    var observed = false;
+    final pending = RuntimePlaybackCapabilities.waitForMpvInventory().then((_) => observed = true);
+    RuntimePlaybackCapabilities.recordMpvDecoders([
+      {'codec': 'h264', 'driver': 'h264'},
+    ]);
+    await Future<void>.value();
+    expect(observed, isFalse);
+    RuntimePlaybackCapabilities.recordMpvDemuxers(['mov,mp4']);
+    expect(await pending, isTrue);
+  });
+
   test('hardware wrappers alone are insufficient for direct play', () {
     RuntimePlaybackCapabilities.recordMpvDecoders([
       {'codec': 'h264', 'driver': 'h264'},

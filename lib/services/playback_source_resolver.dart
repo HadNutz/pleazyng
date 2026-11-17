@@ -3,6 +3,7 @@ import '../media/ids.dart';
 import '../media/media_backend.dart';
 import '../media/media_kind.dart';
 import '../media/media_server_client.dart';
+import '../media/runtime_playback_capabilities.dart';
 import 'multi_server_manager.dart';
 import 'playback_context.dart';
 import 'playback_initialization_service.dart';
@@ -22,17 +23,25 @@ class PlaybackSourceResolver {
     PlaybackInitializationOptions options, {
     required bool offlineLibraryMode,
     bool downloadOutranksQuality = false,
+    String? videoEngine,
+    Future<bool>? playerReady,
   }) async {
     final metadata = options.metadata;
     final reportingClient = _playbackClient(serverIdOrNull(metadata.serverId), offlineLibraryMode: offlineLibraryMode);
     final service = PlaybackInitializationService(client: reportingClient, database: database);
-    final result = await service.getPlaybackData(
+    if (playerReady != null && !await playerReady) {
+      throw StateError('Player setup ended before playback negotiation');
+    }
+    Future<PlaybackInitializationResult> getPlaybackData() => service.getPlaybackData(
       options,
       preferOffline:
           !options.forceServerPlayback &&
           (offlineLibraryMode || options.qualityPreset.isOriginal || downloadOutranksQuality),
       requireOffline: offlineLibraryMode,
     );
+    final result = await (videoEngine == null
+        ? getPlaybackData()
+        : RuntimePlaybackCapabilities.withVideoEngine(videoEngine, getPlaybackData));
 
     final sourceKind = result.usesLocalMedia
         ? PlaybackSourceKind.localFile

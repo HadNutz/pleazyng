@@ -658,6 +658,9 @@ extension _VideoPlayerReloadMethods on VideoPlayerScreenState {
               forceVideoConversion: targetForceVideoConversion,
             ),
             offlineLibraryMode: _offlineLibraryMode,
+            videoEngine: currentPlayer is PlayerAndroid && currentPlayer.usingMpvFallback
+                ? 'mpv'
+                : currentPlayer.playerType,
             downloadOutranksQuality: downloadOutranksQuality,
           );
         }

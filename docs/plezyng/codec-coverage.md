@@ -14,11 +14,25 @@ source. Native webOS, Tizen and ExoPlayer never inherit mpv's inventory.
 ## Implemented
 
 - Observe mpv `decoder-list` and `demuxer-lavf-list`, accepting native nodes or
-  Android JSON. Invalid/missing observations leave capabilities unknown.
+  Android JSON. A first launch waits briefly for the initial inventory after
+  player setup. Unmeasured mpv negotiates H.264 and any positively reported
+  HEVC or AV1 hardware support. A source negotiation uses its own playback
+  engine, including when the primary player takes a different route.
 - Add measured video decoders to Jellyfin/Emby direct-play profiles, including
   VVC, professional and historical codec identities. Enumerated containers
   expand the original static list. MPEG, AVI, ASF, RealMedia, MXF and others
   are negotiated only when their demuxer is present.
+- Tizen uses the native H.264 profile and checks the source frame rate and bit
+  depth where available. webOS advertises LG's documented container/codec
+  pairs, adding AV1 and VP9 on modern UHD models that report the SDK version
+  and UHD capability. ExoPlayer uses Android's decoder list, and checks known
+  profile, dimensions, and frame rate together on the selected decoder type.
+  These checks describe declared capabilities; real-time and HDR output still
+  require device testing.
+- Add raw `.apv` file discovery. Server container matching uses independently
+  measured demuxers for aliases such as `.qt`, `.mj2`, `.m2t`, `.dvr-ms`, and
+  `.ogm`. Elementary streams keep their own type rather than pretending to be
+  a muxed container.
 - Keep the existing AV1/HEVC/H.264 preference and user-refusal policy for server
   output. A missing source decoder requests conversion, and conversion failure
   cannot silently reopen that same unsupported source.
@@ -41,6 +55,17 @@ source. Native webOS, Tizen and ExoPlayer never inherit mpv's inventory.
   generated decode/seek corpus and LCEVC reconstruction checks on both native
   architectures. The pinned AVS2 dependency is 8-bit only. The application
   lock consumes verified published native packages for all four platform groups.
+
+## Expanded qualification
+
+The companion producer adds a 45-case Linux release corpus covering software
+decode and seek, current codec bit depths and chroma formats, HLS/DASH VOD,
+DTS core and TrueHD PCM, and three timed text subtitle formats. Six hash-pinned
+reference vectors cover APV, VVC, EVC, AVS2 and AVS3. The existing published
+Linux x64 bundle passed the 44 cases it can run and all six reference vectors.
+Its DASH demuxer is absent. The producer adds DASH to the Linux and Android
+build recipes, pending published replacement binaries for the application lock.
+See the [producer coverage report](https://github.com/snapetech-org/mpv-build/blob/main/docs/codec-coverage.md#reference-vectors-and-dash).
 
 ## Coverage order and remaining qualification
 

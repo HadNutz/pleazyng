@@ -431,6 +431,12 @@ abstract class Player {
   /// MpvPlayerCore.initialVideoOutput; #2010).
   static const int videoPlayerSlotCapacity = nativeVideoPlayerSlotCount;
 
+  static String videoEngineFor({required bool useExoPlayer}) {
+    if (PlatformDetector.isTizenBuild()) return 'tizen';
+    if (PlatformDetector.isWebOSBuild()) return 'webos';
+    return Platform.isAndroid && useExoPlayer ? 'exoplayer' : 'mpv';
+  }
+
   factory Player({
     bool? useExoPlayer,
     bool hardwareDecoding = true,
@@ -442,13 +448,7 @@ abstract class Player {
       throw UnsupportedError('This platform does not provide native video slot $slot');
     }
     if (slot == 0) {
-      RuntimePlaybackCapabilities.activeVideoEngine = PlatformDetector.isTizenBuild()
-          ? 'tizen'
-          : PlatformDetector.isWebOSBuild()
-          ? 'webos'
-          : Platform.isAndroid && useExoPlayer == true
-          ? 'exoplayer'
-          : 'mpv';
+      RuntimePlaybackCapabilities.activeVideoEngine = videoEngineFor(useExoPlayer: useExoPlayer ?? false);
     }
     if (PlatformDetector.isTizenBuild()) return PlayerTizen();
     if (PlatformDetector.isWebOSBuild()) {

@@ -32,6 +32,7 @@ import '../mpv/player/player_native.dart';
 
 import '../services/scrub_preview_source.dart';
 import '../media/media_backend.dart';
+import '../media/runtime_playback_capabilities.dart';
 import '../media/dolby_vision_compatibility.dart';
 import '../media/media_display_criteria.dart';
 import '../media/media_server_user_profile.dart';
@@ -2117,6 +2118,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Future<void> _runPlayerInitializationAttempt(int generation, {required bool replaceCurrent}) async {
     var initPhase = 'starting';
+    Completer<bool>? playbackCodecReady;
     Player? attemptPlayer;
     VideoPlayerLease? attemptVideoLease;
     var committed = false;
@@ -2166,13 +2168,15 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
           settingsService.read(SettingsService.enableDebugLogging) ||
           settingsService.read(SettingsService.dvExperimentDiagnostics);
       final useExoPlayer = settingsService.read(SettingsService.useExoPlayer);
+      final videoEngine = Player.videoEngineFor(useExoPlayer: useExoPlayer);
 
       // Kick off getPlaybackData() before the Windows display-mode sync, the
       // music-session teardown in claimVideo(), player construction, and the
       // whole mpv property chain below: the resolve depends only on settings +
       // provider lookups, so starting it first hides all of that setup behind
       // the network round trip(s).
-      // The network/DB work has no dependency on the player — it just needs
+      // A cold mpv backend waits for its initial inventory before negotiation.
+      // The other network/DB work just needs
       // the context (providers), which is still safe to touch here because no
       // async gaps invalidate it between the guard after the settings await
       // and the reads below.
@@ -2232,6 +2236,9 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
             serverManager: context.read<MultiServerProvider>().serverManager,
             database: context.read<AppDatabase>(),
           );
+          if (videoEngine == 'mpv' && !RuntimePlaybackCapabilities.hasMpvInventory) {
+            playbackCodecReady = Completer<bool>();
+          }
           _playbackDataFuture = playbackResolver.resolve(
             PlaybackInitializationOptions(
               metadata: _currentMetadata,
@@ -2266,6 +2273,8 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
               ),
             ),
             offlineLibraryMode: false,
+            videoEngine: videoEngine,
+            playerReady: playbackCodecReady?.future,
             downloadOutranksQuality: _downloadOutranksQuality,
           );
           // If MPV setup below throws before `_startPlayback` awaits this,
@@ -2363,6 +2372,10 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       initPhase = 'configuring player';
       await currentPlayer.configureSubtitleFonts();
       await currentPlayer.setProperty('sub-ass', 'yes'); // Enable libass
+      if (playbackCodecReady != null) {
+        await RuntimePlaybackCapabilities.waitForMpvInventory();
+        playbackCodecReady.complete(_isPlayerInitializationCurrent(generation));
+      }
       if (Platform.isAndroid && useExoPlayer) {
         final tunneledPlayback = settingsService.read(SettingsService.tunneledPlayback);
         await currentPlayer.setProperty('tunneled-playback', tunneledPlayback ? 'yes' : 'no');
@@ -2847,6 +2860,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       }
       appLogger.e('Failed to initialize player during $initPhase', error: e, stackTrace: st);
     } finally {
+      if (playbackCodecReady != null && !playbackCodecReady.isCompleted) playbackCodecReady.complete(false);
       final failedAttempt = attemptPlayer;
       if (!committed && failedAttempt != null) {
         await _disposePlayerInitializationAttempt(failedAttempt);

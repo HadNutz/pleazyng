@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'codec_catalog.dart';
@@ -9,8 +10,31 @@ abstract final class RuntimePlaybackCapabilities {
   static DecoderInventory? _mpv;
   static Set<String>? _demuxers;
   static String activeVideoEngine = 'mpv';
+  static final Object _videoEngineKey = Object();
+  static Completer<void>? _inventoryObserved;
+
+  static String get negotiationEngine => Zone.current[_videoEngineKey] as String? ?? activeVideoEngine;
+
+  static T withVideoEngine<T>(String engine, T Function() negotiate) =>
+      runZoned(negotiate, zoneValues: {_videoEngineKey: engine});
+
+  /// Wait briefly for the two initial observations after the native player
+  /// initializes. Older binaries can omit them and still use the baseline.
+  static Future<void> waitForMpvInventory() async {
+    if (hasMpvInventory) return;
+    final observed = _inventoryObserved ??= Completer<void>();
+    await observed.future.timeout(const Duration(milliseconds: 350), onTimeout: () {});
+  }
+
+  static bool get hasMpvInventory => _mpv != null && _demuxers != null;
+
+  static void _markInventoryObserved() {
+    final observed = _inventoryObserved;
+    if (hasMpvInventory && observed != null && !observed.isCompleted) observed.complete();
+  }
+
   static DecoderInventory? get mpv => _mpv;
-  static DecoderInventory? get videoDecoders => activeVideoEngine == 'mpv' ? _mpv : null;
+  static DecoderInventory? get videoDecoders => negotiationEngine == 'mpv' ? _mpv : null;
   static Set<String>? get demuxers => _demuxers;
 
   /// Null is unknown, not an empty supported list. Audio in a video stream is
@@ -24,7 +48,9 @@ abstract final class RuntimePlaybackCapabilities {
 
   static void recordMpvDecoders(Object? value) {
     final parsed = DecoderInventory.fromMpv(value);
-    if (parsed != null) _mpv = parsed;
+    if (parsed == null) return;
+    _mpv = parsed;
+    _markInventoryObserved();
   }
 
   static void recordMpvDemuxers(Object? value) {
@@ -43,6 +69,7 @@ abstract final class RuntimePlaybackCapabilities {
       result.addAll(entry.split(','));
     }
     _demuxers = Set.unmodifiable(result);
+    _markInventoryObserved();
   }
 
   static const videoContainerDemuxers = <String, String>{
@@ -100,7 +127,7 @@ abstract final class RuntimePlaybackCapabilities {
   };
 
   static List<String> get mpvVideoContainers {
-    final measured = activeVideoEngine == 'mpv' ? _demuxers : null;
+    final measured = negotiationEngine == 'mpv' ? _demuxers : null;
     if (measured == null) return const ['mp4', 'mkv', 'm4v', 'webm', 'mov', 'ts', 'mpegts'];
     return [
       for (final entry in videoContainerDemuxers.entries)
@@ -109,6 +136,9 @@ abstract final class RuntimePlaybackCapabilities {
   }
 
   static void reset() {
+    final observed = _inventoryObserved;
+    if (observed != null && !observed.isCompleted) observed.complete();
+    _inventoryObserved = null;
     _mpv = null;
     _demuxers = null;
     activeVideoEngine = 'mpv';
