@@ -109,6 +109,10 @@ class MacAppStoreProfileTests(unittest.TestCase):
             "/v1/bundleIds/bundle-resource/profiles?limit=200",
         ])
         cms_decode.assert_called_once()
+        self.assertEqual(cms_decode.call_args.args[0][:6], [
+            "openssl", "cms", "-verify", "-binary", "-inform", "DER",
+        ])
+        self.assertIn("-noverify", cms_decode.call_args.args[0])
         self.assertEqual(report["apple_api_requests"], "GET only")
         self.assertFalse(report["profile_created"])
         self.assertFalse(report["profile_deleted"])
@@ -119,6 +123,8 @@ class MacAppStoreProfileTests(unittest.TestCase):
         ])
         self.assertNotIn("profileContent", json.dumps(report))
         self.assertNotIn(profile_content, json.dumps(report))
+        self.assertTrue(report["profiles"][0]["cms_signature_verified"])
+        self.assertFalse(report["profiles"][0]["cms_signer_chain_verified"])
 
     def test_profile_inspection_workflow_uses_public_macos_without_private_signing_permissions(self):
         workflow = (ROOT / ".github/workflows/macos-app-store-signed.yml").read_text(encoding="utf-8")
@@ -127,7 +133,7 @@ class MacAppStoreProfileTests(unittest.TestCase):
 
         self.assertIn("inputs.profile_inspection_only != true", private_job.split("\n    runs-on:", 1)[0])
         self.assertIn("if: github.repository == 'snapetech-org/pleazyng'", public_job)
-        self.assertIn("runs-on: macos-26", public_job)
+        self.assertIn("runs-on: ubuntu-24.04", public_job)
         permissions = public_job.split("    permissions:", 1)[1].split("    steps:", 1)[0]
         self.assertIn("actions: read", permissions)
         self.assertIn("contents: read", permissions)

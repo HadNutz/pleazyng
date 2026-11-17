@@ -184,6 +184,18 @@ def certificate_fingerprint(certificate_der: bytes) -> str:
     return hashlib.sha1(certificate_der, usedforsecurity=False).hexdigest().upper()
 
 
+def decode_profile_payload(profile_path: Path) -> bytes:
+    """Verify a provisioning profile CMS signature and return its signed plist."""
+    # `-noverify` skips signer-chain trust evaluation, but OpenSSL still checks
+    # the CMS content/signature. The profile came from Apple's authenticated
+    # App Store Connect API; this read-only diagnostic reports payload metadata
+    # and does not qualify the signer chain for distribution.
+    return signing_run([
+        "openssl", "cms", "-verify", "-binary", "-inform", "DER",
+        "-in", str(profile_path), "-noverify",
+    ])
+
+
 def _certificate_public_key(certificate_der: bytes, stage: Path) -> bytes:
     path = stage / f"certificate-{hashlib.sha256(certificate_der).hexdigest()[:12]}.der"
     path.write_bytes(certificate_der)
@@ -544,7 +556,7 @@ def inspect_macos_profiles(api: AppleProfileAPI, stage: Path, *, team: str) -> d
                     profile_path = stage / f"macos-profile-{len(profile_receipts):03d}-{index:03d}.provisionprofile"
                     write_private_file(profile_path, profile_data)
                     try:
-                        profile = plistlib.loads(signing_run(["security", "cms", "-D", "-i", str(profile_path)]))
+                        profile = plistlib.loads(decode_profile_payload(profile_path))
                     finally:
                         profile_path.unlink(missing_ok=True)
                     if not isinstance(profile, dict):
@@ -559,6 +571,8 @@ def inspect_macos_profiles(api: AppleProfileAPI, stage: Path, *, team: str) -> d
                     receipt.update({
                         "payload_sha256": hashlib.sha256(profile_data).hexdigest(),
                         "payload_size_bytes": len(profile_data),
+                        "cms_signature_verified": True,
+                        "cms_signer_chain_verified": False,
                         "payload_uuid": profile.get("UUID"),
                         "payload_platform": [value for value in profile.get("Platform", [])
                                              if isinstance(value, str) and len(value) <= 64]
@@ -839,8 +853,6 @@ def run_profile_inspection(source: dict[str, str], team: str,
     output_dir.mkdir(mode=0o700, parents=True)
     report: dict[str, object] = {**source, "channel": "Mac App Store", "candidate_state": "profile-inspected"}
     try:
-        if sys.platform != "darwin":
-            raise RuntimeError("Mac App Store profile inspection requires macOS to decode Apple profiles")
         with tempfile.TemporaryDirectory(prefix="pleazyng-macos-profile-inspection-", dir=output_dir) as temporary:
             stage = Path(temporary)
             stage.chmod(0o700)

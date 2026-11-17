@@ -246,7 +246,7 @@ jobs:
   inspect-profiles:
     name: Inspect App Store profiles (read-only)
     if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && inputs.profile_inspection_only == true
-    runs-on: macos-26
+    runs-on: ubuntu-24.04
     permissions:
       actions: read
       contents: read
