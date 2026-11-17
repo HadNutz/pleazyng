@@ -57,6 +57,38 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 capture.storekit_catalog(path)
 
+    def test_xcodegen_explicitly_places_storekit_in_the_ui_test_resource_phase(self) -> None:
+        target = capture.storekit_ui_test_project_spec()["targets"]["PleazyngTrialReviewUITests"]
+        self.assertEqual(target["type"], "bundle.ui-testing")
+        self.assertEqual(target["sources"], [
+            {"path": "PleazyngTrialReviewUITests.swift", "buildPhase": "sources"},
+            {"path": "pleazyng-trial-review.storekit", "buildPhase": "resources"},
+        ])
+        self.assertNotIn("resources", target)
+
+    def test_built_storekit_resource_must_be_exactly_in_the_xctest_bundle(self) -> None:
+        catalog_bytes = CATALOG_PATH.read_bytes()
+        catalog_hash = capture.sha256_file(CATALOG_PATH)
+        with tempfile.TemporaryDirectory() as temporary:
+            products = Path(temporary) / "Build" / "Products"
+            test_bundle = products / "Debug-iphonesimulator/Runner.app/PlugIns/Review.xctest"
+            test_bundle.mkdir(parents=True)
+            resource = test_bundle / "pleazyng-trial-review.storekit"
+            resource.write_bytes(catalog_bytes)
+            self.assertEqual(
+                capture.verify_built_storekit_test_resource(products, catalog_hash),
+                resource,
+            )
+            with self.assertRaisesRegex(ValueError, "does not match"):
+                capture.verify_built_storekit_test_resource(products, "0" * 64)
+
+            resource.unlink()
+            app_only_resource = products / "Debug-iphonesimulator/Pleazyng.app/pleazyng-trial-review.storekit"
+            app_only_resource.parent.mkdir(parents=True)
+            app_only_resource.write_bytes(catalog_bytes)
+            with self.assertRaisesRegex(ValueError, "found 0"):
+                capture.verify_built_storekit_test_resource(products, catalog_hash)
+
     def test_ui_harness_uses_native_trial_ui_and_never_buys_lifetime(self) -> None:
         self.assertIn("import StoreKitTest", UI_TEST)
         self.assertIn("SKTestSession(contentsOf: configurationURL)", UI_TEST)

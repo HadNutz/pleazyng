@@ -172,6 +172,65 @@ def storekit_catalog(path: Path) -> list[dict[str, str]]:
     return normalized
 
 
+def storekit_ui_test_project_spec() -> dict[str, Any]:
+    """Build an XcodeGen spec with the StoreKit catalog in the XCTest bundle."""
+    return {
+        "name": "PleazyngTrialReview",
+        "options": {
+            "bundleIdPrefix": "org.snapetech.pleazyng.localtest",
+            "xcodeVersion": "26.5",
+            "deploymentTarget": {"iOS": "15.5"},
+        },
+        "targets": {
+            "PleazyngTrialReviewUITests": {
+                "type": "bundle.ui-testing",
+                "platform": "iOS",
+                "sources": [
+                    {"path": "PleazyngTrialReviewUITests.swift", "buildPhase": "sources"},
+                    {"path": STOREKIT_RELATIVE_PATH.name, "buildPhase": "resources"},
+                ],
+                "settings": {
+                    "base": {
+                        "PRODUCT_BUNDLE_IDENTIFIER": "org.snapetech.pleazyng.localtest.trial-review-tests",
+                        "GENERATE_INFOPLIST_FILE": "YES",
+                        "SWIFT_VERSION": "5.0",
+                        "CODE_SIGN_STYLE": "Automatic",
+                    },
+                },
+            },
+        },
+        "schemes": {
+            "PleazyngTrialReview": {
+                "build": {"targets": {"PleazyngTrialReviewUITests": ["test"]}},
+                "test": {
+                    "targets": ["PleazyngTrialReviewUITests"],
+                    "captureScreenshotsAutomatically": False,
+                    "deleteScreenshotsWhenEachTestSucceeds": True,
+                },
+            },
+        },
+    }
+
+
+def verify_built_storekit_test_resource(built_products: Path, expected_sha256: str) -> Path:
+    """Require the exact StoreKit catalog inside one built XCTest bundle."""
+    built_products = built_products.resolve(strict=True)
+    if re.fullmatch(r"[0-9a-f]{64}", expected_sha256) is None:
+        raise ValueError("Expected StoreKit configuration SHA-256 must be 64 lowercase hexadecimal characters")
+    candidates = [
+        path for path in built_products.rglob(STOREKIT_RELATIVE_PATH.name)
+        if path.parent.suffix == ".xctest" and path.is_file() and not path.is_symlink()
+    ]
+    if len(candidates) != 1:
+        raise ValueError(
+            f"Expected exactly one regular StoreKit configuration in a built XCTest bundle; found {len(candidates)}"
+        )
+    resource = candidates[0]
+    if sha256_file(resource) != expected_sha256:
+        raise ValueError("Built XCTest bundle StoreKit configuration does not match the pinned source catalog")
+    return resource
+
+
 def write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -405,40 +464,7 @@ def capture(args: argparse.Namespace) -> None:
         project_root.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ui_test_path, project_root / "PleazyngTrialReviewUITests.swift")
         shutil.copyfile(storekit_path, project_root / "pleazyng-trial-review.storekit")
-        project_spec_data = {
-            "name": "PleazyngTrialReview",
-            "options": {
-                "bundleIdPrefix": "org.snapetech.pleazyng.localtest",
-                "xcodeVersion": "26.5",
-                "deploymentTarget": {"iOS": "15.5"},
-            },
-            "targets": {
-                "PleazyngTrialReviewUITests": {
-                    "type": "bundle.ui-testing",
-                    "platform": "iOS",
-                    "sources": ["PleazyngTrialReviewUITests.swift"],
-                    "resources": ["pleazyng-trial-review.storekit"],
-                    "settings": {
-                        "base": {
-                            "PRODUCT_BUNDLE_IDENTIFIER": "org.snapetech.pleazyng.localtest.trial-review-tests",
-                            "GENERATE_INFOPLIST_FILE": "YES",
-                            "SWIFT_VERSION": "5.0",
-                            "CODE_SIGN_STYLE": "Automatic",
-                        },
-                    },
-                },
-            },
-            "schemes": {
-                "PleazyngTrialReview": {
-                    "build": {"targets": {"PleazyngTrialReviewUITests": ["test"]}},
-                    "test": {
-                        "targets": ["PleazyngTrialReviewUITests"],
-                        "captureScreenshotsAutomatically": False,
-                        "deleteScreenshotsWhenEachTestSucceeds": True,
-                    },
-                },
-            },
-        }
+        project_spec_data = storekit_ui_test_project_spec()
         project_spec = project_root / "project.json"
         write_json(project_spec, project_spec_data)
         command(["xcodegen", "generate", "--spec", str(project_spec), "--project", str(project_root)], timeout=180)
@@ -469,6 +495,9 @@ def capture(args: argparse.Namespace) -> None:
             )
         if build.returncode != 0:
             raise RuntimeError(f"XCTest-only runner build failed ({build.returncode}); see {build_log}")
+
+        built_products = derived_data / "Build" / "Products"
+        verify_built_storekit_test_resource(built_products, sha256_file(storekit_path))
 
         command(["xcrun", "simctl", "install", device["udid"], str(app)], timeout=180)
         xctestruns = list((derived_data / "Build" / "Products").glob("*.xctestrun"))
