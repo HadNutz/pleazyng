@@ -974,6 +974,8 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
         self.assertIn("import StoreKitTest", UI_TEST)
         self.assertIn("SKTestSession(contentsOf: configurationURL)", UI_TEST)
         self.assertIn('trialButton.tap()', UI_TEST)
+        self.assertIn("XCTAssertTrue(trialButton.isHittable", UI_TEST)
+        self.assertNotIn("trialButton.isEnabled", UI_TEST)
         self.assertIn('Restore lifetime purchase', UI_TEST)
         self.assertIn('pleazyng-trial-offer-localtest', UI_TEST)
         self.assertIn('pleazyng-trial-active-files-books-localtest', UI_TEST)
