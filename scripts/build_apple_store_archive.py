@@ -19,6 +19,8 @@ import urllib.parse
 import urllib.request
 
 from apple_signing_material import decode_secret, run, signing_identity
+from pubspec_version import parse_pubspec_version
+from verify_apple_store_ipa import verify_ipa
 from apple.configure_ios_music_widget import (
     BUNDLE as WIDGET_BUNDLE, PROFILE_KEY as WIDGET_PROFILE_KEY, TARGET as WIDGET_TARGET,
     add_music_widget_target, verify_music_widget,
@@ -136,7 +138,8 @@ def configure_project(project: dict, bindings: dict[str, dict], team: str, finge
 
 
 def archive(platform: str, archive_path: Path, export_path: Path, derived_data: Path, source_packages: Path | None) -> None:
-    report = {'app_build_qualified': False, 'archive_export_verified': False, 'store_purchase_verified': False}
+    report = {'app_build_qualified': False, 'archive_export_verified': False,
+              'ipa_metadata_verified': False, 'store_purchase_verified': False}
     project_path = Path(platform) / 'Runner.xcodeproj/project.pbxproj'
     original_project = project_path.read_bytes()
     created_profiles: list[Path] = []
@@ -205,6 +208,13 @@ def archive(platform: str, archive_path: Path, export_path: Path, derived_data: 
             ipas = list(export_path.glob('*.ipa'))
             if len(ipas) != 1:
                 raise ValueError('Xcode must export exactly one App Store IPA')
+            source_version, source_build = parse_pubspec_version(
+                (Path(__file__).resolve().parents[1] / 'pubspec.yaml').read_text(encoding='utf-8')
+            )
+            metadata = verify_ipa(
+                ipas[0], platform=platform, expected_version=source_version.split('+', 1)[0],
+                expected_build=source_build,
+            )
             if widget_enabled:
                 verify_music_widget(ipas[0])
             destination = Path(f'pleazyng-{platform}-appstore.ipa')
@@ -213,7 +223,8 @@ def archive(platform: str, archive_path: Path, export_path: Path, derived_data: 
                 checksum = hashlib.sha256()
                 for chunk in iter(lambda: stream.read(1024 * 1024), b''):
                     checksum.update(chunk)
-            report.update(archive_export_verified=True, platform=platform, profiles=bindings,
+            report.update(archive_export_verified=True, ipa_metadata_verified=True,
+                          embedded_bundle_metadata=metadata, platform=platform, profiles=bindings,
                           ipa_sha256=checksum.hexdigest(), music_widget_embedded=widget_enabled)
     finally:
         project_path.write_bytes(original_project)

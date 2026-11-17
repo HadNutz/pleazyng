@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(plezy_torrent LANGUAGES C CXX)
+project(plezy_torrent VERSION 1.0.0 LANGUAGES C CXX)
 include(FetchContent)
 if(POLICY CMP0135)
   cmake_policy(SET CMP0135 NEW)
@@ -64,7 +64,10 @@ if(ANDROID)
 endif()
 if(APPLE)
   set_target_properties(plezy_torrent PROPERTIES FRAMEWORK TRUE FRAMEWORK_VERSION A
-    MACOSX_FRAMEWORK_IDENTIFIER org.plezy.torrent OUTPUT_NAME PlezyTorrent
+    MACOSX_FRAMEWORK_IDENTIFIER org.plezy.torrent
+    MACOSX_FRAMEWORK_BUNDLE_VERSION "${PROJECT_VERSION}"
+    MACOSX_FRAMEWORK_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+    OUTPUT_NAME PlezyTorrent
     PUBLIC_HEADER plezy_torrent.h)
 endif()
 option(PLEZY_TORRENT_TESTS "Build native loopback transfer tests" OFF)

@@ -123,3 +123,18 @@ does not expose an IPA hash for an already existing build, so that receipt
 marks reused builds as a version/build identity match. Upload success and
 processing do not create a matching draft version, invite TestFlight users,
 or submit App Review.
+
+### v3.0.36 signed-store processing result
+
+The frozen v3.0.36 iOS and tvOS IPAs were signed and exported by [run
+43966734793](https://github.com/snapetech-org/pleazyng/actions/runs/43966734793).
+The first iOS App Store Connect upload, [run
+43997226541](https://github.com/snapetech-org/pleazyng/actions/runs/43997226541),
+was rejected by Apple's Transporter before App Store Connect processing because
+`PlezyTorrent.framework/Info.plist` lacked both `CFBundleShortVersionString`
+and `CFBundleVersion`. Read-only inspection of the signed tvOS IPA found the
+same missing keys, so tvOS was withheld from upload. Neither IPA reached
+`VALID`; do not select either build for TestFlight or App Review. The published
+v3.0.36 release assets are immutable and retained for provenance. New signed
+Apple archives must carry framework version metadata and pass the embedded
+bundle preflight before upload; qualify that correction on v3.0.37.
