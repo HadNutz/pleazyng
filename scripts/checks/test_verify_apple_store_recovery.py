@@ -1,11 +1,14 @@
 """Keep Apple upload provenance compatible with explicit append-only receipts."""
 
 import sys
+import hashlib
+import json
+import tempfile
 from pathlib import Path
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from verify_apple_store_recovery import verify_recovery_provenance
+from verify_apple_store_recovery import verify_recovery_provenance, verify_downloaded_ipa
 
 
 class VerifyAppleStoreRecoveryTests(unittest.TestCase):
@@ -79,6 +82,57 @@ class VerifyAppleStoreRecoveryTests(unittest.TestCase):
         for changes in cases:
             with self.subTest(changes=changes), self.assertRaises(ValueError):
                 self.verify(self.provenance(**changes))
+
+
+class DownloadedIpaTests(unittest.TestCase):
+    asset = VerifyAppleStoreRecoveryTests.asset
+    provenance = VerifyAppleStoreRecoveryTests.provenance
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.directory = Path(self.temporary.name)
+        self.data = b"signed IPA fixture"
+        self.digest = hashlib.sha256(self.data).hexdigest()
+        self.record = {"name": self.asset, "sha256": self.digest}
+        (self.directory / self.asset).write_bytes(self.data)
+        self.manifest = f"{self.digest}  {self.asset}\n"
+        (self.directory / "SHA256SUMS.txt").write_text(self.manifest)
+
+    def check_download(self, recovery=False):
+        return verify_downloaded_ipa(self.directory, release_tag="v3.0.36", asset_name=self.asset, recovery=recovery)
+
+    def recovery_files(self):
+        (self.directory / "APPLE-STORE-SHA256SUMS.txt").write_text(self.manifest)
+        (self.directory / "APPLE-STORE-RECOVERY.json").write_text(json.dumps(self.provenance()))
+
+    def test_normal_release_uses_attested_core_manifest(self):
+        self.assertEqual(self.check_download(), [self.asset, "SHA256SUMS.txt"])
+
+    def test_recovered_release_requires_sidecars_and_provenance(self):
+        self.recovery_files()
+        # The original immutable core manifest does not list appended IPAs.
+        (self.directory / "SHA256SUMS.txt").write_text("a" * 64 + "  original.dmg\n")
+        self.assertEqual(self.check_download(True), [self.asset, "APPLE-STORE-SHA256SUMS.txt", "APPLE-STORE-RECOVERY.json"])
+        (self.directory / "APPLE-STORE-RECOVERY.json").unlink()
+        with self.assertRaises(ValueError):
+            self.check_download(True)
+
+    def test_cannot_downgrade_recovery_to_core_manifest(self):
+        self.recovery_files()
+        with self.assertRaises(ValueError):
+            self.check_download(False)
+
+    def test_core_manifest_rejects_missing_duplicate_and_changed_digest(self):
+        for contents in ("", self.manifest * 2, self.manifest.replace(self.digest, "e" * 64)):
+            (self.directory / "SHA256SUMS.txt").write_text(contents)
+            with self.subTest(contents=contents), self.assertRaises(ValueError):
+                self.check_download()
+
+    def test_recovery_does_not_accept_core_hash_when_sidecar_is_wrong(self):
+        self.recovery_files()
+        (self.directory / "APPLE-STORE-SHA256SUMS.txt").write_text(self.manifest.replace(self.digest, "e" * 64))
+        with self.assertRaises(ValueError):
+            self.check_download(True)
 
 
 if __name__ == "__main__":

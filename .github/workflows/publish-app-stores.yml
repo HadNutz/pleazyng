@@ -71,6 +71,7 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       release_tag: ${{ steps.validate.outputs.release_tag }}
+      apple_recovery: ${{ steps.validate.outputs.apple_recovery }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -137,12 +138,12 @@ jobs:
             exit 1
           fi
           if [[ "$CHANNEL" == app-store-ios || "$CHANNEL" == app-store-tvos ]]; then
-            for asset in APPLE-STORE-SHA256SUMS.txt APPLE-STORE-RECOVERY.json; do
-              if ! jq -e --arg asset "$asset" '.assets | any(.name == $asset)' <<< "$release_json" >/dev/null; then
-                echo "Release $RELEASE_TAG is missing append-only Apple recovery asset $asset." >&2
-                exit 1
-              fi
-            done
+            sidecar_count=$(jq '[.assets[] | select(.name == "APPLE-STORE-SHA256SUMS.txt" or .name == "APPLE-STORE-RECOVERY.json") | .name] | unique | length' <<< "$release_json")
+            case "$sidecar_count" in
+              0) echo "apple_recovery=false" >> "$GITHUB_OUTPUT" ;;
+              2) echo "apple_recovery=true" >> "$GITHUB_OUTPUT" ;;
+              *) echo "Apple recovery requires both unique sidecar assets." >&2; exit 1 ;;
+            esac
           fi
           echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
 
@@ -336,39 +337,31 @@ jobs:
           RELEASE_TAG: ${{ needs.validate-release.outputs.release_tag }}
           IPA_ASSET: ${{ steps.apple-asset.outputs.asset }}
           APPLE_STORE_PLATFORM: ${{ steps.apple-asset.outputs.platform }}
+          APPLE_RECOVERY: ${{ needs.validate-release.outputs.apple_recovery }}
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/store-assets"
+          patterns=(--pattern "$IPA_ASSET" --pattern SHA256SUMS.txt)
+          if [[ "$APPLE_RECOVERY" == true ]]; then
+            patterns+=(--pattern APPLE-STORE-SHA256SUMS.txt --pattern APPLE-STORE-RECOVERY.json)
+          fi
           gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
-            --pattern "$IPA_ASSET" --pattern SHA256SUMS.txt \
-            --pattern APPLE-STORE-SHA256SUMS.txt --pattern APPLE-STORE-RECOVERY.json \
-            --dir "$RUNNER_TEMP/store-assets"
+            "${patterns[@]}" --dir "$RUNNER_TEMP/store-assets"
           cd "$RUNNER_TEMP/store-assets"
           python3 - <<'PYHASH'
-          import hashlib, json, os
+          import os, sys
           from pathlib import Path
-          import sys
           sys.path.insert(0, os.environ["GITHUB_WORKSPACE"] + "/scripts")
-          from verify_apple_store_recovery import verify_recovery_provenance
-          asset = os.environ["IPA_ASSET"]
-          release_tag = os.environ["RELEASE_TAG"]
-          entries = [line.split() for line in Path("APPLE-STORE-SHA256SUMS.txt").read_text().splitlines()]
-          expected = [parts[0].lower() for parts in entries if len(parts) == 2 and parts[1] == asset]
-          with open(asset, "rb") as source:
-              actual = hashlib.file_digest(source, "sha256").hexdigest()
-          if expected != [actual]:
-              raise SystemExit("Signed IPA checksum missing from Apple sidecar, ambiguous, or mismatched")
-          provenance = json.loads(Path("APPLE-STORE-RECOVERY.json").read_text())
-          try:
-              verify_recovery_provenance(
-                  provenance, release_tag=release_tag, asset_name=asset, asset_sha256=actual,
-              )
-          except ValueError as error:
-              raise SystemExit(str(error)) from error
+          from verify_apple_store_recovery import verify_downloaded_ipa
+          names = verify_downloaded_ipa(
+              Path.cwd(), release_tag=os.environ["RELEASE_TAG"],
+              asset_name=os.environ["IPA_ASSET"], recovery=os.environ["APPLE_RECOVERY"] == "true",
+          )
+          Path("apple-attestation-inputs.txt").write_text("\n".join(names) + "\n")
           PYHASH
-          python3 "$GITHUB_WORKSPACE/scripts/verify_release_attestation.py" "$IPA_ASSET" --repo "$GITHUB_REPOSITORY"
-          python3 "$GITHUB_WORKSPACE/scripts/verify_release_attestation.py" APPLE-STORE-SHA256SUMS.txt --repo "$GITHUB_REPOSITORY"
-          python3 "$GITHUB_WORKSPACE/scripts/verify_release_attestation.py" APPLE-STORE-RECOVERY.json --repo "$GITHUB_REPOSITORY"
+          while IFS= read -r asset; do
+            python3 "$GITHUB_WORKSPACE/scripts/verify_release_attestation.py" "$asset" --repo "$GITHUB_REPOSITORY"
+          done < apple-attestation-inputs.txt
           python3 "$GITHUB_WORKSPACE/scripts/verify_apple_store_ipa.py" "$IPA_ASSET" \
             --platform "$APPLE_STORE_PLATFORM" --expected-version "${RELEASE_TAG#v}"
 

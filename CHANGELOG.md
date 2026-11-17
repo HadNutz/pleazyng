@@ -7,6 +7,8 @@
 
 ## [3.0.37]
 
+- Verify new Apple Store uploads against their core release manifest while keeping recovered uploads bound to their separate checksum and provenance sidecars.
+
 - Build authentic Apple Store screenshots with current Flutter, preserve reusable app bundles, and verify their source and capture provenance.
 - Add signed macOS App Store packaging and upload with source, storage, certificate and processing validation.
 - Skip Git metadata during Apple network-storage source cleanup.

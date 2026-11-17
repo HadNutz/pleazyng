@@ -138,3 +138,7 @@ same missing keys, so tvOS was withheld from upload. Neither IPA reached
 v3.0.36 release assets are immutable and retained for provenance. New signed
 Apple archives must carry framework version metadata and pass the embedded
 bundle preflight before upload; qualify that correction on v3.0.37.
+
+### Normal release and recovery upload manifests
+
+A new signed release binds its IPA to the attested core `SHA256SUMS.txt` and the IPA's own build attestation. An append-only repair instead requires both `APPLE-STORE-SHA256SUMS.txt` and `APPLE-STORE-RECOVERY.json`, with their attestations and exact source/run/IPA binding. The release asset inventory selects the mode before download; partial sidecars fail closed. Recovery sidecars are not prerequisites for a normal new release.

@@ -2768,8 +2768,7 @@ def publish_configured_channels(
             "fields": {"action": "publish-app-stores", "runner_pool": "public", "release_tag": tag,
                        "channel": "app-store-ios", "play_track": "internal", "play_release_status": "draft"},
             "secrets": {"APPLE_API_KEY_ID", "APPLE_API_ISSUER_ID", "APPLE_API_PRIVATE_KEY"}, "variables": set(),
-            "assets": {"pleazyng-ios-appstore.ipa", "SHA256SUMS.txt",
-                       "APPLE-STORE-SHA256SUMS.txt", "APPLE-STORE-RECOVERY.json"},
+            "assets": {"pleazyng-ios-appstore.ipa", "SHA256SUMS.txt"},
         },
         {
             "name": "Apple App Store Connect tvOS upload",
@@ -2779,8 +2778,7 @@ def publish_configured_channels(
             "fields": {"action": "publish-app-stores", "runner_pool": "public", "release_tag": tag,
                        "channel": "app-store-tvos", "play_track": "internal", "play_release_status": "draft"},
             "secrets": {"APPLE_API_KEY_ID", "APPLE_API_ISSUER_ID", "APPLE_API_PRIVATE_KEY"}, "variables": set(),
-            "assets": {"pleazyng-tvos-appstore.ipa", "SHA256SUMS.txt",
-                       "APPLE-STORE-SHA256SUMS.txt", "APPLE-STORE-RECOVERY.json"},
+            "assets": {"pleazyng-tvos-appstore.ipa", "SHA256SUMS.txt"},
         },
         {
             "name": "AUR",
@@ -2929,6 +2927,10 @@ def publish_configured_channels(
             continue
         predicate = spec.get("asset_predicate")
         required_assets = set(spec["assets"])
+        if spec["fields"].get("channel") in {"app-store-ios", "app-store-tvos"}:
+            recovery_assets = {"APPLE-STORE-SHA256SUMS.txt", "APPLE-STORE-RECOVERY.json"}
+            if assets & recovery_assets:
+                required_assets.update(recovery_assets)
         if predicate:
             matching = {name for name in assets if isinstance(name, str) and predicate(name)}
             if not matching:
