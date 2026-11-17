@@ -9,6 +9,7 @@ import plistlib
 import tarfile
 import tempfile
 import unittest
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
@@ -86,6 +87,128 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
             capture.verify_storekit_test_runtime("26.5", inventory, "26.6")
         with self.assertRaisesRegex(ValueError, "No installed iOS Simulator runtime"):
             capture.verify_storekit_test_runtime("27.2", inventory, "26.6")
+
+    def test_required_display_targets_select_exact_xcode_27_2_simulator_models(self) -> None:
+        inventory = {
+            "runtimes": [
+                {
+                    "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-2",
+                    "version": "27.2",
+                    "isAvailable": True,
+                },
+            ],
+            "devices": {
+                "com.apple.CoreSimulator.SimRuntime.iOS-27-2": [
+                    {
+                        "name": "iPhone Duo",
+                        "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo",
+                        "isAvailable": True,
+                    },
+                    {
+                        "name": "iPhone 18 Pro",
+                        "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro",
+                        "isAvailable": True,
+                    },
+                    {
+                        "name": "iPad Pro 13-inch (M5)",
+                        "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5",
+                        "isAvailable": True,
+                    },
+                ],
+            },
+        }
+        phone = capture.verify_capture_display_target("iphone-medium", "27.2", inventory)
+        tablet = capture.verify_capture_display_target("ipad-13", "27.2", inventory)
+        self.assertEqual(phone["device_name"], "iPhone 18 Pro")
+        self.assertEqual(phone["expected_screenshot_dimensions"], [1206, 2622])
+        self.assertEqual(tablet["device_name"], "iPad Pro 13-inch (M5)")
+        self.assertEqual(tablet["expected_screenshot_dimensions"], [2064, 2752])
+        self.assertIsNone(capture.verify_capture_display_target("default", "27.2", inventory))
+
+    def test_required_display_targets_fail_closed_on_wrong_sdk_or_missing_exact_model(self) -> None:
+        inventory = {
+            "runtimes": [
+                {
+                    "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-2",
+                    "version": "27.2",
+                    "isAvailable": True,
+                },
+            ],
+            "devices": {"com.apple.CoreSimulator.SimRuntime.iOS-27-2": []},
+        }
+        with self.assertRaisesRegex(ValueError, "requires the iOS 27.2 SDK"):
+            capture.verify_capture_display_target("iphone-medium", "27.3", inventory)
+        with self.assertRaisesRegex(ValueError, "found 0"):
+            capture.verify_capture_display_target("iphone-medium", "27.2", inventory)
+        with self.assertRaisesRegex(ValueError, "Unsupported StoreKit capture display target"):
+            capture.verify_capture_display_target("unknown", "27.2", inventory)
+
+    def test_required_screenshot_dimensions_reject_wrong_device_slots(self) -> None:
+        capture.verify_capture_screenshot_dimensions("iphone-medium", (1206, 2622))
+        capture.verify_capture_screenshot_dimensions("ipad-13", (2064, 2752))
+        capture.verify_capture_screenshot_dimensions("default", (1398, 2034))
+        with self.assertRaisesRegex(ValueError, r"expected \(1206, 2622\)"):
+            capture.verify_capture_screenshot_dimensions("iphone-medium", (1398, 2034))
+        with self.assertRaisesRegex(ValueError, r"expected \(2064, 2752\)"):
+            capture.verify_capture_screenshot_dimensions("ipad-13", (2048, 2732))
+
+    def test_restore_sync_must_finish_inside_the_recorded_pre_relaunch_window(self) -> None:
+        def epoch_ms(value: str) -> int:
+            return int(datetime.fromisoformat(value).replace(tzinfo=timezone.utc).timestamp() * 1000)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            log_path = Path(temporary) / "simulator-storekitd.log"
+            log_path.write_text(
+                "\n".join([
+                    "2026-11-17 11:45:36.624 Df storekitd[7129:d6a5] [com.apple.storekit:Default] "
+                    "Purchase completed successfully. Transactions: [0] "
+                    "b:org.snapetech.pleazyng p:pleazyng_7_day_trial s:1",
+                    "2026-11-17 11:45:50.010 Df storekitd[7129:d782] [com.apple.storekit:Default] "
+                    'Starting transactions sync with reason "reset(<storekitd.DialogContext>)" '
+                    "for org.snapetech.pleazyng",
+                    "2026-11-17 11:45:50.033 Df storekitd[7129:dc19] [com.apple.storekit:Default] "
+                    "Finished syncing transactions",
+                    "2026-11-17 11:46:02.120 Df storekitd[7129:d782] [com.apple.storekit:Default] "
+                    'Starting transactions sync with reason "reset(<storekitd.DialogContext>)" '
+                    "for org.snapetech.pleazyng",
+                    "2026-11-17 11:46:02.143 Df storekitd[7129:dc19] [com.apple.storekit:Default] "
+                    "Finished syncing transactions",
+                ]) + "\n",
+                encoding="utf-8",
+            )
+            localtest = {
+                "appBehavior": {
+                    "restoreActionTapCompleted": True,
+                    "restoreActionTiming": {
+                        "windowStartedAtEpochMilliseconds": epoch_ms("2026-11-17T11:46:01+00:00"),
+                        "tapReturnedAtEpochMilliseconds": epoch_ms("2026-11-17T11:46:01.500+00:00"),
+                        "windowCompletedAtEpochMilliseconds": epoch_ms("2026-11-17T11:46:03+00:00"),
+                        "preRelaunchAtEpochMilliseconds": epoch_ms("2026-11-17T11:46:03+00:00"),
+                        "timezoneOffsetSeconds": 0,
+                        "windowEndsBeforeFreshRelaunch": True,
+                    },
+                },
+            }
+            receipt = capture.verify_storekit_restore_sync(log_path, localtest)
+            self.assertTrue(receipt["post_purchase_app_store_sync_observed"])
+            self.assertTrue(receipt["completed_sync_inside_restore_window"])
+            self.assertEqual(receipt["clock_tolerance_milliseconds"], 2000)
+            self.assertEqual(receipt["post_purchase_app_store_sync_log_line"], 4)
+
+            localtest["appBehavior"]["restoreActionTiming"]["windowStartedAtEpochMilliseconds"] = epoch_ms(
+                "2026-11-17T11:46:10+00:00"
+            )
+            localtest["appBehavior"]["restoreActionTiming"]["tapReturnedAtEpochMilliseconds"] = epoch_ms(
+                "2026-11-17T11:46:10.500+00:00"
+            )
+            localtest["appBehavior"]["restoreActionTiming"]["windowCompletedAtEpochMilliseconds"] = epoch_ms(
+                "2026-11-17T11:46:12+00:00"
+            )
+            localtest["appBehavior"]["restoreActionTiming"]["preRelaunchAtEpochMilliseconds"] = epoch_ms(
+                "2026-11-17T11:46:12+00:00"
+            )
+            with self.assertRaisesRegex(ValueError, "within the recorded Restore tap window"):
+                capture.verify_storekit_restore_sync(log_path, localtest)
 
     def test_xcodegen_explicitly_places_storekit_in_the_ui_test_resource_phase(self) -> None:
         spec = capture.storekit_ui_test_project_spec()
@@ -415,8 +538,15 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
         self.assertIn('pleazyng-trial-offer-localtest', UI_TEST)
         self.assertIn('pleazyng-trial-active-files-books-localtest', UI_TEST)
         self.assertIn('pleazyng-trial-active-supporter-localtest', UI_TEST)
-        self.assertIn('let restoreBusy = NSPredicate(format: "isEnabled == false")', UI_TEST)
-        self.assertIn('let restoreIdle = NSPredicate(format: "isEnabled == true")', UI_TEST)
+        self.assertIn("let restoreActionTapCompleted = true", UI_TEST)
+        self.assertNotIn("restoreBusy", UI_TEST)
+        self.assertNotIn("restoreIdle", UI_TEST)
+        self.assertIn('"restoreActionTapCompleted": restoreActionTapCompleted', UI_TEST)
+        self.assertIn('"restoreActionTiming"', UI_TEST)
+        self.assertIn('"tapReturnedAtEpochMilliseconds"', UI_TEST)
+        self.assertIn('"preRelaunchAtEpochMilliseconds"', UI_TEST)
+        self.assertIn('"windowEndsBeforeFreshRelaunch": true', UI_TEST)
+        self.assertIn("verify_storekit_restore_sync", SCRIPT)
         self.assertIn('trialHistorySnapshots', UI_TEST)
         self.assertIn('afterFreshRelaunch', UI_TEST)
         self.assertIn('originalTransactionIdentifier', UI_TEST)
@@ -430,12 +560,11 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
             'NSPredicate(format: "label CONTAINS %@", "Settings")).firstMatch',
             UI_TEST,
         )
-        self.assertIn(
-            'NSPredicate(format: "label CONTAINS %@", "Restore lifetime purchase")',
-            UI_TEST,
-        )
+        self.assertIn('NSPredicate(format: "label CONTAINS %@", "Restore lifetime purchase")', UI_TEST)
         self.assertIn('trial-settings-home-accessibility-localtest', UI_TEST)
         self.assertIn('trial-settings-profiles-menu-accessibility-localtest', UI_TEST)
+        self.assertIn('tapWhenHittable(lifetimeTile, in: app', UI_TEST)
+        self.assertIn('app.swipeUp()', UI_TEST)
         self.assertNotIn("session.buyProduct", UI_TEST)
         self.assertNotIn('localLifetimePrice.tap()', UI_TEST)
         self.assertNotIn('buyProduct(productIdentifier: lifetimeProductID)', UI_TEST)
@@ -454,6 +583,14 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
         self.assertIn("if: always()", WORKFLOW)
         self.assertIn("contents: read", WORKFLOW)
         self.assertIn("actions: read", WORKFLOW)
+        self.assertIn("display_target: ${{ fromJSON(inputs.mode == 'capture-only'", WORKFLOW)
+        self.assertIn("'[\"iphone-medium\",\"ipad-13\"]'", WORKFLOW)
+        self.assertIn("'[\"default\"]'", WORKFLOW)
+        self.assertIn("sudo xcode-select --switch /Applications/Xcode_27.2.app/Contents/Developer", WORKFLOW)
+        self.assertIn("--display-target \"$DISPLAY_TARGET\"", WORKFLOW)
+        self.assertIn('--display-target "${{ matrix.display_target }}"', WORKFLOW)
+        self.assertIn("${{ matrix.display_target }}", WORKFLOW[WORKFLOW.index("name: Upload StoreKitTest screenshots"):])
+        self.assertEqual(WORKFLOW.count("flutter build ios --debug --simulator --no-pub"), 1)
         self.assertIn('"CODE_SIGN_STYLE": "Automatic"', SCRIPT)
         self.assertNotIn('"CODE_SIGN_ENTITLEMENTS"', SCRIPT)
         self.assertIn("stage_verified_app_for_xctestrun", SCRIPT)

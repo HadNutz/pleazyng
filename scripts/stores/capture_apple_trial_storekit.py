@@ -19,7 +19,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -32,6 +32,19 @@ BUILD_NUMBER = "196"
 BUNDLE_ID = "org.snapetech.pleazyng"
 TRIAL_PRODUCT_ID = "pleazyng_7_day_trial"
 LIFETIME_PRODUCT_ID = "pleazyng_lifetime_unlock"
+RESTORE_SYNC_CLOCK_TOLERANCE_MS = 2000
+CAPTURE_DISPLAY_TARGETS = {
+    "default": None,
+    "iphone-medium": {
+        "device_name": "iPhone 18 Pro",
+        "expected_screenshot_dimensions": [1206, 2622],
+    },
+    "ipad-13": {
+        "device_name": "iPad Pro 13-inch (M5)",
+        "expected_screenshot_dimensions": [2064, 2752],
+    },
+}
+CAPTURE_DISPLAY_XCODE_VERSION = "27.2"
 BUILD_ARTIFACT = "pleazyng-apple-trial-review-product-v3.0.37.tar.gz"
 RECEIPT_NAME = "product-build-provenance.json"
 STOREKIT_RELATIVE_PATH = Path("scripts/stores/apple/pleazyng-trial-review.storekit")
@@ -209,10 +222,99 @@ def verify_storekit_test_runtime(
     }
 
 
+def verify_capture_display_target(
+    display_target: str,
+    sdk_version: str,
+    runtime_inventory: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Require exact public iOS 27.2 simulator models for required screenshots."""
+    if display_target not in CAPTURE_DISPLAY_TARGETS:
+        raise ValueError(f"Unsupported StoreKit capture display target: {display_target!r}")
+    spec = CAPTURE_DISPLAY_TARGETS[display_target]
+    if spec is None:
+        return None
+    if sdk_version != CAPTURE_DISPLAY_XCODE_VERSION:
+        raise ValueError(
+            f"{display_target} capture requires the iOS {CAPTURE_DISPLAY_XCODE_VERSION} SDK; found {sdk_version}"
+        )
+    runtime = verify_storekit_test_runtime(
+        sdk_version,
+        runtime_inventory,
+        CAPTURE_DISPLAY_XCODE_VERSION,
+    )
+    devices = [
+        device for device in runtime_inventory.get("devices", {}).get(runtime["runtime_id"], [])
+        if device.get("isAvailable") is True
+        and device.get("name") == spec["device_name"]
+        and isinstance(device.get("deviceTypeIdentifier"), str)
+    ]
+    if len(devices) != 1:
+        raise ValueError(
+            f"Expected exactly one available {spec['device_name']} in iOS {CAPTURE_DISPLAY_XCODE_VERSION}; "
+            f"found {len(devices)}"
+        )
+    return {
+        **runtime,
+        "display_target": display_target,
+        "device_name": spec["device_name"],
+        "device_type": devices[0]["deviceTypeIdentifier"],
+        "expected_screenshot_dimensions": spec["expected_screenshot_dimensions"],
+    }
+
+
+def create_storekit_simulator(display_target: str, run_id: str, attempt: str) -> dict[str, Any]:
+    """Create the exact required screenshot simulator, or the default producer device."""
+    if display_target not in CAPTURE_DISPLAY_TARGETS:
+        raise ValueError(f"Unsupported StoreKit capture display target: {display_target!r}")
+    spec = CAPTURE_DISPLAY_TARGETS[display_target]
+    if spec is None:
+        device = capture_tools.create_simulator("iOS", "iphone", run_id, attempt)
+        return {**device, "display_target": display_target}
+
+    sdk_version = command(["xcrun", "--sdk", "iphonesimulator", "--show-sdk-version"], capture=True, timeout=60)
+    inventory = json.loads(command(["xcrun", "simctl", "list", "-j"], capture=True, timeout=60))
+    selected = verify_capture_display_target(display_target, sdk_version, inventory)
+    assert selected is not None
+    name = f"Pleazyng-{run_id}-{attempt}-{display_target}"
+    udid = command(
+        ["xcrun", "simctl", "create", name, selected["device_type"], selected["runtime_id"]],
+        capture=True,
+        timeout=120,
+    )
+    if re.fullmatch(r"[0-9A-Fa-f-]{36}", udid) is None:
+        raise RuntimeError(f"Simulator returned an invalid device identifier: {udid!r}")
+    return {
+        "udid": udid,
+        "name": name,
+        "runtime_id": selected["runtime_id"],
+        "runtime_version": selected["runtime_version"],
+        "device_name": selected["device_name"],
+        "device_type": selected["device_type"],
+        "sdk_version": selected["sdk_version"],
+        "display_target": display_target,
+        "expected_screenshot_dimensions": selected["expected_screenshot_dimensions"],
+    }
+
+
+def verify_capture_screenshot_dimensions(display_target: str, dimensions: tuple[int, int]) -> None:
+    """Fail if an image does not occupy the target's exact portrait pixel slot."""
+    if display_target not in CAPTURE_DISPLAY_TARGETS:
+        raise ValueError(f"Unsupported StoreKit capture display target: {display_target!r}")
+    spec = CAPTURE_DISPLAY_TARGETS[display_target]
+    if spec is not None and list(dimensions) != spec["expected_screenshot_dimensions"]:
+        expected = tuple(spec["expected_screenshot_dimensions"])
+        raise ValueError(
+            f"{display_target} screenshot dimensions are {dimensions}; expected {expected} for {spec['device_name']}"
+        )
+
+
 def verify_runtime(args: argparse.Namespace) -> None:
     sdk_version = command(["xcrun", "--sdk", "iphonesimulator", "--show-sdk-version"], capture=True, timeout=60)
     inventory = json.loads(command(["xcrun", "simctl", "list", "-j"], capture=True, timeout=60))
     selected = verify_storekit_test_runtime(sdk_version, inventory, args.minimum_ios_version)
+    display = verify_capture_display_target(args.display_target, sdk_version, inventory)
+    if display is not None:
+        selected["capture_display_target"] = display
     print(json.dumps(selected, sort_keys=True))
 
 
@@ -532,6 +634,129 @@ def capture_simulator_storekit_logs(device_id: str, output: Path) -> None:
             )
 
 
+def verify_storekit_restore_sync(log_path: Path, localtest_record: dict[str, Any]) -> dict[str, Any]:
+    """Correlate Restore tap timing with the app's completed StoreKit sync."""
+    lines = log_path.read_text(encoding="utf-8", errors="replace").splitlines()
+    behavior = localtest_record.get("appBehavior")
+    timing = behavior.get("restoreActionTiming") if isinstance(behavior, dict) else None
+    if not isinstance(behavior, dict) or behavior.get("restoreActionTapCompleted") is not True:
+        raise ValueError("XCTest did not complete the actual Restore control tap")
+    if not isinstance(timing, dict) or timing.get("windowEndsBeforeFreshRelaunch") is not True:
+        raise ValueError("XCTest did not record a Restore observation window before fresh relaunch")
+    start_ms = timing.get("windowStartedAtEpochMilliseconds")
+    tap_returned_ms = timing.get("tapReturnedAtEpochMilliseconds")
+    end_ms = timing.get("windowCompletedAtEpochMilliseconds")
+    before_relaunch_ms = timing.get("preRelaunchAtEpochMilliseconds")
+    offset_seconds = timing.get("timezoneOffsetSeconds")
+    if any(type(value) is not int for value in (start_ms, tap_returned_ms, end_ms, before_relaunch_ms, offset_seconds)):
+        raise ValueError("XCTest Restore observation window has invalid clock values")
+    if (
+        not start_ms <= tap_returned_ms <= end_ms == before_relaunch_ms
+        or abs(offset_seconds) >= 24 * 60 * 60
+    ):
+        raise ValueError("XCTest Restore observation window is invalid")
+
+    purchase_phrase = f"b:{BUNDLE_ID} p:{TRIAL_PRODUCT_ID} s:1"
+    purchase_index = next(
+        (
+            index for index, line in enumerate(lines)
+            if "Purchase completed successfully. Transactions:" in line and purchase_phrase in line
+        ),
+        None,
+    )
+    if purchase_index is None:
+        raise ValueError("StoreKit daemon log has no successful LOCALTEST trial purchase for the app")
+
+    sync_start_indexes = [
+        index for index in range(purchase_index + 1, len(lines))
+        if 'Starting transactions sync with reason "reset(' in lines[index]
+        and f"for {BUNDLE_ID}" in lines[index]
+    ]
+    if not sync_start_indexes:
+        raise ValueError("StoreKit daemon log has no app-account sync after the LOCALTEST trial purchase")
+
+    def process_id(index: int) -> str | None:
+        match = re.search(r"storekitd\[(\d+):", lines[index])
+        return match.group(1) if match else None
+
+    def log_timestamp(index: int) -> str | None:
+        match = re.match(r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:\.\d+)?)", lines[index])
+        return match.group(1) if match else None
+
+    def log_epoch_milliseconds(index: int) -> int:
+        value = log_timestamp(index)
+        if value is None:
+            raise ValueError(f"StoreKit daemon log line {index + 1} has no parseable timestamp")
+        try:
+            parsed = datetime.fromisoformat(value).replace(tzinfo=timezone(timedelta(seconds=offset_seconds)))
+        except ValueError as error:
+            raise ValueError(f"StoreKit daemon log line {index + 1} has an invalid timestamp") from error
+        return int(parsed.timestamp() * 1000)
+
+    purchase_ms = log_epoch_milliseconds(purchase_index)
+    tolerated_start = start_ms - RESTORE_SYNC_CLOCK_TOLERANCE_MS
+    tolerated_end = end_ms + RESTORE_SYNC_CLOCK_TOLERANCE_MS
+    if purchase_ms >= start_ms:
+        raise ValueError("The successful trial purchase did not precede the recorded Restore tap window")
+
+    completed_syncs: list[tuple[int, int, int, int]] = []
+    saw_completed_sync = False
+    saw_process_identity = False
+    for sync_start_index in sync_start_indexes:
+        sync_pid = process_id(sync_start_index)
+        if sync_pid is None:
+            continue
+        saw_process_identity = True
+        sync_finished_index = next(
+            (
+                index for index in range(sync_start_index + 1, len(lines))
+                if "Finished syncing transactions" in lines[index]
+                and process_id(index) == sync_pid
+            ),
+            None,
+        )
+        if sync_finished_index is None:
+            continue
+        saw_completed_sync = True
+        sync_start_ms = log_epoch_milliseconds(sync_start_index)
+        sync_finished_ms = log_epoch_milliseconds(sync_finished_index)
+        if sync_finished_ms < sync_start_ms:
+            continue
+        if tolerated_start <= sync_start_ms <= tolerated_end and tolerated_start <= sync_finished_ms <= tolerated_end:
+            completed_syncs.append((sync_start_index, sync_finished_index, sync_start_ms, sync_finished_ms))
+
+    if not saw_process_identity:
+        raise ValueError("StoreKit daemon sync-start log line has no process identity")
+    if not saw_completed_sync:
+        raise ValueError("StoreKit daemon log has no completed transaction sync after the Restore tap")
+    if not completed_syncs:
+        raise ValueError("StoreKit daemon sync did not finish within the recorded Restore tap window")
+    sync_start_index, sync_finished_index, sync_start_ms, sync_finished_ms = completed_syncs[0]
+    if purchase_ms >= sync_start_ms:
+        raise ValueError("StoreKit daemon account sync did not follow the successful trial purchase")
+
+    return {
+        "schema_version": 1,
+        "environment": "LOCALTEST",
+        "bundle_id": BUNDLE_ID,
+        "trial_product_id": TRIAL_PRODUCT_ID,
+        "successful_trial_purchase_log_line": purchase_index + 1,
+        "successful_trial_purchase_log_timestamp": log_timestamp(purchase_index),
+        "post_purchase_app_store_sync_log_line": sync_start_index + 1,
+        "post_purchase_app_store_sync_log_timestamp": log_timestamp(sync_start_index),
+        "completed_sync_log_line": sync_finished_index + 1,
+        "completed_sync_log_timestamp": log_timestamp(sync_finished_index),
+        "restore_window_started_at_epoch_milliseconds": start_ms,
+        "restore_tap_returned_at_epoch_milliseconds": tap_returned_ms,
+        "restore_window_completed_at_epoch_milliseconds": end_ms,
+        "pre_relaunch_at_epoch_milliseconds": before_relaunch_ms,
+        "restore_window_timezone_offset_seconds": offset_seconds,
+        "clock_tolerance_milliseconds": RESTORE_SYNC_CLOCK_TOLERANCE_MS,
+        "post_purchase_app_store_sync_observed": True,
+        "completed_sync_inside_restore_window": True,
+    }
+
+
 def _attachment_name_matches(actual: str, expected: str) -> bool:
     if actual == expected:
         return True
@@ -823,7 +1048,7 @@ def capture(args: argparse.Namespace) -> None:
     failure: str | None = None
     result_bundle: Path | None = None
     try:
-        device = capture_tools.create_simulator("iOS", "iphone", args.run_id, args.run_attempt)
+        device = create_storekit_simulator(args.display_target, args.run_id, args.run_attempt)
         write_json(output / "simulator.json", device)
         command(["xcrun", "simctl", "boot", device["udid"]], timeout=180)
         command(["xcrun", "simctl", "bootstatus", device["udid"], "-b"], timeout=600)
@@ -907,6 +1132,11 @@ def capture(args: argparse.Namespace) -> None:
         localtest = json.loads(exported["localtest_record"].read_text(encoding="utf-8"))
         if localtest.get("environment") != "LOCALTEST":
             raise ValueError("XCTest transaction evidence is not labeled LOCALTEST")
+        restore_sync_evidence = verify_storekit_restore_sync(
+            output / "simulator-storekitd.log",
+            localtest,
+        )
+        write_json(output / "storekit-restore-sync.json", restore_sync_evidence)
         queries = localtest.get("productQueries", {})
         if queries.get("trialProductVisibleInApp") is not True or queries.get("lifetimeProductVisibleInApp") is not True:
             raise ValueError("The app did not show both actual LOCALTEST product query results")
@@ -920,14 +1150,15 @@ def capture(args: argparse.Namespace) -> None:
             raise ValueError("LOCALTEST transaction is not a completed free-trial product")
         if localtest.get("appBehavior", {}).get("lifetimeTransactionCreated") is not False:
             raise ValueError("UI test did not explicitly prove that no lifetime transaction was created")
-        if localtest.get("appBehavior", {}).get("restoreActionCompleted") is not True:
-            raise ValueError("UI test did not complete the real Restore control")
+        if localtest.get("appBehavior", {}).get("restoreActionTapCompleted") is not True:
+            raise ValueError("UI test did not complete the tap on the real Restore control")
         if localtest.get("appBehavior", {}).get("activeTrialRestoredAfterFreshRelaunch") is not True:
             raise ValueError("The app did not restore verified trial history after a fresh process launch")
 
         screenshot_receipts: dict[str, Any] = {}
         for attachment_name, path in ((name, output / filename) for name, filename in SCREENSHOTS.items()):
             dimensions = capture_tools.png_dimensions(path)
+            verify_capture_screenshot_dimensions(args.display_target, dimensions)
             pixels = capture_tools.require_visible_screen_content(path)
             screenshot_receipts[path.name] = {
                 "source_attachment": attachment_name,
@@ -953,6 +1184,8 @@ def capture(args: argparse.Namespace) -> None:
             "storekit_configuration_sha256": sha256_file(storekit_path),
             "ui_test_source_sha256": sha256_file(ui_test_path),
             "local_test_catalog": catalog,
+            "storekit_restore_sync": restore_sync_evidence,
+            "capture_display_target": args.display_target,
             "simulator": device,
             "xcode_version": command(["xcodebuild", "-version"], capture=True, timeout=60),
             "xcode_test_result_bundle": result_bundle.name,
@@ -1018,6 +1251,7 @@ def parser() -> argparse.ArgumentParser:
 
     runtime = commands.add_parser("verify-runtime", help="verify an installed Simulator runtime for StoreKitTest")
     runtime.add_argument("--minimum-ios-version", required=True)
+    runtime.add_argument("--display-target", choices=tuple(CAPTURE_DISPLAY_TARGETS), default="default")
     runtime.set_defaults(handler=verify_runtime)
 
     capture_command = commands.add_parser("capture")
@@ -1031,6 +1265,7 @@ def parser() -> argparse.ArgumentParser:
     capture_command.add_argument("--output-dir", required=True, type=Path)
     capture_command.add_argument("--run-id", required=True)
     capture_command.add_argument("--run-attempt", required=True)
+    capture_command.add_argument("--display-target", choices=tuple(CAPTURE_DISPLAY_TARGETS), default="default")
     capture_command.set_defaults(handler=capture)
     return root
 
