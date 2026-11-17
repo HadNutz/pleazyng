@@ -171,7 +171,8 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
 
         self.assertNotIn("ruby/setup-ruby", workflow)
         self.assertIn("BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile", workflow)
-        self.assertIn("BUNDLE_PATH: ${{ runner.temp }}/fastlane-bundle", workflow)
+        self.assertNotIn("BUNDLE_PATH: ${{ runner.temp }}", workflow.split("jobs:", 1)[0])
+        self.assertIn('echo "BUNDLE_PATH=$RUNNER_TEMP/fastlane-bundle" >> "$GITHUB_ENV"', workflow)
         self.assertIn('BUNDLE_FROZEN: "true"', workflow)
         bundle_step = workflow.split(
             "- name: Install the locked Fastlane bundle in runner temp", 1

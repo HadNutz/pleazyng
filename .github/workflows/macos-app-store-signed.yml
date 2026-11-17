@@ -24,7 +24,6 @@ env:
   GH_TOKEN: ${{ github.token }}
   PUB_CACHE: ${{ github.workspace }}/.cache/plezy-pub-cache
   BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile
-  BUNDLE_PATH: ${{ runner.temp }}/fastlane-bundle
   BUNDLE_FROZEN: "true"
   FLUTTER_SUPPRESS_ANALYTICS: "true"
   DASH__SUPPRESS_ANALYTICS: "true"
@@ -59,6 +58,10 @@ jobs:
             --release-tag "$RELEASE_TAG" \
             --source-dir "$GITHUB_WORKSPACE/source" \
             --main-commit "$GITHUB_SHA"
+
+      - name: Configure isolated Ruby bundle path
+        shell: bash
+        run: echo "BUNDLE_PATH=$RUNNER_TEMP/fastlane-bundle" >> "$GITHUB_ENV"
 
       - name: Preflight macOS build disk capacity
         env:
