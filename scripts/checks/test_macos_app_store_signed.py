@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 import base64
+import hashlib
 from pathlib import Path
 import plistlib
 import re
@@ -316,6 +317,12 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         package_export = package_builder.index('"xcodebuild", "-exportArchive"')
         self.assertLess(framework_validation, package_export)
         self.assertIn('"embedded_plezy_torrent_framework": native_framework', signed_builder)
+        self.assertIn("prepare_store_info_plist(source_dir, source_sha)", package_builder)
+        self.assertIn('info_plist_file=str(store_info_plist["derived_xcode_path"])', package_builder)
+        self.assertIn("validate_store_info_plist(derived_info_plist_path)", package_builder)
+        self.assertIn("store_category_receipt(store_info_plist, archive_info_plist)", package_builder)
+        self.assertIn('"application_category": category_receipt', package_builder)
+        self.assertIn("validate_store_info_plist(archived_info_plist)", signed_builder)
         package_build = signed_builder.index("package_path, receipt = build_signed_package(")
         post_build_validation = signed_builder.index(
             "validate_release_source(source_dir, args.release_tag", package_build
@@ -460,14 +467,78 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
             },
         }
         store.configure_project(project, team=TEAM, app_fingerprint="A" * 40,
-                                profile_uuid=UUID, keychain=Path("/tmp/store.keychain-db"))
+                                profile_uuid=UUID, keychain=Path("/tmp/store.keychain-db"),
+                                info_plist_file="$(SRCROOT)/../build/store/Info.plist")
         settings = project["objects"]["release"]["buildSettings"]
         self.assertEqual("Runner/AppStore.entitlements", settings["CODE_SIGN_ENTITLEMENTS"])
+        self.assertEqual("$(SRCROOT)/../build/store/Info.plist", settings["INFOPLIST_FILE"])
         self.assertEqual("A" * 40, settings["CODE_SIGN_IDENTITY"])
         self.assertEqual(UUID, settings["PROVISIONING_PROFILE_SPECIFIER"])
         self.assertEqual("release", settings["KEEP"])
         self.assertEqual({"KEEP": "debug"}, project["objects"]["debug"]["buildSettings"])
         self.assertEqual({"KEEP": "tests"}, project["objects"]["test-release"]["buildSettings"])
+
+    def test_store_category_plist_is_derived_and_provenance_hashes_are_stable(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            source_dir = Path(temporary)
+            source_plist = source_dir / store.STORE_INFO_PLIST_SOURCE
+            source_plist.parent.mkdir(parents=True)
+            source_info = {
+                "CFBundleIdentifier": BUNDLE,
+                "CFBundleName": "Pleazyng",
+                "LSApplicationCategoryType": "public.app-category.education",
+            }
+            original = plistlib.dumps(source_info, fmt=plistlib.FMT_XML, sort_keys=False)
+            source_plist.write_bytes(original)
+            source_sha = "a" * 40
+
+            result = store.prepare_store_info_plist(source_dir, source_sha)
+            derived_path = source_dir / result["derived_path"]
+            derived_info = plistlib.loads(derived_path.read_bytes())
+
+            self.assertEqual("build/macos-app-store-signed/" + source_sha + "/Info.plist",
+                             result["derived_path"])
+            self.assertEqual("public.app-category.entertainment", store.STORE_APP_CATEGORY)
+            self.assertEqual(store.STORE_APP_CATEGORY, derived_info["LSApplicationCategoryType"])
+            self.assertEqual("Pleazyng", derived_info["CFBundleName"])
+            self.assertEqual(store.STORE_APP_CATEGORY, result["category"])
+            self.assertEqual(hashlib.sha256(original).hexdigest(), result["source_sha256"])
+            self.assertEqual(hashlib.sha256(derived_path.read_bytes()).hexdigest(), result["derived_sha256"])
+            self.assertEqual(original, source_plist.read_bytes())
+            self.assertEqual(store.STORE_APP_CATEGORY, store.validate_store_info_plist(derived_path))
+            self.assertEqual(result, store.prepare_store_info_plist(source_dir, source_sha))
+
+            archived_plist = source_dir / "archive/Contents/Info.plist"
+            archived_plist.parent.mkdir(parents=True)
+            archived_plist.write_bytes(derived_path.read_bytes())
+            receipt = store.store_category_receipt(result, archived_plist)
+            self.assertEqual(store.STORE_APP_CATEGORY, receipt["ls_application_category_type"])
+            self.assertEqual("Entertainment", receipt["asc_primary_category"])
+            self.assertEqual(hashlib.sha256(original).hexdigest(), receipt["source_info_plist_sha256"])
+            self.assertEqual(hashlib.sha256(derived_path.read_bytes()).hexdigest(),
+                             receipt["derived_info_plist_sha256"])
+            self.assertEqual(hashlib.sha256(archived_plist.read_bytes()).hexdigest(),
+                             receipt["archived_info_plist_sha256"])
+
+            derived_path.write_bytes(plistlib.dumps({"LSApplicationCategoryType": "public.app-category.games"}))
+            with self.assertRaisesRegex(FileExistsError, "Refusing to replace a different derived"):
+                store.prepare_store_info_plist(source_dir, source_sha)
+
+    def test_store_category_validation_rejects_missing_wrong_and_symlinked_plists(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "Info.plist"
+            for info in ({"CFBundleIdentifier": BUNDLE},
+                         {"LSApplicationCategoryType": "public.app-category.photography"}):
+                path.write_bytes(plistlib.dumps(info))
+                with self.assertRaisesRegex(ValueError, "category must be public.app-category.entertainment"):
+                    store.validate_store_info_plist(path)
+
+            path.write_bytes(plistlib.dumps({"LSApplicationCategoryType": store.STORE_APP_CATEGORY}))
+            self.assertEqual(store.STORE_APP_CATEGORY, store.validate_store_info_plist(path))
+            link = Path(temporary) / "LinkedInfo.plist"
+            link.symlink_to(path)
+            with self.assertRaisesRegex(ValueError, "regular file"):
+                store.validate_store_info_plist(link)
 
 
 if __name__ == "__main__":

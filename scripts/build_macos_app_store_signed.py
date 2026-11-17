@@ -51,6 +51,11 @@ PENDING_DIRECTORY = Path("Library/Application Support/Pleazyng/MacAppStoreSignin
 PROFILE_DIRECTORY = Path("Library/MobileDevice/Provisioning Profiles")
 EXPECTED_ARCHITECTURES = {"arm64", "x86_64"}
 STORE_ENTITLEMENTS = Path("macos/Runner/AppStore.entitlements")
+# Matches the live App Store Connect primary category (Entertainment). The
+# secondary Photo & Video category is not represented by this single plist key.
+STORE_APP_CATEGORY = "public.app-category.entertainment"
+STORE_INFO_PLIST_SOURCE = Path("macos/Runner/Info.plist")
+STORE_INFO_PLIST_DERIVED_ROOT = Path("build/macos-app-store-signed")
 EARLY_CAPACITY_GIB = 32.0
 SIGNING_CAPACITY_GIB = 20.0
 BUILD_CAPACITY_GIB = 20.0
@@ -725,7 +730,7 @@ def install_profile(profile_data: bytes, profile_uuid: str) -> list[Path]:
 
 
 def configure_project(project: dict, *, team: str, app_fingerprint: str,
-                      profile_uuid: str, keychain: Path) -> None:
+                      profile_uuid: str, keychain: Path, info_plist_file: str) -> None:
     objects = project["objects"]
     targets = [objects[key] for key in objects[project["rootObject"]]["targets"]]
     matching = [target for target in targets if target.get("name") == "Runner" and target.get("isa") == "PBXNativeTarget"]
@@ -744,6 +749,7 @@ def configure_project(project: dict, *, team: str, app_fingerprint: str,
         CODE_SIGNING_REQUIRED="YES",
         DEVELOPMENT_TEAM=team,
         ENABLE_HARDENED_RUNTIME="YES",
+        INFOPLIST_FILE=info_plist_file,
         PRODUCT_BUNDLE_IDENTIFIER=EXPECTED_BUNDLE_ID,
         PROVISIONING_PROFILE_SPECIFIER=profile_uuid,
     )
@@ -877,6 +883,100 @@ def validate_source_entitlements(source_dir: Path) -> None:
         validate_entitlements_data(plistlib.load(stream))
 
 
+def prepare_store_info_plist(source_dir: Path, source_commit: str) -> dict[str, object]:
+    """Derive the App Store category into ignored build output without editing release source."""
+    if not re.fullmatch(r"[0-9a-f]{40}", source_commit):
+        raise ValueError("App Store Info.plist derivation requires a full source commit SHA")
+    source_path = source_dir / STORE_INFO_PLIST_SOURCE
+    if source_path.is_symlink() or not source_path.is_file():
+        raise ValueError("Tagged macOS Runner Info.plist must be a regular file")
+    source_data = source_path.read_bytes()
+    try:
+        source_info = plistlib.loads(source_data)
+    except (plistlib.InvalidFileException, ValueError, TypeError):
+        raise ValueError("Tagged macOS Runner Info.plist is invalid") from None
+    if not isinstance(source_info, dict):
+        raise ValueError("Tagged macOS Runner Info.plist must contain a dictionary")
+
+    derived_info = dict(source_info)
+    derived_info["LSApplicationCategoryType"] = STORE_APP_CATEGORY
+    derived_data = plistlib.dumps(derived_info, fmt=plistlib.FMT_XML, sort_keys=False)
+    relative_path = STORE_INFO_PLIST_DERIVED_ROOT / source_commit / "Info.plist"
+    derived_path = source_dir / relative_path
+
+    # Refuse symlinked build directories so a tagged build cannot redirect this
+    # generated input outside the source checkout.
+    current = source_dir
+    for component in relative_path.parent.parts:
+        current = current / component
+        if current.is_symlink():
+            raise ValueError("Derived App Store Info.plist path must not traverse symlinks")
+        if current.exists() and not current.is_dir():
+            raise ValueError("Derived App Store Info.plist parent is not a directory")
+        current.mkdir(mode=0o755, exist_ok=True)
+
+    if derived_path.is_symlink():
+        raise ValueError("Derived App Store Info.plist must not be a symlink")
+    if derived_path.exists():
+        if not derived_path.is_file() or derived_path.read_bytes() != derived_data:
+            raise FileExistsError("Refusing to replace a different derived App Store Info.plist")
+    else:
+        try:
+            descriptor = os.open(derived_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644)
+        except FileExistsError:
+            if derived_path.is_symlink() or not derived_path.is_file() or derived_path.read_bytes() != derived_data:
+                raise FileExistsError("Refusing to replace a different derived App Store Info.plist") from None
+        else:
+            with os.fdopen(descriptor, "wb") as output:
+                output.write(derived_data)
+
+    if validate_store_info_plist(derived_path) != STORE_APP_CATEGORY:
+        raise ValueError("Derived App Store Info.plist has an unexpected category")
+    derived_digest = hashlib.sha256(derived_path.read_bytes()).hexdigest()
+    if derived_digest != hashlib.sha256(derived_data).hexdigest():
+        raise ValueError("Derived App Store Info.plist changed during creation")
+    return {
+        "source_path": STORE_INFO_PLIST_SOURCE.as_posix(),
+        "source_sha256": hashlib.sha256(source_data).hexdigest(),
+        "derived_path": relative_path.as_posix(),
+        "derived_xcode_path": f"$(SRCROOT)/../{relative_path.as_posix()}",
+        "derived_sha256": derived_digest,
+        "category": STORE_APP_CATEGORY,
+    }
+
+
+def validate_store_info_plist(info_plist_path: Path) -> str:
+    if info_plist_path.is_symlink() or not info_plist_path.is_file():
+        raise ValueError("App Store Info.plist must be a regular file")
+    try:
+        info = plistlib.loads(info_plist_path.read_bytes())
+    except (plistlib.InvalidFileException, ValueError, TypeError):
+        raise ValueError("App Store Info.plist is invalid") from None
+    if not isinstance(info, dict) or info.get("LSApplicationCategoryType") != STORE_APP_CATEGORY:
+        raise ValueError("App Store Info.plist category must be public.app-category.entertainment")
+    return STORE_APP_CATEGORY
+
+
+def store_category_receipt(store_info_plist: dict[str, object], archived_info_plist: Path) -> dict[str, str]:
+    if store_info_plist.get("category") != STORE_APP_CATEGORY:
+        raise ValueError("Derived App Store Info.plist provenance has an unexpected category")
+    archived_category = validate_store_info_plist(archived_info_plist)
+    source_digest = store_info_plist.get("source_sha256")
+    derived_digest = store_info_plist.get("derived_sha256")
+    if (not isinstance(source_digest, str) or not re.fullmatch(r"[0-9a-f]{64}", source_digest)
+            or not isinstance(derived_digest, str) or not re.fullmatch(r"[0-9a-f]{64}", derived_digest)):
+        raise ValueError("App Store Info.plist provenance is missing a valid SHA-256 digest")
+    return {
+        "ls_application_category_type": archived_category,
+        "asc_primary_category": "Entertainment",
+        "source_info_plist": str(store_info_plist["source_path"]),
+        "source_info_plist_sha256": source_digest,
+        "derived_info_plist": str(store_info_plist["derived_path"]),
+        "derived_info_plist_sha256": derived_digest,
+        "archived_info_plist_sha256": hashlib.sha256(archived_info_plist.read_bytes()).hexdigest(),
+    }
+
+
 def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: Path,
                          archive_path: Path, derived_data: Path,
                          app_keychain: Path, installer_keychain: Path,
@@ -901,6 +1001,9 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
     ], cwd=source_dir, env=build_env)
     _run_visible(["pod", "install", "--deployment"], cwd=source_dir / "macos", env=build_env)
 
+    store_info_plist = prepare_store_info_plist(source_dir, source_sha)
+    derived_info_plist_path = source_dir / str(store_info_plist["derived_path"])
+
     project_path = source_dir / "macos/Runner.xcodeproj/project.pbxproj"
     original_project = project_path.read_bytes()
     installed_profiles: list[Path] = []
@@ -908,12 +1011,17 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
         installed_profiles = install_profile(profile_data, profile_uuid)
         project = plistlib.loads(_capture(["plutil", "-convert", "xml1", "-o", "-", str(project_path)]))
         configure_project(project, team=team, app_fingerprint=app_fingerprint,
-                          profile_uuid=profile_uuid, keychain=app_keychain)
+                          profile_uuid=profile_uuid, keychain=app_keychain,
+                          info_plist_file=str(store_info_plist["derived_xcode_path"]))
         project_path.write_bytes(plistlib.dumps(project, sort_keys=False))
         _capture(["plutil", "-lint", str(project_path)])
         source_packages = source_dir / "build/macos/SourcePackages"
         source_packages.mkdir(mode=0o700, parents=True, exist_ok=True)
         archive_env = build_env
+        if (validate_store_info_plist(derived_info_plist_path) != STORE_APP_CATEGORY
+                or hashlib.sha256(derived_info_plist_path.read_bytes()).hexdigest()
+                != store_info_plist["derived_sha256"]):
+            raise ValueError("Derived App Store Info.plist changed before archive")
         _run_visible([
             "xcodebuild", "archive", "-workspace", str(source_dir / "macos/Runner.xcworkspace"),
             "-scheme", "Runner", "-configuration", "Release", "-sdk", "macosx",
@@ -924,6 +1032,8 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
         ], cwd=source_dir, env=archive_env)
         app_path = archive_path / ARCHIVE_APP_SUFFIX
         app_info, architectures = inspect_app(app_path)
+        archive_info_plist = app_path / "Contents/Info.plist"
+        category_receipt = store_category_receipt(store_info_plist, archive_info_plist)
         native_framework = validate_plezy_torrent_framework_metadata(app_path)
         if (app_info["version"] != source["marketing_version"]
                 or str(app_info["build_number"]) != source["build_number"]):
@@ -964,6 +1074,7 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
             "candidate_state": "signed-awaiting-upload",
             **source,
             "application": {**app_info, "architectures": architectures},
+            "application_category": category_receipt,
             "embedded_plezy_torrent_framework": native_framework,
             "app_signature": signature,
             "installer_signature": {"signed": True, "certificate_type": INSTALLER_CERTIFICATE_TYPE,
