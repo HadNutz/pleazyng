@@ -14,10 +14,11 @@ on:
           - ios-macos-only
           - macos-only
           - capture-only
+          - macos-paywall-capture-only
         default: all
         required: true
       artifact_run_id:
-        description: Completed main-branch run supplying partial captures or all three app builds for capture-only.
+        description: Completed main-branch run supplying partial captures or the required compiled app bundle(s).
         type: string
         required: false
 
@@ -430,7 +431,7 @@ jobs:
           retention-days: 7
 
   macos:
-    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'ios-macos-only' || inputs.target == 'macos-only' || inputs.target == 'capture-only')
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'ios-macos-only' || inputs.target == 'macos-only' || inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only')
     runs-on: macos-26-intel
     timeout-minutes: 210
     steps:
@@ -455,7 +456,7 @@ jobs:
 
       - name: Verify the prior build artifact producer
         id: producer
-        if: inputs.target == 'capture-only'
+        if: inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only'
         env:
           GH_TOKEN: ${{ github.token }}
           PRODUCER_RUN_ID: ${{ inputs.artifact_run_id }}
@@ -472,7 +473,7 @@ jobs:
           echo "run_attempt=$run_attempt" >> "$GITHUB_OUTPUT"
 
       - name: Download prior macOS build
-        if: inputs.target == 'capture-only'
+        if: inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: apple-store-build-macos-v3.0.36
@@ -481,7 +482,7 @@ jobs:
           path: ${{ runner.temp }}/apple-store-build-macos-input
 
       - name: Validate and restore prior macOS build
-        if: inputs.target == 'capture-only'
+        if: inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only'
         env:
           PRODUCER_RUN_ID: ${{ inputs.artifact_run_id }}
           PRODUCER_RUN_ATTEMPT: ${{ steps.producer.outputs.run_attempt }}
@@ -498,23 +499,25 @@ jobs:
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-build-macos-restored/Pleazyng.app" >> "$GITHUB_ENV"
 
       - name: Load pinned Flutter SDK
+        if: inputs.target != 'macos-paywall-capture-only'
         run: python3 scripts/flutter/load_sdk_pin.py --github-env
 
       - name: Setup Flutter
+        if: inputs.target != 'macos-paywall-capture-only'
         uses: ./.github/actions/setup-flutter-apple
         with:
           hosted-xcode-version: '26.5'
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Cache Pub dependencies
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ env.PUB_CACHE }}
           key: apple-store-macos-v3.0.36-${{ runner.os }}-${{ runner.arch }}-pub-${{ hashFiles('pubspec.yaml', 'pubspec.lock') }}
 
       - name: Install native build tools
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
@@ -523,7 +526,7 @@ jobs:
           command -v git-lfs >/dev/null || brew install git-lfs
 
       - name: Install CocoaPods
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/bin:$PATH"
@@ -538,25 +541,25 @@ jobs:
           echo "$RUNNER_TEMP/cocoapods-bin" >> "$GITHUB_PATH"
 
       - name: Install locked Flutter dependencies
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
         run: flutter pub get --enforce-lockfile --no-example
 
       - name: Prefetch checksum-pinned macOS native downloads
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
         run: python3 scripts/prepare_native_downloads.py --sqlite-platform macos
 
       - name: Prepare run-local Swift package checkout
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
         run: mkdir -p build/macos/SourcePackages
 
       - name: Refresh pinned macOS Swift packages
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
         env:
           PLEAZYNG_APPLE_SOURCE_ROOT: ${{ github.workspace }}
         run: capture-tools/scripts/refresh_apple_spm.sh macos
 
       - name: Build the unsigned Mac App Store candidate
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
         env:
           PLEAZYNG_APPLE_SOURCE_ROOT: ${{ github.workspace }}
         run: |
@@ -567,7 +570,7 @@ jobs:
             --derived-data-dir "$RUNNER_TEMP/apple-store-macos-derived-data"
 
       - name: Preserve the compiled unsigned Mac app before capture
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
         env:
           PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
         run: |
@@ -579,7 +582,7 @@ jobs:
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-macos-candidate/Pleazyng.xcarchive/Products/Applications/Pleazyng.app" >> "$GITHUB_ENV"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
         with:
           name: apple-store-build-macos-v3.0.36
           path: |
@@ -589,6 +592,7 @@ jobs:
           retention-days: 7
 
       - name: Capture the actual macOS app window
+        if: inputs.target != 'macos-paywall-capture-only'
         env:
           PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
         run: |
@@ -597,12 +601,32 @@ jobs:
             --app "$APPLE_STORE_APP_PATH" \
             --output-dir "$RUNNER_TEMP/apple-store-captures-macos"
 
+      - name: Capture the real lifetime-access sheet from the restored Mac app
+        if: inputs.target == 'macos-paywall-capture-only'
+        env:
+          PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
+        run: |
+          python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-macos-paywall \
+            --product-root "$GITHUB_WORKSPACE" \
+            --app "$APPLE_STORE_APP_PATH" \
+            --build-receipt "$RUNNER_TEMP/apple-store-build-macos-restored/build-provenance.json" \
+            --output-dir "$RUNNER_TEMP/apple-store-iap-review-paywall"
+
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: inputs.target != 'macos-paywall-capture-only'
         with:
           name: apple-store-captures-macos-v3.0.36
           path: ${{ runner.temp }}/apple-store-captures-macos/
           if-no-files-found: error
           retention-days: 7
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: inputs.target == 'macos-paywall-capture-only'
+        with:
+          name: pleazyng-apple-iap-review-paywall-macos-v3.0.36
+          path: ${{ runner.temp }}/apple-store-iap-review-paywall/
+          if-no-files-found: error
+          retention-days: 90
 
   package:
     if: >-

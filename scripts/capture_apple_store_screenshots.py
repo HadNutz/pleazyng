@@ -589,6 +589,188 @@ print(number.intValue)
 '''
 
 
+SWIFT_PAYWALL_PID_AND_WINDOW = r'''
+import AppKit
+import CoreGraphics
+import Foundation
+
+guard let appPath = ProcessInfo.processInfo.environment["PLEAZYNG_CAPTURE_APP_PATH"] else { exit(2) }
+let expectedPath = URL(fileURLWithPath: appPath).standardizedFileURL.resolvingSymlinksInPath().path
+guard let app = NSRunningApplication.runningApplications(withBundleIdentifier: "org.snapetech.pleazyng")
+  .first(where: { $0.bundleURL?.standardizedFileURL.resolvingSymlinksInPath().path == expectedPath }) else { exit(3) }
+let options: CGWindowListOption = [.optionOnScreenOnly, .excludeDesktopElements]
+let windows = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] ?? []
+let matches = windows.filter {
+  ($0[kCGWindowOwnerPID as String] as? NSNumber)?.int32Value == app.processIdentifier
+    && ($0[kCGWindowLayer as String] as? NSNumber)?.intValue == 0
+    && (($0[kCGWindowAlpha as String] as? NSNumber)?.doubleValue ?? 1) > 0.9
+}
+guard let window = matches.first,
+      let number = window[kCGWindowNumber as String] as? NSNumber else { exit(4) }
+print("\(app.processIdentifier)\t\(number.intValue)")
+'''
+
+
+def _paywall_applescript(pid: int, action: str, label: str | None = None) -> str:
+    if not isinstance(pid, int) or pid <= 0:
+        raise ValueError("Expected the launched app's positive process ID")
+    if action == "settings":
+        return f'''on run
+  set targetPid to {pid}
+  tell application "System Events"
+    set targetProcess to first application process whose unix id is targetPid
+    set frontmost of targetProcess to true
+    keystroke "," using {{command down}}
+  end tell
+end run'''
+    if action not in ("click", "wait") or label is None:
+        raise ValueError("Expected an accessible button action and label")
+    escaped_label = label.replace("\\", "\\\\").replace('"', '\\"')
+    on_success = (
+        f'''        click targetButton
+        set foundButton to true
+        exit repeat'''
+        if action == "click"
+        else "        set foundButton to true\n        exit repeat"
+    )
+    return f'''on run
+  set targetPid to {pid}
+  set targetLabel to "{escaped_label}"
+  tell application "System Events"
+    set targetProcess to first application process whose unix id is targetPid
+    set frontmost of targetProcess to true
+    set foundButton to false
+    repeat 40 times
+      try
+        set targetWindow to first window of targetProcess
+        set targetButton to first button of targetWindow whose name is targetLabel
+{on_success}
+      on error errorMessage number errorNumber
+        if errorNumber is -25211 or errorNumber is -1743 then error errorMessage number errorNumber
+        if errorNumber is not -1728 then error errorMessage number errorNumber
+      end try
+      delay 0.5
+    end repeat
+    if not foundButton then error "Accessible button not found: " & targetLabel number -1728
+  end tell
+end run'''
+
+
+def _run_paywall_applescript(pid: int, action: str, label: str | None = None) -> None:
+    script = _paywall_applescript(pid, action, label)
+    result = subprocess.run(
+        ["osascript", "-e", script],
+        check=False,
+        text=True,
+        capture_output=True,
+        timeout=30,
+    )
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout).strip()
+        raise RuntimeError(f"macOS accessibility automation failed for {action} {label or ''}: {detail}")
+
+
+def _launched_app_pid_and_window(app: Path) -> tuple[int, str]:
+    with tempfile.TemporaryDirectory(prefix="pleazyng-paywall-window-") as temporary:
+        temporary_path = Path(temporary)
+        swift_source = temporary_path / "paywall_window.swift"
+        helper = temporary_path / "paywall_window"
+        swift_source.write_text(SWIFT_PAYWALL_PID_AND_WINDOW, encoding="utf-8")
+        run([
+            "swiftc", "-framework", "AppKit", "-framework", "CoreGraphics",
+            str(swift_source), "-o", str(helper),
+        ], timeout=180)
+        for _ in range(30):
+            result = subprocess.run(
+                [str(helper)],
+                check=False,
+                text=True,
+                capture_output=True,
+                env={**os.environ, "PLEAZYNG_CAPTURE_APP_PATH": str(app)},
+                timeout=15,
+            )
+            match = re.fullmatch(r"([0-9]+)\t([0-9]+)\s*", result.stdout)
+            if result.returncode == 0 and match is not None:
+                return int(match.group(1)), match.group(2)
+            if result.returncode not in (3, 4):
+                raise RuntimeError(f"Could not bind the launched app window to its process: {result.stderr.strip()}")
+            time.sleep(1)
+    raise RuntimeError("The launched Mac app did not expose an on-screen window within 30 seconds")
+
+
+def capture_macos_paywall(args: argparse.Namespace) -> None:
+    product_root = args.product_root.resolve(strict=True)
+    require_source(product_root)
+    tool_source_sha = require_capture_tools_sha()
+    app = args.app.resolve(strict=True)
+    identity = app_info(app)
+    build_receipt_path = args.build_receipt.resolve(strict=True)
+    build_receipt = json.loads(build_receipt_path.read_text(encoding="utf-8"))
+    app_digest = sha256_tree(app)
+    if (build_receipt.get("source_sha") != SOURCE_SHA
+            or build_receipt.get("product_version") != VERSION
+            or build_receipt.get("product_build") != BUILD_NUMBER
+            or build_receipt.get("platform") != "macOS"
+            or build_receipt.get("build_configuration") != BUILD_CONFIGURATION["macos"]
+            or build_receipt.get("build_mode") != "App Store IAP"
+            or build_receipt.get("app_bundle_sha256") != app_digest
+            or build_receipt.get("bundle_id") != identity["bundle_id"]
+            or build_receipt.get("distribution_signing") != "disabled"
+            or not re.fullmatch(r"[0-9]+", str(build_receipt.get("producer_run_id", "")))
+            or not re.fullmatch(r"[0-9]+", str(build_receipt.get("producer_run_attempt", "")))):
+        raise ValueError("The restored Mac app does not match its unsigned v3.0.36 App Store build receipt")
+
+    output = args.output_dir.resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    run(["open", "-n", "-a", str(app)], timeout=120)
+    app_pid, window_id = _launched_app_pid_and_window(app)
+    run(["osascript", "-e", f'tell application id "{BUNDLE_ID}" to activate'], timeout=60)
+    _run_paywall_applescript(app_pid, "click", "Use files and books")
+    time.sleep(3)
+    _run_paywall_applescript(app_pid, "settings")
+    _run_paywall_applescript(app_pid, "click", "Pleazyng lifetime access")
+    _run_paywall_applescript(app_pid, "wait", "Restore lifetime purchase")
+    time.sleep(SIMULATOR_SETTLE_SECONDS)
+
+    final_pid, window_id = _launched_app_pid_and_window(app)
+    if final_pid != app_pid:
+        raise RuntimeError("The captured app process changed during paywall navigation")
+    screenshot = output / "macos-iap-review-paywall.png"
+    run(["/usr/sbin/screencapture", "-x", "-l", window_id, str(screenshot)], timeout=120)
+    width, height = png_dimensions(screenshot)
+    capture = {
+        "filename": screenshot.name,
+        "platform": "macOS",
+        "build_configuration": build_receipt["build_configuration"],
+        "capture_scene": "Real lifetime-access sheet opened through Settings on a fresh local-files session. No server/account was configured, and Buy or Restore was not activated. StoreKit price/error state is the live app response.",
+        "capture_method": ["System Events accessibility buttons and Cmd+,; /usr/sbin/screencapture -x -l <app-window-id>"],
+        "capture_run_id": os.environ.get("GITHUB_RUN_ID", ""),
+        "capture_run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT", ""),
+        "source_tag": SOURCE_TAG,
+        "source_sha": SOURCE_SHA,
+        "capture_tools_sha": tool_source_sha,
+        "build_receipt": build_receipt,
+        "launch_process_id": app_pid,
+        "captured_window_id": window_id,
+        "bundle_id": identity["bundle_id"],
+        "app_version": identity["version"],
+        "app_build": identity["build_number"],
+        "app_bundle_sha256": app_digest,
+        "capture_sha256": sha256_file(screenshot),
+        "dimensions": [width, height],
+        "device": {
+            "kind": "GitHub-hosted macOS desktop",
+            "model": run(["sysctl", "-n", "hw.model"], capture=True, timeout=30),
+            "architecture": run(["uname", "-m"], capture=True, timeout=30),
+            "os_version": run(["sw_vers", "-productVersion"], capture=True, timeout=30),
+        },
+        "build_defines": IOS_MAC_STORE_DEFINES,
+        "qualification": "Authentic UI from the unsigned App Store app bundle. A visible price reflects the live StoreKit response; this capture does not qualify a purchase, StoreKit sandbox, signing, or App Store processing.",
+    }
+    (output / "capture-provenance.json").write_text(json.dumps(capture, indent=2) + "\n", encoding="utf-8")
+    print(f"Captured authentic lifetime-access sheet from the restored Mac app in {output}")
+
+
 def capture_macos(args: argparse.Namespace) -> None:
     product_root = args.product_root.resolve(strict=True)
     require_source(product_root)
@@ -817,6 +999,12 @@ def parse_args() -> argparse.Namespace:
             command.add_argument("--run-id", default=os.environ.get("GITHUB_RUN_ID", str(os.getpid())))
             command.add_argument("--run-attempt", default=os.environ.get("GITHUB_RUN_ATTEMPT", "1"))
         command.set_defaults(handler=handler)
+    paywall = subparsers.add_parser("capture-macos-paywall")
+    paywall.add_argument("--product-root", required=True, type=Path)
+    paywall.add_argument("--app", required=True, type=Path)
+    paywall.add_argument("--build-receipt", required=True, type=Path)
+    paywall.add_argument("--output-dir", required=True, type=Path)
+    paywall.set_defaults(handler=capture_macos_paywall)
     package = subparsers.add_parser("package")
     package.add_argument("--ios-dir", required=True, type=Path)
     package.add_argument("--tvos-dir", required=True, type=Path)
