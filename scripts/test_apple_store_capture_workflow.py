@@ -59,7 +59,7 @@ class AppleStoreCaptureWorkflowRoutingTests(unittest.TestCase):
             self.assertIn(f"APPLE_STORE_BUILD_RECEIPT={restored_path}", job, platform)
             self.assertIn(f"APPLE_STORE_BUILD_RECEIPT={fresh_receipt}", job, platform)
             self.assertIn(f"--build-receipt \"$APPLE_STORE_BUILD_RECEIPT\"", job, platform)
-            self.assertEqual(job.count('--build-receipt "$APPLE_STORE_BUILD_RECEIPT"'), {"ios": 1, "tvos": 1, "macos": 3}[platform])
+            self.assertEqual(job.count('--build-receipt "$APPLE_STORE_BUILD_RECEIPT"'), {"ios": 1, "tvos": 2, "macos": 4}[platform])
             self.assertNotIn(f"--build-receipt \"{restored_path}\"", job, platform)
 
             restore_name = {
@@ -102,8 +102,11 @@ class AppleStoreCaptureWorkflowRoutingTests(unittest.TestCase):
         self.assertIsNotNone(build_upload)
         self.assertIn("inputs.target != 'tvos-in-use-capture-only'", build_upload.group(1))
 
-        self.assertIn("Capture the post-onboarding tvOS Files and Books screen", tvos)
+        self.assertIn("Capture tvOS app with native LOCALTEST trial history", tvos)
         self.assertIn("inputs.target == 'tvos-in-use-capture-only'", named_step_condition(
+            tvos, "Capture tvOS app with native LOCALTEST trial history"
+        ))
+        self.assertNotIn("tvos-in-use-capture-only", named_step_condition(
             tvos, "Capture the post-onboarding tvOS Files and Books screen"
         ))
 
@@ -195,6 +198,43 @@ class AppleStoreCaptureWorkflowRoutingTests(unittest.TestCase):
             named_step_condition(macos, "Capture the local Files and Books screen and real Mac lifetime-access sheet"),
         )
         self.assertNotIn("macos-in-use-diagnostic-only", job_text("package", None))
+
+    def test_platform_in_use_targets_use_native_localtest_trial_harness_without_product_rebuild(self) -> None:
+        ios = job_text("ios", "tvos")
+        tvos = job_text("tvos", "macos")
+        macos = job_text("macos", "package")
+        for platform, job, target, step_name, legacy_step, producer_input in (
+            (
+                "tvos", tvos, "tvos-in-use-capture-only",
+                "Capture tvOS app with native LOCALTEST trial history",
+                "Capture the post-onboarding tvOS Files and Books screen", "tvos_artifact_run_id",
+            ),
+            (
+                "macos", macos, "macos-in-use-capture-only",
+                "Capture Mac app with native LOCALTEST trial history",
+                "Capture the local Files and Books screen and real Mac lifetime-access sheet",
+                "macos_artifact_run_id",
+            ),
+        ):
+            self.assertIn(target, named_step_condition(job, step_name))
+            capture_step = named_step_text(job, step_name)
+            self.assertIn(f"--platform {platform}", capture_step)
+            self.assertIn("--build-receipt \"$APPLE_STORE_BUILD_RECEIPT\"", capture_step)
+            self.assertIn("--capture-tools-sha \"$PLEAZYNG_CAPTURE_TOOLS_SHA\"", capture_step)
+            self.assertIn(f"inputs.{producer_input}", job)
+            self.assertNotIn(target, named_step_condition(job, legacy_step))
+            self.assertIn("Validate and restore prior", job)
+            self.assertIn(f"inputs.target != '{target}'", named_step_condition(
+                job,
+                "Build the Store-mode tvOS Simulator app" if platform == "tvos" else
+                "Build the unsigned Mac App Store candidate",
+            ))
+            self.assertIn(f"inputs.target != '{target}'", named_step_condition(
+                job,
+                "Setup the pinned tvOS Flutter SDK" if platform == "tvos" else "Load pinned Flutter SDK",
+            ))
+        self.assertNotIn("tvos-in-use-capture-only", ios)
+        self.assertNotIn("macos-in-use-capture-only", ios)
 
 
 if __name__ == "__main__":

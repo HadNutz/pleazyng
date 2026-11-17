@@ -503,7 +503,7 @@ jobs:
             --output-dir "$RUNNER_TEMP/apple-store-captures-tvos"
 
       - name: Capture the post-onboarding tvOS Files and Books screen
-        if: inputs.target == 'app-in-use-capture-only' || inputs.target == 'tvos-in-use-capture-only' || inputs.target == 'macos-tvos-in-use-producer-only'
+        if: inputs.target == 'app-in-use-capture-only' || inputs.target == 'macos-tvos-in-use-producer-only'
         env:
           PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
         run: |
@@ -512,6 +512,27 @@ jobs:
             --app "$APPLE_STORE_APP_PATH" \
             --build-receipt "$APPLE_STORE_BUILD_RECEIPT" \
             --output-dir "$RUNNER_TEMP/apple-store-in-use-captures-tvos"
+
+      - name: Capture tvOS app with native LOCALTEST trial history
+        if: inputs.target == 'tvos-in-use-capture-only'
+        env:
+          PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
+          PRODUCER_RUN_ID: ${{ inputs.tvos_artifact_run_id }}
+          PRODUCER_RUN_ATTEMPT: ${{ steps.producer.outputs.run_attempt }}
+        run: |
+          python3 capture-tools/scripts/stores/capture_apple_macos_tvos_storekit.py capture \
+            --platform tvos \
+            --product-root "$GITHUB_WORKSPACE" \
+            --capture-tools-root "$GITHUB_WORKSPACE/capture-tools" \
+            --capture-tools-sha "$PLEAZYNG_CAPTURE_TOOLS_SHA" \
+            --app "$APPLE_STORE_APP_PATH" \
+            --build-receipt "$APPLE_STORE_BUILD_RECEIPT" \
+            --producer-run-id "$PRODUCER_RUN_ID" \
+            --producer-run-attempt "$PRODUCER_RUN_ATTEMPT" \
+            --runner-root "$RUNNER_TEMP/pleazyng-storekit-review-tvos" \
+            --output-dir "$RUNNER_TEMP/apple-store-in-use-captures-tvos" \
+            --run-id "$GITHUB_RUN_ID" \
+            --run-attempt "$GITHUB_RUN_ATTEMPT"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: inputs.target != 'app-in-use-capture-only' && inputs.target != 'tvos-in-use-capture-only' && inputs.target != 'macos-tvos-in-use-producer-only'
@@ -608,6 +629,14 @@ jobs:
       - name: Load pinned Flutter SDK
         if: inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only' && inputs.target != 'macos-in-use-capture-only' && inputs.target != 'macos-in-use-diagnostic-only'
         run: python3 scripts/flutter/load_sdk_pin.py --github-env
+
+      - name: Install XcodeGen for native StoreKitTest capture
+        if: inputs.target == 'macos-in-use-capture-only'
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+          command -v xcodegen >/dev/null || brew install xcodegen
+          echo "/opt/homebrew/bin" >> "$GITHUB_PATH"
 
       - name: Setup Flutter
         if: inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only' && inputs.target != 'macos-in-use-capture-only' && inputs.target != 'macos-in-use-diagnostic-only'
@@ -721,7 +750,7 @@ jobs:
             --output-dir "$RUNNER_TEMP/apple-store-iap-review-paywall"
 
       - name: Capture the local Files and Books screen and real Mac lifetime-access sheet
-        if: inputs.target == 'app-in-use-capture-only' || inputs.target == 'macos-in-use-capture-only' || inputs.target == 'macos-tvos-in-use-producer-only'
+        if: inputs.target == 'app-in-use-capture-only' || inputs.target == 'macos-tvos-in-use-producer-only'
         env:
           PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
         run: |
@@ -730,6 +759,27 @@ jobs:
             --app "$APPLE_STORE_APP_PATH" \
             --build-receipt "$APPLE_STORE_BUILD_RECEIPT" \
             --output-dir "$RUNNER_TEMP/apple-store-in-use-captures-macos"
+
+      - name: Capture Mac app with native LOCALTEST trial history
+        if: inputs.target == 'macos-in-use-capture-only'
+        env:
+          PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
+          PRODUCER_RUN_ID: ${{ inputs.macos_artifact_run_id }}
+          PRODUCER_RUN_ATTEMPT: ${{ steps.producer.outputs.run_attempt }}
+        run: |
+          python3 capture-tools/scripts/stores/capture_apple_macos_tvos_storekit.py capture \
+            --platform macos \
+            --product-root "$GITHUB_WORKSPACE" \
+            --capture-tools-root "$GITHUB_WORKSPACE/capture-tools" \
+            --capture-tools-sha "$PLEAZYNG_CAPTURE_TOOLS_SHA" \
+            --app "$APPLE_STORE_APP_PATH" \
+            --build-receipt "$APPLE_STORE_BUILD_RECEIPT" \
+            --producer-run-id "$PRODUCER_RUN_ID" \
+            --producer-run-attempt "$PRODUCER_RUN_ATTEMPT" \
+            --runner-root "$RUNNER_TEMP/pleazyng-storekit-review-macos" \
+            --output-dir "$RUNNER_TEMP/apple-store-in-use-captures-macos" \
+            --run-id "$GITHUB_RUN_ID" \
+            --run-attempt "$GITHUB_RUN_ATTEMPT"
 
       - name: Diagnose the retained Mac app without rebuilding
         if: inputs.target == 'macos-in-use-diagnostic-only'
