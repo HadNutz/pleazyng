@@ -86,6 +86,39 @@ class PackagingRepairControllerTests(unittest.TestCase):
         self.assertEqual(dispatch.call_args.args[3]['tvos_runner_pool'], 'private')
         self.assertNotIn('rebuild_tvos', dispatch.call_args.args[3])
 
+    def test_completed_tv_assembly_reference_dispatches_unique_full_release_assembly(self):
+        options = {
+            **self.options(),
+            'rebuild_ios': False,
+            'rebuild_tvos': False,
+            'prepare_homebrew_cask': False,
+            'reuse_repaired_run_id': 'assembly-tvos:44094749688',
+        }
+        with patch.object(release, 'matching_packaging_repair_run', return_value=None) as matching, \
+                patch.object(release, 'verify_platform_recovery', return_value=self.proof()) as verify, \
+                patch.object(release, 'ensure_frozen_release_source'), \
+                patch.object(release, 'ensure_remote_main_sha'), \
+                patch.object(release, 'dispatch', return_value={'databaseId': 99}) as dispatch:
+            release.ensure_release(self.tag, self.repair, **options)
+        self.assertEqual(verify.call_args.kwargs['built_tvos_run'], 44094749688)
+        self.assertNotIn('repaired_run', verify.call_args.kwargs)
+        expected_title = (f'action:release:pool:public:tag:{self.tag}:repair:{self.repair}'
+                          ':assembly-tvos:44094749688')
+        matching.assert_called_once_with(expected_title)
+        self.assertEqual(dispatch.call_args.kwargs['expected_title'], expected_title)
+        fields = dispatch.call_args.args[3]
+        self.assertEqual(fields['reuse_repaired_run_id'], 'assembly-tvos:44094749688')
+        self.assertNotIn('rebuild_tvos', fields)
+        self.assertNotIn('rebuild_ios', fields)
+
+    def test_repaired_run_reference_accepts_only_positive_numeric_or_typed_tv_ids(self):
+        self.assertEqual(release.parse_repaired_run_reference('84'), 84)
+        self.assertEqual(release.parse_repaired_run_reference('assembly-tvos:84'), 'assembly-tvos:84')
+        self.assertEqual(release.assembly_tvos_run_id('assembly-tvos:84'), 84)
+        for invalid in ('0', 'assembly-tvos:0', 'assembly-tvos:84,ios:85', '84junk'):
+            with self.subTest(invalid=invalid), self.assertRaises(release.ReleaseError):
+                release.parse_repaired_run_reference(invalid)
+
     def test_completed_repair_is_reused_after_main_advances_and_all_signed_steps_are_required(self):
         existing = {'databaseId': 99, 'headSha': self.workflow, 'status': 'completed', 'conclusion': 'success'}
         for missing in (None, 'Build signed iOS App Store IPA', 'Build signed tvOS App Store IPA',

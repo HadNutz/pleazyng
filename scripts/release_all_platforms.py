@@ -291,6 +291,27 @@ def matching_packaging_repair_run(title: str) -> dict | None:
             "conclusion": run.get("conclusion"), "url": run.get("html_url")}
 
 
+def parse_repaired_run_reference(value):
+    """Parse the existing repaired-run slot, including its typed tvOS assembly form."""
+    if value is None or type(value) is int:
+        return value
+    if not isinstance(value, str):
+        raise ReleaseError("Repaired run must be a positive ID or assembly-tvos:<ID>.")
+    if re.fullmatch(r"[1-9][0-9]*", value):
+        return int(value)
+    match = re.fullmatch(r"assembly-tvos:([1-9][0-9]*)", value)
+    if match:
+        return f"assembly-tvos:{int(match.group(1))}"
+    raise ReleaseError("Repaired run must be a positive ID or assembly-tvos:<ID>.")
+
+
+def assembly_tvos_run_id(value) -> int | None:
+    value = parse_repaired_run_reference(value)
+    if isinstance(value, str):
+        return int(value.split(":", 1)[1])
+    return None
+
+
 def failed_build_has_drained(run: dict, jobs: list[dict]) -> bool:
     """Cancel only obsolete queued Apple work, after all other consumers finish."""
     if not apple_queue.is_failed_release_build(run, jobs):
@@ -1738,7 +1759,7 @@ def ensure_release(
     rebuild_macos: bool = False,
     rebuild_tvos: bool = False,
     rebuild_ios: bool = False,
-    reuse_repaired_run_id: int | None = None,
+    reuse_repaired_run_id: int | str | None = None,
     reuse_tvos_run_id: int | None = None,
     reuse_ios_run_id: int | None = None,
     reuse_webos_run_id: int | None = None,
@@ -1753,6 +1774,17 @@ def ensure_release(
     private_apple_signing_unavailable: bool = False,
     allow_private_apple_retry: bool = False,
 ) -> dict:
+    reuse_repaired_run_id = parse_repaired_run_reference(reuse_repaired_run_id)
+    built_tvos_run_id = assembly_tvos_run_id(reuse_repaired_run_id)
+    if built_tvos_run_id is not None and (
+            packaging_source_sha is None or reuse_platform_run_id is None
+            or not include_apple_store_build or rebuild_tvos or rebuild_ios
+            or rebuild_linux or rebuild_macos or reuse_tvos_run_id or reuse_ios_run_id
+            or reuse_macos_run_id):
+        raise ReleaseError(
+            "assembly-tvos reuse requires approved frozen Apple packaging and the original platform source, "
+            "with no other rebuild or Apple sibling substitution."
+        )
     watch_hosted_tvos = tvos_runner_pool in {"auto", "hosted"}
     tvos_runner_pool = select_apple_runner_pool(tvos_runner_pool)
     macos_runner_pool = select_apple_runner_pool(macos_runner_pool)
@@ -1791,6 +1823,8 @@ def ensure_release(
                 or re.fullmatch(r"[0-9a-f]{40}", packaging_source_sha) is None):
             raise ReleaseError("Packaging recovery requires the exact repair source and original platform run.")
         run_title += f":repair:{packaging_source_sha}"
+        if built_tvos_run_id is not None:
+            run_title += f":assembly-tvos:{built_tvos_run_id}"
         existing = matching_packaging_repair_run(run_title)
         workflow_source_sha = (existing["headSha"] if existing else workflow_source_sha)
         if workflow_source_sha is None:
@@ -1902,7 +1936,9 @@ def ensure_release(
             options["rebuild_tvos"] = True
         if rebuild_ios:
             options["rebuild_ios"] = True
-        if reuse_repaired_run_id:
+        if built_tvos_run_id is not None:
+            options["built_tvos_run"] = built_tvos_run_id
+        elif reuse_repaired_run_id:
             options["repaired_run"] = reuse_repaired_run_id
         if reuse_tvos_run_id:
             options['tvos_run'] = reuse_tvos_run_id
@@ -2024,7 +2060,7 @@ def ensure_release(
         fields["rebuild_tvos"] = "true"
     if rebuild_ios:
         fields["rebuild_ios"] = "true"
-    if reuse_repaired_run_id:
+    if reuse_repaired_run_id is not None:
         fields["reuse_repaired_run_id"] = str(reuse_repaired_run_id)
     if reuse_tvos_run_id:
         # The existing dispatch slot carries the two independently verified
@@ -2079,12 +2115,20 @@ def ensure_release(
 def verify_platform_recovery(run_id: int, commit_sha: str, version: str, *,
                              android_run=None, macos_run=None, webos_run=None, include_webos_build=True, wait_complete=False,
                              rebuild_linux=False, rebuild_macos=False, rebuild_tvos=False, rebuild_ios=False, repaired_run=None, require_homebrew_cask=False,
-                             packaging_source_sha=None, workflow_source_sha=None, include_apple_store_build=False, tvos_run=None, ios_run=None) -> dict:
+                             packaging_source_sha=None, workflow_source_sha=None, include_apple_store_build=False, tvos_run=None, ios_run=None,
+                             built_tvos_run=None) -> dict:
     from recover_release_platforms import RecoveryError, compose_proof, verify_source_run, wait_for_source_run, verify_macos_packaging_recovery
 
     if (rebuild_tvos or rebuild_ios) and (macos_run or repaired_run):
         raise ReleaseError("Apple device rebuilding requires ordinary verified platform recovery")
-    options = {}
+    if built_tvos_run is not None:
+        if (not packaging_source_sha or not workflow_source_sha or not include_apple_store_build
+                or rebuild_tvos or rebuild_ios or rebuild_linux or rebuild_macos
+                or repaired_run or macos_run or tvos_run or ios_run):
+            raise ReleaseError('Built tvOS reuse requires approved frozen Apple packaging recovery.')
+        options = {"built_tvos_run": built_tvos_run}
+    else:
+        options = {}
     if tvos_run:
         if not packaging_source_sha or rebuild_tvos or repaired_run or macos_run:
             raise ReleaseError('Signed TV reuse requires approved frozen packaging recovery.')
@@ -2999,7 +3043,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--reuse-macos-run", type=int, help="Use a qualified signing-only Mac recovery with every original platform artifact.")
     parser.add_argument("--rebuild-linux", action="store_true", help="Rebuild Linux during verified platform recovery")
     parser.add_argument("--reuse-webos-run", type=int, help="Reuse a verified webOS package and wait locally for completed source outputs before assembly")
-    parser.add_argument("--reuse-repaired-run", type=int, help="Reuse successful Linux and fully qualified Mac jobs from a prior repair run")
+    parser.add_argument("--reuse-repaired-run", type=str,
+                        help="Reuse repaired Linux/Mac outputs by ID or a signed tvOS package as assembly-tvos:<ID>")
     parser.add_argument('--reuse-tvos-run', type=int, help='Reuse successful signed TV output from an approved sibling Apple packaging repair')
     parser.add_argument('--reuse-ios-run', type=int, help='Reuse successful signed iOS output from an approved sibling Apple packaging repair')
     parser.add_argument("--rebuild-ios", action="store_true", help="Rebuild iOS during verified platform recovery")
@@ -3064,6 +3109,10 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    args.reuse_repaired_run = parse_repaired_run_reference(args.reuse_repaired_run)
+    built_tvos_run = assembly_tvos_run_id(args.reuse_repaired_run)
+    repaired_platform_run = (args.reuse_repaired_run
+                             if type(args.reuse_repaired_run) is int else None)
     if not re.fullmatch(r"\d+\.\d+\.\d+", args.version):
         raise ReleaseError("--version must be MAJOR.MINOR.PATCH, without a leading v.")
     if args.execution_profile is None:
@@ -3085,10 +3134,16 @@ def main() -> int:
         raise ReleaseError('Signed TV reuse requires approved iOS-only sibling packaging recovery.')
     if args.reuse_ios_run and (args.reuse_ios_run < 1 or not args.reuse_tvos_run or args.rebuild_ios):
         raise ReleaseError('Signed iOS reuse requires a distinct signed TV sibling source.')
-    if packaging_repair and (not (args.rebuild_ios or args.rebuild_tvos or args.rebuild_macos or args.reuse_ios_run)
-                            or args.rebuild_linux
-                            or args.reuse_macos_run or args.reuse_repaired_run):
+    if packaging_repair and (not (args.rebuild_ios or args.rebuild_tvos or args.rebuild_macos
+                                  or args.reuse_ios_run or built_tvos_run is not None)
+                            or args.rebuild_linux or args.reuse_macos_run or repaired_platform_run):
         raise ReleaseError("Approved packaging recovery rebuilds only requested Apple packages.")
+    if built_tvos_run is not None and (
+            not packaging_repair or not args.reuse_platform_run or not args.include_apple_store_build
+            or args.rebuild_ios or args.rebuild_tvos or args.rebuild_macos or args.rebuild_linux
+            or args.reuse_tvos_run or args.reuse_ios_run or args.reuse_macos_run
+            or repaired_platform_run):
+        raise ReleaseError("assembly-tvos reuse requires approved frozen Apple packaging and the original platform source.")
     if args.reuse_platform_run and (
         args.reuse_platform_run < 1
         or ((args.publish or args.include_apple_store_build)
@@ -3102,7 +3157,7 @@ def main() -> int:
         )
     if args.reuse_webos_run and (args.reuse_webos_run < 1 or not args.reuse_platform_run or args.reuse_macos_run):
         raise ReleaseError("WebOS reuse requires verified platform recovery without signing-only substitution")
-    if args.reuse_repaired_run and (args.reuse_repaired_run < 1 or not args.reuse_platform_run or args.reuse_macos_run or args.rebuild_linux or args.rebuild_macos):
+    if repaired_platform_run and (repaired_platform_run < 1 or not args.reuse_platform_run or args.reuse_macos_run or args.rebuild_linux or args.rebuild_macos):
         raise ReleaseError("Repaired Linux/Mac reuse requires original platform recovery without rebuilding those platforms")
     if args.rebuild_ios and (not args.reuse_platform_run or args.reuse_macos_run or args.reuse_repaired_run):
         raise ReleaseError("iOS rebuilding requires ordinary verified platform recovery")
@@ -3226,6 +3281,8 @@ def main() -> int:
             repair_options = {}
             if packaging_repair:
                 repair_title = f"action:release:pool:public:tag:{tag}:repair:{pin_sha}"
+                if built_tvos_run is not None:
+                    repair_title += f":assembly-tvos:{built_tvos_run}"
                 prior_repair = matching_packaging_repair_run(repair_title)
                 workflow_sha = (prior_repair["headSha"] if prior_repair else
                                 gh_json("api", f"repos/{PLEZY_REPO}/branches/main")["commit"]["sha"])
@@ -3238,7 +3295,8 @@ def main() -> int:
                 **({"rebuild_macos": True} if args.rebuild_macos else {}),
                 **({"rebuild_tvos": True} if args.rebuild_tvos else {}),
                 **({"rebuild_ios": True} if args.rebuild_ios else {}),
-                **({"repaired_run": args.reuse_repaired_run} if args.reuse_repaired_run else {}),
+                **({"repaired_run": repaired_platform_run} if repaired_platform_run else {}),
+                **({"built_tvos_run": built_tvos_run} if built_tvos_run is not None else {}),
                 **({'tvos_run': args.reuse_tvos_run} if args.reuse_tvos_run else {}),
                 **({'ios_run': args.reuse_ios_run} if args.reuse_ios_run else {}),
                 **({"webos_run": args.reuse_webos_run} if args.reuse_webos_run else {}),

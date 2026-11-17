@@ -389,6 +389,122 @@ def verify_frozen_tvos_run(run_id, proof, repository=REPOSITORY):
             'artifact_digest': artifact['digest'], 'platforms_complete': True}
 
 
+def verify_completed_tvos_run(run_id, proof, repository=REPOSITORY):
+    """Reuse a signed tvOS artifact from a frozen packaging assembly retry."""
+    if (repository != REPOSITORY or not str(run_id).isdigit() or int(run_id) < 1
+            or not re.fullmatch(r'[0-9a-f]{40}', str(proof.get('packaging_source_sha', '')))
+            or not re.fullmatch(r'[0-9a-f]{40}', str(proof.get('workflow_source_sha', '')))
+            or not re.fullmatch(r'[0-9a-f]{40}', str(proof.get('product_source_sha', '')))):
+        raise RecoveryError('Completed tvOS reuse requires exact frozen product, packaging, and workflow sources')
+    run = api(f'repos/{repository}/actions/runs/{run_id}')
+    version = proof['version']
+    title = re.fullmatch(r'action:release:pool:public:tag:v' + re.escape(version)
+                         + r':repair:([0-9a-f]{40})', run.get('display_title', ''))
+    workflow = run.get('head_sha', '')
+    if (not title or title.group(1) != proof['packaging_source_sha']
+            or run.get('id') != int(run_id) or run.get('status') != 'completed'
+            or run.get('conclusion') != 'failure' or run.get('event') != 'workflow_dispatch'
+            or run.get('head_branch') != 'main' or run.get('path') != '.github/workflows/build.yml'
+            or run.get('repository', {}).get('id') != 1433487464
+            or run.get('head_repository', {}).get('full_name') != repository
+            or not re.fullmatch(r'[0-9a-f]{40}', workflow)
+            or type(run.get('run_attempt')) is not int or run['run_attempt'] < 1):
+        raise RecoveryError('Completed tvOS artifact must come from the exact trusted frozen packaging repair')
+    lineage = api(f'repos/{repository}/compare/{workflow}...{proof["workflow_source_sha"]}')
+    if (lineage.get('status') not in {'ahead', 'identical'}
+            or lineage.get('merge_base_commit', {}).get('sha') != workflow):
+        raise RecoveryError('Completed tvOS producer workflow is outside the approved recovery lineage')
+
+    prior = verify_source_run(
+        proof['source_run_id'], proof['packaging_source_sha'], version, repository,
+        rebuild_tvos=True, packaging_source_sha=proof['packaging_source_sha'],
+        workflow_source_sha=workflow, include_apple_store_build=True)
+    approval = prior.get('packaging_approval')
+    current_approval = proof.get('packaging_approval')
+    if (prior.get('source_sha') != proof['product_source_sha'] or not prior.get('platforms_complete')
+            or not isinstance(approval, dict) or not isinstance(current_approval, dict)
+            or approval.get('approved_files') != current_approval.get('approved_files')
+            or approval.get('approval_blob_sha') != current_approval.get('approval_blob_sha')):
+        raise RecoveryError('Completed tvOS producer does not share the approved product and packaging proof')
+
+    jobs = collection(f'repos/{repository}/actions/runs/{run_id}/attempts/{run["run_attempt"]}/jobs', 'jobs')
+    tv_name = 'Build tvOS developer package (arm64)'
+    selected = {}
+    for name in ('Validate release request', tv_name, 'create-release'):
+        matches = [job for job in jobs if job.get('name') == name]
+        if len(matches) != 1:
+            raise RecoveryError('Completed tvOS producer job is missing or ambiguous: ' + name)
+        selected[name] = matches[0]
+    validate = selected['Validate release request']
+    tvos = selected[tv_name]
+    if (validate.get('status') != 'completed' or validate.get('conclusion') != 'success'
+            or tvos.get('status') != 'completed' or tvos.get('conclusion') != 'success'):
+        raise RecoveryError('Completed tvOS producer validation or signed build did not succeed')
+    _verify_frozen_apple_runner(tvos, int(run_id), 'tvos')
+
+    required_validate_steps = (
+        'Verify approved frozen packaging checkout', 'Verify reusable platform source',
+        'Validate immutable release tag against trusted main', 'Validate release tag before building',
+    )
+    for name in required_validate_steps:
+        matches = [step for step in validate.get('steps', []) if step.get('name') == name]
+        if len(matches) != 1 or matches[0].get('status') != 'completed' or matches[0].get('conclusion') != 'success':
+            raise RecoveryError('Completed tvOS producer lacks successful validation: ' + name)
+    required_tvos_steps = (
+        'Build tvOS app', 'Package unsigned tvOS developer IPA', 'Build signed tvOS App Store IPA',
+        'Verify tvOS runtime dependencies',
+        'Attest unsigned tvOS developer package', 'Attest signed tvOS App Store package',
+        'Retain tvOS signing report', 'Remove tvOS signing archive outputs',
+        'Upload tvOS package', 'Clean tvOS source and Xcode scratch',
+    )
+    for name in required_tvos_steps:
+        matches = [step for step in tvos.get('steps', []) if step.get('name') == name]
+        if len(matches) != 1 or matches[0].get('status') != 'completed' or matches[0].get('conclusion') != 'success':
+            raise RecoveryError('Completed tvOS producer lacks signed artifact qualification: ' + name)
+
+    create = selected['create-release']
+    steps = create.get('steps', [])
+    if create.get('status') != 'completed' or create.get('conclusion') != 'failure':
+        raise RecoveryError('Completed tvOS producer did not stop at the expected pre-publication failure')
+    failures = [step.get('name') for step in steps if step.get('conclusion') == 'failure']
+    if failures != ['Prepare append-only Apple Store recovery assets']:
+        raise RecoveryError('Completed tvOS producer reached an unexpected failure or publication stage')
+    for name, conclusion in (
+            ('Recover verified platform artifacts', 'success'),
+            ('Attest append-only Apple Store recovery assets', 'skipped'),
+            ('Verify existing immutable release tag', 'skipped'),
+            ('Append signed Apple assets without replacing existing release assets', 'skipped'),
+            ('Create Release', 'skipped')):
+        matches = [step for step in steps if step.get('name') == name]
+        if len(matches) != 1 or matches[0].get('conclusion') != conclusion:
+            raise RecoveryError('Completed tvOS producer did not stop before release mutation: ' + name)
+    for job in jobs:
+        if job in selected.values():
+            continue
+        if job.get('status') != 'completed' or job.get('conclusion') != 'skipped' or job.get('steps') != []:
+            raise RecoveryError('Completed tvOS producer executed unrelated release work')
+
+    artifacts = collection(f'repos/{repository}/actions/runs/{run_id}/artifacts', 'artifacts')
+    matches = [item for item in artifacts if item.get('name') == 'tvos-ipa']
+    if (len(matches) != 1 or matches[0].get('expired') is not False
+            or type(matches[0].get('id')) is not int or matches[0]['id'] < 1
+            or not re.fullmatch(r'sha256:[0-9a-f]{64}', str(matches[0].get('digest', '')))):
+        raise RecoveryError('Completed tvOS producer lacks one unexpired digest-bound artifact')
+    artifact = matches[0]
+    metadata = api(f'repos/{repository}/actions/artifacts/{artifact["id"]}')
+    if (metadata.get('id') != artifact['id'] or metadata.get('name') != 'tvos-ipa'
+            or metadata.get('digest') != artifact['digest'] or metadata.get('expired') is not False
+            or metadata.get('workflow_run', {}).get('id') != int(run_id)
+            or metadata.get('workflow_run', {}).get('head_sha') != workflow):
+        raise RecoveryError('Completed tvOS artifact metadata differs from its trusted producer')
+    return {'source_run_id': int(run_id), 'source_sha': proof['packaging_source_sha'],
+            'workflow_source_sha': workflow, 'product_source_sha': proof['product_source_sha'],
+            'original_source_run_id': proof['source_run_id'], 'job_id': tvos['id'],
+            'run_attempt': run['run_attempt'], 'packaging_approval': approval,
+            'artifact_id': artifact['id'], 'artifact_digest': artifact['digest'],
+            'platforms_complete': True}
+
+
 def verify_frozen_ios_run(run_id, proof, repository=REPOSITORY):
     """Reuse only the signed iOS output of an approved unpublished sibling."""
     if repository != REPOSITORY or not str(run_id).isdigit() or int(run_id) < 1:
@@ -639,9 +755,24 @@ def _verify_frozen_apple_runner(job, run_id, platform):
     )
 
 
-def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow_pending=False, rebuild_linux=False, rebuild_macos=False, rebuild_tvos=False, rebuild_ios=False, repaired_run=None, require_homebrew_cask=False, packaging_source_sha=None, workflow_source_sha=None, include_apple_store_build=False, tvos_run=None, ios_run=None, append_apple_only=False):
+def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow_pending=False, rebuild_linux=False, rebuild_macos=False, rebuild_tvos=False, rebuild_ios=False, repaired_run=None, require_homebrew_cask=False, packaging_source_sha=None, workflow_source_sha=None, include_apple_store_build=False, tvos_run=None, ios_run=None, built_tvos_run=None, append_apple_only=False):
     if ios_run and not tvos_run:
         raise RecoveryError('Signed iOS sibling reuse requires a distinct signed TV sibling')
+    if built_tvos_run is not None:
+        if (not packaging_source_sha or not workflow_source_sha or not include_apple_store_build
+                or rebuild_tvos or rebuild_ios or repaired_run):
+            raise RecoveryError('Built tvOS reuse requires frozen signed Apple packaging without another platform rebuild')
+        if tvos_run or ios_run or append_apple_only or rebuild_linux or rebuild_macos:
+            raise RecoveryError('Built tvOS reuse cannot be mixed with sibling, append-only, or non-Apple recovery modes')
+        proof = verify_source_run(
+            run_id, head_sha, version, repository, allow_pending=allow_pending,
+            rebuild_tvos=True, packaging_source_sha=packaging_source_sha,
+            workflow_source_sha=workflow_source_sha, include_apple_store_build=True)
+        tvos = verify_completed_tvos_run(built_tvos_run, proof, repository)
+        tv_job = 'Build tvOS developer package (arm64)'
+        return {**proof, 'tvos_source': tvos, 'rebuild_tvos': False,
+                'rebuilt_jobs': sorted(set(proof['rebuilt_jobs']) - {tv_job}),
+                'reused_jobs': [*proof['reused_jobs'], tv_job]}
     if append_apple_only and (not packaging_source_sha or not workflow_source_sha
                               or not include_apple_store_build or rebuild_linux or rebuild_macos
                               or repaired_run):
@@ -1185,6 +1316,8 @@ def main():
     parser.add_argument("--repaired-run", help="Reuse verified Linux and fully qualified Mac jobs from a prior repair run")
     parser.add_argument('--tvos-run', help='Reuse signed TV bytes from an independently approved sibling Apple repair')
     parser.add_argument('--ios-run', help='Reuse signed iOS bytes from an independently approved sibling Apple repair')
+    parser.add_argument('--built-tvos-run', type=int,
+                        help='Reuse a successful signed tvOS artifact from a verified frozen packaging retry')
     parser.add_argument("--require-homebrew-cask", action="store_true", help="Require the reused Mac notarization and Gatekeeper checks")
     parser.add_argument("--webos-run", help="Reuse a successful verified webOS package from a prior release run")
     parser.add_argument("--android-run", help="Reuse a separately successful Android release build.")
@@ -1210,10 +1343,16 @@ def main():
         parser.error('TV reuse requires approved frozen iOS-only packaging recovery')
     if args.ios_run and (not args.tvos_run or args.rebuild_ios or args.rebuild_tvos):
         parser.error('iOS reuse requires both independently approved signed Apple sibling runs')
+    if args.built_tvos_run is not None and (
+            args.built_tvos_run < 1 or not args.packaging_source_sha or not args.workflow_source_sha
+            or not args.include_apple_store_build or args.rebuild_ios or args.rebuild_tvos
+            or args.tvos_run or args.ios_run):
+        parser.error('built tvOS reuse requires approved frozen Apple packaging and cannot rebuild or append siblings')
     frozen_options = ({'packaging_source_sha': args.packaging_source_sha,
                        'workflow_source_sha': args.workflow_source_sha,
                        'include_apple_store_build': args.include_apple_store_build,
-                       **({'tvos_run': args.tvos_run} if args.tvos_run else {})}
+                       **({'tvos_run': args.tvos_run} if args.tvos_run else {}),
+                       **({'built_tvos_run': args.built_tvos_run} if args.built_tvos_run is not None else {})}
                       if args.packaging_source_sha else {})
     if args.ios_run:
         frozen_options['ios_run'] = args.ios_run

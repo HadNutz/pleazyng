@@ -613,6 +613,164 @@ class FrozenTvosReuseTests(unittest.TestCase):
                             self.assertEqual(digest, hashlib.sha256(name.encode()).hexdigest())
 
 
+class CompletedTvosAssemblyReuseTests(unittest.TestCase):
+    def setUp(self):
+        self.product, self.packaging, self.producer_workflow, self.current_workflow = (
+            'a' * 40, 'b' * 40, 'd' * 40, 'e' * 40)
+        self.approval = {'approved_files': {'scripts/recover_release_platforms.py': 'f' * 40},
+                         'approval_blob_sha': '1' * 40}
+        self.proof = {'source_run_id': 42, 'product_source_sha': self.product,
+                      'packaging_source_sha': self.packaging,
+                      'workflow_source_sha': self.current_workflow,
+                      'packaging_approval': copy.deepcopy(self.approval), 'version': '3.0.37'}
+        self.run = {'id': 84, 'head_sha': self.producer_workflow, 'status': 'completed',
+                    'conclusion': 'failure', 'event': 'workflow_dispatch', 'head_branch': 'main',
+                    'path': '.github/workflows/build.yml',
+                    'repository': {'id': 1433487464},
+                    'head_repository': {'full_name': recovery.REPOSITORY}, 'run_attempt': 2,
+                    'display_title': 'action:release:pool:public:tag:v3.0.37:repair:' + self.packaging}
+
+        def job(name, conclusion, steps=(), platform=None):
+            result = {'id': 500 + len(name), 'name': name, 'status': 'completed',
+                      'conclusion': conclusion,
+                      'steps': [{'name': step, 'status': 'completed', 'conclusion': 'success'}
+                                for step in steps]}
+            if platform == 'tvos':
+                result.update(runner_id=501, runner_name='GitHub Actions 501',
+                              runner_group_name='GitHub Actions', labels=['macos-26'])
+            return result
+
+        self.validate_steps = (
+            'Verify approved frozen packaging checkout', 'Verify reusable platform source',
+            'Validate immutable release tag against trusted main', 'Validate release tag before building',
+        )
+        self.tvos_steps = (
+            'Build tvOS app', 'Package unsigned tvOS developer IPA', 'Build signed tvOS App Store IPA',
+            'Verify tvOS runtime dependencies',
+            'Attest unsigned tvOS developer package', 'Attest signed tvOS App Store package',
+            'Retain tvOS signing report', 'Remove tvOS signing archive outputs',
+            'Upload tvOS package', 'Clean tvOS source and Xcode scratch',
+        )
+        self.jobs = [
+            job('Validate release request', 'success', self.validate_steps),
+            job('Build tvOS developer package (arm64)', 'success', self.tvos_steps, 'tvos'),
+            job('build-ios', 'skipped'), job('build-macos', 'skipped'),
+            job('create-release', 'failure'), job('build-android', 'skipped'),
+        ]
+        self.jobs[4]['steps'] = [
+            {'name': 'Recover verified platform artifacts', 'status': 'completed', 'conclusion': 'success'},
+            {'name': 'Prepare append-only Apple Store recovery assets', 'status': 'completed', 'conclusion': 'failure'},
+            {'name': 'Attest append-only Apple Store recovery assets', 'status': 'completed', 'conclusion': 'skipped'},
+            {'name': 'Verify existing immutable release tag', 'status': 'completed', 'conclusion': 'skipped'},
+            {'name': 'Append signed Apple assets without replacing existing release assets', 'status': 'completed', 'conclusion': 'skipped'},
+            {'name': 'Create Release', 'status': 'completed', 'conclusion': 'skipped'},
+        ]
+        self.artifact = {'id': 9, 'name': 'tvos-ipa', 'expired': False,
+                         'digest': 'sha256:' + 'f' * 64,
+                         'workflow_run': {'id': 84, 'head_sha': self.producer_workflow}}
+        self.artifact_metadata = copy.deepcopy(self.artifact)
+        self.prior = {'source_sha': self.product, 'platforms_complete': True,
+                      'packaging_approval': copy.deepcopy(self.approval)}
+
+    def prove(self):
+        lineage = {'status': 'ahead', 'merge_base_commit': {'sha': self.producer_workflow}}
+        with patch.object(recovery, 'api', side_effect=[self.run, lineage, self.artifact_metadata]), \
+                patch.object(recovery, 'collection', side_effect=[self.jobs, [self.artifact]]), \
+                patch.object(recovery, 'verify_source_run', return_value=self.prior) as verify_source:
+            result = recovery.verify_completed_tvos_run(84, self.proof)
+        self.assertEqual(verify_source.call_args.args[:3],
+                         (self.proof['source_run_id'], self.packaging, '3.0.37'))
+        self.assertTrue(verify_source.call_args.kwargs['rebuild_tvos'])
+        self.assertTrue(verify_source.call_args.kwargs['include_apple_store_build'])
+        self.assertEqual(verify_source.call_args.kwargs['workflow_source_sha'], self.producer_workflow)
+        return result
+
+    def test_reuses_signed_artifact_from_same_approved_packaging(self):
+        source = self.prove()
+        self.assertEqual(source['source_run_id'], 84)
+        self.assertEqual(source['artifact_id'], self.artifact['id'])
+        self.assertEqual(source['artifact_digest'], self.artifact['digest'])
+        self.assertEqual(source['workflow_source_sha'], self.producer_workflow)
+        self.assertEqual(source['packaging_approval'], self.approval)
+
+    def test_full_recovery_reclassifies_tv_as_reused_and_keeps_full_release_scope(self):
+        base = {'recovery_policy': 'frozen-apple-packaging-v1', 'source_run_id': 42,
+                'source_sha': self.product,
+                'rebuilt_jobs': sorted(set(recovery.REBUILT_JOBS) |
+                                       {'Build tvOS developer package (arm64)'}),
+                'reused_jobs': [name for name in recovery.REQUIRED_JOBS
+                                if name != 'Build tvOS developer package (arm64)']}
+        tvos = {'source_run_id': 84, 'artifact_id': 9}
+        original = recovery.verify_source_run
+        with patch.object(recovery, 'verify_source_run', return_value=base) as verify_base, \
+                patch.object(recovery, 'verify_completed_tvos_run', return_value=tvos):
+            proof = original(42, self.packaging, '3.0.37',
+                             packaging_source_sha=self.packaging,
+                             workflow_source_sha=self.current_workflow,
+                             include_apple_store_build=True, built_tvos_run=84)
+        self.assertTrue(verify_base.call_args.kwargs['rebuild_tvos'])
+        self.assertEqual(proof['tvos_source'], tvos)
+        self.assertFalse(proof['rebuild_tvos'])
+        self.assertNotIn('Build tvOS developer package (arm64)', proof['rebuilt_jobs'])
+        self.assertIn('Build tvOS developer package (arm64)', proof['reused_jobs'])
+        self.assertNotIn('append_apple_only', proof)
+        source_jobs = [
+            {'id': 1, 'name': 'build-android', 'status': 'completed', 'conclusion': 'success'},
+            {'id': 2, 'name': 'Build WebOS TV package (ARMv7)', 'status': 'completed', 'conclusion': 'success'},
+        ]
+        with patch.object(recovery, 'collection', return_value=source_jobs):
+            assembled = recovery.compose_proof(proof, android_run=42, webos_run=42)
+        self.assertEqual(assembled['rebuilt_jobs'], [])
+        self.assertEqual(assembled['tvos_source'], tvos)
+
+    def test_wrong_identity_lineage_or_approval_is_rejected(self):
+        original_run = copy.deepcopy(self.run)
+        for change in ('wrong-title', 'wrong-owner', 'wrong-lineage', 'different-approval'):
+            self.run = copy.deepcopy(original_run)
+            lineage = {'status': 'ahead', 'merge_base_commit': {'sha': self.producer_workflow}}
+            if change == 'wrong-title':
+                self.run['display_title'] = self.run['display_title'].replace(self.packaging, 'c' * 40)
+            elif change == 'wrong-owner':
+                self.run['head_repository']['full_name'] = 'example/untrusted'
+            elif change == 'wrong-lineage':
+                lineage = {'status': 'behind', 'merge_base_commit': {'sha': '0' * 40}}
+            elif change == 'different-approval':
+                self.prior['packaging_approval']['approval_blob_sha'] = '2' * 40
+            with self.subTest(change=change), \
+                    patch.object(recovery, 'api', side_effect=[self.run, lineage, self.artifact_metadata]), \
+                    patch.object(recovery, 'collection', side_effect=[self.jobs, [self.artifact]]), \
+                    patch.object(recovery, 'verify_source_run', return_value=self.prior), \
+                    self.assertRaises(recovery.RecoveryError):
+                recovery.verify_completed_tvos_run(84, self.proof)
+        self.run = original_run
+
+    def test_missing_signature_or_any_post_prepare_mutation_rejects_source(self):
+        original_jobs = copy.deepcopy(self.jobs)
+        for change in ('missing-dependency', 'missing-signature', 'missing-upload', 'missing-cleanup', 'uploaded', 'published'):
+            self.jobs = copy.deepcopy(original_jobs)
+            if change == 'missing-dependency':
+                next(step for step in self.jobs[1]['steps']
+                     if step['name'] == 'Verify tvOS runtime dependencies')['conclusion'] = 'skipped'
+            elif change == 'missing-signature':
+                next(step for step in self.jobs[1]['steps']
+                     if step['name'] == 'Attest signed tvOS App Store package')['conclusion'] = 'skipped'
+            elif change == 'missing-upload':
+                next(step for step in self.jobs[1]['steps']
+                     if step['name'] == 'Upload tvOS package')['conclusion'] = 'skipped'
+            elif change == 'missing-cleanup':
+                next(step for step in self.jobs[1]['steps']
+                     if step['name'] == 'Clean tvOS source and Xcode scratch')['conclusion'] = 'skipped'
+            elif change == 'uploaded':
+                next(step for step in self.jobs[4]['steps']
+                     if step['name'] == 'Append signed Apple assets without replacing existing release assets')['conclusion'] = 'success'
+            else:
+                next(step for step in self.jobs[4]['steps']
+                     if step['name'] == 'Create Release')['conclusion'] = 'success'
+            with self.subTest(change=change), self.assertRaises(recovery.RecoveryError):
+                self.prove()
+        self.jobs = original_jobs
+
+
 class FrozenCombinedAppleReuseTests(unittest.TestCase):
     def setUp(self):
         self.product = 'a' * 40
@@ -853,6 +1011,29 @@ class ArtifactTests(unittest.TestCase):
              patch.object(recovery, "collection", return_value=[]):
             with self.assertRaises(recovery.RecoveryError):
                 recovery.download_platforms(proof, self.root)
+
+    def test_rebuilt_tv_artifact_is_downloaded_from_verified_sibling_when_reused(self):
+        archive = self.archive('pleazyng-tvos-appstore.ipa', b'signed tvOS IPA')
+        artifact = {'id': 9, 'name': 'tvos-ipa', 'expired': False,
+                    'digest': 'sha256:' + hashlib.sha256(archive).hexdigest(),
+                    'workflow_run': {'id': 84, 'head_sha': 'd' * 40}}
+        proof = {'source_run_id': 42, 'source_sha': 'a' * 40, 'rebuild_tvos': False,
+                 'tvos_source': {'source_run_id': 84, 'source_sha': 'b' * 40,
+                                 'workflow_source_sha': 'd' * 40, 'artifact_id': 9,
+                                 'artifact_digest': artifact['digest']}}
+
+        def download(_command, stdout):
+            stdout.write(archive)
+            return SimpleNamespace(returncode=0)
+
+        with patch.object(recovery, 'ARTIFACTS', {'tvos-ipa': 'tvos-ipa'}), \
+                patch.object(recovery, 'collection', side_effect=[[], [artifact]]), \
+                patch.object(recovery.subprocess, 'run', side_effect=download), \
+                patch.object(recovery, 'verify_tvos_package_attestations', return_value={'signed': 'c' * 64}):
+            result = recovery.download_platforms(proof, self.root)
+        self.assertEqual(result['artifacts'][0]['source_run_id'], 84)
+        self.assertEqual(result['artifacts'][0]['artifact_id'], 9)
+        self.assertEqual((self.root / 'tvos-ipa/pleazyng-tvos-appstore.ipa').read_bytes(), b'signed tvOS IPA')
 
     def test_ios_is_not_downloaded_from_failed_original_when_rebuilt(self):
         proof = {"source_run_id": 42, "source_sha": "a" * 40, "rebuild_ios": True}
