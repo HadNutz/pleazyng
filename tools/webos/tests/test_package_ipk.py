@@ -123,6 +123,30 @@ class PackageIpkTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "repeats field 'Package'"):
             verify_package.parse_control_fields(b"Package: first\nPackage: second\n\n")
 
+    def test_billing_profile_requires_fixed_paid_configuration(self) -> None:
+        tester = package_ipk.paymentwall_build_profile("tester")
+        self.assertEqual(verify_package.inspect_paymentwall_build(json.dumps(tester).encode()), tester)
+        with self.assertRaisesRegex(package_ipk.PackageError, "tester IPKs cannot contain"):
+            package_ipk.paymentwall_build_profile("tester", api_origin="https://billing.pleazyng.app")
+        with self.assertRaisesRegex(package_ipk.PackageError, "fixed billing origin"):
+            package_ipk.paymentwall_build_profile("paid", api_origin="https://evil.invalid", public_key_sha256="a" * 64)
+        with self.assertRaisesRegex(ValueError, "unexpected or inconsistent"):
+            verify_package.inspect_paymentwall_build(
+                json.dumps({**tester, "supporterMode": "iap"}).encode()
+            )
+
+    def test_paid_billing_profile_records_only_public_key_fingerprint(self) -> None:
+        profile = package_ipk.paymentwall_build_profile(
+            "paid",
+            api_origin="https://billing.pleazyng.app",
+            public_key_sha256="a" * 64,
+        )
+        verified = verify_package.inspect_paymentwall_build(json.dumps(profile).encode())
+        self.assertEqual(verified["billingMode"], "paid")
+        self.assertEqual(verified["supporterMode"], "iap")
+        self.assertEqual(verified["paymentwall"]["grantPublicKeySha256"], "a" * 64)
+        self.assertNotIn('"grantPublicKey":', json.dumps(profile))
+
     def test_ipk_verifier_rejects_symlink_input(self) -> None:
         with tempfile.TemporaryDirectory(dir=os.environ["PLEZY_WEBOS_TEST_TMP"]) as temporary:
             root = Path(temporary)

@@ -117,11 +117,14 @@ class CorePublicationTests(unittest.TestCase):
                 self.assertIn("artifacts/windows-installer/pleazyng-windows-installer.exe", files)
                 self.assertIn("artifacts/appcast.xml", files)
                 self.assertIn("artifacts/webos/*.ipk", files)
-                self.assertIn("artifacts/webos/pleazyng-lg-webos-submission.zip", files)
+                self.assertNotIn("artifacts/webos/pleazyng-lg-webos-submission.zip", files)
                 for evidence in ("webos-app-provenance.json", "webos-engine-provenance.json", "webos-compatibility.json", "macos-compilation-recovery.json"):
                     self.assertNotIn(evidence, files)
         webos_steps = {step.get("name"): step for step in jobs['build-webos']['steps']}
-        handoff = webos_steps['Prepare LG Seller Lounge handoff bundle']['run']
+        handoff = webos_steps['Prepare LG Seller Lounge handoff bundle for a paid IPK']['run']
+        self.assertIn('BILLING_MODE', handoff)
+        self.assertIn('this core release contains an off/tester IPK', handoff)
+        self.assertIn('--webos-provenance "$OUTPUT_DIR/webos-app-provenance.json"', handoff)
         for evidence in ("webos-app-provenance.json", "webos-engine-provenance.json", "webos-compatibility.json"):
             self.assertIn('--evidence "$OUTPUT_DIR/' + evidence + '"', handoff)
 

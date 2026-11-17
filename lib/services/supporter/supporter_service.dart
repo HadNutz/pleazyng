@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart' as openiap;
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
@@ -11,6 +12,7 @@ import '../../mixins/disposable_change_notifier_mixin.dart';
 import '../../utils/app_logger.dart';
 import '../settings_service.dart';
 import 'amazon_supporter_store.dart';
+import 'lg_paymentwall_client.dart';
 import 'supporter_mode.dart';
 import 'supporter_store.dart';
 import 'review_access.dart';
@@ -18,6 +20,8 @@ import 'review_access.dart';
 /// The StoreKit plugin's error code for a product query that found nothing.
 const _storeKitNoProducts = 'storekit_no_response';
 const _amazonStoreBuild = bool.fromEnvironment('AMAZON_STORE');
+const _webosBuild = bool.fromEnvironment('PLEZY_WEBOS');
+const _lgPaymentwallBuild = _webosBuild && supporterBuildMode == SupporterMode.iap;
 
 /// Where a purchase or restore the user started currently stands.
 enum SupporterPurchaseStatus {
@@ -32,6 +36,9 @@ enum SupporterPurchaseStatus {
 
   /// Restore Purchases is reading the store account.
   restoring,
+
+  /// Securely creating or reading the LG accountless recovery identity.
+  preparingRecovery,
 }
 
 /// Why the store could not price, sell or restore the lifetime unlock.
@@ -54,6 +61,18 @@ enum SupporterError {
 
   /// The store account has no lifetime unlock to restore.
   nothingToRestore,
+
+  /// The dedicated LG payment service is temporarily unavailable.
+  paymentServiceUnavailable,
+
+  /// The dedicated LG payment service could not verify restore status.
+  paymentRestoreFailed,
+
+  /// The recovery identity has no verified lifetime purchase.
+  paymentNothingToRestore,
+
+  /// The LG checkout could not be opened.
+  paymentPurchaseFailed,
 
   /// App Store Connect did not return the free trial product.
   trialProductNotFound,
@@ -90,7 +109,10 @@ class SupporterStoreState {
   /// Why the last purchase or restore did not unlock the perks.
   final SupporterError? error;
 
-  bool get isBusy => status == SupporterPurchaseStatus.purchasing || status == SupporterPurchaseStatus.restoring;
+  bool get isBusy =>
+      status == SupporterPurchaseStatus.purchasing ||
+      status == SupporterPurchaseStatus.restoring ||
+      status == SupporterPurchaseStatus.preparingRecovery;
 
   SupporterStoreState copyWith({
     bool? isLoadingProduct,
@@ -131,7 +153,7 @@ class SupporterStoreState {
 /// current plugin can forward an unverified transaction as purchased, so the
 /// App Store history API must confirm ownership before a new entitlement is
 /// granted. The history wrapper exposes verified transactions only.
-class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin {
+class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin, WidgetsBindingObserver {
   static const fullAccessTrialDuration = Duration(days: 7);
 
   /// Seeds the cached entitlement synchronously, so the first frame under the
@@ -141,9 +163,11 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
         supporterAvailabilityFor(supporterBuildMode),
         appleStoreBuild: _appleStoreTarget,
         // Const guard: builds other than `iap` never reach the billing plugin.
-        createStore: supporterBuildMode == SupporterMode.iap && !_amazonStoreBuild
+        createStore: supporterBuildMode == SupporterMode.iap && !_amazonStoreBuild && !_webosBuild
             ? SupporterStore.forThisDevice
             : null,
+        lgPaymentwallClient: _lgPaymentwallBuild ? LgPaymentwallClient() : null,
+        lgPaymentwallBuild: _lgPaymentwallBuild,
       );
 
   /// Without [purchased], seeds from the cache like the app does. [store]
@@ -156,12 +180,15 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
     SupporterStore? store,
     String reviewVerificationKey = ReviewAccess.publicKey,
     bool? appleStoreBuild,
+    LgPaymentwallClient? lgPaymentwallClient,
   }) : this._(
          availability,
          purchased: purchased,
          reviewVerificationKey: reviewVerificationKey,
          appleStoreBuild: appleStoreBuild ?? (store is AppStoreSupporterStore),
          createStore: store == null ? null : () => store,
+         lgPaymentwallClient: lgPaymentwallClient,
+         lgPaymentwallBuild: lgPaymentwallClient != null,
        );
 
   SupporterService._(
@@ -169,12 +196,16 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
     bool? purchased,
     required bool appleStoreBuild,
     this._createStore,
+    this._lgPaymentwallClient,
+    bool lgPaymentwallBuild = false,
     this.reviewVerificationKey = ReviewAccess.publicKey,
   }) : _purchased =
            purchased ??
            (availability == SupporterAvailability.purchasable &&
+               !lgPaymentwallBuild &&
                (SettingsService.instanceOrNull?.read(SettingsService.supporterEntitlementCached) ?? false)),
        _appleStoreBuild = appleStoreBuild,
+       _isLGPaymentwallBuild = lgPaymentwallBuild,
        _trialStartedAtEpochMs = appleStoreBuild
            ? 0
            : SettingsService.instanceOrNull?.read(SettingsService.appAccessTrialStartedAtEpochMs) ?? 0;
@@ -183,6 +214,8 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
   final SupporterAvailability availability;
   final String reviewVerificationKey;
   final bool _appleStoreBuild;
+  final LgPaymentwallClient? _lgPaymentwallClient;
+  final bool _isLGPaymentwallBuild;
 
   final SupporterStore? Function()? _createStore;
   bool _storeCreated = false;
@@ -202,6 +235,8 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
   Timer? _reviewExpiryTimer;
   DateTime? _reviewExpiresAt;
   bool _ready = false;
+  bool _waitingForLGCheckoutReturn = false;
+  bool _lgCheckoutWentBackground = false;
 
   /// Bumped by every confirmed purchase or revocation from the purchase
   /// stream, so an older history query cannot overwrite a newer store event.
@@ -219,6 +254,10 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
   bool get hasLifetimeUnlock => _purchased;
 
   bool get isAppleStoreBuild => _appleStoreBuild;
+
+  bool get isLGPaymentwallBuild => _isLGPaymentwallBuild;
+
+  bool get hasLGPaymentwallIdentity => _lgPaymentwallClient?.hasLocalIdentity ?? false;
 
   bool get hasStartedTrial => _appleStoreBuild ? _appStoreTrialPurchased : _trialStartedAtEpochMs > 0;
 
@@ -282,7 +321,11 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
               !_storeState.value.isBusy &&
               _storeState.value.status != SupporterPurchaseStatus.pending));
 
-  bool get _lifetimeProductLoaded => _amazonStoreBuild ? _amazonProduct != null : _product != null;
+  bool get _lifetimeProductLoaded => _lgPaymentwallClient != null
+      ? _lgPaymentwallClient.isConfigured && _storeState.value.price != null
+      : _amazonStoreBuild
+      ? _amazonProduct != null
+      : _product != null;
 
   /// Whether any perk UI is shown on this install.
   bool get isAvailable => availability != SupporterAvailability.hidden;
@@ -304,9 +347,22 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
     try {
       final settings = await SettingsService.getInstance();
       if (isDisposed) return;
-      // The cache only ever raises a lifetime entitlement here; lowering it
-      // takes a confirmed revocation.
-      if (settings.read(SettingsService.supporterEntitlementCached) && !_purchased) _purchased = true;
+      // LG ownership comes only from the signed key-store grant. Its legacy
+      // boolean cache is deliberately ignored, including when the key store is
+      // unavailable or the paid build lacks its public verification key.
+      if (_lgPaymentwallClient != null) {
+        WidgetsBinding.instance.addObserver(this);
+        try {
+          final cached = await _lgPaymentwallClient.readCachedEntitlement();
+          if (cached != null) _purchased = cached.owned;
+        } on LgPaymentwallFailure {
+          _setStoreState(_storeState.value.copyWith(error: () => SupporterError.paymentRestoreFailed));
+        }
+      } else if (settings.read(SettingsService.supporterEntitlementCached) && !_purchased) {
+        // Other store caches only ever raise a lifetime entitlement here;
+        // lowering it takes a confirmed store revocation.
+        _purchased = true;
+      }
       _trialStartedAtEpochMs = _appleStoreBuild ? 0 : settings.read(SettingsService.appAccessTrialStartedAtEpochMs);
       if (supportsReviewAccess) {
         final expiry = await ReviewAccess.verify(
@@ -321,9 +377,28 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
 
       // Other store builds retain their existing local first-launch trial.
       // Apple users must explicitly approve the zero-price StoreKit product.
-      if (!_appleStoreBuild && !_purchased && !hasStartedTrial) await startTrial();
+      if (!_appleStoreBuild &&
+          !_purchased &&
+          !hasStartedTrial &&
+          !(_isLGPaymentwallBuild && settings.read(SettingsService.supporterEntitlementCached))) {
+        await startTrial();
+      }
 
-      if (_amazonStoreBuild) {
+      if (_lgPaymentwallClient != null) {
+        if (!_lgPaymentwallClient.isConfigured) {
+          _setStoreState(_storeState.value.copyWith(error: () => SupporterError.paymentServiceUnavailable));
+        } else {
+          try {
+            final entitlement = await _lgPaymentwallClient.refreshEntitlement();
+            if (entitlement != null) _setPurchased(entitlement.owned);
+            _setStoreState(_storeState.value.copyWith(error: () => null));
+          } on LgPaymentwallFailure catch (error) {
+            _setStoreState(
+              _storeState.value.copyWith(error: () => _supporterErrorForLGFailure(error, restoring: true)),
+            );
+          }
+        }
+      } else if (_amazonStoreBuild) {
         final store = _ensureAmazonStore();
         if (store != null) {
           await store.initialize();
@@ -369,7 +444,7 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
         SupporterAvailability.hidden => false,
         SupporterAvailability.free => true,
         SupporterAvailability.purchasable =>
-          settings.read(SettingsService.supporterEntitlementCached) ||
+          (!_lgPaymentwallBuild && settings.read(SettingsService.supporterEntitlementCached)) ||
               (!(appleStoreBuild ?? _appleStoreTarget) &&
                   _trialIsActive(settings.read(SettingsService.appAccessTrialStartedAtEpochMs))),
       };
@@ -413,6 +488,14 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
     if (availability != SupporterAvailability.purchasable) return;
     final current = _storeState.value;
     if ((_lifetimeProductLoaded && (!_appleStoreBuild || _trialProduct != null)) || current.isLoadingProduct) return;
+    if (_lgPaymentwallClient != null) {
+      if (!_lgPaymentwallClient.isConfigured) {
+        _setStoreState(current.copyWith(productError: () => SupporterError.paymentServiceUnavailable));
+      } else {
+        _setStoreState(current.copyWith(price: 'USD 2.99', productError: () => null, error: () => null));
+      }
+      return;
+    }
     if (_amazonStoreBuild) {
       final amazonStore = _ensureAmazonStore();
       if (amazonStore == null) {
@@ -555,6 +638,10 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
   /// stream and shows up in [storeState] and [hasLifetimeUnlock].
   Future<void> purchase() async {
     if (availability != SupporterAvailability.purchasable || _purchased || _storeState.value.isBusy) return;
+    if (_lgPaymentwallClient != null) {
+      await _purchaseLGPaymentwall();
+      return;
+    }
     if (_amazonStoreBuild) {
       await _startAmazonPurchase();
       return;
@@ -583,6 +670,10 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
   /// Restore Purchases: re-reads the store account's lifetime unlock.
   Future<void> restore() async {
     if (availability != SupporterAvailability.purchasable || _storeState.value.isBusy) return;
+    if (_lgPaymentwallClient != null) {
+      await _restoreLGPaymentwall();
+      return;
+    }
     if (_amazonStoreBuild) {
       await _restoreAmazonPurchases();
       return;
@@ -638,6 +729,206 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
   void clearError() {
     if (_storeState.value.error != null && !_storeState.value.isBusy) {
       _setStoreState(_storeState.value.copyWith(error: () => null));
+    }
+  }
+
+  /// Prepares the secure identity and recovery disclosure for the LG checkout.
+  /// No checkout is opened until the user has acknowledged saving this code.
+  Future<LgPaymentwallRecoveryOffer?> prepareLGRecoveryCode() async {
+    final client = _lgPaymentwallClient;
+    if (client == null || !client.isConfigured) {
+      _setStoreState(_storeState.value.copyWith(error: () => SupporterError.paymentServiceUnavailable));
+      return null;
+    }
+    _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.preparingRecovery, error: () => null));
+    try {
+      final offer = await client.prepareCheckoutRecoveryCode();
+      if (!isDisposed) _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.idle));
+      return offer;
+    } on LgPaymentwallFailure catch (error) {
+      _setStoreState(
+        _storeState.value.copyWith(
+          status: SupporterPurchaseStatus.idle,
+          error: () => _supporterErrorForLGFailure(error),
+        ),
+      );
+      return null;
+    } catch (_) {
+      _setStoreState(
+        _storeState.value.copyWith(
+          status: SupporterPurchaseStatus.idle,
+          error: () => SupporterError.paymentServiceUnavailable,
+        ),
+      );
+      return null;
+    }
+  }
+
+  /// Re-shows the active accountless recovery code from secure storage.
+  Future<String?> revealLGRecoveryCode() async {
+    final client = _lgPaymentwallClient;
+    if (client == null) return null;
+    try {
+      return await client.revealRecoveryCode();
+    } catch (_) {
+      _setStoreState(_storeState.value.copyWith(error: () => SupporterError.paymentRestoreFailed));
+      return null;
+    }
+  }
+
+  Future<bool> acknowledgeLGRecoveryCode() async {
+    final client = _lgPaymentwallClient;
+    if (client == null) return false;
+    try {
+      await client.acknowledgeRecoveryCode();
+      return true;
+    } catch (_) {
+      _setStoreState(_storeState.value.copyWith(error: () => SupporterError.paymentServiceUnavailable));
+      return false;
+    }
+  }
+
+  /// Applies an imported recovery code only after the backend authenticates
+  /// the existing identity and returns a valid signed ownership proof.
+  Future<bool> restoreLGWithRecoveryCode(String code, {bool confirmSwitch = false}) async {
+    final client = _lgPaymentwallClient;
+    if (client == null || _storeState.value.isBusy) return false;
+    _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.restoring, error: () => null));
+    try {
+      final entitlement = await client.restoreWithRecoveryCode(code, confirmSwitch: confirmSwitch);
+      if (isDisposed) return false;
+      _setPurchased(entitlement.owned);
+      _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.idle, error: () => null));
+      return true;
+    } on LgPaymentwallFailure catch (error) {
+      if (!isDisposed) {
+        _setStoreState(
+          _storeState.value.copyWith(
+            status: SupporterPurchaseStatus.idle,
+            error: () => _supporterErrorForLGFailure(error, restoring: true),
+          ),
+        );
+      }
+      return false;
+    } catch (_) {
+      if (!isDisposed) {
+        _setStoreState(
+          _storeState.value.copyWith(
+            status: SupporterPurchaseStatus.idle,
+            error: () => SupporterError.paymentRestoreFailed,
+          ),
+        );
+      }
+      return false;
+    }
+  }
+
+  Future<void> _purchaseLGPaymentwall() async {
+    final client = _lgPaymentwallClient!;
+    if (!client.isConfigured || !client.hasLocalIdentity) {
+      _setStoreState(_storeState.value.copyWith(error: () => SupporterError.paymentServiceUnavailable));
+      return;
+    }
+    _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.purchasing, error: () => null));
+    _waitingForLGCheckoutReturn = true;
+    _lgCheckoutWentBackground = false;
+    try {
+      await client.beginCheckout();
+      if (isDisposed) return;
+      if (_waitingForLGCheckoutReturn) {
+        // A launched checkout stays pending until a fresh Status API response
+        // confirms ownership. The browser callback is never entitlement proof.
+        _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.pending, error: () => null));
+      }
+    } on LgPaymentwallFailure catch (error) {
+      _waitingForLGCheckoutReturn = false;
+      _setStoreState(
+        _storeState.value.copyWith(
+          status: SupporterPurchaseStatus.idle,
+          error: () => _supporterErrorForLGFailure(error),
+        ),
+      );
+    } catch (_) {
+      _waitingForLGCheckoutReturn = false;
+      _setStoreState(
+        _storeState.value.copyWith(
+          status: SupporterPurchaseStatus.idle,
+          error: () => SupporterError.paymentPurchaseFailed,
+        ),
+      );
+    }
+  }
+
+  Future<void> _restoreLGPaymentwall() async {
+    final client = _lgPaymentwallClient!;
+    if (!client.isConfigured) {
+      _setStoreState(_storeState.value.copyWith(error: () => SupporterError.paymentServiceUnavailable));
+      return;
+    }
+    if (!client.hasLocalIdentity) {
+      _setStoreState(_storeState.value.copyWith(error: () => SupporterError.paymentNothingToRestore));
+      return;
+    }
+    _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.restoring, error: () => null));
+    await _refreshLGPaymentwall(restoring: true);
+  }
+
+  Future<void> _refreshLGPaymentwall({required bool restoring}) async {
+    final client = _lgPaymentwallClient!;
+    try {
+      final entitlement = await client.refreshEntitlement();
+      if (isDisposed) return;
+      if (entitlement == null) {
+        _setStoreState(
+          _storeState.value.copyWith(
+            status: SupporterPurchaseStatus.idle,
+            error: () => restoring ? SupporterError.paymentNothingToRestore : null,
+          ),
+        );
+        return;
+      }
+      _setPurchased(entitlement.owned);
+      _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.idle, error: () => null));
+    } on LgPaymentwallFailure catch (error) {
+      if (!isDisposed) {
+        _setStoreState(
+          _storeState.value.copyWith(
+            status: SupporterPurchaseStatus.idle,
+            error: () => _supporterErrorForLGFailure(error, restoring: restoring),
+          ),
+        );
+      }
+    } catch (_) {
+      if (!isDisposed) {
+        _setStoreState(
+          _storeState.value.copyWith(
+            status: SupporterPurchaseStatus.idle,
+            error: () => restoring ? SupporterError.paymentRestoreFailed : null,
+          ),
+        );
+      }
+    }
+  }
+
+  SupporterError _supporterErrorForLGFailure(LgPaymentwallFailure error, {bool restoring = false}) =>
+      switch (error.kind) {
+        LgPaymentwallFailureKind.unauthorized =>
+          restoring ? SupporterError.paymentNothingToRestore : SupporterError.paymentPurchaseFailed,
+        LgPaymentwallFailureKind.invalidRecoveryCode ||
+        LgPaymentwallFailureKind.identitySwitchNeedsConfirmation ||
+        LgPaymentwallFailureKind.invalidProof => SupporterError.paymentRestoreFailed,
+        LgPaymentwallFailureKind.unavailable =>
+          restoring ? SupporterError.paymentRestoreFailed : SupporterError.paymentServiceUnavailable,
+      };
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (_lgPaymentwallClient == null || !_waitingForLGCheckoutReturn) return;
+    if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
+      _lgCheckoutWentBackground = true;
+    } else if (state == AppLifecycleState.resumed && _lgCheckoutWentBackground) {
+      _waitingForLGCheckoutReturn = false;
+      unawaited(_refreshLGPaymentwall(restoring: false));
     }
   }
 
@@ -1071,7 +1362,7 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
   void _setPurchased(bool purchased) {
     if (isDisposed || _purchased == purchased) return;
     _purchased = purchased;
-    unawaited(_persist(purchased));
+    if (!_isLGPaymentwallBuild) unawaited(_persist(purchased));
     if (purchased) _trialExpiryTimer?.cancel();
     safeNotifyListeners();
   }
@@ -1092,6 +1383,10 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
 
   @override
   void dispose() {
+    if (_lgPaymentwallClient != null) {
+      WidgetsBinding.instance.removeObserver(this);
+      _lgPaymentwallClient.close();
+    }
     _reviewExpiryTimer?.cancel();
     unawaited(_purchaseSubscription?.cancel());
     unawaited(_amazonPurchaseSubscription?.cancel());

@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import stat
 import sys
 import zipfile
@@ -115,10 +116,54 @@ def make_readme(profile: dict[str, Any], args: argparse.Namespace, package_hash:
     ]
     if args.package_verified:
         lines.extend([
-            "The release workflow verified package integrity and source provenance. Physical-device qualification and LG Seller Lounge approval are separate.",
+            "The package integrity and source provenance were verified for this exact IPK. Physical-device qualification and LG Seller Lounge approval are separate.",
+            "",
+        ])
+    if args.store == "lg":
+        lines.extend([
+            "The package profile confirms the paid LG build uses the configured Paymentwall origin, the recorded grant public-key fingerprint, and the fixed one-time USD 2.99 product.",
             "",
         ])
     return "\n".join(lines)
+
+
+def verify_lg_paid_profile(package: Path, provenance_path: Path, version: str, source_commit: str) -> dict[str, Any]:
+    if not re.fullmatch(r"[0-9a-f]{40}", source_commit.lower()):
+        raise ValueError("LG paid handoff requires the exact 40-character source commit")
+    if provenance_path.is_symlink():
+        raise ValueError("refusing symlink LG application provenance")
+    try:
+        provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError("cannot read the LG application provenance file") from exc
+    if not isinstance(provenance, dict):
+        raise ValueError("LG application provenance must be a JSON object")
+
+    webos_tools = str(ROOT / "tools" / "webos")
+    if webos_tools not in sys.path:
+        sys.path.insert(0, webos_tools)
+    try:
+        from verify_package import load_lock, verify_ipk
+
+        report = verify_ipk(package, load_lock())
+    except (OSError, ValueError, KeyError, TypeError, AssertionError) as exc:
+        raise ValueError("LG IPK integrity verification failed") from exc
+    billing_profile = report.get("lgPaymentwallBuild")
+    if (
+        not isinstance(billing_profile, dict)
+        or billing_profile.get("billingMode") != "paid"
+        or billing_profile.get("supporterMode") != "iap"
+    ):
+        raise ValueError("LG handoff requires a paid Paymentwall IPK; tester/off packages are not store submissions")
+    if (
+        provenance.get("sourceCommit") != source_commit.lower()
+        or provenance.get("version") != version
+        or provenance.get("package") != package.name
+        or provenance.get("packageSha256") != report.get("packageSha256")
+        or provenance.get("lgPaymentwallBuild") != billing_profile
+    ):
+        raise ValueError("LG application provenance does not match this paid IPK")
+    return billing_profile
 
 
 def main() -> int:
@@ -134,6 +179,11 @@ def main() -> int:
         action="store_true",
         help="Record that LG package integrity and provenance were verified before bundling.",
     )
+    parser.add_argument(
+        "--webos-provenance",
+        type=Path,
+        help="Exact webos-app-provenance.json bound to this LG paid IPK.",
+    )
     args = parser.parse_args()
 
     try:
@@ -146,10 +196,22 @@ def main() -> int:
             raise ValueError(f"{args.store} packages must end in {profile['package_suffix']}")
         if args.store == "lg" and not args.package_verified:
             raise ValueError("LG handoff bundles require package integrity and provenance verification")
-        if not args.evidence:
-            raise ValueError("at least one package inspection or provenance file must be included")
         if args.package_verified and args.store != "lg":
             raise ValueError("--package-verified is only valid for an LG bundle")
+        lg_paymentwall_profile = None
+        if args.store == "lg":
+            if not args.package_verified:
+                raise ValueError("LG handoff bundles require package integrity and provenance verification")
+            if args.webos_provenance is None:
+                raise ValueError("LG handoff bundles require --webos-provenance for the exact paid IPK")
+            lg_paymentwall_profile = verify_lg_paid_profile(
+                args.package, args.webos_provenance, args.version, args.source_commit
+            )
+        evidence_paths = list(args.evidence)
+        if args.store == "lg" and args.webos_provenance not in evidence_paths:
+            evidence_paths.append(args.webos_provenance)
+        if not evidence_paths:
+            raise ValueError("at least one package inspection or provenance file must be included")
 
         package_bytes = read_regular_file(args.package)
         if not package_bytes:
@@ -158,7 +220,7 @@ def main() -> int:
         entries: dict[str, bytes] = {}
         archive_file(entries, "package", args.package)
         seen_evidence: set[str] = set()
-        for evidence in args.evidence:
+        for evidence in evidence_paths:
             if evidence.name in seen_evidence or evidence.name == args.package.name:
                 raise ValueError(f"duplicate evidence filename: {evidence.name}")
             seen_evidence.add(evidence.name)
@@ -192,6 +254,7 @@ def main() -> int:
                 "passed for this exact LG candidate" if args.package_verified
                 else "not asserted by the bundle builder"
             ),
+            "lg_paymentwall_build": lg_paymentwall_profile,
             "submission": {
                 "method": "manual seller-portal upload",
                 "automated_upload_supported": False,

@@ -24,7 +24,7 @@ class DeliveryTests(unittest.TestCase):
             pleazyng-linux-x64.tar.gz pleazyng-linux-arm64.tar.gz pleazyng-windows-x64-portable.7z
             pleazyng-windows-arm64-portable.zip pleazyng-macos.dmg pleazyng-ios-unsigned.ipa
             pleazyng-tvos-unsigned.ipa pleazyng-tizen-arm-tester-handoff.zip
-            org.snapetech.pleazyng_3.0.30_arm.ipk webos-SHA256SUMS.txt pleazyng-lg-webos-submission.zip'''.split())
+            org.snapetech.pleazyng_3.0.30_arm.ipk webos-SHA256SUMS.txt'''.split())
         names.update({'pleazyng-android-play.aab', 'SHA256SUMS.txt'})
         return {'tag_name': 'v3.0.30', 'draft': False, 'prerelease': False,
                 'assets': [{'name': name, 'size': 1} for name in names]}

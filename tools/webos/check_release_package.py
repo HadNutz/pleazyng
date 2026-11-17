@@ -25,6 +25,8 @@ def verify(artifact: Path, source_commit: str, version: str) -> dict:
         raise ValueError('webOS package differs from its recorded SHA-256')
     if provenance.get('package') != artifact.name:
         raise ValueError('webOS provenance names a different package')
+    if provenance.get('lgPaymentwallBuild') != report.get('lgPaymentwallBuild'):
+        raise ValueError('webOS billing build provenance differs from the packaged profile')
     return report
 
 

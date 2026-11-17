@@ -12,6 +12,60 @@ IPK_DIR="$ROOT/build/webos/arm/release/ipk"
 : "${WEBOS_PYTHON_BIN:=python3}"
 export WEBOS_PYTHON_BIN
 
+PLEZY_WEBOS_BILLING_MODE="${PLEZY_WEBOS_BILLING_MODE:-tester}"
+LG_PAYMENTWALL_ENABLED=false
+billing_defines=()
+case "$PLEZY_WEBOS_BILLING_MODE" in
+  tester)
+    if [[ -n "${LG_PAYMENTWALL_API_ORIGIN:-}" || -n "${LG_PAYMENTWALL_GRANT_PUBLIC_KEY:-}" ]]; then
+      echo "Tester webOS builds cannot receive Paymentwall configuration." >&2
+      exit 1
+    fi
+    SUPPORTER_MODE=off
+    PLEZY_WEBOS_BILLING_API_ORIGIN=""
+    PLEZY_WEBOS_BILLING_PUBLIC_KEY_SHA256=""
+    ;;
+  paid)
+    : "${LG_PAYMENTWALL_API_ORIGIN:?Paid LG builds require LG_PAYMENTWALL_API_ORIGIN}"
+    : "${LG_PAYMENTWALL_GRANT_PUBLIC_KEY:?Paid LG builds require LG_PAYMENTWALL_GRANT_PUBLIC_KEY}"
+    if [[ "$LG_PAYMENTWALL_API_ORIGIN" != "https://billing.pleazyng.app" ]]; then
+      echo "Paid LG builds must use the fixed dedicated billing origin." >&2
+      exit 1
+    fi
+    SUPPORTER_MODE=iap
+    LG_PAYMENTWALL_ENABLED=true
+    PLEZY_WEBOS_BILLING_API_ORIGIN="$LG_PAYMENTWALL_API_ORIGIN"
+    PLEZY_WEBOS_BILLING_PUBLIC_KEY_SHA256="$(LG_PAYMENTWALL_GRANT_PUBLIC_KEY="$LG_PAYMENTWALL_GRANT_PUBLIC_KEY" "$WEBOS_PYTHON_BIN" - <<'PYKEY'
+import base64
+import hashlib
+import os
+import re
+import sys
+
+text = os.environ["LG_PAYMENTWALL_GRANT_PUBLIC_KEY"]
+if not re.fullmatch(r"[A-Za-z0-9_-]{43}", text):
+    raise SystemExit("LG grant public key must be unpadded base64url for exactly 32 bytes")
+try:
+    raw = base64.urlsafe_b64decode(text + "=")
+except ValueError as error:
+    raise SystemExit("LG grant public key is invalid base64url") from error
+if len(raw) != 32 or base64.urlsafe_b64encode(raw).decode("ascii").rstrip("=") != text:
+    raise SystemExit("LG grant public key is not the canonical encoding of 32 bytes")
+print(hashlib.sha256(raw).hexdigest())
+PYKEY
+)"
+    billing_defines=(
+      "--dart-define=LG_PAYMENTWALL_API_ORIGIN=$LG_PAYMENTWALL_API_ORIGIN"
+      "--dart-define=LG_PAYMENTWALL_GRANT_PUBLIC_KEY=$LG_PAYMENTWALL_GRANT_PUBLIC_KEY"
+    )
+    ;;
+  *)
+    echo "PLEZY_WEBOS_BILLING_MODE must be tester or paid." >&2
+    exit 1
+    ;;
+esac
+export PLEZY_WEBOS_BILLING_MODE PLEZY_WEBOS_BILLING_API_ORIGIN PLEZY_WEBOS_BILLING_PUBLIC_KEY_SHA256
+
 if [[ -n "${PLEZY_WEBOS_VISUALIZER_NATIVE:-}" || -n "${PLEZY_WEBOS_VISUALIZER_MANIFEST_SHA256:-}" ]]; then
   if [[ -z "${PLEZY_WEBOS_VISUALIZER_NATIVE:-}" || -z "${PLEZY_WEBOS_VISUALIZER_MANIFEST_SHA256:-}" ]]; then
     echo "Set both PLEZY_WEBOS_VISUALIZER_NATIVE and PLEZY_WEBOS_VISUALIZER_MANIFEST_SHA256." >&2
@@ -85,8 +139,8 @@ if ! "$WEBOS_PYTHON_BIN" -c 'import sys; raise SystemExit(0 if sys.version_info 
   exit 1
 fi
 PACKAGER_VERSION="$("$PACKAGER" --version)"
-if [[ "$PACKAGER_VERSION" != "pleazyng-ipk-packager 1" ]]; then
-  echo "The webOS IPK packager version is not pinned to version 1." >&2
+if [[ "$PACKAGER_VERSION" != "pleazyng-ipk-packager 2" ]]; then
+  echo "The webOS IPK packager version is not pinned to version 2." >&2
   exit 1
 fi
 export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-0}"
@@ -121,8 +175,11 @@ flutter-webos build webos \
   --target-arch arm \
   --target-backend-type wayland \
   --dart-define=PLEZY_WEBOS=true \
+  --dart-define="SUPPORTER_MODE=$SUPPORTER_MODE" \
+  --dart-define="LG_PAYMENTWALL_ENABLED=$LG_PAYMENTWALL_ENABLED" \
   --dart-define=ENABLE_UPDATE_CHECK=true \
-  --dart-define="GIT_COMMIT=$GIT_COMMIT"
+  --dart-define="GIT_COMMIT=$GIT_COMMIT" \
+  "${billing_defines[@]}"
 
 if ! git -C "$ROOT" diff --quiet -- webos/flutter/main.dart pubspec.lock; then
   git -C "$ROOT" diff -- webos/flutter/main.dart pubspec.lock >&2
@@ -140,5 +197,37 @@ if [[ -L "${IPKS[0]}" || ! -f "${IPKS[0]}" ]]; then
   exit 1
 fi
 
-"$WEBOS_PYTHON_BIN" "$ROOT/tools/webos/verify_package.py" --ipk "${IPKS[0]}"
+PACKAGE_REPORT="$("$WEBOS_PYTHON_BIN" "$ROOT/tools/webos/verify_package.py" --ipk "${IPKS[0]}")"
+PLEZY_WEBOS_VERIFICATION_REPORT="$PACKAGE_REPORT" "$WEBOS_PYTHON_BIN" - "$IPK_DIR" "${IPKS[0]}" "$GIT_COMMIT" <<'PYPROVENANCE'
+import json
+import os
+import pathlib
+import sys
+import tempfile
+
+output_dir, ipk, commit = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), sys.argv[3]
+report = json.loads(os.environ["PLEZY_WEBOS_VERIFICATION_REPORT"])
+profile = report.get("lgPaymentwallBuild")
+if not isinstance(profile, dict) or report.get("packageSha256") is None:
+    raise ValueError("verified package report is missing billing profile or package digest")
+if ipk.name != f"{report.get('appId')}_{report.get('version')}_arm.ipk" or report.get("appId") != "org.snapetech.pleazyng":
+    raise ValueError("verified package report does not match the built Pleazyng IPK")
+record = {
+    "sourceCommit": commit,
+    "version": report["version"],
+    "package": ipk.name,
+    "packageSha256": report["packageSha256"],
+    "deviceQualification": "not-established-by-build",
+    "lgPaymentwallBuild": profile,
+}
+destination = output_dir / "webos-app-provenance.json"
+if destination.is_symlink():
+    raise ValueError("refusing symlink application provenance output")
+with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=output_dir, prefix=".webos-app-provenance.", delete=False) as stream:
+    temporary = pathlib.Path(stream.name)
+    stream.write(json.dumps(record, indent=2) + "\n")
+    stream.flush()
+    os.fsync(stream.fileno())
+os.replace(temporary, destination)
+PYPROVENANCE
 printf 'Validated release candidate: %s\n' "${IPKS[0]}"

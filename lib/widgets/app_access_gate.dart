@@ -9,6 +9,7 @@ import '../i18n/strings.g.dart';
 import '../services/supporter/supporter_service.dart';
 import '../services/supporter/supporter_mode.dart';
 import 'app_icon.dart';
+import 'lg_paymentwall_recovery_dialog.dart';
 import 'loading_indicator_box.dart';
 import 'store_review_access_button.dart';
 
@@ -29,6 +30,7 @@ class _AppAccessGateState extends State<AppAccessGate> with WidgetsBindingObserv
   late final FocusNode _trialFocusNode = FocusNode(debugLabel: 'app_access_trial');
   late final FocusNode _purchaseFocusNode = FocusNode(debugLabel: 'app_access_purchase');
   late final FocusNode _restoreFocusNode = FocusNode(debugLabel: 'app_access_restore');
+  late final FocusNode _recoveryFocusNode = FocusNode(debugLabel: 'app_access_recovery');
   bool _startingTrial = false;
   String? _trialError;
 
@@ -47,6 +49,7 @@ class _AppAccessGateState extends State<AppAccessGate> with WidgetsBindingObserv
     _trialFocusNode.dispose();
     _purchaseFocusNode.dispose();
     _restoreFocusNode.dispose();
+    _recoveryFocusNode.dispose();
     super.dispose();
   }
 
@@ -107,7 +110,11 @@ class _AppAccessGateState extends State<AppAccessGate> with WidgetsBindingObserv
     final trialProductError = service.shouldOfferTrial ? storeState.trialProductError : null;
     final error = _trialError ?? _localizedError(storeState.error ?? productError ?? trialProductError);
     final busy = storeState.isBusy || storeState.isLoadingProduct || _startingTrial;
-    final description = service.isAppleStoreBuild && service.shouldOfferTrial && storeState.price != null
+    final description = service.isLGPaymentwallBuild
+        ? (service.hasStartedTrial
+              ? t.appAccess.lgPaymentwallTrialEndedDescription
+              : t.appAccess.lgPaymentwallDescription)
+        : service.isAppleStoreBuild && service.shouldOfferTrial && storeState.price != null
         ? t.appAccess.appleTrialDisclosure(price: storeState.price!)
         : service.hasStartedTrial
         ? t.appAccess.trialEndedDescription
@@ -143,7 +150,10 @@ class _AppAccessGateState extends State<AppAccessGate> with WidgetsBindingObserv
                     Text(error, style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.error)),
                   ] else if (storeState.status == SupporterPurchaseStatus.pending) ...[
                     const SizedBox(height: 20),
-                    Text(t.appAccess.pending, textAlign: TextAlign.center),
+                    Text(
+                      service.isLGPaymentwallBuild ? t.appAccess.lgPaymentwallPending : t.appAccess.pending,
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                   const SizedBox(height: 24),
                   if (service.shouldOfferTrial) ...[
@@ -194,12 +204,12 @@ class _AppAccessGateState extends State<AppAccessGate> with WidgetsBindingObserv
                       onPressed:
                           storeState.price == null || busy || storeState.status == SupporterPurchaseStatus.pending
                           ? null
-                          : () => unawaited(service.purchase()),
+                          : _purchase,
                       child: FilledButton.icon(
                         onPressed:
                             storeState.price == null || busy || storeState.status == SupporterPurchaseStatus.pending
                             ? null
-                            : () => unawaited(service.purchase()),
+                            : _purchase,
                         icon: storeState.status == SupporterPurchaseStatus.purchasing || storeState.isLoadingProduct
                             ? const LoadingIndicatorBox()
                             : const AppIcon(Symbols.key_rounded, fill: 1),
@@ -214,15 +224,27 @@ class _AppAccessGateState extends State<AppAccessGate> with WidgetsBindingObserv
                   StoreReviewAccessButton(service: service),
                   FocusableButton(
                     focusNode: _restoreFocusNode,
-                    onPressed: busy ? null : () => unawaited(service.restore()),
+                    onPressed: busy ? null : _restore,
                     child: TextButton.icon(
-                      onPressed: busy ? null : () => unawaited(service.restore()),
+                      onPressed: busy ? null : _restore,
                       icon: storeState.status == SupporterPurchaseStatus.restoring
                           ? const LoadingIndicatorBox()
                           : const AppIcon(Symbols.restore_rounded, fill: 1),
                       label: Text(t.appAccess.restore),
                     ),
                   ),
+                  if (service.isLGPaymentwallBuild) ...[
+                    const SizedBox(height: 4),
+                    FocusableButton(
+                      focusNode: _recoveryFocusNode,
+                      onPressed: busy ? null : _restoreWithRecoveryCode,
+                      child: TextButton.icon(
+                        onPressed: busy ? null : _restoreWithRecoveryCode,
+                        icon: const AppIcon(Symbols.key_rounded, fill: 1),
+                        label: Text(t.appAccess.lgRecoveryImportTitle),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -230,6 +252,26 @@ class _AppAccessGateState extends State<AppAccessGate> with WidgetsBindingObserv
         ),
       ),
     );
+  }
+
+  Future<void> _purchase() async {
+    final service = widget.service;
+    if (service.isLGPaymentwallBuild && !await ensureLGRecoveryCodeSaved(context, service)) return;
+    if (!mounted) return;
+    await service.purchase();
+  }
+
+  Future<void> _restore() async {
+    final service = widget.service;
+    if (service.isLGPaymentwallBuild && !service.hasLGPaymentwallIdentity) {
+      await _restoreWithRecoveryCode();
+      return;
+    }
+    await service.restore();
+  }
+
+  Future<void> _restoreWithRecoveryCode() async {
+    await restoreLGWithRecoveryCodePrompt(context, widget.service);
   }
 
   Future<void> _startTrial() async {
@@ -247,6 +289,10 @@ class _AppAccessGateState extends State<AppAccessGate> with WidgetsBindingObserv
 
   String? _localizedError(SupporterError? error) => switch (error) {
     null => null,
+    SupporterError.paymentServiceUnavailable => t.appAccess.lgPaymentwallUnavailable,
+    SupporterError.paymentRestoreFailed => t.appAccess.lgPaymentwallRestoreFailed,
+    SupporterError.paymentNothingToRestore => t.appAccess.lgPaymentwallNothingToRestore,
+    SupporterError.paymentPurchaseFailed => t.appAccess.lgPaymentwallPurchaseFailed,
     SupporterError.storeUnavailable => t.appAccess.storeUnavailable,
     SupporterError.productNotFound => t.appAccess.productNotFound,
     SupporterError.productQueryFailed => t.appAccess.productQueryFailed,

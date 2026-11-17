@@ -8887,6 +8887,69 @@ class Translations$appAccess$en {
 	/// en: 'No Pleazyng lifetime purchase was found for this store account.'
 	String get nothingToRestore => 'No Pleazyng lifetime purchase was found for this store account.';
 
+	/// en: 'Try every Pleazyng feature free for 7 days, then unlock lifetime access for USD 2.99 with one payment. No subscription or automatic charge.'
+	String get lgPaymentwallDescription => 'Try every Pleazyng feature free for 7 days, then unlock lifetime access for USD 2.99 with one payment. No subscription or automatic charge.';
+
+	/// en: 'Unlock every Pleazyng feature for life with one USD 2.99 payment. No subscription or automatic charge.'
+	String get lgPaymentwallTrialEndedDescription => 'Unlock every Pleazyng feature for life with one USD 2.99 payment. No subscription or automatic charge.';
+
+	/// en: 'Finish checkout in the browser, return to Pleazyng, then restore to verify your purchase.'
+	String get lgPaymentwallPending => 'Finish checkout in the browser, return to Pleazyng, then restore to verify your purchase.';
+
+	/// en: 'The LG payment service is temporarily unavailable. Try again later.'
+	String get lgPaymentwallUnavailable => 'The LG payment service is temporarily unavailable. Try again later.';
+
+	/// en: 'Couldn't verify lifetime access right now. Check your connection and try Restore again.'
+	String get lgPaymentwallRestoreFailed => 'Couldn\'t verify lifetime access right now. Check your connection and try Restore again.';
+
+	/// en: 'No verified Pleazyng lifetime purchase was found for this recovery identity.'
+	String get lgPaymentwallNothingToRestore => 'No verified Pleazyng lifetime purchase was found for this recovery identity.';
+
+	/// en: 'Couldn't open the LG checkout. Try again.'
+	String get lgPaymentwallPurchaseFailed => 'Couldn\'t open the LG checkout. Try again.';
+
+	/// en: 'Save your recovery code'
+	String get lgRecoveryTitle => 'Save your recovery code';
+
+	/// en: 'This code can restore your lifetime purchase on another TV if this TV's secure storage is lost. Save it somewhere private before checkout.'
+	String get lgRecoveryInstructions => 'This code can restore your lifetime purchase on another TV if this TV\'s secure storage is lost. Save it somewhere private before checkout.';
+
+	/// en: 'Anyone with this code can restore access to your purchase. Pleazyng cannot recover it for you.'
+	String get lgRecoveryWarning => 'Anyone with this code can restore access to your purchase. Pleazyng cannot recover it for you.';
+
+	/// en: 'Recovery code'
+	String get lgRecoveryCodeLabel => 'Recovery code';
+
+	/// en: 'This recovery code is invalid or has a typing error.'
+	String get lgRecoveryCodeInvalid => 'This recovery code is invalid or has a typing error.';
+
+	/// en: 'I saved this recovery code somewhere private'
+	String get lgRecoverySaved => 'I saved this recovery code somewhere private';
+
+	/// en: 'Continue to checkout'
+	String get lgRecoveryContinue => 'Continue to checkout';
+
+	/// en: 'Copy code'
+	String get lgRecoveryCopy => 'Copy code';
+
+	/// en: 'Restore with a recovery code'
+	String get lgRecoveryImportTitle => 'Restore with a recovery code';
+
+	/// en: 'Enter the saved code to verify and restore your lifetime purchase.'
+	String get lgRecoveryImportInstructions => 'Enter the saved code to verify and restore your lifetime purchase.';
+
+	/// en: 'This TV already has a saved recovery identity. Your current access remains recoverable with its original code.'
+	String get lgRecoverySwitchWarning => 'This TV already has a saved recovery identity. Your current access remains recoverable with its original code.';
+
+	/// en: 'Switch this TV to the entered recovery identity'
+	String get lgRecoveryConfirmSwitch => 'Switch this TV to the entered recovery identity';
+
+	/// en: 'Verify and restore'
+	String get lgRecoveryRestore => 'Verify and restore';
+
+	/// en: 'Show recovery code'
+	String get lgRecoveryShow => 'Show recovery code';
+
 	/// en: 'Store review access'
 	String get reviewAccess => 'Store review access';
 
@@ -21490,6 +21553,27 @@ extension on Translations {
 			'appAccess.purchaseFailed' => 'The purchase didn\'t go through. Try again.',
 			'appAccess.restoreFailed' => 'Couldn\'t reach the store to restore your purchase. Try again.',
 			'appAccess.nothingToRestore' => 'No Pleazyng lifetime purchase was found for this store account.',
+			'appAccess.lgPaymentwallDescription' => 'Try every Pleazyng feature free for 7 days, then unlock lifetime access for USD 2.99 with one payment. No subscription or automatic charge.',
+			'appAccess.lgPaymentwallTrialEndedDescription' => 'Unlock every Pleazyng feature for life with one USD 2.99 payment. No subscription or automatic charge.',
+			'appAccess.lgPaymentwallPending' => 'Finish checkout in the browser, return to Pleazyng, then restore to verify your purchase.',
+			'appAccess.lgPaymentwallUnavailable' => 'The LG payment service is temporarily unavailable. Try again later.',
+			'appAccess.lgPaymentwallRestoreFailed' => 'Couldn\'t verify lifetime access right now. Check your connection and try Restore again.',
+			'appAccess.lgPaymentwallNothingToRestore' => 'No verified Pleazyng lifetime purchase was found for this recovery identity.',
+			'appAccess.lgPaymentwallPurchaseFailed' => 'Couldn\'t open the LG checkout. Try again.',
+			'appAccess.lgRecoveryTitle' => 'Save your recovery code',
+			'appAccess.lgRecoveryInstructions' => 'This code can restore your lifetime purchase on another TV if this TV\'s secure storage is lost. Save it somewhere private before checkout.',
+			'appAccess.lgRecoveryWarning' => 'Anyone with this code can restore access to your purchase. Pleazyng cannot recover it for you.',
+			'appAccess.lgRecoveryCodeLabel' => 'Recovery code',
+			'appAccess.lgRecoveryCodeInvalid' => 'This recovery code is invalid or has a typing error.',
+			'appAccess.lgRecoverySaved' => 'I saved this recovery code somewhere private',
+			'appAccess.lgRecoveryContinue' => 'Continue to checkout',
+			'appAccess.lgRecoveryCopy' => 'Copy code',
+			'appAccess.lgRecoveryImportTitle' => 'Restore with a recovery code',
+			'appAccess.lgRecoveryImportInstructions' => 'Enter the saved code to verify and restore your lifetime purchase.',
+			'appAccess.lgRecoverySwitchWarning' => 'This TV already has a saved recovery identity. Your current access remains recoverable with its original code.',
+			'appAccess.lgRecoveryConfirmSwitch' => 'Switch this TV to the entered recovery identity',
+			'appAccess.lgRecoveryRestore' => 'Verify and restore',
+			'appAccess.lgRecoveryShow' => 'Show recovery code',
 			'appAccess.reviewAccess' => 'Store review access',
 			'appAccess.reviewAccessActive' => 'Store review access active',
 			'appAccess.reviewAccessInstructions' => 'Enter the review code provided in the store review instructions. This does not make a purchase.',
@@ -21668,6 +21752,8 @@ extension on Translations {
 			'universalMedia.uploadSelected' => 'Upload selected files',
 			'universalMedia.uploadSelectFirst' => 'Choose one or more files first.',
 			'universalMedia.uploading' => 'Sending',
+			_ => null,
+		} ?? switch (path) {
 			'universalMedia.uploadComplete' => 'File added to Pleazyng.',
 			'universalMedia.uploadFailed' => 'The file could not be added. Keep this page open and try again.',
 			'universalMedia.liveCue' => 'LIVE',
@@ -21689,8 +21775,6 @@ extension on Translations {
 			'universalMedia.view360Yaw' => 'Horizontal view',
 			'universalMedia.view360Pitch' => 'Vertical view',
 			'universalMedia.view360FieldOfView' => 'Field of view',
-			_ => null,
-		} ?? switch (path) {
 			'universalMedia.recordStream' => 'Record live stream',
 			'universalMedia.stopRecording' => 'Stop and save recording',
 			'universalMedia.recordingStarted' => 'Recording is active. Leaving playback stops and saves the recording.',
@@ -22182,6 +22266,8 @@ extension on Translations {
 			'sourceSetup.videoDetailsLoading' => 'Loading video details',
 			'sourceSetup.subtitleKeyRequired' => 'OpenSubtitles API key required',
 			'sourceSetup.subtitleKeyHelp' => 'Edit this file source and add an OpenSubtitles API key in its optional subtitle settings.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.subtitleSearchFailed' => 'Subtitle search failed. Check the API key, connection, and service access.',
 			'sourceSetup.subtitleApplyFailed' => 'Could not download or apply this subtitle. Check your connection and try another result.',
 			'sourceSetup.subtitleSearch' => 'Search OpenSubtitles',
@@ -22203,8 +22289,6 @@ extension on Translations {
 			'sourceSetup.httpUnencrypted' => 'HTTP without transport encryption',
 			'sourceSetup.checkEndpointSecurity' => 'Check endpoint security',
 			'sourceSetup.fieldRequired' => ({required Object label}) => '${label} is required.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.integerRange' => ({required Object label, required Object min, required Object max}) => 'Enter ${label} from ${min} to ${max}.',
 			'sourceSetup.replaceFile' => ({required Object name}) => 'Replace ${name}',
 			'sourceSetup.selectedIdentity' => ({required Object name}) => 'Selected client identity: ${name}',
@@ -22696,6 +22780,8 @@ extension on Translations {
 			'subtitleAiUi.automaticSync' => 'Automatic sync',
 			'subtitleAiUi.cutRepairLowercase' => 'cut repair',
 			'subtitleAiUi.syncLowercase' => 'sync',
+			_ => null,
+		} ?? switch (path) {
 			'subtitleAiUi.subtitleReferenceSync' => 'Subtitle-reference sync',
 			'subtitleAiUi.capturedEvidenceTimingNote' => 'Cues outside captured evidence kept their original timing. ',
 			'subtitleAiUi.uploadedToServerLibraryNote' => ' Uploaded to the server library.',
@@ -22717,8 +22803,6 @@ extension on Translations {
 			'subtitleAiUi.subtitleEncodingNoCues' => 'No readable subtitle cues were found with this encoding.',
 			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'This file could not be decoded with the selected encoding.',
 			'subtitleAiUi.subtitleEncodingUsePreview' => 'Use this preview',
-			_ => null,
-		} ?? switch (path) {
 			'subtitleAiUi.chooseDifferentLanguagesToUseTransla_db4d6e3a' => 'Choose different languages to use translated text for matching.',
 			'subtitleAiUi.chooseTheSubtitleThatNeedsSynchronization' => 'Choose the subtitle that needs synchronization…',
 			'subtitleAiUi.chooseASynchronizedSubtitleInAnotherLanguage' => 'Choose a synchronized subtitle in another language…',
@@ -23210,6 +23294,8 @@ extension on Translations {
 			'karaokeUi.splitSpan' => 'Split span',
 			'karaokeUi.mergeWithNext' => 'Merge with next',
 			'karaokeUi.firstSyllable' => 'First segment text',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.secondSyllable' => 'Second segment text',
 			'karaokeUi.splitBoundaryMs' => 'Split boundary (ms)',
 			'karaokeUi.syllableTextMustMatchLyricExactly' => 'The segments must reproduce the lyric exactly, including spaces.',
@@ -23231,8 +23317,6 @@ extension on Translations {
 			'karaokeUi.addNote' => 'Add note',
 			'karaokeUi.tapLine' => ({required Object value1}) => 'Tap line ${value1}',
 			'karaokeUi.resetTapCursor' => 'Reset tap cursor',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.export' => ({required Object value1}) => 'Export ${value1}',
 			'karaokeUi.lyricOffsetMs' => ({required Object value1}) => 'Lyric offset: ${value1} ms',
 			'karaokeUi.iAuditionedThisChartAndVerifiedTheNotesParts' => 'I auditioned this chart and verified the notes, parts and timing',

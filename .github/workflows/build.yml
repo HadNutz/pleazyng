@@ -1194,7 +1194,7 @@ jobs:
             --version "$RELEASE_TAG" --source-commit "$COMPILE_SOURCE_SHA" \
             --artifact "${ipks[0]}"
 
-      - name: Prepare LG Seller Lounge handoff bundle
+      - name: Prepare LG Seller Lounge handoff bundle for a paid IPK
         if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_webos_release == 'true' }}
         env:
           OUTPUT_DIR: ${{ steps.webos-build.outputs.output_dir }}
@@ -1203,6 +1203,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          BILLING_MODE="$(python3 -c 'import json,os; print(json.load(open(os.path.join(os.environ["OUTPUT_DIR"], "webos-app-provenance.json")))["lgPaymentwallBuild"]["billingMode"])')"
+          if [[ "$BILLING_MODE" == tester ]]; then
+            echo "Skipping LG Seller Lounge handoff: this core release contains an off/tester IPK."
+            exit 0
+          fi
+          if [[ "$BILLING_MODE" != paid ]]; then
+            echo "Unknown LG billing mode in WebOS provenance: $BILLING_MODE" >&2
+            exit 1
+          fi
           mapfile -t ipks < <(find "$OUTPUT_DIR" -maxdepth 1 -type f -name '*.ipk' -print)
           if [[ "${#ipks[@]}" -ne 1 ]]; then
             echo "Expected exactly one WebOS IPK for the Seller Lounge bundle." >&2
@@ -1211,6 +1220,7 @@ jobs:
           python3 scripts/tv_store_submission.py --store lg \
             --package "${ipks[0]}" --version "$RELEASE_TAG" \
             --source-commit "$SOURCE_COMMIT" --package-verified \
+            --webos-provenance "$OUTPUT_DIR/webos-app-provenance.json" \
             --evidence "$OUTPUT_DIR/webos-app-provenance.json" \
             --evidence "$OUTPUT_DIR/webos-engine-provenance.json" \
             --evidence "$OUTPUT_DIR/webos-compatibility.json" \
@@ -3897,7 +3907,9 @@ jobs:
             if [[ "$INCLUDE_WEBOS_RELEASE" == "true" ]]; then
               echo artifacts/webos/*.ipk
               echo artifacts/webos/webos-SHA256SUMS.txt
-              echo artifacts/webos/pleazyng-lg-webos-submission.zip
+              if [[ -f artifacts/webos/pleazyng-lg-webos-submission.zip ]]; then
+                echo artifacts/webos/pleazyng-lg-webos-submission.zip
+              fi
             fi
             echo artifacts/ios-ipa/pleazyng-ios-unsigned.ipa
             if [ -f artifacts/ios-ipa/pleazyng-ios-appstore.ipa ]; then

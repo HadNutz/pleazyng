@@ -317,7 +317,7 @@ export PLEZY_WEBOS_VISUALIZER_MANIFEST_SHA256
 tools/webos/build_engine.sh
 
 export WEBOS_ENGINE_LOCAL_PATH="$WEBOS_ENGINE_BUILD_ROOT/artifacts/webos-arm-release.zip"
-tools/webos/build_ipk.sh 2>&1 | tee "$LOG_ROOT/build-ipk.log"
+PLEZY_WEBOS_BILLING_MODE=tester tools/webos/build_ipk.sh 2>&1 | tee "$LOG_ROOT/build-ipk.log"
 
 shopt -s nullglob
 IPKS=("$ROOT/build/webos/arm/release/ipk"/org.snapetech.pleazyng_*_arm.ipk)
@@ -334,20 +334,14 @@ fi
 install -m 644 -- "${IPKS[0]}" "$OUTPUT_ROOT/"
 install -m 644 -- "$ENGINE_PROVENANCE" "$OUTPUT_ROOT/webos-engine-provenance.json"
 install -m 644 -- "$ROOT/tools/webos/compatibility.json" "$OUTPUT_ROOT/webos-compatibility.json"
+APP_PROVENANCE="$(dirname -- "${IPKS[0]}")/webos-app-provenance.json"
+if [[ ! -f "$APP_PROVENANCE" || -L "$APP_PROVENANCE" ]]; then
+  echo "The verified application billing/source provenance file is missing." >&2
+  exit 1
+fi
+install -m 644 -- "$APP_PROVENANCE" "$OUTPUT_ROOT/webos-app-provenance.json"
 PACKAGE_VERSION="$("$JSON_PYTHON" "$ROOT/scripts/pubspec_version.py" "$ROOT/pubspec.yaml")"
 PACKAGE_VERSION="${PACKAGE_VERSION%%+*}"
-"$JSON_PYTHON" - "$OUTPUT_ROOT" "$PLEZY_WEBOS_GIT_COMMIT" "$PACKAGE_VERSION" <<'PYPROVENANCE'
-import hashlib, json, pathlib, sys
-root, commit, version = pathlib.Path(sys.argv[1]), sys.argv[2], sys.argv[3]
-ipk, = root.glob('*.ipk')
-if ipk.name != f'org.snapetech.pleazyng_{version}_arm.ipk':
-    raise ValueError('WebOS package filename differs from the project version')
-with ipk.open('rb') as source:
-    digest = hashlib.file_digest(source, 'sha256').hexdigest()
-record = {'sourceCommit': commit, 'version': version, 'package': ipk.name,
-          'packageSha256': digest, 'deviceQualification': 'not-established-by-build'}
-(root / 'webos-app-provenance.json').write_text(json.dumps(record, indent=2) + '\n')
-PYPROVENANCE
 # Validation mode must exercise the same package/source/version check as release
 # mode, before retaining an apparently successful candidate.
 "$JSON_PYTHON" "$ROOT/tools/webos/check_release_package.py" \

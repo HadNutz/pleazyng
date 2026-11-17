@@ -6,6 +6,7 @@ import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import 'package:plezy/services/base_shared_preferences_service.dart';
 import 'package:plezy/services/settings_service.dart';
+import 'package:plezy/services/supporter/lg_paymentwall_client.dart';
 import 'package:plezy/services/supporter/supporter_mode.dart';
 import 'package:plezy/services/supporter/supporter_service.dart';
 import 'package:plezy/services/supporter/supporter_store.dart';
@@ -130,6 +131,29 @@ void main() {
       expect(service.isAvailable, isFalse);
       expect(service.isUnlocked, isFalse);
       expect(service.hasAccess, isTrue);
+    });
+
+    test('LG paid mode ignores the legacy bare entitlement boolean', () async {
+      await _cacheEntitlement(true);
+      final service = SupporterService.forTesting(
+        availability: SupporterAvailability.purchasable,
+        lgPaymentwallClient: LgPaymentwallClient(
+          enabled: false,
+          apiOrigin: 'https://billing.pleazyng.app',
+          grantPublicKey: '',
+        ),
+      );
+      addTearDown(service.dispose);
+
+      expect(service.isLGPaymentwallBuild, isTrue);
+      expect(service.isUnlocked, isFalse);
+      await service.init();
+
+      expect(service.isReady, isTrue);
+      expect(service.hasLifetimeUnlock, isFalse);
+      expect(service.isUnlocked, isFalse);
+      expect(service.hasStartedTrial, isFalse);
+      expect(await _cachedTrialStartedAt(), 0);
     });
 
     test('a free build is unlocked without any purchase', () async {

@@ -11,6 +11,7 @@ import '../services/supporter/supporter_mode.dart';
 import '../services/supporter/supporter_service.dart';
 import 'app_icon.dart';
 import 'bottom_sheet_header.dart';
+import 'lg_paymentwall_recovery_dialog.dart';
 import 'loading_indicator_box.dart';
 import 'overlay_sheet.dart';
 import 'store_review_access_button.dart';
@@ -46,6 +47,7 @@ class SupporterSheet extends StatefulWidget {
 class _SupporterSheetState extends State<SupporterSheet> {
   late final FocusNode _primaryFocusNode = FocusNode(debugLabel: 'supporter_primary');
   late final FocusNode _restoreFocusNode = FocusNode(debugLabel: 'supporter_restore');
+  late final FocusNode _recoveryFocusNode = FocusNode(debugLabel: 'supporter_recovery');
   late final FocusNode _closeFocusNode = FocusNode(debugLabel: 'supporter_close');
   final ScrollController _scrollController = ScrollController();
 
@@ -64,7 +66,7 @@ class _SupporterSheetState extends State<SupporterSheet> {
     }
   }
 
-  List<FocusNode> get _buttonFocusNodes => [_primaryFocusNode, _restoreFocusNode, _closeFocusNode];
+  List<FocusNode> get _buttonFocusNodes => [_primaryFocusNode, _restoreFocusNode, _recoveryFocusNode, _closeFocusNode];
 
   /// Scrolls a D-pad-focused button into view with as much of the content
   /// above it showing as fits. Nothing above the buttons takes focus, so on a
@@ -108,6 +110,7 @@ class _SupporterSheetState extends State<SupporterSheet> {
     _supporter.storeState.removeListener(_handleChange);
     _primaryFocusNode.dispose();
     _restoreFocusNode.dispose();
+    _recoveryFocusNode.dispose();
     _closeFocusNode.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -154,9 +157,23 @@ class _SupporterSheetState extends State<SupporterSheet> {
     });
   }
 
-  void _buy() => unawaited(_supporter.purchase());
+  void _buy() => unawaited(_buyAfterRecoveryDisclosure());
 
-  void _restore() => unawaited(_supporter.restore());
+  Future<void> _buyAfterRecoveryDisclosure() async {
+    if (_supporter.isLGPaymentwallBuild && !await ensureLGRecoveryCodeSaved(context, _supporter)) return;
+    if (!mounted) return;
+    await _supporter.purchase();
+  }
+
+  void _restore() {
+    if (_supporter.isLGPaymentwallBuild && !_supporter.hasLGPaymentwallIdentity) {
+      unawaited(restoreLGWithRecoveryCodePrompt(context, _supporter));
+      return;
+    }
+    unawaited(_supporter.restore());
+  }
+
+  void _showRecoveryCode() => unawaited(showLGRecoveryCode(context, _supporter));
 
   void _retryProduct() => unawaited(_supporter.loadProduct());
 
@@ -230,7 +247,11 @@ class _SupporterSheetState extends State<SupporterSheet> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          t.appAccess.manageDescription,
+          _supporter.isLGPaymentwallBuild
+              ? (_supporter.hasStartedTrial
+                    ? t.appAccess.lgPaymentwallTrialEndedDescription
+                    : t.appAccess.lgPaymentwallDescription)
+              : t.appAccess.manageDescription,
           style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
         ),
         if (_supporter.isTrialActive) ...[
@@ -243,11 +264,28 @@ class _SupporterSheetState extends State<SupporterSheet> {
         if (state.error ?? productError case final error?)
           _Notice.error(error)
         else if (state.status == SupporterPurchaseStatus.pending)
-          _Notice(icon: Symbols.hourglass_top_rounded, message: t.appAccess.pending, isFailure: false),
+          _Notice(
+            icon: Symbols.hourglass_top_rounded,
+            message: _supporter.isLGPaymentwallBuild ? t.appAccess.lgPaymentwallPending : t.appAccess.pending,
+            isFailure: false,
+          ),
         const SizedBox(height: 4),
         if (productError != null) _buildRetryButton() else _buildBuyButton(state),
         const SizedBox(height: 8),
         _buildRestoreButton(state),
+        if (_supporter.isLGPaymentwallBuild) ...[
+          const SizedBox(height: 4),
+          FocusableButton(
+            focusNode: _recoveryFocusNode,
+            onPressed: state.isBusy ? null : _showRecoveryCode,
+            autoScroll: false,
+            child: TextButton.icon(
+              onPressed: state.isBusy ? null : _showRecoveryCode,
+              icon: const AppIcon(Symbols.key_rounded, fill: 1),
+              label: Text(t.appAccess.lgRecoveryShow),
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -255,7 +293,10 @@ class _SupporterSheetState extends State<SupporterSheet> {
   Widget _buildBuyButton(SupporterStoreState state) {
     final price = state.price;
     final onBuy = price != null && !state.isBusy && state.status != SupporterPurchaseStatus.pending ? _buy : null;
-    final showSpinner = state.isLoadingProduct || state.status == SupporterPurchaseStatus.purchasing;
+    final showSpinner =
+        state.isLoadingProduct ||
+        state.status == SupporterPurchaseStatus.purchasing ||
+        state.status == SupporterPurchaseStatus.preparingRecovery;
     return FocusableButton(
       focusNode: _primaryFocusNode,
       useBackgroundFocus: true,
@@ -311,6 +352,10 @@ class _Notice extends StatelessWidget {
     : this(
         icon: error == SupporterError.nothingToRestore ? Symbols.info_rounded : Symbols.error_rounded,
         message: switch (error) {
+          SupporterError.paymentServiceUnavailable => t.appAccess.lgPaymentwallUnavailable,
+          SupporterError.paymentRestoreFailed => t.appAccess.lgPaymentwallRestoreFailed,
+          SupporterError.paymentNothingToRestore => t.appAccess.lgPaymentwallNothingToRestore,
+          SupporterError.paymentPurchaseFailed => t.appAccess.lgPaymentwallPurchaseFailed,
           SupporterError.storeUnavailable => t.appAccess.storeUnavailable,
           SupporterError.productNotFound => t.appAccess.productNotFound,
           SupporterError.productQueryFailed => t.appAccess.productQueryFailed,
@@ -320,7 +365,7 @@ class _Notice extends StatelessWidget {
           SupporterError.trialProductNotFound => t.appAccess.trialProductNotFound,
           SupporterError.trialProductInvalid => t.appAccess.trialProductInvalid,
         },
-        isFailure: error != SupporterError.nothingToRestore,
+        isFailure: error != SupporterError.nothingToRestore && error != SupporterError.paymentNothingToRestore,
       );
 
   final IconData icon;

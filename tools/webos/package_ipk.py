@@ -24,7 +24,7 @@ APP_ID_PATTERN = re.compile(r"^[a-z0-9.+-]+$")
 VERSION_PATTERN = re.compile(r"^(?:[1-9][0-9]{0,8}|0)\.(?:[1-9][0-9]{0,8}|0)\.(?:[1-9][0-9]{0,8}|0)$")
 AR_MAGIC = b"!<arch>\n"
 AR_BLOCK = 60
-PACKAGER_VERSION = "1"
+PACKAGER_VERSION = "2"
 MAINTAINER = "SnapeTech <noreply@github.com>"
 DESCRIPTION = "Plex media client for LG webOS TVs."
 ROOT = Path(__file__).resolve().parents[2]
@@ -35,6 +35,9 @@ VISUALIZER_FILES = {
     "milkrust-source.tar.gz": ("sourceArchiveSha256", 256 * 1024 * 1024),
     "MILKRUST-NOTICES.txt": ("noticesSha256", 1024 * 1024),
 }
+PAYMENTWALL_BUILD_METADATA = "lg-paymentwall-build.json"
+PAYMENTWALL_API_ORIGIN = "https://billing.pleazyng.app"
+PAYMENTWALL_PRODUCT_ID = "pleazyng_lifetime_unlock"
 
 
 class PackageError(ValueError):
@@ -271,6 +274,65 @@ def _validate_app(app_dir: Path, output_dir: Path) -> tuple[dict[str, object], s
     return appinfo, app_id
 
 
+def paymentwall_build_profile(
+    billing_mode: str,
+    *,
+    api_origin: str | None = None,
+    public_key_sha256: str | None = None,
+) -> dict[str, object]:
+    if billing_mode == "tester":
+        if api_origin is not None or public_key_sha256 is not None:
+            raise PackageError("tester IPKs cannot contain Paymentwall configuration")
+        supporter_mode = "off"
+        paymentwall = {
+            "enabled": False,
+            "apiOrigin": None,
+            "grantPublicKeySha256": None,
+            "productId": None,
+            "currency": None,
+            "amountCents": None,
+        }
+    elif billing_mode == "paid":
+        if api_origin != PAYMENTWALL_API_ORIGIN or not re.fullmatch(r"[0-9a-f]{64}", public_key_sha256 or ""):
+            raise PackageError("paid LG IPKs require the fixed billing origin and a public-key SHA-256")
+        supporter_mode = "iap"
+        paymentwall = {
+            "enabled": True,
+            "apiOrigin": PAYMENTWALL_API_ORIGIN,
+            "grantPublicKeySha256": public_key_sha256,
+            "productId": PAYMENTWALL_PRODUCT_ID,
+            "currency": "USD",
+            "amountCents": 299,
+        }
+    else:
+        raise PackageError("LG billing mode must be tester or paid")
+    return {
+        "schemaVersion": 1,
+        "target": "webos-arm",
+        "billingMode": billing_mode,
+        "supporterMode": supporter_mode,
+        "paymentwall": paymentwall,
+    }
+
+
+def _write_paymentwall_build_profile(app_dir: Path, profile: dict[str, object]) -> None:
+    path = app_dir / PAYMENTWALL_BUILD_METADATA
+    if path.is_symlink():
+        raise PackageError("LG billing build metadata cannot be a symlink")
+    if path.exists():
+        if not path.is_file():
+            raise PackageError("LG billing build metadata must be a regular file")
+        try:
+            existing = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise PackageError("existing LG billing build metadata is invalid") from exc
+        if existing != profile:
+            raise PackageError("existing LG billing build metadata differs from this build configuration")
+        return
+    path.write_text(json.dumps(profile, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.chmod(0o644)
+
+
 def _tree_size(root: Path) -> int:
     """Return the stable installed byte count used in the IPK control field."""
     total = 0
@@ -298,7 +360,7 @@ def _write_control_tar(destination: Path, package_id: str, version: str, install
         f"Maintainer: {MAINTAINER}\n"
         f"Description: {DESCRIPTION}\n"
         "webOS-Package-Format-Version: 2\n"
-        "webOS-Packager-Version: pleazyng-python-1\n"
+        "webOS-Packager-Version: pleazyng-python-2\n"
         "\n"
     ).encode("utf-8")
     with destination.open("wb") as output:
@@ -374,6 +436,9 @@ def package(
     *,
     visualizer_native: Path | None = None,
     visualizer_manifest_sha256: str | None = None,
+    lg_billing_mode: str = "tester",
+    lg_paymentwall_api_origin: str | None = None,
+    lg_paymentwall_public_key_sha256: str | None = None,
 ) -> Path:
     if output_dir.is_symlink() or not output_dir.is_dir():
         raise PackageError("IPK output directory must be a regular directory")
@@ -384,6 +449,12 @@ def package(
     expected_data_root = output_real / "data"
     if not (app_real == expected_data_root / "usr/palm/applications" / app_id):
         raise PackageError("app directory is not the expected IPK staging tree")
+    profile = paymentwall_build_profile(
+        lg_billing_mode,
+        api_origin=lg_paymentwall_api_origin,
+        public_key_sha256=lg_paymentwall_public_key_sha256,
+    )
+    _write_paymentwall_build_profile(app_real, profile)
     if bool(visualizer_native) != bool(visualizer_manifest_sha256):
         raise PackageError("Specify both the MilkRust bundle and its manifest SHA-256")
     if visualizer_native is not None:
@@ -457,6 +528,12 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("-o", "--outdir", type=Path, required=True)
     parser.add_argument("--visualizer-native", type=Path, help="Complete source-built MilkRust ARM bundle required by the standard release path")
     parser.add_argument("--visualizer-manifest-sha256", help="Expected SHA-256 of milkrust-native.json")
+    parser.add_argument("--lg-billing-mode", choices=("tester", "paid"), default=os.environ.get("PLEZY_WEBOS_BILLING_MODE", "tester"))
+    parser.add_argument("--lg-paymentwall-api-origin", default=os.environ.get("PLEZY_WEBOS_BILLING_API_ORIGIN") or None)
+    parser.add_argument(
+        "--lg-paymentwall-public-key-sha256",
+        default=os.environ.get("PLEZY_WEBOS_BILLING_PUBLIC_KEY_SHA256") or None,
+    )
     return parser.parse_args(argv)
 
 
@@ -472,6 +549,9 @@ def main(argv: list[str] | None = None) -> int:
             args.outdir,
             visualizer_native=args.visualizer_native,
             visualizer_manifest_sha256=args.visualizer_manifest_sha256,
+            lg_billing_mode=args.lg_billing_mode,
+            lg_paymentwall_api_origin=args.lg_paymentwall_api_origin,
+            lg_paymentwall_public_key_sha256=args.lg_paymentwall_public_key_sha256,
         )
         digest = hashlib.sha256()
         with result.open("rb") as packaged:

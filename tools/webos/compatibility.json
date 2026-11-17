@@ -204,7 +204,7 @@
   },
   "packager": {
     "path": "tools/webos/package_ipk.py",
-    "version": 1,
+    "version": 2,
     "runtime": "Python 3.10+ standard library only",
     "archive": "IPK v2 with USTAR payloads and deterministic gzip headers"
   },

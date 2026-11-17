@@ -41,6 +41,7 @@ VISUALIZER_HELPER = str(APP_ROOT / "lib/plezy_visualizer_helper")
 VISUALIZER_HOST_SOURCE = str(APP_ROOT / "visualizer/visualizer-host-source.tar.gz")
 VISUALIZER_SOURCE = str(APP_ROOT / "visualizer/milkrust-source.tar.gz")
 VISUALIZER_NOTICES = str(APP_ROOT / "visualizer/MILKRUST-NOTICES.txt")
+PAYMENTWALL_BUILD_METADATA = str(APP_ROOT / "lg-paymentwall-build.json")
 VISUALIZER_ARTIFACTS = {
     VISUALIZER_MANIFEST,
     VISUALIZER_HELPER,
@@ -49,6 +50,8 @@ VISUALIZER_ARTIFACTS = {
     VISUALIZER_SOURCE,
     VISUALIZER_NOTICES,
 }
+PAYMENTWALL_API_ORIGIN = "https://billing.pleazyng.app"
+PAYMENTWALL_PRODUCT_ID = "pleazyng_lifetime_unlock"
 VISUALIZER_FILES = {
     VISUALIZER_LIBRARY: ("librarySha256", 256 * 1024 * 1024),
     VISUALIZER_HELPER: ("helperSha256", 32 * 1024 * 1024),
@@ -294,6 +297,61 @@ def inspect_visualizer(entries: dict[str, bytes]) -> dict[str, object]:
     }
 
 
+def inspect_paymentwall_build(raw: bytes) -> dict[str, object]:
+    if not raw or len(raw) > 16 * 1024:
+        raise ValueError("LG billing build metadata is empty or exceeds 16 KiB")
+    try:
+        profile = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError("LG billing build metadata is not valid JSON") from exc
+    if not isinstance(profile, dict) or profile.get("schemaVersion") != 1 or profile.get("target") != "webos-arm":
+        raise ValueError("LG billing build metadata has an unsupported schema or target")
+    mode = profile.get("billingMode")
+    if mode == "tester":
+        expected = {
+            "schemaVersion": 1,
+            "target": "webos-arm",
+            "billingMode": "tester",
+            "supporterMode": "off",
+            "paymentwall": {
+                "enabled": False,
+                "apiOrigin": None,
+                "grantPublicKeySha256": None,
+                "productId": None,
+                "currency": None,
+                "amountCents": None,
+            },
+        }
+    elif mode == "paid":
+        paymentwall = profile.get("paymentwall")
+        if (
+            profile.get("supporterMode") != "iap"
+            or not isinstance(paymentwall, dict)
+            or paymentwall.get("apiOrigin") != PAYMENTWALL_API_ORIGIN
+            or not re.fullmatch(r"[0-9a-f]{64}", str(paymentwall.get("grantPublicKeySha256", "")))
+        ):
+            raise ValueError("paid LG build metadata is missing its fixed backend or public-key fingerprint")
+        expected = {
+            "schemaVersion": 1,
+            "target": "webos-arm",
+            "billingMode": "paid",
+            "supporterMode": "iap",
+            "paymentwall": {
+                "enabled": True,
+                "apiOrigin": PAYMENTWALL_API_ORIGIN,
+                "grantPublicKeySha256": paymentwall["grantPublicKeySha256"],
+                "productId": PAYMENTWALL_PRODUCT_ID,
+                "currency": "USD",
+                "amountCents": 299,
+            },
+        }
+    else:
+        raise ValueError("LG billing build metadata must identify tester or paid mode")
+    if profile != expected:
+        raise ValueError("LG billing build metadata contains unexpected or inconsistent fields")
+    return profile
+
+
 def load_lock() -> dict[str, object]:
     try:
         return json.loads(LOCK_PATH.read_text(encoding="utf-8"))
@@ -383,7 +441,7 @@ def verify_ipk(path: Path, lock: dict[str, object]) -> dict[str, object]:
         raise ValueError("IPK control installed size is invalid")
     if control_fields.get("webOS-Package-Format-Version") != "2":
         raise ValueError("IPK control metadata has an unsupported webOS package format")
-    if control_fields.get("webOS-Packager-Version") != "pleazyng-python-1":
+    if control_fields.get("webOS-Packager-Version") != "pleazyng-python-2":
         raise ValueError("IPK was not produced by the pinned Pleazyng packager")
     if control_fields.get("Maintainer") != EXPECTED_MAINTAINER:
         raise ValueError("IPK control metadata does not identify the Pleazyng maintainer")
@@ -397,7 +455,7 @@ def verify_ipk(path: Path, lock: dict[str, object]) -> dict[str, object]:
     library_paths = [str(APP_ROOT / "lib" / name) for name in (*RUNTIME_LIBRARIES, *REQUIRED_NATIVE_LIBRARIES)]
     selected = read_tar_members(
         data_tar,
-        {appinfo_path, executable_path, package_info_path, notice_path, *library_paths},
+        {appinfo_path, executable_path, package_info_path, notice_path, PAYMENTWALL_BUILD_METADATA, *library_paths},
         optional=VISUALIZER_ARTIFACTS,
     )
     appinfo = json.loads(selected[appinfo_path])
@@ -442,6 +500,7 @@ def verify_ipk(path: Path, lock: dict[str, object]) -> dict[str, object]:
         raise ValueError("IPK is missing the exact LG runtime OSS notice asset")
 
     visualizer = inspect_visualizer(selected)
+    paymentwall_build = inspect_paymentwall_build(selected[PAYMENTWALL_BUILD_METADATA])
 
     return {
         "appId": APP_ID,
@@ -451,6 +510,7 @@ def verify_ipk(path: Path, lock: dict[str, object]) -> dict[str, object]:
         "packageBytes": path.stat().st_size,
         "requiredACG": sorted(required_acg),
         "visualizer": visualizer,
+        "lgPaymentwallBuild": paymentwall_build,
     }
 
 
