@@ -4,10 +4,12 @@
 import argparse
 import ast
 import base64
-import hashlib
+from datetime import datetime
 from functools import lru_cache
+import hashlib
 import json
 import os
+import plistlib
 import re
 import stat
 import subprocess
@@ -17,6 +19,7 @@ import zipfile
 from pathlib import Path, PurePosixPath
 
 import verify_release_ci as release_ci
+import verify_release_attestation
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -65,6 +68,16 @@ ARTIFACTS = {
     "windows-chocolatey": "windows-chocolatey", "linux-x64": "linux-x64",
     "linux-arm64": "linux-arm64", "linux-x64-appimage": "linux-x64",
 }
+TVOS_RUNTIME_RECEIPT = "tvos-runtime-dependency-receipt.json"
+TVOS_RUNTIME_SYSTEM_PREFIXES = ("/System/Library/", "/System/iOSSupport/", "/usr/lib/")
+TVOS_MACHO_MAGICS = frozenset(bytes.fromhex(value) for value in (
+    "feedface", "cefaedfe", "feedfacf", "cffaedfe",
+    "cafebabe", "bebafeca", "cafebabf", "bfbafeca",
+))
+TVOS_DYLIB_LOAD_COMMANDS = frozenset({
+    "LC_LOAD_DYLIB", "LC_LOAD_WEAK_DYLIB", "LC_REEXPORT_DYLIB",
+    "LC_LOAD_UPWARD_DYLIB", "LC_LAZY_LOAD_DYLIB",
+})
 
 
 class RecoveryError(RuntimeError):
@@ -363,7 +376,8 @@ def verify_frozen_tvos_run(run_id, proof, repository=REPOSITORY):
             raise RecoveryError('TV sibling assembly did not stop before publication')
     for job, required in ((selected['Validate release request'], (
             'Verify approved frozen packaging checkout', 'Verify reusable platform source')),
-            (selected[tv_name], ('Build tvOS app', 'Build signed tvOS App Store IPA',
+            (selected[tv_name], ('Build tvOS app', 'Package unsigned tvOS developer IPA',
+             'Build signed tvOS App Store IPA', 'Verify tvOS runtime dependencies',
              'Attest unsigned tvOS developer package', 'Attest signed tvOS App Store package', 'Upload tvOS package'))):
         for name in required:
             steps = [step for step in job.get('steps', []) if step.get('name') == name]
@@ -383,7 +397,9 @@ def verify_frozen_tvos_run(run_id, proof, repository=REPOSITORY):
             or metadata.get('workflow_run', {}).get('head_sha') != workflow):
         raise RecoveryError('TV artifact metadata differs from its approved workflow producer')
     return {'source_run_id': int(run_id), 'source_sha': packaging, 'workflow_source_sha': workflow,
-            'product_source_sha': proof['product_source_sha'], 'original_source_run_id': proof['source_run_id'],
+            'product_source_sha': proof['product_source_sha'], 'packaging_source_sha': packaging,
+            'version': proof['version'], 'runtime_dependency_receipt_required': True,
+            'original_source_run_id': proof['source_run_id'],
             'job_id': selected[tv_name]['id'], 'run_attempt': run['run_attempt'],
             'packaging_approval': prior['packaging_approval'], 'artifact_id': artifact['id'],
             'artifact_digest': artifact['digest'], 'platforms_complete': True}
@@ -499,10 +515,11 @@ def verify_completed_tvos_run(run_id, proof, repository=REPOSITORY):
         raise RecoveryError('Completed tvOS artifact metadata differs from its trusted producer')
     return {'source_run_id': int(run_id), 'source_sha': proof['packaging_source_sha'],
             'workflow_source_sha': workflow, 'product_source_sha': proof['product_source_sha'],
+            'packaging_source_sha': proof['packaging_source_sha'], 'version': version,
             'original_source_run_id': proof['source_run_id'], 'job_id': tvos['id'],
             'run_attempt': run['run_attempt'], 'packaging_approval': approval,
             'artifact_id': artifact['id'], 'artifact_digest': artifact['digest'],
-            'platforms_complete': True}
+            'platforms_complete': True, 'runtime_dependency_receipt_required': True}
 
 
 def verify_frozen_ios_run(run_id, proof, repository=REPOSITORY):
@@ -651,6 +668,7 @@ def verify_frozen_apple_run(run_id, proof, repository=REPOSITORY):
                           'Retain iOS signing report', 'Remove iOS signing archive outputs',
                           'Upload IPA', 'Remove short iOS build workspace')),
             (tvos, 'tvos', ('Build tvOS app', 'Package unsigned tvOS developer IPA',
+                            'Verify tvOS runtime dependencies',
                             'Build signed tvOS App Store IPA', 'Attest unsigned tvOS developer package',
                             'Attest signed tvOS App Store package', 'Retain tvOS signing report',
                             'Remove tvOS signing archive outputs', 'Upload tvOS package',
@@ -718,6 +736,8 @@ def verify_frozen_apple_run(run_id, proof, repository=REPOSITORY):
         sources[platform] = {
             'source_run_id': int(run_id), 'source_sha': packaging,
             'workflow_source_sha': workflow, 'product_source_sha': proof['product_source_sha'],
+            **({'packaging_source_sha': packaging, 'version': proof['version'],
+                'runtime_dependency_receipt_required': True} if platform == 'tvos' else {}),
             'original_source_run_id': proof['source_run_id'], 'job_id': job['id'],
             'run_attempt': run['run_attempt'], 'packaging_approval': prior['packaging_approval'],
             'artifact_id': artifact['id'], 'artifact_digest': artifact['digest'],
@@ -879,9 +899,30 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
             if rebuilt or name in pending_jobs:
                 continue
             job = next(job for job in jobs if job.get('name') == name)
-            if not any(item.get('name') == step and item.get('conclusion') == 'success'
-                       and item.get('status') == 'completed' for item in job.get('steps', [])):
-                raise RecoveryError(f'Reusable Apple platform lacks its actual signed Store archive: {name}')
+            if name == 'Build tvOS developer package (arm64)':
+                required_steps = (step, 'Package unsigned tvOS developer IPA',
+                                  'Attest unsigned tvOS developer package', 'Verify tvOS runtime dependencies')
+            else:
+                required_steps = (step,)
+            for required_step in required_steps:
+                matches = [item for item in job.get('steps', []) if item.get('name') == required_step]
+                if (len(matches) != 1 or matches[0].get('conclusion') != 'success'
+                        or matches[0].get('status') != 'completed'):
+                    raise RecoveryError(
+                        f'Reusable Apple platform lacks a required signed Store qualification step: {name}/{required_step}')
+    if not rebuild_tvos:
+        tvos_job = next(job for job in jobs if job.get('name') == 'Build tvOS developer package (arm64)')
+        if 'Build tvOS developer package (arm64)' not in pending_jobs:
+            for required_step in (
+                    'Package unsigned tvOS developer IPA',
+                    'Verify tvOS runtime dependencies',
+                    'Attest unsigned tvOS developer package',
+                    'Upload tvOS package'):
+                matches = [item for item in tvos_job.get('steps', []) if item.get('name') == required_step]
+                if (len(matches) != 1 or matches[0].get('conclusion') != 'success'
+                        or matches[0].get('status') != 'completed'):
+                    raise RecoveryError(
+                        f'Reusable tvOS artifact lacks runtime dependency qualification: {required_step}')
     failures = [job.get("name") for job in jobs
                 if job.get("conclusion") in {"failure", "cancelled", "timed_out"}
                 and job.get("name") not in rebuilt_jobs | set(repaired["reused_jobs"] if repaired else [])
@@ -911,6 +952,7 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
     if require_homebrew_cask and not rebuild_macos and not repaired and macos.get("status") == "completed" and not cask_qualified:
         raise RecoveryError("Reusable Mac build lacks successful notarization and Homebrew Gatekeeper qualification")
     return {"source_run_id": int(run_id), "source_sha": source_sha, "head_sha": head_sha,
+            "run_attempt": source.get("run_attempt"),
             "version": version, "reused_jobs": list(required_jobs),
             "rebuilt_jobs": sorted(rebuilt_jobs), "rebuild_linux": rebuild_linux, "rebuild_macos": rebuild_macos, "rebuild_tvos": rebuild_tvos, "rebuild_ios": rebuild_ios,
             "macos_cask_qualified": repaired["macos_cask_qualified"] if repaired else cask_qualified,
@@ -923,6 +965,7 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
                 'product_source_sha': source_sha, 'packaging_source_sha': head_sha,
                 'workflow_source_sha': workflow_source_sha, 'packaging_approval': frozen_repair,
                 'include_apple_store_build': True} if frozen_repair is not None else {}),
+            **({'runtime_dependency_receipt_required': True} if not rebuild_tvos else {}),
             **({'append_apple_only': True,
                 'reused_release_assets': ['SHA256SUMS.txt', 'pleazyng-macos.dmg']}
                if append_apple_only else {})}
@@ -1146,6 +1189,306 @@ def verify_tvos_package_attestations(directory, source, repository=REPOSITORY):
     return digests
 
 
+def _tvos_product_version_build(source, repository):
+    product_sha = source.get('product_source_sha')
+    if not isinstance(product_sha, str) or not re.fullmatch(r'[0-9a-f]{40}', product_sha):
+        raise RecoveryError('tvOS dependency receipt lacks the exact product source SHA')
+    content = immutable_content(repository, product_sha, 'pubspec.yaml')
+    match = re.search(r'(?m)^version:\s*([0-9]+\.[0-9]+\.[0-9]+)\+([0-9]+)\s*$', content)
+    if not match or match.group(1) != source.get('version'):
+        raise RecoveryError('tvOS dependency receipt product version/build cannot be bound to frozen source')
+    return match.group(1), match.group(2)
+
+
+def _ipa_runtime_inventory(ipa_path, expected_version, expected_build):
+    try:
+        with zipfile.ZipFile(ipa_path) as archive:
+            files = [item for item in archive.infolist() if not item.is_dir()]
+            names = [item.filename for item in files]
+            if len(names) != len(set(names)):
+                raise RecoveryError(f'tvOS IPA contains duplicate ZIP paths: {ipa_path.name}')
+            for name in names:
+                member = PurePosixPath(name)
+                if (member.is_absolute() or '..' in member.parts or '\\' in name or ':' in name
+                        or not member.parts or str(member) != name):
+                    raise RecoveryError(f'tvOS IPA contains an unsafe ZIP path: {name}')
+            app_info_paths = [PurePosixPath(name) for name in names
+                              if PurePosixPath(name).parts[:1] == ('Payload',)
+                              and len(PurePosixPath(name).parts) == 3
+                              and PurePosixPath(name).parts[1].endswith('.app')
+                              and PurePosixPath(name).name == 'Info.plist']
+            if len(app_info_paths) != 1:
+                raise RecoveryError(f'tvOS IPA must have exactly one app Info.plist: {ipa_path.name}')
+            info_path = app_info_paths[0]
+            info_item = archive.getinfo(str(info_path))
+            if stat.S_ISLNK(info_item.external_attr >> 16):
+                raise RecoveryError(f'tvOS IPA app Info.plist is a symlink: {ipa_path.name}')
+            try:
+                app_info = plistlib.loads(archive.read(info_item))
+            except (OSError, plistlib.InvalidFileException, ValueError) as error:
+                raise RecoveryError(f'tvOS IPA app Info.plist is invalid: {ipa_path.name}') from error
+            app_root = info_path.parent
+            if (not isinstance(app_info, dict)
+                    or app_info.get('CFBundleIdentifier') != 'org.snapetech.pleazyng'
+                    or app_info.get('DTPlatformName') != 'appletvos'
+                    or app_info.get('CFBundleShortVersionString') != expected_version
+                    or str(app_info.get('CFBundleVersion')) != expected_build):
+                raise RecoveryError(f'tvOS IPA app identity differs from frozen product: {ipa_path.name}')
+
+            images = {}
+            for item in files:
+                path = PurePosixPath(item.filename)
+                if app_root not in path.parents or stat.S_ISLNK(item.external_attr >> 16):
+                    continue
+                with archive.open(item) as stream:
+                    first = stream.read(4)
+                    if first not in TVOS_MACHO_MAGICS:
+                        continue
+                    digest = hashlib.sha256(first)
+                    for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+                        digest.update(chunk)
+                images[item.filename] = digest.hexdigest()
+            if not images:
+                raise RecoveryError(f'tvOS IPA contains no bundled Mach-O images: {ipa_path.name}')
+            return images
+    except (OSError, zipfile.BadZipFile) as error:
+        raise RecoveryError(f'Cannot inspect tvOS IPA from runtime receipt: {ipa_path.name}') from error
+
+
+def _validate_tvos_runtime_input(record, ipa_path, expected):
+    if not isinstance(record, dict):
+        raise RecoveryError('tvOS dependency receipt input is not an object')
+    identity = {
+        'artifact_name': 'tvos-ipa',
+        'filename': ipa_path.name,
+        'platform': 'tvos',
+        'status': 'passed',
+        'bundle_id': 'org.snapetech.pleazyng',
+        'product_version': expected['product_version'],
+        'product_build': expected['product_build'],
+        'product_source_sha': expected['product_source_sha'],
+        'packaging_source_sha': expected['packaging_source_sha'],
+        'workflow_source_sha': expected['workflow_source_sha'],
+        'run_id': expected['run_id'],
+        'run_attempt': expected['run_attempt'],
+    }
+    if any(record.get(key) != value for key, value in identity.items()):
+        raise RecoveryError(f'tvOS dependency receipt input identity mismatch: {ipa_path.name}')
+    errors = record.get('errors')
+    if not isinstance(errors, list) or errors:
+        raise RecoveryError(f'tvOS dependency receipt reports an input error: {ipa_path.name}')
+    with ipa_path.open('rb') as stream:
+        actual_ipa_sha = hashlib.file_digest(stream, 'sha256').hexdigest()
+    if (not isinstance(record.get('ipa_sha256'), str)
+            or not re.fullmatch(r'[0-9a-f]{64}', record['ipa_sha256'])
+            or record['ipa_sha256'] != actual_ipa_sha):
+        raise RecoveryError(f'tvOS dependency receipt IPA hash mismatch: {ipa_path.name}')
+
+    actual_images = _ipa_runtime_inventory(ipa_path, expected['product_version'], expected['product_build'])
+    image_rows = record.get('macho_images')
+    if not isinstance(image_rows, list) or type(record.get('macho_image_count')) is not int:
+        raise RecoveryError(f'tvOS dependency receipt has no complete Mach-O inventory: {ipa_path.name}')
+    images = {}
+    for image in image_rows:
+        if not isinstance(image, dict):
+            raise RecoveryError(f'tvOS dependency receipt has an invalid Mach-O record: {ipa_path.name}')
+        path = image.get('path')
+        architectures = image.get('architectures')
+        digest = image.get('sha256')
+        pure_path = PurePosixPath(path) if isinstance(path, str) else PurePosixPath('.')
+        if (not isinstance(path, str) or not pure_path.parts or pure_path.is_absolute()
+                or '..' in pure_path.parts or '\\' in path or str(pure_path) != path
+                or not path.startswith('Payload/') or path in images
+                or not isinstance(architectures, list) or not architectures
+                or any(not isinstance(arch, str) or not re.fullmatch(r'[A-Za-z0-9_]+', arch) for arch in architectures)
+                or len(architectures) != len(set(architectures))
+                or not isinstance(digest, str) or not re.fullmatch(r'[0-9a-f]{64}', digest)):
+            raise RecoveryError(f'tvOS dependency receipt has an invalid Mach-O record: {ipa_path.name}')
+        images[path] = {'architectures': set(architectures), 'sha256': digest}
+    if (record['macho_image_count'] != len(images) or set(images) != set(actual_images)
+            or any(images[path]['sha256'] != digest for path, digest in actual_images.items())):
+        raise RecoveryError(f'tvOS dependency receipt Mach-O inventory differs from IPA bytes: {ipa_path.name}')
+
+    policy = expected['verification_policy']
+    dependencies = record.get('dependencies')
+    weak_rows = record.get('unresolved_weak_dependencies')
+    if not isinstance(dependencies, list) or not isinstance(weak_rows, list):
+        raise RecoveryError(f'tvOS dependency receipt has no dependency closure: {ipa_path.name}')
+    unresolved_weak = set()
+    seen_dependencies = set()
+    for dependency in dependencies:
+        if not isinstance(dependency, dict):
+            raise RecoveryError(f'tvOS dependency receipt has an invalid load record: {ipa_path.name}')
+        architecture = dependency.get('architecture')
+        command = dependency.get('command')
+        install_name = dependency.get('install_name')
+        from_image = dependency.get('from_image')
+        resolution = dependency.get('resolution')
+        if (not isinstance(architecture, str) or not isinstance(command, str)
+                or command not in TVOS_DYLIB_LOAD_COMMANDS
+                or not isinstance(install_name, str) or not install_name
+                or not isinstance(from_image, str) or from_image not in images
+                or architecture not in images[from_image]['architectures']):
+            raise RecoveryError(f'tvOS dependency receipt has a foreign or malformed load: {ipa_path.name}')
+        key = (from_image, architecture, command, install_name)
+        if key in seen_dependencies:
+            raise RecoveryError(f'tvOS dependency receipt has duplicate load records: {ipa_path.name}')
+        seen_dependencies.add(key)
+        weak = command == 'LC_LOAD_WEAK_DYLIB'
+        if resolution == 'system':
+            if not any(install_name.startswith(prefix) for prefix in policy['system_prefixes']):
+                raise RecoveryError(f'tvOS dependency receipt classifies a non-system load as system: {install_name}')
+            if dependency.get('resolved_path') is not None or dependency.get('resolved_sha256') is not None:
+                raise RecoveryError(f'tvOS system dependency unexpectedly names a bundled image: {install_name}')
+            continue
+        if resolution == 'bundled':
+            target = dependency.get('resolved_path')
+            target_image = images.get(target) if isinstance(target, str) else None
+            if target_image is None:
+                raise RecoveryError(f'tvOS dependency receipt resolves outside its Mach-O inventory: {install_name}')
+            if architecture in target_image['architectures']:
+                if dependency.get('resolved_sha256') != target_image['sha256']:
+                    raise RecoveryError(f'tvOS dependency receipt resolved image hash mismatch: {install_name}')
+                continue
+            if weak:
+                unresolved_weak.add(key)
+                continue
+            raise RecoveryError(f'tvOS strong dependency lacks a matching architecture: {install_name}')
+        if weak and resolution == 'missing':
+            if dependency.get('resolved_path') is not None or dependency.get('resolved_sha256') is not None:
+                raise RecoveryError(f'tvOS unresolved weak dependency has a false target: {install_name}')
+            unresolved_weak.add(key)
+            continue
+        raise RecoveryError(f'tvOS strong or ambiguous dependency is unresolved: {install_name}')
+
+    listed_weak = set()
+    for item in weak_rows:
+        if not isinstance(item, dict):
+            raise RecoveryError(f'tvOS dependency receipt has an invalid weak-load record: {ipa_path.name}')
+        from_image = item.get('from_image')
+        architecture = item.get('architecture')
+        install_name = item.get('install_name')
+        if (not isinstance(from_image, str) or from_image not in images
+                or not isinstance(architecture, str)
+                or architecture not in images[from_image]['architectures']
+                or not isinstance(install_name, str) or not install_name):
+            raise RecoveryError(f'tvOS dependency receipt has an invalid weak-load record: {ipa_path.name}')
+        key = (from_image, architecture, 'LC_LOAD_WEAK_DYLIB', install_name)
+        if key in listed_weak:
+            raise RecoveryError(f'tvOS dependency receipt has duplicate weak-load records: {ipa_path.name}')
+        listed_weak.add(key)
+    if listed_weak != unresolved_weak:
+        raise RecoveryError(f'tvOS dependency receipt unresolved weak-load inventory differs: {ipa_path.name}')
+
+
+def verify_tvos_runtime_dependency_receipt(directory, source, repository=REPOSITORY):
+    """Verify the attested dependency receipt against the selected signed tvOS artifact."""
+    receipt_path = directory / TVOS_RUNTIME_RECEIPT
+    if not receipt_path.is_file() or receipt_path.is_symlink():
+        raise RecoveryError('Reused tvOS artifact is missing its attested runtime dependency receipt')
+    try:
+        publisher = verify_release_attestation.verify(receipt_path, repository)
+    except (ValueError, OSError, subprocess.CalledProcessError) as error:
+        raise RecoveryError(f'tvOS runtime dependency receipt attestation failed: {error}') from error
+    if publisher != repository:
+        raise RecoveryError('tvOS runtime dependency receipt was not attested by the canonical repository')
+
+    try:
+        result = subprocess.run(
+            ['gh', 'attestation', 'verify', str(receipt_path), '--repo', repository,
+             '--signer-workflow', repository + '/.github/workflows/build.yml',
+             '--source-digest', source['workflow_source_sha'], '--format', 'json'],
+            check=True, capture_output=True, text=True)
+        verification = json.loads(result.stdout)
+    except (KeyError, TypeError, ValueError, OSError, subprocess.CalledProcessError) as error:
+        raise RecoveryError(f'tvOS runtime dependency receipt run attestation failed: {error}') from error
+    if not isinstance(verification, list):
+        raise RecoveryError('Runtime dependency receipt attestation returned an invalid result')
+    certificates = []
+    for item in verification:
+        if not isinstance(item, dict):
+            raise RecoveryError('Runtime dependency receipt attestation returned an invalid result')
+        verification_result = item.get('verificationResult')
+        signature = verification_result.get('signature') if isinstance(verification_result, dict) else None
+        certificate = signature.get('certificate') if isinstance(signature, dict) else None
+        if not isinstance(certificate, dict):
+            raise RecoveryError('Runtime dependency receipt attestation returned an invalid certificate')
+        certificates.append(certificate)
+    expected_uri = f'https://github.com/{repository}/actions/runs/{source["source_run_id"]}'
+    if not certificates or any(
+            str(cert.get('sourceRepositoryIdentifier')) != '1433487464'
+            or cert.get('sourceRepositoryDigest') != source['workflow_source_sha']
+            or cert.get('runInvocationURI') not in (expected_uri, expected_uri + '/attempts/' + str(source['run_attempt']))
+            for cert in certificates):
+        raise RecoveryError('Runtime dependency receipt attestation does not bind the approved workflow and run')
+
+    try:
+        receipt = json.loads(receipt_path.read_text(encoding='utf-8'))
+    except (OSError, json.JSONDecodeError) as error:
+        raise RecoveryError('tvOS runtime dependency receipt is unreadable JSON') from error
+    product_version, product_build = _tvos_product_version_build(source, repository)
+    expected = {
+        'repository': repository,
+        'product_source_sha': source['product_source_sha'],
+        'packaging_source_sha': source['packaging_source_sha'],
+        'workflow_source_sha': source['workflow_source_sha'],
+        'run_id': str(source['source_run_id']),
+        'run_attempt': str(source['run_attempt']),
+        'artifact_name': 'tvos-ipa',
+        'platform': 'tvos',
+        'product_version': product_version,
+        'product_build': product_build,
+        'verification_policy': {
+            'architectures': 'all bundled Mach-O slices',
+            'strong_dependencies': 'must resolve to a same-architecture Mach-O inside the app bundle or an allowed system path',
+            'weak_dependencies': 'unresolved optional weak loads are recorded and do not fail',
+            'system_prefixes': list(TVOS_RUNTIME_SYSTEM_PREFIXES),
+        },
+    }
+    if (not isinstance(receipt, dict) or receipt.get('schema_version') != 1
+            or receipt.get('workflow_step') != 'Verify tvOS runtime dependencies'
+            or receipt.get('status') != 'passed'
+            or receipt.get('actual_checkout_sha') != expected['packaging_source_sha']
+            or any(receipt.get(key) != value for key, value in expected.items())):
+        raise RecoveryError('tvOS runtime dependency receipt identity, policy, or status mismatch')
+    errors = receipt.get('errors')
+    if not isinstance(errors, list) or errors:
+        raise RecoveryError('tvOS runtime dependency receipt reports verification errors')
+    if not isinstance(receipt.get('sdk_root'), str) or not receipt['sdk_root'].startswith('/'):
+        raise RecoveryError('tvOS runtime dependency receipt lacks its selected SDK root')
+    if (not isinstance(receipt.get('sdk_version'), str)
+            or not re.fullmatch(r'[0-9]+(?:\.[0-9]+)+', receipt['sdk_version'])):
+        raise RecoveryError('tvOS runtime dependency receipt lacks a valid SDK version')
+    try:
+        created_at = datetime.fromisoformat(receipt.get('created_at_utc', '').replace('Z', '+00:00'))
+    except (AttributeError, TypeError, ValueError):
+        created_at = None
+    if created_at is None or created_at.utcoffset() is None or created_at.utcoffset().total_seconds() != 0:
+        raise RecoveryError('tvOS runtime dependency receipt lacks a UTC creation time')
+
+    inputs = receipt.get('inputs')
+    expected_names = {'pleazyng-tvos-unsigned.ipa', 'pleazyng-tvos-appstore.ipa'}
+    if not isinstance(inputs, list) or len(inputs) != len(expected_names):
+        raise RecoveryError('tvOS runtime dependency receipt must bind both unsigned and signed IPAs')
+    by_name = {}
+    for record in inputs:
+        if not isinstance(record, dict):
+            raise RecoveryError('tvOS runtime dependency receipt has a missing, duplicate, or unexpected IPA input')
+        filename = record.get('filename')
+        if not isinstance(filename, str) or filename not in expected_names or filename in by_name:
+            raise RecoveryError('tvOS runtime dependency receipt has a missing, duplicate, or unexpected IPA input')
+        by_name[filename] = record
+    if set(by_name) != expected_names:
+        raise RecoveryError('tvOS runtime dependency receipt does not bind both IPA inputs')
+    for name in sorted(expected_names):
+        ipa_path = directory / name
+        if not ipa_path.is_file() or ipa_path.is_symlink():
+            raise RecoveryError(f'tvOS runtime dependency receipt input is missing: {name}')
+        _validate_tvos_runtime_input(by_name[name], ipa_path, expected)
+    with receipt_path.open('rb') as receipt_file:
+        return hashlib.file_digest(receipt_file, 'sha256').hexdigest()
+
+
 def verify_ios_package_attestations(directory, source, repository=REPOSITORY):
     digests = {}
     for name in ('pleazyng-ios-unsigned.ipa', 'pleazyng-ios-appstore.ipa'):
@@ -1253,8 +1596,13 @@ def download_platforms(proof, destination, repository=REPOSITORY):
             if result.returncode or actual_digest != digest[7:]:
                 raise RecoveryError(f"Reusable artifact download/digest verification failed: {name}")
             extract_verified(archive, destination / folder)
-            if name == 'tvos-ipa' and proof.get('tvos_source'):
-                source['package_sha256'] = verify_tvos_package_attestations(destination / folder, source, repository)
+            if name == 'tvos-ipa' and (proof.get('tvos_source') or source.get('runtime_dependency_receipt_required')):
+                if not source.get('runtime_dependency_receipt_required'):
+                    raise RecoveryError('Reused tvOS artifact lacks runtime dependency qualification')
+                package_hashes = verify_tvos_package_attestations(destination / folder, source, repository)
+                if proof.get('tvos_source'):
+                    source['package_sha256'] = package_hashes
+                verify_tvos_runtime_dependency_receipt(destination / folder, source, repository)
             if name == 'ios-ipa' and proof.get('ios_source'):
                 source['package_sha256'] = verify_ios_package_attestations(destination / folder, source, repository)
             if name == "macos-dmg" and proof.get("macos_source"):
