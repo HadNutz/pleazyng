@@ -269,8 +269,8 @@ def verify_macos_startup_contract():
     source = (ROOT / "macos/Runner/MainFlutterWindow.swift").read_text()
     main = (ROOT / "lib/main.dart").read_text()
     view_binding = (ROOT / "lib/utils/native_primary_view.dart").read_text()
-    if "allowHeadlessExecution: true" not in source:
-        raise RuntimeError("The macOS engine must allow startup before its first multiview attachment")
+    if "allowHeadlessExecution: false" not in source:
+        raise RuntimeError("The macOS engine must attach a native view before running without headless mode")
     runs = [index for index in range(len(source)) if source.startswith("guard engine.run(withEntrypoint: nil)", index)]
     controllers = [
         index for index in range(len(source))
@@ -280,6 +280,7 @@ def verify_macos_startup_contract():
         index for index in range(len(source))
         if source.startswith("self.contentViewController = flutterViewController", index)
     ]
+    multiview_enable = source.find("if supportsMultiView { _ = engine.perform(enableMultiView) }")
     registry_creations = [
         index for index in range(len(source))
         if source.startswith("let pluginRegistry = PrimaryViewPluginRegistry(engine: engine, primaryViewController: flutterViewController)", index)
@@ -289,14 +290,16 @@ def verify_macos_startup_contract():
         if source.startswith("RegisterGeneratedPlugins(registry: pluginRegistry)", index)
     ]
     if any(len(positions) != 2 for positions in (runs, controllers, window_attachments, registry_creations, registrants)):
-        raise RuntimeError("Both macOS launch paths must start the engine and attach the first view before registration")
+        raise RuntimeError("Both macOS launch paths must attach a view, start the engine, and register plugins")
+    if multiview_enable < 0 or multiview_enable > controllers[0]:
+        raise RuntimeError("Enable macOS multiview before attaching the first Flutter controller")
     if source.count("primaryViewPluginRegistry = pluginRegistry") != 2:
         raise RuntimeError("Both macOS launch paths must retain the primary-view plugin registry")
     for run_position, controller_position, window_position, registry_position, registrar_position in zip(
         runs, controllers, window_attachments, registry_creations, registrants
     ):
-        if not run_position < controller_position < window_position < registry_position < registrar_position:
-            raise RuntimeError("macOS must start the engine, attach its first window view, then register plugins")
+        if not controller_position < run_position < window_position < registry_position < registrar_position:
+            raise RuntimeError("macOS must attach its first engine view before running Dart or registering plugins")
     if "registry: engine" in source or "with: engine.registrar(" in source:
         raise RuntimeError("macOS plugins must not be registered before the first Flutter view")
     workspace_host = source.split("private final class WorkspaceDesktopWindows", 1)[-1]
@@ -388,12 +391,12 @@ def qualify(platform, arch=None):
                 "  private var workspaceWindows: WorkspaceDesktopWindows?\n"
                 "  private var primaryViewPluginRegistry: PrimaryViewPluginRegistry?")
         replace(source, "let flutterViewController = FlutterViewController()",
-                "let engine = FlutterEngine(name: \"WorkspaceProbe\", project: nil, allowHeadlessExecution: true)\n"
+                "let engine = FlutterEngine(name: \"WorkspaceProbe\", project: nil, allowHeadlessExecution: false)\n"
                 "    let selector = NSSelectorFromString(\"enableMultiView\")\n"
                 "    guard engine.responds(to: selector) else { fatalError(\"SDK lacks multiview\") }\n"
                 "    _ = engine.perform(selector)\n"
-                "    guard engine.run(withEntrypoint: nil) else { fatalError(\"engine startup failed\") }\n"
                 "    let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)\n"
+                "    guard engine.run(withEntrypoint: nil) else { fatalError(\"engine startup failed\") }\n"
                 "    print(\"WORKSPACE_NATIVE_VIEW_ID id=\\(flutterViewController.viewIdentifier)\")\n"
                 "    workspaceWindows = WorkspaceDesktopWindows(engine: engine, parent: self, available: true)")
         replace(source, "RegisterGeneratedPlugins(registry: flutterViewController)",
