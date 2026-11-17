@@ -67,6 +67,7 @@ import '../media/media_file_info.dart';
 import '../media/media_filter.dart';
 import '../media/media_source_info.dart';
 import '../media/media_version.dart';
+import '../media/runtime_playback_capabilities.dart';
 import '../models/subtitles/subtitle_search_result.dart';
 import '../models/plex/plex_managed_hub.dart';
 import '../models/plex/plex_match_result.dart';
@@ -935,8 +936,9 @@ class PlexClient
               json['key'] = id;
 
               libraries.add(
-                PlexLibraryDto.fromJson(json)
-                    .copyWith(serverId: serverId, serverName: serverName, isShared: isSharedLibrary),
+                PlexLibraryDto.fromJson(
+                  json,
+                ).copyWith(serverId: serverId, serverName: serverName, isShared: isSharedLibrary),
               );
             } catch (e) {
               appLogger.w('Failed to parse media provider directory entry', error: e);
@@ -1191,9 +1193,9 @@ class PlexClient
     if (container != null && container['Directory'] != null) {
       return (container['Directory'] as List)
           .map(
-            (json) =>
-                PlexLibraryDto.fromJson(json as Map<String, dynamic>)
-                    .copyWith(serverId: serverId, serverName: serverName),
+            (json) => PlexLibraryDto.fromJson(
+              json as Map<String, dynamic>,
+            ).copyWith(serverId: serverId, serverName: serverName),
           )
           .toList();
     }
@@ -1205,9 +1207,9 @@ class PlexClient
     if (container != null && container['Metadata'] != null) {
       return (container['Metadata'] as List)
           .map(
-            (json) =>
-                PlexPlaylistDto.fromJson(json as Map<String, dynamic>)
-                    .copyWith(serverId: serverId, serverName: serverName),
+            (json) => PlexPlaylistDto.fromJson(
+              json as Map<String, dynamic>,
+            ).copyWith(serverId: serverId, serverName: serverName),
           )
           .toList();
     }
@@ -4451,7 +4453,14 @@ class PlexClient
       final resolvedAudioId = carriedAudioTrack == null
           ? _resolveAudioStreamId(options.selectedAudioStreamId, data.mediaInfo)
           : carriedAudioStreamId;
-      final audioCodecRefused = !isTrack && options.forceAudioConversion;
+      final selectedAudioCodec = data.mediaInfo?.audioTracks
+          .where((track) => track.id == resolvedAudioId)
+          .firstOrNull
+          ?.codec;
+      final audioCodecRefused =
+          !isTrack &&
+          (options.forceAudioConversion ||
+              RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable(selectedAudioCodec));
       final sourceCodecRefused = !isTrack && _sourceCodecRefused(data);
       final forceVideoConversion =
           !isTrack &&

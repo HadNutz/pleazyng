@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Discover JPEG XL files and request server audio conversion when the active mpv build lacks the selected AC-4 or MPEG-H decoder.
+
 - Fix a macOS multiview startup crash by restoring Flutter's merged platform/UI task runner.
 - Match direct-play negotiation to the active playback engine, check Android native stream limits, and discover APV and additional legacy containers.
 

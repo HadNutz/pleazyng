@@ -56,12 +56,18 @@ source. Native webOS, Tizen and ExoPlayer never inherit mpv's inventory.
   architectures. The pinned AVS2 dependency is 8-bit only. The application
   lock consumes verified published native packages for all four platform groups.
 
+- For the selected AC-4 or MPEG-H audio track, a measured decoder absence
+  requests server audio conversion with video stream copy available. This
+  requires a server decoder and leaves unmeasured TV capabilities to the
+  platform playback stack.
+
 ## Expanded qualification
 
-The companion producer adds a 45-case Linux release corpus covering software
+The companion producer adds a 48-case Linux release corpus covering software
 decode and seek, current codec bit depths and chroma formats, HLS/DASH VOD,
-DTS core and TrueHD PCM, and three timed text subtitle formats. Six hash-pinned
-reference vectors cover APV, VVC, EVC, AVS2 and AVS3. The existing published
+DTS core and TrueHD PCM, and three timed text subtitle formats plus three software bitmap overlays. Eight hash-pinned
+reference vectors cover APV, VVC, EVC, AVS2, AVS3 and both JPEG XL forms.
+JPEG XL and DASH require updated published Linux and Android packages. The existing published
 Linux x64 bundle passed the 44 cases it can run and all six reference vectors.
 Its DASH demuxer is absent. The producer adds DASH to the Linux and Android
 build recipes, pending published replacement binaries for the application lock.

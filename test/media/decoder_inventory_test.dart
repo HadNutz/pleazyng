@@ -137,6 +137,27 @@ void main() {
     expect(VideoDecodeCapabilities.directPlayVideoCodecs, ['h264']);
   });
 
+  test('AC-4 and MPEG-H only need audio conversion when the selected engine lacks a decoder', () {
+    expect(RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable('ac-4'), isFalse);
+    RuntimePlaybackCapabilities.recordMpvDecoders([
+      {'codec': 'aac', 'driver': 'aac'},
+    ]);
+    expect(RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable('ac-4'), isTrue);
+    expect(RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable('mhm1'), isTrue);
+    expect(RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable('truehd'), isFalse);
+    RuntimePlaybackCapabilities.recordMpvDecoders([
+      {'codec': 'ac4', 'driver': 'ac4'},
+    ]);
+    expect(RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable('ac4'), isFalse);
+    expect(
+      RuntimePlaybackCapabilities.withVideoEngine(
+        'webos',
+        () => RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable('mpegh'),
+      ),
+      isFalse,
+    );
+  });
+
   test('container aliases follow the actual demuxer inventory', () {
     RuntimePlaybackCapabilities.recordMpvDemuxers(['mov,mp4,m4a,3gp,3g2,mj2', 'avi', 'mpeg', 'mpegts', 'asf', 'ogg']);
     expect(
@@ -149,7 +170,7 @@ void main() {
   });
 
   test('new and legacy media reach source browsing without claiming decode support', () {
-    for (final extension in ['.vvc', '.ivf', '.apv', '.nut', '.bik', '.dvr-ms', '.m2t']) {
+    for (final extension in ['.vvc', '.ivf', '.apv', '.jxl', '.nut', '.bik', '.dvr-ms', '.m2t']) {
       expect(classifySourceFile('sample$extension'), SourceItemKind.video);
     }
     for (final extension in ['.tak', '.tta', '.shn', '.dts', '.truehd', '.aifc']) {

@@ -310,7 +310,6 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     final preset = options.qualityPreset;
     final audioPreset = options.audioQualityPreset ?? AudioQualityPreset.original;
     final wantsOriginal = isTrack ? audioPreset.isOriginal : preset.isOriginal;
-    final forceAudioConversion = !isTrack && options.forceAudioConversion;
     final forceCompatibleDolbyVisionTranscode = !isTrack && options.requestsCompatibleDolbyVisionRendition(mediaInfo);
     final sourceCodec = bundle.availableVersions.isEmpty
         ? null
@@ -319,8 +318,6 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
         !isTrack &&
         (options.forceVideoConversion ||
             await VideoDecodeCapabilities.sourceFormatUnavailable(sourceCodec, mediaInfo.displayCriteria));
-    final requiresConversion =
-        forceAudioConversion || forceCompatibleDolbyVisionTranscode || forceVideoConversion || options.forceTranscode;
     if (forceCompatibleDolbyVisionTranscode &&
         !options.hasServerDolbyVisionSdrRoute(
           mediaInfo,
@@ -339,6 +336,17 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
               ? null
               : findSourceAudioTrackForIntent(options.preferredAudioTrack!, mediaInfo.audioTracks)?.id
         : _validJellyfinAudioStreamId(options.selectedAudioStreamId, mediaInfo);
+    final audioStreamForConversion =
+        _resolveJellyfinAudioStreamId(requestedAudioStreamId, mediaInfo) ?? mediaInfo.audioTracks.firstOrNull?.id;
+    final selectedAudioCodec = mediaInfo.audioTracks
+        .where((track) => track.id == audioStreamForConversion)
+        .firstOrNull
+        ?.codec;
+    final needsCompatibleAudio =
+        !isTrack && RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable(selectedAudioCodec);
+    final forceAudioConversion = !isTrack && (options.forceAudioConversion || needsCompatibleAudio);
+    final requiresConversion =
+        forceAudioConversion || forceCompatibleDolbyVisionTranscode || forceVideoConversion || options.forceTranscode;
     final requestedSubtitleStreamId = _validJellyfinSubtitleStreamId(options.preferredSubtitleTrack, mediaInfo);
     // A real external subtitle file stays a file the client fetches, on a transcode as much as on
     // a direct play - it is the one case where the client genuinely holds it. Jellyfin decides
@@ -385,7 +393,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
         maxStreamingBitrate: maxStreamingBitrate,
         mediaSourceId: bundle.selectedSourceId,
         startTimeTicks: transcodeStartTimeTicks,
-        audioStreamIndex: requestedAudioStreamId,
+        audioStreamIndex: needsCompatibleAudio ? audioStreamForConversion : requestedAudioStreamId,
         subtitleStreamIndex: requestedSubtitleStreamId,
         audioProfile: isTrack,
         enableDirectPlay: requiresConversion ? false : null,

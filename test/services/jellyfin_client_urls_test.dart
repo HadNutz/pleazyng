@@ -1149,6 +1149,56 @@ void main() {
       }
     });
 
+    test('an unavailable default AC-4 decoder requests audio conversion with video copy allowed', () async {
+      addTearDown(RuntimePlaybackCapabilities.reset);
+      RuntimePlaybackCapabilities.recordMpvDecoders([
+        {'codec': 'h264', 'driver': 'h264'},
+        {'codec': 'aac', 'driver': 'aac'},
+      ]);
+      late Map<String, dynamic> body;
+      final scoped = _clientWithPlaybackInfo(
+        (request) async {
+          body = jsonDecode(request.body) as Map<String, dynamic>;
+          return jsonResponse({
+            'MediaSources': [
+              {'Id': 'src-1', 'TranscodingUrl': '/Videos/item-1/master.m3u8'},
+            ],
+          });
+        },
+        itemSources: [
+          {
+            'Id': 'src-1',
+            'Container': 'mp4',
+            'DefaultAudioStreamIndex': 1,
+            'MediaStreams': [
+              {'Index': 0, 'Type': 'Video', 'Codec': 'h264'},
+              {'Index': 1, 'Type': 'Audio', 'Codec': 'ac4'},
+              {'Index': 2, 'Type': 'Audio', 'Codec': 'aac'},
+            ],
+          },
+        ],
+      );
+      addTearDown(scoped.close);
+      final result = await scoped.getPlaybackInitialization(
+        PlaybackInitializationOptions(
+          metadata: testMediaItem(
+            id: 'item-1',
+            backend: MediaBackend.jellyfin,
+            kind: MediaKind.movie,
+            serverId: 'srv-1',
+          ),
+          selectedMediaIndex: 0,
+          startPosition: const Duration(seconds: 42),
+        ),
+      );
+      expect(result.isTranscoding, isTrue);
+      expect(body['AudioStreamIndex'], 1);
+      expect(body['EnableDirectPlay'], isFalse);
+      expect(body['AllowAudioStreamCopy'], isFalse);
+      expect(body['AllowVideoStreamCopy'], isNot(false));
+      expect(body['StartTimeTicks'], 420000000);
+    });
+
     test('forced compatibility conversion cannot fall back to the rejected file', () async {
       for (final response in [
         jsonResponse({
@@ -3405,7 +3455,8 @@ void main() {
               'MediaSources': [
                 {
                   'Container': 'ts',
-                  'TranscodingUrl': '/Videos/channel-1/live.m3u8?MediaSourceId=source-url&LiveStreamId=live-url&PlaySessionId=play-url',
+                  'TranscodingUrl':
+                      '/Videos/channel-1/live.m3u8?MediaSourceId=source-url&LiveStreamId=live-url&PlaySessionId=play-url',
                 },
               ],
             });

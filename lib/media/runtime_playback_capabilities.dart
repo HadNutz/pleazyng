@@ -46,6 +46,15 @@ abstract final class RuntimePlaybackCapabilities {
     return inventory.decoders.keys.where(CodecCatalog.isAudioCodec).toList()..sort();
   }
 
+  /// These formats have no libmpv bitstream output route. Only a measured
+  /// decoder absence warrants audio conversion. Native TV capability and
+  /// ordinary DTS/TrueHD passthrough remain independent of this check.
+  static bool sourceAudioDecoderUnavailable(String? codec) {
+    if (codec == null) return false;
+    final normalized = CodecCatalog.normalize(codec);
+    return const {'ac4', 'mpegh_3d_audio'}.contains(normalized) && videoDecoders?.contains(normalized) == false;
+  }
+
   static void recordMpvDecoders(Object? value) {
     final parsed = DecoderInventory.fromMpv(value);
     if (parsed == null) return;
