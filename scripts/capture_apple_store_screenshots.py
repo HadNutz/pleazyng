@@ -11,6 +11,7 @@ import plistlib
 import posixpath
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tarfile
@@ -166,11 +167,18 @@ def run(command: list[str], *, capture: bool = False, timeout: int = 300) -> str
     return result.stdout.strip() if capture else ""
 
 
-def capture_ios_keychain_diagnostics(simulator_udid: str, output: Path, filename: str) -> dict[str, Any]:
+def capture_ios_keychain_diagnostics(
+    simulator_udid: str,
+    output: Path,
+    filename: str,
+    app_executable: str,
+) -> dict[str, Any]:
     """Keep only app/keychain daemon diagnostics from the fresh iOS capture simulator."""
+    if re.fullmatch(r"[A-Za-z0-9._-]+", app_executable) is None:
+        raise ValueError("The product's Info.plist executable name is invalid for Keychain diagnostics")
     log_path = output / f"{Path(filename).stem}.simulator-keychain.log"
     predicate = (
-        '(process == "Pleazyng" AND (eventMessage CONTAINS[c] "keychain" '
+        f'(process == "{app_executable}" AND (eventMessage CONTAINS[c] "keychain" '
         'OR eventMessage CONTAINS[c] "secure storage" OR eventMessage CONTAINS[c] "errSec" '
         'OR eventMessage CONTAINS[c] "34018" OR eventMessage CONTAINS[c] "security")) '
         'OR (process == "securityd" AND (eventMessage CONTAINS[c] "org.snapetech.pleazyng" '
@@ -205,7 +213,8 @@ def capture_ios_keychain_diagnostics(simulator_udid: str, output: Path, filename
         "size_bytes": log_path.stat().st_size,
         "exit_code": returncode,
         "filter": predicate,
-        "scope": "Fresh capture simulator only; Pleazyng keychain-related messages and matching securityd records.",
+        "app_executable": app_executable,
+        "scope": "Fresh capture simulator only; the actual CFBundleExecutable's Keychain-related messages and matching securityd records.",
     }
 
 
@@ -867,6 +876,168 @@ def derive_ios_simulator_entitlements(
     return result, prefix, product_identifier
 
 
+def derive_nested_bundle_simulator_entitlements(
+    source_entitlements: dict[str, Any],
+    prefix: str,
+    bundle_id: str,
+) -> dict[str, Any]:
+    if re.fullmatch(r"[A-Za-z0-9]{10}\.", prefix) is None:
+        raise ValueError("The nested Simulator bundle has an invalid Xcode-derived prefix")
+    if not re.fullmatch(r"[A-Za-z0-9.-]+", bundle_id):
+        raise ValueError("The nested Simulator bundle has an invalid verified bundle identifier")
+    identity_keys = {
+        "application-identifier",
+        "keychain-access-groups",
+        "com.apple.developer.team-identifier",
+        "com.apple.security.application-groups",
+    }
+    if identity_keys.intersection(source_entitlements):
+        raise ValueError("The nested entitlement source already contains identity or sharing grants")
+    result = dict(source_entitlements)
+    result["application-identifier"] = f"{prefix}{bundle_id}"
+    return result
+
+
+def nested_code_paths(app: Path) -> list[tuple[Path, str]]:
+    candidates: list[tuple[Path, str]] = []
+    for path in app.rglob("*"):
+        if path.is_dir() and path.suffix in (".app", ".appex", ".framework", ".xpc"):
+            candidates.append((path, path.suffix.lstrip(".")))
+        elif path.is_file() and path.suffix == ".dylib":
+            candidates.append((path, "dylib"))
+    return sorted(
+        candidates,
+        key=lambda candidate: (len(candidate[0].relative_to(app).parts), candidate[0].as_posix()),
+        reverse=True,
+    )
+
+
+def simulator_codesign_command(code_path: Path, entitlements_path: Path | None = None) -> list[str]:
+    command = [
+        "/usr/bin/codesign", "--force", "--sign", "-", "--timestamp=none",
+    ]
+    if entitlements_path is not None:
+        command.extend(["--generate-entitlement-der", "--entitlements", str(entitlements_path)])
+    command.append(str(code_path))
+    return command
+
+
+def bundle_executable(bundle: Path) -> tuple[str, str, Path]:
+    info_path = next(
+        (candidate for candidate in (bundle / "Info.plist", bundle / "Contents" / "Info.plist")
+         if candidate.is_file()),
+        bundle / "Info.plist",
+    )
+    with info_path.open("rb") as source:
+        info = plistlib.load(source)
+    bundle_id = info.get("CFBundleIdentifier")
+    executable = info.get("CFBundleExecutable")
+    if (not isinstance(bundle_id, str) or not isinstance(executable, str) or not executable
+            or Path(executable).name != executable):
+        raise ValueError(f"Nested code bundle has no safe executable identity: {bundle}")
+    executable_path = bundle / executable
+    if not executable_path.is_file() or not executable_path.stat().st_mode & 0o111:
+        raise ValueError(f"Nested code executable is missing or not executable: {executable_path}")
+    return bundle_id, executable, executable_path
+
+
+def code_executable_inventory(app: Path) -> list[dict[str, Any]]:
+    entries: list[tuple[Path, str, str, Path]] = []
+    main = app_info(app)
+    main_executable = app / main["executable"]
+    if not main_executable.is_file() or not main_executable.stat().st_mode & 0o111:
+        raise ValueError(f"Product executable is missing or not executable: {main_executable}")
+    entries.append((app, "app", main["bundle_id"], main_executable))
+    for path, kind in nested_code_paths(app):
+        if kind == "dylib":
+            if not path.stat().st_mode & 0o111:
+                raise ValueError(f"Nested dynamic library is not executable: {path}")
+            entries.append((path, kind, path.stem, path))
+        else:
+            bundle_id, _, executable = bundle_executable(path)
+            entries.append((path, kind, bundle_id, executable))
+
+    inventory = []
+    for code_path, kind, identifier, executable in entries:
+        architectures = sorted(set(run(["/usr/bin/lipo", "-archs", str(executable)], capture=True).split()))
+        if not architectures:
+            raise ValueError(f"No Mach-O architecture was found in {executable}")
+        inventory.append({
+            "code_path": code_path.relative_to(app).as_posix() or ".",
+            "code_kind": kind,
+            "bundle_or_file_identifier": identifier,
+            "executable_path": executable.relative_to(app).as_posix(),
+            "executable_mode": f"{stat.S_IMODE(executable.stat().st_mode):04o}",
+            "executable_size_bytes": executable.stat().st_size,
+            "architectures": architectures,
+        })
+    return inventory
+
+
+def codesign_details(code_path: Path) -> str:
+    result = subprocess.run(
+        ["/usr/bin/codesign", "--display", "--verbose=5", str(code_path)],
+        check=False,
+        text=True,
+        capture_output=True,
+        timeout=60,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"Could not inspect the Simulator code signature for {code_path}: {result.stderr.strip()}")
+    return (result.stdout + result.stderr).strip()
+
+
+def capture_ios_simulator_launch_diagnostics(
+    simulator_udid: str,
+    output: Path,
+    filename: str,
+    app_executable: str,
+) -> dict[str, Any]:
+    if re.fullmatch(r"[A-Za-z0-9._-]+", app_executable) is None:
+        raise ValueError("The product's Info.plist executable name is invalid for Simulator diagnostics")
+    log_path = output / f"{Path(filename).stem}.simulator-launch.log"
+    services = (
+        "SpringBoard", "launchd", "launchd_sim", "runningboardd", "amfid", "installd",
+        "launchservicesd", "lsd", "dyld", app_executable, "PleazyngInUseCaptureTests-Runner",
+    )
+    service_predicate = " OR ".join(f'process == "{name}"' for name in dict.fromkeys(services))
+    relevant_text = (
+        'eventMessage CONTAINS[c] "org.snapetech.pleazyng" '
+        'OR eventMessage CONTAINS[c] "RommWorker" '
+        'OR eventMessage CONTAINS[c] "FAKETEAMID" '
+        'OR eventMessage CONTAINS[c] "spawn" '
+        'OR eventMessage CONTAINS[c] "deny" '
+        'OR eventMessage CONTAINS[c] "signature" '
+        'OR eventMessage CONTAINS[c] "entitlement" '
+        'OR eventMessage CONTAINS[c] "dyld"'
+    )
+    predicate = f"(({service_predicate}) AND ({relevant_text})) OR process == \"{app_executable}\""
+    command = [
+        "xcrun", "simctl", "spawn", simulator_udid, "log", "show",
+        "--last", "15m", "--style", "compact", "--predicate", predicate,
+    ]
+    with log_path.open("w", encoding="utf-8") as log_file:
+        result = subprocess.run(
+            command,
+            check=False,
+            text=True,
+            stdout=log_file,
+            stderr=subprocess.STDOUT,
+            timeout=120,
+        )
+    if result.returncode == 0 and log_path.stat().st_size == 0:
+        log_path.write_text("No matching Simulator launch, AMFI, dyld, or SpringBoard events were retained.\n", encoding="utf-8")
+    return {
+        "filename": log_path.name,
+        "sha256": sha256_file(log_path),
+        "size_bytes": log_path.stat().st_size,
+        "exit_code": result.returncode,
+        "app_executable": app_executable,
+        "filter": predicate,
+        "scope": "Fresh capture Simulator launch, SpringBoard, launchd, RunningBoard, AMFI, dyld, installer, and product executable records.",
+    }
+
+
 def codesign_entitlements(app: Path) -> dict[str, Any]:
     result = subprocess.run(
         ["/usr/bin/codesign", "-d", "--entitlements", ":-", str(app)],
@@ -875,7 +1046,7 @@ def codesign_entitlements(app: Path) -> dict[str, Any]:
         capture_output=True,
         timeout=60,
     )
-    entitlements = plistlib.loads(result.stdout)
+    entitlements = plistlib.loads(result.stdout) if result.stdout.strip() else {}
     if not isinstance(entitlements, dict):
         raise RuntimeError("The signed application entitlements are not a plist dictionary")
     return entitlements
@@ -890,6 +1061,7 @@ def sign_ios_app_for_simulator(
     build_receipt: dict[str, Any],
     receipt_digest: str,
     base_entitlements_path: Path,
+    extension_entitlements_source_path: Path,
     runner_xcent: Path,
     runner_entitlements: dict[str, Any],
     runner_bundle_id: str,
@@ -906,18 +1078,109 @@ def sign_ios_app_for_simulator(
         observed_digest = sha256_tree(app)
         if observed_digest != original_app_digest:
             raise ValueError("The restored iOS app changed before simulator-only signing")
-        run([
-            "/usr/bin/codesign", "--force", "--deep", "--sign", "-",
-            "--entitlements", str(entitlements_path), str(app),
-        ], timeout=600)
+        before_inventory = code_executable_inventory(app)
+        nested = nested_code_paths(app)
+        extensions = [path for path, kind in nested if kind == "appex"]
+        if len(extensions) != 1:
+            raise RuntimeError(f"Expected one product app extension to sign independently; found {len(extensions)}")
+        extension = extensions[0]
+        extension_bundle_id, extension_executable, _ = bundle_executable(extension)
+        if extension_bundle_id != f"{BUNDLE_ID}.RommWorker":
+            raise RuntimeError(f"The embedded product extension has an unexpected identity: {extension_bundle_id}")
+        with extension_entitlements_source_path.open("rb") as source:
+            extension_source_entitlements = plistlib.load(source)
+        if not isinstance(extension_source_entitlements, dict):
+            raise ValueError("The product extension's source entitlements are not a plist dictionary")
+        extension_entitlements = derive_nested_bundle_simulator_entitlements(
+            extension_source_entitlements, prefix, extension_bundle_id
+        )
+        extension_entitlements_path = output / f"{Path(filename).stem}.simulator-extension-entitlements.plist"
+        extension_entitlements_path.write_bytes(
+            plistlib.dumps(extension_entitlements, fmt=plistlib.FMT_XML, sort_keys=True)
+        )
+
+        signing_actions: list[dict[str, Any]] = []
+        for code_path, kind in nested:
+            action_entitlements = extension_entitlements_path if code_path == extension else None
+            command = simulator_codesign_command(code_path, action_entitlements)
+            run(command, timeout=600)
+            signing_actions.append({
+                "code_path": code_path.relative_to(app).as_posix(),
+                "kind": kind,
+                "bundle_id": extension_bundle_id if code_path == extension else (
+                    bundle_executable(code_path)[0] if kind in ("app", "appex", "framework", "xpc")
+                    else code_path.stem
+                ),
+                "entitlements_file": action_entitlements.name if action_entitlements else None,
+                "command": [*command[:-1], "<bundle-path>"],
+            })
+        main_command = simulator_codesign_command(app, entitlements_path)
+        run(main_command, timeout=600)
+        signing_actions.append({
+            "code_path": ".",
+            "kind": "app",
+            "bundle_id": BUNDLE_ID,
+            "entitlements_file": entitlements_path.name,
+            "command": [*main_command[:-1], "<app-bundle>"],
+        })
+
         run(["/usr/bin/codesign", "--verify", "--deep", "--strict", str(app)], timeout=300)
+        for code_path, _ in nested:
+            run(["/usr/bin/codesign", "--verify", "--strict", str(code_path)], timeout=180)
         signed_entitlements = codesign_entitlements(app)
         if (signed_entitlements.get("application-identifier") != product_identifier
                 or signed_entitlements.get("keychain-access-groups") != [product_identifier]
                 or set(signed_entitlements) != {"application-identifier", "keychain-access-groups"}):
-            raise RuntimeError("Ad-hoc simulator signature does not contain the derived product Keychain group")
-        if (app / "embedded.mobileprovision").exists():
-            raise RuntimeError("The simulator-only app unexpectedly contains a provisioning profile")
+            raise RuntimeError("Ad-hoc Simulator app signature does not contain only its derived application and Keychain identities")
+        if (app / "embedded.mobileprovision").exists() or any(app.rglob("embedded.mobileprovision")):
+            raise RuntimeError("The Simulator-only app unexpectedly contains a provisioning profile")
+        if codesign_entitlements(extension) != extension_entitlements:
+            raise RuntimeError("The Simulator extension signature does not match its own source entitlements and bundle identity")
+
+        signature_inventory: list[dict[str, Any]] = []
+        for code_path, kind in [(app, "app"), *nested]:
+            actual_entitlements = codesign_entitlements(code_path)
+            if code_path == app:
+                expected_entitlements = derived
+            elif code_path == extension:
+                expected_entitlements = extension_entitlements
+            else:
+                expected_entitlements = {}
+            if actual_entitlements != expected_entitlements:
+                raise RuntimeError(f"Unexpected Simulator signing entitlements on {code_path.relative_to(app) or Path('.')}")
+            signature_inventory.append({
+                "code_path": code_path.relative_to(app).as_posix() or ".",
+                "kind": kind,
+                "entitlements": actual_entitlements,
+                "codesign_display": codesign_details(code_path),
+            })
+        after_inventory = code_executable_inventory(app)
+        before_by_path = {item["executable_path"]: item for item in before_inventory}
+        after_by_path = {item["executable_path"]: item for item in after_inventory}
+        if before_by_path.keys() != after_by_path.keys():
+            raise RuntimeError("Simulator signing changed the product executable inventory")
+        for executable_path, before in before_by_path.items():
+            after = after_by_path[executable_path]
+            if (before["architectures"] != after["architectures"]
+                    or before["executable_mode"] != after["executable_mode"]):
+                raise RuntimeError(f"Simulator signing changed executable mode or architectures: {executable_path}")
+
+        inventory_path = output / f"{Path(filename).stem}.simulator-signing-inventory.json"
+        inventory_record = {
+            "schema_version": 1,
+            "product_source_sha": SOURCE_SHA,
+            "product_bundle_id": BUNDLE_ID,
+            "producer_app_bundle_sha256_before_signing": observed_digest,
+            "signed_app_bundle_sha256": sha256_tree(app),
+            "signing_order": ["nested code deepest first", "main app last"],
+            "signing_actions": signing_actions,
+            "before_executables": before_inventory,
+            "after_executables": after_inventory,
+            "signed_code": signature_inventory,
+            "nested_code_entitlements_policy": "Frameworks and dylibs have no entitlements; the RommWorker extension retains only its own source entitlement payload and derived application identifier, with no Keychain or app-group sharing grant.",
+            "main_app_entitlements_policy": "The main app has only its Xcode-derived application identifier and matching default Keychain group, with DER entitlements; no profile or real signing identity.",
+        }
+        inventory_path.write_text(json.dumps(inventory_record, indent=2) + "\n", encoding="utf-8")
         derived_digest = sha256_tree(app)
         signing_state = {
             "derived_application_identifier": product_identifier,
@@ -933,7 +1196,13 @@ def sign_ios_app_for_simulator(
             "runner_signed_keychain_access_groups": runner_signed_entitlements.get("keychain-access-groups"),
             "runner_simulated_keychain_group_source": "Xcode-generated -Simulated.xcent; application-identifier may be absent",
             "runner_bundle_id": runner_bundle_id,
-            "signing_mode": "ad-hoc simulator-only (-); source artifact remains unsigned and unchanged",
+            "extension_bundle_id": extension_bundle_id,
+            "extension_executable": extension_executable,
+            "extension_source_entitlements_sha256": sha256_file(extension_entitlements_source_path),
+            "extension_simulator_entitlements_sha256": sha256_file(extension_entitlements_path),
+            "signing_inventory_filename": inventory_path.name,
+            "signing_inventory_sha256": sha256_file(inventory_path),
+            "signing_mode": "ad-hoc Simulator-only (-); nested code signed inside-out, frameworks/dylibs without entitlements, source extension scope retained, main app signed last with DER; producer artifact remains unchanged",
             "signature_verified": True,
         }
     else:
@@ -1004,6 +1273,7 @@ def run_app_in_use_ui_test(
     build_receipt: dict[str, Any] | None,
     build_receipt_digest: str | None,
     simulator_entitlements: Path | None,
+    extension_entitlements_source_path: Path | None,
     signing_state: dict[str, Any] | None,
 ) -> tuple[Path, dict[str, Any], dict[str, Any] | None]:
     xcode_platform = "tvOS" if platform == "tvOS" else "iOS"
@@ -1111,9 +1381,10 @@ def run_app_in_use_ui_test(
                 "org.snapetech.pleazyng.capture-ui-tests",
                 output,
             )
-            if (simulator_entitlements is None or build_receipt is None or build_receipt_digest is None
+            if (simulator_entitlements is None or extension_entitlements_source_path is None
+                    or build_receipt is None or build_receipt_digest is None
                     or runner_signed_entitlements_path is None):
-                raise ValueError("iOS Keychain capture requires the approved product entitlements and producer receipt")
+                raise ValueError("iOS Keychain capture requires both product entitlement sources and the producer receipt")
             signing_state = sign_ios_app_for_simulator(
                 app,
                 output,
@@ -1123,6 +1394,7 @@ def run_app_in_use_ui_test(
                 build_receipt,
                 build_receipt_digest,
                 simulator_entitlements,
+                extension_entitlements_source_path,
                 runner_xcent,
                 runner_entitlements,
                 runner_bundle_id,
@@ -1131,6 +1403,33 @@ def run_app_in_use_ui_test(
                 signing_state,
             )
         run(["xcrun", "simctl", "install", simulator_udid, str(app)], timeout=180)
+
+        app_executable = app_info(app)["executable"]
+        preflight_log_path = output / f"{Path(filename).stem}.simulator-launch-preflight.log"
+        preflight_command = ["xcrun", "simctl", "launch", simulator_udid, BUNDLE_ID]
+        preflight = subprocess.run(
+            preflight_command,
+            check=False,
+            text=True,
+            capture_output=True,
+            timeout=120,
+        )
+        preflight_log_path.write_text(
+            "command: " + " ".join(preflight_command) + "\n"
+            + f"exit_code: {preflight.returncode}\n"
+            + "stdout:\n" + preflight.stdout
+            + "stderr:\n" + preflight.stderr,
+            encoding="utf-8",
+        )
+        if preflight.returncode != 0:
+            launch_diagnostics = capture_ios_simulator_launch_diagnostics(
+                simulator_udid, output, filename, app_executable
+            ) if platform == "iOS" else None
+            raise RuntimeError(
+                f"The ad-hoc Simulator product failed direct launch with exit code {preflight.returncode}; "
+                f"launch output is retained at {preflight_log_path}; diagnostics={launch_diagnostics}"
+            )
+        run(["xcrun", "simctl", "terminate", simulator_udid, BUNDLE_ID], timeout=60)
 
         xctestruns = list((derived_data / "Build" / "Products").glob("*.xctestrun"))
         if len(xctestruns) != 1:
@@ -1155,11 +1454,19 @@ def run_app_in_use_ui_test(
                 stderr=subprocess.STDOUT,
                 timeout=1500,
             )
+        launch_diagnostics = capture_ios_simulator_launch_diagnostics(
+            simulator_udid, output, filename, app_executable
+        ) if platform == "iOS" else None
         if result.returncode != 0:
+            failed_result_bundle = output / f"{Path(filename).stem}.failed.xcresult"
+            if result_bundle.is_dir():
+                shutil.copytree(result_bundle, failed_result_bundle)
             tail = log_path.read_text(encoding="utf-8", errors="replace").splitlines()[-80:]
             raise RuntimeError(
                 f"The app-in-use UI test failed with exit code {result.returncode}; "
-                f"runner log is retained at {log_path}:\n" + "\n".join(tail)
+                f"runner log is retained at {log_path}; failure result bundle is retained at "
+                f"{failed_result_bundle if failed_result_bundle.exists() else 'unavailable'}; "
+                f"launch diagnostics={launch_diagnostics}:\n" + "\n".join(tail)
             )
 
         export_dir = project_root / "exported-attachments"
@@ -1203,6 +1510,9 @@ def run_app_in_use_ui_test(
             "simulator_udid": simulator_udid,
             "xcode_version": run(["xcodebuild", "-version"], capture=True, timeout=60),
             "screenshot_attachment": exported_name,
+            "direct_product_launch_exit_code": preflight.returncode,
+            "direct_product_launch_log": preflight_log_path.name,
+            "simulator_launch_diagnostics": launch_diagnostics,
             "product_target_compiled": False,
             "ios_keychain_roundtrip_verified": platform == "iOS",
             "ios_keychain_roundtrip_scope": (
@@ -1230,6 +1540,7 @@ def capture_simulator(
     build_receipt: dict[str, Any] | None = None,
     build_receipt_digest: str | None = None,
     simulator_entitlements: Path | None = None,
+    extension_entitlements_source_path: Path | None = None,
     signing_state: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     device = create_simulator(platform, category, run_id, attempt)
@@ -1254,11 +1565,12 @@ def capture_simulator(
                 build_receipt=build_receipt,
                 build_receipt_digest=build_receipt_digest,
                 simulator_entitlements=simulator_entitlements,
+                extension_entitlements_source_path=extension_entitlements_source_path,
                 signing_state=signing_state,
             )
             if platform == "iOS":
                 simulator_runtime_diagnostics = capture_ios_keychain_diagnostics(
-                    device["udid"], output, filename
+                    device["udid"], output, filename, app_info(app)["executable"]
                 )
         else:
             run(["xcrun", "simctl", "install", device["udid"], str(app)], timeout=180)
@@ -1320,7 +1632,9 @@ def capture_simulator(
     finally:
         try:
             if app_in_use and platform == "iOS" and simulator_runtime_diagnostics is None:
-                capture_ios_keychain_diagnostics(device["udid"], output, filename)
+                capture_ios_keychain_diagnostics(
+                    device["udid"], output, filename, app_info(app)["executable"]
+                )
         finally:
             cleanup_simulator(device)
 
@@ -1436,6 +1750,13 @@ def capture_ios_in_use(args: argparse.Namespace) -> None:
     simulator_entitlements = args.simulator_entitlements.resolve(strict=True)
     if simulator_entitlements.is_symlink() or not simulator_entitlements.is_file():
         raise ValueError("The approved iOS simulator entitlement source must be a regular file")
+    extension_entitlements_source_path = args.extension_entitlements.resolve(strict=True)
+    if extension_entitlements_source_path.is_symlink() or not extension_entitlements_source_path.is_file():
+        raise ValueError("The product extension entitlement source must be a regular file")
+    try:
+        extension_entitlements_source_path.relative_to(product_root)
+    except ValueError as error:
+        raise ValueError("The product extension entitlement source must remain under the exact source checkout") from error
     receipt_digest = sha256_file(build_receipt_path)
     shutil.copyfile(build_receipt_path, output / "producer-build-provenance.json")
     captures = []
@@ -1451,6 +1772,7 @@ def capture_ios_in_use(args: argparse.Namespace) -> None:
             build_receipt=build_receipt,
             build_receipt_digest=receipt_digest,
             simulator_entitlements=simulator_entitlements,
+            extension_entitlements_source_path=extension_entitlements_source_path,
             signing_state=signing_state,
         )
         signing_state = capture.get("simulator_signing")
@@ -2169,6 +2491,7 @@ def parse_args() -> argparse.Namespace:
             command.add_argument("--build-receipt", required=True, type=Path)
         if name == "capture-ios-in-use":
             command.add_argument("--simulator-entitlements", required=True, type=Path)
+            command.add_argument("--extension-entitlements", required=True, type=Path)
         command.set_defaults(handler=handler)
     paywall = subparsers.add_parser("capture-macos-paywall")
     paywall.add_argument("--product-root", required=True, type=Path)

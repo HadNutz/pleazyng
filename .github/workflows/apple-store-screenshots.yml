@@ -247,6 +247,7 @@ jobs:
             --app "$APPLE_STORE_APP_PATH" \
             --build-receipt "$RUNNER_TEMP/apple-store-build-ios-restored/build-provenance.json" \
             --simulator-entitlements "$GITHUB_WORKSPACE/capture-tools/ios/Runner/DebugProfile.entitlements" \
+            --extension-entitlements "$GITHUB_WORKSPACE/native/games/romm/apple/extension/RommWorker.entitlements" \
             --output-dir "$RUNNER_TEMP/apple-store-in-use-captures-ios"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7

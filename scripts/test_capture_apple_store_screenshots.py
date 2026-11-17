@@ -10,8 +10,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 from capture_apple_store_screenshots import (
+    derive_nested_bundle_simulator_entitlements,
     derive_ios_simulator_entitlements,
+    nested_code_paths,
     runner_signing_identity,
+    simulator_codesign_command,
 )
 
 
@@ -153,6 +156,67 @@ class SimulatorSigningTests(unittest.TestCase):
                     RUNNER_BUNDLE_ID,
                     "org.snapetech.pleazyng",
                 )
+
+    def test_nested_extension_keeps_its_source_entitlements_and_own_identity(self) -> None:
+        source = {
+            "com.apple.security.hardened-process": True,
+            "com.apple.security.hardened-process.dyld-ro": True,
+        }
+
+        actual = derive_nested_bundle_simulator_entitlements(
+            source,
+            TEAM_PREFIX,
+            "org.snapetech.pleazyng.RommWorker",
+        )
+
+        self.assertEqual(actual, {
+            **source,
+            "application-identifier": f"{TEAM_PREFIX}org.snapetech.pleazyng.RommWorker",
+        })
+
+    def test_nested_extension_rejects_inherited_or_sharing_identities(self) -> None:
+        for key in (
+            "application-identifier",
+            "keychain-access-groups",
+            "com.apple.developer.team-identifier",
+            "com.apple.security.application-groups",
+        ):
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "identity or sharing grants"):
+                derive_nested_bundle_simulator_entitlements(
+                    {key: "unexpected"}, TEAM_PREFIX, "org.snapetech.pleazyng.RommWorker"
+                )
+
+    def test_nested_codesign_command_never_deep_signs_and_generates_der_for_entitlements(self) -> None:
+        no_entitlements = simulator_codesign_command(Path("/tmp/Foo.framework"))
+        with_entitlements = simulator_codesign_command(
+            Path("/tmp/RommWorker.appex"), Path("/tmp/RommWorker.entitlements.plist")
+        )
+
+        self.assertNotIn("--deep", no_entitlements)
+        self.assertNotIn("--entitlements", no_entitlements)
+        self.assertIn("--generate-entitlement-der", with_entitlements)
+        self.assertEqual(with_entitlements[-3:], [
+            "--entitlements", "/tmp/RommWorker.entitlements.plist", "/tmp/RommWorker.appex"
+        ])
+        self.assertNotIn("--deep", with_entitlements)
+
+    def test_nested_code_order_places_contained_code_before_its_container(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            app = Path(temporary) / "Pleazyng.app"
+            parent = app / "Frameworks" / "Outer.framework"
+            child = parent / "Frameworks" / "Inner.framework"
+            extension = app / "PlugIns" / "RommWorker.appex"
+            dylib = app / "Frameworks" / "libNative.dylib"
+            for path in (child, parent, extension):
+                path.mkdir(parents=True, exist_ok=True)
+            dylib.parent.mkdir(parents=True, exist_ok=True)
+            dylib.touch()
+
+            paths = nested_code_paths(app)
+            indices = {path: index for index, (path, _) in enumerate(paths)}
+
+        self.assertLess(indices[child], indices[parent])
+        self.assertEqual({kind for _, kind in paths}, {"framework", "appex", "dylib"})
 
 
 if __name__ == "__main__":
