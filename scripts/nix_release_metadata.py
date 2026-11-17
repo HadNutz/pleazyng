@@ -19,6 +19,10 @@ from verify_frozen_packaging_repair import verify_receipt
 REPOSITORY = "snapetech-org/pleazyng"
 METADATA_PATH = "linux/packaging/nix/release.json"
 ACTIVATION_VERSION = (3, 0, 33)
+FROZEN_REPAIR_RECEIPT_FIELDS = frozenset({
+    "product_source_sha", "packaging_source_sha", "workflow_source_sha",
+    "packaging_approval", "recovery_policy", "schema_version",
+})
 
 
 def identity(metadata: dict) -> dict:
@@ -97,9 +101,114 @@ def manifest_run(proofs: list, digest: str, commit: str) -> tuple[int, int]:
     return matches.pop()
 
 
+def verify_ordinary_recovery(receipt: dict, product_commit: str, tag: str, github) -> str:
+    """Authenticate the narrow ordinary Linux-reuse receipt profile."""
+    import recover_release_platforms
+
+    if (not isinstance(receipt, dict)
+            or any(key in receipt for key in (
+                "schema_version", "product_source_sha", "packaging_source_sha",
+                "workflow_source_sha", "packaging_approval", "recovery_policy",
+                "assembly_run_id", "actual_checkout_sha"))):
+        raise ValueError("Unsupported ordinary recovery receipt shape")
+    source_run_id = receipt.get("source_run_id")
+    head_sha = receipt.get("head_sha")
+    if (type(source_run_id) is not int or source_run_id < 1
+            or receipt.get("source_sha") != product_commit
+            or receipt.get("version") != tag[1:]
+            or not isinstance(head_sha, str)
+            or re.fullmatch(r"[0-9a-f]{40}", head_sha) is None
+            or receipt.get("platforms_complete") is not True):
+        raise ValueError("Ordinary recovery receipt differs from the published source or version")
+
+    # This published recovery reused both Linux builds and rebuilt only Mac.
+    # Keep the accepted profile narrow so a receipt cannot omit a Linux job.
+    expected_rebuilds = {
+        "rebuild_linux": False, "rebuild_macos": True,
+        "rebuild_tvos": False, "rebuild_ios": False,
+    }
+    if any(receipt.get(key) is not value for key, value in expected_rebuilds.items()):
+        raise ValueError("Ordinary recovery receipt has unsupported platform reuse flags")
+    if (receipt.get("rebuilt_jobs") != ["build-macos"]
+            or receipt.get("append_apple_only") is True):
+        raise ValueError("Ordinary recovery receipt has an unsupported rebuilt-job set")
+
+    proof = recover_release_platforms.verify_source_run(
+        source_run_id, head_sha, tag[1:], REPOSITORY, rebuild_macos=True,
+    )
+    expected_proof = {
+        "source_run_id": source_run_id,
+        "source_sha": product_commit,
+        "head_sha": head_sha,
+        "version": tag[1:],
+        "rebuild_linux": False,
+        "rebuild_macos": True,
+        "rebuild_tvos": False,
+        "rebuild_ios": False,
+        "reused_jobs": receipt.get("reused_jobs"),
+        "platforms_complete": True,
+        "pending_jobs": receipt.get("pending_jobs"),
+        "macos_cask_qualified": receipt.get("macos_cask_qualified"),
+        "webos_link_compatibility_repaired": receipt.get("webos_link_compatibility_repaired"),
+    }
+    if any(proof.get(key) != expected for key, expected in expected_proof.items()):
+        raise ValueError("Ordinary recovery receipt differs from independently verified source-run proof")
+    if (not isinstance(proof.get("reused_jobs"), list)
+            or proof["reused_jobs"].count("Build Linux (x64)") != 1
+            or proof["reused_jobs"].count("Build Linux (arm64)") != 1):
+        raise ValueError("Verified source run did not reuse both exact Linux platform jobs")
+
+    # The CI receipt is itself returned by verify_source_run after checking the
+    # original source run. Compare its complete mode-specific proof, not just
+    # the receipt's self-reported CI run ID.
+    for key in ("ci_mode", "ci_run_id", "ci_run_url", "ci_source_sha", "embedded_ci"):
+        if key not in proof or receipt.get(key) != proof[key]:
+            raise ValueError("Ordinary recovery CI proof differs from the verified source run")
+
+    artifacts = receipt.get("artifacts")
+    if not isinstance(artifacts, list) or not artifacts:
+        raise ValueError("Ordinary recovery receipt has no bound source artifacts")
+    inventory = github(f"actions/runs/{source_run_id}/artifacts?per_page=100")
+    items = inventory.get("artifacts") if isinstance(inventory, dict) else None
+    total_count = inventory.get("total_count") if isinstance(inventory, dict) else None
+    if (not isinstance(items, list) or type(total_count) is not int
+            or total_count != len(items)):
+        raise ValueError("Cannot read a complete source-run artifact inventory")
+    seen = set()
+    for record in artifacts:
+        if not isinstance(record, dict):
+            raise ValueError("Ordinary recovery artifact record is invalid")
+        name = record.get("name")
+        artifact_id = record.get("artifact_id")
+        digest = record.get("digest")
+        if (not isinstance(name, str) or not name or name in seen
+                or type(artifact_id) is not int or artifact_id < 1
+                or not isinstance(digest, str)
+                or re.fullmatch(r"sha256:[0-9a-f]{64}", digest) is None
+                or record.get("source_run_id") != source_run_id
+                or record.get("source_sha") != product_commit
+                or ("workflow_source_sha" in record
+                    and record["workflow_source_sha"] != product_commit)):
+            raise ValueError("Ordinary recovery artifact is not bound to the exact source run")
+        seen.add(name)
+        matches = [item for item in items if item.get("name") == name]
+        if len(matches) != 1:
+            raise ValueError("Source-run artifact is missing or ambiguous: " + name)
+        item = matches[0]
+        workflow_run = item.get("workflow_run", {})
+        if (item.get("id") != artifact_id or item.get("digest") != digest
+                or item.get("expired") is not False
+                or workflow_run.get("id") != source_run_id
+                or workflow_run.get("head_sha") != product_commit):
+            raise ValueError("Recovery artifact ID, digest, or source identity changed: " + name)
+    if not {"linux-x64", "linux-arm64"}.issubset(seen):
+        raise ValueError("Ordinary recovery receipt does not bind both Linux source artifacts")
+    return head_sha
+
+
 def recovery_source(directory: str, assets: dict, manifest: str, product_commit: str,
-                    tag: str) -> tuple[str, dict | None]:
-    """Read an attestation-bound frozen-repair receipt, if this release has one."""
+                    tag: str, github) -> tuple[str, dict | None]:
+    """Read an attestation-bound recovery receipt, if this release has one."""
     asset = assets.get("platform-reuse-provenance.json")
     if asset is None:
         return product_commit, None
@@ -117,11 +226,16 @@ def recovery_source(directory: str, assets: dict, manifest: str, product_commit:
     if matches != [digest]:
         raise ValueError("Final checksums do not uniquely bind the recovery receipt")
     receipt = json.loads(raw)
-    workflow_commit = receipt.get("workflow_source_sha")
-    if (receipt.get("product_source_sha") != product_commit
-            or not isinstance(workflow_commit, str)
-            or re.fullmatch(r"[0-9a-f]{40}", workflow_commit) is None):
-        raise ValueError("Recovery receipt has a different immutable product or workflow source")
+    if not isinstance(receipt, dict):
+        raise ValueError("Recovery receipt must be a JSON object")
+    if FROZEN_REPAIR_RECEIPT_FIELDS.intersection(receipt):
+        workflow_commit = receipt.get("workflow_source_sha")
+        if (receipt.get("product_source_sha") != product_commit
+                or not isinstance(workflow_commit, str)
+                or re.fullmatch(r"[0-9a-f]{40}", workflow_commit) is None):
+            raise ValueError("Recovery receipt has a different immutable product or workflow source")
+        return workflow_commit, receipt
+    workflow_commit = verify_ordinary_recovery(receipt, product_commit, tag, github)
     return workflow_commit, receipt
 
 
@@ -157,7 +271,9 @@ def prepare(root: Path, metadata: dict, commit: str, github) -> tuple[str | None
         digest = hashlib.sha256(raw).hexdigest()
         if len(raw) != assets[manifest.name]["size"] or assets[manifest.name].get("digest") != f"sha256:{digest}":
             raise ValueError("Final manifest differs from public release asset")
-        workflow_commit, recovery = recovery_source(directory, assets, raw.decode("utf-8"), commit, tag)
+        workflow_commit, recovery = recovery_source(
+            directory, assets, raw.decode("utf-8"), commit, tag, github,
+        )
         result = subprocess.run(["gh", "attestation", "verify", str(manifest), "--repo", REPOSITORY,
                                  "--source-digest", workflow_commit, "--signer-workflow",
                                  f"{REPOSITORY}/.github/workflows/build.yml", "--format", "json"],
@@ -170,24 +286,30 @@ def prepare(root: Path, metadata: dict, commit: str, github) -> tuple[str | None
                 or assembly.get("repository", {}).get("full_name") != REPOSITORY):
             raise ValueError("Manifest assembly did not successfully build the immutable release source")
         if recovery is not None:
-            prefix = f"repos/{REPOSITORY}/"
-            def api(path: str) -> dict:
-                if path == f"repos/{REPOSITORY}":
-                    return json.loads(subprocess.check_output(["gh", "api", path], text=True))
-                if not path.startswith(prefix):
-                    raise ValueError("Recovery verifier requested a foreign repository")
-                return github(path[len(prefix):])
-            approval = verify_receipt(
-                recovery, product_source_sha=commit,
-                packaging_source_sha=recovery.get("packaging_source_sha"),
-                workflow_source_sha=workflow_commit,
-                source_run_id=recovery.get("source_run_id"), assembly_run_id=run_id,
-                api=api,
-            )
-            if (recovery.get("packaging_approval") != approval
-                    or recovery.get("source_sha") != commit
-                    or recovery.get("actual_checkout_sha") != recovery.get("packaging_source_sha")):
-                raise ValueError("Recovery receipt differs from its independently approved repair")
+            if not FROZEN_REPAIR_RECEIPT_FIELDS.intersection(recovery):
+                if (workflow_commit != recovery.get("head_sha")
+                        or assembly.get("head_branch") != "main"
+                        or assembly.get("head_repository", {}).get("full_name") != REPOSITORY):
+                    raise ValueError("Manifest attestation does not bind the ordinary recovery workflow source")
+            else:
+                prefix = f"repos/{REPOSITORY}/"
+                def api(path: str) -> dict:
+                    if path == f"repos/{REPOSITORY}":
+                        return json.loads(subprocess.check_output(["gh", "api", path], text=True))
+                    if not path.startswith(prefix):
+                        raise ValueError("Recovery verifier requested a foreign repository")
+                    return github(path[len(prefix):])
+                approval = verify_receipt(
+                    recovery, product_source_sha=commit,
+                    packaging_source_sha=recovery.get("packaging_source_sha"),
+                    workflow_source_sha=workflow_commit,
+                    source_run_id=recovery.get("source_run_id"), assembly_run_id=run_id,
+                    api=api,
+                )
+                if (recovery.get("packaging_approval") != approval
+                        or recovery.get("source_sha") != commit
+                        or recovery.get("actual_checkout_sha") != recovery.get("packaging_source_sha")):
+                    raise ValueError("Recovery receipt differs from its independently approved repair")
         hashes = release_hashes(raw.decode("utf-8"))
         for name, expected in hashes.items():
             if assets[name].get("digest") != f"sha256:{expected}":

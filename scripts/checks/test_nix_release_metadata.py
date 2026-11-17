@@ -42,6 +42,7 @@ class NixMetadataTests(unittest.TestCase):
         self.assembly = {"status": "completed", "conclusion": "success", "head_sha": self.commit,
                          "path": ".github/workflows/build.yml", "run_attempt": 1,
                          "repository": {"full_name": nix.REPOSITORY}}
+        self.attestation_source = self.commit
         self.source = {"encoding": "base64", "size": len(b"version: 3.0.33+192\n"),
                        "content": base64.b64encode(b"version: 3.0.33+192\n").decode()}
         self.proof = [{"verificationResult": {"statement": {
@@ -59,6 +60,8 @@ class NixMetadataTests(unittest.TestCase):
             return {"status": "ahead"}
         if path.startswith("contents/"):
             return self.source
+        if path.endswith("/artifacts?per_page=100"):
+            return self.artifact_inventory
         if path.startswith("actions/"):
             return self.assembly
         self.assertEqual(path, "releases/latest")
@@ -66,15 +69,67 @@ class NixMetadataTests(unittest.TestCase):
 
     def subprocess(self, args, **kwargs):
         if args[1:3] == ["release", "download"]:
-            (Path(args[args.index("--dir") + 1]) / "SHA256SUMS.txt").write_bytes(self.raw)
+            pattern = args[args.index("--pattern") + 1]
+            filename = Path(args[args.index("--dir") + 1]) / pattern
+            filename.write_bytes(self.recovery_raw if pattern == "platform-reuse-provenance.json" else self.raw)
             return SimpleNamespace(returncode=0)
         self.assertEqual(args[1:3], ["attestation", "verify"])
-        self.assertEqual(args[args.index("--source-digest") + 1], self.commit)
+        self.assertEqual(args[args.index("--source-digest") + 1], self.attestation_source)
         return SimpleNamespace(returncode=0, stdout=json.dumps(self.proof))
 
     def prepare(self, github=None):
         with patch.object(nix, "require_repository_identity"), patch.object(nix.subprocess, "run", side_effect=self.subprocess):
             return nix.prepare(self.root, self.metadata, self.commit, github or self.github)
+
+    def ordinary_recovery(self):
+        workflow = "f" * 40
+        source_run = 99
+        reused = [
+            "Validate release request", "Build tvOS developer package (arm64)", "build-ios",
+            "Build Linux (x64)", "Build Linux (arm64)", "Build Windows (x64)",
+            "Build Windows (arm64)", "package-windows",
+            "Build Samsung Tizen TV package (ARM) / validate",
+            "Build Samsung Tizen TV package (ARM) / package",
+        ]
+        artifacts = [
+            {"name": name, "artifact_id": artifact_id, "digest": "sha256:" + digest,
+             "source_run_id": source_run, "source_sha": self.commit}
+            for name, artifact_id, digest in (
+                ("linux-x64", 100, "a" * 64),
+                ("linux-arm64", 101, "b" * 64),
+            )
+        ]
+        ci = {"mode": "embedded", "run_id": source_run, "attempt": 1,
+              "workflow": ".github/workflows/build.yml", "ci_workflow": ".github/workflows/ci.yml",
+              "jobs": [{"id": 1, "name": "Release CI / Unit Tests", "attempt": 1,
+                        "status": "completed", "conclusion": "success"}]}
+        receipt = {
+            "source_run_id": source_run, "source_sha": self.commit,
+            "head_sha": workflow, "version": "3.0.33",
+            "reused_jobs": reused, "rebuilt_jobs": ["build-macos"],
+            "rebuild_linux": False, "rebuild_macos": True,
+            "rebuild_tvos": False, "rebuild_ios": False,
+            "macos_cask_qualified": False, "platforms_complete": True,
+            "pending_jobs": [], "webos_link_compatibility_repaired": False,
+            "ci_mode": "embedded", "ci_run_id": source_run,
+            "ci_run_url": f"https://github.com/{nix.REPOSITORY}/actions/runs/{source_run}",
+            "ci_source_sha": self.commit, "embedded_ci": ci,
+            "artifacts": artifacts,
+        }
+        proof = {key: receipt[key] for key in (
+            "source_run_id", "source_sha", "head_sha", "version",
+            "reused_jobs", "rebuild_linux", "rebuild_macos", "rebuild_tvos", "rebuild_ios",
+            "macos_cask_qualified", "platforms_complete", "pending_jobs",
+            "webos_link_compatibility_repaired", "ci_mode", "ci_run_id", "ci_run_url",
+            "ci_source_sha", "embedded_ci",
+        )}
+        inventory = {"total_count": 2, "artifacts": [
+            {"id": item["artifact_id"], "name": item["name"], "digest": item["digest"],
+             "expired": False,
+             "workflow_run": {"id": source_run, "head_sha": self.commit}}
+            for item in artifacts
+        ]}
+        return receipt, proof, inventory, workflow
 
     def test_exact_source_manifest_and_asset_digests_prepare_only_metadata(self):
         text, receipt = self.prepare()
@@ -118,6 +173,96 @@ class NixMetadataTests(unittest.TestCase):
             _, prepared = nix.prepare(self.root, self.metadata, self.commit, self.github)
         self.assertEqual(prepared["assembly_workflow_source"], workflow)
         verify.assert_called_once()
+
+    def test_ordinary_recovery_reauthenticates_source_ci_artifacts_and_final_attestation(self):
+        receipt, source_proof, inventory, workflow = self.ordinary_recovery()
+        with patch("recover_release_platforms.verify_source_run", return_value=source_proof) as verify:
+            self.assertEqual(nix.verify_ordinary_recovery(
+                receipt, self.commit, "v3.0.33", lambda _path: inventory,
+            ), workflow)
+        verify.assert_called_once_with(
+            receipt["source_run_id"], workflow, "3.0.33", nix.REPOSITORY, rebuild_macos=True,
+        )
+
+        receipt_raw = json.dumps(receipt).encode()
+        receipt_digest = hashlib.sha256(receipt_raw).hexdigest()
+        self.recovery_raw = receipt_raw
+        self.raw += (receipt_digest + "  platform-reuse-provenance.json\n").encode()
+        self.digest = hashlib.sha256(self.raw).hexdigest()
+        next(a for a in self.metadata["assets"] if a["name"] == "SHA256SUMS.txt").update(
+            size=len(self.raw), digest="sha256:" + self.digest)
+        self.metadata["assets"].append({"id": 900, "name": "platform-reuse-provenance.json",
+                                        "size": len(receipt_raw), "digest": "sha256:" + receipt_digest})
+        self.proof[0]["verificationResult"]["statement"]["subject"][0]["digest"]["sha256"] = self.digest
+        self.proof[0]["verificationResult"]["statement"]["predicate"]["buildDefinition"][
+            "resolvedDependencies"][0]["digest"]["gitCommit"] = workflow
+        self.attestation_source = workflow
+        self.assembly.update(head_sha=workflow, head_branch="main",
+                             head_repository={"full_name": nix.REPOSITORY})
+        self.artifact_inventory = inventory
+        with patch("recover_release_platforms.verify_source_run", return_value=source_proof):
+            _, prepared = self.prepare()
+        self.assertEqual(prepared["assembly_workflow_source"], workflow)
+        self.assertEqual(prepared["assembly_run"], 123)
+
+    def test_ordinary_recovery_rejects_receipt_source_run_ci_and_artifact_mismatches(self):
+        original, source_proof, inventory, workflow = self.ordinary_recovery()
+        cases = []
+
+        source = copy.deepcopy(original)
+        source["source_sha"] = "d" * 40
+        cases.append(("source", source, source_proof, inventory))
+
+        run = copy.deepcopy(original)
+        run["source_run_id"] += 1
+        cases.append(("run", run, source_proof, inventory))
+
+        ci = copy.deepcopy(original)
+        ci["ci_source_sha"] = "d" * 40
+        cases.append(("ci", ci, source_proof, inventory))
+
+        artifact = copy.deepcopy(original)
+        artifact["artifacts"][0]["digest"] = "sha256:" + "c" * 64
+        cases.append(("artifact", artifact, source_proof, inventory))
+
+        for kind, receipt, proof, live in cases:
+            with self.subTest(kind=kind), patch(
+                    "recover_release_platforms.verify_source_run", return_value=proof):
+                with self.assertRaises(ValueError):
+                    nix.verify_ordinary_recovery(
+                        receipt, self.commit, "v3.0.33", lambda _path: live,
+                    )
+
+        with patch("recover_release_platforms.verify_source_run", return_value=source_proof):
+            with self.assertRaisesRegex(ValueError, "artifact ID, digest"):
+                nix.verify_ordinary_recovery(
+                    original, self.commit, "v3.0.33",
+                    lambda _path: {**inventory, "artifacts": [
+                        {**inventory["artifacts"][0], "id": 999}, inventory["artifacts"][1],
+                    ]},
+                )
+
+    def test_ordinary_recovery_requires_the_attested_main_assembly_source(self):
+        receipt, source_proof, inventory, workflow = self.ordinary_recovery()
+        receipt_raw = json.dumps(receipt).encode()
+        receipt_digest = hashlib.sha256(receipt_raw).hexdigest()
+        self.recovery_raw = receipt_raw
+        self.raw += (receipt_digest + "  platform-reuse-provenance.json\n").encode()
+        self.digest = hashlib.sha256(self.raw).hexdigest()
+        next(a for a in self.metadata["assets"] if a["name"] == "SHA256SUMS.txt").update(
+            size=len(self.raw), digest="sha256:" + self.digest)
+        self.metadata["assets"].append({"id": 900, "name": "platform-reuse-provenance.json",
+                                        "size": len(receipt_raw), "digest": "sha256:" + receipt_digest})
+        self.proof[0]["verificationResult"]["statement"]["subject"][0]["digest"]["sha256"] = self.digest
+        self.proof[0]["verificationResult"]["statement"]["predicate"]["buildDefinition"][
+            "resolvedDependencies"][0]["digest"]["gitCommit"] = workflow
+        self.attestation_source = workflow
+        self.assembly.update(head_sha=workflow, head_branch="other",
+                             head_repository={"full_name": nix.REPOSITORY})
+        self.artifact_inventory = inventory
+        with patch("recover_release_platforms.verify_source_run", return_value=source_proof):
+            with self.assertRaisesRegex(ValueError, "ordinary recovery workflow source"):
+                self.prepare()
 
 
     def test_publication_and_coverage_fail_closed_before_network(self):

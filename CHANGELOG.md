@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Update Nix release metadata to published Pleazyng 3.0.36 with authenticated Linux x64 and ARM64 checksums.
+
 ## [3.0.37] - 2026-11-17
 
 - Bundle pinned EVC, 8-bit AVS2, AVS3 and LCEVC implementations in normal mpv packages for Android, Linux, Windows and Apple, consuming verified published artifacts across all four platform groups. End users do not install decoder SDKs.
