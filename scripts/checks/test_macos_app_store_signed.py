@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 import base64
 import hashlib
+import json
 from pathlib import Path
 import plistlib
 import re
@@ -69,6 +70,75 @@ class MacAppStoreProfileTests(unittest.TestCase):
         profile["ProvisionedDevices"] = ["device"]
         with self.assertRaises(ValueError):
             store.validate_macos_profile(profile, team=TEAM, certificate=CERTIFICATE)
+
+    def test_profile_inspection_is_get_only_and_never_exports_profile_content(self):
+        profile = self.profile()
+        profile["Platform"] = ["OSX"]
+        profile_bytes = plistlib.dumps(profile)
+        profile_content = base64.b64encode(b"cms-wrapped-profile-bytes").decode()
+
+        class FakeAPI:
+            def __init__(self):
+                self.paths = []
+
+            def items(self, path):
+                self.paths.append(path)
+                if path.startswith("/v1/bundleIds?"):
+                    return [{"id": "bundle-resource", "attributes": {
+                        "identifier": BUNDLE, "platform": "MAC_OS",
+                    }}]
+                return [{"id": "profile-resource", "attributes": {
+                    "profileType": "MAC_APP_STORE",
+                    "profileState": "ACTIVE",
+                    "uuid": UUID,
+                    "expirationDate": "2027-01-01T00:00:00Z",
+                    "profileContent": profile_content,
+                }}]
+
+            def request(self, path, body=None):
+                raise AssertionError("profile inspection must not issue direct requests or POST")
+
+        api = FakeAPI()
+        with tempfile.TemporaryDirectory() as temporary, patch.object(
+            store, "signing_run", return_value=profile_bytes
+        ) as cms_decode:
+            report = store.inspect_macos_profiles(api, Path(temporary), team=TEAM)
+
+        self.assertEqual(api.paths, [
+            "/v1/bundleIds?filter%5Bidentifier%5D=org.snapetech.pleazyng&limit=200",
+            "/v1/bundleIds/bundle-resource/profiles?limit=200",
+        ])
+        cms_decode.assert_called_once()
+        self.assertEqual(report["apple_api_requests"], "GET only")
+        self.assertFalse(report["profile_created"])
+        self.assertFalse(report["profile_deleted"])
+        self.assertFalse(report["keychains_accessed"])
+        self.assertEqual(report["profiles"][0]["payload_platform"], ["OSX"])
+        self.assertEqual(report["profiles"][0]["developer_certificate_sha1s"], [
+            store.certificate_fingerprint(CERTIFICATE),
+        ])
+        self.assertNotIn("profileContent", json.dumps(report))
+        self.assertNotIn(profile_content, json.dumps(report))
+
+    def test_profile_inspection_workflow_uses_public_macos_without_private_signing_permissions(self):
+        workflow = (ROOT / ".github/workflows/macos-app-store-signed.yml").read_text(encoding="utf-8")
+        private_job = workflow.split("  build-upload:", 1)[1].split("\n  inspect-profiles:", 1)[0]
+        public_job = workflow.split("  inspect-profiles:", 1)[1]
+
+        self.assertIn("inputs.profile_inspection_only != true", private_job.split("\n    runs-on:", 1)[0])
+        self.assertIn("if: github.repository == 'snapetech-org/pleazyng'", public_job)
+        self.assertIn("runs-on: macos-26", public_job)
+        permissions = public_job.split("    permissions:", 1)[1].split("    steps:", 1)[0]
+        self.assertIn("actions: read", permissions)
+        self.assertIn("contents: read", permissions)
+        self.assertNotIn("id-token", permissions)
+        self.assertNotIn("self-hosted", public_job)
+        self.assertLess(
+            public_job.index("--validate-source-only"),
+            public_job.index("--profile-inspection-only"),
+        )
+        self.assertIn("APPLE_API_PRIVATE_KEY", public_job)
+        self.assertNotIn("APPLE_CERTIFICATE_PASSWORD", public_job)
 
 
 class MacAppStoreSigningGuardTests(unittest.TestCase):
@@ -264,7 +334,8 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         self.assertIn("--local-signing-preflight-only", preflight_step)
         self.assertNotIn("APPLE_API_PRIVATE_KEY", preflight_step)
         self.assertIn("if: inputs.preflight_only != true", workflow[workflow.index("- name: Load Flutter version pinned by release source"):])
-        preflight_impl = signed_builder.split("def run_local_signing_preflight(", 1)[1].split("\ndef install_profile", 1)[0]
+        preflight_impl = signed_builder.split("def run_local_signing_preflight(", 1)[1].split(
+            "\ndef run_profile_inspection", 1)[0]
         self.assertIn("migrate_installer_identity", preflight_impl)
         self.assertIn('keychains["app"]', preflight_impl)
         self.assertIn('keychains["installer"]', preflight_impl)

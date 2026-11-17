@@ -109,6 +109,14 @@ submit App Review. A processed upload does not qualify sandbox/JIT runtime,
 StoreKit purchase and restore, screenshots, or Apple review. The first signed
 run remains an external signing and account qualification gate.
 
+For a profile-only diagnosis, dispatch the same workflow with
+`profile_inspection_only=true`. That mode runs on public hosted macOS, validates
+the immutable tag first, and makes only Apple API GET requests. Its bounded
+artifact reports the API profile type/state/platform and the decoded profile's
+platform, team, app identifier, certificate fingerprints and expiration; it
+does not export profile contents, access keychains, create profiles, or build
+the app. It does not use the private signing runner or queue controller.
+
 Xcode's `-resolvePackageDependencies` rewrites these tracked files while
 refreshing the tagged Swift packages:
 

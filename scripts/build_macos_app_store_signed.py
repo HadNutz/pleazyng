@@ -473,6 +473,120 @@ def validate_macos_profile(profile: dict, *, team: str, certificate: bytes) -> s
     return uuid
 
 
+def inspect_macos_profiles(api: AppleProfileAPI, stage: Path, *, team: str) -> dict:
+    """Read profile metadata from Apple without creating, deleting, or installing anything."""
+    bundle_items = api.items("/v1/bundleIds?" + urllib.parse.urlencode({
+        "filter[identifier]": EXPECTED_BUNDLE_ID, "limit": 200,
+    }))
+    if any(not isinstance(item, dict) or not isinstance(item.get("attributes"), dict)
+           for item in bundle_items):
+        raise ValueError("Apple bundle registration response is malformed")
+    bundle_items = [item for item in bundle_items
+                    if isinstance(item["attributes"].get("identifier"), str)
+                    and item["attributes"]["identifier"].casefold() == EXPECTED_BUNDLE_ID.casefold()]
+    report: dict[str, object] = {
+        "schema_version": 1,
+        "mode": "read-only Apple provisioning profile inspection",
+        "expected_bundle_id": EXPECTED_BUNDLE_ID,
+        "expected_team_id": team,
+        "apple_api_requests": "GET only",
+        "profile_content_exported": False,
+        "profile_created": False,
+        "profile_deleted": False,
+        "keychains_accessed": False,
+        "bundle_resources": [],
+        "profiles": [],
+    }
+    bundle_receipts: list[dict[str, object]] = []
+    profile_receipts: list[dict[str, object]] = []
+    for bundle in bundle_items:
+        attributes = bundle.get("attributes", {})
+        bundle_id = bundle.get("id")
+        if not isinstance(bundle_id, str) or not re.fullmatch(r"[A-Za-z0-9-]{1,128}", bundle_id):
+            bundle_id = None
+        bundle_receipts.append({
+            "resource_id": bundle_id,
+            "identifier": attributes.get("identifier")[:256]
+                if isinstance(attributes.get("identifier"), str) else None,
+            "registered_platform": attributes.get("platform")[:64]
+                if isinstance(attributes.get("platform"), str) else None,
+        })
+        if bundle_id is None:
+            continue
+        api_profiles = api.items(
+            f"/v1/bundleIds/{urllib.parse.quote(bundle_id, safe='')}/profiles?limit=200"
+        )
+        if any(not isinstance(item, dict) or not isinstance(item.get("attributes"), dict)
+               for item in api_profiles):
+            raise ValueError("Apple provisioning profile response is malformed")
+        for index, item in enumerate(api_profiles):
+            profile_attributes = item.get("attributes", {})
+            profile_type = profile_attributes.get("profileType")
+            receipt: dict[str, object] = {
+                "api_resource_id": item.get("id")[:128] if isinstance(item.get("id"), str) else None,
+                "profile_type": profile_type[:64] if isinstance(profile_type, str) else None,
+                "profile_state": profile_attributes.get("profileState")[:64]
+                    if isinstance(profile_attributes.get("profileState"), str) else None,
+                "api_platform": profile_attributes.get("platform")[:64]
+                    if isinstance(profile_attributes.get("platform"), str) else None,
+                "api_uuid": profile_attributes.get("uuid")[:64]
+                    if isinstance(profile_attributes.get("uuid"), str) else None,
+                "expiration_date": profile_attributes.get("expirationDate")[:64]
+                    if isinstance(profile_attributes.get("expirationDate"), str) else None,
+            }
+            if profile_type == PROFILE_TYPE:
+                receipt["content_inspected"] = True
+                try:
+                    content = profile_attributes.get("profileContent")
+                    if not isinstance(content, str) or len(content) > 6 * 1024 * 1024:
+                        raise ValueError("Apple provisioning profile content is missing or too large")
+                    profile_data = base64.b64decode(content, validate=True)
+                    profile_path = stage / f"macos-profile-{len(profile_receipts):03d}-{index:03d}.provisionprofile"
+                    write_private_file(profile_path, profile_data)
+                    try:
+                        profile = plistlib.loads(signing_run(["security", "cms", "-D", "-i", str(profile_path)]))
+                    finally:
+                        profile_path.unlink(missing_ok=True)
+                    if not isinstance(profile, dict):
+                        raise ValueError("Apple provisioning profile payload is malformed")
+                    entitlements = profile.get("Entitlements", {})
+                    if not isinstance(entitlements, dict):
+                        entitlements = {}
+                    app_identifier = entitlements.get("application-identifier")
+                    if not isinstance(app_identifier, str):
+                        app_identifier = entitlements.get("com.apple.application-identifier")
+                    certificates = profile.get("DeveloperCertificates", [])
+                    receipt.update({
+                        "payload_sha256": hashlib.sha256(profile_data).hexdigest(),
+                        "payload_size_bytes": len(profile_data),
+                        "payload_uuid": profile.get("UUID"),
+                        "payload_platform": [value for value in profile.get("Platform", [])
+                                             if isinstance(value, str) and len(value) <= 64]
+                            if isinstance(profile.get("Platform"), list) else [],
+                        "payload_team_ids": [value for value in profile.get("TeamIdentifier", [])
+                                             if isinstance(value, str) and re.fullmatch(r"[A-Z0-9]{10}", value)]
+                            if isinstance(profile.get("TeamIdentifier"), list) else [],
+                        "payload_application_identifier": app_identifier
+                            if isinstance(app_identifier, str) and len(app_identifier) <= 256 else None,
+                        "developer_certificate_sha1s": [
+                            certificate_fingerprint(value) for value in certificates
+                            if isinstance(value, bytes)
+                        ] if isinstance(certificates, list) else [],
+                        "get_task_allow": entitlements.get("get-task-allow")
+                            if type(entitlements.get("get-task-allow")) is bool else None,
+                        "provisioned_devices_count": len(profile.get("ProvisionedDevices", []))
+                            if isinstance(profile.get("ProvisionedDevices", []), list) else None,
+                        "provisions_all_devices": profile.get("ProvisionsAllDevices")
+                            if type(profile.get("ProvisionsAllDevices")) is bool else None,
+                    })
+                except (RuntimeError, ValueError, TypeError, OSError, plistlib.InvalidFileException):
+                    receipt["payload_inspection_error"] = "profile content could not be decoded safely"
+            profile_receipts.append(receipt)
+    report["bundle_resources"] = bundle_receipts
+    report["profiles"] = profile_receipts
+    return report
+
+
 def ensure_macos_profile(api: AppleProfileAPI, stage: Path, *, team: str,
                          certificate: bytes, certificate_id: str) -> tuple[bytes, str]:
     bundles = api.items("/v1/bundleIds?" + urllib.parse.urlencode({
@@ -715,6 +829,33 @@ def run_local_signing_preflight(source_dir: Path, source: dict[str, str], team: 
     _write_receipt(report_path, report)
     print(f"Verified persistent Mac App Store signing identities; receipt: {report_path}")
     return 0
+
+
+def run_profile_inspection(source: dict[str, str], team: str,
+                           output_dir: Path, report_path: Path) -> int:
+    """Record current Apple profile metadata with GET-only API calls and no keychain access."""
+    if output_dir.exists() or output_dir.is_symlink():
+        raise FileExistsError("Refusing to overwrite a Mac App Store profile inspection output")
+    output_dir.mkdir(mode=0o700, parents=True)
+    report: dict[str, object] = {**source, "channel": "Mac App Store", "candidate_state": "profile-inspected"}
+    try:
+        if sys.platform != "darwin":
+            raise RuntimeError("Mac App Store profile inspection requires macOS to decode Apple profiles")
+        with tempfile.TemporaryDirectory(prefix="pleazyng-macos-profile-inspection-", dir=output_dir) as temporary:
+            stage = Path(temporary)
+            stage.chmod(0o700)
+            api = AppleProfileAPI(_apple_api_token(stage))
+            os.environ.pop("APPLE_API_PRIVATE_KEY", None)
+            report["profile_inspection"] = inspect_macos_profiles(api, stage, team=team)
+        _write_receipt(report_path, report)
+        print(f"Inspected Mac App Store provisioning profile metadata; receipt: {report_path}")
+        return 0
+    except (RuntimeError, ValueError, OSError, KeyError, plistlib.InvalidFileException) as error:
+        report["candidate_state"] = "profile-inspection-failed"
+        report["failure"] = str(error)
+        _write_receipt(report_path, report)
+        print("Mac App Store profile inspection failed; see the bounded public receipt.", file=sys.stderr)
+        return 1
 
 
 def install_profile(profile_data: bytes, profile_uuid: str) -> list[Path]:
@@ -1257,6 +1398,8 @@ def parse_args() -> argparse.Namespace:
                         help="check free space for the named filesystem roots")
     parser.add_argument("--local-signing-preflight-only", action="store_true",
                         help="repair the retained installer key ACL and verify identities with local signing probes")
+    parser.add_argument("--profile-inspection-only", action="store_true",
+                        help="inspect current Apple profile metadata with read-only API calls; do not access keychains or create profiles")
     parser.add_argument("--capacity-root", action="append", default=[], metavar="LABEL=PATH",
                         help="filesystem role and path to check; may be supplied more than once")
     parser.add_argument("--minimum-free-gib", type=float, default=EARLY_CAPACITY_GIB,
@@ -1267,8 +1410,8 @@ def parse_args() -> argparse.Namespace:
     args = parser.parse_args()
     _safe_tag(args.release_tag)
     if sum((args.validate_source_only, args.capacity_preflight_only,
-            args.local_signing_preflight_only)) > 1:
-        parser.error("source validation, capacity preflight, and local signing preflight are separate modes")
+            args.local_signing_preflight_only, args.profile_inspection_only)) > 1:
+        parser.error("source validation, capacity preflight, local signing preflight, and profile inspection are separate modes")
     if args.validate_source_only:
         if not args.main_commit:
             parser.error("--main-commit is required with --validate-source-only")
@@ -1278,6 +1421,9 @@ def parse_args() -> argparse.Namespace:
     elif args.local_signing_preflight_only:
         if not args.output_dir:
             parser.error("--output-dir is required with --local-signing-preflight-only")
+    elif args.profile_inspection_only:
+        if not args.output_dir:
+            parser.error("--output-dir is required with --profile-inspection-only")
     elif not all((args.output_dir, args.archive_path, args.derived_data)):
         parser.error("--output-dir, --archive-path, and --derived-data are required for signing")
     return args
@@ -1303,4 +1449,15 @@ if __name__ == "__main__":
             raise SystemExit(1) from None
         print(json.dumps(result, sort_keys=True))
         raise SystemExit(0)
+    if arguments.profile_inspection_only:
+        report = validate_release_source(
+            arguments.source_dir, arguments.release_tag, os.environ.get("GITHUB_SHA", "")
+        )
+        team = os.environ.get(TEAM_SECRET, "")
+        if not re.fullmatch(r"[A-Z0-9]{10}", team):
+            raise SystemExit("APPLE_TEAM_ID is missing or invalid")
+        raise SystemExit(run_profile_inspection(
+            report, team, arguments.output_dir,
+            arguments.output_dir / "pleazyng-macos-appstore-profile-inspection.json",
+        ))
     raise SystemExit(run_build(arguments))
