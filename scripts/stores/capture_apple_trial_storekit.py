@@ -555,6 +555,50 @@ def write_json(path: Path, value: Any) -> None:
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def run_logged_command(args: list[str], log_path: Path, *, timeout: int) -> subprocess.CompletedProcess[str]:
+    """Run Xcode with durable combined output and a timeout receipt."""
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with log_path.open("w", encoding="utf-8") as log_file:
+            return subprocess.run(
+                args,
+                check=False,
+                text=True,
+                stdout=log_file,
+                stderr=subprocess.STDOUT,
+                timeout=timeout,
+            )
+    except subprocess.TimeoutExpired as error:
+        evidence: dict[str, Any] = {
+            "command": args,
+            "timeout_seconds": timeout,
+            "combined_stdout_stderr_log": log_path.name,
+        }
+        for stream_name, stream in (
+            ("stdout", getattr(error, "stdout", None) or getattr(error, "output", None)),
+            ("stderr", getattr(error, "stderr", None)),
+        ):
+            if stream is None:
+                continue
+            stream_bytes = stream if isinstance(stream, bytes) else str(stream).encode("utf-8")
+            stream_path = log_path.with_name(f"{log_path.name}.{stream_name}.timeout.txt")
+            stream_path.write_bytes(stream_bytes)
+            evidence[f"captured_{stream_name}_log"] = stream_path.name
+        write_json(log_path.with_name(f"{log_path.name}.timeout.json"), evidence)
+        raise RuntimeError(
+            f"Xcode command timed out after {timeout}s; combined stdout/stderr retained in {log_path.name}"
+        ) from error
+
+
+def failure_diagnostic_files(output: Path) -> list[str]:
+    return sorted(
+        path.name for path in output.iterdir()
+        if path.is_file() and (".timeout." in path.name or path.name in {
+            "xctest-runner-build.log", "storekit-ui-test.log", "simulator-storekitd.log",
+        })
+    )
+
+
 def record_build(args: argparse.Namespace) -> None:
     root = args.product_root.resolve(strict=True)
     source = verify_source(root, args.product_source_sha)
@@ -792,10 +836,6 @@ def capture(args: argparse.Namespace) -> None:
         write_json(project_spec, project_spec_data)
         command(["xcodegen", "generate", "--spec", str(project_spec), "--project", str(project_root)], timeout=180)
         project = project_root / "PleazyngTrialReview.xcodeproj"
-        inventory = json.loads(command(["xcodebuild", "-list", "-json", "-project", str(project)], capture=True, timeout=180))
-        targets = inventory.get("project", {}).get("targets", [])
-        if targets != ["PleazyngTrialReviewUITests"]:
-            raise ValueError(f"Temporary XCTest project has unexpected targets: {targets!r}")
 
         derived_data = project_root / "derived-data"
         build_log = output / "xctest-runner-build.log"
@@ -807,15 +847,7 @@ def capture(args: argparse.Namespace) -> None:
             "-derivedDataPath", str(derived_data),
             "-parallel-testing-enabled", "NO",
         ]
-        with build_log.open("w", encoding="utf-8") as log_file:
-            build = subprocess.run(
-                build_command,
-                check=False,
-                text=True,
-                stdout=log_file,
-                stderr=subprocess.STDOUT,
-                timeout=900,
-            )
+        build = run_logged_command(build_command, build_log, timeout=900)
         if build.returncode != 0:
             raise RuntimeError(f"XCTest-only runner build failed ({build.returncode}); see {build_log}")
 
@@ -856,15 +888,7 @@ def capture(args: argparse.Namespace) -> None:
         ]
         test_log = output / "storekit-ui-test.log"
         try:
-            with test_log.open("w", encoding="utf-8") as log_file:
-                result = subprocess.run(
-                    test_command,
-                    check=False,
-                    text=True,
-                    stdout=log_file,
-                    stderr=subprocess.STDOUT,
-                    timeout=1800,
-                )
+            result = run_logged_command(test_command, test_log, timeout=1800)
         finally:
             capture_simulator_storekit_logs(device["udid"], output)
         if result_bundle.is_dir():
@@ -950,6 +974,7 @@ def capture(args: argparse.Namespace) -> None:
             "capture_tools_sha": tools_sha,
             "error": failure,
             "result_bundle_present": bool(result_bundle and result_bundle.exists()),
+            "diagnostic_files": failure_diagnostic_files(output),
             "created_at_utc": datetime.now(timezone.utc).isoformat(),
         })
         raise

@@ -88,13 +88,65 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
             capture.verify_storekit_test_runtime("27.2", inventory, "26.6")
 
     def test_xcodegen_explicitly_places_storekit_in_the_ui_test_resource_phase(self) -> None:
-        target = capture.storekit_ui_test_project_spec()["targets"]["PleazyngTrialReviewUITests"]
+        spec = capture.storekit_ui_test_project_spec()
+        target = spec["targets"]["PleazyngTrialReviewUITests"]
         self.assertEqual(target["type"], "bundle.ui-testing")
         self.assertEqual(target["sources"], [
             {"path": "PleazyngTrialReviewUITests.swift", "buildPhase": "sources"},
             {"path": "pleazyng-trial-review.storekit", "buildPhase": "resources"},
         ])
         self.assertNotIn("resources", target)
+        self.assertEqual(
+            spec["schemes"]["PleazyngTrialReview"]["build"]["targets"],
+            {"PleazyngTrialReviewUITests": ["test"]},
+        )
+
+    def test_xcode_capture_build_skips_redundant_project_inventory(self) -> None:
+        capture_body = SCRIPT[SCRIPT.index("def capture(args:"):]
+        self.assertNotIn('["xcodebuild", "-list"', capture_body)
+        self.assertIn('"xcodebuild", "build-for-testing"', capture_body)
+        self.assertIn('"-scheme", "PleazyngTrialReview"', capture_body)
+        self.assertIn("run_logged_command(build_command, build_log, timeout=900)", capture_body)
+        self.assertIn("run_logged_command(test_command, test_log, timeout=1800)", capture_body)
+
+    def test_xcode_timeout_keeps_partial_output_and_command_receipt(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            log_path = Path(temporary) / "xctest-runner-build.log"
+
+            def time_out(args, **kwargs):
+                kwargs["stdout"].write("visible partial xcodebuild output\n")
+                raise capture.subprocess.TimeoutExpired(
+                    args,
+                    timeout=1,
+                    output=b"captured stdout",
+                    stderr=b"captured stderr",
+                )
+
+            with patch.object(capture.subprocess, "run", side_effect=time_out):
+                with self.assertRaisesRegex(RuntimeError, "stdout/stderr retained in xctest-runner-build.log"):
+                    capture.run_logged_command(["xcodebuild", "build-for-testing"], log_path, timeout=1)
+
+            self.assertIn("visible partial xcodebuild output", log_path.read_text(encoding="utf-8"))
+            self.assertEqual(
+                log_path.with_name("xctest-runner-build.log.stdout.timeout.txt").read_bytes(),
+                b"captured stdout",
+            )
+            self.assertEqual(
+                log_path.with_name("xctest-runner-build.log.stderr.timeout.txt").read_bytes(),
+                b"captured stderr",
+            )
+            timeout_receipt = json.loads(
+                log_path.with_name("xctest-runner-build.log.timeout.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(timeout_receipt["command"], ["xcodebuild", "build-for-testing"])
+            self.assertEqual(timeout_receipt["timeout_seconds"], 1)
+            self.assertEqual(timeout_receipt["combined_stdout_stderr_log"], log_path.name)
+            self.assertEqual(capture.failure_diagnostic_files(Path(temporary)), [
+                "xctest-runner-build.log",
+                "xctest-runner-build.log.stderr.timeout.txt",
+                "xctest-runner-build.log.stdout.timeout.txt",
+                "xctest-runner-build.log.timeout.json",
+            ])
 
     def test_built_storekit_resource_must_be_exactly_in_the_xctest_bundle(self) -> None:
         catalog_bytes = CATALOG_PATH.read_bytes()
@@ -391,6 +443,7 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
         self.assertIn("stage_verified_app_for_xctestrun", SCRIPT)
         self.assertIn("install_verified_app_on_simulator", SCRIPT)
         self.assertIn("capture_simulator_storekit_logs", SCRIPT)
+        self.assertIn('"diagnostic_files"', SCRIPT)
         self.assertIn('["xcrun", "simctl", "install", device_id, str(app)]', SCRIPT)
         capture_body = SCRIPT[SCRIPT.index("def capture(args:"):]
         self.assertLess(
