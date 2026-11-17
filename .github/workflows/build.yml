@@ -1735,6 +1735,12 @@ jobs:
           export GIT_TERMINAL_PROMPT=0
           tvos/scripts/pod_install.sh
 
+      - name: Test tvOS package-product framework wiring
+        run: |
+          set -euo pipefail
+          gem install minitest --version 5.25.5 --no-document
+          ruby test/native/tvos_plugin_wiring_test.rb
+
       - name: Resolve pinned tvOS Swift packages
         run: |
           xcodebuild -resolvePackageDependencies \
@@ -1816,10 +1822,50 @@ jobs:
             --derived-data "$APPLE_LOCAL_BUILD_DIR/tvos-store-derived-data" \
             --source-packages "$APPLE_SOURCE_PACKAGES_DIR"
 
+      - name: Verify tvOS runtime dependencies
+        env:
+          TVOS_SIGNED_BUILD: ${{ steps.tvos-signing.outputs.configured }}
+          TVOS_PRODUCT_SOURCE_SHA: ${{ inputs.recovery_product_sha || github.sha }}
+        run: |
+          set -euo pipefail
+          sdk_root="$(xcrun --sdk appletvos --show-sdk-path)"
+          sdk_version="$(xcrun --sdk appletvos --show-sdk-version)"
+          args=(
+            --product-root "$GITHUB_WORKSPACE"
+            --unsigned-ipa "$GITHUB_WORKSPACE/pleazyng-tvos-unsigned.ipa"
+            --product-source-sha "$TVOS_PRODUCT_SOURCE_SHA"
+            --packaging-source-sha "$COMPILE_SOURCE_SHA"
+            --workflow-source-sha "$GITHUB_SHA"
+            --run-id "$GITHUB_RUN_ID"
+            --run-attempt "$GITHUB_RUN_ATTEMPT"
+            --repository "$GITHUB_REPOSITORY"
+            --sdk-root "$sdk_root"
+            --sdk-version "$sdk_version"
+            --receipt "$GITHUB_WORKSPACE/tvos-runtime-dependency-receipt.json"
+          )
+          if [[ "$TVOS_SIGNED_BUILD" == true ]]; then
+            args+=(
+              --signed-ipa "$GITHUB_WORKSPACE/pleazyng-tvos-appstore.ipa"
+              --require-signed
+            )
+          fi
+          python3 scripts/verify_apple_macho_dependencies.py "${args[@]}"
+
+      - name: Retain tvOS runtime dependency report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: tvos-runtime-dependency-report
+          path: ${{ github.workspace }}/tvos-runtime-dependency-receipt.json
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Attest unsigned tvOS developer package
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
-          subject-path: pleazyng-tvos-unsigned.ipa
+          subject-path: |
+            pleazyng-tvos-unsigned.ipa
+            tvos-runtime-dependency-receipt.json
 
       - name: Attest signed tvOS App Store package
         if: steps.tvos-signing.outputs.configured == 'true'
@@ -1850,6 +1896,7 @@ jobs:
           path: |
             pleazyng-tvos-unsigned.ipa
             pleazyng-tvos-appstore.ipa
+            tvos-runtime-dependency-receipt.json
           if-no-files-found: error
 
       - name: Clean tvOS source and Xcode scratch

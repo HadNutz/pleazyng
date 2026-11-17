@@ -1565,6 +1565,54 @@ require(
     "Apple Swift package resolution must keep DerivedData inside the per-job cleanup root",
 )
 
+tvos_job = job("build-tvos")
+tvos_wiring_regression = named_step(tvos_job, "Test tvOS package-product framework wiring")
+tvos_dependency_gate = named_step(tvos_job, "Verify tvOS runtime dependencies")
+tvos_dependency_report = named_step(tvos_job, "Retain tvOS runtime dependency report")
+tvos_package_upload = named_step(tvos_job, "Upload tvOS package")
+tvos_unsigned_attestation = named_step(tvos_job, "Attest unsigned tvOS developer package")
+require(
+    'gem install minitest --version 5.25.5 --no-document' in tvos_wiring_regression
+    and 'ruby test/native/tvos_plugin_wiring_test.rb' in tvos_wiring_regression
+    and tvos_job.find("      - name: Install tvOS CocoaPods dependencies")
+    < tvos_job.find("      - name: Test tvOS package-product framework wiring")
+    < tvos_job.find("      - name: Build tvOS app"),
+    "tvOS Xcode-project regression must run with the CocoaPods xcodeproj install before compilation",
+)
+require(
+    "scripts/verify_apple_macho_dependencies.py" in tvos_dependency_gate
+    and '"$GITHUB_WORKSPACE/pleazyng-tvos-unsigned.ipa"' in tvos_dependency_gate
+    and '"$GITHUB_WORKSPACE/pleazyng-tvos-appstore.ipa"' in tvos_dependency_gate
+    and "--require-signed" in tvos_dependency_gate
+    and "TVOS_PRODUCT_SOURCE_SHA: ${{ inputs.recovery_product_sha || github.sha }}" in tvos_dependency_gate
+    and '"$TVOS_PRODUCT_SOURCE_SHA"' in tvos_dependency_gate
+    and '"$COMPILE_SOURCE_SHA"' in tvos_dependency_gate
+    and "--packaging-source-sha" in tvos_dependency_gate
+    and '"$GITHUB_SHA"' in tvos_dependency_gate
+    and '"$GITHUB_RUN_ID"' in tvos_dependency_gate
+    and '"$GITHUB_RUN_ATTEMPT"' in tvos_dependency_gate
+    and '"$GITHUB_REPOSITORY"' in tvos_dependency_gate
+    and '"$(xcrun --sdk appletvos --show-sdk-path)"' in tvos_dependency_gate
+    and '"$(xcrun --sdk appletvos --show-sdk-version)"' in tvos_dependency_gate,
+    "tvOS package gate must verify unsigned and requested signed IPA dependencies against exact source, run, and SDK identity",
+)
+require(
+    tvos_job.find("      - name: Build signed tvOS App Store IPA")
+    < tvos_job.find("      - name: Verify tvOS runtime dependencies")
+    < tvos_job.find("      - name: Attest unsigned tvOS developer package")
+    < tvos_job.find("      - name: Upload tvOS package")
+    and "tvos-runtime-dependency-receipt.json" in tvos_package_upload
+    and "if: always()" in tvos_dependency_report
+    and "tvos-runtime-dependency-report" in tvos_dependency_report
+    and "tvos-runtime-dependency-receipt.json" in tvos_dependency_report,
+    "tvOS dependency validation must gate attestations/package upload and preserve its receipt on failure",
+)
+require(
+    "tvos-runtime-dependency-receipt.json" in tvos_unsigned_attestation
+    and "pleazyng-tvos-unsigned.ipa" in tvos_unsigned_attestation,
+    "tvOS dependency receipt must be covered by the unsigned package attestation",
+)
+
 unit_tests = job_block(ci_text, "test")
 chrome_setup = named_step(unit_tests, "Configure Flutter Chrome executable")
 chrome_test = named_step(unit_tests, "Run wakelock_plus Chrome tests")
