@@ -2,10 +2,12 @@
 
 ## [Unreleased]
 
+## [3.0.37] - 2026-11-17
+
 - Bundle pinned EVC, 8-bit AVS2, AVS3 and LCEVC implementations in normal mpv packages for Android, Linux, Windows and Apple, consuming verified published artifacts across all four platform groups. End users do not install decoder SDKs.
 - Detect LCEVC enhancement before hardware submission and replay through software when hardware would present only the base layer. Ordinary H.264 retains hardware decoding.
 
-## [3.0.37]
+- Include required version metadata in the bundled Apple torrent framework and reject malformed embedded bundles before store upload.
 
 - Verify new Apple Store uploads against their core release manifest while keeping recovered uploads bound to their separate checksum and provenance sidecars.
 
