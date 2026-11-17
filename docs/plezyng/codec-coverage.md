@@ -35,9 +35,13 @@ source. Native webOS, Tizen and ExoPlayer never inherit mpv's inventory.
 - Companion `snapetech-org/mpv-build` preserves the broad built-in FFmpeg
   decoder, demuxer, parser and bitstream-filter sets. Linux packages generate
   a binary-hashed inventory and require a software AV1 implementation.
-  Its Linux, Android, Apple and Windows source graphs include EVC, AVS2 and
-  AVS3 external decoders. The pinned AVS2 dependency is 8-bit only. Native packages must be rebuilt and consumed
-  before these new dependencies exist in an installed application.
+  Its Linux, Android, Apple and Windows source graphs include EVC, AVS2,
+  AVS3 and static LCEVCdec. The Linux release gate requires H.264, HEVC,
+  software AV1, VP9, MPEG-2, VC-1, MPEG-4, VVC, EVC, AVS2 and AVS3, plus
+  generated decode/seek corpus and LCEVC reconstruction checks on both native
+  architectures. The pinned AVS2 dependency is 8-bit only. Native packages
+  must be rebuilt and consumed before these source integrations exist in an
+  installed application.
 
 ## Coverage order and remaining qualification
 
@@ -77,16 +81,16 @@ The application remains on its last verified native pin until the producer's
 new all-platform artifacts pass publication and pin verification. These source
 changes do not themselves establish shipped or device-qualified LCEVC support.
 Native webOS/Tizen/ExoPlayer backends do not gain this SDK from mpv packaging.
-AV2 v1.0.0 is final, but VideoLAN still describes dav2d as an early
-decoder and advises against production use; its repository roadmap lists the C
-implementation, usable API and platform ports as ongoing work. The pinned
-FFmpeg has no AV2 codec ID or integrated decoder wrapper, so filename or
+AV2 v1.0.0 is final. VideoLAN's May 2026 status describes dav2d as a
+functional early decoder with 8/10-bit decoding, while conformance,
+optimization and platform support remain active work. The pinned FFmpeg has
+no AV2 codec ID, decoder wrapper or demuxer integration, so filename or
 server-metadata recognition cannot enable local AV2 playback. Current mpv
 inventories therefore exclude AV2. When a valid inventory shows no source
 decoder, Jellyfin/Emby playback requests a compatible server conversion; if
 none is offered, the client reports the unsupported source instead of retrying
 the same file. Sources: [AV2 v1.0 specification](https://av2.aomedia.org/),
-[VideoLAN dav2d project](https://code.videolan.org/videolan/dav2d).
+[VideoLAN dav2d status](https://jbkempf.com/blog/2026/dav2d/).
 
 Unavailable proprietary SDKs must likewise keep an honest unsupported or
 server-conversion route; recognition never substitutes for an implementation.
