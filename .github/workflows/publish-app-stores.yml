@@ -344,8 +344,11 @@ jobs:
             --dir "$RUNNER_TEMP/store-assets"
           cd "$RUNNER_TEMP/store-assets"
           python3 - <<'PYHASH'
-          import hashlib, json, os, re
+          import hashlib, json, os
           from pathlib import Path
+          import sys
+          sys.path.insert(0, os.environ["GITHUB_WORKSPACE"] + "/scripts")
+          from verify_apple_store_recovery import verify_recovery_provenance
           asset = os.environ["IPA_ASSET"]
           release_tag = os.environ["RELEASE_TAG"]
           entries = [line.split() for line in Path("APPLE-STORE-SHA256SUMS.txt").read_text().splitlines()]
@@ -355,19 +358,12 @@ jobs:
           if expected != [actual]:
               raise SystemExit("Signed IPA checksum missing from Apple sidecar, ambiguous, or mismatched")
           provenance = json.loads(Path("APPLE-STORE-RECOVERY.json").read_text())
-          if (provenance.get("schema_version") != 1
-              or provenance.get("release_tag") != release_tag
-              or not re.fullmatch(r"[0-9a-f]{40}", str(provenance.get("product_source_sha", "")))
-              or not re.fullmatch(r"[0-9a-f]{40}", str(provenance.get("packaging_source_sha", "")))
-              or not re.fullmatch(r"[0-9a-f]{40}", str(provenance.get("workflow_source_sha", "")))
-              or not isinstance(provenance.get("source_run_id"), int)
-              or not isinstance(provenance.get("assembly_run_id"), int)):
-              raise SystemExit("Apple recovery provenance identity is incomplete")
-          outputs = {item.get("name"): item.get("sha256")
-                     for item in provenance.get("signed_store_artifacts", [])
-                     if isinstance(item, dict)}
-          if outputs.get(asset) != actual:
-              raise SystemExit("Apple recovery provenance does not bind the selected IPA bytes")
+          try:
+              verify_recovery_provenance(
+                  provenance, release_tag=release_tag, asset_name=asset, asset_sha256=actual,
+              )
+          except ValueError as error:
+              raise SystemExit(str(error)) from error
           PYHASH
           python3 "$GITHUB_WORKSPACE/scripts/verify_release_attestation.py" "$IPA_ASSET" --repo "$GITHUB_REPOSITORY"
           python3 "$GITHUB_WORKSPACE/scripts/verify_release_attestation.py" APPLE-STORE-SHA256SUMS.txt --repo "$GITHUB_REPOSITORY"
