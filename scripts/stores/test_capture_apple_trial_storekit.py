@@ -377,6 +377,151 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
                 "xctest-runner-build.log.timeout.json",
             ])
 
+    def test_simulator_command_preserves_success_and_timeout_stdout_stderr(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            success_args = ["xcrun", "simctl", "install", "simulator-udid", "/tmp/Pleazyng.app"]
+            with patch.object(
+                capture.subprocess,
+                "run",
+                return_value=subprocess.CompletedProcess(success_args, 0, "install stdout\n", "install stderr\n"),
+            ):
+                result = capture.run_simulator_command(
+                    success_args, output, "simctl-install", timeout=30
+                )
+            self.assertEqual(result.returncode, 0)
+            self.assertEqual((output / "simctl-install.stdout.txt").read_text(), "install stdout\n")
+            self.assertEqual((output / "simctl-install.stderr.txt").read_text(), "install stderr\n")
+            receipt = json.loads((output / "simctl-install.command.json").read_text())
+            self.assertEqual(receipt["command"], success_args)
+            self.assertEqual(receipt["timeout_seconds"], 30)
+            self.assertFalse(receipt["timed_out"])
+
+            timeout_args = ["xcrun", "simctl", "get_app_container", "simulator-udid", capture.BUNDLE_ID, "app"]
+            with patch.object(
+                capture.subprocess,
+                "run",
+                side_effect=subprocess.TimeoutExpired(
+                    timeout_args, 2, output=b"partial get-container stdout", stderr=b"service stderr"
+                ),
+            ), self.assertRaises(subprocess.TimeoutExpired):
+                capture.run_simulator_command(timeout_args, output, "simctl-get-app", timeout=2)
+            self.assertEqual(
+                (output / "simctl-get-app.stdout.txt").read_text(), "partial get-container stdout"
+            )
+            self.assertEqual((output / "simctl-get-app.stderr.txt").read_text(), "service stderr")
+            receipt = json.loads((output / "simctl-get-app.command.json").read_text())
+            self.assertTrue(receipt["timed_out"])
+            self.assertEqual(receipt["command"], timeout_args)
+
+    def test_simulator_is_rebooted_on_the_same_udid_after_xctest_build_shutdown(self) -> None:
+        device_id = "12345678-1234-1234-1234-123456789ABC"
+        device = {
+            "udid": device_id,
+            "runtime_id": "com.apple.CoreSimulator.SimRuntime.iOS-27-2",
+            "device_type": "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro",
+        }
+        states = iter(("Shutdown", "Booted"))
+        calls: list[list[str]] = []
+
+        def fake_simulator_command(args, output_dir, name, *, timeout, check=True):
+            calls.append(args)
+            if args[2:4] == ["list", "devices"]:
+                state = next(states)
+                output = json.dumps({"devices": {device["runtime_id"]: [{
+                    "udid": device_id,
+                    "state": state,
+                    "deviceTypeIdentifier": device["device_type"],
+                }]}})
+            else:
+                output = "launchd ready\n" if "launchctl" in args else ""
+            return subprocess.CompletedProcess(args, 0, output, "")
+
+        with tempfile.TemporaryDirectory() as temporary, patch.object(
+            capture, "run_simulator_command", side_effect=fake_simulator_command
+        ):
+            receipt = capture.ensure_simulator_ready_after_xctest_build(device, Path(temporary))
+        self.assertTrue(receipt["booted_after_xctest_runner_build"])
+        self.assertEqual(receipt["device_state_before_recovery"], "Shutdown")
+        self.assertEqual(receipt["device_state_after_bootstatus"], "Booted")
+        self.assertIn(["xcrun", "simctl", "boot", device_id], calls)
+        self.assertIn(["xcrun", "simctl", "bootstatus", device_id, "-b"], calls)
+        self.assertIn(["xcrun", "simctl", "spawn", device_id, "launchctl", "list"], calls)
+        self.assertFalse(any(args[2] == "shutdown" for args in calls if len(args) > 2))
+
+    def test_simulator_service_diagnostics_retain_raw_installed_app_inventory(self) -> None:
+        device_id = "12345678-1234-1234-1234-123456789ABC"
+        runtime_id = "com.apple.CoreSimulator.SimRuntime.iOS-27-2"
+        outputs = {
+            "devices": json.dumps({
+                "devices": {runtime_id: [{
+                    "udid": device_id,
+                    "state": "Booted",
+                    "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro",
+                    "isAvailable": True,
+                }]},
+            }),
+            "launchctl": "PID Status Label\n- 0 com.apple.SpringBoard\n",
+            "listapps": f'{{ "{capture.BUNDLE_ID}" = {{ CFBundleIdentifier = "{capture.BUNDLE_ID}"; }}; }}\n',
+        }
+
+        def fake_simulator_command(args, output_dir, name, *, timeout, check=True):
+            if "launchctl" in args:
+                output = outputs["launchctl"]
+            elif args[2] == "listapps":
+                output = outputs["listapps"]
+            else:
+                output = outputs["devices"]
+            output_dir.mkdir(parents=True, exist_ok=True)
+            (output_dir / f"{name}.stdout.txt").write_text(output, encoding="utf-8")
+            (output_dir / f"{name}.stderr.txt").write_text("", encoding="utf-8")
+            return subprocess.CompletedProcess(args, 0, output, "")
+
+        with tempfile.TemporaryDirectory() as temporary, patch.object(
+            capture, "run_simulator_command", side_effect=fake_simulator_command
+        ):
+            diagnostics = capture.capture_simulator_service_diagnostics(
+                device_id, Path(temporary), "after-app-install"
+            )
+            self.assertEqual(diagnostics["devices"]["device"]["state"], "Booted")
+            self.assertTrue(diagnostics["listapps"]["expected_bundle_id_text_present"])
+            self.assertIn(
+                capture.BUNDLE_ID,
+                (Path(temporary) / "simulator-after-app-install-listapps.stdout.txt").read_text(),
+            )
+            receipt = json.loads(
+                (Path(temporary) / "simulator-after-app-install-diagnostics.json").read_text()
+            )
+            self.assertEqual(receipt["simulator_udid"], device_id)
+            self.assertEqual(receipt["phase"], "after-app-install")
+
+    def test_post_build_simulator_state_fails_closed_unless_exact_udid_is_booted(self) -> None:
+        device = {
+            "udid": "12345678-1234-1234-1234-123456789ABC",
+            "runtime_id": "com.apple.CoreSimulator.SimRuntime.iOS-27-2",
+            "device_type": "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro",
+        }
+
+        def fake_simulator_command(args, output_dir, name, *, timeout, check=True):
+            if args[2:4] == ["list", "devices"]:
+                return subprocess.CompletedProcess(args, 0, json.dumps({
+                    "devices": {device["runtime_id"]: [{
+                        "udid": device["udid"],
+                        "state": "Shutting Down",
+                        "deviceTypeIdentifier": device["device_type"],
+                    }]},
+                }), "")
+            raise AssertionError(f"Unexpected command for a shutting-down simulator: {args}")
+
+        with tempfile.TemporaryDirectory() as temporary, patch.object(
+            capture, "run_simulator_command", side_effect=fake_simulator_command
+        ), patch.object(capture, "capture_simulator_service_diagnostics") as diagnostics:
+            with self.assertRaisesRegex(RuntimeError, "Booted or Shutdown"):
+                capture.ensure_simulator_ready_after_xctest_build(device, Path(temporary))
+            diagnostics.assert_called_once_with(
+                device["udid"], Path(temporary), "unexpected-post-build-state"
+            )
+
     def test_built_storekit_resource_must_be_exactly_in_the_xctest_bundle(self) -> None:
         catalog_bytes = CATALOG_PATH.read_bytes()
         catalog_hash = capture.sha256_file(CATALOG_PATH)
@@ -493,36 +638,61 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
             expected_hash = capture.sha256_tree(staged)
             calls: list[list[str]] = []
 
-            def fake_command(args: list[str], *, capture: bool = False, timeout: int = 300, cwd: Path | None = None) -> str:
+            def fake_simulator_command(args, output_dir, name, *, timeout, check=True):
                 calls.append(args)
-                if args[2] == "get_app_container":
-                    return str(installed)
-                return ""
+                stdout = str(installed) + "\n" if args[2] == "get_app_container" else ""
+                return subprocess.CompletedProcess(args, 0, stdout, "")
 
-            with patch.object(capture, "command", side_effect=fake_command), patch.object(
-                capture, "bundle_info", return_value=identity
-            ):
+            def fake_diagnostics(device_id, output_dir, phase):
+                fake_simulator_command(["xcrun", "simctl", "list", "devices", "-j"], output_dir, "devices", timeout=60)
+                fake_simulator_command(
+                    ["xcrun", "simctl", "spawn", device_id, "launchctl", "list"],
+                    output_dir,
+                    "launchctl",
+                    timeout=60,
+                )
+                fake_simulator_command(
+                    ["xcrun", "simctl", "listapps", device_id], output_dir, "listapps", timeout=90
+                )
+                return {
+                    "launchctl": {"returncode": 0},
+                    "listapps": {"returncode": 0, "expected_bundle_id_text_present": True},
+                }
+
+            with patch.object(capture, "run_simulator_command", side_effect=fake_simulator_command), patch.object(
+                capture, "capture_simulator_service_diagnostics", side_effect=fake_diagnostics
+            ), patch.object(capture, "bundle_info", return_value=identity):
                 evidence = capture.install_verified_app_on_simulator(
                     device_id="simulator-udid",
                     app=staged,
                     expected_identity=identity,
                     expected_sha256=expected_hash,
+                    diagnostic_dir=root / "evidence",
                 )
 
             self.assertEqual(calls[0], ["xcrun", "simctl", "install", "simulator-udid", str(staged)])
-            self.assertEqual(calls[1], ["xcrun", "simctl", "get_app_container", "simulator-udid", capture.BUNDLE_ID, "app"])
+            self.assertEqual(calls[1], ["xcrun", "simctl", "list", "devices", "-j"])
+            self.assertEqual(calls[2], ["xcrun", "simctl", "spawn", "simulator-udid", "launchctl", "list"])
+            self.assertEqual(calls[3], ["xcrun", "simctl", "listapps", "simulator-udid"])
+            self.assertEqual(
+                calls[4],
+                ["xcrun", "simctl", "get_app_container", "simulator-udid", capture.BUNDLE_ID, "app"],
+            )
             self.assertEqual(evidence["installed_app_bundle_sha256"], expected_hash)
             self.assertEqual(evidence["installed_app_identity"], identity)
 
             (installed / "Pleazyng").write_bytes(b"changed after install")
-            with patch.object(capture, "command", side_effect=fake_command), patch.object(
-                capture, "bundle_info", return_value=identity
-            ), self.assertRaisesRegex(ValueError, "not byte-identical"):
+            with patch.object(capture, "run_simulator_command", side_effect=fake_simulator_command), patch.object(
+                capture, "capture_simulator_service_diagnostics", side_effect=fake_diagnostics
+            ), patch.object(capture, "bundle_info", return_value=identity), self.assertRaisesRegex(
+                ValueError, "not byte-identical"
+            ):
                 capture.install_verified_app_on_simulator(
                     device_id="simulator-udid",
                     app=staged,
                     expected_identity=identity,
                     expected_sha256=expected_hash,
+                    diagnostic_dir=root / "evidence",
                 )
 
     def test_xctestrun_association_supports_legacy_target_dictionary_layout(self) -> None:
@@ -689,7 +859,13 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
         self.assertIn("if: always()", WORKFLOW)
         self.assertIn("contents: read", WORKFLOW)
         self.assertIn("actions: read", WORKFLOW)
-        self.assertIn("display_target: ${{ fromJSON(inputs.mode == 'capture-only'", WORKFLOW)
+        self.assertIn("capture_target:", WORKFLOW)
+        self.assertIn("- iphone-medium", WORKFLOW)
+        self.assertIn("- ipad-13", WORKFLOW)
+        self.assertIn("display_target: >-", WORKFLOW)
+        self.assertIn("${{ fromJSON(", WORKFLOW)
+        self.assertIn("inputs.capture_target == 'all'", WORKFLOW)
+        self.assertIn("format('[\"{0}\"]', inputs.capture_target)", WORKFLOW)
         self.assertIn("'[\"iphone-medium\",\"ipad-13\"]'", WORKFLOW)
         self.assertIn("'[\"default\"]'", WORKFLOW)
         self.assertIn("sudo xcode-select --switch /Applications/Xcode_27.2.app/Contents/Developer", WORKFLOW)
@@ -703,12 +879,24 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
         self.assertIn("stage_verified_app_for_xctestrun", SCRIPT)
         self.assertIn("install_verified_app_on_simulator", SCRIPT)
         self.assertIn("capture_simulator_storekit_logs", SCRIPT)
+        self.assertIn("ensure_simulator_ready_after_xctest_build", SCRIPT)
+        self.assertIn("capture_simulator_service_diagnostics", SCRIPT)
+        self.assertIn("simctl-install-retained-app", SCRIPT)
+        self.assertIn("simctl-get-app-container", SCRIPT)
         self.assertIn('"diagnostic_files"', SCRIPT)
         self.assertIn('["xcrun", "simctl", "install", device_id, str(app)]', SCRIPT)
         capture_body = SCRIPT[SCRIPT.index("def capture(args:"):]
         self.assertLess(
             capture_body.index("installed_app_receipt = install_verified_app_on_simulator("),
             capture_body.index("test_command = ["),
+        )
+        self.assertLess(
+            capture_body.index("ensure_simulator_ready_after_xctest_build(device, output)"),
+            capture_body.index("installed_app_receipt = install_verified_app_on_simulator("),
+        )
+        self.assertLess(
+            capture_body.index("build = run_logged_command(build_command, build_log, timeout=900)"),
+            capture_body.index("ensure_simulator_ready_after_xctest_build(device, output)"),
         )
 
     def test_retained_bundle_extraction_rejects_path_traversal(self) -> None:

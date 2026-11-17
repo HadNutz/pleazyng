@@ -3,7 +3,7 @@
 # capture-only pins public Xcode/iOS Simulator 27.2 for the required medium-iPhone
 # and 13-inch-iPad screenshot models; build-and-capture still creates one product app.
 name: Apple Trial StoreKit Test Review Capture
-run-name: apple-trial-storekit-review:${{ inputs.mode }}:${{ inputs.product_source_sha }}
+run-name: apple-trial-storekit-review:${{ inputs.mode }}:${{ inputs.capture_target }}:${{ inputs.product_source_sha }}
 
 on:
   workflow_dispatch:
@@ -24,6 +24,15 @@ on:
         description: Completed run of this workflow that retained the exact product app (capture-only mode).
         type: string
         required: false
+      capture_target:
+        description: Capture target for capture-only mode; all runs both required screenshot targets.
+        type: choice
+        options:
+          - all
+          - iphone-medium
+          - ipad-13
+        default: all
+        required: true
 
 permissions:
   actions: read
@@ -48,7 +57,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        display_target: ${{ fromJSON(inputs.mode == 'capture-only' && '["iphone-medium","ipad-13"]' || '["default"]') }}
+        display_target: >-
+          ${{ fromJSON(
+            inputs.mode == 'capture-only' &&
+            (inputs.capture_target == 'all' && '["iphone-medium","ipad-13"]'
+            || format('["{0}"]', inputs.capture_target))
+            || '["default"]'
+          ) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:

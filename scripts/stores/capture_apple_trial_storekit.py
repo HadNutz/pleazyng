@@ -19,6 +19,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -90,6 +91,66 @@ def command(args: list[str], *, capture: bool = False, timeout: int = 300, cwd: 
     if not capture:
         return ""
     return result.stdout.strip()
+
+
+def _command_stream_text(value: str | bytes | None) -> str:
+    if value is None:
+        return ""
+    return value.decode("utf-8", errors="replace") if isinstance(value, bytes) else value
+
+
+def run_simulator_command(
+    args: list[str],
+    output_dir: Path,
+    name: str,
+    *,
+    timeout: int,
+    check: bool = True,
+) -> subprocess.CompletedProcess[str]:
+    """Run a Simulator command and retain its exact output, including timeout fragments."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    stdout_path = output_dir / f"{name}.stdout.txt"
+    stderr_path = output_dir / f"{name}.stderr.txt"
+    receipt_path = output_dir / f"{name}.command.json"
+    started_at = datetime.now(timezone.utc)
+    start = time.monotonic()
+    try:
+        result = subprocess.run(args, check=False, text=True, capture_output=True, timeout=timeout)
+    except subprocess.TimeoutExpired as error:
+        stdout = _command_stream_text(error.stdout or error.output)
+        stderr = _command_stream_text(error.stderr)
+        stdout_path.write_text(stdout, encoding="utf-8")
+        stderr_path.write_text(stderr, encoding="utf-8")
+        write_json(receipt_path, {
+            "command": args,
+            "timeout_seconds": timeout,
+            "timed_out": True,
+            "started_at_utc": started_at.isoformat(),
+            "elapsed_seconds": round(time.monotonic() - start, 3),
+            "stdout_file": stdout_path.name,
+            "stderr_file": stderr_path.name,
+        })
+        raise
+    stdout_path.write_text(result.stdout or "", encoding="utf-8")
+    stderr_path.write_text(result.stderr or "", encoding="utf-8")
+    write_json(receipt_path, {
+        "command": args,
+        "timeout_seconds": timeout,
+        "returncode": result.returncode,
+        "timed_out": False,
+        "started_at_utc": started_at.isoformat(),
+        "elapsed_seconds": round(time.monotonic() - start, 3),
+        "stdout_file": stdout_path.name,
+        "stderr_file": stderr_path.name,
+    })
+    if check and result.returncode != 0:
+        raise subprocess.CalledProcessError(
+            result.returncode,
+            args,
+            output=result.stdout,
+            stderr=result.stderr,
+        )
+    return result
 
 
 def git(root: Path, *args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -616,6 +677,7 @@ def install_verified_app_on_simulator(
     app: Path,
     expected_identity: dict[str, Any],
     expected_sha256: str,
+    diagnostic_dir: Path,
 ) -> dict[str, Any]:
     """Install the retained UI target before StoreKitTest configures the app."""
     app = app.resolve(strict=True)
@@ -626,12 +688,31 @@ def install_verified_app_on_simulator(
     if bundle_info(app) != expected_identity:
         raise ValueError("Staged Simulator app identity changed before installation")
 
-    command(["xcrun", "simctl", "install", device_id, str(app)], timeout=300)
-    installed_path_value = command(
-        ["xcrun", "simctl", "get_app_container", device_id, BUNDLE_ID, "app"],
-        capture=True,
-        timeout=120,
+    run_simulator_command(
+        ["xcrun", "simctl", "install", device_id, str(app)],
+        diagnostic_dir,
+        "simctl-install-retained-app",
+        timeout=300,
     )
+    service_diagnostics = capture_simulator_service_diagnostics(device_id, diagnostic_dir, "after-app-install")
+    launchctl_status = service_diagnostics.get("launchctl", {})
+    listapps_status = service_diagnostics.get("listapps", {})
+    if not isinstance(launchctl_status, dict) or launchctl_status.get("returncode") != 0:
+        raise RuntimeError("The simulator launchd service did not respond after app installation")
+    if not isinstance(listapps_status, dict) or listapps_status.get("returncode") != 0:
+        raise RuntimeError("The simulator could not return its installed-app inventory after app installation")
+    if listapps_status.get("expected_bundle_id_text_present") is not True:
+        raise RuntimeError("The installed-app inventory does not contain the retained Pleazyng bundle ID")
+    try:
+        installed_path_value = run_simulator_command(
+            ["xcrun", "simctl", "get_app_container", device_id, BUNDLE_ID, "app"],
+            diagnostic_dir,
+            "simctl-get-app-container",
+            timeout=120,
+        ).stdout.strip()
+    except (OSError, subprocess.TimeoutExpired, subprocess.CalledProcessError):
+        capture_simulator_service_diagnostics(device_id, diagnostic_dir, "get-app-container-failed")
+        raise
     installed_app = Path(installed_path_value).resolve(strict=True)
     if installed_app == app or installed_app.name != "Pleazyng.app" or not installed_app.is_dir():
         raise ValueError("simctl did not return the installed Pleazyng app container")
@@ -826,6 +907,154 @@ def write_json(path: Path, value: Any) -> None:
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def simulator_device_record(device_id: str, inventory: dict[str, Any]) -> dict[str, Any]:
+    devices = inventory.get("devices")
+    if not isinstance(devices, dict):
+        raise ValueError("simctl device inventory does not contain a devices map")
+    matches = [
+        {**device, "runtime_id": runtime_id}
+        for runtime_id, runtime_devices in devices.items()
+        if isinstance(runtime_devices, list)
+        for device in runtime_devices
+        if isinstance(device, dict)
+        and isinstance(device.get("udid"), str)
+        and device["udid"].casefold() == device_id.casefold()
+    ]
+    if len(matches) != 1:
+        raise ValueError(f"Expected exactly one simulator record for {device_id}; found {len(matches)}")
+    return matches[0]
+
+
+def read_simulator_device_record(device_id: str, output_dir: Path, name: str) -> dict[str, Any]:
+    result = run_simulator_command(
+        ["xcrun", "simctl", "list", "devices", "-j"],
+        output_dir,
+        name,
+        timeout=60,
+    )
+    try:
+        inventory = json.loads(result.stdout)
+    except json.JSONDecodeError as error:
+        raise ValueError(f"simctl device inventory is not valid JSON ({name})") from error
+    if not isinstance(inventory, dict):
+        raise ValueError(f"simctl device inventory has an unexpected top-level value ({name})")
+    record = simulator_device_record(device_id, inventory)
+    write_json(output_dir / f"{name}.json", {
+        "simulator_udid": device_id,
+        "device": record,
+        "raw_inventory_stdout": f"{name}.stdout.txt",
+    })
+    return record
+
+
+def capture_simulator_service_diagnostics(device_id: str, output_dir: Path, phase: str) -> dict[str, Any]:
+    """Keep the exact device state, launchd response, and installed-app inventory."""
+    outcomes: dict[str, Any] = {"simulator_udid": device_id, "phase": phase}
+    commands = (
+        ("devices", ["xcrun", "simctl", "list", "devices", "-j"], 60),
+        ("launchctl", ["xcrun", "simctl", "spawn", device_id, "launchctl", "list"], 60),
+        ("listapps", ["xcrun", "simctl", "listapps", device_id], 90),
+    )
+    for label, command_args, timeout in commands:
+        name = f"simulator-{phase}-{label}"
+        try:
+            result = run_simulator_command(command_args, output_dir, name, timeout=timeout, check=False)
+        except (OSError, subprocess.TimeoutExpired) as error:
+            outcomes[label] = {"error": f"{type(error).__name__}: {error}"}
+            continue
+        outcome = {
+            "returncode": result.returncode,
+            "stdout_file": f"{name}.stdout.txt",
+            "stderr_file": f"{name}.stderr.txt",
+        }
+        if label == "devices" and result.returncode == 0:
+            try:
+                inventory = json.loads(result.stdout)
+                outcome["device"] = simulator_device_record(device_id, inventory)
+            except (json.JSONDecodeError, ValueError, TypeError) as error:
+                outcome["inventory_error"] = f"{type(error).__name__}: {error}"
+        elif label == "listapps" and result.returncode == 0:
+            outcome["expected_bundle_id_text_present"] = BUNDLE_ID in result.stdout
+        outcomes[label] = outcome
+    write_json(output_dir / f"simulator-{phase}-diagnostics.json", outcomes)
+    return outcomes
+
+
+def ensure_simulator_ready_after_xctest_build(
+    device: dict[str, Any],
+    output_dir: Path,
+) -> dict[str, Any]:
+    """Restore and verify the exact Simulator after Xcode's runner build may stop it."""
+    device_id = device["udid"]
+    before = read_simulator_device_record(device_id, output_dir, "simulator-after-xctest-build-before")
+    if (
+        before.get("runtime_id") != device.get("runtime_id")
+        or before.get("deviceTypeIdentifier") != device.get("device_type")
+    ):
+        capture_simulator_service_diagnostics(device_id, output_dir, "post-build-identity-mismatch")
+        raise RuntimeError("The post-build Simulator record does not match the exact selected runtime and device type")
+    initial_state = before.get("state")
+    booted_here = initial_state == "Shutdown"
+    if initial_state == "Shutdown":
+        run_simulator_command(
+            ["xcrun", "simctl", "boot", device_id],
+            output_dir,
+            "simulator-after-xctest-build-boot",
+            timeout=180,
+        )
+    elif initial_state not in ("Booted", "Booting"):
+        capture_simulator_service_diagnostics(device_id, output_dir, "unexpected-post-build-state")
+        raise RuntimeError(
+            f"Expected the selected Simulator to be Booted or Shutdown after XCTest build; found {initial_state!r}"
+        )
+
+    run_simulator_command(
+        ["xcrun", "simctl", "bootstatus", device_id, "-b"],
+        output_dir,
+        "simulator-after-xctest-build-bootstatus",
+        timeout=600,
+    )
+    after = read_simulator_device_record(device_id, output_dir, "simulator-after-xctest-build-after")
+    if (
+        after.get("runtime_id") != device.get("runtime_id")
+        or after.get("deviceTypeIdentifier") != device.get("device_type")
+    ):
+        capture_simulator_service_diagnostics(device_id, output_dir, "post-boot-identity-mismatch")
+        raise RuntimeError("The booted Simulator record does not match the exact selected runtime and device type")
+    if after.get("state") != "Booted":
+        capture_simulator_service_diagnostics(device_id, output_dir, "not-booted-after-bootstatus")
+        raise RuntimeError(f"Selected Simulator did not reach Booted state after bootstatus: {after.get('state')!r}")
+
+    launchctl = run_simulator_command(
+        ["xcrun", "simctl", "spawn", device_id, "launchctl", "list"],
+        output_dir,
+        "simulator-after-xctest-build-launchctl",
+        timeout=60,
+        check=False,
+    )
+    if launchctl.returncode != 0:
+        capture_simulator_service_diagnostics(device_id, output_dir, "launchctl-not-ready-after-build")
+        raise RuntimeError(
+            f"The selected Simulator is Booted but launchctl readiness failed ({launchctl.returncode})"
+        )
+    receipt = {
+        "schema_version": 1,
+        "simulator_udid": device_id,
+        "runtime_id": device.get("runtime_id"),
+        "device_type": device.get("device_type"),
+        "device_state_before_recovery": initial_state,
+        "booted_after_xctest_runner_build": booted_here,
+        "device_state_after_bootstatus": after.get("state"),
+        "launchctl_returncode": launchctl.returncode,
+        "qualification": (
+            "The exact selected Simulator was verified Booted and launchctl responded after "
+            "xcodebuild build-for-testing, immediately before installing the retained app."
+        ),
+    }
+    write_json(output_dir / "simulator-readiness-after-xctest-build.json", receipt)
+    return receipt
+
+
 def run_logged_command(args: list[str], log_path: Path, *, timeout: int) -> subprocess.CompletedProcess[str]:
     """Run Xcode with durable combined output and a timeout receipt."""
     log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -864,10 +1093,11 @@ def run_logged_command(args: list[str], log_path: Path, *, timeout: int) -> subp
 def failure_diagnostic_files(output: Path) -> list[str]:
     return sorted(
         path.name for path in output.iterdir()
-        if path.is_file() and (".timeout." in path.name or path.name in {
-            "xctest-runner-build.log", "storekit-ui-test.log", "simulator-storekitd.log",
-            "simulator-create-failure.json",
-        } or path.name.startswith("simulator-inventory-"))
+        if path.is_file() and (
+            ".timeout." in path.name
+            or path.name.startswith(("simulator-", "simctl-"))
+            or path.name in {"xctest-runner-build.log", "storekit-ui-test.log", "simulator-storekitd.log"}
+        )
     )
 
 
@@ -1102,8 +1332,6 @@ def capture(args: argparse.Namespace) -> None:
             diagnostic_dir=output,
         )
         write_json(output / "simulator.json", device)
-        command(["xcrun", "simctl", "boot", device["udid"]], timeout=180)
-        command(["xcrun", "simctl", "bootstatus", device["udid"], "-b"], timeout=600)
         project_root = output / "storekit-ui-runner"
         project_root.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ui_test_path, project_root / "PleazyngTrialReviewUITests.swift")
@@ -1144,11 +1372,13 @@ def capture(args: argparse.Namespace) -> None:
         )
         if staged_app != built_products / "Debug-iphonesimulator" / "Pleazyng.app":
             raise ValueError("The staged UI target app path differs from the xctestrun TestROOT path")
+        ensure_simulator_ready_after_xctest_build(device, output)
         installed_app_receipt = install_verified_app_on_simulator(
             device_id=device["udid"],
             app=staged_app,
             expected_identity=identity,
             expected_sha256=receipt["product_app_bundle_sha256"],
+            diagnostic_dir=output,
         )
         write_json(output / "simulator-installed-app.json", installed_app_receipt)
         result_bundle = output / "pleazyng-trial-review.xcresult"
