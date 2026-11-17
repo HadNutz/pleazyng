@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Update privacy notices for optional local subtitle recovery, LG Paymentwall license verification and the current authorization relay boundaries.
+
 - Add optional device-local subtitle capture recovery with bounded text checkpoints, explicit same-item restore, profile/playback fencing and crash-file cleanup; audio is never stored or resumed. Recovered text is hidden when its playback or profile context ends.
 
 - Keep audio-only player contract checks aligned with its shared native codec inventory.
