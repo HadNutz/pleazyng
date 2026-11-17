@@ -46,6 +46,19 @@ redirects, and non-JSON responses. The schema fixture in
 `server/lg_paymentwall_test.go` is an adapted USD 2.99 example, not a live
 transaction or qualification claim.
 
+The checkout page loads Paymentwall Smart TV SDK 1.4 from its documented
+`api.paymentwall.com` URL. A 2026-11-16 inspection of that official script
+recorded SHA-256 `8051e8c67fcafb3d496cd937b4398822867a8be4e73b068e690f7ae84d6056f6`:
+the SDK evaluates provider responses with `eval` and builds the payment UI with
+inline style attributes. The dedicated checkout response therefore allows
+`'unsafe-eval'` for scripts and `style-src-attr 'unsafe-inline'` only on that
+dynamic billing page, while retaining its per-response script/style nonce. The
+SDK's optional Google Analytics loader stays blocked by `script-src` and
+`connect-src`. The static website CSP is a separate deployment and is not
+changed by these checkout requirements. Register
+`PWSmartGatewayOnLoadedCallback` before loading the SDK; the gateway object is
+created before its asynchronously loaded platform adapter is ready.
+
 Paymentwall documents pingback `type=0` as a purchase, `type=2` as refund,
 chargeback, or fraud, Brick `200` as pending, `201` as accepted, `202` as
 declined, `203` as voided, and `220` as a successful partial refund. This
@@ -128,6 +141,11 @@ to the container. It is independent from the user-hosted relay's proxy trust
 setting. Keep the binding on loopback, do not proxy this host to the general
 relay, and do not add OAuth, log, poster, commerce, or WebSocket locations.
 
+The persistent state lock currently uses Linux `flock`; non-Linux Go builds
+keep the ordinary relay available, while Paymentwall state-store startup
+returns a clear billing-unavailable error. Deploy the dedicated billing
+container on Linux and keep it single-writer.
+
 The test-only mode does not qualify live payments. An unmarked callback in this
 mode receives HTTP 503. When the project is LIVE and Status API activation is
 confirmed, configure the grant signing key and persistent state volume, then
@@ -185,11 +203,23 @@ header.
    pingbacks revoke the referenced transaction immediately. A separate valid
    transaction can keep the indivisible lifetime unlock active.
 
-The query start time is stored for each reconciliation. A negative pingback
-received while an older Status API query is still in flight wins over that
-older response. A later query that starts after the refund may reinstate the
-same reference only if Paymentwall currently reports the exact SKU, USD 2.99,
-approved risk, and `refunded=false`.
+Recovery import sends `{"uid":"…","restoreOnly":true}` to the identity
+route. The server returns 204 only when that UID already exists and the bearer
+credential matches its stored hash; an unknown UID returns a generic 401 and
+is never registered by restore. The client stages the candidate credential
+and signed ownership proof before switching its active identity, and retains
+the previous identity if verification or persistence fails.
+
+Each reference has a persisted mutation generation. The service captures
+all generations for the UID before a Status API request and reconciles the
+response only against references that have not changed since that snapshot.
+This fence prevents an older response from overwriting a positive pingback,
+refund, or newer reconciliation even if wall-clock timestamps tie or move
+backwards; timestamps remain available for diagnostics. Every verified negative
+pingback durably advances its reference generation, including a repeated refund
+for an already-revoked reference. A fresh query started after the latest refund
+may reinstate the same reference only if Paymentwall currently reports the
+exact SKU, USD 2.99, approved risk, and `refunded=false`.
 
 ## State file, single writer, and backup
 

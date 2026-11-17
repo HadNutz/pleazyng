@@ -25,7 +25,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 )
 
@@ -93,8 +92,15 @@ type lgPaymentwallReference struct {
 	SKU       string    `json:"sku"`
 	Verified  bool      `json:"verified"`
 	Revoked   bool      `json:"revoked"`
+	Mutation  uint64    `json:"mutation"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
+
+// lgPaymentwallMutationFence records each reference generation immediately
+// before an authoritative Status API request. It prevents an older response
+// from overwriting a pingback or a newer reconciliation even when clocks tie
+// or move backwards.
+type lgPaymentwallMutationFence map[string]uint64
 
 type lgPaymentwallEvent struct {
 	UID        string    `json:"uid"`
@@ -172,7 +178,8 @@ type lgPaymentwallEntitlementResponse struct {
 }
 
 type lgPaymentwallIdentityRequest struct {
-	UID string `json:"uid"`
+	UID         string `json:"uid"`
+	RestoreOnly bool   `json:"restoreOnly,omitempty"`
 }
 
 type lgPaymentwallCheckoutResponse struct {
@@ -217,16 +224,18 @@ var lgPaymentwallCheckoutHTML = template.Must(template.New("lg-paymentwall-check
 <body>
   <main>
     <h1>Pleazyng lifetime access</h1>
-    <p>Complete the one-time USD 2.99 purchase to unlock Pleazyng on this account. After checkout, return to Pleazyng and choose Restore to check your server-verified purchase.</p>
+    <p>Complete the one-time USD 2.99 purchase to unlock Pleazyng on this TV. After payment, return to Pleazyng and choose Restore to verify your purchase.</p>
     <div id="payment" aria-live="polite">Loading the secure payment form…</div>
-    <p id="status">Checkout completion is not proof of ownership. Pleazyng unlocks only after the payment provider confirms the transaction.</p>
+    <p id="status">Pleazyng unlocks after the payment provider confirms your payment.</p>
   </main>
-  <script nonce="{{.Nonce}}" src="https://api.paymentwall.com/js/pwsmart/ver/pwsmart.1.4.js"></script>
   <script nonce="{{.Nonce}}">
     (function () {
       const status = document.getElementById('status');
       function showError() { status.textContent = 'Payment could not be completed. Return to Pleazyng and try again.'; }
+      let formOpened = false;
       function openPaymentForm() {
+        if (formOpened) return;
+        formOpened = true;
         try {
           PWSmartGateway.init({ key: {{printf "%q" .ProjectKey}}, lang: 'en', brand: 'lgtv' });
           PWSmartGateway.showPaymentForm({
@@ -235,12 +244,19 @@ var lgPaymentwallCheckoutHTML = template.Must(template.New("lg-paymentwall-check
             showBackButton: true,
             enablePaymentRecoverFlow: true
           }, function () {
-            status.textContent = 'Payment submitted. Return to Pleazyng and choose Restore to check server-confirmed access.';
+            status.textContent = 'Payment submitted. Return to Pleazyng and choose Restore.';
           }, showError);
         } catch (_) { showError(); }
       }
-      if (window.PWSmartGateway) openPaymentForm();
-      else window.PWSmartGatewayOnLoadedCallback = openPaymentForm;
+      // Paymentwall's documented callback fires only after its asynchronously
+      // loaded platform adapter is ready. Register it before inserting the SDK;
+      // the gateway object itself exists earlier and is not a readiness signal.
+      window.PWSmartGatewayOnLoadedCallback = openPaymentForm;
+      const sdk = document.createElement('script');
+      sdk.src = 'https://api.paymentwall.com/js/pwsmart/ver/pwsmart.1.4.js';
+      sdk.async = true;
+      sdk.onerror = showError;
+      document.head.appendChild(sdk);
     }());
   </script>
 </body>
@@ -404,6 +420,17 @@ func (h *lgPaymentwallHandler) serveIdentity(w http.ResponseWriter, r *http.Requ
 		http.Error(w, "Invalid license identity", http.StatusBadRequest)
 		return
 	}
+	if input.RestoreOnly {
+		// Recovery code import must prove an identity already registered by the
+		// original client. It must never create a new UID that could later be
+		// mistaken for a restored purchase.
+		if !h.store.authorized(input.UID, credential) {
+			http.Error(w, "Payment identity could not be restored", http.StatusUnauthorized)
+			return
+		}
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 	if err := h.store.registerIdentity(input.UID, credential, h.now()); err != nil {
 		switch {
 		case errors.Is(err, errLGPaymentwallUnauthorized):
@@ -488,7 +515,7 @@ func (h *lgPaymentwallHandler) serveCheckoutPage(w http.ResponseWriter, r *http.
 	w.Header().Set("Referrer-Policy", "no-referrer")
 	w.Header().Set("X-Frame-Options", "DENY")
 	w.Header().Set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
-	w.Header().Set("Content-Security-Policy", "default-src 'none'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; script-src 'nonce-"+nonce+"' https://api.paymentwall.com; connect-src https://api.paymentwall.com https://*.paymentwall.com; img-src data: https://api.paymentwall.com https://*.paymentwall.com; style-src 'nonce-"+nonce+"'; frame-src https://api.paymentwall.com https://*.paymentwall.com https:; form-action https://api.paymentwall.com https://*.paymentwall.com https:; font-src data: https://api.paymentwall.com https://*.paymentwall.com")
+	w.Header().Set("Content-Security-Policy", "default-src 'none'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; script-src 'nonce-"+nonce+"' 'unsafe-eval' https://api.paymentwall.com; connect-src https://api.paymentwall.com https://*.paymentwall.com; img-src data: https://api.paymentwall.com https://*.paymentwall.com; style-src 'nonce-"+nonce+"' https://api.paymentwall.com https://*.paymentwall.com; style-src-attr 'unsafe-inline'; frame-src https://api.paymentwall.com https://*.paymentwall.com; form-action https://api.paymentwall.com https://*.paymentwall.com; font-src data: https://api.paymentwall.com https://*.paymentwall.com")
 	data := lgPaymentwallCheckoutTemplateData{Nonce: nonce, ProjectKey: h.config.projectKey, UID: uid, ProductSKU: lgPaymentwallProductSKU}
 	if err := lgPaymentwallCheckoutHTML.Execute(w, data); err != nil {
 		return
@@ -514,13 +541,18 @@ func (h *lgPaymentwallHandler) serveEntitlement(w http.ResponseWriter, r *http.R
 		http.Error(w, "License identity is not authorized", http.StatusUnauthorized)
 		return
 	}
+	mutationFence, err := h.store.captureMutationFence(uid)
+	if err != nil {
+		http.Error(w, "Payment ownership could not be durably verified", http.StatusServiceUnavailable)
+		return
+	}
 	statusQueryStartedAt := h.now().UTC()
 	payments, err := h.statusAPI.queryByUID(r.Context(), uid)
 	if err != nil {
 		http.Error(w, "Payment status is temporarily unavailable", http.StatusBadGateway)
 		return
 	}
-	snapshot, err := h.store.reconcile(uid, payments, statusQueryStartedAt, h.now())
+	snapshot, err := h.store.reconcileWithFence(uid, payments, mutationFence, statusQueryStartedAt, h.now())
 	if err != nil {
 		http.Error(w, "Payment ownership could not be durably verified", http.StatusServiceUnavailable)
 		return
@@ -602,6 +634,11 @@ func (h *lgPaymentwallHandler) servePingback(w http.ResponseWriter, r *http.Requ
 			_, _ = io.WriteString(w, "OK")
 			return
 		}
+		mutationFence, fenceErr := h.store.captureMutationFence(uid)
+		if fenceErr != nil {
+			http.Error(w, "Payment status is temporarily unavailable", http.StatusServiceUnavailable)
+			return
+		}
 		statusQueryStartedAt := h.now().UTC()
 		payment, found, queryErr := h.statusAPI.queryByReference(r.Context(), ref)
 		if queryErr != nil {
@@ -612,7 +649,7 @@ func (h *lgPaymentwallHandler) servePingback(w http.ResponseWriter, r *http.Requ
 			http.Error(w, "Payment status is not confirmed", http.StatusServiceUnavailable)
 			return
 		}
-		applied, applyErr := h.store.applyVerifiedPositivePingback(uid, ref, typeValue, statusQueryStartedAt, h.now())
+		applied, applyErr := h.store.applyVerifiedPositivePingbackWithFence(uid, ref, typeValue, mutationFence, statusQueryStartedAt, h.now())
 		if applyErr != nil {
 			http.Error(w, "Payment state could not be durably stored", http.StatusServiceUnavailable)
 			return
@@ -985,6 +1022,41 @@ func (s *lgPaymentwallStore) identityExists(uid string) bool {
 	return ok
 }
 
+func (s *lgPaymentwallStore) captureMutationFence(uid string) (lgPaymentwallMutationFence, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.poisoned {
+		return nil, errLGPaymentwallStorePoisoned
+	}
+	if _, ok := s.state.Identities[uid]; !ok {
+		return nil, errLGPaymentwallUnauthorized
+	}
+	fence := make(lgPaymentwallMutationFence)
+	for ref, reference := range s.state.References {
+		if reference.UID == uid {
+			fence[ref] = reference.Mutation
+		}
+	}
+	return fence, nil
+}
+
+func referenceChangedSinceFence(fence lgPaymentwallMutationFence, references map[string]lgPaymentwallReference, ref string) bool {
+	reference, exists := references[ref]
+	if !exists {
+		return false
+	}
+	fencedMutation, wasPresent := fence[ref]
+	return !wasPresent || reference.Mutation != fencedMutation
+}
+
+func advanceLGPaymentwallReferenceMutation(reference *lgPaymentwallReference) error {
+	if reference.Mutation == ^uint64(0) {
+		return errLGPaymentwallInvalidState
+	}
+	reference.Mutation++
+	return nil
+}
+
 func (s *lgPaymentwallStore) createCheckoutSession(uid string, now time.Time) (string, error) {
 	token, err := randomLGPaymentwallHex(32)
 	if err != nil {
@@ -1041,6 +1113,17 @@ func (s *lgPaymentwallStore) checkoutSession(token string, now time.Time) (strin
 // and refund state. It can reactivate a reference after a refund reversal only
 // on that authoritative path; the pingback alone is not proof.
 func (s *lgPaymentwallStore) applyVerifiedPositivePingback(uid, ref string, eventType int, proofStartedAt, now time.Time) (bool, error) {
+	fence, err := s.captureMutationFence(uid)
+	if err != nil {
+		if errors.Is(err, errLGPaymentwallUnauthorized) {
+			return false, nil
+		}
+		return false, err
+	}
+	return s.applyVerifiedPositivePingbackWithFence(uid, ref, eventType, fence, proofStartedAt, now)
+}
+
+func (s *lgPaymentwallStore) applyVerifiedPositivePingbackWithFence(uid, ref string, eventType int, fence lgPaymentwallMutationFence, proofStartedAt, now time.Time) (bool, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.poisoned {
@@ -1050,9 +1133,14 @@ func (s *lgPaymentwallStore) applyVerifiedPositivePingback(uid, ref string, even
 		if existing.UID != uid || existing.SKU != lgPaymentwallProductSKU {
 			return false, nil
 		}
+		if referenceChangedSinceFence(fence, s.state.References, ref) {
+			return false, nil
+		}
 		if existing.Revoked && existing.UpdatedAt.After(proofStartedAt) {
 			return false, nil
 		}
+	} else if referenceChangedSinceFence(fence, s.state.References, ref) {
+		return false, nil
 	}
 	eventKey := lgPaymentwallEventKey(ref, eventType)
 	_, duplicate := s.state.Events[eventKey]
@@ -1060,7 +1148,16 @@ func (s *lgPaymentwallStore) applyVerifiedPositivePingback(uid, ref string, even
 	if (!duplicate && len(next.Events) >= lgPaymentwallMaxEvents) || (len(next.References) >= lgPaymentwallMaxReferences && next.References[ref].UID == "") {
 		return false, errLGPaymentwallStateFull
 	}
-	next.References[ref] = lgPaymentwallReference{UID: uid, SKU: lgPaymentwallProductSKU, Verified: true, UpdatedAt: now.UTC()}
+	reference := next.References[ref]
+	reference.UID = uid
+	reference.SKU = lgPaymentwallProductSKU
+	reference.Verified = true
+	reference.Revoked = false
+	if err := advanceLGPaymentwallReferenceMutation(&reference); err != nil {
+		return false, err
+	}
+	reference.UpdatedAt = now.UTC()
+	next.References[ref] = reference
 	if !duplicate {
 		next.Events[eventKey] = lgPaymentwallEvent{UID: uid, Ref: ref, Type: eventType, ReceivedAt: now.UTC()}
 	}
@@ -1103,11 +1200,13 @@ func (s *lgPaymentwallStore) applyNegativePingback(uid, ref string, eventType in
 	if existing, ok := s.state.References[ref]; ok && existing.UID != uid {
 		return false, nil
 	}
-	if _, duplicate := s.state.Events[lgPaymentwallEventKey(ref, eventType)]; duplicate {
-		return true, nil
+	eventKey := lgPaymentwallEventKey(ref, eventType)
+	previousEvent, duplicate := s.state.Events[eventKey]
+	if duplicate && previousEvent.UID != uid {
+		return false, nil
 	}
 	next := cloneLGPaymentwallState(s.state)
-	if len(next.Events) >= lgPaymentwallMaxEvents || (len(next.References) >= lgPaymentwallMaxReferences && next.References[ref].UID == "") {
+	if (!duplicate && len(next.Events) >= lgPaymentwallMaxEvents) || (len(next.References) >= lgPaymentwallMaxReferences && next.References[ref].UID == "") {
 		return false, errLGPaymentwallStateFull
 	}
 	reference := next.References[ref]
@@ -1115,9 +1214,14 @@ func (s *lgPaymentwallStore) applyNegativePingback(uid, ref string, eventType in
 	reference.SKU = lgPaymentwallProductSKU
 	reference.Revoked = true
 	reference.Verified = false
+	if err := advanceLGPaymentwallReferenceMutation(&reference); err != nil {
+		return false, err
+	}
 	reference.UpdatedAt = now.UTC()
 	next.References[ref] = reference
-	next.Events[lgPaymentwallEventKey(ref, eventType)] = lgPaymentwallEvent{UID: uid, Ref: ref, Type: eventType, ReceivedAt: now.UTC()}
+	if !duplicate {
+		next.Events[eventKey] = lgPaymentwallEvent{UID: uid, Ref: ref, Type: eventType, ReceivedAt: now.UTC()}
+	}
 	if identity, ok := next.Identities[uid]; ok {
 		setLGPaymentwallOwned(&identity, hasLGPaymentwallPurchase(next, uid), now)
 		next.Identities[uid] = identity
@@ -1129,6 +1233,14 @@ func (s *lgPaymentwallStore) applyNegativePingback(uid, ref string, eventType in
 }
 
 func (s *lgPaymentwallStore) reconcile(uid string, payments []lgPaymentwallPayment, proofStartedAt, now time.Time) (lgPaymentwallOwnershipSnapshot, error) {
+	fence, err := s.captureMutationFence(uid)
+	if err != nil {
+		return lgPaymentwallOwnershipSnapshot{}, err
+	}
+	return s.reconcileWithFence(uid, payments, fence, proofStartedAt, now)
+}
+
+func (s *lgPaymentwallStore) reconcileWithFence(uid string, payments []lgPaymentwallPayment, fence lgPaymentwallMutationFence, proofStartedAt, now time.Time) (lgPaymentwallOwnershipSnapshot, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.poisoned {
@@ -1144,6 +1256,9 @@ func (s *lgPaymentwallStore) reconcile(uid string, payments []lgPaymentwallPayme
 		if !lgPaymentwallReferencePattern.MatchString(payment.ID) || payment.UID != uid || payment.ProductID != lgPaymentwallProductSKU {
 			continue
 		}
+		if referenceChangedSinceFence(fence, next.References, payment.ID) {
+			continue
+		}
 		if paymentwallPaymentOwns(payment, uid) {
 			if reference, exists := next.References[payment.ID]; exists {
 				if reference.UID != uid || reference.UpdatedAt.After(proofStartedAt) {
@@ -1151,7 +1266,16 @@ func (s *lgPaymentwallStore) reconcile(uid string, payments []lgPaymentwallPayme
 				}
 			}
 			active[payment.ID] = true
-			next.References[payment.ID] = lgPaymentwallReference{UID: uid, SKU: lgPaymentwallProductSKU, Verified: true, UpdatedAt: now.UTC()}
+			reference := next.References[payment.ID]
+			reference.UID = uid
+			reference.SKU = lgPaymentwallProductSKU
+			reference.Verified = true
+			reference.Revoked = false
+			if err := advanceLGPaymentwallReferenceMutation(&reference); err != nil {
+				return lgPaymentwallOwnershipSnapshot{}, err
+			}
+			reference.UpdatedAt = now.UTC()
+			next.References[payment.ID] = reference
 		} else if payment.Refunded != nil && *payment.Refunded {
 			reference := next.References[payment.ID]
 			if (reference.UID == "" || reference.UID == uid) && !reference.UpdatedAt.After(proofStartedAt) {
@@ -1159,18 +1283,24 @@ func (s *lgPaymentwallStore) reconcile(uid string, payments []lgPaymentwallPayme
 				reference.SKU = lgPaymentwallProductSKU
 				reference.Revoked = true
 				reference.Verified = false
+				if err := advanceLGPaymentwallReferenceMutation(&reference); err != nil {
+					return lgPaymentwallOwnershipSnapshot{}, err
+				}
 				reference.UpdatedAt = now.UTC()
 				next.References[payment.ID] = reference
 			}
 		}
 	}
 	for ref, reference := range next.References {
-		if reference.UID != uid || !reference.Verified || reference.Revoked || reference.UpdatedAt.After(proofStartedAt) {
+		if reference.UID != uid || !reference.Verified || reference.Revoked || reference.UpdatedAt.After(proofStartedAt) || referenceChangedSinceFence(fence, next.References, ref) {
 			continue
 		}
 		if _, present := active[ref]; !present {
 			reference.Verified = false
 			reference.Revoked = true
+			if err := advanceLGPaymentwallReferenceMutation(&reference); err != nil {
+				return lgPaymentwallOwnershipSnapshot{}, err
+			}
 			reference.UpdatedAt = now.UTC()
 			next.References[ref] = reference
 		}
@@ -1235,13 +1365,13 @@ func newLGPaymentwallStore(path string) (*lgPaymentwallStore, error) {
 		_ = lockFile.Close()
 		return nil, err
 	}
-	if err := syscall.Flock(int(lockFile.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
+	if err := lockLGPaymentwallFile(lockFile); err != nil {
 		_ = lockFile.Close()
-		return nil, errors.New("Paymentwall state already has an active writer")
+		return nil, err
 	}
 	store := &lgPaymentwallStore{path: path, lockFile: lockFile, syncDir: syncLGPaymentwallDirectory, state: emptyLGPaymentwallState()}
 	fail := func(err error) (*lgPaymentwallStore, error) {
-		_ = syscall.Flock(int(lockFile.Fd()), syscall.LOCK_UN)
+		_ = unlockLGPaymentwallFile(lockFile)
 		_ = lockFile.Close()
 		return nil, err
 	}
@@ -1277,7 +1407,7 @@ func (s *lgPaymentwallStore) close() error {
 	if s == nil || s.lockFile == nil {
 		return nil
 	}
-	err := syscall.Flock(int(s.lockFile.Fd()), syscall.LOCK_UN)
+	err := unlockLGPaymentwallFile(s.lockFile)
 	closeErr := s.lockFile.Close()
 	s.lockFile = nil
 	return errors.Join(err, closeErr)

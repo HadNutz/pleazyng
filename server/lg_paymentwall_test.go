@@ -291,6 +291,77 @@ func TestPaymentwallNegativePingbackWinsAgainstOlderInFlightStatusProof(t *testi
 	}
 }
 
+func TestPaymentwallRepeatedRefundFenceWinsAgainstSameClockStatusResponse(t *testing.T) {
+	store := newLGTestStore(t)
+	base := time.Now().UTC()
+	if err := store.registerIdentity(testLGUID, testLGCredential, base); err != nil {
+		t.Fatal(err)
+	}
+	if applied, err := store.applyNegativePingback(testLGUID, "refRace", 2, base.Add(time.Second)); err != nil || !applied {
+		t.Fatalf("initial refund: applied=%v err=%v", applied, err)
+	}
+
+	// Paymentwall later reverses the first refund. This query starts after that
+	// callback and its authoritative approval restores the lifetime entitlement.
+	reversalFence, err := store.captureMutationFence(testLGUID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	reversalStarted := base.Add(2 * time.Second)
+	snapshot, err := store.reconcileWithFence(testLGUID, []lgPaymentwallPayment{approvedLGPayment("refRace")}, reversalFence, reversalStarted, reversalStarted.Add(time.Second))
+	if err != nil || !snapshot.Owned {
+		t.Fatalf("fresh refund reversal: snapshot=%#v err=%v", snapshot, err)
+	}
+
+	// This older approval query remains in flight while a second refund callback
+	// arrives. Its clock value intentionally equals the query start time.
+	staleStarted := base.Add(4 * time.Second)
+	staleFence, err := store.captureMutationFence(testLGUID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	mutationBeforeRefund := store.state.References["refRace"].Mutation
+	if applied, err := store.applyNegativePingback(testLGUID, "refRace", 2, staleStarted); err != nil || !applied {
+		t.Fatalf("refund after reversal: applied=%v err=%v", applied, err)
+	}
+	mutationAfterRefund := store.state.References["refRace"].Mutation
+	if mutationAfterRefund != mutationBeforeRefund+1 {
+		t.Fatalf("duplicate refund did not advance its fence: before=%d after=%d", mutationBeforeRefund, mutationAfterRefund)
+	}
+
+	// A repeated negative while already revoked must also advance the persisted
+	// fence, even though the ownership state and event key are unchanged.
+	revisionBeforeRepeatedNegative := store.state.Identities[testLGUID].Revision
+	if applied, err := store.applyNegativePingback(testLGUID, "refRace", 2, staleStarted); err != nil || !applied {
+		t.Fatalf("repeated refund while revoked: applied=%v err=%v", applied, err)
+	}
+	if got := store.state.References["refRace"].Mutation; got != mutationAfterRefund+1 {
+		t.Fatalf("negative callback while already revoked did not advance its fence: got=%d want=%d", got, mutationAfterRefund+1)
+	}
+	if got := store.state.Identities[testLGUID].Revision; got != revisionBeforeRepeatedNegative {
+		t.Fatalf("repeated negative changed ownership revision without changing ownership: got=%d want=%d", got, revisionBeforeRepeatedNegative)
+	}
+	persistedState, err := os.ReadFile(store.path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var persisted lgPaymentwallState
+	if err := json.Unmarshal(persistedState, &persisted); err != nil {
+		t.Fatal(err)
+	}
+	if got := persisted.References["refRace"].Mutation; got != mutationAfterRefund+1 {
+		t.Fatalf("negative mutation fence was not persisted: got=%d want=%d", got, mutationAfterRefund+1)
+	}
+
+	snapshot, err = store.reconcileWithFence(testLGUID, []lgPaymentwallPayment{approvedLGPayment("refRace")}, staleFence, staleStarted, staleStarted.Add(time.Second))
+	if err != nil || snapshot.Owned || snapshot.Revision != 2 {
+		t.Fatalf("same-clock stale approval restored a refunded purchase: snapshot=%#v err=%v", snapshot, err)
+	}
+	if reference := store.state.References["refRace"]; !reference.Revoked || reference.Verified || reference.Mutation != mutationAfterRefund+1 {
+		t.Fatalf("stale approval changed the refund fence: reference=%#v", reference)
+	}
+}
+
 func TestPaymentwallPositivePingbackWinsAgainstOlderEmptyStatusQuery(t *testing.T) {
 	store := newLGTestStore(t)
 	base := time.Now().UTC()
@@ -641,6 +712,49 @@ func TestPaymentwallTestOnlyModeAcknowledgesOnlySignedTestEventsWithoutLiveAPI(t
 	}
 }
 
+func TestPaymentwallRestoreOnlyIdentityCannotRegisterUnknownUID(t *testing.T) {
+	store := newLGTestStore(t)
+	if err := store.registerIdentity(testLGUID, testLGCredential, time.Now().UTC()); err != nil {
+		t.Fatal(err)
+	}
+	h := newLGPaymentwallHandlerWithDependencies(
+		lgPaymentwallConfig{enabled: true, allowedOrigins: map[string]struct{}{"https://billing.pleazyng.app": {}}},
+		clientIPResolver{}, store, nil, &lgPaymentwallStatusAPI{},
+	)
+	request := func(uid, credential string, restoreOnly bool) *httptest.ResponseRecorder {
+		t.Helper()
+		body := `{"uid":"` + uid + `","restoreOnly":` + strconv.FormatBool(restoreOnly) + `}`
+		req := httptest.NewRequest(http.MethodPost, lgPaymentwallIdentityPath, strings.NewReader(body))
+		req.RemoteAddr = "192.0.2.3:1234"
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", "Bearer "+credential)
+		recorder := httptest.NewRecorder()
+		h.serveIdentity(recorder, req)
+		return recorder
+	}
+
+	if got := request(testLGUID, testLGCredential, true).Code; got != http.StatusNoContent {
+		t.Fatalf("existing identity restore status = %d, want 204", got)
+	}
+	unknownUID := "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	if got := request(unknownUID, testLGCredential, true).Code; got != http.StatusUnauthorized {
+		t.Fatalf("unknown restore identity status = %d, want 401", got)
+	}
+	if store.identityExists(unknownUID) {
+		t.Fatal("restore-only request created an identity for an unknown UID")
+	}
+	if got := request(testLGUID, strings.Repeat("b", 64), true).Code; got != http.StatusUnauthorized {
+		t.Fatalf("mismatched restore identity status = %d, want 401", got)
+	}
+	newUID := "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+	if got := request(newUID, strings.Repeat("c", 64), false).Code; got != http.StatusNoContent {
+		t.Fatalf("normal first-registration status = %d, want 204", got)
+	}
+	if !store.identityExists(newUID) {
+		t.Fatal("normal first-registration did not create an identity")
+	}
+}
+
 func TestPaymentwallBrowserOriginIsExact(t *testing.T) {
 	allowed := map[string]struct{}{"https://billing.pleazyng.app": {}}
 	request := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -654,6 +768,57 @@ func TestPaymentwallBrowserOriginIsExact(t *testing.T) {
 	recorder = httptest.NewRecorder()
 	if rejectLGPaymentwallOrigin(recorder, request, allowed) {
 		t.Fatalf("configured origin was rejected: %d", recorder.Code)
+	}
+}
+
+func TestPaymentwallCheckoutPageCSPSupportsOnlyTheSmartTVSDKNeeds(t *testing.T) {
+	_, privateKey, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	store := newLGTestStore(t)
+	if err := store.registerIdentity(testLGUID, testLGCredential, time.Now().UTC()); err != nil {
+		t.Fatal(err)
+	}
+	h := testLGHandler(t, store, privateKey, nil)
+	session, err := store.createCheckoutSession(testLGUID, h.now())
+	if err != nil {
+		t.Fatal(err)
+	}
+	request := httptest.NewRequest(http.MethodGet, lgPaymentwallCheckoutPage+session, nil)
+	request.Header.Set("Origin", "https://billing.pleazyng.app")
+	recorder := httptest.NewRecorder()
+	h.serveCheckoutPage(recorder, request)
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("checkout page status = %d: %s", recorder.Code, recorder.Body.String())
+	}
+	policy := recorder.Header().Get("Content-Security-Policy")
+	for _, directive := range []string{
+		"script-src 'nonce-",
+		"'unsafe-eval' https://api.paymentwall.com",
+		"style-src 'nonce-",
+		"style-src-attr 'unsafe-inline'",
+		"connect-src https://api.paymentwall.com https://*.paymentwall.com",
+		"frame-ancestors 'none'",
+	} {
+		if !strings.Contains(policy, directive) {
+			t.Errorf("checkout CSP is missing %q: %s", directive, policy)
+		}
+	}
+	if strings.Contains(policy, "google-analytics") || strings.Contains(policy, "frame-src https:;") || strings.Contains(policy, "form-action https:;") {
+		t.Fatalf("checkout CSP allows an unneeded external destination: %s", policy)
+	}
+	if !strings.Contains(recorder.Body.String(), "unlock Pleazyng on this TV") ||
+		!strings.Contains(recorder.Body.String(), "After payment, return to Pleazyng and choose Restore") ||
+		strings.Contains(recorder.Body.String(), "on this account") {
+		t.Fatalf("checkout page user copy is not plain or TV-specific: %s", recorder.Body.String())
+	}
+	body := recorder.Body.String()
+	callbackPosition := strings.Index(body, "window.PWSmartGatewayOnLoadedCallback = openPaymentForm")
+	loaderPosition := strings.Index(body, "document.head.appendChild(sdk)")
+	if callbackPosition < 0 || loaderPosition < callbackPosition ||
+		!strings.Contains(body, "if (formOpened) return") || strings.Contains(body, "if (window.PWSmartGateway) openPaymentForm()") {
+		t.Fatalf("checkout does not register the SDK readiness callback before loading exactly once: %s", body)
 	}
 }
 

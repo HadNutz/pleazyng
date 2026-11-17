@@ -49,7 +49,7 @@ commerce, or WebSocket routes. Its only registered paths are:
 | Route | Method | App or service use | Registration and availability |
 | --- | --- | --- | --- |
 | `/health` | `GET` HTTP | Billing service liveness. | Mounted by the billing-only mux. |
-| `/lg/paymentwall/identity` | `POST` HTTP; `OPTIONS` preflight | Register or re-authenticate the accountless LG license UID using its recovery credential. | Billing-only mode; requires live billing enablement. Credential is sent in `Authorization`, never a URL. |
+| `/lg/paymentwall/identity` | `POST` HTTP; `OPTIONS` preflight | Register or re-authenticate the accountless LG license UID using its recovery credential. `restoreOnly: true` authenticates an existing UID but never registers an unknown one. | Billing-only mode; requires live billing enablement. Credential is sent in `Authorization`, never a URL. |
 | `/lg/paymentwall/checkout` | `POST` HTTP; `OPTIONS` preflight | Create a short-lived checkout session and return a billing-origin URL. | Billing-only mode; requires live billing enablement and a registered UID. |
 | `/lg/paymentwall/checkout/{session}` | `GET` HTTP | Serve the Paymentwall Smart TV checkout page. | Billing-only mode; the opaque session is short-lived and is not a credential or entitlement proof. |
 | `/lg/paymentwall/entitlement` | `GET` HTTP; `OPTIONS` preflight | Query Paymentwall Status API and return a server-signed ownership or revocation grant. | Billing-only mode; requires live billing enablement. No browser callback grants ownership. |
