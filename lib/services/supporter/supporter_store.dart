@@ -18,6 +18,20 @@ const String lifetimeUnlockProductId = String.fromEnvironment(
   defaultValue: 'pleazyng_lifetime_unlock',
 );
 
+/// Apple-only, zero-price Non-Consumable used to start the seven-day trial.
+const String appStoreTrialProductId = 'pleazyng_7_day_trial';
+
+enum AppStoreTrialStatus { notPurchased, owned, revoked, invalid }
+
+/// The result of reading the Apple Account's verified trial transaction.
+@immutable
+class AppStoreTrialHistory {
+  const AppStoreTrialHistory(this.status, {this.originalPurchaseDate});
+
+  final AppStoreTrialStatus status;
+  final DateTime? originalPurchaseDate;
+}
+
 /// What a store's purchase history says about the lifetime unlock on the
 /// signed-in store account.
 enum SupporterOwnership {
@@ -166,6 +180,55 @@ class AppStoreSupporterStore extends SupporterStore {
 
   final Future<List<SK2Transaction>> Function() _transactions;
   final Future<void> Function() _sync;
+
+  /// Reads the trial only from StoreKit 2's verified `Transaction.all` list.
+  /// The plugin filters out unverified results before exposing this list.
+  Future<AppStoreTrialHistory> queryTrialHistory() async {
+    final transactions = await _transactions();
+    final trialTransactions = transactions.where((t) => t.productId == appStoreTrialProductId).toList();
+    if (trialTransactions.isEmpty) return const AppStoreTrialHistory(AppStoreTrialStatus.notPurchased);
+
+    var revoked = false;
+    final originalPurchaseDates = <DateTime>[];
+    for (final transaction in trialTransactions) {
+      try {
+        final representation = transaction.jsonRepresentation;
+        if (representation == null || representation.isEmpty) {
+          return const AppStoreTrialHistory(AppStoreTrialStatus.invalid);
+        }
+        final decoded = jsonDecode(representation);
+        if (decoded is! Map<String, dynamic> ||
+            decoded['productId'] != appStoreTrialProductId ||
+            decoded['type'] != 'Non-Consumable') {
+          return const AppStoreTrialHistory(AppStoreTrialStatus.invalid);
+        }
+        final rawDate = decoded['originalPurchaseDate'];
+        if (rawDate is! int || rawDate <= 0) {
+          return const AppStoreTrialHistory(AppStoreTrialStatus.invalid);
+        }
+        final date = DateTime.fromMillisecondsSinceEpoch(rawDate, isUtc: true);
+        if (date.isAfter(DateTime.now().toUtc())) {
+          return const AppStoreTrialHistory(AppStoreTrialStatus.invalid);
+        }
+        if (decoded['revocationDate'] != null) {
+          revoked = true;
+        } else {
+          originalPurchaseDates.add(date);
+        }
+      } on FormatException {
+        return const AppStoreTrialHistory(AppStoreTrialStatus.invalid);
+      } on RangeError {
+        return const AppStoreTrialHistory(AppStoreTrialStatus.invalid);
+      } on ArgumentError {
+        return const AppStoreTrialHistory(AppStoreTrialStatus.invalid);
+      }
+    }
+    if (originalPurchaseDates.isNotEmpty) {
+      originalPurchaseDates.sort();
+      return AppStoreTrialHistory(AppStoreTrialStatus.owned, originalPurchaseDate: originalPurchaseDates.first);
+    }
+    return AppStoreTrialHistory(revoked ? AppStoreTrialStatus.revoked : AppStoreTrialStatus.invalid);
+  }
 
   @override
   Future<SupporterHistory> queryHistory() async {

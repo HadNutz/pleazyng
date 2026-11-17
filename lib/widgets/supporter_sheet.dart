@@ -317,6 +317,8 @@ class _Notice extends StatelessWidget {
           SupporterError.purchaseFailed => t.appAccess.purchaseFailed,
           SupporterError.restoreFailed => t.appAccess.restoreFailed,
           SupporterError.nothingToRestore => t.appAccess.nothingToRestore,
+          SupporterError.trialProductNotFound => t.appAccess.trialProductNotFound,
+          SupporterError.trialProductInvalid => t.appAccess.trialProductInvalid,
         },
         isFailure: error != SupporterError.nothingToRestore,
       );

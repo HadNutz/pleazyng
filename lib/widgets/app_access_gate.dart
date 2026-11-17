@@ -104,8 +104,14 @@ class _AppAccessGateState extends State<AppAccessGate> with WidgetsBindingObserv
     final theme = Theme.of(context);
     final service = widget.service;
     final productError = storeState.price == null && !storeState.isLoadingProduct ? storeState.productError : null;
-    final error = _trialError ?? _localizedError(storeState.error ?? productError);
+    final trialProductError = service.shouldOfferTrial ? storeState.trialProductError : null;
+    final error = _trialError ?? _localizedError(storeState.error ?? productError ?? trialProductError);
     final busy = storeState.isBusy || storeState.isLoadingProduct || _startingTrial;
+    final description = service.isAppleStoreBuild && service.shouldOfferTrial && storeState.price != null
+        ? t.appAccess.appleTrialDisclosure(price: storeState.price!)
+        : service.hasStartedTrial
+        ? t.appAccess.trialEndedDescription
+        : t.appAccess.description;
 
     return ColoredBox(
       color: theme.scaffoldBackgroundColor,
@@ -128,7 +134,7 @@ class _AppAccessGateState extends State<AppAccessGate> with WidgetsBindingObserv
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    service.hasStartedTrial ? t.appAccess.trialEndedDescription : t.appAccess.description,
+                    description,
                     style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                     textAlign: TextAlign.center,
                   ),
@@ -145,11 +151,25 @@ class _AppAccessGateState extends State<AppAccessGate> with WidgetsBindingObserv
                       focusNode: _trialFocusNode,
                       autofocus: true,
                       useBackgroundFocus: true,
-                      onPressed: busy || !service.canStartTrial ? null : _startTrial,
+                      onPressed: busy
+                          ? null
+                          : trialProductError != null
+                          ? () => unawaited(service.loadProduct())
+                          : service.canStartTrial
+                          ? _startTrial
+                          : null,
                       child: FilledButton.icon(
-                        onPressed: busy || !service.canStartTrial ? null : _startTrial,
-                        icon: const AppIcon(Symbols.play_arrow_rounded, fill: 1),
-                        label: Text(t.appAccess.startTrial),
+                        onPressed: busy
+                            ? null
+                            : trialProductError != null
+                            ? () => unawaited(service.loadProduct())
+                            : service.canStartTrial
+                            ? _startTrial
+                            : null,
+                        icon: trialProductError != null
+                            ? const AppIcon(Symbols.refresh_rounded, fill: 1)
+                            : const AppIcon(Symbols.play_arrow_rounded, fill: 1),
+                        label: Text(trialProductError != null ? t.appAccess.retryPrice : t.appAccess.startTrial),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -233,5 +253,7 @@ class _AppAccessGateState extends State<AppAccessGate> with WidgetsBindingObserv
     SupporterError.purchaseFailed => t.appAccess.purchaseFailed,
     SupporterError.restoreFailed => t.appAccess.restoreFailed,
     SupporterError.nothingToRestore => t.appAccess.nothingToRestore,
+    SupporterError.trialProductNotFound => t.appAccess.trialProductNotFound,
+    SupporterError.trialProductInvalid => t.appAccess.trialProductInvalid,
   };
 }

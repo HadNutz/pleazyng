@@ -4,6 +4,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart' as openiap;
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';
 
 import '../../mixins/disposable_change_notifier_mixin.dart';
 import '../../utils/app_logger.dart';
@@ -52,6 +54,12 @@ enum SupporterError {
 
   /// The store account has no lifetime unlock to restore.
   nothingToRestore,
+
+  /// App Store Connect did not return the free trial product.
+  trialProductNotFound,
+
+  /// The App Store trial product is not a zero-price Non-Consumable.
+  trialProductInvalid,
 }
 
 /// The store-facing state the Supporter sheet renders.
@@ -61,6 +69,7 @@ class SupporterStoreState {
     this.isLoadingProduct = false,
     this.price,
     this.productError,
+    this.trialProductError,
     this.status = SupporterPurchaseStatus.idle,
     this.error,
   });
@@ -73,6 +82,9 @@ class SupporterStoreState {
   /// Why [price] is unavailable after loading finished.
   final SupporterError? productError;
 
+  /// Why the Apple zero-price trial product cannot be started.
+  final SupporterError? trialProductError;
+
   final SupporterPurchaseStatus status;
 
   /// Why the last purchase or restore did not unlock the perks.
@@ -84,12 +96,14 @@ class SupporterStoreState {
     bool? isLoadingProduct,
     String? price,
     SupporterError? Function()? productError,
+    SupporterError? Function()? trialProductError,
     SupporterPurchaseStatus? status,
     SupporterError? Function()? error,
   }) => SupporterStoreState(
     isLoadingProduct: isLoadingProduct ?? this.isLoadingProduct,
     price: price ?? this.price,
     productError: productError != null ? productError() : this.productError,
+    trialProductError: trialProductError != null ? trialProductError() : this.trialProductError,
     status: status ?? this.status,
     error: error != null ? error() : this.error,
   );
@@ -125,6 +139,7 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
   SupporterService()
     : this._(
         supporterAvailabilityFor(supporterBuildMode),
+        appleStoreBuild: _appleStoreTarget,
         // Const guard: builds other than `iap` never reach the billing plugin.
         createStore: supporterBuildMode == SupporterMode.iap && !_amazonStoreBuild
             ? SupporterStore.forThisDevice
@@ -140,28 +155,34 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
     bool? purchased,
     SupporterStore? store,
     String reviewVerificationKey = ReviewAccess.publicKey,
+    bool? appleStoreBuild,
   }) : this._(
          availability,
          purchased: purchased,
          reviewVerificationKey: reviewVerificationKey,
+         appleStoreBuild: appleStoreBuild ?? (store is AppStoreSupporterStore),
          createStore: store == null ? null : () => store,
        );
 
   SupporterService._(
     this.availability, {
     bool? purchased,
+    required bool appleStoreBuild,
     this._createStore,
     this.reviewVerificationKey = ReviewAccess.publicKey,
   }) : _purchased =
            purchased ??
            (availability == SupporterAvailability.purchasable &&
                (SettingsService.instanceOrNull?.read(SettingsService.supporterEntitlementCached) ?? false)),
-       _trialStartedAtEpochMs =
-           SettingsService.instanceOrNull?.read(SettingsService.appAccessTrialStartedAtEpochMs) ?? 0;
+       _appleStoreBuild = appleStoreBuild,
+       _trialStartedAtEpochMs = appleStoreBuild
+           ? 0
+           : SettingsService.instanceOrNull?.read(SettingsService.appAccessTrialStartedAtEpochMs) ?? 0;
 
   /// Fixed for the life of the process.
   final SupporterAvailability availability;
   final String reviewVerificationKey;
+  final bool _appleStoreBuild;
 
   final SupporterStore? Function()? _createStore;
   bool _storeCreated = false;
@@ -171,8 +192,12 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
   StreamSubscription<openiap.Purchase>? _amazonPurchaseSubscription;
   StreamSubscription<openiap.PurchaseError>? _amazonErrorSubscription;
   ProductDetails? _product;
+  ProductDetails? _trialProduct;
   openiap.Product? _amazonProduct;
   int _trialStartedAtEpochMs;
+  bool _appStoreTrialPurchased = false;
+  bool _appStoreTrialHistoryChecked = false;
+  DateTime? _appStoreTrialStartedAt;
   Timer? _trialExpiryTimer;
   Timer? _reviewExpiryTimer;
   DateTime? _reviewExpiresAt;
@@ -193,11 +218,18 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
 
   bool get hasLifetimeUnlock => _purchased;
 
-  bool get hasStartedTrial => _trialStartedAtEpochMs > 0;
+  bool get isAppleStoreBuild => _appleStoreBuild;
 
-  DateTime? get trialEndsAt => hasStartedTrial
-      ? DateTime.fromMillisecondsSinceEpoch(_trialStartedAtEpochMs, isUtc: true).add(fullAccessTrialDuration)
-      : null;
+  bool get hasStartedTrial => _appleStoreBuild ? _appStoreTrialPurchased : _trialStartedAtEpochMs > 0;
+
+  DateTime? get trialEndsAt {
+    final startedAt = _appleStoreBuild
+        ? _appStoreTrialStartedAt
+        : hasStartedTrial
+        ? DateTime.fromMillisecondsSinceEpoch(_trialStartedAtEpochMs, isUtc: true)
+        : null;
+    return startedAt?.add(fullAccessTrialDuration);
+  }
 
   bool get isTrialActive {
     final end = trialEndsAt;
@@ -241,7 +273,14 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
 
   bool get shouldOfferTrial => availability == SupporterAvailability.purchasable && !_purchased && !hasStartedTrial;
 
-  bool get canStartTrial => shouldOfferTrial;
+  bool get canStartTrial =>
+      shouldOfferTrial &&
+      (!_appleStoreBuild ||
+          (_appStoreTrialHistoryChecked &&
+              _trialProduct != null &&
+              _product != null &&
+              !_storeState.value.isBusy &&
+              _storeState.value.status != SupporterPurchaseStatus.pending));
 
   bool get _lifetimeProductLoaded => _amazonStoreBuild ? _amazonProduct != null : _product != null;
 
@@ -255,7 +294,7 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
     SupporterAvailability.purchasable => _purchased || isTrialActive || hasReviewAccess,
   };
 
-  /// Starts a fresh trial automatically, then refreshes lifetime ownership.
+  /// Loads store entitlements. Apple trial access is never started here.
   Future<void> init() async {
     if (availability != SupporterAvailability.purchasable) {
       _ready = true;
@@ -268,7 +307,7 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
       // The cache only ever raises a lifetime entitlement here; lowering it
       // takes a confirmed revocation.
       if (settings.read(SettingsService.supporterEntitlementCached) && !_purchased) _purchased = true;
-      _trialStartedAtEpochMs = settings.read(SettingsService.appAccessTrialStartedAtEpochMs);
+      _trialStartedAtEpochMs = _appleStoreBuild ? 0 : settings.read(SettingsService.appAccessTrialStartedAtEpochMs);
       if (supportsReviewAccess) {
         final expiry = await ReviewAccess.verify(
           settings.read(SettingsService.storeReviewAccessGrant),
@@ -280,9 +319,9 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
       _scheduleTrialExpiry();
       safeNotifyListeners();
 
-      // A free trial should let people use the app immediately. Starting it
-      // here keeps the first-launch path full access without a paywall choice.
-      if (!_purchased && !hasStartedTrial) await startTrial();
+      // Other store builds retain their existing local first-launch trial.
+      // Apple users must explicitly approve the zero-price StoreKit product.
+      if (!_appleStoreBuild && !_purchased && !hasStartedTrial) await startTrial();
 
       if (_amazonStoreBuild) {
         final store = _ensureAmazonStore();
@@ -297,6 +336,15 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
       } else {
         final store = _ensureStore();
         if (store != null) {
+          if (_appleStoreBuild && store is AppStoreSupporterStore) {
+            await _refreshAppStoreTrial(
+              store,
+              onFailure: (error) {
+                _setStoreState(_storeState.value.copyWith(error: () => error));
+              },
+            );
+            if (isDisposed) return;
+          }
           final ownership = await _refreshEntitlement(store);
           if (isDisposed) return;
           if (ownership == SupporterOwnership.pending && !_purchased && !_storeState.value.isBusy) {
@@ -316,13 +364,18 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
 
   /// [isUnlocked] for the pre-provider startup frame, from the same build
   /// policy and entitlement cache this service starts from.
-  static bool startupUnlocked(SettingsService settings) => switch (supporterAvailabilityFor(supporterBuildMode)) {
-    SupporterAvailability.hidden => false,
-    SupporterAvailability.free => true,
-    SupporterAvailability.purchasable =>
-      settings.read(SettingsService.supporterEntitlementCached) ||
-          _trialIsActive(settings.read(SettingsService.appAccessTrialStartedAtEpochMs)),
-  };
+  static bool startupUnlocked(SettingsService settings, {bool? appleStoreBuild}) =>
+      switch (supporterAvailabilityFor(supporterBuildMode)) {
+        SupporterAvailability.hidden => false,
+        SupporterAvailability.free => true,
+        SupporterAvailability.purchasable =>
+          settings.read(SettingsService.supporterEntitlementCached) ||
+              (!(appleStoreBuild ?? _appleStoreTarget) &&
+                  _trialIsActive(settings.read(SettingsService.appAccessTrialStartedAtEpochMs))),
+      };
+
+  static bool get _appleStoreTarget =>
+      defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS;
 
   static bool _trialIsActive(int startedAtEpochMs) =>
       startedAtEpochMs > 0 &&
@@ -332,6 +385,7 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
 
   Future<bool> startTrial() async {
     if (!canStartTrial) return false;
+    if (_appleStoreBuild) return _startAppStoreTrial();
     final startedAtEpochMs = DateTime.now().toUtc().millisecondsSinceEpoch;
     try {
       final settings = await SettingsService.getInstance();
@@ -358,7 +412,7 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
   Future<void> loadProduct() async {
     if (availability != SupporterAvailability.purchasable) return;
     final current = _storeState.value;
-    if (_lifetimeProductLoaded || current.isLoadingProduct) return;
+    if ((_lifetimeProductLoaded && (!_appleStoreBuild || _trialProduct != null)) || current.isLoadingProduct) return;
     if (_amazonStoreBuild) {
       final amazonStore = _ensureAmazonStore();
       if (amazonStore == null) {
@@ -390,20 +444,47 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
     }
     final store = _ensureStore();
     if (store == null) {
-      _setStoreState(current.copyWith(productError: () => SupporterError.storeUnavailable));
+      _setStoreState(
+        current.copyWith(
+          productError: () => SupporterError.storeUnavailable,
+          trialProductError: () => _appleStoreBuild ? SupporterError.storeUnavailable : null,
+        ),
+      );
       return;
     }
-    _setStoreState(current.copyWith(isLoadingProduct: true, productError: () => null, error: () => null));
+    _setStoreState(
+      current.copyWith(
+        isLoadingProduct: true,
+        productError: () => null,
+        trialProductError: () => null,
+        error: () => null,
+      ),
+    );
     SupporterError? failure;
+    SupporterError? trialFailure;
     try {
       if (!await store.platform.isAvailable()) {
         failure = SupporterError.storeUnavailable;
+        if (_appleStoreBuild) trialFailure = SupporterError.storeUnavailable;
       } else {
-        final productIds = {lifetimeUnlockProductId};
+        final productIds = {lifetimeUnlockProductId, if (_appleStoreBuild) appStoreTrialProductId};
         final response = await store.platform.queryProductDetails(productIds);
         _product = response.productDetails.firstWhereOrNull(
           (p) => p.id == lifetimeUnlockProductId && store.acceptsProduct(p),
         );
+        if (_appleStoreBuild) {
+          final trial = response.productDetails.firstWhereOrNull((p) => p.id == appStoreTrialProductId);
+          if (trial == null) {
+            final error = response.error;
+            trialFailure = error != null && error.code != _storeKitNoProducts
+                ? SupporterError.productQueryFailed
+                : SupporterError.trialProductNotFound;
+          } else if (!_isValidAppStoreTrialProduct(trial)) {
+            trialFailure = SupporterError.trialProductInvalid;
+          } else {
+            _trialProduct = trial;
+          }
+        }
         if (_product == null) {
           // StoreKit 2 reports a query that found no product as the error
           // `storekit_no_response` rather than an empty result.
@@ -420,11 +501,54 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
     } catch (error, stackTrace) {
       appLogger.w('Pleazyng access: product query failed', error: error, stackTrace: stackTrace);
       failure = SupporterError.productQueryFailed;
+      if (_appleStoreBuild) trialFailure = SupporterError.productQueryFailed;
     }
     if (isDisposed) return;
     _setStoreState(
-      _storeState.value.copyWith(isLoadingProduct: false, price: _product?.price, productError: () => failure),
+      _storeState.value.copyWith(
+        isLoadingProduct: false,
+        price: _product?.price,
+        productError: () => failure,
+        trialProductError: () => trialFailure,
+      ),
     );
+  }
+
+  static bool _isValidAppStoreTrialProduct(ProductDetails product) =>
+      product.id == appStoreTrialProductId &&
+      product is AppStoreProduct2Details &&
+      product.sk2Product.id == appStoreTrialProductId &&
+      product.sk2Product.type == SK2ProductType.nonConsumable &&
+      product.rawPrice == 0 &&
+      product.sk2Product.price == 0;
+
+  Future<bool> _startAppStoreTrial() async {
+    final store = _ensureStore();
+    final product = _trialProduct;
+    if (store is! AppStoreSupporterStore || product == null || !_isValidAppStoreTrialProduct(product)) {
+      _setStoreState(_storeState.value.copyWith(trialProductError: () => SupporterError.trialProductInvalid));
+      return false;
+    }
+    if (!_appStoreTrialHistoryChecked) {
+      final history = await _refreshAppStoreTrial(store);
+      if (history == null || history.status != AppStoreTrialStatus.notPurchased || !canStartTrial) return false;
+    }
+    _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.purchasing, error: () => null));
+    try {
+      final launched = await store.platform.buyNonConsumable(purchaseParam: PurchaseParam(productDetails: product));
+      if (!launched) {
+        _setStoreState(
+          _storeState.value.copyWith(status: SupporterPurchaseStatus.idle, error: () => SupporterError.purchaseFailed),
+        );
+      }
+      return launched;
+    } catch (error, stackTrace) {
+      appLogger.w('Pleazyng App Store trial purchase could not start', error: error, stackTrace: stackTrace);
+      _setStoreState(
+        _storeState.value.copyWith(status: SupporterPurchaseStatus.idle, error: () => SupporterError.purchaseFailed),
+      );
+      return false;
+    }
   }
 
   /// Starts the lifetime purchase flow. The outcome arrives on the purchase
@@ -485,6 +609,19 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
     var failure = SupporterError.restoreFailed;
     final ownership = await _refreshEntitlement(store, onFailure: (error) => failure = error);
     if (isDisposed) return;
+    AppStoreTrialHistory? trialHistory;
+    if (_appleStoreBuild && store is AppStoreSupporterStore) {
+      trialHistory = await _refreshAppStoreTrial(store, onFailure: (error) => failure = error);
+      if (isDisposed) return;
+    }
+    if (ownership == SupporterOwnership.owned || trialHistory?.status == AppStoreTrialStatus.owned) {
+      _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.idle, error: () => null));
+      return;
+    }
+    if (trialHistory == null && _appleStoreBuild) {
+      _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.idle, error: () => failure));
+      return;
+    }
     _setStoreState(switch (ownership) {
       SupporterOwnership.owned => _storeState.value.copyWith(status: SupporterPurchaseStatus.idle),
       SupporterOwnership.pending => _storeState.value.copyWith(status: SupporterPurchaseStatus.pending),
@@ -692,6 +829,8 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
       if (isDisposed) return;
       if (purchase.productID == lifetimeUnlockProductId) {
         await _handleLifetimeUnlockPurchase(store, purchase);
+      } else if (_appleStoreBuild && store is AppStoreSupporterStore && purchase.productID == appStoreTrialProductId) {
+        await _handleAppStoreTrialPurchase(store, purchase);
       } else if (purchase.productID.isEmpty && _storeState.value.status == SupporterPurchaseStatus.purchasing) {
         // Play reports a cancelled or failed billing flow without a product.
         if (purchase.status == PurchaseStatus.canceled) {
@@ -702,6 +841,44 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
         }
       }
       // Any other product is not Pleazyng's; leave it to the store.
+    }
+  }
+
+  Future<void> _handleAppStoreTrialPurchase(AppStoreSupporterStore store, PurchaseDetails purchase) async {
+    switch (purchase.status) {
+      case PurchaseStatus.pending:
+        _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.pending, error: () => null));
+        return;
+      case PurchaseStatus.canceled:
+        if (_storeState.value.status == SupporterPurchaseStatus.purchasing ||
+            _storeState.value.status == SupporterPurchaseStatus.pending) {
+          _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.idle));
+        }
+        return;
+      case PurchaseStatus.error:
+        appLogger.w('Supporter: App Store trial purchase failed: ${purchase.error?.code} ${purchase.error?.message}');
+        _setStoreState(
+          _storeState.value.copyWith(status: SupporterPurchaseStatus.idle, error: () => SupporterError.purchaseFailed),
+        );
+        return;
+      case PurchaseStatus.purchased || PurchaseStatus.restored:
+        final history = await _refreshAppStoreTrial(store);
+        if (isDisposed) return;
+        final verifiedTrial = history?.status == AppStoreTrialStatus.owned && _appStoreTrialStartedAt != null;
+        if (!verifiedTrial) {
+          _setStoreState(
+            _storeState.value.copyWith(
+              status: SupporterPurchaseStatus.idle,
+              error: () => SupporterError.purchaseFailed,
+            ),
+          );
+          if (history?.status == AppStoreTrialStatus.revoked && purchase.pendingCompletePurchase) {
+            await _complete(store, purchase);
+          }
+          return;
+        }
+        _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.idle, error: () => null));
+        if (purchase.pendingCompletePurchase) await _complete(store, purchase);
     }
   }
 
@@ -855,6 +1032,33 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
         break;
     }
     return history.ownership;
+  }
+
+  Future<AppStoreTrialHistory?> _refreshAppStoreTrial(
+    AppStoreSupporterStore store, {
+    void Function(SupporterError error)? onFailure,
+  }) async {
+    try {
+      final history = await store.queryTrialHistory();
+      if (isDisposed) return null;
+      _appStoreTrialHistoryChecked = true;
+      _appStoreTrialPurchased = history.status != AppStoreTrialStatus.notPurchased;
+      _appStoreTrialStartedAt = history.status == AppStoreTrialStatus.owned ? history.originalPurchaseDate : null;
+      _scheduleTrialExpiry();
+      safeNotifyListeners();
+      if (history.status == AppStoreTrialStatus.invalid) onFailure?.call(SupporterError.restoreFailed);
+      return history;
+    } catch (error, stackTrace) {
+      appLogger.w(
+        'Supporter: App Store trial history unavailable; no trial access granted',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      onFailure?.call(
+        error is SupporterStoreUnavailable ? SupporterError.storeUnavailable : SupporterError.restoreFailed,
+      );
+      return null;
+    }
   }
 
   void _clearPendingStatus() {

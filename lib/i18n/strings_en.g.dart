@@ -8818,6 +8818,9 @@ class Translations$appAccess$en {
 	/// en: 'Start a seven-day trial with full access to every Pleazyng feature. There is no charge during the trial and no subscription. After the trial, one lifetime purchase at your store's price unlocks Pleazyng for life.'
 	String get description => 'Start a seven-day trial with full access to every Pleazyng feature. There is no charge during the trial and no subscription. After the trial, one lifetime purchase at your store\'s price unlocks Pleazyng for life.';
 
+	/// en: 'Start a free 7-day trial with full access. Trial access ends after 7 days. There is no subscription or automatic charge. After the trial, access ends unless you choose a one-time lifetime purchase for ${price}.'
+	String appleTrialDisclosure({required Object price}) => 'Start a free 7-day trial with full access. Trial access ends after 7 days. There is no subscription or automatic charge. After the trial, access ends unless you choose a one-time lifetime purchase for ${price}.';
+
 	/// en: 'Unlock every feature in Pleazyng for life with one purchase at your store's price. There is no subscription.'
 	String get trialEndedDescription => 'Unlock every feature in Pleazyng for life with one purchase at your store\'s price. There is no subscription.';
 
@@ -8832,6 +8835,12 @@ class Translations$appAccess$en {
 
 	/// en: 'Couldn't save the trial on this device. Please try again.'
 	String get trialStartFailed => 'Couldn\'t save the trial on this device. Please try again.';
+
+	/// en: 'The 7-day trial is not available from the App Store right now.'
+	String get trialProductNotFound => 'The 7-day trial is not available from the App Store right now.';
+
+	/// en: 'The App Store returned an invalid 7-day trial offer. You can still buy lifetime access.'
+	String get trialProductInvalid => 'The App Store returned an invalid 7-day trial offer. You can still buy lifetime access.';
 
 	/// en: 'Pleazyng unlocked for life'
 	String get lifetimeTitle => 'Pleazyng unlocked for life';
@@ -21413,11 +21422,14 @@ extension on Translations {
 			'notifications.newEpisodeBody' => ({required Object show, required Object episode}) => '${show} · ${episode}',
 			'appAccess.title' => 'Try every feature free for 7 days',
 			'appAccess.description' => 'Start a seven-day trial with full access to every Pleazyng feature. There is no charge during the trial and no subscription. After the trial, one lifetime purchase at your store\'s price unlocks Pleazyng for life.',
+			'appAccess.appleTrialDisclosure' => ({required Object price}) => 'Start a free 7-day trial with full access. Trial access ends after 7 days. There is no subscription or automatic charge. After the trial, access ends unless you choose a one-time lifetime purchase for ${price}.',
 			'appAccess.trialEndedDescription' => 'Unlock every feature in Pleazyng for life with one purchase at your store\'s price. There is no subscription.',
 			'appAccess.startTrial' => 'Start my 7-day free trial',
 			'appAccess.trialActive' => 'Your 7-day full-feature trial is active.',
 			'appAccess.trialEnded' => 'Your 7-day trial has ended',
 			'appAccess.trialStartFailed' => 'Couldn\'t save the trial on this device. Please try again.',
+			'appAccess.trialProductNotFound' => 'The 7-day trial is not available from the App Store right now.',
+			'appAccess.trialProductInvalid' => 'The App Store returned an invalid 7-day trial offer. You can still buy lifetime access.',
 			'appAccess.lifetimeTitle' => 'Pleazyng unlocked for life',
 			'appAccess.lifetimeBody' => 'Thanks! You have lifetime access to every Pleazyng feature.',
 			'appAccess.manageTitle' => 'Pleazyng lifetime access',
@@ -21632,11 +21644,11 @@ extension on Translations {
 			'universalMedia.view360Yaw' => 'Horizontal view',
 			'universalMedia.view360Pitch' => 'Vertical view',
 			'universalMedia.view360FieldOfView' => 'Field of view',
+			_ => null,
+		} ?? switch (path) {
 			'universalMedia.recordStream' => 'Record live stream',
 			'universalMedia.stopRecording' => 'Stop and save recording',
 			'universalMedia.recordingStarted' => 'Recording is active. Leaving playback stops and saves the recording.',
-			_ => null,
-		} ?? switch (path) {
 			'universalMedia.recordingSaved' => 'Recording finalized and saved.',
 			'universalMedia.recordingActive' => 'Recording to this device. Leaving playback stops and saves it.',
 			'universalMedia.recordingFormatHelp' => 'For video, choose MKV or MPEG-TS. For audio, choose MKA or MKV.',
@@ -22146,11 +22158,11 @@ extension on Translations {
 			'sourceSetup.httpUnencrypted' => 'HTTP without transport encryption',
 			'sourceSetup.checkEndpointSecurity' => 'Check endpoint security',
 			'sourceSetup.fieldRequired' => ({required Object label}) => '${label} is required.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.integerRange' => ({required Object label, required Object min, required Object max}) => 'Enter ${label} from ${min} to ${max}.',
 			'sourceSetup.replaceFile' => ({required Object name}) => 'Replace ${name}',
 			'sourceSetup.selectedIdentity' => ({required Object name}) => 'Selected client identity: ${name}',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.subtitleRating' => ({required Object rating}) => 'Rating ${rating}',
 			'sourceSetup.subtitleDownloading' => ({required Object title}) => 'Downloading subtitle: ${title}',
 			'sourceSetup.sharedEntryPair' => 'Pair this item',
@@ -22660,11 +22672,11 @@ extension on Translations {
 			'subtitleAiUi.subtitleEncodingNoCues' => 'No readable subtitle cues were found with this encoding.',
 			'subtitleAiUi.subtitleEncodingDecodeFailed' => 'This file could not be decoded with the selected encoding.',
 			'subtitleAiUi.subtitleEncodingUsePreview' => 'Use this preview',
+			_ => null,
+		} ?? switch (path) {
 			'subtitleAiUi.chooseDifferentLanguagesToUseTransla_db4d6e3a' => 'Choose different languages to use translated text for matching.',
 			'subtitleAiUi.chooseTheSubtitleThatNeedsSynchronization' => 'Choose the subtitle that needs synchronization…',
 			'subtitleAiUi.chooseASynchronizedSubtitleInAnotherLanguage' => 'Choose a synchronized subtitle in another language…',
-			_ => null,
-		} ?? switch (path) {
 			'subtitleAiUi.translatingTargetCuesLocallyForTextMatching' => 'Translating target cues locally for text matching…',
 			'subtitleAiUi.translatingCuesForAlignment' => ({required Object completed, required Object total}) => 'Translating cues for alignment (${completed}/${total})…',
 			'subtitleAiUi.aligningTranslatedTargetTextAgainstTheReference' => 'Aligning translated target text against the reference…',
@@ -23174,11 +23186,11 @@ extension on Translations {
 			'karaokeUi.confirmApplyShowTemplate' => ({required Object value1}) => 'Applying ${value1} replaces venue settings and saved setlists. Singers and playback stay unchanged.',
 			'karaokeUi.addSectionFromCurrentPlaybackTimes' => 'Add section from current playback times',
 			'karaokeUi.deleteLine' => 'Delete line',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.referenceNotes' => 'Reference notes',
 			'karaokeUi.midi' => ({required Object value1, required Object value2, required Object value3}) => '${value1} · MIDI ${value2} · ${value3}',
 			'karaokeUi.deleteNote' => 'Delete note',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.deleteShowTemplate' => 'Delete show template',
 			'karaokeUi.addAQuestionYouAuthoredOrMayUse' => 'Add a question you authored or may use',
 			'karaokeUi.triviaLyricCompletionNameThatTunePrompt' => 'Trivia / lyric completion / name that tune prompt',

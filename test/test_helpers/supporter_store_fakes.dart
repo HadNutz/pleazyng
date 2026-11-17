@@ -19,6 +19,9 @@ final class FakeInAppPurchasePlatform extends InAppPurchasePlatform {
   /// The product query's answer; null answers with an empty product list.
   ProductDetails? product = supporterProduct();
 
+  /// Optional multi-product query result, filtered by requested identifiers.
+  List<ProductDetails>? productResults;
+
   /// Thrown by the product query when set.
   Object? productQueryError;
 
@@ -62,11 +65,11 @@ final class FakeInAppPurchasePlatform extends InAppPurchasePlatform {
     productQueries++;
     await productQueryGate?.future;
     if (productQueryError case final error?) throw error;
-    final product = this.product;
+    final products = productResults?.where((product) => identifiers.contains(product.id)).toList() ?? [?product];
     return ProductDetailsResponse(
-      productDetails: [?product],
-      notFoundIDs: [if (product == null) ...identifiers],
-      error: product == null ? productResponseError : null,
+      productDetails: products,
+      notFoundIDs: identifiers.difference(products.map((product) => product.id).toSet()).toList(),
+      error: products.isEmpty ? productResponseError : null,
     );
   }
 
@@ -162,23 +165,56 @@ final class FakeAppStore {
   );
 }
 
-String _transactionJson(String productId, {required bool revoked}) => jsonEncode({
+String _transactionJson(String productId, {required bool revoked, DateTime? originalPurchaseDate}) => jsonEncode({
   'productId': productId,
+  'type': 'Non-Consumable',
   'purchaseDate': 1767225600000,
+  if (originalPurchaseDate != null) 'originalPurchaseDate': originalPurchaseDate.toUtc().millisecondsSinceEpoch,
   if (revoked) 'revocationDate': 1767312000000,
   if (revoked) 'revocationReason': 0,
 });
 
 /// A verified StoreKit 2 transaction from `Transaction.all`.
-SK2Transaction appStoreTransaction({String productId = lifetimeUnlockProductId, bool revoked = false}) =>
-    SK2Transaction(
-      id: '2000000000000001',
-      originalId: '2000000000000001',
-      productId: productId,
-      purchaseDate: '2026-01-01T00:00:00Z',
-      appAccountToken: null,
-      jsonRepresentation: _transactionJson(productId, revoked: revoked),
-    );
+SK2Transaction appStoreTransaction({
+  String productId = lifetimeUnlockProductId,
+  bool revoked = false,
+  DateTime? originalPurchaseDate,
+  String? jsonRepresentation,
+}) => SK2Transaction(
+  id: '2000000000000001',
+  originalId: '2000000000000001',
+  productId: productId,
+  purchaseDate: '2026-01-01T00:00:00Z',
+  appAccountToken: null,
+  jsonRepresentation:
+      jsonRepresentation ?? _transactionJson(productId, revoked: revoked, originalPurchaseDate: originalPurchaseDate),
+);
+
+ProductDetails appStoreTrialProduct({
+  String productId = appStoreTrialProductId,
+  double price = 0,
+  SK2ProductType type = SK2ProductType.nonConsumable,
+}) {
+  final product = SK2Product(
+    id: productId,
+    displayName: '7-day Trial',
+    displayPrice: price == 0 ? 'Free' : price.toStringAsFixed(2),
+    description: 'Free full access for 7 days. No automatic charge.',
+    price: price,
+    type: type,
+    priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'),
+  );
+  return AppStoreProduct2Details(
+    id: productId,
+    title: product.displayName,
+    description: product.description,
+    price: product.displayPrice,
+    rawPrice: price,
+    currencyCode: 'USD',
+    currencySymbol: r'$',
+    sk2Product: product,
+  );
+}
 
 /// A StoreKit 2 transaction on the purchase stream, as the plugin reports a
 /// purchase or a `Transaction.updates` refund.

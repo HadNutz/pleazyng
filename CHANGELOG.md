@@ -10,6 +10,7 @@
 - Verify new Apple Store uploads against their core release manifest while keeping recovered uploads bound to their separate checksum and provenance sidecars.
 
 - Build authentic Apple Store screenshots with current Flutter, preserve reusable app bundles, and verify their source and capture provenance.
+- Offer Apple customers an explicitly accepted free seven-day StoreKit trial, restore its verified original purchase date, and disclose the localized one-time lifetime price with no subscription or automatic charge. The three new Apple trial labels currently use English fallback pending translation review.
 - Add signed macOS App Store packaging and upload with source, storage, certificate and processing validation.
 - Skip Git metadata during Apple network-storage source cleanup.
 - Include the original EVC/AVS decoder notices and the complete upstream LCEVC notice tree in the app Licenses screen, with one SDK entry.
