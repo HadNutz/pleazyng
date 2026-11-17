@@ -1,0 +1,45 @@
+{
+  "identifier" : "FF72C23C-1B9B-4EA2-91E3-8DE74922F3D1",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "0.00",
+      "familyShareable" : false,
+      "internalID" : "1000000001",
+      "localizations" : [
+        {
+          "description" : "Seven days of full app access",
+          "displayName" : "Pleazyng 7-day trial",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "pleazyng_7_day_trial",
+      "referenceName" : "Pleazyng Seven-Day Trial LOCALTEST",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "1000000002",
+      "localizations" : [
+        {
+          "description" : "One-time lifetime access to every feature",
+          "displayName" : "Pleazyng Lifetime Unlock",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "pleazyng_lifetime_unlock",
+      "referenceName" : "Pleazyng Lifetime Unlock LOCALTEST",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_locale" : "en_US",
+    "_storefront" : "USA"
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

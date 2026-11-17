@@ -1,0 +1,267 @@
+# ng-runner-policy: hosted-default-v2
+# iOS StoreKitTest evidence uses a public hosted Mac and an exact 3.0.37 source SHA.
+name: Apple Trial StoreKit Test Review Capture
+run-name: apple-trial-storekit-review:${{ inputs.mode }}:${{ inputs.product_source_sha }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Build the one authorized iOS Simulator product and capture, or reuse its retained app bundle.
+        type: choice
+        options:
+          - build-and-capture
+          - capture-only
+        default: build-and-capture
+        required: true
+      product_source_sha:
+        description: Exact 40-character 3.0.37+196 product source commit on main.
+        type: string
+        required: true
+      producer_run_id:
+        description: Completed run of this workflow that retained the exact product app (capture-only mode).
+        type: string
+        required: false
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: pleazyng-apple-trial-storekit-review-v3-0-37
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  PUB_CACHE: ${{ github.workspace }}/.cache/plezy-pub-cache
+  FLUTTER_SUPPRESS_ANALYTICS: "true"
+  DASH__SUPPRESS_ANALYTICS: "true"
+
+jobs:
+  trial-review:
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main'
+    runs-on: macos-26
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.product_source_sha }}
+          path: product-source
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Fetch main for the exact source ancestry guard
+        working-directory: product-source
+        run: git fetch --no-tags origin main:refs/remotes/origin/main
+
+      - name: Verify the exact 3.0.37 product source
+        env:
+          PRODUCT_SOURCE_SHA: ${{ inputs.product_source_sha }}
+        run: |
+          set -euo pipefail
+          python3 scripts/stores/capture_apple_trial_storekit.py verify-source \
+            --product-root "$GITHUB_WORKSPACE/product-source" \
+            --product-source-sha "$PRODUCT_SOURCE_SHA"
+
+      - name: Verify the retained product build producer
+        id: producer
+        if: inputs.mode == 'capture-only'
+        env:
+          PRODUCER_RUN_ID: ${{ inputs.producer_run_id }}
+        run: |
+          set -euo pipefail
+          [[ "$PRODUCER_RUN_ID" =~ ^[0-9]+$ ]]
+          workflow_id="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/apple-trial-storekit-review.yml" --jq .id)"
+          [[ "$workflow_id" =~ ^[0-9]+$ ]]
+          metadata="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PRODUCER_RUN_ID" \
+            --jq "if .workflow_id == $workflow_id and .event == \"workflow_dispatch\" and .head_branch == \"main\" and .status == \"completed\" then [.head_sha, (.run_attempt | tostring)] | @tsv else error(\"build producer is not a completed main-branch dispatch of this workflow\") end")"
+          IFS=$'\t' read -r producer_tools_sha producer_run_attempt <<< "$metadata"
+          [[ "$producer_tools_sha" =~ ^[0-9a-f]{40}$ && "$producer_run_attempt" =~ ^[0-9]+$ ]]
+          echo "tools_sha=$producer_tools_sha" >> "$GITHUB_OUTPUT"
+          echo "run_attempt=$producer_run_attempt" >> "$GITHUB_OUTPUT"
+
+      - name: Download the retained 3.0.37 product build
+        if: inputs.mode == 'capture-only'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: apple-trial-storekit-build-v3.0.37
+          run-id: ${{ inputs.producer_run_id }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/apple-trial-storekit-build-input
+
+      - name: Restore and verify the exact retained app
+        if: inputs.mode == 'capture-only'
+        env:
+          PRODUCT_SOURCE_SHA: ${{ inputs.product_source_sha }}
+          PRODUCER_RUN_ID: ${{ inputs.producer_run_id }}
+          PRODUCER_RUN_ATTEMPT: ${{ steps.producer.outputs.run_attempt }}
+          PRODUCER_TOOLS_SHA: ${{ steps.producer.outputs.tools_sha }}
+        run: |
+          set -euo pipefail
+          python3 scripts/stores/capture_apple_trial_storekit.py restore-build \
+            --artifact-dir "$RUNNER_TEMP/apple-trial-storekit-build-input" \
+            --product-source-sha "$PRODUCT_SOURCE_SHA" \
+            --producer-run-id "$PRODUCER_RUN_ID" \
+            --producer-run-attempt "$PRODUCER_RUN_ATTEMPT" \
+            --producer-tools-sha "$PRODUCER_TOOLS_SHA" \
+            --output-dir "$RUNNER_TEMP/apple-trial-storekit-build-restored"
+          echo "PLEAZYNG_TRIAL_APP=$RUNNER_TEMP/apple-trial-storekit-build-restored/restore/Pleazyng.app" >> "$GITHUB_ENV"
+          echo "PLEAZYNG_TRIAL_BUILD_RECEIPT=$RUNNER_TEMP/apple-trial-storekit-build-input/product-build-provenance.json" >> "$GITHUB_ENV"
+
+      - name: Preserve retained build consumer provenance with capture evidence
+        if: inputs.mode == 'capture-only'
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/apple-trial-storekit-captures"
+          cp "$RUNNER_TEMP/apple-trial-storekit-build-restored/consumer-provenance.json" \
+            "$RUNNER_TEMP/apple-trial-storekit-captures/consumer-provenance.json"
+
+      - name: Install StoreKit UI-test project generator for capture-only reuse
+        if: inputs.mode == 'capture-only'
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+          command -v xcodegen >/dev/null || brew install xcodegen
+          echo "/opt/homebrew/bin" >> "$GITHUB_PATH"
+
+      - name: Load the product source's pinned Flutter SDK
+        if: inputs.mode == 'build-and-capture'
+        working-directory: product-source
+        run: python3 scripts/flutter/load_sdk_pin.py --github-env
+
+      - name: Setup the product source's pinned Flutter SDK
+        if: inputs.mode == 'build-and-capture'
+        uses: ./product-source/.github/actions/setup-flutter-apple
+        with:
+          hosted-xcode-version: '26.5'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Cache locked Flutter dependencies
+        if: inputs.mode == 'build-and-capture'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ env.PUB_CACHE }}
+          key: apple-trial-storekit-v3.0.37-${{ runner.os }}-${{ runner.arch }}-pub-${{ hashFiles('product-source/pubspec.yaml', 'product-source/pubspec.lock') }}
+
+      - name: Install native iOS build tools
+        if: inputs.mode == 'build-and-capture'
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+          command -v cmake >/dev/null || brew install cmake
+          command -v xcodegen >/dev/null || brew install xcodegen
+          command -v git-lfs >/dev/null || brew install git-lfs
+          echo "/opt/homebrew/bin" >> "$GITHUB_PATH"
+
+      - name: Install CocoaPods
+        if: inputs.mode == 'build-and-capture'
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/bin:$PATH"
+          gem install cocoapods --version 1.17.0 --no-document \
+            --install-dir "$RUNNER_TEMP/cocoapods-gems" \
+            --bindir "$RUNNER_TEMP/cocoapods-bin"
+          {
+            echo "GEM_HOME=$RUNNER_TEMP/cocoapods-gems"
+            echo "GEM_PATH=$RUNNER_TEMP/cocoapods-gems:$(gem env gempath)"
+          } >> "$GITHUB_ENV"
+          echo "/opt/homebrew/bin" >> "$GITHUB_PATH"
+          echo "$RUNNER_TEMP/cocoapods-bin" >> "$GITHUB_PATH"
+
+      - name: Install locked Flutter dependencies
+        if: inputs.mode == 'build-and-capture'
+        working-directory: product-source
+        run: flutter pub get --enforce-lockfile --no-example
+
+      - name: Prepare checksum-pinned iOS native downloads
+        if: inputs.mode == 'build-and-capture'
+        working-directory: product-source
+        run: python3 scripts/prepare_native_downloads.py --sqlite-platform ios
+
+      - name: Prepare pinned iOS Steam sources
+        if: inputs.mode == 'build-and-capture'
+        working-directory: product-source
+        env:
+          GIT_TERMINAL_PROMPT: "0"
+        run: python3 scripts/games/prepare_steam.py
+
+      - name: Resolve pinned iOS Swift packages
+        if: inputs.mode == 'build-and-capture'
+        working-directory: product-source
+        env:
+          PLEAZYNG_APPLE_SOURCE_ROOT: ${{ github.workspace }}/product-source
+        run: scripts/refresh_apple_spm.sh ios
+
+      - name: Build the one Store-mode iOS Simulator product app
+        if: inputs.mode == 'build-and-capture'
+        working-directory: product-source
+        env:
+          PRODUCT_SOURCE_SHA: ${{ inputs.product_source_sha }}
+        run: |
+          set -euo pipefail
+          flutter build ios --debug --simulator --no-pub \
+            --dart-define=SUPPORTER_MODE=iap \
+            --dart-define=ENABLE_UPDATE_CHECK=false \
+            --dart-define=GIT_COMMIT="$PRODUCT_SOURCE_SHA" \
+            --dart-define=PLEAZYNG_DISCORD_APPLICATION_ID= \
+            --dart-define=LIFETIME_UNLOCK_PRODUCT_ID=pleazyng_lifetime_unlock
+          test -d build/ios/iphonesimulator/Pleazyng.app
+
+      - name: Preserve the Xcode-managed iOS Simulator product build
+        if: inputs.mode == 'build-and-capture'
+        env:
+          PRODUCT_SOURCE_SHA: ${{ inputs.product_source_sha }}
+          CAPTURE_TOOLS_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          python3 scripts/stores/capture_apple_trial_storekit.py record-build \
+            --product-root "$GITHUB_WORKSPACE/product-source" \
+            --product-source-sha "$PRODUCT_SOURCE_SHA" \
+            --capture-tools-root "$GITHUB_WORKSPACE" \
+            --capture-tools-sha "$CAPTURE_TOOLS_SHA" \
+            --producer-run-id "$GITHUB_RUN_ID" \
+            --producer-run-attempt "$GITHUB_RUN_ATTEMPT" \
+            --app "$GITHUB_WORKSPACE/product-source/build/ios/iphonesimulator/Pleazyng.app" \
+            --output-dir "$RUNNER_TEMP/apple-trial-storekit-build"
+          echo "PLEAZYNG_TRIAL_APP=$GITHUB_WORKSPACE/product-source/build/ios/iphonesimulator/Pleazyng.app" >> "$GITHUB_ENV"
+          echo "PLEAZYNG_TRIAL_BUILD_RECEIPT=$RUNNER_TEMP/apple-trial-storekit-build/product-build-provenance.json" >> "$GITHUB_ENV"
+
+      - name: Upload the product app before capture
+        if: inputs.mode == 'build-and-capture'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: apple-trial-storekit-build-v3.0.37
+          path: ${{ runner.temp }}/apple-trial-storekit-build/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Run the native StoreKitTest UI capture
+        env:
+          PRODUCT_SOURCE_SHA: ${{ inputs.product_source_sha }}
+          CAPTURE_TOOLS_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          python3 scripts/stores/capture_apple_trial_storekit.py capture \
+            --product-root "$GITHUB_WORKSPACE/product-source" \
+            --product-source-sha "$PRODUCT_SOURCE_SHA" \
+            --capture-tools-root "$GITHUB_WORKSPACE" \
+            --capture-tools-sha "$CAPTURE_TOOLS_SHA" \
+            --app "$PLEAZYNG_TRIAL_APP" \
+            --build-receipt "$PLEAZYNG_TRIAL_BUILD_RECEIPT" \
+            --output-dir "$RUNNER_TEMP/apple-trial-storekit-captures" \
+            --run-id "$GITHUB_RUN_ID" \
+            --run-attempt "$GITHUB_RUN_ATTEMPT"
+
+      - name: Upload StoreKitTest screenshots, receipts and diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: apple-trial-storekit-captures-v3.0.37-${{ github.run_id }}
+          path: ${{ runner.temp }}/apple-trial-storekit-captures/
+          if-no-files-found: warn
+          retention-days: 30
