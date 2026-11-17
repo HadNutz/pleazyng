@@ -596,17 +596,40 @@ def _test_local_signing_identities(keychain: Path, app_identity: dict[str, str],
         f"{EXPECTED_BUNDLE_ID}.signing-preflight", "--version", "1",
         "--install-location", "/tmp/pleazyng-signing-preflight", str(unsigned_package),
     ])
-    signing_run([
+    productsign = subprocess.run([
         # productsign(1) names the installer identity by its certificate common
         # name; unlike codesign, it does not accept the SHA-1 fingerprint here.
         "/usr/bin/productsign", "--sign", installer_identity["name"],
         "--keychain", str(keychain), str(unsigned_package), str(signed_package),
-    ])
+    ], check=False, capture_output=True)
+    if productsign.returncode:
+        diagnostic = _safe_productsign_diagnostic(
+            productsign.stderr, installer_identity["name"], team)
+        raise RuntimeError(
+            f"Temporary installer package signing probe failed (exit {productsign.returncode}); {diagnostic}")
     package_signature = _capture(["/usr/sbin/pkgutil", "--check-signature", str(signed_package)]).decode(
         errors="replace")
     if "3rd Party Mac Developer Installer" not in package_signature or team not in package_signature:
         raise ValueError("Temporary installer package did not verify with the expected Mac App Store identity")
     return {"app_bundle_signed_and_verified": True, "installer_package_signed_and_verified": True}
+
+
+def _safe_productsign_diagnostic(stderr: bytes, identity_name: str, team: str) -> str:
+    """Retain useful productsign stderr while removing paths and credential-like data."""
+    text = stderr.decode(errors="replace")
+    text = re.sub(
+        r"-----BEGIN [^\r\n]*PRIVATE KEY-----.*?-----END [^\r\n]*PRIVATE KEY-----",
+        "<private-key-redacted>", text, flags=re.DOTALL)
+    for secret_name in (CERTIFICATE_PASSWORD_SECRET, *API_SECRETS):
+        secret = os.environ.get(secret_name, "")
+        if secret:
+            text = text.replace(secret, "<redacted>")
+    text = text.replace(identity_name, "<installer identity>").replace(team, "<team>")
+    text = re.sub(r"/(?:Users|private|tmp)/[^\s\"']+", "<path>", text)
+    text = re.sub(r"\b[A-Za-z0-9+/=_-]{80,}\b", "<long-token-redacted>", text)
+    lines = [" ".join(line.split()) for line in text.splitlines()
+             if "-----BEGIN" not in line and "-----END" not in line]
+    return (" ".join(line for line in lines if line)[:500] or "No safe diagnostic text was emitted")
 
 
 def run_local_signing_preflight(source_dir: Path, source: dict[str, str], team: str,
@@ -629,14 +652,14 @@ def run_local_signing_preflight(source_dir: Path, source: dict[str, str], team: 
     with persistent_signing_keychain(report) as keychain:
         app_identity = _local_identity_record(keychain, APP_CERTIFICATE_TYPE, team)
         installer_identity = _local_identity_record(keychain, INSTALLER_CERTIFICATE_TYPE, team)
-        with tempfile.TemporaryDirectory(prefix="pleazyng-macos-signing-preflight-",
-                                         dir=output_dir) as temporary:
-            smoke_tests = _test_local_signing_identities(
-                keychain, app_identity, installer_identity, team, Path(temporary))
         report["signing_identities"] = {
             APP_CERTIFICATE_TYPE: app_identity,
             INSTALLER_CERTIFICATE_TYPE: installer_identity,
         }
+        with tempfile.TemporaryDirectory(prefix="pleazyng-macos-signing-preflight-",
+                                         dir=output_dir) as temporary:
+            smoke_tests = _test_local_signing_identities(
+                keychain, app_identity, installer_identity, team, Path(temporary))
         report["local_signing_tests"] = smoke_tests
     report["qualification"] = {
         "app_archive_built": False,

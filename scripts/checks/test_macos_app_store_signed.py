@@ -133,6 +133,20 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, "valid version and build metadata"):
                         store.validate_plezy_torrent_framework_metadata(app)
 
+    def test_productsign_diagnostic_redacts_identity_paths_and_tokens(self):
+        identity_name = "3rd Party Mac Developer Installer: Pleazyng (DM9A59DC85)"
+        secret = "certificate-password-test-value"
+        stderr = (f"productsign: error: Identity {identity_name} failed at "
+                  f"/Users/gha-jit-macos/private.pkg for {TEAM}; secret {secret}; "
+                  f"token {'a' * 96}\n").encode()
+        with patch.dict(store.os.environ, {store.CERTIFICATE_PASSWORD_SECRET: secret}):
+            diagnostic = store._safe_productsign_diagnostic(stderr, identity_name, TEAM)
+        self.assertIn("productsign: error:", diagnostic)
+        for sensitive in (identity_name, TEAM, secret, "/Users/", "a" * 96):
+            self.assertNotIn(sensitive, diagnostic)
+        self.assertIn("<installer identity>", diagnostic)
+        self.assertIn("<path>", diagnostic)
+
     def test_release_tag_must_be_a_versioned_annotated_tag_with_matching_source(self):
         self.assertIsNone(store._safe_tag("v3.0.36"))
         for tag in ("3.0.36", "v3.0.36-candidate", "--v3.0.36", "v3.0.36+195"):
@@ -205,6 +219,7 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         self.assertIn('receipt["macos_swift_package_locks"]', signed_builder)
         self.assertIn("productsign", signed_builder)
         self.assertIn('"--sign", installer_identity["name"]', signed_builder)
+        self.assertIn("_safe_productsign_diagnostic", signed_builder)
         package_builder = signed_builder.split("def build_signed_package(", 1)[1].split("\ndef _write_receipt", 1)[0]
         framework_validation = package_builder.index("validate_plezy_torrent_framework_metadata(app_path)")
         package_export = package_builder.index('"xcodebuild", "-exportArchive"')
