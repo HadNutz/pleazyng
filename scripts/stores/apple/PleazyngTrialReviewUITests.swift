@@ -92,6 +92,9 @@ final class PleazyngTrialReviewUITests: XCTestCase {
         XCTAssertTrue(activeTrial.waitForExistence(timeout: 30), "App Store transaction history did not show the active trial")
 
         restoreButton.tap()
+        let restoreBusy = NSPredicate(format: "isEnabled == false")
+        expectation(for: restoreBusy, evaluatedWith: restoreButton)
+        waitForExpectations(timeout: 30)
         let restoreIdle = NSPredicate(format: "isEnabled == true")
         expectation(for: restoreIdle, evaluatedWith: restoreButton)
         waitForExpectations(timeout: 90)
@@ -104,6 +107,20 @@ final class PleazyngTrialReviewUITests: XCTestCase {
             session.allTransactions().contains { $0.productIdentifier == lifetimeProductID },
             "Restore must not create or buy a lifetime transaction"
         )
+        let restoredTransactions = session.allTransactions()
+        XCTAssertEqual(restoredTransactions.count, 1, "Restore must leave exactly the single LOCALTEST trial transaction")
+        let restoredTrial = try XCTUnwrap(restoredTransactions.first)
+        XCTAssertEqual(restoredTrial.productIdentifier, trialProductID)
+        XCTAssertEqual(
+            restoredTrial.originalTransactionIdentifier,
+            transaction.originalTransactionIdentifier,
+            "Restore must preserve the trial's original StoreKit test transaction"
+        )
+        XCTAssertEqual(
+            restoredTrial.purchaseDate,
+            transaction.purchaseDate,
+            "Restore must preserve the original LOCALTEST trial purchase date"
+        )
         let activeTrialShownAfterRestore = activeTrial.exists
         let restoreActionCompleted = restoreButton.isEnabled
         attachScreenshot(of: app, named: "pleazyng-trial-active-supporter-localtest")
@@ -114,6 +131,20 @@ final class PleazyngTrialReviewUITests: XCTestCase {
         XCTAssertTrue(
             relaunchedLocalScreen.waitForExistence(timeout: 90),
             "Fresh launch did not restore the active trial from the app's verified StoreKit history"
+        )
+        let relaunchedTransactions = session.allTransactions()
+        XCTAssertEqual(relaunchedTransactions.count, 1, "Fresh launch must not add or lose a LOCALTEST transaction")
+        let relaunchedTrial = try XCTUnwrap(relaunchedTransactions.first)
+        XCTAssertEqual(relaunchedTrial.productIdentifier, trialProductID)
+        XCTAssertEqual(
+            relaunchedTrial.originalTransactionIdentifier,
+            transaction.originalTransactionIdentifier,
+            "Fresh launch must retain the original LOCALTEST transaction identity"
+        )
+        XCTAssertEqual(
+            relaunchedTrial.purchaseDate,
+            transaction.purchaseDate,
+            "Fresh launch must retain the original LOCALTEST trial purchase date"
         )
 
         let record: [String: Any] = [
@@ -133,6 +164,18 @@ final class PleazyngTrialReviewUITests: XCTestCase {
                 "purchaseDate": ISO8601DateFormatter().string(from: transaction.purchaseDate),
                 "expirationDate": optionalDate(transaction.expirationDate),
                 "cancelDate": optionalDate(transaction.cancelDate),
+            ],
+            "trialHistorySnapshots": [
+                "afterRestore": [
+                    "transactionCount": restoredTransactions.count,
+                    "originalTestTransactionIdentifier": restoredTrial.originalTransactionIdentifier,
+                    "originalPurchaseDate": ISO8601DateFormatter().string(from: restoredTrial.purchaseDate),
+                ],
+                "afterFreshRelaunch": [
+                    "transactionCount": relaunchedTransactions.count,
+                    "originalTestTransactionIdentifier": relaunchedTrial.originalTransactionIdentifier,
+                    "originalPurchaseDate": ISO8601DateFormatter().string(from: relaunchedTrial.purchaseDate),
+                ],
             ],
             "appBehavior": [
                 "trialGateOpenedAfterLivePurchaseAction": trialGateOpenedAfterPurchase,

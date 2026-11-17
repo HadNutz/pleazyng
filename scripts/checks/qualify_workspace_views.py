@@ -13,7 +13,9 @@ import time
 ROOT = Path(__file__).resolve().parents[2]
 DART = r"""
 import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'desktop_workspace_views.dart';
 
 void main() {
@@ -29,8 +31,8 @@ class Probe extends StatefulWidget {
 
 class _ProbeState extends State<Probe> {
   final windows = DesktopWorkspaceViews();
-  bool started = false;
   final key = 'a' * 64;
+  final renderKey = GlobalKey();
 
   @override
   void initState() {
@@ -47,6 +49,24 @@ class _ProbeState extends State<Probe> {
   Future<void> exercise() async {
     try {
       final initial = WidgetsBinding.instance.platformDispatcher.views.length;
+      require(initial >= 1, 'the initial native Flutter view was not attached');
+      await WidgetsBinding.instance.endOfFrame;
+      final renderObject = renderKey.currentContext?.findRenderObject();
+      if (renderObject is! RenderRepaintBoundary) {
+        throw StateError('the initial Dart frame is unavailable');
+      }
+      final image = await renderObject.toImage(pixelRatio: 1);
+      final data = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+      if (data == null) throw StateError('the initial Dart frame could not be read');
+      final pixels = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      final colors = <int>{};
+      for (var offset = 0; offset + 3 < pixels.length && colors.length < 16; offset += 4) {
+        colors.add((pixels[offset] << 24) | (pixels[offset + 1] << 16) |
+            (pixels[offset + 2] << 8) | pixels[offset + 3]);
+      }
+      image.dispose();
+      require(colors.length > 4, 'the initial Dart frame was blank or uniform');
+      stdout.writeln('WORKSPACE_DART_FRAME_OK');
       require(await windows.open('first', geometryKey: key, title: 'First'), 'first view failed');
       require(await windows.open('second', geometryKey: 'b' * 64, title: 'Second'), 'second view failed');
       require(windows.view('first')!.viewId != windows.view('second')!.viewId, 'view identity reused');
@@ -76,7 +96,10 @@ class _ProbeState extends State<Probe> {
           View(key: ValueKey(id), view: windows.view(id)!,
             child: Material(child: Center(child: Text(id)))),
       ]),
-      child: const Scaffold(body: Center(child: Text('Workspace view qualification'))),
+      child: RepaintBoundary(
+        key: renderKey,
+        child: const Scaffold(body: Center(child: Text('Workspace view qualification'))),
+      ),
     )),
   );
 
@@ -101,9 +124,41 @@ def replace(path, before, after):
     path.write_text(content.replace(before, after))
 
 
+def verify_macos_startup_contract():
+    source = (ROOT / "macos/Runner/MainFlutterWindow.swift").read_text()
+    if "allowHeadlessExecution: true" not in source:
+        raise RuntimeError("The macOS engine must allow startup before its first multiview attachment")
+    runs = [index for index in range(len(source)) if source.startswith("guard engine.run(withEntrypoint: nil)", index)]
+    controllers = [
+        index for index in range(len(source))
+        if source.startswith("let flutterViewController = FlutterViewController(engine: engine", index)
+    ]
+    window_attachments = [
+        index for index in range(len(source))
+        if source.startswith("self.contentViewController = flutterViewController", index)
+    ]
+    registrants = [
+        index for index in range(len(source))
+        if source.startswith("RegisterGeneratedPlugins(registry: flutterViewController)", index)
+    ]
+    if len(runs) != 2 or len(controllers) != 2 or len(window_attachments) != 2 or len(registrants) != 2:
+        raise RuntimeError("Both macOS launch paths must start the engine and attach the first view before registration")
+    if source.count("RegisterGeneratedPlugins(registry: flutterViewController)") != 2:
+        raise RuntimeError("macOS generated plugins must receive the first Flutter view's registrar")
+    for run_position, controller_position, window_position, registrar_position in zip(
+        runs, controllers, window_attachments, registrants
+    ):
+        if not run_position < controller_position < window_position < registrar_position:
+            raise RuntimeError("macOS must start the engine, attach its first window view, then register plugins")
+    if "registry: engine" in source or "with: engine.registrar(" in source:
+        raise RuntimeError("macOS plugins must not be registered before the first Flutter view")
+
+
 def qualify(platform, arch=None):
     if arch is not None and platform != "windows":
         raise ValueError("Architecture overrides apply only to Windows")
+    if platform == "macos":
+        verify_macos_startup_contract()
     arch = arch or ("arm64" if host_platform.machine().lower() in {"arm64", "aarch64"} else "x64")
     directory = ROOT / "build" / f"workspace-native-{platform}"
     if directory.exists():
@@ -164,10 +219,11 @@ def qualify(platform, arch=None):
                 "class MainFlutterWindow: NSWindow {\n"
                 "  private var workspaceWindows: WorkspaceDesktopWindows?")
         replace(source, "let flutterViewController = FlutterViewController()",
-                "let engine = FlutterEngine(name: \"WorkspaceProbe\", project: nil, allowHeadlessExecution: false)\n"
+                "let engine = FlutterEngine(name: \"WorkspaceProbe\", project: nil, allowHeadlessExecution: true)\n"
                 "    let selector = NSSelectorFromString(\"enableMultiView\")\n"
                 "    guard engine.responds(to: selector) else { fatalError(\"SDK lacks multiview\") }\n"
                 "    _ = engine.perform(selector)\n"
+                "    guard engine.run(withEntrypoint: nil) else { fatalError(\"engine startup failed\") }\n"
                 "    let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)\n"
                 "    workspaceWindows = WorkspaceDesktopWindows(engine: engine, parent: self, available: true)")
     # Flutter selects the Windows target from the native host architecture.
@@ -214,7 +270,7 @@ def qualify(platform, arch=None):
         result = subprocess.run(command, cwd=binary.parent, env=environment,
                                 text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=90)
     print(result.stdout)
-    if result.returncode or "WORKSPACE_NATIVE_VIEWS_OK" not in result.stdout:
+    if result.returncode or "WORKSPACE_DART_FRAME_OK" not in result.stdout or "WORKSPACE_NATIVE_VIEWS_OK" not in result.stdout:
         raise RuntimeError(f"Native workspace lifetime probe failed ({result.returncode})")
 
 

@@ -9,18 +9,17 @@ class MainFlutterWindow: NSWindow {
   override func awakeFromNib() {
     let project = FlutterDartProject()
     project.dartEntrypointArguments = Array(CommandLine.arguments.dropFirst())
-    let engine = FlutterEngine(name: "Pleazyng", project: project, allowHeadlessExecution: false)
-    // This Flutter SDK exposes multiview setup on the engine before any view
-    // controller is attached. Keep the ordinary main view available if it
-    // disappears in a future SDK and disable detached views in that case.
+    // Multiview calls FlutterEngineAddView while each controller attaches, so
+    // the engine must already be running. Allow headless startup just long
+    // enough to run the Dart entrypoint before attaching the first window.
+    let engine = FlutterEngine(name: "Pleazyng", project: project, allowHeadlessExecution: true)
     let enableMultiView = NSSelectorFromString("enableMultiView")
     let supportsMultiView = engine.responds(to: enableMultiView)
     if supportsMultiView { _ = engine.perform(enableMultiView) }
-    let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)
     workspaceViews = WorkspaceDesktopWindows(engine: engine, parent: self, available: supportsMultiView)
     DownloadBackupPolicy.refreshExistingRoots()
     let storageChannel = FlutterMethodChannel(
-      name: "com.pleazyng/download_storage", binaryMessenger: flutterViewController.engine.binaryMessenger)
+      name: "com.pleazyng/download_storage", binaryMessenger: engine.binaryMessenger)
     storageChannel.setMethodCallHandler { call, result in
       guard call.method == "excludeFromBackup", let path = call.arguments as? String else {
         result(FlutterMethodNotImplemented)
@@ -37,8 +36,12 @@ class MainFlutterWindow: NSWindow {
     if preparationWorker {
       NSApp.setActivationPolicy(.prohibited)
       self.orderOut(nil)
-      RegisterGeneratedPlugins(registry: flutterViewController)
+      guard engine.run(withEntrypoint: nil) else {
+        fatalError("Could not start the Flutter preparation worker engine")
+      }
+      let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)
       self.contentViewController = flutterViewController
+      RegisterGeneratedPlugins(registry: flutterViewController)
       return
     }
 
@@ -47,20 +50,20 @@ class MainFlutterWindow: NSWindow {
     // the native video layer behind it remains visible.
     self.isOpaque = true
     self.backgroundColor = NSColor.black
-    flutterViewController.backgroundColor = NSColor.clear
 
     let windowFrame = self.frame
-    self.contentViewController = flutterViewController
-    self.setFrame(windowFrame, display: true)
 
     // Configure window chrome before restoring the saved frame.
     self.titlebarAppearsTransparent = true
     self.titleVisibility = .hidden
     self.styleMask.insert(.fullSizeContentView)
 
-    // Add forwarding toolbar for click-through in titlebar area
-    let toolbar = ForwardingToolbar(flutterViewController: flutterViewController)
-    self.toolbar = toolbar
+    guard engine.run(withEntrypoint: nil) else {
+      fatalError("Could not start the Pleazyng Flutter engine")
+    }
+    let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)
+    flutterViewController.backgroundColor = NSColor.clear
+    self.contentViewController = flutterViewController
 
     MpvPlayerPlugin.register(
       with: flutterViewController.registrar(forPlugin: "MpvPlayerPlugin"))
@@ -84,7 +87,6 @@ class MainFlutterWindow: NSWindow {
       with: flutterViewController.registrar(forPlugin: "WindowUtilsPlugin"))
     WindowUtilsPlugin.setWindow(self)
     WindowUtilsPlugin.installWindowDelegate()
-    WindowUtilsPlugin.syncWindowChrome()
 
     AppLookupPlugin.register(
       with: flutterViewController.registrar(forPlugin: "AppLookupPlugin"))
@@ -95,6 +97,11 @@ class MainFlutterWindow: NSWindow {
     PlezySteamPlugin.register(with: flutterViewController.registrar(forPlugin: "PlezySteamPlugin"))
 
     RegisterGeneratedPlugins(registry: flutterViewController)
+    self.setFrame(windowFrame, display: true)
+
+    // Add forwarding toolbar for click-through in titlebar area
+    let toolbar = ForwardingToolbar(flutterViewController: flutterViewController)
+    self.toolbar = toolbar
 
     self.setFrameAutosaveName("org.snapetech.plezyng.MainWindow")
     WindowUtilsPlugin.syncWindowChrome()
