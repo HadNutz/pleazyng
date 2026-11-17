@@ -251,6 +251,9 @@ class SetNativeRevisionTest(unittest.TestCase):
                 lock.write_text(
                     json.dumps(RESOLVED_TEMPLATE, indent=2) + "\n", encoding="utf-8"
                 )
+        probe = self.root / "scripts/apple/static-mpv-framework-probe/Probe.xcodeproj/project.pbxproj"
+        probe.parent.mkdir(parents=True)
+        probe.write_text(PBXPROJ_TEMPLATE.format(revision=OLD_SHA), encoding="utf-8")
         (self.root / VERIFICATION).parent.mkdir(parents=True)
 
     def _pbxproj(self, platform: str) -> Path:

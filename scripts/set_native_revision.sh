@@ -261,7 +261,7 @@ fetch_manifest versions.json
 
 # ---- collect the Apple pin sites ------------------------------------------
 
-PROJECTS=()
+PROJECTS=("scripts/apple/static-mpv-framework-probe/Probe.xcodeproj/project.pbxproj")
 LOCKS=()
 MISSING=()
 for platform in ios macos tvos; do

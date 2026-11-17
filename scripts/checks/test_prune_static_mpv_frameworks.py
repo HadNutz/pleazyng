@@ -641,7 +641,7 @@ class XcodePhaseIntegrationTests(unittest.TestCase):
         pins = [item for item in package["pins"] if item.get("identity", "").lower() == "mpv-build"]
         project = (repo / "scripts/apple/static-mpv-framework-probe/Probe.xcodeproj/project.pbxproj").read_text()
         match = re.search(
-            r'repositoryURL = "https://github.com/snapetech-org/mpv-build";\s*requirement = \{kind = revision; revision = ([0-9a-f]{40});',
+            r'repositoryURL = "https://github.com/snapetech-org/mpv-build";\s*requirement = \{\s*kind = revision;\s*revision = ([0-9a-f]{40});',
             project,
         )
         self.assertEqual(len(pins), 1)

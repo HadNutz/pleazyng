@@ -62,7 +62,10 @@
 		A511D000000000000000000F /* XCRemoteSwiftPackageReference "mpv-build" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/snapetech-org/mpv-build";
-			requirement = {kind = revision; revision = ed921fcc7f3923926ef454f3c7aedd6ddb897d3f; };
+			requirement = {
+				kind = revision;
+				revision = 7aff0ff256b7f83e2a4e6b8da2aa9aea705b60c3;
+			};
 		};
 		A511D0000000000000000010 /* Build configuration list for PBXProject "Probe" */ = {isa = XCConfigurationList; buildConfigurations = (A511D0000000000000000012 /* Debug */, A511D0000000000000000013 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 		A511D0000000000000000011 /* Build configuration list for PBXNativeTarget "Probe" */ = {isa = XCConfigurationList; buildConfigurations = (A511D0000000000000000014 /* Debug */, A511D0000000000000000015 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };

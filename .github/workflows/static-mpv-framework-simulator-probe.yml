@@ -51,8 +51,8 @@ jobs:
           resolved = json.loads(resolved_path.read_text(encoding="utf-8"))
           pins = [item for item in resolved["pins"] if item.get("identity", "").lower() == "mpv-build"]
           project = pathlib.Path("scripts/apple/static-mpv-framework-probe/Probe.xcodeproj/project.pbxproj").read_text(encoding="utf-8")
-          match = re.search(r"repositoryURL = \"https://github.com/snapetech-org/mpv-build\";\s*requirement = \{kind = revision; revision = ([0-9a-f]{40});", project)
-          if len(pins) != 1 or pins[0].get("state", {}).get("revision") != "ed921fcc7f3923926ef454f3c7aedd6ddb897d3f":
+          match = re.search(r"repositoryURL = \"https://github.com/snapetech-org/mpv-build\";\s*requirement = \{\s*kind = revision;\s*revision = ([0-9a-f]{40});", project)
+          if len(pins) != 1 or not re.fullmatch(r"[0-9a-f]{40}", pins[0].get("state", {}).get("revision", "")):
               raise SystemExit("Product source does not pin the reviewed mpv-build revision")
           if not match or match.group(1) != pins[0]["state"]["revision"]:
               raise SystemExit("Probe project and immutable product source use different mpv-build revisions")
