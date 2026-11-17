@@ -15,10 +15,23 @@ on:
           - macos-only
           - capture-only
           - macos-paywall-capture-only
+          - app-in-use-capture-only
         default: all
         required: true
       artifact_run_id:
         description: Completed main-branch run supplying partial captures or the required compiled app bundle(s).
+        type: string
+        required: false
+      ios_artifact_run_id:
+        description: Completed run supplying the verified iOS app bundle for app-in-use capture.
+        type: string
+        required: false
+      macos_artifact_run_id:
+        description: Completed run supplying the verified macOS app bundle for app-in-use capture.
+        type: string
+        required: false
+      tvos_artifact_run_id:
+        description: Completed run supplying the verified tvOS app bundle for app-in-use capture.
         type: string
         required: false
 
@@ -38,7 +51,7 @@ env:
 
 jobs:
   ios:
-    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'ios-macos-only' || inputs.target == 'capture-only' || inputs.target == '')
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'ios-macos-only' || inputs.target == 'capture-only' || inputs.target == 'app-in-use-capture-only' || inputs.target == '')
     runs-on: macos-26
     timeout-minutes: 180
     steps:
@@ -63,10 +76,10 @@ jobs:
 
       - name: Verify the prior build artifact producer
         id: producer
-        if: inputs.target == 'capture-only'
+        if: inputs.target == 'capture-only' || inputs.target == 'app-in-use-capture-only'
         env:
           GH_TOKEN: ${{ github.token }}
-          PRODUCER_RUN_ID: ${{ inputs.artifact_run_id }}
+          PRODUCER_RUN_ID: ${{ inputs.target == 'app-in-use-capture-only' && inputs.ios_artifact_run_id || inputs.artifact_run_id }}
         run: |
           set -euo pipefail
           [[ "$PRODUCER_RUN_ID" =~ ^[0-9]+$ ]]
@@ -80,18 +93,18 @@ jobs:
           echo "run_attempt=$run_attempt" >> "$GITHUB_OUTPUT"
 
       - name: Download prior iOS build
-        if: inputs.target == 'capture-only'
+        if: inputs.target == 'capture-only' || inputs.target == 'app-in-use-capture-only'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: apple-store-build-ios-v3.0.36
-          run-id: ${{ inputs.artifact_run_id }}
+          run-id: ${{ inputs.target == 'app-in-use-capture-only' && inputs.ios_artifact_run_id || inputs.artifact_run_id }}
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/apple-store-build-ios-input
 
       - name: Validate and restore prior iOS build
-        if: inputs.target == 'capture-only'
+        if: inputs.target == 'capture-only' || inputs.target == 'app-in-use-capture-only'
         env:
-          PRODUCER_RUN_ID: ${{ inputs.artifact_run_id }}
+          PRODUCER_RUN_ID: ${{ inputs.target == 'app-in-use-capture-only' && inputs.ios_artifact_run_id || inputs.artifact_run_id }}
           PRODUCER_RUN_ATTEMPT: ${{ steps.producer.outputs.run_attempt }}
           PRODUCER_TOOLS_SHA: ${{ steps.producer.outputs.tool_sha }}
         run: |
@@ -105,6 +118,14 @@ jobs:
             --output-dir "$RUNNER_TEMP/apple-store-build-ios-restored"
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-build-ios-restored/Pleazyng.app" >> "$GITHUB_ENV"
 
+      - name: Install the UI capture project generator
+        if: inputs.target == 'app-in-use-capture-only'
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+          command -v xcodegen >/dev/null || brew install xcodegen
+          echo "/opt/homebrew/bin" >> "$GITHUB_PATH"
+
       - name: Load pinned Flutter SDK
         run: python3 scripts/flutter/load_sdk_pin.py --github-env
 
@@ -115,14 +136,14 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Cache Pub dependencies
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ env.PUB_CACHE }}
           key: apple-store-v3.0.36-${{ runner.os }}-${{ runner.arch }}-pub-${{ hashFiles('pubspec.yaml', 'pubspec.lock') }}
 
       - name: Install native build tools
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
@@ -131,7 +152,7 @@ jobs:
           command -v git-lfs >/dev/null || brew install git-lfs
 
       - name: Install CocoaPods
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/bin:$PATH"
@@ -146,27 +167,27 @@ jobs:
           echo "$RUNNER_TEMP/cocoapods-bin" >> "$GITHUB_PATH"
 
       - name: Install locked Flutter dependencies
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         run: flutter pub get --enforce-lockfile --no-example
 
       - name: Prefetch checksum-pinned iOS native downloads
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         run: python3 scripts/prepare_native_downloads.py --sqlite-platform ios
 
       - name: Prepare pinned iOS Steam sources
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         env:
           GIT_TERMINAL_PROMPT: "0"
         run: python3 scripts/games/prepare_steam.py
 
       - name: Resolve pinned iOS Swift packages
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         env:
           PLEAZYNG_APPLE_SOURCE_ROOT: ${{ github.workspace }}
         run: capture-tools/scripts/refresh_apple_spm.sh ios
 
       - name: Build the Store-mode iOS Simulator app
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         env:
           SOURCE_SHA: 2388a06cc74d03e69ac7178fcd927a54460a5e3a
         run: |
@@ -180,7 +201,7 @@ jobs:
 
       - name: Preserve the compiled iOS Simulator app before capture
         id: preserve-build
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         env:
           PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
         run: |
@@ -192,7 +213,7 @@ jobs:
           echo "APPLE_STORE_APP_PATH=$GITHUB_WORKSPACE/build/ios/iphonesimulator/Pleazyng.app" >> "$GITHUB_ENV"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         with:
           name: apple-store-build-ios-v3.0.36
           path: |
@@ -202,6 +223,7 @@ jobs:
           retention-days: 7
 
       - name: Capture actual iPhone and iPad app screens
+        if: inputs.target != 'app-in-use-capture-only'
         env:
           PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
         run: |
@@ -210,15 +232,35 @@ jobs:
             --app "$APPLE_STORE_APP_PATH" \
             --output-dir "$RUNNER_TEMP/apple-store-captures-ios"
 
+      - name: Capture post-onboarding iPhone and iPad Files and Books screens
+        if: inputs.target == 'app-in-use-capture-only'
+        env:
+          PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
+        run: |
+          python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-ios-in-use \
+            --product-root "$GITHUB_WORKSPACE" \
+            --app "$APPLE_STORE_APP_PATH" \
+            --build-receipt "$RUNNER_TEMP/apple-store-build-ios-restored/build-provenance.json" \
+            --output-dir "$RUNNER_TEMP/apple-store-in-use-captures-ios"
+
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: inputs.target != 'app-in-use-capture-only'
         with:
           name: apple-store-captures-ios-v3.0.36
           path: ${{ runner.temp }}/apple-store-captures-ios/
           if-no-files-found: error
           retention-days: 7
 
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: always() && inputs.target == 'app-in-use-capture-only'
+        with:
+          name: apple-store-in-use-captures-ios-v3.0.36
+          path: ${{ runner.temp }}/apple-store-in-use-captures-ios/
+          if-no-files-found: warn
+          retention-days: 7
+
   tvos:
-    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'capture-only' || inputs.target == '')
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'capture-only' || inputs.target == 'app-in-use-capture-only' || inputs.target == '')
     runs-on: macos-26
     timeout-minutes: 180
     steps:
@@ -243,10 +285,10 @@ jobs:
 
       - name: Verify the prior build artifact producer
         id: producer
-        if: inputs.target == 'capture-only'
+        if: inputs.target == 'capture-only' || inputs.target == 'app-in-use-capture-only'
         env:
           GH_TOKEN: ${{ github.token }}
-          PRODUCER_RUN_ID: ${{ inputs.artifact_run_id }}
+          PRODUCER_RUN_ID: ${{ inputs.target == 'app-in-use-capture-only' && inputs.tvos_artifact_run_id || inputs.artifact_run_id }}
         run: |
           set -euo pipefail
           [[ "$PRODUCER_RUN_ID" =~ ^[0-9]+$ ]]
@@ -260,18 +302,18 @@ jobs:
           echo "run_attempt=$run_attempt" >> "$GITHUB_OUTPUT"
 
       - name: Download prior tvOS build
-        if: inputs.target == 'capture-only'
+        if: inputs.target == 'capture-only' || inputs.target == 'app-in-use-capture-only'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: apple-store-build-tvos-v3.0.36
-          run-id: ${{ inputs.artifact_run_id }}
+          run-id: ${{ inputs.target == 'app-in-use-capture-only' && inputs.tvos_artifact_run_id || inputs.artifact_run_id }}
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/apple-store-build-tvos-input
 
       - name: Validate and restore prior tvOS build
-        if: inputs.target == 'capture-only'
+        if: inputs.target == 'capture-only' || inputs.target == 'app-in-use-capture-only'
         env:
-          PRODUCER_RUN_ID: ${{ inputs.artifact_run_id }}
+          PRODUCER_RUN_ID: ${{ inputs.target == 'app-in-use-capture-only' && inputs.tvos_artifact_run_id || inputs.artifact_run_id }}
           PRODUCER_RUN_ATTEMPT: ${{ steps.producer.outputs.run_attempt }}
           PRODUCER_TOOLS_SHA: ${{ steps.producer.outputs.tool_sha }}
         run: |
@@ -285,6 +327,14 @@ jobs:
             --output-dir "$RUNNER_TEMP/apple-store-build-tvos-restored"
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-build-tvos-restored/Runner.app" >> "$GITHUB_ENV"
 
+      - name: Install the UI capture project generator
+        if: inputs.target == 'app-in-use-capture-only'
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+          command -v xcodegen >/dev/null || brew install xcodegen
+          echo "/opt/homebrew/bin" >> "$GITHUB_PATH"
+
       - name: Setup the pinned tvOS Flutter SDK
         uses: ./.github/actions/setup-flutter-apple
         with:
@@ -292,14 +342,14 @@ jobs:
           flutter-version: '3.47.1'
 
       - name: Cache Pub dependencies
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ env.PUB_CACHE }}
           key: apple-store-tvos-v3.0.36-${{ runner.os }}-${{ runner.arch }}-pub-${{ hashFiles('pubspec.yaml', 'pubspec.lock', 'pubspec_overrides_tvos.yaml') }}
 
       - name: Install native build tools
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
@@ -308,7 +358,7 @@ jobs:
           command -v git-lfs >/dev/null || brew install git-lfs
 
       - name: Install CocoaPods
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/bin:$PATH"
@@ -323,19 +373,19 @@ jobs:
           echo "$RUNNER_TEMP/cocoapods-bin" >> "$GITHUB_PATH"
 
       - name: Resolve tvOS dependencies
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         run: tvos/scripts/pub_get.sh
 
       - name: Prefetch checksum-pinned tvOS native downloads
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         run: python3 scripts/prepare_native_downloads.py --sqlite-platform tvos
 
       - name: Fetch the checksum-pinned tvOS Flutter engine
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         run: tvos/scripts/fetch_engine.sh
 
       - name: Install tvOS CocoaPods dependencies
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -357,7 +407,7 @@ jobs:
           tvos/scripts/pod_install.sh
 
       - name: Resolve pinned tvOS Swift packages
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         env:
           TVOS_DERIVED_DATA: ${{ runner.temp }}/apple-store-tvos-derived
           TVOS_SOURCE_PACKAGES: ${{ runner.temp }}/apple-store-tvos-source-packages
@@ -373,7 +423,7 @@ jobs:
             --resolved-package tvos/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
       - name: Build the Store-mode tvOS Simulator app
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         env:
           TVOS_DERIVED_DATA: ${{ runner.temp }}/apple-store-tvos-derived
           TVOS_SOURCE_PACKAGES: ${{ runner.temp }}/apple-store-tvos-source-packages
@@ -393,7 +443,7 @@ jobs:
           test -d "$TVOS_DERIVED_DATA/Build/Products/Debug-appletvsimulator/Runner.app"
 
       - name: Preserve the compiled tvOS Simulator app before capture
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         env:
           PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
         run: |
@@ -405,7 +455,7 @@ jobs:
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-tvos-derived/Build/Products/Debug-appletvsimulator/Runner.app" >> "$GITHUB_ENV"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        if: inputs.target != 'capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only'
         with:
           name: apple-store-build-tvos-v3.0.36
           path: |
@@ -415,6 +465,7 @@ jobs:
           retention-days: 7
 
       - name: Capture the actual tvOS app screen
+        if: inputs.target != 'app-in-use-capture-only'
         env:
           PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
         run: |
@@ -423,15 +474,35 @@ jobs:
             --app "$APPLE_STORE_APP_PATH" \
             --output-dir "$RUNNER_TEMP/apple-store-captures-tvos"
 
+      - name: Capture the post-onboarding tvOS Files and Books screen
+        if: inputs.target == 'app-in-use-capture-only'
+        env:
+          PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
+        run: |
+          python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-tvos-in-use \
+            --product-root "$GITHUB_WORKSPACE" \
+            --app "$APPLE_STORE_APP_PATH" \
+            --build-receipt "$RUNNER_TEMP/apple-store-build-tvos-restored/build-provenance.json" \
+            --output-dir "$RUNNER_TEMP/apple-store-in-use-captures-tvos"
+
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: inputs.target != 'app-in-use-capture-only'
         with:
           name: apple-store-captures-tvos-v3.0.36
           path: ${{ runner.temp }}/apple-store-captures-tvos/
           if-no-files-found: error
           retention-days: 7
 
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: always() && inputs.target == 'app-in-use-capture-only'
+        with:
+          name: apple-store-in-use-captures-tvos-v3.0.36
+          path: ${{ runner.temp }}/apple-store-in-use-captures-tvos/
+          if-no-files-found: warn
+          retention-days: 7
+
   macos:
-    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'ios-macos-only' || inputs.target == 'macos-only' || inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only')
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'ios-macos-only' || inputs.target == 'macos-only' || inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only' || inputs.target == 'app-in-use-capture-only')
     runs-on: macos-26-intel
     timeout-minutes: 210
     steps:
@@ -456,10 +527,10 @@ jobs:
 
       - name: Verify the prior build artifact producer
         id: producer
-        if: inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only'
+        if: inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only' || inputs.target == 'app-in-use-capture-only'
         env:
           GH_TOKEN: ${{ github.token }}
-          PRODUCER_RUN_ID: ${{ inputs.artifact_run_id }}
+          PRODUCER_RUN_ID: ${{ inputs.target == 'app-in-use-capture-only' && inputs.macos_artifact_run_id || inputs.artifact_run_id }}
         run: |
           set -euo pipefail
           [[ "$PRODUCER_RUN_ID" =~ ^[0-9]+$ ]]
@@ -473,18 +544,18 @@ jobs:
           echo "run_attempt=$run_attempt" >> "$GITHUB_OUTPUT"
 
       - name: Download prior macOS build
-        if: inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only'
+        if: inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only' || inputs.target == 'app-in-use-capture-only'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: apple-store-build-macos-v3.0.36
-          run-id: ${{ inputs.artifact_run_id }}
+          run-id: ${{ inputs.target == 'app-in-use-capture-only' && inputs.macos_artifact_run_id || inputs.artifact_run_id }}
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/apple-store-build-macos-input
 
       - name: Validate and restore prior macOS build
-        if: inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only'
+        if: inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only' || inputs.target == 'app-in-use-capture-only'
         env:
-          PRODUCER_RUN_ID: ${{ inputs.artifact_run_id }}
+          PRODUCER_RUN_ID: ${{ inputs.target == 'app-in-use-capture-only' && inputs.macos_artifact_run_id || inputs.artifact_run_id }}
           PRODUCER_RUN_ATTEMPT: ${{ steps.producer.outputs.run_attempt }}
           PRODUCER_TOOLS_SHA: ${{ steps.producer.outputs.tool_sha }}
         run: |
@@ -499,25 +570,25 @@ jobs:
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-build-macos-restored/Pleazyng.app" >> "$GITHUB_ENV"
 
       - name: Load pinned Flutter SDK
-        if: inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         run: python3 scripts/flutter/load_sdk_pin.py --github-env
 
       - name: Setup Flutter
-        if: inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         uses: ./.github/actions/setup-flutter-apple
         with:
           hosted-xcode-version: '26.5'
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Cache Pub dependencies
-        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ env.PUB_CACHE }}
           key: apple-store-macos-v3.0.36-${{ runner.os }}-${{ runner.arch }}-pub-${{ hashFiles('pubspec.yaml', 'pubspec.lock') }}
 
       - name: Install native build tools
-        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
@@ -526,7 +597,7 @@ jobs:
           command -v git-lfs >/dev/null || brew install git-lfs
 
       - name: Install CocoaPods
-        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/bin:$PATH"
@@ -541,25 +612,25 @@ jobs:
           echo "$RUNNER_TEMP/cocoapods-bin" >> "$GITHUB_PATH"
 
       - name: Install locked Flutter dependencies
-        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         run: flutter pub get --enforce-lockfile --no-example
 
       - name: Prefetch checksum-pinned macOS native downloads
-        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         run: python3 scripts/prepare_native_downloads.py --sqlite-platform macos
 
       - name: Prepare run-local Swift package checkout
-        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         run: mkdir -p build/macos/SourcePackages
 
       - name: Refresh pinned macOS Swift packages
-        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         env:
           PLEAZYNG_APPLE_SOURCE_ROOT: ${{ github.workspace }}
         run: capture-tools/scripts/refresh_apple_spm.sh macos
 
       - name: Build the unsigned Mac App Store candidate
-        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         env:
           PLEAZYNG_APPLE_SOURCE_ROOT: ${{ github.workspace }}
         run: |
@@ -570,7 +641,7 @@ jobs:
             --derived-data-dir "$RUNNER_TEMP/apple-store-macos-derived-data"
 
       - name: Preserve the compiled unsigned Mac app before capture
-        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         env:
           PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
         run: |
@@ -582,7 +653,7 @@ jobs:
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-macos-candidate/Pleazyng.xcarchive/Products/Applications/Pleazyng.app" >> "$GITHUB_ENV"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         with:
           name: apple-store-build-macos-v3.0.36
           path: |
@@ -592,7 +663,7 @@ jobs:
           retention-days: 7
 
       - name: Capture the actual macOS app window
-        if: inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         env:
           PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
         run: |
@@ -612,12 +683,31 @@ jobs:
             --build-receipt "$RUNNER_TEMP/apple-store-build-macos-restored/build-provenance.json" \
             --output-dir "$RUNNER_TEMP/apple-store-iap-review-paywall"
 
+      - name: Capture the local Files and Books screen and real Mac lifetime-access sheet
+        if: inputs.target == 'app-in-use-capture-only'
+        env:
+          PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
+        run: |
+          python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-macos-in-use \
+            --product-root "$GITHUB_WORKSPACE" \
+            --app "$APPLE_STORE_APP_PATH" \
+            --build-receipt "$RUNNER_TEMP/apple-store-build-macos-restored/build-provenance.json" \
+            --output-dir "$RUNNER_TEMP/apple-store-in-use-captures-macos"
+
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        if: inputs.target != 'macos-paywall-capture-only'
+        if: inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only'
         with:
           name: apple-store-captures-macos-v3.0.36
           path: ${{ runner.temp }}/apple-store-captures-macos/
           if-no-files-found: error
+          retention-days: 7
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: always() && inputs.target == 'app-in-use-capture-only'
+        with:
+          name: apple-store-in-use-captures-macos-v3.0.36
+          path: ${{ runner.temp }}/apple-store-in-use-captures-macos/
+          if-no-files-found: warn
           retention-days: 7
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
@@ -633,6 +723,7 @@ jobs:
       always() && github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' &&
       ((inputs.target == 'all' && needs.ios.result == 'success' && needs.tvos.result == 'success' && needs.macos.result == 'success') ||
        (inputs.target == 'capture-only' && inputs.artifact_run_id != '' && needs.ios.result == 'success' && needs.tvos.result == 'success' && needs.macos.result == 'success') ||
+       (inputs.target == 'app-in-use-capture-only' && inputs.ios_artifact_run_id != '' && inputs.macos_artifact_run_id != '' && inputs.tvos_artifact_run_id != '' && needs.ios.result == 'success' && needs.tvos.result == 'success' && needs.macos.result == 'success') ||
        (inputs.target == 'ios-macos-only' && inputs.artifact_run_id != '' && needs.ios.result == 'success' && needs.macos.result == 'success') ||
        (inputs.target == 'macos-only' && inputs.artifact_run_id != '' && needs.macos.result == 'success'))
     needs: [ios, tvos, macos]
@@ -682,6 +773,13 @@ jobs:
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/apple-store-captures-ios
 
+      - name: Download app-in-use iOS captures
+        if: inputs.target == 'app-in-use-capture-only'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: apple-store-in-use-captures-ios-v3.0.36
+          path: ${{ runner.temp }}/apple-store-in-use-captures-ios
+
       - name: Download tvOS captures
         if: inputs.target == 'all' || inputs.target == 'capture-only' || inputs.target == ''
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
@@ -698,13 +796,29 @@ jobs:
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/apple-store-captures-tvos
 
+      - name: Download app-in-use tvOS captures
+        if: inputs.target == 'app-in-use-capture-only'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: apple-store-in-use-captures-tvos-v3.0.36
+          path: ${{ runner.temp }}/apple-store-in-use-captures-tvos
+
       - name: Download macOS captures
+        if: inputs.target != 'app-in-use-capture-only'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: apple-store-captures-macos-v3.0.36
           path: ${{ runner.temp }}/apple-store-captures-macos
 
+      - name: Download app-in-use macOS captures
+        if: inputs.target == 'app-in-use-capture-only'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: apple-store-in-use-captures-macos-v3.0.36
+          path: ${{ runner.temp }}/apple-store-in-use-captures-macos
+
       - name: Verify and package the Apple screenshot set
+        if: inputs.target != 'app-in-use-capture-only'
         env:
           PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
           LEGACY_TOOL_SOURCE_SHA: ${{ steps.prior-run.outputs.tool_sha }}
@@ -716,16 +830,45 @@ jobs:
             --output-dir "$RUNNER_TEMP/apple-store-screenshots-v3.0.36" \
             --legacy-tool-source-sha "$LEGACY_TOOL_SOURCE_SHA"
 
+      - name: Verify and package the app-in-use review screenshots
+        if: inputs.target == 'app-in-use-capture-only'
+        env:
+          PLEAZYNG_CAPTURE_TOOLS_SHA: ${{ github.sha }}
+        run: |
+          python3 capture-tools/scripts/capture_apple_store_screenshots.py package-app-in-use \
+            --ios-dir "$RUNNER_TEMP/apple-store-in-use-captures-ios" \
+            --tvos-dir "$RUNNER_TEMP/apple-store-in-use-captures-tvos" \
+            --macos-dir "$RUNNER_TEMP/apple-store-in-use-captures-macos" \
+            --output-dir "$RUNNER_TEMP/apple-store-in-use-screenshots-v3.0.36"
+
       - name: Attest the screenshot package
+        if: inputs.target != 'app-in-use-capture-only'
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: ${{ runner.temp }}/apple-store-screenshots-v3.0.36.zip
 
+      - name: Attest the app-in-use screenshot package
+        if: inputs.target == 'app-in-use-capture-only'
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: ${{ runner.temp }}/apple-store-in-use-screenshots-v3.0.36.zip
+
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: inputs.target != 'app-in-use-capture-only'
         with:
           name: pleazyng-apple-store-screenshots-v3.0.36
           path: |
             ${{ runner.temp }}/apple-store-screenshots-v3.0.36/
             ${{ runner.temp }}/apple-store-screenshots-v3.0.36.zip
+          if-no-files-found: error
+          retention-days: 90
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: inputs.target == 'app-in-use-capture-only'
+        with:
+          name: pleazyng-apple-store-in-use-screenshots-v3.0.36
+          path: |
+            ${{ runner.temp }}/apple-store-in-use-screenshots-v3.0.36/
+            ${{ runner.temp }}/apple-store-in-use-screenshots-v3.0.36.zip
           if-no-files-found: error
           retention-days: 90

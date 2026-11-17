@@ -43,6 +43,43 @@ BUILD_CONFIGURATION = {
 SIMULATOR_SETTLE_SECONDS = 25
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
+APP_IN_USE_UI_TEST = r'''import XCTest
+
+final class PleazyngAppInUseCaptureTests: XCTestCase {
+    func testCaptureFilesAndBooksScreen() {
+        let app = XCUIApplication(bundleIdentifier: "org.snapetech.pleazyng")
+        app.launch()
+
+        let useFiles = app.buttons["Use files and books"]
+        XCTAssertTrue(useFiles.waitForExistence(timeout: 60), "The real first-launch Files and Books action was not available")
+
+        #if os(tvOS)
+        for _ in 0..<12 {
+            if useFiles.hasFocus { break }
+            XCUIRemote.shared.press(.down)
+            Thread.sleep(forTimeInterval: 0.25)
+        }
+        XCTAssertTrue(useFiles.hasFocus, "The real Files and Books action did not receive Apple TV focus")
+        XCUIRemote.shared.press(.select)
+        #else
+        useFiles.tap()
+        #endif
+
+        XCTAssertTrue(app.buttons["Add source"].waitForExistence(timeout: 60), "The local Files and Books screen did not open")
+        XCTAssertTrue(app.buttons["Import files"].exists, "The local Files and Books import action is missing")
+        XCTAssertTrue(
+            app.staticTexts.containing(NSPredicate(format: "label CONTAINS[c] %@", "Add a source or import a book")).firstMatch.exists,
+            "The empty local library state is missing"
+        )
+
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        attachment.name = "pleazyng-app-in-use-screen"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+}
+'''
+
 
 def run(command: list[str], *, capture: bool = False, timeout: int = 300) -> str:
     result = subprocess.run(
@@ -448,6 +485,130 @@ def cleanup_simulator(device: dict[str, str]) -> None:
     run(["xcrun", "simctl", "delete", device["udid"]], timeout=120)
 
 
+def run_app_in_use_ui_test(platform: str, simulator_udid: str, output: Path, filename: str) -> tuple[Path, dict[str, Any]]:
+    xcode_platform = "tvOS" if platform == "tvOS" else "iOS"
+    deployment_target = "15.0" if platform == "tvOS" else "15.5"
+    project_spec_data = {
+        "name": "PleazyngInUseCapture",
+        "options": {
+            "bundleIdPrefix": "org.snapetech.pleazyng.capture",
+            "xcodeVersion": "26.5",
+            "deploymentTarget": {xcode_platform: deployment_target},
+        },
+        "targets": {
+            "PleazyngInUseCaptureTests": {
+                "type": "bundle.ui-testing",
+                "platform": xcode_platform,
+                "sources": ["CaptureTests.swift"],
+                "settings": {
+                    "base": {
+                        "PRODUCT_BUNDLE_IDENTIFIER": "org.snapetech.pleazyng.capture-ui-tests",
+                        "GENERATE_INFOPLIST_FILE": "YES",
+                        "SWIFT_VERSION": "5.0",
+                        "CODE_SIGN_IDENTITY": "-",
+                    },
+                },
+            },
+        },
+        "schemes": {
+            "PleazyngInUseCapture": {
+                "build": {"targets": {"PleazyngInUseCaptureTests": ["test"]}},
+                "test": {
+                    "targets": ["PleazyngInUseCaptureTests"],
+                    "captureScreenshotsAutomatically": False,
+                    "deleteScreenshotsWhenEachTestSucceeds": True,
+                },
+            },
+        },
+    }
+    with tempfile.TemporaryDirectory(prefix="pleazyng-in-use-ui-test-") as temporary:
+        project_root = Path(temporary)
+        project_spec = project_root / "project.json"
+        project_spec.write_text(json.dumps(project_spec_data, indent=2) + "\n", encoding="utf-8")
+        test_source = project_root / "CaptureTests.swift"
+        test_source.write_text(APP_IN_USE_UI_TEST, encoding="utf-8")
+        run([
+            "xcodegen", "generate", "--spec", str(project_spec), "--project", str(project_root),
+        ], timeout=180)
+        project = project_root / "PleazyngInUseCapture.xcodeproj"
+        project_inventory = json.loads(run([
+            "xcodebuild", "-list", "-json", "-project", str(project),
+        ], capture=True, timeout=180))
+        targets = project_inventory.get("project", {}).get("targets", [])
+        if targets != ["PleazyngInUseCaptureTests"]:
+            raise RuntimeError(f"The UI capture project contains an unexpected target set: {targets}")
+
+        derived_data = project_root / "derived-data"
+        result_bundle = project_root / "capture.xcresult"
+        log_path = output / f"{Path(filename).stem}.ui-test.log"
+        command = [
+            "xcodebuild", "test",
+            "-project", str(project),
+            "-scheme", "PleazyngInUseCapture",
+            "-destination", f"platform={xcode_platform} Simulator,id={simulator_udid}",
+            "-derivedDataPath", str(derived_data),
+            "-resultBundlePath", str(result_bundle),
+            "-parallel-testing-enabled", "NO",
+            "-testLanguage", "en",
+            "-testRegion", "US",
+            "-only-testing:PleazyngInUseCaptureTests/PleazyngAppInUseCaptureTests/testCaptureFilesAndBooksScreen",
+        ]
+        with log_path.open("w", encoding="utf-8") as log_file:
+            result = subprocess.run(
+                command,
+                check=False,
+                text=True,
+                stdout=log_file,
+                stderr=subprocess.STDOUT,
+                timeout=1500,
+            )
+        if result.returncode != 0:
+            tail = log_path.read_text(encoding="utf-8", errors="replace").splitlines()[-80:]
+            raise RuntimeError(
+                f"The app-in-use UI test failed with exit code {result.returncode}; "
+                f"runner log is retained at {log_path}:\n" + "\n".join(tail)
+            )
+
+        export_dir = project_root / "exported-attachments"
+        run([
+            "xcrun", "xcresulttool", "export", "attachments",
+            "--path", str(result_bundle),
+            "--output-path", str(export_dir),
+        ], timeout=180)
+        manifest_path = export_dir / "manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        matches = [
+            attachment
+            for test in manifest
+            for attachment in test.get("attachments", [])
+            if attachment.get("suggestedHumanReadableName", "").startswith("pleazyng-app-in-use-screen")
+        ]
+        if len(matches) != 1:
+            raise RuntimeError(f"Expected one named real app screen attachment from XCTest; found {len(matches)}")
+        exported_name = matches[0].get("exportedFileName", "")
+        if not exported_name or Path(exported_name).name != exported_name:
+            raise ValueError("The XCTest screenshot attachment has an invalid exported filename")
+        exported_screenshot = export_dir / exported_name
+        if not exported_screenshot.is_file():
+            raise FileNotFoundError(f"XCTest did not export its named screenshot attachment: {exported_screenshot}")
+        screenshot = output / filename
+        shutil.copyfile(exported_screenshot, screenshot)
+        runner_metadata = {
+            "project_target": "PleazyngInUseCaptureTests",
+            "project_targets": targets,
+            "project_sha256": sha256_file(project_spec),
+            "test_source_sha256": sha256_file(test_source),
+            "test_identifier": matches[0].get("suggestedHumanReadableName"),
+            "test_target_bundle_id": "org.snapetech.pleazyng.capture-ui-tests",
+            "product_app_bundle_id": BUNDLE_ID,
+            "simulator_udid": simulator_udid,
+            "xcode_version": run(["xcodebuild", "-version"], capture=True, timeout=60),
+            "screenshot_attachment": exported_name,
+            "product_target_compiled": False,
+        }
+        return screenshot, runner_metadata
+
+
 def capture_simulator(
     app: Path,
     output: Path,
@@ -460,6 +621,8 @@ def capture_simulator(
     app_digest: str,
     build_defines: list[str],
     tool_source_sha: str,
+    app_in_use: bool = False,
+    build_receipt: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     device = create_simulator(platform, category, run_id, attempt)
     try:
@@ -470,18 +633,31 @@ def capture_simulator(
             run(["xcrun", "simctl", "ui", device["udid"], "appearance", "light"], timeout=60)
             simulator_appearance = "light"
         run(["xcrun", "simctl", "install", device["udid"], str(app)], timeout=180)
-        run(["xcrun", "simctl", "launch", device["udid"], BUNDLE_ID], timeout=120)
-        time.sleep(SIMULATOR_SETTLE_SECONDS)
         screenshot = output / filename
-        run(["xcrun", "simctl", "io", device["udid"], "screenshot", "--type=png", str(screenshot)], timeout=120)
+        ui_test_metadata = None
+        if app_in_use:
+            screenshot, ui_test_metadata = run_app_in_use_ui_test(platform, device["udid"], output, filename)
+        else:
+            run(["xcrun", "simctl", "launch", device["udid"], BUNDLE_ID], timeout=120)
+            time.sleep(SIMULATOR_SETTLE_SECONDS)
+            run(["xcrun", "simctl", "io", device["udid"], "screenshot", "--type=png", str(screenshot)], timeout=120)
         width, height = png_dimensions(screenshot)
-        return {
+        capture = {
             "filename": filename,
             "platform": platform,
             "build_configuration": BUILD_CONFIGURATION["ios" if platform == "iOS" else "tvos"],
             "simulator_appearance": simulator_appearance,
-            "capture_scene": "Fresh install; first-launch onboarding; no media server or account configured.",
-            "capture_method": ["xcrun", "simctl", "io", device["udid"], "screenshot", "--type=png"],
+            "capture_scene": (
+                "Post-onboarding local Files and Books screen. A real local profile was created in the fresh Simulator; "
+                "no media server, account, or media was configured."
+                if app_in_use else
+                "Fresh install; first-launch onboarding; no media server or account configured."
+            ),
+            "capture_method": (
+                ["XCTest UI automation; XCUIScreen.main.screenshot() exported from the test result bundle"]
+                if app_in_use else
+                ["xcrun", "simctl", "io", device["udid"], "screenshot", "--type=png"]
+            ),
             "source_tag": SOURCE_TAG,
             "source_sha": SOURCE_SHA,
             "capture_tools_sha": tool_source_sha,
@@ -493,8 +669,18 @@ def capture_simulator(
             "dimensions": [width, height],
             "device": device,
             "build_defines": build_defines,
-            "qualification": "Actual app UI on an Apple Simulator; does not qualify physical-device behavior, StoreKit transactions, playback, or content.",
+            "qualification": (
+                "Authentic post-onboarding local Files and Books interface from the actual product app bundle on Apple Simulator. "
+                "It does not claim server connection, media playback, StoreKit transactions, or physical-device qualification."
+                if app_in_use else
+                "Actual app UI on an Apple Simulator; does not qualify physical-device behavior, StoreKit transactions, playback, or content."
+            ),
         }
+        if ui_test_metadata is not None:
+            capture["ui_test_runner"] = ui_test_metadata
+        if build_receipt is not None:
+            capture["build_receipt"] = build_receipt
+        return capture
     finally:
         cleanup_simulator(device)
 
@@ -503,6 +689,19 @@ def write_capture_manifest(output: Path, platform: str, captures: list[dict[str,
     defines = captures[0]["build_defines"]
     if any(capture["build_defines"] != defines for capture in captures):
         raise ValueError(f"Captures in {platform} do not share build defines")
+    in_use = any(
+        capture["capture_scene"].startswith("Post-onboarding local Files and Books screen")
+        or capture["capture_scene"].startswith("Real lifetime-access sheet")
+        for capture in captures
+    )
+    qualification = (
+        "Authentic app-in-use screenshots from the actual v3.0.36 product app bundles. iPhone, iPad, and tvOS show the "
+        "local Files and Books library after real onboarding. They do not claim server connection, media playback, StoreKit "
+        "transactions, or physical-device qualification."
+        if in_use else
+        "Authentic application screenshots for App Store listing review. The images show first-launch onboarding only; "
+        "they do not claim media playback, billing, StoreKit, or device qualification."
+    )
     manifest = {
         "schema_version": 1,
         "product": "Pleazyng",
@@ -519,7 +718,7 @@ def write_capture_manifest(output: Path, platform: str, captures: list[dict[str,
         ),
         "build_defines": defines,
         "captures": captures,
-        "qualification": "Authentic application screenshots for App Store listing review. The images show first-launch onboarding only; they do not claim media playback, billing, StoreKit, or device qualification.",
+        "qualification": qualification,
     }
     (output / "capture-provenance.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 
@@ -567,6 +766,78 @@ def capture_tvos(args: argparse.Namespace) -> None:
     )
     write_capture_manifest(output, "tvOS", [capture])
     print(f"Captured authentic tvOS app screen in {output}")
+
+
+def capture_ios_in_use(args: argparse.Namespace) -> None:
+    product_root = args.product_root.resolve(strict=True)
+    require_source(product_root)
+    tool_source_sha = require_capture_tools_sha()
+    app = args.app.resolve(strict=True)
+    identity = app_info(app)
+    if identity["bundle_id"] != BUNDLE_ID:
+        raise ValueError("Unexpected iOS Simulator application identity")
+    output = args.output_dir.resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    app_digest = sha256_tree(app)
+    build_receipt = json.loads(args.build_receipt.resolve(strict=True).read_text(encoding="utf-8"))
+    validate_build_receipt(
+        build_receipt,
+        platform="ios",
+        producer_repository=os.environ.get("GITHUB_REPOSITORY", ""),
+        producer_run_id=str(build_receipt.get("producer_run_id", "")),
+        producer_run_attempt=str(build_receipt.get("producer_run_attempt", "")),
+        capture_tools_sha=str(build_receipt.get("capture_tools_sha", "")),
+    )
+    if build_receipt.get("app_bundle_sha256") != app_digest:
+        raise ValueError("The iOS app bundle differs from its restored build receipt")
+    captures = [
+        capture_simulator(
+            app, output, platform="iOS", category="iphone", filename="iphone-01-files-and-books.png",
+            run_id=args.run_id, attempt=args.run_attempt, app_digest=app_digest,
+            build_defines=IOS_MAC_STORE_DEFINES, tool_source_sha=tool_source_sha, app_in_use=True,
+            build_receipt=build_receipt,
+        ),
+        capture_simulator(
+            app, output, platform="iOS", category="ipad", filename="ipad-01-files-and-books.png",
+            run_id=args.run_id, attempt=args.run_attempt, app_digest=app_digest,
+            build_defines=IOS_MAC_STORE_DEFINES, tool_source_sha=tool_source_sha, app_in_use=True,
+            build_receipt=build_receipt,
+        ),
+    ]
+    write_capture_manifest(output, "iOS and iPadOS", captures)
+    print(f"Captured post-onboarding iPhone and iPad Files and Books screens in {output}")
+
+
+def capture_tvos_in_use(args: argparse.Namespace) -> None:
+    product_root = args.product_root.resolve(strict=True)
+    require_source(product_root)
+    tool_source_sha = require_capture_tools_sha()
+    app = args.app.resolve(strict=True)
+    identity = app_info(app)
+    if identity["bundle_id"] != BUNDLE_ID:
+        raise ValueError("Unexpected tvOS Simulator application identity")
+    output = args.output_dir.resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    app_digest = sha256_tree(app)
+    build_receipt = json.loads(args.build_receipt.resolve(strict=True).read_text(encoding="utf-8"))
+    validate_build_receipt(
+        build_receipt,
+        platform="tvos",
+        producer_repository=os.environ.get("GITHUB_REPOSITORY", ""),
+        producer_run_id=str(build_receipt.get("producer_run_id", "")),
+        producer_run_attempt=str(build_receipt.get("producer_run_attempt", "")),
+        capture_tools_sha=str(build_receipt.get("capture_tools_sha", "")),
+    )
+    if build_receipt.get("app_bundle_sha256") != app_digest:
+        raise ValueError("The tvOS app bundle differs from its restored build receipt")
+    capture = capture_simulator(
+        app, output, platform="tvOS", category="tvos", filename="tvos-01-files-and-books.png",
+        run_id=args.run_id, attempt=args.run_attempt, app_digest=app_digest,
+        build_defines=TVOS_STORE_DEFINES, tool_source_sha=tool_source_sha, app_in_use=True,
+        build_receipt=build_receipt,
+    )
+    write_capture_manifest(output, "tvOS", [capture])
+    print(f"Captured the post-onboarding tvOS Files and Books screen in {output}")
 
 
 SWIFT_WINDOW_ID = r'''
@@ -771,6 +1042,121 @@ def capture_macos_paywall(args: argparse.Namespace) -> None:
     print(f"Captured authentic lifetime-access sheet from the restored Mac app in {output}")
 
 
+def capture_macos_in_use(args: argparse.Namespace) -> None:
+    product_root = args.product_root.resolve(strict=True)
+    require_source(product_root)
+    tool_source_sha = require_capture_tools_sha()
+    app = args.app.resolve(strict=True)
+    identity = app_info(app)
+    receipt_path = args.build_receipt.resolve(strict=True)
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    app_digest = sha256_tree(app)
+    if (receipt.get("source_sha") != SOURCE_SHA
+            or receipt.get("product_version") != VERSION
+            or receipt.get("product_build") != BUILD_NUMBER
+            or receipt.get("platform") != "macOS"
+            or receipt.get("build_configuration") != BUILD_CONFIGURATION["macos"]
+            or receipt.get("build_mode") != "App Store IAP"
+            or receipt.get("app_bundle_sha256") != app_digest
+            or receipt.get("bundle_id") != identity["bundle_id"]
+            or receipt.get("distribution_signing") != "disabled"
+            or not re.fullmatch(r"[0-9]+", str(receipt.get("producer_run_id", "")))
+            or not re.fullmatch(r"[0-9]+", str(receipt.get("producer_run_attempt", "")))):
+        raise ValueError("The restored Mac app does not match its unsigned v3.0.36 App Store build receipt")
+
+    output = args.output_dir.resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    run(["open", "-n", "-a", str(app)], timeout=120)
+    app_pid, _ = _launched_app_pid_and_window(app)
+    run(["osascript", "-e", f'tell application id "{BUNDLE_ID}" to activate'], timeout=60)
+    _run_paywall_applescript(app_pid, "click", "Use files and books")
+    _run_paywall_applescript(app_pid, "wait", "Import files")
+    time.sleep(3)
+
+    device = {
+        "kind": "GitHub-hosted macOS desktop",
+        "model": run(["sysctl", "-n", "hw.model"], capture=True, timeout=30),
+        "architecture": run(["uname", "-m"], capture=True, timeout=30),
+        "os_version": run(["sw_vers", "-productVersion"], capture=True, timeout=30),
+    }
+    captures = []
+    scenes = [
+        (
+            "macos-01-files-and-books.png",
+            "Post-onboarding local Files and Books screen. A real local profile was created; no media server, account, or media was configured.",
+        ),
+    ]
+    for filename, scene in scenes:
+        current_pid, window_id = _launched_app_pid_and_window(app)
+        if current_pid != app_pid:
+            raise RuntimeError("The captured app process changed during local Files and Books navigation")
+        screenshot = output / filename
+        run(["/usr/sbin/screencapture", "-x", "-l", window_id, str(screenshot)], timeout=120)
+        width, height = png_dimensions(screenshot)
+        captures.append({
+            "filename": filename,
+            "platform": "macOS",
+            "build_configuration": receipt["build_configuration"],
+            "capture_scene": scene,
+            "capture_method": ["System Events Accessibility; /usr/sbin/screencapture -x -l <app-window-id>"],
+            "capture_run_id": os.environ.get("GITHUB_RUN_ID", ""),
+            "capture_run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT", ""),
+            "source_tag": SOURCE_TAG,
+            "source_sha": SOURCE_SHA,
+            "capture_tools_sha": tool_source_sha,
+            "build_receipt": receipt,
+            "launch_process_id": app_pid,
+            "captured_window_id": window_id,
+            "bundle_id": identity["bundle_id"],
+            "app_version": identity["version"],
+            "app_build": identity["build_number"],
+            "app_bundle_sha256": app_digest,
+            "capture_sha256": sha256_file(screenshot),
+            "dimensions": [width, height],
+            "device": device,
+            "build_defines": IOS_MAC_STORE_DEFINES,
+            "qualification": "Authentic post-onboarding local Files and Books interface from the actual App Store app bundle; no content or server is represented.",
+        })
+
+    _run_paywall_applescript(app_pid, "settings")
+    _run_paywall_applescript(app_pid, "click", "Pleazyng lifetime access")
+    _run_paywall_applescript(app_pid, "wait", "Restore lifetime purchase")
+    time.sleep(SIMULATOR_SETTLE_SECONDS)
+    filename = "macos-02-iap-review-paywall.png"
+    current_pid, window_id = _launched_app_pid_and_window(app)
+    if current_pid != app_pid:
+        raise RuntimeError("The captured app process changed during paywall navigation")
+    screenshot = output / filename
+    run(["/usr/sbin/screencapture", "-x", "-l", window_id, str(screenshot)], timeout=120)
+    width, height = png_dimensions(screenshot)
+    captures.append({
+        "filename": filename,
+        "platform": "macOS",
+        "build_configuration": receipt["build_configuration"],
+        "capture_scene": "Real lifetime-access sheet opened through Settings after a local Files and Books session. No server/account was configured, and Buy or Restore was not activated. StoreKit price/error state is the live app response.",
+        "capture_method": ["System Events accessibility buttons and Cmd+,; /usr/sbin/screencapture -x -l <app-window-id>"],
+        "capture_run_id": os.environ.get("GITHUB_RUN_ID", ""),
+        "capture_run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT", ""),
+        "source_tag": SOURCE_TAG,
+        "source_sha": SOURCE_SHA,
+        "capture_tools_sha": tool_source_sha,
+        "build_receipt": receipt,
+        "launch_process_id": app_pid,
+        "captured_window_id": window_id,
+        "bundle_id": identity["bundle_id"],
+        "app_version": identity["version"],
+        "app_build": identity["build_number"],
+        "app_bundle_sha256": app_digest,
+        "capture_sha256": sha256_file(screenshot),
+        "dimensions": [width, height],
+        "device": device,
+        "build_defines": IOS_MAC_STORE_DEFINES,
+        "qualification": "Authentic UI from the unsigned App Store app bundle. A visible price/error reflects the live StoreKit response; no purchase or restore action was activated.",
+    })
+    write_capture_manifest(output, "macOS", captures)
+    print(f"Captured authentic Mac Files and Books and lifetime-access screens in {output}")
+
+
 def capture_macos(args: argparse.Namespace) -> None:
     product_root = args.product_root.resolve(strict=True)
     require_source(product_root)
@@ -972,6 +1358,106 @@ def package_captures(args: argparse.Namespace) -> None:
     print(f"Packaged verified screenshots: {archive}")
 
 
+def package_app_in_use_captures(args: argparse.Namespace) -> None:
+    source_dirs = {
+        "iOS and iPadOS": args.ios_dir.resolve(strict=True),
+        "tvOS": args.tvos_dir.resolve(strict=True),
+        "macOS": args.macos_dir.resolve(strict=True),
+    }
+    expected_defines = {
+        "iOS and iPadOS": IOS_MAC_STORE_DEFINES,
+        "tvOS": TVOS_STORE_DEFINES,
+        "macOS": IOS_MAC_STORE_DEFINES,
+    }
+    expected_counts = {"iOS and iPadOS": 2, "tvOS": 1, "macOS": 2}
+    images: list[tuple[Path, dict[str, Any]]] = []
+    for platform, directory in source_dirs.items():
+        _, captures = load_platform_capture(directory, platform, expected_defines[platform], None)
+        if len(captures) != expected_counts[platform]:
+            raise ValueError(f"Unexpected screenshot count for {platform}: {len(captures)}")
+        for image, capture in captures:
+            scene = capture.get("capture_scene", "")
+            if not (scene.startswith("Post-onboarding local Files and Books screen")
+                    or scene.startswith("Real lifetime-access sheet")):
+                raise ValueError(f"Refusing to package a login/onboarding-only image: {image}")
+            receipt = capture.get("build_receipt")
+            if not isinstance(receipt, dict):
+                raise ValueError(f"Screenshot is missing the validated product build receipt: {image}")
+            platform_key = {"iOS and iPadOS": "ios", "tvOS": "tvos", "macOS": "macos"}[platform]
+            validate_build_receipt(
+                receipt,
+                platform=platform_key,
+                producer_repository=str(receipt.get("producer_repository", "")),
+                producer_run_id=str(receipt.get("producer_run_id", "")),
+                producer_run_attempt=str(receipt.get("producer_run_attempt", "")),
+                capture_tools_sha=str(receipt.get("capture_tools_sha", "")),
+            )
+            if receipt.get("app_bundle_sha256") != capture.get("app_bundle_sha256"):
+                raise ValueError(f"Screenshot product hash differs from its validated build receipt: {image}")
+            if platform in ("iOS and iPadOS", "tvOS"):
+                ui_runner = capture.get("ui_test_runner")
+                if (not isinstance(ui_runner, dict)
+                        or ui_runner.get("project_targets") != ["PleazyngInUseCaptureTests"]
+                        or ui_runner.get("product_target_compiled") is not False
+                        or re.fullmatch(r"[0-9a-f]{64}", str(ui_runner.get("test_source_sha256", ""))) is None):
+                    raise ValueError(f"Screenshot lacks the isolated UI-test-only runner receipt: {image}")
+        images.extend(captures)
+
+    names = {capture["filename"] for _, capture in images}
+    required = {
+        "iphone-01-files-and-books.png",
+        "ipad-01-files-and-books.png",
+        "tvos-01-files-and-books.png",
+        "macos-01-files-and-books.png",
+        "macos-02-iap-review-paywall.png",
+    }
+    if names != required:
+        raise ValueError(f"Expected the five post-onboarding review screenshots, found {sorted(names)}")
+    output = args.output_dir.resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    captures = []
+    for image, capture in images:
+        shutil.copyfile(image, output / capture["filename"])
+        captures.append(capture)
+    manifest = {
+        "schema_version": 1,
+        "product": "Pleazyng",
+        "source_tag": SOURCE_TAG,
+        "source_sha": SOURCE_SHA,
+        "product_version": VERSION,
+        "product_build": BUILD_NUMBER,
+        "build_mode": "App Store IAP",
+        "packaging_tool_source_sha": require_capture_tools_sha(),
+        "capture_tools_sha_by_platform": {
+            "ios": next(item["capture_tools_sha"] for item in captures if item["filename"].startswith("iphone-")),
+            "tvos": next(item["capture_tools_sha"] for item in captures if item["filename"].startswith("tvos-")),
+            "macos": next(item["capture_tools_sha"] for item in captures if item["filename"].startswith("macos-")),
+        },
+        "captures": captures,
+        "qualification": (
+            "Authentic post-onboarding local Files and Books screens from the v3.0.36 product app bundles on iPhone, iPad, "
+            "tvOS Simulator, and hosted macOS. The Mac IAP sheet reflects the live StoreKit response and no purchase or "
+            "restore action was activated. These captures do not qualify playback, StoreKit transactions, physical-device "
+            "behavior, signing, or App Store processing."
+        ),
+    }
+    (output / "capture-provenance.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    (output / "README.txt").write_text(
+        "Pleazyng app-in-use review screenshots for v3.0.36\n\n"
+        f"Source commit: {SOURCE_SHA}\n"
+        "The screenshots show the real Files and Books screen after onboarding on iPhone, iPad, tvOS, and macOS. "
+        "The macOS set also includes the real lifetime-access sheet, opened without activating Buy or Restore. "
+        "No server, account, or media was seeded. StoreKit displays its live response.\n"
+        "See capture-provenance.json for product source, bundle hashes, runner/device details, dimensions, and image hashes.\n",
+        encoding="utf-8",
+    )
+    archive = output.with_suffix(".zip")
+    with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as target:
+        for path in sorted(output.iterdir()):
+            target.write(path, path.name)
+    print(f"Packaged verified app-in-use review screenshots: {archive}")
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -990,7 +1476,13 @@ def parse_args() -> argparse.Namespace:
     restore.add_argument("--expected-capture-tools-sha", required=True)
     restore.add_argument("--output-dir", required=True, type=Path)
     restore.set_defaults(handler=restore_build)
-    for name, handler in (("capture-ios", capture_ios), ("capture-tvos", capture_tvos), ("capture-macos", capture_macos)):
+    for name, handler in (
+        ("capture-ios", capture_ios),
+        ("capture-tvos", capture_tvos),
+        ("capture-ios-in-use", capture_ios_in_use),
+        ("capture-tvos-in-use", capture_tvos_in_use),
+        ("capture-macos", capture_macos),
+    ):
         command = subparsers.add_parser(name)
         command.add_argument("--product-root", required=True, type=Path)
         command.add_argument("--app", required=True, type=Path)
@@ -998,6 +1490,8 @@ def parse_args() -> argparse.Namespace:
         if name != "capture-macos":
             command.add_argument("--run-id", default=os.environ.get("GITHUB_RUN_ID", str(os.getpid())))
             command.add_argument("--run-attempt", default=os.environ.get("GITHUB_RUN_ATTEMPT", "1"))
+        if name in ("capture-ios-in-use", "capture-tvos-in-use"):
+            command.add_argument("--build-receipt", required=True, type=Path)
         command.set_defaults(handler=handler)
     paywall = subparsers.add_parser("capture-macos-paywall")
     paywall.add_argument("--product-root", required=True, type=Path)
@@ -1005,6 +1499,12 @@ def parse_args() -> argparse.Namespace:
     paywall.add_argument("--build-receipt", required=True, type=Path)
     paywall.add_argument("--output-dir", required=True, type=Path)
     paywall.set_defaults(handler=capture_macos_paywall)
+    macos_in_use = subparsers.add_parser("capture-macos-in-use")
+    macos_in_use.add_argument("--product-root", required=True, type=Path)
+    macos_in_use.add_argument("--app", required=True, type=Path)
+    macos_in_use.add_argument("--build-receipt", required=True, type=Path)
+    macos_in_use.add_argument("--output-dir", required=True, type=Path)
+    macos_in_use.set_defaults(handler=capture_macos_in_use)
     package = subparsers.add_parser("package")
     package.add_argument("--ios-dir", required=True, type=Path)
     package.add_argument("--tvos-dir", required=True, type=Path)
@@ -1012,6 +1512,12 @@ def parse_args() -> argparse.Namespace:
     package.add_argument("--output-dir", required=True, type=Path)
     package.add_argument("--legacy-tool-source-sha", help="Capture-tools commit from a prior run when its receipts lack that field")
     package.set_defaults(handler=package_captures)
+    app_in_use_package = subparsers.add_parser("package-app-in-use")
+    app_in_use_package.add_argument("--ios-dir", required=True, type=Path)
+    app_in_use_package.add_argument("--tvos-dir", required=True, type=Path)
+    app_in_use_package.add_argument("--macos-dir", required=True, type=Path)
+    app_in_use_package.add_argument("--output-dir", required=True, type=Path)
+    app_in_use_package.set_defaults(handler=package_app_in_use_captures)
     return parser.parse_args()
 
 
