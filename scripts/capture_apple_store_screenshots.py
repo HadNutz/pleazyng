@@ -936,8 +936,10 @@ def bundle_executable(bundle: Path) -> tuple[str, str, Path]:
             or Path(executable).name != executable):
         raise ValueError(f"Nested code bundle has no safe executable identity: {bundle}")
     executable_path = bundle / executable
-    if not executable_path.is_file() or not executable_path.stat().st_mode & 0o111:
-        raise ValueError(f"Nested code executable is missing or not executable: {executable_path}")
+    needs_execute_mode = bundle.suffix != ".framework"
+    if (not executable_path.is_file()
+            or (needs_execute_mode and not executable_path.stat().st_mode & 0o111)):
+        raise ValueError(f"Nested code executable is missing or has an invalid mode: {executable_path}")
     return bundle_id, executable, executable_path
 
 
@@ -950,8 +952,6 @@ def code_executable_inventory(app: Path) -> list[dict[str, Any]]:
     entries.append((app, "app", main["bundle_id"], main_executable))
     for path, kind in nested_code_paths(app):
         if kind == "dylib":
-            if not path.stat().st_mode & 0o111:
-                raise ValueError(f"Nested dynamic library is not executable: {path}")
             entries.append((path, kind, path.stem, path))
         else:
             bundle_id, _, executable = bundle_executable(path)

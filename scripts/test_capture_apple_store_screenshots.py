@@ -10,6 +10,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 from capture_apple_store_screenshots import (
+    BUNDLE_ID,
+    BUILD_NUMBER,
+    VERSION,
+    bundle_executable,
+    code_executable_inventory,
     derive_nested_bundle_simulator_entitlements,
     derive_ios_simulator_entitlements,
     nested_code_paths,
@@ -217,6 +222,56 @@ class SimulatorSigningTests(unittest.TestCase):
 
         self.assertLess(indices[child], indices[parent])
         self.assertEqual({kind for _, kind in paths}, {"framework", "appex", "dylib"})
+
+    def test_framework_and_dylib_macho_files_keep_non_executable_modes(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            app = Path(temporary) / "Pleazyng.app"
+            app.mkdir()
+            (app / "Info.plist").write_bytes(plistlib.dumps({
+                "CFBundleIdentifier": BUNDLE_ID,
+                "CFBundleShortVersionString": VERSION,
+                "CFBundleVersion": BUILD_NUMBER,
+                "CFBundleExecutable": "Pleazyng",
+            }))
+            main_executable = app / "Pleazyng"
+            main_executable.write_bytes(b"main")
+            main_executable.chmod(0o755)
+
+            framework = app / "Frameworks" / "sqlite3.framework"
+            framework.mkdir(parents=True)
+            (framework / "Info.plist").write_bytes(plistlib.dumps({
+                "CFBundleIdentifier": "io.flutter.flutter.native-assets.sqlite3",
+                "CFBundleExecutable": "sqlite3",
+            }))
+            framework_binary = framework / "sqlite3"
+            framework_binary.write_bytes(b"framework")
+            framework_binary.chmod(0o644)
+
+            dylib = app / "Frameworks" / "libnative.dylib"
+            dylib.write_bytes(b"dylib")
+            dylib.chmod(0o644)
+
+            with patch("capture_apple_store_screenshots.run", return_value="arm64"):
+                inventory = code_executable_inventory(app)
+
+        modes = {entry["executable_path"]: entry["executable_mode"] for entry in inventory}
+        self.assertEqual(modes["Frameworks/sqlite3.framework/sqlite3"], "0644")
+        self.assertEqual(modes["Frameworks/libnative.dylib"], "0644")
+
+    def test_app_extension_executable_must_keep_execute_mode(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            extension = Path(temporary) / "RommWorker.appex"
+            extension.mkdir()
+            (extension / "Info.plist").write_bytes(plistlib.dumps({
+                "CFBundleIdentifier": f"{BUNDLE_ID}.RommWorker",
+                "CFBundleExecutable": "RommWorker",
+            }))
+            executable = extension / "RommWorker"
+            executable.write_bytes(b"extension")
+            executable.chmod(0o644)
+
+            with self.assertRaisesRegex(ValueError, "invalid mode"):
+                bundle_executable(extension)
 
 
 if __name__ == "__main__":
