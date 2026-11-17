@@ -449,6 +449,102 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
         self.assertIn(["xcrun", "simctl", "spawn", device_id, "launchctl", "list"], calls)
         self.assertFalse(any(args[2] == "shutdown" for args in calls if len(args) > 2))
 
+    def test_exact_bootstatus_and_launchctl_can_qualify_when_global_inventory_times_out(self) -> None:
+        device_id = "12345678-1234-1234-1234-123456789ABC"
+        device = {
+            "udid": device_id,
+            "runtime_id": "com.apple.CoreSimulator.SimRuntime.iOS-27-2",
+            "device_type": "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro",
+        }
+        inventory_calls = 0
+        simulator_calls: list[list[str]] = []
+
+        def fake_simulator_command(args, output_dir, name, *, timeout, check=True):
+            nonlocal inventory_calls
+            simulator_calls.append(args)
+            if args[2:4] == ["list", "devices"]:
+                inventory_calls += 1
+                if inventory_calls == 1:
+                    return subprocess.CompletedProcess(args, 0, json.dumps({
+                        "devices": {device["runtime_id"]: [{
+                            "udid": device_id,
+                            "state": "Shutdown",
+                            "deviceTypeIdentifier": device["device_type"],
+                        }]},
+                    }), "")
+                raise subprocess.TimeoutExpired(args, timeout, output="partial inventory", stderr="CoreSimulator busy")
+            return subprocess.CompletedProcess(args, 0, "launchd ready\n", "")
+
+        with tempfile.TemporaryDirectory() as temporary, patch.object(
+            capture, "run_simulator_command", side_effect=fake_simulator_command
+        ), patch.object(capture, "capture_simulator_service_diagnostics") as diagnostics:
+            receipt = capture.ensure_simulator_ready_after_xctest_build(device, Path(temporary))
+            saved_receipt = json.loads(
+                (Path(temporary) / "simulator-readiness-after-xctest-build.json").read_text()
+            )
+
+        self.assertTrue(receipt["booted_after_xctest_runner_build"])
+        self.assertIsNone(receipt["device_state_after_bootstatus"])
+        self.assertEqual(receipt["bootstatus_returncode"], 0)
+        self.assertEqual(receipt["launchctl_returncode"], 0)
+        self.assertIn("global simctl device inventory timed out after 60 seconds", receipt["post_boot_inventory_error"])
+        self.assertEqual(saved_receipt, receipt)
+        self.assertEqual(inventory_calls, 2)
+        self.assertEqual(simulator_calls.count(["xcrun", "simctl", "boot", device_id]), 1)
+        self.assertEqual(simulator_calls.count(["xcrun", "simctl", "bootstatus", device_id, "-b"]), 1)
+        self.assertEqual(
+            simulator_calls.count(["xcrun", "simctl", "spawn", device_id, "launchctl", "list"]), 1
+        )
+        diagnostics.assert_not_called()
+
+    def test_global_inventory_timeout_still_fails_if_exact_launchctl_fails(self) -> None:
+        device_id = "12345678-1234-1234-1234-123456789ABC"
+        device = {
+            "udid": device_id,
+            "runtime_id": "com.apple.CoreSimulator.SimRuntime.iOS-27-2",
+            "device_type": "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro",
+        }
+        inventory_calls = 0
+
+        def fake_simulator_command(args, output_dir, name, *, timeout, check=True):
+            nonlocal inventory_calls
+            if args[2:4] == ["list", "devices"]:
+                inventory_calls += 1
+                if inventory_calls == 1:
+                    return subprocess.CompletedProcess(args, 0, json.dumps({
+                        "devices": {device["runtime_id"]: [{
+                            "udid": device_id,
+                            "state": "Shutdown",
+                            "deviceTypeIdentifier": device["device_type"],
+                        }]},
+                    }), "")
+                raise subprocess.TimeoutExpired(args, timeout)
+            if args[2] in ("boot", "bootstatus"):
+                return subprocess.CompletedProcess(args, 0, "", "")
+            if "launchctl" in args:
+                return subprocess.CompletedProcess(args, 72, "", "launchd unavailable")
+            raise AssertionError(f"Unexpected command after launchctl failure: {args}")
+
+        with tempfile.TemporaryDirectory() as temporary, patch.object(
+            capture, "run_simulator_command", side_effect=fake_simulator_command
+        ), patch.object(capture, "capture_simulator_service_diagnostics") as diagnostics:
+            with self.assertRaisesRegex(RuntimeError, "launchctl readiness failed"):
+                capture.ensure_simulator_ready_after_xctest_build(device, Path(temporary))
+            failure_receipt = json.loads(
+                (Path(temporary) / "simulator-readiness-after-xctest-build.json").read_text()
+            )
+
+        diagnostics.assert_called_once_with(
+            device_id,
+            Path(temporary),
+            "launchctl-not-ready-after-global-inventory-timeout",
+            include_devices=False,
+            include_launchctl=False,
+        )
+        self.assertEqual(failure_receipt["launchctl_returncode"], 72)
+        self.assertIn("TimeoutExpired", failure_receipt["post_boot_inventory_error"])
+        self.assertEqual(inventory_calls, 2)
+
     def test_simulator_service_diagnostics_retain_raw_installed_app_inventory(self) -> None:
         device_id = "12345678-1234-1234-1234-123456789ABC"
         runtime_id = "com.apple.CoreSimulator.SimRuntime.iOS-27-2"

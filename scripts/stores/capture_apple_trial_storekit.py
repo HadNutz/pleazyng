@@ -947,14 +947,22 @@ def read_simulator_device_record(device_id: str, output_dir: Path, name: str) ->
     return record
 
 
-def capture_simulator_service_diagnostics(device_id: str, output_dir: Path, phase: str) -> dict[str, Any]:
+def capture_simulator_service_diagnostics(
+    device_id: str,
+    output_dir: Path,
+    phase: str,
+    *,
+    include_devices: bool = True,
+    include_launchctl: bool = True,
+) -> dict[str, Any]:
     """Keep the exact device state, launchd response, and installed-app inventory."""
     outcomes: dict[str, Any] = {"simulator_udid": device_id, "phase": phase}
-    commands = (
-        ("devices", ["xcrun", "simctl", "list", "devices", "-j"], 60),
-        ("launchctl", ["xcrun", "simctl", "spawn", device_id, "launchctl", "list"], 60),
-        ("listapps", ["xcrun", "simctl", "listapps", device_id], 90),
-    )
+    commands = []
+    if include_devices:
+        commands.append(("devices", ["xcrun", "simctl", "list", "devices", "-j"], 60))
+    if include_launchctl:
+        commands.append(("launchctl", ["xcrun", "simctl", "spawn", device_id, "launchctl", "list"], 60))
+    commands.append(("listapps", ["xcrun", "simctl", "listapps", device_id], 90))
     for label, command_args, timeout in commands:
         name = f"simulator-{phase}-{label}"
         try:
@@ -1008,22 +1016,33 @@ def ensure_simulator_ready_after_xctest_build(
             f"Expected the selected Simulator to be Booted or Shutdown after XCTest build; found {initial_state!r}"
         )
 
-    run_simulator_command(
+    bootstatus = run_simulator_command(
         ["xcrun", "simctl", "bootstatus", device_id, "-b"],
         output_dir,
         "simulator-after-xctest-build-bootstatus",
         timeout=600,
     )
-    after = read_simulator_device_record(device_id, output_dir, "simulator-after-xctest-build-after")
-    if (
-        after.get("runtime_id") != device.get("runtime_id")
-        or after.get("deviceTypeIdentifier") != device.get("device_type")
-    ):
-        capture_simulator_service_diagnostics(device_id, output_dir, "post-boot-identity-mismatch")
-        raise RuntimeError("The booted Simulator record does not match the exact selected runtime and device type")
-    if after.get("state") != "Booted":
-        capture_simulator_service_diagnostics(device_id, output_dir, "not-booted-after-bootstatus")
-        raise RuntimeError(f"Selected Simulator did not reach Booted state after bootstatus: {after.get('state')!r}")
+    after: dict[str, Any] | None = None
+    post_boot_inventory_error: str | None = None
+    try:
+        after = read_simulator_device_record(device_id, output_dir, "simulator-after-xctest-build-after")
+    except subprocess.TimeoutExpired as error:
+        # CoreSimulator's global device inventory can stall while the selected
+        # simulator itself is booting. The exact-UDID bootstatus and launchctl
+        # checks below remain authoritative; never substitute another device.
+        post_boot_inventory_error = (
+            f"TimeoutExpired: global simctl device inventory timed out after {error.timeout} seconds"
+        )
+    if after is not None:
+        if (
+            after.get("runtime_id") != device.get("runtime_id")
+            or after.get("deviceTypeIdentifier") != device.get("device_type")
+        ):
+            capture_simulator_service_diagnostics(device_id, output_dir, "post-boot-identity-mismatch")
+            raise RuntimeError("The booted Simulator record does not match the exact selected runtime and device type")
+        if after.get("state") != "Booted":
+            capture_simulator_service_diagnostics(device_id, output_dir, "not-booted-after-bootstatus")
+            raise RuntimeError(f"Selected Simulator did not reach Booted state after bootstatus: {after.get('state')!r}")
 
     launchctl = run_simulator_command(
         ["xcrun", "simctl", "spawn", device_id, "launchctl", "list"],
@@ -1033,7 +1052,29 @@ def ensure_simulator_ready_after_xctest_build(
         check=False,
     )
     if launchctl.returncode != 0:
-        capture_simulator_service_diagnostics(device_id, output_dir, "launchctl-not-ready-after-build")
+        write_json(output_dir / "simulator-readiness-after-xctest-build.json", {
+            "schema_version": 1,
+            "simulator_udid": device_id,
+            "runtime_id": device.get("runtime_id"),
+            "device_type": device.get("device_type"),
+            "device_state_before_recovery": initial_state,
+            "booted_after_xctest_runner_build": booted_here,
+            "device_state_after_bootstatus": after.get("state") if after is not None else None,
+            "post_boot_inventory_error": post_boot_inventory_error,
+            "bootstatus_returncode": bootstatus.returncode,
+            "launchctl_returncode": launchctl.returncode,
+            "qualification": "failed: exact-UDID launchctl did not respond successfully",
+        })
+        if post_boot_inventory_error is None:
+            capture_simulator_service_diagnostics(device_id, output_dir, "launchctl-not-ready-after-build")
+        else:
+            capture_simulator_service_diagnostics(
+                device_id,
+                output_dir,
+                "launchctl-not-ready-after-global-inventory-timeout",
+                include_devices=False,
+                include_launchctl=False,
+            )
         raise RuntimeError(
             f"The selected Simulator is Booted but launchctl readiness failed ({launchctl.returncode})"
         )
@@ -1044,10 +1085,15 @@ def ensure_simulator_ready_after_xctest_build(
         "device_type": device.get("device_type"),
         "device_state_before_recovery": initial_state,
         "booted_after_xctest_runner_build": booted_here,
-        "device_state_after_bootstatus": after.get("state"),
+        "device_state_after_bootstatus": after.get("state") if after is not None else None,
+        "post_boot_inventory_error": post_boot_inventory_error,
+        "bootstatus_returncode": bootstatus.returncode,
         "launchctl_returncode": launchctl.returncode,
         "qualification": (
-            "The exact selected Simulator was verified Booted and launchctl responded after "
+            "The exact selected Simulator completed bootstatus and launchctl responded after "
+            "xcodebuild build-for-testing, immediately before installing the retained app."
+            if post_boot_inventory_error is not None
+            else "The exact selected Simulator was verified Booted and launchctl responded after "
             "xcodebuild build-for-testing, immediately before installing the retained app."
         ),
     }
