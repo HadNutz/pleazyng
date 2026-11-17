@@ -16,7 +16,7 @@
 - Enable the seven-day LG webOS trial, verified USD 2.99 lifetime checkout, accountless recovery and paid-build provenance checks for LG submissions.
 - Serialize LG identity and grant mutations so delayed status responses cannot overwrite a newer refund or publish against a switched recovery identity.
 - Fence in-flight LG status reconciliations by persisted reference generations, refresh refund barriers on every verified negative callback, and require existing-identity authentication during recovery.
-- Remove verified static MPVKit framework wrappers from Apple app bundles while preserving pinned codec notices and the SpatialAudioBridge license.
+- Remove verified static MPVKit framework wrappers from Apple app bundles while preserving pinned codec notices and the SpatialAudioBridge license in platform-appropriate bundle resource locations.
 - Embed and code-sign the dynamically linked AMSMB2 framework in the tvOS app bundle.
 
 ## [3.0.37] - 2026-11-17

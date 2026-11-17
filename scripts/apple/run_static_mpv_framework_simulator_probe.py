@@ -224,6 +224,42 @@ def _require_unchanged_app_info(snapshot: dict[str, Any], expected_sha256: str) 
         )
 
 
+def _inspect_foundation_bundle(app: Path, output_dir: Path, *, stage: str) -> dict[str, Any]:
+    if not re.fullmatch(r"[a-z][a-z0-9-]{0,31}", stage):
+        raise ProbeError(f"Unsafe Foundation bundle inspection stage: {stage!r}")
+    script = Path(__file__).resolve().parent / "static-mpv-framework-probe/inspect_bundle.swift"
+    name = f"foundation-bundle-{stage}"
+    result = _run(["swift", str(script), str(app)], output_dir=output_dir, name=name, check=False)
+    output_path = output_dir / f"{name}.stdout.txt"
+    try:
+        report = json.loads(output_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ProbeError(f"Foundation bundle inspection did not return JSON at stage {stage}") from exc
+    if result.returncode != 0 or not isinstance(report, dict):
+        raise ProbeError(f"Foundation bundle inspection failed at stage {stage}")
+    (output_dir / f"{name}.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8",
+    )
+    if (
+        report.get("bundle_identifier") != BUNDLE_ID
+        or report.get("info_dictionary_identifier") != BUNDLE_ID
+        or report.get("executable_exists") is not True
+    ):
+        raise ProbeError(f"Foundation did not resolve the expected bundle identity/executable at stage {stage}")
+    return report
+
+
+def _require_same_foundation_bundle_identity(
+    before: dict[str, Any],
+    after: dict[str, Any],
+    *,
+    stage: str,
+) -> None:
+    for key in ("bundle_identifier", "info_dictionary_identifier", "executable_path", "executable_exists"):
+        if before.get(key) != after.get(key):
+            raise ProbeError(f"Foundation bundle identity changed at stage {stage}: {key}")
+
+
 def _capture_installer_log(simulator_id: str, output_dir: Path) -> dict[str, Any]:
     command = [
         "xcrun", "simctl", "spawn", simulator_id,
@@ -443,6 +479,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     if not app.is_dir():
         raise ProbeError(f"Xcode did not produce the expected simulator app: {app}")
     app_bundle_info = _verify_app_bundle_info(app, output_dir)
+    foundation_before_prune = _inspect_foundation_bundle(app, output_dir, stage="before-prune")
 
     baseline = _run(
         ["xcrun", "simctl", "install", simulator_id, str(app)],
@@ -462,6 +499,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         raise ProbeError("Baseline install did not reproduce the known codeless static-framework plist failure")
     baseline_snapshot = _capture_app_bundle_snapshot(app, output_dir, stage="after-baseline")
     _require_unchanged_app_info(baseline_snapshot, app_bundle_info["sha256"])
+    if (app / "Resources").exists():
+        raise ProbeError("Probe app unexpectedly contains a reserved top-level Resources directory before pruning")
 
     apply_command = [
         "python3", str(source_root / "scripts/apple/prune_static_mpv_frameworks.py"),
@@ -480,6 +519,14 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             raise ProbeError(f"Verified static framework wrapper remains after pruning: {framework['name']}")
     post_prune_snapshot = _capture_app_bundle_snapshot(app, output_dir, stage="after-prune")
     _require_unchanged_app_info(post_prune_snapshot, app_bundle_info["sha256"])
+    if (app / "Resources").exists():
+        raise ProbeError("Mobile notice preservation created a reserved top-level Resources directory")
+    foundation_after_prune = _inspect_foundation_bundle(app, output_dir, stage="after-prune")
+    _require_same_foundation_bundle_identity(
+        foundation_before_prune,
+        foundation_after_prune,
+        stage="after-prune",
+    )
 
     _run([
         "codesign", "--force", "--deep", "--sign", "-", "--timestamp=none", str(app),
@@ -487,20 +534,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     _run(["codesign", "--verify", "--deep", "--strict", str(app)], output_dir=output_dir, name="verify-signature")
     post_sign_snapshot = _capture_app_bundle_snapshot(app, output_dir, stage="after-sign")
     _require_unchanged_app_info(post_sign_snapshot, app_bundle_info["sha256"])
-    bundle_inspection_script = Path(__file__).resolve().parent / "static-mpv-framework-probe/inspect_bundle.swift"
-    _run(
-        ["swift", str(bundle_inspection_script), str(app)],
-        output_dir=output_dir,
-        name="foundation-bundle-inspection",
-        check=False,
-    )
-    foundation_output = output_dir / "foundation-bundle-inspection.stdout.txt"
-    try:
-        foundation_report = json.loads(foundation_output.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        foundation_report = {"parse_error": True}
-    (output_dir / "foundation-bundle-inspection.json").write_text(
-        json.dumps(foundation_report, indent=2, sort_keys=True) + "\n", encoding="utf-8",
+    foundation_after_sign = _inspect_foundation_bundle(app, output_dir, stage="after-sign")
+    _require_same_foundation_bundle_identity(
+        foundation_before_prune,
+        foundation_after_sign,
+        stage="after-sign",
     )
     pruned_install = _run(
         ["xcrun", "simctl", "install", simulator_id, str(app)],
@@ -511,11 +549,6 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     if pruned_install.returncode != 0:
         _capture_installer_log(simulator_id, output_dir)
         raise ProbeError("Pruned app failed simulator installation; see installer, plist, and bundle snapshots")
-    if (
-        foundation_report.get("bundle_identifier") != BUNDLE_ID
-        or foundation_report.get("executable_exists") is not True
-    ):
-        raise ProbeError("Foundation Bundle(url:) did not find the expected app identity/executable")
     _run(["xcrun", "simctl", "launch", simulator_id, BUNDLE_ID], output_dir=output_dir, name="launch")
 
     container_result = subprocess.run(
@@ -543,6 +576,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "source_commit": args.source_sha,
         "mpv_build_revision": revision,
         "app_bundle_info": app_bundle_info,
+        "foundation_bundle_identity": {
+            "before_prune": foundation_before_prune,
+            "after_prune": foundation_after_prune,
+            "after_sign": foundation_after_sign,
+        },
         "target_build_settings": build_settings,
         "host_architecture": host_arch,
         "simulator": {"name": simulator_name, "udid": simulator_id},

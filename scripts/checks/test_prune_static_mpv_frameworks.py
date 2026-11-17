@@ -281,7 +281,7 @@ class ResourceSafetyTests(unittest.TestCase):
             app_binary_sha256=prune.sha256(app_framework / name),
             app_binary_header="",
         )
-        destination = app / "Resources" / "PleazyngStaticFrameworkResources" / name
+        destination = app / "PleazyngStaticFrameworkResources" / name
         return candidate, destination
 
     def test_notice_tree_is_copied_byte_for_byte(self) -> None:
@@ -333,7 +333,7 @@ class ResourceSafetyTests(unittest.TestCase):
             other = replace(candidate, source=other_source)
             app = candidate.app_path.parents[1]
             with self.assertRaises(prune.PruneError):
-                prune._validate_resource_destinations(app, app / "Resources", (candidate, other))
+                prune._validate_resource_destinations(app, app, (candidate, other))
 
     def test_unknown_resources_symlinks_and_resource_bounds_fail_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -464,6 +464,23 @@ class DependencySafetyTests(unittest.TestCase):
 
 
 class XcodePhaseIntegrationTests(unittest.TestCase):
+    def test_mobile_notice_root_avoids_reserved_resources_and_macos_keeps_contents_layout(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            mobile_app = root / "Runner.app"
+            mobile_app.mkdir()
+            for platform in ("iphoneos", "iphonesimulator", "appletvos", "appletvsimulator"):
+                with self.subTest(platform=platform):
+                    self.assertEqual(prune._bundle_resources_root(mobile_app, platform), mobile_app)
+            self.assertFalse((mobile_app / "Resources").exists())
+
+            mac_app = root / "Runner-macos.app"
+            (mac_app / "Contents").mkdir(parents=True)
+            self.assertEqual(
+                prune._bundle_resources_root(mac_app, "macosx"),
+                mac_app / "Contents/Resources",
+            )
+
     def test_tvos_amsmb2_dynamic_product_is_embedded_and_signed_before_pruning(self) -> None:
         repo = Path(__file__).resolve().parents[2]
         project = (repo / "tvos/Runner.xcodeproj/project.pbxproj").read_text(encoding="utf-8")
@@ -616,7 +633,8 @@ class IdempotentPruneTests(unittest.TestCase):
                 self.assertTrue(amsmb2.is_dir())
                 self.assertEqual(prune.read_plist(amsmb2 / "Info.plist")["CFBundleIdentifier"], "com.amosavian.AMSMB2")
                 self.assertEqual(prune.run(args)["action"], "already-pruned-verified")
-                saved_notice = app / "Resources/PleazyngStaticFrameworkResources/Libavcodec/pleazyng-codecs/xevd/COPYING"
+                self.assertFalse((app / "Resources").exists())
+                saved_notice = app / "PleazyngStaticFrameworkResources/Libavcodec/pleazyng-codecs/xevd/COPYING"
                 self.assertEqual(saved_notice.read_bytes(), b"license bytes\n")
                 saved_notice.write_bytes(b"altered notice\n")
                 with self.assertRaises(prune.PruneError):

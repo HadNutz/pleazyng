@@ -20,10 +20,22 @@ frameworks are left in place.
 
 At the current package pin, `Libmpv.framework` also contains
 `LICENSE.SpatialAudioBridge`. The helper copies that exact, size-bounded notice
-to the app-level `Resources/PleazyngStaticFrameworkResources/Libmpv/` namespace
-before removing the wrapper. This file matches the Flutter asset
+before removing the wrapper. It uses the platform's bundle resource layout:
+`PleazyngStaticFrameworkResources/<framework>/` at the app root on iOS and
+tvOS, and `Contents/Resources/PleazyngStaticFrameworkResources/<framework>/`
+on macOS. This file matches the Flutter asset
 `assets/licenses/SpatialAudioBridge.txt`; unknown top-level framework files
 remain errors.
+
+Do not create a top-level `Resources/` directory in a flat iOS or tvOS app
+bundle. CFBundle classifies that layout as an old-style bundle and looks for
+the app plist under `Resources/Info.plist`, which can make both
+`Bundle(url:)` and the simulator installer report a missing bundle id while
+the root `Info.plist` is still valid. The layout classification is described
+in Apple's [CFBundle resource lookup source](https://raw.githubusercontent.com/apple-oss-distributions/CF/main/CFBundle_Resources.c).
+The simulator probe records the complete plist, Foundation's direct plist and
+bundle identities, and checks that the bundle id and executable stay stable
+before and after notice preservation.
 
 Each build writes a JSON receipt under `DERIVED_FILE_DIR`. The receipt records
 the package revision, selected source slices, complete embedded plist content,
@@ -49,6 +61,8 @@ The workflow retains inspect/apply receipts and command logs as an artifact.
 It also retains the probe app's complete generated `Info.plist` and validates
 its bundle id, executable, package type, name, versions, supported simulator
 platform, tvOS device family and minimum OS before attempting installation.
+The Foundation probe snapshots its bundle identity before pruning, after
+pruning, and after signing.
 The launched fixture writes its `avcodec_version()` marker to the app's
 `Library/Caches` directory, matching tvOS's writable app-storage location.
 This focused result qualifies the tvOS simulator packaging path only. Normal

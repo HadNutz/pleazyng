@@ -545,7 +545,11 @@ def _bundle_resources_root(app_path: Path, platform_name: str) -> Path:
         if contents.is_symlink() or not contents.is_dir():
             raise PruneError(f"macOS app is missing Contents: {app_path}")
         return contents / "Resources"
-    return app_path / "Resources"
+    # iOS and tvOS apps use a flat bundle layout. A top-level Resources
+    # directory changes CFBundle's layout classification and makes it look
+    # for the app plist in Resources/Info.plist. Keep notice payloads in a
+    # dedicated app-root namespace instead.
+    return app_path
 
 
 def _app_frameworks_path(app_path: Path, platform_name: str) -> Path:

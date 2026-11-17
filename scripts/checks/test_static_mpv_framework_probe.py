@@ -1,13 +1,18 @@
 from __future__ import annotations
 
+import json
+import os
 import plistlib
 from pathlib import Path
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "apple"))
 import run_static_mpv_framework_simulator_probe as probe
+import prune_static_mpv_frameworks as prune
 
 
 class AppBundleInfoTests(unittest.TestCase):
@@ -20,6 +25,8 @@ class AppBundleInfoTests(unittest.TestCase):
             "CFBundleName": probe.APP_EXECUTABLE,
             "CFBundleShortVersionString": probe.APP_VERSION,
             "CFBundleVersion": probe.APP_BUILD_VERSION,
+            "CFBundleInfoDictionaryVersion": "6.0",
+            "CFBundleDevelopmentRegion": "en",
             "CFBundleSupportedPlatforms": ["AppleTVSimulator"],
             "UIDeviceFamily": [3],
             "MinimumOSVersion": "15.0",
@@ -196,6 +203,52 @@ class RuntimeMarkerTests(unittest.TestCase):
         self.assertIn("Bundle(url: appURL)", source)
         self.assertIn("bundle?.bundleIdentifier", source)
         self.assertIn("bundle?.executableURL", source)
+        self.assertIn("PropertyListSerialization.propertyList", source)
+        self.assertIn("\"info_dictionary\": infoDictionary", source)
+
+    @unittest.skipUnless(shutil.which("swift"), "Swift compiler is not installed")
+    def test_foundation_bundle_identity_survives_mobile_notice_resource_root(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            app = root / "StaticMPVKitProbe.app"
+            app.mkdir()
+            info = AppBundleInfoTests.valid_info()
+            (app / "Info.plist").write_bytes(plistlib.dumps(info))
+            executable = app / probe.APP_EXECUTABLE
+            executable.write_text("#!/bin/sh\n", encoding="utf-8")
+            executable.chmod(0o755)
+            module_cache = root / "swift-module-cache"
+            env = os.environ.copy()
+            env["SWIFT_MODULECACHE_PATH"] = str(module_cache)
+            script = Path(__file__).resolve().parents[1] / "apple/static-mpv-framework-probe/inspect_bundle.swift"
+
+            def inspect() -> dict[str, object]:
+                result = subprocess.run(
+                    ["swift", str(script), str(app)],
+                    capture_output=True,
+                    text=True,
+                    env=env,
+                    check=False,
+                    timeout=60,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                report = json.loads(result.stdout)
+                self.assertEqual(report["bundle_identifier"], probe.BUNDLE_ID)
+                self.assertEqual(report["info_dictionary_identifier"], probe.BUNDLE_ID)
+                self.assertTrue(report["executable_exists"])
+                return report
+
+            before = inspect()
+            mobile_resources = prune._bundle_resources_root(app, "appletvsimulator")
+            notice = mobile_resources / "PleazyngStaticFrameworkResources/Libmpv/LICENSE.SpatialAudioBridge"
+            notice.parent.mkdir(parents=True)
+            notice.write_bytes(b"verified notice bytes\n")
+            self.assertFalse((app / "Resources").exists())
+            after = inspect()
+
+            self.assertEqual(before["bundle_identifier"], after["bundle_identifier"])
+            self.assertEqual(before["executable_path"], after["executable_path"])
+            self.assertEqual(before["info_dictionary"], after["info_dictionary"])
 
 
 if __name__ == "__main__":
