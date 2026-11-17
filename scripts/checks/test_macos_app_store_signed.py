@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 import base64
+import json
 from pathlib import Path
 import plistlib
 import re
@@ -147,26 +148,47 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         self.assertIn("<installer identity>", diagnostic)
         self.assertIn("<path>", diagnostic)
 
-    def test_installer_acl_repair_reuses_matching_recovery_key_without_deletion(self):
+    def test_installer_acl_repair_targets_the_existing_identity_without_deletion(self):
         fingerprint = "B" * 40
         identity = {"certificate_sha1": fingerprint,
                     "name": "3rd Party Mac Developer Installer: Test (DM9A59DC85)",
                     "policy": "basic"}
         keychain = Path("/Users/test/Library/Keychains/store.keychain-db")
-        key_path = Path("/Users/test/Library/Application Support/Pleazyng/pending/installer.key.pem")
-        with patch.object(store, "_certificate_from_keychain_identity", return_value=CERTIFICATE), \
-                patch.object(store, "_pending_key_for_certificate", return_value=key_path), \
-                patch.object(store, "_import_certificate", return_value=fingerprint) as importer, \
+        receipt = {"certificate_sha1": fingerprint, "matching_private_keys": 1,
+                   "signing_acl_entries": 1, "productsign_acl_additions": 1,
+                   "productsign_trusted_for_signing": True}
+        with patch.object(store, "_capture", return_value=b"") as capture, \
+                patch.object(store.subprocess, "run", return_value=SimpleNamespace(
+                    returncode=0, stdout=json.dumps(receipt).encode(), stderr=b"")) as helper, \
                 patch.object(store, "_local_identity_record", return_value=identity), \
                 patch.object(store, "signing_run", return_value=(
                     f'1) {fingerprint} "{identity["name"]}"\n'.encode())) as signing:
             repaired = store.repair_existing_installer_key_access(
                 keychain, identity, TEAM, Path("/tmp/private-stage"))
-        self.assertEqual(repaired, identity)
-        importer.assert_called_once_with(
-            keychain, CERTIFICATE, key_path, Path("/tmp/private-stage"),
-            store.INSTALLER_CERTIFICATE_TYPE)
+        self.assertEqual(repaired["certificate_sha1"], fingerprint)
+        self.assertEqual(repaired["acl_signing_entries"], "1")
+        self.assertEqual(repaired["productsign_acl_additions"], "1")
+        compile_command = capture.call_args_list[0].args[0]
+        self.assertTrue(any("repair_macos_installer_key_acl.m" in value for value in compile_command))
+        self.assertIn("-framework", compile_command)
+        self.assertEqual(helper.call_args.args[0][-2:], [str(keychain), fingerprint])
         self.assertIn("find-identity", signing.call_args.args[0])
+
+    def test_installer_acl_helper_targets_one_private_key_and_preserves_existing_acl_contents(self):
+        helper = (ROOT / "scripts/repair_macos_installer_key_acl.m").read_text(encoding="utf-8")
+        self.assertIn("kSecAttrApplicationLabel", helper)
+        self.assertIn("kSecReturnPersistentRef", helper)
+        self.assertIn("SecKeychainItemCopyAccess", helper)
+        self.assertIn("SecAccessCopyACLList", helper)
+        self.assertIn("SecACLCopyContents", helper)
+        self.assertIn("SecACLSetContents(acl, updated, description, promptSelector)", helper)
+        self.assertIn('SecTrustedApplicationCreateFromPath("/usr/bin/productsign"', helper)
+        self.assertIn("CFArrayCreateMutableCopy", helper)
+        self.assertIn("SecKeychainItemSetAccess(keyItem, access)", helper)
+        self.assertNotIn("SecACLRemove", helper)
+        self.assertNotIn('CFSTR("Allow All")', helper)
+        self.assertNotIn('SecTrustedApplicationCreateFromPath(""', helper)
+        self.assertIn('"productsign_trusted_for_signing\\":true', helper)
 
     def test_release_tag_must_be_a_versioned_annotated_tag_with_matching_source(self):
         self.assertIsNone(store._safe_tag("v3.0.36"))

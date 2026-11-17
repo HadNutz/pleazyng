@@ -562,28 +562,43 @@ def _local_identity_record(keychain: Path, certificate_type: str, team: str) -> 
     return matches[0]
 
 
-def _certificate_from_keychain_identity(keychain: Path, identity: dict[str, str]) -> bytes:
-    pem = signing_run(["security", "find-certificate", "-c", identity["name"], "-p", str(keychain)])
-    result = subprocess.run(["openssl", "x509", "-inform", "PEM", "-outform", "DER"],
-                            input=pem, capture_output=True, check=False)
-    if result.returncode:
-        raise ValueError("Could not read the existing installer certificate from the dedicated keychain")
-    certificate_der = result.stdout
-    if certificate_fingerprint(certificate_der) != identity["certificate_sha1"]:
-        raise ValueError("The exported installer certificate did not match its selected keychain identity")
-    return certificate_der
-
-
 def repair_existing_installer_key_access(keychain: Path, identity: dict[str, str], team: str,
                                          stage: Path) -> dict[str, str]:
-    """Re-import the same retained identity with productsign explicitly trusted, without deletion."""
+    """Add productsign to the signing ACL of only the exact retained installer key."""
     if identity["policy"] != "basic" or team not in identity["name"]:
         raise ValueError("Refusing to change access for an unexpected installer identity")
-    certificate_der = _certificate_from_keychain_identity(keychain, identity)
-    key_path = _pending_key_for_certificate(INSTALLER_CERTIFICATE_TYPE, certificate_der, stage)
-    if key_path is None:
-        raise ValueError("The matching retained Installer recovery key is unavailable; preserving the keychain")
-    _import_certificate(keychain, certificate_der, key_path, stage, INSTALLER_CERTIFICATE_TYPE)
+    if not re.fullmatch(r"[0-9A-F]{40}", identity["certificate_sha1"]):
+        raise ValueError("Refusing to change access for an installer identity without a valid certificate fingerprint")
+    helper_source = Path(__file__).with_name("repair_macos_installer_key_acl.m")
+    if not helper_source.is_file() or helper_source.is_symlink():
+        raise ValueError("The targeted Installer key ACL helper is missing or unsafe")
+    helper_binary = stage / "repair-macos-installer-key-acl"
+    _capture([
+        "/usr/bin/clang", "-fobjc-arc", "-Wno-deprecated-declarations",
+        str(helper_source), "-framework", "Foundation", "-framework", "Security",
+        "-o", str(helper_binary),
+    ])
+    helper_environment = os.environ.copy()
+    for secret_name in (CERTIFICATE_PASSWORD_SECRET, TEAM_SECRET, *API_SECRETS):
+        helper_environment.pop(secret_name, None)
+    helper_result = subprocess.run([
+        str(helper_binary), str(keychain), identity["certificate_sha1"],
+    ], env=helper_environment, capture_output=True, check=False)
+    if helper_result.returncode:
+        diagnostic = _safe_productsign_diagnostic(helper_result.stderr, identity["name"], team)
+        raise RuntimeError(
+            f"Targeted Installer key ACL repair failed (exit {helper_result.returncode}); {diagnostic}")
+    try:
+        repair_receipt = json.loads(helper_result.stdout)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        raise ValueError("Targeted Installer key ACL helper returned an invalid receipt") from None
+    if (repair_receipt.get("certificate_sha1") != identity["certificate_sha1"]
+            or repair_receipt.get("matching_private_keys") != 1
+            or not isinstance(repair_receipt.get("signing_acl_entries"), int)
+            or repair_receipt["signing_acl_entries"] < 1
+            or not isinstance(repair_receipt.get("productsign_acl_additions"), int)
+            or not repair_receipt.get("productsign_trusted_for_signing")):
+        raise ValueError("Targeted Installer key ACL helper did not verify the exact signing key")
     identity_output = signing_run([
         "security", "find-identity", "-v", "-p", "basic", str(keychain)
     ]).decode()
@@ -598,6 +613,8 @@ def repair_existing_installer_key_access(keychain: Path, identity: dict[str, str
     repaired_identity = _local_identity_record(keychain, INSTALLER_CERTIFICATE_TYPE, team)
     if repaired_identity["certificate_sha1"] != identity["certificate_sha1"]:
         raise ValueError("Installer identity changed during the additive access repair")
+    repaired_identity["acl_signing_entries"] = str(repair_receipt["signing_acl_entries"])
+    repaired_identity["productsign_acl_additions"] = str(repair_receipt["productsign_acl_additions"])
     return repaired_identity
 
 
@@ -700,10 +717,12 @@ def run_local_signing_preflight(source_dir: Path, source: dict[str, str], team: 
                                          dir=output_dir) as repair_temporary:
             installer_identity = repair_existing_installer_key_access(
                 keychain, installer_identity, team, Path(repair_temporary))
-        report["installer_private_key_access_repaired"] = {
+        report["installer_private_key_access_repair"] = {
             "certificate_sha1": installer_identity["certificate_sha1"],
             "same_retained_key_and_certificate": True,
-            "productsign_allowed": True,
+            "signing_acl_entries": int(installer_identity["acl_signing_entries"]),
+            "productsign_acl_additions": int(installer_identity["productsign_acl_additions"]),
+            "productsign_allowed": False,
             "prior_identity_deleted": False,
         }
         report["signing_identities"][INSTALLER_CERTIFICATE_TYPE] = installer_identity
@@ -712,6 +731,8 @@ def run_local_signing_preflight(source_dir: Path, source: dict[str, str], team: 
             smoke_tests = _test_local_signing_identities(
                 keychain, app_identity, installer_identity, team, Path(temporary))
         report["local_signing_tests"] = smoke_tests
+        report["installer_private_key_access_repair"]["productsign_allowed"] = bool(
+            smoke_tests["installer_package_signed_and_verified"])
     report["qualification"] = {
         "app_archive_built": False,
         "app_store_package_exported": False,
