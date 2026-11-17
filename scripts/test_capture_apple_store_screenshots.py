@@ -12,6 +12,8 @@ from unittest.mock import patch
 from capture_apple_store_screenshots import (
     BUNDLE_ID,
     BUILD_NUMBER,
+    SOURCE_SHA,
+    SOURCE_TAG,
     VERSION,
     bundle_executable,
     code_executable_inventory,
@@ -22,6 +24,7 @@ from capture_apple_store_screenshots import (
     simulator_launch_pid,
     simulator_reported_tvos_app_stopped,
     simulator_codesign_command,
+    require_source,
 )
 
 
@@ -71,6 +74,7 @@ class SimulatorSigningTests(unittest.TestCase):
         self.assertEqual(prefix, TEAM_PREFIX)
         self.assertEqual(runner_bundle_id, RUNNER_BUNDLE_ID)
         self.assertEqual(signed, {})
+
 
     def test_cross_checks_signed_application_identifier_when_present(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -275,6 +279,69 @@ class SimulatorSigningTests(unittest.TestCase):
 
             with self.assertRaisesRegex(ValueError, "invalid mode"):
                 bundle_executable(extension)
+
+
+class ProductSourcePinTests(unittest.TestCase):
+    def make_product_root(self, temporary: str) -> Path:
+        root = Path(temporary)
+        (root / "pubspec.yaml").write_text(
+            f"name: pleazyng\nversion: {VERSION}+{BUILD_NUMBER}\n",
+            encoding="utf-8",
+        )
+        return root
+
+    def test_requires_exact_annotated_candidate_tag_source_and_version(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.make_product_root(temporary)
+            with patch(
+                "capture_apple_store_screenshots.run",
+                side_effect=["tag", SOURCE_SHA, SOURCE_SHA],
+            ) as git_run:
+                require_source(root)
+
+        self.assertEqual(git_run.call_count, 3)
+        self.assertEqual(git_run.call_args_list[0].args[0][-2:], ["-t", f"refs/tags/{SOURCE_TAG}"])
+        self.assertEqual(
+            git_run.call_args_list[1].args[0][-1],
+            f"refs/tags/{SOURCE_TAG}^{{commit}}",
+        )
+        self.assertEqual(git_run.call_args_list[2].args[0][-1], "HEAD")
+
+    def test_rejects_lightweight_tag_or_misdirected_candidate(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.make_product_root(temporary)
+            with patch("capture_apple_store_screenshots.run", return_value=SOURCE_SHA):
+                with self.assertRaisesRegex(ValueError, "annotated tag"):
+                    require_source(root)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.make_product_root(temporary)
+            with patch(
+                "capture_apple_store_screenshots.run",
+                side_effect=["tag", "f" * 40],
+            ):
+                with self.assertRaisesRegex(ValueError, "resolve to"):
+                    require_source(root)
+
+    def test_rejects_wrong_head_and_pubspec_version(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.make_product_root(temporary)
+            with patch(
+                "capture_apple_store_screenshots.run",
+                side_effect=["tag", SOURCE_SHA, "f" * 40],
+            ):
+                with self.assertRaisesRegex(ValueError, "Expected .* at"):
+                    require_source(root)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.make_product_root(temporary)
+            (root / "pubspec.yaml").write_text("name: pleazyng\nversion: 3.0.36+190\n", encoding="utf-8")
+            with patch(
+                "capture_apple_store_screenshots.run",
+                side_effect=["tag", SOURCE_SHA, SOURCE_SHA],
+            ):
+                with self.assertRaisesRegex(ValueError, "Expected 3.0.37\\+196"):
+                    require_source(root)
 
 
 class TvOSSimulatorCleanupTests(unittest.TestCase):
