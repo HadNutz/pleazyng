@@ -226,6 +226,7 @@ def verify_capture_display_target(
     display_target: str,
     sdk_version: str,
     runtime_inventory: dict[str, Any],
+    device_type_inventory: dict[str, Any],
 ) -> dict[str, Any] | None:
     """Require exact public iOS 27.2 simulator models for required screenshots."""
     if display_target not in CAPTURE_DISPLAY_TARGETS:
@@ -242,11 +243,13 @@ def verify_capture_display_target(
         runtime_inventory,
         CAPTURE_DISPLAY_XCODE_VERSION,
     )
+    device_types = device_type_inventory.get("devicetypes")
+    if not isinstance(device_types, list):
+        raise ValueError("simctl did not return a device-types inventory")
     devices = [
-        device for device in runtime_inventory.get("devices", {}).get(runtime["runtime_id"], [])
-        if device.get("isAvailable") is True
-        and device.get("name") == spec["device_name"]
-        and isinstance(device.get("deviceTypeIdentifier"), str)
+        device for device in device_types
+        if device.get("name") == spec["device_name"]
+        and isinstance(device.get("identifier"), str)
     ]
     if len(devices) != 1:
         raise ValueError(
@@ -257,7 +260,7 @@ def verify_capture_display_target(
         **runtime,
         "display_target": display_target,
         "device_name": spec["device_name"],
-        "device_type": devices[0]["deviceTypeIdentifier"],
+        "device_type": devices[0]["identifier"],
         "expected_screenshot_dimensions": spec["expected_screenshot_dimensions"],
     }
 
@@ -272,8 +275,9 @@ def create_storekit_simulator(display_target: str, run_id: str, attempt: str) ->
         return {**device, "display_target": display_target}
 
     sdk_version = command(["xcrun", "--sdk", "iphonesimulator", "--show-sdk-version"], capture=True, timeout=60)
-    inventory = json.loads(command(["xcrun", "simctl", "list", "-j"], capture=True, timeout=60))
-    selected = verify_capture_display_target(display_target, sdk_version, inventory)
+    runtimes = json.loads(command(["xcrun", "simctl", "list", "-j", "runtimes"], capture=True, timeout=60))
+    device_types = json.loads(command(["xcrun", "simctl", "list", "-j", "devicetypes"], capture=True, timeout=60))
+    selected = verify_capture_display_target(display_target, sdk_version, runtimes, device_types)
     assert selected is not None
     name = f"Pleazyng-{run_id}-{attempt}-{display_target}"
     udid = command(
@@ -310,9 +314,22 @@ def verify_capture_screenshot_dimensions(display_target: str, dimensions: tuple[
 
 def verify_runtime(args: argparse.Namespace) -> None:
     sdk_version = command(["xcrun", "--sdk", "iphonesimulator", "--show-sdk-version"], capture=True, timeout=60)
-    inventory = json.loads(command(["xcrun", "simctl", "list", "-j"], capture=True, timeout=60))
-    selected = verify_storekit_test_runtime(sdk_version, inventory, args.minimum_ios_version)
-    display = verify_capture_display_target(args.display_target, sdk_version, inventory)
+    runtimes = json.loads(command(["xcrun", "simctl", "list", "-j", "runtimes"], capture=True, timeout=60))
+    device_types = (
+        json.loads(command(["xcrun", "simctl", "list", "-j", "devicetypes"], capture=True, timeout=60))
+        if args.display_target != "default" else {}
+    )
+    if args.inventory_output is not None:
+        write_json(args.inventory_output, {
+            "schema_version": 1,
+            "display_target": args.display_target,
+            "sdk_version": sdk_version,
+            "simctl_list_runtimes_json": runtimes,
+            "simctl_list_devicetypes_json": device_types,
+            "qualification": "Raw `simctl list -j runtimes` and `simctl list -j devicetypes` JSON captured before display-target selection.",
+        })
+    selected = verify_storekit_test_runtime(sdk_version, runtimes, args.minimum_ios_version)
+    display = verify_capture_display_target(args.display_target, sdk_version, runtimes, device_types)
     if display is not None:
         selected["capture_display_target"] = display
     print(json.dumps(selected, sort_keys=True))
@@ -1252,6 +1269,7 @@ def parser() -> argparse.ArgumentParser:
     runtime = commands.add_parser("verify-runtime", help="verify an installed Simulator runtime for StoreKitTest")
     runtime.add_argument("--minimum-ios-version", required=True)
     runtime.add_argument("--display-target", choices=tuple(CAPTURE_DISPLAY_TARGETS), default="default")
+    runtime.add_argument("--inventory-output", type=Path)
     runtime.set_defaults(handler=verify_runtime)
 
     capture_command = commands.add_parser("capture")

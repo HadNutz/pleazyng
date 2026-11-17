@@ -139,7 +139,8 @@ jobs:
           [[ "$(xcrun --sdk iphonesimulator --show-sdk-version)" == '27.2' ]]
           python3 scripts/stores/capture_apple_trial_storekit.py verify-runtime \
             --minimum-ios-version 26.6 \
-            --display-target "$DISPLAY_TARGET"
+            --display-target "$DISPLAY_TARGET" \
+            --inventory-output "$RUNNER_TEMP/apple-trial-storekit-captures/simulator-inventory-$DISPLAY_TARGET.json"
           df -Pk "$RUNNER_TEMP"
 
       - name: Install StoreKit UI-test project generator for capture-only reuse

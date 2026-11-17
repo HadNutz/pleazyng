@@ -11,6 +11,7 @@ import tempfile
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 
@@ -97,33 +98,30 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
                     "isAvailable": True,
                 },
             ],
-            "devices": {
-                "com.apple.CoreSimulator.SimRuntime.iOS-27-2": [
-                    {
-                        "name": "iPhone Duo",
-                        "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo",
-                        "isAvailable": True,
-                    },
-                    {
-                        "name": "iPhone 18 Pro",
-                        "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro",
-                        "isAvailable": True,
-                    },
-                    {
-                        "name": "iPad Pro 13-inch (M5)",
-                        "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5",
-                        "isAvailable": True,
-                    },
-                ],
-            },
         }
-        phone = capture.verify_capture_display_target("iphone-medium", "27.2", inventory)
-        tablet = capture.verify_capture_display_target("ipad-13", "27.2", inventory)
+        device_types = {
+            "devicetypes": [
+                {
+                    "name": "iPhone Duo",
+                    "identifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo",
+                },
+                {
+                    "name": "iPhone 18 Pro",
+                    "identifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro",
+                },
+                {
+                    "name": "iPad Pro 13-inch (M5)",
+                    "identifier": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5",
+                },
+            ],
+        }
+        phone = capture.verify_capture_display_target("iphone-medium", "27.2", inventory, device_types)
+        tablet = capture.verify_capture_display_target("ipad-13", "27.2", inventory, device_types)
         self.assertEqual(phone["device_name"], "iPhone 18 Pro")
         self.assertEqual(phone["expected_screenshot_dimensions"], [1206, 2622])
         self.assertEqual(tablet["device_name"], "iPad Pro 13-inch (M5)")
         self.assertEqual(tablet["expected_screenshot_dimensions"], [2064, 2752])
-        self.assertIsNone(capture.verify_capture_display_target("default", "27.2", inventory))
+        self.assertIsNone(capture.verify_capture_display_target("default", "27.2", inventory, {}))
 
     def test_required_display_targets_fail_closed_on_wrong_sdk_or_missing_exact_model(self) -> None:
         inventory = {
@@ -134,14 +132,49 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
                     "isAvailable": True,
                 },
             ],
-            "devices": {"com.apple.CoreSimulator.SimRuntime.iOS-27-2": []},
         }
+        device_types = {"devicetypes": []}
         with self.assertRaisesRegex(ValueError, "requires the iOS 27.2 SDK"):
-            capture.verify_capture_display_target("iphone-medium", "27.3", inventory)
+            capture.verify_capture_display_target("iphone-medium", "27.3", inventory, device_types)
         with self.assertRaisesRegex(ValueError, "found 0"):
-            capture.verify_capture_display_target("iphone-medium", "27.2", inventory)
+            capture.verify_capture_display_target("iphone-medium", "27.2", inventory, device_types)
         with self.assertRaisesRegex(ValueError, "Unsupported StoreKit capture display target"):
-            capture.verify_capture_display_target("unknown", "27.2", inventory)
+            capture.verify_capture_display_target("unknown", "27.2", inventory, device_types)
+
+    def test_runtime_preflight_preserves_raw_simctl_inventories_before_target_selection(self) -> None:
+        runtime_inventory = {
+            "runtimes": [
+                {
+                    "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-2",
+                    "version": "27.2",
+                    "isAvailable": True,
+                },
+            ],
+        }
+        device_type_inventory = {"devicetypes": [{"name": "iPhone 18 Pro", "identifier": "device-type-id"}]}
+
+        def fake_command(args: list[str], *, capture: bool = False, timeout: int = 300, cwd: Path | None = None) -> str:
+            if args[:3] == ["xcrun", "--sdk", "iphonesimulator"]:
+                return "27.2"
+            if args[-1] == "runtimes":
+                return json.dumps(runtime_inventory)
+            if args[-1] == "devicetypes":
+                return json.dumps(device_type_inventory)
+            raise AssertionError(f"Unexpected simulator preflight command: {args}")
+
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "simulator-inventory.json"
+            args = SimpleNamespace(
+                display_target="ipad-13",
+                minimum_ios_version="26.6",
+                inventory_output=output,
+            )
+            with patch.object(capture, "command", side_effect=fake_command):
+                with self.assertRaisesRegex(ValueError, "Expected exactly one available iPad Pro 13-inch"):
+                    capture.verify_runtime(args)
+            retained = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(retained["simctl_list_runtimes_json"], runtime_inventory)
+            self.assertEqual(retained["simctl_list_devicetypes_json"], device_type_inventory)
 
     def test_required_screenshot_dimensions_reject_wrong_device_slots(self) -> None:
         capture.verify_capture_screenshot_dimensions("iphone-medium", (1206, 2622))
@@ -588,6 +621,7 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
         self.assertIn("'[\"default\"]'", WORKFLOW)
         self.assertIn("sudo xcode-select --switch /Applications/Xcode_27.2.app/Contents/Developer", WORKFLOW)
         self.assertIn("--display-target \"$DISPLAY_TARGET\"", WORKFLOW)
+        self.assertIn("--inventory-output \"$RUNNER_TEMP/apple-trial-storekit-captures/simulator-inventory-$DISPLAY_TARGET.json\"", WORKFLOW)
         self.assertIn('--display-target "${{ matrix.display_target }}"', WORKFLOW)
         self.assertIn("${{ matrix.display_target }}", WORKFLOW[WORKFLOW.index("name: Upload StoreKitTest screenshots"):])
         self.assertEqual(WORKFLOW.count("flutter build ios --debug --simulator --no-pub"), 1)
