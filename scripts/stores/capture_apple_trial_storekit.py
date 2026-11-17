@@ -214,7 +214,14 @@ def verify_storekit_test_runtime(
     ]
     if not runtimes:
         raise ValueError(f"No installed iOS Simulator runtime matches SDK {sdk_version}")
-    selected = sorted(runtimes, key=lambda item: item["identifier"])[-1]
+    canonical_runtime_id = f"com.apple.CoreSimulator.SimRuntime.iOS-{sdk_pair[0]}-{sdk_pair[1]}"
+    canonical_runtimes = [item for item in runtimes if item["identifier"] == canonical_runtime_id]
+    if len(canonical_runtimes) != 1:
+        raise ValueError(
+            f"Expected exactly one canonical iOS Simulator runtime {canonical_runtime_id}; "
+            f"found {len(canonical_runtimes)}"
+        )
+    selected = canonical_runtimes[0]
     return {
         "sdk_version": sdk_version,
         "runtime_id": selected["identifier"],
@@ -265,7 +272,12 @@ def verify_capture_display_target(
     }
 
 
-def create_storekit_simulator(display_target: str, run_id: str, attempt: str) -> dict[str, Any]:
+def create_storekit_simulator(
+    display_target: str,
+    run_id: str,
+    attempt: str,
+    diagnostic_dir: Path | None = None,
+) -> dict[str, Any]:
     """Create the exact required screenshot simulator, or the default producer device."""
     if display_target not in CAPTURE_DISPLAY_TARGETS:
         raise ValueError(f"Unsupported StoreKit capture display target: {display_target!r}")
@@ -280,11 +292,28 @@ def create_storekit_simulator(display_target: str, run_id: str, attempt: str) ->
     selected = verify_capture_display_target(display_target, sdk_version, runtimes, device_types)
     assert selected is not None
     name = f"Pleazyng-{run_id}-{attempt}-{display_target}"
-    udid = command(
-        ["xcrun", "simctl", "create", name, selected["device_type"], selected["runtime_id"]],
-        capture=True,
-        timeout=120,
-    )
+    create_command = ["xcrun", "simctl", "create", name, selected["device_type"], selected["runtime_id"]]
+    try:
+        udid = command(
+            create_command,
+            capture=True,
+            timeout=120,
+        )
+    except subprocess.CalledProcessError as error:
+        def bounded_output(value: str | bytes | None) -> str:
+            if value is None:
+                return ""
+            decoded = value.decode("utf-8", errors="replace") if isinstance(value, bytes) else value
+            return decoded[-4000:]
+
+        if diagnostic_dir is not None:
+            write_json(diagnostic_dir / "simulator-create-failure.json", {
+                "command": create_command,
+                "exit_code": error.returncode,
+                "stdout_tail": bounded_output(error.stdout or error.output),
+                "stderr_tail": bounded_output(error.stderr),
+            })
+        raise
     if re.fullmatch(r"[0-9A-Fa-f-]{36}", udid) is None:
         raise RuntimeError(f"Simulator returned an invalid device identifier: {udid!r}")
     return {
@@ -837,7 +866,8 @@ def failure_diagnostic_files(output: Path) -> list[str]:
         path.name for path in output.iterdir()
         if path.is_file() and (".timeout." in path.name or path.name in {
             "xctest-runner-build.log", "storekit-ui-test.log", "simulator-storekitd.log",
-        })
+            "simulator-create-failure.json",
+        } or path.name.startswith("simulator-inventory-"))
     )
 
 
@@ -1065,7 +1095,12 @@ def capture(args: argparse.Namespace) -> None:
     failure: str | None = None
     result_bundle: Path | None = None
     try:
-        device = create_storekit_simulator(args.display_target, args.run_id, args.run_attempt)
+        device = create_storekit_simulator(
+            args.display_target,
+            args.run_id,
+            args.run_attempt,
+            diagnostic_dir=output,
+        )
         write_json(output / "simulator.json", device)
         command(["xcrun", "simctl", "boot", device["udid"]], timeout=180)
         command(["xcrun", "simctl", "bootstatus", device["udid"], "-b"], timeout=600)

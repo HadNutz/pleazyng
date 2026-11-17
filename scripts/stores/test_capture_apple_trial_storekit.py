@@ -6,6 +6,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import plistlib
+import subprocess
 import tarfile
 import tempfile
 import unittest
@@ -67,6 +68,11 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
             {
                 "runtimes": [
                     {"identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-3", "version": "27.3", "isAvailable": True},
+                    {
+                        "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-3-iPhone19-4",
+                        "version": "27.3",
+                        "isAvailable": True,
+                    },
                     {"identifier": "com.apple.CoreSimulator.SimRuntime.iOS-26-5", "version": "26.5", "isAvailable": True},
                 ],
             },
@@ -87,6 +93,19 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "requires iOS Simulator 26.6"):
             capture.verify_storekit_test_runtime("26.5", inventory, "26.6")
         with self.assertRaisesRegex(ValueError, "No installed iOS Simulator runtime"):
+            capture.verify_storekit_test_runtime("27.2", inventory, "26.6")
+
+    def test_storekit_runtime_preflight_rejects_device_specific_runtime_without_canonical_runtime(self) -> None:
+        inventory = {
+            "runtimes": [
+                {
+                    "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-2-iPhone19-4",
+                    "version": "27.2",
+                    "isAvailable": True,
+                },
+            ],
+        }
+        with self.assertRaisesRegex(ValueError, "Expected exactly one canonical iOS Simulator runtime"):
             capture.verify_storekit_test_runtime("27.2", inventory, "26.6")
 
     def test_required_display_targets_select_exact_xcode_27_2_simulator_models(self) -> None:
@@ -184,6 +203,60 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
             capture.verify_capture_screenshot_dimensions("iphone-medium", (1398, 2034))
         with self.assertRaisesRegex(ValueError, r"expected \(2064, 2752\)"):
             capture.verify_capture_screenshot_dimensions("ipad-13", (2048, 2732))
+
+    def test_exact_simulator_creation_uses_canonical_runtime_and_retains_cli_error(self) -> None:
+        runtimes = {
+            "runtimes": [
+                {
+                    "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-2",
+                    "version": "27.2",
+                    "isAvailable": True,
+                },
+                {
+                    "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-2-iPhone19-4",
+                    "version": "27.2",
+                    "isAvailable": True,
+                },
+            ],
+        }
+        device_types = {
+            "devicetypes": [
+                {
+                    "name": "iPhone 18 Pro",
+                    "identifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro",
+                },
+            ],
+        }
+        calls: list[list[str]] = []
+
+        def fake_command(args: list[str], *, capture: bool = False, timeout: int = 300, cwd: Path | None = None) -> str:
+            calls.append(args)
+            if args[:3] == ["xcrun", "--sdk", "iphonesimulator"]:
+                return "27.2"
+            if args[-1] == "runtimes":
+                return json.dumps(runtimes)
+            if args[-1] == "devicetypes":
+                return json.dumps(device_types)
+            if args[2] == "create":
+                raise subprocess.CalledProcessError(
+                    147,
+                    args,
+                    output="simulator stdout detail",
+                    stderr="simulator stderr detail",
+                )
+            raise AssertionError(f"Unexpected simulator command: {args}")
+
+        with tempfile.TemporaryDirectory() as temporary:
+            diagnostic_dir = Path(temporary)
+            with patch.object(capture, "command", side_effect=fake_command):
+                with self.assertRaises(subprocess.CalledProcessError):
+                    capture.create_storekit_simulator("iphone-medium", "run-id", "1", diagnostic_dir)
+            create_call = calls[-1]
+            self.assertEqual(create_call[-1], "com.apple.CoreSimulator.SimRuntime.iOS-27-2")
+            failure = json.loads((diagnostic_dir / "simulator-create-failure.json").read_text(encoding="utf-8"))
+            self.assertEqual(failure["exit_code"], 147)
+            self.assertEqual(failure["stdout_tail"], "simulator stdout detail")
+            self.assertEqual(failure["stderr_tail"], "simulator stderr detail")
 
     def test_restore_sync_must_finish_inside_the_recorded_pre_relaunch_window(self) -> None:
         def epoch_ms(value: str) -> int:
