@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "Fit to my screen",
+    "fitHelp": "Move each edge until its markers are visible. Select an edge, then use the arrows to adjust it.",
+    "left": "Left",
+    "right": "Right",
+    "top": "Top",
+    "bottom": "Bottom",
+    "receiver": "Dolby Digital 5.1 for older receivers",
+    "receiverHelp": "Convert multichannel sound to Dolby Digital on compatible outputs. Uses passthrough and keeps the original video when it can be copied.",
+    "missing": "Episode ${episode} is missing from this sequence.",
+    "playLater": "Play episode ${episode} anyway",
+    "playCopy": "Play episode ${episode} from ${server}",
+    "jukebox": "Guest jukebox",
+    "jukeboxInfo": "Guests on your local network can search this music library and add songs to the end of your queue.",
+    "openRoom": "Open jukebox",
+    "closeRoom": "Close jukebox",
+    "join": "Scan to request a song",
+    "noNetwork": "Connect to a local network to open a jukebox.",
+    "added": "Added to the queue",
+    "searchSongs": "Search songs",
+    "roomUnavailable": "This jukebox is unavailable.",
+    "noSongs": "No matching songs",
+    "chooseLibrary": "Choose a music library"
+  },
   "app": {
     "title": "Pleazyng"
   },

@@ -40,6 +40,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
+	late final Translations$livingRoom$en livingRoom = Translations$livingRoom$en.internal(_root);
 	late final Translations$app$en app = Translations$app$en.internal(_root);
 	late final Translations$appIcon$en appIcon = Translations$appIcon$en.internal(_root);
 	late final Translations$auth$en auth = Translations$auth$en.internal(_root);
@@ -127,6 +128,81 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$musicExperience$en musicExperience = Translations$musicExperience$en.internal(_root);
 	late final Translations$musicTools$en musicTools = Translations$musicTools$en.internal(_root);
 	late final Translations$musicDevices$en musicDevices = Translations$musicDevices$en.internal(_root);
+}
+
+// Path: livingRoom
+class Translations$livingRoom$en {
+	Translations$livingRoom$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Fit to my screen'
+	String get fitScreen => 'Fit to my screen';
+
+	/// en: 'Move each edge until its markers are visible. Select an edge, then use the arrows to adjust it.'
+	String get fitHelp => 'Move each edge until its markers are visible. Select an edge, then use the arrows to adjust it.';
+
+	/// en: 'Left'
+	String get left => 'Left';
+
+	/// en: 'Right'
+	String get right => 'Right';
+
+	/// en: 'Top'
+	String get top => 'Top';
+
+	/// en: 'Bottom'
+	String get bottom => 'Bottom';
+
+	/// en: 'Dolby Digital 5.1 for older receivers'
+	String get receiver => 'Dolby Digital 5.1 for older receivers';
+
+	/// en: 'Convert multichannel sound to Dolby Digital on compatible outputs. Uses passthrough and keeps the original video when it can be copied.'
+	String get receiverHelp => 'Convert multichannel sound to Dolby Digital on compatible outputs. Uses passthrough and keeps the original video when it can be copied.';
+
+	/// en: 'Episode ${episode} is missing from this sequence.'
+	String missing({required Object episode}) => 'Episode ${episode} is missing from this sequence.';
+
+	/// en: 'Play episode ${episode} anyway'
+	String playLater({required Object episode}) => 'Play episode ${episode} anyway';
+
+	/// en: 'Play episode ${episode} from ${server}'
+	String playCopy({required Object episode, required Object server}) => 'Play episode ${episode} from ${server}';
+
+	/// en: 'Guest jukebox'
+	String get jukebox => 'Guest jukebox';
+
+	/// en: 'Guests on your local network can search this music library and add songs to the end of your queue.'
+	String get jukeboxInfo => 'Guests on your local network can search this music library and add songs to the end of your queue.';
+
+	/// en: 'Open jukebox'
+	String get openRoom => 'Open jukebox';
+
+	/// en: 'Close jukebox'
+	String get closeRoom => 'Close jukebox';
+
+	/// en: 'Scan to request a song'
+	String get join => 'Scan to request a song';
+
+	/// en: 'Connect to a local network to open a jukebox.'
+	String get noNetwork => 'Connect to a local network to open a jukebox.';
+
+	/// en: 'Added to the queue'
+	String get added => 'Added to the queue';
+
+	/// en: 'Search songs'
+	String get searchSongs => 'Search songs';
+
+	/// en: 'This jukebox is unavailable.'
+	String get roomUnavailable => 'This jukebox is unavailable.';
+
+	/// en: 'No matching songs'
+	String get noSongs => 'No matching songs';
+
+	/// en: 'Choose a music library'
+	String get chooseLibrary => 'Choose a music library';
 }
 
 // Path: app
@@ -18171,6 +18247,28 @@ class Translations$bonusExtras$kind$en {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Fit to my screen',
+			'livingRoom.fitHelp' => 'Move each edge until its markers are visible. Select an edge, then use the arrows to adjust it.',
+			'livingRoom.left' => 'Left',
+			'livingRoom.right' => 'Right',
+			'livingRoom.top' => 'Top',
+			'livingRoom.bottom' => 'Bottom',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 for older receivers',
+			'livingRoom.receiverHelp' => 'Convert multichannel sound to Dolby Digital on compatible outputs. Uses passthrough and keeps the original video when it can be copied.',
+			'livingRoom.missing' => ({required Object episode}) => 'Episode ${episode} is missing from this sequence.',
+			'livingRoom.playLater' => ({required Object episode}) => 'Play episode ${episode} anyway',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'Play episode ${episode} from ${server}',
+			'livingRoom.jukebox' => 'Guest jukebox',
+			'livingRoom.jukeboxInfo' => 'Guests on your local network can search this music library and add songs to the end of your queue.',
+			'livingRoom.openRoom' => 'Open jukebox',
+			'livingRoom.closeRoom' => 'Close jukebox',
+			'livingRoom.join' => 'Scan to request a song',
+			'livingRoom.noNetwork' => 'Connect to a local network to open a jukebox.',
+			'livingRoom.added' => 'Added to the queue',
+			'livingRoom.searchSongs' => 'Search songs',
+			'livingRoom.roomUnavailable' => 'This jukebox is unavailable.',
+			'livingRoom.noSongs' => 'No matching songs',
+			'livingRoom.chooseLibrary' => 'Choose a music library',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'App icon',
 			'appIcon.defaultIcon' => 'Default',
@@ -18661,6 +18759,8 @@ extension on Translations {
 			'settings.motionSmoothingMpv' => 'MPV',
 			'settings.motionSmoothingMpvDescription' => 'Use MPV’s display-synchronized temporal interpolation. On Android, eligible SDR 24/30 fps video uses the GPU renderer while keeping the decoder setting. This does not generate motion with a neural model.',
 			'settings.neuralInterpolation' => 'Neural interpolation',
+			_ => null,
+		} ?? switch (path) {
 			'settings.neuralInterpolationPresets' => 'Presets',
 			'settings.neuralInterpolationUnavailable' => 'Neural unavailable',
 			'settings.neuralInterpolationUnavailableDescription' => 'Generate intermediate frames on the device. Apple uses VideoToolbox; Android tries Qualcomm HTP, then LiteRT NPU or GPU; Windows and Linux use the Pleazyng Motion Engine with a matching model and runtime. On Android and desktop, model packs download the first time Neural is selected and are verified before use; that playback uses the available MPV or normal playback path while they download. Playback diagnostics show the provider that actually ran. Choose Performance, Balanced, or Quality.',
@@ -18683,8 +18783,6 @@ extension on Translations {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Off while loudness normalization is on',
 			'settings.audioChannelLimit' => 'Audio Channels',
 			'settings.audioChannelLimitDescription' => 'Mix decoded audio down for speakers, headphones, or HDMI setups that cannot play every channel',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitOriginal' => 'Original',
 			'settings.audioChannelLimitOriginalDescription' => 'Play every channel in the track',
 			'settings.audioChannelLimitSurround51' => 'Up to 5.1',
@@ -19175,6 +19273,8 @@ extension on Translations {
 			'accessibility.systemHint' => 'Your device’s accessibility settings always apply. These options add adjustments throughout Pleazyng.',
 			'accessibility.readability' => 'Reading and visibility',
 			'accessibility.textSize' => 'Additional text size',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.preview' => 'Find your next story. Read, listen and watch at your own pace.',
 			'accessibility.boldText' => 'Bold interface text',
 			'accessibility.highContrast' => 'High contrast',
@@ -19197,8 +19297,6 @@ extension on Translations {
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Letterbox',
 			'videoControls.fillScreen' => 'Fill screen',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.lockRotation' => 'Lock rotation',
 			'videoControls.unlockRotation' => 'Unlock rotation',
 			'videoControls.timerActive' => 'Timer Active',
@@ -19689,6 +19787,8 @@ extension on Translations {
 			'accountPreferences.loadFailed' => 'Couldn\'t load these preferences',
 			'accountPreferences.noPreference' => 'No preference',
 			'accountPreferences.notSet' => 'Not set',
+			_ => null,
+		} ?? switch (path) {
 			'accountPreferences.groups.audioAndSubtitles' => 'Audio & subtitles',
 			'accountPreferences.groups.libraryDisplay' => 'Library',
 			'accountPreferences.groups.personalMedia' => 'Personal media',
@@ -19711,8 +19811,6 @@ extension on Translations {
 			'accountPreferences.subtitleAccessibilityOptions.preferNonSdh' => 'Prefer non-SDH subtitles',
 			'accountPreferences.subtitleAccessibilityOptions.preferSdh' => 'Prefer SDH subtitles',
 			'accountPreferences.subtitleAccessibilityOptions.onlySdh' => 'Only SDH subtitles',
-			_ => null,
-		} ?? switch (path) {
 			'accountPreferences.subtitleAccessibilityOptions.onlyNonSdh' => 'Only non-SDH subtitles',
 			'accountPreferences.subtitleAccessibilityOptions.preferNonSdhDescription' => 'Prefer standard subtitles when both standard and SDH versions are available.',
 			'accountPreferences.subtitleAccessibilityOptions.preferSdhDescription' => 'Prefer SDH subtitles when available, but allow standard subtitles as a fallback.',
@@ -20203,6 +20301,8 @@ extension on Translations {
 			'explore.badge.processing' => 'Processing',
 			'explore.badge.declined' => 'Declined',
 			'explore.badge.requestFailed' => 'Request failed',
+			_ => null,
+		} ?? switch (path) {
 			'explore.badge.requested4k' => '4K requested',
 			'explore.badge.seasonsAvailable' => ({required Object available, required Object total}) => '${available}/${total} seasons',
 			'explore.badge.nextEpisodeIn' => ({required Object episode, required Object duration}) => 'Ep ${episode} in ${duration}',
@@ -20225,8 +20325,6 @@ extension on Translations {
 			'explore.stats.completed' => ({required Object n}) => '${n} completed',
 			'explore.stats.onHold' => ({required Object n}) => '${n} on hold',
 			'explore.stats.dropped' => ({required Object n}) => '${n} dropped',
-			_ => null,
-		} ?? switch (path) {
 			'explore.season.winter' => 'Winter',
 			'explore.season.spring' => 'Spring',
 			'explore.season.summer' => 'Summer',
@@ -20717,6 +20815,8 @@ extension on Translations {
 			'downloads.noSyncRules' => 'No sync rules',
 			'downloads.manageSyncRule' => 'Manage sync',
 			'downloads.editEpisodeCount' => 'Episode count',
+			_ => null,
+		} ?? switch (path) {
 			'downloads.editSyncFilter' => 'Sync filter',
 			'downloads.syncAllItems' => 'Syncing all items',
 			'downloads.syncUnwatchedItems' => 'Syncing unwatched items',
@@ -20739,8 +20839,6 @@ extension on Translations {
 			'downloads.backgroundWarning.reasonStandbyRestricted' => 'Android has put Pleazyng in a restricted standby state. Set its battery usage to "Unrestricted".',
 			'downloads.backgroundWarning.reasonDownloadChannelBlocked' => 'Download notifications are turned off, so progress and controls may be unavailable.',
 			'downloads.backgroundWarning.reasonNotificationsDisabled' => 'Notifications are turned off. On Android 13 or newer, they are required for long background downloads.',
-			_ => null,
-		} ?? switch (path) {
 			'downloads.backgroundWarning.reasonDataSaver' => 'Data Saver is on, which blocks background downloads on mobile data. Downloads should still run on Wi-Fi.',
 			'downloads.backgroundWarning.reasonOemUnknown' => 'Downloads repeatedly stopped while Pleazyng was in the background. Check Pleazyng\'s battery or background usage settings.',
 			'downloads.backgroundWarning.openSettings' => 'Open settings',
@@ -21231,6 +21329,8 @@ extension on Translations {
 			'trakt.historyExportTooLarge' => 'This history is too large to package here. Use Trakt\'s own data export to split very large histories.',
 			'seerr.requests' => 'Requests',
 			'seerr.statusNotRequested' => 'Not requested',
+			_ => null,
+		} ?? switch (path) {
 			'seerr.title' => 'Seerr',
 			'seerr.connectTitle' => 'Connect Seerr',
 			'seerr.serverUrl' => 'Server URL',
@@ -21253,8 +21353,6 @@ extension on Translations {
 			'seerr.request4kHint' => 'Choose a 4K request in Seerr',
 			'seerr.only4kAvailable' => 'This account can request the 4K version only.',
 			'seerr.cardActionHint' => 'Open the card menu for Seerr request options',
-			_ => null,
-		} ?? switch (path) {
 			'seerr.requestInProgress' => 'Request in progress',
 			'seerr.notifyMe' => 'Notify me when available',
 			'seerr.notifyMe4k' => 'Notify me when 4K is available',
@@ -21745,6 +21843,8 @@ extension on Translations {
 			'universalMedia.removeFavorite' => 'Remove stream favorite',
 			'universalMedia.filesHelp' => 'Choose audio, video, or ISO files for a temporary queue. Files and URLs are not added to library history.',
 			'universalMedia.chooseFiles' => 'Choose files',
+			_ => null,
+		} ?? switch (path) {
 			'universalMedia.fileQueue' => ({required num n, required Object count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 selected file', other: '${count} selected files', ), 
 			'universalMedia.wifiTransfer' => 'Send files over Wi-Fi',
 			'universalMedia.wifiTransferHelp' => 'Transfer supported files from a browser on the same trusted network.',
@@ -21767,8 +21867,6 @@ extension on Translations {
 			'universalMedia.uploadSelected' => 'Upload selected files',
 			'universalMedia.uploadSelectFirst' => 'Choose one or more files first.',
 			'universalMedia.uploading' => 'Sending',
-			_ => null,
-		} ?? switch (path) {
 			'universalMedia.uploadComplete' => 'File added to Pleazyng.',
 			'universalMedia.uploadFailed' => 'The file could not be added. Keep this page open and try again.',
 			'universalMedia.liveCue' => 'LIVE',
@@ -22259,6 +22357,8 @@ extension on Translations {
 			'sourceSetup.nfsSetupHint' => 'Check these settings if the connection does not open.',
 			'sourceSetup.nfsSetupDetails' => 'Use an NFSv3 TCP export. The NFS service and mount service must both support RPC-with-TLS when encryption is required. Leave the custom certificate blank for a server certificate trusted by this device, or add the NAS CA/self-signed certificate. The certificate name must match the host in the endpoint. If the NAS asks for mutual TLS, add its PKCS#12 client identity. Finally, confirm the export allows the configured AUTH_SYS UID/GID and the client port policy.',
 			'sourceSetup.ftpHelp' => 'FTP uses passive mode. Use ftp:// for plain FTP, ftpes:// for explicit TLS, or ftps:// for TLS (implicit on port 990; explicit on other ports).',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.openSubtitles' => 'OpenSubtitles',
 			'sourceSetup.subtitleSetup' => 'Optional subtitle search for standalone videos.',
 			'sourceSetup.apiKey' => 'API key',
@@ -22281,8 +22381,6 @@ extension on Translations {
 			'sourceSetup.videoDetailsLoading' => 'Loading video details',
 			'sourceSetup.subtitleKeyRequired' => 'OpenSubtitles API key required',
 			'sourceSetup.subtitleKeyHelp' => 'Edit this file source and add an OpenSubtitles API key in its optional subtitle settings.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.subtitleSearchFailed' => 'Subtitle search failed. Check the API key, connection, and service access.',
 			'sourceSetup.subtitleApplyFailed' => 'Could not download or apply this subtitle. Check your connection and try another result.',
 			'sourceSetup.subtitleSearch' => 'Search OpenSubtitles',
@@ -22773,6 +22871,8 @@ extension on Translations {
 			'podcasts.directoryLink' => 'Open directory listing',
 			'podcasts.feedAdded' => 'Podcast added.',
 			'podcasts.refreshPartial' => 'Some feeds could not refresh. Cached episodes remain available.',
+			_ => null,
+		} ?? switch (path) {
 			'podcasts.importOpml' => 'Import subscriptions (OPML)',
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
 			'podcasts.imported' => 'Subscriptions imported.',
@@ -22795,8 +22895,6 @@ extension on Translations {
 			'subtitleAiUi.automaticSync' => 'Automatic sync',
 			'subtitleAiUi.cutRepairLowercase' => 'cut repair',
 			'subtitleAiUi.syncLowercase' => 'sync',
-			_ => null,
-		} ?? switch (path) {
 			'subtitleAiUi.subtitleReferenceSync' => 'Subtitle-reference sync',
 			'subtitleAiUi.capturedEvidenceTimingNote' => 'Cues outside captured evidence kept their original timing. ',
 			'subtitleAiUi.uploadedToServerLibraryNote' => ' Uploaded to the server library.',
@@ -23287,6 +23385,8 @@ extension on Translations {
 			'karaokeUi.sendRawVocalAudioForPrivateTake' => 'Send raw vocal audio to save a private take on the host',
 			'karaokeUi.enablePhoneMicrophone' => 'Enable phone microphone',
 			'karaokeUi.muteAndSavePhoneInput' => 'Mute and save',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.pitchMIDIPracticeOnly' => ({required Object value1}) => 'Pitch MIDI ${value1} · practice only',
 			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',
 			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',
@@ -23309,8 +23409,6 @@ extension on Translations {
 			'karaokeUi.lyricTiming' => 'Lyric timing',
 			'karaokeUi.editWordSyllableTiming' => 'Edit word/syllable timing',
 			'karaokeUi.timeTheLineBeforeEditingSyllables' => 'Set a start time for this lyric line before editing its syllables.',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.splitClearsSpanPronunciationAndConfidence' => 'Splitting clears the span reading and confidence. Merging requires matching singer parts, readings, and confidence.',
 			'karaokeUi.syllableText' => 'Word or syllable text',
 			'karaokeUi.splitSpan' => 'Split span',

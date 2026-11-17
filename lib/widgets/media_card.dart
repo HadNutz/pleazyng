@@ -30,6 +30,8 @@ import '../providers/download_provider.dart';
 import '../providers/watch_state_store.dart';
 import '../services/download_storage_service.dart';
 import '../services/settings_service.dart';
+import '../services/playback_coordinator.dart';
+import '../services/music/music_playback_service.dart';
 import 'catalog_context_menu.dart';
 import 'settings_builder.dart';
 import 'watched_indicator.dart';
@@ -313,8 +315,52 @@ class MediaCard extends StatefulWidget {
   State<MediaCard> createState() => MediaCardState();
 }
 
+bool canPlayFocusedVideo(BuildContext context, MediaItem item) {
+  final coordinator = PlaybackCoordinator.instance;
+  return !item.isCatalogItem &&
+      {MediaKind.movie, MediaKind.episode, MediaKind.show, MediaKind.season, MediaKind.clip}.contains(item.kind) &&
+      !coordinator.hasVideoSession &&
+      !coordinator.hasFileSession &&
+      !coordinator.hasKaraokeSession &&
+      context.read<MusicPlaybackService?>()?.currentTrack == null;
+}
+
 class MediaCardState extends State<MediaCard> with ContextMenuTapMixin<MediaCard> {
   /// Public method to trigger tap action (for keyboard/gamepad SELECT)
+  bool _openingWithPlay = false;
+
+  bool playFocused() {
+    final item = _effectiveItemForAction(context);
+    if (item is! MediaItem ||
+        widget.selected != null ||
+        contextMenuKey.currentState?.isContextMenuOpen == true ||
+        !canPlayFocusedVideo(context, item)) {
+      return false;
+    }
+    if (!_openingWithPlay) {
+      _openingWithPlay = true;
+      unawaited(_openFocused(item));
+    }
+    return true;
+  }
+
+  Future<void> _openFocused(MediaItem item) async {
+    try {
+      await navigateToMediaItem(
+        context,
+        item,
+        onRefresh: widget.onRefresh,
+        isOffline: widget.isOffline,
+        playDirectly: widget.usesContinueWatchingAction,
+        forcePlay: true,
+      );
+    } catch (_) {
+      if (mounted) showErrorSnackBar(context, t.messages.playbackFailed);
+    } finally {
+      _openingWithPlay = false;
+    }
+  }
+
   void handleTap() {
     _handleTap(context, _effectiveItemForAction(context));
   }

@@ -59,6 +59,7 @@ import 'utils/iphone_duo.dart';
 import 'utils/platform_detector.dart';
 import 'utils/pointer_scroll_axis.dart';
 import 'services/apple_tv_remote_touch_service.dart';
+import 'widgets/projector_viewport.dart';
 import 'services/discord_rpc_service.dart';
 
 import 'package:path_provider/path_provider.dart';
@@ -2467,10 +2468,12 @@ class _AppShell extends StatelessWidget {
 Widget rootShell(Widget? child) {
   return AppSystemUiStyle(
     child: IphoneDuoScope(
-      child: FormFactorScale(
-        child: ScaffoldMessenger(
-          key: rootScaffoldMessengerKey,
-          child: Scaffold(backgroundColor: Colors.transparent, body: child),
+      child: ProjectorViewport(
+        child: FormFactorScale(
+          child: ScaffoldMessenger(
+            key: rootScaffoldMessengerKey,
+            child: Scaffold(backgroundColor: Colors.transparent, body: child),
+          ),
         ),
       ),
     ),

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../focus/focus_navigation_intent.dart';
+import '../focus/focused_media_play.dart';
 import '../utils/app_logger.dart';
 import '../utils/key_event_simulator.dart' as key_sim;
 import 'gamepad_service.dart';
@@ -184,6 +185,7 @@ class AppleTvRemoteTouchService {
         final source = arguments['source'] is String ? arguments['source'] as String : 'native';
         final detail = arguments['detail'] is String ? arguments['detail'] as String : null;
         _log('emit action=play_pause source=$source${detail == null ? '' : ' detail=$detail'}');
+        if (detail != 'remoteControlPause' && FocusedMediaPlay.fromPrimaryFocus()) return;
         _playPauseController.add(AppleTvRemotePlayPauseAction(source: source, detail: detail));
       case 'loc':
         break;

@@ -7,6 +7,10 @@ import '../i18n/strings.g.dart';
 import '../media/canonical_library.dart';
 import '../media/catalog_item_ref.dart';
 import '../media/ids.dart';
+import '../media/episode_collection.dart';
+import '../providers/download_provider.dart';
+import 'provider_extensions.dart';
+import 'snackbar_helper.dart';
 import '../media/media_backend.dart';
 import '../media/media_item.dart';
 import '../media/media_item_merge.dart';
@@ -197,6 +201,7 @@ Future<MediaNavigationResult> navigateToMediaItem(
   void Function(MediaItem source)? onRefresh,
   bool isOffline = false,
   bool playDirectly = false,
+  bool forcePlay = false,
 }) async {
   if (item is MediaPlaylist) {
     var changed = false;
@@ -232,6 +237,38 @@ Future<MediaNavigationResult> navigateToMediaItem(
       if (picked == null || !context.mounted) return MediaNavigationResult.navigated;
       mi = picked;
     }
+  }
+
+  if (forcePlay && (mi.isShow || mi.isSeason)) {
+    MediaItem? episode;
+    if (isOffline) {
+      final showId = mi.isShow ? mi.id : mi.parentId;
+      if (showId != null && mi.serverId != null) {
+        final downloaded = context
+            .read<DownloadProvider>()
+            .getDownloadedEpisodesForShow(buildGlobalKey(ServerId(mi.serverId!), showId))
+            .where((ep) => mi.isShow || ep.parentId == mi.id)
+            .toList();
+        sortEpisodesByWatchOrder(downloaded);
+        episode = firstUnwatchedEpisode(downloaded) ?? downloaded.firstOrNull;
+      }
+    } else {
+      final client = context.tryGetMediaClientForServer(serverIdOrNull(mi.serverId));
+      if (client != null) {
+        if (mi.isShow) episode = (await client.fetchItemWithOnDeck(mi.id)).onDeckEpisode;
+        if (episode == null) {
+          final episodes = (await client.fetchPlayableDescendants(mi.id)).where((e) => e.isEpisode).toList();
+          sortEpisodesByWatchOrder(episodes);
+          episode = firstUnwatchedEpisode(episodes) ?? episodes.firstOrNull;
+        }
+      }
+    }
+    if (!context.mounted) return MediaNavigationResult.navigated;
+    if (episode == null) {
+      showErrorSnackBar(context, t.messages.noEpisodesFound);
+      return MediaNavigationResult.unsupported;
+    }
+    mi = episode.copyWith(serverId: mi.serverId, serverName: mi.serverName);
   }
 
   final sources = context.read<SourceController?>();
@@ -301,7 +338,7 @@ Future<MediaNavigationResult> navigateToMediaItem(
 
     case MediaKind.clip:
     case MediaKind.episode:
-      if (mi.kind == MediaKind.episode && shouldOpenEpisodeDetails) {
+      if (mi.kind == MediaKind.episode && !forcePlay && shouldOpenEpisodeDetails) {
         return navigateToMediaItemDetails(context, mi, onRefresh: onRefresh, isOffline: isOffline);
       }
       final result = await navigateToVideoPlayer(context, metadata: mi, isOffline: isOffline);
@@ -311,7 +348,7 @@ Future<MediaNavigationResult> navigateToMediaItem(
       return MediaNavigationResult.navigated;
 
     case MediaKind.movie:
-      if (playDirectly && !shouldOpenContinueWatchingDetails) {
+      if (forcePlay || (playDirectly && !shouldOpenContinueWatchingDetails)) {
         final result = await navigateToVideoPlayer(context, metadata: mi, isOffline: isOffline);
         if (result == true && context.mounted) {
           onRefresh?.call(mi);

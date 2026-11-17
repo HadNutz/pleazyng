@@ -9,6 +9,7 @@ import '../../karaoke/karaoke_strings.dart';
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,6 +33,8 @@ import '../../multiview/workspace_controller.dart';
 import '../../multiview/workspace_models.dart';
 import '../../media/media_server_client.dart';
 import '../../providers/companion_remote_provider.dart';
+import '../../services/music/guest_jukebox.dart';
+import 'jukebox_dialog.dart';
 import '../../mixins/context_menu_tap_mixin.dart';
 import '../../mpv/mpv.dart';
 import '../../services/device_performance.dart';
@@ -978,6 +981,12 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
               onSelected: () => _transferCastQueue(session as MusicTransferSession, session, companion, output),
             ),
         ],
+        if (!kIsWeb && context.read<GuestJukebox?>() != null)
+          MediaMenuExtraEntry(
+            icon: Symbols.queue_music_rounded,
+            label: t.livingRoom.jukebox,
+            onSelected: () => showGuestJukebox(context),
+          ),
         if (companion.canManageMusicGroups && output?.remoteOutputName == null)
           MediaMenuExtraEntry(
             icon: Symbols.speaker_group_rounded,

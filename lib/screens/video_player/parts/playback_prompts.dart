@@ -106,6 +106,11 @@ extension _VideoPlayerPlaybackPromptMethods on VideoPlayerScreenState {
       // Repeat-all is an explicit continuous playback request. Do not make it
       // depend on the global autoplay-next setting or show the Play Next UI.
       final playbackState = context.read<PlaybackStateProvider>();
+      if (!serverStopped && _missingEpisode(_episode.next!) != null) {
+        // A hole in a series needs an explicit choice before any countdown.
+        unawaited(_playNext());
+        return;
+      }
       if (playbackState.isRepeatActive) {
         unawaited(_playNext());
         return;

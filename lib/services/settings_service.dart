@@ -1636,6 +1636,8 @@ class SettingsService extends BaseSharedPreferencesService {
     values: GridSpacing.values,
     defaultValueProvider: _tvAwareGridSpacingDefault,
   );
+  static const projectorInsets = StringListPref('projector_insets');
+  static const receiverAc3 = BoolPref('receiver_ac3_51');
   static const automotiveUiScale = _AutomotiveUiScalePref();
   static const tvCornerSpotlightBackdrop = BoolPref('tv_corner_spotlight_backdrop');
   static const episodePosterMode = _EpisodePosterModePref();

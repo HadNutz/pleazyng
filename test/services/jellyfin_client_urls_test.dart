@@ -2920,6 +2920,28 @@ void main() {
       expect(capturedUri.toString(), contains('/Items/folder%2Fitem%20%231%3Fx/PlaybackInfo'));
     });
 
+    test('receiver requests AC-3 on each video container and permits video copy', () async {
+      late Map<String, dynamic> body;
+      final scoped = JellyfinClient.forTesting(
+        connection: _conn(),
+        httpClient: MockClient((request) async {
+          body = jsonDecode(request.body) as Map<String, dynamic>;
+          return jsonResponse({'MediaSources': []});
+        }),
+      );
+      addTearDown(scoped.close);
+      await scoped.getPlaybackInfo('movie', receiverAc3: true, allowVideoStreamCopy: true);
+      expect(body['AllowVideoStreamCopy'], true);
+      expect(body['AllowAudioStreamCopy'], false);
+      expect(body['EnableDirectPlay'], false);
+      expect(body['MaxAudioChannels'], 6);
+      final profiles = (body['DeviceProfile']['TranscodingProfiles'] as List).where((p) => p['Type'] == 'Video');
+      expect(profiles, isNotEmpty);
+      for (final profile in profiles) {
+        expect(profile['AudioCodec'], 'ac3');
+      }
+    });
+
     test('video audio negotiation uses measured decoders without claiming output support', () async {
       RuntimePlaybackCapabilities.recordMpvDecoders([
         {'codec': 'h264', 'driver': 'h264'},

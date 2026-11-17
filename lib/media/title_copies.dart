@@ -11,6 +11,7 @@ import 'media_server_client.dart';
 class TitleQuery {
   const TitleQuery.movie({required this.title, this.year, this.ids = const ExternalIds(), this.plexGuid})
     : kind = MediaKind.movie,
+      exactShowOnly = false,
       showTitle = null,
       showYear = null,
       showIds = const ExternalIds(),
@@ -27,11 +28,13 @@ class TitleQuery {
     required int this.episode,
     this.ids = const ExternalIds(),
     this.title = '',
+    this.exactShowOnly = false,
   }) : kind = MediaKind.episode,
        year = null,
        plexGuid = null;
 
   final MediaKind kind;
+  final bool exactShowOnly;
 
   /// The movie's title, or the episode's own (unused for lookups).
   final String title;
@@ -76,6 +79,7 @@ extension TitleCopiesLookup on MediaServerClient {
       final shows = await _titleItems(
         kind: MediaKind.show,
         title: query.showTitle ?? '',
+        exactOnly: query.exactShowOnly,
         year: query.showYear,
         ids: query.showIds,
         plexGuid: query.showPlexGuid,
@@ -94,6 +98,7 @@ extension TitleCopiesLookup on MediaServerClient {
   Future<List<MediaItem>> _titleItems({
     required MediaKind kind,
     required String title,
+    bool exactOnly = false,
     required int? year,
     required ExternalIds ids,
     required String? plexGuid,
@@ -105,7 +110,7 @@ extension TitleCopiesLookup on MediaServerClient {
       abort?.throwIfAborted();
       if (byId != null && byId.isNotEmpty) return byId;
     }
-    if (titles.isEmpty) return const [];
+    if (exactOnly || titles.isEmpty) return const [];
     final hits = await searchItems(titles.single, limit: 50, abort: abort);
     abort?.throwIfAborted();
     final folded = foldTitle(titles.single);
@@ -162,7 +167,22 @@ extension TitleCopiesLookup on MediaServerClient {
       abort?.throwIfAborted();
       matches.addAll(episodes.where(isTarget));
     }
-    return matches;
+    return [for (final item in matches) _inheritLocation(item, show)];
+  }
+
+  MediaItem _inheritLocation(MediaItem item, MediaItem parent) {
+    if ((item.libraryId != null || parent.libraryId == null) &&
+        (item.libraryTitle != null || parent.libraryTitle == null) &&
+        (item.serverId != null || parent.serverId == null) &&
+        (item.serverName != null || parent.serverName == null)) {
+      return item;
+    }
+    return item.copyWith(
+      libraryId: item.libraryId ?? parent.libraryId,
+      libraryTitle: item.libraryTitle ?? parent.libraryTitle,
+      serverId: item.serverId ?? parent.serverId,
+      serverName: item.serverName ?? parent.serverName,
+    );
   }
 
   Future<List<MediaItem>> _seasonEpisodes(MediaItem show, MediaItem season) async {
@@ -187,7 +207,8 @@ extension TitleCopiesLookup on MediaServerClient {
       }
       abort?.throwIfAborted();
       try {
-        result.add(await fetchItem(item.id) ?? item);
+        final detail = await fetchItem(item.id);
+        result.add(detail == null ? item : _inheritLocation(detail, item));
       } catch (error, stackTrace) {
         // The row itself still names the copy; its length may be on the row.
         appLogger.w('Could not read versions of ${item.id}', error: error, stackTrace: stackTrace);

@@ -1,3 +1,4 @@
+import '../focus/focused_media_play.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -358,6 +359,7 @@ class HubSectionState extends State<HubSection> with MountedSetStateMixin, Skele
 
   /// Handle ALL key events at the hub level
   KeyEventResult _handleKeyEvent(FocusNode _, KeyEvent event) {
+    if (FocusedMediaPlay.handle(event) == KeyEventResult.handled) return KeyEventResult.handled;
     final key = event.logicalKey;
 
     final selectResult = _selectLongPress.handleKeyEvent(
@@ -629,247 +631,252 @@ class HubSectionState extends State<HubSection> with MountedSetStateMixin, Skele
           ),
 
           if (widget.hub.items.isNotEmpty)
-            Focus(
-              focusNode: _hubFocusNode,
-              onKeyEvent: _handleKeyEvent,
-              child: SettingsBuilder(
-                prefs: const [
-                  SettingsService.libraryDensity,
-                  SettingsService.episodePosterMode,
-                  SettingsService.gridSpacing,
-                  SettingsService.continueWatchingRowSize,
-                ],
-                builder: (context) => LayoutBuilder(
-                  builder: (context, constraints) {
-                    final svc = SettingsService.instanceOrNull;
-                    if (svc == null) return const SizedBox.shrink();
-                    final density = svc.read(SettingsService.libraryDensity);
-                    final EpisodePosterMode episodePosterMode =
-                        widget.episodePosterModeOverride ?? svc.read(SettingsService.episodePosterMode);
+            FocusedMediaPlay(
+              play: () => _mediaCardKeys[_focusedIndex]?.currentState?.playFocused() ?? false,
+              child: Focus(
+                focusNode: _hubFocusNode,
+                onKeyEvent: _handleKeyEvent,
+                child: SettingsBuilder(
+                  prefs: const [
+                    SettingsService.libraryDensity,
+                    SettingsService.episodePosterMode,
+                    SettingsService.gridSpacing,
+                    SettingsService.continueWatchingRowSize,
+                  ],
+                  builder: (context) => LayoutBuilder(
+                    builder: (context, constraints) {
+                      final svc = SettingsService.instanceOrNull;
+                      if (svc == null) return const SizedBox.shrink();
+                      final density = svc.read(SettingsService.libraryDensity);
+                      final EpisodePosterMode episodePosterMode =
+                          widget.episodePosterModeOverride ?? svc.read(SettingsService.episodePosterMode);
 
-                    final hasEpisodes = widget.hub.items.any((item) => item.usesWideAspectRatio(episodePosterMode));
-                    final hasNonEpisodes = widget.hub.items.any((item) => !item.usesWideAspectRatio(episodePosterMode));
+                      final hasEpisodes = widget.hub.items.any((item) => item.usesWideAspectRatio(episodePosterMode));
+                      final hasNonEpisodes = widget.hub.items.any(
+                        (item) => !item.usesWideAspectRatio(episodePosterMode),
+                      );
 
-                    final isMixedHub = hasEpisodes && hasNonEpisodes;
+                      final isMixedHub = hasEpisodes && hasNonEpisodes;
 
-                    // 16:9 when every item is wide (episode thumbnails, clips,
-                    // home videos), or for mixed hubs in episode-thumbnail
-                    // mode. Clip-only hubs stay wide in the poster modes —
-                    // same gate as TvBrowseRail — since episodes already fold
-                    // the mode into usesWideAspectRatio (#2036).
-                    final useWideLayout =
-                        hasEpisodes && (!hasNonEpisodes || episodePosterMode == EpisodePosterMode.episodeThumbnail);
+                      // 16:9 when every item is wide (episode thumbnails, clips,
+                      // home videos), or for mixed hubs in episode-thumbnail
+                      // mode. Clip-only hubs stay wide in the poster modes —
+                      // same gate as TvBrowseRail — since episodes already fold
+                      // the mode into usesWideAspectRatio (#2036).
+                      final useWideLayout =
+                          hasEpisodes && (!hasNonEpisodes || episodePosterMode == EpisodePosterMode.episodeThumbnail);
 
-                    // Music hubs render square album/artist artwork
-                    final isSquareHub =
-                        widget.hub.items.isNotEmpty &&
-                        widget.hub.items.every((item) => item.cardShape(episodePosterMode) == CardShape.square);
+                      // Music hubs render square album/artist artwork
+                      final isSquareHub =
+                          widget.hub.items.isNotEmpty &&
+                          widget.hub.items.every((item) => item.cardShape(episodePosterMode) == CardShape.square);
 
-                    // A hub row is one row of the grid: cells pack with the
-                    // same gutter the grid uses, so a row and the "see all"
-                    // grid behind it render the same card at equal width.
-                    final gridGap = svc.read(SettingsService.gridSpacing).gridGap;
-                    final baseCardWidth = isTv && widget.cardSizing == HubCardSizing.shelf
-                        ? _getTvCardWidth(
-                            context,
-                            constraints.maxWidth,
-                            density,
-                            leadingPadding,
-                            useWideLayout,
-                            gridGap,
-                          )
-                        : MediaGridDelegate.cellWidth(
-                            context: context,
-                            availableWidth: constraints.maxWidth,
-                            density: density,
-                            useWideAspectRatio: useWideLayout,
-                          );
-                    final cardWidth =
-                        baseCardWidth *
-                        (widget.isInContinueWatching ? svc.read(SettingsService.continueWatchingRowSize).scale : 1.0);
-                    final posterWidth = cardWidth - 6; // 3px padding on each side
-                    final posterHeight = useWideLayout
-                        ? posterWidth *
-                              (9 / 16) // 16:9 for wide layout
-                        : isSquareHub
-                        ? posterWidth // 1:1 for music artwork
-                        : posterWidth * 1.5; // 2:3 for poster layout
+                      // A hub row is one row of the grid: cells pack with the
+                      // same gutter the grid uses, so a row and the "see all"
+                      // grid behind it render the same card at equal width.
+                      final gridGap = svc.read(SettingsService.gridSpacing).gridGap;
+                      final baseCardWidth = isTv && widget.cardSizing == HubCardSizing.shelf
+                          ? _getTvCardWidth(
+                              context,
+                              constraints.maxWidth,
+                              density,
+                              leadingPadding,
+                              useWideLayout,
+                              gridGap,
+                            )
+                          : MediaGridDelegate.cellWidth(
+                              context: context,
+                              availableWidth: constraints.maxWidth,
+                              density: density,
+                              useWideAspectRatio: useWideLayout,
+                            );
+                      final cardWidth =
+                          baseCardWidth *
+                          (widget.isInContinueWatching ? svc.read(SettingsService.continueWatchingRowSize).scale : 1.0);
+                      final posterWidth = cardWidth - 6; // 3px padding on each side
+                      final posterHeight = useWideLayout
+                          ? posterWidth *
+                                (9 / 16) // 16:9 for wide layout
+                          : isSquareHub
+                          ? posterWidth // 1:1 for music artwork
+                          : posterWidth * 1.5; // 2:3 for poster layout
 
-                    // Rendered gap between neighbouring cards. The row has
-                    // always carried 4px (2px each side) on top of the card's
-                    // own 3px padding, so Tight stays byte-identical and the
-                    // wider settings render exactly the grid gutter (#2226).
-                    final cardGap = math.max(4.0, gridGap);
-                    final cardPadding = widget.inset
-                        ? EdgeInsetsDirectional.only(end: cardGap)
-                        : EdgeInsets.symmetric(horizontal: cardGap / 2);
+                      // Rendered gap between neighbouring cards. The row has
+                      // always carried 4px (2px each side) on top of the card's
+                      // own 3px padding, so Tight stays byte-identical and the
+                      // wider settings render exactly the grid gutter (#2226).
+                      final cardGap = math.max(4.0, gridGap);
+                      final cardPadding = widget.inset
+                          ? EdgeInsetsDirectional.only(end: cardGap)
+                          : EdgeInsets.symmetric(horizontal: cardGap / 2);
 
-                    final captionHeight = math.max(
-                      isTv ? 48.0 : 33.0,
-                      MediaCard.gridCaptionBandHeight(context, posterTitleGap: 2),
-                    );
-                    final containerHeight = posterHeight + captionHeight;
-                    final focusBorderWidth = FocusTheme.focusBorderWidth;
-                    final focusExtra = focusBorderWidth * 2; // border on both sides
-                    _itemExtent = cardWidth + focusExtra + cardGap;
+                      final captionHeight = math.max(
+                        isTv ? 48.0 : 33.0,
+                        MediaCard.gridCaptionBandHeight(context, posterTitleGap: 2),
+                      );
+                      final containerHeight = posterHeight + captionHeight;
+                      final focusBorderWidth = FocusTheme.focusBorderWidth;
+                      final focusExtra = focusBorderWidth * 2; // border on both sides
+                      _itemExtent = cardWidth + focusExtra + cardGap;
 
-                    // Everything the card closures capture; a change flushes
-                    // the memo so cached cards can't carry stale geometry.
-                    final cardEpoch = (
-                      cardWidth,
-                      cardGap,
-                      posterHeight,
-                      useWideLayout,
-                      isMixedHub,
-                      episodePosterMode,
-                      isKeyboardMode,
-                      widget.inset,
-                      widget.isInContinueWatching,
-                      widget.usesContinueWatchingAction,
-                    );
+                      // Everything the card closures capture; a change flushes
+                      // the memo so cached cards can't carry stale geometry.
+                      final cardEpoch = (
+                        cardWidth,
+                        cardGap,
+                        posterHeight,
+                        useWideLayout,
+                        isMixedHub,
+                        episodePosterMode,
+                        isKeyboardMode,
+                        widget.inset,
+                        widget.isInContinueWatching,
+                        widget.usesContinueWatchingAction,
+                      );
 
-                    return SizedBox(
-                      height: containerHeight + focusExtra + (isTv ? 12 : 4), // extra for scale + border top/bottom
-                      child: HorizontalScrollWithArrows(
-                        controller: _scrollController,
-                        builder: (scrollController) => ListView.builder(
-                          // Inert on media lists (no keep-alive clients): dropping the
-                          // per-child wrappers shrinks build + semantics work per item.
-                          addAutomaticKeepAlives: false,
-                          addSemanticIndexes: false,
-                          controller: scrollController,
-                          scrollDirection: Axis.horizontal,
-                          clipBehavior: Clip.none,
-                          // On touch, don't pre-inflate off-screen cards when a row
-                          // enters the viewport — the default 250px realizes 2+ extra
-                          // cards per side in the same frame, fattening the row-entry
-                          // spike. Cards inflate as they scroll in instead (a few ms
-                          // each). TV keeps the default: d-pad animateTo benefits from
-                          // the prefetch and TV rows inflate via the focus path anyway.
-                          scrollCacheExtent: isTv ? null : const ScrollCacheExtent.pixels(0),
-                          padding: widget.inset
-                              ? EdgeInsets.symmetric(vertical: isTv ? 6 : 2)
-                              : EdgeInsets.symmetric(horizontal: isTv ? leadingPadding : 8, vertical: isTv ? 6 : 2),
-                          itemCount: isKeyboardMode ? _totalItemCount : widget.hub.items.length,
-                          itemBuilder: (context, index) {
-                            final isItemFocused = hasFocus && index == _focusedIndex;
+                      return SizedBox(
+                        height: containerHeight + focusExtra + (isTv ? 12 : 4), // extra for scale + border top/bottom
+                        child: HorizontalScrollWithArrows(
+                          controller: _scrollController,
+                          builder: (scrollController) => ListView.builder(
+                            // Inert on media lists (no keep-alive clients): dropping the
+                            // per-child wrappers shrinks build + semantics work per item.
+                            addAutomaticKeepAlives: false,
+                            addSemanticIndexes: false,
+                            controller: scrollController,
+                            scrollDirection: Axis.horizontal,
+                            clipBehavior: Clip.none,
+                            // On touch, don't pre-inflate off-screen cards when a row
+                            // enters the viewport — the default 250px realizes 2+ extra
+                            // cards per side in the same frame, fattening the row-entry
+                            // spike. Cards inflate as they scroll in instead (a few ms
+                            // each). TV keeps the default: d-pad animateTo benefits from
+                            // the prefetch and TV rows inflate via the focus path anyway.
+                            scrollCacheExtent: isTv ? null : const ScrollCacheExtent.pixels(0),
+                            padding: widget.inset
+                                ? EdgeInsets.symmetric(vertical: isTv ? 6 : 2)
+                                : EdgeInsets.symmetric(horizontal: isTv ? leadingPadding : 8, vertical: isTv ? 6 : 2),
+                            itemCount: isKeyboardMode ? _totalItemCount : widget.hub.items.length,
+                            itemBuilder: (context, index) {
+                              final isItemFocused = hasFocus && index == _focusedIndex;
 
-                            if (index == widget.hub.items.length) {
-                              return Padding(
-                                key: _itemKeyFor(index),
-                                padding: cardPadding,
-                                child: FocusBuilders.buildLockedFocusWrapper(
-                                  context: context,
-                                  isFocused: isItemFocused,
-                                  onTap: () {
-                                    _onItemTapped(index);
-                                    _navigateToHubDetail(context);
-                                  },
-                                  child: SizedBox(
-                                    width: isTv ? 118 : 80,
-                                    height: containerHeight - 10,
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisSize: .min,
-                                        children: [
-                                          AppIcon(
-                                            Directionality.of(context) == TextDirection.rtl
-                                                ? Symbols.arrow_back_rounded
-                                                : Symbols.arrow_forward_rounded,
-                                            size: isTv ? 42 : 32,
-                                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            t.common.viewAll,
-                                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                              if (index == widget.hub.items.length) {
+                                return Padding(
+                                  key: _itemKeyFor(index),
+                                  padding: cardPadding,
+                                  child: FocusBuilders.buildLockedFocusWrapper(
+                                    context: context,
+                                    isFocused: isItemFocused,
+                                    onTap: () {
+                                      _onItemTapped(index);
+                                      _navigateToHubDetail(context);
+                                    },
+                                    child: SizedBox(
+                                      width: isTv ? 118 : 80,
+                                      height: containerHeight - 10,
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisSize: .min,
+                                          children: [
+                                            AppIcon(
+                                              Directionality.of(context) == TextDirection.rtl
+                                                  ? Symbols.arrow_back_rounded
+                                                  : Symbols.arrow_forward_rounded,
+                                              size: isTv ? 42 : 32,
                                               color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-                                              fontSize: isTv ? 16 : null,
                                             ),
-                                          ),
-                                        ],
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              t.common.viewAll,
+                                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                                                fontSize: isTv ? 16 : null,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              final item = widget.hub.items[index];
+
+                              // Budget fresh inflations while an enclosing
+                              // scrollable is moving (rows enter on the parent's
+                              // vertical scroll); skeletons upgrade a frame
+                              // later.
+                              return realizeBudgeted(
+                                _cardMemo,
+                                context,
+                                index,
+                                item,
+                                epoch: cardEpoch,
+                                // Focus moves only rebuild the two affected
+                                // indices instead of the whole realized row.
+                                salt: isItemFocused,
+                                keyboardMode: isKeyboardMode,
+                                skeleton: () => Padding(
+                                  padding: cardPadding,
+                                  child: SizedBox(
+                                    width: cardWidth,
+                                    child: SkeletonMediaCard(posterHeight: posterHeight),
+                                  ),
+                                ),
+                                build: () => Padding(
+                                  key: _itemKeyFor(index),
+                                  padding: cardPadding,
+                                  child: FocusBuilders.buildLockedFocusWrapper(
+                                    context: context,
+                                    isFocused: isItemFocused,
+                                    // Pointer/touch taps never reach these: MediaCard's own
+                                    // tap region is deeper in the tree and always wins the
+                                    // gesture arena. Passing null lets the wrapper collapse
+                                    // to the bare card outside keyboard mode instead of
+                                    // building a second dead gesture-detector stack per card.
+                                    onTap: isKeyboardMode ? () => _onItemTapped(index) : null,
+                                    onLongPress: isKeyboardMode
+                                        ? () {
+                                            _onItemTapped(index);
+                                            _mediaCardKeys[index]?.currentState?.showContextMenu();
+                                          }
+                                        : null,
+                                    delegateFocusBorder: true,
+                                    child: MediaCard(
+                                      key: _getMediaCardKey(index),
+                                      item: item,
+                                      width: cardWidth,
+                                      height: posterHeight,
+                                      onRefresh: widget.onRefresh,
+                                      onRemoveFromContinueWatching: widget.onRemoveFromContinueWatching,
+                                      onTap: widget.onItemTap == null
+                                          ? null
+                                          : () {
+                                              _onItemTapped(index);
+                                              widget.onItemTap!(item);
+                                            },
+                                      onLongPress: widget.onItemLongPress == null
+                                          ? null
+                                          : () {
+                                              _onItemTapped(index);
+                                              widget.onItemLongPress!(item);
+                                            },
+                                      viewModeOverride: ViewMode.grid,
+                                      isInContinueWatching: widget.isInContinueWatching,
+                                      usesContinueWatchingAction: widget.usesContinueWatchingAction,
+                                      mixedHubContext: isMixedHub,
+                                      episodePosterModeOverride: episodePosterMode,
                                     ),
                                   ),
                                 ),
                               );
-                            }
-
-                            final item = widget.hub.items[index];
-
-                            // Budget fresh inflations while an enclosing
-                            // scrollable is moving (rows enter on the parent's
-                            // vertical scroll); skeletons upgrade a frame
-                            // later.
-                            return realizeBudgeted(
-                              _cardMemo,
-                              context,
-                              index,
-                              item,
-                              epoch: cardEpoch,
-                              // Focus moves only rebuild the two affected
-                              // indices instead of the whole realized row.
-                              salt: isItemFocused,
-                              keyboardMode: isKeyboardMode,
-                              skeleton: () => Padding(
-                                padding: cardPadding,
-                                child: SizedBox(
-                                  width: cardWidth,
-                                  child: SkeletonMediaCard(posterHeight: posterHeight),
-                                ),
-                              ),
-                              build: () => Padding(
-                                key: _itemKeyFor(index),
-                                padding: cardPadding,
-                                child: FocusBuilders.buildLockedFocusWrapper(
-                                  context: context,
-                                  isFocused: isItemFocused,
-                                  // Pointer/touch taps never reach these: MediaCard's own
-                                  // tap region is deeper in the tree and always wins the
-                                  // gesture arena. Passing null lets the wrapper collapse
-                                  // to the bare card outside keyboard mode instead of
-                                  // building a second dead gesture-detector stack per card.
-                                  onTap: isKeyboardMode ? () => _onItemTapped(index) : null,
-                                  onLongPress: isKeyboardMode
-                                      ? () {
-                                          _onItemTapped(index);
-                                          _mediaCardKeys[index]?.currentState?.showContextMenu();
-                                        }
-                                      : null,
-                                  delegateFocusBorder: true,
-                                  child: MediaCard(
-                                    key: _getMediaCardKey(index),
-                                    item: item,
-                                    width: cardWidth,
-                                    height: posterHeight,
-                                    onRefresh: widget.onRefresh,
-                                    onRemoveFromContinueWatching: widget.onRemoveFromContinueWatching,
-                                    onTap: widget.onItemTap == null
-                                        ? null
-                                        : () {
-                                            _onItemTapped(index);
-                                            widget.onItemTap!(item);
-                                          },
-                                    onLongPress: widget.onItemLongPress == null
-                                        ? null
-                                        : () {
-                                            _onItemTapped(index);
-                                            widget.onItemLongPress!(item);
-                                          },
-                                    viewModeOverride: ViewMode.grid,
-                                    isInContinueWatching: widget.isInContinueWatching,
-                                    usesContinueWatchingAction: widget.usesContinueWatchingAction,
-                                    mixedHubContext: isMixedHub,
-                                    episodePosterModeOverride: episodePosterMode,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
+                            },
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             )

@@ -222,6 +222,36 @@ void sortEpisodesByWatchOrder(List<MediaItem> episodes, {SpecialsOrdering? order
   episodes.sort(mode == SpecialsOrdering.airDate ? compareEpisodesByWatchOrder : compareEpisodesSpecialsLast);
 }
 
+/// A numeric hole in an ordinary season. A combined file can appear as
+/// several server rows or as a single Jellyfin row with IndexNumberEnd.
+int? missingEpisodeBefore(MediaItem current, MediaItem next, Iterable<MediaItem> sequence, {String? playedPartId}) {
+  final number = current.index, season = current.parentIndex, following = next.index;
+  if (current.kind != MediaKind.episode ||
+      next.kind != MediaKind.episode ||
+      season == null ||
+      season <= 0 ||
+      season != next.parentIndex ||
+      current.serverId != next.serverId ||
+      current.grandparentId == null ||
+      current.grandparentId != next.grandparentId ||
+      number == null ||
+      following == null ||
+      following <= number + 1) {
+    return null;
+  }
+  final end = int.tryParse((current.raw?['IndexNumberEnd'] ?? current.raw?['indexEnd'] ?? '').toString());
+  var expected = end != null && end >= number ? end + 1 : number + 1;
+  final inSeason = sequence.where((e) => e.parentIndex == season && e.seriesGlobalKey == current.seriesGlobalKey);
+  for (final e in inSeason) {
+    if (e.index != null && e.index! >= expected && current.sharesFileWith(e, playedPartId: playedPartId)) {
+      expected = e.index! + 1;
+    }
+  }
+  // Backend-defined orders can place an existing episode later in the queue.
+  if (expected >= following || inSeason.any((e) => e.index == expected)) return null;
+  return expected;
+}
+
 /// The episode after [currentIdx] in [ordered] that is backed by a different
 /// file than the current one. Plex lists each episode of a multi-episode file
 /// (`S02E24-E25.mkv`) as its own item, and advancing to a same-file sibling

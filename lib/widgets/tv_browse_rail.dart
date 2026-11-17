@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../focus/card_focus_scope.dart';
+import '../focus/focused_media_play.dart';
 import '../focus/covered_route_focus_boundary.dart';
 import '../focus/dpad_navigator.dart';
 import '../focus/dpad_select_long_press_controller.dart';
@@ -26,6 +27,7 @@ import '../utils/layout_constants.dart';
 import '../utils/media_image_helper.dart';
 import '../utils/media_navigation_helper.dart';
 import '../utils/provider_extensions.dart';
+import '../utils/snackbar_helper.dart';
 import 'animated_dim_scrim.dart';
 import 'app_icon.dart';
 import 'card_inflation_budget.dart';
@@ -859,6 +861,8 @@ class TvBrowseRailState extends State<TvBrowseRail> with TickerProviderStateMixi
   KeyEventResult _handleKeyEvent(FocusNode _, KeyEvent event) {
     final key = event.logicalKey;
 
+    final play = FocusedMediaPlay.handle(event);
+    if (play == KeyEventResult.handled) return play;
     if (key.isSelectKey) {
       _hasUserInteracted = true;
 
@@ -1247,6 +1251,33 @@ class TvBrowseRailState extends State<TvBrowseRail> with TickerProviderStateMixi
     _cardKeyFor(hub, _itemIndex).currentState?.showContextMenu();
   }
 
+  bool _launchingHero = false;
+
+  bool _playCurrentItem() {
+    final hub = _activeHub;
+    if (hub == null || _isLeadingSlot(hub, _itemIndex) || _isTrailingSlot(hub, _itemIndex) || _isPersonHub(hub)) {
+      return false;
+    }
+    if (!hub.heroStyle) return _cardKeyFor(hub, _itemIndex).currentState?.playFocused() ?? false;
+    final item = _itemAtSlot(hub, _itemIndex);
+    if (item == null || !canPlayFocusedVideo(context, item)) return false;
+    if (!_launchingHero) {
+      _launchingHero = true;
+      unawaited(_playHero(item));
+    }
+    return true;
+  }
+
+  Future<void> _playHero(MediaItem item) async {
+    try {
+      await navigateToMediaItem(context, item, forcePlay: true, onRefresh: widget.onRefresh);
+    } catch (_) {
+      if (mounted) showErrorSnackBar(context, t.messages.playbackFailed);
+    } finally {
+      _launchingHero = false;
+    }
+  }
+
   Future<void> _activateCurrentItem() async {
     final hub = _activeHub;
     if (hub == null) return;
@@ -1404,97 +1435,100 @@ class TvBrowseRailState extends State<TvBrowseRail> with TickerProviderStateMixi
               TvBrowseRailLayout.railTopPaddingForScale(scale) +
               viewportHeight +
               TvBrowseRailLayout.railBottomPaddingForScale(scale);
-          return Focus(
-            focusNode: _focusNode,
-            onKeyEvent: _handleKeyEvent,
-            child: Align(
-              alignment: .bottomCenter,
-              heightFactor: 1,
-              child: SizedBox(
-                height: totalHeight,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    _RailBleedPositioned(
-                      width: width,
-                      targetBleedLeft: widget.backgroundBleedLeft,
-                      child: RasterizedGradient(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            theme.scaffoldBackgroundColor.withValues(alpha: 0),
-                            theme.scaffoldBackgroundColor.withValues(alpha: 0.7),
-                          ],
+          return FocusedMediaPlay(
+            play: _playCurrentItem,
+            child: Focus(
+              focusNode: _focusNode,
+              onKeyEvent: _handleKeyEvent,
+              child: Align(
+                alignment: .bottomCenter,
+                heightFactor: 1,
+                child: SizedBox(
+                  height: totalHeight,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      _RailBleedPositioned(
+                        width: width,
+                        targetBleedLeft: widget.backgroundBleedLeft,
+                        child: RasterizedGradient(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              theme.scaffoldBackgroundColor.withValues(alpha: 0),
+                              theme.scaffoldBackgroundColor.withValues(alpha: 0.7),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(
-                        horizontalInset,
-                        TvBrowseRailLayout.railTopPaddingForScale(scale),
-                        0,
-                        TvBrowseRailLayout.railBottomPaddingForScale(scale),
-                      ),
-                      child: ClipRect(
-                        clipper: _RailClipper(
-                          leftOverflow: horizontalInset,
-                          rightOverflow: 0,
-                          textDirection: Directionality.of(context),
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                          horizontalInset,
+                          TvBrowseRailLayout.railTopPaddingForScale(scale),
+                          0,
+                          TvBrowseRailLayout.railBottomPaddingForScale(scale),
                         ),
-                        child: ExcludeSemantics(
-                          // Both axes animate during D-pad navigation. Keeping
-                          // the individual headers/cards in the semantics tree
-                          // makes Android recompute every moving node's bounds
-                          // on every frame when an accessibility service is
-                          // active. A fixed proxy below exposes the same active
-                          // selection and actions without tracking that motion.
-                          child: SizedBox(
-                            height: viewportHeight,
-                            child: _buildHubSectionList(
-                              modes: modes,
-                              metricsByHub: metricsByHub,
-                              sectionHeights: sectionHeights,
-                              scale: scale,
-                              fullCardLayout: fullCardLayout,
-                              leftOverflow: horizontalInset,
-                              interactionExpansion: interactionExpansion,
-                              railViewportWidth: railViewportWidth,
-                              bottomPadding: bottomPadding,
+                        child: ClipRect(
+                          clipper: _RailClipper(
+                            leftOverflow: horizontalInset,
+                            rightOverflow: 0,
+                            textDirection: Directionality.of(context),
+                          ),
+                          child: ExcludeSemantics(
+                            // Both axes animate during D-pad navigation. Keeping
+                            // the individual headers/cards in the semantics tree
+                            // makes Android recompute every moving node's bounds
+                            // on every frame when an accessibility service is
+                            // active. A fixed proxy below exposes the same active
+                            // selection and actions without tracking that motion.
+                            child: SizedBox(
+                              height: viewportHeight,
+                              child: _buildHubSectionList(
+                                modes: modes,
+                                metricsByHub: metricsByHub,
+                                sectionHeights: sectionHeights,
+                                scale: scale,
+                                fullCardLayout: fullCardLayout,
+                                leftOverflow: horizontalInset,
+                                interactionExpansion: interactionExpansion,
+                                railViewportWidth: railViewportWidth,
+                                bottomPadding: bottomPadding,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    PositionedDirectional(
-                      start: horizontalInset,
-                      top: TvBrowseRailLayout.railTopPaddingForScale(scale),
-                      end: 0,
-                      height: viewportHeight,
-                      child: _buildSemanticSelectionProxy(context),
-                    ),
-                    // Unfocused-rail dim: a scrim quad on top instead of
-                    // AnimatedOpacity, which would keep a full-viewport
-                    // saveLayer alive every frame (see AnimatedDimScrim).
-                    // Bled under the side nav like the background gradient,
-                    // so its edge doesn't seam against the nav.
-                    _RailBleedPositioned(
-                      width: width,
-                      targetBleedLeft: widget.backgroundBleedLeft,
-                      child: ListenableSelector<bool>(
-                        listenable: _focusModel,
-                        selector: () => _focusModel.railHasFocus,
-                        builder: (context, railHasFocus, _) => AnimatedDimScrim(
-                          dimmed: !railHasFocus,
-                          color: theme.scaffoldBackgroundColor,
-                          alpha: _unfocusedRailDimAlpha,
-                          // The band's top edge cuts across the spotlight
-                          // artwork; ramp the dim in instead.
-                          fadeTop: 36 * scale,
+                      PositionedDirectional(
+                        start: horizontalInset,
+                        top: TvBrowseRailLayout.railTopPaddingForScale(scale),
+                        end: 0,
+                        height: viewportHeight,
+                        child: _buildSemanticSelectionProxy(context),
+                      ),
+                      // Unfocused-rail dim: a scrim quad on top instead of
+                      // AnimatedOpacity, which would keep a full-viewport
+                      // saveLayer alive every frame (see AnimatedDimScrim).
+                      // Bled under the side nav like the background gradient,
+                      // so its edge doesn't seam against the nav.
+                      _RailBleedPositioned(
+                        width: width,
+                        targetBleedLeft: widget.backgroundBleedLeft,
+                        child: ListenableSelector<bool>(
+                          listenable: _focusModel,
+                          selector: () => _focusModel.railHasFocus,
+                          builder: (context, railHasFocus, _) => AnimatedDimScrim(
+                            dimmed: !railHasFocus,
+                            color: theme.scaffoldBackgroundColor,
+                            alpha: _unfocusedRailDimAlpha,
+                            // The band's top edge cuts across the spotlight
+                            // artwork; ramp the dim in instead.
+                            fadeTop: 36 * scale,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -242,7 +242,19 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
               SettingsGroup(
                 title: t.settings.audio,
                 children: [
-                  if (PlatformDetector.supportsAudioPassthrough()) _audioPassthroughTile(),
+                  if (PlatformDetector.supportsAudioPassthrough()) ...[
+                    _audioPassthroughTile(),
+                    SettingsBuilder(
+                      prefs: const [SettingsService.audioNormalization],
+                      builder: (_) => SettingSwitchTile(
+                        pref: SettingsService.receiverAc3,
+                        icon: Symbols.surround_sound_rounded,
+                        title: t.livingRoom.receiver,
+                        subtitle: t.livingRoom.receiverHelp,
+                        enabled: !SettingsService.instance.read(SettingsService.audioNormalization),
+                      ),
+                    ),
+                  ],
                   // The native TV players do not provide a channel-mixing hook.
                   if (!PlatformDetector.usesNativeTvMedia()) ...[
                     _audioChannelLimitTile(exoActive: exoActive),

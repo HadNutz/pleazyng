@@ -342,9 +342,10 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
         .where((track) => track.id == audioStreamForConversion)
         .firstOrNull
         ?.codec;
+    final receiverAc3 = !isTrack && receiverAc3Enabled && needsReceiverAc3(mediaInfo, audioStreamForConversion);
     final needsCompatibleAudio =
         !isTrack && RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable(selectedAudioCodec);
-    final forceAudioConversion = !isTrack && (options.forceAudioConversion || needsCompatibleAudio);
+    final forceAudioConversion = !isTrack && (options.forceAudioConversion || needsCompatibleAudio || receiverAc3);
     final requiresConversion =
         forceAudioConversion || forceCompatibleDolbyVisionTranscode || forceVideoConversion || options.forceTranscode;
     final requestedSubtitleStreamId = _validJellyfinSubtitleStreamId(options.preferredSubtitleTrack, mediaInfo);
@@ -399,6 +400,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
         enableDirectPlay: requiresConversion ? false : null,
         enableTranscoding: requiresConversion ? true : null,
         allowAudioStreamCopy: forceAudioConversion ? false : null,
+        receiverAc3: receiverAc3,
         forceVideoTranscode: forceCompatibleDolbyVisionTranscode || forceVideoConversion,
         requireSdrOutput: forceCompatibleDolbyVisionTranscode,
         // A capped preset is the only way a transcode is asked for, and on one the server
@@ -1023,6 +1025,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     bool? allowAudioStreamCopy,
     bool isLiveTv = false,
     bool audioProfile = false,
+    bool receiverAc3 = false,
     bool forceVideoTranscode = false,
     bool requireSdrOutput = false,
 
@@ -1033,6 +1036,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     // The same negotiation fields go out stringified in the query string and
     // typed in the body.
     final negotiation = <String, Object>{
+      if (receiverAc3) 'MaxAudioChannels': 6,
       'MaxStreamingBitrate': ?maxStreamingBitrate,
       'MediaSourceId': ?mediaSourceId,
       'LiveStreamId': ?liveStreamId,
@@ -1040,11 +1044,11 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
       'AudioStreamIndex': ?audioStreamIndex,
       'SubtitleStreamIndex': ?subtitleStreamIndex,
       'AutoOpenLiveStream': ?autoOpenLiveStream,
-      'EnableDirectPlay': ?(forceVideoTranscode ? false : enableDirectPlay),
+      'EnableDirectPlay': ?(forceVideoTranscode || receiverAc3 ? false : enableDirectPlay),
       'EnableDirectStream': ?(forceVideoTranscode ? false : enableDirectStream),
       'EnableTranscoding': ?(forceVideoTranscode ? true : enableTranscoding),
       'AllowVideoStreamCopy': ?(forceVideoTranscode ? false : allowVideoStreamCopy),
-      'AllowAudioStreamCopy': ?(allowAudioStreamCopy ?? (forceVideoTranscode ? true : null)),
+      'AllowAudioStreamCopy': ?(receiverAc3 ? false : allowAudioStreamCopy ?? (forceVideoTranscode ? true : null)),
     };
     final response = await _http.post(
       '/Items/${_segment(itemId)}/PlaybackInfo',
@@ -1104,7 +1108,9 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
                 // the server substitutes the source codec, filters it against
                 // the same fMP4 set, and ships no audio at all for a source it
                 // cannot carry.
-                'AudioCodec': PlatformDetector.isWebOSBuild() && allowAudioStreamCopy == false
+                'AudioCodec': receiverAc3
+                    ? 'ac3'
+                    : PlatformDetector.isWebOSBuild() && allowAudioStreamCopy == false
                     ? webosTranscodeAudioCodecs
                     : 'aac,mp3,ac3,eac3,flac,opus,dts,truehd',
               },
@@ -1124,7 +1130,9 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
               'Container': 'ts',
               'Protocol': 'hls',
               'VideoCodec': _jellyfinTranscodeVideoCodecsTs(),
-              'AudioCodec': PlatformDetector.isWebOSBuild() && allowAudioStreamCopy == false
+              'AudioCodec': receiverAc3
+                  ? 'ac3'
+                  : PlatformDetector.isWebOSBuild() && allowAudioStreamCopy == false
                   ? webosTranscodeAudioCodecs
                   : 'aac,mp3,ac3,eac3,opus,dts',
             },

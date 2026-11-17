@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../focus/focus_theme.dart';
+import '../focus/focused_media_play.dart';
 import '../focus/focusable_wrapper.dart';
 import '../media/media_item.dart';
 import '../services/settings_service.dart';
@@ -130,49 +131,53 @@ class _FocusableMediaCardState extends State<FocusableMediaCard> {
 
   @override
   Widget build(BuildContext context) {
-    return FocusableWrapper(
-      focusNode: widget.focusNode,
-      // The MediaCard already exposes the complete static button semantics.
-      // Avoid invalidating a dense TV grid's semantics tree on every D-pad
-      // focus change unless an accessibility service needs focused state.
-      includeFocusSemantics: !PlatformDetector.isTV() || MediaQuery.accessibleNavigationOf(context),
-      onSelect: () => _mediaCardKey.currentState?.handleTap(),
-      onLongPress: () => _mediaCardKey.currentState?.showContextMenu(),
-      onNavigateUp: widget.onNavigateUp,
-      onNavigateDown: widget.onNavigateDown,
-      onNavigateLeft: widget.onNavigateLeft,
-      onNavigateRight: widget.onNavigateRight,
-      onBack: widget.onBack,
-      onFocusChange: widget.onFocusChange,
-      enableLongPress: true,
-      disableScale: widget.disableScale,
-      focusScale: widget.fullBleedImage ? FocusTheme.fullCardFocusScale : FocusTheme.focusScale,
-      useFocusGlow: widget.fullBleedImage,
-      // MediaCard draws the focus border itself, on the rect its layout
-      // highlights (poster for standard grid cards, whole card otherwise).
-      delegateFocusBorder: true,
-      useComfortableZone: !PlatformDetector.isTV(), // Always center on TV
-      scrollAlignment: 0.5,
-      child: MediaCard(
-        key: _mediaCardKey,
-        item: widget.item,
-        semanticValue: widget.semanticValue,
-        onRefresh: widget.onRefresh,
-        onRemoveFromContinueWatching: widget.onRemoveFromContinueWatching,
-        onListRefresh: widget.onListRefresh,
-        onTap: widget.onTap,
-        onLongPress: widget.onLongPress,
-        selected: widget.selected,
-        viewModeOverride: widget.viewModeOverride,
-        isInContinueWatching: widget.isInContinueWatching,
-        usesContinueWatchingAction: widget.usesContinueWatchingAction,
-        collectionId: widget.collectionId,
-        isOffline: widget.isOffline,
-        mixedHubContext: widget.mixedHubContext,
-        fullBleedImage: widget.fullBleedImage,
-        cardShapeOverride: widget.cardShapeOverride,
-        showServerName: widget.showServerName,
-        libraryName: widget.libraryName,
+    return FocusedMediaPlay(
+      play: () => _mediaCardKey.currentState?.playFocused() ?? false,
+      child: FocusableWrapper(
+        onKeyEvent: (_, event) => FocusedMediaPlay.handle(event),
+        focusNode: widget.focusNode,
+        // The MediaCard already exposes the complete static button semantics.
+        // Avoid invalidating a dense TV grid's semantics tree on every D-pad
+        // focus change unless an accessibility service needs focused state.
+        includeFocusSemantics: !PlatformDetector.isTV() || MediaQuery.accessibleNavigationOf(context),
+        onSelect: () => _mediaCardKey.currentState?.handleTap(),
+        onLongPress: () => _mediaCardKey.currentState?.showContextMenu(),
+        onNavigateUp: widget.onNavigateUp,
+        onNavigateDown: widget.onNavigateDown,
+        onNavigateLeft: widget.onNavigateLeft,
+        onNavigateRight: widget.onNavigateRight,
+        onBack: widget.onBack,
+        onFocusChange: widget.onFocusChange,
+        enableLongPress: true,
+        disableScale: widget.disableScale,
+        focusScale: widget.fullBleedImage ? FocusTheme.fullCardFocusScale : FocusTheme.focusScale,
+        useFocusGlow: widget.fullBleedImage,
+        // MediaCard draws the focus border itself, on the rect its layout
+        // highlights (poster for standard grid cards, whole card otherwise).
+        delegateFocusBorder: true,
+        useComfortableZone: !PlatformDetector.isTV(), // Always center on TV
+        scrollAlignment: 0.5,
+        child: MediaCard(
+          key: _mediaCardKey,
+          item: widget.item,
+          semanticValue: widget.semanticValue,
+          onRefresh: widget.onRefresh,
+          onRemoveFromContinueWatching: widget.onRemoveFromContinueWatching,
+          onListRefresh: widget.onListRefresh,
+          onTap: widget.onTap,
+          onLongPress: widget.onLongPress,
+          selected: widget.selected,
+          viewModeOverride: widget.viewModeOverride,
+          isInContinueWatching: widget.isInContinueWatching,
+          usesContinueWatchingAction: widget.usesContinueWatchingAction,
+          collectionId: widget.collectionId,
+          isOffline: widget.isOffline,
+          mixedHubContext: widget.mixedHubContext,
+          fullBleedImage: widget.fullBleedImage,
+          cardShapeOverride: widget.cardShapeOverride,
+          showServerName: widget.showServerName,
+          libraryName: widget.libraryName,
+        ),
       ),
     );
   }

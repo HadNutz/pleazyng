@@ -21,6 +21,7 @@ import '../../widgets/settings_section.dart';
 import 'app_icon_setting.dart';
 import 'accessibility_settings_screen.dart';
 import 'home_layout_settings_screen.dart';
+import '../../widgets/projector_viewport.dart';
 import 'content_screensaver_libraries_screen.dart';
 import 'settings_utils.dart';
 import 'theme_settings_screen.dart';
@@ -47,6 +48,13 @@ class AppearanceSettingsScreen extends StatelessWidget {
           title: t.settings.display,
           children: [
             _themeSelector(),
+            if (PlatformDetector.isDesktopOS() || PlatformDetector.isTV())
+              SettingNavigationTile(
+                icon: Symbols.aspect_ratio_rounded,
+                title: t.livingRoom.fitScreen,
+                subtitle: t.livingRoom.fitHelp,
+                destinationBuilder: (_) => const ProjectorSetupScreen(),
+              ),
             if (AppIconSetting.isShown(context)) const AppIconSetting(),
             SettingNavigationTile(
               icon: Symbols.accessibility_new_rounded,

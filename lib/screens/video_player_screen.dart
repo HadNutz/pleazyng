@@ -3,6 +3,10 @@ import 'dart:convert';
 
 import '../services/playback_launch_observer.dart';
 import '../media/ids.dart';
+import '../providers/hidden_libraries_provider.dart';
+import '../providers/libraries_provider.dart';
+import '../utils/external_ids.dart';
+import '../utils/media_server_http_client.dart' show AbortController;
 
 import 'dart:io';
 
@@ -40,6 +44,7 @@ import '../media/media_item.dart';
 import '../media/media_item_types.dart';
 import '../media/media_server_client.dart';
 import '../media/episode_collection.dart';
+import '../media/title_copies.dart';
 import '../media/live_tv_support.dart';
 import '../media/live_tv_timeline.dart';
 import '../services/live_tv_program_guide.dart';
@@ -139,6 +144,7 @@ import '../utils/provider_extensions.dart';
 import '../utils/snackbar_helper.dart';
 import '../utils/stream_buffer_sizing.dart';
 import '../utils/video_player_navigation.dart';
+import '../media/receiver_audio.dart';
 import '../utils/android_exit_diagnostics.dart';
 import 'video_player/completion_latch.dart';
 import 'video_player/episode_session_state.dart';
@@ -2537,7 +2543,9 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       // native sample-buffer renderer handles AC3/EAC3, including JOC metadata;
       // never macOS — see PlatformDetector.supportsAudioPassthrough).
       if (PlatformDetector.supportsAudioPassthrough()) {
-        await currentPlayer.setAudioPassthrough(settingsService.read(SettingsService.audioPassthrough));
+        await currentPlayer.setAudioPassthrough(
+          receiverAc3Enabled || settingsService.read(SettingsService.audioPassthrough),
+        );
       }
 
       // Set before hdr-enabled so the first image description is already built

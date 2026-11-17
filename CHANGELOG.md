@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+- Start or resume a focused video with the hardware Play key. Pleazyng independently adapted requests from [Plezy #1510](https://github.com/edde746/plezy/issues/1510) by [@enchained](https://github.com/enchained) and [Plezy #3038](https://github.com/edde746/plezy/issues/3038) by [@fillilutten](https://github.com/fillilutten).
+- Pause before jumping over a missing numbered episode and offer a matching copy when available. Independently adapted from [Jellyfin Android TV #4566](https://github.com/jellyfin/jellyfin-androidtv/issues/4566) by [@hufforguk](https://github.com/hufforguk).
+- Request Dolby Digital 5.1 audio for an older receiver while retaining compatible video. Independently adapted from [Plezy #3054](https://github.com/edde746/plezy/issues/3054) by [@abaginski](https://github.com/abaginski).
+- Open a local, append-only guest jukebox from Music Now Playing. Room Mode in [MusicLounge Jukebox](https://forums.plex.tv/t/new-app-musiclounge-jukebox/942146) by [Earthmonkey](https://forums.plex.tv/u/Earthmonkey) inspired this implementation.
+- Fit the app and player inside a four-edge projector viewport. Independently adapted from [Plezy #863](https://github.com/edde746/plezy/issues/863) by [@thehomerepot](https://github.com/thehomerepot).
+
 - Retry failed HLS media segments and report unsupported disc types before opening them when mpv has reported its protocol inventory.
 
 - Discover JPEG XL files and request server audio conversion when the active mpv build lacks the selected AC-4 or MPEG-H decoder.

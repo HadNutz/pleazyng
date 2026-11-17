@@ -61,5 +61,18 @@ extension _VideoPlayerCompanionRemoteMethods on VideoPlayerScreenState {
     }
   }
 
-  void _cycleAudioTrack() => _trackManager?.cycleAudioTrack();
+  void _cycleAudioTrack() {
+    final tracks = _currentMediaInfo?.audioTracks;
+    if (receiverAc3Enabled && !_offlineLibraryMode && !widget.isLive && tracks != null && tracks.length > 1) {
+      final selected =
+          _selectedAudioStreamId ??
+          _currentMediaInfo?.defaultAudioStreamIndex ??
+          tracks.where((row) => row.selected).firstOrNull?.id ??
+          tracks.first.id;
+      final index = tracks.indexWhere((row) => row.id == selected);
+      unawaited(_switchPlaybackSource(newAudioStreamId: tracks[(index + 1) % tracks.length].id));
+    } else {
+      _trackManager?.cycleAudioTrack();
+    }
+  }
 }

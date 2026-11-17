@@ -44,6 +44,131 @@ extension _VideoPlayerEpisodeNavigationMethods on VideoPlayerScreenState {
   /// the VOD fallback is unreachable here by construction.
   Future<void> _navigateToPreviousItem() => widget.isLive ? _switchLiveChannel(-1) : _restartOrPlayPrevious();
 
+  int? _missingEpisode(MediaItem next) {
+    final queue = context.read<PlaybackStateProvider>();
+    final current = _currentMetadata;
+    final key = queue.shuffleContextKey;
+    if (queue.isShuffleActive ||
+        _watchTogetherRoom() != null ||
+        queue.hasExternalPlaybackSourceResolver(current) ||
+        (key != null && key != current.grandparentId && key != current.parentId)) {
+      return null;
+    }
+    final sequence = _offlineLibraryMode && current.seriesGlobalKey != null
+        ? context.read<DownloadProvider>().getDownloadedEpisodesForShow(current.seriesGlobalKey!)
+        : queue.loadedItems;
+    return missingEpisodeBefore(current, next, sequence, playedPartId: _currentMediaInfo?.partId?.toString());
+  }
+
+  Future<MediaItem?> _findMissingEpisode(MediaItem current, int missing, AbortController abort) async {
+    MediaItem? alternative;
+    final servers = context.read<MultiServerProvider>();
+    final client = context.tryGetMediaClientForServer(serverIdOrNull(current.serverId));
+    final hidden = context.read<HiddenLibrariesProvider?>();
+    final libraries = context.read<LibrariesProvider?>();
+    await hidden?.ensureInitialized();
+    if (!mounted || abort.isAborted || !identical(current, _currentMetadata)) return null;
+    bool visible(MediaItem item) {
+      final key = item.libraryGlobalKey;
+      return key != null &&
+          hidden != null &&
+          !hidden.hiddenLibraryKeys.contains(key) &&
+          (libraries?.libraries.any((lib) => lib.globalKey == key && !lib.hidden) ?? false);
+    }
+
+    if (_offlineLibraryMode) {
+      final downloads = context.read<DownloadProvider>();
+      final shows = downloads.downloadedShows;
+      final currentShow = shows.where((s) => s.globalKey == current.seriesGlobalKey).firstOrNull;
+      final ids = ExternalIds.fromMediaMetadata(currentShow?.raw, currentShow?.guid);
+      if (ids.hasCatalogIds) {
+        final matchingShows = {
+          for (final show in shows)
+            if (ids.intersects(ExternalIds.fromMediaMetadata(show.raw, show.guid))) show.globalKey,
+        };
+        alternative = downloads.downloadedEpisodes
+            .where(
+              (e) =>
+                  e.index == missing &&
+                  e.parentIndex == current.parentIndex &&
+                  matchingShows.contains(e.seriesGlobalKey) &&
+                  hidden != null &&
+                  !hidden.hiddenLibraryKeys.contains(e.libraryGlobalKey),
+            )
+            .firstOrNull;
+      }
+    } else if (client != null) {
+      try {
+        final ids = await client.fetchExternalIds(current.grandparentId!);
+        if (ids.hasCatalogIds && mounted && !abort.isAborted && identical(current, _currentMetadata)) {
+          final result = await servers.aggregationService.findTitleCopiesAcrossServers(
+            TitleQuery.episode(
+              showTitle: current.grandparentTitle ?? '',
+              showIds: ids,
+              season: current.parentIndex!,
+              episode: missing,
+              exactShowOnly: true,
+            ),
+            abort: abort,
+          );
+          alternative = result.items
+              .where(
+                (e) =>
+                    e.serverId != null &&
+                    e.index == missing &&
+                    e.parentIndex == current.parentIndex &&
+                    servers.isServerOnline(ServerId(e.serverId!)) &&
+                    visible(e),
+              )
+              .firstOrNull;
+        }
+      } catch (error) {
+        appLogger.d('Missing episode lookup unavailable', error: error);
+      }
+    }
+    return alternative;
+  }
+
+  Future<MediaItem?> _chooseAcrossEpisodeGap(MediaItem current, MediaItem next, int missing) async {
+    if (ModalRoute.isCurrentOf(context) != true) return null;
+    final abort = AbortController();
+    final candidate = _findMissingEpisode(current, missing, abort);
+    try {
+      return await showDialog<MediaItem>(
+        context: context,
+        builder: (dialog) => FutureBuilder<MediaItem?>(
+          future: candidate,
+          builder: (context, snapshot) {
+            final copy = snapshot.data;
+            return AlertDialog(
+              title: Text(t.livingRoom.missing(episode: missing)),
+              content: snapshot.connectionState != ConnectionState.done ? const LinearProgressIndicator() : null,
+              actions: [
+                TextButton(autofocus: true, onPressed: () => Navigator.pop(dialog), child: Text(t.common.cancel)),
+                if (copy != null)
+                  FilledButton(
+                    onPressed: () => Navigator.pop(dialog, copy),
+                    child: Text(
+                      t.livingRoom.playCopy(
+                        episode: missing,
+                        server: copy.libraryTitle ?? copy.serverName ?? copy.serverId!,
+                      ),
+                    ),
+                  ),
+                TextButton(
+                  onPressed: () => Navigator.pop(dialog, next),
+                  child: Text(t.livingRoom.playLater(episode: next.index!)),
+                ),
+              ],
+            );
+          },
+        ),
+      );
+    } finally {
+      abort.abort();
+    }
+  }
+
   Future<void> _playNext() async {
     if (!_canNavigateMediaItems()) return;
     if (!mounted) return;
@@ -65,7 +190,21 @@ extension _VideoPlayerEpisodeNavigationMethods on VideoPlayerScreenState {
       _episode.showPlayNextDialog = false;
     });
 
-    final outcome = await _navigateToEpisode(_episode.next!);
+    final current = _currentMetadata;
+    final next = _episode.next!;
+    final missing = _missingEpisode(next);
+    if (missing != null) {
+      final target = await _chooseAcrossEpisodeGap(current, next, missing);
+      if (!mounted || !identical(current, _currentMetadata) || target == null) {
+        _clearEpisodeLoadingFlags();
+        return;
+      }
+      if (target.globalKey != next.globalKey) {
+        await _replaceScreenWithPlayer(target);
+        return;
+      }
+    }
+    final outcome = await _navigateToEpisode(next);
     if (outcome == MediaReloadOutcome.failed) {
       _presentPlayNextRetryPrompt(wasAtCompletion: wasAtCompletion);
     }

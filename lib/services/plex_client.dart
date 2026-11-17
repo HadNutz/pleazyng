@@ -46,6 +46,7 @@ import 'bif_thumbnail_service.dart';
 import 'file_info_parser.dart';
 import 'download_artwork_helpers.dart';
 import 'settings_service.dart';
+import '../media/receiver_audio.dart';
 import 'plex_direct_play_identity.dart';
 import 'library_query_translator.dart';
 import 'scrub_preview_source.dart';
@@ -3270,6 +3271,7 @@ class PlexClient
     int? partId,
     bool sourceCodecRefused = false,
     bool audioCodecRefused = false,
+    bool receiverAc3 = false,
     bool forceVideoEncode = false,
     bool withholdDirectPlay = false,
   }) async {
@@ -3286,9 +3288,10 @@ class PlexClient
         selectedSubtitleTrack: selectedSubtitleTrack,
         useTsFallbackTarget: useTsFallbackTarget,
         sourceCodecRefused: sourceCodecRefused,
-        audioCodecRefused: audioCodecRefused,
+        audioCodecRefused: audioCodecRefused || receiverAc3,
+        receiverAc3: receiverAc3,
         forceVideoEncode: forceVideoEncode,
-        withholdDirectPlay: withholdDirectPlay,
+        withholdDirectPlay: withholdDirectPlay || receiverAc3,
       );
 
       final primary = await _runTranscodeDecision(
@@ -3488,13 +3491,16 @@ class PlexClient
     bool useTsFallbackTarget = false,
     bool sourceCodecRefused = false,
     bool audioCodecRefused = false,
+    bool receiverAc3 = false,
     bool forceVideoEncode = false,
     bool withholdDirectPlay = false,
   }) {
     final isOriginal = preset.isOriginal;
     final selectedInternalSubtitle = _selectedInternalSubtitleForHls(selectedSubtitleTrack);
     var videoTarget = useTsFallbackTarget ? _plexHlsVodTsVideoTranscodeTarget : _plexHlsVodVideoTranscodeTarget();
-    if (audioCodecRefused && PlatformDetector.isWebOSBuild()) {
+    if (receiverAc3) {
+      videoTarget = videoTarget.replaceFirst(RegExp(r'audioCodec=[^&)]+'), 'audioCodec=ac3');
+    } else if (audioCodecRefused && PlatformDetector.isWebOSBuild()) {
       videoTarget = videoTarget.replaceFirst(
         'audioCodec=aac%2Cac3%2Ceac3%2Cmp3',
         'audioCodec=${webosTranscodeAudioCodecs.replaceAll(',', '%2C')}',
@@ -3559,6 +3565,7 @@ class PlexClient
       else if (preset.videoResolution != null)
         'videoResolution': preset.videoResolution!,
       if (preset.videoQuality != null) 'videoQuality': preset.videoQuality!.toString(),
+      if (receiverAc3) 'maxAudioChannels': '6',
       'directStreamAudio': PlatformDetector.isTizenBuild() || audioCodecRefused ? '0' : '1',
       'mediaBufferSize': '102400',
       'session': transcodeSessionId,
@@ -4453,13 +4460,15 @@ class PlexClient
       final resolvedAudioId = carriedAudioTrack == null
           ? _resolveAudioStreamId(options.selectedAudioStreamId, data.mediaInfo)
           : carriedAudioStreamId;
+      final receiverAc3 = !isTrack && receiverAc3Enabled && needsReceiverAc3(data.mediaInfo, resolvedAudioId);
       final selectedAudioCodec = data.mediaInfo?.audioTracks
           .where((track) => track.id == resolvedAudioId)
           .firstOrNull
           ?.codec;
       final audioCodecRefused =
           !isTrack &&
-          (options.forceAudioConversion ||
+          (receiverAc3 ||
+              options.forceAudioConversion ||
               RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable(selectedAudioCodec));
       final sourceCodecRefused = !isTrack && _sourceCodecRefused(data);
       final forceVideoConversion =
@@ -4540,6 +4549,7 @@ class PlexClient
           partId: data.mediaInfo?.partId,
           sourceCodecRefused: sourceCodecRefused,
           audioCodecRefused: audioCodecRefused,
+          receiverAc3: receiverAc3,
           forceVideoEncode: forceCompatibleDolbyVisionTranscode || forceVideoConversion,
           withholdDirectPlay: options.forceTranscode || audioCodecRefused,
         );

@@ -52,6 +52,7 @@ import '../services/agent_control_service.dart';
 import '../services/catalog/catalog_library_matcher.dart';
 import '../services/home_layout_sync_binder.dart';
 import '../services/music/music_playback_service.dart';
+import '../services/music/guest_jukebox.dart';
 import '../services/music/music_playback_service_impl.dart';
 import '../services/music/music_session_store.dart';
 import '../services/offline_watch_sync_service.dart';
@@ -407,6 +408,25 @@ class _ProfileSessionScreenState extends State<ProfileSessionScreen> {
                   );
                   companion.bindMusicSession(music);
                   return music;
+                },
+              ),
+              ChangeNotifierProvider(
+                create: (context) {
+                  final music = context.read<MusicPlaybackService>();
+                  final libraries = context.read<LibrariesProvider>();
+                  final servers = context.read<MultiServerProvider>();
+                  final hidden = context.read<HiddenLibrariesProvider>();
+                  return GuestJukebox(music, (library) {
+                    final id = serverIdOrNull(library.serverId);
+                    if (id == null ||
+                        !hidden.isInitialized ||
+                        hidden.hiddenLibraryKeys.contains(library.globalKey) ||
+                        !libraries.libraries.any((l) => l.globalKey == library.globalKey && !l.hidden) ||
+                        !servers.isServerOnline(id)) {
+                      return null;
+                    }
+                    return servers.getClientForServer(id);
+                  });
                 },
               ),
               ChangeNotifierProvider(

@@ -1,10 +1,20 @@
 # Upstream source attribution
 
-This ledger publicly credits 99 source records: 96 from [edde746/plezy](https://github.com/edde746/plezy), one feature request from [advplyr/audiobookshelf-app](https://github.com/advplyr/audiobookshelf-app), one receiver revision from [moonlight-stream/moonlight-android](https://github.com/moonlight-stream/moonlight-android), and one compatibility fix from [superuser404notfound/AetherEngine](https://github.com/superuser404notfound/AetherEngine). They informed, supplied, or were reconciled with behavior, documentation, maintained plans, or feature context in this fork.
+This ledger credits upstream reports, feature requests, implementation sources, and project documentation that informed Pleazyng.
 
 The linked people made their reports, suggestions, discussions, or code contributions to the upstream project. This is source credit only: it does not claim that they contributed directly to this fork, endorsed it, or participated in the fork integration. Fork maintainers adapted, integrated, or verified the resulting behavior separately.
 
 The PR list comes from explicit “Squash of upstream” commit records and the selected November follow-up. The commit list covers follow-up changes that were sourced from upstream commits rather than PR records.
+
+## Living-room playback and music
+
+These authors proposed the linked behaviors to their respective projects. Pleazyng independently implemented the features described below.
+
+- Hardware Play on a focused poster draws on the upstream feature requests [Plezy #1510](https://github.com/edde746/plezy/issues/1510) by [@enchained](https://github.com/enchained) and [Plezy #3038](https://github.com/edde746/plezy/issues/3038) by [@fillilutten](https://github.com/fillilutten).
+- The missing-episode prompt draws on the upstream feature request [Jellyfin Android TV #4566](https://github.com/jellyfin/jellyfin-androidtv/issues/4566) by [@hufforguk](https://github.com/hufforguk).
+- Dolby Digital receiver output draws on the upstream feature request [Plezy #3054](https://github.com/edde746/plezy/issues/3054) by [@abaginski](https://github.com/abaginski) and the [Kodi audio troubleshooting](https://kodi.wiki/view/Audio_troubleshooting) guide to passthrough and AC-3 transcoding.
+- The local guest music queue draws on Room Mode in [MusicLounge Jukebox](https://forums.plex.tv/t/new-app-musiclounge-jukebox/942146) by [Earthmonkey](https://forums.plex.tv/u/Earthmonkey).
+- Projector calibration draws on the upstream constant-image-height request [Plezy #863](https://github.com/edde746/plezy/issues/863) by [@thehomerepot](https://github.com/thehomerepot).
 
 ## Credited Moonlight Android source
 

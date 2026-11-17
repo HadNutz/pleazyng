@@ -1433,8 +1433,9 @@ void main() {
   });
 
   Future<({({String? startPath, TranscodeDecisionOutcome outcome}) result, List<Uri> decisions})> runGuardedDecision(
-    String Function(int decisionNumber) containerFor,
-  ) async {
+    String Function(int decisionNumber) containerFor, {
+    bool receiverAc3 = false,
+  }) async {
     final decisions = <Uri>[];
     final client = makeClient((request) async {
       decisions.add(request.url);
@@ -1460,12 +1461,25 @@ void main() {
     final result = await client.buildTranscodeStartPath(
       ratingKey: '42',
       mediaIndex: 0,
-      preset: TranscodeQualityPreset.p720_3mbps,
+      preset: receiverAc3 ? TranscodeQualityPreset.original : TranscodeQualityPreset.p720_3mbps,
+      receiverAc3: receiverAc3,
       sessionIdentifier: 'session-id',
       transcodeSessionId: 'transcode-id',
     );
     return (result: result, decisions: decisions);
   }
+
+  test('receiver requests AC-3 up to six channels and retains video copy on original quality', () async {
+    final run = await runGuardedDecision((_) => 'mp4', receiverAc3: true);
+    for (final uri in [...run.decisions, Uri.parse(run.result.startPath!)]) {
+      final params = uri.queryParameters;
+      expect(params['maxAudioChannels'], '6');
+      expect(params['directPlay'], '0');
+      expect(params['directStreamAudio'], '0');
+      expect(params['directStream'], '1');
+      expect(params['X-Plex-Client-Profile-Extra'], contains('audioCodec=ac3)'));
+    }
+  });
 
   test('a decision that honours the fMP4 container is used without a retry', () async {
     final run = await runGuardedDecision((_) => 'mp4');

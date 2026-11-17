@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:path/path.dart' as p;
 
+import '../../../media/receiver_audio.dart';
 import '../../../media/media_source_info.dart';
 import '../../../media/media_kind.dart';
 import '../../../media/ids.dart';
@@ -64,7 +65,7 @@ class TrackSheet extends StatelessWidget {
         final state = trackControlsState;
         final hasExternalSourceAudio = state.sourceAudioTracks.any((track) => track.isExternal);
         final useSourceAudio =
-            (state.isTranscoding || hasExternalSourceAudio) &&
+            (state.isTranscoding || hasExternalSourceAudio || receiverAc3Enabled) &&
             state.sourceAudioTracks.length > 1 &&
             state.onSwitchAudioStreamId != null;
         final useSourceSubtitles = state.canUseSourceSubtitles;
