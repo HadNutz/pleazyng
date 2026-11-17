@@ -12,10 +12,13 @@
 // resolution and server-tagging.
 
 import 'package:json_annotation/json_annotation.dart';
+
 import '../media/chapter_marker_classifier.dart';
 import '../media/artist_discography.dart';
 import '../media/ids.dart';
+
 import 'package:sentry_flutter/sentry_flutter.dart';
+
 import '../i18n/strings.g.dart';
 
 import '../media/media_backend.dart';
@@ -1356,6 +1359,8 @@ class PlexMappers {
       width: videoStream['width'] ?? media?['width'],
       height: videoStream['height'] ?? media?['height'],
       doviProfile: doviProfile,
+      codecProfile: videoStream['profile'] ?? media?['videoProfile'],
+      bitDepth: videoStream['bitDepth'],
       dolbyVisionPresent: hasDolbyVision,
       doviLevel: videoStream['DOVILevel'],
       doviCompatibilityId: doviCompatibilityId,

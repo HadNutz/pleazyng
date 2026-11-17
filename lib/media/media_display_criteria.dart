@@ -70,6 +70,8 @@ class MediaDisplayCriteria {
   final int? width;
   final int? height;
   final int? doviProfile;
+  final String? codecProfile;
+  final int? bitDepth;
 
   /// Positive Dolby Vision evidence without a reliable numeric profile.
   final bool dolbyVisionPresent;
@@ -87,6 +89,8 @@ class MediaDisplayCriteria {
     this.width,
     this.height,
     this.doviProfile,
+    this.codecProfile,
+    this.bitDepth,
     this.dolbyVisionPresent = false,
     this.doviLevel,
     this.doviCompatibilityId,
@@ -103,6 +107,8 @@ class MediaDisplayCriteria {
     Object? width,
     Object? height,
     Object? doviProfile,
+    Object? codecProfile,
+    Object? bitDepth,
     bool dolbyVisionPresent = false,
     Object? doviLevel,
     Object? doviCompatibilityId,
@@ -118,6 +124,8 @@ class MediaDisplayCriteria {
       width: flexibleInt(width),
       height: flexibleInt(height),
       doviProfile: flexibleInt(doviProfile),
+      codecProfile: _stringOrNull(codecProfile),
+      bitDepth: flexibleInt(bitDepth),
       dolbyVisionPresent: dolbyVisionPresent || (flexibleInt(doviProfile) ?? 0) > 0,
       doviLevel: flexibleInt(doviLevel),
       doviCompatibilityId: flexibleInt(doviCompatibilityId),
@@ -145,7 +153,12 @@ class MediaDisplayCriteria {
   /// Vision marker is sufficient for compatibility routing even when a
   /// server omitted dimensions and frame rate; other display classifications
   /// still need a rate or dimensions plus color metadata.
-  bool get isUsable => hasDolbyVision || hasFrameRate || (hasDimensions && hasDisplayMetadata);
+  bool get isUsable =>
+      hasDolbyVision ||
+      hasFrameRate ||
+      (hasDimensions && hasDisplayMetadata) ||
+      codecProfile != null ||
+      bitDepth != null;
 
   MediaDisplayColorType get colorType => classifyMediaDisplayColor(
     isDolbyVision: hasDolbyVision,

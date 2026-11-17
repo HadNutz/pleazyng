@@ -1,5 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:plezy/media/media_display_criteria.dart';
+import 'package:plezy/media/runtime_playback_capabilities.dart';
 import 'package:plezy/services/settings_service.dart';
 import 'package:plezy/services/video_decode_capabilities.dart';
 import 'package:plezy/utils/device_channel.dart';
@@ -104,6 +106,40 @@ void main() {
     expect(identical(instances.$1, instances.$2), isTrue);
     expect(acceptsHevc(), isFalse);
     expect(VideoDecodeCapabilities.describeSync(), 'hevc=none av1=none');
+  });
+
+  test('ExoPlayer uses Android codec enumeration and checks the selected format', () async {
+    RuntimePlaybackCapabilities.activeVideoEngine = 'exoplayer';
+    addTearDown(RuntimePlaybackCapabilities.reset);
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(deviceChannel, (call) async {
+      if (call.method == 'getVideoDecodeCapabilities') {
+        return {
+          'hevc': true,
+          'av1': false,
+          'videoCodecs': ['h264', 'hevc', 'vp9'],
+        };
+      }
+      expect(call.method, 'isNativeVideoFormatSupported');
+      expect(call.arguments, {
+        'codec': 'hevc',
+        'width': 3840,
+        'height': 2160,
+        'fps': 59.94,
+        'profile': 'Main 10',
+        'bitDepth': 10,
+      });
+      return false;
+    });
+    addTearDown(() => binding.defaultBinaryMessenger.setMockMethodCallHandler(deviceChannel, null));
+    await VideoDecodeCapabilities.getInstance();
+    expect(VideoDecodeCapabilities.directPlayVideoCodecs, ['h264', 'hevc', 'vp9']);
+    expect(
+      await VideoDecodeCapabilities.sourceFormatUnavailable(
+        'h265',
+        const MediaDisplayCriteria(width: 3840, height: 2160, fps: 59.94, codecProfile: 'Main 10', bitDepth: 10),
+      ),
+      isTrue,
+    );
   });
 
   group('user refusals (#2443)', () {

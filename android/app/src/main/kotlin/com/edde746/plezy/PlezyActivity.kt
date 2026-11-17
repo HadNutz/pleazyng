@@ -1014,10 +1014,23 @@ class PlezyActivity : FlutterActivity() {
             mapOf(
               "hevc" to (capabilities["hevc"] == true),
               "av1" to (capabilities["av1"] == true),
+              "videoCodecs" to runCatching { MediaCodecQuery.nativeVideoCodecs() }.getOrNull(),
               "dolbyVisionProfiles" to com.edde746.plezy.exoplayer.DoviBridge.supportedDolbyVisionProfiles()
             )
           )
         }
+        "isNativeVideoFormatSupported" -> result.success(
+          runCatching {
+            MediaCodecQuery.supportsVideoFormat(
+              call.argument<String>("codec"),
+              call.argument<Int>("width"),
+              call.argument<Int>("height"),
+              call.argument<Double>("fps"),
+              call.argument<String>("profile"),
+              call.argument<Int>("bitDepth")
+            )
+          }.getOrNull()
+        )
         "getBackgroundWorkSignals" -> result.success(
           BackgroundWorkClassifier.toMap(BackgroundWorkDiagnostics.read(this))
         )

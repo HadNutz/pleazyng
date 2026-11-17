@@ -30,6 +30,8 @@ MediaDisplayCriteria? jellyfinDisplayCriteriaFromStream(
     width: videoStream['Width'] ?? source['Width'],
     height: videoStream['Height'] ?? source['Height'],
     doviProfile: doviProfile,
+    codecProfile: videoStream['Profile'],
+    bitDepth: videoStream['BitDepth'],
     dolbyVisionPresent: dolbyVisionPresent,
     doviLevel: videoStream['DvLevel'],
     doviCompatibilityId: doviCompatibilityId,

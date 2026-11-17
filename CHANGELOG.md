@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Match direct-play negotiation to the active playback engine, check Android native stream limits, and discover APV and additional legacy containers.
+
 - Synchronize the Flutter and webOS release identities at 3.0.38+197.
 
 ## [3.0.38] - 2026-11-17

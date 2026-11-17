@@ -1,8 +1,12 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../media/codec_catalog.dart';
+import '../media/decoder_inventory.dart';
+import '../media/media_display_criteria.dart';
 import '../media/runtime_playback_capabilities.dart';
+import '../media/webos_playback_profile.dart';
 
 import '../utils/async_singleton.dart';
 import '../utils/device_channel.dart';
@@ -38,28 +42,7 @@ enum RankedVideoCodec {
       };
 }
 
-/// Which [RankedVideoCodec]s this device accepts from a media server.
-///
-/// Two inputs narrow the list. The hardware probe: mpv software-decodes HEVC
-/// and AV1 everywhere, so the probe answers "can we decode it without
-/// dropping frames", not "can we decode it". Without a hardware decoder a
-/// phone or TV box has to ask the server to transcode instead of taking the
-/// original stream, and must not offer that codec as a transcode target.
-///
-/// Only Android (`MediaCodecList`) and iOS/tvOS (`VTIsHardwareDecodeSupported`)
-/// answer the probe. Desktop deliberately does not implement it: a
-/// pre-Kaby-Lake Mac has no hardware HEVC decoder and an M1 no hardware AV1
-/// one, yet both software-decode in real time, so narrowing there would force
-/// transcodes for nothing. An unanswered or failed probe reports support — the
-/// advertised codec list must never narrow on missing data.
-///
-/// The user's refusals cover what the probe cannot: a desktop too weak to
-/// software-decode a codec (a dual-core Atom, #2443). The setting is shown
-/// only on desktop and is device-local, so elsewhere the probe alone decides.
-///
-/// The probe is latched once during the startup device-capabilities phase;
-/// refusals are read live, so a changed setting applies to the next
-/// negotiation.
+/// Native decoder evidence and server negotiation for the active video engine.
 class VideoDecodeCapabilities {
   VideoDecodeCapabilities._();
 
@@ -69,6 +52,9 @@ class VideoDecodeCapabilities {
   /// "yes" from an assumed one. Both are set together or not at all.
   bool? _hardwareHevc;
   bool? _hardwareAv1;
+  Set<String>? _androidVideoCodecs;
+  bool? _webosUhd;
+  int? _webosSdkMajor;
   Set<int> _nativeDolbyVisionProfiles = const {};
   bool _dolbyVisionProfilesReported = false;
 
@@ -77,11 +63,28 @@ class VideoDecodeCapabilities {
       _singleton.getInstance(VideoDecodeCapabilities._, (instance) => instance._detect());
 
   Future<void> _detect() async {
+    if (PlatformDetector.isWebOSBuild()) {
+      try {
+        final info = (await DeviceInfoPlugin().deviceInfo).data;
+        final uhd = info['uhd'];
+        if (uhd is bool) _webosUhd = uhd;
+        _webosSdkMajor = int.tryParse(info['sdkVersion']?.toString().split('.').first ?? '');
+      } on MissingPluginException {
+        // Keep the compatibility profile until firmware supplies device info.
+      } on PlatformException {
+        // Keep the compatibility profile if the native service is unavailable.
+      }
+      return;
+    }
     try {
       final result = await deviceChannel.invokeMapMethod<String, dynamic>('getVideoDecodeCapabilities');
       if (result != null) {
         _hardwareHevc = result['hevc'] == true;
         _hardwareAv1 = result['av1'] == true;
+        final codecs = result['videoCodecs'];
+        if (codecs is List && codecs.every((entry) => entry is String && entry.isNotEmpty)) {
+          _androidVideoCodecs = codecs.cast<String>().map(CodecCatalog.normalize).toSet();
+        }
         _nativeDolbyVisionProfiles = _parseDolbyVisionProfiles(result['dolbyVisionProfiles']);
         _dolbyVisionProfilesReported = result.containsKey('dolbyVisionProfiles');
       }
@@ -103,10 +106,11 @@ class VideoDecodeCapabilities {
   /// Whether [codec] should be advertised to a media server. Safe before init.
   static bool accepts(RankedVideoCodec codec) {
     if (isRefusedByUser(codec)) return false;
-    // Samsung's native player has no software decoder fallback. Until a
-    // device probe is implemented/qualified, negotiate the common H.264
-    // baseline instead of inheriting desktop's optimistic HEVC/AV1 default.
-    if (PlatformDetector.isTizenBuild() && codec != RankedVideoCodec.h264) return false;
+    if (videoEngine == 'tizen') return codec == RankedVideoCodec.h264;
+    if (videoEngine == 'webos') return codec != RankedVideoCodec.av1 || _webosModernUhd;
+    if (videoEngine == 'exoplayer') {
+      return codec == RankedVideoCodec.h264 || (_singleton.instance?._androidVideoCodecs?.contains(codec.id) ?? false);
+    }
     final instance = _singleton.instance;
     return switch (codec) {
       RankedVideoCodec.av1 => instance?._hardwareAv1 ?? true,
@@ -122,37 +126,91 @@ class VideoDecodeCapabilities {
       if (accepts(codec)) codec,
   ];
 
-  /// Original-source codecs are not transcode targets. Add the long tail only
-  /// when the bundled decoder reports it, retaining native TV policies.
+  static String get videoEngine => PlatformDetector.isTizenBuild()
+      ? 'tizen'
+      : PlatformDetector.isWebOSBuild()
+      ? 'webos'
+      : RuntimePlaybackCapabilities.activeVideoEngine;
+
+  static bool get _webosModernUhd =>
+      _singleton.instance?._webosUhd == true && (_singleton.instance?._webosSdkMajor ?? 0) >= 9;
+
+  static Map<String, Set<String>> get webosDirectPlayContainers => webosVideoContainers(modernUhd: _webosModernUhd);
+
+  /// Original-source codecs and output encoders have different requirements.
+  /// Until mpv enumeration arrives, offer the compatibility baseline and any
+  /// codec positively reported by the platform hardware probe.
   static List<String> get directPlayVideoCodecs {
-    final nativeTv = PlatformDetector.isTizenBuild() || PlatformDetector.isWebOSBuild();
-    final measured = nativeTv ? null : RuntimePlaybackCapabilities.videoDecoders;
+    switch (videoEngine) {
+      case 'tizen':
+        return const ['h264'];
+      case 'webos':
+        return webosDirectPlayContainers.values.expand((codecs) => codecs).toSet().where(_allowSourceCodec).toList();
+      case 'exoplayer':
+        return (_singleton.instance?._androidVideoCodecs ?? const {'h264'}).where(_allowSourceCodec).toList();
+    }
+    final measured = RuntimePlaybackCapabilities.videoDecoders;
+    final instance = _singleton.instance;
     final candidates = <String>{
       'hevc',
       'h264',
-      'h265',
-      'vp8',
-      'vp9',
       'av1',
-      'mpeg4',
-      'mpeg2video',
-      if (measured != null) ...CodecCatalog.videoCodecs.where(measured.contains),
+      if (measured != null) ...measured.decoders.keys.where(CodecCatalog.videoCodecs.contains),
     };
     return [
       for (final codec in candidates)
-        if ((measured == null || measured.contains(codec)) &&
-            (RankedVideoCodec.fromServerCodec(codec) == null || accepts(RankedVideoCodec.fromServerCodec(codec)!)))
-          codec,
+        if (_mpvCanDirectPlay(codec, measured, instance)) codec,
     ];
   }
 
-  /// Positive evidence only. Unknown codecs/engines still get a direct attempt;
-  /// absence in a successfully enumerated mpv build is a real incompatibility.
+  static bool _mpvCanDirectPlay(String codec, DecoderInventory? measured, VideoDecodeCapabilities? instance) {
+    final ranked = RankedVideoCodec.fromServerCodec(codec);
+    final hasHardware = switch (ranked) {
+      RankedVideoCodec.hevc => instance?._hardwareHevc == true,
+      RankedVideoCodec.av1 => instance?._hardwareAv1 == true,
+      _ => false,
+    };
+    if (ranked != null && !accepts(ranked)) return false;
+    if (measured == null) return codec == 'h264' || hasHardware;
+    return measured.hasSoftwareDecoder(codec) || (hasHardware && measured.contains(codec));
+  }
+
+  static bool _allowSourceCodec(String codec) {
+    final ranked = RankedVideoCodec.fromServerCodec(codec);
+    return ranked == null || !isRefusedByUser(ranked);
+  }
+
   static bool sourceDecoderUnavailable(String? codec) {
     if (codec == null || codec.trim().isEmpty) return false;
-    if (PlatformDetector.isTizenBuild() || PlatformDetector.isWebOSBuild()) return false;
+    if (videoEngine != 'mpv') return false;
     final measured = RuntimePlaybackCapabilities.videoDecoders;
     return measured != null && !measured.contains(codec);
+  }
+
+  /// Android validates the selected stream against a single platform decoder's
+  /// profile, dimensions and rate together. Dolby Vision has its own routing
+  /// and ExoPlayer can recover via mpv when the platform cannot answer.
+  static Future<bool> sourceFormatUnavailable(String? codec, MediaDisplayCriteria? source) async {
+    if (sourceDecoderUnavailable(codec)) return true;
+    if (videoEngine == 'webos' && codec != null && source != null && !source.hasDolbyVision) {
+      return webosVideoFormatUnavailable(CodecCatalog.normalize(codec), source, uhd: _singleton.instance?._webosUhd);
+    }
+    if (videoEngine != 'exoplayer' || codec == null || source == null || source.hasDolbyVision) return false;
+    try {
+      final supported = await deviceChannel.invokeMethod<bool>('isNativeVideoFormatSupported', {
+        'codec': CodecCatalog.normalize(codec),
+        'width': source.width,
+        'height': source.height,
+        'fps': source.fps,
+        'profile': source.codecProfile,
+        'bitDepth': source.bitDepth,
+      });
+      return supported == false;
+    } on MissingPluginException {
+      return false;
+    } on PlatformException {
+      return false;
+    }
   }
 
   /// Platform-reported profiles that the current native video path can accept.

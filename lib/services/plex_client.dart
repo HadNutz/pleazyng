@@ -935,9 +935,8 @@ class PlexClient
               json['key'] = id;
 
               libraries.add(
-                PlexLibraryDto.fromJson(
-                  json,
-                ).copyWith(serverId: serverId, serverName: serverName, isShared: isSharedLibrary),
+                PlexLibraryDto.fromJson(json)
+                    .copyWith(serverId: serverId, serverName: serverName, isShared: isSharedLibrary),
               );
             } catch (e) {
               appLogger.w('Failed to parse media provider directory entry', error: e);
@@ -1192,9 +1191,9 @@ class PlexClient
     if (container != null && container['Directory'] != null) {
       return (container['Directory'] as List)
           .map(
-            (json) => PlexLibraryDto.fromJson(
-              json as Map<String, dynamic>,
-            ).copyWith(serverId: serverId, serverName: serverName),
+            (json) =>
+                PlexLibraryDto.fromJson(json as Map<String, dynamic>)
+                    .copyWith(serverId: serverId, serverName: serverName),
           )
           .toList();
     }
@@ -1206,9 +1205,9 @@ class PlexClient
     if (container != null && container['Metadata'] != null) {
       return (container['Metadata'] as List)
           .map(
-            (json) => PlexPlaylistDto.fromJson(
-              json as Map<String, dynamic>,
-            ).copyWith(serverId: serverId, serverName: serverName),
+            (json) =>
+                PlexPlaylistDto.fromJson(json as Map<String, dynamic>)
+                    .copyWith(serverId: serverId, serverName: serverName),
           )
           .toList();
     }
@@ -4457,7 +4456,10 @@ class PlexClient
       final forceVideoConversion =
           !isTrack &&
           (options.forceVideoConversion ||
-              VideoDecodeCapabilities.sourceDecoderUnavailable(_selectedVersion(data)?.videoCodec));
+              await VideoDecodeCapabilities.sourceFormatUnavailable(
+                _selectedVersion(data)?.videoCodec,
+                data.mediaInfo?.displayCriteria,
+              ));
       final forceCompatibleDolbyVisionTranscode = options.requestsCompatibleDolbyVisionRendition(data.mediaInfo);
       if (forceCompatibleDolbyVisionTranscode &&
           !options.hasServerDolbyVisionSdrRoute(data.mediaInfo, backend: DolbyVisionSdrBackend.plex)) {

@@ -1,3 +1,4 @@
+import 'codec_catalog.dart';
 import 'media_source_info.dart';
 import 'media_version.dart';
 
@@ -6,12 +7,14 @@ import 'media_version.dart';
 bool tizenCanDirectPlayVideo(MediaVersion? version, MediaSourceInfo? source) {
   if (version == null || source == null) return false;
   if (!const {'mp4', 'm4v'}.contains(version.container?.toLowerCase()) ||
-      !const {'h264', 'avc', 'avc1'}.contains(version.videoCodec?.toLowerCase())) {
+      CodecCatalog.normalize(version.videoCodec ?? '') != 'h264') {
     return false;
   }
   final width = version.width;
   final height = version.height;
   if (width == null || height == null || width <= 0 || height <= 0 || width > 1920 || height > 1080) return false;
+  final criteria = source.displayCriteria;
+  if ((criteria?.bitDepth ?? 0) > 8 || (criteria?.fps ?? 0) > 60 || criteria?.isHdr == true) return false;
   return source.audioTracks.every(
     (track) =>
         const {'aac', 'mp3'}.contains(track.codec?.toLowerCase()) &&
@@ -48,6 +51,7 @@ Map<String, Object?> tizenPlaybackProfile({required bool audio, required bool bu
         {'Condition': 'LessThanEqual', 'Property': 'Width', 'Value': '1920', 'IsRequired': true},
         {'Condition': 'LessThanEqual', 'Property': 'Height', 'Value': '1080', 'IsRequired': true},
         {'Condition': 'LessThanEqual', 'Property': 'VideoBitDepth', 'Value': '8', 'IsRequired': false},
+        {'Condition': 'LessThanEqual', 'Property': 'VideoFramerate', 'Value': '60', 'IsRequired': false},
       ],
     },
     {

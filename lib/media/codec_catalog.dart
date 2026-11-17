@@ -248,6 +248,7 @@ abstract final class CodecCatalog {
     '.av2',
     '.evc',
     '.ivf',
+    '.apv',
     '.avs2',
     '.avs3',
     '.ogm',

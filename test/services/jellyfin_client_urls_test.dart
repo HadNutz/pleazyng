@@ -2928,7 +2928,7 @@ void main() {
       expect(profile.containsKey('MusicStreamingTranscodingBitrate'), isFalse);
       expect(profile['DirectPlayProfiles'], isNotEmpty);
       final directPlayProfile = (profile['DirectPlayProfiles'] as List<dynamic>).first as Map<String, dynamic>;
-      expect(directPlayProfile['VideoCodec'], contains('mpeg2video'));
+      expect(directPlayProfile['VideoCodec'], 'h264');
       // No runtime inventory was supplied, so preserve the unknown policy.
       expect(directPlayProfile.containsKey('AudioCodec'), isFalse);
       expect(profile['TranscodingProfiles'], isNotEmpty);
@@ -3048,11 +3048,11 @@ void main() {
       // hardware decoder has to drop it from both lists.
       final noDecoders = await profileFor(hevc: false, av1: false);
       expect(codecs(noDecoders, 'TranscodingProfiles'), 'h264');
-      expect(codecs(noDecoders, 'DirectPlayProfiles'), 'h264,vp8,vp9,mpeg4,mpeg2video');
+      expect(codecs(noDecoders, 'DirectPlayProfiles'), 'h264');
 
       final hevcOnly = await profileFor(hevc: true, av1: false);
       expect(codecs(hevcOnly, 'TranscodingProfiles'), 'hevc,h264');
-      expect(codecs(hevcOnly, 'DirectPlayProfiles'), 'hevc,h264,h265,vp8,vp9,mpeg4,mpeg2video');
+      expect(codecs(hevcOnly, 'DirectPlayProfiles'), 'hevc,h265,h264');
     });
 
     test('Emby never leads the transcode list with AV1 even when the device decodes it', () async {
@@ -3078,7 +3078,7 @@ void main() {
           ((profile[profileKey] as List<dynamic>).first as Map<String, dynamic>)['VideoCodec'] as String;
       expect(codecs('TranscodingProfiles'), 'hevc,h264');
       // An AV1 *source* still direct-plays: only the encode target is gated.
-      expect(codecs('DirectPlayProfiles'), 'hevc,h264,h265,vp8,vp9,av1,mpeg4,mpeg2video');
+      expect(codecs('DirectPlayProfiles'), 'hevc,h265,h264,av1');
     });
 
     test('image subtitle formats are declared Embed-only so a transcode burns them in', () async {
@@ -3405,8 +3405,7 @@ void main() {
               'MediaSources': [
                 {
                   'Container': 'ts',
-                  'TranscodingUrl':
-                      '/Videos/channel-1/live.m3u8?MediaSourceId=source-url&LiveStreamId=live-url&PlaySessionId=play-url',
+                  'TranscodingUrl': '/Videos/channel-1/live.m3u8?MediaSourceId=source-url&LiveStreamId=live-url&PlaySessionId=play-url',
                 },
               ],
             });

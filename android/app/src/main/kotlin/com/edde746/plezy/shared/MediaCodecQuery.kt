@@ -1,6 +1,7 @@
 package com.edde746.plezy.shared
 
 import android.media.MediaCodecInfo
+import android.media.MediaCodecInfo.CodecProfileLevel as Profile
 import android.media.MediaCodecList
 import android.os.Build
 import java.util.Locale
@@ -90,19 +91,115 @@ internal object MediaCodecQuery {
     return null
   }
 
+  private val videoMimeTypes = mapOf(
+    "h264" to "video/avc",
+    "hevc" to "video/hevc",
+    "av1" to "video/av01",
+    "vp9" to "video/x-vnd.on2.vp9",
+    "vp8" to "video/x-vnd.on2.vp8",
+    "mpeg2video" to "video/mpeg2",
+    "mpeg4" to "video/mp4v-es",
+    "h263" to "video/3gpp"
+  )
+
+  /** MediaFormat MIME type for an mpv/FFmpeg codec name. */
+  fun mimeTypeForCodec(codec: String?): String? = videoMimeTypes[codec?.lowercase(Locale.ROOT)]
+
+  /** Regular decoders Media3 can select without a secure playback session. */
+  fun nativeVideoCodecs(): List<String> {
+    val available = MediaCodecList(MediaCodecList.REGULAR_CODECS).codecInfos
+      .filterNot { it.isEncoder }
+      .flatMap { it.supportedTypes.map { type -> type.lowercase(Locale.ROOT) } }
+      .toSet()
+    return videoMimeTypes.filterValues { it in available }.keys.toList()
+  }
+
   /**
-   * MediaFormat MIME type for an mpv/FFmpeg codec name, for the codecs a
-   * hardware decoder may serve; null for anything else.
+   * null means the request could not be described with platform metadata.
+   * Check each decoder as a unit so the selected profile and size/rate
+   * cannot come from different components.
    */
-  fun mimeTypeForCodec(codec: String?): String? = when (codec?.lowercase(Locale.ROOT)) {
-    "h264" -> "video/avc"
-    "hevc" -> "video/hevc"
-    "av1" -> "video/av01"
-    "vp9" -> "video/x-vnd.on2.vp9"
-    "vp8" -> "video/x-vnd.on2.vp8"
-    "mpeg2video" -> "video/mpeg2"
-    "mpeg4" -> "video/mp4v-es"
-    else -> null
+  fun supportsVideoFormat(
+    codec: String?,
+    width: Int?,
+    height: Int?,
+    fps: Double?,
+    profile: String?,
+    bitDepth: Int?
+  ): Boolean? {
+    val mime = mimeTypeForCodec(codec) ?: return null
+    val profiles = platformProfiles(codec, profile, bitDepth)
+    val describesProfile = !profile.isNullOrBlank() || (bitDepth ?: 0) > 8
+    var incomplete = false
+    for (info in MediaCodecList(MediaCodecList.REGULAR_CODECS).codecInfos) {
+      if (info.isEncoder) continue
+      val type = info.supportedTypes.firstOrNull { it.equals(mime, ignoreCase = true) } ?: continue
+      val caps = try {
+        info.getCapabilitiesForType(type)
+      } catch (e: IllegalArgumentException) {
+        incomplete = true
+        continue
+      }
+      val video = caps.videoCapabilities
+      if (width != null && height != null && width > 0 && height > 0) {
+        if (video == null) {
+          incomplete = true
+          continue
+        }
+        val sizeSupported = if (fps != null && fps.isFinite() && fps > 0) {
+          // Media3 checks rounded-down frame rates for fractional content.
+          video.areSizeAndRateSupported(width, height, kotlin.math.floor(fps))
+        } else {
+          video.isSizeSupported(width, height)
+        }
+        if (!sizeSupported) continue
+      }
+      if (!describesProfile) return true
+      if (profiles.isEmpty() || caps.profileLevels.isEmpty()) {
+        incomplete = true
+        continue
+      }
+      if (caps.profileLevels.any { it.profile in profiles }) return true
+    }
+    return if (incomplete) null else false
+  }
+
+  private fun platformProfiles(codec: String?, profile: String?, bitDepth: Int?): Set<Int> {
+    val name = profile?.lowercase(Locale.ROOT)?.filter { it.isLetterOrDigit() }
+    return when (codec) {
+      "h264" -> when (name) {
+        "baseline" -> setOf(Profile.AVCProfileBaseline, Profile.AVCProfileConstrainedBaseline)
+        "constrainedbaseline" -> setOf(Profile.AVCProfileConstrainedBaseline, Profile.AVCProfileBaseline)
+        "main" -> setOf(Profile.AVCProfileMain)
+        "high" -> setOf(Profile.AVCProfileHigh, Profile.AVCProfileConstrainedHigh)
+        "high10" -> setOf(Profile.AVCProfileHigh10)
+        "high422" -> setOf(Profile.AVCProfileHigh422)
+        "high444", "high444predictive" -> setOf(Profile.AVCProfileHigh444)
+        null -> if (bitDepth == 10) setOf(Profile.AVCProfileHigh10) else emptySet()
+        else -> emptySet()
+      }
+      "hevc" -> when {
+        name == "main10" || (name == null && bitDepth == 10) ->
+          setOf(Profile.HEVCProfileMain10, Profile.HEVCProfileMain10HDR10, Profile.HEVCProfileMain10HDR10Plus)
+        name == "main" && (bitDepth ?: 8) <= 8 -> setOf(Profile.HEVCProfileMain, Profile.HEVCProfileMain10)
+        else -> emptySet()
+      }
+      "av1" -> when {
+        name != null && name != "main" && name != "profile0" -> emptySet()
+        bitDepth == 10 ->
+          setOf(Profile.AV1ProfileMain10, Profile.AV1ProfileMain10HDR10, Profile.AV1ProfileMain10HDR10Plus)
+        bitDepth == 8 -> setOf(Profile.AV1ProfileMain8, Profile.AV1ProfileMain10)
+        else -> emptySet()
+      }
+      "vp9" -> when (name) {
+        "profile0", "0" -> setOf(Profile.VP9Profile0)
+        "profile1", "1" -> setOf(Profile.VP9Profile1)
+        "profile2", "2" -> setOf(Profile.VP9Profile2, Profile.VP9Profile2HDR, Profile.VP9Profile2HDR10Plus)
+        "profile3", "3" -> setOf(Profile.VP9Profile3, Profile.VP9Profile3HDR, Profile.VP9Profile3HDR10Plus)
+        else -> emptySet()
+      }
+      else -> emptySet()
+    }
   }
 
   private val PERFORMANCE_POINT_RATES = intArrayOf(240, 120, 90, 60, 50, 30, 25, 24)

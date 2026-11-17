@@ -85,16 +85,41 @@ void main() {
     expect(VideoDecodeCapabilities.sourceDecoderUnavailable('h264'), isFalse);
   });
 
+  test('an unmeasured engine only advertises its compatibility baseline', () {
+    expect(VideoDecodeCapabilities.directPlayVideoCodecs, ['h264']);
+    RuntimePlaybackCapabilities.activeVideoEngine = 'exoplayer';
+    RuntimePlaybackCapabilities.recordMpvDecoders([
+      {'codec': 'vp9', 'driver': 'vp9'},
+    ]);
+    expect(VideoDecodeCapabilities.directPlayVideoCodecs, ['h264']);
+    RuntimePlaybackCapabilities.activeVideoEngine = 'tizen';
+    expect(VideoDecodeCapabilities.directPlayVideoCodecs, ['h264']);
+    RuntimePlaybackCapabilities.activeVideoEngine = 'webos';
+    expect(VideoDecodeCapabilities.directPlayVideoCodecs, containsAll(['h264', 'hevc', 'mpeg2video']));
+    expect(VideoDecodeCapabilities.directPlayVideoCodecs, isNot(contains('av1')));
+  });
+
+  test('hardware wrappers alone are insufficient for direct play', () {
+    RuntimePlaybackCapabilities.recordMpvDecoders([
+      {'codec': 'h264', 'driver': 'h264'},
+      {'codec': 'vp9', 'driver': 'vp9_qsv'},
+    ]);
+    expect(VideoDecodeCapabilities.directPlayVideoCodecs, ['h264']);
+  });
+
   test('container aliases follow the actual demuxer inventory', () {
-    RuntimePlaybackCapabilities.recordMpvDemuxers(['mov,mp4,m4a,3gp,3g2,mj2', 'avi', 'mpeg']);
-    expect(RuntimePlaybackCapabilities.mpvVideoContainers, containsAll(['mp4', 'mov', 'avi', 'vob']));
+    RuntimePlaybackCapabilities.recordMpvDemuxers(['mov,mp4,m4a,3gp,3g2,mj2', 'avi', 'mpeg', 'mpegts', 'asf', 'ogg']);
+    expect(
+      RuntimePlaybackCapabilities.mpvVideoContainers,
+      containsAll(['mp4', 'mov', 'avi', 'vob', 'qt', 'mj2', 'm2t', 'tod', 'dvr-ms', 'ogm']),
+    );
     expect(RuntimePlaybackCapabilities.mpvVideoContainers, isNot(contains('mkv')));
     RuntimePlaybackCapabilities.recordMpvDemuxers(['not a demuxer']);
     expect(RuntimePlaybackCapabilities.mpvVideoContainers, isNot(contains('mkv')));
   });
 
   test('new and legacy media reach source browsing without claiming decode support', () {
-    for (final extension in ['.vvc', '.ivf', '.nut', '.bik', '.dvr-ms', '.m2t']) {
+    for (final extension in ['.vvc', '.ivf', '.apv', '.nut', '.bik', '.dvr-ms', '.m2t']) {
       expect(classifySourceFile('sample$extension'), SourceItemKind.video);
     }
     for (final extension in ['.tak', '.tta', '.shn', '.dts', '.truehd', '.aifc']) {

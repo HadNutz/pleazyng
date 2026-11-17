@@ -9,13 +9,40 @@ bool _canUseJellyfinStaticStreamFallback(Object error) {
   return true;
 }
 
-/// Video codecs the client accepts in an original file, as a set: a codec
-/// missing here makes the server transcode instead of serving the file, which
-/// is the right trade when [VideoDecodeCapabilities] reports no hardware
-/// decoder or the user refused the codec. `h265` is Jellyfin's alternate
-/// spelling of `hevc` and travels with it; the unconditional entries
-/// remain the compatibility baseline until the engine reports its inventory.
-String _jellyfinDirectPlayVideoCodecs() => VideoDecodeCapabilities.directPlayVideoCodecs.join(',');
+const _exoVideoContainers = <String, Set<String>>{
+  'mp4,m4v,mov': {'h264', 'hevc', 'av1', 'vp9', 'mpeg4', 'h263'},
+  'mkv': {'h264', 'hevc', 'av1', 'vp8', 'vp9', 'mpeg4'},
+  'webm': {'av1', 'vp8', 'vp9'},
+  'ts,mpegts,m2ts': {'h264', 'hevc', 'mpeg2video'},
+};
+
+List<Map<String, Object?>> _videoDirectPlayProfiles({bool? allowAudioStreamCopy}) {
+  final codecs = VideoDecodeCapabilities.directPlayVideoCodecs.toSet();
+  final engine = VideoDecodeCapabilities.videoEngine;
+  final containers = switch (engine) {
+    'webos' => VideoDecodeCapabilities.webosDirectPlayContainers,
+    'exoplayer' => _exoVideoContainers,
+    _ => {RuntimePlaybackCapabilities.mpvVideoContainers.join(','): codecs},
+  };
+  final audio = RuntimePlaybackCapabilities.videoAudioCodecs;
+  return [
+    for (final MapEntry(key: container, value: supported) in containers.entries)
+      if (container.isNotEmpty && supported.any(codecs.contains))
+        {
+          'Type': 'Video',
+          'Container': container,
+          // Retain the server's alternate spelling for HEVC on the wire.
+          'VideoCodec': supported
+              .where(codecs.contains)
+              .expand((codec) => [codec, if (codec == 'hevc') 'h265'])
+              .join(','),
+          if (engine == 'webos' && allowAudioStreamCopy == false)
+            'AudioCodec': webosTranscodeAudioCodecs
+          else if (engine == 'mpv' && audio != null && audio.isNotEmpty)
+            'AudioCodec': audio.join(','),
+        },
+  ];
+}
 
 /// Video codecs the client accepts as a transcode output, best first — unlike
 /// the direct-play list this one is an ordered preference and the server
@@ -289,7 +316,9 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
         ? null
         : bundle.availableVersions[bundle.selectedSourceIndex.clamp(0, bundle.availableVersions.length - 1)].videoCodec;
     final forceVideoConversion =
-        !isTrack && (options.forceVideoConversion || VideoDecodeCapabilities.sourceDecoderUnavailable(sourceCodec));
+        !isTrack &&
+        (options.forceVideoConversion ||
+            await VideoDecodeCapabilities.sourceFormatUnavailable(sourceCodec, mediaInfo.displayCriteria));
     final requiresConversion =
         forceAudioConversion || forceCompatibleDolbyVisionTranscode || forceVideoConversion || options.forceTranscode;
     if (forceCompatibleDolbyVisionTranscode &&
@@ -1105,20 +1134,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
               },
           ],
           'DirectPlayProfiles': <Map<String, Object?>>[
-            {
-              'Type': 'Video',
-              'Container': PlatformDetector.isWebOSBuild()
-                  ? 'mp4,mkv,m4v,webm,mov,ts,mpegts'
-                  : RuntimePlaybackCapabilities.mpvVideoContainers.join(','),
-              'VideoCodec': _jellyfinDirectPlayVideoCodecs(),
-              if (PlatformDetector.isWebOSBuild() && allowAudioStreamCopy == false)
-                'AudioCodec': webosTranscodeAudioCodecs
-              else if (RuntimePlaybackCapabilities.videoAudioCodecs case final codecs? when codecs.isNotEmpty)
-                'AudioCodec': codecs.join(','),
-              // Missing inventory preserves the existing unknown-capability
-              // policy. A measured list constrains decoding only; it never
-              // promises passthrough or object-audio reconstruction.
-            },
+            ..._videoDirectPlayProfiles(allowAudioStreamCopy: allowAudioStreamCopy),
             // Music containers/codecs mpv plays natively everywhere. This one
             // keeps its `AudioCodec` because Jellyfin falls back to the
             // container list for `Type: Audio`, and a multi-container entry is
