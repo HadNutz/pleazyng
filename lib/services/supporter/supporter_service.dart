@@ -354,7 +354,7 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
         WidgetsBinding.instance.addObserver(this);
         try {
           final cached = await _lgPaymentwallClient.readCachedEntitlement();
-          if (cached != null) _purchased = cached.owned;
+          if (cached != null && _lgPaymentwallClient.isCurrentEntitlement(cached)) _purchased = cached.owned;
         } on LgPaymentwallFailure {
           _setStoreState(_storeState.value.copyWith(error: () => SupporterError.paymentRestoreFailed));
         }
@@ -390,8 +390,10 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
         } else {
           try {
             final entitlement = await _lgPaymentwallClient.refreshEntitlement();
-            if (entitlement != null) _setPurchased(entitlement.owned);
-            _setStoreState(_storeState.value.copyWith(error: () => null));
+            if (entitlement != null && _lgPaymentwallClient.isCurrentEntitlement(entitlement)) {
+              _setPurchased(entitlement.owned);
+              _setStoreState(_storeState.value.copyWith(error: () => null));
+            }
           } on LgPaymentwallFailure catch (error) {
             _setStoreState(
               _storeState.value.copyWith(error: () => _supporterErrorForLGFailure(error, restoring: true)),
@@ -797,6 +799,10 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
     try {
       final entitlement = await client.restoreWithRecoveryCode(code, confirmSwitch: confirmSwitch);
       if (isDisposed) return false;
+      if (!client.isCurrentEntitlement(entitlement)) {
+        _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.idle));
+        return false;
+      }
       _setPurchased(entitlement.owned);
       _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.idle, error: () => null));
       return true;
@@ -885,6 +891,10 @@ class SupporterService extends ChangeNotifier with DisposableChangeNotifierMixin
             error: () => restoring ? SupporterError.paymentNothingToRestore : null,
           ),
         );
+        return;
+      }
+      if (!client.isCurrentEntitlement(entitlement)) {
+        _setStoreState(_storeState.value.copyWith(status: SupporterPurchaseStatus.idle));
         return;
       }
       _setPurchased(entitlement.owned);

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -192,6 +193,115 @@ void main() {
     statusGrant = await signedGrant(uid: uid!, owned: false, revision: 4);
     await expectLater(payment.refreshEntitlement(), throwsA(isA<LgPaymentwallFailure>()));
     expect((await payment.readCachedEntitlement())?.owned, isTrue);
+    payment.close();
+  });
+
+  test('out-of-order refresh cannot overwrite a newer revocation', () async {
+    final store = _SecureStore();
+    String? uid;
+    var entitlementRequests = 0;
+    final staleRequestStarted = Completer<void>();
+    final staleResponse = Completer<http.Response>();
+    late String initialGrant;
+    late String revokedGrant;
+    final mock = MockClient((request) async {
+      if (request.url.path == '/lg/paymentwall/identity') {
+        uid = (jsonDecode(request.body) as Map<String, dynamic>)['uid'] as String;
+        return http.Response('', 204);
+      }
+      if (request.url.path == '/lg/paymentwall/entitlement') {
+        entitlementRequests++;
+        if (entitlementRequests == 1) {
+          return http.Response(jsonEncode({'grant': initialGrant}), 200, headers: {'content-type': 'application/json'});
+        }
+        if (entitlementRequests == 2) {
+          staleRequestStarted.complete();
+          return staleResponse.future;
+        }
+        if (entitlementRequests == 3) {
+          return http.Response(jsonEncode({'grant': revokedGrant}), 200, headers: {'content-type': 'application/json'});
+        }
+      }
+      fail('unexpected request: ${request.url.path}');
+    });
+    final payment = client(store: store, httpClient: mock);
+    await payment.prepareCheckoutRecoveryCode();
+    initialGrant = await signedGrant(uid: uid!, owned: true, revision: 1);
+    final initial = await payment.refreshEntitlement();
+    expect(initial?.owned, isTrue);
+
+    final staleRefresh = payment.refreshEntitlement();
+    await staleRequestStarted.future;
+    revokedGrant = await signedGrant(uid: uid!, owned: false, revision: 2);
+    final latest = await payment.refreshEntitlement();
+    expect(latest?.owned, isFalse);
+    expect(payment.isCurrentEntitlement(latest!), isTrue);
+
+    staleResponse.complete(
+      http.Response(jsonEncode({'grant': initialGrant}), 200, headers: {'content-type': 'application/json'}),
+    );
+    await expectLater(staleRefresh, throwsA(isA<LgPaymentwallFailure>()));
+    expect(payment.isCurrentEntitlement(latest), isTrue);
+    expect((await payment.readCachedEntitlement())?.owned, isFalse);
+    payment.close();
+  });
+
+  test('refresh started for a previous UID cannot publish after recovery switches identity', () async {
+    final store = _SecureStore();
+    String? oldUid;
+    var entitlementRequests = 0;
+    final staleRequestStarted = Completer<void>();
+    final staleResponse = Completer<http.Response>();
+    late String oldGrant;
+    const newUid = 'ffeeddccbbaa99887766554433221100';
+    const newCredential = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+    final newRecoveryCode = LgPaymentwallClient.recoveryCode(newUid, newCredential);
+    late String newGrant;
+    final mock = MockClient((request) async {
+      if (request.url.path == '/lg/paymentwall/identity') {
+        final input = jsonDecode(request.body) as Map<String, dynamic>;
+        if (input['restoreOnly'] != true) oldUid = input['uid'] as String;
+        return http.Response('', 204);
+      }
+      if (request.url.path == '/lg/paymentwall/entitlement') {
+        entitlementRequests++;
+        if (entitlementRequests == 1) {
+          return http.Response(jsonEncode({'grant': oldGrant}), 200, headers: {'content-type': 'application/json'});
+        }
+        if (entitlementRequests == 2) {
+          staleRequestStarted.complete();
+          return staleResponse.future;
+        }
+        if (entitlementRequests == 3) {
+          return http.Response(jsonEncode({'grant': newGrant}), 200, headers: {'content-type': 'application/json'});
+        }
+      }
+      fail('unexpected request: ${request.url.path}');
+    });
+    final payment = client(store: store, httpClient: mock);
+    await payment.prepareCheckoutRecoveryCode();
+    oldGrant = await signedGrant(uid: oldUid!, owned: true, revision: 1);
+    expect((await payment.refreshEntitlement())?.owned, isTrue);
+
+    final staleRefresh = payment.refreshEntitlement();
+    await staleRequestStarted.future;
+    newGrant = await signedGrant(uid: newUid, owned: false, revision: 1);
+    final imported = await payment.restoreWithRecoveryCode(newRecoveryCode, confirmSwitch: true);
+    expect(imported.uid, newUid);
+    expect(imported.owned, isFalse);
+    expect(payment.isCurrentEntitlement(imported), isTrue);
+
+    staleResponse.complete(
+      http.Response(
+        jsonEncode({'grant': await signedGrant(uid: oldUid!, owned: true, revision: 2)}),
+        200,
+        headers: {'content-type': 'application/json'},
+      ),
+    );
+    await expectLater(staleRefresh, throwsA(isA<LgPaymentwallFailure>()));
+    final active = await payment.readCachedEntitlement();
+    expect(active?.uid, newUid);
+    expect(active?.owned, isFalse);
     payment.close();
   });
 

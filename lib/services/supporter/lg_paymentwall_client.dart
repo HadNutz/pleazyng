@@ -178,13 +178,37 @@ class LgPaymentwallClient {
 
   bool get hasLocalIdentity => _cachedActiveAccount != null;
 
+  /// Whether this exact proof is still the current proof for the active UID.
+  /// Callers use this synchronous fence immediately before publishing ownership.
+  bool isCurrentEntitlement(LgPaymentwallEntitlement entitlement) =>
+      identical(_latestEntitlement, entitlement) &&
+      _cachedActiveAccount?.uid == entitlement.uid &&
+      _cachedActiveAccount?.grant == _latestGrantToken;
+
   /// Reads and verifies the last accepted signed grant for offline startup.
   /// `null` means this TV has no cached grant, not that ownership was revoked.
   Future<LgPaymentwallEntitlement?> readCachedEntitlement() async {
     _requireConfigured();
     final account = await _readActiveAccount();
     if (account == null || account.grant == null) return null;
-    return _verifyGrant(account.grant!, account.uid);
+    final token = account.grant!;
+    final entitlement = await _verifyGrant(token, account.uid);
+    final current = await _serializeMutation(() async {
+      final active = await _readActiveAccount();
+      if (active == null ||
+          active.uid != account.uid ||
+          active.credential != account.credential ||
+          active.grant != token) {
+        throw const LgPaymentwallFailure(LgPaymentwallFailureKind.invalidProof);
+      }
+      _latestEntitlement = entitlement;
+      _latestGrantToken = token;
+      return entitlement;
+    });
+    if (!isCurrentEntitlement(current)) {
+      throw const LgPaymentwallFailure(LgPaymentwallFailureKind.invalidProof);
+    }
+    return current;
   }
 
   /// Queries the dedicated backend and stores only an authenticated grant.
@@ -196,13 +220,16 @@ class LgPaymentwallClient {
     final grant = await _requestGrant(account);
     final entitlement = await _verifyGrant(grant, account.uid);
     await _acceptGrant(account, grant, entitlement);
+    if (!isCurrentEntitlement(entitlement)) {
+      throw const LgPaymentwallFailure(LgPaymentwallFailureKind.invalidProof);
+    }
     return entitlement;
   }
 
   /// Creates or resumes the first identity and returns the user-controlled
   /// recovery code. A successful secure-store round trip is required before
   /// any identity is registered with the backend.
-  Future<LgPaymentwallRecoveryOffer> prepareCheckoutRecoveryCode() async {
+  Future<LgPaymentwallRecoveryOffer> prepareCheckoutRecoveryCode() => _serializeMutation(() async {
     _requireConfigured();
     final active = await _readActiveAccount();
     final account = active ?? await _preparePendingAccount();
@@ -214,15 +241,15 @@ class LgPaymentwallClient {
       code: recoveryCode(account.uid, account.credential),
       acknowledged: account.recoveryAcknowledged,
     );
-  }
+  });
 
   /// Marks that the user has revealed and saved their recovery code.
-  Future<void> acknowledgeRecoveryCode() async {
+  Future<void> acknowledgeRecoveryCode() => _serializeMutation(() async {
     final account = await _readActiveAccount();
     if (account == null) throw const LgPaymentwallFailure(LgPaymentwallFailureKind.unavailable);
     final updated = account.copyWith(recoveryAcknowledged: true);
     await _writeAccount(updated);
-  }
+  });
 
   /// Returns the active recovery code for a user-requested disclosure.
   Future<String?> revealRecoveryCode() async {
@@ -274,46 +301,79 @@ class LgPaymentwallClient {
       throw const LgPaymentwallFailure(LgPaymentwallFailureKind.identitySwitchNeedsConfirmation);
     }
 
-    _LgPaymentwallAccount? previousCandidate;
-    final previousRaw = await _secureRead(_bundleKey(candidate.uid));
-    if (previousRaw != null) previousCandidate = _LgPaymentwallAccount.decode(previousRaw, candidate.uid);
-
     final candidateAccount = _LgPaymentwallAccount(uid: candidate.uid, credential: candidate.credential);
     await _registerIdentity(candidateAccount, restoreOnly: true);
     final grant = await _requestGrant(candidateAccount);
     final entitlement = await _verifyGrant(grant, candidateAccount.uid);
-    if (previousCandidate?.grant case final String previousGrant) {
-      final previous = await _verifyGrant(previousGrant, candidate.uid);
-      _checkRevision(previous, entitlement);
-    }
+    final recovered = await _serializeMutation(() async {
+      if (await _secureRead(_activeUidKey) != activeUid) {
+        throw const LgPaymentwallFailure(LgPaymentwallFailureKind.unavailable);
+      }
+      final previousCandidate = await _readAccount(candidate.uid);
+      if (previousCandidate?.grant case final String previousGrant) {
+        final previous = await _verifyGrant(previousGrant, candidate.uid);
+        _checkRevision(previous, entitlement);
+      }
 
-    final recovered = _LgPaymentwallAccount(
-      uid: candidateAccount.uid,
-      credential: candidateAccount.credential,
-      grant: grant,
-      recoveryAcknowledged: true,
-    );
-    await _writeAccount(recovered);
-    await _writeActiveUid(candidate.uid);
-    return entitlement;
+      final recovered = _LgPaymentwallAccount(
+        uid: candidateAccount.uid,
+        credential: candidateAccount.credential,
+        grant: grant,
+        recoveryAcknowledged: true,
+      );
+      await _writeAccount(recovered);
+      await _writeActiveUid(candidate.uid);
+      _latestEntitlement = entitlement;
+      _latestGrantToken = grant;
+      return entitlement;
+    });
+    if (!isCurrentEntitlement(recovered)) {
+      throw const LgPaymentwallFailure(LgPaymentwallFailureKind.invalidProof);
+    }
+    return recovered;
   }
 
   void close() => _httpClient.close();
 
   _LgPaymentwallAccount? _cachedActiveAccount;
+  LgPaymentwallEntitlement? _latestEntitlement;
+  String? _latestGrantToken;
+  Future<void> _mutationTail = Future<void>.value();
 
   Future<_LgPaymentwallAccount?> _readActiveAccount() async {
-    if (_cachedActiveAccount case final account?) return account;
     final uid = await _secureRead(_activeUidKey);
-    if (uid == null) return null;
+    if (uid == null) {
+      _cachedActiveAccount = null;
+      _latestEntitlement = null;
+      _latestGrantToken = null;
+      return null;
+    }
     if (!RegExp(r'^[a-f0-9]{32}$').hasMatch(uid)) {
       throw const LgPaymentwallFailure(LgPaymentwallFailureKind.unavailable);
     }
     final raw = await _secureRead(_bundleKey(uid));
     if (raw == null) throw const LgPaymentwallFailure(LgPaymentwallFailureKind.unavailable);
     final account = _LgPaymentwallAccount.decode(raw, uid);
+    if (_cachedActiveAccount?.uid != uid) {
+      _latestEntitlement = null;
+      _latestGrantToken = null;
+    }
     _cachedActiveAccount = account;
     return account;
+  }
+
+  Future<T> _serializeMutation<T>(Future<T> Function() action) {
+    final predecessor = _mutationTail;
+    final release = Completer<void>();
+    _mutationTail = release.future;
+    return () async {
+      await predecessor;
+      try {
+        return await action();
+      } finally {
+        release.complete();
+      }
+    }();
   }
 
   Future<_LgPaymentwallAccount> _preparePendingAccount() async {
@@ -451,13 +511,21 @@ class LgPaymentwallClient {
   }
 
   Future<void> _acceptGrant(_LgPaymentwallAccount account, String token, LgPaymentwallEntitlement entitlement) async {
-    if (account.grant != null) {
-      final previous = await _verifyGrant(account.grant!, account.uid);
-      _checkRevision(previous, entitlement);
-    }
-    final updated = account.copyWith(grant: token);
-    await _writeAccount(updated);
-    _cachedActiveAccount = updated;
+    await _serializeMutation(() async {
+      final active = await _readActiveAccount();
+      if (active == null || active.uid != account.uid || active.credential != account.credential) {
+        throw const LgPaymentwallFailure(LgPaymentwallFailureKind.invalidProof);
+      }
+      if (active.grant != null) {
+        final previous = await _verifyGrant(active.grant!, active.uid);
+        _checkRevision(previous, entitlement);
+      }
+      final updated = active.copyWith(grant: token);
+      await _writeAccount(updated);
+      _cachedActiveAccount = updated;
+      _latestEntitlement = entitlement;
+      _latestGrantToken = token;
+    });
   }
 
   void _checkRevision(LgPaymentwallEntitlement previous, LgPaymentwallEntitlement next) {
@@ -489,6 +557,8 @@ class LgPaymentwallClient {
     }
     if (await _secureRead(_activeUidKey) != uid) throw const LgPaymentwallFailure(LgPaymentwallFailureKind.unavailable);
     _cachedActiveAccount = await _readAccount(uid);
+    _latestEntitlement = null;
+    _latestGrantToken = null;
   }
 
   Future<_LgPaymentwallAccount?> _readAccount(String uid) async {
