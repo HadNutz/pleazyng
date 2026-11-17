@@ -12,16 +12,74 @@ import time
 
 ROOT = Path(__file__).resolve().parents[2]
 DART = r"""import 'dart:io';
+import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
 import 'desktop_workspace_views.dart';
 
-void main() {
+ui.FlutterView? _primaryView;
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const Probe());
+  if (Platform.isMacOS) {
+    _primaryView = await _waitForMacPrimaryView();
+    runWidget(View(view: _primaryView!, child: const Probe()));
+  } else {
+    _primaryView = WidgetsBinding.instance.platformDispatcher.implicitView;
+    runApp(const Probe());
+  }
+}
+
+Future<ui.FlutterView> _waitForMacPrimaryView() async {
+  const channel = MethodChannel('com.pleazyng/workspace_views');
+  final dispatcher = WidgetsBinding.instance.platformDispatcher;
+  const timeout = Duration(seconds: 5);
+  const requestTimeout = Duration(milliseconds: 500);
+  final elapsed = Stopwatch()..start();
+  var lastObservation = 'native primary view ID unavailable';
+  while (elapsed.elapsed < timeout) {
+    final remaining = timeout - elapsed.elapsed;
+    try {
+      final viewId = await channel
+          .invokeMethod<int>('mainViewId')
+          .timeout(
+            requestTimeout.inMicroseconds < remaining.inMicroseconds
+                ? requestTimeout
+                : remaining,
+          );
+      if (viewId != null) {
+        for (final view in dispatcher.views) {
+          if (view.viewId == viewId) {
+            stdout.writeln('WORKSPACE_DART_ROOT_VIEW_BOUND id=$viewId');
+            return view;
+          }
+        }
+        lastObservation =
+            'nativeId=$viewId; views=${dispatcher.views.map((view) => '${view.viewId}:${view.physicalSize}').join(',')}';
+      } else {
+        lastObservation = 'native mainViewId returned null';
+      }
+    } on MissingPluginException {
+      lastObservation = 'native mainViewId method not registered yet';
+    } on PlatformException catch (error) {
+      lastObservation = 'native mainViewId returned ${error.code}';
+    } on TimeoutException {
+      lastObservation = 'native mainViewId did not respond';
+    }
+    final delay = timeout - elapsed.elapsed;
+    if (delay.inMicroseconds <= 0) break;
+    await Future<void>.delayed(
+      delay.inMicroseconds < 50000 ? delay : const Duration(milliseconds: 50),
+    );
+  }
+  throw StateError(
+    'could not bind the Dart root to the native primary Flutter view before ${timeout.inSeconds}s: '
+    '$lastObservation; views=${dispatcher.views.map((view) => '${view.viewId}:${view.physicalSize}').join(',')}',
+  );
 }
 
 class Probe extends StatefulWidget {
@@ -62,9 +120,13 @@ class _ProbeState extends State<Probe> {
           .map((view) => '${view.viewId}:${view.physicalSize}')
           .join(',');
       stdout.writeln(
-        'WORKSPACE_DART_VIEWS implicit=${implicitView?.viewId} all=$initialMetrics',
+        'WORKSPACE_DART_VIEWS root=${_primaryView?.viewId} implicit=${implicitView?.viewId} all=$initialMetrics',
       );
-      final initialView = initialViews.first;
+      final initialView = _primaryView ?? initialViews.first;
+      require(
+        initialViews.any((view) => view.viewId == initialView.viewId),
+        'the selected root view is not attached to the engine',
+      );
       RenderRepaintBoundary? renderObject;
       Size? boundarySize;
       for (var attempt = 0; attempt < 200; attempt++) {
@@ -98,8 +160,13 @@ class _ProbeState extends State<Probe> {
           'the initial native view or Dart boundary has zero size: view=${initialView.physicalSize}, boundary=$boundarySize, all=$currentMetrics',
         );
       }
+      final renderedViewId = View.of(renderKey.currentContext!).viewId;
+      require(
+        renderedViewId == initialView.viewId,
+        'the rendered application is bound to view $renderedViewId instead of selected native view ${initialView.viewId}',
+      );
       stdout.writeln(
-        'WORKSPACE_DART_VIEW_READY view=${initialView.physicalSize} boundary=${attachedRenderObject.size}',
+        'WORKSPACE_DART_VIEW_READY id=$renderedViewId view=${initialView.physicalSize} boundary=${attachedRenderObject.size}',
       );
       await WidgetsBinding.instance.endOfFrame;
       final image = await attachedRenderObject.toImage(pixelRatio: 1);
@@ -304,11 +371,17 @@ def qualify(platform, arch=None):
         marker = "/// Additional Flutter views share the existing engine"
         if production.count(marker) != 1:
             raise RuntimeError("Production Swift workspace host not found")
+        plugin_registry = (ROOT / "macos/Runner/PrimaryViewPluginRegistry.swift").read_text()
+        plugin_registry = plugin_registry.replace("import Cocoa\n", "").replace(
+            "import FlutterMacOS\n", ""
+        )
         with source.open("a") as out:
             out.write("\n" + marker + production.split(marker, 1)[1])
+            out.write("\n" + plugin_registry)
         replace(source, "class MainFlutterWindow: NSWindow {",
                 "class MainFlutterWindow: NSWindow {\n"
-                "  private var workspaceWindows: WorkspaceDesktopWindows?")
+                "  private var workspaceWindows: WorkspaceDesktopWindows?\n"
+                "  private var primaryViewPluginRegistry: PrimaryViewPluginRegistry?")
         replace(source, "let flutterViewController = FlutterViewController()",
                 "let engine = FlutterEngine(name: \"WorkspaceProbe\", project: nil, allowHeadlessExecution: true)\n"
                 "    let selector = NSSelectorFromString(\"enableMultiView\")\n"
@@ -317,9 +390,34 @@ def qualify(platform, arch=None):
                 "    guard engine.run(withEntrypoint: nil) else { fatalError(\"engine startup failed\") }\n"
                 "    let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)\n"
                 "    print(\"WORKSPACE_NATIVE_VIEW_ID id=\\(flutterViewController.viewIdentifier)\")\n"
-                "    let startupRegistrar = flutterViewController.registrar(forPlugin: \"WorkspaceStartupProbe\")\n"
-                "    print(\"WORKSPACE_NATIVE_REGISTRAR view=\\(String(describing: startupRegistrar.view)) viewController=\\(String(describing: startupRegistrar.viewController)) viewIsMain=\\(startupRegistrar.view.map { $0 === flutterViewController.view } ?? false) controllerIsMain=\\(startupRegistrar.viewController === flutterViewController) engineControllerIsMain=\\(engine.viewController === flutterViewController)\")\n"
                 "    workspaceWindows = WorkspaceDesktopWindows(engine: engine, parent: self, available: true)")
+        replace(source, "RegisterGeneratedPlugins(registry: flutterViewController)",
+                "primaryViewPluginRegistry = PrimaryViewPluginRegistry(\n"
+                "      engine: engine, primaryViewController: flutterViewController)\n"
+                "    let legacyRegistrar = engine.registrar(forPlugin: \"WindowManagerPlugin\")\n"
+                "    let controllerRegistrar = flutterViewController.registrar(forPlugin: \"WindowManagerPlugin\")\n"
+                "    let scopedRegistrar = primaryViewPluginRegistry!.registrar(forPlugin: \"WindowManagerPlugin\")\n"
+                "    let scopedViewIsPrimary = scopedRegistrar.view === flutterViewController.view\n"
+                "    let scopedControllerIsPrimary = scopedRegistrar.viewController === flutterViewController\n"
+                "    print(\"WORKSPACE_NATIVE_REGISTRAR legacyViewIsNil=\\(legacyRegistrar.view == nil) legacyControllerIsNil=\\(legacyRegistrar.viewController == nil) controllerRegistrarViewIsPrimary=\\(controllerRegistrar.view === flutterViewController.view) engineControllerIsPrimary=\\(engine.viewController === flutterViewController) scopedViewIsPrimary=\\(scopedViewIsPrimary) scopedControllerIsPrimary=\\(scopedControllerIsPrimary)\")\n"
+                "    guard scopedViewIsPrimary && scopedControllerIsPrimary else {\n"
+                "      fatalError(\"scoped registrar did not expose the attached primary view\")\n"
+                "    }\n"
+                "    RegisterGeneratedPlugins(registry: primaryViewPluginRegistry!)")
+        replace(source, "private let engine: FlutterEngine\n  private let available: Bool",
+                "private let engine: FlutterEngine\n  private weak var parentWindow: NSWindow?\n  private let available: Bool")
+        replace(source, "self.engine = engine\n    self.available = available",
+                "self.engine = engine\n    self.parentWindow = parent\n    self.available = available")
+        replace(source, "if call.method == \"available\" { result(available); return }",
+                "if call.method == \"mainViewId\" {\n"
+                "      guard let controller = parentWindow?.contentViewController as? FlutterViewController else {\n"
+                "        result(FlutterError(code: \"PRIMARY_VIEW_UNAVAILABLE\", message: \"The primary Flutter view is not attached\", details: nil))\n"
+                "        return\n"
+                "      }\n"
+                "      result(controller.viewIdentifier)\n"
+                "      return\n"
+                "    }\n"
+                "    if call.method == \"available\" { result(available); return }")
         replace(source, "self.setFrame(windowFrame, display: true)",
                 "self.setFrame(windowFrame, display: true)\n"
                 "    print(\"WORKSPACE_NATIVE_WINDOW_FRAME frame=\\(self.frame) visible=\\(self.isVisible) content=\\(self.contentView?.frame ?? .zero) flutter=\\(flutterViewController.view.frame)\")")
