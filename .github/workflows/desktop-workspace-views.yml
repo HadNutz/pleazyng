@@ -28,7 +28,7 @@ jobs:
           - platform: windows
             runner: windows-2025
           - platform: macos
-            runner: macos-15
+            runner: xcode-27
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 35
     steps:
