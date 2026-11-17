@@ -53,18 +53,18 @@ class BuildWorkflowGuardTest(unittest.TestCase):
         for step in steps:
             if step.get('name') in core_steps:
                 with self.subTest(step=step['name']):
-                    self.assertIn("inputs.recovery_source_sha == ''", step.get('if', ''))
+                    self.assertIn("steps.release-mode.outputs.append_only != 'true'", step.get('if', ''))
         product_checkout = next(step for step in steps
                                 if step.get('with', {}).get('path') == 'product-source')
-        self.assertEqual(product_checkout['if'], "${{ inputs.recovery_source_sha == '' }}")
+        self.assertEqual(product_checkout['if'], "${{ steps.release-mode.outputs.append_only != 'true' }}")
         for name in ('Prepare append-only Apple Store recovery assets',
                      'Attest append-only Apple Store recovery assets',
                      'Append signed Apple assets without replacing existing release assets'):
             step = next(step for step in steps if step.get('name') == name)
-            self.assertIn("inputs.recovery_source_sha != ''", step.get('if', ''))
+            self.assertIn("steps.release-mode.outputs.append_only == 'true'", step.get('if', ''))
 
         changed = self._workflow().replace(
-            "if: ${{ inputs.recovery_source_sha == '' }}\n        id: moonlight-source",
+            "if: ${{ steps.release-mode.outputs.append_only != 'true' }}\n        id: moonlight-source",
             "if: ${{ success() }}\n        id: moonlight-source",
             1,
         )

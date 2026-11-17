@@ -2,7 +2,7 @@
 # Public GitHub-hosted runners are required for all compatible jobs; only
 # requested Apple signing and the verified webOS storage overflow use JIT.
 name: Pleazyng Release
-run-name: ${{ format('{0}{1}', inputs.private_apple_signing_unavailable && 'apple-signing-unavailable:' || '', inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos && inputs.reuse_platform_run_id == '' && inputs.action == 'build' && format('action:{0}:pool:{1}:mode:{2}:version:{3}:runner-retry-of:{4}', inputs.action, inputs.runner_pool, inputs.mode, inputs.build_version, inputs.reuse_repaired_run_id) || inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos && inputs.reuse_platform_run_id == '' && inputs.action == 'release' && format('action:{0}:pool:{1}:tag:v{2}:runner-retry-of:{3}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_repaired_run_id) || inputs.recovery_source_sha != '' && format('action:{0}:pool:{1}:tag:v{2}:repair:{3}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.recovery_source_sha) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.rebuild_tvos && format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:tvos', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id) || inputs.action == 'release' && format('action:{0}:pool:{1}:tag:v{2}', inputs.action, inputs.runner_pool, inputs.build_version) || inputs.action == 'build' && inputs.mode == 'release' && inputs.build_version != '' && format('action:{0}:pool:{1}:mode:{2}:version:{3}', inputs.action, inputs.runner_pool, inputs.mode, inputs.build_version) || format('action:{0}:pool:{1}', inputs.action, inputs.runner_pool)) }}
+run-name: ${{ format('{0}{1}', inputs.private_apple_signing_unavailable && 'apple-signing-unavailable:' || '', inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos && inputs.reuse_platform_run_id == '' && inputs.action == 'build' && format('action:{0}:pool:{1}:mode:{2}:version:{3}:runner-retry-of:{4}', inputs.action, inputs.runner_pool, inputs.mode, inputs.build_version, inputs.reuse_repaired_run_id) || inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos && inputs.reuse_platform_run_id == '' && inputs.action == 'release' && format('action:{0}:pool:{1}:tag:v{2}:runner-retry-of:{3}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_repaired_run_id) || inputs.recovery_source_sha != '' && startsWith(inputs.reuse_repaired_run_id, 'assembly-tvos:') && format('action:{0}:pool:{1}:tag:v{2}:repair:{3}:{4}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.recovery_source_sha, inputs.reuse_repaired_run_id) || inputs.recovery_source_sha != '' && format('action:{0}:pool:{1}:tag:v{2}:repair:{3}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.recovery_source_sha) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.rebuild_tvos && format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:tvos', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id) || inputs.action == 'release' && format('action:{0}:pool:{1}:tag:v{2}', inputs.action, inputs.runner_pool, inputs.build_version) || inputs.action == 'build' && inputs.mode == 'release' && inputs.build_version != '' && format('action:{0}:pool:{1}:mode:{2}:version:{3}', inputs.action, inputs.runner_pool, inputs.mode, inputs.build_version) || format('action:{0}:pool:{1}', inputs.action, inputs.runner_pool)) }}
 
 on:
   workflow_dispatch:
@@ -747,6 +747,8 @@ jobs:
             if [[ -n "$PACKAGING_SHA" ]]; then
               if [[ "$REPAIRED_RUN" =~ ^tvos:([1-9][0-9]*),ios:([1-9][0-9]*)$ ]]; then
                 options+=(--tvos-run "${BASH_REMATCH[1]}" --ios-run "${BASH_REMATCH[2]}")
+              elif [[ "$REPAIRED_RUN" =~ ^assembly-tvos:([1-9][0-9]*)$ ]]; then
+                options+=(--built-tvos-run "${BASH_REMATCH[1]}")
               elif [[ "$REPAIRED_RUN" =~ ^[1-9][0-9]*$ ]]; then
                 options+=(--tvos-run "$REPAIRED_RUN")
               else
@@ -3363,6 +3365,14 @@ jobs:
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
+      - name: Select fresh release or append-only recovery
+        id: release-mode
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.release_tag }}
+          PACKAGING_SOURCE_SHA: ${{ inputs.recovery_source_sha }}
+        run: python3 scripts/release_assembly_mode.py
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ needs.validate-trusted-ref.outputs.android_source_sha || github.sha }}
@@ -3387,10 +3397,10 @@ jobs:
             Casks/snapetech-pleazyng.rb.template
           sparse-checkout-cone-mode: false
           persist-credentials: false
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
 
       - name: Restore immutable product source files
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         env:
           PRODUCT_SOURCE_SHA: ${{ needs.validate-trusted-ref.outputs.android_source_sha || github.sha }}
         run: |
@@ -3448,7 +3458,7 @@ jobs:
           python3 -c "import sys; sys.path.insert(0, 'scripts'); import recover_release_platforms, release_all_platforms, verify_webos_link_patch"
 
       - name: Read version from pubspec.yaml
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         id: version
         run: |
           VERSION=$(python3 scripts/pubspec_version.py pubspec.yaml)
@@ -3458,7 +3468,7 @@ jobs:
           echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
 
       - name: Generate release notes from CHANGELOG.md
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         env:
           RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.version }}
           PRIVATE_APPLE_SIGNING_UNAVAILABLE: ${{ needs.validate-trusted-ref.outputs.private_apple_signing_unavailable }}
@@ -3524,6 +3534,8 @@ jobs:
             if [[ -n "$PACKAGING_SHA" ]]; then
               if [[ "$REPAIRED_RUN" =~ ^tvos:([1-9][0-9]*),ios:([1-9][0-9]*)$ ]]; then
                 options+=(--tvos-run "${BASH_REMATCH[1]}" --ios-run "${BASH_REMATCH[2]}")
+              elif [[ "$REPAIRED_RUN" =~ ^assembly-tvos:([1-9][0-9]*)$ ]]; then
+                options+=(--built-tvos-run "${BASH_REMATCH[1]}")
               elif [[ "$REPAIRED_RUN" =~ ^[1-9][0-9]*$ ]]; then
                 options+=(--tvos-run "$REPAIRED_RUN")
               else
@@ -3542,14 +3554,14 @@ jobs:
           python3 scripts/recover_release_platforms.py "$SOURCE_RUN" --head-sha "$HEAD_SHA" --version "$VERSION" --download artifacts --wait-for-source 10800 "${options[@]}"
 
       - name: Download Android artifacts
-        if: ${{ inputs.recovery_source_sha == '' && inputs.reuse_android_run_id == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && inputs.reuse_android_run_id == '' }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: android-apk
           path: artifacts/android-apk
 
       - name: Ensure the Android Moonlight source archive is available
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         id: moonlight-source
         env:
           APPLICATION_COMMIT: ${{ inputs.recovery_source_sha || needs.validate-trusted-ref.outputs.android_source_sha || github.sha }}
@@ -3570,31 +3582,31 @@ jobs:
           echo "generated=true" >> "$GITHUB_OUTPUT"
 
       - name: Attest recovered Moonlight source archive
-        if: ${{ inputs.recovery_source_sha == '' && steps.moonlight-source.outputs.generated == 'true' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && steps.moonlight-source.outputs.generated == 'true' }}
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: artifacts/android-apk/pleazyng-moonlight-android-source.tar.gz
 
       - name: Download WebOS artifact
-        if: ${{ inputs.recovery_source_sha == '' && inputs.reuse_macos_package_run_id == '' && inputs.reuse_webos_run_id == '' && needs.validate-trusted-ref.outputs.include_webos_release == 'true' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && inputs.reuse_macos_package_run_id == '' && inputs.reuse_webos_run_id == '' && needs.validate-trusted-ref.outputs.include_webos_release == 'true' }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: webos-ipk
           path: artifacts/webos
 
       - name: Give the WebOS checksum manifest a unique release filename
-        if: ${{ inputs.recovery_source_sha == '' && needs.validate-trusted-ref.outputs.include_webos_release == 'true' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && needs.validate-trusted-ref.outputs.include_webos_release == 'true' }}
         run: mv artifacts/webos/SHA256SUMS.txt artifacts/webos/webos-SHA256SUMS.txt
 
       - name: Download Tizen ARM tester handoff
-        if: ${{ inputs.recovery_source_sha == '' && inputs.reuse_platform_run_id == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && inputs.reuse_platform_run_id == '' }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: pleazyng-tizen-arm-experimental
           path: artifacts/tizen
 
       - name: Verify and archive Tizen tester handoff
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         env:
           EXPECTED_SOURCE_COMMIT: ${{ needs.validate-trusted-ref.outputs.reuse_source_sha || github.sha }}
         run: |
@@ -3647,42 +3659,42 @@ jobs:
           PY
 
       - name: Download iOS artifact
-        if: ${{ inputs.recovery_source_sha == '' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_ios) }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_ios) }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: ios-ipa
           path: artifacts/ios-ipa
 
       - name: Download tvOS artifact
-        if: ${{ inputs.recovery_source_sha == '' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_tvos) }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_tvos) }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: tvos-ipa
           path: artifacts/tvos-ipa
 
       - name: Download macOS artifact
-        if: ${{ inputs.recovery_source_sha == '' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_macos) }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_macos) }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: macos-dmg
           path: artifacts/macos-dmg
 
       - name: Download Windows x64 artifact
-        if: ${{ inputs.recovery_source_sha == '' && inputs.reuse_platform_run_id == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && inputs.reuse_platform_run_id == '' }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: windows-x64-portable
           path: artifacts/windows-x64-portable
 
       - name: Download native Windows ARM64 build
-        if: ${{ inputs.recovery_source_sha == '' && inputs.reuse_platform_run_id == '' && needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && inputs.reuse_platform_run_id == '' && needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: windows-arm64-build
           path: artifacts/windows-arm64-build
 
       - name: Package native Windows ARM64 portable archive
-        if: ${{ inputs.recovery_source_sha == '' && needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -3696,20 +3708,20 @@ jobs:
           unzip -tq artifacts/windows-arm64-portable/pleazyng-windows-arm64-portable.zip
 
       - name: Attest native Windows ARM64 portable archive
-        if: ${{ inputs.recovery_source_sha == '' && needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' }}
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: artifacts/windows-arm64-portable/pleazyng-windows-arm64-portable.zip
 
       - name: Download Windows installer artifact
-        if: ${{ inputs.recovery_source_sha == '' && inputs.reuse_platform_run_id == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && inputs.reuse_platform_run_id == '' }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: windows-installer
           path: artifacts/windows-installer
 
       - name: Download Microsoft Store bundle
-        if: ${{ inputs.recovery_source_sha == '' && inputs.reuse_platform_run_id == '' && vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && inputs.reuse_platform_run_id == '' && vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: windows-msix
@@ -3717,53 +3729,53 @@ jobs:
 
       - name: Download Chocolatey package
         continue-on-error: true
-        if: ${{ inputs.recovery_source_sha == '' && inputs.reuse_platform_run_id == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && inputs.reuse_platform_run_id == '' }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: windows-chocolatey
           path: artifacts/windows-chocolatey
 
       - name: Download Linux x64 artifacts
-        if: ${{ inputs.recovery_source_sha == '' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: linux-x64
           path: artifacts/linux-x64
 
       - name: Download Linux arm64 artifacts
-        if: ${{ inputs.recovery_source_sha == '' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: linux-arm64
           path: artifacts/linux-arm64
 
       - name: Download x64 AppImage artifact
-        if: ${{ inputs.recovery_source_sha == '' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: linux-x64-appimage
           path: artifacts/linux-x64
 
       - name: Verify AppImage update contracts before publication
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         # Recovered immutable releases can predate update metadata. Images
         # that advertise updates always require a matching sidecar.
         run: python3 scripts/verify_appimage_update.py --directory artifacts --repository "$GITHUB_REPOSITORY" --allow-legacy
 
       - name: Verify Tizen handoff before publication
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         run: test -s artifacts/tizen/pleazyng-tizen-arm-tester-handoff.zip
 
       - name: Require every release platform before publication
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         run: python3 scripts/release_coverage.py --directory artifacts
 
       - name: Display structure of downloaded files
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         run: ls -R artifacts
 
       - name: Generate WinGet manifest bundle
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         id: winget-manifests
         continue-on-error: true
         env:
@@ -3772,7 +3784,7 @@ jobs:
         run: python3 scripts/generate_winget_manifests.py "$RELEASE_VERSION" artifacts/windows-installer/pleazyng-windows-installer.exe artifacts --release-tag "$RELEASE_TAG"
 
       - name: Generate appcast.xml
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         env:
           RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.release_tag }}
         run: |
@@ -3845,7 +3857,7 @@ jobs:
           cat artifacts/appcast.xml
 
       - name: Generate release SHA-256 checksums
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         run: |
           python3 scripts/create_release_checksums.py artifacts
           if [[ -f artifacts/platform-reuse-provenance.json ]]; then
@@ -3853,7 +3865,7 @@ jobs:
           fi
 
       - name: Generate Homebrew Cask candidate
-        if: ${{ inputs.recovery_source_sha == '' && needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true' }}
         env:
           RELEASE_VERSION: ${{ needs.validate-trusted-ref.outputs.version }}
         run: |
@@ -3864,33 +3876,33 @@ jobs:
             --output artifacts/homebrew/snapetech-pleazyng.rb
 
       - name: Attest release manifests and checksums
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: |
             artifacts/SHA256SUMS.txt
 
       - name: Attest Sparkle appcast
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: artifacts/appcast.xml
 
       - name: Attest WinGet manifests
-        if: ${{ inputs.recovery_source_sha == '' && steps.winget-manifests.outcome == 'success' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && steps.winget-manifests.outcome == 'success' }}
         continue-on-error: true
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: artifacts/pleazyng-winget-manifests-${{ needs.validate-trusted-ref.outputs.version }}.zip
 
       - name: Attest Homebrew Cask candidate
-        if: ${{ inputs.recovery_source_sha == '' && needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true' }}
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: artifacts/homebrew/snapetech-pleazyng.rb
 
       - name: Collect release files
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         id: release-files
         env:
           RELEASE_VERSION: ${{ needs.validate-trusted-ref.outputs.version }}
@@ -3954,7 +3966,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Prepare append-only Apple Store recovery assets
-        if: ${{ inputs.recovery_source_sha != '' }}
+        if: ${{ steps.release-mode.outputs.append_only == 'true' }}
         env:
           RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.release_tag }}
           PRODUCT_SOURCE_SHA: ${{ needs.validate-trusted-ref.outputs.release_commit }}
@@ -3978,7 +3990,7 @@ jobs:
             --assembly-run-id "$ASSEMBLY_RUN_ID"
 
       - name: Attest append-only Apple Store recovery assets
-        if: ${{ inputs.recovery_source_sha != '' }}
+        if: ${{ steps.release-mode.outputs.append_only == 'true' }}
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: |
@@ -4015,7 +4027,7 @@ jobs:
           PY
 
       - name: Append signed Apple assets without replacing existing release assets
-        if: ${{ inputs.recovery_source_sha != '' }}
+        if: ${{ steps.release-mode.outputs.append_only == 'true' }}
         env:
           RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.release_tag }}
           PRODUCT_SOURCE_SHA: ${{ needs.validate-trusted-ref.outputs.release_commit }}
@@ -4037,7 +4049,7 @@ jobs:
             --assembly-run-id "$ASSEMBLY_RUN_ID"
 
       - name: Create Release
-        if: ${{ inputs.recovery_source_sha == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
         with:
           files: ${{ steps.release-files.outputs.files }}

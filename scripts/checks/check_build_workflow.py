@@ -1716,14 +1716,14 @@ append_only_core_steps = (
 )
 for step_name in append_only_core_steps:
     require(
-        "inputs.recovery_source_sha == ''" in named_step(release, step_name),
+        "steps.release-mode.outputs.append_only != 'true'" in named_step(release, step_name),
         f"append-only Apple recovery must skip core-only step '{step_name}'",
     )
 product_checkout = release.find("path: product-source")
 product_checkout_end = release.find("\n      - name:", product_checkout)
 require(
     product_checkout >= 0 and product_checkout_end > product_checkout
-    and "if: ${{ inputs.recovery_source_sha == '' }}"
+    and "if: ${{ steps.release-mode.outputs.append_only != 'true' }}"
         in release[product_checkout:product_checkout_end],
     "append-only Apple recovery must not check out product files for core assembly",
 )
@@ -1733,7 +1733,7 @@ for step_name in (
     "Append signed Apple assets without replacing existing release assets",
 ):
     require(
-        "inputs.recovery_source_sha != ''" in named_step(release, step_name),
+        "steps.release-mode.outputs.append_only == 'true'" in named_step(release, step_name),
         f"frozen Apple recovery must require '{step_name}'",
     )
 for artifact in (
@@ -1804,7 +1804,7 @@ require(
     "release requests must reject incomplete platform selections",
 )
 require(
-    "inputs.recovery_source_sha == '' && inputs.reuse_macos_package_run_id == '' && inputs.reuse_webos_run_id == '' && needs.validate-trusted-ref.outputs.include_webos_release == 'true'" in webos_download
+    "steps.release-mode.outputs.append_only != 'true' && inputs.reuse_macos_package_run_id == '' && inputs.reuse_webos_run_id == '' && needs.validate-trusted-ref.outputs.include_webos_release == 'true'" in webos_download
     and "name: webos-ipk" in webos_download,
     "the WebOS release artifact must be downloaded only after explicit opt-in",
 )
