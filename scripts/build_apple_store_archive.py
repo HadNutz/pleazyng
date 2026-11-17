@@ -139,6 +139,22 @@ def configure_project(project: dict, bindings: dict[str, dict], team: str, finge
         settings['OTHER_CODE_SIGN_FLAGS'] = f'{previous} --keychain "{keychain}"'
 
 
+def _archive_environment(source_packages: Path | None) -> dict[str, str]:
+    env = {key: value for key, value in os.environ.items() if key not in (
+        'APPLE_DISTRIBUTION_CERTIFICATE_BASE64', 'APPLE_CERTIFICATE_PASSWORD',
+        'APPLE_API_PRIVATE_KEY', 'APPLE_API_KEY_ID', 'APPLE_API_ISSUER_ID',
+        'IOS_PROVISIONING_PROFILE_BASE64', 'IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64',
+        'TVOS_PROVISIONING_PROFILE_BASE64',
+        'TVOS_TOPSHELF_PROVISIONING_PROFILE_BASE64',
+        WIDGET_PROFILE_KEY,
+    )}
+    if source_packages is not None:
+        # Xcode does not consistently export -clonedSourcePackagesDirPath to
+        # Run Script phases; pass the exact CLI-selected root through directly.
+        env['APPLE_SOURCE_PACKAGES_DIR'] = str(source_packages.absolute())
+    return env
+
+
 def archive(platform: str, archive_path: Path, export_path: Path, derived_data: Path, source_packages: Path | None) -> None:
     report = {'app_build_qualified': False, 'archive_export_verified': False,
               'ipa_metadata_verified': False, 'store_purchase_verified': False}
@@ -185,14 +201,7 @@ def archive(platform: str, archive_path: Path, export_path: Path, derived_data: 
                 'signingCertificate': fingerprint, 'uploadSymbols': True,
                 'provisioningProfiles': {binding['bundle']: binding['uuid'] for binding in bindings.values()},
             }))
-            env = {key: value for key, value in os.environ.items() if key not in (
-                'APPLE_DISTRIBUTION_CERTIFICATE_BASE64', 'APPLE_CERTIFICATE_PASSWORD',
-                'APPLE_API_PRIVATE_KEY', 'APPLE_API_KEY_ID', 'APPLE_API_ISSUER_ID',
-                'IOS_PROVISIONING_PROFILE_BASE64', 'IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64',
-                'TVOS_PROVISIONING_PROFILE_BASE64',
-                'TVOS_TOPSHELF_PROVISIONING_PROFILE_BASE64',
-                WIDGET_PROFILE_KEY,
-            )}
+            env = _archive_environment(source_packages)
             command = ['xcodebuild', 'archive', '-workspace', f'{platform}/Runner.xcworkspace',
                        '-scheme', 'Runner', '-configuration', 'Release', '-sdk',
                        'iphoneos' if platform == 'ios' else 'appletvos', '-destination',

@@ -194,6 +194,14 @@ class SourcePackagesDiscoveryTests(unittest.TestCase):
             with mock.patch.dict(os.environ, self.prepare_env(root, APPLE_SOURCE_PACKAGES_DIR=str(selected)), clear=True):
                 self.assertEqual(prune._derive_paths(self.args())[2], selected)
 
+    def test_tvos_source_packages_override_is_used(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            selected = root / "screenshots/tvos/SourcePackages"
+            self.add_artifacts(selected)
+            with mock.patch.dict(os.environ, self.prepare_env(root, TVOS_SOURCE_PACKAGES=str(selected)), clear=True):
+                self.assertEqual(prune._derive_paths(self.args())[2], selected)
+
     def test_derived_data_default_source_packages_root_is_discovered(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -213,6 +221,7 @@ class SourcePackagesDiscoveryTests(unittest.TestCase):
                 root,
                 APPLE_SOURCE_PACKAGES_DIR=str(apple),
                 CLONED_SOURCE_PACKAGES_DIR_PATH=str(cloned),
+                TVOS_SOURCE_PACKAGES=str(root / "tvos/SourcePackages"),
             )
             with mock.patch.dict(os.environ, env, clear=True):
                 with self.assertRaises(prune.PruneError):

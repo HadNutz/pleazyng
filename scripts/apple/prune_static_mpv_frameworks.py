@@ -891,15 +891,19 @@ def _derive_paths(args: argparse.Namespace) -> tuple[Path, Path, Path, Path, str
     frameworks = Path(frameworks).absolute()
     source_packages = args.source_packages_dir
     if source_packages is None:
-        apple_source_packages = os.environ.get("APPLE_SOURCE_PACKAGES_DIR")
-        explicit = os.environ.get("CLONED_SOURCE_PACKAGES_DIR_PATH")
-        if apple_source_packages and explicit:
-            apple_root = Path(apple_source_packages).resolve(strict=False)
-            cloned_root = Path(explicit).resolve(strict=False)
-            if apple_root != cloned_root:
-                raise PruneError("APPLE_SOURCE_PACKAGES_DIR and CLONED_SOURCE_PACKAGES_DIR_PATH disagree")
-        if apple_source_packages or explicit:
-            source_packages = Path(apple_source_packages or explicit or "")
+        explicit_roots = [
+            ("APPLE_SOURCE_PACKAGES_DIR", os.environ.get("APPLE_SOURCE_PACKAGES_DIR")),
+            ("CLONED_SOURCE_PACKAGES_DIR_PATH", os.environ.get("CLONED_SOURCE_PACKAGES_DIR_PATH")),
+        ]
+        if platform_name in {"appletvos", "appletvsimulator"}:
+            explicit_roots.append(("TVOS_SOURCE_PACKAGES", os.environ.get("TVOS_SOURCE_PACKAGES")))
+        explicit_roots = [(name, value) for name, value in explicit_roots if value]
+        if explicit_roots:
+            resolved_roots = {Path(value).resolve(strict=False) for _name, value in explicit_roots}
+            if len(resolved_roots) > 1:
+                names = ", ".join(name for name, _value in explicit_roots)
+                raise PruneError(f"Explicit Apple SourcePackages roots disagree: {names}")
+            source_packages = Path(explicit_roots[0][1])
         else:
             candidates: list[Path] = []
             build_dir = os.environ.get("BUILD_DIR")

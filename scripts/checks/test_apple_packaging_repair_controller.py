@@ -19,6 +19,21 @@ from release_coverage import REQUIRED
 from scripts.checks.workflow_yaml import job_block
 
 
+class ArchiveSourcePackagesEnvironmentTests(unittest.TestCase):
+    def test_explicit_archive_source_packages_path_reaches_xcodebuild_environment(self):
+        with tempfile.TemporaryDirectory() as temp:
+            selected = Path(temp) / 'run-scoped/SourcePackages'
+            with patch.dict(apple.os.environ, {
+                'APPLE_SOURCE_PACKAGES_DIR': str(Path(temp) / 'wrong/SourcePackages'),
+                'APPLE_CERTIFICATE_PASSWORD': 'redacted-test-value',
+                'GH_TOKEN': 'preserved-token',
+            }, clear=True):
+                env = apple._archive_environment(selected)
+        self.assertEqual(env['APPLE_SOURCE_PACKAGES_DIR'], str(selected.absolute()))
+        self.assertNotIn('APPLE_CERTIFICATE_PASSWORD', env)
+        self.assertEqual(env['GH_TOKEN'], 'preserved-token')
+
+
 class PackagingRepairControllerTests(unittest.TestCase):
     product, repair, workflow = 'a' * 40, 'b' * 40, 'c' * 40
     tag = 'v3.0.31'
