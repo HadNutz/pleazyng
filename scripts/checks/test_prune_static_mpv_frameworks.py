@@ -39,6 +39,20 @@ def fat_static_archive(path: Path) -> None:
     path.write_bytes(data)
 
 
+def fat_archive_with_cpu_subtypes(path: Path, cpu_subtypes: list[tuple[int, int]]) -> None:
+    header_size = 8 + len(cpu_subtypes) * 20
+    slice_size = len(prune.AR_MAGIC[0])
+    data = bytearray(b"\xca\xfe\xba\xbe" + struct.pack(">I", len(cpu_subtypes)))
+    for index, (cpu, subtype) in enumerate(cpu_subtypes):
+        offset = header_size + index * slice_size
+        signed_subtype = subtype if subtype < (1 << 31) else subtype - (1 << 32)
+        data.extend(struct.pack(">iiIII", cpu, signed_subtype, offset, slice_size, 2))
+    for _ in cpu_subtypes:
+        data.extend(prune.AR_MAGIC[0])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
+
+
 class StaticArchiveTests(unittest.TestCase):
     def test_all_fat_slices_must_be_static_archives(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -64,6 +78,38 @@ class StaticArchiveTests(unittest.TestCase):
                 stdout=f"Non-fat file: {archive} is architecture: arm64\n",
             )):
                 self.assertEqual(prune.archive_architectures(archive, {"arm64"}), ("arm64",))
+
+    def test_arm64_arm64e_archive_subtypes_and_capability_bits_are_distinguished(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            archive = Path(temp) / "Libass"
+            fat_archive_with_cpu_subtypes(archive, [
+                (0x0100000C, 0x00000000),
+                (0x0100000C, 0x80000002),
+            ])
+            self.assertEqual(
+                prune.archive_architectures(archive, {"arm64", "arm64e"}),
+                ("arm64", "arm64e"),
+            )
+            # The declaration check remains exact; this parser fix does not
+            # accept an incomplete or overbroad XCFramework declaration.
+            for declared in ({"arm64"}, {"arm64", "arm64e", "x86_64"}):
+                with self.subTest(declared=declared), self.assertRaisesRegex(
+                    prune.PruneError, "differ from XCFramework declaration"
+                ):
+                    prune.archive_architectures(archive, declared)
+
+    def test_arm64v8_keeps_its_own_name_and_unknown_arm64_subtypes_fail_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            arm64v8 = Path(temp) / "arm64v8.a"
+            fat_archive_with_cpu_subtypes(arm64v8, [(0x0100000C, 0x00000001)])
+            self.assertEqual(prune.archive_architectures(arm64v8, {"arm64v8"}), ("arm64v8",))
+            with self.assertRaisesRegex(prune.PruneError, "differ from XCFramework declaration"):
+                prune.archive_architectures(arm64v8, {"arm64"})
+
+            unknown = Path(temp) / "unknown.a"
+            fat_archive_with_cpu_subtypes(unknown, [(0x0100000C, 0x00000003)])
+            with self.assertRaisesRegex(prune.PruneError, "Unknown ARM64 CPU subtype 0x00000003"):
+                prune.archive_architectures(unknown, {"arm64"})
 
     def test_unknown_lipo_output_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
