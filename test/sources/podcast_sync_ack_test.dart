@@ -26,6 +26,11 @@ void main() {
     await before.customStatement('DROP INDEX entries_podcast_sync_identity');
     await before.customStatement('DROP TABLE retired_downloads');
     await before.customStatement('ALTER TABLE canonical_copies DROP COLUMN scan_generation');
+    // Model a real schema-11 database: this helper starts at the current
+    // schema, so remove tables introduced by schema 15 before lowering its
+    // version marker.
+    await before.customStatement('DROP TABLE subtitle_capture_jobs');
+    await before.customStatement('DROP TABLE subtitle_capture_deleted_profiles');
     await before.customStatement('INSERT INTO entries(profile,source,id,payload) VALUES (?,?,?,?)', [
       'profile',
       'bad',
