@@ -1,0 +1,99 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 60;
+	objects = {
+		A511D0000000000000000001 /* MPVKit in Frameworks */ = {isa = PBXBuildFile; productRef = A511D000000000000000000E /* MPVKit */; };
+		A511D0000000000000000002 /* ProbeApp.swift */ = {isa = PBXBuildFile; fileRef = A511D0000000000000000003 /* ProbeApp.swift */; };
+		A511D0000000000000000003 /* ProbeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProbeApp.swift; sourceTree = "<group>"; };
+		A511D0000000000000000004 /* StaticMPVKitProbe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StaticMPVKitProbe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A511D0000000000000000005 /* Sources */ = {isa = PBXGroup; children = (A511D0000000000000000003 /* ProbeApp.swift */, ); path = Sources; sourceTree = "<group>"; };
+		A511D0000000000000000006 /* Products */ = {isa = PBXGroup; children = (A511D0000000000000000004 /* StaticMPVKitProbe.app */, ); name = Products; sourceTree = "<group>"; };
+		A511D0000000000000000007 /* Probe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A511D0000000000000000011 /* Build configuration list for PBXNativeTarget "Probe" */;
+			buildPhases = (
+				A511D0000000000000000008 /* Sources */,
+				A511D0000000000000000009 /* Frameworks */,
+				A511D000000000000000000A /* Resources */,
+				A511D000000000000000000B /* Inspect static MPVKit wrappers */,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = Probe;
+			packageProductDependencies = (A511D000000000000000000E /* MPVKit */, );
+			productName = StaticMPVKitProbe;
+			productReference = A511D0000000000000000004 /* StaticMPVKitProbe.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A511D0000000000000000008 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A511D0000000000000000002 /* ProbeApp.swift */, ); runOnlyForDeploymentPostprocessing = 0; };
+		A511D0000000000000000009 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (A511D0000000000000000001 /* MPVKit in Frameworks */, ); runOnlyForDeploymentPostprocessing = 0; };
+		A511D000000000000000000A /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A511D000000000000000000B /* Inspect static MPVKit wrappers */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = ();
+			inputPaths = ();
+			name = "Inspect static MPVKit wrappers";
+			outputPaths = ();
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -eu\n: \"${PLEAZYNG_SOURCE_ROOT:?}\"\n: \"${PLEAZYNG_SOURCE_PACKAGES_DIR:?}\"\npython3 \"$PLEAZYNG_SOURCE_ROOT/scripts/apple/prune_static_mpv_frameworks.py\" --mode inspect --require-candidates --source-packages-dir \"$PLEAZYNG_SOURCE_PACKAGES_DIR\" --package-resolved \"$PLEAZYNG_SOURCE_ROOT/tvos/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved\" --receipt \"$PLEAZYNG_STATIC_FRAMEWORK_PRUNE_RECEIPT\"\n";
+		};
+		A511D000000000000000000C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {LastUpgradeCheck = 2600; };
+			buildConfigurationList = A511D0000000000000000010 /* Build configuration list for PBXProject "Probe" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base, );
+			mainGroup = A511D000000000000000000D /* Main group */;
+			packageReferences = (A511D000000000000000000F /* XCRemoteSwiftPackageReference "mpv-build" */, );
+			productRefGroup = A511D0000000000000000006 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (A511D0000000000000000007 /* Probe */, );
+		};
+		A511D000000000000000000D /* Main group */ = {isa = PBXGroup; children = (A511D0000000000000000005 /* Sources */, A511D0000000000000000006 /* Products */, ); sourceTree = "<group>"; };
+		A511D000000000000000000E /* MPVKit */ = {isa = XCSwiftPackageProductDependency; package = A511D000000000000000000F /* XCRemoteSwiftPackageReference "mpv-build" */; productName = MPVKit; };
+		A511D000000000000000000F /* XCRemoteSwiftPackageReference "mpv-build" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/snapetech-org/mpv-build";
+			requirement = {kind = revision; revision = ed921fcc7f3923926ef454f3c7aedd6ddb897d3f; };
+		};
+		A511D0000000000000000010 /* Build configuration list for PBXProject "Probe" */ = {isa = XCConfigurationList; buildConfigurations = (A511D0000000000000000012 /* Debug */, A511D0000000000000000013 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A511D0000000000000000011 /* Build configuration list for PBXNativeTarget "Probe" */ = {isa = XCConfigurationList; buildConfigurations = (A511D0000000000000000014 /* Debug */, A511D0000000000000000015 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A511D0000000000000000012 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_MODULES = YES; SDKROOT = appletvos; SWIFT_VERSION = 5.0; }; name = Debug; };
+		A511D0000000000000000013 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_MODULES = YES; SDKROOT = appletvos; SWIFT_VERSION = 5.0; }; name = Release; };
+		A511D0000000000000000014 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_IDENTITY = "-";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Static MPVKit Probe";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.plezy.probe.staticmpvkit;
+				PRODUCT_NAME = StaticMPVKitProbe;
+				SUPPORTED_PLATFORMS = appletvsimulator;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 15.0;
+			}; name = Debug; };
+		A511D0000000000000000015 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_IDENTITY = "-";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Static MPVKit Probe";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.plezy.probe.staticmpvkit;
+				PRODUCT_NAME = StaticMPVKitProbe;
+				SUPPORTED_PLATFORMS = appletvsimulator;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 15.0;
+			}; name = Release; };
+	};
+	rootObject = A511D000000000000000000C /* Project object */;
+}

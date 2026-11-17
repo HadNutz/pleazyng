@@ -372,6 +372,7 @@
 				3399D490228B24CF009A79C7 /* ShellScript */,
 				38D3B21B4A8B8C7FF266779D /* [CP] Embed Pods Frameworks */,
 				B7F1001AA1100000000000A3 /* Install RomM Worker */,
+				A511C0000000000000000003 /* Prune verified static MPVKit wrappers */,
 			);
 			buildRules = (
 			);
@@ -657,6 +658,18 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\"\npython3 \"$SRCROOT/../tools/dv-engine/build_apple_runtime.py\" --xcode-phase\n";
+		};
+		A511C0000000000000000003 /* Prune verified static MPVKit wrappers */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = ();
+			inputPaths = ();
+			name = "Prune verified static MPVKit wrappers";
+			outputPaths = ();
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -eu\npython3 \"$SRCROOT/../scripts/apple/prune_static_mpv_frameworks.py\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -1,0 +1,82 @@
+name: Static MPVKit simulator packaging probe
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Immutable product source commit whose tvOS package pin will be tested
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  tvos-static-framework-probe:
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - name: Check out trusted probe tools
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check out the immutable product source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.source_sha }}
+          path: product-source
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify source ancestry and pinned package before resolving packages
+        env:
+          REQUESTED_SOURCE_SHA: ${{ inputs.source_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REF" == refs/heads/main ]]
+          [[ "$REQUESTED_SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$(git -C product-source rev-parse HEAD)" == "$REQUESTED_SOURCE_SHA" ]]
+          git merge-base --is-ancestor "$REQUESTED_SOURCE_SHA" "$GITHUB_SHA"
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import re
+
+          source = pathlib.Path("product-source")
+          resolved_path = source / "tvos/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
+          resolved = json.loads(resolved_path.read_text(encoding="utf-8"))
+          pins = [item for item in resolved["pins"] if item.get("identity", "").lower() == "mpv-build"]
+          project = pathlib.Path("scripts/apple/static-mpv-framework-probe/Probe.xcodeproj/project.pbxproj").read_text(encoding="utf-8")
+          match = re.search(r"repositoryURL = \"https://github.com/snapetech-org/mpv-build\";\s*requirement = \{kind = revision; revision = ([0-9a-f]{40});", project)
+          if len(pins) != 1 or pins[0].get("state", {}).get("revision") != "ed921fcc7f3923926ef454f3c7aedd6ddb897d3f":
+              raise SystemExit("Product source does not pin the reviewed mpv-build revision")
+          if not match or match.group(1) != pins[0]["state"]["revision"]:
+              raise SystemExit("Probe project and immutable product source use different mpv-build revisions")
+          PY
+
+      - name: Build, reproduce, prune, install, and launch the tvOS fixture
+        env:
+          RUNNER_TEMP: ${{ runner.temp }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: |
+          set -euo pipefail
+          python3 scripts/apple/run_static_mpv_framework_simulator_probe.py \
+            --source-root "$GITHUB_WORKSPACE/product-source" \
+            --source-sha "$SOURCE_SHA" \
+            --package-cache "$RUNNER_TEMP/static-mpv-framework-source-packages" \
+            --derived-data "$RUNNER_TEMP/static-mpv-framework-derived-data" \
+            --output-dir "$RUNNER_TEMP/static-mpv-framework-probe-evidence"
+
+      - name: Preserve simulator probe evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v6
+        with:
+          name: static-mpv-framework-simulator-probe
+          path: ${{ runner.temp }}/static-mpv-framework-probe-evidence
+          if-no-files-found: warn
+          retention-days: 14
