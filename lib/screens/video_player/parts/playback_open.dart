@@ -1155,6 +1155,7 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
     required Player player,
     required bool isNetworkVod,
     required bool isTranscoding,
+    required bool isNetworkHlsManifest,
     required MediaVersion? selectedVersion,
     required int? transcodeCapSeconds,
     required double? userCacheSecs,
@@ -1198,7 +1199,7 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
     } else {
       // mpv's documented default network-timeout.
       await player.setProperty('network-timeout', '60');
-      await player.setProperty('demuxer-lavf-o', '');
+      await player.setProperty('demuxer-lavf-o', isNetworkHlsManifest ? 'seg_max_retry=2' : '');
     }
 
     int? ringBytes;
@@ -1269,6 +1270,11 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
     void Function(bool available)? onMediaAvailabilityChanged,
   }) async {
     final isNetworkVod = !isLocalMedia && !widget.isLive;
+    final videoUri = Uri.tryParse(videoUrl);
+    final isNetworkHlsManifest =
+        videoUri != null &&
+        (videoUri.scheme == 'http' || videoUri.scheme == 'https') &&
+        videoUri.path.toLowerCase().endsWith('.m3u8');
     // With a Buffer Size set, a transcode is read no further ahead than its
     // server transcodes on its own, so a weak server isn't driven to transcode
     // the whole buffer. Auto keeps each backend's own sizing.
@@ -1285,6 +1291,7 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
       player: player,
       isNetworkVod: isNetworkVod,
       isTranscoding: isTranscoding,
+      isNetworkHlsManifest: isNetworkHlsManifest,
       selectedVersion: selectedVersion,
       transcodeCapSeconds: transcodeCapSeconds,
       // Parsed, not passed through: this is written on every open, so a value

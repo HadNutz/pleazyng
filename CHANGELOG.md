@@ -8,7 +8,7 @@
 - Open a local, append-only guest jukebox from Music Now Playing. Room Mode in [MusicLounge Jukebox](https://forums.plex.tv/t/new-app-musiclounge-jukebox/942146) by [Earthmonkey](https://forums.plex.tv/u/Earthmonkey) inspired this implementation.
 - Fit the app and player inside a four-edge projector viewport. Independently adapted from [Plezy #863](https://github.com/edde746/plezy/issues/863) by [@thehomerepot](https://github.com/thehomerepot).
 
-- Retry failed HLS media segments and report unsupported disc types before opening them when mpv has reported its protocol inventory.
+- Retry failed HLS media segments during server transcoding and direct HTTP playlist playback. Report unsupported disc types before opening them when mpv has reported its protocol inventory.
 
 - Discover JPEG XL files and request server audio conversion when the active mpv build lacks the selected AC-4 or MPEG-H decoder.
 
