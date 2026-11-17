@@ -32,11 +32,11 @@ project.files.select { |f| PLUGIN_BASENAMES.include?(f.display_name) }.each do |
   f.remove_from_project
 end
 
-# Drop any build files whose file_ref is now nil.
+# Drop orphaned file references, preserving Swift package product references.
 project.targets.each do |t|
   t.build_phases.each do |phase|
     next unless phase.respond_to?(:files)
-    phase.files.delete_if { |bf| bf.file_ref.nil? }
+    phase.files.delete_if { |bf| bf.file_ref.nil? && bf.product_ref.nil? }
   end
 end
 
@@ -109,7 +109,7 @@ end
 project.targets.each do |t|
   t.build_phases.each do |phase|
     next unless phase.respond_to?(:files)
-    phase.files.delete_if { |bf| bf.file_ref.nil? }
+    phase.files.delete_if { |bf| bf.file_ref.nil? && bf.product_ref.nil? }
   end
 end
 
