@@ -18,6 +18,7 @@ import shutil
 import subprocess
 import sys
 import tarfile
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -231,6 +232,228 @@ def verify_built_storekit_test_resource(built_products: Path, expected_sha256: s
     return resource
 
 
+def _xctestrun_test_targets(document: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return test-target dictionaries from either supported plist layout."""
+    configurations = document.get("TestConfigurations")
+    if isinstance(configurations, list):
+        targets: list[dict[str, Any]] = []
+        for configuration in configurations:
+            if not isinstance(configuration, dict):
+                raise ValueError("XCTest plan contains a malformed test configuration")
+            configured_targets = configuration.get("TestTargets")
+            if not isinstance(configured_targets, list):
+                raise ValueError("XCTest plan configuration does not contain a TestTargets array")
+            if any(not isinstance(target, dict) for target in configured_targets):
+                raise ValueError("XCTest plan contains a malformed test target")
+            targets.extend(configured_targets)
+        return targets
+
+    targets = []
+    for key, value in document.items():
+        if key in {"__xctestrun_metadata__", "CodeCoverageBuildableInfos", "TestPlan"}:
+            continue
+        if isinstance(value, dict) and ("TestBundlePath" in value or "BlueprintName" in value):
+            targets.append(value)
+    return targets
+
+
+def associate_xctestrun_with_app(xctestrun: Path, app_relative_path: str) -> dict[str, Any]:
+    """Associate a UI test with its staged app using xcodebuild's documented fields."""
+    xctestrun = xctestrun.resolve(strict=True)
+    if app_relative_path != "__TESTROOT__/Debug-iphonesimulator/Pleazyng.app":
+        raise ValueError("The UI target path must identify the retained Pleazyng app under TestROOT")
+    document = plistlib.loads(xctestrun.read_bytes())
+    if not isinstance(document, dict):
+        raise ValueError("XCTest plan root must be a property-list dictionary")
+    if document.get("UseDestinationArtifacts") is True:
+        raise ValueError("The retained app association expects xcodebuild to install TestROOT artifacts")
+    matches = [
+        target for target in _xctestrun_test_targets(document)
+        if target.get("BlueprintName") == "PleazyngTrialReviewUITests"
+    ]
+    if len(matches) != 1:
+        raise ValueError(f"Expected exactly one Pleazyng trial UI test target in xctestrun; found {len(matches)}")
+    target = matches[0]
+    if target.get("IsUITestBundle") is not True:
+        raise ValueError("The selected XCTest plan target is not marked as a UI test bundle")
+    if target.get("UseDestinationArtifacts") is True:
+        raise ValueError("The retained app association expects xcodebuild to install TestROOT artifacts")
+    previous_app_path = target.get("UITargetAppPath")
+    if previous_app_path not in (None, app_relative_path):
+        raise ValueError(f"XCTest plan already points at a different UI target app: {previous_app_path!r}")
+    dependencies = target.get("DependentProductPaths", [])
+    if not isinstance(dependencies, list) or any(not isinstance(path, str) for path in dependencies):
+        raise ValueError("XCTest plan DependentProductPaths must be an array of path strings")
+    if app_relative_path not in dependencies:
+        dependencies.insert(0, app_relative_path)
+    target["UITargetAppPath"] = app_relative_path
+    target["DependentProductPaths"] = dependencies
+    removed_provided_by_tests = target.pop("UseUITargetAppProvidedByTests", None)
+
+    with tempfile.NamedTemporaryFile(
+        mode="wb", prefix=f".{xctestrun.name}.", suffix=".tmp", dir=xctestrun.parent, delete=False
+    ) as temporary:
+        temporary_path = Path(temporary.name)
+        temporary.write(plistlib.dumps(document, fmt=plistlib.FMT_XML, sort_keys=False))
+    os.replace(temporary_path, xctestrun)
+
+    verified = plistlib.loads(xctestrun.read_bytes())
+    verified_targets = [
+        item for item in _xctestrun_test_targets(verified)
+        if item.get("BlueprintName") == "PleazyngTrialReviewUITests"
+    ]
+    if len(verified_targets) != 1:
+        raise ValueError("Patched XCTest plan no longer contains exactly one expected UI test target")
+    verified_target = verified_targets[0]
+    if verified_target.get("UITargetAppPath") != app_relative_path:
+        raise ValueError("Patched XCTest plan did not retain the UI target app path")
+    if app_relative_path not in verified_target.get("DependentProductPaths", []):
+        raise ValueError("Patched XCTest plan did not add the app to DependentProductPaths")
+    if "UseUITargetAppProvidedByTests" in verified_target:
+        raise ValueError("Patched XCTest plan still marks its target app as provided by test code")
+    return {
+        "blueprint_name": "PleazyngTrialReviewUITests",
+        "ui_target_app_path": app_relative_path,
+        "dependent_product_paths": verified_target["DependentProductPaths"],
+        "removed_use_ui_target_app_provided_by_tests": removed_provided_by_tests,
+    }
+
+
+def codesign_identity(app: Path) -> dict[str, str]:
+    """Verify the app signature and return stable, path-independent signature fields."""
+    command(["/usr/bin/codesign", "--verify", "--deep", "--strict", str(app)], timeout=300)
+    result = subprocess.run(
+        ["/usr/bin/codesign", "-dv", "--verbose=4", str(app)],
+        check=True,
+        text=True,
+        capture_output=True,
+        timeout=60,
+    )
+    details = result.stdout + result.stderr
+    stable_fields = ("Identifier", "CDHash", "Signature", "TeamIdentifier")
+    identity: dict[str, str] = {}
+    for line in details.splitlines():
+        for field in stable_fields:
+            prefix = f"{field}="
+            if line.startswith(prefix):
+                identity[field] = line[len(prefix):]
+    missing = [field for field in stable_fields if not identity.get(field)]
+    if missing:
+        raise ValueError(f"Unable to read stable code-signing identity fields: {missing!r}")
+    return identity
+
+
+def stage_verified_app_for_xctestrun(
+    *,
+    xctestrun: Path,
+    built_products: Path,
+    app: Path,
+    expected_identity: dict[str, Any],
+    expected_sha256: str,
+    evidence_dir: Path,
+) -> tuple[Path, dict[str, Any]]:
+    """Stage an unchanged retained app under TestROOT and associate the UI test."""
+    xctestrun = xctestrun.resolve(strict=True)
+    built_products = built_products.resolve(strict=True)
+    app = app.resolve(strict=True)
+    evidence_dir.mkdir(parents=True, exist_ok=True)
+    if xctestrun.parent != built_products:
+        raise ValueError("The xctestrun file must be directly under its built-products TestROOT")
+    if app.name != "Pleazyng.app":
+        raise ValueError(f"Unexpected retained app bundle name: {app.name!r}")
+
+    source_hash = sha256_tree(app)
+    if source_hash != expected_sha256:
+        raise ValueError("Retained app changed after its producer receipt was verified")
+    source_identity = bundle_info(app)
+    if source_identity != expected_identity:
+        raise ValueError("Retained app identity changed after its producer receipt was verified")
+    source_signature = codesign_identity(app)
+
+    app_relative_path = "__TESTROOT__/Debug-iphonesimulator/Pleazyng.app"
+    destination_parent = built_products / "Debug-iphonesimulator"
+    if destination_parent.is_symlink():
+        raise ValueError("Refusing a symlinked XCTest app-staging directory")
+    destination_parent.mkdir(parents=True, exist_ok=True)
+    destination = destination_parent / "Pleazyng.app"
+    if destination.exists() or destination.is_symlink():
+        raise ValueError("Refusing to overwrite an existing XCTest app-staging destination")
+
+    shutil.copytree(app, destination, symlinks=True, copy_function=shutil.copy2)
+    staged_hash = sha256_tree(destination)
+    if staged_hash != source_hash:
+        raise ValueError("Staged UI target app is not byte-identical to the retained product app")
+    staged_identity = bundle_info(destination)
+    if staged_identity != source_identity:
+        raise ValueError("Staged UI target app identity differs from the retained product app")
+    staged_signature = codesign_identity(destination)
+    if staged_signature != source_signature:
+        raise ValueError("Staged UI target app code signature differs from the retained product app")
+
+    before_plan_sha = sha256_file(xctestrun)
+    before_plan_copy = evidence_dir / "pleazyng-trial-review-before-association.xctestrun"
+    shutil.copyfile(xctestrun, before_plan_copy)
+    association = associate_xctestrun_with_app(xctestrun, app_relative_path)
+    after_plan_sha = sha256_file(xctestrun)
+    after_plan_copy = evidence_dir / "pleazyng-trial-review-after-association.xctestrun"
+    shutil.copyfile(xctestrun, after_plan_copy)
+    evidence = {
+        "schema_version": 1,
+        "qualification": "The UI target path and XCTest dependency metadata refer to an unchanged copy of the receipt-verified retained Simulator app.",
+        "product_app_bundle_sha256_before": source_hash,
+        "product_app_bundle_sha256_staged": staged_hash,
+        "product_app_identity_before": source_identity,
+        "product_app_identity_staged": staged_identity,
+        "product_app_codesign_identity_before": source_signature,
+        "product_app_codesign_identity_staged": staged_signature,
+        "ui_target_app_bundle_id": source_identity["bundle_id"],
+        "staged_app_path": str(destination),
+        "xctestrun_path": str(xctestrun),
+        "xctestrun_sha256_before": before_plan_sha,
+        "xctestrun_sha256_after": after_plan_sha,
+        "xctestrun_before_copy": before_plan_copy.name,
+        "xctestrun_after_copy": after_plan_copy.name,
+        **association,
+    }
+    write_json(evidence_dir / "xctestrun-app-association.json", evidence)
+    return destination, evidence
+
+
+def capture_simulator_storekit_logs(device_id: str, output: Path) -> None:
+    """Retain bounded storekitd diagnostics from the just-finished simulator test."""
+    log_path = output / "simulator-storekitd.log"
+    command_args = [
+        "xcrun", "simctl", "spawn", device_id, "log", "show",
+        "--style", "compact", "--last", "15m", "--info",
+        "--predicate", 'process == "storekitd"',
+    ]
+    try:
+        with log_path.open("w", encoding="utf-8") as log_file:
+            result = subprocess.run(
+                command_args,
+                check=False,
+                text=True,
+                stdout=log_file,
+                stderr=subprocess.STDOUT,
+                timeout=180,
+            )
+    except subprocess.TimeoutExpired:
+        write_json(output / "simulator-storekitd-log-error.json", {"error": "simulator storekitd log query timed out"})
+    else:
+        if result.returncode != 0:
+            write_json(
+                output / "simulator-storekitd-log-error.json",
+                {"error": "simulator storekitd log query failed", "exit_code": result.returncode},
+            )
+
+
+def _attachment_name_matches(actual: str, expected: str) -> bool:
+    if actual == expected:
+        return True
+    generated_suffix = rf"{re.escape(expected)}_\d+_[0-9A-Fa-f-]{{36}}(?:\.[A-Za-z0-9]+)?"
+    return re.fullmatch(generated_suffix, actual) is not None
+
+
 def retain_consumer_provenance(source: Path, output: Path) -> Path:
     """Copy consumer provenance into the evidence directory unless already there."""
     source = source.resolve(strict=True)
@@ -399,7 +622,10 @@ def _export_attachments(result_bundle: Path, output: Path) -> dict[str, Path]:
     all_attachments = [attachment for test in manifest for attachment in test.get("attachments", [])]
     exported: dict[str, Path] = {}
     for attachment_name, filename in SCREENSHOTS.items():
-        matches = [item for item in all_attachments if item.get("suggestedHumanReadableName") == attachment_name]
+        matches = [
+            item for item in all_attachments
+            if _attachment_name_matches(str(item.get("suggestedHumanReadableName", "")), attachment_name)
+        ]
         if len(matches) != 1:
             raise RuntimeError(f"Expected exactly one authentic screenshot attachment named {attachment_name!r}; found {len(matches)}")
         exported_name = matches[0].get("exportedFileName", "")
@@ -412,7 +638,11 @@ def _export_attachments(result_bundle: Path, output: Path) -> dict[str, Path]:
         shutil.copyfile(screenshot, destination)
         exported[attachment_name] = destination
 
-    record_matches = [item for item in all_attachments if item.get("suggestedHumanReadableName") == "pleazyng-trial-storekit-localtest-record"]
+    record_attachment_name = "pleazyng-trial-storekit-localtest-record"
+    record_matches = [
+        item for item in all_attachments
+        if _attachment_name_matches(str(item.get("suggestedHumanReadableName", "")), record_attachment_name)
+    ]
     if len(record_matches) != 1:
         raise RuntimeError(f"Expected one StoreKitTest LOCALTEST transaction record; found {len(record_matches)}")
     record_name = record_matches[0].get("exportedFileName", "")
@@ -507,10 +737,19 @@ def capture(args: argparse.Namespace) -> None:
         built_products = derived_data / "Build" / "Products"
         verify_built_storekit_test_resource(built_products, sha256_file(storekit_path))
 
-        command(["xcrun", "simctl", "install", device["udid"], str(app)], timeout=180)
         xctestruns = list((derived_data / "Build" / "Products").glob("*.xctestrun"))
         if len(xctestruns) != 1:
             raise ValueError(f"Expected exactly one XCTest plan, found {len(xctestruns)}")
+        staged_app, _ = stage_verified_app_for_xctestrun(
+            xctestrun=xctestruns[0],
+            built_products=built_products,
+            app=app,
+            expected_identity=identity,
+            expected_sha256=receipt["product_app_bundle_sha256"],
+            evidence_dir=output,
+        )
+        if staged_app != built_products / "Debug-iphonesimulator" / "Pleazyng.app":
+            raise ValueError("The staged UI target app path differs from the xctestrun TestROOT path")
         result_bundle = output / "pleazyng-trial-review.xcresult"
         test_command = [
             "xcodebuild", "test-without-building",
@@ -524,15 +763,18 @@ def capture(args: argparse.Namespace) -> None:
             "-only-testing:PleazyngTrialReviewUITests/PleazyngTrialReviewUITests/testCaptureRealTrialOfferAndActiveAccess",
         ]
         test_log = output / "storekit-ui-test.log"
-        with test_log.open("w", encoding="utf-8") as log_file:
-            result = subprocess.run(
-                test_command,
-                check=False,
-                text=True,
-                stdout=log_file,
-                stderr=subprocess.STDOUT,
-                timeout=1800,
-            )
+        try:
+            with test_log.open("w", encoding="utf-8") as log_file:
+                result = subprocess.run(
+                    test_command,
+                    check=False,
+                    text=True,
+                    stdout=log_file,
+                    stderr=subprocess.STDOUT,
+                    timeout=1800,
+                )
+        finally:
+            capture_simulator_storekit_logs(device["udid"], output)
         if result_bundle.is_dir():
             try:
                 exported = _export_attachments(result_bundle, output)

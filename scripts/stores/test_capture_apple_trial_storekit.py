@@ -5,10 +5,12 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import plistlib
 import tarfile
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -89,6 +91,173 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "found 0"):
                 capture.verify_built_storekit_test_resource(products, catalog_hash)
 
+    def test_retained_app_is_staged_unchanged_and_associated_in_xctestrun(self) -> None:
+        identity = {
+            "bundle_id": capture.BUNDLE_ID,
+            "version": capture.VERSION,
+            "build": capture.BUILD_NUMBER,
+            "executable": "Pleazyng",
+            "architectures": ["arm64", "x86_64"],
+        }
+        signature = {
+            "Identifier": capture.BUNDLE_ID,
+            "CDHash": "1234567890abcdef",
+            "Signature": "adhoc",
+            "TeamIdentifier": "not set",
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            built_products = root / "Build" / "Products"
+            built_products.mkdir(parents=True)
+            xctestrun = built_products / "PleazyngTrialReview_iphonesimulator26.5-arm64.xctestrun"
+            runner_app = "__TESTROOT__/Debug-iphonesimulator/PleazyngTrialReviewUITests-Runner.app"
+            test_bundle = f"{runner_app}/PlugIns/PleazyngTrialReviewUITests.xctest"
+            target = {
+                "BlueprintName": "PleazyngTrialReviewUITests",
+                "IsUITestBundle": True,
+                "TestBundlePath": test_bundle,
+                "TestHostPath": runner_app,
+                "UseUITargetAppProvidedByTests": True,
+                "DependentProductPaths": [runner_app, test_bundle],
+                "TestingEnvironmentVariables": {"SAMPLE": "preserve"},
+            }
+            xctestrun.write_bytes(plistlib.dumps({
+                "TestConfigurations": [{"Name": "Test Scheme Action", "IsEnabled": True, "TestTargets": [target]}],
+                "__xctestrun_metadata__": {"FormatVersion": 2},
+            }))
+            app = root / "retained" / "Pleazyng.app"
+            app.mkdir(parents=True)
+            (app / "Info.plist").write_bytes(b"retained test fixture identity")
+            (app / "Pleazyng").write_bytes(b"unchanged executable fixture")
+            app_hash = capture.sha256_tree(app)
+
+            with patch.object(capture, "bundle_info", return_value=identity), patch.object(
+                capture, "codesign_identity", return_value=signature
+            ):
+                staged, evidence = capture.stage_verified_app_for_xctestrun(
+                    xctestrun=xctestrun,
+                    built_products=built_products,
+                    app=app,
+                    expected_identity=identity,
+                    expected_sha256=app_hash,
+                    evidence_dir=root / "evidence",
+                )
+
+            expected_path = "__TESTROOT__/Debug-iphonesimulator/Pleazyng.app"
+            self.assertEqual(staged, built_products / "Debug-iphonesimulator" / "Pleazyng.app")
+            self.assertEqual(capture.sha256_tree(app), app_hash)
+            self.assertEqual(capture.sha256_tree(staged), app_hash)
+            self.assertEqual(evidence["product_app_identity_before"], identity)
+            self.assertEqual(evidence["product_app_identity_staged"], identity)
+            self.assertEqual(evidence["product_app_codesign_identity_before"], signature)
+            self.assertEqual(evidence["product_app_codesign_identity_staged"], signature)
+            self.assertTrue((root / "evidence" / "pleazyng-trial-review-before-association.xctestrun").is_file())
+            self.assertTrue((root / "evidence" / "pleazyng-trial-review-after-association.xctestrun").is_file())
+            self.assertTrue((root / "evidence" / "xctestrun-app-association.json").is_file())
+
+            plan = plistlib.loads(xctestrun.read_bytes())
+            patched = plan["TestConfigurations"][0]["TestTargets"][0]
+            self.assertEqual(patched["UITargetAppPath"], expected_path)
+            self.assertEqual(patched["DependentProductPaths"][0], expected_path)
+            self.assertEqual(patched["DependentProductPaths"][1:], [runner_app, test_bundle])
+            self.assertNotIn("UseUITargetAppProvidedByTests", patched)
+            self.assertEqual(patched["TestingEnvironmentVariables"], {"SAMPLE": "preserve"})
+
+    def test_xctestrun_association_supports_legacy_target_dictionary_layout(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "legacy.xctestrun"
+            target = {
+                "BlueprintName": "PleazyngTrialReviewUITests",
+                "IsUITestBundle": True,
+                "TestBundlePath": "__TESTHOST__/PlugIns/Review.xctest",
+                "TestHostPath": "__TESTROOT__/Debug-iphonesimulator/Runner.app",
+                "DependentProductPaths": [],
+                "UseUITargetAppProvidedByTests": True,
+            }
+            path.write_bytes(plistlib.dumps({"PleazyngTrialReviewUITests": target}))
+            expected = "__TESTROOT__/Debug-iphonesimulator/Pleazyng.app"
+            association = capture.associate_xctestrun_with_app(path, expected)
+            patched = plistlib.loads(path.read_bytes())["PleazyngTrialReviewUITests"]
+            self.assertEqual(patched["UITargetAppPath"], expected)
+            self.assertEqual(patched["DependentProductPaths"], [expected])
+            self.assertNotIn("UseUITargetAppProvidedByTests", patched)
+            self.assertEqual(association["removed_use_ui_target_app_provided_by_tests"], True)
+
+    def test_xctestrun_association_fails_closed_on_wrong_or_ambiguous_target(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "invalid.xctestrun"
+            expected = "__TESTROOT__/Debug-iphonesimulator/Pleazyng.app"
+            wrong = {"BlueprintName": "OtherUITests", "IsUITestBundle": True}
+            path.write_bytes(plistlib.dumps({"OtherUITests": wrong}))
+            with self.assertRaisesRegex(ValueError, "found 0"):
+                capture.associate_xctestrun_with_app(path, expected)
+
+            first = {
+                "BlueprintName": "PleazyngTrialReviewUITests",
+                "IsUITestBundle": True,
+                "DependentProductPaths": [],
+            }
+            second = dict(first)
+            path.write_bytes(plistlib.dumps({
+                "TestConfigurations": [{"TestTargets": [first, second]}],
+            }))
+            with self.assertRaisesRegex(ValueError, "found 2"):
+                capture.associate_xctestrun_with_app(path, expected)
+
+            path.write_bytes(plistlib.dumps({
+                "UseDestinationArtifacts": True,
+                "PleazyngTrialReviewUITests": first,
+            }))
+            with self.assertRaisesRegex(ValueError, "expects xcodebuild to install"):
+                capture.associate_xctestrun_with_app(path, expected)
+
+    def test_xctestrun_path_must_not_overwrite_a_staged_app(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            products = root / "Products"
+            products.mkdir()
+            plan = products / "plan.xctestrun"
+            plan.write_bytes(plistlib.dumps({}))
+            app = root / "Pleazyng.app"
+            app.mkdir()
+            expected_identity = {
+                "bundle_id": capture.BUNDLE_ID,
+                "version": capture.VERSION,
+                "build": capture.BUILD_NUMBER,
+                "executable": "Pleazyng",
+                "architectures": ["arm64"],
+            }
+            destination = products / "Debug-iphonesimulator" / "Pleazyng.app"
+            destination.mkdir(parents=True)
+            with patch.object(capture, "bundle_info", return_value=expected_identity), patch.object(
+                capture, "codesign_identity", return_value={
+                    "Identifier": capture.BUNDLE_ID,
+                    "CDHash": "1234567890abcdef",
+                    "Signature": "adhoc",
+                    "TeamIdentifier": "not set",
+                }
+            ):
+                with self.assertRaisesRegex(ValueError, "Refusing to overwrite"):
+                    capture.stage_verified_app_for_xctestrun(
+                        xctestrun=plan,
+                        built_products=products,
+                        app=app,
+                        expected_identity=expected_identity,
+                        expected_sha256=capture.sha256_tree(app),
+                        evidence_dir=root / "evidence",
+                    )
+
+    def test_xcresult_generated_attachment_name_suffix_is_recognized_exactly(self) -> None:
+        name = "pleazyng-trial-offer-localtest"
+        self.assertTrue(capture._attachment_name_matches(name, name))
+        self.assertTrue(
+            capture._attachment_name_matches(
+                f"{name}_0_DF4AA6EB-AE12-458E-9B94-5A57C80D3BC5.png", name
+            )
+        )
+        self.assertFalse(capture._attachment_name_matches(f"{name}-other.png", name))
+        self.assertFalse(capture._attachment_name_matches(f"{name}Extra_0_DF4AA6EB-AE12-458E-9B94-5A57C80D3BC5.png", name))
+
     def test_consumer_provenance_retention_is_safe_when_source_is_already_in_output(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary) / "captures"
@@ -136,6 +305,9 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
         self.assertIn("actions: read", WORKFLOW)
         self.assertIn('"CODE_SIGN_STYLE": "Automatic"', SCRIPT)
         self.assertNotIn('"CODE_SIGN_ENTITLEMENTS"', SCRIPT)
+        self.assertIn("stage_verified_app_for_xctestrun", SCRIPT)
+        self.assertIn("capture_simulator_storekit_logs", SCRIPT)
+        self.assertNotIn('command(["xcrun", "simctl", "install", device["udid"], str(app)]', SCRIPT)
 
     def test_retained_bundle_extraction_rejects_path_traversal(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
