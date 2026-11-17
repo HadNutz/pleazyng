@@ -301,6 +301,18 @@ static AVCodecContext* createContext(
     context->sample_rate = rawSampleRate;
     av_channel_layout_default(&context->ch_layout, rawChannelCount);
   }
+  if (context->codec_id == AV_CODEC_ID_OPUS && !context->extradata_size) {
+    // Opus mapping family 0 has fixed mono/stereo routing. More channels
+    // require a stream map from OpusHead.
+    if (rawChannelCount > 2) {
+      LOGE("Multichannel Opus requires an OpusHead channel map.");
+      releaseContext(context);
+      return nullptr;
+    }
+    if (rawChannelCount > 0) {
+      av_channel_layout_default(&context->ch_layout, rawChannelCount);
+    }
+  }
   context->err_recognition = AV_EF_IGNORE_ERR;
   int result = avcodec_open2(context, codec, nullptr);
   if (result < 0) {

@@ -169,14 +169,25 @@ final class FfmpegAudioDecoder
   }
 
   @Nullable
-  private static byte[] getExtraData(String mimeType, List<byte[]> initializationData) {
+  static byte[] getExtraData(String mimeType, List<byte[]> initializationData)
+      throws FfmpegDecoderException {
     switch (mimeType) {
       case MimeTypes.AUDIO_AAC:
+        // ADTS packets carry their configuration in-band.
+        return initializationData.isEmpty() ? null : initializationData.get(0);
       case MimeTypes.AUDIO_OPUS:
-        return initializationData.get(0);
+        // Matroska supplies OpusHead. Raw Opus can use codec parameters.
+        return initializationData.isEmpty() ? null : initializationData.get(0);
       case MimeTypes.AUDIO_ALAC:
+        if (initializationData.isEmpty() || initializationData.get(0).length == 0) {
+          throw new FfmpegDecoderException("Missing ALAC magic cookie");
+        }
         return getAlacExtraData(initializationData);
       case MimeTypes.AUDIO_VORBIS:
+        if (initializationData.size() < 2 || initializationData.get(0).length != 30
+            || initializationData.get(1).length == 0) {
+          throw new FfmpegDecoderException("Missing or invalid Vorbis identification/setup headers");
+        }
         return getVorbisExtraData(initializationData);
       case MimeTypes.AUDIO_FLAC:
         return getFlacExtraData(initializationData);
@@ -199,15 +210,15 @@ final class FfmpegAudioDecoder
   private static byte[] getVorbisExtraData(List<byte[]> initializationData) {
     byte[] header0 = initializationData.get(0);
     byte[] header1 = initializationData.get(1);
-    byte[] extraData = new byte[header0.length + header1.length + 6];
-    extraData[0] = (byte) (header0.length >> 8);
-    extraData[1] = (byte) (header0.length & 0xFF);
-    System.arraycopy(header0, 0, extraData, 2, header0.length);
-    extraData[header0.length + 2] = 0;
-    extraData[header0.length + 3] = 0;
-    extraData[header0.length + 4] = (byte) (header1.length >> 8);
-    extraData[header0.length + 5] = (byte) (header1.length & 0xFF);
-    System.arraycopy(header1, 0, extraData, header0.length + 6, header1.length);
+    // Xiph lacing stores the first two lengths. The final setup header can
+    // exceed 65535 bytes. FFmpeg's Vorbis decoder reads the first and last
+    // headers and accepts an empty comment header between them.
+    byte[] extraData = new byte[3 + header0.length + header1.length];
+    extraData[0] = 2;
+    extraData[1] = (byte) header0.length;
+    extraData[2] = 0;
+    System.arraycopy(header0, 0, extraData, 3, header0.length);
+    System.arraycopy(header1, 0, extraData, 3 + header0.length, header1.length);
     return extraData;
   }
 

@@ -24,6 +24,7 @@ internal fun isPassthroughAudioMimeType(mimeType: String): Boolean = when (mimeT
   "audio/ac4",
   "audio/vnd.dts",
   "audio/vnd.dts.hd",
+  MimeTypes.AUDIO_DTS_EXPRESS,
   "audio/vnd.dts.uhd",
   MimeTypes.AUDIO_TRUEHD -> true
   else -> false
