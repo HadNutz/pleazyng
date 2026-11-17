@@ -597,7 +597,9 @@ def _test_local_signing_identities(keychain: Path, app_identity: dict[str, str],
         "--install-location", "/tmp/pleazyng-signing-preflight", str(unsigned_package),
     ])
     signing_run([
-        "/usr/bin/productsign", "--sign", installer_identity["certificate_sha1"],
+        # productsign(1) names the installer identity by its certificate common
+        # name; unlike codesign, it does not accept the SHA-1 fingerprint here.
+        "/usr/bin/productsign", "--sign", installer_identity["name"],
         "--keychain", str(keychain), str(unsigned_package), str(signed_package),
     ])
     package_signature = _capture(["/usr/sbin/pkgutil", "--check-signature", str(signed_package)]).decode(

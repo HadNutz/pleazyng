@@ -204,6 +204,7 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         self.assertIn("preserve_macos_package_locks(source_dir)", signed_builder)
         self.assertIn('receipt["macos_swift_package_locks"]', signed_builder)
         self.assertIn("productsign", signed_builder)
+        self.assertIn('"--sign", installer_identity["name"]', signed_builder)
         package_builder = signed_builder.split("def build_signed_package(", 1)[1].split("\ndef _write_receipt", 1)[0]
         framework_validation = package_builder.index("validate_plezy_torrent_framework_metadata(app_path)")
         package_export = package_builder.index('"xcodebuild", "-exportArchive"')
