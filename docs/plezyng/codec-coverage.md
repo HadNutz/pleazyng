@@ -39,9 +39,8 @@ source. Native webOS, Tizen and ExoPlayer never inherit mpv's inventory.
   AVS3 and static LCEVCdec. The Linux release gate requires H.264, HEVC,
   software AV1, VP9, MPEG-2, VC-1, MPEG-4, VVC, EVC, AVS2 and AVS3, plus
   generated decode/seek corpus and LCEVC reconstruction checks on both native
-  architectures. The pinned AVS2 dependency is 8-bit only. Native packages
-  must be rebuilt and consumed before these source integrations exist in an
-  installed application.
+  architectures. The pinned AVS2 dependency is 8-bit only. The application
+  lock consumes verified published native packages for all four platform groups.
 
 ## Coverage order and remaining qualification
 
@@ -77,9 +76,14 @@ Android AAR assets and the application's Licenses screen. BSD-3-Clause-Clear
 and the additional licensing information remain the SDK's own terms; they
 explicitly exclude a patent license. See the [pinned SDK source and terms](https://github.com/v-novaltd/LCEVCdec/tree/e295d8438ba554bc541fb269baa9cbd567b626a8).
 
-The application remains on its last verified native pin until the producer's
-new all-platform artifacts pass publication and pin verification. These source
-changes do not themselves establish shipped or device-qualified LCEVC support.
+The application lock now consumes the producer's verified published artifacts
+for all four platform groups. Apple passed all six target builds and iOS/tvOS
+Objective-C-only SwiftPM consumer links; Android passed all four ABI builds and
+AAR/JVM checks; both Linux architectures passed the 28-case decode/seek corpus
+and enhanced-resolution LCEVC checks. Windows x64 and ARM64 passed production
+build, PCM ABI, packaging and publication gates. The SDK implementation and
+notices are bundled; end users do not install a decoder SDK. Physical-device,
+real-time, HDR and codec-profile qualification remains separate.
 Native webOS/Tizen/ExoPlayer backends do not gain this SDK from mpv packaging.
 AV2 v1.0.0 is final. VideoLAN's May 2026 status describes dav2d as a
 functional early decoder with 8/10-bit decoding, while conformance,
@@ -92,16 +96,24 @@ none is offered, the client reports the unsupported source instead of retrying
 the same file. Sources: [AV2 v1.0 specification](https://av2.aomedia.org/),
 [VideoLAN dav2d status](https://jbkempf.com/blog/2026/dav2d/).
 
-Unavailable proprietary SDKs must likewise keep an honest unsupported or
-server-conversion route; recognition never substitutes for an implementation.
+Fraunhofer's MPEG-H decoder SDK is public; a private SDK login is not the
+missing dependency. The pinned FFmpeg integration classifies `libmpeghdec` as
+nonfree, so it is not enabled in the normal redistributable packages. A
+recognized MPEG-H name therefore does not establish local decoding. See the
+[public SDK and its terms](https://github.com/Fraunhofer-IIS/mpeghdec/tree/4448b69738da2fa5f2f2f2b0ce29eea32509e046)
+and the producer's [SDK bundling decisions](https://github.com/snapetech-org/mpv-build/blob/main/docs/codec-coverage.md#sdk-bundling-decisions).
+Unavailable decoder routes must keep an honest unsupported or available
+server-conversion result; recognition never substitutes for an implementation.
 
 The native producer's local validation now includes exact upstream YUV hashes
 for AVS2 8-bit and AVS3 8/10-bit, Android final shared FFmpeg links for all four
 ABIs, and a headless VA-API control test for LCEVC. The latter reproduced a
 silent base-layer-only hardware result and verified targeted software replay
 at enhanced resolution while ordinary H.264 retained hardware decoding.
-These are producer validation results; app delivery still requires the verified
-native pin update above. No TV input or visible playback was changed.
+The pin update carries these verified producer artifacts into normal app
+builds. The pre-decode LCEVC detector handles AVC/HEVC registered-user-data SEI
+and packet-side enhancement metadata; it is not a claim of every LCEVC base
+codec/profile combination. All validation here ran headlessly.
 
 `set_native_revision.sh` also checks `LCEVCdec.sources.json` against the SDK
 source commit/version and the exact app notice payload. A future SDK update or

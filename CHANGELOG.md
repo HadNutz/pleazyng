@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Bundle pinned EVC, 8-bit AVS2, AVS3 and LCEVC implementations in normal mpv packages for Android, Linux, Windows and Apple, consuming verified published artifacts across all four platform groups. End users do not install decoder SDKs.
+- Detect LCEVC enhancement before hardware submission and replay through software when hardware would present only the base layer. Ordinary H.264 retains hardware decoding.
+
 ## [3.0.37]
 
 - Build authentic Apple Store screenshots with current Flutter, preserve reusable app bundles, and verify their source and capture provenance.
@@ -9,7 +12,6 @@
 - Skip Git metadata during Apple network-storage source cleanup.
 - Include the original EVC/AVS decoder notices and the complete upstream LCEVC notice tree in the app Licenses screen, with one SDK entry.
 - Reject native SDK pin updates when the app's bundled decoder license notices are stale or altered, preserving all platform pins on failure.
-- Retain the pinned LCEVC decoder SDK's original licensing terms in the app Licenses screen; document bundled SDK delivery and pending native artifact qualification.
 - Consolidate saved karaoke discovery and preferred-version controls, TTML singer/timing import and export, and profile-owned offline music continuation. Preserve offline queue mode across session restoration and keep its playback local.
 - Give automatic subtitle retrieval distinct progress and failure messages, and save subtitle calibration history before applying settings or exporting an archive. The 18 newly integrated labels use explicit English fallback pending translation review.
 
