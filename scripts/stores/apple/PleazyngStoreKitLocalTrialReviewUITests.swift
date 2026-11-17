@@ -6,6 +6,10 @@ import XCTest
 import CoreGraphics
 import ImageIO
 import Vision
+
+private func macRectJSON(_ rect: CGRect) -> [Double] {
+  [Double(rect.minX), Double(rect.minY), Double(rect.width), Double(rect.height)]
+}
 #endif
 
 final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
@@ -14,6 +18,9 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
   private let lifetimeProductID = "pleazyng_lifetime_unlock"
 
   func testCaptureTrialBackedFilesBooksAndAccessSheet() throws {
+#if os(macOS)
+    try assertMacScreenshotGeometryScale()
+#endif
     let configurationURL = try XCTUnwrap(
       Bundle(for: PleazyngStoreKitLocalTrialReviewUITests.self).url(
         forResource: "pleazyng-trial-review",
@@ -37,17 +44,16 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
     // through the actual product app and its native StoreKit integration.
     let app = XCUIApplication(bundleIdentifier: appBundleID)
     app.launch()
-    attachScreenshot(of: app, named: "pleazyng-diagnostic-after-launch-\(platformName())")
+    try attachScreenshot(of: app, named: "pleazyng-diagnostic-after-launch-\(platformName())")
     attachText(app.debugDescription, named: "pleazyng-diagnostic-accessibility-after-launch-\(platformName())")
 
     #if os(macOS)
-      assertVisionWindowCoordinateScale()
       try tapMacVisibleText("Start fresh", in: app, attachmentName: "pleazyng-macos-legacy-onboarding")
       let afterOnboarding = try waitForMacVisibleText(
         "Start my 7-day free trial", in: app, attachmentName: "pleazyng-diagnostic-after-onboarding-macos",
         timeout: 90)
       XCTAssertTrue(
-        joinedText(afterOnboarding).contains("Read, listen, and watch from your own files"),
+        joinedText(afterOnboarding.lines).contains("Read, listen, and watch from your own files"),
         "The actual first-run app access screen did not appear after choosing Start fresh")
     #endif
 
@@ -58,7 +64,7 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
       let offer = try waitForMacVisibleText(
         "Start my 7-day free trial", in: app, attachmentName: "pleazyng-localtest-trial-offer-macos",
         timeout: 60)
-      let offerText = joinedText(offer)
+      let offerText = joinedText(offer.lines)
       XCTAssertTrue(offerText.contains("Unlock every feature"), "The queried LOCALTEST lifetime product was not visible")
       XCTAssertTrue(offerText.contains("$2.99"), "The queried LOCALTEST lifetime price was not visible")
       XCTAssertTrue(
@@ -66,7 +72,7 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
         "The actual product trial disclosure was not visible")
       trialOfferShown = true
       trialOfferLifetimePriceShown = offerText.contains("Unlock every feature") && offerText.contains("$2.99")
-      lifetimeDisplayPrice = offer.first(where: { $0.text.contains("$2.99") })?.text ?? "$2.99"
+      lifetimeDisplayPrice = offer.lines.first(where: { $0.text.contains("$2.99") })?.text ?? "$2.99"
       try tapMacVisibleText(
         "Start my 7-day free trial", in: app, attachmentName: "pleazyng-macos-trial-offer-action")
     #else
@@ -87,7 +93,7 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
       trialOfferShown = trialButton.exists
       trialOfferLifetimePriceShown = lifetimeOffer.exists
       lifetimeDisplayPrice = lifetimeOffer.label
-      attachScreenshot(of: app, named: "pleazyng-localtest-trial-offer-\(platformName())")
+      try attachScreenshot(of: app, named: "pleazyng-localtest-trial-offer-\(platformName())")
       select(trialButton, in: app)
     #endif
 
@@ -117,7 +123,7 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
       let files = try waitForMacVisibleText(
         "Add a source or import a book", in: app, attachmentName: "pleazyng-localtest-files-books-macos",
         timeout: 60)
-      let filesText = joinedText(files)
+      let filesText = joinedText(files.lines)
       XCTAssertTrue(filesText.contains("Add source"), "The real local library Add source action is missing")
       XCTAssertTrue(filesText.contains("Import files"), "The real local library Import files action is missing")
       filesBooksScreenOpened = true
@@ -131,7 +137,7 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
         "Expected the actual empty local library, without seeded media or a server"
       )
       filesBooksScreenOpened = addSource.exists
-      attachScreenshot(of: app, named: "pleazyng-localtest-files-books-\(platformName())")
+      try attachScreenshot(of: app, named: "pleazyng-localtest-files-books-\(platformName())")
     #endif
 
     openSettings(in: app)
@@ -156,7 +162,7 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
       let accessSheet = try waitForMacVisibleText(
         "Your 7-day full-feature trial is active.", in: app,
         attachmentName: "pleazyng-localtest-supporter-macos", timeout: 60)
-      let accessText = joinedText(accessSheet)
+      let accessText = joinedText(accessSheet.lines)
       XCTAssertTrue(accessText.contains("Restore lifetime purchase"), "The real access sheet did not show its Restore action")
       XCTAssertTrue(accessText.contains("$2.99"), "The app did not show the queried LOCALTEST lifetime price")
       activeTrialShown = true
@@ -174,7 +180,7 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
         lifetimePrice.waitForExistence(timeout: 60), "The app did not show the queried LOCALTEST lifetime price")
       activeTrialShown = activeTrial.exists
       accessSheetLifetimePriceShown = lifetimePrice.exists
-      attachScreenshot(of: app, named: "pleazyng-localtest-supporter-\(platformName())")
+      try attachScreenshot(of: app, named: "pleazyng-localtest-supporter-\(platformName())")
     #endif
 
     let finalTransactions = session.allTransactions()
@@ -288,14 +294,14 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
     return ISO8601DateFormatter().string(from: value)
   }
 
-  private func attachScreenshot(of app: XCUIApplication, named name: String) {
+  private func attachScreenshot(of app: XCUIApplication, named name: String) throws {
     #if os(macOS)
-      let window = app.windows.firstMatch
-      let screenshot = window.exists ? window.screenshot() : app.screenshot()
+      let capture = try captureMacWindowScreenshot(of: app)
+      attachMacScreenshot(capture, named: name)
     #else
       let screenshot = app.screenshot()
+      attachScreenshot(screenshot, named: name)
     #endif
-    attachScreenshot(screenshot, named: name)
   }
 
   private func attachScreenshot(_ screenshot: XCUIScreenshot, named name: String) {
@@ -311,9 +317,63 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
       let boundingBox: CGRect
     }
 
+    private struct MacScreenshotGeometry {
+      let basisNames: [String]
+      let rawImageSize: CGSize
+      let screenFrame: CGRect
+      let applicationFrame: CGRect
+      let windowFrame: CGRect
+      let selectedSourceFrame: CGRect
+      let cropRectInPixels: CGRect
+      let outputImageSize: CGSize
+      let scaleX: CGFloat
+      let scaleY: CGFloat
+
+      func json(name: String) -> String {
+        let value: [String: Any] = [
+          "schema_version": 1,
+          "capture_api": "XCUIApplication.screenshot()",
+          "image_basis": basisNames,
+          "raw_image_pixels": [rawImageSize.width, rawImageSize.height],
+          "screen_frame_points": macRectJSON(screenFrame),
+          "application_frame_points": macRectJSON(applicationFrame),
+          "window_frame_points": macRectJSON(windowFrame),
+          "selected_source_frame_points": macRectJSON(selectedSourceFrame),
+          "crop_rect_in_raw_image_pixels": macRectJSON(cropRectInPixels),
+          "output_window_image_pixels": [outputImageSize.width, outputImageSize.height],
+          "pixels_per_point": [scaleX, scaleY],
+          "ocr_coordinate_basis": "The cropped PNG maps one-to-one to the XCTest window frame; Vision bounds are normalized from bottom-left and converted to the window's top-left normalized offset before tapping.",
+        ]
+        guard let data = try? JSONSerialization.data(withJSONObject: value, options: [.sortedKeys]),
+              let string = String(data: data, encoding: .utf8) else {
+          return "Failed to encode screenshot geometry for \(name)"
+        }
+        return string
+      }
+    }
+
+    private struct MacWindowScreenshot {
+      let image: CGImage
+      let pngData: Data
+      let geometry: MacScreenshotGeometry
+    }
+
+    private struct MacScreenshotMapping {
+      var basisNames: [String]
+      let sourceFrame: CGRect
+      let cropRectInPixels: CGRect
+      let scaleX: CGFloat
+      let scaleY: CGFloat
+    }
+
+    private struct MacTextObservation {
+      let lines: [MacScreenText]
+      let screenshot: MacWindowScreenshot
+    }
+
     private func waitForMacVisibleText(
       _ expected: String, in app: XCUIApplication, attachmentName: String, timeout: TimeInterval
-    ) throws -> [MacScreenText] {
+    ) throws -> MacTextObservation {
       let window = app.windows.firstMatch
       guard window.waitForExistence(timeout: min(timeout, 30)) else {
         throw NSError(
@@ -322,22 +382,22 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
       }
       let deadline = Date().addingTimeInterval(timeout)
       var latest: [MacScreenText] = []
-      var latestScreenshot: XCUIScreenshot?
+      var latestCapture: MacWindowScreenshot?
       repeat {
-        let screenshot = window.screenshot()
-        latestScreenshot = screenshot
-        latest = try recognizeMacScreenText(in: screenshot)
+        let capture = try captureMacWindowScreenshot(of: app)
+        latestCapture = capture
+        latest = try recognizeMacScreenText(in: capture.image)
         if joinedText(latest).localizedCaseInsensitiveContains(expected) {
-          attachScreenshot(screenshot, named: attachmentName)
+          attachMacScreenshot(capture, named: attachmentName)
           attachText(app.debugDescription, named: "\(attachmentName)-accessibility")
           attachText(macScreenTextJSON(latest), named: "\(attachmentName)-vision-ocr")
-          return latest
+          return MacTextObservation(lines: latest, screenshot: capture)
         }
         Thread.sleep(forTimeInterval: 0.5)
       } while Date() < deadline
 
-      if let latestScreenshot {
-        attachScreenshot(latestScreenshot, named: "\(attachmentName)-timeout")
+      if let latestCapture {
+        attachMacScreenshot(latestCapture, named: "\(attachmentName)-timeout")
         attachText(macScreenTextJSON(latest), named: "\(attachmentName)-timeout-vision-ocr")
         attachText(app.debugDescription, named: "\(attachmentName)-timeout-accessibility")
       }
@@ -359,51 +419,206 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
 
       let lines = try waitForMacVisibleText(
         expected, in: app, attachmentName: "\(attachmentName)-before-action", timeout: timeout)
-      let matchingLines = lines.filter { $0.text.localizedCaseInsensitiveContains(expected) }
+      let matchingLines = lines.lines.filter { $0.text.localizedCaseInsensitiveContains(expected) }
       guard matchingLines.count == 1, let match = matchingLines.first else {
         throw NSError(
           domain: "PleazyngStoreKitReviewCapture", code: 2,
           userInfo: [NSLocalizedDescriptionKey: "Expected one visible OCR hit for \(expected.debugDescription), got \(matchingLines.count)"])
       }
-      let offset = try macWindowOffset(forVisionBounds: match.boundingBox)
+      let offset = try macWindowOffset(forVisionBounds: match.boundingBox, geometry: lines.screenshot.geometry)
       attachText(
-        "Used the observed OCR bounds \(NSStringFromRect(match.boundingBox)) to click visible text \(expected.debugDescription) at normalized window offset (\(offset.dx), \(offset.dy)).",
+        "Used one visible OCR match for \(expected.debugDescription). OCR bounds in the cropped app screenshot: \(NSStringFromRect(match.boundingBox)); normalized window tap offset: (\(offset.dx), \(offset.dy)). Screenshot geometry: \(lines.screenshot.geometry.json(name: attachmentName)).",
         named: "\(attachmentName)-action")
       window.coordinate(withNormalizedOffset: offset).tap()
     }
 
-    private func macWindowOffset(forVisionBounds bounds: CGRect) throws -> CGVector {
+    private func macWindowOffset(
+      forVisionBounds bounds: CGRect, geometry: MacScreenshotGeometry
+    ) throws -> CGVector {
       guard bounds.minX >= 0, bounds.minY >= 0, bounds.maxX <= 1, bounds.maxY <= 1,
             bounds.width > 0, bounds.height > 0 else {
         throw NSError(
           domain: "PleazyngStoreKitReviewCapture", code: 5,
           userInfo: [NSLocalizedDescriptionKey: "Vision returned a text box outside normalized screenshot bounds: \(NSStringFromRect(bounds))"])
       }
-      return CGVector(dx: bounds.midX, dy: 1 - bounds.midY)
+      let offset = CGVector(dx: bounds.midX, dy: 1 - bounds.midY)
+      guard offset.dx >= 0.02, offset.dx <= 0.98, offset.dy >= 0.02, offset.dy <= 0.98,
+            geometry.outputImageSize.width > 0,
+            geometry.outputImageSize.height > 0,
+            abs(geometry.outputImageSize.width / geometry.outputImageSize.height
+                - geometry.windowFrame.width / geometry.windowFrame.height) <= 0.02 else {
+        throw NSError(
+          domain: "PleazyngStoreKitReviewCapture", code: 6,
+          userInfo: [NSLocalizedDescriptionKey: "The OCR target is not safely inside the cropped app window: \(NSStringFromRect(bounds)); geometry: \(geometry.json(name: "tap"))"])
+      }
+      return offset
     }
 
-    private func assertVisionWindowCoordinateScale() {
+    private func assertMacScreenshotGeometryScale() throws {
+      let screen = CGRect(x: 0, y: 0, width: 1024, height: 768)
+      let window = CGRect(x: 112, y: 51, width: 800, height: 632)
+      let fullScreenMapping = try resolveMacScreenshotMapping(
+        rawImageSize: CGSize(width: 1024, height: 768),
+        screenFrame: screen,
+        applicationFrame: screen,
+        windowFrame: window)
+      XCTAssertEqual(fullScreenMapping.cropRectInPixels, window)
+      XCTAssertTrue(fullScreenMapping.basisNames.contains("screen"))
+
+      let windowOnlyMapping = try resolveMacScreenshotMapping(
+        rawImageSize: CGSize(width: 1600, height: 1264),
+        screenFrame: screen,
+        applicationFrame: window,
+        windowFrame: window)
+      XCTAssertEqual(windowOnlyMapping.cropRectInPixels, CGRect(x: 0, y: 0, width: 1600, height: 1264))
+      XCTAssertTrue(windowOnlyMapping.basisNames.contains("window"))
+
       let upperScreenText = CGRect(x: 0.1, y: 0.7, width: 0.2, height: 0.2)
       let lowerScreenText = CGRect(x: 0.1, y: 0.1, width: 0.2, height: 0.2)
-      do {
-        let upperOffset = try macWindowOffset(forVisionBounds: upperScreenText)
-        let lowerOffset = try macWindowOffset(forVisionBounds: lowerScreenText)
-        XCTAssertEqual(upperOffset.dx, 0.2, accuracy: 0.0001)
-        XCTAssertEqual(upperOffset.dy, 0.2, accuracy: 0.0001)
-        XCTAssertEqual(lowerOffset.dx, 0.2, accuracy: 0.0001)
-        XCTAssertEqual(lowerOffset.dy, 0.8, accuracy: 0.0001)
-      } catch {
-        XCTFail("The Vision-to-window coordinate transform rejected a normalized test rectangle: \(error)")
-      }
+      let geometry = fixtureGeometry(window)
+      let upperOffset = try macWindowOffset(forVisionBounds: upperScreenText, geometry: geometry)
+      let lowerOffset = try macWindowOffset(forVisionBounds: lowerScreenText, geometry: geometry)
+      XCTAssertEqual(upperOffset.dx, 0.2, accuracy: 0.0001)
+      XCTAssertEqual(upperOffset.dy, 0.2, accuracy: 0.0001)
+      XCTAssertEqual(lowerOffset.dx, 0.2, accuracy: 0.0001)
+      XCTAssertEqual(lowerOffset.dy, 0.8, accuracy: 0.0001)
+
+      XCTAssertThrowsError(try resolveMacScreenshotMapping(
+        rawImageSize: CGSize(width: 1024, height: 768),
+        screenFrame: screen,
+        applicationFrame: screen,
+        windowFrame: CGRect(x: 100, y: 100, width: 800, height: 600)))
     }
 
-    private func recognizeMacScreenText(in screenshot: XCUIScreenshot) throws -> [MacScreenText] {
+    private func fixtureGeometry(_ window: CGRect) -> MacScreenshotGeometry {
+      MacScreenshotGeometry(
+        basisNames: ["window"],
+        rawImageSize: CGSize(width: 800, height: 632),
+        screenFrame: CGRect(x: 0, y: 0, width: 1024, height: 768),
+        applicationFrame: window,
+        windowFrame: window,
+        selectedSourceFrame: window,
+        cropRectInPixels: CGRect(x: 0, y: 0, width: 800, height: 632),
+        outputImageSize: CGSize(width: 800, height: 632),
+        scaleX: 1,
+        scaleY: 1)
+    }
+
+    private func resolveMacScreenshotMapping(
+      rawImageSize: CGSize,
+      screenFrame: CGRect,
+      applicationFrame: CGRect,
+      windowFrame: CGRect
+    ) throws -> MacScreenshotMapping {
+      let rawBounds = CGRect(origin: .zero, size: rawImageSize)
+      let candidates: [(String, CGRect)] = [
+        ("screen", screenFrame), ("application", applicationFrame), ("window", windowFrame),
+      ]
+      var mappings: [MacScreenshotMapping] = []
+      for (name, sourceFrame) in candidates {
+        guard sourceFrame.width > 0, sourceFrame.height > 0,
+              windowFrame.minX >= sourceFrame.minX - 1,
+              windowFrame.minY >= sourceFrame.minY - 1,
+              windowFrame.maxX <= sourceFrame.maxX + 1,
+              windowFrame.maxY <= sourceFrame.maxY + 1 else { continue }
+        let scaleX = rawImageSize.width / sourceFrame.width
+        let scaleY = rawImageSize.height / sourceFrame.height
+        guard scaleX > 0, scaleY > 0,
+              abs(scaleX - scaleY) / max(scaleX, scaleY) <= 0.02 else { continue }
+        // XCTest frames use the same top-left screen coordinate basis as the
+        // screenshot PNG's pixel rows; CGImage cropping uses pixel coordinates.
+        let crop = CGRect(
+          x: (windowFrame.minX - sourceFrame.minX) * scaleX,
+          y: (windowFrame.minY - sourceFrame.minY) * scaleY,
+          width: windowFrame.width * scaleX,
+          height: windowFrame.height * scaleY).integral
+        guard rawBounds.contains(crop),
+              crop.width > 0, crop.height > 0 else { continue }
+        if let existing = mappings.firstIndex(where: { abs($0.cropRectInPixels.minX - crop.minX) < 0.5
+          && abs($0.cropRectInPixels.minY - crop.minY) < 0.5
+          && abs($0.cropRectInPixels.width - crop.width) < 0.5
+          && abs($0.cropRectInPixels.height - crop.height) < 0.5 }) {
+          mappings[existing].basisNames.append(name)
+        } else {
+          mappings.append(MacScreenshotMapping(
+            basisNames: [name], sourceFrame: sourceFrame,
+            cropRectInPixels: crop, scaleX: scaleX, scaleY: scaleY))
+        }
+      }
+      guard mappings.count == 1, let mapping = mappings.first else {
+        throw NSError(
+          domain: "PleazyngStoreKitReviewCapture", code: 7,
+          userInfo: [NSLocalizedDescriptionKey: "Could not identify one unambiguous app-window crop from screenshot pixels \(rawImageSize), screen \(NSStringFromRect(screenFrame)), app \(NSStringFromRect(applicationFrame)), window \(NSStringFromRect(windowFrame)); valid mappings: \(mappings.count)"])
+      }
+      return mapping
+    }
+
+    private func captureMacWindowScreenshot(of app: XCUIApplication) throws -> MacWindowScreenshot {
+      let window = app.windows.firstMatch
+      guard window.waitForExistence(timeout: 30) else {
+        throw NSError(
+          domain: "PleazyngStoreKitReviewCapture", code: 8,
+          userInfo: [NSLocalizedDescriptionKey: "The app window was not available for a supported XCTest screenshot"])
+      }
+      let screenshot = app.screenshot()
       guard let source = CGImageSourceCreateWithData(screenshot.pngRepresentation as CFData, nil),
             let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
         throw NSError(
-          domain: "PleazyngStoreKitReviewCapture", code: 3,
-          userInfo: [NSLocalizedDescriptionKey: "XCTest did not provide a decodable PNG screenshot"])
+          domain: "PleazyngStoreKitReviewCapture", code: 9,
+          userInfo: [NSLocalizedDescriptionKey: "XCUIApplication.screenshot() did not provide a decodable PNG"])
       }
+      let rawImageSize = CGSize(width: image.width, height: image.height)
+      let screenFrame = XCUIScreen.main.frame
+      let applicationFrame = app.frame
+      let windowFrame = window.frame
+      let mapping = try resolveMacScreenshotMapping(
+        rawImageSize: rawImageSize,
+        screenFrame: screenFrame,
+        applicationFrame: applicationFrame,
+        windowFrame: windowFrame)
+      let imageBounds = CGRect(origin: .zero, size: rawImageSize)
+      let crop = mapping.cropRectInPixels.intersection(imageBounds)
+      guard crop == mapping.cropRectInPixels,
+            let croppedImage = image.cropping(to: crop) else {
+        throw NSError(
+          domain: "PleazyngStoreKitReviewCapture", code: 10,
+          userInfo: [NSLocalizedDescriptionKey: "The observed app window crop fell outside screenshot pixels: \(NSStringFromRect(mapping.cropRectInPixels)) of \(rawImageSize)"])
+      }
+      let output = NSMutableData()
+      guard let destination = CGImageDestinationCreateWithData(output, "public.png" as CFString, 1, nil) else {
+        throw NSError(
+          domain: "PleazyngStoreKitReviewCapture", code: 11,
+          userInfo: [NSLocalizedDescriptionKey: "Could not create a PNG for the cropped app screenshot"])
+      }
+      CGImageDestinationAddImage(destination, croppedImage, nil)
+      guard CGImageDestinationFinalize(destination) else {
+        throw NSError(
+          domain: "PleazyngStoreKitReviewCapture", code: 12,
+          userInfo: [NSLocalizedDescriptionKey: "Could not encode the cropped app screenshot as PNG"])
+      }
+      let geometry = MacScreenshotGeometry(
+        basisNames: mapping.basisNames,
+        rawImageSize: rawImageSize,
+        screenFrame: screenFrame,
+        applicationFrame: applicationFrame,
+        windowFrame: windowFrame,
+        selectedSourceFrame: mapping.sourceFrame,
+        cropRectInPixels: crop,
+        outputImageSize: CGSize(width: croppedImage.width, height: croppedImage.height),
+        scaleX: mapping.scaleX,
+        scaleY: mapping.scaleY)
+      return MacWindowScreenshot(image: croppedImage, pngData: output as Data, geometry: geometry)
+    }
+
+    private func attachMacScreenshot(_ capture: MacWindowScreenshot, named name: String) {
+      let attachment = XCTAttachment(data: capture.pngData, uniformTypeIdentifier: "public.png")
+      attachment.name = name
+      attachment.lifetime = .keepAlways
+      add(attachment)
+      attachText(capture.geometry.json(name: name), named: "\(name)-capture-geometry")
+    }
+
+    private func recognizeMacScreenText(in image: CGImage) throws -> [MacScreenText] {
       let request = VNRecognizeTextRequest()
       request.recognitionLevel = .accurate
       request.usesLanguageCorrection = false

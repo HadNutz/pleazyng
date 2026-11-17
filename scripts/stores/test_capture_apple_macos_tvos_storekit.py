@@ -607,11 +607,49 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
         self.assertIn("button.exists && button.isHittable", UI_TEST)
         self.assertIn("guard matchingLines.count == 1", UI_TEST)
         self.assertIn("window.coordinate(withNormalizedOffset: offset).tap()", UI_TEST)
-        self.assertIn("private func macWindowOffset(forVisionBounds bounds: CGRect)", UI_TEST)
+        self.assertIn("private func macWindowOffset(", UI_TEST)
+        self.assertIn("forVisionBounds bounds: CGRect, geometry: MacScreenshotGeometry", UI_TEST)
         self.assertIn("XCTAssertEqual(upperOffset.dy, 0.2, accuracy: 0.0001)", UI_TEST)
         self.assertIn("XCTAssertEqual(lowerOffset.dy, 0.8, accuracy: 0.0001)", UI_TEST)
         self.assertNotIn("AXEnhancedUserInterface", UI_TEST)
         self.assertNotIn("XCUIVoiceOverService", UI_TEST)
+
+    def test_mac_screenshot_is_app_scoped_cropped_and_geometry_recorded(self) -> None:
+        self.assertRegex(
+            UI_TEST,
+            r"#if os\(macOS\)\s+let capture = try captureMacWindowScreenshot\(of: app\)\s+attachMacScreenshot\(capture, named: name\)\s+#else\s+let screenshot = app\.screenshot\(\)",
+        )
+        self.assertNotIn("window.screenshot()", UI_TEST)
+        self.assertIn("let screenshot = app.screenshot()", UI_TEST)
+        self.assertIn("let screenFrame = XCUIScreen.main.frame", UI_TEST)
+        self.assertIn("let applicationFrame = app.frame", UI_TEST)
+        self.assertIn("let windowFrame = window.frame", UI_TEST)
+        self.assertIn("image.cropping(to: crop)", UI_TEST)
+        self.assertIn('XCTAttachment(data: capture.pngData, uniformTypeIdentifier: "public.png")', UI_TEST)
+        for field in (
+            '"raw_image_pixels"',
+            '"screen_frame_points"',
+            '"application_frame_points"',
+            '"window_frame_points"',
+            '"selected_source_frame_points"',
+            '"crop_rect_in_raw_image_pixels"',
+            '"output_window_image_pixels"',
+        ):
+            with self.subTest(field=field):
+                self.assertIn(field, UI_TEST)
+        self.assertIn("guard mappings.count == 1", UI_TEST)
+        self.assertIn("try assertMacScreenshotGeometryScale()", UI_TEST)
+        self.assertIn("XCTAssertThrowsError(try resolveMacScreenshotMapping(", UI_TEST)
+        self.assertIn("guard matchingLines.count == 1", UI_TEST)
+        self.assertIn("macWindowOffset(forVisionBounds: match.boundingBox, geometry: lines.screenshot.geometry)", UI_TEST)
+        self.assertIn("window.coordinate(withNormalizedOffset: offset).tap()", UI_TEST)
+
+    def test_tvos_screenshot_path_remains_the_existing_xctest_screenshot(self) -> None:
+        self.assertIn(
+            "#else\n      let screenshot = app.screenshot()\n      attachScreenshot(screenshot, named: name)\n    #endif",
+            UI_TEST,
+        )
+        self.assertIn("#if os(tvOS)\n      return \"tvos\"", UI_TEST)
 
     def test_xcode_attachment_matcher_accepts_saved_trial_manifest_row(self) -> None:
         # This row is copied from run 44074874321's real xcresult export manifest.
