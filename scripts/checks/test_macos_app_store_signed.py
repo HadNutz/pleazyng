@@ -188,6 +188,31 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
                 Path("/tmp/private-stage"), installer_keychain_created=False)
         importer.assert_not_called()
 
+    def test_installer_certificate_export_selects_exact_public_fingerprint(self):
+        first, selected = b"first public certificate", b"selected public certificate"
+        identity = {"certificate_sha1": store.certificate_fingerprint(selected),
+                    "name": "3rd Party Mac Developer Installer: Test (DM9A59DC85)"}
+        pem_bundle = b"-----BEGIN CERTIFICATE-----A-----END CERTIFICATE-----\n" \
+            b"-----BEGIN CERTIFICATE-----B-----END CERTIFICATE-----\n"
+        with patch.object(store, "signing_run", side_effect=[pem_bundle, first, selected]) as command:
+            result = store._certificate_from_keychain_identity(Path("installer.keychain-db"), identity)
+        self.assertEqual(result, selected)
+        self.assertEqual(command.call_count, 3)
+
+    def test_installer_recovery_key_must_match_certificate_spki(self):
+        certificate = b"public certificate"
+        key = Path("pending/mac-installer.key.pem")
+        with patch.object(store, "_pending_key_paths", return_value=[key]), \
+                patch.object(store, "_private_key_public_key", return_value=b"matching SPKI"), \
+                patch.object(store, "_certificate_public_key", return_value=b"matching SPKI"):
+            self.assertEqual(store._pending_key_for_certificate(
+                store.INSTALLER_CERTIFICATE_TYPE, certificate, Path("/tmp/stage")), key)
+        with patch.object(store, "_pending_key_paths", return_value=[key]), \
+                patch.object(store, "_private_key_public_key", return_value=b"different SPKI"), \
+                patch.object(store, "_certificate_public_key", return_value=b"matching SPKI"):
+            self.assertIsNone(store._pending_key_for_certificate(
+                store.INSTALLER_CERTIFICATE_TYPE, certificate, Path("/tmp/stage")))
+
     def test_release_tag_must_be_a_versioned_annotated_tag_with_matching_source(self):
         self.assertIsNone(store._safe_tag("v3.0.36"))
         for tag in ("3.0.36", "v3.0.36-candidate", "--v3.0.36", "v3.0.36+195"):

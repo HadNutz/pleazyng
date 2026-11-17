@@ -537,15 +537,16 @@ def _certificate_from_keychain_identity(keychain: Path, identity: dict[str, str]
     ])
     pem_certificates = re.findall(
         rb"-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----", pem_bundle, re.DOTALL)
-    matching = []
+    matching: dict[str, bytes] = {}
     for pem in pem_certificates:
         certificate_der = signing_run(
             ["openssl", "x509", "-inform", "PEM", "-outform", "DER"], data=pem)
-        if certificate_fingerprint(certificate_der) == identity["certificate_sha1"]:
-            matching.append(certificate_der)
+        fingerprint = certificate_fingerprint(certificate_der)
+        if fingerprint == identity["certificate_sha1"]:
+            matching[fingerprint] = certificate_der
     if len(matching) != 1:
         raise ValueError("Could not extract exactly one certificate matching the existing Installer identity")
-    return matching[0]
+    return next(iter(matching.values()))
 
 
 def migrate_installer_identity(app_keychain: Path, installer_keychain: Path, team: str,
