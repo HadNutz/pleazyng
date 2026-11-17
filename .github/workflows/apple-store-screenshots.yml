@@ -44,10 +44,6 @@ permissions:
   actions: read
   contents: read
 
-concurrency:
-  group: pleazyng-apple-store-screenshots-v3-0-37
-  cancel-in-progress: false
-
 env:
   GH_TOKEN: ${{ github.token }}
   PUB_CACHE: ${{ github.workspace }}/.cache/plezy-pub-cache
@@ -57,6 +53,9 @@ env:
 jobs:
   ios:
     if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'ios-macos-only' || inputs.target == 'capture-only' || inputs.target == 'app-in-use-capture-only' || inputs.target == 'ios-in-use-capture-only' || inputs.target == '')
+    concurrency:
+      group: pleazyng-apple-store-screenshots-ios
+      cancel-in-progress: false
     runs-on: macos-26
     timeout-minutes: 180
     steps:
@@ -279,6 +278,9 @@ jobs:
 
   tvos:
     if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'capture-only' || inputs.target == 'app-in-use-capture-only' || inputs.target == 'tvos-in-use-capture-only' || inputs.target == 'macos-tvos-in-use-producer-only' || inputs.target == '')
+    concurrency:
+      group: pleazyng-apple-store-screenshots-tvos
+      cancel-in-progress: false
     runs-on: macos-26
     timeout-minutes: 180
     steps:
@@ -552,6 +554,9 @@ jobs:
 
   macos:
     if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && (inputs.target == 'all' || inputs.target == 'ios-macos-only' || inputs.target == 'macos-only' || inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only' || inputs.target == 'app-in-use-capture-only' || inputs.target == 'macos-in-use-capture-only' || inputs.target == 'macos-in-use-diagnostic-only' || inputs.target == 'macos-tvos-in-use-producer-only')
+    concurrency:
+      group: pleazyng-apple-store-screenshots-macos
+      cancel-in-progress: false
     runs-on: macos-26-intel
     timeout-minutes: 210
     steps:
@@ -833,6 +838,9 @@ jobs:
        (inputs.target == 'ios-macos-only' && inputs.artifact_run_id != '' && needs.ios.result == 'success' && needs.macos.result == 'success') ||
        (inputs.target == 'macos-only' && inputs.artifact_run_id != '' && needs.macos.result == 'success'))
     needs: [ios, tvos, macos]
+    concurrency:
+      group: pleazyng-apple-store-screenshots-package
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:

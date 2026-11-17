@@ -46,6 +46,16 @@ def named_step_text(job: str, name: str) -> str:
 
 
 class AppleStoreCaptureWorkflowRoutingTests(unittest.TestCase):
+    def test_platform_jobs_have_independent_non_cancelling_concurrency_groups(self) -> None:
+        self.assertNotIn("\nconcurrency:\n", WORKFLOW.split("jobs:\n", 1)[0])
+        next_names = {"ios": "tvos", "tvos": "macos", "macos": "package", "package": None}
+        for platform, next_name in next_names.items():
+            job = job_text(platform, next_name)
+            self.assertRegex(
+                job,
+                rf"(?m)^    concurrency:\n      group: pleazyng-apple-store-screenshots-{platform}\n      cancel-in-progress: false$",
+            )
+
     def test_build_receipt_follows_the_restored_or_fresh_app_bundle(self) -> None:
         for platform, fresh_path in (
             ("ios", "$GITHUB_WORKSPACE/build/ios/iphonesimulator/Pleazyng.app"),
