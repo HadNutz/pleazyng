@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Capture real macOS/tvOS app screens with a native LOCALTEST trial entitlement.
+"""Capture real macOS/tvOS app screens using an app-initiated LOCALTEST trial.
 
 The product app is restored from its immutable screenshot-producer artifact.
-Only the separate XCTest bundle uses Apple's local StoreKit Test configuration;
-the production app bundle is neither rebuilt nor rewritten.
+The temporary capture scheme and XCTest bundle use Apple's local StoreKit
+configuration; the production app bundle is neither rebuilt nor rewritten.
 """
 
 from __future__ import annotations
@@ -17,6 +17,7 @@ import re
 import shutil
 import subprocess
 import sys
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -39,12 +40,23 @@ STOREKIT_CONFIG = Path("scripts/stores/apple/pleazyng-trial-review.storekit")
 UI_TEST_SOURCE = Path("scripts/stores/apple/PleazyngStoreKitLocalTrialReviewUITests.swift")
 TEST_TARGET = "PleazyngStoreKitLocalTrialReviewUITests"
 TEST_BUNDLE_ID = "org.snapetech.pleazyng.localtest.review-tests"
+SCHEME_PATH_PREFIX = "../../"
+PRIOR_STOREKIT_FAILURE = {
+    "run_id": "44082331641",
+    "host_os_version": "26.6.1",
+    "xcode_version": "26.6.0",
+    "native_error": "SKInternalErrorDomain Code=3 while applying SKTestSession configuration; buyProduct failed with Unable to Complete Request / StoreKitError.notEntitled",
+    "apple_reference_url": "https://developer.apple.com/forums/thread/826971",
+    "workaround": "Associate the exact LOCALTEST catalog with the generated Xcode scheme and initiate the free trial through the actual product UI.",
+}
 SCREENSHOTS = {
     "macos": {
+        "pleazyng-localtest-trial-offer-macos": "macos-00-trial-offer-localtest.png",
         "pleazyng-localtest-files-books-macos": "macos-01-files-and-books-localtest.png",
         "pleazyng-localtest-supporter-macos": "macos-02-supporter-localtest.png",
     },
     "tvos": {
+        "pleazyng-localtest-trial-offer-tvos": "tvos-00-trial-offer-localtest.png",
         "pleazyng-localtest-files-books-tvos": "tvos-01-files-and-books-localtest.png",
         "pleazyng-localtest-supporter-tvos": "tvos-02-supporter-localtest.png",
     },
@@ -80,6 +92,13 @@ def sha256_file(path: Path) -> str:
 def command(args: list[str], *, capture: bool = False, timeout: int = 300, cwd: Path | None = None) -> str:
     result = subprocess.run(args, check=True, text=True, capture_output=capture, timeout=timeout, cwd=cwd)
     return result.stdout.strip() if capture else ""
+
+
+def _best_effort_command(args: list[str]) -> str | None:
+    try:
+        return command(args, capture=True, timeout=30)
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        return None
 
 
 def write_json(path: Path, value: Any) -> None:
@@ -123,6 +142,7 @@ def ui_test_project_spec(platform: str) -> dict[str, Any]:
         "options": {
             "bundleIdPrefix": "org.snapetech.pleazyng.localtest",
             "xcodeVersion": "26.5",
+            "schemePathPrefix": SCHEME_PATH_PREFIX,
             "deploymentTarget": {config["xcode_platform"]: config["deployment_target"]},
         },
         "targets": {
@@ -146,6 +166,7 @@ def ui_test_project_spec(platform: str) -> dict[str, Any]:
         "schemes": {
             "PleazyngStoreKitLocalTrialReview": {
                 "build": {"targets": {TEST_TARGET: ["test"]}},
+                "run": {"storeKitConfiguration": STOREKIT_CONFIG.name},
                 "test": {
                     "targets": [TEST_TARGET],
                     "captureScreenshotsAutomatically": False,
@@ -154,6 +175,98 @@ def ui_test_project_spec(platform: str) -> dict[str, Any]:
             },
         },
     }
+
+
+def verify_scheme_storekit_configuration(scheme_path: Path, project_root: Path) -> dict[str, str]:
+    if scheme_path.is_symlink() or not scheme_path.is_file():
+        raise FileNotFoundError("The generated shared XCTest scheme is missing or is a symlink")
+    try:
+        root = ET.parse(scheme_path).getroot()
+    except ET.ParseError as error:
+        raise ValueError("The generated XCTest scheme is not valid XML") from error
+    reference = root.find("./LaunchAction/StoreKitConfigurationFileReference")
+    identifier = reference.get("identifier") if reference is not None else None
+    if not isinstance(identifier, str) or not identifier or "\\" in identifier:
+        raise ValueError("The generated scheme does not select a relative StoreKit configuration file")
+    expected_reference = f"{SCHEME_PATH_PREFIX}{STOREKIT_CONFIG.name}"
+    expected = (project_root / STOREKIT_CONFIG.name).resolve(strict=True)
+    if identifier != expected_reference or not expected.is_file():
+        raise ValueError("The generated scheme selects a different or missing StoreKit configuration")
+    return {
+        "scheme_path": scheme_path.name,
+        "storekit_configuration_reference": identifier,
+        "storekit_configuration_path": STOREKIT_CONFIG.name,
+        "storekit_configuration_sha256": sha256_file(expected),
+    }
+
+
+def select_canonical_tvos_runtime(inventory: dict[str, Any], sdk_version: tuple[int, int]) -> dict[str, Any]:
+    canonical_id = f"com.apple.CoreSimulator.SimRuntime.tvOS-{sdk_version[0]}-{sdk_version[1]}"
+    candidates = [
+        runtime for runtime in inventory.get("runtimes", [])
+        if isinstance(runtime, dict) and runtime.get("identifier") == canonical_id
+    ]
+    if len(candidates) != 1:
+        raise RuntimeError(f"Expected exactly one canonical tvOS runtime {canonical_id}; found {len(candidates)}")
+    runtime = candidates[0]
+    if runtime.get("isAvailable") is not True:
+        raise RuntimeError(f"The canonical tvOS runtime {canonical_id} is not available")
+    if version_pair(str(runtime.get("version", ""))) != sdk_version:
+        raise RuntimeError(f"The canonical tvOS runtime {canonical_id} does not match the installed SDK")
+    return runtime
+
+
+def create_tvos_simulator(run_id: str, attempt: str, output: Path) -> dict[str, str]:
+    sdk_version_text = command(["xcrun", "--sdk", "appletvsimulator", "--show-sdk-version"], capture=True, timeout=60)
+    sdk_version = version_pair(sdk_version_text)
+    raw_inventory = command(["xcrun", "simctl", "list", "-j"], capture=True, timeout=60)
+    inventory_path = output / "simulator-runtime-inventory.json"
+    inventory_path.write_text(raw_inventory + "\n", encoding="utf-8")
+    inventory = json.loads(raw_inventory)
+    runtime = select_canonical_tvos_runtime(inventory, sdk_version)
+    devices = [
+        device for device in inventory.get("devices", {}).get(runtime["identifier"], [])
+        if isinstance(device, dict)
+        and device.get("isAvailable") is True
+        and str(device.get("name", "")).startswith("Apple TV")
+        and isinstance(device.get("deviceTypeIdentifier"), str)
+    ]
+    if not devices:
+        raise RuntimeError(f"No available Apple TV simulator exists in {runtime['identifier']}")
+    template = max(devices, key=lambda item: capture_tools.device_preference(item["name"], "tvos"))
+    name = f"Pleazyng-{run_id}-{attempt}-tvos"
+    udid = command([
+        "xcrun", "simctl", "create", name, template["deviceTypeIdentifier"], runtime["identifier"],
+    ], capture=True, timeout=120)
+    if re.fullmatch(r"[0-9A-Fa-f-]{36}", udid) is None:
+        raise RuntimeError(f"Simulator returned an invalid device identifier: {udid!r}")
+    return {
+        "udid": udid,
+        "name": name,
+        "runtime_id": runtime["identifier"],
+        "runtime_version": str(runtime["version"]),
+        "device_name": str(template["name"]),
+        "device_type": template["deviceTypeIdentifier"],
+        "sdk_version": sdk_version_text,
+        "runtime_inventory_path": inventory_path.name,
+        "runtime_inventory_sha256": sha256_file(inventory_path),
+    }
+
+
+def verify_created_tvos_simulator(simulator: dict[str, str]) -> None:
+    inventory = json.loads(command(["xcrun", "simctl", "list", "-j"], capture=True, timeout=60))
+    matches = [
+        (runtime_id, device)
+        for runtime_id, devices in inventory.get("devices", {}).items()
+        for device in devices
+        if device.get("udid") == simulator["udid"]
+    ]
+    if len(matches) != 1:
+        raise RuntimeError(f"Created tvOS simulator identity appears {len(matches)} times in simctl inventory")
+    runtime_id, device = matches[0]
+    if (runtime_id != simulator["runtime_id"] or device.get("name") != simulator["name"]
+            or device.get("deviceTypeIdentifier") != simulator["device_type"]):
+        raise RuntimeError("Created tvOS simulator differs from the exact canonical runtime/device selection")
 
 
 def xctestrun_test_targets(document: dict[str, Any]) -> list[dict[str, Any]]:
@@ -342,9 +455,22 @@ def validate_localtest_record(record: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("LOCALTEST trial evidence is missing its transaction identifiers")
     if not transaction.get("purchase_date"):
         raise ValueError("LOCALTEST trial evidence is missing its original purchase date")
+    history = record.get("history", {})
+    before_launch = history.get("beforeAppLaunch", {})
+    after_trial_cta = history.get("afterProductTrialCTA", {})
+    if before_launch.get("transactionCount") != 0:
+        raise ValueError("LOCALTEST transaction history must be empty before the actual app launches")
+    if after_trial_cta.get("transactionCount") != 1:
+        raise ValueError("The product trial CTA must create exactly one native LOCALTEST transaction")
     behavior = record.get("app_behavior", {})
     if behavior.get("active_trial_restored_by_app") is not True:
         raise ValueError("The real app did not report the native LOCALTEST trial as active")
+    if behavior.get("trial_offer_shown") is not True:
+        raise ValueError("The actual product trial offer screen was not captured")
+    if behavior.get("trial_started_via_product_ui") is not True:
+        raise ValueError("The LOCALTEST trial was not started through the actual product UI")
+    if behavior.get("transaction_created_outside_product_app_ui") is not False:
+        raise ValueError("The LOCALTEST trial transaction was not created through the product UI")
     if behavior.get("files_and_books_screen_opened") is not True:
         raise ValueError("The real local Files and Books screen did not open")
     if behavior.get("active_trial_sheet_shown") is not True:
@@ -528,12 +654,14 @@ def capture(args: argparse.Namespace) -> None:
     simulator: dict[str, str] | None = None
     result_bundle: Path | None = None
     failure: str | None = None
+    scheme_evidence: dict[str, str] | None = None
     try:
         simulator_id = None
         if platform == "tvos":
-            simulator = capture_tools.create_simulator("tvOS", "tvos", args.run_id, args.run_attempt)
+            simulator = create_tvos_simulator(args.run_id, args.run_attempt, output)
             simulator_id = simulator["udid"]
             write_json(output / "simulator.json", simulator)
+            verify_created_tvos_simulator(simulator)
             command(["xcrun", "simctl", "boot", simulator_id], timeout=180)
             command(["xcrun", "simctl", "bootstatus", simulator_id, "-b"], timeout=600)
             if version_pair(simulator["runtime_version"]) < version_pair("17.0"):
@@ -546,10 +674,14 @@ def capture(args: argparse.Namespace) -> None:
         project_spec_path = project_root / "project.json"
         write_json(project_spec_path, ui_test_project_spec(platform))
         project_spec_sha = sha256_file(project_spec_path)
+        shutil.copyfile(project_spec_path, output / "generated-project-spec.json")
         command(["xcodegen", "generate", "--spec", str(project_spec_path), "--project", str(project_root)], timeout=180)
 
         derived_data = project_root / "derived-data"
         project = project_root / "PleazyngStoreKitLocalTrialReview.xcodeproj"
+        scheme_path = project / "xcshareddata" / "xcschemes" / "PleazyngStoreKitLocalTrialReview.xcscheme"
+        shutil.copyfile(scheme_path, output / "generated-scheme.xcscheme")
+        scheme_evidence = verify_scheme_storekit_configuration(scheme_path, project_root)
         destination = (
             f"platform=tvOS Simulator,id={simulator_id}" if platform == "tvos" else PLATFORM[platform]["destination"]
         )
@@ -648,7 +780,7 @@ def capture(args: argparse.Namespace) -> None:
         write_json(output / "capture-provenance.json", {
             "schema_version": 1,
             "environment": "LOCALTEST",
-            "qualification": "Actual product app UI with the native free-trial transaction created by Apple StoreKitTest before app launch. This is LOCALTEST only, not App Store Connect, App Store Sandbox, or a live purchase.",
+            "qualification": "The actual product UI created a native free-trial transaction using the exact scheme-associated Apple StoreKitTest catalog. This is LOCALTEST only, not App Store Connect, App Store Sandbox, or a live purchase.",
             "product": {
                 "source_tag": SOURCE_TAG,
                 "source_sha": SOURCE_SHA,
@@ -681,6 +813,8 @@ def capture(args: argparse.Namespace) -> None:
             },
             "storekit_test": {
                 "configuration_sha256": config_sha,
+                "scheme_configuration": scheme_evidence,
+                "prior_attempt_diagnostic": PRIOR_STOREKIT_FAILURE,
                 "test_source_sha256": test_source_sha,
                 "test_project_spec_sha256": project_spec_sha,
                 "built_test_bundle_sha256": test_bundle_sha,
@@ -688,7 +822,8 @@ def capture(args: argparse.Namespace) -> None:
                 "catalog": catalog,
                 "transaction_record": localtest,
                 "transaction_record_sha256": sha256_file(exported["localtest_record"]),
-                "transaction_created_outside_product_app_ui": True,
+                "transaction_created_outside_product_app_ui": False,
+                "trial_started_via_product_ui": True,
                 "trial_entitlement_restored_by_product_app": localtest["app_behavior"]["active_trial_restored_by_app"],
                 "lifetime_transaction_created": False,
                 "raw_jws_included": False,
@@ -716,6 +851,13 @@ def capture(args: argparse.Namespace) -> None:
             "producer_run_id": args.producer_run_id,
             "producer_run_attempt": args.producer_run_attempt,
             "error": failure,
+            "scheme_configuration": scheme_evidence,
+            "observed_prior_failure": PRIOR_STOREKIT_FAILURE,
+            "runner_environment": {
+                "xcode_version": _best_effort_command(["xcodebuild", "-version"]),
+                "host_os_version": _best_effort_command(["sw_vers", "-productVersion"]),
+                "host_architecture": _best_effort_command(["uname", "-m"]),
+            },
             "result_bundle_present": bool(result_bundle and result_bundle.exists()),
             "diagnostic_files": sorted(path.name for path in output.iterdir() if path.is_file()),
             "created_at_utc": datetime.now(timezone.utc).isoformat(),

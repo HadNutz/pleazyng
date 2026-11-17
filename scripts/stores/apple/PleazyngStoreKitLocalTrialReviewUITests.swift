@@ -24,28 +24,44 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
     session.clearTransactions()
     XCTAssertTrue(session.allTransactions().isEmpty, "The LOCALTEST store must begin without transactions")
 
-    // This is Apple's native StoreKitTest transaction API. It creates one
-    // local test transaction for the free trial; it does not change app
-    // preferences, grant an entitlement in Dart, or buy lifetime access.
-    let purchase = try await session.buyProduct(identifier: trialProductID, options: [])
-    XCTAssertEqual(purchase.productID, trialProductID)
     let transactionsBeforeLaunch = session.allTransactions()
-    XCTAssertEqual(transactionsBeforeLaunch.count, 1, "Only the native LOCALTEST trial transaction may exist")
-    let original = try XCTUnwrap(transactionsBeforeLaunch.first)
-    XCTAssertEqual(original.productIdentifier, trialProductID)
-    XCTAssertEqual(original.state, .purchased)
-    XCTAssertFalse(
-      transactionsBeforeLaunch.contains { $0.productIdentifier == lifetimeProductID },
-      "The test must never create a lifetime transaction"
-    )
+    XCTAssertTrue(transactionsBeforeLaunch.isEmpty, "The LOCALTEST store must be empty before the app starts")
 
     // The test plan associates the exact receipt-verified product bundle
-    // with this UI test before launching it.
+    // with this UI test. The user-visible button below starts the free trial
+    // through the actual product app and its native StoreKit integration.
     let app = XCUIApplication(bundleIdentifier: appBundleID)
     app.launch()
 
+    let trialButton = app.buttons["Start my 7-day free trial"]
+    XCTAssertTrue(trialButton.waitForExistence(timeout: 90), "The actual product trial offer did not load")
+    XCTAssertTrue(trialButton.isEnabled, "The actual product trial offer is unavailable")
+    let lifetimeOffer = app.buttons.matching(
+      NSPredicate(format: "label CONTAINS %@ AND label CONTAINS %@", "Unlock every feature", "$2.99")
+    ).firstMatch
+    XCTAssertTrue(lifetimeOffer.waitForExistence(timeout: 60), "The scheme-associated LOCALTEST catalog did not load")
+    XCTAssertTrue(
+      app.staticTexts.containing(
+        NSPredicate(format: "label CONTAINS[c] %@", "There is no subscription or automatic charge")
+      )
+      .firstMatch.exists,
+      "The actual product trial disclosure was not visible"
+    )
+    let trialOfferShown = trialButton.exists
+    let trialOfferLifetimePriceShown = lifetimeOffer.exists
+    let lifetimeDisplayPrice = lifetimeOffer.label
+    attachScreenshot(of: app, named: "pleazyng-localtest-trial-offer-\(platformName())")
+    select(trialButton, in: app)
+
     let useFiles = app.buttons["Use files and books"]
-    XCTAssertTrue(useFiles.waitForExistence(timeout: 90), "The actual app did not restore the LOCALTEST trial access")
+    XCTAssertTrue(useFiles.waitForExistence(timeout: 90), "The app did not unlock after its LOCALTEST trial purchase")
+    let trialTransactions = session.allTransactions()
+    XCTAssertEqual(trialTransactions.count, 1, "The actual product CTA must create only one LOCALTEST trial")
+    let original = try XCTUnwrap(trialTransactions.first)
+    XCTAssertEqual(original.productIdentifier, trialProductID)
+    XCTAssertEqual(original.state, .purchased)
+    XCTAssertFalse(trialTransactions.contains { $0.productIdentifier == lifetimeProductID })
+
     select(useFiles, in: app)
 
     let addSource = app.buttons["Add source"]
@@ -77,7 +93,7 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
     XCTAssertTrue(
       lifetimePrice.waitForExistence(timeout: 60), "The app did not show the queried LOCALTEST lifetime price")
     let activeTrialShown = activeTrial.exists
-    let lifetimePriceShown = lifetimePrice.exists
+    let accessSheetLifetimePriceShown = lifetimePrice.exists
     attachScreenshot(of: app, named: "pleazyng-localtest-supporter-\(platformName())")
 
     let finalTransactions = session.allTransactions()
@@ -92,12 +108,12 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
     let record: [String: Any] = [
       "environment": "LOCALTEST",
       "qualification":
-        "A native Apple StoreKitTest trial transaction was created before launching the exact product app. This is local test evidence only, not App Store Connect, App Store Sandbox, or live purchase evidence.",
+        "The actual product UI started a native Apple StoreKitTest free-trial transaction using the exact scheme-associated local catalog. This is local test evidence only, not App Store Connect, App Store Sandbox, or live purchase evidence.",
       "storefront": "USA",
       "catalog_queries": [
         "trial_product_id": trialProductID,
         "lifetime_product_id": lifetimeProductID,
-        "lifetime_display_price": lifetimePrice.label,
+        "lifetime_display_price": lifetimeDisplayPrice,
       ],
       "transactions": finalTransactions.map { transaction in
         [
@@ -112,7 +128,10 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
       },
       "history": [
         "beforeAppLaunch": [
-          "transactionCount": transactionsBeforeLaunch.count,
+          "transactionCount": transactionsBeforeLaunch.count
+        ],
+        "afterProductTrialCTA": [
+          "transactionCount": trialTransactions.count,
           "originalTransactionId": String(original.originalTransactionIdentifier),
           "purchaseDate": ISO8601DateFormatter().string(from: original.purchaseDate),
         ],
@@ -123,10 +142,14 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
         ],
       ],
       "app_behavior": [
+        "trial_offer_shown": trialOfferShown,
+        "trial_offer_lifetime_price_shown": trialOfferLifetimePriceShown,
+        "trial_started_via_product_ui": true,
+        "transaction_created_outside_product_app_ui": false,
         "active_trial_restored_by_app": activeTrialShown,
         "files_and_books_screen_opened": filesBooksScreenOpened,
         "active_trial_sheet_shown": activeTrialShown,
-        "lifetime_price_shown": lifetimePriceShown,
+        "lifetime_price_shown": accessSheetLifetimePriceShown,
         "lifetime_purchase_activated": false,
         "lifetime_transaction_created": false,
       ],

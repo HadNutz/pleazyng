@@ -281,7 +281,7 @@ jobs:
     concurrency:
       group: pleazyng-apple-store-screenshots-tvos
       cancel-in-progress: false
-    runs-on: macos-26
+    runs-on: ${{ inputs.target == 'tvos-in-use-capture-only' && 'xcode-27' || 'macos-26' }}
     timeout-minutes: 180
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -557,7 +557,7 @@ jobs:
     concurrency:
       group: pleazyng-apple-store-screenshots-macos
       cancel-in-progress: false
-    runs-on: macos-26-intel
+    runs-on: ${{ inputs.target == 'macos-in-use-capture-only' && 'xcode-27' || 'macos-26-intel' }}
     timeout-minutes: 210
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7

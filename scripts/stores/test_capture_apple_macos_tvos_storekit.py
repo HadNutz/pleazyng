@@ -88,8 +88,74 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
             self.assertEqual(target["type"], "bundle.ui-testing")
             self.assertEqual(target["sources"][1]["path"], capture.STOREKIT_CONFIG.name)
             self.assertEqual(spec["schemes"]["PleazyngStoreKitLocalTrialReview"]["test"]["targets"], [capture.TEST_TARGET])
+            self.assertEqual(
+                spec["schemes"]["PleazyngStoreKitLocalTrialReview"]["run"]["storeKitConfiguration"],
+                capture.STOREKIT_CONFIG.name,
+            )
         self.assertIn("pleazyng_7_day_trial", STOREKIT)
         self.assertIn("pleazyng_lifetime_unlock", STOREKIT)
+
+    def test_generated_scheme_points_to_the_exact_localtest_catalog(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            config = root / capture.STOREKIT_CONFIG.name
+            config.write_text(STOREKIT, encoding="utf-8")
+            scheme = root / "Capture.xcodeproj" / "xcshareddata" / "xcschemes" / "Capture.xcscheme"
+            scheme.parent.mkdir(parents=True)
+            scheme.write_text(
+                '<Scheme><LaunchAction><StoreKitConfigurationFileReference '
+                'identifier="../../pleazyng-trial-review.storekit"/></LaunchAction></Scheme>',
+                encoding="utf-8",
+            )
+            evidence = capture.verify_scheme_storekit_configuration(scheme, root)
+            self.assertEqual(evidence["storekit_configuration_path"], config.name)
+            self.assertEqual(evidence["storekit_configuration_sha256"], capture.sha256_file(config))
+
+            scheme.write_text(
+                '<Scheme><LaunchAction><StoreKitConfigurationFileReference '
+                'identifier="../../another.storekit"/></LaunchAction></Scheme>',
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "different or missing"):
+                capture.verify_scheme_storekit_configuration(scheme, root)
+
+    def test_tvos_simulator_selects_canonical_runtime_not_device_variant(self) -> None:
+        canonical_id = "com.apple.CoreSimulator.SimRuntime.tvOS-27-2"
+        inventory = {
+            "runtimes": [
+                {"identifier": canonical_id, "version": "27.2", "isAvailable": True},
+                {
+                    "identifier": canonical_id + "-AppleTV14-1",
+                    "version": "27.2",
+                    "isAvailable": True,
+                },
+            ]
+        }
+        selected = capture.select_canonical_tvos_runtime(inventory, (27, 2))
+        self.assertEqual(selected["identifier"], canonical_id)
+
+        with self.assertRaisesRegex(RuntimeError, "canonical tvOS runtime"):
+            capture.select_canonical_tvos_runtime(
+                {"runtimes": [inventory["runtimes"][1]]}, (27, 2)
+            )
+
+    def test_tvos_runtime_inventory_is_retained_before_canonical_validation(self) -> None:
+        with TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            raw_inventory = json.dumps({
+                "runtimes": [{
+                    "identifier": "com.apple.CoreSimulator.SimRuntime.tvOS-27-2-AppleTV14-1",
+                    "version": "27.2",
+                    "isAvailable": True,
+                }]
+            })
+            with patch.object(capture, "command", side_effect=["27.2", raw_inventory]) as command:
+                with self.assertRaisesRegex(RuntimeError, "canonical tvOS runtime"):
+                    capture.create_tvos_simulator("123", "1", output)
+            retained = output / "simulator-runtime-inventory.json"
+            self.assertTrue(retained.is_file())
+            self.assertEqual(json.loads(retained.read_text()), json.loads(raw_inventory))
+            self.assertEqual(command.call_count, 2)
 
     def test_association_binds_each_target_to_the_exact_retained_product_path(self) -> None:
         for platform in ("macos", "tvos"):
@@ -289,6 +355,10 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
                 "lifetime_product_id": capture.LIFETIME_PRODUCT_ID,
                 "lifetime_display_price": "Unlock every feature $2.99",
             },
+            "history": {
+                "beforeAppLaunch": {"transactionCount": 0},
+                "afterProductTrialCTA": {"transactionCount": 1},
+            },
             "transactions": [{
                 "product_id": capture.TRIAL_PRODUCT_ID,
                 "state": "purchased",
@@ -297,6 +367,9 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
                 "purchase_date": "2026-11-17T12:00:00Z",
             }],
             "app_behavior": {
+                "trial_offer_shown": True,
+                "trial_started_via_product_ui": True,
+                "transaction_created_outside_product_app_ui": False,
                 "active_trial_restored_by_app": True,
                 "files_and_books_screen_opened": True,
                 "active_trial_sheet_shown": True,
@@ -315,14 +388,16 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "did not report"):
             capture.validate_localtest_record(unverified)
 
-    def test_native_transaction_precedes_product_launch_and_never_buys_lifetime(self) -> None:
+    def test_product_ui_starts_local_trial_and_never_buys_lifetime(self) -> None:
         self.assertIn("import StoreKitTest", UI_TEST)
         self.assertIn("SKTestSession(contentsOf: configurationURL)", UI_TEST)
-        transaction = "try await session.buyProduct(identifier: trialProductID, options: [])"
-        self.assertIn(transaction, UI_TEST)
-        self.assertLess(UI_TEST.index(transaction), UI_TEST.index("app.launch()"))
+        self.assertIn('let trialButton = app.buttons["Start my 7-day free trial"]', UI_TEST)
+        self.assertIn("select(trialButton, in: app)", UI_TEST)
+        self.assertLess(UI_TEST.index("app.launch()"), UI_TEST.index("select(trialButton, in: app)"))
+        self.assertNotIn("session.buyProduct", UI_TEST)
         self.assertNotIn("buyProduct(identifier: lifetimeProductID", UI_TEST)
         self.assertNotIn("lifetimePrice.tap()", UI_TEST)
+        self.assertIn('"transaction_created_outside_product_app_ui": false', UI_TEST)
         self.assertIn('"lifetime_transaction_created": false', UI_TEST)
         self.assertIn("app.screenshot()", UI_TEST)
 
@@ -334,6 +409,8 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
         self.assertIn("APPLE_STORE_BUILD_RECEIPT=$RUNNER_TEMP/apple-store-build-tvos-restored/build-provenance.json", WORKFLOW)
         self.assertIn("APPLE_STORE_BUILD_RECEIPT=$RUNNER_TEMP/apple-store-build-macos-restored/build-provenance.json", WORKFLOW)
         self.assertNotIn("buyProduct(identifier: lifetimeProductID", UI_TEST)
+        self.assertIn("inputs.target == 'tvos-in-use-capture-only' && 'xcode-27'", WORKFLOW)
+        self.assertIn("inputs.target == 'macos-in-use-capture-only' && 'xcode-27'", WORKFLOW)
 
 
 if __name__ == "__main__":
