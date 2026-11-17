@@ -3,6 +3,7 @@
 import argparse
 import os
 import platform as host_platform
+import plistlib
 from pathlib import Path
 import shutil
 import subprocess
@@ -267,10 +268,15 @@ def replace(path, before, after):
 
 def verify_macos_startup_contract():
     source = (ROOT / "macos/Runner/MainFlutterWindow.swift").read_text()
+    info = plistlib.loads((ROOT / "macos/Runner/Info.plist").read_bytes())
     main = (ROOT / "lib/main.dart").read_text()
     view_binding = (ROOT / "lib/utils/native_primary_view.dart").read_text()
-    if "allowHeadlessExecution: false" not in source:
-        raise RuntimeError("The macOS engine must attach a native view before running without headless mode")
+    if "allowHeadlessExecution: true" not in source:
+        raise RuntimeError("The macOS engine must run headlessly before adding its multiview controller")
+    if info.get("FLTEnableMergedPlatformUIThread") is not True:
+        raise RuntimeError("macOS multiview requires a synchronous merged platform/UI task runner")
+    if 'probe_info["FLTEnableMergedPlatformUIThread"] = True' not in Path(__file__).read_text():
+        raise RuntimeError("The macOS probe must explicitly use the production merged-thread setting")
     runs = [index for index in range(len(source)) if source.startswith("guard engine.run(withEntrypoint: nil)", index)]
     controllers = [
         index for index in range(len(source))
@@ -291,15 +297,15 @@ def verify_macos_startup_contract():
     ]
     if any(len(positions) != 2 for positions in (runs, controllers, window_attachments, registry_creations, registrants)):
         raise RuntimeError("Both macOS launch paths must attach a view, start the engine, and register plugins")
-    if multiview_enable < 0 or multiview_enable > controllers[0]:
-        raise RuntimeError("Enable macOS multiview before attaching the first Flutter controller")
+    if multiview_enable < 0 or multiview_enable > runs[0]:
+        raise RuntimeError("Enable macOS multiview before starting the engine")
     if source.count("primaryViewPluginRegistry = pluginRegistry") != 2:
         raise RuntimeError("Both macOS launch paths must retain the primary-view plugin registry")
     for run_position, controller_position, window_position, registry_position, registrar_position in zip(
         runs, controllers, window_attachments, registry_creations, registrants
     ):
-        if not controller_position < run_position < window_position < registry_position < registrar_position:
-            raise RuntimeError("macOS must attach its first engine view before running Dart or registering plugins")
+        if not run_position < controller_position < window_position < registry_position < registrar_position:
+            raise RuntimeError("macOS must run the multiview engine before attaching and registering its first view")
     if "registry: engine" in source or "with: engine.registrar(" in source:
         raise RuntimeError("macOS plugins must not be registered before the first Flutter view")
     workspace_host = source.split("private final class WorkspaceDesktopWindows", 1)[-1]
@@ -374,6 +380,10 @@ def qualify(platform, arch=None):
                       '  COMMAND ${CMAKE_COMMAND} "-DHEADER=${WRAPPER_ROOT}/include/flutter/flutter_engine.h"\n'
                       f'    -P "{hook}" VERBATIM)\n')
     elif platform == "macos":
+        probe_info_path = directory / "macos/Runner/Info.plist"
+        probe_info = plistlib.loads(probe_info_path.read_bytes())
+        probe_info["FLTEnableMergedPlatformUIThread"] = True
+        probe_info_path.write_bytes(plistlib.dumps(probe_info, fmt=plistlib.FMT_XML, sort_keys=False))
         source = directory / "macos/Runner/MainFlutterWindow.swift"
         production = (ROOT / "macos/Runner/MainFlutterWindow.swift").read_text()
         marker = "/// Additional Flutter views share the existing engine"
@@ -391,12 +401,12 @@ def qualify(platform, arch=None):
                 "  private var workspaceWindows: WorkspaceDesktopWindows?\n"
                 "  private var primaryViewPluginRegistry: PrimaryViewPluginRegistry?")
         replace(source, "let flutterViewController = FlutterViewController()",
-                "let engine = FlutterEngine(name: \"WorkspaceProbe\", project: nil, allowHeadlessExecution: false)\n"
+                "let engine = FlutterEngine(name: \"WorkspaceProbe\", project: nil, allowHeadlessExecution: true)\n"
                 "    let selector = NSSelectorFromString(\"enableMultiView\")\n"
                 "    guard engine.responds(to: selector) else { fatalError(\"SDK lacks multiview\") }\n"
                 "    _ = engine.perform(selector)\n"
-                "    let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)\n"
                 "    guard engine.run(withEntrypoint: nil) else { fatalError(\"engine startup failed\") }\n"
+                "    let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)\n"
                 "    print(\"WORKSPACE_NATIVE_VIEW_ID id=\\(flutterViewController.viewIdentifier)\")\n"
                 "    workspaceWindows = WorkspaceDesktopWindows(engine: engine, parent: self, available: true)")
         replace(source, "RegisterGeneratedPlugins(registry: flutterViewController)",

@@ -94,8 +94,9 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<!-- Multiview's native AddView callback must complete synchronously. -->
 	<key>FLTEnableMergedPlatformUIThread</key>
-	<false/>
+	<true/>
 	<!-- Keep rendering with Skia. Flutter 3.47 made Impeller the default macOS
 	     renderer, and Pleazyng is unusually exposed to that switch: the Flutter view
 	     is cleared to transparent so mpv's video layer behind it stays visible,

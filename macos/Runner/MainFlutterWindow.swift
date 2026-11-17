@@ -10,10 +10,10 @@ class MainFlutterWindow: NSWindow {
   override func awakeFromNib() {
     let project = FlutterDartProject()
     project.dartEntrypointArguments = Array(CommandLine.arguments.dropFirst())
-    // Attach the first multiview controller before running the Dart entrypoint.
-    // The controller registers its native view with FlutterEngineAddView; starting
-    // a headless engine first leaves the embedder unable to add this first view.
-    let engine = FlutterEngine(name: "Pleazyng", project: project, allowHeadlessExecution: false)
+    // FlutterEngineAddView must be able to synchronously reach the Dart UI
+    // isolate. Keep the platform and UI task runners merged (see Info.plist),
+    // run the engine, then attach the first multiview controller.
+    let engine = FlutterEngine(name: "Pleazyng", project: project, allowHeadlessExecution: true)
     let enableMultiView = NSSelectorFromString("enableMultiView")
     let supportsMultiView = engine.responds(to: enableMultiView)
     if supportsMultiView { _ = engine.perform(enableMultiView) }
@@ -37,10 +37,10 @@ class MainFlutterWindow: NSWindow {
     if preparationWorker {
       NSApp.setActivationPolicy(.prohibited)
       self.orderOut(nil)
-      let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)
       guard engine.run(withEntrypoint: nil) else {
         fatalError("Could not start the Flutter preparation worker engine")
       }
+      let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)
       self.contentViewController = flutterViewController
       let pluginRegistry = PrimaryViewPluginRegistry(engine: engine, primaryViewController: flutterViewController)
       primaryViewPluginRegistry = pluginRegistry
@@ -61,10 +61,10 @@ class MainFlutterWindow: NSWindow {
     self.titleVisibility = .hidden
     self.styleMask.insert(.fullSizeContentView)
 
-    let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)
     guard engine.run(withEntrypoint: nil) else {
       fatalError("Could not start the Pleazyng Flutter engine")
     }
+    let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)
     flutterViewController.backgroundColor = NSColor.clear
     self.contentViewController = flutterViewController
 

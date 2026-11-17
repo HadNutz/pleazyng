@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Fix a macOS startup crash by attaching the primary multiview controller before running the Flutter engine.
+- Fix a macOS multiview startup crash by restoring Flutter's merged platform/UI task runner.
 - Match direct-play negotiation to the active playback engine, check Android native stream limits, and discover APV and additional legacy containers.
 
 - Synchronize the Flutter and webOS release identities at 3.0.38+197.
