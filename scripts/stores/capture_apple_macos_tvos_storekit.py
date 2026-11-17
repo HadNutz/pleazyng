@@ -89,6 +89,18 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def build_screenshot_receipt(*, attachment_name: str, path: Path) -> dict[str, Any]:
+    width, height = capture_tools.png_dimensions(path)
+    content = capture_tools.require_visible_screen_content(path)
+    return {
+        "source_attachment": attachment_name,
+        "sha256": sha256_file(path),
+        "size_bytes": path.stat().st_size,
+        "dimensions": [width, height],
+        "visible_content_validation": content,
+    }
+
+
 def command(args: list[str], *, capture: bool = False, timeout: int = 300, cwd: Path | None = None) -> str:
     result = subprocess.run(args, check=True, text=True, capture_output=capture, timeout=timeout, cwd=cwd)
     return result.stdout.strip() if capture else ""
@@ -104,6 +116,23 @@ def _best_effort_command(args: list[str]) -> str | None:
 def write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def attachment_name_matches(actual: str, expected: str) -> bool:
+    if actual == expected:
+        return True
+    generated_suffix = rf"{re.escape(expected)}_\d+_[0-9A-Fa-f-]{{36}}(?:\.[A-Za-z0-9]+)?"
+    return re.fullmatch(generated_suffix, actual) is not None
+
+
+def unique_attachment(attachments: list[dict[str, Any]], expected: str) -> dict[str, Any]:
+    matches = [
+        item for item in attachments
+        if attachment_name_matches(str(item.get("suggestedHumanReadableName", "")), expected)
+    ]
+    if len(matches) != 1:
+        raise RuntimeError(f"Expected one XCTest attachment {expected!r}; found {len(matches)}")
+    return matches[0]
 
 
 def version_pair(value: str) -> tuple[int, int]:
@@ -253,8 +282,9 @@ def create_tvos_simulator(run_id: str, attempt: str, output: Path) -> dict[str, 
     }
 
 
-def verify_created_tvos_simulator(simulator: dict[str, str]) -> None:
-    inventory = json.loads(command(["xcrun", "simctl", "list", "-j"], capture=True, timeout=60))
+def created_tvos_simulator_from_inventory(
+    inventory: dict[str, Any], simulator: dict[str, str]
+) -> tuple[str, dict[str, Any]]:
     matches = [
         (runtime_id, device)
         for runtime_id, devices in inventory.get("devices", {}).items()
@@ -267,6 +297,67 @@ def verify_created_tvos_simulator(simulator: dict[str, str]) -> None:
     if (runtime_id != simulator["runtime_id"] or device.get("name") != simulator["name"]
             or device.get("deviceTypeIdentifier") != simulator["device_type"]):
         raise RuntimeError("Created tvOS simulator differs from the exact canonical runtime/device selection")
+    return runtime_id, device
+
+
+def verify_created_tvos_simulator(simulator: dict[str, str]) -> None:
+    inventory = json.loads(command(["xcrun", "simctl", "list", "-j"], capture=True, timeout=60))
+    created_tvos_simulator_from_inventory(inventory, simulator)
+
+
+def ensure_tvos_simulator_ready_for_install(simulator: dict[str, str], output: Path) -> dict[str, Any]:
+    raw_before = command(["xcrun", "simctl", "list", "-j"], capture=True, timeout=60)
+    before_path = output / "simulator-state-before-app-install.json"
+    before_path.write_text(raw_before + "\n", encoding="utf-8")
+    before_inventory = json.loads(raw_before)
+    _, before_device = created_tvos_simulator_from_inventory(before_inventory, simulator)
+    initial_state = before_device.get("state")
+    if initial_state == "Shutdown":
+        command(["xcrun", "simctl", "boot", simulator["udid"]], timeout=180)
+        command(["xcrun", "simctl", "bootstatus", simulator["udid"], "-b"], timeout=600)
+        boot_action = "booted-after-xcodebuild"
+    elif initial_state == "Booted":
+        boot_action = "already-booted-after-xcodebuild"
+    else:
+        raise RuntimeError(f"Created tvOS Simulator is not install-ready after XCTest build: {initial_state!r}")
+
+    launchctl_path = output / "simulator-launchctl-list.txt"
+    try:
+        launchctl_output = command(
+            ["xcrun", "simctl", "spawn", simulator["udid"], "launchctl", "list"],
+            capture=True,
+            timeout=60,
+        )
+    except subprocess.CalledProcessError as error:
+        write_json(output / "simulator-launchctl-error.json", {
+            "returncode": error.returncode,
+            "stdout": error.stdout,
+            "stderr": error.stderr,
+        })
+        raise RuntimeError("tvOS Simulator launchctl did not respond before app installation") from error
+    launchctl_path.write_text(launchctl_output + "\n", encoding="utf-8")
+
+    raw_after = command(["xcrun", "simctl", "list", "-j"], capture=True, timeout=60)
+    after_path = output / "simulator-state-before-app-install-ready.json"
+    after_path.write_text(raw_after + "\n", encoding="utf-8")
+    after_inventory = json.loads(raw_after)
+    _, after_device = created_tvos_simulator_from_inventory(after_inventory, simulator)
+    if after_device.get("state") != "Booted":
+        raise RuntimeError(
+            f"Created tvOS Simulator did not reach Booted state before install: {after_device.get('state')!r}"
+        )
+    return {
+        "simulator_udid": simulator["udid"],
+        "state_after_xctest_build": initial_state,
+        "readiness_action": boot_action,
+        "state_before_install": after_device["state"],
+        "launchctl_response_path": launchctl_path.name,
+        "launchctl_response_sha256": sha256_file(launchctl_path),
+        "before_inventory_path": before_path.name,
+        "before_inventory_sha256": sha256_file(before_path),
+        "ready_inventory_path": after_path.name,
+        "ready_inventory_sha256": sha256_file(after_path),
+    }
 
 
 def xctestrun_test_targets(document: dict[str, Any]) -> list[dict[str, Any]]:
@@ -499,6 +590,62 @@ def run_logged(command_args: list[str], log_path: Path, timeout: int) -> subproc
         raise RuntimeError(f"Xcode command timed out after {timeout}s; see {log_path.name}") from error
 
 
+def export_failure_diagnostics(result_bundle: Path, output: Path, platform: str) -> dict[str, Any]:
+    export_dir = output / "failure-diagnostic-attachments"
+    export_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        command(
+            ["xcrun", "xcresulttool", "export", "attachments", "--path", str(result_bundle), "--output-path", str(export_dir)],
+            timeout=300,
+        )
+        manifest_path = export_dir / "manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        attachments = [item for test in manifest for item in test.get("attachments", [])]
+        expected = {
+            f"pleazyng-diagnostic-after-launch-{platform}": output / f"diagnostic-after-launch-{platform}.png",
+            f"pleazyng-diagnostic-accessibility-after-launch-{platform}": (
+                output / f"diagnostic-accessibility-after-launch-{platform}.txt"
+            ),
+        }
+        evidence: dict[str, Any] = {
+            "manifest": manifest_path.relative_to(output).as_posix(),
+            "manifest_sha256": sha256_file(manifest_path),
+            "attachments": {},
+        }
+        for name, destination in expected.items():
+            try:
+                attachment = unique_attachment(attachments, name)
+            except RuntimeError as error:
+                evidence["attachments"][name] = {"error": str(error)}
+                continue
+            exported_name = attachment.get("exportedFileName", "")
+            if not exported_name or Path(exported_name).name != exported_name:
+                evidence["attachments"][name] = {"error": "invalid exported attachment filename"}
+                continue
+            source = export_dir / exported_name
+            if not source.is_file():
+                evidence["attachments"][name] = {"error": "exported attachment file is missing"}
+                continue
+            shutil.copyfile(source, destination)
+            attachment_evidence: dict[str, Any] = {
+                "path": destination.relative_to(output).as_posix(),
+                "sha256": sha256_file(destination),
+                "size_bytes": destination.stat().st_size,
+            }
+            if destination.suffix == ".png":
+                try:
+                    attachment_evidence["dimensions"] = list(capture_tools.png_dimensions(destination))
+                except (OSError, ValueError) as error:
+                    attachment_evidence["image_validation_error"] = str(error)
+            evidence["attachments"][name] = attachment_evidence
+        return evidence
+    except (OSError, RuntimeError, ValueError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+        return {
+            "error": f"{type(error).__name__}: {error}",
+            "export_directory": export_dir.name,
+        }
+
+
 def export_attachments(result_bundle: Path, output: Path, platform: str) -> tuple[dict[str, Path], dict[str, Any]]:
     export_dir = output / "xcresult-attachments"
     export_dir.mkdir(parents=True, exist_ok=True)
@@ -508,12 +655,8 @@ def export_attachments(result_bundle: Path, output: Path, platform: str) -> tupl
     exported: dict[str, Path] = {}
     expected = SCREENSHOTS[platform]
     for name, filename in expected.items():
-        matches = [item for item in attachments if capture_tools._attachment_name_matches(
-            str(item.get("suggestedHumanReadableName", "")), name
-        )]
-        if len(matches) != 1:
-            raise RuntimeError(f"Expected one actual screenshot attachment {name!r}; found {len(matches)}")
-        exported_name = matches[0].get("exportedFileName", "")
+        attachment = unique_attachment(attachments, name)
+        exported_name = attachment.get("exportedFileName", "")
         if not exported_name or Path(exported_name).name != exported_name:
             raise ValueError(f"Invalid exported filename for screenshot {name!r}")
         source = export_dir / exported_name
@@ -524,12 +667,8 @@ def export_attachments(result_bundle: Path, output: Path, platform: str) -> tupl
         exported[name] = destination
 
     record_name = "pleazyng-storekit-macos-tvos-localtest-record"
-    matches = [item for item in attachments if capture_tools._attachment_name_matches(
-        str(item.get("suggestedHumanReadableName", "")), record_name
-    )]
-    if len(matches) != 1:
-        raise RuntimeError(f"Expected one LOCALTEST transaction record; found {len(matches)}")
-    record_filename = matches[0].get("exportedFileName", "")
+    record_attachment = unique_attachment(attachments, record_name)
+    record_filename = record_attachment.get("exportedFileName", "")
     if not record_filename or Path(record_filename).name != record_filename:
         raise ValueError("Invalid exported LOCALTEST transaction record filename")
     record_path = export_dir / record_filename
@@ -652,6 +791,7 @@ def capture(args: argparse.Namespace) -> None:
         shutil.copyfile(producer_consumer, output / "producer-consumer-provenance.json")
 
     simulator: dict[str, str] | None = None
+    simulator_readiness: dict[str, Any] | None = None
     result_bundle: Path | None = None
     failure: str | None = None
     scheme_evidence: dict[str, str] | None = None
@@ -662,8 +802,6 @@ def capture(args: argparse.Namespace) -> None:
             simulator_id = simulator["udid"]
             write_json(output / "simulator.json", simulator)
             verify_created_tvos_simulator(simulator)
-            command(["xcrun", "simctl", "boot", simulator_id], timeout=180)
-            command(["xcrun", "simctl", "bootstatus", simulator_id, "-b"], timeout=600)
             if version_pair(simulator["runtime_version"]) < version_pair("17.0"):
                 raise ValueError(f"tvOS StoreKitTest UI target requires runtime 17.0 or newer, found {simulator['runtime_version']}")
 
@@ -744,6 +882,8 @@ def capture(args: argparse.Namespace) -> None:
         installed_app_evidence = None
         if platform == "tvos":
             assert simulator is not None
+            simulator_readiness = ensure_tvos_simulator_ready_for_install(simulator, output)
+            write_json(output / "simulator-readiness.json", simulator_readiness)
             installed_app_evidence = install_tvos_app(simulator, app_staged, receipt)
             write_json(output / "simulator-installed-app.json", installed_app_evidence)
 
@@ -768,15 +908,9 @@ def capture(args: argparse.Namespace) -> None:
 
         screenshot_receipts: dict[str, Any] = {}
         for attachment_name, path in ((name, output / filename) for name, filename in SCREENSHOTS[platform].items()):
-            width, height = capture_tools.png_dimensions(path)
-            content = capture_tools.require_visible_screen_content(path)
-            screenshot_receipts[path.name] = {
-                "source_attachment": attachment_name,
-                "sha256": sha256_file(path),
-                "size_bytes": path.stat().st_size,
-                "dimensions": [width, height],
-                "visible_content_validation": content,
-            }
+            screenshot_receipts[path.name] = build_screenshot_receipt(
+                attachment_name=attachment_name, path=path
+            )
         write_json(output / "capture-provenance.json", {
             "schema_version": 1,
             "environment": "LOCALTEST",
@@ -809,6 +943,7 @@ def capture(args: argparse.Namespace) -> None:
                 "host_os_version": command(["sw_vers", "-productVersion"], capture=True, timeout=30),
                 "host_architecture": command(["uname", "-m"], capture=True, timeout=30),
                 "simulator": simulator,
+                "simulator_readiness_before_app_install": simulator_readiness,
                 "xcodegen_version": command(["xcodegen", "--version"], capture=True, timeout=60),
             },
             "storekit_test": {
@@ -842,6 +977,9 @@ def capture(args: argparse.Namespace) -> None:
         print(f"Captured authentic {platform} LOCALTEST trial-backed app screens in {output}")
     except Exception as error:
         failure = f"{type(error).__name__}: {error}"
+        failure_diagnostics = None
+        if result_bundle is not None and result_bundle.is_dir():
+            failure_diagnostics = export_failure_diagnostics(result_bundle, output, platform)
         write_json(output / "capture-failure.json", {
             "schema_version": 1,
             "environment": "LOCALTEST",
@@ -852,6 +990,7 @@ def capture(args: argparse.Namespace) -> None:
             "producer_run_attempt": args.producer_run_attempt,
             "error": failure,
             "scheme_configuration": scheme_evidence,
+            "simulator_readiness_before_app_install": simulator_readiness,
             "observed_prior_failure": PRIOR_STOREKIT_FAILURE,
             "runner_environment": {
                 "xcode_version": _best_effort_command(["xcodebuild", "-version"]),
@@ -859,6 +998,7 @@ def capture(args: argparse.Namespace) -> None:
                 "host_architecture": _best_effort_command(["uname", "-m"]),
             },
             "result_bundle_present": bool(result_bundle and result_bundle.exists()),
+            "failure_diagnostic_attachments": failure_diagnostics,
             "diagnostic_files": sorted(path.name for path in output.iterdir() if path.is_file()),
             "created_at_utc": datetime.now(timezone.utc).isoformat(),
         })

@@ -32,6 +32,8 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
     // through the actual product app and its native StoreKit integration.
     let app = XCUIApplication(bundleIdentifier: appBundleID)
     app.launch()
+    attachScreenshot(of: app, named: "pleazyng-diagnostic-after-launch-\(platformName())")
+    attachText(app.debugDescription, named: "pleazyng-diagnostic-accessibility-after-launch-\(platformName())")
 
     let trialButton = app.buttons["Start my 7-day free trial"]
     XCTAssertTrue(trialButton.waitForExistence(timeout: 90), "The actual product trial offer did not load")
@@ -209,6 +211,13 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
 
   private func attachScreenshot(of app: XCUIApplication, named name: String) {
     let attachment = XCTAttachment(screenshot: app.screenshot())
+    attachment.name = name
+    attachment.lifetime = .keepAlways
+    add(attachment)
+  }
+
+  private func attachText(_ value: String, named name: String) {
+    let attachment = XCTAttachment(string: value)
     attachment.name = name
     attachment.lifetime = .keepAlways
     add(attachment)

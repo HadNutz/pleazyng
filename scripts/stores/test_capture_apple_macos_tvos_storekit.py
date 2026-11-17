@@ -3,8 +3,10 @@
 
 from __future__ import annotations
 
+import ast
 import json
 import plistlib
+import struct
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -20,6 +22,19 @@ WORKFLOW = (ROOT / ".github/workflows/apple-store-screenshots.yml").read_text(en
 
 
 class StoreKitReviewCaptureTests(unittest.TestCase):
+    def test_capture_tools_helper_references_exist(self) -> None:
+        tree = ast.parse(Path(capture.__file__).read_text(encoding="utf-8"))
+        names = {
+            node.attr
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Attribute)
+            and isinstance(node.value, ast.Name)
+            and node.value.id == "capture_tools"
+        }
+        self.assertTrue(names)
+        missing = sorted(name for name in names if not hasattr(capture.capture_tools, name))
+        self.assertEqual(missing, [])
+
     def test_build_identity_uses_the_producer_receipt_schema_version_fields(self) -> None:
         with TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -156,6 +171,78 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
             self.assertTrue(retained.is_file())
             self.assertEqual(json.loads(retained.read_text()), json.loads(raw_inventory))
             self.assertEqual(command.call_count, 2)
+
+    def test_tvos_simulator_is_rebooted_after_runner_build_when_it_shutdown(self) -> None:
+        with TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            simulator = {
+                "udid": "01234567-89AB-CDEF-0123-456789ABCDEF",
+                "name": "Pleazyng-test-tvos",
+                "runtime_id": "com.apple.CoreSimulator.SimRuntime.tvOS-27-2",
+                "device_type": "com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-4K",
+            }
+
+            def inventory(state: str) -> str:
+                return json.dumps({
+                    "devices": {
+                        simulator["runtime_id"]: [{
+                            "udid": simulator["udid"],
+                            "name": simulator["name"],
+                            "deviceTypeIdentifier": simulator["device_type"],
+                            "state": state,
+                        }]
+                    }
+                })
+
+            with patch.object(
+                capture,
+                "command",
+                side_effect=[inventory("Shutdown"), "", "", "PID\tStatus\tLabel\n", inventory("Booted")],
+            ) as command:
+                evidence = capture.ensure_tvos_simulator_ready_for_install(simulator, output)
+
+            invocations = [call.args[0] for call in command.call_args_list]
+            self.assertEqual(invocations[1], ["xcrun", "simctl", "boot", simulator["udid"]])
+            self.assertEqual(invocations[2], ["xcrun", "simctl", "bootstatus", simulator["udid"], "-b"])
+            self.assertIn("launchctl", invocations[3])
+            self.assertEqual(evidence["state_after_xctest_build"], "Shutdown")
+            self.assertEqual(evidence["state_before_install"], "Booted")
+            self.assertEqual(evidence["readiness_action"], "booted-after-xcodebuild")
+            self.assertTrue((output / "simulator-state-before-app-install.json").is_file())
+            self.assertTrue((output / "simulator-state-before-app-install-ready.json").is_file())
+            self.assertTrue((output / "simulator-launchctl-list.txt").is_file())
+
+    def test_tvos_simulator_already_booted_after_runner_build_is_not_reset(self) -> None:
+        with TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            simulator = {
+                "udid": "01234567-89AB-CDEF-0123-456789ABCDEF",
+                "name": "Pleazyng-test-tvos",
+                "runtime_id": "com.apple.CoreSimulator.SimRuntime.tvOS-27-2",
+                "device_type": "com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-4K",
+            }
+
+            def inventory() -> str:
+                return json.dumps({
+                    "devices": {
+                        simulator["runtime_id"]: [{
+                            "udid": simulator["udid"],
+                            "name": simulator["name"],
+                            "deviceTypeIdentifier": simulator["device_type"],
+                            "state": "Booted",
+                        }]
+                    }
+                })
+
+            with patch.object(
+                capture, "command", side_effect=[inventory(), "PID\tStatus\tLabel\n", inventory()]
+            ) as command:
+                evidence = capture.ensure_tvos_simulator_ready_for_install(simulator, output)
+
+            invocations = [call.args[0] for call in command.call_args_list]
+            self.assertFalse(any("boot" in invocation[2:] for invocation in invocations))
+            self.assertEqual(evidence["readiness_action"], "already-booted-after-xcodebuild")
+            self.assertEqual(evidence["state_before_install"], "Booted")
 
     def test_association_binds_each_target_to_the_exact_retained_product_path(self) -> None:
         for platform in ("macos", "tvos"):
@@ -400,6 +487,71 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
         self.assertIn('"transaction_created_outside_product_app_ui": false', UI_TEST)
         self.assertIn('"lifetime_transaction_created": false', UI_TEST)
         self.assertIn("app.screenshot()", UI_TEST)
+
+    def test_launch_diagnostics_are_attached_before_product_ui_assertions(self) -> None:
+        launch = UI_TEST.index("app.launch()")
+        screenshot = UI_TEST.index('named: "pleazyng-diagnostic-after-launch-\\(platformName())"')
+        accessibility = UI_TEST.index('named: "pleazyng-diagnostic-accessibility-after-launch-\\(platformName())"')
+        trial_assertion = UI_TEST.index('let trialButton = app.buttons["Start my 7-day free trial"]')
+        self.assertLess(launch, screenshot)
+        self.assertLess(screenshot, accessibility)
+        self.assertLess(accessibility, trial_assertion)
+        self.assertIn("attachText(app.debugDescription", UI_TEST)
+
+    def test_xcode_attachment_matcher_accepts_saved_trial_manifest_row(self) -> None:
+        # This row is copied from run 44074874321's real xcresult export manifest.
+        saved_row = {
+            "suggestedHumanReadableName": (
+                "pleazyng-trial-offer-localtest_0_667438CC-F976-43C1-B321-A26D0648D5F5.png"
+            ),
+            "exportedFileName": "E45F8765-DE1B-42C6-AE84-B669C399D1A6.png",
+            "uniformTypeIdentifier": None,
+            "payloadSize": None,
+        }
+        self.assertIs(capture.attachment_name_matches(
+            saved_row["suggestedHumanReadableName"], "pleazyng-trial-offer-localtest"
+        ), True)
+        self.assertEqual(
+            capture.unique_attachment([saved_row], "pleazyng-trial-offer-localtest"), saved_row
+        )
+        with self.assertRaisesRegex(RuntimeError, "found 2"):
+            capture.unique_attachment([saved_row, saved_row], "pleazyng-trial-offer-localtest")
+
+    def test_failure_diagnostics_export_named_xctest_attachments(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            output = root / "output"
+            output.mkdir()
+            result_bundle = root / "failed.xcresult"
+            result_bundle.mkdir()
+            png_name = "pleazyng-diagnostic-after-launch-macos_0_667438CC-F976-43C1-B321-A26D0648D5F5.png"
+            text_name = (
+                "pleazyng-diagnostic-accessibility-after-launch-macos_0_667438CC-F976-43C1-B321-A26D0648D5F5.txt"
+            )
+
+            def export_result_bundle(args: list[str], **_: object) -> str:
+                export_dir = Path(args[args.index("--output-path") + 1])
+                export_dir.mkdir(parents=True, exist_ok=True)
+                header = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR" + struct.pack(">II", 640, 480)
+                (export_dir / "screenshot.png").write_bytes(header + b"\x00" * (16_001 - len(header)))
+                (export_dir / "accessibility.txt").write_text("snapshot fixture\n", encoding="utf-8")
+                manifest = [{"testIdentifier": "Test/testCapture()", "attachments": [
+                    {"suggestedHumanReadableName": png_name, "exportedFileName": "screenshot.png"},
+                    {"suggestedHumanReadableName": text_name, "exportedFileName": "accessibility.txt"},
+                ]}]
+                (export_dir / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+                return ""
+
+            with patch.object(capture, "command", side_effect=export_result_bundle):
+                evidence = capture.export_failure_diagnostics(result_bundle, output, "macos")
+
+            self.assertNotIn("error", evidence)
+            exported = evidence["attachments"]
+            screenshot = exported["pleazyng-diagnostic-after-launch-macos"]
+            accessibility = exported["pleazyng-diagnostic-accessibility-after-launch-macos"]
+            self.assertEqual(screenshot["dimensions"], [640, 480])
+            self.assertTrue((output / screenshot["path"]).is_file())
+            self.assertTrue((output / accessibility["path"]).is_file())
 
     def test_platform_capture_steps_restore_exact_receipts_without_product_builds(self) -> None:
         self.assertIn("Capture tvOS app with native LOCALTEST trial history", WORKFLOW)
