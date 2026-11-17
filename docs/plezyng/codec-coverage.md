@@ -69,12 +69,11 @@ TrueHD PCM, and six text or bitmap subtitle formats. Four passthrough cases
 check software IEC 61937 output. Eight hash-pinned reference vectors cover
 APV, VVC, EVC, AVS2, AVS3 and both JPEG XL forms.
 
-The current Linux x64 package passed 51 playback checks, including all four
-passthrough cases and three bitmap overlays. It also recovered an HLS segment
-after an injected HTTP 503. The Linux build now requires DVD and Blu-ray title
-protocols and runs an unencrypted DVD title playback test. JPEG XL, DASH and
-the Linux disc readers require updated native releases and an application
-lock update.
+The native manifest at `7aff0ff256b7` pins Linux and Android packages with
+JPEG XL and DASH enabled. Its Linux x86_64 and ARM64 builds passed 52 playback
+checks including DASH, plus the reference JPEG XL cases, DVD title playback
+and recovery from an injected HTTP 503 during HLS playback. The hosted
+Android build passed all four ABIs and packaged the AAR.
 See the [producer coverage report](https://github.com/snapetech-org/mpv-build/blob/main/docs/codec-coverage.md#reference-vectors-and-dash).
 
 ## Coverage order and remaining qualification
