@@ -355,6 +355,14 @@ jobs:
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-build-tvos-restored/Runner.app" >> "$GITHUB_ENV"
           echo "APPLE_STORE_BUILD_RECEIPT=$RUNNER_TEMP/apple-store-build-tvos-restored/build-provenance.json" >> "$GITHUB_ENV"
 
+      - name: Select supported Xcode and tvOS SDK for retained-app capture
+        if: inputs.target == 'tvos-in-use-capture-only'
+        run: |
+          set -euo pipefail
+          sudo xcode-select --switch /Applications/Xcode_27.2.app/Contents/Developer
+          [[ "$(xcodebuild -version | sed -n '1p')" == 'Xcode 27.2' ]]
+          [[ "$(xcrun --sdk appletvsimulator --show-sdk-version)" == '27.2' ]]
+
       - name: Install the UI capture project generator
         if: inputs.target == 'app-in-use-capture-only' || inputs.target == 'tvos-in-use-capture-only' || inputs.target == 'macos-tvos-in-use-producer-only'
         run: |
@@ -630,6 +638,14 @@ jobs:
             --output-dir "$RUNNER_TEMP/apple-store-build-macos-restored"
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-build-macos-restored/Pleazyng.app" >> "$GITHUB_ENV"
           echo "APPLE_STORE_BUILD_RECEIPT=$RUNNER_TEMP/apple-store-build-macos-restored/build-provenance.json" >> "$GITHUB_ENV"
+
+      - name: Select supported Xcode and macOS SDK for retained-app capture
+        if: inputs.target == 'macos-in-use-capture-only'
+        run: |
+          set -euo pipefail
+          sudo xcode-select --switch /Applications/Xcode_27.2.app/Contents/Developer
+          [[ "$(xcodebuild -version | sed -n '1p')" == 'Xcode 27.2' ]]
+          [[ "$(xcrun --sdk macosx --show-sdk-version)" == '27.2' ]]
 
       - name: Load pinned Flutter SDK
         if: inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only' && inputs.target != 'macos-in-use-capture-only' && inputs.target != 'macos-in-use-diagnostic-only'

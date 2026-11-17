@@ -498,6 +498,23 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
         self.assertLess(accessibility, trial_assertion)
         self.assertIn("attachText(app.debugDescription", UI_TEST)
 
+    def test_macos_fresh_install_uses_visible_onboarding_and_bounded_ocr_fallback(self) -> None:
+        self.assertIn('try tapMacVisibleText("Start fresh", in: app', UI_TEST)
+        self.assertIn('"Start my 7-day free trial", in: app', UI_TEST)
+        self.assertIn('"Use files and books", in: app', UI_TEST)
+        self.assertIn('"Pleazyng lifetime access", in: app', UI_TEST)
+        self.assertIn('"Your 7-day full-feature trial is active."', UI_TEST)
+        self.assertIn("import Vision", UI_TEST)
+        self.assertIn("VNRecognizeTextRequest()", UI_TEST)
+        self.assertIn("button.exists && button.isHittable", UI_TEST)
+        self.assertIn("guard matchingLines.count == 1", UI_TEST)
+        self.assertIn("window.coordinate(withNormalizedOffset: offset).tap()", UI_TEST)
+        self.assertIn("private func macWindowOffset(forVisionBounds bounds: CGRect)", UI_TEST)
+        self.assertIn("XCTAssertEqual(upperOffset.dy, 0.2, accuracy: 0.0001)", UI_TEST)
+        self.assertIn("XCTAssertEqual(lowerOffset.dy, 0.8, accuracy: 0.0001)", UI_TEST)
+        self.assertNotIn("AXEnhancedUserInterface", UI_TEST)
+        self.assertNotIn("XCUIVoiceOverService", UI_TEST)
+
     def test_xcode_attachment_matcher_accepts_saved_trial_manifest_row(self) -> None:
         # This row is copied from run 44074874321's real xcresult export manifest.
         saved_row = {
@@ -563,6 +580,25 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
         self.assertNotIn("buyProduct(identifier: lifetimeProductID", UI_TEST)
         self.assertIn("inputs.target == 'tvos-in-use-capture-only' && 'xcode-27'", WORKFLOW)
         self.assertIn("inputs.target == 'macos-in-use-capture-only' && 'xcode-27'", WORKFLOW)
+
+    def test_retained_capture_jobs_select_the_supported_xcode_and_matching_sdk(self) -> None:
+        for platform, capture_label, sdk in (
+            ("tvOS", "tvOS", "appletvsimulator"),
+            ("macOS", "Mac", "macosx"),
+        ):
+            with self.subTest(platform=platform):
+                step = f"Select supported Xcode and {platform} SDK for retained-app capture"
+                self.assertIn(f"- name: {step}", WORKFLOW)
+                self.assertIn(
+                    f"if: inputs.target == '{platform.lower()}-in-use-capture-only'",
+                    WORKFLOW,
+                )
+                self.assertIn("sudo xcode-select --switch /Applications/Xcode_27.2.app/Contents/Developer", WORKFLOW)
+                self.assertIn("[[ \"$(xcodebuild -version | sed -n '1p')\" == 'Xcode 27.2' ]]", WORKFLOW)
+                self.assertIn(f'[[ "$(xcrun --sdk {sdk} --show-sdk-version)" == \'27.2\' ]]', WORKFLOW)
+                select_index = WORKFLOW.index(f"- name: {step}")
+                capture_index = WORKFLOW.index(f"Capture {capture_label} app with native LOCALTEST trial history")
+                self.assertLess(select_index, capture_index)
 
 
 if __name__ == "__main__":
