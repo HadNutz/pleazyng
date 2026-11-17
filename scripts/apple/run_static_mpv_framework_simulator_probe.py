@@ -212,6 +212,22 @@ def _require_target_build_settings(stdout: str, output_dir: Path) -> dict[str, s
     return report
 
 
+def _show_build_settings_command(
+    project: Path,
+    simulator_id: str,
+    derived_data: Path,
+    package_cache: Path,
+) -> list[str]:
+    return [
+        "xcodebuild", "-showBuildSettings",
+        "-project", str(project), "-scheme", "Probe",
+        "-configuration", "Debug",
+        "-destination", f"id={simulator_id}",
+        "-derivedDataPath", str(derived_data),
+        "-clonedSourcePackagesDirPath", str(package_cache),
+    ]
+
+
 def run(args: argparse.Namespace) -> dict[str, Any]:
     source_root = args.source_root.resolve(strict=True)
     output_dir = args.output_dir.resolve()
@@ -254,14 +270,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     _run(["xcrun", "simctl", "boot", simulator_id], output_dir=output_dir, name="simulator-boot", check=False)
     _run(["xcrun", "simctl", "bootstatus", simulator_id, "-b"], output_dir=output_dir, name="simulator-bootstatus")
 
-    _run([
-        "xcodebuild", "-showBuildSettings",
-        "-project", str(project), "-target", "Probe",
-        "-configuration", "Debug",
-        "-destination", f"id={simulator_id}",
-        "-derivedDataPath", str(derived_data),
-        "-clonedSourcePackagesDirPath", str(package_cache),
-    ], output_dir=output_dir, name="show-build-settings")
+    _run(
+        _show_build_settings_command(project, simulator_id, derived_data, package_cache),
+        output_dir=output_dir,
+        name="show-build-settings",
+    )
     build_settings = _require_target_build_settings(
         (output_dir / "show-build-settings.stdout.txt").read_text(encoding="utf-8"), output_dir,
     )

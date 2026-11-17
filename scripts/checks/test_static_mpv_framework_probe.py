@@ -120,6 +120,18 @@ class TargetBuildSettingsTests(unittest.TestCase):
             with self.assertRaisesRegex(probe.ProbeError, "did not report the Probe target"):
                 probe._require_target_build_settings("Build settings for action build and target Other:\n", Path(temp))
 
+    def test_show_build_settings_uses_scheme_with_derived_data(self) -> None:
+        command = probe._show_build_settings_command(
+            Path("Probe.xcodeproj"),
+            "simulator-id",
+            Path("DerivedData"),
+            Path("SourcePackages"),
+        )
+        self.assertIn("-scheme", command)
+        self.assertEqual(command[command.index("-scheme") + 1], "Probe")
+        self.assertNotIn("-target", command)
+        self.assertIn("-derivedDataPath", command)
+
 
 class RuntimeMarkerTests(unittest.TestCase):
     def test_swift_probe_and_runner_use_tvOS_cache_storage(self) -> None:
