@@ -22,6 +22,7 @@ mpv_group = main_group['MpvPlayer'] || main_group.new_group('MpvPlayer', 'Runner
 sources = [
   { name: 'MpvPlayerCoreBase.swift',   path: '../shared/apple/MpvPlayer/MpvPlayerCoreBase.swift',   tree: '<source_root>' },
   { name: 'MpvPlayerPluginShared.swift', path: '../shared/apple/MpvPlayer/MpvPlayerPluginShared.swift', tree: '<source_root>' },
+  { name: 'SystemVideoPlugin.swift', path: '../shared/apple/MpvPlayer/SystemVideoPlugin.swift', tree: '<source_root>' },
   { name: 'MpvPlayerCore.swift',       path: '../ios/Runner/MpvPlayer/MpvPlayerCore.swift',   tree: '<source_root>' },
   { name: 'MpvPlayerPlugin.swift',     path: '../ios/Runner/MpvPlayer/MpvPlayerPlugin.swift', tree: '<source_root>' },
   { name: 'MpvPipController.swift',    path: '../ios/Runner/MpvPlayer/MpvPipController.swift', tree: '<source_root>' },

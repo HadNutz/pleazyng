@@ -1,0 +1,556 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:video_player_drm/video_player.dart' as captions;
+import 'package:video_player_drm/webos_video_plane.dart';
+import '../../../utils/platform_detector.dart';
+import 'package:video_player_win/video_player_win.dart' as win;
+
+import '../../../models/audio_channel_limit.dart';
+import '../../../utils/serial_future_queue.dart';
+import '../../models.dart';
+import '../player_base.dart';
+import '../subtitle_pcm_capture_source.dart';
+import 'webos_media_proxy.dart';
+import 'system_subtitles.dart';
+
+/// One native session per source. Its ID also identifies the video surface:
+/// a delayed prepare, poll or dispose cannot target a replacement source.
+class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
+  PlayerSystem(this.playerType, {this.hardwareDecoding = true}) : super(listenToNativeEvents: false);
+
+  @override
+  final String playerType;
+  final bool hardwareDecoding;
+  String? _window;
+  String? _output, _decoder;
+  int? _outputWidth, _outputHeight;
+  @override
+  String get logPrefix => playerType;
+  @override
+  MethodChannel get methodChannel => const MethodChannel('org.snapetech.pleazyng/system_video');
+  @override
+  EventChannel get eventChannel => const EventChannel('org.snapetech.pleazyng/system_video/events');
+  @override
+  bool get supportsSecondarySubtitles => false;
+
+  @override
+  Set<String> get supportedLocalSubtitleExtensions => const {'srt', 'vtt'};
+  final _caption = ValueNotifier<String>('');
+  List<captions.Caption> _cues = const [];
+  List<SubtitleTrack> _sidecars = const [];
+  Media? _media;
+  int _subtitleSelection = 0;
+  Duration _subtitleDelay = Duration.zero;
+  bool _subtitlesVisible = true;
+  final surfaceRevision = ValueNotifier<int>(0);
+  final _sources = SerialFutureQueue();
+  static int _nextId = 0;
+  int? _id;
+  int? _texture;
+  Size _size = Size.zero;
+  bool _visible = true;
+  bool _live = false;
+  bool _rendered = false;
+  bool _ended = false;
+  bool _closing = false;
+  bool _ready = false;
+  int _generation = 0;
+  @override
+  int get mediaSessionGeneration => _generation;
+  Timer? _poll;
+  WebOSMediaProxy? _proxy;
+  win.WinVideoPlayerController? _windows;
+  StreamSubscription<dynamic>? _windowsEvents;
+  Future<void>? _disposal;
+  bool _current(int generation) => !_closing && generation == _generation;
+
+  Widget videoSurface() => Stack(
+    fit: StackFit.expand,
+    children: [
+      _surface(),
+      if (_visible)
+        IgnorePointer(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 36),
+              child: ValueListenableBuilder<String>(
+                valueListenable: _caption,
+                builder: (context, text, _) =>
+                    text.isEmpty ? const SizedBox.shrink() : captions.ClosedCaption(text: text),
+              ),
+            ),
+          ),
+        ),
+    ],
+  );
+
+  Widget _surface() {
+    final id = _id;
+    if (!_visible || id == null) return const SizedBox.expand();
+    if (playerType == 'avplayer') {
+      const type = 'org.snapetech.pleazyng/avplayer';
+      final view = Platform.isMacOS
+          ? AppKitView(
+              key: ValueKey(id),
+              viewType: type,
+              creationParams: id,
+              creationParamsCodec: const StandardMessageCodec(),
+            )
+          : UiKitView(
+              key: ValueKey(id),
+              viewType: type,
+              creationParams: id,
+              creationParamsCodec: const StandardMessageCodec(),
+            );
+      return IgnorePointer(child: view);
+    }
+    if (_texture == -2 && _window != null && !_size.isEmpty) {
+      return Center(
+        child: AspectRatio(
+          aspectRatio: _size.aspectRatio,
+          child: WebOSVideoPlane(key: ValueKey(_window), window: _window!, source: _size, onError: () => _fail(id)),
+        ),
+      );
+    }
+    final texture = _texture;
+    if (texture == null || texture < 0 || _size.isEmpty) return const SizedBox.expand();
+    return Center(
+      child: AspectRatio(
+        aspectRatio: _size.aspectRatio,
+        child: Texture(textureId: texture),
+      ),
+    );
+  }
+
+  @override
+  Future<void> open(
+    Media media, {
+    bool play = true,
+    bool isLive = false,
+    List<SubtitleTrack>? externalSubtitles,
+    Duration? timelineDuration,
+    Duration timelineOffset = Duration.zero,
+  }) {
+    final generation = ++_generation;
+    return _sources.run(() async {
+      if (!_current(generation)) return;
+      await _release();
+      if (!_current(generation)) return;
+      final id = ++_nextId;
+      _id = id;
+      _media = media;
+      _sidecars = externalSubtitles?.where((t) => t.uri != null).toList() ?? const [];
+      _cues = const [];
+      _caption.value = '';
+      _subtitlesVisible = true;
+      _live = isLive;
+      _rendered = _ended = _ready = false;
+      configureTimeline(duration: timelineDuration, offset: timelineOffset);
+      final start = media.start ?? timelineOffset;
+      resetPlaybackProgress(start);
+      clearTracks();
+      setSeekable(false);
+      handlePlayerEvent('start-file', {'sourceId': id});
+      try {
+        var uri = File(media.uri).isAbsolute ? File(media.uri).uri : Uri.parse(media.uri);
+        if ((uri.scheme == 'http' || uri.scheme == 'https') && (media.headers?.isNotEmpty ?? false)) {
+          final proxy = _proxy = await WebOSMediaProxy.bind();
+          uri = proxy.register(uri, headers: media.headers);
+        }
+        if (!_current(generation)) return;
+        if (playerType == 'mediafoundation') {
+          final controller = _windows = uri.scheme == 'file'
+              ? win.WinVideoPlayerController.file(File.fromUri(uri))
+              : win.WinVideoPlayerController.networkUrl(uri);
+          _windowsEvents = controller.videoEventStream.listen((_) {}, onError: (Object _) {});
+          await controller.initialize();
+          if (!controller.value.isInitialized) throw StateError('Media Foundation could not prepare the source');
+          _texture = controller.value.textureId;
+        } else {
+          if (playerType == 'tvmpv' && hardwareDecoding && PlatformDetector.isWebOSBuild()) {
+            try {
+              _window = await WebOSVideoPlane.windows.invokeMethod<String>('create', {});
+            } on PlatformException {
+              /* An unavailable plane can still use a texture. */
+            }
+          }
+          await _create(id, uri);
+        }
+        if (!_current(generation)) return;
+        try {
+          await _prepare(generation, id);
+        } catch (_) {
+          if (!_current(generation) || _texture != -2) rethrow;
+          // DirectMedia can reject the codec or the decoder can be occupied.
+          // Release the plane before opening the same source on mpv's texture.
+          await methodChannel.invokeMethod<void>('dispose', {'id': id});
+          await _closeWindow();
+          if (!_current(generation)) return;
+          await _create(id, uri);
+          await _prepare(generation, id);
+        }
+        if (!_current(generation)) return;
+        await _readTracks(id);
+        if (!_current(generation)) return;
+        if (sourcePositionFor(start) > Duration.zero) await seek(start);
+        if (!_current(generation)) return;
+        await setVolume(state.volume);
+        if (!_current(generation)) return;
+        if (state.rate != 1) await setRate(state.rate);
+        if (!_current(generation)) return;
+        if (play) await this.play();
+        _schedulePoll(generation, id);
+      } catch (_) {
+        if (!_current(generation)) return;
+        await _release();
+        throw PlatformException(code: 'system-video-open', message: '$playerType could not open this media.');
+      }
+    });
+  }
+
+  Future<void> _create(int id, Uri uri) async {
+    _texture = await methodChannel.invokeMethod<int>('create', {
+      'id': id,
+      'uri': uri.toString(),
+      'hardwareDecoding': hardwareDecoding,
+      if (_window != null) 'windowId': _window,
+    });
+    if (_texture != -2) await _closeWindow();
+  }
+
+  Future<void> _closeWindow() async {
+    final window = _window;
+    _window = null;
+    if (window != null) await WebOSVideoPlane.windows.invokeMethod<void>('dispose', {'windowId': window});
+  }
+
+  Future<void> _prepare(int generation, int id) async {
+    surfaceRevision.value++;
+    final elapsed = Stopwatch()..start();
+    while (_current(generation)) {
+      final info = await _snapshot(id);
+      if (!_current(generation)) return;
+      if (info['failed'] == true) throw StateError('Could not prepare media');
+      if (info['ready'] == true) {
+        _ready = true;
+        handlePlayerEvent('file-loaded', {'sourceId': id});
+        primaryMediaReadyController.add(null);
+        _update(info, id);
+        return;
+      }
+      if (elapsed.elapsed > const Duration(seconds: 35)) throw TimeoutException('Native player preparation');
+      await Future<void>.delayed(const Duration(milliseconds: 80));
+    }
+  }
+
+  Future<Map<dynamic, dynamic>> _snapshot(int id) async {
+    final windows = _windows;
+    if (windows == null) {
+      return await methodChannel.invokeMapMethod<dynamic, dynamic>('state', {'id': id}) ?? const {'failed': true};
+    }
+    final v = windows.value;
+    return {
+      'ready': v.isInitialized,
+      'failed': v.hasError,
+      'playing': v.isPlaying && !v.isCompleted,
+      'buffering': v.isBuffering,
+      'ended': v.isCompleted,
+      'frame': v.isPlaying && v.position > Duration.zero,
+      'position': v.position.inMilliseconds,
+      'duration': v.duration.inMilliseconds,
+      'width': v.size.width,
+      'height': v.size.height,
+    };
+  }
+
+  void _schedulePoll(int generation, int id) {
+    if (!_current(generation) || _ended) return;
+    _poll = Timer(const Duration(milliseconds: 200), () async {
+      try {
+        final info = await _snapshot(id);
+        if (!_current(generation)) return;
+        _update(info, id);
+        _schedulePoll(generation, id);
+      } catch (_) {
+        if (_current(generation)) _fail(id);
+      }
+    });
+  }
+
+  void _fail(int id) {
+    if (_ended) return;
+    _ended = true;
+    handlePlayerEvent('end-file', {
+      'reason': 'error',
+      'sourceId': id,
+      'message': '$playerType could not play this media. Try another engine in Playback settings.',
+    });
+  }
+
+  void _update(Map<dynamic, dynamic> info, int id) {
+    if (info['failed'] == true) {
+      _fail(id);
+      return;
+    }
+    _output = info['output'] as String?;
+    _decoder = info['hardwareDecoder'] as String?;
+    _outputWidth = (info['outputWidth'] as num?)?.toInt();
+    _outputHeight = (info['outputHeight'] as num?)?.toInt();
+    final duration = (info['duration'] as num?) ?? 0;
+    final position = (info['position'] as num?) ?? 0;
+    _caption.value = !_subtitlesVisible
+        ? ''
+        : _cues.isEmpty
+        ? (info['caption'] as String? ?? '')
+        : systemCaptionAt(_cues, Duration(milliseconds: position.toInt()) - _subtitleDelay);
+    setSeekable(!_live && duration > 0);
+    handlePropertyChange('duration', duration / 1000);
+    handlePropertyChange('time-pos', position / 1000);
+    handlePropertyChange('pause', info['playing'] != true);
+    handlePropertyChange('paused-for-cache', info['buffering'] == true);
+    final size = Size((info['width'] as num?)?.toDouble() ?? 0, (info['height'] as num?)?.toDouble() ?? 0);
+    if (_size != size) {
+      _size = size;
+      surfaceRevision.value++;
+    }
+    if (!_rendered && info['frame'] == true) {
+      _rendered = true;
+      handlePlayerEvent('playback-restart', {'sourceId': id, 'positionSeconds': position / 1000});
+    }
+    if (!_ended && info['ended'] == true) {
+      _ended = true;
+      handlePropertyChange('eof-reached', true);
+    }
+  }
+
+  Future<void> _readTracks(int id) async {
+    final tracks = _windows == null
+        ? await methodChannel.invokeListMethod<dynamic>('tracks', {'id': id}) ?? const []
+        : const [];
+    if (id != _id || _closing) return;
+    final audio = <AudioTrack>[];
+    final subs = <SubtitleTrack>[SubtitleTrack.off];
+    String? aid, sid;
+    for (final row in tracks.whereType<Map>()) {
+      final key = row['id'].toString();
+      final lang = row['language'] as String?;
+      final title = row['title'] as String?;
+      if (row['type'] == 'audio') {
+        audio.add(AudioTrack(id: key, language: lang, title: title));
+        if (row['selected'] == true) aid = key;
+      } else if (row['type'] == 'subtitle') {
+        subs.add(SubtitleTrack(id: key, language: lang, title: title, isContainer: true));
+        if (row['selected'] == true) sid = key;
+      }
+    }
+    updateTracks(Tracks(audio: audio, subtitle: [...subs, ..._sidecars]));
+    updateSelectedAudioTrack(aid);
+    updateSelectedSubtitleTrack(sid ?? SubtitleTrack.off.id);
+  }
+
+  Future<void> _control(String method, [Object? value]) async {
+    if (_closing || !_ready || _id == null) return;
+    final windows = _windows;
+    if (windows == null) {
+      await methodChannel.invokeMethod<void>(method, {'id': _id, 'value': value});
+      return;
+    }
+    switch (method) {
+      case 'play':
+        await windows.play();
+      case 'pause':
+        await windows.pause();
+      case 'seek':
+        await windows.seekTo(Duration(milliseconds: value as int));
+      case 'volume':
+        await windows.setVolume(value as double);
+      case 'rate':
+        await windows.setPlaybackSpeed(value as double);
+    }
+  }
+
+  @override
+  Future<void> play() => _control('play');
+  @override
+  Future<void> pause() => _control('pause');
+  @override
+  Future<void> seek(Duration position) async {
+    await runSeek(position, () => _control('seek', sourcePositionFor(position).inMilliseconds));
+    if (_ended && _ready && _id != null) {
+      _ended = false;
+      handlePropertyChange('eof-reached', false);
+      _schedulePoll(_generation, _id!);
+    }
+  }
+
+  @override
+  Future<void> setVolume(double volume) async {
+    final clamped = volume.clamp(0, 100).toDouble();
+    await _control('volume', clamped / 100);
+    setVolumeState(clamped);
+  }
+
+  @override
+  Future<void> setRate(double rate) async {
+    await _control('rate', rate);
+    setRateState(rate);
+  }
+
+  @override
+  Future<void> selectAudioTrack(AudioTrack track) async {
+    if (_windows != null || track.id == 'auto') return;
+    await _control('audio', track.id);
+    updateSelectedAudioTrack(track.id);
+  }
+
+  @override
+  Future<void> selectSubtitleTrack(SubtitleTrack track) async {
+    if (!_ready || track.id == 'auto') return;
+    final selection = ++_subtitleSelection;
+    final generation = _generation;
+    final cues = track.uri != null ? await loadSystemSubtitles(track, _media!, _proxy) : const <captions.Caption>[];
+    if (!_current(generation) || selection != _subtitleSelection) return;
+    if (_windows == null) await _control('subtitle', track.uri == null ? track.id : SubtitleTrack.off.id);
+    if (!_current(generation) || selection != _subtitleSelection) return;
+    _cues = cues;
+    _subtitlesVisible = track.id != SubtitleTrack.off.id;
+    _caption.value = '';
+    updateSelectedSubtitleTrack(track.id);
+  }
+
+  @override
+  Future<void> setProperty(String name, String value) async {
+    switch (name) {
+      case 'pause':
+        await (value == 'yes' ? pause() : play());
+      case 'sub-delay':
+        _subtitleDelay = Duration(milliseconds: ((double.tryParse(value) ?? 0) * 1000).round());
+      case 'sub-visibility':
+        _subtitlesVisible = value == 'yes';
+        if (!_subtitlesVisible) _caption.value = '';
+      case 'volume':
+        await setVolume(double.parse(value));
+      case 'speed':
+        await setRate(double.parse(value));
+    }
+  }
+
+  @override
+  Future<String?> getProperty(String name) async => switch (name) {
+    'current-vo' => _output ?? playerType,
+    'hwdec-current' => _decoder,
+    'width' || 'dwidth' => _size.width.toInt().toString(),
+    'height' || 'dheight' => _size.height.toInt().toString(),
+    'seekable' => state.seekable ? 'yes' : 'no',
+    'time-pos' => (sourcePositionFor(currentPosition).inMilliseconds / 1000).toString(),
+    _ => null,
+  };
+  @override
+  Future<Map<String, dynamic>> getStats() async => {
+    'player': playerType,
+    if (_output != null) 'videoOutput': _output,
+    if (_decoder != null && _decoder!.isNotEmpty) 'hwdec': _decoder,
+    if (_outputWidth != null) 'outputWidth': _outputWidth,
+    if (_outputHeight != null) 'outputHeight': _outputHeight,
+  };
+
+  @override
+  Future<void> configureSubtitleFonts() async {}
+  @override
+  Future<void> setLogLevel(String level) async {}
+  @override
+  Future<void> command(List<String> args) async {
+    if (args.isEmpty || args.first != 'sub-add') return;
+    if (!_ready || args.length < 2) throw StateError('No source for the subtitle');
+    final uri = File(args[1]).uri;
+    final title = uri.pathSegments.last;
+    final ext = title.split('.').last.toLowerCase();
+    if (!supportedLocalSubtitleExtensions.contains(ext)) throw UnsupportedError('Unsupported subtitle format');
+    final track = SubtitleTrack.uri(uri.toString(), title: title, codec: ext);
+    if (!_sidecars.any((s) => s.uri == track.uri)) {
+      _sidecars = [..._sidecars, track];
+      updateTracks(Tracks(audio: state.tracks.audio, subtitle: [...state.tracks.subtitle, track]));
+    }
+    if (args.length < 3 || args[2] == 'select') await selectSubtitleTrack(track);
+  }
+
+  @override
+  Future<void> setAudioNormalization(bool enabled) async {}
+  @override
+  Future<void> setAudioChannelLimit(
+    AudioChannelLimit limit, {
+    required int centerBoostDb,
+    required bool normalize,
+  }) async {}
+  @override
+  Future<bool> setVisible(bool visible, {bool restoreOnWindowVisible = false}) async {
+    if (!_closing && _visible != visible) {
+      _visible = visible;
+      surfaceRevision.value++;
+    }
+    return !_closing;
+  }
+
+  Future<void> _release() async {
+    _poll?.cancel();
+    final id = _id;
+    _id = null;
+    _ready = false;
+    _texture = null;
+    _size = Size.zero;
+    _decoder = _output = null;
+    _outputWidth = _outputHeight = null;
+    final windows = _windows;
+    _windows = null;
+    try {
+      if (windows != null) {
+        await _windowsEvents?.cancel();
+        await windows.dispose();
+      } else if (id != null && playerType != 'mediafoundation') {
+        await methodChannel.invokeMethod<void>('dispose', {'id': id});
+      }
+    } finally {
+      try {
+        await _closeWindow();
+      } finally {
+        await _proxy?.close();
+      }
+      _proxy = null;
+      if (!_closing && id != null) surfaceRevision.value++;
+    }
+  }
+
+  @override
+  Future<void> stop() {
+    ++_generation;
+    return _sources.run(() async {
+      final id = _id;
+      await _release();
+      if (_closing) return;
+      if (id != null) handlePlayerEvent('end-file', {'sourceId': id, 'reason': 'stop'});
+      resetPlaybackProgress(Duration.zero);
+      setSeekable(false);
+      handlePropertyChange('pause', true);
+      clearTracks();
+    });
+  }
+
+  @override
+  Future<void> dispose({bool preserveDisplayMode = false}) => _disposal ??= _disposeSystem();
+
+  Future<void> _disposeSystem() async {
+    _closing = true;
+    ++_generation;
+    try {
+      await _sources.run(_release);
+    } finally {
+      _caption.dispose();
+      surfaceRevision.dispose();
+      await super.dispose();
+    }
+  }
+}

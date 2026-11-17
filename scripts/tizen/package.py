@@ -650,6 +650,14 @@ def build(args):
         project = Path(temp)
         stage(ROOT, project, args.native, args.arch, visualizer_native=args.visualizer_native,
               visualizer_manifest_sha256=args.visualizer_manifest_sha256)
+        mpv_bundle = project / 'build-inputs/tv-mpv'
+        run(sys.executable, ROOT / 'scripts/tv_mpv/build.py', 'tizen',
+            'armv7l' if args.arch == 'arm' else 'x86_64', mpv_bundle)
+        shutil.copyfile(mpv_bundle / 'libpleazyng_tv_mpv.so', project / 'tizen/lib/libpleazyng_tv_mpv.so')
+        notices = project / 'tizen/res/tv-mpv'
+        notices.mkdir(parents=True, exist_ok=True)
+        for name in ('TV-MPV-LICENSES.txt', 'tv-mpv-build.json'):
+            shutil.copyfile(mpv_bundle / name, notices / name)
         run(flutter, 'pub', 'get', cwd=project)
         build_command = [flutter, 'build', 'tpk', '--release', '--device-profile', 'tv',
                          '--target-arch', args.arch, '--security-profile', args.security_profile]
@@ -679,6 +687,10 @@ def build(args):
         if report['visualizer'] is None:
             raise ValueError('The Tizen SDK omitted the required visualization helper/runtime bundle')
         with zipfile.ZipFile(packages[0]) as archive:
+            for name in ('libpleazyng_tv_mpv.so', 'TV-MPV-LICENSES.txt', 'tv-mpv-build.json'):
+                members = [p for p in archive.namelist() if PurePosixPath(p).name == name]
+                if len(members) != 1 or archive.read(members[0]) != (mpv_bundle / name).read_bytes():
+                    raise ValueError(f'TPK omitted or changed the TV mpv runtime file {name}')
             whisper_members = [name for name in archive.namelist()
                                if PurePosixPath(name).name == 'libflutter_whisper_plugin.so']
             if (len(whisper_members) != 1 or hashlib.sha256(archive.read(whisper_members[0])).hexdigest() !=

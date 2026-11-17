@@ -89,7 +89,7 @@ class _SubtitleStylingScreenState extends State<SubtitleStylingScreen> {
   @override
   Widget build(BuildContext context) {
     // Each backend exposes its own text-subtitle placement preference.
-    final exoActive = Platform.isAndroid && SettingsService.instance.read(SettingsService.useExoPlayer);
+    final exoActive = SettingsService.selectedVideoEngine == 'exoplayer';
     return SettingsPage(
       title: Text(t.screens.subtitleStyling),
       children: [

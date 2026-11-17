@@ -36,6 +36,7 @@ class MpvPlayerPlugin: NSObject, FlutterPlugin, FlutterStreamHandler, MpvPluginS
   // MARK: - FlutterPlugin Registration
 
   static func register(with registrar: FlutterPluginRegistrar) {
+    SystemVideoPlugin.register(with: registrar)
     let methodChannel = FlutterMethodChannel(
       name: "com.plezy/mpv_player",
       binaryMessenger: registrar.messenger()

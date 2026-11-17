@@ -109,7 +109,7 @@ class _OpenMediaScreenState extends State<OpenMediaScreen> {
 
   bool get _mpvProtocolsAvailable {
     if (PlatformDetector.isWebOSBuild() || PlatformDetector.isTizenBuild()) return false;
-    if (Platform.isAndroid && SettingsService.instance.read(SettingsService.useExoPlayer)) return false;
+    if (SettingsService.selectedVideoEngine != 'mpv') return false;
     return Platform.isAndroid || Platform.isIOS || Platform.isMacOS || Platform.isWindows || Platform.isLinux;
   }
 

@@ -22,6 +22,10 @@ List<Map<String, Object?>> _videoDirectPlayProfiles({bool? allowAudioStreamCopy}
   final containers = switch (engine) {
     'webos' => VideoDecodeCapabilities.webosDirectPlayContainers,
     'exoplayer' => _exoVideoContainers,
+    'tvmpv' => {'mkv,mp4,m4v,mov,avi,ts,mpegts,mpg,webm': codecs},
+    'avplayer' || 'mediafoundation' || 'mediaplayer' || 'gstreamer' => {
+      'mp4,m4v,mov': codecs.intersection({'h264', 'hevc'}),
+    },
     _ => {RuntimePlaybackCapabilities.mpvVideoContainers.join(','): codecs},
   };
   final audio = RuntimePlaybackCapabilities.videoAudioCodecs;
@@ -38,6 +42,8 @@ List<Map<String, Object?>> _videoDirectPlayProfiles({bool? allowAudioStreamCopy}
               .join(','),
           if (engine == 'webos' && allowAudioStreamCopy == false)
             'AudioCodec': webosTranscodeAudioCodecs
+          else if (const {'avplayer', 'mediafoundation', 'mediaplayer', 'gstreamer'}.contains(engine))
+            'AudioCodec': 'aac,mp3'
           else if (engine == 'mpv' && audio != null && audio.isNotEmpty)
             'AudioCodec': audio.join(','),
         },
@@ -1110,7 +1116,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
                 // cannot carry.
                 'AudioCodec': receiverAc3
                     ? 'ac3'
-                    : PlatformDetector.isWebOSBuild() && allowAudioStreamCopy == false
+                    : VideoDecodeCapabilities.videoEngine == 'webos' && allowAudioStreamCopy == false
                     ? webosTranscodeAudioCodecs
                     : 'aac,mp3,ac3,eac3,flac,opus,dts,truehd',
               },
@@ -1132,7 +1138,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
               'VideoCodec': _jellyfinTranscodeVideoCodecsTs(),
               'AudioCodec': receiverAc3
                   ? 'ac3'
-                  : PlatformDetector.isWebOSBuild() && allowAudioStreamCopy == false
+                  : VideoDecodeCapabilities.videoEngine == 'webos' && allowAudioStreamCopy == false
                   ? webosTranscodeAudioCodecs
                   : 'aac,mp3,ac3,eac3,opus,dts',
             },
@@ -1182,7 +1188,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
           // profile and falls through to `Encode`, which is also why image
           // formats never appear here: a bitmap handed over as a separate
           // stream alongside a transcode is not something the client can render.
-          'SubtitleProfiles': PlatformDetector.isWebOSBuild()
+          'SubtitleProfiles': VideoDecodeCapabilities.videoEngine != 'mpv'
               ? <Map<String, Object?>>[
                   const {'Format': 'srt', 'Method': 'Embed'},
                   const {'Format': 'vtt', 'Method': 'Embed'},
@@ -1206,8 +1212,15 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
                     {'Format': 'vtt', 'Method': 'External'},
                   ],
                 ],
-          if (PlatformDetector.isTizenBuild())
-            ...tizenPlaybackProfile(audio: audioProfile, burnSubtitles: burnSubtitles),
+          if (VideoDecodeCapabilities.videoEngine == 'tizen')
+            ...tizenPlaybackProfile(
+              audio: audioProfile,
+              burnSubtitles: burnSubtitles,
+              refusedVideo: {
+                for (final c in RankedVideoCodec.values)
+                  if (VideoDecodeCapabilities.isRefusedByUser(c)) c.id,
+              },
+            ),
         },
       },
     );

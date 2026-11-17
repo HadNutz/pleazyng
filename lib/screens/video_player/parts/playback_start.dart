@@ -149,6 +149,7 @@ extension _VideoPlayerPlaybackStartMethods on VideoPlayerScreenState {
         committed = attempt.isCurrent;
         if (committed && openedStream != null) unawaited(_recordIptvRecentChannel(channel));
       } catch (e, st) {
+        if (e is PlatformException && const {'system-video-open', 'tizen-playback'}.contains(e.code)) rethrow;
         appLogger.e('Failed to start live TV playback', error: e, stackTrace: st);
         unawaited(_sendLiveTimeline('stopped'));
         widget.launchObserver?.mark('failed', failure: 'playbackFailed');
@@ -225,7 +226,7 @@ extension _VideoPlayerPlaybackStartMethods on VideoPlayerScreenState {
             requestCompatibleDolbyVisionRendition: true,
             supportedNativeDolbyVisionProfiles: VideoDecodeCapabilities.supportedNativeDolbyVisionProfiles,
             allowExperimentalDolbyVisionProfile7:
-                (!Platform.isAndroid || !SettingsService.instance.read(SettingsService.useExoPlayer)) &&
+                (currentPlayer.playerType == 'mpv') &&
                 !PlatformDetector.usesNativeTvMedia() &&
                 !SettingsService.instance.read(SettingsService.disableDolbyVision) &&
                 (SettingsService.instanceOrNull?.read(SettingsService.experimentalDolbyVision) ??
@@ -422,6 +423,7 @@ extension _VideoPlayerPlaybackStartMethods on VideoPlayerScreenState {
       appLogger.w('Playback initialization failed', error: e, stackTrace: st);
       if (attempt.isCurrent && mounted) _reportStartFailure(e.message, primaryMediaOpened: primaryMediaOpened);
     } catch (e, st) {
+      if (e is PlatformException && const {'system-video-open', 'tizen-playback'}.contains(e.code)) rethrow;
       if (attempt.isCurrent) widget.launchObserver?.mark('failed', failure: 'playbackFailed');
       appLogger.e('Failed to start playback', error: e, stackTrace: st);
       if (attempt.isCurrent && mounted) {

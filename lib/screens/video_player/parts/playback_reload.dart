@@ -647,7 +647,7 @@ extension _VideoPlayerReloadMethods on VideoPlayerScreenState {
                   : VideoDecodeCapabilities.supportedNativeDolbyVisionProfiles,
               allowExperimentalDolbyVisionProfile7:
                   !forceServerPlayback &&
-                  (!Platform.isAndroid || !SettingsService.instance.read(SettingsService.useExoPlayer)) &&
+                  (SettingsService.selectedVideoEngine == 'mpv') &&
                   !PlatformDetector.usesNativeTvMedia() &&
                   !SettingsService.instance.read(SettingsService.disableDolbyVision) &&
                   (SettingsService.instanceOrNull?.read(SettingsService.experimentalDolbyVision) ??

@@ -273,7 +273,7 @@ class AgentSettingsCommands {
     return null;
   }
 
-  static bool get _exoActive => Platform.isAndroid && SettingsService.instance.read(SettingsService.useExoPlayer);
+  static bool get _exoActive => SettingsService.selectedVideoEngine == 'exoplayer';
 
   static void _validatePlatformValue(String key, Object? value) {
     if (key == 'subtitle_render_resolution') {

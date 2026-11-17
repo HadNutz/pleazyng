@@ -13,6 +13,7 @@ import '../../media/media_item.dart';
 import '../../media/media_kind.dart';
 import '../../media/media_library.dart';
 import '../../models/audio_channel_limit.dart';
+import '../../models/video_backend.dart';
 import '../../models/audio_quality_preset.dart';
 import '../../models/motion_processing_mode.dart';
 import '../../models/transcode_quality_preset.dart';
@@ -78,7 +79,7 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
     // corrupt the SettingsGroup corner shapes).
     return SettingsBuilder(
       prefs: [
-        SettingsService.useExoPlayer,
+        SettingsService.videoBackendPref,
         SettingsService.matchRefreshRate,
         SettingsService.matchDynamicRange,
         SettingsService.matchContentFrameRate,
@@ -92,7 +93,9 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
       ],
       builder: (context) {
         final svc = SettingsService.instance;
-        final exoActive = Platform.isAndroid && svc.read(SettingsService.useExoPlayer);
+        final engine = SettingsService.selectedVideoEngine;
+        final exoActive = engine == 'exoplayer';
+        final mpvActive = engine == 'mpv';
         // ExoPlayer only has the stereo fold, so a 5.1 limit set on mpv plays
         // (and shows) as Original there.
         final storedChannelLimit = svc.read(SettingsService.audioChannelLimit);
@@ -125,14 +128,14 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
             SettingsGroup(
               title: t.settings.player,
               children: [
-                if (Platform.isAndroid) _playerBackendSelector(),
+                _playerBackendSelector(),
                 if (PlatformDetector.supportsExternalPlayers()) _externalPlayerTile(),
-                if (!exoActive && !PlatformDetector.isTizenBuild()) _mpvConfigTile(),
-                if (!PlatformDetector.isTizenBuild()) _hardwareDecodingTile(),
+                if (mpvActive) _mpvConfigTile(),
+                if (mpvActive || exoActive) _hardwareDecodingTile(),
                 if (exoActive) _playbackBufferTile(),
-                if (!PlatformDetector.isTizenBuild()) _streamBufferSizeTile(exoActive: exoActive),
+                if (mpvActive || exoActive) _streamBufferSizeTile(exoActive: exoActive),
                 if (exoActive) _tunneledPlaybackTile(),
-                if (PlatformDetector.supportsPictureInPicture()) _autoPipTile(),
+                if ((mpvActive || exoActive) && PlatformDetector.supportsPictureInPicture()) _autoPipTile(),
                 if (isMobile && !PlatformDetector.isTV() && !PlatformDetector.isAutomotive())
                   SettingSwitchTile(
                     pref: SettingsService.backgroundVideoAudio,
@@ -151,9 +154,9 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
                 if (Platform.isWindows || Platform.isMacOS) _matchRefreshRateTile(),
                 if (Platform.isWindows) _matchDynamicRangeTile(),
                 if (showDisplaySwitchDelay) _displaySwitchDelayTile(),
-                if (showDisableDolbyVision) _disableDolbyVisionTile(),
-                if (showDvConversionMode) _dvConversionModeTile(),
-                if (showExperimentalDolbyVision)
+                if (mpvActive && showDisableDolbyVision) _disableDolbyVisionTile(),
+                if ((mpvActive || exoActive) && showDvConversionMode) _dvConversionModeTile(),
+                if (mpvActive && showExperimentalDolbyVision)
                   SettingSwitchTile(
                     pref: SettingsService.experimentalDolbyVision,
                     icon: Symbols.hdr_on_rounded,
@@ -186,10 +189,10 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
                   enabled: !PlatformDetector.usesNativeTvMedia(),
                 ),
                 // mpv-only: ExoPlayer always leaves the conversion to the device.
-                if (Platform.isAndroid && !exoActive) _hdrSdrConversionTile(),
+                if (Platform.isAndroid && mpvActive) _hdrSdrConversionTile(),
                 // mpv-only (#2149): ExoPlayer has no filter chain, so the
                 // tile disappears while the ExoPlayer backend is active.
-                if (!exoActive && !PlatformDetector.isTizenBuild()) _deinterlaceTile(),
+                if (mpvActive) _deinterlaceTile(),
                 SettingSelectionTile<MotionClarityPreset>(
                   pref: SettingsService.motionClarityPreset,
                   icon: Symbols.blur_on_rounded,
@@ -909,16 +912,29 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
     ],
   );
 
-  Widget _playerBackendSelector() => SettingSegmentedTile<bool>(
-    pref: SettingsService.useExoPlayer,
-    icon: Symbols.play_circle_rounded,
-    title: t.settings.playerBackend,
-    description: t.settings.playerBackendDescription,
-    segments: [
-      ButtonSegment(value: true, label: Text(t.settings.exoPlayer), tooltip: t.settings.exoPlayerDescription),
-      ButtonSegment(value: false, label: Text(t.settings.mpv), tooltip: t.settings.mpvDescription),
-    ],
-  );
+  Widget _playerBackendSelector() {
+    final host = VideoHost.current;
+    if (host.choices.length == 1) {
+      return ListTile(
+        leading: const Icon(Symbols.play_circle_rounded),
+        title: Text(t.settings.playerBackend),
+        subtitle: Text(host.nativeLabel),
+      );
+    }
+    String label(VideoBackend backend) => switch (backend) {
+      VideoBackend.mpv => t.settings.mpv,
+      VideoBackend.exoplayer => t.settings.exoPlayer,
+      VideoBackend.system => host.nativeLabel,
+    };
+    return SettingSelectionTile<VideoBackend>(
+      pref: SettingsService.videoBackendPref,
+      icon: Symbols.play_circle_rounded,
+      title: t.settings.playerBackend,
+      description: t.settings.playerBackendDescription,
+      subtitleBuilder: label,
+      options: [for (final choice in host.choices) DialogOption(value: choice, title: label(choice))],
+    );
+  }
 
   Widget _externalPlayerTile() => SettingsBuilder(
     prefs: [SettingsService.useExternalPlayer, SettingsService.selectedExternalPlayer],

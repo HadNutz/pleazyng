@@ -454,6 +454,10 @@ def package(
         api_origin=lg_paymentwall_api_origin,
         public_key_sha256=lg_paymentwall_public_key_sha256,
     )
+    if mpv_path := os.environ.get("PLEAZYNG_TV_MPV_DIR"):
+        bundle = Path(mpv_path)
+        for name in ("libpleazyng_tv_mpv.so", "TV-MPV-LICENSES.txt", "tv-mpv-build.json"):
+            shutil.copyfile(bundle / name, app_real / "lib" / name)
     _write_paymentwall_build_profile(app_real, profile)
     if bool(visualizer_native) != bool(visualizer_manifest_sha256):
         raise PackageError("Specify both the MilkRust bundle and its manifest SHA-256")

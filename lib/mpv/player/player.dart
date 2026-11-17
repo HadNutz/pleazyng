@@ -1,6 +1,9 @@
 import 'dart:io' show Platform;
 
 import '../../models/audio_channel_limit.dart';
+import '../../models/video_backend.dart';
+import '../../services/settings_service.dart';
+import 'platform/player_system.dart';
 import '../../media/playback_rate.dart';
 import '../../media/runtime_playback_capabilities.dart';
 import '../models.dart';
@@ -412,33 +415,11 @@ abstract class Player {
   /// After calling this, the player instance should not be used.
   Future<void> dispose({bool preserveDisplayMode = false});
 
-  /// Creates a new player instance.
-  ///
-  /// Returns a platform-specific implementation:
-  /// - macOS/iOS: [PlayerNative] using MPVKit/libmpv with the AVFoundation video output
-  /// - Android: [PlayerNative] using MPV (default) or [PlayerAndroid] using ExoPlayer (opt-in)
-  /// - Windows: [PlayerWindows] using libmpv with native window embedding
-  /// - Linux: [PlayerLinux] using libmpv on a native Wayland video plane
-  ///
-  /// On Android, pass [useExoPlayer] to override the default:
-  /// - false: Use MPV (default, more features, ASS subtitle rendering)
-  /// - true: Use ExoPlayer (the escape hatch for devices MPV mishandles)
-  ///
-  /// [hardwareDecoding] is the session's hardware-decoding setting. The
-  /// Android mpv backend uses it to pick its initial video output — the fork's
-  /// vo=mediacodec (with gpu behind it) for hardware sessions, gpu-next for
-  /// software ones, where DV reshaping can actually happen (see
-  /// MpvPlayerCore.initialVideoOutput; #2010).
+  /// Number of independent slots for video and workspace sessions.
   static const int videoPlayerSlotCapacity = nativeVideoPlayerSlotCount;
 
-  static String videoEngineFor({required bool useExoPlayer}) {
-    if (PlatformDetector.isTizenBuild()) return 'tizen';
-    if (PlatformDetector.isWebOSBuild()) return 'webos';
-    return Platform.isAndroid && useExoPlayer ? 'exoplayer' : 'mpv';
-  }
-
   factory Player({
-    bool? useExoPlayer,
+    VideoBackend? backend,
     bool hardwareDecoding = true,
     int videoPlayerSlot = 0,
     bool companionSession = false,
@@ -447,21 +428,14 @@ abstract class Player {
     if (slot < 0 || slot >= videoPlayerSlotCapacity) {
       throw UnsupportedError('This platform does not provide native video slot $slot');
     }
-    if (slot == 0) {
-      RuntimePlaybackCapabilities.activeVideoEngine = videoEngineFor(useExoPlayer: useExoPlayer ?? false);
-    }
-    if (PlatformDetector.isTizenBuild()) return PlayerTizen();
-    if (PlatformDetector.isWebOSBuild()) {
-      return PlayerWebOS();
-    }
+    final engine = VideoHost.current.resolve(backend ?? SettingsService.preferredVideoBackend);
+    if (slot == 0) RuntimePlaybackCapabilities.activeVideoEngine = engine;
+    if (engine == 'tizen') return PlayerTizen();
+    if (engine == 'webos') return PlayerWebOS();
+    if (engine == 'exoplayer') return PlayerAndroid(videoPlayerSlot: slot);
+    if (engine != 'mpv') return PlayerSystem(engine, hardwareDecoding: hardwareDecoding);
     if (Platform.isAndroid) {
-      // Default to MPV on Android, with ExoPlayer as the opt-in alternative.
-      // The caller should pass useExoPlayer based on SettingsService.useExoPlayer.
-      final useExo = useExoPlayer ?? false;
-      if (useExo) {
-        return PlayerAndroid(videoPlayerSlot: slot); // ExoPlayer (opt-in)
-      }
-      return PlayerNative(hardwareDecoding: hardwareDecoding, videoPlayerSlot: slot); // MPV (default)
+      return PlayerNative(hardwareDecoding: hardwareDecoding, videoPlayerSlot: slot);
     }
     if (Platform.isMacOS || Platform.isIOS) {
       return PlayerNative(videoPlayerSlot: slot);

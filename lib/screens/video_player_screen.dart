@@ -25,6 +25,7 @@ import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../mpv/mpv.dart';
+import '../models/video_backend.dart';
 import '../mpv/player/platform/player_android.dart';
 import '../services/subtitle_playback_transcription_service.dart';
 import '../mpv/player/subtitle_pcm_capture_source.dart';
@@ -2122,12 +2123,17 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
     }
   }
 
-  Future<void> _runPlayerInitializationAttempt(int generation, {required bool replaceCurrent}) async {
+  Future<void> _runPlayerInitializationAttempt(
+    int generation, {
+    required bool replaceCurrent,
+    VideoBackend? overrideBackend,
+  }) async {
     var initPhase = 'starting';
     Completer<bool>? playbackCodecReady;
     Player? attemptPlayer;
     VideoPlayerLease? attemptVideoLease;
     var committed = false;
+    VideoBackend? fallbackBackend;
     String? failureMessage;
     try {
       if (!_isPlayerInitializationCurrent(generation)) {
@@ -2173,8 +2179,9 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       final debugLoggingEnabled =
           settingsService.read(SettingsService.enableDebugLogging) ||
           settingsService.read(SettingsService.dvExperimentDiagnostics);
-      final useExoPlayer = settingsService.read(SettingsService.useExoPlayer);
-      final videoEngine = Player.videoEngineFor(useExoPlayer: useExoPlayer);
+      final backend = overrideBackend ?? SettingsService.preferredVideoBackend;
+      final videoEngine = VideoHost.current.resolve(backend);
+      final useExoPlayer = videoEngine == 'exoplayer';
 
       // Kick off getPlaybackData() before the Windows display-mode sync, the
       // music-session teardown in claimVideo(), player construction, and the
@@ -2265,7 +2272,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
               requestCompatibleDolbyVisionRendition: true,
               supportedNativeDolbyVisionProfiles: VideoDecodeCapabilities.supportedNativeDolbyVisionProfiles,
               allowExperimentalDolbyVisionProfile7:
-                  (!Platform.isAndroid || !SettingsService.instance.read(SettingsService.useExoPlayer)) &&
+                  videoEngine == 'mpv' &&
                   !PlatformDetector.usesNativeTvMedia() &&
                   !SettingsService.instance.read(SettingsService.disableDolbyVision) &&
                   settingsService.read(SettingsService.experimentalDolbyVision),
@@ -2356,7 +2363,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       final allowInitialWorkspaceAudio =
           workspace == null || (!workspace.hasAudioSelection && videoSlot == VideoPlayerSlot.primary);
       final currentPlayer = Player(
-        useExoPlayer: useExoPlayer,
+        backend: backend,
         hardwareDecoding: enableHardwareDecoding,
         videoPlayerSlot: videoSlot.index,
       );
@@ -2397,7 +2404,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       }
       // Before the first file, so its opening route is already decided: a
       // later write would start it on one renderer and move it to the other.
-      if (Platform.isAndroid && !useExoPlayer) {
+      if (Platform.isAndroid && videoEngine == 'mpv') {
         final hdrSdrConversion = settingsService.read(SettingsService.hdrSdrConversion);
         await currentPlayer.setProperty('hdr-sdr-conversion', hdrSdrConversion.nativeValue);
       }
@@ -2432,7 +2439,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       // makes stutter. Wrapped: a preference must never abort player
       // initialization (a core that rejects the value keeps its default).
       final deinterlaceMode = settingsService.read(SettingsService.deinterlaceMode);
-      if (!(Platform.isAndroid && useExoPlayer) && deinterlaceMode != DeinterlaceMode.off) {
+      if ((videoEngine == 'mpv') && deinterlaceMode != DeinterlaceMode.off) {
         final applied = widget.isLive && deinterlaceMode == DeinterlaceMode.film
             ? DeinterlaceMode.video
             : deinterlaceMode;
@@ -2513,7 +2520,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
 
       // Placement policy is MPV-only and independent of ASS styling. Keep the
       // last accepted/default value on refusal; custom mpv.conf still wins below.
-      if (!(Platform.isAndroid && useExoPlayer)) {
+      if ((videoEngine == 'mpv')) {
         try {
           await currentPlayer.setProperty(
             'sub-use-margins',
@@ -2659,7 +2666,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       }
 
       // Before custom mpv.conf, so an `audio-device` line there still wins.
-      if (!(Platform.isAndroid && useExoPlayer)) {
+      if ((videoEngine == 'mpv')) {
         await applyPreferredAudioDevice(currentPlayer, settingsService.read(SettingsService.audioOutputDevice));
       }
 
@@ -2862,8 +2869,13 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       }
       committed = true;
     } catch (e, st) {
+      if (overrideBackend == null &&
+          e is PlatformException &&
+          const {'system-video-open', 'tizen-playback'}.contains(e.code)) {
+        fallbackBackend = e.code == 'tizen-playback' ? VideoBackend.mpv : VideoHost.current.choices.first;
+      }
       failureMessage = _safePlaybackErrorMessage(e);
-      if (_isPlayerInitializationCurrent(generation)) {
+      if (fallbackBackend == null && _isPlayerInitializationCurrent(generation)) {
         widget.launchObserver?.mark('failed', failure: 'playbackFailed');
       }
       appLogger.e('Failed to initialize player during $initPhase', error: e, stackTrace: st);
@@ -2882,6 +2894,11 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       }
     }
 
+    if (fallbackBackend != null && _isPlayerInitializationCurrent(generation)) {
+      appLogger.i('Video open failed; retrying this source with ${VideoHost.current.resolve(fallbackBackend)}');
+      await _runPlayerInitializationAttempt(generation, replaceCurrent: false, overrideBackend: fallbackBackend);
+      return;
+    }
     if (failureMessage != null && _isPlayerInitializationCurrent(generation)) {
       setState(() {
         _isPlayerInitialized = false;

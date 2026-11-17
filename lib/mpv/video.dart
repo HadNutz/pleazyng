@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'models.dart';
 import 'player/player.dart';
+import 'player/platform/player_system.dart';
 import 'player/platform/player_webos.dart';
 import 'player/platform/player_tizen.dart';
 import 'player/video_rect_support.dart';
@@ -132,6 +133,12 @@ class _VideoState extends State<Video> {
   }
 
   Widget _buildVideoSurface() {
+    if (widget.player case final PlayerSystem player) {
+      return ValueListenableBuilder<int>(
+        valueListenable: player.surfaceRevision,
+        builder: (_, _, _) => player.videoSurface(),
+      );
+    }
     if (widget.player is PlayerTizen) {
       final player = widget.player as PlayerTizen;
       return ValueListenableBuilder<int>(

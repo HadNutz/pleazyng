@@ -159,7 +159,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          packages=(build-essential ca-certificates clang cmake curl git-lfs pkg-config python3 unzip zip)
+          packages=(autoconf automake libtool llvm lld nasm meson ninja-build python3-jinja2 build-essential ca-certificates clang cmake curl git-lfs pkg-config python3 unzip zip)
           if ! command -v rustup >/dev/null; then packages+=(rustup); fi
           for attempt in 1 2 3; do
             if sudo apt-get update -o Acquire::Retries=3 \

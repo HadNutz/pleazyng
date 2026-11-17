@@ -1,4 +1,5 @@
 #include "my_application.h"
+#include "system_video.h"
 
 #include <flutter_linux/flutter_linux.h>
 #include <gdk/gdk.h>
@@ -104,6 +105,9 @@ static void my_application_activate(GApplication* application) {
 
   // Register Flutter plugins.
   fl_register_plugins(FL_PLUGIN_REGISTRY(self->flutter_view));
+  g_autoptr(FlPluginRegistrar) system_video = fl_plugin_registry_get_registrar_for_plugin(
+      FL_PLUGIN_REGISTRY(self->flutter_view), "SystemVideo");
+  register_system_video(system_video);
 #ifdef PLEZY_STEAM_RECEIVER
   steam_plugin_register_with_registrar(
       fl_plugin_registry_get_registrar_for_plugin(FL_PLUGIN_REGISTRY(self->flutter_view), "SteamReceiver"));

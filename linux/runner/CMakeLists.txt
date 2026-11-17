@@ -4,6 +4,7 @@ project(runner LANGUAGES CXX)
 add_executable(${BINARY_NAME}
   "main.cc"
   "my_application.cc"
+  "system_video.cc"
   "workspace_views.cc"
   "mpv/mpv_player.cc"
   "mpv/mpv_plugin.cc"
@@ -70,6 +71,7 @@ add_definitions(-DAPPLICATION_ID="${APPLICATION_ID}")
 pkg_check_modules(WAYLAND_CLIENT REQUIRED IMPORTED_TARGET wayland-client)
 pkg_check_modules(WAYLAND_EGL REQUIRED IMPORTED_TARGET wayland-egl)
 pkg_check_modules(EGL REQUIRED IMPORTED_TARGET egl)
+pkg_check_modules(SYSTEM_VIDEO REQUIRED IMPORTED_TARGET gstreamer-app-1.0 gstreamer-video-1.0)
 pkg_check_modules(MPV REQUIRED IMPORTED_TARGET mpv)
 pkg_check_modules(EPOXY REQUIRED IMPORTED_TARGET epoxy)
 find_package(Threads REQUIRED)
@@ -116,7 +118,7 @@ target_include_directories(simdutf PUBLIC "${simdutf_SOURCE_DIR}")
 target_compile_features(simdutf PUBLIC cxx_std_14)
 target_compile_options(simdutf PRIVATE -w)
 
-target_link_libraries(${BINARY_NAME} PRIVATE flutter)
+target_link_libraries(${BINARY_NAME} PRIVATE flutter PkgConfig::SYSTEM_VIDEO)
 target_link_libraries(${BINARY_NAME} PRIVATE PkgConfig::GTK)
 target_link_libraries(${BINARY_NAME} PRIVATE PkgConfig::MPV)
 target_link_libraries(${BINARY_NAME} PRIVATE PkgConfig::EPOXY)

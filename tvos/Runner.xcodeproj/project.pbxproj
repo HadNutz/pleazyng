@@ -24,6 +24,7 @@
 		40C477DC462980F6AF17BEA1 /* ShelfFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C792B031A97357694F027A0 /* ShelfFetcher.swift */; };
 		4F1000024F1000024F100002 /* FlutterNativeTextInputTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4F1000014F1000014F100001 /* FlutterNativeTextInputTests.mm */; };
 		5C71F5F7B33075F2B007825B /* MpvPlayerPluginShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73645904F226A24585A092CE /* MpvPlayerPluginShared.swift */; };
+		F485A2916BA156B4B75962B0 /* SystemVideoPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DAE754C48E819E53990FB59 /* SystemVideoPlugin.swift */; };
 		63354F994A44572B97894B14 /* ShelfItemMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C339C20E52A6F6F6725EF31F /* ShelfItemMapper.swift */; };
 		65AC2C222043B3E6723E2076 /* ConnectivityPlusPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934BC4E316D2AC788C954766 /* ConnectivityPlusPluginTests.swift */; };
 		691577F0EB3F4EB1A5160280 /* MpvPlayerCoreBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52A3BDA46E79969EA1DF3AC /* MpvPlayerCoreBase.swift */; };
@@ -146,6 +147,7 @@
 		67C3193A50DFDECE2B92D075 /* ConnectivityPlusPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConnectivityPlusPlugin.swift; sourceTree = "<group>"; };
 		6AEF79DFBD1D80F00AB39CDA /* PathMonitorConnectivityProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PathMonitorConnectivityProvider.swift; sourceTree = "<group>"; };
 		73645904F226A24585A092CE /* MpvPlayerPluginShared.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MpvPlayerPluginShared.swift; path = ../shared/apple/MpvPlayer/MpvPlayerPluginShared.swift; sourceTree = "<source_root>"; };
+		3DAE754C48E819E53990FB59 /* SystemVideoPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SystemVideoPlugin.swift; path = ../shared/apple/MpvPlayer/SystemVideoPlugin.swift; sourceTree = "<source_root>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
@@ -429,6 +431,7 @@
 			children = (
 				D52A3BDA46E79969EA1DF3AC /* MpvPlayerCoreBase.swift */,
 				73645904F226A24585A092CE /* MpvPlayerPluginShared.swift */,
+				3DAE754C48E819E53990FB59 /* SystemVideoPlugin.swift */,
 				B1D51A6A2F00110000000015 /* MpvAudioPlayerCore.swift */,
 				B1D51A6A2F00110000000017 /* MpvAudioPlayerPlugin.swift */,
 				B1D51A6A2F00110000000090 /* MilkRustNativeHost.mm */,
@@ -845,6 +848,7 @@
 				A9C0FF1C2F00120000000011 /* AppIconPlugin.swift in Sources */,
 				691577F0EB3F4EB1A5160280 /* MpvPlayerCoreBase.swift in Sources */,
 				5C71F5F7B33075F2B007825B /* MpvPlayerPluginShared.swift in Sources */,
+				F485A2916BA156B4B75962B0 /* SystemVideoPlugin.swift in Sources */,
 				B1D51A6A2F00110000000014 /* MpvAudioPlayerCore.swift in Sources */,
 				B1D51A6A2F00110000000016 /* MpvAudioPlayerPlugin.swift in Sources */,
 				B1D51A6A2F00110000000091 /* MilkRustNativeHost.mm in Sources */,

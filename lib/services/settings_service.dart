@@ -38,6 +38,7 @@ export 'base_shared_preferences_service.dart'
         NullableEnumPref,
         JsonPref;
 import '../models/audio_channel_limit.dart';
+import '../models/video_backend.dart';
 import '../models/motion_clarity.dart';
 import '../models/audio_quality_preset.dart';
 import '../models/motion_processing_mode.dart';
@@ -1042,6 +1043,7 @@ class SettingsService extends BaseSharedPreferencesService {
   /// the old key. Shared by the typed migration, reset, and the portable
   /// settings codec.
   static const Map<String, LegacyBoolEnumPref<Enum>> legacyBoolPrefs = {
+    'android_use_exoplayer': androidVideoBackend,
     _legacyAutoSkipIntroKey: skipIntroMode,
     _legacyAutoSkipCreditsKey: skipCreditsMode,
     _legacyAudioDownmixKey: audioChannelLimit,
@@ -1296,15 +1298,38 @@ class SettingsService extends BaseSharedPreferencesService {
     defaultValue: SpecialsOrdering.respectServer,
   );
 
-  /// mpv is the Android backend; ExoPlayer stays selectable as the escape
-  /// hatch while it still ships.
-  ///
-  /// Deliberately a different key from the `use_exoplayer` it replaces. That
-  /// key only ever holds an explicit pick made while ExoPlayer was the
-  /// default, and honoring those picks would leave the devices that most
-  /// need the new backend on the old one. Dropping it ([onInit]) puts every
-  /// install on mpv; choosing ExoPlayer again writes this key and sticks.
-  static const useExoPlayer = BoolPref('android_use_exoplayer');
+  static const androidVideoBackend = LegacyBoolEnumPref<VideoBackend>(
+    'android_video_backend',
+    legacyKey: 'android_use_exoplayer',
+    values: VideoBackend.values,
+    defaultValue: VideoBackend.mpv,
+    legacyTrue: VideoBackend.exoplayer,
+    legacyFalse: VideoBackend.mpv,
+  );
+
+  static const desktopAppleVideoBackend = EnumPref<VideoBackend>(
+    'system_video_backend',
+    values: [VideoBackend.mpv, VideoBackend.system],
+    defaultValue: VideoBackend.mpv,
+  );
+
+  static const tvVideoBackend = EnumPref<VideoBackend>(
+    'tv_video_backend',
+    values: [VideoBackend.system, VideoBackend.mpv],
+    defaultValue: VideoBackend.system,
+  );
+
+  static Pref<VideoBackend> get videoBackendPref => PlatformDetector.usesNativeTvMedia()
+      ? tvVideoBackend
+      : Platform.isAndroid
+      ? androidVideoBackend
+      : desktopAppleVideoBackend;
+
+  static VideoBackend get preferredVideoBackend =>
+      instanceOrNull?.read(videoBackendPref) ?? VideoHost.current.choices.first;
+
+  static String get selectedVideoEngine => VideoHost.current.resolve(preferredVideoBackend);
+
   static const startupSection = EnumPref<NavigationTabId>(
     'startup_section',
     values: NavigationTabId.values,
@@ -2309,7 +2334,9 @@ class SettingsService extends BaseSharedPreferencesService {
     deinterlaceMode,
     playerAlwaysOnTop,
     specialsOrdering,
-    useExoPlayer,
+    androidVideoBackend,
+    desktopAppleVideoBackend,
+    tvVideoBackend,
     startupSection,
     showExploreTab,
     hideEmptyLibraries,

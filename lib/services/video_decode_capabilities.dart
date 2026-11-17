@@ -7,6 +7,7 @@ import '../media/decoder_inventory.dart';
 import '../media/media_display_criteria.dart';
 import '../media/runtime_playback_capabilities.dart';
 import '../media/webos_playback_profile.dart';
+import '../media/tizen_playback_profile.dart';
 
 import '../utils/async_singleton.dart';
 import '../utils/device_channel.dart';
@@ -63,6 +64,18 @@ class VideoDecodeCapabilities {
       _singleton.getInstance(VideoDecodeCapabilities._, (instance) => instance._detect());
 
   Future<void> _detect() async {
+    if (PlatformDetector.isTizenBuild()) {
+      try {
+        const channel = MethodChannel('org.snapetech.pleazyng/system_video');
+        final codecs = await channel.invokeListMethod<String>('hardwareVideoDecoders');
+        if (codecs != null && codecs.isNotEmpty) _hardwareHevc = codecs.contains('hevc');
+      } on MissingPluginException {
+        // Older plugin builds only have the compatibility transcode target.
+      } on PlatformException {
+        // The firmware's media-codec service is optional.
+      }
+      return;
+    }
     if (PlatformDetector.isWebOSBuild()) {
       try {
         final info = (await DeviceInfoPlugin().deviceInfo).data;
@@ -106,9 +119,18 @@ class VideoDecodeCapabilities {
   /// Whether [codec] should be advertised to a media server. Safe before init.
   static bool accepts(RankedVideoCodec codec) {
     if (isRefusedByUser(codec)) return false;
-    if (videoEngine == 'tizen') return codec == RankedVideoCodec.h264;
+    if (const {'gstreamer', 'mediafoundation'}.contains(videoEngine)) return codec == RankedVideoCodec.h264;
+    if (videoEngine == 'tvmpv' || videoEngine == 'tizen') {
+      return codec == RankedVideoCodec.h264 ||
+          (codec == RankedVideoCodec.hevc &&
+              (_singleton.instance?._hardwareHevc == true ||
+                  (videoEngine == 'tvmpv' && _singleton.instance?._webosUhd == true)));
+    }
+    if (videoEngine == 'avplayer' && codec != RankedVideoCodec.h264) {
+      return codec == RankedVideoCodec.hevc && _singleton.instance?._hardwareHevc == true;
+    }
     if (videoEngine == 'webos') return codec != RankedVideoCodec.av1 || _webosModernUhd;
-    if (videoEngine == 'exoplayer') {
+    if (videoEngine == 'exoplayer' || videoEngine == 'mediaplayer') {
       return codec == RankedVideoCodec.h264 || (_singleton.instance?._androidVideoCodecs?.contains(codec.id) ?? false);
     }
     final instance = _singleton.instance;
@@ -126,7 +148,9 @@ class VideoDecodeCapabilities {
       if (accepts(codec)) codec,
   ];
 
-  static String get videoEngine => PlatformDetector.isTizenBuild()
+  static String get videoEngine => RuntimePlaybackCapabilities.negotiationEngine == 'tvmpv'
+      ? 'tvmpv'
+      : PlatformDetector.isTizenBuild()
       ? 'tizen'
       : PlatformDetector.isWebOSBuild()
       ? 'webos'
@@ -142,10 +166,32 @@ class VideoDecodeCapabilities {
   /// codec positively reported by the platform hardware probe.
   static List<String> get directPlayVideoCodecs {
     switch (videoEngine) {
+      case 'tvmpv':
+        return const [
+          'h264',
+          'hevc',
+          'mpeg2video',
+          'mpeg4',
+          'vp8',
+          'vp9',
+          'av1',
+          'theora',
+          'mjpeg',
+          'wmv3',
+          'vc1',
+          'h263',
+          'flv1',
+        ].where(_allowSourceCodec).toList();
       case 'tizen':
+        return tizenVideoContainers.values.expand((codecs) => codecs).toSet().where(_allowSourceCodec).toList();
+      case 'mediafoundation':
+      case 'gstreamer':
         return const ['h264'];
+      case 'avplayer':
+        return ['h264', if (accepts(RankedVideoCodec.hevc)) 'hevc'];
       case 'webos':
         return webosDirectPlayContainers.values.expand((codecs) => codecs).toSet().where(_allowSourceCodec).toList();
+      case 'mediaplayer':
       case 'exoplayer':
         return (_singleton.instance?._androidVideoCodecs ?? const {'h264'}).where(_allowSourceCodec).toList();
     }

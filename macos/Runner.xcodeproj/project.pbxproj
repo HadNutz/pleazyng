@@ -42,6 +42,7 @@
 		6AD8B1722ED7B50000E9E1C2 /* DisplayModeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD8B1732ED7B50000E9E1C2 /* DisplayModeManager.swift */; };
 		B1D51A6A2F00110000000003 /* MpvPlayerCoreBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D51A6A2F00110000000004 /* MpvPlayerCoreBase.swift */; };
 		B1D51A6A2F00110000000007 /* MpvPlayerPluginShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D51A6A2F00110000000008 /* MpvPlayerPluginShared.swift */; };
+		0279B6C0AD9620ABA7650CF8 /* SystemVideoPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22A4D0B070D6FA60711A934 /* SystemVideoPlugin.swift */; };
 		B1D51A6A2F00110000000010 /* MpvAudioPlayerCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D51A6A2F00110000000011 /* MpvAudioPlayerCore.swift */; };
 		B1D51A6A2F00110000000012 /* MpvAudioPlayerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D51A6A2F00110000000013 /* MpvAudioPlayerPlugin.swift */; };
 		CD0DE6EB5F0D9131708BECF5 /* DeepLinkDeliveryCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7278E9E14CBE2D57031E91BE /* DeepLinkDeliveryCoordinator.swift */; };
@@ -124,6 +125,7 @@
 		A1182D4EEFEC88235D8ECD2C /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1D51A6A2F00110000000004 /* MpvPlayerCoreBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MpvPlayerCoreBase.swift; path = ../shared/apple/MpvPlayer/MpvPlayerCoreBase.swift; sourceTree = SOURCE_ROOT; };
 		B1D51A6A2F00110000000008 /* MpvPlayerPluginShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MpvPlayerPluginShared.swift; path = ../shared/apple/MpvPlayer/MpvPlayerPluginShared.swift; sourceTree = SOURCE_ROOT; };
+		D22A4D0B070D6FA60711A934 /* SystemVideoPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SystemVideoPlugin.swift; path = ../shared/apple/MpvPlayer/SystemVideoPlugin.swift; sourceTree = SOURCE_ROOT; };
 		B1D51A6A2F00110000000011 /* MpvAudioPlayerCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MpvAudioPlayerCore.swift; path = ../shared/apple/MpvPlayer/MpvAudioPlayerCore.swift; sourceTree = SOURCE_ROOT; };
 		B1D51A6A2F00110000000013 /* MpvAudioPlayerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MpvAudioPlayerPlugin.swift; path = ../shared/apple/MpvPlayer/MpvAudioPlayerPlugin.swift; sourceTree = SOURCE_ROOT; };
 		7278E9E14CBE2D57031E91BE /* DeepLinkDeliveryCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeepLinkDeliveryCoordinator.swift; path = ../shared/apple/DeepLink/DeepLinkDeliveryCoordinator.swift; sourceTree = SOURCE_ROOT; };
@@ -313,6 +315,7 @@
 			children = (
 				B1D51A6A2F00110000000004 /* MpvPlayerCoreBase.swift */,
 				B1D51A6A2F00110000000008 /* MpvPlayerPluginShared.swift */,
+				D22A4D0B070D6FA60711A934 /* SystemVideoPlugin.swift */,
 				B1D51A6A2F00110000000011 /* MpvAudioPlayerCore.swift */,
 				B1D51A6A2F00110000000013 /* MpvAudioPlayerPlugin.swift */,
 				B1D51A6A2F00110000000090 /* MilkRustNativeHost.mm */,
@@ -700,6 +703,7 @@
 				335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */,
 				B1D51A6A2F00110000000003 /* MpvPlayerCoreBase.swift in Sources */,
 				B1D51A6A2F00110000000007 /* MpvPlayerPluginShared.swift in Sources */,
+				0279B6C0AD9620ABA7650CF8 /* SystemVideoPlugin.swift in Sources */,
 				B1D51A6A2F00110000000010 /* MpvAudioPlayerCore.swift in Sources */,
 				B1D51A6A2F00110000000012 /* MpvAudioPlayerPlugin.swift in Sources */,
 				B1D51A6A2F00110000000091 /* MilkRustNativeHost.mm in Sources */,

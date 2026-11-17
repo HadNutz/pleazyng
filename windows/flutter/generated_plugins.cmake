@@ -21,6 +21,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   sentry_flutter
   universal_gamepad
   url_launcher_windows
+  video_player_win
   window_manager
 )
 

@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "../../../../../shared/tv_mpv/tv_mpv_plugin.h"
 #include "video_player_tizen_plugin.h"
+#include "decoder_capabilities.h"
 
 #include <flutter/plugin_registrar.h>
 #include <flutter_tizen.h>
@@ -22,6 +24,7 @@ class VideoPlayerTizenPlugin : public flutter::Plugin {
       flutter::PluginRegistrar* plugin_registrar) {
     auto plugin = std::make_unique<VideoPlayerTizenPlugin>(registrar_ref);
     plugin_registrar->AddPlugin(std::move(plugin));
+  plugin_registrar->AddPlugin(std::make_unique<pleazyng_tv::TvMpvPlugin>(plugin_registrar, TizenHardwareVideoDecoders));
   }
 
   explicit VideoPlayerTizenPlugin(

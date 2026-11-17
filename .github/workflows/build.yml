@@ -1111,7 +1111,7 @@ jobs:
             df -h "$RUNNER_TEMP" >&2
             exit 1
           fi
-          packages=(build-essential clang cmake curl file git-lfs libgtk-3-dev libsecret-1-dev liblzma-dev ninja-build pkg-config unzip libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-plugins-bad gstreamer1.0-plugins-good)
+          packages=(autoconf automake libtool meson python3-jinja2 build-essential clang cmake curl file git-lfs libgtk-3-dev libsecret-1-dev liblzma-dev ninja-build pkg-config unzip libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-plugins-bad gstreamer1.0-plugins-good)
           for attempt in 1 2 3; do
             if sudo apt-get update -o Acquire::Retries=3 \
               && sudo apt-get install -y --no-install-recommends -o Acquire::Retries=3 "${packages[@]}"; then

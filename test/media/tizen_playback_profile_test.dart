@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/media/tizen_playback_profile.dart';
 
 void main() {
-  test('Samsung profile advertises only conservative native-media formats', () {
+  test('Samsung profile advertises native UHD sources and a compatible HLS conversion', () {
     final profile = tizenPlaybackProfile(audio: false, burnSubtitles: false);
     final transcode = (profile['TranscodingProfiles'] as List).single as Map;
     expect(transcode['Protocol'], 'hls');
@@ -12,17 +12,16 @@ void main() {
       {'Format': 'srt', 'Method': 'External'},
       {'Format': 'vtt', 'Method': 'External'},
     ]);
-    expect(profile.toString(), isNot(contains('hevc')));
-    expect(profile.toString(), isNot(contains('av1')));
+    expect(profile.toString(), contains('hevc'));
+    expect(profile.toString(), contains('vp9'));
+    expect(profile.toString(), isNot(contains('1080')));
   });
   test('burn-in does not simultaneously advertise external subtitle delivery', () {
     expect(tizenPlaybackProfile(audio: true, burnSubtitles: true)['SubtitleProfiles'], isEmpty);
   });
-  test('resolution cap preserves a smaller requested preset', () {
-    expect(tizenVideoResolution(null), '1920x1080');
-    expect(tizenVideoResolution('3840x2160'), '1920x1080');
-    expect(tizenVideoResolution('1280x720'), '1280x720');
-    expect(tizenVideoResolution('invalid'), '1920x1080');
-    expect(tizenVideoResolution('0x0'), '1920x1080');
+  test('a refused codec stays out of Samsung original-source profiles', () {
+    final profile = tizenPlaybackProfile(audio: false, burnSubtitles: false, refusedVideo: {'av1'});
+    expect(profile['DirectPlayProfiles'].toString(), isNot(contains('av1')));
+    expect(profile['DirectPlayProfiles'].toString(), contains('hevc'));
   });
 }

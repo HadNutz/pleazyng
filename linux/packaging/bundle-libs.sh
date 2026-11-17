@@ -162,28 +162,32 @@ if [[ -n "$GTK_LIBDIR" ]]; then
     bundle_module_dir "$PRINT_MODULE_DIR" "$PRINT_DEST"
 fi
 
-# Dedicated Steam decoder plugins. Bundle only the fixed pipelines we use,
-# with the matching scanner, rather than loading a different distro's plugins
-# against the bundled GStreamer libraries. The final dependency walk includes
-# their FFmpeg/audio dependencies. Builds without Steam do not need these.
+# Bundle the in-app GStreamer player and Steam decoder elements with their
+# matching scanner. The launcher isolates these from host plugin versions.
 if compgen -G "$LIB_DIR/libgstreamer-1.0.so*" > /dev/null; then
     STEAM_GST_PLUGINS="$(pkg-config --variable=pluginsdir gstreamer-1.0)"
     STEAM_GST_SCANNER="$(pkg-config --variable=pluginscannerdir gstreamer-1.0)/gst-plugin-scanner"
     mkdir -p "$LIB_DIR/gstreamer-1.0" "$LIB_DIR/gstreamer-tools"
-    for module in app coreelements videoparsersbad libav videoconvertscale audioconvert audioresample volume autodetect pulseaudio; do
+    for module in playback typefindfunctions isomp4 matroska avi ogg flv mpegtsdemux soup tcp gio subparse audioparsers app coreelements videoparsersbad libav videoconvertscale audioconvert audioresample volume autodetect pulseaudio; do
         source="$STEAM_GST_PLUGINS/libgst$module.so"
         # GStreamer 1.20 used a separate videoconvert module.
         if [[ "$module" == "videoconvertscale" && ! -f "$source" ]]; then
             source="$STEAM_GST_PLUGINS/libgstvideoconvert.so"
         fi
         if [[ ! -f "$source" ]]; then
-            echo "Error: Steam decoder plugin is missing: libgst$module.so" >&2
+            echo "Error: GStreamer plugin is missing: libgst$module.so" >&2
             exit 1
         fi
         cp -L "$source" "$LIB_DIR/gstreamer-1.0/"
     done
+    # playbin uses the legacy HLS demuxer. Newer distros also ship
+    # adaptivedemux2. The launcher points at this private plugin directory.
+    for module in va vaapi nvcodec v4l2codecs video4linux2 opengl hls adaptivedemux2 pango overlaycomposition libvisual; do
+        source="$STEAM_GST_PLUGINS/libgst$module.so"
+        [[ ! -f "$source" ]] || cp -L "$source" "$LIB_DIR/gstreamer-1.0/"
+    done
     if [[ ! -x "$STEAM_GST_SCANNER" ]]; then
-        echo "Error: Steam decoder plugin scanner is missing" >&2
+        echo "Error: GStreamer plugin scanner is missing" >&2
         exit 1
     fi
     cp -L "$STEAM_GST_SCANNER" "$LIB_DIR/gstreamer-tools/gst-plugin-scanner"

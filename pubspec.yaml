@@ -92,6 +92,7 @@ dependencies:
   # LG's webOS native media plane is the supported video playback backend on TV.
   # Vendor the pinned upstream plugin so sensitive stream URLs stay redacted
   # from the native device log.
+  video_player_win: 3.3.1
   video_player_drm:
     path: packages/webos_plugins/video_player_drm
   # Samsung's federated implementations. Older package-info/wakelock adapters

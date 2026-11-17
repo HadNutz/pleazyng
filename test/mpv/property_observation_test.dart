@@ -134,6 +134,7 @@ void main() {
     expect(names(observations), {
       'decoder-list',
       'demuxer-lavf-list',
+      'protocol-list',
       'time-pos',
       'duration',
       'pause',
@@ -141,7 +142,7 @@ void main() {
       'audio-device',
       'playlist-pos',
     });
-    for (final name in ['decoder-list', 'demuxer-lavf-list', 'playlist-pos']) {
+    for (final name in ['decoder-list', 'demuxer-lavf-list', 'protocol-list', 'playlist-pos']) {
       final observation = observations.singleWhere((call) => (call.arguments as Map)['name'] == name);
       expect((observation.arguments as Map)['format'], Platform.isAndroid ? 'string' : 'node');
     }

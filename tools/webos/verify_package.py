@@ -29,6 +29,7 @@ RUNTIME_LIBRARIES = (
 )
 REQUIRED_NATIVE_LIBRARIES = (
     "libapp.so",
+    "libpleazyng_tv_mpv.so",
     "libplezy_torrent.so",
     "libflutter_secure_storage_webos_plugin.so",
     "libshared_preferences_webos_plugin.so",
@@ -453,11 +454,16 @@ def verify_ipk(path: Path, lock: dict[str, object]) -> dict[str, object]:
     package_info_path = f"usr/palm/packages/{APP_ID}/packageinfo.json"
     notice_path = str(APP_ROOT / "data/flutter_assets/assets/licenses/LGFlutterWebOSRuntimeNotice.txt")
     library_paths = [str(APP_ROOT / "lib" / name) for name in (*RUNTIME_LIBRARIES, *REQUIRED_NATIVE_LIBRARIES)]
+    tv_manifest = str(APP_ROOT / "lib/tv-mpv-build.json")
+    tv_notice = str(APP_ROOT / "lib/TV-MPV-LICENSES.txt")
     selected = read_tar_members(
         data_tar,
-        {appinfo_path, executable_path, package_info_path, notice_path, PAYMENTWALL_BUILD_METADATA, *library_paths},
+        {tv_manifest, tv_notice, appinfo_path, executable_path, package_info_path, notice_path, PAYMENTWALL_BUILD_METADATA, *library_paths},
         optional=VISUALIZER_ARTIFACTS,
     )
+    tv_mpv = selected[str(APP_ROOT / "lib/libpleazyng_tv_mpv.so")]
+    if not selected[tv_notice].strip() or json.loads(selected[tv_manifest]).get("sha256") != sha256(tv_mpv):
+        raise ValueError("TV mpv library or notices differ from the source-build manifest")
     appinfo = json.loads(selected[appinfo_path])
     if appinfo.get("id") != APP_ID:
         raise ValueError(f"IPK app ID is {appinfo.get('id')!r}; expected {APP_ID!r}")

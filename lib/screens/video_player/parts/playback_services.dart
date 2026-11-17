@@ -278,7 +278,7 @@ extension _VideoPlayerPlaybackServiceMethods on VideoPlayerScreenState {
         // Android ExoPlayer position can advance on its standalone clock without
         // a renderer, so it may infer readiness only after switching to MPV.
         final canInferRenderedFrameFromPosition =
-            !(Platform.isAndroid && useExoPlayer) || (currentPlayer is PlayerAndroid && currentPlayer.usingMpvFallback);
+            currentPlayer.playerType == 'mpv' || (currentPlayer is PlayerAndroid && currentPlayer.usingMpvFallback);
         if (canInferRenderedFrameFromPosition && !_firstFrame.rendered) {
           if (lastObservedPositionMs != null && position.inMilliseconds != lastObservedPositionMs) {
             unawaited(_markFirstFrameReady(currentPlayer, settingsService));

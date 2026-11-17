@@ -117,6 +117,10 @@ fi
 "$WEBOS_PYTHON_BIN" "$ROOT/tools/webos/verify_package.py" --project-metadata
 "$WEBOS_PYTHON_BIN" "$ROOT/tools/webos/verify_sdk_checkout.py" "$SDK_ROOT"
 "$WEBOS_PYTHON_BIN" "$ROOT/tools/webos/ndk_environment.py" --root "$NDK_ROOT" --verify
+# Build before sourcing LG's target environment: the recipe creates its own
+# compiler wrappers and also runs native host tools.
+export PLEAZYNG_TV_MPV_DIR="$ROOT/build/tv-mpv-webos"
+"$WEBOS_PYTHON_BIN" "$ROOT/scripts/tv_mpv/build.py" webos armv7l "$PLEAZYNG_TV_MPV_DIR" --webos-ndk "$NDK_ROOT"
 NDK_ENVIRONMENT="$(mktemp "${TMPDIR:-/tmp}/pleazyng-webos-ndk-env.XXXXXX")"
 trap 'rm -f -- "$NDK_ENVIRONMENT"' EXIT
 "$WEBOS_PYTHON_BIN" "$ROOT/tools/webos/ndk_environment.py" --root "$NDK_ROOT" --emit-shell > "$NDK_ENVIRONMENT"

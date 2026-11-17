@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2023 LG Electronics Inc.
 // SPDX-License-Identifier: BSD-3-Clause
 
+#include "../../../../shared/tv_mpv/tv_mpv_plugin.h"
 #include "include/video_player_drm/video_player_web_os_plugin.h"
 
 #include <pbnjson.hpp>
@@ -22,6 +23,7 @@ void VideoPlayerPlugin::RegisterWithRegistrar(
     FlutterDesktopViewRef view) {
   auto plugin = std::make_unique<VideoPlayerPlugin>(registrar, view);
   registrar->AddPlugin(std::move(plugin));
+  registrar->AddPlugin(std::make_unique<pleazyng_tv::TvMpvPlugin>(registrar));
 }
 
 VideoPlayerPlugin::VideoPlayerPlugin(

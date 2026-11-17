@@ -961,6 +961,7 @@ class PlezyActivity : FlutterActivity() {
     FlutterEngineCache.getInstance().put(MusicBrowserService.ENGINE_ID, flutterEngine)
     if (!flutterEngine.plugins.has(MusicBackgroundPlatformPlugin::class.java)) flutterEngine.plugins.add(MusicBackgroundPlatformPlugin())
     (flutterEngine.plugins.get(MusicBackgroundPlatformPlugin::class.java) as? MusicBackgroundPlatformPlugin)?.suspendForActivity()
+    if (!flutterEngine.plugins.has(SystemVideoPlugin::class.java)) flutterEngine.plugins.add(SystemVideoPlugin())
     if (!flutterEngine.plugins.has(MpvPlayerPlugin::class.java)) flutterEngine.plugins.add(MpvPlayerPlugin())
     if (!flutterEngine.plugins.has(MpvWorkspacePlayerPlugin::class.java)) flutterEngine.plugins.add(MpvWorkspacePlayerPlugin())
     if (!flutterEngine.plugins.has(MpvWorkspace2PlayerPlugin::class.java)) flutterEngine.plugins.add(MpvWorkspace2PlayerPlugin())
