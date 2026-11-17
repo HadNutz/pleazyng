@@ -6,6 +6,7 @@ import base64
 import hashlib
 import io
 import json
+import plistlib
 import shutil
 import stat
 import sys
@@ -33,6 +34,11 @@ class SourceProofTests(unittest.TestCase):
                         "files": [{"filename": "scripts/prepare_gradle_repositories.py"}]}
         self.jobs = [{"name": name, "status": "completed", "conclusion": "success"}
                      for name in recovery.REQUIRED_JOBS]
+        tvos = next(job for job in self.jobs if job['name'] == 'Build tvOS developer package (arm64)')
+        tvos['steps'] = [
+            {'name': name, 'status': 'completed', 'conclusion': 'success'}
+            for name in ('Package unsigned tvOS developer IPA', 'Verify tvOS runtime dependencies',
+                         'Attest unsigned tvOS developer package', 'Upload tvOS package')]
         self.jobs += [{"name": "build-android", "status": "completed", "conclusion": "failure"},
                       {"name": "create-release", "status": "completed", "conclusion": "skipped"}]
 
@@ -64,7 +70,8 @@ class SourceProofTests(unittest.TestCase):
         ])
 
         proof = self.prove(
-            run_id=43826939425, head_sha=source_sha, version="3.0.36", rebuild_macos=True
+            run_id=43826939425, head_sha=source_sha, version="3.0.36",
+            rebuild_macos=True, rebuild_tvos=True,
         )
 
         self.assertEqual(proof["source_sha"], source_sha)
@@ -216,6 +223,18 @@ class SourceProofTests(unittest.TestCase):
         next(job for job in self.jobs if job["name"] == "build-ios")["conclusion"] = "failure"
         with self.assertRaises(recovery.RecoveryError):
             self.prove(rebuild_tvos=True)
+
+    def test_reused_tvos_requires_runtime_receipt_production_and_attestation_steps(self):
+        tvos = next(job for job in self.jobs if job['name'] == 'Build tvOS developer package (arm64)')
+        self.assertTrue(self.prove()['runtime_dependency_receipt_required'])
+        original = copy.deepcopy(tvos['steps'])
+        for missing in ('Package unsigned tvOS developer IPA', 'Verify tvOS runtime dependencies',
+                        'Attest unsigned tvOS developer package', 'Upload tvOS package'):
+            tvos['steps'] = [step for step in original if step['name'] != missing]
+            with self.subTest(step=missing), self.assertRaisesRegex(
+                    recovery.RecoveryError, 'runtime dependency qualification'):
+                self.prove()
+        tvos['steps'] = original
 
     def test_failed_ios_requires_explicit_rebuild_and_keeps_tvos_strict(self):
         next(job for job in self.jobs if job["name"] == "build-ios")["conclusion"] = "failure"
@@ -413,13 +432,25 @@ class SourceProofTests(unittest.TestCase):
 
     def test_frozen_reuse_requires_actual_signed_store_steps(self):
         with patch('verify_frozen_packaging_repair.verify_frozen_packaging_repair', return_value={}):
-            with self.assertRaisesRegex(recovery.RecoveryError, 'signed Store archive'):
+            with self.assertRaisesRegex(recovery.RecoveryError, 'signed Store qualification'):
                 self.frozen()
-            for name, step in [('build-ios', 'Build signed iOS App Store IPA'),
-                               ('Build tvOS developer package (arm64)', 'Build signed tvOS App Store IPA')]:
-                next(job for job in self.jobs if job['name'] == name)['steps'] = [
-                    {'name': step, 'conclusion': 'success', 'status': 'completed'}]
-            self.assertTrue(self.frozen()['include_apple_store_build'])
+            next(job for job in self.jobs if job['name'] == 'build-ios')['steps'] = [
+                {'name': 'Build signed iOS App Store IPA', 'conclusion': 'success', 'status': 'completed'}]
+            tvos_job = next(job for job in self.jobs if job['name'] == 'Build tvOS developer package (arm64)')
+            tvos_job['steps'] = [
+                {'name': step, 'conclusion': 'success', 'status': 'completed'}
+                for step in ('Build signed tvOS App Store IPA', 'Package unsigned tvOS developer IPA',
+                             'Attest unsigned tvOS developer package')]
+            with self.assertRaisesRegex(recovery.RecoveryError, 'Verify tvOS runtime dependencies'):
+                self.frozen()
+            tvos_job['steps'] = [
+                {'name': step, 'conclusion': 'success', 'status': 'completed'}
+                for step in ('Build signed tvOS App Store IPA', 'Package unsigned tvOS developer IPA',
+                             'Attest unsigned tvOS developer package', 'Verify tvOS runtime dependencies',
+                             'Upload tvOS package')]
+            proof = self.frozen()
+            self.assertTrue(proof['include_apple_store_build'])
+            self.assertTrue(proof['runtime_dependency_receipt_required'])
             with self.assertRaisesRegex(recovery.RecoveryError, 'full signed Apple builds'):
                 self.frozen(rebuild_linux=True)
 
@@ -499,7 +530,8 @@ class FrozenTvosReuseTests(unittest.TestCase):
         self.jobs = [job('Validate release request', 'success', (
             'Verify approved frozen packaging checkout', 'Verify reusable platform source')),
             job('Build tvOS developer package (arm64)', 'success', (
-                'Build tvOS app', 'Build signed tvOS App Store IPA', 'Attest unsigned tvOS developer package',
+                'Build tvOS app', 'Package unsigned tvOS developer IPA', 'Build signed tvOS App Store IPA',
+                'Verify tvOS runtime dependencies', 'Attest unsigned tvOS developer package',
                 'Attest signed tvOS App Store package', 'Upload tvOS package')),
             job('build-ios', 'failure'), job('create-release', 'skipped'), job('build-macos', 'skipped')]
         self.artifact = {'id': 7, 'name': 'tvos-ipa', 'expired': False, 'digest': 'sha256:' + 'f' * 64,
@@ -523,6 +555,9 @@ class FrozenTvosReuseTests(unittest.TestCase):
         self.assertEqual(result['artifact_id'], 7)
         self.assertEqual(result['artifact_digest'], self.artifact['digest'])
         self.assertEqual(result['packaging_approval'], self.prior['packaging_approval'])
+        self.assertEqual(result['packaging_source_sha'], self.prior_repair)
+        self.assertEqual(result['version'], '3.0.31')
+        self.assertTrue(result['runtime_dependency_receipt_required'])
 
     def test_explicit_private_apple_route_requires_run_and_job_bound_labels(self):
         self.jobs[1].update(
@@ -551,7 +586,7 @@ class FrozenTvosReuseTests(unittest.TestCase):
 
     def test_untrusted_wrong_product_unsigned_and_publication_attempt_sources_are_rejected(self):
         original = {key: copy.deepcopy(getattr(self, key)) for key in ('run', 'jobs', 'artifact', 'prior')}
-        for change in ('foreign', 'wrong-product', 'failed-ci', 'missing-signed', 'missing-attestation',
+        for change in ('foreign', 'wrong-product', 'failed-ci', 'missing-signed', 'missing-attestation', 'missing-runtime',
                        'publication', 'unrelated-built', 'duplicate-tv', 'expired', 'bad-artifact-source',
                        'wrong-runner-route', 'private-run-title'):
             self.__dict__.update(copy.deepcopy(original))
@@ -561,8 +596,13 @@ class FrozenTvosReuseTests(unittest.TestCase):
                 self.prior['source_sha'] = 'c' * 40
             elif change == 'failed-ci':
                 self.prior['platforms_complete'] = False
-            elif change in ('missing-signed', 'missing-attestation'):
-                self.jobs[1]['steps'][1 if change == 'missing-signed' else 3]['conclusion'] = 'skipped'
+            elif change in ('missing-signed', 'missing-attestation', 'missing-runtime'):
+                target_step = {
+                    'missing-signed': 'Build signed tvOS App Store IPA',
+                    'missing-attestation': 'Attest signed tvOS App Store package',
+                    'missing-runtime': 'Verify tvOS runtime dependencies',
+                }[change]
+                next(step for step in self.jobs[1]['steps'] if step['name'] == target_step)['conclusion'] = 'skipped'
             elif change == 'publication':
                 self.jobs[3]['conclusion'] = 'failure'
             elif change == 'unrelated-built':
@@ -691,6 +731,10 @@ class CompletedTvosAssemblyReuseTests(unittest.TestCase):
         self.assertEqual(source['artifact_id'], self.artifact['id'])
         self.assertEqual(source['artifact_digest'], self.artifact['digest'])
         self.assertEqual(source['workflow_source_sha'], self.producer_workflow)
+        self.assertEqual(source['product_source_sha'], self.product)
+        self.assertEqual(source['packaging_source_sha'], self.packaging)
+        self.assertEqual(source['version'], '3.0.37')
+        self.assertTrue(source['runtime_dependency_receipt_required'])
         self.assertEqual(source['packaging_approval'], self.approval)
 
     def test_full_recovery_reclassifies_tv_as_reused_and_keeps_full_release_scope(self):
@@ -820,7 +864,8 @@ class FrozenCombinedAppleReuseTests(unittest.TestCase):
         )
         tvos_steps = (
             'Build tvOS app', 'Package unsigned tvOS developer IPA',
-            'Build signed tvOS App Store IPA', 'Attest unsigned tvOS developer package',
+            'Build signed tvOS App Store IPA', 'Verify tvOS runtime dependencies',
+            'Attest unsigned tvOS developer package',
             'Attest signed tvOS App Store package', 'Retain tvOS signing report',
             'Remove tvOS signing archive outputs', 'Upload tvOS package',
             'Clean tvOS source and Xcode scratch',
@@ -883,6 +928,8 @@ class FrozenCombinedAppleReuseTests(unittest.TestCase):
         self.assertEqual(result['tvos_source']['source_run_id'], self.source_run)
         self.assertEqual(result['ios_source']['job_id'], self.jobs[1]['id'])
         self.assertEqual(result['tvos_source']['job_id'], self.jobs[2]['id'])
+        self.assertEqual(result['tvos_source']['packaging_source_sha'], self.packaging)
+        self.assertTrue(result['tvos_source']['runtime_dependency_receipt_required'])
 
     def test_missing_failed_signing_upload_or_cleanup_steps_are_rejected(self):
         original_jobs = copy.deepcopy(self.jobs)
@@ -892,6 +939,7 @@ class FrozenCombinedAppleReuseTests(unittest.TestCase):
                 ('build-ios', 'Upload IPA'),
                 ('build-ios', 'Remove short iOS build workspace'),
                 ('Build tvOS developer package (arm64)', 'Build signed tvOS App Store IPA'),
+                ('Build tvOS developer package (arm64)', 'Verify tvOS runtime dependencies'),
                 ('Build tvOS developer package (arm64)', 'Attest signed tvOS App Store package'),
                 ('Build tvOS developer package (arm64)', 'Upload tvOS package'),
                 ('Build tvOS developer package (arm64)', 'Clean tvOS source and Xcode scratch')):
@@ -948,6 +996,195 @@ class FrozenCombinedAppleReuseTests(unittest.TestCase):
         self.metadata = [dict(item) for item in self.artifacts]
         with self.assertRaisesRegex(recovery.RecoveryError, 'distinct IPA artifacts'):
             self.prove()
+
+
+class TvosRuntimeDependencyReceiptTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.product = 'a' * 40
+        self.packaging = 'b' * 40
+        self.workflow = 'c' * 40
+        self.source = {
+            'source_run_id': 84, 'run_attempt': 2,
+            'product_source_sha': self.product, 'packaging_source_sha': self.packaging,
+            'workflow_source_sha': self.workflow, 'source_sha': self.packaging,
+            'version': '3.0.37', 'runtime_dependency_receipt_required': True,
+        }
+        self.ipa_paths = {}
+        self.receipt = self._make_receipt()
+
+    def _make_ipa(self, name, executable):
+        path = self.root / name
+        with zipfile.ZipFile(path, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr('Payload/Runner.app/Info.plist', plistlib.dumps({
+                'CFBundleIdentifier': 'org.snapetech.pleazyng',
+                'CFBundleExecutable': 'Runner',
+                'CFBundleShortVersionString': '3.0.37',
+                'CFBundleVersion': '196',
+                'DTPlatformName': 'appletvos',
+            }))
+            archive.writestr('Payload/Runner.app/Runner', executable)
+        self.ipa_paths[name] = path
+        return path
+
+    def _make_receipt(self):
+        executable = b'\xcf\xfa\xed\xfe' + b'fixture-runner'
+        records = []
+        for name, contents in (
+                ('pleazyng-tvos-unsigned.ipa', executable + b'-unsigned'),
+                ('pleazyng-tvos-appstore.ipa', executable + b'-signed')):
+            path = self._make_ipa(name, contents)
+            macho_sha = hashlib.sha256(contents).hexdigest()
+            records.append({
+                'artifact_name': 'tvos-ipa', 'filename': name,
+                'ipa_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+                'platform': 'tvos', 'status': 'passed', 'errors': [],
+                'bundle_id': 'org.snapetech.pleazyng', 'product_version': '3.0.37',
+                'product_build': '196', 'product_source_sha': self.product,
+                'packaging_source_sha': self.packaging, 'workflow_source_sha': self.workflow,
+                'run_id': '84', 'run_attempt': '2',
+                'macho_images': [{
+                    'path': 'Payload/Runner.app/Runner', 'architectures': ['arm64'],
+                    'sha256': macho_sha,
+                }],
+                'dependencies': [], 'unresolved_weak_dependencies': [],
+                'macho_image_count': 1,
+            })
+        return {
+            'schema_version': 1, 'workflow_step': 'Verify tvOS runtime dependencies',
+            'repository': recovery.REPOSITORY, 'product_source_sha': self.product,
+            'packaging_source_sha': self.packaging, 'workflow_source_sha': self.workflow,
+            'actual_checkout_sha': self.packaging, 'run_id': '84', 'run_attempt': '2',
+            'artifact_name': 'tvos-ipa', 'platform': 'tvos', 'status': 'passed',
+            'sdk_root': '/Applications/Xcode.app/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS.sdk',
+            'sdk_version': '27.2', 'product_version': '3.0.37', 'product_build': '196',
+            'inputs': records, 'errors': [], 'created_at_utc': '2026-11-17T00:00:00+00:00',
+            'verification_policy': {
+                'architectures': 'all bundled Mach-O slices',
+                'strong_dependencies': 'must resolve to a same-architecture Mach-O inside the app bundle or an allowed system path',
+                'weak_dependencies': 'unresolved optional weak loads are recorded and do not fail',
+                'system_prefixes': list(recovery.TVOS_RUNTIME_SYSTEM_PREFIXES),
+            },
+        }
+
+    def _write_receipt(self, receipt=None):
+        path = self.root / recovery.TVOS_RUNTIME_RECEIPT
+        path.write_text(json.dumps(self.receipt if receipt is None else receipt), encoding='utf-8')
+        return path
+
+    def _verify(self):
+        self._write_receipt()
+        certificate = {
+            'sourceRepositoryIdentifier': '1433487464',
+            'sourceRepositoryDigest': self.workflow,
+            'runInvocationURI': f'https://github.com/{recovery.REPOSITORY}/actions/runs/84/attempts/2',
+        }
+        with patch.object(recovery, 'immutable_content', return_value='version: 3.0.37+196\n'), \
+                patch.object(recovery.verify_release_attestation, 'verify',
+                              return_value=recovery.REPOSITORY) as general_verify, \
+                patch.object(recovery.subprocess, 'run', return_value=SimpleNamespace(
+                    stdout=json.dumps([{'verificationResult': {'signature': {'certificate': certificate}}}]),
+                    returncode=0)) as exact_verify:
+            digest = recovery.verify_tvos_runtime_dependency_receipt(self.root, self.source)
+        general_verify.assert_called_once_with(self.root / recovery.TVOS_RUNTIME_RECEIPT, recovery.REPOSITORY)
+        self.assertEqual(exact_verify.call_args.args[0][:3], [
+            'gh', 'attestation', 'verify',
+        ][:3])
+        self.assertIn('--source-digest', exact_verify.call_args.args[0])
+        self.assertEqual(self.workflow, exact_verify.call_args.args[0][
+            exact_verify.call_args.args[0].index('--source-digest') + 1])
+        return digest
+
+    def test_verified_receipt_binds_both_signed_and_unsigned_ipa_bytes(self):
+        digest = self._verify()
+        self.assertEqual(hashlib.sha256((self.root / recovery.TVOS_RUNTIME_RECEIPT).read_bytes()).hexdigest(), digest)
+
+    def test_missing_receipt_is_rejected_before_trust_checks(self):
+        with self.assertRaisesRegex(recovery.RecoveryError, 'missing its attested'):
+            recovery.verify_tvos_runtime_dependency_receipt(self.root, self.source)
+
+    def test_tampered_ipa_hash_and_missing_image_are_rejected(self):
+        original = copy.deepcopy(self.receipt)
+        for mutate in (
+                lambda item: item['inputs'][0].update(ipa_sha256='0' * 64),
+                lambda item: item['inputs'][0].update(macho_images=[])):
+            changed = copy.deepcopy(original)
+            mutate(changed)
+            self.receipt = changed
+            with self.subTest(changed=changed['inputs'][0]), self.assertRaises(recovery.RecoveryError):
+                self._verify()
+
+    def test_wrong_product_packaging_workflow_or_run_identity_is_rejected(self):
+        original = copy.deepcopy(self.receipt)
+        for key, value in (
+                ('product_source_sha', 'd' * 40), ('packaging_source_sha', 'd' * 40),
+                ('workflow_source_sha', 'd' * 40), ('run_id', '85'), ('run_attempt', '3'),
+                ('actual_checkout_sha', 'd' * 40)):
+            changed = copy.deepcopy(original)
+            changed[key] = value
+            self.receipt = changed
+            with self.subTest(key=key), self.assertRaises(recovery.RecoveryError):
+                self._verify()
+
+    def test_each_ipa_input_binds_product_packaging_and_workflow_sources(self):
+        original = copy.deepcopy(self.receipt)
+        for key in ('product_source_sha', 'packaging_source_sha', 'workflow_source_sha'):
+            changed = copy.deepcopy(original)
+            changed['inputs'][0][key] = 'd' * 40
+            self.receipt = changed
+            with self.subTest(key=key), self.assertRaisesRegex(
+                    recovery.RecoveryError, 'input identity mismatch'):
+                self._verify()
+
+    def test_malformed_dependency_types_fail_closed(self):
+        original = copy.deepcopy(self.receipt)
+        for mutate in (
+                lambda item: item['inputs'][0].update(dependencies=[{
+                    'architecture': 'arm64', 'command': [], 'install_name': 'libSystem.B.dylib',
+                    'from_image': 'Payload/Runner.app/Runner', 'resolution': 'system',
+                }]),
+                lambda item: item['inputs'][0].update(unresolved_weak_dependencies=[{
+                    'architecture': 'arm64', 'install_name': '@rpath/optional.dylib',
+                    'from_image': [],
+                }]),
+        ):
+            changed = copy.deepcopy(original)
+            mutate(changed)
+            self.receipt = changed
+            with self.assertRaises(recovery.RecoveryError):
+                self._verify()
+
+    def test_unhashable_input_filename_is_rejected(self):
+        changed = copy.deepcopy(self.receipt)
+        changed['inputs'][0]['filename'] = []
+        self.receipt = changed
+        with self.assertRaisesRegex(recovery.RecoveryError, 'unexpected IPA input'):
+            self._verify()
+
+    def test_failed_or_unresolved_strong_receipts_are_rejected(self):
+        for mutate in (
+                lambda item: item.update(status='failed'),
+                lambda item: item['inputs'][0].update(status='failed'),
+                lambda item: item['inputs'][0].update(dependencies=[{
+                    'architecture': 'arm64', 'command': 'LC_LOAD_DYLIB',
+                    'install_name': '@rpath/AMSMB2.framework/AMSMB2',
+                    'from_image': 'Payload/Runner.app/Runner', 'resolution': 'missing',
+                    'resolved_path': None,
+                }]),
+        ):
+            changed = copy.deepcopy(self.receipt)
+            mutate(changed)
+            self.receipt = changed
+            with self.assertRaises(recovery.RecoveryError):
+                self._verify()
+
+    def test_wrong_receipt_attestation_publisher_is_rejected(self):
+        self._write_receipt()
+        with patch.object(recovery.verify_release_attestation, 'verify', return_value='snapetech-org/PlezyNG'):
+            with self.assertRaisesRegex(recovery.RecoveryError, 'canonical repository'):
+                recovery.verify_tvos_runtime_dependency_receipt(self.root, self.source)
 
 
 class ArtifactTests(unittest.TestCase):
@@ -1020,7 +1257,9 @@ class ArtifactTests(unittest.TestCase):
         proof = {'source_run_id': 42, 'source_sha': 'a' * 40, 'rebuild_tvos': False,
                  'tvos_source': {'source_run_id': 84, 'source_sha': 'b' * 40,
                                  'workflow_source_sha': 'd' * 40, 'artifact_id': 9,
-                                 'artifact_digest': artifact['digest']}}
+                                 'artifact_digest': artifact['digest'], 'product_source_sha': 'c' * 40,
+                                 'packaging_source_sha': 'b' * 40, 'version': '3.0.37',
+                                 'run_attempt': 2, 'runtime_dependency_receipt_required': True}}
 
         def download(_command, stdout):
             stdout.write(archive)
@@ -1029,11 +1268,44 @@ class ArtifactTests(unittest.TestCase):
         with patch.object(recovery, 'ARTIFACTS', {'tvos-ipa': 'tvos-ipa'}), \
                 patch.object(recovery, 'collection', side_effect=[[], [artifact]]), \
                 patch.object(recovery.subprocess, 'run', side_effect=download), \
-                patch.object(recovery, 'verify_tvos_package_attestations', return_value={'signed': 'c' * 64}):
+                patch.object(recovery, 'verify_tvos_package_attestations', return_value={'signed': 'c' * 64}), \
+                patch.object(recovery, 'verify_tvos_runtime_dependency_receipt', return_value='e' * 64):
             result = recovery.download_platforms(proof, self.root)
         self.assertEqual(result['artifacts'][0]['source_run_id'], 84)
         self.assertEqual(result['artifacts'][0]['artifact_id'], 9)
         self.assertEqual((self.root / 'tvos-ipa/pleazyng-tvos-appstore.ipa').read_bytes(), b'signed tvOS IPA')
+
+    def test_completed_tv_reuse_checks_attested_receipt_after_artifact_download(self):
+        archive_stream = io.BytesIO()
+        with zipfile.ZipFile(archive_stream, 'w', compression=zipfile.ZIP_DEFLATED) as package:
+            package.writestr('pleazyng-tvos-unsigned.ipa', b'unsigned')
+            package.writestr('pleazyng-tvos-appstore.ipa', b'signed')
+            package.writestr(recovery.TVOS_RUNTIME_RECEIPT, b'{}')
+        archive = archive_stream.getvalue()
+        digest = 'sha256:' + hashlib.sha256(archive).hexdigest()
+        artifact = {'id': 9, 'name': 'tvos-ipa', 'expired': False, 'digest': digest,
+                    'workflow_run': {'id': 84, 'head_sha': 'e' * 40}}
+        tvos_source = {
+            'source_run_id': 84, 'source_sha': 'b' * 40, 'product_source_sha': 'c' * 40,
+            'packaging_source_sha': 'b' * 40, 'workflow_source_sha': 'e' * 40,
+            'version': '3.0.37', 'run_attempt': 2, 'artifact_id': 9,
+            'artifact_digest': digest, 'runtime_dependency_receipt_required': True,
+        }
+        proof = {'source_run_id': 42, 'source_sha': 'a' * 40, 'rebuild_tvos': False,
+                 'tvos_source': tvos_source}
+
+        def download(_command, stdout):
+            stdout.write(archive)
+            return SimpleNamespace(returncode=0)
+
+        with patch.object(recovery, 'ARTIFACTS', {'tvos-ipa': 'tvos-ipa'}), \
+                patch.object(recovery, 'collection', side_effect=[[], [artifact]]), \
+                patch.object(recovery.subprocess, 'run', side_effect=download), \
+                patch.object(recovery, 'verify_tvos_package_attestations', return_value={'signed': 'c' * 64}), \
+                patch.object(recovery, 'verify_tvos_runtime_dependency_receipt', return_value='d' * 64) as receipt:
+            result = recovery.download_platforms(proof, self.root)
+        receipt.assert_called_once_with(self.root / 'tvos-ipa', tvos_source, recovery.REPOSITORY)
+        self.assertEqual(result['tvos_source'], tvos_source)
 
     def test_ios_is_not_downloaded_from_failed_original_when_rebuilt(self):
         proof = {"source_run_id": 42, "source_sha": "a" * 40, "rebuild_ios": True}
@@ -1089,7 +1361,9 @@ class ArtifactTests(unittest.TestCase):
                 'digest': 'sha256:' + hashlib.sha256(archive).hexdigest(),
                 'workflow_run': {'id': 84, 'head_sha': 'e' * 40}}
         source = {'source_run_id': 84, 'source_sha': 'd' * 40, 'workflow_source_sha': 'e' * 40,
-                  'artifact_id': 7, 'artifact_digest': item['digest']}
+                  'artifact_id': 7, 'artifact_digest': item['digest'], 'product_source_sha': 'f' * 40,
+                  'packaging_source_sha': 'd' * 40, 'version': '3.0.37', 'run_attempt': 2,
+                  'runtime_dependency_receipt_required': True}
         proof = {'source_run_id': 42, 'source_sha': 'a' * 40, 'tvos_source': source}
         def download(_args, stdout):
             stdout.write(archive)
@@ -1097,9 +1371,11 @@ class ArtifactTests(unittest.TestCase):
         with patch.object(recovery, 'ARTIFACTS', {'tvos-ipa': 'tvos-ipa'}), \
                 patch.object(recovery, 'collection', side_effect=[[], [item]]), \
                 patch.object(recovery.subprocess, 'run', side_effect=download), \
-                patch.object(recovery, 'verify_tvos_package_attestations', return_value={'verified': 'hash'}) as cert:
+                patch.object(recovery, 'verify_tvos_package_attestations', return_value={'verified': 'hash'}) as cert, \
+                patch.object(recovery, 'verify_tvos_runtime_dependency_receipt', return_value='f' * 64) as receipt:
             result = recovery.download_platforms(proof, self.root)
         cert.assert_called_once()
+        receipt.assert_called_once_with(self.root / 'tvos-ipa', source, recovery.REPOSITORY)
         self.assertEqual(result['tvos_source']['package_sha256'], {'verified': 'hash'})
         self.assertEqual(result['artifacts'][0]['source_sha'], 'd' * 40)
         for change in ({'artifact_id': 8}, {'artifact_digest': 'sha256:' + 'f' * 64}):
@@ -1122,7 +1398,9 @@ class ArtifactTests(unittest.TestCase):
                'artifact_digest': ios_digest}
         tvos = {'source_run_id': source_run, 'source_sha': 'b' * 40,
                 'workflow_source_sha': workflow, 'artifact_id': 8,
-                'artifact_digest': tvos_digest}
+                'artifact_digest': tvos_digest, 'product_source_sha': 'a' * 40,
+                'packaging_source_sha': 'b' * 40, 'version': '3.0.37', 'run_attempt': 2,
+                'runtime_dependency_receipt_required': True}
         artifacts = [
             {'id': 7, 'name': 'ios-ipa', 'expired': False, 'digest': ios_digest,
              'workflow_run': {'id': source_run, 'head_sha': workflow}},
@@ -1162,7 +1440,8 @@ class ArtifactTests(unittest.TestCase):
                 patch.object(recovery.subprocess, 'check_output', return_value=workflow), \
                 patch.dict('os.environ', {'GITHUB_SHA': workflow, 'GITHUB_RUN_ID': '99'}), \
                 patch.object(recovery, 'verify_ios_package_attestations', return_value={'verified': 'ios'}), \
-                patch.object(recovery, 'verify_tvos_package_attestations', return_value={'verified': 'tvos'}):
+                patch.object(recovery, 'verify_tvos_package_attestations', return_value={'verified': 'tvos'}), \
+                patch.object(recovery, 'verify_tvos_runtime_dependency_receipt', return_value='f' * 64):
             result = recovery.download_platforms(proof, self.root)
 
         self.assertEqual(inventory.call_count, 1)
