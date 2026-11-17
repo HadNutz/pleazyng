@@ -183,6 +183,18 @@
         "test/native/tvos_plugin_wiring_test.rb": "e78ecf19add808daaec36729245c69b874ec2d20",
         "tvos/scripts/wire_plugins.rb": "e8d5dffdb0dfb6586671f4e02e19da7149597910"
       }
+    },
+    {
+      "product_source_sha": "28f417ab17a4b6dc4c2e422b27662c62f62be7fb",
+      "packaging_source_sha": "9b1552e8ba7a206a4c05ecc934976358566744f2",
+      "files": {
+        "scripts/apple/prune_static_mpv_frameworks.py": "a98d6e775d159efc16f96704890c567a8b45d96b",
+        "scripts/checks/test_prune_static_mpv_frameworks.py": "3317765c993a6a57ec8d3971002c0bd8adf2e069",
+        "scripts/test_apple_macho_dependencies.py": "9b08be6495ec1b708393896c70b896ec8648aab0",
+        "scripts/verify_apple_macho_dependencies.py": "994ebb220362728284bfb313b984126836413ea3",
+        "test/native/tvos_plugin_wiring_test.rb": "eed032a17fccbdf67cd77b8aa6c01ebcf9e60731",
+        "tvos/scripts/wire_plugins.rb": "e8d5dffdb0dfb6586671f4e02e19da7149597910"
+      }
     }
   ]
 }
