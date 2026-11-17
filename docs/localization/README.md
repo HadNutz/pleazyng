@@ -152,3 +152,5 @@ localized page input, EPUB search and comic navigation. Apple resource structure
 permission presentation, shaping and speech quality need device testing.
 
 Five recovered saved-capture list labels use explicit English fallback pending translation review. Saved-capture dates and times use the active Material locale.
+
+The 22 living-room playback, receiver, projector and guest jukebox messages have assistant-authored translations in the 32 non-English base catalogs. The four regional catalogs inherit their parent’s wording. Placeholder, structure and coverage checks are automated. These messages have not received native-speaker review.

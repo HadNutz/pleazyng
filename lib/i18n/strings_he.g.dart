@@ -40,6 +40,7 @@ class TranslationsHe extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsHe $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsHe(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$he livingRoom = _Translations$livingRoom$he._(_root);
 	@override late final _Translations$app$he app = _Translations$app$he._(_root);
 	@override late final _Translations$appIcon$he appIcon = _Translations$appIcon$he._(_root);
 	@override late final _Translations$auth$he auth = _Translations$auth$he._(_root);
@@ -120,6 +121,37 @@ class TranslationsHe extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$he musicExperience = _Translations$musicExperience$he._(_root);
 	@override late final _Translations$musicTools$he musicTools = _Translations$musicTools$he._(_root);
 	@override late final _Translations$musicDevices$he musicDevices = _Translations$musicDevices$he._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$he extends Translations$livingRoom$en {
+	_Translations$livingRoom$he._(TranslationsHe root) : this._root = root, super.internal(root);
+
+	final TranslationsHe _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'התאמה למסך שלי';
+	@override String get fitHelp => 'בחרו קצה והזיזו אותו בעזרת החצים עד שרואים את הסימונים שלו. חזרו על הפעולה בכל קצה.';
+	@override String get left => 'שמאל';
+	@override String get right => 'ימין';
+	@override String get top => 'למעלה';
+	@override String get bottom => 'למטה';
+	@override String get receiver => 'Dolby Digital 5.1 לרסיברים ישנים';
+	@override String get receiverHelp => 'ממיר שמע רב־ערוצי ל־Dolby Digital ביציאות תואמות. השמע מועבר ישירות לרסיבר והווידאו המקורי נשמר כשאפשר להעתיק אותו.';
+	@override String missing({required Object episode}) => 'פרק ⁨${episode}⁩ חסר ברצף הזה.';
+	@override String playLater({required Object episode}) => 'לנגן בכל זאת את פרק ⁨${episode}⁩';
+	@override String playCopy({required Object episode, required Object server}) => 'לנגן את פרק ⁨${episode}⁩ מתוך ⁨${server}⁩';
+	@override String get jukebox => 'תיבת נגינה לאורחים';
+	@override String get jukeboxInfo => 'אורחים ברשת המקומית יכולים לחפש בספריית המוזיקה הזו ולהוסיף שירים לסוף התור.';
+	@override String get openRoom => 'פתיחת תיבת הנגינה';
+	@override String get closeRoom => 'סגירת תיבת הנגינה';
+	@override String get join => 'סרקו כדי לבקש שיר';
+	@override String get noNetwork => 'כדי לפתוח את תיבת הנגינה יש להתחבר לרשת מקומית.';
+	@override String get added => 'נוסף לתור';
+	@override String get searchSongs => 'חיפוש שירים';
+	@override String get roomUnavailable => 'תיבת הנגינה הזו אינה זמינה.';
+	@override String get noSongs => 'לא נמצאו שירים מתאימים';
+	@override String get chooseLibrary => 'בחירת ספריית מוזיקה';
 }
 
 // Path: app
@@ -5596,6 +5628,28 @@ class _Translations$services$trackerDescriptions$he extends Translations$service
 extension on TranslationsHe {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'התאמה למסך שלי',
+			'livingRoom.fitHelp' => 'בחרו קצה והזיזו אותו בעזרת החצים עד שרואים את הסימונים שלו. חזרו על הפעולה בכל קצה.',
+			'livingRoom.left' => 'שמאל',
+			'livingRoom.right' => 'ימין',
+			'livingRoom.top' => 'למעלה',
+			'livingRoom.bottom' => 'למטה',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 לרסיברים ישנים',
+			'livingRoom.receiverHelp' => 'ממיר שמע רב־ערוצי ל־Dolby Digital ביציאות תואמות. השמע מועבר ישירות לרסיבר והווידאו המקורי נשמר כשאפשר להעתיק אותו.',
+			'livingRoom.missing' => ({required Object episode}) => 'פרק ⁨${episode}⁩ חסר ברצף הזה.',
+			'livingRoom.playLater' => ({required Object episode}) => 'לנגן בכל זאת את פרק ⁨${episode}⁩',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'לנגן את פרק ⁨${episode}⁩ מתוך ⁨${server}⁩',
+			'livingRoom.jukebox' => 'תיבת נגינה לאורחים',
+			'livingRoom.jukeboxInfo' => 'אורחים ברשת המקומית יכולים לחפש בספריית המוזיקה הזו ולהוסיף שירים לסוף התור.',
+			'livingRoom.openRoom' => 'פתיחת תיבת הנגינה',
+			'livingRoom.closeRoom' => 'סגירת תיבת הנגינה',
+			'livingRoom.join' => 'סרקו כדי לבקש שיר',
+			'livingRoom.noNetwork' => 'כדי לפתוח את תיבת הנגינה יש להתחבר לרשת מקומית.',
+			'livingRoom.added' => 'נוסף לתור',
+			'livingRoom.searchSongs' => 'חיפוש שירים',
+			'livingRoom.roomUnavailable' => 'תיבת הנגינה הזו אינה זמינה.',
+			'livingRoom.noSongs' => 'לא נמצאו שירים מתאימים',
+			'livingRoom.chooseLibrary' => 'בחירת ספריית מוזיקה',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'אפליקציה icon',
 			'appIcon.defaultIcon' => 'ברירת מחדל',
@@ -6086,6 +6140,8 @@ extension on TranslationsHe {
 			'settings.downmixCenterBoostLabel' => 'קידום (dB)',
 			'settings.downmixCenterBoostShort' => 'דב',
 			'settings.audioDownmixNormalize' => 'נורמליזת טמפרטורה על Downmix',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'להוריד את התערובת כדי למנוע קליפ. סגור כדי לשמור על הטמפרטורה המקורית (אולי להפריע סצנות חזקות).',
 			'settings.dvConversionMode' => 'Dolby Vision הפוך',
 			'settings.dvConversionModeDescription' => 'בחר כיצד Dolby Vision פרופיל 7 קבצים מתבצעים.',
@@ -6108,8 +6164,6 @@ extension on TranslationsHe {
 			'settings.hdrSdrConversion' => 'HDR ל- SDR Conversion',
 			'settings.hdrSdrConversionDescription' => 'בחר מה מחליף וידאו HDR כאשר המסך לא יכול להציג HDR.',
 			'settings.hdrSdrConversionAuto' => 'אוטומטי',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'מכשיר ב- Android 9 ומאוחר יותר, שחקן בגרסאות ישנות יותר',
 			'settings.hdrSdrConversionDevice' => 'מכשיר',
 			'settings.hdrSdrConversionDeviceDescription' => 'חומרה וידאו של המכשיר שלך מחליפה אותו מהיר ביותר, אבל הצבעים תלויים במכשיר',
@@ -6600,6 +6654,8 @@ extension on TranslationsHe {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'חיפוש אחורה ${seconds} שניות',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'חיפוש קדימה ${seconds} שניות',
 			'videoControls.previousButton' => 'פרק קודם',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'הפרק הבא',
 			'videoControls.previousChapterButton' => 'הפרק הקודם',
 			'videoControls.nextChapterButton' => 'פרק הבא',
@@ -6622,8 +6678,6 @@ extension on TranslationsHe {
 			'videoControls.segmentLoop' => 'סגמנט לואי',
 			'videoControls.addBookmark' => 'להוסיף bookmark',
 			'videoControls.bookmarkName' => 'Bookmark שם',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'לדוגמה, פתיחת סצנה',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'סימנייה ${n}',
 			'videoControls.bookmarkNameRequired' => 'הקלד שם עבור ספר זה.',
@@ -7114,6 +7168,8 @@ extension on TranslationsHe {
 			'libraries.analysisStarted' => ({required Object title}) => 'ניתוח מתחיל עבור "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'לא הצליח לנתח ספרייה: ${error}',
 			'libraries.noLibrariesFound' => 'לא נמצאו ספרייה',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'כל הספרייה מסתתרת',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'ספריות מוסתרים (${count})',
 			'libraries.thisLibraryIsEmpty' => 'הספרייה הזאת ריקה',
@@ -7136,8 +7192,6 @@ extension on TranslationsHe {
 			'libraries.content' => 'ספרייה תוכן',
 			'libraries.selectLibrary' => 'בחר ספרייה',
 			'libraries.filtersWithCount' => ({required Object count}) => 'מסננים (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'אין המלצות זמינות',
 			'libraries.noCollections' => 'אין אוסף בספריה זו',
 			'libraries.noFoldersFound' => 'לא נמצאו קבצים',
@@ -7628,6 +7682,8 @@ extension on TranslationsHe {
 			'music.visualizerLiveAudio' => 'ניתוח שמע בזמן אמת',
 			'music.visualizerPreviousPreset' => 'סגנון חזותי קודם',
 			'music.visualizerNextPreset' => 'סגנון חזותי הבא',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'אווררה',
 			'music.visualizerPresetBloom' => 'בלום',
 			'music.visualizerPresetOrbitals' => 'אורביטים',
@@ -7650,8 +7706,6 @@ extension on TranslationsHe {
 			'music.noAudioUrl' => ({required Object track}) => 'אין כתובת אודיו זמינה עבור ${track}',
 			'music.discography.singlesAndEps' => 'סינגלים & EPs',
 			'music.discography.live' => 'שידור חי',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'קומפוזיציה',
 			'music.backTo' => 'חזרה אל',
 			'music.upNext' => 'הבאים בתור',
@@ -8142,6 +8196,8 @@ extension on TranslationsHe {
 			'externalPlayer.useExternalPlayer' => 'שימוש ב-Player חיצוני',
 			'externalPlayer.useExternalPlayerDescription' => 'פתח וידאו באפליקציה אחרת',
 			'externalPlayer.selectPlayer' => 'בחר שחקן',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'שחקנים מותאמים',
 			'externalPlayer.systemDefault' => 'מערכת מזויפת',
 			'externalPlayer.addCustomPlayer' => 'להוסיף שחקן מותאם אישית',
@@ -8164,8 +8220,6 @@ extension on TranslationsHe {
 			'metadataEdit.editMetadata' => 'ערוך',
 			'metadataEdit.screenTitle' => 'ערוך מטא-דאטה',
 			'metadataEdit.basicInfo' => 'מידע בסיסי',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'אמנות',
 			'metadataEdit.advancedSettings' => 'הגדרות מתקדמות',
 			'metadataEdit.title' => 'כותרת',
@@ -8656,6 +8710,8 @@ extension on TranslationsHe {
 			'homeLayout.heroCardDescription' => 'מציג כרטיס סיבוב אחד רחב מלא במקום מפתח פוסטר.',
 			'homeLayout.heroUnavailableDescription' => 'זמין רק כאשר שורה זו מתייחסת לכותרות האמיתיות של אוסף יחיד – עם יותר מאחד אוספים שנבחרו, אין כותרת יחידה להסתובב.',
 			'homeLayout.librariesSelection' => 'ספריות (לשחרר את כל הבלתי נבדקים לכל ספרייה)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'כל ספרייה שנבדקה כאן מתמזגת בשורה אחת זו.',
 			'homeLayout.movieCollectionsSelection' => 'אוסף סרטים (שחרר את כל הבלתי נבדק עבור כל ספרייה שנבחרה)',
 			'homeLayout.showCollectionsSelection' => 'הצג אוסף (לשחרר את כל הבלתי נבדק עבור כל ספרייה שנבחרה)',
@@ -8678,8 +8734,6 @@ extension on TranslationsHe {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'הסתרה',
 			'homeLayout.remove' => 'הסר',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'הספרייה מחדש של הספרייה',
 			'homeLayout.pressAgainToDelete' => 'לחץ שוב כדי למחוק',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9170,6 +9224,8 @@ extension on TranslationsHe {
 			'audiobook.statusFinished' => 'הסתיימה',
 			'audiobook.goToTime' => 'ללכת בזמן',
 			'audiobook.timeHelp' => 'שעות: דקות: שניות או דקות: שניות',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'ייצוא עותק מוצפן לאחרונה לפני העברת או תיקון נתוני סינכרון.יבואים מתמזגים עם המצב הנוכחי; הם לעולם לא מחליפים היסטוריה מקומית של סינן.',
 			'audiobook.recoveryExport' => 'ייצוא קובץ ההחזרה מוצפן',
 			'audiobook.recoveryImport' => 'ייבוא קובץ ההחזרה מוצפן',
@@ -9192,8 +9248,6 @@ extension on TranslationsHe {
 			'sourceSetup.passwordOrKey' => 'יש להזין סיסמה או להוסיף מפתח פרטי למטה.',
 			'sourceSetup.sshFingerprint' => 'טביעת אצבע SHA256 של מפתח מארח SSH',
 			'sourceSetup.sshFingerprintHelp' => 'יש לאמת מול מנהל השרת. בשרת, יש להריץ ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub ולהשתמש בערך SHA256 שמתקבל.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'יש להשאיר ריק כדי לשמור על טביעת האצבע המקובעת הנוכחית, או להזין טביעת אצבע חדשה של השרת.',
 			'sourceSetup.sshAuthentication' => 'אימות באמצעות מפתח ציבורי של SSH',
 			'sourceSetup.sshAuthenticationHelp' => 'לא חובה; אפשר גם לבצע אימות באמצעות סיסמה.',
@@ -9684,6 +9738,8 @@ extension on TranslationsHe {
 			'musicTools.days' => 'ימים',
 			'musicTools.albumBlocks' => 'שמירה על אלבומים שלמים ביחד',
 			'musicTools.home' => 'מוסיקה',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'הושמעו לאחרונה',
 			'musicTools.apiKey' => 'מפתח API',
 			'musicTools.missing' => 'N / A',
@@ -9706,8 +9762,6 @@ extension on TranslationsHe {
 			'musicTools.serverAnalysis' => 'ניתוח בשרת',
 			'musicTools.sonicAnalysis' => 'ניתוח צליל',
 			'musicTools.serverAnalysisScope' => 'כל ספריות המוזיקה המתאימות בשרת זה. הגדרות הניתוח שלהן לא ישתנו.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'פעילויות השרת',
 			'musicTools.playlistSharing' => 'גישה לרשימת השמעה',
 			'musicTools.playlistRecipient' => 'שם משתמש Plex או דוא״ל',

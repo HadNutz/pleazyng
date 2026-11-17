@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "Ekranıma uyğunlaşdır",
+    "fitHelp": "Kənarı seçin və işarələr görünənədək oxlarla hərəkət etdirin. Bunu hər kənar üçün təkrarlayın.",
+    "left": "Sol",
+    "right": "Sağ",
+    "top": "Yuxarı",
+    "bottom": "Aşağı",
+    "receiver": "Köhnə qəbuledicilər üçün Dolby Digital 5.1",
+    "receiverHelp": "Uyğun çıxışlarda çoxkanallı səsi Dolby Digital formatına çevirir. Səsi birbaşa qəbulediciyə ötürür, videonu isə köçürmək mümkün olduqda olduğu kimi saxlayır.",
+    "missing": "Bu ardıcıllıqda ${episode} nömrəli bölüm çatışmır.",
+    "playLater": "Yenə də ${episode} nömrəli bölümü oynat",
+    "playCopy": "${episode} nömrəli bölümü ${server} mənbəyindən oynat",
+    "jukebox": "Qonaqlar üçün musiqi qutusu",
+    "jukeboxInfo": "Yerli şəbəkənizdəki qonaqlar bu musiqi kitabxanasında axtarış edə və növbənin sonuna mahnı əlavə edə bilərlər.",
+    "openRoom": "Musiqi qutusunu aç",
+    "closeRoom": "Musiqi qutusunu bağla",
+    "join": "Mahnı sifariş etmək üçün kodu skan edin",
+    "noNetwork": "Musiqi qutusunu açmaq üçün yerli şəbəkəyə qoşulun.",
+    "added": "Növbəyə əlavə edildi",
+    "searchSongs": "Mahnı axtar",
+    "roomUnavailable": "Bu musiqi qutusu əlçatan deyil.",
+    "noSongs": "Uyğun mahnı yoxdur",
+    "chooseLibrary": "Musiqi kitabxanasını seçin"
+  },
   "app": {
     "title": "Pleazyng"
   },

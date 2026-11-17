@@ -40,6 +40,7 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsVi $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsVi(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$vi livingRoom = _Translations$livingRoom$vi._(_root);
 	@override late final _Translations$app$vi app = _Translations$app$vi._(_root);
 	@override late final _Translations$appIcon$vi appIcon = _Translations$appIcon$vi._(_root);
 	@override late final _Translations$auth$vi auth = _Translations$auth$vi._(_root);
@@ -120,6 +121,37 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$vi musicExperience = _Translations$musicExperience$vi._(_root);
 	@override late final _Translations$musicTools$vi musicTools = _Translations$musicTools$vi._(_root);
 	@override late final _Translations$musicDevices$vi musicDevices = _Translations$musicDevices$vi._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$vi extends Translations$livingRoom$en {
+	_Translations$livingRoom$vi._(TranslationsVi root) : this._root = root, super.internal(root);
+
+	final TranslationsVi _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'Chỉnh vừa màn hình';
+	@override String get fitHelp => 'Chọn một cạnh rồi dùng phím mũi tên để di chuyển cho đến khi thấy các dấu ở cạnh đó. Lặp lại với từng cạnh.';
+	@override String get left => 'Trái';
+	@override String get right => 'Phải';
+	@override String get top => 'Trên';
+	@override String get bottom => 'Dưới';
+	@override String get receiver => 'Dolby Digital 5.1 cho đầu thu đời cũ';
+	@override String get receiverHelp => 'Chuyển âm thanh đa kênh thành Dolby Digital trên các đầu ra tương thích. Âm thanh được truyền thẳng đến đầu thu và video gốc được giữ nguyên nếu có thể sao chép.';
+	@override String missing({required Object episode}) => 'Không có tập ${episode} trong thứ tự phát này.';
+	@override String playLater({required Object episode}) => 'Vẫn phát tập ${episode}';
+	@override String playCopy({required Object episode, required Object server}) => 'Phát tập ${episode} từ ${server}';
+	@override String get jukebox => 'Máy chọn nhạc cho khách';
+	@override String get jukeboxInfo => 'Khách trong mạng nội bộ có thể tìm bài hát trong thư viện nhạc này và thêm vào cuối hàng đợi.';
+	@override String get openRoom => 'Mở máy chọn nhạc';
+	@override String get closeRoom => 'Đóng máy chọn nhạc';
+	@override String get join => 'Quét mã để yêu cầu bài hát';
+	@override String get noNetwork => 'Kết nối với mạng nội bộ để mở máy chọn nhạc.';
+	@override String get added => 'Đã thêm vào hàng đợi';
+	@override String get searchSongs => 'Tìm bài hát';
+	@override String get roomUnavailable => 'Máy chọn nhạc này không khả dụng.';
+	@override String get noSongs => 'Không có bài hát phù hợp';
+	@override String get chooseLibrary => 'Chọn thư viện nhạc';
 }
 
 // Path: app
@@ -5563,6 +5595,28 @@ class _Translations$services$trackerDescriptions$vi extends Translations$service
 extension on TranslationsVi {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Chỉnh vừa màn hình',
+			'livingRoom.fitHelp' => 'Chọn một cạnh rồi dùng phím mũi tên để di chuyển cho đến khi thấy các dấu ở cạnh đó. Lặp lại với từng cạnh.',
+			'livingRoom.left' => 'Trái',
+			'livingRoom.right' => 'Phải',
+			'livingRoom.top' => 'Trên',
+			'livingRoom.bottom' => 'Dưới',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 cho đầu thu đời cũ',
+			'livingRoom.receiverHelp' => 'Chuyển âm thanh đa kênh thành Dolby Digital trên các đầu ra tương thích. Âm thanh được truyền thẳng đến đầu thu và video gốc được giữ nguyên nếu có thể sao chép.',
+			'livingRoom.missing' => ({required Object episode}) => 'Không có tập ${episode} trong thứ tự phát này.',
+			'livingRoom.playLater' => ({required Object episode}) => 'Vẫn phát tập ${episode}',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'Phát tập ${episode} từ ${server}',
+			'livingRoom.jukebox' => 'Máy chọn nhạc cho khách',
+			'livingRoom.jukeboxInfo' => 'Khách trong mạng nội bộ có thể tìm bài hát trong thư viện nhạc này và thêm vào cuối hàng đợi.',
+			'livingRoom.openRoom' => 'Mở máy chọn nhạc',
+			'livingRoom.closeRoom' => 'Đóng máy chọn nhạc',
+			'livingRoom.join' => 'Quét mã để yêu cầu bài hát',
+			'livingRoom.noNetwork' => 'Kết nối với mạng nội bộ để mở máy chọn nhạc.',
+			'livingRoom.added' => 'Đã thêm vào hàng đợi',
+			'livingRoom.searchSongs' => 'Tìm bài hát',
+			'livingRoom.roomUnavailable' => 'Máy chọn nhạc này không khả dụng.',
+			'livingRoom.noSongs' => 'Không có bài hát phù hợp',
+			'livingRoom.chooseLibrary' => 'Chọn thư viện nhạc',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'ứng dụng icon',
 			'appIcon.defaultIcon' => 'Mặc Định',
@@ -6053,6 +6107,8 @@ extension on TranslationsVi {
 			'settings.downmixCenterBoostLabel' => 'Độ bền (dB)',
 			'settings.downmixCenterBoostShort' => 'db',
 			'settings.audioDownmixNormalize' => 'Tính năng của Downmix',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Giảm hỗn hợp để ngăn chặn nhấp chuột. tắt để giữ khối lượng ban đầu (có thể làm hỏng các cảnh lớn).',
 			'settings.dvConversionMode' => 'Dolby Vision Chuyển đổi',
 			'settings.dvConversionModeDescription' => 'Chọn cách xử lý Dolby Vision Hồ sơ 7 tệp.',
@@ -6075,8 +6131,6 @@ extension on TranslationsVi {
 			'settings.hdrSdrConversion' => 'HDR sang SDR chuyển đổi',
 			'settings.hdrSdrConversionDescription' => 'Chọn những gì chuyển đổi video HDR khi màn hình không thể hiển thị HDR.',
 			'settings.hdrSdrConversionAuto' => 'Tự động',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Thiết bị trên Android 9 và sau, người chơi trên các phiên bản cũ hơn',
 			'settings.hdrSdrConversionDevice' => 'Thiết bị',
 			'settings.hdrSdrConversionDeviceDescription' => 'Phần cứng video của thiết bị của bạn chuyển đổi nó. nhanh nhất, nhưng màu sắc phụ thuộc vào thiết bị',
@@ -6567,6 +6621,8 @@ extension on TranslationsVi {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Tìm lại ${seconds} giây',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Tìm trước ${seconds} giây',
 			'videoControls.previousButton' => 'Episode trước',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'Tập Kế Tiếp',
 			'videoControls.previousChapterButton' => 'Đoạn trước',
 			'videoControls.nextChapterButton' => 'Đoạn kế tiếp',
@@ -6589,8 +6645,6 @@ extension on TranslationsVi {
 			'videoControls.segmentLoop' => 'phân đoạn loop',
 			'videoControls.addBookmark' => 'Thêm Bookmark',
 			'videoControls.bookmarkName' => 'Bookmark tên',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'Ví dụ: Mở cảnh',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'Bookmark Đề ${n}',
 			'videoControls.bookmarkNameRequired' => 'Nhập tên cho bookmark này.',
@@ -7081,6 +7135,8 @@ extension on TranslationsVi {
 			'libraries.analysisStarted' => ({required Object title}) => 'Phân tích bắt đầu cho "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Không phân tích thư viện: ${error}',
 			'libraries.noLibrariesFound' => 'Không tìm thấy thư viện',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Tất cả các thư viện được ẩn',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Thư viện ẩn (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Thư viện này trống',
@@ -7103,8 +7159,6 @@ extension on TranslationsVi {
 			'libraries.content' => 'Thư viện Content',
 			'libraries.selectLibrary' => 'Chọn thư viện',
 			'libraries.filtersWithCount' => ({required Object count}) => 'Bộ lọc (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'Không có khuyến nghị có sẵn',
 			'libraries.noCollections' => 'Không có tập hợp trong thư viện này',
 			'libraries.noFoldersFound' => 'Không tìm thấy thư mục',
@@ -7595,6 +7649,8 @@ extension on TranslationsVi {
 			'music.visualizerLiveAudio' => 'Phân tích âm thanh trực tiếp',
 			'music.visualizerPreviousPreset' => 'Phong cách Visual Previous',
 			'music.visualizerNextPreset' => 'Tiếp theo: Visual Style',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Cực quang',
 			'music.visualizerPresetBloom' => 'Nở hoa',
 			'music.visualizerPresetOrbitals' => 'Ước',
@@ -7617,8 +7673,6 @@ extension on TranslationsVi {
 			'music.noAudioUrl' => ({required Object track}) => 'Không có URL âm thanh có sẵn cho ${track}',
 			'music.discography.singlesAndEps' => 'Đĩa đơn và EP',
 			'music.discography.live' => 'Trực tiếp',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'Tuyển tập',
 			'music.backTo' => 'Quay lại',
 			'music.upNext' => 'Tiếp theo',
@@ -8109,6 +8163,8 @@ extension on TranslationsVi {
 			'externalPlayer.useExternalPlayer' => 'Sử dụng Player External',
 			'externalPlayer.useExternalPlayerDescription' => 'Mở video trong ứng dụng khác',
 			'externalPlayer.selectPlayer' => 'Chọn Player',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Người chơi Custom',
 			'externalPlayer.systemDefault' => 'Hệ thống default',
 			'externalPlayer.addCustomPlayer' => 'Thêm Custom Player',
@@ -8131,8 +8187,6 @@ extension on TranslationsVi {
 			'metadataEdit.editMetadata' => 'Sửa',
 			'metadataEdit.screenTitle' => 'Sửa dữ liệu mô tả',
 			'metadataEdit.basicInfo' => 'Thông tin cơ bản',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'Nghệ thuật',
 			'metadataEdit.advancedSettings' => 'Cài đặt Advanced',
 			'metadataEdit.title' => 'Tiêu đề',
@@ -8623,6 +8677,8 @@ extension on TranslationsVi {
 			'homeLayout.heroCardDescription' => 'Hiển thị như một thẻ quay rộng đầy đủ thay vì một tấm poster.',
 			'homeLayout.heroUnavailableDescription' => 'Chỉ có sẵn khi hàng này được giải quyết với các tiêu đề thực tế của một bộ sưu tập duy nhất - với nhiều hơn một bộ sưu tập được chọn không có tiêu đề duy nhất để xoay qua.',
 			'homeLayout.librariesSelection' => 'Thư viện (tìm tất cả không kiểm tra để bao gồm mỗi thư viện)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Mỗi thư viện được kiểm tra ở đây được kết hợp vào một hàng này.',
 			'homeLayout.movieCollectionsSelection' => 'Bộ sưu tập phim (tìm tất cả không kiểm tra cho mỗi thư viện được chọn)',
 			'homeLayout.showCollectionsSelection' => 'Hiển thị các bộ sưu tập (tìm tất cả không kiểm tra cho mỗi thư viện được chọn)',
@@ -8645,8 +8701,6 @@ extension on TranslationsVi {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'Ẩn',
 			'homeLayout.remove' => 'Gỡ bỏ',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'Thư viện của thư viện này',
 			'homeLayout.pressAgainToDelete' => 'Nhấn lại để xóa',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9137,6 +9191,8 @@ extension on TranslationsVi {
 			'audiobook.statusFinished' => 'Kết thúc',
 			'audiobook.goToTime' => 'Đi đến thời gian',
 			'audiobook.timeHelp' => 'Thời gian: phút: giây, hoặc phút: giây',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Xuất một bản sao được mã hóa gần đây trước khi di chuyển hoặc sửa chữa dữ liệu đồng bộ. nhập khẩu kết hợp với trạng thái hiện tại; họ không bao giờ thay thế lịch sử đồng bộ địa phương. Giữ mã đồng bộ riêng biệt.',
 			'audiobook.recoveryExport' => 'Xuất khẩu file recovery mã hóa',
 			'audiobook.recoveryImport' => 'nhập file recovery mã hóa',
@@ -9159,8 +9215,6 @@ extension on TranslationsVi {
 			'sourceSetup.passwordOrKey' => 'Nhập mật khẩu hoặc thêm khóa riêng bên dưới.',
 			'sourceSetup.sshFingerprint' => 'Dấu vân tay SHA256 của khóa máy chủ SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Xác minh với quản trị viên máy chủ. Trên máy chủ, chạy ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub và dùng giá trị SHA256.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'Để trống để giữ dấu vân tay đang được ghim, hoặc nhập dấu vân tay máy chủ mới.',
 			'sourceSetup.sshAuthentication' => 'Xác thực SSH bằng khóa công khai',
 			'sourceSetup.sshAuthenticationHelp' => 'Không bắt buộc; cũng hỗ trợ xác thực bằng mật khẩu.',
@@ -9651,6 +9705,8 @@ extension on TranslationsVi {
 			'musicTools.days' => 'Ngày',
 			'musicTools.albumBlocks' => 'Giữ nguyên album',
 			'musicTools.home' => 'Nhạc',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'Đã phát gần đây',
 			'musicTools.apiKey' => 'Khóa API',
 			'musicTools.missing' => 'N / A',
@@ -9673,8 +9729,6 @@ extension on TranslationsVi {
 			'musicTools.serverAnalysis' => 'Phân tích máy chủ',
 			'musicTools.sonicAnalysis' => 'Phân tích âm thanh',
 			'musicTools.serverAnalysisScope' => 'Tất cả thư viện nhạc đủ điều kiện trên máy chủ này. Không thay đổi cài đặt phân tích của chúng.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Hoạt động máy chủ',
 			'musicTools.playlistSharing' => 'Quyền truy cập danh sách phát',
 			'musicTools.playlistRecipient' => 'Tên người dùng Plex hoặc email',

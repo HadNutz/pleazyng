@@ -40,6 +40,7 @@ class TranslationsHu extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsHu $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsHu(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$hu livingRoom = _Translations$livingRoom$hu._(_root);
 	@override late final _Translations$app$hu app = _Translations$app$hu._(_root);
 	@override late final _Translations$appIcon$hu appIcon = _Translations$appIcon$hu._(_root);
 	@override late final _Translations$auth$hu auth = _Translations$auth$hu._(_root);
@@ -120,6 +121,37 @@ class TranslationsHu extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$hu musicExperience = _Translations$musicExperience$hu._(_root);
 	@override late final _Translations$musicTools$hu musicTools = _Translations$musicTools$hu._(_root);
 	@override late final _Translations$musicDevices$hu musicDevices = _Translations$musicDevices$hu._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$hu extends Translations$livingRoom$en {
+	_Translations$livingRoom$hu._(TranslationsHu root) : this._root = root, super.internal(root);
+
+	final TranslationsHu _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'Igazítás a képernyőmhöz';
+	@override String get fitHelp => 'Válassz egy szélt, és mozgasd a nyilakkal, amíg meg nem jelennek a jelölései. Ismételd meg minden szélnél.';
+	@override String get left => 'Bal';
+	@override String get right => 'Jobb';
+	@override String get top => 'Felső';
+	@override String get bottom => 'Alsó';
+	@override String get receiver => 'Dolby Digital 5.1 régebbi erősítőkhöz';
+	@override String get receiverHelp => 'A kompatibilis kimeneteken Dolby Digital formátumra alakítja a többcsatornás hangot. A hangot közvetlenül az erősítőre küldi, a videót pedig eredetiben hagyja, ha másolható.';
+	@override String missing({required Object episode}) => 'A(z) ${episode}. epizód hiányzik ebből a sorrendből.';
+	@override String playLater({required Object episode}) => 'A(z) ${episode}. epizód lejátszása így is';
+	@override String playCopy({required Object episode, required Object server}) => 'A(z) ${episode}. epizód lejátszása innen: ${server}';
+	@override String get jukebox => 'Zenegép a vendégeknek';
+	@override String get jukeboxInfo => 'A helyi hálózaton lévő vendégek kereshetnek ebben a zenetárban, és dalokat adhatnak a sor végéhez.';
+	@override String get openRoom => 'Zenegép megnyitása';
+	@override String get closeRoom => 'Zenegép bezárása';
+	@override String get join => 'Olvasd be a kódot egy dal kéréséhez';
+	@override String get noNetwork => 'A zenegép megnyitásához csatlakozz egy helyi hálózathoz.';
+	@override String get added => 'Hozzáadva a sorhoz';
+	@override String get searchSongs => 'Dalok keresése';
+	@override String get roomUnavailable => 'Ez a zenegép nem érhető el.';
+	@override String get noSongs => 'Nincs megfelelő dal';
+	@override String get chooseLibrary => 'Válassz zenetárat';
 }
 
 // Path: app
@@ -5588,6 +5620,28 @@ class _Translations$services$trackerDescriptions$hu extends Translations$service
 extension on TranslationsHu {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Igazítás a képernyőmhöz',
+			'livingRoom.fitHelp' => 'Válassz egy szélt, és mozgasd a nyilakkal, amíg meg nem jelennek a jelölései. Ismételd meg minden szélnél.',
+			'livingRoom.left' => 'Bal',
+			'livingRoom.right' => 'Jobb',
+			'livingRoom.top' => 'Felső',
+			'livingRoom.bottom' => 'Alsó',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 régebbi erősítőkhöz',
+			'livingRoom.receiverHelp' => 'A kompatibilis kimeneteken Dolby Digital formátumra alakítja a többcsatornás hangot. A hangot közvetlenül az erősítőre küldi, a videót pedig eredetiben hagyja, ha másolható.',
+			'livingRoom.missing' => ({required Object episode}) => 'A(z) ${episode}. epizód hiányzik ebből a sorrendből.',
+			'livingRoom.playLater' => ({required Object episode}) => 'A(z) ${episode}. epizód lejátszása így is',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'A(z) ${episode}. epizód lejátszása innen: ${server}',
+			'livingRoom.jukebox' => 'Zenegép a vendégeknek',
+			'livingRoom.jukeboxInfo' => 'A helyi hálózaton lévő vendégek kereshetnek ebben a zenetárban, és dalokat adhatnak a sor végéhez.',
+			'livingRoom.openRoom' => 'Zenegép megnyitása',
+			'livingRoom.closeRoom' => 'Zenegép bezárása',
+			'livingRoom.join' => 'Olvasd be a kódot egy dal kéréséhez',
+			'livingRoom.noNetwork' => 'A zenegép megnyitásához csatlakozz egy helyi hálózathoz.',
+			'livingRoom.added' => 'Hozzáadva a sorhoz',
+			'livingRoom.searchSongs' => 'Dalok keresése',
+			'livingRoom.roomUnavailable' => 'Ez a zenegép nem érhető el.',
+			'livingRoom.noSongs' => 'Nincs megfelelő dal',
+			'livingRoom.chooseLibrary' => 'Válassz zenetárat',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'Alkalmazásikon',
 			'appIcon.defaultIcon' => 'Alapértelmezett',
@@ -6078,6 +6132,8 @@ extension on TranslationsHu {
 			'settings.downmixCenterBoostLabel' => 'Kiemelés (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Hangerő normalizálása lekeveréskor',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'A keverés szintjének csökkentése a torzítás elkerülésére. Kapcsold ki az eredeti hangerő megőrzéséhez (a hangos jelenetek torzíthatnak).',
 			'settings.dvConversionMode' => 'Dolby Vision-átalakítás',
 			'settings.dvConversionModeDescription' => 'Válaszd ki, hogyan legyenek kezelve a Dolby Vision Profile 7 fájlok.',
@@ -6100,8 +6156,6 @@ extension on TranslationsHu {
 			'settings.hdrSdrConversion' => 'HDR–SDR átalakítás',
 			'settings.hdrSdrConversionDescription' => 'Válaszd ki, mi alakítsa át a HDR-videót, ha a kijelző nem tud HDR-t megjeleníteni.',
 			'settings.hdrSdrConversionAuto' => 'Automatikus',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Eszköz Android 9-től, lejátszó a régebbi verziókon',
 			'settings.hdrSdrConversionDevice' => 'Eszköz',
 			'settings.hdrSdrConversionDeviceDescription' => 'Az eszköz videohardvere alakítja át. A leggyorsabb, de a színek az eszköztől függnek',
@@ -6592,6 +6646,8 @@ extension on TranslationsHu {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Tekerés hátra ${seconds} másodperccel',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Tekerés előre ${seconds} másodperccel',
 			'videoControls.previousButton' => 'Előző epizód',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'Következő epizód',
 			'videoControls.previousChapterButton' => 'Előző fejezet',
 			'videoControls.nextChapterButton' => 'Következő fejezet',
@@ -6614,8 +6670,6 @@ extension on TranslationsHu {
 			'videoControls.segmentLoop' => 'Segmentális lejátszás',
 			'videoControls.addBookmark' => 'Hozzáadása Bookmark',
 			'videoControls.bookmarkName' => 'Bookmark név',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'Például a színpad megnyitása',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'könyvjelző ${n}',
 			'videoControls.bookmarkNameRequired' => 'Írjon be egy nevet erre a könyvjelzőre.',
@@ -7106,6 +7160,8 @@ extension on TranslationsHu {
 			'libraries.analysisStarted' => ({required Object title}) => 'Elemzés elindítva a következőhöz: "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Nem sikerült a könyvtár elemzése: ${error}',
 			'libraries.noLibrariesFound' => 'Nem találhatók könyvtárak',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Minden könyvtár el van rejtve',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Rejtett könyvtárak (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Ez a könyvtár üres',
@@ -7128,8 +7184,6 @@ extension on TranslationsHu {
 			'libraries.content' => 'könyvtár tartalma',
 			'libraries.selectLibrary' => 'Könyvtár kiválasztása',
 			'libraries.filtersWithCount' => ({required Object count}) => 'Szűrők (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'Nincsenek elérhető ajánlások',
 			'libraries.noCollections' => 'Nincsenek gyűjtemények ebben a könyvtárban',
 			'libraries.noFoldersFound' => 'Nem találhatók mappák',
@@ -7620,6 +7674,8 @@ extension on TranslationsHu {
 			'music.visualizerLiveAudio' => 'Élő hangelemzés',
 			'music.visualizerPreviousPreset' => 'Előző vizuális stílus',
 			'music.visualizerNextPreset' => 'Következő vizuális stílus',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Bloom',
 			'music.visualizerPresetOrbitals' => 'Orbitalok',
@@ -7642,8 +7698,6 @@ extension on TranslationsHu {
 			'music.noAudioUrl' => ({required Object track}) => 'Nem érhető el hang-URL ehhez: ${track}',
 			'music.discography.singlesAndEps' => 'Kislemezek és EP-k',
 			'music.discography.live' => 'Élő',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'Válogatások',
 			'music.backTo' => 'Vissza ide',
 			'music.upNext' => 'Következik',
@@ -8134,6 +8188,8 @@ extension on TranslationsHu {
 			'externalPlayer.useExternalPlayer' => 'Külső lejátszó használata',
 			'externalPlayer.useExternalPlayerDescription' => 'Videók megnyitása egy másik alkalmazásban',
 			'externalPlayer.selectPlayer' => 'Lejátszó kiválasztása',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Egyéni lejátszók',
 			'externalPlayer.systemDefault' => 'Rendszer alapértelmezése',
 			'externalPlayer.addCustomPlayer' => 'Egyéni lejátszó hozzáadása',
@@ -8156,8 +8212,6 @@ extension on TranslationsHu {
 			'metadataEdit.editMetadata' => 'Szerkesztés...',
 			'metadataEdit.screenTitle' => 'Metaadatok szerkesztése',
 			'metadataEdit.basicInfo' => 'Alapinformációk',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'Borítók és képek',
 			'metadataEdit.advancedSettings' => 'Haladó beállítások',
 			'metadataEdit.title' => 'Cím',
@@ -8648,6 +8702,8 @@ extension on TranslationsHu {
 			'homeLayout.heroCardDescription' => 'A teljes körű forgatási kártyát mutatja be a poszter-szekrény helyett.',
 			'homeLayout.heroUnavailableDescription' => 'Csak akkor áll rendelkezésre, ha ez a sor egy gyűjtemény tényleges címére oldódik meg - több mint egy gyűjtés kiválasztásával egyetlen cím sem fordulhat át.',
 			'homeLayout.librariesSelection' => 'Könyvtárak (az összes ellenőrzés nélküli könyvtárat minden könyvtárhoz bele kell foglalni)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Minden könyvtár itt ellenőrzött össze van keverve ebben az egyik sorban.',
 			'homeLayout.movieCollectionsSelection' => 'Filmgyűjtemények (minden ellenőrzés nélküli lemez minden kiválasztott könyvtárban)',
 			'homeLayout.showCollectionsSelection' => 'Megjelenítés gyűjtemények (töltsön ki minden nem ellenőrzött minden kiválasztott könyvtár)',
@@ -8670,8 +8726,6 @@ extension on TranslationsHu {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'Elrejtés',
 			'homeLayout.remove' => 'Eltávolítás',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'A könyvtár újbóli sorrendje',
 			'homeLayout.pressAgainToDelete' => 'Nyomja meg újra a törléshez',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9162,6 +9216,8 @@ extension on TranslationsHu {
 			'audiobook.statusFinished' => 'befejezett',
 			'audiobook.goToTime' => 'Menj az időbe',
 			'audiobook.timeHelp' => 'Idők: percek: másodpercek, vagy percek: másodpercek',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'A szinkronizációs adatok áthelyezése vagy javítása előtt exportáljon egy nemrégiben titkosított másolatot. Az importok összeolvadnak a jelenlegi állapotgal; soha nem helyettesítik a helyi szinkrálás történetét.',
 			'audiobook.recoveryExport' => 'Export titkosított helyreállítási fájl',
 			'audiobook.recoveryImport' => 'Import titkosított helyreállítási fájl',
@@ -9184,8 +9240,6 @@ extension on TranslationsHu {
 			'sourceSetup.passwordOrKey' => 'Adj meg egy jelszót, vagy adj hozzá lent egy privát kulcsot.',
 			'sourceSetup.sshFingerprint' => 'Az SSH-gépkulcs SHA256-ujjlenyomata',
 			'sourceSetup.sshFingerprintHelp' => 'Ellenőrizd a szerver rendszergazdájával. A szerveren futtasd az ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub parancsot, és használd az SHA256-értékét.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'Hagyd üresen a jelenleg rögzített ujjlenyomat megőrzéséhez, vagy adj meg új szerverujjlenyomatot.',
 			'sourceSetup.sshAuthentication' => 'SSH-hitelesítés nyilvános kulccsal',
 			'sourceSetup.sshAuthenticationHelp' => 'Nem kötelező; a jelszavas hitelesítés is támogatott.',
@@ -9676,6 +9730,8 @@ extension on TranslationsHu {
 			'musicTools.days' => 'Napok',
 			'musicTools.albumBlocks' => 'Teljes albumok együtt tartása',
 			'musicTools.home' => 'Zene',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'Legutóbb lejátszott',
 			'musicTools.apiKey' => 'API-kulcs',
 			'musicTools.missing' => 'N/A',
@@ -9698,8 +9754,6 @@ extension on TranslationsHu {
 			'musicTools.serverAnalysis' => 'Szerverelemzés',
 			'musicTools.sonicAnalysis' => 'Hangelemzés',
 			'musicTools.serverAnalysisScope' => 'A szerver összes alkalmas zenei könyvtára. Az elemzési beállításaik nem változnak.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Szervertevékenységek',
 			'musicTools.playlistSharing' => 'Lejátszási lista elérése',
 			'musicTools.playlistRecipient' => 'Plex-felhasználónév vagy e-mail',

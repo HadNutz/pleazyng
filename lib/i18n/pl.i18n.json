@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "Dopasuj do mojego ekranu",
+    "fitHelp": "Wybierz krawędź i przesuń ją strzałkami, aż zobaczysz znaczniki. Powtórz dla każdej krawędzi.",
+    "left": "Lewa",
+    "right": "Prawa",
+    "top": "Górna",
+    "bottom": "Dolna",
+    "receiver": "Dolby Digital 5.1 dla starszych amplitunerów",
+    "receiverHelp": "Konwertuje dźwięk wielokanałowy na Dolby Digital na zgodnych wyjściach. Przesyła dźwięk bezpośrednio do amplitunera i zachowuje oryginalny obraz, jeśli można go skopiować.",
+    "missing": "W tej kolejności brakuje odcinka ${episode}.",
+    "playLater": "Mimo to odtwórz odcinek ${episode}",
+    "playCopy": "Odtwórz odcinek ${episode} z ${server}",
+    "jukebox": "Szafa grająca dla gości",
+    "jukeboxInfo": "Goście w sieci lokalnej mogą wyszukiwać utwory w tej bibliotece i dodawać je na koniec kolejki.",
+    "openRoom": "Otwórz szafę grającą",
+    "closeRoom": "Zamknij szafę grającą",
+    "join": "Zeskanuj, aby zamówić utwór",
+    "noNetwork": "Połącz się z siecią lokalną, aby otworzyć szafę grającą.",
+    "added": "Dodano do kolejki",
+    "searchSongs": "Szukaj utworów",
+    "roomUnavailable": "Ta szafa grająca jest niedostępna.",
+    "noSongs": "Brak pasujących utworów",
+    "chooseLibrary": "Wybierz bibliotekę muzyczną"
+  },
   "app": {
     "title": "Pleazyng"
   },

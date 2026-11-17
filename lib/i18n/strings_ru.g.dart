@@ -40,6 +40,7 @@ class TranslationsRu extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsRu $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsRu(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$ru livingRoom = _Translations$livingRoom$ru._(_root);
 	@override late final _Translations$app$ru app = _Translations$app$ru._(_root);
 	@override late final _Translations$appIcon$ru appIcon = _Translations$appIcon$ru._(_root);
 	@override late final _Translations$auth$ru auth = _Translations$auth$ru._(_root);
@@ -120,6 +121,37 @@ class TranslationsRu extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ru musicExperience = _Translations$musicExperience$ru._(_root);
 	@override late final _Translations$musicTools$ru musicTools = _Translations$musicTools$ru._(_root);
 	@override late final _Translations$musicDevices$ru musicDevices = _Translations$musicDevices$ru._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$ru extends Translations$livingRoom$en {
+	_Translations$livingRoom$ru._(TranslationsRu root) : this._root = root, super.internal(root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'Подогнать под мой экран';
+	@override String get fitHelp => 'Выберите край и перемещайте его стрелками, пока не станут видны метки. Повторите для каждого края.';
+	@override String get left => 'Слева';
+	@override String get right => 'Справа';
+	@override String get top => 'Сверху';
+	@override String get bottom => 'Снизу';
+	@override String get receiver => 'Dolby Digital 5.1 для старых ресиверов';
+	@override String get receiverHelp => 'Преобразует многоканальный звук в Dolby Digital для совместимых выходов. Звук передаётся напрямую на ресивер, а видео сохраняется без перекодирования, когда его можно скопировать.';
+	@override String missing({required Object episode}) => 'В этой последовательности отсутствует серия ${episode}.';
+	@override String playLater({required Object episode}) => 'Всё равно воспроизвести серию ${episode}';
+	@override String playCopy({required Object episode, required Object server}) => 'Воспроизвести серию ${episode} из ${server}';
+	@override String get jukebox => 'Музыкальный автомат для гостей';
+	@override String get jukeboxInfo => 'Гости в локальной сети могут искать песни в этой фонотеке и добавлять их в конец очереди.';
+	@override String get openRoom => 'Открыть музыкальный автомат';
+	@override String get closeRoom => 'Закрыть музыкальный автомат';
+	@override String get join => 'Отсканируйте код, чтобы заказать песню';
+	@override String get noNetwork => 'Чтобы открыть музыкальный автомат, подключитесь к локальной сети.';
+	@override String get added => 'Добавлено в очередь';
+	@override String get searchSongs => 'Найти песни';
+	@override String get roomUnavailable => 'Музыкальный автомат недоступен.';
+	@override String get noSongs => 'Подходящих песен нет';
+	@override String get chooseLibrary => 'Выберите фонотеку';
 }
 
 // Path: app
@@ -5638,6 +5670,28 @@ class _Translations$services$trackerDescriptions$ru extends Translations$service
 extension on TranslationsRu {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Подогнать под мой экран',
+			'livingRoom.fitHelp' => 'Выберите край и перемещайте его стрелками, пока не станут видны метки. Повторите для каждого края.',
+			'livingRoom.left' => 'Слева',
+			'livingRoom.right' => 'Справа',
+			'livingRoom.top' => 'Сверху',
+			'livingRoom.bottom' => 'Снизу',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 для старых ресиверов',
+			'livingRoom.receiverHelp' => 'Преобразует многоканальный звук в Dolby Digital для совместимых выходов. Звук передаётся напрямую на ресивер, а видео сохраняется без перекодирования, когда его можно скопировать.',
+			'livingRoom.missing' => ({required Object episode}) => 'В этой последовательности отсутствует серия ${episode}.',
+			'livingRoom.playLater' => ({required Object episode}) => 'Всё равно воспроизвести серию ${episode}',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'Воспроизвести серию ${episode} из ${server}',
+			'livingRoom.jukebox' => 'Музыкальный автомат для гостей',
+			'livingRoom.jukeboxInfo' => 'Гости в локальной сети могут искать песни в этой фонотеке и добавлять их в конец очереди.',
+			'livingRoom.openRoom' => 'Открыть музыкальный автомат',
+			'livingRoom.closeRoom' => 'Закрыть музыкальный автомат',
+			'livingRoom.join' => 'Отсканируйте код, чтобы заказать песню',
+			'livingRoom.noNetwork' => 'Чтобы открыть музыкальный автомат, подключитесь к локальной сети.',
+			'livingRoom.added' => 'Добавлено в очередь',
+			'livingRoom.searchSongs' => 'Найти песни',
+			'livingRoom.roomUnavailable' => 'Музыкальный автомат недоступен.',
+			'livingRoom.noSongs' => 'Подходящих песен нет',
+			'livingRoom.chooseLibrary' => 'Выберите фонотеку',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'Значок приложения',
 			'appIcon.defaultIcon' => 'Стандартный',
@@ -6128,6 +6182,8 @@ extension on TranslationsRu {
 			'settings.downmixCenterBoostLabel' => 'Усиление (дБ)',
 			'settings.downmixCenterBoostShort' => 'дБ',
 			'settings.audioDownmixNormalize' => 'Нормализация громкости при микшировании',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Снижает уровень микса во избежание клиппинга. Отключите, чтобы сохранить исходную громкость (возможны искажения в громких сценах).',
 			'settings.dvConversionMode' => 'Преобразование Dolby Vision',
 			'settings.dvConversionModeDescription' => 'Выберите, как обрабатывать файлы Dolby Vision Profile 7.',
@@ -6150,8 +6206,6 @@ extension on TranslationsRu {
 			'settings.hdrSdrConversion' => 'Преобразование HDR в SDR',
 			'settings.hdrSdrConversionDescription' => 'Выберите, что преобразует HDR-видео, если дисплей не поддерживает HDR.',
 			'settings.hdrSdrConversionAuto' => 'Авто',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Устройство на Android 9 и новее, проигрыватель на более старых версиях',
 			'settings.hdrSdrConversionDevice' => 'Устройство',
 			'settings.hdrSdrConversionDeviceDescription' => 'Преобразует видеооборудование устройства. Быстрее всего, но цвета зависят от устройства',
@@ -6642,6 +6696,8 @@ extension on TranslationsRu {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Перемотать назад на ${seconds} с',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Перемотать вперёд на ${seconds} с',
 			'videoControls.previousButton' => 'Предыдущий эпизод',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'Следующий эпизод',
 			'videoControls.previousChapterButton' => 'Предыдущая глава',
 			'videoControls.nextChapterButton' => 'Следующая глава',
@@ -6664,8 +6720,6 @@ extension on TranslationsRu {
 			'videoControls.segmentLoop' => 'Сегмент Лоуп',
 			'videoControls.addBookmark' => 'Добавить Bookmark',
 			'videoControls.bookmarkName' => 'Bookmark имя',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'Например, сцены открытия',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'Букмарк ${n}',
 			'videoControls.bookmarkNameRequired' => 'Введите имя для этой книжной марки.',
@@ -7156,6 +7210,8 @@ extension on TranslationsRu {
 			'libraries.analysisStarted' => ({required Object title}) => 'Анализ начат для "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Не удалось проанализировать библиотеку: ${error}',
 			'libraries.noLibrariesFound' => 'Библиотеки не найдены',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Все библиотеки скрыты',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Скрытые библиотеки (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Эта библиотека пуста',
@@ -7178,8 +7234,6 @@ extension on TranslationsRu {
 			'libraries.content' => 'содержимое библиотеки',
 			'libraries.selectLibrary' => 'Выбрать библиотеку',
 			'libraries.filtersWithCount' => ({required Object count}) => 'Фильтры (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'Рекомендации недоступны',
 			'libraries.noCollections' => 'В этой библиотеке нет коллекций',
 			'libraries.noFoldersFound' => 'Папки не найдены',
@@ -7670,6 +7724,8 @@ extension on TranslationsRu {
 			'music.visualizerLiveAudio' => 'Анализ аудио в реальном времени',
 			'music.visualizerPreviousPreset' => 'Предыдущий визуальный стиль',
 			'music.visualizerNextPreset' => 'Следующий визуальный стиль',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Блум',
 			'music.visualizerPresetOrbitals' => 'орбиталы',
@@ -7692,8 +7748,6 @@ extension on TranslationsRu {
 			'music.noAudioUrl' => ({required Object track}) => 'Для трека ${track} нет доступного URL аудио',
 			'music.discography.singlesAndEps' => 'Синглы и EP',
 			'music.discography.live' => 'Концертные',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'Сборники',
 			'music.backTo' => 'Вернуться к',
 			'music.upNext' => 'Далее',
@@ -8184,6 +8238,8 @@ extension on TranslationsRu {
 			'externalPlayer.useExternalPlayer' => 'Использовать внешний плеер',
 			'externalPlayer.useExternalPlayerDescription' => 'Открывать видео в другом приложении',
 			'externalPlayer.selectPlayer' => 'Выбрать плеер',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Свои плееры',
 			'externalPlayer.systemDefault' => 'Системный по умолчанию',
 			'externalPlayer.addCustomPlayer' => 'Добавить свой плеер',
@@ -8206,8 +8262,6 @@ extension on TranslationsRu {
 			'metadataEdit.editMetadata' => 'Редактировать...',
 			'metadataEdit.screenTitle' => 'Редактировать метаданные',
 			'metadataEdit.basicInfo' => 'Основная информация',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'Обложка',
 			'metadataEdit.advancedSettings' => 'Дополнительные настройки',
 			'metadataEdit.title' => 'Название',
@@ -8698,6 +8752,8 @@ extension on TranslationsRu {
 			'homeLayout.heroCardDescription' => 'Показывает как одно полномасштабное ротационное карточки вместо плакатного шлема.',
 			'homeLayout.heroUnavailableDescription' => 'Доступны только тогда, когда эта строка разрешается на реальные заголовки одной коллекции — с более чем одной коллекцией, выбранной, нет ни одного заголовка, который бы пересекался.',
 			'homeLayout.librariesSelection' => 'Библиотеки (оставьте все непересмотренные, чтобы включить каждую библиотеку)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Вся библиотека, проверенная здесь, объединяется в этот один ряд.',
 			'homeLayout.movieCollectionsSelection' => 'Коллекции фильмов (оставьте все непересмотренные для каждой выбранной библиотеки)',
 			'homeLayout.showCollectionsSelection' => 'Показать коллекции (оставьте все непересмотренные для каждой выбранной библиотеки)',
@@ -8720,8 +8776,6 @@ extension on TranslationsRu {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'Скрыть',
 			'homeLayout.remove' => 'Удалить',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'Резюме этой библиотеки',
 			'homeLayout.pressAgainToDelete' => 'Нажмите опять, чтобы удалить',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9212,6 +9266,8 @@ extension on TranslationsRu {
 			'audiobook.statusFinished' => 'Завершился',
 			'audiobook.goToTime' => 'Идите в Время',
 			'audiobook.timeHelp' => 'Часы: минуты: секунды или минуты: секунды',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Экспортируйте недавно зашифрованную копию перед перемещением или восстановлением данных синхронизации. Импорты сливаются с текущим состоянием; они никогда не замещают историю локальной синхронности.',
 			'audiobook.recoveryExport' => 'Экспорт шифрованных файлов восстановления',
 			'audiobook.recoveryImport' => 'Импорт шифрованных файлов восстановления',
@@ -9234,8 +9290,6 @@ extension on TranslationsRu {
 			'sourceSetup.passwordOrKey' => 'Введите пароль или добавьте закрытый ключ ниже.',
 			'sourceSetup.sshFingerprint' => 'Отпечаток SHA256 ключа хоста SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Сверьте его с администратором сервера. На сервере выполните ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub и используйте значение SHA256.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'Оставьте пустым, чтобы сохранить закреплённый отпечаток, или введите новый отпечаток сервера.',
 			'sourceSetup.sshAuthentication' => 'Аутентификация SSH по открытому ключу',
 			'sourceSetup.sshAuthenticationHelp' => 'Необязательно; аутентификация по паролю также поддерживается.',
@@ -9726,6 +9780,8 @@ extension on TranslationsRu {
 			'musicTools.days' => 'Дни',
 			'musicTools.albumBlocks' => 'Сохранять альбомы целиком',
 			'musicTools.home' => 'Музыка',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'Недавно прослушанные',
 			'musicTools.apiKey' => 'Ключ API',
 			'musicTools.missing' => 'Н/Д',
@@ -9748,8 +9804,6 @@ extension on TranslationsRu {
 			'musicTools.serverAnalysis' => 'Анализ сервера',
 			'musicTools.sonicAnalysis' => 'Звуковой анализ',
 			'musicTools.serverAnalysisScope' => 'Все подходящие музыкальные библиотеки на этом сервере. Их настройки анализа не изменяются.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Задачи сервера',
 			'musicTools.playlistSharing' => 'Доступ к плейлисту',
 			'musicTools.playlistRecipient' => 'Имя пользователя Plex или эл. почта',

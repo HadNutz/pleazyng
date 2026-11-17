@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "Přizpůsobit obrazovce",
+    "fitHelp": "Vyberte okraj a posouvejte jej šipkami, dokud neuvidíte jeho značky. Opakujte pro každý okraj.",
+    "left": "Vlevo",
+    "right": "Vpravo",
+    "top": "Nahoře",
+    "bottom": "Dole",
+    "receiver": "Dolby Digital 5.1 pro starší přijímače",
+    "receiverHelp": "Na kompatibilních výstupech převede vícekanálový zvuk na Dolby Digital. Zvuk předá přímo přijímači a původní video zachová, pokud je lze zkopírovat.",
+    "missing": "V této řadě chybí epizoda ${episode}.",
+    "playLater": "Přesto přehrát epizodu ${episode}",
+    "playCopy": "Přehrát epizodu ${episode} ze zdroje ${server}",
+    "jukebox": "Jukebox pro hosty",
+    "jukeboxInfo": "Hosté v místní síti mohou vyhledávat skladby v této knihovně a přidávat je na konec fronty.",
+    "openRoom": "Otevřít jukebox",
+    "closeRoom": "Zavřít jukebox",
+    "join": "Naskenujte kód a vyžádejte si skladbu",
+    "noNetwork": "Chcete-li otevřít jukebox, připojte se k místní síti.",
+    "added": "Přidáno do fronty",
+    "searchSongs": "Hledat skladby",
+    "roomUnavailable": "Tento jukebox není dostupný.",
+    "noSongs": "Žádné odpovídající skladby",
+    "chooseLibrary": "Vyberte hudební knihovnu"
+  },
   "app": {
     "title": "Pleazyng"
   },

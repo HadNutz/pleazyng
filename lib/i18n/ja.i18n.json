@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "画面に合わせる",
+    "fitHelp": "辺を選び、目印が見える位置まで矢印キーで移動します。残りの辺も同様に調整してください。",
+    "left": "左",
+    "right": "右",
+    "top": "上",
+    "bottom": "下",
+    "receiver": "旧型AVアンプ向け Dolby Digital 5.1",
+    "receiverHelp": "対応する出力ではマルチチャンネル音声を Dolby Digital に変換し、アンプにパススルーします。映像はコピーできる場合、再エンコードしません。",
+    "missing": "この再生順には第${episode}話がありません。",
+    "playLater": "そのまま第${episode}話を再生",
+    "playCopy": "${server} から第${episode}話を再生",
+    "jukebox": "ゲスト用ジュークボックス",
+    "jukeboxInfo": "同じローカルネットワークのゲストが、この音楽ライブラリから曲を検索してキューの末尾に追加できます。",
+    "openRoom": "ジュークボックスを開く",
+    "closeRoom": "ジュークボックスを閉じる",
+    "join": "スキャンして曲をリクエスト",
+    "noNetwork": "ジュークボックスを開くにはローカルネットワークに接続してください。",
+    "added": "キューに追加しました",
+    "searchSongs": "曲を検索",
+    "roomUnavailable": "このジュークボックスは利用できません。",
+    "noSongs": "一致する曲がありません",
+    "chooseLibrary": "音楽ライブラリを選択"
+  },
   "app": {
     "title": "Pleazyng"
   },

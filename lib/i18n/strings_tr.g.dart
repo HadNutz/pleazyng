@@ -40,6 +40,7 @@ class TranslationsTr extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsTr $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsTr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$tr livingRoom = _Translations$livingRoom$tr._(_root);
 	@override late final _Translations$app$tr app = _Translations$app$tr._(_root);
 	@override late final _Translations$appIcon$tr appIcon = _Translations$appIcon$tr._(_root);
 	@override late final _Translations$auth$tr auth = _Translations$auth$tr._(_root);
@@ -120,6 +121,37 @@ class TranslationsTr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$tr musicExperience = _Translations$musicExperience$tr._(_root);
 	@override late final _Translations$musicTools$tr musicTools = _Translations$musicTools$tr._(_root);
 	@override late final _Translations$musicDevices$tr musicDevices = _Translations$musicDevices$tr._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$tr extends Translations$livingRoom$en {
+	_Translations$livingRoom$tr._(TranslationsTr root) : this._root = root, super.internal(root);
+
+	final TranslationsTr _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'Ekranıma sığdır';
+	@override String get fitHelp => 'Bir kenar seçip işaretleri görünene kadar oklarla hareket ettirin. Her kenar için tekrarlayın.';
+	@override String get left => 'Sol';
+	@override String get right => 'Sağ';
+	@override String get top => 'Üst';
+	@override String get bottom => 'Alt';
+	@override String get receiver => 'Eski alıcılar için Dolby Digital 5.1';
+	@override String get receiverHelp => 'Uyumlu çıkışlarda çok kanallı sesi Dolby Digital biçimine dönüştürür. Sesi doğrudan alıcıya iletir ve kopyalanabiliyorsa özgün videoyu korur.';
+	@override String missing({required Object episode}) => 'Bu sıralamada ${episode}. bölüm eksik.';
+	@override String playLater({required Object episode}) => 'Yine de ${episode}. bölümü oynat';
+	@override String playCopy({required Object episode, required Object server}) => '${episode}. bölümü ${server} kaynağından oynat';
+	@override String get jukebox => 'Misafir müzik kutusu';
+	@override String get jukeboxInfo => 'Yerel ağınızdaki misafirler bu müzik arşivinde arama yapabilir ve sıranın sonuna şarkı ekleyebilir.';
+	@override String get openRoom => 'Müzik kutusunu aç';
+	@override String get closeRoom => 'Müzik kutusunu kapat';
+	@override String get join => 'Şarkı istemek için kodu tarayın';
+	@override String get noNetwork => 'Müzik kutusunu açmak için yerel bir ağa bağlanın.';
+	@override String get added => 'Sıraya eklendi';
+	@override String get searchSongs => 'Şarkı ara';
+	@override String get roomUnavailable => 'Bu müzik kutusu kullanılamıyor.';
+	@override String get noSongs => 'Eşleşen şarkı yok';
+	@override String get chooseLibrary => 'Bir müzik arşivi seçin';
 }
 
 // Path: app
@@ -5588,6 +5620,28 @@ class _Translations$services$trackerDescriptions$tr extends Translations$service
 extension on TranslationsTr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Ekranıma sığdır',
+			'livingRoom.fitHelp' => 'Bir kenar seçip işaretleri görünene kadar oklarla hareket ettirin. Her kenar için tekrarlayın.',
+			'livingRoom.left' => 'Sol',
+			'livingRoom.right' => 'Sağ',
+			'livingRoom.top' => 'Üst',
+			'livingRoom.bottom' => 'Alt',
+			'livingRoom.receiver' => 'Eski alıcılar için Dolby Digital 5.1',
+			'livingRoom.receiverHelp' => 'Uyumlu çıkışlarda çok kanallı sesi Dolby Digital biçimine dönüştürür. Sesi doğrudan alıcıya iletir ve kopyalanabiliyorsa özgün videoyu korur.',
+			'livingRoom.missing' => ({required Object episode}) => 'Bu sıralamada ${episode}. bölüm eksik.',
+			'livingRoom.playLater' => ({required Object episode}) => 'Yine de ${episode}. bölümü oynat',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => '${episode}. bölümü ${server} kaynağından oynat',
+			'livingRoom.jukebox' => 'Misafir müzik kutusu',
+			'livingRoom.jukeboxInfo' => 'Yerel ağınızdaki misafirler bu müzik arşivinde arama yapabilir ve sıranın sonuna şarkı ekleyebilir.',
+			'livingRoom.openRoom' => 'Müzik kutusunu aç',
+			'livingRoom.closeRoom' => 'Müzik kutusunu kapat',
+			'livingRoom.join' => 'Şarkı istemek için kodu tarayın',
+			'livingRoom.noNetwork' => 'Müzik kutusunu açmak için yerel bir ağa bağlanın.',
+			'livingRoom.added' => 'Sıraya eklendi',
+			'livingRoom.searchSongs' => 'Şarkı ara',
+			'livingRoom.roomUnavailable' => 'Bu müzik kutusu kullanılamıyor.',
+			'livingRoom.noSongs' => 'Eşleşen şarkı yok',
+			'livingRoom.chooseLibrary' => 'Bir müzik arşivi seçin',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'Uygulama simgesi',
 			'appIcon.defaultIcon' => 'Varsayılan',
@@ -6078,6 +6132,8 @@ extension on TranslationsTr {
 			'settings.downmixCenterBoostLabel' => 'Yükseltme (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Dönüştürmede Sesi Normalleştir',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Ses patlamalarını önlemek için karışımı düşürün. Orijinal sesi korumak için kapatın (yüksek sesli sahnelerde bozulma yapabilir).',
 			'settings.dvConversionMode' => 'Dolby Vision Dönüştürme',
 			'settings.dvConversionModeDescription' => 'Dolby Vision Profile 7 dosyalarının nasıl işleneceğini seçin.',
@@ -6100,8 +6156,6 @@ extension on TranslationsTr {
 			'settings.hdrSdrConversion' => 'HDR\'den SDR\'ye Dönüştürme',
 			'settings.hdrSdrConversionDescription' => 'Ekran HDR gösteremediğinde HDR videoyu neyin dönüştüreceğini seçin.',
 			'settings.hdrSdrConversionAuto' => 'Otomatik',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Android 9 ve sonrasında cihaz, eski sürümlerde oynatıcı',
 			'settings.hdrSdrConversionDevice' => 'Cihaz',
 			'settings.hdrSdrConversionDeviceDescription' => 'Dönüştürmeyi cihazın video donanımı yapar. En hızlısı, ancak renkler cihaza bağlıdır',
@@ -6592,6 +6646,8 @@ extension on TranslationsTr {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => '${seconds} saniye geri sar',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => '${seconds} saniye ileri sar',
 			'videoControls.previousButton' => 'Önceki bölüm',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'Sonraki bölüm',
 			'videoControls.previousChapterButton' => 'Önceki kısım',
 			'videoControls.nextChapterButton' => 'Sonraki kısım',
@@ -6614,8 +6670,6 @@ extension on TranslationsTr {
 			'videoControls.segmentLoop' => 'Segment Yürüyüşü',
 			'videoControls.addBookmark' => 'Bookmark ekleyin',
 			'videoControls.bookmarkName' => 'Bookmark Adı',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'Örneğin, açılan sahne',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'Bookmark Hakkında ${n}',
 			'videoControls.bookmarkNameRequired' => 'Bu kitaplık için bir isim girin.',
@@ -7106,6 +7160,8 @@ extension on TranslationsTr {
 			'libraries.analysisStarted' => ({required Object title}) => '"${title}" için analiz başladı',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Kitaplık analiz edilemedi: ${error}',
 			'libraries.noLibrariesFound' => 'Kitaplık bulunamadı',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Tüm kitaplıklar gizli',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Gizli kitaplıklar (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Bu kitaplık boş',
@@ -7128,8 +7184,6 @@ extension on TranslationsTr {
 			'libraries.content' => 'kitaplık içeriği',
 			'libraries.selectLibrary' => 'Kitaplık seç',
 			'libraries.filtersWithCount' => ({required Object count}) => 'Filtreler (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'Öneri bulunmuyor',
 			'libraries.noCollections' => 'Bu kitaplıkta koleksiyon yok',
 			'libraries.noFoldersFound' => 'Klasör bulunamadı',
@@ -7620,6 +7674,8 @@ extension on TranslationsTr {
 			'music.visualizerLiveAudio' => 'Canlı ses analizi',
 			'music.visualizerPreviousPreset' => 'Önceki Görsel Stil',
 			'music.visualizerNextPreset' => 'Next Görsel Stil',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Bloom için',
 			'music.visualizerPresetOrbitals' => 'Orbitler',
@@ -7642,8 +7698,6 @@ extension on TranslationsTr {
 			'music.noAudioUrl' => ({required Object track}) => '${track} için kullanılabilir ses URL\'si yok',
 			'music.discography.singlesAndEps' => 'Single ve EP\'ler',
 			'music.discography.live' => 'Canlı',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'Derlemeler',
 			'music.backTo' => 'Önceki çalınanlar',
 			'music.upNext' => 'Sıradaki',
@@ -8134,6 +8188,8 @@ extension on TranslationsTr {
 			'externalPlayer.useExternalPlayer' => 'Harici Oynatıcı Kullan',
 			'externalPlayer.useExternalPlayerDescription' => 'Videoları başka bir uygulamada açın',
 			'externalPlayer.selectPlayer' => 'Oynatıcı Seç',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Özel Oynatıcılar',
 			'externalPlayer.systemDefault' => 'Sistem Varsayılanı',
 			'externalPlayer.addCustomPlayer' => 'Özel Oynatıcı Ekle',
@@ -8156,8 +8212,6 @@ extension on TranslationsTr {
 			'metadataEdit.editMetadata' => 'Düzenle...',
 			'metadataEdit.screenTitle' => 'Meta Verileri Düzenle',
 			'metadataEdit.basicInfo' => 'Temel Bilgiler',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'Görseller',
 			'metadataEdit.advancedSettings' => 'Gelişmiş Ayarlar',
 			'metadataEdit.title' => 'Başlık',
@@ -8648,6 +8702,8 @@ extension on TranslationsTr {
 			'homeLayout.heroCardDescription' => 'Bir poster şelalesi yerine tam geniş bir döner kart olarak gösterilir.',
 			'homeLayout.heroUnavailableDescription' => 'Sadece bu satır tek bir koleksiyonun gerçek başlıklarına çözüldüğünde mevcuttur - birden fazla koleksiyon seçildiğinde, tek bir başlık geçmek için geçerli değildir.',
 			'homeLayout.librariesSelection' => 'Kütüphaneler (her kütüphaneyi içermek için tüm kontrolsüz bırakın)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Burada kontrol edilen her kütüphane bu tek satırda birleşmiştir.',
 			'homeLayout.movieCollectionsSelection' => 'Film koleksiyonları (her seçilen kütüphane için tüm kontrolsüz bırakın)',
 			'homeLayout.showCollectionsSelection' => 'Koleksiyonları göster (her seçilen kütüphane için tüm kontrolsüz bırakın)',
@@ -8670,8 +8726,6 @@ extension on TranslationsTr {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'Gizle',
 			'homeLayout.remove' => 'Kaldır',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'Bu kütüphanenin resim sırası',
 			'homeLayout.pressAgainToDelete' => 'Yine silinmek için basın',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9162,6 +9216,8 @@ extension on TranslationsTr {
 			'audiobook.statusFinished' => 'bitmiş',
 			'audiobook.goToTime' => 'Zamanına gidin',
 			'audiobook.timeHelp' => 'Saatler: dakikalar: saniye veya dakikalar: saniye',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Son zamanlarda şifrelenmiş bir kopyasını aktarmadan önce veya senkronizasyon verilerini düzeltmeden önce ihraç edin. ithalat mevcut durumla birleşir; yerel senkrona geçmişi asla değiştirmezler. senkronu ayrı tutun.',
 			'audiobook.recoveryExport' => 'İhracat şifreli kurtarma dosyası',
 			'audiobook.recoveryImport' => 'İthalat Şifreli Kurtarma Dosyası',
@@ -9184,8 +9240,6 @@ extension on TranslationsTr {
 			'sourceSetup.passwordOrKey' => 'Bir parola girin veya aşağıdan özel anahtar ekleyin.',
 			'sourceSetup.sshFingerprint' => 'SSH ana makine anahtarının SHA256 parmak izi',
 			'sourceSetup.sshFingerprintHelp' => 'Sunucu yöneticisiyle doğrulayın. Sunucuda ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub komutunu çalıştırıp SHA256 değerini kullanın.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'Geçerli sabitlenmiş parmak izini korumak için boş bırakın veya yeni sunucu parmak izini girin.',
 			'sourceSetup.sshAuthentication' => 'SSH açık anahtar kimlik doğrulaması',
 			'sourceSetup.sshAuthenticationHelp' => 'İsteğe bağlıdır; parolayla kimlik doğrulama da desteklenir.',
@@ -9676,6 +9730,8 @@ extension on TranslationsTr {
 			'musicTools.days' => 'Günler',
 			'musicTools.albumBlocks' => 'Albümleri bütün olarak tut',
 			'musicTools.home' => 'Müzik',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'Son çalınanlar',
 			'musicTools.apiKey' => 'API anahtarı',
 			'musicTools.missing' => 'Yok',
@@ -9698,8 +9754,6 @@ extension on TranslationsTr {
 			'musicTools.serverAnalysis' => 'Sunucu analizi',
 			'musicTools.sonicAnalysis' => 'Ses analizi',
 			'musicTools.serverAnalysisScope' => 'Bu sunucudaki uygun tüm müzik kitaplıkları. Analiz ayarları değiştirilmez.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Sunucu etkinlikleri',
 			'musicTools.playlistSharing' => 'Çalma listesi erişimi',
 			'musicTools.playlistRecipient' => 'Plex kullanıcı adı veya e-posta',

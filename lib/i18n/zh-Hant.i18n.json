@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "配合我的螢幕大小",
+    "fitHelp": "選擇一條邊，用方向鍵移動，直到看見該邊的標記。逐一調整每條邊。",
+    "left": "左",
+    "right": "右",
+    "top": "上",
+    "bottom": "下",
+    "receiver": "適用於舊款擴大機的 Dolby Digital 5.1",
+    "receiverHelp": "在相容的輸出上將多聲道音訊轉為 Dolby Digital，並直接傳送至擴大機。若可直接複製視訊串流，就保留原始視訊。",
+    "missing": "這個播放順序中缺少第 ${episode} 集。",
+    "playLater": "仍要播放第 ${episode} 集",
+    "playCopy": "從 ${server} 播放第 ${episode} 集",
+    "jukebox": "訪客點歌機",
+    "jukeboxInfo": "同一區域網路內的訪客可以搜尋這個音樂庫，並將歌曲加到佇列末端。",
+    "openRoom": "開啟點歌機",
+    "closeRoom": "關閉點歌機",
+    "join": "掃描 QR 碼點歌",
+    "noNetwork": "請連上區域網路以開啟點歌機。",
+    "added": "已加入佇列",
+    "searchSongs": "搜尋歌曲",
+    "roomUnavailable": "無法使用這台點歌機。",
+    "noSongs": "找不到相符的歌曲",
+    "chooseLibrary": "選擇音樂庫"
+  },
   "app": {
     "title": "Pleazyng"
   },

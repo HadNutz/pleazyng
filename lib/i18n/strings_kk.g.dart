@@ -40,6 +40,7 @@ class TranslationsKk extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsKk $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsKk(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$kk livingRoom = _Translations$livingRoom$kk._(_root);
 	@override late final _Translations$app$kk app = _Translations$app$kk._(_root);
 	@override late final _Translations$appIcon$kk appIcon = _Translations$appIcon$kk._(_root);
 	@override late final _Translations$auth$kk auth = _Translations$auth$kk._(_root);
@@ -120,6 +121,37 @@ class TranslationsKk extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$kk musicExperience = _Translations$musicExperience$kk._(_root);
 	@override late final _Translations$musicTools$kk musicTools = _Translations$musicTools$kk._(_root);
 	@override late final _Translations$musicDevices$kk musicDevices = _Translations$musicDevices$kk._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$kk extends Translations$livingRoom$en {
+	_Translations$livingRoom$kk._(TranslationsKk root) : this._root = root, super.internal(root);
+
+	final TranslationsKk _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'Экраныма сыйдыру';
+	@override String get fitHelp => 'Бір шетін таңдап, белгілері көрінгенше көрсеткілермен жылжытыңыз. Әр шеті үшін қайталаңыз.';
+	@override String get left => 'Сол жақ';
+	@override String get right => 'Оң жақ';
+	@override String get top => 'Жоғарғы жақ';
+	@override String get bottom => 'Төменгі жақ';
+	@override String get receiver => 'Ескі ресиверлерге арналған Dolby Digital 5.1';
+	@override String get receiverHelp => 'Үйлесімді шығыстарда көп арналы дыбысты Dolby Digital пішіміне түрлендіреді. Дыбыс ресиверге тікелей беріледі, ал бейнені көшіруге болса, ол бастапқы күйінде қалады.';
+	@override String missing({required Object episode}) => 'Бұл ретте ${episode}-бөлім жоқ.';
+	@override String playLater({required Object episode}) => 'Сонда да ${episode}-бөлімді ойнату';
+	@override String playCopy({required Object episode, required Object server}) => '${episode}-бөлімді ${server} көзінен ойнату';
+	@override String get jukebox => 'Қонақтарға арналған музыкалық автомат';
+	@override String get jukeboxInfo => 'Жергілікті желідегі қонақтар осы музыка қорынан ән іздеп, оны кезектің соңына қоса алады.';
+	@override String get openRoom => 'Музыкалық автоматты ашу';
+	@override String get closeRoom => 'Музыкалық автоматты жабу';
+	@override String get join => 'Ән сұрату үшін кодты сканерлеңіз';
+	@override String get noNetwork => 'Музыкалық автоматты ашу үшін жергілікті желіге қосылыңыз.';
+	@override String get added => 'Кезекке қосылды';
+	@override String get searchSongs => 'Ән іздеу';
+	@override String get roomUnavailable => 'Бұл музыкалық автомат қолжетімсіз.';
+	@override String get noSongs => 'Сәйкес ән табылмады';
+	@override String get chooseLibrary => 'Музыка қорын таңдаңыз';
 }
 
 // Path: app
@@ -5588,6 +5620,28 @@ class _Translations$services$trackerDescriptions$kk extends Translations$service
 extension on TranslationsKk {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Экраныма сыйдыру',
+			'livingRoom.fitHelp' => 'Бір шетін таңдап, белгілері көрінгенше көрсеткілермен жылжытыңыз. Әр шеті үшін қайталаңыз.',
+			'livingRoom.left' => 'Сол жақ',
+			'livingRoom.right' => 'Оң жақ',
+			'livingRoom.top' => 'Жоғарғы жақ',
+			'livingRoom.bottom' => 'Төменгі жақ',
+			'livingRoom.receiver' => 'Ескі ресиверлерге арналған Dolby Digital 5.1',
+			'livingRoom.receiverHelp' => 'Үйлесімді шығыстарда көп арналы дыбысты Dolby Digital пішіміне түрлендіреді. Дыбыс ресиверге тікелей беріледі, ал бейнені көшіруге болса, ол бастапқы күйінде қалады.',
+			'livingRoom.missing' => ({required Object episode}) => 'Бұл ретте ${episode}-бөлім жоқ.',
+			'livingRoom.playLater' => ({required Object episode}) => 'Сонда да ${episode}-бөлімді ойнату',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => '${episode}-бөлімді ${server} көзінен ойнату',
+			'livingRoom.jukebox' => 'Қонақтарға арналған музыкалық автомат',
+			'livingRoom.jukeboxInfo' => 'Жергілікті желідегі қонақтар осы музыка қорынан ән іздеп, оны кезектің соңына қоса алады.',
+			'livingRoom.openRoom' => 'Музыкалық автоматты ашу',
+			'livingRoom.closeRoom' => 'Музыкалық автоматты жабу',
+			'livingRoom.join' => 'Ән сұрату үшін кодты сканерлеңіз',
+			'livingRoom.noNetwork' => 'Музыкалық автоматты ашу үшін жергілікті желіге қосылыңыз.',
+			'livingRoom.added' => 'Кезекке қосылды',
+			'livingRoom.searchSongs' => 'Ән іздеу',
+			'livingRoom.roomUnavailable' => 'Бұл музыкалық автомат қолжетімсіз.',
+			'livingRoom.noSongs' => 'Сәйкес ән табылмады',
+			'livingRoom.chooseLibrary' => 'Музыка қорын таңдаңыз',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'Қолданба белгішесі',
 			'appIcon.defaultIcon' => 'Әдепкі',
@@ -6078,6 +6132,8 @@ extension on TranslationsKk {
 			'settings.downmixCenterBoostLabel' => 'Күшейту (дБ)',
 			'settings.downmixCenterBoostShort' => 'дБ',
 			'settings.audioDownmixNormalize' => 'Түрлендіруде дыбысты нормалау',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Дыбыс бұзылуын болдырмау үшін деңгейді төмендету.',
 			'settings.dvConversionMode' => 'Dolby Vision түрлендіруі',
 			'settings.dvConversionModeDescription' => 'Dolby Vision Profile 7 файлдарын өңдеу әдісін таңдаңыз.',
@@ -6100,8 +6156,6 @@ extension on TranslationsKk {
 			'settings.hdrSdrConversion' => 'HDR-ды SDR-ға түрлендіру',
 			'settings.hdrSdrConversionDescription' => 'Дисплей HDR көрсете алмаған кезде HDR бейнесін не түрлендіретінін таңдаңыз.',
 			'settings.hdrSdrConversionAuto' => 'Автоматты',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Android 9 және жаңарақ нұсқаларда құрылғы, ескі нұсқаларда ойнатқыш',
 			'settings.hdrSdrConversionDevice' => 'Құрылғы',
 			'settings.hdrSdrConversionDeviceDescription' => 'Түрлендіруді құрылғының бейне жабдығы орындайды. Ең жылдамы, бірақ түстер құрылғыға байланысты',
@@ -6592,6 +6646,8 @@ extension on TranslationsKk {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => '${seconds} секунд артқа айналдыру',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => '${seconds} секунд алға айналдыру',
 			'videoControls.previousButton' => 'Алдыңғы бөлім',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'Келесі бөлім',
 			'videoControls.previousChapterButton' => 'Алдыңғы бөлімше',
 			'videoControls.nextChapterButton' => 'Келесі бөлімше',
@@ -6614,8 +6670,6 @@ extension on TranslationsKk {
 			'videoControls.segmentLoop' => 'Бөлімді қайталау',
 			'videoControls.addBookmark' => 'Бетбелгі қосу',
 			'videoControls.bookmarkName' => 'Бетбелгі атауы',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'Мысалы, кіріспе көрінісі',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'Бетбелгі ${n}',
 			'videoControls.bookmarkNameRequired' => 'Бұл бетбелгіге атау енгізіңіз.',
@@ -7106,6 +7160,8 @@ extension on TranslationsKk {
 			'libraries.analysisStarted' => ({required Object title}) => '"${title}" үшін талдау басталды',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Талдау жасау мүмкін болмады: ${error}',
 			'libraries.noLibrariesFound' => 'Кітапханалар табылмады',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Барлық кітапханалар жасырылған',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Жасырын кітапханалар (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Бұл кітапхана бос',
@@ -7128,8 +7184,6 @@ extension on TranslationsKk {
 			'libraries.content' => 'кітапхана мазмұны',
 			'libraries.selectLibrary' => 'Кітапхананы таңдау',
 			'libraries.filtersWithCount' => ({required Object count}) => 'Фильтрлер (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'Ұсыныстар жоқ',
 			'libraries.noCollections' => 'Бұл кітапханада топтамалар жоқ',
 			'libraries.noFoldersFound' => 'Қапшықтар табылмады',
@@ -7620,6 +7674,8 @@ extension on TranslationsKk {
 			'music.visualizerLiveAudio' => 'Тікелей аудио талдауы',
 			'music.visualizerPreviousPreset' => 'Previous Жүктесің стиль',
 			'music.visualizerNextPreset' => 'Өзі сүйікті стиль',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Ауыз',
 			'music.visualizerPresetBloom' => 'Блум',
 			'music.visualizerPresetOrbitals' => 'орбиталы',
@@ -7642,8 +7698,6 @@ extension on TranslationsKk {
 			'music.noAudioUrl' => ({required Object track}) => '${track} үшін аудио URL-і қолжетімді емес',
 			'music.discography.singlesAndEps' => 'Синглдер және EP',
 			'music.discography.live' => 'Жанды',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'Жинақтар',
 			'music.backTo' => 'Алдыңғы ойнатылғандар',
 			'music.upNext' => 'Келесі',
@@ -8134,6 +8188,8 @@ extension on TranslationsKk {
 			'externalPlayer.useExternalPlayer' => 'Сыртқы ойнатқышты пайдалану',
 			'externalPlayer.useExternalPlayerDescription' => 'Видеоларды басқа қолданбада ашу',
 			'externalPlayer.selectPlayer' => 'Ойнатқышты таңдау',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Арнайы ойнатқыштар',
 			'externalPlayer.systemDefault' => 'Жүйелік әдепкі',
 			'externalPlayer.addCustomPlayer' => 'Арнайы ойнатқыш қосу',
@@ -8156,8 +8212,6 @@ extension on TranslationsKk {
 			'metadataEdit.editMetadata' => 'Өңдеу...',
 			'metadataEdit.screenTitle' => 'Метадеректерді өңдеу',
 			'metadataEdit.basicInfo' => 'Негізгі ақпарат',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'Суреттер/Постерлер',
 			'metadataEdit.advancedSettings' => 'Кеңейтілген баптаулар',
 			'metadataEdit.title' => 'Атауы',
@@ -8648,6 +8702,8 @@ extension on TranslationsKk {
 			'homeLayout.heroCardDescription' => 'Бұл үшін бір-бірімен бір-бірек картон, бір-бірін бір-білік картон, басқа бір-бітік картон.',
 			'homeLayout.heroUnavailableDescription' => 'Бұл жануарлардың бір-бірімен бір-бірін бір-бірин бір-біректің бір-біремен бір-биректің бір - бір-біреймен бір-бетімен бір-бақа бір-біреттің бір-биреттің бір - біремен бір -біректің де бір-бірестің бір-бетқа бір-бирімен бір -биректің де біремен де біремеді.',
 			'homeLayout.librariesSelection' => 'Бібліотекасы (вiнiңiңiнiкiнiнiзiнiмiнiлiңiкiңiмiзiмiңiзiзi)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Бұл үшін бір-бірімен бір-бірін бір-бірин бір-біректік бір-біретімен бір-биректік бір.',
 			'homeLayout.movieCollectionsSelection' => '«Аяқтық» киносы (аяқтық-аяққа қанақтық-бақыны)',
 			'homeLayout.showCollectionsSelection' => '«Аяқтық» (аяқтық) және «Аялық» (ааяққа) және «Карталық» (Аяққалы) және «Тұқсат» (Ааяқтың) және «Сұқсаттың» (ААяқтың).',
@@ -8670,8 +8726,6 @@ extension on TranslationsKk {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'Жасыру',
 			'homeLayout.remove' => 'Өшіру',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'Бібліотеканың ең айқын көрмесі',
 			'homeLayout.pressAgainToDelete' => 'Көпiнiң өнерінен өнеріне',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9162,6 +9216,8 @@ extension on TranslationsKk {
 			'audiobook.statusFinished' => 'Өткен',
 			'audiobook.goToTime' => 'Қазіргі уақытта',
 			'audiobook.timeHelp' => 'Өнімдер: 1 минут, 1 минут, 1 секунды',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Қаланың тұрақты тұрғындарының саны 10 адамды құрайды және 1 адамды қағидалардан тұрады.',
 			'audiobook.recoveryExport' => 'Експортдық криптовалюттік файл',
 			'audiobook.recoveryImport' => 'Қандай-ақ криптовалюталық дағдарыс',
@@ -9184,8 +9240,6 @@ extension on TranslationsKk {
 			'sourceSetup.passwordOrKey' => 'Құпиясөз енгізіңіз немесе төменде жеке кілт қосыңыз.',
 			'sourceSetup.sshFingerprint' => 'SSH хост кілтінің SHA256 ізі',
 			'sourceSetup.sshFingerprintHelp' => 'Оны сервер әкімшісімен тексеріңіз. Серверде ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub пәрменін орындап, SHA256 мәнін пайдаланыңыз.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'Қазір бекітілген ізді сақтау үшін бос қалдырыңыз немесе сервердің жаңа ізін енгізіңіз.',
 			'sourceSetup.sshAuthentication' => 'Ашық кілтпен SSH аутентификациясы',
 			'sourceSetup.sshAuthenticationHelp' => 'Міндетті емес; құпиясөзбен аутентификация да қолданылады.',
@@ -9676,6 +9730,8 @@ extension on TranslationsKk {
 			'musicTools.days' => 'Күндер',
 			'musicTools.albumBlocks' => 'Альбомдарды тұтас сақтау',
 			'musicTools.home' => 'Музыка',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'Жақында тыңдалған',
 			'musicTools.apiKey' => 'API кілті',
 			'musicTools.missing' => 'N/A',
@@ -9698,8 +9754,6 @@ extension on TranslationsKk {
 			'musicTools.serverAnalysis' => 'Серверді талдау',
 			'musicTools.sonicAnalysis' => 'Дыбыстық талдау',
 			'musicTools.serverAnalysisScope' => 'Осы сервердегі барлық жарамды музыка кітапханалары. Олардың талдау параметрлері өзгермейді.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Сервер әрекеттері',
 			'musicTools.playlistSharing' => 'Ойнату тізіміне қатынау',
 			'musicTools.playlistRecipient' => 'Plex пайдаланушы аты немесе электрондық пошта',

@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "Igazítás a képernyőmhöz",
+    "fitHelp": "Válassz egy szélt, és mozgasd a nyilakkal, amíg meg nem jelennek a jelölései. Ismételd meg minden szélnél.",
+    "left": "Bal",
+    "right": "Jobb",
+    "top": "Felső",
+    "bottom": "Alsó",
+    "receiver": "Dolby Digital 5.1 régebbi erősítőkhöz",
+    "receiverHelp": "A kompatibilis kimeneteken Dolby Digital formátumra alakítja a többcsatornás hangot. A hangot közvetlenül az erősítőre küldi, a videót pedig eredetiben hagyja, ha másolható.",
+    "missing": "A(z) ${episode}. epizód hiányzik ebből a sorrendből.",
+    "playLater": "A(z) ${episode}. epizód lejátszása így is",
+    "playCopy": "A(z) ${episode}. epizód lejátszása innen: ${server}",
+    "jukebox": "Zenegép a vendégeknek",
+    "jukeboxInfo": "A helyi hálózaton lévő vendégek kereshetnek ebben a zenetárban, és dalokat adhatnak a sor végéhez.",
+    "openRoom": "Zenegép megnyitása",
+    "closeRoom": "Zenegép bezárása",
+    "join": "Olvasd be a kódot egy dal kéréséhez",
+    "noNetwork": "A zenegép megnyitásához csatlakozz egy helyi hálózathoz.",
+    "added": "Hozzáadva a sorhoz",
+    "searchSongs": "Dalok keresése",
+    "roomUnavailable": "Ez a zenegép nem érhető el.",
+    "noSongs": "Nincs megfelelő dal",
+    "chooseLibrary": "Válassz zenetárat"
+  },
   "app": {
     "title": "Pleazyng"
   },

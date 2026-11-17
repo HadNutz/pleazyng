@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "Aanpassen aan mijn scherm",
+    "fitHelp": "Kies een rand en verplaats die met de pijltjes tot de markeringen zichtbaar zijn. Herhaal dit voor elke rand.",
+    "left": "Links",
+    "right": "Rechts",
+    "top": "Boven",
+    "bottom": "Onder",
+    "receiver": "Dolby Digital 5.1 voor oudere receivers",
+    "receiverHelp": "Zet meerkanaalsgeluid om naar Dolby Digital voor geschikte uitgangen. Stuurt het geluid rechtstreeks door en behoudt de oorspronkelijke video als die kan worden gekopieerd.",
+    "missing": "Aflevering ${episode} ontbreekt in deze reeks.",
+    "playLater": "Aflevering ${episode} toch afspelen",
+    "playCopy": "Aflevering ${episode} afspelen vanaf ${server}",
+    "jukebox": "Jukebox voor gasten",
+    "jukeboxInfo": "Gasten op je lokale netwerk kunnen deze muziekbibliotheek doorzoeken en nummers achteraan de wachtrij toevoegen.",
+    "openRoom": "Jukebox openen",
+    "closeRoom": "Jukebox sluiten",
+    "join": "Scan om een nummer aan te vragen",
+    "noNetwork": "Maak verbinding met een lokaal netwerk om de jukebox te openen.",
+    "added": "Aan de wachtrij toegevoegd",
+    "searchSongs": "Nummers zoeken",
+    "roomUnavailable": "Deze jukebox is niet beschikbaar.",
+    "noSongs": "Geen overeenkomende nummers",
+    "chooseLibrary": "Kies een muziekbibliotheek"
+  },
   "app": {
     "title": "Pleazyng"
   },

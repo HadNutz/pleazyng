@@ -40,6 +40,7 @@ class TranslationsJa extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsJa $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsJa(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$ja livingRoom = _Translations$livingRoom$ja._(_root);
 	@override late final _Translations$app$ja app = _Translations$app$ja._(_root);
 	@override late final _Translations$appIcon$ja appIcon = _Translations$appIcon$ja._(_root);
 	@override late final _Translations$auth$ja auth = _Translations$auth$ja._(_root);
@@ -120,6 +121,37 @@ class TranslationsJa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ja musicExperience = _Translations$musicExperience$ja._(_root);
 	@override late final _Translations$musicTools$ja musicTools = _Translations$musicTools$ja._(_root);
 	@override late final _Translations$musicDevices$ja musicDevices = _Translations$musicDevices$ja._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$ja extends Translations$livingRoom$en {
+	_Translations$livingRoom$ja._(TranslationsJa root) : this._root = root, super.internal(root);
+
+	final TranslationsJa _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => '画面に合わせる';
+	@override String get fitHelp => '辺を選び、目印が見える位置まで矢印キーで移動します。残りの辺も同様に調整してください。';
+	@override String get left => '左';
+	@override String get right => '右';
+	@override String get top => '上';
+	@override String get bottom => '下';
+	@override String get receiver => '旧型AVアンプ向け Dolby Digital 5.1';
+	@override String get receiverHelp => '対応する出力ではマルチチャンネル音声を Dolby Digital に変換し、アンプにパススルーします。映像はコピーできる場合、再エンコードしません。';
+	@override String missing({required Object episode}) => 'この再生順には第${episode}話がありません。';
+	@override String playLater({required Object episode}) => 'そのまま第${episode}話を再生';
+	@override String playCopy({required Object server, required Object episode}) => '${server} から第${episode}話を再生';
+	@override String get jukebox => 'ゲスト用ジュークボックス';
+	@override String get jukeboxInfo => '同じローカルネットワークのゲストが、この音楽ライブラリから曲を検索してキューの末尾に追加できます。';
+	@override String get openRoom => 'ジュークボックスを開く';
+	@override String get closeRoom => 'ジュークボックスを閉じる';
+	@override String get join => 'スキャンして曲をリクエスト';
+	@override String get noNetwork => 'ジュークボックスを開くにはローカルネットワークに接続してください。';
+	@override String get added => 'キューに追加しました';
+	@override String get searchSongs => '曲を検索';
+	@override String get roomUnavailable => 'このジュークボックスは利用できません。';
+	@override String get noSongs => '一致する曲がありません';
+	@override String get chooseLibrary => '音楽ライブラリを選択';
 }
 
 // Path: app
@@ -5583,6 +5615,28 @@ class _Translations$services$trackerDescriptions$ja extends Translations$service
 extension on TranslationsJa {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => '画面に合わせる',
+			'livingRoom.fitHelp' => '辺を選び、目印が見える位置まで矢印キーで移動します。残りの辺も同様に調整してください。',
+			'livingRoom.left' => '左',
+			'livingRoom.right' => '右',
+			'livingRoom.top' => '上',
+			'livingRoom.bottom' => '下',
+			'livingRoom.receiver' => '旧型AVアンプ向け Dolby Digital 5.1',
+			'livingRoom.receiverHelp' => '対応する出力ではマルチチャンネル音声を Dolby Digital に変換し、アンプにパススルーします。映像はコピーできる場合、再エンコードしません。',
+			'livingRoom.missing' => ({required Object episode}) => 'この再生順には第${episode}話がありません。',
+			'livingRoom.playLater' => ({required Object episode}) => 'そのまま第${episode}話を再生',
+			'livingRoom.playCopy' => ({required Object server, required Object episode}) => '${server} から第${episode}話を再生',
+			'livingRoom.jukebox' => 'ゲスト用ジュークボックス',
+			'livingRoom.jukeboxInfo' => '同じローカルネットワークのゲストが、この音楽ライブラリから曲を検索してキューの末尾に追加できます。',
+			'livingRoom.openRoom' => 'ジュークボックスを開く',
+			'livingRoom.closeRoom' => 'ジュークボックスを閉じる',
+			'livingRoom.join' => 'スキャンして曲をリクエスト',
+			'livingRoom.noNetwork' => 'ジュークボックスを開くにはローカルネットワークに接続してください。',
+			'livingRoom.added' => 'キューに追加しました',
+			'livingRoom.searchSongs' => '曲を検索',
+			'livingRoom.roomUnavailable' => 'このジュークボックスは利用できません。',
+			'livingRoom.noSongs' => '一致する曲がありません',
+			'livingRoom.chooseLibrary' => '音楽ライブラリを選択',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'アプリアイコン',
 			'appIcon.defaultIcon' => 'デフォルト',
@@ -6073,6 +6127,8 @@ extension on TranslationsJa {
 			'settings.downmixCenterBoostLabel' => 'ブースト (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'ダウンミックス時の音量正規化',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'クリッピングを防ぐためにミックス音量を下げます。オフにすると元の音量を維持します（大音量シーンで歪む場合があります）。',
 			'settings.dvConversionMode' => 'Dolby Vision 変換',
 			'settings.dvConversionModeDescription' => 'Dolby Vision Profile 7 ファイルの処理方法を選択します。',
@@ -6095,8 +6151,6 @@ extension on TranslationsJa {
 			'settings.hdrSdrConversion' => 'HDRからSDRへの変換',
 			'settings.hdrSdrConversionDescription' => 'ディスプレイがHDRを表示できないときに、HDR映像を何で変換するかを選択します。',
 			'settings.hdrSdrConversionAuto' => '自動',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Android 9以降はデバイス、それより前のバージョンではプレーヤー',
 			'settings.hdrSdrConversionDevice' => 'デバイス',
 			'settings.hdrSdrConversionDeviceDescription' => 'デバイスの映像ハードウェアで変換します。最も高速ですが、色はデバイスによって異なります',
@@ -6587,6 +6641,8 @@ extension on TranslationsJa {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => '${seconds}秒戻る',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => '${seconds}秒進む',
 			'videoControls.previousButton' => '前のエピソード',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => '次のエピソード',
 			'videoControls.previousChapterButton' => '前のチャプター',
 			'videoControls.nextChapterButton' => '次のチャプター',
@@ -6609,8 +6665,6 @@ extension on TranslationsJa {
 			'videoControls.segmentLoop' => 'セグメントループ',
 			'videoControls.addBookmark' => 'ブックマーク追加',
 			'videoControls.bookmarkName' => 'Bookmark 名称',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'たとえば、オープンシーン。',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'ブックマーク ${n}',
 			'videoControls.bookmarkNameRequired' => 'このブックマークの名前を入力します。',
@@ -7101,6 +7155,8 @@ extension on TranslationsJa {
 			'libraries.analysisStarted' => ({required Object title}) => '「${title}」の解析を開始しました',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'ライブラリの解析に失敗しました: ${error}',
 			'libraries.noLibrariesFound' => 'ライブラリが見つかりません',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'すべてのライブラリが非表示です',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => '非表示のライブラリ (${count})',
 			'libraries.thisLibraryIsEmpty' => 'このライブラリは空です',
@@ -7123,8 +7179,6 @@ extension on TranslationsJa {
 			'libraries.content' => 'ライブラリコンテンツ',
 			'libraries.selectLibrary' => 'ライブラリを選択',
 			'libraries.filtersWithCount' => ({required Object count}) => 'フィルター (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'おすすめがありません',
 			'libraries.noCollections' => 'このライブラリにコレクションがありません',
 			'libraries.noFoldersFound' => 'フォルダが見つかりません',
@@ -7615,6 +7669,8 @@ extension on TranslationsJa {
 			'music.visualizerLiveAudio' => 'ライブ音声解析',
 			'music.visualizerPreviousPreset' => '前の視覚スタイル',
 			'music.visualizerNextPreset' => '次 次 視覚スタイル',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'オーラ',
 			'music.visualizerPresetBloom' => 'ブルーム',
 			'music.visualizerPresetOrbitals' => 'オービタル',
@@ -7637,8 +7693,6 @@ extension on TranslationsJa {
 			'music.noAudioUrl' => ({required Object track}) => '${track}で利用可能な音声URLがありません',
 			'music.discography.singlesAndEps' => 'シングル・EP',
 			'music.discography.live' => 'ライブ',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'コンピレーション',
 			'music.backTo' => '再生済み',
 			'music.upNext' => '次に再生',
@@ -8129,6 +8183,8 @@ extension on TranslationsJa {
 			'externalPlayer.useExternalPlayer' => '外部プレーヤーを使用',
 			'externalPlayer.useExternalPlayerDescription' => '動画を別のアプリで開きます',
 			'externalPlayer.selectPlayer' => 'プレーヤーを選択',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'カスタムプレーヤー',
 			'externalPlayer.systemDefault' => 'システム既定',
 			'externalPlayer.addCustomPlayer' => 'カスタムプレーヤーを追加',
@@ -8151,8 +8207,6 @@ extension on TranslationsJa {
 			'metadataEdit.editMetadata' => '編集…',
 			'metadataEdit.screenTitle' => 'メタデータを編集',
 			'metadataEdit.basicInfo' => '基本情報',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'アートワーク',
 			'metadataEdit.advancedSettings' => '詳細設定',
 			'metadataEdit.title' => 'タイトル',
@@ -8643,6 +8697,8 @@ extension on TranslationsJa {
 			'homeLayout.heroCardDescription' => 'ポスターシェルフの代わりに、単一の全幅のローテーションカードとして表示されます。',
 			'homeLayout.heroUnavailableDescription' => 'この順番が単一のコレクションの実際のタイトルに解決する場合にのみ利用可能で、1 つ以上のコレクターが選択されると、単一のタイトルの回転はできません。',
 			'homeLayout.librariesSelection' => '図書館(すべての図書館を含むためにチェックされていないすべてを残す)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'ここでチェックされているすべての図書館は、この一行に合併しています。',
 			'homeLayout.movieCollectionsSelection' => '映画コレクション(各選択された図書館にチェックされていないすべてを残す)',
 			'homeLayout.showCollectionsSelection' => 'コレクションを表示する(各選択された図書館のすべての未チェックを残す)',
@@ -8665,8 +8721,6 @@ extension on TranslationsJa {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => '非表示',
 			'homeLayout.remove' => '削除',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'この図書館のリセットライン',
 			'homeLayout.pressAgainToDelete' => '再度削除するために押す',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9157,6 +9211,8 @@ extension on TranslationsJa {
 			'audiobook.statusFinished' => '終了',
 			'audiobook.goToTime' => '時間へ行く',
 			'audiobook.timeHelp' => '時間:分:秒、または分:秒',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => '同期データを移動または修正する前に、最近暗号化されたコピーを輸出します. インポートは現在の状態と合併し、現地の同期史を決して置き換えることはありません。',
 			'audiobook.recoveryExport' => 'エクスポート暗号化回復ファイル',
 			'audiobook.recoveryImport' => '暗号化された復元ファイルの輸入',
@@ -9179,8 +9235,6 @@ extension on TranslationsJa {
 			'sourceSetup.passwordOrKey' => 'パスワードを入力するか、下に秘密鍵を追加してください。',
 			'sourceSetup.sshFingerprint' => 'SSH ホスト鍵の SHA256 フィンガープリント',
 			'sourceSetup.sshFingerprintHelp' => 'サーバー管理者に確認してください。サーバーで ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub を実行し、表示された SHA256 値を使用します。',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => '現在固定されているフィンガープリントを維持するには空欄にします。変更する場合は新しいサーバーのフィンガープリントを入力してください。',
 			'sourceSetup.sshAuthentication' => 'SSH 公開鍵認証',
 			'sourceSetup.sshAuthenticationHelp' => '任意です。パスワード認証も利用できます。',
@@ -9671,6 +9725,8 @@ extension on TranslationsJa {
 			'musicTools.days' => '日',
 			'musicTools.albumBlocks' => 'アルバム全体をまとめる',
 			'musicTools.home' => '音楽',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => '最近再生した曲',
 			'musicTools.apiKey' => 'API キー',
 			'musicTools.missing' => 'N/A',
@@ -9693,8 +9749,6 @@ extension on TranslationsJa {
 			'musicTools.serverAnalysis' => 'サーバー解析',
 			'musicTools.sonicAnalysis' => '音響解析',
 			'musicTools.serverAnalysisScope' => 'このサーバー上の対象となるすべての音楽ライブラリ。解析設定は変更されません。',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'サーバーの処理状況',
 			'musicTools.playlistSharing' => 'プレイリストへのアクセス',
 			'musicTools.playlistRecipient' => 'Plexユーザー名またはメール',

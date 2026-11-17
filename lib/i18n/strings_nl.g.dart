@@ -40,6 +40,7 @@ class TranslationsNl extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsNl $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsNl(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$nl livingRoom = _Translations$livingRoom$nl._(_root);
 	@override late final _Translations$app$nl app = _Translations$app$nl._(_root);
 	@override late final _Translations$appIcon$nl appIcon = _Translations$appIcon$nl._(_root);
 	@override late final _Translations$auth$nl auth = _Translations$auth$nl._(_root);
@@ -120,6 +121,37 @@ class TranslationsNl extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$nl musicExperience = _Translations$musicExperience$nl._(_root);
 	@override late final _Translations$musicTools$nl musicTools = _Translations$musicTools$nl._(_root);
 	@override late final _Translations$musicDevices$nl musicDevices = _Translations$musicDevices$nl._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$nl extends Translations$livingRoom$en {
+	_Translations$livingRoom$nl._(TranslationsNl root) : this._root = root, super.internal(root);
+
+	final TranslationsNl _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'Aanpassen aan mijn scherm';
+	@override String get fitHelp => 'Kies een rand en verplaats die met de pijltjes tot de markeringen zichtbaar zijn. Herhaal dit voor elke rand.';
+	@override String get left => 'Links';
+	@override String get right => 'Rechts';
+	@override String get top => 'Boven';
+	@override String get bottom => 'Onder';
+	@override String get receiver => 'Dolby Digital 5.1 voor oudere receivers';
+	@override String get receiverHelp => 'Zet meerkanaalsgeluid om naar Dolby Digital voor geschikte uitgangen. Stuurt het geluid rechtstreeks door en behoudt de oorspronkelijke video als die kan worden gekopieerd.';
+	@override String missing({required Object episode}) => 'Aflevering ${episode} ontbreekt in deze reeks.';
+	@override String playLater({required Object episode}) => 'Aflevering ${episode} toch afspelen';
+	@override String playCopy({required Object episode, required Object server}) => 'Aflevering ${episode} afspelen vanaf ${server}';
+	@override String get jukebox => 'Jukebox voor gasten';
+	@override String get jukeboxInfo => 'Gasten op je lokale netwerk kunnen deze muziekbibliotheek doorzoeken en nummers achteraan de wachtrij toevoegen.';
+	@override String get openRoom => 'Jukebox openen';
+	@override String get closeRoom => 'Jukebox sluiten';
+	@override String get join => 'Scan om een nummer aan te vragen';
+	@override String get noNetwork => 'Maak verbinding met een lokaal netwerk om de jukebox te openen.';
+	@override String get added => 'Aan de wachtrij toegevoegd';
+	@override String get searchSongs => 'Nummers zoeken';
+	@override String get roomUnavailable => 'Deze jukebox is niet beschikbaar.';
+	@override String get noSongs => 'Geen overeenkomende nummers';
+	@override String get chooseLibrary => 'Kies een muziekbibliotheek';
 }
 
 // Path: app
@@ -5588,6 +5620,28 @@ class _Translations$services$trackerDescriptions$nl extends Translations$service
 extension on TranslationsNl {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Aanpassen aan mijn scherm',
+			'livingRoom.fitHelp' => 'Kies een rand en verplaats die met de pijltjes tot de markeringen zichtbaar zijn. Herhaal dit voor elke rand.',
+			'livingRoom.left' => 'Links',
+			'livingRoom.right' => 'Rechts',
+			'livingRoom.top' => 'Boven',
+			'livingRoom.bottom' => 'Onder',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 voor oudere receivers',
+			'livingRoom.receiverHelp' => 'Zet meerkanaalsgeluid om naar Dolby Digital voor geschikte uitgangen. Stuurt het geluid rechtstreeks door en behoudt de oorspronkelijke video als die kan worden gekopieerd.',
+			'livingRoom.missing' => ({required Object episode}) => 'Aflevering ${episode} ontbreekt in deze reeks.',
+			'livingRoom.playLater' => ({required Object episode}) => 'Aflevering ${episode} toch afspelen',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'Aflevering ${episode} afspelen vanaf ${server}',
+			'livingRoom.jukebox' => 'Jukebox voor gasten',
+			'livingRoom.jukeboxInfo' => 'Gasten op je lokale netwerk kunnen deze muziekbibliotheek doorzoeken en nummers achteraan de wachtrij toevoegen.',
+			'livingRoom.openRoom' => 'Jukebox openen',
+			'livingRoom.closeRoom' => 'Jukebox sluiten',
+			'livingRoom.join' => 'Scan om een nummer aan te vragen',
+			'livingRoom.noNetwork' => 'Maak verbinding met een lokaal netwerk om de jukebox te openen.',
+			'livingRoom.added' => 'Aan de wachtrij toegevoegd',
+			'livingRoom.searchSongs' => 'Nummers zoeken',
+			'livingRoom.roomUnavailable' => 'Deze jukebox is niet beschikbaar.',
+			'livingRoom.noSongs' => 'Geen overeenkomende nummers',
+			'livingRoom.chooseLibrary' => 'Kies een muziekbibliotheek',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'App-icoon',
 			'appIcon.defaultIcon' => 'Standaard',
@@ -6078,6 +6132,8 @@ extension on TranslationsNl {
 			'settings.downmixCenterBoostLabel' => 'Versterking (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Volume normaliseren bij downmix',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Verlaagt de mix om clipping te voorkomen. Zet uit om het originele volume te behouden (kan vervormen bij luide scènes).',
 			'settings.dvConversionMode' => 'Dolby Vision-conversie',
 			'settings.dvConversionModeDescription' => 'Kies hoe Dolby Vision Profile 7-bestanden worden verwerkt.',
@@ -6100,8 +6156,6 @@ extension on TranslationsNl {
 			'settings.hdrSdrConversion' => 'HDR-naar-SDR-conversie',
 			'settings.hdrSdrConversionDescription' => 'Kies wat HDR-video omzet als het scherm geen HDR kan weergeven.',
 			'settings.hdrSdrConversionAuto' => 'Automatisch',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Apparaat vanaf Android 9, speler op oudere versies',
 			'settings.hdrSdrConversionDevice' => 'Apparaat',
 			'settings.hdrSdrConversionDeviceDescription' => 'De videohardware van het apparaat zet het om. Het snelst, maar de kleuren hangen af van het apparaat',
@@ -6592,6 +6646,8 @@ extension on TranslationsNl {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => '${seconds} seconden terugspoelen',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => '${seconds} seconden vooruitspoelen',
 			'videoControls.previousButton' => 'Vorige aflevering',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'Volgende aflevering',
 			'videoControls.previousChapterButton' => 'Vorig hoofdstuk',
 			'videoControls.nextChapterButton' => 'Volgend hoofdstuk',
@@ -6614,8 +6670,6 @@ extension on TranslationsNl {
 			'videoControls.segmentLoop' => 'Fragment herhalen',
 			'videoControls.addBookmark' => 'Voeg Bookmark toe',
 			'videoControls.bookmarkName' => 'Bookmark naam',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'Bijvoorbeeld de openingsscène',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'Boekmark ${n}',
 			'videoControls.bookmarkNameRequired' => 'Voer een naam in voor dit boekmerk.',
@@ -7106,6 +7160,8 @@ extension on TranslationsNl {
 			'libraries.analysisStarted' => ({required Object title}) => 'Analyse gestart voor "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Kon bibliotheek niet analyseren: ${error}',
 			'libraries.noLibrariesFound' => 'Geen bibliotheken gevonden',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Alle bibliotheken zijn verborgen',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Verborgen bibliotheken (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Deze bibliotheek is leeg',
@@ -7128,8 +7184,6 @@ extension on TranslationsNl {
 			'libraries.content' => 'bibliotheekinhoud',
 			'libraries.selectLibrary' => 'Bibliotheek kiezen',
 			'libraries.filtersWithCount' => ({required Object count}) => 'Filters (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'Geen aanbevelingen beschikbaar',
 			'libraries.noCollections' => 'Geen collecties in deze bibliotheek',
 			'libraries.noFoldersFound' => 'Geen mappen gevonden',
@@ -7620,6 +7674,8 @@ extension on TranslationsNl {
 			'music.visualizerLiveAudio' => 'Live-audioanalyse',
 			'music.visualizerPreviousPreset' => 'Vorige Visueel Styl',
 			'music.visualizerNextPreset' => 'Volgende Visual Style',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Bloem',
 			'music.visualizerPresetOrbitals' => 'Orbitale',
@@ -7642,8 +7698,6 @@ extension on TranslationsNl {
 			'music.noAudioUrl' => ({required Object track}) => 'Er is geen audio-URL beschikbaar voor ${track}',
 			'music.discography.singlesAndEps' => 'Singles en EP\'s',
 			'music.discography.live' => 'Live',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'Compilaties',
 			'music.backTo' => 'Terug naar',
 			'music.upNext' => 'Hierna',
@@ -8134,6 +8188,8 @@ extension on TranslationsNl {
 			'externalPlayer.useExternalPlayer' => 'Externe speler gebruiken',
 			'externalPlayer.useExternalPlayerDescription' => 'Open video\'s in een andere app',
 			'externalPlayer.selectPlayer' => 'Speler selecteren',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Aangepaste spelers',
 			'externalPlayer.systemDefault' => 'Systeemstandaard',
 			'externalPlayer.addCustomPlayer' => 'Aangepaste speler toevoegen',
@@ -8156,8 +8212,6 @@ extension on TranslationsNl {
 			'metadataEdit.editMetadata' => 'Bewerken...',
 			'metadataEdit.screenTitle' => 'Metadata bewerken',
 			'metadataEdit.basicInfo' => 'Basisinformatie',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'Illustraties',
 			'metadataEdit.advancedSettings' => 'Geavanceerde instellingen',
 			'metadataEdit.title' => 'Titel',
@@ -8648,6 +8702,8 @@ extension on TranslationsNl {
 			'homeLayout.heroCardDescription' => 'Het wordt weergegeven als een volledige rotatingkaart in plaats van een posterschel.',
 			'homeLayout.heroUnavailableDescription' => 'Alleen beschikbaar wanneer deze rij op een enkele collectie de werkelijke titels wordt opgelost – met meer dan één selectie is er geen enkele titel om door te roteren.',
 			'homeLayout.librariesSelection' => 'Bibliotheken (leven alle niet gecontroleerde om elke bibliotheek te bevatten)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Elke bibliotheek die hier wordt gecontroleerd, is in deze ene rij samengesteld.',
 			'homeLayout.movieCollectionsSelection' => 'Filmcollecties (leven alle niet-gecontroleerde voor elke geselecteerde bibliotheek)',
 			'homeLayout.showCollectionsSelection' => 'Toon collecties (laat alle niet-gecontroleerde voor elke gekozen bibliotheek)',
@@ -8670,8 +8726,6 @@ extension on TranslationsNl {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'Verbergen',
 			'homeLayout.remove' => 'Verwijderen',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'De herhaling van deze bibliotheek',
 			'homeLayout.pressAgainToDelete' => 'Druk opnieuw om te verwijderen',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9162,6 +9216,8 @@ extension on TranslationsNl {
 			'audiobook.statusFinished' => 'Afgerond',
 			'audiobook.goToTime' => 'Ga naar de tijd',
 			'audiobook.timeHelp' => 'uur: minuten: seconden of minuten: seconden',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Exporteer een recente versleutelde kopie voor het verplaatsen of repareren van synchronisatiegegevens.Importeren verschijnt met de huidige toestand; ze vervangen nooit de lokale sync-geschiedenis.',
 			'audiobook.recoveryExport' => 'Export versleutelde herstel bestanden',
 			'audiobook.recoveryImport' => 'Geïmporteerde versleutelde herstelbestanden',
@@ -9184,8 +9240,6 @@ extension on TranslationsNl {
 			'sourceSetup.passwordOrKey' => 'Voer een wachtwoord in of voeg hieronder een privésleutel toe.',
 			'sourceSetup.sshFingerprint' => 'SHA256-vingerafdruk van de SSH-hostsleutel',
 			'sourceSetup.sshFingerprintHelp' => 'Controleer deze bij de serverbeheerder. Voer op de server ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub uit en gebruik de SHA256-waarde.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'Laat leeg om de huidige vastgelegde vingerafdruk te behouden, of voer een nieuwe servervingerafdruk in.',
 			'sourceSetup.sshAuthentication' => 'SSH-authenticatie met openbare sleutel',
 			'sourceSetup.sshAuthenticationHelp' => 'Optioneel; authenticatie met een wachtwoord wordt ook ondersteund.',
@@ -9676,6 +9730,8 @@ extension on TranslationsNl {
 			'musicTools.days' => 'Dagen',
 			'musicTools.albumBlocks' => 'Volledige albums bij elkaar houden',
 			'musicTools.home' => 'Muziek',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'Onlangs afgespeeld',
 			'musicTools.apiKey' => 'API-sleutel',
 			'musicTools.missing' => 'N/A',
@@ -9698,8 +9754,6 @@ extension on TranslationsNl {
 			'musicTools.serverAnalysis' => 'Serveranalyse',
 			'musicTools.sonicAnalysis' => 'Geluidsanalyse',
 			'musicTools.serverAnalysisScope' => 'Alle geschikte muziekbibliotheken op deze server. Hun analyse-instellingen worden niet gewijzigd.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Serveractiviteiten',
 			'musicTools.playlistSharing' => 'Toegang tot afspeellijst',
 			'musicTools.playlistRecipient' => 'Plex-gebruikersnaam of e-mail',

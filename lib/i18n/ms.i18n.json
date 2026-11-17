@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "Padankan dengan skrin saya",
+    "fitHelp": "Pilih tepi dan gerakkannya dengan kekunci anak panah sehingga penandanya kelihatan. Ulang untuk setiap tepi.",
+    "left": "Kiri",
+    "right": "Kanan",
+    "top": "Atas",
+    "bottom": "Bawah",
+    "receiver": "Dolby Digital 5.1 untuk penerima lama",
+    "receiverHelp": "Menukar audio berbilang saluran kepada Dolby Digital pada output yang serasi. Audio dihantar terus ke penerima dan video asal dikekalkan jika boleh disalin.",
+    "missing": "Episod ${episode} tiada dalam turutan ini.",
+    "playLater": "Mainkan juga episod ${episode}",
+    "playCopy": "Mainkan episod ${episode} daripada ${server}",
+    "jukebox": "Jukebox tetamu",
+    "jukeboxInfo": "Tetamu dalam rangkaian setempat anda boleh mencari lagu dalam pustaka muzik ini dan menambahkannya ke hujung baris gilir.",
+    "openRoom": "Buka jukebox",
+    "closeRoom": "Tutup jukebox",
+    "join": "Imbas untuk meminta lagu",
+    "noNetwork": "Sambung ke rangkaian setempat untuk membuka jukebox.",
+    "added": "Ditambah pada baris gilir",
+    "searchSongs": "Cari lagu",
+    "roomUnavailable": "Jukebox ini tidak tersedia.",
+    "noSongs": "Tiada lagu yang sepadan",
+    "chooseLibrary": "Pilih pustaka muzik"
+  },
   "app": {
     "title": "Pleazyng"
   },

@@ -40,6 +40,7 @@ class TranslationsSv extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsSv $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsSv(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$sv livingRoom = _Translations$livingRoom$sv._(_root);
 	@override late final _Translations$app$sv app = _Translations$app$sv._(_root);
 	@override late final _Translations$appIcon$sv appIcon = _Translations$appIcon$sv._(_root);
 	@override late final _Translations$auth$sv auth = _Translations$auth$sv._(_root);
@@ -120,6 +121,37 @@ class TranslationsSv extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$sv musicExperience = _Translations$musicExperience$sv._(_root);
 	@override late final _Translations$musicTools$sv musicTools = _Translations$musicTools$sv._(_root);
 	@override late final _Translations$musicDevices$sv musicDevices = _Translations$musicDevices$sv._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$sv extends Translations$livingRoom$en {
+	_Translations$livingRoom$sv._(TranslationsSv root) : this._root = root, super.internal(root);
+
+	final TranslationsSv _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'Anpassa till min skärm';
+	@override String get fitHelp => 'Välj en kant och flytta den med piltangenterna tills markeringarna syns. Upprepa för varje kant.';
+	@override String get left => 'Vänster';
+	@override String get right => 'Höger';
+	@override String get top => 'Överkant';
+	@override String get bottom => 'Underkant';
+	@override String get receiver => 'Dolby Digital 5.1 för äldre receivrar';
+	@override String get receiverHelp => 'Omvandlar flerkanalsljud till Dolby Digital på kompatibla utgångar. Skickar ljudet direkt till receivern och behåller originalvideon när den går att kopiera.';
+	@override String missing({required Object episode}) => 'Avsnitt ${episode} saknas i den här följden.';
+	@override String playLater({required Object episode}) => 'Spela avsnitt ${episode} ändå';
+	@override String playCopy({required Object episode, required Object server}) => 'Spela avsnitt ${episode} från ${server}';
+	@override String get jukebox => 'Jukebox för gäster';
+	@override String get jukeboxInfo => 'Gäster på ditt lokala nätverk kan söka i musikbiblioteket och lägga till låtar sist i kön.';
+	@override String get openRoom => 'Öppna jukeboxen';
+	@override String get closeRoom => 'Stäng jukeboxen';
+	@override String get join => 'Skanna för att önska en låt';
+	@override String get noNetwork => 'Anslut till ett lokalt nätverk för att öppna jukeboxen.';
+	@override String get added => 'Tillagd i kön';
+	@override String get searchSongs => 'Sök efter låtar';
+	@override String get roomUnavailable => 'Jukeboxen är inte tillgänglig.';
+	@override String get noSongs => 'Inga matchande låtar';
+	@override String get chooseLibrary => 'Välj ett musikbibliotek';
 }
 
 // Path: app
@@ -5588,6 +5620,28 @@ class _Translations$services$trackerDescriptions$sv extends Translations$service
 extension on TranslationsSv {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Anpassa till min skärm',
+			'livingRoom.fitHelp' => 'Välj en kant och flytta den med piltangenterna tills markeringarna syns. Upprepa för varje kant.',
+			'livingRoom.left' => 'Vänster',
+			'livingRoom.right' => 'Höger',
+			'livingRoom.top' => 'Överkant',
+			'livingRoom.bottom' => 'Underkant',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 för äldre receivrar',
+			'livingRoom.receiverHelp' => 'Omvandlar flerkanalsljud till Dolby Digital på kompatibla utgångar. Skickar ljudet direkt till receivern och behåller originalvideon när den går att kopiera.',
+			'livingRoom.missing' => ({required Object episode}) => 'Avsnitt ${episode} saknas i den här följden.',
+			'livingRoom.playLater' => ({required Object episode}) => 'Spela avsnitt ${episode} ändå',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'Spela avsnitt ${episode} från ${server}',
+			'livingRoom.jukebox' => 'Jukebox för gäster',
+			'livingRoom.jukeboxInfo' => 'Gäster på ditt lokala nätverk kan söka i musikbiblioteket och lägga till låtar sist i kön.',
+			'livingRoom.openRoom' => 'Öppna jukeboxen',
+			'livingRoom.closeRoom' => 'Stäng jukeboxen',
+			'livingRoom.join' => 'Skanna för att önska en låt',
+			'livingRoom.noNetwork' => 'Anslut till ett lokalt nätverk för att öppna jukeboxen.',
+			'livingRoom.added' => 'Tillagd i kön',
+			'livingRoom.searchSongs' => 'Sök efter låtar',
+			'livingRoom.roomUnavailable' => 'Jukeboxen är inte tillgänglig.',
+			'livingRoom.noSongs' => 'Inga matchande låtar',
+			'livingRoom.chooseLibrary' => 'Välj ett musikbibliotek',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'Appikon',
 			'appIcon.defaultIcon' => 'Standard',
@@ -6078,6 +6132,8 @@ extension on TranslationsSv {
 			'settings.downmixCenterBoostLabel' => 'Förstärkning (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Normalisera ljudstyrka vid nedmixning',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Sänk ljudnivån för att förhindra klippning. Stäng av för att behålla originalvolymen (starka ljud kan då bli förvrängda).',
 			'settings.dvConversionMode' => 'Dolby Vision-konvertering',
 			'settings.dvConversionModeDescription' => 'Välj hur Dolby Vision Profile 7-filer hanteras.',
@@ -6100,8 +6156,6 @@ extension on TranslationsSv {
 			'settings.hdrSdrConversion' => 'HDR till SDR-konvertering',
 			'settings.hdrSdrConversionDescription' => 'Välj vad som konverterar HDR-video när skärmen inte kan visa HDR.',
 			'settings.hdrSdrConversionAuto' => 'Auto',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Enhet på Android 9 och senare, spelare på äldre versioner',
 			'settings.hdrSdrConversionDevice' => 'Enhet',
 			'settings.hdrSdrConversionDeviceDescription' => 'Enhetens videohårdvara konverterar. Snabbast, men färgerna beror på enheten',
@@ -6592,6 +6646,8 @@ extension on TranslationsSv {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Spola bakåt ${seconds} sekunder',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Spola framåt ${seconds} sekunder',
 			'videoControls.previousButton' => 'Föregående avsnitt',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'Nästa avsnitt',
 			'videoControls.previousChapterButton' => 'Föregående kapitel',
 			'videoControls.nextChapterButton' => 'Nästa kapitel',
@@ -6614,8 +6670,6 @@ extension on TranslationsSv {
 			'videoControls.segmentLoop' => 'Segment Lås',
 			'videoControls.addBookmark' => 'Lägg till bookmark',
 			'videoControls.bookmarkName' => 'Bookmark namn',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'Till exempel öppna scenen',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'Bokmärke ${n}',
 			'videoControls.bookmarkNameRequired' => 'Skriv in ett namn för denna bokmärke.',
@@ -7106,6 +7160,8 @@ extension on TranslationsSv {
 			'libraries.analysisStarted' => ({required Object title}) => 'Analysen har startat för "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Det gick inte att analysera biblioteket: ${error}',
 			'libraries.noLibrariesFound' => 'Inga bibliotek hittades',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Alla bibliotek är dolda',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Dolda bibliotek (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Detta bibliotek är tomt',
@@ -7128,8 +7184,6 @@ extension on TranslationsSv {
 			'libraries.content' => 'bibliotekets innehåll',
 			'libraries.selectLibrary' => 'Välj bibliotek',
 			'libraries.filtersWithCount' => ({required Object count}) => 'Filter (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'Inga rekommendationer tillgängliga',
 			'libraries.noCollections' => 'Inga samlingar i det här biblioteket',
 			'libraries.noFoldersFound' => 'Inga mappar hittades',
@@ -7620,6 +7674,8 @@ extension on TranslationsSv {
 			'music.visualizerLiveAudio' => 'Live-ljudanalys',
 			'music.visualizerPreviousPreset' => 'Föregående Visua stil',
 			'music.visualizerNextPreset' => 'Nästa visuell stil',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Blomma',
 			'music.visualizerPresetOrbitals' => 'Orbitala',
@@ -7642,8 +7698,6 @@ extension on TranslationsSv {
 			'music.noAudioUrl' => ({required Object track}) => 'Ingen ljud-URL är tillgänglig för ${track}',
 			'music.discography.singlesAndEps' => 'Singlar och EP',
 			'music.discography.live' => 'Live',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'Samlingar',
 			'music.backTo' => 'Tillbaka till',
 			'music.upNext' => 'Härnäst',
@@ -8134,6 +8188,8 @@ extension on TranslationsSv {
 			'externalPlayer.useExternalPlayer' => 'Använd extern spelare',
 			'externalPlayer.useExternalPlayerDescription' => 'Öppna videor i en annan app',
 			'externalPlayer.selectPlayer' => 'Välj spelare',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Anpassade spelare',
 			'externalPlayer.systemDefault' => 'Systemstandard',
 			'externalPlayer.addCustomPlayer' => 'Lägg till anpassad spelare',
@@ -8156,8 +8212,6 @@ extension on TranslationsSv {
 			'metadataEdit.editMetadata' => 'Redigera...',
 			'metadataEdit.screenTitle' => 'Redigera metadata',
 			'metadataEdit.basicInfo' => 'Grundläggande information',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'Bildmaterial',
 			'metadataEdit.advancedSettings' => 'Avancerade inställningar',
 			'metadataEdit.title' => 'Titel',
@@ -8648,6 +8702,8 @@ extension on TranslationsSv {
 			'homeLayout.heroCardDescription' => 'Visar som ett fullbredt roterande kort istället för en posterskiva.',
 			'homeLayout.heroUnavailableDescription' => 'Endast när denna rad löser sig till en enda samlingens verkliga titlar – med mer än en samling som valts finns det ingen enda titel att rotera igenom.',
 			'homeLayout.librariesSelection' => 'Biblioteker (lägga alla okänd för att inkludera varje bibliotek)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Varje bibliotek som kontrolleras här är sammanförd i denna rad.',
 			'homeLayout.movieCollectionsSelection' => 'Filmsamlingar (lägga alla okänd för varje valda bibliotek)',
 			'homeLayout.showCollectionsSelection' => 'Visa samlingar (lägga ut alla okänd för varje bibliotek som valts)',
@@ -8670,8 +8726,6 @@ extension on TranslationsSv {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'Dölj',
 			'homeLayout.remove' => 'Ta bort',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'Denna bibliotek återställer',
 			'homeLayout.pressAgainToDelete' => 'Tryck igen för att radera',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9162,6 +9216,8 @@ extension on TranslationsSv {
 			'audiobook.statusFinished' => 'Avslutad',
 			'audiobook.goToTime' => 'Gå till tiden',
 			'audiobook.timeHelp' => 'Klockor: minuter: sekunder eller minuter: sekunder',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Exportera en nyligen krypterad kopia innan du flyttar eller reparerar synkroniseringsdata. Importer går ihop med den aktuella tillståndet; de ersätter aldrig lokal synkroniseringshistoria. Håll synkronkoden separat.',
 			'audiobook.recoveryExport' => 'Export krypterad återhämtningsfil',
 			'audiobook.recoveryImport' => 'Import krypterad återhämtningsfil',
@@ -9184,8 +9240,6 @@ extension on TranslationsSv {
 			'sourceSetup.passwordOrKey' => 'Ange ett lösenord eller lägg till en privat nyckel nedan.',
 			'sourceSetup.sshFingerprint' => 'SHA256-fingeravtryck för SSH-värdnyckeln',
 			'sourceSetup.sshFingerprintHelp' => 'Kontrollera det med serveradministratören. Kör ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub på servern och använd dess SHA256-värde.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'Lämna tomt för att behålla det låsta fingeravtrycket eller ange ett nytt serverfingeravtryck.',
 			'sourceSetup.sshAuthentication' => 'SSH-autentisering med offentlig nyckel',
 			'sourceSetup.sshAuthenticationHelp' => 'Valfritt; autentisering med lösenord stöds också.',
@@ -9676,6 +9730,8 @@ extension on TranslationsSv {
 			'musicTools.days' => 'Dagar',
 			'musicTools.albumBlocks' => 'Håll hela album samman',
 			'musicTools.home' => 'Musik',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'Senast spelat',
 			'musicTools.apiKey' => 'API-nyckel',
 			'musicTools.missing' => 'N/A',
@@ -9698,8 +9754,6 @@ extension on TranslationsSv {
 			'musicTools.serverAnalysis' => 'Serveranalys',
 			'musicTools.sonicAnalysis' => 'Ljudanalys',
 			'musicTools.serverAnalysisScope' => 'Alla kvalificerade musikbibliotek på den här servern. Deras analysinställningar ändras inte.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Serveraktiviteter',
 			'musicTools.playlistSharing' => 'Åtkomst till spellista',
 			'musicTools.playlistRecipient' => 'Plex-användarnamn eller e-post',

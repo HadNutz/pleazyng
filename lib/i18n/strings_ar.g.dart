@@ -40,6 +40,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsAr $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsAr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$ar livingRoom = _Translations$livingRoom$ar._(_root);
 	@override late final _Translations$app$ar app = _Translations$app$ar._(_root);
 	@override late final _Translations$appIcon$ar appIcon = _Translations$appIcon$ar._(_root);
 	@override late final _Translations$auth$ar auth = _Translations$auth$ar._(_root);
@@ -120,6 +121,37 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ar musicExperience = _Translations$musicExperience$ar._(_root);
 	@override late final _Translations$musicTools$ar musicTools = _Translations$musicTools$ar._(_root);
 	@override late final _Translations$musicDevices$ar musicDevices = _Translations$musicDevices$ar._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$ar extends Translations$livingRoom$en {
+	_Translations$livingRoom$ar._(TranslationsAr root) : this._root = root, super.internal(root);
+
+	final TranslationsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'ملاءمة شاشتي';
+	@override String get fitHelp => 'اختر حافة وحرّكها بالأسهم حتى ترى علاماتها. كرّر ذلك لكل حافة.';
+	@override String get left => 'اليسار';
+	@override String get right => 'اليمين';
+	@override String get top => 'الأعلى';
+	@override String get bottom => 'الأسفل';
+	@override String get receiver => 'Dolby Digital 5.1 لأجهزة الاستقبال القديمة';
+	@override String get receiverHelp => 'يحوّل الصوت متعدد القنوات إلى Dolby Digital على المخارج المتوافقة. يمرّر الصوت مباشرة إلى جهاز الاستقبال ويحتفظ بالفيديو الأصلي إذا أمكن نسخه.';
+	@override String missing({required Object episode}) => 'الحلقة ⁨${episode}⁩ مفقودة من هذا التسلسل.';
+	@override String playLater({required Object episode}) => 'تشغيل الحلقة ⁨${episode}⁩ على أي حال';
+	@override String playCopy({required Object episode, required Object server}) => 'تشغيل الحلقة ⁨${episode}⁩ من ⁨${server}⁩';
+	@override String get jukebox => 'صندوق أغاني الضيوف';
+	@override String get jukeboxInfo => 'يمكن للضيوف على شبكتك المحلية البحث في مكتبة الموسيقى هذه وإضافة أغانٍ إلى نهاية قائمة الانتظار.';
+	@override String get openRoom => 'فتح صندوق الأغاني';
+	@override String get closeRoom => 'إغلاق صندوق الأغاني';
+	@override String get join => 'امسح الرمز لطلب أغنية';
+	@override String get noNetwork => 'اتصل بشبكة محلية لفتح صندوق الأغاني.';
+	@override String get added => 'أُضيفت إلى قائمة الانتظار';
+	@override String get searchSongs => 'البحث عن أغانٍ';
+	@override String get roomUnavailable => 'صندوق الأغاني هذا غير متاح.';
+	@override String get noSongs => 'لا توجد أغانٍ مطابقة';
+	@override String get chooseLibrary => 'اختر مكتبة موسيقى';
 }
 
 // Path: app
@@ -5688,6 +5720,28 @@ class _Translations$services$trackerDescriptions$ar extends Translations$service
 extension on TranslationsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'ملاءمة شاشتي',
+			'livingRoom.fitHelp' => 'اختر حافة وحرّكها بالأسهم حتى ترى علاماتها. كرّر ذلك لكل حافة.',
+			'livingRoom.left' => 'اليسار',
+			'livingRoom.right' => 'اليمين',
+			'livingRoom.top' => 'الأعلى',
+			'livingRoom.bottom' => 'الأسفل',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 لأجهزة الاستقبال القديمة',
+			'livingRoom.receiverHelp' => 'يحوّل الصوت متعدد القنوات إلى Dolby Digital على المخارج المتوافقة. يمرّر الصوت مباشرة إلى جهاز الاستقبال ويحتفظ بالفيديو الأصلي إذا أمكن نسخه.',
+			'livingRoom.missing' => ({required Object episode}) => 'الحلقة ⁨${episode}⁩ مفقودة من هذا التسلسل.',
+			'livingRoom.playLater' => ({required Object episode}) => 'تشغيل الحلقة ⁨${episode}⁩ على أي حال',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'تشغيل الحلقة ⁨${episode}⁩ من ⁨${server}⁩',
+			'livingRoom.jukebox' => 'صندوق أغاني الضيوف',
+			'livingRoom.jukeboxInfo' => 'يمكن للضيوف على شبكتك المحلية البحث في مكتبة الموسيقى هذه وإضافة أغانٍ إلى نهاية قائمة الانتظار.',
+			'livingRoom.openRoom' => 'فتح صندوق الأغاني',
+			'livingRoom.closeRoom' => 'إغلاق صندوق الأغاني',
+			'livingRoom.join' => 'امسح الرمز لطلب أغنية',
+			'livingRoom.noNetwork' => 'اتصل بشبكة محلية لفتح صندوق الأغاني.',
+			'livingRoom.added' => 'أُضيفت إلى قائمة الانتظار',
+			'livingRoom.searchSongs' => 'البحث عن أغانٍ',
+			'livingRoom.roomUnavailable' => 'صندوق الأغاني هذا غير متاح.',
+			'livingRoom.noSongs' => 'لا توجد أغانٍ مطابقة',
+			'livingRoom.chooseLibrary' => 'اختر مكتبة موسيقى',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'تطبيق icon',
 			'appIcon.defaultIcon' => 'الافتراضي',
@@ -6178,6 +6232,8 @@ extension on TranslationsAr {
 			'settings.downmixCenterBoostLabel' => 'الارتفاع (dB )',
 			'settings.downmixCenterBoostShort' => 'دبي',
 			'settings.audioDownmixNormalize' => 'تحديد الحجم على Downmix',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'انخفاض المزيج لمنع الانحناء. انقطع للحفاظ على الحجم الأصلي (قد يفسد المشاهد الصاخبة).',
 			'settings.dvConversionMode' => 'Dolby Vision تحويل',
 			'settings.dvConversionModeDescription' => 'اختر كيفية التعامل مع ملفات Dolby Vision الملف 7.',
@@ -6200,8 +6256,6 @@ extension on TranslationsAr {
 			'settings.hdrSdrConversion' => 'تحويل HDR إلى SDR',
 			'settings.hdrSdrConversionDescription' => 'اختر ما الذي يحول فيديو HDR عندما لا يمكن لعرض الشاشة عرض HDR.',
 			'settings.hdrSdrConversionAuto' => 'تلقائي',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'الأجهزة على Android 9 وما بعدها، اللاعب على الإصدارات القديمة',
 			'settings.hdrSdrConversionDevice' => 'الجهاز',
 			'settings.hdrSdrConversionDeviceDescription' => 'أجهزة الفيديو في جهازك تحولها.أسرع، ولكن الألوان تعتمد على الجهاز',
@@ -6692,6 +6746,8 @@ extension on TranslationsAr {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'البحث إلى الوراء ${seconds} ثانية',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'البحث إلى الأمام ${seconds} ثانية',
 			'videoControls.previousButton' => 'الحلقة السابقة',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'الحلقة التالية',
 			'videoControls.previousChapterButton' => 'الفصل السابق',
 			'videoControls.nextChapterButton' => 'الفصل التالي',
@@ -6714,8 +6770,6 @@ extension on TranslationsAr {
 			'videoControls.segmentLoop' => 'القسم القصير',
 			'videoControls.addBookmark' => 'إضافة bookmark',
 			'videoControls.bookmarkName' => 'Bookmark الاسم',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'على سبيل المثال، فتح المشهد',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'الكتابة ${n}',
 			'videoControls.bookmarkNameRequired' => 'أدخل اسمًا لهذا الكتاب.',
@@ -7206,6 +7260,8 @@ extension on TranslationsAr {
 			'libraries.analysisStarted' => ({required Object title}) => 'بدأت التحليلات لـ "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'فشل في تحليل المكتبة: ${error}',
 			'libraries.noLibrariesFound' => 'لا توجد مكتبات',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'جميع المكتبات مخفية',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'المكتبات الخفية (${count})',
 			'libraries.thisLibraryIsEmpty' => 'هذه المكتبة فارغة',
@@ -7228,8 +7284,6 @@ extension on TranslationsAr {
 			'libraries.content' => 'مكتبة المحتوى',
 			'libraries.selectLibrary' => 'اختيار المكتبة',
 			'libraries.filtersWithCount' => ({required Object count}) => 'الفلاتر (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'لا توجد توصيات متاحة',
 			'libraries.noCollections' => 'لا توجد مجموعات في هذه المكتبة',
 			'libraries.noFoldersFound' => 'لا توجد ملفات',
@@ -7720,6 +7774,8 @@ extension on TranslationsAr {
 			'music.visualizerLiveAudio' => 'تحليل الصوت المباشر',
 			'music.visualizerPreviousPreset' => 'النمط البصري السابق',
 			'music.visualizerNextPreset' => 'النمط البصري التالي',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'أورورا',
 			'music.visualizerPresetBloom' => 'بلوم',
 			'music.visualizerPresetOrbitals' => 'أوربيتال',
@@ -7742,8 +7798,6 @@ extension on TranslationsAr {
 			'music.noAudioUrl' => ({required Object track}) => 'لا توجد عناوين URL الصوتية متوفرة على ${track}',
 			'music.discography.singlesAndEps' => 'مجلدات & EPs',
 			'music.discography.live' => 'مباشر',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'المجموعات',
 			'music.backTo' => 'العودة إلى',
 			'music.upNext' => 'التالي',
@@ -8234,6 +8288,8 @@ extension on TranslationsAr {
 			'externalPlayer.useExternalPlayer' => 'استخدام اللاعب الخارجي',
 			'externalPlayer.useExternalPlayerDescription' => 'فتح الفيديوهات في تطبيق آخر',
 			'externalPlayer.selectPlayer' => 'اختيار اللاعب',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'اللاعبين المخصصين',
 			'externalPlayer.systemDefault' => 'نظام الافتراض',
 			'externalPlayer.addCustomPlayer' => 'إضافة اللاعب المخصص',
@@ -8256,8 +8312,6 @@ extension on TranslationsAr {
 			'metadataEdit.editMetadata' => 'تعديل',
 			'metadataEdit.screenTitle' => 'تعديل البيانات الوصفية',
 			'metadataEdit.basicInfo' => 'معلومات أساسية',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'الفن',
 			'metadataEdit.advancedSettings' => 'الإعدادات المتقدمة',
 			'metadataEdit.title' => 'العنوان',
@@ -8748,6 +8802,8 @@ extension on TranslationsAr {
 			'homeLayout.heroCardDescription' => 'يعرض بطاقة دوّارة بعرض الشاشة بدلًا من صف الملصقات.',
 			'homeLayout.heroUnavailableDescription' => 'متاح فقط عندما يعرض الصف عناوين مجموعة واحدة مباشرةً. عند اختيار أكثر من مجموعة، لا توجد مجموعة عناوين واحدة للتنقّل بينها.',
 			'homeLayout.librariesSelection' => 'المكتبات (اتركها كلها دون تحديد لتضمين جميع المكتبات)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'تُدمج كل المكتبات المحدّدة هنا في هذا الصف الواحد.',
 			'homeLayout.movieCollectionsSelection' => 'مجموعات الأفلام (اتركها كلها دون تحديد لتضمين كل المجموعات في المكتبات المختارة)',
 			'homeLayout.showCollectionsSelection' => 'مجموعات المسلسلات (اتركها كلها دون تحديد لتضمين كل المجموعات في المكتبات المختارة)',
@@ -8770,8 +8826,6 @@ extension on TranslationsAr {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'إخفاء',
 			'homeLayout.remove' => 'إزالة',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'صف استئناف المشاهدة الخاص بهذه المكتبة',
 			'homeLayout.pressAgainToDelete' => 'اضغط مرة أخرى للحذف',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9262,6 +9316,8 @@ extension on TranslationsAr {
 			'audiobook.statusFinished' => 'الانتهاء',
 			'audiobook.goToTime' => 'اذهب إلى الزمن',
 			'audiobook.timeHelp' => 'ساعات: دقائق: ثواني، أو دقائق: ثواني',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'تصدير نسخة مشفرة مؤخرا قبل نقل أو إصلاح بيانات المزامنة.يتم دمج الواردات مع الحالة الحالية؛ أنها لا تحل محل تاريخ المزامن المحلي.',
 			'audiobook.recoveryExport' => 'تصدير ملف استرداد مشفرة',
 			'audiobook.recoveryImport' => 'استيراد ملف إعادة التدوير المشفرة',
@@ -9284,8 +9340,6 @@ extension on TranslationsAr {
 			'sourceSetup.passwordOrKey' => 'أدخل كلمة مرور أو أضف مفتاحًا خاصًا أدناه.',
 			'sourceSetup.sshFingerprint' => 'بصمة SHA256 لمفتاح مضيف SSH',
 			'sourceSetup.sshFingerprintHelp' => 'تحقّق منها مع مسؤول الخادم. شغّل على الخادم الأمر ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub واستخدم قيمة SHA256 التي يعرضها.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'اتركه فارغًا للاحتفاظ بالبصمة المثبّتة حاليًا، أو أدخل بصمة خادم جديدة.',
 			'sourceSetup.sshAuthentication' => 'المصادقة بمفتاح SSH عام',
 			'sourceSetup.sshAuthenticationHelp' => 'اختياري؛ تُدعم المصادقة بكلمة مرور أيضًا.',
@@ -9776,6 +9830,8 @@ extension on TranslationsAr {
 			'musicTools.days' => 'أيام',
 			'musicTools.albumBlocks' => 'إبقاء الألبومات كاملة معًا',
 			'musicTools.home' => 'الموسيقى',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'تم تشغيلها مؤخرًا',
 			'musicTools.apiKey' => 'مفتاح API',
 			'musicTools.missing' => 'N / A',
@@ -9798,8 +9854,6 @@ extension on TranslationsAr {
 			'musicTools.serverAnalysis' => 'تحليل الخادم',
 			'musicTools.sonicAnalysis' => 'التحليل الصوتي',
 			'musicTools.serverAnalysisScope' => 'كل مكتبات الموسيقى المؤهلة على هذا الخادم. لا يغيّر هذا إعدادات التحليل الخاصة بها.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'أنشطة الخادم',
 			'musicTools.playlistSharing' => 'الوصول إلى قائمة التشغيل',
 			'musicTools.playlistRecipient' => 'اسم مستخدم Plex أو البريد الإلكتروني',

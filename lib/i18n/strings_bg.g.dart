@@ -40,6 +40,7 @@ class TranslationsBg extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsBg $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsBg(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$bg livingRoom = _Translations$livingRoom$bg._(_root);
 	@override late final _Translations$app$bg app = _Translations$app$bg._(_root);
 	@override late final _Translations$appIcon$bg appIcon = _Translations$appIcon$bg._(_root);
 	@override late final _Translations$auth$bg auth = _Translations$auth$bg._(_root);
@@ -120,6 +121,37 @@ class TranslationsBg extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$bg musicExperience = _Translations$musicExperience$bg._(_root);
 	@override late final _Translations$musicTools$bg musicTools = _Translations$musicTools$bg._(_root);
 	@override late final _Translations$musicDevices$bg musicDevices = _Translations$musicDevices$bg._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$bg extends Translations$livingRoom$en {
+	_Translations$livingRoom$bg._(TranslationsBg root) : this._root = root, super.internal(root);
+
+	final TranslationsBg _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'Побиране в моя екран';
+	@override String get fitHelp => 'Изберете ръб и го местете със стрелките, докато видите маркерите. Повторете за всеки ръб.';
+	@override String get left => 'Ляво';
+	@override String get right => 'Дясно';
+	@override String get top => 'Горе';
+	@override String get bottom => 'Долу';
+	@override String get receiver => 'Dolby Digital 5.1 за по-стари ресивъри';
+	@override String get receiverHelp => 'Преобразува многоканалния звук в Dolby Digital за съвместимите изходи. Предава звука директно към ресивъра и запазва оригиналното видео, когато то може да се копира.';
+	@override String missing({required Object episode}) => 'Епизод ${episode} липсва в тази поредица.';
+	@override String playLater({required Object episode}) => 'Възпроизвеждане на епизод ${episode} въпреки това';
+	@override String playCopy({required Object episode, required Object server}) => 'Възпроизвеждане на епизод ${episode} от ${server}';
+	@override String get jukebox => 'Джубокс за гости';
+	@override String get jukeboxInfo => 'Гостите в локалната мрежа могат да търсят песни в тази музикална библиотека и да ги добавят в края на опашката.';
+	@override String get openRoom => 'Отваряне на джубокса';
+	@override String get closeRoom => 'Затваряне на джубокса';
+	@override String get join => 'Сканирайте кода, за да поръчате песен';
+	@override String get noNetwork => 'Свържете се с локална мрежа, за да отворите джубокса.';
+	@override String get added => 'Добавено в опашката';
+	@override String get searchSongs => 'Търсене на песни';
+	@override String get roomUnavailable => 'Този джубокс е недостъпен.';
+	@override String get noSongs => 'Няма съвпадащи песни';
+	@override String get chooseLibrary => 'Изберете музикална библиотека';
 }
 
 // Path: app
@@ -5588,6 +5620,28 @@ class _Translations$services$trackerDescriptions$bg extends Translations$service
 extension on TranslationsBg {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Побиране в моя екран',
+			'livingRoom.fitHelp' => 'Изберете ръб и го местете със стрелките, докато видите маркерите. Повторете за всеки ръб.',
+			'livingRoom.left' => 'Ляво',
+			'livingRoom.right' => 'Дясно',
+			'livingRoom.top' => 'Горе',
+			'livingRoom.bottom' => 'Долу',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 за по-стари ресивъри',
+			'livingRoom.receiverHelp' => 'Преобразува многоканалния звук в Dolby Digital за съвместимите изходи. Предава звука директно към ресивъра и запазва оригиналното видео, когато то може да се копира.',
+			'livingRoom.missing' => ({required Object episode}) => 'Епизод ${episode} липсва в тази поредица.',
+			'livingRoom.playLater' => ({required Object episode}) => 'Възпроизвеждане на епизод ${episode} въпреки това',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'Възпроизвеждане на епизод ${episode} от ${server}',
+			'livingRoom.jukebox' => 'Джубокс за гости',
+			'livingRoom.jukeboxInfo' => 'Гостите в локалната мрежа могат да търсят песни в тази музикална библиотека и да ги добавят в края на опашката.',
+			'livingRoom.openRoom' => 'Отваряне на джубокса',
+			'livingRoom.closeRoom' => 'Затваряне на джубокса',
+			'livingRoom.join' => 'Сканирайте кода, за да поръчате песен',
+			'livingRoom.noNetwork' => 'Свържете се с локална мрежа, за да отворите джубокса.',
+			'livingRoom.added' => 'Добавено в опашката',
+			'livingRoom.searchSongs' => 'Търсене на песни',
+			'livingRoom.roomUnavailable' => 'Този джубокс е недостъпен.',
+			'livingRoom.noSongs' => 'Няма съвпадащи песни',
+			'livingRoom.chooseLibrary' => 'Изберете музикална библиотека',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'Икона на приложението',
 			'appIcon.defaultIcon' => 'По подразбиране',
@@ -6078,6 +6132,8 @@ extension on TranslationsBg {
 			'settings.downmixCenterBoostLabel' => 'Усилване (дБ)',
 			'settings.downmixCenterBoostShort' => 'дБ',
 			'settings.audioDownmixNormalize' => 'Нормализиране на звука при смесване',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Понижава микса, за да се предотврати клипинг. Изключете, за да запазите оригиналната сила на звука (възможни изкривявания при силни сцени).',
 			'settings.dvConversionMode' => 'Преобразуване на Dolby Vision',
 			'settings.dvConversionModeDescription' => 'Изберете как да се обработват файлове с Dolby Vision Profile 7.',
@@ -6100,8 +6156,6 @@ extension on TranslationsBg {
 			'settings.hdrSdrConversion' => 'Преобразуване от HDR към SDR',
 			'settings.hdrSdrConversionDescription' => 'Изберете какво да преобразува HDR видеото, когато дисплеят не поддържа HDR.',
 			'settings.hdrSdrConversionAuto' => 'Автоматично',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Устройство при Android 9 и по-нови, плейър при по-стари версии',
 			'settings.hdrSdrConversionDevice' => 'Устройство',
 			'settings.hdrSdrConversionDeviceDescription' => 'Видеохардуерът на устройството извършва преобразуването. Най-бързо, но цветовете зависят от устройството',
@@ -6592,6 +6646,8 @@ extension on TranslationsBg {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Превърти назад ${seconds} секунди',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Превърти напред ${seconds} секунди',
 			'videoControls.previousButton' => 'Предишен епизод',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'Следващ епизод',
 			'videoControls.previousChapterButton' => 'Предишна глава',
 			'videoControls.nextChapterButton' => 'Следваща глава',
@@ -6614,8 +6670,6 @@ extension on TranslationsBg {
 			'videoControls.segmentLoop' => 'Сегментът Лоу',
 			'videoControls.addBookmark' => 'Добавяне на Bookmark',
 			'videoControls.bookmarkName' => 'Bookmark име',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'Например, отваряща сцена',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'Букмарк ${n}',
 			'videoControls.bookmarkNameRequired' => 'Въведете име за тази книжка.',
@@ -7106,6 +7160,8 @@ extension on TranslationsBg {
 			'libraries.analysisStarted' => ({required Object title}) => 'Анализът е стартиран за "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Неуспешен анализ на библиотеката: ${error}',
 			'libraries.noLibrariesFound' => 'Не са намерени библиотеки',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Всички библиотеки са скрити',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Скрити библиотеки (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Тази библиотека е празна',
@@ -7128,8 +7184,6 @@ extension on TranslationsBg {
 			'libraries.content' => 'съдържание на библиотеката',
 			'libraries.selectLibrary' => 'Избери библиотека',
 			'libraries.filtersWithCount' => ({required Object count}) => 'Филтри (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'Няма налични препоръки',
 			'libraries.noCollections' => 'Няма колекции в тази библиотека',
 			'libraries.noFoldersFound' => 'Не са намерени папки',
@@ -7620,6 +7674,8 @@ extension on TranslationsBg {
 			'music.visualizerLiveAudio' => 'Анализ на аудио в реално време',
 			'music.visualizerPreviousPreset' => 'Предишна Статия Визуален стил',
 			'music.visualizerNextPreset' => 'Следваща Статия Визуален стил',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Аврора',
 			'music.visualizerPresetBloom' => 'Блум',
 			'music.visualizerPresetOrbitals' => 'орбитални',
@@ -7642,8 +7698,6 @@ extension on TranslationsBg {
 			'music.noAudioUrl' => ({required Object track}) => 'Няма наличен URL за аудиото на ${track}',
 			'music.discography.singlesAndEps' => 'Сингли и EP',
 			'music.discography.live' => 'Концертни',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'Компилации',
 			'music.backTo' => 'Вече пуснати',
 			'music.upNext' => 'Следващи',
@@ -8134,6 +8188,8 @@ extension on TranslationsBg {
 			'externalPlayer.useExternalPlayer' => 'Използвай външен плеър',
 			'externalPlayer.useExternalPlayerDescription' => 'Отваряй видеата в друго приложение',
 			'externalPlayer.selectPlayer' => 'Избери плейър',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Потребителски плейъри',
 			'externalPlayer.systemDefault' => 'Системен по подразбиране',
 			'externalPlayer.addCustomPlayer' => 'Добави потребителски плейър',
@@ -8156,8 +8212,6 @@ extension on TranslationsBg {
 			'metadataEdit.editMetadata' => 'Редактирай...',
 			'metadataEdit.screenTitle' => 'Редактиране на метаданни',
 			'metadataEdit.basicInfo' => 'Основна информация',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'Обложка',
 			'metadataEdit.advancedSettings' => 'Разширени настройки',
 			'metadataEdit.title' => 'Заглавие',
@@ -8648,6 +8702,8 @@ extension on TranslationsBg {
 			'homeLayout.heroCardDescription' => 'Показва се като една пълноширока ротационна карта вместо плакатна шапка.',
 			'homeLayout.heroUnavailableDescription' => 'Достъпна е само когато тази линия се разрешава на действителните заглавия на една колекция – с повече от една колекция, избрана няма нито един заглавие, който да се върти.',
 			'homeLayout.librariesSelection' => 'Библиотеки (оставяне на всички непровержени, за да включат всяка библиотека)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Всяка библиотека, която се проверява тук, е съчетана в тази една линия.',
 			'homeLayout.movieCollectionsSelection' => 'Филмови колекции (оставяне на всички непровержени за всяка избрана библиотека)',
 			'homeLayout.showCollectionsSelection' => 'Покажи колекции (оставяне на всички непровержени за всяка избрана библиотека)',
@@ -8670,8 +8726,6 @@ extension on TranslationsBg {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'Скрий',
 			'homeLayout.remove' => 'Премахни',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'Тази библиотека се пренасочва',
 			'homeLayout.pressAgainToDelete' => 'Натиснете отново за изтриване',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9162,6 +9216,8 @@ extension on TranslationsBg {
 			'audiobook.statusFinished' => 'Завършен',
 			'audiobook.goToTime' => 'Отидете в времето',
 			'audiobook.timeHelp' => 'Време: минути: секунди или минути: секунди',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Експортирайте неотдавна шифрована копие, преди да преместите или поправите данни за синхронизиране. Импортират се с текущото състояние; те никога не заместват местната история на синхронността.',
 			'audiobook.recoveryExport' => 'Износ на криптирани файлове за възстановяване',
 			'audiobook.recoveryImport' => 'Въвеждане на криптирани файлове за възстановяване',
@@ -9184,8 +9240,6 @@ extension on TranslationsBg {
 			'sourceSetup.passwordOrKey' => 'Въведете парола или добавете частен ключ по-долу.',
 			'sourceSetup.sshFingerprint' => 'SHA256 отпечатък на SSH ключа на хоста',
 			'sourceSetup.sshFingerprintHelp' => 'Проверете го с администратора на сървъра. На сървъра изпълнете ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub и използвайте стойността SHA256.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'Оставете празно, за да запазите фиксирания отпечатък, или въведете нов отпечатък на сървъра.',
 			'sourceSetup.sshAuthentication' => 'SSH удостоверяване с публичен ключ',
 			'sourceSetup.sshAuthenticationHelp' => 'Незадължително; поддържа се и удостоверяване с парола.',
@@ -9676,6 +9730,8 @@ extension on TranslationsBg {
 			'musicTools.days' => 'Дни',
 			'musicTools.albumBlocks' => 'Запазване на целите албуми заедно',
 			'musicTools.home' => 'Музика',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'Наскоро слушани',
 			'musicTools.apiKey' => 'API ключ',
 			'musicTools.missing' => 'Н/Д',
@@ -9698,8 +9754,6 @@ extension on TranslationsBg {
 			'musicTools.serverAnalysis' => 'Анализ на сървъра',
 			'musicTools.sonicAnalysis' => 'Звуков анализ',
 			'musicTools.serverAnalysisScope' => 'Всички подходящи музикални библиотеки на този сървър. Настройките им за анализ не се променят.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Дейности на сървъра',
 			'musicTools.playlistSharing' => 'Достъп до плейлист',
 			'musicTools.playlistRecipient' => 'Plex потребителско име или имейл',

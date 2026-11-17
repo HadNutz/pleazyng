@@ -40,6 +40,7 @@ class TranslationsUz extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsUz $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsUz(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$uz livingRoom = _Translations$livingRoom$uz._(_root);
 	@override late final _Translations$app$uz app = _Translations$app$uz._(_root);
 	@override late final _Translations$appIcon$uz appIcon = _Translations$appIcon$uz._(_root);
 	@override late final _Translations$auth$uz auth = _Translations$auth$uz._(_root);
@@ -120,6 +121,37 @@ class TranslationsUz extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$uz musicExperience = _Translations$musicExperience$uz._(_root);
 	@override late final _Translations$musicTools$uz musicTools = _Translations$musicTools$uz._(_root);
 	@override late final _Translations$musicDevices$uz musicDevices = _Translations$musicDevices$uz._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$uz extends Translations$livingRoom$en {
+	_Translations$livingRoom$uz._(TranslationsUz root) : this._root = root, super.internal(root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'Ekranimga moslash';
+	@override String get fitHelp => 'Bir chetni tanlang va belgilari ko‘ringuncha strelkalar bilan siljiting. Har bir chet uchun takrorlang.';
+	@override String get left => 'Chap';
+	@override String get right => 'O‘ng';
+	@override String get top => 'Yuqori';
+	@override String get bottom => 'Past';
+	@override String get receiver => 'Eski qabul qilgichlar uchun Dolby Digital 5.1';
+	@override String get receiverHelp => 'Mos chiqishlarda ko‘p kanalli ovozni Dolby Digital formatiga o‘giradi. Ovoz qabul qilgichga bevosita uzatiladi, videoni nusxalash mumkin bo‘lsa, u asl holida saqlanadi.';
+	@override String missing({required Object episode}) => 'Bu ketma-ketlikda ${episode}-qism yo‘q.';
+	@override String playLater({required Object episode}) => 'Baribir ${episode}-qismni ijro etish';
+	@override String playCopy({required Object episode, required Object server}) => '${episode}-qismni ${server} manbasidan ijro etish';
+	@override String get jukebox => 'Mehmonlar uchun musiqa qutisi';
+	@override String get jukeboxInfo => 'Mahalliy tarmoqdagi mehmonlar shu musiqa kutubxonasidan qo‘shiq qidirib, navbat oxiriga qo‘shishi mumkin.';
+	@override String get openRoom => 'Musiqa qutisini ochish';
+	@override String get closeRoom => 'Musiqa qutisini yopish';
+	@override String get join => 'Qo‘shiq so‘rash uchun kodni skanerlang';
+	@override String get noNetwork => 'Musiqa qutisini ochish uchun mahalliy tarmoqqa ulaning.';
+	@override String get added => 'Navbatga qo‘shildi';
+	@override String get searchSongs => 'Qo‘shiq qidirish';
+	@override String get roomUnavailable => 'Bu musiqa qutisi mavjud emas.';
+	@override String get noSongs => 'Mos qo‘shiq topilmadi';
+	@override String get chooseLibrary => 'Musiqa kutubxonasini tanlang';
 }
 
 // Path: app
@@ -5588,6 +5620,28 @@ class _Translations$services$trackerDescriptions$uz extends Translations$service
 extension on TranslationsUz {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Ekranimga moslash',
+			'livingRoom.fitHelp' => 'Bir chetni tanlang va belgilari ko‘ringuncha strelkalar bilan siljiting. Har bir chet uchun takrorlang.',
+			'livingRoom.left' => 'Chap',
+			'livingRoom.right' => 'O‘ng',
+			'livingRoom.top' => 'Yuqori',
+			'livingRoom.bottom' => 'Past',
+			'livingRoom.receiver' => 'Eski qabul qilgichlar uchun Dolby Digital 5.1',
+			'livingRoom.receiverHelp' => 'Mos chiqishlarda ko‘p kanalli ovozni Dolby Digital formatiga o‘giradi. Ovoz qabul qilgichga bevosita uzatiladi, videoni nusxalash mumkin bo‘lsa, u asl holida saqlanadi.',
+			'livingRoom.missing' => ({required Object episode}) => 'Bu ketma-ketlikda ${episode}-qism yo‘q.',
+			'livingRoom.playLater' => ({required Object episode}) => 'Baribir ${episode}-qismni ijro etish',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => '${episode}-qismni ${server} manbasidan ijro etish',
+			'livingRoom.jukebox' => 'Mehmonlar uchun musiqa qutisi',
+			'livingRoom.jukeboxInfo' => 'Mahalliy tarmoqdagi mehmonlar shu musiqa kutubxonasidan qo‘shiq qidirib, navbat oxiriga qo‘shishi mumkin.',
+			'livingRoom.openRoom' => 'Musiqa qutisini ochish',
+			'livingRoom.closeRoom' => 'Musiqa qutisini yopish',
+			'livingRoom.join' => 'Qo‘shiq so‘rash uchun kodni skanerlang',
+			'livingRoom.noNetwork' => 'Musiqa qutisini ochish uchun mahalliy tarmoqqa ulaning.',
+			'livingRoom.added' => 'Navbatga qo‘shildi',
+			'livingRoom.searchSongs' => 'Qo‘shiq qidirish',
+			'livingRoom.roomUnavailable' => 'Bu musiqa qutisi mavjud emas.',
+			'livingRoom.noSongs' => 'Mos qo‘shiq topilmadi',
+			'livingRoom.chooseLibrary' => 'Musiqa kutubxonasini tanlang',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'Ilova belgisi',
 			'appIcon.defaultIcon' => 'Standart',
@@ -6078,6 +6132,8 @@ extension on TranslationsUz {
 			'settings.downmixCenterBoostLabel' => 'Kuchaytirish (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Oʻtkazishda ovozni meʼyorlashtirish',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Ovoz buzilishining oldini olish uchun darajani tushirish. Asl ovoz balandligini saqlash uchun oʻchiring (baland sahnalar buzilishi mumkin).',
 			'settings.dvConversionMode' => 'Dolby Vision oʻtkazmasi',
 			'settings.dvConversionModeDescription' => 'Dolby Vision Profile 7 fayllarini qayta ishlash rejimini tanlang.',
@@ -6100,8 +6156,6 @@ extension on TranslationsUz {
 			'settings.hdrSdrConversion' => 'HDR\'ni SDR\'ga aylantirish',
 			'settings.hdrSdrConversionDescription' => 'Displey HDR\'ni ko‘rsata olmaganda HDR videoni nima aylantirishini tanlang.',
 			'settings.hdrSdrConversionAuto' => 'Avtomatik',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Android 9 va undan keyingi versiyalarda qurilma, eskiroq versiyalarda pleyer',
 			'settings.hdrSdrConversionDevice' => 'Qurilma',
 			'settings.hdrSdrConversionDeviceDescription' => 'Aylantirishni qurilmaning video apparati bajaradi. Eng tezi, lekin ranglar qurilmaga bog‘liq',
@@ -6592,6 +6646,8 @@ extension on TranslationsUz {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => '${seconds} soniya orqaga oʻtkazish',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => '${seconds} soniya oldinga oʻtkazish',
 			'videoControls.previousButton' => 'Oldingi qism',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'Keyingi qism',
 			'videoControls.previousChapterButton' => 'Oldingi boʻlimcha',
 			'videoControls.nextChapterButton' => 'Keyingi boʻlimcha',
@@ -6614,8 +6670,6 @@ extension on TranslationsUz {
 			'videoControls.segmentLoop' => 'Bo‘limni takrorlash',
 			'videoControls.addBookmark' => 'Xatcho‘p qo‘shish',
 			'videoControls.bookmarkName' => 'Xatcho‘p nomi',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'Masalan, kirish sahnasi',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'Xatcho‘p ${n}',
 			'videoControls.bookmarkNameRequired' => 'Bu xatcho‘p uchun nom kiriting.',
@@ -7106,6 +7160,8 @@ extension on TranslationsUz {
 			'libraries.analysisStarted' => ({required Object title}) => '"${title}" uchun tahlil boshlandi',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Tahlil qilib boʻlmadi: ${error}',
 			'libraries.noLibrariesFound' => 'Kutubxonalar topilmadi',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Barcha kutubxonalar yashirilgan',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Yashirin kutubxonalar (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Ushbu kutubxona boʻsh',
@@ -7128,8 +7184,6 @@ extension on TranslationsUz {
 			'libraries.content' => 'kutubxona tarkibi',
 			'libraries.selectLibrary' => 'Kutubxonani tanlash',
 			'libraries.filtersWithCount' => ({required Object count}) => 'Filtrlar (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'Tavsiyalar yoʻq',
 			'libraries.noCollections' => 'Ushbu kutubxonada toʻplamlar yoʻq',
 			'libraries.noFoldersFound' => 'Jildlar topilmadi',
@@ -7620,6 +7674,8 @@ extension on TranslationsUz {
 			'music.visualizerLiveAudio' => 'Jonli audio tahlili',
 			'music.visualizerPreviousPreset' => 'Oldingi vizual uslub',
 			'music.visualizerNextPreset' => 'Keyingi vizual uslub',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Qutb yog‘dusi',
 			'music.visualizerPresetBloom' => 'Gullash',
 			'music.visualizerPresetOrbitals' => 'Orbitadi',
@@ -7642,8 +7698,6 @@ extension on TranslationsUz {
 			'music.noAudioUrl' => ({required Object track}) => '${track} uchun audio URL mavjud emas',
 			'music.discography.singlesAndEps' => 'Singllar va EP',
 			'music.discography.live' => 'Jonli',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'Toʻplamlar',
 			'music.backTo' => 'Oldin ijro etilganlar',
 			'music.upNext' => 'Keyingi',
@@ -8134,6 +8188,8 @@ extension on TranslationsUz {
 			'externalPlayer.useExternalPlayer' => 'Tashqi pleyerdan foydalanish',
 			'externalPlayer.useExternalPlayerDescription' => 'Videolarni boshqa ilovada ochish',
 			'externalPlayer.selectPlayer' => 'Pleyerni tanlash',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Maxsus pleyerlar',
 			'externalPlayer.systemDefault' => 'Tizim standarti',
 			'externalPlayer.addCustomPlayer' => 'Maxsus pleyer qoʻshish',
@@ -8156,8 +8212,6 @@ extension on TranslationsUz {
 			'metadataEdit.editMetadata' => 'Tahrirlash...',
 			'metadataEdit.screenTitle' => 'Metamaʼlumotlarni tahrirlash',
 			'metadataEdit.basicInfo' => 'Asosiy maʼlumotlar',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'Rasmlar/Posterlar',
 			'metadataEdit.advancedSettings' => 'Kengaytirilgan sozlamalar',
 			'metadataEdit.title' => 'Nomi',
@@ -8648,6 +8702,8 @@ extension on TranslationsUz {
 			'homeLayout.heroCardDescription' => 'Bir kartta bir kartta bir poster shelf ko‘zadi.',
 			'homeLayout.heroUnavailableDescription' => 'Bu seri bir koleksiyonin real titlarlarga qotʻlarda qotʻlanga qotujayda qotujiyada qotujaya qotujin qotujan qotuj.',
 			'homeLayout.librariesSelection' => 'Librarlar (tashqqqqtqqt qtqqqta qtqtqt qtaqtqtaqt qqtqtsqtql qtqts qtqlqtqdqlqqttql)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Her librariyiz burada kontrolda bu bir sıraya birimdir.',
 			'homeLayout.movieCollectionsSelection' => 'Film koleksiyonlar (tashqiziziziz bütün seçkin librariyalar)',
 			'homeLayout.showCollectionsSelection' => 'Koleksiylar (tashqiziziziz o‘tashqitiziziz)',
@@ -8670,8 +8726,6 @@ extension on TranslationsUz {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'Yashirish',
 			'homeLayout.remove' => 'Oʻchirish',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'Ushbu kutubxonaning tomoshani davom ettirish qatori',
 			'homeLayout.pressAgainToDelete' => 'Yenni xifida qaytadi.',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9162,6 +9216,8 @@ extension on TranslationsUz {
 			'audiobook.statusFinished' => 'Konni',
 			'audiobook.goToTime' => 'O‘zadi.',
 			'audiobook.timeHelp' => 'Hours:minuts:seconds, o minutlar:seconds',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Sinklik data\'ni transfer o‘yadi.Sinkliklar ko‘yad qo‘yingiz, lokal sinklik tarihini qaytarmaymazlar.Sinqlik kodini separata tutan.',
 			'audiobook.recoveryExport' => 'Filiya qaytarga xifratsiya',
 			'audiobook.recoveryImport' => 'İthalat xifratni qaytarga faili',
@@ -9184,8 +9240,6 @@ extension on TranslationsUz {
 			'sourceSetup.passwordOrKey' => 'Parol kiriting yoki quyida maxfiy kalit qo‘shing.',
 			'sourceSetup.sshFingerprint' => 'SSH host kalitining SHA256 izi',
 			'sourceSetup.sshFingerprintHelp' => 'Server administratori bilan tekshiring. Serverda ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub buyrug‘ini bajaring va SHA256 qiymatidan foydalaning.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'Joriy qat’iy belgilangan izni saqlash uchun bo‘sh qoldiring yoki serverning yangi izini kiriting.',
 			'sourceSetup.sshAuthentication' => 'Ochiq kalit bilan SSH autentifikatsiyasi',
 			'sourceSetup.sshAuthenticationHelp' => 'Ixtiyoriy; parol orqali autentifikatsiya ham qo‘llab-quvvatlanadi.',
@@ -9676,6 +9730,8 @@ extension on TranslationsUz {
 			'musicTools.days' => 'Kunlar',
 			'musicTools.albumBlocks' => 'Albomlarni butun saqlash',
 			'musicTools.home' => 'Musiqa',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'Yaqinda ijro etilgan',
 			'musicTools.apiKey' => 'API kaliti',
 			'musicTools.missing' => 'N/A',
@@ -9698,8 +9754,6 @@ extension on TranslationsUz {
 			'musicTools.serverAnalysis' => 'Server tahlili',
 			'musicTools.sonicAnalysis' => 'Ovoz tahlili',
 			'musicTools.serverAnalysisScope' => 'Ushbu serverdagi barcha mos musiqa kutubxonalari. Ularning tahlil sozlamalari o‘zgarmaydi.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Server faoliyati',
 			'musicTools.playlistSharing' => 'Pleylistga kirish',
 			'musicTools.playlistRecipient' => 'Plex foydalanuvchi nomi yoki email',

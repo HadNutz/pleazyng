@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "Ajustar a mi pantalla",
+    "fitHelp": "Selecciona un borde y muévelo con las flechas hasta ver sus marcas. Repite el ajuste en cada borde.",
+    "left": "Izquierda",
+    "right": "Derecha",
+    "top": "Arriba",
+    "bottom": "Abajo",
+    "receiver": "Dolby Digital 5.1 para receptores antiguos",
+    "receiverHelp": "Convierte el audio multicanal a Dolby Digital en salidas compatibles. Envía el audio directamente al receptor y conserva el vídeo original si puede copiarse.",
+    "missing": "Falta el episodio ${episode} en esta secuencia.",
+    "playLater": "Reproducir el episodio ${episode} de todos modos",
+    "playCopy": "Reproducir el episodio ${episode} desde ${server}",
+    "jukebox": "Rocola para invitados",
+    "jukeboxInfo": "Los invitados de tu red local pueden buscar en esta biblioteca de música y añadir canciones al final de la cola.",
+    "openRoom": "Abrir la rocola",
+    "closeRoom": "Cerrar la rocola",
+    "join": "Escanea para pedir una canción",
+    "noNetwork": "Conéctate a una red local para abrir la rocola.",
+    "added": "Se ha añadido a la cola",
+    "searchSongs": "Buscar canciones",
+    "roomUnavailable": "Esta rocola no está disponible.",
+    "noSongs": "No se encontraron canciones",
+    "chooseLibrary": "Elige una biblioteca de música"
+  },
   "app": {
     "title": "Pleazyng"
   },

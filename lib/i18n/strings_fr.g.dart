@@ -40,6 +40,7 @@ class TranslationsFr extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsFr $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsFr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final Translations$livingRoom$fr livingRoom = Translations$livingRoom$fr.internal(_root);
 	@override late final Translations$app$fr app = Translations$app$fr.internal(_root);
 	@override late final Translations$appIcon$fr appIcon = Translations$appIcon$fr.internal(_root);
 	@override late final Translations$auth$fr auth = Translations$auth$fr.internal(_root);
@@ -121,6 +122,37 @@ class TranslationsFr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$fr musicExperience = Translations$musicExperience$fr.internal(_root);
 	@override late final Translations$musicTools$fr musicTools = Translations$musicTools$fr.internal(_root);
 	@override late final Translations$musicDevices$fr musicDevices = Translations$musicDevices$fr.internal(_root);
+}
+
+// Path: livingRoom
+class Translations$livingRoom$fr extends Translations$livingRoom$en {
+	Translations$livingRoom$fr.internal(TranslationsFr root) : this._root = root, super.internal(root);
+
+	final TranslationsFr _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'Ajuster à mon écran';
+	@override String get fitHelp => 'Sélectionnez un bord, puis déplacez-le avec les flèches jusqu’à voir ses repères. Répétez pour chaque bord.';
+	@override String get left => 'Gauche';
+	@override String get right => 'Droite';
+	@override String get top => 'Haut';
+	@override String get bottom => 'Bas';
+	@override String get receiver => 'Dolby Digital 5.1 pour les amplis anciens';
+	@override String get receiverHelp => 'Convertit le son multicanal en Dolby Digital sur les sorties compatibles. Le son est transmis directement à l’ampli et la vidéo d’origine est conservée si elle peut être copiée.';
+	@override String missing({required Object episode}) => 'L’épisode ${episode} manque dans cette séquence.';
+	@override String playLater({required Object episode}) => 'Lire quand même l’épisode ${episode}';
+	@override String playCopy({required Object episode, required Object server}) => 'Lire l’épisode ${episode} depuis ${server}';
+	@override String get jukebox => 'Jukebox des invités';
+	@override String get jukeboxInfo => 'Les invités sur votre réseau local peuvent rechercher des morceaux dans cette bibliothèque et les ajouter à la fin de la file d’attente.';
+	@override String get openRoom => 'Ouvrir le jukebox';
+	@override String get closeRoom => 'Fermer le jukebox';
+	@override String get join => 'Scannez pour demander un morceau';
+	@override String get noNetwork => 'Connectez-vous à un réseau local pour ouvrir le jukebox.';
+	@override String get added => 'Ajouté à la file d’attente';
+	@override String get searchSongs => 'Rechercher des morceaux';
+	@override String get roomUnavailable => 'Ce jukebox est indisponible.';
+	@override String get noSongs => 'Aucun morceau correspondant';
+	@override String get chooseLibrary => 'Choisir une bibliothèque musicale';
 }
 
 // Path: app
@@ -5632,6 +5664,28 @@ class Translations$services$trackerDescriptions$fr extends Translations$services
 extension on TranslationsFr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Ajuster à mon écran',
+			'livingRoom.fitHelp' => 'Sélectionnez un bord, puis déplacez-le avec les flèches jusqu’à voir ses repères. Répétez pour chaque bord.',
+			'livingRoom.left' => 'Gauche',
+			'livingRoom.right' => 'Droite',
+			'livingRoom.top' => 'Haut',
+			'livingRoom.bottom' => 'Bas',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 pour les amplis anciens',
+			'livingRoom.receiverHelp' => 'Convertit le son multicanal en Dolby Digital sur les sorties compatibles. Le son est transmis directement à l’ampli et la vidéo d’origine est conservée si elle peut être copiée.',
+			'livingRoom.missing' => ({required Object episode}) => 'L’épisode ${episode} manque dans cette séquence.',
+			'livingRoom.playLater' => ({required Object episode}) => 'Lire quand même l’épisode ${episode}',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'Lire l’épisode ${episode} depuis ${server}',
+			'livingRoom.jukebox' => 'Jukebox des invités',
+			'livingRoom.jukeboxInfo' => 'Les invités sur votre réseau local peuvent rechercher des morceaux dans cette bibliothèque et les ajouter à la fin de la file d’attente.',
+			'livingRoom.openRoom' => 'Ouvrir le jukebox',
+			'livingRoom.closeRoom' => 'Fermer le jukebox',
+			'livingRoom.join' => 'Scannez pour demander un morceau',
+			'livingRoom.noNetwork' => 'Connectez-vous à un réseau local pour ouvrir le jukebox.',
+			'livingRoom.added' => 'Ajouté à la file d’attente',
+			'livingRoom.searchSongs' => 'Rechercher des morceaux',
+			'livingRoom.roomUnavailable' => 'Ce jukebox est indisponible.',
+			'livingRoom.noSongs' => 'Aucun morceau correspondant',
+			'livingRoom.chooseLibrary' => 'Choisir une bibliothèque musicale',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'Icône de l’application',
 			'appIcon.defaultIcon' => 'Par défaut',
@@ -6122,6 +6176,8 @@ extension on TranslationsFr {
 			'settings.downmixCenterBoostLabel' => 'Renforcement (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Normaliser le volume lors de la conversion en stéréo',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Atténuer le mixage pour éviter la saturation. Désactivez cette option pour conserver le volume d’origine, au risque de déformer les scènes bruyantes.',
 			'settings.dvConversionMode' => 'Conversion Dolby Vision',
 			'settings.dvConversionModeDescription' => 'Choisir comment les fichiers Dolby Vision de profil 7 sont gérés.',
@@ -6144,8 +6200,6 @@ extension on TranslationsFr {
 			'settings.hdrSdrConversion' => 'Conversion HDR vers SDR',
 			'settings.hdrSdrConversionDescription' => 'Choisir ce qui convertit les vidéos HDR lorsque l’écran ne peut pas afficher le HDR.',
 			'settings.hdrSdrConversionAuto' => 'Auto',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Appareil à partir d’Android 9, lecteur sur les versions antérieures',
 			'settings.hdrSdrConversionDevice' => 'Appareil',
 			'settings.hdrSdrConversionDeviceDescription' => 'Le matériel vidéo de l’appareil effectue la conversion. Le plus rapide, mais les couleurs dépendent de l’appareil',
@@ -6636,6 +6690,8 @@ extension on TranslationsFr {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Reculer de ${seconds} secondes',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Avancer de ${seconds} secondes',
 			'videoControls.previousButton' => 'Épisode précédent',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'Épisode suivant',
 			'videoControls.previousChapterButton' => 'Chapitre précédent',
 			'videoControls.nextChapterButton' => 'Chapitre suivant',
@@ -6658,8 +6714,6 @@ extension on TranslationsFr {
 			'videoControls.segmentLoop' => 'Le Segment Loop',
 			'videoControls.addBookmark' => 'Ajoutez le bookmark',
 			'videoControls.bookmarkName' => 'Nom de Bookmark',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'Par exemple, la scène d’ouverture',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'Le Bookmark ${n}',
 			'videoControls.bookmarkNameRequired' => 'Entrez un nom pour ce livre.',
@@ -7150,6 +7204,8 @@ extension on TranslationsFr {
 			'libraries.analyzeLibrary' => 'Analyser la bibliothèque',
 			'libraries.refreshMetadata' => 'Actualiser les métadonnées',
 			'libraries.emptyTrash' => 'Vider la corbeille',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyingTrash' => ({required Object title}) => 'Vidage de la corbeille de « ${title} »…',
 			'libraries.trashEmptied' => ({required Object title}) => 'Corbeille vidée pour « ${title} »',
 			'libraries.failedToEmptyTrash' => ({required Object error}) => 'Échec du vidage de la corbeille : ${error}',
@@ -7172,8 +7228,6 @@ extension on TranslationsFr {
 			'libraries.sort' => 'Trier',
 			'libraries.sortBy' => 'Trier par',
 			'libraries.filters' => 'Filtres',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.confirmActionMessage' => 'Êtes-vous sûr de vouloir effectuer cette action ?',
 			'libraries.showLibrary' => 'Afficher la bibliothèque',
 			'libraries.hideLibrary' => 'Masquer la bibliothèque',
@@ -7664,6 +7718,8 @@ extension on TranslationsFr {
 			'music.queue' => 'File d\'attente',
 			'music.clearQueue' => 'Vider la file d\'attente',
 			'music.lyrics' => 'Paroles',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizer' => 'Visualisateur',
 			'music.visualizerProfileLoading' => 'Lire la suite de Track Analysis...',
 			'music.visualizerAmbientMotion' => 'Mouvement environnemental',
@@ -7686,8 +7742,6 @@ extension on TranslationsFr {
 			'music.nextTrack' => 'Titre suivant',
 			'music.repeat' => 'Répéter',
 			'music.repeatAll' => 'Tout répéter',
-			_ => null,
-		} ?? switch (path) {
 			'music.repeatOne' => 'Répéter le titre',
 			'music.instantMixNoServer' => 'Aucun serveur n’est disponible pour créer un mix instantané',
 			'music.instantMixFailed' => 'Impossible de charger le mix instantané',
@@ -8178,6 +8232,8 @@ extension on TranslationsFr {
 			'performanceOverlay.decoderExynosHw' => 'Matériel Exynos',
 			'performanceOverlay.decoderSoftware' => 'Logiciel',
 			'performanceOverlay.decoderHardware' => 'Matériel',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.tunnelingActive' => 'Actif',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} échecs)',
 			'performanceOverlay.cacheLimitMiB' => ({required Object size}) => 'Limite du cache: ${size} MiB',
@@ -8200,8 +8256,6 @@ extension on TranslationsFr {
 			'externalPlayer.description' => 'Choisissez une autre application pour ouvrir les vidéos. Les joueurs disponibles dépendent de votre appareil et des applications installées.',
 			'externalPlayer.systemDefaultDescription' => 'Laissez le système d\'exploitation ouvrir la vidéo avec son application par défaut.',
 			'externalPlayer.playerOptionDescription' => ({required Object player}) => 'Ouvrez des vidéos avec ${player}.',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.playerNameDescription' => 'L\'étiquette affichée dans la liste des joueurs.',
 			'externalPlayer.playerPackageDescription' => 'Entrez le nom de paquet Android de l\'application joueur, comme com.example.player.',
 			'externalPlayer.playerCommandDescription' => 'Entrez le commandement de joueur installé ou la voie exécutable pour ce dispositif.',
@@ -8692,6 +8746,8 @@ extension on TranslationsFr {
 			'homeLayout.movieCollections' => 'Film Collections',
 			'homeLayout.showCollections' => 'Afficher les collections',
 			'homeLayout.rowTitle' => 'Titre Row',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.content' => 'contenu',
 			'homeLayout.showThisRowIn' => 'Afficher cette ligne dans :',
 			'homeLayout.libraryRecommended' => 'Bibliothèque recommandée',
@@ -8714,8 +8770,6 @@ extension on TranslationsFr {
 			'homeLayout.editHomeRow' => 'Edit à domicile',
 			'homeLayout.resetHeroButton' => 'Résetez le layout de l\'héroïne à stock Pleazyng',
 			'homeLayout.reorderingUnlocked' => 'Réservation déclenchée',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.reorderingLocked' => 'Réservation bloquée',
 			'homeLayout.rowsCanBeDragged' => 'Les rayons peuvent être tirés — tapez le verrou pour éviter que',
 			'homeLayout.tapLockToDrag' => 'Tapez le lock pour tirer les lignes',
@@ -9206,6 +9260,8 @@ extension on TranslationsFr {
 			'audiobook.sortTitle' => 'Titre',
 			'audiobook.sortAuthor' => 'Auteur',
 			'audiobook.sortNarrator' => 'Narrateur',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortSeries' => 'Commande série',
 			'audiobook.sortRecent' => 'récemment ouvert',
 			'audiobook.statusFilter' => 'Le statut de lecture',
@@ -9228,8 +9284,6 @@ extension on TranslationsFr {
 			'sourceSetup.nfsEndpointInvalid' => 'Saisissez une URL NFS, par exemple nfs://nas:2049/export.',
 			'sourceSetup.dlnaNone' => 'Aucun serveur DLNA trouvé. Saisissez manuellement l’URL de description de l’appareil.',
 			'sourceSetup.dlnaServers' => 'Serveurs multimédias DLNA',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.dlnaUnavailable' => 'La découverte DLNA est indisponible sur ce réseau. Saisissez manuellement l’URL de description de l’appareil.',
 			'sourceSetup.dlnaSearching' => 'Recherche de serveurs DLNA sur le réseau local',
 			'sourceSetup.networkSearching' => 'Recherche sur le réseau local…',
@@ -9720,6 +9774,8 @@ extension on TranslationsFr {
 			'musicExperience.on' => 'sur',
 			'musicExperience.off' => 'Désactivé',
 			'musicExperience.unknown' => 'Inconnu',
+			_ => null,
+		} ?? switch (path) {
 			'musicExperience.routeLost' => 'Sortie audio déconnectée. Lecture en pause.',
 			'musicExperience.autoDriving' => 'Ouvrir le mode conduite à la connexion à une voiture',
 			'musicExperience.routeHint' => 'Le système de la voiture décide si l’application peut s’afficher automatiquement.',
@@ -9742,8 +9798,6 @@ extension on TranslationsFr {
 			'musicTools.model' => 'Nom du modèle',
 			'musicTools.consent' => 'Envoyer ma description à ce fournisseur',
 			'musicTools.promptHint' => 'Décrivez la musique souhaitée',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.noHistory' => 'Aucune musique à afficher',
 			'musicTools.historyHint' => 'Historique d’écoute de ce profil',
 			'musicTools.days' => 'Jours',

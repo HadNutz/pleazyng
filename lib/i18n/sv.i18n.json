@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "Anpassa till min skärm",
+    "fitHelp": "Välj en kant och flytta den med piltangenterna tills markeringarna syns. Upprepa för varje kant.",
+    "left": "Vänster",
+    "right": "Höger",
+    "top": "Överkant",
+    "bottom": "Underkant",
+    "receiver": "Dolby Digital 5.1 för äldre receivrar",
+    "receiverHelp": "Omvandlar flerkanalsljud till Dolby Digital på kompatibla utgångar. Skickar ljudet direkt till receivern och behåller originalvideon när den går att kopiera.",
+    "missing": "Avsnitt ${episode} saknas i den här följden.",
+    "playLater": "Spela avsnitt ${episode} ändå",
+    "playCopy": "Spela avsnitt ${episode} från ${server}",
+    "jukebox": "Jukebox för gäster",
+    "jukeboxInfo": "Gäster på ditt lokala nätverk kan söka i musikbiblioteket och lägga till låtar sist i kön.",
+    "openRoom": "Öppna jukeboxen",
+    "closeRoom": "Stäng jukeboxen",
+    "join": "Skanna för att önska en låt",
+    "noNetwork": "Anslut till ett lokalt nätverk för att öppna jukeboxen.",
+    "added": "Tillagd i kön",
+    "searchSongs": "Sök efter låtar",
+    "roomUnavailable": "Jukeboxen är inte tillgänglig.",
+    "noSongs": "Inga matchande låtar",
+    "chooseLibrary": "Välj ett musikbibliotek"
+  },
   "app": {
     "title": "Pleazyng"
   },

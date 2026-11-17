@@ -40,6 +40,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsEs $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsEs(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final Translations$livingRoom$es livingRoom = Translations$livingRoom$es.internal(_root);
 	@override late final Translations$app$es app = Translations$app$es.internal(_root);
 	@override late final Translations$appIcon$es appIcon = Translations$appIcon$es.internal(_root);
 	@override late final Translations$auth$es auth = Translations$auth$es.internal(_root);
@@ -121,6 +122,37 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$es musicExperience = Translations$musicExperience$es.internal(_root);
 	@override late final Translations$musicTools$es musicTools = Translations$musicTools$es.internal(_root);
 	@override late final Translations$musicDevices$es musicDevices = Translations$musicDevices$es.internal(_root);
+}
+
+// Path: livingRoom
+class Translations$livingRoom$es extends Translations$livingRoom$en {
+	Translations$livingRoom$es.internal(TranslationsEs root) : this._root = root, super.internal(root);
+
+	final TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'Ajustar a mi pantalla';
+	@override String get fitHelp => 'Selecciona un borde y muévelo con las flechas hasta ver sus marcas. Repite el ajuste en cada borde.';
+	@override String get left => 'Izquierda';
+	@override String get right => 'Derecha';
+	@override String get top => 'Arriba';
+	@override String get bottom => 'Abajo';
+	@override String get receiver => 'Dolby Digital 5.1 para receptores antiguos';
+	@override String get receiverHelp => 'Convierte el audio multicanal a Dolby Digital en salidas compatibles. Envía el audio directamente al receptor y conserva el vídeo original si puede copiarse.';
+	@override String missing({required Object episode}) => 'Falta el episodio ${episode} en esta secuencia.';
+	@override String playLater({required Object episode}) => 'Reproducir el episodio ${episode} de todos modos';
+	@override String playCopy({required Object episode, required Object server}) => 'Reproducir el episodio ${episode} desde ${server}';
+	@override String get jukebox => 'Rocola para invitados';
+	@override String get jukeboxInfo => 'Los invitados de tu red local pueden buscar en esta biblioteca de música y añadir canciones al final de la cola.';
+	@override String get openRoom => 'Abrir la rocola';
+	@override String get closeRoom => 'Cerrar la rocola';
+	@override String get join => 'Escanea para pedir una canción';
+	@override String get noNetwork => 'Conéctate a una red local para abrir la rocola.';
+	@override String get added => 'Se ha añadido a la cola';
+	@override String get searchSongs => 'Buscar canciones';
+	@override String get roomUnavailable => 'Esta rocola no está disponible.';
+	@override String get noSongs => 'No se encontraron canciones';
+	@override String get chooseLibrary => 'Elige una biblioteca de música';
 }
 
 // Path: app
@@ -5712,6 +5744,28 @@ class Translations$bonusExtras$kind$es extends Translations$bonusExtras$kind$en 
 extension on TranslationsEs {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Ajustar a mi pantalla',
+			'livingRoom.fitHelp' => 'Selecciona un borde y muévelo con las flechas hasta ver sus marcas. Repite el ajuste en cada borde.',
+			'livingRoom.left' => 'Izquierda',
+			'livingRoom.right' => 'Derecha',
+			'livingRoom.top' => 'Arriba',
+			'livingRoom.bottom' => 'Abajo',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 para receptores antiguos',
+			'livingRoom.receiverHelp' => 'Convierte el audio multicanal a Dolby Digital en salidas compatibles. Envía el audio directamente al receptor y conserva el vídeo original si puede copiarse.',
+			'livingRoom.missing' => ({required Object episode}) => 'Falta el episodio ${episode} en esta secuencia.',
+			'livingRoom.playLater' => ({required Object episode}) => 'Reproducir el episodio ${episode} de todos modos',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'Reproducir el episodio ${episode} desde ${server}',
+			'livingRoom.jukebox' => 'Rocola para invitados',
+			'livingRoom.jukeboxInfo' => 'Los invitados de tu red local pueden buscar en esta biblioteca de música y añadir canciones al final de la cola.',
+			'livingRoom.openRoom' => 'Abrir la rocola',
+			'livingRoom.closeRoom' => 'Cerrar la rocola',
+			'livingRoom.join' => 'Escanea para pedir una canción',
+			'livingRoom.noNetwork' => 'Conéctate a una red local para abrir la rocola.',
+			'livingRoom.added' => 'Se ha añadido a la cola',
+			'livingRoom.searchSongs' => 'Buscar canciones',
+			'livingRoom.roomUnavailable' => 'Esta rocola no está disponible.',
+			'livingRoom.noSongs' => 'No se encontraron canciones',
+			'livingRoom.chooseLibrary' => 'Elige una biblioteca de música',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'Icono de la aplicación',
 			'appIcon.defaultIcon' => 'Predeterminado',
@@ -6202,6 +6256,8 @@ extension on TranslationsEs {
 			'settings.audioChannelLimitStereoDescription' => 'Mezcla a dos canales para altavoces estéreo o auriculares. Desactiva la transferencia directa.',
 			'settings.downmixCenterBoost' => 'Realce del canal central',
 			'settings.downmixCenterBoostValue' => ({required Object db}) => '${db} dB',
+			_ => null,
+		} ?? switch (path) {
 			'settings.downmixCenterBoostLabel' => 'Realce (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Normalizar volumen al mezclar',
@@ -6224,8 +6280,6 @@ extension on TranslationsEs {
 			'settings.dvExperimentDiagnosticsDescription' => 'Activar registros detallados del reproductor en la próxima reproducción.',
 			'settings.disableDolbyVision' => 'Desactivar Dolby Vision',
 			'settings.disableDolbyVisionDescription' => 'Reproducir la capa HDR10 o HLG del archivo en lugar de Dolby Vision, si la tiene',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversion' => 'Conversión de HDR a SDR',
 			'settings.hdrSdrConversionDescription' => 'Elige qué convierte el vídeo HDR cuando la pantalla no puede mostrar HDR.',
 			'settings.hdrSdrConversionAuto' => 'Automático',
@@ -6716,6 +6770,8 @@ extension on TranslationsEs {
 			'videoControls.loadingVideo' => 'Cargando el vídeo',
 			'videoControls.showPlaybackControls' => 'Mostrar controles de reproducción',
 			'videoControls.hidePlaybackControls' => 'Ocultar controles de reproducción',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Retroceder ${seconds} segundos',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Avanzar ${seconds} segundos',
 			'videoControls.previousButton' => 'Episodio anterior',
@@ -6738,8 +6794,6 @@ extension on TranslationsEs {
 			'videoControls.bookmarksHelp' => 'Las notas se almacenan en este dispositivo. Seleccione una para ir a ese tiempo.',
 			'videoControls.bookmarksButton' => 'Bookmarcas',
 			'videoControls.chaptersAndBookmarks' => 'Capítulos y Bookmarks',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.segmentLoop' => 'El segmento Loop',
 			'videoControls.addBookmark' => 'Añadir Bookmark',
 			'videoControls.bookmarkName' => 'Nombre Bookmark',
@@ -7230,6 +7284,8 @@ extension on TranslationsEs {
 			'errors.reasonNotFound' => 'el elemento ya no está en el servidor',
 			'errors.reasonServerError' => 'el servidor informó de un error',
 			'errors.reasonCancelled' => 'se canceló la solicitud',
+			_ => null,
+		} ?? switch (path) {
 			'errors.reasonUnexpected' => 'se produjo un error inesperado',
 			'libraries.playRandomMovie' => 'Juega una película aleatoria',
 			'libraries.randomPickFailed' => 'No podía elegir una película aleatoria de esta biblioteca.',
@@ -7252,8 +7308,6 @@ extension on TranslationsEs {
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Bibliotecas ocultas (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Esta biblioteca está vacía',
 			'libraries.noItemsMatchFilters' => 'Ningún elemento coincide con los filtros activos',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.resetFilters' => 'Restablecer filtros',
 			'libraries.all' => 'Todos',
 			'libraries.clearAll' => 'Borrar todo',
@@ -7744,6 +7798,8 @@ extension on TranslationsEs {
 			'playlists.errorAdding' => 'Error al añadir a la lista de reproducción',
 			'playlists.errorReordering' => 'Error al reordenar el elemento de la lista de reproducción',
 			'playlists.errorRemoving' => 'Error al eliminar de la lista de reproducción',
+			_ => null,
+		} ?? switch (path) {
 			'music.goToAlbum' => 'Ir al álbum',
 			'music.goToArtist' => 'Ir al artista',
 			'music.instantMix' => 'Mezcla instantánea',
@@ -7766,8 +7822,6 @@ extension on TranslationsEs {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Blojo',
 			'music.visualizerPresetOrbitals' => 'Orbitales',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetPrism' => 'Prism',
 			'music.visualizerPresetTunnel' => 'Túnel',
 			'music.visualizerPresetTrackMap' => 'Mapa de Track',
@@ -8258,6 +8312,8 @@ extension on TranslationsEs {
 			'performanceOverlay.cacheUsed' => 'Caché usada',
 			'performanceOverlay.cacheLimit' => 'Límite de caché',
 			'performanceOverlay.speed' => 'Velocidad',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.player' => 'Reproductor',
 			'performanceOverlay.playMethod' => 'El método de juego',
 			'performanceOverlay.memory' => 'Memoria',
@@ -8280,8 +8336,6 @@ extension on TranslationsEs {
 			'externalPlayer.customPlayers' => 'Reproductores personalizados',
 			'externalPlayer.systemDefault' => 'Predeterminado del sistema',
 			'externalPlayer.addCustomPlayer' => 'Añadir reproductor personalizado',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.playerName' => 'Nombre del reproductor',
 			'externalPlayer.playerNameHint' => 'Mi reproductor',
 			'externalPlayer.playerCommand' => 'Comando',
@@ -8772,6 +8826,8 @@ extension on TranslationsEs {
 			'homeLayout.openDetails' => 'Detalles abiertos',
 			'homeLayout.heroCards' => 'Cartas de héroe',
 			'homeLayout.tapHeroCard' => 'Tapa una tarjeta de héroe',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tvPlayFocus' => 'TV remota: botón de juego',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad abajo se detiene en el botón de juego antes de moverse a la siguiente línea.',
 			'homeLayout.tvWrap' => 'TV remote: tarjetas de héroe de la cinta',
@@ -8794,8 +8850,6 @@ extension on TranslationsEs {
 			'homeLayout.showThisRowIn' => 'Mostrar esta línea en:',
 			'homeLayout.libraryRecommended' => 'Biblioteca Recomendada',
 			'homeLayout.heroCard' => 'Tarjeta de héroe',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroCardDescription' => 'Mostra como una tarjeta de rotación de ancho en lugar de una esquina de carteles.',
 			'homeLayout.heroUnavailableDescription' => 'Sólo está disponible cuando esta línea se resuelva a los títulos reales de una sola colección — con más de una colección seleccionada no hay ningún título para girar.',
 			'homeLayout.librariesSelection' => 'Librerías (deja todas las bibliotecas sin verificación para incluir todas las biblioteas)',
@@ -9286,6 +9340,8 @@ extension on TranslationsEs {
 			'audiobook.finished' => 'Finalizado',
 			'audiobook.readingPosition' => ({required Object percent}) => 'Leer · ${percent}%',
 			'audiobook.chapterTimeline' => 'Capítulo Progreso',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.bookTimeline' => 'Todo el libro Progreso',
 			'audiobook.bookRemaining' => ({required Object time}) => 'El tiempo que queda en este libro: ${time}',
 			'audiobook.chapterRemaining' => ({required Object time}) => 'Tiempo restante en este capítulo: ${time}',
@@ -9308,8 +9364,6 @@ extension on TranslationsEs {
 			'audiobook.sortRecent' => 'recientemente abierto',
 			'audiobook.statusFilter' => 'El estado de lectura',
 			'audiobook.statusAll' => 'Todos los libros',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.statusNew' => 'No comenzó',
 			'audiobook.statusProgress' => 'En el progreso',
 			'audiobook.statusFinished' => 'Finalizado',
@@ -9800,6 +9854,8 @@ extension on TranslationsEs {
 			'bonusExtras.deviceNotice' => 'La opción «En este dispositivo» requiere un entorno de ejecución compatible con OpenAI instalado en localhost.',
 			'bonusExtras.save' => 'Guardar',
 			'bonusExtras.cancel' => 'Cancelar',
+			_ => null,
+		} ?? switch (path) {
 			'bonusExtras.invalidSettings' => 'Comprueba las direcciones de los servidores y el nombre del modelo. El modo en la nube requiere HTTPS; el modo en este dispositivo requiere localhost.',
 			'bonusExtras.failed' => 'No se pudieron actualizar los extras. Los extras disponibles en tu biblioteca siguen siendo accesibles.',
 			'bonusExtras.partial' => 'Algunas fuentes en línea no están disponibles. Se muestran los resultados disponibles.',
@@ -9822,8 +9878,6 @@ extension on TranslationsEs {
 			'bonusExtras.resume' => 'Reanudar extra',
 			'bonusExtras.restricted' => 'Los extras en línea no están disponibles para este perfil.',
 			'bonusExtras.kind.makingOf' => 'Cómo se hizo',
-			_ => null,
-		} ?? switch (path) {
 			'bonusExtras.kind.effects' => 'Efectos y escenas de riesgo',
 			'bonusExtras.kind.makeup' => 'Maquillaje y vestuario',
 			'bonusExtras.kind.interview' => 'Entrevistas',

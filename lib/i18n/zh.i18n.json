@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "适配我的屏幕",
+    "fitHelp": "选择一条边，用方向键移动，直到看到该边的标记。依次调整每条边。",
+    "left": "左",
+    "right": "右",
+    "top": "上",
+    "bottom": "下",
+    "receiver": "适用于旧款功放的 Dolby Digital 5.1",
+    "receiverHelp": "在兼容的输出上将多声道音频转换为 Dolby Digital，并直通至功放。如果可以直接复制视频流，则保留原始视频。",
+    "missing": "此播放顺序中缺少第 ${episode} 集。",
+    "playLater": "仍然播放第 ${episode} 集",
+    "playCopy": "从 ${server} 播放第 ${episode} 集",
+    "jukebox": "访客点歌台",
+    "jukeboxInfo": "同一局域网内的访客可以搜索这个音乐库，并将歌曲添加到队列末尾。",
+    "openRoom": "开启点歌台",
+    "closeRoom": "关闭点歌台",
+    "join": "扫码点歌",
+    "noNetwork": "请连接到局域网以开启点歌台。",
+    "added": "已加入队列",
+    "searchSongs": "搜索歌曲",
+    "roomUnavailable": "此点歌台不可用。",
+    "noSongs": "没有匹配的歌曲",
+    "chooseLibrary": "选择音乐库"
+  },
   "app": {
     "title": "Pleazyng"
   },

@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "내 화면에 맞추기",
+    "fitHelp": "가장자리를 선택한 뒤 표시가 보일 때까지 방향키로 옮기세요. 나머지 가장자리도 같은 방법으로 조정하세요.",
+    "left": "왼쪽",
+    "right": "오른쪽",
+    "top": "위쪽",
+    "bottom": "아래쪽",
+    "receiver": "구형 리시버용 Dolby Digital 5.1",
+    "receiverHelp": "호환되는 출력에서 다채널 음성을 Dolby Digital로 변환해 리시버에 직접 전달합니다. 영상을 복사할 수 있으면 원본을 유지합니다.",
+    "missing": "이 재생 순서에 ${episode}화가 없습니다.",
+    "playLater": "그래도 ${episode}화 재생",
+    "playCopy": "${server}에서 ${episode}화 재생",
+    "jukebox": "게스트 주크박스",
+    "jukeboxInfo": "같은 로컬 네트워크의 게스트가 이 음악 라이브러리에서 곡을 찾아 대기열 끝에 추가할 수 있습니다.",
+    "openRoom": "주크박스 열기",
+    "closeRoom": "주크박스 닫기",
+    "join": "스캔하여 곡 신청",
+    "noNetwork": "주크박스를 열려면 로컬 네트워크에 연결하세요.",
+    "added": "대기열에 추가됨",
+    "searchSongs": "곡 검색",
+    "roomUnavailable": "이 주크박스를 사용할 수 없습니다.",
+    "noSongs": "일치하는 곡이 없습니다",
+    "chooseLibrary": "음악 라이브러리 선택"
+  },
   "app": {
     "title": "Pleazyng"
   },

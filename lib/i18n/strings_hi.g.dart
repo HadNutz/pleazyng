@@ -40,6 +40,7 @@ class TranslationsHi extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsHi $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsHi(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$hi livingRoom = _Translations$livingRoom$hi._(_root);
 	@override late final _Translations$app$hi app = _Translations$app$hi._(_root);
 	@override late final _Translations$appIcon$hi appIcon = _Translations$appIcon$hi._(_root);
 	@override late final _Translations$auth$hi auth = _Translations$auth$hi._(_root);
@@ -120,6 +121,37 @@ class TranslationsHi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$hi musicExperience = _Translations$musicExperience$hi._(_root);
 	@override late final _Translations$musicTools$hi musicTools = _Translations$musicTools$hi._(_root);
 	@override late final _Translations$musicDevices$hi musicDevices = _Translations$musicDevices$hi._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$hi extends Translations$livingRoom$en {
+	_Translations$livingRoom$hi._(TranslationsHi root) : this._root = root, super.internal(root);
+
+	final TranslationsHi _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'मेरी स्क्रीन में फ़िट करें';
+	@override String get fitHelp => 'कोई किनारा चुनें और तीर वाले बटनों से उसे तब तक खिसकाएँ जब तक उसके निशान दिखने लगें। हर किनारे के लिए दोहराएँ।';
+	@override String get left => 'बायाँ';
+	@override String get right => 'दायाँ';
+	@override String get top => 'ऊपर';
+	@override String get bottom => 'नीचे';
+	@override String get receiver => 'पुराने रिसीवर के लिए Dolby Digital 5.1';
+	@override String get receiverHelp => 'संगत आउटपुट पर मल्टीचैनल ऑडियो को Dolby Digital में बदलता है। ऑडियो सीधे रिसीवर को भेजता है और जब वीडियो की कॉपी बन सकती है, तो उसे मूल रूप में रखता है।';
+	@override String missing({required Object episode}) => 'इस क्रम में एपिसोड ${episode} मौजूद नहीं है।';
+	@override String playLater({required Object episode}) => 'फिर भी एपिसोड ${episode} चलाएँ';
+	@override String playCopy({required Object server, required Object episode}) => '${server} से एपिसोड ${episode} चलाएँ';
+	@override String get jukebox => 'मेहमानों के लिए ज्यूकबॉक्स';
+	@override String get jukeboxInfo => 'आपके स्थानीय नेटवर्क के मेहमान इस संगीत लाइब्रेरी में गाने खोजकर उन्हें कतार के अंत में जोड़ सकते हैं।';
+	@override String get openRoom => 'ज्यूकबॉक्स खोलें';
+	@override String get closeRoom => 'ज्यूकबॉक्स बंद करें';
+	@override String get join => 'गाने का अनुरोध करने के लिए स्कैन करें';
+	@override String get noNetwork => 'ज्यूकबॉक्स खोलने के लिए स्थानीय नेटवर्क से जुड़ें।';
+	@override String get added => 'कतार में जोड़ा गया';
+	@override String get searchSongs => 'गाने खोजें';
+	@override String get roomUnavailable => 'यह ज्यूकबॉक्स उपलब्ध नहीं है।';
+	@override String get noSongs => 'कोई मेल खाता गाना नहीं मिला';
+	@override String get chooseLibrary => 'संगीत लाइब्रेरी चुनें';
 }
 
 // Path: app
@@ -5588,6 +5620,28 @@ class _Translations$services$trackerDescriptions$hi extends Translations$service
 extension on TranslationsHi {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'मेरी स्क्रीन में फ़िट करें',
+			'livingRoom.fitHelp' => 'कोई किनारा चुनें और तीर वाले बटनों से उसे तब तक खिसकाएँ जब तक उसके निशान दिखने लगें। हर किनारे के लिए दोहराएँ।',
+			'livingRoom.left' => 'बायाँ',
+			'livingRoom.right' => 'दायाँ',
+			'livingRoom.top' => 'ऊपर',
+			'livingRoom.bottom' => 'नीचे',
+			'livingRoom.receiver' => 'पुराने रिसीवर के लिए Dolby Digital 5.1',
+			'livingRoom.receiverHelp' => 'संगत आउटपुट पर मल्टीचैनल ऑडियो को Dolby Digital में बदलता है। ऑडियो सीधे रिसीवर को भेजता है और जब वीडियो की कॉपी बन सकती है, तो उसे मूल रूप में रखता है।',
+			'livingRoom.missing' => ({required Object episode}) => 'इस क्रम में एपिसोड ${episode} मौजूद नहीं है।',
+			'livingRoom.playLater' => ({required Object episode}) => 'फिर भी एपिसोड ${episode} चलाएँ',
+			'livingRoom.playCopy' => ({required Object server, required Object episode}) => '${server} से एपिसोड ${episode} चलाएँ',
+			'livingRoom.jukebox' => 'मेहमानों के लिए ज्यूकबॉक्स',
+			'livingRoom.jukeboxInfo' => 'आपके स्थानीय नेटवर्क के मेहमान इस संगीत लाइब्रेरी में गाने खोजकर उन्हें कतार के अंत में जोड़ सकते हैं।',
+			'livingRoom.openRoom' => 'ज्यूकबॉक्स खोलें',
+			'livingRoom.closeRoom' => 'ज्यूकबॉक्स बंद करें',
+			'livingRoom.join' => 'गाने का अनुरोध करने के लिए स्कैन करें',
+			'livingRoom.noNetwork' => 'ज्यूकबॉक्स खोलने के लिए स्थानीय नेटवर्क से जुड़ें।',
+			'livingRoom.added' => 'कतार में जोड़ा गया',
+			'livingRoom.searchSongs' => 'गाने खोजें',
+			'livingRoom.roomUnavailable' => 'यह ज्यूकबॉक्स उपलब्ध नहीं है।',
+			'livingRoom.noSongs' => 'कोई मेल खाता गाना नहीं मिला',
+			'livingRoom.chooseLibrary' => 'संगीत लाइब्रेरी चुनें',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'एप्लिकेशन आइकन',
 			'appIcon.defaultIcon' => 'मूल',
@@ -6078,6 +6132,8 @@ extension on TranslationsHi {
 			'settings.downmixCenterBoostLabel' => 'बूस्ट ( डीबी)',
 			'settings.downmixCenterBoostShort' => 'डीबी',
 			'settings.audioDownmixNormalize' => 'Downmix पर वॉल्यूम को सामान्य करें',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'मिश्रण को नीचे रखें ताकि क्लिपिंग को रोक दिया जा सके. मूल वॉल्यूम को बनाए रखने के लिए बंद करें (मैं जोर से दृश्यों को खराब कर सकता हूं)।',
 			'settings.dvConversionMode' => 'Dolby Vision परिवर्तित',
 			'settings.dvConversionModeDescription' => 'कैसे Dolby Vision प्रोफ़ाइल 7 फ़ाइलों को संभालने के लिए चुनें।',
@@ -6100,8 +6156,6 @@ extension on TranslationsHi {
 			'settings.hdrSdrConversion' => 'HDR से SDR के लिए रूपांतरण',
 			'settings.hdrSdrConversionDescription' => 'चुनें कि HDR वीडियो को क्या रूपांतरित करता है जब डिस्प्ले HDR नहीं दिखा सकता है।',
 			'settings.hdrSdrConversionAuto' => 'ऑटो',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'डिवाइस पर Android 9 और बाद में, पुराने संस्करणों पर प्लेयर',
 			'settings.hdrSdrConversionDevice' => 'डिवाइस',
 			'settings.hdrSdrConversionDeviceDescription' => 'आपके डिवाइस का वीडियो हार्डवेयर इसे परिवर्तित करता है सबसे तेज़, लेकिन रंग डिवाइस पर निर्भर करता है',
@@ -6592,6 +6646,8 @@ extension on TranslationsHi {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'पीछे की ओर खोजें ${seconds} सेकंड',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'आगे की तलाश ${seconds} सेकंड',
 			'videoControls.previousButton' => 'पिछला एपिसोड',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'अगला एपिसोड',
 			'videoControls.previousChapterButton' => 'पिछला अध्याय',
 			'videoControls.nextChapterButton' => 'अगला अध्याय',
@@ -6614,8 +6670,6 @@ extension on TranslationsHi {
 			'videoControls.segmentLoop' => 'सेगमेंट लॉक',
 			'videoControls.addBookmark' => 'Bookmark जोड़ें',
 			'videoControls.bookmarkName' => 'Bookmark नाम',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'उदाहरण के लिए, खोलने की दृश्य',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'बुकमार्क ${n}',
 			'videoControls.bookmarkNameRequired' => 'इस पुस्तक के लिए एक नाम दर्ज करें।',
@@ -7106,6 +7160,8 @@ extension on TranslationsHi {
 			'libraries.analysisStarted' => ({required Object title}) => '"${title}" के लिए विश्लेषण शुरू हुआ',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'पुस्तकालय का विश्लेषण करने में विफलता: ${error}',
 			'libraries.noLibrariesFound' => 'कोई पुस्तकालय नहीं मिला',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'सभी पुस्तकालय छिपे हुए हैं',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'छिपे हुए पुस्तकालयों (${count})',
 			'libraries.thisLibraryIsEmpty' => 'यह पुस्तकालय खाली है।',
@@ -7128,8 +7184,6 @@ extension on TranslationsHi {
 			'libraries.content' => 'पुस्तकालय सामग्री',
 			'libraries.selectLibrary' => 'पुस्तकालय चुनें',
 			'libraries.filtersWithCount' => ({required Object count}) => 'फ़िल्टर (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'कोई प्रस्ताव उपलब्ध नहीं है',
 			'libraries.noCollections' => 'इस पुस्तकालय में कोई संग्रह नहीं',
 			'libraries.noFoldersFound' => 'कोई फ़ोल्डर नहीं मिला',
@@ -7620,6 +7674,8 @@ extension on TranslationsHi {
 			'music.visualizerLiveAudio' => 'लाइव ऑडियो विश्लेषण',
 			'music.visualizerPreviousPreset' => 'Previous दृश्य शैली',
 			'music.visualizerNextPreset' => 'अगला दृश्य शैली',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora के बारे में',
 			'music.visualizerPresetBloom' => 'ब्लू',
 			'music.visualizerPresetOrbitals' => 'Orbitals के बारे में',
@@ -7642,8 +7698,6 @@ extension on TranslationsHi {
 			'music.noAudioUrl' => ({required Object track}) => 'कोई ऑडियो URL उपलब्ध नहीं है ${track} के लिए',
 			'music.discography.singlesAndEps' => 'सींग्स & EPs',
 			'music.discography.live' => 'जीवित',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'संकलित',
 			'music.backTo' => 'वापस जाएँ',
 			'music.upNext' => 'इसके बाद',
@@ -8134,6 +8188,8 @@ extension on TranslationsHi {
 			'externalPlayer.useExternalPlayer' => 'बाहरी खिलाड़ी का उपयोग करें',
 			'externalPlayer.useExternalPlayerDescription' => 'एक और ऐप में वीडियो खोलना',
 			'externalPlayer.selectPlayer' => 'खिलाड़ी चुनें',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Custom खिलाड़ी',
 			'externalPlayer.systemDefault' => 'डिफ़ॉल्ट सिस्टम',
 			'externalPlayer.addCustomPlayer' => 'कस्टम प्लेयर',
@@ -8156,8 +8212,6 @@ extension on TranslationsHi {
 			'metadataEdit.editMetadata' => 'संपादित करें...',
 			'metadataEdit.screenTitle' => 'मेटाडेटा संपादन',
 			'metadataEdit.basicInfo' => 'बुनियादी जानकारी',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'कला कार्य',
 			'metadataEdit.advancedSettings' => 'उन्नत सेटिंग्स',
 			'metadataEdit.title' => 'शीर्षक',
@@ -8648,6 +8702,8 @@ extension on TranslationsHi {
 			'homeLayout.heroCardDescription' => 'एक पोस्टर शीट के बजाय एक पूर्ण चौड़ा रूटिंग कार्ड के रूप में प्रदर्शित करता है।',
 			'homeLayout.heroUnavailableDescription' => 'केवल तभी उपलब्ध है जब यह पंक्ति एकल संग्रह के वास्तविक शीर्षकों के लिए हल हो जाती है - एक से अधिक संग्रह चुने हुए के साथ, कोई एकल शीर्षक पार नहीं होता है।',
 			'homeLayout.librariesSelection' => 'पुस्तकालय (सभी पुस्तकालयों को शामिल करने के लिए अनियंत्रित छोड़ दें)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'यहां देखे गए प्रत्येक पुस्तकालय इस एक पंक्ति में मिश्रित है।',
 			'homeLayout.movieCollectionsSelection' => 'फिल्म संग्रह (प्रत्येक चयनित पुस्तकालय के लिए सभी अनियंत्रित छोड़ दें)',
 			'homeLayout.showCollectionsSelection' => 'संग्रह प्रदर्शित करें (प्रत्येक चयनित पुस्तकालय के लिए सभी अनियंत्रित छोड़ दें)',
@@ -8670,8 +8726,6 @@ extension on TranslationsHi {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'छिपाना',
 			'homeLayout.remove' => 'हटाना',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'इस पुस्तकालय की पुनरावृत्ति',
 			'homeLayout.pressAgainToDelete' => 'इसे हटाने के लिए फिर से दबाएं',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9162,6 +9216,8 @@ extension on TranslationsHi {
 			'audiobook.statusFinished' => 'समाप्त',
 			'audiobook.goToTime' => 'समय के लिए जाओ',
 			'audiobook.timeHelp' => 'घंटे: मिनट: सेकंड, या मिनट: सेकंड',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'सिंक डेटा को स्थानांतरित या ठीक करने से पहले हाल की एन्क्रिप्टेड कॉपी निर्यात करें। आयात मौजूदा स्थिति के साथ मिलते हैं; वे स्थानीय सिंक इतिहास को कभी नहीं बदलते। सिंक कोड अलग से रखें।',
 			'audiobook.recoveryExport' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइलों का निर्यात',
 			'audiobook.recoveryImport' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइल आयात',
@@ -9184,8 +9240,6 @@ extension on TranslationsHi {
 			'sourceSetup.passwordOrKey' => 'पासवर्ड दर्ज करें या नीचे निजी कुंजी जोड़ें।',
 			'sourceSetup.sshFingerprint' => 'SSH होस्ट कुंजी का SHA256 फ़िंगरप्रिंट',
 			'sourceSetup.sshFingerprintHelp' => 'सर्वर व्यवस्थापक से इसकी पुष्टि करें। सर्वर पर ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub चलाएँ और उससे मिलने वाला SHA256 मान इस्तेमाल करें।',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'मौजूदा पिन किया गया फ़िंगरप्रिंट रखने के लिए खाली छोड़ें, या सर्वर का नया फ़िंगरप्रिंट दर्ज करें।',
 			'sourceSetup.sshAuthentication' => 'SSH सार्वजनिक कुंजी से प्रमाणीकरण',
 			'sourceSetup.sshAuthenticationHelp' => 'वैकल्पिक; पासवर्ड से प्रमाणीकरण भी समर्थित है।',
@@ -9676,6 +9730,8 @@ extension on TranslationsHi {
 			'musicTools.days' => 'दिन',
 			'musicTools.albumBlocks' => 'पूरे एल्बम साथ रखें',
 			'musicTools.home' => 'संगीत',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'हाल ही में सुने गए',
 			'musicTools.apiKey' => 'API कुंजी',
 			'musicTools.missing' => 'ए / ए',
@@ -9698,8 +9754,6 @@ extension on TranslationsHi {
 			'musicTools.serverAnalysis' => 'सर्वर विश्लेषण',
 			'musicTools.sonicAnalysis' => 'ध्वनि विश्लेषण',
 			'musicTools.serverAnalysisScope' => 'इस सर्वर की सभी पात्र संगीत लाइब्रेरी। इससे उनकी विश्लेषण सेटिंग नहीं बदलती।',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'सर्वर गतिविधियाँ',
 			'musicTools.playlistSharing' => 'प्लेलिस्ट का ऐक्सेस',
 			'musicTools.playlistRecipient' => 'Plex उपयोगकर्ता नाम या ईमेल',

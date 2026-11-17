@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "Tilpas til min skærm",
+    "fitHelp": "Vælg en kant, og flyt den med piletasterne, til markeringerne er synlige. Gentag for hver kant.",
+    "left": "Venstre",
+    "right": "Højre",
+    "top": "Top",
+    "bottom": "Bund",
+    "receiver": "Dolby Digital 5.1 til ældre receivere",
+    "receiverHelp": "Konverterer flerkanalslyd til Dolby Digital på kompatible udgange. Sender lyden direkte videre og bevarer den originale video, når den kan kopieres.",
+    "missing": "Afsnit ${episode} mangler i denne rækkefølge.",
+    "playLater": "Afspil afsnit ${episode} alligevel",
+    "playCopy": "Afspil afsnit ${episode} fra ${server}",
+    "jukebox": "Jukeboks til gæster",
+    "jukeboxInfo": "Gæster på dit lokale netværk kan søge i dette musikbibliotek og føje numre til slutningen af køen.",
+    "openRoom": "Åbn jukeboks",
+    "closeRoom": "Luk jukeboks",
+    "join": "Scan for at ønske et nummer",
+    "noNetwork": "Opret forbindelse til et lokalt netværk for at åbne jukeboksen.",
+    "added": "Føjet til køen",
+    "searchSongs": "Søg efter numre",
+    "roomUnavailable": "Denne jukeboks er ikke tilgængelig.",
+    "noSongs": "Ingen matchende numre",
+    "chooseLibrary": "Vælg et musikbibliotek"
+  },
   "app": {
     "title": "Pleazyng"
   },

@@ -40,6 +40,7 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsFa $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsFa(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$fa livingRoom = _Translations$livingRoom$fa._(_root);
 	@override late final _Translations$app$fa app = _Translations$app$fa._(_root);
 	@override late final _Translations$appIcon$fa appIcon = _Translations$appIcon$fa._(_root);
 	@override late final _Translations$auth$fa auth = _Translations$auth$fa._(_root);
@@ -120,6 +121,37 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$fa musicExperience = _Translations$musicExperience$fa._(_root);
 	@override late final _Translations$musicTools$fa musicTools = _Translations$musicTools$fa._(_root);
 	@override late final _Translations$musicDevices$fa musicDevices = _Translations$musicDevices$fa._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$fa extends Translations$livingRoom$en {
+	_Translations$livingRoom$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'تنظیم متناسب با صفحه‌نمایش من';
+	@override String get fitHelp => 'یک لبه را انتخاب کنید و با کلیدهای جهت آن را جابه‌جا کنید تا نشانه‌هایش دیده شوند. برای هر لبه تکرار کنید.';
+	@override String get left => 'چپ';
+	@override String get right => 'راست';
+	@override String get top => 'بالا';
+	@override String get bottom => 'پایین';
+	@override String get receiver => 'Dolby Digital 5.1 برای گیرنده‌های قدیمی';
+	@override String get receiverHelp => 'صدای چندکاناله را در خروجی‌های سازگار به Dolby Digital تبدیل می‌کند. صدا مستقیم به گیرنده می‌رسد و اگر کپی ویدیو ممکن باشد، ویدیوی اصلی حفظ می‌شود.';
+	@override String missing({required Object episode}) => 'قسمت ⁨${episode}⁩ در این توالی وجود ندارد.';
+	@override String playLater({required Object episode}) => 'پخش قسمت ⁨${episode}⁩ با وجود این';
+	@override String playCopy({required Object episode, required Object server}) => 'پخش قسمت ⁨${episode}⁩ از ⁨${server}⁩';
+	@override String get jukebox => 'جعبه موسیقی مهمانان';
+	@override String get jukeboxInfo => 'مهمانان شبکه محلی می‌توانند در این کتابخانه موسیقی جست‌وجو کنند و آهنگ‌ها را به انتهای صف بیفزایند.';
+	@override String get openRoom => 'باز کردن جعبه موسیقی';
+	@override String get closeRoom => 'بستن جعبه موسیقی';
+	@override String get join => 'برای درخواست آهنگ کد را اسکن کنید';
+	@override String get noNetwork => 'برای باز کردن جعبه موسیقی به شبکه محلی وصل شوید.';
+	@override String get added => 'به صف افزوده شد';
+	@override String get searchSongs => 'جست‌وجوی آهنگ';
+	@override String get roomUnavailable => 'این جعبه موسیقی در دسترس نیست.';
+	@override String get noSongs => 'آهنگ مطابقی پیدا نشد';
+	@override String get chooseLibrary => 'یک کتابخانه موسیقی انتخاب کنید';
 }
 
 // Path: app
@@ -5588,6 +5620,28 @@ class _Translations$services$trackerDescriptions$fa extends Translations$service
 extension on TranslationsFa {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'تنظیم متناسب با صفحه‌نمایش من',
+			'livingRoom.fitHelp' => 'یک لبه را انتخاب کنید و با کلیدهای جهت آن را جابه‌جا کنید تا نشانه‌هایش دیده شوند. برای هر لبه تکرار کنید.',
+			'livingRoom.left' => 'چپ',
+			'livingRoom.right' => 'راست',
+			'livingRoom.top' => 'بالا',
+			'livingRoom.bottom' => 'پایین',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 برای گیرنده‌های قدیمی',
+			'livingRoom.receiverHelp' => 'صدای چندکاناله را در خروجی‌های سازگار به Dolby Digital تبدیل می‌کند. صدا مستقیم به گیرنده می‌رسد و اگر کپی ویدیو ممکن باشد، ویدیوی اصلی حفظ می‌شود.',
+			'livingRoom.missing' => ({required Object episode}) => 'قسمت ⁨${episode}⁩ در این توالی وجود ندارد.',
+			'livingRoom.playLater' => ({required Object episode}) => 'پخش قسمت ⁨${episode}⁩ با وجود این',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'پخش قسمت ⁨${episode}⁩ از ⁨${server}⁩',
+			'livingRoom.jukebox' => 'جعبه موسیقی مهمانان',
+			'livingRoom.jukeboxInfo' => 'مهمانان شبکه محلی می‌توانند در این کتابخانه موسیقی جست‌وجو کنند و آهنگ‌ها را به انتهای صف بیفزایند.',
+			'livingRoom.openRoom' => 'باز کردن جعبه موسیقی',
+			'livingRoom.closeRoom' => 'بستن جعبه موسیقی',
+			'livingRoom.join' => 'برای درخواست آهنگ کد را اسکن کنید',
+			'livingRoom.noNetwork' => 'برای باز کردن جعبه موسیقی به شبکه محلی وصل شوید.',
+			'livingRoom.added' => 'به صف افزوده شد',
+			'livingRoom.searchSongs' => 'جست‌وجوی آهنگ',
+			'livingRoom.roomUnavailable' => 'این جعبه موسیقی در دسترس نیست.',
+			'livingRoom.noSongs' => 'آهنگ مطابقی پیدا نشد',
+			'livingRoom.chooseLibrary' => 'یک کتابخانه موسیقی انتخاب کنید',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'آیکون اپ',
 			'appIcon.defaultIcon' => 'پیشفرض',
@@ -6078,6 +6132,8 @@ extension on TranslationsFa {
 			'settings.downmixCenterBoostLabel' => 'افزایش (dB )',
 			'settings.downmixCenterBoostShort' => 'دبی',
 			'settings.audioDownmixNormalize' => 'دانلود بازی Downmix',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'مخلوط را پایین بیاورید تا از چرخش جلوگیری شود.برای حفظ حجم اصلی (ممکن است صحنه های بلند را مختل کند) خاموش کنید.',
 			'settings.dvConversionMode' => 'Dolby Vision تبدیل',
 			'settings.dvConversionModeDescription' => 'انتخاب کنید که چگونه فایل های پروفایل 7 Dolby Vision پردازش می شوند.',
@@ -6100,8 +6156,6 @@ extension on TranslationsFa {
 			'settings.hdrSdrConversion' => 'HDR به SDR تبدیل',
 			'settings.hdrSdrConversionDescription' => 'انتخاب کنید که چه چیزی ویدئو HDR را تبدیل می کند زمانی که صفحه نمایش نمی تواند HDR را نشان دهد.',
 			'settings.hdrSdrConversionAuto' => 'خودکار',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'دستگاه در Android 9 و بالاتر، پخش کننده در نسخه های قدیمی تر',
 			'settings.hdrSdrConversionDevice' => 'دستگاه',
 			'settings.hdrSdrConversionDeviceDescription' => 'سخت افزار ویدئویی دستگاه شما آن را تبدیل می کند سریع ترین، اما رنگ ها بستگی به دستگاه دارد',
@@ -6592,6 +6646,8 @@ extension on TranslationsFa {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'جستجو به عقب ${seconds} ثانیه',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'جستجو در آینده ${seconds} ثانیه',
 			'videoControls.previousButton' => 'قسمت قبلی',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'قسمت بعد',
 			'videoControls.previousChapterButton' => 'بخش قبلی',
 			'videoControls.nextChapterButton' => 'بخش بعد',
@@ -6614,8 +6670,6 @@ extension on TranslationsFa {
 			'videoControls.segmentLoop' => 'بخش لوله',
 			'videoControls.addBookmark' => 'اضافه کردن Bookmark',
 			'videoControls.bookmarkName' => 'Bookmark نام',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'به عنوان مثال، صحنه باز',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'برچسب ها ${n}',
 			'videoControls.bookmarkNameRequired' => 'نام این کتاب را وارد کنید.',
@@ -7106,6 +7160,8 @@ extension on TranslationsFa {
 			'libraries.analysisStarted' => ({required Object title}) => 'تحلیل برای "${title}" آغاز شد',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'عدم تحلیل کتابخانه: ${error}',
 			'libraries.noLibrariesFound' => 'هیچ کتابخانه ای یافت نشد',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'همه کتابخانه ها پنهان هستند',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'کتابخانه های پنهان (${count})',
 			'libraries.thisLibraryIsEmpty' => 'این کتابخانه خالی است',
@@ -7128,8 +7184,6 @@ extension on TranslationsFa {
 			'libraries.content' => 'محتوای کتابخانه',
 			'libraries.selectLibrary' => 'انتخاب کتابخانه',
 			'libraries.filtersWithCount' => ({required Object count}) => 'فیلترها (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'بدون توصیه در دسترس',
 			'libraries.noCollections' => 'هیچ مجموعه ای در این کتابخانه وجود ندارد',
 			'libraries.noFoldersFound' => 'هیچ پوشه ای یافت نشد',
@@ -7620,6 +7674,8 @@ extension on TranslationsFa {
 			'music.visualizerLiveAudio' => 'تحلیل زندهٔ صدا',
 			'music.visualizerPreviousPreset' => 'قبلی سبک بصری',
 			'music.visualizerNextPreset' => 'بعدی سبک بصری',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'آوریا',
 			'music.visualizerPresetBloom' => 'بلوم',
 			'music.visualizerPresetOrbitals' => 'مدار',
@@ -7642,8 +7698,6 @@ extension on TranslationsFa {
 			'music.noAudioUrl' => ({required Object track}) => 'هیچ URL صوتی در دسترس نیست برای ${track}',
 			'music.discography.singlesAndEps' => 'تک آهنگ ها و EPs',
 			'music.discography.live' => 'پخش زنده',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'جمع آوری',
 			'music.backTo' => 'بازگشت به',
 			'music.upNext' => 'بعدی',
@@ -8134,6 +8188,8 @@ extension on TranslationsFa {
 			'externalPlayer.useExternalPlayer' => 'استفاده از بازیکن خارجی',
 			'externalPlayer.useExternalPlayerDescription' => 'باز کردن ویدئوها در یک برنامه دیگر',
 			'externalPlayer.selectPlayer' => 'انتخاب بازیکن',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'بازیکنان سفارشی',
 			'externalPlayer.systemDefault' => 'سیستم پیش فرض',
 			'externalPlayer.addCustomPlayer' => 'اضافه کردن Custom Player',
@@ -8156,8 +8212,6 @@ extension on TranslationsFa {
 			'metadataEdit.editMetadata' => 'ویرایش',
 			'metadataEdit.screenTitle' => 'ویرایش فراداده',
 			'metadataEdit.basicInfo' => 'اطلاعات پایه',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'هنری',
 			'metadataEdit.advancedSettings' => 'تنظیمات پیشرفته',
 			'metadataEdit.title' => 'عنوان',
@@ -8648,6 +8702,8 @@ extension on TranslationsFa {
 			'homeLayout.heroCardDescription' => 'نشان می دهد به عنوان یک کارت چرخش کامل به جای یک پوستر شیل.',
 			'homeLayout.heroUnavailableDescription' => 'تنها زمانی در دسترس است که این ردیف به عنوان عنوان های واقعی یک مجموعه حل می شود – با بیش از یک مجموعه انتخاب شده، هیچ عنوانی برای چرخش وجود ندارد.',
 			'homeLayout.librariesSelection' => 'کتابخانه ها (همه کتابخانه ها را بدون چک قرار دهید)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'هر کتابخانه ای که در اینجا بررسی می شود در این یک ردیف ادغام می شود.',
 			'homeLayout.movieCollectionsSelection' => 'مجموعه های فیلم (برای هر کتابخانه انتخاب شده همه غیرقابل بررسی را رها کنید)',
 			'homeLayout.showCollectionsSelection' => 'نمایش مجموعه ها (برای هر کتابخانه ای که انتخاب کرده اید، همه آنها را بدون بررسی رها کنید)',
@@ -8670,8 +8726,6 @@ extension on TranslationsFa {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'پنهان کردن',
 			'homeLayout.remove' => 'حذف',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'این کتابخانه به صورت مجدد',
 			'homeLayout.pressAgainToDelete' => 'فشار دوباره برای حذف',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9162,6 +9216,8 @@ extension on TranslationsFa {
 			'audiobook.statusFinished' => 'به پایان رسید',
 			'audiobook.goToTime' => 'به زمان برو',
 			'audiobook.timeHelp' => 'ساعت: دقیقه ها: ثانیه ها یا دقیقه ها: ثانیه ها',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'یک کپی رمزگذاری شده اخیر را قبل از حرکت یا اصلاح داده های همگام سازی صادر کنید. واردات با وضعیت فعلی ادغام می شود؛ آنها هرگز تاریخچه همگامه محلی را جایگزین نمی کنند.',
 			'audiobook.recoveryExport' => 'صادرات رمزگذاری شده بازگرداندن فایل',
 			'audiobook.recoveryImport' => 'واردات فایل های رمزگذاری شده',
@@ -9184,8 +9240,6 @@ extension on TranslationsFa {
 			'sourceSetup.passwordOrKey' => 'گذرواژه وارد کنید یا در پایین یک کلید خصوصی اضافه کنید.',
 			'sourceSetup.sshFingerprint' => 'اثر انگشت SHA256 کلید میزبان SSH',
 			'sourceSetup.sshFingerprintHelp' => 'با مدیر سرور تأیید کنید. روی سرور، دستور ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub را اجرا کنید و از مقدار SHA256 آن استفاده کنید.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'برای حفظ اثر انگشت تثبیت‌شدهٔ فعلی خالی بگذارید، یا اثر انگشت جدید سرور را وارد کنید.',
 			'sourceSetup.sshAuthentication' => 'احراز هویت با کلید عمومی SSH',
 			'sourceSetup.sshAuthenticationHelp' => 'اختیاری است؛ احراز هویت با گذرواژه نیز پشتیبانی می‌شود.',
@@ -9676,6 +9730,8 @@ extension on TranslationsFa {
 			'musicTools.days' => 'روزها',
 			'musicTools.albumBlocks' => 'آلبوم‌ها را کامل نگه دار',
 			'musicTools.home' => 'موسیقی‌ها',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'اخیراً پخش‌شده',
 			'musicTools.apiKey' => 'کلید API',
 			'musicTools.missing' => 'N / A',
@@ -9698,8 +9754,6 @@ extension on TranslationsFa {
 			'musicTools.serverAnalysis' => 'تحلیل سرور',
 			'musicTools.sonicAnalysis' => 'تحلیل صوتی',
 			'musicTools.serverAnalysisScope' => 'همهٔ کتابخانه‌های موسیقی واجد شرایط در این سرور. تنظیمات تحلیل آن‌ها تغییر نمی‌کند.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'فعالیت‌های سرور',
 			'musicTools.playlistSharing' => 'دسترسی به فهرست پخش',
 			'musicTools.playlistRecipient' => 'نام کاربری Plex یا ایمیل',

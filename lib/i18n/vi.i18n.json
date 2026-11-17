@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "Chỉnh vừa màn hình",
+    "fitHelp": "Chọn một cạnh rồi dùng phím mũi tên để di chuyển cho đến khi thấy các dấu ở cạnh đó. Lặp lại với từng cạnh.",
+    "left": "Trái",
+    "right": "Phải",
+    "top": "Trên",
+    "bottom": "Dưới",
+    "receiver": "Dolby Digital 5.1 cho đầu thu đời cũ",
+    "receiverHelp": "Chuyển âm thanh đa kênh thành Dolby Digital trên các đầu ra tương thích. Âm thanh được truyền thẳng đến đầu thu và video gốc được giữ nguyên nếu có thể sao chép.",
+    "missing": "Không có tập ${episode} trong thứ tự phát này.",
+    "playLater": "Vẫn phát tập ${episode}",
+    "playCopy": "Phát tập ${episode} từ ${server}",
+    "jukebox": "Máy chọn nhạc cho khách",
+    "jukeboxInfo": "Khách trong mạng nội bộ có thể tìm bài hát trong thư viện nhạc này và thêm vào cuối hàng đợi.",
+    "openRoom": "Mở máy chọn nhạc",
+    "closeRoom": "Đóng máy chọn nhạc",
+    "join": "Quét mã để yêu cầu bài hát",
+    "noNetwork": "Kết nối với mạng nội bộ để mở máy chọn nhạc.",
+    "added": "Đã thêm vào hàng đợi",
+    "searchSongs": "Tìm bài hát",
+    "roomUnavailable": "Máy chọn nhạc này không khả dụng.",
+    "noSongs": "Không có bài hát phù hợp",
+    "chooseLibrary": "Chọn thư viện nhạc"
+  },
   "app": {
     "title": "Pleazyng"
   },

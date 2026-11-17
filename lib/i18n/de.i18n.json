@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "An meinen Bildschirm anpassen",
+    "fitHelp": "Wähle einen Rand und verschiebe ihn mit den Pfeiltasten, bis seine Markierungen sichtbar sind. Wiederhole das für jeden Rand.",
+    "left": "Links",
+    "right": "Rechts",
+    "top": "Oben",
+    "bottom": "Unten",
+    "receiver": "Dolby Digital 5.1 für ältere Receiver",
+    "receiverHelp": "Wandelt Mehrkanalton für kompatible Ausgänge in Dolby Digital um. Der Ton wird durchgereicht. Das Video bleibt im Original, wenn es kopiert werden kann.",
+    "missing": "Folge ${episode} fehlt in dieser Reihenfolge.",
+    "playLater": "Folge ${episode} trotzdem abspielen",
+    "playCopy": "Folge ${episode} von ${server} abspielen",
+    "jukebox": "Gäste-Jukebox",
+    "jukeboxInfo": "Gäste im lokalen Netzwerk können diese Mediathek durchsuchen und Titel ans Ende deiner Warteschlange hängen.",
+    "openRoom": "Jukebox öffnen",
+    "closeRoom": "Jukebox schließen",
+    "join": "Scannen und einen Titel wünschen",
+    "noNetwork": "Verbinde dich mit einem lokalen Netzwerk, um die Jukebox zu öffnen.",
+    "added": "Zur Warteschlange hinzugefügt",
+    "searchSongs": "Titel suchen",
+    "roomUnavailable": "Diese Jukebox ist nicht verfügbar.",
+    "noSongs": "Keine passenden Titel",
+    "chooseLibrary": "Musikmediathek auswählen"
+  },
   "app": {
     "title": "Pleazyng"
   },

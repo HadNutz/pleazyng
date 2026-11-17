@@ -40,6 +40,7 @@ class TranslationsMs extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsMs $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsMs(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$ms livingRoom = _Translations$livingRoom$ms._(_root);
 	@override late final _Translations$app$ms app = _Translations$app$ms._(_root);
 	@override late final _Translations$appIcon$ms appIcon = _Translations$appIcon$ms._(_root);
 	@override late final _Translations$auth$ms auth = _Translations$auth$ms._(_root);
@@ -120,6 +121,37 @@ class TranslationsMs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ms musicExperience = _Translations$musicExperience$ms._(_root);
 	@override late final _Translations$musicTools$ms musicTools = _Translations$musicTools$ms._(_root);
 	@override late final _Translations$musicDevices$ms musicDevices = _Translations$musicDevices$ms._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$ms extends Translations$livingRoom$en {
+	_Translations$livingRoom$ms._(TranslationsMs root) : this._root = root, super.internal(root);
+
+	final TranslationsMs _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'Padankan dengan skrin saya';
+	@override String get fitHelp => 'Pilih tepi dan gerakkannya dengan kekunci anak panah sehingga penandanya kelihatan. Ulang untuk setiap tepi.';
+	@override String get left => 'Kiri';
+	@override String get right => 'Kanan';
+	@override String get top => 'Atas';
+	@override String get bottom => 'Bawah';
+	@override String get receiver => 'Dolby Digital 5.1 untuk penerima lama';
+	@override String get receiverHelp => 'Menukar audio berbilang saluran kepada Dolby Digital pada output yang serasi. Audio dihantar terus ke penerima dan video asal dikekalkan jika boleh disalin.';
+	@override String missing({required Object episode}) => 'Episod ${episode} tiada dalam turutan ini.';
+	@override String playLater({required Object episode}) => 'Mainkan juga episod ${episode}';
+	@override String playCopy({required Object episode, required Object server}) => 'Mainkan episod ${episode} daripada ${server}';
+	@override String get jukebox => 'Jukebox tetamu';
+	@override String get jukeboxInfo => 'Tetamu dalam rangkaian setempat anda boleh mencari lagu dalam pustaka muzik ini dan menambahkannya ke hujung baris gilir.';
+	@override String get openRoom => 'Buka jukebox';
+	@override String get closeRoom => 'Tutup jukebox';
+	@override String get join => 'Imbas untuk meminta lagu';
+	@override String get noNetwork => 'Sambung ke rangkaian setempat untuk membuka jukebox.';
+	@override String get added => 'Ditambah pada baris gilir';
+	@override String get searchSongs => 'Cari lagu';
+	@override String get roomUnavailable => 'Jukebox ini tidak tersedia.';
+	@override String get noSongs => 'Tiada lagu yang sepadan';
+	@override String get chooseLibrary => 'Pilih pustaka muzik';
 }
 
 // Path: app
@@ -5563,6 +5595,28 @@ class _Translations$services$trackerDescriptions$ms extends Translations$service
 extension on TranslationsMs {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Padankan dengan skrin saya',
+			'livingRoom.fitHelp' => 'Pilih tepi dan gerakkannya dengan kekunci anak panah sehingga penandanya kelihatan. Ulang untuk setiap tepi.',
+			'livingRoom.left' => 'Kiri',
+			'livingRoom.right' => 'Kanan',
+			'livingRoom.top' => 'Atas',
+			'livingRoom.bottom' => 'Bawah',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 untuk penerima lama',
+			'livingRoom.receiverHelp' => 'Menukar audio berbilang saluran kepada Dolby Digital pada output yang serasi. Audio dihantar terus ke penerima dan video asal dikekalkan jika boleh disalin.',
+			'livingRoom.missing' => ({required Object episode}) => 'Episod ${episode} tiada dalam turutan ini.',
+			'livingRoom.playLater' => ({required Object episode}) => 'Mainkan juga episod ${episode}',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'Mainkan episod ${episode} daripada ${server}',
+			'livingRoom.jukebox' => 'Jukebox tetamu',
+			'livingRoom.jukeboxInfo' => 'Tetamu dalam rangkaian setempat anda boleh mencari lagu dalam pustaka muzik ini dan menambahkannya ke hujung baris gilir.',
+			'livingRoom.openRoom' => 'Buka jukebox',
+			'livingRoom.closeRoom' => 'Tutup jukebox',
+			'livingRoom.join' => 'Imbas untuk meminta lagu',
+			'livingRoom.noNetwork' => 'Sambung ke rangkaian setempat untuk membuka jukebox.',
+			'livingRoom.added' => 'Ditambah pada baris gilir',
+			'livingRoom.searchSongs' => 'Cari lagu',
+			'livingRoom.roomUnavailable' => 'Jukebox ini tidak tersedia.',
+			'livingRoom.noSongs' => 'Tiada lagu yang sepadan',
+			'livingRoom.chooseLibrary' => 'Pilih pustaka muzik',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'Icon Permohonan',
 			'appIcon.defaultIcon' => 'Perkataan default',
@@ -6053,6 +6107,8 @@ extension on TranslationsMs {
 			'settings.downmixCenterBoostLabel' => 'Pengukuran (db)',
 			'settings.downmixCenterBoostShort' => 'DB',
 			'settings.audioDownmixNormalize' => 'Meningkatkan jumlah pada Downmix',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Mengurangkan campuran untuk mengelakkan penipisan. beralih untuk mengekalkan volum asal (mungkin mengganggu adegan yang keras).',
 			'settings.dvConversionMode' => 'Dolby Vision Pengubahsuaian',
 			'settings.dvConversionModeDescription' => 'Pilih bagaimana fail Dolby Vision Profil 7 diuruskan.',
@@ -6075,8 +6131,6 @@ extension on TranslationsMs {
 			'settings.hdrSdrConversion' => 'HDR kepada SDR Konversi',
 			'settings.hdrSdrConversionDescription' => 'Pilih apa yang menukar video HDR apabila paparan tidak boleh menunjukkan HDR.',
 			'settings.hdrSdrConversionAuto' => 'Kereta',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Peranti pada Android 9 dan seterusnya, pemain pada versi yang lebih tua',
 			'settings.hdrSdrConversionDevice' => 'peranti',
 			'settings.hdrSdrConversionDeviceDescription' => 'Perkakasan video peranti anda menukarnya. paling cepat, tetapi warna bergantung kepada peranti',
@@ -6567,6 +6621,8 @@ extension on TranslationsMs {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Mencari ke belakang ${seconds} saat',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Mencari ke hadapan ${seconds} saat',
 			'videoControls.previousButton' => 'episod terdahulu',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'Episod seterusnya',
 			'videoControls.previousChapterButton' => 'Bab sebelumnya',
 			'videoControls.nextChapterButton' => 'Bab seterusnya',
@@ -6589,8 +6645,6 @@ extension on TranslationsMs {
 			'videoControls.segmentLoop' => 'Perbezaan segmen',
 			'videoControls.addBookmark' => 'Menambah Bookmark',
 			'videoControls.bookmarkName' => 'Nama Bookmark',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'Sebagai contoh, adegan pembukaan',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'Perpustakaan ${n}',
 			'videoControls.bookmarkNameRequired' => 'Masukkan nama untuk buku ini.',
@@ -7081,6 +7135,8 @@ extension on TranslationsMs {
 			'libraries.analysisStarted' => ({required Object title}) => 'Analisis bermula untuk "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Kegagalan untuk menganalisis perpustakaan: ${error}',
 			'libraries.noLibrariesFound' => 'Tiada perpustakaan yang ditemui',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Semua perpustakaan tersembunyi',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Perpustakaan yang tersembunyi (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Perpustakaan ini kosong',
@@ -7103,8 +7159,6 @@ extension on TranslationsMs {
 			'libraries.content' => 'Perpustakaan kandungan',
 			'libraries.selectLibrary' => 'Pilih Perpustakaan',
 			'libraries.filtersWithCount' => ({required Object count}) => 'Filter (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'Tiada cadangan yang tersedia',
 			'libraries.noCollections' => 'Tiada koleksi dalam perpustakaan ini',
 			'libraries.noFoldersFound' => 'Tiada folder yang ditemui',
@@ -7595,6 +7649,8 @@ extension on TranslationsMs {
 			'music.visualizerLiveAudio' => 'Analisis audio langsung',
 			'music.visualizerPreviousPreset' => 'Gaya visual yang terdahulu',
 			'music.visualizerNextPreset' => 'Seterusnya Visual Style',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora yang',
 			'music.visualizerPresetBloom' => 'Bloom daripada',
 			'music.visualizerPresetOrbitals' => 'Orbit yang',
@@ -7617,8 +7673,6 @@ extension on TranslationsMs {
 			'music.noAudioUrl' => ({required Object track}) => 'Tiada URL audio boleh didapati untuk ${track}',
 			'music.discography.singlesAndEps' => 'Kumpulan & EPs',
 			'music.discography.live' => 'hidup',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'Kompilasi',
 			'music.backTo' => 'Kembali ke',
 			'music.upNext' => 'Seterusnya',
@@ -8109,6 +8163,8 @@ extension on TranslationsMs {
 			'externalPlayer.useExternalPlayer' => 'Penggunaan Pemain Luar',
 			'externalPlayer.useExternalPlayerDescription' => 'Membuka video dalam aplikasi lain',
 			'externalPlayer.selectPlayer' => 'Pilih Pemain',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Pemain Custom',
 			'externalPlayer.systemDefault' => 'Sistem yang lalai',
 			'externalPlayer.addCustomPlayer' => 'Menambah Custom Player',
@@ -8131,8 +8187,6 @@ extension on TranslationsMs {
 			'metadataEdit.editMetadata' => 'Sunting',
 			'metadataEdit.screenTitle' => 'Sunting metadata',
 			'metadataEdit.basicInfo' => 'Maklumat asas',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'seni',
 			'metadataEdit.advancedSettings' => 'Pengaturan Lanjutan',
 			'metadataEdit.title' => 'Tajuk',
@@ -8623,6 +8677,8 @@ extension on TranslationsMs {
 			'homeLayout.heroCardDescription' => 'Menunjukkan sebagai satu kad berputar lebar penuh bukannya poster shelf.',
 			'homeLayout.heroUnavailableDescription' => 'Hanya boleh didapati apabila baris ini diselesaikan kepada tajuk sebenar satu koleksi - dengan lebih daripada satu koleksi dipilih tidak ada satu tajuk untuk berputar melalui.',
 			'homeLayout.librariesSelection' => 'Perpustakaan (meninggalkan semua tidak disemak untuk termasuk setiap perpustakaan)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Setiap perpustakaan yang disemak di sini digabungkan ke dalam satu baris ini.',
 			'homeLayout.movieCollectionsSelection' => 'Koleksi filem (meninggalkan semua tidak disemak untuk setiap perpustakaan yang dipilih)',
 			'homeLayout.showCollectionsSelection' => 'Tunjukkan koleksi (meninggalkan semua tidak disemak untuk setiap perpustakaan yang dipilih)',
@@ -8645,8 +8701,6 @@ extension on TranslationsMs {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'menyembunyikan',
 			'homeLayout.remove' => 'Keluarkan',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'Rujukan semula perpustakaan ini',
 			'homeLayout.pressAgainToDelete' => 'Tekan lagi untuk memadamkan',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9137,6 +9191,8 @@ extension on TranslationsMs {
 			'audiobook.statusFinished' => 'selesai',
 			'audiobook.goToTime' => 'Pergi ke masa',
 			'audiobook.timeHelp' => 'Jam : minit : detik atau minit : detik',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Eksport salinan yang disulitkan baru-baru ini sebelum memindahkan atau memperbaiki data sink. Import bergabung dengan keadaan semasa; mereka tidak pernah menggantikan sejarah sink tempatan. Simpan kod sink secara berasingan.',
 			'audiobook.recoveryExport' => 'Mengeksport fail pemulihan yang disulitkan',
 			'audiobook.recoveryImport' => 'Import fail pemulihan yang disulitkan',
@@ -9159,8 +9215,6 @@ extension on TranslationsMs {
 			'sourceSetup.passwordOrKey' => 'Masukkan kata laluan atau tambah kunci peribadi di bawah.',
 			'sourceSetup.sshFingerprint' => 'Cap jari SHA256 kunci hos SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Sahkan dengan pentadbir pelayan. Pada pelayan, jalankan ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub dan gunakan nilai SHA256-nya.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'Biarkan kosong untuk mengekalkan cap jari yang ditetapkan sekarang, atau masukkan cap jari pelayan yang baharu.',
 			'sourceSetup.sshAuthentication' => 'Pengesahan SSH dengan kunci awam',
 			'sourceSetup.sshAuthenticationHelp' => 'Pilihan; pengesahan dengan kata laluan juga disokong.',
@@ -9651,6 +9705,8 @@ extension on TranslationsMs {
 			'musicTools.days' => 'Hari',
 			'musicTools.albumBlocks' => 'Kekalkan album penuh bersama',
 			'musicTools.home' => 'Muzik',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'Baru dimainkan',
 			'musicTools.apiKey' => 'Kunci API',
 			'musicTools.missing' => 'N / A',
@@ -9673,8 +9729,6 @@ extension on TranslationsMs {
 			'musicTools.serverAnalysis' => 'Analisis pelayan',
 			'musicTools.sonicAnalysis' => 'Analisis sonik',
 			'musicTools.serverAnalysisScope' => 'Semua pustaka muzik yang layak pada pelayan ini. Tetapan analisisnya tidak diubah.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Aktiviti pelayan',
 			'musicTools.playlistSharing' => 'Akses senarai main',
 			'musicTools.playlistRecipient' => 'Nama pengguna Plex atau e-mel',

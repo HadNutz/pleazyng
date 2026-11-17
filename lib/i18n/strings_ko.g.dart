@@ -40,6 +40,7 @@ class TranslationsKo extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsKo $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsKo(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$ko livingRoom = _Translations$livingRoom$ko._(_root);
 	@override late final _Translations$app$ko app = _Translations$app$ko._(_root);
 	@override late final _Translations$appIcon$ko appIcon = _Translations$appIcon$ko._(_root);
 	@override late final _Translations$auth$ko auth = _Translations$auth$ko._(_root);
@@ -120,6 +121,37 @@ class TranslationsKo extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ko musicExperience = _Translations$musicExperience$ko._(_root);
 	@override late final _Translations$musicTools$ko musicTools = _Translations$musicTools$ko._(_root);
 	@override late final _Translations$musicDevices$ko musicDevices = _Translations$musicDevices$ko._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$ko extends Translations$livingRoom$en {
+	_Translations$livingRoom$ko._(TranslationsKo root) : this._root = root, super.internal(root);
+
+	final TranslationsKo _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => '내 화면에 맞추기';
+	@override String get fitHelp => '가장자리를 선택한 뒤 표시가 보일 때까지 방향키로 옮기세요. 나머지 가장자리도 같은 방법으로 조정하세요.';
+	@override String get left => '왼쪽';
+	@override String get right => '오른쪽';
+	@override String get top => '위쪽';
+	@override String get bottom => '아래쪽';
+	@override String get receiver => '구형 리시버용 Dolby Digital 5.1';
+	@override String get receiverHelp => '호환되는 출력에서 다채널 음성을 Dolby Digital로 변환해 리시버에 직접 전달합니다. 영상을 복사할 수 있으면 원본을 유지합니다.';
+	@override String missing({required Object episode}) => '이 재생 순서에 ${episode}화가 없습니다.';
+	@override String playLater({required Object episode}) => '그래도 ${episode}화 재생';
+	@override String playCopy({required Object server, required Object episode}) => '${server}에서 ${episode}화 재생';
+	@override String get jukebox => '게스트 주크박스';
+	@override String get jukeboxInfo => '같은 로컬 네트워크의 게스트가 이 음악 라이브러리에서 곡을 찾아 대기열 끝에 추가할 수 있습니다.';
+	@override String get openRoom => '주크박스 열기';
+	@override String get closeRoom => '주크박스 닫기';
+	@override String get join => '스캔하여 곡 신청';
+	@override String get noNetwork => '주크박스를 열려면 로컬 네트워크에 연결하세요.';
+	@override String get added => '대기열에 추가됨';
+	@override String get searchSongs => '곡 검색';
+	@override String get roomUnavailable => '이 주크박스를 사용할 수 없습니다.';
+	@override String get noSongs => '일치하는 곡이 없습니다';
+	@override String get chooseLibrary => '음악 라이브러리 선택';
 }
 
 // Path: app
@@ -5583,6 +5615,28 @@ class _Translations$services$trackerDescriptions$ko extends Translations$service
 extension on TranslationsKo {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => '내 화면에 맞추기',
+			'livingRoom.fitHelp' => '가장자리를 선택한 뒤 표시가 보일 때까지 방향키로 옮기세요. 나머지 가장자리도 같은 방법으로 조정하세요.',
+			'livingRoom.left' => '왼쪽',
+			'livingRoom.right' => '오른쪽',
+			'livingRoom.top' => '위쪽',
+			'livingRoom.bottom' => '아래쪽',
+			'livingRoom.receiver' => '구형 리시버용 Dolby Digital 5.1',
+			'livingRoom.receiverHelp' => '호환되는 출력에서 다채널 음성을 Dolby Digital로 변환해 리시버에 직접 전달합니다. 영상을 복사할 수 있으면 원본을 유지합니다.',
+			'livingRoom.missing' => ({required Object episode}) => '이 재생 순서에 ${episode}화가 없습니다.',
+			'livingRoom.playLater' => ({required Object episode}) => '그래도 ${episode}화 재생',
+			'livingRoom.playCopy' => ({required Object server, required Object episode}) => '${server}에서 ${episode}화 재생',
+			'livingRoom.jukebox' => '게스트 주크박스',
+			'livingRoom.jukeboxInfo' => '같은 로컬 네트워크의 게스트가 이 음악 라이브러리에서 곡을 찾아 대기열 끝에 추가할 수 있습니다.',
+			'livingRoom.openRoom' => '주크박스 열기',
+			'livingRoom.closeRoom' => '주크박스 닫기',
+			'livingRoom.join' => '스캔하여 곡 신청',
+			'livingRoom.noNetwork' => '주크박스를 열려면 로컬 네트워크에 연결하세요.',
+			'livingRoom.added' => '대기열에 추가됨',
+			'livingRoom.searchSongs' => '곡 검색',
+			'livingRoom.roomUnavailable' => '이 주크박스를 사용할 수 없습니다.',
+			'livingRoom.noSongs' => '일치하는 곡이 없습니다',
+			'livingRoom.chooseLibrary' => '음악 라이브러리 선택',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => '앱 아이콘',
 			'appIcon.defaultIcon' => '기본',
@@ -6073,6 +6127,8 @@ extension on TranslationsKo {
 			'settings.downmixCenterBoostLabel' => '부스트 (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => '다운믹스 시 음량 정규화',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => '클리핑을 방지하기 위해 믹스 음량을 낮춥니다. 원래 음량을 유지하려면 끄세요(큰 소리 장면에서 왜곡될 수 있음).',
 			'settings.dvConversionMode' => 'Dolby Vision 변환',
 			'settings.dvConversionModeDescription' => 'Dolby Vision Profile 7 파일을 처리하는 방식을 선택합니다.',
@@ -6095,8 +6151,6 @@ extension on TranslationsKo {
 			'settings.hdrSdrConversion' => 'HDR을 SDR로 변환',
 			'settings.hdrSdrConversionDescription' => '디스플레이가 HDR을 표시할 수 없을 때 HDR 동영상을 무엇으로 변환할지 선택합니다.',
 			'settings.hdrSdrConversionAuto' => '자동',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Android 9 이상에서는 기기, 이전 버전에서는 플레이어',
 			'settings.hdrSdrConversionDevice' => '기기',
 			'settings.hdrSdrConversionDeviceDescription' => '기기의 비디오 하드웨어가 변환합니다. 가장 빠르지만 색상은 기기에 따라 다릅니다',
@@ -6587,6 +6641,8 @@ extension on TranslationsKo {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => '${seconds}초 뒤로 이동',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => '${seconds}초 앞으로 이동',
 			'videoControls.previousButton' => '이전 에피소드',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => '다음 에피소드',
 			'videoControls.previousChapterButton' => '이전 챕터',
 			'videoControls.nextChapterButton' => '다음 챕터',
@@ -6609,8 +6665,6 @@ extension on TranslationsKo {
 			'videoControls.segmentLoop' => '세그먼트 루프',
 			'videoControls.addBookmark' => 'Bookmark 추가하기',
 			'videoControls.bookmarkName' => 'Bookmark 이름',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => '예를 들어, 개방 장면',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => '책표 ${n}',
 			'videoControls.bookmarkNameRequired' => '이 책자에 대한 이름을 입력합니다.',
@@ -7101,6 +7155,8 @@ extension on TranslationsKo {
 			'libraries.analysisStarted' => ({required Object title}) => '"${title}" 분석 시작됨',
 			'libraries.failedToAnalyze' => ({required Object error}) => '미디어 라이브러리 분석 실패: ${error}',
 			'libraries.noLibrariesFound' => '미디어 라이브러리 없음',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => '모든 라이브러리가 숨겨졌습니다',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => '숨겨진 라이브러리 (${count})',
 			'libraries.thisLibraryIsEmpty' => '이 미디어 라이브러리는 비어 있습니다',
@@ -7123,8 +7179,6 @@ extension on TranslationsKo {
 			'libraries.content' => '미디어 라이브러리 콘텐츠',
 			'libraries.selectLibrary' => '미디어 라이브러리 선택',
 			'libraries.filtersWithCount' => ({required Object count}) => '필터 (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => '추천 없음',
 			'libraries.noCollections' => '이 미디어 라이브러리에는 컬렉션이 없습니다',
 			'libraries.noFoldersFound' => '폴더를 찾을 수 없습니다',
@@ -7615,6 +7669,8 @@ extension on TranslationsKo {
 			'music.visualizerLiveAudio' => '실시간 오디오 분석',
 			'music.visualizerPreviousPreset' => '이전 시각적 스타일',
 			'music.visualizerNextPreset' => '다음 시각적 스타일',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => '오로라',
 			'music.visualizerPresetBloom' => '블루',
 			'music.visualizerPresetOrbitals' => '궤도',
@@ -7637,8 +7693,6 @@ extension on TranslationsKo {
 			'music.noAudioUrl' => ({required Object track}) => '${track}에 사용할 수 있는 오디오 URL이 없습니다',
 			'music.discography.singlesAndEps' => '싱글 및 EP',
 			'music.discography.live' => '라이브',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => '컴필레이션',
 			'music.backTo' => '이전에 재생한 곡',
 			'music.upNext' => '다음 재생',
@@ -8129,6 +8183,8 @@ extension on TranslationsKo {
 			'externalPlayer.useExternalPlayer' => '외부 플레이어 사용',
 			'externalPlayer.useExternalPlayerDescription' => '동영상을 다른 앱에서 열기',
 			'externalPlayer.selectPlayer' => '플레이어 선택',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => '사용자 정의 플레이어',
 			'externalPlayer.systemDefault' => '시스템 기본값',
 			'externalPlayer.addCustomPlayer' => '사용자 정의 플레이어 추가',
@@ -8151,8 +8207,6 @@ extension on TranslationsKo {
 			'metadataEdit.editMetadata' => '편집...',
 			'metadataEdit.screenTitle' => '메타데이터 편집',
 			'metadataEdit.basicInfo' => '기본 정보',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => '아트워크',
 			'metadataEdit.advancedSettings' => '고급 설정',
 			'metadataEdit.title' => '제목',
@@ -8643,6 +8697,8 @@ extension on TranslationsKo {
 			'homeLayout.heroCardDescription' => '포스터 셰프 대신 하나의 전체 광장 회전 카드로 표시됩니다.',
 			'homeLayout.heroUnavailableDescription' => '이 순서가 단일 컬렉션의 실제 제목에 해결될 때만 사용할 수 있습니다 - 선택된 컬렉션 이상이 있는 경우에는 단일 제목이 롤러가 없습니다.',
 			'homeLayout.librariesSelection' => '도서관 (모든 도서관을 포함하기 위해 모든 검사되지 않은 것을 남겨 두십시오)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => '여기서 확인한 모든 도서관은 이 한 줄에 합쳐집니다.',
 			'homeLayout.movieCollectionsSelection' => '영화 컬렉션 (모든 선택된 도서관에 대한 모든 검사되지 않은 것을 남겨두십시오)',
 			'homeLayout.showCollectionsSelection' => '컬렉션을 표시합니다 (선택된 각 도서관에 대한 모든 검사되지 않은 것을 남겨 두십시오)',
@@ -8665,8 +8721,6 @@ extension on TranslationsKo {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => '숨기기',
 			'homeLayout.remove' => '제거',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => '이 도서관의 재구성 순서',
 			'homeLayout.pressAgainToDelete' => '다시 눌러 삭제',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9157,6 +9211,8 @@ extension on TranslationsKo {
 			'audiobook.statusFinished' => '마무리',
 			'audiobook.goToTime' => '시간에 가라',
 			'audiobook.timeHelp' => '시간:분:초 또는 분:초',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => '동기화 데이터를 이동하거나 복구하기 전에 최근 암호화 된 복사본을 수출합니다.수입은 현재 상태와 결합됩니다; 그들은 결코 지역 동기 역사를 대체하지 않습니다.',
 			'audiobook.recoveryExport' => '수출 암호화 된 복구 파일',
 			'audiobook.recoveryImport' => '암호화된 복구 파일 수입',
@@ -9179,8 +9235,6 @@ extension on TranslationsKo {
 			'sourceSetup.passwordOrKey' => '비밀번호를 입력하거나 아래에 개인 키를 추가하세요.',
 			'sourceSetup.sshFingerprint' => 'SSH 호스트 키의 SHA256 지문',
 			'sourceSetup.sshFingerprintHelp' => '서버 관리자에게 확인하세요. 서버에서 ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub 명령을 실행하고 표시된 SHA256 값을 사용하세요.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => '현재 고정된 지문을 유지하려면 비워 두세요. 변경하려면 새 서버 지문을 입력하세요.',
 			'sourceSetup.sshAuthentication' => 'SSH 공개 키 인증',
 			'sourceSetup.sshAuthenticationHelp' => '선택 사항입니다. 비밀번호 인증도 지원합니다.',
@@ -9671,6 +9725,8 @@ extension on TranslationsKo {
 			'musicTools.days' => '일',
 			'musicTools.albumBlocks' => '앨범 전체를 함께 유지',
 			'musicTools.home' => '음악',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => '최근 재생한 음악',
 			'musicTools.apiKey' => 'API 키',
 			'musicTools.missing' => 'N/A',
@@ -9693,8 +9749,6 @@ extension on TranslationsKo {
 			'musicTools.serverAnalysis' => '서버 분석',
 			'musicTools.sonicAnalysis' => '음향 분석',
 			'musicTools.serverAnalysisScope' => '이 서버에서 분석 가능한 모든 음악 라이브러리에 적용됩니다. 분석 설정은 변경되지 않습니다.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => '서버 작업',
 			'musicTools.playlistSharing' => '재생목록 접근',
 			'musicTools.playlistRecipient' => 'Plex 사용자 이름 또는 이메일',

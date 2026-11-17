@@ -40,6 +40,7 @@ class TranslationsZh extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsZh $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsZh(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final Translations$livingRoom$zh livingRoom = Translations$livingRoom$zh.internal(_root);
 	@override late final Translations$app$zh app = Translations$app$zh.internal(_root);
 	@override late final Translations$appIcon$zh appIcon = Translations$appIcon$zh.internal(_root);
 	@override late final Translations$auth$zh auth = Translations$auth$zh.internal(_root);
@@ -120,6 +121,37 @@ class TranslationsZh extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$zh musicExperience = Translations$musicExperience$zh.internal(_root);
 	@override late final Translations$musicTools$zh musicTools = Translations$musicTools$zh.internal(_root);
 	@override late final Translations$musicDevices$zh musicDevices = Translations$musicDevices$zh.internal(_root);
+}
+
+// Path: livingRoom
+class Translations$livingRoom$zh extends Translations$livingRoom$en {
+	Translations$livingRoom$zh.internal(TranslationsZh root) : this._root = root, super.internal(root);
+
+	final TranslationsZh _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => '适配我的屏幕';
+	@override String get fitHelp => '选择一条边，用方向键移动，直到看到该边的标记。依次调整每条边。';
+	@override String get left => '左';
+	@override String get right => '右';
+	@override String get top => '上';
+	@override String get bottom => '下';
+	@override String get receiver => '适用于旧款功放的 Dolby Digital 5.1';
+	@override String get receiverHelp => '在兼容的输出上将多声道音频转换为 Dolby Digital，并直通至功放。如果可以直接复制视频流，则保留原始视频。';
+	@override String missing({required Object episode}) => '此播放顺序中缺少第 ${episode} 集。';
+	@override String playLater({required Object episode}) => '仍然播放第 ${episode} 集';
+	@override String playCopy({required Object server, required Object episode}) => '从 ${server} 播放第 ${episode} 集';
+	@override String get jukebox => '访客点歌台';
+	@override String get jukeboxInfo => '同一局域网内的访客可以搜索这个音乐库，并将歌曲添加到队列末尾。';
+	@override String get openRoom => '开启点歌台';
+	@override String get closeRoom => '关闭点歌台';
+	@override String get join => '扫码点歌';
+	@override String get noNetwork => '请连接到局域网以开启点歌台。';
+	@override String get added => '已加入队列';
+	@override String get searchSongs => '搜索歌曲';
+	@override String get roomUnavailable => '此点歌台不可用。';
+	@override String get noSongs => '没有匹配的歌曲';
+	@override String get chooseLibrary => '选择音乐库';
 }
 
 // Path: app
@@ -5583,6 +5615,28 @@ class Translations$services$trackerDescriptions$zh extends Translations$services
 extension on TranslationsZh {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => '适配我的屏幕',
+			'livingRoom.fitHelp' => '选择一条边，用方向键移动，直到看到该边的标记。依次调整每条边。',
+			'livingRoom.left' => '左',
+			'livingRoom.right' => '右',
+			'livingRoom.top' => '上',
+			'livingRoom.bottom' => '下',
+			'livingRoom.receiver' => '适用于旧款功放的 Dolby Digital 5.1',
+			'livingRoom.receiverHelp' => '在兼容的输出上将多声道音频转换为 Dolby Digital，并直通至功放。如果可以直接复制视频流，则保留原始视频。',
+			'livingRoom.missing' => ({required Object episode}) => '此播放顺序中缺少第 ${episode} 集。',
+			'livingRoom.playLater' => ({required Object episode}) => '仍然播放第 ${episode} 集',
+			'livingRoom.playCopy' => ({required Object server, required Object episode}) => '从 ${server} 播放第 ${episode} 集',
+			'livingRoom.jukebox' => '访客点歌台',
+			'livingRoom.jukeboxInfo' => '同一局域网内的访客可以搜索这个音乐库，并将歌曲添加到队列末尾。',
+			'livingRoom.openRoom' => '开启点歌台',
+			'livingRoom.closeRoom' => '关闭点歌台',
+			'livingRoom.join' => '扫码点歌',
+			'livingRoom.noNetwork' => '请连接到局域网以开启点歌台。',
+			'livingRoom.added' => '已加入队列',
+			'livingRoom.searchSongs' => '搜索歌曲',
+			'livingRoom.roomUnavailable' => '此点歌台不可用。',
+			'livingRoom.noSongs' => '没有匹配的歌曲',
+			'livingRoom.chooseLibrary' => '选择音乐库',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => '应用图标',
 			'appIcon.defaultIcon' => '默认',
@@ -6073,6 +6127,8 @@ extension on TranslationsZh {
 			'settings.downmixCenterBoostLabel' => '增强（dB）',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => '下混时音量标准化',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => '降低混音电平以防止削波。关闭可保持原始音量（大音量场景可能失真）。',
 			'settings.dvConversionMode' => 'Dolby Vision 转换',
 			'settings.dvConversionModeDescription' => '选择如何处理 Dolby Vision Profile 7 文件。',
@@ -6095,8 +6151,6 @@ extension on TranslationsZh {
 			'settings.hdrSdrConversion' => 'HDR 转 SDR',
 			'settings.hdrSdrConversionDescription' => '选择在显示器无法显示 HDR 时由谁转换 HDR 视频。',
 			'settings.hdrSdrConversionAuto' => '自动',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Android 9 及更高版本使用设备，更早版本使用播放器',
 			'settings.hdrSdrConversionDevice' => '设备',
 			'settings.hdrSdrConversionDeviceDescription' => '由设备的视频硬件转换。速度最快，但色彩取决于设备',
@@ -6587,6 +6641,8 @@ extension on TranslationsZh {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => '快退 ${seconds} 秒',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => '快进 ${seconds} 秒',
 			'videoControls.previousButton' => '上一集',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => '下一集',
 			'videoControls.previousChapterButton' => '上一章节',
 			'videoControls.nextChapterButton' => '下一章节',
@@ -6609,8 +6665,6 @@ extension on TranslationsZh {
 			'videoControls.segmentLoop' => '分区路径',
 			'videoControls.addBookmark' => '添加 Bookmark',
 			'videoControls.bookmarkName' => 'Bookmark 名称',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => '例如,开幕式',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => '图标 ${n}',
 			'videoControls.bookmarkNameRequired' => '请输入本书标志的名称。',
@@ -7101,6 +7155,8 @@ extension on TranslationsZh {
 			'libraries.analysisStarted' => ({required Object title}) => '已开始分析“${title}”',
 			'libraries.failedToAnalyze' => ({required Object error}) => '无法分析媒体库：${error}',
 			'libraries.noLibrariesFound' => '未找到媒体库',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => '所有媒体库已隐藏',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => '已隐藏的媒体库 (${count})',
 			'libraries.thisLibraryIsEmpty' => '此媒体库为空',
@@ -7123,8 +7179,6 @@ extension on TranslationsZh {
 			'libraries.content' => '媒体库内容',
 			'libraries.selectLibrary' => '选择媒体库',
 			'libraries.filtersWithCount' => ({required Object count}) => '筛选器（${count}）',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => '暂无推荐',
 			'libraries.noCollections' => '此媒体库中没有合集',
 			'libraries.noFoldersFound' => '未找到文件夹',
@@ -7615,6 +7669,8 @@ extension on TranslationsZh {
 			'music.visualizerLiveAudio' => '实时音频分析',
 			'music.visualizerPreviousPreset' => '以前的视觉风格',
 			'music.visualizerNextPreset' => '下一篇 视觉风格',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => '奥拉',
 			'music.visualizerPresetBloom' => '蓝色',
 			'music.visualizerPresetOrbitals' => '轨道',
@@ -7637,8 +7693,6 @@ extension on TranslationsZh {
 			'music.noAudioUrl' => ({required Object track}) => '没有可供 ${track} 使用的音频 URL',
 			'music.discography.singlesAndEps' => '单曲和 EP',
 			'music.discography.live' => '现场',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => '合集',
 			'music.backTo' => '回到已播放',
 			'music.upNext' => '即将播放',
@@ -8129,6 +8183,8 @@ extension on TranslationsZh {
 			'externalPlayer.useExternalPlayer' => '使用外部播放器',
 			'externalPlayer.useExternalPlayerDescription' => '在其他应用中打开视频',
 			'externalPlayer.selectPlayer' => '选择播放器',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => '自定义播放器',
 			'externalPlayer.systemDefault' => '系统默认',
 			'externalPlayer.addCustomPlayer' => '添加自定义播放器',
@@ -8151,8 +8207,6 @@ extension on TranslationsZh {
 			'metadataEdit.editMetadata' => '编辑…',
 			'metadataEdit.screenTitle' => '编辑元数据',
 			'metadataEdit.basicInfo' => '基本信息',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => '封面图片',
 			'metadataEdit.advancedSettings' => '高级设置',
 			'metadataEdit.title' => '标题',
@@ -8643,6 +8697,8 @@ extension on TranslationsZh {
 			'homeLayout.heroCardDescription' => '显示为一个全宽旋转卡,而不是海报架。',
 			'homeLayout.heroUnavailableDescription' => '仅当此内容行展示单个合集中的具体媒体条目时才可用；选择多个合集时，没有可供轮播的单个媒体条目。',
 			'homeLayout.librariesSelection' => '图书馆(所有未经检查的图书馆都包含)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => '这里查看的每一个图书馆都合并到这个单一的行列。',
 			'homeLayout.movieCollectionsSelection' => '电影收藏(每个选择的图书馆都没有查看)',
 			'homeLayout.showCollectionsSelection' => '显示收藏品(每个选择的图书馆都没有查看)',
@@ -8665,8 +8721,6 @@ extension on TranslationsZh {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => '隐藏',
 			'homeLayout.remove' => '移除',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => '图书馆的重复顺序',
 			'homeLayout.pressAgainToDelete' => '再次按下删除',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9157,6 +9211,8 @@ extension on TranslationsZh {
 			'audiobook.statusFinished' => '结束',
 			'audiobook.goToTime' => '走到时间',
 			'audiobook.timeHelp' => '时间: 分钟: 秒或 分钟: 秒',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => '移动或修复同步数据前，请先导出近期的加密备份。导入内容会与当前状态合并，不会覆盖本地同步历史。请另行保存同步代码。',
 			'audiobook.recoveryExport' => '输出加密恢复文件',
 			'audiobook.recoveryImport' => '输入加密恢复文件',
@@ -9179,8 +9235,6 @@ extension on TranslationsZh {
 			'sourceSetup.passwordOrKey' => '请输入密码，或在下方添加私钥。',
 			'sourceSetup.sshFingerprint' => 'SSH 主机密钥 SHA256 指纹',
 			'sourceSetup.sshFingerprintHelp' => '请向服务器管理员核实。在服务器上运行 ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub，并使用显示的 SHA256 值。',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => '留空以保留当前固定的指纹，或输入新的服务器指纹。',
 			'sourceSetup.sshAuthentication' => 'SSH 公钥认证',
 			'sourceSetup.sshAuthenticationHelp' => '可选；也支持密码认证。',
@@ -9671,6 +9725,8 @@ extension on TranslationsZh {
 			'musicTools.days' => '天',
 			'musicTools.albumBlocks' => '保持专辑完整',
 			'musicTools.home' => '音乐',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => '最近播放',
 			'musicTools.apiKey' => 'API 密钥',
 			'musicTools.missing' => 'N/A',
@@ -9693,8 +9749,6 @@ extension on TranslationsZh {
 			'musicTools.serverAnalysis' => '服务器分析',
 			'musicTools.sonicAnalysis' => '音频特征分析',
 			'musicTools.serverAnalysisScope' => '此服务器上所有符合条件的音乐资料库。不会更改其分析设置。',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => '服务器任务',
 			'musicTools.playlistSharing' => '播放列表访问权限',
 			'musicTools.playlistRecipient' => 'Plex 用户名或电子邮件',

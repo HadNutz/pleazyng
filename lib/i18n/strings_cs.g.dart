@@ -40,6 +40,7 @@ class TranslationsCs extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsCs $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsCs(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$livingRoom$cs livingRoom = _Translations$livingRoom$cs._(_root);
 	@override late final _Translations$app$cs app = _Translations$app$cs._(_root);
 	@override late final _Translations$appIcon$cs appIcon = _Translations$appIcon$cs._(_root);
 	@override late final _Translations$auth$cs auth = _Translations$auth$cs._(_root);
@@ -120,6 +121,37 @@ class TranslationsCs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$cs musicExperience = _Translations$musicExperience$cs._(_root);
 	@override late final _Translations$musicTools$cs musicTools = _Translations$musicTools$cs._(_root);
 	@override late final _Translations$musicDevices$cs musicDevices = _Translations$musicDevices$cs._(_root);
+}
+
+// Path: livingRoom
+class _Translations$livingRoom$cs extends Translations$livingRoom$en {
+	_Translations$livingRoom$cs._(TranslationsCs root) : this._root = root, super.internal(root);
+
+	final TranslationsCs _root; // ignore: unused_field
+
+	// Translations
+	@override String get fitScreen => 'Přizpůsobit obrazovce';
+	@override String get fitHelp => 'Vyberte okraj a posouvejte jej šipkami, dokud neuvidíte jeho značky. Opakujte pro každý okraj.';
+	@override String get left => 'Vlevo';
+	@override String get right => 'Vpravo';
+	@override String get top => 'Nahoře';
+	@override String get bottom => 'Dole';
+	@override String get receiver => 'Dolby Digital 5.1 pro starší přijímače';
+	@override String get receiverHelp => 'Na kompatibilních výstupech převede vícekanálový zvuk na Dolby Digital. Zvuk předá přímo přijímači a původní video zachová, pokud je lze zkopírovat.';
+	@override String missing({required Object episode}) => 'V této řadě chybí epizoda ${episode}.';
+	@override String playLater({required Object episode}) => 'Přesto přehrát epizodu ${episode}';
+	@override String playCopy({required Object episode, required Object server}) => 'Přehrát epizodu ${episode} ze zdroje ${server}';
+	@override String get jukebox => 'Jukebox pro hosty';
+	@override String get jukeboxInfo => 'Hosté v místní síti mohou vyhledávat skladby v této knihovně a přidávat je na konec fronty.';
+	@override String get openRoom => 'Otevřít jukebox';
+	@override String get closeRoom => 'Zavřít jukebox';
+	@override String get join => 'Naskenujte kód a vyžádejte si skladbu';
+	@override String get noNetwork => 'Chcete-li otevřít jukebox, připojte se k místní síti.';
+	@override String get added => 'Přidáno do fronty';
+	@override String get searchSongs => 'Hledat skladby';
+	@override String get roomUnavailable => 'Tento jukebox není dostupný.';
+	@override String get noSongs => 'Žádné odpovídající skladby';
+	@override String get chooseLibrary => 'Vyberte hudební knihovnu';
 }
 
 // Path: app
@@ -5632,6 +5664,28 @@ class _Translations$services$trackerDescriptions$cs extends Translations$service
 extension on TranslationsCs {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'livingRoom.fitScreen' => 'Přizpůsobit obrazovce',
+			'livingRoom.fitHelp' => 'Vyberte okraj a posouvejte jej šipkami, dokud neuvidíte jeho značky. Opakujte pro každý okraj.',
+			'livingRoom.left' => 'Vlevo',
+			'livingRoom.right' => 'Vpravo',
+			'livingRoom.top' => 'Nahoře',
+			'livingRoom.bottom' => 'Dole',
+			'livingRoom.receiver' => 'Dolby Digital 5.1 pro starší přijímače',
+			'livingRoom.receiverHelp' => 'Na kompatibilních výstupech převede vícekanálový zvuk na Dolby Digital. Zvuk předá přímo přijímači a původní video zachová, pokud je lze zkopírovat.',
+			'livingRoom.missing' => ({required Object episode}) => 'V této řadě chybí epizoda ${episode}.',
+			'livingRoom.playLater' => ({required Object episode}) => 'Přesto přehrát epizodu ${episode}',
+			'livingRoom.playCopy' => ({required Object episode, required Object server}) => 'Přehrát epizodu ${episode} ze zdroje ${server}',
+			'livingRoom.jukebox' => 'Jukebox pro hosty',
+			'livingRoom.jukeboxInfo' => 'Hosté v místní síti mohou vyhledávat skladby v této knihovně a přidávat je na konec fronty.',
+			'livingRoom.openRoom' => 'Otevřít jukebox',
+			'livingRoom.closeRoom' => 'Zavřít jukebox',
+			'livingRoom.join' => 'Naskenujte kód a vyžádejte si skladbu',
+			'livingRoom.noNetwork' => 'Chcete-li otevřít jukebox, připojte se k místní síti.',
+			'livingRoom.added' => 'Přidáno do fronty',
+			'livingRoom.searchSongs' => 'Hledat skladby',
+			'livingRoom.roomUnavailable' => 'Tento jukebox není dostupný.',
+			'livingRoom.noSongs' => 'Žádné odpovídající skladby',
+			'livingRoom.chooseLibrary' => 'Vyberte hudební knihovnu',
 			'app.title' => 'Pleazyng',
 			'appIcon.title' => 'aplikace ikona',
 			'appIcon.defaultIcon' => 'Výchozí',
@@ -6122,6 +6176,8 @@ extension on TranslationsCs {
 			'settings.downmixCenterBoostLabel' => 'Zvýšení (dB)',
 			'settings.downmixCenterBoostShort' => 'DB',
 			'settings.audioDownmixNormalize' => 'Normalizace objemu na Downmix',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Snižte směs, aby se zabránilo klíčení. vypněte, abyste zachovali původní objem (možná narušení hlasitých scén).',
 			'settings.dvConversionMode' => 'Dolby Vision Převod',
 			'settings.dvConversionModeDescription' => 'Vyberte si, jak jsou zpracovávány soubory profilu Dolby Vision.',
@@ -6144,8 +6200,6 @@ extension on TranslationsCs {
 			'settings.hdrSdrConversion' => 'HDR na SDR konverze',
 			'settings.hdrSdrConversionDescription' => 'Vyberte, co konvertuje HDR video, když displej nedokáže zobrazit HDR.',
 			'settings.hdrSdrConversionAuto' => 'Automaticky',
-			_ => null,
-		} ?? switch (path) {
 			'settings.hdrSdrConversionAutoDescription' => 'Přístroj na Android 9 a novější, hráč na starších verzích',
 			'settings.hdrSdrConversionDevice' => 'Zařízení',
 			'settings.hdrSdrConversionDeviceDescription' => 'Video hardware vašeho zařízení to konvertuje. nejrychlejší, ale barvy závisí na zařízení',
@@ -6636,6 +6690,8 @@ extension on TranslationsCs {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Hledat zpět ${seconds} sekund',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Hledání vpřed ${seconds} sekund',
 			'videoControls.previousButton' => 'Předchozí epizoda',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.nextButton' => 'Další díl',
 			'videoControls.previousChapterButton' => 'Předchozí kapitola',
 			'videoControls.nextChapterButton' => 'Další kapitola',
@@ -6658,8 +6714,6 @@ extension on TranslationsCs {
 			'videoControls.segmentLoop' => 'Segmentový loop',
 			'videoControls.addBookmark' => 'Přidat bookmark',
 			'videoControls.bookmarkName' => 'Bookmark jméno',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.bookmarkNameHint' => 'Například otevírací scény',
 			'videoControls.bookmarkDefaultName' => ({required Object n}) => 'Bookmarková ${n}',
 			'videoControls.bookmarkNameRequired' => 'Zadejte jméno pro tuto knižní značku.',
@@ -7150,6 +7204,8 @@ extension on TranslationsCs {
 			'libraries.analysisStarted' => ({required Object title}) => 'Analýza začala pro "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Neuspěl analyzovat knihovnu: ${error}',
 			'libraries.noLibrariesFound' => 'Žádné knihovny nenajdete',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Všechny knihovny jsou skryté',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Skryté knihovny (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Tato knihovna je prázdná',
@@ -7172,8 +7228,6 @@ extension on TranslationsCs {
 			'libraries.content' => 'Obsah knihovny',
 			'libraries.selectLibrary' => 'Vyberte knihovnu',
 			'libraries.filtersWithCount' => ({required Object count}) => 'Filtry (${count})',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.noRecommendations' => 'Žádné doporučení k dispozici',
 			'libraries.noCollections' => 'Žádné sbírky v této knihovně',
 			'libraries.noFoldersFound' => 'Žádné složky nenajdete',
@@ -7664,6 +7718,8 @@ extension on TranslationsCs {
 			'music.visualizerLiveAudio' => 'Živá analýza zvuku',
 			'music.visualizerPreviousPreset' => 'Předchozí vizuální styl',
 			'music.visualizerNextPreset' => 'Další vizuální styl',
+			_ => null,
+		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Blondýn',
 			'music.visualizerPresetOrbitals' => 'Orbitální',
@@ -7686,8 +7742,6 @@ extension on TranslationsCs {
 			'music.noAudioUrl' => ({required Object track}) => 'Žádný audio URL není k dispozici pro ${track}',
 			'music.discography.singlesAndEps' => 'Singles a EPs',
 			'music.discography.live' => 'Živě',
-			_ => null,
-		} ?? switch (path) {
 			'music.discography.compilations' => 'Kompilace',
 			'music.backTo' => 'Zpět na',
 			'music.upNext' => 'Následuje',
@@ -8178,6 +8232,8 @@ extension on TranslationsCs {
 			'externalPlayer.useExternalPlayer' => 'Použijte externí hráče',
 			'externalPlayer.useExternalPlayerDescription' => 'Otevřete videa v jiné aplikaci',
 			'externalPlayer.selectPlayer' => 'Vyberte hráče',
+			_ => null,
+		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Custom hráči',
 			'externalPlayer.systemDefault' => 'Systém default',
 			'externalPlayer.addCustomPlayer' => 'Přidat přizpůsobený hráč',
@@ -8200,8 +8256,6 @@ extension on TranslationsCs {
 			'metadataEdit.editMetadata' => 'Upravit',
 			'metadataEdit.screenTitle' => 'Upravit metadata',
 			'metadataEdit.basicInfo' => 'Základní info',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.artwork' => 'umělecká práce',
 			'metadataEdit.advancedSettings' => 'Pokročilé nastavení',
 			'metadataEdit.title' => 'Název',
@@ -8692,6 +8746,8 @@ extension on TranslationsCs {
 			'homeLayout.heroCardDescription' => 'Zobrazuje se jako jedna plnoširoká rotační karta namísto plakátového šelfu.',
 			'homeLayout.heroUnavailableDescription' => 'Dostupné pouze tehdy, když se tento řádek vyřeší na skutečné tituly jedné kolekce - s více než jednou kolekcí vybranou neexistuje žádný jediný titul, který by se mohl otáčet.',
 			'homeLayout.librariesSelection' => 'Knihovny (pustit všechny neprohlédnuté zahrnovat každou knihovnu)',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Každá knihovna, která je zde kontrolována, je spojena do této jedné řady.',
 			'homeLayout.movieCollectionsSelection' => 'Filmové sbírky (pustit všechny nezkontrolované pro každou vybranou knihovnu)',
 			'homeLayout.showCollectionsSelection' => 'Zobrazit sbírky (zanechat všechny nezkontrolované pro každou vybranou knihovnu)',
@@ -8714,8 +8770,6 @@ extension on TranslationsCs {
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'Skrýt',
 			'homeLayout.remove' => 'Odstranit',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.libraryResumeRow' => 'Knižní přehled této knihovny',
 			'homeLayout.pressAgainToDelete' => 'Znovu stiskněte, abyste odstranili',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
@@ -9206,6 +9260,8 @@ extension on TranslationsCs {
 			'audiobook.statusFinished' => 'Dokončené',
 			'audiobook.goToTime' => 'Jděte do času',
 			'audiobook.timeHelp' => 'Hodiny: minuty: sekundy nebo minuty: sekundy',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Exportujte nedávnou šifrovanou kopii před přenesením nebo opravou synchronizačních dat. Importy se spojí s aktuálním stavem; nikdy nenahrazují místní historii synchromu.',
 			'audiobook.recoveryExport' => 'Export šifrované obnovení souborů',
 			'audiobook.recoveryImport' => 'Import šifrované obnovení souborů',
@@ -9228,8 +9284,6 @@ extension on TranslationsCs {
 			'sourceSetup.passwordOrKey' => 'Zadejte heslo nebo níže přidejte soukromý klíč.',
 			'sourceSetup.sshFingerprint' => 'Otisk SHA256 hostitelského klíče SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Ověřte jej u správce serveru. Na serveru spusťte ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub a použijte hodnotu SHA256.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprintKeep' => 'Ponechte prázdné pro zachování připnutého otisku nebo zadejte nový otisk serveru.',
 			'sourceSetup.sshAuthentication' => 'Ověření SSH veřejným klíčem',
 			'sourceSetup.sshAuthenticationHelp' => 'Nepovinné; podporováno je i ověření heslem.',
@@ -9720,6 +9774,8 @@ extension on TranslationsCs {
 			'musicTools.days' => 'Dny',
 			'musicTools.albumBlocks' => 'Ponechat celá alba pohromadě',
 			'musicTools.home' => 'Hudba',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.recent' => 'Nedávno přehrané',
 			'musicTools.apiKey' => 'Klíč API',
 			'musicTools.missing' => 'N / A',
@@ -9742,8 +9798,6 @@ extension on TranslationsCs {
 			'musicTools.serverAnalysis' => 'Analýza serveru',
 			'musicTools.sonicAnalysis' => 'Zvuková analýza',
 			'musicTools.serverAnalysisScope' => 'Všechny způsobilé hudební knihovny na tomto serveru. Jejich nastavení analýzy se nezmění.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.serverActivities' => 'Aktivity serveru',
 			'musicTools.playlistSharing' => 'Přístup k playlistu',
 			'musicTools.playlistRecipient' => 'Uživatelské jméno Plex nebo e-mail',

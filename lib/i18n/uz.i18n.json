@@ -1,4 +1,28 @@
 {
+  "livingRoom": {
+    "fitScreen": "Ekranimga moslash",
+    "fitHelp": "Bir chetni tanlang va belgilari ko‘ringuncha strelkalar bilan siljiting. Har bir chet uchun takrorlang.",
+    "left": "Chap",
+    "right": "O‘ng",
+    "top": "Yuqori",
+    "bottom": "Past",
+    "receiver": "Eski qabul qilgichlar uchun Dolby Digital 5.1",
+    "receiverHelp": "Mos chiqishlarda ko‘p kanalli ovozni Dolby Digital formatiga o‘giradi. Ovoz qabul qilgichga bevosita uzatiladi, videoni nusxalash mumkin bo‘lsa, u asl holida saqlanadi.",
+    "missing": "Bu ketma-ketlikda ${episode}-qism yo‘q.",
+    "playLater": "Baribir ${episode}-qismni ijro etish",
+    "playCopy": "${episode}-qismni ${server} manbasidan ijro etish",
+    "jukebox": "Mehmonlar uchun musiqa qutisi",
+    "jukeboxInfo": "Mahalliy tarmoqdagi mehmonlar shu musiqa kutubxonasidan qo‘shiq qidirib, navbat oxiriga qo‘shishi mumkin.",
+    "openRoom": "Musiqa qutisini ochish",
+    "closeRoom": "Musiqa qutisini yopish",
+    "join": "Qo‘shiq so‘rash uchun kodni skanerlang",
+    "noNetwork": "Musiqa qutisini ochish uchun mahalliy tarmoqqa ulaning.",
+    "added": "Navbatga qo‘shildi",
+    "searchSongs": "Qo‘shiq qidirish",
+    "roomUnavailable": "Bu musiqa qutisi mavjud emas.",
+    "noSongs": "Mos qo‘shiq topilmadi",
+    "chooseLibrary": "Musiqa kutubxonasini tanlang"
+  },
   "app": {
     "title": "Pleazyng"
   },
