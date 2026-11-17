@@ -163,6 +163,14 @@
         "scripts/release_all_platforms.py": "d082bb298d15676c8abb375c4400275112275265",
         "scripts/verify_frozen_packaging_repair.py": "c9286844a353741a58c69d694a3295fd14b19ee1"
       }
+    },
+    {
+      "product_source_sha": "28f417ab17a4b6dc4c2e422b27662c62f62be7fb",
+      "packaging_source_sha": "52acb07e841b06d82d4e42a2d79d7b45540453bd",
+      "files": {
+        "scripts/apple/prune_static_mpv_frameworks.py": "a98d6e775d159efc16f96704890c567a8b45d96b",
+        "scripts/checks/test_prune_static_mpv_frameworks.py": "3317765c993a6a57ec8d3971002c0bd8adf2e069"
+      }
     }
   ]
 }

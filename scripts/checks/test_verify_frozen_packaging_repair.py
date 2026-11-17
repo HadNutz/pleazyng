@@ -73,6 +73,25 @@ class FrozenPackagingRepairTests(unittest.TestCase):
         self.responses[f'{PREFIX}/compare/{W}...main']['status'] = 'identical'
         self.verify()
 
+    def test_static_framework_parser_repair_requires_exact_reviewed_blobs(self):
+        files = {'scripts/apple/prune_static_mpv_frameworks.py': NEW,
+                 'scripts/checks/test_prune_static_mpv_frameworks.py': '6' * 40}
+        self.config['repairs'][0]['files'] = files
+        self.responses[f'{PREFIX}/compare/{S}...{R}']['files'] = [
+            {'filename': path, 'status': 'modified', 'sha': blob}
+            for path, blob in files.items()]
+        for tree_sha, changed in ((ST, False), (RT, True)):
+            tree = self.responses[f'{PREFIX}/git/trees/{tree_sha}?recursive=1']['tree']
+            tree[:] = [entry for entry in tree if entry['path'] != FILE]
+            tree.extend({'path': path, 'type': 'blob', 'mode': '100644',
+                         'sha': blob if changed else OLD}
+                        for path, blob in files.items())
+        self.assertEqual(self.verify()['approved_files'], files)
+        self.config['repairs'][0]['files'] = {**files,
+            'scripts/apple/prune_static_mpv_frameworks.py': '7' * 40}
+        with self.assertRaisesRegex(repair.FrozenPackagingRepairError, 'approved files/blobs'):
+            self.verify()
+
     def test_unapproved_or_duplicate_pair_is_rejected(self):
         for entries in ([], [dict(self.config['repairs'][0], packaging_source_sha='f' * 40)],
                         self.config['repairs'] * 2):
@@ -84,7 +103,8 @@ class FrozenPackagingRepairTests(unittest.TestCase):
     def test_approval_cannot_authorize_product_native_pin_version_or_path_escape(self):
         for path in ('lib/main.dart', 'native/pins.json', 'pubspec.yaml', 'pubspec.lock',
                      'ios/Runner.xcodeproj/project.pbxproj', 'tools/dv-engine/pins.json',
-                     'scripts/../lib/main.dart', repair.APPROVAL_PATH):
+                     'scripts/../lib/main.dart', 'scripts/apple/other_packaging_tool.py',
+                     repair.APPROVAL_PATH):
             with self.subTest(path=path):
                 self.config['repairs'][0]['files'] = {path: NEW}
                 with self.assertRaisesRegex(repair.FrozenPackagingRepairError, 'unsupported packaging'):
