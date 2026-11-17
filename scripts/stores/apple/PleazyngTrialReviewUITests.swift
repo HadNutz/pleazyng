@@ -76,9 +76,20 @@ final class PleazyngTrialReviewUITests: XCTestCase {
         let localFilesScreenOpened = addSource.exists
         attachScreenshot(of: app, named: "pleazyng-trial-active-files-books-localtest")
 
-        let settingsTab = app.buttons["Settings"]
-        XCTAssertTrue(settingsTab.waitForExistence(timeout: 60), "The real Settings navigation action was not available")
-        settingsTab.tap()
+        let homeTab = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Home")).firstMatch
+        XCTAssertTrue(homeTab.waitForExistence(timeout: 30), "The real Home navigation action was not available")
+        homeTab.tap()
+        let profilesMenu = app.buttons["Profiles"]
+        XCTAssertTrue(profilesMenu.waitForExistence(timeout: 30), "The real Profiles menu was not available on Home")
+        attachAccessibilityHierarchy(of: app, named: "trial-settings-home-accessibility-localtest")
+        profilesMenu.tap()
+        let settingsItem = app.buttons["Settings"]
+        XCTAssertTrue(
+            settingsItem.waitForExistence(timeout: 30),
+            "The real Settings action was not available in the Profiles menu"
+        )
+        attachAccessibilityHierarchy(of: app, named: "trial-settings-profiles-menu-accessibility-localtest")
+        settingsItem.tap()
         let lifetimeTile = app.descendants(matching: .any).matching(
             NSPredicate(format: "label CONTAINS %@", "Pleazyng lifetime access")
         ).firstMatch
@@ -206,6 +217,13 @@ final class PleazyngTrialReviewUITests: XCTestCase {
     private func optionalDate(_ value: Date?) -> Any {
         guard let value else { return NSNull() }
         return ISO8601DateFormatter().string(from: value)
+    }
+
+    private func attachAccessibilityHierarchy(of app: XCUIApplication, named name: String) {
+        let attachment = XCTAttachment(data: Data(app.debugDescription.utf8), uniformTypeIdentifier: "public.plain-text")
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
     }
 
     private func attachScreenshot(of app: XCUIApplication, named name: String) {
