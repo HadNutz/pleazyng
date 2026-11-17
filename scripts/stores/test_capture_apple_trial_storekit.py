@@ -191,6 +191,59 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
             self.assertNotIn("UseUITargetAppProvidedByTests", patched)
             self.assertEqual(patched["TestingEnvironmentVariables"], {"SAMPLE": "preserve"})
 
+    def test_simulator_install_precedes_storekit_test_and_verifies_exact_bundle(self) -> None:
+        identity = {
+            "bundle_id": capture.BUNDLE_ID,
+            "version": capture.VERSION,
+            "build": capture.BUILD_NUMBER,
+            "executable": "Pleazyng",
+            "architectures": ["arm64", "x86_64"],
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            staged = root / "Debug-iphonesimulator" / "Pleazyng.app"
+            installed = root / "simulator" / "Containers" / "Pleazyng.app"
+            staged.mkdir(parents=True)
+            installed.mkdir(parents=True)
+            (staged / "Info.plist").write_bytes(b"verified product app")
+            (staged / "Pleazyng").write_bytes(b"verified executable")
+            (installed / "Info.plist").write_bytes(b"verified product app")
+            (installed / "Pleazyng").write_bytes(b"verified executable")
+            expected_hash = capture.sha256_tree(staged)
+            calls: list[list[str]] = []
+
+            def fake_command(args: list[str], *, capture: bool = False, timeout: int = 300, cwd: Path | None = None) -> str:
+                calls.append(args)
+                if args[2] == "get_app_container":
+                    return str(installed)
+                return ""
+
+            with patch.object(capture, "command", side_effect=fake_command), patch.object(
+                capture, "bundle_info", return_value=identity
+            ):
+                evidence = capture.install_verified_app_on_simulator(
+                    device_id="simulator-udid",
+                    app=staged,
+                    expected_identity=identity,
+                    expected_sha256=expected_hash,
+                )
+
+            self.assertEqual(calls[0], ["xcrun", "simctl", "install", "simulator-udid", str(staged)])
+            self.assertEqual(calls[1], ["xcrun", "simctl", "get_app_container", "simulator-udid", capture.BUNDLE_ID, "app"])
+            self.assertEqual(evidence["installed_app_bundle_sha256"], expected_hash)
+            self.assertEqual(evidence["installed_app_identity"], identity)
+
+            (installed / "Pleazyng").write_bytes(b"changed after install")
+            with patch.object(capture, "command", side_effect=fake_command), patch.object(
+                capture, "bundle_info", return_value=identity
+            ), self.assertRaisesRegex(ValueError, "not byte-identical"):
+                capture.install_verified_app_on_simulator(
+                    device_id="simulator-udid",
+                    app=staged,
+                    expected_identity=identity,
+                    expected_sha256=expected_hash,
+                )
+
     def test_xctestrun_association_supports_legacy_target_dictionary_layout(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "legacy.xctestrun"
@@ -336,8 +389,14 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
         self.assertIn('"CODE_SIGN_STYLE": "Automatic"', SCRIPT)
         self.assertNotIn('"CODE_SIGN_ENTITLEMENTS"', SCRIPT)
         self.assertIn("stage_verified_app_for_xctestrun", SCRIPT)
+        self.assertIn("install_verified_app_on_simulator", SCRIPT)
         self.assertIn("capture_simulator_storekit_logs", SCRIPT)
-        self.assertNotIn('command(["xcrun", "simctl", "install", device["udid"], str(app)]', SCRIPT)
+        self.assertIn('["xcrun", "simctl", "install", device_id, str(app)]', SCRIPT)
+        capture_body = SCRIPT[SCRIPT.index("def capture(args:"):]
+        self.assertLess(
+            capture_body.index("installed_app_receipt = install_verified_app_on_simulator("),
+            capture_body.index("test_command = ["),
+        )
 
     def test_retained_bundle_extraction_rejects_path_traversal(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

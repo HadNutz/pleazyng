@@ -462,6 +462,48 @@ def stage_verified_app_for_xctestrun(
     return destination, evidence
 
 
+def install_verified_app_on_simulator(
+    *,
+    device_id: str,
+    app: Path,
+    expected_identity: dict[str, Any],
+    expected_sha256: str,
+) -> dict[str, Any]:
+    """Install the retained UI target before StoreKitTest configures the app."""
+    app = app.resolve(strict=True)
+    if app.name != "Pleazyng.app":
+        raise ValueError(f"Unexpected Simulator app bundle name: {app.name!r}")
+    if sha256_tree(app) != expected_sha256:
+        raise ValueError("Staged Simulator app changed before installation")
+    if bundle_info(app) != expected_identity:
+        raise ValueError("Staged Simulator app identity changed before installation")
+
+    command(["xcrun", "simctl", "install", device_id, str(app)], timeout=300)
+    installed_path_value = command(
+        ["xcrun", "simctl", "get_app_container", device_id, BUNDLE_ID, "app"],
+        capture=True,
+        timeout=120,
+    )
+    installed_app = Path(installed_path_value).resolve(strict=True)
+    if installed_app == app or installed_app.name != "Pleazyng.app" or not installed_app.is_dir():
+        raise ValueError("simctl did not return the installed Pleazyng app container")
+    installed_hash = sha256_tree(installed_app)
+    if installed_hash != expected_sha256:
+        raise ValueError("Simulator-installed app is not byte-identical to the receipt-verified product app")
+    installed_identity = bundle_info(installed_app)
+    if installed_identity != expected_identity:
+        raise ValueError("Simulator-installed app identity differs from the receipt-verified product app")
+    return {
+        "schema_version": 1,
+        "simulator_udid": device_id,
+        "bundle_id": BUNDLE_ID,
+        "installed_app_path": str(installed_app),
+        "installed_app_bundle_sha256": installed_hash,
+        "installed_app_identity": installed_identity,
+        "qualification": "simctl installed the exact receipt-verified app before SKTestSession setup; app container hash and identity match the retained product.",
+    }
+
+
 def capture_simulator_storekit_logs(device_id: str, output: Path) -> None:
     """Retain bounded storekitd diagnostics from the just-finished simulator test."""
     log_path = output / "simulator-storekitd.log"
@@ -793,6 +835,13 @@ def capture(args: argparse.Namespace) -> None:
         )
         if staged_app != built_products / "Debug-iphonesimulator" / "Pleazyng.app":
             raise ValueError("The staged UI target app path differs from the xctestrun TestROOT path")
+        installed_app_receipt = install_verified_app_on_simulator(
+            device_id=device["udid"],
+            app=staged_app,
+            expected_identity=identity,
+            expected_sha256=receipt["product_app_bundle_sha256"],
+        )
+        write_json(output / "simulator-installed-app.json", installed_app_receipt)
         result_bundle = output / "pleazyng-trial-review.xcresult"
         test_command = [
             "xcodebuild", "test-without-building",
