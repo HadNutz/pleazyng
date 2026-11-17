@@ -409,20 +409,6 @@ def qualify(platform, arch=None):
                 "      fatalError(\"scoped registrar did not expose the attached primary view\")\n"
                 "    }\n"
                 "    RegisterGeneratedPlugins(registry: primaryViewPluginRegistry!)")
-        replace(source, "private let engine: FlutterEngine\n  private let available: Bool",
-                "private let engine: FlutterEngine\n  private weak var parentWindow: NSWindow?\n  private let available: Bool")
-        replace(source, "self.engine = engine\n    self.available = available",
-                "self.engine = engine\n    self.parentWindow = parent\n    self.available = available")
-        replace(source, "if call.method == \"available\" { result(available); return }",
-                "if call.method == \"mainViewId\" {\n"
-                "      guard let controller = parentWindow?.contentViewController as? FlutterViewController else {\n"
-                "        result(FlutterError(code: \"PRIMARY_VIEW_UNAVAILABLE\", message: \"The primary Flutter view is not attached\", details: nil))\n"
-                "        return\n"
-                "      }\n"
-                "      result(controller.viewIdentifier)\n"
-                "      return\n"
-                "    }\n"
-                "    if call.method == \"available\" { result(available); return }")
         replace(source, "self.setFrame(windowFrame, display: true)",
                 "self.setFrame(windowFrame, display: true)\n"
                 "    print(\"WORKSPACE_NATIVE_WINDOW_FRAME frame=\\(self.frame) visible=\\(self.isVisible) content=\\(self.contentView?.frame ?? .zero) flutter=\\(flutterViewController.view.frame)\")")
