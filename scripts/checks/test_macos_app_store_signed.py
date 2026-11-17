@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import build_macos_app_store_signed as store
+import macos_app_store_package_locks as package_locks
 
 
 TEAM = "DM9A59DC85"
@@ -150,15 +151,27 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         next_step = workflow.find("\n      - ", refresh + 1)
         refresh_step = workflow[refresh:next_step]
         self.assertNotIn("working-directory: source", refresh_step)
-        self.assertIn("PLEAZYNG_APPLE_SOURCE_ROOT: ${{ github.workspace }}/source", refresh_step)
-        self.assertIn("run: scripts/refresh_apple_spm.sh macos", refresh_step)
+        self.assertIn("python3 scripts/refresh_macos_app_store_spm.py", refresh_step)
+        self.assertIn('--source-dir "$GITHUB_WORKSPACE/source"', refresh_step)
+        self.assertIn('--main-commit "$GITHUB_SHA"', refresh_step)
         helper = (ROOT / "scripts/refresh_apple_spm.sh").read_text(encoding="utf-8")
         self.assertIn("PLEAZYNG_APPLE_SOURCE_ROOT", helper)
+        preserving_helper = (ROOT / "scripts/refresh_macos_app_store_spm.py").read_text(encoding="utf-8")
+        self.assertLess(preserving_helper.index("validate_release_source"),
+                        preserving_helper.index("subprocess.run"))
+        self.assertIn("preserve_macos_package_locks(source_dir)", preserving_helper)
 
         signed_builder = (ROOT / "scripts/build_macos_app_store_signed.py").read_text(encoding="utf-8")
         flutter_config_command = signed_builder.split('"flutter", "build", "macos",', 1)[1].split("],", 1)[0]
         self.assertIn('"--config-only"', flutter_config_command)
         self.assertNotIn('"--no-codesign"', flutter_config_command)
+        self.assertIn("preserve_macos_package_locks(source_dir)", signed_builder)
+        self.assertIn('receipt["macos_swift_package_locks"]', signed_builder)
+        package_build = signed_builder.index("package_path, receipt = build_signed_package(")
+        post_build_validation = signed_builder.index(
+            "validate_release_source(source_dir, args.release_tag", package_build
+        )
+        self.assertGreater(post_build_validation, package_build)
 
         job = re.search(
             r"(?m)^  ([A-Za-z0-9_-]+):\n    name: Build and upload signed Mac App Store package$",
@@ -179,6 +192,46 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         )[1].split("\n      - ", 1)[0]
         self.assertIn('gem install bundler --version "$bundler_version"', bundle_step)
         self.assertIn("bundle install --jobs 4 --retry 3", bundle_step)
+
+    def test_only_mac_app_store_resolver_lockfiles_are_restored_on_success_and_error(self):
+        self.assertEqual(package_locks.MACOS_PACKAGE_LOCK_PATHS, (
+            Path("macos/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"),
+            Path("macos/Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved"),
+        ))
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            original = {}
+            for relative in package_locks.MACOS_PACKAGE_LOCK_PATHS:
+                path = root / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                original[relative] = f"release source lock: {relative}\n".encode()
+                path.write_bytes(original[relative])
+            unrelated = root / "macos/Podfile.lock"
+            unrelated.write_text("release source pod lock\n", encoding="utf-8")
+
+            def rewrite_known_locks():
+                for relative in package_locks.MACOS_PACKAGE_LOCK_PATHS:
+                    (root / relative).write_text("Xcode generated lock\n", encoding="utf-8")
+                unrelated.write_text("unrelated drift stays visible\n", encoding="utf-8")
+
+            with package_locks.preserve_macos_package_locks(root) as snapshots:
+                rewrite_known_locks()
+            self.assertTrue(package_locks.macos_package_locks_match(snapshots))
+            for relative, expected in original.items():
+                self.assertEqual((root / relative).read_bytes(), expected)
+            self.assertEqual(unrelated.read_text(encoding="utf-8"), "unrelated drift stays visible\n")
+            receipt = package_locks.macos_package_lock_receipt(snapshots, restored=True)
+            self.assertTrue(receipt["preserved_from_release_source"])
+            self.assertEqual({item["path"] for item in receipt["files"]},
+                             {path.as_posix() for path in package_locks.MACOS_PACKAGE_LOCK_PATHS})
+
+            with self.assertRaisesRegex(RuntimeError, "resolver failure"):
+                with package_locks.preserve_macos_package_locks(root):
+                    rewrite_known_locks()
+                    raise RuntimeError("resolver failure")
+            for relative, expected in original.items():
+                self.assertEqual((root / relative).read_bytes(), expected)
+            self.assertEqual(unrelated.read_text(encoding="utf-8"), "unrelated drift stays visible\n")
 
     def test_existing_certificate_without_local_key_tries_additive_cert_without_revocation(self):
         certificate = {

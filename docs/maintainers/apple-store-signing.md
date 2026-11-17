@@ -91,6 +91,18 @@ submit App Review. A processed upload does not qualify sandbox/JIT runtime,
 StoreKit purchase and restore, screenshots, or Apple review. The first signed
 run remains an external signing and account qualification gate.
 
+Xcode's `-resolvePackageDependencies` rewrites these tracked files while
+refreshing the tagged Swift packages:
+
+- `macos/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`
+- `macos/Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved`
+
+The project resolver removes pins outside its package graph. The MAS lane
+snapshots only these two known lockfiles, restores their exact release-tag bytes
+after resolution and archive, and records each original SHA-256 in the signed
+build receipt. Whole-checkout source validation remains strict before and after
+those steps; any other tracked change fails the build.
+
 The explicit `publish-app-stores.yml` Apple lanes inspect the checksum-verified,
 attested IPA's bundle, platform, marketing version, and build number before
 upload. They target the existing App Store Connect app ID `6826955231`, reuse

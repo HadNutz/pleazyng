@@ -30,6 +30,12 @@ from build_macos_app_store_candidate import (
     EXPECTED_BUNDLE_ID,
     inspect_app,
 )
+from macos_app_store_package_locks import (
+    macos_package_lock_receipt,
+    macos_package_locks_match,
+    preserve_macos_package_locks,
+    snapshot_macos_package_locks,
+)
 from pubspec_version import parse_pubspec_version
 
 
@@ -780,6 +786,9 @@ def run_build(args: argparse.Namespace) -> int:
         source_dir = args.source_dir.resolve(strict=True)
         source = validate_release_source(source_dir, args.release_tag, os.environ.get("GITHUB_SHA", ""))
         report.update(source)
+        package_lock_snapshots = snapshot_macos_package_locks(source_dir)
+        report["macos_swift_package_locks"] = macos_package_lock_receipt(
+            package_lock_snapshots, restored=False)
         team = os.environ.get(TEAM_SECRET, "")
         if not re.fullmatch(r"[A-Z0-9]{10}", team):
             raise ValueError("APPLE_TEAM_ID is missing or invalid")
@@ -811,12 +820,22 @@ def run_build(args: argparse.Namespace) -> int:
                 report["profile"] = {"type": PROFILE_TYPE, "uuid": profile_uuid}
                 report["capacity_preflights"].append(
                     capacity_preflight(capacity_roots, BUILD_CAPACITY_GIB))
-                package_path, receipt = build_signed_package(
-                    source_dir, source, args.output_dir, args.archive_path, args.derived_data,
-                    keychain, team, app_certificate["fingerprint"], installer_certificate["fingerprint"],
-                    app_certificate["der"], profile_data, profile_uuid, stage)
+                try:
+                    with preserve_macos_package_locks(source_dir):
+                        package_path, receipt = build_signed_package(
+                            source_dir, source, args.output_dir, args.archive_path, args.derived_data,
+                            keychain, team, app_certificate["fingerprint"], installer_certificate["fingerprint"],
+                            app_certificate["der"], profile_data, profile_uuid, stage)
+                finally:
+                    locks_restored = macos_package_locks_match(package_lock_snapshots)
+                    report["macos_swift_package_locks"] = macos_package_lock_receipt(
+                        package_lock_snapshots, restored=locks_restored)
+                if not locks_restored:
+                    raise RuntimeError("Mac App Store build changed a frozen Swift package lockfile")
+                validate_release_source(source_dir, args.release_tag, os.environ.get("GITHUB_SHA", ""))
                 receipt["workflow_commit"] = os.environ.get("GITHUB_SHA", "")
                 receipt["capacity_preflights"] = report["capacity_preflights"]
+                receipt["macos_swift_package_locks"] = report["macos_swift_package_locks"]
                 receipt["signing_material"] = {
                     "persistent_service_keychain": KEYCHAIN_NAME,
                     "locked_after_job": True,

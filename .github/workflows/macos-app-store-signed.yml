@@ -137,8 +137,13 @@ jobs:
 
       - name: Refresh pinned mpv Swift packages
         env:
-          PLEAZYNG_APPLE_SOURCE_ROOT: ${{ github.workspace }}/source
-        run: scripts/refresh_apple_spm.sh macos
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+          python3 scripts/refresh_macos_app_store_spm.py \
+            --source-dir "$GITHUB_WORKSPACE/source" \
+            --release-tag "$RELEASE_TAG" \
+            --main-commit "$GITHUB_SHA"
 
       - name: Install the locked Fastlane bundle in runner temp
         shell: bash
