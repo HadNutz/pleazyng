@@ -747,9 +747,38 @@ def cleanup_simulator(device: dict[str, str]) -> None:
     run(["xcrun", "simctl", "delete", device["udid"]], timeout=120)
 
 
-def runner_signing_identity(derived_data: Path, target_bundle_id: str) -> tuple[Path, dict[str, Any], str, str]:
-    candidates: list[tuple[Path, dict[str, Any], str, int]] = []
+def runner_signing_identity(
+    derived_data: Path,
+    target_bundle_id: str,
+    evidence_dir: Path | None = None,
+) -> tuple[Path, dict[str, Any], str, str, dict[str, Any], Path | None]:
+    """Derive the simulator prefix from Xcode's observed simulated test entitlements.
+
+    Xcode 26 emits the test target's simulated entitlement file with the derived
+    Keychain group but without an ``application-identifier``. Read the actual
+    signed UI-test runner too and cross-check its application identifier when
+    one is present instead of inventing a missing value in Xcode's plist.
+    """
+    runner_apps = [path for path in derived_data.rglob("*-Runner.app") if path.is_dir()]
+    if len(runner_apps) != 1:
+        raise RuntimeError(f"Expected one signed UI-test runner app; found {len(runner_apps)}")
+    runner_app = runner_apps[0]
+    try:
+        with (runner_app / "Info.plist").open("rb") as source:
+            runner_info = plistlib.load(source)
+    except (OSError, plistlib.InvalidFileException) as error:
+        raise RuntimeError("The signed UI-test runner has no readable bundle identity") from error
+    runner_bundle_id = runner_info.get("CFBundleIdentifier") if isinstance(runner_info, dict) else None
+    accepted_runner_ids = {target_bundle_id, f"{target_bundle_id}.xctrunner"}
+    if runner_bundle_id not in accepted_runner_ids:
+        raise RuntimeError(f"The signed UI-test runner has an unexpected bundle identifier: {runner_bundle_id!r}")
+
+    signed_entitlements = codesign_entitlements(runner_app)
+    candidates: list[tuple[Path, dict[str, Any], str]] = []
+    expected_group_suffix = f".{target_bundle_id}"
     for path in derived_data.rglob("*.xcent"):
+        if not path.name.endswith("-Simulated.xcent"):
+            continue
         try:
             with path.open("rb") as source:
                 entitlements = plistlib.load(source)
@@ -757,31 +786,53 @@ def runner_signing_identity(derived_data: Path, target_bundle_id: str) -> tuple[
             continue
         if not isinstance(entitlements, dict):
             continue
-        application_identifier = entitlements.get("application-identifier")
-        if not isinstance(application_identifier, str):
+        groups = entitlements.get("keychain-access-groups")
+        if (not isinstance(groups, list) or len(groups) != 1
+                or not isinstance(groups[0], str) or not groups[0].endswith(expected_group_suffix)):
             continue
-        if application_identifier.endswith(f".{target_bundle_id}.xctrunner"):
-            runner_bundle_id = f"{target_bundle_id}.xctrunner"
-            candidates.append((path, entitlements, runner_bundle_id, 2))
-        elif application_identifier.endswith(f".{target_bundle_id}"):
-            candidates.append((path, entitlements, target_bundle_id, 1))
-    if candidates:
-        highest_priority = max(candidate[3] for candidate in candidates)
-        candidates = [candidate for candidate in candidates if candidate[3] == highest_priority]
+        prefix = groups[0][:-len(target_bundle_id)]
+        if not prefix.endswith(".") or re.fullmatch(r"[A-Za-z0-9]{10}\.", prefix) is None:
+            continue
+        application_identifier = entitlements.get("application-identifier")
+        if application_identifier is not None:
+            valid_ids = {
+                f"{prefix}{target_bundle_id}",
+                f"{prefix}{target_bundle_id}.xctrunner",
+            }
+            if application_identifier not in valid_ids:
+                raise RuntimeError("The simulated UI-test entitlement identity does not match its derived Keychain prefix")
+        candidates.append((path, entitlements, prefix))
+
     if len(candidates) != 1:
         raise RuntimeError(
-            f"Expected exactly one signed UI-test runner entitlement file for {target_bundle_id}; found {len(candidates)}"
+            f"Expected exactly one Xcode-simulated UI-test entitlement file for {target_bundle_id}; found {len(candidates)}"
         )
-    path, entitlements, runner_bundle_id, _ = candidates[0]
-    application_identifier = entitlements["application-identifier"]
-    prefix = application_identifier[:-len(runner_bundle_id)]
-    if re.fullmatch(r"[A-Za-z0-9-]+\.", prefix) is None:
-        raise RuntimeError("The UI-test runner application identifier has no valid simulator prefix")
-    groups = entitlements.get("keychain-access-groups")
-    if (not isinstance(groups, list) or not all(isinstance(group, str) for group in groups)
-            or application_identifier not in groups):
-        raise RuntimeError("The signed UI-test runner does not expose its own derived Keychain access group")
-    return path, entitlements, prefix, runner_bundle_id
+    path, entitlements, prefix = candidates[0]
+    signed_application_identifier = signed_entitlements.get("application-identifier")
+    if signed_application_identifier is not None:
+        valid_signed_ids = {
+            f"{prefix}{target_bundle_id}",
+            f"{prefix}{target_bundle_id}.xctrunner",
+        }
+        if signed_application_identifier not in valid_signed_ids:
+            raise RuntimeError("The signed UI-test runner application identifier disagrees with Xcode's simulated prefix")
+    signed_groups = signed_entitlements.get("keychain-access-groups")
+    if signed_groups is not None:
+        allowed_groups = {f"{prefix}{target_bundle_id}", f"{prefix}{runner_bundle_id}"}
+        if (not isinstance(signed_groups, list) or not all(isinstance(group, str) for group in signed_groups)
+                or len(signed_groups) > 1 or not set(signed_groups).issubset(allowed_groups)):
+            raise RuntimeError("The signed UI-test runner exposes an unexpected Keychain access group")
+
+    if evidence_dir is not None:
+        evidence_dir.mkdir(parents=True, exist_ok=True)
+        preserved_xcent = evidence_dir / "ui-test-runner-simulated-entitlements.xcent"
+        shutil.copyfile(path, preserved_xcent)
+        signed_entitlements_path = evidence_dir / "ui-test-runner-code-signature-entitlements.plist"
+        signed_entitlements_path.write_bytes(plistlib.dumps(signed_entitlements, fmt=plistlib.FMT_XML, sort_keys=True))
+        path = preserved_xcent
+    else:
+        signed_entitlements_path = None
+    return path, entitlements, prefix, runner_bundle_id, signed_entitlements, signed_entitlements_path
 
 
 def derive_ios_simulator_entitlements(
@@ -791,14 +842,18 @@ def derive_ios_simulator_entitlements(
     product_bundle_id: str,
 ) -> tuple[dict[str, Any], str, str]:
     runner_identifier = runner_entitlements.get("application-identifier")
-    if not isinstance(runner_identifier, str) or not runner_identifier.endswith(f".{runner_bundle_id}"):
-        raise ValueError("The UI-test runner application identifier does not match its declared bundle ID")
-    prefix = runner_identifier[:-len(runner_bundle_id)]
     runner_groups = runner_entitlements.get("keychain-access-groups")
-    if not isinstance(runner_groups, list) or runner_identifier not in runner_groups:
-        raise ValueError("The UI-test runner application identifier is not a signed Keychain access group")
-    if re.fullmatch(r"[A-Za-z0-9-]+\.", prefix) is None:
-        raise ValueError("The UI-test runner application identifier has an invalid derived prefix")
+    group_bundle_id = runner_bundle_id.removesuffix(".xctrunner")
+    if (not isinstance(runner_groups, list) or len(runner_groups) != 1
+            or not isinstance(runner_groups[0], str) or not runner_groups[0].endswith(f".{group_bundle_id}")):
+        raise ValueError("The Xcode-simulated UI-test Keychain group does not match its owned test bundle")
+    prefix = runner_groups[0][:-len(group_bundle_id)]
+    if re.fullmatch(r"[A-Za-z0-9]{10}\.", prefix) is None:
+        raise ValueError("The Xcode-simulated UI-test Keychain group has an invalid derived prefix")
+    if runner_identifier is not None:
+        valid_ids = {f"{prefix}{group_bundle_id}", f"{prefix}{runner_bundle_id}"}
+        if runner_identifier not in valid_ids:
+            raise ValueError("The UI-test runner application identifier disagrees with its Keychain group prefix")
 
     with base_entitlements_path.open("rb") as source:
         base = plistlib.load(source)
@@ -838,6 +893,8 @@ def sign_ios_app_for_simulator(
     runner_xcent: Path,
     runner_entitlements: dict[str, Any],
     runner_bundle_id: str,
+    runner_signed_entitlements: dict[str, Any],
+    runner_signed_entitlements_path: Path,
     signing_state: dict[str, Any] | None,
 ) -> dict[str, Any]:
     derived, prefix, product_identifier = derive_ios_simulator_entitlements(
@@ -856,8 +913,11 @@ def sign_ios_app_for_simulator(
         run(["/usr/bin/codesign", "--verify", "--deep", "--strict", str(app)], timeout=300)
         signed_entitlements = codesign_entitlements(app)
         if (signed_entitlements.get("application-identifier") != product_identifier
-                or signed_entitlements.get("keychain-access-groups") != [product_identifier]):
+                or signed_entitlements.get("keychain-access-groups") != [product_identifier]
+                or set(signed_entitlements) != {"application-identifier", "keychain-access-groups"}):
             raise RuntimeError("Ad-hoc simulator signature does not contain the derived product Keychain group")
+        if (app / "embedded.mobileprovision").exists():
+            raise RuntimeError("The simulator-only app unexpectedly contains a provisioning profile")
         derived_digest = sha256_tree(app)
         signing_state = {
             "derived_application_identifier": product_identifier,
@@ -866,8 +926,12 @@ def sign_ios_app_for_simulator(
             "entitlements_sha256": sha256_file(entitlements_path),
             "entitlements_source_sha256": sha256_file(base_entitlements_path),
             "runner_xcent_sha256": sha256_file(runner_xcent),
-            "runner_application_identifier": runner_entitlements["application-identifier"],
+            "runner_xcent_filename": runner_xcent.name,
+            "runner_signed_entitlements_sha256": sha256_file(runner_signed_entitlements_path),
+            "runner_application_identifier": runner_signed_entitlements.get("application-identifier"),
             "runner_keychain_access_groups": runner_entitlements["keychain-access-groups"],
+            "runner_signed_keychain_access_groups": runner_signed_entitlements.get("keychain-access-groups"),
+            "runner_simulated_keychain_group_source": "Xcode-generated -Simulated.xcent; application-identifier may be absent",
             "runner_bundle_id": runner_bundle_id,
             "signing_mode": "ad-hoc simulator-only (-); source artifact remains unsigned and unchanged",
             "signature_verified": True,
@@ -880,8 +944,24 @@ def sign_ios_app_for_simulator(
         run(["/usr/bin/codesign", "--verify", "--deep", "--strict", str(app)], timeout=300)
         signed_entitlements = codesign_entitlements(app)
         if (signed_entitlements.get("application-identifier") != product_identifier
-                or signed_entitlements.get("keychain-access-groups") != [product_identifier]):
+                or signed_entitlements.get("keychain-access-groups") != [product_identifier]
+                or set(signed_entitlements) != {"application-identifier", "keychain-access-groups"}):
             raise RuntimeError("The reused simulator signature no longer has the expected product Keychain group")
+        if (app / "embedded.mobileprovision").exists():
+            raise RuntimeError("The simulator-only app unexpectedly contains a provisioning profile")
+
+    signature_entitlements_path = output / f"{Path(filename).stem}.simulator-signature-entitlements.plist"
+    signature_entitlements_path.write_bytes(
+        plistlib.dumps(signed_entitlements, fmt=plistlib.FMT_XML, sort_keys=True)
+    )
+    signing_state["derived_signature_entitlements_sha256"] = sha256_file(signature_entitlements_path)
+    signing_state["derived_signature_entitlements_filename"] = signature_entitlements_path.name
+    signing_state["source_keychain_access_groups"] = []
+    signing_state["derived_signature_keychain_access_groups"] = signed_entitlements["keychain-access-groups"]
+    signing_state["entitlement_expansion"] = (
+        "Empty project entitlement group list expanded only for this ad-hoc Simulator signature to the "
+        "derived product application identifier and matching default Keychain group."
+    )
 
     provenance = {
         "schema_version": 1,
@@ -903,6 +983,7 @@ def sign_ios_app_for_simulator(
         "product_entitlements_file": "ios/Runner/DebugProfile.entitlements",
         "product_entitlements_file_sha256": signing_state["entitlements_source_sha256"],
         "test_runner_entitlements_sha256": signing_state["runner_xcent_sha256"],
+        "derived_signature_entitlements_sha256": signing_state["derived_signature_entitlements_sha256"],
         "derived_app_bundle_sha256": signing_state["derived_app_bundle_sha256"],
         "qualification": "Simulator-only diagnostic signature; not an App Store signed or uploadable product artifact.",
     }
@@ -1015,11 +1096,23 @@ def run_app_in_use_ui_test(
         runner_entitlements: dict[str, Any] = {}
         derived_prefix = None
         runner_bundle_id = None
+        runner_signed_entitlements: dict[str, Any] = {}
+        runner_signed_entitlements_path: Path | None = None
         if platform == "iOS":
-            runner_xcent, runner_entitlements, derived_prefix, runner_bundle_id = runner_signing_identity(
-                derived_data, "org.snapetech.pleazyng.capture-ui-tests"
+            (
+                runner_xcent,
+                runner_entitlements,
+                derived_prefix,
+                runner_bundle_id,
+                runner_signed_entitlements,
+                runner_signed_entitlements_path,
+            ) = runner_signing_identity(
+                derived_data,
+                "org.snapetech.pleazyng.capture-ui-tests",
+                output,
             )
-            if (simulator_entitlements is None or build_receipt is None or build_receipt_digest is None):
+            if (simulator_entitlements is None or build_receipt is None or build_receipt_digest is None
+                    or runner_signed_entitlements_path is None):
                 raise ValueError("iOS Keychain capture requires the approved product entitlements and producer receipt")
             signing_state = sign_ios_app_for_simulator(
                 app,
@@ -1033,6 +1126,8 @@ def run_app_in_use_ui_test(
                 runner_xcent,
                 runner_entitlements,
                 runner_bundle_id,
+                runner_signed_entitlements,
+                runner_signed_entitlements_path,
                 signing_state,
             )
         run(["xcrun", "simctl", "install", simulator_udid, str(app)], timeout=180)
@@ -1097,7 +1192,10 @@ def run_app_in_use_ui_test(
             "project_sha256": sha256_file(project_spec),
             "test_source_sha256": sha256_file(test_source),
             "test_runner_entitlements_sha256": sha256_file(runner_xcent) if runner_xcent is not None else None,
-            "test_runner_application_identifier": runner_entitlements.get("application-identifier"),
+            "test_runner_application_identifier": runner_signed_entitlements.get("application-identifier"),
+            "test_runner_code_signature_entitlements_sha256": (
+                sha256_file(runner_signed_entitlements_path) if runner_signed_entitlements_path is not None else None
+            ),
             "simulator_application_identifier_prefix": derived_prefix,
             "test_identifier": matches[0].get("suggestedHumanReadableName"),
             "test_target_bundle_id": "org.snapetech.pleazyng.capture-ui-tests",
