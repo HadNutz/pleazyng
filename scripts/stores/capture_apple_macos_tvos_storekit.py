@@ -331,7 +331,7 @@ def verify_build_identity(platform: str, app: Path, receipt_path: Path, producer
     app_hash = capture_tools.sha256_tree(app)
     if receipt.get("app_bundle_sha256") != app_hash:
         raise ValueError("Retained app bundle hash differs from the exact producer receipt")
-    if (receipt.get("bundle_id"), receipt.get("version"), receipt.get("build_number"), receipt.get("executable")) != (
+    if (receipt.get("bundle_id"), receipt.get("product_version"), receipt.get("product_build"), receipt.get("executable")) != (
         identity["bundle_id"], identity["version"], identity["build_number"], identity["executable"]
     ):
         raise ValueError("Retained app identity differs from its producer receipt")

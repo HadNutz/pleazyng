@@ -3,10 +3,12 @@
 
 from __future__ import annotations
 
+import json
 import plistlib
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 import capture_apple_macos_tvos_storekit as capture
 
@@ -18,6 +20,48 @@ WORKFLOW = (ROOT / ".github/workflows/apple-store-screenshots.yml").read_text(en
 
 
 class StoreKitReviewCaptureTests(unittest.TestCase):
+    def test_build_identity_uses_the_producer_receipt_schema_version_fields(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            app = root / "Pleazyng.app"
+            contents = app / "Contents"
+            contents.mkdir(parents=True)
+            (contents / "Info.plist").write_bytes(plistlib.dumps({
+                "CFBundleIdentifier": capture.BUNDLE_ID,
+                "CFBundleShortVersionString": capture.VERSION,
+                "CFBundleVersion": capture.BUILD_NUMBER,
+                "CFBundleExecutable": "Pleazyng",
+            }))
+            app_hash = capture.capture_tools.sha256_tree(app)
+            receipt = {
+                "bundle_id": capture.BUNDLE_ID,
+                "product_version": capture.VERSION,
+                "product_build": capture.BUILD_NUMBER,
+                "executable": "Pleazyng",
+                "app_bundle_sha256": app_hash,
+            }
+            receipt_path = root / "build-provenance.json"
+            receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+
+            with patch.dict("os.environ", {"GITHUB_REPOSITORY": "snapetech-org/pleazyng"}), patch.object(
+                capture.capture_tools, "validate_build_receipt", return_value="Pleazyng.app"
+            ) as validate:
+                validated_receipt, identity = capture.verify_build_identity(
+                    "macos", app, receipt_path, "44062395003", "1"
+                )
+
+            self.assertEqual(validated_receipt, receipt)
+            self.assertEqual(identity["version"], capture.VERSION)
+            self.assertEqual(identity["build_number"], capture.BUILD_NUMBER)
+            validate.assert_called_once_with(
+                receipt,
+                platform="macos",
+                producer_repository="snapetech-org/pleazyng",
+                producer_run_id="44062395003",
+                producer_run_attempt="1",
+                capture_tools_sha="",
+            )
+
     def test_platform_targets_use_the_native_api_minimums_and_only_test_resources(self) -> None:
         macos = capture.ui_test_project_spec("macos")
         tvos = capture.ui_test_project_spec("tvos")
