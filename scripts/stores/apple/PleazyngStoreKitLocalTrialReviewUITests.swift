@@ -13,7 +13,7 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
   private let trialProductID = "pleazyng_7_day_trial"
   private let lifetimeProductID = "pleazyng_lifetime_unlock"
 
-  func testCaptureTrialBackedFilesBooksAndAccessSheet() async throws {
+  func testCaptureTrialBackedFilesBooksAndAccessSheet() throws {
     let configurationURL = try XCTUnwrap(
       Bundle(for: PleazyngStoreKitLocalTrialReviewUITests.self).url(
         forResource: "pleazyng-trial-review",

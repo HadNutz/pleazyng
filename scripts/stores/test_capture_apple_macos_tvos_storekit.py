@@ -478,6 +478,8 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
     def test_product_ui_starts_local_trial_and_never_buys_lifetime(self) -> None:
         self.assertIn("import StoreKitTest", UI_TEST)
         self.assertIn("SKTestSession(contentsOf: configurationURL)", UI_TEST)
+        self.assertIn("func testCaptureTrialBackedFilesBooksAndAccessSheet() throws {", UI_TEST)
+        self.assertNotIn("func testCaptureTrialBackedFilesBooksAndAccessSheet() async", UI_TEST)
         self.assertIn('let trialButton = app.buttons["Start my 7-day free trial"]', UI_TEST)
         self.assertIn("select(trialButton, in: app)", UI_TEST)
         self.assertLess(UI_TEST.index("app.launch()"), UI_TEST.index("select(trialButton, in: app)"))
