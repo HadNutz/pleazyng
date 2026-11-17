@@ -13,7 +13,6 @@ import os
 from pathlib import Path
 import plistlib
 import re
-import secrets
 import shlex
 import shutil
 import subprocess
@@ -46,7 +45,8 @@ CERTIFICATE_PASSWORD_SECRET = "APPLE_CERTIFICATE_PASSWORD"
 APP_CERTIFICATE_TYPE = "MAC_APP_DISTRIBUTION"
 INSTALLER_CERTIFICATE_TYPE = "MAC_INSTALLER_DISTRIBUTION"
 PROFILE_TYPE = "MAC_APP_STORE"
-KEYCHAIN_NAME = "Pleazyng-Mac-App-Store.keychain-db"
+APP_KEYCHAIN_NAME = "Pleazyng-Mac-App-Store.keychain-db"
+INSTALLER_KEYCHAIN_NAME = "Pleazyng-Mac-App-Store-Installer-v2.keychain-db"
 PENDING_DIRECTORY = Path("Library/Application Support/Pleazyng/MacAppStoreSigning/pending")
 PROFILE_DIRECTORY = Path("Library/MobileDevice/Provisioning Profiles")
 EXPECTED_ARCHITECTURES = {"arm64", "x86_64"}
@@ -228,44 +228,58 @@ def _is_active_certificate(item: dict, *, now: datetime | None = None) -> bool:
 
 
 @contextmanager
-def persistent_signing_keychain(report: dict):
-    """Use one dedicated locked-at-rest keychain owned by the private Mac user."""
+def persistent_signing_keychains(report: dict):
+    """Keep the existing app keychain and isolate the installer key in a new one."""
     if sys.platform != "darwin":
         raise RuntimeError("Mac App Store signing requires the native private Mac runner")
     password = _keychain_password()
-    keychain = Path.home() / "Library/Keychains" / KEYCHAIN_NAME
-    keychain.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
-    if keychain.is_symlink():
-        raise ValueError("Refusing a symlink at the persistent Mac App Store keychain path")
+    keychain_directory = Path.home() / "Library/Keychains"
+    keychain_directory.mkdir(mode=0o700, parents=True, exist_ok=True)
+    app_keychain = keychain_directory / APP_KEYCHAIN_NAME
+    installer_keychain = keychain_directory / INSTALLER_KEYCHAIN_NAME
+    if app_keychain.is_symlink() or installer_keychain.is_symlink():
+        raise ValueError("Refusing a symlink at a persistent Mac App Store keychain path")
+    if not app_keychain.is_file():
+        raise ValueError("The existing Mac App Store App signing keychain is unavailable")
     original_search_list = shlex.split(signing_run(["security", "list-keychains", "-d", "user"]).decode())
-    created = False
+    installer_created = False
     try:
-        if not keychain.exists():
-            signing_run(["security", "create-keychain", "-p", password, str(keychain)])
-            created = True
-            signing_run(["security", "set-keychain-settings", "-lut", "14400", "-u", str(keychain)])
-        if not keychain.is_file():
-            raise ValueError("Persistent Mac App Store keychain is not a regular file")
-        os.chmod(keychain, 0o600)
-        signing_run(["security", "unlock-keychain", "-p", password, str(keychain)])
-        names = _keychain_identity_names(keychain)
-        accepted = ("mac app distribution", "mac installer distribution",
-                    "3rd party mac developer application", "3rd party mac developer installer")
-        if any(not any(token in name.lower() for token in accepted) for name in names):
-            raise ValueError("Dedicated Mac App Store keychain contains an unrelated signing identity; refusing to alter its ACLs")
-        signing_run(["security", "list-keychains", "-d", "user", "-s", str(keychain), *original_search_list])
-        if names:
-            signing_run(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:",
-                         "-s", "-k", password, str(keychain)])
-        report["persistent_keychain"] = str(keychain)
-        report["persistent_keychain_created"] = created
-        yield keychain
+        if not installer_keychain.exists():
+            signing_run(["security", "create-keychain", "-p", password, str(installer_keychain)])
+            installer_created = True
+            signing_run(["security", "set-keychain-settings", "-lut", "14400", "-u", str(installer_keychain)])
+        if not installer_keychain.is_file():
+            raise ValueError("Persistent Mac App Store Installer keychain is not a regular file")
+        for keychain in (app_keychain, installer_keychain):
+            os.chmod(keychain, 0o600)
+            signing_run(["security", "unlock-keychain", "-p", password, str(keychain)])
+
+        app_names = _keychain_identity_names(app_keychain)
+        installer_names = _keychain_identity_names(installer_keychain)
+        accepted = ("3rd party mac developer application", "3rd party mac developer installer")
+        if any(not any(token in name.lower() for token in accepted) for name in app_names):
+            raise ValueError("Existing Mac App Store App keychain contains an unrelated signing identity")
+        if any("3rd party mac developer installer" not in name.lower() for name in installer_names):
+            raise ValueError("New Mac App Store Installer keychain contains an unrelated signing identity")
+
+        # Put the dedicated Installer keychain first for Xcode export, while
+        # project code signing receives the existing App keychain explicitly.
+        signing_run(["security", "list-keychains", "-d", "user", "-s",
+                     str(installer_keychain), str(app_keychain), *original_search_list])
+        report["persistent_keychains"] = {
+            "app": str(app_keychain),
+            "installer": str(installer_keychain),
+            "installer_created": installer_created,
+        }
+        yield {"app": app_keychain, "installer": installer_keychain,
+               "installer_created": installer_created}
     finally:
         try:
             signing_run(["security", "list-keychains", "-d", "user", "-s", *original_search_list])
         finally:
-            if keychain.exists():
-                signing_run(["security", "lock-keychain", str(keychain)])
+            for keychain in (installer_keychain, app_keychain):
+                if keychain.exists():
+                    signing_run(["security", "lock-keychain", str(keychain)])
 
 
 def _identity_policy(certificate_type: str) -> str:
@@ -316,46 +330,6 @@ def _pending_key_for_certificate(certificate_type: str, certificate_der: bytes, 
     return matches[0] if matches else None
 
 
-def _make_pending_key(certificate_type: str, *, fresh: bool = False,
-                      reuse_key: Path | None = None) -> tuple[Path, Path]:
-    pending = _pending_directory()
-    stem = certificate_type.lower().replace("_", "-")
-    if reuse_key is not None:
-        key_path = reuse_key
-        csr_path = key_path.with_name(key_path.name.removesuffix(".key.pem") + ".csr")
-    elif fresh:
-        nonce = secrets.token_hex(6)
-        key_path, csr_path = pending / f"{stem}-{nonce}.key.pem", pending / f"{stem}-{nonce}.csr"
-    else:
-        key_path, csr_path = pending / f"{stem}.key.pem", pending / f"{stem}.csr"
-    if (key_path.exists() and key_path.is_symlink()) or (csr_path.exists() and csr_path.is_symlink()):
-        raise ValueError("Refusing a symlink in the private Apple certificate recovery directory")
-    if (key_path.exists() and not key_path.is_file()) or (csr_path.exists() and not csr_path.is_file()):
-        raise ValueError("Private Apple certificate recovery material has an unexpected file type")
-    if not key_path.exists():
-        if csr_path.exists():
-            raise ValueError("Apple certificate recovery CSR exists without its private key; preserving it for review")
-        previous_umask = os.umask(0o077)
-        try:
-            _capture(["openssl", "req", "-new", "-newkey", "rsa:2048", "-nodes",
-                      "-keyout", str(key_path), "-out", str(csr_path),
-                      "-subj", "/CN=Pleazyng Mac App Store/O=Snapetech/OU=DM9A59DC85/C=CA"])
-        finally:
-            os.umask(previous_umask)
-        os.chmod(key_path, 0o600)
-        os.chmod(csr_path, 0o600)
-    elif not csr_path.exists():
-        _capture(["openssl", "req", "-new", "-key", str(key_path), "-out", str(csr_path),
-                  "-subj", "/CN=Pleazyng Mac App Store/O=Snapetech/OU=DM9A59DC85/C=CA"])
-        os.chmod(csr_path, 0o600)
-    if key_path.stat().st_mode & 0o077 or csr_path.stat().st_mode & 0o077:
-        raise ValueError("Private Apple certificate recovery files must be mode 0600")
-    csr_public_key = _public_key_der(_capture(["openssl", "req", "-in", str(csr_path), "-pubkey", "-noout"]))
-    if csr_public_key != _private_key_public_key(key_path):
-        raise ValueError("Apple certificate recovery CSR does not match its retained private key")
-    return key_path, csr_path
-
-
 def _pending_directory() -> Path:
     pending = Path.home() / PENDING_DIRECTORY
     _private_directory(pending)
@@ -381,7 +355,10 @@ def _import_certificate(keychain: Path, certificate_der: bytes, key_path: Path, 
         os.chmod(p12_path, 0o600)
         keychain_password = _keychain_password()
         signing_run(["security", "import", str(p12_path), "-k", str(keychain), "-P", private_password,
-                     "-T", "/usr/bin/codesign", "-T", "/usr/bin/productsign"])
+                     "-T", "/usr/bin/codesign", "-T", "/usr/bin/productbuild",
+                     "-T", "/usr/bin/productsign"])
+        # This importer is used only for the isolated Installer keychain. Its
+        # first import contains no other signing keys to modify.
         signing_run(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:",
                      "-s", "-k", keychain_password, str(keychain)])
     finally:
@@ -393,8 +370,9 @@ def _import_certificate(keychain: Path, certificate_der: bytes, key_path: Path, 
     return fingerprint
 
 
-def ensure_macos_certificates(api: AppleProfileAPI, keychain: Path, stage: Path) -> dict[str, dict]:
-    """Reuse exact local identities; create missing Mac Store certs without revocation."""
+def ensure_macos_certificates(api: AppleProfileAPI, keychains: dict[str, Path],
+                              stage: Path) -> dict[str, dict]:
+    """Require exact existing Apple certificates and local keys; never issue replacements."""
     all_certificates = api.items("/v1/certificates?limit=200")
     required = (APP_CERTIFICATE_TYPE, INSTALLER_CERTIFICATE_TYPE)
     inventories = {
@@ -408,6 +386,7 @@ def ensure_macos_certificates(api: AppleProfileAPI, keychain: Path, stage: Path)
     }
     result = {}
     for certificate_type in required:
+        keychain = keychains["app" if certificate_type == APP_CERTIFICATE_TYPE else "installer"]
         active = sorted(active_by_type[certificate_type],
                         key=lambda item: item.get("attributes", {}).get("expirationDate", ""), reverse=True)
         selected = None
@@ -421,8 +400,13 @@ def ensure_macos_certificates(api: AppleProfileAPI, keychain: Path, stage: Path)
                 break
         if selected:
             item, certificate_der, fingerprint, pending_key = selected
+            identity_present = _identity_present(keychain, fingerprint, certificate_type)
+            if certificate_type == APP_CERTIFICATE_TYPE and not identity_present:
+                raise ValueError(
+                    "The existing App Store App keychain does not contain its active App signing identity; "
+                    "refusing to create or import a replacement")
             if pending_key:
-                if not _identity_present(keychain, fingerprint, certificate_type):
+                if not identity_present and certificate_type == INSTALLER_CERTIFICATE_TYPE:
                     _import_certificate(keychain, certificate_der, pending_key, stage, certificate_type)
                 # Keep the matching 0600 recovery key and CSR alongside the
                 # persistent keychain so a future Mac migration can recover.
@@ -431,29 +415,14 @@ def ensure_macos_certificates(api: AppleProfileAPI, keychain: Path, stage: Path)
                                         "expiration": item.get("attributes", {}).get("expirationDate")}
             continue
 
-        # Existing certificates and profiles remain untouched. If no local
-        # key matches an active certificate, ask Apple for an additional
-        # certificate; Apple's own limit is the external gate. Never revoke.
-        pending_keys = _pending_key_paths(certificate_type)
-        if len(pending_keys) > 1:
-            raise ValueError(f"Multiple pending {certificate_type} private keys need owner review before a new request")
-        key_path, csr_path = _make_pending_key(
-            certificate_type,
-            fresh=not pending_keys,
-            reuse_key=pending_keys[0] if pending_keys else None,
-        )
-        body = {"data": {"type": "certificates", "attributes": {
-            "certificateType": certificate_type,
-            "csrContent": csr_path.read_text(encoding="ascii"),
-        }}}
-        created = api.request("/v1/certificates", body).get("data", {})
-        if not isinstance(created.get("id"), str) or not created["id"]:
-            raise ValueError("Apple did not return an identifier for the new Mac App Store certificate")
-        certificate_der = _certificate_data(created, certificate_type)
-        fingerprint = _import_certificate(keychain, certificate_der, key_path, stage, certificate_type)
-        result[certificate_type] = {"id": created.get("id"), "der": certificate_der,
-                                    "fingerprint": fingerprint,
-                                    "expiration": created.get("attributes", {}).get("expirationDate")}
+        if certificate_type == APP_CERTIFICATE_TYPE:
+            raise ValueError(
+                "No active App Store App certificate matches the existing App signing key; "
+                "refusing to create an App certificate or replace its private key")
+
+        raise ValueError(
+            f"No active {certificate_type} certificate matches the retained local signing identity; "
+            "refusing to create a certificate or replace its private key")
     return result
 
 
@@ -562,63 +531,64 @@ def _local_identity_record(keychain: Path, certificate_type: str, team: str) -> 
     return matches[0]
 
 
-def repair_existing_installer_key_access(keychain: Path, identity: dict[str, str], team: str,
-                                         stage: Path) -> dict[str, str]:
-    """Add productsign to the signing ACL of only the exact retained installer key."""
-    if identity["policy"] != "basic" or team not in identity["name"]:
-        raise ValueError("Refusing to change access for an unexpected installer identity")
-    if not re.fullmatch(r"[0-9A-F]{40}", identity["certificate_sha1"]):
-        raise ValueError("Refusing to change access for an installer identity without a valid certificate fingerprint")
-    helper_source = Path(__file__).with_name("repair_macos_installer_key_acl.m")
-    if not helper_source.is_file() or helper_source.is_symlink():
-        raise ValueError("The targeted Installer key ACL helper is missing or unsafe")
-    helper_binary = stage / "repair-macos-installer-key-acl"
-    _capture([
-        "/usr/bin/clang", "-fobjc-arc", "-Wno-deprecated-declarations",
-        str(helper_source), "-framework", "Foundation", "-framework", "Security",
-        "-o", str(helper_binary),
+def _certificate_from_keychain_identity(keychain: Path, identity: dict[str, str]) -> bytes:
+    pem_bundle = signing_run([
+        "security", "find-certificate", "-a", "-c", identity["name"], "-p", str(keychain),
     ])
-    helper_environment = os.environ.copy()
-    for secret_name in (CERTIFICATE_PASSWORD_SECRET, TEAM_SECRET, *API_SECRETS):
-        helper_environment.pop(secret_name, None)
-    helper_result = subprocess.run([
-        str(helper_binary), str(keychain), identity["certificate_sha1"],
-    ], env=helper_environment, capture_output=True, check=False)
-    if helper_result.returncode:
-        diagnostic = _safe_productsign_diagnostic(helper_result.stderr, identity["name"], team)
-        raise RuntimeError(
-            f"Targeted Installer key ACL repair failed (exit {helper_result.returncode}); {diagnostic}")
-    try:
-        repair_receipt = json.loads(helper_result.stdout)
-    except (json.JSONDecodeError, UnicodeDecodeError):
-        raise ValueError("Targeted Installer key ACL helper returned an invalid receipt") from None
-    if (repair_receipt.get("certificate_sha1") != identity["certificate_sha1"]
-            or repair_receipt.get("matching_private_keys") != 1
-            or not isinstance(repair_receipt.get("signing_acl_entries"), int)
-            or repair_receipt["signing_acl_entries"] < 1
-            or not isinstance(repair_receipt.get("productsign_acl_additions"), int)
-            or not repair_receipt.get("productsign_trusted_for_signing")):
-        raise ValueError("Targeted Installer key ACL helper did not verify the exact signing key")
-    identity_output = signing_run([
-        "security", "find-identity", "-v", "-p", "basic", str(keychain)
-    ]).decode()
-    entries = [match for line in identity_output.splitlines()
-               if (match := re.match(r'\s*\d+\) ([0-9A-F]{40}) "([^"]+)"', line))
-               and match.group(1) == identity["certificate_sha1"]
-               and match.group(2) == identity["name"]]
-    if len(entries) != 1:
-        raise ValueError(
-            "Additive Installer ACL repair did not leave exactly one matching identity entry; "
-            "all keychain items are preserved")
-    repaired_identity = _local_identity_record(keychain, INSTALLER_CERTIFICATE_TYPE, team)
-    if repaired_identity["certificate_sha1"] != identity["certificate_sha1"]:
-        raise ValueError("Installer identity changed during the additive access repair")
-    repaired_identity["acl_signing_entries"] = str(repair_receipt["signing_acl_entries"])
-    repaired_identity["productsign_acl_additions"] = str(repair_receipt["productsign_acl_additions"])
-    return repaired_identity
+    pem_certificates = re.findall(
+        rb"-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----", pem_bundle, re.DOTALL)
+    matching = []
+    for pem in pem_certificates:
+        certificate_der = signing_run(
+            ["openssl", "x509", "-inform", "PEM", "-outform", "DER"], data=pem)
+        if certificate_fingerprint(certificate_der) == identity["certificate_sha1"]:
+            matching.append(certificate_der)
+    if len(matching) != 1:
+        raise ValueError("Could not extract exactly one certificate matching the existing Installer identity")
+    return matching[0]
 
 
-def _test_local_signing_identities(keychain: Path, app_identity: dict[str, str],
+def migrate_installer_identity(app_keychain: Path, installer_keychain: Path, team: str,
+                               stage: Path, *, installer_keychain_created: bool) -> dict[str, object]:
+    """Copy the same retained Installer key into its new, isolated keychain."""
+    existing_identity = _local_identity_record(app_keychain, INSTALLER_CERTIFICATE_TYPE, team)
+    certificate_der = _certificate_from_keychain_identity(app_keychain, existing_identity)
+    key_path = _pending_key_for_certificate(INSTALLER_CERTIFICATE_TYPE, certificate_der, stage)
+    if key_path is None:
+        raise ValueError("The retained Installer private key does not match its existing certificate")
+
+    if _identity_present(installer_keychain, existing_identity["certificate_sha1"],
+                         INSTALLER_CERTIFICATE_TYPE):
+        migrated_identity = _local_identity_record(
+            installer_keychain, INSTALLER_CERTIFICATE_TYPE, team)
+        if migrated_identity["certificate_sha1"] != existing_identity["certificate_sha1"]:
+            raise ValueError("Installer keychain contains a different certificate identity")
+        imported = False
+    else:
+        if not installer_keychain_created:
+            raise ValueError(
+                "The existing Installer v2 keychain lacks the expected identity; preserving its contents")
+        _import_certificate(installer_keychain, certificate_der, key_path, stage,
+                            INSTALLER_CERTIFICATE_TYPE)
+        migrated_identity = _local_identity_record(
+            installer_keychain, INSTALLER_CERTIFICATE_TYPE, team)
+        if migrated_identity["certificate_sha1"] != existing_identity["certificate_sha1"]:
+            raise ValueError("Installer v2 keychain did not retain the exact existing identity")
+        imported = True
+
+    return {
+        "source_app_keychain": APP_KEYCHAIN_NAME,
+        "installer_keychain": INSTALLER_KEYCHAIN_NAME,
+        "installer_keychain_created": installer_keychain_created,
+        "same_existing_certificate_sha1": existing_identity["certificate_sha1"],
+        "recovery_private_key_matches_certificate": True,
+        "same_existing_installer_key_imported": imported,
+        "legacy_keychain_items_modified": False,
+    }
+
+
+def _test_local_signing_identities(app_keychain: Path, installer_keychain: Path,
+                                   app_identity: dict[str, str],
                                    installer_identity: dict[str, str], team: str,
                                    stage: Path) -> dict:
     """Exercise both signing tools with temporary, non-product payloads."""
@@ -639,7 +609,7 @@ def _test_local_signing_identities(keychain: Path, app_identity: dict[str, str],
         }, stream)
     signing_run([
         "/usr/bin/codesign", "--force", "--sign", app_identity["certificate_sha1"],
-        "--keychain", str(keychain), "--timestamp=none", str(app_path),
+        "--keychain", str(app_keychain), "--timestamp=none", str(app_path),
     ])
     signing_run(["/usr/bin/codesign", "--verify", "--strict", "--deep", str(app_path)])
 
@@ -657,7 +627,7 @@ def _test_local_signing_identities(keychain: Path, app_identity: dict[str, str],
         # productsign(1) names the installer identity by its certificate common
         # name; unlike codesign, it does not accept the SHA-1 fingerprint here.
         "/usr/bin/productsign", "--sign", installer_identity["name"],
-        "--keychain", str(keychain), str(unsigned_package), str(signed_package),
+        "--keychain", str(installer_keychain), str(unsigned_package), str(signed_package),
     ], check=False, capture_output=True)
     if productsign.returncode:
         diagnostic = _safe_productsign_diagnostic(
@@ -692,7 +662,7 @@ def _safe_productsign_diagnostic(stderr: bytes, identity_name: str, team: str) -
 def run_local_signing_preflight(source_dir: Path, source: dict[str, str], team: str,
                                 output_dir: Path, report_path: Path, report: dict,
                                 package_lock_snapshots: tuple[dict, ...]) -> int:
-    """Repair installer key ACL and verify identities without Apple API or product builds."""
+    """Migrate the existing Installer identity and sign probes without Apple API or product builds."""
     if output_dir.exists() or output_dir.is_symlink():
         raise FileExistsError("Refusing to overwrite a Mac App Store signing preflight output")
     output_dir.mkdir(mode=0o700, parents=True)
@@ -706,33 +676,28 @@ def run_local_signing_preflight(source_dir: Path, source: dict[str, str], team: 
     ], SIGNING_CAPACITY_GIB)]
     report["macos_swift_package_locks"] = macos_package_lock_receipt(
         package_lock_snapshots, restored=True)
-    with persistent_signing_keychain(report) as keychain:
-        app_identity = _local_identity_record(keychain, APP_CERTIFICATE_TYPE, team)
-        installer_identity = _local_identity_record(keychain, INSTALLER_CERTIFICATE_TYPE, team)
+    with persistent_signing_keychains(report) as keychains:
+        app_keychain = keychains["app"]
+        installer_keychain = keychains["installer"]
+        app_identity = _local_identity_record(app_keychain, APP_CERTIFICATE_TYPE, team)
+        with tempfile.TemporaryDirectory(prefix="pleazyng-macos-installer-migration-",
+                                         dir=output_dir) as migration_temporary:
+            migration = migrate_installer_identity(
+                app_keychain, installer_keychain, team, Path(migration_temporary),
+                installer_keychain_created=keychains["installer_created"])
+        installer_identity = _local_identity_record(
+            installer_keychain, INSTALLER_CERTIFICATE_TYPE, team)
+        report["installer_keychain_migration"] = migration
         report["signing_identities"] = {
             APP_CERTIFICATE_TYPE: app_identity,
             INSTALLER_CERTIFICATE_TYPE: installer_identity,
         }
-        with tempfile.TemporaryDirectory(prefix="pleazyng-macos-key-access-repair-",
-                                         dir=output_dir) as repair_temporary:
-            installer_identity = repair_existing_installer_key_access(
-                keychain, installer_identity, team, Path(repair_temporary))
-        report["installer_private_key_access_repair"] = {
-            "certificate_sha1": installer_identity["certificate_sha1"],
-            "same_retained_key_and_certificate": True,
-            "signing_acl_entries": int(installer_identity["acl_signing_entries"]),
-            "productsign_acl_additions": int(installer_identity["productsign_acl_additions"]),
-            "productsign_allowed": False,
-            "prior_identity_deleted": False,
-        }
-        report["signing_identities"][INSTALLER_CERTIFICATE_TYPE] = installer_identity
         with tempfile.TemporaryDirectory(prefix="pleazyng-macos-signing-preflight-",
                                          dir=output_dir) as temporary:
             smoke_tests = _test_local_signing_identities(
-                keychain, app_identity, installer_identity, team, Path(temporary))
+                app_keychain, installer_keychain, app_identity, installer_identity,
+                team, Path(temporary))
         report["local_signing_tests"] = smoke_tests
-        report["installer_private_key_access_repair"]["productsign_allowed"] = bool(
-            smoke_tests["installer_package_signed_and_verified"])
     report["qualification"] = {
         "app_archive_built": False,
         "app_store_package_exported": False,
@@ -912,7 +877,8 @@ def validate_source_entitlements(source_dir: Path) -> None:
 
 
 def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: Path,
-                         archive_path: Path, derived_data: Path, keychain: Path,
+                         archive_path: Path, derived_data: Path,
+                         app_keychain: Path, installer_keychain: Path,
                          team: str, app_fingerprint: str, installer_fingerprint: str,
                          app_certificate: bytes, profile_data: bytes,
                          profile_uuid: str, stage: Path) -> tuple[Path, dict]:
@@ -941,7 +907,7 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
         installed_profiles = install_profile(profile_data, profile_uuid)
         project = plistlib.loads(_capture(["plutil", "-convert", "xml1", "-o", "-", str(project_path)]))
         configure_project(project, team=team, app_fingerprint=app_fingerprint,
-                          profile_uuid=profile_uuid, keychain=keychain)
+                          profile_uuid=profile_uuid, keychain=app_keychain)
         project_path.write_bytes(plistlib.dumps(project, sort_keys=False))
         _capture(["plutil", "-lint", str(project_path)])
         source_packages = source_dir / "build/macos/SourcePackages"
@@ -1057,13 +1023,19 @@ def run_build(args: argparse.Namespace) -> int:
             ("persistent-keychain", Path.home() / "Library/Keychains"),
         ]
         report["capacity_preflights"] = [capacity_preflight(capacity_roots, SIGNING_CAPACITY_GIB)]
-        with persistent_signing_keychain(report) as keychain:
+        with persistent_signing_keychains(report) as keychains:
             with tempfile.TemporaryDirectory(prefix="pleazyng-macos-app-store-") as temporary:
                 stage = Path(temporary)
                 stage.chmod(0o700)
-                ensure_wwdr_intermediate(keychain, stage)
+                app_keychain = keychains["app"]
+                installer_keychain = keychains["installer"]
+                migration = migrate_installer_identity(
+                    app_keychain, installer_keychain, team, stage,
+                    installer_keychain_created=keychains["installer_created"])
+                report["installer_keychain_migration"] = migration
+                ensure_wwdr_intermediate(installer_keychain, stage)
                 api = AppleProfileAPI(_apple_api_token(stage))
-                certificates = ensure_macos_certificates(api, keychain, stage)
+                certificates = ensure_macos_certificates(api, keychains, stage)
                 app_certificate = certificates[APP_CERTIFICATE_TYPE]
                 installer_certificate = certificates[INSTALLER_CERTIFICATE_TYPE]
                 report["apple_certificates"] = {
@@ -1080,7 +1052,8 @@ def run_build(args: argparse.Namespace) -> int:
                     with preserve_macos_package_locks(source_dir):
                         package_path, receipt = build_signed_package(
                             source_dir, source, args.output_dir, args.archive_path, args.derived_data,
-                            keychain, team, app_certificate["fingerprint"], installer_certificate["fingerprint"],
+                            app_keychain, installer_keychain, team,
+                            app_certificate["fingerprint"], installer_certificate["fingerprint"],
                             app_certificate["der"], profile_data, profile_uuid, stage)
                 finally:
                     locks_restored = macos_package_locks_match(package_lock_snapshots)
@@ -1092,8 +1065,13 @@ def run_build(args: argparse.Namespace) -> int:
                 receipt["workflow_commit"] = os.environ.get("GITHUB_SHA", "")
                 receipt["capacity_preflights"] = report["capacity_preflights"]
                 receipt["macos_swift_package_locks"] = report["macos_swift_package_locks"]
+                receipt["installer_keychain_migration"] = report["installer_keychain_migration"]
+                receipt["persistent_keychains"] = report["persistent_keychains"]
                 receipt["signing_material"] = {
-                    "persistent_service_keychain": KEYCHAIN_NAME,
+                    "persistent_service_keychains": {
+                        "app": APP_KEYCHAIN_NAME,
+                        "installer": INSTALLER_KEYCHAIN_NAME,
+                    },
                     "locked_after_job": True,
                     "app_certificate_sha1": app_certificate["fingerprint"],
                     "installer_certificate_sha1": installer_certificate["fingerprint"],

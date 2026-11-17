@@ -69,28 +69,32 @@ IAP build mode, and signs the universal app and installer for the exact bundle
 `org.snapetech.pleazyng`. It uses the configured App Store Connect API key,
 team ID and certificate-password secret; it does not need a new signing secret.
 
-The lane inventories Apple certificates and reuses an exact local identity when
-available. If an active Mac App Distribution or Mac Installer Distribution
-certificate has no local private key, the workflow requests a separate
-certificate through the Apple API. It never revokes or replaces an existing
-certificate. Apple's account certificate limit is an external gate. The CSR
-private key and CSR stay mode `0600` in the service user's recovery directory
-and are imported into `~/Library/Keychains/Pleazyng-Mac-App-Store.keychain-db`.
-This dedicated service keychain persists between signed releases and is locked
-when each job ends. The workflow preserves the user's original keychain search
-list and existing provisioning profiles.
+The lane inventories Apple certificates and requires an exact match for the
+retained local App and Installer identities. It does not request replacement
+certificates or generate new signing keys. The Installer CSR, private key and
+CSR stay mode `0600` in the service user's recovery directory.
+The existing App identity remains in
+`~/Library/Keychains/Pleazyng-Mac-App-Store.keychain-db`. The Installer identity
+uses `~/Library/Keychains/Pleazyng-Mac-App-Store-Installer-v2.keychain-db`;
+the workflow imports the same retained Installer key and matching public
+certificate into that new dedicated keychain. It leaves both identities in the
+original keychain untouched. Both service keychains persist between signed
+releases and are locked when each job ends. The workflow restores the user's
+original keychain search list and preserves existing provisioning profiles.
 
 Set the manual workflow's `preflight_only` input to verify the existing App and
 Installer identities before an archive. It signs a temporary app bundle and
 installer package locally, verifies both, and uploads only a public preflight
-receipt. Preflight matches the Installer private key to its certificate, then
-adds `/usr/bin/productsign` to that key's signing ACL while preserving all
-existing trusted applications, authorization entries and prompt settings. It
-does not delete the existing identity, create certificates or profiles, build
-Pleazyng, or call App Store Connect. The receipt says `productsign_allowed`
-only after the temporary package signature verifies with `pkgutil`. The normal
-workflow mode performs the signed app build and upload after preflight
-succeeds. Before export, it also checks that the embedded
+receipt. Preflight checks that the retained Installer key matches the
+certificate in the original keychain, imports that same pair once into the new
+Installer keychain with explicit `/usr/bin/productsign` and
+`/usr/bin/productbuild` access, and signs a temporary app and package using
+the separate keychains. The package signature must verify with `pkgutil` before
+the receipt says `productsign_allowed`. It does not modify the original
+keychain, delete or replace identities, create certificates or profiles, build
+Pleazyng, or call App Store Connect. The normal workflow mode performs the
+signed app build and upload after preflight succeeds. Before export, it also
+checks that the embedded
 `PlezyTorrent.framework` has its expected bundle identity and valid
 `CFBundleShortVersionString` and `CFBundleVersion` metadata.
 
