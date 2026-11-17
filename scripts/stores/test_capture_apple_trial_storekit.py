@@ -421,8 +421,19 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
         self.assertIn('afterFreshRelaunch', UI_TEST)
         self.assertIn('originalTransactionIdentifier', UI_TEST)
         self.assertIn('app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Home"))', UI_TEST)
-        self.assertIn('let profilesMenu = app.buttons["Profiles"]', UI_TEST)
-        self.assertIn('let settingsItem = app.buttons["Settings"]', UI_TEST)
+        self.assertIn(
+            'app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Profiles")).firstMatch',
+            UI_TEST,
+        )
+        self.assertIn("Read, listen, and watch from your own files", UI_TEST)
+        self.assertIn(
+            'NSPredicate(format: "label CONTAINS %@", "Settings")).firstMatch',
+            UI_TEST,
+        )
+        self.assertIn(
+            'NSPredicate(format: "label CONTAINS %@", "Restore lifetime purchase")',
+            UI_TEST,
+        )
         self.assertIn('trial-settings-home-accessibility-localtest', UI_TEST)
         self.assertIn('trial-settings-profiles-menu-accessibility-localtest', UI_TEST)
         self.assertNotIn("session.buyProduct", UI_TEST)

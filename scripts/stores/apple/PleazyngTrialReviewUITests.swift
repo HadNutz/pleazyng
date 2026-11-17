@@ -69,7 +69,9 @@ final class PleazyngTrialReviewUITests: XCTestCase {
         XCTAssertTrue(addSource.waitForExistence(timeout: 60), "The actual local Files and Books screen did not open")
         XCTAssertTrue(app.buttons["Import files"].exists, "The actual local screen is missing its import action")
         XCTAssertTrue(
-            app.staticTexts.containing(NSPredicate(format: "label CONTAINS[c] %@", "Add a source or import a book"))
+            app.staticTexts.containing(
+                NSPredicate(format: "label CONTAINS[c] %@", "Read, listen, and watch from your own files")
+            )
                 .firstMatch.exists,
             "Expected the real empty local library state with no server or seeded media"
         )
@@ -79,11 +81,12 @@ final class PleazyngTrialReviewUITests: XCTestCase {
         let homeTab = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Home")).firstMatch
         XCTAssertTrue(homeTab.waitForExistence(timeout: 30), "The real Home navigation action was not available")
         homeTab.tap()
-        let profilesMenu = app.buttons["Profiles"]
+        // The icon font contributes a leading `F\n` to this button's accessibility label.
+        let profilesMenu = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Profiles")).firstMatch
         XCTAssertTrue(profilesMenu.waitForExistence(timeout: 30), "The real Profiles menu was not available on Home")
         attachAccessibilityHierarchy(of: app, named: "trial-settings-home-accessibility-localtest")
         profilesMenu.tap()
-        let settingsItem = app.buttons["Settings"]
+        let settingsItem = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Settings")).firstMatch
         XCTAssertTrue(
             settingsItem.waitForExistence(timeout: 30),
             "The real Settings action was not available in the Profiles menu"
@@ -96,7 +99,9 @@ final class PleazyngTrialReviewUITests: XCTestCase {
         XCTAssertTrue(lifetimeTile.waitForExistence(timeout: 60), "The actual lifetime-access Settings row was not available")
         lifetimeTile.tap()
 
-        let restoreButton = app.buttons["Restore lifetime purchase"]
+        let restoreButton = app.buttons.matching(
+            NSPredicate(format: "label CONTAINS %@", "Restore lifetime purchase")
+        ).firstMatch
         XCTAssertTrue(restoreButton.waitForExistence(timeout: 60), "The real lifetime sheet did not show Restore")
         XCTAssertTrue(localLifetimePrice.waitForExistence(timeout: 60), "The real lifetime sheet lost the queried price")
         let activeTrial = app.staticTexts["Your 7-day full-feature trial is active."]
