@@ -23,44 +23,60 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
     def test_build_identity_uses_the_producer_receipt_schema_version_fields(self) -> None:
         with TemporaryDirectory() as temporary:
             root = Path(temporary)
-            app = root / "Pleazyng.app"
-            contents = app / "Contents"
-            contents.mkdir(parents=True)
-            (contents / "Info.plist").write_bytes(plistlib.dumps({
-                "CFBundleIdentifier": capture.BUNDLE_ID,
-                "CFBundleShortVersionString": capture.VERSION,
-                "CFBundleVersion": capture.BUILD_NUMBER,
-                "CFBundleExecutable": "Pleazyng",
-            }))
-            app_hash = capture.capture_tools.sha256_tree(app)
-            receipt = {
-                "bundle_id": capture.BUNDLE_ID,
-                "product_version": capture.VERSION,
-                "product_build": capture.BUILD_NUMBER,
-                "executable": "Pleazyng",
-                "app_bundle_sha256": app_hash,
-            }
-            receipt_path = root / "build-provenance.json"
-            receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+            repository = "snapetech-org/pleazyng"
+            for platform in ("macos", "tvos"):
+                with self.subTest(platform=platform):
+                    app = root / capture.PLATFORM[platform]["app_bundle"]
+                    executable = "Pleazyng" if platform == "macos" else "Runner"
+                    info_path = app / "Contents" / "Info.plist" if platform == "macos" else app / "Info.plist"
+                    info_path.parent.mkdir(parents=True)
+                    info_path.write_bytes(plistlib.dumps({
+                        "CFBundleIdentifier": capture.BUNDLE_ID,
+                        "CFBundleShortVersionString": capture.VERSION,
+                        "CFBundleVersion": capture.BUILD_NUMBER,
+                        "CFBundleExecutable": executable,
+                    }))
+                    app_hash = capture.capture_tools.sha256_tree(app)
+                    receipt = {
+                        "schema_version": 1,
+                        "product": "Pleazyng",
+                        "source_tag": capture.SOURCE_TAG,
+                        "source_sha": capture.SOURCE_SHA,
+                        "capture_tools_sha": "e6d6c24dbe612c156f583969d05d4fd19b8b3874",
+                        "producer_repository": repository,
+                        "producer_workflow_ref": f"{repository}/{capture.capture_tools.WORKFLOW_PATH}@refs/heads/main",
+                        "producer_run_id": "44062395003",
+                        "producer_run_attempt": "1",
+                        "product_version": capture.VERSION,
+                        "product_build": capture.BUILD_NUMBER,
+                        "platform": "macOS" if platform == "macos" else "tvOS Simulator",
+                        "build_mode": "App Store IAP",
+                        "build_configuration": capture.capture_tools.BUILD_CONFIGURATION[platform],
+                        "app_bundle_name": app.name,
+                        "bundle_id": capture.BUNDLE_ID,
+                        "executable": executable,
+                        "architectures": ["arm64", "x86_64"] if platform == "macos" else ["arm64"],
+                        "build_host_architecture": "X64",
+                        "build_defines": (
+                            capture.capture_tools.IOS_MAC_STORE_DEFINES
+                            if platform == "macos" else capture.capture_tools.TVOS_STORE_DEFINES
+                        ),
+                        "app_bundle_sha256": app_hash,
+                        "distribution_signing": "disabled",
+                        "qualification": "Compiled application bundle only; not a signed or uploadable store product.",
+                    }
+                    receipt_path = root / f"{platform}-build-provenance.json"
+                    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
 
-            with patch.dict("os.environ", {"GITHUB_REPOSITORY": "snapetech-org/pleazyng"}), patch.object(
-                capture.capture_tools, "validate_build_receipt", return_value="Pleazyng.app"
-            ) as validate:
-                validated_receipt, identity = capture.verify_build_identity(
-                    "macos", app, receipt_path, "44062395003", "1"
-                )
+                    with patch.dict("os.environ", {"GITHUB_REPOSITORY": repository}):
+                        validated_receipt, identity = capture.verify_build_identity(
+                            platform, app, receipt_path, "44062395003", "1"
+                        )
 
-            self.assertEqual(validated_receipt, receipt)
-            self.assertEqual(identity["version"], capture.VERSION)
-            self.assertEqual(identity["build_number"], capture.BUILD_NUMBER)
-            validate.assert_called_once_with(
-                receipt,
-                platform="macos",
-                producer_repository="snapetech-org/pleazyng",
-                producer_run_id="44062395003",
-                producer_run_attempt="1",
-                capture_tools_sha="",
-            )
+                    self.assertEqual(validated_receipt, receipt)
+                    self.assertEqual(identity["version"], capture.VERSION)
+                    self.assertEqual(identity["build_number"], capture.BUILD_NUMBER)
+                    self.assertEqual(identity["executable"], executable)
 
     def test_platform_targets_use_the_native_api_minimums_and_only_test_resources(self) -> None:
         macos = capture.ui_test_project_spec("macos")
