@@ -62,6 +62,21 @@ void main() {
     }
   });
 
+  test('AV2 direct play follows the loaded decoder across engine changes', () async {
+    RuntimePlaybackCapabilities.recordMpvDecoders([
+      {'codec': 'av2', 'driver': 'libdav2d'},
+    ]);
+    expect(VideoDecodeCapabilities.directPlayVideoCodecs, contains('av2'));
+    expect(VideoDecodeCapabilities.transcodeVideoCodecs.map((codec) => codec.id), isNot(contains('av2')));
+    await RuntimePlaybackCapabilities.withVideoEngine('tizen', () async {
+      expect(VideoDecodeCapabilities.directPlayVideoCodecs, isNot(contains('av2')));
+    });
+    RuntimePlaybackCapabilities.recordMpvDecoders([
+      {'codec': 'h264', 'driver': 'h264'},
+    ]);
+    expect(VideoDecodeCapabilities.directPlayVideoCodecs, isNot(contains('av2')));
+  });
+
   test('long-tail source decoders are advertised without becoming encode targets', () {
     RuntimePlaybackCapabilities.recordMpvDecoders([
       for (final codec in ['h264', 'hevc', 'vc1', 'mpeg1video', 'prores', 'vvc', 'rv40'])
@@ -181,7 +196,7 @@ void main() {
   });
 
   test('new and legacy media reach source browsing without claiming decode support', () {
-    for (final extension in ['.vvc', '.ivf', '.apv', '.jxl', '.nut', '.bik', '.dvr-ms', '.m2t']) {
+    for (final extension in ['.vvc', '.ivf', '.obu', '.apv', '.jxl', '.nut', '.bik', '.dvr-ms', '.m2t']) {
       expect(classifySourceFile('sample$extension'), SourceItemKind.video);
     }
     for (final extension in ['.tak', '.tta', '.shn', '.dts', '.truehd', '.aifc']) {

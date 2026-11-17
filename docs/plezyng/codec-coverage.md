@@ -119,16 +119,14 @@ build, PCM ABI, packaging and publication gates. The SDK implementation and
 notices are bundled; end users do not install a decoder SDK. Physical-device,
 real-time, HDR and codec-profile qualification remains separate.
 Native webOS/Tizen/ExoPlayer backends do not gain this SDK from mpv packaging.
-AV2 v1.0.0 is final. VideoLAN's May 2026 status describes dav2d as a
-functional early decoder with 8/10-bit decoding, while conformance,
-optimization and platform support remain active work. The pinned FFmpeg has
-no AV2 codec ID, decoder wrapper or demuxer integration, so filename or
-server-metadata recognition cannot enable local AV2 playback. Current mpv
-inventories therefore exclude AV2. When a valid inventory shows no source
-decoder, Jellyfin/Emby playback requests a compatible server conversion; if
-none is offered, the client reports the unsupported source instead of retrying
-the same file. Sources: [AV2 v1.0 specification](https://av2.aomedia.org/),
-[VideoLAN dav2d status](https://jbkempf.com/blog/2026/dav2d/).
+AV2 direct play requires a loaded mpv engine reporting the AV2 decoder. The
+native producer integrates VideoLAN dav2d with FFmpeg for AV02 IVF and raw
+OBU streams. The Linux reference check covers 130 frames and a one-second
+IVF seek. File discovery recognizes the raw `.av2` and `.obu` extensions.
+Clients running older native packages still request an available server
+conversion for AV2. Native TV and Android platform engines negotiate separately.
+[Decoder source](https://code.videolan.org/videolan/dav2d).
+[FFmpeg decoder and demuxer proposal](https://code.ffmpeg.org/FFmpeg/FFmpeg/pulls/23018).
 
 Fraunhofer's MPEG-H decoder SDK is public; a private SDK login is not the
 missing dependency. The pinned FFmpeg integration classifies `libmpeghdec` as
