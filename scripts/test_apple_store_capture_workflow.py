@@ -33,7 +33,51 @@ def named_step_condition(job: str, name: str) -> str:
     raise AssertionError(f"Missing workflow step: {name}")
 
 
+def named_step_text(job: str, name: str) -> str:
+    lines = job.splitlines()
+    for index, line in enumerate(lines):
+        if line.strip() != f"- name: {name}":
+            continue
+        end = index + 1
+        while end < len(lines) and not lines[end].startswith("      - "):
+            end += 1
+        return "\n".join(lines[index:end])
+    raise AssertionError(f"Missing workflow step: {name}")
+
+
 class AppleStoreCaptureWorkflowRoutingTests(unittest.TestCase):
+    def test_build_receipt_follows_the_restored_or_fresh_app_bundle(self) -> None:
+        for platform, fresh_path in (
+            ("ios", "$GITHUB_WORKSPACE/build/ios/iphonesimulator/Pleazyng.app"),
+            ("tvos", "$RUNNER_TEMP/apple-store-tvos-derived/Build/Products/Debug-appletvsimulator/Runner.app"),
+            ("macos", "$RUNNER_TEMP/apple-store-macos-candidate/Pleazyng.xcarchive/Products/Applications/Pleazyng.app"),
+        ):
+            job = job_text(platform, "tvos" if platform == "ios" else "macos" if platform == "tvos" else "package")
+            restored_path = f"$RUNNER_TEMP/apple-store-build-{platform}-restored/build-provenance.json"
+            fresh_receipt = f"$RUNNER_TEMP/apple-store-build-{platform}/build-provenance.json"
+
+            self.assertIn(f"APPLE_STORE_BUILD_RECEIPT={restored_path}", job, platform)
+            self.assertIn(f"APPLE_STORE_BUILD_RECEIPT={fresh_receipt}", job, platform)
+            self.assertIn(f"--build-receipt \"$APPLE_STORE_BUILD_RECEIPT\"", job, platform)
+            self.assertEqual(job.count('--build-receipt "$APPLE_STORE_BUILD_RECEIPT"'), {"ios": 1, "tvos": 1, "macos": 3}[platform])
+            self.assertNotIn(f"--build-receipt \"{restored_path}\"", job, platform)
+
+            restore_name = {
+                "ios": "Validate and restore prior iOS build",
+                "tvos": "Validate and restore prior tvOS build",
+                "macos": "Validate and restore prior macOS build",
+            }[platform]
+            restore_step = named_step_text(job, restore_name)
+            self.assertIn(f"APPLE_STORE_BUILD_RECEIPT={restored_path}", restore_step, platform)
+            preserve_name = {
+                "ios": "Preserve the compiled iOS Simulator app before capture",
+                "tvos": "Preserve the compiled tvOS Simulator app before capture",
+                "macos": "Preserve the compiled unsigned Mac app before capture",
+            }[platform]
+            preserve_step = named_step_text(job, preserve_name)
+            self.assertIn(f"APPLE_STORE_APP_PATH={fresh_path}", preserve_step, platform)
+            self.assertIn(f"APPLE_STORE_BUILD_RECEIPT={fresh_receipt}", preserve_step, platform)
+
     def test_tvos_in_use_capture_restores_bundle_and_never_builds_or_preserves_a_new_one(self) -> None:
         tvos = job_text("tvos", "macos")
         self.assertIn("inputs.target == 'tvos-in-use-capture-only'", tvos)

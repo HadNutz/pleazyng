@@ -129,6 +129,7 @@ jobs:
             --expected-capture-tools-sha "$PRODUCER_TOOLS_SHA" \
             --output-dir "$RUNNER_TEMP/apple-store-build-ios-restored"
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-build-ios-restored/Pleazyng.app" >> "$GITHUB_ENV"
+          echo "APPLE_STORE_BUILD_RECEIPT=$RUNNER_TEMP/apple-store-build-ios-restored/build-provenance.json" >> "$GITHUB_ENV"
 
       - name: Install the UI capture project generator
         if: inputs.target == 'app-in-use-capture-only' || inputs.target == 'ios-in-use-capture-only'
@@ -225,6 +226,7 @@ jobs:
             --platform ios \
             --output-dir "$RUNNER_TEMP/apple-store-build-ios"
           echo "APPLE_STORE_APP_PATH=$GITHUB_WORKSPACE/build/ios/iphonesimulator/Pleazyng.app" >> "$GITHUB_ENV"
+          echo "APPLE_STORE_BUILD_RECEIPT=$RUNNER_TEMP/apple-store-build-ios/build-provenance.json" >> "$GITHUB_ENV"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only' && inputs.target != 'ios-in-use-capture-only'
@@ -254,7 +256,7 @@ jobs:
           python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-ios-in-use \
             --product-root "$GITHUB_WORKSPACE" \
             --app "$APPLE_STORE_APP_PATH" \
-            --build-receipt "$RUNNER_TEMP/apple-store-build-ios-restored/build-provenance.json" \
+            --build-receipt "$APPLE_STORE_BUILD_RECEIPT" \
             --simulator-entitlements "$GITHUB_WORKSPACE/capture-tools/ios/Runner/DebugProfile.entitlements" \
             --extension-entitlements "$GITHUB_WORKSPACE/native/games/romm/apple/extension/RommWorker.entitlements" \
             --output-dir "$RUNNER_TEMP/apple-store-in-use-captures-ios"
@@ -349,6 +351,7 @@ jobs:
             --expected-capture-tools-sha "$PRODUCER_TOOLS_SHA" \
             --output-dir "$RUNNER_TEMP/apple-store-build-tvos-restored"
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-build-tvos-restored/Runner.app" >> "$GITHUB_ENV"
+          echo "APPLE_STORE_BUILD_RECEIPT=$RUNNER_TEMP/apple-store-build-tvos-restored/build-provenance.json" >> "$GITHUB_ENV"
 
       - name: Install the UI capture project generator
         if: inputs.target == 'app-in-use-capture-only' || inputs.target == 'tvos-in-use-capture-only' || inputs.target == 'macos-tvos-in-use-producer-only'
@@ -477,6 +480,7 @@ jobs:
             --platform tvos \
             --output-dir "$RUNNER_TEMP/apple-store-build-tvos"
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-tvos-derived/Build/Products/Debug-appletvsimulator/Runner.app" >> "$GITHUB_ENV"
+          echo "APPLE_STORE_BUILD_RECEIPT=$RUNNER_TEMP/apple-store-build-tvos/build-provenance.json" >> "$GITHUB_ENV"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: always() && inputs.target != 'capture-only' && inputs.target != 'app-in-use-capture-only' && inputs.target != 'tvos-in-use-capture-only'
@@ -506,7 +510,7 @@ jobs:
           python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-tvos-in-use \
             --product-root "$GITHUB_WORKSPACE" \
             --app "$APPLE_STORE_APP_PATH" \
-            --build-receipt "$RUNNER_TEMP/apple-store-build-tvos-restored/build-provenance.json" \
+            --build-receipt "$APPLE_STORE_BUILD_RECEIPT" \
             --output-dir "$RUNNER_TEMP/apple-store-in-use-captures-tvos"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
@@ -599,6 +603,7 @@ jobs:
             --expected-capture-tools-sha "$PRODUCER_TOOLS_SHA" \
             --output-dir "$RUNNER_TEMP/apple-store-build-macos-restored"
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-build-macos-restored/Pleazyng.app" >> "$GITHUB_ENV"
+          echo "APPLE_STORE_BUILD_RECEIPT=$RUNNER_TEMP/apple-store-build-macos-restored/build-provenance.json" >> "$GITHUB_ENV"
 
       - name: Load pinned Flutter SDK
         if: inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only' && inputs.target != 'macos-in-use-capture-only' && inputs.target != 'macos-in-use-diagnostic-only'
@@ -682,6 +687,7 @@ jobs:
             --platform macos \
             --output-dir "$RUNNER_TEMP/apple-store-build-macos"
           echo "APPLE_STORE_APP_PATH=$RUNNER_TEMP/apple-store-macos-candidate/Pleazyng.xcarchive/Products/Applications/Pleazyng.app" >> "$GITHUB_ENV"
+          echo "APPLE_STORE_BUILD_RECEIPT=$RUNNER_TEMP/apple-store-build-macos/build-provenance.json" >> "$GITHUB_ENV"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: always() && inputs.target != 'capture-only' && inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only' && inputs.target != 'macos-in-use-capture-only' && inputs.target != 'macos-in-use-diagnostic-only'
@@ -711,7 +717,7 @@ jobs:
           python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-macos-paywall \
             --product-root "$GITHUB_WORKSPACE" \
             --app "$APPLE_STORE_APP_PATH" \
-            --build-receipt "$RUNNER_TEMP/apple-store-build-macos-restored/build-provenance.json" \
+            --build-receipt "$APPLE_STORE_BUILD_RECEIPT" \
             --output-dir "$RUNNER_TEMP/apple-store-iap-review-paywall"
 
       - name: Capture the local Files and Books screen and real Mac lifetime-access sheet
@@ -722,7 +728,7 @@ jobs:
           python3 capture-tools/scripts/capture_apple_store_screenshots.py capture-macos-in-use \
             --product-root "$GITHUB_WORKSPACE" \
             --app "$APPLE_STORE_APP_PATH" \
-            --build-receipt "$RUNNER_TEMP/apple-store-build-macos-restored/build-provenance.json" \
+            --build-receipt "$APPLE_STORE_BUILD_RECEIPT" \
             --output-dir "$RUNNER_TEMP/apple-store-in-use-captures-macos"
 
       - name: Diagnose the retained Mac app without rebuilding
@@ -733,7 +739,7 @@ jobs:
           python3 capture-tools/scripts/capture_apple_store_screenshots.py diagnose-macos-in-use \
             --product-root "$GITHUB_WORKSPACE" \
             --app "$APPLE_STORE_APP_PATH" \
-            --build-receipt "$RUNNER_TEMP/apple-store-build-macos-restored/build-provenance.json" \
+            --build-receipt "$APPLE_STORE_BUILD_RECEIPT" \
             --output-dir "$RUNNER_TEMP/apple-store-in-use-diagnostics-macos"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
