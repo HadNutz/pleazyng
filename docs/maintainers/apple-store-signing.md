@@ -109,6 +109,10 @@ submit App Review. A processed upload does not qualify sandbox/JIT runtime,
 StoreKit purchase and restore, screenshots, or Apple review. The first signed
 run remains an external signing and account qualification gate.
 
+Apple's decoded `MAC_APP_STORE` profile payload uses the exact platform token
+`OSX`; the profile validator requires that one-element platform list alongside
+the App Store Connect API's `MAC_OS` profile platform.
+
 For a profile-only diagnosis, dispatch the same workflow with
 `profile_inspection_only=true`. That mode runs on public hosted Linux, validates
 the immutable tag first, and makes only Apple API GET requests. Its bounded

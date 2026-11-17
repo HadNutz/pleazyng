@@ -466,8 +466,8 @@ def validate_macos_profile(profile: dict, *, team: str, certificate: bytes) -> s
     if (not separator or prefix != team or suffix.casefold() != EXPECTED_BUNDLE_ID.casefold()
             or profile.get("TeamIdentifier") != [team]):
         raise ValueError("Mac App Store profile does not match the team and exact Pleazyng bundle ID")
-    if "macOS" not in profile.get("Platform", []):
-        raise ValueError("Provisioning profile platform is not macOS")
+    if profile.get("Platform") != ["OSX"]:
+        raise ValueError("Mac App Store profile payload platform must be exactly OSX")
     if certificate not in profile.get("DeveloperCertificates", []):
         raise ValueError("Mac App Store profile does not include the selected Mac App Distribution certificate")
     expires = profile.get("ExpirationDate")

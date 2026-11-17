@@ -34,7 +34,7 @@ class MacAppStoreProfileTests(unittest.TestCase):
             "UUID": UUID,
             "TeamIdentifier": [TEAM],
             "DeveloperCertificates": [CERTIFICATE],
-            "Platform": ["macOS"],
+            "Platform": ["OSX"],
             "ExpirationDate": datetime.now(timezone.utc) + timedelta(days=100),
             "Entitlements": {"application-identifier": f"{TEAM}.{BUNDLE}"},
         }
@@ -55,6 +55,10 @@ class MacAppStoreProfileTests(unittest.TestCase):
                 profile[key] = value
                 with self.assertRaises(ValueError):
                     store.validate_macos_profile(profile, team=TEAM, certificate=CERTIFICATE)
+        profile = self.profile()
+        profile["Platform"] = ["OSX", "iOS"]
+        with self.assertRaisesRegex(ValueError, "exactly OSX"):
+            store.validate_macos_profile(profile, team=TEAM, certificate=CERTIFICATE)
         profile = self.profile()
         profile["Entitlements"]["application-identifier"] = f"{TEAM}.org.snapetech.other"
         with self.assertRaises(ValueError):
