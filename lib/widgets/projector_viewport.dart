@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../i18n/strings.g.dart';
 import '../services/settings_service.dart';
+import 'app_icon.dart';
 import 'settings_builder.dart';
 
 final _calibrating = ValueNotifier(false);
@@ -189,7 +191,7 @@ class _ProjectorSetupScreenState extends State<ProjectorSetupScreen> {
                             children: [
                               IconButton(
                                 tooltip: t.accessibility.decrease,
-                                icon: const Icon(Icons.remove),
+                                icon: const AppIcon(Symbols.remove_rounded),
                                 onPressed: () => _adjust(-2),
                               ),
                               Focus(
@@ -225,7 +227,7 @@ class _ProjectorSetupScreenState extends State<ProjectorSetupScreen> {
                               ),
                               IconButton(
                                 tooltip: t.accessibility.increase,
-                                icon: const Icon(Icons.add),
+                                icon: const AppIcon(Symbols.add_rounded),
                                 onPressed: () => _adjust(2),
                               ),
                             ],

@@ -1,226 +1,226 @@
 {
   "locales": {
     "ar": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 313,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "az": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 351,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "bg": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 312,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "bn": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 311,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "cs": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 356,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "da": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 433,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "de": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 455,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "en": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
-      "sameAsEnglish": 5533,
+      "sameAsEnglish": 5555,
       "englishFallbacks": 0
     },
     "es": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 381,
-      "englishFallbacks": 1300
+      "englishFallbacks": 1322
     },
     "es-419": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": "es",
       "sameAsEnglish": 375,
-      "englishFallbacks": 1300
+      "englishFallbacks": 1322
     },
     "fa": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 315,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "fr": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 419,
-      "englishFallbacks": 1373
+      "englishFallbacks": 1395
     },
     "fr-CA": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": "fr",
       "sameAsEnglish": 412,
-      "englishFallbacks": 1373
+      "englishFallbacks": 1395
     },
     "he": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 319,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "hi": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 305,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "hu": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 354,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "id": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 359,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "it": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 413,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "ja": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 326,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "kk": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 329,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "ko": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 328,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "ms": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 344,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "nb": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 395,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "nl": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 460,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "pl": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 367,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "pt": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 391,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "pt-BR": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": "pt",
       "sameAsEnglish": 379,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "pt-PT": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": "pt",
       "sameAsEnglish": 380,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "ru": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 309,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "sv": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 403,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "th": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 316,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "tr": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 342,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "uk": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 303,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "uz": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 365,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "vi": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 333,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "zh": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 315,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     },
     "zh-Hant": {
-      "messages": 5533,
+      "messages": 5555,
       "inheritedFrom": null,
       "sameAsEnglish": 311,
-      "englishFallbacks": 1400
+      "englishFallbacks": 1422
     }
   },
   "errors": []

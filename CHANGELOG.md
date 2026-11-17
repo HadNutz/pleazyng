@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Use English for new living-room controls and guest jukebox messages until translations are reviewed.
+
 - Start or resume a focused video with the hardware Play key. Pleazyng independently adapted requests from [Plezy #1510](https://github.com/edde746/plezy/issues/1510) by [@enchained](https://github.com/enchained) and [Plezy #3038](https://github.com/edde746/plezy/issues/3038) by [@fillilutten](https://github.com/fillilutten).
 - Pause before jumping over a missing numbered episode and offer a matching copy when available. Independently adapted from [Jellyfin Android TV #4566](https://github.com/jellyfin/jellyfin-androidtv/issues/4566) by [@hufforguk](https://github.com/hufforguk).
 - Request Dolby Digital 5.1 audio for an older receiver while retaining compatible video. Independently adapted from [Plezy #3054](https://github.com/edde746/plezy/issues/3054) by [@abaginski](https://github.com/abaginski).
