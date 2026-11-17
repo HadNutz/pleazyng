@@ -17,6 +17,7 @@ import tarfile
 import tempfile
 import time
 import zipfile
+import zlib
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -39,6 +40,50 @@ BUILD_CONFIGURATION = {
     "ios": "Debug Simulator",
     "tvos": "Debug Simulator",
     "macos": "Release Archive",
+}
+LEGACY_BUILD_CONFIGURATION_EVIDENCE = {
+    ("8a11288cbdf4b67a26f888b54771eabcf1be1762", "ios"): {
+        "schema_version": 1,
+        "build_configuration": "Debug Simulator",
+        "evidence_source": "verified producer workflow build command",
+        "producer_tools_sha": "8a11288cbdf4b67a26f888b54771eabcf1be1762",
+        "workflow_path": WORKFLOW_PATH,
+        "workflow_blob_sha1": "18a951057abeb83bd9dab60d7d1e3e5e3b4f6967",
+        "workflow_sha256": "2fdd1039bdd3a2107cc223ff5bbff9adcb63185a487ef73f5b153a6ee2b54fb3",
+        "build_step": "Build the Store-mode iOS Simulator app",
+        "build_command": [
+            "flutter build ios --debug --simulator --no-codesign --no-pub",
+            "--dart-define=SUPPORTER_MODE=iap",
+            "--dart-define=ENABLE_UPDATE_CHECK=false",
+            "--dart-define=GIT_COMMIT=2388a06cc74d03e69ac7178fcd927a54460a5e3a",
+            "--dart-define=PLEAZYNG_DISCORD_APPLICATION_ID=",
+        ],
+        "app_output_path": "build/ios/iphonesimulator/Pleazyng.app",
+    },
+    ("496bc05789aca8a405f12611587e00ef92682451", "tvos"): {
+        "schema_version": 1,
+        "build_configuration": "Debug Simulator",
+        "evidence_source": "verified producer workflow build command",
+        "producer_tools_sha": "496bc05789aca8a405f12611587e00ef92682451",
+        "workflow_path": WORKFLOW_PATH,
+        "workflow_blob_sha1": "0fb60039b116a558e65917c7359c04735ccb3be9",
+        "workflow_sha256": "bd84105246ac0714ebbe28b6555f0ddcb782cf37782da894134be5c7f18dde74",
+        "build_step": "Build the Store-mode tvOS Simulator app",
+        "build_command": [
+            "xcodebuild build",
+            "-workspace tvos/Runner.xcworkspace",
+            "-scheme Runner",
+            "-configuration Debug",
+            "-sdk appletvsimulator",
+            "-destination generic/platform=tvOS Simulator",
+            "-derivedDataPath $RUNNER_TEMP/apple-store-tvos-derived",
+            "-clonedSourcePackagesDirPath $RUNNER_TEMP/apple-store-tvos-source-packages",
+            "ARCHS=arm64",
+            "CODE_SIGNING_ALLOWED=NO",
+            "COMPILER_INDEX_STORE_ENABLE=NO",
+        ],
+        "app_output_path": "apple-store-tvos-derived/Build/Products/Debug-appletvsimulator/Runner.app",
+    },
 }
 SIMULATOR_SETTLE_SECONDS = 25
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -72,6 +117,35 @@ final class PleazyngAppInUseCaptureTests: XCTestCase {
             "The empty local library state is missing"
         )
 
+        #if os(iOS)
+        let keychainSuccess = app.descendants(matching: .any).matching(
+            NSPredicate(format: "label CONTAINS[c] %@", "Connections stay private to this profile and encrypted on this device")
+        ).firstMatch
+        let keychainFailure = app.descendants(matching: .any).matching(
+            NSPredicate(format: "label CONTAINS[c] %@", "Couldn't unlock the saved streaming settings")
+        ).firstMatch
+        let initialDeadline = Date().addingTimeInterval(30)
+        while !keychainSuccess.exists && !keychainFailure.exists && Date() < initialDeadline {
+            Thread.sleep(forTimeInterval: 0.25)
+        }
+        XCTAssertTrue(keychainSuccess.exists || keychainFailure.exists, "Fresh keychain state did not settle")
+        XCTAssertFalse(keychainFailure.exists, "Fresh protected settings write/read failed on iOS")
+        XCTAssertTrue(keychainSuccess.exists, "The fresh profile's protected settings did not load")
+
+        app.terminate()
+        app.launch()
+        let librariesTab = app.buttons["Libraries"]
+        XCTAssertTrue(librariesTab.waitForExistence(timeout: 60), "The Libraries tab did not return after relaunch")
+        librariesTab.tap()
+        let relaunchDeadline = Date().addingTimeInterval(30)
+        while !keychainSuccess.exists && !keychainFailure.exists && Date() < relaunchDeadline {
+            Thread.sleep(forTimeInterval: 0.25)
+        }
+        XCTAssertTrue(keychainSuccess.exists || keychainFailure.exists, "Persisted keychain state did not settle after relaunch")
+        XCTAssertFalse(keychainFailure.exists, "Persisted protected settings failed to decrypt after relaunch")
+        XCTAssertTrue(keychainSuccess.exists, "Persisted protected settings were not readable after relaunch")
+        #endif
+
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         attachment.name = "pleazyng-app-in-use-screen"
         attachment.lifetime = .keepAlways
@@ -90,6 +164,49 @@ def run(command: list[str], *, capture: bool = False, timeout: int = 300) -> str
         timeout=timeout,
     )
     return result.stdout.strip() if capture else ""
+
+
+def capture_ios_keychain_diagnostics(simulator_udid: str, output: Path, filename: str) -> dict[str, Any]:
+    """Keep only app/keychain daemon diagnostics from the fresh iOS capture simulator."""
+    log_path = output / f"{Path(filename).stem}.simulator-keychain.log"
+    predicate = (
+        '(process == "Pleazyng" AND (eventMessage CONTAINS[c] "keychain" '
+        'OR eventMessage CONTAINS[c] "secure storage" OR eventMessage CONTAINS[c] "errSec" '
+        'OR eventMessage CONTAINS[c] "34018" OR eventMessage CONTAINS[c] "security")) '
+        'OR (process == "securityd" AND (eventMessage CONTAINS[c] "org.snapetech.pleazyng" '
+        'OR eventMessage CONTAINS[c] "34018" OR eventMessage CONTAINS[c] "errSec" '
+        'OR eventMessage CONTAINS[c] "keychain" OR eventMessage CONTAINS[c] "entitlement"))'
+    )
+    command = [
+        "xcrun", "simctl", "spawn", simulator_udid,
+        "log", "show", "--last", "15m", "--style", "compact", "--predicate", predicate,
+    ]
+    returncode = None
+    with log_path.open("w", encoding="utf-8") as log_file:
+        try:
+            result = subprocess.run(
+                command,
+                check=False,
+                text=True,
+                stdout=log_file,
+                stderr=subprocess.STDOUT,
+                timeout=120,
+            )
+            returncode = result.returncode
+            if returncode == 0 and log_path.stat().st_size == 0:
+                log_file.write("No matching Pleazyng/keychain daemon events were retained by the simulator log.")
+        except subprocess.TimeoutExpired:
+            log_file.write("Simulator keychain diagnostic log collection timed out after 120 seconds.\n")
+        except OSError as error:
+            log_file.write(f"Simulator keychain diagnostic log collection failed: {error.__class__.__name__}.\n")
+    return {
+        "filename": log_path.name,
+        "sha256": sha256_file(log_path),
+        "size_bytes": log_path.stat().st_size,
+        "exit_code": returncode,
+        "filter": predicate,
+        "scope": "Fresh capture simulator only; Pleazyng keychain-related messages and matching securityd records.",
+    }
 
 
 def require_source(product_root: Path) -> None:
@@ -154,6 +271,120 @@ def png_dimensions(path: Path) -> tuple[int, int]:
     if path.stat().st_size < 16_000:
         raise ValueError(f"Capture is unexpectedly small to be a complete app screenshot: {path}")
     return width, height
+
+
+def require_visible_screen_content(path: Path) -> dict[str, Any]:
+    data = path.read_bytes()
+    if data[:8] != PNG_SIGNATURE:
+        raise ValueError(f"Capture is not a PNG image: {path}")
+    position = 8
+    width = height = bit_depth = color_type = interlace = None
+    image_data = bytearray()
+    palette: bytes | None = None
+    while position + 12 <= len(data):
+        length = int.from_bytes(data[position:position + 4], "big")
+        kind = data[position + 4:position + 8]
+        start = position + 8
+        end = start + length
+        if end + 4 > len(data):
+            raise ValueError(f"Capture PNG has a truncated chunk: {path}")
+        chunk = data[start:end]
+        if kind == b"IHDR":
+            if len(chunk) != 13:
+                raise ValueError(f"Capture PNG has a malformed header: {path}")
+            width = int.from_bytes(chunk[0:4], "big")
+            height = int.from_bytes(chunk[4:8], "big")
+            bit_depth, color_type, _, _, interlace = chunk[8:13]
+        elif kind == b"PLTE":
+            palette = chunk
+        elif kind == b"IDAT":
+            image_data.extend(chunk)
+        elif kind == b"IEND":
+            break
+        position = end + 4
+    if (not width or not height or bit_depth != 8 or interlace != 0
+            or color_type not in (0, 2, 3, 4, 6)):
+        raise ValueError(f"Capture PNG format is unsupported for content validation: {path}")
+    if color_type == 3 and (palette is None or len(palette) % 3 != 0):
+        raise ValueError(f"Capture PNG palette is missing or malformed: {path}")
+    channels = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}[color_type]
+    bytes_per_pixel = channels
+    row_bytes = width * channels
+    decoded = zlib.decompress(image_data)
+    expected_bytes = height * (row_bytes + 1)
+    if len(decoded) != expected_bytes:
+        raise ValueError(f"Capture PNG pixel data has an unexpected length: {path}")
+
+    region_x0, region_x1 = width // 10, width - width // 10
+    region_y0, region_y1 = height // 10, height - height // 10
+    region_area = (region_x1 - region_x0) * (region_y1 - region_y0)
+    visible_pixels = 0
+    sampled_colors: set[tuple[int, int, int]] = set()
+    previous = bytearray(row_bytes)
+    cursor = 0
+    for y in range(height):
+        filter_type = decoded[cursor]
+        filtered = decoded[cursor + 1:cursor + 1 + row_bytes]
+        cursor += row_bytes + 1
+        row = bytearray(row_bytes)
+        for index, value in enumerate(filtered):
+            left = row[index - bytes_per_pixel] if index >= bytes_per_pixel else 0
+            above = previous[index]
+            upper_left = previous[index - bytes_per_pixel] if index >= bytes_per_pixel else 0
+            if filter_type == 0:
+                predictor = 0
+            elif filter_type == 1:
+                predictor = left
+            elif filter_type == 2:
+                predictor = above
+            elif filter_type == 3:
+                predictor = (left + above) // 2
+            elif filter_type == 4:
+                estimate = left + above - upper_left
+                distance_left = abs(estimate - left)
+                distance_above = abs(estimate - above)
+                distance_upper_left = abs(estimate - upper_left)
+                predictor = (
+                    left if distance_left <= distance_above and distance_left <= distance_upper_left
+                    else above if distance_above <= distance_upper_left
+                    else upper_left
+                )
+            else:
+                raise ValueError(f"Capture PNG has an unsupported scanline filter: {filter_type}")
+            row[index] = (value + predictor) & 0xFF
+        if region_y0 <= y < region_y1:
+            for x in range(region_x0, region_x1):
+                offset = x * channels
+                if color_type == 0:
+                    gray = row[offset]
+                    rgb = (gray, gray, gray)
+                elif color_type == 2:
+                    rgb = (row[offset], row[offset + 1], row[offset + 2])
+                elif color_type == 3:
+                    palette_offset = row[offset] * 3
+                    if palette_offset + 2 >= len(palette or b""):
+                        raise ValueError(f"Capture PNG references an invalid palette index: {path}")
+                    rgb = tuple((palette or b"")[palette_offset:palette_offset + 3])
+                elif color_type == 4:
+                    gray = row[offset]
+                    rgb = (gray, gray, gray)
+                else:
+                    rgb = (row[offset], row[offset + 1], row[offset + 2])
+                alpha = row[offset + channels - 1] if color_type in (4, 6) else 255
+                if alpha > 16 and max(rgb) >= 48:
+                    visible_pixels += 1
+                if alpha > 16 and x % 6 == 0 and y % 6 == 0:
+                    sampled_colors.add(rgb)
+        previous = row
+    metrics = {
+        "central_region": [region_x0, region_y0, region_x1, region_y1],
+        "central_region_pixels": region_area,
+        "visible_pixel_count": visible_pixels,
+        "sampled_color_count": len(sampled_colors),
+    }
+    if visible_pixels < max(200, region_area // 1000) or len(sampled_colors) < 6:
+        raise ValueError(f"Capture looks blank or has no usable app content: {path} ({metrics})")
+    return metrics
 
 
 def app_info(app: Path) -> dict[str, str]:
@@ -282,13 +513,18 @@ def validate_build_receipt(
         "product_build": BUILD_NUMBER,
         "platform": platform_name,
         "build_mode": "App Store IAP",
-        "build_configuration": BUILD_CONFIGURATION[platform],
         "app_bundle_name": expected_app_name,
         "bundle_id": BUNDLE_ID,
         "build_defines": expected_defines,
         "distribution_signing": "disabled",
     }
     mismatched = {key: (receipt.get(key), value) for key, value in expected.items() if receipt.get(key) != value}
+    configuration_evidence = build_configuration_evidence(receipt, platform)
+    if (configuration_evidence is None
+            or configuration_evidence.get("build_configuration") != BUILD_CONFIGURATION[platform]):
+        mismatched["build_configuration"] = (
+            receipt.get("build_configuration"), BUILD_CONFIGURATION[platform]
+        )
     if mismatched:
         raise ValueError(f"Build receipt does not match the expected producer and product: {mismatched}")
     architectures = receipt.get("architectures")
@@ -298,6 +534,32 @@ def validate_build_receipt(
     if re.fullmatch(r"[0-9a-f]{64}", str(receipt.get("app_bundle_sha256", ""))) is None:
         raise ValueError("Build receipt has an invalid app bundle SHA-256")
     return expected_app_name
+
+
+def build_configuration_evidence(receipt: dict[str, Any], platform: str) -> dict[str, Any] | None:
+    configuration = receipt.get("build_configuration")
+    if isinstance(configuration, str) and configuration:
+        evidence = {
+            "schema_version": 1,
+            "build_configuration": configuration,
+            "evidence_source": "producer build-provenance.json",
+            "producer_tools_sha": receipt.get("capture_tools_sha"),
+        }
+    else:
+        legacy_evidence = LEGACY_BUILD_CONFIGURATION_EVIDENCE.get(
+            (str(receipt.get("capture_tools_sha", "")), platform)
+        )
+        if legacy_evidence is None:
+            return None
+        evidence = dict(legacy_evidence)
+    evidence.update({
+        "producer_repository": receipt.get("producer_repository"),
+        "producer_workflow_ref": receipt.get("producer_workflow_ref"),
+        "producer_run_id": receipt.get("producer_run_id"),
+        "producer_run_attempt": receipt.get("producer_run_attempt"),
+        "product_source_sha": receipt.get("source_sha"),
+    })
+    return evidence
 
 
 def restore_build(args: argparse.Namespace) -> None:
@@ -485,7 +747,184 @@ def cleanup_simulator(device: dict[str, str]) -> None:
     run(["xcrun", "simctl", "delete", device["udid"]], timeout=120)
 
 
-def run_app_in_use_ui_test(platform: str, simulator_udid: str, output: Path, filename: str) -> tuple[Path, dict[str, Any]]:
+def runner_signing_identity(derived_data: Path, target_bundle_id: str) -> tuple[Path, dict[str, Any], str, str]:
+    candidates: list[tuple[Path, dict[str, Any], str, int]] = []
+    for path in derived_data.rglob("*.xcent"):
+        try:
+            with path.open("rb") as source:
+                entitlements = plistlib.load(source)
+        except (OSError, plistlib.InvalidFileException):
+            continue
+        if not isinstance(entitlements, dict):
+            continue
+        application_identifier = entitlements.get("application-identifier")
+        if not isinstance(application_identifier, str):
+            continue
+        if application_identifier.endswith(f".{target_bundle_id}.xctrunner"):
+            runner_bundle_id = f"{target_bundle_id}.xctrunner"
+            candidates.append((path, entitlements, runner_bundle_id, 2))
+        elif application_identifier.endswith(f".{target_bundle_id}"):
+            candidates.append((path, entitlements, target_bundle_id, 1))
+    if candidates:
+        highest_priority = max(candidate[3] for candidate in candidates)
+        candidates = [candidate for candidate in candidates if candidate[3] == highest_priority]
+    if len(candidates) != 1:
+        raise RuntimeError(
+            f"Expected exactly one signed UI-test runner entitlement file for {target_bundle_id}; found {len(candidates)}"
+        )
+    path, entitlements, runner_bundle_id, _ = candidates[0]
+    application_identifier = entitlements["application-identifier"]
+    prefix = application_identifier[:-len(runner_bundle_id)]
+    if re.fullmatch(r"[A-Za-z0-9-]+\.", prefix) is None:
+        raise RuntimeError("The UI-test runner application identifier has no valid simulator prefix")
+    groups = entitlements.get("keychain-access-groups")
+    if (not isinstance(groups, list) or not all(isinstance(group, str) for group in groups)
+            or application_identifier not in groups):
+        raise RuntimeError("The signed UI-test runner does not expose its own derived Keychain access group")
+    return path, entitlements, prefix, runner_bundle_id
+
+
+def derive_ios_simulator_entitlements(
+    base_entitlements_path: Path,
+    runner_entitlements: dict[str, Any],
+    runner_bundle_id: str,
+    product_bundle_id: str,
+) -> tuple[dict[str, Any], str, str]:
+    runner_identifier = runner_entitlements.get("application-identifier")
+    if not isinstance(runner_identifier, str) or not runner_identifier.endswith(f".{runner_bundle_id}"):
+        raise ValueError("The UI-test runner application identifier does not match its declared bundle ID")
+    prefix = runner_identifier[:-len(runner_bundle_id)]
+    runner_groups = runner_entitlements.get("keychain-access-groups")
+    if not isinstance(runner_groups, list) or runner_identifier not in runner_groups:
+        raise ValueError("The UI-test runner application identifier is not a signed Keychain access group")
+    if re.fullmatch(r"[A-Za-z0-9-]+\.", prefix) is None:
+        raise ValueError("The UI-test runner application identifier has an invalid derived prefix")
+
+    with base_entitlements_path.open("rb") as source:
+        base = plistlib.load(source)
+    if (not isinstance(base, dict) or set(base) != {"keychain-access-groups"}
+            or base.get("keychain-access-groups") != []):
+        raise ValueError("The iOS simulator signing source must contain only the approved empty Keychain group list")
+    product_identifier = f"{prefix}{product_bundle_id}"
+    result = dict(base)
+    result["application-identifier"] = product_identifier
+    result["keychain-access-groups"] = [product_identifier]
+    return result, prefix, product_identifier
+
+
+def codesign_entitlements(app: Path) -> dict[str, Any]:
+    result = subprocess.run(
+        ["/usr/bin/codesign", "-d", "--entitlements", ":-", str(app)],
+        check=True,
+        text=False,
+        capture_output=True,
+        timeout=60,
+    )
+    entitlements = plistlib.loads(result.stdout)
+    if not isinstance(entitlements, dict):
+        raise RuntimeError("The signed application entitlements are not a plist dictionary")
+    return entitlements
+
+
+def sign_ios_app_for_simulator(
+    app: Path,
+    output: Path,
+    filename: str,
+    simulator_udid: str,
+    original_app_digest: str,
+    build_receipt: dict[str, Any],
+    receipt_digest: str,
+    base_entitlements_path: Path,
+    runner_xcent: Path,
+    runner_entitlements: dict[str, Any],
+    runner_bundle_id: str,
+    signing_state: dict[str, Any] | None,
+) -> dict[str, Any]:
+    derived, prefix, product_identifier = derive_ios_simulator_entitlements(
+        base_entitlements_path, runner_entitlements, runner_bundle_id, BUNDLE_ID
+    )
+    entitlements_path = output / f"{Path(filename).stem}.simulator-entitlements.plist"
+    entitlements_path.write_bytes(plistlib.dumps(derived, fmt=plistlib.FMT_XML, sort_keys=True))
+    if signing_state is None:
+        observed_digest = sha256_tree(app)
+        if observed_digest != original_app_digest:
+            raise ValueError("The restored iOS app changed before simulator-only signing")
+        run([
+            "/usr/bin/codesign", "--force", "--deep", "--sign", "-",
+            "--entitlements", str(entitlements_path), str(app),
+        ], timeout=600)
+        run(["/usr/bin/codesign", "--verify", "--deep", "--strict", str(app)], timeout=300)
+        signed_entitlements = codesign_entitlements(app)
+        if (signed_entitlements.get("application-identifier") != product_identifier
+                or signed_entitlements.get("keychain-access-groups") != [product_identifier]):
+            raise RuntimeError("Ad-hoc simulator signature does not contain the derived product Keychain group")
+        derived_digest = sha256_tree(app)
+        signing_state = {
+            "derived_application_identifier": product_identifier,
+            "derived_keychain_access_group": product_identifier,
+            "derived_app_bundle_sha256": derived_digest,
+            "entitlements_sha256": sha256_file(entitlements_path),
+            "entitlements_source_sha256": sha256_file(base_entitlements_path),
+            "runner_xcent_sha256": sha256_file(runner_xcent),
+            "runner_application_identifier": runner_entitlements["application-identifier"],
+            "runner_keychain_access_groups": runner_entitlements["keychain-access-groups"],
+            "runner_bundle_id": runner_bundle_id,
+            "signing_mode": "ad-hoc simulator-only (-); source artifact remains unsigned and unchanged",
+            "signature_verified": True,
+        }
+    else:
+        if signing_state.get("derived_application_identifier") != product_identifier:
+            raise RuntimeError("The second iOS simulator derived a different signing prefix")
+        if sha256_tree(app) != signing_state.get("derived_app_bundle_sha256"):
+            raise ValueError("The simulator-signed app bundle changed between iPhone and iPad captures")
+        run(["/usr/bin/codesign", "--verify", "--deep", "--strict", str(app)], timeout=300)
+        signed_entitlements = codesign_entitlements(app)
+        if (signed_entitlements.get("application-identifier") != product_identifier
+                or signed_entitlements.get("keychain-access-groups") != [product_identifier]):
+            raise RuntimeError("The reused simulator signature no longer has the expected product Keychain group")
+
+    provenance = {
+        "schema_version": 1,
+        "purpose": "diagnostic iOS Simulator signing for actual fresh-profile Keychain persistence capture",
+        "product_source_sha": SOURCE_SHA,
+        "product_source_tag": SOURCE_TAG,
+        "product_version": VERSION,
+        "product_build": BUILD_NUMBER,
+        "bundle_id": BUNDLE_ID,
+        "producer_run_id": build_receipt.get("producer_run_id"),
+        "producer_run_attempt": build_receipt.get("producer_run_attempt"),
+        "producer_capture_tools_sha": build_receipt.get("capture_tools_sha"),
+        "producer_build_receipt_sha256": receipt_digest,
+        "producer_app_bundle_sha256": original_app_digest,
+        "producer_distribution_signing": build_receipt.get("distribution_signing"),
+        "producer_architectures": build_receipt.get("architectures"),
+        "simulator_udid": simulator_udid,
+        "derived_signature": signing_state,
+        "product_entitlements_file": "ios/Runner/DebugProfile.entitlements",
+        "product_entitlements_file_sha256": signing_state["entitlements_source_sha256"],
+        "test_runner_entitlements_sha256": signing_state["runner_xcent_sha256"],
+        "derived_app_bundle_sha256": signing_state["derived_app_bundle_sha256"],
+        "qualification": "Simulator-only diagnostic signature; not an App Store signed or uploadable product artifact.",
+    }
+    signing_provenance = output / f"{Path(filename).stem}.simulator-signing-provenance.json"
+    signing_provenance.write_text(json.dumps(provenance, indent=2) + "\n", encoding="utf-8")
+    signing_state["provenance_filename"] = signing_provenance.name
+    return signing_state
+
+
+def run_app_in_use_ui_test(
+    platform: str,
+    simulator_udid: str,
+    output: Path,
+    filename: str,
+    *,
+    app: Path,
+    app_digest: str,
+    build_receipt: dict[str, Any] | None,
+    build_receipt_digest: str | None,
+    simulator_entitlements: Path | None,
+    signing_state: dict[str, Any] | None,
+) -> tuple[Path, dict[str, Any], dict[str, Any] | None]:
     xcode_platform = "tvOS" if platform == "tvOS" else "iOS"
     deployment_target = "15.0" if platform == "tvOS" else "15.5"
     project_spec_data = {
@@ -527,6 +966,12 @@ def run_app_in_use_ui_test(platform: str, simulator_udid: str, output: Path, fil
         project_spec.write_text(json.dumps(project_spec_data, indent=2) + "\n", encoding="utf-8")
         test_source = project_root / "CaptureTests.swift"
         test_source.write_text(APP_IN_USE_UI_TEST, encoding="utf-8")
+        runner_entitlements_path = project_root / "CaptureTests.entitlements"
+        runner_entitlements_path.write_bytes(plistlib.dumps({
+            "keychain-access-groups": ["$(AppIdentifierPrefix)$(PRODUCT_BUNDLE_IDENTIFIER)"],
+        }, fmt=plistlib.FMT_XML, sort_keys=True))
+        project_spec_data["targets"]["PleazyngInUseCaptureTests"]["settings"]["base"]["CODE_SIGN_ENTITLEMENTS"] = "CaptureTests.entitlements"
+        project_spec.write_text(json.dumps(project_spec_data, indent=2) + "\n", encoding="utf-8")
         run([
             "xcodegen", "generate", "--spec", str(project_spec), "--project", str(project_root),
         ], timeout=180)
@@ -541,10 +986,63 @@ def run_app_in_use_ui_test(platform: str, simulator_udid: str, output: Path, fil
         derived_data = project_root / "derived-data"
         result_bundle = project_root / "capture.xcresult"
         log_path = output / f"{Path(filename).stem}.ui-test.log"
-        command = [
-            "xcodebuild", "test",
+        build_log_path = output / f"{Path(filename).stem}.ui-runner-build.log"
+        build_command = [
+            "xcodebuild", "build-for-testing",
             "-project", str(project),
             "-scheme", "PleazyngInUseCapture",
+            "-destination", f"platform={xcode_platform} Simulator,id={simulator_udid}",
+            "-derivedDataPath", str(derived_data),
+            "-parallel-testing-enabled", "NO",
+        ]
+        with build_log_path.open("w", encoding="utf-8") as log_file:
+            result = subprocess.run(
+                build_command,
+                check=False,
+                text=True,
+                stdout=log_file,
+                stderr=subprocess.STDOUT,
+                timeout=900,
+            )
+        if result.returncode != 0:
+            tail = build_log_path.read_text(encoding="utf-8", errors="replace").splitlines()[-80:]
+            raise RuntimeError(
+                f"The test-only UI runner build failed with exit code {result.returncode}; "
+                f"runner build log is retained at {build_log_path}:\n" + "\n".join(tail)
+            )
+
+        runner_xcent = None
+        runner_entitlements: dict[str, Any] = {}
+        derived_prefix = None
+        runner_bundle_id = None
+        if platform == "iOS":
+            runner_xcent, runner_entitlements, derived_prefix, runner_bundle_id = runner_signing_identity(
+                derived_data, "org.snapetech.pleazyng.capture-ui-tests"
+            )
+            if (simulator_entitlements is None or build_receipt is None or build_receipt_digest is None):
+                raise ValueError("iOS Keychain capture requires the approved product entitlements and producer receipt")
+            signing_state = sign_ios_app_for_simulator(
+                app,
+                output,
+                filename,
+                simulator_udid,
+                app_digest,
+                build_receipt,
+                build_receipt_digest,
+                simulator_entitlements,
+                runner_xcent,
+                runner_entitlements,
+                runner_bundle_id,
+                signing_state,
+            )
+        run(["xcrun", "simctl", "install", simulator_udid, str(app)], timeout=180)
+
+        xctestruns = list((derived_data / "Build" / "Products").glob("*.xctestrun"))
+        if len(xctestruns) != 1:
+            raise RuntimeError(f"Expected one built UI test plan; found {len(xctestruns)}")
+        command = [
+            "xcodebuild", "test-without-building",
+            "-xctestrun", str(xctestruns[0]),
             "-destination", f"platform={xcode_platform} Simulator,id={simulator_udid}",
             "-derivedDataPath", str(derived_data),
             "-resultBundlePath", str(result_bundle),
@@ -598,6 +1096,9 @@ def run_app_in_use_ui_test(platform: str, simulator_udid: str, output: Path, fil
             "project_targets": targets,
             "project_sha256": sha256_file(project_spec),
             "test_source_sha256": sha256_file(test_source),
+            "test_runner_entitlements_sha256": sha256_file(runner_xcent) if runner_xcent is not None else None,
+            "test_runner_application_identifier": runner_entitlements.get("application-identifier"),
+            "simulator_application_identifier_prefix": derived_prefix,
             "test_identifier": matches[0].get("suggestedHumanReadableName"),
             "test_target_bundle_id": "org.snapetech.pleazyng.capture-ui-tests",
             "product_app_bundle_id": BUNDLE_ID,
@@ -605,8 +1106,14 @@ def run_app_in_use_ui_test(platform: str, simulator_udid: str, output: Path, fil
             "xcode_version": run(["xcodebuild", "-version"], capture=True, timeout=60),
             "screenshot_attachment": exported_name,
             "product_target_compiled": False,
+            "ios_keychain_roundtrip_verified": platform == "iOS",
+            "ios_keychain_roundtrip_scope": (
+                "Fresh-profile protected-state write/read, then app termination/relaunch and persisted decrypt/read; "
+                "error-card absence is asserted."
+                if platform == "iOS" else None
+            ),
         }
-        return screenshot, runner_metadata
+        return screenshot, runner_metadata, signing_state
 
 
 def capture_simulator(
@@ -623,8 +1130,12 @@ def capture_simulator(
     tool_source_sha: str,
     app_in_use: bool = False,
     build_receipt: dict[str, Any] | None = None,
+    build_receipt_digest: str | None = None,
+    simulator_entitlements: Path | None = None,
+    signing_state: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     device = create_simulator(platform, category, run_id, attempt)
+    simulator_runtime_diagnostics = None
     try:
         run(["xcrun", "simctl", "boot", device["udid"]], timeout=180)
         run(["xcrun", "simctl", "bootstatus", device["udid"], "-b"], timeout=300)
@@ -632,16 +1143,32 @@ def capture_simulator(
         if platform == "iOS":
             run(["xcrun", "simctl", "ui", device["udid"], "appearance", "light"], timeout=60)
             simulator_appearance = "light"
-        run(["xcrun", "simctl", "install", device["udid"], str(app)], timeout=180)
         screenshot = output / filename
         ui_test_metadata = None
         if app_in_use:
-            screenshot, ui_test_metadata = run_app_in_use_ui_test(platform, device["udid"], output, filename)
+            screenshot, ui_test_metadata, signing_state = run_app_in_use_ui_test(
+                platform,
+                device["udid"],
+                output,
+                filename,
+                app=app,
+                app_digest=app_digest,
+                build_receipt=build_receipt,
+                build_receipt_digest=build_receipt_digest,
+                simulator_entitlements=simulator_entitlements,
+                signing_state=signing_state,
+            )
+            if platform == "iOS":
+                simulator_runtime_diagnostics = capture_ios_keychain_diagnostics(
+                    device["udid"], output, filename
+                )
         else:
+            run(["xcrun", "simctl", "install", device["udid"], str(app)], timeout=180)
             run(["xcrun", "simctl", "launch", device["udid"], BUNDLE_ID], timeout=120)
             time.sleep(SIMULATOR_SETTLE_SECONDS)
             run(["xcrun", "simctl", "io", device["udid"], "screenshot", "--type=png", str(screenshot)], timeout=120)
         width, height = png_dimensions(screenshot)
+        screen_content_check = require_visible_screen_content(screenshot) if app_in_use else None
         capture = {
             "filename": filename,
             "platform": platform,
@@ -678,11 +1205,26 @@ def capture_simulator(
         }
         if ui_test_metadata is not None:
             capture["ui_test_runner"] = ui_test_metadata
+        if signing_state is not None:
+            capture["simulator_signing_provenance"] = signing_state["provenance_filename"]
+            capture["simulator_signing"] = dict(signing_state)
+        if simulator_runtime_diagnostics is not None:
+            capture["simulator_runtime_diagnostics"] = simulator_runtime_diagnostics
+        if screen_content_check is not None:
+            capture["screen_content_check"] = screen_content_check
         if build_receipt is not None:
             capture["build_receipt"] = build_receipt
+            receipt_platform = {"iOS": "ios", "tvOS": "tvos"}[platform]
+            capture["build_configuration_evidence"] = build_configuration_evidence(
+                build_receipt, receipt_platform
+            )
         return capture
     finally:
-        cleanup_simulator(device)
+        try:
+            if app_in_use and platform == "iOS" and simulator_runtime_diagnostics is None:
+                capture_ios_keychain_diagnostics(device["udid"], output, filename)
+        finally:
+            cleanup_simulator(device)
 
 
 def write_capture_manifest(output: Path, platform: str, captures: list[dict[str, Any]]) -> None:
@@ -779,7 +1321,10 @@ def capture_ios_in_use(args: argparse.Namespace) -> None:
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=False)
     app_digest = sha256_tree(app)
-    build_receipt = json.loads(args.build_receipt.resolve(strict=True).read_text(encoding="utf-8"))
+    build_receipt_path = args.build_receipt.resolve(strict=True)
+    build_receipt = json.loads(build_receipt_path.read_text(encoding="utf-8"))
+    if not isinstance(build_receipt, dict):
+        raise ValueError("The iOS producer build receipt is not a JSON object")
     validate_build_receipt(
         build_receipt,
         platform="ios",
@@ -790,20 +1335,28 @@ def capture_ios_in_use(args: argparse.Namespace) -> None:
     )
     if build_receipt.get("app_bundle_sha256") != app_digest:
         raise ValueError("The iOS app bundle differs from its restored build receipt")
-    captures = [
-        capture_simulator(
-            app, output, platform="iOS", category="iphone", filename="iphone-01-files-and-books.png",
+    simulator_entitlements = args.simulator_entitlements.resolve(strict=True)
+    if simulator_entitlements.is_symlink() or not simulator_entitlements.is_file():
+        raise ValueError("The approved iOS simulator entitlement source must be a regular file")
+    receipt_digest = sha256_file(build_receipt_path)
+    shutil.copyfile(build_receipt_path, output / "producer-build-provenance.json")
+    captures = []
+    signing_state = None
+    for category, filename in (
+        ("iphone", "iphone-01-files-and-books.png"),
+        ("ipad", "ipad-01-files-and-books.png"),
+    ):
+        capture = capture_simulator(
+            app, output, platform="iOS", category=category, filename=filename,
             run_id=args.run_id, attempt=args.run_attempt, app_digest=app_digest,
             build_defines=IOS_MAC_STORE_DEFINES, tool_source_sha=tool_source_sha, app_in_use=True,
             build_receipt=build_receipt,
-        ),
-        capture_simulator(
-            app, output, platform="iOS", category="ipad", filename="ipad-01-files-and-books.png",
-            run_id=args.run_id, attempt=args.run_attempt, app_digest=app_digest,
-            build_defines=IOS_MAC_STORE_DEFINES, tool_source_sha=tool_source_sha, app_in_use=True,
-            build_receipt=build_receipt,
-        ),
-    ]
+            build_receipt_digest=receipt_digest,
+            simulator_entitlements=simulator_entitlements,
+            signing_state=signing_state,
+        )
+        signing_state = capture.get("simulator_signing")
+        captures.append(capture)
     write_capture_manifest(output, "iOS and iPadOS", captures)
     print(f"Captured post-onboarding iPhone and iPad Files and Books screens in {output}")
 
@@ -911,14 +1464,14 @@ end run'''
     set targetProcess to first application process whose unix id is targetPid
     set frontmost of targetProcess to true
     set foundButton to false
-    repeat 40 times
+    repeat 60 times
       try
         set targetWindow to first window of targetProcess
         set targetButton to first button of targetWindow whose name is targetLabel
 {on_success}
       on error errorMessage number errorNumber
         if errorNumber is -25211 or errorNumber is -1743 then error errorMessage number errorNumber
-        if errorNumber is not -1728 then error errorMessage number errorNumber
+        if errorNumber is not -1719 and errorNumber is not -1728 then error errorMessage number errorNumber
       end try
       delay 0.5
     end repeat
@@ -1063,6 +1616,9 @@ def capture_macos_in_use(args: argparse.Namespace) -> None:
             or not re.fullmatch(r"[0-9]+", str(receipt.get("producer_run_id", "")))
             or not re.fullmatch(r"[0-9]+", str(receipt.get("producer_run_attempt", "")))):
         raise ValueError("The restored Mac app does not match its unsigned v3.0.36 App Store build receipt")
+    configuration_evidence = build_configuration_evidence(receipt, "macos")
+    if configuration_evidence is None:
+        raise ValueError("The restored Mac app has no verifiable build-configuration evidence")
 
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=False)
@@ -1093,6 +1649,7 @@ def capture_macos_in_use(args: argparse.Namespace) -> None:
         screenshot = output / filename
         run(["/usr/sbin/screencapture", "-x", "-l", window_id, str(screenshot)], timeout=120)
         width, height = png_dimensions(screenshot)
+        screen_content_check = require_visible_screen_content(screenshot)
         captures.append({
             "filename": filename,
             "platform": "macOS",
@@ -1105,6 +1662,7 @@ def capture_macos_in_use(args: argparse.Namespace) -> None:
             "source_sha": SOURCE_SHA,
             "capture_tools_sha": tool_source_sha,
             "build_receipt": receipt,
+            "build_configuration_evidence": configuration_evidence,
             "launch_process_id": app_pid,
             "captured_window_id": window_id,
             "bundle_id": identity["bundle_id"],
@@ -1113,6 +1671,7 @@ def capture_macos_in_use(args: argparse.Namespace) -> None:
             "app_bundle_sha256": app_digest,
             "capture_sha256": sha256_file(screenshot),
             "dimensions": [width, height],
+            "screen_content_check": screen_content_check,
             "device": device,
             "build_defines": IOS_MAC_STORE_DEFINES,
             "qualification": "Authentic post-onboarding local Files and Books interface from the actual App Store app bundle; no content or server is represented.",
@@ -1129,6 +1688,7 @@ def capture_macos_in_use(args: argparse.Namespace) -> None:
     screenshot = output / filename
     run(["/usr/sbin/screencapture", "-x", "-l", window_id, str(screenshot)], timeout=120)
     width, height = png_dimensions(screenshot)
+    screen_content_check = require_visible_screen_content(screenshot)
     captures.append({
         "filename": filename,
         "platform": "macOS",
@@ -1141,6 +1701,7 @@ def capture_macos_in_use(args: argparse.Namespace) -> None:
         "source_sha": SOURCE_SHA,
         "capture_tools_sha": tool_source_sha,
         "build_receipt": receipt,
+        "build_configuration_evidence": configuration_evidence,
         "launch_process_id": app_pid,
         "captured_window_id": window_id,
         "bundle_id": identity["bundle_id"],
@@ -1149,6 +1710,7 @@ def capture_macos_in_use(args: argparse.Namespace) -> None:
         "app_bundle_sha256": app_digest,
         "capture_sha256": sha256_file(screenshot),
         "dimensions": [width, height],
+        "screen_content_check": screen_content_check,
         "device": device,
         "build_defines": IOS_MAC_STORE_DEFINES,
         "qualification": "Authentic UI from the unsigned App Store app bundle. A visible price/error reflects the live StoreKit response; no purchase or restore action was activated.",
@@ -1376,6 +1938,9 @@ def package_app_in_use_captures(args: argparse.Namespace) -> None:
         if len(captures) != expected_counts[platform]:
             raise ValueError(f"Unexpected screenshot count for {platform}: {len(captures)}")
         for image, capture in captures:
+            content_check = require_visible_screen_content(image)
+            if capture.get("screen_content_check") is None:
+                capture["screen_content_check"] = content_check
             scene = capture.get("capture_scene", "")
             if not (scene.startswith("Post-onboarding local Files and Books screen")
                     or scene.startswith("Real lifetime-access sheet")):
@@ -1394,6 +1959,12 @@ def package_app_in_use_captures(args: argparse.Namespace) -> None:
             )
             if receipt.get("app_bundle_sha256") != capture.get("app_bundle_sha256"):
                 raise ValueError(f"Screenshot product hash differs from its validated build receipt: {image}")
+            expected_configuration_evidence = build_configuration_evidence(receipt, platform_key)
+            if (expected_configuration_evidence is None
+                    or capture.get("build_configuration_evidence") != expected_configuration_evidence):
+                raise ValueError(
+                    f"Screenshot is missing the verified producer build-configuration evidence: {image}"
+                )
             if platform in ("iOS and iPadOS", "tvOS"):
                 ui_runner = capture.get("ui_test_runner")
                 if (not isinstance(ui_runner, dict)
@@ -1427,6 +1998,12 @@ def package_app_in_use_captures(args: argparse.Namespace) -> None:
         "product_version": VERSION,
         "product_build": BUILD_NUMBER,
         "build_mode": "App Store IAP",
+        "build_configuration_by_platform": BUILD_CONFIGURATION,
+        "build_configuration_evidence_by_platform": {
+            "ios": next(item["build_configuration_evidence"] for item in captures if item["filename"].startswith("iphone-")),
+            "tvos": next(item["build_configuration_evidence"] for item in captures if item["filename"].startswith("tvos-")),
+            "macos": next(item["build_configuration_evidence"] for item in captures if item["filename"].startswith("macos-")),
+        },
         "packaging_tool_source_sha": require_capture_tools_sha(),
         "capture_tools_sha_by_platform": {
             "ios": next(item["capture_tools_sha"] for item in captures if item["filename"].startswith("iphone-")),
@@ -1492,6 +2069,8 @@ def parse_args() -> argparse.Namespace:
             command.add_argument("--run-attempt", default=os.environ.get("GITHUB_RUN_ATTEMPT", "1"))
         if name in ("capture-ios-in-use", "capture-tvos-in-use"):
             command.add_argument("--build-receipt", required=True, type=Path)
+        if name == "capture-ios-in-use":
+            command.add_argument("--simulator-entitlements", required=True, type=Path)
         command.set_defaults(handler=handler)
     paywall = subparsers.add_parser("capture-macos-paywall")
     paywall.add_argument("--product-root", required=True, type=Path)
