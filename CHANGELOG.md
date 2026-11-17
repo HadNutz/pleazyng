@@ -2,7 +2,11 @@
 
 ## [Unreleased]
 
-- Reconcile historical worktree changes: retain newer main implementations, recover saved subtitle capture clock offsets and dropped-audio gap fencing, and localize saved-capture list metadata. Five list labels use explicit English fallback pending translation review. These changes are outside the frozen 3.0.37 source.
+- Synchronize the Flutter and webOS release identities at 3.0.38+197.
+
+## [3.0.38] - 2026-11-17
+
+- Reconcile historical worktree changes: retain newer main implementations, recover saved subtitle capture clock offsets and dropped-audio gap fencing, and localize saved-capture list metadata. Five list labels use explicit English fallback pending translation review.
 - Build manual Samsung LiteRT adapters from the audited source commit in an isolated worktree, with both required FlatBuffers dependency patches and patch hashes in the build receipt.
 
 - Start the macOS Flutter engine before attaching its first multiview window, and register view-dependent plugins after the window is available.
@@ -24,7 +28,9 @@
 - Remove verified static MPVKit framework wrappers from Apple app bundles while preserving pinned codec notices and the SpatialAudioBridge license in platform-appropriate bundle resource locations.
 - Embed and code-sign the dynamically linked AMSMB2 framework in the tvOS app bundle.
 
-## [3.0.37] - 2026-11-17
+- Preserve Swift package link and embed entries during tvOS plugin rewiring, and verify every packaged strong Mach-O dependency before attestation and upload.
+- Validate Apple Mac App Store provisioning profiles against their signed macOS platform identifier and preserve source-bound StoreKit capture evidence.
+
 
 - Bundle pinned EVC, 8-bit AVS2, AVS3 and LCEVC implementations in normal mpv packages for Android, Linux, Windows and Apple, consuming verified published artifacts across all four platform groups. End users do not install decoder SDKs.
 - Detect LCEVC enhancement before hardware submission and replay through software when hardware would present only the base layer. Ordinary H.264 retains hardware decoding.
