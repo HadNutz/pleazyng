@@ -1676,6 +1676,66 @@ require(
     in release,
     "release dependencies must include the trust gate, all platform builds, and Windows packaging",
 )
+append_only_core_steps = (
+    "Restore immutable product source files",
+    "Read version from pubspec.yaml",
+    "Generate release notes from CHANGELOG.md",
+    "Download Android artifacts",
+    "Ensure the Android Moonlight source archive is available",
+    "Attest recovered Moonlight source archive",
+    "Download WebOS artifact",
+    "Give the WebOS checksum manifest a unique release filename",
+    "Download Tizen ARM tester handoff",
+    "Verify and archive Tizen tester handoff",
+    "Download iOS artifact",
+    "Download tvOS artifact",
+    "Download macOS artifact",
+    "Download Windows x64 artifact",
+    "Download native Windows ARM64 build",
+    "Package native Windows ARM64 portable archive",
+    "Attest native Windows ARM64 portable archive",
+    "Download Windows installer artifact",
+    "Download Microsoft Store bundle",
+    "Download Chocolatey package",
+    "Download Linux x64 artifacts",
+    "Download Linux arm64 artifacts",
+    "Download x64 AppImage artifact",
+    "Verify AppImage update contracts before publication",
+    "Verify Tizen handoff before publication",
+    "Require every release platform before publication",
+    "Display structure of downloaded files",
+    "Generate WinGet manifest bundle",
+    "Generate appcast.xml",
+    "Generate release SHA-256 checksums",
+    "Generate Homebrew Cask candidate",
+    "Attest release manifests and checksums",
+    "Attest Sparkle appcast",
+    "Attest WinGet manifests",
+    "Attest Homebrew Cask candidate",
+    "Collect release files",
+)
+for step_name in append_only_core_steps:
+    require(
+        "inputs.recovery_source_sha == ''" in named_step(release, step_name),
+        f"append-only Apple recovery must skip core-only step '{step_name}'",
+    )
+product_checkout = release.find("path: product-source")
+product_checkout_end = release.find("\n      - name:", product_checkout)
+require(
+    product_checkout >= 0 and product_checkout_end > product_checkout
+    and "if: ${{ inputs.recovery_source_sha == '' }}"
+        in release[product_checkout:product_checkout_end],
+    "append-only Apple recovery must not check out product files for core assembly",
+)
+for step_name in (
+    "Prepare append-only Apple Store recovery assets",
+    "Attest append-only Apple Store recovery assets",
+    "Append signed Apple assets without replacing existing release assets",
+):
+    require(
+        "inputs.recovery_source_sha != ''" in named_step(release, step_name),
+        f"frozen Apple recovery must require '{step_name}'",
+    )
 for artifact in (
     "android-apk",
     "pleazyng-tizen-arm-experimental",
@@ -1744,7 +1804,7 @@ require(
     "release requests must reject incomplete platform selections",
 )
 require(
-    "if: ${{ inputs.reuse_macos_package_run_id == '' && inputs.reuse_webos_run_id == '' && needs.validate-trusted-ref.outputs.include_webos_release == 'true' }}" in webos_download
+    "inputs.recovery_source_sha == '' && inputs.reuse_macos_package_run_id == '' && inputs.reuse_webos_run_id == '' && needs.validate-trusted-ref.outputs.include_webos_release == 'true'" in webos_download
     and "name: webos-ipk" in webos_download,
     "the WebOS release artifact must be downloaded only after explicit opt-in",
 )

@@ -35,6 +35,44 @@ STEAM_CMAKE = ROOT / "native/games/steam/CMakeLists.txt"
 
 
 class BuildWorkflowGuardTest(unittest.TestCase):
+    def test_append_only_apple_recovery_skips_unrelated_core_assembly_steps(self):
+        workflow = yaml.safe_load(self._workflow())
+        steps = workflow['jobs']['create-release']['steps']
+        core_steps = {
+            'Ensure the Android Moonlight source archive is available',
+            'Give the WebOS checksum manifest a unique release filename',
+            'Verify and archive Tizen tester handoff',
+            'Package native Windows ARM64 portable archive',
+            'Verify AppImage update contracts before publication',
+            'Require every release platform before publication',
+            'Generate WinGet manifest bundle',
+            'Generate appcast.xml',
+            'Generate release SHA-256 checksums',
+            'Collect release files',
+        }
+        for step in steps:
+            if step.get('name') in core_steps:
+                with self.subTest(step=step['name']):
+                    self.assertIn("inputs.recovery_source_sha == ''", step.get('if', ''))
+        product_checkout = next(step for step in steps
+                                if step.get('with', {}).get('path') == 'product-source')
+        self.assertEqual(product_checkout['if'], "${{ inputs.recovery_source_sha == '' }}")
+        for name in ('Prepare append-only Apple Store recovery assets',
+                     'Attest append-only Apple Store recovery assets',
+                     'Append signed Apple assets without replacing existing release assets'):
+            step = next(step for step in steps if step.get('name') == name)
+            self.assertIn("inputs.recovery_source_sha != ''", step.get('if', ''))
+
+        changed = self._workflow().replace(
+            "if: ${{ inputs.recovery_source_sha == '' }}\n        id: moonlight-source",
+            "if: ${{ success() }}\n        id: moonlight-source",
+            1,
+        )
+        self.assertNotEqual(changed, self._workflow())
+        result = self._run(changed)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("append-only Apple recovery must skip core-only step", result.stderr)
+
     def test_frozen_apple_recovery_accepts_one_run_per_distinct_platform_only(self):
         workflow = yaml.safe_load(self._workflow())
         steps = workflow['jobs']['create-release']['steps']
