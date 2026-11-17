@@ -36,6 +36,10 @@ on:
         description: Completed run supplying the verified macOS app bundle for app-in-use capture.
         type: string
         required: false
+      macos_artifact_run_attempt:
+        description: Exact completed producer attempt for the selected macOS app artifact when a run has targeted retries.
+        type: string
+        required: false
       tvos_artifact_run_id:
         description: Completed run supplying the verified tvOS app bundle for app-in-use capture.
         type: string
@@ -741,17 +745,52 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PRODUCER_RUN_ID: ${{ (inputs.target == 'app-in-use-capture-only' || inputs.target == 'macos-in-use-capture-only' || inputs.target == 'macos-in-use-diagnostic-only') && inputs.macos_artifact_run_id || inputs.artifact_run_id }}
+          PRODUCER_RUN_ATTEMPT_INPUT: ${{ inputs.macos_artifact_run_attempt }}
+          CAPTURE_TARGET: ${{ inputs.target }}
         run: |
           set -euo pipefail
           [[ "$PRODUCER_RUN_ID" =~ ^[0-9]+$ ]]
           workflow_id="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/apple-store-screenshots.yml" --jq .id)"
           [[ "$workflow_id" =~ ^[0-9]+$ ]]
-          metadata="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PRODUCER_RUN_ID" \
-            --jq "if .workflow_id == $workflow_id and .event == \"workflow_dispatch\" and .head_branch == \"main\" and .status == \"completed\" then [.head_sha, (.run_attempt | tostring)] | @tsv else error(\"build producer is not a completed main-branch Apple Store Screenshots dispatch\") end")"
-          IFS=$'\t' read -r tool_sha run_attempt <<< "$metadata"
-          [[ "$tool_sha" =~ ^[0-9a-f]{40}$ && "$run_attempt" =~ ^[0-9]+$ ]]
-          echo "tool_sha=$tool_sha" >> "$GITHUB_OUTPUT"
-          echo "run_attempt=$run_attempt" >> "$GITHUB_OUTPUT"
+          if [[ -n "$PRODUCER_RUN_ATTEMPT_INPUT" ]]; then
+            case "$CAPTURE_TARGET" in
+              app-in-use-capture-only|macos-in-use-capture-only|macos-in-use-diagnostic-only) ;;
+              *) echo "An explicit Mac producer attempt is unsupported for target $CAPTURE_TARGET" >&2; exit 1 ;;
+            esac
+            [[ "$PRODUCER_RUN_ATTEMPT_INPUT" =~ ^[1-9][0-9]*$ ]]
+            run_json="$RUNNER_TEMP/apple-store-producer-run.json"
+            attempt_json="$RUNNER_TEMP/apple-store-producer-attempt.json"
+            jobs_json="$RUNNER_TEMP/apple-store-producer-attempt-jobs.json"
+            artifacts_json="$RUNNER_TEMP/apple-store-producer-artifacts.json"
+            selection_receipt="$RUNNER_TEMP/apple-store-producer-selection.json"
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PRODUCER_RUN_ID" > "$run_json"
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PRODUCER_RUN_ID/attempts/$PRODUCER_RUN_ATTEMPT_INPUT" > "$attempt_json"
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PRODUCER_RUN_ID/attempts/$PRODUCER_RUN_ATTEMPT_INPUT/jobs" > "$jobs_json"
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PRODUCER_RUN_ID/artifacts" > "$artifacts_json"
+            python3 capture-tools/scripts/verify_apple_capture_producer.py \
+              --run-json "$run_json" \
+              --attempt-json "$attempt_json" \
+              --jobs-json "$jobs_json" \
+              --artifacts-json "$artifacts_json" \
+              --run-id "$PRODUCER_RUN_ID" \
+              --attempt-number "$PRODUCER_RUN_ATTEMPT_INPUT" \
+              --workflow-id "$workflow_id" \
+              --artifact-name "apple-store-build-macos-$PLEAZYNG_CAPTURE_PRODUCT_VERSION" \
+              --capture-target "$CAPTURE_TARGET" \
+              --consumer-workflow-sha "$GITHUB_SHA" \
+              --product-source-sha "$PLEAZYNG_CAPTURE_PRODUCT_SOURCE_SHA" \
+              --product-version "$PLEAZYNG_CAPTURE_PRODUCT_VERSION" \
+              --product-build "$PLEAZYNG_CAPTURE_PRODUCT_BUILD" \
+              --output "$selection_receipt" \
+              --github-output "$GITHUB_OUTPUT"
+          else
+            metadata="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PRODUCER_RUN_ID" \
+              --jq "if .workflow_id == $workflow_id and .event == \"workflow_dispatch\" and .head_branch == \"main\" and .status == \"completed\" then [.head_sha, (.run_attempt | tostring)] | @tsv else error(\"build producer is not a completed main-branch Apple Store Screenshots dispatch\") end")"
+            IFS=$'\t' read -r tool_sha run_attempt <<< "$metadata"
+            [[ "$tool_sha" =~ ^[0-9a-f]{40}$ && "$run_attempt" =~ ^[0-9]+$ ]]
+            echo "tool_sha=$tool_sha" >> "$GITHUB_OUTPUT"
+            echo "run_attempt=$run_attempt" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Download prior macOS build
         if: inputs.target == 'capture-only' || inputs.target == 'macos-paywall-capture-only' || inputs.target == 'app-in-use-capture-only' || inputs.target == 'macos-in-use-capture-only' || inputs.target == 'macos-in-use-diagnostic-only'
@@ -954,6 +993,19 @@ jobs:
             --app "$APPLE_STORE_APP_PATH" \
             --build-receipt "$APPLE_STORE_BUILD_RECEIPT" \
             --output-dir "$RUNNER_TEMP/apple-store-in-use-diagnostics-macos"
+
+      - name: Preserve selected Mac producer attempt evidence
+        if: always() && inputs.target == 'macos-in-use-diagnostic-only' && inputs.macos_artifact_run_attempt != ''
+        env:
+          PRODUCER_SELECTION_RECEIPT: ${{ steps.producer.outputs.selection_path }}
+        run: |
+          set -euo pipefail
+          if [[ -n "$PRODUCER_SELECTION_RECEIPT" && -f "$PRODUCER_SELECTION_RECEIPT" ]]; then
+            mkdir -p "$RUNNER_TEMP/apple-store-in-use-diagnostics-macos"
+            cp "$PRODUCER_SELECTION_RECEIPT" "$RUNNER_TEMP/apple-store-in-use-diagnostics-macos/producer-selection.json"
+          else
+            echo "::warning::Selected producer attempt receipt was not created before failure."
+          fi
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: inputs.target != 'macos-paywall-capture-only' && inputs.target != 'app-in-use-capture-only' && inputs.target != 'macos-in-use-capture-only' && inputs.target != 'macos-in-use-diagnostic-only' && inputs.target != 'macos-tvos-in-use-producer-only'
