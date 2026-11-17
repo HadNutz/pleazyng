@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Keep audio-only player contract checks aligned with its shared native codec inventory.
+
 - Update Nix release metadata to published Pleazyng 3.0.36 with authenticated Linux x64 and ARM64 checksums.
 - Configure iOS Debug, Profile and Release signing with the Keychain Sharing entitlement required by `flutter_secure_storage`, preserving optional Music NFC and widget entitlement merging.
 

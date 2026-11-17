@@ -556,8 +556,9 @@ class PlayerNative extends PlayerBase
       // failures don't leave us in a half-initialized state that the memoized
       // future would falsely treat as ready.
       if (audioOnly) {
-        // Only what the music service consumes (position/duration/playing/
-        // completed). Every observation costs an initial notification plus a
+        // Beyond the shared static codec inventory, observe only what the
+        // music service consumes (position/duration/playing/completed).
+        // Every observation costs an initial notification plus a
         // channel event per edge. Music observes routes for output-specific EQ,
         // but still omits the video track-list and demuxer-cache-state payloads.
         await observeProperty('time-pos', 'double');

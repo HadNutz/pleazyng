@@ -123,7 +123,7 @@ void main() {
     }
   });
 
-  test('audio-only mpv registers only the properties the music path consumes', () async {
+  test('audio-only mpv registers codec inventory and the music playback properties', () async {
     final player = PlayerNative.audio();
     final observations = await capturedObservations(
       channelName: 'com.plezy/mpv_audio_player',
@@ -131,8 +131,19 @@ void main() {
       dispose: () => player.dispose(),
     );
 
-    expect(names(observations), {'time-pos', 'duration', 'pause', 'eof-reached', 'audio-device', 'playlist-pos'});
-    final playlistPos = observations.singleWhere((call) => (call.arguments as Map)['name'] == 'playlist-pos');
-    expect((playlistPos.arguments as Map)['format'], Platform.isAndroid ? 'string' : 'node');
+    expect(names(observations), {
+      'decoder-list',
+      'demuxer-lavf-list',
+      'time-pos',
+      'duration',
+      'pause',
+      'eof-reached',
+      'audio-device',
+      'playlist-pos',
+    });
+    for (final name in ['decoder-list', 'demuxer-lavf-list', 'playlist-pos']) {
+      final observation = observations.singleWhere((call) => (call.arguments as Map)['name'] == name);
+      expect((observation.arguments as Map)['format'], Platform.isAndroid ? 'string' : 'node');
+    }
   });
 }
