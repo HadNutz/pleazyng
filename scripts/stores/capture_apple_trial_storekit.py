@@ -173,6 +173,49 @@ def storekit_catalog(path: Path) -> list[dict[str, str]]:
     return normalized
 
 
+def verify_storekit_test_runtime(
+    sdk_version: str,
+    runtime_inventory: dict[str, Any],
+    minimum_ios_version: str,
+) -> dict[str, str]:
+    """Require an installed iOS runtime that includes the CLI StoreKitTest fix."""
+    def version_pair(value: str) -> tuple[int, int]:
+        match = re.fullmatch(r"([0-9]+)\.([0-9]+)(?:\.[0-9]+)?", value)
+        if match is None:
+            raise ValueError(f"Invalid iOS Simulator version: {value!r}")
+        return int(match.group(1)), int(match.group(2))
+
+    minimum_pair = version_pair(minimum_ios_version)
+    sdk_pair = version_pair(sdk_version)
+    if sdk_pair < minimum_pair:
+        raise ValueError(
+            f"StoreKitTest CLI capture requires iOS Simulator {minimum_ios_version} or newer; "
+            f"the selected SDK is {sdk_version}"
+        )
+    runtimes = [
+        item for item in runtime_inventory.get("runtimes", [])
+        if item.get("isAvailable") is True
+        and isinstance(item.get("identifier"), str)
+        and ".iOS-" in item["identifier"]
+        and version_pair(str(item.get("version", ""))) == sdk_pair
+    ]
+    if not runtimes:
+        raise ValueError(f"No installed iOS Simulator runtime matches SDK {sdk_version}")
+    selected = sorted(runtimes, key=lambda item: item["identifier"])[-1]
+    return {
+        "sdk_version": sdk_version,
+        "runtime_id": selected["identifier"],
+        "runtime_version": str(selected["version"]),
+    }
+
+
+def verify_runtime(args: argparse.Namespace) -> None:
+    sdk_version = command(["xcrun", "--sdk", "iphonesimulator", "--show-sdk-version"], capture=True, timeout=60)
+    inventory = json.loads(command(["xcrun", "simctl", "list", "-j"], capture=True, timeout=60))
+    selected = verify_storekit_test_runtime(sdk_version, inventory, args.minimum_ios_version)
+    print(json.dumps(selected, sort_keys=True))
+
+
 def storekit_ui_test_project_spec() -> dict[str, Any]:
     """Build an XcodeGen spec with the StoreKit catalog in the XCTest bundle."""
     return {
@@ -898,6 +941,10 @@ def parser() -> argparse.ArgumentParser:
     restore.add_argument("--producer-tools-sha", required=True)
     restore.add_argument("--output-dir", required=True, type=Path)
     restore.set_defaults(handler=restore_build)
+
+    runtime = commands.add_parser("verify-runtime", help="verify an installed Simulator runtime for StoreKitTest")
+    runtime.add_argument("--minimum-ios-version", required=True)
+    runtime.set_defaults(handler=verify_runtime)
 
     capture_command = commands.add_parser("capture")
     capture_command.add_argument("--product-root", required=True, type=Path)

@@ -59,6 +59,34 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 capture.storekit_catalog(path)
 
+    def test_storekit_runtime_preflight_accepts_installed_fixed_runtime(self) -> None:
+        selected = capture.verify_storekit_test_runtime(
+            "27.3",
+            {
+                "runtimes": [
+                    {"identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-3", "version": "27.3", "isAvailable": True},
+                    {"identifier": "com.apple.CoreSimulator.SimRuntime.iOS-26-5", "version": "26.5", "isAvailable": True},
+                ],
+            },
+            "26.6",
+        )
+        self.assertEqual(selected, {
+            "sdk_version": "27.3",
+            "runtime_id": "com.apple.CoreSimulator.SimRuntime.iOS-27-3",
+            "runtime_version": "27.3",
+        })
+
+    def test_storekit_runtime_preflight_rejects_26_5_and_missing_matching_runtime(self) -> None:
+        inventory = {
+            "runtimes": [
+                {"identifier": "com.apple.CoreSimulator.SimRuntime.iOS-26-5", "version": "26.5", "isAvailable": True},
+            ],
+        }
+        with self.assertRaisesRegex(ValueError, "requires iOS Simulator 26.6"):
+            capture.verify_storekit_test_runtime("26.5", inventory, "26.6")
+        with self.assertRaisesRegex(ValueError, "No installed iOS Simulator runtime"):
+            capture.verify_storekit_test_runtime("27.2", inventory, "26.6")
+
     def test_xcodegen_explicitly_places_storekit_in_the_ui_test_resource_phase(self) -> None:
         target = capture.storekit_ui_test_project_spec()["targets"]["PleazyngTrialReviewUITests"]
         self.assertEqual(target["type"], "bundle.ui-testing")
@@ -293,7 +321,9 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
 
     def test_workflow_is_main_only_hosted_ios_with_one_code_signed_product_build(self) -> None:
         self.assertIn("github.ref == 'refs/heads/main'", WORKFLOW)
-        self.assertIn("runs-on: macos-26", WORKFLOW)
+        self.assertIn("runs-on: ${{ inputs.mode == 'capture-only' && 'xcode-27' || 'macos-26' }}", WORKFLOW)
+        self.assertIn("Verify a StoreKitTest-compatible public Simulator runtime", WORKFLOW)
+        self.assertIn("--minimum-ios-version 26.6", WORKFLOW)
         self.assertIn("product_source_sha", WORKFLOW)
         self.assertIn("build-and-capture", WORKFLOW)
         self.assertIn("capture-only", WORKFLOW)

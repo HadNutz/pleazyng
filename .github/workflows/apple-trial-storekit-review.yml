@@ -1,5 +1,7 @@
 # ng-runner-policy: hosted-default-v2
-# iOS StoreKitTest evidence uses a public hosted Mac and an exact 3.0.37 source SHA.
+# iOS StoreKitTest evidence uses public hosted Macs and an exact 3.0.37 source SHA.
+# capture-only runs on the current public Xcode 27 image because iOS 26.6 fixed
+# the StoreKitTest Simulator connection failure present in the 26.5 runtime.
 name: Apple Trial StoreKit Test Review Capture
 run-name: apple-trial-storekit-review:${{ inputs.mode }}:${{ inputs.product_source_sha }}
 
@@ -40,7 +42,7 @@ env:
 jobs:
   trial-review:
     if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main'
-    runs-on: macos-26
+    runs-on: ${{ inputs.mode == 'capture-only' && 'xcode-27' || 'macos-26' }}
     timeout-minutes: 240
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -120,6 +122,14 @@ jobs:
           mkdir -p "$RUNNER_TEMP/apple-trial-storekit-captures"
           cp "$RUNNER_TEMP/apple-trial-storekit-build-restored/consumer-provenance.json" \
             "$RUNNER_TEMP/apple-trial-storekit-captures/consumer-provenance.json"
+
+      - name: Verify a StoreKitTest-compatible public Simulator runtime
+        if: inputs.mode == 'capture-only'
+        run: |
+          set -euo pipefail
+          python3 scripts/stores/capture_apple_trial_storekit.py verify-runtime \
+            --minimum-ios-version 26.6
+          df -Pk "$RUNNER_TEMP"
 
       - name: Install StoreKit UI-test project generator for capture-only reuse
         if: inputs.mode == 'capture-only'
