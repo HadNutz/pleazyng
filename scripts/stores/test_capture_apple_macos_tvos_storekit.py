@@ -244,6 +244,102 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
             self.assertEqual(evidence["readiness_action"], "already-booted-after-xcodebuild")
             self.assertEqual(evidence["state_before_install"], "Booted")
 
+    def test_tvos_direct_launch_diagnostic_binds_pid_logs_and_receipt_to_exact_installed_app(self) -> None:
+        with TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            simulator = {
+                "udid": "01234567-89AB-CDEF-0123-456789ABCDEF",
+                "name": "Pleazyng-test-tvos",
+                "runtime_id": "com.apple.CoreSimulator.SimRuntime.tvOS-27-2",
+                "runtime_version": "27.2",
+                "device_type": "com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-4K",
+            }
+            app_hash = "a" * 64
+            installed = {"installed_app_bundle_sha256": app_hash}
+            identity = {
+                "bundle_id": capture.BUNDLE_ID,
+                "version": capture.VERSION,
+                "build_number": capture.BUILD_NUMBER,
+                "executable": "Runner",
+            }
+            invocations: list[tuple[str, list[str]]] = []
+
+            def diagnostic_command(directory: Path, name: str, args: list[str], *, timeout: int = 60):
+                invocations.append((name, args))
+                stdout = ""
+                returncode = 0
+                if name == "simctl_launch":
+                    stdout = f"{capture.BUNDLE_ID}: 1234\n"
+                elif name in {"product_process_after_launch", "product_process_after_terminate"}:
+                    stdout = "PID PPID STAT COMMAND ARGS\n"
+                    if name == "product_process_after_launch":
+                        stdout += "1234 1 S Runner Runner\n"
+                        returncode = 0
+                    else:
+                        returncode = 1
+                elif name == "launchctl_after":
+                    stdout = f"1234\t0\tapplication.{capture.BUNDLE_ID}\n"
+                stdout_path = directory / f"{name}.stdout.txt"
+                stderr_path = directory / f"{name}.stderr.txt"
+                stdout_path.write_text(stdout, encoding="utf-8")
+                stderr_path.write_text("", encoding="utf-8")
+                return {
+                    "command": args,
+                    "returncode": returncode,
+                    "timed_out": False,
+                    "error": None,
+                    "stdout_path": stdout_path.name,
+                    "stdout_sha256": capture.sha256_file(stdout_path),
+                    "stdout_size_bytes": stdout_path.stat().st_size,
+                    "stderr_path": stderr_path.name,
+                    "stderr_sha256": capture.sha256_file(stderr_path),
+                    "stderr_size_bytes": 0,
+                }
+
+            with (
+                patch.object(capture, "diagnostic_command", side_effect=diagnostic_command),
+                patch.object(capture, "copy_recent_tvos_crash_reports", return_value=[]),
+                patch.object(capture.time, "sleep"),
+            ):
+                evidence = capture.diagnose_tvos_retained_app(
+                    simulator, installed, identity, app_hash, output
+                )
+
+            self.assertTrue(evidence["ready_for_xctest"])
+            self.assertEqual(evidence["product_pid"], 1234)
+            self.assertTrue(evidence["process_alive_after_launch"])
+            self.assertFalse(evidence["process_alive_after_terminate"])
+            launch_call = next(args for name, args in invocations if name == "simctl_launch")
+            self.assertEqual(launch_call, ["xcrun", "simctl", "launch", simulator["udid"], capture.BUNDLE_ID])
+            log_call = next(args for name, args in invocations if name == "unified_log_after_launch")
+            self.assertIn("processIdentifier == 1234", log_call[-1])
+            receipt_path = output / evidence["receipt_path"]
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            self.assertEqual(receipt["product"]["app_bundle_sha256"], app_hash)
+            self.assertTrue((output / "tvos-pre-xctest-diagnostic/simctl_launch.stdout.txt").is_file())
+
+    def test_tvos_direct_launch_diagnostic_rejects_wrong_installed_bundle_hash(self) -> None:
+        with TemporaryDirectory() as temporary:
+            simulator = {"udid": "01234567-89AB-CDEF-0123-456789ABCDEF"}
+            installed = {"installed_app_bundle_sha256": "b" * 64}
+            identity = {"bundle_id": capture.BUNDLE_ID}
+            with self.assertRaisesRegex(ValueError, "exact installed producer app hash"):
+                capture.diagnose_tvos_retained_app(
+                    simulator, installed, identity, "a" * 64, Path(temporary)
+                )
+
+    def test_tvos_direct_launch_pid_parser_requires_unique_exact_bundle_id(self) -> None:
+        with TemporaryDirectory() as temporary:
+            output = Path(temporary) / "launch.txt"
+            output.write_text(f"{capture.BUNDLE_ID}: 1234\n", encoding="utf-8")
+            self.assertEqual(capture.simctl_launch_pid(output), 1234)
+            output.write_text(f"org.example.other: 1234\n", encoding="utf-8")
+            self.assertIsNone(capture.simctl_launch_pid(output))
+            output.write_text(
+                f"{capture.BUNDLE_ID}: 1234\n{capture.BUNDLE_ID}: 5678\n", encoding="utf-8"
+            )
+            self.assertIsNone(capture.simctl_launch_pid(output))
+
     def test_association_binds_each_target_to_the_exact_retained_product_path(self) -> None:
         for platform in ("macos", "tvos"):
             with self.subTest(platform=platform), TemporaryDirectory() as temporary:

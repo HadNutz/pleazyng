@@ -17,6 +17,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
@@ -752,10 +753,267 @@ def install_tvos_app(simulator: dict[str, str], app: Path, receipt: dict[str, An
     return {
         "bundle_id": BUNDLE_ID,
         "simulator_udid": udid,
+        "installed_app_path": str(installed_path),
         "installed_app_bundle_sha256": installed_hash,
         "installed_app_identity": capture_tools.app_info(installed_path),
         "qualification": "Installed the exact producer-receipt-verified retained app into the named tvOS Simulator before SKTestSession setup.",
     }
+
+
+def diagnostic_command(
+    output: Path,
+    name: str,
+    args: list[str],
+    *,
+    timeout: int = 60,
+) -> dict[str, Any]:
+    """Run and retain one bounded simulator diagnostic command verbatim."""
+    stdout_path = output / f"{name}.stdout.txt"
+    stderr_path = output / f"{name}.stderr.txt"
+    try:
+        result = subprocess.run(
+            args,
+            check=False,
+            text=True,
+            capture_output=True,
+            timeout=timeout,
+        )
+        stdout = result.stdout or ""
+        stderr = result.stderr or ""
+        returncode: int | None = result.returncode
+        timed_out = False
+        error = None
+    except subprocess.TimeoutExpired as exc:
+        stdout_value = exc.stdout or ""
+        stderr_value = exc.stderr or ""
+        stdout = stdout_value.decode(errors="replace") if isinstance(stdout_value, bytes) else stdout_value
+        stderr = stderr_value.decode(errors="replace") if isinstance(stderr_value, bytes) else stderr_value
+        returncode = None
+        timed_out = True
+        error = f"Timed out after {timeout}s"
+    except OSError as exc:
+        stdout = ""
+        stderr = ""
+        returncode = None
+        timed_out = False
+        error = f"{type(exc).__name__}: {exc}"
+    stdout_path.write_text(stdout, encoding="utf-8")
+    stderr_path.write_text(stderr, encoding="utf-8")
+    return {
+        "command": args,
+        "returncode": returncode,
+        "timed_out": timed_out,
+        "error": error,
+        "stdout_path": stdout_path.name,
+        "stdout_sha256": sha256_file(stdout_path),
+        "stdout_size_bytes": stdout_path.stat().st_size,
+        "stderr_path": stderr_path.name,
+        "stderr_sha256": sha256_file(stderr_path),
+        "stderr_size_bytes": stderr_path.stat().st_size,
+    }
+
+
+def simctl_launch_pid(stdout_path: Path) -> int | None:
+    text = stdout_path.read_text(encoding="utf-8", errors="replace")
+    matches = re.findall(rf"(?m)^\s*{re.escape(BUNDLE_ID)}:\s*([0-9]+)\s*$", text)
+    return int(matches[0]) if len(matches) == 1 else None
+
+
+def simulator_ps_contains_pid(stdout_path: Path, pid: int) -> bool:
+    return any(
+        re.match(rf"^\s*{pid}\s+", line) is not None
+        for line in stdout_path.read_text(encoding="utf-8", errors="replace").splitlines()
+    )
+
+
+def _matches_tvos_crash_report(path: Path) -> bool:
+    try:
+        sample = path.read_text(encoding="utf-8", errors="replace")[:131072]
+    except OSError:
+        return False
+    if BUNDLE_ID in sample:
+        return True
+    if path.suffix == ".ips":
+        try:
+            header = json.loads(sample.splitlines()[0])
+            payload = json.loads(sample.splitlines()[1])
+        except (IndexError, json.JSONDecodeError):
+            return False
+        return (
+            payload.get("procName") == "Runner"
+            and header.get("name") == "Runner"
+        )
+    return re.search(r"(?m)^Process:\s+Runner(?:\s|$)", sample) is not None
+
+
+def copy_recent_tvos_crash_reports(
+    simulator: dict[str, str], output: Path, *, started_at: float
+) -> list[dict[str, Any]]:
+    home = Path.home()
+    device_data = home / "Library" / "Developer" / "CoreSimulator" / "Devices" / simulator["udid"] / "data"
+    directories = [
+        device_data / "Library" / "Logs" / "CrashReporter",
+        device_data / "Library" / "Logs" / "CrashReporter" / "Retired",
+        home / "Library" / "Logs" / "DiagnosticReports",
+    ]
+    destination = output / "tvos-pre-xctest-diagnostic" / "crash-reports"
+    destination.mkdir(parents=True, exist_ok=True)
+    evidence: list[dict[str, Any]] = []
+    seen: set[Path] = set()
+    for directory in directories:
+        if not directory.is_dir():
+            continue
+        for path in directory.iterdir():
+            if path in seen or not path.is_file() or path.suffix not in {".ips", ".crash"}:
+                continue
+            seen.add(path)
+            try:
+                if path.stat().st_mtime < started_at - 5 or not _matches_tvos_crash_report(path):
+                    continue
+                copied = destination / path.name
+                if copied.exists():
+                    copied = destination / f"{path.stem}-{len(evidence) + 1}{path.suffix}"
+                shutil.copyfile(path, copied)
+                evidence.append({
+                    "source_path": str(path),
+                    "path": copied.relative_to(output).as_posix(),
+                    "sha256": sha256_file(copied),
+                    "size_bytes": copied.stat().st_size,
+                })
+            except OSError:
+                continue
+    return evidence
+
+
+def diagnose_tvos_retained_app(
+    simulator: dict[str, str],
+    installed_app_evidence: dict[str, Any],
+    app_identity: dict[str, str],
+    app_bundle_sha256: str,
+    output: Path,
+) -> dict[str, Any]:
+    """Launch the verified tvOS app outside XCTest and retain bounded runtime evidence."""
+    if app_identity.get("bundle_id") != BUNDLE_ID:
+        raise ValueError("tvOS diagnostic launch requires the receipt-verified Pleazyng bundle identity")
+    if installed_app_evidence.get("installed_app_bundle_sha256") != app_bundle_sha256:
+        raise ValueError("tvOS diagnostic launch requires the exact installed producer app hash")
+    diagnostic_dir = output / "tvos-pre-xctest-diagnostic"
+    diagnostic_dir.mkdir(parents=True, exist_ok=False)
+    started_at = time.time()
+    udid = simulator["udid"]
+    evidence: dict[str, Any] = {
+        "schema_version": 1,
+        "purpose": "Bounded product-process diagnosis before XCTest; no taps or StoreKit transactions are performed.",
+        "storekit_environment": "No SKTestSession is active during this direct launch; its StoreKit response is diagnostic only.",
+        "product": {
+            "bundle_id": BUNDLE_ID,
+            "version": app_identity.get("version"),
+            "build": app_identity.get("build_number"),
+            "executable": app_identity.get("executable"),
+            "app_bundle_sha256": app_bundle_sha256,
+            "installed_app_bundle_sha256": installed_app_evidence["installed_app_bundle_sha256"],
+        },
+        "simulator": simulator,
+        "started_at_utc": datetime.fromtimestamp(started_at, timezone.utc).isoformat(),
+        "commands": {},
+        "crash_reports": [],
+    }
+
+    def run(name: str, args: list[str], *, timeout: int = 60) -> dict[str, Any]:
+        receipt = diagnostic_command(diagnostic_dir, name, args, timeout=timeout)
+        evidence["commands"][name] = receipt
+        return receipt
+
+    run("installed_app_inventory", ["xcrun", "simctl", "listapps", udid])
+    run("launchctl_before", ["xcrun", "simctl", "spawn", udid, "launchctl", "list"])
+    launch = run("simctl_launch", ["xcrun", "simctl", "launch", udid, BUNDLE_ID], timeout=90)
+    launch_stdout = diagnostic_dir / launch["stdout_path"]
+    pid = simctl_launch_pid(launch_stdout)
+    evidence["product_pid"] = pid
+    time.sleep(5)
+
+    process = None
+    if pid is not None:
+        process = run(
+            "product_process_after_launch",
+            ["xcrun", "simctl", "spawn", udid, "ps", "-p", str(pid), "-o", "pid,ppid,state,comm,args"],
+        )
+        process_stdout = diagnostic_dir / process["stdout_path"]
+        process_alive = process["returncode"] == 0 and simulator_ps_contains_pid(process_stdout, pid)
+        run(
+            "product_launchctl_process_info",
+            ["xcrun", "simctl", "spawn", udid, "launchctl", "procinfo", str(pid)],
+        )
+    else:
+        process_alive = False
+
+    launchctl_after = run("launchctl_after", ["xcrun", "simctl", "spawn", udid, "launchctl", "list"])
+    launchctl_text = (diagnostic_dir / launchctl_after["stdout_path"]).read_text(encoding="utf-8", errors="replace")
+    evidence["launchctl_app_service_lines"] = [
+        line for line in launchctl_text.splitlines() if BUNDLE_ID in line
+    ]
+    unified_predicate = f'process == "Runner" OR processIdentifier == {pid or 0} OR subsystem CONTAINS[c] "StoreKit"'
+    run(
+        "unified_log_after_launch",
+        ["xcrun", "simctl", "spawn", udid, "log", "show", "--last", "2m", "--style", "compact", "--predicate", unified_predicate],
+        timeout=120,
+    )
+
+    screenshot = diagnostic_dir / "simulator-screen.png"
+    screenshot_receipt = run(
+        "simulator_screenshot",
+        ["xcrun", "simctl", "io", udid, "screenshot", "--type=png", str(screenshot)],
+        timeout=60,
+    )
+    if screenshot.is_file() and screenshot.stat().st_size:
+        image_evidence: dict[str, Any] = {
+            "path": screenshot.relative_to(output).as_posix(),
+            "sha256": sha256_file(screenshot),
+            "size_bytes": screenshot.stat().st_size,
+        }
+        try:
+            image_evidence["dimensions"] = list(capture_tools.png_dimensions(screenshot))
+            image_evidence["visible_content_check"] = capture_tools.require_visible_screen_content(screenshot)
+        except (OSError, ValueError) as error:
+            image_evidence["validation_error"] = f"{type(error).__name__}: {error}"
+        evidence["diagnostic_screen"] = image_evidence
+    else:
+        evidence["diagnostic_screen"] = {
+            "error": "Simulator screenshot command did not create a nonempty PNG",
+            "command": screenshot_receipt,
+        }
+
+    evidence["crash_reports"] = copy_recent_tvos_crash_reports(
+        simulator, output, started_at=started_at
+    )
+    evidence["process_alive_after_launch"] = process_alive
+    evidence["simctl_launch_succeeded"] = launch["returncode"] == 0 and pid is not None
+    evidence["ready_for_xctest"] = evidence["simctl_launch_succeeded"] and process_alive
+    if pid is not None and process_alive:
+        terminate = run("simctl_terminate_product", ["xcrun", "simctl", "terminate", udid, BUNDLE_ID])
+        if terminate["returncode"] != 0:
+            error_text = "\n".join((
+                (diagnostic_dir / terminate["stdout_path"]).read_text(encoding="utf-8", errors="replace"),
+                (diagnostic_dir / terminate["stderr_path"]).read_text(encoding="utf-8", errors="replace"),
+            ))
+            if not (terminate["returncode"] == 3 and re.search(r"not running|no running process", error_text, re.IGNORECASE)):
+                evidence["ready_for_xctest"] = False
+                evidence["termination_error"] = "simctl terminate failed for the preflight product app"
+        after_terminate = run(
+            "product_process_after_terminate",
+            ["xcrun", "simctl", "spawn", udid, "ps", "-p", str(pid), "-o", "pid,ppid,state,comm,args"],
+        )
+        after_stdout = diagnostic_dir / after_terminate["stdout_path"]
+        evidence["process_alive_after_terminate"] = (
+            after_terminate["returncode"] == 0 and simulator_ps_contains_pid(after_stdout, pid)
+        )
+        if evidence["process_alive_after_terminate"]:
+            evidence["ready_for_xctest"] = False
+            evidence["termination_error"] = "The preflight tvOS product process remained alive after simctl terminate"
+    receipt_path = output / "tvos-pre-xctest-diagnostic.json"
+    evidence["receipt_path"] = receipt_path.name
+    write_json(receipt_path, evidence)
+    return evidence
 
 
 def capture(args: argparse.Namespace) -> None:
@@ -795,6 +1053,7 @@ def capture(args: argparse.Namespace) -> None:
     result_bundle: Path | None = None
     failure: str | None = None
     scheme_evidence: dict[str, str] | None = None
+    pre_xctest_app_diagnostic: dict[str, Any] | None = None
     try:
         simulator_id = None
         if platform == "tvos":
@@ -886,6 +1145,18 @@ def capture(args: argparse.Namespace) -> None:
             write_json(output / "simulator-readiness.json", simulator_readiness)
             installed_app_evidence = install_tvos_app(simulator, app_staged, receipt)
             write_json(output / "simulator-installed-app.json", installed_app_evidence)
+            pre_xctest_app_diagnostic = diagnose_tvos_retained_app(
+                simulator,
+                installed_app_evidence,
+                identity,
+                app_hash,
+                output,
+            )
+            if not pre_xctest_app_diagnostic["ready_for_xctest"]:
+                raise RuntimeError(
+                    "The exact retained tvOS app did not stay running after a bounded direct launch; "
+                    "see tvos-pre-xctest-diagnostic.json and its process/crash/log evidence"
+                )
 
         result_bundle = output / f"pleazyng-{platform}-storekit-localtest.xcresult"
         test_log = output / "storekit-ui-test.log"
@@ -944,6 +1215,11 @@ def capture(args: argparse.Namespace) -> None:
                 "host_architecture": command(["uname", "-m"], capture=True, timeout=30),
                 "simulator": simulator,
                 "simulator_readiness_before_app_install": simulator_readiness,
+                "pre_xctest_app_diagnostic": pre_xctest_app_diagnostic,
+                "pre_xctest_app_diagnostic_receipt_sha256": (
+                    sha256_file(output / "tvos-pre-xctest-diagnostic.json")
+                    if pre_xctest_app_diagnostic is not None else None
+                ),
                 "xcodegen_version": command(["xcodegen", "--version"], capture=True, timeout=60),
             },
             "storekit_test": {
@@ -991,6 +1267,11 @@ def capture(args: argparse.Namespace) -> None:
             "error": failure,
             "scheme_configuration": scheme_evidence,
             "simulator_readiness_before_app_install": simulator_readiness,
+            "pre_xctest_app_diagnostic": pre_xctest_app_diagnostic,
+            "pre_xctest_app_diagnostic_receipt_sha256": (
+                sha256_file(output / "tvos-pre-xctest-diagnostic.json")
+                if pre_xctest_app_diagnostic is not None else None
+            ),
             "observed_prior_failure": PRIOR_STOREKIT_FAILURE,
             "runner_environment": {
                 "xcode_version": _best_effort_command(["xcodebuild", "-version"]),
