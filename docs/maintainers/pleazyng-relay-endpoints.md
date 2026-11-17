@@ -1,10 +1,11 @@
 # Pleazyng service endpoint inventory
 
 This is the source-backed inventory of HTTP and WebSocket routes in the
-self-hostable Pleazyng Go relay and the first-party MAL OAuth broker. The
-operator's public API hostname now serves only the Cloudflare Worker; its home
-Go service and Tunnel origin are disabled. Other routes below are available
-only when a user operates a relay and explicitly configures it in the app.
+self-hostable Pleazyng Go relay, the first-party MAL OAuth broker, and the
+separate first-party billing-only service. The operator's public API hostname
+continues to serve only the Cloudflare Worker; its home Go service and Tunnel
+origin remain disabled. The billing hostname is a separate dedicated origin
+and is not part of the public API Worker or the user-hosted relay.
 
 The route list is taken from [`main.go`](../../server/main.go),
 [`oauth.go`](../../server/oauth.go), and the registered handlers linked below. App callers
@@ -18,6 +19,7 @@ handler is mounted, an app callsite changes, or a route is retired.
 | Settings → Services → User-hosted relay | Optional HTTPS base URL for a relay the user operates. Official builds leave it unset; relay-backed features fail closed until configured. |
 | `pleazyngOAuthBrokerBaseUrl` | Fixed first-party OAuth handoff origin. It handles the MAL code-only flow and receives neither PKCE verifier nor provider tokens. |
 | Profile music relay URL | Optional profile-specific URL for `/music/connect/relay`; if empty, the app uses the user-configured relay base URL. |
+| `https://billing.pleazyng.app` | Dedicated first-party billing origin served by the `-billing-only` Go mode. It exposes only the routes in the billing section below and remains disabled until Paymentwall live approval, Status API activation, HTTPS ingress, and runtime secret configuration are complete. |
 
 The Flutter URL validation and defaults live in [`plezy_server.dart`](../../lib/services/plezy_server.dart).
 The app requires HTTPS and does not infer a relay from a build variable.
@@ -36,6 +38,29 @@ The app requires HTTPS and does not infer a relay from a build variable.
 | `/commerce/watchmode-availability` | `GET` HTTP with `tmdbType`, `tmdbId`, and `region`; `OPTIONS` preflight | Fetch title availability sources for a movie or TV title. | Available only through a user-configured relay; returns unavailable unless its operator supplies an approved key. Caller: [`watchmode_availability_client.dart`](../../lib/services/watchmode_availability_client.dart); handler: [`watchmode_availability.go`](../../server/watchmode_availability.go). |
 | `/music/connect/relay` | `GET` WebSocket upgrade | Optional away-from-home **Music → Play on** receiver/controller connection. The relay routes encrypted music-control frames; the receiving app accesses its own media server. | Self-hosted only and mounted only when `MUSIC_CONNECT_RELAY_ENABLED=true`. Caller and URI construction: [`music_relay_configuration.dart`](../../lib/services/music/music_relay_configuration.dart); handler: [`music_connect_relay.go`](../../server/music_connect_relay.go). |
 | `/games/steam/relay` | `GET` WebSocket upgrade | Optional paired Steam host/receiver internet stream and control tunnel. Steam UDP traffic may also use the separately configured `STEAM_STREAM_RELAY_UDP_PORT`. | Self-hosted only; mounted when `STEAM_STREAM_RELAY_ENABLED=true` and OAuth is configured. Client route: [`steam_internet_tunnel.dart`](../../lib/games/steam_internet_tunnel.dart); handler: [`steam_relay.go`](../../server/steam_relay.go). The operator-hosted service and public origin are disabled. |
+
+## First-party billing-only routes
+
+The dedicated server is started with `-billing-only` from
+[`docker-compose.billing.yml`](../../server/docker-compose.billing.yml). That
+mode does not start the general relay and mounts no OAuth, logs, posters,
+commerce, or WebSocket routes. Its only registered paths are:
+
+| Route | Method | App or service use | Registration and availability |
+| --- | --- | --- | --- |
+| `/health` | `GET` HTTP | Billing service liveness. | Mounted by the billing-only mux. |
+| `/lg/paymentwall/identity` | `POST` HTTP; `OPTIONS` preflight | Register or re-authenticate the accountless LG license UID using its recovery credential. | Billing-only mode; requires live billing enablement. Credential is sent in `Authorization`, never a URL. |
+| `/lg/paymentwall/checkout` | `POST` HTTP; `OPTIONS` preflight | Create a short-lived checkout session and return a billing-origin URL. | Billing-only mode; requires live billing enablement and a registered UID. |
+| `/lg/paymentwall/checkout/{session}` | `GET` HTTP | Serve the Paymentwall Smart TV checkout page. | Billing-only mode; the opaque session is short-lived and is not a credential or entitlement proof. |
+| `/lg/paymentwall/entitlement` | `GET` HTTP; `OPTIONS` preflight | Query Paymentwall Status API and return a server-signed ownership or revocation grant. | Billing-only mode; requires live billing enablement. No browser callback grants ownership. |
+| `/paymentwall/lg/pingback` | `GET` or `POST` HTTP | Receive Paymentwall purchase, review, refund, and test events. | Billing-only mode; requires Paymentwall source-IP and signature checks. The separate test-only configuration accepts only a correctly signed `is_test=1` callback and has no state store or live Status API. |
+
+The standalone billing compose file binds the service to loopback port 8081 and
+uses a separate persistent `billing-state` volume. A billing virtual host must
+proxy only the listed billing paths and `/health`; unmatched paths return 404.
+The standard relay compose file does not receive Paymentwall secrets and does
+not mount these paths. The billing service is not currently live or qualified;
+the owner runbook records the external merchant and ingress gates.
 
 `/relay` is the Go service's Pleazyng room protocol. The current Watch Together
 feature instead constructs a `.../v1/ws` WebSocket URL through the Open Watch
@@ -127,6 +152,7 @@ services are reachable or unaffected by their own regional controls.
 ## Route sources and maintenance
 
 - Core route registration and log/poster handlers: [`main.go`](../../server/main.go).
+- Billing-only route registration and process mode: [`main.go`](../../server/main.go), [`lg_paymentwall.go`](../../server/lg_paymentwall.go), [`docker-compose.billing.yml`](../../server/docker-compose.billing.yml), and [`lg-paymentwall.md`](lg-paymentwall.md).
 - OAuth dispatch: [`oauth.go`](../../server/oauth.go); Steam catalog, game, Cloud, and Families handlers: [`steam_catalog.go`](../../server/steam_catalog.go), [`steam_game_context.go`](../../server/steam_game_context.go), [`steam_cloud.go`](../../server/steam_cloud.go), [`steam_families.go`](../../server/steam_families.go).
 - Optional commerce handlers: [`comic_commerce.go`](../../server/comic_commerce.go) and [`watchmode_availability.go`](../../server/watchmode_availability.go).
 - Optional WebSocket handlers: [`music_connect_relay.go`](../../server/music_connect_relay.go) and [`steam_relay.go`](../../server/steam_relay.go).

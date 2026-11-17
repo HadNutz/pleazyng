@@ -2798,8 +2798,52 @@ func newHTTPServer(addr string, handler http.Handler) *http.Server {
 	}
 }
 
+func newLGPaymentwallOnlyMux(handler *lgPaymentwallHandler) *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = io.WriteString(w, "ok")
+	})
+	registerLGPaymentwallRoutes(mux, handler)
+	return mux
+}
+
+func runLGPaymentwallOnly(addr string, handler *lgPaymentwallHandler) error {
+	httpSrv := newHTTPServer(addr, newLGPaymentwallOnlyMux(handler))
+	serveErr := make(chan error, 1)
+	go func() {
+		log.Printf("Starting Paymentwall-only billing server on %s", addr)
+		if err := httpSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			serveErr <- err
+		}
+		close(serveErr)
+	}()
+
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+	defer signal.Stop(sig)
+	var listenErr error
+	select {
+	case err, ok := <-serveErr:
+		if ok {
+			listenErr = err
+		}
+	case received := <-sig:
+		log.Printf("billing shutdown received (%s)", received)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	shutdownErr := httpSrv.Shutdown(ctx)
+	cancel()
+	var storeErr error
+	if handler != nil && handler.store != nil {
+		storeErr = handler.store.close()
+	}
+	return errors.Join(listenErr, shutdownErr, storeErr)
+}
+
 func main() {
 	addr := flag.String("addr", ":8080", "Listen address")
+	billingOnly := flag.Bool("billing-only", false, "Serve only Paymentwall billing and health routes")
 	logDir := flag.String("log-dir", "/data/logs", "Directory for log file storage")
 	posterDir := flag.String("poster-dir", "/data/posters", "Directory for Discord poster storage")
 	stateFile := flag.String("state-file", "/data/rooms.json", "Path to room snapshot file")
@@ -2810,11 +2854,21 @@ func main() {
 		log.Fatalf("invalid TRUSTED_PROXY_CIDRS")
 	}
 	clientIPs := newClientIPResolver(trustedProxyCIDRs)
+	if *billingOnly {
+		lgPaymentwall, err := newLGPaymentwallHandler(clientIPs)
+		if err != nil {
+			log.Fatalf("LG Paymentwall startup failed: %v", err)
+		}
+		if err := runLGPaymentwallOnly(*addr, lgPaymentwall); err != nil {
+			log.Printf("Paymentwall-only billing server failed: %v", err)
+			os.Exit(1)
+		}
+		return
+	}
 	srv := newServer(*logDir, *stateFile, *posterDir, clientIPs)
 	if srv.startupErr != nil {
 		log.Fatalf("abuse guard unavailable: %v", srv.startupErr)
 	}
-
 	mux := http.NewServeMux()
 	mux.HandleFunc("/relay", srv.handleWS)
 	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {

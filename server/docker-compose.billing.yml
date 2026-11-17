@@ -1,0 +1,41 @@
+services:
+  billing:
+    profiles: [billing]
+    build: .
+    command: ["-billing-only", "-addr", ":8080"]
+    restart: unless-stopped
+    read_only: true
+    mem_limit: 128m
+    cpus: 0.5
+    pids_limit: 64
+    stop_grace_period: 15s
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=16m
+    volumes:
+      - billing-state:/data
+    ports:
+      - "127.0.0.1:8081:8080"
+    environment:
+      TRUSTED_PROXY_CIDRS: ${BILLING_TRUSTED_PROXY_CIDRS:?Set BILLING_TRUSTED_PROXY_CIDRS to the dedicated billing proxy network CIDR}
+      LG_PAYMENTWALL_ENABLED: ${LG_PAYMENTWALL_ENABLED:-false}
+      LG_PAYMENTWALL_TEST_PINGBACK_ENABLED: ${LG_PAYMENTWALL_TEST_PINGBACK_ENABLED:-false}
+      LG_PAYMENTWALL_STATUS_API_ENABLED: ${LG_PAYMENTWALL_STATUS_API_ENABLED:-false}
+      LG_PAYMENTWALL_PROJECT_KEY: ${LG_PAYMENTWALL_PROJECT_KEY:-}
+      LG_PAYMENTWALL_SECRET_KEY: ${LG_PAYMENTWALL_SECRET_KEY:-}
+      LG_PAYMENTWALL_PUBLIC_BASE_URL: ${LG_PAYMENTWALL_PUBLIC_BASE_URL:-https://billing.pleazyng.app}
+      LG_PAYMENTWALL_STATE_FILE: ${LG_PAYMENTWALL_STATE_FILE:-/data/lg-paymentwall.json}
+      LG_PAYMENTWALL_GRANT_PRIVATE_KEY: ${LG_PAYMENTWALL_GRANT_PRIVATE_KEY:-}
+      LG_PAYMENTWALL_ALLOW_SIG_V2: ${LG_PAYMENTWALL_ALLOW_SIG_V2:-false}
+      LG_PAYMENTWALL_ALLOWED_ORIGINS: ${LG_PAYMENTWALL_ALLOWED_ORIGINS:-https://billing.pleazyng.app}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  billing-state:
