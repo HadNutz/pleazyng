@@ -19,6 +19,8 @@ from capture_apple_store_screenshots import (
     derive_ios_simulator_entitlements,
     nested_code_paths,
     runner_signing_identity,
+    simulator_launch_pid,
+    simulator_reported_tvos_app_stopped,
     simulator_codesign_command,
 )
 
@@ -162,6 +164,7 @@ class SimulatorSigningTests(unittest.TestCase):
                     "org.snapetech.pleazyng",
                 )
 
+
     def test_nested_extension_keeps_its_source_entitlements_and_own_identity(self) -> None:
         source = {
             "com.apple.security.hardened-process": True,
@@ -272,6 +275,26 @@ class SimulatorSigningTests(unittest.TestCase):
 
             with self.assertRaisesRegex(ValueError, "invalid mode"):
                 bundle_executable(extension)
+
+
+class TvOSSimulatorCleanupTests(unittest.TestCase):
+    def test_accepts_only_the_specific_already_stopped_cleanup_result(self) -> None:
+        stderr = (
+            "An error was encountered processing the command (domain=NSPOSIXErrorDomain, code=3):\n"
+            "Simulator device failed to terminate org.snapetech.pleazyng.\n"
+            "found nothing to terminate\n"
+        )
+        self.assertTrue(simulator_reported_tvos_app_stopped(3, "", stderr))
+        self.assertFalse(simulator_reported_tvos_app_stopped(4, "", stderr))
+        self.assertFalse(simulator_reported_tvos_app_stopped(3, "", "found nothing to terminate"))
+        self.assertFalse(simulator_reported_tvos_app_stopped(
+            3, "", "domain=NSPOSIXErrorDomain, code=2: found nothing to terminate"
+        ))
+
+    def test_reads_only_the_exact_product_pid_from_simctl_launch_output(self) -> None:
+        self.assertEqual(simulator_launch_pid("org.snapetech.pleazyng: 6612\n"), 6612)
+        self.assertIsNone(simulator_launch_pid("org.snapetech.pleazyng: not-a-pid\n"))
+        self.assertIsNone(simulator_launch_pid("org.snapetech.other: 6612\n"))
 
 
 if __name__ == "__main__":

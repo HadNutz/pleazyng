@@ -1038,6 +1038,117 @@ def capture_ios_simulator_launch_diagnostics(
     }
 
 
+def simulator_reported_tvos_app_stopped(returncode: int, stdout: str, stderr: str) -> bool:
+    details = f"{stdout}\n{stderr}"
+    return (
+        returncode == 3
+        and "NSPOSIXErrorDomain" in details
+        and re.search(r"\bcode\s*=\s*3\b", details) is not None
+        and "found nothing to terminate" in details.lower()
+    )
+
+
+def simulator_launch_pid(stdout: str) -> int | None:
+    match = re.search(rf"{re.escape(BUNDLE_ID)}:\s*([0-9]+)\b", stdout)
+    return int(match.group(1)) if match is not None else None
+
+
+def capture_tvos_simulator_launch_diagnostics(
+    simulator_udid: str,
+    output: Path,
+    filename: str,
+    app_executable: str,
+    app_pid: int | None,
+) -> dict[str, Any]:
+    if re.fullmatch(r"[A-Za-z0-9._-]+", app_executable) is None:
+        raise ValueError("The product's Info.plist executable name is invalid for tvOS diagnostics")
+    stem = Path(filename).stem
+    state: dict[str, Any] = {
+        "simulator_udid": simulator_udid,
+        "app_executable": app_executable,
+        "preflight_process_id": app_pid,
+        "scope": "The disposable tvOS capture Simulator only; no StoreKit action or product rebuild was performed.",
+    }
+    process_path = output / f"{stem}.simulator-process-state.txt"
+    process_command = [
+        "xcrun", "simctl", "spawn", simulator_udid, "/bin/ps",
+        "-A", "-o", "pid=,ppid=,state=,etime=,command=",
+    ]
+    try:
+        process_result = subprocess.run(
+            process_command, check=False, text=True, capture_output=True, timeout=30,
+        )
+        app_rows = [
+            line for line in process_result.stdout.splitlines()
+            if app_executable in line or (app_pid is not None and re.match(rf"\s*{app_pid}\b", line))
+        ]
+        process_path.write_text(
+            "command: " + " ".join(process_command) + "\n"
+            + f"exit_code: {process_result.returncode}\n"
+            + "matching_app_processes:\n" + "\n".join(app_rows) + "\n"
+            + "stderr:\n" + process_result.stderr,
+            encoding="utf-8",
+        )
+        state["process_state"] = {
+            "path": process_path.name,
+            "exit_code": process_result.returncode,
+            "matching_rows": app_rows,
+            "sha256": sha256_file(process_path),
+        }
+    except (OSError, subprocess.TimeoutExpired) as error:
+        process_path.write_text(f"Simulator process-state probe failed: {error}\n", encoding="utf-8")
+        state["process_state"] = {"path": process_path.name, "error": str(error)}
+
+    services = (
+        "SpringBoard", "launchd", "launchd_sim", "runningboardd", "amfid", "installd",
+        "launchservicesd", "lsd", "dyld", "ReportCrash", app_executable,
+    )
+    service_predicate = " OR ".join(f'process == "{name}"' for name in dict.fromkeys(services))
+    relevant_text = (
+        f'eventMessage CONTAINS[c] "{BUNDLE_ID}" '
+        'OR eventMessage CONTAINS[c] "crash" '
+        'OR eventMessage CONTAINS[c] "termination" '
+        'OR eventMessage CONTAINS[c] "dyld" '
+        'OR eventMessage CONTAINS[c] "launch" '
+        'OR eventMessage CONTAINS[c] "deny" '
+        'OR eventMessage CONTAINS[c] "signature" '
+        'OR eventMessage CONTAINS[c] "entitlement"'
+    )
+    predicate = f"(({service_predicate}) AND ({relevant_text})) OR process == \"{app_executable}\""
+    if app_pid is not None:
+        predicate += f" OR processIdentifier == {app_pid}"
+    log_command = [
+        "xcrun", "simctl", "spawn", simulator_udid, "log", "show",
+        "--last", "15m", "--style", "compact", "--predicate", predicate,
+    ]
+    log_path = output / f"{stem}.simulator-launch-crash.log"
+    try:
+        log_result = subprocess.run(
+            log_command, check=False, text=True, capture_output=True, timeout=120,
+        )
+        log_path.write_text(log_result.stdout + log_result.stderr, encoding="utf-8")
+        if log_result.returncode == 0 and not log_result.stdout.strip():
+            log_path.write_text(
+                "No matching Simulator launch, crash reporter, dyld, or SpringBoard events were retained.\n",
+                encoding="utf-8",
+            )
+        state["unified_log"] = {
+            "path": log_path.name,
+            "exit_code": log_result.returncode,
+            "sha256": sha256_file(log_path),
+            "filter": predicate,
+            "preflight_process_id": app_pid,
+        }
+    except (OSError, subprocess.TimeoutExpired) as error:
+        log_path.write_text(f"Simulator unified log collection failed: {error}\n", encoding="utf-8")
+        state["unified_log"] = {"path": log_path.name, "error": str(error)}
+
+    summary_path = output / f"{stem}.simulator-launch-diagnostics.json"
+    summary_path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+    state["summary_path"] = summary_path.name
+    return state
+
+
 def codesign_entitlements(app: Path) -> dict[str, Any]:
     result = subprocess.run(
         ["/usr/bin/codesign", "-d", "--entitlements", ":-", str(app)],
@@ -1421,42 +1532,101 @@ def run_app_in_use_ui_test(
             + "stderr:\n" + preflight.stderr,
             encoding="utf-8",
         )
+        preflight_pid = simulator_launch_pid(preflight.stdout)
         if preflight.returncode != 0:
-            launch_diagnostics = capture_ios_simulator_launch_diagnostics(
-                simulator_udid, output, filename, app_executable
-            ) if platform == "iOS" else None
+            if platform == "iOS":
+                launch_diagnostics = capture_ios_simulator_launch_diagnostics(
+                    simulator_udid, output, filename, app_executable
+                )
+            elif platform == "tvOS":
+                launch_diagnostics = capture_tvos_simulator_launch_diagnostics(
+                    simulator_udid, output, filename, app_executable, preflight_pid
+                )
+            else:
+                launch_diagnostics = None
             raise RuntimeError(
                 f"The ad-hoc Simulator product failed direct launch with exit code {preflight.returncode}; "
                 f"launch output is retained at {preflight_log_path}; diagnostics={launch_diagnostics}"
             )
-        run(["xcrun", "simctl", "terminate", simulator_udid, BUNDLE_ID], timeout=60)
+        tvos_termination_evidence = None
+        launch_diagnostics = None
+        result = None
+        try:
+            if platform == "tvOS":
+                termination_command = ["xcrun", "simctl", "terminate", simulator_udid, BUNDLE_ID]
+                termination = subprocess.run(
+                    termination_command,
+                    check=False,
+                    text=True,
+                    capture_output=True,
+                    timeout=60,
+                )
+                termination_log_path = output / f"{Path(filename).stem}.simulator-pre-test-terminate.log"
+                termination_log_path.write_text(
+                    "command: " + " ".join(termination_command) + "\n"
+                    + f"exit_code: {termination.returncode}\n"
+                    + "stdout:\n" + termination.stdout
+                    + "stderr:\n" + termination.stderr,
+                    encoding="utf-8",
+                )
+                stopped_before_test = simulator_reported_tvos_app_stopped(
+                    termination.returncode, termination.stdout, termination.stderr,
+                )
+                tvos_termination_evidence = {
+                    "exit_code": termination.returncode,
+                    "log_path": termination_log_path.name,
+                    "already_stopped_exact_result": stopped_before_test,
+                    "action": "continue to XCTest relaunch" if stopped_before_test else "not tolerated",
+                }
+                if termination.returncode != 0 and not stopped_before_test:
+                    raise subprocess.CalledProcessError(
+                        termination.returncode,
+                        termination_command,
+                        output=termination.stdout,
+                        stderr=termination.stderr,
+                    )
+            else:
+                run(["xcrun", "simctl", "terminate", simulator_udid, BUNDLE_ID], timeout=60)
 
-        xctestruns = list((derived_data / "Build" / "Products").glob("*.xctestrun"))
-        if len(xctestruns) != 1:
-            raise RuntimeError(f"Expected one built UI test plan; found {len(xctestruns)}")
-        command = [
-            "xcodebuild", "test-without-building",
-            "-xctestrun", str(xctestruns[0]),
-            "-destination", f"platform={xcode_platform} Simulator,id={simulator_udid}",
-            "-derivedDataPath", str(derived_data),
-            "-resultBundlePath", str(result_bundle),
-            "-parallel-testing-enabled", "NO",
-            "-testLanguage", "en",
-            "-testRegion", "US",
-            "-only-testing:PleazyngInUseCaptureTests/PleazyngAppInUseCaptureTests/testCaptureFilesAndBooksScreen",
-        ]
-        with log_path.open("w", encoding="utf-8") as log_file:
-            result = subprocess.run(
-                command,
-                check=False,
-                text=True,
-                stdout=log_file,
-                stderr=subprocess.STDOUT,
-                timeout=1500,
-            )
-        launch_diagnostics = capture_ios_simulator_launch_diagnostics(
-            simulator_udid, output, filename, app_executable
-        ) if platform == "iOS" else None
+            xctestruns = list((derived_data / "Build" / "Products").glob("*.xctestrun"))
+            if len(xctestruns) != 1:
+                raise RuntimeError(f"Expected one built UI test plan; found {len(xctestruns)}")
+            command = [
+                "xcodebuild", "test-without-building",
+                "-xctestrun", str(xctestruns[0]),
+                "-destination", f"platform={xcode_platform} Simulator,id={simulator_udid}",
+                "-derivedDataPath", str(derived_data),
+                "-resultBundlePath", str(result_bundle),
+                "-parallel-testing-enabled", "NO",
+                "-testLanguage", "en",
+                "-testRegion", "US",
+                "-only-testing:PleazyngInUseCaptureTests/PleazyngAppInUseCaptureTests/testCaptureFilesAndBooksScreen",
+            ]
+            with log_path.open("w", encoding="utf-8") as log_file:
+                result = subprocess.run(
+                    command,
+                    check=False,
+                    text=True,
+                    stdout=log_file,
+                    stderr=subprocess.STDOUT,
+                    timeout=1500,
+                )
+        finally:
+            if platform == "tvOS":
+                try:
+                    launch_diagnostics = capture_tvos_simulator_launch_diagnostics(
+                        simulator_udid, output, filename, app_executable, preflight_pid,
+                    )
+                except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError,
+                        subprocess.TimeoutExpired) as error:
+                    launch_diagnostics = {"error": f"tvOS diagnostic collection failed: {error}"}
+                    (output / f"{Path(filename).stem}.simulator-launch-diagnostics.json").write_text(
+                        json.dumps(launch_diagnostics, indent=2) + "\n", encoding="utf-8",
+                    )
+            elif result is not None:
+                launch_diagnostics = capture_ios_simulator_launch_diagnostics(
+                    simulator_udid, output, filename, app_executable
+                ) if platform == "iOS" else None
         if result.returncode != 0:
             failed_result_bundle = output / f"{Path(filename).stem}.failed.xcresult"
             if result_bundle.is_dir():
@@ -1466,7 +1636,8 @@ def run_app_in_use_ui_test(
                 f"The app-in-use UI test failed with exit code {result.returncode}; "
                 f"runner log is retained at {log_path}; failure result bundle is retained at "
                 f"{failed_result_bundle if failed_result_bundle.exists() else 'unavailable'}; "
-                f"launch diagnostics={launch_diagnostics}:\n" + "\n".join(tail)
+                f"launch diagnostics={launch_diagnostics}; tvOS cleanup={tvos_termination_evidence}:\n"
+                + "\n".join(tail)
             )
 
         export_dir = project_root / "exported-attachments"
@@ -1512,7 +1683,9 @@ def run_app_in_use_ui_test(
             "screenshot_attachment": exported_name,
             "direct_product_launch_exit_code": preflight.returncode,
             "direct_product_launch_log": preflight_log_path.name,
+            "direct_product_launch_process_id": preflight_pid,
             "simulator_launch_diagnostics": launch_diagnostics,
+            "tvos_pre_test_termination": tvos_termination_evidence,
             "product_target_compiled": False,
             "ios_keychain_roundtrip_verified": platform == "iOS",
             "ios_keychain_roundtrip_scope": (
@@ -2139,6 +2312,417 @@ def capture_macos_in_use(args: argparse.Namespace) -> None:
     print(f"Captured authentic Mac Files and Books and lifetime-access screens in {output}")
 
 
+MACOS_DIAGNOSTIC_WINDOWS_SWIFT = r'''
+import CoreGraphics
+import Foundation
+
+guard CommandLine.arguments.count == 2, let targetPID = Int32(CommandLine.arguments[1]) else { exit(2) }
+let options: CGWindowListOption = [.optionAll]
+let windows = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] ?? []
+let matches = windows.filter {
+  ($0[kCGWindowOwnerPID as String] as? NSNumber)?.int32Value == targetPID
+}
+let rows = matches.map { window -> [String: Any] in
+  let bounds = window[kCGWindowBounds as String] as? [String: CGFloat] ?? [:]
+  return [
+    "window_id": window[kCGWindowNumber as String] ?? 0,
+    "owner_pid": window[kCGWindowOwnerPID as String] ?? 0,
+    "owner_name": window[kCGWindowOwnerName as String] ?? "",
+    "title": window[kCGWindowName as String] ?? "",
+    "layer": window[kCGWindowLayer as String] ?? 0,
+    "alpha": window[kCGWindowAlpha as String] ?? 0,
+    "bounds": bounds,
+    "on_screen": window[kCGWindowIsOnscreen as String] ?? false,
+  ]
+}
+let display = CGDisplayBounds(CGMainDisplayID())
+let result: [String: Any] = [
+  "target_pid": targetPID,
+  "display_bounds": ["x": display.origin.x, "y": display.origin.y, "width": display.width, "height": display.height],
+  "windows": rows,
+]
+let data = try JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted, .sortedKeys])
+print(String(decoding: data, as: UTF8.self))
+'''
+
+
+MACOS_DIAGNOSTIC_ACCESSIBILITY_SWIFT = r'''
+import ApplicationServices
+import Foundation
+
+guard CommandLine.arguments.count == 2, let targetPID = Int32(CommandLine.arguments[1]) else { exit(2) }
+let app = AXUIElementCreateApplication(targetPID)
+let timeoutStatus = AXUIElementSetMessagingTimeout(app, 2.0)
+var remaining = 300
+
+func read(_ element: AXUIElement, _ attribute: CFString) -> (Any?, Int32) {
+  var value: CFTypeRef?
+  let status = AXUIElementCopyAttributeValue(element, attribute, &value)
+  return (value, status.rawValue)
+}
+
+func label(_ element: AXUIElement, _ attribute: CFString) -> [String: Any] {
+  let (value, status) = read(element, attribute)
+  if status != AXError.success.rawValue { return ["status": status] }
+  if let text = value as? String { return ["status": status, "value": text] }
+  return ["status": status]
+}
+
+func node(_ element: AXUIElement, _ depth: Int) -> [String: Any] {
+  remaining -= 1
+  var result: [String: Any] = [
+    "role": label(element, kAXRoleAttribute as CFString),
+    "title": label(element, kAXTitleAttribute as CFString),
+    "description": label(element, kAXDescriptionAttribute as CFString),
+    "help": label(element, kAXHelpAttribute as CFString),
+  ]
+  guard depth < 6, remaining > 0 else {
+    result["children_truncated"] = true
+    return result
+  }
+  let (rawChildren, status) = read(element, kAXChildrenAttribute as CFString)
+  result["children_status"] = status
+  if status == AXError.success.rawValue, let children = rawChildren as? [AXUIElement] {
+    result["children"] = children.prefix(100).map { node($0, depth + 1) }
+  }
+  return result
+}
+
+let output: [String: Any] = [
+  "target_pid": targetPID,
+  "accessibility_trusted": AXIsProcessTrusted(),
+  "messaging_timeout_status": timeoutStatus.rawValue,
+  "tree": node(app, 0),
+]
+let data = try JSONSerialization.data(withJSONObject: output, options: [.prettyPrinted, .sortedKeys])
+print(String(decoding: data, as: UTF8.self))
+'''
+
+
+MACOS_DIAGNOSTIC_METAL_SWIFT = r'''
+import Foundation
+import Metal
+
+var output: [String: Any] = ["default_device_available": false]
+if let device = MTLCreateSystemDefaultDevice() {
+  output["default_device_available"] = true
+  output["device_name"] = device.name
+  output["low_power"] = device.isLowPower
+  output["headless"] = device.isHeadless
+  output["registry_id"] = String(device.registryID, radix: 16)
+}
+let data = try JSONSerialization.data(withJSONObject: output, options: [.prettyPrinted, .sortedKeys])
+print(String(decoding: data, as: UTF8.self))
+'''
+
+
+def _compile_macos_diagnostic_helper(
+    output: Path,
+    name: str,
+    source_text: str,
+    frameworks: tuple[str, ...] = (),
+) -> tuple[Path | None, dict[str, Any]]:
+    source = output / f"{name}.swift"
+    executable = output / name
+    source.write_text(source_text, encoding="utf-8")
+    command = ["/usr/bin/swiftc"]
+    for framework in frameworks:
+        command.extend(("-framework", framework))
+    command.extend((str(source), "-o", str(executable)))
+    try:
+        result = subprocess.run(command, check=False, text=True, capture_output=True, timeout=180)
+    except (OSError, subprocess.TimeoutExpired) as error:
+        details = str(error)
+        (output / f"{name}.compile.log").write_text(details + "\n", encoding="utf-8")
+        return None, {"command": command, "error": details}
+    compile_log = (result.stdout or "") + (result.stderr or "")
+    (output / f"{name}.compile.log").write_text(compile_log, encoding="utf-8")
+    state = {"command": command, "exit_code": result.returncode, "log_path": f"{name}.compile.log"}
+    if result.returncode != 0 or not executable.is_file():
+        state["error"] = "Swift diagnostic helper did not compile"
+        return None, state
+    return executable, state
+
+
+def _run_macos_diagnostic_probe(executable: Path | None, output: Path, name: str, *arguments: str) -> dict[str, Any]:
+    if executable is None:
+        return {"error": "diagnostic helper was unavailable"}
+    try:
+        result = subprocess.run(
+            [str(executable), *arguments], check=False, text=True, capture_output=True, timeout=20,
+        )
+    except (OSError, subprocess.TimeoutExpired) as error:
+        details = str(error)
+        (output / f"{name}.stdout.txt").write_text("", encoding="utf-8")
+        (output / f"{name}.stderr.txt").write_text(details + "\n", encoding="utf-8")
+        return {"error": details}
+    stdout_path = output / f"{name}.stdout.txt"
+    stderr_path = output / f"{name}.stderr.txt"
+    stdout_path.write_text(result.stdout, encoding="utf-8")
+    stderr_path.write_text(result.stderr, encoding="utf-8")
+    state: dict[str, Any] = {
+        "exit_code": result.returncode,
+        "stdout_path": stdout_path.name,
+        "stderr_path": stderr_path.name,
+    }
+    if result.returncode == 0:
+        try:
+            state["result"] = json.loads(result.stdout)
+        except json.JSONDecodeError as error:
+            state["parse_error"] = str(error)
+    else:
+        state["error"] = f"probe exited with status {result.returncode}"
+    return state
+
+
+def diagnose_macos_in_use(args: argparse.Namespace) -> None:
+    output = args.output_dir.resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    diagnostics: dict[str, Any] = {
+        "schema_version": 1,
+        "purpose": "bounded diagnosis of retained macOS app launch, rendering, Metal availability, and Accessibility state",
+        "source_tag": SOURCE_TAG,
+        "source_sha": SOURCE_SHA,
+        "product_version": VERSION,
+        "product_build": BUILD_NUMBER,
+        "capture_run_id": os.environ.get("GITHUB_RUN_ID", ""),
+        "capture_run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT", ""),
+        "capture_tools_sha": os.environ.get("PLEAZYNG_CAPTURE_TOOLS_SHA", ""),
+        "errors": [],
+        "timeline": [],
+        "windowserver_processes": [],
+    }
+    process: subprocess.Popen[bytes] | None = None
+    stdout_file = None
+    stderr_file = None
+    app: Path | None = None
+    executable: Path | None = None
+    windows_helper: Path | None = None
+    accessibility_helper: Path | None = None
+    metal_helper: Path | None = None
+    app_pid: int | None = None
+    window_state: dict[str, Any] | None = None
+    screenshot = output / "macos-diagnostic-screen.png"
+    stdout_path = output / "app.stdout.log"
+    stderr_path = output / "app.stderr.log"
+
+    try:
+        product_root = args.product_root.resolve(strict=True)
+        require_source(product_root)
+        app = args.app.resolve(strict=True)
+        identity = app_info(app)
+        executable = app / "Contents" / "MacOS" / identity["executable"]
+        if not executable.is_file() or not executable.stat().st_mode & 0o111:
+            raise ValueError(f"CFBundleExecutable is missing or not executable: {executable}")
+        receipt_path = args.build_receipt.resolve(strict=True)
+        receipt_bytes = receipt_path.read_bytes()
+        receipt = json.loads(receipt_bytes)
+        app_digest = sha256_tree(app)
+        if (receipt.get("source_sha") != SOURCE_SHA
+                or receipt.get("product_version") != VERSION
+                or receipt.get("product_build") != BUILD_NUMBER
+                or receipt.get("platform") != "macOS"
+                or receipt.get("build_configuration") != BUILD_CONFIGURATION["macos"]
+                or receipt.get("build_mode") != "App Store IAP"
+                or receipt.get("app_bundle_sha256") != app_digest
+                or receipt.get("bundle_id") != identity["bundle_id"]
+                or receipt.get("distribution_signing") != "disabled"):
+            raise ValueError("The retained Mac app differs from its unsigned v3.0.36 App Store build receipt")
+        configuration_evidence = build_configuration_evidence(receipt, "macos")
+        if configuration_evidence is None:
+            raise ValueError("The retained Mac app has no verifiable build-configuration evidence")
+        diagnostics.update({
+            "bundle_id": identity["bundle_id"],
+            "app_version": identity["version"],
+            "app_build": identity["build_number"],
+            "app_bundle_sha256": app_digest,
+            "build_receipt_sha256": hashlib.sha256(receipt_bytes).hexdigest(),
+            "producer_run_id": receipt.get("producer_run_id"),
+            "producer_run_attempt": receipt.get("producer_run_attempt"),
+            "build_configuration_evidence": configuration_evidence,
+            "cf_bundle_executable": identity["executable"],
+            "executable_path": str(executable),
+            "executable_sha256": sha256_file(executable),
+            "launch_mode": "direct launch of the retained CFBundleExecutable to capture stdout/stderr; product bundle unchanged",
+            "device": {
+                "kind": "GitHub-hosted macOS desktop",
+                "model": run(["sysctl", "-n", "hw.model"], capture=True, timeout=30),
+                "architecture": run(["uname", "-m"], capture=True, timeout=30),
+                "os_version": run(["sw_vers", "-productVersion"], capture=True, timeout=30),
+            },
+        })
+
+        windows_helper, diagnostics["windows_helper_compile"] = _compile_macos_diagnostic_helper(
+            output, "window_probe", MACOS_DIAGNOSTIC_WINDOWS_SWIFT, ("CoreGraphics",)
+        )
+        accessibility_helper, diagnostics["accessibility_helper_compile"] = _compile_macos_diagnostic_helper(
+            output, "accessibility_probe", MACOS_DIAGNOSTIC_ACCESSIBILITY_SWIFT, ("ApplicationServices",)
+        )
+        metal_helper, diagnostics["metal_helper_compile"] = _compile_macos_diagnostic_helper(
+            output, "metal_probe", MACOS_DIAGNOSTIC_METAL_SWIFT, ("Metal",)
+        )
+        diagnostics["metal"] = _run_macos_diagnostic_probe(metal_helper, output, "metal_probe")
+
+        app_env = dict(os.environ)
+        for key in ("GH_TOKEN", "GITHUB_TOKEN", "APPLE_API_PRIVATE_KEY"):
+            app_env.pop(key, None)
+        stdout_file = stdout_path.open("wb")
+        stderr_file = stderr_path.open("wb")
+        try:
+            process = subprocess.Popen(
+                [str(executable)],
+                cwd=str(executable.parent),
+                env=app_env,
+                stdin=subprocess.DEVNULL,
+                stdout=stdout_file,
+                stderr=stderr_file,
+                start_new_session=True,
+            )
+            app_pid = process.pid
+            diagnostics["launch_pid"] = app_pid
+        except OSError as error:
+            diagnostics["errors"].append(f"CFBundleExecutable launch failed: {error}")
+
+        if app_pid is not None:
+            start = time.monotonic()
+            for elapsed_target in (1, 5, 12, 22):
+                delay = elapsed_target - (time.monotonic() - start)
+                if delay > 0:
+                    time.sleep(delay)
+                poll = process.poll() if process is not None else None
+                ps = subprocess.run(
+                    ["/bin/ps", "-p", str(app_pid), "-o", "pid=,ppid=,state=,etime=,%cpu=,%mem=,command="],
+                    check=False, text=True, capture_output=True, timeout=10,
+                )
+                windows_state = _run_macos_diagnostic_probe(
+                    windows_helper, output, f"windows_t{elapsed_target}", str(app_pid),
+                )
+                diagnostics["timeline"].append({
+                    "elapsed_seconds": round(time.monotonic() - start, 2),
+                    "process_exit_code": poll,
+                    "process_snapshot": ps.stdout.strip(),
+                    "process_snapshot_error": ps.stderr.strip(),
+                    "windows": windows_state,
+                })
+                if windows_state.get("result"):
+                    window_state = windows_state["result"]
+                if elapsed_target == 5:
+                    diagnostics["accessibility"] = _run_macos_diagnostic_probe(
+                        accessibility_helper, output, "accessibility_probe", str(app_pid),
+                    )
+        else:
+            diagnostics["accessibility"] = {"not_run": "the retained CFBundleExecutable did not start"}
+
+        windowserver = subprocess.run(
+            ["/bin/ps", "-axo", "pid=,ppid=,state=,etime=,command="],
+            check=False, text=True, capture_output=True, timeout=10,
+        )
+        diagnostics["windowserver_processes"] = [
+            line.strip() for line in windowserver.stdout.splitlines()
+            if "WindowServer" in line
+        ]
+    except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+        diagnostics["errors"].append(f"{error.__class__.__name__}: {error}")
+    finally:
+        if app_pid is not None and windows_helper is not None:
+            try:
+                final_windows = _run_macos_diagnostic_probe(
+                    windows_helper, output, "windows_final", str(app_pid),
+                )
+                diagnostics["final_windows"] = final_windows
+                if final_windows.get("result"):
+                    window_state = final_windows["result"]
+            except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError,
+                    subprocess.TimeoutExpired) as error:
+                diagnostics["errors"].append(f"Final app window probe failed: {error}")
+
+        try:
+            screenshot_command = ["/usr/sbin/screencapture", "-x"]
+            app_windows = (window_state or {}).get("windows", [])
+            app_window = next((
+                window for window in app_windows
+                if window.get("on_screen") is True
+                and isinstance(window.get("window_id"), int)
+                and window.get("layer") == 0
+                and window.get("alpha", 0) > 0.9
+            ), None)
+            if app_window is not None:
+                screenshot_command.extend(("-l", str(app_window["window_id"])))
+                diagnostics["screenshot_scope"] = "retained app process window"
+            else:
+                diagnostics["screenshot_scope"] = "full hosted macOS display; no matching app window was reported"
+            screenshot_command.append(str(screenshot))
+            screenshot_result = subprocess.run(
+                screenshot_command, check=False, text=True, capture_output=True, timeout=30,
+            )
+            diagnostics["screenshot_command"] = screenshot_command
+            diagnostics["screenshot_exit_code"] = screenshot_result.returncode
+            diagnostics["screenshot_stderr"] = screenshot_result.stderr.strip()
+            if screenshot.is_file():
+                diagnostics["screenshot_path"] = screenshot.name
+                diagnostics["screenshot_sha256"] = sha256_file(screenshot)
+                try:
+                    diagnostics["screenshot_dimensions"] = list(png_dimensions(screenshot))
+                    diagnostics["screen_content_check"] = require_visible_screen_content(screenshot)
+                    diagnostics["screen_content_status"] = "visible"
+                except (OSError, ValueError) as error:
+                    diagnostics["screen_content_status"] = "invalid_or_blank"
+                    diagnostics["screen_content_error"] = str(error)
+        except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+            diagnostics["errors"].append(f"Screenshot evidence collection failed: {error.__class__.__name__}: {error}")
+
+        if app_pid is not None:
+            log_path = output / "owned-process-unified-log.txt"
+            try:
+                log_result = subprocess.run(
+                    ["/usr/bin/log", "show", "--last", "2m", "--style", "compact",
+                     "--predicate", f"processIdentifier == {app_pid}"],
+                    check=False, text=True, capture_output=True, timeout=30,
+                )
+                log_path.write_text(log_result.stdout + log_result.stderr, encoding="utf-8")
+                diagnostics["owned_process_unified_log"] = {
+                    "path": log_path.name,
+                    "exit_code": log_result.returncode,
+                    "bytes": log_path.stat().st_size,
+                }
+            except (OSError, subprocess.TimeoutExpired) as error:
+                log_path.write_text(f"Owned-process unified log query failed: {error}\n", encoding="utf-8")
+                diagnostics["owned_process_unified_log"] = {"path": log_path.name, "error": str(error)}
+
+        if process is not None:
+            try:
+                if process.poll() is None:
+                    process.terminate()
+                    process.wait(timeout=5)
+            except (OSError, subprocess.TimeoutExpired) as error:
+                if process.poll() is None:
+                    diagnostics["errors"].append(f"App graceful termination failed: {error}")
+                    try:
+                        process.kill()
+                        process.wait(timeout=5)
+                    except (OSError, subprocess.TimeoutExpired) as kill_error:
+                        diagnostics["errors"].append(f"App termination fallback failed: {kill_error}")
+            diagnostics["process_exit_code_after_cleanup"] = process.poll()
+        try:
+            if stdout_file is not None:
+                stdout_file.close()
+            if stderr_file is not None:
+                stderr_file.close()
+            if stdout_path.is_file():
+                diagnostics["stdout_sha256"] = sha256_file(stdout_path)
+                diagnostics["stdout_bytes"] = stdout_path.stat().st_size
+            if stderr_path.is_file():
+                diagnostics["stderr_sha256"] = sha256_file(stderr_path)
+                diagnostics["stderr_bytes"] = stderr_path.stat().st_size
+        except OSError as error:
+            diagnostics["errors"].append(f"Could not finalize executable output logs: {error}")
+        finally:
+            summary = output / "diagnosis.json"
+            summary.write_text(json.dumps(diagnostics, indent=2) + "\n", encoding="utf-8")
+
+    print(f"Retained bounded macOS app launch/render/Accessibility diagnostics in {output}")
+
+
 def capture_macos(args: argparse.Namespace) -> None:
     product_root = args.product_root.resolve(strict=True)
     require_source(product_root)
@@ -2505,6 +3089,12 @@ def parse_args() -> argparse.Namespace:
     macos_in_use.add_argument("--build-receipt", required=True, type=Path)
     macos_in_use.add_argument("--output-dir", required=True, type=Path)
     macos_in_use.set_defaults(handler=capture_macos_in_use)
+    macos_diagnostic = subparsers.add_parser("diagnose-macos-in-use")
+    macos_diagnostic.add_argument("--product-root", required=True, type=Path)
+    macos_diagnostic.add_argument("--app", required=True, type=Path)
+    macos_diagnostic.add_argument("--build-receipt", required=True, type=Path)
+    macos_diagnostic.add_argument("--output-dir", required=True, type=Path)
+    macos_diagnostic.set_defaults(handler=diagnose_macos_in_use)
     package = subparsers.add_parser("package")
     package.add_argument("--ios-dir", required=True, type=Path)
     package.add_argument("--tvos-dir", required=True, type=Path)

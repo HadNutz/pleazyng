@@ -12,9 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = (ROOT / ".github/workflows/apple-store-screenshots.yml").read_text(encoding="utf-8")
 
 
-def job_text(name: str, next_name: str) -> str:
+def job_text(name: str, next_name: str | None) -> str:
     start = WORKFLOW.index(f"  {name}:\n", WORKFLOW.index("jobs:\n"))
-    end = WORKFLOW.index(f"  {next_name}:\n", start + 1)
+    end = WORKFLOW.index(f"  {next_name}:\n", start + 1) if next_name else len(WORKFLOW)
     return WORKFLOW[start:end]
 
 
@@ -57,6 +57,35 @@ class AppleStoreCaptureWorkflowRoutingTests(unittest.TestCase):
         self.assertIn("inputs.target == 'tvos-in-use-capture-only'", named_step_condition(
             tvos, "Capture the post-onboarding tvOS Files and Books screen"
         ))
+
+    def test_macos_diagnostic_target_isolated_from_capture_and_build_lanes(self) -> None:
+        self.assertIn("- macos-in-use-diagnostic-only", WORKFLOW)
+        ios = job_text("ios", "tvos")
+        tvos = job_text("tvos", "macos")
+        macos = job_text("macos", "package")
+        self.assertNotIn("macos-in-use-diagnostic-only", ios)
+        self.assertNotIn("macos-in-use-diagnostic-only", tvos)
+        self.assertIn("inputs.target == 'macos-in-use-diagnostic-only'", macos)
+        self.assertIn("inputs.macos_artifact_run_id", macos)
+        self.assertIn("Validate and restore prior macOS build", macos)
+
+        for step_name in (
+            "Load pinned Flutter SDK",
+            "Build the unsigned Mac App Store candidate",
+        ):
+            self.assertIn(
+                "inputs.target != 'macos-in-use-diagnostic-only'",
+                named_step_condition(macos, step_name),
+                step_name,
+            )
+
+        diagnosis = named_step_condition(macos, "Diagnose the retained Mac app without rebuilding")
+        self.assertEqual(diagnosis, "inputs.target == 'macos-in-use-diagnostic-only'")
+        self.assertNotIn(
+            "macos-in-use-diagnostic-only",
+            named_step_condition(macos, "Capture the local Files and Books screen and real Mac lifetime-access sheet"),
+        )
+        self.assertNotIn("macos-in-use-diagnostic-only", job_text("package", None))
 
 
 if __name__ == "__main__":
