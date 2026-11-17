@@ -11,11 +11,12 @@ import tempfile
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
-DART = r"""
-import 'dart:io';
+DART = r"""import 'dart:io';
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+
 import 'desktop_workspace_views.dart';
 
 void main() {
@@ -41,44 +42,107 @@ class _ProbeState extends State<Probe> {
     WidgetsBinding.instance.addPostFrameCallback((_) => exercise());
   }
 
-  void changed() { if (mounted) setState(() {}); }
+  void changed() {
+    if (mounted) setState(() {});
+  }
+
   void require(bool condition, String message) {
     if (!condition) throw StateError(message);
   }
 
   Future<void> exercise() async {
     try {
-      final initial = WidgetsBinding.instance.platformDispatcher.views.length;
+      final platformViews = WidgetsBinding.instance.platformDispatcher.views;
+      final initial = platformViews.length;
       require(initial >= 1, 'the initial native Flutter view was not attached');
-      await WidgetsBinding.instance.endOfFrame;
-      final renderObject = renderKey.currentContext?.findRenderObject();
-      if (renderObject is! RenderRepaintBoundary) {
-        throw StateError('the initial Dart frame is unavailable');
+      final initialView = platformViews.first;
+      RenderRepaintBoundary? renderObject;
+      Size? boundarySize;
+      for (var attempt = 0; attempt < 200; attempt++) {
+        await WidgetsBinding.instance.endOfFrame;
+        final candidate = renderKey.currentContext?.findRenderObject();
+        if (candidate is RenderRepaintBoundary && candidate.hasSize) {
+          final size = candidate.size;
+          boundarySize = size;
+          if (initialView.physicalSize.width > 1 &&
+              initialView.physicalSize.height > 1 &&
+              size.width > 1 &&
+              size.height > 1) {
+            renderObject = candidate;
+            break;
+          }
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 50));
       }
-      final image = await renderObject.toImage(pixelRatio: 1);
+      final attachedRenderObject = renderObject;
+      if (attachedRenderObject == null) {
+        throw StateError(
+          'the initial native view or Dart boundary has zero size: view=${initialView.physicalSize}, boundary=$boundarySize',
+        );
+      }
+      stdout.writeln(
+        'WORKSPACE_DART_VIEW_READY view=${initialView.physicalSize} boundary=${attachedRenderObject.size}',
+      );
+      await WidgetsBinding.instance.endOfFrame;
+      final image = await attachedRenderObject.toImage(pixelRatio: 1);
       final data = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
-      if (data == null) throw StateError('the initial Dart frame could not be read');
-      final pixels = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      if (data == null)
+        throw StateError('the initial Dart frame could not be read');
+      final pixels = data.buffer.asUint8List(
+        data.offsetInBytes,
+        data.lengthInBytes,
+      );
       final colors = <int>{};
-      for (var offset = 0; offset + 3 < pixels.length && colors.length < 16; offset += 4) {
-        colors.add((pixels[offset] << 24) | (pixels[offset + 1] << 16) |
-            (pixels[offset + 2] << 8) | pixels[offset + 3]);
+      for (
+        var offset = 0;
+        offset + 3 < pixels.length && colors.length < 16;
+        offset += 4
+      ) {
+        colors.add(
+          (pixels[offset] << 24) |
+              (pixels[offset + 1] << 16) |
+              (pixels[offset + 2] << 8) |
+              pixels[offset + 3],
+        );
       }
       image.dispose();
       require(colors.length > 4, 'the initial Dart frame was blank or uniform');
-      stdout.writeln('WORKSPACE_DART_FRAME_OK');
-      require(await windows.open('first', geometryKey: key, title: 'First'), 'first view failed');
-      require(await windows.open('second', geometryKey: 'b' * 64, title: 'Second'), 'second view failed');
-      require(windows.view('first')!.viewId != windows.view('second')!.viewId, 'view identity reused');
-      require(WidgetsBinding.instance.platformDispatcher.views.length == initial + 2, 'views not in original engine');
+      stdout.writeln('WORKSPACE_DART_FRAME_OK distinctColors=${colors.length}');
+      require(
+        await windows.open('first', geometryKey: key, title: 'First'),
+        'first view failed',
+      );
+      require(
+        await windows.open('second', geometryKey: 'b' * 64, title: 'Second'),
+        'second view failed',
+      );
+      require(
+        windows.view('first')!.viewId != windows.view('second')!.viewId,
+        'view identity reused',
+      );
+      require(
+        WidgetsBinding.instance.platformDispatcher.views.length == initial + 2,
+        'views not in original engine',
+      );
       await windows.close('first');
       require(windows.detached('second'), 'closing first retired second');
       await windows.close('second');
-      for (var i = 0; i < 100 && WidgetsBinding.instance.platformDispatcher.views.length != initial; i++) {
+      for (
+        var i = 0;
+        i < 100 &&
+            WidgetsBinding.instance.platformDispatcher.views.length != initial;
+        i++
+      ) {
         await Future<void>.delayed(const Duration(milliseconds: 20));
       }
-      require(WidgetsBinding.instance.platformDispatcher.views.length == initial, 'view leaked after close');
-      require(await windows.open('third', geometryKey: key, title: 'Reopened'), 'engine was destroyed');
+      require(
+        WidgetsBinding.instance.platformDispatcher.views.length == initial,
+        'view leaked after close',
+      );
+      require(
+        await windows.open('third', geometryKey: key, title: 'Reopened'),
+        'engine was destroyed',
+      );
       await windows.close('third');
       stdout.writeln('WORKSPACE_NATIVE_VIEWS_OK');
       exit(0);
@@ -90,17 +154,26 @@ class _ProbeState extends State<Probe> {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-    home: Builder(builder: (context) => ViewAnchor(
-      view: ViewCollection(views: [
-        for (final id in windows.detachedIds)
-          View(key: ValueKey(id), view: windows.view(id)!,
-            child: Material(child: Center(child: Text(id)))),
-      ]),
-      child: RepaintBoundary(
-        key: renderKey,
-        child: const Scaffold(body: Center(child: Text('Workspace view qualification'))),
+    home: Builder(
+      builder: (context) => ViewAnchor(
+        view: ViewCollection(
+          views: [
+            for (final id in windows.detachedIds)
+              View(
+                key: ValueKey(id),
+                view: windows.view(id)!,
+                child: Material(child: Center(child: Text(id))),
+              ),
+          ],
+        ),
+        child: RepaintBoundary(
+          key: renderKey,
+          child: const Scaffold(
+            body: Center(child: Text('Workspace view qualification')),
+          ),
+        ),
       ),
-    )),
+    ),
   );
 
   @override
