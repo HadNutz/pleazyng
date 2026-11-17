@@ -92,6 +92,26 @@ class FrozenPackagingRepairTests(unittest.TestCase):
         with self.assertRaisesRegex(repair.FrozenPackagingRepairError, 'approved files/blobs'):
             self.verify()
 
+    def test_tv_embedding_and_dependency_gate_require_exact_reviewed_blobs(self):
+        files = {'tvos/scripts/wire_plugins.rb': NEW,
+                 'test/native/tvos_plugin_wiring_test.rb': '6' * 40,
+                 'scripts/verify_apple_macho_dependencies.py': '7' * 40,
+                 'scripts/test_apple_macho_dependencies.py': '8' * 40}
+        self.config['repairs'][0]['files'] = files
+        self.responses[f'{PREFIX}/compare/{S}...{R}']['files'] = [
+            {'filename': path, 'status': 'modified' if path.startswith('tvos/') else 'added', 'sha': blob}
+            for path, blob in files.items()]
+        for tree_sha, changed in ((ST, False), (RT, True)):
+            tree = self.responses[f'{PREFIX}/git/trees/{tree_sha}?recursive=1']['tree']
+            tree[:] = [entry for entry in tree if entry['path'] != FILE]
+            tree.extend({'path': path, 'type': 'blob', 'mode': '100644',
+                         'sha': blob if changed else OLD}
+                        for path, blob in files.items() if changed or path.startswith('tvos/'))
+        self.assertEqual(self.verify()['approved_files'], files)
+        self.config['repairs'][0]['files']['tvos/scripts/wire_plugins.rb'] = '9' * 40
+        with self.assertRaisesRegex(repair.FrozenPackagingRepairError, 'approved files/blobs'):
+            self.verify()
+
     def test_unapproved_or_duplicate_pair_is_rejected(self):
         for entries in ([], [dict(self.config['repairs'][0], packaging_source_sha='f' * 40)],
                         self.config['repairs'] * 2):
