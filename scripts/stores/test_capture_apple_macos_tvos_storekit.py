@@ -128,6 +128,24 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "TestROOT plan"):
                 capture.associate_xctestrun_with_retained_app(path, "macos")
 
+    def test_storekit_resource_finder_accepts_real_mac_and_tvos_xctest_bundle_components(self) -> None:
+        storekit_resource = ROOT / capture.STOREKIT_CONFIG
+        config_sha = capture.sha256_file(storekit_resource)
+        bundle_resource_paths = (
+            Path(
+                "Debug/PleazyngStoreKitLocalTrialReviewUITests-Runner.app/Contents/PlugIns/"
+                "PleazyngStoreKitLocalTrialReviewUITests.xctest/Contents/Resources"
+            ),
+            Path("Debug-appletvsimulator/PleazyngStoreKitLocalTrialReviewUITests.xctest"),
+        )
+        for relative_directory in bundle_resource_paths:
+            with self.subTest(relative_directory=relative_directory), TemporaryDirectory() as temporary:
+                products = Path(temporary) / "Build" / "Products"
+                resource = products / relative_directory / storekit_resource.name
+                resource.parent.mkdir(parents=True)
+                resource.write_bytes(storekit_resource.read_bytes())
+                self.assertEqual(capture.verify_storekit_resource(products, config_sha), resource)
+
     def test_stage_app_for_xctestrun_copies_the_receipt_verified_bundle_unchanged(self) -> None:
         for platform in ("macos", "tvos"):
             with self.subTest(platform=platform), TemporaryDirectory() as temporary:

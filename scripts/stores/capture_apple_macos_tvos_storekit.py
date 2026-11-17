@@ -361,7 +361,7 @@ def stage_app_for_xctestrun(app: Path, products: Path, platform: str, receipt: d
 def verify_storekit_resource(products: Path, expected_sha: str) -> Path:
     matches = [
         path for path in products.rglob(STOREKIT_CONFIG.name)
-        if path.is_file() and ".xctest" in path.parts
+        if path.is_file() and any(part.endswith(".xctest") for part in path.parts)
     ]
     if len(matches) != 1:
         raise ValueError(f"Expected one StoreKit configuration resource in the built XCTest bundle; found {len(matches)}")
