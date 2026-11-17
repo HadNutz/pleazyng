@@ -38,6 +38,7 @@ LIFETIME_PRODUCT_ID = "pleazyng_lifetime_unlock"
 STOREKIT_CONFIG = Path("scripts/stores/apple/pleazyng-trial-review.storekit")
 UI_TEST_SOURCE = Path("scripts/stores/apple/PleazyngStoreKitLocalTrialReviewUITests.swift")
 TEST_TARGET = "PleazyngStoreKitLocalTrialReviewUITests"
+TEST_BUNDLE_ID = "org.snapetech.pleazyng.localtest.review-tests"
 SCREENSHOTS = {
     "macos": {
         "pleazyng-localtest-files-books-macos": "macos-01-files-and-books-localtest.png",
@@ -134,7 +135,7 @@ def ui_test_project_spec(platform: str) -> dict[str, Any]:
                 ],
                 "settings": {
                     "base": {
-                        "PRODUCT_BUNDLE_IDENTIFIER": "org.snapetech.pleazyng.localtest.review-tests",
+                        "PRODUCT_BUNDLE_IDENTIFIER": TEST_BUNDLE_ID,
                         "GENERATE_INFOPLIST_FILE": "YES",
                         "SWIFT_VERSION": "5.0",
                         "CODE_SIGN_IDENTITY": "-",
@@ -174,9 +175,7 @@ def xctestrun_test_targets(document: dict[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
-def associate_xctestrun_with_retained_app(xctestrun: Path, platform: str) -> dict[str, Any]:
-    expected_path = PLATFORM[platform]["app_relative_path"]
-    document = plistlib.loads(xctestrun.read_bytes())
+def select_xctestrun_target(document: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(document, dict) or document.get("UseDestinationArtifacts") is True:
         raise ValueError("XCTest plan must be a normal TestROOT plan, not a destination-artifact plan")
     matches = [target for target in xctestrun_test_targets(document) if target.get("BlueprintName") == TEST_TARGET]
@@ -185,6 +184,115 @@ def associate_xctestrun_with_retained_app(xctestrun: Path, platform: str) -> dic
     target = matches[0]
     if target.get("IsUITestBundle") is not True or target.get("UseDestinationArtifacts") is True:
         raise ValueError("XCTest plan target is not a UI test bundle using TestROOT dependencies")
+    bundle_identifier = target.get("TestBundleIdentifier")
+    if bundle_identifier not in (None, TEST_BUNDLE_ID):
+        raise ValueError(f"XCTest plan target has unexpected test bundle identifier: {bundle_identifier!r}")
+    return target
+
+
+def safe_testroot_path(value: str, products: Path) -> Path:
+    prefix = "__TESTROOT__/"
+    if not isinstance(value, str) or not value.startswith(prefix):
+        raise ValueError("XCTest paths must use the documented __TESTROOT__ macro")
+    suffix = value[len(prefix):]
+    if "\\" in suffix:
+        raise ValueError("XCTest paths must use POSIX separators")
+    parts = suffix.split("/")
+    if not parts or any(part in ("", ".", "..") for part in parts):
+        raise ValueError("XCTest path contains an empty or escaping component")
+    if any(re.search(r"__[A-Za-z0-9_]+__", part) for part in parts):
+        raise ValueError("XCTest path contains an unsupported macro")
+    root = products.resolve(strict=True)
+    candidate = root.joinpath(*parts)
+    cursor = root
+    for part in parts:
+        cursor = cursor / part
+        if cursor.is_symlink():
+            raise ValueError("XCTest path must not traverse symlinks")
+    resolved = candidate.resolve(strict=True)
+    if not resolved.is_relative_to(root):
+        raise ValueError("XCTest path resolves outside the build products TestROOT")
+    return resolved
+
+
+def resolve_xctestrun_path(value: str, target: dict[str, Any], products: Path) -> Path:
+    if not isinstance(value, str) or "\\" in value:
+        raise ValueError("XCTest path must be a POSIX path string")
+    if value.startswith("__TESTROOT__/"):
+        return safe_testroot_path(value, products)
+    host_prefix = "__TESTHOST__/"
+    if value.startswith(host_prefix):
+        host_reference = target.get("TestHostPath")
+        if not isinstance(host_reference, str):
+            raise ValueError("XCTest plan is missing TestHostPath for its __TESTHOST__ bundle reference")
+        test_host = safe_testroot_path(host_reference, products)
+        if not test_host.name.endswith(".app") or not test_host.is_dir():
+            raise ValueError("XCTest TestHostPath must resolve to an app bundle under TestROOT")
+        suffix = value[len(host_prefix):]
+        if not suffix:
+            raise ValueError("XCTest test bundle path has no __TESTHOST__-relative suffix")
+        parts = suffix.split("/")
+        if any(part in ("", ".", "..") for part in parts):
+            raise ValueError("XCTest __TESTHOST__ path contains an empty or escaping component")
+        if any(re.search(r"__[A-Za-z0-9_]+__", part) for part in parts):
+            raise ValueError("XCTest __TESTHOST__ path contains an unsupported macro")
+        candidate = test_host.joinpath(*parts)
+        cursor = test_host
+        for part in parts:
+            cursor = cursor / part
+            if cursor.is_symlink():
+                raise ValueError("XCTest __TESTHOST__ path must not traverse symlinks")
+        resolved = candidate.resolve(strict=True)
+        root = products.resolve(strict=True)
+        if not resolved.is_relative_to(root) or candidate.is_symlink():
+            raise ValueError("XCTest __TESTHOST__ bundle resolves outside TestROOT or through a symlink")
+        return resolved
+    if "__" in value:
+        raise ValueError("XCTest path contains an unsupported or misplaced macro")
+    raise ValueError("XCTest path must start with __TESTROOT__ or __TESTHOST__")
+
+
+def resolve_test_bundle_from_plan(xctestrun: Path, products: Path) -> tuple[Path, dict[str, Any]]:
+    document = plistlib.loads(xctestrun.read_bytes())
+    target = select_xctestrun_target(document)
+    host_reference = target.get("TestHostPath")
+    if not isinstance(host_reference, str):
+        raise ValueError("XCTest plan target is missing TestHostPath")
+    test_host = safe_testroot_path(host_reference, products)
+    if not test_host.name.endswith(".app") or not test_host.is_dir():
+        raise ValueError("XCTest TestHostPath must resolve to an app bundle under TestROOT")
+    bundle_reference = target.get("TestBundlePath")
+    if not isinstance(bundle_reference, str):
+        raise ValueError("XCTest plan target is missing TestBundlePath")
+    reference_suffix = bundle_reference.split("/", 1)[-1]
+    if PurePosixPath(reference_suffix).name != f"{TEST_TARGET}.xctest":
+        raise ValueError("XCTest plan target path does not identify the exact expected test bundle")
+    bundle = resolve_xctestrun_path(bundle_reference, target, products)
+    if bundle.name != f"{TEST_TARGET}.xctest" or not bundle.is_dir():
+        raise ValueError("Resolved XCTest TestBundlePath is not the exact expected test bundle directory")
+    return bundle, target
+
+
+def verify_test_bundle_identity(test_bundle: Path) -> dict[str, str]:
+    info_path = next(
+        (candidate for candidate in (test_bundle / "Info.plist", test_bundle / "Contents" / "Info.plist")
+         if candidate.is_file()),
+        None,
+    )
+    if info_path is None or info_path.is_symlink():
+        raise FileNotFoundError("The resolved XCTest bundle does not contain a regular Info.plist")
+    with info_path.open("rb") as source:
+        info = plistlib.load(source)
+    bundle_id = info.get("CFBundleIdentifier") if isinstance(info, dict) else None
+    if bundle_id != TEST_BUNDLE_ID:
+        raise ValueError(f"Resolved XCTest bundle has an unexpected identity: {bundle_id!r}")
+    return {"bundle_id": str(bundle_id), "info_plist": info_path.relative_to(test_bundle).as_posix()}
+
+
+def associate_xctestrun_with_retained_app(xctestrun: Path, platform: str) -> dict[str, Any]:
+    expected_path = PLATFORM[platform]["app_relative_path"]
+    document = plistlib.loads(xctestrun.read_bytes())
+    target = select_xctestrun_target(document)
     old_path = target.get("UITargetAppPath")
     if old_path not in (None, expected_path):
         raise ValueError(f"XCTest plan points at a different UI app: {old_path!r}")
@@ -199,10 +307,7 @@ def associate_xctestrun_with_retained_app(xctestrun: Path, platform: str) -> dic
     xctestrun.write_bytes(plistlib.dumps(document, fmt=plistlib.FMT_XML, sort_keys=False))
 
     verified = plistlib.loads(xctestrun.read_bytes())
-    verified_matches = [item for item in xctestrun_test_targets(verified) if item.get("BlueprintName") == TEST_TARGET]
-    if len(verified_matches) != 1:
-        raise ValueError("Patched XCTest plan no longer has one review target")
-    verified_target = verified_matches[0]
+    verified_target = select_xctestrun_target(verified)
     if verified_target.get("UITargetAppPath") != expected_path:
         raise ValueError("Patched XCTest plan does not point at the retained product app")
     if expected_path not in verified_target.get("DependentProductPaths", []):
@@ -358,10 +463,10 @@ def stage_app_for_xctestrun(app: Path, products: Path, platform: str, receipt: d
     }
 
 
-def verify_storekit_resource(products: Path, expected_sha: str) -> Path:
+def verify_storekit_resource(test_bundle: Path, expected_sha: str) -> Path:
     matches = [
-        path for path in products.rglob(STOREKIT_CONFIG.name)
-        if path.is_file() and any(part.endswith(".xctest") for part in path.parts)
+        path for path in test_bundle.rglob(STOREKIT_CONFIG.name)
+        if path.is_file() and not path.is_symlink()
     ]
     if len(matches) != 1:
         raise ValueError(f"Expected one StoreKit configuration resource in the built XCTest bundle; found {len(matches)}")
@@ -462,23 +567,42 @@ def capture(args: argparse.Namespace) -> None:
             raise RuntimeError(f"XCTest-only {platform} runner build failed ({build_result.returncode}); see {build_log.name}")
 
         products = derived_data / "Build" / "Products"
-        storekit_resource = verify_storekit_resource(products, config_sha)
-        test_bundle = products / PLATFORM[platform]["products_directory"] / f"{TEST_TARGET}.xctest"
-        if test_bundle.is_symlink() or not test_bundle.is_dir():
-            raise ValueError(f"XCTest build did not produce the expected test bundle: {test_bundle}")
-        test_bundle_sha = capture_tools.sha256_tree(test_bundle)
-        app_staged, staged_evidence = stage_app_for_xctestrun(app, products, platform, receipt)
         xctestruns = list(products.glob("*.xctestrun"))
         if len(xctestruns) != 1:
+            for index, generated_plan in enumerate(sorted(xctestruns), start=1):
+                shutil.copyfile(generated_plan, output / f"xctestrun-generated-{index}.xctestrun")
             raise ValueError(f"Expected exactly one XCTest plan, found {len(xctestruns)}")
         xctestrun = xctestruns[0]
-        before_sha = sha256_file(xctestrun)
+        raw_xctestrun_sha = sha256_file(xctestrun)
         shutil.copyfile(xctestrun, output / "xctestrun-before-app-association.xctestrun")
+        test_bundle, _ = resolve_test_bundle_from_plan(xctestrun, products)
+        test_bundle_identity = verify_test_bundle_identity(test_bundle)
+        storekit_resource = verify_storekit_resource(test_bundle, config_sha)
+        test_bundle_sha = capture_tools.sha256_tree(test_bundle)
+        storekit_resource_sha = sha256_file(storekit_resource)
+        app_staged, staged_evidence = stage_app_for_xctestrun(app, products, platform, receipt)
+        before_sha = sha256_file(xctestrun)
+        if before_sha != raw_xctestrun_sha:
+            raise ValueError("Generated XCTest plan changed before retained-app association")
         association = associate_xctestrun_with_retained_app(xctestrun, platform)
         after_sha = sha256_file(xctestrun)
         shutil.copyfile(xctestrun, output / "xctestrun-after-app-association.xctestrun")
+        verified_test_bundle, verified_target = resolve_test_bundle_from_plan(xctestrun, products)
+        if verified_test_bundle != test_bundle:
+            raise ValueError("App association changed the XCTest plan's resolved test bundle")
+        if capture_tools.sha256_tree(verified_test_bundle) != test_bundle_sha:
+            raise ValueError("The resolved XCTest bundle changed after app association")
+        if sha256_file(verify_storekit_resource(verified_test_bundle, config_sha)) != storekit_resource_sha:
+            raise ValueError("The verified StoreKit configuration changed after app association")
         write_json(output / "xctestrun-app-association.json", {
             "platform": platform,
+            "blueprint_name": verified_target["BlueprintName"],
+            "test_bundle_path": verified_target["TestBundlePath"],
+            "test_host_path": verified_target.get("TestHostPath"),
+            "resolved_test_bundle": test_bundle.relative_to(products).as_posix(),
+            "test_bundle_identity": test_bundle_identity,
+            "test_bundle_sha256": test_bundle_sha,
+            "storekit_resource_sha256": storekit_resource_sha,
             "xctestrun_sha256_before": before_sha,
             "xctestrun_sha256_after": after_sha,
             **staged_evidence,

@@ -128,23 +128,130 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "TestROOT plan"):
                 capture.associate_xctestrun_with_retained_app(path, "macos")
 
-    def test_storekit_resource_finder_accepts_real_mac_and_tvos_xctest_bundle_components(self) -> None:
+    def test_generated_mac_plan_resolves_exact_nested_host_bundle_and_catalog(self) -> None:
         storekit_resource = ROOT / capture.STOREKIT_CONFIG
         config_sha = capture.sha256_file(storekit_resource)
-        bundle_resource_paths = (
-            Path(
-                "Debug/PleazyngStoreKitLocalTrialReviewUITests-Runner.app/Contents/PlugIns/"
-                "PleazyngStoreKitLocalTrialReviewUITests.xctest/Contents/Resources"
-            ),
-            Path("Debug-appletvsimulator/PleazyngStoreKitLocalTrialReviewUITests.xctest"),
-        )
-        for relative_directory in bundle_resource_paths:
-            with self.subTest(relative_directory=relative_directory), TemporaryDirectory() as temporary:
-                products = Path(temporary) / "Build" / "Products"
-                resource = products / relative_directory / storekit_resource.name
-                resource.parent.mkdir(parents=True)
-                resource.write_bytes(storekit_resource.read_bytes())
-                self.assertEqual(capture.verify_storekit_resource(products, config_sha), resource)
+        with TemporaryDirectory() as temporary:
+            products = Path(temporary) / "Build" / "Products"
+            host = products / "Debug" / f"{capture.TEST_TARGET}-Runner.app"
+            bundle = host / "Contents" / "PlugIns" / f"{capture.TEST_TARGET}.xctest"
+            (bundle / "Contents" / "Resources").mkdir(parents=True)
+            (bundle / "Contents" / "Info.plist").write_bytes(plistlib.dumps({
+                "CFBundleIdentifier": capture.TEST_BUNDLE_ID,
+            }))
+            resource = bundle / "Contents" / "Resources" / storekit_resource.name
+            resource.write_bytes(storekit_resource.read_bytes())
+            (host / "Contents").mkdir(parents=True, exist_ok=True)
+
+            # The hosted Xcode build log proves this exact Mac XCTest nesting.
+            # Its macro pair follows Apple's documented TestHostPath contract;
+            # this fixture is explicit because the earlier failure preceded
+            # preservation of the Mac's generated .xctestrun file.
+            target = {
+                "BlueprintName": capture.TEST_TARGET,
+                "IsUITestBundle": True,
+                "TestBundleIdentifier": capture.TEST_BUNDLE_ID,
+                "TestBundlePath": f"__TESTHOST__/Contents/PlugIns/{capture.TEST_TARGET}.xctest",
+                "TestHostPath": f"__TESTROOT__/Debug/{capture.TEST_TARGET}-Runner.app",
+            }
+            plan = products / "capture.xctestrun"
+            plan.parent.mkdir(parents=True, exist_ok=True)
+            plan.write_bytes(plistlib.dumps({capture.TEST_TARGET: target}))
+
+            resolved_bundle, resolved_target = capture.resolve_test_bundle_from_plan(plan, products)
+            identity = capture.verify_test_bundle_identity(resolved_bundle)
+            resolved_resource = capture.verify_storekit_resource(resolved_bundle, config_sha)
+
+            self.assertEqual(resolved_bundle, bundle)
+            self.assertEqual(resolved_target["BlueprintName"], capture.TEST_TARGET)
+            self.assertEqual(identity["bundle_id"], capture.TEST_BUNDLE_ID)
+            self.assertEqual(resolved_resource, resource)
+
+    def test_retained_tvos_bundle_layout_resolves_from_plan_host_path(self) -> None:
+        storekit_resource = ROOT / capture.STOREKIT_CONFIG
+        config_sha = capture.sha256_file(storekit_resource)
+        with TemporaryDirectory() as temporary:
+            products = Path(temporary) / "Build" / "Products"
+            host = products / "Debug-appletvsimulator" / f"{capture.TEST_TARGET}-Runner.app"
+            testhost_bundle = host / "PlugIns" / f"{capture.TEST_TARGET}.xctest"
+            (testhost_bundle / "Info.plist").parent.mkdir(parents=True)
+            (testhost_bundle / "Info.plist").write_bytes(plistlib.dumps({
+                "CFBundleIdentifier": capture.TEST_BUNDLE_ID,
+            }))
+            resource = testhost_bundle / storekit_resource.name
+            resource.write_bytes(storekit_resource.read_bytes())
+
+            # Xcode's actual tvOS build log places the XCTest bundle here and
+            # copies the catalog into it. Its exact .xctestrun macro pair was
+            # not retained by the earlier failing helper, so this plan object
+            # is explicitly a synthesized fixture following Apple's documented
+            # TestHostPath/TestBundlePath contract.
+            target = {
+                "BlueprintName": capture.TEST_TARGET,
+                "IsUITestBundle": True,
+                "TestBundlePath": f"__TESTHOST__/PlugIns/{capture.TEST_TARGET}.xctest",
+                "TestHostPath": f"__TESTROOT__/Debug-appletvsimulator/{capture.TEST_TARGET}-Runner.app",
+            }
+            plan = products / "tvos-capture.xctestrun"
+            plan.parent.mkdir(parents=True, exist_ok=True)
+            plan.write_bytes(plistlib.dumps({capture.TEST_TARGET: target}))
+            resolved_bundle, resolved_target = capture.resolve_test_bundle_from_plan(plan, products)
+
+            self.assertEqual(resolved_bundle, testhost_bundle)
+            self.assertEqual(resolved_target["TestBundlePath"], target["TestBundlePath"])
+            self.assertEqual(capture.verify_test_bundle_identity(resolved_bundle)["bundle_id"], capture.TEST_BUNDLE_ID)
+            self.assertEqual(capture.verify_storekit_resource(resolved_bundle, config_sha), resource)
+
+    def test_testroot_test_bundle_reference_resolves_as_a_synthetic_macro_case(self) -> None:
+        with TemporaryDirectory() as temporary:
+            products = Path(temporary) / "Build" / "Products"
+            host = products / "Debug" / "Runner.app"
+            bundle = products / "Debug" / f"{capture.TEST_TARGET}.xctest"
+            bundle.mkdir(parents=True)
+            host.mkdir(parents=True)
+            (bundle / "Info.plist").write_bytes(plistlib.dumps({
+                "CFBundleIdentifier": capture.TEST_BUNDLE_ID,
+            }))
+            target = {
+                "BlueprintName": capture.TEST_TARGET,
+                "IsUITestBundle": True,
+                "TestBundlePath": f"__TESTROOT__/Debug/{capture.TEST_TARGET}.xctest",
+                "TestHostPath": "__TESTROOT__/Debug/Runner.app",
+            }
+            plan = products / "testroot-reference.xctestrun"
+            plan.write_bytes(plistlib.dumps({capture.TEST_TARGET: target}))
+            resolved_bundle, _ = capture.resolve_test_bundle_from_plan(plan, products)
+            self.assertEqual(resolved_bundle, bundle)
+
+    def test_xctestrun_bundle_resolution_rejects_unknown_macros_escapes_and_wrong_identity(self) -> None:
+        with TemporaryDirectory() as temporary:
+            products = Path(temporary) / "Build" / "Products"
+            products.mkdir(parents=True)
+            (products / "Debug" / "Runner.app").mkdir(parents=True)
+            plan = products / "capture.xctestrun"
+            base_target = {
+                "BlueprintName": capture.TEST_TARGET,
+                "IsUITestBundle": True,
+                "TestBundlePath": "__TESTROOT__/Debug/Test.xctest",
+                "TestHostPath": "__TESTROOT__/Debug/Runner.app",
+            }
+            for field, value, error in (
+                ("TestBundlePath", "__UNKNOWN__/Runner/PlugIns/" + f"{capture.TEST_TARGET}.xctest", "unsupported"),
+                ("TestBundlePath", "__TESTROOT__/Debug/__unknown__/" + f"{capture.TEST_TARGET}.xctest", "unsupported"),
+                ("TestBundlePath", "__TESTROOT__/../escape/" + f"{capture.TEST_TARGET}.xctest", "escaping"),
+                ("TestHostPath", "__TESTROOT__/Debug/../Runner.app", "escaping"),
+            ):
+                target = {**base_target, field: value}
+                if field == "TestBundlePath" and "Test.xctest" in value:
+                    target[field] = f"__TESTROOT__/Debug/{capture.TEST_TARGET}.xctest"
+                plan.write_bytes(plistlib.dumps({capture.TEST_TARGET: target}))
+                with self.subTest(field=field, value=value), self.assertRaisesRegex(ValueError, error):
+                    capture.resolve_test_bundle_from_plan(plan, products)
+
+            wrong_identifier = {**base_target, "TestBundleIdentifier": "org.example.wrong"}
+            plan.write_bytes(plistlib.dumps({capture.TEST_TARGET: wrong_identifier}))
+            with self.assertRaisesRegex(ValueError, "unexpected test bundle identifier"):
+                capture.resolve_test_bundle_from_plan(plan, products)
 
     def test_stage_app_for_xctestrun_copies_the_receipt_verified_bundle_unchanged(self) -> None:
         for platform in ("macos", "tvos"):
