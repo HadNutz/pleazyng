@@ -6,13 +6,29 @@ abstract final class CodecCatalog {
   static String normalize(String value) {
     var name = value.trim().toLowerCase();
     if (name.startsWith('video/') || name.startsWith('audio/')) name = name.substring(name.indexOf('/') + 1);
-    if (name.startsWith('av01.')) return 'av1';
-    if (name.startsWith('vp09.')) return 'vp9';
-    if (name.startsWith('avc1.') || name.startsWith('avc3.')) return 'h264';
-    if (name.startsWith('hvc1.') || name.startsWith('hev1.')) return 'hevc';
-    if (name.startsWith('vvc1.') || name.startsWith('vvi1.')) return 'vvc';
+    final dot = name.indexOf('.');
+    if (dot > 0 && dot < name.length - 1) {
+      final fourcc = name.substring(0, dot);
+      if (_profiledSampleEntries.contains(fourcc)) return aliases[fourcc]!;
+    }
     return aliases[name] ?? name;
   }
+
+  static const _profiledSampleEntries = {
+    'av01',
+    'vp09',
+    'avc1',
+    'avc3',
+    'hvc1',
+    'hev1',
+    'vvc1',
+    'vvi1',
+    'ac-4',
+    'mha1',
+    'mha2',
+    'mhm1',
+    'mhm2',
+  };
 
   static const aliases = <String, String>{
     'avc': 'h264',
@@ -24,6 +40,7 @@ abstract final class CodecCatalog {
     'hev1': 'hevc',
     'x265': 'hevc',
     'av01': 'av1',
+    'av02': 'av2',
     'vp09': 'vp9',
     'x-vnd.on2.vp9': 'vp9',
     'x-vnd.on2.vp8': 'vp8',
@@ -51,7 +68,9 @@ abstract final class CodecCatalog {
     'mpegh': 'mpegh_3d_audio',
     'mpegh3da': 'mpegh_3d_audio',
     'mha1': 'mpegh_3d_audio',
+    'mha2': 'mpegh_3d_audio',
     'mhm1': 'mpegh_3d_audio',
+    'mhm2': 'mpegh_3d_audio',
     'mp4a-latm': 'aac',
     'mp3float': 'mp3',
     'flac': 'flac',

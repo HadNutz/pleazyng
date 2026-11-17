@@ -143,7 +143,9 @@ void main() {
       {'codec': 'aac', 'driver': 'aac'},
     ]);
     expect(RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable('ac-4'), isTrue);
-    expect(RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable('mhm1'), isTrue);
+    for (final codec in ['audio/ac-4.02.01.01', 'mha1.0x0D', 'mha2', 'mhm1', 'MHM2.0x0D']) {
+      expect(RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable(codec), isTrue, reason: codec);
+    }
     expect(RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable('truehd'), isFalse);
     RuntimePlaybackCapabilities.recordMpvDecoders([
       {'codec': 'ac4', 'driver': 'ac4'},
@@ -194,6 +196,8 @@ void main() {
   test('codec aliases preserve profile-independent identity', () {
     expect(CodecCatalog.normalize('hvc1.2.4.L153.B0'), 'hevc');
     expect(CodecCatalog.normalize('video/x-vnd.on2.vp9'), 'vp9');
+    expect(CodecCatalog.normalize('AV02'), 'av2');
+    expect(CodecCatalog.normalize('mp4a.40.42'), 'mp4a.40.42');
     expect(RankedVideoCodec.fromServerCodec('hvc1'), RankedVideoCodec.hevc);
     expect(RankedVideoCodec.fromServerCodec('av01.0.08M.10'), RankedVideoCodec.av1);
   });
