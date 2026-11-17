@@ -11,9 +11,11 @@ struct StaticMPVKitProbeApp: App {
             let version = avcodec_version()
             Text("avcodec_version: \(version)")
                 .onAppear {
-                    let marker = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-                        .appendingPathComponent("avcodec-version.txt")
+                    let fileManager = FileManager.default
+                    let cacheDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+                    let marker = cacheDirectory.appendingPathComponent("avcodec-version.txt")
                     do {
+                        try fileManager.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
                         try "\(version)\n".write(to: marker, atomically: true, encoding: .utf8)
                     } catch {
                         fatalError("Could not write the avcodec version marker: \(error)")

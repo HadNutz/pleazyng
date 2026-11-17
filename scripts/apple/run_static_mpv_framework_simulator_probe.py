@@ -22,6 +22,7 @@ BUNDLE_ID = "org.plezy.probe.staticmpvkit"
 APP_EXECUTABLE = "StaticMPVKitProbe"
 APP_VERSION = "1.0.0"
 APP_BUILD_VERSION = "1"
+APP_MARKER_RELATIVE_PATH = Path("Library/Caches/avcodec-version.txt")
 
 
 class ProbeError(RuntimeError):
@@ -334,7 +335,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     )
     if container_result.returncode != 0:
         raise ProbeError("Could not locate the installed probe app data container")
-    marker = Path(container_result.stdout.strip()) / "Documents/avcodec-version.txt"
+    marker = Path(container_result.stdout.strip()) / APP_MARKER_RELATIVE_PATH
     deadline = time.monotonic() + 45
     version_text = ""
     while time.monotonic() < deadline:

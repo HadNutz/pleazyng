@@ -49,6 +49,8 @@ The workflow retains inspect/apply receipts and command logs as an artifact.
 It also retains the probe app's complete generated `Info.plist` and validates
 its bundle id, executable, package type, name, versions, supported simulator
 platform, tvOS device family and minimum OS before attempting installation.
+The launched fixture writes its `avcodec_version()` marker to the app's
+`Library/Caches` directory, matching tvOS's writable app-storage location.
 This focused result qualifies the tvOS simulator packaging path only. Normal
 iOS and macOS build/installation checks must pass before claiming those
 platforms are qualified.

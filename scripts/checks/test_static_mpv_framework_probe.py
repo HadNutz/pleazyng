@@ -121,5 +121,15 @@ class TargetBuildSettingsTests(unittest.TestCase):
                 probe._require_target_build_settings("Build settings for action build and target Other:\n", Path(temp))
 
 
+class RuntimeMarkerTests(unittest.TestCase):
+    def test_swift_probe_and_runner_use_tvOS_cache_storage(self) -> None:
+        self.assertEqual(probe.APP_MARKER_RELATIVE_PATH.as_posix(), "Library/Caches/avcodec-version.txt")
+        source = Path(__file__).resolve().parents[1] / "apple/static-mpv-framework-probe/Sources/ProbeApp.swift"
+        text = source.read_text(encoding="utf-8")
+        self.assertIn(".cachesDirectory", text)
+        self.assertIn("createDirectory(at: cacheDirectory, withIntermediateDirectories: true)", text)
+        self.assertNotIn(".documentDirectory", text)
+
+
 if __name__ == "__main__":
     unittest.main()
