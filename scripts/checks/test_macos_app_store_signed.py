@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 import base64
 from pathlib import Path
+import re
 import sys
 import tempfile
 import unittest
@@ -159,8 +160,14 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         self.assertIn('"--config-only"', flutter_config_command)
         self.assertNotIn('"--no-codesign"', flutter_config_command)
 
+        job = re.search(
+            r"(?m)^  ([A-Za-z0-9_-]+):\n    name: Build and upload signed Mac App Store package$",
+            workflow,
+        )
+        self.assertIsNotNone(job)
         runner = next(line for line in workflow.splitlines() if "runs-on:" in line)
-        self.assertIn('"labels":["self-hosted","macOS","ARM64","private-apple","gha-{0}-macos-app-store"]', runner)
+        self.assertIn('"labels":["self-hosted","macOS","ARM64","private-apple"', runner)
+        self.assertIn(f'"gha-{{0}}-{job.group(1)}"', runner)
 
     def test_existing_certificate_without_local_key_tries_additive_cert_without_revocation(self):
         certificate = {
