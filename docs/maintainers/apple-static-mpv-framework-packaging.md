@@ -46,6 +46,9 @@ same verifier/pruner, installs and launches the app in a tvOS simulator, and
 checks that the app called `avcodec_version()` successfully.
 
 The workflow retains inspect/apply receipts and command logs as an artifact.
+It also retains the probe app's complete generated `Info.plist` and validates
+its bundle id, executable, package type, name, versions, supported simulator
+platform, tvOS device family and minimum OS before attempting installation.
 This focused result qualifies the tvOS simulator packaging path only. Normal
 iOS and macOS build/installation checks must pass before claiming those
 platforms are qualified.

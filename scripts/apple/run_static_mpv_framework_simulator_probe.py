@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
 import platform
+import plistlib
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -16,6 +19,9 @@ from typing import Any
 
 EXPECTED_MPV_BUILD_REVISION = "ed921fcc7f3923926ef454f3c7aedd6ddb897d3f"
 BUNDLE_ID = "org.plezy.probe.staticmpvkit"
+APP_EXECUTABLE = "StaticMPVKitProbe"
+APP_VERSION = "1.0.0"
+APP_BUILD_VERSION = "1"
 
 
 class ProbeError(RuntimeError):
@@ -107,6 +113,104 @@ def _frameworks_path(app: Path) -> Path:
     return app / "Frameworks"
 
 
+def _verify_app_bundle_info(app: Path, output_dir: Path) -> dict[str, Any]:
+    path = app / "Info.plist"
+    if path.is_symlink() or not path.is_file():
+        raise ProbeError(f"Probe app Info.plist is missing or unsafe: {path}")
+    content = path.read_bytes()
+    if len(content) > 1024 * 1024:
+        raise ProbeError(f"Probe app Info.plist exceeds the 1 MiB limit: {path}")
+    try:
+        value = plistlib.loads(content)
+    except (plistlib.InvalidFileException, ValueError) as exc:
+        raise ProbeError(f"Probe app Info.plist is invalid: {path}") from exc
+    if not isinstance(value, dict):
+        raise ProbeError(f"Probe app Info.plist root is not a dictionary: {path}")
+    report = {
+        "path": str(path),
+        "size": len(content),
+        "sha256": hashlib.sha256(content).hexdigest(),
+        "keys": sorted(key for key in value if isinstance(key, str)),
+        "bundle_identifier": value.get("CFBundleIdentifier"),
+        "package_type": value.get("CFBundlePackageType"),
+        "executable": value.get("CFBundleExecutable"),
+        "name": value.get("CFBundleName"),
+        "short_version": value.get("CFBundleShortVersionString"),
+        "build_version": value.get("CFBundleVersion"),
+        "supported_platforms": value.get("CFBundleSupportedPlatforms"),
+        "device_family": value.get("UIDeviceFamily"),
+        "minimum_os_version": value.get("MinimumOSVersion"),
+    }
+    shutil.copyfile(path, output_dir / "app-bundle-info.plist")
+    (output_dir / "app-bundle-info.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8",
+    )
+    if report["bundle_identifier"] != BUNDLE_ID:
+        raise ProbeError(f"Probe app Info.plist must declare CFBundleIdentifier={BUNDLE_ID}")
+    if report["package_type"] != "APPL":
+        raise ProbeError("Probe app Info.plist must declare CFBundlePackageType=APPL")
+    if report["executable"] != APP_EXECUTABLE:
+        raise ProbeError(f"Probe app Info.plist must declare CFBundleExecutable={APP_EXECUTABLE}")
+    if report["name"] != APP_EXECUTABLE:
+        raise ProbeError(f"Probe app Info.plist must declare CFBundleName={APP_EXECUTABLE}")
+    if report["short_version"] != APP_VERSION or report["build_version"] != APP_BUILD_VERSION:
+        raise ProbeError("Probe app Info.plist must contain the expected nonempty short/build versions")
+    if not isinstance(report["supported_platforms"], list) or "AppleTVSimulator" not in report["supported_platforms"]:
+        raise ProbeError("Probe app Info.plist must declare AppleTVSimulator in CFBundleSupportedPlatforms")
+    if not isinstance(report["device_family"], list) or 3 not in report["device_family"]:
+        raise ProbeError("Probe app Info.plist must declare tvOS device family 3")
+    if report["minimum_os_version"] != "15.0":
+        raise ProbeError("Probe app Info.plist must declare MinimumOSVersion=15.0")
+    return report
+
+
+def _require_target_build_settings(stdout: str, output_dir: Path) -> dict[str, str]:
+    settings: dict[str, str] = {}
+    in_probe_target = False
+    target_header = "Build settings for action build and target Probe:"
+    for line in stdout.splitlines():
+        if line.strip() == target_header:
+            in_probe_target = True
+            continue
+        if in_probe_target and line.startswith("Build settings for action "):
+            break
+        if not in_probe_target:
+            continue
+        match = re.match(r"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$", line)
+        if match:
+            settings[match.group(1)] = match.group(2)
+    if not in_probe_target:
+        raise ProbeError("xcodebuild -showBuildSettings did not report the Probe target")
+
+    expected = {
+        "PRODUCT_BUNDLE_IDENTIFIER": BUNDLE_ID,
+        "PRODUCT_NAME": APP_EXECUTABLE,
+        "EXECUTABLE_NAME": APP_EXECUTABLE,
+        "CURRENT_PROJECT_VERSION": APP_BUILD_VERSION,
+        "MARKETING_VERSION": APP_VERSION,
+        "TARGETED_DEVICE_FAMILY": "3",
+        "TVOS_DEPLOYMENT_TARGET": "15.0",
+        "INFOPLIST_KEY_CFBundleIdentifier": BUNDLE_ID,
+        "INFOPLIST_KEY_CFBundleExecutable": APP_EXECUTABLE,
+        "INFOPLIST_KEY_CFBundleName": APP_EXECUTABLE,
+        "INFOPLIST_KEY_CFBundlePackageType": "APPL",
+        "INFOPLIST_KEY_CFBundleShortVersionString": APP_VERSION,
+        "INFOPLIST_KEY_CFBundleVersion": APP_BUILD_VERSION,
+    }
+    mismatches = {
+        key: {"expected": value, "actual": settings.get(key)}
+        for key, value in expected.items()
+        if settings.get(key) != value
+    }
+    report = {key: settings.get(key, "") for key in expected}
+    (output_dir / "target-build-settings.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8",
+    )
+    if mismatches:
+        raise ProbeError(f"Probe target build settings do not match the expected tvOS identity: {mismatches}")
+    return report
+
+
 def run(args: argparse.Namespace) -> dict[str, Any]:
     source_root = args.source_root.resolve(strict=True)
     output_dir = args.output_dir.resolve()
@@ -149,6 +253,18 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     _run(["xcrun", "simctl", "boot", simulator_id], output_dir=output_dir, name="simulator-boot", check=False)
     _run(["xcrun", "simctl", "bootstatus", simulator_id, "-b"], output_dir=output_dir, name="simulator-bootstatus")
 
+    _run([
+        "xcodebuild", "-showBuildSettings",
+        "-project", str(project), "-target", "Probe",
+        "-configuration", "Debug",
+        "-destination", f"id={simulator_id}",
+        "-derivedDataPath", str(derived_data),
+        "-clonedSourcePackagesDirPath", str(package_cache),
+    ], output_dir=output_dir, name="show-build-settings")
+    build_settings = _require_target_build_settings(
+        (output_dir / "show-build-settings.stdout.txt").read_text(encoding="utf-8"), output_dir,
+    )
+
     host_arch = platform.machine().lower()
     if host_arch not in {"arm64", "x86_64"}:
         raise ProbeError(f"Unsupported simulator runner architecture: {host_arch}")
@@ -168,6 +284,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     app = derived_data / "Build/Products/Debug-appletvsimulator/StaticMPVKitProbe.app"
     if not app.is_dir():
         raise ProbeError(f"Xcode did not produce the expected simulator app: {app}")
+    app_bundle_info = _verify_app_bundle_info(app, output_dir)
 
     baseline = _run(
         ["xcrun", "simctl", "install", simulator_id, str(app)],
@@ -233,6 +350,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "schema": 1,
         "source_commit": args.source_sha,
         "mpv_build_revision": revision,
+        "app_bundle_info": app_bundle_info,
+        "target_build_settings": build_settings,
         "host_architecture": host_arch,
         "simulator": {"name": simulator_name, "udid": simulator_id},
         "baseline_install_failure": {
