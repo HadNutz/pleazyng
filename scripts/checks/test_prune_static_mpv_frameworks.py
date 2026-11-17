@@ -229,14 +229,20 @@ class SourcePackagesDiscoveryTests(unittest.TestCase):
 
 
 class ResourceSafetyTests(unittest.TestCase):
-    def make_framework(self, root: Path, *, resource_name: str = "pleazyng-codecs") -> Path:
-        framework = root / "Libavcodec.framework"
+    def make_framework(
+        self,
+        root: Path,
+        *,
+        resource_name: str = "pleazyng-codecs",
+        framework_name: str = "Libavcodec",
+    ) -> Path:
+        framework = root / f"{framework_name}.framework"
         write_plist(framework / "Info.plist", {
-            "CFBundleIdentifier": "com.mpvkit.Libavcodec",
-            "CFBundleExecutable": "Libavcodec",
+            "CFBundleIdentifier": f"com.mpvkit.{framework_name}",
+            "CFBundleExecutable": framework_name,
             "CFBundlePackageType": "FMWK",
         })
-        (framework / "Libavcodec").write_bytes(prune.AR_MAGIC[0])
+        (framework / framework_name).write_bytes(prune.AR_MAGIC[0])
         (framework / "Headers").mkdir()
         (framework / "Modules").mkdir()
         (framework / "Resources" / resource_name / "xevd").mkdir(parents=True)
@@ -245,24 +251,25 @@ class ResourceSafetyTests(unittest.TestCase):
 
     def make_candidate(self, framework: Path) -> tuple[prune.Candidate, Path]:
         resources = prune._resource_inventory(framework)
+        name = framework.name.removesuffix(".framework")
         source = prune.SourceFramework(
-            name="Libavcodec",
-            bundle_identifier="com.mpvkit.Libavcodec",
-            executable="Libavcodec",
+            name=name,
+            bundle_identifier=f"com.mpvkit.{name}",
+            executable=name,
             source_paths=(framework,),
-            source_binary_paths=(framework / "Libavcodec",),
+            source_binary_paths=(framework / name,),
             architectures=("arm64", "x86_64"),
             resources=resources,
         )
         app = framework.parent.parent / "Runner.app"
-        app_framework = app / "Frameworks" / "Libavcodec.framework"
+        app_framework = app / "Frameworks" / f"{name}.framework"
         write_plist(app_framework / "Info.plist", {
             "CFBundleIdentifier": source.bundle_identifier,
             "CFBundleExecutable": source.executable,
             "CFBundlePackageType": "FMWK",
             "MinimumOSVersion": "15.0",
         })
-        (app_framework / "Libavcodec").write_bytes(b"\xcf\xfa\xed\xfe" + b"\0" * 60)
+        (app_framework / name).write_bytes(b"\xcf\xfa\xed\xfe" + b"\0" * 60)
         info = prune.read_plist(app_framework / "Info.plist")
         candidate = prune.Candidate(
             source=source,
@@ -270,11 +277,11 @@ class ResourceSafetyTests(unittest.TestCase):
             app_info_path=app_framework / "Info.plist",
             app_info=info,
             app_info_sha256=prune.sha256(app_framework / "Info.plist"),
-            app_binary_path=app_framework / "Libavcodec",
-            app_binary_sha256=prune.sha256(app_framework / "Libavcodec"),
+            app_binary_path=app_framework / name,
+            app_binary_sha256=prune.sha256(app_framework / name),
             app_binary_header="",
         )
-        destination = app / "Resources" / "PleazyngStaticFrameworkResources" / "Libavcodec"
+        destination = app / "Resources" / "PleazyngStaticFrameworkResources" / name
         return candidate, destination
 
     def test_notice_tree_is_copied_byte_for_byte(self) -> None:
@@ -286,6 +293,32 @@ class ResourceSafetyTests(unittest.TestCase):
             copied = destination / "pleazyng-codecs" / "xevd" / "COPYING"
             self.assertEqual(copied.read_bytes(), b"license bytes\n")
             self.assertEqual(prune.sha256(copied), prune.sha256(framework / "Resources/pleazyng-codecs/xevd/COPYING"))
+
+    def test_spatial_audio_framework_license_is_preserved_byte_for_byte(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            framework = self.make_framework(Path(temp) / "source", framework_name="Libmpv")
+            tracked_license = Path(__file__).resolve().parents[2] / "assets/licenses/SpatialAudioBridge.txt"
+            framework_license = framework / "LICENSE.SpatialAudioBridge"
+            shutil.copyfile(tracked_license, framework_license)
+            candidate, destination = self.make_candidate(framework)
+            self.assertIn("LICENSE.SpatialAudioBridge", {entry[0] for entry in candidate.source.resources})
+            created = prune._copy_resources(((candidate, destination),))
+            self.assertEqual(created, (destination,))
+            copied = destination / "LICENSE.SpatialAudioBridge"
+            self.assertEqual(copied.read_bytes(), tracked_license.read_bytes())
+            self.assertEqual(prune.sha256(copied), prune.sha256(framework_license))
+
+    def test_unreviewed_top_level_framework_license_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            framework = self.make_framework(Path(temp) / "source")
+            (framework / "LICENSE.Unreviewed").write_text("unknown notice\n", encoding="utf-8")
+            with self.assertRaises(prune.PruneError):
+                prune._resource_inventory(framework)
+
+            unsupported_library = self.make_framework(Path(temp) / "wrong-framework")
+            (unsupported_library / "LICENSE.SpatialAudioBridge").write_bytes(b"notice belongs to Libmpv only")
+            with self.assertRaises(prune.PruneError):
+                prune._resource_inventory(unsupported_library)
 
     def test_case_insensitive_framework_resource_namespaces_fail(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -330,28 +363,32 @@ class ResourceSafetyTests(unittest.TestCase):
 
     def test_versioned_macos_framework_symlinks_are_resolved_inside_the_bundle(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
-            framework = Path(temp) / "Libavcodec.framework"
+            framework = Path(temp) / "Libmpv.framework"
             version = framework / "Versions" / "A"
             resources = version / "Resources"
             write_plist(resources / "Info.plist", {
-                "CFBundleIdentifier": "com.mpvkit.Libavcodec",
-                "CFBundleExecutable": "Libavcodec",
+                "CFBundleIdentifier": "com.mpvkit.Libmpv",
+                "CFBundleExecutable": "Libmpv",
                 "CFBundlePackageType": "FMWK",
             })
-            archive = version / "Libavcodec"
+            archive = version / "Libmpv"
             fat_static_archive(archive)
             notice = resources / "pleazyng-codecs" / "xevd" / "COPYING"
             notice.parent.mkdir(parents=True)
             notice.write_bytes(b"macOS notice\n")
+            tracked_license = Path(__file__).resolve().parents[2] / "assets/licenses/SpatialAudioBridge.txt"
+            version.joinpath("LICENSE.SpatialAudioBridge").write_bytes(tracked_license.read_bytes())
             (framework / "Versions").mkdir(parents=True, exist_ok=True)
             (framework / "Versions" / "Current").symlink_to("A")
             (framework / "Resources").symlink_to("Versions/Current/Resources")
-            (framework / "Libavcodec").symlink_to("Versions/Current/Libavcodec")
+            (framework / "Libmpv").symlink_to("Versions/Current/Libmpv")
             info = prune._framework_info_path(framework)
-            self.assertEqual(prune.read_plist(info)["CFBundleIdentifier"], "com.mpvkit.Libavcodec")
+            self.assertEqual(prune.read_plist(info)["CFBundleIdentifier"], "com.mpvkit.Libmpv")
             inventory = prune._resource_inventory(framework)
             self.assertEqual(inventory[0][0], "pleazyng-codecs/xevd/COPYING")
             self.assertEqual(inventory[0][2], prune.sha256(notice))
+            license_item = next(item for item in inventory if item[0] == "LICENSE.SpatialAudioBridge")
+            self.assertEqual(license_item[2], prune.sha256(tracked_license))
 
     def test_versioned_framework_symlink_escape_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

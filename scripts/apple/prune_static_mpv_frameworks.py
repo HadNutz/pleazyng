@@ -33,6 +33,7 @@ MAX_RESOURCE_TOTAL_BYTES = 16 * 1024 * 1024
 MAX_RECEIPT_BYTES = 64 * 1024 * 1024
 AR_MAGIC = (b"!<arch>\n", b"!<thin>\n")
 MPV_BUNDLE_PREFIX = "com.mpvkit."
+KNOWN_FRAMEWORK_LICENSES = {"Libmpv": ("LICENSE.SpatialAudioBridge",)}
 CPU_ARCH = {
     7: "i386",
     12: "arm",
@@ -257,7 +258,11 @@ def package_revision(source_packages: Path, resolved_file: Path) -> str:
 def _resource_inventory(framework: Path) -> tuple[tuple[str, Path, str, int], ...]:
     executable = framework.name.removesuffix(".framework")
     root = framework.resolve(strict=True)
-    expected = {"Info.plist", executable, "Headers", "Modules", "Resources", "_CodeSignature", "Versions", "LICENSE"}
+    license_names = {"LICENSE", *KNOWN_FRAMEWORK_LICENSES.get(executable, ())}
+    expected = {
+        "Info.plist", executable, "Headers", "Modules", "Resources", "_CodeSignature", "Versions",
+        *license_names,
+    }
     for child in framework.iterdir():
         if child.name not in expected:
             raise PruneError(f"Unexpected content in static MPVKit framework: {child}")
@@ -283,7 +288,7 @@ def _resource_inventory(framework: Path) -> tuple[tuple[str, Path, str, int], ..
         if version_dir.parent != version_root.resolve(strict=True) or not version_dir.is_dir():
             raise PruneError(f"Versions/Current must point to a version directory: {framework}")
         version_entries = {path.name for path in version_dir.iterdir()}
-        if version_entries - {"Resources", executable, "LICENSE"}:
+        if version_entries - {"Resources", executable, *license_names}:
             raise PruneError(f"Unexpected versioned framework content: {version_dir}")
         if executable not in version_entries:
             raise PruneError(f"Versioned framework executable is missing: {version_dir}")
@@ -330,18 +335,21 @@ def _resource_inventory(framework: Path) -> tuple[tuple[str, Path, str, int], ..
                     raise PruneError("Static-framework notice resource count exceeds the configured bound")
                 relative = path.relative_to(resources_real).as_posix()
                 files.append((relative, path, sha256(path), size))
-    license_paths = [framework / "LICENSE"]
+    license_paths = [framework / name for name in sorted(license_names)]
     if version_dir is not None:
-        license_paths.append(version_dir / "LICENSE")
+        license_paths.extend(version_dir / name for name in sorted(license_names))
     for license_path in license_paths:
         if license_path.exists():
+            if license_path.is_symlink():
+                raise PruneError(f"Framework license must be a regular, non-symlink file: {license_path}")
             license_real = _resolve_within(license_path, root, label="framework license")
             if not license_real.is_file():
-                raise PruneError(f"Framework LICENSE must be a regular file: {license_path}")
-            item = ("LICENSE", license_real, sha256(license_real), license_real.stat().st_size)
-            existing = next((entry for entry in files if entry[0] == "LICENSE"), None)
-            if existing and existing[2] != item[2]:
-                raise PruneError(f"Conflicting framework LICENSE content: {framework}")
+                raise PruneError(f"Framework license must be a regular file: {license_path}")
+            relative = license_path.name
+            item = (relative, license_real, sha256(license_real), license_real.stat().st_size)
+            existing = next((entry for entry in files if entry[0] == relative), None)
+            if existing and (existing[2], existing[3]) != (item[2], item[3]):
+                raise PruneError(f"Conflicting framework license content: {framework}/{relative}")
             if not existing:
                 total += item[3]
                 if item[3] > MAX_RESOURCE_FILE_BYTES or total > MAX_RESOURCE_TOTAL_BYTES:

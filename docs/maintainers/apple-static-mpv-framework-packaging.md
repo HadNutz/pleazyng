@@ -18,6 +18,13 @@ allow-listed notice resources byte-for-byte, then removes only wrappers whose
 matching pinned source slices are verified as static archives. Dynamic
 frameworks are left in place.
 
+At the current package pin, `Libmpv.framework` also contains
+`LICENSE.SpatialAudioBridge`. The helper copies that exact, size-bounded notice
+to the app-level `Resources/PleazyngStaticFrameworkResources/Libmpv/` namespace
+before removing the wrapper. This file matches the Flutter asset
+`assets/licenses/SpatialAudioBridge.txt`; unknown top-level framework files
+remain errors.
+
 Each build writes a JSON receipt under `DERIVED_FILE_DIR`. The receipt records
 the package revision, selected source slices, complete embedded plist content,
 Mach-O headers/build commands and load dependencies, and hashes/sizes for

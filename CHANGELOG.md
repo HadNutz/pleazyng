@@ -11,7 +11,7 @@
 - Update Nix release metadata to published Pleazyng 3.0.36 with authenticated Linux x64 and ARM64 checksums.
 - Configure iOS Debug, Profile and Release signing with the Keychain Sharing entitlement required by `flutter_secure_storage`, preserving optional Music NFC and widget entitlement merging.
 - Add a disabled-by-default, isolated Paymentwall billing backend for the fixed USD 2.99 LG webOS lifetime unlock, with server-verified ownership, recovery credentials, and refund-aware restore.
-- Remove verified static MPVKit runtime wrappers from Apple app bundles while preserving pinned codec notices, so iOS, tvOS and macOS bundles pass runtime installation checks.
+- Remove verified static MPVKit runtime wrappers from Apple app bundles while preserving pinned codec notices and the SpatialAudioBridge license, so iOS, tvOS and macOS bundles pass runtime installation checks.
 
 ## [3.0.37] - 2026-11-17
 
