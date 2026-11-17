@@ -31,6 +31,7 @@ import '../../../services/subtitle_sync_service.dart';
 import '../../../services/subtitle_translation_service.dart';
 import '../../../services/settings_service.dart';
 import '../../../services/subtitle_playback_transcription_service.dart';
+import '../../../services/subtitle_capture_job_store.dart';
 import '../../../services/subtitle_revision_service.dart';
 import '../../../services/subtitle_source_transcript_cache.dart';
 import '../../../utils/provider_extensions.dart';
@@ -666,9 +667,176 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
   Future<void> _showCapturedTranscript(SubtitlePlaybackTranscriptionService service) async {
     await showDialog<void>(
       context: context,
-      builder: (context) => _CapturedTranscriptDialog(player: widget.player, service: service),
+      builder: (context) => _CapturedTranscriptDialog(
+        player: widget.player,
+        service: service,
+        captureSummary: service.recentCaptureJob == null ? null : _captureJobSummary(service.recentCaptureJob!),
+      ),
     );
   }
+
+  SubtitleCaptureJobIdentity? _captureJobIdentity(SubtitleRevisionIdentity? identity) {
+    if (identity == null || identity.profileId.trim().isEmpty) return null;
+    final audioIdentity = _stableAudioIdentity(widget.player);
+    return SubtitleCaptureJobIdentity.fromSource(
+      profileId: identity.profileId,
+      sourceIdentity: jsonEncode([identity.serverId.trim(), identity.ratingKey.trim(), identity.mediaIndex]),
+      stableAudioIdentity: audioIdentity,
+    );
+  }
+
+  String? _stableAudioIdentity(Player player) {
+    final state = player.state;
+    final selected = state.track.audio;
+    if (selected == null || selected.id.trim().isEmpty || selected.id == 'auto' || selected.id == 'no') return null;
+    final matching = state.tracks.audio.where((track) => track.id == selected.id).toList(growable: false);
+    if (matching.length != 1) return null;
+    final track = matching.single;
+    final codec = track.codec?.trim().toLowerCase() ?? '';
+    final profile = track.codecProfile?.trim().toLowerCase() ?? '';
+    final language = track.language?.trim().toLowerCase() ?? '';
+    final channels = track.channels;
+    final sampleRate = track.sampleRate;
+    if (codec.isEmpty || channels == null || sampleRate == null || channels < 1 || sampleRate < 8000) return null;
+    final descriptor = jsonEncode([codec, profile, language, channels, sampleRate, track.bitrate]);
+    final matchingDescriptors = state.tracks.audio.where((candidate) {
+      return jsonEncode([
+            candidate.codec?.trim().toLowerCase() ?? '',
+            candidate.codecProfile?.trim().toLowerCase() ?? '',
+            candidate.language?.trim().toLowerCase() ?? '',
+            candidate.channels,
+            candidate.sampleRate,
+            candidate.bitrate,
+          ]) ==
+          descriptor;
+    });
+    if (matchingDescriptors.length != 1) return null;
+    return descriptor;
+  }
+
+  Future<void> _browseDurableCaptures() => _run(() async {
+    final operationIdentity = _operationIdentity;
+    final revisionIdentity = operationIdentity?.revisionIdentity;
+    final captureIdentity = _captureJobIdentity(revisionIdentity);
+    if (operationIdentity == null || revisionIdentity == null || captureIdentity == null) {
+      throw StateError('A stable profile and media identity are required to browse saved playback captures.');
+    }
+    final selectedAudioId = widget.player.state.track.audio?.id;
+    final service = SubtitlePlaybackTranscriptionService.instance;
+    final jobs = await service.browseDurableCaptures(captureIdentity);
+    _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
+    if (!mounted) return;
+    if (jobs.isEmpty) {
+      setState(() => _status = context.t.subtitleAiUi.noSavedPlaybackCaptures);
+      return;
+    }
+    final selected = await showDialog<SubtitleCaptureJob>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(context.t.subtitleAiUi.savedPlaybackCaptures),
+        content: SizedBox(
+          width: 520,
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              for (final job in jobs)
+                Builder(
+                  builder: (context) {
+                    final audioCanBeChecked = captureIdentity.hasStableAudioIdentity && job.audioHash.isNotEmpty;
+                    final audioMismatch = audioCanBeChecked && !job.audioMatches;
+                    final stamp = DateTime.fromMillisecondsSinceEpoch(job.startedAtMs).toLocal();
+                    final state = job.state == SubtitleCaptureJobState.interrupted
+                        ? 'Interrupted partial'
+                        : 'Captured playback';
+                    final details = [
+                      '$state · ${job.cueCount} cues · ${stamp.toString().substring(0, 16)}',
+                      if (job.gapCount > 0) '${job.gapCount} uncaptured audio gaps recorded',
+                      if (!audioCanBeChecked) 'Audio identity needs revalidation',
+                      if (audioMismatch) 'Different selected audio track',
+                      if (job.wasRecoveredAfterRestart) 'Recovered after app restart',
+                    ].join('\n');
+                    return ListTile(
+                      leading: const AppIcon(Symbols.history_rounded),
+                      title: Text(state),
+                      subtitle: Text(details),
+                      isThreeLine: details.contains('\n'),
+                      enabled: !audioMismatch && job.hasCheckpoint && job.state != SubtitleCaptureJobState.capturing,
+                      onTap: !audioMismatch && job.hasCheckpoint && job.state != SubtitleCaptureJobState.capturing
+                          ? () => Navigator.of(dialogContext).pop(job)
+                          : null,
+                    );
+                  },
+                ),
+            ],
+          ),
+        ),
+        actions: [TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: Text(context.t.common.cancel))],
+      ),
+    );
+    if (selected == null || !mounted) return;
+    _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
+    var audioRevalidated = false;
+    if (!audioRevalidated) {
+      audioRevalidated =
+          await showDialog<bool>(
+            context: context,
+            builder: (dialogContext) => AlertDialog(
+              title: Text(context.t.subtitleAiUi.recheckAudioTrack),
+              content: Text(context.t.subtitleAiUi.audioRevalidationDescription),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(false),
+                  child: Text(context.t.common.cancel),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                  child: Text(context.t.subtitleAiUi.confirmAudioRechecked),
+                ),
+              ],
+            ),
+          ) ??
+          false;
+    }
+    if (!audioRevalidated || !mounted) return;
+    _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
+    await service.restoreDurableCapture(
+      selected,
+      captureIdentity,
+      audioRevalidated: true,
+      isIdentityCurrent: () =>
+          _operationIdentityIsCurrent(operationIdentity) &&
+          widget.player.state.track.audio?.id == selectedAudioId &&
+          _captureJobIdentity(_revisionIdentity)?.audioHash == captureIdentity.audioHash,
+    );
+    _ensurePlayerSessionCurrent(expectedIdentity: operationIdentity);
+    await _showCapturedTranscript(service);
+  });
+
+  String _captureJobSummary(SubtitleCaptureJob job) {
+    String position(int? milliseconds) {
+      if (milliseconds == null || milliseconds < 0) return '';
+      final seconds = milliseconds ~/ 1000;
+      final hours = seconds ~/ 3600;
+      final minutes = (seconds % 3600) ~/ 60;
+      final remainder = seconds % 60;
+      return hours > 0
+          ? '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${remainder.toString().padLeft(2, '0')}'
+          : '${minutes.toString().padLeft(2, '0')}:${remainder.toString().padLeft(2, '0')}';
+    }
+
+    final at = position(job.interruptedAtMs ?? job.playbackPositionMs);
+    final state = job.state == SubtitleCaptureJobState.interrupted
+        ? context.t.subtitleAiUi.interruptedCaptureSummary(position: at)
+        : context.t.subtitleAiUi.savedCaptureSummary(position: at);
+    return [
+      state,
+      if (job.gapCount > 0) context.t.subtitleAiUi.captureGapSummary(count: job.gapCount),
+      if (job.wasRecoveredAfterRestart) context.t.subtitleAiUi.captureRecoveredAfterRestart,
+      context.t.subtitleAiUi.captureAudioNotSaved,
+    ].join(' ');
+  }
+
+  bool _saveCaptureRecovery = false;
 
   Future<void> _captureLivePlayback() => _run(() async {
     final player = widget.player;
@@ -693,6 +861,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
       captureSource,
       languageCode: _speechLanguageCode == 'auto' ? null : _speechLanguageCode,
       isProfileIdentityCurrent: () => _operationIdentityIsCurrent(operationIdentity),
+      durableIdentity: _saveCaptureRecovery ? _captureJobIdentity(operationIdentity.revisionIdentity) : null,
       onProgress: (status) {
         if (mounted) {
           setState(() => _captureStatus = status);
@@ -2476,6 +2645,14 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ),
+                    if (service.checkpointError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: Text(
+                          context.t.subtitleAiUi.checkpointSaveFailed,
+                          style: TextStyle(color: Theme.of(context).colorScheme.error),
+                        ),
+                      ),
                     FocusableListTile(
                       leading: AppIcon(
                         service.isStarting
@@ -2500,12 +2677,34 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
                       ),
                       onTap: (_busy || service.isStarting) ? null : () => unawaited(_captureLivePlayback()),
                     ),
+                    if (_captureJobIdentity(_revisionIdentity) != null)
+                      SwitchListTile(
+                        title: Text(context.t.subtitleAiUi.saveCaptureRecovery),
+                        subtitle: Text(context.t.subtitleAiUi.saveCaptureRecoveryDescription),
+                        value: _saveCaptureRecovery,
+                        onChanged: (_busy || service.isStarting || service.isRunning || service.hasActiveSession)
+                            ? null
+                            : (value) => setState(() => _saveCaptureRecovery = value),
+                      ),
                     if (service.hasRecentTranscript)
                       FocusableListTile(
                         leading: const AppIcon(Symbols.search_rounded),
                         title: Text(context.t.subtitleAiUi.browseCapturedTranscript),
-                        subtitle: Text(context.t.subtitleAiUi.searchCuesSeekToTheirStartOrHideFutureDialogue),
+                        subtitle: Text(
+                          service.recentCaptureJob == null
+                              ? context.t.subtitleAiUi.searchCuesSeekToTheirStartOrHideFutureDialogue
+                              : _captureJobSummary(service.recentCaptureJob!),
+                        ),
                         onTap: () => unawaited(_showCapturedTranscript(service)),
+                      ),
+                    if (_captureJobIdentity(_revisionIdentity) != null)
+                      FocusableListTile(
+                        leading: const AppIcon(Symbols.history_rounded),
+                        title: Text(context.t.subtitleAiUi.restoreSavedPlaybackCapture),
+                        subtitle: Text(context.t.subtitleAiUi.restoreSavedPlaybackCaptureDescription),
+                        onTap: (_busy || service.isRunning || service.isStarting)
+                            ? null
+                            : () => unawaited(_browseDurableCaptures()),
                       ),
                     if (service.hasRecentTranscript && !service.isRunning) ...[
                       FocusableListTile(
@@ -2709,10 +2908,11 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
 /// Search and seek within the in-memory transcript captured from the watched
 /// portion of the current decoded-PCM playback timeline.
 class _CapturedTranscriptDialog extends StatefulWidget {
-  const _CapturedTranscriptDialog({required this.player, required this.service});
+  const _CapturedTranscriptDialog({required this.player, required this.service, this.captureSummary});
 
   final Player player;
   final SubtitlePlaybackTranscriptionService service;
+  final String? captureSummary;
 
   @override
   State<_CapturedTranscriptDialog> createState() => _CapturedTranscriptDialogState();
@@ -2816,7 +3016,7 @@ class _CapturedTranscriptDialogState extends State<_CapturedTranscriptDialog> {
                 child: Column(
                   children: [
                     Text(
-                      context.t.subtitleAiUi.onlyWatchedPortionsAreIncludedSelect_bb56a271,
+                      widget.captureSummary ?? context.t.subtitleAiUi.onlyWatchedPortionsAreIncludedSelect_bb56a271,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     const SizedBox(height: 10),

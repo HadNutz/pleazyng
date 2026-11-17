@@ -9,6 +9,7 @@ import 'package:flutter_whisper_ggml/flutter_whisper.dart' as whisper;
 import '../mpv/player/subtitle_pcm_capture_source.dart';
 import 'subtitle_ai_service.dart';
 import 'subtitle_capture_timeline.dart';
+import 'subtitle_capture_job_store.dart';
 import 'subtitle_retimer.dart';
 import 'subtitle_whisper_cpp_service.dart';
 import 'subtitle_word_timing.dart';
@@ -24,16 +25,19 @@ final class SubtitleLiveCaption {
 /// Opt-in subtitle capture from the active decoded-audio player. PCM remains in a bounded queue
 /// and is transcribed on-device; no recording file is created.
 final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
-  SubtitlePlaybackTranscriptionService._() : _loadLiveCpuSessionForTesting = null;
+  SubtitlePlaybackTranscriptionService._() : _loadLiveCpuSessionForTesting = null, _captureJobStoreForTesting = null;
 
   @visibleForTesting
   SubtitlePlaybackTranscriptionService.forTesting({
     required Future<whisper.FlutterWhisper> Function() loadLiveCpuSession,
-  }) : _loadLiveCpuSessionForTesting = loadLiveCpuSession;
+    SubtitleCaptureJobStore? captureJobStore,
+  }) : _loadLiveCpuSessionForTesting = loadLiveCpuSession,
+       _captureJobStoreForTesting = captureJobStore;
 
   static final SubtitlePlaybackTranscriptionService instance = SubtitlePlaybackTranscriptionService._();
 
   final Future<whisper.FlutterWhisper> Function()? _loadLiveCpuSessionForTesting;
+  final SubtitleCaptureJobStore? _captureJobStoreForTesting;
 
   static const int _sampleRate = 16000;
   static const int _windowSamples = _sampleRate * 5;
@@ -53,6 +57,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
   whisper.FlutterWhisper? _session;
   Timer? _timer;
   Future<void>? _inferenceFuture;
+  int _restoreGeneration = 0;
   bool _running = false;
   bool _starting = false;
   bool _polling = false;
@@ -77,13 +82,38 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
   DateTime? _startedAt;
   DateTime? _lastPacketAt;
   SubtitleTranscriptionResult? _recentTranscript;
+  bool Function()? _transcriptIdentityIsCurrent;
+  SubtitleCaptureJobStore? _captureJobStore;
+  SubtitleCaptureJobIdentity? _captureJobIdentity;
+  SubtitleCaptureJob? _captureJob;
+  SubtitleCaptureJob? _recentCaptureJob;
+  int _captureAttemptGeneration = 0;
+  int _checkpointRevision = 0;
+  Future<void> _checkpointTail = Future<void>.value();
+  Future<SubtitleTranscriptionResult?>? _stopFuture;
+  Object? _checkpointError;
+  bool _unexpectedTimelineReset = false;
+  int _captureGapCount = 0;
+  int? _lastGapStartMs;
+  int? _lastGapEndMs;
+  int _lastAudioThroughMs = 0;
 
   bool get isRunning => _running;
   bool get isStarting => _starting;
   bool get hasActiveSession => _session != null;
   SubtitleCaptureStatus? get status => _status;
-  SubtitleTranscriptionResult? get recentTranscript => _recentTranscript;
-  bool get hasRecentTranscript => _recentTranscript?.cues.isNotEmpty == true;
+  bool get _transcriptIsCurrent {
+    try {
+      return _transcriptIdentityIsCurrent?.call() ?? true;
+    } on Object {
+      return false;
+    }
+  }
+
+  SubtitleTranscriptionResult? get recentTranscript => _transcriptIsCurrent ? _recentTranscript : null;
+  SubtitleCaptureJob? get recentCaptureJob => _transcriptIsCurrent ? _recentCaptureJob : null;
+  Object? get checkpointError => _checkpointError;
+  bool get hasRecentTranscript => recentTranscript?.cues.isNotEmpty == true;
 
   Duration captionPositionForPlayback(Duration position) => position + Duration(milliseconds: _capturePositionOffsetMs);
 
@@ -154,7 +184,9 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     String? languageCode,
     void Function(SubtitleCaptureStatus status)? onProgress,
     bool Function()? isProfileIdentityCurrent,
+    SubtitleCaptureJobIdentity? durableIdentity,
   }) async {
+    _restoreGeneration++;
     final requestedLanguage = languageCode?.trim().toLowerCase().split(RegExp(r'[-_]')).first ?? '';
     final selectedLanguage = requestedLanguage.isEmpty ? 'auto' : requestedLanguage;
     if (selectedLanguage != 'auto' && !RegExp(r'^[a-z]{2,3}$').hasMatch(selectedLanguage)) {
@@ -189,6 +221,8 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     final startGeneration = player.mediaSessionGeneration;
     final startAudioTrackId = player.subtitlePcmAudioTrackId;
     whisper.FlutterWhisper? loadedSession;
+    SubtitleCaptureJobStore? startedJobStore;
+    SubtitleCaptureJob? startedJob;
     var captureEnabled = false;
     try {
       _setStatus(const SubtitleCaptureStatus(SubtitleCapturePhase.loadingModel));
@@ -204,7 +238,15 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       _lastChannels = null;
       _lastEncoding = null;
       _packetsReceived = 0;
+      _transcriptIdentityIsCurrent = isProfileIdentityCurrent;
       _recentTranscript = null;
+      _recentCaptureJob = null;
+      _checkpointError = null;
+      _unexpectedTimelineReset = false;
+      _captureGapCount = 0;
+      _lastGapStartMs = null;
+      _lastGapEndMs = null;
+      _lastAudioThroughMs = player.currentPosition.inMilliseconds;
       liveCaption.value = null;
 
       void onModelProgress(SubtitleModelLoadPhase phase, int received, int total) {
@@ -244,6 +286,28 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
         );
       }
 
+      if (durableIdentity != null) {
+        startedJobStore = _captureJobStoreForTesting ?? await SubtitleCaptureJobStore.open();
+        startedJob = await startedJobStore.beginCapture(
+          durableIdentity,
+          playbackPositionMs: player.currentPosition.inMilliseconds.clamp(0, SubtitleRetimer.maximumTimeMs).toInt(),
+        );
+        if (!_profileIdentityIsCurrent() ||
+            player.disposed ||
+            player.mediaSessionGeneration != startGeneration ||
+            player.subtitlePcmAudioTrackId != startAudioTrackId) {
+          await startedJobStore.finishCapture(
+            job: startedJob,
+            expectedAttemptGeneration: startedJob.attemptGeneration,
+            interrupted: true,
+            reason: 'start_interrupted',
+            interruptedAtMs: player.currentPosition.inMilliseconds.clamp(0, SubtitleRetimer.maximumTimeMs).toInt(),
+          );
+          startedJob = null;
+          throw StateError('Playback or profile changed while the durable capture was starting. Start again.');
+        }
+      }
+
       _session = loadedSession;
       loadedSession = null;
       _player = player;
@@ -258,6 +322,12 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       _capturePositionOffsetMs = 0;
       _liveHandoff = null;
       _audioTrackId = startAudioTrackId;
+      _captureJobStore = startedJobStore;
+      _captureJobIdentity = durableIdentity;
+      _captureJob = startedJob;
+      _captureAttemptGeneration = startedJob?.attemptGeneration ?? 0;
+      _checkpointRevision = startedJob?.checkpointRevision ?? 0;
+      _checkpointTail = Future<void>.value();
       _running = true;
       _startedAt = DateTime.now();
       _lastPacketAt = null;
@@ -272,6 +342,15 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
           await player.setSubtitlePcmCaptureEnabled(false);
         } catch (_) {}
       }
+      if (startedJob != null && startedJobStore != null) {
+        await startedJobStore.finishCapture(
+          job: startedJob,
+          expectedAttemptGeneration: startedJob.attemptGeneration,
+          interrupted: true,
+          reason: 'start_failed',
+          interruptedAtMs: player.currentPosition.inMilliseconds.clamp(0, SubtitleRetimer.maximumTimeMs).toInt(),
+        );
+      }
       await loadedSession?.dispose();
       _isProfileIdentityCurrent = null;
       _setStatus(const SubtitleCaptureStatus(SubtitleCapturePhase.startFailed));
@@ -281,7 +360,18 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     }
   }
 
-  Future<SubtitleTranscriptionResult?> stop() async {
+  Future<SubtitleTranscriptionResult?> stop() {
+    _restoreGeneration++;
+    final pending = _stopFuture;
+    if (pending != null) return pending;
+    final future = _stopInternal();
+    _stopFuture = future;
+    return future.whenComplete(() {
+      if (identical(_stopFuture, future)) _stopFuture = null;
+    });
+  }
+
+  Future<SubtitleTranscriptionResult?> _stopInternal() async {
     _liveHandoff = null;
     _timer?.cancel();
     _timer = null;
@@ -302,11 +392,11 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       await Future<void>.delayed(const Duration(milliseconds: 20));
     }
     invalidReason ??= _invalidCaptureSessionReason(player);
-    if (invalidReason == null && player != null) {
+    if (invalidReason == null && player != null && !_unexpectedTimelineReset) {
       try {
         _appendPackets(await player.drainSubtitlePcmCapture());
       } catch (_) {}
-    } else {
+    } else if (invalidReason != null) {
       _discardCapturedTimeline();
     }
 
@@ -319,6 +409,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     }
 
     while (invalidReason == null &&
+        !_unexpectedTimelineReset &&
         _lastError == null &&
         _samples.length >= _windowSamples &&
         _invalidCaptureSessionReason(player) == null) {
@@ -334,6 +425,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       }
     }
     if (invalidReason == null &&
+        !_unexpectedTimelineReset &&
         _lastError == null &&
         _samples.length >= _minimumFinalSamples &&
         _invalidCaptureSessionReason(player) == null) {
@@ -349,7 +441,52 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     }
 
     if (invalidReason == null) {
-      _publishTranscript();
+      _publishTranscript(checkpoint: true);
+    }
+    await _checkpointTail;
+    final activeJob = _captureJob;
+    final jobStore = _captureJobStore;
+    if (activeJob != null && jobStore != null) {
+      final endedAt = player != null && !player.disposed && player.mediaSessionGeneration == _playerGeneration
+          ? player.currentPosition.inMilliseconds.clamp(0, SubtitleRetimer.maximumTimeMs).toInt()
+          : null;
+      final completedAtEnd =
+          invalidReason == null && _lastError == null && !_unexpectedTimelineReset && player?.state.completed == true;
+      final reason = _lastError != null
+          ? 'inference_failed'
+          : completedAtEnd
+          ? 'playback_ended'
+          : invalidReason == null
+          ? (_unexpectedTimelineReset ? 'live_timeline_reset' : 'user_stopped')
+          : switch (invalidReason.phase) {
+              SubtitleCapturePhase.captureStopped => 'profile_or_owner_changed',
+              SubtitleCapturePhase.audioTrackChanged => 'audio_track_changed',
+              SubtitleCapturePhase.playbackChanged => 'playback_changed',
+              _ => 'capture_interrupted',
+            };
+      final gapStart = (endedAt != null && endedAt > _lastAudioThroughMs ? _lastAudioThroughMs : _lastGapStartMs)
+          ?.clamp(0, SubtitleRetimer.maximumTimeMs)
+          .toInt();
+      final gapEnd = (endedAt != null && endedAt > _lastAudioThroughMs ? endedAt : _lastGapEndMs)
+          ?.clamp(0, SubtitleRetimer.maximumTimeMs)
+          .toInt();
+      if (endedAt != null && endedAt > _lastAudioThroughMs && _lastGapEndMs != endedAt) {
+        _captureGapCount++;
+      }
+      try {
+        _recentCaptureJob = await jobStore.finishCapture(
+          job: activeJob,
+          expectedAttemptGeneration: _captureAttemptGeneration,
+          interrupted: !completedAtEnd,
+          reason: reason,
+          interruptedAtMs: (endedAt ?? activeJob.playbackPositionMs).clamp(0, SubtitleRetimer.maximumTimeMs).toInt(),
+          gapStartMs: gapStart,
+          gapEndMs: gapEnd,
+          gapCount: _captureGapCount,
+        );
+      } catch (error) {
+        _setCheckpointError(_checkpointError ?? error);
+      }
     }
     final session = _session;
     _session = null;
@@ -360,6 +497,9 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     _playerGeneration = null;
     _audioTrackId = null;
     _isProfileIdentityCurrent = null;
+    _captureJob = null;
+    _captureJobStore = null;
+    _captureJobIdentity = null;
     liveCaption.value = null;
 
     if (_lastError != null) {
@@ -374,6 +514,54 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       _setStatus(SubtitleCaptureStatus(SubtitleCapturePhase.captured, count: _recentTranscript!.cues.length));
     }
     return _recentTranscript;
+  }
+
+  Future<List<SubtitleCaptureJob>> browseDurableCaptures(SubtitleCaptureJobIdentity identity) async {
+    final store = _captureJobStoreForTesting ?? await SubtitleCaptureJobStore.open();
+    return store.browse(identity);
+  }
+
+  Future<SubtitleTranscriptionResult> restoreDurableCapture(
+    SubtitleCaptureJob job,
+    SubtitleCaptureJobIdentity identity, {
+    required bool audioRevalidated,
+    required bool Function() isIdentityCurrent,
+  }) async {
+    final generation = ++_restoreGeneration;
+    bool canPublish() {
+      try {
+        return generation == _restoreGeneration && !_running && !_starting && _session == null && isIdentityCurrent();
+      } on Object {
+        return false;
+      }
+    }
+
+    if (!canPublish()) throw StateError('The subtitle restore context is no longer current.');
+    if (_running || _starting || _session != null) {
+      throw StateError('Stop live capture before restoring a saved transcript.');
+    }
+    final store = _captureJobStoreForTesting ?? await SubtitleCaptureJobStore.open();
+    final checkpoint = await store.restore(job, identity, audioRevalidated: audioRevalidated);
+    if (!canPublish()) throw StateError('Playback or profile changed while restoring the transcript.');
+    final duration = checkpoint.cues.fold<int>(0, (value, cue) => math.max(value, cue.endMs));
+    final transcript = SubtitleTranscriptionResult(
+      cues: checkpoint.cues,
+      durationMs: duration.clamp(1, SubtitleRetimer.maximumTimeMs).toInt(),
+      requestedProvider: SubtitleInferenceProvider.cpu,
+      runtimeProvider: 'Restored local playback-capture checkpoint',
+      fellBackToCpu: false,
+      detectedLanguage: 'auto',
+      translatedToEnglish: false,
+      wordTimings: checkpoint.wordTimings,
+    );
+    _transcriptIdentityIsCurrent = isIdentityCurrent;
+    _recentTranscript = transcript;
+    _recentCaptureJob = job;
+    _checkpointError = null;
+    _detectedLanguage = 'auto';
+    _setStatus(SubtitleCaptureStatus(SubtitleCapturePhase.captured, count: transcript.cues.length));
+    notifyListeners();
+    return transcript;
   }
 
   SubtitleCaptureStatus? _invalidCaptureSessionReason(SubtitlePcmCaptureSource? player) {
@@ -508,7 +696,8 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
           (_lastEncoding != null && _lastEncoding != encoding);
       final expected = _nextExpectedPtsUs;
       final gapUs = expected == null ? 0 : ptsUs - expected;
-      if (clock != null && clock.subtitlePcmSeekGeneration != _captureTimeline?.seekGeneration) {
+      final seekChanged = clock != null && clock.subtitlePcmSeekGeneration != _captureTimeline?.seekGeneration;
+      if (seekChanged) {
         // Invalidate inference immediately, including when the native drain
         // still contains packets queued before this seek.
         _resetAudioWindow(ptsUs);
@@ -529,10 +718,35 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
         continue;
       }
       if (action == SubtitleCapturePacketAction.resetTimeline) {
-        _discardCapturedTimeline();
-        _latestLivePtsMs = 0;
+        _unexpectedTimelineReset = true;
+        _captureGapCount++;
+        _lastGapStartMs = expected == null ? ptsUs ~/ 1000 : expected ~/ 1000;
+        _lastGapEndMs = null;
+        _resetAudioWindow(ptsUs);
+        _running = false;
+        _timer?.cancel();
+        _timer = null;
+        liveCaption.value = null;
+        _setStatus(const SubtitleCaptureStatus(SubtitleCapturePhase.captureStopped));
+        unawaited(_player?.setSubtitlePcmCaptureEnabled(false) ?? Future<bool>.value(false));
+        unawaited(stop());
+        return;
       }
-      if (action == SubtitleCapturePacketAction.resetWindow || action == SubtitleCapturePacketAction.resetTimeline) {
+      if (action == SubtitleCapturePacketAction.resetWindow) {
+        if (seekChanged || changedFormat || gapUs > SubtitleCaptureTimeline.maximumForwardGapUs) {
+          _captureGapCount++;
+          if (seekChanged && clock.subtitlePcmSeekTarget != null) {
+            final targetUs = clock.subtitlePcmSeekTarget!.inMicroseconds + _capturePositionOffsetMs * 1000;
+            _lastGapStartMs = (expected == null ? targetUs : math.min(expected, targetUs)) ~/ 1000;
+            _lastGapEndMs = math.max(expected ?? targetUs, targetUs) ~/ 1000;
+          } else if (expected != null && ptsUs >= expected) {
+            _lastGapStartMs = expected ~/ 1000;
+            _lastGapEndMs = ptsUs ~/ 1000;
+          } else {
+            _lastGapStartMs = ptsUs ~/ 1000;
+            _lastGapEndMs = null;
+          }
+        }
         _resetAudioWindow(ptsUs);
         liveCaption.value = null;
       } else if (_streamStartMs == null) {
@@ -554,6 +768,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       _lastChannels = channels;
       _lastEncoding = encoding;
       _nextExpectedPtsUs = ptsUs + (frames * 1000000 / sampleRate).round();
+      _lastAudioThroughMs = math.max(_lastAudioThroughMs, _nextExpectedPtsUs! ~/ 1000).toInt();
       final data = ByteData.sublistView(raw);
       final mono = Float32List(frames);
       for (var frame = 0; frame < frames; frame++) {
@@ -700,6 +915,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
         ),
       );
     }
+    _publishTranscript(checkpoint: true);
   }
 
   void _mergeWordTiming(SubtitleWordTiming timing) {
@@ -772,7 +988,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     _publishTranscript();
   }
 
-  void _publishTranscript() {
+  void _publishTranscript({bool checkpoint = false}) {
     final player = _player;
     if (_cues.isEmpty) {
       return;
@@ -790,6 +1006,56 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       translatedToEnglish: false,
       wordTimings: SubtitleWordTimingBuilder.attachCueReferences(_wordTimings, _cues),
     );
+    if (checkpoint) _scheduleCheckpoint();
+    notifyListeners();
+  }
+
+  void _scheduleCheckpoint() {
+    final store = _captureJobStore, identity = _captureJobIdentity, job = _captureJob, transcript = _recentTranscript;
+    if (store == null || identity == null || job == null || transcript == null || transcript.cues.isEmpty) return;
+    final snapshot = SubtitleCaptureCheckpoint(
+      cues: List.unmodifiable(transcript.cues),
+      wordTimings: List.unmodifiable(transcript.wordTimings),
+    );
+    final playbackPositionMs = (_player?.currentPosition.inMilliseconds ?? job.playbackPositionMs)
+        .clamp(0, SubtitleRetimer.maximumTimeMs)
+        .toInt();
+    final gapStartMs = _lastGapStartMs?.clamp(0, SubtitleRetimer.maximumTimeMs).toInt();
+    final gapEndMs = _lastGapEndMs?.clamp(0, SubtitleRetimer.maximumTimeMs).toInt();
+    final generation = _captureAttemptGeneration;
+    final queued = _checkpointTail.then<void>((_) async {
+      if (_captureJob == null || _captureAttemptGeneration != generation) return;
+      try {
+        final revision = await store.saveCheckpoint(
+          identity: identity,
+          job: job,
+          expectedAttemptGeneration: generation,
+          expectedCheckpointRevision: _checkpointRevision,
+          checkpoint: snapshot,
+          playbackPositionMs: playbackPositionMs,
+          gapCount: _captureGapCount,
+          gapStartMs: gapStartMs,
+          gapEndMs: gapEndMs,
+        );
+        if (revision == null) {
+          _captureJob = null;
+          _setCheckpointError(StateError('This capture was removed or superseded before its checkpoint was saved.'));
+        } else {
+          _checkpointRevision = revision;
+          _setCheckpointError(null);
+        }
+      } catch (error) {
+        _setCheckpointError(error);
+      }
+    });
+    _checkpointTail = queued.catchError((Object error) {
+      _setCheckpointError(error);
+    });
+  }
+
+  void _setCheckpointError(Object? error) {
+    if (identical(_checkpointError, error) || (_checkpointError == null && error == null)) return;
+    _checkpointError = error;
     notifyListeners();
   }
 

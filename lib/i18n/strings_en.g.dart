@@ -13164,6 +13164,51 @@ class Translations$subtitleAiUi$en {
 
 	/// en: ' · seeking unavailable'
 	String get seekingUnavailableNote => ' · seeking unavailable';
+
+	/// en: 'No saved playback captures are available for this item and profile.'
+	String get noSavedPlaybackCaptures => 'No saved playback captures are available for this item and profile.';
+
+	/// en: 'Saved playback captures'
+	String get savedPlaybackCaptures => 'Saved playback captures';
+
+	/// en: 'Recheck the audio track'
+	String get recheckAudioTrack => 'Recheck the audio track';
+
+	/// en: 'This capture contains only the saved transcript prefix. No audio was saved and capture cannot resume. Confirm that the current media edition and selected audio track match the original capture before restoring.'
+	String get audioRevalidationDescription => 'This capture contains only the saved transcript prefix. No audio was saved and capture cannot resume. Confirm that the current media edition and selected audio track match the original capture before restoring.';
+
+	/// en: 'I rechecked'
+	String get confirmAudioRechecked => 'I rechecked';
+
+	/// en: 'Could not save a recovery checkpoint. This partial transcript may be lost if the app closes.'
+	String get checkpointSaveFailed => 'Could not save a recovery checkpoint. This partial transcript may be lost if the app closes.';
+
+	/// en: 'Restore saved playback capture'
+	String get restoreSavedPlaybackCapture => 'Restore saved playback capture';
+
+	/// en: 'Browse this profile and item only; restoring opens a transcript for review.'
+	String get restoreSavedPlaybackCaptureDescription => 'Browse this profile and item only; restoring opens a transcript for review.';
+
+	/// en: 'Interrupted near ${position}; only the saved transcript prefix is available.'
+	String interruptedCaptureSummary({required Object position}) => 'Interrupted near ${position}; only the saved transcript prefix is available.';
+
+	/// en: 'Saved playback interval near ${position}; this transcript covers only captured audio.'
+	String savedCaptureSummary({required Object position}) => 'Saved playback interval near ${position}; this transcript covers only captured audio.';
+
+	/// en: '${count} uncaptured audio gaps recorded.'
+	String captureGapSummary({required Object count}) => '${count} uncaptured audio gaps recorded.';
+
+	/// en: 'Recovered after app restart.'
+	String get captureRecoveredAfterRestart => 'Recovered after app restart.';
+
+	/// en: 'Audio was not saved and playback capture cannot resume.'
+	String get captureAudioNotSaved => 'Audio was not saved and playback capture cannot resume.';
+
+	/// en: 'Save transcript recovery on this device'
+	String get saveCaptureRecovery => 'Save transcript recovery on this device';
+
+	/// en: 'Optional: keep recognized text for this profile and item across restarts. Audio is never saved. Up to 12 captures and 64 MiB are retained per profile; older captures are removed.'
+	String get saveCaptureRecoveryDescription => 'Optional: keep recognized text for this profile and item across restarts. Audio is never saved. Up to 12 captures and 64 MiB are retained per profile; older captures are removed.';
 }
 
 // Path: externalAccessUi
@@ -22823,6 +22868,21 @@ extension on Translations {
 			'subtitleAiUi.translationQualityWarnings' => ({required Object count}) => '; ${count} translation quality warnings',
 			'subtitleAiUi.cueCountSummary' => ({required Object visibleCount, required Object totalCount, required Object seekingNote}) => '${visibleCount} of ${totalCount} cues${seekingNote}',
 			'subtitleAiUi.seekingUnavailableNote' => ' · seeking unavailable',
+			'subtitleAiUi.noSavedPlaybackCaptures' => 'No saved playback captures are available for this item and profile.',
+			'subtitleAiUi.savedPlaybackCaptures' => 'Saved playback captures',
+			'subtitleAiUi.recheckAudioTrack' => 'Recheck the audio track',
+			'subtitleAiUi.audioRevalidationDescription' => 'This capture contains only the saved transcript prefix. No audio was saved and capture cannot resume. Confirm that the current media edition and selected audio track match the original capture before restoring.',
+			'subtitleAiUi.confirmAudioRechecked' => 'I rechecked',
+			'subtitleAiUi.checkpointSaveFailed' => 'Could not save a recovery checkpoint. This partial transcript may be lost if the app closes.',
+			'subtitleAiUi.restoreSavedPlaybackCapture' => 'Restore saved playback capture',
+			'subtitleAiUi.restoreSavedPlaybackCaptureDescription' => 'Browse this profile and item only; restoring opens a transcript for review.',
+			'subtitleAiUi.interruptedCaptureSummary' => ({required Object position}) => 'Interrupted near ${position}; only the saved transcript prefix is available.',
+			'subtitleAiUi.savedCaptureSummary' => ({required Object position}) => 'Saved playback interval near ${position}; this transcript covers only captured audio.',
+			'subtitleAiUi.captureGapSummary' => ({required Object count}) => '${count} uncaptured audio gaps recorded.',
+			'subtitleAiUi.captureRecoveredAfterRestart' => 'Recovered after app restart.',
+			'subtitleAiUi.captureAudioNotSaved' => 'Audio was not saved and playback capture cannot resume.',
+			'subtitleAiUi.saveCaptureRecovery' => 'Save transcript recovery on this device',
+			'subtitleAiUi.saveCaptureRecoveryDescription' => 'Optional: keep recognized text for this profile and item across restarts. Audio is never saved. Up to 12 captures and 64 MiB are retained per profile; older captures are removed.',
 			'externalAccessUi.streamingAvailabilityPoweredByWatchmode' => 'Streaming availability powered by Watchmode',
 			'externalAccessUi.appleMusic' => 'Apple Music',
 			'subtitleLanguageOrderUi.useAtMost12LanguageCodes' => 'Use at most 12 language codes.',
@@ -23171,6 +23231,8 @@ extension on Translations {
 			'karaokeUi.addNote' => 'Add note',
 			'karaokeUi.tapLine' => ({required Object value1}) => 'Tap line ${value1}',
 			'karaokeUi.resetTapCursor' => 'Reset tap cursor',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.export' => ({required Object value1}) => 'Export ${value1}',
 			'karaokeUi.lyricOffsetMs' => ({required Object value1}) => 'Lyric offset: ${value1} ms',
 			'karaokeUi.iAuditionedThisChartAndVerifiedTheNotesParts' => 'I auditioned this chart and verified the notes, parts and timing',
@@ -23186,8 +23248,6 @@ extension on Translations {
 			'karaokeUi.confirmApplyShowTemplate' => ({required Object value1}) => 'Applying ${value1} replaces venue settings and saved setlists. Singers and playback stay unchanged.',
 			'karaokeUi.addSectionFromCurrentPlaybackTimes' => 'Add section from current playback times',
 			'karaokeUi.deleteLine' => 'Delete line',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.referenceNotes' => 'Reference notes',
 			'karaokeUi.midi' => ({required Object value1, required Object value2, required Object value3}) => '${value1} · MIDI ${value2} · ${value3}',
 			'karaokeUi.deleteNote' => 'Delete note',

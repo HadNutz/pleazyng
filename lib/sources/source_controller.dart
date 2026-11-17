@@ -31,6 +31,7 @@ import 'source_models.dart';
 import 'source_oauth.dart';
 import '../media/canonical_video_identity.dart';
 import '../services/standalone_video_metadata_client.dart';
+import '../services/subtitle_capture_job_store.dart';
 import '../services/remote_streams/remote_stream_models.dart';
 import '../services/remote_streams/remote_streaming_provider.dart';
 import '../utils/search_relevance.dart';
@@ -712,6 +713,7 @@ class SourceController extends ChangeNotifier {
     await _settleImports();
     await downloads.settleCancelled();
     await repository.forgetProfile(profile);
+    await SubtitleCaptureJobStore.deleteProfileCheckpointFiles(profile);
     final root = Directory(p.join(downloads.directory.path, sourceDigest(profile)));
     if (await root.exists()) {
       await root.delete(recursive: true);

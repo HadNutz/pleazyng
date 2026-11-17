@@ -5092,7 +5092,22 @@
     "detectedSpeechLanguage": "Detected language: ${language}",
     "translationQualityWarnings": "; ${count} translation quality warnings",
     "cueCountSummary": "${visibleCount} of ${totalCount} cues${seekingNote}",
-    "seekingUnavailableNote": " · seeking unavailable"
+    "seekingUnavailableNote": " · seeking unavailable",
+    "noSavedPlaybackCaptures": "No saved playback captures are available for this item and profile.",
+    "savedPlaybackCaptures": "Saved playback captures",
+    "recheckAudioTrack": "Recheck the audio track",
+    "audioRevalidationDescription": "This capture contains only the saved transcript prefix. No audio was saved and capture cannot resume. Confirm that the current media edition and selected audio track match the original capture before restoring.",
+    "confirmAudioRechecked": "I rechecked",
+    "checkpointSaveFailed": "Could not save a recovery checkpoint. This partial transcript may be lost if the app closes.",
+    "restoreSavedPlaybackCapture": "Restore saved playback capture",
+    "restoreSavedPlaybackCaptureDescription": "Browse this profile and item only; restoring opens a transcript for review.",
+    "interruptedCaptureSummary": "Interrupted near ${position}; only the saved transcript prefix is available.",
+    "savedCaptureSummary": "Saved playback interval near ${position}; this transcript covers only captured audio.",
+    "captureGapSummary": "${count} uncaptured audio gaps recorded.",
+    "captureRecoveredAfterRestart": "Recovered after app restart.",
+    "captureAudioNotSaved": "Audio was not saved and playback capture cannot resume.",
+    "saveCaptureRecovery": "Save transcript recovery on this device",
+    "saveCaptureRecoveryDescription": "Optional: keep recognized text for this profile and item across restarts. Audio is never saved. Up to 12 captures and 64 MiB are retained per profile; older captures are removed."
   },
   "externalAccessUi": {
     "streamingAvailabilityPoweredByWatchmode": "Streaming availability powered by Watchmode",

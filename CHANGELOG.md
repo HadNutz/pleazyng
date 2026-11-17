@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add optional device-local subtitle capture recovery with bounded text checkpoints, explicit same-item restore, profile/playback fencing and crash-file cleanup; audio is never stored or resumed. Recovered text is hidden when its playback or profile context ends.
+
 - Keep audio-only player contract checks aligned with its shared native codec inventory.
 
 - Update Nix release metadata to published Pleazyng 3.0.36 with authenticated Linux x64 and ARM64 checksums.

@@ -62,7 +62,7 @@ class SourceDatabase extends GeneratedDatabase {
   }
 
   @override
-  int get schemaVersion => 14;
+  int get schemaVersion => 15;
   @override
   Iterable<TableInfo<Table, Object?>> get allTables => const [];
   @override
@@ -94,6 +94,7 @@ class SourceDatabase extends GeneratedDatabase {
       await _createRemoteWorkerSchema();
       await _createPodcastSyncSchema();
       await _createRetiredDownloadSchema();
+      await _createSubtitleCaptureJobSchema();
       await _createEntrySearchIndex();
     },
     onUpgrade: (migrator, from, to) async {
@@ -217,6 +218,9 @@ class SourceDatabase extends GeneratedDatabase {
       if (from >= 11 && from < 14) {
         await customStatement("ALTER TABLE canonical_copies ADD COLUMN scan_generation TEXT NOT NULL DEFAULT ''");
       }
+      if (from < 15) {
+        await _createSubtitleCaptureJobSchema();
+      }
     },
   );
 
@@ -234,6 +238,31 @@ class SourceDatabase extends GeneratedDatabase {
       'CREATE TABLE retired_downloads (profile TEXT NOT NULL, key TEXT NOT NULL, fingerprint TEXT NOT NULL, path TEXT NOT NULL, bytes INTEGER NOT NULL, complete INTEGER NOT NULL, source_id TEXT NOT NULL DEFAULT \'\', file_payload TEXT NOT NULL DEFAULT \'{}\', state TEXT NOT NULL DEFAULT \'retired\', updated INTEGER NOT NULL DEFAULT 0, reserved_bytes INTEGER NOT NULL DEFAULT 0, label TEXT NOT NULL DEFAULT \'\', PRIMARY KEY(profile,key,fingerprint))',
     );
     await customStatement('CREATE INDEX retired_downloads_profile_updated ON retired_downloads(profile,updated)');
+  }
+
+  Future<void> _createSubtitleCaptureJobSchema() async {
+    await customStatement('CREATE TABLE subtitle_capture_deleted_profiles (profile_hash TEXT PRIMARY KEY NOT NULL)');
+    await customStatement(
+      'CREATE TABLE subtitle_capture_jobs ('
+      'profile_hash TEXT NOT NULL, job_id TEXT NOT NULL, media_hash TEXT NOT NULL, audio_hash TEXT NOT NULL DEFAULT \'\', '
+      'state TEXT NOT NULL, checkpoint_path TEXT NOT NULL DEFAULT \'\', checkpoint_sha256 TEXT NOT NULL DEFAULT \'\', '
+      'checkpoint_bytes INTEGER NOT NULL DEFAULT 0, checkpoint_version INTEGER NOT NULL DEFAULT 1, '
+      'cue_count INTEGER NOT NULL DEFAULT 0, word_count INTEGER NOT NULL DEFAULT 0, '
+      'checkpoint_revision INTEGER NOT NULL DEFAULT 0, attempt_generation INTEGER NOT NULL DEFAULT 1, '
+      'worker_token TEXT NOT NULL, started_at INTEGER NOT NULL, updated INTEGER NOT NULL, '
+      'started_position_ms INTEGER NOT NULL DEFAULT 0, playback_position_ms INTEGER NOT NULL DEFAULT 0, '
+      'interrupted_at_ms INTEGER, interruption_reason TEXT NOT NULL DEFAULT \'\', '
+      'gap_start_ms INTEGER, gap_end_ms INTEGER, gap_count INTEGER NOT NULL DEFAULT 0, '
+      'PRIMARY KEY(profile_hash,job_id))',
+    );
+    await customStatement(
+      'CREATE INDEX subtitle_capture_jobs_profile_media_updated '
+      'ON subtitle_capture_jobs(profile_hash,media_hash,updated DESC)',
+    );
+    await customStatement(
+      'CREATE INDEX subtitle_capture_jobs_profile_state_updated '
+      'ON subtitle_capture_jobs(profile_hash,state,updated DESC)',
+    );
   }
 
   Future<void> _createRemoteWorkerSchema() async {
@@ -330,6 +359,9 @@ class SourceRepository {
     _removedProfiles.add(profile);
     await database.transaction(() async {
       await database.customStatement('INSERT OR IGNORE INTO remote_deleted_profiles VALUES (?)', [profile]);
+      await database.customStatement('INSERT OR IGNORE INTO subtitle_capture_deleted_profiles VALUES (?)', [
+        sourceDigest(profile.trim()),
+      ]);
       for (final table in [
         'sources',
         'entries',
@@ -351,6 +383,9 @@ class SourceRepository {
       ]) {
         await database.customStatement('DELETE FROM $table WHERE profile=?', [profile]);
       }
+      await database.customStatement('DELETE FROM subtitle_capture_jobs WHERE profile_hash=?', [
+        sourceDigest(profile.trim()),
+      ]);
     });
   }
 
