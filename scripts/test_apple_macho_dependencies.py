@@ -235,14 +235,20 @@ class AppleMachODependencyTests(unittest.TestCase):
             _write_ipa(signed)
             unsigned_sha = hashlib.sha256(unsigned.read_bytes()).hexdigest()
             signed_sha = hashlib.sha256(signed.read_bytes()).hexdigest()
+            product_root = root / "product"
+            product_root.mkdir()
+            (product_root / "pubspec.yaml").write_text(
+                f"version: {VERSION}+{BUILD}\n", encoding="utf-8"
+            )
             receipt_path = root / "receipt.json"
-            with mock.patch.object(VERIFY, "_architectures", return_value=("arm64",)), \
+            with mock.patch.object(VERIFY, "_checkout_sha", return_value=PACKAGING_SHA), \
+                    mock.patch.object(VERIFY, "_architectures", return_value=("arm64",)), \
                     mock.patch.object(VERIFY, "_load_commands", return_value=((VERIFY.LoadCommand(
                         "LC_LOAD_DYLIB", "@rpath/AMSMB2.framework/AMSMB2"
                     ),), ("@executable_path/Frameworks",))):
                 with contextlib.redirect_stdout(io.StringIO()):
                     status = VERIFY.main([
-                        "--product-root", str(ROOT),
+                        "--product-root", str(product_root),
                         "--unsigned-ipa", str(unsigned),
                         "--signed-ipa", str(signed),
                         "--require-signed",
