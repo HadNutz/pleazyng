@@ -55,7 +55,16 @@ class _ProbeState extends State<Probe> {
       final platformViews = WidgetsBinding.instance.platformDispatcher.views;
       final initial = platformViews.length;
       require(initial >= 1, 'the initial native Flutter view was not attached');
-      final initialView = platformViews.first;
+      final initialViews = platformViews.toList();
+      final implicitView =
+          WidgetsBinding.instance.platformDispatcher.implicitView;
+      final initialMetrics = initialViews
+          .map((view) => '${view.viewId}:${view.physicalSize}')
+          .join(',');
+      stdout.writeln(
+        'WORKSPACE_DART_VIEWS implicit=${implicitView?.viewId} all=$initialMetrics',
+      );
+      final initialView = initialViews.first;
       RenderRepaintBoundary? renderObject;
       Size? boundarySize;
       for (var attempt = 0; attempt < 200; attempt++) {
@@ -75,9 +84,18 @@ class _ProbeState extends State<Probe> {
         await Future<void>.delayed(const Duration(milliseconds: 50));
       }
       final attachedRenderObject = renderObject;
+      final currentViews = WidgetsBinding.instance.platformDispatcher.views;
+      final currentMetrics = currentViews
+          .map((view) => '${view.viewId}:${view.physicalSize}')
+          .join(',');
+      final currentImplicitView =
+          WidgetsBinding.instance.platformDispatcher.implicitView;
+      stdout.writeln(
+        'WORKSPACE_DART_VIEWS_FINAL implicit=${currentImplicitView?.viewId} all=$currentMetrics',
+      );
       if (attachedRenderObject == null) {
         throw StateError(
-          'the initial native view or Dart boundary has zero size: view=${initialView.physicalSize}, boundary=$boundarySize',
+          'the initial native view or Dart boundary has zero size: view=${initialView.physicalSize}, boundary=$boundarySize, all=$currentMetrics',
         );
       }
       stdout.writeln(
@@ -298,7 +316,19 @@ def qualify(platform, arch=None):
                 "    _ = engine.perform(selector)\n"
                 "    guard engine.run(withEntrypoint: nil) else { fatalError(\"engine startup failed\") }\n"
                 "    let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)\n"
+                "    print(\"WORKSPACE_NATIVE_VIEW_ID id=\\(flutterViewController.viewIdentifier)\")\n"
+                "    let startupRegistrar = flutterViewController.registrar(forPlugin: \"WorkspaceStartupProbe\")\n"
+                "    print(\"WORKSPACE_NATIVE_REGISTRAR view=\\(String(describing: startupRegistrar.view)) viewController=\\(String(describing: startupRegistrar.viewController)) viewIsMain=\\(startupRegistrar.view.map { $0 === flutterViewController.view } ?? false) controllerIsMain=\\(startupRegistrar.viewController === flutterViewController) engineControllerIsMain=\\(engine.viewController === flutterViewController)\")\n"
                 "    workspaceWindows = WorkspaceDesktopWindows(engine: engine, parent: self, available: true)")
+        replace(source, "self.setFrame(windowFrame, display: true)",
+                "self.setFrame(windowFrame, display: true)\n"
+                "    print(\"WORKSPACE_NATIVE_WINDOW_FRAME frame=\\(self.frame) visible=\\(self.isVisible) content=\\(self.contentView?.frame ?? .zero) flutter=\\(flutterViewController.view.frame)\")")
+        replace(source, "super.awakeFromNib()",
+                "super.awakeFromNib()\n"
+                "    print(\"WORKSPACE_NATIVE_WINDOW_AWAKE frame=\\(self.frame) visible=\\(self.isVisible) content=\\(self.contentView?.frame ?? .zero) flutter=\\(flutterViewController.view.frame)\")\n"
+                "    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {\n"
+                "      print(\"WORKSPACE_NATIVE_WINDOW_LATER frame=\\(self.frame) visible=\\(self.isVisible) content=\\(self.contentView?.frame ?? .zero) flutter=\\(flutterViewController.view.frame)\")\n"
+                "    }")
     # Flutter selects the Windows target from the native host architecture.
     # The build windows command rejects --target-platform.
     run(flutter, "build", platform, "--debug", cwd=directory)
