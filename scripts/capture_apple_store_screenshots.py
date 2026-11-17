@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build evidence and package authentic Apple App Store screenshots for v3.0.37."""
+"""Build evidence and package authentic Apple App Store screenshots for the selected product source."""
 
 from __future__ import annotations
 
@@ -25,11 +25,13 @@ from typing import Any
 
 DEFAULT_SOURCE_TAG = "v3.0.37-candidate.28f417ab17a4b6dc4c2e422b27662c62f62be7fb"
 DEFAULT_SOURCE_SHA = "28f417ab17a4b6dc4c2e422b27662c62f62be7fb"
+DEFAULT_VERSION = "3.0.37"
+DEFAULT_BUILD_NUMBER = "196"
 SOURCE_TAG = os.environ.get("PLEAZYNG_CAPTURE_PRODUCT_SOURCE_TAG", DEFAULT_SOURCE_TAG)
 SOURCE_SHA = os.environ.get("PLEAZYNG_CAPTURE_PRODUCT_SOURCE_SHA", DEFAULT_SOURCE_SHA)
 WORKFLOW_PATH = ".github/workflows/apple-store-screenshots.yml"
-VERSION = "3.0.37"
-BUILD_NUMBER = "196"
+VERSION = os.environ.get("PLEAZYNG_CAPTURE_PRODUCT_VERSION", DEFAULT_VERSION)
+BUILD_NUMBER = os.environ.get("PLEAZYNG_CAPTURE_PRODUCT_BUILD", DEFAULT_BUILD_NUMBER)
 BUNDLE_ID = "org.snapetech.pleazyng"
 COMMON_STORE_DEFINES = ["SUPPORTER_MODE=iap"]
 IOS_MAC_STORE_DEFINES = [
@@ -223,8 +225,12 @@ def capture_ios_keychain_diagnostics(
 def require_source(product_root: Path) -> None:
     if re.fullmatch(r"[0-9a-f]{40}", SOURCE_SHA) is None:
         raise ValueError("Expected product source SHA must be a full lowercase 40-character commit")
-    if re.fullmatch(r"v3\.0\.37-candidate\.[0-9a-f]{40}", SOURCE_TAG) is None:
-        raise ValueError("Expected product source tag must be an exact 3.0.37 candidate tag")
+    if (re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", VERSION) is None
+            or re.fullmatch(r"[0-9]+", BUILD_NUMBER) is None):
+        raise ValueError("Expected product version and build must be numeric version fields")
+    expected_tag = f"v{VERSION}-candidate.{SOURCE_SHA}"
+    if SOURCE_TAG != expected_tag:
+        raise ValueError(f"Expected exact source tag {expected_tag}, found {SOURCE_TAG!r}")
     tag_type = run(
         ["git", "-C", str(product_root), "cat-file", "-t", f"refs/tags/{SOURCE_TAG}"],
         capture=True,
@@ -259,17 +265,28 @@ def _git_output(repository: Path, *arguments: str) -> str:
 def source_lineage(product_root: Path, approval_root: Path | None) -> dict[str, Any]:
     """Verify the explicit packaging-repair relationship for a nonbaseline build."""
     tools_sha = require_capture_tools_sha()
-    if SOURCE_SHA == DEFAULT_SOURCE_SHA:
-        return {
-            "relationship": "qualified product source built directly",
-            "product_source_sha": SOURCE_SHA,
-            "product_source_tag": SOURCE_TAG,
-        }
-
     frozen_sha = os.environ.get("PLEAZYNG_CAPTURE_FROZEN_PRODUCT_SOURCE_SHA", "")
     frozen_tag = os.environ.get("PLEAZYNG_CAPTURE_FROZEN_PRODUCT_SOURCE_TAG", "")
+    if not frozen_sha and not frozen_tag:
+        if (SOURCE_SHA == DEFAULT_SOURCE_SHA and VERSION == DEFAULT_VERSION
+                and BUILD_NUMBER == DEFAULT_BUILD_NUMBER):
+            # Preserve the historic receipt shape so retained 3.0.37 bundles remain reusable.
+            return {
+                "relationship": "qualified product source built directly",
+                "product_source_sha": SOURCE_SHA,
+                "product_source_tag": SOURCE_TAG,
+            }
+        return {
+            "relationship": "exact candidate product source built directly; product and packaging sources are identical",
+            "product_source_sha": SOURCE_SHA,
+            "product_source_tag": SOURCE_TAG,
+            "packaging_source_sha": SOURCE_SHA,
+            "workflow_source_sha": tools_sha,
+            "proof_method": "Verified the exact annotated candidate tag, checked-out commit, and product version/build fields.",
+        }
+
     if (approval_root is None or re.fullmatch(r"[0-9a-f]{40}", frozen_sha) is None
-            or frozen_tag != f"v3.0.37-candidate.{frozen_sha}"):
+            or frozen_tag != f"v{VERSION}-candidate.{frozen_sha}"):
         raise ValueError("A nonbaseline capture requires exact frozen-product and approved packaging-source proof inputs")
     frozen_tag_type = _git_output(product_root, "cat-file", "-t", f"refs/tags/{frozen_tag}")
     if frozen_tag_type != "tag":
@@ -519,7 +536,7 @@ def app_info(app: Path) -> dict[str, str]:
         "build_number": BUILD_NUMBER,
         "executable": actual["executable"],
     } or not isinstance(actual["executable"], str) or not actual["executable"]:
-        raise ValueError(f"Application identity does not match the v3.0.37 Store build: {actual}")
+        raise ValueError(f"Application identity does not match the v{VERSION} Store build: {actual}")
     return {key: str(value) for key, value in actual.items()}
 
 
@@ -2152,7 +2169,7 @@ def write_capture_manifest(output: Path, platform: str, captures: list[dict[str,
         for capture in captures
     )
     qualification = (
-        "Authentic app-in-use screenshots from the actual v3.0.37 product app bundles. iPhone, iPad, and tvOS show the "
+        f"Authentic app-in-use screenshots from the actual v{VERSION} product app bundles. iPhone, iPad, and tvOS show the "
         "local Files and Books library after real onboarding. They do not claim server connection, media playback, StoreKit "
         "transactions, or physical-device qualification."
         if in_use else
@@ -2465,7 +2482,7 @@ def capture_macos_paywall(args: argparse.Namespace) -> None:
             or build_receipt.get("distribution_signing") != "disabled"
             or not re.fullmatch(r"[0-9]+", str(build_receipt.get("producer_run_id", "")))
             or not re.fullmatch(r"[0-9]+", str(build_receipt.get("producer_run_attempt", "")))):
-        raise ValueError("The restored Mac app does not match its unsigned v3.0.37 App Store build receipt")
+        raise ValueError(f"The restored Mac app does not match its unsigned v{VERSION} App Store build receipt")
 
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=False)
@@ -2538,7 +2555,7 @@ def capture_macos_in_use(args: argparse.Namespace) -> None:
             or receipt.get("distribution_signing") != "disabled"
             or not re.fullmatch(r"[0-9]+", str(receipt.get("producer_run_id", "")))
             or not re.fullmatch(r"[0-9]+", str(receipt.get("producer_run_attempt", "")))):
-        raise ValueError("The restored Mac app does not match its unsigned v3.0.37 App Store build receipt")
+        raise ValueError(f"The restored Mac app does not match its unsigned v{VERSION} App Store build receipt")
     configuration_evidence = build_configuration_evidence(receipt, "macos")
     if configuration_evidence is None:
         raise ValueError("The restored Mac app has no verifiable build-configuration evidence")
@@ -2857,7 +2874,7 @@ def diagnose_macos_in_use(args: argparse.Namespace) -> None:
                 or receipt.get("app_bundle_sha256") != app_digest
                 or receipt.get("bundle_id") != identity["bundle_id"]
                 or receipt.get("distribution_signing") != "disabled"):
-            raise ValueError("The retained Mac app differs from its unsigned v3.0.37 App Store build receipt")
+            raise ValueError(f"The retained Mac app differs from its unsigned v{VERSION} App Store build receipt")
         configuration_evidence = build_configuration_evidence(receipt, "macos")
         if configuration_evidence is None:
             raise ValueError("The retained Mac app has no verifiable build-configuration evidence")
@@ -3162,7 +3179,7 @@ def load_platform_capture(
                 or capture.get("app_build") != BUILD_NUMBER
                 or not isinstance(capture.get("device"), dict)
                 or not re.fullmatch(r"[0-9a-f]{64}", capture.get("app_bundle_sha256", ""))):
-            raise ValueError(f"Capture provenance does not describe a v3.0.37 {expected_capture_platform} app: {image}")
+            raise ValueError(f"Capture provenance does not describe a v{VERSION} {expected_capture_platform} app: {image}")
         if (capture.get("source_sha") != SOURCE_SHA or capture.get("source_tag") != SOURCE_TAG
                 or capture.get("capture_sha256") != sha256_file(image)
                 or capture.get("dimensions") != dimensions
@@ -3231,12 +3248,12 @@ def package_captures(args: argparse.Namespace) -> None:
             "macos": IOS_MAC_STORE_DEFINES,
         },
         "captures": final_captures,
-        "qualification": "Four authentic app UI captures from the v3.0.37 source on iPhone, iPad, tvOS Simulator, and hosted macOS. They show first-launch onboarding only; no media is included and playback, StoreKit, physical-device behavior, App Store processing, and sandbox runtime are not qualified.",
+        "qualification": f"Four authentic app UI captures from the v{VERSION} source on iPhone, iPad, tvOS Simulator, and hosted macOS. They show first-launch onboarding only; no media is included and playback, StoreKit, physical-device behavior, App Store processing, and sandbox runtime are not qualified.",
     }
     manifest_path = output / "capture-provenance.json"
     manifest_path.write_text(json.dumps(final_manifest, indent=2) + "\n", encoding="utf-8")
     (output / "README.txt").write_text(
-        "Pleazyng App Store screenshots for v3.0.37\n\n"
+        f"Pleazyng App Store screenshots for v{VERSION}\n\n"
         f"Source commit: {SOURCE_SHA}\n"
         "These are unaltered screenshots of the running app. iPhone, iPad, and tvOS "
         "captures come from Apple Simulators; macOS comes from the hosted Mac app. "
@@ -3346,7 +3363,7 @@ def package_app_in_use_captures(args: argparse.Namespace) -> None:
         },
         "captures": captures,
         "qualification": (
-            "Authentic post-onboarding local Files and Books screens from the v3.0.37 product app bundles on iPhone, iPad, "
+            f"Authentic post-onboarding local Files and Books screens from the v{VERSION} product app bundles on iPhone, iPad, "
             "tvOS Simulator, and hosted macOS. The Mac IAP sheet reflects the live StoreKit response and no purchase or "
             "restore action was activated. These captures do not qualify playback, StoreKit transactions, physical-device "
             "behavior, signing, or App Store processing."
@@ -3354,7 +3371,7 @@ def package_app_in_use_captures(args: argparse.Namespace) -> None:
     }
     (output / "capture-provenance.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     (output / "README.txt").write_text(
-        "Pleazyng app-in-use review screenshots for v3.0.37\n\n"
+        f"Pleazyng app-in-use review screenshots for v{VERSION}\n\n"
         f"Source commit: {SOURCE_SHA}\n"
         "The screenshots show the real Files and Books screen after onboarding on iPhone, iPad, tvOS, and macOS. "
         "The macOS set also includes the real lifetime-access sheet, opened without activating Buy or Restore. "

@@ -294,6 +294,36 @@ class ProductSourcePinTests(unittest.TestCase):
         )
         return root
 
+    def test_dynamic_product_source_accepts_exact_candidate_tag_version_and_build(self) -> None:
+        source_sha = "a" * 40
+        source_tag = f"v3.0.38-candidate.{source_sha}"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "pubspec.yaml").write_text(
+                "name: pleazyng\nversion: 3.0.38+197\n", encoding="utf-8"
+            )
+            with patch.object(capture, "SOURCE_SHA", source_sha), \
+                    patch.object(capture, "SOURCE_TAG", source_tag), \
+                    patch.object(capture, "VERSION", "3.0.38"), \
+                    patch.object(capture, "BUILD_NUMBER", "197"), \
+                    patch("capture_apple_store_screenshots.run", side_effect=["tag", source_sha, source_sha]):
+                capture.require_source(root)
+
+    def test_direct_nonbaseline_lineage_binds_product_packaging_and_workflow_shas(self) -> None:
+        source_sha = "a" * 40
+        tools_sha = "b" * 40
+        with patch.object(capture, "SOURCE_SHA", source_sha), \
+                patch.object(capture, "SOURCE_TAG", f"v3.0.38-candidate.{source_sha}"), \
+                patch.object(capture, "VERSION", "3.0.38"), \
+                patch.object(capture, "BUILD_NUMBER", "197"), \
+                patch.dict("os.environ", {"PLEAZYNG_CAPTURE_TOOLS_SHA": tools_sha}):
+            lineage = capture.source_lineage(Path("/unused/product"), None)
+
+        self.assertEqual(source_sha, lineage["product_source_sha"])
+        self.assertEqual(source_sha, lineage["packaging_source_sha"])
+        self.assertEqual(tools_sha, lineage["workflow_source_sha"])
+        self.assertIn("built directly", lineage["relationship"])
+
     def test_requires_exact_annotated_candidate_tag_source_and_version(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = self.make_product_root(temporary)

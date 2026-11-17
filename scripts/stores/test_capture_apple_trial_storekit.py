@@ -36,6 +36,74 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
             with self.subTest(invalid=invalid), self.assertRaises(ValueError):
                 capture.require_exact_source_sha(invalid)
 
+    def test_source_guard_accepts_exact_dynamic_candidate_identity(self) -> None:
+        source_sha = "a" * 40
+        source_tag = f"v3.0.38-candidate.{source_sha}"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "pubspec.yaml").write_text("name: pleazyng\nversion: 3.0.38+197\n", encoding="utf-8")
+            store = root / "lib/services/supporter/supporter_store.dart"
+            store.parent.mkdir(parents=True)
+            store.write_text(
+                "const String appStoreTrialProductId = 'pleazyng_7_day_trial';\n"
+                "defaultValue: 'pleazyng_lifetime_unlock';\n",
+                encoding="utf-8",
+            )
+
+            def fake_git(product_root: Path, *arguments: str, check: bool = True) -> subprocess.CompletedProcess[str]:
+                del product_root, check
+                if arguments == ("rev-parse", "HEAD"):
+                    stdout, returncode = source_sha, 0
+                elif arguments == ("rev-parse", "--verify", "refs/remotes/origin/main"):
+                    stdout, returncode = "b" * 40, 0
+                elif arguments == ("merge-base", "--is-ancestor", source_sha, "refs/remotes/origin/main"):
+                    stdout, returncode = "", 0
+                elif arguments == ("cat-file", "-t", f"refs/tags/{source_tag}"):
+                    stdout, returncode = "tag", 0
+                elif arguments == ("rev-parse", f"refs/tags/{source_tag}^{{commit}}"):
+                    stdout, returncode = source_sha, 0
+                else:
+                    raise AssertionError(f"Unexpected git invocation: {arguments}")
+                return subprocess.CompletedProcess(["git", *arguments], returncode, stdout, "")
+
+            with patch.object(capture, "VERSION", "3.0.38"), \
+                    patch.object(capture, "BUILD_NUMBER", "197"), \
+                    patch.object(capture, "SOURCE_TAG", source_tag), \
+                    patch.object(capture, "git", side_effect=fake_git):
+                source = capture.verify_source(root, source_sha)
+
+        self.assertEqual(source, {
+            "product_source_sha": source_sha,
+            "product_source_tag": source_tag,
+            "product_version": "3.0.38",
+            "product_build": "197",
+        })
+        with patch.object(capture, "VERSION", "3.0.38"):
+            self.assertEqual(
+                capture.build_artifact_name(),
+                "pleazyng-apple-trial-review-product-v3.0.38.tar.gz",
+            )
+
+    def test_source_guard_rejects_candidate_tag_not_bound_to_version_and_sha(self) -> None:
+        source_sha = "a" * 40
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            def fake_git(product_root: Path, *arguments: str, check: bool = True) -> subprocess.CompletedProcess[str]:
+                del product_root, check
+                if arguments == ("rev-parse", "HEAD"):
+                    return subprocess.CompletedProcess(["git", *arguments], 0, source_sha, "")
+                if arguments == ("rev-parse", "--verify", "refs/remotes/origin/main"):
+                    return subprocess.CompletedProcess(["git", *arguments], 0, "b" * 40, "")
+                if arguments == ("merge-base", "--is-ancestor", source_sha, "refs/remotes/origin/main"):
+                    return subprocess.CompletedProcess(["git", *arguments], 0, "", "")
+                raise AssertionError(f"Unexpected git invocation: {arguments}")
+
+            with patch.object(capture, "VERSION", "3.0.38"), \
+                    patch.object(capture, "SOURCE_TAG", f"v3.0.37-candidate.{source_sha}"), \
+                    patch.object(capture, "git", side_effect=fake_git):
+                with self.assertRaisesRegex(ValueError, "exact versioned candidate tag"):
+                    capture.verify_source(root, source_sha)
+
     def test_local_catalog_has_only_the_approved_trial_and_lifetime_products(self) -> None:
         catalog = capture.storekit_catalog(CATALOG_PATH)
         self.assertEqual(catalog, [
@@ -947,6 +1015,12 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
         self.assertIn("Verify a StoreKitTest-compatible public Simulator runtime", WORKFLOW)
         self.assertIn("--minimum-ios-version 26.6", WORKFLOW)
         self.assertIn("product_source_sha", WORKFLOW)
+        self.assertIn("product_source_tag:", WORKFLOW)
+        self.assertIn("product_version:", WORKFLOW)
+        self.assertIn("product_build:", WORKFLOW)
+        self.assertIn("ref: ${{ inputs.product_source_tag }}", WORKFLOW)
+        self.assertIn('[[ "$PRODUCT_SOURCE_TAG" == "v$PRODUCT_VERSION-candidate.$PRODUCT_SOURCE_SHA" ]]', WORKFLOW)
+        self.assertNotIn("v3.0.37", WORKFLOW)
         self.assertIn("build-and-capture", WORKFLOW)
         self.assertIn("capture-only", WORKFLOW)
         self.assertIn("flutter build ios --debug --simulator --no-pub", WORKFLOW)

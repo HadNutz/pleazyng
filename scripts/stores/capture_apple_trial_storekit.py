@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Capture Pleazyng's real iOS trial UI with Apple's local StoreKit Test environment.
 
-The product is built from an exact, main-ancestry 3.0.37 source SHA. StoreKit
+The product is built from an exact, main-ancestry candidate source SHA. StoreKit
 Test configuration and XCTest code are test-only resources; they are never
 copied into or compiled as part of the product app.
 """
@@ -28,8 +28,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import capture_apple_store_screenshots as capture_tools
 
 
-VERSION = "3.0.37"
-BUILD_NUMBER = "196"
+VERSION = capture_tools.VERSION
+BUILD_NUMBER = capture_tools.BUILD_NUMBER
+SOURCE_TAG = capture_tools.SOURCE_TAG
 BUNDLE_ID = "org.snapetech.pleazyng"
 TRIAL_PRODUCT_ID = "pleazyng_7_day_trial"
 LIFETIME_PRODUCT_ID = "pleazyng_lifetime_unlock"
@@ -46,7 +47,6 @@ CAPTURE_DISPLAY_TARGETS = {
     },
 }
 CAPTURE_DISPLAY_XCODE_VERSION = "27.2"
-BUILD_ARTIFACT = "pleazyng-apple-trial-review-product-v3.0.37.tar.gz"
 RECEIPT_NAME = "product-build-provenance.json"
 STOREKIT_RELATIVE_PATH = Path("scripts/stores/apple/pleazyng-trial-review.storekit")
 UITEST_RELATIVE_PATH = Path("scripts/stores/apple/PleazyngTrialReviewUITests.swift")
@@ -55,6 +55,10 @@ SCREENSHOTS = {
     "pleazyng-trial-active-files-books-localtest": "trial-active-files-books-localtest.png",
     "pleazyng-trial-active-supporter-localtest": "trial-active-supporter-localtest.png",
 }
+
+
+def build_artifact_name() -> str:
+    return f"pleazyng-apple-trial-review-product-v{VERSION}.tar.gz"
 
 
 def sha256_file(path: Path) -> str:
@@ -169,6 +173,14 @@ def verify_source(product_root: Path, expected_sha: str) -> dict[str, str]:
     actual_sha = git(product_root, "rev-parse", "HEAD").stdout.strip()
     if actual_sha != expected_sha:
         raise ValueError(f"Product checkout is {actual_sha}; expected the exact source SHA {expected_sha}")
+    if SOURCE_TAG != f"v{VERSION}-candidate.{expected_sha}":
+        raise ValueError("The product source tag must be the exact versioned candidate tag for the source SHA")
+    tag_type = git(product_root, "cat-file", "-t", f"refs/tags/{SOURCE_TAG}", check=False)
+    if tag_type.returncode != 0 or tag_type.stdout.strip() != "tag":
+        raise ValueError(f"The exact product candidate tag is missing or is not annotated: {SOURCE_TAG}")
+    tag_commit = git(product_root, "rev-parse", f"refs/tags/{SOURCE_TAG}^{{commit}}", check=False)
+    if tag_commit.returncode != 0 or tag_commit.stdout.strip() != expected_sha:
+        raise ValueError("The exact product candidate tag does not resolve to the selected source SHA")
     main_ref = git(product_root, "rev-parse", "--verify", "refs/remotes/origin/main", check=False)
     if main_ref.returncode != 0:
         raise ValueError("The product checkout must contain origin/main for the ancestry guard")
@@ -190,7 +202,12 @@ def verify_source(product_root: Path, expected_sha: str) -> dict[str, str]:
         raise ValueError("The exact product source does not declare the approved Apple trial product ID")
     if not re.search(r"defaultValue:\s*'pleazyng_lifetime_unlock'", store_source):
         raise ValueError("The exact product source does not declare the approved lifetime product ID")
-    return {"product_source_sha": actual_sha, "product_version": VERSION, "product_build": BUILD_NUMBER}
+    return {
+        "product_source_sha": actual_sha,
+        "product_source_tag": SOURCE_TAG,
+        "product_version": VERSION,
+        "product_build": BUILD_NUMBER,
+    }
 
 
 def bundle_info(app: Path) -> dict[str, Any]:
@@ -1176,12 +1193,12 @@ def record_build(args: argparse.Namespace) -> None:
 
     out = args.output_dir.resolve()
     out.mkdir(parents=True, exist_ok=True)
-    archive = out / BUILD_ARTIFACT
+    archive = out / build_artifact_name()
     with tarfile.open(archive, "w:gz", compresslevel=6) as bundle:
         bundle.add(app, arcname="Pleazyng.app", recursive=True)
     receipt = {
         "schema_version": 1,
-        "purpose": "Retained v3.0.37 iOS Simulator product build for LOCALTEST StoreKitTest review capture.",
+        "purpose": f"Retained v{VERSION} iOS Simulator product build for LOCALTEST StoreKitTest review capture.",
         **source,
         "product_bundle_id": BUNDLE_ID,
         "product_app_bundle_sha256": sha256_tree(app),
@@ -1260,9 +1277,11 @@ def restore_build(args: argparse.Namespace) -> None:
     if receipt.get("capture_tools_sha") != args.producer_tools_sha:
         raise ValueError("Retained app receipt capture-tools SHA does not match its producer workflow revision")
     if (receipt.get("product_version"), str(receipt.get("product_build"))) != (VERSION, BUILD_NUMBER):
-        raise ValueError("Retained app receipt is not for the expected 3.0.37+196 product")
+        raise ValueError(f"Retained app receipt is not for the expected {VERSION}+{BUILD_NUMBER} product")
+    if receipt.get("product_source_tag") != SOURCE_TAG:
+        raise ValueError("Retained app receipt does not match the exact selected product candidate tag")
     archive_name = receipt.get("product_app_archive")
-    if archive_name != BUILD_ARTIFACT or Path(archive_name).name != archive_name:
+    if archive_name != build_artifact_name() or Path(archive_name).name != archive_name:
         raise ValueError("Retained product app receipt names an unexpected archive")
     archive = artifact_dir / archive_name
     if sha256_file(archive) != receipt.get("product_app_archive_sha256"):
@@ -1277,6 +1296,9 @@ def restore_build(args: argparse.Namespace) -> None:
     consumer = {
         "schema_version": 1,
         "consumer_product_source_sha": args.product_source_sha,
+        "consumer_product_source_tag": receipt.get("product_source_tag"),
+        "consumer_product_version": receipt.get("product_version"),
+        "consumer_product_build": receipt.get("product_build"),
         "producer_run_id": args.producer_run_id,
         "producer_run_attempt": args.producer_run_attempt,
         "producer_receipt_sha256": sha256_file(receipt_path),
@@ -1352,6 +1374,12 @@ def capture(args: argparse.Namespace) -> None:
     receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
     if receipt.get("product_source_sha") != args.product_source_sha:
         raise ValueError("Built app receipt source SHA does not match the selected product source")
+    if receipt.get("product_source_tag") != source["product_source_tag"]:
+        raise ValueError("Built app receipt candidate tag does not match the selected product source")
+    if (receipt.get("product_version"), str(receipt.get("product_build"))) != (
+        source["product_version"], source["product_build"]
+    ):
+        raise ValueError("Built app receipt version/build does not match the selected product source")
     if receipt.get("product_app_bundle_sha256") != app_hash:
         raise ValueError("Installed app bundle does not match the retained product build receipt")
     if receipt.get("product_app") != identity:

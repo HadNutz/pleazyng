@@ -1022,7 +1022,7 @@ def capture(args: argparse.Namespace) -> None:
     tools_root = args.capture_tools_root.resolve(strict=True)
     capture_tools.require_source(product_root)
     if capture_tools.run(["git", "-C", str(product_root), "rev-parse", "HEAD"], capture=True, timeout=30) != SOURCE_SHA:
-        raise ValueError("Product checkout does not match the pinned 3.0.37+196 source SHA")
+        raise ValueError("Product checkout does not match the exact selected candidate source SHA")
     if re.fullmatch(r"[0-9a-f]{40}", args.capture_tools_sha) is None:
         raise ValueError("Capture tools SHA must be an exact lowercase 40-character commit")
     current_tools = capture_tools.run(["git", "-C", str(tools_root), "rev-parse", "HEAD"], capture=True, timeout=30)
@@ -1051,6 +1051,8 @@ def capture(args: argparse.Namespace) -> None:
         static_dependency_receipt_sha = sha256_file(dependency_path)
         if (static_dependency_receipt.get("status") != "passed"
                 or static_dependency_receipt.get("product_source_sha") != SOURCE_SHA
+                or static_dependency_receipt.get("packaging_source_sha") != lineage.get("packaging_source_sha", SOURCE_SHA)
+                or static_dependency_receipt.get("workflow_source_sha") != args.capture_tools_sha
                 or static_dependency_receipt.get("source_lineage") != lineage
                 or static_dependency_receipt.get("app_bundle_sha256") != capture_tools.sha256_tree(args.app.resolve(strict=True))):
             raise ValueError("tvOS dependency receipt does not verify the exact app bundle and source lineage")

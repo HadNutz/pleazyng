@@ -106,7 +106,7 @@ class AppleStoreCaptureWorkflowRoutingTests(unittest.TestCase):
         self.assertIn("inputs.target != 'tvos-in-use-capture-only'", preserve)
 
         build_upload = re.search(
-            r"- uses: actions/upload-artifact@[^\n]+\n\s+if: ([^\n]+)\n\s+with:\n\s+name: apple-store-build-tvos-v3\.0\.37",
+            r"- uses: actions/upload-artifact@[^\n]+\n\s+if: ([^\n]+)\n\s+with:\n\s+name: apple-store-build-tvos-[^\n]+",
             tvos,
         )
         self.assertIsNotNone(build_upload)
@@ -156,7 +156,7 @@ class AppleStoreCaptureWorkflowRoutingTests(unittest.TestCase):
 
         for platform, job in (("tvos", tvos), ("macos", macos)):
             upload = re.search(
-                rf"- uses: actions/upload-artifact@[^\n]+\n\s+if: ([^\n]+)\n\s+with:\n\s+name: apple-store-build-{platform}-v3\.0\.37",
+                rf"- uses: actions/upload-artifact@[^\n]+\n\s+if: ([^\n]+)\n\s+with:\n\s+name: apple-store-build-{platform}-[^\n]+",
                 job,
             )
             self.assertIsNotNone(upload, platform)
@@ -167,23 +167,25 @@ class AppleStoreCaptureWorkflowRoutingTests(unittest.TestCase):
                 "Capture the local Files and Books screen and real Mac lifetime-access sheet",
             ))
             in_use_upload = re.search(
-                rf"- uses: actions/upload-artifact@[^\n]+\n\s+if: ([^\n]+)\n\s+with:\n\s+name: apple-store-in-use-captures-{platform}-v3\.0\.37",
+                rf"- uses: actions/upload-artifact@[^\n]+\n\s+if: ([^\n]+)\n\s+with:\n\s+name: apple-store-in-use-captures-{platform}-[^\n]+",
                 job,
             )
             self.assertIsNotNone(in_use_upload, platform)
             self.assertIn(target, in_use_upload.group(1), platform)
 
-        self.assertEqual(WORKFLOW.count("EXPECTED_SOURCE_SHA: 28f417ab17a4b6dc4c2e422b27662c62f62be7fb"), 2)
-        self.assertEqual(WORKFLOW.count("EXPECTED_SOURCE_TAG: v3.0.37-candidate.28f417ab17a4b6dc4c2e422b27662c62f62be7fb"), 2)
+        self.assertEqual(WORKFLOW.count("EXPECTED_SOURCE_SHA: ${{ inputs.product_source_sha || '28f417ab17a4b6dc4c2e422b27662c62f62be7fb' }}"), 3)
+        self.assertEqual(WORKFLOW.count("EXPECTED_SOURCE_TAG: ${{ inputs.product_source_tag || 'v3.0.37-candidate.28f417ab17a4b6dc4c2e422b27662c62f62be7fb' }}"), 3)
         tvos = job_text("tvos", "macos")
-        self.assertIn("EXPECTED_SOURCE_SHA: ${{ inputs.target == 'tvos-in-use-producer-only' && '9b1552e8ba7a206a4c05ecc934976358566744f2'", tvos)
-        self.assertIn("EXPECTED_SOURCE_TAG: ${{ inputs.target == 'tvos-in-use-producer-only' && 'v3.0.37-candidate.9b1552e8ba7a206a4c05ecc934976358566744f2'", tvos)
-        self.assertEqual(WORKFLOW.count("EXPECTED_VERSION: 3.0.37"), 3)
-        self.assertEqual(WORKFLOW.count('EXPECTED_BUILD: "196"'), 3)
+        self.assertIn("EXPECTED_SOURCE_SHA: ${{ inputs.product_source_sha", tvos)
+        self.assertIn("EXPECTED_SOURCE_TAG: ${{ inputs.product_source_tag", tvos)
+        self.assertIn("EXPECTED_VERSION: ${{ inputs.product_version", tvos)
+        self.assertIn("EXPECTED_BUILD: ${{ inputs.product_build", tvos)
+        self.assertEqual(WORKFLOW.count("EXPECTED_VERSION: ${{ inputs.product_version || '3.0.37' }}"), 3)
+        self.assertEqual(WORKFLOW.count("EXPECTED_BUILD: ${{ inputs.product_build || '196' }}"), 3)
         self.assertEqual(WORKFLOW.count("git cat-file -t \"refs/tags/$EXPECTED_SOURCE_TAG\""), 3)
         self.assertEqual(WORKFLOW.count('python3 scripts/pubspec_version.py'), 3)
 
-    def test_r3_tvos_only_storekit_producer_uses_exact_repair_source_and_never_runs_mac_or_ios(self) -> None:
+    def test_tvos_only_storekit_producer_requires_exact_dynamic_source_and_never_runs_mac_or_ios(self) -> None:
         target = "tvos-in-use-producer-only"
         ios = job_text("ios", "tvos")
         tvos = job_text("tvos", "macos")
@@ -196,9 +198,16 @@ class AppleStoreCaptureWorkflowRoutingTests(unittest.TestCase):
         self.assertNotRegex(macos, rf"inputs\.target\s*==\s*'{target}'")
         self.assertNotIn(target, package)
         self.assertIn("runs-on: ${{ (inputs.target == 'tvos-in-use-capture-only' || inputs.target == 'tvos-in-use-producer-only') && 'xcode-27' || 'macos-26' }}", tvos)
-        self.assertIn("ref: ${{ inputs.target == 'tvos-in-use-producer-only' && 'v3.0.37-candidate.9b1552e8ba7a206a4c05ecc934976358566744f2'", tvos)
+        self.assertIn("ref: ${{ inputs.product_source_tag", tvos)
+        self.assertIn("product_source_tag:", WORKFLOW)
+        self.assertIn("product_source_sha:", WORKFLOW)
+        self.assertIn("product_version:", WORKFLOW)
+        self.assertIn("product_build:", WORKFLOW)
+        self.assertIn('[[ -n "$INPUT_PRODUCT_SOURCE_SHA" && -n "$INPUT_PRODUCT_SOURCE_TAG" ]]', tvos)
         self.assertIn('git rev-parse "refs/tags/$EXPECTED_SOURCE_TAG^{commit}"', tvos)
         self.assertIn("test \"$(git rev-parse HEAD)\" = \"$EXPECTED_SOURCE_SHA\"", tvos)
+        self.assertIn('[[ "$EXPECTED_SOURCE_TAG" == "v$EXPECTED_VERSION-candidate.$EXPECTED_SOURCE_SHA" ]]', tvos)
+        self.assertIn('test "$(python3 scripts/pubspec_version.py)" = "$EXPECTED_VERSION+$EXPECTED_BUILD"', tvos)
 
         for step_name in (
             "Setup the pinned tvOS Flutter SDK",
@@ -225,11 +234,33 @@ class AppleStoreCaptureWorkflowRoutingTests(unittest.TestCase):
         )
         capture = named_step_text(tvos, "Capture tvOS app with native LOCALTEST trial history")
         self.assertIn("--dependency-receipt", capture)
-        self.assertIn("PLEAZYNG_CAPTURE_PRODUCT_SOURCE_SHA", capture)
-        self.assertIn("PLEAZYNG_CAPTURE_FROZEN_PRODUCT_SOURCE_SHA", capture)
+        self.assertIn("PLEAZYNG_CAPTURE_PRODUCT_SOURCE_SHA:", WORKFLOW)
+        self.assertIn("PLEAZYNG_CAPTURE_FROZEN_PRODUCT_SOURCE_SHA:", WORKFLOW)
         self.assertIn("--source-lineage-root", named_step_text(tvos, "Preserve the compiled tvOS Simulator app before capture"))
         self.assertIn("tvos-runtime-dependency-receipt.json", named_step_text(tvos, "Retain tvOS runtime dependency report"))
-        self.assertIn("apple-store-in-use-captures-tvos-v3.0.37", tvos)
+        self.assertIn("apple-store-in-use-captures-tvos-${{ inputs.product_version || '3.0.37' }}", tvos)
+
+    def test_apple_capture_lanes_bind_all_platforms_to_the_supplied_candidate_identity(self) -> None:
+        for start, end in (("ios", "tvos"), ("tvos", "macos"), ("macos", "package")):
+            job = job_text(start, end)
+            with self.subTest(job=start):
+                self.assertIn("ref: ${{ inputs.product_source_tag || 'v3.0.37-candidate.", job)
+                self.assertIn("EXPECTED_SOURCE_SHA: ${{ inputs.product_source_sha ||", job)
+                self.assertIn("EXPECTED_SOURCE_TAG: ${{ inputs.product_source_tag ||", job)
+                self.assertIn("EXPECTED_VERSION: ${{ inputs.product_version ||", job)
+                self.assertIn("EXPECTED_BUILD: ${{ inputs.product_build ||", job)
+                self.assertIn('[[ "$EXPECTED_SOURCE_TAG" == "v$EXPECTED_VERSION-candidate.$EXPECTED_SOURCE_SHA" ]]', job)
+                self.assertIn('test "$(python3 scripts/pubspec_version.py)" = "$EXPECTED_VERSION+$EXPECTED_BUILD"', job)
+                self.assertIn("compare/$EXPECTED_SOURCE_SHA...$GITHUB_SHA", job)
+
+        ios = job_text("ios", "tvos")
+        macos = job_text("macos", "package")
+        package = job_text("package", None)
+        self.assertIn('SOURCE_SHA: ${{ inputs.product_source_sha ||', ios)
+        self.assertIn('--source-sha "$PLEAZYNG_CAPTURE_PRODUCT_SOURCE_SHA"', macos)
+        self.assertIn('apple-store-screenshots-${{ inputs.product_version ||', package)
+        self.assertNotIn("9b1552e8ba7a206a4c05ecc934976358566744f2", WORKFLOW)
+        self.assertIn("PLEAZYNG_CAPTURE_PRODUCT_VERSION: ${{ inputs.product_version ||", WORKFLOW)
 
     def test_macos_diagnostic_target_isolated_from_capture_and_build_lanes(self) -> None:
         self.assertIn("- macos-in-use-diagnostic-only", WORKFLOW)

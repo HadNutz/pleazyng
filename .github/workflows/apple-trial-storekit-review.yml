@@ -1,9 +1,9 @@
 # ng-runner-policy: hosted-default-v2
-# iOS StoreKitTest evidence uses public hosted Macs and an exact 3.0.37 source SHA.
+# iOS StoreKitTest evidence uses public hosted Macs and an exact candidate source.
 # capture-only pins public Xcode/iOS Simulator 27.2 for the required medium-iPhone
 # and 13-inch-iPad screenshot models; build-and-capture still creates one product app.
 name: Apple Trial StoreKit Test Review Capture
-run-name: apple-trial-storekit-review:${{ inputs.mode }}:${{ inputs.capture_target }}:${{ inputs.product_source_sha }}
+run-name: apple-trial-storekit-review:${{ inputs.product_version }}:${{ inputs.mode }}:${{ inputs.capture_target }}:${{ inputs.product_source_sha }}
 
 on:
   workflow_dispatch:
@@ -17,7 +17,19 @@ on:
         default: build-and-capture
         required: true
       product_source_sha:
-        description: Exact 40-character 3.0.37+196 product source commit on main.
+        description: Exact 40-character product source commit on main.
+        type: string
+        required: true
+      product_source_tag:
+        description: Exact annotated versioned candidate tag resolving to product_source_sha.
+        type: string
+        required: true
+      product_version:
+        description: Product semantic version recorded in the selected source.
+        type: string
+        required: true
+      product_build:
+        description: Numeric product build recorded in the selected source.
         type: string
         required: true
       producer_run_id:
@@ -39,12 +51,16 @@ permissions:
   contents: read
 
 concurrency:
-  group: pleazyng-apple-trial-storekit-review-v3-0-37
+  group: pleazyng-apple-trial-storekit-review-${{ inputs.product_version }}
   cancel-in-progress: false
 
 env:
   GH_TOKEN: ${{ github.token }}
   PUB_CACHE: ${{ github.workspace }}/.cache/plezy-pub-cache
+  PLEAZYNG_CAPTURE_PRODUCT_SOURCE_SHA: ${{ inputs.product_source_sha }}
+  PLEAZYNG_CAPTURE_PRODUCT_SOURCE_TAG: ${{ inputs.product_source_tag }}
+  PLEAZYNG_CAPTURE_PRODUCT_VERSION: ${{ inputs.product_version }}
+  PLEAZYNG_CAPTURE_PRODUCT_BUILD: ${{ inputs.product_build }}
   FLUTTER_SUPPRESS_ANALYTICS: "true"
   DASH__SUPPRESS_ANALYTICS: "true"
 
@@ -72,7 +88,7 @@ jobs:
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ inputs.product_source_sha }}
+          ref: ${{ inputs.product_source_tag }}
           path: product-source
           fetch-depth: 0
           persist-credentials: false
@@ -81,11 +97,18 @@ jobs:
         working-directory: product-source
         run: git fetch --no-tags origin main:refs/remotes/origin/main
 
-      - name: Verify the exact 3.0.37 product source
+      - name: Verify the exact product source tag, SHA, version and build
         env:
           PRODUCT_SOURCE_SHA: ${{ inputs.product_source_sha }}
+          PRODUCT_SOURCE_TAG: ${{ inputs.product_source_tag }}
+          PRODUCT_VERSION: ${{ inputs.product_version }}
+          PRODUCT_BUILD: ${{ inputs.product_build }}
         run: |
           set -euo pipefail
+          [[ "$PRODUCT_SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$PRODUCT_SOURCE_TAG" == "v$PRODUCT_VERSION-candidate.$PRODUCT_SOURCE_SHA" ]]
+          [[ "$PRODUCT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          [[ "$PRODUCT_BUILD" =~ ^[0-9]+$ ]]
           python3 scripts/stores/capture_apple_trial_storekit.py verify-source \
             --product-root "$GITHUB_WORKSPACE/product-source" \
             --product-source-sha "$PRODUCT_SOURCE_SHA"
@@ -107,11 +130,11 @@ jobs:
           echo "tools_sha=$producer_tools_sha" >> "$GITHUB_OUTPUT"
           echo "run_attempt=$producer_run_attempt" >> "$GITHUB_OUTPUT"
 
-      - name: Download the retained 3.0.37 product build
+      - name: Download the retained product build
         if: inputs.mode == 'capture-only'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
-          name: apple-trial-storekit-build-v3.0.37
+          name: apple-trial-storekit-build-v${{ inputs.product_version }}
           run-id: ${{ inputs.producer_run_id }}
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/apple-trial-storekit-build-input
@@ -183,7 +206,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ env.PUB_CACHE }}
-          key: apple-trial-storekit-v3.0.37-${{ runner.os }}-${{ runner.arch }}-pub-${{ hashFiles('product-source/pubspec.yaml', 'product-source/pubspec.lock') }}
+          key: apple-trial-storekit-v${{ inputs.product_version }}-${{ runner.os }}-${{ runner.arch }}-pub-${{ hashFiles('product-source/pubspec.yaml', 'product-source/pubspec.lock') }}
 
       - name: Install native iOS build tools
         if: inputs.mode == 'build-and-capture'
@@ -272,7 +295,7 @@ jobs:
         if: inputs.mode == 'build-and-capture'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: apple-trial-storekit-build-v3.0.37
+          name: apple-trial-storekit-build-v${{ inputs.product_version }}
           path: ${{ runner.temp }}/apple-trial-storekit-build/
           if-no-files-found: error
           retention-days: 7
@@ -299,7 +322,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: apple-trial-storekit-captures-v3.0.37-${{ github.run_id }}-${{ matrix.display_target }}
+          name: apple-trial-storekit-captures-v${{ inputs.product_version }}-${{ github.run_id }}-${{ matrix.display_target }}
           path: ${{ runner.temp }}/apple-trial-storekit-captures/
           if-no-files-found: warn
           retention-days: 30
