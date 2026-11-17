@@ -3,6 +3,7 @@ import FlutterMacOS
 
 class MainFlutterWindow: NSWindow {
   private var workspaceViews: WorkspaceDesktopWindows?
+  private var primaryViewPluginRegistry: PrimaryViewPluginRegistry?
 
   private var downloadStorageChannel: FlutterMethodChannel?
 
@@ -41,7 +42,9 @@ class MainFlutterWindow: NSWindow {
       }
       let flutterViewController = FlutterViewController(engine: engine, nibName: nil, bundle: nil)
       self.contentViewController = flutterViewController
-      RegisterGeneratedPlugins(registry: flutterViewController)
+      let pluginRegistry = PrimaryViewPluginRegistry(engine: engine, primaryViewController: flutterViewController)
+      primaryViewPluginRegistry = pluginRegistry
+      RegisterGeneratedPlugins(registry: pluginRegistry)
       return
     }
 
@@ -96,7 +99,9 @@ class MainFlutterWindow: NSWindow {
 
     PlezySteamPlugin.register(with: flutterViewController.registrar(forPlugin: "PlezySteamPlugin"))
 
-    RegisterGeneratedPlugins(registry: flutterViewController)
+    let pluginRegistry = PrimaryViewPluginRegistry(engine: engine, primaryViewController: flutterViewController)
+    primaryViewPluginRegistry = pluginRegistry
+    RegisterGeneratedPlugins(registry: pluginRegistry)
     self.setFrame(windowFrame, display: true)
 
     // Add forwarding toolbar for click-through in titlebar area
@@ -113,6 +118,7 @@ class MainFlutterWindow: NSWindow {
 /// Additional Flutter views share the existing engine, isolate and session owners.
 private final class WorkspaceDesktopWindows: NSObject {
   private let engine: FlutterEngine
+  private weak var parentWindow: NSWindow?
   private let available: Bool
   private let channel: FlutterMethodChannel
   private var windows: [String: WorkspaceDesktopWindow] = [:]
@@ -120,6 +126,7 @@ private final class WorkspaceDesktopWindows: NSObject {
 
   init(engine: FlutterEngine, parent: NSWindow, available: Bool) {
     self.engine = engine
+    self.parentWindow = parent
     self.available = available
     channel = FlutterMethodChannel(name: "com.pleazyng/workspace_views", binaryMessenger: engine.binaryMessenger)
     super.init()
@@ -145,6 +152,16 @@ private final class WorkspaceDesktopWindows: NSObject {
   }
 
   private func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    if call.method == "mainViewId" {
+      guard let controller = parentWindow?.contentViewController as? FlutterViewController else {
+        result(
+          FlutterError(
+            code: "PRIMARY_VIEW_UNAVAILABLE", message: "The primary Flutter view is not attached", details: nil))
+        return
+      }
+      result(controller.viewIdentifier)
+      return
+    }
     if call.method == "available" { result(available); return }
     guard let args = call.arguments as? [String: Any],
       let token = args["token"] as? String,

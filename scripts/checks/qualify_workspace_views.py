@@ -20,65 +20,48 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import 'desktop_workspace_views.dart';
+import 'utils/native_primary_view.dart';
 
 ui.FlutterView? _primaryView;
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isMacOS) {
-    _primaryView = await _waitForMacPrimaryView();
-    runWidget(View(view: _primaryView!, child: const Probe()));
-  } else {
-    _primaryView = WidgetsBinding.instance.platformDispatcher.implicitView;
-    runApp(const Probe());
-  }
+  final dispatcher = WidgetsBinding.instance.platformDispatcher;
+  runWithOptionalNativeView<ui.FlutterView>(
+    useNativeView: Platform.isMacOS,
+    runDefault: () {
+      _primaryView = dispatcher.implicitView;
+      runApp(const Probe());
+    },
+    resolveNativeView: _waitForMacPrimaryView,
+    runNativeView: (view) {
+      _primaryView = view;
+      stdout.writeln('WORKSPACE_DART_ROOT_VIEW_BOUND id=${view.viewId}');
+      runWidget(View(view: view, child: const Probe()));
+    },
+    onFailure: (error, stackTrace) {
+      final views = dispatcher.views
+          .map((view) => '${view.viewId}:${view.physicalSize}')
+          .join(',');
+      stderr.writeln(
+        'Could not bind probe to native primary view: $error; views=$views\n$stackTrace',
+      );
+      exit(1);
+    },
+  );
 }
 
-Future<ui.FlutterView> _waitForMacPrimaryView() async {
+Future<ui.FlutterView> _waitForMacPrimaryView() {
   const channel = MethodChannel('com.pleazyng/workspace_views');
   final dispatcher = WidgetsBinding.instance.platformDispatcher;
-  const timeout = Duration(seconds: 5);
-  const requestTimeout = Duration(milliseconds: 500);
-  final elapsed = Stopwatch()..start();
-  var lastObservation = 'native primary view ID unavailable';
-  while (elapsed.elapsed < timeout) {
-    final remaining = timeout - elapsed.elapsed;
-    try {
-      final viewId = await channel
-          .invokeMethod<int>('mainViewId')
-          .timeout(
-            requestTimeout.inMicroseconds < remaining.inMicroseconds
-                ? requestTimeout
-                : remaining,
-          );
-      if (viewId != null) {
-        for (final view in dispatcher.views) {
-          if (view.viewId == viewId) {
-            stdout.writeln('WORKSPACE_DART_ROOT_VIEW_BOUND id=$viewId');
-            return view;
-          }
-        }
-        lastObservation =
-            'nativeId=$viewId; views=${dispatcher.views.map((view) => '${view.viewId}:${view.physicalSize}').join(',')}';
-      } else {
-        lastObservation = 'native mainViewId returned null';
-      }
-    } on MissingPluginException {
-      lastObservation = 'native mainViewId method not registered yet';
-    } on PlatformException catch (error) {
-      lastObservation = 'native mainViewId returned ${error.code}';
-    } on TimeoutException {
-      lastObservation = 'native mainViewId did not respond';
-    }
-    final delay = timeout - elapsed.elapsed;
-    if (delay.inMicroseconds <= 0) break;
-    await Future<void>.delayed(
-      delay.inMicroseconds < 50000 ? delay : const Duration(milliseconds: 50),
-    );
-  }
-  throw StateError(
-    'could not bind the Dart root to the native primary Flutter view before ${timeout.inSeconds}s: '
-    '$lastObservation; views=${dispatcher.views.map((view) => '${view.viewId}:${view.physicalSize}').join(',')}',
+  return waitForNativePrimaryView<ui.FlutterView>(
+    readNativeViewId: () => channel.invokeMethod<int>('mainViewId'),
+    currentViews: () => dispatcher.views,
+    viewId: (view) => view.viewId,
+    isTransientError: (error) =>
+        error is MissingPluginException ||
+        error is PlatformException ||
+        error is TimeoutException,
   );
 }
 
@@ -284,6 +267,8 @@ def replace(path, before, after):
 
 def verify_macos_startup_contract():
     source = (ROOT / "macos/Runner/MainFlutterWindow.swift").read_text()
+    main = (ROOT / "lib/main.dart").read_text()
+    view_binding = (ROOT / "lib/utils/native_primary_view.dart").read_text()
     if "allowHeadlessExecution: true" not in source:
         raise RuntimeError("The macOS engine must allow startup before its first multiview attachment")
     runs = [index for index in range(len(source)) if source.startswith("guard engine.run(withEntrypoint: nil)", index)]
@@ -295,21 +280,38 @@ def verify_macos_startup_contract():
         index for index in range(len(source))
         if source.startswith("self.contentViewController = flutterViewController", index)
     ]
+    registry_creations = [
+        index for index in range(len(source))
+        if source.startswith("let pluginRegistry = PrimaryViewPluginRegistry(engine: engine, primaryViewController: flutterViewController)", index)
+    ]
     registrants = [
         index for index in range(len(source))
-        if source.startswith("RegisterGeneratedPlugins(registry: flutterViewController)", index)
+        if source.startswith("RegisterGeneratedPlugins(registry: pluginRegistry)", index)
     ]
-    if len(runs) != 2 or len(controllers) != 2 or len(window_attachments) != 2 or len(registrants) != 2:
+    if any(len(positions) != 2 for positions in (runs, controllers, window_attachments, registry_creations, registrants)):
         raise RuntimeError("Both macOS launch paths must start the engine and attach the first view before registration")
-    if source.count("RegisterGeneratedPlugins(registry: flutterViewController)") != 2:
-        raise RuntimeError("macOS generated plugins must receive the first Flutter view's registrar")
-    for run_position, controller_position, window_position, registrar_position in zip(
-        runs, controllers, window_attachments, registrants
+    if source.count("primaryViewPluginRegistry = pluginRegistry") != 2:
+        raise RuntimeError("Both macOS launch paths must retain the primary-view plugin registry")
+    for run_position, controller_position, window_position, registry_position, registrar_position in zip(
+        runs, controllers, window_attachments, registry_creations, registrants
     ):
-        if not run_position < controller_position < window_position < registrar_position:
+        if not run_position < controller_position < window_position < registry_position < registrar_position:
             raise RuntimeError("macOS must start the engine, attach its first window view, then register plugins")
     if "registry: engine" in source or "with: engine.registrar(" in source:
         raise RuntimeError("macOS plugins must not be registered before the first Flutter view")
+    workspace_host = source.split("private final class WorkspaceDesktopWindows", 1)[-1]
+    if 'call.method == "mainViewId"' not in workspace_host or "result(controller.viewIdentifier)" not in workspace_host:
+        raise RuntimeError("The macOS workspace channel must expose the actual primary controller view ID")
+    if "useNativeView: !kIsWeb && Platform.isMacOS" not in main:
+        raise RuntimeError("Only non-web macOS should use the primary-view app root")
+    if "runWithOptionalNativeView<FlutterView>" not in main or "waitForNativePrimaryView<FlutterView>" not in main:
+        raise RuntimeError("The production app must use the shared native primary-view helper")
+    if "Stopwatch()..start()" not in view_binding or "runDefault();" not in view_binding:
+        raise RuntimeError("The shared view helper must have a bounded lookup and synchronous default runApp path")
+    if "waitForNativePrimaryView<ui.FlutterView>" not in DART or "runWithOptionalNativeView<ui.FlutterView>" not in DART:
+        raise RuntimeError("The native probe must exercise the shared production view-binding helper")
+    if "final elapsed = Stopwatch()..start();" in DART:
+        raise RuntimeError("The native probe must not duplicate primary-view lookup logic")
 
 
 def qualify(platform, arch=None):
@@ -327,6 +329,9 @@ def qualify(platform, arch=None):
     run(flutter, "create", "--empty", "--project-name", "workspace_probe",
         "--platforms", platform, directory)
     (directory / "lib/main.dart").write_text(DART)
+    shared_view_binding = directory / "lib/utils/native_primary_view.dart"
+    shared_view_binding.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(ROOT / "lib/utils/native_primary_view.dart", shared_view_binding)
     shutil.copy2(ROOT / "lib/multiview/desktop_workspace_views.dart",
                  directory / "lib/desktop_workspace_views.dart")
 

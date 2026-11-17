@@ -3,6 +3,8 @@ on:
   push:
     branches: [main]
     paths:
+      - lib/main.dart
+      - lib/utils/native_primary_view.dart
       - lib/multiview/desktop_workspace_views.dart
       - linux/runner/workspace_views.*
       - windows/runner/workspace_views.*

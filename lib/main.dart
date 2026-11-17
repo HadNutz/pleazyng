@@ -2,7 +2,7 @@ import 'services/music/music_background_frames.dart';
 import 'services/music/music_endpoint_mode.dart';
 import 'dart:async';
 import 'dart:io' show Directory, File, Platform, ProcessInfo, stderr;
-import 'dart:ui' show AppExitResponse;
+import 'dart:ui' show AppExitResponse, FlutterView;
 
 import 'package:flutter/foundation.dart';
 // ignore: depend_on_referenced_packages
@@ -126,6 +126,7 @@ import 'focus/navigator_back_handler.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'utils/navigation_transitions.dart';
+import 'utils/native_primary_view.dart';
 import 'utils/log_redaction_manager.dart';
 
 import 'package:package_info_plus/package_info_plus.dart';
@@ -229,6 +230,41 @@ void main([List<String> args = const <String>[]]) {
   _bootstrapApp();
 }
 
+void _runRootApplication(Widget app) {
+  runWithOptionalNativeView<FlutterView>(
+    useNativeView: !kIsWeb && Platform.isMacOS,
+    runDefault: () => runApp(app),
+    resolveNativeView: _waitForMacPrimaryView,
+    runNativeView: (view) => runWidget(View(view: view, child: app)),
+    onFailure: (error, stackTrace) {
+      final views = WidgetsBinding.instance.platformDispatcher.views
+          .map((view) => '${view.viewId}:${view.physicalSize}')
+          .join(',');
+      stderr.writeln('Could not bind macOS app to its primary Flutter view: $error; views=$views');
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'macOS app startup',
+          context: ErrorDescription('Observed Flutter views: $views'),
+        ),
+      );
+    },
+  );
+}
+
+Future<FlutterView> _waitForMacPrimaryView() {
+  const channel = MethodChannel('com.pleazyng/workspace_views');
+  final dispatcher = WidgetsBinding.instance.platformDispatcher;
+  return waitForNativePrimaryView<FlutterView>(
+    readNativeViewId: () => channel.invokeMethod<int>('mainViewId'),
+    currentViews: () => dispatcher.views,
+    viewId: (view) => view.viewId,
+    isTransientError: (error) =>
+        error is MissingPluginException || error is PlatformException || error is TimeoutException,
+  );
+}
+
 void _bootstrapApp() {
   // In release mode, show a colored placeholder instead of a blank/white screen
   // when a widget build() throws an unhandled exception.
@@ -251,7 +287,7 @@ void _bootstrapApp() {
 
   File? legacyDesktopDatabaseSource;
   AndroidExitDiagnostics.markStartupPhase(AndroidStartupPhase.runApp);
-  runApp(
+  _runRootApplication(
     StartupBootstrap<_StartupDependencies>(
       beforeInitialize: (context) async {
         await _gatePhase(StartupPhase.preferences, SettingsService.getInstance);
