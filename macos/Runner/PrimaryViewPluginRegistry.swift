@@ -63,8 +63,9 @@ private final class PrimaryViewPluginRegistrar: NSObject, FlutterPluginRegistrar
 
   private var attachedPrimaryViewController: FlutterViewController? {
     guard let controller = primaryViewController,
-      controller.attached,
-      controller.viewIfLoaded?.window != nil
+      controller.attached(),
+      controller.isViewLoaded,
+      controller.view.window != nil
     else {
       return nil
     }
@@ -72,7 +73,7 @@ private final class PrimaryViewPluginRegistrar: NSObject, FlutterPluginRegistrar
   }
 
   var view: NSView? {
-    attachedPrimaryViewController?.viewIfLoaded
+    attachedPrimaryViewController?.view
   }
 
   var viewController: NSViewController? {

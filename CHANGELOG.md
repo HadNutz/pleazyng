@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 - Start the macOS Flutter engine before attaching its first multiview window, and register view-dependent plugins after the window is available.
-- Bind desktop drop, file picker and window manager's legacy registrar view access to the primary macOS window while forwarding registration operations to Flutter's engine.
+- Bind desktop drop, file picker and window manager to the attached primary macOS window in multiview mode, while preserving engine-managed plugin registration.
 
 - Update privacy notices for optional local subtitle recovery, LG Paymentwall license verification and the current authorization relay boundaries.
 

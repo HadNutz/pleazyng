@@ -8,6 +8,8 @@ on:
       - windows/runner/workspace_views.*
       - windows/tool/workspace_view_access.cmake
       - macos/Runner/MainFlutterWindow.swift
+      - macos/Runner/PrimaryViewPluginRegistry.swift
+      - macos/Runner.xcodeproj/project.pbxproj
       - scripts/checks/qualify_workspace_views.py
       - .github/workflows/desktop-workspace-views.yml
   workflow_dispatch:

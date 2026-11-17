@@ -11,6 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 ADAPTER = ROOT / "macos/Runner/PrimaryViewPluginRegistry.swift"
 PROJECT = ROOT / "macos/Runner.xcodeproj/project.pbxproj"
+WORKFLOW = ROOT / ".github/workflows/desktop-workspace-views.yml"
 
 
 class PrimaryViewPluginRegistryTest(unittest.TestCase):
@@ -18,6 +19,7 @@ class PrimaryViewPluginRegistryTest(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.adapter = ADAPTER.read_text(encoding="utf-8")
         cls.project = PROJECT.read_text(encoding="utf-8")
+        cls.workflow = WORKFLOW.read_text(encoding="utf-8")
 
     def test_adapter_is_compiled_in_the_runner_target(self) -> None:
         file_reference = "AF7190A1627D4698991BE101"
@@ -34,6 +36,18 @@ class PrimaryViewPluginRegistryTest(unittest.TestCase):
         )
         self.assertIn(f"{file_reference} /* PrimaryViewPluginRegistry.swift */", self.project)
         self.assertIn(f"{build_file} /* PrimaryViewPluginRegistry.swift in Sources */", self.project)
+
+    def test_native_workspace_probe_runs_when_adapter_or_project_wiring_changes(self) -> None:
+        paths_block = re.search(r"(?m)^    paths:\n((?:      - .*\n)+)", self.workflow)
+        self.assertIsNotNone(paths_block)
+        assert paths_block is not None
+        paths = set(re.findall(r"(?m)^      - (.+)$", paths_block.group(1)))
+        self.assertTrue(
+            {
+                "macos/Runner/PrimaryViewPluginRegistry.swift",
+                "macos/Runner.xcodeproj/project.pbxproj",
+            }.issubset(paths)
+        )
 
     def test_only_view_dependent_plugins_receive_cached_proxies(self) -> None:
         match = re.search(
@@ -64,11 +78,12 @@ class PrimaryViewPluginRegistryTest(unittest.TestCase):
         )
         self.assertIsNotNone(attached_controller)
         assert attached_controller is not None
-        self.assertIn("controller.attached", attached_controller.group(1))
-        self.assertIn("controller.viewIfLoaded?.window != nil", attached_controller.group(1))
+        self.assertIn("controller.attached()", attached_controller.group(1))
+        self.assertIn("controller.isViewLoaded", attached_controller.group(1))
+        self.assertIn("controller.view.window != nil", attached_controller.group(1))
         self.assertRegex(
             self.adapter,
-            r"var view:\s*NSView\?\s*\{\s*attachedPrimaryViewController\?\.viewIfLoaded\s*\}",
+            r"var view:\s*NSView\?\s*\{\s*attachedPrimaryViewController\?\.view\s*\}",
         )
         self.assertRegex(
             self.adapter,
