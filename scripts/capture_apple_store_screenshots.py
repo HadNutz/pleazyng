@@ -23,8 +23,10 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 
-SOURCE_TAG = "v3.0.37-candidate.28f417ab17a4b6dc4c2e422b27662c62f62be7fb"
-SOURCE_SHA = "28f417ab17a4b6dc4c2e422b27662c62f62be7fb"
+DEFAULT_SOURCE_TAG = "v3.0.37-candidate.28f417ab17a4b6dc4c2e422b27662c62f62be7fb"
+DEFAULT_SOURCE_SHA = "28f417ab17a4b6dc4c2e422b27662c62f62be7fb"
+SOURCE_TAG = os.environ.get("PLEAZYNG_CAPTURE_PRODUCT_SOURCE_TAG", DEFAULT_SOURCE_TAG)
+SOURCE_SHA = os.environ.get("PLEAZYNG_CAPTURE_PRODUCT_SOURCE_SHA", DEFAULT_SOURCE_SHA)
 WORKFLOW_PATH = ".github/workflows/apple-store-screenshots.yml"
 VERSION = "3.0.37"
 BUILD_NUMBER = "196"
@@ -219,6 +221,10 @@ def capture_ios_keychain_diagnostics(
 
 
 def require_source(product_root: Path) -> None:
+    if re.fullmatch(r"[0-9a-f]{40}", SOURCE_SHA) is None:
+        raise ValueError("Expected product source SHA must be a full lowercase 40-character commit")
+    if re.fullmatch(r"v3\.0\.37-candidate\.[0-9a-f]{40}", SOURCE_TAG) is None:
+        raise ValueError("Expected product source tag must be an exact 3.0.37 candidate tag")
     tag_type = run(
         ["git", "-C", str(product_root), "cat-file", "-t", f"refs/tags/{SOURCE_TAG}"],
         capture=True,
@@ -244,6 +250,88 @@ def require_source(product_root: Path) -> None:
     match = re.fullmatch(r"""version:\s*["']?([0-9.]+)\+([0-9]+)["']?\s*""", version_line)
     if match is None or match.groups() != (VERSION, BUILD_NUMBER):
         raise ValueError(f"Expected {VERSION}+{BUILD_NUMBER} in pubspec.yaml, found {version_line!r}")
+
+
+def _git_output(repository: Path, *arguments: str) -> str:
+    return run(["git", "-C", str(repository), *arguments], capture=True, timeout=30)
+
+
+def source_lineage(product_root: Path, approval_root: Path | None) -> dict[str, Any]:
+    """Verify the explicit packaging-repair relationship for a nonbaseline build."""
+    tools_sha = require_capture_tools_sha()
+    if SOURCE_SHA == DEFAULT_SOURCE_SHA:
+        return {
+            "relationship": "qualified product source built directly",
+            "product_source_sha": SOURCE_SHA,
+            "product_source_tag": SOURCE_TAG,
+        }
+
+    frozen_sha = os.environ.get("PLEAZYNG_CAPTURE_FROZEN_PRODUCT_SOURCE_SHA", "")
+    frozen_tag = os.environ.get("PLEAZYNG_CAPTURE_FROZEN_PRODUCT_SOURCE_TAG", "")
+    if (approval_root is None or re.fullmatch(r"[0-9a-f]{40}", frozen_sha) is None
+            or frozen_tag != f"v3.0.37-candidate.{frozen_sha}"):
+        raise ValueError("A nonbaseline capture requires exact frozen-product and approved packaging-source proof inputs")
+    frozen_tag_type = _git_output(product_root, "cat-file", "-t", f"refs/tags/{frozen_tag}")
+    if frozen_tag_type != "tag":
+        raise ValueError(f"Expected frozen product tag {frozen_tag} to be annotated, found {frozen_tag_type!r}")
+    frozen_tag_commit = _git_output(product_root, "rev-parse", f"refs/tags/{frozen_tag}^{{commit}}")
+    if frozen_tag_commit != frozen_sha:
+        raise ValueError(f"Frozen product tag {frozen_tag} does not resolve to {frozen_sha}")
+    if _git_output(approval_root, "rev-parse", "HEAD") != tools_sha:
+        raise ValueError("Source approval manifest checkout differs from the capture-tools receipt SHA")
+    approval_path = ".github/release-packaging-repairs.json"
+    manifest_path = approval_root / approval_path
+    if manifest_path.is_symlink() or not manifest_path.is_file():
+        raise ValueError("Approved frozen-packaging source manifest is missing or unsafe")
+    manifest_bytes = manifest_path.read_bytes()
+    approval_blob = hashlib.sha1(
+        b"blob " + str(len(manifest_bytes)).encode("ascii") + b"\0" + manifest_bytes
+    ).hexdigest()
+    recorded_approval_blob = _git_output(approval_root, "rev-parse", f"{tools_sha}:{approval_path}")
+    if approval_blob != recorded_approval_blob:
+        raise ValueError("Frozen-packaging approval manifest bytes differ from the capture-tools Git tree")
+    manifest = json.loads(manifest_bytes)
+    repairs = manifest.get("repairs") if isinstance(manifest, dict) else None
+    matches = [
+        entry for entry in repairs or []
+        if isinstance(entry, dict)
+        and entry.get("product_source_sha") == frozen_sha
+        and entry.get("packaging_source_sha") == SOURCE_SHA
+    ]
+    if len(matches) != 1:
+        raise ValueError("Approval manifest does not contain one exact frozen-product/packaging-source pair")
+    approved_files = matches[0].get("files")
+    if not isinstance(approved_files, dict) or not approved_files:
+        raise ValueError("Approved packaging-source file/blob inventory is missing")
+    for path, blob in approved_files.items():
+        normalized = PurePosixPath(path) if isinstance(path, str) else PurePosixPath("..")
+        if (not isinstance(path, str) or not path or normalized.is_absolute()
+                or ".." in normalized.parts or normalized.as_posix() != path
+                or re.fullmatch(r"[0-9a-f]{40}", str(blob)) is None):
+            raise ValueError("Approved packaging-source inventory contains an unsafe path or invalid blob")
+    parents = _git_output(product_root, "rev-list", "--parents", "-n", "1", SOURCE_SHA).split()
+    if parents != [SOURCE_SHA, frozen_sha]:
+        raise ValueError("Packaging source is not the reviewed single-commit child of the frozen product source")
+    changed_paths = _git_output(product_root, "diff-tree", "--no-commit-id", "--name-only", "-r", SOURCE_SHA).splitlines()
+    if sorted(changed_paths) != sorted(approved_files):
+        raise ValueError("Packaging source changed-file set differs from the approved manifest")
+    for path, expected_blob in approved_files.items():
+        if (not isinstance(path, str) or not isinstance(expected_blob, str)
+                or _git_output(product_root, "rev-parse", f"{SOURCE_SHA}:{path}") != expected_blob):
+            raise ValueError(f"Packaging source does not match approved file blob: {path}")
+    return {
+        "relationship": "approved frozen-product packaging repair; simulator app built from packaging source",
+        "product_source_sha": SOURCE_SHA,
+        "product_source_tag": SOURCE_TAG,
+        "related_frozen_product_source_sha": frozen_sha,
+        "related_frozen_product_source_tag": frozen_tag,
+        "packaging_source_sha": SOURCE_SHA,
+        "workflow_source_sha": tools_sha,
+        "approval_path": approval_path,
+        "approval_blob_sha": approval_blob,
+        "approval_file_blobs": dict(sorted(approved_files.items())),
+        "proof_method": "Verified the exact GitHub packaging-approval manifest pair, sole-parent relationship, changed-file set, and every approved product-source blob.",
+    }
 
 
 def require_capture_tools_sha() -> str:
@@ -435,9 +523,182 @@ def app_info(app: Path) -> dict[str, str]:
     return {key: str(value) for key, value in actual.items()}
 
 
+def verify_tvos_simulator_framework_bundle(app: Path) -> dict[str, Any]:
+    """Verify the known strong AMSMB2 load resolves in the preserved simulator app."""
+    app = app.resolve(strict=True)
+    identity = app_info(app)
+    executable = app / identity["executable"]
+    framework = app / "Frameworks" / "AMSMB2.framework" / "AMSMB2"
+    evidence: dict[str, Any] = {
+        "schema_version": 1,
+        "platform": "tvOS Simulator",
+        "product_source_sha": SOURCE_SHA,
+        "product_source_tag": SOURCE_TAG,
+        "app_bundle_sha256": sha256_tree(app),
+        "bundle_id": identity["bundle_id"],
+        "app_executable": executable.relative_to(app).as_posix(),
+        "required_install_name": "@rpath/AMSMB2.framework/AMSMB2",
+        "framework_path": framework.relative_to(app).as_posix(),
+        "loaders": [],
+        "errors": [],
+    }
+    if not executable.is_file() or not executable.stat().st_mode & 0o111:
+        evidence["errors"].append("The tvOS Simulator app executable is missing or not executable")
+    if not framework.is_file() or framework.is_symlink():
+        evidence["errors"].append("The app does not contain a regular AMSMB2 framework executable")
+    else:
+        try:
+            framework.resolve(strict=True).relative_to(app)
+        except ValueError:
+            evidence["errors"].append("The AMSMB2 framework resolves outside the app bundle")
+        evidence["framework_sha256"] = sha256_file(framework)
+
+    macho_magic = {
+        bytes.fromhex(value) for value in (
+            "feedface", "cefaedfe", "feedfacf", "cffaedfe",
+            "cafebabe", "bebafeca", "cafebabf", "bfbafeca",
+        )
+    }
+    binaries: list[Path] = []
+    if executable.is_file():
+        binaries.append(executable)
+    for path in app.rglob("*"):
+        if path.is_file() and not path.is_symlink() and path != executable:
+            try:
+                with path.open("rb") as source:
+                    if source.read(4) in macho_magic:
+                        binaries.append(path)
+            except OSError:
+                continue
+    binaries = sorted(set(binaries))
+    if framework.is_file() and framework not in binaries:
+        binaries.append(framework)
+
+    def parse_architectures(value: str) -> tuple[str, ...]:
+        match = re.search(r"\bis architecture:\s*([A-Za-z0-9_]+)\s*$", value)
+        if match:
+            return (match.group(1),)
+        match = re.search(r"\bare:\s*(.+)$", value, re.MULTILINE)
+        result = tuple(match.group(1).split()) if match else tuple(value.split())
+        if not result or any(re.fullmatch(r"[A-Za-z0-9_]+", item) is None for item in result):
+            raise ValueError(f"Cannot parse lipo architectures: {value!r}")
+        return tuple(dict.fromkeys(result))
+
+    def load_commands(binary: Path, architecture: str) -> tuple[list[str], list[str]]:
+        output = run(["xcrun", "otool", "-arch", architecture, "-l", str(binary)], capture=True, timeout=60)
+        loads: list[str] = []
+        rpaths: list[str] = []
+        current = ""
+        for line in output.splitlines():
+            stripped = line.strip()
+            if stripped.startswith("cmd "):
+                current = stripped[4:]
+            elif current in {"LC_LOAD_DYLIB", "LC_LOAD_WEAK_DYLIB", "LC_REEXPORT_DYLIB", "LC_LOAD_UPWARD_DYLIB", "LC_LAZY_LOAD_DYLIB"} and stripped.startswith("name "):
+                loads.append(f"{current}\t{stripped[5:].split(' (offset ', 1)[0]}")
+                current = ""
+            elif current == "LC_RPATH" and stripped.startswith("path "):
+                rpaths.append(stripped[5:].split(" (offset ", 1)[0])
+                current = ""
+        return loads, rpaths
+
+    required = evidence["required_install_name"]
+    try:
+        root_architectures = parse_architectures(
+            run(["/usr/bin/lipo", "-archs", str(executable)], capture=True, timeout=60)
+        )
+    except (OSError, RuntimeError, subprocess.CalledProcessError, subprocess.TimeoutExpired, ValueError):
+        root_architectures = ()
+    framework_architectures: tuple[str, ...] = ()
+    if framework.is_file() and not framework.is_symlink():
+        try:
+            framework_architectures = parse_architectures(
+                run(["/usr/bin/lipo", "-archs", str(framework)], capture=True, timeout=60)
+            )
+        except (OSError, RuntimeError, subprocess.CalledProcessError, subprocess.TimeoutExpired, ValueError):
+            pass
+    resolved_loads = 0
+    for binary in binaries:
+        try:
+            arch_output = run(["/usr/bin/lipo", "-archs", str(binary)], capture=True, timeout=60)
+            architectures = parse_architectures(arch_output)
+        except (OSError, RuntimeError, subprocess.CalledProcessError, subprocess.TimeoutExpired, ValueError) as error:
+            evidence["errors"].append(f"Cannot inspect bundled Mach-O {binary.relative_to(app)}: {error}")
+            continue
+        if binary == framework and "arm64" not in architectures:
+            evidence["errors"].append("The embedded AMSMB2 framework does not contain arm64")
+        for architecture in architectures:
+            try:
+                loads, rpaths = load_commands(binary, architecture)
+            except (OSError, RuntimeError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+                evidence["errors"].append(f"Cannot read load commands for {binary.relative_to(app)} ({architecture}): {error}")
+                continue
+            for entry in loads:
+                command_name, install_name = entry.split("\t", 1)
+                if install_name != required:
+                    continue
+                loader = {
+                    "image": binary.relative_to(app).as_posix(),
+                    "architecture": architecture,
+                    "command": command_name,
+                    "install_name": install_name,
+                    "rpaths": rpaths,
+                    "resolved_path": None,
+                }
+                evidence["loaders"].append(loader)
+                if command_name == "LC_LOAD_WEAK_DYLIB":
+                    evidence["errors"].append(f"AMSMB2 is only weakly loaded by {loader['image']} ({architecture})")
+                    continue
+                if architecture not in framework_architectures:
+                    evidence["errors"].append(
+                        f"Embedded AMSMB2 framework lacks {architecture} for {loader['image']}"
+                    )
+                    continue
+                inherited_rpaths: list[str] = []
+                if binary != executable and architecture in root_architectures:
+                    try:
+                        _, inherited_rpaths = load_commands(executable, architecture)
+                    except (OSError, RuntimeError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+                        evidence["errors"].append(f"Cannot read app executable runpaths ({architecture}): {error}")
+                        continue
+                candidates: list[Path] = []
+                for runpath in dict.fromkeys((*inherited_rpaths, *rpaths)):
+                    if runpath == "@loader_path" or runpath.startswith("@loader_path/"):
+                        prefix = binary.parent / runpath[len("@loader_path"):].lstrip("/")
+                    elif runpath == "@executable_path" or runpath.startswith("@executable_path/"):
+                        prefix = executable.parent / runpath[len("@executable_path"):].lstrip("/")
+                    elif runpath.startswith("/"):
+                        prefix = Path(runpath)
+                    else:
+                        continue
+                    candidates.append(prefix / "AMSMB2.framework" / "AMSMB2")
+                for candidate in candidates:
+                    try:
+                        if candidate.resolve(strict=True) == framework.resolve(strict=True):
+                            loader["resolved_path"] = framework.relative_to(app).as_posix()
+                            resolved_loads += 1
+                            break
+                    except OSError:
+                        continue
+                if loader["resolved_path"] is None:
+                    evidence["errors"].append(
+                        f"Strong AMSMB2 load from {loader['image']} ({architecture}) does not resolve into the app bundle"
+                    )
+    if not evidence["loaders"]:
+        evidence["errors"].append("No strong AMSMB2.framework/AMSMB2 load was found in bundled tvOS Mach-O images")
+    if resolved_loads != len(evidence["loaders"]):
+        evidence["errors"].append("Not every AMSMB2 load resolved to the same-architecture embedded framework")
+    evidence["status"] = "passed" if not evidence["errors"] else "failed"
+    evidence["qualification"] = "Static tvOS Simulator Mach-O check of the known strong AMSMB2 dyld load; not runtime qualification."
+    return evidence
+
+
 def preserve_build(args: argparse.Namespace) -> None:
     product_root = args.product_root.resolve(strict=True)
     require_source(product_root)
+    lineage = source_lineage(
+        product_root,
+        args.source_lineage_root.resolve(strict=True) if args.source_lineage_root else None,
+    )
     tool_source_sha = require_capture_tools_sha()
     app = args.app.resolve(strict=True)
     identity = app_info(app)
@@ -474,6 +735,7 @@ def preserve_build(args: argparse.Namespace) -> None:
         "product": "Pleazyng",
         "source_tag": SOURCE_TAG,
         "source_sha": SOURCE_SHA,
+        "source_lineage": lineage,
         "capture_tools_sha": tool_source_sha,
         "producer_repository": producer_repository,
         "producer_workflow_ref": producer_workflow_ref,
@@ -503,6 +765,58 @@ def preserve_build(args: argparse.Namespace) -> None:
         archive.add(app, arcname=app.name)
         archive.add(receipt_path, arcname=receipt_path.name)
     print(f"Preserved {platform_name} app bundle and receipt in {output}")
+
+
+def verify_tvos_simulator_dependencies(args: argparse.Namespace) -> None:
+    product_root = args.product_root.resolve(strict=True)
+    approval_root = args.source_lineage_root.resolve(strict=True)
+    app = args.app.resolve(strict=True)
+    build_receipt_path = args.build_receipt.resolve(strict=True)
+    evidence: dict[str, Any] = {
+        "schema_version": 1,
+        "status": "failed",
+        "platform": "tvOS Simulator",
+        "product_source_sha": SOURCE_SHA,
+        "product_source_tag": SOURCE_TAG,
+        "producer_run_id": args.producer_run_id,
+        "producer_run_attempt": args.producer_run_attempt,
+        "capture_tools_sha": os.environ.get("PLEAZYNG_CAPTURE_TOOLS_SHA", ""),
+        "errors": [],
+    }
+    try:
+        require_source(product_root)
+        lineage = source_lineage(product_root, approval_root)
+        tools_sha = require_capture_tools_sha()
+        producer_repository = os.environ.get("GITHUB_REPOSITORY", "")
+        receipt = json.loads(build_receipt_path.read_text(encoding="utf-8"))
+        if not isinstance(receipt, dict):
+            raise ValueError("tvOS simulator build receipt must be a JSON object")
+        validate_build_receipt(
+            receipt,
+            platform="tvos",
+            producer_repository=producer_repository,
+            producer_run_id=args.producer_run_id,
+            producer_run_attempt=args.producer_run_attempt,
+            capture_tools_sha=tools_sha,
+        )
+        if receipt.get("source_lineage") != lineage:
+            raise ValueError("tvOS simulator build receipt does not match approved frozen-product source lineage")
+        if receipt.get("app_bundle_sha256") != sha256_tree(app):
+            raise ValueError("tvOS simulator app differs from the preserved app receipt")
+        evidence.update(verify_tvos_simulator_framework_bundle(app))
+        evidence["packaging_source_sha"] = lineage.get("packaging_source_sha", SOURCE_SHA)
+        evidence["workflow_source_sha"] = tools_sha
+        evidence["build_receipt_sha256"] = sha256_file(build_receipt_path)
+        evidence["source_lineage"] = lineage
+    except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+        evidence["errors"].append(f"{type(error).__name__}: {error}")
+    evidence["status"] = "passed" if not evidence["errors"] else "failed"
+    if args.output.is_symlink() or args.output.exists():
+        raise ValueError(f"Refusing to replace existing tvOS simulator dependency receipt: {args.output}")
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    if evidence["status"] != "passed":
+        raise ValueError(f"tvOS Simulator AMSMB2 closure verification failed; see {args.output}")
 
 
 def validate_build_receipt(
@@ -550,6 +864,8 @@ def validate_build_receipt(
         )
     if mismatched:
         raise ValueError(f"Build receipt does not match the expected producer and product: {mismatched}")
+    if SOURCE_SHA != DEFAULT_SOURCE_SHA and not isinstance(receipt.get("source_lineage"), dict):
+        raise ValueError("A nonbaseline product build receipt must include its approved source lineage")
     architectures = receipt.get("architectures")
     if (not isinstance(architectures, list) or not all(isinstance(item, str) for item in architectures)
             or architectures != sorted(set(architectures)) or not expected_architectures.issubset(architectures)):
@@ -3060,8 +3376,18 @@ def parse_args() -> argparse.Namespace:
     preserve.add_argument("--product-root", required=True, type=Path)
     preserve.add_argument("--app", required=True, type=Path)
     preserve.add_argument("--platform", required=True, choices=("ios", "tvos", "macos"))
+    preserve.add_argument("--source-lineage-root", type=Path)
     preserve.add_argument("--output-dir", required=True, type=Path)
     preserve.set_defaults(handler=preserve_build)
+    tvos_dependency = subparsers.add_parser("verify-tvos-simulator-framework")
+    tvos_dependency.add_argument("--product-root", required=True, type=Path)
+    tvos_dependency.add_argument("--source-lineage-root", required=True, type=Path)
+    tvos_dependency.add_argument("--app", required=True, type=Path)
+    tvos_dependency.add_argument("--build-receipt", required=True, type=Path)
+    tvos_dependency.add_argument("--producer-run-id", required=True)
+    tvos_dependency.add_argument("--producer-run-attempt", required=True)
+    tvos_dependency.add_argument("--output", required=True, type=Path)
+    tvos_dependency.set_defaults(handler=verify_tvos_simulator_dependencies)
     restore = subparsers.add_parser("restore-build")
     restore.add_argument("--product-root", required=True, type=Path)
     restore.add_argument("--artifact-dir", required=True, type=Path)

@@ -1028,6 +1028,7 @@ def capture(args: argparse.Namespace) -> None:
     current_tools = capture_tools.run(["git", "-C", str(tools_root), "rev-parse", "HEAD"], capture=True, timeout=30)
     if current_tools != args.capture_tools_sha:
         raise ValueError(f"Capture tools checkout is {current_tools}; expected {args.capture_tools_sha}")
+    lineage = capture_tools.source_lineage(product_root, tools_root)
     config_path = tools_root / STOREKIT_CONFIG
     test_source_path = tools_root / UI_TEST_SOURCE
     if not config_path.is_file() or not test_source_path.is_file():
@@ -1036,6 +1037,23 @@ def capture(args: argparse.Namespace) -> None:
     receipt, identity = verify_build_identity(
         platform, args.app, args.build_receipt, args.producer_run_id, args.producer_run_attempt
     )
+    receipt_lineage = receipt.get("source_lineage")
+    if (receipt_lineage != lineage
+            and (receipt_lineage is not None or SOURCE_SHA != capture_tools.DEFAULT_SOURCE_SHA)):
+        raise ValueError("Retained app build receipt does not match its approved frozen-product source lineage")
+    static_dependency_receipt: dict[str, Any] | None = None
+    static_dependency_receipt_sha: str | None = None
+    if args.dependency_receipt is not None:
+        dependency_path = args.dependency_receipt.resolve(strict=True)
+        if dependency_path.is_symlink() or not dependency_path.is_file():
+            raise ValueError("tvOS static runtime dependency receipt must be a regular file")
+        static_dependency_receipt = json.loads(dependency_path.read_text(encoding="utf-8"))
+        static_dependency_receipt_sha = sha256_file(dependency_path)
+        if (static_dependency_receipt.get("status") != "passed"
+                or static_dependency_receipt.get("product_source_sha") != SOURCE_SHA
+                or static_dependency_receipt.get("source_lineage") != lineage
+                or static_dependency_receipt.get("app_bundle_sha256") != capture_tools.sha256_tree(args.app.resolve(strict=True))):
+            raise ValueError("tvOS dependency receipt does not verify the exact app bundle and source lineage")
 
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=False)
@@ -1189,6 +1207,7 @@ def capture(args: argparse.Namespace) -> None:
             "product": {
                 "source_tag": SOURCE_TAG,
                 "source_sha": SOURCE_SHA,
+                "source_lineage": lineage,
                 "version": VERSION,
                 "build": BUILD_NUMBER,
                 "bundle_id": BUNDLE_ID,
@@ -1248,6 +1267,13 @@ def capture(args: argparse.Namespace) -> None:
                 "simulator_installed_app": installed_app_evidence,
             },
             "screenshots": screenshot_receipts,
+            "static_tvos_dependency_check": (
+                {
+                    "receipt_sha256": static_dependency_receipt_sha,
+                    "receipt": static_dependency_receipt,
+                }
+                if static_dependency_receipt is not None else None
+            ),
             "created_at_utc": datetime.now(timezone.utc).isoformat(),
         })
         print(f"Captured authentic {platform} LOCALTEST trial-backed app screens in {output}")
@@ -1261,6 +1287,8 @@ def capture(args: argparse.Namespace) -> None:
             "environment": "LOCALTEST",
             "platform": platform,
             "product_source_sha": SOURCE_SHA,
+            "source_lineage": lineage,
+            "static_tvos_dependency_check_sha256": static_dependency_receipt_sha,
             "capture_tools_sha": args.capture_tools_sha,
             "producer_run_id": args.producer_run_id,
             "producer_run_attempt": args.producer_run_attempt,
@@ -1305,6 +1333,7 @@ def parser() -> argparse.ArgumentParser:
     capture_command.add_argument("--capture-tools-sha", required=True)
     capture_command.add_argument("--app", required=True, type=Path)
     capture_command.add_argument("--build-receipt", required=True, type=Path)
+    capture_command.add_argument("--dependency-receipt", type=Path)
     capture_command.add_argument("--producer-run-id", required=True)
     capture_command.add_argument("--producer-run-attempt", required=True)
     capture_command.add_argument("--runner-root", required=True, type=Path)

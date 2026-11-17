@@ -4,11 +4,14 @@
 from __future__ import annotations
 
 import plistlib
+import hashlib
+import json
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+import capture_apple_store_screenshots as capture
 from capture_apple_store_screenshots import (
     BUNDLE_ID,
     BUILD_NUMBER,
@@ -25,6 +28,7 @@ from capture_apple_store_screenshots import (
     simulator_reported_tvos_app_stopped,
     simulator_codesign_command,
     require_source,
+    verify_tvos_simulator_framework_bundle,
 )
 
 
@@ -343,6 +347,113 @@ class ProductSourcePinTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Expected 3.0.37\\+196"):
                     require_source(root)
 
+    def test_nonbaseline_source_lineage_requires_manifest_pair_parent_and_exact_blobs(self) -> None:
+        packaging_sha = "9b1552e8ba7a206a4c05ecc934976358566744f2"
+        product_sha = SOURCE_SHA
+        tools_sha = "2305765b75d63565f9ad67e36dc9929b23d745a5"
+        files = {
+            "scripts/verify_apple_macho_dependencies.py": "1" * 40,
+            "tvos/scripts/wire_plugins.rb": "2" * 40,
+        }
+        manifest = {
+            "schema_version": 1,
+            "repairs": [{
+                "product_source_sha": product_sha,
+                "packaging_source_sha": packaging_sha,
+                "files": files,
+            }],
+        }
+        manifest_bytes = (json.dumps(manifest, separators=(",", ":")) + "\n").encode()
+        manifest_blob = hashlib.sha1(b"blob " + str(len(manifest_bytes)).encode() + b"\0" + manifest_bytes).hexdigest()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            product_root = root / "product"
+            approval_root = root / "capture-tools"
+            product_root.mkdir()
+            manifest_path = approval_root / ".github" / "release-packaging-repairs.json"
+            manifest_path.parent.mkdir(parents=True)
+            manifest_path.write_bytes(manifest_bytes)
+
+            def git_output(repository: Path, *arguments: str) -> str:
+                if arguments == ("cat-file", "-t", f"refs/tags/v3.0.37-candidate.{product_sha}"):
+                    return "tag"
+                if arguments == ("rev-parse", f"refs/tags/v3.0.37-candidate.{product_sha}^{{commit}}"):
+                    return product_sha
+                if arguments == ("rev-parse", "HEAD"):
+                    return tools_sha
+                if arguments == ("rev-parse", f"{tools_sha}:.github/release-packaging-repairs.json"):
+                    return manifest_blob
+                if arguments[:1] == ("rev-list",):
+                    return f"{packaging_sha} {product_sha}"
+                if arguments[:1] == ("diff-tree",):
+                    return "\n".join(sorted(files))
+                if arguments[:1] == ("rev-parse",) and arguments[1].startswith(f"{packaging_sha}:"):
+                    return files[arguments[1].split(":", 1)[1]]
+                raise AssertionError((repository, arguments))
+
+            with patch.object(capture, "SOURCE_SHA", packaging_sha), \
+                    patch.object(capture, "SOURCE_TAG", f"v3.0.37-candidate.{packaging_sha}"), \
+                    patch.dict("os.environ", {
+                        "PLEAZYNG_CAPTURE_FROZEN_PRODUCT_SOURCE_SHA": product_sha,
+                        "PLEAZYNG_CAPTURE_FROZEN_PRODUCT_SOURCE_TAG": f"v3.0.37-candidate.{product_sha}",
+                        "PLEAZYNG_CAPTURE_TOOLS_SHA": tools_sha,
+                    }), \
+                    patch.object(capture, "_git_output", side_effect=git_output):
+                lineage = capture.source_lineage(product_root, approval_root)
+
+        self.assertEqual(packaging_sha, lineage["product_source_sha"])
+        self.assertEqual(product_sha, lineage["related_frozen_product_source_sha"])
+        self.assertEqual(packaging_sha, lineage["packaging_source_sha"])
+        self.assertEqual(tools_sha, lineage["workflow_source_sha"])
+        self.assertEqual(manifest_blob, lineage["approval_blob_sha"])
+        self.assertEqual(files, lineage["approval_file_blobs"])
+
+    def test_nonbaseline_source_lineage_rejects_a_changed_file_set(self) -> None:
+        packaging_sha = "9b1552e8ba7a206a4c05ecc934976358566744f2"
+        product_sha = SOURCE_SHA
+        tools_sha = "2305765b75d63565f9ad67e36dc9929b23d745a5"
+        files = {"tvos/scripts/wire_plugins.rb": "2" * 40}
+        manifest_bytes = (json.dumps({"repairs": [{
+            "product_source_sha": product_sha,
+            "packaging_source_sha": packaging_sha,
+            "files": files,
+        }]}, separators=(",", ":")) + "\n").encode()
+        manifest_blob = hashlib.sha1(b"blob " + str(len(manifest_bytes)).encode() + b"\0" + manifest_bytes).hexdigest()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            product_root = root / "product"
+            approval_root = root / "capture-tools"
+            product_root.mkdir()
+            manifest_path = approval_root / ".github" / "release-packaging-repairs.json"
+            manifest_path.parent.mkdir(parents=True)
+            manifest_path.write_bytes(manifest_bytes)
+
+            def git_output(repository: Path, *arguments: str) -> str:
+                if arguments == ("cat-file", "-t", f"refs/tags/v3.0.37-candidate.{product_sha}"):
+                    return "tag"
+                if arguments == ("rev-parse", f"refs/tags/v3.0.37-candidate.{product_sha}^{{commit}}"):
+                    return product_sha
+                if arguments == ("rev-parse", "HEAD"):
+                    return tools_sha
+                if arguments == ("rev-parse", f"{tools_sha}:.github/release-packaging-repairs.json"):
+                    return manifest_blob
+                if arguments[:1] == ("rev-list",):
+                    return f"{packaging_sha} {product_sha}"
+                if arguments[:1] == ("diff-tree",):
+                    return "tvos/scripts/wire_plugins.rb\nREADME.md"
+                raise AssertionError((repository, arguments))
+
+            with patch.object(capture, "SOURCE_SHA", packaging_sha), \
+                    patch.object(capture, "SOURCE_TAG", f"v3.0.37-candidate.{packaging_sha}"), \
+                    patch.dict("os.environ", {
+                        "PLEAZYNG_CAPTURE_FROZEN_PRODUCT_SOURCE_SHA": product_sha,
+                        "PLEAZYNG_CAPTURE_FROZEN_PRODUCT_SOURCE_TAG": f"v3.0.37-candidate.{product_sha}",
+                        "PLEAZYNG_CAPTURE_TOOLS_SHA": tools_sha,
+                    }), \
+                    patch.object(capture, "_git_output", side_effect=git_output):
+                with self.assertRaisesRegex(ValueError, "changed-file set"):
+                    capture.source_lineage(product_root, approval_root)
+
 
 class TvOSSimulatorCleanupTests(unittest.TestCase):
     def test_accepts_only_the_specific_already_stopped_cleanup_result(self) -> None:
@@ -362,6 +473,70 @@ class TvOSSimulatorCleanupTests(unittest.TestCase):
         self.assertEqual(simulator_launch_pid("org.snapetech.pleazyng: 6612\n"), 6612)
         self.assertIsNone(simulator_launch_pid("org.snapetech.pleazyng: not-a-pid\n"))
         self.assertIsNone(simulator_launch_pid("org.snapetech.other: 6612\n"))
+
+
+class TvOSSimulatorFrameworkClosureTests(unittest.TestCase):
+    def make_app(self, root: Path) -> Path:
+        app = root / "Runner.app"
+        framework = app / "Frameworks" / "AMSMB2.framework" / "AMSMB2"
+        framework.parent.mkdir(parents=True)
+        framework.write_bytes(bytes.fromhex("feedfacf") + b"framework")
+        executable = app / "Runner"
+        app.mkdir(exist_ok=True)
+        executable.write_bytes(bytes.fromhex("feedfacf") + b"runner")
+        executable.chmod(0o755)
+        (app / "Runner.debug.dylib").write_bytes(bytes.fromhex("feedfacf") + b"debug")
+        (app / "Info.plist").write_bytes(plistlib.dumps({
+            "CFBundleIdentifier": BUNDLE_ID,
+            "CFBundleShortVersionString": VERSION,
+            "CFBundleVersion": BUILD_NUMBER,
+            "CFBundleExecutable": "Runner",
+        }))
+        return app
+
+    def run_output(self, command: list[str], *, weak: bool = False, **_kwargs: object) -> str:
+        if "-archs" in command:
+            return f"Non-fat file: {command[-1]} is architecture: arm64"
+        binary = Path(command[-1])
+        if binary.name == "Runner.debug.dylib":
+            load_command = "LC_LOAD_WEAK_DYLIB" if weak else "LC_LOAD_DYLIB"
+            return (
+                f"cmd {load_command}\ncmdsize 64\n"
+                "name @rpath/AMSMB2.framework/AMSMB2 (offset 24)\n"
+                "cmd LC_RPATH\ncmdsize 32\npath @executable_path/Frameworks (offset 12)\n"
+            )
+        return ""
+
+    def test_accepts_strong_amsmb2_load_resolved_by_app_rpath(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            app = self.make_app(Path(temporary))
+            with patch("capture_apple_store_screenshots.run", side_effect=self.run_output):
+                result = verify_tvos_simulator_framework_bundle(app)
+
+        self.assertEqual("passed", result["status"], result["errors"])
+        self.assertEqual(1, len(result["loaders"]))
+        self.assertEqual("LC_LOAD_DYLIB", result["loaders"][0]["command"])
+        self.assertEqual("Frameworks/AMSMB2.framework/AMSMB2", result["loaders"][0]["resolved_path"])
+
+    def test_rejects_missing_framework_even_with_matching_strong_install_name(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            app = self.make_app(Path(temporary))
+            framework = app / "Frameworks" / "AMSMB2.framework" / "AMSMB2"
+            framework.unlink()
+            with patch("capture_apple_store_screenshots.run", side_effect=self.run_output):
+                result = verify_tvos_simulator_framework_bundle(app)
+
+        self.assertEqual("failed", result["status"])
+        self.assertTrue(any("does not contain a regular AMSMB2" in item for item in result["errors"]))
+
+    def test_rejects_weak_amsmb2_load(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            app = self.make_app(Path(temporary))
+            with patch("capture_apple_store_screenshots.run", side_effect=lambda cmd, **kwargs: self.run_output(cmd, weak=True)):
+                result = verify_tvos_simulator_framework_bundle(app)
+
+        self.assertEqual("failed", result["status"])
+        self.assertTrue(any("only weakly loaded" in item for item in result["errors"]))
 
 
 if __name__ == "__main__":

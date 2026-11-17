@@ -714,7 +714,10 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
         self.assertIn("APPLE_STORE_BUILD_RECEIPT=$RUNNER_TEMP/apple-store-build-tvos-restored/build-provenance.json", WORKFLOW)
         self.assertIn("APPLE_STORE_BUILD_RECEIPT=$RUNNER_TEMP/apple-store-build-macos-restored/build-provenance.json", WORKFLOW)
         self.assertNotIn("buyProduct(identifier: lifetimeProductID", UI_TEST)
-        self.assertIn("inputs.target == 'tvos-in-use-capture-only' && 'xcode-27'", WORKFLOW)
+        self.assertIn(
+            "(inputs.target == 'tvos-in-use-capture-only' || inputs.target == 'tvos-in-use-producer-only') && 'xcode-27'",
+            WORKFLOW,
+        )
         self.assertIn("inputs.target == 'macos-in-use-capture-only' && 'xcode-27'", WORKFLOW)
 
     def test_retained_capture_jobs_select_the_supported_xcode_and_matching_sdk(self) -> None:

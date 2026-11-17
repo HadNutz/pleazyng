@@ -69,7 +69,7 @@ class AppleStoreCaptureWorkflowRoutingTests(unittest.TestCase):
             self.assertIn(f"APPLE_STORE_BUILD_RECEIPT={restored_path}", job, platform)
             self.assertIn(f"APPLE_STORE_BUILD_RECEIPT={fresh_receipt}", job, platform)
             self.assertIn(f"--build-receipt \"$APPLE_STORE_BUILD_RECEIPT\"", job, platform)
-            self.assertEqual(job.count('--build-receipt "$APPLE_STORE_BUILD_RECEIPT"'), {"ios": 1, "tvos": 2, "macos": 4}[platform])
+            self.assertEqual(job.count('--build-receipt "$APPLE_STORE_BUILD_RECEIPT"'), {"ios": 1, "tvos": 3, "macos": 4}[platform])
             self.assertNotIn(f"--build-receipt \"{restored_path}\"", job, platform)
 
             restore_name = {
@@ -173,12 +173,63 @@ class AppleStoreCaptureWorkflowRoutingTests(unittest.TestCase):
             self.assertIsNotNone(in_use_upload, platform)
             self.assertIn(target, in_use_upload.group(1), platform)
 
-        self.assertIn("EXPECTED_SOURCE_SHA: 28f417ab17a4b6dc4c2e422b27662c62f62be7fb", WORKFLOW)
-        self.assertIn("EXPECTED_SOURCE_TAG: v3.0.37-candidate.28f417ab17a4b6dc4c2e422b27662c62f62be7fb", WORKFLOW)
+        self.assertEqual(WORKFLOW.count("EXPECTED_SOURCE_SHA: 28f417ab17a4b6dc4c2e422b27662c62f62be7fb"), 2)
+        self.assertEqual(WORKFLOW.count("EXPECTED_SOURCE_TAG: v3.0.37-candidate.28f417ab17a4b6dc4c2e422b27662c62f62be7fb"), 2)
+        tvos = job_text("tvos", "macos")
+        self.assertIn("EXPECTED_SOURCE_SHA: ${{ inputs.target == 'tvos-in-use-producer-only' && '9b1552e8ba7a206a4c05ecc934976358566744f2'", tvos)
+        self.assertIn("EXPECTED_SOURCE_TAG: ${{ inputs.target == 'tvos-in-use-producer-only' && 'v3.0.37-candidate.9b1552e8ba7a206a4c05ecc934976358566744f2'", tvos)
         self.assertEqual(WORKFLOW.count("EXPECTED_VERSION: 3.0.37"), 3)
         self.assertEqual(WORKFLOW.count('EXPECTED_BUILD: "196"'), 3)
         self.assertEqual(WORKFLOW.count("git cat-file -t \"refs/tags/$EXPECTED_SOURCE_TAG\""), 3)
         self.assertEqual(WORKFLOW.count('python3 scripts/pubspec_version.py'), 3)
+
+    def test_r3_tvos_only_storekit_producer_uses_exact_repair_source_and_never_runs_mac_or_ios(self) -> None:
+        target = "tvos-in-use-producer-only"
+        ios = job_text("ios", "tvos")
+        tvos = job_text("tvos", "macos")
+        macos = job_text("macos", "package")
+        package = job_text("package", None)
+
+        self.assertIn(f"- {target}", WORKFLOW)
+        self.assertNotIn(target, ios)
+        self.assertIn(target, tvos.split("\n", 2)[1])
+        self.assertNotRegex(macos, rf"inputs\.target\s*==\s*'{target}'")
+        self.assertNotIn(target, package)
+        self.assertIn("runs-on: ${{ (inputs.target == 'tvos-in-use-capture-only' || inputs.target == 'tvos-in-use-producer-only') && 'xcode-27' || 'macos-26' }}", tvos)
+        self.assertIn("ref: ${{ inputs.target == 'tvos-in-use-producer-only' && 'v3.0.37-candidate.9b1552e8ba7a206a4c05ecc934976358566744f2'", tvos)
+        self.assertIn('git rev-parse "refs/tags/$EXPECTED_SOURCE_TAG^{commit}"', tvos)
+        self.assertIn("test \"$(git rev-parse HEAD)\" = \"$EXPECTED_SOURCE_SHA\"", tvos)
+
+        for step_name in (
+            "Setup the pinned tvOS Flutter SDK",
+            "Resolve tvOS dependencies",
+            "Build the Store-mode tvOS Simulator app",
+            "Preserve the compiled tvOS Simulator app before capture",
+        ):
+            condition = named_step_condition(tvos, step_name)
+            self.assertNotIn(target, condition, step_name)
+
+        for step_name in (
+            "Verify the prior build artifact producer",
+            "Download prior tvOS build",
+            "Validate and restore prior tvOS build",
+        ):
+            if step_name in tvos:
+                self.assertNotIn(target, named_step_condition(tvos, step_name), step_name)
+        self.assertIn(target, named_step_condition(tvos, "Select supported Xcode and tvOS SDK for retained-app capture"))
+        self.assertIn(target, named_step_condition(tvos, "Verify the tvOS Simulator AMSMB2 strong dependency"))
+        self.assertIn(target, named_step_condition(tvos, "Capture tvOS app with native LOCALTEST trial history"))
+        self.assertNotRegex(
+            named_step_condition(tvos, "Capture the actual tvOS app screen"),
+            rf"inputs\.target\s*==\s*'{target}'",
+        )
+        capture = named_step_text(tvos, "Capture tvOS app with native LOCALTEST trial history")
+        self.assertIn("--dependency-receipt", capture)
+        self.assertIn("PLEAZYNG_CAPTURE_PRODUCT_SOURCE_SHA", capture)
+        self.assertIn("PLEAZYNG_CAPTURE_FROZEN_PRODUCT_SOURCE_SHA", capture)
+        self.assertIn("--source-lineage-root", named_step_text(tvos, "Preserve the compiled tvOS Simulator app before capture"))
+        self.assertIn("tvos-runtime-dependency-receipt.json", named_step_text(tvos, "Retain tvOS runtime dependency report"))
+        self.assertIn("apple-store-in-use-captures-tvos-v3.0.37", tvos)
 
     def test_macos_diagnostic_target_isolated_from_capture_and_build_lanes(self) -> None:
         self.assertIn("- macos-in-use-diagnostic-only", WORKFLOW)
