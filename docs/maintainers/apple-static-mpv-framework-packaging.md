@@ -37,6 +37,11 @@ The simulator probe records the complete plist, Foundation's direct plist and
 bundle identities, and checks that the bundle id and executable stay stable
 before and after notice preservation.
 
+On a reused DerivedData product, the helper refuses any pre-existing
+top-level `Resources` name, case-insensitively, and leaves its contents
+untouched. Clean and rebuild that specific app product before retrying; do not
+delete or migrate unknown bundle resources.
+
 Each build writes a JSON receipt under `DERIVED_FILE_DIR`. The receipt records
 the package revision, selected source slices, complete embedded plist content,
 Mach-O headers/build commands and load dependencies, and hashes/sizes for

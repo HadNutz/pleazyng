@@ -481,6 +481,29 @@ class XcodePhaseIntegrationTests(unittest.TestCase):
                 mac_app / "Contents/Resources",
             )
 
+    def test_mobile_resource_root_refuses_casefold_reserved_paths_without_deleting_them(self) -> None:
+        for name in ("Resources", "resources", "RESOURCES"):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temp:
+                app = Path(temp) / "Runner.app"
+                reserved = app / name
+                marker = reserved / "preserve-me.txt"
+                marker.parent.mkdir(parents=True)
+                marker.write_text("unknown existing content", encoding="utf-8")
+                with self.assertRaisesRegex(prune.PruneError, "Clean this app's DerivedData product"):
+                    prune._bundle_resources_root(app, "appletvsimulator")
+                self.assertEqual(marker.read_text(encoding="utf-8"), "unknown existing content")
+
+        with tempfile.TemporaryDirectory() as temp:
+            app = Path(temp) / "Runner.app"
+            app.mkdir()
+            target = Path(temp) / "preserved-resource-target"
+            target.mkdir()
+            (target / "keep.txt").write_text("keep", encoding="utf-8")
+            (app / "ReSoUrCeS").symlink_to(target, target_is_directory=True)
+            with self.assertRaisesRegex(prune.PruneError, "reserved top-level Resources path"):
+                prune._bundle_resources_root(app, "appletvos")
+            self.assertTrue((target / "keep.txt").is_file())
+
     def test_tvos_amsmb2_dynamic_product_is_embedded_and_signed_before_pruning(self) -> None:
         repo = Path(__file__).resolve().parents[2]
         project = (repo / "tvos/Runner.xcodeproj/project.pbxproj").read_text(encoding="utf-8")

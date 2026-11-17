@@ -115,6 +115,10 @@ def _frameworks_path(app: Path) -> Path:
     return app / "Frameworks"
 
 
+def _reserved_mobile_resources(app: Path) -> list[str]:
+    return sorted(child.name for child in app.iterdir() if child.name.casefold() == "resources")
+
+
 def _verify_app_bundle_info(app: Path, output_dir: Path) -> dict[str, Any]:
     path = app / "Info.plist"
     if path.is_symlink() or not path.is_file():
@@ -499,8 +503,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         raise ProbeError("Baseline install did not reproduce the known codeless static-framework plist failure")
     baseline_snapshot = _capture_app_bundle_snapshot(app, output_dir, stage="after-baseline")
     _require_unchanged_app_info(baseline_snapshot, app_bundle_info["sha256"])
-    if (app / "Resources").exists():
-        raise ProbeError("Probe app unexpectedly contains a reserved top-level Resources directory before pruning")
+    if reserved := _reserved_mobile_resources(app):
+        raise ProbeError(f"Probe app unexpectedly contains reserved top-level Resources paths before pruning: {reserved}")
 
     apply_command = [
         "python3", str(source_root / "scripts/apple/prune_static_mpv_frameworks.py"),
@@ -519,8 +523,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             raise ProbeError(f"Verified static framework wrapper remains after pruning: {framework['name']}")
     post_prune_snapshot = _capture_app_bundle_snapshot(app, output_dir, stage="after-prune")
     _require_unchanged_app_info(post_prune_snapshot, app_bundle_info["sha256"])
-    if (app / "Resources").exists():
-        raise ProbeError("Mobile notice preservation created a reserved top-level Resources directory")
+    if reserved := _reserved_mobile_resources(app):
+        raise ProbeError(f"Mobile notice preservation created reserved top-level Resources paths: {reserved}")
     foundation_after_prune = _inspect_foundation_bundle(app, output_dir, stage="after-prune")
     _require_same_foundation_bundle_identity(
         foundation_before_prune,

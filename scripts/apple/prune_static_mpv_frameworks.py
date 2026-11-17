@@ -545,6 +545,15 @@ def _bundle_resources_root(app_path: Path, platform_name: str) -> Path:
         if contents.is_symlink() or not contents.is_dir():
             raise PruneError(f"macOS app is missing Contents: {app_path}")
         return contents / "Resources"
+    reserved = sorted(
+        (child for child in app_path.iterdir() if child.name.casefold() == "resources"),
+        key=lambda child: child.name,
+    )
+    if reserved:
+        raise PruneError(
+            f"Mobile app contains reserved top-level Resources path {reserved[0]}; "
+            "refusing to remove unknown contents. Clean this app's DerivedData product and rebuild before pruning."
+        )
     # iOS and tvOS apps use a flat bundle layout. A top-level Resources
     # directory changes CFBundle's layout classification and makes it look
     # for the app plist in Resources/Info.plist. Keep notice payloads in a
