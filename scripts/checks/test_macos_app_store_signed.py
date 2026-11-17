@@ -169,6 +169,16 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         self.assertIn('"labels":["self-hosted","macOS","ARM64","private-apple"', runner)
         self.assertIn(f'"gha-{{0}}-{job.group(1)}"', runner)
 
+        self.assertNotIn("ruby/setup-ruby", workflow)
+        self.assertIn("BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile", workflow)
+        self.assertIn("BUNDLE_PATH: ${{ runner.temp }}/fastlane-bundle", workflow)
+        self.assertIn('BUNDLE_FROZEN: "true"', workflow)
+        bundle_step = workflow.split(
+            "- name: Install the locked Fastlane bundle in runner temp", 1
+        )[1].split("\n      - ", 1)[0]
+        self.assertIn('gem install bundler --version "$bundler_version"', bundle_step)
+        self.assertIn("bundle install --jobs 4 --retry 3", bundle_step)
+
     def test_existing_certificate_without_local_key_tries_additive_cert_without_revocation(self):
         certificate = {
             "id": "existing-certificate",

@@ -23,6 +23,9 @@ concurrency:
 env:
   GH_TOKEN: ${{ github.token }}
   PUB_CACHE: ${{ github.workspace }}/.cache/plezy-pub-cache
+  BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile
+  BUNDLE_PATH: ${{ runner.temp }}/fastlane-bundle
+  BUNDLE_FROZEN: "true"
   FLUTTER_SUPPRESS_ANALYTICS: "true"
   DASH__SUPPRESS_ANALYTICS: "true"
   TRUSTED_BUILD_CACHE_VERSION: trusted-build-v1
@@ -134,10 +137,23 @@ jobs:
           PLEAZYNG_APPLE_SOURCE_ROOT: ${{ github.workspace }}/source
         run: scripts/refresh_apple_spm.sh macos
 
-      - uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
-        with:
-          ruby-version: "3.3"
-          bundler-cache: true
+      - name: Install the locked Fastlane bundle in runner temp
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/bin:$PATH"
+          [[ "$GEM_HOME" == "$RUNNER_TEMP/cocoapods-gems" ]]
+          bundler_version="$(awk '$0 == "BUNDLED WITH" { getline; sub(/^[[:space:]]+/, ""); print; exit }' Gemfile.lock)"
+          if [[ ! "$bundler_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Gemfile.lock has no supported pinned Bundler version." >&2
+            exit 1
+          fi
+          gem install bundler --version "$bundler_version" --no-document \
+            --install-dir "$GEM_HOME" \
+            --bindir "$RUNNER_TEMP/cocoapods-bin"
+          export GEM_PATH="$GEM_HOME:${GEM_PATH:-$(gem env gempath)}"
+          export PATH="$RUNNER_TEMP/cocoapods-bin:/opt/homebrew/bin:$PATH"
+          bundle install --jobs 4 --retry 3
 
       - name: Build, sign, export, upload and verify the exact Mac App Store build
         env:
