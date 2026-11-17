@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Retry failed HLS media segments and report unsupported disc types before opening them when mpv has reported its protocol inventory.
+
 - Discover JPEG XL files and request server audio conversion when the active mpv build lacks the selected AC-4 or MPEG-H decoder.
 
 - Fix a macOS multiview startup crash by restoring Flutter's merged platform/UI task runner.

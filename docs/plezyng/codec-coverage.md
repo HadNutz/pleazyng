@@ -63,14 +63,18 @@ source. Native webOS, Tizen and ExoPlayer never inherit mpv's inventory.
 
 ## Expanded qualification
 
-The companion producer adds a 48-case Linux release corpus covering software
-decode and seek, current codec bit depths and chroma formats, HLS/DASH VOD,
-DTS core and TrueHD PCM, and three timed text subtitle formats plus three software bitmap overlays. Eight hash-pinned
-reference vectors cover APV, VVC, EVC, AVS2, AVS3 and both JPEG XL forms.
-JPEG XL and DASH require updated published Linux and Android packages. The existing published
-Linux x64 bundle passed the 44 cases it can run and all six reference vectors.
-Its DASH demuxer is absent. The producer adds DASH to the Linux and Android
-build recipes, pending published replacement binaries for the application lock.
+The companion producer adds a 48-fixture Linux release corpus covering software
+decode and seek, codec bit depths and chroma formats, HLS/DASH VOD, DTS and
+TrueHD PCM, and six text or bitmap subtitle formats. Four passthrough cases
+check software IEC 61937 output. Eight hash-pinned reference vectors cover
+APV, VVC, EVC, AVS2, AVS3 and both JPEG XL forms.
+
+The current Linux x64 package passed 51 playback checks, including all four
+passthrough cases and three bitmap overlays. It also recovered an HLS segment
+after an injected HTTP 503. The Linux build now requires DVD and Blu-ray title
+protocols and runs an unencrypted DVD title playback test. JPEG XL, DASH and
+the Linux disc readers require updated native releases and an application
+lock update.
 See the [producer coverage report](https://github.com/snapetech-org/mpv-build/blob/main/docs/codec-coverage.md#reference-vectors-and-dash).
 
 ## Coverage order and remaining qualification

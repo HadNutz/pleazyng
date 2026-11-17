@@ -548,6 +548,7 @@ class PlayerNative extends PlayerBase
       try {
         await observeProperty('decoder-list', _nodeFormat);
         await observeProperty('demuxer-lavf-list', _nodeFormat);
+        await observeProperty('protocol-list', _nodeFormat);
       } on PlatformException {
         appLogger.d('MPV: runtime codec inventory unavailable');
       }
@@ -1084,6 +1085,10 @@ class PlayerNative extends PlayerBase
   void handlePropertyChange(String name, dynamic value, {int? sourceId}) {
     if (name == 'decoder-list') {
       RuntimePlaybackCapabilities.recordMpvDecoders(value);
+      return;
+    }
+    if (name == 'protocol-list') {
+      RuntimePlaybackCapabilities.recordMpvProtocols(value);
       return;
     }
     if (name == 'demuxer-lavf-list') {

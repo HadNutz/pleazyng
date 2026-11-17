@@ -158,6 +158,15 @@ void main() {
     );
   });
 
+  test('disc capability comes from the loaded mpv protocol inventory', () {
+    expect(RuntimePlaybackCapabilities.mpvSupportsProtocol('dvd'), isNull);
+    RuntimePlaybackCapabilities.recordMpvProtocols('["file","http","bd"]');
+    expect(RuntimePlaybackCapabilities.mpvSupportsProtocol('bd'), isTrue);
+    expect(RuntimePlaybackCapabilities.mpvSupportsProtocol('dvd'), isFalse);
+    RuntimePlaybackCapabilities.recordMpvProtocols(['file', 1]);
+    expect(RuntimePlaybackCapabilities.mpvSupportsProtocol('bd'), isTrue);
+  });
+
   test('container aliases follow the actual demuxer inventory', () {
     RuntimePlaybackCapabilities.recordMpvDemuxers(['mov,mp4,m4a,3gp,3g2,mj2', 'avi', 'mpeg', 'mpegts', 'asf', 'ogg']);
     expect(

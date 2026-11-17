@@ -9,6 +9,7 @@ import 'decoder_inventory.dart';
 abstract final class RuntimePlaybackCapabilities {
   static DecoderInventory? _mpv;
   static Set<String>? _demuxers;
+  static Set<String>? _protocols;
   static String activeVideoEngine = 'mpv';
   static final Object _videoEngineKey = Object();
   static Completer<void>? _inventoryObserved;
@@ -62,19 +63,38 @@ abstract final class RuntimePlaybackCapabilities {
     _markInventoryObserved();
   }
 
-  static void recordMpvDemuxers(Object? value) {
+  /// Null means that the native library has not reported an inventory yet.
+  static bool? mpvSupportsProtocol(String scheme) => _protocols?.contains(scheme);
+
+  static void recordMpvProtocols(Object? value) {
+    final names = _parseMpvNames(value);
+    final schemePattern = RegExp(r'^[a-z0-9.+-]{1,256}$');
+    if (names != null && names.every(schemePattern.hasMatch)) {
+      _protocols = Set.unmodifiable(names);
+    }
+  }
+
+  static List<String>? _parseMpvNames(Object? value) {
     if (value is String) {
-      if (value.length > 512 * 1024) return;
+      if (value.length > 512 * 1024) return null;
       try {
         value = jsonDecode(value);
       } on FormatException {
-        return;
+        return null;
       }
     }
-    if (value is! List || value.isEmpty || value.length > 4096) return;
+    if (value is! List || value.isEmpty || value.length > 4096 || !value.every((name) => name is String)) {
+      return null;
+    }
+    return value.cast<String>();
+  }
+
+  static void recordMpvDemuxers(Object? value) {
+    final names = _parseMpvNames(value);
+    if (names == null) return;
     final result = <String>{};
-    for (final entry in value) {
-      if (entry is! String || !RegExp(r'^[a-zA-Z0-9_,.-]{1,256}$').hasMatch(entry)) return;
+    for (final entry in names) {
+      if (!RegExp(r'^[a-zA-Z0-9_,.-]{1,256}$').hasMatch(entry)) return;
       result.addAll(entry.split(','));
     }
     _demuxers = Set.unmodifiable(result);
@@ -150,12 +170,14 @@ abstract final class RuntimePlaybackCapabilities {
     _inventoryObserved = null;
     _mpv = null;
     _demuxers = null;
+    _protocols = null;
     activeVideoEngine = 'mpv';
   }
 
   static Map<String, Object?> toJson() => {
     'activeVideoEngine': activeVideoEngine,
     'mpv': _mpv?.toJson(),
+    'protocols': _protocols == null ? null : (_protocols!.toList()..sort()),
     'demuxers': _demuxers == null ? null : (_demuxers!.toList()..sort()),
     'note': 'Decoder enumeration does not establish hardware, profile, real-time or output qualification.',
   };

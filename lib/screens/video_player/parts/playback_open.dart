@@ -1186,13 +1186,15 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
     // leaves open without data or error — observed when the request races a
     // transcoder seek/restart — buffers forever (#1859). An explicit
     // network-timeout bounds each stalled read and the demuxer-level
-    // reconnect options re-request the same segment instead of skipping its
-    // content. 20s sits above the segment-serve latency of a struggling
-    // transcode (reads that deliver any bytes reset the clock) and a false
-    // trip is a Range-resumed reconnect, not an error.
+    // reconnect options recover interrupted reads. A short retry budget
+    // also re-requests segments whose initial HTTP open failed. Reads that
+    // deliver bytes reset the 20 second timeout for a slow transcoder.
     if (isNetworkVod && isTranscoding) {
       await player.setProperty('network-timeout', '20');
-      await player.setProperty('demuxer-lavf-o', 'reconnect=1,reconnect_streamed=1,reconnect_on_network_error=1');
+      await player.setProperty(
+        'demuxer-lavf-o',
+        'reconnect=1,reconnect_streamed=1,reconnect_on_network_error=1,seg_max_retry=2',
+      );
     } else {
       // mpv's documented default network-timeout.
       await player.setProperty('network-timeout', '60');

@@ -12,6 +12,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../focus/focusable_text_field.dart';
 import '../../i18n/strings.g.dart';
+import '../../media/runtime_playback_capabilities.dart';
 import '../../services/settings_service.dart';
 import '../../sources/source_controller.dart';
 import '../../sources/media_capture.dart';
@@ -306,13 +307,17 @@ class _OpenMediaScreenState extends State<OpenMediaScreen> {
 
   Future<void> _openStream() => _run(() => _openAddress());
 
-  Future<void> _openDisc(String address, String title, {required bool audio}) => _run(
-    () => _startItems(
-      [UniversalMediaItem(title: title, uri: Uri.parse(address))],
+  Future<void> _openDisc(String address, String title, {required bool audio}) => _run(() async {
+    final uri = Uri.parse(address);
+    if (RuntimePlaybackCapabilities.mpvSupportsProtocol(uri.scheme) == false) {
+      throw const SourceException(SourceFailure.unsupported);
+    }
+    await _startItems(
+      [UniversalMediaItem(title: title, uri: uri)],
       title,
       audio: audio,
-    ),
-  );
+    );
+  });
 
   Future<void> _saveCurrentFavorite() async {
     try {
