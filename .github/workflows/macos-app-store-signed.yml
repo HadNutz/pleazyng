@@ -9,6 +9,11 @@ on:
         required: true
         type: string
         default: v3.0.36
+      preflight_only:
+        description: Verify persistent signing identities locally without building or uploading
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   actions: read
@@ -60,6 +65,7 @@ jobs:
             --main-commit "$GITHUB_SHA"
 
       - name: Configure isolated Ruby bundle path
+        if: inputs.preflight_only != true
         shell: bash
         run: echo "BUNDLE_PATH=$RUNNER_TEMP/fastlane-bundle" >> "$GITHUB_ENV"
 
@@ -77,22 +83,40 @@ jobs:
             --capacity-root "source=$GITHUB_WORKSPACE/source" \
             --capacity-root "runner-temp=$RUNNER_TEMP"
 
+      - name: Verify persistent signing identities with local signing probes
+        if: inputs.preflight_only == true
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+          python3 scripts/build_macos_app_store_signed.py \
+            --local-signing-preflight-only \
+            --release-tag "$RELEASE_TAG" \
+            --source-dir "$GITHUB_WORKSPACE/source" \
+            --output-dir "$RUNNER_TEMP/macos-app-store-output"
+
       - name: Load Flutter version pinned by release source
+        if: inputs.preflight_only != true
         working-directory: source
         run: python3 scripts/flutter/load_sdk_pin.py --github-env
 
       - name: Setup Flutter
+        if: inputs.preflight_only != true
         uses: ./.github/actions/setup-flutter-apple
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Cache Pub dependencies
+        if: inputs.preflight_only != true
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ env.PUB_CACHE }}
           key: ${{ env.TRUSTED_BUILD_CACHE_VERSION }}-${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ hashFiles('source/pubspec.yaml', 'source/pubspec.lock') }}
 
       - name: Install native build tools
+        if: inputs.preflight_only != true
         shell: bash
         run: |
           set -euo pipefail
@@ -103,6 +127,7 @@ jobs:
           cmake --version
 
       - name: Install CocoaPods
+        if: inputs.preflight_only != true
         shell: bash
         run: |
           set -euo pipefail
@@ -123,19 +148,23 @@ jobs:
           pod --version
 
       - name: Install locked Flutter dependencies
+        if: inputs.preflight_only != true
         working-directory: source
         run: flutter pub get --enforce-lockfile --no-example
 
       - name: Prefetch checksum-pinned macOS native downloads
+        if: inputs.preflight_only != true
         working-directory: source
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 scripts/prepare_native_downloads.py --sqlite-platform macos
 
       - name: Prepare run-local Swift package checkout
+        if: inputs.preflight_only != true
         run: mkdir -p "$GITHUB_WORKSPACE/source/build/macos/SourcePackages"
 
       - name: Refresh pinned mpv Swift packages
+        if: inputs.preflight_only != true
         env:
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
@@ -146,6 +175,7 @@ jobs:
             --main-commit "$GITHUB_SHA"
 
       - name: Install the locked Fastlane bundle in runner temp
+        if: inputs.preflight_only != true
         shell: bash
         run: |
           set -euo pipefail
@@ -164,6 +194,7 @@ jobs:
           bundle install --jobs 4 --retry 3
 
       - name: Build, sign, export, upload and verify the exact Mac App Store build
+        if: inputs.preflight_only != true
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -182,7 +213,7 @@ jobs:
             --derived-data "$RUNNER_TEMP/macos-app-store-derived-data"
 
       - name: Attest uploaded installer package
-        if: success()
+        if: success() && inputs.preflight_only != true
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: ${{ runner.temp }}/macos-app-store-output/pleazyng-macos-appstore.pkg

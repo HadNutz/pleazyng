@@ -84,13 +84,15 @@ The controller accepts only trusted `workflow_dispatch` runs from PlezyNG
 preserves launcher logs, GitHub job logs, and `_diag` archives in the supplied
 evidence directory.
 
-The standalone signed Mac App Store workflow also needs this controller:
+The standalone signed Mac App Store workflow also needs this controller. First
+set `preflight_only=true` to validate the existing signing identities with a
+temporary local app and installer package; then run the normal upload mode with
+`preflight_only=false` after the preflight receipt succeeds. For either mode,
 `gh workflow run macos-app-store-signed.yml --ref main -f release_tag="$TAG"`
-queues its single Apple job but does not provision the Mac runner. Capture the
-resulting run ID and pass it to `launch_queued_apple_jit_jobs.py` with the task's
-`apple-jit-evidence` scratch directory as shown above. Keep the controller
-attached until signing, upload verification, post-job cleanup, and diagnostic
-archival finish. The workflow path must remain selected in the
+queues the Apple job but does not provision the Mac runner. Pass its run ID to
+`launch_queued_apple_jit_jobs.py` with the task's `apple-jit-evidence` scratch
+directory as shown above. Keep the controller attached through post-job cleanup
+and diagnostic archival. The workflow path must remain selected in the
 `private-apple-builds` runner group's workflow allow-list.
 
 The iOS and macOS source workspaces use a shared local Git clone of the exact

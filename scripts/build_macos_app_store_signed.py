@@ -268,13 +268,26 @@ def persistent_signing_keychain(report: dict):
                 signing_run(["security", "lock-keychain", str(keychain)])
 
 
-def _identity_present(keychain: Path, fingerprint: str) -> bool:
-    identities = signing_run(["security", "find-identity", "-v", "-p", "codesigning", str(keychain)]).decode()
+def _identity_policy(certificate_type: str) -> str:
+    if certificate_type == APP_CERTIFICATE_TYPE:
+        return "codesigning"
+    if certificate_type == INSTALLER_CERTIFICATE_TYPE:
+        # Installer certificates are not valid for the macOS code-signing
+        # policy. `basic` lists their certificate/private-key identity;
+        # productsign verifies package-signing use separately.
+        return "basic"
+    raise ValueError("Unsupported Mac App Store certificate type")
+
+
+def _identity_present(keychain: Path, fingerprint: str, certificate_type: str) -> bool:
+    identities = signing_run([
+        "security", "find-identity", "-v", "-p", _identity_policy(certificate_type), str(keychain)
+    ]).decode()
     return fingerprint in identities
 
 
 def _keychain_identity_names(keychain: Path) -> list[str]:
-    output = signing_run(["security", "find-identity", "-v", "-p", "codesigning", str(keychain)]).decode()
+    output = signing_run(["security", "find-identity", "-v", "-p", "basic", str(keychain)]).decode()
     return re.findall(r'\"([^\"]+)\"', output)
 
 
@@ -349,7 +362,8 @@ def _pending_directory() -> Path:
     return pending
 
 
-def _import_certificate(keychain: Path, certificate_der: bytes, key_path: Path, stage: Path) -> str:
+def _import_certificate(keychain: Path, certificate_der: bytes, key_path: Path, stage: Path,
+                        certificate_type: str) -> str:
     if _private_key_public_key(key_path) != _certificate_public_key(certificate_der, stage):
         raise ValueError("Apple certificate does not match its locally retained private key")
     fingerprint = certificate_fingerprint(certificate_der)
@@ -367,14 +381,14 @@ def _import_certificate(keychain: Path, certificate_der: bytes, key_path: Path, 
         os.chmod(p12_path, 0o600)
         keychain_password = _keychain_password()
         signing_run(["security", "import", str(p12_path), "-k", str(keychain), "-P", private_password,
-                     "-T", "/usr/bin/codesign"])
+                     "-T", "/usr/bin/codesign", "-T", "/usr/bin/productsign"])
         signing_run(["security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:",
                      "-s", "-k", keychain_password, str(keychain)])
     finally:
         os.environ.pop(password_env_name, None)
         p12_path.unlink(missing_ok=True)
         cert_path.unlink(missing_ok=True)
-    if not _identity_present(keychain, fingerprint):
+    if not _identity_present(keychain, fingerprint, certificate_type):
         raise ValueError("Imported Mac App Store certificate has no valid private-key identity")
     return fingerprint
 
@@ -400,7 +414,7 @@ def ensure_macos_certificates(api: AppleProfileAPI, keychain: Path, stage: Path)
         for item in active:
             certificate_der = _certificate_data(item, certificate_type)
             fingerprint = certificate_fingerprint(certificate_der)
-            identity_present = _identity_present(keychain, fingerprint)
+            identity_present = _identity_present(keychain, fingerprint, certificate_type)
             pending_key = _pending_key_for_certificate(certificate_type, certificate_der, stage)
             if identity_present or pending_key:
                 selected = (item, certificate_der, fingerprint, pending_key)
@@ -408,10 +422,10 @@ def ensure_macos_certificates(api: AppleProfileAPI, keychain: Path, stage: Path)
         if selected:
             item, certificate_der, fingerprint, pending_key = selected
             if pending_key:
-                if not _identity_present(keychain, fingerprint):
-                    _import_certificate(keychain, certificate_der, pending_key, stage)
-                pending_key.unlink(missing_ok=True)
-                pending_key.with_name(pending_key.name.removesuffix(".key.pem") + ".csr").unlink(missing_ok=True)
+                if not _identity_present(keychain, fingerprint, certificate_type):
+                    _import_certificate(keychain, certificate_der, pending_key, stage, certificate_type)
+                # Keep the matching 0600 recovery key and CSR alongside the
+                # persistent keychain so a future Mac migration can recover.
             result[certificate_type] = {"id": item["id"], "der": certificate_der,
                                         "fingerprint": fingerprint,
                                         "expiration": item.get("attributes", {}).get("expirationDate")}
@@ -436,9 +450,7 @@ def ensure_macos_certificates(api: AppleProfileAPI, keychain: Path, stage: Path)
         if not isinstance(created.get("id"), str) or not created["id"]:
             raise ValueError("Apple did not return an identifier for the new Mac App Store certificate")
         certificate_der = _certificate_data(created, certificate_type)
-        fingerprint = _import_certificate(keychain, certificate_der, key_path, stage)
-        key_path.unlink(missing_ok=True)
-        csr_path.unlink(missing_ok=True)
+        fingerprint = _import_certificate(keychain, certificate_der, key_path, stage, certificate_type)
         result[certificate_type] = {"id": created.get("id"), "der": certificate_der,
                                     "fingerprint": fingerprint,
                                     "expiration": created.get("attributes", {}).get("expirationDate")}
@@ -531,6 +543,110 @@ def ensure_macos_profile(api: AppleProfileAPI, stage: Path, *, team: str,
     profile_path.write_bytes(data)
     profile = plistlib.loads(signing_run(["security", "cms", "-D", "-i", str(profile_path)]))
     return data, validate_macos_profile(profile, team=team, certificate=certificate)
+
+
+def _local_identity_record(keychain: Path, certificate_type: str, team: str) -> dict[str, str]:
+    policy = _identity_policy(certificate_type)
+    output = signing_run(["security", "find-identity", "-v", "-p", policy, str(keychain)]).decode()
+    expected = ("3rd Party Mac Developer Application:" if certificate_type == APP_CERTIFICATE_TYPE
+                else "3rd Party Mac Developer Installer:")
+    matches = [
+        {"certificate_sha1": match.group(1), "name": match.group(2), "policy": policy}
+        for line in output.splitlines()
+        if (match := re.match(r'\s*\d+\) ([0-9A-F]{40}) "([^"]+)"', line))
+        and expected in match.group(2) and team in match.group(2)
+    ]
+    if len(matches) != 1:
+        raise ValueError(f"Expected exactly one valid local {certificate_type} identity for the Apple team")
+    return matches[0]
+
+
+def _test_local_signing_identities(keychain: Path, app_identity: dict[str, str],
+                                   installer_identity: dict[str, str], team: str,
+                                   stage: Path) -> dict:
+    """Exercise both signing tools with temporary, non-product payloads."""
+    app_path = stage / "Preflight.app"
+    contents = app_path / "Contents"
+    executable = contents / "MacOS/Preflight"
+    executable.parent.mkdir(mode=0o700, parents=True)
+    executable.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+    executable.chmod(0o700)
+    with (contents / "Info.plist").open("wb") as stream:
+        plistlib.dump({
+            "CFBundleIdentifier": f"{EXPECTED_BUNDLE_ID}.signing-preflight",
+            "CFBundleName": "Pleazyng Signing Preflight",
+            "CFBundleExecutable": "Preflight",
+            "CFBundlePackageType": "APPL",
+            "CFBundleShortVersionString": "1.0",
+            "CFBundleVersion": "1",
+        }, stream)
+    signing_run([
+        "/usr/bin/codesign", "--force", "--sign", app_identity["certificate_sha1"],
+        "--keychain", str(keychain), "--timestamp=none", str(app_path),
+    ])
+    signing_run(["/usr/bin/codesign", "--verify", "--strict", "--deep", str(app_path)])
+
+    payload = stage / "package-payload"
+    payload.mkdir(mode=0o700)
+    (payload / "preflight.txt").write_text("Temporary Mac installer signing check.\n", encoding="utf-8")
+    unsigned_package = stage / "preflight-unsigned.pkg"
+    signed_package = stage / "preflight-signed.pkg"
+    signing_run([
+        "/usr/bin/pkgbuild", "--root", str(payload), "--identifier",
+        f"{EXPECTED_BUNDLE_ID}.signing-preflight", "--version", "1",
+        "--install-location", "/tmp/pleazyng-signing-preflight", str(unsigned_package),
+    ])
+    signing_run([
+        "/usr/bin/productsign", "--sign", installer_identity["certificate_sha1"],
+        "--keychain", str(keychain), str(unsigned_package), str(signed_package),
+    ])
+    package_signature = _capture(["/usr/sbin/pkgutil", "--check-signature", str(signed_package)]).decode(
+        errors="replace")
+    if "3rd Party Mac Developer Installer" not in package_signature or team not in package_signature:
+        raise ValueError("Temporary installer package did not verify with the expected Mac App Store identity")
+    return {"app_bundle_signed_and_verified": True, "installer_package_signed_and_verified": True}
+
+
+def run_local_signing_preflight(source_dir: Path, source: dict[str, str], team: str,
+                                output_dir: Path, report_path: Path, report: dict,
+                                package_lock_snapshots: tuple[dict, ...]) -> int:
+    """Verify persisted identities without creating Apple certificates or building the app."""
+    if output_dir.exists() or output_dir.is_symlink():
+        raise FileExistsError("Refusing to overwrite a Mac App Store signing preflight output")
+    output_dir.mkdir(mode=0o700, parents=True)
+    report.update(source)
+    report["candidate_state"] = "signing-identities-verified"
+    report["capacity_preflights"] = [capacity_preflight([
+        ("source", source_dir),
+        ("preflight-output", output_dir),
+        ("runner-temp", Path(tempfile.gettempdir())),
+        ("persistent-keychain", Path.home() / "Library/Keychains"),
+    ], SIGNING_CAPACITY_GIB)]
+    report["macos_swift_package_locks"] = macos_package_lock_receipt(
+        package_lock_snapshots, restored=True)
+    with persistent_signing_keychain(report) as keychain:
+        app_identity = _local_identity_record(keychain, APP_CERTIFICATE_TYPE, team)
+        installer_identity = _local_identity_record(keychain, INSTALLER_CERTIFICATE_TYPE, team)
+        with tempfile.TemporaryDirectory(prefix="pleazyng-macos-signing-preflight-",
+                                         dir=output_dir) as temporary:
+            smoke_tests = _test_local_signing_identities(
+                keychain, app_identity, installer_identity, team, Path(temporary))
+        report["signing_identities"] = {
+            APP_CERTIFICATE_TYPE: app_identity,
+            INSTALLER_CERTIFICATE_TYPE: installer_identity,
+        }
+        report["local_signing_tests"] = smoke_tests
+    report["qualification"] = {
+        "app_archive_built": False,
+        "app_store_package_exported": False,
+        "app_store_connect_upload": False,
+        "app_store_connect_processed": False,
+        "storekit_purchase_restore": False,
+        "apple_review": False,
+    }
+    _write_receipt(report_path, report)
+    print(f"Verified persistent Mac App Store signing identities; receipt: {report_path}")
+    return 0
 
 
 def install_profile(profile_data: bytes, profile_uuid: str) -> list[Path]:
@@ -654,6 +770,44 @@ def _verify_installer(package_path: Path, *, team: str) -> None:
         raise ValueError("Mac App Store installer payload does not contain the Pleazyng app bundle")
 
 
+def validate_plezy_torrent_framework_metadata(app_path: Path) -> dict[str, str]:
+    """Reject a store archive whose embedded native framework lacks version metadata."""
+    framework = app_path / "Contents/Frameworks/PlezyTorrent.framework"
+    if framework.is_symlink() or not framework.is_dir():
+        raise ValueError("Mac App Store archive is missing the embedded PlezyTorrent framework")
+    resolved_app = app_path.resolve(strict=True)
+    resolved_framework = framework.resolve(strict=True)
+    if not resolved_framework.is_relative_to(resolved_app):
+        raise ValueError("Embedded PlezyTorrent framework resolves outside the app bundle")
+    info_candidates = (framework / "Info.plist", framework / "Resources/Info.plist",
+                       framework / "Versions/A/Resources/Info.plist",
+                       framework / "Versions/Current/Resources/Info.plist")
+    info_path = next((candidate for candidate in info_candidates if candidate.is_file()), None)
+    if info_path is None:
+        raise ValueError("Embedded PlezyTorrent framework is missing Info.plist")
+    if not info_path.resolve(strict=True).is_relative_to(resolved_framework):
+        raise ValueError("Embedded PlezyTorrent framework Info.plist resolves outside the framework")
+    with info_path.open("rb") as stream:
+        info = plistlib.load(stream)
+    if not isinstance(info, dict):
+        raise ValueError("Embedded PlezyTorrent framework Info.plist must contain a dictionary")
+    if info.get("CFBundleIdentifier") != "org.plezy.torrent":
+        raise ValueError("Embedded PlezyTorrent framework has an unexpected bundle identifier")
+    if info.get("CFBundlePackageType") != "FMWK":
+        raise ValueError("Embedded PlezyTorrent framework has an invalid package type")
+    version = info.get("CFBundleShortVersionString")
+    build_number = info.get("CFBundleVersion")
+    version_pattern = r"[0-9]+(?:\.[0-9]+){0,2}"
+    if (not isinstance(version, str) or not re.fullmatch(version_pattern, version)
+            or not isinstance(build_number, str)
+            or not re.fullmatch(version_pattern, build_number)):
+        raise ValueError("Embedded PlezyTorrent framework must have valid version and build metadata")
+    return {"path": info_path.relative_to(app_path).as_posix(),
+            "bundle_identifier": info["CFBundleIdentifier"],
+            "package_type": info["CFBundlePackageType"],
+            "version": version, "build_number": build_number}
+
+
 def validate_source_entitlements(source_dir: Path) -> None:
     entitlements_path = source_dir / STORE_ENTITLEMENTS
     with entitlements_path.open("rb") as stream:
@@ -706,6 +860,7 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
         ], cwd=source_dir, env=archive_env)
         app_path = archive_path / ARCHIVE_APP_SUFFIX
         app_info, architectures = inspect_app(app_path)
+        native_framework = validate_plezy_torrent_framework_metadata(app_path)
         if (app_info["version"] != source["marketing_version"]
                 or str(app_info["build_number"]) != source["build_number"]):
             raise ValueError("Built Mac app version/build differs from the selected immutable release source")
@@ -745,6 +900,7 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
             "candidate_state": "signed-awaiting-upload",
             **source,
             "application": {**app_info, "architectures": architectures},
+            "embedded_plezy_torrent_framework": native_framework,
             "app_signature": signature,
             "installer_signature": {"signed": True, "certificate_type": INSTALLER_CERTIFICATE_TYPE,
                                     "certificate_sha1": installer_fingerprint},
@@ -792,6 +948,9 @@ def run_build(args: argparse.Namespace) -> int:
         team = os.environ.get(TEAM_SECRET, "")
         if not re.fullmatch(r"[A-Z0-9]{10}", team):
             raise ValueError("APPLE_TEAM_ID is missing or invalid")
+        if args.local_signing_preflight_only:
+            return run_local_signing_preflight(
+                source_dir, source, team, args.output_dir, report_path, report, package_lock_snapshots)
         capacity_roots = [
             ("source", source_dir),
             ("package-output", args.output_dir),
@@ -909,6 +1068,8 @@ def parse_args() -> argparse.Namespace:
                         help="validate tag identity and main ancestry without running product code or signing")
     parser.add_argument("--capacity-preflight-only", action="store_true",
                         help="check free space for the named filesystem roots")
+    parser.add_argument("--local-signing-preflight-only", action="store_true",
+                        help="verify persisted Mac App Store identities with temporary local signing probes")
     parser.add_argument("--capacity-root", action="append", default=[], metavar="LABEL=PATH",
                         help="filesystem role and path to check; may be supplied more than once")
     parser.add_argument("--minimum-free-gib", type=float, default=EARLY_CAPACITY_GIB,
@@ -918,14 +1079,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--derived-data", type=Path, help="fresh runner-temporary Xcode DerivedData path")
     args = parser.parse_args()
     _safe_tag(args.release_tag)
-    if args.validate_source_only and args.capacity_preflight_only:
-        parser.error("source validation and capacity preflight are separate modes")
+    if sum((args.validate_source_only, args.capacity_preflight_only,
+            args.local_signing_preflight_only)) > 1:
+        parser.error("source validation, capacity preflight, and local signing preflight are separate modes")
     if args.validate_source_only:
         if not args.main_commit:
             parser.error("--main-commit is required with --validate-source-only")
     elif args.capacity_preflight_only:
         if not args.capacity_root:
             parser.error("--capacity-root is required with --capacity-preflight-only")
+    elif args.local_signing_preflight_only:
+        if not args.output_dir:
+            parser.error("--output-dir is required with --local-signing-preflight-only")
     elif not all((args.output_dir, args.archive_path, args.derived_data)):
         parser.error("--output-dir, --archive-path, and --derived-data are required for signing")
     return args

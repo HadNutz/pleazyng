@@ -74,11 +74,20 @@ available. If an active Mac App Distribution or Mac Installer Distribution
 certificate has no local private key, the workflow requests a separate
 certificate through the Apple API. It never revokes or replaces an existing
 certificate. Apple's account certificate limit is an external gate. The CSR
-private key is retained securely across interrupted requests, imported into
-`~/Library/Keychains/Pleazyng-Mac-App-Store.keychain-db`, and the pending copy is
-removed after the key is installed. This dedicated service keychain persists
-between signed releases and is locked when each job ends. The workflow preserves
-the user's original keychain search list and existing provisioning profiles.
+private key and CSR stay mode `0600` in the service user's recovery directory
+and are imported into `~/Library/Keychains/Pleazyng-Mac-App-Store.keychain-db`.
+This dedicated service keychain persists between signed releases and is locked
+when each job ends. The workflow preserves the user's original keychain search
+list and existing provisioning profiles.
+
+Set the manual workflow's `preflight_only` input to verify the existing App and
+Installer identities before an archive. It signs a temporary app bundle and
+installer package locally, verifies both, and uploads only a public preflight
+receipt. It does not create certificates or profiles, build Pleazyng, or call
+App Store Connect. The normal workflow mode performs the signed app build and
+upload after preflight succeeds. Before export, it also checks that the
+embedded `PlezyTorrent.framework` has its expected bundle identity and valid
+`CFBundleShortVersionString` and `CFBundleVersion` metadata.
 
 The workflow creates or reuses a `MAC_APP_STORE` profile only after checking the
 exact team, bundle ID, macOS platform, selected certificate and expiration. It

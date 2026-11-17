@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 import base64
 from pathlib import Path
+import plistlib
 import re
 import sys
 import tempfile
@@ -107,6 +108,31 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             store.validate_entitlements_data(entitlements)
 
+    def test_archive_requires_versioned_embedded_plezy_torrent_framework(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            app = Path(temporary) / "Pleazyng.app"
+            framework = app / "Contents/Frameworks/PlezyTorrent.framework/Versions/A/Resources"
+            framework.mkdir(parents=True)
+            info_path = framework / "Info.plist"
+            info = {
+                "CFBundleIdentifier": "org.plezy.torrent",
+                "CFBundlePackageType": "FMWK",
+                "CFBundleShortVersionString": "1.0.0",
+                "CFBundleVersion": "1",
+            }
+            info_path.write_bytes(plistlib.dumps(info))
+            metadata = store.validate_plezy_torrent_framework_metadata(app)
+            self.assertEqual(metadata["version"], "1.0.0")
+            self.assertEqual(metadata["build_number"], "1")
+
+            for key in ("CFBundleShortVersionString", "CFBundleVersion"):
+                with self.subTest(missing=key):
+                    invalid = dict(info)
+                    del invalid[key]
+                    info_path.write_bytes(plistlib.dumps(invalid))
+                    with self.assertRaisesRegex(ValueError, "valid version and build metadata"):
+                        store.validate_plezy_torrent_framework_metadata(app)
+
     def test_release_tag_must_be_a_versioned_annotated_tag_with_matching_source(self):
         self.assertIsNone(store._safe_tag("v3.0.36"))
         for tag in ("3.0.36", "v3.0.36-candidate", "--v3.0.36", "v3.0.36+195"):
@@ -147,6 +173,16 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         self.assertIn("capacity_preflight(capacity_roots, SIGNING_CAPACITY_GIB)",
                       (ROOT / "scripts/build_macos_app_store_signed.py").read_text(encoding="utf-8"))
 
+        preflight = workflow.index("- name: Verify persistent signing identities with local signing probes")
+        preflight_end = workflow.find("\n      - ", preflight + 1)
+        preflight_step = workflow[preflight:preflight_end]
+        self.assertLess(capacity, preflight)
+        self.assertLess(preflight, tagged_tools)
+        self.assertIn("if: inputs.preflight_only == true", preflight_step)
+        self.assertIn("--local-signing-preflight-only", preflight_step)
+        self.assertNotIn("APPLE_API_PRIVATE_KEY", preflight_step)
+        self.assertIn("if: inputs.preflight_only != true", workflow[workflow.index("- name: Load Flutter version pinned by release source"):])
+
         refresh = workflow.index("- name: Refresh pinned mpv Swift packages")
         next_step = workflow.find("\n      - ", refresh + 1)
         refresh_step = workflow[refresh:next_step]
@@ -167,6 +203,12 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         self.assertNotIn('"--no-codesign"', flutter_config_command)
         self.assertIn("preserve_macos_package_locks(source_dir)", signed_builder)
         self.assertIn('receipt["macos_swift_package_locks"]', signed_builder)
+        self.assertIn("productsign", signed_builder)
+        package_builder = signed_builder.split("def build_signed_package(", 1)[1].split("\ndef _write_receipt", 1)[0]
+        framework_validation = package_builder.index("validate_plezy_torrent_framework_metadata(app_path)")
+        package_export = package_builder.index('"xcodebuild", "-exportArchive"')
+        self.assertLess(framework_validation, package_export)
+        self.assertIn('"embedded_plezy_torrent_framework": native_framework', signed_builder)
         package_build = signed_builder.index("package_path, receipt = build_signed_package(")
         post_build_validation = signed_builder.index(
             "validate_release_source(source_dir, args.release_tag", package_build
@@ -232,6 +274,46 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
             for relative, expected in original.items():
                 self.assertEqual((root / relative).read_bytes(), expected)
             self.assertEqual(unrelated.read_text(encoding="utf-8"), "unrelated drift stays visible\n")
+
+    def test_installer_identity_uses_basic_policy_and_preserves_recovery_keys(self):
+        fingerprint = "A" * 40
+        keychain = Path("/tmp/store.keychain-db")
+        with patch.object(store, "signing_run", return_value=f'1) {fingerprint} "installer"\n'.encode()) as run:
+            self.assertTrue(store._identity_present(keychain, fingerprint, store.INSTALLER_CERTIFICATE_TYPE))
+        self.assertIn("basic", run.call_args.args[0])
+
+        certificates = []
+        pending_paths = {}
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for certificate_type in (store.APP_CERTIFICATE_TYPE, store.INSTALLER_CERTIFICATE_TYPE):
+                key_path = root / f"{certificate_type.lower()}.key.pem"
+                csr_path = root / f"{certificate_type.lower()}.csr"
+                key_path.write_text("retained private key test bytes", encoding="ascii")
+                csr_path.write_text("retained CSR test bytes", encoding="ascii")
+                key_path.chmod(0o600)
+                csr_path.chmod(0o600)
+                pending_paths[certificate_type] = key_path
+                certificates.append({
+                    "id": f"certificate-{certificate_type}",
+                    "attributes": {
+                        "certificateType": certificate_type,
+                        "certificateContent": base64.b64encode(certificate_type.encode()).decode(),
+                        "activated": True,
+                        "expirationDate": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+                    },
+                })
+            api = Mock()
+            api.items.return_value = certificates
+            with patch.object(store, "_identity_present", return_value=True), \
+                    patch.object(store, "_pending_key_for_certificate",
+                                 side_effect=lambda certificate_type, *_: pending_paths[certificate_type]):
+                result = store.ensure_macos_certificates(api, root / "keychain", root)
+            self.assertEqual(set(result), {store.APP_CERTIFICATE_TYPE, store.INSTALLER_CERTIFICATE_TYPE})
+            for key_path in pending_paths.values():
+                self.assertTrue(key_path.is_file())
+                self.assertTrue(key_path.with_name(key_path.name.removesuffix(".key.pem") + ".csr").is_file())
+            api.request.assert_not_called()
 
     def test_existing_certificate_without_local_key_tries_additive_cert_without_revocation(self):
         certificate = {
