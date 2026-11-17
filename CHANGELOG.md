@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Remove retired library integrations and their in-app borrowing flows. Public catalogue search and library website links remain available.
+
 - Translate the living-room controls and guest jukebox across all 37 supported locales, including regional inheritance.
 
 - Start or resume a focused video with the hardware Play key. Pleazyng independently adapted requests from [Plezy #1510](https://github.com/edde746/plezy/issues/1510) by [@enchained](https://github.com/enchained) and [Plezy #3038](https://github.com/edde746/plezy/issues/3038) by [@fillilutten](https://github.com/fillilutten).
@@ -137,7 +139,7 @@
 - Page publication sync catalog scans and load only entries referenced by local progress, annotations, or remote sync records.
 - Keep an offline book edition available while its reader is open, and block removal until that reader closes.
 - Move the MAL OAuth broker to a code-only handoff, restore configured-relay polling sessions, and require users to configure their own HTTPS relay for relay-backed integrations. See the [relay endpoint inventory](docs/maintainers/pleazyng-relay-endpoints.md) and [security review](server/cloudflare-oauth/security-review-20261113.md).
-- Add approved-only OverDrive Title Link search and Libby handoff, plus indexed audiobook playback through the existing Android Auto and CarPlay controls. See [LENDING_SETUP.md](docs/LENDING_SETUP.md) and the [car integration guide](docs/plezyng/music/CAR_INTEGRATION.md).
+- Add indexed audiobook playback through the existing Android Auto and CarPlay controls. See the [car integration guide](docs/plezyng/music/CAR_INTEGRATION.md).
 - Require normal Android, Linux, and Windows packages to carry a checksum-bound Dolby Vision FEL engine receipt.
 - Reset the AUR package release number when publishing a new Pleazyng version while preserving same-version maintainer revisions.
 - Keep the theme preview’s illustrative save/cancel controls out of pointer, keyboard-focus, and accessibility interaction until they have real actions.
@@ -857,7 +859,7 @@
 
 - Add feature-documentation source footers with verified upstream PR/issue/commit links and author credits, turn the README's historical ticket numbers into links, and preserve the distinction between a source proposal and delivered behavior.
 
-- Harden HTTP response memory limits, request cancellation, authenticated metadata origins, nested crash-report redaction, companion TLS admission, lending gateway concurrency, and provider request budgets. Local PINs use random-salt PBKDF2 verifiers with durable attempt limits and upgrade on successful activation; new webOS credential envelopes authenticate ciphertext and its logical key. Preserve HLS tail playback and renew active sharing leases. LAN sharing offers HTTPS and requires explicit consent for plaintext compatibility. Add automatic security regressions, enforced dependency locks, and weekly multi-ecosystem dependency maintenance. See `docs/security/audit-remediation-2026-11-09.md` for validation and remaining deployment, isolation and qualification work.
+- Harden HTTP response memory limits, request cancellation, authenticated metadata origins, nested crash-report redaction, companion TLS admission, and provider request budgets. Local PINs use random-salt PBKDF2 verifiers with durable attempt limits and upgrade on successful activation; new webOS credential envelopes authenticate ciphertext and its logical key. Preserve HLS tail playback and renew active sharing leases. LAN sharing offers HTTPS and requires explicit consent for plaintext compatibility. Add automatic security regressions, enforced dependency locks, and weekly multi-ecosystem dependency maintenance. See `docs/security/audit-remediation-2026-11-09.md` for validation and remaining deployment, isolation and qualification work.
 
 - Route trusted-main Apple validation and release builds through compatible GitHub-hosted macOS runners in the hybrid profile, retaining private Apple JIT only as an explicit fallback.
 
@@ -1442,7 +1444,7 @@
 
 - Apply the coral ribbon identity across native launchers, store artwork and in-app branding, with light/dark marks, matching wordmarks and simplified small-size icons.
 
-- Add metadata-backed mood and familiarity filters, explicit local genre taste controls with hide/restore/reset, private co-present shortlist voting, optional bounded AI reranking, Open Library catalog-only candidates, and gated borrower-catalog candidates to Find your next.
+- Add metadata-backed mood and familiarity filters, explicit local genre taste controls with hide/restore/reset, private co-present shortlist voting, optional bounded AI reranking, Open Library catalog-only candidates to Find your next.
 - Add capped, disposable OPDS sample previews, exact-ID adaptation matching, side-by-side Saved-pick comparison, and opt-in encrypted Saved-pick sync with exact-identity re-resolution.
 - Add a searchable, region-aware directory of official video, rental, book, audiobook, comics, music and game storefronts to Services and title details; add Google Books catalog search with country-specific sale metadata and official purchase handoff.
 - Add a previewed Trakt movie-history CSV export for manual Letterboxd import, preserving rewatches and splitting oversized exports into safe files.
@@ -1610,7 +1612,7 @@ This release gathers PlezyNG’s feature work since the fork, platform expansion
 
 - Add ebooks, comics and multipart audiobooks with reading preferences, zoom, bookmarks, notes, offline editions and chapter-aware controls; connect local files, OPDS, Audiobookshelf, Google Drive, OneDrive, Dropbox, WebDAV and S3-compatible storage.
 - Add Komga comic sources, ComicInfo metadata, streamed comic pages, spreads, continuous scrolling, thumbnails, touch zoom and per-comic display settings.
-- Add encrypted cross-device audiobook progress, bookmarks and notes, with public-library discovery and a default-off OverDrive/Libby handoff.
+- Add encrypted cross-device audiobook progress, bookmarks and notes, with public-library discovery.
 - Add app-wide accessibility preferences for text size, bold text, contrast, reduced motion and larger controls, along with expanded language, regional-format and metadata-language choices.
 
 #### Games, workspace and Dolby Vision

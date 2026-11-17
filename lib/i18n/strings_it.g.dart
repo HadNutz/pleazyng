@@ -3713,48 +3713,14 @@ class _Translations$lending$it extends Translations$lending$en {
 	@override String get libraryUrlHint => 'Usa il catalogo della tua biblioteca o la pagina di accesso.';
 	@override String get intro => 'Prendi in prestito dalla tua biblioteca. Tieni i tuoi libri a portata di mano.';
 	@override String get handoff => 'Accedi, prendi in prestito e leggi in sicurezza con il servizio della tua biblioteca.';
-	@override String get openService => 'Apri biblioteca';
 	@override String get findLibrary => 'Trova una biblioteca';
 	@override String get search => 'Cerca libri e autori';
-	@override String get catalogue => 'Catalogo';
-	@override String get loans => 'Prestiti';
-	@override String get holds => 'Prenotazioni';
-	@override String get signIn => 'Accedi tramite la tua biblioteca';
-	@override String get waiting => 'Completa l’accesso nel browser, poi torna qui.';
-	@override String get cancel => 'Annulla';
 	@override String get disconnect => 'Rimuovi biblioteca';
 	@override String get disconnectMessage => 'Rimuovere questa biblioteca da questo profilo? I prestiti e le prenotazioni resteranno registrati presso la biblioteca.';
-	@override String get getBook => 'Ottieni il libro';
-	@override String get checkAvailability => 'Verifica disponibilità';
-	@override String get available => 'Disponibile per il prestito';
-	@override String get unavailable => 'Al momento non disponibile';
-	@override String get borrow => 'Prendi in prestito';
-	@override String get placeHold => 'Prenota';
-	@override String get returnBook => 'Restituisci in anticipo';
-	@override String get cancelHold => 'Annulla prenotazione';
-	@override String get confirmBorrow => 'Prendere in prestito questo titolo dalla tua biblioteca?';
-	@override String get confirmReturn => 'Restituire questo titolo adesso? Potresti doverlo prendere di nuovo in prestito per continuare.';
-	@override String get confirmCancelHold => 'Annullare la prenotazione di questo titolo?';
-	@override String get email => 'Email per le notifiche sulle prenotazioni';
-	@override String due({required Object date}) => 'Scadenza: ${date}';
-	@override String queue({required Object position}) => 'Posizione in coda: ${position}';
 	@override String get empty => 'Non ci sono ancora titoli.';
 	@override String get openLibraryNote => 'Esplora il catalogo di Open Library. Le opzioni di lettura e prestito sono indicate nella pagina di ciascun titolo.';
 	@override String get more => 'Carica di più';
-	@override String get gateway => 'Servizio di accesso alla biblioteca';
-	@override String get gatewayHint => 'Fornito dalla tua biblioteca o dall’amministratore di Pleazyng.';
-	@override String get advanced => 'Integrazione della biblioteca';
-	@override String get loadLibraries => 'Scegli la tua biblioteca';
-	@override String get expired => 'Il prestito è scaduto.';
-	@override String get updated => 'Biblioteca aggiornata';
 	@override String get continueService => 'Continua nel servizio';
-	@override String get comingSoon => 'Prestiti nell’app · In arrivo';
-	@override String get comingSoonDescription => 'L’integrazione con Libby è in arrivo. Puoi usare la tua biblioteca in Libby mentre completiamo il collegamento.';
-	@override String get suspendHold => 'Sospendi prenotazione';
-	@override String get resumeHold => 'Riprendi prenotazione';
-	@override String get suspendMessage => 'Mantenere il tuo posto in coda e lasciare che il prossimo lettore prenda in prestito questa copia? Puoi riprendere la prenotazione in seguito.';
-	@override String get resumeMessage => 'Riprendere questa prenotazione per consentire alla biblioteca di offrirti la prossima copia disponibile?';
-	@override String get editEmail => 'Modifica l’email per le notifiche';
 }
 
 // Path: audiobook
@@ -9132,48 +9098,14 @@ extension on TranslationsIt {
 			'lending.libraryUrlHint' => 'Usa il catalogo della tua biblioteca o la pagina di accesso.',
 			'lending.intro' => 'Prendi in prestito dalla tua biblioteca. Tieni i tuoi libri a portata di mano.',
 			'lending.handoff' => 'Accedi, prendi in prestito e leggi in sicurezza con il servizio della tua biblioteca.',
-			'lending.openService' => 'Apri biblioteca',
 			'lending.findLibrary' => 'Trova una biblioteca',
 			'lending.search' => 'Cerca libri e autori',
-			'lending.catalogue' => 'Catalogo',
-			'lending.loans' => 'Prestiti',
-			'lending.holds' => 'Prenotazioni',
-			'lending.signIn' => 'Accedi tramite la tua biblioteca',
-			'lending.waiting' => 'Completa l’accesso nel browser, poi torna qui.',
-			'lending.cancel' => 'Annulla',
 			'lending.disconnect' => 'Rimuovi biblioteca',
 			'lending.disconnectMessage' => 'Rimuovere questa biblioteca da questo profilo? I prestiti e le prenotazioni resteranno registrati presso la biblioteca.',
-			'lending.getBook' => 'Ottieni il libro',
-			'lending.checkAvailability' => 'Verifica disponibilità',
-			'lending.available' => 'Disponibile per il prestito',
-			'lending.unavailable' => 'Al momento non disponibile',
-			'lending.borrow' => 'Prendi in prestito',
-			'lending.placeHold' => 'Prenota',
-			'lending.returnBook' => 'Restituisci in anticipo',
-			'lending.cancelHold' => 'Annulla prenotazione',
-			'lending.confirmBorrow' => 'Prendere in prestito questo titolo dalla tua biblioteca?',
-			'lending.confirmReturn' => 'Restituire questo titolo adesso? Potresti doverlo prendere di nuovo in prestito per continuare.',
-			'lending.confirmCancelHold' => 'Annullare la prenotazione di questo titolo?',
-			'lending.email' => 'Email per le notifiche sulle prenotazioni',
-			'lending.due' => ({required Object date}) => 'Scadenza: ${date}',
-			'lending.queue' => ({required Object position}) => 'Posizione in coda: ${position}',
 			'lending.empty' => 'Non ci sono ancora titoli.',
 			'lending.openLibraryNote' => 'Esplora il catalogo di Open Library. Le opzioni di lettura e prestito sono indicate nella pagina di ciascun titolo.',
 			'lending.more' => 'Carica di più',
-			'lending.gateway' => 'Servizio di accesso alla biblioteca',
-			'lending.gatewayHint' => 'Fornito dalla tua biblioteca o dall’amministratore di Pleazyng.',
-			'lending.advanced' => 'Integrazione della biblioteca',
-			'lending.loadLibraries' => 'Scegli la tua biblioteca',
-			'lending.expired' => 'Il prestito è scaduto.',
-			'lending.updated' => 'Biblioteca aggiornata',
 			'lending.continueService' => 'Continua nel servizio',
-			'lending.comingSoon' => 'Prestiti nell’app · In arrivo',
-			'lending.comingSoonDescription' => 'L’integrazione con Libby è in arrivo. Puoi usare la tua biblioteca in Libby mentre completiamo il collegamento.',
-			'lending.suspendHold' => 'Sospendi prenotazione',
-			'lending.resumeHold' => 'Riprendi prenotazione',
-			'lending.suspendMessage' => 'Mantenere il tuo posto in coda e lasciare che il prossimo lettore prenda in prestito questa copia? Puoi riprendere la prenotazione in seguito.',
-			'lending.resumeMessage' => 'Riprendere questa prenotazione per consentire alla biblioteca di offrirti la prossima copia disponibile?',
-			'lending.editEmail' => 'Modifica l’email per le notifiche',
 			'audiobook.syncTitle' => 'Sincronizzazione di lettura e ascolto',
 			'audiobook.syncHelp' => 'Sincronizza tra i tuoi dispositivi le posizioni di lettura e ascolto, lo stato di completamento, i segnalibri e le note. Scegli un account di archiviazione collegato e usa lo stesso codice di sincronizzazione su ogni dispositivo. Lettura e ascolto restano separati.',
 			'audiobook.addSyncSource' => 'Aggiungi prima Google Drive, OneDrive, Dropbox, WebDAV o S3 in File e libri.',
@@ -9223,8 +9155,6 @@ extension on TranslationsIt {
 			'audiobook.statusFinished' => 'Completato',
 			'audiobook.goToTime' => 'Vai al tempo indicato',
 			'audiobook.timeHelp' => 'ore:minuti:secondi oppure minuti:secondi',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Esportare una copia recentemente crittografata prima di spostare o riparare i dati di sincronizzazione. Le importazioni si uniscono allo stato corrente; non sostituiscono mai la storia locale della sincronizzazione.',
 			'audiobook.recoveryExport' => 'Esporta il file di recupero crittografato',
 			'audiobook.recoveryImport' => 'Importa il file di recupero crittografato',
@@ -9259,6 +9189,8 @@ extension on TranslationsIt {
 			'sourceSetup.nfsGroupId' => 'ID gruppo NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Predefinito: 1000. Usa l’ID gruppo consentito dalla condivisione NFS del NAS.',
 			'sourceSetup.nfsEncryption' => 'Richiedi NFS crittografato (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Richiedi TLS 1.3 per NFS e il servizio di montaggio. Se il NAS non lo supporta, la connessione viene rifiutata.',
 			'sourceSetup.nfsTrustCertificate' => 'CA NFS personalizzata o certificato del server (PEM, facoltativo)',
 			'sourceSetup.nfsTrustHelp' => 'Lascia vuoto per usare i certificati considerati attendibili da questo dispositivo. Se necessario, aggiungi un certificato di una CA privata o un certificato del server autofirmato; i nomi indicati devono corrispondere all’host nell’URL NFS.',
@@ -9737,8 +9669,6 @@ extension on TranslationsIt {
 			'musicTools.days' => 'Giorni',
 			'musicTools.albumBlocks' => 'Mantieni gli album interi',
 			'musicTools.home' => 'Musica',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'Ascoltati di recente',
 			'musicTools.apiKey' => 'Chiave API',
 			'musicTools.missing' => 'N/D',
@@ -9773,6 +9703,8 @@ extension on TranslationsIt {
 			'musicTools.peak' => 'Picco',
 			'musicTools.bass' => 'Bassi',
 			'musicTools.treble' => 'Alti',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Playlist condivise',
 			'musicTools.sharingInvitationsTitle' => 'Inviti di condivisione Plex',
 			'musicTools.noSharingInvitations' => 'Nessun invito in sospeso',

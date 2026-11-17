@@ -3706,48 +3706,14 @@ class _Translations$lending$hu extends Translations$lending$en {
 	@override String get libraryUrlHint => 'Használja a könyvtár katalógusát vagy a bejelentkezési oldalt.';
 	@override String get intro => 'Hitelezzen a könyvtárból, tartsa a könyveit.';
 	@override String get handoff => 'Jelentkezzen be, kölcsönözze és olvassa biztonságosan a könyvtár saját szolgáltatásaival.';
-	@override String get openService => 'Nyílt könyvtár';
 	@override String get findLibrary => 'Keresse meg a könyvtárat';
 	@override String get search => 'Könyvek és szerzők keresése';
-	@override String get catalogue => 'Katalógus';
-	@override String get loans => 'kölcsönök';
-	@override String get holds => 'Előjegyzések';
-	@override String get signIn => 'Jelentkezzen be a könyvtárával';
-	@override String get waiting => 'Véget ért a regisztráció a böngészőben, majd térj vissza ide.';
-	@override String get cancel => 'Mégse';
 	@override String get disconnect => 'Könyvtár eltávolítása';
 	@override String get disconnectMessage => 'Eltávolítod ezt a könyvtárat ebből a profilból? A kölcsönzéseid és előjegyzéseid megmaradnak a könyvtárnál.';
-	@override String get getBook => 'Könyvet kap';
-	@override String get checkAvailability => 'Ellenőrizze a rendelkezésre állást';
-	@override String get available => 'Elérhető kölcsönzéshez';
-	@override String get unavailable => 'Jelenleg nem elérhető';
-	@override String get borrow => 'Kölcsönzés';
-	@override String get placeHold => 'Előjegyzés';
-	@override String get returnBook => 'Korai visszatérés';
-	@override String get cancelHold => 'Előjegyzés törlése';
-	@override String get confirmBorrow => 'Ezt a címet kölcsönözzétek a könyvtárból?';
-	@override String get confirmReturn => 'Vissza kell adnia ezt a címet most? lehet, hogy újra kölcsönözni, hogy folytassa.';
-	@override String get confirmCancelHold => 'Törlöd a címre vonatkozó előjegyzésedet?';
-	@override String get email => 'Hajtsa az értesítést e-mail';
-	@override String due({required Object date}) => 'Személyi ${date}';
-	@override String queue({required Object position}) => '${position} pozíció a sorban';
 	@override String get empty => 'Még nincs címünk itt.';
 	@override String get openLibraryNote => 'Fedezze fel a nyílt könyvtár katalógusát.Az olvasási és hitelezési lehetőségek az egyes címek oldalán jelennek meg.';
 	@override String get more => 'Töltse tovább';
-	@override String get gateway => 'Könyvtár beiratkozás szolgáltatás';
-	@override String get gatewayHint => 'A könyvtár vagy a Pleazyng adminisztrátor által biztosított.';
-	@override String get advanced => 'Könyvtár integráció';
-	@override String get loadLibraries => 'Válassza ki a könyvtárát';
-	@override String get expired => 'Ez a hitel lejár.';
-	@override String get updated => 'Könyvtár frissítés';
 	@override String get continueService => 'Folytatjuk a szolgálatot';
-	@override String get comingSoon => 'In-app kölcsönzés · Jön hamarosan';
-	@override String get comingSoonDescription => 'A Libby integráció a maga módján van.A Libby könyvtárát használhatja, miközben befejezzük a kapcsolatot.';
-	@override String get suspendHold => 'Megszakított tartás';
-	@override String get resumeHold => 'Összefoglaló tartsa';
-	@override String get suspendMessage => 'Megtartod a helyedet a sorban, és átengeded ezt a példányt a következő olvasónak? Az előjegyzést később folytathatod.';
-	@override String get resumeMessage => 'Folytatod ezt az előjegyzést, hogy a könyvtár felajánlhassa a következő elérhető példányt?';
-	@override String get editEmail => 'Változtassuk meg az értesítés e-mail';
 }
 
 // Path: audiobook
@@ -9125,48 +9091,14 @@ extension on TranslationsHu {
 			'lending.libraryUrlHint' => 'Használja a könyvtár katalógusát vagy a bejelentkezési oldalt.',
 			'lending.intro' => 'Hitelezzen a könyvtárból, tartsa a könyveit.',
 			'lending.handoff' => 'Jelentkezzen be, kölcsönözze és olvassa biztonságosan a könyvtár saját szolgáltatásaival.',
-			'lending.openService' => 'Nyílt könyvtár',
 			'lending.findLibrary' => 'Keresse meg a könyvtárat',
 			'lending.search' => 'Könyvek és szerzők keresése',
-			'lending.catalogue' => 'Katalógus',
-			'lending.loans' => 'kölcsönök',
-			'lending.holds' => 'Előjegyzések',
-			'lending.signIn' => 'Jelentkezzen be a könyvtárával',
-			'lending.waiting' => 'Véget ért a regisztráció a böngészőben, majd térj vissza ide.',
-			'lending.cancel' => 'Mégse',
 			'lending.disconnect' => 'Könyvtár eltávolítása',
 			'lending.disconnectMessage' => 'Eltávolítod ezt a könyvtárat ebből a profilból? A kölcsönzéseid és előjegyzéseid megmaradnak a könyvtárnál.',
-			'lending.getBook' => 'Könyvet kap',
-			'lending.checkAvailability' => 'Ellenőrizze a rendelkezésre állást',
-			'lending.available' => 'Elérhető kölcsönzéshez',
-			'lending.unavailable' => 'Jelenleg nem elérhető',
-			'lending.borrow' => 'Kölcsönzés',
-			'lending.placeHold' => 'Előjegyzés',
-			'lending.returnBook' => 'Korai visszatérés',
-			'lending.cancelHold' => 'Előjegyzés törlése',
-			'lending.confirmBorrow' => 'Ezt a címet kölcsönözzétek a könyvtárból?',
-			'lending.confirmReturn' => 'Vissza kell adnia ezt a címet most? lehet, hogy újra kölcsönözni, hogy folytassa.',
-			'lending.confirmCancelHold' => 'Törlöd a címre vonatkozó előjegyzésedet?',
-			'lending.email' => 'Hajtsa az értesítést e-mail',
-			'lending.due' => ({required Object date}) => 'Személyi ${date}',
-			'lending.queue' => ({required Object position}) => '${position} pozíció a sorban',
 			'lending.empty' => 'Még nincs címünk itt.',
 			'lending.openLibraryNote' => 'Fedezze fel a nyílt könyvtár katalógusát.Az olvasási és hitelezési lehetőségek az egyes címek oldalán jelennek meg.',
 			'lending.more' => 'Töltse tovább',
-			'lending.gateway' => 'Könyvtár beiratkozás szolgáltatás',
-			'lending.gatewayHint' => 'A könyvtár vagy a Pleazyng adminisztrátor által biztosított.',
-			'lending.advanced' => 'Könyvtár integráció',
-			'lending.loadLibraries' => 'Válassza ki a könyvtárát',
-			'lending.expired' => 'Ez a hitel lejár.',
-			'lending.updated' => 'Könyvtár frissítés',
 			'lending.continueService' => 'Folytatjuk a szolgálatot',
-			'lending.comingSoon' => 'In-app kölcsönzés · Jön hamarosan',
-			'lending.comingSoonDescription' => 'A Libby integráció a maga módján van.A Libby könyvtárát használhatja, miközben befejezzük a kapcsolatot.',
-			'lending.suspendHold' => 'Megszakított tartás',
-			'lending.resumeHold' => 'Összefoglaló tartsa',
-			'lending.suspendMessage' => 'Megtartod a helyedet a sorban, és átengeded ezt a példányt a következő olvasónak? Az előjegyzést később folytathatod.',
-			'lending.resumeMessage' => 'Folytatod ezt az előjegyzést, hogy a könyvtár felajánlhassa a következő elérhető példányt?',
-			'lending.editEmail' => 'Változtassuk meg az értesítés e-mail',
 			'audiobook.syncTitle' => 'olvasás és hallgatás szinkronizálás',
 			'audiobook.syncHelp' => 'Tartsa az olvasási pozíciókat, a hallgatási pozíciókat, a befejezési állapotot, a könyvjelzőket és a jegyzeteket az eszközökön keresztül. Válasszon egy hozzáadott tárolási fiókot, és használja ugyanazt a szinkron kódot minden eszközön. Az olvasás és a hallgatás külön marad.',
 			'audiobook.addSyncSource' => 'Add hozzá a Google Drive, OneDrive, Dropbox, WebDAV vagy S3 a Fájlok és könyvek először.',
@@ -9216,8 +9148,6 @@ extension on TranslationsHu {
 			'audiobook.statusFinished' => 'befejezett',
 			'audiobook.goToTime' => 'Menj az időbe',
 			'audiobook.timeHelp' => 'Idők: percek: másodpercek, vagy percek: másodpercek',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'A szinkronizációs adatok áthelyezése vagy javítása előtt exportáljon egy nemrégiben titkosított másolatot. Az importok összeolvadnak a jelenlegi állapotgal; soha nem helyettesítik a helyi szinkrálás történetét.',
 			'audiobook.recoveryExport' => 'Export titkosított helyreállítási fájl',
 			'audiobook.recoveryImport' => 'Import titkosított helyreállítási fájl',
@@ -9252,6 +9182,8 @@ extension on TranslationsHu {
 			'sourceSetup.nfsGroupId' => 'NFS-csoportazonosító (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Alapértelmezett: 1000. A NAS NFS-megosztása által engedélyezett csoportazonosítót használd.',
 			'sourceSetup.nfsEncryption' => 'Titkosított NFS megkövetelése (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'TLS 1.3 megkövetelése az NFS-hez és a csatolási szolgáltatáshoz. Ha a NAS ezt nem támogatja, a kapcsolat nem jön létre.',
 			'sourceSetup.nfsTrustCertificate' => 'Egyéni NFS CA vagy szervertanúsítvány (PEM, nem kötelező)',
 			'sourceSetup.nfsTrustHelp' => 'Hagyd üresen az eszköz által megbízhatónak tartott tanúsítványokhoz. Szükség esetén adj hozzá privát CA-tanúsítványt vagy önaláírt szervertanúsítványt; a benne szereplő neveknek egyezniük kell az NFS URL gépnevével.',
@@ -9730,8 +9662,6 @@ extension on TranslationsHu {
 			'musicTools.days' => 'Napok',
 			'musicTools.albumBlocks' => 'Teljes albumok együtt tartása',
 			'musicTools.home' => 'Zene',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'Legutóbb lejátszott',
 			'musicTools.apiKey' => 'API-kulcs',
 			'musicTools.missing' => 'N/A',
@@ -9766,6 +9696,8 @@ extension on TranslationsHu {
 			'musicTools.peak' => 'Csúcs',
 			'musicTools.bass' => 'Mély',
 			'musicTools.treble' => 'Magas',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Megosztott lejátszási listák',
 			'musicTools.sharingInvitationsTitle' => 'Plex-megosztási meghívók',
 			'musicTools.noSharingInvitations' => 'Nincsenek függő meghívók',

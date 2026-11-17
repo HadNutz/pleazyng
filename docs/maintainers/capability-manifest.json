@@ -81,8 +81,8 @@
     "localeChoices": 37,
     "directory": "lib/i18n",
     "filePattern": "*.i18n.json",
-    "qualityStatus": "Structural locale coverage is present: 5,555 messages across 37 locales and 50,146 explicitly allowlisted English-fallback entries (1,400 keys), including seven subtitle provider-placement and live-capture guidance messages. Metronome and legacy-import strings use assistant-generated drafts without independent/native-speaker review; five legacy-link converter labels remain explicit English fallback. Native-speaker fluency review is not established by key counts or generated-file checks. Eighteen consolidated karaoke discovery/preferred-version, offline music continuation and subtitle status labels remain explicit English fallback pending review. The three Apple Store trial disclosure and offer-unavailable/invalid labels use explicit English fallback pending translation review; no translation or native-speaker review is claimed. Fifteen subtitle checkpoint recovery and explicit opt-in messages use English fallback pending translation review. Twenty-one LG webOS lifetime unlock and accountless recovery labels remain explicit English fallback pending translation review. Five recovered saved-capture list labels use explicit English fallback pending translation review. The 22 living-room controls use assistant-authored translations in the base catalogs.",
-    "messagesPerLocale": 5555,
+    "qualityStatus": "Structural locale coverage is present: 5,521 messages across 37 locales and 50,146 explicitly allowlisted English-fallback entries (1,400 keys), including seven subtitle provider-placement and live-capture guidance messages. Metronome and legacy-import strings use assistant-generated drafts without independent/native-speaker review; five legacy-link converter labels remain explicit English fallback. Native-speaker fluency review is not established by key counts or generated-file checks. Eighteen consolidated karaoke discovery/preferred-version, offline music continuation and subtitle status labels remain explicit English fallback pending review. The three Apple Store trial disclosure and offer-unavailable/invalid labels use explicit English fallback pending translation review; no translation or native-speaker review is claimed. Fifteen subtitle checkpoint recovery and explicit opt-in messages use English fallback pending translation review. Twenty-one LG webOS lifetime unlock and accountless recovery labels remain explicit English fallback pending translation review. Five recovered saved-capture list labels use explicit English fallback pending translation review. The 22 living-room controls use assistant-authored translations in the base catalogs.",
+    "messagesPerLocale": 5521,
     "englishFallbackKeys": 1400,
     "englishFallbackEntries": 50146,
     "coverageReport": "docs/localization/coverage.json",
@@ -101,7 +101,7 @@
         "lib/screens/discovery/discovery_shortlist_vote_screen.dart",
         "lib/screens/lending/public_libraries_screen.dart"
       ],
-      "open": "The bounded mixed-media deck, profile-local Saved picks/history, exact filters, mood/familiarity filtering, explicit local taste controls, per-pick hide/restore/reset, capped isolated OPDS samples, exact-public-ID adaptation matching, two-to-three-item comparison, private co-present shortlist voting, and opt-in encrypted Saved-pick sync are implemented. Optional AI reranking uses opaque IDs and bounded metadata with deterministic fallback. Open Library adds browse-only catalog records; when the existing OverDrive gate is enabled, connected borrower catalogs can add local-only candidates that are revalidated by exact library and book IDs before opening. OverDrive remains disabled by default and availability is checked only in its existing detail flow. Feature acceptance, provider exercises, native builds and physical-device qualification have not run for this slice. No research-cohort feature is in scope."
+      "open": "The bounded mixed-media deck, profile-local Saved picks/history, exact filters, mood/familiarity filtering, explicit local taste controls, per-pick hide/restore/reset, capped isolated OPDS samples, exact-public-ID adaptation matching, two-to-three-item comparison, private co-present shortlist voting, and opt-in encrypted Saved-pick sync are implemented. Optional AI reranking uses opaque IDs and bounded metadata with deterministic fallback. Open Library adds browse-only catalog records and opens their public title pages. Feature acceptance, provider exercises, native builds and physical-device qualification have not run for this slice. No research-cohort feature is in scope."
     },
     {
       "area": "Comics",
@@ -200,15 +200,6 @@
         "docs/maintainers/dv-engine-luna-handoff.md"
       ],
       "open": "Implemented DV/FEL routing is automatic by default in ordinary builds, with persisted explicit Off/manual controls and compatibility fallback, under the 2026-11-09 owner directive. Experiments remain accurately identified as experimental. Reference-output, signaling, seek/sync and platform evidence remain required; packaging alone is not image-quality qualification."
-    },
-    {
-      "area": "OverDrive lending",
-      "status": "gated",
-      "evidence": [
-        "docs/LENDING_SETUP.md",
-        "lib/lending/lending_service.dart"
-      ],
-      "open": "Keep OverDrive disabled until provider approval, deployed gateway controls, assigned sandbox credentials, and live fulfillment qualification are available."
     },
     {
       "area": "Hybrid runner routing",

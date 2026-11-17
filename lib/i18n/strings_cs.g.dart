@@ -3748,48 +3748,14 @@ class _Translations$lending$cs extends Translations$lending$en {
 	@override String get libraryUrlHint => 'Použijte katalog své knihovny nebo její přihlašovací stránku.';
 	@override String get intro => 'Půjčte si knihu z knihovny, držte si knihy v blízkosti.';
 	@override String get handoff => 'Přihlaste se, vypůjčujte si knihy a bezpečně čtěte prostřednictvím služby své knihovny.';
-	@override String get openService => 'otevřená knihovna';
 	@override String get findLibrary => 'Najít knihovnu';
 	@override String get search => 'Vyhledávání knih a autorů';
-	@override String get catalogue => 'Katalog';
-	@override String get loans => 'půjčky';
-	@override String get holds => 'Rezervace';
-	@override String get signIn => 'Přihlaste se k vaší knihovně';
-	@override String get waiting => 'Přihlaste se do svého prohlížeče a pak se vrátíte.';
-	@override String get cancel => 'Zrušit';
 	@override String get disconnect => 'Odstranit knihovnu';
 	@override String get disconnectMessage => 'Odebrat tuto knihovnu z tohoto profilu? Vaše výpůjčky a rezervace zůstanou u knihovny.';
-	@override String get getBook => 'Získejte knihu';
-	@override String get checkAvailability => 'Zkontrolujte dostupnost';
-	@override String get available => 'Dostupné k půjčování';
-	@override String get unavailable => 'V současné době nedostupné';
-	@override String get borrow => 'Vypůjčit';
-	@override String get placeHold => 'Rezervovat';
-	@override String get returnBook => 'Zpět brzy';
-	@override String get cancelHold => 'Zrušit rezervaci';
-	@override String get confirmBorrow => 'Půjčujete si tento titul z vaší knihovny?';
-	@override String get confirmReturn => 'Vrátit tento titul nyní? Abyste mohli pokračovat, možná si jej budete muset znovu vypůjčit.';
-	@override String get confirmCancelHold => 'Zrušit rezervaci tohoto titulu?';
-	@override String get email => 'Udržujte e-mail oznámení';
-	@override String due({required Object date}) => 'Vrátit do ${date}';
-	@override String queue({required Object position}) => 'Pozice ${position} v čáru';
 	@override String get empty => 'Zatím tu žádné tituly.';
 	@override String get openLibraryNote => 'Procházejte katalog Open Library. Možnosti čtení a vypůjčení jsou uvedeny na stránce každého titulu.';
 	@override String get more => 'Naložte více';
-	@override String get gateway => 'knihovny sign-in';
-	@override String get gatewayHint => 'Zajištěno vaší knihovnou nebo správcem Pleazyng.';
-	@override String get advanced => 'knihovny integrace';
-	@override String get loadLibraries => 'Vyberte si svou knihovnu';
-	@override String get expired => 'Tento úvěr skončil.';
-	@override String get updated => 'Aktualizovaná knihovna';
 	@override String get continueService => 'Pokračovat ve službě';
-	@override String get comingSoon => 'In-app půjčka · Brzy přijde';
-	@override String get comingSoonDescription => 'Libby integrace je na cestě.Můžete použít vaši knihovnu v Libby, zatímco my dokončujeme připojení.';
-	@override String get suspendHold => 'Pozastavit rezervaci';
-	@override String get resumeHold => 'Obnovit rezervaci';
-	@override String get suspendMessage => 'Ponechat si místo ve frontě a nechat dalšího čtenáře vypůjčit si tento výtisk? Rezervaci můžete později obnovit.';
-	@override String get resumeMessage => 'Obnovit rezervaci, aby vám knihovna mohla nabídnout další dostupný výtisk?';
-	@override String get editEmail => 'Změna e-mailu oznámení';
 }
 
 // Path: audiobook
@@ -9169,48 +9135,14 @@ extension on TranslationsCs {
 			'lending.libraryUrlHint' => 'Použijte katalog své knihovny nebo její přihlašovací stránku.',
 			'lending.intro' => 'Půjčte si knihu z knihovny, držte si knihy v blízkosti.',
 			'lending.handoff' => 'Přihlaste se, vypůjčujte si knihy a bezpečně čtěte prostřednictvím služby své knihovny.',
-			'lending.openService' => 'otevřená knihovna',
 			'lending.findLibrary' => 'Najít knihovnu',
 			'lending.search' => 'Vyhledávání knih a autorů',
-			'lending.catalogue' => 'Katalog',
-			'lending.loans' => 'půjčky',
-			'lending.holds' => 'Rezervace',
-			'lending.signIn' => 'Přihlaste se k vaší knihovně',
-			'lending.waiting' => 'Přihlaste se do svého prohlížeče a pak se vrátíte.',
-			'lending.cancel' => 'Zrušit',
 			'lending.disconnect' => 'Odstranit knihovnu',
 			'lending.disconnectMessage' => 'Odebrat tuto knihovnu z tohoto profilu? Vaše výpůjčky a rezervace zůstanou u knihovny.',
-			'lending.getBook' => 'Získejte knihu',
-			'lending.checkAvailability' => 'Zkontrolujte dostupnost',
-			'lending.available' => 'Dostupné k půjčování',
-			'lending.unavailable' => 'V současné době nedostupné',
-			'lending.borrow' => 'Vypůjčit',
-			'lending.placeHold' => 'Rezervovat',
-			'lending.returnBook' => 'Zpět brzy',
-			'lending.cancelHold' => 'Zrušit rezervaci',
-			'lending.confirmBorrow' => 'Půjčujete si tento titul z vaší knihovny?',
-			'lending.confirmReturn' => 'Vrátit tento titul nyní? Abyste mohli pokračovat, možná si jej budete muset znovu vypůjčit.',
-			'lending.confirmCancelHold' => 'Zrušit rezervaci tohoto titulu?',
-			'lending.email' => 'Udržujte e-mail oznámení',
-			'lending.due' => ({required Object date}) => 'Vrátit do ${date}',
-			'lending.queue' => ({required Object position}) => 'Pozice ${position} v čáru',
 			'lending.empty' => 'Zatím tu žádné tituly.',
 			'lending.openLibraryNote' => 'Procházejte katalog Open Library. Možnosti čtení a vypůjčení jsou uvedeny na stránce každého titulu.',
 			'lending.more' => 'Naložte více',
-			'lending.gateway' => 'knihovny sign-in',
-			'lending.gatewayHint' => 'Zajištěno vaší knihovnou nebo správcem Pleazyng.',
-			'lending.advanced' => 'knihovny integrace',
-			'lending.loadLibraries' => 'Vyberte si svou knihovnu',
-			'lending.expired' => 'Tento úvěr skončil.',
-			'lending.updated' => 'Aktualizovaná knihovna',
 			'lending.continueService' => 'Pokračovat ve službě',
-			'lending.comingSoon' => 'In-app půjčka · Brzy přijde',
-			'lending.comingSoonDescription' => 'Libby integrace je na cestě.Můžete použít vaši knihovnu v Libby, zatímco my dokončujeme připojení.',
-			'lending.suspendHold' => 'Pozastavit rezervaci',
-			'lending.resumeHold' => 'Obnovit rezervaci',
-			'lending.suspendMessage' => 'Ponechat si místo ve frontě a nechat dalšího čtenáře vypůjčit si tento výtisk? Rezervaci můžete později obnovit.',
-			'lending.resumeMessage' => 'Obnovit rezervaci, aby vám knihovna mohla nabídnout další dostupný výtisk?',
-			'lending.editEmail' => 'Změna e-mailu oznámení',
 			'audiobook.syncTitle' => 'Čtení a poslouchání synchronizace',
 			'audiobook.syncHelp' => 'Udržujte pozice čtení, pozice poslouchání, stav dokončení, poznámky a poznámky na vašich zařízeních. Vyberte připojený úložiště a použijte stejný synchronizační kód na každém zařízení. Čtení a poslouchání zůstávají oddělené.',
 			'audiobook.addSyncSource' => 'Nejprve přidejte Google Drive, OneDrive, Dropbox, WebDAV nebo S3 do souborů a knih.',
@@ -9260,8 +9192,6 @@ extension on TranslationsCs {
 			'audiobook.statusFinished' => 'Dokončené',
 			'audiobook.goToTime' => 'Jděte do času',
 			'audiobook.timeHelp' => 'Hodiny: minuty: sekundy nebo minuty: sekundy',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Exportujte nedávnou šifrovanou kopii před přenesením nebo opravou synchronizačních dat. Importy se spojí s aktuálním stavem; nikdy nenahrazují místní historii synchromu.',
 			'audiobook.recoveryExport' => 'Export šifrované obnovení souborů',
 			'audiobook.recoveryImport' => 'Import šifrované obnovení souborů',
@@ -9296,6 +9226,8 @@ extension on TranslationsCs {
 			'sourceSetup.nfsGroupId' => 'ID skupiny NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Výchozí: 1000. Použijte ID skupiny povolené exportem NFS na NAS.',
 			'sourceSetup.nfsEncryption' => 'Vyžadovat šifrované NFS (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Vyžadovat TLS 1.3 pro NFS i službu připojení. Pokud jej NAS nepodporuje, spojení bude odmítnuto.',
 			'sourceSetup.nfsTrustCertificate' => 'Vlastní CA NFS nebo certifikát serveru (PEM, nepovinné)',
 			'sourceSetup.nfsTrustHelp' => 'Ponechte prázdné pro certifikáty, kterým toto zařízení důvěřuje. V případě potřeby přidejte certifikát soukromé CA nebo certifikát serveru podepsaný sebou samým; jeho názvy se musí shodovat s hostitelem v adrese NFS.',
@@ -9774,8 +9706,6 @@ extension on TranslationsCs {
 			'musicTools.days' => 'Dny',
 			'musicTools.albumBlocks' => 'Ponechat celá alba pohromadě',
 			'musicTools.home' => 'Hudba',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'Nedávno přehrané',
 			'musicTools.apiKey' => 'Klíč API',
 			'musicTools.missing' => 'N / A',
@@ -9810,6 +9740,8 @@ extension on TranslationsCs {
 			'musicTools.peak' => 'Špička',
 			'musicTools.bass' => 'Basy',
 			'musicTools.treble' => 'Výšky',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Sdílené playlisty',
 			'musicTools.sharingInvitationsTitle' => 'Pozvánky ke sdílení Plex',
 			'musicTools.noSharingInvitations' => 'Žádné čekající pozvánky',

@@ -3706,48 +3706,14 @@ class _Translations$lending$tr extends Translations$lending$en {
 	@override String get libraryUrlHint => 'Kütüphanenin katalogunu veya sayfanızı kullanın.';
 	@override String get intro => 'Kütüphaneden ödünç alın, kitaplarınızı kapatın.';
 	@override String get handoff => 'Kayıt olun, kredi alın ve kütüphanenizdeki hizmetle güvenli bir şekilde okuyun.';
-	@override String get openService => 'Açık Kütüphane';
 	@override String get findLibrary => 'Bir kütüphane bul';
 	@override String get search => 'Kitaplar ve yazarları arıyorum';
-	@override String get catalogue => 'Katalog';
-	@override String get loans => 'Kredi';
-	@override String get holds => 'Ayırtmalar';
-	@override String get signIn => 'Kütüphanenizle giriş yapın';
-	@override String get waiting => 'Bu yazıyı tarayıcınızda bitirip buraya geri dönün.';
-	@override String get cancel => 'İptal';
 	@override String get disconnect => 'Kütüphaneyi kaldırın';
 	@override String get disconnectMessage => 'Bu kütüphane bu profilden kaldırılsın mı? Ödünç aldıklarınız ve ayırtmalarınız kütüphanede kalır.';
-	@override String get getBook => 'Kitap alın';
-	@override String get checkAvailability => 'Kullanılabilirliği kontrol edin';
-	@override String get available => 'Borçlanmak için kullanılabilir';
-	@override String get unavailable => 'Şu anda mevcut değil';
-	@override String get borrow => 'Ödünç al';
-	@override String get placeHold => 'Ayırt';
-	@override String get returnBook => 'Erken Dönüş';
-	@override String get cancelHold => 'Ayırtmayı iptal et';
-	@override String get confirmBorrow => 'Kütüphaneden bu başlıkları ödünç alabilir misiniz?';
-	@override String get confirmReturn => 'Bu eser şimdi iade edilsin mi? Devam etmek için yeniden ödünç almanız gerekebilir.';
-	@override String get confirmCancelHold => 'Bu eser için ayırtmanız iptal edilsin mi?';
-	@override String get email => 'E-posta bildirim tutun';
-	@override String due({required Object date}) => 'Şekil ${date}';
-	@override String queue({required Object position}) => 'Yorumlar ${position}';
 	@override String get empty => 'Şimdiye kadar hiç başlık yok.';
 	@override String get openLibraryNote => 'Open Library\'in katalogunu keşfedin. okuma ve kredi seçenekleri her başlık sayfasında gösteriliyor.';
 	@override String get more => 'Daha fazla yük';
-	@override String get gateway => 'Kütüphane abonelik hizmetleri';
-	@override String get gatewayHint => 'Kütüphanesi veya Pleazyng yöneticisi tarafından sağlanır.';
-	@override String get advanced => 'Kütüphane Entegrasyonu';
-	@override String get loadLibraries => 'Kütüphanenizi Seçin';
-	@override String get expired => 'Bu kredi sona erdi.';
-	@override String get updated => 'Kütüphane Güncellenmiş';
 	@override String get continueService => 'Hizmette devam et';
-	@override String get comingSoon => 'Kredi Kartı - Yakında Gelecek';
-	@override String get comingSoonDescription => 'Libby\'nin bütünleşmesi yolunda. Libby\'deki kütüphanenizi, bağlantılarını bitirirken kullanabilirsiniz.';
-	@override String get suspendHold => 'Durdurma tutma';
-	@override String get resumeHold => 'Resim tut';
-	@override String get suspendMessage => 'Sıradaki yeriniz korunsun ve sonraki okuyucu bu kopyayı ödünç alsın mı? Ayırtmayı daha sonra sürdürebilirsiniz.';
-	@override String get resumeMessage => 'Kütüphanenin size sıradaki uygun kopyayı sunabilmesi için bu ayırtma sürdürülsün mü?';
-	@override String get editEmail => 'E-posta bildirim değişikliği';
 }
 
 // Path: audiobook
@@ -9125,48 +9091,14 @@ extension on TranslationsTr {
 			'lending.libraryUrlHint' => 'Kütüphanenin katalogunu veya sayfanızı kullanın.',
 			'lending.intro' => 'Kütüphaneden ödünç alın, kitaplarınızı kapatın.',
 			'lending.handoff' => 'Kayıt olun, kredi alın ve kütüphanenizdeki hizmetle güvenli bir şekilde okuyun.',
-			'lending.openService' => 'Açık Kütüphane',
 			'lending.findLibrary' => 'Bir kütüphane bul',
 			'lending.search' => 'Kitaplar ve yazarları arıyorum',
-			'lending.catalogue' => 'Katalog',
-			'lending.loans' => 'Kredi',
-			'lending.holds' => 'Ayırtmalar',
-			'lending.signIn' => 'Kütüphanenizle giriş yapın',
-			'lending.waiting' => 'Bu yazıyı tarayıcınızda bitirip buraya geri dönün.',
-			'lending.cancel' => 'İptal',
 			'lending.disconnect' => 'Kütüphaneyi kaldırın',
 			'lending.disconnectMessage' => 'Bu kütüphane bu profilden kaldırılsın mı? Ödünç aldıklarınız ve ayırtmalarınız kütüphanede kalır.',
-			'lending.getBook' => 'Kitap alın',
-			'lending.checkAvailability' => 'Kullanılabilirliği kontrol edin',
-			'lending.available' => 'Borçlanmak için kullanılabilir',
-			'lending.unavailable' => 'Şu anda mevcut değil',
-			'lending.borrow' => 'Ödünç al',
-			'lending.placeHold' => 'Ayırt',
-			'lending.returnBook' => 'Erken Dönüş',
-			'lending.cancelHold' => 'Ayırtmayı iptal et',
-			'lending.confirmBorrow' => 'Kütüphaneden bu başlıkları ödünç alabilir misiniz?',
-			'lending.confirmReturn' => 'Bu eser şimdi iade edilsin mi? Devam etmek için yeniden ödünç almanız gerekebilir.',
-			'lending.confirmCancelHold' => 'Bu eser için ayırtmanız iptal edilsin mi?',
-			'lending.email' => 'E-posta bildirim tutun',
-			'lending.due' => ({required Object date}) => 'Şekil ${date}',
-			'lending.queue' => ({required Object position}) => 'Yorumlar ${position}',
 			'lending.empty' => 'Şimdiye kadar hiç başlık yok.',
 			'lending.openLibraryNote' => 'Open Library\'in katalogunu keşfedin. okuma ve kredi seçenekleri her başlık sayfasında gösteriliyor.',
 			'lending.more' => 'Daha fazla yük',
-			'lending.gateway' => 'Kütüphane abonelik hizmetleri',
-			'lending.gatewayHint' => 'Kütüphanesi veya Pleazyng yöneticisi tarafından sağlanır.',
-			'lending.advanced' => 'Kütüphane Entegrasyonu',
-			'lending.loadLibraries' => 'Kütüphanenizi Seçin',
-			'lending.expired' => 'Bu kredi sona erdi.',
-			'lending.updated' => 'Kütüphane Güncellenmiş',
 			'lending.continueService' => 'Hizmette devam et',
-			'lending.comingSoon' => 'Kredi Kartı - Yakında Gelecek',
-			'lending.comingSoonDescription' => 'Libby\'nin bütünleşmesi yolunda. Libby\'deki kütüphanenizi, bağlantılarını bitirirken kullanabilirsiniz.',
-			'lending.suspendHold' => 'Durdurma tutma',
-			'lending.resumeHold' => 'Resim tut',
-			'lending.suspendMessage' => 'Sıradaki yeriniz korunsun ve sonraki okuyucu bu kopyayı ödünç alsın mı? Ayırtmayı daha sonra sürdürebilirsiniz.',
-			'lending.resumeMessage' => 'Kütüphanenin size sıradaki uygun kopyayı sunabilmesi için bu ayırtma sürdürülsün mü?',
-			'lending.editEmail' => 'E-posta bildirim değişikliği',
 			'audiobook.syncTitle' => 'Okuma ve Dinleme Sync',
 			'audiobook.syncHelp' => 'Okuma pozisyonlarını, dinleme pozisyonlarını, tamamlama durumunu, not defterlerini ve notlarını cihazlarınız boyunca tutun. eklenen bir depolama hesabını seçin ve her cihazda aynı senkronizasyon kodunu kullanın. Okuma ve dinleme ayrı kalır.',
 			'audiobook.addSyncSource' => 'Öncelikle Google Drive, OneDrive, Dropbox, WebDAV veya S3\'ü Dosyalar ve kitaplar\'a ekleyin.',
@@ -9216,8 +9148,6 @@ extension on TranslationsTr {
 			'audiobook.statusFinished' => 'bitmiş',
 			'audiobook.goToTime' => 'Zamanına gidin',
 			'audiobook.timeHelp' => 'Saatler: dakikalar: saniye veya dakikalar: saniye',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Son zamanlarda şifrelenmiş bir kopyasını aktarmadan önce veya senkronizasyon verilerini düzeltmeden önce ihraç edin. ithalat mevcut durumla birleşir; yerel senkrona geçmişi asla değiştirmezler. senkronu ayrı tutun.',
 			'audiobook.recoveryExport' => 'İhracat şifreli kurtarma dosyası',
 			'audiobook.recoveryImport' => 'İthalat Şifreli Kurtarma Dosyası',
@@ -9252,6 +9182,8 @@ extension on TranslationsTr {
 			'sourceSetup.nfsGroupId' => 'NFS grup kimliği (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Varsayılan: 1000. NAS’ın NFS paylaşımının izin verdiği grup kimliğini kullanın.',
 			'sourceSetup.nfsEncryption' => 'Şifreli NFS gerektir (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'NFS ve bağlama hizmeti için TLS 1.3 gerektirir. NAS desteklemiyorsa bağlantı reddedilir.',
 			'sourceSetup.nfsTrustCertificate' => 'Özel NFS CA veya sunucu sertifikası (PEM, isteğe bağlı)',
 			'sourceSetup.nfsTrustHelp' => 'Bu aygıtın güvendiği sertifikalar için boş bırakın. Gerektiğinde özel bir CA sertifikası veya kendinden imzalı sunucu sertifikası ekleyin; sertifikadaki adlar NFS URL’sindeki ana makineyle eşleşmelidir.',
@@ -9730,8 +9662,6 @@ extension on TranslationsTr {
 			'musicTools.days' => 'Günler',
 			'musicTools.albumBlocks' => 'Albümleri bütün olarak tut',
 			'musicTools.home' => 'Müzik',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'Son çalınanlar',
 			'musicTools.apiKey' => 'API anahtarı',
 			'musicTools.missing' => 'Yok',
@@ -9766,6 +9696,8 @@ extension on TranslationsTr {
 			'musicTools.peak' => 'Tepe',
 			'musicTools.bass' => 'Bas',
 			'musicTools.treble' => 'Tiz',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Paylaşılan çalma listeleri',
 			'musicTools.sharingInvitationsTitle' => 'Plex paylaşım davetleri',
 			'musicTools.noSharingInvitations' => 'Bekleyen davet yok',

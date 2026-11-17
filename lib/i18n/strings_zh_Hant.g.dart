@@ -3702,48 +3702,14 @@ class _Translations$lending$zh_Hant extends Translations$lending$zh {
 	@override String get libraryUrlHint => '使用您的圖書館的目錄或登入頁面。';
 	@override String get intro => '向圖書館借閱，讓書籍隨時相伴。';
 	@override String get handoff => '登入、借款和安全閱讀,您圖書館的服務。';
-	@override String get openService => '開放圖書館';
 	@override String get findLibrary => '找個圖書館';
 	@override String get search => '搜尋書籍和作家';
-	@override String get catalogue => '目錄';
-	@override String get loans => '借閱';
-	@override String get holds => '預約';
-	@override String get signIn => '與您的圖書館登入';
-	@override String get waiting => '結束登入在您的瀏覽器,然後返回這裡。';
-	@override String get cancel => '取消';
 	@override String get disconnect => '取消圖書館';
 	@override String get disconnectMessage => '要從此使用者設定檔移除此圖書館嗎？借閱和預約紀錄仍會保留在圖書館。';
-	@override String get getBook => '獲書';
-	@override String get checkAvailability => '檢視可用性';
-	@override String get available => '可借閱';
-	@override String get unavailable => '目前不可用';
-	@override String get borrow => '借閱';
-	@override String get placeHold => '預約借閱';
-	@override String get returnBook => '提前歸還';
-	@override String get cancelHold => '取消預約';
-	@override String get confirmBorrow => '借這本書從圖書館裡?';
-	@override String get confirmReturn => '現在歸還此書嗎？您可能需要重新借閱才能繼續閱讀。';
-	@override String get confirmCancelHold => '要取消此書的預約嗎？';
-	@override String get email => '留下通知電子郵件';
-	@override String due({required Object date}) => '歸還日期：${date}';
-	@override String queue({required Object position}) => '排隊位置：${position}';
 	@override String get empty => '還沒有標題。';
 	@override String get openLibraryNote => '探索 Open Library 的目錄。每本書的頁面都會顯示閱讀和借閱選項。';
 	@override String get more => '載入更多';
-	@override String get gateway => '圖書館登入服務';
-	@override String get gatewayHint => '由您的圖書館或管理員提供,Pleazyng。';
-	@override String get advanced => '圖書館整合';
-	@override String get loadLibraries => '選擇您的圖書館';
-	@override String get expired => '此借閱已到期。';
-	@override String get updated => '圖書館更新';
 	@override String get continueService => '繼續服務';
-	@override String get comingSoon => '借款 即將到來';
-	@override String get comingSoonDescription => '即將支援 Libby 整合。在連線功能完成之前，您可以先在 Libby 中使用圖書館服務。';
-	@override String get suspendHold => '暫停預約';
-	@override String get resumeHold => '恢復預約';
-	@override String get suspendMessage => '要保留排隊位置，讓下一位讀者先借閱此副本嗎？您可以稍後恢復預約。';
-	@override String get resumeMessage => '要恢復此預約，讓圖書館為您提供下一份可借閱的副本嗎？';
-	@override String get editEmail => '更改通知電子郵件';
 }
 
 // Path: audiobook
@@ -9121,48 +9087,14 @@ extension on TranslationsZhHant {
 			'lending.libraryUrlHint' => '使用您的圖書館的目錄或登入頁面。',
 			'lending.intro' => '向圖書館借閱，讓書籍隨時相伴。',
 			'lending.handoff' => '登入、借款和安全閱讀,您圖書館的服務。',
-			'lending.openService' => '開放圖書館',
 			'lending.findLibrary' => '找個圖書館',
 			'lending.search' => '搜尋書籍和作家',
-			'lending.catalogue' => '目錄',
-			'lending.loans' => '借閱',
-			'lending.holds' => '預約',
-			'lending.signIn' => '與您的圖書館登入',
-			'lending.waiting' => '結束登入在您的瀏覽器,然後返回這裡。',
-			'lending.cancel' => '取消',
 			'lending.disconnect' => '取消圖書館',
 			'lending.disconnectMessage' => '要從此使用者設定檔移除此圖書館嗎？借閱和預約紀錄仍會保留在圖書館。',
-			'lending.getBook' => '獲書',
-			'lending.checkAvailability' => '檢視可用性',
-			'lending.available' => '可借閱',
-			'lending.unavailable' => '目前不可用',
-			'lending.borrow' => '借閱',
-			'lending.placeHold' => '預約借閱',
-			'lending.returnBook' => '提前歸還',
-			'lending.cancelHold' => '取消預約',
-			'lending.confirmBorrow' => '借這本書從圖書館裡?',
-			'lending.confirmReturn' => '現在歸還此書嗎？您可能需要重新借閱才能繼續閱讀。',
-			'lending.confirmCancelHold' => '要取消此書的預約嗎？',
-			'lending.email' => '留下通知電子郵件',
-			'lending.due' => ({required Object date}) => '歸還日期：${date}',
-			'lending.queue' => ({required Object position}) => '排隊位置：${position}',
 			'lending.empty' => '還沒有標題。',
 			'lending.openLibraryNote' => '探索 Open Library 的目錄。每本書的頁面都會顯示閱讀和借閱選項。',
 			'lending.more' => '載入更多',
-			'lending.gateway' => '圖書館登入服務',
-			'lending.gatewayHint' => '由您的圖書館或管理員提供,Pleazyng。',
-			'lending.advanced' => '圖書館整合',
-			'lending.loadLibraries' => '選擇您的圖書館',
-			'lending.expired' => '此借閱已到期。',
-			'lending.updated' => '圖書館更新',
 			'lending.continueService' => '繼續服務',
-			'lending.comingSoon' => '借款 即將到來',
-			'lending.comingSoonDescription' => '即將支援 Libby 整合。在連線功能完成之前，您可以先在 Libby 中使用圖書館服務。',
-			'lending.suspendHold' => '暫停預約',
-			'lending.resumeHold' => '恢復預約',
-			'lending.suspendMessage' => '要保留排隊位置，讓下一位讀者先借閱此副本嗎？您可以稍後恢復預約。',
-			'lending.resumeMessage' => '要恢復此預約，讓圖書館為您提供下一份可借閱的副本嗎？',
-			'lending.editEmail' => '更改通知電子郵件',
 			'audiobook.syncTitle' => '閱讀與傾聽Sync',
 			'audiobook.syncHelp' => '在您的裝置上保持閱讀位置、傾聽位置、完成狀態、圖示和筆記。 選擇附加儲存帳戶並在每個裝置上使用相同的同步程式碼. 閱讀和傾聽保持分開。',
 			'audiobook.addSyncSource' => '首先將 Google Drive、OneDrive、Dropbox、WebDAV 或 S3 新增到檔案和書籍中。',
@@ -9212,8 +9144,6 @@ extension on TranslationsZhHant {
 			'audiobook.statusFinished' => '結束',
 			'audiobook.goToTime' => '走到時間',
 			'audiobook.timeHelp' => '時間: 分鐘: 秒或 分鐘: 秒',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => '移動或修復同步資料前，請先匯出近期的加密備份。匯入資料會與目前狀態合併，不會取代本機同步記錄。請另外保存同步代碼。',
 			'audiobook.recoveryExport' => '輸出加密恢復檔案',
 			'audiobook.recoveryImport' => '輸入加密恢復檔案',
@@ -9248,6 +9178,8 @@ extension on TranslationsZhHant {
 			'sourceSetup.nfsGroupId' => 'NFS 群組 ID（AUTH_SYS）',
 			'sourceSetup.nfsGroupIdHelp' => '預設值：1000。請使用 NAS 匯出設定允許的群組 ID。',
 			'sourceSetup.nfsEncryption' => '要求加密 NFS 連線（RPC-with-TLS）',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => '要求 NFS 和掛載服務使用 TLS 1.3。若 NAS 不支援，將拒絕連線。',
 			'sourceSetup.nfsTrustCertificate' => '自訂 NFS CA 或伺服器憑證（PEM，選填）',
 			'sourceSetup.nfsTrustHelp' => '使用此裝置信任的憑證時請留空。需要時可新增私人 CA 或自我簽署的伺服器憑證；憑證中的名稱必須與 NFS 網址的主機名稱相符。',
@@ -9726,8 +9658,6 @@ extension on TranslationsZhHant {
 			'musicTools.days' => '天',
 			'musicTools.albumBlocks' => '保持專輯完整',
 			'musicTools.home' => '音樂',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => '最近播放',
 			'musicTools.apiKey' => 'API 金鑰',
 			'musicTools.missing' => 'N/A',
@@ -9762,6 +9692,8 @@ extension on TranslationsZhHant {
 			'musicTools.peak' => '峰值',
 			'musicTools.bass' => '低音',
 			'musicTools.treble' => '高音',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => '共享播放清單',
 			'musicTools.sharingInvitationsTitle' => 'Plex 共享邀請',
 			'musicTools.noSharingInvitations' => '沒有待處理的邀請',

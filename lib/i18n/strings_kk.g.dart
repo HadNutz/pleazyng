@@ -3706,48 +3706,14 @@ class _Translations$lending$kk extends Translations$lending$en {
 	@override String get libraryUrlHint => 'Библиотеканың каталогында немесе сайынға дейін көшіру.';
 	@override String get intro => 'Бібліотекадан көшіру үшін, сіздің книги менің қанаққалыңыз.';
 	@override String get handoff => 'Бұл үшін, бізге сіздің библиотекасы арқылы сіздің қызметтері бар, сіздің қызметтер бар, сізге сіздің қызмет көрсету үшін сіздің қызметтерді бар.';
-	@override String get openService => 'Бібліотекасы';
 	@override String get findLibrary => 'Бібліотеканың тұрады';
 	@override String get search => 'Бібліотекасы және авторлары';
-	@override String get catalogue => 'Каталог';
-	@override String get loans => 'Кредиттер';
-	@override String get holds => 'Брондар';
-	@override String get signIn => 'Бібліотеканың ең айқын көрмесі';
-	@override String get waiting => 'Бұл үшін сіздің браузерде көреген, онда сіздің қосыңызға болады.';
-	@override String get cancel => 'Бас тарту';
 	@override String get disconnect => 'Бібліотекасы көтерілу';
 	@override String get disconnectMessage => 'Бұл кітапхана осы профильден жойылсын ба? Кітапханадағы уақытша алған кітаптарыңыз бен брондарыңыз өзгермейді.';
-	@override String get getBook => 'Бібліі';
-	@override String get checkAvailability => 'Қайтанының дағдыры';
-	@override String get available => 'Керіктің қабығы';
-	@override String get unavailable => 'Қазіргі таңда қазір';
-	@override String get borrow => 'Уақытша алу';
-	@override String get placeHold => 'Брондау';
-	@override String get returnBook => 'Өткен қайтарып';
-	@override String get cancelHold => 'Брондаудан бас тарту';
-	@override String get confirmBorrow => 'Бұл қағидалардан бір-бірінен биліктің қағидалары бар?';
-	@override String get confirmReturn => 'Бұл кітапты қазір қайтарасыз ба? Жалғастыру үшін оны қайтадан алуыңыз қажет болуы мүмкін.';
-	@override String get confirmCancelHold => 'Осы кітапқа жасаған броныңыздан бас тартасыз ба?';
-	@override String get email => 'электрондық поштадағы электрондық пошты';
-	@override String due({required Object date}) => 'Қайтару мерзімі: ${date}';
-	@override String queue({required Object position}) => 'Қаланың тұрақты тұрғындарының саны ${position}';
 	@override String get empty => 'Бұл үшін не қазір титул.';
 	@override String get openLibraryNote => 'Бұл үшін, «Аяқтар» және «Аялық» бағдарламасы, «Аақтар» бағдарламасы және «Аақықтар» жобасы бар.';
 	@override String get more => 'Өздіктер';
-	@override String get gateway => 'Библиотекасы қабырғасы';
-	@override String get gatewayHint => 'Біздің библиотекасы немесе Pleazyng администраторға арналған.';
-	@override String get advanced => 'Библиотекасы';
-	@override String get loadLibraries => 'Бібліотека мен биліктері';
-	@override String get expired => 'Бұл кредиттік қызметті ұзақтығы.';
-	@override String get updated => 'Бібліотекасы көрету';
 	@override String get continueService => 'Ақыттық қызмет көрсету';
-	@override String get comingSoon => '«Апп» бағдарламасы – өте көп';
-	@override String get comingSoonDescription => 'Бизнес әріптестікке және кооперацияға ұсыныс.';
-	@override String get suspendHold => 'Жаққалы';
-	@override String get resumeHold => 'Жүктесі';
-	@override String get suspendMessage => 'Кезектегі орныңызды сақтап, келесі оқырманға осы дананы алуға мүмкіндік бересіз бе? Брондауды кейін жалғастыра аласыз.';
-	@override String get resumeMessage => 'Кітапхана келесі қолжетімді дананы ұсына алуы үшін осы брондауды жалғастырасыз ба?';
-	@override String get editEmail => 'электрондық поштадағы электрондық пошты';
 }
 
 // Path: audiobook
@@ -9125,48 +9091,14 @@ extension on TranslationsKk {
 			'lending.libraryUrlHint' => 'Библиотеканың каталогында немесе сайынға дейін көшіру.',
 			'lending.intro' => 'Бібліотекадан көшіру үшін, сіздің книги менің қанаққалыңыз.',
 			'lending.handoff' => 'Бұл үшін, бізге сіздің библиотекасы арқылы сіздің қызметтері бар, сіздің қызметтер бар, сізге сіздің қызмет көрсету үшін сіздің қызметтерді бар.',
-			'lending.openService' => 'Бібліотекасы',
 			'lending.findLibrary' => 'Бібліотеканың тұрады',
 			'lending.search' => 'Бібліотекасы және авторлары',
-			'lending.catalogue' => 'Каталог',
-			'lending.loans' => 'Кредиттер',
-			'lending.holds' => 'Брондар',
-			'lending.signIn' => 'Бібліотеканың ең айқын көрмесі',
-			'lending.waiting' => 'Бұл үшін сіздің браузерде көреген, онда сіздің қосыңызға болады.',
-			'lending.cancel' => 'Бас тарту',
 			'lending.disconnect' => 'Бібліотекасы көтерілу',
 			'lending.disconnectMessage' => 'Бұл кітапхана осы профильден жойылсын ба? Кітапханадағы уақытша алған кітаптарыңыз бен брондарыңыз өзгермейді.',
-			'lending.getBook' => 'Бібліі',
-			'lending.checkAvailability' => 'Қайтанының дағдыры',
-			'lending.available' => 'Керіктің қабығы',
-			'lending.unavailable' => 'Қазіргі таңда қазір',
-			'lending.borrow' => 'Уақытша алу',
-			'lending.placeHold' => 'Брондау',
-			'lending.returnBook' => 'Өткен қайтарып',
-			'lending.cancelHold' => 'Брондаудан бас тарту',
-			'lending.confirmBorrow' => 'Бұл қағидалардан бір-бірінен биліктің қағидалары бар?',
-			'lending.confirmReturn' => 'Бұл кітапты қазір қайтарасыз ба? Жалғастыру үшін оны қайтадан алуыңыз қажет болуы мүмкін.',
-			'lending.confirmCancelHold' => 'Осы кітапқа жасаған броныңыздан бас тартасыз ба?',
-			'lending.email' => 'электрондық поштадағы электрондық пошты',
-			'lending.due' => ({required Object date}) => 'Қайтару мерзімі: ${date}',
-			'lending.queue' => ({required Object position}) => 'Қаланың тұрақты тұрғындарының саны ${position}',
 			'lending.empty' => 'Бұл үшін не қазір титул.',
 			'lending.openLibraryNote' => 'Бұл үшін, «Аяқтар» және «Аялық» бағдарламасы, «Аақтар» бағдарламасы және «Аақықтар» жобасы бар.',
 			'lending.more' => 'Өздіктер',
-			'lending.gateway' => 'Библиотекасы қабырғасы',
-			'lending.gatewayHint' => 'Біздің библиотекасы немесе Pleazyng администраторға арналған.',
-			'lending.advanced' => 'Библиотекасы',
-			'lending.loadLibraries' => 'Бібліотека мен биліктері',
-			'lending.expired' => 'Бұл кредиттік қызметті ұзақтығы.',
-			'lending.updated' => 'Бібліотекасы көрету',
 			'lending.continueService' => 'Ақыттық қызмет көрсету',
-			'lending.comingSoon' => '«Апп» бағдарламасы – өте көп',
-			'lending.comingSoonDescription' => 'Бизнес әріптестікке және кооперацияға ұсыныс.',
-			'lending.suspendHold' => 'Жаққалы',
-			'lending.resumeHold' => 'Жүктесі',
-			'lending.suspendMessage' => 'Кезектегі орныңызды сақтап, келесі оқырманға осы дананы алуға мүмкіндік бересіз бе? Брондауды кейін жалғастыра аласыз.',
-			'lending.resumeMessage' => 'Кітапхана келесі қолжетімді дананы ұсына алуы үшін осы брондауды жалғастырасыз ба?',
-			'lending.editEmail' => 'электрондық поштадағы электрондық пошты',
 			'audiobook.syncTitle' => 'Ауыз ішінен ішінен ішінен',
 			'audiobook.syncHelp' => 'Қаланың тұрақты тұрғындарының саны 1 адамды құрайды, 1 адамды құрайды, 1 адамды құрайды, 1 адамды құрайды, 1 адамды құрайды.',
 			'audiobook.addSyncSource' => '«Google Drive», «OneDrive», «Dropbox», «WebDAV» немесе «S3» бағдарламасы мен бағдарламасы мен бағдарламасы мен бағдарламасы мен бағдарламасы мен бағдарламасы мен бағдарламасы мен бағдарламасы мен бағдарламасы мен бағдарламасы мен бағдарламасы мен бағдарламасы»',
@@ -9216,8 +9148,6 @@ extension on TranslationsKk {
 			'audiobook.statusFinished' => 'Өткен',
 			'audiobook.goToTime' => 'Қазіргі уақытта',
 			'audiobook.timeHelp' => 'Өнімдер: 1 минут, 1 минут, 1 секунды',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Қаланың тұрақты тұрғындарының саны 10 адамды құрайды және 1 адамды қағидалардан тұрады.',
 			'audiobook.recoveryExport' => 'Експортдық криптовалюттік файл',
 			'audiobook.recoveryImport' => 'Қандай-ақ криптовалюталық дағдарыс',
@@ -9252,6 +9182,8 @@ extension on TranslationsKk {
 			'sourceSetup.nfsGroupId' => 'NFS тобының ID мәні (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Әдепкі: 1000. NAS-тағы NFS ортақ ресурсы рұқсат ететін топ ID мәнін пайдаланыңыз.',
 			'sourceSetup.nfsEncryption' => 'Шифрланған NFS талап ету (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'NFS пен mount қызметі үшін TLS 1.3 талап етіледі. NAS мұны қолдамаса, қосылым қабылданбайды.',
 			'sourceSetup.nfsTrustCertificate' => 'Теңшелетін NFS CA немесе сервер сертификаты (PEM, міндетті емес)',
 			'sourceSetup.nfsTrustHelp' => 'Осы құрылғы сенетін сертификаттар үшін бос қалдырыңыз. Қажет болса, жеке CA сертификатын немесе өзі қол қойған сервер сертификатын қосыңыз; ондағы атаулар NFS URL мекенжайындағы хостқа сәйкес болуы керек.',
@@ -9730,8 +9662,6 @@ extension on TranslationsKk {
 			'musicTools.days' => 'Күндер',
 			'musicTools.albumBlocks' => 'Альбомдарды тұтас сақтау',
 			'musicTools.home' => 'Музыка',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'Жақында тыңдалған',
 			'musicTools.apiKey' => 'API кілті',
 			'musicTools.missing' => 'N/A',
@@ -9766,6 +9696,8 @@ extension on TranslationsKk {
 			'musicTools.peak' => 'Шың',
 			'musicTools.bass' => 'Бас',
 			'musicTools.treble' => 'Жоғары жиіліктер',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Ортақ ойнату тізімдері',
 			'musicTools.sharingInvitationsTitle' => 'Plex ортақ пайдалану шақырулары',
 			'musicTools.noSharingInvitations' => 'Күтілген шақырулар жоқ',

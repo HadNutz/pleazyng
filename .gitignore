@@ -71,8 +71,7 @@ maestro/**/*.png
 server/deploy.sh
 server/Caddyfile
 
-# Local lending gateway secrets and Python artifacts
-tools/lending_gateway/config.json
+# Python artifacts
 __pycache__/
 *.pyc
 

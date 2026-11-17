@@ -66,11 +66,11 @@ Do not extend `MediaServerClient` with dozens of no-op merchant methods. Do not 
 | Contextual access rows/sheet | `catalog_item_detail_screen.dart`, `media_detail_screen.dart`, `sources/source_detail_screen.dart`, media-detail action owners | Existing Play/Read primary action keeps its behavior when no new access options exist. |
 | Remote search leg | `lib/media/search_hit.dart`, `screens/search_screen.dart`, `catalog_search_screen.dart` | Preserve per-leg failures/cancellation; keep nonplayable catalog hits distinct from server/source hits. |
 | Service directory/detail | `screens/settings/services_settings_screen.dart`, existing connect screens and grouped rows | One connection appears once; Files/Lending/Games shortcuts point to the same owner. |
-| New lending adapters | `lib/lending/lending_service.dart`, public-library screens, gateway | Refactor incrementally behind an interface; retain OverDrive behavior and disabled release flag. |
+| New lending adapters | `lib/lending/lending_service.dart`, public-library screens | Add provider-specific adapters after access and qualification. |
 | Podcast/OpenSubsonic | Existing music/source playback owners and publication library where semantically suitable | Introduce show/episode or music contracts as needed; do not label a music collection an audiobook. |
 | SDK transport bridge | `PlaybackCoordinator`, music playback service, platform packages | One audio/output lease; provider restrictions override generic chrome capabilities. |
 | Marks and copy | `assets/provider_marks/`, provider mark widgets, Slang sources | Record official provenance; no unlicensed scraped logos or hardcoded production English. |
-| Confidential provider gateway | Existing Go `server/` OAuth infrastructure; existing Python lending gateway remains separate initially | Deployment approval and secrets are operational tasks, not client configuration checked into git. |
+| Confidential provider gateway | Existing Go `server/` OAuth infrastructure | Deployment approval and secrets are operational tasks, not client configuration checked into git. |
 
 ## Identity and matching
 

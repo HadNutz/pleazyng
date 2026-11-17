@@ -3748,48 +3748,14 @@ class _Translations$lending$uk extends Translations$lending$en {
 	@override String get libraryUrlHint => 'Скористайтеся каталогом бібліотеки або її сторінкою входу.';
 	@override String get intro => 'Позичайте книги у своїй бібліотеці й тримайте їх поруч.';
 	@override String get handoff => 'Увійдіть, позичайте книги й читайте безпечно через власний сервіс бібліотеки.';
-	@override String get openService => 'Відкрита бібліотека';
 	@override String get findLibrary => 'Знайдіть бібліотеку';
 	@override String get search => 'Пошук книг та авторів';
-	@override String get catalogue => 'каталог';
-	@override String get loans => 'Позичені книги';
-	@override String get holds => 'Бронювання';
-	@override String get signIn => 'Підписуйтесь у Вашій бібліотеці';
-	@override String get waiting => 'Завершити підписання в браузері, а потім повернутися сюди.';
-	@override String get cancel => 'Скасувати';
 	@override String get disconnect => 'Видалення бібліотеки';
 	@override String get disconnectMessage => 'Вилучити цю бібліотеку з цього профілю? Ваші позичені книги та бронювання залишаться в бібліотеці.';
-	@override String get getBook => 'Отримайте книгу';
-	@override String get checkAvailability => 'Перевірка наявності';
-	@override String get available => 'Доступно для позики';
-	@override String get unavailable => 'В даний час недоступні';
-	@override String get borrow => 'Позичити';
-	@override String get placeHold => 'Забронювати';
-	@override String get returnBook => 'Повернення рано';
-	@override String get cancelHold => 'Скасувати бронювання';
-	@override String get confirmBorrow => 'Ви можете замовити цю книжку у вашій бібліотеці?';
-	@override String get confirmReturn => 'Ви можете повернути цей титул зараз? Ви можете замовити його знову, щоб продовжити.';
-	@override String get confirmCancelHold => 'Скасувати бронювання цього видання?';
-	@override String get email => 'Зберігайте повідомлення електронною поштою';
-	@override String due({required Object date}) => 'Повернути до ${date}';
-	@override String queue({required Object position}) => 'Позиція ${position} в лінії';
 	@override String get empty => 'Тепер тут немає титулів.';
 	@override String get openLibraryNote => 'Переглядайте каталог Open Library. Варіанти читання й позичання наведено на сторінці кожного видання.';
 	@override String get more => 'Завантажити більше';
-	@override String get gateway => 'Бібліотека підписується';
-	@override String get gatewayHint => 'Пропонується вашою бібліотекою або адміністратором Pleazyng.';
-	@override String get advanced => 'Бібліотека інтеграція';
-	@override String get loadLibraries => 'Виберіть свою бібліотеку';
-	@override String get expired => 'Термін користування цією книгою минув.';
-	@override String get updated => 'Бібліотека оновлена';
 	@override String get continueService => 'Продовжуйте службу';
-	@override String get comingSoon => 'Заробітна плата в Україні · Приїжджає незабаром';
-	@override String get comingSoonDescription => 'Ви можете використовувати свою бібліотеку в Libby, поки ми закінчимо підключення її.';
-	@override String get suspendHold => 'Призупинити бронювання';
-	@override String get resumeHold => 'Відновити бронювання';
-	@override String get suspendMessage => 'Зберегти своє місце в черзі й дозволити наступному читачеві позичити цей примірник? Бронювання можна відновити пізніше.';
-	@override String get resumeMessage => 'Відновити бронювання, щоб бібліотека могла запропонувати вам наступний доступний примірник?';
-	@override String get editEmail => 'Зміни повідомлення електронної пошти';
 }
 
 // Path: audiobook
@@ -9169,48 +9135,14 @@ extension on TranslationsUk {
 			'lending.libraryUrlHint' => 'Скористайтеся каталогом бібліотеки або її сторінкою входу.',
 			'lending.intro' => 'Позичайте книги у своїй бібліотеці й тримайте їх поруч.',
 			'lending.handoff' => 'Увійдіть, позичайте книги й читайте безпечно через власний сервіс бібліотеки.',
-			'lending.openService' => 'Відкрита бібліотека',
 			'lending.findLibrary' => 'Знайдіть бібліотеку',
 			'lending.search' => 'Пошук книг та авторів',
-			'lending.catalogue' => 'каталог',
-			'lending.loans' => 'Позичені книги',
-			'lending.holds' => 'Бронювання',
-			'lending.signIn' => 'Підписуйтесь у Вашій бібліотеці',
-			'lending.waiting' => 'Завершити підписання в браузері, а потім повернутися сюди.',
-			'lending.cancel' => 'Скасувати',
 			'lending.disconnect' => 'Видалення бібліотеки',
 			'lending.disconnectMessage' => 'Вилучити цю бібліотеку з цього профілю? Ваші позичені книги та бронювання залишаться в бібліотеці.',
-			'lending.getBook' => 'Отримайте книгу',
-			'lending.checkAvailability' => 'Перевірка наявності',
-			'lending.available' => 'Доступно для позики',
-			'lending.unavailable' => 'В даний час недоступні',
-			'lending.borrow' => 'Позичити',
-			'lending.placeHold' => 'Забронювати',
-			'lending.returnBook' => 'Повернення рано',
-			'lending.cancelHold' => 'Скасувати бронювання',
-			'lending.confirmBorrow' => 'Ви можете замовити цю книжку у вашій бібліотеці?',
-			'lending.confirmReturn' => 'Ви можете повернути цей титул зараз? Ви можете замовити його знову, щоб продовжити.',
-			'lending.confirmCancelHold' => 'Скасувати бронювання цього видання?',
-			'lending.email' => 'Зберігайте повідомлення електронною поштою',
-			'lending.due' => ({required Object date}) => 'Повернути до ${date}',
-			'lending.queue' => ({required Object position}) => 'Позиція ${position} в лінії',
 			'lending.empty' => 'Тепер тут немає титулів.',
 			'lending.openLibraryNote' => 'Переглядайте каталог Open Library. Варіанти читання й позичання наведено на сторінці кожного видання.',
 			'lending.more' => 'Завантажити більше',
-			'lending.gateway' => 'Бібліотека підписується',
-			'lending.gatewayHint' => 'Пропонується вашою бібліотекою або адміністратором Pleazyng.',
-			'lending.advanced' => 'Бібліотека інтеграція',
-			'lending.loadLibraries' => 'Виберіть свою бібліотеку',
-			'lending.expired' => 'Термін користування цією книгою минув.',
-			'lending.updated' => 'Бібліотека оновлена',
 			'lending.continueService' => 'Продовжуйте службу',
-			'lending.comingSoon' => 'Заробітна плата в Україні · Приїжджає незабаром',
-			'lending.comingSoonDescription' => 'Ви можете використовувати свою бібліотеку в Libby, поки ми закінчимо підключення її.',
-			'lending.suspendHold' => 'Призупинити бронювання',
-			'lending.resumeHold' => 'Відновити бронювання',
-			'lending.suspendMessage' => 'Зберегти своє місце в черзі й дозволити наступному читачеві позичити цей примірник? Бронювання можна відновити пізніше.',
-			'lending.resumeMessage' => 'Відновити бронювання, щоб бібліотека могла запропонувати вам наступний доступний примірник?',
-			'lending.editEmail' => 'Зміни повідомлення електронної пошти',
 			'audiobook.syncTitle' => 'Читання та слухання Sync',
 			'audiobook.syncHelp' => 'Зберігайте позиції читання, позиції слуху, стан завершення, знаки книг і записи на ваших пристроях. Виберіть прикріплений обліковий запис зберігання і використовуйте той же код синхронізації на кожному пристрої. Читання і слухання залишаються окремими.',
 			'audiobook.addSyncSource' => 'Перш за все, додайте Google Drive, OneDrive, Dropbox, WebDAV або S3 до файлів і книг.',
@@ -9260,8 +9192,6 @@ extension on TranslationsUk {
 			'audiobook.statusFinished' => 'Завершено',
 			'audiobook.goToTime' => 'Ідіть до часу',
 			'audiobook.timeHelp' => 'Час: хвилини: секунди або хвилини: секунди',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Експортуйте недавно зашифровану копію, перш ніж переміщати або відновлювати дані синхронізації. імпорт поєднується з поточним станом; вони ніколи не замінюють місцеву історію синхронності.',
 			'audiobook.recoveryExport' => 'Експорт криптовалютних файлів відновлення',
 			'audiobook.recoveryImport' => 'Ввезення шифрованих файлів відновлення',
@@ -9296,6 +9226,8 @@ extension on TranslationsUk {
 			'sourceSetup.nfsGroupId' => 'ID групи NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Типово: 1000. Використайте ID групи, дозволений експортом NFS на NAS.',
 			'sourceSetup.nfsEncryption' => 'Вимагати шифрування NFS (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Вимагати TLS 1.3 для NFS і служби монтування. Якщо NAS цього не підтримує, з’єднання буде відхилено.',
 			'sourceSetup.nfsTrustCertificate' => 'Власний CA NFS або сертифікат сервера (PEM, необов’язково)',
 			'sourceSetup.nfsTrustHelp' => 'Залиште порожнім для сертифікатів, яким довіряє цей пристрій. За потреби додайте сертифікат приватного CA або самопідписаний сертифікат сервера; імена в ньому мають відповідати хосту в URL NFS.',
@@ -9774,8 +9706,6 @@ extension on TranslationsUk {
 			'musicTools.days' => 'Дні',
 			'musicTools.albumBlocks' => 'Зберігати альбоми цілими',
 			'musicTools.home' => 'Музика',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'Нещодавно прослухані',
 			'musicTools.apiKey' => 'Ключ API',
 			'musicTools.missing' => 'Н / А',
@@ -9810,6 +9740,8 @@ extension on TranslationsUk {
 			'musicTools.peak' => 'Пік',
 			'musicTools.bass' => 'Низькі частоти',
 			'musicTools.treble' => 'Високі частоти',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Спільні списки відтворення',
 			'musicTools.sharingInvitationsTitle' => 'Запрошення до спільних матеріалів Plex',
 			'musicTools.noSharingInvitations' => 'Немає запрошень, що очікують',

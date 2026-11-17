@@ -23,7 +23,7 @@ Status: all code remains implemented but unqualified. Existing synthetic fixture
 | V13 | Native owned EPUB/MP3/M4B imported after official store download | Existing reader/audio flow and file-qualified resume; retained after store disconnect | W05/W07 |
 | V14 | ACSM, LCP license, encrypted ebook or incorrectly labeled HTML download | No unrestricted native import; supported fulfillment or precise recovery | W05/W07/W08 |
 | V15 | Kindle eligible purchased export versus borrowed KU title | Only actual exported compatible file is importable; no borrowed-export promise | W05 |
-| V16 | OverDrive disabled build | Coming soon retained; no native auth/circulation requests; external Libby works where qualified | W08 |
+| V16 | Public libraries | Supported links open their HTTPS websites. Retired provider entries are skipped when loading saved libraries. | W08 |
 | V17 | Borrow/hold request times out after server accepted it | Reconcile state; no duplicate mutation from retry/double tap | W08 |
 | V18 | Hold ready/pickup, suspend/resume, return, expiry, revoked card, changed collection | Provider-advertised actions only; confirmed mutation; correct due state and reader destination | W08 |
 | V19 | Audiobookshelf supported legacy and new auth flows, token expiry and server upgrade | Code supports JWT login/rotation and legacy bearer credentials; qualification must show preserved source/history, one refresh/reconnect, and no exposed credentials | W07; not run |

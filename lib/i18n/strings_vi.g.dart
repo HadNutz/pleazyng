@@ -3683,48 +3683,14 @@ class _Translations$lending$vi extends Translations$lending$en {
 	@override String get libraryUrlHint => 'Dùng danh mục hoặc trang đăng nhập của thư viện.';
 	@override String get intro => 'Hãy vay từ thư viện của bạn, hãy giữ cho sách của bạn gần.';
 	@override String get handoff => 'Đăng nhập, mượn sách và đọc an toàn qua dịch vụ riêng của thư viện.';
-	@override String get openService => 'Thư viện mở';
 	@override String get findLibrary => 'Tìm một thư viện';
 	@override String get search => 'Tìm kiếm sách và tác giả';
-	@override String get catalogue => 'Danh mục';
-	@override String get loans => 'Sách đã mượn';
-	@override String get holds => 'Đặt trước';
-	@override String get signIn => 'Đăng nhập với thư viện của bạn';
-	@override String get waiting => 'Kết thúc đăng ký trong trình duyệt của bạn, sau đó trở lại đây.';
-	@override String get cancel => 'Hủy bỏ';
 	@override String get disconnect => 'xóa thư viện';
 	@override String get disconnectMessage => 'Xóa thư viện này khỏi hồ sơ này? Các sách đã mượn và lượt đặt trước vẫn được giữ tại thư viện.';
-	@override String get getBook => 'Nhận sách';
-	@override String get checkAvailability => 'Kiểm tra khả dụng';
-	@override String get available => 'Có sẵn để vay';
-	@override String get unavailable => 'Hiện chưa có';
-	@override String get borrow => 'Mượn';
-	@override String get placeHold => 'Đặt trước';
-	@override String get returnBook => 'Trả trước hạn';
-	@override String get cancelHold => 'Hủy đặt trước';
-	@override String get confirmBorrow => 'Bạn có nên mượn danh hiệu này từ thư viện của mình?';
-	@override String get confirmReturn => 'Trả tựa sách này ngay? Bạn có thể cần mượn lại để tiếp tục.';
-	@override String get confirmCancelHold => 'Hủy lượt đặt trước của bạn cho tựa sách này?';
-	@override String get email => 'Đặt thông báo email';
-	@override String due({required Object date}) => 'Hạn trả: ${date}';
-	@override String queue({required Object position}) => 'Vị trí ${position} trong dòng';
 	@override String get empty => 'Không có tiêu đề nào ở đây.';
 	@override String get openLibraryNote => 'Khám phá danh mục của Open Library. Các tùy chọn đọc và mượn được hiển thị trên trang của từng tựa sách.';
 	@override String get more => 'tải thêm';
-	@override String get gateway => 'Thư viện đăng ký dịch vụ';
-	@override String get gatewayHint => 'Được cung cấp bởi thư viện của bạn hoặc quản trị viên Pleazyng.';
-	@override String get advanced => 'Thư viện Integration';
-	@override String get loadLibraries => 'Chọn thư viện của bạn';
-	@override String get expired => 'Thời hạn mượn sách này đã kết thúc.';
-	@override String get updated => 'Thư viện cập nhật';
 	@override String get continueService => 'tiếp tục phục vụ';
-	@override String get comingSoon => 'Lương In-app · Đến sớm';
-	@override String get comingSoonDescription => 'Bạn có thể sử dụng thư viện của bạn trong Libby trong khi chúng tôi kết thúc kết nối nó.';
-	@override String get suspendHold => 'Tạm dừng đặt trước';
-	@override String get resumeHold => 'Tiếp tục đặt trước';
-	@override String get suspendMessage => 'Giữ vị trí trong hàng chờ và để người đọc tiếp theo mượn bản này? Bạn có thể tiếp tục lượt đặt trước sau.';
-	@override String get resumeMessage => 'Tiếp tục lượt đặt trước này để thư viện có thể cung cấp bản sẵn có tiếp theo cho bạn?';
-	@override String get editEmail => 'Thay đổi thông báo email';
 }
 
 // Path: audiobook
@@ -9100,48 +9066,14 @@ extension on TranslationsVi {
 			'lending.libraryUrlHint' => 'Dùng danh mục hoặc trang đăng nhập của thư viện.',
 			'lending.intro' => 'Hãy vay từ thư viện của bạn, hãy giữ cho sách của bạn gần.',
 			'lending.handoff' => 'Đăng nhập, mượn sách và đọc an toàn qua dịch vụ riêng của thư viện.',
-			'lending.openService' => 'Thư viện mở',
 			'lending.findLibrary' => 'Tìm một thư viện',
 			'lending.search' => 'Tìm kiếm sách và tác giả',
-			'lending.catalogue' => 'Danh mục',
-			'lending.loans' => 'Sách đã mượn',
-			'lending.holds' => 'Đặt trước',
-			'lending.signIn' => 'Đăng nhập với thư viện của bạn',
-			'lending.waiting' => 'Kết thúc đăng ký trong trình duyệt của bạn, sau đó trở lại đây.',
-			'lending.cancel' => 'Hủy bỏ',
 			'lending.disconnect' => 'xóa thư viện',
 			'lending.disconnectMessage' => 'Xóa thư viện này khỏi hồ sơ này? Các sách đã mượn và lượt đặt trước vẫn được giữ tại thư viện.',
-			'lending.getBook' => 'Nhận sách',
-			'lending.checkAvailability' => 'Kiểm tra khả dụng',
-			'lending.available' => 'Có sẵn để vay',
-			'lending.unavailable' => 'Hiện chưa có',
-			'lending.borrow' => 'Mượn',
-			'lending.placeHold' => 'Đặt trước',
-			'lending.returnBook' => 'Trả trước hạn',
-			'lending.cancelHold' => 'Hủy đặt trước',
-			'lending.confirmBorrow' => 'Bạn có nên mượn danh hiệu này từ thư viện của mình?',
-			'lending.confirmReturn' => 'Trả tựa sách này ngay? Bạn có thể cần mượn lại để tiếp tục.',
-			'lending.confirmCancelHold' => 'Hủy lượt đặt trước của bạn cho tựa sách này?',
-			'lending.email' => 'Đặt thông báo email',
-			'lending.due' => ({required Object date}) => 'Hạn trả: ${date}',
-			'lending.queue' => ({required Object position}) => 'Vị trí ${position} trong dòng',
 			'lending.empty' => 'Không có tiêu đề nào ở đây.',
 			'lending.openLibraryNote' => 'Khám phá danh mục của Open Library. Các tùy chọn đọc và mượn được hiển thị trên trang của từng tựa sách.',
 			'lending.more' => 'tải thêm',
-			'lending.gateway' => 'Thư viện đăng ký dịch vụ',
-			'lending.gatewayHint' => 'Được cung cấp bởi thư viện của bạn hoặc quản trị viên Pleazyng.',
-			'lending.advanced' => 'Thư viện Integration',
-			'lending.loadLibraries' => 'Chọn thư viện của bạn',
-			'lending.expired' => 'Thời hạn mượn sách này đã kết thúc.',
-			'lending.updated' => 'Thư viện cập nhật',
 			'lending.continueService' => 'tiếp tục phục vụ',
-			'lending.comingSoon' => 'Lương In-app · Đến sớm',
-			'lending.comingSoonDescription' => 'Bạn có thể sử dụng thư viện của bạn trong Libby trong khi chúng tôi kết thúc kết nối nó.',
-			'lending.suspendHold' => 'Tạm dừng đặt trước',
-			'lending.resumeHold' => 'Tiếp tục đặt trước',
-			'lending.suspendMessage' => 'Giữ vị trí trong hàng chờ và để người đọc tiếp theo mượn bản này? Bạn có thể tiếp tục lượt đặt trước sau.',
-			'lending.resumeMessage' => 'Tiếp tục lượt đặt trước này để thư viện có thể cung cấp bản sẵn có tiếp theo cho bạn?',
-			'lending.editEmail' => 'Thay đổi thông báo email',
 			'audiobook.syncTitle' => 'Đọc & lắng nghe Sync',
 			'audiobook.syncHelp' => 'Giữ vị trí đọc, nghe vị trí, trạng thái hoàn thành, sổ ghi chép và ghi chú trên thiết bị của bạn. Chọn một tài khoản lưu trữ được gắn và sử dụng cùng mã đồng bộ trên mỗi thiết bị. Đọc và nghe vẫn riêng biệt.',
 			'audiobook.addSyncSource' => 'Thêm Google Drive, OneDrive, Dropbox, WebDAV hoặc S3 vào tệp và sách trước.',
@@ -9191,8 +9123,6 @@ extension on TranslationsVi {
 			'audiobook.statusFinished' => 'Kết thúc',
 			'audiobook.goToTime' => 'Đi đến thời gian',
 			'audiobook.timeHelp' => 'Thời gian: phút: giây, hoặc phút: giây',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Xuất một bản sao được mã hóa gần đây trước khi di chuyển hoặc sửa chữa dữ liệu đồng bộ. nhập khẩu kết hợp với trạng thái hiện tại; họ không bao giờ thay thế lịch sử đồng bộ địa phương. Giữ mã đồng bộ riêng biệt.',
 			'audiobook.recoveryExport' => 'Xuất khẩu file recovery mã hóa',
 			'audiobook.recoveryImport' => 'nhập file recovery mã hóa',
@@ -9227,6 +9157,8 @@ extension on TranslationsVi {
 			'sourceSetup.nfsGroupId' => 'ID nhóm NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Mặc định: 1000. Dùng ID nhóm được vùng chia sẻ NFS trên NAS cho phép.',
 			'sourceSetup.nfsEncryption' => 'Bắt buộc mã hóa NFS (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Bắt buộc dùng TLS 1.3 cho NFS và dịch vụ gắn kết. Nếu NAS không hỗ trợ, kết nối sẽ bị từ chối.',
 			'sourceSetup.nfsTrustCertificate' => 'CA NFS tùy chỉnh hoặc chứng chỉ máy chủ (PEM, không bắt buộc)',
 			'sourceSetup.nfsTrustHelp' => 'Để trống để dùng các chứng chỉ được thiết bị này tin cậy. Nếu cần, thêm chứng chỉ của CA riêng hoặc chứng chỉ máy chủ tự ký; các tên trong chứng chỉ phải khớp với máy chủ trong URL NFS.',
@@ -9705,8 +9637,6 @@ extension on TranslationsVi {
 			'musicTools.days' => 'Ngày',
 			'musicTools.albumBlocks' => 'Giữ nguyên album',
 			'musicTools.home' => 'Nhạc',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'Đã phát gần đây',
 			'musicTools.apiKey' => 'Khóa API',
 			'musicTools.missing' => 'N / A',
@@ -9741,6 +9671,8 @@ extension on TranslationsVi {
 			'musicTools.peak' => 'Đỉnh',
 			'musicTools.bass' => 'Âm trầm',
 			'musicTools.treble' => 'Âm cao',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Danh sách phát được chia sẻ',
 			'musicTools.sharingInvitationsTitle' => 'Lời mời chia sẻ Plex',
 			'musicTools.noSharingInvitations' => 'Không có lời mời đang chờ',

@@ -3706,48 +3706,14 @@ class _Translations$lending$hi extends Translations$lending$en {
 	@override String get libraryUrlHint => 'अपने पुस्तकालय के कैटलॉग या साइन-इन पेज का उपयोग करें।';
 	@override String get intro => 'अपनी लाइब्रेरी से किताबें उधार लें और उन्हें अपने पास रखें।';
 	@override String get handoff => 'साइन इन करें, उधार लें और अपनी पुस्तकालय की सेवा के साथ सुरक्षित रूप से पढ़ें।';
-	@override String get openService => 'खुली पुस्तकालय';
 	@override String get findLibrary => 'एक पुस्तकालय खोजें';
 	@override String get search => 'किताबें और लेखकों की खोज';
-	@override String get catalogue => 'कैटलॉग';
-	@override String get loans => 'ऋण';
-	@override String get holds => 'आरक्षण';
-	@override String get signIn => 'अपनी पुस्तकालय के साथ साइन इन करें';
-	@override String get waiting => 'अपने ब्राउज़र में साइन इन करना बंद करें, फिर यहां वापस जाएं।';
-	@override String get cancel => 'रद्द करना';
 	@override String get disconnect => 'पुस्तकालय को हटा दें';
 	@override String get disconnectMessage => 'इस लाइब्रेरी को इस प्रोफ़ाइल से हटाएँ? उधार ली गई किताबें और आरक्षण आपकी लाइब्रेरी में बने रहेंगे।';
-	@override String get getBook => 'किताबें प्राप्त करें';
-	@override String get checkAvailability => 'उपलब्धता की जांच करें';
-	@override String get available => 'ऋण के लिए उपलब्ध';
-	@override String get unavailable => 'वर्तमान में उपलब्ध नहीं';
-	@override String get borrow => 'उधार लें';
-	@override String get placeHold => 'आरक्षित करें';
-	@override String get returnBook => 'जल्दी लौटें';
-	@override String get cancelHold => 'आरक्षण रद्द करें';
-	@override String get confirmBorrow => 'क्या आप अपनी पुस्तकालय से इस शीर्षक को उधार लेते हैं?';
-	@override String get confirmReturn => 'यह किताब अभी लौटाएँ? पढ़ना जारी रखने के लिए इसे फिर से उधार लेना पड़ सकता है।';
-	@override String get confirmCancelHold => 'इस किताब का अपना आरक्षण रद्द करें?';
-	@override String get email => 'ईमेल नोटिस रखें';
-	@override String due({required Object date}) => 'लौटाने की तारीख: ${date}';
-	@override String queue({required Object position}) => 'पद ${position} लाइन में';
 	@override String get empty => 'अभी तक कोई शीर्षक नहीं है।';
 	@override String get openLibraryNote => 'Open Library के कैटलॉग का पता लगाएं. पढ़ने और ऋण के विकल्प प्रत्येक शीर्षक के पृष्ठ पर दिखाई देते हैं.';
 	@override String get more => 'अधिक लोड करें';
-	@override String get gateway => 'पुस्तकालय सेवा में हस्ताक्षर';
-	@override String get gatewayHint => 'आपके पुस्तकालय या व्यवस्थापक द्वारा प्रदान किया गया Pleazyng।';
-	@override String get advanced => 'पुस्तकालयों का संचालन';
-	@override String get loadLibraries => 'अपनी पुस्तकालय चुनें';
-	@override String get expired => 'यह ऋण समाप्त हो गया है।';
-	@override String get updated => 'पुस्तकालय अद्यतन';
 	@override String get continueService => 'सेवा में जारी रखें';
-	@override String get comingSoon => 'जल्द ही आने वाले ऋण';
-	@override String get comingSoonDescription => 'आप Libby में अपनी पुस्तकालय का उपयोग कर सकते हैं जबकि हम इसे कनेक्ट करने के लिए समाप्त कर सकते हैं।';
-	@override String get suspendHold => 'आरक्षण अस्थायी रूप से रोकें';
-	@override String get resumeHold => 'आरक्षण फिर से चालू करें';
-	@override String get suspendMessage => 'कतार में अपनी जगह बनाए रखकर अगले पाठक को यह प्रति उधार लेने दें? आप बाद में आरक्षण फिर से चालू कर सकते हैं।';
-	@override String get resumeMessage => 'यह आरक्षण फिर से चालू करें ताकि लाइब्रेरी अगली उपलब्ध प्रति आपको दे सके?';
-	@override String get editEmail => 'ईमेल नोटिस बदलना';
 }
 
 // Path: audiobook
@@ -9125,48 +9091,14 @@ extension on TranslationsHi {
 			'lending.libraryUrlHint' => 'अपने पुस्तकालय के कैटलॉग या साइन-इन पेज का उपयोग करें।',
 			'lending.intro' => 'अपनी लाइब्रेरी से किताबें उधार लें और उन्हें अपने पास रखें।',
 			'lending.handoff' => 'साइन इन करें, उधार लें और अपनी पुस्तकालय की सेवा के साथ सुरक्षित रूप से पढ़ें।',
-			'lending.openService' => 'खुली पुस्तकालय',
 			'lending.findLibrary' => 'एक पुस्तकालय खोजें',
 			'lending.search' => 'किताबें और लेखकों की खोज',
-			'lending.catalogue' => 'कैटलॉग',
-			'lending.loans' => 'ऋण',
-			'lending.holds' => 'आरक्षण',
-			'lending.signIn' => 'अपनी पुस्तकालय के साथ साइन इन करें',
-			'lending.waiting' => 'अपने ब्राउज़र में साइन इन करना बंद करें, फिर यहां वापस जाएं।',
-			'lending.cancel' => 'रद्द करना',
 			'lending.disconnect' => 'पुस्तकालय को हटा दें',
 			'lending.disconnectMessage' => 'इस लाइब्रेरी को इस प्रोफ़ाइल से हटाएँ? उधार ली गई किताबें और आरक्षण आपकी लाइब्रेरी में बने रहेंगे।',
-			'lending.getBook' => 'किताबें प्राप्त करें',
-			'lending.checkAvailability' => 'उपलब्धता की जांच करें',
-			'lending.available' => 'ऋण के लिए उपलब्ध',
-			'lending.unavailable' => 'वर्तमान में उपलब्ध नहीं',
-			'lending.borrow' => 'उधार लें',
-			'lending.placeHold' => 'आरक्षित करें',
-			'lending.returnBook' => 'जल्दी लौटें',
-			'lending.cancelHold' => 'आरक्षण रद्द करें',
-			'lending.confirmBorrow' => 'क्या आप अपनी पुस्तकालय से इस शीर्षक को उधार लेते हैं?',
-			'lending.confirmReturn' => 'यह किताब अभी लौटाएँ? पढ़ना जारी रखने के लिए इसे फिर से उधार लेना पड़ सकता है।',
-			'lending.confirmCancelHold' => 'इस किताब का अपना आरक्षण रद्द करें?',
-			'lending.email' => 'ईमेल नोटिस रखें',
-			'lending.due' => ({required Object date}) => 'लौटाने की तारीख: ${date}',
-			'lending.queue' => ({required Object position}) => 'पद ${position} लाइन में',
 			'lending.empty' => 'अभी तक कोई शीर्षक नहीं है।',
 			'lending.openLibraryNote' => 'Open Library के कैटलॉग का पता लगाएं. पढ़ने और ऋण के विकल्प प्रत्येक शीर्षक के पृष्ठ पर दिखाई देते हैं.',
 			'lending.more' => 'अधिक लोड करें',
-			'lending.gateway' => 'पुस्तकालय सेवा में हस्ताक्षर',
-			'lending.gatewayHint' => 'आपके पुस्तकालय या व्यवस्थापक द्वारा प्रदान किया गया Pleazyng।',
-			'lending.advanced' => 'पुस्तकालयों का संचालन',
-			'lending.loadLibraries' => 'अपनी पुस्तकालय चुनें',
-			'lending.expired' => 'यह ऋण समाप्त हो गया है।',
-			'lending.updated' => 'पुस्तकालय अद्यतन',
 			'lending.continueService' => 'सेवा में जारी रखें',
-			'lending.comingSoon' => 'जल्द ही आने वाले ऋण',
-			'lending.comingSoonDescription' => 'आप Libby में अपनी पुस्तकालय का उपयोग कर सकते हैं जबकि हम इसे कनेक्ट करने के लिए समाप्त कर सकते हैं।',
-			'lending.suspendHold' => 'आरक्षण अस्थायी रूप से रोकें',
-			'lending.resumeHold' => 'आरक्षण फिर से चालू करें',
-			'lending.suspendMessage' => 'कतार में अपनी जगह बनाए रखकर अगले पाठक को यह प्रति उधार लेने दें? आप बाद में आरक्षण फिर से चालू कर सकते हैं।',
-			'lending.resumeMessage' => 'यह आरक्षण फिर से चालू करें ताकि लाइब्रेरी अगली उपलब्ध प्रति आपको दे सके?',
-			'lending.editEmail' => 'ईमेल नोटिस बदलना',
 			'audiobook.syncTitle' => 'पढ़ना और सुनना सिंक्रनाइज़ेशन',
 			'audiobook.syncHelp' => 'अपने डिवाइस के माध्यम से पढ़ने की स्थिति, सुनने की स्थिति, पूरा होने की स्थिति, बुकमार्क और नोट्स रखें. एक संलग्न स्टोरेज खाता चुनें और प्रत्येक डिवाइस पर एक ही सिंक्रनाइज़ेशन कोड का उपयोग करें. पढ़ना और सुनना अलग रहता है.',
 			'audiobook.addSyncSource' => 'पहले फ़ाइलों और किताबों में Google ड्राइव, OneDrive, Dropbox, WebDAV या S3 जोड़ें।',
@@ -9216,8 +9148,6 @@ extension on TranslationsHi {
 			'audiobook.statusFinished' => 'समाप्त',
 			'audiobook.goToTime' => 'समय के लिए जाओ',
 			'audiobook.timeHelp' => 'घंटे: मिनट: सेकंड, या मिनट: सेकंड',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'सिंक डेटा को स्थानांतरित या ठीक करने से पहले हाल की एन्क्रिप्टेड कॉपी निर्यात करें। आयात मौजूदा स्थिति के साथ मिलते हैं; वे स्थानीय सिंक इतिहास को कभी नहीं बदलते। सिंक कोड अलग से रखें।',
 			'audiobook.recoveryExport' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइलों का निर्यात',
 			'audiobook.recoveryImport' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइल आयात',
@@ -9252,6 +9182,8 @@ extension on TranslationsHi {
 			'sourceSetup.nfsGroupId' => 'NFS समूह ID (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'डिफ़ॉल्ट: 1000। NAS एक्सपोर्ट की अनुमति वाला समूह ID इस्तेमाल करें।',
 			'sourceSetup.nfsEncryption' => 'एन्क्रिप्टेड NFS अनिवार्य करें (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'NFS और माउंट सेवा के लिए TLS 1.3 अनिवार्य करें। NAS में समर्थन न होने पर कनेक्शन अस्वीकार कर दिया जाता है।',
 			'sourceSetup.nfsTrustCertificate' => 'कस्टम NFS CA या सर्वर प्रमाणपत्र (PEM, वैकल्पिक)',
 			'sourceSetup.nfsTrustHelp' => 'इस डिवाइस के भरोसेमंद प्रमाणपत्रों के लिए खाली छोड़ें। ज़रूरत होने पर निजी CA या स्वयं हस्ताक्षरित सर्वर प्रमाणपत्र जोड़ें; उसके नाम NFS URL के होस्ट से मेल खाने चाहिए।',
@@ -9730,8 +9662,6 @@ extension on TranslationsHi {
 			'musicTools.days' => 'दिन',
 			'musicTools.albumBlocks' => 'पूरे एल्बम साथ रखें',
 			'musicTools.home' => 'संगीत',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'हाल ही में सुने गए',
 			'musicTools.apiKey' => 'API कुंजी',
 			'musicTools.missing' => 'ए / ए',
@@ -9766,6 +9696,8 @@ extension on TranslationsHi {
 			'musicTools.peak' => 'शिखर',
 			'musicTools.bass' => 'बास',
 			'musicTools.treble' => 'ट्रेबल',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'शेयर की गई प्लेलिस्ट',
 			'musicTools.sharingInvitationsTitle' => 'Plex साझाकरण आमंत्रण',
 			'musicTools.noSharingInvitations' => 'कोई लंबित आमंत्रण नहीं',

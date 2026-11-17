@@ -3706,48 +3706,14 @@ class _Translations$lending$nl extends Translations$lending$en {
 	@override String get libraryUrlHint => 'Gebruik de catalogus van uw bibliotheek of sign-in pagina.';
 	@override String get intro => 'Lenen van uw bibliotheek, houd uw boeken dicht.';
 	@override String get handoff => 'Meld je aan, len en lees veilig met de service van je bibliotheek.';
-	@override String get openService => 'Open bibliotheek';
 	@override String get findLibrary => 'Vind een bibliotheek';
 	@override String get search => 'Zoek boeken en auteurs';
-	@override String get catalogue => 'Catalogus';
-	@override String get loans => 'Lenen';
-	@override String get holds => 'Reserveringen';
-	@override String get signIn => 'Meld je aan bij je bibliotheek';
-	@override String get waiting => 'Sluit de inschrijving in uw browser en kom dan terug.';
-	@override String get cancel => 'Annuleren';
 	@override String get disconnect => 'Verwijder bibliotheek';
 	@override String get disconnectMessage => 'Deze bibliotheek uit dit profiel verwijderen? Je uitleningen en reserveringen blijven bij de bibliotheek bewaard.';
-	@override String get getBook => 'Krijg boek';
-	@override String get checkAvailability => 'Controleer beschikbaarheid';
-	@override String get available => 'beschikbaar voor lening';
-	@override String get unavailable => 'Momenteel niet beschikbaar';
-	@override String get borrow => 'Lenen';
-	@override String get placeHold => 'Reserveren';
-	@override String get returnBook => 'Vroeg terug';
-	@override String get cancelHold => 'Reservering annuleren';
-	@override String get confirmBorrow => 'Lenen deze titel van je bibliotheek?';
-	@override String get confirmReturn => 'Ga deze titel nu terug? u moet het misschien opnieuw lenen om verder te gaan.';
-	@override String get confirmCancelHold => 'Je reservering voor deze titel annuleren?';
-	@override String get email => 'Houd de melding e-mail';
-	@override String due({required Object date}) => 'Gevangen ${date}';
-	@override String queue({required Object position}) => 'Positie ${position} in de lijn';
 	@override String get empty => 'Geen titel hier nog.';
 	@override String get openLibraryNote => 'Ontdek de catalogus van Open Library. lees- en leningsopties worden weergegeven op de pagina van elke titel.';
 	@override String get more => 'Laden meer';
-	@override String get gateway => 'Bibliotheek Sign-in Service';
-	@override String get gatewayHint => 'Gevestigd door uw bibliotheek of de administrator Pleazyng.';
-	@override String get advanced => 'Bibliotheek integratie';
-	@override String get loadLibraries => 'Kies uw bibliotheek';
-	@override String get expired => 'Dit lening is uitgestorven.';
-	@override String get updated => 'Bibliotheek bijgewerkt';
 	@override String get continueService => 'Blijf in dienst';
-	@override String get comingSoon => 'In-app lening · Komt binnenkort';
-	@override String get comingSoonDescription => 'U kunt uw bibliotheek in Libby gebruiken terwijl we het eindigen met het verbinden.';
-	@override String get suspendHold => 'Stoppen houden';
-	@override String get resumeHold => 'Resume houden';
-	@override String get suspendMessage => 'Je plaats in de wachtrij behouden en de volgende lezer dit exemplaar laten lenen? Je kunt de reservering later hervatten.';
-	@override String get resumeMessage => 'Deze reservering hervatten zodat de bibliotheek je het volgende beschikbare exemplaar kan aanbieden?';
-	@override String get editEmail => 'Wijziging van de e-mail notificatie';
 }
 
 // Path: audiobook
@@ -9125,48 +9091,14 @@ extension on TranslationsNl {
 			'lending.libraryUrlHint' => 'Gebruik de catalogus van uw bibliotheek of sign-in pagina.',
 			'lending.intro' => 'Lenen van uw bibliotheek, houd uw boeken dicht.',
 			'lending.handoff' => 'Meld je aan, len en lees veilig met de service van je bibliotheek.',
-			'lending.openService' => 'Open bibliotheek',
 			'lending.findLibrary' => 'Vind een bibliotheek',
 			'lending.search' => 'Zoek boeken en auteurs',
-			'lending.catalogue' => 'Catalogus',
-			'lending.loans' => 'Lenen',
-			'lending.holds' => 'Reserveringen',
-			'lending.signIn' => 'Meld je aan bij je bibliotheek',
-			'lending.waiting' => 'Sluit de inschrijving in uw browser en kom dan terug.',
-			'lending.cancel' => 'Annuleren',
 			'lending.disconnect' => 'Verwijder bibliotheek',
 			'lending.disconnectMessage' => 'Deze bibliotheek uit dit profiel verwijderen? Je uitleningen en reserveringen blijven bij de bibliotheek bewaard.',
-			'lending.getBook' => 'Krijg boek',
-			'lending.checkAvailability' => 'Controleer beschikbaarheid',
-			'lending.available' => 'beschikbaar voor lening',
-			'lending.unavailable' => 'Momenteel niet beschikbaar',
-			'lending.borrow' => 'Lenen',
-			'lending.placeHold' => 'Reserveren',
-			'lending.returnBook' => 'Vroeg terug',
-			'lending.cancelHold' => 'Reservering annuleren',
-			'lending.confirmBorrow' => 'Lenen deze titel van je bibliotheek?',
-			'lending.confirmReturn' => 'Ga deze titel nu terug? u moet het misschien opnieuw lenen om verder te gaan.',
-			'lending.confirmCancelHold' => 'Je reservering voor deze titel annuleren?',
-			'lending.email' => 'Houd de melding e-mail',
-			'lending.due' => ({required Object date}) => 'Gevangen ${date}',
-			'lending.queue' => ({required Object position}) => 'Positie ${position} in de lijn',
 			'lending.empty' => 'Geen titel hier nog.',
 			'lending.openLibraryNote' => 'Ontdek de catalogus van Open Library. lees- en leningsopties worden weergegeven op de pagina van elke titel.',
 			'lending.more' => 'Laden meer',
-			'lending.gateway' => 'Bibliotheek Sign-in Service',
-			'lending.gatewayHint' => 'Gevestigd door uw bibliotheek of de administrator Pleazyng.',
-			'lending.advanced' => 'Bibliotheek integratie',
-			'lending.loadLibraries' => 'Kies uw bibliotheek',
-			'lending.expired' => 'Dit lening is uitgestorven.',
-			'lending.updated' => 'Bibliotheek bijgewerkt',
 			'lending.continueService' => 'Blijf in dienst',
-			'lending.comingSoon' => 'In-app lening · Komt binnenkort',
-			'lending.comingSoonDescription' => 'U kunt uw bibliotheek in Libby gebruiken terwijl we het eindigen met het verbinden.',
-			'lending.suspendHold' => 'Stoppen houden',
-			'lending.resumeHold' => 'Resume houden',
-			'lending.suspendMessage' => 'Je plaats in de wachtrij behouden en de volgende lezer dit exemplaar laten lenen? Je kunt de reservering later hervatten.',
-			'lending.resumeMessage' => 'Deze reservering hervatten zodat de bibliotheek je het volgende beschikbare exemplaar kan aanbieden?',
-			'lending.editEmail' => 'Wijziging van de e-mail notificatie',
 			'audiobook.syncTitle' => 'Lezen en luisteren sync',
 			'audiobook.syncHelp' => 'Houd leesposities, luisterposities, voltooiingsstatus, bookmarks en notities op uw apparaten.Kies een bijgevoegde opslagaccount en gebruik dezelfde synchronisatiecode op elk apparaat.Lezen en luisteren blijven gescheiden.',
 			'audiobook.addSyncSource' => 'Voeg eerst Google Drive, OneDrive, Dropbox, WebDAV of S3 toe in bestanden en boeken.',
@@ -9216,8 +9148,6 @@ extension on TranslationsNl {
 			'audiobook.statusFinished' => 'Afgerond',
 			'audiobook.goToTime' => 'Ga naar de tijd',
 			'audiobook.timeHelp' => 'uur: minuten: seconden of minuten: seconden',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Exporteer een recente versleutelde kopie voor het verplaatsen of repareren van synchronisatiegegevens.Importeren verschijnt met de huidige toestand; ze vervangen nooit de lokale sync-geschiedenis.',
 			'audiobook.recoveryExport' => 'Export versleutelde herstel bestanden',
 			'audiobook.recoveryImport' => 'Geïmporteerde versleutelde herstelbestanden',
@@ -9252,6 +9182,8 @@ extension on TranslationsNl {
 			'sourceSetup.nfsGroupId' => 'NFS-groeps-ID (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Standaard: 1000. Gebruik de groeps-ID die de NFS-share van de NAS toestaat.',
 			'sourceSetup.nfsEncryption' => 'Versleutelde NFS vereisen (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'TLS 1.3 vereisen voor NFS en de mountservice. Ondersteunt de NAS dit niet, dan wordt de verbinding geweigerd.',
 			'sourceSetup.nfsTrustCertificate' => 'Aangepaste NFS-CA of servercertificaat (PEM, optioneel)',
 			'sourceSetup.nfsTrustHelp' => 'Laat leeg voor certificaten die dit apparaat vertrouwt. Voeg zo nodig een certificaat van een private CA of een zelfondertekend servercertificaat toe; de namen moeten overeenkomen met de host in de NFS-URL.',
@@ -9730,8 +9662,6 @@ extension on TranslationsNl {
 			'musicTools.days' => 'Dagen',
 			'musicTools.albumBlocks' => 'Volledige albums bij elkaar houden',
 			'musicTools.home' => 'Muziek',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'Onlangs afgespeeld',
 			'musicTools.apiKey' => 'API-sleutel',
 			'musicTools.missing' => 'N/A',
@@ -9766,6 +9696,8 @@ extension on TranslationsNl {
 			'musicTools.peak' => 'Piek',
 			'musicTools.bass' => 'Bas',
 			'musicTools.treble' => 'Hoge tonen',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Gedeelde afspeellijsten',
 			'musicTools.sharingInvitationsTitle' => 'Plex-deeluitnodigingen',
 			'musicTools.noSharingInvitations' => 'Geen openstaande uitnodigingen',

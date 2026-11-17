@@ -561,9 +561,6 @@
     },
     "googleDrive": "Google Drive"
   },
-  "lending": {
-    "cancel": "Cancelar"
-  },
   "sourceSetup": {
     "subtitleApplyFailed": "Não foi possível descarregar ou aplicar esta legenda. Verifique a ligação e tente outro resultado.",
     "subtitleSearching": "A pesquisar no OpenSubtitles",

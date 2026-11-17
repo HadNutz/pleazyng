@@ -83,7 +83,6 @@ class TranslationsPtPt extends TranslationsPt with BaseTranslations<AppLocale, T
 	@override late final Translations$watchLink$pt_PT watchLink = Translations$watchLink$pt_PT.internal(_root);
 	@override late final Translations$homeLayout$pt_PT homeLayout = Translations$homeLayout$pt_PT.internal(_root);
 	@override late final Translations$fileSources$pt_PT fileSources = Translations$fileSources$pt_PT.internal(_root);
-	@override late final Translations$lending$pt_PT lending = Translations$lending$pt_PT.internal(_root);
 	@override late final Translations$sourceSetup$pt_PT sourceSetup = Translations$sourceSetup$pt_PT.internal(_root);
 	@override late final Translations$householdSetup$pt_PT householdSetup = Translations$householdSetup$pt_PT.internal(_root);
 	@override late final Translations$issueReport$pt_PT issueReport = Translations$issueReport$pt_PT.internal(_root);
@@ -812,16 +811,6 @@ class Translations$fileSources$pt_PT extends Translations$fileSources$pt {
 		many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} minutos',
 	);
 	@override String get googleDrive => 'Google Drive';
-}
-
-// Path: lending
-class Translations$lending$pt_PT extends Translations$lending$pt {
-	Translations$lending$pt_PT.internal(TranslationsPtPt root) : this._root = root, super.internal(root);
-
-	final TranslationsPtPt _root; // ignore: unused_field
-
-	// Translations
-	@override String get cancel => 'Cancelar';
 }
 
 // Path: sourceSetup
@@ -1806,7 +1795,6 @@ extension on TranslationsPtPt {
 			'fileSources.rightToLeft' => 'Da direita para a esquerda',
 			'fileSources.minutes' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} minutos', one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} minuto', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} minutos', ), 
 			'fileSources.googleDrive' => 'Google Drive',
-			'lending.cancel' => 'Cancelar',
 			'sourceSetup.subtitleApplyFailed' => 'Não foi possível descarregar ou aplicar esta legenda. Verifique a ligação e tente outro resultado.',
 			'sourceSetup.subtitleSearching' => 'A pesquisar no OpenSubtitles',
 			'sourceSetup.bookorbitOpen' => 'Abrir no BookOrbit',
@@ -1914,9 +1902,9 @@ extension on TranslationsPtPt {
 			'romm.engine' => 'Emulator identity',
 			'romm.slot' => 'Save slot',
 			'romm.core' => 'Core identity',
+			'romm.compatibilityHelp' => 'Save states require the same emulator and compatible core version. Choose the exact game copy before importing.',
 			_ => null,
 		} ?? switch (path) {
-			'romm.compatibilityHelp' => 'Save states require the same emulator and compatible core version. Choose the exact game copy before importing.',
 			'romm.saveConflict' => 'Both copies changed. Keep both versions, use the server copy, or explicitly replace it.',
 			'romm.keepBoth' => 'Keep both',
 			'romm.useServer' => 'Use server copy',

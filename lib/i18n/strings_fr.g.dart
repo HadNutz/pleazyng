@@ -3727,48 +3727,14 @@ class Translations$lending$fr extends Translations$lending$en {
 	@override String get libraryUrlHint => 'Utilisez le catalogue de votre bibliothèque ou la page de signature.';
 	@override String get intro => 'Prendre un prêt à la bibliothèque, garder vos livres fermés.';
 	@override String get handoff => 'Inscrivez-vous, prêtez et lisez en toute sécurité avec le service de votre bibliothèque.';
-	@override String get openService => 'Bibliothèque ouverte';
 	@override String get findLibrary => 'Trouvez une bibliothèque';
 	@override String get search => 'Rechercher des livres et des auteurs';
-	@override String get catalogue => 'Catalogue';
-	@override String get loans => 'Les prêts';
-	@override String get holds => 'Réservations';
-	@override String get signIn => 'Inscrivez-vous avec votre bibliothèque';
-	@override String get waiting => 'Réservez votre abonnement dans votre navigateur, puis revenez ici.';
-	@override String get cancel => 'Annuler';
 	@override String get disconnect => 'Récupérer la bibliothèque';
 	@override String get disconnectMessage => 'Retirer cette bibliothèque de ce profil ? Vos emprunts et réservations resteront enregistrés auprès de la bibliothèque.';
-	@override String get getBook => 'Obtenez le livre';
-	@override String get checkAvailability => 'Vérifier la disponibilité';
-	@override String get available => 'Disponible pour emprunter';
-	@override String get unavailable => 'Actuellement inaccessible';
-	@override String get borrow => 'Emprunter';
-	@override String get placeHold => 'Réserver';
-	@override String get returnBook => 'Retour précoce';
-	@override String get cancelHold => 'Annuler la réservation';
-	@override String get confirmBorrow => 'Vous prêtez ce titre de votre bibliothèque ?';
-	@override String get confirmReturn => 'Rendre ce titre maintenant ? Vous devrez peut-être l’emprunter de nouveau pour continuer.';
-	@override String get confirmCancelHold => 'Annuler votre réservation de ce titre ?';
-	@override String get email => 'Restez en e-mail de notification';
-	@override String due({required Object date}) => 'Leur résultat : ${date}';
-	@override String queue({required Object position}) => 'Position ${position} en ligne';
 	@override String get empty => 'Pas de titres ici encore.';
 	@override String get openLibraryNote => 'Explorez le catalogue de la Bibliothèque ouverte.Les options de lecture et de prêt sont affichées sur la page de chaque titre.';
 	@override String get more => 'Charger plus';
-	@override String get gateway => 'Bibliothèque de service';
-	@override String get gatewayHint => 'Fourni par votre bibliothèque ou par l\'administrateur Pleazyng.';
-	@override String get advanced => 'Intégration bibliothèque';
-	@override String get loadLibraries => 'Choisissez votre bibliothèque';
-	@override String get expired => 'Ce prêt est expiré.';
-	@override String get updated => 'Bibliothèque mise à jour';
 	@override String get continueService => 'Continuez à service';
-	@override String get comingSoon => 'Prêt en app · Bientôt';
-	@override String get comingSoonDescription => 'Vous pouvez utiliser votre bibliothèque dans Libby alors que nous finissons par le connecter.';
-	@override String get suspendHold => 'Suspension de la main';
-	@override String get resumeHold => 'Résumé Hold';
-	@override String get suspendMessage => 'Garder votre place dans la file d’attente et laisser le lecteur suivant emprunter cet exemplaire ? Vous pourrez reprendre la réservation plus tard.';
-	@override String get resumeMessage => 'Reprendre cette réservation pour que la bibliothèque puisse vous proposer le prochain exemplaire disponible ?';
-	@override String get editEmail => 'Changer la notification par email';
 }
 
 // Path: audiobook
@@ -9176,48 +9142,14 @@ extension on TranslationsFr {
 			'lending.libraryUrlHint' => 'Utilisez le catalogue de votre bibliothèque ou la page de signature.',
 			'lending.intro' => 'Prendre un prêt à la bibliothèque, garder vos livres fermés.',
 			'lending.handoff' => 'Inscrivez-vous, prêtez et lisez en toute sécurité avec le service de votre bibliothèque.',
-			'lending.openService' => 'Bibliothèque ouverte',
 			'lending.findLibrary' => 'Trouvez une bibliothèque',
 			'lending.search' => 'Rechercher des livres et des auteurs',
-			'lending.catalogue' => 'Catalogue',
-			'lending.loans' => 'Les prêts',
-			'lending.holds' => 'Réservations',
-			'lending.signIn' => 'Inscrivez-vous avec votre bibliothèque',
-			'lending.waiting' => 'Réservez votre abonnement dans votre navigateur, puis revenez ici.',
-			'lending.cancel' => 'Annuler',
 			'lending.disconnect' => 'Récupérer la bibliothèque',
 			'lending.disconnectMessage' => 'Retirer cette bibliothèque de ce profil ? Vos emprunts et réservations resteront enregistrés auprès de la bibliothèque.',
-			'lending.getBook' => 'Obtenez le livre',
-			'lending.checkAvailability' => 'Vérifier la disponibilité',
-			'lending.available' => 'Disponible pour emprunter',
-			'lending.unavailable' => 'Actuellement inaccessible',
-			'lending.borrow' => 'Emprunter',
-			'lending.placeHold' => 'Réserver',
-			'lending.returnBook' => 'Retour précoce',
-			'lending.cancelHold' => 'Annuler la réservation',
-			'lending.confirmBorrow' => 'Vous prêtez ce titre de votre bibliothèque ?',
-			'lending.confirmReturn' => 'Rendre ce titre maintenant ? Vous devrez peut-être l’emprunter de nouveau pour continuer.',
-			'lending.confirmCancelHold' => 'Annuler votre réservation de ce titre ?',
-			'lending.email' => 'Restez en e-mail de notification',
-			'lending.due' => ({required Object date}) => 'Leur résultat : ${date}',
-			'lending.queue' => ({required Object position}) => 'Position ${position} en ligne',
 			'lending.empty' => 'Pas de titres ici encore.',
 			'lending.openLibraryNote' => 'Explorez le catalogue de la Bibliothèque ouverte.Les options de lecture et de prêt sont affichées sur la page de chaque titre.',
 			'lending.more' => 'Charger plus',
-			'lending.gateway' => 'Bibliothèque de service',
-			'lending.gatewayHint' => 'Fourni par votre bibliothèque ou par l\'administrateur Pleazyng.',
-			'lending.advanced' => 'Intégration bibliothèque',
-			'lending.loadLibraries' => 'Choisissez votre bibliothèque',
-			'lending.expired' => 'Ce prêt est expiré.',
-			'lending.updated' => 'Bibliothèque mise à jour',
 			'lending.continueService' => 'Continuez à service',
-			'lending.comingSoon' => 'Prêt en app · Bientôt',
-			'lending.comingSoonDescription' => 'Vous pouvez utiliser votre bibliothèque dans Libby alors que nous finissons par le connecter.',
-			'lending.suspendHold' => 'Suspension de la main',
-			'lending.resumeHold' => 'Résumé Hold',
-			'lending.suspendMessage' => 'Garder votre place dans la file d’attente et laisser le lecteur suivant emprunter cet exemplaire ? Vous pourrez reprendre la réservation plus tard.',
-			'lending.resumeMessage' => 'Reprendre cette réservation pour que la bibliothèque puisse vous proposer le prochain exemplaire disponible ?',
-			'lending.editEmail' => 'Changer la notification par email',
 			'audiobook.syncTitle' => 'Lire et écouter Sync',
 			'audiobook.syncHelp' => 'Gardez les positions de lecture, les positions d\'écoute, l\'état de finition, les notes et les notes sur vos appareils. Choisissez un compte de stockage attaché et utilisez le même code de synchronisation sur chaque appareil. La lecture et l\'écoute restent séparées.',
 			'audiobook.addSyncSource' => 'Ajouter Google Drive, OneDrive, Dropbox, WebDAV ou S3 dans les fichiers et les livres d’abord.',
@@ -9260,8 +9192,6 @@ extension on TranslationsFr {
 			'audiobook.sortTitle' => 'Titre',
 			'audiobook.sortAuthor' => 'Auteur',
 			'audiobook.sortNarrator' => 'Narrateur',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortSeries' => 'Commande série',
 			'audiobook.sortRecent' => 'récemment ouvert',
 			'audiobook.statusFilter' => 'Le statut de lecture',
@@ -9296,6 +9226,8 @@ extension on TranslationsFr {
 			'sourceSetup.sshFingerprintKeep' => 'Laissez vide pour conserver l’empreinte actuellement épinglée, ou saisissez une nouvelle empreinte du serveur.',
 			'sourceSetup.sshAuthentication' => 'Authentification SSH par clé publique',
 			'sourceSetup.sshAuthenticationHelp' => 'Facultative ; l’authentification par mot de passe est également prise en charge.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKey' => 'Clé privée (format PEM ou OpenSSH)',
 			'sourceSetup.privateKeyPassphrase' => 'Phrase secrète de la clé privée',
 			'sourceSetup.nfsMountPort' => 'Port TCP du service de montage NFS',
@@ -9774,8 +9706,6 @@ extension on TranslationsFr {
 			'musicExperience.on' => 'sur',
 			'musicExperience.off' => 'Désactivé',
 			'musicExperience.unknown' => 'Inconnu',
-			_ => null,
-		} ?? switch (path) {
 			'musicExperience.routeLost' => 'Sortie audio déconnectée. Lecture en pause.',
 			'musicExperience.autoDriving' => 'Ouvrir le mode conduite à la connexion à une voiture',
 			'musicExperience.routeHint' => 'Le système de la voiture décide si l’application peut s’afficher automatiquement.',
@@ -9810,6 +9740,8 @@ extension on TranslationsFr {
 			'musicTools.rules' => 'Filtres',
 			'musicTools.exclusiveOutput' => 'Sortie audio exclusive',
 			'musicTools.preamp' => 'Préamplification',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.ratingPending' => 'Enregistré sur cet appareil ; synchronisation en attente',
 			'musicTools.lyricsOffset' => 'Décalage des paroles',
 			'musicTools.anniversaries' => 'Anniversaires des albums',

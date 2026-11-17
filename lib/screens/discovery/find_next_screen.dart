@@ -2204,64 +2204,9 @@ class _FindNextScreenState extends State<FindNextScreen> {
       return;
     }
     try {
-      final lendingLibraryId = choice.lendingLibraryId;
-      final lendingBookId = choice.lendingBookId;
-      if (lendingLibraryId != null || lendingBookId != null) {
-        if (lendingLibraryId == null || lendingBookId == null || !LendingService.overdriveEnabled) {
-          throw const SourceException(SourceFailure.unavailable);
-        }
-        final service = LendingService(
-          sources.repository,
-          profileId,
-          valid: () =>
-              mounted && sources.current(_sourceGeneration) && !sources.blocked && sources.profileId == profileId,
-        );
-        try {
-          final library = (await service.libraries())
-              .where((item) => item.id == lendingLibraryId && item.native)
-              .firstOrNull;
-          if (library == null) {
-            throw const SourceException(SourceFailure.unavailable);
-          }
-          if (!mounted ||
-              context.read<ActiveProfileProvider>().active?.id != profileId ||
-              !sources.current(_sourceGeneration)) {
-            return;
-          }
-          final isConnected = await service.connected(library);
-          if (!mounted ||
-              context.read<ActiveProfileProvider>().active?.id != profileId ||
-              !sources.current(_sourceGeneration)) {
-            return;
-          }
-          if (!isConnected) {
-            await signInToLendingLibrary(context, service, library);
-            if (!mounted || context.read<ActiveProfileProvider>().active?.id != profileId) {
-              return;
-            }
-          }
-          if (!await service.connected(library)) {
-            throw const SourceException(SourceFailure.authentication);
-          }
-          if (!mounted ||
-              context.read<ActiveProfileProvider>().active?.id != profileId ||
-              !sources.current(_sourceGeneration)) {
-            return;
-          }
-          await Navigator.of(context).push<void>(
-            MaterialPageRoute(
-              builder: (_) => LibraryCatalogueScreen(
-                service: service,
-                library: library,
-                initialQuery: choice.title,
-                initialBookId: lendingBookId,
-              ),
-            ),
-          );
-        } finally {
-          service.close();
-        }
-        return;
+      // Older profiles can still have saved picks from a retired provider.
+      if (choice.lendingLibraryId != null || choice.lendingBookId != null) {
+        throw const SourceException(SourceFailure.unavailable);
       }
       final publicWorkId = choice.publicCatalogWorkId;
       if (publicWorkId != null) {
@@ -2718,83 +2663,12 @@ class _FindNextScreenState extends State<FindNextScreen> {
       valid: () => mounted && sources.current(generation) && !sources.blocked && sources.profileId == profileId,
     );
     try {
-      LendingLibrary? selectedLibrary;
-      if (LendingService.overdriveEnabled) {
-        try {
-          final configured = (await service.libraries()).where((library) => library.native).toList(growable: false);
-          if (configured.isNotEmpty && mounted && _sessionCurrent(profileId, generation, _loadGeneration)) {
-            final selection =
-                await OverlaySheetController.showAdaptive<({bool publicCatalog, LendingLibrary? library})>(
-                  context,
-                  showDragHandle: true,
-                  builder: (sheetContext) => Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(sheetContext).height * 0.72),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              t.discover.findNext.libraryCatalog,
-                              style: Theme.of(sheetContext).textTheme.titleLarge,
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              t.discover.findNext.libraryCatalogHint,
-                              style: Theme.of(sheetContext).textTheme.bodySmall,
-                            ),
-                            const SizedBox(height: 12),
-                            FocusableListTile(
-                              leading: const AppIcon(Symbols.menu_book_rounded),
-                              title: Text(t.discover.findNext.openLibraryName),
-                              subtitle: Text(t.discover.findNext.catalogOnly),
-                              onTap: () => Navigator.of(sheetContext).pop((publicCatalog: true, library: null)),
-                            ),
-                            for (final library in configured)
-                              FocusableListTile(
-                                leading: const AppIcon(Symbols.local_library_rounded),
-                                title: Text(isolateDisplayText(library.name)),
-                                subtitle: Text(library.provider.label),
-                                onTap: () => Navigator.of(sheetContext).pop((publicCatalog: false, library: library)),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-            if (selection == null) return;
-            if (selection.publicCatalog == (selection.library != null)) return;
-            selectedLibrary = selection.library;
-          }
-        } catch (_) {
-          // A local lender setup issue does not remove the public catalog path.
-        }
-      }
-      final selectedLender = selectedLibrary;
-      if (selectedLender != null && !await service.connected(selectedLender)) {
-        if (!mounted || !_sessionCurrent(profileId, generation, _loadGeneration)) {
-          return;
-        }
-        await signInToLendingLibrary(context, service, selectedLender);
-        if (!mounted || !_sessionCurrent(profileId, generation, _loadGeneration)) {
-          return;
-        }
-        if (!await service.connected(selectedLender)) return;
-      }
       if (!mounted || !_sessionCurrent(profileId, generation, _loadGeneration)) {
         return;
       }
       final book = await Navigator.of(context).push<LendingBook>(
         MaterialPageRoute(
-          builder: (_) => LibraryCatalogueScreen(
-            service: service,
-            library: selectedLender,
-            initialQuery: anchor.title,
-            selectOnly: true,
-          ),
+          builder: (_) => LibraryCatalogueScreen(service: service, initialQuery: anchor.title, selectOnly: true),
         ),
       );
       if (book == null || !_sessionCurrent(profileId, generation, _loadGeneration)) {
@@ -2802,60 +2676,28 @@ class _FindNextScreenState extends State<FindNextScreen> {
       }
       final title = book.title.trim();
       if (title.isEmpty) return;
-      late final DiscoveryChoice choice;
-      if (selectedLender == null) {
-        final match = RegExp(r'^/works/(OL[0-9]{1,14}W)$').firstMatch(book.id);
-        if (match == null) return;
-        final workId = match.group(1)!;
-        choice = DiscoveryChoice(
-          id: jsonEncode(['open-library-work', workId]),
-          type: DiscoveryChoiceType.ebook,
-          title: title,
-          subtitle: book.author.trim(),
-          reason: t.discover.findNext.catalogOnly,
-          summary: '',
-          durationMs: null,
-          totalDurationMs: null,
-          isEstimate: false,
-          serverId: null,
-          mediaId: null,
-          mediaKind: null,
-          sourceId: null,
-          entryId: null,
-          year: null,
-          publicCatalogWorkId: workId,
-          publicCatalogAuthor: book.author.trim(),
-        );
-      } else {
-        if (!selectedLender.native ||
-            selectedLender.id.trim().isEmpty ||
-            selectedLender.id.length > 128 ||
-            book.id.trim().isEmpty ||
-            book.id == 'null' ||
-            book.id.length > 256 ||
-            RegExp(r'[\r\n\u0000]').hasMatch(book.id)) {
-          return;
-        }
-        choice = DiscoveryChoice(
-          id: jsonEncode(['lending-candidate', selectedLender.id, book.id]),
-          type: DiscoveryChoiceType.ebook,
-          title: title,
-          subtitle: book.author.trim(),
-          reason: t.discover.findNext.libraryReason(library: selectedLender.name),
-          summary: '',
-          durationMs: null,
-          totalDurationMs: null,
-          isEstimate: false,
-          serverId: null,
-          mediaId: null,
-          mediaKind: null,
-          sourceId: null,
-          entryId: null,
-          year: null,
-          lendingLibraryId: selectedLender.id,
-          lendingBookId: book.id,
-        );
-      }
+      final match = RegExp(r'^/works/(OL[0-9]{1,14}W)$').firstMatch(book.id);
+      if (match == null) return;
+      final workId = match.group(1)!;
+      final choice = DiscoveryChoice(
+        id: jsonEncode(['open-library-work', workId]),
+        type: DiscoveryChoiceType.ebook,
+        title: title,
+        subtitle: book.author.trim(),
+        reason: t.discover.findNext.catalogOnly,
+        summary: '',
+        durationMs: null,
+        totalDurationMs: null,
+        isEstimate: false,
+        serverId: null,
+        mediaId: null,
+        mediaKind: null,
+        sourceId: null,
+        entryId: null,
+        year: null,
+        publicCatalogWorkId: workId,
+        publicCatalogAuthor: book.author.trim(),
+      );
       final existing = _choices.indexWhere((item) => item.id == choice.id);
       final insertedAt = existing >= 0 ? existing : _position.clamp(0, _choices.length).toInt();
       final nextChoices = existing >= 0

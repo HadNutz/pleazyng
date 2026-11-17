@@ -280,28 +280,25 @@ void main() {
     expect(tester.takeException(), isNull);
     await capture(tester, 'media-tools-extensions-phone-dark');
   });
-  testWidgets('OverDrive is visibly coming soon without a patron credential form', (tester) async {
+  testWidgets('Public libraries lists supported external library links', (tester) async {
     await sources.repository.savePreference('alice', 'lending:libraries', {
       'libraries': [
         const LendingLibrary(
           id: 'card',
-          provider: LendingProvider.overdrive,
+          provider: LendingProvider.hoopla,
           name: 'Public library',
-          home: 'https://libbyapp.com',
+          home: 'https://www.hoopladigital.com',
         ).toJson(),
       ],
     });
     await pump(tester, const PublicLibrariesScreen(), MonoPalette.dark, const Size(1200, 900));
-    expect(find.text(isolateDisplayText(t.lending.comingSoon)), findsOneWidget);
+    expect(find.text(isolateDisplayText('Public library')), findsOneWidget);
     expect(find.byType(TextFormField), findsNothing);
-    expect(find.byType(ProviderMark), findsNWidgets(2));
     await capture(tester, 'public-libraries-dark');
-    await tester.tap(find.text('Libby / OverDrive'));
+    await tester.tap(find.widgetWithText(ActionChip, 'Hoopla'));
     await tester.pumpAndSettle();
-    expect(find.text(t.lending.comingSoonDescription), findsOneWidget);
-    expect(find.text(t.lending.signIn), findsNothing);
+    expect(find.text(t.lending.handoff), findsOneWidget);
     expect(tester.takeException(), isNull);
-    await capture(tester, 'libby-coming-soon');
   });
   for (final (fixed, comic) in [(false, false), (true, false), (true, true)]) {
     testWidgets('reader preferences fit large text and show applicable controls ($fixed, $comic)', (tester) async {

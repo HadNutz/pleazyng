@@ -3701,48 +3701,14 @@ class _Translations$lending$ja extends Translations$lending$en {
 	@override String get libraryUrlHint => '図書館のカタログまたはサインインページを使用します。';
 	@override String get intro => '図書館から借りて、本をいつも身近に。';
 	@override String get handoff => '図書館のサービスでサインインし、本を借りて安全に読めます。';
-	@override String get openService => 'オープン図書館';
 	@override String get findLibrary => '図書館を見つける';
 	@override String get search => '書籍と著者を検索';
-	@override String get catalogue => 'カタログ';
-	@override String get loans => '貸し出し';
-	@override String get holds => '予約';
-	@override String get signIn => '図書館で登録する';
-	@override String get waiting => 'ブラウザでサインインを終了し、ここに戻ります。';
-	@override String get cancel => 'キャンセル';
 	@override String get disconnect => '図書館削除';
 	@override String get disconnectMessage => 'このプロフィールからこの図書館を削除しますか？貸出中の本と予約は図書館に残ります。';
-	@override String get getBook => '書籍を取得';
-	@override String get checkAvailability => '利用可能性チェック';
-	@override String get available => '貸し出し利用可能';
-	@override String get unavailable => '現在利用できない';
-	@override String get borrow => '借りる';
-	@override String get placeHold => '予約する';
-	@override String get returnBook => '期限前に返却';
-	@override String get cancelHold => '予約を取り消す';
-	@override String get confirmBorrow => '図書館からこのタイトルを借りる?';
-	@override String get confirmReturn => 'この本を今すぐ返却しますか？続きを利用するには、もう一度借りる必要がある場合があります。';
-	@override String get confirmCancelHold => 'この本の予約を取り消しますか？';
-	@override String get email => 'メール 通知';
-	@override String due({required Object date}) => '返却期限：${date}';
-	@override String queue({required Object position}) => 'ポジション ${position} ライン';
 	@override String get empty => 'まだタイトルは無い。';
 	@override String get openLibraryNote => 'Open Library のカタログを検索する. 読書および貸し出しのオプションは、各タイトルのページに表示されます。';
 	@override String get more => 'もっと充電';
-	@override String get gateway => '図書館登録サービス';
-	@override String get gatewayHint => '図書館または管理者 Pleazyng によって提供されます。';
-	@override String get advanced => '図書館統合';
-	@override String get loadLibraries => '図書館を選択';
-	@override String get expired => 'この本の貸出期間は終了しました。';
-	@override String get updated => '図書館更新';
 	@override String get continueService => 'サービスを継続';
-	@override String get comingSoon => 'イン・アプリ・貸し出し · すぐに来る';
-	@override String get comingSoonDescription => 'Libbyとの連携機能を準備中です。連携が完了するまでは、Libbyで図書館を利用できます。';
-	@override String get suspendHold => '予約を一時停止';
-	@override String get resumeHold => '予約を再開';
-	@override String get suspendMessage => '順番を維持したまま、次の読者にこの本を貸し出しますか？予約は後で再開できます。';
-	@override String get resumeMessage => '予約を再開して、次に利用可能な本の案内を図書館から受け取りますか？';
-	@override String get editEmail => 'メール通知の変更';
 }
 
 // Path: audiobook
@@ -9120,48 +9086,14 @@ extension on TranslationsJa {
 			'lending.libraryUrlHint' => '図書館のカタログまたはサインインページを使用します。',
 			'lending.intro' => '図書館から借りて、本をいつも身近に。',
 			'lending.handoff' => '図書館のサービスでサインインし、本を借りて安全に読めます。',
-			'lending.openService' => 'オープン図書館',
 			'lending.findLibrary' => '図書館を見つける',
 			'lending.search' => '書籍と著者を検索',
-			'lending.catalogue' => 'カタログ',
-			'lending.loans' => '貸し出し',
-			'lending.holds' => '予約',
-			'lending.signIn' => '図書館で登録する',
-			'lending.waiting' => 'ブラウザでサインインを終了し、ここに戻ります。',
-			'lending.cancel' => 'キャンセル',
 			'lending.disconnect' => '図書館削除',
 			'lending.disconnectMessage' => 'このプロフィールからこの図書館を削除しますか？貸出中の本と予約は図書館に残ります。',
-			'lending.getBook' => '書籍を取得',
-			'lending.checkAvailability' => '利用可能性チェック',
-			'lending.available' => '貸し出し利用可能',
-			'lending.unavailable' => '現在利用できない',
-			'lending.borrow' => '借りる',
-			'lending.placeHold' => '予約する',
-			'lending.returnBook' => '期限前に返却',
-			'lending.cancelHold' => '予約を取り消す',
-			'lending.confirmBorrow' => '図書館からこのタイトルを借りる?',
-			'lending.confirmReturn' => 'この本を今すぐ返却しますか？続きを利用するには、もう一度借りる必要がある場合があります。',
-			'lending.confirmCancelHold' => 'この本の予約を取り消しますか？',
-			'lending.email' => 'メール 通知',
-			'lending.due' => ({required Object date}) => '返却期限：${date}',
-			'lending.queue' => ({required Object position}) => 'ポジション ${position} ライン',
 			'lending.empty' => 'まだタイトルは無い。',
 			'lending.openLibraryNote' => 'Open Library のカタログを検索する. 読書および貸し出しのオプションは、各タイトルのページに表示されます。',
 			'lending.more' => 'もっと充電',
-			'lending.gateway' => '図書館登録サービス',
-			'lending.gatewayHint' => '図書館または管理者 Pleazyng によって提供されます。',
-			'lending.advanced' => '図書館統合',
-			'lending.loadLibraries' => '図書館を選択',
-			'lending.expired' => 'この本の貸出期間は終了しました。',
-			'lending.updated' => '図書館更新',
 			'lending.continueService' => 'サービスを継続',
-			'lending.comingSoon' => 'イン・アプリ・貸し出し · すぐに来る',
-			'lending.comingSoonDescription' => 'Libbyとの連携機能を準備中です。連携が完了するまでは、Libbyで図書館を利用できます。',
-			'lending.suspendHold' => '予約を一時停止',
-			'lending.resumeHold' => '予約を再開',
-			'lending.suspendMessage' => '順番を維持したまま、次の読者にこの本を貸し出しますか？予約は後で再開できます。',
-			'lending.resumeMessage' => '予約を再開して、次に利用可能な本の案内を図書館から受け取りますか？',
-			'lending.editEmail' => 'メール通知の変更',
 			'audiobook.syncTitle' => '読書・聴くシンク',
 			'audiobook.syncHelp' => 'あなたのデバイスを通じて読み込みポジション、聴くポジション、完成状態、ブックマーク、ノートを保持します。付属ストレージアカウントを選択し、それぞれのデバイスに同じ同期コードを使用します。',
 			'audiobook.addSyncSource' => 'Google ドライブ、OneDrive、Dropbox、WebDAV、または S3 をファイルと本に最初に追加します。',
@@ -9211,8 +9143,6 @@ extension on TranslationsJa {
 			'audiobook.statusFinished' => '終了',
 			'audiobook.goToTime' => '時間へ行く',
 			'audiobook.timeHelp' => '時間:分:秒、または分:秒',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => '同期データを移動または修正する前に、最近暗号化されたコピーを輸出します. インポートは現在の状態と合併し、現地の同期史を決して置き換えることはありません。',
 			'audiobook.recoveryExport' => 'エクスポート暗号化回復ファイル',
 			'audiobook.recoveryImport' => '暗号化された復元ファイルの輸入',
@@ -9247,6 +9177,8 @@ extension on TranslationsJa {
 			'sourceSetup.nfsGroupId' => 'NFS グループ ID（AUTH_SYS）',
 			'sourceSetup.nfsGroupIdHelp' => '既定値: 1000。NAS のエクスポート設定で許可されているグループ ID を使用してください。',
 			'sourceSetup.nfsEncryption' => 'NFS の暗号化を必須にする（RPC-with-TLS）',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'NFS とマウントサービスに TLS 1.3 を必須とします。NAS が対応していない場合、接続は拒否されます。',
 			'sourceSetup.nfsTrustCertificate' => 'NFS のカスタム CA 証明書またはサーバー証明書（PEM、任意）',
 			'sourceSetup.nfsTrustHelp' => 'このデバイスが信頼する証明書を使う場合は空欄にします。必要に応じてプライベート CA または自己署名のサーバー証明書を追加してください。証明書の名前は NFS URL のホスト名と一致する必要があります。',
@@ -9725,8 +9657,6 @@ extension on TranslationsJa {
 			'musicTools.days' => '日',
 			'musicTools.albumBlocks' => 'アルバム全体をまとめる',
 			'musicTools.home' => '音楽',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => '最近再生した曲',
 			'musicTools.apiKey' => 'API キー',
 			'musicTools.missing' => 'N/A',
@@ -9761,6 +9691,8 @@ extension on TranslationsJa {
 			'musicTools.peak' => 'ピーク',
 			'musicTools.bass' => '低音',
 			'musicTools.treble' => '高音',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => '共有プレイリスト',
 			'musicTools.sharingInvitationsTitle' => 'Plex共有の招待',
 			'musicTools.noSharingInvitations' => '保留中の招待はありません',

@@ -15,15 +15,6 @@
     "url": "https://learn.microsoft.com/en-us/entra/identity-platform/media/howto-add-branding-in-apps/ms-symbollockup_mssymbol_19.svg",
     "sha256": "929f48f88c8ca7f3f5d294be47ec4caf51acc28ac25340c19a903125d7ecd84a"
   },
-  "overdrive_white.svg": {
-    "url": "https://static.od-cdn.com/OD-white-2020-01.svg",
-    "sha256": "d274e1946f237756d94153e4b52444813dc500c9d99369e1eff951660fbd2ba9"
-  },
-  "libby.png": {
-    "url": "https://static.od-cdn.com/LIBBY%20ICON-CIRCLE.ZIP",
-    "member": "Libby Icon (Circle)/Libby Logo_Icon_White Outline.png",
-    "sha256": "3a0481a03f401b9621e02471a43dd8bc89f8ef3641dc97e704a2955c2492fc73"
-  },
   "fontawesome_amazon.svg": {
     "url": "https://github.com/FortAwesome/Font-Awesome/blob/7.x/svgs/brands/amazon.svg",
     "upstream_blob": "7b467597992d023d75f988954f87c7c3e23fb8c3",

@@ -3683,48 +3683,14 @@ class _Translations$lending$th extends Translations$lending$en {
 	@override String get libraryUrlHint => 'ใช้แค็ตตาล็อกหรือหน้าเข้าสู่ระบบของห้องสมุดคุณ';
 	@override String get intro => 'จองจากห้องสมุดของคุณ ปกป้องหนังสือของคุณ';
 	@override String get handoff => 'เข้าสู่ระบบ ยืม และอ่านอย่างปลอดภัยผ่านบริการของห้องสมุดคุณเอง';
-	@override String get openService => 'ห้องสมุดเปิด';
 	@override String get findLibrary => 'ค้นหาห้องสมุด';
 	@override String get search => 'ค้นหาหนังสือและผู้เขียน';
-	@override String get catalogue => 'คาตาล็อก';
-	@override String get loans => 'หนังสือที่ยืม';
-	@override String get holds => 'รายการจอง';
-	@override String get signIn => 'ลงทะเบียนกับห้องสมุดของคุณ';
-	@override String get waiting => 'เสร็จสิ้นการลงทะเบียนในเบราว์เซอร์ของคุณแล้วกลับที่นี่';
-	@override String get cancel => 'ยกเลิก';
 	@override String get disconnect => 'ลบห้องสมุด';
 	@override String get disconnectMessage => 'นำห้องสมุดนี้ออกจากโปรไฟล์นี้หรือไม่ หนังสือที่ยืมและรายการจองจะยังคงอยู่กับห้องสมุดของคุณ';
-	@override String get getBook => 'รับหนังสือ';
-	@override String get checkAvailability => 'ตรวจสอบความพร้อม';
-	@override String get available => 'พร้อมให้ยืม';
-	@override String get unavailable => 'ไม่สามารถใช้ได้ในขณะนี้';
-	@override String get borrow => 'ยืม';
-	@override String get placeHold => 'จอง';
-	@override String get returnBook => 'คืนก่อนกำหนด';
-	@override String get cancelHold => 'ยกเลิกการจอง';
-	@override String get confirmBorrow => 'รับใบรับรองจากห้องสมุดของคุณหรือไม่';
-	@override String get confirmReturn => 'คืนหนังสือเล่มนี้ตอนนี้หรือไม่ คุณอาจต้องยืมอีกครั้งเพื่ออ่านต่อ';
-	@override String get confirmCancelHold => 'ยกเลิกการจองหนังสือเล่มนี้หรือไม่';
-	@override String get email => 'หมายเลขอีเมล';
-	@override String due({required Object date}) => 'กำหนดคืน: ${date}';
-	@override String queue({required Object position}) => 'ตําแหน่ง ${position} ในเส้น';
 	@override String get empty => 'ไม่มีชื่อที่นี่';
 	@override String get openLibraryNote => 'สำรวจแค็ตตาล็อกของ Open Library ตัวเลือกการอ่านและการยืมจะแสดงในหน้าของหนังสือแต่ละเล่ม';
 	@override String get more => 'บรรจุเพิ่มเติม';
-	@override String get gateway => 'บริการลงทะเบียนห้องสมุด';
-	@override String get gatewayHint => 'ให้โดยห้องสมุดของคุณหรือผู้ดูแลระบบ Pleazyng';
-	@override String get advanced => 'การรวมห้องสมุด';
-	@override String get loadLibraries => 'เลือกห้องสมุดของคุณ';
-	@override String get expired => 'ระยะเวลายืมหนังสือนี้สิ้นสุดแล้ว';
-	@override String get updated => 'บีบอิสระปรับปรุง';
 	@override String get continueService => 'ทํางานต่อไป';
-	@override String get comingSoon => 'การรับประกันในแอป · มาเร็ว ๆ นี้';
-	@override String get comingSoonDescription => 'การรวมของ Libby จะอยู่บนทางของคุณ คุณสามารถใช้ห้องสมุดของคุณใน Libby ในขณะที่เราจะเสร็จสิ้นการเชื่อมต่อ';
-	@override String get suspendHold => 'พักการจอง';
-	@override String get resumeHold => 'เปิดใช้การจองต่อ';
-	@override String get suspendMessage => 'เก็บลำดับของคุณในคิวไว้และให้ผู้อ่านคนถัดไปยืมสำเนานี้หรือไม่ คุณสามารถเปิดใช้การจองต่อได้ภายหลัง';
-	@override String get resumeMessage => 'เปิดใช้การจองนี้ต่อเพื่อให้ห้องสมุดเสนอสำเนาถัดไปที่พร้อมให้ยืมหรือไม่';
-	@override String get editEmail => 'การเปลี่ยนแปลงอีเมลการแจ้งเตือน';
 }
 
 // Path: audiobook
@@ -9100,48 +9066,14 @@ extension on TranslationsTh {
 			'lending.libraryUrlHint' => 'ใช้แค็ตตาล็อกหรือหน้าเข้าสู่ระบบของห้องสมุดคุณ',
 			'lending.intro' => 'จองจากห้องสมุดของคุณ ปกป้องหนังสือของคุณ',
 			'lending.handoff' => 'เข้าสู่ระบบ ยืม และอ่านอย่างปลอดภัยผ่านบริการของห้องสมุดคุณเอง',
-			'lending.openService' => 'ห้องสมุดเปิด',
 			'lending.findLibrary' => 'ค้นหาห้องสมุด',
 			'lending.search' => 'ค้นหาหนังสือและผู้เขียน',
-			'lending.catalogue' => 'คาตาล็อก',
-			'lending.loans' => 'หนังสือที่ยืม',
-			'lending.holds' => 'รายการจอง',
-			'lending.signIn' => 'ลงทะเบียนกับห้องสมุดของคุณ',
-			'lending.waiting' => 'เสร็จสิ้นการลงทะเบียนในเบราว์เซอร์ของคุณแล้วกลับที่นี่',
-			'lending.cancel' => 'ยกเลิก',
 			'lending.disconnect' => 'ลบห้องสมุด',
 			'lending.disconnectMessage' => 'นำห้องสมุดนี้ออกจากโปรไฟล์นี้หรือไม่ หนังสือที่ยืมและรายการจองจะยังคงอยู่กับห้องสมุดของคุณ',
-			'lending.getBook' => 'รับหนังสือ',
-			'lending.checkAvailability' => 'ตรวจสอบความพร้อม',
-			'lending.available' => 'พร้อมให้ยืม',
-			'lending.unavailable' => 'ไม่สามารถใช้ได้ในขณะนี้',
-			'lending.borrow' => 'ยืม',
-			'lending.placeHold' => 'จอง',
-			'lending.returnBook' => 'คืนก่อนกำหนด',
-			'lending.cancelHold' => 'ยกเลิกการจอง',
-			'lending.confirmBorrow' => 'รับใบรับรองจากห้องสมุดของคุณหรือไม่',
-			'lending.confirmReturn' => 'คืนหนังสือเล่มนี้ตอนนี้หรือไม่ คุณอาจต้องยืมอีกครั้งเพื่ออ่านต่อ',
-			'lending.confirmCancelHold' => 'ยกเลิกการจองหนังสือเล่มนี้หรือไม่',
-			'lending.email' => 'หมายเลขอีเมล',
-			'lending.due' => ({required Object date}) => 'กำหนดคืน: ${date}',
-			'lending.queue' => ({required Object position}) => 'ตําแหน่ง ${position} ในเส้น',
 			'lending.empty' => 'ไม่มีชื่อที่นี่',
 			'lending.openLibraryNote' => 'สำรวจแค็ตตาล็อกของ Open Library ตัวเลือกการอ่านและการยืมจะแสดงในหน้าของหนังสือแต่ละเล่ม',
 			'lending.more' => 'บรรจุเพิ่มเติม',
-			'lending.gateway' => 'บริการลงทะเบียนห้องสมุด',
-			'lending.gatewayHint' => 'ให้โดยห้องสมุดของคุณหรือผู้ดูแลระบบ Pleazyng',
-			'lending.advanced' => 'การรวมห้องสมุด',
-			'lending.loadLibraries' => 'เลือกห้องสมุดของคุณ',
-			'lending.expired' => 'ระยะเวลายืมหนังสือนี้สิ้นสุดแล้ว',
-			'lending.updated' => 'บีบอิสระปรับปรุง',
 			'lending.continueService' => 'ทํางานต่อไป',
-			'lending.comingSoon' => 'การรับประกันในแอป · มาเร็ว ๆ นี้',
-			'lending.comingSoonDescription' => 'การรวมของ Libby จะอยู่บนทางของคุณ คุณสามารถใช้ห้องสมุดของคุณใน Libby ในขณะที่เราจะเสร็จสิ้นการเชื่อมต่อ',
-			'lending.suspendHold' => 'พักการจอง',
-			'lending.resumeHold' => 'เปิดใช้การจองต่อ',
-			'lending.suspendMessage' => 'เก็บลำดับของคุณในคิวไว้และให้ผู้อ่านคนถัดไปยืมสำเนานี้หรือไม่ คุณสามารถเปิดใช้การจองต่อได้ภายหลัง',
-			'lending.resumeMessage' => 'เปิดใช้การจองนี้ต่อเพื่อให้ห้องสมุดเสนอสำเนาถัดไปที่พร้อมให้ยืมหรือไม่',
-			'lending.editEmail' => 'การเปลี่ยนแปลงอีเมลการแจ้งเตือน',
 			'audiobook.syncTitle' => 'อ่านและฟัง Sync',
 			'audiobook.syncHelp' => 'เก็บตําแหน่งการอ่านตําแหน่งการฟังสถานะการเสร็จสิ้นหมายเลขและบันทึกบนอุปกรณ์ของคุณ เลือกบัญชีการจัดเก็บที่แนบและใช้รหัสซิงค์เดียวกันบนแต่ละอุปกรณ์ อ่านและฟังจะอยู่แยกต่างหาก',
 			'audiobook.addSyncSource' => 'เพิ่ม Google Drive, OneDrive, Dropbox, WebDAV หรือ S3 ในไฟล์และหนังสือแรก',
@@ -9191,8 +9123,6 @@ extension on TranslationsTh {
 			'audiobook.statusFinished' => 'เสร็จ',
 			'audiobook.goToTime' => 'ไปยัง เวลา',
 			'audiobook.timeHelp' => 'ชั่วโมง:นาที:วินาทีหรือนาที:วินาที',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Export a recent encrypted copy before moving or repairing sync data. นําเข้ามาพร้อมกับสถานะปัจจุบัน พวกเขาไม่เคยแทนที่ประวัติการซิงค์ในท้องถิ่น ให้รหัสซิงโครแยกกัน',
 			'audiobook.recoveryExport' => 'การส่งออกไฟล์การกู้คืนที่เข้ารหัส',
 			'audiobook.recoveryImport' => 'นําเข้าไฟล์การกู้คืนที่เข้ารหัส',
@@ -9227,6 +9157,8 @@ extension on TranslationsTh {
 			'sourceSetup.nfsGroupId' => 'ID กลุ่ม NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'ค่าเริ่มต้น: 1000 ใช้ ID กลุ่มที่ส่วนแบ่งปัน NFS ของ NAS อนุญาต',
 			'sourceSetup.nfsEncryption' => 'บังคับใช้ NFS ที่เข้ารหัส (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'บังคับใช้ TLS 1.3 สำหรับ NFS และบริการเมานต์ หาก NAS ไม่รองรับ ระบบจะปฏิเสธการเชื่อมต่อ',
 			'sourceSetup.nfsTrustCertificate' => 'CA ของ NFS หรือใบรับรองเซิร์ฟเวอร์ที่กำหนดเอง (PEM, ไม่บังคับ)',
 			'sourceSetup.nfsTrustHelp' => 'เว้นว่างไว้เพื่อใช้ใบรับรองที่อุปกรณ์นี้เชื่อถือ หากจำเป็น ให้เพิ่มใบรับรองจาก CA ส่วนตัวหรือใบรับรองเซิร์ฟเวอร์ที่ลงนามด้วยตนเอง ชื่อในใบรับรองต้องตรงกับโฮสต์ใน URL ของ NFS',
@@ -9705,8 +9637,6 @@ extension on TranslationsTh {
 			'musicTools.days' => 'วัน',
 			'musicTools.albumBlocks' => 'เก็บอัลบั้มทั้งชุดไว้ด้วยกัน',
 			'musicTools.home' => 'เพลง',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'เล่นล่าสุด',
 			'musicTools.apiKey' => 'คีย์ API',
 			'musicTools.missing' => 'หมายเลขรุ่น: A',
@@ -9741,6 +9671,8 @@ extension on TranslationsTh {
 			'musicTools.peak' => 'พีค',
 			'musicTools.bass' => 'เสียงเบส',
 			'musicTools.treble' => 'เสียงแหลม',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'เพลย์ลิสต์ที่แชร์',
 			'musicTools.sharingInvitationsTitle' => 'คำเชิญแชร์ของ Plex',
 			'musicTools.noSharingInvitations' => 'ไม่มีคำเชิญที่รอดำเนินการ',

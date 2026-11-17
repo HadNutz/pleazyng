@@ -83,7 +83,6 @@ class TranslationsEs419 extends TranslationsEs with BaseTranslations<AppLocale, 
 	@override late final _Translations$watchLink$es_419 watchLink = _Translations$watchLink$es_419._(_root);
 	@override late final _Translations$homeLayout$es_419 homeLayout = _Translations$homeLayout$es_419._(_root);
 	@override late final _Translations$fileSources$es_419 fileSources = _Translations$fileSources$es_419._(_root);
-	@override late final _Translations$lending$es_419 lending = _Translations$lending$es_419._(_root);
 	@override late final _Translations$householdSetup$es_419 householdSetup = _Translations$householdSetup$es_419._(_root);
 	@override late final _Translations$issueReport$es_419 issueReport = _Translations$issueReport$es_419._(_root);
 	@override late final _Translations$romm$es_419 romm = _Translations$romm$es_419._(_root);
@@ -801,16 +800,6 @@ class _Translations$fileSources$es_419 extends Translations$fileSources$es {
 		many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} minutos',
 	);
 	@override String get googleDrive => 'Google Drive';
-}
-
-// Path: lending
-class _Translations$lending$es_419 extends Translations$lending$es {
-	_Translations$lending$es_419._(TranslationsEs419 root) : this._root = root, super.internal(root);
-
-	final TranslationsEs419 _root; // ignore: unused_field
-
-	// Translations
-	@override String get cancel => 'Cancelar';
 }
 
 // Path: householdSetup
@@ -1768,7 +1757,6 @@ extension on TranslationsEs419 {
 			'fileSources.rightToLeft' => 'De derecha a izquierda',
 			'fileSources.minutes' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} minutos', one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} minuto', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} minutos', ), 
 			'fileSources.googleDrive' => 'Google Drive',
-			'lending.cancel' => 'Cancelar',
 			'householdSetup.title' => 'Configuración del hogar',
 			'issueReport.title' => 'Reportar un problema',
 			'issueReport.instructions' => 'Escanea el código QR para abrir un borrador de GitHub ya llenado. Revísalo y envíalo cuando estés listo.',
@@ -1888,9 +1876,9 @@ extension on TranslationsEs419 {
 			'romm.exitWithoutSaving' => 'Exit without saving',
 			'romm.exitConfirm' => 'Finish this game session?',
 			'romm.saveExitHelp' => 'Save your progress before leaving. Keep this screen open until saving finishes.',
+			'romm.starting' => 'Starting game…',
 			_ => null,
 		} ?? switch (path) {
-			'romm.starting' => 'Starting game…',
 			'romm.connecting' => 'Connecting…',
 			'romm.busy' => 'The streaming computer is occupied.',
 			'romm.streamEnded' => 'The streaming session ended.',

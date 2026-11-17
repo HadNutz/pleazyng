@@ -3701,48 +3701,14 @@ class Translations$lending$zh extends Translations$lending$en {
 	@override String get libraryUrlHint => '使用您的图书馆的目录或登录页面。';
 	@override String get intro => '从图书馆借阅，让书籍随时相伴。';
 	@override String get handoff => '登录、借款和安全阅读,您图书馆的服务。';
-	@override String get openService => '开放图书馆';
 	@override String get findLibrary => '找个图书馆';
 	@override String get search => '搜索书籍和作家';
-	@override String get catalogue => '目录';
-	@override String get loans => '借阅';
-	@override String get holds => '预约';
-	@override String get signIn => '与您的图书馆登录';
-	@override String get waiting => '结束登录在您的浏览器,然后返回这里。';
-	@override String get cancel => '取消';
 	@override String get disconnect => '取消图书馆';
 	@override String get disconnectMessage => '要从此个人资料中移除此图书馆吗？借阅和预约记录仍会保留在图书馆。';
-	@override String get getBook => '获书';
-	@override String get checkAvailability => '查看可用性';
-	@override String get available => '可借阅';
-	@override String get unavailable => '目前不可用';
-	@override String get borrow => '借阅';
-	@override String get placeHold => '预约借阅';
-	@override String get returnBook => '提前归还';
-	@override String get cancelHold => '取消预约';
-	@override String get confirmBorrow => '借这本书从图书馆里?';
-	@override String get confirmReturn => '现在归还此书吗？您可能需要重新借阅才能继续阅读。';
-	@override String get confirmCancelHold => '要取消此书的预约吗？';
-	@override String get email => '留下通知电子邮件';
-	@override String due({required Object date}) => '归还日期：${date}';
-	@override String queue({required Object position}) => '排队位置：${position}';
 	@override String get empty => '还没有标题。';
 	@override String get openLibraryNote => '探索 Open Library 的目录。每本书的页面上都会显示阅读和借阅选项。';
 	@override String get more => '加载更多';
-	@override String get gateway => '图书馆登录服务';
-	@override String get gatewayHint => '由您的图书馆或管理员提供,Pleazyng。';
-	@override String get advanced => '图书馆集成';
-	@override String get loadLibraries => '选择您的图书馆';
-	@override String get expired => '此借阅已到期。';
-	@override String get updated => '图书馆更新';
 	@override String get continueService => '继续服务';
-	@override String get comingSoon => '借款 即将到来';
-	@override String get comingSoonDescription => '即将支持 Libby 集成。在连接功能完成之前，您可以先在 Libby 中使用图书馆服务。';
-	@override String get suspendHold => '暂停预约';
-	@override String get resumeHold => '恢复预约';
-	@override String get suspendMessage => '要保留排队位置，让下一位读者先借阅此副本吗？您可以稍后恢复预约。';
-	@override String get resumeMessage => '要恢复此预约，以便图书馆为您提供下一份可借阅的副本吗？';
-	@override String get editEmail => '更改通知电子邮件';
 }
 
 // Path: audiobook
@@ -9120,48 +9086,14 @@ extension on TranslationsZh {
 			'lending.libraryUrlHint' => '使用您的图书馆的目录或登录页面。',
 			'lending.intro' => '从图书馆借阅，让书籍随时相伴。',
 			'lending.handoff' => '登录、借款和安全阅读,您图书馆的服务。',
-			'lending.openService' => '开放图书馆',
 			'lending.findLibrary' => '找个图书馆',
 			'lending.search' => '搜索书籍和作家',
-			'lending.catalogue' => '目录',
-			'lending.loans' => '借阅',
-			'lending.holds' => '预约',
-			'lending.signIn' => '与您的图书馆登录',
-			'lending.waiting' => '结束登录在您的浏览器,然后返回这里。',
-			'lending.cancel' => '取消',
 			'lending.disconnect' => '取消图书馆',
 			'lending.disconnectMessage' => '要从此个人资料中移除此图书馆吗？借阅和预约记录仍会保留在图书馆。',
-			'lending.getBook' => '获书',
-			'lending.checkAvailability' => '查看可用性',
-			'lending.available' => '可借阅',
-			'lending.unavailable' => '目前不可用',
-			'lending.borrow' => '借阅',
-			'lending.placeHold' => '预约借阅',
-			'lending.returnBook' => '提前归还',
-			'lending.cancelHold' => '取消预约',
-			'lending.confirmBorrow' => '借这本书从图书馆里?',
-			'lending.confirmReturn' => '现在归还此书吗？您可能需要重新借阅才能继续阅读。',
-			'lending.confirmCancelHold' => '要取消此书的预约吗？',
-			'lending.email' => '留下通知电子邮件',
-			'lending.due' => ({required Object date}) => '归还日期：${date}',
-			'lending.queue' => ({required Object position}) => '排队位置：${position}',
 			'lending.empty' => '还没有标题。',
 			'lending.openLibraryNote' => '探索 Open Library 的目录。每本书的页面上都会显示阅读和借阅选项。',
 			'lending.more' => '加载更多',
-			'lending.gateway' => '图书馆登录服务',
-			'lending.gatewayHint' => '由您的图书馆或管理员提供,Pleazyng。',
-			'lending.advanced' => '图书馆集成',
-			'lending.loadLibraries' => '选择您的图书馆',
-			'lending.expired' => '此借阅已到期。',
-			'lending.updated' => '图书馆更新',
 			'lending.continueService' => '继续服务',
-			'lending.comingSoon' => '借款 即将到来',
-			'lending.comingSoonDescription' => '即将支持 Libby 集成。在连接功能完成之前，您可以先在 Libby 中使用图书馆服务。',
-			'lending.suspendHold' => '暂停预约',
-			'lending.resumeHold' => '恢复预约',
-			'lending.suspendMessage' => '要保留排队位置，让下一位读者先借阅此副本吗？您可以稍后恢复预约。',
-			'lending.resumeMessage' => '要恢复此预约，以便图书馆为您提供下一份可借阅的副本吗？',
-			'lending.editEmail' => '更改通知电子邮件',
 			'audiobook.syncTitle' => '阅读与倾听Sync',
 			'audiobook.syncHelp' => '在您的设备上保持阅读位置、倾听位置、完成状态、图标和笔记。 选择附加存储帐户并在每个设备上使用相同的同步代码. 阅读和倾听保持分开。',
 			'audiobook.addSyncSource' => '首先将 Google Drive、OneDrive、Dropbox、WebDAV 或 S3 添加到文件和书籍中。',
@@ -9211,8 +9143,6 @@ extension on TranslationsZh {
 			'audiobook.statusFinished' => '结束',
 			'audiobook.goToTime' => '走到时间',
 			'audiobook.timeHelp' => '时间: 分钟: 秒或 分钟: 秒',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => '移动或修复同步数据前，请先导出近期的加密备份。导入内容会与当前状态合并，不会覆盖本地同步历史。请另行保存同步代码。',
 			'audiobook.recoveryExport' => '输出加密恢复文件',
 			'audiobook.recoveryImport' => '输入加密恢复文件',
@@ -9247,6 +9177,8 @@ extension on TranslationsZh {
 			'sourceSetup.nfsGroupId' => 'NFS 组 ID（AUTH_SYS）',
 			'sourceSetup.nfsGroupIdHelp' => '默认值：1000。请使用 NAS 导出配置允许的组 ID。',
 			'sourceSetup.nfsEncryption' => '要求加密 NFS 连接（RPC-with-TLS）',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => '要求 NFS 和挂载服务使用 TLS 1.3。如果 NAS 不支持，将拒绝连接。',
 			'sourceSetup.nfsTrustCertificate' => '自定义 NFS CA 或服务器证书（PEM，可选）',
 			'sourceSetup.nfsTrustHelp' => '使用此设备信任的证书时请留空。需要时可添加私有 CA 或自签名服务器证书；证书中的名称必须与 NFS 地址的主机名匹配。',
@@ -9725,8 +9657,6 @@ extension on TranslationsZh {
 			'musicTools.days' => '天',
 			'musicTools.albumBlocks' => '保持专辑完整',
 			'musicTools.home' => '音乐',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => '最近播放',
 			'musicTools.apiKey' => 'API 密钥',
 			'musicTools.missing' => 'N/A',
@@ -9761,6 +9691,8 @@ extension on TranslationsZh {
 			'musicTools.peak' => '峰值',
 			'musicTools.bass' => '低音',
 			'musicTools.treble' => '高音',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => '共享播放列表',
 			'musicTools.sharingInvitationsTitle' => 'Plex 共享邀请',
 			'musicTools.noSharingInvitations' => '没有待处理的邀请',

@@ -10,7 +10,7 @@ A cross-platform media client for Plex, Jellyfin, Emby, standalone files, books,
 
 Pleazyng started as a downstream fork for feature requests that Plezy upstream had declined, left open, or not yet shipped. The table below maps those upstream gaps to the corresponding downstream implementation.  Our app has evolved from those roots, to encompass other media domains and integrations.
 
-See [Files, books and listening](docs/FILES_AND_BOOKS.md) for standard/cloud sources, readers and offline behavior, and [Public-library setup](docs/LENDING_SETUP.md) for the staged OverDrive integration.
+See [Files, books and listening](docs/FILES_AND_BOOKS.md) for standard/cloud sources, readers and offline behavior, and [Public-library setup](docs/LENDING_SETUP.md) for catalogue search and library website links.
 
 Browse the [documentation index](docs/README.md) for product guides, feature records, maintainer runbooks, release evidence and historical snapshots.
 
@@ -315,7 +315,7 @@ This list covers the current Pleazyng codebase, including additions since the fo
 - Profile-local Saved picks, review history, undo/retry, two- or three-pick comparison, and private pass-the-device shortlist voting
 - Bounded OPDS sample previews, exact-ID adaptation links, and browse-only Open Library candidates
 - Optional AI reranking through a user-configured endpoint, with ordinary ranking as fallback; optional encrypted Saved-pick sync
-- See the [discovery guide and delivery limits](docs/plezyng/swipe/README.md); borrower-catalog candidates require the separately gated lending integration
+- See the [discovery guide and delivery limits](docs/plezyng/swipe/README.md)
 
 ### <img src="assets/readme_icons/explore.svg" height="20" alt="" align="center" /> Explore & Requests
 
@@ -340,7 +340,7 @@ This list covers the current Pleazyng codebase, including additions since the fo
 - Optional encrypted reading/listening progress and annotation sync through supported cloud storage; concurrent positions remain an explicit choice
 - Hardcover shelf import, exact-edition matching and preview/undo for shelf and reading-progress updates
 - Public catalog browsing through Open Library and Google Books, plus edition-aware official bookstore and comic-storefront handoffs
-- See [Files, books and listening](docs/FILES_AND_BOOKS.md). Document reading is unavailable on TV; Linux EPUB and comic archives (CBZ/CBR/CB7) open in the system browser. OverDrive lending remains [disabled pending provider approval and qualification](docs/LENDING_SETUP.md).
+- See [Files, books and listening](docs/FILES_AND_BOOKS.md). Document reading is unavailable on TV; Linux EPUB and comic archives (CBZ/CBR/CB7) open in the system browser.
 
 ### Cloud & add-on streaming
 
@@ -663,7 +663,7 @@ of the whole feature category.
 Plex server/account entitlements still apply where Plex enforces them, including
 remote streaming, Downloads, DVR and server analysis. Neither client grants
 Plex Pass or replaces server hardware transcoding. Provider-gated
-[OverDrive lending](docs/LENDING_SETUP.md), [Watchmode/MusicKit pilots](docs/plezyng/service-integrations/README.md)
+[Watchmode/MusicKit pilots](docs/plezyng/service-integrations/README.md)
 and the [deferred full Discord client](docs/plezyng/discord/DELIVERY.md) are not
 counted as generally available features. Dolby Vision/FEL routing is automatic by default with compatibility fallback; neural motion processing remains opt-in;
 see the linked qualification records before assuming a particular device works.

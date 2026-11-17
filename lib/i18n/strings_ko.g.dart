@@ -3701,48 +3701,14 @@ class _Translations$lending$ko extends Translations$lending$en {
 	@override String get libraryUrlHint => '도서관의 도서 목록 또는 로그인 페이지를 사용하세요.';
 	@override String get intro => '도서관에서 책을 빌리고 언제나 가까이 두세요.';
 	@override String get handoff => '도서관 자체 서비스를 통해 로그인하고 책을 빌려 안전하게 읽으세요.';
-	@override String get openService => '오픈 도서관';
 	@override String get findLibrary => '도서관 찾기';
 	@override String get search => '책과 저자를 찾아보세요';
-	@override String get catalogue => '카탈로그';
-	@override String get loans => '대출';
-	@override String get holds => '예약';
-	@override String get signIn => '도서관에 가입하십시오';
-	@override String get waiting => '브라우저에서 가입을 마무리하고 여기로 돌아갑니다.';
-	@override String get cancel => '취소';
 	@override String get disconnect => '도서관 삭제';
 	@override String get disconnectMessage => '이 프로필에서 이 도서관을 제거할까요? 대출 및 예약 내역은 도서관에 그대로 유지됩니다.';
-	@override String get getBook => '책을 얻으라';
-	@override String get checkAvailability => '이용 가능성을 확인하기';
-	@override String get available => '대출을 위해 사용할 수 있는';
-	@override String get unavailable => '현재 이용할 수 없는';
-	@override String get borrow => '대출';
-	@override String get placeHold => '예약하기';
-	@override String get returnBook => '기한 전에 반납';
-	@override String get cancelHold => '예약 취소';
-	@override String get confirmBorrow => '이 책을 도서관에서 빌려주시나요?';
-	@override String get confirmReturn => '이 제목을 지금 돌려주십시오.이 제목을 계속하기 위해 다시 대출해야 할 수도 있습니다.';
-	@override String get confirmCancelHold => '이 도서의 예약을 취소할까요?';
-	@override String get email => '이메일 통보를 유지';
-	@override String due({required Object date}) => '반납 기한: ${date}';
-	@override String queue({required Object position}) => '위치 ${position} 라인';
 	@override String get empty => '아직 제목이 없습니다.';
 	@override String get openLibraryNote => 'Open Library의 카탈로그를 탐색하십시오.읽기 및 대출 옵션은 각 제목의 페이지에 표시됩니다.';
 	@override String get more => '더 충전';
-	@override String get gateway => '도서관 서명 서비스';
-	@override String get gatewayHint => '도서관 또는 관리자 Pleazyng에 의해 제공됩니다.';
-	@override String get advanced => '도서관 통합';
-	@override String get loadLibraries => '당신의 도서관을 선택하세요';
-	@override String get expired => '이 대출은 끝났습니다.';
-	@override String get updated => '도서관 업데이트';
 	@override String get continueService => '계속 서비스에';
-	@override String get comingSoon => '신속하게 도착하는 앱 대출';
-	@override String get comingSoonDescription => 'Libby 통합은 그 길에 있습니다. Libby에서 도서관을 사용할 수 있습니다.';
-	@override String get suspendHold => '예약 일시 중지';
-	@override String get resumeHold => '예약 재개';
-	@override String get suspendMessage => '대기 순서를 유지하고 다음 독자가 이 책을 먼저 빌리도록 할까요? 나중에 예약을 재개할 수 있습니다.';
-	@override String get resumeMessage => '도서관에서 다음으로 이용 가능한 책을 제공할 수 있도록 이 예약을 재개할까요?';
-	@override String get editEmail => '이메일 통지 변경';
 }
 
 // Path: audiobook
@@ -9120,48 +9086,14 @@ extension on TranslationsKo {
 			'lending.libraryUrlHint' => '도서관의 도서 목록 또는 로그인 페이지를 사용하세요.',
 			'lending.intro' => '도서관에서 책을 빌리고 언제나 가까이 두세요.',
 			'lending.handoff' => '도서관 자체 서비스를 통해 로그인하고 책을 빌려 안전하게 읽으세요.',
-			'lending.openService' => '오픈 도서관',
 			'lending.findLibrary' => '도서관 찾기',
 			'lending.search' => '책과 저자를 찾아보세요',
-			'lending.catalogue' => '카탈로그',
-			'lending.loans' => '대출',
-			'lending.holds' => '예약',
-			'lending.signIn' => '도서관에 가입하십시오',
-			'lending.waiting' => '브라우저에서 가입을 마무리하고 여기로 돌아갑니다.',
-			'lending.cancel' => '취소',
 			'lending.disconnect' => '도서관 삭제',
 			'lending.disconnectMessage' => '이 프로필에서 이 도서관을 제거할까요? 대출 및 예약 내역은 도서관에 그대로 유지됩니다.',
-			'lending.getBook' => '책을 얻으라',
-			'lending.checkAvailability' => '이용 가능성을 확인하기',
-			'lending.available' => '대출을 위해 사용할 수 있는',
-			'lending.unavailable' => '현재 이용할 수 없는',
-			'lending.borrow' => '대출',
-			'lending.placeHold' => '예약하기',
-			'lending.returnBook' => '기한 전에 반납',
-			'lending.cancelHold' => '예약 취소',
-			'lending.confirmBorrow' => '이 책을 도서관에서 빌려주시나요?',
-			'lending.confirmReturn' => '이 제목을 지금 돌려주십시오.이 제목을 계속하기 위해 다시 대출해야 할 수도 있습니다.',
-			'lending.confirmCancelHold' => '이 도서의 예약을 취소할까요?',
-			'lending.email' => '이메일 통보를 유지',
-			'lending.due' => ({required Object date}) => '반납 기한: ${date}',
-			'lending.queue' => ({required Object position}) => '위치 ${position} 라인',
 			'lending.empty' => '아직 제목이 없습니다.',
 			'lending.openLibraryNote' => 'Open Library의 카탈로그를 탐색하십시오.읽기 및 대출 옵션은 각 제목의 페이지에 표시됩니다.',
 			'lending.more' => '더 충전',
-			'lending.gateway' => '도서관 서명 서비스',
-			'lending.gatewayHint' => '도서관 또는 관리자 Pleazyng에 의해 제공됩니다.',
-			'lending.advanced' => '도서관 통합',
-			'lending.loadLibraries' => '당신의 도서관을 선택하세요',
-			'lending.expired' => '이 대출은 끝났습니다.',
-			'lending.updated' => '도서관 업데이트',
 			'lending.continueService' => '계속 서비스에',
-			'lending.comingSoon' => '신속하게 도착하는 앱 대출',
-			'lending.comingSoonDescription' => 'Libby 통합은 그 길에 있습니다. Libby에서 도서관을 사용할 수 있습니다.',
-			'lending.suspendHold' => '예약 일시 중지',
-			'lending.resumeHold' => '예약 재개',
-			'lending.suspendMessage' => '대기 순서를 유지하고 다음 독자가 이 책을 먼저 빌리도록 할까요? 나중에 예약을 재개할 수 있습니다.',
-			'lending.resumeMessage' => '도서관에서 다음으로 이용 가능한 책을 제공할 수 있도록 이 예약을 재개할까요?',
-			'lending.editEmail' => '이메일 통지 변경',
 			'audiobook.syncTitle' => '읽기 & 듣기 Sync',
 			'audiobook.syncHelp' => '기기 내에서 읽기 위치, 듣기 위치, 완성 상태, 책표 및 노트를 유지하십시오. 연결된 스토리지 계정을 선택하고 각 장치에 동일한 동기화 코드를 사용하십시오. 읽기 및 듣기는 별도로 남아 있습니다.',
 			'audiobook.addSyncSource' => '먼저 Google 드라이브, OneDrive, Dropbox, WebDAV 또는 S3를 파일 및 책에 추가합니다.',
@@ -9211,8 +9143,6 @@ extension on TranslationsKo {
 			'audiobook.statusFinished' => '마무리',
 			'audiobook.goToTime' => '시간에 가라',
 			'audiobook.timeHelp' => '시간:분:초 또는 분:초',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => '동기화 데이터를 이동하거나 복구하기 전에 최근 암호화 된 복사본을 수출합니다.수입은 현재 상태와 결합됩니다; 그들은 결코 지역 동기 역사를 대체하지 않습니다.',
 			'audiobook.recoveryExport' => '수출 암호화 된 복구 파일',
 			'audiobook.recoveryImport' => '암호화된 복구 파일 수입',
@@ -9247,6 +9177,8 @@ extension on TranslationsKo {
 			'sourceSetup.nfsGroupId' => 'NFS 그룹 ID(AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => '기본값: 1000. NAS 내보내기 설정에서 허용한 그룹 ID를 사용하세요.',
 			'sourceSetup.nfsEncryption' => 'NFS 암호화 필수(RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'NFS와 마운트 서비스에 TLS 1.3을 요구합니다. NAS가 지원하지 않으면 연결을 거부합니다.',
 			'sourceSetup.nfsTrustCertificate' => '사용자 지정 NFS CA 또는 서버 인증서(PEM, 선택 사항)',
 			'sourceSetup.nfsTrustHelp' => '이 장치에서 신뢰하는 인증서를 사용하려면 비워 두세요. 필요하면 사설 CA 또는 자체 서명 서버 인증서를 추가하세요. 인증서의 이름은 NFS URL의 호스트와 일치해야 합니다.',
@@ -9725,8 +9657,6 @@ extension on TranslationsKo {
 			'musicTools.days' => '일',
 			'musicTools.albumBlocks' => '앨범 전체를 함께 유지',
 			'musicTools.home' => '음악',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => '최근 재생한 음악',
 			'musicTools.apiKey' => 'API 키',
 			'musicTools.missing' => 'N/A',
@@ -9761,6 +9691,8 @@ extension on TranslationsKo {
 			'musicTools.peak' => '피크',
 			'musicTools.bass' => '저음',
 			'musicTools.treble' => '고음',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => '공유 재생목록',
 			'musicTools.sharingInvitationsTitle' => 'Plex 공유 초대',
 			'musicTools.noSharingInvitations' => '대기 중인 초대 없음',

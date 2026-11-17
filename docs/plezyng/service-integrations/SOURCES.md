@@ -30,9 +30,6 @@ JustWatch: [content partner integrations](https://apis.justwatch.com/docs/conten
 
 TMDB: [TV watch providers](https://developer.themoviedb.org/reference/tv-series-watch-providers), [FAQ/licensing](https://developer.themoviedb.org/docs/faq). Country/provider availability, required JustWatch attribution, lack of full service deep links and commercial-license distinction. High.
 
-## S07
-
-OverDrive: [application process](https://developer.overdrive.com/getting-started/application-process), [API overview](https://developer.overdrive.com/getting-started/api-overview), [circulation](https://developer.overdrive.com/api-docs/circulation-apis), [integration environment](https://developer.overdrive.com/getting-started/integration-library), [authentication](https://developer.overdrive.com/api-docs/authentication). Establishes separate approvals/environments and discovery/circulation capabilities. Existing repo gateway behavior is code evidence, not provider approval. High.
 
 ## S08
 

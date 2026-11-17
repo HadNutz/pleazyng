@@ -10652,80 +10652,17 @@ class Translations$lending$en {
 	/// en: 'Sign in, borrow and read securely with your library’s own service.'
 	String get handoff => 'Sign in, borrow and read securely with your library’s own service.';
 
-	/// en: 'Open library'
-	String get openService => 'Open library';
-
 	/// en: 'Find a library'
 	String get findLibrary => 'Find a library';
 
 	/// en: 'Search books and authors'
 	String get search => 'Search books and authors';
 
-	/// en: 'Catalogue'
-	String get catalogue => 'Catalogue';
-
-	/// en: 'Loans'
-	String get loans => 'Loans';
-
-	/// en: 'Holds'
-	String get holds => 'Holds';
-
-	/// en: 'Sign in with your library'
-	String get signIn => 'Sign in with your library';
-
-	/// en: 'Finish signing in in your browser, then return here.'
-	String get waiting => 'Finish signing in in your browser, then return here.';
-
-	/// en: 'Cancel'
-	String get cancel => 'Cancel';
-
 	/// en: 'Remove library'
 	String get disconnect => 'Remove library';
 
 	/// en: 'Remove this library from this profile? Your loans and holds stay with your library.'
 	String get disconnectMessage => 'Remove this library from this profile? Your loans and holds stay with your library.';
-
-	/// en: 'Get book'
-	String get getBook => 'Get book';
-
-	/// en: 'Check availability'
-	String get checkAvailability => 'Check availability';
-
-	/// en: 'Available to borrow'
-	String get available => 'Available to borrow';
-
-	/// en: 'Currently unavailable'
-	String get unavailable => 'Currently unavailable';
-
-	/// en: 'Borrow'
-	String get borrow => 'Borrow';
-
-	/// en: 'Place hold'
-	String get placeHold => 'Place hold';
-
-	/// en: 'Return early'
-	String get returnBook => 'Return early';
-
-	/// en: 'Cancel hold'
-	String get cancelHold => 'Cancel hold';
-
-	/// en: 'Borrow this title from your library?'
-	String get confirmBorrow => 'Borrow this title from your library?';
-
-	/// en: 'Return this title now? You may need to borrow it again to continue.'
-	String get confirmReturn => 'Return this title now? You may need to borrow it again to continue.';
-
-	/// en: 'Remove your hold on this title?'
-	String get confirmCancelHold => 'Remove your hold on this title?';
-
-	/// en: 'Hold notification email'
-	String get email => 'Hold notification email';
-
-	/// en: 'Due $date'
-	String due({required Object date}) => 'Due ${date}';
-
-	/// en: 'Position $position in line'
-	String queue({required Object position}) => 'Position ${position} in line';
 
 	/// en: 'No titles here yet.'
 	String get empty => 'No titles here yet.';
@@ -10736,47 +10673,8 @@ class Translations$lending$en {
 	/// en: 'Load more'
 	String get more => 'Load more';
 
-	/// en: 'Library sign-in service'
-	String get gateway => 'Library sign-in service';
-
-	/// en: 'Provided by your library or the Pleazyng administrator.'
-	String get gatewayHint => 'Provided by your library or the Pleazyng administrator.';
-
-	/// en: 'Library integration'
-	String get advanced => 'Library integration';
-
-	/// en: 'Choose your library'
-	String get loadLibraries => 'Choose your library';
-
-	/// en: 'This loan has expired.'
-	String get expired => 'This loan has expired.';
-
-	/// en: 'Library updated'
-	String get updated => 'Library updated';
-
 	/// en: 'Continue in service'
 	String get continueService => 'Continue in service';
-
-	/// en: 'In-app borrowing · Coming soon'
-	String get comingSoon => 'In-app borrowing · Coming soon';
-
-	/// en: 'Libby integration is on its way. You can use your library in Libby while we finish connecting it.'
-	String get comingSoonDescription => 'Libby integration is on its way. You can use your library in Libby while we finish connecting it.';
-
-	/// en: 'Suspend hold'
-	String get suspendHold => 'Suspend hold';
-
-	/// en: 'Resume hold'
-	String get resumeHold => 'Resume hold';
-
-	/// en: 'Keep your place in line and let the next reader borrow this copy? You can resume the hold later.'
-	String get suspendMessage => 'Keep your place in line and let the next reader borrow this copy? You can resume the hold later.';
-
-	/// en: 'Resume this hold so your library can offer you the next available copy?'
-	String get resumeMessage => 'Resume this hold so your library can offer you the next available copy?';
-
-	/// en: 'Change notification email'
-	String get editEmail => 'Change notification email';
 }
 
 // Path: audiobook
@@ -22206,48 +22104,14 @@ extension on Translations {
 			'lending.libraryUrlHint' => 'Use your library’s catalogue or sign-in page.',
 			'lending.intro' => 'Borrow from your library. Keep your books close.',
 			'lending.handoff' => 'Sign in, borrow and read securely with your library’s own service.',
-			'lending.openService' => 'Open library',
 			'lending.findLibrary' => 'Find a library',
 			'lending.search' => 'Search books and authors',
-			'lending.catalogue' => 'Catalogue',
-			'lending.loans' => 'Loans',
-			'lending.holds' => 'Holds',
-			'lending.signIn' => 'Sign in with your library',
-			'lending.waiting' => 'Finish signing in in your browser, then return here.',
-			'lending.cancel' => 'Cancel',
 			'lending.disconnect' => 'Remove library',
 			'lending.disconnectMessage' => 'Remove this library from this profile? Your loans and holds stay with your library.',
-			'lending.getBook' => 'Get book',
-			'lending.checkAvailability' => 'Check availability',
-			'lending.available' => 'Available to borrow',
-			'lending.unavailable' => 'Currently unavailable',
-			'lending.borrow' => 'Borrow',
-			'lending.placeHold' => 'Place hold',
-			'lending.returnBook' => 'Return early',
-			'lending.cancelHold' => 'Cancel hold',
-			'lending.confirmBorrow' => 'Borrow this title from your library?',
-			'lending.confirmReturn' => 'Return this title now? You may need to borrow it again to continue.',
-			'lending.confirmCancelHold' => 'Remove your hold on this title?',
-			'lending.email' => 'Hold notification email',
-			'lending.due' => ({required Object date}) => 'Due ${date}',
-			'lending.queue' => ({required Object position}) => 'Position ${position} in line',
 			'lending.empty' => 'No titles here yet.',
 			'lending.openLibraryNote' => 'Explore Open Library’s catalogue. Reading and borrowing options are shown on each title’s page.',
 			'lending.more' => 'Load more',
-			'lending.gateway' => 'Library sign-in service',
-			'lending.gatewayHint' => 'Provided by your library or the Pleazyng administrator.',
-			'lending.advanced' => 'Library integration',
-			'lending.loadLibraries' => 'Choose your library',
-			'lending.expired' => 'This loan has expired.',
-			'lending.updated' => 'Library updated',
 			'lending.continueService' => 'Continue in service',
-			'lending.comingSoon' => 'In-app borrowing · Coming soon',
-			'lending.comingSoonDescription' => 'Libby integration is on its way. You can use your library in Libby while we finish connecting it.',
-			'lending.suspendHold' => 'Suspend hold',
-			'lending.resumeHold' => 'Resume hold',
-			'lending.suspendMessage' => 'Keep your place in line and let the next reader borrow this copy? You can resume the hold later.',
-			'lending.resumeMessage' => 'Resume this hold so your library can offer you the next available copy?',
-			'lending.editEmail' => 'Change notification email',
 			'audiobook.syncTitle' => 'Reading & listening sync',
 			'audiobook.syncHelp' => 'Keep reading positions, listening positions, completion state, bookmarks and notes across your devices. Choose an attached storage account and use the same sync code on each device. Reading and listening remain separate.',
 			'audiobook.addSyncSource' => 'Add Google Drive, OneDrive, Dropbox, WebDAV or S3 in Files & books first.',
@@ -22357,8 +22221,6 @@ extension on Translations {
 			'sourceSetup.nfsSetupHint' => 'Check these settings if the connection does not open.',
 			'sourceSetup.nfsSetupDetails' => 'Use an NFSv3 TCP export. The NFS service and mount service must both support RPC-with-TLS when encryption is required. Leave the custom certificate blank for a server certificate trusted by this device, or add the NAS CA/self-signed certificate. The certificate name must match the host in the endpoint. If the NAS asks for mutual TLS, add its PKCS#12 client identity. Finally, confirm the export allows the configured AUTH_SYS UID/GID and the client port policy.',
 			'sourceSetup.ftpHelp' => 'FTP uses passive mode. Use ftp:// for plain FTP, ftpes:// for explicit TLS, or ftps:// for TLS (implicit on port 990; explicit on other ports).',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.openSubtitles' => 'OpenSubtitles',
 			'sourceSetup.subtitleSetup' => 'Optional subtitle search for standalone videos.',
 			'sourceSetup.apiKey' => 'API key',
@@ -22393,6 +22255,8 @@ extension on Translations {
 			'sourceSetup.downloadSubtitle' => 'Download subtitle',
 			'sourceSetup.subtitle' => 'Subtitle',
 			'sourceSetup.nfsTlsRequired' => 'RPC-with-TLS required',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsUnencrypted' => 'Unencrypted NFS',
 			'sourceSetup.tlsEncrypted' => 'TLS encrypted',
 			'sourceSetup.ftpPlain' => 'Plain FTP',
@@ -22871,8 +22735,6 @@ extension on Translations {
 			'podcasts.directoryLink' => 'Open directory listing',
 			'podcasts.feedAdded' => 'Podcast added.',
 			'podcasts.refreshPartial' => 'Some feeds could not refresh. Cached episodes remain available.',
-			_ => null,
-		} ?? switch (path) {
 			'podcasts.importOpml' => 'Import subscriptions (OPML)',
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
 			'podcasts.imported' => 'Subscriptions imported.',
@@ -22907,6 +22769,8 @@ extension on Translations {
 			'subtitleAiUi.transcribingAudioAndAligningSubtitleText' => 'Transcribing audio and aligning subtitle text…',
 			'subtitleAiUi.synchronizationOperationApplied' => ({required Object operation, required Object matchedCueCount, required Object totalCueCount, required Object confidence, required Object rmsResidualMs, required Object maxResidualMs, required Object discontinuityCount, required Object rate, required Object baseOffset, required Object source, required Object uploadedNote}) => '${operation} applied to ${matchedCueCount} of ${totalCueCount} cues (${confidence}% match confidence; global-fit residual RMS/max ${rmsResidualMs}/${maxResidualMs} ms). ${discontinuityCount} timing discontinuities detected; rate ${rate}×, base offset ${baseOffset} ms. Original: ${source}.${uploadedNote}',
 			'subtitleAiUi.subtitleLanguagesForMatching' => 'Subtitle languages for matching',
+			_ => null,
+		} ?? switch (path) {
 			'subtitleAiUi.subtitleToSynchronize' => 'Subtitle to synchronize',
 			'subtitleAiUi.referenceSubtitle' => 'Reference subtitle',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Preview subtitle encoding',
@@ -23385,8 +23249,6 @@ extension on Translations {
 			'karaokeUi.sendRawVocalAudioForPrivateTake' => 'Send raw vocal audio to save a private take on the host',
 			'karaokeUi.enablePhoneMicrophone' => 'Enable phone microphone',
 			'karaokeUi.muteAndSavePhoneInput' => 'Mute and save',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.pitchMIDIPracticeOnly' => ({required Object value1}) => 'Pitch MIDI ${value1} · practice only',
 			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',
 			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',
@@ -23421,6 +23283,8 @@ extension on Translations {
 			'karaokeUi.splitBoundaryMustFallInsideSpan' => 'Choose a split time after the start and before the end of this span.',
 			'karaokeUi.mergeRequiresMatchingSingerAndReadings' => 'Merging requires matching singer parts, pronunciation presence, and confidence.',
 			'karaokeUi.invalidLyricSpanTiming' => 'Each span needs valid start and end times.',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.referenceNote' => 'Reference note',
 			'karaokeUi.freestyleNotScored' => 'Freestyle / not scored',
 			'karaokeUi.goldenNote' => 'Golden note',

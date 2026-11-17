@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
@@ -12,21 +11,13 @@ import '../../focus/focusable_button.dart';
 import '../../focus/focusable_text_field.dart';
 import '../../focus/focusable_wrapper.dart';
 import '../../i18n/strings.g.dart';
-import '../../i18n/presentation_formats.dart';
-import '../../utils/formatters.dart';
 import '../../lending/lending_service.dart';
 import '../../services/external_access_directory.dart';
 import '../../sources/source_controller.dart';
 import '../../sources/source_models.dart';
 import '../../theme/mono_tokens.dart';
 import '../../utils/dialogs.dart';
-import '../../utils/snackbar_helper.dart';
 import '../../widgets/app_icon.dart';
-import '../../widgets/dialog_action_button.dart';
-import '../../widgets/provider_mark.dart';
-
-import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../widgets/app_menu.dart';
 import '../../widgets/focused_scroll_scaffold.dart';
 import '../libraries/state_messages.dart';
@@ -103,22 +94,7 @@ class _PublicLibrariesScreenState extends State<PublicLibrariesScreen> {
   Future<void> _open(LendingLibrary library) async {
     final service = _service;
     if (service == null) return;
-    if (library.native && LendingService.overdriveEnabled) {
-      if (!await service.connected(library)) {
-        if (mounted) await _signIn(context, service, library);
-        if (!await service.connected(library)) return;
-      }
-      if (mounted) {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => LibraryCatalogueScreen(service: service, library: library),
-          ),
-        );
-      }
-    } else {
-      await service.openPage(lendingHttps(library.home));
-    }
+    await service.openPage(lendingHttps(library.home));
   }
 
   @override
@@ -173,7 +149,7 @@ class _PublicLibrariesScreenState extends State<PublicLibrariesScreen> {
                       ),
                     ),
                   SourceTile(
-                    title: 'Open Library',
+                    title: t.discover.findNext.openLibraryName,
                     subtitle: t.lending.openLibraryNote,
                     icon: Symbols.menu_book_rounded,
                     onTap: _service == null || _loading
@@ -188,14 +164,8 @@ class _PublicLibrariesScreenState extends State<PublicLibrariesScreen> {
                     for (var i = 0; i < _libraries.length; i++)
                       SourceTile(
                         title: _libraries[i].name,
-                        subtitle:
-                            _libraries[i].provider == LendingProvider.overdrive && !LendingService.overdriveEnabled
-                            ? t.lending.comingSoon
-                            : _libraries[i].provider.label,
+                        subtitle: _libraries[i].provider.label,
                         icon: Symbols.local_library_rounded,
-                        leading: _libraries[i].provider == LendingProvider.overdrive
-                            ? const ProviderMark('libby.png', label: 'Libby, by OverDrive')
-                            : null,
                         index: i,
                         count: _libraries.length,
                         onTap: () => sourceAction(context, () => _open(_libraries[i])),
@@ -204,16 +174,10 @@ class _PublicLibrariesScreenState extends State<PublicLibrariesScreen> {
                           tooltip: t.fileSources.preferences,
                           adaptiveSheet: true,
                           entriesBuilder: (_) => [
-                            if (_libraries[i].native && LendingService.overdriveEnabled)
-                              AppMenuItem(value: 'signIn', label: t.lending.signIn, icon: Symbols.login_rounded),
                             AppMenuItem(value: 'remove', label: t.lending.disconnect, icon: Symbols.link_off_rounded),
                           ],
                           onSelected: (action) => sourceAction(context, () async {
                             final library = _libraries[i];
-                            if (action == 'signIn') {
-                              await _signIn(context, _service!, library);
-                              return;
-                            }
                             if (await showConfirmDialog(
                               context,
                               title: t.lending.disconnect,
@@ -238,9 +202,6 @@ class _PublicLibrariesScreenState extends State<PublicLibrariesScreen> {
                         (p) => p != LendingProvider.openLibrary && p != LendingProvider.other,
                       ))
                         ActionChip(
-                          avatar: provider == LendingProvider.overdrive
-                              ? const ProviderMark('libby.png', size: 24)
-                              : null,
                           label: Text(provider.label),
                           onPressed: _service == null || _loading ? null : () => _add(provider),
                         ),
@@ -256,67 +217,6 @@ class _PublicLibrariesScreenState extends State<PublicLibrariesScreen> {
   );
 }
 
-Future<void> _signIn(BuildContext context, LendingService service, LendingLibrary library) async {
-  Object? failure;
-  final finished = Completer<void>();
-  unawaited(
-    service
-        .authorize(library)
-        .catchError((Object error) {
-          failure = error;
-        })
-        .whenComplete(() => finished.complete()),
-  );
-  await showScopedDialog<void>(
-    context: context,
-    builder: (dialogContext) => _SignInDialog(service: service, finished: finished.future),
-  );
-  service.cancelAuthorization();
-  if (failure != null && context.mounted) {
-    showErrorSnackBar(context, sourceFailureText(failure!));
-  }
-}
-
-/// Reuses the explicit borrower authorization flow from discovery.
-Future<void> signInToLendingLibrary(BuildContext context, LendingService service, LendingLibrary library) =>
-    _signIn(context, service, library);
-
-class _SignInDialog extends StatefulWidget {
-  const _SignInDialog({required this.service, required this.finished});
-  final LendingService service;
-  final Future<void> finished;
-  @override
-  State<_SignInDialog> createState() => _SignInDialogState();
-}
-
-class _SignInDialogState extends State<_SignInDialog> {
-  @override
-  void initState() {
-    super.initState();
-    unawaited(
-      widget.finished.then((_) {
-        if (mounted) Navigator.pop(context);
-      }),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) => AlertDialog(
-    title: Text(t.lending.signIn),
-    content: Text(t.lending.waiting),
-    actions: [
-      DialogActionButton(
-        autofocus: true,
-        onPressed: () {
-          widget.service.cancelAuthorization();
-          Navigator.pop(context);
-        },
-        label: t.lending.cancel,
-      ),
-    ],
-  );
-}
-
 class _AddLibraryScreen extends StatefulWidget {
   const _AddLibraryScreen({required this.service, this.provider});
   final LendingService service;
@@ -326,40 +226,30 @@ class _AddLibraryScreen extends StatefulWidget {
 }
 
 class _AddLibraryScreenState extends State<_AddLibraryScreen> {
-  late LendingProvider _provider = widget.provider ?? LendingProvider.overdrive;
+  late LendingProvider _provider = widget.provider ?? LendingProvider.other;
   final _name = TextEditingController(), _url = TextEditingController();
-  final _gateway = TextEditingController(text: const String.fromEnvironment('LENDING_GATEWAY_URL'));
-  List<Map<String, dynamic>> _available = [];
-  Map<String, dynamic>? _selected;
   bool _busy = false;
   @override
   void dispose() {
     _name.dispose();
     _url.dispose();
-    _gateway.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     setState(() => _busy = true);
     try {
-      final native = _selected;
       final library = LendingLibrary(
         id: const Uuid().v4(),
         provider: _provider,
-        name: _name.text.trim().isNotEmpty ? _name.text.trim() : native?['name'] as String? ?? _provider.label,
-        home: _url.text.trim().isNotEmpty ? _url.text.trim() : native?['home'] as String? ?? _provider.home,
-        gateway: native == null ? '' : _gateway.text.trim(),
-        remoteId: native?['id']?.toString() ?? '',
-        integration: native?['integration'] == true,
-        circulation: native?['circulation'] == true,
+        name: _name.text.trim().isNotEmpty ? _name.text.trim() : _provider.label,
+        home: _url.text.trim().isNotEmpty ? _url.text.trim() : _provider.home,
       );
       if (library.name.isEmpty) {
         throw const SourceException(SourceFailure.invalidData);
       }
       await widget.service.save(library);
       if (!mounted) return;
-      if (library.native) await _signIn(context, widget.service, library);
       if (mounted) Navigator.pop(context);
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -387,29 +277,9 @@ class _AddLibraryScreenState extends State<_AddLibraryScreen> {
                       for (final p in LendingProvider.values.where((p) => p != LendingProvider.openLibrary))
                         DropdownMenuItem(value: p, child: Text(p == LendingProvider.other ? t.lending.other : p.label)),
                     ],
-                    onChanged: _busy
-                        ? null
-                        : (value) => setState(() {
-                            _provider = value!;
-                            _selected = null;
-                          }),
+                    onChanged: _busy ? null : (value) => setState(() => _provider = value!),
                   ),
                   const SizedBox(height: 24),
-                  if (_provider == LendingProvider.overdrive) ...[
-                    const Center(child: ProviderMark('libby.png', size: 72, label: 'Libby, by OverDrive')),
-                    if (Theme.of(context).brightness == Brightness.dark)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: Center(
-                          child: SvgPicture.asset(
-                            'assets/provider_marks/overdrive_white.svg',
-                            width: 108,
-                            semanticsLabel: 'OverDrive',
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 16),
-                  ],
                   Text(t.lending.handoff),
                   const SizedBox(height: 24),
                   FocusableTextField(
@@ -427,66 +297,11 @@ class _AddLibraryScreenState extends State<_AddLibraryScreen> {
                       helperText: t.lending.libraryUrlHint,
                     ),
                   ),
-                  if (_provider == LendingProvider.overdrive && !LendingService.overdriveEnabled)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(t.lending.comingSoon, style: Theme.of(context).textTheme.titleSmall),
-                          const SizedBox(height: 8),
-                          Text(t.lending.comingSoonDescription),
-                        ],
-                      ),
-                    ),
-                  if (_provider == LendingProvider.overdrive && LendingService.overdriveEnabled)
-                    ExpansionTile(
-                      title: Text(t.lending.advanced),
-                      tilePadding: EdgeInsets.zero,
-                      children: [
-                        FocusableTextField(
-                          controller: _gateway,
-                          autocorrect: false,
-                          decoration: InputDecoration(labelText: t.lending.gateway, helperText: t.lending.gatewayHint),
-                        ),
-                        _focusedLendingButton(
-                          onPressed: _busy
-                              ? null
-                              : () => sourceAction(context, () async {
-                                  setState(() => _busy = true);
-                                  try {
-                                    final choices = await widget.service.gatewayLibraries(_gateway.text.trim());
-                                    if (mounted) {
-                                      setState(() => _available = choices);
-                                    }
-                                  } finally {
-                                    if (mounted) setState(() => _busy = false);
-                                  }
-                                }),
-                          buildButton: (onPressed) =>
-                              TextButton(onPressed: onPressed, child: Text(t.lending.loadLibraries)),
-                        ),
-                        if (_available.isNotEmpty)
-                          DropdownButtonFormField<String>(
-                            isExpanded: true,
-                            icon: const AppIcon(Symbols.expand_more_rounded),
-                            items: [
-                              for (final l in _available)
-                                DropdownMenuItem(value: '${l['id']}', child: Text('${l['name']}')),
-                            ],
-                            onChanged: (id) =>
-                                setState(() => _selected = _available.firstWhere((l) => '${l['id']}' == id)),
-                          ),
-                      ],
-                    ),
                   const SizedBox(height: 24),
                   _focusedLendingButton(
                     onPressed: _busy ? null : () => sourceAction(context, _save),
                     primary: true,
-                    buildButton: (onPressed) => FilledButton(
-                      onPressed: onPressed,
-                      child: Text(_selected == null ? t.lending.add : t.lending.signIn),
-                    ),
+                    buildButton: (onPressed) => FilledButton(onPressed: onPressed, child: Text(t.lending.add)),
                   ),
                 ],
               ),
@@ -499,18 +314,9 @@ class _AddLibraryScreenState extends State<_AddLibraryScreen> {
 }
 
 class LibraryCatalogueScreen extends StatefulWidget {
-  const LibraryCatalogueScreen({
-    super.key,
-    required this.service,
-    this.library,
-    this.initialQuery,
-    this.initialBookId,
-    this.selectOnly = false,
-  });
+  const LibraryCatalogueScreen({super.key, required this.service, this.initialQuery, this.selectOnly = false});
   final LendingService service;
-  final LendingLibrary? library;
   final String? initialQuery;
-  final String? initialBookId;
   final bool selectOnly;
   @override
   State<LibraryCatalogueScreen> createState() => _LibraryCatalogueScreenState();
@@ -518,14 +324,10 @@ class LibraryCatalogueScreen extends StatefulWidget {
 
 class _LibraryCatalogueScreenState extends State<LibraryCatalogueScreen> {
   final _search = TextEditingController();
-  final _creator = TextEditingController();
   List<LendingBook> _books = [];
-  String _shelf = 'catalogue';
   String _catalogProvider = 'openLibrary';
-  String? _libbyMediaType;
   int _page = 1, _request = 0;
   bool _busy = false, _more = false;
-  bool _openedInitialBook = false;
   Object? _error;
 
   @override
@@ -538,50 +340,28 @@ class _LibraryCatalogueScreenState extends State<LibraryCatalogueScreen> {
   }
 
   Future<void> _load({bool more = false}) async {
-    if (_shelf == 'catalogue' && _search.text.trim().isEmpty) return;
+    if (_search.text.trim().isEmpty) return;
     final request = ++_request;
     setState(() {
       _busy = true;
       _error = null;
     });
     try {
-      final page = more ? _page + 1 : 1, service = widget.service, library = widget.library;
-      final result = library == null
-          ? _catalogProvider == 'libby'
-                ? await service.libbyTitleSearch(
-                    _search.text.trim(),
-                    creator: _creator.text.trim(),
-                    mediaType: _libbyMediaType,
-                  )
-                : _catalogProvider == 'googleBooks'
-                ? await service.googleBooksSearch(
-                    _search.text.trim(),
-                    page: page,
-                    country: Localizations.localeOf(context).countryCode ?? 'CA',
-                  )
-                : await service.openLibrarySearch(_search.text.trim(), page: page)
-          : _shelf == 'catalogue'
-          ? await service.search(library, _search.text.trim(), page: page)
-          : await service.shelf(library, holds: _shelf == 'holds');
+      final page = more ? _page + 1 : 1;
+      final service = widget.service;
+      final result = _catalogProvider == 'googleBooks'
+          ? await service.googleBooksSearch(
+              _search.text.trim(),
+              page: page,
+              country: Localizations.localeOf(context).countryCode ?? 'CA',
+            )
+          : await service.openLibrarySearch(_search.text.trim(), page: page);
       if (mounted && request == _request) {
         setState(() {
           _books = more ? [..._books, ...result.books] : result.books;
           _page = page;
           _more = result.more;
         });
-      }
-      final initialBookId = widget.initialBookId;
-      if (!more && initialBookId != null && !_openedInitialBook && mounted && request == _request) {
-        final exactBook = result.books.where((book) => book.id == initialBookId).firstOrNull;
-        if (exactBook == null) {
-          setState(() {
-            _books = [];
-            _error = const SourceException(SourceFailure.unavailable);
-          });
-        } else {
-          _openedInitialBook = true;
-          await _open(exactBook);
-        }
       }
     } catch (error) {
       if (mounted && request == _request) setState(() => _error = error);
@@ -593,7 +373,6 @@ class _LibraryCatalogueScreenState extends State<LibraryCatalogueScreen> {
   @override
   void dispose() {
     _search.dispose();
-    _creator.dispose();
     super.dispose();
   }
 
@@ -605,31 +384,14 @@ class _LibraryCatalogueScreenState extends State<LibraryCatalogueScreen> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => _LendingDetailScreen(service: widget.service, library: widget.library, book: book),
+        builder: (_) => _LendingDetailScreen(service: widget.service, book: book),
       ),
     );
-    if (mounted && _shelf != 'catalogue') await _load();
   }
 
   @override
   Widget build(BuildContext context) => FocusedScrollScaffold(
-    title: Text(
-      widget.library?.name ??
-          (_catalogProvider == 'googleBooks'
-              ? 'Google Books'
-              : _catalogProvider == 'libby'
-              ? 'Libby / OverDrive'
-              : 'Open Library'),
-    ),
-    focusableAppBarActions: true,
-    actions: [
-      if (widget.library != null)
-        IconButton(
-          tooltip: t.lending.openService,
-          onPressed: () => sourceAction(context, () => widget.service.openPage(lendingHttps(widget.library!.home))),
-          icon: const AppIcon(Symbols.open_in_new_rounded),
-        ),
-    ],
+    title: Text(_catalogProvider == 'googleBooks' ? 'Google Books' : t.discover.findNext.openLibraryName),
     slivers: [
       SliverPadding(
         padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
@@ -637,44 +399,15 @@ class _LibraryCatalogueScreenState extends State<LibraryCatalogueScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (widget.library != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Wrap(
-                    spacing: 8,
-                    children: [
-                      for (final entry in {
-                        'catalogue': t.lending.catalogue,
-                        'loans': t.lending.loans,
-                        'holds': t.lending.holds,
-                      }.entries)
-                        ChoiceChip(
-                          label: Text(entry.value),
-                          selected: _shelf == entry.key,
-                          onSelected: _busy
-                              ? null
-                              : (_) {
-                                  setState(() {
-                                    _shelf = entry.key;
-                                    _books = [];
-                                    _more = false;
-                                  });
-                                  unawaited(_load());
-                                },
-                        ),
-                    ],
-                  ),
-                ),
-              if (widget.library == null)
+              if (!widget.selectOnly)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: Wrap(
                     spacing: 8,
                     children: [
                       for (final source in [
-                        const ('openLibrary', 'Open Library'),
+                        ('openLibrary', t.discover.findNext.openLibraryName),
                         const ('googleBooks', 'Google Books'),
-                        if (widget.service.titleLinkAvailable) const ('libby', 'Libby / OverDrive'),
                       ])
                         ChoiceChip(
                           label: Text(source.$2),
@@ -695,76 +428,23 @@ class _LibraryCatalogueScreenState extends State<LibraryCatalogueScreen> {
                     ],
                   ),
                 ),
-              if (_shelf == 'catalogue')
-                FocusableTextField(
-                  controller: _search,
-                  textInputAction: TextInputAction.search,
-                  onSubmitted: (_) => _load(),
-                  decoration: InputDecoration(
-                    hintText: t.lending.search,
-                    prefixIcon: const AppIcon(Symbols.search_rounded),
-                    suffixIcon: IconButton(
-                      onPressed: _busy ? null : () => _load(),
-                      icon: AppIcon(
-                        Directionality.of(context) == ui.TextDirection.rtl
-                            ? Symbols.arrow_back_rounded
-                            : Symbols.arrow_forward_rounded,
-                      ),
+              FocusableTextField(
+                controller: _search,
+                textInputAction: TextInputAction.search,
+                onSubmitted: (_) => _load(),
+                decoration: InputDecoration(
+                  hintText: t.lending.search,
+                  prefixIcon: const AppIcon(Symbols.search_rounded),
+                  suffixIcon: IconButton(
+                    onPressed: _busy ? null : () => _load(),
+                    icon: AppIcon(
+                      Directionality.of(context) == ui.TextDirection.rtl
+                          ? Symbols.arrow_back_rounded
+                          : Symbols.arrow_forward_rounded,
                     ),
                   ),
                 ),
-              if (widget.library == null && _catalogProvider == 'libby')
-                Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: FocusableTextField(
-                    controller: _creator,
-                    textInputAction: TextInputAction.search,
-                    onSubmitted: (_) => _load(),
-                    decoration: InputDecoration(
-                      hintText: t.explore.creditRole.creator,
-                      prefixIcon: const AppIcon(Symbols.person_rounded),
-                    ),
-                  ),
-                ),
-              if (widget.library == null && _catalogProvider == 'libby')
-                Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: Wrap(
-                    spacing: 8,
-                    children: [
-                      ChoiceChip(
-                        label: Text(t.fileSources.all),
-                        selected: _libbyMediaType == null,
-                        onSelected: _busy
-                            ? null
-                            : (_) {
-                                setState(() => _libbyMediaType = null);
-                                if (_search.text.trim().isNotEmpty) unawaited(_load());
-                              },
-                      ),
-                      ChoiceChip(
-                        label: Text(t.fileSources.ebooks),
-                        selected: _libbyMediaType == 'ebook',
-                        onSelected: _busy
-                            ? null
-                            : (_) {
-                                setState(() => _libbyMediaType = 'ebook');
-                                if (_search.text.trim().isNotEmpty) unawaited(_load());
-                              },
-                      ),
-                      ChoiceChip(
-                        label: Text(t.fileSources.audiobooks),
-                        selected: _libbyMediaType == 'audiobook',
-                        onSelected: _busy
-                            ? null
-                            : (_) {
-                                setState(() => _libbyMediaType = 'audiobook');
-                                if (_search.text.trim().isNotEmpty) unawaited(_load());
-                              },
-                      ),
-                    ],
-                  ),
-                ),
+              ),
               if (widget.selectOnly)
                 Padding(
                   padding: const EdgeInsets.only(top: 12),
@@ -790,11 +470,7 @@ class _LibraryCatalogueScreenState extends State<LibraryCatalogueScreen> {
               if (!_busy && _books.isEmpty && _error == null)
                 Padding(
                   padding: const EdgeInsets.only(top: 32),
-                  child: Text(
-                    widget.library == null && _catalogProvider == 'openLibrary'
-                        ? t.lending.openLibraryNote
-                        : t.lending.empty,
-                  ),
+                  child: Text(_catalogProvider == 'openLibrary' ? t.lending.openLibraryNote : t.lending.empty),
                 ),
             ],
           ),
@@ -844,16 +520,6 @@ class _LibraryCatalogueScreenState extends State<LibraryCatalogueScreen> {
                           context,
                         ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.primary),
                       ),
-                    if (book.due != null)
-                      Text(
-                        t.lending.due(date: formatAbbreviatedDate(book.due!.toLocal().toIso8601String())),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    if (book.queuePosition != null)
-                      Text(
-                        t.lending.queue(position: formatCount(book.queuePosition!)),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
                   ],
                 ),
               ),
@@ -900,125 +566,15 @@ class LendingCover extends StatelessWidget {
   }
 }
 
-class _LendingDetailScreen extends StatefulWidget {
-  const _LendingDetailScreen({required this.service, required this.library, required this.book});
+class _LendingDetailScreen extends StatelessWidget {
+  const _LendingDetailScreen({required this.service, required this.book});
   final LendingService service;
-  final LendingLibrary? library;
   final LendingBook book;
-  @override
-  State<_LendingDetailScreen> createState() => _LendingDetailScreenState();
-}
-
-class _LendingDetailScreenState extends State<_LendingDetailScreen> {
-  Map<String, dynamic>? _availability;
-  bool _busy = false, _changed = false;
-  Future<void> _act(Future<void> Function() operation) async {
-    setState(() => _busy = true);
-    try {
-      await operation();
-      if (mounted) setState(() => _changed = true);
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  Future<void> _borrow({bool hold = false}) async {
-    String? email;
-    if (hold) {
-      final controller = TextEditingController();
-      email = await showScopedDialog<String>(
-        context: context,
-        builder: (ctx) {
-          void submit() {
-            if (controller.text.contains('@')) {
-              Navigator.pop(ctx, controller.text.trim());
-            }
-          }
-
-          return AlertDialog(
-            title: Text(t.lending.placeHold),
-            content: FocusableTextField(
-              controller: controller,
-              autofocus: true,
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.done,
-              onSubmitted: (_) => submit(),
-              decoration: InputDecoration(labelText: t.lending.email),
-            ),
-            actions: [
-              DialogActionButton(onPressed: () => Navigator.pop(ctx), label: t.lending.cancel),
-              DialogActionButton(onPressed: submit, label: t.lending.placeHold, isPrimary: true),
-            ],
-          );
-        },
-      );
-      // Dialog route may still be animating when its result completes.
-      unawaited(Future<void>.delayed(const Duration(seconds: 1), controller.dispose));
-      if (email == null) return;
-    } else if (!await showConfirmDialog(
-      context,
-      title: t.lending.borrow,
-      message: t.lending.confirmBorrow,
-      confirmText: t.lending.borrow,
-    )) {
-      return;
-    }
-    if (!mounted) return;
-    await _act(() => widget.service.borrow(widget.library!, widget.book, holdEmail: email));
-  }
-
-  Future<void> _showLibbyQr(Uri uri) async {
-    if (!mounted) return;
-    await showScopedDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(t.auth.showQRCode),
-        content: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 340),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(t.auth.scanQRToSignIn, textAlign: TextAlign.center),
-              const SizedBox(height: 16),
-              QrImageView(
-                data: uri.toString(),
-                version: QrVersions.auto,
-                size: 220,
-                backgroundColor: Colors.white,
-                semanticsLabel: t.auth.scanQRToSignIn,
-              ),
-              const SizedBox(height: 12),
-              SelectableText(uri.toString(), textAlign: TextAlign.center),
-            ],
-          ),
-        ),
-        actions: [DialogActionButton(onPressed: () => Navigator.pop(dialogContext), label: t.common.close)],
-      ),
-    );
-  }
-
-  Future<void> _continueToLibby({bool browser = false}) async {
-    final uri = widget.book.page;
-    if (uri == null) return;
-    final opened = await widget.service.openLibbyShare(uri, preferBrowser: browser);
-    if (opened || !mounted) return;
-    await _showLibbyQr(uri);
-  }
 
   @override
   Widget build(BuildContext context) {
-    final book = widget.book, library = widget.library;
-    final expired = book.due?.isBefore(DateTime.now()) ?? false;
-    final available = _availability?['available'] == true;
     return FocusedScrollScaffold(
-      title: Text(
-        library?.name ??
-            (book.data['source'] == 'libbyTitleLink'
-                ? 'Libby / OverDrive'
-                : book.data['source'] == 'googleBooks'
-                ? 'Google Books'
-                : 'Open Library'),
-      ),
+      title: Text(book.data['source'] == 'googleBooks' ? 'Google Books' : t.discover.findNext.openLibraryName),
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.all(24),
@@ -1038,141 +594,20 @@ class _LendingDetailScreenState extends State<_LendingDetailScreen> {
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(color: tokens(context).textMuted),
                     ),
-                    if (book.data['source'] == 'libbyTitleLink')
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 620),
-                          child: Text(
-                            t.lending.handoff,
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: tokens(context).textMuted),
-                          ),
-                        ),
-                      ),
                     if (book.price != null && book.currency != null) ...[
                       const SizedBox(height: 8),
                       Text(NumberFormat.simpleCurrency(name: book.currency).format(book.price)),
                     ],
                     const SizedBox(height: 24),
-                    if (book.due != null)
-                      Text(
-                        expired
-                            ? t.lending.expired
-                            : t.lending.due(date: formatFullDate(book.due!.toLocal().toIso8601String())),
-                      ),
-                    if (book.queuePosition != null) Text(t.lending.queue(position: formatCount(book.queuePosition!))),
-                    if (_changed) Text(t.lending.updated),
                     const SizedBox(height: 16),
                     Wrap(
                       alignment: WrapAlignment.center,
                       spacing: 12,
                       runSpacing: 12,
                       children: [
-                        if (book.loan && !expired && !_changed)
-                          _focusedLendingButton(
-                            onPressed: _busy
-                                ? null
-                                : () => sourceAction(context, () => widget.service.fulfill(library!, book)),
-                            primary: true,
-                            buildButton: (onPressed) => FilledButton.icon(
-                              onPressed: onPressed,
-                              icon: const AppIcon(Symbols.menu_book_rounded),
-                              label: Text(t.lending.getBook),
-                            ),
-                          ),
-                        if (book.hold && book.action('checkout') != null && library?.circulation == true && !_changed)
-                          _focusedLendingButton(
-                            onPressed: _busy ? null : () => sourceAction(context, () => _borrow()),
-                            primary: true,
-                            buildButton: (onPressed) =>
-                                FilledButton(onPressed: onPressed, child: Text(t.lending.borrow)),
-                          ),
-                        if (book.hold && library?.circulation == true && !_changed) ...[
-                          if (book.action('addSuspension') != null || book.action('releaseSuspension') != null)
-                            _focusedLendingButton(
-                              onPressed: _busy
-                                  ? null
-                                  : () => sourceAction(context, () async {
-                                      final resume = book.action('releaseSuspension') != null;
-                                      if (await showConfirmDialog(
-                                        context,
-                                        title: resume ? t.lending.resumeHold : t.lending.suspendHold,
-                                        message: resume ? t.lending.resumeMessage : t.lending.suspendMessage,
-                                        confirmText: resume ? t.lending.resumeHold : t.lending.suspendHold,
-                                      )) {
-                                        await _act(() => widget.service.suspendHold(library!, book, resume: resume));
-                                      }
-                                    }),
-                              buildButton: (onPressed) => TextButton(
-                                onPressed: onPressed,
-                                child: Text(
-                                  book.action('releaseSuspension') != null
-                                      ? t.lending.resumeHold
-                                      : t.lending.suspendHold,
-                                ),
-                              ),
-                            ),
-                          if (book.action('editHold') != null)
-                            _focusedLendingButton(
-                              onPressed: _busy
-                                  ? null
-                                  : () => sourceAction(context, () async {
-                                      final input = TextEditingController(
-                                        text: book.data['emailAddress'] as String? ?? '',
-                                      );
-                                      final email = await showScopedDialog<String>(
-                                        context: context,
-                                        builder: (ctx) {
-                                          void submit() {
-                                            if (input.text.contains('@')) {
-                                              Navigator.pop(ctx, input.text.trim());
-                                            }
-                                          }
-
-                                          return AlertDialog(
-                                            title: Text(t.lending.editEmail),
-                                            content: FocusableTextField(
-                                              controller: input,
-                                              autofocus: true,
-                                              keyboardType: TextInputType.emailAddress,
-                                              textInputAction: TextInputAction.done,
-                                              onSubmitted: (_) => submit(),
-                                              decoration: InputDecoration(labelText: t.lending.email),
-                                            ),
-                                            actions: [
-                                              DialogActionButton(
-                                                onPressed: () => Navigator.pop(ctx),
-                                                label: t.lending.cancel,
-                                              ),
-                                              DialogActionButton(
-                                                onPressed: submit,
-                                                label: t.fileSources.save,
-                                                isPrimary: true,
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                      unawaited(Future<void>.delayed(const Duration(seconds: 1), input.dispose));
-                                      if (email != null && mounted) {
-                                        await _act(() => widget.service.editHoldEmail(library!, book, email));
-                                      }
-                                    }),
-                              buildButton: (onPressed) =>
-                                  TextButton(onPressed: onPressed, child: Text(t.lending.editEmail)),
-                            ),
-                        ],
                         if (book.page != null)
                           _focusedLendingButton(
-                            onPressed: _busy
-                                ? null
-                                : () => sourceAction(
-                                    context,
-                                    () => book.data['source'] == 'libbyTitleLink'
-                                        ? _continueToLibby()
-                                        : widget.service.openPage(book.page!),
-                                  ),
+                            onPressed: () => sourceAction(context, () => service.openPage(book.page!)),
                             primary: true,
                             buildButton: (onPressed) => FilledButton.icon(
                               onPressed: onPressed,
@@ -1180,119 +615,38 @@ class _LendingDetailScreenState extends State<_LendingDetailScreen> {
                               label: Text(t.lending.continueService),
                             ),
                           ),
-                        if (book.data['source'] == 'libbyTitleLink')
-                          _focusedLendingButton(
-                            onPressed: _busy
-                                ? null
-                                : () => sourceAction(context, () => _continueToLibby(browser: true)),
-                            buildButton: (onPressed) => OutlinedButton.icon(
-                              onPressed: onPressed,
-                              icon: const AppIcon(Symbols.language_rounded),
-                              label: Text(t.explore.detail.openOn(site: 'Libby web')),
-                            ),
-                          ),
-                        if (book.data['source'] == 'libbyTitleLink')
-                          _focusedLendingButton(
-                            onPressed: _busy ? null : () => _showLibbyQr(book.page!),
-                            buildButton: (onPressed) => TextButton.icon(
-                              onPressed: onPressed,
-                              icon: const AppIcon(Symbols.qr_code_rounded),
-                              label: Text(t.auth.showQRCode),
-                            ),
-                          ),
                         if (book.purchaseLink != null)
                           _focusedLendingButton(
-                            onPressed: _busy
-                                ? null
-                                : () => sourceAction(context, () => widget.service.openPage(book.purchaseLink!)),
+                            onPressed: () => sourceAction(context, () => service.openPage(book.purchaseLink!)),
                             buildButton: (onPressed) => OutlinedButton.icon(
                               onPressed: onPressed,
                               icon: const AppIcon(Symbols.shopping_bag_rounded),
                               label: Text(t.explore.detail.openOn(site: 'Google Books')),
                             ),
                           ),
-                        if (library == null)
-                          _focusedLendingButton(
-                            onPressed: () => Navigator.push<void>(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder: (_) => ExternalAccessScreen(
-                                  title: book.title,
-                                  creator: book.author,
-                                  identifiers: book.identifiers,
-                                  categories: const [ExternalAccessCategory.books],
-                                ),
+                        _focusedLendingButton(
+                          onPressed: () => Navigator.push<void>(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (_) => ExternalAccessScreen(
+                                title: book.title,
+                                creator: book.author,
+                                identifiers: book.identifiers,
+                                categories: const [ExternalAccessCategory.books],
                               ),
                             ),
-                            buildButton: (onPressed) => OutlinedButton.icon(
-                              onPressed: onPressed,
-                              icon: const AppIcon(Symbols.storefront_rounded),
-                              label: Text(t.explore.detail.links),
-                            ),
                           ),
-                        if (library != null && !book.loan && !book.hold && !_changed) ...[
-                          if (_availability == null)
-                            _focusedLendingButton(
-                              onPressed: _busy
-                                  ? null
-                                  : () => sourceAction(context, () async {
-                                      setState(() => _busy = true);
-                                      try {
-                                        final value = await widget.service.availability(library, book);
-                                        if (mounted) {
-                                          setState(() => _availability = value);
-                                        }
-                                      } finally {
-                                        if (mounted) {
-                                          setState(() => _busy = false);
-                                        }
-                                      }
-                                    }),
-                              primary: true,
-                              buildButton: (onPressed) =>
-                                  FilledButton(onPressed: onPressed, child: Text(t.lending.checkAvailability)),
-                            )
-                          else if (library.circulation)
-                            _focusedLendingButton(
-                              onPressed: _busy ? null : () => sourceAction(context, () => _borrow(hold: !available)),
-                              primary: true,
-                              buildButton: (onPressed) => FilledButton(
-                                onPressed: onPressed,
-                                child: Text(available ? t.lending.borrow : t.lending.placeHold),
-                              ),
-                            ),
-                        ],
-                        if (library?.circulation == true &&
-                            !_changed &&
-                            (book.action('earlyReturn') != null || book.action('removeHold') != null))
-                          _focusedLendingButton(
-                            onPressed: _busy
-                                ? null
-                                : () => sourceAction(context, () async {
-                                    if (await showConfirmDialog(
-                                      context,
-                                      title: book.hold ? t.lending.cancelHold : t.lending.returnBook,
-                                      message: book.hold ? t.lending.confirmCancelHold : t.lending.confirmReturn,
-                                      confirmText: book.hold ? t.lending.cancelHold : t.lending.returnBook,
-                                    )) {
-                                      await _act(() => widget.service.returnOrCancel(library!, book));
-                                    }
-                                  }),
-                            buildButton: (onPressed) => TextButton(
-                              onPressed: onPressed,
-                              child: Text(book.hold ? t.lending.cancelHold : t.lending.returnBook),
-                            ),
+                          buildButton: (onPressed) => OutlinedButton.icon(
+                            onPressed: onPressed,
+                            icon: const AppIcon(Symbols.storefront_rounded),
+                            label: Text(t.explore.detail.links),
                           ),
+                        ),
                       ],
                     ),
-                    if (_availability != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: Text(available ? t.lending.available : t.lending.unavailable),
-                      ),
-                    if (_busy) const Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator()),
                     const SizedBox(height: 24),
-                    Text(library == null ? t.lending.openLibraryNote : t.lending.handoff, textAlign: TextAlign.center),
+                    if (book.data['source'] != 'googleBooks')
+                      Text(t.lending.openLibraryNote, textAlign: TextAlign.center),
                   ],
                 ),
               ),

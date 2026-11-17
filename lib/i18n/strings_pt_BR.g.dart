@@ -83,7 +83,6 @@ class TranslationsPtBr extends TranslationsPt with BaseTranslations<AppLocale, T
 	@override late final Translations$watchLink$pt_BR watchLink = Translations$watchLink$pt_BR.internal(_root);
 	@override late final Translations$homeLayout$pt_BR homeLayout = Translations$homeLayout$pt_BR.internal(_root);
 	@override late final Translations$fileSources$pt_BR fileSources = Translations$fileSources$pt_BR.internal(_root);
-	@override late final Translations$lending$pt_BR lending = Translations$lending$pt_BR.internal(_root);
 	@override late final Translations$householdSetup$pt_BR householdSetup = Translations$householdSetup$pt_BR.internal(_root);
 	@override late final Translations$issueReport$pt_BR issueReport = Translations$issueReport$pt_BR.internal(_root);
 	@override late final Translations$romm$pt_BR romm = Translations$romm$pt_BR.internal(_root);
@@ -807,16 +806,6 @@ class Translations$fileSources$pt_BR extends Translations$fileSources$pt {
 		many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} minutos',
 	);
 	@override String get googleDrive => 'Google Drive';
-}
-
-// Path: lending
-class Translations$lending$pt_BR extends Translations$lending$pt {
-	Translations$lending$pt_BR.internal(TranslationsPtBr root) : this._root = root, super.internal(root);
-
-	final TranslationsPtBr _root; // ignore: unused_field
-
-	// Translations
-	@override String get cancel => 'Cancelar';
 }
 
 // Path: householdSetup
@@ -1786,7 +1775,6 @@ extension on TranslationsPtBr {
 			'fileSources.zoom' => 'Ampliar',
 			'fileSources.minutes' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} minuto', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} minutos', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} minutos', ), 
 			'fileSources.googleDrive' => 'Google Drive',
-			'lending.cancel' => 'Cancelar',
 			'householdSetup.title' => 'Configuração da casa',
 			'issueReport.title' => 'Relatar um problema',
 			'issueReport.instructions' => 'Leia o QR code para abrir um rascunho do GitHub já preenchido. Revise e envie quando estiver pronto.',
@@ -1897,9 +1885,9 @@ extension on TranslationsPtBr {
 			'romm.replaceServer' => 'Replace server copy',
 			'romm.pendingSaves' => 'Saves waiting to sync',
 			'romm.sync' => 'Sync saves',
+			'romm.savedLocally' => 'Progress kept on this device; upload is pending.',
 			_ => null,
 		} ?? switch (path) {
-			'romm.savedLocally' => 'Progress kept on this device; upload is pending.',
 			'romm.pause' => 'Pause',
 			'romm.kContinue' => 'Continue',
 			'romm.saveState' => 'Save state',

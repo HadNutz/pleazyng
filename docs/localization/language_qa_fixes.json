@@ -6434,17 +6434,6 @@
     },
     {
       "locale": "ja",
-      "key": "lending.comingSoonDescription",
-      "corrected": "Libbyとの連携機能を準備中です。連携が完了するまでは、Libbyで図書館を利用できます。",
-      "reason": "Restore coming-soon status and interim service option.",
-      "english": "Libby integration is on its way. You can use your library in Libby while we finish connecting it.",
-      "original": "リビーの図書館を使用するには、リビーに接続するのを終わらせる。",
-      "correctionPass": 2,
-      "severity": "high",
-      "status": "corrected-ai-not-native-certified"
-    },
-    {
-      "locale": "ja",
       "key": "lending.expired",
       "corrected": "この本の貸出期間は終了しました。",
       "reason": "Library loan period rather than financial loan.",
@@ -12632,17 +12621,6 @@
     },
     {
       "locale": "zh",
-      "key": "lending.comingSoonDescription",
-      "corrected": "即将支持 Libby 集成。在连接功能完成之前，您可以先在 Libby 中使用图书馆服务。",
-      "reason": "Restore coming-soon status and temporary service option.",
-      "english": "Libby integration is on its way. You can use your library in Libby while we finish connecting it.",
-      "original": "您可以使用您的 Libby 图书馆,而我们完成连接它。",
-      "correctionPass": 2,
-      "severity": "high",
-      "status": "corrected-ai-not-native-certified"
-    },
-    {
-      "locale": "zh",
       "key": "lending.openLibraryNote",
       "corrected": "探索 Open Library 的目录。每本书的页面上都会显示阅读和借阅选项。",
       "reason": "Preserve service name and library borrowing rather than financial loans.",
@@ -13462,17 +13440,6 @@
       "original": "使用條件寫作;媒體保持不變的WebDAV資料夾為PlezyNG狀態。",
       "correctionPass": 2,
       "severity": "medium",
-      "status": "corrected-ai-not-native-certified"
-    },
-    {
-      "locale": "zh-Hant",
-      "key": "lending.comingSoonDescription",
-      "corrected": "即將支援 Libby 整合。在連線功能完成之前，您可以先在 Libby 中使用圖書館服務。",
-      "reason": "Restore coming-soon status and interim service option.",
-      "english": "Libby integration is on its way. You can use your library in Libby while we finish connecting it.",
-      "original": "您可以使用您的 Libby 圖書館,而我們完成連線它。",
-      "correctionPass": 2,
-      "severity": "high",
       "status": "corrected-ai-not-native-certified"
     },
     {

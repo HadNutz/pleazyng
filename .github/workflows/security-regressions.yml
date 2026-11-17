@@ -37,7 +37,6 @@ jobs:
           (cd server && go test -race ./... && go vet ./...)
           node --test server/cloudflare-oauth/worker.test.mjs
           python3 -m unittest discover -s tools/karaoke_companion -p 'test_*.py'
-          python3 -m unittest discover -s tools/lending_gateway -p 'test_*.py'
           python3 -m unittest discover -s scripts/checks -p test_release_signing_options.py
       - name: Fixed-engine artifact and producer trust regressions
         run: python3 -m unittest discover -s scripts/flutter -p 'test_*.py'

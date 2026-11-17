@@ -45,7 +45,6 @@ Podcasts, magazines, news, sports, home videos and educational files can appear 
 | WebDAV / Nextcloud / S3-compatible | B source adapters | Explicit root/prefix and bounded index | No writes to source media; optional state sync uses its own explicitly authorized destination |
 | Audiobookshelf | B adapter and publication identities | Library books/editions/chapters and compatible primary/secondary formats | Reuse exact progress authority; preview must avoid progress/bookmark mutation |
 | OPDS 1/2 | B adapter | Navigation/acquisition metadata; actual sample links when provided | Sample/open-access/download/borrow/purchase relations stay distinct; no fetch of purchase or borrow URL as owned file |
-| OverDrive / Libby | B `LendingService` | Hidden native candidate source while `overdriveEnabled` is false; official service handoff remains | Coming soon preserved; only approved, configured and qualified native discovery/circulation can be enabled |
 | Open Library | B public-catalog integration | Clearly labelled catalog picks when explicitly included | Availability and actual borrowing/reading stay with official service; no assumption of immediate local access |
 | Hoopla / regional services | B official saved links | No native recommendations unless an approved documented adapter exists | Open official service; do not scrape authenticated apps or imply API support from a logo |
 

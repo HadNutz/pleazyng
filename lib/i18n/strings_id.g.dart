@@ -3683,48 +3683,14 @@ class _Translations$lending$id extends Translations$lending$en {
 	@override String get libraryUrlHint => 'Gunakan katalog perpustakaan atau halaman masuknya.';
 	@override String get intro => 'Pinjam dari perpustakaan Anda.Tahan buku Anda dekat.';
 	@override String get handoff => 'Masuk, pinjam, dan baca dengan aman melalui layanan perpustakaan Anda sendiri.';
-	@override String get openService => 'Perpustakaan Terbuka';
 	@override String get findLibrary => 'Temukan perpustakaan';
 	@override String get search => 'Mencari buku dan penulis';
-	@override String get catalogue => 'Katalog';
-	@override String get loans => 'Pinjaman';
-	@override String get holds => 'Reservasi';
-	@override String get signIn => 'Mendaftar dengan perpustakaan Anda';
-	@override String get waiting => 'Selesaikan pendaftaran di browser Anda, kemudian kembali ke sini.';
-	@override String get cancel => 'Batal';
 	@override String get disconnect => 'Menghapus perpustakaan';
 	@override String get disconnectMessage => 'Hapus perpustakaan ini dari profil ini? Pinjaman dan reservasi Anda tetap tersimpan di perpustakaan.';
-	@override String get getBook => 'Dapatkan Buku';
-	@override String get checkAvailability => 'Periksa ketersediaan';
-	@override String get available => 'tersedia untuk pinjaman';
-	@override String get unavailable => 'Saat ini tidak tersedia';
-	@override String get borrow => 'Pinjam';
-	@override String get placeHold => 'Buat reservasi';
-	@override String get returnBook => 'Kembali Cepat';
-	@override String get cancelHold => 'Batalkan reservasi';
-	@override String get confirmBorrow => 'Apakah Anda meminjam judul ini dari perpustakaan Anda?';
-	@override String get confirmReturn => 'Kembalikan judul ini sekarang? Anda mungkin perlu meminjamnya lagi untuk melanjutkan.';
-	@override String get confirmCancelHold => 'Batalkan reservasi Anda untuk judul ini?';
-	@override String get email => 'Pastikan pemberitahuan email';
-	@override String due({required Object date}) => 'Batas pengembalian: ${date}';
-	@override String queue({required Object position}) => 'Posisi ${position} dalam baris';
 	@override String get empty => 'Belum ada judul di sini.';
 	@override String get openLibraryNote => 'Temukan katalog Open Library. opsi bacaan dan pinjaman ditampilkan di halaman setiap judul.';
 	@override String get more => 'Layar Lebih';
-	@override String get gateway => 'Perpustakaan Servis';
-	@override String get gatewayHint => 'Disediakan oleh perpustakaan Anda atau administrator Pleazyng.';
-	@override String get advanced => 'Integrasi perpustakaan';
-	@override String get loadLibraries => 'Pilih perpustakaan Anda';
-	@override String get expired => 'Pinjaman ini sudah habis.';
-	@override String get updated => 'Perpustakaan yang diperbarui';
 	@override String get continueService => 'Terus di Layanan';
-	@override String get comingSoon => 'In-app pinjaman · Datang segera';
-	@override String get comingSoonDescription => 'Anda dapat menggunakan perpustakaan Anda di Libby saat kami selesai menghubungkannya.';
-	@override String get suspendHold => 'Tangguhkan reservasi';
-	@override String get resumeHold => 'Lanjutkan reservasi';
-	@override String get suspendMessage => 'Pertahankan posisi Anda dalam antrean dan biarkan pembaca berikutnya meminjam salinan ini? Anda dapat melanjutkan reservasi nanti.';
-	@override String get resumeMessage => 'Lanjutkan reservasi ini agar perpustakaan dapat menawarkan salinan berikutnya yang tersedia?';
-	@override String get editEmail => 'Perubahan email pemberitahuan';
 }
 
 // Path: audiobook
@@ -9100,48 +9066,14 @@ extension on TranslationsId {
 			'lending.libraryUrlHint' => 'Gunakan katalog perpustakaan atau halaman masuknya.',
 			'lending.intro' => 'Pinjam dari perpustakaan Anda.Tahan buku Anda dekat.',
 			'lending.handoff' => 'Masuk, pinjam, dan baca dengan aman melalui layanan perpustakaan Anda sendiri.',
-			'lending.openService' => 'Perpustakaan Terbuka',
 			'lending.findLibrary' => 'Temukan perpustakaan',
 			'lending.search' => 'Mencari buku dan penulis',
-			'lending.catalogue' => 'Katalog',
-			'lending.loans' => 'Pinjaman',
-			'lending.holds' => 'Reservasi',
-			'lending.signIn' => 'Mendaftar dengan perpustakaan Anda',
-			'lending.waiting' => 'Selesaikan pendaftaran di browser Anda, kemudian kembali ke sini.',
-			'lending.cancel' => 'Batal',
 			'lending.disconnect' => 'Menghapus perpustakaan',
 			'lending.disconnectMessage' => 'Hapus perpustakaan ini dari profil ini? Pinjaman dan reservasi Anda tetap tersimpan di perpustakaan.',
-			'lending.getBook' => 'Dapatkan Buku',
-			'lending.checkAvailability' => 'Periksa ketersediaan',
-			'lending.available' => 'tersedia untuk pinjaman',
-			'lending.unavailable' => 'Saat ini tidak tersedia',
-			'lending.borrow' => 'Pinjam',
-			'lending.placeHold' => 'Buat reservasi',
-			'lending.returnBook' => 'Kembali Cepat',
-			'lending.cancelHold' => 'Batalkan reservasi',
-			'lending.confirmBorrow' => 'Apakah Anda meminjam judul ini dari perpustakaan Anda?',
-			'lending.confirmReturn' => 'Kembalikan judul ini sekarang? Anda mungkin perlu meminjamnya lagi untuk melanjutkan.',
-			'lending.confirmCancelHold' => 'Batalkan reservasi Anda untuk judul ini?',
-			'lending.email' => 'Pastikan pemberitahuan email',
-			'lending.due' => ({required Object date}) => 'Batas pengembalian: ${date}',
-			'lending.queue' => ({required Object position}) => 'Posisi ${position} dalam baris',
 			'lending.empty' => 'Belum ada judul di sini.',
 			'lending.openLibraryNote' => 'Temukan katalog Open Library. opsi bacaan dan pinjaman ditampilkan di halaman setiap judul.',
 			'lending.more' => 'Layar Lebih',
-			'lending.gateway' => 'Perpustakaan Servis',
-			'lending.gatewayHint' => 'Disediakan oleh perpustakaan Anda atau administrator Pleazyng.',
-			'lending.advanced' => 'Integrasi perpustakaan',
-			'lending.loadLibraries' => 'Pilih perpustakaan Anda',
-			'lending.expired' => 'Pinjaman ini sudah habis.',
-			'lending.updated' => 'Perpustakaan yang diperbarui',
 			'lending.continueService' => 'Terus di Layanan',
-			'lending.comingSoon' => 'In-app pinjaman · Datang segera',
-			'lending.comingSoonDescription' => 'Anda dapat menggunakan perpustakaan Anda di Libby saat kami selesai menghubungkannya.',
-			'lending.suspendHold' => 'Tangguhkan reservasi',
-			'lending.resumeHold' => 'Lanjutkan reservasi',
-			'lending.suspendMessage' => 'Pertahankan posisi Anda dalam antrean dan biarkan pembaca berikutnya meminjam salinan ini? Anda dapat melanjutkan reservasi nanti.',
-			'lending.resumeMessage' => 'Lanjutkan reservasi ini agar perpustakaan dapat menawarkan salinan berikutnya yang tersedia?',
-			'lending.editEmail' => 'Perubahan email pemberitahuan',
 			'audiobook.syncTitle' => 'Membaca & Mendengarkan Sync',
 			'audiobook.syncHelp' => 'Tetap membaca posisi, mendengarkan posisi, status penyelesaian, buku catatan dan catatan di seluruh perangkat Anda. Pilih akun penyimpanan yang disertakan dan gunakan kode sinkron yang sama pada setiap perangkat. Membaca dan mendengarkan tetap terpisah.',
 			'audiobook.addSyncSource' => 'Tambah Google Drive, OneDrive, Dropbox, WebDAV atau S3 ke File & Buku terlebih dahulu.',
@@ -9191,8 +9123,6 @@ extension on TranslationsId {
 			'audiobook.statusFinished' => 'selesai',
 			'audiobook.goToTime' => 'Pergi ke Waktu',
 			'audiobook.timeHelp' => 'Waktu: menit: detik, atau menit: detik',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Ekspor salinan yang disulitkan baru-baru ini sebelum memindahkan atau memperbaiki data sink. Import bergabung dengan keadaan saat ini; mereka tidak pernah mengganti sejarah sink lokal.',
 			'audiobook.recoveryExport' => 'Mengekspor file pemulihan yang disulitkan',
 			'audiobook.recoveryImport' => 'Mengimport file pemulihan yang disulitkan',
@@ -9227,6 +9157,8 @@ extension on TranslationsId {
 			'sourceSetup.nfsGroupId' => 'ID grup NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Bawaan: 1000. Gunakan ID grup yang diizinkan oleh ekspor NFS di NAS.',
 			'sourceSetup.nfsEncryption' => 'Wajibkan NFS terenkripsi (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Wajibkan TLS 1.3 untuk NFS dan layanan mount. Jika NAS tidak mendukungnya, koneksi ditolak.',
 			'sourceSetup.nfsTrustCertificate' => 'CA NFS khusus atau sertifikat server (PEM, opsional)',
 			'sourceSetup.nfsTrustHelp' => 'Kosongkan untuk sertifikat yang dipercaya perangkat ini. Jika perlu, tambahkan sertifikat CA privat atau sertifikat server yang ditandatangani sendiri; namanya harus cocok dengan host pada URL NFS.',
@@ -9705,8 +9637,6 @@ extension on TranslationsId {
 			'musicTools.days' => 'Hari',
 			'musicTools.albumBlocks' => 'Satukan album utuh',
 			'musicTools.home' => 'Musik',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'Baru diputar',
 			'musicTools.apiKey' => 'Kunci API',
 			'musicTools.missing' => 'N / A',
@@ -9741,6 +9671,8 @@ extension on TranslationsId {
 			'musicTools.peak' => 'Puncak',
 			'musicTools.bass' => 'Bas',
 			'musicTools.treble' => 'Trebel',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Daftar putar bersama',
 			'musicTools.sharingInvitationsTitle' => 'Undangan berbagi Plex',
 			'musicTools.noSharingInvitations' => 'Tidak ada undangan tertunda',

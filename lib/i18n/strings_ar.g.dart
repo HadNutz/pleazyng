@@ -3798,48 +3798,14 @@ class _Translations$lending$ar extends Translations$lending$en {
 	@override String get libraryUrlHint => 'استخدم صفحة فهرس مكتبتك أو صفحة تسجيل الدخول.';
 	@override String get intro => 'استعر من مكتبتك واحتفظ بكتبك في متناولك.';
 	@override String get handoff => 'سجّل الدخول واستعر واقرأ بأمان عبر خدمة مكتبتك نفسها.';
-	@override String get openService => 'فتح المكتبة';
 	@override String get findLibrary => 'العثور على مكتبة';
 	@override String get search => 'البحث عن كتب ومؤلفين';
-	@override String get catalogue => 'الفهرس';
-	@override String get loans => 'الاستعارات';
-	@override String get holds => 'الحجوزات';
-	@override String get signIn => 'تسجيل الدخول عبر مكتبتك';
-	@override String get waiting => 'أكمل تسجيل الدخول في المتصفح، ثم عُد إلى هنا.';
-	@override String get cancel => 'إلغاء';
 	@override String get disconnect => 'إزالة المكتبة';
 	@override String get disconnectMessage => 'هل تريد إزالة هذه المكتبة من هذا الملف الشخصي؟ ستبقى استعاراتك وحجوزاتك لدى المكتبة.';
-	@override String get getBook => 'الحصول على الكتاب';
-	@override String get checkAvailability => 'التحقق من التوفر';
-	@override String get available => 'متاح للاستعارة';
-	@override String get unavailable => 'غير متاح حاليًا';
-	@override String get borrow => 'استعارة';
-	@override String get placeHold => 'حجز';
-	@override String get returnBook => 'إرجاع مبكر';
-	@override String get cancelHold => 'إلغاء الحجز';
-	@override String get confirmBorrow => 'هل تريد استعارة هذا العنوان من مكتبتك؟';
-	@override String get confirmReturn => 'هل تريد إرجاع هذا العنوان الآن؟ قد تحتاج إلى استعارته مجددًا للمتابعة.';
-	@override String get confirmCancelHold => 'هل تريد إلغاء حجزك لهذا العنوان؟';
-	@override String get email => 'البريد الإلكتروني لإشعارات الحجز';
-	@override String due({required Object date}) => 'موعد الإرجاع: ${date}';
-	@override String queue({required Object position}) => 'ترتيبك في قائمة الانتظار: ${position}';
 	@override String get empty => 'لا توجد عناوين هنا بعد.';
 	@override String get openLibraryNote => 'استكشف فهرس Open Library. تظهر خيارات القراءة والاستعارة في صفحة كل عنوان.';
 	@override String get more => 'تحميل المزيد';
-	@override String get gateway => 'خدمة تسجيل الدخول إلى المكتبة';
-	@override String get gatewayHint => 'توفرها مكتبتك أو مسؤول Pleazyng.';
-	@override String get advanced => 'تكامل المكتبة';
-	@override String get loadLibraries => 'اختيار مكتبتك';
-	@override String get expired => 'انتهت مدة هذه الاستعارة.';
-	@override String get updated => 'تم تحديث المكتبة';
 	@override String get continueService => 'المتابعة في الخدمة';
-	@override String get comingSoon => 'الاستعارة داخل التطبيق · قريبًا';
-	@override String get comingSoonDescription => 'تكامل Libby قادم قريبًا. يمكنك استخدام مكتبتك في Libby بينما نكمل الربط.';
-	@override String get suspendHold => 'تعليق الحجز';
-	@override String get resumeHold => 'استئناف الحجز';
-	@override String get suspendMessage => 'هل تريد الاحتفاظ بترتيبك في قائمة الانتظار والسماح للقارئ التالي باستعارة هذه النسخة؟ يمكنك استئناف الحجز لاحقًا.';
-	@override String get resumeMessage => 'هل تريد استئناف هذا الحجز لتعرض عليك المكتبة النسخة التالية المتاحة؟';
-	@override String get editEmail => 'تغيير البريد الإلكتروني للإشعارات';
 }
 
 // Path: audiobook
@@ -9225,48 +9191,14 @@ extension on TranslationsAr {
 			'lending.libraryUrlHint' => 'استخدم صفحة فهرس مكتبتك أو صفحة تسجيل الدخول.',
 			'lending.intro' => 'استعر من مكتبتك واحتفظ بكتبك في متناولك.',
 			'lending.handoff' => 'سجّل الدخول واستعر واقرأ بأمان عبر خدمة مكتبتك نفسها.',
-			'lending.openService' => 'فتح المكتبة',
 			'lending.findLibrary' => 'العثور على مكتبة',
 			'lending.search' => 'البحث عن كتب ومؤلفين',
-			'lending.catalogue' => 'الفهرس',
-			'lending.loans' => 'الاستعارات',
-			'lending.holds' => 'الحجوزات',
-			'lending.signIn' => 'تسجيل الدخول عبر مكتبتك',
-			'lending.waiting' => 'أكمل تسجيل الدخول في المتصفح، ثم عُد إلى هنا.',
-			'lending.cancel' => 'إلغاء',
 			'lending.disconnect' => 'إزالة المكتبة',
 			'lending.disconnectMessage' => 'هل تريد إزالة هذه المكتبة من هذا الملف الشخصي؟ ستبقى استعاراتك وحجوزاتك لدى المكتبة.',
-			'lending.getBook' => 'الحصول على الكتاب',
-			'lending.checkAvailability' => 'التحقق من التوفر',
-			'lending.available' => 'متاح للاستعارة',
-			'lending.unavailable' => 'غير متاح حاليًا',
-			'lending.borrow' => 'استعارة',
-			'lending.placeHold' => 'حجز',
-			'lending.returnBook' => 'إرجاع مبكر',
-			'lending.cancelHold' => 'إلغاء الحجز',
-			'lending.confirmBorrow' => 'هل تريد استعارة هذا العنوان من مكتبتك؟',
-			'lending.confirmReturn' => 'هل تريد إرجاع هذا العنوان الآن؟ قد تحتاج إلى استعارته مجددًا للمتابعة.',
-			'lending.confirmCancelHold' => 'هل تريد إلغاء حجزك لهذا العنوان؟',
-			'lending.email' => 'البريد الإلكتروني لإشعارات الحجز',
-			'lending.due' => ({required Object date}) => 'موعد الإرجاع: ${date}',
-			'lending.queue' => ({required Object position}) => 'ترتيبك في قائمة الانتظار: ${position}',
 			'lending.empty' => 'لا توجد عناوين هنا بعد.',
 			'lending.openLibraryNote' => 'استكشف فهرس Open Library. تظهر خيارات القراءة والاستعارة في صفحة كل عنوان.',
 			'lending.more' => 'تحميل المزيد',
-			'lending.gateway' => 'خدمة تسجيل الدخول إلى المكتبة',
-			'lending.gatewayHint' => 'توفرها مكتبتك أو مسؤول Pleazyng.',
-			'lending.advanced' => 'تكامل المكتبة',
-			'lending.loadLibraries' => 'اختيار مكتبتك',
-			'lending.expired' => 'انتهت مدة هذه الاستعارة.',
-			'lending.updated' => 'تم تحديث المكتبة',
 			'lending.continueService' => 'المتابعة في الخدمة',
-			'lending.comingSoon' => 'الاستعارة داخل التطبيق · قريبًا',
-			'lending.comingSoonDescription' => 'تكامل Libby قادم قريبًا. يمكنك استخدام مكتبتك في Libby بينما نكمل الربط.',
-			'lending.suspendHold' => 'تعليق الحجز',
-			'lending.resumeHold' => 'استئناف الحجز',
-			'lending.suspendMessage' => 'هل تريد الاحتفاظ بترتيبك في قائمة الانتظار والسماح للقارئ التالي باستعارة هذه النسخة؟ يمكنك استئناف الحجز لاحقًا.',
-			'lending.resumeMessage' => 'هل تريد استئناف هذا الحجز لتعرض عليك المكتبة النسخة التالية المتاحة؟',
-			'lending.editEmail' => 'تغيير البريد الإلكتروني للإشعارات',
 			'audiobook.syncTitle' => 'القراءة والاستماع Sync',
 			'audiobook.syncHelp' => 'الحفاظ على مواقف القراءة، ومواقف الاستماع، وحالة الانتهاء، والملاحظات والملاحظات عبر أجهزتك.اختر حساب التخزين المرفق واستخدم نفس رمز المزامنة على كل جهاز.',
 			'audiobook.addSyncSource' => 'إضافة Google Drive، OneDrive، Dropbox، WebDAV أو S3 في الملفات والكتب أولاً.',
@@ -9316,8 +9248,6 @@ extension on TranslationsAr {
 			'audiobook.statusFinished' => 'الانتهاء',
 			'audiobook.goToTime' => 'اذهب إلى الزمن',
 			'audiobook.timeHelp' => 'ساعات: دقائق: ثواني، أو دقائق: ثواني',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'تصدير نسخة مشفرة مؤخرا قبل نقل أو إصلاح بيانات المزامنة.يتم دمج الواردات مع الحالة الحالية؛ أنها لا تحل محل تاريخ المزامن المحلي.',
 			'audiobook.recoveryExport' => 'تصدير ملف استرداد مشفرة',
 			'audiobook.recoveryImport' => 'استيراد ملف إعادة التدوير المشفرة',
@@ -9352,6 +9282,8 @@ extension on TranslationsAr {
 			'sourceSetup.nfsGroupId' => 'معرّف مجموعة NFS ‏(AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'الافتراضي: 1000. استخدم معرّف المجموعة الذي تسمح به إعدادات تصدير NAS.',
 			'sourceSetup.nfsEncryption' => 'اشتراط تشفير NFS ‏(RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'اشترط TLS 1.3 لخدمة NFS وخدمة التركيب. يُرفض الاتصال إذا لم يدعم NAS ذلك.',
 			'sourceSetup.nfsTrustCertificate' => 'شهادة CA أو خادم مخصّصة لـ NFS ‏(PEM، اختيارية)',
 			'sourceSetup.nfsTrustHelp' => 'اتركه فارغًا للشهادات التي يثق بها هذا الجهاز. أضف شهادة CA خاصة أو شهادة خادم موقّعة ذاتيًا عند الحاجة؛ يجب أن تطابق أسماؤها المضيف في عنوان NFS.',
@@ -9830,8 +9762,6 @@ extension on TranslationsAr {
 			'musicTools.days' => 'أيام',
 			'musicTools.albumBlocks' => 'إبقاء الألبومات كاملة معًا',
 			'musicTools.home' => 'الموسيقى',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'تم تشغيلها مؤخرًا',
 			'musicTools.apiKey' => 'مفتاح API',
 			'musicTools.missing' => 'N / A',
@@ -9866,6 +9796,8 @@ extension on TranslationsAr {
 			'musicTools.peak' => 'ذروة',
 			'musicTools.bass' => 'جهير',
 			'musicTools.treble' => 'صوت حاد',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'قوائم التشغيل المشتركة',
 			'musicTools.sharingInvitationsTitle' => 'دعوات المشاركة في Plex',
 			'musicTools.noSharingInvitations' => 'لا توجد دعوات معلقة',

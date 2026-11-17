@@ -3221,12 +3221,6 @@
       "exactUpstreamBlobMatch": false
     },
     {
-      "path": "assets/provider_marks/libby.png",
-      "gitBlobSha": "6f217987c8d438aacaf0dabe3ea46fa6b4cad213",
-      "bytes": 117291,
-      "exactUpstreamBlobMatch": false
-    },
-    {
       "path": "assets/provider_marks/microsoft.svg",
       "gitBlobSha": "1f739764834586f6940428a24b87510d29425deb",
       "bytes": 343,
@@ -3236,12 +3230,6 @@
       "path": "assets/provider_marks/onedrive.svg",
       "gitBlobSha": "dff0b77118558c131e096953a011613701c7081a",
       "bytes": 658,
-      "exactUpstreamBlobMatch": false
-    },
-    {
-      "path": "assets/provider_marks/overdrive_white.svg",
-      "gitBlobSha": "6533c6e12aad3dfe1d3e2c7980cd43ffd9932548",
-      "bytes": 2533,
       "exactUpstreamBlobMatch": false
     },
     {
@@ -11846,15 +11834,6 @@
       ]
     },
     {
-      "path": "dist/assets/providers/libby.png",
-      "gitBlobSha": "6f217987c8d438aacaf0dabe3ea46fa6b4cad213",
-      "bytes": 117291,
-      "exactUpstreamBlobMatch": false,
-      "matchingApplicationPaths": [
-        "assets/provider_marks/libby.png"
-      ]
-    },
-    {
       "path": "dist/assets/providers/microsoft.svg",
       "gitBlobSha": "1f739764834586f6940428a24b87510d29425deb",
       "bytes": 343,
@@ -11877,15 +11856,6 @@
       "exactUpstreamBlobMatch": false,
       "matchingApplicationPaths": [
         "assets/provider_marks/onedrive.svg"
-      ]
-    },
-    {
-      "path": "dist/assets/providers/overdrive_white.svg",
-      "gitBlobSha": "6533c6e12aad3dfe1d3e2c7980cd43ffd9932548",
-      "bytes": 2533,
-      "exactUpstreamBlobMatch": false,
-      "matchingApplicationPaths": [
-        "assets/provider_marks/overdrive_white.svg"
       ]
     },
     {

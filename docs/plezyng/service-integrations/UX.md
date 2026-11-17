@@ -8,7 +8,7 @@ Status: the existing detail and source routes own the integration. Comic storefr
 | --- | --- | --- |
 | Settings → Services | Grouped rows for media servers/files, libraries, streaming preferences, stores, tracking and devices; one searchable Add service route when the directory grows | `FocusedScrollScaffold`, `SettingsGroup`, current service-specific screens, profile scope and PIN checks |
 | Libraries → Files and books | Existing connected sources and import actions; clear shortcuts to public libraries and supported file providers | Existing library picker, shelves, reader/player routes and hidden empty shelves |
-| Public libraries | Library cards/connections, loans/holds and official handoffs; provider-specific statuses | OverDrive Coming soon, explicit circulation confirmations and due-date semantics |
+| Public libraries | Catalogue search and official library website handoffs | Account and loan actions stay on the provider website |
 | Media/book detail | Compact access section below existing primary controls: Your copies, Your libraries, Your services, Buy or rent; show only applicable groups | Artwork, metadata, current Play/Read action, existing adaptive source/versions picker |
 | Search | Progressive local/server/Files results, Seerr requests and connected-catalog search, with source and media-kind distinction | Debounce, stable focus, independent errors and existing filters; licensed availability offers are not included |
 | Explore | Optional catalog/availability rows from enabled providers and saved picks | Existing poster/cover rows; no wall of provider tiles |
@@ -69,7 +69,6 @@ An access row contains an approved provider mark, provider/action, relevant form
 | Provider timeout | “Availability couldn't be checked” with retry | No available copies |
 | Retired/unsupported capability | “Not available on this device” or targeted explanation | A disabled generic Play control with no recovery |
 | Account API unavailable | “Open service” | “Connect account” |
-| OverDrive gate closed | Existing “Coming soon” plus working Libby handoff | Enabled borrowing |
 | External app return | Return to detail without success toast | Watched/read/purchased/borrowed completion |
 
 For eligible affiliate rows, a concise adjacent disclosure such as “Purchases through these links may support PlezyNG” can coexist with detailed attribution/terms in service information. Merchant-mandated wording still governs. No disclosure banner over artwork or player controls.
@@ -98,7 +97,6 @@ Offline mode retains downloaded owned media and permitted cached metadata. Onlin
 
 - **Movie already on Plex and also discoverable on Crave:** existing Play resumes Plex. The external directory opens an official provider search; it does not store credentials or scrobble an external launch.
 - **Novel with Kobo ebook, Indigo paperback and Libro audiobook:** one work overview may link to three explicit format/edition details; each price and fulfillment stays attached to its own product. Listening progress never overwrites ebook location.
-- **Libby loan available, Kobo purchase also offered:** loan and expiry appear in Your libraries; official fulfillment is explicit. The paid offer remains discoverable without displacing the free borrowing path.
 - **Canadian title with a regional add-on offer:** display the supplied channel requirement and its source. A search handoff does not mark every title in the base subscription as available.
 - **Bandcamp album imported from FLAC files:** existing owned-music flow is authoritative. A store link is provenance/discovery, not required at every play.
 - **Steam game sold at Fanatical but no paired host has it installed:** show a store action if eligible; Play remains unavailable until a real host route exists.

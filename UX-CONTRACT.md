@@ -51,7 +51,7 @@ replacement; physical TV and live-server validation are separate evidence.
 
 Connection and detail rows use existing grouped surfaces, typography, icons, menus and confirmations; covers carry the visual emphasis. Provider colours are not recoloured to the app accent. Generic protocol names do not borrow a vendor's logo. Ebooks/Audiobooks/Comics use the same library picker and sidebar selection flow; unconfigured empty shelves stay hidden. Setup can create a standard local profile without requiring a media-server account. Existing protected profiles still go through the standard profile picker.
 
-Cloud passwords/card PINs are entered only at a supported provider-hosted authorization surface. Native OverDrive circulation is compiled off and shown as Coming soon until approval and provider acceptance testing; ordinary service handoffs remain available. Holdings, due dates and fulfillment are not owned-file downloads. Native Hoopla/regional circulation is not invented from private endpoints.
+Cloud passwords/card PINs are entered only at a supported provider-hosted authorization surface. Library shortcuts open the provider’s own website. Holdings, due dates and fulfillment are not owned-file downloads. Native Hoopla/regional circulation is not invented from private endpoints.
 
 Archive content is untrusted: bounded extraction, no traversal/symlinks, no publication scripts or external network access. The reader and stream server bind to loopback and require session capabilities. A profile transition retires readers, authorization and streams; neither expired sessions nor deleted profiles may publish new state. Provider tokens never enter publication JavaScript, native player URLs or cross-origin artwork requests.
 

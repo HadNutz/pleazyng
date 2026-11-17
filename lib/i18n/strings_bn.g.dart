@@ -3706,48 +3706,14 @@ class _Translations$lending$bn extends Translations$lending$en {
 	@override String get libraryUrlHint => 'আপনার লাইব্রেরির ক্যাটাগোজ বা সাইন-এ-পেজ ব্যবহার করুন।';
 	@override String get intro => 'আপনার লাইব্রেরি থেকে বই ধার নিন। বই রাখুন হাতের কাছেই।';
 	@override String get handoff => 'আপনার লাইব্রেরি নিজের পরিষেবা দিয়ে সুরক্ষিতভাবে নিবন্ধন, লেনদেন এবং পড়ুন।';
-	@override String get openService => 'খোলা লাইব্রেরি';
 	@override String get findLibrary => 'একটি লাইব্রেরি খুঁজে পেতে';
 	@override String get search => 'বই ও লেখকদের খুঁজে পেতে';
-	@override String get catalogue => 'ক্যাটাগো';
-	@override String get loans => 'ধার নেওয়া বই';
-	@override String get holds => 'রিজার্ভেশন';
-	@override String get signIn => 'আপনার লাইব্রেরি নিয়ে সাইন আপ করুন';
-	@override String get waiting => 'আপনার ব্রাউজারে সাইন আপ শেষ করুন, তারপর এখানে ফিরে আসুন।';
-	@override String get cancel => 'বাতিল';
 	@override String get disconnect => 'লাইব্রেরি বের করুন';
 	@override String get disconnectMessage => 'এই প্রোফাইল থেকে এই লাইব্রেরি সরাবেন? ধার নেওয়া বই ও রিজার্ভেশনগুলি আপনার লাইব্রেরিতে থাকবে।';
-	@override String get getBook => 'বই পেয়ে';
-	@override String get checkAvailability => 'সনাক্ত করা উপলব্ধতা';
-	@override String get available => 'ধার নেওয়া যাবে';
-	@override String get unavailable => 'বর্তমানে অসম্ভব';
-	@override String get borrow => 'ধার নিন';
-	@override String get placeHold => 'রিজার্ভ করুন';
-	@override String get returnBook => 'দ্রুত ফিরে আসুন';
-	@override String get cancelHold => 'রিজার্ভেশন বাতিল করুন';
-	@override String get confirmBorrow => 'আপনার লাইব্রেরি থেকে এই টাইটটি লেনদেন করুন?';
-	@override String get confirmReturn => 'এই বইটি এখন ফেরত দেবেন? পড়া চালিয়ে যেতে আবার ধার নিতে হতে পারে।';
-	@override String get confirmCancelHold => 'এই বইয়ের জন্য আপনার রিজার্ভেশন বাতিল করবেন?';
-	@override String get email => 'ইমেলের বিজ্ঞাপন রাখুন';
-	@override String due({required Object date}) => 'ফেরত দেওয়ার তারিখ: ${date}';
-	@override String queue({required Object position}) => 'পয়েন্ট ${position} লাইনে';
 	@override String get empty => 'এখনো এখানে কোন টাইম নেই।';
 	@override String get openLibraryNote => 'Open Library-এর ক্যাটালগ দেখুন। প্রতিটি বইয়ের পাতায় পড়া ও ধার নেওয়ার বিকল্পগুলি দেখানো হয়।';
 	@override String get more => 'আরো লোড';
-	@override String get gateway => 'লাইব্রেরি সাইন-ইন সেবা';
-	@override String get gatewayHint => 'আপনার লাইব্রেরি বা প্রশাসক Pleazyng দ্বারা সরবরাহ করা হয়।';
-	@override String get advanced => 'লাইব্রেরি ইন্টারফেস';
-	@override String get loadLibraries => 'আপনার লাইব্রেরি নির্বাচন করুন';
-	@override String get expired => 'এই বই ধার নেওয়ার মেয়াদ শেষ হয়েছে।';
-	@override String get updated => 'সংস্করণ আপডেট';
 	@override String get continueService => 'সেবা চালু করুন';
-	@override String get comingSoon => 'অ্যাপে ডাউনলোড · শীঘ্রই আসে';
-	@override String get comingSoonDescription => 'আপনি আপনার লাইব্রেরি ব্যবহার করতে পারেন লিবি যখন আমরা এটি সংযোগ শেষ করি।';
-	@override String get suspendHold => 'রিজার্ভেশন সাময়িক বন্ধ করুন';
-	@override String get resumeHold => 'রিজার্ভেশন আবার চালু করুন';
-	@override String get suspendMessage => 'লাইনে নিজের জায়গা রেখে পরের পাঠককে এই কপিটি ধার নিতে দেবেন? পরে রিজার্ভেশনটি আবার চালু করতে পারবেন।';
-	@override String get resumeMessage => 'এই রিজার্ভেশনটি আবার চালু করবেন, যাতে লাইব্রেরি পরবর্তী উপলব্ধ কপিটি আপনাকে দিতে পারে?';
-	@override String get editEmail => 'ইমেলের বিজ্ঞাপন পরিবর্তন';
 }
 
 // Path: audiobook
@@ -9125,48 +9091,14 @@ extension on TranslationsBn {
 			'lending.libraryUrlHint' => 'আপনার লাইব্রেরির ক্যাটাগোজ বা সাইন-এ-পেজ ব্যবহার করুন।',
 			'lending.intro' => 'আপনার লাইব্রেরি থেকে বই ধার নিন। বই রাখুন হাতের কাছেই।',
 			'lending.handoff' => 'আপনার লাইব্রেরি নিজের পরিষেবা দিয়ে সুরক্ষিতভাবে নিবন্ধন, লেনদেন এবং পড়ুন।',
-			'lending.openService' => 'খোলা লাইব্রেরি',
 			'lending.findLibrary' => 'একটি লাইব্রেরি খুঁজে পেতে',
 			'lending.search' => 'বই ও লেখকদের খুঁজে পেতে',
-			'lending.catalogue' => 'ক্যাটাগো',
-			'lending.loans' => 'ধার নেওয়া বই',
-			'lending.holds' => 'রিজার্ভেশন',
-			'lending.signIn' => 'আপনার লাইব্রেরি নিয়ে সাইন আপ করুন',
-			'lending.waiting' => 'আপনার ব্রাউজারে সাইন আপ শেষ করুন, তারপর এখানে ফিরে আসুন।',
-			'lending.cancel' => 'বাতিল',
 			'lending.disconnect' => 'লাইব্রেরি বের করুন',
 			'lending.disconnectMessage' => 'এই প্রোফাইল থেকে এই লাইব্রেরি সরাবেন? ধার নেওয়া বই ও রিজার্ভেশনগুলি আপনার লাইব্রেরিতে থাকবে।',
-			'lending.getBook' => 'বই পেয়ে',
-			'lending.checkAvailability' => 'সনাক্ত করা উপলব্ধতা',
-			'lending.available' => 'ধার নেওয়া যাবে',
-			'lending.unavailable' => 'বর্তমানে অসম্ভব',
-			'lending.borrow' => 'ধার নিন',
-			'lending.placeHold' => 'রিজার্ভ করুন',
-			'lending.returnBook' => 'দ্রুত ফিরে আসুন',
-			'lending.cancelHold' => 'রিজার্ভেশন বাতিল করুন',
-			'lending.confirmBorrow' => 'আপনার লাইব্রেরি থেকে এই টাইটটি লেনদেন করুন?',
-			'lending.confirmReturn' => 'এই বইটি এখন ফেরত দেবেন? পড়া চালিয়ে যেতে আবার ধার নিতে হতে পারে।',
-			'lending.confirmCancelHold' => 'এই বইয়ের জন্য আপনার রিজার্ভেশন বাতিল করবেন?',
-			'lending.email' => 'ইমেলের বিজ্ঞাপন রাখুন',
-			'lending.due' => ({required Object date}) => 'ফেরত দেওয়ার তারিখ: ${date}',
-			'lending.queue' => ({required Object position}) => 'পয়েন্ট ${position} লাইনে',
 			'lending.empty' => 'এখনো এখানে কোন টাইম নেই।',
 			'lending.openLibraryNote' => 'Open Library-এর ক্যাটালগ দেখুন। প্রতিটি বইয়ের পাতায় পড়া ও ধার নেওয়ার বিকল্পগুলি দেখানো হয়।',
 			'lending.more' => 'আরো লোড',
-			'lending.gateway' => 'লাইব্রেরি সাইন-ইন সেবা',
-			'lending.gatewayHint' => 'আপনার লাইব্রেরি বা প্রশাসক Pleazyng দ্বারা সরবরাহ করা হয়।',
-			'lending.advanced' => 'লাইব্রেরি ইন্টারফেস',
-			'lending.loadLibraries' => 'আপনার লাইব্রেরি নির্বাচন করুন',
-			'lending.expired' => 'এই বই ধার নেওয়ার মেয়াদ শেষ হয়েছে।',
-			'lending.updated' => 'সংস্করণ আপডেট',
 			'lending.continueService' => 'সেবা চালু করুন',
-			'lending.comingSoon' => 'অ্যাপে ডাউনলোড · শীঘ্রই আসে',
-			'lending.comingSoonDescription' => 'আপনি আপনার লাইব্রেরি ব্যবহার করতে পারেন লিবি যখন আমরা এটি সংযোগ শেষ করি।',
-			'lending.suspendHold' => 'রিজার্ভেশন সাময়িক বন্ধ করুন',
-			'lending.resumeHold' => 'রিজার্ভেশন আবার চালু করুন',
-			'lending.suspendMessage' => 'লাইনে নিজের জায়গা রেখে পরের পাঠককে এই কপিটি ধার নিতে দেবেন? পরে রিজার্ভেশনটি আবার চালু করতে পারবেন।',
-			'lending.resumeMessage' => 'এই রিজার্ভেশনটি আবার চালু করবেন, যাতে লাইব্রেরি পরবর্তী উপলব্ধ কপিটি আপনাকে দিতে পারে?',
-			'lending.editEmail' => 'ইমেলের বিজ্ঞাপন পরিবর্তন',
 			'audiobook.syncTitle' => 'Read & Listening সিনক',
 			'audiobook.syncHelp' => 'আপনার ডিভাইসের মধ্যেই পড়ার অবস্থান, শুনার অবস্থান, সম্পূর্ণন অবস্থান, বুকমার্ক এবং নোট রাখুন. একটি সংযুক্ত স্টোরিং অ্যাকাউন্ট নির্বাচন করুন এবং প্রতিটি ডিভাইসে একই সিন্ক কোড ব্যবহার করুন. পড়ার এবং শুনার অবস্থান আলাদা থাকবে.',
 			'audiobook.addSyncSource' => 'প্রথমেই ফাইল এবং বইগুলিতে Google ড্রাইভ, OneDrive, ড্রপবক্স, WebDAV বা S3 যোগ করুন।',
@@ -9216,8 +9148,6 @@ extension on TranslationsBn {
 			'audiobook.statusFinished' => 'শেষ',
 			'audiobook.goToTime' => 'সময় নিয়ে যান',
 			'audiobook.timeHelp' => 'ঘণ্টা : মিনিট : সেকেন্ড বা মিনিট : সেকেন্ড',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'সিঙ্ক ডেটা সরানোর বা মেরামত করার আগে সাম্প্রতিক এনক্রিপ্ট করা কপি রপ্তানি করুন। আমদানি করলে বর্তমান অবস্থার সঙ্গে ডেটা মিশে যাবে; স্থানীয় সিঙ্ক ইতিহাস কখনো প্রতিস্থাপিত হবে না। সিঙ্ক কোড আলাদা করে রাখুন।',
 			'audiobook.recoveryExport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
 			'audiobook.recoveryImport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
@@ -9252,6 +9182,8 @@ extension on TranslationsBn {
 			'sourceSetup.nfsGroupId' => 'NFS গ্রুপ ID (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'ডিফল্ট: 1000। NAS এক্সপোর্টে অনুমোদিত গ্রুপ ID ব্যবহার করুন।',
 			'sourceSetup.nfsEncryption' => 'এনক্রিপ্ট করা NFS বাধ্যতামূলক করুন (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'NFS ও মাউন্ট সেবার জন্য TLS 1.3 বাধ্যতামূলক করুন। NAS এটি সমর্থন না করলে সংযোগ প্রত্যাখ্যান করা হবে।',
 			'sourceSetup.nfsTrustCertificate' => 'কাস্টম NFS CA বা সার্ভার সার্টিফিকেট (PEM, ঐচ্ছিক)',
 			'sourceSetup.nfsTrustHelp' => 'এই ডিভাইসের বিশ্বস্ত সার্টিফিকেটের জন্য ফাঁকা রাখুন। প্রয়োজনে ব্যক্তিগত CA বা স্ব-স্বাক্ষরিত সার্ভার সার্টিফিকেট যোগ করুন; এর নামগুলো NFS URL-এর হোস্টের সঙ্গে মিলতে হবে।',
@@ -9730,8 +9662,6 @@ extension on TranslationsBn {
 			'musicTools.days' => 'দিন',
 			'musicTools.albumBlocks' => 'সম্পূর্ণ অ্যালবাম একসাথে রাখুন',
 			'musicTools.home' => 'সঙ্গীত',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'সম্প্রতি শোনা',
 			'musicTools.apiKey' => 'API কী',
 			'musicTools.missing' => 'ন/এ',
@@ -9766,6 +9696,8 @@ extension on TranslationsBn {
 			'musicTools.peak' => 'পিক',
 			'musicTools.bass' => 'বেস',
 			'musicTools.treble' => 'ট্রেবল',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'শেয়ার করা প্লেলিস্ট',
 			'musicTools.sharingInvitationsTitle' => 'Plex ভাগাভাগির আমন্ত্রণ',
 			'musicTools.noSharingInvitations' => 'কোনো মুলতুবি আমন্ত্রণ নেই',

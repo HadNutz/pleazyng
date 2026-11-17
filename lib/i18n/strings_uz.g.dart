@@ -3706,48 +3706,14 @@ class _Translations$lending$uz extends Translations$lending$en {
 	@override String get libraryUrlHint => 'Siz librariyiznin katalogi ya‘y‘y‘ya‘y‘yo‘y‘ay.';
 	@override String get intro => 'Kütüphanizdan borga.Bibrarizdan qurt.';
 	@override String get handoff => 'Kutubxonangizning o‘z xizmati orqali hisobingizga kiring, kitoblarni vaqtincha oling va xavfsiz o‘qing.';
-	@override String get openService => 'Librariq';
 	@override String get findLibrary => 'Bir kütüphan bulga';
 	@override String get search => 'Kitablar ve yazarlar aradi';
-	@override String get catalogue => 'Katalog';
-	@override String get loans => 'Loan';
-	@override String get holds => 'Band qilingan kitoblar';
-	@override String get signIn => 'Siz librariyizga qaytadi.';
-	@override String get waiting => 'Siz browserga abonni bilan bilan, qaytdan qaytdan.';
-	@override String get cancel => 'Bekor qilish';
 	@override String get disconnect => 'Librariya bilan';
 	@override String get disconnectMessage => 'Bu kutubxona shu profildan olib tashlansinmi? Vaqtincha olgan va band qilgan kitoblaringiz kutubxona hisobingizda saqlanadi.';
-	@override String get getBook => 'Bookga bo‘yadi';
-	@override String get checkAvailability => 'Tadiqlar bilan bilan bilan';
-	@override String get available => 'U\'ziyadi borga';
-	@override String get unavailable => 'Şu anda yetimlik';
-	@override String get borrow => 'Vaqtincha olish';
-	@override String get placeHold => 'Band qilish';
-	@override String get returnBook => 'Tadi qaytar';
-	@override String get cancelHold => 'Band qilishni bekor qilish';
-	@override String get confirmBorrow => 'Bu titili librarizdan borga?';
-	@override String get confirmReturn => 'Bu kitobni hozir qaytarasizmi? Davom etish uchun uni yana olishingiz kerak bo‘lishi mumkin.';
-	@override String get confirmCancelHold => 'Bu kitobni band qilishni bekor qilasizmi?';
-	@override String get email => 'Kitobni band qilish haqidagi bildirishnomalar uchun elektron pochta';
-	@override String due({required Object date}) => 'Qaytarish muddati: ${date}';
-	@override String queue({required Object position}) => 'Possiya ${position} linni.';
 	@override String get empty => 'Yiyiyiyiy o‘zlar.';
 	@override String get openLibraryNote => 'Open Library\'nin katalogi va\'qlar. Read and borrilik seçenekler hər bir titilinin sayadi.';
 	@override String get more => 'Yatadi';
-	@override String get gateway => 'Librariyadi-sign-in servis';
-	@override String get gatewayHint => 'Siz librariyiz o‘yibib o‘yiba Pleazyng administrator.';
-	@override String get advanced => 'Librariya integrasyon';
-	@override String get loadLibraries => 'Librari sizni seçin';
-	@override String get expired => 'Bu borga bilan bilan bo‘zadi.';
-	@override String get updated => 'Librari bilan günahlar';
 	@override String get continueService => 'U‘ziyadi';
-	@override String get comingSoon => 'U-app borga · Biraz qaytarga';
-	@override String get comingSoonDescription => 'Libby integration is on its way. Siz Libby librariyizni sizni kullanabiliz, biz onu bağlayganni bilan.';
-	@override String get suspendHold => 'Tadiqadiqadi';
-	@override String get resumeHold => 'Tadiqadiqadi';
-	@override String get suspendMessage => 'Navbatdagi o‘rningizni saqlab, keyingi o‘quvchiga bu nusxani olishga ruxsat berasizmi? Band qilishni keyin davom ettirishingiz mumkin.';
-	@override String get resumeMessage => 'Kutubxona keyingi bo‘sh nusxani sizga taklif qilishi uchun bu band qilishni davom ettirasizmi?';
-	@override String get editEmail => 'Email Notifikacion';
 }
 
 // Path: audiobook
@@ -9125,48 +9091,14 @@ extension on TranslationsUz {
 			'lending.libraryUrlHint' => 'Siz librariyiznin katalogi ya‘y‘y‘ya‘y‘yo‘y‘ay.',
 			'lending.intro' => 'Kütüphanizdan borga.Bibrarizdan qurt.',
 			'lending.handoff' => 'Kutubxonangizning o‘z xizmati orqali hisobingizga kiring, kitoblarni vaqtincha oling va xavfsiz o‘qing.',
-			'lending.openService' => 'Librariq',
 			'lending.findLibrary' => 'Bir kütüphan bulga',
 			'lending.search' => 'Kitablar ve yazarlar aradi',
-			'lending.catalogue' => 'Katalog',
-			'lending.loans' => 'Loan',
-			'lending.holds' => 'Band qilingan kitoblar',
-			'lending.signIn' => 'Siz librariyizga qaytadi.',
-			'lending.waiting' => 'Siz browserga abonni bilan bilan, qaytdan qaytdan.',
-			'lending.cancel' => 'Bekor qilish',
 			'lending.disconnect' => 'Librariya bilan',
 			'lending.disconnectMessage' => 'Bu kutubxona shu profildan olib tashlansinmi? Vaqtincha olgan va band qilgan kitoblaringiz kutubxona hisobingizda saqlanadi.',
-			'lending.getBook' => 'Bookga bo‘yadi',
-			'lending.checkAvailability' => 'Tadiqlar bilan bilan bilan',
-			'lending.available' => 'U\'ziyadi borga',
-			'lending.unavailable' => 'Şu anda yetimlik',
-			'lending.borrow' => 'Vaqtincha olish',
-			'lending.placeHold' => 'Band qilish',
-			'lending.returnBook' => 'Tadi qaytar',
-			'lending.cancelHold' => 'Band qilishni bekor qilish',
-			'lending.confirmBorrow' => 'Bu titili librarizdan borga?',
-			'lending.confirmReturn' => 'Bu kitobni hozir qaytarasizmi? Davom etish uchun uni yana olishingiz kerak bo‘lishi mumkin.',
-			'lending.confirmCancelHold' => 'Bu kitobni band qilishni bekor qilasizmi?',
-			'lending.email' => 'Kitobni band qilish haqidagi bildirishnomalar uchun elektron pochta',
-			'lending.due' => ({required Object date}) => 'Qaytarish muddati: ${date}',
-			'lending.queue' => ({required Object position}) => 'Possiya ${position} linni.',
 			'lending.empty' => 'Yiyiyiyiy o‘zlar.',
 			'lending.openLibraryNote' => 'Open Library\'nin katalogi va\'qlar. Read and borrilik seçenekler hər bir titilinin sayadi.',
 			'lending.more' => 'Yatadi',
-			'lending.gateway' => 'Librariyadi-sign-in servis',
-			'lending.gatewayHint' => 'Siz librariyiz o‘yibib o‘yiba Pleazyng administrator.',
-			'lending.advanced' => 'Librariya integrasyon',
-			'lending.loadLibraries' => 'Librari sizni seçin',
-			'lending.expired' => 'Bu borga bilan bilan bo‘zadi.',
-			'lending.updated' => 'Librari bilan günahlar',
 			'lending.continueService' => 'U‘ziyadi',
-			'lending.comingSoon' => 'U-app borga · Biraz qaytarga',
-			'lending.comingSoonDescription' => 'Libby integration is on its way. Siz Libby librariyizni sizni kullanabiliz, biz onu bağlayganni bilan.',
-			'lending.suspendHold' => 'Tadiqadiqadi',
-			'lending.resumeHold' => 'Tadiqadiqadi',
-			'lending.suspendMessage' => 'Navbatdagi o‘rningizni saqlab, keyingi o‘quvchiga bu nusxani olishga ruxsat berasizmi? Band qilishni keyin davom ettirishingiz mumkin.',
-			'lending.resumeMessage' => 'Kutubxona keyingi bo‘sh nusxani sizga taklif qilishi uchun bu band qilishni davom ettirasizmi?',
-			'lending.editEmail' => 'Email Notifikacion',
 			'audiobook.syncTitle' => 'Okum & dining sync',
 			'audiobook.syncHelp' => 'Okuma pozsiya, okuma pozisyonlar, completion status, bookmarks, notlar siz cihazlarınızda. Added stockage account seçin ve hər cihazda aynı sinq kod kullanın. Okuma və dinim ayaladi.',
 			'audiobook.addSyncSource' => 'Google Drive, OneDrive, Dropbox, WebDAV o S3\'i fillar və kitablar qoladi.',
@@ -9216,8 +9148,6 @@ extension on TranslationsUz {
 			'audiobook.statusFinished' => 'Konni',
 			'audiobook.goToTime' => 'O‘zadi.',
 			'audiobook.timeHelp' => 'Hours:minuts:seconds, o minutlar:seconds',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Sinklik data\'ni transfer o‘yadi.Sinkliklar ko‘yad qo‘yingiz, lokal sinklik tarihini qaytarmaymazlar.Sinqlik kodini separata tutan.',
 			'audiobook.recoveryExport' => 'Filiya qaytarga xifratsiya',
 			'audiobook.recoveryImport' => 'İthalat xifratni qaytarga faili',
@@ -9252,6 +9182,8 @@ extension on TranslationsUz {
 			'sourceSetup.nfsGroupId' => 'NFS guruh ID-si (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Standart: 1000. NAS dagi NFS umumiy katalogi ruxsat bergan guruh ID-sidan foydalaning.',
 			'sourceSetup.nfsEncryption' => 'Shifrlangan NFS talab qilish (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'NFS va ulash xizmati uchun TLS 1.3 talab qilinadi. NAS buni qo‘llamasa, ulanish rad etiladi.',
 			'sourceSetup.nfsTrustCertificate' => 'Maxsus NFS CA yoki server sertifikati (PEM, ixtiyoriy)',
 			'sourceSetup.nfsTrustHelp' => 'Ushbu qurilma ishonadigan sertifikatlar uchun bo‘sh qoldiring. Zarur bo‘lsa, xususiy CA sertifikati yoki o‘zi imzolagan server sertifikatini qo‘shing; undagi nomlar NFS URL manzilidagi hostga mos kelishi kerak.',
@@ -9730,8 +9662,6 @@ extension on TranslationsUz {
 			'musicTools.days' => 'Kunlar',
 			'musicTools.albumBlocks' => 'Albomlarni butun saqlash',
 			'musicTools.home' => 'Musiqa',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'Yaqinda ijro etilgan',
 			'musicTools.apiKey' => 'API kaliti',
 			'musicTools.missing' => 'N/A',
@@ -9766,6 +9696,8 @@ extension on TranslationsUz {
 			'musicTools.peak' => 'Choʻqqi',
 			'musicTools.bass' => 'Bas',
 			'musicTools.treble' => 'Yuqori tovushlar',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Ulashilgan pleylistlar',
 			'musicTools.sharingInvitationsTitle' => 'Plex ulashish takliflari',
 			'musicTools.noSharingInvitations' => 'Kutilayotgan takliflar yo‘q',

@@ -3706,48 +3706,14 @@ class _Translations$lending$fa extends Translations$lending$en {
 	@override String get libraryUrlHint => 'از فهرست کتابخانه یا صفحهٔ ورود آن استفاده کنید.';
 	@override String get intro => 'کتاب را از کتابخانه خود قرض بگیرید کتاب های خود را در نزدیکی خود نگه دارید.';
 	@override String get handoff => 'با سرویس خود کتابخانه، وارد حساب شوید، کتاب امانت بگیرید و با امنیت بخوانید.';
-	@override String get openService => 'کتابخانه باز';
 	@override String get findLibrary => 'پیدا کردن کتابخانه';
 	@override String get search => 'جستجو برای کتاب ها و نویسندگان';
-	@override String get catalogue => 'کاتالوگ';
-	@override String get loans => 'امانت‌ها';
-	@override String get holds => 'رزروها';
-	@override String get signIn => 'ثبت نام با کتابخانه خود';
-	@override String get waiting => 'ثبت نام را در مرورگر خود به پایان برسانید و سپس به اینجا برگردید.';
-	@override String get cancel => 'لغو کردن';
 	@override String get disconnect => 'حذف کتابخانه';
 	@override String get disconnectMessage => 'این کتابخانه از این نمایه حذف شود؟ امانت‌ها و رزروهای شما در کتابخانه باقی می‌مانند.';
-	@override String get getBook => 'کتاب را بخوانید';
-	@override String get checkAvailability => 'بررسی در دسترس بودن';
-	@override String get available => 'آمادهٔ امانت گرفتن';
-	@override String get unavailable => 'در حال حاضر در دسترس نیست';
-	@override String get borrow => 'امانت گرفتن';
-	@override String get placeHold => 'رزرو کردن';
-	@override String get returnBook => 'بازگرداندن پیش از موعد';
-	@override String get cancelHold => 'لغو رزرو';
-	@override String get confirmBorrow => 'این کتاب را از کتابخانه خود قرض می دهید؟';
-	@override String get confirmReturn => 'این عنوان اکنون بازگردانده شود؟ برای ادامه ممکن است لازم باشد دوباره آن را امانت بگیرید.';
-	@override String get confirmCancelHold => 'رزرو شما برای این عنوان لغو شود؟';
-	@override String get email => 'ارسال ایمیل اطلاع رسانی';
-	@override String due({required Object date}) => 'موعد بازگشت: ${date}';
-	@override String queue({required Object position}) => 'موقعیت ${position} در خط';
 	@override String get empty => 'هنوز هیچ عنوانی در اینجا وجود ندارد.';
 	@override String get openLibraryNote => 'فهرست Open Library را مرور کنید. گزینه‌های خواندن و امانت گرفتن در صفحهٔ هر عنوان نمایش داده می‌شوند.';
 	@override String get more => 'بار بیشتر';
-	@override String get gateway => 'کتابخانه ثبت نام در سرویس';
-	@override String get gatewayHint => 'توسط کتابخانه یا مدیر Pleazyng ارائه شده است.';
-	@override String get advanced => 'کتابخانه ادغام';
-	@override String get loadLibraries => 'کتابخانه خود را انتخاب کنید';
-	@override String get expired => 'مدت این امانت به پایان رسیده است.';
-	@override String get updated => 'کتابخانه به روز شده';
 	@override String get continueService => 'ادامه خدمت';
-	@override String get comingSoon => 'وام های جدید در آینده ای نزدیک';
-	@override String get comingSoonDescription => 'شما می توانید از کتابخانه خود در Libby استفاده کنید در حالی که ما آن را به اتصال می رسانیم.';
-	@override String get suspendHold => 'تعلیق رزرو';
-	@override String get resumeHold => 'ازسرگیری رزرو';
-	@override String get suspendMessage => 'جای خود را در صف حفظ کنید و اجازه دهید خوانندهٔ بعدی این نسخه را امانت بگیرد؟ می‌توانید بعداً رزرو را از سر بگیرید.';
-	@override String get resumeMessage => 'این رزرو از سر گرفته شود تا کتابخانه بتواند نسخهٔ بعدیِ موجود را به شما پیشنهاد دهد؟';
-	@override String get editEmail => 'تغییر ایمیل اطلاع رسانی';
 }
 
 // Path: audiobook
@@ -9125,48 +9091,14 @@ extension on TranslationsFa {
 			'lending.libraryUrlHint' => 'از فهرست کتابخانه یا صفحهٔ ورود آن استفاده کنید.',
 			'lending.intro' => 'کتاب را از کتابخانه خود قرض بگیرید کتاب های خود را در نزدیکی خود نگه دارید.',
 			'lending.handoff' => 'با سرویس خود کتابخانه، وارد حساب شوید، کتاب امانت بگیرید و با امنیت بخوانید.',
-			'lending.openService' => 'کتابخانه باز',
 			'lending.findLibrary' => 'پیدا کردن کتابخانه',
 			'lending.search' => 'جستجو برای کتاب ها و نویسندگان',
-			'lending.catalogue' => 'کاتالوگ',
-			'lending.loans' => 'امانت‌ها',
-			'lending.holds' => 'رزروها',
-			'lending.signIn' => 'ثبت نام با کتابخانه خود',
-			'lending.waiting' => 'ثبت نام را در مرورگر خود به پایان برسانید و سپس به اینجا برگردید.',
-			'lending.cancel' => 'لغو کردن',
 			'lending.disconnect' => 'حذف کتابخانه',
 			'lending.disconnectMessage' => 'این کتابخانه از این نمایه حذف شود؟ امانت‌ها و رزروهای شما در کتابخانه باقی می‌مانند.',
-			'lending.getBook' => 'کتاب را بخوانید',
-			'lending.checkAvailability' => 'بررسی در دسترس بودن',
-			'lending.available' => 'آمادهٔ امانت گرفتن',
-			'lending.unavailable' => 'در حال حاضر در دسترس نیست',
-			'lending.borrow' => 'امانت گرفتن',
-			'lending.placeHold' => 'رزرو کردن',
-			'lending.returnBook' => 'بازگرداندن پیش از موعد',
-			'lending.cancelHold' => 'لغو رزرو',
-			'lending.confirmBorrow' => 'این کتاب را از کتابخانه خود قرض می دهید؟',
-			'lending.confirmReturn' => 'این عنوان اکنون بازگردانده شود؟ برای ادامه ممکن است لازم باشد دوباره آن را امانت بگیرید.',
-			'lending.confirmCancelHold' => 'رزرو شما برای این عنوان لغو شود؟',
-			'lending.email' => 'ارسال ایمیل اطلاع رسانی',
-			'lending.due' => ({required Object date}) => 'موعد بازگشت: ${date}',
-			'lending.queue' => ({required Object position}) => 'موقعیت ${position} در خط',
 			'lending.empty' => 'هنوز هیچ عنوانی در اینجا وجود ندارد.',
 			'lending.openLibraryNote' => 'فهرست Open Library را مرور کنید. گزینه‌های خواندن و امانت گرفتن در صفحهٔ هر عنوان نمایش داده می‌شوند.',
 			'lending.more' => 'بار بیشتر',
-			'lending.gateway' => 'کتابخانه ثبت نام در سرویس',
-			'lending.gatewayHint' => 'توسط کتابخانه یا مدیر Pleazyng ارائه شده است.',
-			'lending.advanced' => 'کتابخانه ادغام',
-			'lending.loadLibraries' => 'کتابخانه خود را انتخاب کنید',
-			'lending.expired' => 'مدت این امانت به پایان رسیده است.',
-			'lending.updated' => 'کتابخانه به روز شده',
 			'lending.continueService' => 'ادامه خدمت',
-			'lending.comingSoon' => 'وام های جدید در آینده ای نزدیک',
-			'lending.comingSoonDescription' => 'شما می توانید از کتابخانه خود در Libby استفاده کنید در حالی که ما آن را به اتصال می رسانیم.',
-			'lending.suspendHold' => 'تعلیق رزرو',
-			'lending.resumeHold' => 'ازسرگیری رزرو',
-			'lending.suspendMessage' => 'جای خود را در صف حفظ کنید و اجازه دهید خوانندهٔ بعدی این نسخه را امانت بگیرد؟ می‌توانید بعداً رزرو را از سر بگیرید.',
-			'lending.resumeMessage' => 'این رزرو از سر گرفته شود تا کتابخانه بتواند نسخهٔ بعدیِ موجود را به شما پیشنهاد دهد؟',
-			'lending.editEmail' => 'تغییر ایمیل اطلاع رسانی',
 			'audiobook.syncTitle' => 'خواندن و گوش دادن Sync',
 			'audiobook.syncHelp' => 'موقعیت های خواندن، موقعیت های گوش دادن، وضعیت تکمیل، برچسب ها و یادداشت ها را در سراسر دستگاه های خود نگه دارید.یک حساب ذخیره سازی پیوسته را انتخاب کنید و از همان کد همگام سازی در هر دستگاه استفاده کنید.خواندن و گوش دادن جداگانه باقی می ماند.',
 			'audiobook.addSyncSource' => 'در ابتدا Google Drive، OneDrive، Dropbox، WebDAV یا S3 را به فایل ها و کتاب ها اضافه کنید.',
@@ -9216,8 +9148,6 @@ extension on TranslationsFa {
 			'audiobook.statusFinished' => 'به پایان رسید',
 			'audiobook.goToTime' => 'به زمان برو',
 			'audiobook.timeHelp' => 'ساعت: دقیقه ها: ثانیه ها یا دقیقه ها: ثانیه ها',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'یک کپی رمزگذاری شده اخیر را قبل از حرکت یا اصلاح داده های همگام سازی صادر کنید. واردات با وضعیت فعلی ادغام می شود؛ آنها هرگز تاریخچه همگامه محلی را جایگزین نمی کنند.',
 			'audiobook.recoveryExport' => 'صادرات رمزگذاری شده بازگرداندن فایل',
 			'audiobook.recoveryImport' => 'واردات فایل های رمزگذاری شده',
@@ -9252,6 +9182,8 @@ extension on TranslationsFa {
 			'sourceSetup.nfsGroupId' => 'شناسهٔ گروه NFS ‏(AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'پیش‌فرض: 1000. از شناسهٔ گروهی استفاده کنید که در تنظیمات اشتراک NFS روی NAS مجاز است.',
 			'sourceSetup.nfsEncryption' => 'الزام رمزگذاری NFS ‏(RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'TLS 1.3 را برای NFS و سرویس mount الزامی می‌کند. اگر NAS پشتیبانی نکند، اتصال رد می‌شود.',
 			'sourceSetup.nfsTrustCertificate' => 'گواهی سفارشی CA یا سرور NFS ‏(PEM، اختیاری)',
 			'sourceSetup.nfsTrustHelp' => 'برای گواهی‌های مورد اعتماد این دستگاه، خالی بگذارید. در صورت نیاز، گواهی CA خصوصی یا گواهی خودامضای سرور را اضافه کنید؛ نام‌های آن باید با میزبان نشانی NFS مطابقت داشته باشند.',
@@ -9730,8 +9662,6 @@ extension on TranslationsFa {
 			'musicTools.days' => 'روزها',
 			'musicTools.albumBlocks' => 'آلبوم‌ها را کامل نگه دار',
 			'musicTools.home' => 'موسیقی‌ها',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'اخیراً پخش‌شده',
 			'musicTools.apiKey' => 'کلید API',
 			'musicTools.missing' => 'N / A',
@@ -9766,6 +9696,8 @@ extension on TranslationsFa {
 			'musicTools.peak' => 'اوج',
 			'musicTools.bass' => 'بیس',
 			'musicTools.treble' => 'زیر',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'فهرست‌های پخش اشتراکی',
 			'musicTools.sharingInvitationsTitle' => 'دعوت‌های اشتراک‌گذاری Plex',
 			'musicTools.noSharingInvitations' => 'دعوت در انتظاری وجود ندارد',

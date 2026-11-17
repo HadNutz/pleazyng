@@ -3706,48 +3706,14 @@ class _Translations$lending$sv extends Translations$lending$en {
 	@override String get libraryUrlHint => 'Använd bibliotekets katalog eller sign-in-sida.';
 	@override String get intro => 'Lån från ditt bibliotek.Håll dina böcker stängda.';
 	@override String get handoff => 'Registrera dig, låna och läsa säkert med din egen bibliotekstjänst.';
-	@override String get openService => 'Öppen bibliotek';
 	@override String get findLibrary => 'Hitta ett bibliotek';
 	@override String get search => 'Sök böcker och författare';
-	@override String get catalogue => 'Katalog';
-	@override String get loans => 'Lån';
-	@override String get holds => 'Reservationer';
-	@override String get signIn => 'Registrera dig med ditt bibliotek';
-	@override String get waiting => 'Slutar att registrera dig i din webbläsare, sedan återvända här.';
-	@override String get cancel => 'Avbryt';
 	@override String get disconnect => 'Ta bort biblioteket';
 	@override String get disconnectMessage => 'Ta bort detta bibliotek från denna profil? Dina lån och reservationer finns kvar hos biblioteket.';
-	@override String get getBook => 'Få bok';
-	@override String get checkAvailability => 'Kontrollera tillgänglighet';
-	@override String get available => 'Tillgänglig för lån';
-	@override String get unavailable => 'För närvarande otillgängliga';
-	@override String get borrow => 'Låna';
-	@override String get placeHold => 'Reservera';
-	@override String get returnBook => 'Återgå tidigt';
-	@override String get cancelHold => 'Avboka reservation';
-	@override String get confirmBorrow => 'Låna denna titel från ditt bibliotek?';
-	@override String get confirmReturn => 'Återlämna den här titeln nu? Du kan behöva låna den igen för att fortsätta.';
-	@override String get confirmCancelHold => 'Avboka din reservation av denna titel?';
-	@override String get email => 'Håll meddelande e-post';
-	@override String due({required Object date}) => 'Låter ${date}';
-	@override String queue({required Object position}) => 'Position ${position} i linje';
 	@override String get empty => 'Inga titlar här än.';
 	@override String get openLibraryNote => 'Utforska katalogen för Open Library. Läs- och lånalternativ visas på varje rubriks sida.';
 	@override String get more => 'Ladda mer';
-	@override String get gateway => 'Biblioteksansökning i tjänsten';
-	@override String get gatewayHint => 'Tillhandahålls av din bibliotek eller administratören Pleazyng.';
-	@override String get advanced => 'Biblioteksintegration';
-	@override String get loadLibraries => 'Välj din bibliotek';
-	@override String get expired => 'Lånet har löpt ut.';
-	@override String get updated => 'Biblioteket uppdateras';
 	@override String get continueService => 'Fortsätt i tjänst';
-	@override String get comingSoon => 'In-app lån · Kommer snart';
-	@override String get comingSoonDescription => 'Du kan använda din bibliotek i Libby medan vi slutför att ansluta den.';
-	@override String get suspendHold => 'Stängd hållning';
-	@override String get resumeHold => 'Resumé håll';
-	@override String get suspendMessage => 'Behåll din plats i kön och låt nästa läsare låna detta exemplar? Du kan återuppta reservationen senare.';
-	@override String get resumeMessage => 'Återuppta denna reservation så att biblioteket kan erbjuda dig nästa tillgängliga exemplar?';
-	@override String get editEmail => 'Ändra meddelande e-post';
 }
 
 // Path: audiobook
@@ -9125,48 +9091,14 @@ extension on TranslationsSv {
 			'lending.libraryUrlHint' => 'Använd bibliotekets katalog eller sign-in-sida.',
 			'lending.intro' => 'Lån från ditt bibliotek.Håll dina böcker stängda.',
 			'lending.handoff' => 'Registrera dig, låna och läsa säkert med din egen bibliotekstjänst.',
-			'lending.openService' => 'Öppen bibliotek',
 			'lending.findLibrary' => 'Hitta ett bibliotek',
 			'lending.search' => 'Sök böcker och författare',
-			'lending.catalogue' => 'Katalog',
-			'lending.loans' => 'Lån',
-			'lending.holds' => 'Reservationer',
-			'lending.signIn' => 'Registrera dig med ditt bibliotek',
-			'lending.waiting' => 'Slutar att registrera dig i din webbläsare, sedan återvända här.',
-			'lending.cancel' => 'Avbryt',
 			'lending.disconnect' => 'Ta bort biblioteket',
 			'lending.disconnectMessage' => 'Ta bort detta bibliotek från denna profil? Dina lån och reservationer finns kvar hos biblioteket.',
-			'lending.getBook' => 'Få bok',
-			'lending.checkAvailability' => 'Kontrollera tillgänglighet',
-			'lending.available' => 'Tillgänglig för lån',
-			'lending.unavailable' => 'För närvarande otillgängliga',
-			'lending.borrow' => 'Låna',
-			'lending.placeHold' => 'Reservera',
-			'lending.returnBook' => 'Återgå tidigt',
-			'lending.cancelHold' => 'Avboka reservation',
-			'lending.confirmBorrow' => 'Låna denna titel från ditt bibliotek?',
-			'lending.confirmReturn' => 'Återlämna den här titeln nu? Du kan behöva låna den igen för att fortsätta.',
-			'lending.confirmCancelHold' => 'Avboka din reservation av denna titel?',
-			'lending.email' => 'Håll meddelande e-post',
-			'lending.due' => ({required Object date}) => 'Låter ${date}',
-			'lending.queue' => ({required Object position}) => 'Position ${position} i linje',
 			'lending.empty' => 'Inga titlar här än.',
 			'lending.openLibraryNote' => 'Utforska katalogen för Open Library. Läs- och lånalternativ visas på varje rubriks sida.',
 			'lending.more' => 'Ladda mer',
-			'lending.gateway' => 'Biblioteksansökning i tjänsten',
-			'lending.gatewayHint' => 'Tillhandahålls av din bibliotek eller administratören Pleazyng.',
-			'lending.advanced' => 'Biblioteksintegration',
-			'lending.loadLibraries' => 'Välj din bibliotek',
-			'lending.expired' => 'Lånet har löpt ut.',
-			'lending.updated' => 'Biblioteket uppdateras',
 			'lending.continueService' => 'Fortsätt i tjänst',
-			'lending.comingSoon' => 'In-app lån · Kommer snart',
-			'lending.comingSoonDescription' => 'Du kan använda din bibliotek i Libby medan vi slutför att ansluta den.',
-			'lending.suspendHold' => 'Stängd hållning',
-			'lending.resumeHold' => 'Resumé håll',
-			'lending.suspendMessage' => 'Behåll din plats i kön och låt nästa läsare låna detta exemplar? Du kan återuppta reservationen senare.',
-			'lending.resumeMessage' => 'Återuppta denna reservation så att biblioteket kan erbjuda dig nästa tillgängliga exemplar?',
-			'lending.editEmail' => 'Ändra meddelande e-post',
 			'audiobook.syncTitle' => 'Läsning och lyssnande sync',
 			'audiobook.syncHelp' => 'Håll läsningspositioner, lyssningspositioner, slutförandestatus, bokmärken och anteckningar över dina enheter. Välj ett bifogat lagringskonto och använd samma synkroniseringskod på varje enhet. Läsning och lyssning förblir separat.',
 			'audiobook.addSyncSource' => 'Lägg till Google Drive, OneDrive, Dropbox, WebDAV eller S3 i Filer och böcker först.',
@@ -9216,8 +9148,6 @@ extension on TranslationsSv {
 			'audiobook.statusFinished' => 'Avslutad',
 			'audiobook.goToTime' => 'Gå till tiden',
 			'audiobook.timeHelp' => 'Klockor: minuter: sekunder eller minuter: sekunder',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'Exportera en nyligen krypterad kopia innan du flyttar eller reparerar synkroniseringsdata. Importer går ihop med den aktuella tillståndet; de ersätter aldrig lokal synkroniseringshistoria. Håll synkronkoden separat.',
 			'audiobook.recoveryExport' => 'Export krypterad återhämtningsfil',
 			'audiobook.recoveryImport' => 'Import krypterad återhämtningsfil',
@@ -9252,6 +9182,8 @@ extension on TranslationsSv {
 			'sourceSetup.nfsGroupId' => 'NFS-grupp-ID (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Standard: 1000. Använd det grupp-ID som NAS-enhetens NFS-delning tillåter.',
 			'sourceSetup.nfsEncryption' => 'Kräv krypterad NFS (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Kräv TLS 1.3 för NFS och monteringstjänsten. Om NAS-enheten inte stöder detta nekas anslutningen.',
 			'sourceSetup.nfsTrustCertificate' => 'Anpassad NFS-CA eller servercertifikat (PEM, valfritt)',
 			'sourceSetup.nfsTrustHelp' => 'Lämna tomt för certifikat som den här enheten litar på. Lägg vid behov till ett certifikat från en privat CA eller ett självsignerat servercertifikat; namnen måste stämma överens med värden i NFS-URL:en.',
@@ -9730,8 +9662,6 @@ extension on TranslationsSv {
 			'musicTools.days' => 'Dagar',
 			'musicTools.albumBlocks' => 'Håll hela album samman',
 			'musicTools.home' => 'Musik',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'Senast spelat',
 			'musicTools.apiKey' => 'API-nyckel',
 			'musicTools.missing' => 'N/A',
@@ -9766,6 +9696,8 @@ extension on TranslationsSv {
 			'musicTools.peak' => 'Topp',
 			'musicTools.bass' => 'Bas',
 			'musicTools.treble' => 'Diskant',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Delade spellistor',
 			'musicTools.sharingInvitationsTitle' => 'Plex-delningsinbjudningar',
 			'musicTools.noSharingInvitations' => 'Inga väntande inbjudningar',

@@ -3714,48 +3714,14 @@ class _Translations$lending$he extends Translations$lending$en {
 	@override String get libraryUrlHint => 'יש להשתמש בקטלוג של הספרייה או בעמוד ההתחברות שלה.';
 	@override String get intro => 'לשאול ספרים מהספרייה שלך ולהשאיר אותם קרוב אליך.';
 	@override String get handoff => 'להתחבר, לשאול ספרים ולקרוא בבטחה באמצעות השירות של הספרייה שלך.';
-	@override String get openService => 'ספרייה פתוחה';
 	@override String get findLibrary => 'מצא ספרייה';
 	@override String get search => 'חיפוש ספרים וסופרים';
-	@override String get catalogue => 'קטגוריה';
-	@override String get loans => 'השאלות';
-	@override String get holds => 'הזמנות';
-	@override String get signIn => 'הצטרפו לספריה שלכם';
-	@override String get waiting => 'הסתיימו את ההרשמה בדפדפן שלכם, ואז תחזרו לכאן.';
-	@override String get cancel => 'בטל';
 	@override String get disconnect => 'הסרת ספרייה';
 	@override String get disconnectMessage => 'להסיר את הספרייה הזאת מהפרופיל הזה? ההשאלות וההזמנות שלך יישארו בספרייה.';
-	@override String get getBook => 'קבל ספר';
-	@override String get checkAvailability => 'בדוק את זמינות';
-	@override String get available => 'זמין להשאלה';
-	@override String get unavailable => 'כרגע לא זמין';
-	@override String get borrow => 'לשאול';
-	@override String get placeHold => 'להזמין';
-	@override String get returnBook => 'החזרה לפני המועד';
-	@override String get cancelHold => 'לבטל הזמנה';
-	@override String get confirmBorrow => 'האם אתה משלם את הכותרת הזו מהספרייה שלך?';
-	@override String get confirmReturn => 'להחזיר את הכותר הזה עכשיו? ייתכן שיהיה צורך לשאול אותו שוב כדי להמשיך.';
-	@override String get confirmCancelHold => 'לבטל את ההזמנה שלך לכותר הזה?';
-	@override String get email => 'שמור הודעה בדואר אלקטרוני';
-	@override String due({required Object date}) => 'מועד החזרה: ${date}';
-	@override String queue({required Object position}) => 'מקום ${position} בתור';
 	@override String get empty => 'אין שם עדיין כאן.';
 	@override String get openLibraryNote => 'אפשר לעיין בקטלוג של Open Library. אפשרויות הקריאה וההשאלה מוצגות בעמוד של כל כותר.';
 	@override String get more => 'להעלות יותר';
-	@override String get gateway => 'ספרייה שירות חתימה';
-	@override String get gatewayHint => 'מסופק על ידי הספרייה שלך או המנהל Pleazyng.';
-	@override String get advanced => 'אינטגרציה ספרייה';
-	@override String get loadLibraries => 'בחר את הספרייה שלך';
-	@override String get expired => 'תקופת ההשאלה הסתיימה.';
-	@override String get updated => 'ספרייה עדכנה';
 	@override String get continueService => 'להמשיך בשירות';
-	@override String get comingSoon => 'הלוואות ב-App · מגיע בקרוב';
-	@override String get comingSoonDescription => 'אתה יכול להשתמש בספריה שלך ב- Libby בזמן שאנחנו מסיימים את חיבורו.';
-	@override String get suspendHold => 'להשהות הזמנה';
-	@override String get resumeHold => 'לחדש הזמנה';
-	@override String get suspendMessage => 'לשמור על מקומך בתור ולאפשר לקורא הבא לשאול את העותק הזה? אפשר לחדש את ההזמנה בהמשך.';
-	@override String get resumeMessage => 'לחדש את ההזמנה כדי שהספרייה תוכל להציע לך את העותק הזמין הבא?';
-	@override String get editEmail => 'שינוי הודעת דואר אלקטרוני';
 }
 
 // Path: audiobook
@@ -9133,48 +9099,14 @@ extension on TranslationsHe {
 			'lending.libraryUrlHint' => 'יש להשתמש בקטלוג של הספרייה או בעמוד ההתחברות שלה.',
 			'lending.intro' => 'לשאול ספרים מהספרייה שלך ולהשאיר אותם קרוב אליך.',
 			'lending.handoff' => 'להתחבר, לשאול ספרים ולקרוא בבטחה באמצעות השירות של הספרייה שלך.',
-			'lending.openService' => 'ספרייה פתוחה',
 			'lending.findLibrary' => 'מצא ספרייה',
 			'lending.search' => 'חיפוש ספרים וסופרים',
-			'lending.catalogue' => 'קטגוריה',
-			'lending.loans' => 'השאלות',
-			'lending.holds' => 'הזמנות',
-			'lending.signIn' => 'הצטרפו לספריה שלכם',
-			'lending.waiting' => 'הסתיימו את ההרשמה בדפדפן שלכם, ואז תחזרו לכאן.',
-			'lending.cancel' => 'בטל',
 			'lending.disconnect' => 'הסרת ספרייה',
 			'lending.disconnectMessage' => 'להסיר את הספרייה הזאת מהפרופיל הזה? ההשאלות וההזמנות שלך יישארו בספרייה.',
-			'lending.getBook' => 'קבל ספר',
-			'lending.checkAvailability' => 'בדוק את זמינות',
-			'lending.available' => 'זמין להשאלה',
-			'lending.unavailable' => 'כרגע לא זמין',
-			'lending.borrow' => 'לשאול',
-			'lending.placeHold' => 'להזמין',
-			'lending.returnBook' => 'החזרה לפני המועד',
-			'lending.cancelHold' => 'לבטל הזמנה',
-			'lending.confirmBorrow' => 'האם אתה משלם את הכותרת הזו מהספרייה שלך?',
-			'lending.confirmReturn' => 'להחזיר את הכותר הזה עכשיו? ייתכן שיהיה צורך לשאול אותו שוב כדי להמשיך.',
-			'lending.confirmCancelHold' => 'לבטל את ההזמנה שלך לכותר הזה?',
-			'lending.email' => 'שמור הודעה בדואר אלקטרוני',
-			'lending.due' => ({required Object date}) => 'מועד החזרה: ${date}',
-			'lending.queue' => ({required Object position}) => 'מקום ${position} בתור',
 			'lending.empty' => 'אין שם עדיין כאן.',
 			'lending.openLibraryNote' => 'אפשר לעיין בקטלוג של Open Library. אפשרויות הקריאה וההשאלה מוצגות בעמוד של כל כותר.',
 			'lending.more' => 'להעלות יותר',
-			'lending.gateway' => 'ספרייה שירות חתימה',
-			'lending.gatewayHint' => 'מסופק על ידי הספרייה שלך או המנהל Pleazyng.',
-			'lending.advanced' => 'אינטגרציה ספרייה',
-			'lending.loadLibraries' => 'בחר את הספרייה שלך',
-			'lending.expired' => 'תקופת ההשאלה הסתיימה.',
-			'lending.updated' => 'ספרייה עדכנה',
 			'lending.continueService' => 'להמשיך בשירות',
-			'lending.comingSoon' => 'הלוואות ב-App · מגיע בקרוב',
-			'lending.comingSoonDescription' => 'אתה יכול להשתמש בספריה שלך ב- Libby בזמן שאנחנו מסיימים את חיבורו.',
-			'lending.suspendHold' => 'להשהות הזמנה',
-			'lending.resumeHold' => 'לחדש הזמנה',
-			'lending.suspendMessage' => 'לשמור על מקומך בתור ולאפשר לקורא הבא לשאול את העותק הזה? אפשר לחדש את ההזמנה בהמשך.',
-			'lending.resumeMessage' => 'לחדש את ההזמנה כדי שהספרייה תוכל להציע לך את העותק הזמין הבא?',
-			'lending.editEmail' => 'שינוי הודעת דואר אלקטרוני',
 			'audiobook.syncTitle' => 'קריאה ושמיעה Sync',
 			'audiobook.syncHelp' => 'שמור על עמדות קריאה, עמדות הקשבה, מצב השלמת, תוויות ספרים והערות בכל המכשירים שלך.בחור חשבון אחסון מקושר ולהשתמש באותו קוד סינכרון בכל מכשיר.קריאה ושמיעה נשארים נפרדים.',
 			'audiobook.addSyncSource' => 'הוסף Google Drive, OneDrive, Dropbox, WebDAV או S3 בקבצים וספרים קודם.',
@@ -9224,8 +9156,6 @@ extension on TranslationsHe {
 			'audiobook.statusFinished' => 'הסתיימה',
 			'audiobook.goToTime' => 'ללכת בזמן',
 			'audiobook.timeHelp' => 'שעות: דקות: שניות או דקות: שניות',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryHelp' => 'ייצוא עותק מוצפן לאחרונה לפני העברת או תיקון נתוני סינכרון.יבואים מתמזגים עם המצב הנוכחי; הם לעולם לא מחליפים היסטוריה מקומית של סינן.',
 			'audiobook.recoveryExport' => 'ייצוא קובץ ההחזרה מוצפן',
 			'audiobook.recoveryImport' => 'ייבוא קובץ ההחזרה מוצפן',
@@ -9260,6 +9190,8 @@ extension on TranslationsHe {
 			'sourceSetup.nfsGroupId' => 'מזהה קבוצת NFS ‏(AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'ברירת מחדל: 1000. יש להשתמש במזהה הקבוצה המותר בהגדרות ייצוא NFS של ה־NAS.',
 			'sourceSetup.nfsEncryption' => 'דרישת NFS מוצפן (RPC-with-TLS)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'מחייב TLS 1.3 עבור NFS ושירות ה־mount. אם ה־NAS אינו תומך בכך, החיבור יידחה.',
 			'sourceSetup.nfsTrustCertificate' => 'אישור CA או שרת NFS מותאם אישית (PEM, רשות)',
 			'sourceSetup.nfsTrustHelp' => 'יש להשאיר ריק לאישורים שהתקן זה נותן בהם אמון. לפי הצורך, אפשר להוסיף אישור CA פרטי או אישור שרת בחתימה עצמית; השמות בו חייבים להתאים למארח שבכתובת NFS.',
@@ -9738,8 +9670,6 @@ extension on TranslationsHe {
 			'musicTools.days' => 'ימים',
 			'musicTools.albumBlocks' => 'שמירה על אלבומים שלמים ביחד',
 			'musicTools.home' => 'מוסיקה',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.recent' => 'הושמעו לאחרונה',
 			'musicTools.apiKey' => 'מפתח API',
 			'musicTools.missing' => 'N / A',
@@ -9774,6 +9704,8 @@ extension on TranslationsHe {
 			'musicTools.peak' => 'שיא',
 			'musicTools.bass' => 'בס',
 			'musicTools.treble' => 'גבוהים',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'רשימות השמעה משותפות',
 			'musicTools.sharingInvitationsTitle' => 'הזמנות שיתוף ב־Plex',
 			'musicTools.noSharingInvitations' => 'אין הזמנות ממתינות',

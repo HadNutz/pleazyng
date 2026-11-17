@@ -269,17 +269,6 @@
     },
     {
       "locale": "it",
-      "key": "lending.comingSoonDescription",
-      "english": "Libby integration is on its way. You can use your library in Libby while we finish connecting it.",
-      "original": "Puoi usare la tua biblioteca in Libby mentre finisci connetendola.",
-      "corrected": "L’integrazione con Libby è in arrivo. Puoi usare la tua biblioteca in Libby mentre completiamo il collegamento.",
-      "reason": "Restore the forthcoming integration and identify the app team, not the user, as completing it.",
-      "severity": "medium",
-      "status": "corrected-ai-not-native-certified",
-      "baseline": "Current main027 integration before this Italian follow-up; historical1218corrections remain unchanged."
-    },
-    {
-      "locale": "it",
       "key": "lending.suspendHold",
       "english": "Suspend hold",
       "original": "Sospensione di tenere",
