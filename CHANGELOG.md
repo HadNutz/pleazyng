@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Reconcile historical worktree changes: retain newer main implementations, recover saved subtitle capture clock offsets and dropped-audio gap fencing, and localize saved-capture list metadata. Five list labels use explicit English fallback pending translation review. These changes are outside the frozen 3.0.37 source.
+- Build manual Samsung LiteRT adapters from the audited source commit in an isolated worktree, with both required FlatBuffers dependency patches and patch hashes in the build receipt.
+
 - Start the macOS Flutter engine before attaching its first multiview window, and register view-dependent plugins after the window is available.
 - Bind desktop drop, file picker and window manager to the attached primary macOS window in multiview mode, while preserving engine-managed plugin registration.
 - Bind the macOS app root to the primary controller's actual Flutter view ID in multiview mode; keep standard `runApp` startup on other platforms and the web build.

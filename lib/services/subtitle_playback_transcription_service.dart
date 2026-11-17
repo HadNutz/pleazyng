@@ -57,6 +57,8 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
   whisper.FlutterWhisper? _session;
   Timer? _timer;
   Future<void>? _inferenceFuture;
+  double? _inferenceStartMs;
+  double? _inferenceEndMs;
   int _restoreGeneration = 0;
   bool _running = false;
   bool _starting = false;
@@ -96,6 +98,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
   int _captureGapCount = 0;
   int? _lastGapStartMs;
   int? _lastGapEndMs;
+  bool _hasOpenEndedGap = false;
   int _lastAudioThroughMs = 0;
 
   bool get isRunning => _running;
@@ -246,6 +249,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       _captureGapCount = 0;
       _lastGapStartMs = null;
       _lastGapEndMs = null;
+      _hasOpenEndedGap = false;
       _lastAudioThroughMs = player.currentPosition.inMilliseconds;
       liveCaption.value = null;
 
@@ -464,15 +468,11 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
               SubtitleCapturePhase.playbackChanged => 'playback_changed',
               _ => 'capture_interrupted',
             };
-      final gapStart = (endedAt != null && endedAt > _lastAudioThroughMs ? _lastAudioThroughMs : _lastGapStartMs)
-          ?.clamp(0, SubtitleRetimer.maximumTimeMs)
-          .toInt();
-      final gapEnd = (endedAt != null && endedAt > _lastAudioThroughMs ? endedAt : _lastGapEndMs)
-          ?.clamp(0, SubtitleRetimer.maximumTimeMs)
-          .toInt();
-      if (endedAt != null && endedAt > _lastAudioThroughMs && _lastGapEndMs != endedAt) {
-        _captureGapCount++;
+      if (endedAt != null && endedAt > _lastAudioThroughMs) {
+        _recordAudioGap(_lastAudioThroughMs, endedAt);
       }
+      final gapStart = _lastGapStartMs?.clamp(0, SubtitleRetimer.maximumTimeMs).toInt();
+      final gapEnd = _hasOpenEndedGap ? null : _lastGapEndMs?.clamp(0, SubtitleRetimer.maximumTimeMs).toInt();
       try {
         _recentCaptureJob = await jobStore.finishCapture(
           job: activeJob,
@@ -480,6 +480,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
           interrupted: !completedAtEnd,
           reason: reason,
           interruptedAtMs: (endedAt ?? activeJob.playbackPositionMs).clamp(0, SubtitleRetimer.maximumTimeMs).toInt(),
+          timelineOffsetMs: _capturePositionOffsetMs,
           gapStartMs: gapStart,
           gapEndMs: gapEnd,
           gapCount: _captureGapCount,
@@ -554,6 +555,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       translatedToEnglish: false,
       wordTimings: checkpoint.wordTimings,
     );
+    _capturePositionOffsetMs = job.timelineOffsetMs;
     _transcriptIdentityIsCurrent = isIdentityCurrent;
     _recentTranscript = transcript;
     _recentCaptureJob = job;
@@ -719,9 +721,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       }
       if (action == SubtitleCapturePacketAction.resetTimeline) {
         _unexpectedTimelineReset = true;
-        _captureGapCount++;
-        _lastGapStartMs = expected == null ? ptsUs ~/ 1000 : expected ~/ 1000;
-        _lastGapEndMs = null;
+        _recordAudioGap(expected == null ? ptsUs ~/ 1000 : expected ~/ 1000, null);
         _resetAudioWindow(ptsUs);
         _running = false;
         _timer?.cancel();
@@ -734,17 +734,16 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       }
       if (action == SubtitleCapturePacketAction.resetWindow) {
         if (seekChanged || changedFormat || gapUs > SubtitleCaptureTimeline.maximumForwardGapUs) {
-          _captureGapCount++;
           if (seekChanged && clock.subtitlePcmSeekTarget != null) {
             final targetUs = clock.subtitlePcmSeekTarget!.inMicroseconds + _capturePositionOffsetMs * 1000;
-            _lastGapStartMs = (expected == null ? targetUs : math.min(expected, targetUs)) ~/ 1000;
-            _lastGapEndMs = math.max(expected ?? targetUs, targetUs) ~/ 1000;
+            _recordAudioGap(
+              (expected == null ? targetUs : math.min(expected, targetUs)) ~/ 1000,
+              math.max(expected ?? targetUs, targetUs) ~/ 1000,
+            );
           } else if (expected != null && ptsUs >= expected) {
-            _lastGapStartMs = expected ~/ 1000;
-            _lastGapEndMs = ptsUs ~/ 1000;
+            _recordAudioGap(expected ~/ 1000, ptsUs ~/ 1000);
           } else {
-            _lastGapStartMs = ptsUs ~/ 1000;
-            _lastGapEndMs = null;
+            _recordAudioGap(ptsUs ~/ 1000, null);
           }
         }
         _resetAudioWindow(ptsUs);
@@ -801,8 +800,36 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       return;
     }
     final trim = _samples.length - _maximumQueuedSamples;
+    final startMs = _streamStartMs ?? 0;
+    final endMs = startMs + trim * 1000.0 / _sampleRate;
     _samples.removeRange(0, trim);
-    _streamStartMs = (_streamStartMs ?? 0) + trim * 1000.0 / _sampleRate;
+    _streamStartMs = endMs;
+    _recordAudioGap(startMs.floor(), endMs.ceil());
+    final inferenceStart = _inferenceStartMs;
+    final inferenceEnd = _inferenceEndMs;
+    if (_inferenceFuture != null &&
+        inferenceStart != null &&
+        inferenceEnd != null &&
+        startMs < inferenceEnd &&
+        endMs > inferenceStart) {
+      // The inference owns a copy of samples that no longer match the bounded
+      // queue. Fence it so its eventual completion cannot claim this dropped
+      // interval or consume newer samples at the shifted queue head.
+      _audioGeneration++;
+    }
+    _publishTranscript(checkpoint: true);
+  }
+
+  void _recordAudioGap(int startMs, int? endMs) {
+    final start = startMs.clamp(0, SubtitleRetimer.maximumTimeMs).toInt();
+    final end = endMs?.clamp(0, SubtitleRetimer.maximumTimeMs).toInt();
+    _captureGapCount = math.min(100000, _captureGapCount + 1).toInt();
+    _lastGapStartMs = _lastGapStartMs == null ? start : math.min(_lastGapStartMs!, start).toInt();
+    if (end == null) {
+      _hasOpenEndedGap = true;
+    } else {
+      _lastGapEndMs = _lastGapEndMs == null ? end : math.max(_lastGapEndMs!, end).toInt();
+    }
   }
 
   void _resetAudioWindow(int ptsUs) {
@@ -824,7 +851,10 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     }
     final count = math.min(_windowSamples, _samples.length).toInt();
     final samples = Float32List.fromList(_samples.take(count).toList(growable: false));
-    final startMs = _streamStartMs!.round();
+    final windowStartMs = _streamStartMs!;
+    final startMs = windowStartMs.round();
+    _inferenceStartMs = windowStartMs;
+    _inferenceEndMs = windowStartMs + count * 1000.0 / _sampleRate;
     final consume = finalChunk ? count : math.min(_strideSamples, count).toInt();
     final generation = _audioGeneration;
     final session = _session!;
@@ -854,8 +884,10 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
         })
         .whenComplete(() {
           _inferenceFuture = null;
+          _inferenceStartMs = null;
+          _inferenceEndMs = null;
           _publishTranscript();
-          if (_running && _isCurrentInference(generation)) {
+          if (_running) {
             _startInference(finalChunk: false);
           }
         });
@@ -1020,8 +1052,9 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     final playbackPositionMs = (_player?.currentPosition.inMilliseconds ?? job.playbackPositionMs)
         .clamp(0, SubtitleRetimer.maximumTimeMs)
         .toInt();
+    final timelineOffsetMs = _capturePositionOffsetMs;
     final gapStartMs = _lastGapStartMs?.clamp(0, SubtitleRetimer.maximumTimeMs).toInt();
-    final gapEndMs = _lastGapEndMs?.clamp(0, SubtitleRetimer.maximumTimeMs).toInt();
+    final gapEndMs = _hasOpenEndedGap ? null : _lastGapEndMs?.clamp(0, SubtitleRetimer.maximumTimeMs).toInt();
     final generation = _captureAttemptGeneration;
     final queued = _checkpointTail.then<void>((_) async {
       if (_captureJob == null || _captureAttemptGeneration != generation) return;
@@ -1033,6 +1066,7 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
           expectedCheckpointRevision: _checkpointRevision,
           checkpoint: snapshot,
           playbackPositionMs: playbackPositionMs,
+          timelineOffsetMs: timelineOffsetMs,
           gapCount: _captureGapCount,
           gapStartMs: gapStartMs,
           gapEndMs: gapEndMs,

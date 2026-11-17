@@ -745,15 +745,22 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
                     final audioCanBeChecked = captureIdentity.hasStableAudioIdentity && job.audioHash.isNotEmpty;
                     final audioMismatch = audioCanBeChecked && !job.audioMatches;
                     final stamp = DateTime.fromMillisecondsSinceEpoch(job.startedAtMs).toLocal();
+                    final localizations = MaterialLocalizations.of(context);
+                    final timestamp =
+                        '${localizations.formatMediumDate(stamp)} ${localizations.formatTimeOfDay(TimeOfDay.fromDateTime(stamp))}';
                     final state = job.state == SubtitleCaptureJobState.interrupted
-                        ? 'Interrupted partial'
-                        : 'Captured playback';
+                        ? context.t.subtitleAiUi.interruptedPartialPlaybackCapture
+                        : context.t.subtitleAiUi.capturedPlaybackCapture;
                     final details = [
-                      '$state · ${job.cueCount} cues · ${stamp.toString().substring(0, 16)}',
-                      if (job.gapCount > 0) '${job.gapCount} uncaptured audio gaps recorded',
-                      if (!audioCanBeChecked) 'Audio identity needs revalidation',
-                      if (audioMismatch) 'Different selected audio track',
-                      if (job.wasRecoveredAfterRestart) 'Recovered after app restart',
+                      context.t.subtitleAiUi.savedPlaybackCaptureListLine(
+                        state: state,
+                        cueCount: job.cueCount,
+                        timestamp: timestamp,
+                      ),
+                      if (job.gapCount > 0) context.t.subtitleAiUi.captureGapSummary(count: job.gapCount),
+                      if (!audioCanBeChecked) context.t.subtitleAiUi.audioIdentityNeedsRevalidation,
+                      if (audioMismatch) context.t.subtitleAiUi.differentSelectedAudioTrack,
+                      if (job.wasRecoveredAfterRestart) context.t.subtitleAiUi.captureRecoveredAfterRestart,
                     ].join('\n');
                     return ListTile(
                       leading: const AppIcon(Symbols.history_rounded),

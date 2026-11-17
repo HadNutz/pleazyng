@@ -56,7 +56,8 @@ class ReleaseVersionTests(unittest.TestCase):
         self.assertEqual(self.pubspec.read_bytes(), before)
 
     def test_release_metadata_failure_precedes_auth_ci_and_tag_creation(self):
-        arguments = SimpleNamespace(version="3.0.7", execution_profile="hybrid")
+        arguments = SimpleNamespace(version="3.0.7", execution_profile="hybrid",
+                                    reuse_repaired_run=None)
         with patch.object(release_all_platforms, "parse_args", return_value=arguments), \
                 patch.object(release_all_platforms, "command", side_effect=[
                     SimpleNamespace(stdout="3.0.7+166\n"),

@@ -923,7 +923,12 @@
   },
   "subtitleAiUi": {
     "liveCaptureStart": "Démarrer les sous-titres en direct",
-    "liveCaptureStop": "Arrêter les sous-titres en direct"
+    "liveCaptureStop": "Arrêter les sous-titres en direct",
+    "interruptedPartialPlaybackCapture": "",
+    "capturedPlaybackCapture": "",
+    "savedPlaybackCaptureListLine": "",
+    "audioIdentityNeedsRevalidation": "",
+    "differentSelectedAudioTrack": ""
   },
   "karaokeUi": {
     "allThemesAndCollections": "",

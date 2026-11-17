@@ -13272,6 +13272,21 @@ class Translations$subtitleAiUi$en {
 
 	/// en: 'Optional: keep recognized text for this profile and item across restarts. Audio is never saved. Up to 12 captures and 64 MiB are retained per profile; older captures are removed.'
 	String get saveCaptureRecoveryDescription => 'Optional: keep recognized text for this profile and item across restarts. Audio is never saved. Up to 12 captures and 64 MiB are retained per profile; older captures are removed.';
+
+	/// en: 'Interrupted partial'
+	String get interruptedPartialPlaybackCapture => 'Interrupted partial';
+
+	/// en: 'Captured playback'
+	String get capturedPlaybackCapture => 'Captured playback';
+
+	/// en: '${state} · ${cueCount} cues · ${timestamp}'
+	String savedPlaybackCaptureListLine({required Object state, required Object cueCount, required Object timestamp}) => '${state} · ${cueCount} cues · ${timestamp}';
+
+	/// en: 'Audio identity needs revalidation'
+	String get audioIdentityNeedsRevalidation => 'Audio identity needs revalidation';
+
+	/// en: 'Different selected audio track'
+	String get differentSelectedAudioTrack => 'Different selected audio track';
 }
 
 // Path: externalAccessUi
@@ -22967,6 +22982,11 @@ extension on Translations {
 			'subtitleAiUi.captureAudioNotSaved' => 'Audio was not saved and playback capture cannot resume.',
 			'subtitleAiUi.saveCaptureRecovery' => 'Save transcript recovery on this device',
 			'subtitleAiUi.saveCaptureRecoveryDescription' => 'Optional: keep recognized text for this profile and item across restarts. Audio is never saved. Up to 12 captures and 64 MiB are retained per profile; older captures are removed.',
+			'subtitleAiUi.interruptedPartialPlaybackCapture' => 'Interrupted partial',
+			'subtitleAiUi.capturedPlaybackCapture' => 'Captured playback',
+			'subtitleAiUi.savedPlaybackCaptureListLine' => ({required Object state, required Object cueCount, required Object timestamp}) => '${state} · ${cueCount} cues · ${timestamp}',
+			'subtitleAiUi.audioIdentityNeedsRevalidation' => 'Audio identity needs revalidation',
+			'subtitleAiUi.differentSelectedAudioTrack' => 'Different selected audio track',
 			'externalAccessUi.streamingAvailabilityPoweredByWatchmode' => 'Streaming availability powered by Watchmode',
 			'externalAccessUi.appleMusic' => 'Apple Music',
 			'subtitleLanguageOrderUi.useAtMost12LanguageCodes' => 'Use at most 12 language codes.',
@@ -23289,13 +23309,13 @@ extension on Translations {
 			'karaokeUi.lyricTiming' => 'Lyric timing',
 			'karaokeUi.editWordSyllableTiming' => 'Edit word/syllable timing',
 			'karaokeUi.timeTheLineBeforeEditingSyllables' => 'Set a start time for this lyric line before editing its syllables.',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.splitClearsSpanPronunciationAndConfidence' => 'Splitting clears the span reading and confidence. Merging requires matching singer parts, readings, and confidence.',
 			'karaokeUi.syllableText' => 'Word or syllable text',
 			'karaokeUi.splitSpan' => 'Split span',
 			'karaokeUi.mergeWithNext' => 'Merge with next',
 			'karaokeUi.firstSyllable' => 'First segment text',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.secondSyllable' => 'Second segment text',
 			'karaokeUi.splitBoundaryMs' => 'Split boundary (ms)',
 			'karaokeUi.syllableTextMustMatchLyricExactly' => 'The segments must reproduce the lyric exactly, including spaces.',

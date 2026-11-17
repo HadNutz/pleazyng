@@ -103,6 +103,39 @@ void main() {
     expect(await jobDirectory.list().length, 1);
   });
 
+  test('finishing an open-ended gap clears a prior closed checkpoint boundary', () async {
+    final directory = await Directory.systemTemp.createTemp('subtitle-open-gap-');
+    addTearDown(() => directory.delete(recursive: true));
+    final database = SourceDatabase(NativeDatabase.memory());
+    addTearDown(database.close);
+    final identity = _identity();
+    final store = SubtitleCaptureJobStore.forTesting(database, checkpointRoot: directory, workerToken: 'gap-worker');
+    final job = await store.beginCapture(identity, playbackPositionMs: 1000);
+    await store.saveCheckpoint(
+      identity: identity,
+      job: job,
+      expectedAttemptGeneration: job.attemptGeneration,
+      expectedCheckpointRevision: 0,
+      checkpoint: _checkpoint(),
+      playbackPositionMs: 5000,
+      gapCount: 1,
+      gapStartMs: 3000,
+      gapEndMs: 4000,
+    );
+    final finished = await store.finishCapture(
+      job: job,
+      expectedAttemptGeneration: job.attemptGeneration,
+      interrupted: true,
+      reason: 'live_timeline_reset',
+      gapCount: 2,
+      gapStartMs: 3000,
+      gapEndMs: null,
+    );
+    expect(finished?.gapCount, 2);
+    expect(finished?.gapStartMs, 3000);
+    expect(finished?.gapEndMs, isNull);
+  });
+
   test('checkpoints contain cues only and stale workers cannot replace a recovered prefix', () async {
     final directory = await Directory.systemTemp.createTemp('subtitle-capture-journal-');
     addTearDown(() => directory.delete(recursive: true));
@@ -122,6 +155,7 @@ void main() {
       expectedCheckpointRevision: 0,
       checkpoint: _checkpoint(),
       playbackPositionMs: 12000,
+      timelineOffsetMs: -72000,
       gapCount: 1,
       gapStartMs: 7000,
       gapEndMs: 9000,
@@ -159,6 +193,7 @@ void main() {
     expect(recovered.attemptGeneration, job.attemptGeneration + 1);
     expect(recovered.wasRecoveredAfterRestart, isTrue);
     expect(recovered.gapCount, 1);
+    expect(recovered.timelineOffsetMs, -72000);
     expect(recovered.gapStartMs, 7000);
     expect(recovered.gapEndMs, 9000);
 
@@ -169,6 +204,7 @@ void main() {
       expectedCheckpointRevision: 1,
       checkpoint: _checkpoint(),
       playbackPositionMs: 15000,
+      timelineOffsetMs: -72000,
       gapCount: 1,
       gapStartMs: 7000,
       gapEndMs: 9000,

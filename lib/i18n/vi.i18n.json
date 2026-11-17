@@ -5021,7 +5021,12 @@
     "detectedSpeechLanguage": "",
     "translationQualityWarnings": "",
     "cueCountSummary": "",
-    "seekingUnavailableNote": ""
+    "seekingUnavailableNote": "",
+    "interruptedPartialPlaybackCapture": "",
+    "capturedPlaybackCapture": "",
+    "savedPlaybackCaptureListLine": "",
+    "audioIdentityNeedsRevalidation": "",
+    "differentSelectedAudioTrack": ""
   },
   "externalAccessUi": {
     "streamingAvailabilityPoweredByWatchmode": "",

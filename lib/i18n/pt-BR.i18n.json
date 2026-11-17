@@ -953,7 +953,12 @@
   },
   "subtitleAiUi": {
     "liveCaptureStart": "Iniciar legendas ao vivo",
-    "liveCaptureStop": "Parar legendas ao vivo"
+    "liveCaptureStop": "Parar legendas ao vivo",
+    "interruptedPartialPlaybackCapture": "",
+    "capturedPlaybackCapture": "",
+    "savedPlaybackCaptureListLine": "",
+    "audioIdentityNeedsRevalidation": "",
+    "differentSelectedAudioTrack": ""
   },
   "karaokeUi": {
     "allThemesAndCollections": "",

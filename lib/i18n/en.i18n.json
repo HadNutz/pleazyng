@@ -5128,7 +5128,12 @@
     "captureRecoveredAfterRestart": "Recovered after app restart.",
     "captureAudioNotSaved": "Audio was not saved and playback capture cannot resume.",
     "saveCaptureRecovery": "Save transcript recovery on this device",
-    "saveCaptureRecoveryDescription": "Optional: keep recognized text for this profile and item across restarts. Audio is never saved. Up to 12 captures and 64 MiB are retained per profile; older captures are removed."
+    "saveCaptureRecoveryDescription": "Optional: keep recognized text for this profile and item across restarts. Audio is never saved. Up to 12 captures and 64 MiB are retained per profile; older captures are removed.",
+    "interruptedPartialPlaybackCapture": "Interrupted partial",
+    "capturedPlaybackCapture": "Captured playback",
+    "savedPlaybackCaptureListLine": "${state} · ${cueCount} cues · ${timestamp}",
+    "audioIdentityNeedsRevalidation": "Audio identity needs revalidation",
+    "differentSelectedAudioTrack": "Different selected audio track"
   },
   "externalAccessUi": {
     "streamingAvailabilityPoweredByWatchmode": "Streaming availability powered by Watchmode",

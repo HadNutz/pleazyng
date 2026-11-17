@@ -66,6 +66,21 @@ class _Version14Database extends SourceDatabase {
   );
 }
 
+class _Version15Database extends SourceDatabase {
+  _Version15Database(super.executor);
+
+  @override
+  int get schemaVersion => 15;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (migrator) async {
+      await super.migration.onCreate(migrator);
+      await customStatement('ALTER TABLE subtitle_capture_jobs DROP COLUMN timeline_offset_ms');
+    },
+  );
+}
+
 void main() {
   test('schema 14 upgrade creates the bounded subtitle-capture journal', () async {
     final directory = await Directory.systemTemp.createTemp('plezy-schema14-');
@@ -81,8 +96,31 @@ void main() {
     expect(columns.any((row) => row.read<String>('name') == 'profile_hash'), isTrue);
     expect(columns.any((row) => row.read<String>('name') == 'media_hash'), isTrue);
     expect(columns.any((row) => row.read<String>('name') == 'audio_hash'), isTrue);
+    expect(columns.any((row) => row.read<String>('name') == 'timeline_offset_ms'), isTrue);
     final version = await database.customSelect('PRAGMA user_version').getSingle();
-    expect(version.read<int>('user_version'), 15);
+    expect(version.read<int>('user_version'), 16);
+  });
+
+  test('schema 15 upgrade adds a zero-default capture timeline offset', () async {
+    final directory = await Directory.systemTemp.createTemp('plezy-schema15-');
+    addTearDown(() => directory.delete(recursive: true));
+    final file = File('${directory.path}/publications.sqlite');
+    final old = _Version15Database(NativeDatabase(file));
+    await old.customSelect('SELECT 1').getSingle();
+    await old.customStatement(
+      'INSERT INTO subtitle_capture_jobs('
+      'profile_hash,job_id,media_hash,audio_hash,state,worker_token,started_at,updated) '
+      'VALUES(?,?,?,?,?,?,?,?)',
+      ['a' * 64, '00000000-0000-4000-8000-000000000001', 'b' * 64, '', 'interrupted', 'worker', 1, 1],
+    );
+    await old.close();
+
+    final database = SourceDatabase(NativeDatabase(file));
+    addTearDown(database.close);
+    final row = await database.customSelect('SELECT timeline_offset_ms FROM subtitle_capture_jobs').getSingle();
+    expect(row.read<int>('timeline_offset_ms'), 0);
+    final version = await database.customSelect('PRAGMA user_version').getSingle();
+    expect(version.read<int>('user_version'), 16);
   });
 
   test('schema 9 upgrade indexes identified titles without changing entries or progress', () async {

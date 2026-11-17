@@ -150,3 +150,5 @@ preference persistence, formatting, selection semantics, large text, RTL card
 order and focus. Browser integration tests exercise Arabic interface direction,
 localized page input, EPUB search and comic navigation. Apple resource structure can be checked on Linux; final native
 permission presentation, shaping and speech quality need device testing.
+
+Five recovered saved-capture list labels use explicit English fallback pending translation review. Saved-capture dates and times use the active Material locale.

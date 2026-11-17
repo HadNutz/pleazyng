@@ -75,6 +75,7 @@ final class SubtitleCaptureJob {
     required this.updatedAtMs,
     required this.startedPositionMs,
     required this.playbackPositionMs,
+    required this.timelineOffsetMs,
     required this.interruptedAtMs,
     required this.interruptionReason,
     required this.gapStartMs,
@@ -100,6 +101,10 @@ final class SubtitleCaptureJob {
   final int updatedAtMs;
   final int startedPositionMs;
   final int playbackPositionMs;
+
+  /// Maps the player's current position onto the absolute capture timeline.
+  /// This is non-zero when a live DVR reopen rebased its local clock.
+  final int timelineOffsetMs;
   final int? interruptedAtMs;
   final String interruptionReason;
   final int? gapStartMs;
@@ -244,6 +249,7 @@ final class SubtitleCaptureJobStore {
     required int expectedCheckpointRevision,
     required SubtitleCaptureCheckpoint checkpoint,
     required int playbackPositionMs,
+    int timelineOffsetMs = 0,
     required int gapCount,
     required int? gapStartMs,
     required int? gapEndMs,
@@ -256,6 +262,7 @@ final class SubtitleCaptureJobStore {
       expectedCheckpointRevision: expectedCheckpointRevision,
       checkpoint: checkpoint,
       playbackPositionMs: playbackPositionMs,
+      timelineOffsetMs: timelineOffsetMs,
       gapCount: gapCount,
       gapStartMs: gapStartMs,
       gapEndMs: gapEndMs,
@@ -269,12 +276,14 @@ final class SubtitleCaptureJobStore {
     required int expectedCheckpointRevision,
     required SubtitleCaptureCheckpoint checkpoint,
     required int playbackPositionMs,
+    int timelineOffsetMs = 0,
     required int gapCount,
     required int? gapStartMs,
     required int? gapEndMs,
   }) async {
     _validateIdentity(identity);
     _validatePosition(playbackPositionMs);
+    _validateTimelineOffset(timelineOffsetMs);
     if (gapStartMs != null) _validatePosition(gapStartMs);
     if (gapEndMs != null) _validatePosition(gapEndMs);
     if (job.profileHash != identity.profileHash ||
@@ -332,7 +341,7 @@ final class SubtitleCaptureJobStore {
         final changed = await _database.customUpdate(
           'UPDATE subtitle_capture_jobs SET checkpoint_path=?,checkpoint_sha256=?,checkpoint_bytes=?,'
           'checkpoint_version=?,cue_count=?,word_count=?,checkpoint_revision=checkpoint_revision+1,'
-          'updated=?,playback_position_ms=?,gap_count=?,gap_start_ms=?,gap_end_ms=? '
+          'updated=?,playback_position_ms=?,timeline_offset_ms=?,gap_count=?,gap_start_ms=?,gap_end_ms=? '
           'WHERE profile_hash=? AND job_id=? AND attempt_generation=? AND checkpoint_revision=? '
           'AND worker_token=? AND state=\'capturing\'',
           variables: [
@@ -344,6 +353,7 @@ final class SubtitleCaptureJobStore {
             Variable.withInt(checkpoint.wordTimings.length),
             Variable.withInt(now),
             Variable.withInt(playbackPositionMs),
+            Variable.withInt(timelineOffsetMs),
             Variable.withInt(gapCount),
             gapStartMs == null ? const Variable<int>(null) : Variable.withInt(gapStartMs),
             gapEndMs == null ? const Variable<int>(null) : Variable.withInt(gapEndMs),
@@ -376,12 +386,14 @@ final class SubtitleCaptureJobStore {
     return nextRevision;
   }
 
+  /// Supplying gapCount replaces the gap envelope, including an unknown end.
   Future<SubtitleCaptureJob?> finishCapture({
     required SubtitleCaptureJob job,
     required int expectedAttemptGeneration,
     required bool interrupted,
     required String reason,
     int? interruptedAtMs,
+    int? timelineOffsetMs,
     int? gapStartMs,
     int? gapEndMs,
     int? gapCount,
@@ -393,6 +405,7 @@ final class SubtitleCaptureJobStore {
       interrupted: interrupted,
       reason: reason,
       interruptedAtMs: interruptedAtMs,
+      timelineOffsetMs: timelineOffsetMs,
       gapStartMs: gapStartMs,
       gapEndMs: gapEndMs,
       gapCount: gapCount,
@@ -405,6 +418,7 @@ final class SubtitleCaptureJobStore {
     required bool interrupted,
     required String reason,
     int? interruptedAtMs,
+    int? timelineOffsetMs,
     int? gapStartMs,
     int? gapEndMs,
     int? gapCount,
@@ -413,6 +427,7 @@ final class SubtitleCaptureJobStore {
       throw ArgumentError.value(reason, 'reason', 'Use a bounded reason code.');
     }
     if (interruptedAtMs != null) _validatePosition(interruptedAtMs);
+    if (timelineOffsetMs != null) _validateTimelineOffset(timelineOffsetMs);
     if (gapStartMs != null) _validatePosition(gapStartMs);
     if (gapEndMs != null) _validatePosition(gapEndMs);
     final now = DateTime.now().millisecondsSinceEpoch;
@@ -420,14 +435,17 @@ final class SubtitleCaptureJobStore {
       if (await _isProfileDeleted(job.profileHash)) return;
       await _database.customUpdate(
         'UPDATE subtitle_capture_jobs SET state=?,attempt_generation=attempt_generation+1,'
-        'interrupted_at_ms=?,interruption_reason=?,gap_start_ms=COALESCE(?,gap_start_ms),'
-        'gap_end_ms=COALESCE(?,gap_end_ms),gap_count=COALESCE(?,gap_count),updated=? '
+        'interrupted_at_ms=?,timeline_offset_ms=COALESCE(?,timeline_offset_ms),interruption_reason=?,gap_start_ms=COALESCE(?,gap_start_ms),'
+        'gap_end_ms=CASE WHEN ? THEN ? ELSE COALESCE(?,gap_end_ms) END,gap_count=COALESCE(?,gap_count),updated=? '
         'WHERE profile_hash=? AND job_id=? AND state=\'capturing\' AND attempt_generation=? AND worker_token=?',
         variables: [
           Variable.withString(interrupted ? 'interrupted' : 'captured'),
           interruptedAtMs == null ? const Variable<int>(null) : Variable.withInt(interruptedAtMs),
+          timelineOffsetMs == null ? const Variable<int>(null) : Variable.withInt(timelineOffsetMs),
           Variable.withString(reason),
           gapStartMs == null ? const Variable<int>(null) : Variable.withInt(gapStartMs),
+          Variable.withInt(gapCount == null ? 0 : 1),
+          gapEndMs == null ? const Variable<int>(null) : Variable.withInt(gapEndMs),
           gapEndMs == null ? const Variable<int>(null) : Variable.withInt(gapEndMs),
           gapCount == null ? const Variable<int>(null) : Variable.withInt(gapCount),
           Variable.withInt(now),
@@ -568,6 +586,7 @@ final class SubtitleCaptureJobStore {
     updatedAtMs: row.read<int>('updated'),
     startedPositionMs: row.read<int>('started_position_ms'),
     playbackPositionMs: row.read<int>('playback_position_ms'),
+    timelineOffsetMs: row.read<int>('timeline_offset_ms'),
     interruptedAtMs: row.readNullable<int>('interrupted_at_ms'),
     interruptionReason: row.read<String>('interruption_reason'),
     gapStartMs: row.readNullable<int>('gap_start_ms'),
@@ -873,6 +892,12 @@ final class SubtitleCaptureJobStore {
   static void _validatePosition(int positionMs) {
     if (positionMs < 0 || positionMs > SubtitleRetimer.maximumTimeMs) {
       throw ArgumentError.value(positionMs, 'positionMs', 'Playback position is outside the supported range.');
+    }
+  }
+
+  static void _validateTimelineOffset(int offsetMs) {
+    if (offsetMs < -SubtitleRetimer.maximumTimeMs || offsetMs > SubtitleRetimer.maximumTimeMs) {
+      throw ArgumentError.value(offsetMs, 'offsetMs', 'Capture timeline offset is outside the supported range.');
     }
   }
 

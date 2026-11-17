@@ -962,7 +962,12 @@
   },
   "subtitleAiUi": {
     "liveCaptureStart": "Iniciar legendas em direto",
-    "liveCaptureStop": "Parar legendas em direto"
+    "liveCaptureStop": "Parar legendas em direto",
+    "interruptedPartialPlaybackCapture": "",
+    "capturedPlaybackCapture": "",
+    "savedPlaybackCaptureListLine": "",
+    "audioIdentityNeedsRevalidation": "",
+    "differentSelectedAudioTrack": ""
   },
   "karaokeUi": {
     "allThemesAndCollections": "",

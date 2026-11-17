@@ -62,7 +62,7 @@ class SourceDatabase extends GeneratedDatabase {
   }
 
   @override
-  int get schemaVersion => 15;
+  int get schemaVersion => 16;
   @override
   Iterable<TableInfo<Table, Object?>> get allTables => const [];
   @override
@@ -220,6 +220,10 @@ class SourceDatabase extends GeneratedDatabase {
       }
       if (from < 15) {
         await _createSubtitleCaptureJobSchema();
+      } else if (from < 16) {
+        await customStatement(
+          'ALTER TABLE subtitle_capture_jobs ADD COLUMN timeline_offset_ms INTEGER NOT NULL DEFAULT 0',
+        );
       }
     },
   );
@@ -251,6 +255,7 @@ class SourceDatabase extends GeneratedDatabase {
       'checkpoint_revision INTEGER NOT NULL DEFAULT 0, attempt_generation INTEGER NOT NULL DEFAULT 1, '
       'worker_token TEXT NOT NULL, started_at INTEGER NOT NULL, updated INTEGER NOT NULL, '
       'started_position_ms INTEGER NOT NULL DEFAULT 0, playback_position_ms INTEGER NOT NULL DEFAULT 0, '
+      'timeline_offset_ms INTEGER NOT NULL DEFAULT 0, '
       'interrupted_at_ms INTEGER, interruption_reason TEXT NOT NULL DEFAULT \'\', '
       'gap_start_ms INTEGER, gap_end_ms INTEGER, gap_count INTEGER NOT NULL DEFAULT 0, '
       'PRIMARY KEY(profile_hash,job_id))',
