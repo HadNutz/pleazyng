@@ -464,6 +464,58 @@ class DependencySafetyTests(unittest.TestCase):
 
 
 class XcodePhaseIntegrationTests(unittest.TestCase):
+    def test_tvos_amsmb2_dynamic_product_is_embedded_and_signed_before_pruning(self) -> None:
+        repo = Path(__file__).resolve().parents[2]
+        project = (repo / "tvos/Runner.xcodeproj/project.pbxproj").read_text(encoding="utf-8")
+        linked = re.search(
+            r"(?m)^\s*([0-9A-F]{23,24}) /\* AMSMB2 in Frameworks \*/ = \{isa = PBXBuildFile; productRef = ([0-9A-F]{23,24}) /\* AMSMB2 \*/; \};",
+            project,
+        )
+        self.assertIsNotNone(linked)
+        embed = re.search(
+            r"(?m)^\s*([0-9A-F]{24}) /\* AMSMB2 in Embed Frameworks \*/ = \{isa = PBXBuildFile; productRef = ([0-9A-F]{23,24}) /\* AMSMB2 \*/; settings = \{ATTRIBUTES = \(([^)]*)\); \}; \};",
+            project,
+        )
+        self.assertIsNotNone(embed)
+        assert linked is not None and embed is not None
+        self.assertEqual(embed.group(2), linked.group(2))
+        attributes = {item.strip() for item in embed.group(3).split(",") if item.strip()}
+        self.assertEqual(attributes, {"CodeSignOnCopy", "RemoveHeadersOnCopy"})
+
+        phase = re.search(
+            r"(?ms)^\s*([0-9A-F]{24}) /\* Embed Frameworks \*/ = \{(.*?)^\s*\};",
+            project,
+        )
+        self.assertIsNotNone(phase)
+        assert phase is not None
+        self.assertIn("isa = PBXCopyFilesBuildPhase;", phase.group(2))
+        self.assertIn("dstSubfolderSpec = 10;", phase.group(2))
+        self.assertRegex(phase.group(2), rf"files = \(\s*{embed.group(1)} /\* AMSMB2 in Embed Frameworks \*/,")
+
+        native_targets = re.search(
+            r"(?ms)/\* Begin PBXNativeTarget section \*/(.*?)/\* End PBXNativeTarget section \*/",
+            project,
+        )
+        self.assertIsNotNone(native_targets)
+        assert native_targets is not None
+        runner = re.search(
+            r"(?ms)^\s*[0-9A-F]{23,24} /\* Runner \*/ = \{(.*?)^\s*\};",
+            native_targets.group(1),
+        )
+        self.assertIsNotNone(runner)
+        assert runner is not None
+        phases = re.search(r"buildPhases = \((.*?)\);", runner.group(1), re.S)
+        self.assertIsNotNone(phases)
+        assert phases is not None
+        phase_ids = re.findall(r"([0-9A-F]{23,24}) /\* .*? \*/", phases.group(1))
+        prune_phase = re.search(
+            r"(?m)^\s*([0-9A-F]{23,24}) /\* Prune verified static MPVKit wrappers \*/ = \{",
+            project,
+        )
+        self.assertIsNotNone(prune_phase)
+        assert prune_phase is not None
+        self.assertLess(phase_ids.index(phase.group(1)), phase_ids.index(prune_phase.group(1)))
+
     def test_prune_phase_is_last_on_each_runner_target(self) -> None:
         repo = Path(__file__).resolve().parents[2]
         for platform in ("ios", "tvos", "macos"):
@@ -523,6 +575,13 @@ class IdempotentPruneTests(unittest.TestCase):
             app_framework_candidate, _destination = ResourceSafetyTests().make_candidate(source_framework)
             app = app_framework_candidate.app_path.parents[1]
             frameworks = app / "Frameworks"
+            amsmb2 = frameworks / "AMSMB2.framework"
+            write_plist(amsmb2 / "Info.plist", {
+                "CFBundleIdentifier": "com.amosavian.AMSMB2",
+                "CFBundleExecutable": "AMSMB2",
+                "CFBundlePackageType": "FMWK",
+            })
+            (amsmb2 / "AMSMB2").write_bytes(b"\xcf\xfa\xed\xfe" + b"\0" * 60)
             receipt_path = root / "Derived/receipt.json"
             args = argparse.Namespace(
                 app=None,
@@ -554,6 +613,8 @@ class IdempotentPruneTests(unittest.TestCase):
                 first = prune.run(args)
                 self.assertEqual(first["action"], "removed-verified-static-wrappers")
                 self.assertFalse(app_framework_candidate.app_path.exists())
+                self.assertTrue(amsmb2.is_dir())
+                self.assertEqual(prune.read_plist(amsmb2 / "Info.plist")["CFBundleIdentifier"], "com.amosavian.AMSMB2")
                 self.assertEqual(prune.run(args)["action"], "already-pruned-verified")
                 saved_notice = app / "Resources/PleazyngStaticFrameworkResources/Libavcodec/pleazyng-codecs/xevd/COPYING"
                 self.assertEqual(saved_notice.read_bytes(), b"license bytes\n")

@@ -53,6 +53,27 @@ class AppBundleInfoTests(unittest.TestCase):
                 probe._verify_app_bundle_info(app, output)
             self.assertTrue((output / "app-bundle-info.json").is_file())
 
+    def test_app_bundle_snapshots_preserve_identity_and_layout(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            app, output = self.make_app(Path(temp), self.valid_info())
+            (app / probe.APP_EXECUTABLE).write_text("executable", encoding="utf-8")
+            (app / "Frameworks/AMSMB2.framework").mkdir(parents=True)
+            snapshot = probe._capture_app_bundle_snapshot(app, output, stage="after-sign")
+            self.assertEqual(snapshot["bundle_identifier"], probe.BUNDLE_ID)
+            self.assertTrue(snapshot["executable_exists"])
+            self.assertEqual(snapshot["framework_entries"], ["AMSMB2.framework"])
+            self.assertTrue((output / "app-bundle-after-sign-info.plist").is_file())
+            self.assertTrue((output / "app-bundle-after-sign-snapshot.json").is_file())
+
+    def test_app_bundle_snapshot_rejects_missing_identity_after_recording_plist(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            info = self.valid_info()
+            del info["CFBundleIdentifier"]
+            app, output = self.make_app(Path(temp), info)
+            with self.assertRaisesRegex(probe.ProbeError, "lost CFBundleIdentifier"):
+                probe._capture_app_bundle_snapshot(app, output, stage="after-prune")
+            self.assertTrue((output / "app-bundle-after-prune-info.plist").is_file())
+
     def test_non_app_bundle_identifier_type_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             info = self.valid_info()
@@ -132,6 +153,33 @@ class TargetBuildSettingsTests(unittest.TestCase):
         self.assertNotIn("-target", command)
         self.assertIn("-derivedDataPath", command)
 
+    def test_resolve_settings_and_build_commands_share_project_scheme_and_paths(self) -> None:
+        project = Path("Probe.xcodeproj")
+        simulator = "simulator-id"
+        derived = Path("DerivedData")
+        packages = Path("SourcePackages")
+        commands = {
+            "resolve": probe._resolve_packages_command(project, derived, packages),
+            "settings": probe._show_build_settings_command(project, simulator, derived, packages),
+            "build": probe._build_probe_command(project, simulator, derived, packages, "arm64"),
+        }
+        probe._validate_xcode_command_sequence(
+            commands,
+            project=project,
+            simulator_id=simulator,
+            derived_data=derived,
+            package_cache=packages,
+        )
+        commands["settings"][commands["settings"].index("-scheme") + 1] = "WrongScheme"
+        with self.assertRaisesRegex(probe.ProbeError, "inconsistent -scheme"):
+            probe._validate_xcode_command_sequence(
+                commands,
+                project=project,
+                simulator_id=simulator,
+                derived_data=derived,
+                package_cache=packages,
+            )
+
 
 class RuntimeMarkerTests(unittest.TestCase):
     def test_swift_probe_and_runner_use_tvOS_cache_storage(self) -> None:
@@ -141,6 +189,13 @@ class RuntimeMarkerTests(unittest.TestCase):
         self.assertIn(".cachesDirectory", text)
         self.assertIn("createDirectory(at: cacheDirectory, withIntermediateDirectories: true)", text)
         self.assertNotIn(".documentDirectory", text)
+
+    def test_bundle_identity_probe_uses_foundation_bundle_url(self) -> None:
+        script = Path(__file__).resolve().parents[1] / "apple/static-mpv-framework-probe/inspect_bundle.swift"
+        source = script.read_text(encoding="utf-8")
+        self.assertIn("Bundle(url: appURL)", source)
+        self.assertIn("bundle?.bundleIdentifier", source)
+        self.assertIn("bundle?.executableURL", source)
 
 
 if __name__ == "__main__":

@@ -23,6 +23,7 @@ APP_EXECUTABLE = "StaticMPVKitProbe"
 APP_VERSION = "1.0.0"
 APP_BUILD_VERSION = "1"
 APP_MARKER_RELATIVE_PATH = Path("Library/Caches/avcodec-version.txt")
+MAX_INSTALLER_LOG_BYTES = 2 * 1024 * 1024
 
 
 class ProbeError(RuntimeError):
@@ -165,6 +166,85 @@ def _verify_app_bundle_info(app: Path, output_dir: Path) -> dict[str, Any]:
     return report
 
 
+def _capture_app_bundle_snapshot(app: Path, output_dir: Path, *, stage: str) -> dict[str, Any]:
+    if not re.fullmatch(r"[a-z][a-z0-9-]{0,31}", stage):
+        raise ProbeError(f"Unsafe app bundle snapshot stage: {stage!r}")
+    info_path = app / "Info.plist"
+    if info_path.is_symlink() or not info_path.is_file():
+        raise ProbeError(f"App bundle snapshot has no regular Info.plist at stage {stage}: {info_path}")
+    content = info_path.read_bytes()
+    if len(content) > 1024 * 1024:
+        raise ProbeError(f"App bundle snapshot Info.plist exceeds 1 MiB at stage {stage}")
+    try:
+        info = plistlib.loads(content)
+    except (plistlib.InvalidFileException, ValueError) as exc:
+        (output_dir / f"app-bundle-{stage}-info.plist").write_bytes(content)
+        raise ProbeError(f"App bundle Info.plist is invalid at stage {stage}") from exc
+    if not isinstance(info, dict):
+        (output_dir / f"app-bundle-{stage}-info.plist").write_bytes(content)
+        raise ProbeError(f"App bundle Info.plist root is not a dictionary at stage {stage}")
+
+    executable_name = info.get("CFBundleExecutable")
+    executable_path = app / executable_name if isinstance(executable_name, str) and executable_name else None
+    executable_exists = executable_path is not None and executable_path.is_file() and not executable_path.is_symlink()
+    frameworks = _frameworks_path(app)
+    framework_entries = None
+    if frameworks.exists():
+        if frameworks.is_symlink() or not frameworks.is_dir():
+            raise ProbeError(f"App Frameworks path is unsafe at stage {stage}: {frameworks}")
+        framework_entries = sorted(item.name for item in frameworks.iterdir())
+
+    snapshot = {
+        "stage": stage,
+        "app_path": str(app),
+        "root_entries": sorted(item.name for item in app.iterdir()),
+        "info_plist_path": str(info_path),
+        "info_plist_size": len(content),
+        "info_plist_sha256": hashlib.sha256(content).hexdigest(),
+        "bundle_identifier": info.get("CFBundleIdentifier"),
+        "package_type": info.get("CFBundlePackageType"),
+        "executable_name": executable_name,
+        "executable_path": str(executable_path) if executable_path else None,
+        "executable_exists": executable_exists,
+        "framework_entries": framework_entries,
+    }
+    (output_dir / f"app-bundle-{stage}-info.plist").write_bytes(content)
+    (output_dir / f"app-bundle-{stage}-snapshot.json").write_text(
+        json.dumps(snapshot, indent=2, sort_keys=True) + "\n", encoding="utf-8",
+    )
+    if snapshot["bundle_identifier"] != BUNDLE_ID:
+        raise ProbeError(f"App bundle snapshot lost CFBundleIdentifier at stage {stage}")
+    return snapshot
+
+
+def _require_unchanged_app_info(snapshot: dict[str, Any], expected_sha256: str) -> None:
+    if snapshot.get("info_plist_sha256") != expected_sha256:
+        raise ProbeError(
+            f"App Info.plist changed during {snapshot.get('stage')}; see its preserved snapshot"
+        )
+
+
+def _capture_installer_log(simulator_id: str, output_dir: Path) -> dict[str, Any]:
+    command = [
+        "xcrun", "simctl", "spawn", simulator_id,
+        "log", "show", "--style", "compact", "--last", "2m",
+        "--predicate",
+        'process == "installd" OR process == "CoreSimulatorBridge" OR eventMessage CONTAINS[c] "StaticMPVKitProbe" OR eventMessage CONTAINS[c] "Missing bundle ID"',
+    ]
+    result = subprocess.run(command, text=True, capture_output=True, check=False)
+    combined = result.stdout + ("\n" + result.stderr if result.stderr else "")
+    truncated = len(combined.encode("utf-8", errors="replace")) > MAX_INSTALLER_LOG_BYTES
+    if truncated:
+        encoded = combined.encode("utf-8", errors="replace")[-MAX_INSTALLER_LOG_BYTES:]
+        combined = "[truncated to final 2 MiB]\n" + encoded.decode("utf-8", errors="replace")
+    (output_dir / "simulator-installer-log.txt").write_text(combined, encoding="utf-8")
+    report = {"exit_status": result.returncode, "truncated": truncated, "captured_bytes": len(combined.encode("utf-8"))}
+    (output_dir / "simulator-installer-log.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8",
+    )
+    return report
+
+
 def _require_target_build_settings(stdout: str, output_dir: Path) -> dict[str, str]:
     settings: dict[str, str] = {}
     in_probe_target = False
@@ -228,6 +308,71 @@ def _show_build_settings_command(
     ]
 
 
+def _resolve_packages_command(project: Path, derived_data: Path, package_cache: Path) -> list[str]:
+    return [
+        "xcodebuild", "-resolvePackageDependencies",
+        "-project", str(project), "-scheme", "Probe",
+        "-clonedSourcePackagesDirPath", str(package_cache),
+        "-derivedDataPath", str(derived_data),
+    ]
+
+
+def _build_probe_command(
+    project: Path,
+    simulator_id: str,
+    derived_data: Path,
+    package_cache: Path,
+    host_arch: str,
+) -> list[str]:
+    return [
+        "xcodebuild", "build",
+        "-project", str(project), "-scheme", "Probe",
+        "-configuration", "Debug",
+        "-destination", f"id={simulator_id}",
+        "-derivedDataPath", str(derived_data),
+        "-clonedSourcePackagesDirPath", str(package_cache),
+        "ARCHS=" + host_arch,
+        "ONLY_ACTIVE_ARCH=YES",
+        "CODE_SIGNING_ALLOWED=YES",
+        "CODE_SIGN_IDENTITY=-",
+    ]
+
+
+def _validate_xcode_command_sequence(
+    commands: dict[str, list[str]],
+    *,
+    project: Path,
+    simulator_id: str,
+    derived_data: Path,
+    package_cache: Path,
+) -> None:
+    expected_names = ("resolve", "settings", "build")
+    if tuple(commands) != expected_names:
+        raise ProbeError("Xcode command plan must contain resolve, settings, and build in order")
+    expected_flags = {
+        "-project": str(project),
+        "-scheme": "Probe",
+        "-derivedDataPath": str(derived_data),
+        "-clonedSourcePackagesDirPath": str(package_cache),
+    }
+    for name, command in commands.items():
+        if len(command) < 2 or command[0] != "xcodebuild":
+            raise ProbeError(f"Xcode {name} command is malformed")
+        for flag, value in expected_flags.items():
+            if command.count(flag) != 1 or command[command.index(flag) + 1] != value:
+                raise ProbeError(f"Xcode {name} command has inconsistent {flag} configuration")
+    for name in ("settings", "build"):
+        command = commands[name]
+        if command.count("-destination") != 1 or command[command.index("-destination") + 1] != f"id={simulator_id}":
+            raise ProbeError(f"Xcode {name} command does not target the selected simulator")
+    if "-resolvePackageDependencies" not in commands["resolve"]:
+        raise ProbeError("First Xcode command must resolve the pinned package graph")
+    if "-showBuildSettings" not in commands["settings"]:
+        raise ProbeError("Second Xcode command must inspect target build settings")
+    if commands["build"][1] != "build":
+        raise ProbeError("Final Xcode command must build the probe app")
+
+
 def run(args: argparse.Namespace) -> dict[str, Any]:
     source_root = args.source_root.resolve(strict=True)
     output_dir = args.output_dir.resolve()
@@ -259,19 +404,32 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "PLEAZYNG_STATIC_FRAMEWORK_PRUNE_RECEIPT": str(inspect_receipt),
     })
 
-    _run([
-        "xcodebuild", "-resolvePackageDependencies",
-        "-project", str(project), "-scheme", "Probe",
-        "-clonedSourcePackagesDirPath", str(package_cache),
-        "-derivedDataPath", str(derived_data),
-    ], output_dir=output_dir, name="resolve-packages")
-
     simulator_id, simulator_name = _choose_tvos_simulator(output_dir)
     _run(["xcrun", "simctl", "boot", simulator_id], output_dir=output_dir, name="simulator-boot", check=False)
     _run(["xcrun", "simctl", "bootstatus", simulator_id, "-b"], output_dir=output_dir, name="simulator-bootstatus")
 
+    host_arch = platform.machine().lower()
+    if host_arch not in {"arm64", "x86_64"}:
+        raise ProbeError(f"Unsupported simulator runner architecture: {host_arch}")
+    command_plan = {
+        "resolve": _resolve_packages_command(project, derived_data, package_cache),
+        "settings": _show_build_settings_command(project, simulator_id, derived_data, package_cache),
+        "build": _build_probe_command(project, simulator_id, derived_data, package_cache, host_arch),
+    }
+    _validate_xcode_command_sequence(
+        command_plan,
+        project=project,
+        simulator_id=simulator_id,
+        derived_data=derived_data,
+        package_cache=package_cache,
+    )
+    (output_dir / "xcode-command-plan.json").write_text(
+        json.dumps(command_plan, indent=2, sort_keys=True) + "\n", encoding="utf-8",
+    )
+
+    _run(command_plan["resolve"], output_dir=output_dir, name="resolve-packages")
     _run(
-        _show_build_settings_command(project, simulator_id, derived_data, package_cache),
+        command_plan["settings"],
         output_dir=output_dir,
         name="show-build-settings",
     )
@@ -279,21 +437,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         (output_dir / "show-build-settings.stdout.txt").read_text(encoding="utf-8"), output_dir,
     )
 
-    host_arch = platform.machine().lower()
-    if host_arch not in {"arm64", "x86_64"}:
-        raise ProbeError(f"Unsupported simulator runner architecture: {host_arch}")
-    _run([
-        "xcodebuild", "build",
-        "-project", str(project), "-scheme", "Probe",
-        "-configuration", "Debug",
-        "-destination", f"id={simulator_id}",
-        "-derivedDataPath", str(derived_data),
-        "-clonedSourcePackagesDirPath", str(package_cache),
-        "ARCHS=" + host_arch,
-        "ONLY_ACTIVE_ARCH=YES",
-        "CODE_SIGNING_ALLOWED=YES",
-        "CODE_SIGN_IDENTITY=-",
-    ], output_dir=output_dir, name="build-inspect", env=environment)
+    _run(command_plan["build"], output_dir=output_dir, name="build-inspect", env=environment)
     inspect = _require_receipt(inspect_receipt, expected_action="validated-would-prune")
     app = derived_data / "Build/Products/Debug-appletvsimulator/StaticMPVKitProbe.app"
     if not app.is_dir():
@@ -316,6 +460,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         or "none of the keys that we expect" in baseline_text
     ):
         raise ProbeError("Baseline install did not reproduce the known codeless static-framework plist failure")
+    baseline_snapshot = _capture_app_bundle_snapshot(app, output_dir, stage="after-baseline")
+    _require_unchanged_app_info(baseline_snapshot, app_bundle_info["sha256"])
 
     apply_command = [
         "python3", str(source_root / "scripts/apple/prune_static_mpv_frameworks.py"),
@@ -332,12 +478,44 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     for framework in inspect["frameworks"]:
         if (frameworks / f"{framework['name']}.framework").exists():
             raise ProbeError(f"Verified static framework wrapper remains after pruning: {framework['name']}")
+    post_prune_snapshot = _capture_app_bundle_snapshot(app, output_dir, stage="after-prune")
+    _require_unchanged_app_info(post_prune_snapshot, app_bundle_info["sha256"])
 
     _run([
         "codesign", "--force", "--deep", "--sign", "-", "--timestamp=none", str(app),
     ], output_dir=output_dir, name="resign-pruned-app")
     _run(["codesign", "--verify", "--deep", "--strict", str(app)], output_dir=output_dir, name="verify-signature")
-    _run(["xcrun", "simctl", "install", simulator_id, str(app)], output_dir=output_dir, name="pruned-install")
+    post_sign_snapshot = _capture_app_bundle_snapshot(app, output_dir, stage="after-sign")
+    _require_unchanged_app_info(post_sign_snapshot, app_bundle_info["sha256"])
+    bundle_inspection_script = Path(__file__).resolve().parent / "static-mpv-framework-probe/inspect_bundle.swift"
+    _run(
+        ["swift", str(bundle_inspection_script), str(app)],
+        output_dir=output_dir,
+        name="foundation-bundle-inspection",
+        check=False,
+    )
+    foundation_output = output_dir / "foundation-bundle-inspection.stdout.txt"
+    try:
+        foundation_report = json.loads(foundation_output.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        foundation_report = {"parse_error": True}
+    (output_dir / "foundation-bundle-inspection.json").write_text(
+        json.dumps(foundation_report, indent=2, sort_keys=True) + "\n", encoding="utf-8",
+    )
+    pruned_install = _run(
+        ["xcrun", "simctl", "install", simulator_id, str(app)],
+        output_dir=output_dir,
+        name="pruned-install",
+        check=False,
+    )
+    if pruned_install.returncode != 0:
+        _capture_installer_log(simulator_id, output_dir)
+        raise ProbeError("Pruned app failed simulator installation; see installer, plist, and bundle snapshots")
+    if (
+        foundation_report.get("bundle_identifier") != BUNDLE_ID
+        or foundation_report.get("executable_exists") is not True
+    ):
+        raise ProbeError("Foundation Bundle(url:) did not find the expected app identity/executable")
     _run(["xcrun", "simctl", "launch", simulator_id, BUNDLE_ID], output_dir=output_dir, name="launch")
 
     container_result = subprocess.run(

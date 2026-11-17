@@ -10,6 +10,7 @@
 		4682CC1153F35A6F291C2F03 /* PlezyNGDVRuntimeAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 9B606A502EAB8379DC5EF951 /* PlezyNGDVRuntimeAPI */; };
 		B1D51A6A2F00110000000091 /* MilkRustNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = B1D51A6A2F00110000000090 /* MilkRustNativeHost.mm */; };
 		A14B3C5D6E7F8091A2B3C4D /* AMSMB2 in Frameworks */ = {isa = PBXBuildFile; productRef = B14B3C5D6E7F8091A2B3C4D /* AMSMB2 */; };
+		C0A1B2C3D4E5F60718293A4B /* AMSMB2 in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B14B3C5D6E7F8091A2B3C4D /* AMSMB2 */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0092CB48B2682E3D69B1A09F /* TopShelfFetchContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D44F4361594F517C002DC45 /* TopShelfFetchContractTests.swift */; };
 		013E913372C9904E64697D05 /* ShelfItemMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C339C20E52A6F6F6725EF31F /* ShelfItemMapper.swift */; };
 		055E465F9095D0B6E9B91D46 /* PathProviderPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41AA251EF365516E2AC5287 /* PathProviderPlugin.swift */; };
@@ -98,6 +99,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				C0A1B2C3D4E5F60718293A4B /* AMSMB2 in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
