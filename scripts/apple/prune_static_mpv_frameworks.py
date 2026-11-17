@@ -41,6 +41,13 @@ CPU_ARCH = {
     0x0100000C: "arm64",
     0x0200000C: "arm64_32",
 }
+ARM64_CPU_TYPE = 0x0100000C
+ARM64_SUBTYPE_CAPABILITY_MASK = 0xFF000000
+ARM64_ARCH_BY_SUBTYPE = {
+    0: "arm64",
+    1: "arm64v8",
+    2: "arm64e",
+}
 
 
 class PruneError(RuntimeError):
@@ -171,6 +178,23 @@ def static_archive_slices(path: Path) -> tuple[tuple[int | None, int | None], ..
     return tuple(slices)
 
 
+def archive_architecture(cpu: int, subtype: int, path: Path) -> str:
+    """Name a Mach-O CPU/subtype pair without collapsing ARM64 variants."""
+    cpu_type = cpu & 0xFFFFFFFF
+    if cpu_type == ARM64_CPU_TYPE:
+        subtype_value = (subtype & 0xFFFFFFFF) & ~ARM64_SUBTYPE_CAPABILITY_MASK
+        architecture = ARM64_ARCH_BY_SUBTYPE.get(subtype_value)
+        if architecture is None:
+            raise PruneError(
+                f"Unknown ARM64 CPU subtype 0x{subtype_value:08x} in static archive: {path}"
+            )
+        return architecture
+    try:
+        return CPU_ARCH[cpu_type]
+    except KeyError as exc:
+        raise PruneError(f"Unknown static archive CPU type in {path}: {cpu_type}") from exc
+
+
 def archive_architectures(path: Path, declared: set[str]) -> tuple[str, ...] | None:
     slices = static_archive_slices(path)
     if slices is None:
@@ -189,10 +213,11 @@ def archive_architectures(path: Path, declared: set[str]) -> tuple[str, ...] | N
     else:
         if any(cpu is None for cpu, _subtype in slices):
             raise PruneError(f"Mixed thin/fat architecture records: {path}")
-        try:
-            actual = {CPU_ARCH[cpu & 0xFFFFFFFF] for cpu, _subtype in slices if cpu is not None}
-        except KeyError as exc:
-            raise PruneError(f"Unknown static archive CPU type in {path}: {exc.args[0]}") from exc
+        actual = {
+            archive_architecture(cpu, subtype, path)
+            for cpu, subtype in slices
+            if cpu is not None and subtype is not None
+        }
     if not actual or actual != declared:
         raise PruneError(f"Static archive architectures {sorted(actual)} differ from XCFramework declaration {sorted(declared)}: {path}")
     return tuple(sorted(actual))
