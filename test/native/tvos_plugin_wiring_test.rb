@@ -1,12 +1,24 @@
-require 'minitest/autorun'
 require 'tmpdir'
 require 'fileutils'
 require 'open3'
 require 'rbconfig'
 require 'xcodeproj'
 
-class TvOSPluginWiringTest < Minitest::Test
+class TvOSPluginWiringTest
   ROOT = File.expand_path('../..', __dir__)
+
+  attr_reader :checks
+
+  def assert(value, message = 'Assertion failed')
+    @checks = (@checks || 0) + 1
+    raise message unless value
+  end
+
+  def refute_nil(value) = assert(!value.nil?)
+  def assert_nil(value) = assert(value.nil?)
+  def assert_equal(expected, actual) = assert(expected == actual, "Expected #{expected.inspect}, got #{actual.inspect}")
+  def assert_empty(value) = assert(value.empty?, "Expected empty collection, got #{value.inspect}")
+  def assert_includes(collection, value) = assert(collection.include?(value), "Missing #{value.inspect}")
 
   def test_rewiring_preserves_package_link_and_embed_entries_and_removes_orphans
     Dir.mktmpdir('pleazyng-tvos-wiring-') do |scratch|
@@ -51,3 +63,7 @@ class TvOSPluginWiringTest < Minitest::Test
     end
   end
 end
+
+test = TvOSPluginWiringTest.new
+test.test_rewiring_preserves_package_link_and_embed_entries_and_removes_orphans
+puts "tvOS plugin wiring: #{test.checks} checks passed"

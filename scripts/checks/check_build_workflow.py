@@ -1572,7 +1572,7 @@ tvos_dependency_report = named_step(tvos_job, "Retain tvOS runtime dependency re
 tvos_package_upload = named_step(tvos_job, "Upload tvOS package")
 tvos_unsigned_attestation = named_step(tvos_job, "Attest unsigned tvOS developer package")
 require(
-    'gem install minitest --version 5.25.5 --no-document' in tvos_wiring_regression
+    'minitest' not in tvos_wiring_regression
     and 'ruby test/native/tvos_plugin_wiring_test.rb' in tvos_wiring_regression
     and tvos_job.find("      - name: Install tvOS CocoaPods dependencies")
     < tvos_job.find("      - name: Test tvOS package-product framework wiring")
