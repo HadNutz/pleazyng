@@ -9,6 +9,9 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import tempfile
+
+from release_coverage import missing_assets
 
 
 REPOSITORY = "snapetech-org/pleazyng"
@@ -17,6 +20,7 @@ SIDECAR_PROVENANCE = "APPLE-STORE-RECOVERY.json"
 IOS_ASSET = "pleazyng-ios-appstore.ipa"
 TVOS_ASSET = "pleazyng-tvos-appstore.ipa"
 REPAIR_ASSETS = (IOS_ASSET, TVOS_ASSET, SIDECAR_CHECKSUMS, SIDECAR_PROVENANCE)
+CORE_BASELINE_ASSETS = ("SHA256SUMS.txt", "platform-reuse-provenance.json", "pleazyng-macos.dmg")
 
 
 class AppendError(RuntimeError):
@@ -61,6 +65,56 @@ def _tag_commit(repository: str, tag: str) -> str:
 def _sha256(path: Path) -> str:
     with path.open("rb") as source:
         return hashlib.file_digest(source, "sha256").hexdigest()
+
+
+def _verify_original_core_baseline(repository: str, tag: str, prior: dict[str, str]) -> dict:
+    if missing_assets(set(prior)) or any(name not in prior for name in CORE_BASELINE_ASSETS):
+        raise AppendError("Published release lacks the complete original core asset inventory")
+    with tempfile.TemporaryDirectory(prefix="pleazyng-apple-release-baseline-") as temporary:
+        result = subprocess.run(
+            ["gh", "release", "download", tag, "--repo", repository,
+             "--pattern", "SHA256SUMS.txt", "--dir", temporary],
+            capture_output=True, text=True,
+        )
+        manifest_path = Path(temporary) / "SHA256SUMS.txt"
+        if result.returncode or not manifest_path.is_file():
+            raise AppendError("Original release checksum manifest could not be verified")
+        raw = manifest_path.read_bytes()
+    manifest_sha = hashlib.sha256(raw).hexdigest()
+    if prior["SHA256SUMS.txt"] != "sha256:" + manifest_sha:
+        raise AppendError("Original release checksum manifest differs from its published digest")
+    try:
+        lines = raw.decode("utf-8").splitlines()
+    except UnicodeDecodeError as error:
+        raise AppendError("Original release checksum manifest is not UTF-8 text") from error
+    entries = {}
+    for line in lines:
+        fields = line.split(maxsplit=1)
+        if len(fields) != 2 or not re.fullmatch(r"[0-9a-f]{64}", fields[0]):
+            raise AppendError("Original release checksum manifest is malformed")
+        name = fields[1].lstrip("*").strip()
+        if not name or name in entries:
+            raise AppendError("Original release checksum manifest has duplicate or empty asset names")
+        entries[name] = fields[0]
+    macos_digest = prior["pleazyng-macos.dmg"]
+    if entries.get("pleazyng-macos.dmg") != macos_digest.removeprefix("sha256:"):
+        raise AppendError("Original macOS DMG differs from the published checksum manifest")
+    linux_digest = prior["pleazyng-linux-x64.tar.gz"]
+    if entries.get("pleazyng-linux-x64.tar.gz") != linux_digest.removeprefix("sha256:"):
+        raise AppendError("Original Linux archive differs from the published checksum manifest")
+    for name, digest in prior.items():
+        if name in entries and entries[name] != digest.removeprefix("sha256:"):
+            raise AppendError("Original release asset differs from the published checksum manifest")
+    return {
+        "asset_count": len(prior),
+        "checksum_manifest_asset_digest": prior["SHA256SUMS.txt"],
+        "checksum_manifest_sha256": manifest_sha,
+        "macos_dmg_asset_digest": macos_digest,
+        "macos_dmg_manifest_sha256": entries["pleazyng-macos.dmg"],
+        "linux_x64_asset_digest": linux_digest,
+        "linux_x64_manifest_sha256": entries["pleazyng-linux-x64.tar.gz"],
+        "platform_reuse_provenance_digest": prior["platform-reuse-provenance.json"],
+    }
 
 
 def _asset_map(release: dict) -> dict[str, str]:
@@ -136,6 +190,8 @@ def _load_provenance(path: Path, *, tag: str, product_sha: str, packaging_sha: s
         "assembly_run_id": assembly_run_id,
         "version": tag.removeprefix("v"),
         "include_apple_store_build": True,
+        "append_apple_only": True,
+        "assembly_scope": "apple-store-append-only",
     }
     if not isinstance(value, dict) or any(value.get(key) != item for key, item in expected.items()):
         raise AppendError("Recovery provenance does not match the selected product, source, or workflow")
@@ -157,6 +213,8 @@ def prepare(args: argparse.Namespace) -> None:
         raise AppendError("Recovery run identity is invalid")
 
     prior = _asset_map(release)
+    original_core_baseline = _verify_original_core_baseline(
+        args.repository, args.release_tag, prior)
     app_paths = {
         IOS_ASSET: directory / "ios-ipa" / IOS_ASSET,
         TVOS_ASSET: directory / "tvos-ipa" / TVOS_ASSET,
@@ -185,7 +243,9 @@ def prepare(args: argparse.Namespace) -> None:
     checksum_path = directory / SIDECAR_CHECKSUMS
     checksum_path.write_text(checksums, encoding="utf-8")
     repair_provenance = {
-        "schema_version": 1,
+        "schema_version": 2,
+        "append_apple_only": True,
+        "assembly_scope": "apple-store-append-only",
         "release_tag": args.release_tag,
         "product_source_sha": args.product_source_sha,
         "packaging_source_sha": args.packaging_source_sha,
@@ -195,6 +255,7 @@ def prepare(args: argparse.Namespace) -> None:
         "prior_release_assets": [
             {"name": name, "digest": prior[name]} for name in sorted(prior)
         ],
+        "original_core_baseline": original_core_baseline,
         "signed_store_artifacts": [
             {
                 "name": name,
@@ -230,7 +291,9 @@ def upload(args: argparse.Namespace) -> None:
     except (OSError, json.JSONDecodeError) as error:
         raise AppendError("Apple append sidecars are missing or invalid") from error
     expected_identity = {
-        "schema_version": 1,
+        "schema_version": 2,
+        "append_apple_only": True,
+        "assembly_scope": "apple-store-append-only",
         "release_tag": args.release_tag,
         "product_source_sha": args.product_source_sha,
         "packaging_source_sha": args.packaging_source_sha,
@@ -249,7 +312,9 @@ def upload(args: argparse.Namespace) -> None:
             or provenance.get("packaging_source_sha") != args.packaging_source_sha
             or provenance.get("workflow_source_sha") != args.workflow_source_sha
             or provenance.get("source_run_id") != args.source_run_id
-            or provenance.get("assembly_run_id") != args.assembly_run_id):
+            or provenance.get("assembly_run_id") != args.assembly_run_id
+            or provenance.get("append_apple_only") is not True
+            or provenance.get("assembly_scope") != "apple-store-append-only"):
         raise AppendError("Apple append sidecar recovery provenance differs from this run")
     if not re.fullmatch(r"[0-9a-f]{40}", args.workflow_source_sha):
         raise AppendError("Workflow source SHA is invalid")
@@ -267,6 +332,10 @@ def upload(args: argparse.Namespace) -> None:
                 or item["name"] in prior):
             raise AppendError("Apple append sidecar has an invalid prior asset inventory")
         prior[item["name"]] = item["digest"]
+    current_core_baseline = _verify_original_core_baseline(
+        args.repository, args.release_tag, prior)
+    if proof.get("original_core_baseline") != current_core_baseline:
+        raise AppendError("Original core release checksum or macOS identity changed after preparation")
     current = _asset_map(release)
     if any(current.get(name) != digest for name, digest in prior.items()):
         raise AppendError("An existing published release asset changed after append preparation")

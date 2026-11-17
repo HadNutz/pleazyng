@@ -71,6 +71,78 @@ class SourceProofTests(unittest.TestCase):
         self.assertIn("build-macos", proof["rebuilt_jobs"])
         self.assertNotIn("build-macos", proof["reused_jobs"])
 
+    def test_append_only_apple_mode_reuses_release_macos_and_ignores_only_original_mac_failure(self):
+        source_sha = "2388a06cc74d03e69ac7178fcd927a54460a5e3a"
+        repair_sha = "312df6d14938ce530c6eb2c88ef4d6dda0c7610b"
+        workflow_sha = "f9985742e9cb0c72f4c5a7ab7abce40a11828f37"
+        self.source.update(
+            id=43826939425, head_sha=source_sha, status="completed", conclusion="failure",
+            display_title="action:release:pool:public:tag:v3.0.36",
+        )
+        self.compare = {"status": "identical", "merge_base_commit": {"sha": source_sha}, "files": []}
+        self.jobs = [
+            {"name": name, "status": "completed",
+             "conclusion": "failure" if name == "build-macos" else "success"}
+            for name in recovery.REQUIRED_JOBS
+        ]
+        self.jobs.extend([
+            {"name": "build-android", "status": "completed", "conclusion": "success"},
+            {"name": "Build WebOS TV package (ARMv7)", "status": "completed", "conclusion": "success"},
+            {"name": "create-release", "status": "completed", "conclusion": "skipped"},
+        ])
+        approval = {
+            "recovery_policy": "frozen-apple-packaging-v1",
+            "product_source_sha": source_sha,
+            "packaging_source_sha": repair_sha,
+            "workflow_source_sha": workflow_sha,
+            "approval_source_sha": workflow_sha,
+            "approved_files": {"scripts/verify_release_attestation.py": "a" * 40},
+        }
+        with patch("verify_frozen_packaging_repair.verify_frozen_packaging_repair",
+                   return_value=approval):
+            proof = self.prove(
+                run_id=43826939425, head_sha=repair_sha, version="3.0.36",
+                rebuild_ios=True, rebuild_tvos=True, packaging_source_sha=repair_sha,
+                workflow_source_sha=workflow_sha, include_apple_store_build=True,
+                append_apple_only=True,
+            )
+        self.assertTrue(proof["append_apple_only"])
+        self.assertFalse(proof["rebuild_macos"])
+        self.assertNotIn("build-macos", proof["rebuilt_jobs"])
+        self.assertEqual(proof["reused_release_assets"], ["SHA256SUMS.txt", "pleazyng-macos.dmg"])
+
+    def test_append_only_apple_mode_rejects_non_mac_failure_and_unapproved_use(self):
+        with self.assertRaisesRegex(recovery.RecoveryError, "Append-only Apple recovery"):
+            self.prove(append_apple_only=True)
+
+        source_sha = "2388a06cc74d03e69ac7178fcd927a54460a5e3a"
+        repair_sha = "312df6d14938ce530c6eb2c88ef4d6dda0c7610b"
+        workflow_sha = "f9985742e9cb0c72f4c5a7ab7abce40a11828f37"
+        self.source.update(
+            id=43826939425, head_sha=source_sha, status="completed", conclusion="failure",
+            display_title="action:release:pool:public:tag:v3.0.36",
+        )
+        self.compare = {"status": "identical", "merge_base_commit": {"sha": source_sha}, "files": []}
+        self.jobs = [
+            {"name": name, "status": "completed",
+             "conclusion": "failure" if name in {"build-macos", "Build Linux (x64)"} else "success"}
+            for name in recovery.REQUIRED_JOBS
+        ]
+        self.jobs.extend([
+            {"name": "build-android", "status": "completed", "conclusion": "success"},
+            {"name": "Build WebOS TV package (ARMv7)", "status": "completed", "conclusion": "success"},
+            {"name": "create-release", "status": "completed", "conclusion": "skipped"},
+        ])
+        with patch("verify_frozen_packaging_repair.verify_frozen_packaging_repair",
+                   return_value={"approved_files": {"scripts/file.py": "a" * 40}}):
+            with self.assertRaisesRegex(recovery.RecoveryError, "Source platform job is not uniquely successful"):
+                self.prove(
+                    run_id=43826939425, head_sha=repair_sha, version="3.0.36",
+                    rebuild_ios=True, rebuild_tvos=True, packaging_source_sha=repair_sha,
+                    workflow_source_sha=workflow_sha, include_apple_store_build=True,
+                    append_apple_only=True,
+                )
+
     def test_unexpected_public_title_still_fails_closed(self):
         for title in (
             "action:release:pool:public:tag:v3.0.1",
@@ -394,8 +466,17 @@ class SourceProofTests(unittest.TestCase):
         self.assertFalse(proof['rebuild_tvos'])
         self.assertNotIn('build-ios', proof['rebuilt_jobs'])
         self.assertNotIn('Build tvOS developer package (arm64)', proof['rebuilt_jobs'])
-        with self.assertRaisesRegex(recovery.RecoveryError, 'Dual signed Apple'):
-            self.frozen(tvos_run=84, ios_run=84)
+
+    def test_one_combined_signed_run_may_supply_one_artifact_for_each_apple_platform(self):
+        tv = {'source_run_id': 84, 'source_sha': 'd' * 40, 'artifact_id': 7}
+        ios = {'source_run_id': 84, 'source_sha': 'd' * 40, 'artifact_id': 8}
+        combined = {'tvos_source': tv, 'ios_source': ios}
+        with patch('verify_frozen_packaging_repair.verify_frozen_packaging_repair', return_value={'approved': True}), \
+                patch.object(recovery, 'verify_frozen_apple_run', return_value=combined) as verify:
+            proof = self.frozen(tvos_run=84, ios_run=84)
+        self.assertEqual(proof['tvos_source'], tv)
+        self.assertEqual(proof['ios_source'], ios)
+        self.assertEqual(verify.call_args.args[0], 84)
 
 
 class FrozenTvosReuseTests(unittest.TestCase):
@@ -530,6 +611,185 @@ class FrozenTvosReuseTests(unittest.TestCase):
                         self.assertEqual(verify.call_count, 2)
                         for name, digest in digests.items():
                             self.assertEqual(digest, hashlib.sha256(name.encode()).hexdigest())
+
+
+class FrozenCombinedAppleReuseTests(unittest.TestCase):
+    def setUp(self):
+        self.product = 'a' * 40
+        self.packaging = 'b' * 40
+        self.source_workflow = 'c' * 40
+        self.assembly_workflow = 'd' * 40
+        self.source_run = 84
+        self.proof = {
+            'source_run_id': 42, 'product_source_sha': self.product,
+            'packaging_source_sha': self.packaging,
+            'workflow_source_sha': self.assembly_workflow, 'version': '3.0.36',
+        }
+        self.run = {
+            'id': self.source_run, 'head_sha': self.source_workflow, 'status': 'completed',
+            'conclusion': 'failure', 'event': 'workflow_dispatch', 'head_branch': 'main',
+            'path': '.github/workflows/build.yml',
+            'repository': {'id': 1433487464},
+            'head_repository': {'full_name': recovery.REPOSITORY}, 'run_attempt': 1,
+            'display_title': f'action:release:pool:public:tag:v3.0.36:repair:{self.packaging}',
+        }
+
+        def job(name, conclusion, steps=(), platform=None):
+            item = {
+                'id': len(name), 'name': name, 'status': 'completed',
+                'conclusion': conclusion,
+                'steps': [{'name': step, 'status': 'completed', 'conclusion': 'success'}
+                          for step in steps],
+            }
+            if platform:
+                item.update(
+                    runner_id=100 + len(name), runner_name=f'GitHub Actions {100 + len(name)}',
+                    runner_group_name='GitHub Actions',
+                    labels=['macos-26-intel' if platform == 'ios' else 'macos-26'],
+                )
+            return item
+
+        validate_steps = (
+            'Verify approved frozen packaging checkout', 'Verify reusable platform source',
+            'Validate immutable release tag against trusted main', 'Validate release tag before building',
+        )
+        ios_steps = (
+            'Build iOS (no codesign)', 'Create unsigned developer IPA',
+            'Attest unsigned developer IPA', 'Retain unsigned iOS developer checkpoint',
+            'Build signed iOS App Store IPA', 'Attest signed iOS App Store IPA',
+            'Retain iOS signing report', 'Remove iOS signing archive outputs',
+            'Upload IPA', 'Remove short iOS build workspace',
+        )
+        tvos_steps = (
+            'Build tvOS app', 'Package unsigned tvOS developer IPA',
+            'Build signed tvOS App Store IPA', 'Attest unsigned tvOS developer package',
+            'Attest signed tvOS App Store package', 'Retain tvOS signing report',
+            'Remove tvOS signing archive outputs', 'Upload tvOS package',
+            'Clean tvOS source and Xcode scratch',
+        )
+        mutation_steps = (
+            'Prepare append-only Apple Store recovery assets',
+            'Attest append-only Apple Store recovery assets',
+            'Verify existing immutable release tag',
+            'Append signed Apple assets without replacing existing release assets',
+            'Create Release',
+        )
+        create_steps = [
+            {'name': 'Recover verified platform artifacts', 'status': 'completed', 'conclusion': 'failure'},
+            *[{'name': name, 'status': 'completed', 'conclusion': 'skipped'} for name in mutation_steps],
+            {'name': 'Post Run actions/checkout', 'status': 'completed', 'conclusion': 'success'},
+            {'name': 'Complete job', 'status': 'completed', 'conclusion': 'success'},
+        ]
+        self.jobs = [
+            job('Validate release request', 'success', validate_steps),
+            job('build-ios', 'success', ios_steps, 'ios'),
+            job('Build tvOS developer package (arm64)', 'success', tvos_steps, 'tvos'),
+            job('build-macos', 'success', ('Build macOS',)),
+            job('create-release', 'failure'),
+            job('build-android', 'skipped'),
+        ]
+        self.jobs[4]['steps'] = create_steps
+        self.artifacts = [
+            {'id': 7, 'name': 'ios-ipa', 'expired': False, 'digest': 'sha256:' + 'e' * 64,
+             'workflow_run': {'id': self.source_run, 'head_sha': self.source_workflow}},
+            {'id': 8, 'name': 'tvos-ipa', 'expired': False, 'digest': 'sha256:' + 'f' * 64,
+             'workflow_run': {'id': self.source_run, 'head_sha': self.source_workflow}},
+        ]
+        self.metadata = [dict(item) for item in self.artifacts]
+        self.prior = {
+            'source_sha': self.product, 'platforms_complete': True,
+            'packaging_approval': {
+                'product_source_sha': self.product,
+                'packaging_source_sha': self.packaging,
+                'workflow_source_sha': self.source_workflow,
+                'approval_source_sha': self.source_workflow,
+                'approved_files': {'scripts/verified-packaging.py': '1' * 40},
+            },
+        }
+
+    def prove(self):
+        lineage = {'status': 'ahead', 'merge_base_commit': {'sha': self.source_workflow}}
+        with patch.object(recovery, 'api', side_effect=[self.run, lineage, *self.metadata]), \
+                patch.object(recovery, 'collection', side_effect=[self.jobs, self.artifacts]), \
+                patch.object(recovery, 'verify_source_run', return_value=self.prior) as verify_source:
+            result = recovery.verify_frozen_apple_run(self.source_run, self.proof)
+        self.assertEqual(verify_source.call_args.args[:3], (42, self.packaging, '3.0.36'))
+        self.assertEqual(verify_source.call_args.kwargs['workflow_source_sha'], self.source_workflow)
+        return result
+
+    def test_same_run_supplies_separate_attested_ipa_artifacts_for_both_platforms(self):
+        result = self.prove()
+        self.assertEqual(result['ios_source']['artifact_id'], 7)
+        self.assertEqual(result['tvos_source']['artifact_id'], 8)
+        self.assertEqual(result['ios_source']['source_run_id'], self.source_run)
+        self.assertEqual(result['tvos_source']['source_run_id'], self.source_run)
+        self.assertEqual(result['ios_source']['job_id'], self.jobs[1]['id'])
+        self.assertEqual(result['tvos_source']['job_id'], self.jobs[2]['id'])
+
+    def test_missing_failed_signing_upload_or_cleanup_steps_are_rejected(self):
+        original_jobs = copy.deepcopy(self.jobs)
+        for job_name, step_name in (
+                ('build-ios', 'Build signed iOS App Store IPA'),
+                ('build-ios', 'Attest signed iOS App Store IPA'),
+                ('build-ios', 'Upload IPA'),
+                ('build-ios', 'Remove short iOS build workspace'),
+                ('Build tvOS developer package (arm64)', 'Build signed tvOS App Store IPA'),
+                ('Build tvOS developer package (arm64)', 'Attest signed tvOS App Store package'),
+                ('Build tvOS developer package (arm64)', 'Upload tvOS package'),
+                ('Build tvOS developer package (arm64)', 'Clean tvOS source and Xcode scratch')):
+            self.jobs = copy.deepcopy(original_jobs)
+            job = next(item for item in self.jobs if item['name'] == job_name)
+            next(step for step in job['steps'] if step['name'] == step_name)['conclusion'] = 'failure'
+            with self.subTest(job=job_name, step=step_name), \
+                    self.assertRaises(recovery.RecoveryError):
+                self.prove()
+
+    def test_wrong_product_packaging_workflow_or_artifact_identity_is_rejected(self):
+        original_proof = copy.deepcopy(self.proof)
+        original_run = copy.deepcopy(self.run)
+        original_artifacts = copy.deepcopy(self.artifacts)
+        original_prior = copy.deepcopy(self.prior)
+        for kind in ('product', 'packaging', 'workflow', 'artifact_id', 'artifact_digest', 'artifact_source'):
+            self.proof = copy.deepcopy(original_proof)
+            self.run = copy.deepcopy(original_run)
+            self.artifacts = copy.deepcopy(original_artifacts)
+            self.metadata = [dict(item) for item in self.artifacts]
+            self.prior = copy.deepcopy(original_prior)
+            if kind == 'product':
+                self.prior['source_sha'] = '9' * 40
+            elif kind == 'packaging':
+                self.run['display_title'] = self.run['display_title'].replace(self.packaging, '9' * 40)
+            elif kind == 'workflow':
+                self.run['head_sha'] = '9' * 40
+            elif kind == 'artifact_id':
+                self.metadata[0]['id'] = 99
+            elif kind == 'artifact_digest':
+                self.metadata[0]['digest'] = 'sha256:' + '9' * 64
+            else:
+                self.metadata[0]['workflow_run']['head_sha'] = self.packaging
+            with self.subTest(kind=kind), self.assertRaises(recovery.RecoveryError):
+                self.prove()
+
+    def test_unexpected_release_mutation_duplicate_platform_or_shared_artifact_is_rejected(self):
+        original_jobs = copy.deepcopy(self.jobs)
+        create = next(job for job in self.jobs if job['name'] == 'create-release')
+        next(step for step in create['steps']
+             if step['name'] == 'Append signed Apple assets without replacing existing release assets')['conclusion'] = 'success'
+        with self.assertRaisesRegex(recovery.RecoveryError, 'later mutation'):
+            self.prove()
+
+        for platform_name in ('build-ios', 'Build tvOS developer package (arm64)'):
+            self.jobs = copy.deepcopy(original_jobs)
+            self.jobs.append(copy.deepcopy(next(job for job in self.jobs if job['name'] == platform_name)))
+            with self.subTest(platform=platform_name), \
+                    self.assertRaisesRegex(recovery.RecoveryError, 'missing or ambiguous'):
+                self.prove()
+
+        self.jobs = copy.deepcopy(original_jobs)
+        self.artifacts[1]['id'] = self.artifacts[0]['id']
+        self.metadata = [dict(item) for item in self.artifacts]
+        with self.assertRaisesRegex(recovery.RecoveryError, 'distinct IPA artifacts'):
+            self.prove()
 
 
 class ArtifactTests(unittest.TestCase):
@@ -669,6 +929,69 @@ class ArtifactTests(unittest.TestCase):
                     recovery.download_platforms({**proof, 'tvos_source': {**source, **change}}, self.root)
                 download.assert_not_called()
 
+    def test_append_only_apple_assembly_downloads_only_the_two_signed_ipa_artifacts(self):
+        ios_archive = self.archive('ios/payload', b'iOS package')
+        tvos_archive = self.archive('tvos/payload', b'tvOS package')
+        source_run = 84
+        workflow = 'c' * 40
+        ios_digest = 'sha256:' + hashlib.sha256(ios_archive).hexdigest()
+        tvos_digest = 'sha256:' + hashlib.sha256(tvos_archive).hexdigest()
+        ios = {'source_run_id': source_run, 'source_sha': 'b' * 40,
+               'workflow_source_sha': workflow, 'artifact_id': 7,
+               'artifact_digest': ios_digest}
+        tvos = {'source_run_id': source_run, 'source_sha': 'b' * 40,
+                'workflow_source_sha': workflow, 'artifact_id': 8,
+                'artifact_digest': tvos_digest}
+        artifacts = [
+            {'id': 7, 'name': 'ios-ipa', 'expired': False, 'digest': ios_digest,
+             'workflow_run': {'id': source_run, 'head_sha': workflow}},
+            {'id': 8, 'name': 'tvos-ipa', 'expired': False, 'digest': tvos_digest,
+             'workflow_run': {'id': source_run, 'head_sha': workflow}},
+            {'id': 9, 'name': 'macos-dmg', 'expired': False, 'digest': 'sha256:' + '9' * 64,
+             'workflow_run': {'id': source_run, 'head_sha': workflow}},
+            {'id': 10, 'name': 'linux-x64', 'expired': False, 'digest': 'sha256:' + 'a' * 64,
+             'workflow_run': {'id': source_run, 'head_sha': workflow}},
+        ]
+        proof = {
+            'source_run_id': 42, 'source_sha': 'a' * 40,
+            'product_source_sha': 'a' * 40,
+            'packaging_source_sha': 'b' * 40,
+            'workflow_source_sha': workflow,
+            'recovery_policy': 'frozen-apple-packaging-v1',
+            'packaging_approval': {
+                'recovery_policy': 'frozen-apple-packaging-v1',
+                'product_source_sha': 'a' * 40, 'packaging_source_sha': 'b' * 40,
+                'workflow_source_sha': workflow, 'approval_source_sha': workflow,
+                'approved_files': {'scripts/verified.py': 'd' * 40},
+            },
+            'append_apple_only': True, 'ios_source': ios, 'tvos_source': tvos,
+        }
+        packages = {7: ios_archive, 8: tvos_archive}
+        downloaded = []
+
+        def download(args, stdout):
+            artifact_id = int(args[-1].rsplit('/', 2)[-2])
+            downloaded.append(artifact_id)
+            stdout.write(packages[artifact_id])
+            return SimpleNamespace(returncode=0)
+
+        with patch.object(recovery, 'ARTIFACTS', {'macos-dmg': 'macos-dmg', 'linux-x64': 'linux-x64'}), \
+                patch.object(recovery, 'collection', return_value=artifacts) as inventory, \
+                patch.object(recovery.subprocess, 'run', side_effect=download), \
+                patch.object(recovery.subprocess, 'check_output', return_value=workflow), \
+                patch.dict('os.environ', {'GITHUB_SHA': workflow, 'GITHUB_RUN_ID': '99'}), \
+                patch.object(recovery, 'verify_ios_package_attestations', return_value={'verified': 'ios'}), \
+                patch.object(recovery, 'verify_tvos_package_attestations', return_value={'verified': 'tvos'}):
+            result = recovery.download_platforms(proof, self.root)
+
+        self.assertEqual(inventory.call_count, 1)
+        self.assertEqual(set(downloaded), {7, 8})
+        self.assertEqual({item['name'] for item in result['artifacts']}, {'ios-ipa', 'tvos-ipa'})
+        self.assertEqual({item['workflow_source_sha'] for item in result['artifacts']}, {workflow})
+        self.assertTrue(result['append_apple_only'])
+        self.assertEqual(result['assembly_scope'], 'apple-store-append-only')
+        self.assertNotIn('linux_archive_sha256', result)
+
     def test_original_artifact_uses_product_head_even_with_later_workflow(self):
         archive = self.archive()
         item = {'id': 7, 'name': 'pleazyng-tizen-arm-experimental', 'expired': False,
@@ -684,27 +1007,42 @@ class ArtifactTests(unittest.TestCase):
                 patch.object(recovery.subprocess, 'run', side_effect=download):
             result = recovery.download_platforms(proof, self.root)
         self.assertEqual(result['artifacts'][0]['source_sha'], 'a' * 40)
+        self.assertEqual(result['artifacts'][0]['workflow_source_sha'], 'a' * 40)
 
     def test_frozen_assembly_binds_actual_checkout_workflow_run_and_linux_hash(self):
         proof = {'source_run_id': 42, 'source_sha': 'a' * 40,
                  'recovery_policy': 'frozen-apple-packaging-v1',
-                 'packaging_source_sha': 'b' * 40, 'workflow_source_sha': 'c' * 40}
+                 'product_source_sha': 'a' * 40,
+                 'packaging_source_sha': 'b' * 40, 'workflow_source_sha': 'c' * 40,
+                 'packaging_approval': {
+                     'recovery_policy': 'frozen-apple-packaging-v1',
+                     'product_source_sha': 'a' * 40,
+                     'packaging_source_sha': 'b' * 40,
+                     'workflow_source_sha': 'c' * 40,
+                     'approval_source_sha': 'c' * 40,
+                     'approved_files': {'scripts/example.py': 'd' * 40},
+                 }}
         linux = self.root / 'linux-x64/pleazyng-linux-x64.tar.gz'
         linux.parent.mkdir(); linux.write_bytes(b'original immutable Linux archive')
         with patch.object(recovery, 'ARTIFACTS', {}), \
              patch.object(recovery, 'collection', return_value=[]), \
-             patch.object(recovery.subprocess, 'check_output', return_value='b' * 40), \
+             patch.object(recovery.subprocess, 'check_output', return_value='c' * 40), \
              patch.dict('os.environ', {'GITHUB_SHA': 'c' * 40, 'GITHUB_RUN_ID': '84'}):
             result = recovery.download_platforms(proof, self.root)
             self.assertEqual(result['assembly_run_id'], 84)
-            self.assertEqual(result['actual_checkout_sha'], 'b' * 40)
+            self.assertEqual(result['actual_checkout_sha'], 'c' * 40)
             self.assertEqual(result['linux_archive_sha256'], hashlib.sha256(linux.read_bytes()).hexdigest())
             with patch.dict('os.environ', {'GITHUB_SHA': 'd' * 40}):
                 with self.assertRaisesRegex(recovery.RecoveryError, 'workflow identity'):
                     recovery.download_platforms(proof, self.root)
-            with patch.object(recovery.subprocess, 'check_output', return_value='d' * 40):
+            with patch.object(recovery.subprocess, 'check_output', return_value='b' * 40):
                 with self.assertRaisesRegex(recovery.RecoveryError, 'did not check out'):
                     recovery.download_platforms(proof, self.root)
+            mismatched_repair = {**proof, 'packaging_approval': {
+                **proof['packaging_approval'], 'packaging_source_sha': 'e' * 40}}
+            with patch.object(recovery.subprocess, 'check_output', return_value='c' * 40):
+                with self.assertRaisesRegex(recovery.RecoveryError, 'does not bind'):
+                    recovery.download_platforms(mismatched_repair, self.root)
 
     def test_verified_download_records_actual_source_and_digests(self):
         archive = self.archive()

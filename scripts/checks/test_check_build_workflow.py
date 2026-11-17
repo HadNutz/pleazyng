@@ -35,6 +35,23 @@ STEAM_CMAKE = ROOT / "native/games/steam/CMakeLists.txt"
 
 
 class BuildWorkflowGuardTest(unittest.TestCase):
+    def test_frozen_apple_recovery_accepts_one_run_per_distinct_platform_only(self):
+        workflow = yaml.safe_load(self._workflow())
+        steps = workflow['jobs']['create-release']['steps']
+        recovery_step = next(step for step in steps if step.get('name') == 'Recover verified platform artifacts')
+        match = re.search(r'if \[\[ "\$REPAIRED_RUN" =~ (.+?) \]\]; then', recovery_step['run'])
+        self.assertIsNotNone(match)
+        pattern = match.group(1)
+        self.assertEqual(pattern, r'^tvos:([1-9][0-9]*),ios:([1-9][0-9]*)$')
+        for value in ('tvos:84,ios:84', 'tvos:84,ios:85'):
+            self.assertIsNotNone(re.fullmatch(pattern, value))
+        for value in ('tvos:84,tvos:85', 'ios:84,ios:85', 'ios:84,tvos:85',
+                      'tvos:84,ios:85,ios:86', 'tvos:0,ios:85'):
+            with self.subTest(value=value):
+                self.assertIsNone(re.fullmatch(pattern, value))
+        self.assertIn('--tvos-run "${BASH_REMATCH[1]}"', recovery_step['run'])
+        self.assertIn('--ios-run "${BASH_REMATCH[2]}"', recovery_step['run'])
+
     def test_profile_preflight_cannot_leave_trusted_native_bounded_route_or_break_core_serialization(self):
         original = self._workflow()
         begin = original.index('  apple-signing-preflight:\n')

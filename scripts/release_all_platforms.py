@@ -2129,6 +2129,34 @@ def validate_packaging_repair_proof(proof: dict, tag: str, packaging_sha: str, w
     ensure_frozen_release_source(tag, proof["product_source_sha"])
 
 
+def verify_append_only_apple_core_baseline(source_proof: dict, receipt: dict,
+                                          baseline: dict, prior: dict[str, str]) -> None:
+    if (source_proof.get("append_apple_only") is not True
+            or source_proof.get("reused_release_assets") != ["SHA256SUMS.txt", "pleazyng-macos.dmg"]
+            or receipt.get("schema_version") != 2
+            or receipt.get("append_apple_only") is not True
+            or receipt.get("assembly_scope") != "apple-store-append-only"
+            or "linux_archive_sha256" in receipt
+            or not isinstance(baseline, dict)
+            or missing_assets(set(prior))
+            or baseline.get("asset_count") != len(prior)):
+        raise ReleaseError("Apple-only append provenance does not identify a complete preserved core release.")
+    digests = {
+        "checksum_manifest_asset_digest": "SHA256SUMS.txt",
+        "macos_dmg_asset_digest": "pleazyng-macos.dmg",
+        "linux_x64_asset_digest": "pleazyng-linux-x64.tar.gz",
+        "platform_reuse_provenance_digest": "platform-reuse-provenance.json",
+    }
+    for field, name in digests.items():
+        if baseline.get(field) != prior.get(name):
+            raise ReleaseError("Apple-only append receipt differs from the preserved original core inventory.")
+    for field, name in (("checksum_manifest_sha256", "SHA256SUMS.txt"),
+                         ("macos_dmg_manifest_sha256", "pleazyng-macos.dmg"),
+                         ("linux_x64_manifest_sha256", "pleazyng-linux-x64.tar.gz")):
+        if baseline.get(field) != str(prior.get(name, ""))[7:]:
+            raise ReleaseError("Apple-only append checksum identity differs from the original release manifest.")
+
+
 def verify_packaging_repair_assembly(scratch: Path, tag: str, source_proof: dict, run: dict) -> dict:
     """Verify an append-only Apple recovery while preserving every old release asset."""
     directory = scratch / "packaging-repair-assembly"
@@ -2168,7 +2196,9 @@ def verify_packaging_repair_assembly(scratch: Path, tag: str, source_proof: dict
 
     proof = json.loads(proof_path.read_text(encoding="utf-8"))
     expected_fields = {
-        "schema_version": 1,
+        "schema_version": 2,
+        "append_apple_only": True,
+        "assembly_scope": "apple-store-append-only",
         "release_tag": tag,
         "product_source_sha": source_proof.get("product_source_sha"),
         "packaging_source_sha": source_proof.get("packaging_source_sha"),
@@ -2176,7 +2206,9 @@ def verify_packaging_repair_assembly(scratch: Path, tag: str, source_proof: dict
         "source_run_id": source_proof.get("source_run_id"),
         "assembly_run_id": run["databaseId"],
     }
-    if not isinstance(proof, dict) or any(proof.get(key) != value for key, value in expected_fields.items()):
+    if (source_proof.get("append_apple_only") is not True
+            or not isinstance(proof, dict)
+            or any(proof.get(key) != value for key, value in expected_fields.items())):
         raise ReleaseError("Apple recovery proof differs from its approved source and assembly identities.")
     receipt = proof.get("platform_reuse_provenance")
     if (not isinstance(receipt, dict)
@@ -2188,8 +2220,12 @@ def verify_packaging_repair_assembly(scratch: Path, tag: str, source_proof: dict
             or receipt.get("assembly_run_id") != run["databaseId"]
             or receipt.get("actual_checkout_sha") != source_proof.get("packaging_source_sha")
             or receipt.get("packaging_approval") != source_proof.get("packaging_approval")
+            or receipt.get("append_apple_only") is not True
+            or receipt.get("assembly_scope") != "apple-store-append-only"
+            or "linux_archive_sha256" in receipt
+            or not isinstance(proof.get("original_core_baseline"), dict)
             or not isinstance(receipt.get("artifacts"), list) or not receipt["artifacts"]
-            or re.fullmatch(r"[0-9a-f]{64}", str(receipt.get("linux_archive_sha256", ""))) is None):
+            ):
         raise ReleaseError("Apple recovery proof omits the attested platform reuse record.")
     validate_packaging_repair_proof(
         receipt, tag, source_proof["packaging_source_sha"], workflow_sha
@@ -2290,6 +2326,7 @@ def verify_packaging_repair_assembly(scratch: Path, tag: str, source_proof: dict
         if (not isinstance(name, str) or not name or name in reused_names
                 or artifact.get("source_run_id") != source.get("source_run_id")
                 or artifact.get("source_sha") != source.get("source_sha")
+                or artifact.get("workflow_source_sha") != source.get("workflow_source_sha", source.get("source_sha"))
                 or type(artifact.get("artifact_id")) is not int or artifact["artifact_id"] < 1
                 or re.fullmatch(r"sha256:[0-9a-f]{64}", str(artifact.get("digest", ""))) is None):
             raise ReleaseError("Attested recovery artifact record differs from the verified original producer.")
@@ -2305,7 +2342,7 @@ def verify_packaging_repair_assembly(scratch: Path, tag: str, source_proof: dict
         if (metadata.get("id") != artifact["artifact_id"] or metadata.get("name") != name
                 or metadata.get("digest") != artifact["digest"] or metadata.get("expired") is not False
                 or metadata.get("workflow_run", {}).get("id") != artifact["source_run_id"]
-                or metadata.get("workflow_run", {}).get("head_sha") != artifact["source_sha"]):
+                or metadata.get("workflow_run", {}).get("head_sha") != artifact["workflow_source_sha"]):
             raise ReleaseError("Reused platform artifact metadata differs from its attested producer.")
         reused_names.add(name)
 
@@ -2341,8 +2378,14 @@ def verify_packaging_repair_assembly(scratch: Path, tag: str, source_proof: dict
         raise ReleaseError("Published Apple append assets differ from their signed workflow outputs.")
     if prior.get("SHA256SUMS.txt") is None or prior.get("platform-reuse-provenance.json") is None:
         raise ReleaseError("The original release checksums or platform provenance were not preserved.")
-    if prior.get("pleazyng-linux-x64.tar.gz") != "sha256:" + receipt["linux_archive_sha256"]:
-        raise ReleaseError("Original Linux archive differs from the preserved recovery provenance.")
+    if source_proof.get("append_apple_only") is True:
+        verify_append_only_apple_core_baseline(
+            source_proof, receipt, proof.get("original_core_baseline"), prior)
+    else:
+        if receipt.get("append_apple_only") is True:
+            raise ReleaseError("Apple-only append receipt cannot qualify a full platform recovery.")
+        if prior.get("pleazyng-linux-x64.tar.gz") != "sha256:" + receipt["linux_archive_sha256"]:
+            raise ReleaseError("Original Linux archive differs from the preserved recovery provenance.")
     return proof
 
 

@@ -15,6 +15,7 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import release_all_platforms as release
 import build_apple_store_archive as apple
+from release_coverage import REQUIRED
 from scripts.checks.workflow_yaml import job_block
 
 
@@ -271,50 +272,103 @@ class PackagingRepairControllerTests(unittest.TestCase):
         self.assertTrue(verify.call_args.kwargs['include_apple_store_build'])
 
     def test_assembly_receipt_requires_checksum_certificate_and_exact_approved_run_sources(self):
-        for invalid in (None, 'checksum', 'certificate', 'assembly', 'checkout', 'artifact', 'linux'):
+        for invalid in (None, 'checksum', 'certificate', 'assembly', 'checkout', 'artifact',
+                        'linux', 'schema', 'marker', 'linux_hash'):
             with self.subTest(invalid=invalid), tempfile.TemporaryDirectory() as temp:
-                source_proof = self.proof()
-                receipt = {**source_proof, 'assembly_run_id': 99, 'actual_checkout_sha': self.repair,
-                           'linux_archive_sha256': 'e' * 64,
-                           'artifacts': [{'name': 'linux-x64', 'artifact_id': 123, 'source_run_id': 42,
-                                          'source_sha': self.product, 'digest': 'sha256:' + 'f' * 64}]}
-                if invalid == 'assembly': receipt['assembly_run_id'] = 100
-                if invalid == 'checkout': receipt['actual_checkout_sha'] = self.workflow
-                if invalid == 'artifact': receipt['artifacts'][0]['source_sha'] = self.workflow
                 ios_bytes, tvos_bytes = b'signed iOS', b'signed tvOS'
+                source_proof = {
+                    **self.proof(),
+                    'append_apple_only': True,
+                    'reused_release_assets': ['SHA256SUMS.txt', 'pleazyng-macos.dmg'],
+                }
+                siblings = {
+                    'ios': {'source_run_id': 99, 'source_sha': self.repair,
+                            'workflow_source_sha': self.workflow, 'artifact_id': 124,
+                            'artifact_digest': 'sha256:' + '1' * 64},
+                    'tvos': {'source_run_id': 99, 'source_sha': self.repair,
+                             'workflow_source_sha': self.workflow, 'artifact_id': 125,
+                             'artifact_digest': 'sha256:' + '2' * 64},
+                }
+                source_proof.update(ios_source=siblings['ios'], tvos_source=siblings['tvos'])
                 checksums = {
                     'pleazyng-ios-appstore.ipa': hashlib.sha256(ios_bytes).hexdigest(),
                     'pleazyng-tvos-appstore.ipa': hashlib.sha256(tvos_bytes).hexdigest(),
                 }
-                if invalid == 'checksum': checksums['pleazyng-ios-appstore.ipa'] = '0' * 64
                 apple_checksums = ''.join(f'{checksums[name]}  {name}\n' for name in sorted(checksums))
-                prior = {
-                    'SHA256SUMS.txt': 'sha256:' + 'a' * 64,
-                    'platform-reuse-provenance.json': 'sha256:' + 'b' * 64,
-                    'pleazyng-linux-x64.tar.gz': 'sha256:' + ('0' if invalid == 'linux' else 'e') * 64,
+                source_artifacts = [
+                    {'name': f'{platform}-ipa', 'artifact_id': sibling['artifact_id'],
+                     'digest': sibling['artifact_digest'], 'source_run_id': sibling['source_run_id'],
+                     'source_sha': sibling['source_sha'],
+                     'workflow_source_sha': sibling['workflow_source_sha']}
+                    for platform, sibling in siblings.items()
+                ]
+                receipt = {
+                    **source_proof, 'assembly_run_id': 99, 'actual_checkout_sha': self.repair,
+                    'append_apple_only': True, 'assembly_scope': 'apple-store-append-only',
+                    'artifacts': source_artifacts,
+                    'ios_source': {**siblings['ios'], 'package_sha256': {
+                        'pleazyng-ios-unsigned.ipa': '3' * 64,
+                        'pleazyng-ios-appstore.ipa': checksums['pleazyng-ios-appstore.ipa'],
+                    }},
+                    'tvos_source': {**siblings['tvos'], 'package_sha256': {
+                        'pleazyng-tvos-unsigned.ipa': '4' * 64,
+                        'pleazyng-tvos-appstore.ipa': checksums['pleazyng-tvos-appstore.ipa'],
+                    }},
                 }
+                if invalid == 'assembly': receipt['assembly_run_id'] = 100
+                if invalid == 'checkout': receipt['actual_checkout_sha'] = self.workflow
+                if invalid == 'artifact': receipt['artifacts'][0]['source_sha'] = self.workflow
+                if invalid == 'checksum': checksums['pleazyng-ios-appstore.ipa'] = '0' * 64
+                if invalid == 'linux_hash':
+                    receipt['linux_archive_sha256'] = 'e' * 64
+                if invalid == 'schema': receipt['schema_version'] = 1
+                if invalid == 'marker': source_proof['append_apple_only'] = False
+                core_names = {
+                    pattern.replace('*', 'org.snapetech.pleazyng_3.0.36_arm')
+                    for patterns in REQUIRED.values() for pattern in patterns
+                }
+                core_names.update({'SHA256SUMS.txt', 'platform-reuse-provenance.json'})
+                prior = {name: 'sha256:' + hashlib.sha256(name.encode()).hexdigest()
+                         for name in core_names}
+                baseline = {
+                    'asset_count': len(prior),
+                    'checksum_manifest_asset_digest': prior['SHA256SUMS.txt'],
+                    'checksum_manifest_sha256': prior['SHA256SUMS.txt'][7:],
+                    'macos_dmg_asset_digest': prior['pleazyng-macos.dmg'],
+                    'macos_dmg_manifest_sha256': prior['pleazyng-macos.dmg'][7:],
+                    'linux_x64_asset_digest': prior['pleazyng-linux-x64.tar.gz'],
+                    'linux_x64_manifest_sha256': prior['pleazyng-linux-x64.tar.gz'][7:],
+                    'platform_reuse_provenance_digest': prior['platform-reuse-provenance.json'],
+                }
+                if invalid == 'linux':
+                    baseline['linux_x64_asset_digest'] = 'sha256:' + '0' * 64
+                receipt['original_core_baseline'] = baseline
                 signed_records = []
                 for name, artifact_name, artifact_id, artifact_digest in (
                         ('pleazyng-ios-appstore.ipa', 'ios-ipa', 124, 'sha256:' + '1' * 64),
                         ('pleazyng-tvos-appstore.ipa', 'tvos-ipa', 125, 'sha256:' + '2' * 64)):
+                    platform = 'ios' if name == 'pleazyng-ios-appstore.ipa' else 'tvos'
+                    sibling = siblings[platform]
                     signed_records.append({
                         'name': name, 'sha256': checksums[name],
                         'workflow_artifact_name': artifact_name,
-                        'source_run_id': 99, 'source_sha': self.workflow,
-                        'workflow_source_sha': self.workflow,
-                        'artifact_id': artifact_id, 'artifact_digest': artifact_digest,
+                        **sibling,
                     })
                 proof = {
-                    'schema_version': 1, 'release_tag': self.tag,
+                    'schema_version': 2, 'append_apple_only': True,
+                    'assembly_scope': 'apple-store-append-only', 'release_tag': self.tag,
                     'product_source_sha': self.product, 'packaging_source_sha': self.repair,
                     'workflow_source_sha': self.workflow, 'source_run_id': 42,
                     'assembly_run_id': 99,
                     'prior_release_assets': [{'name': name, 'digest': digest}
                                              for name, digest in prior.items()],
+                    'original_core_baseline': baseline,
                     'signed_store_artifacts': signed_records,
                     'platform_reuse_provenance': receipt,
                 }
                 if invalid == 'assembly': proof['assembly_run_id'] = 100
+                if invalid == 'schema': proof['schema_version'] = 1
+                if invalid == 'marker': proof['append_apple_only'] = False
                 certificate = {'sourceRepositoryIdentifier': '1433487464', 'sourceRepositoryDigest': self.workflow,
                                'runInvocationURI': f'https://github.com/{release.PLEZY_REPO}/actions/runs/99'}
                 if invalid == 'certificate': certificate['runInvocationURI'] += '0'
@@ -339,8 +393,6 @@ class PackagingRepairControllerTests(unittest.TestCase):
                     current[name] = 'sha256:' + digest
                 metadata = {'assets': [{'name': name, 'digest': digest} for name, digest in current.items()]}
                 artifact_metadata = {
-                    123: {'id': 123, 'name': 'linux-x64', 'digest': 'sha256:' + 'f' * 64,
-                          'expired': False, 'workflow_run': {'id': 42, 'head_sha': self.product}},
                     124: {'id': 124, 'name': 'ios-ipa', 'digest': 'sha256:' + '1' * 64,
                           'expired': False, 'workflow_run': {'id': 99, 'head_sha': self.workflow}},
                     125: {'id': 125, 'name': 'tvos-ipa', 'digest': 'sha256:' + '2' * 64,
@@ -360,6 +412,54 @@ class PackagingRepairControllerTests(unittest.TestCase):
                         result = release.verify_packaging_repair_assembly(
                             Path(temp), self.tag, source_proof, {'databaseId': 99})
                         self.assertEqual(result['platform_reuse_provenance'], receipt)
+
+    def test_append_only_receipt_qualifies_existing_core_assets_without_a_fresh_linux_hash(self):
+        names = {
+            pattern.replace('*', 'org.snapetech.pleazyng_3.0.36_arm')
+            for patterns in REQUIRED.values() for pattern in patterns
+        }
+        names.update({'SHA256SUMS.txt', 'platform-reuse-provenance.json'})
+        prior = {name: 'sha256:' + hashlib.sha256(name.encode()).hexdigest() for name in names}
+        source_proof = {
+            'append_apple_only': True,
+            'reused_release_assets': ['SHA256SUMS.txt', 'pleazyng-macos.dmg'],
+        }
+        receipt = {
+            'schema_version': 2,
+            'append_apple_only': True,
+            'assembly_scope': 'apple-store-append-only',
+        }
+        baseline = {
+            'asset_count': len(prior),
+            'checksum_manifest_asset_digest': prior['SHA256SUMS.txt'],
+            'checksum_manifest_sha256': prior['SHA256SUMS.txt'][7:],
+            'macos_dmg_asset_digest': prior['pleazyng-macos.dmg'],
+            'macos_dmg_manifest_sha256': prior['pleazyng-macos.dmg'][7:],
+            'linux_x64_asset_digest': prior['pleazyng-linux-x64.tar.gz'],
+            'linux_x64_manifest_sha256': prior['pleazyng-linux-x64.tar.gz'][7:],
+            'platform_reuse_provenance_digest': prior['platform-reuse-provenance.json'],
+        }
+        release.verify_append_only_apple_core_baseline(source_proof, receipt, baseline, prior)
+        for change in ('scope', 'linux_hash', 'manifest_digest', 'missing_core', 'unmarked', 'schema'):
+            bad_source = dict(source_proof)
+            bad_receipt = dict(receipt)
+            bad_baseline = dict(baseline)
+            bad_prior = dict(prior)
+            if change == 'scope':
+                bad_receipt['assembly_scope'] = 'full-platform-recovery'
+            elif change == 'linux_hash':
+                bad_receipt['linux_archive_sha256'] = baseline['linux_x64_manifest_sha256']
+            elif change == 'manifest_digest':
+                bad_baseline['macos_dmg_manifest_sha256'] = '0' * 64
+            elif change == 'missing_core':
+                del bad_prior['pleazyng-macos.dmg']
+            elif change == 'schema':
+                bad_receipt['schema_version'] = 1
+            else:
+                bad_source.pop('append_apple_only')
+            with self.subTest(change=change), self.assertRaises(release.ReleaseError):
+                release.verify_append_only_apple_core_baseline(
+                    bad_source, bad_receipt, bad_baseline, bad_prior)
 
     def test_signed_publication_cli_keeps_product_and_packaging_sources_separate(self):
         self.signed_publication_cli(reuse_tvos=False)

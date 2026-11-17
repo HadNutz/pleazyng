@@ -465,6 +465,154 @@ def verify_frozen_ios_run(run_id, proof, repository=REPOSITORY):
             'artifact_digest': artifact['digest'], 'platforms_complete': True}
 
 
+def verify_frozen_apple_run(run_id, proof, repository=REPOSITORY):
+    """Reuse both signed Apple packages from one assembly-only repair run."""
+    if (repository != REPOSITORY or not str(run_id).isdigit() or int(run_id) < 1
+            or not re.fullmatch(r'[0-9a-f]{40}', str(proof.get('packaging_source_sha', '')))
+            or not re.fullmatch(r'[0-9a-f]{40}', str(proof.get('workflow_source_sha', '')))
+            or not re.fullmatch(r'[0-9a-f]{40}', str(proof.get('product_source_sha', '')))):
+        raise RecoveryError('Combined frozen Apple reuse requires an exact canonical source run')
+    run = api(f'repos/{repository}/actions/runs/{run_id}')
+    title = re.fullmatch(r'action:release:pool:public:tag:v' + re.escape(proof['version'])
+                         + r':repair:([0-9a-f]{40})', run.get('display_title', ''))
+    workflow = run.get('head_sha', '')
+    if (not title or run.get('id') != int(run_id) or run.get('status') != 'completed'
+            or run.get('conclusion') != 'failure' or run.get('event') != 'workflow_dispatch'
+            or run.get('head_branch') != 'main' or run.get('path') != '.github/workflows/build.yml'
+            or run.get('repository', {}).get('id') != 1433487464
+            or run.get('head_repository', {}).get('full_name') != repository
+            or not re.fullmatch(r'[0-9a-f]{40}', workflow)
+            or type(run.get('run_attempt')) is not int or run['run_attempt'] < 1):
+        raise RecoveryError('Combined Apple source must be a completed trusted-main repair run')
+    packaging = title.group(1)
+    if packaging != proof.get('packaging_source_sha'):
+        raise RecoveryError('Combined Apple source uses a different approved packaging revision')
+    lineage = api(f'repos/{repository}/compare/{workflow}...{proof["workflow_source_sha"]}')
+    if (lineage.get('status') not in {'ahead', 'identical'}
+            or lineage.get('merge_base_commit', {}).get('sha') != workflow):
+        raise RecoveryError('Combined Apple source workflow is not an ancestor of this assembly')
+    prior = verify_source_run(
+        proof['source_run_id'], packaging, proof['version'], repository,
+        rebuild_ios=True, rebuild_tvos=True, packaging_source_sha=packaging,
+        workflow_source_sha=workflow, include_apple_store_build=True,
+        append_apple_only=True)
+    approval = prior.get('packaging_approval')
+    if (prior.get('source_sha') != proof.get('product_source_sha')
+            or not prior.get('platforms_complete') or not isinstance(approval, dict)
+            or approval.get('product_source_sha') != proof.get('product_source_sha')
+            or approval.get('packaging_source_sha') != packaging
+            or approval.get('workflow_source_sha') != workflow
+            or approval.get('approval_source_sha') != workflow
+            or not isinstance(approval.get('approved_files'), dict)
+            or not approval['approved_files']):
+        raise RecoveryError('Combined Apple source does not qualify the frozen product and CI')
+
+    jobs = collection(f'repos/{repository}/actions/runs/{run_id}/attempts/{run["run_attempt"]}/jobs', 'jobs')
+    expected = {}
+    for name in ('Validate release request', 'build-ios',
+                 'Build tvOS developer package (arm64)', 'create-release'):
+        matches = [job for job in jobs if job.get('name') == name]
+        if len(matches) != 1:
+            raise RecoveryError(f'Combined Apple source job is missing or ambiguous: {name}')
+        expected[name] = matches[0]
+
+    validate = expected['Validate release request']
+    if validate.get('status') != 'completed' or validate.get('conclusion') != 'success':
+        raise RecoveryError('Combined Apple source failed release request validation')
+    for name in ('Verify approved frozen packaging checkout', 'Verify reusable platform source',
+                 'Validate immutable release tag against trusted main',
+                 'Validate release tag before building'):
+        steps = [step for step in validate.get('steps', []) if step.get('name') == name]
+        if len(steps) != 1 or steps[0].get('status') != 'completed' or steps[0].get('conclusion') != 'success':
+            raise RecoveryError('Combined Apple source lacks successful validation: ' + name)
+
+    ios = expected['build-ios']
+    tvos = expected['Build tvOS developer package (arm64)']
+    for job, platform, required in (
+            (ios, 'ios', ('Build iOS (no codesign)', 'Create unsigned developer IPA',
+                          'Attest unsigned developer IPA', 'Retain unsigned iOS developer checkpoint',
+                          'Build signed iOS App Store IPA', 'Attest signed iOS App Store IPA',
+                          'Retain iOS signing report', 'Remove iOS signing archive outputs',
+                          'Upload IPA', 'Remove short iOS build workspace')),
+            (tvos, 'tvos', ('Build tvOS app', 'Package unsigned tvOS developer IPA',
+                            'Build signed tvOS App Store IPA', 'Attest unsigned tvOS developer package',
+                            'Attest signed tvOS App Store package', 'Retain tvOS signing report',
+                            'Remove tvOS signing archive outputs', 'Upload tvOS package',
+                            'Clean tvOS source and Xcode scratch'))):
+        if job.get('status') != 'completed' or job.get('conclusion') != 'success':
+            raise RecoveryError(f'Combined Apple {platform} signing job did not succeed')
+        _verify_frozen_apple_runner(job, int(run_id), platform)
+        for name in required:
+            steps = [step for step in job.get('steps', []) if step.get('name') == name]
+            if len(steps) != 1 or steps[0].get('status') != 'completed' or steps[0].get('conclusion') != 'success':
+                raise RecoveryError(f'Combined Apple {platform} source lacks successful build, upload, or cleanup: {name}')
+
+    create = expected['create-release']
+    if create.get('status') != 'completed' or create.get('conclusion') != 'failure':
+        raise RecoveryError('Combined Apple assembly did not stop at its failed recovery step')
+    create_steps = create.get('steps', [])
+    failed = [step.get('name') for step in create_steps if step.get('conclusion') == 'failure']
+    if failed != ['Recover verified platform artifacts']:
+        raise RecoveryError('Combined Apple assembly had an unexpected failure or mutation')
+    for name in ('Prepare append-only Apple Store recovery assets',
+                 'Attest append-only Apple Store recovery assets',
+                 'Verify existing immutable release tag',
+                 'Append signed Apple assets without replacing existing release assets',
+                 'Create Release'):
+        steps = [step for step in create_steps if step.get('name') == name]
+        if len(steps) != 1 or steps[0].get('status') != 'completed' or steps[0].get('conclusion') != 'skipped':
+            raise RecoveryError('Combined Apple assembly reached a later mutation step: ' + name)
+    recovery_steps = [index for index, step in enumerate(create_steps)
+                      if step.get('name') == 'Recover verified platform artifacts']
+    if len(recovery_steps) != 1:
+        raise RecoveryError('Combined Apple assembly has ambiguous recovery steps')
+    for step in create_steps[recovery_steps[0] + 1:]:
+        if (step.get('conclusion') != 'skipped'
+                and not step.get('name', '').startswith('Post ')
+                and step.get('name') != 'Complete job'):
+            raise RecoveryError('Combined Apple assembly continued after its recovery failure')
+
+    macos_jobs = [job for job in jobs if job.get('name') == 'build-macos']
+    if len(macos_jobs) > 1:
+        raise RecoveryError('Combined Apple source has duplicate macOS build jobs')
+    for job in jobs:
+        if job in expected.values():
+            continue
+        if job.get('name') == 'build-macos' and job.get('status') == 'completed' and job.get('conclusion') == 'success':
+            continue  # Do not select the separate hosted DMG for release recovery.
+        if job.get('status') != 'completed' or job.get('conclusion') != 'skipped' or job.get('steps') != []:
+            raise RecoveryError('Combined Apple source executed an unrelated or failed job')
+
+    artifacts = collection(f'repos/{repository}/actions/runs/{run_id}/artifacts', 'artifacts')
+    sources = {}
+    for platform, artifact_name, job in (
+            ('ios', 'ios-ipa', ios), ('tvos', 'tvos-ipa', tvos)):
+        matches = [item for item in artifacts if item.get('name') == artifact_name]
+        if (len(matches) != 1 or matches[0].get('expired') is not False
+                or type(matches[0].get('id')) is not int or matches[0]['id'] < 1
+                or not re.fullmatch(r'sha256:[0-9a-f]{64}', str(matches[0].get('digest', '')))):
+            raise RecoveryError(f'Combined Apple source lacks one unexpired digest-bound {artifact_name} artifact')
+        artifact = matches[0]
+        metadata = api(f'repos/{repository}/actions/artifacts/{artifact["id"]}')
+        if (metadata.get('id') != artifact['id'] or metadata.get('name') != artifact_name
+                or metadata.get('digest') != artifact['digest'] or metadata.get('expired') is not False
+                or metadata.get('workflow_run', {}).get('id') != int(run_id)
+                or metadata.get('workflow_run', {}).get('head_sha') != workflow):
+            raise RecoveryError(f'Combined Apple {artifact_name} artifact metadata differs from its producer')
+        sources[platform] = {
+            'source_run_id': int(run_id), 'source_sha': packaging,
+            'workflow_source_sha': workflow, 'product_source_sha': proof['product_source_sha'],
+            'original_source_run_id': proof['source_run_id'], 'job_id': job['id'],
+            'run_attempt': run['run_attempt'], 'packaging_approval': prior['packaging_approval'],
+            'artifact_id': artifact['id'], 'artifact_digest': artifact['digest'],
+            'platforms_complete': True,
+        }
+    if (sources['ios']['artifact_id'] == sources['tvos']['artifact_id']
+            or sources['ios']['artifact_digest'] == sources['tvos']['artifact_digest']):
+        raise RecoveryError('Combined Apple source does not bind two distinct IPA artifacts')
+    return {'ios_source': sources['ios'], 'tvos_source': sources['tvos']}
+
+
 def _verify_frozen_apple_runner(job, run_id, platform):
     """Require one of the explicitly supported signed Apple runner routes."""
     expected_label = 'macos-26-intel' if platform == 'ios' else 'macos-26'
@@ -491,21 +639,28 @@ def _verify_frozen_apple_runner(job, run_id, platform):
     )
 
 
-def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow_pending=False, rebuild_linux=False, rebuild_macos=False, rebuild_tvos=False, rebuild_ios=False, repaired_run=None, require_homebrew_cask=False, packaging_source_sha=None, workflow_source_sha=None, include_apple_store_build=False, tvos_run=None, ios_run=None):
+def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow_pending=False, rebuild_linux=False, rebuild_macos=False, rebuild_tvos=False, rebuild_ios=False, repaired_run=None, require_homebrew_cask=False, packaging_source_sha=None, workflow_source_sha=None, include_apple_store_build=False, tvos_run=None, ios_run=None, append_apple_only=False):
     if ios_run and not tvos_run:
         raise RecoveryError('Signed iOS sibling reuse requires a distinct signed TV sibling')
+    if append_apple_only and (not packaging_source_sha or not workflow_source_sha
+                              or not include_apple_store_build or rebuild_linux or rebuild_macos
+                              or repaired_run):
+        raise RecoveryError('Append-only Apple recovery requires the exact frozen packaging and signed Apple sources')
     if tvos_run and ios_run:
         if (not packaging_source_sha or not workflow_source_sha or not include_apple_store_build
-                or rebuild_ios or rebuild_tvos or repaired_run or rebuild_linux or rebuild_macos
-                or str(tvos_run) == str(ios_run)):
+                or rebuild_ios or rebuild_tvos or repaired_run or rebuild_linux or rebuild_macos):
             raise RecoveryError('Dual signed Apple reuse requires approved assembly-only recovery')
         proof = verify_source_run(run_id, head_sha, version, repository, allow_pending=allow_pending,
                                  rebuild_ios=True, rebuild_tvos=True,
                                  require_homebrew_cask=require_homebrew_cask,
                                  packaging_source_sha=packaging_source_sha, workflow_source_sha=workflow_source_sha,
-                                 include_apple_store_build=True)
-        tvos = verify_frozen_tvos_run(tvos_run, proof, repository)
-        ios = verify_frozen_ios_run(ios_run, proof, repository)
+                                 include_apple_store_build=True, append_apple_only=True)
+        if str(tvos_run) == str(ios_run):
+            apple = verify_frozen_apple_run(tvos_run, proof, repository)
+            tvos, ios = apple['tvos_source'], apple['ios_source']
+        else:
+            tvos = verify_frozen_tvos_run(tvos_run, proof, repository)
+            ios = verify_frozen_ios_run(ios_run, proof, repository)
         return {**proof, 'tvos_source': tvos, 'ios_source': ios,
                 'rebuild_tvos': False, 'rebuild_ios': False,
                 'rebuilt_jobs': sorted(set(proof['rebuilt_jobs']) -
@@ -567,7 +722,16 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
     repaired = verify_repaired_run(repaired_run, head_sha, version, repository, allow_pending=allow_pending, require_homebrew_cask=require_homebrew_cask) if repaired_run else None
     jobs = collection(f"repos/{repository}/actions/runs/{run_id}/jobs", "jobs")
     pending_jobs = []
-    required_jobs = tuple(name for name in REQUIRED_JOBS if not ((rebuild_linux or repaired) and name.startswith("Build Linux (")) and not ((rebuild_macos or repaired) and name == "build-macos") and not (rebuild_tvos and name == "Build tvOS developer package (arm64)") and not (rebuild_ios and name == "build-ios"))
+    required_jobs = tuple(name for name in REQUIRED_JOBS
+                          if not ((rebuild_linux or repaired) and name.startswith("Build Linux ("))
+                          and not ((rebuild_macos or repaired or append_apple_only) and name == "build-macos")
+                          and not (rebuild_tvos and name == "Build tvOS developer package (arm64)")
+                          and not (rebuild_ios and name == "build-ios"))
+    if append_apple_only:
+        macos_jobs = [job for job in jobs if job.get('name') == 'build-macos']
+        if (len(macos_jobs) != 1 or macos_jobs[0].get('status') != 'completed'
+                or macos_jobs[0].get('conclusion') not in {'success', 'failure'}):
+            raise RecoveryError('Append-only Apple recovery requires a completed original Mac job')
     rebuilt_jobs = set(REBUILT_JOBS) | ({"Build Linux (x64)", "Build Linux (arm64)"} if rebuild_linux else set()) | ({"build-macos"} if rebuild_macos else set()) | ({"Build tvOS developer package (arm64)"} if rebuild_tvos else set()) | ({"build-ios"} if rebuild_ios else set())
     for name in required_jobs:
         matches = [job for job in jobs if job.get("name") == name]
@@ -590,6 +754,8 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
     failures = [job.get("name") for job in jobs
                 if job.get("conclusion") in {"failure", "cancelled", "timed_out"}
                 and job.get("name") not in rebuilt_jobs | set(repaired["reused_jobs"] if repaired else [])
+                and not (append_apple_only and job.get("name") == "build-macos"
+                         and job.get("status") == "completed" and job.get("conclusion") == "failure")
                 and not (job.get("name") == "create-release" and job.get("conclusion") == "cancelled"
                          and job.get("runner_id") in (None, 0) and job.get("runner_name") in (None, "")
                          and isinstance(job.get("steps"), list) and not job["steps"])]
@@ -625,7 +791,10 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
             **({'schema_version': 2, 'recovery_policy': 'frozen-apple-packaging-v1',
                 'product_source_sha': source_sha, 'packaging_source_sha': head_sha,
                 'workflow_source_sha': workflow_source_sha, 'packaging_approval': frozen_repair,
-                'include_apple_store_build': True} if frozen_repair is not None else {})}
+                'include_apple_store_build': True} if frozen_repair is not None else {}),
+            **({'append_apple_only': True,
+                'reused_release_assets': ['SHA256SUMS.txt', 'pleazyng-macos.dmg']}
+               if append_apple_only else {})}
 
 
 def verify_macos_packaging_recovery(run_id, macos_run, head_sha, version, repository=REPOSITORY):
@@ -872,37 +1041,54 @@ def verify_ios_package_attestations(directory, source, repository=REPOSITORY):
 
 def download_platforms(proof, destination, repository=REPOSITORY):
     run_id = proof["source_run_id"]
-    inventory = collection(f"repos/{repository}/actions/runs/{run_id}/artifacts", "artifacts")
-    wanted = {name: folder for name, folder in ARTIFACTS.items() if not (proof.get("rebuild_linux") and name.startswith("linux-")) and not (proof.get("rebuild_macos") and name == "macos-dmg") and not (proof.get("rebuild_tvos") and name == "tvos-ipa") and not (proof.get("rebuild_ios") and name == "ios-ipa")}
-    if any(item.get("name") == "windows-msix" for item in inventory):
-        wanted["windows-msix"] = "windows-msix"
-    inventories = {run_id: inventory}
-    if proof.get('tvos_source'):
-        tvos = proof['tvos_source']
-        inventories[tvos['source_run_id']] = collection(
-            f'repos/{repository}/actions/runs/{tvos["source_run_id"]}/artifacts', 'artifacts')
-    if proof.get('ios_source'):
-        ios = proof['ios_source']
-        inventories[ios['source_run_id']] = collection(
-            f'repos/{repository}/actions/runs/{ios["source_run_id"]}/artifacts', 'artifacts')
-    if proof.get("android_source"):
-        android = proof["android_source"]
-        inventories[android["source_run_id"]] = collection(
-            f"repos/{repository}/actions/runs/{android['source_run_id']}/artifacts", "artifacts")
-        wanted["android-apk"] = "android-apk"
-    if proof.get("macos_source"):
-        macos = proof["macos_source"]
-        inventories[macos["source_run_id"]] = collection(
-            f"repos/{repository}/actions/runs/{macos['source_run_id']}/artifacts", "artifacts")
-        wanted["webos-ipk"] = "webos"
-    if proof.get("repaired_source"):
-        repaired = proof["repaired_source"]
-        inventories[repaired["source_run_id"]] = collection(
-            f"repos/{repository}/actions/runs/{repaired['source_run_id']}/artifacts", "artifacts")
-    if proof.get("webos_source"):
-        webos = proof["webos_source"]
-        inventories[webos["source_run_id"]] = collection(f"repos/{repository}/actions/runs/{webos['source_run_id']}/artifacts", "artifacts")
-        wanted["webos-ipk"] = "webos"
+    append_apple_only = proof.get('append_apple_only') is True
+    if append_apple_only:
+        if not proof.get('ios_source') or not proof.get('tvos_source'):
+            raise RecoveryError('Append-only Apple recovery requires both signed IPA source records')
+        wanted = {'ios-ipa': 'ios-ipa', 'tvos-ipa': 'tvos-ipa'}
+        inventories = {}
+        for key in ('ios_source', 'tvos_source'):
+            source_id = proof[key]['source_run_id']
+            if source_id not in inventories:
+                inventories[source_id] = collection(
+                    f'repos/{repository}/actions/runs/{source_id}/artifacts', 'artifacts')
+    else:
+        inventory = collection(f"repos/{repository}/actions/runs/{run_id}/artifacts", "artifacts")
+        wanted = {name: folder for name, folder in ARTIFACTS.items()
+                  if not (proof.get("rebuild_linux") and name.startswith("linux-"))
+                  and not (proof.get("rebuild_macos") and name == "macos-dmg")
+                  and not (proof.get("rebuild_tvos") and name == "tvos-ipa")
+                  and not (proof.get("rebuild_ios") and name == "ios-ipa")}
+        if any(item.get("name") == "windows-msix" for item in inventory):
+            wanted["windows-msix"] = "windows-msix"
+        inventories = {run_id: inventory}
+        if proof.get('tvos_source'):
+            tvos = proof['tvos_source']
+            inventories[tvos['source_run_id']] = collection(
+                f'repos/{repository}/actions/runs/{tvos["source_run_id"]}/artifacts', 'artifacts')
+        if proof.get('ios_source'):
+            ios = proof['ios_source']
+            inventories[ios['source_run_id']] = collection(
+                f'repos/{repository}/actions/runs/{ios["source_run_id"]}/artifacts', 'artifacts')
+        if proof.get("android_source"):
+            android = proof["android_source"]
+            inventories[android["source_run_id"]] = collection(
+                f"repos/{repository}/actions/runs/{android['source_run_id']}/artifacts", "artifacts")
+            wanted["android-apk"] = "android-apk"
+        if proof.get("macos_source"):
+            macos = proof["macos_source"]
+            inventories[macos["source_run_id"]] = collection(
+                f"repos/{repository}/actions/runs/{macos['source_run_id']}/artifacts", "artifacts")
+            wanted["webos-ipk"] = "webos"
+        if proof.get("repaired_source"):
+            repaired = proof["repaired_source"]
+            inventories[repaired["source_run_id"]] = collection(
+                f"repos/{repository}/actions/runs/{repaired['source_run_id']}/artifacts", "artifacts")
+        if proof.get("webos_source"):
+            webos = proof["webos_source"]
+            inventories[webos["source_run_id"]] = collection(
+                f"repos/{repository}/actions/runs/{webos['source_run_id']}/artifacts", "artifacts")
+            wanted["webos-ipk"] = "webos"
     records = []
     for name, folder in wanted.items():
         source = (proof['tvos_source'] if name == 'tvos-ipa' and proof.get('tvos_source') else
@@ -943,22 +1129,41 @@ def download_platforms(proof, destination, repository=REPOSITORY):
             if name == "macos-dmg" and proof.get("macos_source"):
                 verify_macos_receipt(json.loads((destination / folder / "macos-compilation-recovery.json").read_text()), proof)
         records.append({"name": name, "artifact_id": item["id"], "digest": digest,
-                        "source_run_id": artifact_run, "source_sha": source["source_sha"]})
+                        "source_run_id": artifact_run, "source_sha": source["source_sha"],
+                        "workflow_source_sha": expected_sha})
         print(f"Recovered verified {name} from run {artifact_run}.", flush=True)
     proof = {**proof, "artifacts": records}
     if proof.get('recovery_policy') == 'frozen-apple-packaging-v1':
+        approval = proof.get('packaging_approval')
+        expected_approval = {
+            'recovery_policy': 'frozen-apple-packaging-v1',
+            'product_source_sha': proof.get('product_source_sha'),
+            'packaging_source_sha': proof.get('packaging_source_sha'),
+            'workflow_source_sha': proof.get('workflow_source_sha'),
+            'approval_source_sha': proof.get('workflow_source_sha'),
+        }
+        if (not isinstance(approval, dict)
+                or any(approval.get(key) != value for key, value in expected_approval.items())
+                or not isinstance(approval.get('approved_files'), dict)
+                or not approval['approved_files']):
+            raise RecoveryError('Frozen packaging approval does not bind the product, repair, and workflow revisions')
         actual = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
-        if actual != proof['packaging_source_sha']:
-            raise RecoveryError('Assembler did not check out the approved packaging revision')
+        if actual != proof['workflow_source_sha']:
+            raise RecoveryError('Assembler did not check out the approved workflow revision')
         workflow = os.environ.get('GITHUB_SHA')
         assembly = os.environ.get('GITHUB_RUN_ID', '')
         if workflow != proof['workflow_source_sha'] or not assembly.isdigit():
             raise RecoveryError('Assembler workflow identity is not bound to the frozen repair proof')
-        linux = destination / 'linux-x64/pleazyng-linux-x64.tar.gz'
-        with linux.open('rb') as stream:
-            linux_digest = hashlib.file_digest(stream, 'sha256').hexdigest()
-        proof.update(assembly_run_id=int(assembly), actual_checkout_sha=actual,
-                     linux_archive_sha256=linux_digest)
+        if proof.get('append_apple_only') is True:
+            proof.update(assembly_run_id=int(assembly), actual_checkout_sha=actual,
+                         assembly_scope='apple-store-append-only')
+        else:
+            linux = destination / 'linux-x64/pleazyng-linux-x64.tar.gz'
+            with linux.open('rb') as stream:
+                linux_digest = hashlib.file_digest(stream, 'sha256').hexdigest()
+            proof.update(assembly_run_id=int(assembly), actual_checkout_sha=actual,
+                         linux_archive_sha256=linux_digest,
+                         assembly_scope='full-platform-recovery')
     (destination / "platform-reuse-provenance.json").write_text(json.dumps(proof, indent=2) + "\n")
     return proof
 
