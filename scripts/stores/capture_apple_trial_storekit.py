@@ -231,6 +231,17 @@ def verify_built_storekit_test_resource(built_products: Path, expected_sha256: s
     return resource
 
 
+def retain_consumer_provenance(source: Path, output: Path) -> Path:
+    """Copy consumer provenance into the evidence directory unless already there."""
+    source = source.resolve(strict=True)
+    if source.name != "consumer-provenance.json":
+        raise ValueError("Retained build consumer provenance has an unexpected filename")
+    destination = (output / source.name).resolve()
+    if source != destination:
+        shutil.copyfile(source, destination)
+    return destination
+
+
 def write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -448,10 +459,7 @@ def capture(args: argparse.Namespace) -> None:
     if consumer_path is None and (output / "consumer-provenance.json").is_file():
         consumer_path = output / "consumer-provenance.json"
     if consumer_path is not None:
-        consumer_path = consumer_path.resolve(strict=True)
-        if consumer_path.name != "consumer-provenance.json":
-            raise ValueError("Retained build consumer provenance has an unexpected filename")
-        shutil.copyfile(consumer_path, output / consumer_path.name)
+        consumer_path = retain_consumer_provenance(consumer_path, output)
     device: dict[str, str] | None = None
     failure: str | None = None
     result_bundle: Path | None = None

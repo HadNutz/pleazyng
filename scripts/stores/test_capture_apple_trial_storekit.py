@@ -89,6 +89,22 @@ class AppleTrialStoreKitCaptureTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "found 0"):
                 capture.verify_built_storekit_test_resource(products, catalog_hash)
 
+    def test_consumer_provenance_retention_is_safe_when_source_is_already_in_output(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "captures"
+            output.mkdir()
+            source = output / "consumer-provenance.json"
+            source.write_text('{"source":"retained"}\n', encoding="utf-8")
+            self.assertEqual(capture.retain_consumer_provenance(source, output), source)
+            self.assertEqual(source.read_text(encoding="utf-8"), '{"source":"retained"}\n')
+
+            external = Path(temporary) / "producer" / "consumer-provenance.json"
+            external.parent.mkdir()
+            external.write_text('{"source":"producer"}\n', encoding="utf-8")
+            retained = capture.retain_consumer_provenance(external, output)
+            self.assertEqual(retained, source)
+            self.assertEqual(source.read_text(encoding="utf-8"), '{"source":"producer"}\n')
+
     def test_ui_harness_uses_native_trial_ui_and_never_buys_lifetime(self) -> None:
         self.assertIn("import StoreKitTest", UI_TEST)
         self.assertIn("SKTestSession(contentsOf: configurationURL)", UI_TEST)
