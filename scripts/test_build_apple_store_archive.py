@@ -15,7 +15,8 @@ import zipfile
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_apple_store_archive as archive_helper
 from build_apple_store_archive import (
-    BUNDLE, GROUP, MUSIC_NFC_ENTITLEMENT, MUSIC_NFC_FILE, configure_project, music_nfc_allowed, validate_profile,
+    BUNDLE, GROUP, MUSIC_NFC_ENTITLEMENT, MUSIC_NFC_FILE, RELEASE_ENTITLEMENTS_FILE,
+    configure_project, music_nfc_allowed, validate_profile,
 )
 from apple.configure_ios_music_widget import BUNDLE as WIDGET_BUNDLE, TARGET as WIDGET_TARGET, add_music_widget_target, verify_music_widget
 
@@ -162,10 +163,29 @@ class AppleStoreSigningTests(unittest.TestCase):
         configure_project(project, binding, TEAM, 'fixture', Path('/tmp/keychain'))
         self.assertEqual(settings['CODE_SIGN_ENTITLEMENTS'], MUSIC_NFC_FILE)
         self.assertEqual(settings.pop('PLEAZYNG_MUSIC_NFC_ENABLED'), 'YES')
+        settings['CODE_SIGN_ENTITLEMENTS'] = RELEASE_ENTITLEMENTS_FILE
+        configure_project(project, binding, TEAM, 'fixture', Path('/tmp/keychain'))
+        self.assertEqual(settings['CODE_SIGN_ENTITLEMENTS'], MUSIC_NFC_FILE)
+        self.assertEqual(settings.pop('PLEAZYNG_MUSIC_NFC_ENABLED'), 'YES')
+        music_nfc_entitlements = plistlib.loads((Path('ios') / MUSIC_NFC_FILE).read_bytes())
+        self.assertEqual(music_nfc_entitlements['keychain-access-groups'], [])
+        self.assertEqual(music_nfc_entitlements[MUSIC_NFC_ENTITLEMENT], ['TAG'])
         settings['CODE_SIGN_ENTITLEMENTS'] = 'Runner/Custom.entitlements'
         configure_project(project, binding, TEAM, 'fixture', Path('/tmp/keychain'))
         self.assertEqual(settings['CODE_SIGN_ENTITLEMENTS'], 'Runner/Custom.entitlements')
         self.assertNotIn('PLEAZYNG_MUSIC_NFC_ENABLED', settings)
+
+    def test_runner_keychain_entitlements_are_wired_for_debug_profile_and_release(self):
+        project = Path('ios/Runner.xcodeproj/project.pbxproj').read_text(encoding='utf-8')
+        self.assertEqual(project.count('CODE_SIGN_ENTITLEMENTS = Runner/DebugProfile.entitlements;'), 2)
+        self.assertEqual(project.count('CODE_SIGN_ENTITLEMENTS = Runner/Release.entitlements;'), 1)
+        debug_profile = plistlib.loads(Path('ios/Runner/DebugProfile.entitlements').read_bytes())
+        release = plistlib.loads(Path('ios/Runner/Release.entitlements').read_bytes())
+        music_nfc = plistlib.loads((Path('ios') / MUSIC_NFC_FILE).read_bytes())
+        self.assertEqual(debug_profile, {'keychain-access-groups': []})
+        self.assertEqual(release, {'keychain-access-groups': []})
+        self.assertEqual(music_nfc['keychain-access-groups'], [])
+        self.assertEqual(music_nfc[MUSIC_NFC_ENTITLEMENT], ['TAG'])
 
     def test_widget_build_embeds_a_distinct_profile_without_changing_debug_or_dropping_nfc(self):
         project = {'rootObject': 'root', 'objects': {
@@ -174,7 +194,10 @@ class AppleStoreSigningTests(unittest.TestCase):
             'app': {'isa': 'PBXNativeTarget', 'name': 'Runner', 'buildConfigurationList': 'configs',
                     'buildPhases': ['compile', 'thin', 'pods'], 'dependencies': []},
             'configs': {'buildConfigurations': ['release', 'debug']},
-            'release': {'name': 'Release', 'buildSettings': {'OTHER_LDFLAGS': ['$(inherited)', '-lc++']}},
+            'release': {'name': 'Release', 'buildSettings': {
+                'CODE_SIGN_ENTITLEMENTS': RELEASE_ENTITLEMENTS_FILE,
+                'OTHER_LDFLAGS': ['$(inherited)', '-lc++'],
+            }},
             'debug': {'name': 'Debug', 'buildSettings': {'KEEP': 'debug'}},
             'compile': {'isa': 'PBXSourcesBuildPhase'}, 'thin': {'name': 'Thin Binary'},
             'pods': {'name': '[CP] Embed Pods Frameworks'},
@@ -204,6 +227,7 @@ class AppleStoreSigningTests(unittest.TestCase):
             }, TEAM, 'fixture', Path(temporary) / 'keychain', widget_host_entitlements=path)
             entitlements = plistlib.loads(path.read_bytes())
             self.assertEqual(entitlements['com.apple.security.application-groups'], [GROUP])
+            self.assertEqual(entitlements['keychain-access-groups'], [])
             self.assertEqual(entitlements[MUSIC_NFC_ENTITLEMENT], ['TAG'])
         release = objects['release']['buildSettings']
         self.assertEqual(release['OTHER_LDFLAGS'], ['$(inherited)', '-lc++', '-weak_framework', 'AppIntents'])

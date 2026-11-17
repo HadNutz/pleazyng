@@ -36,6 +36,7 @@ PROFILE_KEYS = {
 }
 MUSIC_NFC_ENTITLEMENT = 'com.apple.developer.nfc.readersession.formats'
 MUSIC_NFC_FILE = 'Runner/MusicNFC.entitlements'
+RELEASE_ENTITLEMENTS_FILE = 'Runner/Release.entitlements'
 WORKER_ENTITLEMENTS = (Path(__file__).resolve().parents[1]
                        / 'native/games/romm/apple/extension/RommWorker.entitlements')
 
@@ -114,7 +115,8 @@ def configure_project(project: dict, bindings: dict[str, dict], team: str, finge
         settings.update(CODE_SIGN_STYLE='Manual', DEVELOPMENT_TEAM=team,
                         CODE_SIGN_IDENTITY=fingerprint, PROVISIONING_PROFILE_SPECIFIER=binding['uuid'],
                         PRODUCT_BUNDLE_IDENTIFIER=binding['bundle'])
-        if binding.get('music_nfc') and settings.get('CODE_SIGN_ENTITLEMENTS') in (None, '', MUSIC_NFC_FILE):
+        if binding.get('music_nfc') and settings.get('CODE_SIGN_ENTITLEMENTS') in (
+                None, '', MUSIC_NFC_FILE, RELEASE_ENTITLEMENTS_FILE):
             settings['CODE_SIGN_ENTITLEMENTS'] = MUSIC_NFC_FILE
             settings['PLEAZYNG_MUSIC_NFC_ENABLED'] = 'YES'
         if name == 'Runner' and widget_host_entitlements is not None:
