@@ -230,8 +230,7 @@ class PlayerNative extends PlayerBase
   /// [hardwareDecoding] mirrors the session's hardware-decoding setting so
   /// the Android core can pick its initial video output before mpv
   /// initializes: the fork's vo=mediacodec (with gpu behind it) for hardware
-  /// sessions, gpu-next for software ones (see
-  /// MpvPlayerCore.initialVideoOutput; #2010). Other platforms ignore it.
+  /// sessions, GL for software sessions. Desktop and Apple cores apply Off before loading media.
   PlayerNative({
     this._hardwareDecoding = true,
     int videoPlayerSlot = 0,
@@ -536,6 +535,9 @@ class PlayerNative extends PlayerBase
         throw StateError('Player was disposed during initialization');
       }
 
+      if (!audioOnly && !_hardwareDecoding && !Platform.isAndroid) {
+        await invoke('setProperty', {'name': 'hwdec', 'value': 'no'});
+      }
       final caFile = await MpvCertificateTrust.caFile();
       if (caFile != null) {
         await invoke('setProperty', {'name': 'tls-ca-file', 'value': caFile});

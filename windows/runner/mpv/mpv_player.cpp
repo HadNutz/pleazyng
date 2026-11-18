@@ -703,7 +703,6 @@ bool MpvPlayer::Initialize(HWND view) {
 
     mpv_set_option_string(mpv_, "vo", "gpu-next");
     mpv_set_option_string(mpv_, "gpu-api", "auto");
-    // hwdec is set from Flutter via setProperty based on user preference
   }
 
   // Hardware media keys are owned by the SMTC integration (os_media_controls);

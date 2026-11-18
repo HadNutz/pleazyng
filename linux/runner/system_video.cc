@@ -4,6 +4,7 @@
 #include <gst/video/video.h>
 
 #include <algorithm>
+#include <atomic>
 #include <cstring>
 #include <map>
 #include <memory>
@@ -62,6 +63,43 @@ static void video_pixels_class_init(VideoPixelsClass* klass) {
 static void video_pixels_init(VideoPixels* pixels) { pixels->frame = new VideoPixelsData; }
 
 namespace {
+bool isHardwareVideoDecoder(GstElementFactory* factory) {
+  return factory && gst_element_factory_list_is_type(factory, GST_ELEMENT_FACTORY_TYPE_DECODER |
+      GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO) &&
+      gst_element_factory_list_is_type(factory, GST_ELEMENT_FACTORY_TYPE_HARDWARE);
+}
+
+// uridecodebin uses GValueArray for this signal even on current GStreamer.
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+GValueArray* orderVideoDecoders(GstElement*, GstPad*, GstCaps*, GValueArray* factories, gpointer data) {
+  const bool preferHardware = *static_cast<const bool*>(data);
+  std::vector<const GValue*> video;
+  std::vector<guint> slots;
+  for (guint i = 0; i < factories->n_values; ++i) {
+    auto* value = g_value_array_get_nth(factories, i);
+    auto* factory = GST_ELEMENT_FACTORY(g_value_get_object(value));
+    if (!gst_element_factory_list_is_type(factory, GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO)) continue;
+    slots.push_back(i);
+    video.push_back(value);
+  }
+  const auto isHardware = [](const GValue* value) {
+    return isHardwareVideoDecoder(GST_ELEMENT_FACTORY(g_value_get_object(value)));
+  };
+  if (std::none_of(video.begin(), video.end(), isHardware)) return nullptr;
+  auto* sorted = g_value_array_copy(factories);
+  if (preferHardware) {
+    // Preserve demuxer/parser positions and the driver's rank inside each group.
+    std::stable_partition(video.begin(), video.end(), isHardware);
+    for (size_t i = 0; i < video.size(); ++i)
+      g_value_set_object(g_value_array_get_nth(sorted, slots[i]), g_value_get_object(video[i]));
+  } else {
+    for (size_t i = video.size(); i > 0; --i)
+      if (isHardware(video[i - 1])) g_value_array_remove(sorted, slots[i - 1]);
+  }
+  return sorted;
+}
+G_GNUC_END_IGNORE_DEPRECATIONS
+
 struct Session {
   FlTextureRegistrar* registrar;
   VideoPixels* pixels = nullptr;
@@ -69,6 +107,8 @@ struct Session {
   GstElement* sink = nullptr;
   GstBus* bus = nullptr;
   guint timer = 0;
+  bool prefer_hardware = true;
+  std::atomic<bool> hardware_attempted{false};
   bool registered = false, failed = false, ready = false, ended = false, wants_play = false, buffering = false;
   int width = 0, height = 0;
   double rate = 1;
@@ -84,7 +124,8 @@ struct Session {
     g_clear_object(&pixels);
   }
 
-  bool open(const char* uri) {
+  bool open(const char* uri, bool hardware = true) {
+    prefer_hardware = hardware;
     if (!gst_init_check(nullptr, nullptr, nullptr)) return false;
     pipeline = gst_element_factory_make("playbin", nullptr);
     sink = gst_element_factory_make("appsink", nullptr);
@@ -96,11 +137,20 @@ struct Session {
     pixels = reinterpret_cast<VideoPixels*>(g_object_new(video_pixels_get_type(), nullptr));
     registered = fl_texture_registrar_register_texture(registrar, FL_TEXTURE(pixels));
     if (!registered) return false;
+    g_signal_connect(pipeline, "element-setup", G_CALLBACK(+[](GstElement*, GstElement* child, gpointer data) {
+      auto* self = static_cast<Session*>(data);
+      auto* factory = gst_element_get_factory(child);
+      if (!factory) return;
+      if (isHardwareVideoDecoder(factory)) self->hardware_attempted = true;
+      if (!strcmp(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory)), "uridecodebin")) {
+        g_signal_connect(child, "autoplug-sort", G_CALLBACK(orderVideoDecoders), &self->prefer_hardware);
+      }
+    }), this);
     g_object_set(pipeline, "uri", uri, "video-sink", sink, nullptr);
     bus = gst_element_get_bus(pipeline);
     auto change = gst_element_set_state(pipeline, GST_STATE_PAUSED);
-    if (change == GST_STATE_CHANGE_FAILURE) return false;
-    ready = change == GST_STATE_CHANGE_NO_PREROLL;
+    if (change == GST_STATE_CHANGE_FAILURE && !retryPreroll()) return false;
+    if (change == GST_STATE_CHANGE_NO_PREROLL) ready = true;
     timer = g_timeout_add(12, [](gpointer data) -> gboolean {
       static_cast<Session*>(data)->tick();
       return G_SOURCE_CONTINUE;
@@ -108,10 +158,33 @@ struct Session {
     return true;
   }
 
+  bool retryPreroll() {
+    if (width || !prefer_hardware || !hardware_attempted) return false;
+    // Finish streaming callbacks before changing the per-session selection.
+    if (gst_element_set_state(pipeline, GST_STATE_NULL) == GST_STATE_CHANGE_FAILURE) return false;
+    prefer_hardware = false;
+    ready = false;
+    failed = false;
+    buffering = false;
+    auto change = gst_element_set_state(pipeline, wants_play ? GST_STATE_PLAYING : GST_STATE_PAUSED);
+    ready = change == GST_STATE_CHANGE_NO_PREROLL;
+    return change != GST_STATE_CHANGE_FAILURE;
+  }
+
   void tick() {
     while (GstMessage* msg = gst_bus_pop(bus)) {
       switch (GST_MESSAGE_TYPE(msg)) {
-        case GST_MESSAGE_ERROR: failed = true; break;
+        case GST_MESSAGE_ERROR: {
+          GError* error = nullptr;
+          gst_message_parse_error(msg, &error, nullptr);
+          const bool decodeError = error && error->domain == GST_STREAM_ERROR &&
+              (error->code == GST_STREAM_ERROR_DECODE || error->code == GST_STREAM_ERROR_FORMAT);
+          const bool fromHardware = GST_IS_ELEMENT(GST_MESSAGE_SRC(msg)) &&
+              isHardwareVideoDecoder(gst_element_get_factory(GST_ELEMENT(GST_MESSAGE_SRC(msg))));
+          failed = !((decodeError || fromHardware) && retryPreroll());
+          g_clear_error(&error);
+          break;
+        }
         case GST_MESSAGE_EOS: ended = true; break;
         case GST_MESSAGE_STATE_CHANGED:
           if (GST_MESSAGE_SRC(msg) == GST_OBJECT(pipeline)) {
@@ -273,7 +346,8 @@ void handle(FlMethodChannel*, FlMethodCall* call, gpointer data) {
     if (method == "create") {
       auto session = std::make_unique<Session>(host->registrar);
       auto* uri = fl_value_lookup_string(args, "uri");
-      ok = uri && session->open(fl_value_get_string(uri));
+      auto* hardware = fl_value_lookup_string(args, "hardwareDecoding");
+      ok = uri && session->open(fl_value_get_string(uri), !hardware || fl_value_get_bool(hardware));
       if (ok) {
         reply = fl_value_new_int(fl_texture_get_id(FL_TEXTURE(session->pixels)));
         host->sessions[id] = std::move(session);

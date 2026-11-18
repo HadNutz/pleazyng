@@ -102,6 +102,16 @@ Future<PerformanceStats> _firstStats(
 }
 
 void main() {
+  test('decoder status distinguishes observed hardware, software and an unknown decoder', () {
+    expect(
+      const PerformanceStats(videoDecoderName: 'c2.android.avc.decoder', videoDecoderHardware: false).hwdecFormatted,
+      const PerformanceStats(hwdecCurrent: 'no').hwdecFormatted,
+    );
+    expect(const PerformanceStats(videoDecoderName: 'c2.vendor.unknown').hwdecFormatted, 'c2.vendor.unknown');
+    expect(const PerformanceStats(hwdecCurrent: 'vaapi').hwdecFormatted, 'vaapi');
+    expect(const PerformanceStats().hwdecFormatted, isNot(const PerformanceStats(hwdecCurrent: 'no').hwdecFormatted));
+  });
+
   TestWidgetsFlutterBinding.ensureInitialized();
 
   for (final (type, expectedOutput) in [('webos', 'webos-native'), ('tizen', 'tizen-native'), ('mpv', null)]) {

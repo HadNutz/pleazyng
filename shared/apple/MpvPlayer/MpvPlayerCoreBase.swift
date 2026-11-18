@@ -827,15 +827,6 @@ class MpvPlayerCoreBase: NSObject {
       completeOnMain { completion(.failure(self.lifecycleUnavailableError())) }
       return
     }
-    #if targetEnvironment(simulator)
-      if name == "hwdec" {
-        if value != "no" {
-          MpvLog.debug("[MpvPlayerCore] Simulator does not support hardware decoding; forcing hwdec=no")
-        }
-        setRawStringPropertyAsync(name, value: "no", completion: completion)
-        return
-      }
-    #endif
 
     if isManagedRendererProperty(name) {
       MpvLog.debug("[MpvPlayerCore] Ignoring managed renderer property: \(name)=\(value)")
@@ -1269,11 +1260,8 @@ class MpvPlayerCoreBase: NSObject {
     // not EDR - an SDR sibling layer doesn't dim the video, so the composite,
     // which round-trips BT.2020/PQ through linear P3, buys nothing there.
     checkError(mpv_set_option_string(mpv, "avfoundation-composite-osd", "no"))
-    #if targetEnvironment(simulator)
-      checkError(mpv_set_option_string(mpv, "hwdec", "no"))
-    #else
-      checkError(mpv_set_option_string(mpv, "hwdec", "videotoolbox"))
-    #endif
+    // VideoToolbox probes the actual stream on the running device or simulator.
+    checkError(mpv_set_option_string(mpv, "hwdec", "videotoolbox"))
     checkError(mpv_set_option_string(mpv, "hwdec-codecs", "all"))
     checkError(mpv_set_option_string(mpv, "hwdec-software-fallback", "yes"))
     checkError(mpv_set_option_string(mpv, "target-colorspace-hint", "auto"))

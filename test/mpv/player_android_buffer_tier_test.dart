@@ -13,7 +13,10 @@ import '../test_helpers/prefs.dart';
 /// the `bufferTier` argument of `initialize`, where `ExoPlayerCore` resolves it into
 /// `LoadControlPolicy.bufferDurations`. It is init-only — losing it is silent, because the
 /// native side then keeps the Auto tier and simply never applies the user's choice.
-Future<MethodCall> _captureInitialize({required Future<void> Function(PlayerAndroid player) configure}) async {
+Future<MethodCall> _captureInitialize({
+  bool hardwareDecoding = true,
+  required Future<void> Function(PlayerAndroid player) configure,
+}) async {
   late MethodCall initialize;
   await withMockPlayerChannels(
     methodChannelName: 'com.plezy/exo_player',
@@ -23,7 +26,7 @@ Future<MethodCall> _captureInitialize({required Future<void> Function(PlayerAndr
       return call.method == 'initialize' ? true : null;
     },
     testBody: () async {
-      final player = PlayerAndroid();
+      final player = PlayerAndroid(hardwareDecoding: hardwareDecoding);
       try {
         await configure(player);
         // requestAudioFocus is what actually triggers native initialize; the screen relies
@@ -44,6 +47,13 @@ void main() {
     resetSharedPreferencesForTest();
     SettingsService.resetForTesting();
     await SettingsService.getInstance();
+  });
+
+  test('hardware preference reaches the native codec selector before playback', () async {
+    for (final enabled in [true, false]) {
+      final initialize = await _captureInitialize(hardwareDecoding: enabled, configure: (_) async {});
+      expect(initialize.arguments['hardwareDecoding'], enabled);
+    }
   });
 
   test('an explicit Playback Buffer tier reaches native initialization', () async {

@@ -368,7 +368,11 @@ class PerformanceStatsService {
       final capabilityReport = PlaybackCapabilityReport(
         playerType: 'exoplayer',
         videoOutput: 'exoplayer-surface',
-        hardwareDecoder: statsMap['videoDecoderName'] as String?,
+        hardwareDecoder: switch (statsMap['videoDecoderHardware']) {
+          true => statsMap['videoDecoderName'] as String?,
+          false => 'no',
+          _ => null,
+        },
         sourceWidth: statsMap['videoWidth'] as int?,
         sourceHeight: statsMap['videoHeight'] as int?,
         sourceIsHdr: statsMap['sourceIsHdr'] as bool?,
@@ -390,6 +394,7 @@ class PerformanceStatsService {
         videoFps: (statsMap['videoFps'] as num?)?.toDouble(),
         videoBitrate: statsMap['videoBitrate'] as int?,
         videoDecoderName: statsMap['videoDecoderName'] as String?,
+        videoDecoderHardware: statsMap['videoDecoderHardware'] as bool?,
         // Audio metrics
         audioCodec: _formatAudioCodecName((statsMap['audioCodec'] ?? statsMap['audioMimeType']) as String?),
         audioSamplerate: statsMap['audioSampleRate'] as int?,

@@ -420,7 +420,7 @@ abstract class Player {
 
   factory Player({
     VideoBackend? backend,
-    bool hardwareDecoding = true,
+    bool? hardwareDecoding,
     int videoPlayerSlot = 0,
     bool companionSession = false,
   }) {
@@ -429,22 +429,26 @@ abstract class Player {
       throw UnsupportedError('This platform does not provide native video slot $slot');
     }
     final engine = VideoHost.current.resolve(backend ?? SettingsService.preferredVideoBackend);
+    final useHardware =
+        hardwareDecoding ??
+        SettingsService.instanceOrNull?.read(SettingsService.enableHardwareDecoding) ??
+        SettingsService.enableHardwareDecoding.defaultValue;
     if (slot == 0) RuntimePlaybackCapabilities.activeVideoEngine = engine;
     if (engine == 'tizen') return PlayerTizen();
     if (engine == 'webos') return PlayerWebOS();
-    if (engine == 'exoplayer') return PlayerAndroid(videoPlayerSlot: slot);
-    if (engine != 'mpv') return PlayerSystem(engine, hardwareDecoding: hardwareDecoding);
+    if (engine == 'exoplayer') return PlayerAndroid(hardwareDecoding: useHardware, videoPlayerSlot: slot);
+    if (engine != 'mpv') return PlayerSystem(engine, hardwareDecoding: useHardware);
     if (Platform.isAndroid) {
-      return PlayerNative(hardwareDecoding: hardwareDecoding, videoPlayerSlot: slot);
+      return PlayerNative(hardwareDecoding: useHardware, videoPlayerSlot: slot);
     }
     if (Platform.isMacOS || Platform.isIOS) {
-      return PlayerNative(videoPlayerSlot: slot);
+      return PlayerNative(hardwareDecoding: useHardware, videoPlayerSlot: slot);
     }
     if (Platform.isWindows) {
-      return PlayerWindows(videoPlayerSlot: slot);
+      return PlayerWindows(hardwareDecoding: useHardware, videoPlayerSlot: slot);
     }
     if (Platform.isLinux) {
-      return PlayerLinux(videoPlayerSlot: slot);
+      return PlayerLinux(hardwareDecoding: useHardware, videoPlayerSlot: slot);
     }
     throw UnsupportedError('Player is not supported on this platform');
   }

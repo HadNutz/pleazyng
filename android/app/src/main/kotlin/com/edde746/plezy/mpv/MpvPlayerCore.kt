@@ -1128,16 +1128,8 @@ class MpvPlayerCore private constructor(
                   // the others' keys.
                   decoderOptions.putAll(initialDecoderEntries(Build.VERSION.SDK_INT))
                   setOption("vd-lavc-o", decoderOptions.compose())
-                  // mpv's default hwdec-codecs leaves out mpeg2video, so
-                  // broadcast MPEG-2 (Live TV at Original quality) would decode
-                  // in software and leave the plane for a GL vo, where 1080i with
-                  // deinterlacing falls behind on Fire TV-class CPUs (#2748). The
-                  // hardware decoder deinterlaces by itself and stays on the
-                  // plane. This is every bundled MediaCodec video wrapper except
-                  // mpeg4, which stays off so Xvid/DivX keep the software path
-                  // from #2602. Without an MPEG-2 decoder, mpv falls back to
-                  // software as before.
-                  setOption("hwdec-codecs", "h264,hevc,mpeg2video,vp8,vp9,av1")
+                  setOption("hwdec", if (hardwareDecoding) "mediacodec,mediacodec-copy" else "no")
+                  setOption("hwdec-codecs", "all")
                   if (hardwareDecoding) {
                     // Rationale on DECODER_QUEUE_OPTIONS.
                     for ((name, value) in DECODER_QUEUE_OPTIONS) setOption(name, value)
@@ -1912,7 +1904,13 @@ class MpvPlayerCore private constructor(
     val hardwareHigh10 = MediaCodecQuery.hardwareAvcHigh10Support()
     val hardwareAv1 = MediaCodecQuery.hardwareAv1Support()
     PlayerDebugLog.d(TAG) { "Decode routing: codec=$codec profile=$codecProfile hardwareHigh10=$hardwareHigh10 hardwareAv1=$hardwareAv1" }
-    val needs = GpuVoPolicy.needsSoftwareDecode(codec, codecProfile, hardwareHigh10, hardwareAv1)
+    // MPEG-4 Part 2 decoders often implement Simple Profile only. Keep
+    // Xvid/DivX on GL unless a hardware component reports this stream's format.
+    val unsupportedMpeg4 = track != null && codec == "mpeg4" && MediaCodecQuery.supportsVideoFormat(
+      codec, track.optInt("demux-w"), track.optInt("demux-h"), track.optDouble("demux-fps"),
+      codecProfile, null, hardwareOnly = true
+    ) != true
+    val needs = unsupportedMpeg4 || GpuVoPolicy.needsSoftwareDecode(codec, codecProfile, hardwareHigh10, hardwareAv1)
     if (holdHwdec(p, GpuVoPolicy.REASON_CODEC_SW_DECODE, needs) && needs) {
       Log.i(TAG, "$codec profile=$codecProfile without hardware support: native software decode on the GL vo")
     }
@@ -2127,8 +2125,8 @@ class MpvPlayerCore private constructor(
 
   /**
    * The plane cannot display this file's stream: it decodes to something
-   * other than MediaCodec buffers (a codec outside `hwdec-codecs` such as
-   * Xvid, #2602, or mpv's own fallback to `mediacodec-copy` or software).
+   * other than MediaCodec buffers (unsupported Xvid profiles or mpv's
+   * own fallback to `mediacodec-copy` or software).
    * The fork mpv holds the video chain on the rejected frame instead of
    * dropping the track (VO_CAP_CLIENT_FALLBACK), so the switch to a GL vo
    * takes mpv's own vo-change path, which rebuilds the chain and seeks;

@@ -15,11 +15,16 @@ import '../video_rect_support.dart';
 class PlayerAndroid extends PlayerBase implements VideoRectSupport, PlayerAudioFocusControl, SubtitlePcmCaptureSource {
   static const _channelBase = 'com.plezy/exo_player';
 
-  PlayerAndroid({int videoPlayerSlot = 0, bool companionSession = false, super.listenToNativeEvents = true})
-    : _primaryVideoPlayer = !companionSession && videoPlayerSlot == 0,
-      methodChannel = MethodChannel(_channelName(companionSession ? 1 : videoPlayerSlot)),
-      eventChannel = EventChannel('${_channelName(companionSession ? 1 : videoPlayerSlot)}/events');
+  PlayerAndroid({
+    this.hardwareDecoding = true,
+    int videoPlayerSlot = 0,
+    bool companionSession = false,
+    super.listenToNativeEvents = true,
+  }) : _primaryVideoPlayer = !companionSession && videoPlayerSlot == 0,
+       methodChannel = MethodChannel(_channelName(companionSession ? 1 : videoPlayerSlot)),
+       eventChannel = EventChannel('${_channelName(companionSession ? 1 : videoPlayerSlot)}/events');
 
+  final bool hardwareDecoding;
   final bool _primaryVideoPlayer;
 
   static String _channelName(int videoPlayerSlot) {
@@ -195,6 +200,7 @@ class PlayerAndroid extends PlayerBase implements VideoRectSupport, PlayerAudioF
     try {
       final result = await invoke<bool>('initialize', {
         'instanceId': nativeInstanceId,
+        'hardwareDecoding': hardwareDecoding,
         'bufferTier': _bufferTier,
         'bufferMb': _bufferMb,
         'transcodeBufferSeconds': _transcodeBufferSeconds,

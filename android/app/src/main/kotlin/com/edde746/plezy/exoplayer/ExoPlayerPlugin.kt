@@ -132,6 +132,8 @@ open class ExoPlayerPlugin(
   private var mpvCoreNeedsReplacement = false
   internal var createMpvCore: (Activity) -> MpvPlayerCore =
     { MpvPlayerCore(it, hardwareDecoding = fallbackHardwareDecoding()) }
+  private var sessionHardwareDecoding = true
+
   internal var initializeMpvCore: (MpvPlayerCore, (Boolean) -> Unit) -> Unit = { core, onInitialized ->
     core.initialize(onInitialized)
   }
@@ -321,6 +323,7 @@ open class ExoPlayerPlugin(
       return
     }
 
+    val hardwareDecoding = call.argument<Boolean>("hardwareDecoding") ?: true
     val tunnelingEnabled = call.argument<Boolean>("tunnelingEnabled") ?: false
     dvConversionMode = call.argument<String>("dvConversionMode") ?: "auto"
     val audioPassthroughEnabled = call.argument<Boolean>("audioPassthroughEnabled") ?: false
@@ -374,8 +377,11 @@ open class ExoPlayerPlugin(
         playerCore = core
         coreInstanceId = call.argument<Number>("instanceId")?.toLong()
         core.setTranscodeBufferCapSeconds(transcodeBufferSeconds)
+        sessionHardwareDecoding = hardwareDecoding
+        val useHardware = fallbackHardwareDecoding()
         val success = core.initialize(
-          tunnelingEnabled = tunnelingEnabled,
+          hardwareDecoding = useHardware,
+          tunnelingEnabled = tunnelingEnabled && useHardware,
           audioPassthroughEnabled = audioPassthroughEnabled,
           bufferTier = bufferTier,
           bufferMb = bufferMb
@@ -1571,7 +1577,7 @@ open class ExoPlayerPlugin(
    * reshaping, and a session that asked for software decode is usually the
    * one that needs it.
    */
-  private fun fallbackHardwareDecoding(): Boolean = pendingMpvProperties["hwdec"]?.let { it != "no" } ?: true
+  private fun fallbackHardwareDecoding(): Boolean = pendingMpvProperties["hwdec"]?.let { it != "no" } ?: sessionHardwareDecoding
 
   /**
    * Configure a freshly initialized MPV fallback core: replay the properties
@@ -1583,8 +1589,7 @@ open class ExoPlayerPlugin(
     val pendingProps = pendingMpvProperties.filterKeys { it != "audio-spdif" }.toList()
     val observedProps = observedProperties.toList()
 
-    // hwdec is not seeded here — Dart's write in pendingMpvProperties is the
-    // single source of the fallback core's chain.
+    // The fallback core already has this session's requested decoder and output.
     core.setProperty("ao", "audiotrack")
     // Dart routes dv-conversion-mode through setDvConversionMode, so unlike
     // hwdec it never reaches pendingMpvProperties.

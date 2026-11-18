@@ -125,14 +125,15 @@ internal object MediaCodecQuery {
     height: Int?,
     fps: Double?,
     profile: String?,
-    bitDepth: Int?
+    bitDepth: Int?,
+    hardwareOnly: Boolean = false
   ): Boolean? {
     val mime = mimeTypeForCodec(codec) ?: return null
     val profiles = platformProfiles(codec, profile, bitDepth)
     val describesProfile = !profile.isNullOrBlank() || (bitDepth ?: 0) > 8
     var incomplete = false
     for (info in MediaCodecList(MediaCodecList.REGULAR_CODECS).codecInfos) {
-      if (info.isEncoder) continue
+      if (info.isEncoder || (hardwareOnly && !isHardwareAccelerated(info))) continue
       val type = info.supportedTypes.firstOrNull { it.equals(mime, ignoreCase = true) } ?: continue
       val caps = try {
         info.getCapabilitiesForType(type)
@@ -167,6 +168,11 @@ internal object MediaCodecQuery {
   private fun platformProfiles(codec: String?, profile: String?, bitDepth: Int?): Set<Int> {
     val name = profile?.lowercase(Locale.ROOT)?.filter { it.isLetterOrDigit() }
     return when (codec) {
+      "mpeg4" -> when (name) {
+        "simple", "simpleprofile" -> setOf(Profile.MPEG4ProfileSimple, Profile.MPEG4ProfileAdvancedSimple)
+        "advancedsimple", "advancedsimpleprofile" -> setOf(Profile.MPEG4ProfileAdvancedSimple)
+        else -> emptySet()
+      }
       "h264" -> when (name) {
         "baseline" -> setOf(Profile.AVCProfileBaseline, Profile.AVCProfileConstrainedBaseline)
         "constrainedbaseline" -> setOf(Profile.AVCProfileConstrainedBaseline, Profile.AVCProfileBaseline)

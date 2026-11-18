@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/models/video_backend.dart';
 import 'package:plezy/mpv/models.dart';
+import 'package:plezy/mpv/player/player.dart';
 import 'package:plezy/mpv/player/platform/player_system.dart';
 import 'package:plezy/services/settings_service.dart';
 import '../test_helpers/prefs.dart';
@@ -32,6 +33,25 @@ void main() {
     expect(settings.read(SettingsService.tvVideoBackend), VideoBackend.system);
     expect(settings.read(SettingsService.desktopAppleVideoBackend), VideoBackend.mpv);
   });
+
+  test('new playback sessions prefer hardware and inherit a saved opt-out', () async {
+    resetSharedPreferencesForTest();
+    final settings = await SettingsService.getInstance();
+    Future<void> expectPreference(bool expected, {bool? override}) async {
+      final player = Player(backend: VideoBackend.system, hardwareDecoding: override) as PlayerSystem;
+      try {
+        expect(player.hardwareDecoding, expected);
+      } finally {
+        await player.dispose();
+      }
+    }
+
+    await expectPreference(true);
+    await expectPreference(false, override: false);
+    await settings.write(SettingsService.enableHardwareDecoding, false);
+    await expectPreference(false);
+    await expectPreference(true, override: true);
+  }, skip: VideoHost.current == VideoHost.webos || VideoHost.current == VideoHost.tizen);
 
   const channel = MethodChannel('org.snapetech.pleazyng/system_video');
   final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;

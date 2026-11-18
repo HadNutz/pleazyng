@@ -52,6 +52,7 @@ class PerformanceStats {
   final String? aspectName;
   final int? rotate;
   final String? videoDecoderName;
+  final bool? videoDecoderHardware;
 
   final String? pixelformat;
   final String? hwPixelformat;
@@ -139,6 +140,7 @@ class PerformanceStats {
     this.aspectName,
     this.rotate,
     this.videoDecoderName,
+    this.videoDecoderHardware,
     this.pixelformat,
     this.hwPixelformat,
     this.colormatrix,
@@ -557,39 +559,22 @@ class PerformanceStats {
 
   /// Format hardware decoding mode.
   String get hwdecFormatted {
-    // The native TV media plugins (webOS and Tizen) do not expose mpv's
-    // hwdec-current property or a decoder name. A missing report is not proof
-    // of software decoding; show the unknown value instead of a false claim.
-    if (playerType == 'webos' || playerType == 'tizen') {
-      return t.common.notAvailable;
-    }
-    // For ExoPlayer, use the decoder name
-    if (videoDecoderName != null && videoDecoderName!.isNotEmpty) {
-      // Check if it's a hardware decoder (contains OMX, c2, or MediaCodec patterns)
-      final decoder = videoDecoderName!;
-      if (decoder.contains('c2.') || decoder.contains('OMX.') || decoder.contains('.hw.')) {
-        // Extract a cleaner name
-        if (decoder.contains('c2.android.')) return t.performanceOverlay.decoderAndroidHw;
-        if (decoder.contains('c2.nvidia')) return t.performanceOverlay.decoderNvidiaHw;
-        if (decoder.contains('c2.qti') || decoder.contains('c2.qcom')) {
-          return t.performanceOverlay.decoderQualcommHw;
-        }
-        if (decoder.contains('c2.mtk') || decoder.contains('c2.mediatek')) {
-          return t.performanceOverlay.decoderMediatekHw;
-        }
-        if (decoder.contains('c2.exynos') || decoder.contains('c2.samsung')) {
-          return t.performanceOverlay.decoderExynosHw;
-        }
-        if (decoder.contains('OMX.google')) return t.performanceOverlay.decoderSoftware;
-        return t.performanceOverlay.decoderHardware;
+    final decoder = videoDecoderName;
+    if (decoder != null && decoder.isNotEmpty) {
+      if (videoDecoderHardware == false) return t.performanceOverlay.decoderSoftware;
+      if (videoDecoderHardware == null) return decoder;
+      if (decoder.startsWith('c2.nvidia')) return t.performanceOverlay.decoderNvidiaHw;
+      if (decoder.startsWith('c2.qti') || decoder.startsWith('c2.qcom')) return t.performanceOverlay.decoderQualcommHw;
+      if (decoder.startsWith('c2.mtk') || decoder.startsWith('c2.mediatek')) {
+        return t.performanceOverlay.decoderMediatekHw;
       }
-      return t.performanceOverlay.decoderSoftware;
+      if (decoder.startsWith('c2.exynos') || decoder.startsWith('c2.samsung')) {
+        return t.performanceOverlay.decoderExynosHw;
+      }
+      return t.performanceOverlay.decoderHardware;
     }
-    // For MPV, use hwdec-current property
-    if (hwdecCurrent == null || hwdecCurrent!.isEmpty || hwdecCurrent == 'no') {
-      return t.performanceOverlay.decoderSoftware;
-    }
-    return hwdecCurrent!;
+    if (hwdecCurrent == 'no') return t.performanceOverlay.decoderSoftware;
+    return (hwdecCurrent?.isNotEmpty ?? false) ? hwdecCurrent! : t.common.notAvailable;
   }
 
   /// Raw video decoder name (e.g. c2.qti.video.decoder.hevc).

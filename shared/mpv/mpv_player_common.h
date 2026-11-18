@@ -522,7 +522,7 @@ inline bool ParseEnabledFlag(const std::string& value) { return value == "yes" |
 inline const char* TargetColorspaceHint(bool hdr_enabled) { return hdr_enabled ? "auto" : "no"; }
 
 // Startup options shared by every desktop mpv core. Must run between
-// mpv_create() and mpv_initialize(); platform-specific options (vo, hwdec,
+// mpv_create() and mpv_initialize(); platform-specific options (vo,
 // wid, HDR/tone-mapping, log level) stay with the caller.
 inline void ApplyCommonStartupOptions(mpv_handle* mpv, bool audio_only) {
   // Set before initialization for every video and audio core.
@@ -535,6 +535,10 @@ inline void ApplyCommonStartupOptions(mpv_handle* mpv, bool audio_only) {
     mpv_set_option_string(mpv, "force-window", "no");
     mpv_set_option_string(mpv, "audio-display", "no");
     mpv_set_option_string(mpv, "gapless-audio", "weak");
+  } else {
+    // Applies to every video entry point, including previews and secondary cores.
+    mpv_set_option_string(mpv, "hwdec", "auto");
+    mpv_set_option_string(mpv, "hwdec-codecs", "all");
   }
   mpv_set_option_string(mpv, "keep-open", "yes");
   // When the audio device becomes unavailable (sleep, device unplug), fall

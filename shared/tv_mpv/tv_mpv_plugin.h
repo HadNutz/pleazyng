@@ -123,7 +123,7 @@ class Session {
     plane_ = hardware && !window.empty() && api_.ndl_acquire && api_.ndl_status &&
              api_.ndl_release && api_.ndl_acquire(window.c_str());
     for (const auto& option : std::map<std::string, std::string>{
-        {"vo",plane_ ? "webos-ndl" : "libmpv"}, {"hwdec",hardware ? "v4l2m2m-copy" : "no"}, {"pause","yes"}, {"keep-open","yes"}, {"config","no"},
+        {"vo",plane_ ? "webos-ndl" : "libmpv"}, {"hwdec",hardware ? "v4l2m2m-copy" : "no"}, {"hwdec-codecs","all"}, {"pause","yes"}, {"keep-open","yes"}, {"config","no"},
         {"input-default-bindings","no"}, {"terminal","no"}, {"audio-display","no"}}) {
       check(api_.set_option_string(core_, option.first.c_str(), option.second.c_str()));
     }

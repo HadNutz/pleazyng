@@ -13,6 +13,10 @@ Choose an engine under **Settings → Playback → Video player**. The selection
 
 ExoPlayer uses Android APIs. The system choices use each OS's playback stack. An installed decoder, a decoder selected for a stream, and the signal actually presented by a display are separate observations. Server negotiation follows the engine selected for that source. Original quality on TV preserves source resolution. Lower quality presets continue to request their configured dimensions. For the desktop system players the app queries GStreamer's installed decoders and demuxers, Media Foundation's decoder transforms, or AVFoundation's playable MP4 codecs. A software decoder can accept an original file. A reported hardware decoder also enables HEVC or AV1 as a preferred server transcode output.
 
+Hardware decoding is enabled by default for new video sessions, including previews and secondary players. mpv tries the platform decoder for the source codec and falls back when it cannot decode the stream. ExoPlayer tries compatible hardware MediaCodec components before software ones. GStreamer prefers hardware video decoders for each session and can retry software when a driver fails during preparation. These engines respect a saved hardware-decoding preference. Features that require CPU-decoded frames can still select software.
+
+AVPlayer, Android MediaPlayer, Media Foundation and the native Samsung and LG players use the operating system’s decoder selection. Original quality preserves the source resolution independently of decoder selection.
+
 ## TV hardware paths
 
 On webOS, mpv can demux H.264, HEVC, VP9 and AV1 for LG DirectMedia. mpv schedules compressed access units in decode order, passes their original presentation timestamps to the hardware and renders video on an exported LG window. H.264 and HEVC from MP4 are reframed as Annex B. For HDR VP9, the adapter sends container colour and mastering metadata to DirectMedia. Flutter draws the controls and sidecar text over the plane. The NDL path seeks to keyframes so the decoder receives its reference pictures. The LG URI player remains an independent option for native track handling and HDR formats.

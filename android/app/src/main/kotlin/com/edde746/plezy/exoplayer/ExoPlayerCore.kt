@@ -321,6 +321,7 @@ class ExoPlayerCore(private val activity: Activity) :
   // Decoder hang detection: tracks gap between decoder init and first rendered frame
   private var decoderHangRunnable: Runnable? = null
   private var decoderInitName: String? = null
+  private var decoderInitHardware: Boolean? = null
   private var audioDecoderInitName: String? = null
   private var lastAudioTrackConfig: AudioSink.AudioTrackConfig? = null
   private val directAudioOutputBlockedAfterFailure = mutableSetOf<String>()
@@ -597,7 +598,8 @@ class ExoPlayerCore(private val activity: Activity) :
     // the default (#1816).
     bufferTier: String = "auto",
     // Buffer Size setting; 0 keeps the auto byte budget and the tier's durations.
-    bufferMb: Int = 0
+    bufferMb: Int = 0,
+    hardwareDecoding: Boolean = true
   ): Boolean {
     if (isInitialized) {
       Log.d(TAG, "Already initialized")
@@ -726,11 +728,8 @@ class ExoPlayerCore(private val activity: Activity) :
           if (shouldForceAppAudioDecoder(mimeType)) {
             emptyList()
           } else {
-            MediaCodecSelector.DEFAULT.getDecoderInfos(
-              mimeType,
-              requiresSecureDecoder,
-              requiresTunnelingDecoder
-            )
+            val candidates = MediaCodecSelector.DEFAULT.getDecoderInfos(mimeType, requiresSecureDecoder, requiresTunnelingDecoder)
+            if (MimeTypes.isVideo(mimeType)) preferredVideoDecoders(candidates, hardwareDecoding) else candidates
           }
         }
       }
@@ -1700,7 +1699,7 @@ class ExoPlayerCore(private val activity: Activity) :
     val doviTrack = activeDoviTrackOutput()
     val conversionActive = doviTrack?.conversionActive == true
     val sourceProfile = if (conversionActive) 7 else (dolbyVisionProfile(format) ?: return null)
-    val decoder = decoderName ?: decoderInitName ?: getVideoDecoderInfo(format) ?: "unknown"
+    val decoder = decoderName ?: decoderInitName ?: "unknown"
     val mimeType = format?.sampleMimeType
 
     val (path, reason) = when {
@@ -3136,11 +3135,21 @@ class ExoPlayerCore(private val activity: Activity) :
       val mediaGeneration = mediaGenerationAt(eventTime) ?: return
       if (mediaGeneration != currentMediaGeneration) return
       decoderInitName = decoderName
+      decoderInitHardware = runCatching {
+        MediaCodecList(MediaCodecList.ALL_CODECS).codecInfos.firstOrNull { it.name == decoderName }
+          ?.let(MediaCodecQuery::isHardwareAccelerated)
+      }.getOrNull()
       persistRuntimePlaybackDiagnostics(currentVideoFormat ?: exoPlayer?.videoFormat, decoderName)
       firstFrameRendered = false
       emitLog("debug", "decoder-hang", "Decoder initialized: $decoderName (${initializationDurationMs}ms)")
       logDolbyVisionPlaybackPathIfNeeded(decoderName)
       startDecoderHangCheck(decoderName, mediaGeneration)
+    }
+
+    override fun onVideoDecoderReleased(eventTime: AnalyticsListener.EventTime, decoderName: String) {
+      if (mediaGenerationAt(eventTime) == currentMediaGeneration && decoderInitName == decoderName) {
+        decoderInitName = null
+      }
     }
 
     override fun onAudioDecoderInitialized(
@@ -4451,9 +4460,7 @@ class ExoPlayerCore(private val activity: Activity) :
     val audioFormat = player.audioFormat
     val audioTrackConfig = lastAudioTrackConfig
 
-    // Get decoder info from the format's codecs field and check if hardware accelerated
-    val videoDecoderInfo = getVideoDecoderInfo(videoFormat)
-    val videoDecoderName = decoderInitName ?: videoDecoderInfo
+    val videoDecoderName = decoderInitName
     val dvPlaybackInfo = buildDvPlaybackInfo(videoFormat, videoDecoderName) ?: lastDvPlaybackInfo
     val sourceIsHdr = videoFormat?.colorInfo?.let { colorInfo ->
       val transfer = colorInfo.colorTransfer
@@ -4478,6 +4485,7 @@ class ExoPlayerCore(private val activity: Activity) :
       "sourceIsHdr" to sourceIsHdr,
       "videoBitrate" to videoFormat?.bitrate,
       "videoDecoderName" to videoDecoderName,
+      "videoDecoderHardware" to videoDecoderName?.let { decoderInitHardware },
       "videoDroppedFrames" to player.videoDecoderCounters?.droppedBufferCount,
       "videoRenderedFrames" to player.videoDecoderCounters?.renderedOutputBufferCount,
       "videoResumeStallRecoveries" to resumeStallRecoveryCount,
@@ -4590,17 +4598,6 @@ class ExoPlayerCore(private val activity: Activity) :
         )
       }
     )
-  }
-
-  private fun getVideoDecoderInfo(videoFormat: androidx.media3.common.Format?): String? {
-    if (videoFormat == null) return null
-    val mimeType = videoFormat.sampleMimeType ?: return null
-
-    return try {
-      MediaCodecQuery.findHardwareDecoder(mimeType, MediaCodecList.ALL_CODECS)?.name ?: "Software"
-    } catch (e: Exception) {
-      null
-    }
   }
 
   private fun getTunnelingStatus(player: ExoPlayer): String {

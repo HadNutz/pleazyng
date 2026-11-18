@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Prefer compatible hardware video decoders on every platform. ExoPlayer and GStreamer keep software fallback available, and playback statistics report the decoder observed for the stream.
+
 - Choose a video engine in Playback settings. Android offers mpv, Media3 ExoPlayer and Android MediaPlayer. Apple platforms offer AVPlayer, Windows offers Media Foundation, and Linux offers GStreamer alongside mpv.
 - Add mpv to the LG and Samsung TV builds. LG mpv can feed the TV video plane directly. TV mpv can also try V4L2 hardware decoding. Samsung original-quality sources can reach the native decoder at UHD resolution. See [video engines and device qualification](docs/plezyng/video-engines.md).
 
