@@ -31,20 +31,23 @@ Future<({File file, int size, bool complete})> finishManualCapture({
 
 /// One demuxer owns both the cached packets and the live continuation. mpv
 /// completes the asynchronous command on stop; some platform bridges instead
-/// acknowledge submission immediately, so disk creation confirms startup.
+/// acknowledge submission immediately. The first written bytes confirm startup.
 class BufferedIptvCapture {
   BufferedIptvCapture(this.command);
   final Future<void> Function(List<String>) command;
   Object? _error;
   Future<void>? _dump;
+  Future<void>? _stopping;
 
   Future<void> start(File output, double offset) async {
     _dump = command(['dump-cache', offset.toStringAsFixed(3), 'no', output.path]).catchError((Object error) {
       _error = error;
     });
     final clock = Stopwatch()..start();
-    while (!await output.exists()) {
+    while (true) {
+      final stat = await output.stat();
       if (_error != null) throw StateError('Buffered recording failed: $_error');
+      if (stat.type == FileSystemEntityType.file && stat.size > 0) return;
       if (clock.elapsed > const Duration(seconds: 5)) {
         await stop();
         throw const FileSystemException('Buffered recording did not start');
@@ -53,9 +56,12 @@ class BufferedIptvCapture {
     }
   }
 
-  Future<void> stop() async {
-    await command(['dump-cache', 'no', 'no', '']);
-    await _dump?.timeout(const Duration(seconds: 5));
+  Future<void> stop() => _stopping ??= _stop();
+
+  Future<void> _stop() async {
+    const timeout = Duration(seconds: 5);
+    await command(['dump-cache', 'no', 'no', '']).timeout(timeout);
+    await _dump?.timeout(timeout);
     if (_error != null) throw StateError('Buffered recording interrupted: $_error');
   }
 }

@@ -17,7 +17,8 @@ buffer is checked again after the choice in case it has advanced.
 
 A single asynchronous demuxer dump remuxes the retained packets and continues
 recording live packets. It does not open another provider stream. Stopping the
-recording flushes that same writer. Channel changes and shutdown finish it
+recording flushes that same writer. The app reports a buffered recording as started
+after the writer produces its first bytes. Channel changes and shutdown finish it
 before replacing the player. This requires a native build with the MPEG-TS
 recording muxer; native TV engines without this packet buffer do not offer it.
 
@@ -135,9 +136,10 @@ performance still needs device qualification.
 
 The native muxer/filter build changes are in
 [mpv-build 31c7da3](https://github.com/snapetech-org/mpv-build/commit/31c7da326fc9975311ff68851d691267ecb810c3).
-The hosted native build is in progress; the previously pinned artifacts do not
-qualify the new recording/commentary paths. Artifact promotion must retain
-verified checksums and complete platform coverage.
+The Linux x86-64 artifact from [native build 73](https://github.com/snapetech-org/mpv-build/actions/runs/44227223847)
+passed the decoded commentary, episode, CUE and buffered recording checks.
+The release controller verifies the current producer manifest and pins the
+platform checksums before packaging the app.
 
 ## Upstream sources
 

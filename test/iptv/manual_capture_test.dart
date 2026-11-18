@@ -50,8 +50,21 @@ void main() {
     await capture.start(output, 12.345);
     expect(dumping.isCompleted, isFalse);
     expect(requests.single, ['dump-cache', '12.345', 'no', output.path]);
-    await capture.stop();
+    await Future.wait([capture.stop(), capture.stop()]);
+    expect(requests.where((args) => args.last.isEmpty), hasLength(1));
     expect(await output.readAsBytes(), [1, 2, 3, 4, 5, 6]);
+  });
+  test('an empty file left by a failing muxer never announces a recording', () async {
+    final folder = await Directory.systemTemp.createTemp('iptv-empty-buffer');
+    addTearDown(() => folder.delete(recursive: true));
+    final output = await File('${folder.path}/capture.ts').create();
+    final failure = Completer<void>();
+    final capture = BufferedIptvCapture((_) => failure.future);
+    final startup = expectLater(capture.start(output, 0), throwsStateError);
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    failure.completeError(StateError('muxer rejected the stream'));
+    await startup;
+    expect(await output.length(), 0);
   });
   test('buffered capture reports a rejected command instead of claiming success', () async {
     final folder = await Directory.systemTemp.createTemp('iptv-buffer-error');
