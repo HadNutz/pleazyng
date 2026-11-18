@@ -127,7 +127,9 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
   /// Progress recorded *after* the mark is a genuine rewatch: it is queued
   /// later, so it is never touched here.
   void _onWatchStateChanged(WatchStateEvent event) {
-    if (isDisposed) return;
+    // Offline marks already purged their own queue in the insert transaction.
+    // A delayed notification may arrive after another profile becomes active.
+    if (isDisposed || event.patchId?.isOfflineAction == true) return;
     if (event.changeType != WatchStateChangeType.watched && event.changeType != WatchStateChangeType.unwatched) {
       return;
     }
@@ -135,26 +137,19 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
       _discardQueuedProgress(
         ServerId(event.serverId),
         event.itemId,
-        beforeRevision: _offlineActionRevision(event.patchId),
+        eventScope: resolveActiveClientScopeId(serverId: event.serverId, cacheServerId: event.cacheServerId),
       ),
     );
   }
 
-  int? _offlineActionRevision(WatchPatchId? patchId) {
-    final value = patchId?.value;
-    if (value == null || !value.startsWith('o:')) return null;
-    final separator = value.lastIndexOf(':');
-    return separator < 2 ? null : int.tryParse(value.substring(separator + 1));
-  }
-
-  Future<void> _discardQueuedProgress(ServerId serverId, String itemId, {int? beforeRevision}) async {
+  Future<void> _discardQueuedProgress(ServerId serverId, String itemId, {String? eventScope}) async {
+    final profileId = _activeProfileId;
     try {
       final removed = await _database.deleteQueuedProgressForItem(
-        profileId: _activeProfileId,
+        profileId: profileId,
         serverId: serverId,
-        clientScopeId: await _clientScopeIdForItem(serverId, itemId),
+        clientScopeId: eventScope ?? await _clientScopeIdForItem(serverId, itemId, profileId),
         ratingKey: itemId,
-        beforeRevision: beforeRevision,
       );
       if (removed == 0) return;
       appLogger.d('Dropped $removed superseded queued progress action(s) for $serverId:$itemId');
@@ -340,8 +335,8 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
   }) async {
     final shouldMarkWatched =
         duration != null && isWatchedByProgress(viewOffset, duration, serverId: ServerId(serverId));
-    final clientScopeId = await _clientScopeIdForItem(ServerId(serverId), itemId);
     final profileId = _activeProfileId;
+    final clientScopeId = await _clientScopeIdForItem(serverId, itemId, profileId);
 
     final queued = await _database.upsertProgressAction(
       profileId: profileId,
@@ -376,8 +371,8 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
     required String itemId,
     required String actionType,
   }) async {
-    final clientScopeId = await _clientScopeIdForItem(ServerId(serverId), itemId);
     final profileId = _activeProfileId;
+    final clientScopeId = await _clientScopeIdForItem(serverId, itemId, profileId);
     final queued = await _database.insertWatchAction(
       profileId: profileId,
       serverId: serverId,
@@ -559,7 +554,7 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
     }
   }
 
-  Future<String?> _clientScopeIdForItem(ServerId serverId, String itemId) async {
+  Future<String?> _clientScopeIdForItem(ServerId serverId, String itemId, String? profileId) async {
     // A downloaded row's clientScopeId is a cache/source hint, not an owner.
     // Offline watch actions are user-owned, so a new local action follows the
     // currently active scoped client. Once queued, _clientForAction replays
@@ -569,7 +564,6 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
     if (activeScopeId != null) return activeScopeId;
     final download = await _database.getDownloadedMedia(buildGlobalKey(ServerId(serverId), itemId));
     final downloadedScope = resolveActiveClientScopeId(serverId: serverId, cacheServerId: download?.clientScopeId);
-    final profileId = _activeProfileId;
     if (downloadedScope != null && isPlexProfileScopeId(downloadedScope) && profileId != null && profileId.isNotEmpty) {
       return buildPlexProfileScopeId(serverId: serverId, profileId: profileId);
     }

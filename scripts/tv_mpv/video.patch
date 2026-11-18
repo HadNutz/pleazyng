@@ -70,7 +70,8 @@ index 049294f..0a95460 100644
 @@ -466 +493 @@ cross_build_ffmpeg() {
 -    "$@"
 +    "$@" "${video_uapi[@]}"
-@@ -483,0 +511,3 @@ cross_mpv_source() {
+@@ -483,0 +511,4 @@ cross_mpv_source() {
++  (cd "$CROSS_MPV_DIR" && patch --batch --fuzz=0 -p1 -i "$PLEAZYNG_TV_MPV_SOURCE/sw-subtitles.patch")
 +  if [[ "${NDK_TRIPLE:-}" == "arm-webosmllib32-linux-gnueabi" ]]; then
 +    python3 "$PLEAZYNG_TV_MPV_SOURCE/install_ndl.py" "$CROSS_MPV_DIR"
 +  fi
@@ -83,3 +84,33 @@ index cd77494..1880184 100644
 +d8f299f7aa92ad182d82ba721cc546e4a93421259bc1c19fbd676d4c6f6de47d  https://raw.githubusercontent.com/torvalds/linux/adc218676eef25575469234709c2d87185ca223a/include/uapi/linux/v4l2-common.h
 +85b0478bd5cf72c8c83b3f73d47ba4378b49738ac2302762320a8fa3122e3824  https://raw.githubusercontent.com/torvalds/linux/adc218676eef25575469234709c2d87185ca223a/include/uapi/linux/v4l2-controls.h
 +8161dd789a5ac4cd622285ff56dc3f497bdad689e32ac609d5dc8c481e44227c  https://raw.githubusercontent.com/torvalds/linux/adc218676eef25575469234709c2d87185ca223a/include/uapi/linux/videodev2.h
+--- a/scripts/build_libmpv_tizen.sh
++++ b/scripts/build_libmpv_tizen.sh
+@@ -304,0 +305 @@
++  licenses+=(libpng freetype fribidi harfbuzz libunibreak libass)
+@@ -317 +318 @@
+-  libass_stripped || die "the Tizen build has no font stack: keep strip_libass and strip_mpv_dead on"
++  source "$SCRIPT_DIR/shared/_font_stack.sh"
+@@ -326,0 +328,7 @@
++  build_libpng
++  build_freetype
++  build_fribidi
++  build_harfbuzz
++  build_freetype_round2
++  build_libunibreak
++  build_libass
+--- a/scripts/build_libmpv_webos.sh
++++ b/scripts/build_libmpv_webos.sh
+@@ -275,0 +276 @@
++  licenses+=(libpng freetype fribidi harfbuzz libunibreak libass)
+@@ -288 +289 @@
+-  libass_stripped || die "the webOS build has no font stack: keep strip_libass and strip_mpv_dead on"
++  source "$SCRIPT_DIR/shared/_font_stack.sh"
+@@ -297,0 +299,7 @@
++  build_libpng
++  build_freetype
++  build_fribidi
++  build_harfbuzz
++  build_freetype_round2
++  build_libunibreak
++  build_libass

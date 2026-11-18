@@ -35,6 +35,7 @@ import '../../theme/mono_tokens.dart';
 import '../../utils/dialogs.dart';
 import '../../utils/platform_detector.dart';
 import '../../utils/snackbar_helper.dart';
+import '../../utils/serial_future_queue.dart';
 import '../../widgets/app_icon.dart';
 import '../../widgets/app_menu.dart';
 import '../../widgets/dialog_action_button.dart';
@@ -98,7 +99,9 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
   bool _workspaceDetached = false;
   bool _autoJoinScheduled = false;
   Timer? _saveTimer;
-  Future<void> _writes = Future.value();
+  final _writes = SerialFutureQueue();
+  bool _finishing = false;
+  bool _finishSaved = false;
   FlutterTts? _tts;
   bool get pdf => !_streamingComic && p.extension(widget.file.name).toLowerCase() == '.pdf';
   bool get _previewOnly => widget.file.sampleOnly;
@@ -352,6 +355,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
       _sources = sources;
       _playback = context.read<SourcePlayback>();
       await sources.ready;
+      if (!mounted) return;
       sources.requireSession();
       _profile = sources.profileId;
       _generation = sources.generation;
@@ -365,6 +369,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
           session: const Uuid().v4(),
         );
         _progress = await sources.openProgress(widget.entry, initial);
+        if (!valid) return;
         if (sources.cloudConflict(initial.key)) {
           _cloudConflict = true;
           throw const SourceException(SourceFailure.conflict);
@@ -375,6 +380,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
         }
       }
       final defaults = await sources.repository.preference(_profile!, 'reader');
+      if (!valid) return;
       _settings = normalizeReaderPreferences({
         ...defaults,
         if (_preferenceKey != 'reader') ...await sources.repository.preference(_profile!, _preferenceKey),
@@ -737,23 +743,28 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
     _saveTimer = Timer(const Duration(milliseconds: 700), () => unawaited(_flush()));
   }
 
-  Future<void> _flush() {
+  Future<bool> _flush({bool finish = false}) {
     _saveTimer?.cancel();
     final snapshot = _progress, profile = _profile, sources = _sources;
-    if (snapshot == null || profile == null || sources == null) return Future.value();
-    final write = _writes.then((_) async {
-      final saved = await sources.repository.saveProgress(
-        profile,
-        snapshot.copyWith(revision: _progress?.revision ?? snapshot.revision),
-      );
-      // A layout event arriving during a write keeps its newer cursor.
-      _progress = _progress?.copyWith(revision: saved.revision, updatedAt: saved.updatedAt);
-      if (valid) sources.scheduleSync();
+    if (snapshot == null || profile == null || sources == null || _finishSaved || (_finishing && !finish)) {
+      return Future.value(false);
+    }
+    return _writes.run(() async {
+      try {
+        final saved = await sources.repository.saveProgress(
+          profile,
+          snapshot.copyWith(revision: _progress?.revision ?? snapshot.revision, finished: finish || snapshot.finished),
+        );
+        // Preserve cursor changes received while this snapshot was being saved.
+        _progress = _progress?.copyWith(revision: saved.revision, updatedAt: saved.updatedAt, finished: saved.finished);
+        if (finish) _finishSaved = true;
+        if (valid) sources.scheduleSync();
+        return true;
+      } catch (error) {
+        if (mounted && valid) showErrorSnackBar(context, sourceFailureText(error));
+        return false;
+      }
     });
-    _writes = write.catchError((Object e) {
-      if (mounted && !_disposed) setState(() => _error = e);
-    });
-    return _writes;
   }
 
   Future<void> _addNote({BookAnnotation? existing, String? quote}) async {
@@ -1098,7 +1109,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
     final syncSources = _sources, syncKey = _progress?.key;
     if (syncSources != null && syncKey != null) {
       unawaited(
-        _flush().whenComplete(() {
+        _flush().then((_) => _writes.settled).whenComplete(() {
           syncSources.releaseProgress(syncKey);
           syncSources.scheduleSync();
         }),
@@ -1392,9 +1403,14 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
                 case 'along':
                   await _startReadAlong();
                 case 'finished':
-                  _progress = _progress?.copyWith(finished: true);
-                  await _flush();
-                  if (context.mounted) Navigator.pop(context);
+                  if (_finishing || !valid) return;
+                  _finishing = true;
+                  try {
+                    final saved = await _flush(finish: true);
+                    if (saved && context.mounted && valid) Navigator.pop(context);
+                  } finally {
+                    _finishing = false;
+                  }
               }
             }),
           ),

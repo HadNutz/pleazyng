@@ -19,6 +19,8 @@
 #include "osdep/timer.h"
 #include "video/mp_image.h"
 #include "video/out/vo.h"
+#include "sub/osd.h"
+#include "sub/draw_bmp.h"
 
 #define PUBLIC __attribute__((visibility("default")))
 #define NDL_FN(name) __typeof__(&NDL_##name) name
@@ -39,6 +41,16 @@ static struct {
 static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static bool owned;
 static atomic_int status;
+typedef void (*overlay_callback)(void *, const uint8_t *, int, int, int);
+static overlay_callback publish_overlay;
+static void *overlay_context;
+
+// Installed before loadfile and removed after terminate_destroy joins the VO.
+PUBLIC void mpv_pleazyng_ndl_overlay(overlay_callback callback, void *context)
+{
+    publish_overlay = callback;
+    overlay_context = context;
+}
 static void event_callback(int type, long long value, const char *text) {}
 
 PUBLIC int mpv_pleazyng_ndl_acquire(const char *window)
@@ -278,7 +290,11 @@ static void list(struct mp_decoder_list *decoders)
 }
 const struct mp_decoder_fns vd_webos_ndl = {.create=create, .add_decoders=list};
 
-struct output { int w, h, source; uint64_t last; bool loaded, have_hdr; NDL_DIRECTVIDEO_HDR_INFO_T hdr; };
+struct output {
+    struct mp_draw_sub_cache *subs;
+    int64_t subtitle_change;
+    bool visible;
+    int w, h, source; uint64_t last; bool loaded, have_hdr; NDL_DIRECTVIDEO_HDR_INFO_T hdr; };
 
 static void output_close(struct vo *vo)
 {
@@ -287,10 +303,44 @@ static void output_close(struct vo *vo)
     o->loaded = o->have_hdr = false;
 }
 
+static void draw_subtitles(struct vo *vo, struct mp_image *frame)
+{
+    struct output *o = vo->priv;
+    if (!publish_overlay || !frame || frame->w <= 0 || frame->h <= 0) return;
+    struct mp_osd_res res = osd_res_from_image_params(&frame->params);
+    const double scale = fmin(1.0, fmin(1920.0 / res.w, 1080.0 / res.h));
+    res.w = MPMAX(1, (int)(res.w * scale));
+    res.h = MPMAX(1, (int)(res.h * scale));
+    struct sub_bitmap_list *list = osd_render(vo->osd, res, frame->pts,
+                                               OSD_DRAW_SUB_ONLY, mp_draw_sub_formats);
+    if (list->change_id != o->subtitle_change || vo->want_redraw) {
+        o->subtitle_change = list->change_id;
+        if (list->num_items) {
+            if (!o->subs) o->subs = mp_draw_sub_alloc(o, vo->global);
+            struct mp_rect active, dirty;
+            int active_count, dirty_count;
+            struct mp_image *image = mp_draw_sub_overlay(o->subs, list, &active, 1, &active_count,
+                                                          &dirty, 1, &dirty_count);
+            if (image && active_count) {
+                publish_overlay(overlay_context, image->planes[0], image->stride[0], res.w, res.h);
+                o->visible = true;
+            } else if (o->visible) {
+                publish_overlay(overlay_context, NULL, 0, 0, 0);
+                o->visible = false;
+            }
+        } else if (o->visible) {
+            publish_overlay(overlay_context, NULL, 0, 0, 0);
+            o->visible = false;
+        }
+    }
+    talloc_free(list);
+}
+
 static bool draw(struct vo *vo, struct vo_frame *frame)
 {
     struct output *o = vo->priv;
     struct mp_image *img = frame->current;
+    draw_subtitles(vo, img);
     if (!img || frame->frame_id == o->last || atomic_load(&status) < 0) return true;
     int source = (int)(uintptr_t)img->planes[1];
     if (!o->loaded || o->w != img->w || o->h != img->h || o->source != source) {
@@ -338,6 +388,9 @@ static int control(struct vo *vo, uint32_t req, void *data)
     if (req == VOCTRL_RESET && o->loaded) {
         api.DirectVideoFlushRenderBuffer();
         o->last = 0;
+        o->subtitle_change = -1;
+        if (o->visible && publish_overlay) publish_overlay(overlay_context, NULL, 0, 0, 0);
+        o->visible = false;
         return VO_TRUE;
     }
     return VO_NOTIMPL;

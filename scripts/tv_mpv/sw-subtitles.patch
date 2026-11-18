@@ -1,0 +1,43 @@
+--- a/video/out/libmpv_sw.c
++++ b/video/out/libmpv_sw.c
+@@ -3,0 +4 @@
++#include "sub/draw_bmp.h"
+@@ -10,0 +12 @@
++    struct mp_draw_sub_cache *sub_cache;
+@@ -93,0 +96,31 @@
++}
++
++// Flutter consumes RGBA. Composite mpv's premultiplied subtitle overlay
++// directly instead of converting the output to a planar intermediate.
++static void draw_rgba_subtitles(struct render_backend *ctx, struct mp_image *dst, double pts)
++{
++    struct priv *p = ctx->priv;
++    struct sub_bitmap_list *list = osd_render(p->osd, p->osd_rc, pts, 0, mp_draw_sub_formats);
++    if (list->num_items) {
++        if (!p->sub_cache) p->sub_cache = mp_draw_sub_alloc(p, ctx->global);
++        struct mp_rect active[16], dirty;
++        int count = 0, modified = 0;
++        struct mp_image *src = mp_draw_sub_overlay(p->sub_cache, list, active,
++            MP_ARRAY_SIZE(active), &count, &dirty, 1, &modified);
++        for (int i = 0; src && i < count; ++i) {
++            struct mp_rect r = active[i];
++            for (int y = MPMAX(0, r.y0); y < MPMIN(dst->h, r.y1); ++y) {
++                for (int x = MPMAX(0, r.x0); x < MPMIN(dst->w, r.x1); ++x) {
++                    uint8_t *d = dst->planes[0] + y * dst->stride[0] + 4 * x;
++                    const uint8_t *s = src->planes[0] + y * src->stride[0] + 4 * x;
++                    int inv = 255 - s[3];
++                    if (inv == 255) continue;
++                    d[0] = s[2] + (d[0] * inv + 127) / 255;
++                    d[1] = s[1] + (d[1] * inv + 127) / 255;
++                    d[2] = s[0] + (d[2] * inv + 127) / 255;
++                    d[3] = s[3] + (d[3] * inv + 127) / 255;
++                }
++            }
++        }
++    }
++    talloc_free(list);
+@@ -186 +219,3 @@
+-    if (p->osd)
++    if (p->osd && wrap_img.imgfmt == IMGFMT_RGBA)
++        draw_rgba_subtitles(ctx, &wrap_img, img ? img->pts : 0);
++    else if (p->osd)

@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'system_dash_manifest.dart';
+
 /// A loopback-only, per-player bridge for LG and Samsung native media.
 ///
 /// The native plugins have limited HTTP-header support. This proxy keeps
@@ -30,6 +32,7 @@ class WebOSMediaProxy {
   final Random _random = Random.secure();
   final Map<String, _ProxyResource> _resources = {};
   final Map<String, String> _resourceKeys = {};
+  final Set<String> _roots = {};
   bool _closed = false;
 
   static Future<WebOSMediaProxy> bind() async {
@@ -55,20 +58,45 @@ class WebOSMediaProxy {
   /// Registers a server URL and returns an opaque loopback URL for NDL media.
   Uri register(Uri source, {Map<String, String>? headers}) {
     if (_closed) throw StateError('The webOS media proxy is closed');
-    final normalized = _normalizeSource(source, headers ?? const {});
+    final key = _register(source, headers ?? const {}, 0);
+    _roots.add(key);
+    return _local(key);
+  }
+
+  Uri _local(String key) =>
+      Uri(scheme: 'http', host: InternetAddress.loopbackIPv4.address, port: port, pathSegments: ['r', key]);
+
+  String _register(Uri source, Map<String, String> headers, int templateSlots) {
+    final normalized = _normalizeSource(source, headers);
     final uri = normalized.uri;
     if (!_isHttp(uri)) throw const FormatException('Media URL must use HTTP or HTTPS');
-
-    final cacheKey = _cacheKey(uri, normalized.headers);
-    final key = _resourceKeys.putIfAbsent(cacheKey, () {
-      if (_resources.length >= _maxResources) {
-        throw StateError('The webOS media playlist contains too many resources');
+    final cacheKey = '$templateSlots:${_cacheKey(uri, normalized.headers)}';
+    return _resourceKeys.putIfAbsent(cacheKey, () {
+      if (_resources.length >= 3 * _maxResources) {
+        throw StateError('The media playlist contains too many live resources');
       }
-      final newKey = _randomToken();
-      _resources[newKey] = _ProxyResource(uri, normalized.headers, uri.origin);
-      return newKey;
+      final key = _randomToken();
+      _resources[key] = _ProxyResource(uri, normalized.headers, uri.origin, templateSlots);
+      return key;
     });
-    return Uri(scheme: 'http', host: InternetAddress.loopbackIPv4.address, port: port, pathSegments: ['r', key]);
+  }
+
+  // A manifest may be shared by multiple renditions. Trace from playback roots
+  // so refreshing one playlist cannot retire another rendition's keys or maps.
+  void _collectResources() {
+    final live = <String>{};
+    final pending = _roots.toList();
+    while (pending.isNotEmpty) {
+      final key = pending.removeLast();
+      if (!live.add(key)) continue;
+      final resource = _resources[key];
+      if (resource != null) {
+        pending.addAll(resource.current);
+        pending.addAll(resource.previous);
+      }
+    }
+    _resources.removeWhere((key, _) => !live.contains(key));
+    _resourceKeys.removeWhere((_, key) => !live.contains(key));
   }
 
   Future<void> close() async {
@@ -76,6 +104,7 @@ class WebOSMediaProxy {
     _closed = true;
     _resources.clear();
     _resourceKeys.clear();
+    _roots.clear();
     _client.close(force: true);
     await _server.close(force: true);
   }
@@ -99,7 +128,8 @@ class WebOSMediaProxy {
     }
 
     final parts = request.uri.pathSegments;
-    final resource = parts.length == 2 && parts.first == 'r' && request.uri.query.isEmpty ? _resources[parts[1]] : null;
+    final entry = parts.length >= 2 && parts.first == 'r' && request.uri.query.isEmpty ? _resources[parts[1]] : null;
+    final resource = entry?.expand(parts.skip(2).toList());
     if (resource == null) {
       request.response.statusCode = HttpStatus.notFound;
       await request.response.close();
@@ -158,16 +188,37 @@ class WebOSMediaProxy {
     if (upstream == null) throw const HttpException('Media request did not complete');
     final response = downstream.response;
     final contentType = upstream.headers.value(HttpHeaders.contentTypeHeader) ?? '';
+    final dash = current.path.toLowerCase().endsWith('.mpd') || contentType.toLowerCase().contains('dash+xml');
     final isPlaylist =
         method == 'GET' &&
         upstream.statusCode >= 200 &&
         upstream.statusCode < 300 &&
-        (current.path.toLowerCase().endsWith('.m3u8') || contentType.toLowerCase().contains('mpegurl'));
+        (dash || current.path.toLowerCase().endsWith('.m3u8') || contentType.toLowerCase().contains('mpegurl'));
 
     if (isPlaylist) {
       final bytes = await _readBounded(upstream, _maxPlaylistBytes);
       final text = utf8.decode(bytes, allowMalformed: false);
-      final rewritten = _rewritePlaylist(text, current, resource);
+      final children = <String>{};
+      String child(Uri source, [List<String> slots = const []]) {
+        if (!_isHttp(source) || source.origin != resource.origin || source.userInfo.isNotEmpty) {
+          throw const FormatException('Playlist reference left the authenticated source origin');
+        }
+        final key = _register(source, resource.headers, slots.length);
+        children.add(key);
+        if (children.length > _maxResources) throw const FormatException('Playlist is too large');
+        return [_local(key).toString(), ...slots].join('/');
+      }
+
+      final String rewritten;
+      try {
+        rewritten = dash ? rewriteSystemDashManifest(text, current, child) : _rewritePlaylist(text, current, child);
+        resource.previous = resource.current;
+        resource.current = children;
+      } catch (_) {
+        _collectResources();
+        rethrow;
+      }
+      if (_resources.length > 512) _collectResources();
       final output = utf8.encode(rewritten);
       response.statusCode = upstream.statusCode;
       _copyResponseHeaders(upstream, response, omitLength: true);
@@ -229,7 +280,7 @@ class WebOSMediaProxy {
     return bytes;
   }
 
-  String _rewritePlaylist(String playlist, Uri playlistUri, _ProxyResource parent) {
+  String _rewritePlaylist(String playlist, Uri playlistUri, String Function(Uri) child) {
     final lines = playlist.split('\n');
     for (var index = 0; index < lines.length; index++) {
       final line = lines[index];
@@ -241,22 +292,15 @@ class WebOSMediaProxy {
         lines[index] =
             content.replaceAllMapped(_uriAttribute, (match) {
               final source = playlistUri.resolve(match.group(1)!);
-              return 'URI="${_childUri(source, parent)}"';
+              return 'URI="${child(source)}"';
             }) +
             cr;
       } else {
         final source = playlistUri.resolve(content.trim());
-        lines[index] = _childUri(source, parent) + cr;
+        lines[index] = child(source) + cr;
       }
     }
     return lines.join('\n');
-  }
-
-  String _childUri(Uri source, _ProxyResource parent) {
-    if (!_isHttp(source) || source.origin != parent.origin) {
-      throw const FormatException('HLS playlist references a different origin');
-    }
-    return register(source, headers: parent.headers).toString();
   }
 
   bool _isHttp(Uri uri) => (uri.scheme == 'http' || uri.scheme == 'https') && uri.host.isNotEmpty;
@@ -314,7 +358,23 @@ class _NormalizedSource {
 }
 
 class _ProxyResource {
-  const _ProxyResource(this.uri, this.headers, this.origin);
+  _ProxyResource(this.uri, this.headers, this.origin, this.templateSlots);
+  final int templateSlots;
+  Set<String> current = const {}, previous = const {};
+  static final _number = RegExp(r'^[0-9a-fA-F]{1,32}$');
+
+  _ProxyResource? expand(List<String> values) {
+    if (values.length != templateSlots) return null;
+    if (values.isEmpty) return this;
+    if (!values.every(_number.hasMatch)) return null;
+    var target = uri.toString();
+    for (var i = 0; i < values.length; i++) {
+      target = target.replaceAll(dashSlot(i), values[i]);
+    }
+    final expanded = Uri.parse(target);
+    return expanded.origin == origin ? _ProxyResource(expanded, headers, origin, 0) : null;
+  }
+
   final Uri uri;
   final Map<String, String> headers;
   final String origin;

@@ -43,10 +43,25 @@ int NDL_DirectVideoFlushRenderBuffer(void) { return 0; }
 #else
 #include "../../shared/tv_mpv/include/mpv/client.h"
 #include <assert.h>
+#include <stdatomic.h>
+#include <stdint.h>
 #include <dlfcn.h>
 #include <stdio.h>
+// With a font directory and an embedded subtitle fixture, require actual
+// nontransparent glyph pixels and their removal during the following cue gap.
+typedef void (*overlay_cb)(void *, const uint8_t *, int, int, int);
+static atomic_int visible, cleared;
+static void observe_overlay(void *ctx, const uint8_t *bgra, int stride, int w, int h) {
+    if (!bgra) {
+        if (atomic_load(&visible)) atomic_store(&cleared, 1);
+        return;
+    }
+    for (int y = 0; y < h; ++y)
+        for (int x = 0; x < w; ++x)
+            if (bgra[y * stride + 4 * x + 3]) { atomic_store(&visible, 1); return; }
+}
 int main(int argc, char **argv) {
-    assert(argc == 3);
+    assert(argc == 3 || argc == 4);
     void *so = dlopen(argv[1], RTLD_NOW);
     if (!so) { fprintf(stderr, "%s\n",dlerror()); return 1; }
 #define FN(f) __typeof__(&mpv_##f) f = dlsym(so, "mpv_" #f); assert(f)
@@ -57,7 +72,16 @@ int main(int argc, char **argv) {
     void (*release)(void) = dlsym(so, "mpv_pleazyng_ndl_release");
     assert(acquire && release && status && acquire("test-window"));
     assert(!acquire("second-window"));
+    void (*overlay)(overlay_cb, void *) = dlsym(so, "mpv_pleazyng_ndl_overlay");
+    assert(overlay);
+    if (argc == 4) overlay(observe_overlay, NULL);
     mpv_handle *mp = create();
+    if (argc == 4) {
+        assert(set_option_string(mp, "sid", "1") == 0);
+        assert(set_option_string(mp, "sub-font-provider", "none") == 0);
+        assert(set_option_string(mp, "sub-fonts-dir", argv[3]) == 0);
+        assert(set_option_string(mp, "sub-font", "Go Noto Current-Regular") == 0);
+    }
     assert(mp && set_option_string(mp, "vo", "webos-ndl") == 0);
     assert(set_option_string(mp, "vd", "webos-ndl") == 0);
     assert(set_option_string(mp, "ao", "null") == 0);
@@ -79,7 +103,9 @@ int main(int argc, char **argv) {
         }
     }
     int passed = ended && status() == 1;
+    if (argc == 4) passed = passed && atomic_load(&visible) && atomic_load(&cleared);
     terminate_destroy(mp);
+    overlay(NULL, NULL);
     release();
     assert(acquire("test-window"));
     release();

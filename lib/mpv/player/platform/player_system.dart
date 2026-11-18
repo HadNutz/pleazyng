@@ -15,6 +15,7 @@ import '../player_base.dart';
 import '../subtitle_pcm_capture_source.dart';
 import 'webos_media_proxy.dart';
 import 'system_subtitles.dart';
+import '../../font_loader.dart';
 
 /// One native session per source. Its ID also identifies the video surface:
 /// a delayed prepare, poll or dispose cannot target a replacement source.
@@ -57,6 +58,9 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
   bool _ended = false;
   bool _closing = false;
   bool _ready = false;
+  static const _windowsChannel = MethodChannel('video_player_win');
+  int? _trackRevision;
+  int? _overlayTexture;
   int _generation = 0;
   @override
   int get mediaSessionGeneration => _generation;
@@ -112,7 +116,14 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
       return Center(
         child: AspectRatio(
           aspectRatio: _size.aspectRatio,
-          child: WebOSVideoPlane(key: ValueKey(_window), window: _window!, source: _size, onError: () => _fail(id)),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              WebOSVideoPlane(key: ValueKey(_window), window: _window!, source: _size, onError: () => _fail(id)),
+              if (_overlayTexture case final texture? when texture >= 0)
+                IgnorePointer(child: Texture(textureId: texture)),
+            ],
+          ),
         ),
       );
     }
@@ -213,11 +224,13 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
   }
 
   Future<void> _create(int id, Uri uri) async {
+    final fonts = playerType == 'tvmpv' ? await SubtitleFontLoader.loadSubtitleFont() : null;
     _texture = await methodChannel.invokeMethod<int>('create', {
       'id': id,
       'uri': uri.toString(),
       'hardwareDecoding': hardwareDecoding,
       if (_window != null) 'windowId': _window,
+      'fontDir': ?fonts,
     });
     if (_texture != -2) await _closeWindow();
   }
@@ -237,6 +250,7 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
       if (info['failed'] == true) throw StateError('Could not prepare media');
       if (info['ready'] == true) {
         _ready = true;
+        _trackRevision = info['trackRevision'] as int?;
         handlePlayerEvent('file-loaded', {'sourceId': id});
         primaryMediaReadyController.add(null);
         _update(info, id);
@@ -254,6 +268,7 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
     }
     final v = windows.value;
     return {
+      ...?await _windowsChannel.invokeMapMethod<String, dynamic>('trackState', {'textureId': v.textureId}),
       'ready': v.isInitialized,
       'failed': v.hasError,
       'playing': v.isPlaying && !v.isCompleted,
@@ -273,6 +288,12 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
       try {
         final info = await _snapshot(id);
         if (!_current(generation)) return;
+        final revision = info['trackRevision'] as int?;
+        if (revision != null && revision != _trackRevision) {
+          await _readTracks(id);
+          if (!_current(generation)) return;
+          _trackRevision = revision;
+        }
         _update(info, id);
         _schedulePoll(generation, id);
       } catch (_) {
@@ -313,7 +334,9 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
     handlePropertyChange('pause', info['playing'] != true);
     handlePropertyChange('paused-for-cache', info['buffering'] == true);
     final size = Size((info['width'] as num?)?.toDouble() ?? 0, (info['height'] as num?)?.toDouble() ?? 0);
-    if (_size != size) {
+    final overlay = info['overlayTexture'] as int?;
+    if (_size != size || _overlayTexture != overlay) {
+      _overlayTexture = overlay;
       _size = size;
       surfaceRevision.value++;
     }
@@ -330,7 +353,8 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
   Future<void> _readTracks(int id) async {
     final tracks = _windows == null
         ? await methodChannel.invokeListMethod<dynamic>('tracks', {'id': id}) ?? const []
-        : const [];
+        : await _windowsChannel.invokeListMethod<dynamic>('tracks', {'textureId': _windows!.value.textureId}) ??
+              const [];
     if (id != _id || _closing) return;
     final audio = <AudioTrack>[];
     final subs = <SubtitleTrack>[SubtitleTrack.off];
@@ -349,7 +373,8 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
     }
     updateTracks(Tracks(audio: audio, subtitle: [...subs, ..._sidecars]));
     updateSelectedAudioTrack(aid);
-    updateSelectedSubtitleTrack(sid ?? SubtitleTrack.off.id);
+    final external = state.track.subtitle;
+    updateSelectedSubtitleTrack(sid ?? (external?.uri != null ? external!.id : SubtitleTrack.off.id));
   }
 
   Future<void> _control(String method, [Object? value]) async {
@@ -360,6 +385,10 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
       return;
     }
     switch (method) {
+      case 'audio':
+      case 'subtitle':
+        final track = value == SubtitleTrack.off.id ? -1 : int.parse(value as String);
+        await _windowsChannel.invokeMethod<void>(method, {'textureId': windows.value.textureId, 'track': track});
       case 'play':
         await windows.play();
       case 'pause':
@@ -402,9 +431,10 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
 
   @override
   Future<void> selectAudioTrack(AudioTrack track) async {
-    if (_windows != null || track.id == 'auto') return;
+    if (!_ready || track.id == 'auto') return;
+    final generation = _generation;
     await _control('audio', track.id);
-    updateSelectedAudioTrack(track.id);
+    if (_current(generation)) updateSelectedAudioTrack(track.id);
   }
 
   @override
@@ -414,7 +444,7 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
     final generation = _generation;
     final cues = track.uri != null ? await loadSystemSubtitles(track, _media!, _proxy) : const <captions.Caption>[];
     if (!_current(generation) || selection != _subtitleSelection) return;
-    if (_windows == null) await _control('subtitle', track.uri == null ? track.id : SubtitleTrack.off.id);
+    await _control('subtitle', track.uri == null ? track.id : SubtitleTrack.off.id);
     if (!_current(generation) || selection != _subtitleSelection) return;
     _cues = cues;
     _subtitlesVisible = track.id != SubtitleTrack.off.id;
@@ -428,8 +458,10 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
       case 'pause':
         await (value == 'yes' ? pause() : play());
       case 'sub-delay':
+        if (playerType == 'tvmpv' && _ready) await _control('subtitleDelay', value);
         _subtitleDelay = Duration(milliseconds: ((double.tryParse(value) ?? 0) * 1000).round());
       case 'sub-visibility':
+        if (playerType == 'tvmpv' && _ready) await _control('subtitleVisible', value);
         _subtitlesVisible = value == 'yes';
         if (!_subtitlesVisible) _caption.value = '';
       case 'volume':
@@ -501,6 +533,8 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
     _id = null;
     _ready = false;
     _texture = null;
+    _overlayTexture = null;
+    _trackRevision = null;
     _size = Size.zero;
     _decoder = _output = null;
     _outputWidth = _outputHeight = null;

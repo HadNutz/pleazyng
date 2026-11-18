@@ -1844,9 +1844,13 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
   }
 
   @override
-  Future<List<MediaItem>> fetchContinueWatching({int? count = 20, Set<String> excludedLibraryIds = const {}}) async {
+  Future<List<MediaItem>> fetchContinueWatching({
+    int? count = 20,
+    Set<String> excludedLibraryIds = const {},
+    bool requireComplete = false,
+  }) async {
     if (excludedLibraryIds.isEmpty) {
-      final rows = await _continueWatchingRows(count: count);
+      final rows = await _continueWatchingRows(count: count, requireComplete: requireComplete);
       return _mergeContinueWatchingAndNextUp(resume: rows.resume, nextUp: rows.nextUp, limit: count);
     }
 
@@ -1870,7 +1874,7 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
     for (var start = 0; start < visible.length; start += concurrency) {
       final batch = await Future.wait([
         for (final library in visible.skip(start).take(concurrency))
-          _continueWatchingRows(count: count, library: library),
+          _continueWatchingRows(count: count, library: library, requireComplete: requireComplete),
       ]);
       for (final rows in batch) {
         resume.addAll(rows.resume);
@@ -1883,6 +1887,7 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
   /// The two Continue Watching halves, server-wide or scoped to [library]
   /// (whose rows are then stamped with it).
   Future<({List<MediaItem> resume, List<MediaItem> nextUp})> _continueWatchingRows({
+    required bool requireComplete,
     int? count,
     MediaLibrary? library,
   }) async {
@@ -1899,6 +1904,7 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
           paths.resumeItems,
           _embyResumeWindowQuery(parentId: parentId),
           retry: _continueWatchingRetry,
+          validateItems: requireComplete,
         ),
       );
       return (
@@ -1912,12 +1918,21 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
         paths.resumeItems,
         _resumeItemsQuery(limit: count, parentId: parentId),
         retry: _continueWatchingRetry,
+        validateItems: requireComplete,
       ),
-      _safeFetchItemsArray(
-        '/Shows/NextUp',
-        _nextUpQuery(limit: count, parentId: parentId),
-        retry: _continueWatchingRetry,
-      ),
+      if (requireComplete)
+        _fetchItemsArray(
+          '/Shows/NextUp',
+          _nextUpQuery(limit: count, parentId: parentId),
+          retry: _continueWatchingRetry,
+          validateItems: true,
+        )
+      else
+        _safeFetchItemsArray(
+          '/Shows/NextUp',
+          _nextUpQuery(limit: count, parentId: parentId),
+          retry: _continueWatchingRetry,
+        ),
     ]);
 
     return (
@@ -2832,11 +2847,22 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
     Map<String, dynamic> queryParameters, {
     _HubRetryPolicy? retry,
     AbortController? abort,
+    bool validateItems = false,
   }) async {
     final response = await _getItemsResponse(path, queryParameters, retry, abort: abort);
     abort?.throwIfAborted();
     throwIfHttpError(response);
-    return _itemsArray(response.data);
+    final data = response.data;
+    if (validateItems) {
+      final items = data is Map ? data['Items'] : data;
+      if (items is! List ||
+          items.any(
+            (item) => item is! Map<String, dynamic> || item['Id'] is! String || (item['Id'] as String).isEmpty,
+          )) {
+        throw const FormatException('Incomplete Continue Watching response');
+      }
+    }
+    return _itemsArray(data);
   }
 
   @override

@@ -142,14 +142,16 @@ class MultiviewWorkspaceController extends ChangeNotifier {
 
   void unwatchRecovery(Object owner) {
     if (_disposed) return;
-    _recoverySources.remove(owner);
+    final source = _recoverySources.remove(owner);
     final previous = _activeRecovery.remove(owner);
+    if (source == null && previous == null) return;
     if (previous != null) _pendingRecovery.remove(previous.id);
     if (_recoverySources.isEmpty) {
       _recoveryTimer?.cancel();
       _recoveryTimer = null;
     }
-    _publish();
+    // An owner can retire while Flutter is disposing a route.
+    scheduleMicrotask(_publish);
   }
 
   void _captureRecovery() {

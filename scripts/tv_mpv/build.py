@@ -27,6 +27,16 @@ def build(target, arch, out, webos_ndk=None):
         git("fetch", "--quiet", "--depth=1", ORIGIN, RECIPE)
         git("checkout", "--quiet", "--detach", "FETCH_HEAD")
         git("apply", "--unidiff-zero", HERE / "video.patch")
+        # Share the checksum-pinned Linux cross-build functions for the TV font stack.
+        scripts = checkout / "scripts"
+        linux = (scripts / "build_libmpv_linux.sh").read_text()
+        start = linux.index("build_libpng() {")
+        end = linux.index("# OpenSSL Configure", start)
+        font_stack = linux[start:end].replace(" --enable-asm", "").replace(
+            "--disable-require-system-font-provider", "--disable-fontconfig --disable-require-system-font-provider"
+        )
+        unibreak = next(line for line in linux.splitlines() if line.startswith("LIBUNIBREAK_VERSION="))
+        (scripts / "shared/_font_stack.sh").write_text(unibreak + "\n" + font_stack)
         shutil.copyfile(HERE / "video-options.sh", checkout / "scripts/shared/_user_overrides.sh")
         env = {**os.environ, "PLEAZYNG_TV_MPV_SOURCE": str(HERE), "STRICT_SOURCES": "1", "ENABLE_LTO_DEPS": "0"}
         if webos_ndk:
@@ -41,7 +51,7 @@ def build(target, arch, out, webos_ndk=None):
         symbols = subprocess.check_output(["readelf", "--dyn-syms", "--wide", library], text=True)
         required = ["mpv_initialize", "mpv_render_context_create", "mpv_render_context_render"]
         if target == "webos":
-            required.extend(["mpv_pleazyng_ndl_acquire", "mpv_pleazyng_ndl_status", "mpv_pleazyng_ndl_release"])
+            required.extend(["mpv_pleazyng_ndl_acquire", "mpv_pleazyng_ndl_status", "mpv_pleazyng_ndl_overlay", "mpv_pleazyng_ndl_release"])
         for symbol in required:
             if not any(line.endswith(" " + symbol) and " UND " not in line for line in symbols.splitlines()):
                 raise ValueError(f"{label} library is missing {symbol}")

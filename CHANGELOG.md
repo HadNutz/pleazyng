@@ -11,6 +11,10 @@
 - Choose a video engine in Playback settings. Android offers mpv, Media3 ExoPlayer and Android MediaPlayer. Apple platforms offer AVPlayer, Windows offers Media Foundation, and Linux offers GStreamer alongside mpv.
 - Add mpv to the LG and Samsung TV builds. LG mpv can feed the TV video plane directly. TV mpv can also try V4L2 hardware decoding. Samsung original-quality sources can reach the native decoder at UHD resolution. See [video engines and device qualification](docs/plezyng/video-engines.md).
 
+- Render embedded subtitles in TV mpv, including over the LG hardware video plane. Windows Media Foundation now exposes audio and subtitle track selection.
+- Keep authenticated live HLS and DASH playback working across playlist refreshes and record each sequenced HLS segment once when signed URLs change.
+- Preserve Continue Watching downloads when the server returns a partial shelf, keep offline watch changes with their originating profile, and keep the reader open when saving completion fails.
+
 - Extending an active sports recording draws on [gingie’s Channels DVR request](https://community.getchannels.com/t/extend-live-recordings/1789).
 - Prefer original dialogue from server metadata and embedded track flags in direct files. Original dialogue selection draws on [@Altarentys’s Plezy request #3019](https://github.com/edde746/plezy/issues/3019).
 - Per-issue comic spread correction draws on the pairing problem reported by [@fatherpanda in Kavita #4903](https://github.com/Kareadita/Kavita/issues/4903).

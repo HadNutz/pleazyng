@@ -455,7 +455,13 @@ abstract class MediaServerClient {
   /// with the same contract as in [searchItems]: a backend whose rows carry a
   /// library id may ignore it, and one whose rows cannot be attributed to a
   /// library MUST leave those libraries out itself.
-  Future<List<MediaItem>> fetchContinueWatching({int? count = 20, Set<String> excludedLibraryIds = const {}});
+  /// With [requireComplete], an unavailable or malformed shelf must fail before
+  /// the caller reconciles offline download ownership against it.
+  Future<List<MediaItem>> fetchContinueWatching({
+    int? count = 20,
+    Set<String> excludedLibraryIds = const {},
+    bool requireComplete = false,
+  });
 
   /// Curated home-screen hubs across all libraries (Plex Discover; Jellyfin
   /// synthesizes `Latest` plus optional `Resume` + `NextUp`).

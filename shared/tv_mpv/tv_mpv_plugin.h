@@ -56,6 +56,9 @@ struct Api {
   int (*ndl_acquire)(const char*) = reinterpret_cast<int (*)(const char*)>(dlsym(lib, "mpv_pleazyng_ndl_acquire"));
   int (*ndl_status)() = reinterpret_cast<int (*)()>(dlsym(lib, "mpv_pleazyng_ndl_status"));
   void (*ndl_release)() = reinterpret_cast<void (*)()>(dlsym(lib, "mpv_pleazyng_ndl_release"));
+  using OverlayCallback = void (*)(void*, const uint8_t*, int, int, int);
+  using SetOverlay = void (*)(OverlayCallback, void*);
+  SetOverlay ndl_overlay = reinterpret_cast<SetOverlay>(dlsym(lib, "mpv_pleazyng_ndl_overlay"));
   static Api& instance() { static Api api; return api; }
 };
 
@@ -106,6 +109,12 @@ class Session {
     }
     wake_.notify_one();
     if (worker_.joinable()) worker_.join();
+    if (render_) api_.render_context_free(render_);
+    if (core_) api_.terminate_destroy(core_);
+    if (plane_) {
+      api_.ndl_overlay(nullptr, nullptr);
+      api_.ndl_release();
+    }
     if (texture_id_ >= 0) {
 #ifdef PLEAZYNG_TIZEN_EMBEDDER
       registrar_->UnregisterTexture(texture_id_, [keep = texture_] {});
@@ -113,19 +122,21 @@ class Session {
       registrar_->UnregisterTexture(texture_id_);
 #endif
     }
-    if (render_) api_.render_context_free(render_);
-    if (core_) api_.terminate_destroy(core_);
-    if (plane_) api_.ndl_release();
   }
-  int64_t open(const std::string& uri, const std::string& window, bool hardware) {
+  int64_t open(const std::string& uri, const std::string& window, bool hardware, const std::string& fonts = {}) {
     core_ = api_.create();
     if (!core_) throw std::runtime_error("mpv create failed");
     plane_ = hardware && !window.empty() && api_.ndl_acquire && api_.ndl_status &&
-             api_.ndl_release && api_.ndl_acquire(window.c_str());
+             api_.ndl_release && api_.ndl_overlay && api_.ndl_acquire(window.c_str());
     for (const auto& option : std::map<std::string, std::string>{
         {"vo",plane_ ? "webos-ndl" : "libmpv"}, {"hwdec",hardware ? "v4l2m2m-copy" : "no"}, {"hwdec-codecs","all"}, {"pause","yes"}, {"keep-open","yes"}, {"config","no"},
         {"input-default-bindings","no"}, {"terminal","no"}, {"audio-display","no"}}) {
       check(api_.set_option_string(core_, option.first.c_str(), option.second.c_str()));
+    }
+    if (!fonts.empty()) {
+      check(api_.set_option_string(core_, "sub-font-provider", "none"));
+      check(api_.set_option_string(core_, "sub-fonts-dir", fonts.c_str()));
+      check(api_.set_option_string(core_, "sub-font", "Go Noto Current-Regular"));
     }
     if (plane_) {
       check(api_.set_option_string(core_, "vd", "webos-ndl"));
@@ -133,7 +144,8 @@ class Session {
       check(api_.set_option_string(core_, "hr-seek", "no"));
     }
     check(api_.initialize(core_));
-    if (!plane_) registerTexture();
+    registerTexture();
+    if (plane_) api_.ndl_overlay(&publishOverlay, this);
     const char* command[] = {"loadfile", uri.c_str(), nullptr};
     check(api_.command(core_, command));
     return plane_ ? -2 : texture_id_;
@@ -141,7 +153,7 @@ class Session {
 
   void registerTexture() {
     mpv_render_param setup[] = {{MPV_RENDER_PARAM_API_TYPE, const_cast<char*>(MPV_RENDER_API_TYPE_SW)}, {}};
-    check(api_.render_context_create(&render_, core_, setup));
+    if (!plane_) check(api_.render_context_create(&render_, core_, setup));
     auto slot = slot_;
     texture_ = std::make_shared<flutter::TextureVariant>(flutter::PixelBufferTexture(
         [slot, synchronous = synchronous_upload_](size_t, size_t) -> const FlutterDesktopPixelBuffer* {
@@ -158,6 +170,7 @@ class Session {
         }));
     texture_id_ = registrar_->RegisterTexture(texture_.get());
     check(texture_id_ < 0 ? -1 : 0);
+    if (plane_) return;
     worker_ = std::thread([this] { draw(); });
     api_.render_context_set_update_callback(render_, [](void* opaque) {
       static_cast<Session*>(opaque)->signal();
@@ -198,6 +211,7 @@ class Session {
       if (resized) signal();
     }
     return {{Value("ready"),Value(loaded_ && (!plane_ || rendered_.load()))}, {Value("failed"),Value(failed_ || render_failed_.load())},
+      {Value("overlayTexture"), Value(plane_ ? texture_id_ : int64_t(-1))},
       {Value("output"), Value(plane_ ? "webos-ndl" : "libmpv-texture")},
       {Value("hardwareDecoder"), Value(rendered_.load() ? (plane_ ? std::string("webos-ndl") : prop("hwdec-current")) : std::string())},
       {Value("outputWidth"), Value(plane_ ? w : width_)}, {Value("outputHeight"), Value(plane_ ? h : height_)},
@@ -261,6 +275,26 @@ class Session {
     int value = 0;
     return api_.get_property(core_, name, MPV_FORMAT_FLAG, &value) >= 0 && value;
   }
+  static void publishOverlay(void* context, const uint8_t* bgra, int stride, int w, int h) noexcept {
+    auto& session = *static_cast<Session*>(context);
+    try {
+      auto picture = std::make_shared<Picture>(bgra ? w : 1, bgra ? h : 1);
+      auto* dst = picture->rgba.get();
+      if (!bgra) std::memset(dst, 0, 4);
+      for (int y = 0; bgra && y < h; ++y) {
+        const auto* src = bgra + y * stride;
+        for (int x = 0; x < w; ++x, src += 4, dst += 4) {
+          dst[0] = src[2]; dst[1] = src[1]; dst[2] = src[0]; dst[3] = src[3];
+        }
+      }
+      {
+        std::lock_guard<std::mutex> guard(session.slot_->mutex);
+        session.slot_->picture = std::move(picture);
+      }
+      session.registrar_->MarkTextureFrameAvailable(session.texture_id_);
+    } catch (...) { session.render_failed_ = true; }
+  }
+
   void signal() {
     { std::lock_guard<std::mutex> lock(wake_mutex_); pending_ = true; }
     wake_.notify_one();
@@ -316,10 +350,12 @@ class TvMpvPlugin : public flutter::Plugin {
           auto session = std::make_unique<Session>(textures_);
 #endif
           const auto window = map.find(Value("windowId"));
+          const auto fonts = map.find(Value("fontDir"));
           const auto hardware = map.find(Value("hardwareDecoding"));
           auto texture = session->open(std::get<std::string>(map.at(Value("uri"))),
               window == map.end() ? std::string() : std::get<std::string>(window->second),
-              hardware == map.end() || std::get<bool>(hardware->second));
+              hardware == map.end() || std::get<bool>(hardware->second),
+              fonts == map.end() ? std::string() : std::get<std::string>(fonts->second));
           sessions_[id] = std::move(session);
           result->Success(Value(texture));
           return;
@@ -331,7 +367,9 @@ class TvMpvPlugin : public flutter::Plugin {
         if (method == "play" || method == "pause") s.set("pause",method == "pause" ? "yes" : "no");
         else {
           const auto& value = map.at(Value("value"));
-          if (method == "audio" || method == "subtitle") s.set(method == "audio" ? "aid" : "sid",std::get<std::string>(value));
+          if (method == "subtitleDelay") s.set("sub-delay", std::get<std::string>(value));
+          else if (method == "subtitleVisible") s.set("sub-visibility", std::get<std::string>(value));
+          else if (method == "audio" || method == "subtitle") s.set(method == "audio" ? "aid" : "sid",std::get<std::string>(value));
           else if (method == "seek") s.seek(value.LongValue() / 1000.0);
           else if (method == "rate") s.set("speed",std::to_string(std::get<double>(value)));
           else if (method == "volume") s.set("volume",std::to_string(100 * std::get<double>(value)));

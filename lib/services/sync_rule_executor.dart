@@ -600,7 +600,7 @@ class SyncRuleExecutor {
     required DeleteSyncRuleDownload deleteSyncRuleDownload,
   }) async {
     final serverId = ServerId(rule.serverId);
-    final shelf = await client.fetchContinueWatching();
+    final shelf = await client.fetchContinueWatching(count: null, requireComplete: true);
 
     final previousLinks = await _database.getSyncRuleDownloadLinks(rule.id);
     final previousKeys = previousLinks.map((link) => link.downloadGlobalKey).toSet();

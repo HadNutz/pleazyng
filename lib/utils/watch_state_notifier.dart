@@ -25,6 +25,8 @@ class WatchPatchId {
 
   const WatchPatchId._(this.value);
 
+  bool get isOfflineAction => value.startsWith('o:');
+
   factory WatchPatchId.session(int sequence) => WatchPatchId._('s:$sequence');
 
   factory WatchPatchId.offlineAction({required String? profileId, required int rowId, required int revision}) =>

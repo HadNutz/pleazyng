@@ -518,6 +518,27 @@ void main() {
       expect(await db.getLatestWatchAction('srv:42'), isNull);
     });
 
+    test('a delayed offline mark preserves progress belonging to another profile', () async {
+      final (svc: svc, db: db, mgr: _) = _makeService();
+      svc.setActiveProfileId('B');
+      await svc.queueProgressUpdate(serverId: ServerId('srv'), itemId: '42', viewOffset: 10, duration: 100);
+      svc.setActiveProfileId('A');
+      await svc.queueProgressUpdate(serverId: ServerId('srv'), itemId: '42', viewOffset: 20, duration: 100);
+      final mark = await svc.queueMarkWatched(serverId: ServerId('srv'), itemId: '42');
+      svc.setActiveProfileId('B');
+      WatchStateNotifier().notifyWatched(
+        item: itemFor('42'),
+        patchId: WatchPatchId.offlineAction(profileId: mark.profileId, rowId: mark.rowId, revision: mark.revision),
+      );
+      await pumpEventQueue();
+
+      final actions = await db.getWatchActionsForKey('srv:42');
+      expect(
+        actions.map((row) => (row.profileId, row.actionType, row.viewOffset)),
+        unorderedEquals([('A', 'watched', null), ('B', 'progress', 10)]),
+      );
+    });
+
     test('an unwatched event drops it too', () async {
       final svc = _makeService().svc;
 

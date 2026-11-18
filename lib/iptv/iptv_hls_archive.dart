@@ -118,8 +118,9 @@ class IptvHlsArchive {
     track.ended = parsed.ended;
     for (final segment in parsed.segments) {
       if (_stopped || !_now().isBefore(endsAt)) break;
-      final identity =
-          '${segment.continuity}:${segment.sequence}:${segment.uri}:${segment.range?.offset}:${segment.range?.length}';
+      final identity = parsed.sequenced
+          ? '${segment.continuity}:${segment.sequence}'
+          : '${segment.continuity}:${segment.sequence}:${segment.uri}:${segment.range?.offset}:${segment.range?.length}';
       if (track.seen.contains(identity)) continue;
       if (track.segments.length >= 50000) throw const SourceException(SourceFailure.invalidData);
       String? mapName;
@@ -397,7 +398,8 @@ class IptvHlsArchive {
     return (uri: selected.uri, audio: audio[selected.group], bandwidth: selected.bandwidth);
   }
 
-  static ({List<_Segment> segments, int targetDuration, bool ended}) _parse(String text, Uri base) {
+  static ({List<_Segment> segments, int targetDuration, bool ended, bool sequenced}) _parse(String text, Uri base) {
+    var sequenced = false;
     var sequence = 0, target = 4, continuity = 0;
     DateTime? startsAt;
     var ended = false, discontinuity = false;
@@ -409,7 +411,9 @@ class IptvHlsArchive {
     final segments = <_Segment>[];
     for (final line in const LineSplitter().convert(text).map((line) => line.trim())) {
       if (line.startsWith('#EXT-X-MEDIA-SEQUENCE:')) {
-        sequence = int.tryParse(line.substring(22)) ?? 0;
+        sequence = int.parse(line.substring(22));
+        if (sequence < 0 || segments.isNotEmpty) throw const FormatException('Invalid HLS media sequence');
+        sequenced = true;
       } else if (line.startsWith('#EXT-X-TARGETDURATION:')) {
         target = (int.tryParse(line.substring(22)) ?? 4).clamp(1, 120).toInt();
       } else if (line.startsWith('#EXTINF:')) {
@@ -466,7 +470,7 @@ class IptvHlsArchive {
         duration = 0;
       }
     }
-    return (segments: segments, targetDuration: target, ended: ended);
+    return (segments: segments, targetDuration: target, ended: ended, sequenced: sequenced);
   }
 
   static _Range? _range(String? value, Uri address, Map<String, int> offsets) {

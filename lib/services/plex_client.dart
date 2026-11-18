@@ -243,9 +243,15 @@ List<PlexHubDto> _processHubResponse(
   int? librarySectionID,
   String? librarySectionTitle,
   bool Function(PlexMetadataDto)? filter,
+  bool requireComplete = false,
 }) {
   final container = decoded['MediaContainer'] as Map<String, dynamic>?;
-  if (container == null || container['Hub'] == null) return [];
+  if (container == null || container['Hub'] == null) {
+    if (requireComplete && flexibleInt(container?['size']) != 0) {
+      throw const FormatException('Missing Continue Watching hubs');
+    }
+    return [];
+  }
 
   final containerSectionID = _librarySectionIdFromJson(container) ?? librarySectionID;
   final containerSectionTitle = _librarySectionTitleFromJson(container) ?? librarySectionTitle;
@@ -261,6 +267,17 @@ List<PlexHubDto> _processHubResponse(
         librarySectionID: hubSectionID,
         librarySectionTitle: hubSectionTitle,
       );
+      if (requireComplete) {
+        final metadata = hubMap['Metadata'] ?? const [];
+        final directories = hubMap['Directory'] ?? const [];
+        if (metadata is! List ||
+            directories is! List ||
+            hub.items.length != metadata.length + directories.length ||
+            hub.items.length < hub.size ||
+            hub.items.any((item) => item.ratingKey.isEmpty || item.type == null)) {
+          throw const FormatException('Incomplete Continue Watching hub');
+        }
+      }
       if (hub.items.isEmpty) continue;
 
       final filteredItems = hub.items.where(itemFilter).toList();
@@ -281,6 +298,7 @@ List<PlexHubDto> _processHubResponse(
         );
       }
     } catch (_) {
+      if (requireComplete) rethrow;
       // Skip hubs that fail to parse
     }
   }
@@ -1976,7 +1994,7 @@ class PlexClient
   /// Prefer the provider's dedicated Continue Watching feature key when
   /// advertised; fall back to Plex Web's legacy hubs query. Both respect the
   /// server's OnDeckWindow preference (unlike /library/onDeck).
-  Future<List<PlexMetadataDto>> _getContinueWatching({int? count = 20}) async {
+  Future<List<PlexMetadataDto>> _getContinueWatching({int? count = 20, bool requireComplete = false}) async {
     final continueWatchingHubKey = _providerContinueWatchingHubKey;
     final queryParameters = <String, dynamic>{'count': ?count, 'includeGuids': 1};
     if (continueWatchingHubKey == null) {
@@ -1997,7 +2015,7 @@ class PlexClient
     final sid = serverId;
     final sname = serverName;
     final data = response.data as Map<String, dynamic>;
-    final hubs = await tryIsolateRun(() => _processHubResponse(data, sid, sname));
+    final hubs = await tryIsolateRun(() => _processHubResponse(data, sid, sname, requireComplete: requireComplete));
     // Deduplicate across home.continue and home.ondeck hubs.
     // Like plex-web, episodes from the same show (same grandparentRatingKey)
     // are deduplicated, preferring the in-progress item (has viewOffset).
@@ -5405,8 +5423,12 @@ class PlexClient
   /// [excludedLibraryIds] is unused: every row carries its `librarySectionID`,
   /// so the caller filters hidden libraries out of the mapped results.
   @override
-  Future<List<MediaItem>> fetchContinueWatching({int? count = 20, Set<String> excludedLibraryIds = const {}}) async {
-    final items = await _getContinueWatching(count: count);
+  Future<List<MediaItem>> fetchContinueWatching({
+    int? count = 20,
+    Set<String> excludedLibraryIds = const {},
+    bool requireComplete = false,
+  }) async {
+    final items = await _getContinueWatching(count: count, requireComplete: requireComplete);
     return items.map((m) => PlexMappers.mediaItem(m)).toList();
   }
 
