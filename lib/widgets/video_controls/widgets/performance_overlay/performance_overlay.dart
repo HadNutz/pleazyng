@@ -101,7 +101,7 @@ class _PlayerPerformanceOverlayState extends State<PlayerPerformanceOverlay> {
       Align(
         alignment: AlignmentDirectional.centerStart,
         child: TextButton.icon(
-          icon: const Icon(Icons.copy, size: 16),
+          icon: const AppIcon(Symbols.content_copy_rounded, size: 16),
           label: Text(t.startup.copyDetails),
           onPressed: () => Clipboard.setData(ClipboardData(text: _stats.comparison)),
         ),

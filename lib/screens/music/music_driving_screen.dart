@@ -123,7 +123,7 @@ class MusicDrivingScreen extends StatelessWidget {
           if (track != null && context.read<GuestJukebox?>() != null)
             IconButton(
               tooltip: t.livingRoom.jukebox,
-              icon: const Icon(Icons.group_add),
+              icon: const AppIcon(Symbols.group_add_rounded),
               onPressed: () => showGuestJukebox(context),
             ),
         ],

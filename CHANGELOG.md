@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Use the rounded group and copy icons for music passenger requests and playback diagnostics.
+
 - CarPlay skips profile-specific station and download lookups when the profile is unavailable and discards stale browse results after disconnecting.
 - Preserve the unsupported-favorites error for music servers without favorites support.
 
