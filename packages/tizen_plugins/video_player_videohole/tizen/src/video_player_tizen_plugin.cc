@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#define PLEAZYNG_TIZEN_EMBEDDER 1
 #include "../../../../../shared/tv_mpv/tv_mpv_plugin.h"
 #include "video_player_tizen_plugin.h"
 #include "decoder_capabilities.h"

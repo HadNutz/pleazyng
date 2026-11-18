@@ -8,13 +8,15 @@
 #include <stdlib.h>
 #include <string.h>
 static FILE *out;
+static NDL_DIRECTVIDEO_SRC_TYPE source;
 bool NDL_DirectMedia_DL_Initialize(void) { return true; }
 int NDL_DirectMediaSetWindowId(const char *id) { return strcmp(id, "test-window"); }
 int NDL_DirectMediaInit(const char *app) { return strcmp(app, "org.snapetech.pleazyng"); }
 int NDL_DirectMediaSetAppState(NDL_DIRECTMEDIA_APP_STATE s) { return 0; }
 int NDL_DirectMediaLoad(NDL_DIRECTMEDIA_DATA_INFO_T *m, StateCallbackFP cb) {
-    if (m->videoDataInfo.source != NDL_DIRECTVIDEO_SRC_TYPE_H264 &&
-        m->videoDataInfo.source != NDL_DIRECTVIDEO_SRC_TYPE_HEVC) return -1;
+    source = m->videoDataInfo.source;
+    if (source != NDL_DIRECTVIDEO_SRC_TYPE_H264 && source != NDL_DIRECTVIDEO_SRC_TYPE_HEVC &&
+        source != NDL_DIRECTVIDEO_SRC_TYPE_VP9) return -1;
     out = fopen(getenv("NDL_CAPTURE"), "wb");
     return out ? 0 : -1;
 }
@@ -23,9 +25,18 @@ int NDL_DirectMediaQuit(void) { return 0; }
 int NDL_DirectVideoSetArea(int x, int y, int w, int h) {
     return w == atoi(getenv("NDL_WIDTH")) && h == atoi(getenv("NDL_HEIGHT")) ? 0 : -1;
 }
+int NDL_DirectVideoSetHDRInfo(NDL_DIRECTVIDEO_HDR_INFO_T hdr) {
+    const char *path = getenv("NDL_HDR_CAPTURE");
+    if (!path) return -1;
+    FILE *file = fopen(path, "w");
+    if (!file) return -1;
+    fprintf(file, "%u %u %u\n", hdr.colorPrimaries, hdr.transferCharacteristics, hdr.matrixCoeffs);
+    return fclose(file);
+}
 int NDL_DirectVideoPlay(void *data, unsigned size, long long pts) {
     const unsigned char *p = data;
-    if (size < 4 || p[0] || p[1] || (p[2] != 1 && (p[2] || p[3] != 1))) return -1;
+    if (source != NDL_DIRECTVIDEO_SRC_TYPE_VP9 &&
+        (size < 4 || p[0] || p[1] || (p[2] != 1 && (p[2] || p[3] != 1)))) return -1;
     return fwrite(data, 1, size, out) == size ? 0 : -1;
 }
 int NDL_DirectVideoFlushRenderBuffer(void) { return 0; }

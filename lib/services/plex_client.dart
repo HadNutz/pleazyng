@@ -200,11 +200,15 @@ String _plexConvertedDownloadProfileExtra(int maxVideoBitrateKbps) => [
   ],
 ].join('+');
 
-String _buildPlexHlsClientProfileExtra({required String videoTranscodeTarget, int? maxVideoBitrateKbps}) {
+String _buildPlexHlsClientProfileExtra({
+  required String videoTranscodeTarget,
+  int? maxVideoBitrateKbps,
+  bool copySamsungVideo = false,
+}) {
   if (_usesSamsungVideoPlane) {
     videoTranscodeTarget =
         'add-transcode-target(type=videoProfile&context=streaming'
-        '&protocol=hls&container=mpegts&videoCodec=h264&audioCodec=aac)';
+        '&protocol=hls&container=mpegts&videoCodec=${copySamsungVideo ? 'h264%2Chevc%2Cmpeg2video' : 'h264'}&audioCodec=aac)';
   }
   final clauses = <String>[
     'add-settings(DirectPlayStreamSelection=true)',
@@ -3509,7 +3513,15 @@ class PlexClient
         'audioCodec=${webosTranscodeAudioCodecs.replaceAll(',', '%2C')}',
       );
     }
+    final copySamsungVideo =
+        _usesSamsungVideoPlane &&
+        isOriginal &&
+        audioCodecRefused &&
+        !sourceCodecRefused &&
+        !forceVideoEncode &&
+        selectedInternalSubtitle == null;
     final clientProfileExtra = _buildPlexHlsClientProfileExtra(
+      copySamsungVideo: copySamsungVideo,
       videoTranscodeTarget: videoTarget,
       maxVideoBitrateKbps: !isOriginal ? preset.videoBitrateKbps : null,
     );
@@ -3543,7 +3555,7 @@ class PlexClient
               !withholdDirectPlay
           ? '1'
           : '0',
-      'directStream': forceVideoEncode || _usesSamsungVideoPlane
+      'directStream': forceVideoEncode || (_usesSamsungVideoPlane && !copySamsungVideo)
           ? '0'
           : isOriginal
           ? '1'
@@ -4478,6 +4490,9 @@ class PlexClient
           !isTrack &&
           (receiverAc3 ||
               options.forceAudioConversion ||
+              (_usesSamsungVideoPlane &&
+                  selectedAudioCodec != null &&
+                  !tizenSourceAudio.contains(selectedAudioCodec.toLowerCase())) ||
               RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable(selectedAudioCodec));
       final sourceCodecRefused = !isTrack && _sourceCodecRefused(data);
       final forceVideoConversion =

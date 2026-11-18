@@ -34,7 +34,7 @@ index 825168d..c6a4de2 100644
 -MPV_SONAME="libmpv_audio_kit.so"
 +MPV_SONAME="libpleazyng_tv_mpv.so"
 diff --git a/scripts/shared/_cross.sh b/scripts/shared/_cross.sh
-index 049294f..4187ce0 100644
+index 049294f..0a95460 100644
 --- a/scripts/shared/_cross.sh
 +++ b/scripts/shared/_cross.sh
 @@ -408,0 +409,5 @@ cross_build_libplacebo() {
@@ -43,7 +43,21 @@ index 049294f..4187ce0 100644
 +    sed -i '1i #define HAS_STD_TO_CHARS_FP 0' "$gitdir/src/convert.cc"
 +    sed -i 's/= has_std_from_chars_impl<T>::value;/= !std::is_floating_point_v<T> \&\& has_std_from_chars_impl<T>::value;/' "$gitdir/src/convert.cc"
 +  fi
-@@ -456,0 +462,8 @@ cross_build_ffmpeg() {
+@@ -456,0 +462,22 @@ cross_build_ffmpeg() {
++  # The Tizen 6 sysroot's kernel headers predate V4L2 EOS and HEVC.
++  # Overlay only the userspace V4L2 declarations. Runtime ioctls still probe
++  # the actual driver and libavcodec declines unsupported formats.
++  local -a video_uapi=()
++  if [[ "$platform" == tizen ]]; then
++    local uapi="$CROSS_BUILD_DIR/video-uapi" name raw
++    mkdir -p "$uapi/linux"
++    for name in videodev2.h v4l2-common.h v4l2-controls.h; do
++      raw="$CROSS_BUILD_DIR/src/linux-6.12-$name"
++      download "https://raw.githubusercontent.com/torvalds/linux/adc218676eef25575469234709c2d87185ca223a/include/uapi/linux/$name" "$raw"
++      sed '/^#include <linux\/compiler\.h>$/d; s/\<__user\>//g' "$raw" > "$uapi/linux/$name"
++    done
++    video_uapi=("--extra-cflags=-I$uapi")
++  fi
 +  local dav_tar="$CROSS_BUILD_DIR/src/dav1d-1.5.1.tar.xz"
 +  download "https://download.videolan.org/pub/videolan/dav1d/1.5.1/dav1d-1.5.1.tar.xz" "$dav_tar"
 +  local dav_src; dav_src="$(extract "$dav_tar" "$CROSS_BUILD_DIR/src")"
@@ -52,13 +66,19 @@ index 049294f..4187ce0 100644
 +    --prefix "$CROSS_PREFIX_DIR" --libdir lib --default-library=static \
 +    -Db_staticpic=true -Denable_tools=false -Denable_tests=false
 +  ninja -C "$dav_build" -j"$JOBS" install
-@@ -483,0 +497,3 @@ cross_mpv_source() {
+@@ -466 +493 @@ cross_build_ffmpeg() {
+-    "$@"
++    "$@" "${video_uapi[@]}"
+@@ -483,0 +511,3 @@ cross_mpv_source() {
 +  if [[ "${NDK_TRIPLE:-}" == "arm-webosmllib32-linux-gnueabi" ]]; then
 +    python3 "$PLEAZYNG_TV_MPV_SOURCE/install_ndl.py" "$CROSS_MPV_DIR"
 +  fi
 diff --git a/scripts/shared/_sources.sha256 b/scripts/shared/_sources.sha256
-index cd77494..bc065f6 100644
+index cd77494..1880184 100644
 --- a/scripts/shared/_sources.sha256
 +++ b/scripts/shared/_sources.sha256
-@@ -39,0 +40 @@ d2e2da18b2be4b08c5f515c64f6ac9984e030652e5bdc0e920dbe95f7ae743b3  emsdk:7.0.0/li
+@@ -39,0 +40,4 @@ d2e2da18b2be4b08c5f515c64f6ac9984e030652e5bdc0e920dbe95f7ae743b3  emsdk:7.0.0/li
 +401813f1f89fa8fd4295805aa5284d9aed9bc7fc1fdbe554af4292f64cbabe21  https://download.videolan.org/pub/videolan/dav1d/1.5.1/dav1d-1.5.1.tar.xz
++d8f299f7aa92ad182d82ba721cc546e4a93421259bc1c19fbd676d4c6f6de47d  https://raw.githubusercontent.com/torvalds/linux/adc218676eef25575469234709c2d87185ca223a/include/uapi/linux/v4l2-common.h
++85b0478bd5cf72c8c83b3f73d47ba4378b49738ac2302762320a8fa3122e3824  https://raw.githubusercontent.com/torvalds/linux/adc218676eef25575469234709c2d87185ca223a/include/uapi/linux/v4l2-controls.h
++8161dd789a5ac4cd622285ff56dc3f497bdad689e32ac609d5dc8c481e44227c  https://raw.githubusercontent.com/torvalds/linux/adc218676eef25575469234709c2d87185ca223a/include/uapi/linux/videodev2.h

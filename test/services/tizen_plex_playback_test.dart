@@ -25,12 +25,14 @@ void main() {
     tearDown(() => db.close());
 
     for (final decisionWorks in [true, false]) {
-      for (final compatible in [false, true]) {
+      for (final source in ['h264', 'hevc', 'hevc-truehd']) {
+        final compatible = source != 'hevc-truehd';
+        final uhd = source != 'h264';
         test(
           compatible
-              ? 'Original preserves compatible H264 video ($decisionWorks)'
+              ? 'Original preserves compatible $source video ($decisionWorks)'
               : decisionWorks
-              ? 'Original requests compatible video and stereo audio'
+              ? 'Original preserves UHD video while converting TrueHD audio'
               : 'failed transcode cannot fall back to an unsupported original',
           () async {
             final decisions = <Uri>[];
@@ -49,16 +51,16 @@ void main() {
                             'Media': [
                               {
                                 'id': 7,
-                                'container': compatible ? 'mp4' : 'mkv',
-                                'videoCodec': compatible ? 'h264' : 'hevc',
-                                'width': compatible ? 1920 : 3840,
-                                'height': compatible ? 1080 : 2160,
+                                'container': uhd ? 'mkv' : 'mp4',
+                                'videoCodec': uhd ? 'hevc' : 'h264',
+                                'width': uhd ? 3840 : 1920,
+                                'height': uhd ? 2160 : 1080,
                                 'Part': [
                                   {
                                     'id': 99,
                                     'key': '/library/parts/99/file.mkv',
                                     'Stream': [
-                                      {'streamType': 1, 'id': 300, 'codec': compatible ? 'h264' : 'hevc'},
+                                      {'streamType': 1, 'id': 300, 'codec': uhd ? 'hevc' : 'h264'},
                                       {
                                         'streamType': 2,
                                         'id': 301,
@@ -135,13 +137,12 @@ void main() {
             expect(decisions, isNotEmpty);
             final params = decisions.first.queryParameters;
             expect(params['directPlay'], '0');
-            expect(params['directStream'], '0');
+            expect(params['directStream'], '1');
             expect(params['directStreamAudio'], '0');
-            expect(params['videoResolution'], '1920x1080');
+            expect(params, isNot(contains('videoResolution')));
             final profile = params['X-Plex-Client-Profile-Extra']!;
-            expect(profile, contains('container=mpegts&videoCodec=h264&audioCodec=aac)'));
+            expect(profile, contains('container=mpegts&videoCodec=h264%2Chevc%2Cmpeg2video&audioCodec=aac)'));
             expect(profile, contains('name=audio.channels&value=2'));
-            expect(profile, isNot(contains('hevc')));
             expect(profile, isNot(contains('ac3')));
           },
         );

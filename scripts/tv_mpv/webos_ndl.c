@@ -7,6 +7,8 @@
 #include <pthread.h>
 #include <math.h>
 #include <libavcodec/bsf.h>
+#include <libplacebo/utils/libav.h>
+#include <libavutil/mastering_display_metadata.h>
 #include "common/av_common.h"
 #include "common/codecs.h"
 #include "common/msg.h"
@@ -32,6 +34,7 @@ static struct {
     NDL_FN(DirectVideoPlay);
     NDL_FN(DirectVideoFlushRenderBuffer);
     NDL_FN(DirectVideoSetArea);
+    NDL_FN(DirectVideoSetHDRInfo);
 } api;
 static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static bool owned;
@@ -60,6 +63,7 @@ PUBLIC int mpv_pleazyng_ndl_acquire(const char *window)
         LOOKUP(DirectVideoPlay);
         LOOKUP(DirectVideoFlushRenderBuffer);
         LOOKUP(DirectVideoSetArea);
+        api.DirectVideoSetHDRInfo = dlsym(api.lib, "NDL_DirectVideoSetHDRInfo");
         if (!api.initialize || !api.initialize()) goto missing;
     }
     if (api.DirectMediaSetWindowId(window) || api.DirectMediaInit(app)) goto fail;
@@ -94,6 +98,8 @@ struct decoder {
     struct mp_codec_params *codec;
     AVBSFContext *bsf;
     int source;
+    NDL_DIRECTVIDEO_HDR_INFO_T hdr;
+    bool hdr_enabled;
 };
 
 static const struct {const char *name; int source; const char *filter;} formats[] = {
@@ -103,6 +109,36 @@ static const struct {const char *name; int source; const char *filter;} formats[
     {"av1", NDL_DIRECTVIDEO_SRC_TYPE_AV1, "null"},
 };
 
+// VP9 carries mastering data in the container. NDL needs that metadata
+// separately from the elementary stream. Coordinates and luminance follow
+// the integer units used in mastering-display-colour-volume SEI.
+static void update_metadata(NDL_DIRECTVIDEO_HDR_INFO_T *hdr, const AVPacketSideData *side, int count)
+{
+    const AVPacketSideData *master = av_packet_side_data_get(side, count, AV_PKT_DATA_MASTERING_DISPLAY_METADATA);
+    if (master && master->size >= sizeof(AVMasteringDisplayMetadata)) {
+        const AVMasteringDisplayMetadata *m = (const void *)master->data;
+        if (m->has_primaries) {
+            hdr->displayPrimariesRx = lrint(50000 * av_q2d(m->display_primaries[0][0]));
+            hdr->displayPrimariesRy = lrint(50000 * av_q2d(m->display_primaries[0][1]));
+            hdr->displayPrimariesGx = lrint(50000 * av_q2d(m->display_primaries[1][0]));
+            hdr->displayPrimariesGy = lrint(50000 * av_q2d(m->display_primaries[1][1]));
+            hdr->displayPrimariesBx = lrint(50000 * av_q2d(m->display_primaries[2][0]));
+            hdr->displayPrimariesBy = lrint(50000 * av_q2d(m->display_primaries[2][1]));
+            hdr->whitePointX = lrint(50000 * av_q2d(m->white_point[0]));
+            hdr->whitePointY = lrint(50000 * av_q2d(m->white_point[1]));
+        }
+        if (m->has_luminance) {
+            hdr->minDisplayMasteringLuminance = lrint(10000 * av_q2d(m->min_luminance));
+            hdr->maxDisplayMasteringLuminance = lrint(10000 * av_q2d(m->max_luminance));
+        }
+    }
+    const AVPacketSideData *light = av_packet_side_data_get(side, count, AV_PKT_DATA_CONTENT_LIGHT_LEVEL);
+    if (light && light->size >= sizeof(AVContentLightMetadata)) {
+        const AVContentLightMetadata *m = (const void *)light->data;
+        hdr->maxContentLightLevel = m->MaxCLL;
+        hdr->maxFrameAverageLightLevel = m->MaxFALL;
+    }
+}
 static void free_packet(void *p) { AVPacket *pkt = p; av_packet_free(&pkt); }
 
 static void process(struct mp_filter *f)
@@ -138,6 +174,15 @@ static void process(struct mp_filter *f)
         return;
     }
     if (rc < 0) goto fail;
+    if (d->hdr_enabled) {
+        update_metadata(&d->hdr, pkt->side_data, pkt->side_data_elems);
+        av_buffer_unref(&pkt->opaque_ref);
+        pkt->opaque_ref = av_buffer_alloc(sizeof(d->hdr));
+        if (!pkt->opaque_ref) goto fail;
+        memcpy(pkt->opaque_ref->data, &d->hdr, sizeof(d->hdr));
+    } else {
+        av_buffer_unref(&pkt->opaque_ref);
+    }
     img.planes[0] = (uint8_t *)pkt;
     img.planes[1] = (uint8_t *)(uintptr_t)d->source;
     struct mp_image *out = mp_image_new_custom_ref(&img, pkt, free_packet);
@@ -182,6 +227,36 @@ static struct mp_decoder *create(struct mp_filter *parent, struct mp_codec_param
         AVCodecParameters *p = mp_codec_params_to_av(codec);
         bool ok = bsf && p && av_bsf_alloc(bsf, &d->bsf) >= 0 &&
                   avcodec_parameters_copy(d->bsf->par_in, p) >= 0;
+        // mpv's Matroska demuxer stores Colour and MasteringMetadata in
+        // mp_codec_params. libavformat-backed sources use AVCodecParameters.
+        if (ok && d->source == NDL_DIRECTVIDEO_SRC_TYPE_VP9 &&
+            (codec->color.transfer == PL_COLOR_TRC_PQ || codec->color.transfer == PL_COLOR_TRC_HLG)) {
+            p->color_trc = pl_transfer_to_av(codec->color.transfer);
+            p->color_primaries = pl_primaries_to_av(codec->color.primaries);
+            p->color_space = pl_system_to_av(codec->repr.sys);
+            const struct pl_hdr_metadata *h = &codec->color.hdr;
+            d->hdr.displayPrimariesRx = lrintf(50000 * h->prim.red.x);
+            d->hdr.displayPrimariesRy = lrintf(50000 * h->prim.red.y);
+            d->hdr.displayPrimariesGx = lrintf(50000 * h->prim.green.x);
+            d->hdr.displayPrimariesGy = lrintf(50000 * h->prim.green.y);
+            d->hdr.displayPrimariesBx = lrintf(50000 * h->prim.blue.x);
+            d->hdr.displayPrimariesBy = lrintf(50000 * h->prim.blue.y);
+            d->hdr.whitePointX = lrintf(50000 * h->prim.white.x);
+            d->hdr.whitePointY = lrintf(50000 * h->prim.white.y);
+            d->hdr.minDisplayMasteringLuminance = lrintf(10000 * h->min_luma);
+            d->hdr.maxDisplayMasteringLuminance = lrintf(10000 * h->max_luma);
+            d->hdr.maxContentLightLevel = lrintf(h->max_cll);
+            d->hdr.maxFrameAverageLightLevel = lrintf(h->max_fall);
+        }
+        if (ok && d->source == NDL_DIRECTVIDEO_SRC_TYPE_VP9 &&
+            (p->color_trc == AVCOL_TRC_SMPTE2084 || p->color_trc == AVCOL_TRC_ARIB_STD_B67)) {
+            d->hdr_enabled = true;
+            d->hdr.transferCharacteristics = p->color_trc;
+            d->hdr.colorPrimaries = p->color_primaries;
+            d->hdr.matrixCoeffs = p->color_space;
+            update_metadata(&d->hdr, p->coded_side_data, p->nb_coded_side_data);
+            ok = api.DirectVideoSetHDRInfo != NULL;
+        }
         avcodec_parameters_free(&p);
         if (ok) {
             d->bsf->time_base_in = AV_TIME_BASE_Q;
@@ -203,13 +278,13 @@ static void list(struct mp_decoder_list *decoders)
 }
 const struct mp_decoder_fns vd_webos_ndl = {.create=create, .add_decoders=list};
 
-struct output { int w, h, source; uint64_t last; bool loaded; };
+struct output { int w, h, source; uint64_t last; bool loaded, have_hdr; NDL_DIRECTVIDEO_HDR_INFO_T hdr; };
 
 static void output_close(struct vo *vo)
 {
     struct output *o = vo->priv;
     if (o->loaded) api.DirectMediaUnload();
-    o->loaded = false;
+    o->loaded = o->have_hdr = false;
 }
 
 static bool draw(struct vo *vo, struct vo_frame *frame)
@@ -230,6 +305,14 @@ static bool draw(struct vo *vo, struct vo_frame *frame)
         if (api.DirectVideoSetArea(0,0,o->w,o->h)) goto fail;
     }
     AVPacket *pkt = (void *)img->planes[0];
+    if (pkt->opaque_ref) {
+        const NDL_DIRECTVIDEO_HDR_INFO_T *hdr = (const void *)pkt->opaque_ref->data;
+        if (!o->have_hdr || memcmp(&o->hdr, hdr, sizeof(*hdr))) {
+            if (!api.DirectVideoSetHDRInfo || api.DirectVideoSetHDRInfo(*hdr)) goto fail;
+            o->hdr = *hdr;
+            o->have_hdr = true;
+        }
+    }
     long long pts = pkt->pts != AV_NOPTS_VALUE ? pkt->pts :
                     pkt->dts != AV_NOPTS_VALUE ? pkt->dts : 0;
     for (int n = 0; n < 100; ++n) {

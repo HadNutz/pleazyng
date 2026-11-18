@@ -20,7 +20,7 @@ bool tizenCanDirectPlayVideo(MediaVersion? version, MediaSourceInfo? source) {
   }
   final depth = source.displayCriteria?.bitDepth;
   if (depth != null && depth > (codec == 'h264' ? 8 : 10)) return false;
-  return source.audioTracks.every((track) => tizenSourceAudio.contains(track.codec?.toLowerCase()));
+  return true;
 }
 
 Map<String, Object?> tizenPlaybackProfile({

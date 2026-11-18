@@ -77,6 +77,10 @@ struct Picture {
 struct PictureSlot {
   std::mutex mutex;
   std::shared_ptr<const Picture> picture;
+  // Tizen copies synchronously with glTexImage2D and omits the release
+  // callback. Retain the front buffer through the next raster callback.
+  std::shared_ptr<const Picture> presented;
+  FlutterDesktopPixelBuffer front{};
 };
 struct PictureLease {
   std::shared_ptr<const Picture> picture;
@@ -92,7 +96,8 @@ struct PictureLease {
 
 class Session {
  public:
-  explicit Session(flutter::TextureRegistrar* registrar) : registrar_(registrar), api_(Api::instance()) {}
+  explicit Session(flutter::TextureRegistrar* registrar, bool synchronous_upload = false)
+      : registrar_(registrar), api_(Api::instance()), synchronous_upload_(synchronous_upload) {}
   ~Session() {
     if (render_) api_.render_context_set_update_callback(render_, nullptr, nullptr);
     {
@@ -101,7 +106,13 @@ class Session {
     }
     wake_.notify_one();
     if (worker_.joinable()) worker_.join();
-    if (texture_id_ >= 0) registrar_->UnregisterTexture(texture_id_);
+    if (texture_id_ >= 0) {
+#ifdef PLEAZYNG_TIZEN_EMBEDDER
+      registrar_->UnregisterTexture(texture_id_, [keep = texture_] {});
+#else
+      registrar_->UnregisterTexture(texture_id_);
+#endif
+    }
     if (render_) api_.render_context_free(render_);
     if (core_) api_.terminate_destroy(core_);
     if (plane_) api_.ndl_release();
@@ -133,9 +144,16 @@ class Session {
     check(api_.render_context_create(&render_, core_, setup));
     auto slot = slot_;
     texture_ = std::make_shared<flutter::TextureVariant>(flutter::PixelBufferTexture(
-        [slot](size_t, size_t) -> const FlutterDesktopPixelBuffer* {
+        [slot, synchronous = synchronous_upload_](size_t, size_t) -> const FlutterDesktopPixelBuffer* {
           std::lock_guard<std::mutex> lock(slot->mutex);
           if (!slot->picture) return nullptr;
+          if (synchronous) {
+            slot->presented = slot->picture;
+            slot->front.buffer = slot->presented->rgba.get();
+            slot->front.width = slot->presented->w;
+            slot->front.height = slot->presented->h;
+            return &slot->front;
+          }
           return &(new PictureLease(slot->picture))->buffer;
         }));
     texture_id_ = registrar_->RegisterTexture(texture_.get());
@@ -213,6 +231,7 @@ class Session {
  private:
   flutter::TextureRegistrar* registrar_;
   Api& api_;
+  bool synchronous_upload_;
   mpv_handle* core_ = nullptr;
   mpv_render_context* render_ = nullptr;
   int64_t texture_id_ = -1;
@@ -291,7 +310,11 @@ class TvMpvPlugin : public flutter::Plugin {
         auto id = map.at(Value("id")).LongValue();
         const auto& method = call.method_name();
         if (method == "create") {
+#ifdef PLEAZYNG_TIZEN_EMBEDDER
+          auto session = std::make_unique<Session>(textures_, true);
+#else
           auto session = std::make_unique<Session>(textures_);
+#endif
           const auto window = map.find(Value("windowId"));
           const auto hardware = map.find(Value("hardwareDecoding"));
           auto texture = session->open(std::get<std::string>(map.at(Value("uri"))),
