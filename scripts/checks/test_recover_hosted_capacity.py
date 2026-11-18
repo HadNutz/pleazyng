@@ -1,5 +1,6 @@
 """Guard the decision to retry all failed jobs in a hosted workflow attempt."""
 
+import subprocess
 import sys
 import unittest
 from pathlib import Path
@@ -41,6 +42,7 @@ class HostedCapacityTests(unittest.TestCase):
         }
         self.mutate = self.enterContext(patch.object(capacity.subprocess, "run", autospec=True))
         self.enterContext(patch.object(capacity, "api", side_effect=self.api))
+        self.sleep = self.enterContext(patch.object(capacity.time, "sleep"))
 
     def api(self, path, *, pages=False):
         if path == self.route and not pages:
@@ -100,6 +102,22 @@ class HostedCapacityTests(unittest.TestCase):
         with patch.object(capacity, "api", side_effect=advancing_api):
             self.recover()
         self.mutate.assert_not_called()
+
+    def test_concurrent_retry_winning_the_post_race_is_successful(self):
+        def publish_new_attempt(_seconds):
+            self.workflow.update(status="queued", conclusion=None, run_attempt=self.attempt + 1)
+
+        self.mutate.side_effect = subprocess.CalledProcessError(1, "gh")
+        self.sleep.side_effect = publish_new_attempt
+        self.assertEqual(self.recover(), "Run has already advanced")
+        self.mutate.assert_called_once()
+        self.sleep.assert_called_once()
+
+    def test_rejected_retry_without_state_change_remains_an_error(self):
+        self.mutate.side_effect = subprocess.CalledProcessError(1, "gh")
+        with self.assertRaises(subprocess.CalledProcessError):
+            self.recover()
+        self.mutate.assert_called_once()
 
     def test_historical_attempt_can_be_classified_without_mutation(self):
         self.workflow.update(run_attempt=self.attempt + 1, conclusion="success")

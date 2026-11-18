@@ -266,6 +266,8 @@ class HostedRecoveryWatchTests(unittest.TestCase):
                         "event": "workflow_dispatch", "headBranch": "main", "attempt": 2, "updatedAt": stamp}
         self.classify = self.enterContext(patch("release_all_platforms.hosted_capacity.classify_attempt",
                                                 return_value=(["tvOS"], "")))
+        self.recover = self.enterContext(patch("release_all_platforms.hosted_capacity.recover",
+                                               return_value="Requested retry for tvOS"))
         self.gh = self.enterContext(patch("release_all_platforms.gh_json"))
         self.sleep = self.enterContext(patch("release_all_platforms.time.sleep"))
 
@@ -286,12 +288,27 @@ class HostedRecoveryWatchTests(unittest.TestCase):
         self.assertEqual(popen.call_args_list[1], popen.call_args_list[3])
         self.assertEqual(signing.wait.call_count, 2)
         self.classify.assert_called_once_with(self.repo, 7, 2)
+        self.recover.assert_not_called()
         self.sleep.assert_called_once()
 
     def test_resume_between_attempts_follows_same_run(self):
         self.gh.side_effect = [self.failed, self.queued]
         self.assertEqual(resume_hosted_retry(self.summary),
                          {**self.summary, "status": "queued", "conclusion": None, "attempt": 3})
+        self.recover.assert_not_called()
+
+    def test_delayed_recovery_workflow_gets_one_guarded_local_request(self):
+        self.gh.side_effect = [self.failed, self.failed, self.failed, self.queued]
+        with patch("release_all_platforms.time.monotonic", side_effect=[0, 65, 80, 95]):
+            self.assertEqual(await_hosted_retry(self.repo, 7, self.failed), self.queued)
+        self.recover.assert_called_once_with(self.repo, 7, 2, retry=True)
+
+    def test_lost_response_does_not_issue_a_second_local_request(self):
+        self.failed["updated_at"] = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(minutes=2)).isoformat()
+        self.recover.side_effect = subprocess.CalledProcessError(1, "gh")
+        self.gh.side_effect = [self.failed, self.failed, self.queued]
+        self.assertEqual(await_hosted_retry(self.repo, 7, self.failed), self.queued)
+        self.recover.assert_called_once_with(self.repo, 7, 2, retry=True)
 
     def test_genuine_failure_exhaustion_and_cancellation_return_immediately(self):
         self.classify.return_value = [], "Requires investigation"
@@ -299,6 +316,7 @@ class HostedRecoveryWatchTests(unittest.TestCase):
             with self.subTest(changes=changes):
                 self.assertIsNone(await_hosted_retry(self.repo, 7, {**self.failed, **changes}))
         self.classify.assert_called_once()
+        self.recover.assert_not_called()
         self.gh.assert_not_called()
         self.sleep.assert_not_called()
 

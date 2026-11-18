@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 import subprocess
+import time
 
 
 MAX_ATTEMPTS = 8
@@ -64,10 +65,21 @@ def recover(repository, run_id, attempt, retry):
     names = ", ".join(failed_jobs)
     if attempt >= MAX_ATTEMPTS:
         raise SystemExit(f"Hosted capacity still unavailable after {attempt} attempts: {names}")
-    if retry and current_failure():
+    if not retry:
+        return f"Confirmed hosted allocation failure: {names}"
+    if not current_failure():
+        return "Run has already advanced"
+    try:
         subprocess.run(["gh", "api", "--method", "POST", f"{route}/rerun-failed-jobs"], check=True)
-        return f"Requested retry for {names}"
-    return f"Confirmed hosted allocation failure: {names}"
+    except subprocess.CalledProcessError:
+        # A concurrent requester can win after our last read, or the POST response can be lost.
+        for delay in (0, 3, 6):
+            if delay:
+                time.sleep(delay)
+            if not current_failure():
+                return "Run has already advanced"
+        raise
+    return f"Requested retry for {names}"
 
 
 if __name__ == "__main__":

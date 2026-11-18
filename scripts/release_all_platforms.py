@@ -64,6 +64,7 @@ FFMPEG_SIGNING_FINGERPRINT = "FCF986EA15E6E293A5644F10B4322F04D67658D8"
 DOWNLOAD_ATTEMPTS = 4
 DOWNLOAD_RETRY_INITIAL_DELAY_SECONDS = 1
 HOSTED_RECOVERY_GRACE_SECONDS = 15 * 60
+HOSTED_RECOVERY_WORKFLOW_HEAD_START_SECONDS = 60
 NATIVE_FAILED_RUN_QUEUE_TIMEOUT_SECONDS = 15 * 60
 APPLE_JIT_EVIDENCE_ROOT: Path | None = None
 APPLE_JIT_SSH_TARGET = os.environ.get("APPLE_JIT_SSH_TARGET", "keith@100.64.0.3")
@@ -424,7 +425,7 @@ def remaining_hosted_recovery_window(updated_at: str) -> float:
 
 
 def await_hosted_retry(repo: str, run_id: int, overview: dict) -> dict | None:
-    """Follow GitHub's automatic failed-job retry on this run without dispatching work."""
+    """Follow the hosted retry and request it locally if its workflow is delayed."""
     attempt = overview.get("run_attempt")
     if (repo != PLEZY_REPO or overview.get("id") != run_id
             or not hosted_capacity.trusted_workflow(repo, overview)
@@ -436,6 +437,7 @@ def await_hosted_retry(repo: str, run_id: int, overview: dict) -> dict | None:
         return None
     deadline = time.monotonic() + min(remaining, HOSTED_RECOVERY_GRACE_SECONDS)
     jobs = None
+    local_request_attempted = False
     while True:
         try:
             if jobs is None:
@@ -447,9 +449,18 @@ def await_hosted_retry(repo: str, run_id: int, overview: dict) -> dict | None:
             latest = gh_json("api", f"repos/{repo}/actions/runs/{run_id}")
             if latest.get("id") == run_id and latest.get("run_attempt", 0) > attempt:
                 return latest
+            remaining = deadline - time.monotonic()
+            if (not local_request_attempted and latest.get("id") == run_id
+                    and latest.get("run_attempt") == attempt and latest.get("status") == "completed"
+                    and latest.get("conclusion") == "failure"
+                    and 0 < remaining <= HOSTED_RECOVERY_GRACE_SECONDS - HOSTED_RECOVERY_WORKFLOW_HEAD_START_SECONDS):
+                # A successful request or a lost response can precede the REST status update.
+                # Let the recovery workflow and subsequent polls observe this single request.
+                local_request_attempted = True
+                print(hosted_capacity.recover(repo, run_id, attempt, retry=True), flush=True)
         except (ReleaseError, subprocess.CalledProcessError, ValueError) as error:
             print(f"Could not verify hosted recovery for run {run_id}: {error}", flush=True)
-        remaining = deadline - time.monotonic()
+            remaining = deadline - time.monotonic()
         if remaining <= 0:
             print(f"GitHub has not reported a new attempt for run {run_id} within "
                   f"{HOSTED_RECOVERY_GRACE_SECONDS // 60} minutes of completion.", flush=True)
