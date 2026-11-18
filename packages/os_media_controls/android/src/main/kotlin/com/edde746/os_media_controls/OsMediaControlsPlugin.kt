@@ -119,17 +119,21 @@ class OsMediaControlsPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
     }
 
     private fun showCarFailure(code: String) {
-        if (currentState == PlaybackStateCompat.STATE_PLAYING || code == "disconnected") return
+        if (code == "disconnected" || code == "superseded") return
         val labels = MusicCarApi.snapshot["carLabels"] as? Map<*, *>
         val locked = code == "profile_unavailable"
         val text = when (code) {
-            "profile_unavailable" -> "Unlock Pleazyng"
+            "profile_unavailable" -> labels?.get("unlock") as? String ?: "Unlock Pleazyng"
             "loading" -> labels?.get("loading") as? String ?: "Loading Pleazyng"
             "no_match", "ambiguous_search" -> MusicCarApi.snapshot["noMatch"] as? String ?: "No matching media"
             "stale_queue", "stale_widget" -> "Select the item again"
             else -> labels?.get("unavailable") as? String ?: "Media unavailable. Try again."
         }
-        val state = PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_ERROR, currentPosition, currentSpeed)
+        val prior = mediaSession.controller.playbackState
+        val state = if (currentState == PlaybackStateCompat.STATE_PLAYING && prior != null)
+            PlaybackStateCompat.Builder(prior)
+        else PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_ERROR, currentPosition, currentSpeed)
+        state
             .setActions(buildPlaybackActions()).setErrorMessage(if (locked) PlaybackStateCompat.ERROR_CODE_AUTHENTICATION_EXPIRED
                 else PlaybackStateCompat.ERROR_CODE_APP_ERROR, text)
         if (locked) (context.packageManager.getLaunchIntentForPackage(context.packageName)

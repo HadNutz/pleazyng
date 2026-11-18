@@ -182,7 +182,14 @@ class GuestJukebox extends ChangeNotifier {
           out.statusCode = 410;
           return;
         }
-        final accepted = await _music.acceptGuestTrack(track);
+        final bool accepted;
+        if (_music case final GuestQueueAdmission admission) {
+          accepted = await admission.acceptGuestTrack(track);
+        } else {
+          final before = _music.queue.length;
+          _music.addToEnd([track]);
+          accepted = _music.queue.length == before + 1 && _music.queue.last.globalKey == track.globalKey;
+        }
         if (!accepted || epoch != _epoch) {
           out.statusCode = 409;
           return;

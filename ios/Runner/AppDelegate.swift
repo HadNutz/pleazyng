@@ -540,7 +540,7 @@ final class MusicCarBridge {
         let video = CarVideoPlayer(id: id, url: url, title: args["title"] as? String ?? "Pleazyng",
           offset: args["offset"] as? Int ?? 0, duration: args["duration"] as? Int ?? 0, multipart: args["multipart"] as? Bool ?? false)
         self.carVideo = video
-        video.open(position: args["position"] as? Int ?? 0, ready: { ok in result(ok) }) {
+        video.open(position: args["position"] as? Int ?? 0, playing: args["playing"] as? Bool ?? true, ready: { ok in result(ok) }) {
           [weak self, weak video] position, paused, reason, seek in
           guard let self, let video, self.carVideo === video else { return }
           self.channel?.invokeMethod(
@@ -706,7 +706,7 @@ private final class CarVideoPlayer {
     session.automaticallyPublishesNowPlayingInfo = !multipart
   }
 
-  func open(position: Int, ready: @escaping (Bool) -> Void, event: @escaping (Int, Bool, String, Int?) -> Void) {
+  func open(position: Int, playing: Bool, ready: @escaping (Bool) -> Void, event: @escaping (Int, Bool, String, Int?) -> Void) {
     guard let item = player.currentItem else { ready(false); return }
     opening = ready
     do {
@@ -768,8 +768,12 @@ private final class CarVideoPlayer {
           self.player.seek(to: CMTime(value: Int64(position), timescale: 1000)) { [weak self] ok in
             DispatchQueue.main.async {
               guard let self, !self.stopped, self.opening != nil else { return }
-              if ok { self.session.becomeActiveIfPossible(completion: nil); self.player.play() }
+              if ok {
+                self.session.becomeActiveIfPossible(completion: nil)
+                if playing { self.player.play() }
+              }
               self.finishOpening(ok)
+              if ok { report("progress") }
             }
           }
         }

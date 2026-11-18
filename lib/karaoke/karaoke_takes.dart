@@ -60,14 +60,18 @@ class KaraokeTakes {
         continue;
       }
       final file = File(p.join(directory.path, 'take.json'));
-      if (!await file.exists() || await file.length() > 1024 * 1024) {
-        continue;
-      }
       try {
+        if (!await file.exists() || await file.length() > 1024 * 1024) {
+          continue;
+        }
         final j = jsonDecode(await file.readAsString()) as Map<String, dynamic>;
         if (j['schema'] == 1 && j['id'] == p.basename(directory.path)) {
           takes.add(KaraokeTake(directory, j));
         }
+      } on FileSystemException {
+        continue;
+      } on TypeError {
+        continue;
       } on FormatException {
         continue;
       }

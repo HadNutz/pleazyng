@@ -158,6 +158,7 @@ MusicQueueState _captureTransferQueueState(
 class MusicPlaybackServiceImpl extends MusicPlaybackService
     with WidgetsBindingObserver
     implements
+        GuestQueueAdmission,
         MusicLoudnessProfileService,
         MusicAudioSpectrumService,
         MusicVisualizationAudioService,
@@ -4788,7 +4789,12 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
   @override
   Future<bool> acceptGuestTrack(MediaItem track) async {
     final output = _musicDeviceOutput;
-    if (output == null) return super.acceptGuestTrack(track);
+    if (output == null) {
+      if (_currentTrack == null || _queue.isEmpty) return false;
+      _queue.addToEnd([track]);
+      _afterQueueEdit();
+      return true;
+    }
     final transfer = MusicTransferSnapshot(
       queue: _captureTransferQueueState([track]),
       position: Duration.zero,

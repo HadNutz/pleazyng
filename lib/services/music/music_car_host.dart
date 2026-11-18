@@ -1,3 +1,6 @@
+import '../../screens/music/jukebox_dialog.dart';
+import '../../services/car_ux_restrictions_service.dart';
+import '../../utils/platform_detector.dart';
 import 'server_music_radio.dart';
 import '../playback_coordinator.dart';
 import '../../utils/serial_future_queue.dart';
@@ -208,6 +211,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
   }
 
   void _catalogChanged() {
+    _ownedByServer.clear();
     if (_catalogPending || !_current) return;
     _catalogPending = true;
     scheduleMicrotask(() {
@@ -322,6 +326,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       _music.shuffled,
       spoken?.chapters.length,
       jsonEncode(actions),
+      _ratingState,
       track?.trackArtistTitle,
     );
     if (_publishedStatus == status && DateTime.now().difference(_lastStatus) < const Duration(minutes: 5)) return;
@@ -366,6 +371,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         },
         'revision': _catalogRevision,
         'actions': actions,
+        'ratingState': [_ratingState?.kind, _ratingState?.value, _ratingState?.canUndo],
         'noMatch': t.messages.noResultsFound,
         'hasQueue': queue.isNotEmpty,
         'hasChapters': spoken?.chapters.isNotEmpty == true,
@@ -378,6 +384,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           'upNext': t.music.upNext,
           'queue': t.music.queue,
           'chapters': t.fileSources.chapters,
+          'unlock': t.karaokeUi.unlock,
           'loading': t.common.loading,
           'more': t.fileSources.loadMore,
           'close': t.common.close,
@@ -626,6 +633,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     final owner = _authorizations[id];
     if (!_current || owner == null || owner.generation != _profiles.identityMutationGeneration) return false;
     final client = owner.client, item = _items[id];
+    if (item != null && _hiddenCarLibraries().contains('${item.serverId}:${item.libraryId}')) return false;
     if (!_offlineRows.contains(id) &&
         client != null &&
         !client.isOfflineMode &&
@@ -750,9 +758,14 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     final hidden = context.read<HiddenLibrariesProvider?>();
     await hidden?.ensureInitialized();
     if (!_current || downloads == null || downloads.isDisposed || downloads.activeProfileId != _profileId) return [];
-    final denied = _hiddenCarLibraries();
+    final denied = _hiddenCarLibraries(), manager = context.read<MultiServerProvider?>()?.serverManager;
     return downloads.downloadedTracks
-        .where((track) => !denied.contains('${track.serverId}:${track.libraryId}'))
+        .where(
+          (track) =>
+              track.serverId != null &&
+              manager?.isServerVisible(ServerId(track.serverId!)) != false &&
+              !denied.contains('${track.serverId}:${track.libraryId}'),
+        )
         .toList();
   }
 
@@ -1017,7 +1030,11 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
             ];
           }
         }
-        final results = await _search(args['query'] as String? ?? '');
+        final (results, audiobookMatches) = await (
+          _search(args['query'] as String? ?? ''),
+          _searchAudiobooks(args['query'] as String? ?? ''),
+        ).wait;
+        final owned = {for (final track in await _visibleDownloads()) (track.backend, track.globalKey)};
         if (!mounted || !requestCurrent()) return [];
         final resolved = results
             .where(
@@ -1034,10 +1051,16 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
                       _voiceName(item.kind == MediaKind.album ? item.displayTitle : item.albumTitle ?? '') == album) &&
                   (kind == null || item.kind.name == kind),
             )
+            .where((item) => !_hiddenCarLibraries().contains('${item.serverId}:${item.libraryId}'))
             .take(10)
-            .map(_item)
+            .map((item) => _item(item, offline: owned.contains((item.backend, item.globalKey))))
             .toList();
-        final audiobookMatches = await _searchAudiobooks(args['query'] as String? ?? '');
+        for (final row in resolved) {
+          if (resolved.where((other) => other['title'] == row['title']).length < 2) continue;
+          final source = _authorizations[row['id']]?.client?.serverName;
+          if (source != null)
+            row['subtitle'] = [row['subtitle'], source].whereType<String>().where((s) => s.isNotEmpty).join(' · ');
+        }
         if (!mounted || !requestCurrent()) return [];
         resolved.addAll(
           audiobookMatches.where(
@@ -1094,6 +1117,14 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         if (id.startsWith('shuffle:')) {
           id = id.substring(8);
           args['shuffle'] = true;
+        }
+        if (Platform.isAndroid &&
+            id == 'guestPhone:$_itemScope' &&
+            (_connected || PlatformDetector.isAutomotiveMedia())) {
+          if (!await commit() || context.read<GuestJukebox?>() == null) return false;
+          _guestPending = true;
+          _openGuestWhenAvailable();
+          return true;
         }
         if (id == 'downloadMix:$_itemScope') {
           final tracks = await _visibleDownloads();
@@ -1814,7 +1845,9 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         _folder('queue', t.music.queue),
         if (Platform.isAndroid && _ratingState?.kind == 'rating') _folder('rating', t.mediaMenu.rate),
         ...stationPins,
-        if (Platform.isIOS && _connected && _music.currentTrack != null && context.read<GuestJukebox?>() != null)
+        if ((_connected || PlatformDetector.isAutomotiveMedia()) &&
+            _music.currentTrack != null &&
+            context.read<GuestJukebox?>() != null)
           _folder('guest', t.livingRoom.jukebox),
         _folder('pins', t.musicTools.pins),
         _folder('favorites', t.libraries.filterCategories.favorites),
@@ -1927,7 +1960,18 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       String library(MediaItem track) => '${track.serverId}:${track.libraryId}';
       if (id == 'offlineChart') {
         final keys = owned.map(library).toSet().toList()..sort();
-        return _page(keys.map((k) => _folder('offlineChart:$k', libraries[k] ?? k)), id, offset);
+        return _page(
+          keys.map(
+            (k) => _folder(
+              'offlineChart:$k',
+              libraries[k] ??
+                  owned.where((track) => library(track) == k).firstOrNull?.libraryTitle ??
+                  t.navigation.downloads,
+            ),
+          ),
+          id,
+          offset,
+        );
       }
       final tracks = {
         for (final item in owned.where((e) => library(e) == id.substring('offlineChart:'.length))) item.globalKey: item,
@@ -2158,7 +2202,11 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       ];
     }
     if (id == 'offline') {
-      return _page((await _visibleDownloads()).map((e) => _item(e, offline: true)), id, offset);
+      final owned = await _visibleDownloads();
+      if (!_current) return [];
+      return owned.isEmpty
+          ? [_folder('carEmpty', t.downloads.noDownloads)]
+          : _page(owned.map((e) => _item(e, offline: true)), id, offset);
     }
     if (id == 'recent') {
       final rows = await MusicLibraryStore(context.read<AppDatabase>(), _profileId!).recent(limit: 100);
@@ -2237,6 +2285,32 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
             manager.isClientOnline(ServerId(l.serverId!)) &&
             manager.isServerVisible(ServerId(l.serverId!)),
       );
+      if (id == 'guest' && Platform.isAndroid && (_connected || PlatformDetector.isAutomotiveMedia())) {
+        return [
+          {
+            'id': 'guestPhone:$_itemScope',
+            'title': PlatformDetector.isAutomotiveMedia() ? t.livingRoom.jukebox : t.bonusExtras.sendToPhone,
+            'subtitle': t.livingRoom.jukeboxInfo,
+            'playable': true,
+          },
+        ];
+      }
+      if (id == 'carEmpty') return [];
+      if (id == 'rootPlayable') {
+        final owned = await _visibleDownloads();
+        if (!_current) return [];
+        return [
+          if (_music.currentTrack != null || _spoken != null)
+            {'id': 'resume', 'title': t.common.resume, 'playable': true},
+          if (owned.isNotEmpty)
+            {
+              'id': 'downloadMix:$_itemScope',
+              'title': '${t.common.shuffle} · ${t.navigation.downloads}',
+              'playable': true,
+            },
+          for (final track in owned.take(4)) _item(track, offline: true),
+        ];
+      }
       if (id == 'guest') {
         return _page(choices.map((l) => _folder('guestNetwork:$_itemScope:${l.globalKey}', l.title)), id, offset);
       }
@@ -2624,7 +2698,33 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && _connected) _openDrivingIfRequested();
+    if (state == AppLifecycleState.resumed) {
+      if (_guestPending) {
+        _openGuestWhenAvailable();
+      } else if (_connected) {
+        _openDrivingIfRequested();
+      }
+    }
+  }
+
+  bool _guestPending = false;
+  bool _guestOpen = false;
+  void _openGuestWhenAvailable() {
+    if (!_guestPending ||
+        _guestOpen ||
+        !_current ||
+        _profiles.isBinding ||
+        !_profiles.lastBindingSucceeded ||
+        WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed)
+      return;
+    if (PlatformDetector.isAutomotiveMedia() &&
+        CarUxRestrictionsService.instance.state != CarUxRestrictionState.unrestricted)
+      return;
+    final screen = widget.navigatorKey.currentState?.overlay?.context;
+    if (screen == null) return;
+    _guestPending = false;
+    _guestOpen = true;
+    unawaited(showGuestJukebox(screen).whenComplete(() => _guestOpen = false));
   }
 
   void _openDrivingIfRequested() {

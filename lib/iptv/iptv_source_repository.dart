@@ -1473,9 +1473,15 @@ class IptvSourceRepository {
 
   /// Claim the local timer before issuing a remote write. An uncertain reply
   /// remains recoverable by reading the server schedule, even after restart.
-  Future<void> transferLocalRecording(IptvLocalRecordingSchedule job) async {
-    final config = await configuration(job.profileId, job.sourceId);
+  Future<void> transferLocalRecording(IptvLocalRecordingSchedule job, {String? targetSourceId}) async {
+    final pending = job.state == 'transfer_pending' && job.recordingId != null
+        ? jsonDecode(job.recordingId!) as Map
+        : null;
+    final destination = pending?['source'] as String? ?? targetSourceId ?? job.sourceId;
+    final config = await configuration(job.profileId, destination);
     if (config == null || !config.supportsDispatcharrDvr) throw const IptvImportException('dvr_unavailable');
+    final endpoint = sha256.convert(utf8.encode(config.dispatcharrApiEndpoint.trim())).toString();
+    if (pending != null && pending['endpoint'] != endpoint) throw const IptvImportException('dvr_unavailable');
     final client = DispatcharrDvrClient(config);
     final start = job.startsAt.millisecondsSinceEpoch ~/ 1000, end = job.endsAt.millisecondsSinceEpoch ~/ 1000;
     final program = LiveTvProgram(title: job.programmeTitle ?? job.title, beginsAt: start, endsAt: end);
@@ -1496,10 +1502,16 @@ class IptvSourceRepository {
       ),
     );
     try {
-      final channel = (await channels(
-        job.profileId,
-      )).where((c) => c.iptvSourceId == job.sourceId && c.iptvChannelId == job.channelId).single;
-      final remote = await client.resolveChannel(channel);
+      final Object remote;
+      if (pending != null) {
+        remote = pending['channel'] as String;
+      } else {
+        final channel = (await channels(
+          job.profileId,
+        )).where((c) => c.iptvSourceId == job.sourceId && c.iptvChannelId == job.channelId).single;
+        remote = await client.resolveChannel(channel);
+      }
+      final claim = jsonEncode({'source': destination, 'endpoint': endpoint, 'channel': remote.toString()});
       Future<IptvDispatcharrRecording?> verify() async {
         final matches = (await client.recordings())
             .where(
@@ -1516,7 +1528,7 @@ class IptvSourceRepository {
       }
 
       final prior = await verify();
-      final claimed = job.state == 'scheduled' && await change('scheduled', 'transfer_pending', null) == 1;
+      final claimed = job.state == 'scheduled' && await change('scheduled', 'transfer_pending', claim) == 1;
       if (!claimed && job.state != 'transfer_pending') throw const IptvImportException('recording_schedule_invalid');
       var verified = prior;
       if (claimed && prior == null) {

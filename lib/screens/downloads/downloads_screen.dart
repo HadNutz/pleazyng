@@ -348,7 +348,20 @@ class DownloadsScreenState extends State<DownloadsScreen>
                                   context.read<DownloadProvider>().getMetadata(row.globalKey)?.displayTitle ??
                                       row.ratingKey,
                                 ),
-                                subtitle: Text(row.actionType),
+                                subtitle: Text(
+                                  [
+                                    row.actionType,
+                                    if (row.lastError != null)
+                                      RegExp(r'\b(401|403)\b|unauth', caseSensitive: false).hasMatch(row.lastError!)
+                                          ? t.fileSources.signIn
+                                          : RegExp(
+                                              r'timeout|socket|network',
+                                              caseSensitive: false,
+                                            ).hasMatch(row.lastError!)
+                                          ? t.errors.connectionFailed
+                                          : t.downloads.retryFailed,
+                                  ].join(' · '),
+                                ),
                                 trailing: TextButton(
                                   onPressed: () => sync.retryWatchAction(row),
                                   child: Text(t.common.retry),
@@ -737,7 +750,40 @@ class _DownloadsGridContentState extends State<_DownloadsGridContent>
 /// Review only app-managed files with no matching download record or active
 /// task. The provider rescans before deletion, including from Settings.
 Future<void> reviewOrphanDownloads(BuildContext context, DownloadProvider provider) async {
-  final scan = await provider.scanOrphanDownloads();
+  final progress = ValueNotifier<int>(0);
+  final navigator = Navigator.of(context);
+  var cancel = false;
+  final dialog = DialogRoute<void>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: Text(t.downloads.reviewOrphanFiles),
+      content: ValueListenableBuilder<int>(
+        valueListenable: progress,
+        builder: (_, count, _) =>
+            Column(mainAxisSize: MainAxisSize.min, children: [const LinearProgressIndicator(), Text('$count')]),
+      ),
+      actions: [TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(t.common.cancel))],
+    ),
+  );
+  unawaited(
+    navigator.push(dialog).then((_) {
+      cancel = true;
+    }),
+  );
+  late final OrphanDownloadScan scan;
+  try {
+    scan = await provider.scanOrphanDownloads(
+      onProgress: (count) {
+        progress.value = count;
+      },
+      cancelled: () => cancel || !context.mounted,
+    );
+  } finally {
+    if (dialog.isActive) navigator.removeRoute(dialog);
+    await dialog.completed;
+    progress.dispose();
+  }
+  if (scan.failure == OrphanDownloadScanFailure.cancelled) return;
   if (!context.mounted) return;
 
   if (!scan.isComplete) {

@@ -221,7 +221,10 @@ class MusicLibraryStore {
     final result = <MediaItem>[];
     var position = start, pageIndex = -1;
     List? ids;
-    while (position < count && result.length < limit) {
+    // Sparse manifests must also respect the browse budget. The next cursor
+    // resumes after inspected slots, including unavailable occurrences.
+    final stop = (start + 512).clamp(0, count);
+    while (position < stop && result.length < limit) {
       Object? id;
       if (legacy != null) {
         final row = legacy[position];

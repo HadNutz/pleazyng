@@ -197,7 +197,7 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
     final profileId = context.read<ActiveProfileProvider>().activeId;
     var localRecordings = <IptvLocalRecording>[];
     var localSchedules = <IptvLocalRecordingSchedule>[];
-    final transfers = <String>{};
+    final transfers = <String, String>{};
     var dispatcharrRecordings = <IptvDispatcharrRecording>[];
     var dispatcharrRules = <IptvDispatcharrRule>[];
     var iptvFailed = false;
@@ -206,8 +206,9 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
       try {
         localRecordings = await repository.localRecordings(profileId);
         localSchedules = await repository.localRecordingSchedules(profileId: profileId);
-        for (final source in localSchedules.map((s) => s.sourceId).toSet()) {
-          if (await repository.supportsDispatcharrDvr(profileId, source)) transfers.add(source);
+        for (final source in await repository.sources(profileId)) {
+          if (localSchedules.isNotEmpty && await repository.supportsDispatcharrDvr(profileId, source.id))
+            transfers[source.id] = source.displayName;
         }
       } on Object catch (error, stackTrace) {
         iptvFailed = true;
@@ -366,11 +367,26 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
     }
   }
 
-  Set<String> _transferSources = {};
+  Map<String, String> _transferSources = {};
   Future<void> _transferSchedule(IptvLocalRecordingSchedule schedule) async {
     if (context.read<ActiveProfileProvider>().activeId != schedule.profileId) return;
     try {
-      await context.read<IptvSourceRepository>().transferLocalRecording(schedule);
+      String? destination;
+      if (schedule.state != 'transfer_pending') {
+        destination = await showDialog<String>(
+          context: context,
+          builder: (dialog) => SimpleDialog(
+            title: Text('Dispatcharr · ${t.iptv.scheduleRecording}'),
+            children: [
+              for (final target in _transferSources.entries)
+                SimpleDialogOption(onPressed: () => Navigator.pop(dialog, target.key), child: Text(target.value)),
+            ],
+          ),
+        );
+        if (destination == null || !mounted || context.read<ActiveProfileProvider>().activeId != schedule.profileId)
+          return;
+      }
+      await context.read<IptvSourceRepository>().transferLocalRecording(schedule, targetSourceId: destination);
       if (mounted) showSnackBar(context, t.iptv.dispatcharrRecordings);
     } on Object {
       if (mounted) showErrorSnackBar(context, t.iptv.recordingActionFailed);
@@ -564,7 +580,7 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
                 _LocalIptvScheduleTile(
                   schedule: _localSchedules[i],
                   onTransfer:
-                      _transferSources.contains(_localSchedules[i].sourceId) &&
+                      _transferSources.isNotEmpty &&
                           (_localSchedules[i].state == 'transfer_pending' ||
                               _localSchedules[i].state == 'scheduled' &&
                                   _localSchedules[i].startsAt.isAfter(DateTime.now()))
@@ -777,7 +793,9 @@ class _LocalIptvScheduleTile extends StatelessWidget {
               ),
               if (onTransfer != null)
                 IconButton(
-                  tooltip: schedule.state == 'transfer_pending' ? t.common.retry : t.iptv.scheduleRecording,
+                  tooltip: schedule.state == 'transfer_pending'
+                      ? t.common.retry
+                      : 'Dispatcharr · ${t.iptv.scheduleRecording}',
                   onPressed: onTransfer,
                   icon: const AppIcon(Symbols.cloud_upload_rounded),
                 ),

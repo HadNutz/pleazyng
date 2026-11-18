@@ -42,6 +42,7 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
     )
   }
   private var observedCatalog = -1L
+  private var observedRating: List<*>? = null
   private var observedWindow: Map<*, *>? = null
   private val loadedParents = LinkedHashSet<String>()
   private val changed: () -> Unit = {
@@ -49,6 +50,12 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
     if (observedCatalog != MusicCarApi.catalogVersion) {
       observedCatalog = MusicCarApi.catalogVersion
       for (parent in loadedParents.toList() + "root") notifyChildrenChanged(parent)
+    }
+    val rating = MusicCarApi.snapshot["ratingState"] as? List<*>
+    if (rating != observedRating) {
+      observedRating = rating
+      notifyChildrenChanged("rating")
+      notifyChildrenChanged("home")
     }
     if (observedWindow !== MusicCarApi.queueWindow) {
       observedWindow = MusicCarApi.queueWindow
@@ -77,19 +84,38 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
     MediaSessionHolder.sessionToken?.let { if (sessionToken == null) setSessionToken(it) }
     if (acceptedHost) MusicCarApi.connection(true)
     val limit = rootHints?.getInt(MediaConstants.BROWSER_ROOT_HINTS_KEY_ROOT_CHILDREN_LIMIT, 4) ?: 4
-    return BrowserRoot(if (limit in 1..3) "rootLimit:$limit" else "root", Bundle().apply { putBoolean("android.media.browse.SEARCH_SUPPORTED", true) })
+    val supported = rootHints?.getInt(MediaConstants.BROWSER_ROOT_HINTS_KEY_ROOT_CHILDREN_SUPPORTED_FLAGS, 3) ?: 3
+    val rootId = when {
+      supported == MediaBrowserCompat.MediaItem.FLAG_PLAYABLE -> "rootPlayable:${limit.coerceIn(1, 4)}"
+      limit in 1..3 -> "rootLimit:$limit"
+      else -> "root"
+    }
+    return BrowserRoot(rootId, Bundle().apply { putBoolean("android.media.browse.SEARCH_SUPPORTED", true) })
   }
 
   override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaBrowserCompat.MediaItem>>) {
     if (loadedParents.size >= 100) loadedParents.remove(loadedParents.first())
     loadedParents.add(parentId)
     result.detach()
-    val limit = parentId.removePrefix("rootLimit:").toIntOrNull()?.coerceIn(1, 3)
-    val overflow = parentId.removePrefix("rootMore:").toIntOrNull()?.coerceIn(0, 2)
-    val id = if (limit != null || overflow != null) "root" else parentId
-    MusicCarApi.request("browse", mapOf("id" to id), { code -> MusicCarApi.reportFailure(code) }) { raw ->
-      if (raw !is List<*>) { result.sendResult(null); return@request }
+    val requested = parentId.removePrefix("retry:")
+    val playable = requested.takeIf { it.startsWith("rootPlayable:") }?.substringAfter(':')?.toIntOrNull()
+    val limit = requested.removePrefix("rootLimit:").toIntOrNull()?.coerceIn(1, 3)
+    val overflow = requested.removePrefix("rootMore:").toIntOrNull()?.coerceIn(0, 2)
+    val id = if (playable != null) "rootPlayable" else if (limit != null || overflow != null) "root" else requested
+    var failure: String? = null
+    MusicCarApi.request("browse", mapOf("id" to id), { code -> failure = code; MusicCarApi.reportFailure(code) }) { raw ->
+      if (raw !is List<*>) {
+        val labels = MusicCarApi.snapshot["carLabels"] as? Map<*, *>
+        val title = when (failure) {
+          "profile_unavailable" -> labels?.get("unlock") ?: "Unlock Pleazyng"
+          "loading" -> labels?.get("loading") ?: "Loading Pleazyng"
+          else -> labels?.get("retry") ?: "Retry"
+        }
+        result.sendResult(items(listOf(mapOf("id" to "retry:$requested", "title" to title))))
+        return@request
+      }
       val rows = when {
+        playable != null -> raw.take(playable.coerceIn(1, 4))
         overflow != null -> raw.drop(overflow)
         limit != null && raw.size > limit -> raw.take(limit - 1) + listOf(mapOf(
           "id" to "rootMore:${limit - 1}", "title" to ((MusicCarApi.snapshot["carLabels"] as? Map<*, *>)?.get("more") ?: "More")

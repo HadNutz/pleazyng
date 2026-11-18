@@ -29,6 +29,7 @@ object MusicCarApi {
         listeners.toList().forEach { it() }
     }
     private val claims = mutableMapOf<String, () -> Boolean>()
+    private var unclaimedPlay: Pair<String, () -> Unit>? = null
     private val pending = mutableSetOf<() -> Unit>()
     fun retireRequests() {
         epoch++
@@ -37,6 +38,7 @@ object MusicCarApi {
     var failureHandler: ((String) -> Unit)? = null
     fun reportFailure(code: String) { failureHandler?.invoke(code) }
     fun attach(messenger: BinaryMessenger) {
+        channel?.setMethodCallHandler(null)
         retireRequests()
         ready = false
         snapshot = emptyMap<Any, Any>()
@@ -45,7 +47,7 @@ object MusicCarApi {
             pipe.setMethodCallHandler { call, result ->
                 when (call.method) {
                     "ready" -> { retireRequests(); ready = true; if (hasCarHost) connection(true); catalogChanged(); result.success(null) }
-                    "acceptCarRequest" -> result.success(claims.remove(call.arguments as? String)?.invoke() == true)
+                    "acceptCarRequest" -> result.success((call.arguments as? String)?.let { claims.remove(it)?.invoke() } == true)
                     "catalogChanged" -> { catalogChanged(); result.success(null) }
                     "queueWindow" -> { queueWindow = call.arguments as? Map<*, *> ?: emptyMap<Any, Any>(); listeners.toList().forEach { it() }; result.success(null) }
                     "snapshot" -> { snapshot = call.arguments as? Map<*, *> ?: emptyMap<Any, Any>(); listeners.toList().forEach { it() }; result.success(null) }
@@ -70,6 +72,7 @@ object MusicCarApi {
         fun finish(value: Any?, error: String? = null) {
             if (finished) return
             finished = true
+            if (unclaimedPlay?.first == token) unclaimedPlay = null
             pending.remove(cancel)
             claims.remove(token)
             handler.removeCallbacks(timeout)
@@ -81,7 +84,12 @@ object MusicCarApi {
         pending.add(cancel)
         handler.postDelayed(timeout, 10000)
         val payload = if (args is Map<*, *> && method in setOf("playItem", "playSearch", "transport", "jump", "guestAction")) {
+            if (method in setOf("playItem", "playSearch", "jump")) {
+                unclaimedPlay?.second?.invoke()
+                unclaimedPlay = token to { finish(null, "superseded") }
+            }
             claims[token] = {
+                if (unclaimedPlay?.first == token) unclaimedPlay = null
                 handler.removeCallbacks(timeout)
                 !finished && ready && expected == epoch
             }

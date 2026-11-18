@@ -886,9 +886,9 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<List<Map<String, dynamic>>> _pruneSpoken(String profile, int epoch) async {
     final rows = await _spokenRows(profile);
-    if (!sources.current(epoch) || sources.loading || rows.isEmpty) return rows;
+    if (!sources.current(epoch) || sources.blocked || sources.loading || rows.isEmpty) return rows;
     final entries = await sources.repository.entriesByKeys(profile, rows.map((r) => r['key'] as String));
-    if (!sources.current(epoch) || sources.loading) return rows;
+    if (!sources.current(epoch) || sources.blocked || sources.loading) return rows;
     final valid = entries.where(_ownsSpoken).map((e) => e.key).toSet();
     final kept = rows.where((r) => valid.contains(r['key'])).toList();
     if (kept.length != rows.length) {

@@ -16,7 +16,7 @@ class DispatcharrDvrClient {
   String _authScheme = 'ApiKey';
 
   Future<List<IptvDispatcharrRecording>> recordings() async {
-    final response = await _requestWithFallback('GET', const ['/api/channels/recordings/', '/api/dvr/recordings/']);
+    final response = await _allRows(const ['/api/channels/recordings/', '/api/dvr/recordings/']);
     return [
       for (final row in _rows(response))
         IptvDispatcharrRecording.fromJson(sourceMap(row), config.id, config.displayName),
@@ -75,7 +75,7 @@ class DispatcharrDvrClient {
     if (tvgId == null || tvgId.isEmpty) {
       throw const SourceException(SourceFailure.unsupported);
     }
-    final channels = _rows(await _requestWithFallback('GET', const ['/api/channels/channels/', '/api/channels/']));
+    final channels = await _allRows(const ['/api/channels/channels/', '/api/channels/']);
     final matches = <Map<String, dynamic>>[];
     for (final value in channels) {
       final row = sourceMap(value);
@@ -109,7 +109,36 @@ class DispatcharrDvrClient {
     final created = sourceMap(
       await _requestWithFallback('POST', const ['/api/channels/recordings/', '/api/dvr/recordings/'], body: body),
     );
-    return IptvDispatcharrRecording.fromJson(created, config.id, config.displayName);
+    final recording = IptvDispatcharrRecording.fromJson(created, config.id, config.displayName);
+    if (recording.id.isEmpty) throw const SourceException(SourceFailure.invalidData);
+    return recording;
+  }
+
+  Future<List<dynamic>> _allRows(List<String> paths) async {
+    for (final path in paths) {
+      final endpoint = _uri(path);
+      Object? page;
+      try {
+        page = await _requestUri('GET', endpoint);
+      } on SourceException catch (error) {
+        if (error.status == 404 && path != paths.last) continue;
+        rethrow;
+      }
+      final result = <dynamic>[], visited = <Uri>{endpoint};
+      while (true) {
+        result.addAll(_rows(page));
+        if (page is! Map || page['next'] == null) return result;
+        final next = endpoint.resolve(page['next'] as String);
+        if (next.origin != endpoint.origin ||
+            next.path != endpoint.path ||
+            next.userInfo.isNotEmpty ||
+            !visited.add(next) ||
+            visited.length > 1000)
+          throw const SourceException(SourceFailure.invalidData);
+        page = await _requestUri('GET', next);
+      }
+    }
+    throw const SourceException(SourceFailure.unsupported);
   }
 
   Future<Object?> _requestWithFallback(String method, List<String> paths, {String? body}) async {
@@ -125,8 +154,9 @@ class DispatcharrDvrClient {
     throw last ?? const SourceException(SourceFailure.unavailable);
   }
 
-  Future<Object?> _request(String method, String path, {String? body}) async {
-    final uri = _uri(path);
+  Future<Object?> _request(String method, String path, {String? body}) => _requestUri(method, _uri(path), body: body);
+
+  Future<Object?> _requestUri(String method, Uri uri, {String? body}) async {
     final headers = <String, String>{
       'Accept': 'application/json',
       'Authorization': '$_authScheme ${config.dispatcharrApiKey.trim()}',
@@ -146,7 +176,7 @@ class DispatcharrDvrClient {
     } on SourceException catch (error) {
       if (error.reason != SourceFailure.authentication || _authScheme == 'Bearer') rethrow;
       _authScheme = 'Bearer';
-      return _request(method, path, body: body);
+      return _requestUri(method, uri, body: body);
     } on FormatException {
       throw const SourceException(SourceFailure.invalidData);
     }

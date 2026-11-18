@@ -248,12 +248,6 @@ abstract class MusicPlaybackService extends ChangeNotifier {
   void addNext(List<MediaItem> tracks);
   void addToEnd(List<MediaItem> tracks);
 
-  Future<bool> acceptGuestTrack(MediaItem track) async {
-    final count = queue.length;
-    addToEnd([track]);
-    return queue.length == count + 1 && queue.any((item) => item.globalKey == track.globalKey);
-  }
-
   /// Drop everything after the current track.
   void clearUpcoming();
 
@@ -279,4 +273,8 @@ abstract class MusicPlaybackService extends ChangeNotifier {
   /// Lyrics for [track] (defaults to the current track's backend). Delegates
   /// to `MediaServerClient.fetchLyrics`; null = none available.
   Future<Lyrics?> fetchLyrics(MediaItem track);
+}
+
+abstract interface class GuestQueueAdmission {
+  Future<bool> acceptGuestTrack(MediaItem track);
 }

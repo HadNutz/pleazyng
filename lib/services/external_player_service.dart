@@ -425,6 +425,8 @@ class ExternalPlayerService {
       final offline = context.read<OfflineWatchSyncService?>();
       await store.deleteDocument('externalPlayer', 'pending');
       if (!context.mounted || profiles.identityMutationGeneration != epoch) return null;
+      final warm = _callbackSession;
+      if (warm != null && warm.id == id && identical(warm.client, account == null ? null : live)) return warm;
       return _CallbackSession(
         id: id,
         playerId: saved['player'] as String,
@@ -474,7 +476,7 @@ class ExternalPlayerService {
         launched: true,
         positionMs: positionMs,
         durationMs: durationMs,
-        playbackCompleted: positionMs == null && successMeansFinished,
+        playbackCompleted: !params.containsKey('position') && successMeansFinished,
       ),
       _ReturnResult.cancel => _ExternalPlayerLaunchResult(
         launched: true,

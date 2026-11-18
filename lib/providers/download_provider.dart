@@ -224,7 +224,8 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
 
   bool get canReviewOrphanDownloads => _downloadManager.canReviewOrphanDownloads;
 
-  Future<OrphanDownloadScan> scanOrphanDownloads() => _downloadManager.scanOrphanDownloads();
+  Future<OrphanDownloadScan> scanOrphanDownloads({void Function(int)? onProgress, bool Function()? cancelled}) =>
+      _downloadManager.scanOrphanDownloads(onProgress: onProgress, cancelled: cancelled);
 
   Future<OrphanDownloadCleanupResult> deleteOrphanDownloads(OrphanDownloadScan scan) =>
       _downloadManager.deleteOrphanDownloads(scan);

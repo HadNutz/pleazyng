@@ -1,3 +1,7 @@
+import '../../services/car_ux_restrictions_service.dart';
+import '../../utils/platform_detector.dart';
+import '../../services/music/guest_jukebox.dart';
+import 'jukebox_dialog.dart';
 import '../../widgets/music/music_server_shelves.dart';
 import 'dart:async';
 
@@ -392,6 +396,17 @@ class _MusicHomeScreenState extends State<MusicHomeScreen> {
       appBar: AppBar(
         title: Text(t.musicTools.home),
         actions: [
+          if (PlatformDetector.isAutomotiveMedia() && context.read<GuestJukebox?>() != null)
+            ValueListenableBuilder<CarUxRestrictionState>(
+              valueListenable: CarUxRestrictionsService.instance.listenable,
+              builder: (_, state, _) => state != CarUxRestrictionState.unrestricted
+                  ? const SizedBox.shrink()
+                  : IconButton(
+                      tooltip: t.livingRoom.jukebox,
+                      icon: const Icon(Icons.group_add),
+                      onPressed: () => showGuestJukebox(context),
+                    ),
+            ),
           IconButton(
             tooltip: t.homeLayout.sync,
             icon: const AppIcon(Symbols.sync_rounded),

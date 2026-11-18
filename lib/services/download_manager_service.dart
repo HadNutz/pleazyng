@@ -1,3 +1,4 @@
+import 'package:path_provider/path_provider.dart' show getApplicationSupportDirectory;
 // ignore_for_file: prefer_initializing_formals
 
 import 'dart:async';
@@ -350,8 +351,9 @@ class DownloadManagerService {
   /// of every item in the selected tree.
   bool get canReviewOrphanDownloads => downloadsSupported && !Platform.isIOS && !_storageService.isUsingCustomPath();
 
-  Future<OrphanDownloadScan> scanOrphanDownloads() async {
-    if (!canReviewOrphanDownloads) {
+  bool _reviewRunning = false;
+  Future<OrphanDownloadScan> scanOrphanDownloads({void Function(int)? onProgress, bool Function()? cancelled}) async {
+    if (!canReviewOrphanDownloads || _reviewRunning) {
       return const OrphanDownloadScan(
         rootPath: '',
         files: [],
@@ -360,6 +362,7 @@ class DownloadManagerService {
       );
     }
 
+    _reviewRunning = true;
     try {
       final rows = await _database.select(_database.downloadedMedia).get();
       final tasks = await _nativeOps.allTasks();
@@ -369,7 +372,15 @@ class DownloadManagerService {
           if (task.metaData.isNotEmpty) DownloadStorageService.tagForGlobalKey(task.metaData),
       };
       final root = await _storageService.getAppManagedDownloadsDirectory();
-      return await _orphanDownloadCleanup.scan(root, protectedTags: protectedTags);
+      if (!await root.exists()) return await _orphanDownloadCleanup.scan(root, protectedTags: protectedTags);
+      final support = await getApplicationSupportDirectory();
+      return await _orphanDownloadCleanup.scanWithCheckpoint(
+        root,
+        Directory(path.join(support.path, 'orphan-review')),
+        protectedTags: protectedTags,
+        onProgress: onProgress,
+        cancelled: cancelled,
+      );
     } catch (error) {
       appLogger.w('Could not safely prepare orphan-download review', error: error);
       return const OrphanDownloadScan(
@@ -378,6 +389,8 @@ class DownloadManagerService {
         failure: OrphanDownloadScanFailure.scanFailed,
         scannedEntries: 0,
       );
+    } finally {
+      _reviewRunning = false;
     }
   }
 

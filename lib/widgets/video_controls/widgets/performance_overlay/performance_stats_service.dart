@@ -576,6 +576,9 @@ class PerformanceStatsService {
           _ => null,
         };
     final native = player is PlayerSystem ? await player.getStats() : const <String, dynamic>{};
+    final surface = player.playerType == 'mpv'
+        ? await Future.wait([player.getProperty('osd-dimensions/w'), player.getProperty('osd-dimensions/h')])
+        : const <String?>[];
     final videoWidth = _parseInt(results[1] ?? (webosDimensions.isEmpty ? null : webosDimensions[0]));
     final videoHeight = _parseInt(results[2] ?? (webosDimensions.length < 2 ? null : webosDimensions[1]));
     final sourceWidth = _parseInt(results[1]);
@@ -636,6 +639,8 @@ class PerformanceStatsService {
     final stats = PerformanceStats(
       playerType: player.playerType,
       videoCodec: _formatVideoCodecName(results.first),
+      surfaceWidth: surface.isEmpty ? null : _parseInt(surface[0]),
+      surfaceHeight: surface.isEmpty ? null : _parseInt(surface[1]),
       outputWidth: (native['outputWidth'] as num?)?.toInt(),
       outputHeight: (native['outputHeight'] as num?)?.toInt(),
       displayMode: native['displayMode'] as String?,

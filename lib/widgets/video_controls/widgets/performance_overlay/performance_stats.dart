@@ -44,7 +44,7 @@ class PerformanceStats {
   final String playerType;
 
   final String? videoCodec;
-  final int? outputWidth, outputHeight;
+  final int? outputWidth, outputHeight, surfaceWidth, surfaceHeight;
   final String? displayMode;
   final int? videoWidth;
   final int? videoHeight;
@@ -134,6 +134,8 @@ class PerformanceStats {
   const PerformanceStats({
     this.playerType = 'unknown',
     this.videoCodec,
+    this.surfaceWidth,
+    this.surfaceHeight,
     this.outputWidth,
     this.outputHeight,
     this.displayMode,
@@ -211,13 +213,14 @@ class PerformanceStats {
 
   String get comparison => [
     'Engine: $playerType',
-    'Source dimensions: $resolution',
+    'Source dimensions (active player): $resolution',
+    'Render surface: ${surfaceWidth == null || surfaceHeight == null ? t.common.notAvailable : "${surfaceWidth}x$surfaceHeight"}',
     'Output dimensions: ${outputWidth == null || outputHeight == null ? t.common.notAvailable : "${outputWidth}x$outputHeight"}',
     'Output: ${currentVideoOutput ?? t.common.notAvailable}',
     'Display mode: ${displayMode ?? t.common.notAvailable}',
     'Decoder: ${videoDecoderName ?? hwdecCurrent ?? t.common.notAvailable}',
     'Source transfer: ${gamma ?? t.common.notAvailable}',
-    'Source HDR: ${playbackCapabilityReport?.sourceIsHdr ?? t.common.notAvailable}',
+    'Source HDR (stream metadata): ${playbackCapabilityReport?.sourceIsHdr ?? t.common.notAvailable}',
   ].join('\n');
 
   String get resolution {

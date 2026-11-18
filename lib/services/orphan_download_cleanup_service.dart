@@ -1,10 +1,14 @@
 import 'dart:io';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 
 import 'package:path/path.dart' as path;
 
 import '../media/codec_catalog.dart';
 
-enum OrphanDownloadScanFailure { unsafeRoot, tooManyEntries, scanFailed }
+part 'orphan_download_scan_checkpoint.dart';
+
+enum OrphanDownloadScanFailure { unsafeRoot, tooManyEntries, scanFailed, cancelled }
 
 /// A file in Pleazyng's recognized, app-managed download layout that no stored
 /// download row or native download task currently owns.

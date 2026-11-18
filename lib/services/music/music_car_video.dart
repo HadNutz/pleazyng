@@ -174,7 +174,7 @@ extension _CarVideo on _MusicCarHostState {
     }
   }
 
-  Future<bool> _openVideoPosition(_CarVideoSession session, int position) async {
+  Future<bool> _openVideoPosition(_CarVideoSession session, int position, {required bool playing}) async {
     final before = session.timeline;
     if (before == null) return false;
     final time = Duration(milliseconds: position.clamp(0, before.duration.inMilliseconds));
@@ -210,6 +210,7 @@ extension _CarVideo on _MusicCarHostState {
                 'offset': session.offset,
                 'duration': timeline.duration.inMilliseconds,
                 'multipart': true,
+                'playing': playing,
               }) ==
               true &&
           current();
@@ -232,7 +233,8 @@ extension _CarVideo on _MusicCarHostState {
           ? timeline.current.end.inMilliseconds
           : null;
       if (next != null) {
-        if (!await _openVideoPosition(session, next)) await _finishCarVideo();
+        if (!await _openVideoPosition(session, next, playing: seek == null || args['paused'] != true))
+          await _finishCarVideo();
         return true;
       }
     }
