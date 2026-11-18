@@ -6,8 +6,8 @@ import android.os.Process
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
 import androidx.media.MediaBrowserServiceCompat
-import androidx.media.utils.MediaConstants
 import androidx.media.MediaSessionManager
+import androidx.media.utils.MediaConstants
 import com.edde746.os_media_controls.MediaSessionHolder
 import com.edde746.os_media_controls.MusicCarApi
 import com.edde746.plezy.BuildConfig
@@ -101,9 +101,18 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
     val playable = requested.takeIf { it.startsWith("rootPlayable:") }?.substringAfter(':')?.toIntOrNull()
     val limit = requested.removePrefix("rootLimit:").toIntOrNull()?.coerceIn(1, 3)
     val overflow = requested.removePrefix("rootMore:").toIntOrNull()?.coerceIn(0, 2)
-    val id = if (playable != null) "rootPlayable" else if (limit != null || overflow != null) "root" else requested
+    val id = if (playable != null) {
+      "rootPlayable"
+    } else if (limit != null || overflow != null) {
+      "root"
+    } else {
+      requested
+    }
     var failure: String? = null
-    MusicCarApi.request("browse", mapOf("id" to id), { code -> failure = code; MusicCarApi.reportFailure(code) }) { raw ->
+    MusicCarApi.request("browse", mapOf("id" to id), { code ->
+      failure = code
+      MusicCarApi.reportFailure(code)
+    }) { raw ->
       if (raw !is List<*>) {
         val labels = MusicCarApi.snapshot["carLabels"] as? Map<*, *>
         val title = when (failure) {
@@ -117,9 +126,12 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
       val rows = when {
         playable != null -> raw.take(playable.coerceIn(1, 4))
         overflow != null -> raw.drop(overflow)
-        limit != null && raw.size > limit -> raw.take(limit - 1) + listOf(mapOf(
-          "id" to "rootMore:${limit - 1}", "title" to ((MusicCarApi.snapshot["carLabels"] as? Map<*, *>)?.get("more") ?: "More")
-        ))
+        limit != null && raw.size > limit -> raw.take(limit - 1) + listOf(
+          mapOf(
+            "id" to "rootMore:${limit - 1}",
+            "title" to ((MusicCarApi.snapshot["carLabels"] as? Map<*, *>)?.get("more") ?: "More")
+          )
+        )
         else -> raw
       }
       result.sendResult(items(rows))
