@@ -33,6 +33,54 @@ STDMETHODIMP MyPlayer::QueryInterface(REFIID riid, void** ppv)
     return S_OK;
 }
 
+// Flutter paints controls in the top DirectComposition visual. The disabled child
+// HWND below it owns the Media Engine swapchain and leaves hit testing to Flutter.
+bool MyPlayer::CreatePlane(HWND parent) {
+    m_plane = CreateWindowExW(WS_EX_NOPARENTNOTIFY, L"STATIC", L"", WS_CHILD | WS_DISABLED | WS_CLIPSIBLINGS,
+                              0, 0, 1, 1, parent, nullptr, GetModuleHandleW(nullptr), nullptr);
+    return m_plane != nullptr;
+}
+
+HRESULT MyPlayer::AttachSwapchain() {
+    Microsoft::WRL::ComPtr<IDXGIDevice> dxgi;
+    Microsoft::WRL::ComPtr<IUnknown> surface;
+    HANDLE handle = nullptr;
+    HRESULT hr = pDX11Device.As(&dxgi);
+    if (SUCCEEDED(hr)) hr = DCompositionCreateDevice(dxgi.Get(), IID_PPV_ARGS(&m_composition));
+    if (SUCCEEDED(hr)) hr = m_composition->CreateTargetForHwnd(m_plane, TRUE, &m_target);
+    if (SUCCEEDED(hr)) hr = m_composition->CreateVisual(&m_visual);
+    RECT size = {0, 0, (LONG)m_VideoWidth, (LONG)m_VideoHeight};
+    if (SUCCEEDED(hr)) hr = m_pEngineEx->UpdateVideoStream(nullptr, &size, nullptr);
+    if (SUCCEEDED(hr)) hr = m_pEngineEx->GetVideoSwapchainHandle(&handle);
+    if (SUCCEEDED(hr)) hr = m_composition->CreateSurfaceFromHandle(handle, &surface);
+    if (handle && handle != INVALID_HANDLE_VALUE) CloseHandle(handle);
+    if (SUCCEEDED(hr)) hr = m_visual->SetContent(surface.Get());
+    if (SUCCEEDED(hr)) hr = m_target->SetRoot(m_visual.Get());
+    return SUCCEEDED(hr) ? m_composition->Commit() : hr;
+}
+
+HRESULT MyPlayer::PlacePlane(int x, int y, int width, int height) {
+    if (!m_plane || !m_pEngineEx) return E_UNEXPECTED;
+    if (width <= 0 || height <= 0) { HidePlane(); return S_OK; }
+    RECT dest = {0, 0, width, height};
+    HRESULT hr = m_pEngineEx->UpdateVideoStream(nullptr, &dest, nullptr);
+    if (SUCCEEDED(hr)) SetWindowPos(m_plane, HWND_TOP, x, y, width, height, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+    return hr;
+}
+void MyPlayer::HidePlane() { if (m_plane) ShowWindow(m_plane, SW_HIDE); }
+void MyPlayer::DestroyPlane() {
+    if (m_plane) DestroyWindow(m_plane);
+    m_plane = nullptr;
+}
+void MyPlayer::FinishOpen(bool success) {
+    std::function<void(bool)> callback;
+    {
+        std::lock_guard<std::mutex> lock(m_openMutex);
+        callback.swap(m_loadCallback);
+    }
+    if (callback) callback(success);
+}
+
 HRESULT MyPlayer::initD3D11()
 {
     const UINT creationFlags = (D3D11_CREATE_DEVICE_VIDEO_SUPPORT
@@ -108,6 +156,7 @@ MyPlayer::MyPlayer(IDXGIAdapter* adapter) :
 
 HRESULT MyPlayer::EventNotify(DWORD event, DWORD_PTR param1, DWORD param2)
 {
+    if (m_isShutdown.load()) return S_OK;
     switch (event) {
         case MF_MEDIA_ENGINE_EVENT_TIMEUPDATE:
             return S_OK;
@@ -119,17 +168,17 @@ HRESULT MyPlayer::EventNotify(DWORD event, DWORD_PTR param1, DWORD param2)
                 m_pEngine->GetNativeVideoSize(&m_VideoWidth, &m_VideoHeight);
                 m_frameRectDst.right = m_VideoWidth;
                 m_frameRectDst.bottom = m_VideoHeight;
-                initTexture();
+                if (!m_plane) initTexture();
             }
             break;
 
         case MF_MEDIA_ENGINE_EVENT_CANPLAY:
             // notify client code that loading successfully
-            m_loadCallback(true);
-            m_loadCallback = NULL;
+            FinishOpen(!m_plane || !m_hasVideo || m_visual || SUCCEEDED(AttachSwapchain()));
             break;
 
         case MF_MEDIA_ENGINE_EVENT_FIRSTFRAMEREADY:
+            if (m_plane) break;
             updateFrame(); // show first frame when ready
             startVideoThread();
             break;
@@ -150,7 +199,7 @@ HRESULT MyPlayer::EventNotify(DWORD event, DWORD_PTR param1, DWORD param2)
 
         //case MF_MEDIA_ENGINE_EVENT_SEEKING:
         case MF_MEDIA_ENGINE_EVENT_SEEKED:
-            if (!m_isPlaying && m_hasVideo) // video scrubbing in pause state
+            if (!m_plane && !m_isPlaying && m_hasVideo) // video scrubbing in pause state
             {
                 m_seekingToPts = -1;
                 ResetEvent(m_playingEvent);
@@ -166,11 +215,7 @@ HRESULT MyPlayer::EventNotify(DWORD event, DWORD_PTR param1, DWORD param2)
             // TODO: pass error reason to client code ?
             printErrorMessage(param1);
         case MF_MEDIA_ENGINE_EVENT_ABORT:
-            if (m_loadCallback != NULL)
-            {
-                m_loadCallback(false);
-                m_loadCallback = NULL;
-            }
+            FinishOpen(false);
             break;
     }
 
@@ -181,7 +226,7 @@ HRESULT MyPlayer::EventNotify(DWORD event, DWORD_PTR param1, DWORD param2)
 
 void MyPlayer::printErrorMessage(DWORD_PTR param1)
 {
-    char *msg = "Unknown error";
+    const char *msg = "Unknown error";
     switch (param1)
     {
         case MF_MEDIA_ENGINE_ERR_NOERROR:
@@ -224,10 +269,15 @@ HRESULT MyPlayer::OpenURL(const WCHAR* pszFileName, MyPlayerCallback* playerCall
     CHECK_HR(hr = MFCreateAttributes(&pAttributes, 3));
     CHECK_HR(hr = pAttributes->SetUnknown(MF_MEDIA_ENGINE_DXGI_MANAGER, (IUnknown*)m_pDXGIManager.Get()));
     CHECK_HR(hr = pAttributes->SetUnknown(MF_MEDIA_ENGINE_CALLBACK, (IUnknown*)this));
-    CHECK_HR(hr = pAttributes->SetUINT32(MF_MEDIA_ENGINE_VIDEO_OUTPUT_FORMAT, DXGI_FORMAT_B8G8R8A8_UNORM));
+    if (m_plane) {
+        CHECK_HR(hr = pAttributes->SetUINT64(MF_MEDIA_ENGINE_OPM_HWND, reinterpret_cast<UINT_PTR>(m_plane)));
+    } else {
+        CHECK_HR(hr = pAttributes->SetUINT32(MF_MEDIA_ENGINE_VIDEO_OUTPUT_FORMAT, DXGI_FORMAT_B8G8R8A8_UNORM));
+    }
     CHECK_HR(hr = pFactory->CreateInstance(0, pAttributes.Get(), &m_pEngine));
 
     CHECK_HR(hr = m_pEngine->QueryInterface(IID_PPV_ARGS(&m_pEngineEx)));
+    if (m_plane) { CHECK_HR(hr = m_pEngineEx->EnableWindowlessSwapchainMode(TRUE)); }
     tracks.attach(m_pEngineEx.Get());
 
     if (!httpHeaders.empty() && wcsncmp(pszFileName, L"http", 4) == 0) {
@@ -241,8 +291,7 @@ done:
     if (FAILED(hr))
     {
         std::cout << TAG "OpenURL() failed: hr=" << hr << std::endl;
-        m_loadCallback(SUCCEEDED(hr));
-        m_loadCallback = NULL;
+        FinishOpen(false);
     }
     return hr;
 }
@@ -332,7 +381,7 @@ LONGLONG MyPlayer::updateFrame()
             s_lastPts = pts;
             */
 
-            hr = m_pEngine->TransferVideoFrame(m_pTexture.Get(), &m_frameRectSrc, &m_frameRectDst, NULL);
+            hr = m_pEngine->TransferVideoFrame(m_pTexture.Get(), nullptr, &m_frameRectDst, NULL);
             if (FAILED(hr)) {
                 std::cout << TAG "TransferVideoFrame failed !!!!!!!!!!!! hr = " << hr << std::endl;
             }
@@ -442,6 +491,7 @@ void MyPlayer::Shutdown()
     std::unique_lock<std::mutex> guard(m_mutex);
     if (m_isShutdown) return;
     m_isShutdown = true;
+    FinishOpen(false);
 
     if (m_pEngine)
     {
@@ -452,6 +502,7 @@ void MyPlayer::Shutdown()
         m_pEngine.Reset();
         m_pTexture.Reset();
 
-        this->Release(); // TODO: without this line, ~MyPlayer() not called... who keep this pointer ???
+        m_pEngineEx.Reset();
     }
+    m_frameCallback.Reset();
 }

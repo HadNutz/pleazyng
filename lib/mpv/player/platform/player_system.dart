@@ -12,6 +12,7 @@ import '../../../models/audio_channel_limit.dart';
 import '../../../utils/serial_future_queue.dart';
 import '../../models.dart';
 import '../player_base.dart';
+import '../video_rect_support.dart';
 import '../subtitle_pcm_capture_source.dart';
 import 'webos_media_proxy.dart';
 import 'system_subtitles.dart';
@@ -19,14 +20,14 @@ import '../../font_loader.dart';
 
 /// One native session per source. Its ID also identifies the video surface:
 /// a delayed prepare, poll or dispose cannot target a replacement source.
-class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
+class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity, VideoRectSupport {
   PlayerSystem(this.playerType, {this.hardwareDecoding = true}) : super(listenToNativeEvents: false);
 
   @override
   final String playerType;
   final bool hardwareDecoding;
   String? _window;
-  String? _output, _decoder;
+  String? _output, _decoder, _displayMode;
   int? _outputWidth, _outputHeight;
   @override
   String get logPrefix => playerType;
@@ -40,7 +41,7 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
   @override
   Set<String> get supportedLocalSubtitleExtensions => const {'srt', 'vtt'};
   final _caption = ValueNotifier<String>('');
-  List<captions.Caption> _cues = const [];
+  SystemSubtitleTimeline? _cues;
   List<SubtitleTrack> _sidecars = const [];
   Media? _media;
   int _subtitleSelection = 0;
@@ -62,6 +63,36 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
   int? _trackRevision;
   int? _overlayTexture;
   int _generation = 0;
+  Completer<void>? _opening;
+  bool _desktopPlane = false;
+  bool get usesDesktopPlane => _desktopPlane && _visible;
+  int _newGeneration() {
+    _opening?.complete();
+    _opening = null;
+    return ++_generation;
+  }
+
+  @override
+  Future<void> setVideoRect({
+    required int left,
+    required int top,
+    required int right,
+    required int bottom,
+    required double devicePixelRatio,
+  }) async {
+    if (!_desktopPlane || !_visible || _id == null) return;
+    final windows = _windows;
+    await (windows == null ? methodChannel : _windowsChannel).invokeMethod<void>('planeRect', {
+      'id': _id,
+      'textureId': windows?.value.textureId,
+      'left': left,
+      'top': top,
+      'width': right - left,
+      'height': bottom - top,
+      'scale': devicePixelRatio.round(),
+    });
+  }
+
   @override
   int get mediaSessionGeneration => _generation;
   Timer? _poll;
@@ -71,10 +102,15 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
   Future<void>? _disposal;
   bool _current(int generation) => !_closing && generation == _generation;
 
-  Widget videoSurface() => Stack(
+  Widget videoSurface({Widget? desktopPlane}) => Stack(
     fit: StackFit.expand,
     children: [
-      _surface(),
+      if (usesDesktopPlane && desktopPlane != null && !_size.isEmpty)
+        Center(
+          child: AspectRatio(aspectRatio: _size.aspectRatio, child: desktopPlane),
+        )
+      else
+        _surface(),
       if (_visible)
         IgnorePointer(
           child: Align(
@@ -146,7 +182,7 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
     Duration? timelineDuration,
     Duration timelineOffset = Duration.zero,
   }) {
-    final generation = ++_generation;
+    final generation = _newGeneration();
     return _sources.run(() async {
       if (!_current(generation)) return;
       await _release();
@@ -155,7 +191,7 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
       _id = id;
       _media = media;
       _sidecars = externalSubtitles?.where((t) => t.uri != null).toList() ?? const [];
-      _cues = const [];
+      _cues = null;
       _caption.value = '';
       _subtitlesVisible = true;
       _live = isLive;
@@ -174,13 +210,33 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
         }
         if (!_current(generation)) return;
         if (playerType == 'mediafoundation') {
-          final controller = _windows = uri.scheme == 'file'
-              ? win.WinVideoPlayerController.file(File.fromUri(uri))
-              : win.WinVideoPlayerController.networkUrl(uri);
-          _windowsEvents = controller.videoEventStream.listen((_) {}, onError: (Object _) {});
-          await controller.initialize();
-          if (!controller.value.isInitialized) throw StateError('Media Foundation could not prepare the source');
-          _texture = controller.value.textureId;
+          final interrupted = _opening = Completer<void>();
+          final deadline = Stopwatch()..start();
+          try {
+            for (final nativeSurface in [true, false]) {
+              if (!_current(generation)) return;
+              final controller = _windows = uri.scheme == 'file'
+                  ? win.WinVideoPlayerController.file(File.fromUri(uri))
+                  : win.WinVideoPlayerController.networkUrl(uri);
+              controller.nativeSurface = nativeSurface;
+              _windowsEvents = controller.videoEventStream.listen((_) {}, onError: (Object _) {});
+              await Future.any([
+                controller.initialize(),
+                interrupted.future,
+              ]).timeout(const Duration(seconds: 35) - deadline.elapsed);
+              if (!_current(generation)) return;
+              if (controller.value.isInitialized) {
+                _texture = controller.value.textureId;
+                break;
+              }
+              if (!nativeSurface) throw StateError('Media Foundation could not prepare the source');
+              await _windowsEvents?.cancel();
+              await controller.dispose();
+              _windows = null;
+            }
+          } finally {
+            if (identical(_opening, interrupted)) _opening = null;
+          }
         } else {
           if (playerType == 'tvmpv' && hardwareDecoding && PlatformDetector.isWebOSBuild()) {
             try {
@@ -195,13 +251,12 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
         try {
           await _prepare(generation, id);
         } catch (_) {
-          if (!_current(generation) || _texture != -2) rethrow;
-          // DirectMedia can reject the codec or the decoder can be occupied.
-          // Release the plane before opening the same source on mpv's texture.
+          if (!_current(generation) || (_texture != -2 && _texture != -3)) rethrow;
+          // Renegotiate through the compatibility texture if the native plane rejects preroll.
           await methodChannel.invokeMethod<void>('dispose', {'id': id});
           await _closeWindow();
           if (!_current(generation)) return;
-          await _create(id, uri);
+          await _create(id, uri, nativeSurface: false);
           await _prepare(generation, id);
         }
         if (!_current(generation)) return;
@@ -223,10 +278,11 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
     });
   }
 
-  Future<void> _create(int id, Uri uri) async {
+  Future<void> _create(int id, Uri uri, {bool nativeSurface = true}) async {
     final fonts = playerType == 'tvmpv' ? await SubtitleFontLoader.loadSubtitleFont() : null;
     _texture = await methodChannel.invokeMethod<int>('create', {
       'id': id,
+      'nativeSurface': nativeSurface,
       'uri': uri.toString(),
       'hardwareDecoding': hardwareDecoding,
       if (_window != null) 'windowId': _window,
@@ -317,17 +373,21 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
       _fail(id);
       return;
     }
+    final plane = info['nativePlane'] == true;
+    if (plane != _desktopPlane) {
+      _desktopPlane = plane;
+      surfaceRevision.value++;
+    }
     _output = info['output'] as String?;
     _decoder = info['hardwareDecoder'] as String?;
+    _displayMode = info['displayMode'] as String?;
     _outputWidth = (info['outputWidth'] as num?)?.toInt();
     _outputHeight = (info['outputHeight'] as num?)?.toInt();
     final duration = (info['duration'] as num?) ?? 0;
     final position = (info['position'] as num?) ?? 0;
     _caption.value = !_subtitlesVisible
         ? ''
-        : _cues.isEmpty
-        ? (info['caption'] as String? ?? '')
-        : systemCaptionAt(_cues, Duration(milliseconds: position.toInt()) - _subtitleDelay);
+        : _cues?.at(Duration(milliseconds: position.toInt()) - _subtitleDelay) ?? (info['caption'] as String? ?? '');
     setSeekable(!_live && duration > 0);
     handlePropertyChange('duration', duration / 1000);
     handlePropertyChange('time-pos', position / 1000);
@@ -442,7 +502,7 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
     if (!_ready || track.id == 'auto') return;
     final selection = ++_subtitleSelection;
     final generation = _generation;
-    final cues = track.uri != null ? await loadSystemSubtitles(track, _media!, _proxy) : const <captions.Caption>[];
+    final cues = track.uri != null ? await loadSystemSubtitles(track, _media!, _proxy) : null;
     if (!_current(generation) || selection != _subtitleSelection) return;
     await _control('subtitle', track.uri == null ? track.id : SubtitleTrack.off.id);
     if (!_current(generation) || selection != _subtitleSelection) return;
@@ -473,7 +533,9 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
 
   @override
   Future<String?> getProperty(String name) async => switch (name) {
-    'current-vo' => _output ?? playerType,
+    'current-vo' => [_output ?? playerType, if (_displayMode?.isNotEmpty == true) _displayMode!].join(' · '),
+    'video-params/w' => _size.width > 0 ? _size.width.round().toString() : null,
+    'video-params/h' => _size.height > 0 ? _size.height.round().toString() : null,
     'hwdec-current' => _decoder,
     'width' || 'dwidth' => _size.width.toInt().toString(),
     'height' || 'dheight' => _size.height.toInt().toString(),
@@ -485,6 +547,7 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
   Future<Map<String, dynamic>> getStats() async => {
     'player': playerType,
     if (_output != null) 'videoOutput': _output,
+    if (_displayMode?.isNotEmpty == true) 'displayMode': _displayMode,
     if (_decoder != null && _decoder!.isNotEmpty) 'hwdec': _decoder,
     if (_outputWidth != null) 'outputWidth': _outputWidth,
     if (_outputHeight != null) 'outputHeight': _outputHeight,
@@ -521,6 +584,12 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
   @override
   Future<bool> setVisible(bool visible, {bool restoreOnWindowVisible = false}) async {
     if (!_closing && _visible != visible) {
+      if (!visible && _desktopPlane && _id != null) {
+        await (_windows == null ? methodChannel : _windowsChannel).invokeMethod<void>('hidePlane', {
+          'id': _id,
+          'textureId': _windows?.value.textureId,
+        });
+      }
       _visible = visible;
       surfaceRevision.value++;
     }
@@ -532,11 +601,12 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
     final id = _id;
     _id = null;
     _ready = false;
+    _desktopPlane = false;
     _texture = null;
     _overlayTexture = null;
     _trackRevision = null;
     _size = Size.zero;
-    _decoder = _output = null;
+    _decoder = _output = _displayMode = null;
     _outputWidth = _outputHeight = null;
     final windows = _windows;
     _windows = null;
@@ -560,7 +630,7 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
 
   @override
   Future<void> stop() {
-    ++_generation;
+    _newGeneration();
     return _sources.run(() async {
       final id = _id;
       await _release();
@@ -578,7 +648,7 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity {
 
   Future<void> _disposeSystem() async {
     _closing = true;
-    ++_generation;
+    _newGeneration();
     try {
       await _sources.run(_release);
     } finally {

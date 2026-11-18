@@ -14,7 +14,7 @@
 #include <sstream>
 
 #include "my_grabber_player.h"
-#include <dxgi.h>
+#include <dxgi1_6.h>
 #include <mfapi.h>
 #include <Shlwapi.h>
 #include <stdio.h>
@@ -112,7 +112,34 @@ class MyPlayerInternal : public MyPlayer, public MyPlayerCallback {
 public:
   int64_t textureId = -1;
   FlutterDesktopGpuSurfaceDescriptor texture_buffer;
-  HWND mChildHWND = 0;
+  flutter::TextureVariant* flutterTexture = nullptr;
+
+  std::string displayMode() {
+    const auto now = std::chrono::steady_clock::now();
+    if (now < nextDisplayProbe) return displayDescription;
+    nextDisplayProbe = now + std::chrono::seconds(2);
+    displayDescription.clear();
+    const HMONITOR monitor = MonitorFromWindow(m_plugin->m_nativeHWND, MONITOR_DEFAULTTONEAREST);
+    Microsoft::WRL::ComPtr<IDXGIFactory1> factory;
+    if (FAILED(CreateDXGIFactory1(IID_PPV_ARGS(&factory)))) return {};
+    for (UINT a = 0; ; ++a) {
+      Microsoft::WRL::ComPtr<IDXGIAdapter1> adapter;
+      if (FAILED(factory->EnumAdapters1(a, &adapter))) break;
+      for (UINT i = 0; ; ++i) {
+        Microsoft::WRL::ComPtr<IDXGIOutput> output;
+        if (FAILED(adapter->EnumOutputs(i, &output))) break;
+        Microsoft::WRL::ComPtr<IDXGIOutput6> output6;
+        DXGI_OUTPUT_DESC1 desc{};
+        if (SUCCEEDED(output.As(&output6)) && SUCCEEDED(output6->GetDesc1(&desc)) && desc.Monitor == monitor) {
+          if (desc.ColorSpace == DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020) displayDescription = "HDR10";
+          else if (desc.ColorSpace == DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709) displayDescription = "SDR";
+          if (!displayDescription.empty()) displayDescription += " / " + std::to_string(desc.BitsPerColor) + " bpc";
+          return displayDescription;
+        }
+      }
+    }
+    return {};
+  }
 
   MyPlayerInternal(VideoPlayerWinPlugin* plugin) : MyPlayer(plugin->m_dxgiAdapter), m_plugin(plugin) {}
   ~MyPlayerInternal() {
@@ -131,6 +158,8 @@ public:
 	}
 
 private:
+  std::chrono::steady_clock::time_point nextDisplayProbe{};
+  std::string displayDescription;
   VideoPlayerWinPlugin* m_plugin;
   bool mTextureInited = false;
   HANDLE mSharedTextureHandle = 0;
@@ -244,32 +273,47 @@ void VideoPlayerWinPlugin::createTexture(MyPlayer* _data) {
     [=](size_t width, size_t height) -> const FlutterDesktopGpuSurfaceDescriptor* {
       return &data->texture_buffer;
     }));
+  data->flutterTexture = texture;
   data->textureId = texture_registar_->RegisterTexture(texture);
 }
 
 MyPlayer* VideoPlayerWinPlugin::getPlayerById(int64_t textureId, bool autoCreate) {
   std::lock_guard<std::mutex> lock(m_mapMutex);
-  MyPlayerInternal* data = (MyPlayerInternal*) playerMap[textureId];
+  auto found = playerMap.find(textureId);
+  MyPlayerInternal* data = found == playerMap.end() ? nullptr : static_cast<MyPlayerInternal*>(found->second);
   if (data == NULL && autoCreate) {
     initMediaFoundation();
     data = new MyPlayerInternal(this);
     createTexture(data);
+    if (data->textureId < 0) {
+      delete data->flutterTexture;
+      data->Release();
+      return nullptr;
+    }
     playerMap[data->textureId] = data;
   }
   return data;
 }
 
 void VideoPlayerWinPlugin::destroyPlayerById(int64_t textureId, bool toRelease) {
-  std::lock_guard<std::mutex> lock(m_mapMutex);
-  MyPlayerInternal* data = (MyPlayerInternal*) playerMap[textureId];
-  if (data == NULL) return;
-  playerMap.erase(textureId);
+  MyPlayerInternal* data;
+  {
+    std::lock_guard<std::mutex> lock(m_mapMutex);
+    auto found = playerMap.find(textureId);
+    if (found == playerMap.end()) return;
+    data = static_cast<MyPlayerInternal*>(found->second);
+    playerMap.erase(found);
+  }
   if (data->textureId != -1) {
-    texture_registar_->UnregisterTexture(data->textureId);
+    Microsoft::WRL::ComPtr<MyPlayer> keepAlive(static_cast<MyPlayer*>(data));
+    auto* texture = data->flutterTexture;
+    texture_registar_->UnregisterTexture(data->textureId, [keepAlive, texture]() { delete texture; });
+    data->flutterTexture = nullptr;
     data->textureId = -1;
   }
 
   data->Shutdown();
+  data->DestroyPlane();
   if (toRelease) {
     data->Release();
   }
@@ -277,13 +321,7 @@ void VideoPlayerWinPlugin::destroyPlayerById(int64_t textureId, bool toRelease) 
 }
 
 void VideoPlayerWinPlugin::destroyAllPlayers() {
-  for(auto iter = playerMap.begin(); iter != playerMap.end(); iter++) {
-    if (iter->first < 0) continue;
-    std::cout << "[video_player_win][native] old player found, deleting " << iter->first << std::endl;
-    iter->second->Shutdown();
-    iter->second->Release();
-  }
-  playerMap.clear();
+  while (!playerMap.empty()) destroyPlayerById(playerMap.begin()->first, true);
 }
 
 }
@@ -368,8 +406,13 @@ void VideoPlayerWinPlugin::HandleMethodCall(
   auto textureId = arguments[flutter::EncodableValue("textureId")].LongValue();
   MyPlayerInternal* player;
   bool isOpenVideo = method_call.method_name().compare("openVideo") == 0;
-  if (isOpenVideo) {
-    player = (MyPlayerInternal*) getPlayerById(-1, true);
+  if (method_call.method_name() == "reservePlayer") {
+    player = static_cast<MyPlayerInternal*>(getPlayerById(-1, true));
+    result->Success(flutter::EncodableValue(player ? player->textureId : int64_t(-1)));
+    return;
+  }
+  if (isOpenVideo && textureId < 0) {
+    player = static_cast<MyPlayerInternal*>(getPlayerById(-1, true));
   } else {
     player = (MyPlayerInternal*) getPlayerById(textureId, false);
   }
@@ -391,25 +434,24 @@ void VideoPlayerWinPlugin::HandleMethodCall(
     auto path = std::get<std::string>(arguments[flutter::EncodableValue("path")]);
     auto wPath = toWideString(path);
 
+    const bool reserved = textureId >= 0;
     textureId = player->textureId;
+    const auto native = arguments.find(flutter::EncodableValue("nativeSurface"));
+    if (native != arguments.end() && std::get<bool>(native->second) && !player->CreatePlane(m_nativeHWND)) {
+      result->Success(flutter::EncodableValue(flutter::EncodableMap{{flutter::EncodableValue("result"), flutter::EncodableValue(false)}}));
+      return;
+    }
     std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>> shared_result = std::move(result);
+    Microsoft::WRL::ComPtr<MyPlayer> owner(static_cast<MyPlayer*>(player));
     player->OpenURL(wPath.c_str(), player, m_nativeHWND, headerLines, [=](bool isSuccess) {
       if (isSuccess) {
-        auto _player = (MyPlayerInternal*) getPlayerById(textureId, false);
-        if (_player == NULL) {
-          // the player is disposed between async OpenURL() and callback here
-          flutter::EncodableMap map;
-          map[flutter::EncodableValue("result")] = flutter::EncodableValue(false);
-          shared_result->Success(flutter::EncodableValue(map));
-          return;
-        }
-
+        auto* _player = owner.Get();
         SIZE videoSize = _player->GetVideoSize();
         flutter::EncodableMap map;
         float volume = 1.0f;
         _player->GetVolume(&volume);
         map[flutter::EncodableValue("result")] = flutter::EncodableValue(true);
-        map[flutter::EncodableValue("textureId")] = flutter::EncodableValue(_player->textureId);
+        map[flutter::EncodableValue("textureId")] = flutter::EncodableValue(textureId);
         map[flutter::EncodableValue("duration")] = flutter::EncodableValue((int64_t)_player->GetDuration());
         map[flutter::EncodableValue("videoWidth")] = flutter::EncodableValue(static_cast<int32_t>(videoSize.cx));
         map[flutter::EncodableValue("videoHeight")] = flutter::EncodableValue(static_cast<int32_t>(videoSize.cy));
@@ -417,13 +459,22 @@ void VideoPlayerWinPlugin::HandleMethodCall(
         shared_result->Success(flutter::EncodableValue(map));
       } else {
         // TODO: call destroyPlayerById(true) when open video failed here will crash since player->Release() called... how to fix?
-        destroyPlayerById(player->textureId, true);
+        if (!reserved) destroyPlayerById(textureId, true);
 
         flutter::EncodableMap map;
         map[flutter::EncodableValue("result")] = flutter::EncodableValue(false);
         shared_result->Success(flutter::EncodableValue(map));
       }
     });
+  } else if (method_call.method_name() == "planeRect") {
+    using V = flutter::EncodableValue;
+    auto dimension = [&](const char* key) { return static_cast<int>(arguments.at(V(key)).LongValue()); };
+    if (FAILED(player->PlacePlane(dimension("left"), dimension("top"), dimension("width"), dimension("height"))))
+      result->Error("planeRect", "Could not position the video swapchain.");
+    else result->Success();
+  } else if (method_call.method_name() == "hidePlane") {
+    player->HidePlane();
+    result->Success();
   } else if (method_call.method_name() == "tracks") {
     using V = flutter::EncodableValue;
     flutter::EncodableList rows;
@@ -437,6 +488,9 @@ void VideoPlayerWinPlugin::HandleMethodCall(
   } else if (method_call.method_name() == "trackState") {
     using V = flutter::EncodableValue;
     result->Success(V(flutter::EncodableMap{{V("caption"), V(player->tracks.caption())},
+                                             {V("nativePlane"), V(player->HasPlane())},
+                                             {V("displayMode"), V(player->displayMode())},
+                                             {V("output"), V(player->HasPlane() ? "Media Foundation DirectComposition swapchain" : "BGRA8 SDR texture")},
                                              {V("trackRevision"), V(player->tracks.revision())}}));
   } else if (method_call.method_name() == "audio" || method_call.method_name() == "subtitle") {
     const auto id = arguments.at(flutter::EncodableValue("track")).LongValue();

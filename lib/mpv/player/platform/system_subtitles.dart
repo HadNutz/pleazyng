@@ -9,7 +9,7 @@ import 'webos_media_proxy.dart';
 
 /// System engines that cannot attach a sidecar still render SRT and WebVTT
 /// in the same Flutter surface as the transport controls.
-Future<List<captions.Caption>> loadSystemSubtitles(SubtitleTrack track, Media media, WebOSMediaProxy? proxy) async {
+Future<SystemSubtitleTimeline> loadSystemSubtitles(SubtitleTrack track, Media media, WebOSMediaProxy? proxy) async {
   final uri = Uri.parse(track.uri!);
   final vtt = track.codec == 'vtt' || track.codec == 'webvtt' || uri.path.toLowerCase().endsWith('.vtt');
   final srt = track.codec == 'srt' || track.codec == 'subrip' || uri.path.toLowerCase().endsWith('.srt');
@@ -44,7 +44,7 @@ Future<List<captions.Caption>> loadSystemSubtitles(SubtitleTrack track, Media me
     }
     final text = utf8.decode(bytes).replaceFirst('\uFEFF', '');
     final cues = vtt ? captions.WebVTTCaptionFile(text).captions : captions.SubRipCaptionFile(text).captions;
-    return cues.toList()..sort((a, b) => a.start.compareTo(b.start));
+    return SystemSubtitleTimeline(cues);
   } catch (_) {
     throw const FormatException('Subtitle file could not be read.');
   } finally {
@@ -52,17 +52,40 @@ Future<List<captions.Caption>> loadSystemSubtitles(SubtitleTrack track, Media me
   }
 }
 
-String systemCaptionAt(List<captions.Caption> cues, Duration position) {
-  var lo = 0, hi = cues.length;
-  while (lo < hi) {
-    final mid = (lo + hi) ~/ 2;
-    if (cues[mid].start <= position) {
-      lo = mid + 1;
-    } else {
-      hi = mid;
+/// Prefix maxima let a seek find every active cue without walking the entire subtitle file.
+class SystemSubtitleTimeline {
+  SystemSubtitleTimeline(Iterable<captions.Caption> source) {
+    final sorted = source.indexed.toList()
+      ..sort((a, b) {
+        final byStart = a.$2.start.compareTo(b.$2.start);
+        return byStart == 0 ? a.$1.compareTo(b.$1) : byStart;
+      });
+    var end = Duration.zero;
+    for (final entry in sorted) {
+      _cues.add(entry);
+      if (entry.$2.end > end) end = entry.$2.end;
+      _latestEnd.add(end);
     }
   }
-  if (lo == 0) return '';
-  final cue = cues[lo - 1];
-  return position < cue.end ? cue.text : '';
+
+  final _cues = <(int, captions.Caption)>[];
+  final _latestEnd = <Duration>[];
+
+  String at(Duration position) {
+    var lo = 0, hi = _cues.length;
+    while (lo < hi) {
+      final mid = (lo + hi) ~/ 2;
+      if (_latestEnd[mid] <= position) {
+        lo = mid + 1;
+      } else {
+        hi = mid;
+      }
+    }
+    final active = <(int, captions.Caption)>[];
+    for (var i = lo; i < _cues.length && _cues[i].$2.start <= position; i++) {
+      if (position < _cues[i].$2.end) active.add(_cues[i]);
+    }
+    active.sort((a, b) => a.$1.compareTo(b.$1));
+    return active.map((cue) => cue.$2.text).join('\n');
+  }
 }

@@ -205,9 +205,18 @@ class WinVideoPlayerController extends ValueNotifier<WinVideoPlayerValue> {
     }
   }
 
+  bool nativeSurface = false;
+  bool _disposed = false;
+  bool claimTexture(int id) {
+    if (_disposed) return false;
+    textureId_ = id;
+    return true;
+  }
+
   Future<void> initialize() async {
     final WinVideoPlayerValue? pv =
         await VideoPlayerWinPlatform.instance.openVideo(this, textureId_, dataSource, httpHeaders);
+    if (_disposed) return;
     if (pv == null) {
       log("[video_player_win] controller intialize (open video) failed");
       value = value.copyWith(isInitialized: false, errorDescription: "open file failed");
@@ -272,10 +281,12 @@ class WinVideoPlayerController extends ValueNotifier<WinVideoPlayerValue> {
 
   @override
   Future<void> dispose() async {
+    if (_disposed) return;
+    _disposed = true;
     value = value.copyWith(textureId: -1);
 
     VideoPlayerWinPlatform.instance.unregisterPlayer(textureId_);
-    await VideoPlayerWinPlatform.instance.dispose(textureId_);
+    if (textureId_ >= 0) await VideoPlayerWinPlatform.instance.dispose(textureId_);
 
     log("flutter: video player dispose: id=$textureId_");
     textureId_ = -1;
@@ -283,6 +294,7 @@ class WinVideoPlayerController extends ValueNotifier<WinVideoPlayerValue> {
     _finalizer.detach(this);
     _cancelTrackingPosition();
 
+    unawaited(_eventStreamController.close());
     super.dispose();
   }
 }

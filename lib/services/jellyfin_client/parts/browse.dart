@@ -1899,18 +1899,18 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
     if (!dialect.resumeReturnsOnlyStartedItems) {
       // Emby: both shelf halves ride the one hide-aware window request — see
       // [_embyResumeWindowQuery].
-      final split = _splitEmbyResumeRows(
-        await _fetchItemsArray(
-          paths.resumeItems,
-          _embyResumeWindowQuery(parentId: parentId),
-          retry: _continueWatchingRetry,
-          validateItems: requireComplete,
-        ),
-      );
-      return (
-        resume: stamped(_mapItems(split.resume)),
-        nextUp: stamped(_mapItems(await _stampEmbyNextUpRows(split.nextUp, parentId: parentId))),
-      );
+      final raw = requireComplete
+          ? await _completeEmbyResume(parentId)
+          : await _fetchItemsArray(
+              paths.resumeItems,
+              _embyResumeWindowQuery(parentId: parentId),
+              retry: _continueWatchingRetry,
+            );
+      final split = _splitEmbyResumeRows(raw);
+      final nextUp = requireComplete
+          ? await _completeEmbyNextUp(split.nextUp)
+          : await _stampEmbyNextUpRows(split.nextUp, parentId: parentId);
+      return (resume: stamped(_mapItems(split.resume)), nextUp: stamped(_mapItems(nextUp)));
     }
 
     final results = await Future.wait([
@@ -2497,6 +2497,80 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
   Map<String, String> _embyResumeWindowQuery({String? parentId}) =>
       _resumeItemsQuery(limit: _embyResumeWindowLimit, parentId: parentId);
 
+  /// Offline removal needs the complete hide-aware membership, including older
+  /// rows outside the home preview. Some servers ignore StartIndex or omit totals.
+  Future<List<Map<String, dynamic>>> _completeEmbyResume(String? parentId) async {
+    final rows = <Map<String, dynamic>>[];
+    final seen = <String>{};
+    int? expected;
+    while (true) {
+      final response = await _getItemsResponse(
+        paths.resumeItems,
+        _resumeItemsQuery(parentId: parentId, start: rows.length, limit: _embyResumeWindowLimit, totalCount: true),
+        _continueWatchingRetry,
+      );
+      throwIfHttpError(response);
+      final data = response.data;
+      final page = _validatedShelfRows(data);
+      final total = data is Map ? data['TotalRecordCount'] : null;
+      if (total is int && total >= 0) {
+        if (expected != null && total != expected) throw const FormatException('Resume shelf changed during paging');
+        expected = total;
+      }
+      for (final row in page) {
+        if (!seen.add(row['Id'] as String) || row['UserData'] is! Map || row['Type'] is! String) {
+          throw const FormatException('Incomplete Emby Resume page');
+        }
+      }
+      rows.addAll(page);
+      if (rows.length == expected || (expected == null && page.isEmpty)) return rows;
+      if (page.isEmpty || (expected != null && rows.length > expected) || rows.length >= 50000) {
+        throw const FormatException('Could not establish complete Emby Resume membership');
+      }
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> _completeEmbyNextUp(List<Map<String, dynamic>> rows) async {
+    final dates = <String, String?>{};
+    final series = rows.map((row) => row['SeriesId'] as String).toSet().toList();
+    for (var start = 0; start < series.length; start += _seriesLastPlayedConcurrency) {
+      await Future.wait(
+        series.skip(start).take(_seriesLastPlayedConcurrency).map((id) async {
+          final played = await _fetchItemsArray(
+            '/Items',
+            {
+              'userId': connection.userId,
+              'ParentId': id,
+              'Recursive': 'true',
+              'IncludeItemTypes': 'Episode',
+              'Filters': 'IsPlayed',
+              'SortBy': 'DatePlayed',
+              'SortOrder': 'Descending',
+              'Limit': '1',
+              'Fields': 'UserData',
+              'EnableImages': 'false',
+            },
+            validateItems: true,
+            retry: _continueWatchingRetry,
+          );
+          final userData = played.firstOrNull?['UserData'];
+          dates[id] = userData is Map ? userData['LastPlayedDate'] as String? : null;
+        }),
+      );
+    }
+    final eligible = _withinNextUpCutoff([
+      for (final entry in dates.entries) (entry.key, entry.value),
+    ], _nextUpDateCutoff()).map((entry) => entry.$1).toSet();
+    return [
+      for (final row in rows)
+        if (eligible.contains(row['SeriesId']))
+          {
+            ...row,
+            'UserData': {...row['UserData'] as Map<String, dynamic>, 'LastPlayedDate': ?dates[row['SeriesId']]},
+          },
+    ];
+  }
+
   String get _latestItemsPath => '/Users/${_segment(connection.userId)}/Items/Latest';
 
   /// Resume-route query behind the Continue Watching shelf, hub preview and
@@ -2853,14 +2927,14 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
     abort?.throwIfAborted();
     throwIfHttpError(response);
     final data = response.data;
-    if (validateItems) {
-      final items = data is Map ? data['Items'] : data;
-      if (items is! List ||
-          items.any(
-            (item) => item is! Map<String, dynamic> || item['Id'] is! String || (item['Id'] as String).isEmpty,
-          )) {
-        throw const FormatException('Incomplete Continue Watching response');
-      }
+    return validateItems ? _validatedShelfRows(data) : _itemsArray(data);
+  }
+
+  List<Map<String, dynamic>> _validatedShelfRows(dynamic data) {
+    final items = data is Map ? data['Items'] : data;
+    if (items is! List ||
+        items.any((item) => item is! Map<String, dynamic> || item['Id'] is! String || (item['Id'] as String).isEmpty)) {
+      throw const FormatException('Incomplete Continue Watching response');
     }
     return _itemsArray(data);
   }

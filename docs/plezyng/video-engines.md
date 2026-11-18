@@ -17,6 +17,12 @@ Hardware decoding is enabled by default for new video sessions, including previe
 
 AVPlayer, Android MediaPlayer, Media Foundation and the native Samsung and LG players use the operating system’s decoder selection. Original quality preserves the source resolution independently of decoder selection.
 
+## Desktop presentation
+
+Media Foundation opens a windowless DirectComposition swapchain beneath the Windows controls. Windows negotiates its video format. If the swapchain cannot open, the player retries through the BGRA8 texture. The performance overlay shows the presentation route and, when DXGI reports it, the current monitor signal and bits per channel.
+
+GStreamer uses a native video subsurface when the installed Wayland sink supports HDR10 metadata (1.28 or later) and the compositor advertises HDR colour management. The sink negotiates a format with the compositor, including DMA-BUF where available. The overlay shows the negotiated format and any compositor colour preference. The compatibility path reads ten-bit RGB and tone maps PQ or HLG to the eight-bit SDR texture. Both routes retain the decoded frame dimensions.
+
 ## TV hardware paths
 
 On webOS, mpv can demux H.264, HEVC, VP9 and AV1 for LG DirectMedia. mpv schedules compressed access units in decode order, passes their original presentation timestamps to the hardware and renders video on an exported LG window. When H.264 or HEVC has reordered pictures and no decode timestamps, the LG path buffers up to 17 compressed packets to recover the presentation cadence, including on variable-frame-rate video. H.264 and HEVC from MP4 are reframed as Annex B. For HDR VP9, the adapter sends container colour and mastering metadata to DirectMedia. Flutter draws the controls and sidecar text over the plane. For embedded subtitles, mpv renders a separate transparent texture while DirectMedia continues decoding the original video. The NDL path seeks to keyframes so the decoder receives its reference pictures. The LG URI player remains an independent option for native track handling and HDR formats.

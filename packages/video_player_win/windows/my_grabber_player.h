@@ -6,6 +6,8 @@
 #include <mfmediaengine.h>
 #include <dxgi1_2.h>
 #include <d3d11.h>
+#include <dcomp.h>
+#include <atomic>
 
 #include <iostream>
 #include <functional>
@@ -36,6 +38,12 @@ private:
 
 public:
     MediaTracks tracks;
+    bool CreatePlane(HWND parent);
+    HRESULT PlacePlane(int x, int y, int width, int height);
+    void HidePlane();
+    void DestroyPlane();
+    bool HasPlane() const { return m_plane != nullptr; }
+
 	HRESULT OpenURL(const WCHAR* pszFileName, MyPlayerCallback* playerCallback, HWND hwndVideo, std::vector<std::wstring> httpHeaders, std::function<void(bool)> loadCallback);
 	HRESULT Play(LONGLONG ms = -1);
 	HRESULT Pause();
@@ -63,6 +71,13 @@ protected:
 	DWORD m_VideoHeight;
 
 private:
+    HWND m_plane = nullptr;
+    Microsoft::WRL::ComPtr<IDCompositionDevice> m_composition;
+    Microsoft::WRL::ComPtr<IDCompositionTarget> m_target;
+    Microsoft::WRL::ComPtr<IDCompositionVisual> m_visual;
+    HRESULT AttachSwapchain();
+    void FinishOpen(bool success);
+    std::mutex m_openMutex;
     Microsoft::WRL::ComPtr<ID3D11Device> pDX11Device;
 	HRESULT initD3D11();
 	HRESULT initTexture();
@@ -88,9 +103,8 @@ private:
 	BOOL m_isEnded = FALSE;
 	HANDLE m_playingEvent = NULL; // win32 event
 	LONGLONG m_seekingToPts = -1; // seeking pts if seeking
-	bool m_isShutdown;
+	std::atomic<bool> m_isShutdown;
 
-    MFVideoNormalizedRect m_frameRectSrc = {};
     RECT m_frameRectDst = {};
 	HANDLE m_threadHandle = NULL;
 };

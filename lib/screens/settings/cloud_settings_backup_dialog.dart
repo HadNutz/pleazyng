@@ -30,6 +30,7 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
   final _passwordFocus = FocusNode(debugLabel: 'CloudSettingsBackup:Password');
   final _saveFocus = FocusNode(debugLabel: 'CloudSettingsBackup:Save');
   final _backup = CloudSettingsBackupService();
+  bool Function()? _formOwner;
   bool _loading = true;
   bool _working = false;
   String? _message;
@@ -55,8 +56,10 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
 
   Future<void> _load() async {
     try {
+      final owner = await _captureOwner();
+      _formOwner = owner.isCurrent;
       final configuration = await _backup.loadConfiguration();
-      if (!mounted) return;
+      if (!mounted || !owner.isCurrent()) return;
       _url.text = configuration.url;
       _username.text = configuration.username;
       _password.text = configuration.password;
@@ -70,7 +73,12 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
 
   Future<void> _save() async {
     await _run(() async {
-      await _backup.saveConfiguration(url: _url.text, username: _username.text, password: _password.text);
+      await _backup.saveConfiguration(
+        url: _url.text,
+        username: _username.text,
+        password: _password.text,
+        isCurrentSession: _formOwner,
+      );
       return t.settings.cloudBackupSaved;
     });
   }
@@ -78,7 +86,12 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
   Future<void> _backUp() async {
     await _run(() async {
       final owner = await _captureOwner();
-      await _backup.saveConfiguration(url: _url.text, username: _username.text, password: _password.text);
+      await _backup.saveConfiguration(
+        url: _url.text,
+        username: _username.text,
+        password: _password.text,
+        isCurrentSession: _formOwner,
+      );
       await _backup.backUp(
         expectedProfileId: owner.profileId,
         expectedOwner: owner.owner,
@@ -88,24 +101,33 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
     });
   }
 
-  Future<void> _restore() async {
+  Future<void> _restore({bool portable = false}) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(t.settings.cloudBackupRestore),
-        content: Text(t.settings.cloudBackupRestoreConfirm),
+        title: Text(portable ? t.settings.importSettings : t.settings.cloudBackupRestore),
+        content: Text(portable ? t.settings.importSettingsConfirm : t.settings.cloudBackupRestoreConfirm),
         actions: [
           DialogActionButton(onPressed: () => Navigator.pop(context, false), label: t.common.cancel),
-          DialogActionButton(onPressed: () => Navigator.pop(context, true), label: t.settings.cloudBackupRestore),
+          DialogActionButton(
+            onPressed: () => Navigator.pop(context, true),
+            label: portable ? t.settings.importSettings : t.settings.cloudBackupRestore,
+          ),
         ],
       ),
     );
     if (confirmed != true || !mounted) return;
     await _run(() async {
       final owner = await _captureOwner();
-      await _backup.saveConfiguration(url: _url.text, username: _username.text, password: _password.text);
+      await _backup.saveConfiguration(
+        url: _url.text,
+        username: _username.text,
+        password: _password.text,
+        isCurrentSession: _formOwner,
+      );
       widget.beforeRestore();
       await _backup.restore(
+        importPortableFile: portable,
         expectedProfileId: owner.profileId,
         expectedOwner: owner.owner,
         isCurrentSession: owner.isCurrent,
@@ -136,6 +158,8 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
       _message = null;
     });
     try {
+      if (_formOwner?.call() != true)
+        throw const CloudSettingsBackupException('Reopen backup settings for the active profile.');
       final message = await operation();
       if (mounted) setState(() => _message = message);
     } catch (error, stackTrace) {
@@ -221,7 +245,14 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
       DialogActionButton(onPressed: _working ? null : () => Navigator.pop(context), label: t.common.close),
       DialogActionButton(focusNode: _saveFocus, onPressed: _working || _loading ? null : _save, label: t.common.save),
       DialogActionButton(onPressed: _working || _loading ? null : _backUp, label: t.settings.cloudBackupNow),
-      DialogActionButton(onPressed: _working || _loading ? null : _restore, label: t.settings.cloudBackupRestore),
+      DialogActionButton(
+        onPressed: _working || _loading ? null : () => _restore(portable: true),
+        label: t.settings.importSettings,
+      ),
+      DialogActionButton(
+        onPressed: _working || _loading ? null : () => _restore(),
+        label: t.settings.cloudBackupRestore,
+      ),
     ],
   );
 }

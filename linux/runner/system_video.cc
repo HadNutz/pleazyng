@@ -2,6 +2,7 @@
 
 #include <gst/app/gstappsink.h>
 #include <gst/video/video.h>
+#include <gst/video/videooverlay.h>
 
 #include <algorithm>
 #include <atomic>
@@ -11,6 +12,9 @@
 #include <mutex>
 #include <string>
 #include <vector>
+
+#include "mpv/wayland_video_surface.h"
+#include "system_tone_map.h"
 
 struct VideoPixelsData {
   std::mutex mutex;
@@ -50,8 +54,24 @@ static gboolean copy_video_pixels(
     frame->output.resize(row * *height);
     auto* pixels = static_cast<uint8_t*>(GST_VIDEO_FRAME_PLANE_DATA(&mapped, 0));
     const auto stride = GST_VIDEO_FRAME_PLANE_STRIDE(&mapped, 0);
+    const bool rgba8 = GST_VIDEO_INFO_FORMAT(&info) == GST_VIDEO_FORMAT_RGBA;
+    const bool pq = info.colorimetry.transfer == GST_VIDEO_TRANSFER_SMPTE2084;
+    const bool hlg = info.colorimetry.transfer == GST_VIDEO_TRANSFER_ARIB_STD_B67;
     for (uint32_t y = 0; y < *height; ++y) {
-      std::memcpy(frame->output.data() + row * y, pixels + stride * ptrdiff_t(y), row);
+      const auto* src = pixels + stride * ptrdiff_t(y);
+      auto* dst = frame->output.data() + row * y;
+      if (rgba8 && !pq && !hlg) {
+        std::memcpy(dst, src, row);
+        continue;
+      }
+      for (uint32_t x = 0; x < *width; ++x) {
+        const uint8_t* in = src + 4 * x;
+        const auto expand = [](uint32_t v) { return (v << 2) | (v >> 6); };
+        const uint32_t pixel =
+            rgba8 ? expand(in[0]) | (expand(in[1]) << 10) | (expand(in[2]) << 20) : GST_READ_UINT32_LE(in);
+        system_video::toSdr(
+            pixel, pq, hlg, info.colorimetry.primaries == GST_VIDEO_COLOR_PRIMARIES_BT2020, dst + 4 * x);
+      }
     }
     *buffer = frame->output.data();
     gst_video_frame_unmap(&mapped);
@@ -112,6 +132,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
 struct Session {
   FlTextureRegistrar* registrar;
+  std::unique_ptr<mpv::WaylandVideoSurface> plane;
+  std::string output, decoder;
+  int viewWidth = 0, viewHeight = 0;
   VideoPixels* pixels = nullptr;
   GstElement* pipeline = nullptr;
   GstElement* sink = nullptr;
@@ -134,19 +157,46 @@ struct Session {
     g_clear_object(&pixels);
   }
 
-  bool open(const char* uri, bool hardware = true) {
+  bool open(const char* uri, bool hardware = true, GtkWidget* view = nullptr) {
     prefer_hardware = hardware;
     if (!gst_init_check(nullptr, nullptr, nullptr)) return false;
     pipeline = gst_element_factory_make("playbin", nullptr);
-    sink = gst_element_factory_make("appsink", nullptr);
-    if (!pipeline || !sink) return false;
-    gst_object_ref_sink(sink);
-    GstCaps* caps = gst_caps_from_string("video/x-raw,format=RGBA,pixel-aspect-ratio=1/1");
-    g_object_set(sink, "caps", caps, "max-buffers", 2u, "drop", TRUE, "wait-on-eos", FALSE, nullptr);
-    gst_caps_unref(caps);
-    pixels = reinterpret_cast<VideoPixels*>(g_object_new(video_pixels_get_type(), nullptr));
-    registered = fl_texture_registrar_register_texture(registrar, FL_TEXTURE(pixels));
-    if (!registered) return false;
+    if (!pipeline) return false;
+    if (view && mpv::WaylandVideoSurface::IsSupported(gtk_widget_get_display(view))) {
+      auto* factory = gst_element_factory_find("waylandsink");
+      if (factory && gst_plugin_feature_check_version(GST_PLUGIN_FEATURE(factory), 1, 28, 0)) {
+        plane = std::make_unique<mpv::WaylandVideoSurface>();
+        std::string error;
+        if (plane->Create(view, &error, true, true) && plane->supports_hdr() && plane->MapChildHost()) {
+          sink = gst_element_factory_create(factory, nullptr);
+        }
+        if (!sink) plane.reset();
+      }
+      if (factory) gst_object_unref(factory);
+    }
+    if (plane) {
+      gst_object_ref_sink(sink);
+      auto* context = gst_context_new("GstWaylandDisplayHandleContextType", TRUE);
+      gst_structure_set(
+          gst_context_writable_structure(context), "display", G_TYPE_POINTER, plane->native_display(), nullptr);
+      gst_element_set_context(sink, context);
+      gst_element_set_context(pipeline, context);
+      gst_context_unref(context);
+      gst_video_overlay_set_window_handle(GST_VIDEO_OVERLAY(sink), reinterpret_cast<guintptr>(plane->native_surface()));
+      gst_video_overlay_set_render_rectangle(GST_VIDEO_OVERLAY(sink), 0, 0, 1, 1);
+      output = "GStreamer Wayland video plane";
+    } else {
+      sink = gst_element_factory_make("appsink", nullptr);
+      if (!sink) return false;
+      gst_object_ref_sink(sink);
+      GstCaps* caps = gst_caps_from_string("video/x-raw,format=(string){RGB10A2_LE,RGBA},pixel-aspect-ratio=1/1");
+      g_object_set(sink, "caps", caps, "max-buffers", 2u, "drop", TRUE, "wait-on-eos", FALSE, nullptr);
+      gst_caps_unref(caps);
+      pixels = reinterpret_cast<VideoPixels*>(g_object_new(video_pixels_get_type(), nullptr));
+      registered = fl_texture_registrar_register_texture(registrar, FL_TEXTURE(pixels));
+      if (!registered) return false;
+      output = "RGBA8 SDR texture";
+    }
     g_signal_connect(
         pipeline, "element-setup", G_CALLBACK(+[](GstElement*, GstElement* child, gpointer data) {
           auto* self = static_cast<Session*>(data);
@@ -208,6 +258,17 @@ struct Session {
             GstState state;
             gst_message_parse_state_changed(msg, nullptr, &state, nullptr);
             if (state >= GST_STATE_PAUSED) ready = true;
+          } else if (GST_IS_ELEMENT(GST_MESSAGE_SRC(msg))) {
+            GstState state;
+            gst_message_parse_state_changed(msg, nullptr, &state, nullptr);
+            auto* element = GST_ELEMENT(GST_MESSAGE_SRC(msg));
+            auto* factory = gst_element_get_factory(element);
+            if (state == GST_STATE_PAUSED && factory &&
+                gst_element_factory_list_is_type(
+                    factory, GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO)) {
+              decoder =
+                  isHardwareVideoDecoder(factory) ? gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory)) : "no";
+            }
           }
           break;
         case GST_MESSAGE_BUFFERING: {
@@ -222,13 +283,32 @@ struct Session {
       }
       gst_message_unref(msg);
     }
-    GstSample* sample = gst_app_sink_try_pull_sample(GST_APP_SINK(sink), 0);
+    GstSample* sample = plane ? gst_base_sink_get_last_sample(GST_BASE_SINK(sink))
+                              : gst_app_sink_try_pull_sample(GST_APP_SINK(sink), 0);
     if (!sample && !width) sample = gst_base_sink_get_last_sample(GST_BASE_SINK(sink));
     if (!sample) return;
-    GstVideoInfo info;
+    GstVideoInfo info{};
     if (gst_video_info_from_caps(&info, gst_sample_get_caps(sample))) {
       width = info.width;
       height = info.height;
+    }
+    if (plane) {
+      const auto* caps = gst_sample_get_caps(sample);
+      const GstStructure* format = gst_caps_get_structure(caps, 0);
+      gst_structure_get_int(format, "width", &width);
+      gst_structure_get_int(format, "height", &height);
+      const char* name = gst_structure_get_string(format, "drm-format");
+      if (!name) name = gst_structure_get_string(format, "format");
+      output = std::string("Wayland video plane / ") + (name ? name : "unknown format");
+      gst_sample_unref(sample);
+      return;
+    }
+    if (info.colorimetry.transfer == GST_VIDEO_TRANSFER_SMPTE2084 ||
+        info.colorimetry.transfer == GST_VIDEO_TRANSFER_ARIB_STD_B67) {
+      output = GST_VIDEO_INFO_FORMAT(&info) == GST_VIDEO_FORMAT_RGBA ? "8-bit HDR to RGBA8 SDR (tone mapped)"
+                                                                     : "10-bit HDR to RGBA8 SDR (tone mapped)";
+    } else {
+      output = "RGBA8 SDR texture";
     }
     {
       std::lock_guard<std::mutex> lock(pixels->frame->mutex);
@@ -256,6 +336,16 @@ struct Session {
     auto* out = fl_value_new_map();
     gint64 duration = 0;
     gst_element_query_duration(pipeline, GST_FORMAT_TIME, &duration);
+    fl_value_set_string_take(out, "nativePlane", fl_value_new_bool(plane != nullptr));
+    if (plane && plane->preferred().valid) {
+      const auto& display = plane->preferred();
+      fl_value_set_string_take(
+          out, "displayMode", fl_value_new_string(display.pq ? "compositor prefers PQ" : "compositor prefers non-PQ"));
+    }
+    fl_value_set_string_take(out, "output", fl_value_new_string(output.c_str()));
+    fl_value_set_string_take(out, "outputWidth", fl_value_new_int(plane ? viewWidth : width));
+    fl_value_set_string_take(out, "outputHeight", fl_value_new_int(plane ? viewHeight : height));
+    if (!decoder.empty()) fl_value_set_string_take(out, "hardwareDecoder", fl_value_new_string(decoder.c_str()));
     fl_value_set_string_take(out, "ready", fl_value_new_bool(ready));
     fl_value_set_string_take(out, "failed", fl_value_new_bool(failed));
     fl_value_set_string_take(out, "ended", fl_value_new_bool(ended));
@@ -355,6 +445,7 @@ FlValue* decoderInventory() {
 
 struct Host {
   FlTextureRegistrar* registrar;
+  GtkWidget* view;
   std::map<int64_t, std::unique_ptr<Session>> sessions;
 };
 
@@ -377,16 +468,37 @@ void handle(FlMethodChannel*, FlMethodCall* call, gpointer data) {
       auto session = std::make_unique<Session>(host->registrar);
       auto* uri = fl_value_lookup_string(args, "uri");
       auto* hardware = fl_value_lookup_string(args, "hardwareDecoding");
-      ok = uri && session->open(fl_value_get_string(uri), !hardware || fl_value_get_bool(hardware));
+      auto* native = fl_value_lookup_string(args, "nativeSurface");
+      ok = uri && session->open(
+                      fl_value_get_string(uri), !hardware || fl_value_get_bool(hardware),
+                      native && fl_value_get_bool(native) ? host->view : nullptr);
       if (ok) {
-        reply = fl_value_new_int(fl_texture_get_id(FL_TEXTURE(session->pixels)));
+        reply = fl_value_new_int(session->plane ? -3 : fl_texture_get_id(FL_TEXTURE(session->pixels)));
         host->sessions[id] = std::move(session);
       }
     } else if (method == "dispose") {
       host->sessions.erase(id);
     } else if (host->sessions.count(id)) {
       auto& s = *host->sessions.at(id);
-      if (method == "state")
+      if (method == "planeRect" && s.plane) {
+        auto number = [args](const char* name) {
+          return static_cast<int>(fl_value_get_int(fl_value_lookup_string(args, name)));
+        };
+        const int scale = std::max(1, number("scale"));
+        s.viewWidth = number("width");
+        s.viewHeight = number("height");
+        s.plane->SetRect(number("left"), number("top"), s.viewWidth, s.viewHeight, scale);
+        if (s.viewWidth > 0 && s.viewHeight > 0) {
+          gst_video_overlay_set_render_rectangle(
+              GST_VIDEO_OVERLAY(s.sink), 0, 0, (s.viewWidth + scale - 1) / scale, (s.viewHeight + scale - 1) / scale);
+          s.plane->SetVisible(true);
+          s.plane->MapChildHost();
+          gst_video_overlay_expose(GST_VIDEO_OVERLAY(s.sink));
+        } else
+          s.plane->SetVisible(false);
+      } else if (method == "hidePlane" && s.plane)
+        s.plane->SetVisible(false);
+      else if (method == "state")
         reply = s.state();
       else if (method == "tracks")
         reply = s.tracks();
@@ -430,7 +542,8 @@ void register_system_video(FlPluginRegistrar* registrar) {
   g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
   g_autoptr(FlMethodChannel) channel = fl_method_channel_new(
       fl_plugin_registrar_get_messenger(registrar), "org.snapetech.pleazyng/system_video", FL_METHOD_CODEC(codec));
-  auto* host = new Host{fl_plugin_registrar_get_texture_registrar(registrar), {}};
+  auto* host = new Host{
+      fl_plugin_registrar_get_texture_registrar(registrar), GTK_WIDGET(fl_plugin_registrar_get_view(registrar)), {}};
   fl_method_channel_set_method_call_handler(
       channel, handle, host, [](gpointer data) { delete static_cast<Host*>(data); });
 }

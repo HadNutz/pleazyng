@@ -48,6 +48,7 @@ class _VideoState extends State<Video> {
   // was derived from, because the rounding in _updateVideoRect is what decides
   // whether a layout change is visible to the plane at all.
   bool _hasSentRect = false;
+  int? _sentGeneration;
   int _sentLeft = 0;
   int _sentTop = 0;
   int _sentRight = 0;
@@ -136,7 +137,10 @@ class _VideoState extends State<Video> {
     if (widget.player case final PlayerSystem player) {
       return ValueListenableBuilder<int>(
         valueListenable: player.surfaceRevision,
-        builder: (_, _, _) => player.videoSurface(),
+        builder: (_, _, _) {
+          if (!player.usesDesktopPlane) _hasSentRect = false;
+          return player.videoSurface(desktopPlane: player.usesDesktopPlane ? _nativePlane() : null);
+        },
       );
     }
     if (widget.player is PlayerTizen) {
@@ -154,20 +158,22 @@ class _VideoState extends State<Video> {
       );
     }
     if (widget.player is VideoRectSupport) {
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _updateVideoRect(context, constraints);
-          });
-          return CustomPaint(
-            painter: _NativeVideoAperture(clear: _hasFirstFrame),
-            child: const SizedBox.expand(),
-          );
-        },
-      );
+      return _nativePlane();
     }
     return const SizedBox.expand();
   }
+
+  Widget _nativePlane() => LayoutBuilder(
+    builder: (context, constraints) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) _updateVideoRect(context, constraints);
+      });
+      return CustomPaint(
+        painter: _NativeVideoAperture(clear: _hasFirstFrame),
+        child: const SizedBox.expand(),
+      );
+    },
+  );
 
   void _updateVideoRect(BuildContext context, BoxConstraints _) {
     final renderBox = context.findRenderObject() as RenderBox?;
@@ -203,7 +209,9 @@ class _VideoState extends State<Video> {
     // surface at the old buffer resolution: soft at half resolution after
     // docking to a HiDPI output, overdrawn at double after undocking. The Steam
     // Deck's dock is exactly this.
+    final generation = widget.player is PlayerSystem ? (widget.player as PlayerSystem).mediaSessionGeneration : null;
     if (_hasSentRect &&
+        generation == _sentGeneration &&
         _sentLeft == left &&
         _sentTop == top &&
         _sentRight == right &&
@@ -213,6 +221,7 @@ class _VideoState extends State<Video> {
     }
 
     _hasSentRect = true;
+    _sentGeneration = generation;
     _sentLeft = left;
     _sentTop = top;
     _sentRight = right;

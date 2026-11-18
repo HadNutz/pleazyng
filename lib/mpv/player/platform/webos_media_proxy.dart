@@ -128,16 +128,22 @@ class WebOSMediaProxy {
     }
 
     final parts = request.uri.pathSegments;
-    final entry = parts.length >= 2 && parts.first == 'r' && request.uri.query.isEmpty ? _resources[parts[1]] : null;
+    final entry = parts.length >= 2 && parts.first == 'r' ? _resources[parts[1]] : null;
     final resource = entry?.expand(parts.skip(2).toList());
-    if (resource == null) {
+    Uri? target;
+    try {
+      target = resource?.requestUri(request.uri);
+    } on FormatException {
+      // Reject malformed percent/UTF-8 encodings just like an unknown directive.
+    }
+    if (resource == null || target == null) {
       request.response.statusCode = HttpStatus.notFound;
       await request.response.close();
       return;
     }
 
     try {
-      await _serve(request, resource);
+      await _serve(request, resource, target);
     } catch (_) {
       try {
         request.response.statusCode = HttpStatus.badGateway;
@@ -153,9 +159,8 @@ class WebOSMediaProxy {
     }
   }
 
-  Future<void> _serve(HttpRequest downstream, _ProxyResource resource) async {
+  Future<void> _serve(HttpRequest downstream, _ProxyResource resource, Uri current) async {
     final method = downstream.method;
-    var current = resource.uri;
     HttpClientResponse? upstream;
 
     for (var redirect = 0; redirect <= _maxRedirects; redirect++) {
@@ -199,11 +204,12 @@ class WebOSMediaProxy {
       final bytes = await _readBounded(upstream, _maxPlaylistBytes);
       final text = utf8.decode(bytes, allowMalformed: false);
       final children = <String>{};
-      String child(Uri source, [List<String> slots = const []]) {
+      String child(Uri source, [List<String> slots = const [], bool playlist = false]) {
         if (!_isHttp(source) || source.origin != resource.origin || source.userInfo.isNotEmpty) {
           throw const FormatException('Playlist reference left the authenticated source origin');
         }
         final key = _register(source, resource.headers, slots.length);
+        if (playlist) _resources[key]!.hls = true;
         children.add(key);
         if (children.length > _maxResources) throw const FormatException('Playlist is too large');
         return [_local(key).toString(), ...slots].join('/');
@@ -211,7 +217,10 @@ class WebOSMediaProxy {
 
       final String rewritten;
       try {
-        rewritten = dash ? rewriteSystemDashManifest(text, current, child) : _rewritePlaylist(text, current, child);
+        rewritten = dash
+            ? rewriteSystemDashManifest(text, current, child)
+            : _rewritePlaylist(text, current, (uri, playlist) => child(uri, const [], playlist));
+        resource.hls = !dash && text.trimLeft().startsWith('#EXTM3U');
         resource.previous = resource.current;
         resource.current = children;
       } catch (_) {
@@ -280,7 +289,8 @@ class WebOSMediaProxy {
     return bytes;
   }
 
-  String _rewritePlaylist(String playlist, Uri playlistUri, String Function(Uri) child) {
+  String _rewritePlaylist(String playlist, Uri playlistUri, String Function(Uri, bool) child) {
+    var variant = false;
     final lines = playlist.split('\n');
     for (var index = 0; index < lines.length; index++) {
       final line = lines[index];
@@ -289,15 +299,22 @@ class WebOSMediaProxy {
       if (content.trim().isEmpty) continue;
 
       if (content.startsWith('#')) {
+        if (content.startsWith('#EXT-X-STREAM-INF:')) variant = true;
+        final playlistAttribute =
+            content.startsWith('#EXT-X-MEDIA:') ||
+            content.startsWith('#EXT-X-I-FRAME-STREAM-INF:') ||
+            content.startsWith('#EXT-X-IMAGE-STREAM-INF:') ||
+            content.startsWith('#EXT-X-RENDITION-REPORT:');
         lines[index] =
             content.replaceAllMapped(_uriAttribute, (match) {
               final source = playlistUri.resolve(match.group(1)!);
-              return 'URI="${child(source)}"';
+              return 'URI="${child(source, playlistAttribute)}"';
             }) +
             cr;
       } else {
         final source = playlistUri.resolve(content.trim());
-        lines[index] = child(source) + cr;
+        lines[index] = child(source, variant) + cr;
+        variant = false;
       }
     }
     return lines.join('\n');
@@ -347,7 +364,11 @@ class WebOSMediaProxy {
       }
     }
 
-    return _NormalizedSource(source.replace(queryParameters: remaining), Map<String, String>.unmodifiable(headers));
+    final query = source.query
+        .split('&')
+        .where((part) => remaining.containsKey(Uri.decodeQueryComponent(part.split('=').first)));
+    final uri = remaining.length == source.queryParametersAll.length ? source : source.replace(query: query.join('&'));
+    return _NormalizedSource(uri, Map<String, String>.unmodifiable(headers));
   }
 }
 
@@ -362,6 +383,31 @@ class _ProxyResource {
   final int templateSlots;
   Set<String> current = const {}, previous = const {};
   static final _number = RegExp(r'^[0-9a-fA-F]{1,32}$');
+
+  bool hls = false;
+  static final _decimal = RegExp(r'^[0-9]{1,20}$');
+
+  Uri? requestUri(Uri request) {
+    if (!request.hasQuery || request.query.isEmpty) return uri;
+    if (!hls || request.query.length > 128) return null;
+    final directives = request.queryParametersAll;
+    for (final entry in directives.entries) {
+      if (entry.value.length != 1) return null;
+      final value = entry.value.single;
+      final valid = switch (entry.key) {
+        '_HLS_msn' || '_HLS_part' => _decimal.hasMatch(value),
+        '_HLS_skip' => value == 'YES' || value == 'v2',
+        _ => false,
+      };
+      if (!valid) return null;
+    }
+    if (directives.containsKey('_HLS_part') && !directives.containsKey('_HLS_msn')) return null;
+    // Keep opaque signature parameters byte-for-byte and replace prior reload directives.
+    final upstream = uri.query
+        .split('&')
+        .where((part) => part.isNotEmpty && !directives.containsKey(Uri.decodeQueryComponent(part.split('=').first)));
+    return uri.replace(query: [...upstream, request.query].join('&'));
+  }
 
   _ProxyResource? expand(List<String> values) {
     if (values.length != templateSlots) return null;

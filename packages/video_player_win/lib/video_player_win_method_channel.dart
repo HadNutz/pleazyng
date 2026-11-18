@@ -53,8 +53,18 @@ class MethodChannelVideoPlayerWin extends VideoPlayerWinPlatform {
   @override
   Future<WinVideoPlayerValue?> openVideo(
       WinVideoPlayerController player, int textureId, String path, Map<String, String> httpHeaders) async {
-    final arguments =
-        await methodChannel.invokeMethod<Map>('openVideo', {"textureId": -1, "path": path, "httpHeaders": httpHeaders});
+    final reserved = await methodChannel.invokeMethod<int>('reservePlayer', {'textureId': -1});
+    if (reserved == null || reserved < 0) return null;
+    if (!player.claimTexture(reserved)) {
+      await dispose(reserved);
+      return null;
+    }
+    final arguments = await methodChannel.invokeMethod<Map>('openVideo', {
+      'textureId': reserved,
+      'path': path,
+      'httpHeaders': httpHeaders,
+      'nativeSurface': player.nativeSurface,
+    });
     if (arguments == null) return null;
     if (arguments["result"] == false) return null;
 
@@ -72,6 +82,7 @@ class MethodChannelVideoPlayerWin extends VideoPlayerWinPlatform {
       volume: volume,
     );
 
+    if (!player.claimTexture(reserved)) return null;
     playerMap[value.textureId] = WeakReference<WinVideoPlayerController>(player);
     return value;
   }

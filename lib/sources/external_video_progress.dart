@@ -37,27 +37,15 @@ class ExternalVideoProgressSession {
       mode: PublicationMode.watching,
       session: const Uuid().v4(),
     );
-    var progress = await sources.openProgress(entry, initial);
+    final progress = await sources.openProgress(entry, initial);
     sources.requireSession(generation);
     if (sources.cloudConflict(initial.key) || await sources.repository.remoteConflict(profile, initial.key) != null) {
       throw const SourceException(SourceFailure.conflict);
     }
 
+    sources.requireSession(generation);
     sources.holdProgress(progress.key);
-    try {
-      if (progress.finished) {
-        progress = await sources.repository.saveProgress(
-          profile,
-          progress.copyWith(positionMs: 0, filePositionMs: 0, fraction: 0, finished: false),
-          kind: 'restart',
-        );
-      }
-      sources.requireSession(generation);
-      return ExternalVideoProgressSession._(sources, profile, generation, progress);
-    } catch (_) {
-      if (sources.current(generation) && sources.profileId == profile) sources.releaseProgress(progress.key);
-      rethrow;
-    }
+    return ExternalVideoProgressSession._(sources, profile, generation, progress);
   }
 
   Future<void> record(String state, Duration position, Duration duration) {
@@ -69,12 +57,18 @@ class ExternalVideoProgressSession {
       final durationMs = duration.inMilliseconds;
       if (durationMs <= 0) return;
       final positionMs = position.inMilliseconds.clamp(0, durationMs).toInt();
+      // Preparing or canceling a replay must leave its acknowledged completion intact.
+      if (_progress.finished && positionMs == 0) return;
       final fraction = positionMs / durationMs;
       final finished = state == 'stopped' && fraction >= 0.9;
       _progress = await _sources.repository.saveProgress(
         _profileId,
         _progress.copyWith(positionMs: positionMs, filePositionMs: positionMs, fraction: fraction, finished: finished),
-        kind: finished ? 'finished' : 'position',
+        kind: finished
+            ? 'finished'
+            : _progress.finished
+            ? 'restart'
+            : 'position',
       );
     });
     // A journal write failure must not interrupt playback. Leave the previous

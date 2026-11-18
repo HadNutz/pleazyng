@@ -210,59 +210,6 @@ final class PodcastAutomation with WidgetsBindingObserver {
             .toList();
         final desired = candidates.map((e) => e.key).toSet();
         final managed = <String, dynamic>{...sourceMap(state['managed'])};
-        final byKey = {for (final episode in episodes) episode.key: episode};
-        for (final record in managed.entries.toList()) {
-          check();
-          final data = sourceMap(record.value), entryKey = data['entry'] as String?;
-          if (entryKey == null) {
-            continue;
-          }
-          final entry = byKey[entryKey];
-          if (entry == null && sources.activeProgressKeys.isNotEmpty) {
-            continue;
-          }
-          if (entry != null && sources.activeProgressKeys.contains(PodcastLibrary.seed(entry).key)) {
-            continue;
-          }
-          final currentProgress = latest[entryKey];
-          if (currentProgress != null && sources.activeProgressKeys.contains(currentProgress.key)) {
-            continue;
-          }
-          final finishedExpired =
-              rules.removeFinishedDays > 0 &&
-              currentProgress?.finished == true &&
-              now.millisecondsSinceEpoch - currentProgress!.updatedAt >=
-                  Duration(days: rules.removeFinishedDays).inMilliseconds;
-          final outside = rules.keepLatest > 0 && !desired.contains(entryKey) && (currentProgress?.fraction ?? 0) == 0;
-          if (!finishedExpired && !outside) {
-            continue;
-          }
-          if (await _manuallyProtected(profile, record.key)) {
-            managed.remove(record.key);
-            continue;
-          }
-          check();
-          final file = PublicationFile.fromJson(sourceMap(data['file']));
-          // Only files claimed by this automation journal are eligible. A
-          // manual download discovered before claiming is never enrolled.
-          await sources.downloads.cancelAndWait(profile, source.id, file);
-          check();
-          await sources.downloads.remove(
-            profile,
-            source.id,
-            file,
-            shouldRemove: () =>
-                !_disposed &&
-                _foreground &&
-                sources.current(epoch) &&
-                !sources.blocked &&
-                sources.activeProgressKeys.isEmpty &&
-                !_manualClaimed(profile, record.key),
-          );
-          if (await sources.repository.download(profile, record.key) == null) {
-            managed.remove(record.key);
-          }
-        }
         final day = now.toUtc().toIso8601String().substring(0, 10);
         var used = state['day'] == day ? sourceInt(state['bytes']) ?? 0 : 0;
         if (rules.keepLatest > 0 && (!rules.wifiOnly || unmetered)) {
@@ -306,6 +253,70 @@ final class PodcastAutomation with WidgetsBindingObserver {
                 break;
               }
             }
+          }
+        }
+        // Only rotate unplayed files once the desired episodes are usable offline.
+        // A metered connection, failed fetch, quota or incomplete feed may leave gaps.
+        var replacementsReady = candidates.isNotEmpty;
+        for (final candidate in candidates) {
+          final files = candidate.files.where((file) => !file.sampleOnly);
+          if (files.isEmpty) replacementsReady = false;
+          for (final file in files) {
+            if (await sources.downloads.local(profile, source.id, file) == null) replacementsReady = false;
+          }
+          if (!replacementsReady) break;
+        }
+        final byKey = {for (final episode in episodes) episode.key: episode};
+        for (final record in managed.entries.toList()) {
+          check();
+          final data = sourceMap(record.value), entryKey = data['entry'] as String?;
+          if (entryKey == null) {
+            continue;
+          }
+          final entry = byKey[entryKey];
+          if (entry == null && sources.activeProgressKeys.isNotEmpty) {
+            continue;
+          }
+          if (entry != null && sources.activeProgressKeys.contains(PodcastLibrary.seed(entry).key)) {
+            continue;
+          }
+          final currentProgress = latest[entryKey];
+          if (currentProgress != null && sources.activeProgressKeys.contains(currentProgress.key)) {
+            continue;
+          }
+          final finishedExpired =
+              rules.removeFinishedDays > 0 &&
+              currentProgress?.finished == true &&
+              now.millisecondsSinceEpoch - currentProgress!.updatedAt >=
+                  Duration(days: rules.removeFinishedDays).inMilliseconds;
+          final outside = replacementsReady && !desired.contains(entryKey) && (currentProgress?.fraction ?? 0) == 0;
+          if (!finishedExpired && !outside) {
+            continue;
+          }
+          if (await _manuallyProtected(profile, record.key)) {
+            managed.remove(record.key);
+            continue;
+          }
+          check();
+          final file = PublicationFile.fromJson(sourceMap(data['file']));
+          // Only files claimed by this automation journal are eligible. A
+          // manual download discovered before claiming is never enrolled.
+          await sources.downloads.cancelAndWait(profile, source.id, file);
+          check();
+          await sources.downloads.remove(
+            profile,
+            source.id,
+            file,
+            shouldRemove: () =>
+                !_disposed &&
+                _foreground &&
+                sources.current(epoch) &&
+                !sources.blocked &&
+                sources.activeProgressKeys.isEmpty &&
+                !_manualClaimed(profile, record.key),
+          );
+          if (await sources.repository.download(profile, record.key) == null) {
+            managed.remove(record.key);
           }
         }
         check();

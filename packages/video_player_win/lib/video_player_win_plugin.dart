@@ -68,11 +68,17 @@ class WindowsVideoPlayer extends VideoPlayerPlatform {
       );
     }
 
-    await controller.initialize();
-    if (controller.textureId_ > 0) {
+    try {
+      await controller.initialize();
+    } catch (_) {
+      await controller.dispose();
+      rethrow;
+    }
+    if (controller.value.isInitialized && controller.textureId_ >= 0) {
       mControllerMap[controller.textureId_] = controller;
       return controller.textureId_;
     }
+    await controller.dispose();
     return null;
   }
 

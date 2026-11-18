@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart' show immutable, visibleForTesting;
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
@@ -33,23 +34,61 @@ class CloudSettingsBackupService {
   @visibleForTesting
   static Uri? Function(String)? debugParseUri;
 
-  Future<CloudSettingsBackupConfiguration> loadConfiguration() async {
+  Future<String> _activeConfigurationKey() async {
+    final storage = await StorageService.getInstance();
+    final profile = storage.getActiveProfileId(), owner = storage.activeUserScope();
+    if (profile == null || owner == null)
+      throw const CloudSettingsBackupException('Choose a profile before configuring a backup.');
+    return _profileKey(profile, owner);
+  }
+
+  Future<CloudSettingsBackupConfiguration> loadConfiguration() async =>
+      _loadConfiguration(await _activeConfigurationKey());
+
+  Future<CloudSettingsBackupConfiguration> _loadConfiguration(String key) async {
     final prefs = (await SettingsService.getInstance()).prefs;
-    final passwordCiphertext = prefs.getString(_passwordKey) ?? '';
-    final password = passwordCiphertext.isEmpty ? '' : (await CredentialVault.reveal(passwordCiphertext) ?? '');
+    // Earlier versions configured one endpoint per device. Keep that endpoint
+    // as the initial value until this profile saves its own configuration.
+    final stored = prefs.getString('cloud_settings_backup_config_$key');
+    final data = stored == null ? null : jsonDecode(stored) as Map<String, dynamic>;
+    final ciphertext = (data == null ? prefs.getString(_passwordKey) : data['password'] as String?) ?? '';
     return CloudSettingsBackupConfiguration(
-      url: prefs.getString(_urlKey) ?? '',
-      username: prefs.getString(_usernameKey) ?? '',
-      password: password,
+      url: (data == null ? prefs.getString(_urlKey) : data['url'] as String?) ?? '',
+      username: (data == null ? prefs.getString(_usernameKey) : data['username'] as String?) ?? '',
+      password: ciphertext.isEmpty ? '' : (await CredentialVault.reveal(ciphertext) ?? ''),
     );
   }
 
-  Future<void> saveConfiguration({required String url, required String username, required String password}) async {
+  Future<void> saveConfiguration({
+    required String url,
+    required String username,
+    required String password,
+    bool Function()? isCurrentSession,
+  }) async {
     _destination(url);
+    final key = await _activeConfigurationKey();
     final prefs = (await SettingsService.getInstance()).prefs;
-    await prefs.setString(_urlKey, url.trim());
-    await prefs.setString(_usernameKey, username.trim());
-    await prefs.setString(_passwordKey, password.isEmpty ? '' : await CredentialVault.protect(password));
+    final protected = password.isEmpty ? '' : await CredentialVault.protect(password);
+    if (isCurrentSession != null && !isCurrentSession()) {
+      throw const CloudSettingsBackupException('The active profile changed before saving the backup destination.');
+    }
+    await prefs.setString(
+      'cloud_settings_backup_config_$key',
+      jsonEncode({'url': url.trim(), 'username': username.trim(), 'password': protected}),
+    );
+  }
+
+  String _profileKey(String profile, String owner) =>
+      sha256.convert(utf8.encode(jsonEncode([profile, owner]))).toString();
+
+  Uri _profileDestination(Uri base, String key) {
+    final segments = base.pathSegments.toList();
+    if (segments.isEmpty || segments.last.isEmpty) {
+      throw const CloudSettingsBackupException('Enter an HTTPS WebDAV URL to a JSON file.');
+    }
+    final name = segments.removeLast();
+    final stem = name.toLowerCase().endsWith('.json') ? name.substring(0, name.length - 5) : name;
+    return base.replace(pathSegments: [...segments, '$stem.$key.json']);
   }
 
   Future<void> backUp({
@@ -64,8 +103,9 @@ class CloudSettingsBackupService {
     if (!_sameOwner(storage, expectedProfileId, expectedOwner, isCurrentSession: isCurrentSession)) {
       throw const CloudSettingsBackupException('The active profile changed before the backup started.');
     }
-    final configuration = await loadConfiguration();
-    final uri = _destination(configuration.url);
+    final key = _profileKey(expectedProfileId, expectedOwner);
+    final configuration = await _loadConfiguration(key);
+    final uri = _profileDestination(_destination(configuration.url), key);
     final settings = await SettingsService.getInstance();
     String appVersion = '';
     try {
@@ -81,6 +121,7 @@ class CloudSettingsBackupService {
       currentUserUuid: expectedOwner,
       appVersion: appVersion,
     );
+    data['backupProfile'] = key;
     final bodyBytes = _encodeBackupBody(data);
     final response = await _request(
       () => _boundedRequest(
@@ -104,6 +145,7 @@ class CloudSettingsBackupService {
     required String? expectedProfileId,
     required String? expectedOwner,
     bool Function()? isCurrentSession,
+    bool importPortableFile = false,
   }) async {
     if (expectedProfileId == null || expectedProfileId.isEmpty || expectedOwner == null || expectedOwner.isEmpty) {
       throw const CloudSettingsBackupException('Choose a profile before restoring settings.');
@@ -113,8 +155,10 @@ class CloudSettingsBackupService {
     if (!isOwnerCurrent()) {
       throw const CloudSettingsBackupException('The active profile changed before the restore started.');
     }
-    final configuration = await loadConfiguration();
-    final uri = _destination(configuration.url);
+    final key = _profileKey(expectedProfileId, expectedOwner);
+    final configuration = await _loadConfiguration(key);
+    final base = _destination(configuration.url);
+    final uri = importPortableFile ? base : _profileDestination(base, key);
     if (!isOwnerCurrent()) {
       throw const CloudSettingsBackupException('The active profile changed before the backup was downloaded.');
     }
@@ -140,6 +184,11 @@ class CloudSettingsBackupService {
       throw const CloudSettingsBackupException('The remote file is not a valid settings backup.');
     }
 
+    if (!importPortableFile && decoded['backupProfile'] != key) {
+      throw const CloudSettingsBackupException(
+        'This backup belongs to another profile or has no profile information. Use Import Settings to import a portable file explicitly.',
+      );
+    }
     final settings = await SettingsService.getInstance();
     if (!isOwnerCurrent()) {
       throw const CloudSettingsBackupException('The active profile changed before the backup could be applied.');

@@ -118,28 +118,28 @@ class SyncRuleExecutor {
       return [];
     }
 
-    // Read connectivity once for both the WiFi-only gate and the cooldown pick.
-    final List<ConnectivityResult> connectivity = await ConnectivityProbe.check();
-    if (await DownloadManagerService.shouldBlockDownloadOnCellularWith(connectivity)) {
-      appLogger.d('Skipping sync rules — cellular download blocked');
-      return [];
-    }
-
-    final lastFullRunAt = _lastFullRunAtByProfile[profileId];
-    if (!force && lastFullRunAt != null) {
-      final hasWifi = connectivity.hasWifiOrEthernet;
-      final cooldown = hasWifi ? _cooldownWifi : _cooldownCellular;
-      final elapsed = DateTime.now().difference(lastFullRunAt);
-      if (elapsed < cooldown) {
-        appLogger.d(
-          'Sync rules cooldown active (${elapsed.inMinutes}m < ${cooldown.inMinutes}m, hasWifi=$hasWifi) — skipping',
-        );
-        return [];
-      }
-    }
-
     _isExecuting = true;
     try {
+      // Read connectivity once for both the WiFi-only gate and the cooldown pick.
+      final List<ConnectivityResult> connectivity = await ConnectivityProbe.check();
+      if (await DownloadManagerService.shouldBlockDownloadOnCellularWith(connectivity)) {
+        appLogger.d('Skipping sync rules — cellular download blocked');
+        return [];
+      }
+
+      final lastFullRunAt = _lastFullRunAtByProfile[profileId];
+      if (!force && lastFullRunAt != null) {
+        final hasWifi = connectivity.hasWifiOrEthernet;
+        final cooldown = hasWifi ? _cooldownWifi : _cooldownCellular;
+        final elapsed = DateTime.now().difference(lastFullRunAt);
+        if (elapsed < cooldown) {
+          appLogger.d(
+            'Sync rules cooldown active (${elapsed.inMinutes}m < ${cooldown.inMinutes}m, hasWifi=$hasWifi) — skipping',
+          );
+          return [];
+        }
+      }
+
       final rules = await _database.getSyncRules(profileId: profileId);
       if (rules.isEmpty) return [];
 
@@ -197,18 +197,18 @@ class SyncRuleExecutor {
       return null;
     }
 
-    if (await DownloadManagerService.shouldBlockDownloadOnCellular()) {
-      appLogger.d('Skipping single sync rule $globalKey — cellular download blocked');
-      return null;
-    }
-
-    final rule = await _database.getSyncRule(globalKey);
-    if (rule == null || !rule.enabled || rule.profileId != profileId) {
-      return null;
-    }
-
     _isExecuting = true;
     try {
+      if (await DownloadManagerService.shouldBlockDownloadOnCellular()) {
+        appLogger.d('Skipping single sync rule $globalKey — cellular download blocked');
+        return null;
+      }
+
+      final rule = await _database.getSyncRule(globalKey);
+      if (rule == null || !rule.enabled || rule.profileId != profileId) {
+        return null;
+      }
+
       return await _executeRule(
         rule: rule,
         serverManager: serverManager,

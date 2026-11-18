@@ -127,7 +127,11 @@ void main() {
     );
     addTearDown(service.dispose);
     await configure(service, 'https://backup.test/settings.json');
-    final result = await service.restore(expectedProfileId: 'audit-local', expectedOwner: 'audit-local');
+    final result = await service.restore(
+      importPortableFile: true,
+      expectedProfileId: 'audit-local',
+      expectedOwner: 'audit-local',
+    );
     expect(result.keysImported, 1);
     expect(await volume(), 87.0);
     expect(calls, 2);

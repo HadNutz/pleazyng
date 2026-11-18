@@ -10,6 +10,7 @@
 
 #include "hdr_metadata.h"
 
+struct wl_buffer;
 struct wl_callback;
 struct wl_compositor;
 struct wl_display;
@@ -91,10 +92,12 @@ class WaylandVideoSurface {
   // window config, then half-float (NVIDIA offers no 10-bit unorm configs on
   // Wayland), falling back to 8. Returns false and fills `error` on any
   // failure — the caller reports it; there is no other video path.
-  bool Create(GtkWidget* view, std::string* error, bool vulkan = false);
+  bool Create(GtkWidget* view, std::string* error, bool vulkan = false, bool child_host = false);
 
   // Recreate only the subsurface relationship; the producer surface, EGL
   // context, decoder and colour objects remain owned. Caller drains presents.
+  // Map a one-pixel parent for an embedded sink which presents its own subsurfaces.
+  bool MapChildHost();
   bool Reparent(GtkWidget* view);
 
   // Alternative producer for a Steam Vulkan swapchain. No EGL producer is
@@ -414,7 +417,9 @@ class WaylandVideoSurface {
 
   GtkWidget* view_ = nullptr;
 
-  wl_display* wl_display_ = nullptr;           // owned by GDK
+  wl_display* wl_display_ = nullptr;  // owned by GDK
+  wl_buffer* anchor_ = nullptr;
+  bool child_host_ = false;
   wl_compositor* compositor_ = nullptr;        // owned by GDK
   wl_subcompositor* subcompositor_ = nullptr;  // bound by us
   wl_surface* surface_ = nullptr;

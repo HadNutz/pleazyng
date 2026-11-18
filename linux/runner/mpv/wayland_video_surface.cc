@@ -2,6 +2,7 @@
 
 #include <EGL/eglext.h>
 #include <gdk/gdkwayland.h>
+#include <sys/mman.h>
 #include <unistd.h>
 #include <wayland-client.h>
 #include <wayland-egl.h>
@@ -28,13 +29,17 @@ bool Fail(std::string* error, const char* message) {
 // Scratch state for the registry listener only. The registry proxy is destroyed
 // before BindGlobals returns, so a pointer to this frame cannot outlive it.
 struct RegistryTarget {
+  bool child_host = false;
+  wl_shm* shm = nullptr;
   wl_subcompositor* subcompositor = nullptr;
   wp_color_manager_v1* color_manager = nullptr;
 };
 
 void RegistryGlobal(void* data, wl_registry* registry, uint32_t name, const char* interface, uint32_t version) {
   auto* target = static_cast<RegistryTarget*>(data);
-  if (g_strcmp0(interface, "wl_subcompositor") == 0 && target->subcompositor == nullptr) {
+  if (target->child_host && !strcmp(interface, "wl_shm")) {
+    target->shm = static_cast<wl_shm*>(wl_registry_bind(registry, name, &wl_shm_interface, 1));
+  } else if (g_strcmp0(interface, "wl_subcompositor") == 0 && target->subcompositor == nullptr) {
     target->subcompositor =
         static_cast<wl_subcompositor*>(wl_registry_bind(registry, name, &wl_subcompositor_interface, 1));
   } else if (g_strcmp0(interface, "wp_color_manager_v1") == 0 && target->color_manager == nullptr) {
@@ -139,6 +144,7 @@ bool WaylandVideoSurface::BindGlobals(GdkDisplay* display, std::string* error) {
   wl_proxy_set_queue(reinterpret_cast<wl_proxy*>(registry), queue);
 
   RegistryTarget target;
+  target.child_host = child_host_;
   wl_registry_add_listener(registry, &kRegistryListener, &target);
   bool round_tripped = wl_display_roundtrip_queue(wl_display_, queue) >= 0;
 
@@ -177,6 +183,21 @@ bool WaylandVideoSurface::BindGlobals(GdkDisplay* display, std::string* error) {
   }
   if (target.color_manager != nullptr) {
     wl_proxy_set_queue(reinterpret_cast<wl_proxy*>(target.color_manager), nullptr);
+  }
+  if (target.shm) {
+    const int fd = memfd_create("video-plane-anchor", MFD_CLOEXEC);
+    if (fd >= 0) {
+      if (ftruncate(fd, 4) == 0) {
+        auto* pool = wl_shm_create_pool(target.shm, fd, 4);
+        if (pool) {
+          anchor_ = wl_shm_pool_create_buffer(pool, 0, 1, 1, 4, WL_SHM_FORMAT_XRGB8888);
+          if (anchor_) wl_proxy_set_queue(reinterpret_cast<wl_proxy*>(anchor_), nullptr);
+          wl_shm_pool_destroy(pool);
+        }
+      }
+      close(fd);
+    }
+    wl_shm_destroy(target.shm);
   }
   wl_event_queue_destroy(queue);
 
@@ -295,7 +316,8 @@ bool WaylandVideoSurface::InitEgl(std::string* error) {
   return Fail(error, "No matching EGL config for the video plane");
 }
 
-bool WaylandVideoSurface::Create(GtkWidget* view, std::string* error, bool vulkan) {
+bool WaylandVideoSurface::Create(GtkWidget* view, std::string* error, bool vulkan, bool child_host) {
+  child_host_ = child_host;
   vulkan_ = vulkan;
   if (view == nullptr) return Fail(error, "Video plane requires a realized view");
   GdkDisplay* display = gtk_widget_get_display(view);
@@ -1152,7 +1174,19 @@ void WaylandVideoSurface::HandleSurfacePreferredBufferTransform(void* data, wl_s
   (void)transform;
 }
 
+bool WaylandVideoSurface::MapChildHost() {
+  if (!surface_ || !anchor_) return false;
+  wl_surface_set_buffer_scale(surface_, 1);
+  wl_surface_attach(surface_, anchor_, 0, 0);
+  wl_surface_damage(surface_, 0, 0, 1, 1);
+  wl_surface_commit(surface_);
+  return true;
+}
+
 void WaylandVideoSurface::Destroy() {
+  if (anchor_) wl_buffer_destroy(anchor_);
+  anchor_ = nullptr;
+  child_host_ = false;
   // Unconditionally, ahead of everything: all three timeout closures capture
   // `this`, and the transition watchdog is only cancelled below when a
   // transition is actually staged.
