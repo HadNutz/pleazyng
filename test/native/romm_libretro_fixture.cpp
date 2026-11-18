@@ -131,8 +131,16 @@ RETRO_API void retro_run() {
   video(pixels, 2, 2, 8);
   audio(pcm, 2);
 }
-RETRO_API size_t retro_serialize_size() { return behavior == "M" ? 134217729 : state.size(); }
+RETRO_API size_t retro_serialize_size() {
+  if (behavior == "M") return 134217729;
+  if (behavior == "L") return 8 * 1024 * 1024 + 1;
+  return state.size();
+}
 RETRO_API bool retro_serialize(void* bytes, size_t size) {
+  if (behavior == "L" && size == retro_serialize_size()) {
+    std::memset(bytes, ++state[0], size);
+    return true;
+  }
   if (size != state.size()) return false;
   std::memcpy(bytes, state.data(), size);
   return true;

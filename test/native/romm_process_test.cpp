@@ -70,9 +70,22 @@ int main(int argc, char** argv) {
         const uint8_t state[]{7, 8, 9};
         Require(plezy_retro_restore(state, 3, 1) == 1, "Restore failed");
         Require(plezy_retro_capture(1) == 3 && plezy_retro_snapshot()[0] == 7, "Save round-trip failed");
+        if (production || descriptor)
+          Require(plezy_retro_capture(3) == 3 && plezy_retro_snapshot()[0] == 7, "Rewind round-trip failed");
         plezy_retro_close();
         Reap();
         std::cout << "Passed isolated session " << mode << "\n";
+      }
+      if (production || descriptor) {
+        open('L');
+        Require(plezy_retro_capture(3) == 0, "Oversized rewind state accepted");
+        Require(plezy_retro_capture(0) == 4 && plezy_retro_snapshot()[0] == 1,
+                "Rewind serialized a state it could not keep");
+        Require(plezy_retro_capture(1) == 8 * 1024 * 1024 + 1 && plezy_retro_snapshot()[0] == 2,
+                "Rewind limit changed ordinary saves");
+        plezy_retro_close();
+        Reap();
+        std::cout << "Skipped oversized rewind capture and retained full manual save\n";
       }
       if (!production)
         for (char mode : (descriptor ? std::string("CHMD") : std::string("CHFMD"))) {

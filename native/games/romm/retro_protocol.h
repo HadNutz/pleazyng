@@ -12,6 +12,11 @@ namespace plezy::retro {
 using Bytes = std::vector<uint8_t>;
 constexpr uint32_t kMagic = 0x52545231, kVersion = 1, kReply = 0x80000000;
 constexpr size_t kHeaderSize = 20, kMaximumState = 128 * 1024 * 1024;
+constexpr uint32_t kRewindCapture = 3;
+// Leave room for at least two snapshots in the player's 16 MiB rewind history.
+constexpr size_t CaptureLimit(uint32_t kind) {
+  return kind == kRewindCapture ? 8 * 1024 * 1024 : kMaximumState;
+}
 constexpr size_t kMaximumMessage = kMaximumState + 65536;
 constexpr uint32_t kMaximumDimension = 2048, kMaximumSamples = 32768;
 enum class Command : uint32_t { Probe = 1, Open, Run, Buttons, Pause, Capture, Restore, Close };

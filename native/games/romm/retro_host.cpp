@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include "libretro.h"
+#include "retro_protocol.h"
 #ifdef PLEZY_RETRO_DESCRIPTOR_INPUTS
 #include "retro_input_files.h"
 #endif
@@ -289,10 +290,12 @@ API void plezy_retro_pause_audio(int paused) {
   host->audio_paused=paused!=0;host->read=host->write;
 }
 API int plezy_retro_capture(int kind) {
-  if(!host||!host->loaded||kind<0||kind>2)return 0;
-  const bool state=kind==1;const unsigned memory=kind==2?RETRO_MEMORY_RTC:RETRO_MEMORY_SAVE_RAM;
+  if (!host || !host->loaded || kind < 0 || uint32_t(kind) > plezy::retro::kRewindCapture) return 0;
+  const bool state = kind == 1 || uint32_t(kind) == plezy::retro::kRewindCapture;
+  const unsigned memory = kind == 2 ? RETRO_MEMORY_RTC : RETRO_MEMORY_SAVE_RAM;
   size_t size=state?host->serialize_size():host->get_memory_size(memory);
-  if(!size||size>134217728)return 0;host->snapshot.resize(size);
+  if (!size || size > plezy::retro::CaptureLimit(kind)) return 0;
+  host->snapshot.resize(size);
   if(state){if(!host->serialize(host->snapshot.data(),size))return 0;}
   else {auto* data=host->get_memory_data(memory);if(!data)return 0;std::memcpy(host->snapshot.data(),data,size);}
   return static_cast<int>(size);

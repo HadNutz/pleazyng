@@ -307,14 +307,15 @@ API void plezy_retro_pause_audio(int paused) {
 }
 API int plezy_retro_capture(int kind) {
   std::lock_guard<std::recursive_mutex> lock(mutex);
-  if (!session || !session->healthy || kind < 0 || kind > 2) return 0;
+  if (!session || !session->healthy || kind < 0 || uint32_t(kind) > kRewindCapture) return 0;
   try {
     Bytes body;
     U32(body, kind);
-    const auto result = session->Request(Command::Capture, body, 8 + kMaximumState, 10);
+    const auto limit = CaptureLimit(kind);
+    const auto result = session->Request(Command::Capture, body, 8 + limit, 10);
     Reader reader(result);
     const auto size = reader.U32();
-    Check(size <= kMaximumState);
+    Check(size <= limit);
     auto snapshot = reader.Data(size);
     reader.End();
     session->snapshot = std::move(snapshot);

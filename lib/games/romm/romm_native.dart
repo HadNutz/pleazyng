@@ -27,6 +27,9 @@ String rommNativeEmulator(String core, String fileHash) {
 }
 
 class _RetroBindings {
+  // Matches kRewindCapture in retro_protocol.h. The worker checks the size
+  // before it allocates, serializes or sends the state to the player.
+  static const rewindCapture = 3;
   _RetroBindings()
     : library = DynamicLibrary.open(
         Platform.isWindows
@@ -434,7 +437,7 @@ void _retroWorker(Map<String, Object?> args) {
 
     void remember() {
       final cost = Stopwatch()..start();
-      final size = binding.capture(1);
+      final size = binding.capture(_RetroBindings.rewindCapture);
       if (size <= 0 ||
           size > history.byteBudget ~/ 2 ||
           !history.add(binding.snapshot().asTypedList(size), frameNumber)) {

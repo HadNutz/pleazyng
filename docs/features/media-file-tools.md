@@ -117,6 +117,8 @@ Cores without state serialization, very large states, and serialization that
 exceeds a frame budget disable capture for the session. The control reflects
 whether rewind history is available. Snapshot frequency adapts to measured
 capture cost. The practical history length depends on the core and device.
+The native worker checks a state's size before allocating or transferring it
+for rewind. Games with states larger than 8 MiB retain ordinary manual saves.
 
 ## Verification and packaging
 

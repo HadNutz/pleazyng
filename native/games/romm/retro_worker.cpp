@@ -128,9 +128,9 @@ int RommWorkerMain(BytePipe::Handle channel) {
           case Command::Capture: {
             const auto kind = reader.U32();
             reader.End();
-            Check(kind <= 2);
+            Check(kind <= kRewindCapture);
             const auto size = plezy_retro_capture(kind);
-            Check(size >= 0 && size_t(size) <= kMaximumState);
+            Check(size >= 0 && size_t(size) <= CaptureLimit(kind));
             const auto bytes = plezy_retro_snapshot();
             Check(!size || bytes);
             U32(reply, size);
