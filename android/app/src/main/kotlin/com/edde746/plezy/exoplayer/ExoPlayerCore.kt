@@ -58,6 +58,8 @@ import androidx.media3.exoplayer.audio.AudioSink
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.FilteringMediaSource
+import androidx.media3.exoplayer.source.LoadEventInfo
+import androidx.media3.exoplayer.source.MediaLoadData
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
@@ -101,8 +103,6 @@ interface ExoPlayerDelegate : com.edde746.plezy.shared.PlayerDelegate {
     errorMessage: String
   ): Boolean = false
 }
-
-internal fun playbackMimeType(isLive: Boolean): String? = if (isLive) MimeTypes.APPLICATION_M3U8 else null
 
 @OptIn(UnstableApi::class)
 class ExoPlayerCore(private val activity: Activity) :
@@ -402,6 +402,7 @@ class ExoPlayerCore(private val activity: Activity) :
   private var currentMediaUri: String? = null
   private var currentHeaders: Map<String, String>? = null
   private var currentMediaIsLive: Boolean = false
+  private val liveSourceRoute = LiveSourceRoute()
   private var currentMediaGeneration: Int = 0
   private var terminalErrorGeneration: Int? = null
   private var currentVisible: Boolean = false
@@ -1360,6 +1361,18 @@ class ExoPlayerCore(private val activity: Activity) :
         cause = statusCause
       )
       return
+    }
+
+    if (error.errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED && liveSourceRoute.useDetectedType()) {
+      val player = exoPlayer
+      val uri = currentMediaUri
+      if (player != null && uri != null) {
+        emitLog("info", "media", "Retrying opaque live stream with its detected transport")
+        setCurrentMediaSource(player, uri, effectivePosition)
+        player.prepare()
+        armBufferingStallWatchdog()
+        return
+      }
     }
 
     if (handleEndOfStreamStall(error, mediaGeneration)) return
@@ -2968,10 +2981,7 @@ class ExoPlayerCore(private val activity: Activity) :
       .setMediaId(currentMediaGeneration.toString())
       .setUri(uri)
 
-    // Every Live TV backend negotiates HLS before opening the native player.
-    // Pin the MIME type so tokenized manifests never fall back to progressive
-    // extension sniffing, and so initial opens and recovery use one source path.
-    playbackMimeType(currentMediaIsLive)?.let(mediaItemBuilder::setMimeType)
+    liveSourceRoute.mimeType(Uri.parse(uri), currentMediaIsLive)?.let(mediaItemBuilder::setMimeType)
 
     if (externalSubtitles.isNotEmpty()) {
       mediaItemBuilder.setSubtitleConfigurations(externalSubtitles.toList())
@@ -3093,6 +3103,18 @@ class ExoPlayerCore(private val activity: Activity) :
     override fun onPlaybackStateChanged(eventTime: AnalyticsListener.EventTime, state: Int) {
       if (mediaGenerationAt(eventTime) != currentMediaGeneration) return
       handlePlaybackStateChanged(state)
+    }
+
+    override fun onLoadError(
+      eventTime: AnalyticsListener.EventTime,
+      loadEventInfo: LoadEventInfo,
+      mediaLoadData: MediaLoadData,
+      error: java.io.IOException,
+      wasCanceled: Boolean
+    ) {
+      if (mediaGenerationAt(eventTime) != currentMediaGeneration || !currentMediaIsLive ||
+        mediaLoadData.dataType != C.DATA_TYPE_MANIFEST || loadEventInfo.dataSpec.uri.toString() != currentMediaUri) return
+      liveSourceRoute.observeManifestError(loadEventInfo.dataSpec.uri, loadEventInfo.uri, loadEventInfo.responseHeaders, error)
     }
 
     override fun onPlayerError(eventTime: AnalyticsListener.EventTime, error: PlaybackException) {
@@ -3667,6 +3689,7 @@ class ExoPlayerCore(private val activity: Activity) :
     currentMediaUri = uri
     currentHeaders = headers
     currentMediaIsLive = isLive
+    liveSourceRoute.reset()
     resetPlaybackProgress(startPositionMs)
 
     // Apply auth/custom headers to the HTTP DataSource for this session
@@ -3757,7 +3780,7 @@ class ExoPlayerCore(private val activity: Activity) :
       armBufferingStallWatchdog()
     }
 
-    val sourceLabel = if (isLive) "live HLS" else "media"
+    val sourceLabel = if (isLive) "live media" else "media"
     emitLog(
       "info",
       "media",

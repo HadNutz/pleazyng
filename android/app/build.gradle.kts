@@ -1377,6 +1377,9 @@ dependencies {
   implementation("androidx.media3:media3-decoder:$media3Version")
   implementation("androidx.media3:media3-exoplayer:$media3Version")
   implementation("androidx.media3:media3-exoplayer-hls:$media3Version")
+  implementation("androidx.media3:media3-exoplayer-dash:$media3Version")
+  implementation("androidx.media3:media3-exoplayer-smoothstreaming:$media3Version")
+  implementation("androidx.media3:media3-exoplayer-rtsp:$media3Version")
   // ExoPlayer's GPU frame-effects pipeline (used for opt-in Lanczos upscaling).
   implementation("androidx.media3:media3-effect:$media3Version")
   implementation("androidx.media3:media3-ui:$media3Version")

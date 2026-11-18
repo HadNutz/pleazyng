@@ -151,3 +151,12 @@ codec/profile combination. All validation here ran headlessly.
 source commit/version and the exact app notice payload. A future SDK update or
 altered notice fails before any platform pin is written, preventing a static
 framework's resource-copy behavior from dropping its licensing information.
+
+
+Android ExoPlayer includes Media3’s HLS, DASH, SmoothStreaming and RTSP
+source factories. Direct tuner transport streams and radio streams can use
+the progressive extractors. Opaque live HTTP endpoints still try HLS first.
+When the root response lacks the playlist header, its content type or final
+URL chooses DASH or SmoothStreaming, with progressive sniffing for other
+payloads. The retry is limited to once per open. The Android unit tests
+instantiate the actual factories and exercise the HLS parser’s error path.
