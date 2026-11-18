@@ -4,6 +4,7 @@ import UIKit
 import AVFoundation
 import MediaPlayer
 import MusicKit
+import CoreImage
 import CarPlay
 import Intents
 #if canImport(GoogleCast)
@@ -505,12 +506,23 @@ final class MusicCarBridge {
   private var channel: FlutterMethodChannel?
   private(set) var ready = false
   private var epoch = 0
+  private var pending = Set<String>()
+  private var invalidations: [String: () -> Void] = [:]
+  private func invalidateRequests() {
+    let callbacks = Array(invalidations.values)
+    invalidations.removeAll()
+    pending.removeAll()
+    callbacks.forEach { $0() }
+  }
+  private var carVideo: AnyObject?
   private var widgetSnapshot: MusicWidgetSnapshot?
   private(set) var playback: [String: Any] = [:]
   private(set) var connected = false
   weak var scene: MusicCarSceneDelegate?
 
   func attach(_ messenger: FlutterBinaryMessenger) {
+    stopVideo()
+    invalidateRequests()
     ready = false
     epoch += 1
     playback = [:]
@@ -519,7 +531,29 @@ final class MusicCarBridge {
     channel?.setMethodCallHandler { [weak self] call, result in
       guard let self else { result(nil); return }
       switch call.method {
+      case "openCarVideo":
+        guard #available(iOS 27.0, *), self.ready, self.connected, self.scene?.supportsVideo == true,
+          let args = call.arguments as? [String: Any], let id = args["id"] as? String,
+          let raw = args["url"] as? String, let url = URL(string: raw), ["https","http"].contains(url.scheme ?? "")
+        else { result(false); return }
+        self.stopVideo()
+        let video = CarVideoPlayer(id: id, url: url, title: args["title"] as? String ?? "Pleazyng")
+        self.carVideo = video
+        video.open(position: args["position"] as? Int ?? 0, ready: { ok in result(ok) }) { [weak self, weak video] position, paused, ended in
+          guard let self, let video, self.carVideo === video else { return }
+          self.channel?.invokeMethod("videoEvent", arguments: ["id": id, "position": position, "paused": paused, "ended": ended])
+        }
+      case "stopCarVideo":
+        if #available(iOS 27.0, *), let video = self.carVideo as? CarVideoPlayer, video.id == call.arguments as? String {
+          let position = video.position
+          self.stopVideo()
+          result(position)
+        } else { result(nil) }
+      case "acceptCarRequest":
+        let id = call.arguments as? String ?? ""
+        result(self.pending.remove(id) != nil)
       case "ready":
+        self.invalidateRequests()
         self.ready = true
         self.epoch += 1
         self.updateWidget(nil)
@@ -541,6 +575,8 @@ final class MusicCarBridge {
         }
         result(nil)
       case "close":
+        self.stopVideo()
+        self.invalidateRequests()
         self.ready = false
         self.playback = [:]
         self.epoch += 1
@@ -573,38 +609,204 @@ final class MusicCarBridge {
     }
   }
 
+  private func stopVideo() {
+    if #available(iOS 27.0, *) { (carVideo as? CarVideoPlayer)?.stop() }
+    carVideo = nil
+  }
+
   func connection(_ value: Bool) {
     connected = value
+    if !value {
+      invalidateRequests()
+      if #available(iOS 27.0, *), let video = carVideo as? CarVideoPlayer {
+        channel?.invokeMethod("videoEvent", arguments: ["id": video.id, "position": video.position, "paused": true, "ended": true])
+      }
+      stopVideo()
+    }
     guard ready else { return }
-    channel?.invokeMethod("connection", arguments: ["connected": value])
+    channel?.invokeMethod("connection", arguments: ["connected": value, "video": value && scene?.supportsVideo == true])
   }
 
   func request(_ method: String, _ args: [String: Any], completion: @escaping (Any?) -> Void) {
     guard ready, let channel else { completion(nil); return }
     let expected = epoch
+    let guarded = ["transport", "playItem", "playSearch", "play", "pause", "next", "previous", "guestAction", "videoStart"].contains(method)
+    let id = UUID().uuidString
+    var arguments = args
+    if guarded {
+      pending.insert(id)
+      arguments["carRequest"] = id
+    }
     var finished = false
     let finish: (Any?) -> Void = { [weak self] value in
       guard !finished else { return }
       finished = true
+      self?.pending.remove(id)
+      self?.invalidations.removeValue(forKey: id)
       completion(self?.epoch == expected ? value : nil)
     }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 10) { finish(nil) }
-    channel.invokeMethod(method, arguments: args, result: finish)
+    if guarded { invalidations[id] = { finish(nil) } }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
+      guard !finished else { return }
+      // Dart claims a live request immediately before changing the player.
+      // An accepted operation finishes with its actual result.
+      if !guarded || self?.pending.contains(id) == true || self?.epoch != expected { finish(nil) }
+    }
+    channel.invokeMethod(method, arguments: arguments, result: finish)
+  }
+}
+
+/// CarPlay owns the external video surface and transitions to audio when the vehicle requires it.
+@available(iOS 27.0, *)
+private final class CarVideoPlayer {
+  let id: String
+  private let player: AVPlayer
+  private let session: MPNowPlayingSession
+  private var status: NSKeyValueObservation?
+  private var playbackStatus: NSKeyValueObservation?
+  private var observer: Any?
+  private var notifications: [NSObjectProtocol] = []
+  private var remotes: [(MPRemoteCommand, Any)] = []
+  private var opening: ((Bool) -> Void)?
+  private var stopped = false
+  var position: Int {
+    let seconds = player.currentTime().seconds
+    return seconds.isFinite ? max(0, Int(seconds * 1000)) : 0
+  }
+
+  init(id: String, url: URL, title: String) {
+    self.id = id
+    let item = AVPlayerItem(url: url)
+    let metadata = AVMutableMetadataItem()
+    metadata.identifier = .commonIdentifierTitle
+    metadata.value = title as NSString
+    metadata.extendedLanguageTag = "und"
+    item.externalMetadata = [metadata]
+    player = AVPlayer(playerItem: item)
+    player.allowsExternalPlayback = true
+    session = MPNowPlayingSession(players: [player])
+    session.automaticallyPublishesNowPlayingInfo = true
+  }
+
+  func open(position: Int, ready: @escaping (Bool) -> Void, event: @escaping (Int, Bool, Bool) -> Void) {
+    guard let item = player.currentItem else { ready(false); return }
+    opening = ready
+    do {
+      try AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback, policy: .longFormVideo)
+      try AVAudioSession.sharedInstance().setActive(true)
+    } catch { finishOpening(false); return }
+    let center = session.remoteCommandCenter
+    func register(_ command: MPRemoteCommand, _ action: @escaping (MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus) {
+      command.isEnabled = true
+      remotes.append((command, command.addTarget(handler: action)))
+    }
+    register(center.playCommand) { [weak self] _ in self?.player.play(); return .success }
+    register(center.pauseCommand) { [weak self] _ in self?.player.pause(); return .success }
+    register(center.changePlaybackPositionCommand) { [weak self] event in
+      guard let event = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
+      self?.player.seek(to: CMTime(seconds: event.positionTime, preferredTimescale: 1000))
+      return .success
+    }
+    func report(_ ended: Bool) {
+      guard !stopped, opening == nil else { return }
+      event(self.position, player.timeControlStatus == .paused, ended)
+    }
+    for name in [AVPlayerItem.didPlayToEndTimeNotification, AVPlayerItem.failedToPlayToEndTimeNotification] {
+      notifications.append(NotificationCenter.default.addObserver(forName: name, object: item, queue: .main) { [weak self] _ in
+        guard let self else { return }
+        if self.opening != nil { self.finishOpening(false) } else { report(true) }
+      })
+    }
+    observer = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 10, preferredTimescale: 1), queue: .main) { _ in report(false) }
+    playbackStatus = player.observe(\.timeControlStatus, options: [.new]) { _, _ in DispatchQueue.main.async { report(false) } }
+    status = item.observe(\.status, options: [.initial,.new]) { [weak self] item, _ in
+      DispatchQueue.main.async {
+        guard let self, !self.stopped else { return }
+        if item.status == .failed {
+          if self.opening != nil { self.finishOpening(false) } else { report(true) }
+        } else if item.status == .readyToPlay && self.opening != nil {
+          self.player.seek(to: CMTime(value: Int64(position), timescale: 1000)) { [weak self] ok in
+            DispatchQueue.main.async {
+              guard let self, !self.stopped, self.opening != nil else { return }
+              if ok { self.session.becomeActiveIfPossible(completion: nil); self.player.play() }
+              self.finishOpening(ok)
+            }
+          }
+        }
+      }
+    }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 25) { [weak self] in self?.finishOpening(false) }
+  }
+
+  private func finishOpening(_ ok: Bool) {
+    let reply = opening
+    opening = nil
+    reply?(ok)
+  }
+
+  func stop() {
+    stopped = true
+    status = nil
+    playbackStatus = nil
+    for notification in notifications { NotificationCenter.default.removeObserver(notification) }
+    notifications.removeAll()
+    if let observer { player.removeTimeObserver(observer) }
+    observer = nil
+    for (command, token) in remotes { command.removeTarget(token) }
+    remotes.removeAll()
+    player.pause()
+    player.replaceCurrentItem(with: nil)
+    finishOpening(false)
   }
 }
 
 @objc(MusicCarSceneDelegate)
 final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate, CPNowPlayingTemplateObserver,
-  CPTabBarTemplateDelegate
+  CPTabBarTemplateDelegate, CPSearchTemplateDelegate, CPSessionConfigurationDelegate
 {
   private var controller: CPInterfaceController?
   private var artworkGeneration = 0
+  private var searchGeneration = 0
+  private lazy var configuration = CPSessionConfiguration(delegate: self)
+  var supportsVideo: Bool {
+    #if compiler(>=6.3)
+    if #available(iOS 27.0, *) {
+      return Bundle.main.object(forInfoDictionaryKey: "PleazyngCarVideoEnabled") as? String == "YES" && configuration.supportsVideoPlayback
+    }
+    #endif
+    return false
+  }
+  private var initialPlayback = false
+  private var rootInstalled = false
+
+  private func enterNowPlaying() {
+    guard let controller, controller.topTemplate !== CPNowPlayingTemplate.shared else { return }
+    let template = CPNowPlayingTemplate.shared
+    if controller.templates.contains(where: { $0 === template }) {
+      controller.pop(to: template, animated: true, completion: nil)
+    } else if controller.templates.count >= 5 {
+      controller.popTemplate(animated: false) { ok, _ in
+        if ok { controller.pushTemplate(template, animated: true, completion: nil) }
+      }
+    } else {
+      controller.pushTemplate(template, animated: true, completion: nil)
+    }
+  }
+
+  private func restoreInitialPlayback() {
+    guard initialPlayback, rootInstalled, let playing = MusicCarBridge.shared.playback["playing"] as? Bool else { return }
+    initialPlayback = false
+    if playing { enterNowPlaying() }
+  }
+
 
   func templateApplicationScene(
     _ templateApplicationScene: CPTemplateApplicationScene,
     didConnect interfaceController: CPInterfaceController
   ) {
     _ = (UIApplication.shared.delegate as? AppDelegate)?.ensureMusicEngine()
+    initialPlayback = true
+    rootInstalled = false
     controller = interfaceController
     CPNowPlayingTemplate.shared.add(self)
     configurePlayback()
@@ -619,6 +821,9 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
   ) {
     artworkGeneration += 1
     CPNowPlayingTemplate.shared.remove(self)
+    searchGeneration += 1
+    rootInstalled = false
+    initialPlayback = false
     tabs.removeAll()
     MusicCarBridge.shared.connection(false)
     MusicCarBridge.shared.scene = nil
@@ -662,35 +867,37 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
     let actions = snapshot["actions"] as? [String: String] ?? [:]
     let spoken = snapshot["spoken"] as? Bool == true
     template.isUpNextButtonEnabled =
-      bridge.ready && (spoken ? snapshot["hasChapters"] as? Bool == true : snapshot["hasQueue"] as? Bool == true)
+      bridge.ready && (spoken || snapshot["hasQueue"] as? Bool == true)
     let labels = snapshot["carLabels"] as? [String: String] ?? [:]
-    template.upNextTitle = labels[spoken ? "chapters" : "queue"] ?? (spoken ? "Chapters" : "Up Next")
+    template.upNextTitle = labels[spoken ? "upNext" : "queue"] ?? "Up Next"
     let symbols = [
-      "favorite": "heart", "shuffle": "shuffle",
+      "rating": "star", "favorite": snapshot["favorite"] as? Bool == true ? "heart.fill" : "heart", "shuffle": "shuffle",
       "repeat": snapshot["repeatMode"] as? String == "one" ? "repeat.1" : "repeat",
       "radio": "dot.radiowaves.left.and.right", "bookmark": "bookmark", "speed": "speedometer",
       "back15": "gobackward.15", "forward30": "goforward.30",
     ]
-    let order = spoken ? ["back15", "forward30", "speed", "bookmark"] : ["favorite", "shuffle", "repeat", "radio"]
+    let order = spoken ? ["back15", "forward30", "speed", "bookmark"] : ["favorite", "rating", "shuffle", "repeat", "radio"]
     let buttons: [CPNowPlayingButton] = order.compactMap { action in
       guard bridge.ready, let label = actions[action], let symbol = symbols[action],
         let image = UIImage(systemName: symbol), let scope = snapshot["scope"], let revision = snapshot["revision"]
       else { return nil }
       image.accessibilityLabel = label
-      let button = CPNowPlayingImageButton(image: image) { _ in
+      let button = CPNowPlayingImageButton(image: image) { [weak self] _ in
+        if action == "rating" { self?.show(id: "rating", title: label); return }
         bridge.request("transport", ["scope": scope, "revision": revision, "command": action]) { _ in }
       }
       button.isSelected =
-        (action == "shuffle" && snapshot["shuffled"] as? Bool == true)
+        (action == "favorite" && snapshot["favorite"] as? Bool == true) || (action == "shuffle" && snapshot["shuffled"] as? Bool == true)
         || (action == "repeat" && snapshot["repeatMode"] as? String != "off")
       return button
     }
     template.updateNowPlayingButtons(buttons)
+    restoreInitialPlayback()
   }
 
   func nowPlayingTemplateUpNextButtonTapped(_ nowPlayingTemplate: CPNowPlayingTemplate) {
     let spoken = MusicCarBridge.shared.playback["spoken"] as? Bool == true
-    show(id: spoken ? "chapters" : "queue", title: nowPlayingTemplate.upNextTitle)
+    show(id: spoken ? "spokenControls" : "queue", title: nowPlayingTemplate.upNextTitle)
   }
 
   func tabBarTemplate(_ tabBarTemplate: CPTabBarTemplate, didSelect selectedTemplate: CPTemplate) {
@@ -702,6 +909,8 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
     artworkGeneration += 1
     guard let controller else { return }
     if !MusicCarBridge.shared.ready {
+      searchGeneration += 1
+      rootInstalled = false
       tabs.removeAll()
       configurePlayback()
       let item = CPListItem(
@@ -750,13 +959,131 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
     pump()
   }
 
+  func searchTemplate(_ searchTemplate: CPSearchTemplate, updatedSearchText searchText: String,
+    completionHandler: @escaping ([CPListItem]) -> Void) {
+    searchGeneration += 1
+    let generation = searchGeneration
+    let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !query.isEmpty else { completionHandler([]); return }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self, weak searchTemplate] in
+      guard let self, let searchTemplate, self.searchGeneration == generation,
+        self.controller?.topTemplate === searchTemplate else { completionHandler([]); return }
+      MusicCarBridge.shared.request("search", ["query": query]) { [weak self] value in
+        guard self?.searchGeneration == generation, self?.controller?.topTemplate === searchTemplate,
+          let rows = value as? [[String: Any]] else { completionHandler([]); return }
+        completionHandler(rows.prefix(CPListTemplate.maximumItemCount).map { row in
+          let item = CPListItem(text: row["title"] as? String, detailText: row["subtitle"] as? String)
+          item.userInfo = row
+          return item
+        })
+      }
+    }
+  }
+
+  func searchTemplate(_ searchTemplate: CPSearchTemplate, selectedResult item: CPListItem,
+    completionHandler: @escaping () -> Void) {
+    guard let row = item.userInfo as? [String: Any] else { completionHandler(); return }
+    select(row, done: completionHandler)
+  }
+
+  private func select(_ row: [String: Any], done: @escaping () -> Void) {
+    guard let id = row["id"] as? String, let title = row["title"] as? String, let controller else { done(); return }
+    let labels = MusicCarBridge.shared.playback["carLabels"] as? [String: String] ?? [:]
+    if row["video"] as? Bool == true {
+      guard supportsVideo else { done(); return }
+      MusicCarBridge.shared.request("videoStart", ["id": id]) { [weak self] value in
+        if !(value as? Bool ?? false), let self, self.controller === controller {
+          let close = CPAlertAction(title: labels["close"] ?? "Close", style: .cancel) { _ in controller.dismissTemplate(animated: true, completion: nil) }
+          controller.presentTemplate(CPAlertTemplate(titleVariants: [labels["unavailable"] ?? "Media unavailable"], actions: [close]), animated: true, completion: nil)
+        }
+        done()
+      }
+      return
+    }
+    if let action = row["guest"] as? String {
+      var arguments = row
+      arguments["action"] = action
+      MusicCarBridge.shared.request("guestAction", arguments) { [weak self] value in
+        guard let self, self.controller === controller else { done(); return }
+        if action == "invite", let url = value as? String,
+          let filter = CIFilter(name: "CIQRCodeGenerator") {
+          filter.setValue(Data(url.utf8), forKey: "inputMessage")
+          filter.setValue("M", forKey: "inputCorrectionLevel")
+          if let code = filter.outputImage {
+            let bordered = code.composited(over: CIImage(color: .white).cropped(to: code.extent.insetBy(dx: -4, dy: -4)))
+            let output = bordered.transformed(by: CGAffineTransform(scaleX: 6, y: 6))
+            if let cg = CIContext().createCGImage(output, from: output.extent) {
+              let image = UIImage(cgImage: cg)
+              let qr = CPListImageRowItem(text: title, images: [image])
+              let page = CPListTemplate(title: title, sections: [CPListSection(items: [qr])])
+              controller.pushTemplate(page, animated: true, completion: nil)
+            }
+          }
+        } else if value as? Bool == true {
+          self.show(id: "guest", title: title, target: controller.topTemplate as? CPListTemplate)
+        } else {
+          let retry = CPAlertAction(title: labels["retry"] ?? "Retry", style: .default) { _ in
+            controller.dismissTemplate(animated: true) { ok, _ in if ok { self.select(row, done: {}) } }
+          }
+          let close = CPAlertAction(title: labels["close"] ?? "Close", style: .cancel) { _ in controller.dismissTemplate(animated: true, completion: nil) }
+          controller.presentTemplate(CPAlertTemplate(titleVariants: [labels["unavailable"] ?? "Unavailable"], actions: [retry, close]), animated: true, completion: nil)
+        }
+        done()
+      }
+      return
+    }
+    guard row["playable"] as? Bool == true else { show(id: id, title: title); done(); return }
+    func play(_ queue: String? = nil) {
+      var arguments: [String: Any] = ["id": id]
+      if let queue { arguments["queue"] = queue }
+      MusicCarBridge.shared.request("playItem", arguments) { [weak self] value in
+        guard let self, self.controller === controller else { return }
+        if value as? Bool == true {
+          if row["quiet"] as? Bool == true, let list = controller.topTemplate as? CPListTemplate { self.show(id: "rating", title: list.title ?? "", target: list) } else if queue == nil { self.enterNowPlaying() }
+        } else {
+          let alert = CPAlertTemplate(titleVariants: [labels["unavailable"] ?? "Media unavailable"], actions: [
+            CPAlertAction(title: labels["retry"] ?? "Retry", style: .default) { _ in
+              controller.dismissTemplate(animated: true) { ok, _ in if ok { play(queue) } }
+            },
+            CPAlertAction(title: labels["close"] ?? "Close", style: .cancel) { _ in
+              controller.dismissTemplate(animated: true, completion: nil)
+            }
+          ])
+          controller.presentTemplate(alert, animated: true, completion: nil)
+        }
+      }
+    }
+    let queued = row["queuedSpoken"] as? Bool == true
+    if queued || ["podcast", "audiobook"].contains(row["kind"] as? String ?? "") && row["quickResume"] as? Bool != true {
+      func action(_ name: String, _ queue: String?) -> CPAlertAction {
+        CPAlertAction(title: name, style: .default) { _ in
+          controller.dismissTemplate(animated: true) { ok, _ in if ok { play(queue) } }
+        }
+      }
+      var actions = [action(labels["playNow"] ?? "Play now", nil)]
+      if queued {
+        actions.append(action(labels["remove"] ?? "Remove", "remove"))
+      } else {
+        actions.append(action(labels["next"] ?? "Play next", "next"))
+        actions.append(action(labels["later"] ?? "Add to queue", "later"))
+      }
+      let sheet = CPActionSheetTemplate(title: title, message: nil, actions: actions + [
+        CPAlertAction(title: labels["close"] ?? "Close", style: .cancel) { _ in
+          controller.dismissTemplate(animated: true, completion: nil)
+        }
+      ])
+      controller.presentTemplate(sheet, animated: true, completion: nil)
+    } else { play() }
+    done()
+  }
+
   private func show(id: String, title: String, root: Bool = false, target: CPListTemplate? = nil, offset: Int = 0) {
     artworkGeneration += 1
     let generation = artworkGeneration
     let previous = controller?.topTemplate
     MusicCarBridge.shared.request("browse", ["id": id]) { [weak self] value in
       guard let self, generation == self.artworkGeneration, let controller = self.controller else { return }
-      guard root || controller.topTemplate === previous else { return }
+      guard root || controller.topTemplate === previous || (target != nil && (controller.rootTemplate as? CPTabBarTemplate)?.templates.contains(where: { $0 === target }) == true) else { return }
       let labels = MusicCarBridge.shared.playback["carLabels"] as? [String: String] ?? [:]
       if root, let rows = value as? [[String: Any]], !rows.isEmpty {
         self.tabs.removeAll()
@@ -764,6 +1091,14 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
         let lists: [CPListTemplate] = rows.prefix(CPTabBarTemplate.maximumTabCount).compactMap { row in
           guard let id = row["id"] as? String, let name = row["title"] as? String else { return nil }
           let list = CPListTemplate(title: name, sections: [])
+          if #available(iOS 27.0, *), let icon = UIImage(systemName: "magnifyingglass") {
+            icon.accessibilityLabel = labels["search"] ?? "Search"
+            list.trailingNavigationBarButtons = [CPBarButton(image: icon) { [weak self] _ in
+              let search = CPSearchTemplate()
+              search.delegate = self
+              self?.controller?.pushTemplate(search, animated: true, completion: nil)
+            }]
+          }
           list.tabTitle = name
           list.tabImage = UIImage(systemName: symbols[id] ?? "list.bullet")
           list.emptyViewTitleVariants = [labels["loading"] ?? "Loading…"]
@@ -774,7 +1109,11 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
         let bar = CPTabBarTemplate(templates: lists)
         bar.delegate = self
         controller.setRootTemplate(bar, animated: false) { [weak self] ok, _ in
-          if ok, let first = lists.first { self?.tabBarTemplate(bar, didSelect: bar.selectedTemplate ?? first) }
+          if ok, let self, let first = lists.first {
+            self.rootInstalled = true
+            self.tabBarTemplate(bar, didSelect: bar.selectedTemplate ?? first)
+            self.restoreInitialPlayback()
+          }
         }
         return
       }
@@ -786,40 +1125,17 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
       let items: [CPListItem] = rows.dropFirst(offset).prefix(pageSize).compactMap { row in
         guard let id = row["id"] as? String, let title = row["title"] as? String else { return nil }
         let item = CPListItem(text: title, detailText: row["subtitle"] as? String)
+        #if compiler(>=6.3)
+        if #available(iOS 27.0, *), self.supportsVideo, row["video"] as? Bool == true {
+          item.playbackConfiguration = CPPlaybackConfiguration(preferredPresentation: .video, playbackAction: .play,
+            elapsedTime: CMTime(value: Int64(row["elapsed"] as? Int ?? 0), timescale: 1000),
+            duration: CMTime(value: Int64(row["duration"] as? Int ?? 0), timescale: 1000))
+        }
+        #endif
         if row["artwork"] as? Bool == true { artworkRows.append((id, item)) }
         item.handler = { [weak self] _, done in
-          if row["playable"] as? Bool == true {
-            MusicCarBridge.shared.request("playItem", ["id": id]) { success in
-              if success as? Bool == true && self?.controller?.topTemplate !== CPNowPlayingTemplate.shared {
-                if self?.controller?.templates.contains(where: { $0 === CPNowPlayingTemplate.shared }) == true {
-                  self?.controller?.pop(to: CPNowPlayingTemplate.shared, animated: true, completion: nil)
-                } else {
-                  guard let controller = self?.controller else { done(); return }
-                  if controller.templates.count >= 5 {
-                    controller.popTemplate(animated: false) { ok, _ in
-                      if ok { controller.pushTemplate(CPNowPlayingTemplate.shared, animated: true, completion: nil) }
-                    }
-                  } else {
-                    controller.pushTemplate(CPNowPlayingTemplate.shared, animated: true, completion: nil)
-                  }
-                }
-              }
-              if success as? Bool != true, let self, let controller = self.controller {
-                let alert = CPAlertTemplate(
-                  titleVariants: [labels["unavailable"] ?? "Media unavailable"],
-                  actions: [
-                    CPAlertAction(title: labels["close"] ?? "Close", style: .cancel) { _ in
-                      controller.dismissTemplate(animated: true, completion: nil)
-                    }
-                  ])
-                controller.presentTemplate(alert, animated: true, completion: nil)
-              }
-              done()
-            }
-          } else {
-            self?.show(id: id, title: title)
-            done()
-          }
+          guard let self else { done(); return }
+          self.select(row, done: done)
         }
         return item
       }
@@ -888,6 +1204,7 @@ final class MusicPlayIntentHandler: NSObject, INPlayMediaIntentHandling {
       if let selected = intent.mediaItems?.first,
         (selected.identifier?.hasPrefix("item:") == true || selected.identifier?.hasPrefix("audiobook:") == true
           || selected.identifier?.hasPrefix("serverRadio:") == true
+          || selected.identifier?.hasPrefix("genre:") == true || selected.identifier?.hasPrefix("downloadMix:") == true || selected.identifier?.hasPrefix("similar:") == true
           || selected.identifier?.hasPrefix("favorites:") == true
           || selected.identifier?.hasPrefix("station:") == true || selected.identifier?.hasPrefix("recipe:") == true)
       {
@@ -895,16 +1212,21 @@ final class MusicPlayIntentHandler: NSObject, INPlayMediaIntentHandling {
         completion(INPlayMediaMediaItemResolutionResult.successes(with: [selected]))
         return
       }
-      guard let name = intent.mediaSearch?.mediaName, !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+      let search = intent.mediaSearch
+      let genre = search?.genreNames?.count == 1 ? search?.genreNames?.first : nil
+      let similar = search?.reference == .currentlyPlaying && search?.sortOrder == .recommended
+      guard let name = search?.mediaName ?? genre ?? (similar ? "More like this" : nil), !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
       else {
         completion([INPlayMediaMediaItemResolutionResult(mediaItemResolutionResult: .needsValue())])
         return
       }
       var args: [String: Any] = ["query": name]
       if let artist = intent.mediaSearch?.artistName { args["artist"] = artist }
+      if intent.mediaSearch?.sortOrder == .newest { args["latest"] = true }
       if let album = intent.mediaSearch?.albumName { args["album"] = album }
       switch intent.mediaSearch?.mediaType {
       case .song: args["kind"] = "track"
+      case .podcastShow: args["kind"] = "show"
       case .podcastEpisode: args["kind"] = "podcast"
       case .audioBook: args["kind"] = "audiobook"
       case .album: args["kind"] = "album"
@@ -913,6 +1235,8 @@ final class MusicPlayIntentHandler: NSObject, INPlayMediaIntentHandling {
       case .radioStation: args["kind"] = "station"
       default: break
       }
+      if genre != nil && search?.mediaName == nil { args["kind"] = "genre" }
+      if similar { args["similar"] = true }
       MusicCarBridge.shared.request("resolveVoice", args) { value in
         let items: [INMediaItem] = (value as? [[String: Any]] ?? []).compactMap { row in
           guard let id = row["id"] as? String, let title = row["title"] as? String else { return nil }

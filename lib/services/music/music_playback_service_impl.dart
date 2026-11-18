@@ -118,10 +118,15 @@ int? _musicStartIndex(List<MediaItem> tracks, MediaItem? startTrack) {
   return index < 0 ? null : index;
 }
 
-MusicQueueState _captureTransferQueueState(List<MediaItem> tracks, {MediaItem? startTrack, bool shuffle = false}) {
+MusicQueueState _captureTransferQueueState(
+  List<MediaItem> tracks, {
+  MediaItem? startTrack,
+  int? occurrence,
+  bool shuffle = false,
+}) {
   final queue = MusicQueueController(spillLargeQueues: true);
   try {
-    queue.load(tracks, startIndex: _musicStartIndex(tracks, startTrack), shuffle: shuffle);
+    queue.load(tracks, startIndex: occurrence ?? _musicStartIndex(tracks, startTrack), shuffle: shuffle);
     return queue.captureState();
   } finally {
     queue.clear();
@@ -2242,7 +2247,19 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
   // ---------------------------------------------------------------------
 
   @override
+  Future<void> playFromOccurrence({
+    required List<MediaItem> tracks,
+    required int index,
+    required MusicPlayContext playContext,
+    bool offline = false,
+  }) {
+    RangeError.checkValidIndex(index, tracks);
+    return playFromList(tracks: tracks, occurrence: index, playContext: playContext, offline: offline);
+  }
+
+  @override
   Future<void> playFromList({
+    int? occurrence,
     required List<MediaItem> tracks,
     MediaItem? startTrack,
     required MusicPlayContext playContext,
@@ -2258,7 +2275,12 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
         _errorsController.add(StateError('This playback source requires this device'));
         return Future.value();
       }
-      final queueState = _captureTransferQueueState(tracks, startTrack: startTrack, shuffle: shuffle);
+      final queueState = _captureTransferQueueState(
+        tracks,
+        startTrack: startTrack,
+        occurrence: occurrence,
+        shuffle: shuffle,
+      );
       return output
           .playSnapshot(
             MusicTransferSnapshot(
@@ -2277,6 +2299,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     beginPlayIntent();
     return _startQueue(
       tracks: tracks,
+      occurrence: occurrence,
       startTrack: startTrack,
       playContext: playContext,
       shuffle: shuffle,
@@ -2469,6 +2492,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
   }
 
   Future<void> _startQueue({
+    int? occurrence,
     required List<MediaItem> tracks,
     MediaItem? startTrack,
     required MusicPlayContext playContext,
@@ -2569,7 +2593,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     // shuffled queue randomize its head too. Collapsing that into 0 pinned
     // every shuffle launch to the list's first track (#1811) — including a
     // start track the list turns out not to contain.
-    final startIndex = _musicStartIndex(tracks, startTrack);
+    final startIndex = occurrence ?? _musicStartIndex(tracks, startTrack);
     if (restoredQueue != null) {
       if (!_queue.restoreState(restoredQueue)) return;
     } else {

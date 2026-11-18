@@ -798,6 +798,32 @@ class SourceRepository {
         AND d.key=json_array($table.source, json_extract(f.value,'\$.id'))))
   """;
 
+  Future<List<({String source, String parent, String title})>> podcastShows(
+    String profile, {
+    int offset = 0,
+    int limit = 99,
+    String? title,
+  }) async {
+    final rows = await database
+        .customSelect(
+          "SELECT e.source, COALESCE(e.parent,'') AS parent, "
+          "COALESCE(NULLIF(MAX(json_extract(e.payload,'\$.series')),''),NULLIF(json_extract(parent.payload,'\$.title'),''),'') AS show_title "
+          "FROM entries e LEFT JOIN entries parent ON parent.profile=e.profile AND parent.source=e.source AND parent.id=e.parent "
+          "WHERE e.profile=? AND json_extract(e.payload,'\$.kind')!='folder' AND (json_extract(e.payload,'\$.identifiers.podcast')='episode' OR json_extract(e.payload,'\$.identifiers.feed') IS NOT NULL) "
+          "GROUP BY e.source,e.parent "
+          "${title == null ? '' : 'HAVING show_title = ? COLLATE NOCASE '} "
+          "ORDER BY show_title COLLATE NOCASE,e.source,e.parent LIMIT ? OFFSET ?",
+          variables: [Variable(profile), if (title != null) Variable(title), Variable(limit), Variable(offset)],
+        )
+        .get();
+    return rows
+        .map(
+          (r) =>
+              (source: r.read<String>('source'), parent: r.read<String>('parent'), title: r.read<String>('show_title')),
+        )
+        .toList();
+  }
+
   /// Latest indexed episodes across RSS and Audiobookshelf, scoped before
   /// decoding so opening Podcasts never loads the entire media catalogue.
   Future<List<SourceEntry>> podcastEntries(
@@ -809,13 +835,21 @@ class SourceRepository {
     String query = '',
     bool oldestFirst = false,
     bool downloadedOnly = false,
+    bool unplayedOnly = false,
+    bool inProgressOnly = false,
   }) async {
+    const recent =
+        "SELECT p.payload FROM progress p WHERE p.profile=e.profile AND p.entry=e.entry_key AND json_extract(p.payload,'\$.mode')='listening' ORDER BY CAST(json_extract(p.payload,'\$.updatedAt') AS INTEGER) DESC,p.rowid DESC LIMIT 1";
+    final state = unplayedOnly || inProgressOnly
+        ? "AND COALESCE(json_extract(($recent),'\$.finished'),0)=0 AND COALESCE(json_extract(($recent),'\$.positionMs'),0) ${inProgressOnly ? '>' : '='} 0 "
+        : '';
     final rows = await database
         .customSelect(
           "SELECT e.payload FROM entries e WHERE e.profile=? "
           "AND json_extract(e.payload,'\$.kind') != 'folder' "
           "AND (json_extract(e.payload,'\$.identifiers.podcast')='episode' "
           "OR json_extract(e.payload,'\$.identifiers.feed') IS NOT NULL) "
+          '$state'
           "${downloadedOnly ? 'AND ${_hasDownloadedFile('e')} ' : ''}"
           '${source == null ? '' : 'AND e.source=? '}'
           '${parent == null ? '' : 'AND e.parent=? '}'

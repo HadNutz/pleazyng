@@ -93,14 +93,35 @@ channel and existing MPNowPlaying/remote-command implementation. Info.plist
 registers the CarPlay scene. A locked/uninitialized profile exposes an unlock
 message, not a previous profile's catalog.
 
-The App Store archive reads the distribution profile's CarPlay audio and Siri
-grants independently. It merges granted capabilities with the Runner release
-entitlements, checks the exported executable with codesign and records
-`signed_car_capabilities` in the archive report. Apple's CarPlay approval
-and a regenerated distribution profile are necessary for signed CarPlay use.
+The iOS archive merges the audio, Siri and video capabilities granted by the
+Runner provisioning profile. The export checks the executable, the embedded
+profile and the video feature flag. For a release advertised with all three,
+set `PLEAZYNG_REQUIRED_CAR_CAPABILITIES=audio,siri,video`; a missing grant
+then stops the archive. The archive report records required, signed and
+embedded capabilities. Apple approval and a matching profile are needed on
+the publishing account.
 
-CarPlay uses native tabs, host list limits, loading and retry states. Now
-Playing opens Up Next or Chapters and exposes actions for the current player.
+Home includes pinned playlists and stations, the current session and a
+continue-listening shortcut with chapter and remaining time when known. A
+connection to an already-playing session opens Now Playing. On newer systems
+the search button opens Apple's native search template. Siri remains available
+on earlier systems. Choosing a track inside an album or playlist keeps the
+parent queue and its exact occurrence. Downloaded artists open into albums
+and tracks; known album totals appear alongside the downloaded count.
+
+The spoken Up Next list belongs to the active profile. Episodes and books can
+play now, next or later. Natural completion advances after the last file;
+chapter navigation and sleep boundaries stay independent. Shows group by feed
+or indexed show, with Unplayed and In Progress filters. Favorite controls show
+the current choice. Servers with numeric ratings get stars, Clear and Undo.
+
+With music playing, Guest Jukebox under Home lets the owner choose a visible
+music library and a local network. A passenger scans the invitation on the
+head unit and uses the existing jukebox. Closing the room retires the link.
+On iOS 27, a video-authorized build offers Continue Watching on a compatible
+head unit. The native AirPlay player resumes the item and reports progress
+to its source server. CarPlay controls when the display can show video and
+may continue audio when the vehicle moves.
 
 `AppDelegate.ensureMusicEngine` now runs one explicit headless-capable Flutter
 engine and registers the application's normal plugins. `MusicPhoneSceneDelegate`
@@ -113,8 +134,7 @@ Siri `INPlayMediaIntent` handling resolves names through the active profile's
 catalog, returns ambiguous choices for disambiguation, and sends shuffle/repeat
 and next/later commands to the shared player. An unavailable/locked profile
 requires app launch; it never falls through to an old account. Native fallback
-messages still need localized resources. Native keyboard search is not emulated
-using navigation-only CarPlay templates: supported audio voice entry uses Siri.
+messages still need localized resources. On iOS 27, audio apps can also use the system search template. Keyboard availability follows the vehicle’s restrictions.
 See Apple's [CarPlay guide](https://developer.apple.com/download/files/CarPlay-Developer-Guide.pdf)
 and [music integration documentation](https://developer.apple.com/documentation/carplay/integrating-carplay-with-your-music-app).
 

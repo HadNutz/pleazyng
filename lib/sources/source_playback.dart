@@ -31,6 +31,7 @@ import '../utils/subtitle_forced_semantics.dart';
 import '../utils/notification_permission.dart';
 import '../screens/video_player/wakelock_controller.dart';
 import 'content_access.dart';
+import 'offline_readiness.dart';
 import 'source_controller.dart';
 import 'source_models.dart';
 
@@ -850,6 +851,100 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
     return next;
   }
 
+  static const _spokenQueueKey = 'spokenUpNext.v1';
+
+  bool _ownsSpoken(SourceEntry item) =>
+      !sources.blocked &&
+      sources.sources.any((s) => s.id == item.sourceId && s.profileId == sources.profileId) &&
+      (item.kind == SourceItemKind.audiobook ||
+          item.kind != SourceItemKind.video &&
+              (item.identifiers['podcast'] == 'episode' || item.identifiers.containsKey('feed')));
+
+  Future<List<Map<String, dynamic>>> _spokenRows(String profile) async {
+    final saved = await sources.repository.preference(profile, _spokenQueueKey);
+    return (saved['rows'] as List? ?? [])
+        .whereType<Map<String, dynamic>>()
+        .where((r) => r['id'] is String && r['key'] is String)
+        .toList();
+  }
+
+  Future<List<({String id, SourceEntry item})>> spokenQueue() async {
+    final profile = sources.profileId, epoch = sources.generation;
+    if (profile == null || sources.blocked) return [];
+    final rows = await _spokenRows(profile);
+    final entries = {
+      for (final e in await sources.repository.entriesByKeys(profile, rows.map((r) => r['key'] as String))) e.key: e,
+    };
+    if (!sources.current(epoch)) return [];
+    return [
+      for (final row in rows)
+        if (entries[row['key']] case final entry?)
+          if (_ownsSpoken(entry)) (id: row['id'] as String, item: entry),
+    ];
+  }
+
+  Future<void> enqueueSpoken(SourceEntry item, {required bool next, required bool offline}) {
+    final epoch = sources.generation, profile = sources.profileId;
+    return _serialize(() async {
+      if (profile == null || !sources.current(epoch) || !_ownsSpoken(item)) throw StateError('Spoken library changed');
+      final rows = await _spokenRows(profile);
+      if (!sources.current(epoch) || rows.length >= 500) throw StateError('Spoken queue unavailable');
+      rows.insert(next ? 0 : rows.length, {'id': const Uuid().v4(), 'key': item.key, 'offline': offline});
+      await sources.repository.savePreference(profile, _spokenQueueKey, {'rows': rows});
+      _notify();
+    });
+  }
+
+  Future<bool> removeQueuedSpoken(String id) async {
+    final profile = sources.profileId, epoch = sources.generation;
+    var removed = false;
+    await _serialize(() async {
+      if (profile == null || !sources.current(epoch)) return;
+      final rows = await _spokenRows(profile);
+      final index = rows.indexWhere((row) => row['id'] == id);
+      if (index < 0 || !sources.current(epoch)) return;
+      rows.removeAt(index);
+      await sources.repository.savePreference(profile, _spokenQueueKey, {'rows': rows});
+      removed = true;
+      _notify();
+    });
+    return removed;
+  }
+
+  Future<bool> playQueuedSpoken(String id) async {
+    final epoch = sources.generation;
+    var started = false;
+    await _serialize(() async {
+      if (sources.current(epoch)) started = await _advanceSpoken(id);
+    });
+    return started;
+  }
+
+  Future<bool> _advanceSpoken([String? id]) async {
+    final profile = sources.profileId, epoch = sources.generation;
+    if (profile == null || !sources.current(epoch)) return false;
+    final rows = await _spokenRows(profile);
+    for (final row in rows.where((r) => id == null || r['id'] == id).toList()) {
+      final item = await sources.repository.entryByKey(profile, row['key'] as String);
+      if (!sources.current(epoch)) return false;
+      if (item == null || !_ownsSpoken(item)) continue;
+      final verified = await sources.downloads.verifiedFiles(profile, [item]);
+      if (!sources.current(epoch)) return false;
+      final local = PublicationOfflineReadiness.evaluate(item, verified).canListen;
+      if (!local && (row['offline'] == true || item.unavailable)) continue;
+      final fresh = local ? item : await sources.hydrate(item);
+      if (!sources.current(epoch) || fresh.key != item.key || !_ownsSpoken(fresh)) return false;
+      if (fresh.audio.isEmpty) continue;
+      await _start(fresh, fresh.audio, isStartCurrent: () => sources.current(epoch) && _ownsSpoken(fresh));
+      if (!sources.current(epoch) || !active || entry?.key != fresh.key) return false;
+      rows.remove(row);
+      await sources.repository.savePreference(profile, _spokenQueueKey, {'rows': rows});
+      _notify();
+      return true;
+    }
+    return false;
+  }
+
   Future<void> start(
     SourceEntry item,
     List<PublicationFile> selected, {
@@ -1287,6 +1382,8 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
                 await _persist(finished: true);
                 await native.pause();
                 _notify();
+                if (current() && _fileEpoch == epoch && !video && entry != null && _ownsSpoken(entry!))
+                  await _advanceSpoken();
               }
             }),
           );

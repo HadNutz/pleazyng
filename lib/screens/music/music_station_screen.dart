@@ -45,6 +45,7 @@ class _MusicStationScreenState extends State<MusicStationScreen> {
   late final ActiveProfileProvider _profile;
   late final int _profileGeneration;
   int _refreshHours = 0;
+  bool _pinned = false;
   bool get _current =>
       mounted &&
       _experience.store.active &&
@@ -82,6 +83,11 @@ class _MusicStationScreenState extends State<MusicStationScreen> {
     _descending = rule?.descending ?? true;
     _continuous = rule?.continuous ?? false;
     _albums = rule?.albums ?? false;
+    if (rule != null) {
+      _experience.store.document('carStationPin', rule.id).then((pin) {
+        if (_current && pin != null) setState(() => _pinned = true);
+      });
+    }
   }
 
   @override
@@ -284,7 +290,19 @@ class _MusicStationScreenState extends State<MusicStationScreen> {
   });
   Future<void> _save() => _run((_) async {
     final station = _station(), downloads = context.read<DownloadProvider>();
-    await _experience.store.saveDocument('station', station.id, station.toJson());
+    final client = context.tryGetMediaClientForServer(ServerId(station.serverId));
+    await _experience.store.database.transaction(() async {
+      await _experience.store.saveDocument('station', station.id, station.toJson());
+      if (!_pinned) {
+        await _experience.store.deleteDocument('carStationPin', station.id);
+      } else if (client != null) {
+        await _experience.store.saveDocument('carStationPin', station.id, {
+          'id': station.id,
+          'account': musicAccountScope(client),
+        });
+      }
+    });
+    if (_current) _experience.pins.refresh();
     if (!_current) return;
     // Reuse Downloads' network scheduling, profile ownership and cleanup links.
     // A station refresh tops up downloads; it never silently deletes copies.
@@ -399,6 +417,16 @@ class _MusicStationScreenState extends State<MusicStationScreen> {
                   ActionChip(label: Text(_presetLabel(preset)), onPressed: _busy ? null : () => _applyPreset(preset)),
               ],
             ),
+          SwitchListTile.adaptive(
+            title: Text(t.musicTools.pinToHome),
+            value: _pinned,
+            onChanged:
+                _busy ||
+                    _library?.serverId == null ||
+                    context.tryGetMediaClientForServer(ServerId(_library!.serverId!)) == null
+                ? null
+                : (value) => setState(() => _pinned = value),
+          ),
           TextField(
             controller: _title,
             onChanged: (_) => setState(() => _preview = []),

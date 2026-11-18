@@ -36,6 +36,10 @@ PROFILE_KEYS = {
              ('TopShelfExtension', BUNDLE + '.TopShelfExtension', 'TVOS_TOPSHELF_PROVISIONING_PROFILE_BASE64')],
 }
 CAR_CAPABILITIES = ('com.apple.developer.carplay-audio', 'com.apple.developer.siri')
+CAR_VIDEO_CAPABILITY = 'com.apple.developer.carplay-video'
+ALL_CAR_CAPABILITIES = (*CAR_CAPABILITIES, CAR_VIDEO_CAPABILITY)
+CAR_RELEASE_CAPABILITIES = dict(zip(('audio', 'siri', 'video'), ALL_CAR_CAPABILITIES))
+
 MUSIC_NFC_ENTITLEMENT = 'com.apple.developer.nfc.readersession.formats'
 MUSIC_NFC_FILE = 'Runner/MusicNFC.entitlements'
 RELEASE_ENTITLEMENTS_FILE = 'Runner/Release.entitlements'
@@ -104,7 +108,7 @@ def validate_profile(profile: dict, *, bundle: str, platform: str, team: str, ce
 def authorized_car_capabilities(profile: dict, platform: str, target: str) -> list[str]:
     if platform != 'ios' or target != 'Runner':
         return []
-    return [key for key in CAR_CAPABILITIES if profile['Entitlements'].get(key) is True]
+    return [key for key in ALL_CAR_CAPABILITIES if profile['Entitlements'].get(key) is True]
 
 
 def configure_project(project: dict, bindings: dict[str, dict], team: str, fingerprint: str, keychain: Path,
@@ -132,7 +136,8 @@ def configure_project(project: dict, bindings: dict[str, dict], team: str, finge
                 raise ValueError('Missing iOS host entitlement output')
             source = settings.get('CODE_SIGN_ENTITLEMENTS')
             entitlements = plistlib.loads((Path('ios') / source).read_bytes()) if source else {}
-            entitlements.update({key: True for key in binding['car_capabilities'] if key in CAR_CAPABILITIES})
+            settings['PLEAZYNG_CAR_VIDEO_ENABLED'] = 'YES' if CAR_VIDEO_CAPABILITY in binding['car_capabilities'] else 'NO'
+            entitlements.update({key: True for key in binding['car_capabilities'] if key in ALL_CAR_CAPABILITIES})
             car_entitlements.write_bytes(plistlib.dumps(entitlements))
             settings['CODE_SIGN_ENTITLEMENTS'] = str(car_entitlements.absolute())
         if name == 'Runner' and widget_host_entitlements is not None:
@@ -194,6 +199,15 @@ def archive(platform: str, archive_path: Path, export_path: Path, derived_data: 
                 bindings[target] = {'bundle': bundle, 'uuid': uuid,
                                     'music_nfc': target == 'Runner' and music_nfc_allowed(profile, platform),
                                     'car_capabilities': authorized_car_capabilities(profile, platform, target)}
+                if platform == 'ios' and target == 'Runner':
+                    names = {n.strip().lower() for n in os.environ.get('PLEAZYNG_REQUIRED_CAR_CAPABILITIES', '').split(',') if n.strip()}
+                    if names - CAR_RELEASE_CAPABILITIES.keys():
+                        raise ValueError('Unknown required CarPlay capability: ' + ', '.join(sorted(names - CAR_RELEASE_CAPABILITIES.keys())))
+                    required = {CAR_RELEASE_CAPABILITIES[n] for n in names}
+                    missing = required - set(bindings[target]['car_capabilities'])
+                    if missing:
+                        raise ValueError('Host provisioning profile lacks required entitlements: ' + ', '.join(sorted(missing)))
+                    report['required_car_capabilities'] = sorted(required)
                 installed = Path.home() / 'Library/MobileDevice/Provisioning Profiles' / f'{uuid}.mobileprovision'
                 installed.parent.mkdir(parents=True, exist_ok=True)
                 if installed.exists():
@@ -253,9 +267,19 @@ def archive(platform: str, archive_path: Path, export_path: Path, derived_data: 
                     with package.open(plist_name.rsplit('/', 1)[0] + '/' + executable) as src, binary.open('wb') as dst:
                         shutil.copyfileobj(src, dst)
                     signed = plistlib.loads(run(['codesign', '-d', '--entitlements', '-', str(binary)]))
-                    actual = [key for key in CAR_CAPABILITIES if signed.get(key) is True]
+                    actual = [key for key in ALL_CAR_CAPABILITIES if signed.get(key) is True]
                     if actual != bindings['Runner']['car_capabilities']:
                         raise ValueError('Exported car capabilities differ from the authorized host configuration')
+                    profile_path = stage / 'exported-car.mobileprovision'
+                    profile_path.write_bytes(package.read(plist_name.rsplit('/', 1)[0] + '/embedded.mobileprovision'))
+                    embedded = plistlib.loads(run(['security', 'cms', '-D', '-i', str(profile_path)]))
+                    grants = authorized_car_capabilities(embedded, 'ios', 'Runner')
+                    if set(actual) - set(grants):
+                        raise ValueError('Exported profile does not grant every signed car entitlement')
+                    flag = plistlib.loads(package.read(plist_name)).get('PleazyngCarVideoEnabled') == 'YES'
+                    if flag != (CAR_VIDEO_CAPABILITY in actual):
+                        raise ValueError('Exported CarPlay video flag differs from signed capabilities')
+                    report['embedded_car_capabilities'] = grants
                     report['signed_car_capabilities'] = actual
             if widget_enabled:
                 verify_music_widget(ipas[0])

@@ -169,6 +169,14 @@ abstract class MusicPlaybackService extends ChangeNotifier {
   /// identical adjacent entries. History must never key a play by track ID.
   int get playbackOccurrenceRevision => queueSessionRevision * 1000000 + currentIndex;
 
+  /// Start a collection at a specific occurrence, including adjacent duplicates.
+  Future<void> playFromOccurrence({
+    required List<MediaItem> tracks,
+    required int index,
+    required MusicPlayContext playContext,
+    bool offline = false,
+  }) => playFromList(tracks: tracks, startTrack: tracks[index], playContext: playContext, offline: offline);
+
   /// Start a new queue from [tracks], optionally at [startTrack] (defaults
   /// to the first track). [shuffle] anchors [startTrack] first and shuffles
   /// the rest after it; with no [startTrack] the whole list shuffles, so the

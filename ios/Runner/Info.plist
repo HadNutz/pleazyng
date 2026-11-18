@@ -48,6 +48,8 @@
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>PleazyngCarVideoEnabled</key>
+	<string>$(PLEAZYNG_CAR_VIDEO_ENABLED)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Pleazyng</string>
 	<key>CFBundleExecutable</key>

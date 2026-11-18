@@ -27,47 +27,95 @@ class MusicRatingJournal {
 
   Future<bool> rate(MediaItem item, double value) => _queue(item, 'rating', value);
   Future<bool> favorite(MediaItem item, bool value) => _queue(item, 'favorite', value);
-  Future<bool> _queue(MediaItem item, String kind, Object value) => _operations.run(() async {
-    if (_disposed || !store.active) throw StateError('Music profile is no longer active');
-    final client = clientFor(item);
-    final offline = client == null ? await offlineAccountFor?.call(item) : null;
-    final capabilities = client?.capabilities ?? offline?.capabilities;
-    if (capabilities == null) throw StateError('Music account unavailable');
-    if (kind == 'rating' &&
-        (!capabilities.numericUserRating ||
-            value is! double ||
-            !value.isFinite ||
-            value != -1 && (value < 0 || value > 10))) {
-      throw ArgumentError('Unsupported numeric rating');
-    }
-    if (kind == 'favorite' && !capabilities.userFavorites) throw UnsupportedError('No favorite flag');
-    final scope = client == null ? offline!.scope : musicAccountScope(client);
+  Future<({String kind, Object? value, bool canUndo})?> carState(MediaItem item) async {
+    final client = clientFor(item), offline = clientFor(item) == null ? await offlineAccountFor?.call(item) : null;
+    final caps = client?.capabilities ?? offline?.capabilities;
+    final scope = client == null ? offline?.scope : musicAccountScope(client);
+    if (scope == null || caps == null || !store.active || _disposed) return null;
+    final kind = caps.userFavorites
+        ? 'favorite'
+        : caps.numericUserRating
+        ? 'rating'
+        : null;
+    if (kind == null) return null;
     final id = '$kind:${sha256.convert(utf8.encode(scope))}:${item.globalKey}';
-    final previous = await store.document('ratingPending', id);
-    final stillCurrent = client == null
-        ? (await offlineAccountFor?.call(item))?.scope == scope
-        : identical(clientFor(item), client) && musicAccountScope(client) == scope;
-    if (_disposed || !store.active || !stillCurrent) {
-      throw StateError('Music account changed');
-    }
-    final entry = {
-      'version': 3,
-      'id': id,
-      'revision': const Uuid().v4(),
-      'scope': scope,
-      'kind': kind,
-      'value': value,
-      'item': musicIdentity(item).toJson(),
-      'base': previous != null && previous['version'] == 3
-          ? previous['base']
-          : (kind == 'rating' ? item.userRating : item.isFavorite),
-    };
-    await store.saveDocument('ratingPending', entry['id'] as String, entry);
-    await store.deleteDocument('ratingConflict', id);
-    // A cold-start edit has not observed the current remote value. Always
-    // compare its original base on reconnection, even if discovery just ended.
-    return client == null ? false : _send(entry);
-  });
+    final saved = await store.document('ratingLast', id), pending = await store.document('ratingPending', id);
+    final observed = kind == 'rating' ? item.userRating : item.isFavorite;
+    final usable = saved != null && (saved['base'] == observed || saved['value'] == observed);
+    if (_disposed ||
+        !store.active ||
+        (client == null
+            ? (await offlineAccountFor?.call(item))?.scope != scope
+            : !identical(clientFor(item), client) || musicAccountScope(client) != scope))
+      return null;
+    return (
+      kind: kind,
+      value: pending?['value'] ?? (usable ? saved['value'] : observed),
+      canUndo: usable && saved['canUndo'] == true,
+    );
+  }
+
+  Future<bool> carEdit(MediaItem item, String kind, {double? rating, bool undo = false}) =>
+      _queue(item, kind, rating, car: true, undo: undo);
+
+  Future<bool> _queue(MediaItem item, String kind, Object? requested, {bool car = false, bool undo = false}) =>
+      _operations.run(() async {
+        if (_disposed || !store.active) throw StateError('Music profile is no longer active');
+        final client = clientFor(item);
+        final offline = client == null ? await offlineAccountFor?.call(item) : null;
+        final capabilities = client?.capabilities ?? offline?.capabilities;
+        if (capabilities == null) throw StateError('Music account unavailable');
+        final scope = client == null ? offline!.scope : musicAccountScope(client);
+        final id = '$kind:${sha256.convert(utf8.encode(scope))}:${item.globalKey}';
+        final previous = await store.document('ratingPending', id);
+        final saved = await store.document('ratingLast', id);
+        final observed = kind == 'rating' ? item.userRating : item.isFavorite;
+        final usable = saved != null && (saved['base'] == observed || saved['value'] == observed);
+        final current = previous?['value'] ?? (usable ? saved['value'] : observed);
+        final value = undo
+            ? (usable && saved['canUndo'] == true ? saved['before'] ?? (kind == 'rating' ? -1.0 : false) : null)
+            : car && kind == 'favorite'
+            ? current != true
+            : requested;
+        if (kind == 'rating' &&
+            (!capabilities.numericUserRating ||
+                value is! double ||
+                !value.isFinite ||
+                value != -1 && (value < 0 || value > 10)))
+          throw ArgumentError('Invalid rating');
+        if (kind == 'favorite' && (!capabilities.userFavorites || value is! bool))
+          throw ArgumentError('Invalid favorite');
+        final stillCurrent = client == null
+            ? (await offlineAccountFor?.call(item))?.scope == scope
+            : identical(clientFor(item), client) && musicAccountScope(client) == scope;
+        if (_disposed || !store.active || !stillCurrent) {
+          throw StateError('Music account changed');
+        }
+        final entry = {
+          'version': 3,
+          'id': id,
+          'revision': const Uuid().v4(),
+          'scope': scope,
+          'kind': kind,
+          'value': value,
+          'item': musicIdentity(item).toJson(),
+          'base': previous != null && previous['version'] == 3
+              ? previous['base']
+              : (kind == 'rating' ? item.userRating : item.isFavorite),
+        };
+        await store.database.transaction(() async {
+          await store.saveDocument('ratingPending', id, entry);
+          await store.saveDocument('ratingLast', id, {
+            'value': value,
+            'before': current,
+            'base': observed,
+            'canUndo': !undo,
+          });
+          await store.deleteDocument('ratingConflict', id);
+        });
+        final sent = client != null && await _send(entry);
+        return car || sent;
+      });
 
   Future<bool> _send(Map<String, dynamic> entry, {bool verifyRemote = false}) async {
     // Legacy server-only records cannot be assigned to a Plex account safely.

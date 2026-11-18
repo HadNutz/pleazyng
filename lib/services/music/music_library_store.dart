@@ -168,6 +168,77 @@ class MusicLibraryStore {
     );
   }
 
+  /// Replace the manifest and its ordered pages in one transaction. A reader
+  /// sees either revision and duplicates occupy distinct slots.
+  Future<void> saveOfflinePlaylist(MediaItem playlist, List<MediaItem> rows, String account) =>
+      database.transaction(() async {
+        if (!active) return;
+        final key = playlist.globalKey;
+        final old = await document('offlinePlaylist', key);
+        const size = 256;
+        final pages = (rows.length + size - 1) ~/ size;
+        for (var n = 0; n < pages; n++) {
+          final end = ((n + 1) * size).clamp(0, rows.length);
+          await saveDocument('offlinePlaylistPage', jsonEncode([key, n]), {
+            'ids': [for (var i = n * size; i < end; i++) rows[i].id],
+          });
+        }
+        final previous = old?['pages'];
+        if (previous is int) {
+          for (var n = pages; n < previous; n++) {
+            await deleteDocument('offlinePlaylistPage', jsonEncode([key, n]));
+          }
+        }
+        await saveDocument('offlinePlaylist', key, {
+          'version': 2,
+          'accountScope': account,
+          'playlist': musicIdentity(playlist).toJson(),
+          'pages': pages,
+          'count': rows.length,
+        });
+      });
+
+  Future<List<MediaItem>> ownedPlaylistTracks(
+    MediaItem playlist,
+    List<MediaItem> downloads,
+    String? account, {
+    bool firstOnly = false,
+  }) => database.transaction(() async {
+    final doc = await document('offlinePlaylist', playlist.globalKey);
+    if (doc == null || account != null && doc['accountScope'] != account) return <MediaItem>[];
+    final owned = {
+      for (final track in downloads)
+        if (track.backend == playlist.backend && track.serverId == playlist.serverId && track.kind == MediaKind.track)
+          track.id: track,
+    };
+    final result = <MediaItem>[];
+    void append(Object? id) {
+      final item = owned[id];
+      if (item != null) result.add(item);
+    }
+
+    if (doc['version'] == 1 && doc['tracks'] is List) {
+      for (final row in doc['tracks'] as List) {
+        if (row is Map && row['serverId'] == playlist.serverId) append(row['id']);
+        if (firstOnly && result.isNotEmpty) break;
+      }
+    } else if (doc['version'] == 2 &&
+        doc['pages'] is int &&
+        doc['count'] is int &&
+        doc['pages'] == ((doc['count'] as int) + 255) ~/ 256) {
+      for (var i = 0; i < (doc['pages'] as int); i++) {
+        final page = await document('offlinePlaylistPage', jsonEncode([playlist.globalKey, i]));
+        final ids = page?['ids'];
+        if (ids is! List || ids.length != ((doc['count'] as int) - i * 256).clamp(0, 256)) return <MediaItem>[];
+        for (final id in ids) {
+          append(id);
+          if (firstOnly && result.isNotEmpty) return result;
+        }
+      }
+    }
+    return result;
+  });
+
   Future<void> saveDocument(String kind, String id, Map<String, dynamic> value) {
     if (!active) return Future.value();
     final encoded = jsonEncode(value);

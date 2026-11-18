@@ -1791,19 +1791,10 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     if (playlist?.kind == MediaKind.playlist &&
         playlist!.serverId == client.serverId.value &&
         profile != null &&
-        candidates.length <= 5000 &&
-        candidates.isNotEmpty &&
         candidates.every(
           (item) => item.kind == MediaKind.track && (item.serverId == null || item.serverId == client.serverId.value),
         )) {
-      await MusicLibraryStore(_database, profile).saveDocument('offlinePlaylist', playlist.globalKey, {
-        'version': 1,
-        'accountScope': account,
-        'playlist': musicIdentity(playlist).toJson(),
-        'tracks': [
-          for (final track in candidates) {'serverId': client.serverId.value, 'id': track.id},
-        ],
-      });
+      await MusicLibraryStore(_database, profile).saveOfflinePlaylist(playlist, candidates, account);
     }
     final relatedContext = _RelatedMetadataDownloadContext();
     var count = 0;
