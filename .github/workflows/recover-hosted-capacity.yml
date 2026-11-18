@@ -1,0 +1,31 @@
+name: Recover hosted runner capacity
+on:
+  workflow_run:
+    workflows: [CI - Sanity Checks, Pleazyng Release]
+    types: [completed]
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  recover:
+    if: >-
+      github.event.workflow_run.event == 'workflow_dispatch' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      actions: write
+      checks: read
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Retry confirmed hosted allocation failures
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
+        run: python3 scripts/recover_hosted_capacity.py "$RUN_ID" "$ATTEMPT" --retry
