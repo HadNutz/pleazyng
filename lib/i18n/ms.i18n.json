@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "Rakam 30 minit lagi",
+    "recordsUntil": "Merakam sehingga ${time}",
+    "extendFailed": "Rakaman tidak dapat dilanjutkan",
+    "originalDialogue": "Utamakan dialog asal",
+    "soloPage": "Paparkan halaman ini secara berasingan",
+    "pairPage": "Pasangkan semula halaman ini",
+    "listenPhone": "Dengar pada telefon ini",
+    "audioUnavailable": "Fail atau trek audio tidak tersedia pada telefon ini."
+  },
   "livingRoom": {
     "fitScreen": "Padankan dengan skrin saya",
     "fitHelp": "Pilih tepi dan gerakkannya dengan kekunci anak panah sehingga penandanya kelihatan. Ulang untuk setiap tepi.",

@@ -241,33 +241,37 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
               ],
             ),
 
-            if (!PlatformDetector.isTizenBuild())
-              SettingsGroup(
-                title: t.settings.audio,
-                children: [
-                  if (PlatformDetector.supportsAudioPassthrough()) ...[
-                    _audioPassthroughTile(),
-                    SettingsBuilder(
-                      prefs: const [SettingsService.audioNormalization],
-                      builder: (_) => SettingSwitchTile(
-                        pref: SettingsService.receiverAc3,
-                        icon: Symbols.surround_sound_rounded,
-                        title: t.livingRoom.receiver,
-                        subtitle: t.livingRoom.receiverHelp,
-                        enabled: !SettingsService.instance.read(SettingsService.audioNormalization),
-                      ),
+            SettingsGroup(
+              title: t.settings.audio,
+              children: [
+                SettingSwitchTile(
+                  pref: SettingsService.preferOriginalDialogue,
+                  icon: Symbols.language_rounded,
+                  title: t.viewing.originalDialogue,
+                ),
+                if (PlatformDetector.supportsAudioPassthrough()) ...[
+                  _audioPassthroughTile(),
+                  SettingsBuilder(
+                    prefs: const [SettingsService.audioNormalization],
+                    builder: (_) => SettingSwitchTile(
+                      pref: SettingsService.receiverAc3,
+                      icon: Symbols.surround_sound_rounded,
+                      title: t.livingRoom.receiver,
+                      subtitle: t.livingRoom.receiverHelp,
+                      enabled: !SettingsService.instance.read(SettingsService.audioNormalization),
                     ),
-                  ],
-                  // The native TV players do not provide a channel-mixing hook.
-                  if (!PlatformDetector.usesNativeTvMedia()) ...[
-                    _audioChannelLimitTile(exoActive: exoActive),
-                    // Only a stereo fold mixes the center away; any fold can clip.
-                    if (channelLimit == AudioChannelLimit.stereo) _downmixCenterBoostTile(),
-                    if (channelLimit != AudioChannelLimit.original) _downmixNormalizeTile(),
-                  ],
-                  _maxVolumeTile(),
+                  ),
                 ],
-              ),
+                // The native TV players do not provide a channel-mixing hook.
+                if (!PlatformDetector.usesNativeTvMedia()) ...[
+                  _audioChannelLimitTile(exoActive: exoActive),
+                  // Only a stereo fold mixes the center away; any fold can clip.
+                  if (channelLimit == AudioChannelLimit.stereo) _downmixCenterBoostTile(),
+                  if (channelLimit != AudioChannelLimit.original) _downmixNormalizeTile(),
+                ],
+                if (!PlatformDetector.isTizenBuild()) _maxVolumeTile(),
+              ],
+            ),
 
             SettingsGroup(
               title: t.settings.quality,

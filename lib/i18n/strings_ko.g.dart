@@ -40,6 +40,7 @@ class TranslationsKo extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsKo $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsKo(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$ko viewing = _Translations$viewing$ko._(_root);
 	@override late final _Translations$livingRoom$ko livingRoom = _Translations$livingRoom$ko._(_root);
 	@override late final _Translations$app$ko app = _Translations$app$ko._(_root);
 	@override late final _Translations$appIcon$ko appIcon = _Translations$appIcon$ko._(_root);
@@ -121,6 +122,23 @@ class TranslationsKo extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ko musicExperience = _Translations$musicExperience$ko._(_root);
 	@override late final _Translations$musicTools$ko musicTools = _Translations$musicTools$ko._(_root);
 	@override late final _Translations$musicDevices$ko musicDevices = _Translations$musicDevices$ko._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$ko extends Translations$viewing$en {
+	_Translations$viewing$ko._(TranslationsKo root) : this._root = root, super.internal(root);
+
+	final TranslationsKo _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => '30분 더 녹화';
+	@override String recordsUntil({required Object time}) => '${time} 까지 녹화';
+	@override String get extendFailed => '녹화를 연장할 수 없습니다';
+	@override String get originalDialogue => '원어 음성 우선';
+	@override String get soloPage => '이 페이지만 따로 표시';
+	@override String get pairPage => '이 페이지를 다시 묶기';
+	@override String get listenPhone => '이 휴대전화로 듣기';
+	@override String get audioUnavailable => '이 휴대전화에서 현재 파일 또는 오디오 트랙을 사용할 수 없습니다.';
 }
 
 // Path: livingRoom
@@ -5581,6 +5599,14 @@ class _Translations$services$trackerDescriptions$ko extends Translations$service
 extension on TranslationsKo {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => '30분 더 녹화',
+			'viewing.recordsUntil' => ({required Object time}) => '${time} 까지 녹화',
+			'viewing.extendFailed' => '녹화를 연장할 수 없습니다',
+			'viewing.originalDialogue' => '원어 음성 우선',
+			'viewing.soloPage' => '이 페이지만 따로 표시',
+			'viewing.pairPage' => '이 페이지를 다시 묶기',
+			'viewing.listenPhone' => '이 휴대전화로 듣기',
+			'viewing.audioUnavailable' => '이 휴대전화에서 현재 파일 또는 오디오 트랙을 사용할 수 없습니다.',
 			'livingRoom.fitScreen' => '내 화면에 맞추기',
 			'livingRoom.fitHelp' => '가장자리를 선택한 뒤 표시가 보일 때까지 방향키로 옮기세요. 나머지 가장자리도 같은 방법으로 조정하세요.',
 			'livingRoom.left' => '왼쪽',
@@ -6085,6 +6111,8 @@ extension on TranslationsKo {
 			'settings.audioChannelLimitOriginal' => '원본',
 			'settings.audioChannelLimitOriginalDescription' => '트랙의 모든 채널을 재생합니다',
 			'settings.audioChannelLimitSurround51' => '최대 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => '5.1 PCM만 지원하는 TV와 리시버를 위해 7.1을 5.1로 다운믹스합니다. 패스스루에는 영향을 주지 않습니다.',
 			'settings.audioChannelLimitStereo' => '스테레오',
 			'settings.audioChannelLimitStereoDescription' => '스테레오 스피커나 헤드폰에 맞게 2채널로 다운믹스합니다. 패스스루가 꺼집니다.',
@@ -6093,8 +6121,6 @@ extension on TranslationsKo {
 			'settings.downmixCenterBoostLabel' => '부스트 (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => '다운믹스 시 음량 정규화',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => '클리핑을 방지하기 위해 믹스 음량을 낮춥니다. 원래 음량을 유지하려면 끄세요(큰 소리 장면에서 왜곡될 수 있음).',
 			'settings.dvConversionMode' => 'Dolby Vision 변환',
 			'settings.dvConversionModeDescription' => 'Dolby Vision Profile 7 파일을 처리하는 방식을 선택합니다.',
@@ -6599,6 +6625,8 @@ extension on TranslationsKo {
 			'videoControls.playNext' => '다음 재생',
 			'videoControls.playButton' => '재생',
 			'videoControls.pauseButton' => '일시정지',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => '일시정지됨',
 			'videoControls.playbackResumed' => '재생 중',
 			'videoControls.loadingVideo' => '동영상 로딩 중...',
@@ -6607,8 +6635,6 @@ extension on TranslationsKo {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => '${seconds}초 뒤로 이동',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => '${seconds}초 앞으로 이동',
 			'videoControls.previousButton' => '이전 에피소드',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => '다음 에피소드',
 			'videoControls.previousChapterButton' => '이전 챕터',
 			'videoControls.nextChapterButton' => '다음 챕터',
@@ -7113,6 +7139,8 @@ extension on TranslationsKo {
 			'libraries.analyze' => '분석',
 			'libraries.analyzeLibrary' => '미디어 라이브러리 분석',
 			'libraries.refreshMetadata' => '메타데이터 새로 고침',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => '휴지통 비우기',
 			'libraries.emptyingTrash' => ({required Object title}) => '「${title}」의 휴지통을 비우고 있습니다...',
 			'libraries.trashEmptied' => ({required Object title}) => '「${title}」의 휴지통을 비웠습니다',
@@ -7121,8 +7149,6 @@ extension on TranslationsKo {
 			'libraries.analysisStarted' => ({required Object title}) => '"${title}" 분석 시작됨',
 			'libraries.failedToAnalyze' => ({required Object error}) => '미디어 라이브러리 분석 실패: ${error}',
 			'libraries.noLibrariesFound' => '미디어 라이브러리 없음',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => '모든 라이브러리가 숨겨졌습니다',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => '숨겨진 라이브러리 (${count})',
 			'libraries.thisLibraryIsEmpty' => '이 미디어 라이브러리는 비어 있습니다',
@@ -7627,6 +7653,8 @@ extension on TranslationsKo {
 			'music.playingFrom' => ({required Object title}) => '${title}에서 재생 중',
 			'music.queue' => '재생 대기열',
 			'music.clearQueue' => '대기열 비우기',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => '가사',
 			'music.visualizer' => '시각화',
 			'music.visualizerProfileLoading' => '트랙 분석을 읽고...',
@@ -7635,8 +7663,6 @@ extension on TranslationsKo {
 			'music.visualizerLiveAudio' => '실시간 오디오 분석',
 			'music.visualizerPreviousPreset' => '이전 시각적 스타일',
 			'music.visualizerNextPreset' => '다음 시각적 스타일',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => '오로라',
 			'music.visualizerPresetBloom' => '블루',
 			'music.visualizerPresetOrbitals' => '궤도',
@@ -8141,6 +8167,8 @@ extension on TranslationsKo {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => '소프트웨어',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => '하드웨어',
 			'performanceOverlay.tunnelingActive' => '활성',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures}개 실패)',
@@ -8149,8 +8177,6 @@ extension on TranslationsKo {
 			'externalPlayer.useExternalPlayer' => '외부 플레이어 사용',
 			'externalPlayer.useExternalPlayerDescription' => '동영상을 다른 앱에서 열기',
 			'externalPlayer.selectPlayer' => '플레이어 선택',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => '사용자 정의 플레이어',
 			'externalPlayer.systemDefault' => '시스템 기본값',
 			'externalPlayer.addCustomPlayer' => '사용자 정의 플레이어 추가',
@@ -8655,6 +8681,8 @@ extension on TranslationsKo {
 			'homeLayout.recentlyReleased' => '최근에 출시된',
 			'homeLayout.movieCollections' => '영화 컬렉션',
 			'homeLayout.showCollections' => '컬렉션 보기',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => '로이 제목',
 			'homeLayout.content' => '흥미로운',
 			'homeLayout.showThisRowIn' => '이 라인을 보여주십시오 :',
@@ -8663,8 +8691,6 @@ extension on TranslationsKo {
 			'homeLayout.heroCardDescription' => '포스터 셰프 대신 하나의 전체 광장 회전 카드로 표시됩니다.',
 			'homeLayout.heroUnavailableDescription' => '이 순서가 단일 컬렉션의 실제 제목에 해결될 때만 사용할 수 있습니다 - 선택된 컬렉션 이상이 있는 경우에는 단일 제목이 롤러가 없습니다.',
 			'homeLayout.librariesSelection' => '도서관 (모든 도서관을 포함하기 위해 모든 검사되지 않은 것을 남겨 두십시오)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => '여기서 확인한 모든 도서관은 이 한 줄에 합쳐집니다.',
 			'homeLayout.movieCollectionsSelection' => '영화 컬렉션 (모든 선택된 도서관에 대한 모든 검사되지 않은 것을 남겨두십시오)',
 			'homeLayout.showCollectionsSelection' => '컬렉션을 표시합니다 (선택된 각 도서관에 대한 모든 검사되지 않은 것을 남겨 두십시오)',
@@ -9169,6 +9195,8 @@ extension on TranslationsKo {
 			'sourceSetup.sshAuthentication' => 'SSH 공개 키 인증',
 			'sourceSetup.sshAuthenticationHelp' => '선택 사항입니다. 비밀번호 인증도 지원합니다.',
 			'sourceSetup.privateKey' => '개인 키(PEM 또는 OpenSSH 형식)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => '개인 키 암호 구문',
 			'sourceSetup.nfsMountPort' => 'NFS 마운트 서비스 TCP 포트',
 			'sourceSetup.nfsMountPortHelp' => '기본값: 20048',
@@ -9177,8 +9205,6 @@ extension on TranslationsKo {
 			'sourceSetup.nfsGroupId' => 'NFS 그룹 ID(AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => '기본값: 1000. NAS 내보내기 설정에서 허용한 그룹 ID를 사용하세요.',
 			'sourceSetup.nfsEncryption' => 'NFS 암호화 필수(RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'NFS와 마운트 서비스에 TLS 1.3을 요구합니다. NAS가 지원하지 않으면 연결을 거부합니다.',
 			'sourceSetup.nfsTrustCertificate' => '사용자 지정 NFS CA 또는 서버 인증서(PEM, 선택 사항)',
 			'sourceSetup.nfsTrustHelp' => '이 장치에서 신뢰하는 인증서를 사용하려면 비워 두세요. 필요하면 사설 CA 또는 자체 서명 서버 인증서를 추가하세요. 인증서의 이름은 NFS URL의 호스트와 일치해야 합니다.',
@@ -9683,6 +9709,8 @@ extension on TranslationsKo {
 			'musicTools.playlistSharing' => '재생목록 접근',
 			'musicTools.playlistRecipient' => 'Plex 사용자 이름 또는 이메일',
 			'musicTools.playlistSharingHint' => '이 재생목록과 트랙에 대한 접근을 허용합니다. 수신자가 초대를 수락해야 할 수 있습니다.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => '재생목록 접근을 요청할 수 없습니다.',
 			'musicTools.playlistSharingAccepted' => 'Plex가 접근 요청을 접수했습니다.',
 			'musicTools.playlistAccessList' => '현재 접근 권한',
@@ -9691,8 +9719,6 @@ extension on TranslationsKo {
 			'musicTools.peak' => '피크',
 			'musicTools.bass' => '저음',
 			'musicTools.treble' => '고음',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => '공유 재생목록',
 			'musicTools.sharingInvitationsTitle' => 'Plex 공유 초대',
 			'musicTools.noSharingInvitations' => '대기 중인 초대 없음',

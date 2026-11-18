@@ -40,6 +40,7 @@ class TranslationsHe extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsHe $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsHe(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$he viewing = _Translations$viewing$he._(_root);
 	@override late final _Translations$livingRoom$he livingRoom = _Translations$livingRoom$he._(_root);
 	@override late final _Translations$app$he app = _Translations$app$he._(_root);
 	@override late final _Translations$appIcon$he appIcon = _Translations$appIcon$he._(_root);
@@ -121,6 +122,23 @@ class TranslationsHe extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$he musicExperience = _Translations$musicExperience$he._(_root);
 	@override late final _Translations$musicTools$he musicTools = _Translations$musicTools$he._(_root);
 	@override late final _Translations$musicDevices$he musicDevices = _Translations$musicDevices$he._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$he extends Translations$viewing$en {
+	_Translations$viewing$he._(TranslationsHe root) : this._root = root, super.internal(root);
+
+	final TranslationsHe _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'הקלטה לעוד 30 דקות';
+	@override String recordsUntil({required Object time}) => 'הקלטה עד ${time}';
+	@override String get extendFailed => 'לא ניתן להאריך את ההקלטה';
+	@override String get originalDialogue => 'העדפת הדיאלוג המקורי';
+	@override String get soloPage => 'הצגת העמוד הזה לבד';
+	@override String get pairPage => 'צימוד העמוד מחדש';
+	@override String get listenPhone => 'האזנה בטלפון הזה';
+	@override String get audioUnavailable => 'הקובץ או רצועת השמע אינם זמינים בטלפון הזה.';
 }
 
 // Path: livingRoom
@@ -5594,6 +5612,14 @@ class _Translations$services$trackerDescriptions$he extends Translations$service
 extension on TranslationsHe {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'הקלטה לעוד 30 דקות',
+			'viewing.recordsUntil' => ({required Object time}) => 'הקלטה עד ${time}',
+			'viewing.extendFailed' => 'לא ניתן להאריך את ההקלטה',
+			'viewing.originalDialogue' => 'העדפת הדיאלוג המקורי',
+			'viewing.soloPage' => 'הצגת העמוד הזה לבד',
+			'viewing.pairPage' => 'צימוד העמוד מחדש',
+			'viewing.listenPhone' => 'האזנה בטלפון הזה',
+			'viewing.audioUnavailable' => 'הקובץ או רצועת השמע אינם זמינים בטלפון הזה.',
 			'livingRoom.fitScreen' => 'התאמה למסך שלי',
 			'livingRoom.fitHelp' => 'בחרו קצה והזיזו אותו בעזרת החצים עד שרואים את הסימונים שלו. חזרו על הפעולה בכל קצה.',
 			'livingRoom.left' => 'שמאל',
@@ -6098,6 +6124,8 @@ extension on TranslationsHe {
 			'settings.audioChannelLimitOriginal' => 'מקורי',
 			'settings.audioChannelLimitOriginalDescription' => 'לשחק בכל ערוץ בשורה',
 			'settings.audioChannelLimitSurround51' => 'עד 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'מעורב 7.1 למטה 5.1 עבור טלוויזיות ומקבלים אשר לוקחים רק 5.1 PCM.',
 			'settings.audioChannelLimitStereo' => 'סטריאו',
 			'settings.audioChannelLimitStereoDescription' => 'לערבב עד שני ערוצים עבור רמקולים סטריאו או אוזניות.',
@@ -6106,8 +6134,6 @@ extension on TranslationsHe {
 			'settings.downmixCenterBoostLabel' => 'קידום (dB)',
 			'settings.downmixCenterBoostShort' => 'דב',
 			'settings.audioDownmixNormalize' => 'נורמליזת טמפרטורה על Downmix',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'להוריד את התערובת כדי למנוע קליפ. סגור כדי לשמור על הטמפרטורה המקורית (אולי להפריע סצנות חזקות).',
 			'settings.dvConversionMode' => 'Dolby Vision הפוך',
 			'settings.dvConversionModeDescription' => 'בחר כיצד Dolby Vision פרופיל 7 קבצים מתבצעים.',
@@ -6612,6 +6638,8 @@ extension on TranslationsHe {
 			'videoControls.playNext' => 'נגן את הבא',
 			'videoControls.playButton' => 'נגן',
 			'videoControls.pauseButton' => 'השהה',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'הפסקה',
 			'videoControls.playbackResumed' => 'לשחק',
 			'videoControls.loadingVideo' => 'טעינה וידאו',
@@ -6620,8 +6648,6 @@ extension on TranslationsHe {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'חיפוש אחורה ${seconds} שניות',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'חיפוש קדימה ${seconds} שניות',
 			'videoControls.previousButton' => 'פרק קודם',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'הפרק הבא',
 			'videoControls.previousChapterButton' => 'הפרק הקודם',
 			'videoControls.nextChapterButton' => 'פרק הבא',
@@ -7126,6 +7152,8 @@ extension on TranslationsHe {
 			'libraries.analyze' => 'ניתוח',
 			'libraries.analyzeLibrary' => 'ניתוח הספרייה',
 			'libraries.refreshMetadata' => 'רענון מטא-דאטה',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'ריק טראש',
 			'libraries.emptyingTrash' => ({required Object title}) => 'פטריות ריקות עבור "${title}..."',
 			'libraries.trashEmptied' => ({required Object title}) => 'תגיות קשורות "${title}"',
@@ -7134,8 +7162,6 @@ extension on TranslationsHe {
 			'libraries.analysisStarted' => ({required Object title}) => 'ניתוח מתחיל עבור "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'לא הצליח לנתח ספרייה: ${error}',
 			'libraries.noLibrariesFound' => 'לא נמצאו ספרייה',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'כל הספרייה מסתתרת',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'ספריות מוסתרים (${count})',
 			'libraries.thisLibraryIsEmpty' => 'הספרייה הזאת ריקה',
@@ -7640,6 +7666,8 @@ extension on TranslationsHe {
 			'music.playingFrom' => ({required Object title}) => 'משחקים מתוך ${title}',
 			'music.queue' => 'קווי',
 			'music.clearQueue' => 'נקה תור',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'מילות השיר',
 			'music.visualizer' => 'ויזואלי',
 			'music.visualizerProfileLoading' => 'קריאת רצועת ניתוח',
@@ -7648,8 +7676,6 @@ extension on TranslationsHe {
 			'music.visualizerLiveAudio' => 'ניתוח שמע בזמן אמת',
 			'music.visualizerPreviousPreset' => 'סגנון חזותי קודם',
 			'music.visualizerNextPreset' => 'סגנון חזותי הבא',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'אווררה',
 			'music.visualizerPresetBloom' => 'בלום',
 			'music.visualizerPresetOrbitals' => 'אורביטים',
@@ -8154,6 +8180,8 @@ extension on TranslationsHe {
 			'performanceOverlay.decoderMediatekHw' => 'מיקרוסופט HW',
 			'performanceOverlay.decoderExynosHw' => 'יונייטד HW',
 			'performanceOverlay.decoderSoftware' => 'תוכנה',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'חומרה',
 			'performanceOverlay.tunnelingActive' => 'פעיל',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} נכשל)',
@@ -8162,8 +8190,6 @@ extension on TranslationsHe {
 			'externalPlayer.useExternalPlayer' => 'שימוש ב-Player חיצוני',
 			'externalPlayer.useExternalPlayerDescription' => 'פתח וידאו באפליקציה אחרת',
 			'externalPlayer.selectPlayer' => 'בחר שחקן',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'שחקנים מותאמים',
 			'externalPlayer.systemDefault' => 'מערכת מזויפת',
 			'externalPlayer.addCustomPlayer' => 'להוסיף שחקן מותאם אישית',
@@ -8668,6 +8694,8 @@ extension on TranslationsHe {
 			'homeLayout.recentlyReleased' => 'שוחרר לאחרונה',
 			'homeLayout.movieCollections' => 'קולקציות סרטים',
 			'homeLayout.showCollections' => 'הצג אוסף',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'כותרת Row',
 			'homeLayout.content' => 'תוכן',
 			'homeLayout.showThisRowIn' => 'הצג את השורה הזאת ב:',
@@ -8676,8 +8704,6 @@ extension on TranslationsHe {
 			'homeLayout.heroCardDescription' => 'מציג כרטיס סיבוב אחד רחב מלא במקום מפתח פוסטר.',
 			'homeLayout.heroUnavailableDescription' => 'זמין רק כאשר שורה זו מתייחסת לכותרות האמיתיות של אוסף יחיד – עם יותר מאחד אוספים שנבחרו, אין כותרת יחידה להסתובב.',
 			'homeLayout.librariesSelection' => 'ספריות (לשחרר את כל הבלתי נבדקים לכל ספרייה)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'כל ספרייה שנבדקה כאן מתמזגת בשורה אחת זו.',
 			'homeLayout.movieCollectionsSelection' => 'אוסף סרטים (שחרר את כל הבלתי נבדק עבור כל ספרייה שנבחרה)',
 			'homeLayout.showCollectionsSelection' => 'הצג אוסף (לשחרר את כל הבלתי נבדק עבור כל ספרייה שנבחרה)',
@@ -9182,6 +9208,8 @@ extension on TranslationsHe {
 			'sourceSetup.sshAuthentication' => 'אימות באמצעות מפתח ציבורי של SSH',
 			'sourceSetup.sshAuthenticationHelp' => 'לא חובה; אפשר גם לבצע אימות באמצעות סיסמה.',
 			'sourceSetup.privateKey' => 'מפתח פרטי (בפורמט PEM או OpenSSH)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'סיסמה להגנת המפתח הפרטי',
 			'sourceSetup.nfsMountPort' => 'יציאת TCP של שירות ה־mount של NFS',
 			'sourceSetup.nfsMountPortHelp' => 'ברירת מחדל: 20048',
@@ -9190,8 +9218,6 @@ extension on TranslationsHe {
 			'sourceSetup.nfsGroupId' => 'מזהה קבוצת NFS ‏(AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'ברירת מחדל: 1000. יש להשתמש במזהה הקבוצה המותר בהגדרות ייצוא NFS של ה־NAS.',
 			'sourceSetup.nfsEncryption' => 'דרישת NFS מוצפן (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'מחייב TLS 1.3 עבור NFS ושירות ה־mount. אם ה־NAS אינו תומך בכך, החיבור יידחה.',
 			'sourceSetup.nfsTrustCertificate' => 'אישור CA או שרת NFS מותאם אישית (PEM, רשות)',
 			'sourceSetup.nfsTrustHelp' => 'יש להשאיר ריק לאישורים שהתקן זה נותן בהם אמון. לפי הצורך, אפשר להוסיף אישור CA פרטי או אישור שרת בחתימה עצמית; השמות בו חייבים להתאים למארח שבכתובת NFS.',
@@ -9696,6 +9722,8 @@ extension on TranslationsHe {
 			'musicTools.playlistSharing' => 'גישה לרשימת השמעה',
 			'musicTools.playlistRecipient' => 'שם משתמש Plex או דוא״ל',
 			'musicTools.playlistSharingHint' => 'הענקת גישה לרשימה זו ולרצועות שלה. ייתכן שהנמען יצטרך לאשר הזמנה.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'לא ניתן לבקש גישה לרשימת ההשמעה.',
 			'musicTools.playlistSharingAccepted' => 'Plex קיבל את בקשת הגישה.',
 			'musicTools.playlistAccessList' => 'גישה נוכחית',
@@ -9704,8 +9732,6 @@ extension on TranslationsHe {
 			'musicTools.peak' => 'שיא',
 			'musicTools.bass' => 'בס',
 			'musicTools.treble' => 'גבוהים',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'רשימות השמעה משותפות',
 			'musicTools.sharingInvitationsTitle' => 'הזמנות שיתוף ב־Plex',
 			'musicTools.noSharingInvitations' => 'אין הזמנות ממתינות',

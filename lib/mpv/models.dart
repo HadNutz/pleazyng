@@ -125,6 +125,7 @@ sealed class AudioTrack with _$AudioTrack {
     /// patched demuxer publishes it for every DTS track at load; a decoder
     /// fills or replaces it for the selected track.
     String? codecProfile,
+    int? ffIndex,
     int? channels,
     int? sampleRate,
     int? bitrate,

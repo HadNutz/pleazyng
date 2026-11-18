@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,7 @@ import '../../widgets/app_icon.dart';
 import '../../widgets/overlay_sheet.dart';
 import '../../widgets/pill_input_decoration.dart';
 import 'game_sessions_dialog.dart';
+import 'phone_listening_screen.dart';
 
 class MobileRemoteScreen extends StatefulWidget {
   const MobileRemoteScreen({super.key});
@@ -324,8 +326,19 @@ class _RemoteControlContentState extends State<_RemoteControlContent> {
   }
 
   Widget _buildPlaybackTab() {
+    final remote = context.watch<CompanionRemoteProvider>();
     return Column(
       children: [
+        if ((Platform.isAndroid || Platform.isIOS) &&
+            !PlatformDetector.isTV() &&
+            remote.supportsPhoneListening &&
+            remote.isPlayerActive)
+          ListTile(
+            leading: const Icon(Icons.headphones),
+            title: Text(t.viewing.listenPhone),
+            onTap: () =>
+                Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const PhoneListeningScreen())),
+          ),
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: .center,

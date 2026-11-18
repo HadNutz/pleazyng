@@ -650,8 +650,31 @@ void main() {
       expectedHostClientId: _authContext.clientIdentifier,
     );
 
-    expect((await hostInfo.timeout(_ioTimeout)).data?['musicConnectVersion'], 1);
-    expect((await remoteInfo.timeout(_ioTimeout)).data?['musicConnectVersion'], 1);
+    final hostCapabilities = (await hostInfo.timeout(_ioTimeout)).data;
+    final remoteCapabilities = (await remoteInfo.timeout(_ioTimeout)).data;
+    expect(hostCapabilities?['musicConnectVersion'], 1);
+    expect(remoteCapabilities?['musicConnectVersion'], 1);
+    expect(hostCapabilities?['listeningClockVersion'], 1);
+    expect(remoteCapabilities?['listeningClockVersion'], 1);
+    expect(host.isAuthenticatedLan, isTrue);
+    expect(remote.isAuthenticatedLan, isTrue);
+    final probe = host.onCommandReceived.firstWhere((command) => command.type == RemoteCommandType.listeningClock);
+    remote.sendCommand(const RemoteCommand(type: RemoteCommandType.listeningClock, data: {'probe': 7}));
+    expect((await probe.timeout(_ioTimeout)).data?['probe'], 7);
+    final clock = remote.onCommandReceived.firstWhere((command) => command.type == RemoteCommandType.listeningClock);
+    const data = {
+      'reply': 7,
+      'item': 'movie',
+      'server': 's',
+      'source': 'v',
+      'part': 8,
+      'ms': 43000,
+      'playing': false,
+      'rate': 1.0,
+    };
+    host.sendCommand(const RemoteCommand(type: RemoteCommandType.listeningClock, data: data));
+    expect((await clock.timeout(_ioTimeout)).data, data);
+
     final hostCommand = host.onCommandReceived.firstWhere((command) => command.type == RemoteCommandType.play);
     remote.sendCommand(const RemoteCommand(type: RemoteCommandType.play, data: {'source': 'remote'}));
     expect(

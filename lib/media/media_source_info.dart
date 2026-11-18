@@ -6,6 +6,7 @@ import 'media_part_timeline.dart';
 
 class MediaSourceInfo {
   final String videoUrl;
+  final String? originalLanguage;
   final List<MediaAudioTrack> audioTracks;
   final List<MediaSubtitleTrack> subtitleTracks;
   final List<MediaChapter> chapters;
@@ -40,6 +41,7 @@ class MediaSourceInfo {
 
   MediaSourceInfo({
     required this.videoUrl,
+    this.originalLanguage,
     required this.audioTracks,
     required this.subtitleTracks,
     required this.chapters,
@@ -55,12 +57,18 @@ class MediaSourceInfo {
     this.videoAspectRatio,
   });
 
+  MediaSourceInfo selectAudio(int? id) {
+    if (id == null || !audioTracks.any((t) => t.id == id)) return this;
+    return copyWith(audioTracks: [for (final t in audioTracks) t.withSelected(t.id == id)]);
+  }
+
   /// Field-preserving rebuild. Track lists are the only members that the
   /// playback pipeline rewrites after construction; every other field must
   /// survive those rewrites untouched.
   MediaSourceInfo copyWith({List<MediaAudioTrack>? audioTracks, List<MediaSubtitleTrack>? subtitleTracks}) {
     return MediaSourceInfo(
       videoUrl: videoUrl,
+      originalLanguage: originalLanguage,
       audioTracks: audioTracks ?? this.audioTracks,
       subtitleTracks: subtitleTracks ?? this.subtitleTracks,
       chapters: chapters,
@@ -144,6 +152,7 @@ class MediaAudioTrack with _TrackLabelMixin {
   /// Container fallback, independent of the server/user-selected row.
   final bool isDefault;
   final bool external;
+  final bool original, dubbed, commentary, described;
   final MediaReplayGain? replayGain;
 
   MediaAudioTrack({
@@ -161,6 +170,10 @@ class MediaAudioTrack with _TrackLabelMixin {
     required this.selected,
     this.isDefault = false,
     this.external = false,
+    this.original = false,
+    this.dubbed = false,
+    this.commentary = false,
+    this.described = false,
     this.replayGain,
   });
 
@@ -183,6 +196,10 @@ class MediaAudioTrack with _TrackLabelMixin {
       selected: selected,
       isDefault: isDefault,
       external: external,
+      original: original,
+      dubbed: dubbed,
+      commentary: commentary,
+      described: described,
       replayGain: replayGain,
     );
   }

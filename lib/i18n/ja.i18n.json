@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "録画を30分延長",
+    "recordsUntil": "${time} まで録画",
+    "extendFailed": "録画を延長できませんでした",
+    "originalDialogue": "オリジナル音声を優先",
+    "soloPage": "このページを単独で表示",
+    "pairPage": "このページを見開きに戻す",
+    "listenPhone": "このスマートフォンで聴く",
+    "audioUnavailable": "このスマートフォンでは現在のファイルまたは音声トラックを再生できません。"
+  },
   "livingRoom": {
     "fitScreen": "画面に合わせる",
     "fitHelp": "辺を選び、目印が見える位置まで矢印キーで移動します。残りの辺も同様に調整してください。",

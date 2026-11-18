@@ -40,6 +40,7 @@ class TranslationsAz extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsAz $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsAz(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$az viewing = _Translations$viewing$az._(_root);
 	@override late final _Translations$livingRoom$az livingRoom = _Translations$livingRoom$az._(_root);
 	@override late final _Translations$app$az app = _Translations$app$az._(_root);
 	@override late final _Translations$appIcon$az appIcon = _Translations$appIcon$az._(_root);
@@ -121,6 +122,23 @@ class TranslationsAz extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$az musicExperience = _Translations$musicExperience$az._(_root);
 	@override late final _Translations$musicTools$az musicTools = _Translations$musicTools$az._(_root);
 	@override late final _Translations$musicDevices$az musicDevices = _Translations$musicDevices$az._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$az extends Translations$viewing$en {
+	_Translations$viewing$az._(TranslationsAz root) : this._root = root, super.internal(root);
+
+	final TranslationsAz _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Daha 30 dəqiqə yaz';
+	@override String recordsUntil({required Object time}) => 'Yazı ${time} vaxtına qədər davam edir';
+	@override String get extendFailed => 'Yazını uzatmaq mümkün olmadı';
+	@override String get originalDialogue => 'Orijinal dialoqa üstünlük ver';
+	@override String get soloPage => 'Bu səhifəni tək göstər';
+	@override String get pairPage => 'Bu səhifəni yenidən cütləşdir';
+	@override String get listenPhone => 'Bu telefonda dinlə';
+	@override String get audioUnavailable => 'Fayl və ya səs treki bu telefonda əlçatan deyil.';
 }
 
 // Path: livingRoom
@@ -5586,6 +5604,14 @@ class _Translations$services$trackerDescriptions$az extends Translations$service
 extension on TranslationsAz {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Daha 30 dəqiqə yaz',
+			'viewing.recordsUntil' => ({required Object time}) => 'Yazı ${time} vaxtına qədər davam edir',
+			'viewing.extendFailed' => 'Yazını uzatmaq mümkün olmadı',
+			'viewing.originalDialogue' => 'Orijinal dialoqa üstünlük ver',
+			'viewing.soloPage' => 'Bu səhifəni tək göstər',
+			'viewing.pairPage' => 'Bu səhifəni yenidən cütləşdir',
+			'viewing.listenPhone' => 'Bu telefonda dinlə',
+			'viewing.audioUnavailable' => 'Fayl və ya səs treki bu telefonda əlçatan deyil.',
 			'livingRoom.fitScreen' => 'Ekranıma uyğunlaşdır',
 			'livingRoom.fitHelp' => 'Kənarı seçin və işarələr görünənədək oxlarla hərəkət etdirin. Bunu hər kənar üçün təkrarlayın.',
 			'livingRoom.left' => 'Sol',
@@ -6090,6 +6116,8 @@ extension on TranslationsAz {
 			'settings.audioChannelLimitOriginal' => 'Orijinal',
 			'settings.audioChannelLimitOriginalDescription' => 'Trekdəki bütün kanalları oynat',
 			'settings.audioChannelLimitSurround51' => '5.1-ə qədər',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Yalnız 5.1 PCM qəbul edən televizorlar və resiverlər üçün 7.1-i 5.1-ə endir. Birbaşa ötürməyə təsir etmir.',
 			'settings.audioChannelLimitStereo' => 'Stereo',
 			'settings.audioChannelLimitStereoDescription' => 'Stereo dinamiklər və ya qulaqlıqlar üçün iki kanala endir. Birbaşa ötürməni söndürür.',
@@ -6098,8 +6126,6 @@ extension on TranslationsAz {
 			'settings.downmixCenterBoostLabel' => 'Gücləndirmə (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Çevirmədə səsi normallaşdır',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Səs kəsilmələrinin qarşısını almaq üçün səviyyəni endirin. Orijinal səs səviyyəsini saxlamaq üçün söndürün (yüksək səsli səhnələr təhrif oluna bilər).',
 			'settings.dvConversionMode' => 'Dolby Vision çevrilməsi',
 			'settings.dvConversionModeDescription' => 'Dolby Vision Profile 7 fayllarının necə emal ediləcəyini seçin.',
@@ -6604,6 +6630,8 @@ extension on TranslationsAz {
 			'videoControls.playNext' => 'Növbətini oynat',
 			'videoControls.playButton' => 'Oynat',
 			'videoControls.pauseButton' => 'Fasilə',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'Fasilədə',
 			'videoControls.playbackResumed' => 'Oynadılır',
 			'videoControls.loadingVideo' => 'Video yüklənir',
@@ -6612,8 +6640,6 @@ extension on TranslationsAz {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => '${seconds} saniyə geri sar',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => '${seconds} saniyə irəli sar',
 			'videoControls.previousButton' => 'Əvvəlki seriya',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Növbəti seriya',
 			'videoControls.previousChapterButton' => 'Əvvəlki hissə',
 			'videoControls.nextChapterButton' => 'Növbəti hissə',
@@ -7118,6 +7144,8 @@ extension on TranslationsAz {
 			'libraries.analyze' => 'Analiz et',
 			'libraries.analyzeLibrary' => 'Kitabxananı analiz et',
 			'libraries.refreshMetadata' => 'Meta-məlumatları yenilə',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Zibil qutusunu təmizlə',
 			'libraries.emptyingTrash' => ({required Object title}) => '"${title}" üçün zibil qutusu təmizlənir...',
 			'libraries.trashEmptied' => ({required Object title}) => '"${title}" üçün zibil qutusu təmizləndi',
@@ -7126,8 +7154,6 @@ extension on TranslationsAz {
 			'libraries.analysisStarted' => ({required Object title}) => '"${title}" üçün analiz başladı',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Kitabxana analiz edilə bilmədi: ${error}',
 			'libraries.noLibrariesFound' => 'Kitabxana tapılmadı',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Bütün kitabxanalar gizlədilib',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Gizli kitabxanalar (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Bu kitabxana boşdur',
@@ -7632,6 +7658,8 @@ extension on TranslationsAz {
 			'music.playingFrom' => ({required Object title}) => '${title} mənbəsindən oynadılır',
 			'music.queue' => 'Növbə',
 			'music.clearQueue' => 'Növbəni təmizlə',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'Mahnı sözləri',
 			'music.visualizer' => 'Görüntülər',
 			'music.visualizerProfileLoading' => 'İndi analizə baxmaq...',
@@ -7640,8 +7668,6 @@ extension on TranslationsAz {
 			'music.visualizerLiveAudio' => 'Canlı audio təhlili',
 			'music.visualizerPreviousPreset' => 'Öncəki Görünürlük',
 			'music.visualizerNextPreset' => 'Sonraki Görünüş Stili',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Blum',
 			'music.visualizerPresetOrbitals' => 'Orbitlər',
@@ -8146,6 +8172,8 @@ extension on TranslationsAz {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Proqram təminatı',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Aparat təminatı',
 			'performanceOverlay.tunnelingActive' => 'Aktiv',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} uğursuz)',
@@ -8154,8 +8182,6 @@ extension on TranslationsAz {
 			'externalPlayer.useExternalPlayer' => 'Xarici oynadıcı istifadə et',
 			'externalPlayer.useExternalPlayerDescription' => 'Videoları başqa tətbiqdə açın',
 			'externalPlayer.selectPlayer' => 'Oynadıcı seç',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Xüsusi oynadıcılar',
 			'externalPlayer.systemDefault' => 'Sistem defoltu',
 			'externalPlayer.addCustomPlayer' => 'Xüsusi oynadıcı əlavə et',
@@ -8660,6 +8686,8 @@ extension on TranslationsAz {
 			'homeLayout.recentlyReleased' => 'Son zamanlarda yayımlanan',
 			'homeLayout.movieCollections' => 'Film Koleksiya',
 			'homeLayout.showCollections' => 'Koleksiya göstərişi',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Rövb Adı',
 			'homeLayout.content' => 'Qadınlar',
 			'homeLayout.showThisRowIn' => 'Bu yolda belə bir şey göstərilir:',
@@ -8668,8 +8696,6 @@ extension on TranslationsAz {
 			'homeLayout.heroCardDescription' => 'Bir kartın yerində bir kartın yerində bir kartın yerində bir kartın yerində görünür.',
 			'homeLayout.heroUnavailableDescription' => 'Bu sıra yalnız bir koleksiyonun gerçek başlığına çözüldüğünde mevcutdur - birdən çox koleksiyon seçildiğinde, bir başlığı dönmək mümkün deyil.',
 			'homeLayout.librariesSelection' => 'Kütüphanələr (her kütüphanə daxil olmaq üçün bütün kontrolsüzləri bırakın)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Burada hər bir kütüphane bu bir sıraya birleşir.',
 			'homeLayout.movieCollectionsSelection' => 'Film koleksiyonları (tüm seçilmiş kütüphane üçün kontrol edilməyənləri bırakın)',
 			'homeLayout.showCollectionsSelection' => 'Koleksiyaları görünür (tüm seçilmiş kütüphane üçün kontrolsüz olanları bırakın)',
@@ -9174,6 +9200,8 @@ extension on TranslationsAz {
 			'sourceSetup.sshAuthentication' => 'Açıq açarla SSH kimlik təsdiqi',
 			'sourceSetup.sshAuthenticationHelp' => 'İstəyə bağlıdır; şifrə ilə kimlik təsdiqi də dəstəklənir.',
 			'sourceSetup.privateKey' => 'Özəl açar (PEM və ya OpenSSH formatı)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Özəl açarın parol ifadəsi',
 			'sourceSetup.nfsMountPort' => 'NFS mount xidmətinin TCP portu',
 			'sourceSetup.nfsMountPortHelp' => 'Standart: 20048',
@@ -9182,8 +9210,6 @@ extension on TranslationsAz {
 			'sourceSetup.nfsGroupId' => 'NFS qrup ID-si (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Standart: 1000. NAS-ın NFS paylaşımında icazə verilən qrup ID-sini istifadə edin.',
 			'sourceSetup.nfsEncryption' => 'Şifrələnmiş NFS tələb et (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'NFS və mount xidməti üçün TLS 1.3 tələb edin. NAS bunu dəstəkləmirsə, bağlantı rədd edilir.',
 			'sourceSetup.nfsTrustCertificate' => 'Xüsusi NFS CA və ya server sertifikatı (PEM, istəyə bağlı)',
 			'sourceSetup.nfsTrustHelp' => 'Bu cihazın etibar etdiyi sertifikatlar üçün boş saxlayın. Lazım olduqda özəl CA sertifikatı və ya öz-özünə imzalanmış server sertifikatı əlavə edin; sertifikatdakı adlar NFS URL-indəki hosta uyğun gəlməlidir.',
@@ -9688,6 +9714,8 @@ extension on TranslationsAz {
 			'musicTools.playlistSharing' => 'Pleylistə giriş',
 			'musicTools.playlistRecipient' => 'Plex istifadəçi adı və ya e-poçt',
 			'musicTools.playlistSharingHint' => 'Bu pleylistə və treklərinə giriş verin. Alıcı dəvəti qəbul etməli ola bilər.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Pleylistə giriş istənilə bilmədi.',
 			'musicTools.playlistSharingAccepted' => 'Plex giriş sorğusunu qəbul etdi.',
 			'musicTools.playlistAccessList' => 'Cari giriş',
@@ -9696,8 +9724,6 @@ extension on TranslationsAz {
 			'musicTools.peak' => 'Zirvə',
 			'musicTools.bass' => 'Bas',
 			'musicTools.treble' => 'Tiz səslər',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Paylaşılan pleylistlər',
 			'musicTools.sharingInvitationsTitle' => 'Plex paylaşım dəvətləri',
 			'musicTools.noSharingInvitations' => 'Gözləyən dəvət yoxdur',

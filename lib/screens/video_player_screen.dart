@@ -5,6 +5,7 @@ import '../services/playback_launch_observer.dart';
 import '../media/ids.dart';
 import '../providers/hidden_libraries_provider.dart';
 import '../providers/libraries_provider.dart';
+import '../providers/seerr_account_provider.dart';
 import '../utils/external_ids.dart';
 import '../utils/media_server_http_client.dart' show AbortController;
 
@@ -44,6 +45,7 @@ import '../media/media_server_user_profile.dart';
 import '../media/media_item.dart';
 import '../media/media_item_types.dart';
 import '../media/media_server_client.dart';
+import '../media/media_kind.dart';
 import '../media/episode_collection.dart';
 import '../media/title_copies.dart';
 import '../media/live_tv_support.dart';
@@ -51,6 +53,8 @@ import '../media/live_tv_timeline.dart';
 import '../services/live_tv_program_guide.dart';
 import 'video_player/live_tv_seek.dart';
 import 'iptv/iptv_live_channel_picker.dart';
+import 'livetv/recording_extension.dart';
+import '../services/companion_remote/listening_clock.dart';
 import '../models/livetv_capture_buffer.dart';
 import '../models/livetv_channel.dart';
 import '../models/livetv_program.dart';
@@ -1200,6 +1204,32 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   Completer<void>? _nativeSeekDrain;
 
   late final CompanionRemoteBinding _companionRemote = CompanionRemoteBinding(
+    readListeningClock: () {
+      final session = _playbackSession;
+      final current = player;
+      final info = session?.mediaInfo;
+      final server = session?.metadata.serverId;
+      final source = info?.mediaSourceId;
+      if (!_firstFrame.rendered ||
+          current == null ||
+          session == null ||
+          session.isOffline ||
+          widget.isLive ||
+          _shuttingDown ||
+          _transitionGate.transition != PlaybackTransition.idle ||
+          server == null ||
+          source == null ||
+          source.isEmpty ||
+          (session.metadata.backend == MediaBackend.plex && info?.partId == null)) {
+        return null;
+      }
+      return ListeningClock(
+        (server: server, item: session.metadata.id, source: source, part: info?.partId),
+        current.currentPosition,
+        current.state.playing && !current.state.buffering && !current.state.completed,
+        current.state.rate,
+      );
+    },
     player: () => player,
     isMounted: () => mounted,
     canControlPlayback: () => _canControlPlayback(),
@@ -1223,6 +1253,23 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       return null;
     }
     return context.read<MultiServerProvider>().serverManager.getClient(ServerId(id));
+  }
+
+  Future<String?> Function()? _originalLanguageLookup(MediaItem item) {
+    // A series-level language is not evidence for a particular episode.
+    if (item.kind != MediaKind.movie || !SettingsService.instance.read(SettingsService.preferOriginalDialogue)) {
+      return null;
+    }
+    final client = context.read<SeerrAccountProvider?>()?.catalogClient;
+    final tmdb = ExternalIds.fromMediaMetadata(item.raw, item.guid).tmdb;
+    if (client == null || tmdb == null || tmdb <= 0) return null;
+    return () async {
+      final details = await client.getMovie(tmdb);
+      if (!mounted || !identical(context.read<SeerrAccountProvider?>()?.catalogClient, client) || details.id != tmdb) {
+        return null;
+      }
+      return details.originalLanguage;
+    };
   }
 
   MediaServerClient? _getOnlineMediaServerClient(BuildContext context) {
@@ -2257,6 +2304,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
               metadata: _currentMetadata,
               selectedMediaIndex: _effectiveSelectedMediaIndex,
               selectedMediaSourceId: _requestedMediaSourceId,
+              lookupOriginalLanguage: _originalLanguageLookup(_currentMetadata),
               preferredVersionName: widget.preferredVersionName,
               preferredVersionSignature: widget.preferredVersionSignature,
               qualityPreset: _selectedQualityPreset,

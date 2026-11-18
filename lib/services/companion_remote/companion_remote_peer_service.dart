@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../../utils/bounded_web_socket.dart';
+import '../../sources/network_media_stream_server.dart';
 
 import 'dart:math';
 
@@ -200,6 +201,13 @@ class CompanionRemotePeerService with KeepaliveMixin {
   RemoteSessionRole? get role => _role;
   String? get selectedAuthContextId => _selectedAuthContextId;
   String? get selectedHostClientId => _selectedHostClientId;
+  bool get isAuthenticatedLan {
+    if (!_isAuthenticated) return false;
+    final host = isHost ? _currentHostAdmission?.sourceIp : Uri.tryParse('ws://$_hostAddress')?.host;
+    final address = host == null ? null : InternetAddress.tryParse(host);
+    return address != null && NetworkMediaStreamPolicy.isPrivateIPv4(address);
+  }
+
   bool get isAuthenticated => _isAuthenticated;
   int get authenticationGeneration => _authenticationCommitGeneration;
   bool get isHost => _role == RemoteSessionRole.host;
@@ -1405,6 +1413,7 @@ class CompanionRemotePeerService with KeepaliveMixin {
           'name': deviceName,
           'platform': platform,
           'role': _role?.name,
+          'listeningClockVersion': 1,
           'gameInventoryVersion': 1,
           'gameActionVersion': 1,
           'gameActionKinds': SteamHostAction.values.map((action) => action.name).toList(growable: false),

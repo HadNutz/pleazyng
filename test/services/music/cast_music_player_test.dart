@@ -43,6 +43,7 @@ class _SourceClient extends ExperienceClient {
     int mediaIndex = 0,
     String? mediaSourceId,
     Duration? position,
+    bool registerPlayback = true,
   }) async =>
       target == null ? const ExternalPlaybackTarget(url: 'https://server/file.flac?auth=private') : target!.future;
 }

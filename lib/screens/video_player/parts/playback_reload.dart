@@ -630,6 +630,7 @@ extension _VideoPlayerReloadMethods on VideoPlayerScreenState {
           playbackContext = await playbackResolver.resolve(
             PlaybackInitializationOptions(
               metadata: metadata,
+              lookupOriginalLanguage: _originalLanguageLookup(metadata),
               selectedMediaIndex: targetMediaIndex,
               selectedMediaSourceId: selectedMediaSourceId,
               preferredVersionSignature: preferredVersionSignature,

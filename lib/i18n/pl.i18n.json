@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "Nagrywaj jeszcze 30 minut",
+    "recordsUntil": "Nagrywanie do ${time}",
+    "extendFailed": "Nie udało się przedłużyć nagrania",
+    "originalDialogue": "Preferuj oryginalne dialogi",
+    "soloPage": "Wyświetl tę stronę osobno",
+    "pairPage": "Ponownie połącz tę stronę w parę",
+    "listenPhone": "Słuchaj na tym telefonie",
+    "audioUnavailable": "Plik lub ścieżka dźwiękowa jest niedostępna na tym telefonie."
+  },
   "livingRoom": {
     "fitScreen": "Dopasuj do mojego ekranu",
     "fitHelp": "Wybierz krawędź i przesuń ją strzałkami, aż zobaczysz znaczniki. Powtórz dla każdej krawędzi.",

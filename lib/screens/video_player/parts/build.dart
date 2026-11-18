@@ -304,6 +304,11 @@ extension _VideoPlayerBuildMethods on VideoPlayerScreenState {
                     final sourceSubtitleSidecars = _sourceSubtitleSidecarsForControls();
                     final sourceSubtitleTracks = _sourceSubtitleTracksForControls();
 
+                    final channels = widget.live?.channels;
+                    final liveChannel =
+                        channels != null && _live.channelIndex >= 0 && _live.channelIndex < channels.length
+                        ? channels[_live.channelIndex]
+                        : widget.live?.channel;
                     return Video(
                       player: player!,
                       hasFirstFrame: _firstFrame.uiReady,
@@ -365,6 +370,17 @@ extension _VideoPlayerBuildMethods on VideoPlayerScreenState {
                         thumbnailDataBuilder: _scrubPreviewSource?.isAvailable == true ? _getThumbnailData : null,
                         isLive: widget.isLive,
                         isRecordingLiveStream: _isRecordingIptv,
+                        scheduledRecordingControl:
+                            liveChannel?.iptvChannelId != null &&
+                                _live.session is IptvLiveTvPlaybackSession &&
+                                !(_live.session as IptvLiveTvPlaybackSession).isCatchup
+                            ? (fallback) => LiveRecordingExtension(
+                                profile: context.read<ActiveProfileProvider>().activeId,
+                                source: liveChannel?.iptvSourceId,
+                                channel: liveChannel?.iptvChannelId,
+                                fallback: fallback,
+                              )
+                            : null,
                         onToggleLiveRecording: _canRecordIptv ? _toggleIptvRecording : null,
                         onOpenLiveChannelPicker: widget.isLive && (widget.live?.channels?.length ?? 0) > 1
                             ? _showLiveChannelPicker

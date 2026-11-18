@@ -80,6 +80,20 @@ internal class MusicAudioRouteBridge(context: Context, messenger: BinaryMessenge
   private val methods = MethodChannel(messenger, "com.pleazyng/music_audio_route")
   private val events = EventChannel(messenger, "com.pleazyng/music_audio_route/events")
   private val handler = Handler(Looper.getMainLooper())
+  private val headphones = EventChannel(messenger, "com.pleazyng/phone_listening/headphones")
+  private var headphoneCallback: AudioDeviceCallback? = null
+
+  private fun privateOutput(device: AudioDeviceInfo) = device.isSink && device.type in setOf(
+    AudioDeviceInfo.TYPE_WIRED_HEADPHONES, AudioDeviceInfo.TYPE_WIRED_HEADSET,
+    AudioDeviceInfo.TYPE_USB_HEADSET, AudioDeviceInfo.TYPE_BLUETOOTH_A2DP,
+    AudioDeviceInfo.TYPE_BLUETOOTH_SCO, AudioDeviceInfo.TYPE_HEARING_AID,
+    AudioDeviceInfo.TYPE_BLE_HEADSET
+  )
+
+  private fun stopHeadphones() {
+    headphoneCallback?.let { audio.unregisterAudioDeviceCallback(it) }
+    headphoneCallback = null
+  }
   private var sink: EventChannel.EventSink? = null
   private var registered = false
   private var published = false
@@ -103,6 +117,30 @@ internal class MusicAudioRouteBridge(context: Context, messenger: BinaryMessenge
   init {
     methods.setMethodCallHandler(this)
     events.setStreamHandler(this)
+    headphones.setStreamHandler(object : EventChannel.StreamHandler {
+      override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
+        stopHeadphones()
+        // Android delivers the initial output inventory as an "added" callback.
+        // Only changes after registration should release the listener's hold.
+        val known = audio.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+          .filter(::privateOutput).map { it.id }.toMutableSet()
+        val callback = object : AudioDeviceCallback() {
+          override fun onAudioDevicesAdded(devices: Array<AudioDeviceInfo>) {
+            if (headphoneCallback !== this) return
+            val added = devices.filter(::privateOutput).map { it.id }
+            if (known.addAll(added)) events.success(true)
+          }
+          override fun onAudioDevicesRemoved(devices: Array<AudioDeviceInfo>) {
+            if (headphoneCallback !== this) return
+            val removed = devices.filter(::privateOutput).map { it.id }.toSet()
+            if (known.removeAll(removed)) events.success(false)
+          }
+        }
+        headphoneCallback = callback
+        audio.registerAudioDeviceCallback(callback, handler)
+      }
+      override fun onCancel(arguments: Any?) = stopHeadphones()
+    })
   }
 
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -163,6 +201,8 @@ internal class MusicAudioRouteBridge(context: Context, messenger: BinaryMessenge
   }
 
   override fun close() {
+    stopHeadphones()
+    headphones.setStreamHandler(null)
     stop()
     methods.setMethodCallHandler(null)
     events.setStreamHandler(null)

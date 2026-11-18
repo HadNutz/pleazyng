@@ -5,6 +5,11 @@
 - Choose a video engine in Playback settings. Android offers mpv, Media3 ExoPlayer and Android MediaPlayer. Apple platforms offer AVPlayer, Windows offers Media Foundation, and Linux offers GStreamer alongside mpv.
 - Add mpv to the LG and Samsung TV builds. LG mpv can feed the TV video plane directly. TV mpv can also try V4L2 hardware decoding. Samsung original-quality sources can reach the native decoder at UHD resolution. See [video engines and device qualification](docs/plezyng/video-engines.md).
 
+- Extending an active sports recording draws on [gingie’s Channels DVR request](https://community.getchannels.com/t/extend-live-recordings/1789).
+- Original dialogue selection draws on [@Altarentys’s Plezy request #3019](https://github.com/edde746/plezy/issues/3019).
+- Per-issue comic spread correction draws on the pairing problem reported by [@fatherpanda in Kavita #4903](https://github.com/Kareadita/Kavita/issues/4903).
+- Synchronized personal audio description takes inspiration from [GRETA by Greta & Starks Apps GmbH](https://apps.apple.com/ca/app/greta/id793892423). Pleazyng uses the listener’s own server file and embedded tracks.
+
 - Remove retired library integrations and their in-app borrowing flows. Public catalogue search and library website links remain available.
 
 - Translate the living-room controls and guest jukebox across all 37 supported locales, including regional inheritance.

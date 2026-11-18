@@ -80,6 +80,7 @@ void main() {
                               'index': 1,
                               'codec': 'flac',
                               'languageCode': 'jpn',
+                              'original': '1',
                               'title': 'Main',
                             },
                           ],
@@ -166,6 +167,17 @@ void main() {
     expect(requests.single.url.path, '/library/parts/99');
     expect(requests.single.url.queryParameters['audioStreamID'], '301');
     expect(requests.single.url.queryParameters['allParts'], '1');
+  });
+
+  test('original dialogue reaches the Plex transcoder and explicit picks still win', () async {
+    resetSharedPreferencesForTest();
+    final settings = await SettingsService.getInstance();
+    await settings.write(SettingsService.preferOriginalDialogue, true);
+    final original = await initializeTranscodeAudio();
+    expect(original.decisionUri.queryParameters['audioStreamID'], '305');
+    expect(original.result.mediaInfo!.audioTracks.singleWhere((row) => row.selected).id, 305);
+    final explicit = await initializeTranscodeAudio(selectedAudioStreamId: 301);
+    expect(explicit.decisionUri.queryParameters['audioStreamID'], '301');
   });
 
   test('semantic carried audio is sent to the Plex transcode decision', () async {

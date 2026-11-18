@@ -40,6 +40,7 @@ class TranslationsId extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsId $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsId(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$id viewing = _Translations$viewing$id._(_root);
 	@override late final _Translations$livingRoom$id livingRoom = _Translations$livingRoom$id._(_root);
 	@override late final _Translations$app$id app = _Translations$app$id._(_root);
 	@override late final _Translations$appIcon$id appIcon = _Translations$appIcon$id._(_root);
@@ -121,6 +122,23 @@ class TranslationsId extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$id musicExperience = _Translations$musicExperience$id._(_root);
 	@override late final _Translations$musicTools$id musicTools = _Translations$musicTools$id._(_root);
 	@override late final _Translations$musicDevices$id musicDevices = _Translations$musicDevices$id._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$id extends Translations$viewing$en {
+	_Translations$viewing$id._(TranslationsId root) : this._root = root, super.internal(root);
+
+	final TranslationsId _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Rekam 30 menit lagi';
+	@override String recordsUntil({required Object time}) => 'Merekam hingga ${time}';
+	@override String get extendFailed => 'Rekaman tidak dapat diperpanjang';
+	@override String get originalDialogue => 'Utamakan dialog asli';
+	@override String get soloPage => 'Tampilkan halaman ini sendiri';
+	@override String get pairPage => 'Pasangkan kembali halaman ini';
+	@override String get listenPhone => 'Dengarkan di ponsel ini';
+	@override String get audioUnavailable => 'Berkas atau trek audio tidak tersedia di ponsel ini.';
 }
 
 // Path: livingRoom
@@ -5561,6 +5579,14 @@ class _Translations$services$trackerDescriptions$id extends Translations$service
 extension on TranslationsId {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Rekam 30 menit lagi',
+			'viewing.recordsUntil' => ({required Object time}) => 'Merekam hingga ${time}',
+			'viewing.extendFailed' => 'Rekaman tidak dapat diperpanjang',
+			'viewing.originalDialogue' => 'Utamakan dialog asli',
+			'viewing.soloPage' => 'Tampilkan halaman ini sendiri',
+			'viewing.pairPage' => 'Pasangkan kembali halaman ini',
+			'viewing.listenPhone' => 'Dengarkan di ponsel ini',
+			'viewing.audioUnavailable' => 'Berkas atau trek audio tidak tersedia di ponsel ini.',
 			'livingRoom.fitScreen' => 'Sesuaikan dengan layar saya',
 			'livingRoom.fitHelp' => 'Pilih tepi dan geser dengan tombol panah hingga penandanya terlihat. Ulangi untuk setiap tepi.',
 			'livingRoom.left' => 'Kiri',
@@ -6065,6 +6091,8 @@ extension on TranslationsId {
 			'settings.audioChannelLimitOriginal' => 'asli',
 			'settings.audioChannelLimitOriginalDescription' => 'Mainkan setiap saluran di jalur',
 			'settings.audioChannelLimitSurround51' => 'hingga 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Campurkan 7.1 ke bawah 5.1 untuk TV dan penerima yang hanya mengambil 5.1 PCM.',
 			'settings.audioChannelLimitStereo' => 'Stereo',
 			'settings.audioChannelLimitStereoDescription' => 'Campurkan ke dua saluran untuk speaker stereo atau headset.',
@@ -6073,8 +6101,6 @@ extension on TranslationsId {
 			'settings.downmixCenterBoostLabel' => 'Peningkatan (db)',
 			'settings.downmixCenterBoostShort' => 'db',
 			'settings.audioDownmixNormalize' => 'Meningkatkan volume pada Downmix',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Mengurangi campuran untuk menghindari penipuan. tutup untuk menjaga volume asli (mungkin mengganggu adegan yang keras).',
 			'settings.dvConversionMode' => 'Dolby Vision Konversi',
 			'settings.dvConversionModeDescription' => 'Pilih bagaimana Dolby Vision Profil 7 file diproses.',
@@ -6579,6 +6605,8 @@ extension on TranslationsId {
 			'videoControls.playNext' => 'Mainkan selanjutnya',
 			'videoControls.playButton' => 'Putar',
 			'videoControls.pauseButton' => 'Jeda',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'beristirahat',
 			'videoControls.playbackResumed' => 'Bermain',
 			'videoControls.loadingVideo' => 'Download video',
@@ -6587,8 +6615,6 @@ extension on TranslationsId {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Mencari ke belakang ${seconds} detik',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Mencari ke depan ${seconds} detik',
 			'videoControls.previousButton' => 'episode sebelumnya',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Episode Selanjutnya',
 			'videoControls.previousChapterButton' => 'Bab sebelumnya',
 			'videoControls.nextChapterButton' => 'Bab selanjutnya',
@@ -7093,6 +7119,8 @@ extension on TranslationsId {
 			'libraries.analyze' => 'Analisis',
 			'libraries.analyzeLibrary' => 'Analisis Perpustakaan',
 			'libraries.refreshMetadata' => 'Segarkan metadata',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Tembusan kosong',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Menghilangkan sampah untuk "${title}..."',
 			'libraries.trashEmptied' => ({required Object title}) => 'Langkah-langkah untuk "${title}"',
@@ -7101,8 +7129,6 @@ extension on TranslationsId {
 			'libraries.analysisStarted' => ({required Object title}) => 'Analisis dimulai untuk "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Tidak berhasil menganalisis perpustakaan: ${error}',
 			'libraries.noLibrariesFound' => 'Tidak ditemukan perpustakaan',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Semua perpustakaan tersembunyi',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Perpustakaan Tersembunyi (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Perpustakaan ini kosong',
@@ -7607,6 +7633,8 @@ extension on TranslationsId {
 			'music.playingFrom' => ({required Object title}) => 'Bermain dari ${title}',
 			'music.queue' => 'Keuangan',
 			'music.clearQueue' => 'Hapus antrian',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'Lirik',
 			'music.visualizer' => 'Visualisasi',
 			'music.visualizerProfileLoading' => 'Membaca Track Analysis',
@@ -7615,8 +7643,6 @@ extension on TranslationsId {
 			'music.visualizerLiveAudio' => 'Analisis audio langsung',
 			'music.visualizerPreviousPreset' => 'Gaya visual sebelumnya',
 			'music.visualizerNextPreset' => 'Seterusnya Visual Style',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Bloom yang',
 			'music.visualizerPresetOrbitals' => 'Orbitasi',
@@ -8121,6 +8147,8 @@ extension on TranslationsId {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Keberadaan HW',
 			'performanceOverlay.decoderSoftware' => 'Software yang',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Perangkat keras',
 			'performanceOverlay.tunnelingActive' => 'aktif',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} gagal)',
@@ -8129,8 +8157,6 @@ extension on TranslationsId {
 			'externalPlayer.useExternalPlayer' => 'Gunakan pemain eksternal',
 			'externalPlayer.useExternalPlayerDescription' => 'Membuka video di aplikasi lain',
 			'externalPlayer.selectPlayer' => 'Pilih Pemain',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Pemain Custom',
 			'externalPlayer.systemDefault' => 'Sistem default',
 			'externalPlayer.addCustomPlayer' => 'Menambahkan Custom Player',
@@ -8635,6 +8661,8 @@ extension on TranslationsId {
 			'homeLayout.recentlyReleased' => 'Baru-baru ini dilepaskan',
 			'homeLayout.movieCollections' => 'Koleksi Film',
 			'homeLayout.showCollections' => 'Tunjukkan Koleksi',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Judul Row',
 			'homeLayout.content' => 'Sukses',
 			'homeLayout.showThisRowIn' => 'Tunjukkan baris ini di:',
@@ -8643,8 +8671,6 @@ extension on TranslationsId {
 			'homeLayout.heroCardDescription' => 'Menunjukkan sebagai satu kartu putar lebar penuh bukannya poster shelf.',
 			'homeLayout.heroUnavailableDescription' => 'Hanya tersedia ketika baris ini diselesaikan untuk judul nyata dari satu koleksi - dengan lebih dari satu koleksi terpilih tidak ada satu judul untuk berputar melalui.',
 			'homeLayout.librariesSelection' => 'Perpustakaan (meninggalkan semua tidak disemak untuk mencakup setiap perpustakaan)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Setiap perpustakaan yang diperiksa di sini digabungkan ke dalam satu baris ini.',
 			'homeLayout.movieCollectionsSelection' => 'Koleksi film (meninggalkan semua tidak disemak untuk setiap perpustakaan yang dipilih)',
 			'homeLayout.showCollectionsSelection' => 'Menampilkan koleksi (meninggalkan semua yang tidak disemak untuk setiap perpustakaan yang dipilih)',
@@ -9149,6 +9175,8 @@ extension on TranslationsId {
 			'sourceSetup.sshAuthentication' => 'Autentikasi SSH dengan kunci publik',
 			'sourceSetup.sshAuthenticationHelp' => 'Opsional; autentikasi kata sandi juga didukung.',
 			'sourceSetup.privateKey' => 'Kunci privat (format PEM atau OpenSSH)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Frasa sandi kunci privat',
 			'sourceSetup.nfsMountPort' => 'Port TCP layanan mount NFS',
 			'sourceSetup.nfsMountPortHelp' => 'Bawaan: 20048',
@@ -9157,8 +9185,6 @@ extension on TranslationsId {
 			'sourceSetup.nfsGroupId' => 'ID grup NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Bawaan: 1000. Gunakan ID grup yang diizinkan oleh ekspor NFS di NAS.',
 			'sourceSetup.nfsEncryption' => 'Wajibkan NFS terenkripsi (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Wajibkan TLS 1.3 untuk NFS dan layanan mount. Jika NAS tidak mendukungnya, koneksi ditolak.',
 			'sourceSetup.nfsTrustCertificate' => 'CA NFS khusus atau sertifikat server (PEM, opsional)',
 			'sourceSetup.nfsTrustHelp' => 'Kosongkan untuk sertifikat yang dipercaya perangkat ini. Jika perlu, tambahkan sertifikat CA privat atau sertifikat server yang ditandatangani sendiri; namanya harus cocok dengan host pada URL NFS.',
@@ -9663,6 +9689,8 @@ extension on TranslationsId {
 			'musicTools.playlistSharing' => 'Akses daftar putar',
 			'musicTools.playlistRecipient' => 'Nama pengguna Plex atau email',
 			'musicTools.playlistSharingHint' => 'Berikan akses ke daftar putar ini dan lagunya. Penerima mungkin perlu menerima undangan.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Tidak dapat meminta akses daftar putar.',
 			'musicTools.playlistSharingAccepted' => 'Plex menerima permintaan akses.',
 			'musicTools.playlistAccessList' => 'Akses saat ini',
@@ -9671,8 +9699,6 @@ extension on TranslationsId {
 			'musicTools.peak' => 'Puncak',
 			'musicTools.bass' => 'Bas',
 			'musicTools.treble' => 'Trebel',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Daftar putar bersama',
 			'musicTools.sharingInvitationsTitle' => 'Undangan berbagi Plex',
 			'musicTools.noSharingInvitations' => 'Tidak ada undangan tertunda',

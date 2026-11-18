@@ -41,6 +41,7 @@ class TranslationsPtBr extends TranslationsPt with BaseTranslations<AppLocale, T
 	TranslationsPtBr $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsPtBr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final Translations$viewing$pt_BR viewing = Translations$viewing$pt_BR.internal(_root);
 	@override late final Translations$cast$pt_BR cast = Translations$cast$pt_BR.internal(_root);
 	@override late final Translations$appIcon$pt_BR appIcon = Translations$appIcon$pt_BR.internal(_root);
 	@override late final Translations$auth$pt_BR auth = Translations$auth$pt_BR.internal(_root);
@@ -90,6 +91,23 @@ class TranslationsPtBr extends TranslationsPt with BaseTranslations<AppLocale, T
 	@override late final Translations$musicTools$pt_BR musicTools = Translations$musicTools$pt_BR.internal(_root);
 	@override late final Translations$musicExperience$pt_BR musicExperience = Translations$musicExperience$pt_BR.internal(_root);
 	@override late final Translations$subtitleAiUi$pt_BR subtitleAiUi = Translations$subtitleAiUi$pt_BR.internal(_root);
+}
+
+// Path: viewing
+class Translations$viewing$pt_BR extends Translations$viewing$pt {
+	Translations$viewing$pt_BR.internal(TranslationsPtBr root) : this._root = root, super.internal(root);
+
+	final TranslationsPtBr _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Gravar mais 30 minutos';
+	@override String recordsUntil({required Object time}) => 'Gravando até ${time}';
+	@override String get extendFailed => 'Não foi possível estender a gravação';
+	@override String get originalDialogue => 'Preferir o áudio original';
+	@override String get soloPage => 'Mostrar esta página sozinha';
+	@override String get pairPage => 'Voltar a agrupar esta página';
+	@override String get listenPhone => 'Ouvir neste celular';
+	@override String get audioUnavailable => 'O arquivo ou a faixa de áudio não está disponível neste celular.';
 }
 
 // Path: cast
@@ -1374,6 +1392,14 @@ class Translations$services$libraryFilter$pt_BR extends Translations$services$li
 extension on TranslationsPtBr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Gravar mais 30 minutos',
+			'viewing.recordsUntil' => ({required Object time}) => 'Gravando até ${time}',
+			'viewing.extendFailed' => 'Não foi possível estender a gravação',
+			'viewing.originalDialogue' => 'Preferir o áudio original',
+			'viewing.soloPage' => 'Mostrar esta página sozinha',
+			'viewing.pairPage' => 'Voltar a agrupar esta página',
+			'viewing.listenPhone' => 'Ouvir neste celular',
+			'viewing.audioUnavailable' => 'O arquivo ou a faixa de áudio não está disponível neste celular.',
 			'cast.subtitle' => 'Legendas',
 			'appIcon.defaultIcon' => 'Padrão',
 			'auth.quickConnect' => 'Conexão rápida',
@@ -1878,6 +1904,8 @@ extension on TranslationsPtBr {
 			'romm.engine' => 'Emulator identity',
 			'romm.slot' => 'Save slot',
 			'romm.core' => 'Core identity',
+			_ => null,
+		} ?? switch (path) {
 			'romm.compatibilityHelp' => 'Save states require the same emulator and compatible core version. Choose the exact game copy before importing.',
 			'romm.saveConflict' => 'Both copies changed. Keep both versions, use the server copy, or explicitly replace it.',
 			'romm.keepBoth' => 'Keep both',
@@ -1886,8 +1914,6 @@ extension on TranslationsPtBr {
 			'romm.pendingSaves' => 'Saves waiting to sync',
 			'romm.sync' => 'Sync saves',
 			'romm.savedLocally' => 'Progress kept on this device; upload is pending.',
-			_ => null,
-		} ?? switch (path) {
 			'romm.pause' => 'Pause',
 			'romm.kContinue' => 'Continue',
 			'romm.saveState' => 'Save state',

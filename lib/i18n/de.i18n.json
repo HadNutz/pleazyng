@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "30 Minuten länger aufnehmen",
+    "recordsUntil": "Aufnahme bis ${time}",
+    "extendFailed": "Aufnahme konnte nicht verlängert werden",
+    "originalDialogue": "Originalton bevorzugen",
+    "soloPage": "Diese Seite einzeln anzeigen",
+    "pairPage": "Diese Seite wieder paaren",
+    "listenPhone": "Auf diesem Smartphone hören",
+    "audioUnavailable": "Die Datei oder Tonspur ist auf diesem Smartphone nicht verfügbar."
+  },
   "livingRoom": {
     "fitScreen": "An meinen Bildschirm anpassen",
     "fitHelp": "Wähle einen Rand und verschiebe ihn mit den Pfeiltasten, bis seine Markierungen sichtbar sind. Wiederhole das für jeden Rand.",

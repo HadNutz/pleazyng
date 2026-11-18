@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "Optag 30 minutter mere",
+    "recordsUntil": "Optager indtil ${time}",
+    "extendFailed": "Kunne ikke forlænge optagelsen",
+    "originalDialogue": "Foretræk original dialog",
+    "soloPage": "Vis denne side alene",
+    "pairPage": "Par denne side igen",
+    "listenPhone": "Lyt på denne telefon",
+    "audioUnavailable": "Filen eller lydsporet er ikke tilgængeligt på denne telefon."
+  },
   "livingRoom": {
     "fitScreen": "Tilpas til min skærm",
     "fitHelp": "Vælg en kant, og flyt den med piletasterne, til markeringerne er synlige. Gentag for hver kant.",

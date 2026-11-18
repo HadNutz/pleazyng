@@ -40,6 +40,7 @@ class TranslationsCs extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsCs $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsCs(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$cs viewing = _Translations$viewing$cs._(_root);
 	@override late final _Translations$livingRoom$cs livingRoom = _Translations$livingRoom$cs._(_root);
 	@override late final _Translations$app$cs app = _Translations$app$cs._(_root);
 	@override late final _Translations$appIcon$cs appIcon = _Translations$appIcon$cs._(_root);
@@ -121,6 +122,23 @@ class TranslationsCs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$cs musicExperience = _Translations$musicExperience$cs._(_root);
 	@override late final _Translations$musicTools$cs musicTools = _Translations$musicTools$cs._(_root);
 	@override late final _Translations$musicDevices$cs musicDevices = _Translations$musicDevices$cs._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$cs extends Translations$viewing$en {
+	_Translations$viewing$cs._(TranslationsCs root) : this._root = root, super.internal(root);
+
+	final TranslationsCs _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Nahrávat dalších 30 minut';
+	@override String recordsUntil({required Object time}) => 'Nahrávání do ${time}';
+	@override String get extendFailed => 'Nahrávání se nepodařilo prodloužit';
+	@override String get originalDialogue => 'Upřednostnit původní dialogy';
+	@override String get soloPage => 'Zobrazit tuto stránku samostatně';
+	@override String get pairPage => 'Znovu spárovat tuto stránku';
+	@override String get listenPhone => 'Poslouchat na tomto telefonu';
+	@override String get audioUnavailable => 'Soubor nebo zvuková stopa nejsou na tomto telefonu dostupné.';
 }
 
 // Path: livingRoom
@@ -5630,6 +5648,14 @@ class _Translations$services$trackerDescriptions$cs extends Translations$service
 extension on TranslationsCs {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Nahrávat dalších 30 minut',
+			'viewing.recordsUntil' => ({required Object time}) => 'Nahrávání do ${time}',
+			'viewing.extendFailed' => 'Nahrávání se nepodařilo prodloužit',
+			'viewing.originalDialogue' => 'Upřednostnit původní dialogy',
+			'viewing.soloPage' => 'Zobrazit tuto stránku samostatně',
+			'viewing.pairPage' => 'Znovu spárovat tuto stránku',
+			'viewing.listenPhone' => 'Poslouchat na tomto telefonu',
+			'viewing.audioUnavailable' => 'Soubor nebo zvuková stopa nejsou na tomto telefonu dostupné.',
 			'livingRoom.fitScreen' => 'Přizpůsobit obrazovce',
 			'livingRoom.fitHelp' => 'Vyberte okraj a posouvejte jej šipkami, dokud neuvidíte jeho značky. Opakujte pro každý okraj.',
 			'livingRoom.left' => 'Vlevo',
@@ -6134,6 +6160,8 @@ extension on TranslationsCs {
 			'settings.audioChannelLimitOriginal' => 'originál',
 			'settings.audioChannelLimitOriginalDescription' => 'Zahrajte si každý kanál na trati',
 			'settings.audioChannelLimitSurround51' => 'až do 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Mícháme 7.1 dolů na 5.1 pro televizory a přijímače, které užívají pouze 5.1 PCM.',
 			'settings.audioChannelLimitStereo' => 'Stereo',
 			'settings.audioChannelLimitStereoDescription' => 'Smícháme do dvou kanálů pro stereo reproduktory nebo sluchátka.',
@@ -6142,8 +6170,6 @@ extension on TranslationsCs {
 			'settings.downmixCenterBoostLabel' => 'Zvýšení (dB)',
 			'settings.downmixCenterBoostShort' => 'DB',
 			'settings.audioDownmixNormalize' => 'Normalizace objemu na Downmix',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Snižte směs, aby se zabránilo klíčení. vypněte, abyste zachovali původní objem (možná narušení hlasitých scén).',
 			'settings.dvConversionMode' => 'Dolby Vision Převod',
 			'settings.dvConversionModeDescription' => 'Vyberte si, jak jsou zpracovávány soubory profilu Dolby Vision.',
@@ -6648,6 +6674,8 @@ extension on TranslationsCs {
 			'videoControls.playNext' => 'Přehrát jako další',
 			'videoControls.playButton' => 'Přehrát',
 			'videoControls.pauseButton' => 'Pozastavit',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'Odpočinek',
 			'videoControls.playbackResumed' => 'Hrají',
 			'videoControls.loadingVideo' => 'nahrávání videa',
@@ -6656,8 +6684,6 @@ extension on TranslationsCs {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Hledat zpět ${seconds} sekund',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Hledání vpřed ${seconds} sekund',
 			'videoControls.previousButton' => 'Předchozí epizoda',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Další díl',
 			'videoControls.previousChapterButton' => 'Předchozí kapitola',
 			'videoControls.nextChapterButton' => 'Další kapitola',
@@ -7162,6 +7188,8 @@ extension on TranslationsCs {
 			'libraries.analyze' => 'Analýza',
 			'libraries.analyzeLibrary' => 'Analýza knihovny',
 			'libraries.refreshMetadata' => 'Aktualizovat metadata',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'prázdný trash',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Vybavení odpadků pro "${title}..."',
 			'libraries.trashEmptied' => ({required Object title}) => 'Zpět na téma „${title}“',
@@ -7170,8 +7198,6 @@ extension on TranslationsCs {
 			'libraries.analysisStarted' => ({required Object title}) => 'Analýza začala pro "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Neuspěl analyzovat knihovnu: ${error}',
 			'libraries.noLibrariesFound' => 'Žádné knihovny nenajdete',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Všechny knihovny jsou skryté',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Skryté knihovny (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Tato knihovna je prázdná',
@@ -7676,6 +7702,8 @@ extension on TranslationsCs {
 			'music.playingFrom' => ({required Object title}) => 'Hraje se z ${title}',
 			'music.queue' => 'Kouč',
 			'music.clearQueue' => 'Vymazat frontu',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'Texty',
 			'music.visualizer' => 'vizualizace',
 			'music.visualizerProfileLoading' => 'Přečtěte si analýzu track...',
@@ -7684,8 +7712,6 @@ extension on TranslationsCs {
 			'music.visualizerLiveAudio' => 'Živá analýza zvuku',
 			'music.visualizerPreviousPreset' => 'Předchozí vizuální styl',
 			'music.visualizerNextPreset' => 'Další vizuální styl',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Blondýn',
 			'music.visualizerPresetOrbitals' => 'Orbitální',
@@ -8190,6 +8216,8 @@ extension on TranslationsCs {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Software',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'hardwarové',
 			'performanceOverlay.tunnelingActive' => 'aktivní',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} selhalo)',
@@ -8198,8 +8226,6 @@ extension on TranslationsCs {
 			'externalPlayer.useExternalPlayer' => 'Použijte externí hráče',
 			'externalPlayer.useExternalPlayerDescription' => 'Otevřete videa v jiné aplikaci',
 			'externalPlayer.selectPlayer' => 'Vyberte hráče',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Custom hráči',
 			'externalPlayer.systemDefault' => 'Systém default',
 			'externalPlayer.addCustomPlayer' => 'Přidat přizpůsobený hráč',
@@ -8704,6 +8730,8 @@ extension on TranslationsCs {
 			'homeLayout.recentlyReleased' => 'Nedávno uvolněné',
 			'homeLayout.movieCollections' => 'Filmové sbírky',
 			'homeLayout.showCollections' => 'Zobrazení kolekcí',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Row titulek',
 			'homeLayout.content' => 'obsah',
 			'homeLayout.showThisRowIn' => 'Zobrazit tento řádek v:',
@@ -8712,8 +8740,6 @@ extension on TranslationsCs {
 			'homeLayout.heroCardDescription' => 'Zobrazuje se jako jedna plnoširoká rotační karta namísto plakátového šelfu.',
 			'homeLayout.heroUnavailableDescription' => 'Dostupné pouze tehdy, když se tento řádek vyřeší na skutečné tituly jedné kolekce - s více než jednou kolekcí vybranou neexistuje žádný jediný titul, který by se mohl otáčet.',
 			'homeLayout.librariesSelection' => 'Knihovny (pustit všechny neprohlédnuté zahrnovat každou knihovnu)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Každá knihovna, která je zde kontrolována, je spojena do této jedné řady.',
 			'homeLayout.movieCollectionsSelection' => 'Filmové sbírky (pustit všechny nezkontrolované pro každou vybranou knihovnu)',
 			'homeLayout.showCollectionsSelection' => 'Zobrazit sbírky (zanechat všechny nezkontrolované pro každou vybranou knihovnu)',
@@ -9218,6 +9244,8 @@ extension on TranslationsCs {
 			'sourceSetup.sshAuthentication' => 'Ověření SSH veřejným klíčem',
 			'sourceSetup.sshAuthenticationHelp' => 'Nepovinné; podporováno je i ověření heslem.',
 			'sourceSetup.privateKey' => 'Soukromý klíč (formát PEM nebo OpenSSH)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Heslová fráze soukromého klíče',
 			'sourceSetup.nfsMountPort' => 'Port TCP služby připojení NFS',
 			'sourceSetup.nfsMountPortHelp' => 'Výchozí: 20048',
@@ -9226,8 +9254,6 @@ extension on TranslationsCs {
 			'sourceSetup.nfsGroupId' => 'ID skupiny NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Výchozí: 1000. Použijte ID skupiny povolené exportem NFS na NAS.',
 			'sourceSetup.nfsEncryption' => 'Vyžadovat šifrované NFS (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Vyžadovat TLS 1.3 pro NFS i službu připojení. Pokud jej NAS nepodporuje, spojení bude odmítnuto.',
 			'sourceSetup.nfsTrustCertificate' => 'Vlastní CA NFS nebo certifikát serveru (PEM, nepovinné)',
 			'sourceSetup.nfsTrustHelp' => 'Ponechte prázdné pro certifikáty, kterým toto zařízení důvěřuje. V případě potřeby přidejte certifikát soukromé CA nebo certifikát serveru podepsaný sebou samým; jeho názvy se musí shodovat s hostitelem v adrese NFS.',
@@ -9732,6 +9758,8 @@ extension on TranslationsCs {
 			'musicTools.playlistSharing' => 'Přístup k playlistu',
 			'musicTools.playlistRecipient' => 'Uživatelské jméno Plex nebo e-mail',
 			'musicTools.playlistSharingHint' => 'Udělte přístup k tomuto playlistu a jeho skladbám. Příjemce možná bude muset přijmout pozvánku.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Nepodařilo se požádat o přístup k playlistu.',
 			'musicTools.playlistSharingAccepted' => 'Plex přijal žádost o přístup.',
 			'musicTools.playlistAccessList' => 'Aktuální přístup',
@@ -9740,8 +9768,6 @@ extension on TranslationsCs {
 			'musicTools.peak' => 'Špička',
 			'musicTools.bass' => 'Basy',
 			'musicTools.treble' => 'Výšky',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Sdílené playlisty',
 			'musicTools.sharingInvitationsTitle' => 'Pozvánky ke sdílení Plex',
 			'musicTools.noSharingInvitations' => 'Žádné čekající pozvánky',

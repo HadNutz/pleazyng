@@ -27,3 +27,11 @@ test('stable locators preserve halves, webtoon offset and legacy bookmarks',()=>
     assert.deepEqual(parseComicLocator('broken',4),{index:4,offset:0});
     assert.equal(parseComicLocator(comicLocator(2,undefined,10)).offset,1);
 });
+
+test('an issue correction isolates either half and repairs the following pairs in reading order',()=>{
+    const narrow=Array.from({length:8},()=>({width:600,height:900}));
+    const pairs=settings=>comicTurns(narrow,{spread:'double',...settings},1200,800).map(turn=>turn.map(p=>p.index));
+    assert.deepEqual(pairs({soloPages:[2]}),[[0],[1],[2],[3,4],[5,6],[7]]);
+    assert.deepEqual(pairs({direction:'rtl',soloPages:[1,4]}),[[0],[1],[3,2],[4],[6,5],[7]]);
+    assert.deepEqual(pairs({soloPages:[]}),[[0],[1,2],[3,4],[5,6],[7]]);
+});

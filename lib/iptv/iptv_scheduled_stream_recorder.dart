@@ -24,7 +24,26 @@ class IptvScheduledStreamRecorder {
   final bool allowHttp;
   final Map<String, String> headers;
   final File outputFile;
-  final DateTime endsAt;
+  DateTime endsAt;
+  void Function()? _onDeadline;
+  bool _finished = false;
+
+  bool get canExtend => !_stopped && !_finished && (_archive?.capturing ?? true) && _now().isBefore(endsAt);
+
+  // Change only the deadline. Both the HTTP subscription and the HLS archive
+  // retain their open files, segment indexes and pending writes.
+  void setDeadline(DateTime deadline) {
+    endsAt = deadline;
+    _archive?.endsAt = deadline;
+    _armDeadline();
+  }
+
+  void _armDeadline() {
+    _stopTimer?.cancel();
+    final callback = _onDeadline;
+    if (callback != null) _stopTimer = Timer(endsAt.difference(_now()), callback);
+  }
+
   final Directory? archiveDirectory;
   IptvHlsArchive? _archive;
   int get archivedMediaBytes => _archive?.mediaBytes ?? 0;
@@ -38,6 +57,16 @@ class IptvScheduledStreamRecorder {
   String get fileExtension => _fileExtension;
 
   Future<String> record() async {
+    try {
+      return await _capture();
+    } finally {
+      _finished = true;
+      _onDeadline = null;
+      _stopTimer?.cancel();
+    }
+  }
+
+  Future<String> _capture() async {
     if (uri.path.toLowerCase().endsWith('.m3u8')) {
       return _recordHls(uri);
     }
@@ -89,6 +118,8 @@ class IptvScheduledStreamRecorder {
       if (done.isCompleted) {
         return;
       }
+      _finished = true;
+      _onDeadline = null;
       if (error == null) {
         done.complete();
       } else {
@@ -114,11 +145,12 @@ class IptvScheduledStreamRecorder {
       cancelOnError: true,
     );
     _subscription = subscription;
-    _stopTimer = Timer(endsAt.difference(_now()).isNegative ? Duration.zero : endsAt.difference(_now()), () {
+    _onDeadline = () {
       reachedScheduledEnd = true;
       _stopped = true;
       unawaited(subscription.cancel().then((_) => finish()));
-    });
+    };
+    _armDeadline();
     try {
       await done.future;
       if (!reachedScheduledEnd && !_stopped && _now().isBefore(endsAt)) {

@@ -40,6 +40,7 @@ class TranslationsHu extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsHu $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsHu(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$hu viewing = _Translations$viewing$hu._(_root);
 	@override late final _Translations$livingRoom$hu livingRoom = _Translations$livingRoom$hu._(_root);
 	@override late final _Translations$app$hu app = _Translations$app$hu._(_root);
 	@override late final _Translations$appIcon$hu appIcon = _Translations$appIcon$hu._(_root);
@@ -121,6 +122,23 @@ class TranslationsHu extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$hu musicExperience = _Translations$musicExperience$hu._(_root);
 	@override late final _Translations$musicTools$hu musicTools = _Translations$musicTools$hu._(_root);
 	@override late final _Translations$musicDevices$hu musicDevices = _Translations$musicDevices$hu._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$hu extends Translations$viewing$en {
+	_Translations$viewing$hu._(TranslationsHu root) : this._root = root, super.internal(root);
+
+	final TranslationsHu _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Felvétel további 30 percig';
+	@override String recordsUntil({required Object time}) => 'Felvétel eddig: ${time}';
+	@override String get extendFailed => 'A felvételt nem sikerült meghosszabbítani';
+	@override String get originalDialogue => 'Eredeti párbeszéd előnyben részesítése';
+	@override String get soloPage => 'Az oldal megjelenítése külön';
+	@override String get pairPage => 'Az oldal újbóli párosítása';
+	@override String get listenPhone => 'Hallgatás ezen a telefonon';
+	@override String get audioUnavailable => 'A fájl vagy a hangsáv nem érhető el ezen a telefonon.';
 }
 
 // Path: livingRoom
@@ -5586,6 +5604,14 @@ class _Translations$services$trackerDescriptions$hu extends Translations$service
 extension on TranslationsHu {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Felvétel további 30 percig',
+			'viewing.recordsUntil' => ({required Object time}) => 'Felvétel eddig: ${time}',
+			'viewing.extendFailed' => 'A felvételt nem sikerült meghosszabbítani',
+			'viewing.originalDialogue' => 'Eredeti párbeszéd előnyben részesítése',
+			'viewing.soloPage' => 'Az oldal megjelenítése külön',
+			'viewing.pairPage' => 'Az oldal újbóli párosítása',
+			'viewing.listenPhone' => 'Hallgatás ezen a telefonon',
+			'viewing.audioUnavailable' => 'A fájl vagy a hangsáv nem érhető el ezen a telefonon.',
 			'livingRoom.fitScreen' => 'Igazítás a képernyőmhöz',
 			'livingRoom.fitHelp' => 'Válassz egy szélt, és mozgasd a nyilakkal, amíg meg nem jelennek a jelölései. Ismételd meg minden szélnél.',
 			'livingRoom.left' => 'Bal',
@@ -6090,6 +6116,8 @@ extension on TranslationsHu {
 			'settings.audioChannelLimitOriginal' => 'Eredeti',
 			'settings.audioChannelLimitOriginalDescription' => 'A sáv összes csatornájának lejátszása',
 			'settings.audioChannelLimitSurround51' => 'Legfeljebb 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => '7.1 lekeverése 5.1-re olyan TV-khez és erősítőkhöz, amelyek csak 5.1-es PCM-et fogadnak. A hangtovábbítást nem érinti.',
 			'settings.audioChannelLimitStereo' => 'Sztereó',
 			'settings.audioChannelLimitStereoDescription' => 'Lekeverés két csatornára sztereó hangszórókhoz vagy fejhallgatóhoz. Kikapcsolja a hangtovábbítást.',
@@ -6098,8 +6126,6 @@ extension on TranslationsHu {
 			'settings.downmixCenterBoostLabel' => 'Kiemelés (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Hangerő normalizálása lekeveréskor',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'A keverés szintjének csökkentése a torzítás elkerülésére. Kapcsold ki az eredeti hangerő megőrzéséhez (a hangos jelenetek torzíthatnak).',
 			'settings.dvConversionMode' => 'Dolby Vision-átalakítás',
 			'settings.dvConversionModeDescription' => 'Válaszd ki, hogyan legyenek kezelve a Dolby Vision Profile 7 fájlok.',
@@ -6604,6 +6630,8 @@ extension on TranslationsHu {
 			'videoControls.playNext' => 'Következő lejátszása',
 			'videoControls.playButton' => 'Lejátszás',
 			'videoControls.pauseButton' => 'Szünet',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'Szüneteltetve',
 			'videoControls.playbackResumed' => 'Lejátszás',
 			'videoControls.loadingVideo' => 'Videó betöltése',
@@ -6612,8 +6640,6 @@ extension on TranslationsHu {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Tekerés hátra ${seconds} másodperccel',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Tekerés előre ${seconds} másodperccel',
 			'videoControls.previousButton' => 'Előző epizód',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Következő epizód',
 			'videoControls.previousChapterButton' => 'Előző fejezet',
 			'videoControls.nextChapterButton' => 'Következő fejezet',
@@ -7118,6 +7144,8 @@ extension on TranslationsHu {
 			'libraries.analyze' => 'Elemzés',
 			'libraries.analyzeLibrary' => 'Könyvtár elemzése',
 			'libraries.refreshMetadata' => 'Metaadatok frissítése',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Lomtár ürítése',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Lomtár ürítése a következőhöz: "${title}"...',
 			'libraries.trashEmptied' => ({required Object title}) => 'Lomtár kiürítve a következőhöz: "${title}"',
@@ -7126,8 +7154,6 @@ extension on TranslationsHu {
 			'libraries.analysisStarted' => ({required Object title}) => 'Elemzés elindítva a következőhöz: "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Nem sikerült a könyvtár elemzése: ${error}',
 			'libraries.noLibrariesFound' => 'Nem találhatók könyvtárak',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Minden könyvtár el van rejtve',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Rejtett könyvtárak (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Ez a könyvtár üres',
@@ -7632,6 +7658,8 @@ extension on TranslationsHu {
 			'music.playingFrom' => ({required Object title}) => 'Lejátszás innen: ${title}',
 			'music.queue' => 'Lejátszási sor',
 			'music.clearQueue' => 'Sor törlése',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'Dalszöveg',
 			'music.visualizer' => 'vizualizálása',
 			'music.visualizerProfileLoading' => 'A track analízis...',
@@ -7640,8 +7668,6 @@ extension on TranslationsHu {
 			'music.visualizerLiveAudio' => 'Élő hangelemzés',
 			'music.visualizerPreviousPreset' => 'Előző vizuális stílus',
 			'music.visualizerNextPreset' => 'Következő vizuális stílus',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Bloom',
 			'music.visualizerPresetOrbitals' => 'Orbitalok',
@@ -8146,6 +8172,8 @@ extension on TranslationsHu {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Szoftveres',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Hardveres',
 			'performanceOverlay.tunnelingActive' => 'Aktív',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} sikertelen)',
@@ -8154,8 +8182,6 @@ extension on TranslationsHu {
 			'externalPlayer.useExternalPlayer' => 'Külső lejátszó használata',
 			'externalPlayer.useExternalPlayerDescription' => 'Videók megnyitása egy másik alkalmazásban',
 			'externalPlayer.selectPlayer' => 'Lejátszó kiválasztása',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Egyéni lejátszók',
 			'externalPlayer.systemDefault' => 'Rendszer alapértelmezése',
 			'externalPlayer.addCustomPlayer' => 'Egyéni lejátszó hozzáadása',
@@ -8660,6 +8686,8 @@ extension on TranslationsHu {
 			'homeLayout.recentlyReleased' => 'Nemrégiben kiadott',
 			'homeLayout.movieCollections' => 'Filmgyűjtemények',
 			'homeLayout.showCollections' => 'Kollekciók bemutatása',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Row cím',
 			'homeLayout.content' => 'Tartalom',
 			'homeLayout.showThisRowIn' => 'Ez a sor a következőben jelenik meg:',
@@ -8668,8 +8696,6 @@ extension on TranslationsHu {
 			'homeLayout.heroCardDescription' => 'A teljes körű forgatási kártyát mutatja be a poszter-szekrény helyett.',
 			'homeLayout.heroUnavailableDescription' => 'Csak akkor áll rendelkezésre, ha ez a sor egy gyűjtemény tényleges címére oldódik meg - több mint egy gyűjtés kiválasztásával egyetlen cím sem fordulhat át.',
 			'homeLayout.librariesSelection' => 'Könyvtárak (az összes ellenőrzés nélküli könyvtárat minden könyvtárhoz bele kell foglalni)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Minden könyvtár itt ellenőrzött össze van keverve ebben az egyik sorban.',
 			'homeLayout.movieCollectionsSelection' => 'Filmgyűjtemények (minden ellenőrzés nélküli lemez minden kiválasztott könyvtárban)',
 			'homeLayout.showCollectionsSelection' => 'Megjelenítés gyűjtemények (töltsön ki minden nem ellenőrzött minden kiválasztott könyvtár)',
@@ -9174,6 +9200,8 @@ extension on TranslationsHu {
 			'sourceSetup.sshAuthentication' => 'SSH-hitelesítés nyilvános kulccsal',
 			'sourceSetup.sshAuthenticationHelp' => 'Nem kötelező; a jelszavas hitelesítés is támogatott.',
 			'sourceSetup.privateKey' => 'Privát kulcs (PEM- vagy OpenSSH-formátum)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'A privát kulcs jelmondata',
 			'sourceSetup.nfsMountPort' => 'Az NFS-csatolási szolgáltatás TCP-portja',
 			'sourceSetup.nfsMountPortHelp' => 'Alapértelmezett: 20048',
@@ -9182,8 +9210,6 @@ extension on TranslationsHu {
 			'sourceSetup.nfsGroupId' => 'NFS-csoportazonosító (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Alapértelmezett: 1000. A NAS NFS-megosztása által engedélyezett csoportazonosítót használd.',
 			'sourceSetup.nfsEncryption' => 'Titkosított NFS megkövetelése (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'TLS 1.3 megkövetelése az NFS-hez és a csatolási szolgáltatáshoz. Ha a NAS ezt nem támogatja, a kapcsolat nem jön létre.',
 			'sourceSetup.nfsTrustCertificate' => 'Egyéni NFS CA vagy szervertanúsítvány (PEM, nem kötelező)',
 			'sourceSetup.nfsTrustHelp' => 'Hagyd üresen az eszköz által megbízhatónak tartott tanúsítványokhoz. Szükség esetén adj hozzá privát CA-tanúsítványt vagy önaláírt szervertanúsítványt; a benne szereplő neveknek egyezniük kell az NFS URL gépnevével.',
@@ -9688,6 +9714,8 @@ extension on TranslationsHu {
 			'musicTools.playlistSharing' => 'Lejátszási lista elérése',
 			'musicTools.playlistRecipient' => 'Plex-felhasználónév vagy e-mail',
 			'musicTools.playlistSharingHint' => 'Adjon hozzáférést ehhez a listához és számaihoz. A címzettnek esetleg el kell fogadnia egy meghívást.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Nem sikerült hozzáférést kérni a listához.',
 			'musicTools.playlistSharingAccepted' => 'A Plex elfogadta a hozzáférési kérést.',
 			'musicTools.playlistAccessList' => 'Jelenlegi hozzáférés',
@@ -9696,8 +9724,6 @@ extension on TranslationsHu {
 			'musicTools.peak' => 'Csúcs',
 			'musicTools.bass' => 'Mély',
 			'musicTools.treble' => 'Magas',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Megosztott lejátszási listák',
 			'musicTools.sharingInvitationsTitle' => 'Plex-megosztási meghívók',
 			'musicTools.noSharingInvitations' => 'Nincsenek függő meghívók',

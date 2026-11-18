@@ -6,6 +6,7 @@ import '../../mpv/mpv.dart';
 import '../../providers/companion_remote_provider.dart';
 import '../../services/companion_remote/companion_remote_receiver.dart';
 import '../../services/fullscreen_state_manager.dart';
+import '../../services/companion_remote/listening_clock.dart';
 import '../../services/video_volume_controller.dart';
 import '../../utils/app_logger.dart';
 import '../../utils/platform_detector.dart';
@@ -22,6 +23,7 @@ import '../../utils/platform_detector.dart';
 /// and volume/seek dispatch must bind to the player at command receipt.
 class CompanionRemoteBinding {
   CompanionRemoteBinding({
+    this.readListeningClock,
     required this._player,
     required this._isMounted,
     required this._canControlPlayback,
@@ -37,6 +39,7 @@ class CompanionRemoteBinding {
     required this._readProvider,
   });
 
+  final ListeningClock? Function()? readListeningClock;
   final Player? Function() _player;
   final bool Function() _isMounted;
   final bool Function() _canControlPlayback;
@@ -95,6 +98,7 @@ class CompanionRemoteBinding {
     // Store provider reference for use in dispose and notify remote
     try {
       _provider = _readProvider();
+      _provider!.readListeningClock = readListeningClock;
       _provider!.setHostPlayerActive(true);
     } catch (e) {
       appLogger.d('CompanionRemote provider unavailable', error: e);
@@ -156,6 +160,7 @@ class CompanionRemoteBinding {
     _savedOnHome = null;
 
     // Notify only when the active player owner exits.
+    _provider?.readListeningClock = null;
     _provider?.setHostPlayerActive(false);
     _provider = null;
   }

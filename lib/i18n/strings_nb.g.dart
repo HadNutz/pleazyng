@@ -40,6 +40,7 @@ class TranslationsNb extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsNb $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsNb(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$nb viewing = _Translations$viewing$nb._(_root);
 	@override late final _Translations$livingRoom$nb livingRoom = _Translations$livingRoom$nb._(_root);
 	@override late final _Translations$app$nb app = _Translations$app$nb._(_root);
 	@override late final _Translations$appIcon$nb appIcon = _Translations$appIcon$nb._(_root);
@@ -121,6 +122,23 @@ class TranslationsNb extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$nb musicExperience = _Translations$musicExperience$nb._(_root);
 	@override late final _Translations$musicTools$nb musicTools = _Translations$musicTools$nb._(_root);
 	@override late final _Translations$musicDevices$nb musicDevices = _Translations$musicDevices$nb._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$nb extends Translations$viewing$en {
+	_Translations$viewing$nb._(TranslationsNb root) : this._root = root, super.internal(root);
+
+	final TranslationsNb _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Ta opp 30 minutter til';
+	@override String recordsUntil({required Object time}) => 'Opptak frem til ${time}';
+	@override String get extendFailed => 'Kunne ikke forlenge opptaket';
+	@override String get originalDialogue => 'Foretrekk originaldialog';
+	@override String get soloPage => 'Vis denne siden alene';
+	@override String get pairPage => 'Par denne siden igjen';
+	@override String get listenPhone => 'Lytt på denne telefonen';
+	@override String get audioUnavailable => 'Filen eller lydsporet er utilgjengelig på denne telefonen.';
 }
 
 // Path: livingRoom
@@ -5586,6 +5604,14 @@ class _Translations$services$trackerDescriptions$nb extends Translations$service
 extension on TranslationsNb {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Ta opp 30 minutter til',
+			'viewing.recordsUntil' => ({required Object time}) => 'Opptak frem til ${time}',
+			'viewing.extendFailed' => 'Kunne ikke forlenge opptaket',
+			'viewing.originalDialogue' => 'Foretrekk originaldialog',
+			'viewing.soloPage' => 'Vis denne siden alene',
+			'viewing.pairPage' => 'Par denne siden igjen',
+			'viewing.listenPhone' => 'Lytt på denne telefonen',
+			'viewing.audioUnavailable' => 'Filen eller lydsporet er utilgjengelig på denne telefonen.',
 			'livingRoom.fitScreen' => 'Tilpass til skjermen min',
 			'livingRoom.fitHelp' => 'Velg en kant og flytt den med piltastene til markeringene er synlige. Gjenta for hver kant.',
 			'livingRoom.left' => 'Venstre',
@@ -6090,6 +6116,8 @@ extension on TranslationsNb {
 			'settings.audioChannelLimitOriginal' => 'Original',
 			'settings.audioChannelLimitOriginalDescription' => 'Spill av alle kanalene i sporet',
 			'settings.audioChannelLimitSurround51' => 'Opptil 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Miks 7.1 ned til 5.1 for TV-er og mottakere som bare støtter 5.1 PCM. Direkte lydutgang påvirkes ikke.',
 			'settings.audioChannelLimitStereo' => 'Stereo',
 			'settings.audioChannelLimitStereoDescription' => 'Miks ned til to kanaler for stereohøyttalere eller hodetelefoner. Slår av direkte lydutgang.',
@@ -6098,8 +6126,6 @@ extension on TranslationsNb {
 			'settings.downmixCenterBoostLabel' => 'Forsterkning (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Normaliser lydstyrke ved nedmiks',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Senker miksen for å unngå klipping. Slå av for å beholde originalvolumet (høye scener kan forvrenges).',
 			'settings.dvConversionMode' => 'Dolby Vision-konvertering',
 			'settings.dvConversionModeDescription' => 'Velg hvordan filer med Dolby Vision-profil 7 håndteres.',
@@ -6604,6 +6630,8 @@ extension on TranslationsNb {
 			'videoControls.playNext' => 'Spill neste',
 			'videoControls.playButton' => 'Spill av',
 			'videoControls.pauseButton' => 'Pause',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'Pauset',
 			'videoControls.playbackResumed' => 'Spiller',
 			'videoControls.loadingVideo' => 'Laster video',
@@ -6612,8 +6640,6 @@ extension on TranslationsNb {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Spol tilbake ${seconds} sekunder',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Spol fremover ${seconds} sekunder',
 			'videoControls.previousButton' => 'Forrige episode',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Neste episode',
 			'videoControls.previousChapterButton' => 'Forrige kapittel',
 			'videoControls.nextChapterButton' => 'Neste kapittel',
@@ -7118,6 +7144,8 @@ extension on TranslationsNb {
 			'libraries.analyze' => 'Analyser',
 			'libraries.analyzeLibrary' => 'Analyser bibliotek',
 			'libraries.refreshMetadata' => 'Oppdater metadata',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Tøm papirkurv',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Tømmer papirkurv for "${title}"...',
 			'libraries.trashEmptied' => ({required Object title}) => 'Papirkurv tømt for "${title}"',
@@ -7126,8 +7154,6 @@ extension on TranslationsNb {
 			'libraries.analysisStarted' => ({required Object title}) => 'Analyse startet for "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Kunne ikke analysere bibliotek: ${error}',
 			'libraries.noLibrariesFound' => 'Ingen biblioteker funnet',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Alle biblioteker er skjult',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Skjulte biblioteker (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Dette biblioteket er tomt',
@@ -7632,6 +7658,8 @@ extension on TranslationsNb {
 			'music.playingFrom' => ({required Object title}) => 'Spiller fra ${title}',
 			'music.queue' => 'Kø',
 			'music.clearQueue' => 'Tøm kø',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'Sangtekst',
 			'music.visualizer' => 'Visualiser',
 			'music.visualizerProfileLoading' => 'Lesing av track analyse.',
@@ -7640,8 +7668,6 @@ extension on TranslationsNb {
 			'music.visualizerLiveAudio' => 'Direkte lydanalyse',
 			'music.visualizerPreviousPreset' => 'Tidligere visuell stil',
 			'music.visualizerNextPreset' => 'Neste visuell stil',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Blomst',
 			'music.visualizerPresetOrbitals' => 'Orbitale',
@@ -8146,6 +8172,8 @@ extension on TranslationsNb {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek-maskinvare',
 			'performanceOverlay.decoderExynosHw' => 'Exynos-maskinvare',
 			'performanceOverlay.decoderSoftware' => 'Programvare',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Maskinvare',
 			'performanceOverlay.tunnelingActive' => 'Aktiv',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} mislyktes)',
@@ -8154,8 +8182,6 @@ extension on TranslationsNb {
 			'externalPlayer.useExternalPlayer' => 'Bruk ekstern spiller',
 			'externalPlayer.useExternalPlayerDescription' => 'Åpne videoer i en annen app',
 			'externalPlayer.selectPlayer' => 'Velg spiller',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Egendefinerte spillere',
 			'externalPlayer.systemDefault' => 'Systemstandard',
 			'externalPlayer.addCustomPlayer' => 'Legg til egendefinert spiller',
@@ -8660,6 +8686,8 @@ extension on TranslationsNb {
 			'homeLayout.recentlyReleased' => 'Nylig frigjort',
 			'homeLayout.movieCollections' => 'Filmsamlinger',
 			'homeLayout.showCollections' => 'Vis innsamling',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Rø titel',
 			'homeLayout.content' => 'Innhold',
 			'homeLayout.showThisRowIn' => 'Vis denne raden i:',
@@ -8668,8 +8696,6 @@ extension on TranslationsNb {
 			'homeLayout.heroCardDescription' => 'Vises som et fullbredt roterende kort i stedet for et posterskjelv.',
 			'homeLayout.heroUnavailableDescription' => 'Kun tilgjengelig når denne raden løses til en enkelt samlings virkelige titler - med mer enn én samling valgt det er ingen enkelt tittel å rote gjennom.',
 			'homeLayout.librariesSelection' => 'Biblioteker (leve alle unchecked for å inkludere hver bibliotek)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Hver bibliotek sjekket her er forbundet i denne ene raden.',
 			'homeLayout.movieCollectionsSelection' => 'Filmsamlinger (leve alle unchecked for hver utvalgte bibliotek)',
 			'homeLayout.showCollectionsSelection' => 'Vis samlingene (leve alle u sjekket for hver utvalgte bibliotek)',
@@ -9174,6 +9200,8 @@ extension on TranslationsNb {
 			'sourceSetup.sshAuthentication' => 'SSH-autentisering med offentlig nøkkel',
 			'sourceSetup.sshAuthenticationHelp' => 'Valgfritt; autentisering med passord støttes også.',
 			'sourceSetup.privateKey' => 'Privat nøkkel (PEM- eller OpenSSH-format)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Passfrase for privat nøkkel',
 			'sourceSetup.nfsMountPort' => 'TCP-port for NFS-monteringstjenesten',
 			'sourceSetup.nfsMountPortHelp' => 'Standard: 20048',
@@ -9182,8 +9210,6 @@ extension on TranslationsNb {
 			'sourceSetup.nfsGroupId' => 'NFS-gruppe-ID (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Standard: 1000. Bruk gruppe-ID-en som NAS-enhetens NFS-deling tillater.',
 			'sourceSetup.nfsEncryption' => 'Krev kryptert NFS (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Krev TLS 1.3 for NFS og monteringstjenesten. Hvis NAS-enheten ikke støtter dette, avvises tilkoblingen.',
 			'sourceSetup.nfsTrustCertificate' => 'Egendefinert NFS-CA eller serversertifikat (PEM, valgfritt)',
 			'sourceSetup.nfsTrustHelp' => 'La stå tomt for sertifikater denne enheten stoler på. Legg ved behov til et sertifikat fra en privat CA eller et selvsignert serversertifikat; navnene må samsvare med verten i NFS-URL-en.',
@@ -9688,6 +9714,8 @@ extension on TranslationsNb {
 			'musicTools.playlistSharing' => 'Tilgang til spilleliste',
 			'musicTools.playlistRecipient' => 'Plex-brukernavn eller e-post',
 			'musicTools.playlistSharingHint' => 'Gi tilgang til denne spillelisten og sporene. Mottakeren må kanskje godta en invitasjon.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Kunne ikke be om tilgang til spillelisten.',
 			'musicTools.playlistSharingAccepted' => 'Plex godtok tilgangsforespørselen.',
 			'musicTools.playlistAccessList' => 'Nåværende tilgang',
@@ -9696,8 +9724,6 @@ extension on TranslationsNb {
 			'musicTools.peak' => 'Topp',
 			'musicTools.bass' => 'Bass',
 			'musicTools.treble' => 'Diskant',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Delte spillelister',
 			'musicTools.sharingInvitationsTitle' => 'Plex-delingsinvitasjoner',
 			'musicTools.noSharingInvitations' => 'Ingen ventende invitasjoner',

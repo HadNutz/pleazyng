@@ -47,6 +47,7 @@ import 'file_info_parser.dart';
 import 'download_artwork_helpers.dart';
 import 'settings_service.dart';
 import '../media/receiver_audio.dart';
+import '../media/original_dialogue.dart';
 import 'plex_direct_play_identity.dart';
 import 'library_query_translator.dart';
 import 'scrub_preview_source.dart';
@@ -4456,9 +4457,18 @@ class PlexClient
       final audioPreset = PlatformDetector.isTizenBuild() && requestedAudioPreset.isOriginal
           ? AudioQualityPreset.high
           : requestedAudioPreset;
-      final resolvedAudioId = carriedAudioTrack == null
-          ? _resolveAudioStreamId(options.selectedAudioStreamId, data.mediaInfo)
-          : carriedAudioStreamId;
+      final requestedAudioId =
+          options.selectedAudioStreamId ??
+          carriedAudioStreamId ??
+          (isTrack
+              ? null
+              : await serverOriginalId(
+                  data.mediaInfo,
+                  options.metadata.raw?['originalLanguage'],
+                  options.lookupOriginalLanguage,
+                ));
+      final resolvedAudioId =
+          requestedAudioId ?? (carriedAudioTrack == null ? _resolveAudioStreamId(null, data.mediaInfo) : null);
       final receiverAc3 = !isTrack && receiverAc3Enabled && needsReceiverAc3(data.mediaInfo, resolvedAudioId);
       final selectedAudioCodec = data.mediaInfo?.audioTracks
           .where((track) => track.id == resolvedAudioId)
@@ -4523,7 +4533,7 @@ class PlexClient
             return PlaybackInitializationResult(
               availableVersions: data.availableVersions,
               videoUrl: transcodeUrl,
-              mediaInfo: data.mediaInfo,
+              mediaInfo: data.mediaInfo?.selectAudio(requestedAudioId),
               isOffline: false,
               isTranscoding: true,
               playMethod: 'Transcode',
@@ -4570,7 +4580,7 @@ class PlexClient
           return PlaybackInitializationResult(
             availableVersions: data.availableVersions,
             videoUrl: transcodeUrl,
-            mediaInfo: data.mediaInfo,
+            mediaInfo: data.mediaInfo?.selectAudio(requestedAudioId),
             subtitleSidecars: subtitleSidecars,
             isOffline: false,
             isTranscoding: true,
@@ -4586,7 +4596,7 @@ class PlexClient
           data,
           result.outcome,
           options,
-          activeAudioStreamId: carriedAudioStreamId,
+          activeAudioStreamId: requestedAudioId,
           audioCodecRefused: audioCodecRefused,
         );
       }
@@ -4596,10 +4606,10 @@ class PlexClient
       return PlaybackInitializationResult(
         availableVersions: data.availableVersions,
         videoUrl: _sessionStreamUrl(data.videoUrl, options),
-        mediaInfo: data.mediaInfo,
+        mediaInfo: data.mediaInfo?.selectAudio(requestedAudioId),
         subtitleSidecars: _buildExternalSubtitles(data.mediaInfo),
         isOffline: false,
-        activeAudioStreamId: carriedAudioStreamId,
+        activeAudioStreamId: requestedAudioId,
         playMethod: 'DirectPlay',
         playSessionId: options.sessionIdentifier,
         selectedMediaIndex: data.selectedMediaIndex,
@@ -4728,7 +4738,7 @@ class PlexClient
     return PlaybackInitializationResult(
       availableVersions: data.availableVersions,
       videoUrl: _sessionStreamUrl(data.videoUrl, options),
-      mediaInfo: data.mediaInfo,
+      mediaInfo: data.mediaInfo?.selectAudio(activeAudioStreamId),
       subtitleSidecars: _buildExternalSubtitles(data.mediaInfo),
       isOffline: false,
       isTranscoding: false,
@@ -5954,6 +5964,7 @@ class PlexClient
     int mediaIndex = 0,
     String? mediaSourceId,
     Duration? position,
+    bool registerPlayback = true,
   }) async {
     final playbackData = await getVideoPlaybackData(
       item.id,
@@ -5962,8 +5973,8 @@ class PlexClient
       position: position,
     );
     if (!playbackData.hasValidVideoUrl) return null;
-    final sessionId = item.kind.isVideo ? generateSessionIdentifier() : null;
-    await _registerDirectPlay(playbackData, item, sessionId);
+    final sessionId = registerPlayback && item.kind.isVideo ? generateSessionIdentifier() : null;
+    if (registerPlayback) await _registerDirectPlay(playbackData, item, sessionId);
     return ExternalPlaybackTarget(
       url: sessionId == null
           ? playbackData.videoUrl!
@@ -5971,6 +5982,7 @@ class PlexClient
       playSessionId: sessionId,
       subtitles: [for (final sidecar in _buildExternalSubtitles(playbackData.mediaInfo)) sidecar.track],
       partTimeline: playbackData.mediaInfo?.partTimeline,
+      mediaInfo: playbackData.mediaInfo,
     );
   }
 

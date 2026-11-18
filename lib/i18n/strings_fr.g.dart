@@ -40,6 +40,7 @@ class TranslationsFr extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsFr $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsFr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final Translations$viewing$fr viewing = Translations$viewing$fr.internal(_root);
 	@override late final Translations$livingRoom$fr livingRoom = Translations$livingRoom$fr.internal(_root);
 	@override late final Translations$app$fr app = Translations$app$fr.internal(_root);
 	@override late final Translations$appIcon$fr appIcon = Translations$appIcon$fr.internal(_root);
@@ -122,6 +123,23 @@ class TranslationsFr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$fr musicExperience = Translations$musicExperience$fr.internal(_root);
 	@override late final Translations$musicTools$fr musicTools = Translations$musicTools$fr.internal(_root);
 	@override late final Translations$musicDevices$fr musicDevices = Translations$musicDevices$fr.internal(_root);
+}
+
+// Path: viewing
+class Translations$viewing$fr extends Translations$viewing$en {
+	Translations$viewing$fr.internal(TranslationsFr root) : this._root = root, super.internal(root);
+
+	final TranslationsFr _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Enregistrer 30 minutes de plus';
+	@override String recordsUntil({required Object time}) => 'Enregistrement jusqu’à ${time}';
+	@override String get extendFailed => 'Impossible de prolonger cet enregistrement';
+	@override String get originalDialogue => 'Préférer les dialogues originaux';
+	@override String get soloPage => 'Afficher cette page seule';
+	@override String get pairPage => 'Associer à nouveau cette page';
+	@override String get listenPhone => 'Écouter sur ce téléphone';
+	@override String get audioUnavailable => 'Le fichier ou la piste audio est indisponible sur ce téléphone.';
 }
 
 // Path: livingRoom
@@ -5630,6 +5648,14 @@ class Translations$services$trackerDescriptions$fr extends Translations$services
 extension on TranslationsFr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Enregistrer 30 minutes de plus',
+			'viewing.recordsUntil' => ({required Object time}) => 'Enregistrement jusqu’à ${time}',
+			'viewing.extendFailed' => 'Impossible de prolonger cet enregistrement',
+			'viewing.originalDialogue' => 'Préférer les dialogues originaux',
+			'viewing.soloPage' => 'Afficher cette page seule',
+			'viewing.pairPage' => 'Associer à nouveau cette page',
+			'viewing.listenPhone' => 'Écouter sur ce téléphone',
+			'viewing.audioUnavailable' => 'Le fichier ou la piste audio est indisponible sur ce téléphone.',
 			'livingRoom.fitScreen' => 'Ajuster à mon écran',
 			'livingRoom.fitHelp' => 'Sélectionnez un bord, puis déplacez-le avec les flèches jusqu’à voir ses repères. Répétez pour chaque bord.',
 			'livingRoom.left' => 'Gauche',
@@ -6134,6 +6160,8 @@ extension on TranslationsFr {
 			'settings.audioChannelLimitOriginal' => 'D’origine',
 			'settings.audioChannelLimitOriginalDescription' => 'Lire tous les canaux de la piste',
 			'settings.audioChannelLimitSurround51' => 'Jusqu’à 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Convertir le 7.1 en 5.1 pour les téléviseurs et amplis qui n’acceptent que le PCM 5.1. La transmission directe n’est pas affectée.',
 			'settings.audioChannelLimitStereo' => 'Stéréo',
 			'settings.audioChannelLimitStereoDescription' => 'Convertir en deux canaux pour des enceintes stéréo ou un casque. Désactive la transmission directe.',
@@ -6142,8 +6170,6 @@ extension on TranslationsFr {
 			'settings.downmixCenterBoostLabel' => 'Renforcement (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Normaliser le volume lors de la conversion en stéréo',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Atténuer le mixage pour éviter la saturation. Désactivez cette option pour conserver le volume d’origine, au risque de déformer les scènes bruyantes.',
 			'settings.dvConversionMode' => 'Conversion Dolby Vision',
 			'settings.dvConversionModeDescription' => 'Choisir comment les fichiers Dolby Vision de profil 7 sont gérés.',
@@ -6648,6 +6674,8 @@ extension on TranslationsFr {
 			'videoControls.playNext' => 'Lire l\'épisode suivant',
 			'videoControls.playButton' => 'Lire',
 			'videoControls.pauseButton' => 'Pause',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'En pause',
 			'videoControls.playbackResumed' => 'En lecture',
 			'videoControls.loadingVideo' => 'Chargement de la vidéo',
@@ -6656,8 +6684,6 @@ extension on TranslationsFr {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Reculer de ${seconds} secondes',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Avancer de ${seconds} secondes',
 			'videoControls.previousButton' => 'Épisode précédent',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Épisode suivant',
 			'videoControls.previousChapterButton' => 'Chapitre précédent',
 			'videoControls.nextChapterButton' => 'Chapitre suivant',
@@ -7162,6 +7188,8 @@ extension on TranslationsFr {
 			'errors.reasonUnexpected' => 'une erreur inattendue s\'est produite',
 			'libraries.playRandomMovie' => 'Jouer un film aléatoire',
 			'libraries.randomPickFailed' => 'Je ne pouvais pas choisir un film de cette bibliothèque.',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.title' => 'Bibliothèques',
 			'libraries.fallbackTitle' => 'Bibliothèque',
 			'libraries.scanLibraryFiles' => 'Scanner les fichiers de la bibliothèque',
@@ -7170,8 +7198,6 @@ extension on TranslationsFr {
 			'libraries.analyzeLibrary' => 'Analyser la bibliothèque',
 			'libraries.refreshMetadata' => 'Actualiser les métadonnées',
 			'libraries.emptyTrash' => 'Vider la corbeille',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyingTrash' => ({required Object title}) => 'Vidage de la corbeille de « ${title} »…',
 			'libraries.trashEmptied' => ({required Object title}) => 'Corbeille vidée pour « ${title} »',
 			'libraries.failedToEmptyTrash' => ({required Object error}) => 'Échec du vidage de la corbeille : ${error}',
@@ -7676,6 +7702,8 @@ extension on TranslationsFr {
 			'music.goToArtist' => 'Aller à l\'artiste',
 			'music.instantMix' => 'Mix instantané',
 			'music.playNext' => 'Lire ensuite',
+			_ => null,
+		} ?? switch (path) {
 			'music.addToQueue' => 'Ajouter à la file d\'attente',
 			'music.discNumber' => ({required Object n}) => 'Disque ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titre', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titres', ), 
@@ -7684,8 +7712,6 @@ extension on TranslationsFr {
 			'music.queue' => 'File d\'attente',
 			'music.clearQueue' => 'Vider la file d\'attente',
 			'music.lyrics' => 'Paroles',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizer' => 'Visualisateur',
 			'music.visualizerProfileLoading' => 'Lire la suite de Track Analysis...',
 			'music.visualizerAmbientMotion' => 'Mouvement environnemental',
@@ -8190,6 +8216,8 @@ extension on TranslationsFr {
 			'performanceOverlay.playMethod' => 'Le jeu méthode',
 			'performanceOverlay.memory' => 'Mémoire',
 			'performanceOverlay.uiFps' => 'FPS UI',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderAndroidHw' => 'Matériel Android',
 			'performanceOverlay.decoderNvidiaHw' => 'Matériel NVIDIA',
@@ -8198,8 +8226,6 @@ extension on TranslationsFr {
 			'performanceOverlay.decoderExynosHw' => 'Matériel Exynos',
 			'performanceOverlay.decoderSoftware' => 'Logiciel',
 			'performanceOverlay.decoderHardware' => 'Matériel',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.tunnelingActive' => 'Actif',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} échecs)',
 			'performanceOverlay.cacheLimitMiB' => ({required Object size}) => 'Limite du cache: ${size} MiB',
@@ -8704,6 +8730,8 @@ extension on TranslationsFr {
 			'homeLayout.loading' => 'La mise à jour de la maison...',
 			'homeLayout.noCustomRows' => 'Pas de coutures encore',
 			'homeLayout.addRowHint' => 'Utilisez Add Home row pour créer un.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRow' => 'Ajouter la ligne de maison',
 			'homeLayout.addHomeRowDescription' => 'Choisissez une catégorie ; la nouvelle ligne est ajoutée à l\'Organisateur automatiquement',
 			'homeLayout.removeRow' => 'Réserver la ligne',
@@ -8712,8 +8740,6 @@ extension on TranslationsFr {
 			'homeLayout.movieCollections' => 'Film Collections',
 			'homeLayout.showCollections' => 'Afficher les collections',
 			'homeLayout.rowTitle' => 'Titre Row',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.content' => 'contenu',
 			'homeLayout.showThisRowIn' => 'Afficher cette ligne dans :',
 			'homeLayout.libraryRecommended' => 'Bibliothèque recommandée',
@@ -9218,6 +9244,8 @@ extension on TranslationsFr {
 			'sourceSetup.dlnaSearching' => 'Recherche de serveurs DLNA sur le réseau local',
 			'sourceSetup.networkSearching' => 'Recherche sur le réseau local…',
 			'sourceSetup.dlnaDiscover' => 'Découvrir les serveurs DLNA',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.dlnaHelp' => 'La découverte repose sur la multidiffusion du réseau local. Si aucun serveur n’apparaît, saisissez ci-dessus son URL de description de l’appareil.',
 			'sourceSetup.dlnaRoot' => 'Identifiant d’objet DLNA ; laissez vide pour utiliser la racine de l’appareil.',
 			'sourceSetup.passwordOrKey' => 'Saisissez un mot de passe ou ajoutez une clé privée ci-dessous.',
@@ -9226,8 +9254,6 @@ extension on TranslationsFr {
 			'sourceSetup.sshFingerprintKeep' => 'Laissez vide pour conserver l’empreinte actuellement épinglée, ou saisissez une nouvelle empreinte du serveur.',
 			'sourceSetup.sshAuthentication' => 'Authentification SSH par clé publique',
 			'sourceSetup.sshAuthenticationHelp' => 'Facultative ; l’authentification par mot de passe est également prise en charge.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKey' => 'Clé privée (format PEM ou OpenSSH)',
 			'sourceSetup.privateKeyPassphrase' => 'Phrase secrète de la clé privée',
 			'sourceSetup.nfsMountPort' => 'Port TCP du service de montage NFS',
@@ -9732,6 +9758,8 @@ extension on TranslationsFr {
 			'musicTools.historyHint' => 'Historique d’écoute de ce profil',
 			'musicTools.days' => 'Jours',
 			'musicTools.albumBlocks' => 'Garder les albums entiers',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.home' => 'Musique',
 			'musicTools.recent' => 'Écoutés récemment',
 			'musicTools.apiKey' => 'Clé API',
@@ -9740,8 +9768,6 @@ extension on TranslationsFr {
 			'musicTools.rules' => 'Filtres',
 			'musicTools.exclusiveOutput' => 'Sortie audio exclusive',
 			'musicTools.preamp' => 'Préamplification',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.ratingPending' => 'Enregistré sur cet appareil ; synchronisation en attente',
 			'musicTools.lyricsOffset' => 'Décalage des paroles',
 			'musicTools.anniversaries' => 'Anniversaires des albums',

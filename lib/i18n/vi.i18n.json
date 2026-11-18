@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "Ghi thêm 30 phút",
+    "recordsUntil": "Ghi đến ${time}",
+    "extendFailed": "Không thể kéo dài bản ghi",
+    "originalDialogue": "Ưu tiên lời thoại gốc",
+    "soloPage": "Hiển thị riêng trang này",
+    "pairPage": "Ghép lại trang này",
+    "listenPhone": "Nghe trên điện thoại này",
+    "audioUnavailable": "Tệp hoặc bản âm thanh không khả dụng trên điện thoại này."
+  },
   "livingRoom": {
     "fitScreen": "Chỉnh vừa màn hình",
     "fitHelp": "Chọn một cạnh rồi dùng phím mũi tên để di chuyển cho đến khi thấy các dấu ở cạnh đó. Lặp lại với từng cạnh.",

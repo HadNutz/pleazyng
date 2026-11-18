@@ -122,7 +122,8 @@ export class ComicReader extends HTMLElement {
         const fraction=Math.min(1,Math.max(0,end/this.pages.length));
         const title=section.bookmark || this.pageLabel(this.index);
         this.send('location',{cfi:comicLocator(this.index,this.half,this.offset),href:section.name,title,
-            fraction,section:this.index,sections:this.pages.length,text:''});
+            fraction,section:this.index,spreadPages: turn.length > 1 ? turn.map(p=>p.index) :
+                turn.filter(p=>this.settings.soloPages?.includes(p.index)).map(p=>p.index),sections:this.pages.length,text:''});
         this.status.textContent=title;
     }
     render() {

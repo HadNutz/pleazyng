@@ -1079,6 +1079,7 @@ abstract class MediaServerClient {
     int mediaIndex = 0,
     String? mediaSourceId,
     Duration? position,
+    bool registerPlayback = true,
   });
 }
 

@@ -40,6 +40,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsEs $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsEs(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final Translations$viewing$es viewing = Translations$viewing$es.internal(_root);
 	@override late final Translations$livingRoom$es livingRoom = Translations$livingRoom$es.internal(_root);
 	@override late final Translations$app$es app = Translations$app$es.internal(_root);
 	@override late final Translations$appIcon$es appIcon = Translations$appIcon$es.internal(_root);
@@ -122,6 +123,23 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$es musicExperience = Translations$musicExperience$es.internal(_root);
 	@override late final Translations$musicTools$es musicTools = Translations$musicTools$es.internal(_root);
 	@override late final Translations$musicDevices$es musicDevices = Translations$musicDevices$es.internal(_root);
+}
+
+// Path: viewing
+class Translations$viewing$es extends Translations$viewing$en {
+	Translations$viewing$es.internal(TranslationsEs root) : this._root = root, super.internal(root);
+
+	final TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Grabar 30 minutos más';
+	@override String recordsUntil({required Object time}) => 'Grabando hasta las ${time}';
+	@override String get extendFailed => 'No se pudo ampliar la grabación';
+	@override String get originalDialogue => 'Preferir el diálogo original';
+	@override String get soloPage => 'Mostrar esta página sola';
+	@override String get pairPage => 'Volver a emparejar esta página';
+	@override String get listenPhone => 'Escuchar en este teléfono';
+	@override String get audioUnavailable => 'El archivo o la pista de audio no está disponible en este teléfono.';
 }
 
 // Path: livingRoom
@@ -5710,6 +5728,14 @@ class Translations$bonusExtras$kind$es extends Translations$bonusExtras$kind$en 
 extension on TranslationsEs {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Grabar 30 minutos más',
+			'viewing.recordsUntil' => ({required Object time}) => 'Grabando hasta las ${time}',
+			'viewing.extendFailed' => 'No se pudo ampliar la grabación',
+			'viewing.originalDialogue' => 'Preferir el diálogo original',
+			'viewing.soloPage' => 'Mostrar esta página sola',
+			'viewing.pairPage' => 'Volver a emparejar esta página',
+			'viewing.listenPhone' => 'Escuchar en este teléfono',
+			'viewing.audioUnavailable' => 'El archivo o la pista de audio no está disponible en este teléfono.',
 			'livingRoom.fitScreen' => 'Ajustar a mi pantalla',
 			'livingRoom.fitHelp' => 'Selecciona un borde y muévelo con las flechas hasta ver sus marcas. Repite el ajuste en cada borde.',
 			'livingRoom.left' => 'Izquierda',
@@ -6214,6 +6240,8 @@ extension on TranslationsEs {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Desactivada mientras la normalización de volumen esté activada',
 			'settings.audioChannelLimit' => 'Canales de audio',
 			'settings.audioChannelLimitDescription' => 'Mezcla el audio decodificado a menos canales para altavoces, auriculares o equipos HDMI que no pueden reproducir todos los canales',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitOriginal' => 'Original',
 			'settings.audioChannelLimitOriginalDescription' => 'Reproduce todos los canales de la pista',
 			'settings.audioChannelLimitSurround51' => 'Hasta 5.1',
@@ -6222,8 +6250,6 @@ extension on TranslationsEs {
 			'settings.audioChannelLimitStereoDescription' => 'Mezcla a dos canales para altavoces estéreo o auriculares. Desactiva la transferencia directa.',
 			'settings.downmixCenterBoost' => 'Realce del canal central',
 			'settings.downmixCenterBoostValue' => ({required Object db}) => '${db} dB',
-			_ => null,
-		} ?? switch (path) {
 			'settings.downmixCenterBoostLabel' => 'Realce (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Normalizar volumen al mezclar',
@@ -6728,6 +6754,8 @@ extension on TranslationsEs {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Se pausará en ${seconds}s',
 			'videoControls.continueWatching' => 'Continuar',
 			'videoControls.autoPlayNext' => 'Reproducir siguiente automáticamente',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playNext' => 'Reproducir siguiente',
 			'videoControls.playButton' => 'Reproducir',
 			'videoControls.pauseButton' => 'Pausar',
@@ -6736,8 +6764,6 @@ extension on TranslationsEs {
 			'videoControls.loadingVideo' => 'Cargando el vídeo',
 			'videoControls.showPlaybackControls' => 'Mostrar controles de reproducción',
 			'videoControls.hidePlaybackControls' => 'Ocultar controles de reproducción',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Retroceder ${seconds} segundos',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Avanzar ${seconds} segundos',
 			'videoControls.previousButton' => 'Episodio anterior',
@@ -7242,6 +7268,8 @@ extension on TranslationsEs {
 			'errors.invalidToken' => 'Token no válido',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Error al verificar el token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Error al cambiar al perfil ${displayName}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Error al eliminar ${displayName}',
 			'errors.failedToRate' => 'No se pudo actualizar la valoración',
 			'errors.reasonTimedOut' => 'se agotó el tiempo de conexión',
@@ -7250,8 +7278,6 @@ extension on TranslationsEs {
 			'errors.reasonNotFound' => 'el elemento ya no está en el servidor',
 			'errors.reasonServerError' => 'el servidor informó de un error',
 			'errors.reasonCancelled' => 'se canceló la solicitud',
-			_ => null,
-		} ?? switch (path) {
 			'errors.reasonUnexpected' => 'se produjo un error inesperado',
 			'libraries.playRandomMovie' => 'Juega una película aleatoria',
 			'libraries.randomPickFailed' => 'No podía elegir una película aleatoria de esta biblioteca.',
@@ -7756,6 +7782,8 @@ extension on TranslationsEs {
 			'playlists.deleted' => 'Lista de reproducción eliminada',
 			'playlists.itemAdded' => 'Añadido a la lista de reproducción',
 			'playlists.itemRemoved' => 'Eliminado de la lista de reproducción',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Seleccionar lista de reproducción',
 			'playlists.searchPlaylists' => 'Buscar listas de reproducción...',
 			'playlists.errorCreating' => 'Error al crear la lista de reproducción',
@@ -7764,8 +7792,6 @@ extension on TranslationsEs {
 			'playlists.errorAdding' => 'Error al añadir a la lista de reproducción',
 			'playlists.errorReordering' => 'Error al reordenar el elemento de la lista de reproducción',
 			'playlists.errorRemoving' => 'Error al eliminar de la lista de reproducción',
-			_ => null,
-		} ?? switch (path) {
 			'music.goToAlbum' => 'Ir al álbum',
 			'music.goToArtist' => 'Ir al artista',
 			'music.instantMix' => 'Mezcla instantánea',
@@ -8270,6 +8296,8 @@ extension on TranslationsEs {
 			'performanceOverlay.dropped' => 'Descartados',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
 			'performanceOverlay.dvRpuAverage' => 'Prom. DV RPU',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'Prom. muestra DV',
 			'performanceOverlay.maxLuma' => 'Luma máx.',
 			'performanceOverlay.minLuma' => 'Luma mín.',
@@ -8278,8 +8306,6 @@ extension on TranslationsEs {
 			'performanceOverlay.cacheUsed' => 'Caché usada',
 			'performanceOverlay.cacheLimit' => 'Límite de caché',
 			'performanceOverlay.speed' => 'Velocidad',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.player' => 'Reproductor',
 			'performanceOverlay.playMethod' => 'El método de juego',
 			'performanceOverlay.memory' => 'Memoria',
@@ -8784,6 +8810,8 @@ extension on TranslationsEs {
 			'homeLayout.nextUpHomeDescription' => 'La siguiente secuencia de episodios no observados se muestra separadamente en Home',
 			'homeLayout.library' => 'Biblioteca',
 			'homeLayout.showInRecommended' => 'Presentación en Biblioteca Recomendada',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.customPlexRow' => 'Conexión Plex',
 			'homeLayout.heroNeedsLibrary' => 'Véase la biblioteca primero — El héroe necesita algo para mostrar',
 			'homeLayout.heroNeedsSurface' => 'Véase la Biblioteca o la Casa primero — El héroe necesita algo para mostrar',
@@ -8792,8 +8820,6 @@ extension on TranslationsEs {
 			'homeLayout.openDetails' => 'Detalles abiertos',
 			'homeLayout.heroCards' => 'Cartas de héroe',
 			'homeLayout.tapHeroCard' => 'Tapa una tarjeta de héroe',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tvPlayFocus' => 'TV remota: botón de juego',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad abajo se detiene en el botón de juego antes de moverse a la siguiente línea.',
 			'homeLayout.tvWrap' => 'TV remote: tarjetas de héroe de la cinta',
@@ -9298,6 +9324,8 @@ extension on TranslationsEs {
 			'audiobook.statusProgress' => 'En el progreso',
 			'audiobook.statusFinished' => 'Finalizado',
 			'audiobook.goToTime' => 'Vuelve al tiempo',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.timeHelp' => 'Horas: minutos: segundos o minutos: segundos',
 			'audiobook.recoveryHelp' => 'Exportar una copia cifrada reciente antes de mover o reparar los datos de sincronización. las importaciones se fusionan con el estado actual; nunca sustituyen la historia de la sincronía local.',
 			'audiobook.recoveryExport' => 'Exportación de archivos de recuperación cifrados',
@@ -9306,8 +9334,6 @@ extension on TranslationsEs {
 			'audiobook.recoveryExported' => 'El archivo de recuperación encriptado se salvó.',
 			'audiobook.recoveryImported' => 'Los datos de recuperación se mezclan.',
 			'sourceSetup.bookorbitHelp' => 'Inicia sesión con tu propia cuenta de BookOrbit para explorar y reproducir sus libros. Las solicitudes de títulos que falten seguirán gestionándose a través de tu instancia conectada de SeerrNG.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitOpen' => 'Abrir en BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Consulta este título en BookOrbit para gestionar los detalles de la biblioteca y los formatos que Pleazyng no puede abrir. El progreso de escucha se sincroniza con tu cuenta de BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Certificado del servidor guardado',
@@ -9812,6 +9838,8 @@ extension on TranslationsEs {
 			'bonusExtras.kind.makeup' => 'Maquillaje y vestuario',
 			'bonusExtras.kind.interview' => 'Entrevistas',
 			'bonusExtras.kind.deletedScene' => 'Escenas eliminadas',
+			_ => null,
+		} ?? switch (path) {
 			'bonusExtras.kind.bloopers' => 'Tomas falsas',
 			'bonusExtras.kind.commentary' => 'Comentarios',
 			'bonusExtras.kind.trailer' => 'Tráilers',
@@ -9820,8 +9848,6 @@ extension on TranslationsEs {
 			'bonusExtras.setupHint' => 'Conecta un servidor de descubrimiento en Ajustes de extras para encontrar extras verificados en línea. Los extras de la biblioteca funcionan sin él.',
 			'bonusExtras.playbackBlocked' => 'Este extra ya no está disponible con tus ajustes actuales.',
 			'musicExperience.title' => 'Descubrimiento musical',
-			_ => null,
-		} ?? switch (path) {
 			'musicExperience.mix' => 'Creador de mezclas',
 			'musicExperience.adventure' => 'Aventura sonora',
 			'musicExperience.related' => 'Sonidos similares',

@@ -31,6 +31,7 @@ import '../profiles/profile_connection_registry.dart';
 import '../services/companion_remote/companion_remote_peer_service.dart';
 import '../services/companion_remote/lan_discovery_service.dart';
 import '../services/companion_remote/remote_auth_context.dart';
+import '../services/companion_remote/listening_clock.dart';
 import '../services/companion_remote/remote_auth_service.dart';
 import '../services/companion_remote/remote_pairing_store.dart';
 import '../services/music/music_transfer_exchange.dart';
@@ -460,6 +461,32 @@ class CompanionRemoteProvider with ChangeNotifier, DisposableChangeNotifierMixin
   // Whether this device's own video player is up, as last advertised to a
   // remote. Kept so a remote that pairs mid-playback is told on connect.
   bool _hostPlayerActive = false;
+  bool _listeningClockSupported = false;
+  bool get supportsPhoneListening =>
+      isRemote && isConnected && _listeningClockSupported && _peerService?.isAuthenticatedLan == true;
+  ListeningClock? Function()? readListeningClock;
+  int _clockSequence = 0;
+  Completer<ListeningClock?>? _clockReply;
+
+  Future<ListeningClock?> sampleListeningClock() async {
+    if (!supportsPhoneListening || _clockReply != null) return null;
+    final reply = Completer<ListeningClock?>();
+    _clockReply = reply;
+    try {
+      sendCommand(RemoteCommandType.listeningClock, data: {'probe': ++_clockSequence});
+      return await reply.future.timeout(const Duration(milliseconds: 1100), onTimeout: () => null);
+    } finally {
+      if (identical(reply, _clockReply)) _clockReply = null;
+    }
+  }
+
+  void _clearListeningPeer() {
+    _listeningClockSupported = false;
+    final reply = _clockReply;
+    _clockReply = null;
+    if (reply != null && !reply.isCompleted) reply.complete(null);
+  }
+
   // Listen addresses of a running host server (`ip:port`), surfaced so the
   // host UI can show what a phone's manual connection should target.
   List<String> _hostServerAddresses = const [];
@@ -1819,7 +1846,21 @@ class CompanionRemoteProvider with ChangeNotifier, DisposableChangeNotifierMixin
         if (!_ownsPeer(peer, generation)) return;
         appLogger.d('CompanionRemote: Command received: ${command.type}');
 
-        if (command.type == RemoteCommandType.gameSession) {
+        if (command.type == RemoteCommandType.listeningClock) {
+          if (!peer.isAuthenticatedLan || !isConnected || !_listeningClockSupported || profileId != _cryptoProfileId) {
+            return;
+          }
+          final data = command.data;
+          final probe = data?['probe'];
+          if (host && probe is int) {
+            final sample = _hostPlayerActive ? readListeningClock?.call() : null;
+            peer.sendCommand(
+              RemoteCommand(type: RemoteCommandType.listeningClock, data: {'reply': probe, ...?sample?.toJson()}),
+            );
+          } else if (!host && data?['reply'] == _clockSequence && _clockReply?.isCompleted == false) {
+            _clockReply!.complete(ListeningClock.parse(data));
+          }
+        } else if (command.type == RemoteCommandType.gameSession) {
           _gameSessions?.receive(command.data);
         } else if (command.type == RemoteCommandType.musicConnect) {
           // MusicDevicePeer owns this extension.
@@ -1867,6 +1908,7 @@ class CompanionRemoteProvider with ChangeNotifier, DisposableChangeNotifierMixin
 
     _deviceDisconnectedSubscription = peer.onDeviceDisconnected.listen((_) {
       if (!_ownsPeer(peer, generation)) return;
+      _clearListeningPeer();
       _musicTransfer?.reset();
       _musicTransferVersion = 0;
       _musicGroup?.leave(notifyPeer: false);
@@ -1969,6 +2011,7 @@ class CompanionRemoteProvider with ChangeNotifier, DisposableChangeNotifierMixin
     _cloudSettingsSupported = command.data?['gameCloudSettingVersion'] == 1;
     _gameActionVersion = command.data?['gameActionVersion'] == 1 ? 1 : 0;
     _gameActionKinds = steamHostActionCapabilities(command.data?['gameActionKinds']);
+    _listeningClockSupported = command.data?['listeningClockVersion'] == 1;
     _gameInventoryVersion = command.data?['gameInventoryVersion'] == 1 ? 1 : 0;
     if (command.data != null) {
       final id = command.data!['id'] as String? ?? 'unknown';
@@ -1994,6 +2037,7 @@ class CompanionRemoteProvider with ChangeNotifier, DisposableChangeNotifierMixin
   }
 
   void _cleanupSubscriptions() {
+    _clearListeningPeer();
     _musicHistory?.close();
     _musicHistory = null;
     _musicHistoryVersion = 0;

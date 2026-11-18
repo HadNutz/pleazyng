@@ -547,11 +547,27 @@ AudioTrack? findMpvTrackForPlexAudio(
   MediaAudioTrack plexTrack,
   List<AudioTrack> mpvTracks, {
   List<MediaAudioTrack>? allPlexTracks,
-}) => _findBestScoredAudioMatch(
-  mpvTracks,
-  probeOrdinal: allPlexTracks?.indexOf(plexTrack) ?? -1,
-  score: (mpvTrack, ordinalMatches) => _scoreAudioMatch(mpvTrack, plexTrack, ordinalMatches: ordinalMatches),
-);
+}) {
+  // Transcodes may renumber streams. Trust the demux index only when the
+  // engine exposes the whole embedded audio catalog and its language agrees.
+  if ((plexTrack.index ?? -1) >= 0 &&
+      allPlexTracks != null &&
+      !plexTrack.external &&
+      mpvTracks.length == allPlexTracks.where((t) => !t.external).length) {
+    final exact = mpvTracks.where((t) => t.ffIndex == plexTrack.index).singleOrNull;
+    if (exact != null &&
+        (exact.language == null ||
+            plexTrack.languageCode == null ||
+            _languagesMatch(exact.language, plexTrack.languageCode))) {
+      return exact;
+    }
+  }
+  return _findBestScoredAudioMatch(
+    mpvTracks,
+    probeOrdinal: allPlexTracks?.indexOf(plexTrack) ?? -1,
+    score: (mpvTrack, ordinalMatches) => _scoreAudioMatch(mpvTrack, plexTrack, ordinalMatches: ordinalMatches),
+  );
+}
 
 /// Find the Plex audio track that matches an MPV audio track
 MediaAudioTrack? findPlexTrackForMpvAudio(

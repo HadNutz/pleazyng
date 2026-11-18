@@ -40,6 +40,7 @@ class TranslationsBg extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsBg $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsBg(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$bg viewing = _Translations$viewing$bg._(_root);
 	@override late final _Translations$livingRoom$bg livingRoom = _Translations$livingRoom$bg._(_root);
 	@override late final _Translations$app$bg app = _Translations$app$bg._(_root);
 	@override late final _Translations$appIcon$bg appIcon = _Translations$appIcon$bg._(_root);
@@ -121,6 +122,23 @@ class TranslationsBg extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$bg musicExperience = _Translations$musicExperience$bg._(_root);
 	@override late final _Translations$musicTools$bg musicTools = _Translations$musicTools$bg._(_root);
 	@override late final _Translations$musicDevices$bg musicDevices = _Translations$musicDevices$bg._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$bg extends Translations$viewing$en {
+	_Translations$viewing$bg._(TranslationsBg root) : this._root = root, super.internal(root);
+
+	final TranslationsBg _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Записване още 30 минути';
+	@override String recordsUntil({required Object time}) => 'Запис до ${time}';
+	@override String get extendFailed => 'Записът не можа да бъде удължен';
+	@override String get originalDialogue => 'Предпочитане на оригиналния диалог';
+	@override String get soloPage => 'Показване на тази страница отделно';
+	@override String get pairPage => 'Повторно сдвояване на страницата';
+	@override String get listenPhone => 'Слушане на този телефон';
+	@override String get audioUnavailable => 'Файлът или звуковата пътека не са достъпни на този телефон.';
 }
 
 // Path: livingRoom
@@ -5586,6 +5604,14 @@ class _Translations$services$trackerDescriptions$bg extends Translations$service
 extension on TranslationsBg {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Записване още 30 минути',
+			'viewing.recordsUntil' => ({required Object time}) => 'Запис до ${time}',
+			'viewing.extendFailed' => 'Записът не можа да бъде удължен',
+			'viewing.originalDialogue' => 'Предпочитане на оригиналния диалог',
+			'viewing.soloPage' => 'Показване на тази страница отделно',
+			'viewing.pairPage' => 'Повторно сдвояване на страницата',
+			'viewing.listenPhone' => 'Слушане на този телефон',
+			'viewing.audioUnavailable' => 'Файлът или звуковата пътека не са достъпни на този телефон.',
 			'livingRoom.fitScreen' => 'Побиране в моя екран',
 			'livingRoom.fitHelp' => 'Изберете ръб и го местете със стрелките, докато видите маркерите. Повторете за всеки ръб.',
 			'livingRoom.left' => 'Ляво',
@@ -6090,6 +6116,8 @@ extension on TranslationsBg {
 			'settings.audioChannelLimitOriginal' => 'Оригинални',
 			'settings.audioChannelLimitOriginalDescription' => 'Възпроизвежда всички канали от пътечката',
 			'settings.audioChannelLimitSurround51' => 'До 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Смесва 7.1 до 5.1 за телевизори и приемници, които приемат само 5.1 PCM. Директното предаване не се засяга.',
 			'settings.audioChannelLimitStereo' => 'Стерео',
 			'settings.audioChannelLimitStereoDescription' => 'Смесва до два канала за стерео тонколони или слушалки. Изключва директното предаване.',
@@ -6098,8 +6126,6 @@ extension on TranslationsBg {
 			'settings.downmixCenterBoostLabel' => 'Усилване (дБ)',
 			'settings.downmixCenterBoostShort' => 'дБ',
 			'settings.audioDownmixNormalize' => 'Нормализиране на звука при смесване',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Понижава микса, за да се предотврати клипинг. Изключете, за да запазите оригиналната сила на звука (възможни изкривявания при силни сцени).',
 			'settings.dvConversionMode' => 'Преобразуване на Dolby Vision',
 			'settings.dvConversionModeDescription' => 'Изберете как да се обработват файлове с Dolby Vision Profile 7.',
@@ -6604,6 +6630,8 @@ extension on TranslationsBg {
 			'videoControls.playNext' => 'Пусни следващото',
 			'videoControls.playButton' => 'Пусни',
 			'videoControls.pauseButton' => 'Пауза',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'На пауза',
 			'videoControls.playbackResumed' => 'Възпроизвежда се',
 			'videoControls.loadingVideo' => 'Зареждане на видеото',
@@ -6612,8 +6640,6 @@ extension on TranslationsBg {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Превърти назад ${seconds} секунди',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Превърти напред ${seconds} секунди',
 			'videoControls.previousButton' => 'Предишен епизод',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Следващ епизод',
 			'videoControls.previousChapterButton' => 'Предишна глава',
 			'videoControls.nextChapterButton' => 'Следваща глава',
@@ -7118,6 +7144,8 @@ extension on TranslationsBg {
 			'libraries.analyze' => 'Анализирай',
 			'libraries.analyzeLibrary' => 'Анализирай библиотеката',
 			'libraries.refreshMetadata' => 'Опресни метаданни',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Изпразни кошчето',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Изпразване на кошчето за "${title}"...',
 			'libraries.trashEmptied' => ({required Object title}) => 'Кошчето е изпразнено за "${title}"',
@@ -7126,8 +7154,6 @@ extension on TranslationsBg {
 			'libraries.analysisStarted' => ({required Object title}) => 'Анализът е стартиран за "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Неуспешен анализ на библиотеката: ${error}',
 			'libraries.noLibrariesFound' => 'Не са намерени библиотеки',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Всички библиотеки са скрити',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Скрити библиотеки (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Тази библиотека е празна',
@@ -7632,6 +7658,8 @@ extension on TranslationsBg {
 			'music.playingFrom' => ({required Object title}) => 'Възпроизвеждане от ${title}',
 			'music.queue' => 'Опашка',
 			'music.clearQueue' => 'Изчисти опашката',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'Текст на песента',
 			'music.visualizer' => 'Визуализатор',
 			'music.visualizerProfileLoading' => 'Прочетете проучване на трафика...',
@@ -7640,8 +7668,6 @@ extension on TranslationsBg {
 			'music.visualizerLiveAudio' => 'Анализ на аудио в реално време',
 			'music.visualizerPreviousPreset' => 'Предишна Статия Визуален стил',
 			'music.visualizerNextPreset' => 'Следваща Статия Визуален стил',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Аврора',
 			'music.visualizerPresetBloom' => 'Блум',
 			'music.visualizerPresetOrbitals' => 'орбитални',
@@ -8146,6 +8172,8 @@ extension on TranslationsBg {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Софтуерен',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Хардуерен',
 			'performanceOverlay.tunnelingActive' => 'Активно',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (неуспешни: ${failures})',
@@ -8154,8 +8182,6 @@ extension on TranslationsBg {
 			'externalPlayer.useExternalPlayer' => 'Използвай външен плеър',
 			'externalPlayer.useExternalPlayerDescription' => 'Отваряй видеата в друго приложение',
 			'externalPlayer.selectPlayer' => 'Избери плейър',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Потребителски плейъри',
 			'externalPlayer.systemDefault' => 'Системен по подразбиране',
 			'externalPlayer.addCustomPlayer' => 'Добави потребителски плейър',
@@ -8660,6 +8686,8 @@ extension on TranslationsBg {
 			'homeLayout.recentlyReleased' => 'Неотдавна освободени',
 			'homeLayout.movieCollections' => 'Филмови колекции',
 			'homeLayout.showCollections' => 'Покажи колекции',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Роу заглавие',
 			'homeLayout.content' => 'Съдържание',
 			'homeLayout.showThisRowIn' => 'Показвайте тази линия в:',
@@ -8668,8 +8696,6 @@ extension on TranslationsBg {
 			'homeLayout.heroCardDescription' => 'Показва се като една пълноширока ротационна карта вместо плакатна шапка.',
 			'homeLayout.heroUnavailableDescription' => 'Достъпна е само когато тази линия се разрешава на действителните заглавия на една колекция – с повече от една колекция, избрана няма нито един заглавие, който да се върти.',
 			'homeLayout.librariesSelection' => 'Библиотеки (оставяне на всички непровержени, за да включат всяка библиотека)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Всяка библиотека, която се проверява тук, е съчетана в тази една линия.',
 			'homeLayout.movieCollectionsSelection' => 'Филмови колекции (оставяне на всички непровержени за всяка избрана библиотека)',
 			'homeLayout.showCollectionsSelection' => 'Покажи колекции (оставяне на всички непровержени за всяка избрана библиотека)',
@@ -9174,6 +9200,8 @@ extension on TranslationsBg {
 			'sourceSetup.sshAuthentication' => 'SSH удостоверяване с публичен ключ',
 			'sourceSetup.sshAuthenticationHelp' => 'Незадължително; поддържа се и удостоверяване с парола.',
 			'sourceSetup.privateKey' => 'Частен ключ (формат PEM или OpenSSH)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Паролна фраза на частния ключ',
 			'sourceSetup.nfsMountPort' => 'TCP порт на услугата за монтиране на NFS',
 			'sourceSetup.nfsMountPortHelp' => 'По подразбиране: 20048',
@@ -9182,8 +9210,6 @@ extension on TranslationsBg {
 			'sourceSetup.nfsGroupId' => 'ID на група за NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'По подразбиране: 1000. Използвайте ID на група, разрешен от NFS експорта на NAS.',
 			'sourceSetup.nfsEncryption' => 'Изискване на шифрован NFS (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Изискване на TLS 1.3 за NFS и услугата за монтиране. Ако NAS не го поддържа, връзката се отказва.',
 			'sourceSetup.nfsTrustCertificate' => 'Персонализиран NFS CA или сертификат на сървъра (PEM, незадължително)',
 			'sourceSetup.nfsTrustHelp' => 'Оставете празно за сертификатите, на които това устройство се доверява. При нужда добавете сертификат от частен CA или самоподписан сертификат на сървъра; имената в него трябва да съответстват на хоста в NFS URL адреса.',
@@ -9688,6 +9714,8 @@ extension on TranslationsBg {
 			'musicTools.playlistSharing' => 'Достъп до плейлист',
 			'musicTools.playlistRecipient' => 'Plex потребителско име или имейл',
 			'musicTools.playlistSharingHint' => 'Дайте достъп до този плейлист и песните му. Получателят може да трябва да приеме покана.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Неуспешна заявка за достъп до плейлиста.',
 			'musicTools.playlistSharingAccepted' => 'Plex прие заявката за достъп.',
 			'musicTools.playlistAccessList' => 'Текущ достъп',
@@ -9696,8 +9724,6 @@ extension on TranslationsBg {
 			'musicTools.peak' => 'Пик',
 			'musicTools.bass' => 'Баси',
 			'musicTools.treble' => 'Високи честоти',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Споделени плейлисти',
 			'musicTools.sharingInvitationsTitle' => 'Покани за споделяне в Plex',
 			'musicTools.noSharingInvitations' => 'Няма чакащи покани',

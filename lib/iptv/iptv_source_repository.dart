@@ -1188,6 +1188,26 @@ class IptvSourceRepository {
     ];
   }
 
+  Future<bool> saveActiveRecordingDeadline(
+    IptvLocalRecordingSchedule schedule,
+    DateTime previous,
+    DateTime next,
+  ) async {
+    final updated = await _database.runIdentityMutation(
+      () => _database.customUpdate(
+        "UPDATE iptv_recording_schedules SET ends_at=?, updated_at=? WHERE profile_id=? AND id=? AND state='recording' AND ends_at=?",
+        variables: [
+          Variable(next.millisecondsSinceEpoch ~/ 1000),
+          Variable(DateTime.now().millisecondsSinceEpoch ~/ 1000),
+          Variable(schedule.profileId),
+          Variable(schedule.id),
+          Variable(previous.millisecondsSinceEpoch ~/ 1000),
+        ],
+      ),
+    );
+    return updated == 1;
+  }
+
   Future<void> updateLocalRecordingSchedule(
     String scheduleId, {
     required String state,

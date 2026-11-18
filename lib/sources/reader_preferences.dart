@@ -8,6 +8,10 @@ Map<String, dynamic> normalizeReaderPreferences(Map<String, dynamic> input) {
   }
 
   final zoom = input['zoom'];
+  final savedPages = input['soloPages'];
+  final soloPages = savedPages is List
+      ? savedPages.whereType<int>().where((i) => i >= 0 && i < 100000).toSet().toList()
+      : <int>[];
   return {
     'theme': choice('theme', ['app', 'paper', 'sepia', 'night']),
     'font': choice('font', ['serif', 'sans', 'mono']),
@@ -21,6 +25,7 @@ Map<String, dynamic> normalizeReaderPreferences(Map<String, dynamic> input) {
     'justify': input['justify'] == true,
     'comicMode': choice('comicMode', ['paged', 'webtoon']),
     'coverAlone': input['coverAlone'] != false,
+    'soloPages': soloPages..sort(),
     'splitWide': input['splitWide'] == true,
     'spread': choice('spread', ['auto', 'single', 'double']),
     'direction': choice('direction', ['auto', 'ltr', 'rtl']),

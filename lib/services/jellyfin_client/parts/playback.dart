@@ -338,9 +338,16 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
       );
     }
     final requestedAudioStreamId = options.selectedAudioStreamId == null
-        ? options.preferredAudioTrack == null
-              ? null
-              : findSourceAudioTrackForIntent(options.preferredAudioTrack!, mediaInfo.audioTracks)?.id
+        ? (options.preferredAudioTrack == null
+                  ? null
+                  : findSourceAudioTrackForIntent(options.preferredAudioTrack!, mediaInfo.audioTracks)?.id) ??
+              (isTrack
+                  ? null
+                  : await serverOriginalId(
+                      mediaInfo,
+                      metadata.raw?['OriginalLanguage'],
+                      options.lookupOriginalLanguage,
+                    ))
         : _validJellyfinAudioStreamId(options.selectedAudioStreamId, mediaInfo);
     final audioStreamForConversion =
         _resolveJellyfinAudioStreamId(requestedAudioStreamId, mediaInfo) ?? mediaInfo.audioTracks.firstOrNull?.id;
@@ -577,6 +584,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     int mediaIndex = 0,
     String? mediaSourceId,
     Duration? position,
+    bool registerPlayback = true,
   }) async {
     // Tracks stream from /Audio/{id}/stream; the URL contract (Static=true,
     // api_key in the query string) is otherwise identical to the video one.
@@ -612,6 +620,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
       mediaIndex: bundle.selectedSourceIndex,
     );
     return ExternalPlaybackTarget(
+      mediaInfo: mediaInfo,
       url: buildDirectStreamUrl(item.id, container: container, mediaSourceId: pinnedSourceId, containerExtension: true),
       subtitles: [
         for (final sidecar in _buildExternalSubtitles(item.id, bundle.selectedSourceId, mediaInfo)) sidecar.track,

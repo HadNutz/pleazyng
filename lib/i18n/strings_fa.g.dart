@@ -40,6 +40,7 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsFa $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsFa(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$fa viewing = _Translations$viewing$fa._(_root);
 	@override late final _Translations$livingRoom$fa livingRoom = _Translations$livingRoom$fa._(_root);
 	@override late final _Translations$app$fa app = _Translations$app$fa._(_root);
 	@override late final _Translations$appIcon$fa appIcon = _Translations$appIcon$fa._(_root);
@@ -121,6 +122,23 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$fa musicExperience = _Translations$musicExperience$fa._(_root);
 	@override late final _Translations$musicTools$fa musicTools = _Translations$musicTools$fa._(_root);
 	@override late final _Translations$musicDevices$fa musicDevices = _Translations$musicDevices$fa._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$fa extends Translations$viewing$en {
+	_Translations$viewing$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => '۳۰ دقیقه بیشتر ضبط کن';
+	@override String recordsUntil({required Object time}) => 'ضبط تا ${time}';
+	@override String get extendFailed => 'تمدید ضبط ممکن نشد';
+	@override String get originalDialogue => 'ترجیح گفت‌وگوی اصلی';
+	@override String get soloPage => 'نمایش این صفحه به‌تنهایی';
+	@override String get pairPage => 'جفت کردن دوبارهٔ این صفحه';
+	@override String get listenPhone => 'گوش دادن با این تلفن';
+	@override String get audioUnavailable => 'این فایل یا قطعهٔ صوتی در این تلفن در دسترس نیست.';
 }
 
 // Path: livingRoom
@@ -5586,6 +5604,14 @@ class _Translations$services$trackerDescriptions$fa extends Translations$service
 extension on TranslationsFa {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => '۳۰ دقیقه بیشتر ضبط کن',
+			'viewing.recordsUntil' => ({required Object time}) => 'ضبط تا ${time}',
+			'viewing.extendFailed' => 'تمدید ضبط ممکن نشد',
+			'viewing.originalDialogue' => 'ترجیح گفت‌وگوی اصلی',
+			'viewing.soloPage' => 'نمایش این صفحه به‌تنهایی',
+			'viewing.pairPage' => 'جفت کردن دوبارهٔ این صفحه',
+			'viewing.listenPhone' => 'گوش دادن با این تلفن',
+			'viewing.audioUnavailable' => 'این فایل یا قطعهٔ صوتی در این تلفن در دسترس نیست.',
 			'livingRoom.fitScreen' => 'تنظیم متناسب با صفحه‌نمایش من',
 			'livingRoom.fitHelp' => 'یک لبه را انتخاب کنید و با کلیدهای جهت آن را جابه‌جا کنید تا نشانه‌هایش دیده شوند. برای هر لبه تکرار کنید.',
 			'livingRoom.left' => 'چپ',
@@ -6090,6 +6116,8 @@ extension on TranslationsFa {
 			'settings.audioChannelLimitOriginal' => 'اصلی',
 			'settings.audioChannelLimitOriginalDescription' => 'بازی هر کانال در مسیر',
 			'settings.audioChannelLimitSurround51' => 'تا 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'مخلوط 7.1 به 5.1 برای تلویزیون ها و گیرنده هایی که فقط 5.1 PCM را می گیرند.',
 			'settings.audioChannelLimitStereo' => 'استریو',
 			'settings.audioChannelLimitStereoDescription' => 'مخلوط کردن به دو کانال برای بلندگوهای استریو یا گوشی های هوشمند.',
@@ -6098,8 +6126,6 @@ extension on TranslationsFa {
 			'settings.downmixCenterBoostLabel' => 'افزایش (dB )',
 			'settings.downmixCenterBoostShort' => 'دبی',
 			'settings.audioDownmixNormalize' => 'دانلود بازی Downmix',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'مخلوط را پایین بیاورید تا از چرخش جلوگیری شود.برای حفظ حجم اصلی (ممکن است صحنه های بلند را مختل کند) خاموش کنید.',
 			'settings.dvConversionMode' => 'Dolby Vision تبدیل',
 			'settings.dvConversionModeDescription' => 'انتخاب کنید که چگونه فایل های پروفایل 7 Dolby Vision پردازش می شوند.',
@@ -6604,6 +6630,8 @@ extension on TranslationsFa {
 			'videoControls.playNext' => 'بعدی را اجرا کن',
 			'videoControls.playButton' => 'اجرا کردن',
 			'videoControls.pauseButton' => 'مکث',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'استراحت',
 			'videoControls.playbackResumed' => 'بازی کردن',
 			'videoControls.loadingVideo' => 'دانلود ویدئو',
@@ -6612,8 +6640,6 @@ extension on TranslationsFa {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'جستجو به عقب ${seconds} ثانیه',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'جستجو در آینده ${seconds} ثانیه',
 			'videoControls.previousButton' => 'قسمت قبلی',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'قسمت بعد',
 			'videoControls.previousChapterButton' => 'بخش قبلی',
 			'videoControls.nextChapterButton' => 'بخش بعد',
@@ -7118,6 +7144,8 @@ extension on TranslationsFa {
 			'libraries.analyze' => 'تحلیل',
 			'libraries.analyzeLibrary' => 'تجزیه و تحلیل کتابخانه',
 			'libraries.refreshMetadata' => 'تازه کردن متادیتا',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'تریش خالی',
 			'libraries.emptyingTrash' => ({required Object title}) => 'در این مطلب به نقل از «${title}» می پردازیم.',
 			'libraries.trashEmptied' => ({required Object title}) => 'تریلر جدید «${title}»',
@@ -7126,8 +7154,6 @@ extension on TranslationsFa {
 			'libraries.analysisStarted' => ({required Object title}) => 'تحلیل برای "${title}" آغاز شد',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'عدم تحلیل کتابخانه: ${error}',
 			'libraries.noLibrariesFound' => 'هیچ کتابخانه ای یافت نشد',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'همه کتابخانه ها پنهان هستند',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'کتابخانه های پنهان (${count})',
 			'libraries.thisLibraryIsEmpty' => 'این کتابخانه خالی است',
@@ -7632,6 +7658,8 @@ extension on TranslationsFa {
 			'music.playingFrom' => ({required Object title}) => 'بازی از ${title}',
 			'music.queue' => 'کوی',
 			'music.clearQueue' => 'پاکسازی صف',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'متن ترانه',
 			'music.visualizer' => 'بصری',
 			'music.visualizerProfileLoading' => 'در ادامه به بررسی تراکتور...',
@@ -7640,8 +7668,6 @@ extension on TranslationsFa {
 			'music.visualizerLiveAudio' => 'تحلیل زندهٔ صدا',
 			'music.visualizerPreviousPreset' => 'قبلی سبک بصری',
 			'music.visualizerNextPreset' => 'بعدی سبک بصری',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'آوریا',
 			'music.visualizerPresetBloom' => 'بلوم',
 			'music.visualizerPresetOrbitals' => 'مدار',
@@ -8146,6 +8172,8 @@ extension on TranslationsFa {
 			'performanceOverlay.decoderMediatekHw' => 'رسانه ها HW',
 			'performanceOverlay.decoderExynosHw' => 'بیوگرافی HW',
 			'performanceOverlay.decoderSoftware' => 'نرم افزار',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'سخت افزار',
 			'performanceOverlay.tunnelingActive' => 'فعال',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} شکست خورده)',
@@ -8154,8 +8182,6 @@ extension on TranslationsFa {
 			'externalPlayer.useExternalPlayer' => 'استفاده از بازیکن خارجی',
 			'externalPlayer.useExternalPlayerDescription' => 'باز کردن ویدئوها در یک برنامه دیگر',
 			'externalPlayer.selectPlayer' => 'انتخاب بازیکن',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'بازیکنان سفارشی',
 			'externalPlayer.systemDefault' => 'سیستم پیش فرض',
 			'externalPlayer.addCustomPlayer' => 'اضافه کردن Custom Player',
@@ -8660,6 +8686,8 @@ extension on TranslationsFa {
 			'homeLayout.recentlyReleased' => 'اخیرا منتشر شد',
 			'homeLayout.movieCollections' => 'مجموعه فیلم ها',
 			'homeLayout.showCollections' => 'نمایش مجموعه ها',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'راوی عنوان',
 			'homeLayout.content' => 'محتوای',
 			'homeLayout.showThisRowIn' => 'این ردیف را در:',
@@ -8668,8 +8696,6 @@ extension on TranslationsFa {
 			'homeLayout.heroCardDescription' => 'نشان می دهد به عنوان یک کارت چرخش کامل به جای یک پوستر شیل.',
 			'homeLayout.heroUnavailableDescription' => 'تنها زمانی در دسترس است که این ردیف به عنوان عنوان های واقعی یک مجموعه حل می شود – با بیش از یک مجموعه انتخاب شده، هیچ عنوانی برای چرخش وجود ندارد.',
 			'homeLayout.librariesSelection' => 'کتابخانه ها (همه کتابخانه ها را بدون چک قرار دهید)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'هر کتابخانه ای که در اینجا بررسی می شود در این یک ردیف ادغام می شود.',
 			'homeLayout.movieCollectionsSelection' => 'مجموعه های فیلم (برای هر کتابخانه انتخاب شده همه غیرقابل بررسی را رها کنید)',
 			'homeLayout.showCollectionsSelection' => 'نمایش مجموعه ها (برای هر کتابخانه ای که انتخاب کرده اید، همه آنها را بدون بررسی رها کنید)',
@@ -9174,6 +9200,8 @@ extension on TranslationsFa {
 			'sourceSetup.sshAuthentication' => 'احراز هویت با کلید عمومی SSH',
 			'sourceSetup.sshAuthenticationHelp' => 'اختیاری است؛ احراز هویت با گذرواژه نیز پشتیبانی می‌شود.',
 			'sourceSetup.privateKey' => 'کلید خصوصی (با قالب PEM یا OpenSSH)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'عبارت عبور کلید خصوصی',
 			'sourceSetup.nfsMountPort' => 'درگاه TCP سرویس mount NFS',
 			'sourceSetup.nfsMountPortHelp' => 'پیش‌فرض: 20048',
@@ -9182,8 +9210,6 @@ extension on TranslationsFa {
 			'sourceSetup.nfsGroupId' => 'شناسهٔ گروه NFS ‏(AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'پیش‌فرض: 1000. از شناسهٔ گروهی استفاده کنید که در تنظیمات اشتراک NFS روی NAS مجاز است.',
 			'sourceSetup.nfsEncryption' => 'الزام رمزگذاری NFS ‏(RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'TLS 1.3 را برای NFS و سرویس mount الزامی می‌کند. اگر NAS پشتیبانی نکند، اتصال رد می‌شود.',
 			'sourceSetup.nfsTrustCertificate' => 'گواهی سفارشی CA یا سرور NFS ‏(PEM، اختیاری)',
 			'sourceSetup.nfsTrustHelp' => 'برای گواهی‌های مورد اعتماد این دستگاه، خالی بگذارید. در صورت نیاز، گواهی CA خصوصی یا گواهی خودامضای سرور را اضافه کنید؛ نام‌های آن باید با میزبان نشانی NFS مطابقت داشته باشند.',
@@ -9688,6 +9714,8 @@ extension on TranslationsFa {
 			'musicTools.playlistSharing' => 'دسترسی به فهرست پخش',
 			'musicTools.playlistRecipient' => 'نام کاربری Plex یا ایمیل',
 			'musicTools.playlistSharingHint' => 'به این فهرست پخش و آهنگ‌های آن دسترسی بدهید. گیرنده ممکن است لازم باشد دعوتی را بپذیرد.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'درخواست دسترسی به فهرست پخش ممکن نشد.',
 			'musicTools.playlistSharingAccepted' => 'Plex درخواست دسترسی را پذیرفت.',
 			'musicTools.playlistAccessList' => 'دسترسی فعلی',
@@ -9696,8 +9724,6 @@ extension on TranslationsFa {
 			'musicTools.peak' => 'اوج',
 			'musicTools.bass' => 'بیس',
 			'musicTools.treble' => 'زیر',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'فهرست‌های پخش اشتراکی',
 			'musicTools.sharingInvitationsTitle' => 'دعوت‌های اشتراک‌گذاری Plex',
 			'musicTools.noSharingInvitations' => 'دعوت در انتظاری وجود ندارد',

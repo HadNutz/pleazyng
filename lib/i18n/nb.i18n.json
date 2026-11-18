@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "Ta opp 30 minutter til",
+    "recordsUntil": "Opptak frem til ${time}",
+    "extendFailed": "Kunne ikke forlenge opptaket",
+    "originalDialogue": "Foretrekk originaldialog",
+    "soloPage": "Vis denne siden alene",
+    "pairPage": "Par denne siden igjen",
+    "listenPhone": "Lytt på denne telefonen",
+    "audioUnavailable": "Filen eller lydsporet er utilgjengelig på denne telefonen."
+  },
   "livingRoom": {
     "fitScreen": "Tilpass til skjermen min",
     "fitHelp": "Velg en kant og flytt den med piltastene til markeringene er synlige. Gjenta for hver kant.",

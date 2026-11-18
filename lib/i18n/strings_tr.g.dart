@@ -40,6 +40,7 @@ class TranslationsTr extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsTr $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsTr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$tr viewing = _Translations$viewing$tr._(_root);
 	@override late final _Translations$livingRoom$tr livingRoom = _Translations$livingRoom$tr._(_root);
 	@override late final _Translations$app$tr app = _Translations$app$tr._(_root);
 	@override late final _Translations$appIcon$tr appIcon = _Translations$appIcon$tr._(_root);
@@ -121,6 +122,23 @@ class TranslationsTr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$tr musicExperience = _Translations$musicExperience$tr._(_root);
 	@override late final _Translations$musicTools$tr musicTools = _Translations$musicTools$tr._(_root);
 	@override late final _Translations$musicDevices$tr musicDevices = _Translations$musicDevices$tr._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$tr extends Translations$viewing$en {
+	_Translations$viewing$tr._(TranslationsTr root) : this._root = root, super.internal(root);
+
+	final TranslationsTr _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => '30 dakika daha kaydet';
+	@override String recordsUntil({required Object time}) => 'Kayıt bitişi: ${time}';
+	@override String get extendFailed => 'Kayıt uzatılamadı';
+	@override String get originalDialogue => 'Özgün diyaloğu tercih et';
+	@override String get soloPage => 'Bu sayfayı tek göster';
+	@override String get pairPage => 'Bu sayfayı yeniden eşleştir';
+	@override String get listenPhone => 'Bu telefonda dinle';
+	@override String get audioUnavailable => 'Dosya veya ses parçası bu telefonda kullanılamıyor.';
 }
 
 // Path: livingRoom
@@ -5586,6 +5604,14 @@ class _Translations$services$trackerDescriptions$tr extends Translations$service
 extension on TranslationsTr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => '30 dakika daha kaydet',
+			'viewing.recordsUntil' => ({required Object time}) => 'Kayıt bitişi: ${time}',
+			'viewing.extendFailed' => 'Kayıt uzatılamadı',
+			'viewing.originalDialogue' => 'Özgün diyaloğu tercih et',
+			'viewing.soloPage' => 'Bu sayfayı tek göster',
+			'viewing.pairPage' => 'Bu sayfayı yeniden eşleştir',
+			'viewing.listenPhone' => 'Bu telefonda dinle',
+			'viewing.audioUnavailable' => 'Dosya veya ses parçası bu telefonda kullanılamıyor.',
 			'livingRoom.fitScreen' => 'Ekranıma sığdır',
 			'livingRoom.fitHelp' => 'Bir kenar seçip işaretleri görünene kadar oklarla hareket ettirin. Her kenar için tekrarlayın.',
 			'livingRoom.left' => 'Sol',
@@ -6090,6 +6116,8 @@ extension on TranslationsTr {
 			'settings.audioChannelLimitOriginal' => 'Orijinal',
 			'settings.audioChannelLimitOriginalDescription' => 'Parçadaki tüm kanalları çalar',
 			'settings.audioChannelLimitSurround51' => 'En fazla 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Yalnızca 5.1 PCM kabul eden TV ve alıcılar için 7.1\'i 5.1\'e indirger. Doğrudan geçiş etkilenmez.',
 			'settings.audioChannelLimitStereo' => 'Stereo',
 			'settings.audioChannelLimitStereoDescription' => 'Stereo hoparlörler veya kulaklıklar için iki kanala indirger. Doğrudan geçişi kapatır.',
@@ -6098,8 +6126,6 @@ extension on TranslationsTr {
 			'settings.downmixCenterBoostLabel' => 'Yükseltme (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Dönüştürmede Sesi Normalleştir',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Ses patlamalarını önlemek için karışımı düşürün. Orijinal sesi korumak için kapatın (yüksek sesli sahnelerde bozulma yapabilir).',
 			'settings.dvConversionMode' => 'Dolby Vision Dönüştürme',
 			'settings.dvConversionModeDescription' => 'Dolby Vision Profile 7 dosyalarının nasıl işleneceğini seçin.',
@@ -6604,6 +6630,8 @@ extension on TranslationsTr {
 			'videoControls.playNext' => 'Sonrakini Oynat',
 			'videoControls.playButton' => 'Oynat',
 			'videoControls.pauseButton' => 'Duraklat',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'Duraklatıldı',
 			'videoControls.playbackResumed' => 'Oynatılıyor',
 			'videoControls.loadingVideo' => 'Video yükleniyor',
@@ -6612,8 +6640,6 @@ extension on TranslationsTr {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => '${seconds} saniye geri sar',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => '${seconds} saniye ileri sar',
 			'videoControls.previousButton' => 'Önceki bölüm',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Sonraki bölüm',
 			'videoControls.previousChapterButton' => 'Önceki kısım',
 			'videoControls.nextChapterButton' => 'Sonraki kısım',
@@ -7118,6 +7144,8 @@ extension on TranslationsTr {
 			'libraries.analyze' => 'Analiz Et',
 			'libraries.analyzeLibrary' => 'Kitaplığı Analiz Et',
 			'libraries.refreshMetadata' => 'Meta Verileri Yenile',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Çöpü Boşalt',
 			'libraries.emptyingTrash' => ({required Object title}) => '"${title}" için çöp boşaltılıyor...',
 			'libraries.trashEmptied' => ({required Object title}) => '"${title}" için çöp boşaltıldı',
@@ -7126,8 +7154,6 @@ extension on TranslationsTr {
 			'libraries.analysisStarted' => ({required Object title}) => '"${title}" için analiz başladı',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Kitaplık analiz edilemedi: ${error}',
 			'libraries.noLibrariesFound' => 'Kitaplık bulunamadı',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Tüm kitaplıklar gizli',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Gizli kitaplıklar (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Bu kitaplık boş',
@@ -7632,6 +7658,8 @@ extension on TranslationsTr {
 			'music.playingFrom' => ({required Object title}) => '${title} kaynağından oynatılıyor',
 			'music.queue' => 'Kuyruk',
 			'music.clearQueue' => 'Kuyruğu temizle',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'Şarkı Sözleri',
 			'music.visualizer' => 'Görüntüleme',
 			'music.visualizerProfileLoading' => 'Track Analysis ile ilgili...',
@@ -7640,8 +7668,6 @@ extension on TranslationsTr {
 			'music.visualizerLiveAudio' => 'Canlı ses analizi',
 			'music.visualizerPreviousPreset' => 'Önceki Görsel Stil',
 			'music.visualizerNextPreset' => 'Next Görsel Stil',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Bloom için',
 			'music.visualizerPresetOrbitals' => 'Orbitler',
@@ -8146,6 +8172,8 @@ extension on TranslationsTr {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek Donanım',
 			'performanceOverlay.decoderExynosHw' => 'Exynos Donanım',
 			'performanceOverlay.decoderSoftware' => 'Yazılım',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Donanım',
 			'performanceOverlay.tunnelingActive' => 'Etkin',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} başarısız)',
@@ -8154,8 +8182,6 @@ extension on TranslationsTr {
 			'externalPlayer.useExternalPlayer' => 'Harici Oynatıcı Kullan',
 			'externalPlayer.useExternalPlayerDescription' => 'Videoları başka bir uygulamada açın',
 			'externalPlayer.selectPlayer' => 'Oynatıcı Seç',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Özel Oynatıcılar',
 			'externalPlayer.systemDefault' => 'Sistem Varsayılanı',
 			'externalPlayer.addCustomPlayer' => 'Özel Oynatıcı Ekle',
@@ -8660,6 +8686,8 @@ extension on TranslationsTr {
 			'homeLayout.recentlyReleased' => 'Son zamanlarda serbest bırakıldı',
 			'homeLayout.movieCollections' => 'Film Koleksiyonları',
 			'homeLayout.showCollections' => 'Koleksiyonlar göster',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Row Başlık',
 			'homeLayout.content' => 'içerik',
 			'homeLayout.showThisRowIn' => 'Bu satırı göster:',
@@ -8668,8 +8696,6 @@ extension on TranslationsTr {
 			'homeLayout.heroCardDescription' => 'Bir poster şelalesi yerine tam geniş bir döner kart olarak gösterilir.',
 			'homeLayout.heroUnavailableDescription' => 'Sadece bu satır tek bir koleksiyonun gerçek başlıklarına çözüldüğünde mevcuttur - birden fazla koleksiyon seçildiğinde, tek bir başlık geçmek için geçerli değildir.',
 			'homeLayout.librariesSelection' => 'Kütüphaneler (her kütüphaneyi içermek için tüm kontrolsüz bırakın)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Burada kontrol edilen her kütüphane bu tek satırda birleşmiştir.',
 			'homeLayout.movieCollectionsSelection' => 'Film koleksiyonları (her seçilen kütüphane için tüm kontrolsüz bırakın)',
 			'homeLayout.showCollectionsSelection' => 'Koleksiyonları göster (her seçilen kütüphane için tüm kontrolsüz bırakın)',
@@ -9174,6 +9200,8 @@ extension on TranslationsTr {
 			'sourceSetup.sshAuthentication' => 'SSH açık anahtar kimlik doğrulaması',
 			'sourceSetup.sshAuthenticationHelp' => 'İsteğe bağlıdır; parolayla kimlik doğrulama da desteklenir.',
 			'sourceSetup.privateKey' => 'Özel anahtar (PEM veya OpenSSH biçiminde)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Özel anahtarın parola ifadesi',
 			'sourceSetup.nfsMountPort' => 'NFS bağlama hizmetinin TCP bağlantı noktası',
 			'sourceSetup.nfsMountPortHelp' => 'Varsayılan: 20048',
@@ -9182,8 +9210,6 @@ extension on TranslationsTr {
 			'sourceSetup.nfsGroupId' => 'NFS grup kimliği (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Varsayılan: 1000. NAS’ın NFS paylaşımının izin verdiği grup kimliğini kullanın.',
 			'sourceSetup.nfsEncryption' => 'Şifreli NFS gerektir (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'NFS ve bağlama hizmeti için TLS 1.3 gerektirir. NAS desteklemiyorsa bağlantı reddedilir.',
 			'sourceSetup.nfsTrustCertificate' => 'Özel NFS CA veya sunucu sertifikası (PEM, isteğe bağlı)',
 			'sourceSetup.nfsTrustHelp' => 'Bu aygıtın güvendiği sertifikalar için boş bırakın. Gerektiğinde özel bir CA sertifikası veya kendinden imzalı sunucu sertifikası ekleyin; sertifikadaki adlar NFS URL’sindeki ana makineyle eşleşmelidir.',
@@ -9688,6 +9714,8 @@ extension on TranslationsTr {
 			'musicTools.playlistSharing' => 'Çalma listesi erişimi',
 			'musicTools.playlistRecipient' => 'Plex kullanıcı adı veya e-posta',
 			'musicTools.playlistSharingHint' => 'Bu çalma listesine ve parçalarına erişim verin. Alıcının bir daveti kabul etmesi gerekebilir.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Çalma listesi erişimi istenemedi.',
 			'musicTools.playlistSharingAccepted' => 'Plex erişim isteğini kabul etti.',
 			'musicTools.playlistAccessList' => 'Geçerli erişim',
@@ -9696,8 +9724,6 @@ extension on TranslationsTr {
 			'musicTools.peak' => 'Tepe',
 			'musicTools.bass' => 'Bas',
 			'musicTools.treble' => 'Tiz',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Paylaşılan çalma listeleri',
 			'musicTools.sharingInvitationsTitle' => 'Plex paylaşım davetleri',
 			'musicTools.noSharingInvitations' => 'Bekleyen davet yok',

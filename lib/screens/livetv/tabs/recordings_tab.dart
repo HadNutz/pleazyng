@@ -30,6 +30,7 @@ import '../../../widgets/app_icon.dart';
 import '../../../widgets/settings_section.dart';
 import '../../sources/source_player_screen.dart';
 import '../live_tv_refresh_mixin.dart';
+import '../recording_extension.dart';
 import '../live_tv_server_iteration.dart';
 import '../livetv_recording_actions.dart';
 import '../livetv_styles.dart';
@@ -488,8 +489,17 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
     }
   }
 
+  Future<void> _extendSchedule(IptvLocalRecordingSchedule schedule) async {
+    await extendIptvRecording(context, schedule);
+    if (mounted) await _load();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final activeSchedules = {
+      for (final s in _localSchedules)
+        if (s.state == 'recording' && s.recordingId != null) s.recordingId!: s,
+    };
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -539,6 +549,7 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
                   focusNode: i == 0 ? _firstTileFocusNode : null,
                   onNavigateUp: i == 0 ? widget.onNavigateUp : null,
                   onBack: widget.onBack,
+                  onExtend: _extendSchedule,
                   onCancel: () => _cancelLocalSchedule(_localSchedules[i]),
                 ),
             ],
@@ -550,6 +561,8 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
               for (var i = 0; i < _localRecordings.length; i++)
                 _LocalIptvRecordingTile(
                   recording: _localRecordings[i],
+                  schedule: activeSchedules[_localRecordings[i].id],
+                  onExtend: _extendSchedule,
                   autofocus: _localSchedules.isEmpty && grabs.isEmpty && rules.isEmpty && i == 0,
                   focusNode: _localSchedules.isEmpty && grabs.isEmpty && rules.isEmpty && i == 0
                       ? _firstTileFocusNode
@@ -639,6 +652,7 @@ class _EmptyMessage extends StatelessWidget {
 class _LocalIptvScheduleTile extends StatelessWidget {
   const _LocalIptvScheduleTile({
     required this.schedule,
+    required this.onExtend,
     required this.onCancel,
     required this.autofocus,
     this.focusNode,
@@ -647,6 +661,7 @@ class _LocalIptvScheduleTile extends StatelessWidget {
   });
 
   final IptvLocalRecordingSchedule schedule;
+  final ValueChanged<IptvLocalRecordingSchedule> onExtend;
   final VoidCallback onCancel;
   final bool autofocus;
   final FocusNode? focusNode;
@@ -659,6 +674,11 @@ class _LocalIptvScheduleTile extends StatelessWidget {
     final starts = schedule.startsAt.toLocal();
     final ends = schedule.endsAt.toLocal();
     final active = schedule.state == 'recording' || schedule.state == 'starting';
+    final action = schedule.state == 'recording'
+        ? () => onExtend(schedule)
+        : schedule.state == 'scheduled'
+        ? onCancel
+        : null;
     final failed = schedule.state == 'failed';
     final missed = schedule.state == 'missed';
     final subtitle = [
@@ -667,6 +687,7 @@ class _LocalIptvScheduleTile extends StatelessWidget {
       formatDurationTextual(ends.difference(starts).inMilliseconds),
       if (failed) _localRecordingFailure(schedule.errorCode),
       if (missed) t.iptv.recordingMissed,
+      if (active) t.viewing.recordsUntil(time: TimeOfDay.fromDateTime(ends).format(context)),
     ].join(' · ');
     final stateLabel = active
         ? t.iptv.recordingInProgressLocal
@@ -682,12 +703,12 @@ class _LocalIptvScheduleTile extends StatelessWidget {
       useBackgroundFocus: true,
       disableScale: true,
       semanticLabel: '${schedule.programmeTitle ?? schedule.title}, $stateLabel',
-      onSelect: schedule.state == 'scheduled' ? onCancel : null,
+      onSelect: action,
       onNavigateUp: onNavigateUp,
       onBack: onBack,
       child: InkWell(
         canRequestFocus: false,
-        onTap: schedule.state == 'scheduled' ? onCancel : null,
+        onTap: action,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
           child: Row(
@@ -725,6 +746,8 @@ class _LocalIptvScheduleTile extends StatelessWidget {
                     ? theme.colorScheme.error
                     : theme.colorScheme.primary,
               ),
+              if (schedule.state == 'recording')
+                IconButton(tooltip: t.viewing.extendRecording, onPressed: action, icon: const Icon(Icons.more_time)),
               if (schedule.state == 'scheduled')
                 IconButton(
                   tooltip: t.iptv.cancelSchedule,
@@ -751,6 +774,8 @@ class _LocalIptvScheduleTile extends StatelessWidget {
 class _LocalIptvRecordingTile extends StatelessWidget {
   const _LocalIptvRecordingTile({
     required this.recording,
+    this.schedule,
+    required this.onExtend,
     required this.onPlay,
     required this.onDelete,
     required this.autofocus,
@@ -760,6 +785,8 @@ class _LocalIptvRecordingTile extends StatelessWidget {
   });
 
   final IptvLocalRecording recording;
+  final IptvLocalRecordingSchedule? schedule;
+  final ValueChanged<IptvLocalRecordingSchedule> onExtend;
   final VoidCallback onPlay;
   final VoidCallback onDelete;
   final bool autofocus;
@@ -774,9 +801,12 @@ class _LocalIptvRecordingTile extends StatelessWidget {
     final isFailed = recording.state != 'complete' && !isRecording;
     final canPlay = recording.state == 'complete' || (isFailed && (recording.sizeBytes ?? 0) > 0);
     final started = recording.startedAt.toLocal();
+    final active = schedule;
+    final extend = isRecording && active != null ? () => onExtend(active) : null;
     final subtitle = <String>[
       formatRelativeDayLabel(started),
       formatClockTime(started, is24Hour: MediaQuery.alwaysUse24HourFormatOf(context)),
+      if (active != null) t.viewing.recordsUntil(time: TimeOfDay.fromDateTime(active.endsAt.toLocal()).format(context)),
       if (recording.sizeBytes case final size? when size > 0) ByteFormatter.formatBytes(size),
       if (isFailed) t.iptv.recordingInterrupted,
     ].join(' · ');
@@ -786,7 +816,7 @@ class _LocalIptvRecordingTile extends StatelessWidget {
       autoScroll: true,
       useBackgroundFocus: true,
       disableScale: true,
-      onSelect: canPlay ? onPlay : null,
+      onSelect: extend ?? (canPlay ? onPlay : null),
       onNavigateUp: onNavigateUp,
       onBack: onBack,
       child: Padding(
@@ -818,6 +848,8 @@ class _LocalIptvRecordingTile extends StatelessWidget {
                 ],
               ),
             ),
+            if (extend != null)
+              IconButton(onPressed: extend, tooltip: t.viewing.extendRecording, icon: const Icon(Icons.more_time)),
             if (isRecording)
               StatusPill(label: t.iptv.recordingInProgressLocal, color: Colors.red)
             else

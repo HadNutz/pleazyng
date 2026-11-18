@@ -158,6 +158,10 @@ class PlexFileInfoStreamReader implements FileInfoStreamReader {
       channels: flexibleInt(stream['channels']),
       selected: flexibleBool(stream['selected']),
       isDefault: flexibleBool(stream['default']),
+      original: flexibleBool(stream['original']),
+      dubbed: flexibleBool(stream['dub']),
+      commentary: flexibleBool(stream['commentary']),
+      described: flexibleBool(stream['visualImpaired']) || flexibleBool(stream['visualImpairedDescription']),
       replayGain: MediaReplayGain(
         trackDb: MediaReplayGain.validDb(flexibleDouble(stream['gain'])),
         albumDb: MediaReplayGain.validDb(flexibleDouble(stream['albumGain'])),
@@ -220,6 +224,10 @@ class JellyfinFileInfoStreamReader implements FileInfoStreamReader {
       channels: f.channels,
       selected: f.isDefault,
       isDefault: f.isDefault,
+      original: flexibleBool(s['IsOriginal']),
+      dubbed: flexibleBool(s['IsDub']),
+      commentary: flexibleBool(s['IsCommentary']),
+      described: flexibleBool(s['IsAudioDescription']) || flexibleBool(s['IsVisualImpaired']),
       external: f.isExternal,
     );
   }

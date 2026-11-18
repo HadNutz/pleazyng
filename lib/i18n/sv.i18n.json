@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "Spela in 30 minuter till",
+    "recordsUntil": "Inspelning till ${time}",
+    "extendFailed": "Det gick inte att förlänga inspelningen",
+    "originalDialogue": "Föredra originaldialog",
+    "soloPage": "Visa sidan separat",
+    "pairPage": "Para ihop sidan igen",
+    "listenPhone": "Lyssna på den här telefonen",
+    "audioUnavailable": "Filen eller ljudspåret är inte tillgängligt på den här telefonen."
+  },
   "livingRoom": {
     "fitScreen": "Anpassa till min skärm",
     "fitHelp": "Välj en kant och flytta den med piltangenterna tills markeringarna syns. Upprepa för varje kant.",

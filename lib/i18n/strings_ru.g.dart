@@ -40,6 +40,7 @@ class TranslationsRu extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsRu $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsRu(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$ru viewing = _Translations$viewing$ru._(_root);
 	@override late final _Translations$livingRoom$ru livingRoom = _Translations$livingRoom$ru._(_root);
 	@override late final _Translations$app$ru app = _Translations$app$ru._(_root);
 	@override late final _Translations$appIcon$ru appIcon = _Translations$appIcon$ru._(_root);
@@ -121,6 +122,23 @@ class TranslationsRu extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ru musicExperience = _Translations$musicExperience$ru._(_root);
 	@override late final _Translations$musicTools$ru musicTools = _Translations$musicTools$ru._(_root);
 	@override late final _Translations$musicDevices$ru musicDevices = _Translations$musicDevices$ru._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$ru extends Translations$viewing$en {
+	_Translations$viewing$ru._(TranslationsRu root) : this._root = root, super.internal(root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Записывать ещё 30 минут';
+	@override String recordsUntil({required Object time}) => 'Запись до ${time}';
+	@override String get extendFailed => 'Не удалось продлить запись';
+	@override String get originalDialogue => 'Предпочитать оригинальную озвучку';
+	@override String get soloPage => 'Показать эту страницу отдельно';
+	@override String get pairPage => 'Снова объединить страницу в разворот';
+	@override String get listenPhone => 'Слушать на этом телефоне';
+	@override String get audioUnavailable => 'Файл или звуковая дорожка недоступны на этом телефоне.';
 }
 
 // Path: livingRoom
@@ -5636,6 +5654,14 @@ class _Translations$services$trackerDescriptions$ru extends Translations$service
 extension on TranslationsRu {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Записывать ещё 30 минут',
+			'viewing.recordsUntil' => ({required Object time}) => 'Запись до ${time}',
+			'viewing.extendFailed' => 'Не удалось продлить запись',
+			'viewing.originalDialogue' => 'Предпочитать оригинальную озвучку',
+			'viewing.soloPage' => 'Показать эту страницу отдельно',
+			'viewing.pairPage' => 'Снова объединить страницу в разворот',
+			'viewing.listenPhone' => 'Слушать на этом телефоне',
+			'viewing.audioUnavailable' => 'Файл или звуковая дорожка недоступны на этом телефоне.',
 			'livingRoom.fitScreen' => 'Подогнать под мой экран',
 			'livingRoom.fitHelp' => 'Выберите край и перемещайте его стрелками, пока не станут видны метки. Повторите для каждого края.',
 			'livingRoom.left' => 'Слева',
@@ -6140,6 +6166,8 @@ extension on TranslationsRu {
 			'settings.audioChannelLimitOriginal' => 'Исходные',
 			'settings.audioChannelLimitOriginalDescription' => 'Воспроизводить все каналы дорожки',
 			'settings.audioChannelLimitSurround51' => 'До 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Сводить 7.1 в 5.1 для телевизоров и ресиверов, принимающих только 5.1 PCM. На сквозной вывод не влияет.',
 			'settings.audioChannelLimitStereo' => 'Стерео',
 			'settings.audioChannelLimitStereoDescription' => 'Сводить в два канала для стереоколонок или наушников. Отключает сквозной вывод.',
@@ -6148,8 +6176,6 @@ extension on TranslationsRu {
 			'settings.downmixCenterBoostLabel' => 'Усиление (дБ)',
 			'settings.downmixCenterBoostShort' => 'дБ',
 			'settings.audioDownmixNormalize' => 'Нормализация громкости при микшировании',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Снижает уровень микса во избежание клиппинга. Отключите, чтобы сохранить исходную громкость (возможны искажения в громких сценах).',
 			'settings.dvConversionMode' => 'Преобразование Dolby Vision',
 			'settings.dvConversionModeDescription' => 'Выберите, как обрабатывать файлы Dolby Vision Profile 7.',
@@ -6654,6 +6680,8 @@ extension on TranslationsRu {
 			'videoControls.playNext' => 'Следующее',
 			'videoControls.playButton' => 'Воспроизвести',
 			'videoControls.pauseButton' => 'Пауза',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'На паузе',
 			'videoControls.playbackResumed' => 'Воспроизведение',
 			'videoControls.loadingVideo' => 'Загрузка видео',
@@ -6662,8 +6690,6 @@ extension on TranslationsRu {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Перемотать назад на ${seconds} с',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Перемотать вперёд на ${seconds} с',
 			'videoControls.previousButton' => 'Предыдущий эпизод',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Следующий эпизод',
 			'videoControls.previousChapterButton' => 'Предыдущая глава',
 			'videoControls.nextChapterButton' => 'Следующая глава',
@@ -7168,6 +7194,8 @@ extension on TranslationsRu {
 			'libraries.analyze' => 'Анализировать',
 			'libraries.analyzeLibrary' => 'Анализировать библиотеку',
 			'libraries.refreshMetadata' => 'Обновить метаданные',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Очистить корзину',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Очистка корзины для "${title}"...',
 			'libraries.trashEmptied' => ({required Object title}) => 'Корзина очищена для "${title}"',
@@ -7176,8 +7204,6 @@ extension on TranslationsRu {
 			'libraries.analysisStarted' => ({required Object title}) => 'Анализ начат для "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Не удалось проанализировать библиотеку: ${error}',
 			'libraries.noLibrariesFound' => 'Библиотеки не найдены',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Все библиотеки скрыты',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Скрытые библиотеки (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Эта библиотека пуста',
@@ -7682,6 +7708,8 @@ extension on TranslationsRu {
 			'music.playingFrom' => ({required Object title}) => 'Воспроизведение из ${title}',
 			'music.queue' => 'Очередь',
 			'music.clearQueue' => 'Очистить очередь',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'Текст песни',
 			'music.visualizer' => 'Визуализация',
 			'music.visualizerProfileLoading' => 'Читать траекторию анализов...',
@@ -7690,8 +7718,6 @@ extension on TranslationsRu {
 			'music.visualizerLiveAudio' => 'Анализ аудио в реальном времени',
 			'music.visualizerPreviousPreset' => 'Предыдущий визуальный стиль',
 			'music.visualizerNextPreset' => 'Следующий визуальный стиль',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Блум',
 			'music.visualizerPresetOrbitals' => 'орбиталы',
@@ -8196,6 +8222,8 @@ extension on TranslationsRu {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek, аппаратный',
 			'performanceOverlay.decoderExynosHw' => 'Exynos, аппаратный',
 			'performanceOverlay.decoderSoftware' => 'Программный',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Аппаратный',
 			'performanceOverlay.tunnelingActive' => 'Активно',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (ошибок: ${failures})',
@@ -8204,8 +8232,6 @@ extension on TranslationsRu {
 			'externalPlayer.useExternalPlayer' => 'Использовать внешний плеер',
 			'externalPlayer.useExternalPlayerDescription' => 'Открывать видео в другом приложении',
 			'externalPlayer.selectPlayer' => 'Выбрать плеер',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Свои плееры',
 			'externalPlayer.systemDefault' => 'Системный по умолчанию',
 			'externalPlayer.addCustomPlayer' => 'Добавить свой плеер',
@@ -8710,6 +8736,8 @@ extension on TranslationsRu {
 			'homeLayout.recentlyReleased' => 'Недавно выпущен',
 			'homeLayout.movieCollections' => 'Фильмы Коллекции',
 			'homeLayout.showCollections' => 'Покажите коллекции',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Роу титул',
 			'homeLayout.content' => 'Содержание',
 			'homeLayout.showThisRowIn' => 'Показать эту строку в:',
@@ -8718,8 +8746,6 @@ extension on TranslationsRu {
 			'homeLayout.heroCardDescription' => 'Показывает как одно полномасштабное ротационное карточки вместо плакатного шлема.',
 			'homeLayout.heroUnavailableDescription' => 'Доступны только тогда, когда эта строка разрешается на реальные заголовки одной коллекции — с более чем одной коллекцией, выбранной, нет ни одного заголовка, который бы пересекался.',
 			'homeLayout.librariesSelection' => 'Библиотеки (оставьте все непересмотренные, чтобы включить каждую библиотеку)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Вся библиотека, проверенная здесь, объединяется в этот один ряд.',
 			'homeLayout.movieCollectionsSelection' => 'Коллекции фильмов (оставьте все непересмотренные для каждой выбранной библиотеки)',
 			'homeLayout.showCollectionsSelection' => 'Показать коллекции (оставьте все непересмотренные для каждой выбранной библиотеки)',
@@ -9224,6 +9250,8 @@ extension on TranslationsRu {
 			'sourceSetup.sshAuthentication' => 'Аутентификация SSH по открытому ключу',
 			'sourceSetup.sshAuthenticationHelp' => 'Необязательно; аутентификация по паролю также поддерживается.',
 			'sourceSetup.privateKey' => 'Закрытый ключ (формат PEM или OpenSSH)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Парольная фраза закрытого ключа',
 			'sourceSetup.nfsMountPort' => 'TCP-порт службы монтирования NFS',
 			'sourceSetup.nfsMountPortHelp' => 'По умолчанию: 20048',
@@ -9232,8 +9260,6 @@ extension on TranslationsRu {
 			'sourceSetup.nfsGroupId' => 'ID группы NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'По умолчанию: 1000. Используйте ID группы, разрешённый экспортом NFS на NAS.',
 			'sourceSetup.nfsEncryption' => 'Требовать шифрование NFS (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Требовать TLS 1.3 для NFS и службы монтирования. Если NAS его не поддерживает, подключение будет отклонено.',
 			'sourceSetup.nfsTrustCertificate' => 'Собственный CA NFS или сертификат сервера (PEM, необязательно)',
 			'sourceSetup.nfsTrustHelp' => 'Оставьте пустым для сертификатов, которым доверяет это устройство. При необходимости добавьте сертификат частного CA или самоподписанный сертификат сервера; имена в нём должны совпадать с хостом в URL NFS.',
@@ -9738,6 +9764,8 @@ extension on TranslationsRu {
 			'musicTools.playlistSharing' => 'Доступ к плейлисту',
 			'musicTools.playlistRecipient' => 'Имя пользователя Plex или эл. почта',
 			'musicTools.playlistSharingHint' => 'Предоставьте доступ к этому плейлисту и его трекам. Получателю может потребоваться принять приглашение.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Не удалось запросить доступ к плейлисту.',
 			'musicTools.playlistSharingAccepted' => 'Plex принял запрос на доступ.',
 			'musicTools.playlistAccessList' => 'Текущий доступ',
@@ -9746,8 +9774,6 @@ extension on TranslationsRu {
 			'musicTools.peak' => 'Пик',
 			'musicTools.bass' => 'Низкие частоты',
 			'musicTools.treble' => 'Высокие частоты',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Общие плейлисты',
 			'musicTools.sharingInvitationsTitle' => 'Приглашения к общим материалам Plex',
 			'musicTools.noSharingInvitations' => 'Нет ожидающих приглашений',

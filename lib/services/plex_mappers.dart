@@ -1524,6 +1524,7 @@ MediaSourceInfo? plexMediaSourceInfoForSelection(
   );
   return MediaSourceInfo(
     videoUrl: videoUrl,
+    originalLanguage: metadata['originalLanguage'] is String ? metadata['originalLanguage'] as String : null,
     audioTracks: streams.audioTracks,
     subtitleTracks: streams.subtitleTracks,
     chapters: plexChaptersFromCacheJson(metadata),

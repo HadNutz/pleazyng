@@ -40,6 +40,7 @@ class TranslationsTh extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsTh $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsTh(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$th viewing = _Translations$viewing$th._(_root);
 	@override late final _Translations$livingRoom$th livingRoom = _Translations$livingRoom$th._(_root);
 	@override late final _Translations$app$th app = _Translations$app$th._(_root);
 	@override late final _Translations$appIcon$th appIcon = _Translations$appIcon$th._(_root);
@@ -121,6 +122,23 @@ class TranslationsTh extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$th musicExperience = _Translations$musicExperience$th._(_root);
 	@override late final _Translations$musicTools$th musicTools = _Translations$musicTools$th._(_root);
 	@override late final _Translations$musicDevices$th musicDevices = _Translations$musicDevices$th._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$th extends Translations$viewing$en {
+	_Translations$viewing$th._(TranslationsTh root) : this._root = root, super.internal(root);
+
+	final TranslationsTh _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'บันทึกต่ออีก 30 นาที';
+	@override String recordsUntil({required Object time}) => 'บันทึกถึง ${time}';
+	@override String get extendFailed => 'ขยายเวลาบันทึกไม่ได้';
+	@override String get originalDialogue => 'ใช้เสียงบทสนทนาต้นฉบับเป็นอันดับแรก';
+	@override String get soloPage => 'แสดงหน้านี้แยกเดี่ยว';
+	@override String get pairPage => 'จับคู่หน้านี้อีกครั้ง';
+	@override String get listenPhone => 'ฟังบนโทรศัพท์เครื่องนี้';
+	@override String get audioUnavailable => 'ไฟล์หรือแทร็กเสียงไม่พร้อมใช้งานบนโทรศัพท์เครื่องนี้';
 }
 
 // Path: livingRoom
@@ -5561,6 +5579,14 @@ class _Translations$services$trackerDescriptions$th extends Translations$service
 extension on TranslationsTh {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'บันทึกต่ออีก 30 นาที',
+			'viewing.recordsUntil' => ({required Object time}) => 'บันทึกถึง ${time}',
+			'viewing.extendFailed' => 'ขยายเวลาบันทึกไม่ได้',
+			'viewing.originalDialogue' => 'ใช้เสียงบทสนทนาต้นฉบับเป็นอันดับแรก',
+			'viewing.soloPage' => 'แสดงหน้านี้แยกเดี่ยว',
+			'viewing.pairPage' => 'จับคู่หน้านี้อีกครั้ง',
+			'viewing.listenPhone' => 'ฟังบนโทรศัพท์เครื่องนี้',
+			'viewing.audioUnavailable' => 'ไฟล์หรือแทร็กเสียงไม่พร้อมใช้งานบนโทรศัพท์เครื่องนี้',
 			'livingRoom.fitScreen' => 'ปรับให้พอดีกับหน้าจอ',
 			'livingRoom.fitHelp' => 'เลือกขอบแล้วใช้ปุ่มลูกศรเลื่อนจนเห็นเครื่องหมาย ทำซ้ำจนครบทุกขอบ',
 			'livingRoom.left' => 'ซ้าย',
@@ -6065,6 +6091,8 @@ extension on TranslationsTh {
 			'settings.audioChannelLimitOriginal' => 'หลัก',
 			'settings.audioChannelLimitOriginalDescription' => 'เล่นทุกช่องในทิศทาง',
 			'settings.audioChannelLimitSurround51' => 'สูงสุด 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'ผสม 7.1 ลงไป 5.1 สําหรับทีวีและผู้รับที่ใช้ PCM 5.1 เท่านั้น Passthrough ไม่ได้รับผลกระทบ',
 			'settings.audioChannelLimitStereo' => 'สเตียรอยด์',
 			'settings.audioChannelLimitStereoDescription' => 'ผสมลงไปสองช่องสําหรับสเตียรอยด์หรือหัวข้อ แปลงไปตรงไปตรงไปตรง',
@@ -6073,8 +6101,6 @@ extension on TranslationsTh {
 			'settings.downmixCenterBoostLabel' => 'ปริมาณ (dB)',
 			'settings.downmixCenterBoostShort' => 'DB',
 			'settings.audioDownmixNormalize' => 'ปรับปรุงปริมาณบน Downmix',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'ลดส่วนผสมเพื่อป้องกันไม่ให้คลิก ปิดเพื่อรักษาปริมาณเดิม (อาจทําให้เกิดความผิดปกติในสถานการณ์ที่เสียงรบกวน)',
 			'settings.dvConversionMode' => 'Dolby Vision การแปลง',
 			'settings.dvConversionModeDescription' => 'เลือกวิธีการจัดการไฟล์ Dolby Vision โปรไฟล์ 7',
@@ -6579,6 +6605,8 @@ extension on TranslationsTh {
 			'videoControls.playNext' => 'เล่นต่อไป',
 			'videoControls.playButton' => 'เล่น',
 			'videoControls.pauseButton' => 'หยุดชั่วคราว',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'สะพาน',
 			'videoControls.playbackResumed' => 'เล่น',
 			'videoControls.loadingVideo' => 'วิดีโอโหลด',
@@ -6587,8 +6615,6 @@ extension on TranslationsTh {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'ค้นหากลับ ${seconds} วินาที',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'ค้นหาต่อไป ${seconds} วินาที',
 			'videoControls.previousButton' => 'เรื่องก่อนหน้า',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'เรื่องถัดไป',
 			'videoControls.previousChapterButton' => 'ประเภทก่อนหน้า',
 			'videoControls.nextChapterButton' => 'บทความถัดไป',
@@ -7093,6 +7119,8 @@ extension on TranslationsTh {
 			'libraries.analyze' => 'การวิเคราะห์',
 			'libraries.analyzeLibrary' => 'การวิเคราะห์ห้องสมุด',
 			'libraries.refreshMetadata' => 'การปรับปรุง Metadata',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'ระยําที่ว่างเปล่า',
 			'libraries.emptyingTrash' => ({required Object title}) => 'ปิดฝุ่นสําหรับ "${title}..."',
 			'libraries.trashEmptied' => ({required Object title}) => 'โลหะที่ถูกเก็บไว้สําหรับ "${title}"',
@@ -7101,8 +7129,6 @@ extension on TranslationsTh {
 			'libraries.analysisStarted' => ({required Object title}) => 'การวิเคราะห์เริ่มต้นสําหรับ "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'ไม่สามารถวิเคราะห์ห้องสมุดได้: ${error}',
 			'libraries.noLibrariesFound' => 'ไม่พบห้องสมุด',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'ห้องสมุดทั้งหมดซ่อนอยู่',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'ห้องสมุดที่ซ่อนอยู่ (${count})',
 			'libraries.thisLibraryIsEmpty' => 'ห้องสมุดนี้ว่างเปล่า',
@@ -7607,6 +7633,8 @@ extension on TranslationsTh {
 			'music.playingFrom' => ({required Object title}) => 'เล่นจาก ${title}',
 			'music.queue' => 'สิทธิ',
 			'music.clearQueue' => 'ล้างคิว',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'เนื้อเพลง',
 			'music.visualizer' => 'วิดีโอ',
 			'music.visualizerProfileLoading' => 'อ่าน track analysis ...',
@@ -7615,8 +7643,6 @@ extension on TranslationsTh {
 			'music.visualizerLiveAudio' => 'การวิเคราะห์เสียงแบบเรียลไทม์',
 			'music.visualizerPreviousPreset' => 'สไตล์ภาพก่อนหน้า',
 			'music.visualizerNextPreset' => 'สไตล์ภาพต่อไป',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'ออโรารี',
 			'music.visualizerPresetBloom' => 'บลู',
 			'music.visualizerPresetOrbitals' => 'วงจร',
@@ -8121,6 +8147,8 @@ extension on TranslationsTh {
 			'performanceOverlay.decoderMediatekHw' => 'โมเดียม HW',
 			'performanceOverlay.decoderExynosHw' => 'แอพลิเคชัน HW',
 			'performanceOverlay.decoderSoftware' => 'ซอฟต์แวร์',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'ฮาร์ดแวร์',
 			'performanceOverlay.tunnelingActive' => 'การใช้งาน',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} ไม่สําเร็จ)',
@@ -8129,8 +8157,6 @@ extension on TranslationsTh {
 			'externalPlayer.useExternalPlayer' => 'ใช้ผู้เล่นภายนอก',
 			'externalPlayer.useExternalPlayerDescription' => 'เปิดวิดีโอในแอปอื่น ๆ',
 			'externalPlayer.selectPlayer' => 'เลือกผู้เล่น',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'ผู้เล่นที่กําหนดเอง',
 			'externalPlayer.systemDefault' => 'ระบบที่กําหนดเอง',
 			'externalPlayer.addCustomPlayer' => 'เพิ่มผู้เล่นที่กําหนดเอง',
@@ -8635,6 +8661,8 @@ extension on TranslationsTh {
 			'homeLayout.recentlyReleased' => 'ปล่อยล่าสุด',
 			'homeLayout.movieCollections' => 'คอลเลกชันภาพยนตร์',
 			'homeLayout.showCollections' => 'แสดงคอลเลกชัน',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'รูชื่อ',
 			'homeLayout.content' => 'ความสุข',
 			'homeLayout.showThisRowIn' => 'แสดงแถวนี้ใน:',
@@ -8643,8 +8671,6 @@ extension on TranslationsTh {
 			'homeLayout.heroCardDescription' => 'แสดงเป็นบัตรหมุนกว้างเดียวแทนที่กระดาษโพสต์',
 			'homeLayout.heroUnavailableDescription' => 'มีเพียงเมื่อแถวนี้ได้รับการแก้ไขกับชื่อจริงของคอลเลกชันเดียว - ด้วยคอลเลกชันหนึ่งที่เลือกไม่มีชื่อเดียวที่จะหมุนผ่าน',
 			'homeLayout.librariesSelection' => 'ห้องสมุด (ปล่อยให้ทั้งหมดไม่ตรวจสอบเพื่อรวมห้องสมุดแต่ละห้อง)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'ทุกห้องสมุดที่ตรวจสอบที่นี่จะรวมอยู่ในบรรทัดนี้',
 			'homeLayout.movieCollectionsSelection' => 'ชุดภาพยนตร์ (ปล่อยให้ทั้งหมดไม่ได้ตรวจสอบสําหรับแต่ละห้องสมุดที่เลือก)',
 			'homeLayout.showCollectionsSelection' => 'แสดงคอลเลกชัน (ปล่อยให้ทั้งหมดไม่ได้ตรวจสอบสําหรับแต่ละห้องสมุดที่เลือก)',
@@ -9149,6 +9175,8 @@ extension on TranslationsTh {
 			'sourceSetup.sshAuthentication' => 'การยืนยันตัวตน SSH ด้วยกุญแจสาธารณะ',
 			'sourceSetup.sshAuthenticationHelp' => 'ไม่บังคับ รองรับการยืนยันตัวตนด้วยรหัสผ่านด้วย',
 			'sourceSetup.privateKey' => 'กุญแจส่วนตัว (รูปแบบ PEM หรือ OpenSSH)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'วลีรหัสผ่านของกุญแจส่วนตัว',
 			'sourceSetup.nfsMountPort' => 'พอร์ต TCP ของบริการเมานต์ NFS',
 			'sourceSetup.nfsMountPortHelp' => 'ค่าเริ่มต้น: 20048',
@@ -9157,8 +9185,6 @@ extension on TranslationsTh {
 			'sourceSetup.nfsGroupId' => 'ID กลุ่ม NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'ค่าเริ่มต้น: 1000 ใช้ ID กลุ่มที่ส่วนแบ่งปัน NFS ของ NAS อนุญาต',
 			'sourceSetup.nfsEncryption' => 'บังคับใช้ NFS ที่เข้ารหัส (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'บังคับใช้ TLS 1.3 สำหรับ NFS และบริการเมานต์ หาก NAS ไม่รองรับ ระบบจะปฏิเสธการเชื่อมต่อ',
 			'sourceSetup.nfsTrustCertificate' => 'CA ของ NFS หรือใบรับรองเซิร์ฟเวอร์ที่กำหนดเอง (PEM, ไม่บังคับ)',
 			'sourceSetup.nfsTrustHelp' => 'เว้นว่างไว้เพื่อใช้ใบรับรองที่อุปกรณ์นี้เชื่อถือ หากจำเป็น ให้เพิ่มใบรับรองจาก CA ส่วนตัวหรือใบรับรองเซิร์ฟเวอร์ที่ลงนามด้วยตนเอง ชื่อในใบรับรองต้องตรงกับโฮสต์ใน URL ของ NFS',
@@ -9663,6 +9689,8 @@ extension on TranslationsTh {
 			'musicTools.playlistSharing' => 'สิทธิ์เข้าถึงเพลย์ลิสต์',
 			'musicTools.playlistRecipient' => 'ชื่อผู้ใช้ Plex หรืออีเมล',
 			'musicTools.playlistSharingHint' => 'ให้สิทธิ์เข้าถึงเพลย์ลิสต์นี้และเพลงในรายการ ผู้รับอาจต้องตอบรับคำเชิญ',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'ไม่สามารถขอสิทธิ์เข้าถึงเพลย์ลิสต์ได้',
 			'musicTools.playlistSharingAccepted' => 'Plex ยอมรับคำขอสิทธิ์เข้าถึงแล้ว',
 			'musicTools.playlistAccessList' => 'สิทธิ์เข้าถึงปัจจุบัน',
@@ -9671,8 +9699,6 @@ extension on TranslationsTh {
 			'musicTools.peak' => 'พีค',
 			'musicTools.bass' => 'เสียงเบส',
 			'musicTools.treble' => 'เสียงแหลม',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'เพลย์ลิสต์ที่แชร์',
 			'musicTools.sharingInvitationsTitle' => 'คำเชิญแชร์ของ Plex',
 			'musicTools.noSharingInvitations' => 'ไม่มีคำเชิญที่รอดำเนินการ',

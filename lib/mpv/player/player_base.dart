@@ -961,6 +961,7 @@ abstract class PlayerBase
             title: cleanTrackMetadataValue(track['title'] is String ? track['title'] as String : null),
             language: cleanTrackMetadataValue(track['lang'] is String ? track['lang'] as String : null),
             codec: track['codec'] is String ? track['codec'] as String : null,
+            ffIndex: _finiteInt(track['ff-index']),
             codecProfile: track['codec-profile'] is String ? track['codec-profile'] as String : null,
             channels: _finiteInt(track['demux-channel-count']),
             sampleRate: _finiteInt(track['demux-samplerate']),

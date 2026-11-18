@@ -28,6 +28,7 @@ class _Client extends ExperienceClient {
     int mediaIndex = 0,
     String? mediaSourceId,
     Duration? position,
+    bool registerPlayback = true,
   }) async {
     resolved.add(item.id);
     return resolve == null ? ExternalPlaybackTarget(url: 'https://server/${item.id}.flac') : resolve!(item);

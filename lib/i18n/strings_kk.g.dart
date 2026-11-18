@@ -40,6 +40,7 @@ class TranslationsKk extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsKk $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsKk(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$kk viewing = _Translations$viewing$kk._(_root);
 	@override late final _Translations$livingRoom$kk livingRoom = _Translations$livingRoom$kk._(_root);
 	@override late final _Translations$app$kk app = _Translations$app$kk._(_root);
 	@override late final _Translations$appIcon$kk appIcon = _Translations$appIcon$kk._(_root);
@@ -121,6 +122,23 @@ class TranslationsKk extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$kk musicExperience = _Translations$musicExperience$kk._(_root);
 	@override late final _Translations$musicTools$kk musicTools = _Translations$musicTools$kk._(_root);
 	@override late final _Translations$musicDevices$kk musicDevices = _Translations$musicDevices$kk._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$kk extends Translations$viewing$en {
+	_Translations$viewing$kk._(TranslationsKk root) : this._root = root, super.internal(root);
+
+	final TranslationsKk _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Тағы 30 минут жазу';
+	@override String recordsUntil({required Object time}) => 'Жазбаның аяқталу уақыты: ${time}';
+	@override String get extendFailed => 'Жазбаны ұзарту мүмкін болмады';
+	@override String get originalDialogue => 'Түпнұсқа диалогқа басымдық беру';
+	@override String get soloPage => 'Бұл бетті жеке көрсету';
+	@override String get pairPage => 'Бұл бетті қайта жұптау';
+	@override String get listenPhone => 'Осы телефонда тыңдау';
+	@override String get audioUnavailable => 'Бұл телефонда файл немесе дыбыс жолы қолжетімсіз.';
 }
 
 // Path: livingRoom
@@ -5586,6 +5604,14 @@ class _Translations$services$trackerDescriptions$kk extends Translations$service
 extension on TranslationsKk {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Тағы 30 минут жазу',
+			'viewing.recordsUntil' => ({required Object time}) => 'Жазбаның аяқталу уақыты: ${time}',
+			'viewing.extendFailed' => 'Жазбаны ұзарту мүмкін болмады',
+			'viewing.originalDialogue' => 'Түпнұсқа диалогқа басымдық беру',
+			'viewing.soloPage' => 'Бұл бетті жеке көрсету',
+			'viewing.pairPage' => 'Бұл бетті қайта жұптау',
+			'viewing.listenPhone' => 'Осы телефонда тыңдау',
+			'viewing.audioUnavailable' => 'Бұл телефонда файл немесе дыбыс жолы қолжетімсіз.',
 			'livingRoom.fitScreen' => 'Экраныма сыйдыру',
 			'livingRoom.fitHelp' => 'Бір шетін таңдап, белгілері көрінгенше көрсеткілермен жылжытыңыз. Әр шеті үшін қайталаңыз.',
 			'livingRoom.left' => 'Сол жақ',
@@ -6090,6 +6116,8 @@ extension on TranslationsKk {
 			'settings.audioChannelLimitOriginal' => 'Түпнұсқа',
 			'settings.audioChannelLimitOriginalDescription' => 'Жолдағы барлық арнаны ойнату',
 			'settings.audioChannelLimitSurround51' => '5.1-ге дейін',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Тек 5.1 PCM қабылдайтын теледидарлар мен ресиверлер үшін 7.1-ді 5.1-ге түрлендіру. Тікелей өткізуге әсер етпейді.',
 			'settings.audioChannelLimitStereo' => 'Стерео',
 			'settings.audioChannelLimitStereoDescription' => 'Стерео динамиктер немесе құлаққаптар үшін екі арнаға түрлендіру. Тікелей өткізуді өшіреді.',
@@ -6098,8 +6126,6 @@ extension on TranslationsKk {
 			'settings.downmixCenterBoostLabel' => 'Күшейту (дБ)',
 			'settings.downmixCenterBoostShort' => 'дБ',
 			'settings.audioDownmixNormalize' => 'Түрлендіруде дыбысты нормалау',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Дыбыс бұзылуын болдырмау үшін деңгейді төмендету.',
 			'settings.dvConversionMode' => 'Dolby Vision түрлендіруі',
 			'settings.dvConversionModeDescription' => 'Dolby Vision Profile 7 файлдарын өңдеу әдісін таңдаңыз.',
@@ -6604,6 +6630,8 @@ extension on TranslationsKk {
 			'videoControls.playNext' => 'Келесіні ойнату',
 			'videoControls.playButton' => 'Ойнату',
 			'videoControls.pauseButton' => 'Кідірту',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'Кідіртілді',
 			'videoControls.playbackResumed' => 'Ойнатылуда',
 			'videoControls.loadingVideo' => 'Бейне жүктелуде',
@@ -6612,8 +6640,6 @@ extension on TranslationsKk {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => '${seconds} секунд артқа айналдыру',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => '${seconds} секунд алға айналдыру',
 			'videoControls.previousButton' => 'Алдыңғы бөлім',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Келесі бөлім',
 			'videoControls.previousChapterButton' => 'Алдыңғы бөлімше',
 			'videoControls.nextChapterButton' => 'Келесі бөлімше',
@@ -7118,6 +7144,8 @@ extension on TranslationsKk {
 			'libraries.analyze' => 'Талдау жасау',
 			'libraries.analyzeLibrary' => 'Кітапханаға талдау жасау',
 			'libraries.refreshMetadata' => 'Метадеректерді жаңарту',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Себетті тазалау',
 			'libraries.emptyingTrash' => ({required Object title}) => '"${title}" себеті тазалануда...',
 			'libraries.trashEmptied' => ({required Object title}) => '"${title}" себеті тазаланды',
@@ -7126,8 +7154,6 @@ extension on TranslationsKk {
 			'libraries.analysisStarted' => ({required Object title}) => '"${title}" үшін талдау басталды',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Талдау жасау мүмкін болмады: ${error}',
 			'libraries.noLibrariesFound' => 'Кітапханалар табылмады',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Барлық кітапханалар жасырылған',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Жасырын кітапханалар (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Бұл кітапхана бос',
@@ -7632,6 +7658,8 @@ extension on TranslationsKk {
 			'music.playingFrom' => ({required Object title}) => '${title} дереккөзінен',
 			'music.queue' => 'Кезек',
 			'music.clearQueue' => 'Кезекті тазалау',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'Ән мәтіні',
 			'music.visualizer' => 'Жүктесі',
 			'music.visualizerProfileLoading' => 'Тректі талдау деректері оқылуда…',
@@ -7640,8 +7668,6 @@ extension on TranslationsKk {
 			'music.visualizerLiveAudio' => 'Тікелей аудио талдауы',
 			'music.visualizerPreviousPreset' => 'Previous Жүктесің стиль',
 			'music.visualizerNextPreset' => 'Өзі сүйікті стиль',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Ауыз',
 			'music.visualizerPresetBloom' => 'Блум',
 			'music.visualizerPresetOrbitals' => 'орбиталы',
@@ -8146,6 +8172,8 @@ extension on TranslationsKk {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Бағдарламалық',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Аппараттық',
 			'performanceOverlay.tunnelingActive' => 'Белсенді',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} сәтсіз аяқталды)',
@@ -8154,8 +8182,6 @@ extension on TranslationsKk {
 			'externalPlayer.useExternalPlayer' => 'Сыртқы ойнатқышты пайдалану',
 			'externalPlayer.useExternalPlayerDescription' => 'Видеоларды басқа қолданбада ашу',
 			'externalPlayer.selectPlayer' => 'Ойнатқышты таңдау',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Арнайы ойнатқыштар',
 			'externalPlayer.systemDefault' => 'Жүйелік әдепкі',
 			'externalPlayer.addCustomPlayer' => 'Арнайы ойнатқыш қосу',
@@ -8660,6 +8686,8 @@ extension on TranslationsKk {
 			'homeLayout.recentlyReleased' => 'Олардың ең көне ұлы',
 			'homeLayout.movieCollections' => 'кино коллекциясы',
 			'homeLayout.showCollections' => 'Колекциясы',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Әуес қауымда',
 			'homeLayout.content' => 'Жүзілік',
 			'homeLayout.showThisRowIn' => 'Бұл қағидалардан қараңыз:',
@@ -8668,8 +8696,6 @@ extension on TranslationsKk {
 			'homeLayout.heroCardDescription' => 'Бұл үшін бір-бірімен бір-бірек картон, бір-бірін бір-білік картон, басқа бір-бітік картон.',
 			'homeLayout.heroUnavailableDescription' => 'Бұл жануарлардың бір-бірімен бір-бірін бір-бірин бір-біректің бір-біремен бір-биректің бір - бір-біреймен бір-бетімен бір-бақа бір-біреттің бір-биреттің бір - біремен бір -біректің де бір-бірестің бір-бетқа бір-бирімен бір -биректің де біремен де біремеді.',
 			'homeLayout.librariesSelection' => 'Бібліотекасы (вiнiңiңiнiкiнiнiзiнiмiнiлiңiкiңiмiзiмiңiзiзi)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Бұл үшін бір-бірімен бір-бірін бір-бірин бір-біректік бір-біретімен бір-биректік бір.',
 			'homeLayout.movieCollectionsSelection' => '«Аяқтық» киносы (аяқтық-аяққа қанақтық-бақыны)',
 			'homeLayout.showCollectionsSelection' => '«Аяқтық» (аяқтық) және «Аялық» (ааяққа) және «Карталық» (Аяққалы) және «Тұқсат» (Ааяқтың) және «Сұқсаттың» (ААяқтың).',
@@ -9174,6 +9200,8 @@ extension on TranslationsKk {
 			'sourceSetup.sshAuthentication' => 'Ашық кілтпен SSH аутентификациясы',
 			'sourceSetup.sshAuthenticationHelp' => 'Міндетті емес; құпиясөзбен аутентификация да қолданылады.',
 			'sourceSetup.privateKey' => 'Жеке кілт (PEM немесе OpenSSH пішімі)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Жеке кілттің құпиясөз тіркесі',
 			'sourceSetup.nfsMountPort' => 'NFS mount қызметінің TCP порты',
 			'sourceSetup.nfsMountPortHelp' => 'Әдепкі: 20048',
@@ -9182,8 +9210,6 @@ extension on TranslationsKk {
 			'sourceSetup.nfsGroupId' => 'NFS тобының ID мәні (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Әдепкі: 1000. NAS-тағы NFS ортақ ресурсы рұқсат ететін топ ID мәнін пайдаланыңыз.',
 			'sourceSetup.nfsEncryption' => 'Шифрланған NFS талап ету (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'NFS пен mount қызметі үшін TLS 1.3 талап етіледі. NAS мұны қолдамаса, қосылым қабылданбайды.',
 			'sourceSetup.nfsTrustCertificate' => 'Теңшелетін NFS CA немесе сервер сертификаты (PEM, міндетті емес)',
 			'sourceSetup.nfsTrustHelp' => 'Осы құрылғы сенетін сертификаттар үшін бос қалдырыңыз. Қажет болса, жеке CA сертификатын немесе өзі қол қойған сервер сертификатын қосыңыз; ондағы атаулар NFS URL мекенжайындағы хостқа сәйкес болуы керек.',
@@ -9688,6 +9714,8 @@ extension on TranslationsKk {
 			'musicTools.playlistSharing' => 'Ойнату тізіміне қатынау',
 			'musicTools.playlistRecipient' => 'Plex пайдаланушы аты немесе электрондық пошта',
 			'musicTools.playlistSharingHint' => 'Осы тізімге және оның тректеріне қатынау беріңіз. Алушы шақыруды қабылдауы қажет болуы мүмкін.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Тізімге қатынау сұрауын жіберу мүмкін болмады.',
 			'musicTools.playlistSharingAccepted' => 'Plex қатынау сұрауын қабылдады.',
 			'musicTools.playlistAccessList' => 'Ағымдағы қатынау',
@@ -9696,8 +9724,6 @@ extension on TranslationsKk {
 			'musicTools.peak' => 'Шың',
 			'musicTools.bass' => 'Бас',
 			'musicTools.treble' => 'Жоғары жиіліктер',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Ортақ ойнату тізімдері',
 			'musicTools.sharingInvitationsTitle' => 'Plex ортақ пайдалану шақырулары',
 			'musicTools.noSharingInvitations' => 'Күтілген шақырулар жоқ',

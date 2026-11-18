@@ -706,6 +706,7 @@ class PlexVideoControls extends StatefulWidget {
 
   /// Optional local MPV capture control for direct IPTV live streams.
   final bool isRecordingLiveStream;
+  final Widget Function(Widget?)? scheduledRecordingControl;
   final VoidCallback? onToggleLiveRecording;
   final VoidCallback? onOpenLiveChannelPicker;
 
@@ -811,6 +812,7 @@ class PlexVideoControls extends StatefulWidget {
     this.thumbnailDataBuilder,
     this.isLive = false,
     this.isRecordingLiveStream = false,
+    this.scheduledRecordingControl,
     this.onToggleLiveRecording,
     this.onOpenLiveChannelPicker,
     this.liveChannelName,
@@ -834,15 +836,17 @@ class _PlexVideoControlsState extends State<PlexVideoControls>
 
   Widget? get _liveRecordingControl {
     final onPressed = widget.onToggleLiveRecording;
-    if (!widget.isLive || onPressed == null) return null;
+    if (!widget.isLive) return null;
+    if (onPressed == null) return widget.scheduledRecordingControl?.call(null);
     final recording = widget.isRecordingLiveStream;
-    return IconButton(
+    final button = IconButton(
       tooltip: recording ? t.universalMedia.stopRecording : t.universalMedia.recordStream,
       onPressed: onPressed,
       visualDensity: VisualDensity.compact,
       color: recording ? Colors.red.shade300 : Colors.white,
       icon: AppIcon(recording ? Symbols.stop_circle_rounded : Symbols.radio_button_checked_rounded),
     );
+    return widget.scheduledRecordingControl?.call(button) ?? button;
   }
 
   Widget? get _liveChannelPickerControl {

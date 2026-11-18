@@ -40,6 +40,7 @@ class TranslationsUk extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsUk $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsUk(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$uk viewing = _Translations$viewing$uk._(_root);
 	@override late final _Translations$livingRoom$uk livingRoom = _Translations$livingRoom$uk._(_root);
 	@override late final _Translations$app$uk app = _Translations$app$uk._(_root);
 	@override late final _Translations$appIcon$uk appIcon = _Translations$appIcon$uk._(_root);
@@ -121,6 +122,23 @@ class TranslationsUk extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$uk musicExperience = _Translations$musicExperience$uk._(_root);
 	@override late final _Translations$musicTools$uk musicTools = _Translations$musicTools$uk._(_root);
 	@override late final _Translations$musicDevices$uk musicDevices = _Translations$musicDevices$uk._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$uk extends Translations$viewing$en {
+	_Translations$viewing$uk._(TranslationsUk root) : this._root = root, super.internal(root);
+
+	final TranslationsUk _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Записувати ще 30 хвилин';
+	@override String recordsUntil({required Object time}) => 'Запис до ${time}';
+	@override String get extendFailed => 'Не вдалося подовжити запис';
+	@override String get originalDialogue => 'Віддавати перевагу оригінальній озвучці';
+	@override String get soloPage => 'Показати цю сторінку окремо';
+	@override String get pairPage => 'Знову поєднати сторінку в розворот';
+	@override String get listenPhone => 'Слухати на цьому телефоні';
+	@override String get audioUnavailable => 'Файл або звукова доріжка недоступні на цьому телефоні.';
 }
 
 // Path: livingRoom
@@ -5630,6 +5648,14 @@ class _Translations$services$trackerDescriptions$uk extends Translations$service
 extension on TranslationsUk {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Записувати ще 30 хвилин',
+			'viewing.recordsUntil' => ({required Object time}) => 'Запис до ${time}',
+			'viewing.extendFailed' => 'Не вдалося подовжити запис',
+			'viewing.originalDialogue' => 'Віддавати перевагу оригінальній озвучці',
+			'viewing.soloPage' => 'Показати цю сторінку окремо',
+			'viewing.pairPage' => 'Знову поєднати сторінку в розворот',
+			'viewing.listenPhone' => 'Слухати на цьому телефоні',
+			'viewing.audioUnavailable' => 'Файл або звукова доріжка недоступні на цьому телефоні.',
 			'livingRoom.fitScreen' => 'Припасувати до мого екрана',
 			'livingRoom.fitHelp' => 'Виберіть край і пересувайте його стрілками, доки не побачите позначки. Повторіть для кожного краю.',
 			'livingRoom.left' => 'Ліворуч',
@@ -6134,6 +6160,8 @@ extension on TranslationsUk {
 			'settings.audioChannelLimitOriginal' => 'Оригінальна',
 			'settings.audioChannelLimitOriginalDescription' => 'Грати в кожен канал на трасі',
 			'settings.audioChannelLimitSurround51' => 'До 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Змішайте 7.1 до 5.1 для телевізорів і приймачів, які приймають тільки 5.1 ПКМ.',
 			'settings.audioChannelLimitStereo' => 'Стерео',
 			'settings.audioChannelLimitStereoDescription' => 'Змішайте до двох каналів для стерео-голосних пристроїв або наушників.',
@@ -6142,8 +6170,6 @@ extension on TranslationsUk {
 			'settings.downmixCenterBoostLabel' => 'Завантажити (dB)',
 			'settings.downmixCenterBoostShort' => 'ДБ',
 			'settings.audioDownmixNormalize' => 'Використання об\'єктів Downmix',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Знизити суміш, щоб уникнути схилу. вимкніть, щоб зберегти оригінальний обсяг (може порушити голосні сцени).',
 			'settings.dvConversionMode' => 'Dolby Vision Перетворення',
 			'settings.dvConversionModeDescription' => 'Виберіть, як обробляються файли Dolby Vision Профіль 7 .',
@@ -6648,6 +6674,8 @@ extension on TranslationsUk {
 			'videoControls.playNext' => 'Наступне',
 			'videoControls.playButton' => 'Грати',
 			'videoControls.pauseButton' => 'Пауза',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'Відпочинок',
 			'videoControls.playbackResumed' => 'Грати',
 			'videoControls.loadingVideo' => 'Завантажити відео',
@@ -6656,8 +6684,6 @@ extension on TranslationsUk {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Пошук назад ${seconds} секунд',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Пошук вперед ${seconds} секунд',
 			'videoControls.previousButton' => 'Попередній епізод',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Наступний епізод',
 			'videoControls.previousChapterButton' => 'Попередня сцена',
 			'videoControls.nextChapterButton' => 'Наступна сцена',
@@ -7162,6 +7188,8 @@ extension on TranslationsUk {
 			'libraries.analyze' => 'Аналіз',
 			'libraries.analyzeLibrary' => 'Аналіз бібліотеки',
 			'libraries.refreshMetadata' => 'Оновити метадані',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Порожній траш',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Попередня статтяКто чего не ест – ${title}...',
 			'libraries.trashEmptied' => ({required Object title}) => 'Попередня статтяКто чего не ест – ${title}',
@@ -7170,8 +7198,6 @@ extension on TranslationsUk {
 			'libraries.analysisStarted' => ({required Object title}) => 'Аналіз розпочався для «${title}»',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Не вдалося проаналізувати бібліотеку: ${error}',
 			'libraries.noLibrariesFound' => 'Бібліотеки не знайдено',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Всі бібліотеки приховані',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Схована бібліотека (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Ця бібліотека порожня',
@@ -7676,6 +7702,8 @@ extension on TranslationsUk {
 			'music.playingFrom' => ({required Object title}) => 'Ігри з ${title}',
 			'music.queue' => 'Квітень',
 			'music.clearQueue' => 'Очистити чергу',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'Текст пісні',
 			'music.visualizer' => 'Візуалізація',
 			'music.visualizerProfileLoading' => 'Читати далі про Аналіз трак...',
@@ -7684,8 +7712,6 @@ extension on TranslationsUk {
 			'music.visualizerLiveAudio' => 'Аналіз аудіо наживо',
 			'music.visualizerPreviousPreset' => 'Попередній візуальний стиль',
 			'music.visualizerNextPreset' => 'Наступний візуальний стиль',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Аврора',
 			'music.visualizerPresetBloom' => 'Блюм',
 			'music.visualizerPresetOrbitals' => 'орбітальні',
@@ -8190,6 +8216,8 @@ extension on TranslationsUk {
 			'performanceOverlay.decoderMediatekHw' => 'Створення MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Екзотичний HW',
 			'performanceOverlay.decoderSoftware' => 'Програмне забезпечення',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Хардкор',
 			'performanceOverlay.tunnelingActive' => 'Активний',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} не вдалося)',
@@ -8198,8 +8226,6 @@ extension on TranslationsUk {
 			'externalPlayer.useExternalPlayer' => 'Використовуйте зовнішній гравець',
 			'externalPlayer.useExternalPlayerDescription' => 'Відкрийте відео в іншому додатку',
 			'externalPlayer.selectPlayer' => 'Вибір гравця',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Custom гравці',
 			'externalPlayer.systemDefault' => 'Системний дефолт',
 			'externalPlayer.addCustomPlayer' => 'Додати Custom Player',
@@ -8704,6 +8730,8 @@ extension on TranslationsUk {
 			'homeLayout.recentlyReleased' => 'Нещодавно звільнений',
 			'homeLayout.movieCollections' => 'Колекції фільмів',
 			'homeLayout.showCollections' => 'Покажіть колекції',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Роу титул',
 			'homeLayout.content' => 'Контент',
 			'homeLayout.showThisRowIn' => 'Показати цю рядку в:',
@@ -8712,8 +8740,6 @@ extension on TranslationsUk {
 			'homeLayout.heroCardDescription' => 'Показано як одна повна широта ротаційна карта замість плакатної шафи.',
 			'homeLayout.heroUnavailableDescription' => 'Доступно тільки тоді, коли ця рядка розв\'язується до реальних заголовків однієї колекції — з більш ніж однією колекцією вибраних немає жодного заголовка, який би міг би перевернути.',
 			'homeLayout.librariesSelection' => 'Бібліотеки (відпустіть всі не перевірені для включення кожної бібліотеки)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Кожна бібліотека, що перевіряється тут, поєднується в цей один ряд.',
 			'homeLayout.movieCollectionsSelection' => 'Колекції фільмів (залишити всі не перевірені для кожної вибраної бібліотеки)',
 			'homeLayout.showCollectionsSelection' => 'Показати колекції (залишити всі непереглянуті для кожної вибраної бібліотеки)',
@@ -9218,6 +9244,8 @@ extension on TranslationsUk {
 			'sourceSetup.sshAuthentication' => 'Автентифікація SSH за відкритим ключем',
 			'sourceSetup.sshAuthenticationHelp' => 'Необов’язково; автентифікація за паролем також підтримується.',
 			'sourceSetup.privateKey' => 'Приватний ключ (формат PEM або OpenSSH)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Парольна фраза приватного ключа',
 			'sourceSetup.nfsMountPort' => 'TCP-порт служби монтування NFS',
 			'sourceSetup.nfsMountPortHelp' => 'Типово: 20048',
@@ -9226,8 +9254,6 @@ extension on TranslationsUk {
 			'sourceSetup.nfsGroupId' => 'ID групи NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Типово: 1000. Використайте ID групи, дозволений експортом NFS на NAS.',
 			'sourceSetup.nfsEncryption' => 'Вимагати шифрування NFS (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Вимагати TLS 1.3 для NFS і служби монтування. Якщо NAS цього не підтримує, з’єднання буде відхилено.',
 			'sourceSetup.nfsTrustCertificate' => 'Власний CA NFS або сертифікат сервера (PEM, необов’язково)',
 			'sourceSetup.nfsTrustHelp' => 'Залиште порожнім для сертифікатів, яким довіряє цей пристрій. За потреби додайте сертифікат приватного CA або самопідписаний сертифікат сервера; імена в ньому мають відповідати хосту в URL NFS.',
@@ -9732,6 +9758,8 @@ extension on TranslationsUk {
 			'musicTools.playlistSharing' => 'Доступ до списку відтворення',
 			'musicTools.playlistRecipient' => 'Ім’я користувача Plex або ел. пошта',
 			'musicTools.playlistSharingHint' => 'Надайте доступ до цього списку та його композицій. Одержувачу може знадобитися прийняти запрошення.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Не вдалося запросити доступ до списку.',
 			'musicTools.playlistSharingAccepted' => 'Plex прийняв запит на доступ.',
 			'musicTools.playlistAccessList' => 'Поточний доступ',
@@ -9740,8 +9768,6 @@ extension on TranslationsUk {
 			'musicTools.peak' => 'Пік',
 			'musicTools.bass' => 'Низькі частоти',
 			'musicTools.treble' => 'Високі частоти',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Спільні списки відтворення',
 			'musicTools.sharingInvitationsTitle' => 'Запрошення до спільних матеріалів Plex',
 			'musicTools.noSharingInvitations' => 'Немає запрошень, що очікують',

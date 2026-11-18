@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "Enregistrer 30 minutes de plus",
+    "recordsUntil": "Enregistrement jusqu’à ${time}",
+    "extendFailed": "Impossible de prolonger cet enregistrement",
+    "originalDialogue": "Préférer les dialogues originaux",
+    "soloPage": "Afficher cette page seule",
+    "pairPage": "Associer à nouveau cette page",
+    "listenPhone": "Écouter sur ce téléphone",
+    "audioUnavailable": "Le fichier ou la piste audio est indisponible sur ce téléphone."
+  },
   "livingRoom": {
     "fitScreen": "Ajuster à mon écran",
     "fitHelp": "Sélectionnez un bord, puis déplacez-le avec les flèches jusqu’à voir ses repères. Répétez pour chaque bord.",

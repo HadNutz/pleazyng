@@ -75,6 +75,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
   String _chapter = '';
   String? _selectedCFI, _selectedText, _overlayHref;
   int _pages = 0;
+  List<int> _spreadPages = const [];
   bool _fixed = false, _comic = false, _streamingComic = false;
   String get _readerTitle {
     final comicTitle = widget.file.kind == SourceItemKind.comic
@@ -574,6 +575,8 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
             'comicMode': t.comics.readingMode,
             'paged': t.comics.paged,
             'webtoon': t.comics.webtoon,
+            'soloPage': t.viewing.soloPage,
+            'pairPage': t.viewing.pairPage,
             'coverAlone': t.comics.coverAlone,
             'splitWide': t.comics.splitWide,
             'thumbnails': t.comics.thumbnails,
@@ -634,6 +637,9 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
         _markReaderReady();
       case 'location':
         if (_progress == null) return;
+        _spreadPages = sourceList(
+          message['spreadPages'],
+        ).whereType<int>().where((i) => i >= 0 && i < 100000).take(2).toList();
         final fraction = (message['fraction'] as num?)?.toDouble() ?? 0;
         _progress = _progress!.copyWith(
           locator: ReadingLocator(
@@ -1323,6 +1329,17 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
                 label: pdf || _fixed ? t.fileSources.goToPage : t.fileSources.goToSection,
                 icon: Symbols.numbers_rounded,
               ),
+              if (_comic &&
+                  _settings['comicMode'] != 'webtoon' &&
+                  _settings['splitWide'] != true &&
+                  _settings['spread'] != 'single')
+                for (final page in _spreadPages)
+                  AppMenuItem(
+                    value: 'solo:$page',
+                    label:
+                        '${(_settings['soloPages'] as List).contains(page) ? t.viewing.pairPage : t.viewing.soloPage} · ${page + 1}',
+                    icon: Symbols.menu_book_rounded,
+                  ),
               if (pdf || _fixed) ...[
                 AppMenuItem(value: 'fit-page', label: t.fileSources.fitPage, icon: Symbols.fit_screen_rounded),
                 AppMenuItem(value: 'fit-width', label: t.fileSources.fitWidth, icon: Symbols.width_rounded),
@@ -1347,6 +1364,15 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
                 AppMenuItem(value: 'finished', label: t.fileSources.markFinished, icon: Symbols.done_rounded),
             ],
             onSelected: (action) => sourceAction(context, () async {
+              if (action.startsWith('solo:')) {
+                final page = int.parse(action.substring(5));
+                final pages = (_settings['soloPages'] as List).whereType<int>().toSet();
+                if (!pages.remove(page)) pages.add(page);
+                _settings = normalizeReaderPreferences({..._settings, 'soloPages': pages.toList()});
+                if (!_previewOnly) await _sources!.repository.savePreference(_profile!, _preferenceKey, _settings);
+                await _js('settings', readerSettings());
+                return;
+              }
               switch (action) {
                 case 'jump':
                   await _jumpToPage();

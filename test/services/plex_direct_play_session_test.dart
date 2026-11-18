@@ -187,6 +187,19 @@ void main() {
     expect(target.playSessionId, isNotEmpty);
     expect(decision!.queryParameters['X-Plex-Session-Identifier'], target.playSessionId);
     expect(Uri.parse(target.url).queryParameters['X-Plex-Session-Identifier'], target.playSessionId);
+
+    decision = null;
+    final listener = await client.resolveExternalPlayback(
+      testMediaItem(id: '42'),
+      mediaSourceId: '20',
+      position: const Duration(seconds: 75),
+      registerPlayback: false,
+    );
+    expect(listener?.mediaInfo?.mediaSourceId, '20');
+    expect(listener?.mediaInfo?.partId, 201);
+    expect(listener?.playSessionId, isNull);
+    expect(Uri.parse(listener!.url).queryParameters, isNot(contains('X-Plex-Session-Identifier')));
+    expect(decision, isNull);
   });
 
   test('music does not register a video decision', () async {

@@ -589,6 +589,7 @@ class _ExternalUrlClient implements MediaServerClient {
     int mediaIndex = 0,
     String? mediaSourceId,
     Duration? position,
+    bool registerPlayback = true,
   }) async {
     resolvedMediaIndexes.add(mediaIndex);
     return ExternalPlaybackTarget(url: 'https://server/stream/$mediaIndex');

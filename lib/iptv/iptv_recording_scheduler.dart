@@ -29,6 +29,38 @@ class IptvRecordingScheduler with WidgetsBindingObserver {
 
   final IptvSourceRepository _repository;
   final Map<String, IptvScheduledStreamRecorder> _active = {};
+  final _activeSchedules = <String, IptvLocalRecordingSchedule>{};
+  final _extending = <String>{};
+  final changes = ValueNotifier<int>(0);
+  Iterable<IptvLocalRecordingSchedule> activeFor(String? profile, String? source, String? channel) =>
+      _activeSchedules.values.where((s) => s.profileId == profile && s.sourceId == source && s.channelId == channel);
+
+  Future<DateTime?> extend(IptvLocalRecordingSchedule schedule) async {
+    final capture = _active[schedule.id];
+    if (capture == null ||
+        !capture.canExtend ||
+        _activeSchedules[schedule.id]?.profileId != schedule.profileId ||
+        !_extending.add(schedule.id)) {
+      return null;
+    }
+    final previous = capture.endsAt;
+    final next = previous.add(const Duration(minutes: 30));
+    capture.setDeadline(next);
+    try {
+      if (!await _repository.saveActiveRecordingDeadline(schedule, previous, next)) {
+        capture.setDeadline(previous);
+        return null;
+      }
+      return next;
+    } catch (_) {
+      capture.setDeadline(previous);
+      rethrow;
+    } finally {
+      _extending.remove(schedule.id);
+      if (!_disposed) changes.value++;
+    }
+  }
+
   final Set<String> _starting = {};
   final _uuid = const Uuid();
   Timer? _timer;
@@ -156,6 +188,7 @@ class IptvRecordingScheduler with WidgetsBindingObserver {
         ),
       );
       await _repository.updateLocalRecordingSchedule(schedule.id, state: 'recording', recordingId: id);
+      if (_disposed) throw const IptvImportException('recording_interrupted');
       final capture = IptvScheduledStreamRecorder(
         uri: uri,
         allowHttp: config.allowHttp,
@@ -166,6 +199,8 @@ class IptvRecordingScheduler with WidgetsBindingObserver {
       );
       recorder = capture;
       _active[schedule.id] = capture;
+      _activeSchedules[schedule.id] = schedule;
+      if (!_disposed) changes.value++;
       final extension = await capture.record();
       if (_disposed) {
         throw const IptvImportException('recording_interrupted');
@@ -254,6 +289,8 @@ class IptvRecordingScheduler with WidgetsBindingObserver {
       }
     } finally {
       _active.remove(schedule.id);
+      _activeSchedules.remove(schedule.id);
+      if (!_disposed) changes.value++;
       _starting.remove(schedule.id);
       if (recorder != null && !_disposed) {
         await recorder.stop();
@@ -293,5 +330,6 @@ class IptvRecordingScheduler with WidgetsBindingObserver {
       await recorder.stop();
     }
     _active.clear();
+    changes.dispose();
   }
 }

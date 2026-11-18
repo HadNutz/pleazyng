@@ -41,6 +41,7 @@ class TranslationsZhHant extends TranslationsZh with BaseTranslations<AppLocale,
 	TranslationsZhHant $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsZhHant(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$zh_Hant viewing = _Translations$viewing$zh_Hant._(_root);
 	@override late final _Translations$livingRoom$zh_Hant livingRoom = _Translations$livingRoom$zh_Hant._(_root);
 	@override late final _Translations$app$zh_Hant app = _Translations$app$zh_Hant._(_root);
 	@override late final _Translations$appIcon$zh_Hant appIcon = _Translations$appIcon$zh_Hant._(_root);
@@ -122,6 +123,23 @@ class TranslationsZhHant extends TranslationsZh with BaseTranslations<AppLocale,
 	@override late final _Translations$musicExperience$zh_Hant musicExperience = _Translations$musicExperience$zh_Hant._(_root);
 	@override late final _Translations$musicTools$zh_Hant musicTools = _Translations$musicTools$zh_Hant._(_root);
 	@override late final _Translations$musicDevices$zh_Hant musicDevices = _Translations$musicDevices$zh_Hant._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$zh_Hant extends Translations$viewing$zh {
+	_Translations$viewing$zh_Hant._(TranslationsZhHant root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHant _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => '再錄製 30 分鐘';
+	@override String recordsUntil({required Object time}) => '錄製至 ${time}';
+	@override String get extendFailed => '無法延長錄製時間';
+	@override String get originalDialogue => '優先播放原聲對白';
+	@override String get soloPage => '單獨顯示此頁';
+	@override String get pairPage => '重新配對此頁';
+	@override String get listenPhone => '在這支手機上收聽';
+	@override String get audioUnavailable => '這支手機無法播放目前的檔案或音軌。';
 }
 
 // Path: livingRoom
@@ -5582,6 +5600,14 @@ class _Translations$services$trackerDescriptions$zh_Hant extends Translations$se
 extension on TranslationsZhHant {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => '再錄製 30 分鐘',
+			'viewing.recordsUntil' => ({required Object time}) => '錄製至 ${time}',
+			'viewing.extendFailed' => '無法延長錄製時間',
+			'viewing.originalDialogue' => '優先播放原聲對白',
+			'viewing.soloPage' => '單獨顯示此頁',
+			'viewing.pairPage' => '重新配對此頁',
+			'viewing.listenPhone' => '在這支手機上收聽',
+			'viewing.audioUnavailable' => '這支手機無法播放目前的檔案或音軌。',
 			'livingRoom.fitScreen' => '配合我的螢幕大小',
 			'livingRoom.fitHelp' => '選擇一條邊，用方向鍵移動，直到看見該邊的標記。逐一調整每條邊。',
 			'livingRoom.left' => '左',
@@ -6086,6 +6112,8 @@ extension on TranslationsZhHant {
 			'settings.audioChannelLimitOriginal' => '原始',
 			'settings.audioChannelLimitOriginalDescription' => '播放音軌中的所有聲道',
 			'settings.audioChannelLimitSurround51' => '最多 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => '將 7.1 下混為 5.1，適用於僅支援 5.1 PCM 的電視與擴大機。不影響直通。',
 			'settings.audioChannelLimitStereo' => '立體聲',
 			'settings.audioChannelLimitStereoDescription' => '下混為雙聲道，適用於立體聲喇叭或耳機。會關閉直通。',
@@ -6094,8 +6122,6 @@ extension on TranslationsZhHant {
 			'settings.downmixCenterBoostLabel' => '增強（dB）',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => '下混時音量標準化',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => '降低混音電平以防止破音。關閉以保持原始音量（大音量場景可能會失真）。',
 			'settings.dvConversionMode' => 'Dolby Vision 轉換模式',
 			'settings.dvConversionModeDescription' => '選擇如何處理 Dolby Vision Profile 7 檔案。',
@@ -6600,6 +6626,8 @@ extension on TranslationsZhHant {
 			'videoControls.playNext' => '播放下一集',
 			'videoControls.playButton' => '播放',
 			'videoControls.pauseButton' => '暫停',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => '已暫停',
 			'videoControls.playbackResumed' => '播放中',
 			'videoControls.loadingVideo' => '正在載入影片',
@@ -6608,8 +6636,6 @@ extension on TranslationsZhHant {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => '後退 ${seconds} 秒',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => '前進 ${seconds} 秒',
 			'videoControls.previousButton' => '上一集',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => '下一集',
 			'videoControls.previousChapterButton' => '上一個章節',
 			'videoControls.nextChapterButton' => '下一個章節',
@@ -7114,6 +7140,8 @@ extension on TranslationsZhHant {
 			'libraries.analyze' => '分析',
 			'libraries.analyzeLibrary' => '分析媒體庫',
 			'libraries.refreshMetadata' => '重新整理中繼資料',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => '清空垃圾桶',
 			'libraries.emptyingTrash' => ({required Object title}) => '正在清空「${title}」的垃圾桶…',
 			'libraries.trashEmptied' => ({required Object title}) => '已清空「${title}」的垃圾桶',
@@ -7122,8 +7150,6 @@ extension on TranslationsZhHant {
 			'libraries.analysisStarted' => ({required Object title}) => '已開始分析「${title}」',
 			'libraries.failedToAnalyze' => ({required Object error}) => '無法分析媒體庫：${error}',
 			'libraries.noLibrariesFound' => '找不到媒體庫',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => '所有媒體庫都已隱藏',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => '已隱藏的媒體庫（${count}）',
 			'libraries.thisLibraryIsEmpty' => '此媒體庫為空',
@@ -7628,6 +7654,8 @@ extension on TranslationsZhHant {
 			'music.playingFrom' => ({required Object title}) => '來自 ${title}',
 			'music.queue' => '播放佇列',
 			'music.clearQueue' => '清空佇列',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => '歌詞',
 			'music.visualizer' => '視覺化',
 			'music.visualizerProfileLoading' => '閱讀路徑分析',
@@ -7636,8 +7664,6 @@ extension on TranslationsZhHant {
 			'music.visualizerLiveAudio' => '即時音訊分析',
 			'music.visualizerPreviousPreset' => '以前的視覺風格',
 			'music.visualizerNextPreset' => '下一篇 視覺風格',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => '奧拉',
 			'music.visualizerPresetBloom' => '藍色',
 			'music.visualizerPresetOrbitals' => '軌道',
@@ -8142,6 +8168,8 @@ extension on TranslationsZhHant {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek 硬體',
 			'performanceOverlay.decoderExynosHw' => 'Exynos 硬體',
 			'performanceOverlay.decoderSoftware' => '軟體',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => '硬體',
 			'performanceOverlay.tunnelingActive' => '已啟用',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted}（${failures} 個失敗）',
@@ -8150,8 +8178,6 @@ extension on TranslationsZhHant {
 			'externalPlayer.useExternalPlayer' => '使用外部播放器',
 			'externalPlayer.useExternalPlayerDescription' => '在其他應用程式中開啟影片',
 			'externalPlayer.selectPlayer' => '選擇播放器',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => '自訂播放器',
 			'externalPlayer.systemDefault' => '系統預設',
 			'externalPlayer.addCustomPlayer' => '新增自訂播放器',
@@ -8656,6 +8682,8 @@ extension on TranslationsZhHant {
 			'homeLayout.recentlyReleased' => '最近釋出',
 			'homeLayout.movieCollections' => '電影收藏',
 			'homeLayout.showCollections' => '展示集合',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => '路 標題',
 			'homeLayout.content' => '內容',
 			'homeLayout.showThisRowIn' => '顯示此行在:',
@@ -8664,8 +8692,6 @@ extension on TranslationsZhHant {
 			'homeLayout.heroCardDescription' => '顯示為一個全寬旋轉卡,而不是海報架。',
 			'homeLayout.heroUnavailableDescription' => '僅當此內容列顯示單一合輯中的實際媒體項目時才可用；選取多個合輯時，沒有可供輪播的單一媒體項目。',
 			'homeLayout.librariesSelection' => '圖書館(所有未經檢查的圖書館都包含)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => '這裡檢視的每一個圖書館都合併到這個單一的行列。',
 			'homeLayout.movieCollectionsSelection' => '電影收藏(每個選擇的圖書館都沒有檢視)',
 			'homeLayout.showCollectionsSelection' => '顯示收藏品(每個選擇的圖書館都沒有檢視)',
@@ -9170,6 +9196,8 @@ extension on TranslationsZhHant {
 			'sourceSetup.sshAuthentication' => 'SSH 公開金鑰驗證',
 			'sourceSetup.sshAuthenticationHelp' => '選填；也支援密碼驗證。',
 			'sourceSetup.privateKey' => '私密金鑰（PEM 或 OpenSSH 格式）',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => '私密金鑰密碼',
 			'sourceSetup.nfsMountPort' => 'NFS 掛載服務 TCP 連接埠',
 			'sourceSetup.nfsMountPortHelp' => '預設值：20048',
@@ -9178,8 +9206,6 @@ extension on TranslationsZhHant {
 			'sourceSetup.nfsGroupId' => 'NFS 群組 ID（AUTH_SYS）',
 			'sourceSetup.nfsGroupIdHelp' => '預設值：1000。請使用 NAS 匯出設定允許的群組 ID。',
 			'sourceSetup.nfsEncryption' => '要求加密 NFS 連線（RPC-with-TLS）',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => '要求 NFS 和掛載服務使用 TLS 1.3。若 NAS 不支援，將拒絕連線。',
 			'sourceSetup.nfsTrustCertificate' => '自訂 NFS CA 或伺服器憑證（PEM，選填）',
 			'sourceSetup.nfsTrustHelp' => '使用此裝置信任的憑證時請留空。需要時可新增私人 CA 或自我簽署的伺服器憑證；憑證中的名稱必須與 NFS 網址的主機名稱相符。',
@@ -9684,6 +9710,8 @@ extension on TranslationsZhHant {
 			'musicTools.playlistSharing' => '播放清單存取權',
 			'musicTools.playlistRecipient' => 'Plex 使用者名稱或電子郵件',
 			'musicTools.playlistSharingHint' => '授予此播放清單及其曲目的存取權。收件者可能需要接受邀請。',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => '無法請求播放清單存取權。',
 			'musicTools.playlistSharingAccepted' => 'Plex 已接受存取請求。',
 			'musicTools.playlistAccessList' => '目前的存取權',
@@ -9692,8 +9720,6 @@ extension on TranslationsZhHant {
 			'musicTools.peak' => '峰值',
 			'musicTools.bass' => '低音',
 			'musicTools.treble' => '高音',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => '共享播放清單',
 			'musicTools.sharingInvitationsTitle' => 'Plex 共享邀請',
 			'musicTools.noSharingInvitations' => '沒有待處理的邀請',

@@ -40,6 +40,7 @@ class TranslationsMs extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsMs $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsMs(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$ms viewing = _Translations$viewing$ms._(_root);
 	@override late final _Translations$livingRoom$ms livingRoom = _Translations$livingRoom$ms._(_root);
 	@override late final _Translations$app$ms app = _Translations$app$ms._(_root);
 	@override late final _Translations$appIcon$ms appIcon = _Translations$appIcon$ms._(_root);
@@ -121,6 +122,23 @@ class TranslationsMs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ms musicExperience = _Translations$musicExperience$ms._(_root);
 	@override late final _Translations$musicTools$ms musicTools = _Translations$musicTools$ms._(_root);
 	@override late final _Translations$musicDevices$ms musicDevices = _Translations$musicDevices$ms._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$ms extends Translations$viewing$en {
+	_Translations$viewing$ms._(TranslationsMs root) : this._root = root, super.internal(root);
+
+	final TranslationsMs _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Rakam 30 minit lagi';
+	@override String recordsUntil({required Object time}) => 'Merakam sehingga ${time}';
+	@override String get extendFailed => 'Rakaman tidak dapat dilanjutkan';
+	@override String get originalDialogue => 'Utamakan dialog asal';
+	@override String get soloPage => 'Paparkan halaman ini secara berasingan';
+	@override String get pairPage => 'Pasangkan semula halaman ini';
+	@override String get listenPhone => 'Dengar pada telefon ini';
+	@override String get audioUnavailable => 'Fail atau trek audio tidak tersedia pada telefon ini.';
 }
 
 // Path: livingRoom
@@ -5561,6 +5579,14 @@ class _Translations$services$trackerDescriptions$ms extends Translations$service
 extension on TranslationsMs {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Rakam 30 minit lagi',
+			'viewing.recordsUntil' => ({required Object time}) => 'Merakam sehingga ${time}',
+			'viewing.extendFailed' => 'Rakaman tidak dapat dilanjutkan',
+			'viewing.originalDialogue' => 'Utamakan dialog asal',
+			'viewing.soloPage' => 'Paparkan halaman ini secara berasingan',
+			'viewing.pairPage' => 'Pasangkan semula halaman ini',
+			'viewing.listenPhone' => 'Dengar pada telefon ini',
+			'viewing.audioUnavailable' => 'Fail atau trek audio tidak tersedia pada telefon ini.',
 			'livingRoom.fitScreen' => 'Padankan dengan skrin saya',
 			'livingRoom.fitHelp' => 'Pilih tepi dan gerakkannya dengan kekunci anak panah sehingga penandanya kelihatan. Ulang untuk setiap tepi.',
 			'livingRoom.left' => 'Kiri',
@@ -6065,6 +6091,8 @@ extension on TranslationsMs {
 			'settings.audioChannelLimitOriginal' => 'asal',
 			'settings.audioChannelLimitOriginalDescription' => 'Mainkan setiap saluran dalam trek',
 			'settings.audioChannelLimitSurround51' => 'sehingga 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Campurkan 7.1 ke bawah kepada 5.1 untuk TV dan penerima yang hanya mengambil 5.1 PCM.',
 			'settings.audioChannelLimitStereo' => 'Stereo',
 			'settings.audioChannelLimitStereoDescription' => 'Campurkan ke dua saluran untuk speaker stereo atau headphone.',
@@ -6073,8 +6101,6 @@ extension on TranslationsMs {
 			'settings.downmixCenterBoostLabel' => 'Pengukuran (db)',
 			'settings.downmixCenterBoostShort' => 'DB',
 			'settings.audioDownmixNormalize' => 'Meningkatkan jumlah pada Downmix',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Mengurangkan campuran untuk mengelakkan penipisan. beralih untuk mengekalkan volum asal (mungkin mengganggu adegan yang keras).',
 			'settings.dvConversionMode' => 'Dolby Vision Pengubahsuaian',
 			'settings.dvConversionModeDescription' => 'Pilih bagaimana fail Dolby Vision Profil 7 diuruskan.',
@@ -6579,6 +6605,8 @@ extension on TranslationsMs {
 			'videoControls.playNext' => 'Bermain seterusnya',
 			'videoControls.playButton' => 'Bermain',
 			'videoControls.pauseButton' => 'Henti Sejenak',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'beristirahat',
 			'videoControls.playbackResumed' => 'Bermain',
 			'videoControls.loadingVideo' => 'Penghantaran Video',
@@ -6587,8 +6615,6 @@ extension on TranslationsMs {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Mencari ke belakang ${seconds} saat',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Mencari ke hadapan ${seconds} saat',
 			'videoControls.previousButton' => 'episod terdahulu',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Episod seterusnya',
 			'videoControls.previousChapterButton' => 'Bab sebelumnya',
 			'videoControls.nextChapterButton' => 'Bab seterusnya',
@@ -7093,6 +7119,8 @@ extension on TranslationsMs {
 			'libraries.analyze' => 'Analisis',
 			'libraries.analyzeLibrary' => 'Analisis Perpustakaan',
 			'libraries.refreshMetadata' => 'Meningkatkan Metadata',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Kerosakan kosong',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Pembersihan sampah untuk "${title}"',
 			'libraries.trashEmptied' => ({required Object title}) => 'Perbincangan:Penggambaran untuk "${title}"',
@@ -7101,8 +7129,6 @@ extension on TranslationsMs {
 			'libraries.analysisStarted' => ({required Object title}) => 'Analisis bermula untuk "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Kegagalan untuk menganalisis perpustakaan: ${error}',
 			'libraries.noLibrariesFound' => 'Tiada perpustakaan yang ditemui',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Semua perpustakaan tersembunyi',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Perpustakaan yang tersembunyi (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Perpustakaan ini kosong',
@@ -7607,6 +7633,8 @@ extension on TranslationsMs {
 			'music.playingFrom' => ({required Object title}) => 'Bermain daripada ${title}',
 			'music.queue' => 'Perbincangan',
 			'music.clearQueue' => 'Kosongkan barisan',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'Lirik',
 			'music.visualizer' => 'Visualisasi',
 			'music.visualizerProfileLoading' => 'Membaca Analisis Track ...',
@@ -7615,8 +7643,6 @@ extension on TranslationsMs {
 			'music.visualizerLiveAudio' => 'Analisis audio langsung',
 			'music.visualizerPreviousPreset' => 'Gaya visual yang terdahulu',
 			'music.visualizerNextPreset' => 'Seterusnya Visual Style',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora yang',
 			'music.visualizerPresetBloom' => 'Bloom daripada',
 			'music.visualizerPresetOrbitals' => 'Orbit yang',
@@ -8121,6 +8147,8 @@ extension on TranslationsMs {
 			'performanceOverlay.decoderMediatekHw' => 'Perbincangan HW',
 			'performanceOverlay.decoderExynosHw' => 'Perbezaan HW',
 			'performanceOverlay.decoderSoftware' => 'Perisian',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Perkakasan',
 			'performanceOverlay.tunnelingActive' => 'Aktiviti',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} gagal)',
@@ -8129,8 +8157,6 @@ extension on TranslationsMs {
 			'externalPlayer.useExternalPlayer' => 'Penggunaan Pemain Luar',
 			'externalPlayer.useExternalPlayerDescription' => 'Membuka video dalam aplikasi lain',
 			'externalPlayer.selectPlayer' => 'Pilih Pemain',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Pemain Custom',
 			'externalPlayer.systemDefault' => 'Sistem yang lalai',
 			'externalPlayer.addCustomPlayer' => 'Menambah Custom Player',
@@ -8635,6 +8661,8 @@ extension on TranslationsMs {
 			'homeLayout.recentlyReleased' => 'baru-baru ini dikeluarkan',
 			'homeLayout.movieCollections' => 'Koleksi filem',
 			'homeLayout.showCollections' => 'Tunjukkan koleksi',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Tajuk Row',
 			'homeLayout.content' => 'Kesan',
 			'homeLayout.showThisRowIn' => 'Tunjukkan baris ini dalam:',
@@ -8643,8 +8671,6 @@ extension on TranslationsMs {
 			'homeLayout.heroCardDescription' => 'Menunjukkan sebagai satu kad berputar lebar penuh bukannya poster shelf.',
 			'homeLayout.heroUnavailableDescription' => 'Hanya boleh didapati apabila baris ini diselesaikan kepada tajuk sebenar satu koleksi - dengan lebih daripada satu koleksi dipilih tidak ada satu tajuk untuk berputar melalui.',
 			'homeLayout.librariesSelection' => 'Perpustakaan (meninggalkan semua tidak disemak untuk termasuk setiap perpustakaan)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Setiap perpustakaan yang disemak di sini digabungkan ke dalam satu baris ini.',
 			'homeLayout.movieCollectionsSelection' => 'Koleksi filem (meninggalkan semua tidak disemak untuk setiap perpustakaan yang dipilih)',
 			'homeLayout.showCollectionsSelection' => 'Tunjukkan koleksi (meninggalkan semua tidak disemak untuk setiap perpustakaan yang dipilih)',
@@ -9149,6 +9175,8 @@ extension on TranslationsMs {
 			'sourceSetup.sshAuthentication' => 'Pengesahan SSH dengan kunci awam',
 			'sourceSetup.sshAuthenticationHelp' => 'Pilihan; pengesahan dengan kata laluan juga disokong.',
 			'sourceSetup.privateKey' => 'Kunci peribadi (format PEM atau OpenSSH)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Frasa laluan kunci peribadi',
 			'sourceSetup.nfsMountPort' => 'Port TCP perkhidmatan lekap NFS',
 			'sourceSetup.nfsMountPortHelp' => 'Lalai: 20048',
@@ -9157,8 +9185,6 @@ extension on TranslationsMs {
 			'sourceSetup.nfsGroupId' => 'ID kumpulan NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Lalai: 1000. Gunakan ID kumpulan yang dibenarkan oleh perkongsian NFS pada NAS.',
 			'sourceSetup.nfsEncryption' => 'Wajibkan NFS disulitkan (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Wajibkan TLS 1.3 untuk NFS dan perkhidmatan lekap. Jika NAS tidak menyokongnya, sambungan ditolak.',
 			'sourceSetup.nfsTrustCertificate' => 'CA NFS tersuai atau sijil pelayan (PEM, pilihan)',
 			'sourceSetup.nfsTrustHelp' => 'Biarkan kosong untuk sijil yang dipercayai oleh peranti ini. Jika perlu, tambah sijil CA persendirian atau sijil pelayan yang ditandatangani sendiri; namanya mesti sepadan dengan hos dalam URL NFS.',
@@ -9663,6 +9689,8 @@ extension on TranslationsMs {
 			'musicTools.playlistSharing' => 'Akses senarai main',
 			'musicTools.playlistRecipient' => 'Nama pengguna Plex atau e-mel',
 			'musicTools.playlistSharingHint' => 'Berikan akses kepada senarai main ini dan lagunya. Penerima mungkin perlu menerima jemputan.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Tidak dapat meminta akses senarai main.',
 			'musicTools.playlistSharingAccepted' => 'Plex menerima permintaan akses.',
 			'musicTools.playlistAccessList' => 'Akses semasa',
@@ -9671,8 +9699,6 @@ extension on TranslationsMs {
 			'musicTools.peak' => 'Puncak',
 			'musicTools.bass' => 'Bes',
 			'musicTools.treble' => 'Trebel',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Senarai main dikongsi',
 			'musicTools.sharingInvitationsTitle' => 'Jemputan perkongsian Plex',
 			'musicTools.noSharingInvitations' => 'Tiada jemputan tertunda',

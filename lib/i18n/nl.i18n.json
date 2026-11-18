@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "30 minuten langer opnemen",
+    "recordsUntil": "Opname tot ${time}",
+    "extendFailed": "Verlengen van de opname is mislukt",
+    "originalDialogue": "Voorkeur voor originele dialogen",
+    "soloPage": "Deze pagina apart tonen",
+    "pairPage": "Deze pagina weer koppelen",
+    "listenPhone": "Op deze telefoon luisteren",
+    "audioUnavailable": "Het bestand of het geluidsspoor is niet beschikbaar op deze telefoon."
+  },
   "livingRoom": {
     "fitScreen": "Aanpassen aan mijn scherm",
     "fitHelp": "Kies een rand en verplaats die met de pijltjes tot de markeringen zichtbaar zijn. Herhaal dit voor elke rand.",

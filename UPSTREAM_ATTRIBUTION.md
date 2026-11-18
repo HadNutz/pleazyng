@@ -16,6 +16,11 @@ These authors proposed the linked behaviors to their respective projects. Pleazy
 - The local guest music queue draws on Room Mode in [MusicLounge Jukebox](https://forums.plex.tv/t/new-app-musiclounge-jukebox/942146) by [Earthmonkey](https://forums.plex.tv/u/Earthmonkey).
 - Projector calibration draws on the upstream constant-image-height request [Plezy #863](https://github.com/edde746/plezy/issues/863) by [@thehomerepot](https://github.com/thehomerepot).
 
+- Extending an active sports recording draws on [gingie’s Channels DVR request](https://community.getchannels.com/t/extend-live-recordings/1789).
+- Original dialogue selection draws on [@Altarentys’s Plezy request #3019](https://github.com/edde746/plezy/issues/3019).
+- Per-issue comic spread correction draws on the pairing problem reported by [@fatherpanda in Kavita #4903](https://github.com/Kareadita/Kavita/issues/4903).
+- Synchronized personal audio description takes inspiration from [GRETA by Greta & Starks Apps GmbH](https://apps.apple.com/ca/app/greta/id793892423). Pleazyng uses the listener’s own server file and embedded tracks.
+
 ## Credited Moonlight Android source
 
 - [Moonlight Android commit `b48494cb`](https://github.com/moonlight-stream/moonlight-android/commit/b48494cb96bff23d8886c4775cc4f39a1075495d) — pinned receiver revision (v12.2), authored upstream by [@cgutman](https://github.com/cgutman). The author contributed this receiver implementation to the upstream Moonlight project. Pleazyng independently adapted its connection, decoder, audio-renderer, input lifecycle, and retained-surface recovery for a workspace surface; this record does not claim that the author contributed to, endorsed, or participated in Pleazyng.

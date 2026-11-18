@@ -40,6 +40,7 @@ class TranslationsNl extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsNl $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsNl(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$nl viewing = _Translations$viewing$nl._(_root);
 	@override late final _Translations$livingRoom$nl livingRoom = _Translations$livingRoom$nl._(_root);
 	@override late final _Translations$app$nl app = _Translations$app$nl._(_root);
 	@override late final _Translations$appIcon$nl appIcon = _Translations$appIcon$nl._(_root);
@@ -121,6 +122,23 @@ class TranslationsNl extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$nl musicExperience = _Translations$musicExperience$nl._(_root);
 	@override late final _Translations$musicTools$nl musicTools = _Translations$musicTools$nl._(_root);
 	@override late final _Translations$musicDevices$nl musicDevices = _Translations$musicDevices$nl._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$nl extends Translations$viewing$en {
+	_Translations$viewing$nl._(TranslationsNl root) : this._root = root, super.internal(root);
+
+	final TranslationsNl _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => '30 minuten langer opnemen';
+	@override String recordsUntil({required Object time}) => 'Opname tot ${time}';
+	@override String get extendFailed => 'Verlengen van de opname is mislukt';
+	@override String get originalDialogue => 'Voorkeur voor originele dialogen';
+	@override String get soloPage => 'Deze pagina apart tonen';
+	@override String get pairPage => 'Deze pagina weer koppelen';
+	@override String get listenPhone => 'Op deze telefoon luisteren';
+	@override String get audioUnavailable => 'Het bestand of het geluidsspoor is niet beschikbaar op deze telefoon.';
 }
 
 // Path: livingRoom
@@ -5586,6 +5604,14 @@ class _Translations$services$trackerDescriptions$nl extends Translations$service
 extension on TranslationsNl {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => '30 minuten langer opnemen',
+			'viewing.recordsUntil' => ({required Object time}) => 'Opname tot ${time}',
+			'viewing.extendFailed' => 'Verlengen van de opname is mislukt',
+			'viewing.originalDialogue' => 'Voorkeur voor originele dialogen',
+			'viewing.soloPage' => 'Deze pagina apart tonen',
+			'viewing.pairPage' => 'Deze pagina weer koppelen',
+			'viewing.listenPhone' => 'Op deze telefoon luisteren',
+			'viewing.audioUnavailable' => 'Het bestand of het geluidsspoor is niet beschikbaar op deze telefoon.',
 			'livingRoom.fitScreen' => 'Aanpassen aan mijn scherm',
 			'livingRoom.fitHelp' => 'Kies een rand en verplaats die met de pijltjes tot de markeringen zichtbaar zijn. Herhaal dit voor elke rand.',
 			'livingRoom.left' => 'Links',
@@ -6090,6 +6116,8 @@ extension on TranslationsNl {
 			'settings.audioChannelLimitOriginal' => 'Origineel',
 			'settings.audioChannelLimitOriginalDescription' => 'Speel elk kanaal van het spoor af',
 			'settings.audioChannelLimitSurround51' => 'Tot 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Downmix 7.1 naar 5.1 voor tv\'s en receivers die alleen 5.1-PCM accepteren. Doorvoer wordt niet beïnvloed.',
 			'settings.audioChannelLimitStereo' => 'Stereo',
 			'settings.audioChannelLimitStereoDescription' => 'Downmix naar twee kanalen voor stereoluidsprekers of koptelefoons. Schakelt doorvoer uit.',
@@ -6098,8 +6126,6 @@ extension on TranslationsNl {
 			'settings.downmixCenterBoostLabel' => 'Versterking (dB)',
 			'settings.downmixCenterBoostShort' => 'dB',
 			'settings.audioDownmixNormalize' => 'Volume normaliseren bij downmix',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Verlaagt de mix om clipping te voorkomen. Zet uit om het originele volume te behouden (kan vervormen bij luide scènes).',
 			'settings.dvConversionMode' => 'Dolby Vision-conversie',
 			'settings.dvConversionModeDescription' => 'Kies hoe Dolby Vision Profile 7-bestanden worden verwerkt.',
@@ -6604,6 +6630,8 @@ extension on TranslationsNl {
 			'videoControls.playNext' => 'Volgende afspelen',
 			'videoControls.playButton' => 'Afspelen',
 			'videoControls.pauseButton' => 'Pauzeren',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'Gepauzeerd',
 			'videoControls.playbackResumed' => 'Afspelen',
 			'videoControls.loadingVideo' => 'Video laden',
@@ -6612,8 +6640,6 @@ extension on TranslationsNl {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => '${seconds} seconden terugspoelen',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => '${seconds} seconden vooruitspoelen',
 			'videoControls.previousButton' => 'Vorige aflevering',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Volgende aflevering',
 			'videoControls.previousChapterButton' => 'Vorig hoofdstuk',
 			'videoControls.nextChapterButton' => 'Volgend hoofdstuk',
@@ -7118,6 +7144,8 @@ extension on TranslationsNl {
 			'libraries.analyze' => 'Analyseren',
 			'libraries.analyzeLibrary' => 'Bibliotheek analyseren',
 			'libraries.refreshMetadata' => 'Metadata vernieuwen',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Prullenbak legen',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Prullenbak legen voor "${title}"...',
 			'libraries.trashEmptied' => ({required Object title}) => 'Prullenbak geleegd voor "${title}"',
@@ -7126,8 +7154,6 @@ extension on TranslationsNl {
 			'libraries.analysisStarted' => ({required Object title}) => 'Analyse gestart voor "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Kon bibliotheek niet analyseren: ${error}',
 			'libraries.noLibrariesFound' => 'Geen bibliotheken gevonden',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Alle bibliotheken zijn verborgen',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Verborgen bibliotheken (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Deze bibliotheek is leeg',
@@ -7632,6 +7658,8 @@ extension on TranslationsNl {
 			'music.playingFrom' => ({required Object title}) => 'Afspelen vanaf ${title}',
 			'music.queue' => 'Wachtrij',
 			'music.clearQueue' => 'Wachtrij wissen',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'Songtekst',
 			'music.visualizer' => 'Visualiseren',
 			'music.visualizerProfileLoading' => 'Lees track analyse...',
@@ -7640,8 +7668,6 @@ extension on TranslationsNl {
 			'music.visualizerLiveAudio' => 'Live-audioanalyse',
 			'music.visualizerPreviousPreset' => 'Vorige Visueel Styl',
 			'music.visualizerNextPreset' => 'Volgende Visual Style',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora',
 			'music.visualizerPresetBloom' => 'Bloem',
 			'music.visualizerPresetOrbitals' => 'Orbitale',
@@ -8146,6 +8172,8 @@ extension on TranslationsNl {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Software',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Hardware',
 			'performanceOverlay.tunnelingActive' => 'Actief',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} mislukt)',
@@ -8154,8 +8182,6 @@ extension on TranslationsNl {
 			'externalPlayer.useExternalPlayer' => 'Externe speler gebruiken',
 			'externalPlayer.useExternalPlayerDescription' => 'Open video\'s in een andere app',
 			'externalPlayer.selectPlayer' => 'Speler selecteren',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Aangepaste spelers',
 			'externalPlayer.systemDefault' => 'Systeemstandaard',
 			'externalPlayer.addCustomPlayer' => 'Aangepaste speler toevoegen',
@@ -8660,6 +8686,8 @@ extension on TranslationsNl {
 			'homeLayout.recentlyReleased' => 'Onlangs vrijgegeven',
 			'homeLayout.movieCollections' => 'Filmcollecties',
 			'homeLayout.showCollections' => 'Show collecties',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Roe titel',
 			'homeLayout.content' => 'Inhoud',
 			'homeLayout.showThisRowIn' => 'Zie deze volgorde in:',
@@ -8668,8 +8696,6 @@ extension on TranslationsNl {
 			'homeLayout.heroCardDescription' => 'Het wordt weergegeven als een volledige rotatingkaart in plaats van een posterschel.',
 			'homeLayout.heroUnavailableDescription' => 'Alleen beschikbaar wanneer deze rij op een enkele collectie de werkelijke titels wordt opgelost – met meer dan één selectie is er geen enkele titel om door te roteren.',
 			'homeLayout.librariesSelection' => 'Bibliotheken (leven alle niet gecontroleerde om elke bibliotheek te bevatten)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Elke bibliotheek die hier wordt gecontroleerd, is in deze ene rij samengesteld.',
 			'homeLayout.movieCollectionsSelection' => 'Filmcollecties (leven alle niet-gecontroleerde voor elke geselecteerde bibliotheek)',
 			'homeLayout.showCollectionsSelection' => 'Toon collecties (laat alle niet-gecontroleerde voor elke gekozen bibliotheek)',
@@ -9174,6 +9200,8 @@ extension on TranslationsNl {
 			'sourceSetup.sshAuthentication' => 'SSH-authenticatie met openbare sleutel',
 			'sourceSetup.sshAuthenticationHelp' => 'Optioneel; authenticatie met een wachtwoord wordt ook ondersteund.',
 			'sourceSetup.privateKey' => 'Privésleutel (PEM- of OpenSSH-formaat)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Wachtwoordzin van de privésleutel',
 			'sourceSetup.nfsMountPort' => 'TCP-poort van de NFS-mountservice',
 			'sourceSetup.nfsMountPortHelp' => 'Standaard: 20048',
@@ -9182,8 +9210,6 @@ extension on TranslationsNl {
 			'sourceSetup.nfsGroupId' => 'NFS-groeps-ID (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Standaard: 1000. Gebruik de groeps-ID die de NFS-share van de NAS toestaat.',
 			'sourceSetup.nfsEncryption' => 'Versleutelde NFS vereisen (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'TLS 1.3 vereisen voor NFS en de mountservice. Ondersteunt de NAS dit niet, dan wordt de verbinding geweigerd.',
 			'sourceSetup.nfsTrustCertificate' => 'Aangepaste NFS-CA of servercertificaat (PEM, optioneel)',
 			'sourceSetup.nfsTrustHelp' => 'Laat leeg voor certificaten die dit apparaat vertrouwt. Voeg zo nodig een certificaat van een private CA of een zelfondertekend servercertificaat toe; de namen moeten overeenkomen met de host in de NFS-URL.',
@@ -9688,6 +9714,8 @@ extension on TranslationsNl {
 			'musicTools.playlistSharing' => 'Toegang tot afspeellijst',
 			'musicTools.playlistRecipient' => 'Plex-gebruikersnaam of e-mail',
 			'musicTools.playlistSharingHint' => 'Geef toegang tot deze afspeellijst en de nummers. De ontvanger moet mogelijk een uitnodiging accepteren.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Kon geen toegang tot de afspeellijst aanvragen.',
 			'musicTools.playlistSharingAccepted' => 'Plex heeft het toegangsverzoek geaccepteerd.',
 			'musicTools.playlistAccessList' => 'Huidige toegang',
@@ -9696,8 +9724,6 @@ extension on TranslationsNl {
 			'musicTools.peak' => 'Piek',
 			'musicTools.bass' => 'Bas',
 			'musicTools.treble' => 'Hoge tonen',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Gedeelde afspeellijsten',
 			'musicTools.sharingInvitationsTitle' => 'Plex-deeluitnodigingen',
 			'musicTools.noSharingInvitations' => 'Geen openstaande uitnodigingen',

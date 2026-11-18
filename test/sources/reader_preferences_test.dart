@@ -15,12 +15,15 @@ void main() {
       'coverAlone': false,
       'splitWide': true,
       'direction': 'rtl',
+      'soloPages': [4, 2, 4, -1, 100000, 'bad'],
     });
     expect(custom['comicMode'], 'webtoon');
     expect(custom['zoom'], 'fit-height');
     expect(custom['coverAlone'], isFalse);
     expect(custom['splitWide'], isTrue);
     expect(custom['direction'], 'rtl');
+    expect(custom['soloPages'], [2, 4]);
+    expect(defaults['soloPages'], isEmpty);
     expect(normalizeReaderPreferences(custom), custom);
   });
 

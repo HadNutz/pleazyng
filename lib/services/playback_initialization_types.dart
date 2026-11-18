@@ -56,6 +56,10 @@ class PlaybackInitializationOptions {
   /// recover it). Resolution failure falls back to the server's pick.
   final AudioTrack? preferredAudioTrack;
 
+  /// Optional exact-title catalog lookup, invoked only when the source has
+  /// several tracks and no usable original flag or production language.
+  final Future<String?> Function()? lookupOriginalLanguage;
+
   /// Preferred subtitle carried across navigation/reloads. Backends that put
   /// embedded subtitles in the rendition can use this during negotiation;
   /// sidecar-capable backends keep subtitle delivery independent.
@@ -133,6 +137,7 @@ class PlaybackInitializationOptions {
     this.audioQualityPreset,
     this.selectedAudioStreamId,
     this.preferredAudioTrack,
+    this.lookupOriginalLanguage,
     this.preferredSubtitleTrack,
     this.sessionIdentifier,
     this.transcodeSessionId,
@@ -182,7 +187,15 @@ class ExternalPlaybackTarget {
   /// files: the external player gets that one file, on that file's clock.
   final MediaPartTimeline? partTimeline;
 
-  const ExternalPlaybackTarget({required this.url, this.subtitles = const [], this.partTimeline, this.playSessionId});
+  /// Identity and embedded track catalog of the file actually resolved.
+  final MediaSourceInfo? mediaInfo;
+  const ExternalPlaybackTarget({
+    required this.url,
+    this.subtitles = const [],
+    this.partTimeline,
+    this.playSessionId,
+    this.mediaInfo,
+  });
 }
 
 /// Reason the transcode branch fell back to direct play.

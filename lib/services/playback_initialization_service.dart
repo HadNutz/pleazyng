@@ -9,6 +9,7 @@ import '../media/media_item.dart';
 import '../media/media_item_types.dart';
 import '../media/media_server_client.dart';
 import '../media/media_source_info.dart';
+import '../media/original_dialogue.dart';
 import '../mpv/models.dart';
 import '../utils/app_logger.dart';
 import '../utils/global_key_utils.dart';
@@ -187,7 +188,13 @@ class PlaybackInitializationService {
           return _buildOfflineResult(
             metadata: metadata,
             offlineVideoPath: offlineVideoPath,
-            mediaInfo: mediaInfo,
+            mediaInfo: mediaInfo?.selectAudio(
+              options.selectedAudioStreamId ??
+                  preferredOriginalId(
+                    mediaInfo,
+                    metadata.raw?['OriginalLanguage'] ?? metadata.raw?['originalLanguage'],
+                  ),
+            ),
             selectedMediaIndex: offlineSource.mediaIndex,
             selectedMediaSourceId: offlineSource.mediaSourceId,
           );

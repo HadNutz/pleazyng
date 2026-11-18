@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "再錄製 30 分鐘",
+    "recordsUntil": "錄製至 ${time}",
+    "extendFailed": "無法延長錄製時間",
+    "originalDialogue": "優先播放原聲對白",
+    "soloPage": "單獨顯示此頁",
+    "pairPage": "重新配對此頁",
+    "listenPhone": "在這支手機上收聽",
+    "audioUnavailable": "這支手機無法播放目前的檔案或音軌。"
+  },
   "livingRoom": {
     "fitScreen": "配合我的螢幕大小",
     "fitHelp": "選擇一條邊，用方向鍵移動，直到看見該邊的標記。逐一調整每條邊。",

@@ -24,6 +24,30 @@ IptvLocalRecording _recording(String id, String path) => IptvLocalRecording(
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  test('an extension persists only for a running recording with its previous deadline', () async {
+    final database = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(database.close);
+    await _profile(database);
+    await database.customStatement(
+      "INSERT INTO iptv_sources(id, profile_id, display_name, kind, config_ciphertext, created_at) VALUES ('s','p','TV','m3u','',0)",
+    );
+    await database.customStatement(
+      "INSERT INTO iptv_recording_schedules(id,profile_id,source_id,channel_id,title,starts_at,ends_at,state,created_at,updated_at) "
+      "VALUES ('game','p','s','c','Overtime',10,100,'recording',0,0)",
+    );
+    final repository = IptvSourceRepository(database);
+    final schedule = (await repository.localRecordingSchedules(profileId: 'p')).single;
+    final next = schedule.endsAt.add(const Duration(minutes: 30));
+    expect(await repository.saveActiveRecordingDeadline(schedule, schedule.endsAt, next), isTrue);
+    expect(await repository.saveActiveRecordingDeadline(schedule, schedule.endsAt, next), isFalse);
+    expect((await repository.localRecordingSchedules(profileId: 'p')).single.endsAt, next);
+    await repository.updateLocalRecordingSchedule('game', state: 'completed');
+    expect(
+      await repository.saveActiveRecordingDeadline(schedule, next, next.add(const Duration(minutes: 30))),
+      isFalse,
+    );
+  });
+
   test('an unreadable archive cannot prevent another interrupted recording from recovering', () async {
     final directory = await Directory.systemTemp.createTemp('plezy-recording-recovery-');
     final database = AppDatabase.forTesting(NativeDatabase.memory());

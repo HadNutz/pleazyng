@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "Yana 30 daqiqa yozish",
+    "recordsUntil": "Yozish ${time} gacha davom etadi",
+    "extendFailed": "Yozuvni uzaytirib boʻlmadi",
+    "originalDialogue": "Asl dialogni afzal koʻrish",
+    "soloPage": "Bu sahifani alohida koʻrsatish",
+    "pairPage": "Bu sahifani yana juftlash",
+    "listenPhone": "Shu telefonda tinglash",
+    "audioUnavailable": "Fayl yoki ovoz yoʻlagi bu telefonda mavjud emas."
+  },
   "livingRoom": {
     "fitScreen": "Ekranimga moslash",
     "fitHelp": "Bir chetni tanlang va belgilari ko‘ringuncha strelkalar bilan siljiting. Har bir chet uchun takrorlang.",

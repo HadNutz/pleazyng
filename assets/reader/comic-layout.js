@@ -3,6 +3,7 @@ export const isWide = page => page.doublePage || (page.width > 0 && page.height 
 export function comicTurns(pages, settings, width, height) {
     const double = settings.comicMode !== 'webtoon' && !settings.splitWide &&
         (settings.spread === 'double' || (settings.spread === 'auto' && width >= 900 && width > height));
+    const solo = new Set(settings.soloPages ?? []);
     const turns = [];
     for (let i = 0; i < pages.length; i++) {
         const page = pages[i];
@@ -10,7 +11,7 @@ export function comicTurns(pages, settings, width, height) {
             const halves = settings.direction === 'rtl' ? [1, 0] : [0, 1];
             turns.push(...halves.map(half => [{index: i, half}]));
         } else if (double && !(i === 0 && settings.coverAlone !== false) &&
-            !isWide(page) && i + 1 < pages.length && !isWide(pages[i + 1])) {
+            !solo.has(i) && !solo.has(i + 1) && !isWide(page) && i + 1 < pages.length && !isWide(pages[i + 1])) {
             const pair = [{index: i}, {index: ++i}];
             turns.push(settings.direction === 'rtl' ? pair.reverse() : pair);
         } else turns.push([{index: i}]);

@@ -40,6 +40,7 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsVi $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsVi(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$vi viewing = _Translations$viewing$vi._(_root);
 	@override late final _Translations$livingRoom$vi livingRoom = _Translations$livingRoom$vi._(_root);
 	@override late final _Translations$app$vi app = _Translations$app$vi._(_root);
 	@override late final _Translations$appIcon$vi appIcon = _Translations$appIcon$vi._(_root);
@@ -121,6 +122,23 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$vi musicExperience = _Translations$musicExperience$vi._(_root);
 	@override late final _Translations$musicTools$vi musicTools = _Translations$musicTools$vi._(_root);
 	@override late final _Translations$musicDevices$vi musicDevices = _Translations$musicDevices$vi._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$vi extends Translations$viewing$en {
+	_Translations$viewing$vi._(TranslationsVi root) : this._root = root, super.internal(root);
+
+	final TranslationsVi _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => 'Ghi thêm 30 phút';
+	@override String recordsUntil({required Object time}) => 'Ghi đến ${time}';
+	@override String get extendFailed => 'Không thể kéo dài bản ghi';
+	@override String get originalDialogue => 'Ưu tiên lời thoại gốc';
+	@override String get soloPage => 'Hiển thị riêng trang này';
+	@override String get pairPage => 'Ghép lại trang này';
+	@override String get listenPhone => 'Nghe trên điện thoại này';
+	@override String get audioUnavailable => 'Tệp hoặc bản âm thanh không khả dụng trên điện thoại này.';
 }
 
 // Path: livingRoom
@@ -5561,6 +5579,14 @@ class _Translations$services$trackerDescriptions$vi extends Translations$service
 extension on TranslationsVi {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => 'Ghi thêm 30 phút',
+			'viewing.recordsUntil' => ({required Object time}) => 'Ghi đến ${time}',
+			'viewing.extendFailed' => 'Không thể kéo dài bản ghi',
+			'viewing.originalDialogue' => 'Ưu tiên lời thoại gốc',
+			'viewing.soloPage' => 'Hiển thị riêng trang này',
+			'viewing.pairPage' => 'Ghép lại trang này',
+			'viewing.listenPhone' => 'Nghe trên điện thoại này',
+			'viewing.audioUnavailable' => 'Tệp hoặc bản âm thanh không khả dụng trên điện thoại này.',
 			'livingRoom.fitScreen' => 'Chỉnh vừa màn hình',
 			'livingRoom.fitHelp' => 'Chọn một cạnh rồi dùng phím mũi tên để di chuyển cho đến khi thấy các dấu ở cạnh đó. Lặp lại với từng cạnh.',
 			'livingRoom.left' => 'Trái',
@@ -6065,6 +6091,8 @@ extension on TranslationsVi {
 			'settings.audioChannelLimitOriginal' => 'nguyên bản',
 			'settings.audioChannelLimitOriginalDescription' => 'Chơi mỗi kênh trong track',
 			'settings.audioChannelLimitSurround51' => 'Đến 5.1',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Trộn 7.1 xuống 5.1 cho các TV và máy nhận mà chỉ mất 5.1 PCM.',
 			'settings.audioChannelLimitStereo' => 'Âm Thanh Nổi',
 			'settings.audioChannelLimitStereoDescription' => 'Thay vào hai kênh cho các loa stereo hoặc tai nghe.',
@@ -6073,8 +6101,6 @@ extension on TranslationsVi {
 			'settings.downmixCenterBoostLabel' => 'Độ bền (dB)',
 			'settings.downmixCenterBoostShort' => 'db',
 			'settings.audioDownmixNormalize' => 'Tính năng của Downmix',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'Giảm hỗn hợp để ngăn chặn nhấp chuột. tắt để giữ khối lượng ban đầu (có thể làm hỏng các cảnh lớn).',
 			'settings.dvConversionMode' => 'Dolby Vision Chuyển đổi',
 			'settings.dvConversionModeDescription' => 'Chọn cách xử lý Dolby Vision Hồ sơ 7 tệp.',
@@ -6579,6 +6605,8 @@ extension on TranslationsVi {
 			'videoControls.playNext' => 'Phát kế tiếp',
 			'videoControls.playButton' => 'Phát',
 			'videoControls.pauseButton' => 'Tạm dừng',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'nghỉ ngơi',
 			'videoControls.playbackResumed' => 'chơi',
 			'videoControls.loadingVideo' => 'tải video',
@@ -6587,8 +6615,6 @@ extension on TranslationsVi {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'Tìm lại ${seconds} giây',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'Tìm trước ${seconds} giây',
 			'videoControls.previousButton' => 'Episode trước',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'Tập Kế Tiếp',
 			'videoControls.previousChapterButton' => 'Đoạn trước',
 			'videoControls.nextChapterButton' => 'Đoạn kế tiếp',
@@ -7093,6 +7119,8 @@ extension on TranslationsVi {
 			'libraries.analyze' => 'phân tích',
 			'libraries.analyzeLibrary' => 'Phân tích Thư viện',
 			'libraries.refreshMetadata' => 'Làm mới dữ liệu mô tả',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Dọn sạch thùng rác',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Khả năng làm sạch bụi bẩn cho "${title}..."',
 			'libraries.trashEmptied' => ({required Object title}) => 'Trash emptied cho "${title}"',
@@ -7101,8 +7129,6 @@ extension on TranslationsVi {
 			'libraries.analysisStarted' => ({required Object title}) => 'Phân tích bắt đầu cho "${title}"',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'Không phân tích thư viện: ${error}',
 			'libraries.noLibrariesFound' => 'Không tìm thấy thư viện',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'Tất cả các thư viện được ẩn',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'Thư viện ẩn (${count})',
 			'libraries.thisLibraryIsEmpty' => 'Thư viện này trống',
@@ -7607,6 +7633,8 @@ extension on TranslationsVi {
 			'music.playingFrom' => ({required Object title}) => 'Chơi từ ${title}',
 			'music.queue' => 'Quay',
 			'music.clearQueue' => 'Xóa hàng đợi',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'Lời bài hát',
 			'music.visualizer' => 'hình ảnh',
 			'music.visualizerProfileLoading' => 'Đọc Track Analysis...',
@@ -7615,8 +7643,6 @@ extension on TranslationsVi {
 			'music.visualizerLiveAudio' => 'Phân tích âm thanh trực tiếp',
 			'music.visualizerPreviousPreset' => 'Phong cách Visual Previous',
 			'music.visualizerNextPreset' => 'Tiếp theo: Visual Style',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Cực quang',
 			'music.visualizerPresetBloom' => 'Nở hoa',
 			'music.visualizerPresetOrbitals' => 'Ước',
@@ -8121,6 +8147,8 @@ extension on TranslationsVi {
 			'performanceOverlay.decoderMediatekHw' => 'Thông tin HW',
 			'performanceOverlay.decoderExynosHw' => 'Đánh giá HW',
 			'performanceOverlay.decoderSoftware' => 'Phần mềm',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Phần cứng',
 			'performanceOverlay.tunnelingActive' => 'hoạt động',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} thất bại)',
@@ -8129,8 +8157,6 @@ extension on TranslationsVi {
 			'externalPlayer.useExternalPlayer' => 'Sử dụng Player External',
 			'externalPlayer.useExternalPlayerDescription' => 'Mở video trong ứng dụng khác',
 			'externalPlayer.selectPlayer' => 'Chọn Player',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Người chơi Custom',
 			'externalPlayer.systemDefault' => 'Hệ thống default',
 			'externalPlayer.addCustomPlayer' => 'Thêm Custom Player',
@@ -8635,6 +8661,8 @@ extension on TranslationsVi {
 			'homeLayout.recentlyReleased' => 'Gần đây phát hành',
 			'homeLayout.movieCollections' => 'Bộ sưu tập phim',
 			'homeLayout.showCollections' => 'Hiển thị bộ sưu tập',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Row tiêu đề',
 			'homeLayout.content' => 'Nội dung',
 			'homeLayout.showThisRowIn' => 'Hiển thị dòng này trong:',
@@ -8643,8 +8671,6 @@ extension on TranslationsVi {
 			'homeLayout.heroCardDescription' => 'Hiển thị như một thẻ quay rộng đầy đủ thay vì một tấm poster.',
 			'homeLayout.heroUnavailableDescription' => 'Chỉ có sẵn khi hàng này được giải quyết với các tiêu đề thực tế của một bộ sưu tập duy nhất - với nhiều hơn một bộ sưu tập được chọn không có tiêu đề duy nhất để xoay qua.',
 			'homeLayout.librariesSelection' => 'Thư viện (tìm tất cả không kiểm tra để bao gồm mỗi thư viện)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'Mỗi thư viện được kiểm tra ở đây được kết hợp vào một hàng này.',
 			'homeLayout.movieCollectionsSelection' => 'Bộ sưu tập phim (tìm tất cả không kiểm tra cho mỗi thư viện được chọn)',
 			'homeLayout.showCollectionsSelection' => 'Hiển thị các bộ sưu tập (tìm tất cả không kiểm tra cho mỗi thư viện được chọn)',
@@ -9149,6 +9175,8 @@ extension on TranslationsVi {
 			'sourceSetup.sshAuthentication' => 'Xác thực SSH bằng khóa công khai',
 			'sourceSetup.sshAuthenticationHelp' => 'Không bắt buộc; cũng hỗ trợ xác thực bằng mật khẩu.',
 			'sourceSetup.privateKey' => 'Khóa riêng (định dạng PEM hoặc OpenSSH)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Cụm mật khẩu của khóa riêng',
 			'sourceSetup.nfsMountPort' => 'Cổng TCP của dịch vụ gắn kết NFS',
 			'sourceSetup.nfsMountPortHelp' => 'Mặc định: 20048',
@@ -9157,8 +9185,6 @@ extension on TranslationsVi {
 			'sourceSetup.nfsGroupId' => 'ID nhóm NFS (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'Mặc định: 1000. Dùng ID nhóm được vùng chia sẻ NFS trên NAS cho phép.',
 			'sourceSetup.nfsEncryption' => 'Bắt buộc mã hóa NFS (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'Bắt buộc dùng TLS 1.3 cho NFS và dịch vụ gắn kết. Nếu NAS không hỗ trợ, kết nối sẽ bị từ chối.',
 			'sourceSetup.nfsTrustCertificate' => 'CA NFS tùy chỉnh hoặc chứng chỉ máy chủ (PEM, không bắt buộc)',
 			'sourceSetup.nfsTrustHelp' => 'Để trống để dùng các chứng chỉ được thiết bị này tin cậy. Nếu cần, thêm chứng chỉ của CA riêng hoặc chứng chỉ máy chủ tự ký; các tên trong chứng chỉ phải khớp với máy chủ trong URL NFS.',
@@ -9663,6 +9689,8 @@ extension on TranslationsVi {
 			'musicTools.playlistSharing' => 'Quyền truy cập danh sách phát',
 			'musicTools.playlistRecipient' => 'Tên người dùng Plex hoặc email',
 			'musicTools.playlistSharingHint' => 'Cấp quyền truy cập danh sách phát này và các bản nhạc. Người nhận có thể cần chấp nhận lời mời.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Không thể yêu cầu truy cập danh sách phát.',
 			'musicTools.playlistSharingAccepted' => 'Plex đã tiếp nhận yêu cầu truy cập.',
 			'musicTools.playlistAccessList' => 'Quyền truy cập hiện tại',
@@ -9671,8 +9699,6 @@ extension on TranslationsVi {
 			'musicTools.peak' => 'Đỉnh',
 			'musicTools.bass' => 'Âm trầm',
 			'musicTools.treble' => 'Âm cao',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'Danh sách phát được chia sẻ',
 			'musicTools.sharingInvitationsTitle' => 'Lời mời chia sẻ Plex',
 			'musicTools.noSharingInvitations' => 'Không có lời mời đang chờ',

@@ -20,6 +20,24 @@ Start a music queue. In **Now Playing → More → Guest jukebox**, choose the l
 
 Open **Settings → Appearance → Fit to my screen**. Select an edge and move it with the remote arrows or the on-screen controls. Fit all four edges and save. The app uses the resulting rectangle for its menus, video player and overlays. Cancel discards the edit. Reset followed by Save restores the full screen.
 
+## Overtime recordings
+
+While a local scheduled IPTV recording is running, choose **Record 30 more minutes** on the live channel or in **Live TV → Recordings**. Each successful press adds 30 minutes to the current stop time. The confirmation displays the revised local time. Extending keeps the existing capture and recording file open.
+
+## Original dialogue
+
+In **Settings → Playback → Audio**, enable **Prefer original dialogue**. An explicit audio selection takes priority. With no override, Pleazyng looks for a main audio track flagged as original. If no track has that flag, a verified original language can identify a single main dialogue track. Ambiguous matches leave the usual selection in effect. Movie language lookup through a configured Seerr connection uses the exact TMDB movie ID.
+
+## Comic spreads
+
+In a comic’s two-page view, open the reader options and choose **Show this page alone** for the physical page that breaks a spread. On a two-page spread you can choose either page by number. Reopen the same menu on an isolated page to restore normal pairing. Corrections belong to that issue and profile. Physical page numbers, bookmarks and reading direction stay consistent.
+
+## Audio description on a paired phone
+
+Pair the Android or iOS companion remote with the playback device on your local network. Start a server-backed video, then open **Playback → Listen on this phone** on the phone. Both devices need access to the same server and edition. Connect headphones and select an embedded audio track. A single track flagged for audio description is selected automatically. The TV keeps its own soundtrack.
+
+Keep the listening screen open. The phone follows TV pauses, playback speed, seeks and edition changes. Use the audio sync slider to compensate for headphone delay. When headphones disconnect, playback on the phone pauses. Reconnect or use the on-screen play control to resume. Leaving the screen ends personal listening.
+
 ## Upstream sources
 
 - Hardware Play on a focused poster draws on the upstream feature requests [Plezy #1510](https://github.com/edde746/plezy/issues/1510) by [@enchained](https://github.com/enchained) and [Plezy #3038](https://github.com/edde746/plezy/issues/3038) by [@fillilutten](https://github.com/fillilutten).
@@ -27,5 +45,10 @@ Open **Settings → Appearance → Fit to my screen**. Select an edge and move i
 - Dolby Digital receiver output draws on the upstream feature request [Plezy #3054](https://github.com/edde746/plezy/issues/3054) by [@abaginski](https://github.com/abaginski) and the [Kodi audio troubleshooting](https://kodi.wiki/view/Audio_troubleshooting) guide to passthrough and AC-3 transcoding.
 - The local guest music queue draws on Room Mode in [MusicLounge Jukebox](https://forums.plex.tv/t/new-app-musiclounge-jukebox/942146) by [Earthmonkey](https://forums.plex.tv/u/Earthmonkey).
 - Projector calibration draws on the upstream constant-image-height request [Plezy #863](https://github.com/edde746/plezy/issues/863) by [@thehomerepot](https://github.com/thehomerepot).
+
+- Extending an active sports recording draws on [gingie’s Channels DVR request](https://community.getchannels.com/t/extend-live-recordings/1789).
+- Original dialogue selection draws on [@Altarentys’s Plezy request #3019](https://github.com/edde746/plezy/issues/3019).
+- Per-issue comic spread correction draws on the pairing problem reported by [@fatherpanda in Kavita #4903](https://github.com/Kareadita/Kavita/issues/4903).
+- Synchronized personal audio description takes inspiration from [GRETA by Greta & Starks Apps GmbH](https://apps.apple.com/ca/app/greta/id793892423). Pleazyng uses the listener’s own server file and embedded tracks.
 
 Pleazyng implemented these features independently. See the [attribution ledger](../../UPSTREAM_ATTRIBUTION.md).

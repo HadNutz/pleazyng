@@ -70,6 +70,16 @@ header.append(button('zoomOut',()=>window.publication.zoom('out')),button('zoomI
       settings=window.readerOptions.settings??settings;
       const {content,actions}=show(labels.settings);
       if(isComic){const help=document.createElement('p');help.textContent=labels.comicHelp;content.append(help);}
+      if(isComic && settings.comicMode!=='webtoon' && !settings.splitWide && settings.spread!=='single'){
+        for(const index of locationState.spreadPages??[]){
+          const solo=new Set(settings.soloPages??[]);
+          row(content,`${solo.has(index)?labels.pairPage:labels.soloPage} · ${numbers.format(index+1)}`,()=>{
+            if(!solo.delete(index))solo.add(index);
+            emit('browserSettings',{settings:{soloPages:[...solo]}});
+            dialog.close();
+          });
+        }
+      }
       const options=[['theme',labels.theme,['app','paper','sepia','night']],...(isFixed?
         [...(isComic?[['comicMode',labels.comicMode,['paged','webtoon']],['coverAlone',labels.coverAlone,[true,false]],['splitWide',labels.splitWide,[false,true]]]:[]),['zoom',labels.zoom,isComic?['fit-page','fit-width','fit-height',1]:['fit-page','fit-width',1]],['spread',labels.pageLayout,['auto','single','double']],['direction',labels.readingDirection,['auto','ltr','rtl']]]:
         [['font',labels.font,['serif','sans','mono']],['fontSize',labels.fontSize,[12,14,16,18,20,24,28,32,40,48,56,64,72]],['lineHeight',labels.lineHeight,[1,1.2,1.4,1.6,1.8,2,2.5]],['letterSpacing',labels.letterSpacing,[0,.05,.1,.2,.3]],['wordSpacing',labels.wordSpacing,[0,.1,.2,.3,.5]],['margin',labels.margin,[2,4,8,12,16,20]],['columns',labels.columns,[1,2]],['scrolled',labels.scrolled,[false,true]],['justify',labels.justify,[false,true]]])];

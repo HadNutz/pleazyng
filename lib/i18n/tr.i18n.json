@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "30 dakika daha kaydet",
+    "recordsUntil": "Kayıt bitişi: ${time}",
+    "extendFailed": "Kayıt uzatılamadı",
+    "originalDialogue": "Özgün diyaloğu tercih et",
+    "soloPage": "Bu sayfayı tek göster",
+    "pairPage": "Bu sayfayı yeniden eşleştir",
+    "listenPhone": "Bu telefonda dinle",
+    "audioUnavailable": "Dosya veya ses parçası bu telefonda kullanılamıyor."
+  },
   "livingRoom": {
     "fitScreen": "Ekranıma sığdır",
     "fitHelp": "Bir kenar seçip işaretleri görünene kadar oklarla hareket ettirin. Her kenar için tekrarlayın.",

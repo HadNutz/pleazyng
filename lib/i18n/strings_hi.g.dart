@@ -40,6 +40,7 @@ class TranslationsHi extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsHi $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsHi(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$viewing$hi viewing = _Translations$viewing$hi._(_root);
 	@override late final _Translations$livingRoom$hi livingRoom = _Translations$livingRoom$hi._(_root);
 	@override late final _Translations$app$hi app = _Translations$app$hi._(_root);
 	@override late final _Translations$appIcon$hi appIcon = _Translations$appIcon$hi._(_root);
@@ -121,6 +122,23 @@ class TranslationsHi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$hi musicExperience = _Translations$musicExperience$hi._(_root);
 	@override late final _Translations$musicTools$hi musicTools = _Translations$musicTools$hi._(_root);
 	@override late final _Translations$musicDevices$hi musicDevices = _Translations$musicDevices$hi._(_root);
+}
+
+// Path: viewing
+class _Translations$viewing$hi extends Translations$viewing$en {
+	_Translations$viewing$hi._(TranslationsHi root) : this._root = root, super.internal(root);
+
+	final TranslationsHi _root; // ignore: unused_field
+
+	// Translations
+	@override String get extendRecording => '30 मिनट और रिकॉर्ड करें';
+	@override String recordsUntil({required Object time}) => '${time} तक रिकॉर्डिंग';
+	@override String get extendFailed => 'रिकॉर्डिंग नहीं बढ़ाई जा सकी';
+	@override String get originalDialogue => 'मूल संवाद को प्राथमिकता दें';
+	@override String get soloPage => 'यह पृष्ठ अकेले दिखाएँ';
+	@override String get pairPage => 'इस पृष्ठ की फिर से जोड़ी बनाएँ';
+	@override String get listenPhone => 'इस फ़ोन पर सुनें';
+	@override String get audioUnavailable => 'इस फ़ोन पर फ़ाइल या ऑडियो ट्रैक उपलब्ध नहीं है।';
 }
 
 // Path: livingRoom
@@ -5586,6 +5604,14 @@ class _Translations$services$trackerDescriptions$hi extends Translations$service
 extension on TranslationsHi {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'viewing.extendRecording' => '30 मिनट और रिकॉर्ड करें',
+			'viewing.recordsUntil' => ({required Object time}) => '${time} तक रिकॉर्डिंग',
+			'viewing.extendFailed' => 'रिकॉर्डिंग नहीं बढ़ाई जा सकी',
+			'viewing.originalDialogue' => 'मूल संवाद को प्राथमिकता दें',
+			'viewing.soloPage' => 'यह पृष्ठ अकेले दिखाएँ',
+			'viewing.pairPage' => 'इस पृष्ठ की फिर से जोड़ी बनाएँ',
+			'viewing.listenPhone' => 'इस फ़ोन पर सुनें',
+			'viewing.audioUnavailable' => 'इस फ़ोन पर फ़ाइल या ऑडियो ट्रैक उपलब्ध नहीं है।',
 			'livingRoom.fitScreen' => 'मेरी स्क्रीन में फ़िट करें',
 			'livingRoom.fitHelp' => 'कोई किनारा चुनें और तीर वाले बटनों से उसे तब तक खिसकाएँ जब तक उसके निशान दिखने लगें। हर किनारे के लिए दोहराएँ।',
 			'livingRoom.left' => 'बायाँ',
@@ -6090,6 +6116,8 @@ extension on TranslationsHi {
 			'settings.audioChannelLimitOriginal' => 'मूल',
 			'settings.audioChannelLimitOriginalDescription' => 'ट्रैक में हर चैनल खेलें',
 			'settings.audioChannelLimitSurround51' => '5.1 तक',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'टीवी और रिसीवरों के लिए 7.1 से 5.1 तक मिश्रण करें जो केवल 5.1 पीसीएम लेते हैं।',
 			'settings.audioChannelLimitStereo' => 'स्टेनलेस',
 			'settings.audioChannelLimitStereoDescription' => 'स्टेरेओ स्पीकर या हेडफोन के लिए दो चैनलों में मिश्रण करें।',
@@ -6098,8 +6126,6 @@ extension on TranslationsHi {
 			'settings.downmixCenterBoostLabel' => 'बूस्ट ( डीबी)',
 			'settings.downmixCenterBoostShort' => 'डीबी',
 			'settings.audioDownmixNormalize' => 'Downmix पर वॉल्यूम को सामान्य करें',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioDownmixNormalizeDescription' => 'मिश्रण को नीचे रखें ताकि क्लिपिंग को रोक दिया जा सके. मूल वॉल्यूम को बनाए रखने के लिए बंद करें (मैं जोर से दृश्यों को खराब कर सकता हूं)।',
 			'settings.dvConversionMode' => 'Dolby Vision परिवर्तित',
 			'settings.dvConversionModeDescription' => 'कैसे Dolby Vision प्रोफ़ाइल 7 फ़ाइलों को संभालने के लिए चुनें।',
@@ -6604,6 +6630,8 @@ extension on TranslationsHi {
 			'videoControls.playNext' => 'Next खेलना',
 			'videoControls.playButton' => 'खेलना',
 			'videoControls.pauseButton' => 'रोकें',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'आराम',
 			'videoControls.playbackResumed' => 'खेलना',
 			'videoControls.loadingVideo' => 'वीडियो लोड',
@@ -6612,8 +6640,6 @@ extension on TranslationsHi {
 			'videoControls.seekBackwardButton' => ({required Object seconds}) => 'पीछे की ओर खोजें ${seconds} सेकंड',
 			'videoControls.seekForwardButton' => ({required Object seconds}) => 'आगे की तलाश ${seconds} सेकंड',
 			'videoControls.previousButton' => 'पिछला एपिसोड',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.nextButton' => 'अगला एपिसोड',
 			'videoControls.previousChapterButton' => 'पिछला अध्याय',
 			'videoControls.nextChapterButton' => 'अगला अध्याय',
@@ -7118,6 +7144,8 @@ extension on TranslationsHi {
 			'libraries.analyze' => 'विश्लेषण',
 			'libraries.analyzeLibrary' => 'पुस्तकालय विश्लेषण',
 			'libraries.refreshMetadata' => 'मेटाडेटा को ताज़ा करें',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.emptyTrash' => 'खाली ट्रैश',
 			'libraries.emptyingTrash' => ({required Object title}) => '"${title}" के लिए खाली कचरा ...',
 			'libraries.trashEmptied' => ({required Object title}) => '"${title}" के लिए ट्रैश एम्टिड',
@@ -7126,8 +7154,6 @@ extension on TranslationsHi {
 			'libraries.analysisStarted' => ({required Object title}) => '"${title}" के लिए विश्लेषण शुरू हुआ',
 			'libraries.failedToAnalyze' => ({required Object error}) => 'पुस्तकालय का विश्लेषण करने में विफलता: ${error}',
 			'libraries.noLibrariesFound' => 'कोई पुस्तकालय नहीं मिला',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.allLibrariesHidden' => 'सभी पुस्तकालय छिपे हुए हैं',
 			'libraries.hiddenLibrariesCount' => ({required Object count}) => 'छिपे हुए पुस्तकालयों (${count})',
 			'libraries.thisLibraryIsEmpty' => 'यह पुस्तकालय खाली है।',
@@ -7632,6 +7658,8 @@ extension on TranslationsHi {
 			'music.playingFrom' => ({required Object title}) => 'खेलने के लिए ${title}',
 			'music.queue' => 'क्यूए',
 			'music.clearQueue' => 'कतार साफ़ करें',
+			_ => null,
+		} ?? switch (path) {
 			'music.lyrics' => 'लिंग',
 			'music.visualizer' => 'दृश्य',
 			'music.visualizerProfileLoading' => 'ट्रैक विश्लेषण पढ़ने के लिए ...',
@@ -7640,8 +7668,6 @@ extension on TranslationsHi {
 			'music.visualizerLiveAudio' => 'लाइव ऑडियो विश्लेषण',
 			'music.visualizerPreviousPreset' => 'Previous दृश्य शैली',
 			'music.visualizerNextPreset' => 'अगला दृश्य शैली',
-			_ => null,
-		} ?? switch (path) {
 			'music.visualizerPresetAurora' => 'Aurora के बारे में',
 			'music.visualizerPresetBloom' => 'ब्लू',
 			'music.visualizerPresetOrbitals' => 'Orbitals के बारे में',
@@ -8146,6 +8172,8 @@ extension on TranslationsHi {
 			'performanceOverlay.decoderMediatekHw' => 'मीडिया एचएच',
 			'performanceOverlay.decoderExynosHw' => 'एक्सिनोस एचड',
 			'performanceOverlay.decoderSoftware' => 'सॉफ्टवेयर',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'हार्डवेयर',
 			'performanceOverlay.tunnelingActive' => 'सक्रिय',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} असफल)',
@@ -8154,8 +8182,6 @@ extension on TranslationsHi {
 			'externalPlayer.useExternalPlayer' => 'बाहरी खिलाड़ी का उपयोग करें',
 			'externalPlayer.useExternalPlayerDescription' => 'एक और ऐप में वीडियो खोलना',
 			'externalPlayer.selectPlayer' => 'खिलाड़ी चुनें',
-			_ => null,
-		} ?? switch (path) {
 			'externalPlayer.customPlayers' => 'Custom खिलाड़ी',
 			'externalPlayer.systemDefault' => 'डिफ़ॉल्ट सिस्टम',
 			'externalPlayer.addCustomPlayer' => 'कस्टम प्लेयर',
@@ -8660,6 +8686,8 @@ extension on TranslationsHi {
 			'homeLayout.recentlyReleased' => 'हाल ही में रिलीज',
 			'homeLayout.movieCollections' => 'फिल्म संग्रह',
 			'homeLayout.showCollections' => 'संग्रह दिखाएं',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'रॉ नाम',
 			'homeLayout.content' => 'संतुष्टि',
 			'homeLayout.showThisRowIn' => 'इस पंक्ति को दिखाएं:',
@@ -8668,8 +8696,6 @@ extension on TranslationsHi {
 			'homeLayout.heroCardDescription' => 'एक पोस्टर शीट के बजाय एक पूर्ण चौड़ा रूटिंग कार्ड के रूप में प्रदर्शित करता है।',
 			'homeLayout.heroUnavailableDescription' => 'केवल तभी उपलब्ध है जब यह पंक्ति एकल संग्रह के वास्तविक शीर्षकों के लिए हल हो जाती है - एक से अधिक संग्रह चुने हुए के साथ, कोई एकल शीर्षक पार नहीं होता है।',
 			'homeLayout.librariesSelection' => 'पुस्तकालय (सभी पुस्तकालयों को शामिल करने के लिए अनियंत्रित छोड़ दें)',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.librariesMergedDescription' => 'यहां देखे गए प्रत्येक पुस्तकालय इस एक पंक्ति में मिश्रित है।',
 			'homeLayout.movieCollectionsSelection' => 'फिल्म संग्रह (प्रत्येक चयनित पुस्तकालय के लिए सभी अनियंत्रित छोड़ दें)',
 			'homeLayout.showCollectionsSelection' => 'संग्रह प्रदर्शित करें (प्रत्येक चयनित पुस्तकालय के लिए सभी अनियंत्रित छोड़ दें)',
@@ -9174,6 +9200,8 @@ extension on TranslationsHi {
 			'sourceSetup.sshAuthentication' => 'SSH सार्वजनिक कुंजी से प्रमाणीकरण',
 			'sourceSetup.sshAuthenticationHelp' => 'वैकल्पिक; पासवर्ड से प्रमाणीकरण भी समर्थित है।',
 			'sourceSetup.privateKey' => 'निजी कुंजी (PEM या OpenSSH प्रारूप)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'निजी कुंजी का पासफ़्रेज़',
 			'sourceSetup.nfsMountPort' => 'NFS माउंट सेवा का TCP पोर्ट',
 			'sourceSetup.nfsMountPortHelp' => 'डिफ़ॉल्ट: 20048',
@@ -9182,8 +9210,6 @@ extension on TranslationsHi {
 			'sourceSetup.nfsGroupId' => 'NFS समूह ID (AUTH_SYS)',
 			'sourceSetup.nfsGroupIdHelp' => 'डिफ़ॉल्ट: 1000। NAS एक्सपोर्ट की अनुमति वाला समूह ID इस्तेमाल करें।',
 			'sourceSetup.nfsEncryption' => 'एन्क्रिप्टेड NFS अनिवार्य करें (RPC-with-TLS)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionHelp' => 'NFS और माउंट सेवा के लिए TLS 1.3 अनिवार्य करें। NAS में समर्थन न होने पर कनेक्शन अस्वीकार कर दिया जाता है।',
 			'sourceSetup.nfsTrustCertificate' => 'कस्टम NFS CA या सर्वर प्रमाणपत्र (PEM, वैकल्पिक)',
 			'sourceSetup.nfsTrustHelp' => 'इस डिवाइस के भरोसेमंद प्रमाणपत्रों के लिए खाली छोड़ें। ज़रूरत होने पर निजी CA या स्वयं हस्ताक्षरित सर्वर प्रमाणपत्र जोड़ें; उसके नाम NFS URL के होस्ट से मेल खाने चाहिए।',
@@ -9688,6 +9714,8 @@ extension on TranslationsHi {
 			'musicTools.playlistSharing' => 'प्लेलिस्ट का ऐक्सेस',
 			'musicTools.playlistRecipient' => 'Plex उपयोगकर्ता नाम या ईमेल',
 			'musicTools.playlistSharingHint' => 'इस प्लेलिस्ट और इसके ट्रैक का ऐक्सेस दें। प्राप्तकर्ता को निमंत्रण स्वीकार करना पड़ सकता है।',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'प्लेलिस्ट के ऐक्सेस का अनुरोध नहीं किया जा सका।',
 			'musicTools.playlistSharingAccepted' => 'Plex ने ऐक्सेस अनुरोध स्वीकार कर लिया।',
 			'musicTools.playlistAccessList' => 'मौजूदा ऐक्सेस',
@@ -9696,8 +9724,6 @@ extension on TranslationsHi {
 			'musicTools.peak' => 'शिखर',
 			'musicTools.bass' => 'बास',
 			'musicTools.treble' => 'ट्रेबल',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sharedPlaylists' => 'शेयर की गई प्लेलिस्ट',
 			'musicTools.sharingInvitationsTitle' => 'Plex साझाकरण आमंत्रण',
 			'musicTools.noSharingInvitations' => 'कोई लंबित आमंत्रण नहीं',

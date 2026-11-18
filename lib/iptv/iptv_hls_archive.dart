@@ -31,10 +31,11 @@ class IptvHlsArchive {
   final Map<String, String> headers;
   final File output;
   final Directory directory;
-  final DateTime endsAt;
+  DateTime endsAt;
   final int maximumBytes;
   SourceTransport? _transport;
   bool _stopped = false;
+  bool get capturing => !_stopped;
   int mediaBytes = 0;
   final Map<String, Uint8List> _keys = {};
 
@@ -97,6 +98,7 @@ class IptvHlsArchive {
       }
       succeeded = true;
     } finally {
+      _stopped = true;
       _keys.clear();
       transport.close();
       _transport = null;

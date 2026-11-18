@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "30분 더 녹화",
+    "recordsUntil": "${time} 까지 녹화",
+    "extendFailed": "녹화를 연장할 수 없습니다",
+    "originalDialogue": "원어 음성 우선",
+    "soloPage": "이 페이지만 따로 표시",
+    "pairPage": "이 페이지를 다시 묶기",
+    "listenPhone": "이 휴대전화로 듣기",
+    "audioUnavailable": "이 휴대전화에서 현재 파일 또는 오디오 트랙을 사용할 수 없습니다."
+  },
   "livingRoom": {
     "fitScreen": "내 화면에 맞추기",
     "fitHelp": "가장자리를 선택한 뒤 표시가 보일 때까지 방향키로 옮기세요. 나머지 가장자리도 같은 방법으로 조정하세요.",

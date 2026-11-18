@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "Record 30 more minutes",
+    "recordsUntil": "Recording until ${time}",
+    "extendFailed": "Couldn’t extend this recording",
+    "originalDialogue": "Prefer original dialogue",
+    "soloPage": "Show this page alone",
+    "pairPage": "Pair this page again",
+    "listenPhone": "Listen on this phone",
+    "audioUnavailable": "The current file or soundtrack is unavailable on this phone."
+  },
   "livingRoom": {
     "fitScreen": "Fit to my screen",
     "fitHelp": "Move each edge until its markers are visible. Select an edge, then use the arrows to adjust it.",

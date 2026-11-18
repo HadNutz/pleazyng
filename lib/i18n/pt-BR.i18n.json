@@ -1,4 +1,14 @@
 {
+  "viewing": {
+    "extendRecording": "Gravar mais 30 minutos",
+    "recordsUntil": "Gravando até ${time}",
+    "extendFailed": "Não foi possível estender a gravação",
+    "originalDialogue": "Preferir o áudio original",
+    "soloPage": "Mostrar esta página sozinha",
+    "pairPage": "Voltar a agrupar esta página",
+    "listenPhone": "Ouvir neste celular",
+    "audioUnavailable": "O arquivo ou a faixa de áudio não está disponível neste celular."
+  },
   "cast": {
     "subtitle": "Legendas"
   },

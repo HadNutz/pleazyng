@@ -152,6 +152,11 @@ class PlaybackCoordinator {
     }
   }
 
+  Future<void> claimPhoneListening() async {
+    await _stopFileSession?.call();
+    await claimFiles();
+  }
+
   /// Theme songs share the music channel, so both claims stop them first.
   void registerThemeSession(Future<void> Function() stop) => _stopThemeSession = stop;
 

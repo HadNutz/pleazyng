@@ -91,7 +91,7 @@ _initializeJellyfinAudioCarry({int? selectedAudioStreamId, AudioTrack? preferred
         'MediaStreams': [
           {'Index': 0, 'Type': 'Video'},
           {'Index': 1, 'Type': 'Audio', 'Codec': 'aac', 'Language': 'eng', 'IsDefault': true},
-          {'Index': 4, 'Type': 'Audio', 'Codec': 'flac', 'Language': 'jpn', 'Title': 'Main'},
+          {'Index': 4, 'Type': 'Audio', 'Codec': 'flac', 'Language': 'jpn', 'Title': 'Main', 'IsOriginal': true},
         ],
       },
     ],
@@ -2371,6 +2371,17 @@ void main() {
       expect(uri.queryParameters.containsKey('AudioStreamIndex'), isFalse);
       expect(uri.queryParameters['MediaSourceId'], 'src-1');
       expect(uri.queryParameters['Container'], 'mkv');
+    });
+
+    test('original dialogue selects the same row for negotiation and direct playback', () async {
+      resetSharedPreferencesForTest();
+      final settings = await SettingsService.getInstance();
+      await settings.write(SettingsService.preferOriginalDialogue, true);
+      final original = await _initializeJellyfinAudioCarry();
+      expect(original.playbackInfoUri.queryParameters['AudioStreamIndex'], '4');
+      expect(original.result.mediaInfo!.audioTracks.singleWhere((row) => row.selected).id, 4);
+      final picked = await _initializeJellyfinAudioCarry(selectedAudioStreamId: 1);
+      expect(picked.result.activeAudioStreamId, 1);
     });
 
     test('semantic carried audio resolves against the selected source before PlaybackInfo negotiation', () async {
