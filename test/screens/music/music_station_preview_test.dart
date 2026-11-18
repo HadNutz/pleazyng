@@ -171,7 +171,8 @@ void main() {
           ),
         ),
       );
-      await tester.ensureVisible(find.text(t.common.preview));
+      final stationForm = find.byType(Scrollable).first;
+      await tester.scrollUntilVisible(find.text(t.common.preview), 200, scrollable: stationForm);
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.common.preview));
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 30)));
@@ -184,7 +185,7 @@ void main() {
       if (scenario == 'hidden') hidden.hiddenLibraryKeys = {'s:library'};
       if (scenario == 'ownership') downloads.downloadedTracks = [];
       if (scenario == 'foreign') downloads.downloadedTracks = [musicTrack('owned').copyWith(libraryId: 'other')];
-      await tester.ensureVisible(find.text(t.common.play));
+      await tester.scrollUntilVisible(find.text(t.common.play), 200, scrollable: stationForm);
       await tester.pumpAndSettle();
       expect(find.text(t.common.play).hitTestable(), findsOneWidget);
       await tester.tap(find.text(t.common.play));

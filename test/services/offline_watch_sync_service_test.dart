@@ -203,6 +203,7 @@ void main() {
   group('queueMarkWatched / queueMarkUnwatched', () {
     test('queueMarkWatched persists a "watched" action and bumps pending count', () async {
       final (svc: svc, db: db, mgr: _) = _makeService();
+      svc.setActiveProfileId('profile-a');
 
       var notifications = 0;
       svc.addListener(() => notifications++);
@@ -233,6 +234,7 @@ void main() {
 
     test('queueing the opposite action replaces the prior action (single row)', () async {
       final (svc: svc, db: db, mgr: _) = _makeService();
+      svc.setActiveProfileId('profile-a');
 
       await svc.queueMarkWatched(serverId: ServerId('srv'), itemId: '42');
       expect(await svc.getPendingSyncCount(), 1);
@@ -266,6 +268,7 @@ void main() {
 
     test('different ratingKeys persist independently', () async {
       final (svc: svc, db: db, mgr: _) = _makeService();
+      svc.setActiveProfileId('profile-a');
 
       await svc.queueMarkWatched(serverId: ServerId('srv'), itemId: '1');
       await svc.queueMarkWatched(serverId: ServerId('srv'), itemId: '2');
@@ -409,6 +412,7 @@ void main() {
       await svc.syncPendingItems();
 
       expect(client.watched, isEmpty);
+      expect(await svc.getPendingSyncCount(), 0);
       expect(await db.getPendingSyncCount(), 1);
     });
 
@@ -486,6 +490,7 @@ void main() {
 
     test('repeated progress updates merge into the same row', () async {
       final (svc: svc, db: db, mgr: _) = _makeService();
+      svc.setActiveProfileId('profile-a');
 
       await svc.queueProgressUpdate(serverId: ServerId('srv'), itemId: '42', viewOffset: 10, duration: 100);
       await svc.queueProgressUpdate(serverId: ServerId('srv'), itemId: '42', viewOffset: 20, duration: 100);
@@ -507,6 +512,7 @@ void main() {
     // mark cleared, which pins the item to Continue Watching on MediaBrowser.
     test('a watched event drops the queued progress row for that item', () async {
       final (svc: svc, db: db, mgr: _) = _makeService();
+      svc.setActiveProfileId('profile-a');
 
       await svc.queueProgressUpdate(serverId: ServerId('srv'), itemId: '42', viewOffset: 50000, duration: 100000);
       expect(await svc.getPendingSyncCount(), 1);
@@ -665,6 +671,7 @@ void main() {
   group('getPendingSyncCount', () {
     test('counts every queued action (manual + progress)', () async {
       final svc = _makeService().svc;
+      svc.setActiveProfileId('profile-a');
 
       expect(await svc.getPendingSyncCount(), 0);
 
@@ -676,6 +683,7 @@ void main() {
 
     test('progress upsert does NOT increment count', () async {
       final svc = _makeService().svc;
+      svc.setActiveProfileId('profile-a');
 
       await svc.queueProgressUpdate(serverId: ServerId('srv'), itemId: '1', viewOffset: 10, duration: 100);
       await svc.queueProgressUpdate(serverId: ServerId('srv'), itemId: '1', viewOffset: 20, duration: 100);
@@ -962,6 +970,7 @@ void main() {
 
     test('legacy Jellyfin rows without clientScopeId are not synced through the active server client', () async {
       final (svc: svc, db: db, mgr: mgr) = _makeService();
+      svc.setActiveProfileId('profile-a');
 
       final paths = <String>[];
       final client = JellyfinClient.forTesting(
@@ -981,6 +990,7 @@ void main() {
 
       mgr.debugRegisterJellyfinClientForTesting(client);
       await db.insertWatchAction(
+        profileId: 'profile-a',
         serverId: ServerId('jf-machine'),
         ratingKey: 'item-1',
         actionType: OfflineActionType.watched.id,
@@ -994,6 +1004,7 @@ void main() {
 
     test('legacy Jellyfin rows without clientScopeId do not borrow downloaded source scope during replay', () async {
       final (svc: svc, db: db, mgr: mgr) = _makeService();
+      svc.setActiveProfileId('profile-a');
 
       final pathsByUser = <String, List<String>>{'user-a': [], 'user-b': []};
 
@@ -1027,6 +1038,7 @@ void main() {
         status: 3,
       );
       await db.insertWatchAction(
+        profileId: 'profile-a',
         serverId: ServerId('jf-machine'),
         ratingKey: 'item-1',
         actionType: OfflineActionType.watched.id,
@@ -1324,6 +1336,7 @@ void main() {
   group('clearAll', () {
     test('removes every queued action and notifies listeners', () async {
       final svc = _makeService().svc;
+      svc.setActiveProfileId('profile-a');
 
       await svc.queueMarkWatched(serverId: ServerId('srv'), itemId: '1');
       await svc.queueMarkUnwatched(serverId: ServerId('srv'), itemId: '2');
