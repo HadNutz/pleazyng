@@ -4523,6 +4523,8 @@ class ExoPlayerCore(private val activity: Activity) :
       "videoMimeType" to videoFormat?.sampleMimeType,
       "videoWidth" to videoFormat?.width,
       "videoHeight" to videoFormat?.height,
+      "surfaceWidth" to surfaceView?.width?.takeIf { it > 0 },
+      "surfaceHeight" to surfaceView?.height?.takeIf { it > 0 },
       "videoFps" to (videoFormat?.frameRate?.takeIf { it > 0 } ?: detectedFrameRate.takeIf { it > 0 }),
       "sourceIsHdr" to sourceIsHdr,
       "videoBitrate" to videoFormat?.bitrate,

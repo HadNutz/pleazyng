@@ -390,6 +390,8 @@ class PerformanceStatsService {
         playerType: 'exoplayer',
         // Video metrics
         videoCodec: _formatVideoCodecName((statsMap['videoCodec'] ?? statsMap['videoMimeType']) as String?),
+        surfaceWidth: statsMap['surfaceWidth'] as int?,
+        surfaceHeight: statsMap['surfaceHeight'] as int?,
         videoWidth: statsMap['videoWidth'] as int?,
         videoHeight: statsMap['videoHeight'] as int?,
         videoFps: (statsMap['videoFps'] as num?)?.toDouble(),

@@ -463,7 +463,10 @@ class ExternalPlayerService {
 
     final params = uri.queryParameters;
     final reportedDuration = _callbackNumber(params['duration']);
-    final msPerUnit = _callbackMsPerUnit(reportedDuration, session.metadata.durationMs);
+    final msPerUnit = _callbackMsPerUnit(
+      reportedDuration,
+      session.partTimeline?.current.duration.inMilliseconds ?? session.metadata.durationMs,
+    );
     final durationMs = reportedDuration == null ? null : (reportedDuration * msPerUnit).round();
     final position = _callbackNumber(params['position'], allowZero: true);
     final positionMs = position == null ? null : (position * msPerUnit).round();
@@ -631,7 +634,7 @@ class ExternalPlayerService {
       durationMs = partTimeline.duration.inMilliseconds;
       final filePositionMs = _position(result.positionMs);
       reportedPositionMs = filePositionMs != null
-          ? part.start.inMilliseconds + filePositionMs
+          ? part.start.inMilliseconds + filePositionMs.clamp(0, part.duration.inMilliseconds)
           : (result.playbackCompleted ? part.end.inMilliseconds : null);
     } else {
       durationMs = _positive(result.durationMs) ?? _positive(metadata.durationMs);

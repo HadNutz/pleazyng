@@ -466,21 +466,27 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
     return profileId == null || profileId.isEmpty ? 0 : _database.getPendingSyncCount(profileId: profileId);
   }
 
-  bool _canRetry(OfflineWatchProgressItem row) =>
-      row.profileId != null &&
-      row.profileId == _activeProfileId &&
-      row.syncAttempts >= maxSyncAttempts &&
-      (row.clientScopeId == null || row.clientScopeId == _activeClientScopeIdForGlobalKey(row.globalKey));
+  Future<bool> _canRetry(OfflineWatchProgressItem row) async {
+    final profile = _activeProfileId, epoch = _profileGeneration;
+    if (profile == null || row.profileId != profile || row.syncAttempts < maxSyncAttempts) return false;
+    final scope = await _clientScopeIdForItem(ServerId(row.serverId), row.ratingKey, profile);
+    return epoch == _profileGeneration && scope == row.clientScopeId;
+  }
 
   Future<List<OfflineWatchProgressItem>> stalledWatchActions() async {
-    final profile = _activeProfileId;
+    final profile = _activeProfileId, epoch = _profileGeneration;
     if (profile == null || profile.isEmpty) return [];
     final rows = await _database.getPendingWatchActions(profileId: profile);
-    return rows.where(_canRetry).toList();
+    final owned = <OfflineWatchProgressItem>[];
+    for (final row in rows) {
+      if (epoch != _profileGeneration) return [];
+      if (await _canRetry(row)) owned.add(row);
+    }
+    return epoch == _profileGeneration ? owned : [];
   }
 
   Future<void> retryWatchAction(OfflineWatchProgressItem row) async {
-    if (!_canRetry(row)) return;
+    if (!await _canRetry(row)) return;
     if (await _database.resetWatchAttempts(row.id, row.updatedAt, row.profileId!, row.clientScopeId)) {
       safeNotifyListeners();
       if (_activeProfileId == row.profileId) await syncPendingItems();

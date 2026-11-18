@@ -125,7 +125,8 @@ class OsMediaControlsPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
         val text = when (code) {
             "profile_unavailable" -> labels?.get("unlock") as? String ?: "Unlock Pleazyng"
             "loading" -> labels?.get("loading") as? String ?: "Loading Pleazyng"
-            "no_match", "ambiguous_search" -> MusicCarApi.snapshot["noMatch"] as? String ?: "No matching media"
+            "ambiguous_search" -> "Several matches. Include an artist or album."
+            "no_match" -> MusicCarApi.snapshot["noMatch"] as? String ?: "No matching media"
             "stale_queue", "stale_widget" -> "Select the item again"
             else -> labels?.get("unavailable") as? String ?: "Media unavailable. Try again."
         }

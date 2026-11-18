@@ -1525,6 +1525,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         final intent = _music.beginPlayIntent();
         final matches = await _handle(MethodCall('resolveVoice', args)) as List;
         if (!mounted || !_current || !_music.isPlayIntentCurrent(intent)) return false;
+        if (matches.isEmpty) throw PlatformException(code: 'no_match');
         if (matches.length != 1) throw PlatformException(code: 'ambiguous_search');
         return _handle(MethodCall('playItem', {...args, 'id': (matches.single as Map)['id']}));
       case 'jump':
