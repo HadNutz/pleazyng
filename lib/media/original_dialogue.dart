@@ -11,7 +11,7 @@ MediaAudioTrack? originalDialogue(List<MediaAudioTrack> tracks, {String? languag
             !t.dubbed &&
             !t.commentary &&
             !t.described &&
-            !_alternate.hasMatch('${t.title ?? ''} ${t.displayTitle ?? ''}'),
+            !isAlternateDialogueTitle('${t.title ?? ''} ${t.displayTitle ?? ''}'),
       )
       .toList();
   final flagged = main.where((t) => t.original).toList();
@@ -21,6 +21,8 @@ MediaAudioTrack? originalDialogue(List<MediaAudioTrack> tracks, {String? languag
   if (code == null) return null;
   return main.where((t) => LanguageCodes.getIso6391Code(t.languageCode ?? '') == code).singleOrNull;
 }
+
+bool isAlternateDialogueTitle(String? title) => _alternate.hasMatch(title ?? '');
 
 final _alternate = RegExp(
   r'\b(commentary|audio description|descriptive audio|described video|visually impaired|dubbed)\b',

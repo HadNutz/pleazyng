@@ -6,7 +6,7 @@
 - Add mpv to the LG and Samsung TV builds. LG mpv can feed the TV video plane directly. TV mpv can also try V4L2 hardware decoding. Samsung original-quality sources can reach the native decoder at UHD resolution. See [video engines and device qualification](docs/plezyng/video-engines.md).
 
 - Extending an active sports recording draws on [gingie’s Channels DVR request](https://community.getchannels.com/t/extend-live-recordings/1789).
-- Original dialogue selection draws on [@Altarentys’s Plezy request #3019](https://github.com/edde746/plezy/issues/3019).
+- Prefer original dialogue from server metadata and embedded track flags in direct files. Original dialogue selection draws on [@Altarentys’s Plezy request #3019](https://github.com/edde746/plezy/issues/3019).
 - Per-issue comic spread correction draws on the pairing problem reported by [@fatherpanda in Kavita #4903](https://github.com/Kareadita/Kavita/issues/4903).
 - Synchronized personal audio description takes inspiration from [GRETA by Greta & Starks Apps GmbH](https://apps.apple.com/ca/app/greta/id793892423). Pleazyng uses the listener’s own server file and embedded tracks.
 

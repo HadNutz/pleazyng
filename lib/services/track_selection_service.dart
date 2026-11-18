@@ -6,6 +6,9 @@ import '../media/media_backend.dart';
 import '../media/media_item.dart';
 import '../media/media_server_user_profile.dart';
 import '../media/media_source_info.dart';
+import '../media/original_dialogue.dart';
+import 'settings_service.dart';
+
 import '../utils/future_extensions.dart';
 import '../utils/app_logger.dart';
 import '../utils/language_codes.dart';
@@ -1065,6 +1068,13 @@ class TrackSelectionService {
 
     // Priority 2: Check server-selected track from media info
     final info = plexMediaInfo;
+    if (info?.hasRequestedAudioTrack != true &&
+        SettingsService.instanceOrNull?.read(SettingsService.preferOriginalDialogue) == true) {
+      // A direct file may expose an original disposition that its server omitted.
+      final original = availableTracks.where((t) => t.originalDialogue && !isAlternateDialogueTitle(t.title));
+      final track = original.singleOrNull ?? original.where((t) => t.isDefault).singleOrNull;
+      if (track != null) return TrackSelectionResult(track, TrackSelectionPriority.deviceLocalOverride);
+    }
     if (info != null && availableTracks.isNotEmpty) {
       final serverSelectedTrack = info.audioTracks.where((t) => t.selected).firstOrNull;
 

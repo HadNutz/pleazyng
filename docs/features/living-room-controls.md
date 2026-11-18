@@ -26,7 +26,7 @@ While a local scheduled IPTV recording is running, choose **Record 30 more minut
 
 ## Original dialogue
 
-In **Settings → Playback → Audio**, enable **Prefer original dialogue**. An explicit audio selection takes priority. With no override, Pleazyng looks for a main audio track flagged as original. If no track has that flag, a verified original language can identify a single main dialogue track. Ambiguous matches leave the usual selection in effect. Movie language lookup through a configured Seerr connection uses the exact TMDB movie ID.
+In **Settings → Playback → Audio**, enable **Prefer original dialogue**. An explicit audio selection takes priority. With no override, Pleazyng looks for a main audio track flagged as original. If no track has that flag, a verified original language can identify a single main dialogue track. On direct playback, a capable engine can also read original-track flags from the file when the server supplies no decision. Ambiguous matches leave the usual selection in effect. Movie language lookup through a configured Seerr connection uses the exact TMDB movie ID.
 
 ## Comic spreads
 

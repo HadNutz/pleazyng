@@ -502,7 +502,9 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     }
 
     final effectiveAudioStreamId = _resolveJellyfinAudioStreamId(requestedAudioStreamId, mediaInfo);
-    mediaInfo = _withSelectedJellyfinAudioStream(mediaInfo, effectiveAudioStreamId);
+    mediaInfo = requestedAudioStreamId == null
+        ? _withSelectedJellyfinAudioStream(mediaInfo, effectiveAudioStreamId)
+        : mediaInfo.selectAudio(effectiveAudioStreamId);
     // Tracks have no subtitle streams to assemble (a `Lyric` stream may be
     // present, but lyrics flow through fetchLyrics, not the subtitle path).
     //

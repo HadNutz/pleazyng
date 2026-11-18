@@ -76,6 +76,16 @@ void main() {
   });
 
   group('track-list property handler', () {
+    test('exposes the original main mix while filtering dub and accessibility dispositions', () async {
+      await withPlayer((player) async {
+        player.handlePropertyChange('track-list', [
+          {'type': 'audio', 'id': 1, 'original': true},
+          for (final (index, flag) in ['dub', 'commentary', 'visual-impaired', 'hearing-impaired'].indexed)
+            {'type': 'audio', 'id': index + 2, 'original': true, flag: true},
+        ]);
+        expect(player.state.tracks.audio.where((track) => track.originalDialogue).map((track) => track.id), ['1']);
+      });
+    });
     test('drives both subtitle selections from one track-list event, in either order', () async {
       for (final trackList in [primaryFirst, secondaryFirst]) {
         await withPlayer((player) async {

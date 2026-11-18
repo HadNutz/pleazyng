@@ -126,6 +126,9 @@ sealed class AudioTrack with _$AudioTrack {
     /// fills or replaces it for the selected track.
     String? codecProfile,
     int? ffIndex,
+
+    /// The demuxer explicitly flagged this main soundtrack as original.
+    @Default(false) bool originalDialogue,
     int? channels,
     int? sampleRate,
     int? bitrate,

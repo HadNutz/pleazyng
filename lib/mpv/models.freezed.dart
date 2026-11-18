@@ -517,7 +517,8 @@ mixin _$AudioTrack {
  String get id; String? get title; String? get language; String? get codec;/// mpv's `codec-profile` (ffmpeg's profile name, e.g. `DTS-HD MA`). The
 /// patched demuxer publishes it for every DTS track at load; a decoder
 /// fills or replaces it for the selected track.
- String? get codecProfile; int? get ffIndex; int? get channels; int? get sampleRate; int? get bitrate; bool get isDefault; bool get isForced;
+ String? get codecProfile; int? get ffIndex;/// The demuxer explicitly flagged this main soundtrack as original.
+ bool get originalDialogue; int? get channels; int? get sampleRate; int? get bitrate; bool get isDefault; bool get isForced;
 /// Create a copy of AudioTrack
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -528,16 +529,16 @@ $AudioTrackCopyWith<AudioTrack> get copyWith => _$AudioTrackCopyWithImpl<AudioTr
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AudioTrack&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.language, language) || other.language == language)&&(identical(other.codec, codec) || other.codec == codec)&&(identical(other.codecProfile, codecProfile) || other.codecProfile == codecProfile)&&(identical(other.ffIndex, ffIndex) || other.ffIndex == ffIndex)&&(identical(other.channels, channels) || other.channels == channels)&&(identical(other.sampleRate, sampleRate) || other.sampleRate == sampleRate)&&(identical(other.bitrate, bitrate) || other.bitrate == bitrate)&&(identical(other.isDefault, isDefault) || other.isDefault == isDefault)&&(identical(other.isForced, isForced) || other.isForced == isForced));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AudioTrack&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.language, language) || other.language == language)&&(identical(other.codec, codec) || other.codec == codec)&&(identical(other.codecProfile, codecProfile) || other.codecProfile == codecProfile)&&(identical(other.ffIndex, ffIndex) || other.ffIndex == ffIndex)&&(identical(other.originalDialogue, originalDialogue) || other.originalDialogue == originalDialogue)&&(identical(other.channels, channels) || other.channels == channels)&&(identical(other.sampleRate, sampleRate) || other.sampleRate == sampleRate)&&(identical(other.bitrate, bitrate) || other.bitrate == bitrate)&&(identical(other.isDefault, isDefault) || other.isDefault == isDefault)&&(identical(other.isForced, isForced) || other.isForced == isForced));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,language,codec,codecProfile,ffIndex,channels,sampleRate,bitrate,isDefault,isForced);
+int get hashCode => Object.hash(runtimeType,id,title,language,codec,codecProfile,ffIndex,originalDialogue,channels,sampleRate,bitrate,isDefault,isForced);
 
 @override
 String toString() {
-  return 'AudioTrack(id: $id, title: $title, language: $language, codec: $codec, codecProfile: $codecProfile, ffIndex: $ffIndex, channels: $channels, sampleRate: $sampleRate, bitrate: $bitrate, isDefault: $isDefault, isForced: $isForced)';
+  return 'AudioTrack(id: $id, title: $title, language: $language, codec: $codec, codecProfile: $codecProfile, ffIndex: $ffIndex, originalDialogue: $originalDialogue, channels: $channels, sampleRate: $sampleRate, bitrate: $bitrate, isDefault: $isDefault, isForced: $isForced)';
 }
 
 
@@ -548,7 +549,7 @@ abstract mixin class $AudioTrackCopyWith<$Res>  {
   factory $AudioTrackCopyWith(AudioTrack value, $Res Function(AudioTrack) _then) = _$AudioTrackCopyWithImpl;
 @useResult
 $Res call({
- String id, String? title, String? language, String? codec, String? codecProfile, int? ffIndex, int? channels, int? sampleRate, int? bitrate, bool isDefault, bool isForced
+ String id, String? title, String? language, String? codec, String? codecProfile, int? ffIndex, bool originalDialogue, int? channels, int? sampleRate, int? bitrate, bool isDefault, bool isForced
 });
 
 
@@ -565,7 +566,7 @@ class _$AudioTrackCopyWithImpl<$Res>
 
 /// Create a copy of AudioTrack
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = freezed,Object? language = freezed,Object? codec = freezed,Object? codecProfile = freezed,Object? ffIndex = freezed,Object? channels = freezed,Object? sampleRate = freezed,Object? bitrate = freezed,Object? isDefault = null,Object? isForced = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = freezed,Object? language = freezed,Object? codec = freezed,Object? codecProfile = freezed,Object? ffIndex = freezed,Object? originalDialogue = null,Object? channels = freezed,Object? sampleRate = freezed,Object? bitrate = freezed,Object? isDefault = null,Object? isForced = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -573,7 +574,8 @@ as String?,language: freezed == language ? _self.language : language // ignore: 
 as String?,codec: freezed == codec ? _self.codec : codec // ignore: cast_nullable_to_non_nullable
 as String?,codecProfile: freezed == codecProfile ? _self.codecProfile : codecProfile // ignore: cast_nullable_to_non_nullable
 as String?,ffIndex: freezed == ffIndex ? _self.ffIndex : ffIndex // ignore: cast_nullable_to_non_nullable
-as int?,channels: freezed == channels ? _self.channels : channels // ignore: cast_nullable_to_non_nullable
+as int?,originalDialogue: null == originalDialogue ? _self.originalDialogue : originalDialogue // ignore: cast_nullable_to_non_nullable
+as bool,channels: freezed == channels ? _self.channels : channels // ignore: cast_nullable_to_non_nullable
 as int?,sampleRate: freezed == sampleRate ? _self.sampleRate : sampleRate // ignore: cast_nullable_to_non_nullable
 as int?,bitrate: freezed == bitrate ? _self.bitrate : bitrate // ignore: cast_nullable_to_non_nullable
 as int?,isDefault: null == isDefault ? _self.isDefault : isDefault // ignore: cast_nullable_to_non_nullable
@@ -660,10 +662,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? title,  String? language,  String? codec,  String? codecProfile,  int? ffIndex,  int? channels,  int? sampleRate,  int? bitrate,  bool isDefault,  bool isForced)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? title,  String? language,  String? codec,  String? codecProfile,  int? ffIndex,  bool originalDialogue,  int? channels,  int? sampleRate,  int? bitrate,  bool isDefault,  bool isForced)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AudioTrack() when $default != null:
-return $default(_that.id,_that.title,_that.language,_that.codec,_that.codecProfile,_that.ffIndex,_that.channels,_that.sampleRate,_that.bitrate,_that.isDefault,_that.isForced);case _:
+return $default(_that.id,_that.title,_that.language,_that.codec,_that.codecProfile,_that.ffIndex,_that.originalDialogue,_that.channels,_that.sampleRate,_that.bitrate,_that.isDefault,_that.isForced);case _:
   return orElse();
 
 }
@@ -681,10 +683,10 @@ return $default(_that.id,_that.title,_that.language,_that.codec,_that.codecProfi
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? title,  String? language,  String? codec,  String? codecProfile,  int? ffIndex,  int? channels,  int? sampleRate,  int? bitrate,  bool isDefault,  bool isForced)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? title,  String? language,  String? codec,  String? codecProfile,  int? ffIndex,  bool originalDialogue,  int? channels,  int? sampleRate,  int? bitrate,  bool isDefault,  bool isForced)  $default,) {final _that = this;
 switch (_that) {
 case _AudioTrack():
-return $default(_that.id,_that.title,_that.language,_that.codec,_that.codecProfile,_that.ffIndex,_that.channels,_that.sampleRate,_that.bitrate,_that.isDefault,_that.isForced);}
+return $default(_that.id,_that.title,_that.language,_that.codec,_that.codecProfile,_that.ffIndex,_that.originalDialogue,_that.channels,_that.sampleRate,_that.bitrate,_that.isDefault,_that.isForced);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -698,10 +700,10 @@ return $default(_that.id,_that.title,_that.language,_that.codec,_that.codecProfi
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? title,  String? language,  String? codec,  String? codecProfile,  int? ffIndex,  int? channels,  int? sampleRate,  int? bitrate,  bool isDefault,  bool isForced)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? title,  String? language,  String? codec,  String? codecProfile,  int? ffIndex,  bool originalDialogue,  int? channels,  int? sampleRate,  int? bitrate,  bool isDefault,  bool isForced)?  $default,) {final _that = this;
 switch (_that) {
 case _AudioTrack() when $default != null:
-return $default(_that.id,_that.title,_that.language,_that.codec,_that.codecProfile,_that.ffIndex,_that.channels,_that.sampleRate,_that.bitrate,_that.isDefault,_that.isForced);case _:
+return $default(_that.id,_that.title,_that.language,_that.codec,_that.codecProfile,_that.ffIndex,_that.originalDialogue,_that.channels,_that.sampleRate,_that.bitrate,_that.isDefault,_that.isForced);case _:
   return null;
 
 }
@@ -713,7 +715,7 @@ return $default(_that.id,_that.title,_that.language,_that.codec,_that.codecProfi
 
 
 class _AudioTrack extends AudioTrack {
-  const _AudioTrack({required this.id, this.title, this.language, this.codec, this.codecProfile, this.ffIndex, this.channels, this.sampleRate, this.bitrate, this.isDefault = false, this.isForced = false}): super._();
+  const _AudioTrack({required this.id, this.title, this.language, this.codec, this.codecProfile, this.ffIndex, this.originalDialogue = false, this.channels, this.sampleRate, this.bitrate, this.isDefault = false, this.isForced = false}): super._();
   
 
 @override final  String id;
@@ -725,6 +727,8 @@ class _AudioTrack extends AudioTrack {
 /// fills or replaces it for the selected track.
 @override final  String? codecProfile;
 @override final  int? ffIndex;
+/// The demuxer explicitly flagged this main soundtrack as original.
+@override@JsonKey() final  bool originalDialogue;
 @override final  int? channels;
 @override final  int? sampleRate;
 @override final  int? bitrate;
@@ -741,16 +745,16 @@ _$AudioTrackCopyWith<_AudioTrack> get copyWith => __$AudioTrackCopyWithImpl<_Aud
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AudioTrack&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.language, language) || other.language == language)&&(identical(other.codec, codec) || other.codec == codec)&&(identical(other.codecProfile, codecProfile) || other.codecProfile == codecProfile)&&(identical(other.ffIndex, ffIndex) || other.ffIndex == ffIndex)&&(identical(other.channels, channels) || other.channels == channels)&&(identical(other.sampleRate, sampleRate) || other.sampleRate == sampleRate)&&(identical(other.bitrate, bitrate) || other.bitrate == bitrate)&&(identical(other.isDefault, isDefault) || other.isDefault == isDefault)&&(identical(other.isForced, isForced) || other.isForced == isForced));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AudioTrack&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.language, language) || other.language == language)&&(identical(other.codec, codec) || other.codec == codec)&&(identical(other.codecProfile, codecProfile) || other.codecProfile == codecProfile)&&(identical(other.ffIndex, ffIndex) || other.ffIndex == ffIndex)&&(identical(other.originalDialogue, originalDialogue) || other.originalDialogue == originalDialogue)&&(identical(other.channels, channels) || other.channels == channels)&&(identical(other.sampleRate, sampleRate) || other.sampleRate == sampleRate)&&(identical(other.bitrate, bitrate) || other.bitrate == bitrate)&&(identical(other.isDefault, isDefault) || other.isDefault == isDefault)&&(identical(other.isForced, isForced) || other.isForced == isForced));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,language,codec,codecProfile,ffIndex,channels,sampleRate,bitrate,isDefault,isForced);
+int get hashCode => Object.hash(runtimeType,id,title,language,codec,codecProfile,ffIndex,originalDialogue,channels,sampleRate,bitrate,isDefault,isForced);
 
 @override
 String toString() {
-  return 'AudioTrack(id: $id, title: $title, language: $language, codec: $codec, codecProfile: $codecProfile, ffIndex: $ffIndex, channels: $channels, sampleRate: $sampleRate, bitrate: $bitrate, isDefault: $isDefault, isForced: $isForced)';
+  return 'AudioTrack(id: $id, title: $title, language: $language, codec: $codec, codecProfile: $codecProfile, ffIndex: $ffIndex, originalDialogue: $originalDialogue, channels: $channels, sampleRate: $sampleRate, bitrate: $bitrate, isDefault: $isDefault, isForced: $isForced)';
 }
 
 
@@ -761,7 +765,7 @@ abstract mixin class _$AudioTrackCopyWith<$Res> implements $AudioTrackCopyWith<$
   factory _$AudioTrackCopyWith(_AudioTrack value, $Res Function(_AudioTrack) _then) = __$AudioTrackCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String? title, String? language, String? codec, String? codecProfile, int? ffIndex, int? channels, int? sampleRate, int? bitrate, bool isDefault, bool isForced
+ String id, String? title, String? language, String? codec, String? codecProfile, int? ffIndex, bool originalDialogue, int? channels, int? sampleRate, int? bitrate, bool isDefault, bool isForced
 });
 
 
@@ -778,7 +782,7 @@ class __$AudioTrackCopyWithImpl<$Res>
 
 /// Create a copy of AudioTrack
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = freezed,Object? language = freezed,Object? codec = freezed,Object? codecProfile = freezed,Object? ffIndex = freezed,Object? channels = freezed,Object? sampleRate = freezed,Object? bitrate = freezed,Object? isDefault = null,Object? isForced = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = freezed,Object? language = freezed,Object? codec = freezed,Object? codecProfile = freezed,Object? ffIndex = freezed,Object? originalDialogue = null,Object? channels = freezed,Object? sampleRate = freezed,Object? bitrate = freezed,Object? isDefault = null,Object? isForced = null,}) {
   return _then(_AudioTrack(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -786,7 +790,8 @@ as String?,language: freezed == language ? _self.language : language // ignore: 
 as String?,codec: freezed == codec ? _self.codec : codec // ignore: cast_nullable_to_non_nullable
 as String?,codecProfile: freezed == codecProfile ? _self.codecProfile : codecProfile // ignore: cast_nullable_to_non_nullable
 as String?,ffIndex: freezed == ffIndex ? _self.ffIndex : ffIndex // ignore: cast_nullable_to_non_nullable
-as int?,channels: freezed == channels ? _self.channels : channels // ignore: cast_nullable_to_non_nullable
+as int?,originalDialogue: null == originalDialogue ? _self.originalDialogue : originalDialogue // ignore: cast_nullable_to_non_nullable
+as bool,channels: freezed == channels ? _self.channels : channels // ignore: cast_nullable_to_non_nullable
 as int?,sampleRate: freezed == sampleRate ? _self.sampleRate : sampleRate // ignore: cast_nullable_to_non_nullable
 as int?,bitrate: freezed == bitrate ? _self.bitrate : bitrate // ignore: cast_nullable_to_non_nullable
 as int?,isDefault: null == isDefault ? _self.isDefault : isDefault // ignore: cast_nullable_to_non_nullable

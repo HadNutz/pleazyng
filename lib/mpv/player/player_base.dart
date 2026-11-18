@@ -962,6 +962,12 @@ abstract class PlayerBase
             language: cleanTrackMetadataValue(track['lang'] is String ? track['lang'] as String : null),
             codec: track['codec'] is String ? track['codec'] as String : null,
             ffIndex: _finiteInt(track['ff-index']),
+            originalDialogue:
+                track['original'] == true &&
+                track['dub'] != true &&
+                track['commentary'] != true &&
+                track['visual-impaired'] != true &&
+                track['hearing-impaired'] != true,
             codecProfile: track['codec-profile'] is String ? track['codec-profile'] as String : null,
             channels: _finiteInt(track['demux-channel-count']),
             sampleRate: _finiteInt(track['demux-samplerate']),

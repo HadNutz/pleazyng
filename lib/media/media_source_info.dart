@@ -7,6 +7,9 @@ import 'media_part_timeline.dart';
 class MediaSourceInfo {
   final String videoUrl;
   final String? originalLanguage;
+
+  /// A track already chosen by the app during source negotiation.
+  final bool hasRequestedAudioTrack;
   final List<MediaAudioTrack> audioTracks;
   final List<MediaSubtitleTrack> subtitleTracks;
   final List<MediaChapter> chapters;
@@ -42,6 +45,7 @@ class MediaSourceInfo {
   MediaSourceInfo({
     required this.videoUrl,
     this.originalLanguage,
+    this.hasRequestedAudioTrack = false,
     required this.audioTracks,
     required this.subtitleTracks,
     required this.chapters,
@@ -59,16 +63,24 @@ class MediaSourceInfo {
 
   MediaSourceInfo selectAudio(int? id) {
     if (id == null || !audioTracks.any((t) => t.id == id)) return this;
-    return copyWith(audioTracks: [for (final t in audioTracks) t.withSelected(t.id == id)]);
+    return copyWith(
+      hasRequestedAudioTrack: true,
+      audioTracks: [for (final t in audioTracks) t.withSelected(t.id == id)],
+    );
   }
 
   /// Field-preserving rebuild. Track lists are the only members that the
   /// playback pipeline rewrites after construction; every other field must
   /// survive those rewrites untouched.
-  MediaSourceInfo copyWith({List<MediaAudioTrack>? audioTracks, List<MediaSubtitleTrack>? subtitleTracks}) {
+  MediaSourceInfo copyWith({
+    List<MediaAudioTrack>? audioTracks,
+    List<MediaSubtitleTrack>? subtitleTracks,
+    bool? hasRequestedAudioTrack,
+  }) {
     return MediaSourceInfo(
       videoUrl: videoUrl,
       originalLanguage: originalLanguage,
+      hasRequestedAudioTrack: hasRequestedAudioTrack ?? this.hasRequestedAudioTrack,
       audioTracks: audioTracks ?? this.audioTracks,
       subtitleTracks: subtitleTracks ?? this.subtitleTracks,
       chapters: chapters,
