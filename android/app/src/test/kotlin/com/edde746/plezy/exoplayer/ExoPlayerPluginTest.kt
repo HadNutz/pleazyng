@@ -328,7 +328,7 @@ class ExoPlayerPluginTest {
       superseded
     )
     plugin.onMethodCall(
-      MethodCall("open", mapOf("uri" to "https://example.test/episode-3.mkv", "autoPlay" to true)),
+      MethodCall("open", mapOf("uri" to "https://example.test/Items/3/stream", "autoPlay" to true, "rawMotionJpeg" to true)),
       active
     )
 
@@ -343,9 +343,10 @@ class ExoPlayerPluginTest {
     assertEquals(null, active.errorCode)
     // mpv received exactly the newest open, with its play intent; neither the
     // failed Exo URI nor the superseded episode was ever loaded.
-    assertEquals(listOf("https://example.test/episode-3.mkv"), loads.map { it[1] })
+    assertEquals(listOf("https://example.test/Items/3/stream"), loads.map { it[1] })
     assertEquals("pause=no", loads.single()[4].split(",")[1])
     assertTrue("fallback events were not delivered", awaitFallbackEventCount(sink, 2))
+    assertTrue("demuxer-lavf-format=mjpeg" in loads.last()[4].split(","))
     val firstFallbackEvents = fallbackEventNames(sink)
     assertEquals(
       "Unexpected MPV event sequence after the first fallback open: $firstFallbackEvents",
@@ -365,6 +366,7 @@ class ExoPlayerPluginTest {
     assertEquals("https://example.test/episode-4.mkv", loads.last()[1])
     assertEquals("pause=yes", loads.last()[4].split(",")[1])
     assertTrue("subsequent fallback events were not delivered", awaitFallbackEventCount(sink, 3))
+    assertFalse("demuxer-lavf-format=mjpeg" in loads.last()[4].split(","))
     val subsequentFallbackEvents = fallbackEventNames(sink)
     assertEquals(
       "Unexpected MPV event sequence after the next fallback open: $subsequentFallbackEvents",

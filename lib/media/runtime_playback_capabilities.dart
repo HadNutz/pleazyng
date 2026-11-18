@@ -165,6 +165,7 @@ abstract final class RuntimePlaybackCapabilities {
     (containers: {'avs3'}, demuxers: {'avs3'}, codecs: {'avs3'}),
     (containers: {'apv'}, demuxers: {'apv'}, codecs: {'apv'}),
     (containers: {'m1v', 'm2v', 'mpv'}, demuxers: {'mpegvideo'}, codecs: {'mpeg1video', 'mpeg2video'}),
+    (containers: {'mjpeg', 'mjpg'}, demuxers: {'mjpeg'}, codecs: {'mjpeg'}),
     (containers: {'jxl'}, demuxers: {'jpegxl_pipe'}, codecs: {'jpegxl'}),
     (containers: {'jxl'}, demuxers: {'jpegxl_anim'}, codecs: {'jpegxl_anim'}),
     (containers: {'dv'}, demuxers: {'dv'}, codecs: {'dvvideo'}),

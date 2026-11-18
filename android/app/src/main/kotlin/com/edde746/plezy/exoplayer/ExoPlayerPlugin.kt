@@ -81,6 +81,7 @@ open class ExoPlayerPlugin(
      */
     var autoPlay: Boolean,
     val isLive: Boolean,
+    val rawMotionJpeg: Boolean,
     val externalSubtitles: List<Map<String, Any?>>?,
     val contentFrameRate: Float,
     private val result: MethodChannel.Result?
@@ -156,6 +157,7 @@ open class ExoPlayerPlugin(
   // PlayerAndroid.setProperty), so the fallback core has to be seeded from the
   // last configured value or it loses the fork's P7/P5 handling entirely.
   private var dvConversionMode = "auto"
+  private var currentRawMotionJpeg = false
   private var currentExternalSubtitles: List<Map<String, Any?>>? = null
 
   // FlutterPlugin
@@ -190,6 +192,7 @@ open class ExoPlayerPlugin(
     pendingOpen = null
     inFlightOpen?.error("NOT_INITIALIZED", "Player session ended before media could open")
     inFlightOpen = null
+    currentRawMotionJpeg = false
     currentExternalSubtitles = null
     pendingMpvProperties.clear()
     audioPassthroughRequested = false
@@ -451,11 +454,13 @@ open class ExoPlayerPlugin(
       hasStartPosition = hasStartPosition,
       autoPlay = autoPlay,
       isLive = isLive,
+      rawMotionJpeg = !isLive && call.argument<Boolean>("rawMotionJpeg") == true,
       externalSubtitles = externalSubtitles?.map { it.toMap() },
       contentFrameRate = contentFrameRate,
       result = result
     )
     terminalEventGeneration = null
+    currentRawMotionJpeg = request.rawMotionJpeg
     currentExternalSubtitles = request.externalSubtitles
 
     if (fallbackInProgress) {
@@ -526,6 +531,7 @@ open class ExoPlayerPlugin(
     startPositionMs: Long,
     hasStartPosition: Boolean,
     autoPlay: Boolean,
+    rawMotionJpeg: Boolean,
     externalSubtitles: List<Map<String, Any?>>?,
     onComplete: (Boolean) -> Unit
   ) {
@@ -533,6 +539,7 @@ open class ExoPlayerPlugin(
     val options = mutableListOf<String>()
     options.add(if (hasStartPosition && startPositionMs > 0L) "start=$startSeconds" else "start=none")
     options.add(if (autoPlay) "pause=no" else "pause=yes")
+    if (rawMotionJpeg) options.add("demuxer-lavf-format=mjpeg")
     options.add("sid=no")
     options.add("secondary-sid=no")
     appendExternalSubtitleOptions(options, externalSubtitles)
@@ -787,6 +794,7 @@ open class ExoPlayerPlugin(
         startPositionMs = request.startPositionMs,
         hasStartPosition = request.hasStartPosition,
         autoPlay = request.autoPlay,
+        rawMotionJpeg = request.rawMotionJpeg,
         externalSubtitles = request.externalSubtitles
       ) { success ->
         if (!settled.compareAndSet(false, true)) {
@@ -1680,6 +1688,7 @@ open class ExoPlayerPlugin(
       hasStartPosition = positionMs > 0L,
       autoPlay = playWhenReady,
       isLive = false,
+      rawMotionJpeg = currentRawMotionJpeg,
       externalSubtitles = currentExternalSubtitles?.map { it.toMap() },
       // The mpv fallback core paces frames itself; the rate only gates ExoPlayer tunneling.
       contentFrameRate = -1f,

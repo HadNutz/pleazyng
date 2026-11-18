@@ -271,6 +271,24 @@ class ReplayGainSettings {
 
 @freezed
 sealed class Media with _$Media {
-  const factory Media(String uri, {Map<String, String>? headers, Duration? start, ReplayGainSettings? replayGain}) =
-      _Media;
+  const factory Media(
+    String uri, {
+    Map<String, String>? headers,
+    Duration? start,
+    ReplayGainSettings? replayGain,
+    String? container,
+  }) = _Media;
+}
+
+extension MotionJpegInput on Media {
+  /// mpv's JPEG still-image reader discards every image after the first.
+  /// Camera endpoints can serve multipart HTTP under the same suffix.
+  bool get isRawMotionJpeg {
+    final explicit = container?.trim().toLowerCase();
+    if (explicit != null && explicit.isNotEmpty) return explicit == 'mjpg' || explicit == 'mjpeg';
+    final parsed = Uri.tryParse(uri);
+    if (parsed == null || (parsed.hasScheme && parsed.scheme != 'file' && parsed.scheme.length != 1)) return false;
+    final path = parsed.path.toLowerCase();
+    return path.endsWith('.mjpg') || path.endsWith('.mjpeg');
+  }
 }

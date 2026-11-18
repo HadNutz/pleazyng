@@ -304,6 +304,7 @@ class PlayerAndroid extends PlayerBase implements VideoRectSupport, PlayerAudioF
         'hasStartPosition': hasStartPosition,
         'autoPlay': play,
         'isLive': isLive,
+        if (!isLive && media.isRawMotionJpeg) 'rawMotionJpeg': true,
         if (_contentFrameRate != null) 'contentFrameRate': _contentFrameRate,
         if (externalSubtitles != null && externalSubtitles.isNotEmpty)
           'externalSubtitles': externalSubtitles

@@ -1256,6 +1256,7 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
     required Player player,
     required SettingsService settingsService,
     required String videoUrl,
+    required String? originalContainer,
     required bool isTranscoding,
     required bool isLocalMedia,
     required MediaVersion? selectedVersion,
@@ -1321,7 +1322,7 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
       if (!shouldContinue()) return const _MediaOpenResult(didOpen: false);
     }
 
-    final media = Media(videoUrl, start: timing.mediaStart, headers: headers);
+    final media = Media(videoUrl, start: timing.mediaStart, headers: headers, container: originalContainer);
     final sidecarOpenGuard = MpvSidecarOpenGuard.armIfNeeded(outcome: outcome, subtitles: externalSubtitlesAtOpen);
     // Both call sites check [shouldContinue] on the statement before, with no
     // await in between, so this closure does not re-check: a staleness signal
@@ -1601,6 +1602,9 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
         player: currentPlayer,
         settingsService: settingsService,
         videoUrl: result.videoUrl!,
+        originalContainer: !result.isTranscoding && result.playMethod == 'DirectPlay'
+            ? result.selectedVersion?.container
+            : null,
         isTranscoding: result.isTranscoding,
         isLocalMedia: isLocalMedia,
         selectedVersion: result.selectedVersion,

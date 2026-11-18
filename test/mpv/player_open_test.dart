@@ -1152,6 +1152,37 @@ void main() {
       );
     });
 
+    test('Motion JPEG uses the video reader for just the original capture', () async {
+      final calls = <MethodCall>[];
+      await withMockPlayerChannels(
+        methodChannelName: 'com.plezy/mpv_player',
+        eventChannelName: 'com.plezy/mpv_player/events',
+        methodHandler: (call) async {
+          calls.add(call);
+          return call.method == 'initialize' ? true : null;
+        },
+        testBody: () async {
+          final player = PlayerNative();
+          try {
+            for (final (media, live, expected) in [
+              (Media('file:///tmp/capture.MJPG'), false, true),
+              (Media('https://server.test/Items/1/stream', container: 'mjpeg'), false, true),
+              (Media('https://camera.test/feed.mjpg'), true, false),
+              (Media('https://camera.test/feed', container: 'mjpeg'), true, false),
+              (Media('file:///tmp/capture.mjpg', container: 'avi'), false, false),
+              (Media('file:///tmp/portrait.jpg'), false, false),
+            ]) {
+              calls.clear();
+              await player.open(media, isLive: live);
+              expect((_loadfileArgs(calls).last as String).split(',').contains('demuxer-lavf-format=mjpeg'), expected);
+            }
+          } finally {
+            await player.dispose();
+          }
+        },
+      );
+    });
+
     test('MPV open(play: true) unpauses after loadfile even when previously paused', () async {
       final calls = <MethodCall>[];
 

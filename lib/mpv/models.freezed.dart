@@ -2447,7 +2447,7 @@ as String,
 /// @nodoc
 mixin _$Media {
 
- String get uri; Map<String, String>? get headers; Duration? get start; ReplayGainSettings? get replayGain;
+ String get uri; Map<String, String>? get headers; Duration? get start; ReplayGainSettings? get replayGain; String? get container;
 /// Create a copy of Media
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2458,16 +2458,16 @@ $MediaCopyWith<Media> get copyWith => _$MediaCopyWithImpl<Media>(this as Media, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Media&&(identical(other.uri, uri) || other.uri == uri)&&const DeepCollectionEquality().equals(other.headers, headers)&&(identical(other.start, start) || other.start == start)&&(identical(other.replayGain, replayGain) || other.replayGain == replayGain));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Media&&(identical(other.uri, uri) || other.uri == uri)&&const DeepCollectionEquality().equals(other.headers, headers)&&(identical(other.start, start) || other.start == start)&&(identical(other.replayGain, replayGain) || other.replayGain == replayGain)&&(identical(other.container, container) || other.container == container));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,uri,const DeepCollectionEquality().hash(headers),start,replayGain);
+int get hashCode => Object.hash(runtimeType,uri,const DeepCollectionEquality().hash(headers),start,replayGain,container);
 
 @override
 String toString() {
-  return 'Media(uri: $uri, headers: $headers, start: $start, replayGain: $replayGain)';
+  return 'Media(uri: $uri, headers: $headers, start: $start, replayGain: $replayGain, container: $container)';
 }
 
 
@@ -2478,7 +2478,7 @@ abstract mixin class $MediaCopyWith<$Res>  {
   factory $MediaCopyWith(Media value, $Res Function(Media) _then) = _$MediaCopyWithImpl;
 @useResult
 $Res call({
- String uri, Map<String, String>? headers, Duration? start, ReplayGainSettings? replayGain
+ String uri, Map<String, String>? headers, Duration? start, ReplayGainSettings? replayGain, String? container
 });
 
 
@@ -2495,13 +2495,14 @@ class _$MediaCopyWithImpl<$Res>
 
 /// Create a copy of Media
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? uri = null,Object? headers = freezed,Object? start = freezed,Object? replayGain = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? uri = null,Object? headers = freezed,Object? start = freezed,Object? replayGain = freezed,Object? container = freezed,}) {
   return _then(_self.copyWith(
 uri: null == uri ? _self.uri : uri // ignore: cast_nullable_to_non_nullable
 as String,headers: freezed == headers ? _self.headers : headers // ignore: cast_nullable_to_non_nullable
 as Map<String, String>?,start: freezed == start ? _self.start : start // ignore: cast_nullable_to_non_nullable
 as Duration?,replayGain: freezed == replayGain ? _self.replayGain : replayGain // ignore: cast_nullable_to_non_nullable
-as ReplayGainSettings?,
+as ReplayGainSettings?,container: freezed == container ? _self.container : container // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -2583,10 +2584,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String uri,  Map<String, String>? headers,  Duration? start,  ReplayGainSettings? replayGain)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String uri,  Map<String, String>? headers,  Duration? start,  ReplayGainSettings? replayGain,  String? container)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Media() when $default != null:
-return $default(_that.uri,_that.headers,_that.start,_that.replayGain);case _:
+return $default(_that.uri,_that.headers,_that.start,_that.replayGain,_that.container);case _:
   return orElse();
 
 }
@@ -2604,10 +2605,10 @@ return $default(_that.uri,_that.headers,_that.start,_that.replayGain);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String uri,  Map<String, String>? headers,  Duration? start,  ReplayGainSettings? replayGain)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String uri,  Map<String, String>? headers,  Duration? start,  ReplayGainSettings? replayGain,  String? container)  $default,) {final _that = this;
 switch (_that) {
 case _Media():
-return $default(_that.uri,_that.headers,_that.start,_that.replayGain);}
+return $default(_that.uri,_that.headers,_that.start,_that.replayGain,_that.container);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -2621,10 +2622,10 @@ return $default(_that.uri,_that.headers,_that.start,_that.replayGain);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String uri,  Map<String, String>? headers,  Duration? start,  ReplayGainSettings? replayGain)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String uri,  Map<String, String>? headers,  Duration? start,  ReplayGainSettings? replayGain,  String? container)?  $default,) {final _that = this;
 switch (_that) {
 case _Media() when $default != null:
-return $default(_that.uri,_that.headers,_that.start,_that.replayGain);case _:
+return $default(_that.uri,_that.headers,_that.start,_that.replayGain,_that.container);case _:
   return null;
 
 }
@@ -2636,7 +2637,7 @@ return $default(_that.uri,_that.headers,_that.start,_that.replayGain);case _:
 
 
 class _Media implements Media {
-  const _Media(this.uri, {final  Map<String, String>? headers, this.start, this.replayGain}): _headers = headers;
+  const _Media(this.uri, {final  Map<String, String>? headers, this.start, this.replayGain, this.container}): _headers = headers;
   
 
 @override final  String uri;
@@ -2651,6 +2652,7 @@ class _Media implements Media {
 
 @override final  Duration? start;
 @override final  ReplayGainSettings? replayGain;
+@override final  String? container;
 
 /// Create a copy of Media
 /// with the given fields replaced by the non-null parameter values.
@@ -2662,16 +2664,16 @@ _$MediaCopyWith<_Media> get copyWith => __$MediaCopyWithImpl<_Media>(this, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Media&&(identical(other.uri, uri) || other.uri == uri)&&const DeepCollectionEquality().equals(other._headers, _headers)&&(identical(other.start, start) || other.start == start)&&(identical(other.replayGain, replayGain) || other.replayGain == replayGain));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Media&&(identical(other.uri, uri) || other.uri == uri)&&const DeepCollectionEquality().equals(other._headers, _headers)&&(identical(other.start, start) || other.start == start)&&(identical(other.replayGain, replayGain) || other.replayGain == replayGain)&&(identical(other.container, container) || other.container == container));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,uri,const DeepCollectionEquality().hash(_headers),start,replayGain);
+int get hashCode => Object.hash(runtimeType,uri,const DeepCollectionEquality().hash(_headers),start,replayGain,container);
 
 @override
 String toString() {
-  return 'Media(uri: $uri, headers: $headers, start: $start, replayGain: $replayGain)';
+  return 'Media(uri: $uri, headers: $headers, start: $start, replayGain: $replayGain, container: $container)';
 }
 
 
@@ -2682,7 +2684,7 @@ abstract mixin class _$MediaCopyWith<$Res> implements $MediaCopyWith<$Res> {
   factory _$MediaCopyWith(_Media value, $Res Function(_Media) _then) = __$MediaCopyWithImpl;
 @override @useResult
 $Res call({
- String uri, Map<String, String>? headers, Duration? start, ReplayGainSettings? replayGain
+ String uri, Map<String, String>? headers, Duration? start, ReplayGainSettings? replayGain, String? container
 });
 
 
@@ -2699,13 +2701,14 @@ class __$MediaCopyWithImpl<$Res>
 
 /// Create a copy of Media
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? uri = null,Object? headers = freezed,Object? start = freezed,Object? replayGain = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? uri = null,Object? headers = freezed,Object? start = freezed,Object? replayGain = freezed,Object? container = freezed,}) {
   return _then(_Media(
 null == uri ? _self.uri : uri // ignore: cast_nullable_to_non_nullable
 as String,headers: freezed == headers ? _self._headers : headers // ignore: cast_nullable_to_non_nullable
 as Map<String, String>?,start: freezed == start ? _self.start : start // ignore: cast_nullable_to_non_nullable
 as Duration?,replayGain: freezed == replayGain ? _self.replayGain : replayGain // ignore: cast_nullable_to_non_nullable
-as ReplayGainSettings?,
+as ReplayGainSettings?,container: freezed == container ? _self.container : container // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

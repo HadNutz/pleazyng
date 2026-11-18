@@ -190,7 +190,11 @@ passed through the same published x86_64 Linux library. This includes DNxHR LB,
 10-bit CineForm, PAL DV, v210, Ut Video, DOSBox recordings, TTA and ADPCM.
 Raw AVC, HEVC, VVC, AVS2/3, EVC, APV, MPEG video and YUV4MPEG server
 profiles now use measured demuxers and matching codecs. JPEG XL still and
-animation have separate demuxer checks. Offline cleanup uses the same file
+animation have separate demuxer checks. Original raw Motion JPEG captures
+select the MJPEG reader in mpv, including Android's mpv fallback. The default
+still-image reader displayed one frame of a 50-frame capture. The file-local
+choice displayed all 50. Raw AVC, HEVC, MPEG-2, AV1 OBU and YUV4MPEG also
+displayed all 50 frames through the published Linux package. Offline cleanup uses the same file
 extensions as the source browser and retains its item identity and path checks.
 
 AC-4 software qualification covered two implementations. The FFmpeg proposal

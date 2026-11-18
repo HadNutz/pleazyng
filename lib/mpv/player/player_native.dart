@@ -819,6 +819,7 @@ class PlayerNative extends PlayerBase
 
     final loadfileArgs = ['loadfile', uri, 'replace'];
     final loadfileOptions = <String>[
+      if (!audioOnly && !isLive && media.isRawMotionJpeg) 'demuxer-lavf-format=mjpeg',
       ?_externalSubtitlesLoadfileOption(externalSubtitles),
       // The audio core also passes the headers file-local. After a gapless
       // advance the playing entry's own header list is file-local, and mpv

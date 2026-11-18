@@ -2375,7 +2375,13 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
     }
     if (!_valid || player != native || !(isLaunchCurrent?.call() ?? true)) return;
     await native.open(
-      Media(mediaAddress, start: Duration(milliseconds: math.max(0, localPosition))),
+      Media(
+        mediaAddress,
+        start: Duration(milliseconds: math.max(0, localPosition)),
+        container: _localOverrides[file.id] == null && directAddress == null
+            ? p.extension(file.name).replaceFirst('.', '')
+            : null,
+      ),
       play: play && automotivePlaybackAllowedNow(),
       isLive: _liveInput,
     );
