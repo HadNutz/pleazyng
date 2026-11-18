@@ -30,7 +30,14 @@ def sha256(path):
 
 
 def github_json(endpoint):
-    return json.loads(subprocess.check_output(["gh", "api", endpoint], timeout=90))
+    for attempt in range(3):
+        try:
+            response = subprocess.check_output(["gh", "api", endpoint], timeout=90)
+            return json.loads(response)
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError):
+            if attempt == 2:
+                raise
+            time.sleep(2 ** attempt)
 
 
 def download_asset(repository, asset_id, destination):
