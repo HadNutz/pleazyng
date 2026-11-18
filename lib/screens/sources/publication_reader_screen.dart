@@ -579,6 +579,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
             'fitWidth': t.fileSources.fitWidth,
             'fitHeight': t.comics.fitHeight,
             'comicMode': t.comics.readingMode,
+            'panels': t.viewing.guidedPanels,
             'paged': t.comics.paged,
             'webtoon': t.comics.webtoon,
             'soloPage': t.viewing.soloPage,
@@ -1759,6 +1760,7 @@ class _ReaderSettingsScreenState extends State<ReaderSettingsScreen> {
                   initialValue: value['comicMode'] as String,
                   decoration: InputDecoration(labelText: t.comics.readingMode),
                   items: [
+                    DropdownMenuItem(value: 'panels', child: Text(t.viewing.guidedPanels)),
                     DropdownMenuItem(value: 'paged', child: Text(t.comics.paged)),
                     DropdownMenuItem(value: 'webtoon', child: Text(t.comics.webtoon)),
                   ],

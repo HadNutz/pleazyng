@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'dart:convert';
+import 'dart:math' as math;
+import 'package:path/path.dart' as p;
 
 import 'package:xml/xml.dart';
 
@@ -7,17 +10,26 @@ import 'source_transport.dart';
 
 /// Physical image identity is independent of spreads, split halves and zoom.
 class ComicPage {
-  const ComicPage(this.name, {this.width, this.height, this.doublePage = false, this.bookmark = ''});
+  const ComicPage(
+    this.name, {
+    this.width,
+    this.height,
+    this.doublePage = false,
+    this.bookmark = '',
+    this.frames = const [],
+  });
   final String name;
   final int? width, height;
   final bool doublePage;
   final String bookmark;
+  final List<List<int>> frames;
   Map<String, dynamic> toJson() => {
     'name': name,
     'width': width,
     'height': height,
     'doublePage': doublePage,
     'bookmark': bookmark,
+    if (frames.isNotEmpty) 'frames': frames,
   };
 }
 
@@ -123,7 +135,99 @@ class ComicDocument {
     );
   }
 
+  static const maxAcbfBytes = 64 * 1024 * 1024;
+
+  static Future<ComicDocument?> readAcbf(Directory directory, Map<String, int> files, String manifest) async {
+    final input = File(p.join(directory.path, manifest));
+    if (await input.length() > maxAcbfBytes) return null;
+    final xml = await input.readAsString();
+    if (RegExp(r'<!\s*(DOCTYPE|ENTITY)', caseSensitive: false).hasMatch(xml)) return null;
+    final root = XmlDocument.parse(xml).rootElement;
+    if (root.name.local != 'ACBF') return null;
+    final info = root.getElement('meta-data')?.getElement('book-info');
+    final body = root.getElement('body');
+    if (body == null) return null;
+    final binaries = {
+      for (final b in root.getElement('data')?.findElements('binary') ?? <XmlElement>[])
+        if (b.getAttribute('id') != null) b.getAttribute('id')!: b,
+    };
+    final embedded = <String, String>{};
+    final pages = <ComicPage>[];
+    final cover = info?.getElement('coverpage');
+    for (final node in [if (cover != null) cover, ...body.findElements('page')]) {
+      if (pages.length >= 10000) return null;
+      final href = node.getElement('image')?.attributes.where((a) => a.name.local == 'href').firstOrNull?.value;
+      if (href == null) return null;
+      String name;
+      if (href.startsWith('#')) {
+        final id = href.substring(1);
+        final binary = binaries[id];
+        final ext = const {
+          'image/png': 'png',
+          'image/jpeg': 'jpg',
+          'image/webp': 'webp',
+          'image/gif': 'gif',
+          'image/avif': 'avif',
+        }[binary?.getAttribute('content-type')?.toLowerCase()];
+        if (binary == null || ext == null) return null;
+        if (!embedded.containsKey(id)) {
+          final bytes = base64.decode(binary.innerText.replaceAll(RegExp(r'\s'), ''));
+          final target = await Directory(directory.path).createTemp('frames-');
+          final image = File(p.join(target.path, 'image.$ext'));
+          await image.writeAsBytes(bytes);
+          final relative = p.split(p.relative(image.path, from: directory.path)).join('/');
+          embedded[id] = relative;
+          files[relative] = bytes.length;
+        }
+        name = embedded[id]!;
+      } else {
+        final decoded = Uri.decodeComponent(href);
+        if (decoded.contains('\\') || decoded.contains(':') || decoded.startsWith('/')) return null;
+        name = p.posix.normalize(p.posix.join(p.posix.dirname(manifest), decoded));
+        if (!files.containsKey(name) || !isImage(name)) return null;
+      }
+      final frames = <List<int>>[];
+      for (final frame in node.findElements('frame').take(512)) {
+        final pairs = (frame.getAttribute('points') ?? '').trim().split(RegExp(r'\s+'));
+        if (pairs.length < 3 || pairs.length > 256) continue;
+        int left = 100000, top = 100000, right = 0, bottom = 0;
+        var valid = true;
+        for (final pair in pairs) {
+          final parts = pair.split(',');
+          final x = int.tryParse(parts.first), y = parts.length == 2 ? int.tryParse(parts.last) : null;
+          if (x == null || y == null || x < 0 || y < 0 || x > 100000 || y > 100000) {
+            valid = false;
+            break;
+          }
+          left = math.min(left, x);
+          top = math.min(top, y);
+          right = math.max(right, x);
+          bottom = math.max(bottom, y);
+        }
+        if (valid && right > left && bottom > top) frames.add([left, top, right, bottom]);
+      }
+      pages.add(ComicPage(name, frames: frames, bookmark: node.getElement('title')?.innerText.trim() ?? ''));
+    }
+    if (pages.isEmpty) return null;
+    return ComicDocument(
+      pages,
+      direction: info?.getElement('reading-direction')?.innerText.trim() == 'RTL' ? 'rtl' : 'ltr',
+      metadata: {if (info?.getElement('book-title') case final title?) 'Title': title.innerText},
+    );
+  }
+
   static Future<ComicDocument> fromArchive(Directory directory, Map<String, int> files) async {
+    final manifests = files.keys.where((name) => name.toLowerCase().endsWith('.acbf')).toList();
+    for (final name in manifests.take(8)) {
+      try {
+        final document = await readAcbf(directory, files, name);
+        if (document != null) return document;
+      } on FormatException {
+        /* Optional manifest. */
+      } on XmlException {
+        /* Optional manifest. */
+      }
+    }
     final info = files.keys.where((name) => name.toLowerCase() == 'comicinfo.xml').firstOrNull;
     String? xml;
     if (info != null && files[info]! <= 1024 * 1024) {

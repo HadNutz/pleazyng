@@ -11,6 +11,7 @@ import '../utils/external_ids.dart';
 import '../utils/media_server_http_client.dart' show AbortController;
 
 import 'dart:io';
+import 'dart:math' show max;
 
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -84,6 +85,8 @@ import '../iptv/iptv_source_repository.dart';
 import '../iptv/iptv_parental_access_service.dart';
 import '../iptv/iptv_live_tv_session.dart';
 import '../iptv/iptv_manual_capture.dart';
+import '../services/movie_audio_attachment.dart';
+import '../services/episode_file_boundaries.dart';
 import '../iptv/iptv_models.dart';
 import '../services/fullscreen_state_manager.dart';
 import '../services/car_ux_restrictions_service.dart';
@@ -689,8 +692,10 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   int _playerInitializationGeneration = 0;
   Future<void>? _shutdownOperation;
   PlaybackPresentation? _presentation;
+  String? _boundedEpisode;
   Future<void>? _iptvFinishing;
   bool _iptvStarting = false;
+  BufferedIptvCapture? _bufferedIptvCapture;
   PlayerNative? _iptvRecordingPlayer;
   File? _iptvRecordingTarget;
   File? _iptvRecordingPartial;

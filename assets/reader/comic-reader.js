@@ -82,13 +82,20 @@ export class ComicReader extends HTMLElement {
             if(!gesture)return;
             const dx=e.clientX-gesture.x,dy=e.clientY-gesture.y;gesture=null;
             if(e.type==='pointercancel'||this.settings.comicMode==='webtoon'||this.canPan)return;
+            if(this.settings.comicMode==='panels' && Math.abs(dx)<12 && Math.abs(dy)<12){
+                const fraction=(e.clientX-this.viewport.getBoundingClientRect().left)/this.clientWidth;
+                if(fraction<.28)this.rtl?this.next():this.prev();
+                else if(fraction>.72)this.rtl?this.prev():this.next();
+                else {this.overview=!this.overview;this.render();}
+                return;
+            }
             if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)(dx<0)!==this.rtl?this.next():this.prev();
         };
         this.viewport.addEventListener('pointerup',end);this.viewport.addEventListener('pointercancel',end);
 
     }
     get rtl(){return this.settings.direction === 'rtl';}
-    get canPan(){return typeof this.settings.zoom === 'number' || ['fit-width','fit-height'].includes(this.settings.zoom);}
+    get canPan(){if(this.settings.comicMode==='panels')return false;return typeof this.settings.zoom === 'number' || ['fit-width','fit-height'].includes(this.settings.zoom);}
     async open(document, options, send, resource) {
         const dimension=value=>Number.isFinite(value)&&value>0&&value<=100000?value:undefined;
         this.pages = document.pages.map(p=>({...p,width:dimension(p.width),height:dimension(p.height)})); this.metadata=document.metadata;
@@ -96,7 +103,7 @@ export class ComicReader extends HTMLElement {
         this.numbers=new Intl.NumberFormat(options.formattingLocale??options.interfaceLocale,{useGrouping:false});
         this.viewport.setAttribute('aria-label',options.title);
         const location=parseComicLocator(options.cfi, Math.max(0,(options.page??1)-1));
-        this.index=Math.min(this.pages.length-1,Math.max(0,location.index));this.half=location.half;this.offset=location.offset;
+        this.index=Math.min(this.pages.length-1,Math.max(0,location.index));this.half=location.half;this.panel=location.panel;this.overview=false;this.offset=location.offset;
         this.configure(options.settings);
         this.viewport.focus({preventScroll:true});
     }
@@ -110,7 +117,7 @@ export class ComicReader extends HTMLElement {
     pageLabel(index){return `${this.options.labels?.imagePage??''} ${this.numbers.format(index+1)}`;}
     turns(){return comicTurns(this.pages,this.settings,this.clientWidth,this.clientHeight);}
     currentTurn(turns=this.turns()) {
-        let n=turns.findIndex(turn=>turn.some(p=>p.index===this.index && (this.half===undefined || p.half===this.half)));
+        let n=turns.findIndex(turn=>turn.some(p=>p.index===this.index && (this.settings.comicMode!=='panels' || this.panel===undefined || p.panel===this.panel) && (this.half===undefined || p.half===this.half)));
         if(n<0)n=turns.findIndex(turn=>turn.some(p=>p.index===this.index));
         return Math.max(0,n);
     }
@@ -119,9 +126,11 @@ export class ComicReader extends HTMLElement {
         const section=this.pages[this.index];
         const turns=this.turns(),turn=turns[this.currentTurn(turns)];
         const end = this.settings.comicMode === 'webtoon' ? this.index+this.offset : Math.max(...turn.map(p=>p.index))+1;
-        const fraction=Math.min(1,Math.max(0,end/this.pages.length));
+        const panel = this.settings.comicMode==='panels' ? turn[0].panel : undefined;
+        const fraction=panel===undefined ? Math.min(1,Math.max(0,end/this.pages.length)) :
+            (this.index+(panel+1)/section.frames.length)/this.pages.length;
         const title=section.bookmark || this.pageLabel(this.index);
-        this.send('location',{cfi:comicLocator(this.index,this.half,this.offset),href:section.name,title,
+        this.send('location',{cfi:comicLocator(this.index,this.half,this.offset,panel),href:section.name,title,
             fraction,section:this.index,spreadPages: turn.length > 1 ? turn.map(p=>p.index) :
                 turn.filter(p=>this.settings.soloPages?.includes(p.index)).map(p=>p.index),sections:this.pages.length,text:''});
         this.status.textContent=title;
@@ -140,6 +149,20 @@ export class ComicReader extends HTMLElement {
             this.window();
         }else{
             const turn=this.turns()[this.currentTurn()];
+            const item=turn[0], page=this.pages[item.index];
+            const frame = !this.overview && item.panel!==undefined ? page.frames[item.panel] : null;
+            if(frame) {
+                const [x,y,right,bottom]=frame, width=right-x, height=bottom-y;
+                const scale=Math.min(this.clientWidth/width,this.clientHeight/height);
+                const figure=this.figure(item,false,scale);
+                figure.style.width=`${width*scale}px`;figure.style.height=`${height*scale}px`;
+                this.stage.style.width='100%';this.stage.style.height='100%';
+                this.stage.append(figure);this.load(figure);
+                const img=figure.querySelector('img');
+                img.style.position='absolute';img.style.left=`${-x*scale}px`;img.style.top=`${-y*scale}px`;
+                this.viewport.scrollLeft=this.viewport.scrollTop=0;
+                this.rendering=false;this.location();return;
+            }
             const width=turn.reduce((sum,item)=>sum+(this.pages[item.index].width||800)/(item.half===undefined?1:2),0);
             const height=Math.max(...turn.map(item=>this.pages[item.index].height||1200));
             const scale=typeof this.settings.zoom==='number'?this.settings.zoom:
@@ -224,14 +247,14 @@ export class ComicReader extends HTMLElement {
         const turns=this.turns(),n=this.currentTurn(turns),next=Math.min(turns.length-1,Math.max(0,n+delta));
         if(n===next)return;
         const target=this.rtl?turns[next].at(-1):turns[next][0];
-        this.index=target.index;this.half=target.half;this.offset=0;this.render();
+        this.index=target.index;this.half=target.half;this.panel=target.panel;this.overview=false;this.offset=0;this.render();
     }
     next(){this.move(1);}prev(){this.move(-1);}
-    page(number){this.index=Math.min(this.pages.length-1,Math.max(0,Math.round(Number(number)||1)-1));this.half=undefined;this.offset=0;this.render();}
+    page(number){this.index=Math.min(this.pages.length-1,Math.max(0,Math.round(Number(number)||1)-1));this.half=undefined;this.panel=undefined;this.overview=false;this.offset=0;this.render();}
     goTo(target){
         const known=this.pages.findIndex(p=>p.name===target);
         const location=parseComicLocator(target,known<0?0:known);
-        this.index=Math.min(this.pages.length-1,location.index);this.half=location.half;this.offset=location.offset;this.render();
+        this.index=Math.min(this.pages.length-1,location.index);this.half=location.half;this.panel=location.panel;this.overview=false;this.offset=location.offset;this.render();
     }
     get scale(){return Number(this.stage.children[this.settings.comicMode==='webtoon'?this.index:0]?.dataset.scale)||1;}
     zoom(value){

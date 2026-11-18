@@ -679,6 +679,20 @@ class SourceRepository {
     if (active?.read<int>('generation') != generation) {
       throw const SourceException(SourceFailure.cancelled);
     }
+    final sourceConfig = await database
+        .customSelect(
+          'SELECT config FROM sources WHERE profile=? AND id=?',
+          variables: [Variable(profile), Variable(source)],
+        )
+        .getSingleOrNull();
+    final localSource =
+        sourceConfig != null && sourceMap(jsonDecode(sourceConfig.read<String>('config')))['kind'] == 'local';
+    final readingLists = localSource
+        ? await preference(profile, 'importedComicReadingLists.v1')
+        : const <String, dynamic>{};
+    final pinned = {
+      for (final list in readingLists.values) ...sourceMap(sourceMap(list)['overrides']).values.whereType<String>(),
+    };
     var afterRowId = 0;
     while (true) {
       if (!isCurrent()) {
@@ -706,7 +720,17 @@ class SourceRepository {
         final entry = entries[index];
         final id = row.read<String>('id');
         final retainedOffline = entry.files.any((file) => completed[sourceKey(source, file.id)] == file.fingerprint);
-        if (retainedOffline) {
+        final hasHistory =
+            localSource &&
+            (pinned.contains(entry.key) ||
+                (await database
+                        .customSelect(
+                          'SELECT 1 FROM progress WHERE profile=? AND entry=? UNION ALL SELECT 1 FROM annotations WHERE profile=? AND entry=? LIMIT 1',
+                          variables: [Variable(profile), Variable(entry.key), Variable(profile), Variable(entry.key)],
+                        )
+                        .get())
+                    .isNotEmpty);
+        if (retainedOffline || hasHistory) {
           await database.customStatement(
             'UPDATE entries SET scan_generation=?,payload=? WHERE profile=? AND source=? AND id=?',
             [generation, jsonEncode(entry.copyWith(unavailable: true).toJson()), profile, source, id],

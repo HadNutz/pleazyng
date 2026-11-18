@@ -167,6 +167,54 @@ class Translations$viewing$en {
 
 	// Translations
 
+	/// en: 'Guided panels'
+	String get guidedPanels => 'Guided panels';
+
+	/// en: 'Rewind'
+	String get rewind => 'Rewind';
+
+	/// en: 'Add audio file'
+	String get attachAudio => 'Add audio file';
+
+	/// en: 'Replace soundtrack'
+	String get replaceSoundtrack => 'Replace soundtrack';
+
+	/// en: 'Mix with movie'
+	String get mixMovie => 'Mix with movie';
+
+	/// en: 'Commentary volume'
+	String get commentaryLevel => 'Commentary volume';
+
+	/// en: 'Movie volume'
+	String get movieLevel => 'Movie volume';
+
+	/// en: 'Episode ${episode} starts here'
+	String episodeStarts({required Object episode}) => 'Episode ${episode} starts here';
+
+	/// en: 'Locate moved folder'
+	String get locateMovedFolder => 'Locate moved folder';
+
+	/// en: 'Reconnect ${count} matching entries'
+	String relinkMatched({required Object count}) => 'Reconnect ${count} matching entries';
+
+	/// en: 'Needs review'
+	String get relinkAmbiguous => 'Needs review';
+
+	/// en: 'No matching files found'
+	String get relinkNone => 'No matching files found';
+
+	/// en: 'Select folder'
+	String get selectFolder => 'Select folder';
+
+	/// en: 'Remove attached audio'
+	String get clearAudio => 'Remove attached audio';
+
+	/// en: 'Keep from ${time}'
+	String keepFrom({required Object time}) => 'Keep from ${time}';
+
+	/// en: 'Record from now'
+	String get recordNow => 'Record from now';
+
 	/// en: 'Record 30 more minutes'
 	String get extendRecording => 'Record 30 more minutes';
 
@@ -18213,6 +18261,22 @@ extension on Translations {
 			'mediaConveniences.missingEpisode' => 'Missing episode',
 			'mediaConveniences.stereoChannel' => 'Channel to play through both speakers',
 			'mediaConveniences.hdrBrightness' => 'HDR subtitle brightness',
+			'viewing.guidedPanels' => 'Guided panels',
+			'viewing.rewind' => 'Rewind',
+			'viewing.attachAudio' => 'Add audio file',
+			'viewing.replaceSoundtrack' => 'Replace soundtrack',
+			'viewing.mixMovie' => 'Mix with movie',
+			'viewing.commentaryLevel' => 'Commentary volume',
+			'viewing.movieLevel' => 'Movie volume',
+			'viewing.episodeStarts' => ({required Object episode}) => 'Episode ${episode} starts here',
+			'viewing.locateMovedFolder' => 'Locate moved folder',
+			'viewing.relinkMatched' => ({required Object count}) => 'Reconnect ${count} matching entries',
+			'viewing.relinkAmbiguous' => 'Needs review',
+			'viewing.relinkNone' => 'No matching files found',
+			'viewing.selectFolder' => 'Select folder',
+			'viewing.clearAudio' => 'Remove attached audio',
+			'viewing.keepFrom' => ({required Object time}) => 'Keep from ${time}',
+			'viewing.recordNow' => 'Record from now',
 			'viewing.extendRecording' => 'Record 30 more minutes',
 			'viewing.recordsUntil' => ({required Object time}) => 'Recording until ${time}',
 			'viewing.extendFailed' => 'Couldn’t extend this recording',
@@ -18703,6 +18767,8 @@ extension on Translations {
 			'settings.maxVolume' => 'Maximum Volume',
 			'settings.maxVolumeDescription' => 'Allow volume boost above 100% for quiet media',
 			'settings.maxVolumePercent' => ({required Object percent}) => '${percent}%',
+			_ => null,
+		} ?? switch (path) {
 			'settings.discordRichPresence' => 'Discord Rich Presence',
 			'settings.discordRichPresenceDescription' => 'Show what you\'re watching on Discord',
 			'settings.services' => 'Services',
@@ -18719,8 +18785,6 @@ extension on Translations {
 			'settings.matchContentResolution' => 'Match Content Resolution',
 			'settings.matchContentResolutionDescription' => 'Switch the display to the video\'s native resolution so your TV handles upscaling. Menus and subtitles are upscaled too during playback',
 			'settings.matchRefreshRate' => 'Match Refresh Rate',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchRefreshRateDescription' => 'Match display refresh rate in fullscreen',
 			'settings.motionProcessing' => 'Motion processing',
 			'settings.motionSmoothing' => 'Motion smoothing',
@@ -19217,6 +19281,8 @@ extension on Translations {
 			'accessibility.tapToPlay' => 'Tap to play',
 			'accessibility.decrease' => 'Decrease',
 			'accessibility.increase' => 'Increase',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.decreaseValue' => ({required Object label}) => 'Decrease ${label}',
 			'accessibility.increaseValue' => ({required Object label}) => 'Increase ${label}',
 			'accessibility.hue' => 'Hue',
@@ -19233,8 +19299,6 @@ extension on Translations {
 			'accessibility.autoScrollPause' => 'Pause auto-scroll',
 			'accessibility.hueShort' => 'H',
 			'accessibility.saturationShort' => 'S',
-			_ => null,
-		} ?? switch (path) {
 			'accessibility.valueShort' => 'V',
 			'accessibility.red' => 'Red',
 			'accessibility.green' => 'Green',
@@ -19731,6 +19795,8 @@ extension on Translations {
 			'iptv.scheduleRecordingOnDevice' => 'Schedule local recording',
 			'iptv.localRecordingScheduled' => 'Local recording scheduled. Pleazyng must be running when it starts.',
 			'iptv.localRecordingAlreadyScheduled' => 'This program is already scheduled for local recording.',
+			_ => null,
+		} ?? switch (path) {
 			'iptv.localRecordingSchedules' => 'Local recording schedule',
 			'iptv.scheduledOnThisDevice' => 'Scheduled on this device',
 			'iptv.cancelLocalRecording' => 'Cancel local recording?',
@@ -19747,8 +19813,6 @@ extension on Translations {
 			'iptv.deleteRecordingRuleConfirm' => 'Delete this rule from Dispatcharr?',
 			'iptv.dispatcharrRecordings' => 'Dispatcharr recordings',
 			'iptv.dispatcharrRules' => 'Dispatcharr rules',
-			_ => null,
-		} ?? switch (path) {
 			'iptv.scheduleRecording' => 'Schedule recording',
 			'iptv.recordingActionUnavailable' => 'This Dispatcharr channel could not be matched to the guide channel.',
 			'iptv.genericError' => 'Could not save this IPTV source. Check the details and retry.',
@@ -20245,6 +20309,8 @@ extension on Translations {
 			'explore.episodeCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episode', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episodes', ), 
 			'explore.cast' => 'Cast',
 			'explore.characters' => 'Characters',
+			_ => null,
+		} ?? switch (path) {
 			'explore.addToWatchlist' => 'Add to Watchlist',
 			'explore.removeFromWatchlist' => 'Remove from Watchlist',
 			'explore.addedToWatchlist' => 'Added to watchlist',
@@ -20261,8 +20327,6 @@ extension on Translations {
 			'explore.searchEmpty' => ({required Object query}) => 'No results for "${query}"',
 			'explore.searchPrompt' => ({required Object source}) => 'Search for movies and shows on ${source}.',
 			'explore.searchFailed' => 'Search failed. Check your connection and try again.',
-			_ => null,
-		} ?? switch (path) {
 			'explore.badge.rankPopular' => ({required Object n}) => '#${n} popular',
 			'explore.badge.rankAiring' => ({required Object n}) => '#${n} airing',
 			'explore.badge.rankRated' => ({required Object n}) => '#${n} rated',
@@ -20759,6 +20823,8 @@ extension on Translations {
 			'downloads.invalidEpisodeCount' => 'Enter a valid episode count.',
 			'downloads.keepSynced' => 'Keep synced',
 			'downloads.downloadOnce' => 'Download once',
+			_ => null,
+		} ?? switch (path) {
 			'downloads.keepNUnwatched' => ({required Object count}) => 'Keep ${count} unwatched',
 			'downloads.editSyncRule' => 'Edit sync rule',
 			'downloads.removeSyncRule' => 'Remove sync rule',
@@ -20775,8 +20841,6 @@ extension on Translations {
 			'downloads.syncedNewEpisodes' => ({required Object count, required Object title}) => 'Synced ${count} new episodes for ${title}',
 			'downloads.syncNow' => 'Sync now',
 			'downloads.downloadsUpToDate' => 'Downloads are up to date',
-			_ => null,
-		} ?? switch (path) {
 			'downloads.syncComplete' => ({required Object queued, required Object removed}) => 'Sync complete · ${queued} queued, ${removed} removed',
 			'downloads.activeSyncRules' => 'Sync rules',
 			'downloads.reviewOrphanFiles' => 'Review orphaned downloads',
@@ -21273,6 +21337,8 @@ extension on Translations {
 			'matchScreen.noMatchesFound' => 'No matches found',
 			'matchScreen.plexDiscover' => 'Plex Discover',
 			'matchScreen.plexLibrary' => 'Plex library',
+			_ => null,
+		} ?? switch (path) {
 			'matchScreen.jellyfinLibrary' => 'Jellyfin library',
 			'matchScreen.embyLibrary' => 'Emby library',
 			'serverTasks.title' => 'Server Tasks',
@@ -21289,8 +21355,6 @@ extension on Translations {
 			'trakt.watchedSyncDescription' => 'When you mark items as watched in Pleazyng, they are also marked as watched on Trakt.',
 			'trakt.historyExport' => 'Export to Letterboxd',
 			'trakt.historyExportDescription' => 'Create a local CSV from Trakt movie history. Nothing is uploaded.',
-			_ => null,
-		} ?? switch (path) {
 			'trakt.historyExportLoading' => 'Loading Trakt movie history…',
 			'trakt.historyExportReviewTitle' => 'Export movie history',
 			'trakt.historyExportReview' => ({required Object plays, required Object movies, required Object files}) => 'This will save ${plays} movie watch entries covering ${movies} movies in ${files} Letterboxd import CSV file(s). Files include available TMDB/IMDb IDs, titles, years, and watched dates using this device\'s local calendar date. TV episodes and ratings are excluded; nothing is uploaded. Letterboxd may combine repeat watches on the same date. Each file stays below Letterboxd\'s 1 MB import limit.',
@@ -21787,6 +21851,8 @@ extension on Translations {
 			'universalMedia.intro' => 'Open a link, playlist, or file. Playback uses Pleazyng’s standard player and does not add history to your library.',
 			'universalMedia.openWhat' => 'What would you like to open?',
 			'universalMedia.stream' => 'Stream address',
+			_ => null,
+		} ?? switch (path) {
 			'universalMedia.playlist' => 'Playlist',
 			'universalMedia.files' => 'Device files',
 			'universalMedia.favorites' => 'Saved stream favorites',
@@ -21803,8 +21869,6 @@ extension on Translations {
 			'universalMedia.saveFavorite' => 'Save favorite',
 			'universalMedia.playNow' => 'Play now',
 			'universalMedia.favoriteSaved' => 'Stream favorite saved to this profile',
-			_ => null,
-		} ?? switch (path) {
 			'universalMedia.skippedEntries' => ({required num n, required Object count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Skipped ${count} unsupported or unsafe playlist entry.', other: 'Skipped ${count} unsupported or unsafe playlist entries.', ), 
 			'universalMedia.playlistAddress' => 'Playlist address',
 			'universalMedia.playlistAddressHelp' => 'Open an M3U, M3U8, or PLS playlist from a web address. Direct stream links do not save the playlist.',
@@ -22301,6 +22365,8 @@ extension on Translations {
 			'sourceSetup.subtitleSetup' => 'Optional subtitle search for standalone videos.',
 			'sourceSetup.apiKey' => 'API key',
 			'sourceSetup.optionalUsername' => 'Account username (optional)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.optionalPassword' => 'Account password (optional)',
 			'sourceSetup.subtitlePrivacy' => 'Get an API key from opensubtitles.com. Search sends the video title and available IMDb/TMDB IDs, never the video file. The key and optional account credentials are encrypted with this source.',
 			'sourceSetup.automaticMetadata' => 'Automatic online video metadata',
@@ -22317,8 +22383,6 @@ extension on Translations {
 			'sourceSetup.metadataNoAutomaticMatch' => 'No automatic title match was found. Search for the title to choose a match.',
 			'sourceSetup.metadataFailed' => 'Online metadata could not be loaded. Playback and local details are still available.',
 			'sourceSetup.videoDetailsLoading' => 'Loading video details',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.subtitleKeyRequired' => 'OpenSubtitles API key required',
 			'sourceSetup.subtitleKeyHelp' => 'Edit this file source and add an OpenSubtitles API key in its optional subtitle settings.',
 			'sourceSetup.subtitleSearchFailed' => 'Subtitle search failed. Check the API key, connection, and service access.',
@@ -22815,6 +22879,8 @@ extension on Translations {
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
 			'podcasts.imported' => 'Subscriptions imported.',
 			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
+			_ => null,
+		} ?? switch (path) {
 			'podcasts.serverHelp' => 'Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.',
 			'podcasts.viewAll' => 'Show more episodes',
 			'podcasts.inLibrary' => 'Open podcast',
@@ -22831,8 +22897,6 @@ extension on Translations {
 			'podcasts.removeFinishedAfter' => 'Remove finished downloads after',
 			'subtitleAiUi.cutRepair' => 'Cut repair',
 			'subtitleAiUi.automaticSync' => 'Automatic sync',
-			_ => null,
-		} ?? switch (path) {
 			'subtitleAiUi.cutRepairLowercase' => 'cut repair',
 			'subtitleAiUi.syncLowercase' => 'sync',
 			'subtitleAiUi.subtitleReferenceSync' => 'Subtitle-reference sync',
@@ -23329,6 +23393,8 @@ extension on Translations {
 			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',
 			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',
 			'karaokeUi.phoneInputRequiresSecureContext' => 'A trusted HTTPS connection is required.',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.phoneInputRequires16kHzCapture' => 'This browser cannot supply the required 16 kHz capture path.',
 			'karaokeUi.phoneInputNeedsActivePerformance' => 'Return to an active performance before enabling capture.',
 			'karaokeUi.phoneCaptureRequiresTrustedHTTPS' => 'Phone capture requires the host HTTPS room with a certificate trusted by this phone. The ordinary LAN songbook remains available.',
@@ -23345,8 +23411,6 @@ extension on Translations {
 			'karaokeUi.comfortableRangeSavedMIDISuggestedKey' => ({required Object value1, required Object value2, required Object value3}) => 'Comfortable range saved: ${value1}–${value2} MIDI. Suggested key: ${value3}.',
 			'karaokeUi.saveMyComfortableRange' => 'Save my comfortable range',
 			'karaokeUi.lyricTiming' => 'Lyric timing',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.editWordSyllableTiming' => 'Edit word/syllable timing',
 			'karaokeUi.timeTheLineBeforeEditingSyllables' => 'Set a start time for this lyric line before editing its syllables.',
 			'karaokeUi.splitClearsSpanPronunciationAndConfidence' => 'Splitting clears the span reading and confidence. Merging requires matching singer parts, readings, and confidence.',

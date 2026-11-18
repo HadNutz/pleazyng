@@ -8,6 +8,7 @@ import 'package:mime/mime.dart';
 import '../source_models.dart';
 import '../source_transport.dart';
 import '../video_nfo.dart';
+import '../cue_album.dart';
 
 class SmbSourceAdapter extends SourceAdapter {
   SmbSourceAdapter(super.source, super.transport, this.credentials);
@@ -102,12 +103,46 @@ class SmbSourceAdapter extends SourceAdapter {
   Future<SourcePage> browse({String? parent, String? cursor, String? query}) async {
     try {
       final directory = _sourcePath(parent ?? source.root);
-      final rows = await (await _connection()).listDirectory(directory);
+      final pool = await _connection();
+      final rows = await pool.listDirectory(directory);
       final entries = <SourceEntry>[];
+      final mediaFiles = <String>{};
+      final files = {
+        for (final row in rows)
+          if (row.isFile && !row.stat.isHidden && !row.name.startsWith('.')) row.name: row,
+      };
+      for (final sidecar in files.values.where((r) => r.name.toLowerCase().endsWith('.cue'))) {
+        final id = _join(directory, sidecar.name);
+        final bytes = await _readBounded(pool, id, sidecar.size, 1024 * 1024);
+        if (bytes == null) continue;
+        final album = await cueAlbumEntries(
+          bytes: bytes,
+          source: source.id,
+          parent: directory,
+          sheet: id,
+          lookup: (name) async {
+            final row = files[name];
+            if (row == null) return null;
+            return PublicationFile(
+              id: _join(directory, name),
+              name: name,
+              mimeType: lookupMimeType(name) ?? '',
+              size: row.size,
+              revision: _revision(row.stat),
+            );
+          },
+        );
+        if (album.isEmpty) continue;
+        mediaFiles.addAll(album.first.files.map((f) => f.id));
+        entries.addAll(
+          album.where((entry) => query == null || entry.title.toLowerCase().contains(query.toLowerCase())),
+        );
+      }
       for (final row in rows) {
         if (row.name.startsWith('.') || row.stat.isHidden) continue;
         if (!row.isDirectory && !row.isFile) continue;
         final id = _join(directory, row.name);
+        if (mediaFiles.contains(id) || row.name.toLowerCase().endsWith('.cue')) continue;
         final kind = row.isDirectory
             ? SourceItemKind.folder
             : classifySourceFile(row.name, lookupMimeType(row.name) ?? '');

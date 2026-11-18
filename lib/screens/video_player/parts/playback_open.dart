@@ -1261,6 +1261,7 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
     required bool isLocalMedia,
     required MediaVersion? selectedVersion,
     required _PlaybackOpenTiming timing,
+    Duration? episodeEnd,
     required PlaybackOpenOutcome outcome,
     Map<String, String>? headers,
     required bool play,
@@ -1333,6 +1334,16 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
       _lastLogError = null;
       _transportFaultSeen = false;
       onOpening?.call();
+      if (episodeEnd != null && player is PlayerNative) {
+        return player.open(
+          media,
+          play: shouldPlay && automotivePlaybackAllowedNow() && !_playbackHeldForProfileSelection,
+          externalSubtitles: externalSubtitles,
+          timelineDuration: timing.timelineDuration,
+          timelineOffset: timing.timelineOffset,
+          sourceEnd: episodeEnd,
+        );
+      }
       return player.open(
         media,
         // The last word on the vehicle and the resume profile picker, taken here because this is
@@ -1571,13 +1582,42 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
 
       // Sidecars ride along with open() so tracks are discovered in a single
       // prepare/loadfile cycle.
-      final openTiming = _playbackOpenTiming(
+      var openTiming = _playbackOpenTiming(
         isTranscoding: result.isTranscoding,
         resumePosition: resumePosition(),
         durationMs: metadata.durationMs,
         partTimeline: result.mediaInfo?.partTimeline,
       );
       if (!isCurrent()) return false;
+      Duration? episodeEnd;
+      if (currentPlayer is PlayerNative &&
+          metadata.isEpisode &&
+          !result.isTranscoding &&
+          result.mediaInfo?.partTimeline == null) {
+        final group = EpisodeFileBounds.identify(
+          context.read<ActiveProfileProvider>().activeId,
+          metadata,
+          result.selectedVersion ?? metadata.mediaVersions?.elementAtOrNull(_effectiveSelectedMediaIndex),
+          result.mediaInfo?.partId,
+          context.read<PlaybackStateProvider>().loadedItems,
+        );
+        if (group != null) {
+          final starts = await group.starts(result.mediaInfo?.chapters ?? []);
+          if (!isCurrent()) return false;
+          final slice = group.slice(metadata.index!, starts);
+          if (slice != null) {
+            final length = slice.end - slice.start;
+            final resume = openTiming.mediaStart?.inMilliseconds ?? 0;
+            openTiming = _PlaybackOpenTiming(
+              mediaStart: Duration(milliseconds: resume >= length ? 0 : resume.clamp(0, length)),
+              timelineOffset: Duration(milliseconds: -slice.start),
+              timelineDuration: Duration(milliseconds: length),
+            );
+            episodeEnd = Duration(milliseconds: slice.end);
+          }
+        }
+      }
+      _boundedEpisode = episodeEnd == null ? null : metadata.globalKey;
       if (PlatformDetector.isWebOSBuild()) {
         await currentPlayer.setProperty(
           'webos-source-has-audio',
@@ -1609,6 +1649,7 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
         isLocalMedia: isLocalMedia,
         selectedVersion: result.selectedVersion,
         timing: openTiming,
+        episodeEnd: episodeEnd,
         outcome: outcome,
         headers: headers,
         play: deferAutomotiveStart ? shouldAutoPlay && !PlatformDetector.isAutomotive() : shouldAutoPlay,

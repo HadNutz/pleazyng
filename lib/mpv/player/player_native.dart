@@ -680,6 +680,7 @@ class PlayerNative extends PlayerBase
     List<SubtitleTrack>? externalSubtitles,
     Duration? timelineDuration,
     Duration timelineOffset = Duration.zero,
+    Duration? sourceEnd,
     bool startLivePlaylistFromBeginning = false,
   }) async {
     if (_nativeCoreUnavailable) {
@@ -727,6 +728,7 @@ class PlayerNative extends PlayerBase
       playlistEntryId = await _loadReplacement(
         media,
         startPosition: sourcePositionFor(startPosition),
+        sourceEnd: sourceEnd,
         play: play,
         isLive: isLive,
         externalSubtitles: externalSubtitles,
@@ -767,6 +769,7 @@ class PlayerNative extends PlayerBase
   Future<int?> _loadReplacement(
     Media media, {
     required Duration startPosition,
+    Duration? sourceEnd,
     required bool play,
     required bool isLive,
     required List<SubtitleTrack>? externalSubtitles,
@@ -808,7 +811,7 @@ class PlayerNative extends PlayerBase
     // refused default must degrade to mpv's own behaviour, not abort the
     // open: the loadfile below is what actually starts playback.
     try {
-      if (startPosition.inSeconds > 0) {
+      if (startPosition.inMilliseconds > 0) {
         await setProperty('start', (startPosition.inMilliseconds / 1000.0).toString());
       } else {
         await setProperty('start', 'none');
@@ -829,6 +832,7 @@ class PlayerNative extends PlayerBase
 
     final loadfileArgs = ['loadfile', uri, 'replace'];
     final loadfileOptions = <String>[
+      if (sourceEnd != null) 'end=${sourceEnd.inMilliseconds / 1000}',
       if (!audioOnly && !isLive && media.isRawMotionJpeg) 'demuxer-lavf-format=mjpeg',
       ?_externalSubtitlesLoadfileOption(externalSubtitles),
       // The audio core also passes the headers file-local. After a gapless

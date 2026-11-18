@@ -16,6 +16,7 @@ import '../../games/romm/romm_models.dart';
 import '../../games/romm/romm_native.dart';
 import '../../games/romm/romm_text.dart';
 import '../../i18n/presentation_formats.dart';
+import '../../i18n/strings.g.dart';
 import '../../services/gamepad_service.dart';
 import '../../services/playback_coordinator.dart';
 import '../../utils/platform_detector.dart';
@@ -52,6 +53,7 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
       _touch = false,
       _capturing = false;
   String _error = '', _lastHash = '', _copyIdentity = '';
+  bool _rewinding = false;
   bool _exitPrompt = false, _retiring = false, _starting = true;
   bool _restoring = false, _recorded = false;
   final _playtime = Stopwatch();
@@ -86,6 +88,7 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
       if (event.connected) {
         return;
       }
+      _rewind(false);
       final port = _pads.remove(event.gamepadId);
       if (port != null) {
         _buttons[port] = 0;
@@ -471,8 +474,18 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
     GamepadButton.leftShoulder: 10,
     GamepadButton.rightShoulder: 11,
   };
+  void _rewind(bool active) {
+    if (_rewinding == active || active && (!_ready || _paused || _closing || _restoring || _capturing || !live)) return;
+    _rewinding = active;
+    _runtime.rewind(active);
+  }
+
   void _input(GamepadEvent event) {
     if (!_ready || _paused || _closing || !live) {
+      return;
+    }
+    if (event is GamepadButtonEvent && event.button == GamepadButton.leftTrigger) {
+      _rewind(event.pressed);
       return;
     }
     if (event is GamepadButtonEvent && event.button == GamepadButton.guide) {
@@ -529,6 +542,10 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
       return;
     }
     final key = event.logicalKey, down = event is! KeyUpEvent;
+    if (key == LogicalKeyboardKey.backspace) {
+      _rewind(down);
+      return;
+    }
     if ({LogicalKeyboardKey.escape, LogicalKeyboardKey.goBack}.contains(key) && event is KeyDownEvent) {
       _pause();
       return;
@@ -591,6 +608,7 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
   }
 
   void _release() {
+    _rewind(false);
     _keys.clear();
     _touches.clear();
     for (var port = 0; port < 4; port++) {
@@ -640,6 +658,7 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
   }
 
   Future<void> _save({bool state = false, bool allowSramFallback = false}) async {
+    if (_rewinding) return;
     if (!_ready || _capturing) {
       if (_closing || state) {
         throw const RommFailure('romm.saveInProgress');
@@ -935,6 +954,15 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
               },
               tooltip: rommText(context, 'touchControls'),
               icon: const AppIcon(Symbols.gamepad_rounded),
+            ),
+            Tooltip(
+              message: t.viewing.rewind,
+              child: Listener(
+                onPointerDown: (_) => _rewind(true),
+                onPointerUp: (_) => _rewind(false),
+                onPointerCancel: (_) => _rewind(false),
+                child: SizedBox.square(dimension: 48, child: Icon(Icons.fast_rewind, semanticLabel: t.viewing.rewind)),
+              ),
             ),
             IconButton(
               onPressed: !_ready || _closing ? null : _loadState,

@@ -433,6 +433,26 @@ extension _VideoPlayerPlaybackServiceMethods on VideoPlayerScreenState {
 
     if (currentPlayer == null) return;
 
+    if (!widget.isLive && currentPlayer.playerType == 'mpv') {
+      final profile = context.read<ActiveProfileProvider>().activeId;
+      final key = movieAudioKey(profile, metadata, _effectiveSelectedMediaIndex, mediaInfo?.partId);
+      if (key != null) {
+        final session = _playbackSession;
+        final attachment = MovieAudioAttachment.forCut(currentPlayer, key)..opened();
+        bool current() =>
+            mounted &&
+            !_shuttingDown &&
+            identical(session, _playbackSession) &&
+            identical(currentPlayer, player) &&
+            _currentMetadata.globalKey == metadata.globalKey &&
+            context.read<ActiveProfileProvider>().activeId == profile;
+        unawaited(
+          attachment.read().then((_) => attachment.apply(current)).catchError((Object e) {
+            appLogger.w('External movie audio could not be restored', error: e);
+          }),
+        );
+      }
+    }
     // Live reporting belongs to [_sendLiveTimeline]'s heartbeats against the
     // tuner session. A [PlaybackProgressTracker] here would post a second,
     // item-shaped timeline for a channel placeholder that has no watch state.
@@ -551,6 +571,7 @@ extension _VideoPlayerPlaybackServiceMethods on VideoPlayerScreenState {
           // emission and the Jellyfin double-scrobble guard (#1287); the
           // trackers hear about a sibling the same way any other watched mark
           // reaches them, since no playback session was ever opened for it.
+          if (_boundedEpisode == metadata.globalKey) return;
           final siblings = playbackState.sameFileSiblings(metadata, playedPartId: mediaInfo?.partId?.toString());
           for (final sibling in siblings) {
             if (sibling.isWatched) continue;

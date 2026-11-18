@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:path/path.dart' as p;
+import '../../sources/local_file_relink.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +57,96 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
   SourceController? _connecting;
   TextEditingController field(String key) => _fields.putIfAbsent(key, TextEditingController.new);
   bool get oauth => const {FileSourceKind.googleDrive, FileSourceKind.oneDrive, FileSourceKind.dropbox}.contains(_kind);
+  String? _fileRelinks;
+
+  Future<void> _locateMovedFolder() async {
+    final source = widget.existing!;
+    final controller = context.read<SourceController>();
+    final epoch = controller.generation;
+    try {
+      final entries = await controller.repository.entries(source.profileId, source: source.id);
+      final folders = <String>{};
+      for (final entry in entries.where((e) => e.files.isNotEmpty)) {
+        var folder = p.dirname(entry.id);
+        while (folder != '.' && folder.isNotEmpty && p.dirname(folder) != folder) {
+          folders.add(folder);
+          folder = p.dirname(folder);
+        }
+      }
+      if (!mounted || !controller.current(epoch)) return;
+      final old = await showDialog<String>(
+        context: context,
+        builder: (dialog) => SimpleDialog(
+          title: Text(t.viewing.locateMovedFolder),
+          children: [
+            for (final f in folders.toList()..sort())
+              SimpleDialogOption(child: Text(f), onPressed: () => Navigator.pop(dialog, f)),
+          ],
+        ),
+      );
+      if (old == null) return;
+      final path = await FilePicker.getDirectoryPath();
+      if (path == null) return;
+      final preview = await LocalFileRelink.preview(
+        root: source.root,
+        oldFolder: old,
+        newFolder: path,
+        entries: entries,
+        offlineCopy: (file) => controller.downloads.local(source.profileId, source.id, file),
+      );
+      if (!mounted || !controller.current(epoch)) return;
+      final chosen = preview.where((r) => r.verified).toSet();
+      final accepted = await showDialog<bool>(
+        context: context,
+        builder: (dialog) => StatefulBuilder(
+          builder: (ctx, update) => AlertDialog(
+            title: Text(t.viewing.locateMovedFolder),
+            content: SizedBox(
+              width: 520,
+              height: 320,
+              child: preview.isEmpty
+                  ? Text(t.viewing.relinkNone)
+                  : ListView.builder(
+                      itemCount: preview.length,
+                      itemBuilder: (_, i) {
+                        final r = preview[i];
+                        return CheckboxListTile(
+                          value: chosen.contains(r),
+                          title: Text(r.path),
+                          subtitle: Text(r.verified ? r.id : '${t.viewing.relinkAmbiguous} · ${r.id}'),
+                          onChanged: (v) => update(() {
+                            if (v == true) {
+                              chosen.add(r);
+                            } else {
+                              chosen.remove(r);
+                            }
+                          }),
+                        );
+                      },
+                    ),
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(t.common.cancel)),
+              FilledButton(
+                onPressed: chosen.isEmpty ? null : () => Navigator.pop(dialog, true),
+                child: Text(t.viewing.relinkMatched(count: chosen.length)),
+              ),
+            ],
+          ),
+        ),
+      );
+      if (accepted != true || !mounted || !controller.current(epoch)) return;
+      final all = {for (final r in LocalFileRelink.decode(_fileRelinks ?? source.options['fileRelinks'])) r.id: r};
+      for (final r in chosen) {
+        all.removeWhere((_, old) => old.path == r.path);
+        all[r.id] = r;
+      }
+      setState(() => _fileRelinks = jsonEncode(all.values.map((r) => r.toJson()).toList()));
+    } catch (error) {
+      if (mounted) setState(() => _error = error);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -414,6 +506,7 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
         root: field('root').text.trim(),
         options: {
           ...preservedOptions,
+          if (_fileRelinks != null) 'fileRelinks': _fileRelinks!,
           'allowHttp': '${_kind != FileSourceKind.smb && _allowHttp}',
           if (_kind == FileSourceKind.smb) 'encryptSmb': '$_encryptSmb',
           'shelves': _shelves.map((s) => s.name).join(','),
@@ -637,6 +730,12 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
                       Text(t.sourceSetup.dlnaHelp, style: Theme.of(context).textTheme.bodySmall),
                     ],
                     if (_kind == FileSourceKind.local) ...[
+                      if (widget.existing?.kind == FileSourceKind.local)
+                        OutlinedButton.icon(
+                          onPressed: _busy ? null : _locateMovedFolder,
+                          icon: const Icon(Icons.drive_file_move),
+                          label: Text(t.viewing.locateMovedFolder),
+                        ),
                       input('root', t.fileSources.root, required: true),
                       OutlinedButton(
                         onPressed: _busy

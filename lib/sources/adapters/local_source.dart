@@ -7,6 +7,8 @@ import 'package:path/path.dart' as p;
 import '../source_models.dart';
 import '../source_transport.dart';
 import '../video_nfo.dart';
+import '../cue_album.dart';
+import '../local_file_relink.dart';
 
 class LocalSourceAdapter extends SourceAdapter {
   LocalSourceAdapter(super.source, super.transport);
@@ -23,9 +25,14 @@ class LocalSourceAdapter extends SourceAdapter {
   Future<Directory>? _temporaryDirectory;
   int _nextSnapshotId = 0;
 
+  late final _relinks = LocalFileRelink.decode(source.options['fileRelinks']);
+  late final _byId = {for (final r in _relinks) r.id: r};
+  late final _byPath = {for (final r in _relinks) r.path: r};
   Future<String> _contained(String value) async {
     final root = await Directory(source.root).resolveSymbolicLinks();
-    final path = p.normalize(p.join(root, value));
+    final moved = _byId[value];
+    final original = p.join(root, value);
+    final path = p.normalize(moved != null && !await File(original).exists() ? p.join(root, moved.path) : original);
     if (path != root && !p.isWithin(root, path)) throw const SourceException(SourceFailure.permission);
     final resolved = await File(path).resolveSymbolicLinks();
     if (resolved != root && !p.isWithin(root, resolved)) throw const SourceException(SourceFailure.permission);
@@ -139,9 +146,45 @@ class LocalSourceAdapter extends SourceAdapter {
     }
 
     try {
+      final albumFiles = <String>{};
+      await for (final sidecar in Directory(directory).list(followLinks: false)) {
+        if (sidecar is! File || !sidecar.path.toLowerCase().endsWith('.cue')) continue;
+        final bytes = await _readBounded(sidecar, 1024 * 1024);
+        if (bytes == null) continue;
+        final album = await cueAlbumEntries(
+          bytes: bytes,
+          source: source.id,
+          parent: relative,
+          sheet: p.relative(sidecar.path, from: root),
+          lookup: (name) async {
+            final path = p.join(directory, name);
+            if (await FileSystemEntity.type(path, followLinks: false) != FileSystemEntityType.file) return null;
+            final stat = await File(path).stat();
+            return PublicationFile(
+              id: p.relative(path, from: root),
+              name: name,
+              mimeType: '',
+              size: stat.size,
+              revision: '${stat.modified.microsecondsSinceEpoch}:${stat.size}',
+            );
+          },
+        );
+        if (album.isEmpty) continue;
+        albumFiles.addAll(album.first.files.map((f) => f.id));
+        for (final entry in album) {
+          if (++recognizedEntries > _maxSpooledEntries) throw const SourceException(SourceFailure.invalidData);
+          if (query.isNotEmpty && !entry.title.toLowerCase().contains(query)) continue;
+          if (entries.length == _maxCachedEntries) await flushRun();
+          entries.add(entry);
+        }
+      }
       await for (final entity in Directory(directory).list(followLinks: false)) {
         if (entity is Link) continue;
-        final id = p.relative(entity.path, from: root);
+        final physicalId = p.relative(entity.path, from: root);
+        final candidate = _byPath[physicalId];
+        final relink = candidate != null && !await File(p.join(root, candidate.id)).exists() ? candidate : null;
+        final id = relink?.id ?? physicalId;
+        if (albumFiles.contains(id)) continue;
         final name = p.basename(entity.path);
         if (name.startsWith('.')) continue;
         final folder = entity is Directory;
@@ -167,7 +210,10 @@ class LocalSourceAdapter extends SourceAdapter {
                       name: name,
                       mimeType: '',
                       size: stat.size,
-                      revision: '${stat.modified.microsecondsSinceEpoch}:${stat.size}',
+                      revision:
+                          relink != null && relink.newRevision == '${stat.modified.microsecondsSinceEpoch}:${stat.size}'
+                          ? relink.oldRevision
+                          : '${stat.modified.microsecondsSinceEpoch}:${stat.size}',
                     ),
                   ],
           ),

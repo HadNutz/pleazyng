@@ -23,7 +23,7 @@ Map<String, dynamic> normalizeReaderPreferences(Map<String, dynamic> input) {
     'columns': number('columns', 2, 1, 2).round(),
     'scrolled': input['scrolled'] == true,
     'justify': input['justify'] == true,
-    'comicMode': choice('comicMode', ['paged', 'webtoon']),
+    'comicMode': choice('comicMode', ['paged', 'webtoon', 'panels']),
     'coverAlone': input['coverAlone'] != false,
     'soloPages': soloPages..sort(),
     'splitWide': input['splitWide'] == true,

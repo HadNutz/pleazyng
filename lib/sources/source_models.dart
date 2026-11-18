@@ -205,6 +205,8 @@ class PublicationFile {
     this.streamOnly = false,
     this.sampleOnly = false,
     this.sealedAccessHint,
+    this.cueStart,
+    this.cueEnd,
   });
   final String id;
   final String name;
@@ -221,6 +223,7 @@ class PublicationFile {
 
   /// Adapter-owned, vault-encrypted resource locator. Never part of edition identity.
   final String? sealedAccessHint;
+  final int? cueStart, cueEnd;
   SourceItemKind get kind => classifySourceFile(name, mimeType);
   bool get previewableSample =>
       sampleOnly &&
@@ -239,6 +242,8 @@ class PublicationFile {
     'mimeType': mimeType,
     'size': size,
     'revision': revision,
+    if (cueStart != null) 'cueStart': cueStart,
+    if (cueEnd != null) 'cueEnd': cueEnd,
     'durationMs': durationMs,
     'primary': primary,
     'streamOnly': streamOnly,
@@ -252,6 +257,8 @@ class PublicationFile {
     size: sourceInt(j['size']),
     revision: j['revision'] as String?,
     durationMs: sourceInt(j['durationMs']),
+    cueStart: sourceInt(j['cueStart']),
+    cueEnd: sourceInt(j['cueEnd']),
     primary: j['primary'] as bool? ?? true,
     streamOnly: j['streamOnly'] as bool? ?? false,
     // Accept the earlier PR schema while always writing the canonical key.
@@ -755,7 +762,7 @@ class BookAnnotation {
 SourceItemKind classifySourceFile(String name, [String mime = '']) {
   final ext = p.extension(name.split('?').first).toLowerCase();
   final contentType = mime.split(';').first.trim().toLowerCase();
-  if (const {'.cbz', '.cbr', '.cb7'}.contains(ext) ||
+  if (const {'.cbz', '.cbr', '.cb7', '.acbf'}.contains(ext) ||
       const {
         'application/vnd.comicbook+zip',
         'application/vnd.comicbook-rar',

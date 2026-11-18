@@ -637,12 +637,54 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
       return;
     }
 
-    final id = const Uuid().v4();
-    final startedAt = DateTime.now();
+    final generation = _transitionGate.generation;
+    bool current() =>
+        mounted &&
+        !_shuttingDown &&
+        identical(session, _live.session) &&
+        player == currentPlayer &&
+        generation == _transitionGate.generation &&
+        _transitionGate.transition == PlaybackTransition.idle &&
+        context.read<ActiveProfileProvider>().activeId == profileId;
     final programme = _liveTimelineForPosition(currentPlayer.currentPosition).program;
+    final window = _freshLiveBuffer;
+    double? offset;
+    var startedAt = DateTime.now();
+    if (window != null && window.isValid && identical(window, session.captureBuffer)) {
+      final epoch = max(window.seekableStartEpoch, programme?.beginsAt ?? window.seekableStartEpoch);
+      if (window.seekableEndEpoch - epoch >= 3) {
+        final date = DateTime.fromMillisecondsSinceEpoch(epoch * 1000);
+        final clock = TimeOfDay.fromDateTime(date).format(context);
+        final keep = await showDialog<bool>(
+          context: context,
+          builder: (dialog) => SimpleDialog(
+            title: Text(t.liveTv.record),
+            children: [
+              SimpleDialogOption(
+                onPressed: () => Navigator.pop(dialog, true),
+                child: Text(t.viewing.keepFrom(time: clock)),
+              ),
+              SimpleDialogOption(onPressed: () => Navigator.pop(dialog, false), child: Text(t.viewing.recordNow)),
+            ],
+          ),
+        );
+        if (keep == null || !current()) return;
+        if (keep) {
+          final fresh = session.captureBuffer;
+          if (fresh == null || fresh.startedAt != window.startedAt) return;
+          final start = max(epoch.toDouble(), fresh.startedAt + fresh.seekStartSeconds);
+          offset = start - fresh.startedAt;
+          startedAt = DateTime.fromMillisecondsSinceEpoch((start * 1000).round());
+        } else {
+          startedAt = DateTime.now();
+        }
+      }
+    }
+    final id = const Uuid().v4();
     final title = programme?.displayTitle ?? selectedChannel.displayName;
     final repository = context.read<IptvSourceRepository>();
     File? partial;
+    BufferedIptvCapture? buffered;
     try {
       final folder = Directory(
         p.join(
@@ -682,7 +724,20 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
           state: 'recording',
         ),
       );
-      await currentPlayer.setProperty('file-local-options/stream-record', recordingPartial.path);
+      if (!current()) throw const IptvImportException('recording_interrupted');
+      if (offset == null) {
+        await currentPlayer.setProperty('file-local-options/stream-record', recordingPartial.path);
+      } else {
+        buffered = BufferedIptvCapture(currentPlayer.command);
+        await buffered.start(recordingPartial, offset);
+      }
+      if (!current()) {
+        if (buffered == null && identical(session, _live.session)) {
+          await currentPlayer.setProperty('file-local-options/stream-record', '');
+        }
+        throw const IptvImportException('recording_interrupted');
+      }
+      _bufferedIptvCapture = buffered;
       _iptvRecordingPlayer = currentPlayer;
       _iptvRecordingTarget = recordingTarget;
       _iptvRecordingPartial = recordingPartial;
@@ -697,6 +752,11 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
         ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(t.universalMedia.recordingStarted)));
       }
     } catch (error) {
+      if (buffered != null) {
+        try {
+          await buffered.stop();
+        } catch (_) {}
+      }
       try {
         final size = partial != null && await partial.exists() ? await partial.length() : 0;
         if (size == 0 && partial != null && await partial.exists()) {
@@ -752,7 +812,11 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
         partial: partial,
         target: target,
         closeWriter: () async {
-          if (native != null && !native.disposed) await native.setProperty('file-local-options/stream-record', '');
+          if (_bufferedIptvCapture case final capture?) {
+            await capture.stop();
+          } else if (native != null && !native.disposed) {
+            await native.setProperty('file-local-options/stream-record', '');
+          }
         },
         journal: (path) =>
             repository.updateLocalRecordingFilePath(profileId: profileId, recordingId: id, filePath: path),
@@ -782,6 +846,7 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
       appLogger.w('Could not finalize recording', error: error, stackTrace: stack);
       if (notify && mounted) showGlobalErrorSnackBar(t.iptv.recordingSaveFailed);
     } finally {
+      _bufferedIptvCapture = null;
       _iptvRecordingPlayer = null;
       _iptvRecordingTarget = null;
       _iptvRecordingPartial = null;

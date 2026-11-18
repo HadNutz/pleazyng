@@ -116,6 +116,18 @@ class PublicationArchive {
     bool comic = false,
     String? password,
   }) async {
+    if (comic) {
+      final file = File(path);
+      final prefix = await file.openRead(0, 100).fold<List<int>>([], (buffer, chunk) => buffer..addAll(chunk));
+      final header = utf8.decode(prefix, allowMalformed: true).replaceFirst('\uFEFF', '').trimLeft();
+      if (header.startsWith('<')) {
+        final size = await file.length();
+        if (size > ComicDocument.maxAcbfBytes) throw const SourceException(SourceFailure.invalidData);
+        const manifest = 'publication.acbf';
+        await file.copy(p.join(destination, manifest));
+        return {manifest: size};
+      }
+    }
     final source = await karchive.FileByteSource.open(path);
     karchive.Archive? archive;
     try {

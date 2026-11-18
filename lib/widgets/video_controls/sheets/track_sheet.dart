@@ -1,4 +1,9 @@
 import 'dart:async';
+import 'package:provider/provider.dart';
+import '../../../profiles/active_profile_provider.dart';
+import '../../../services/movie_audio_attachment.dart';
+import '../../../services/episode_file_boundaries.dart';
+import '../../../providers/playback_state_provider.dart';
 import 'dart:io' show Directory, File;
 
 import 'package:desktop_drop/desktop_drop.dart';
@@ -69,7 +74,25 @@ class TrackSheet extends StatelessWidget {
             state.sourceAudioTracks.length > 1 &&
             state.onSwitchAudioStreamId != null;
         final useSourceSubtitles = state.canUseSourceSubtitles;
-        final showAudio = useSourceAudio || playerAudioTracks.length > 1;
+        final cut = !state.isLive && player.playerType == 'mpv'
+            ? movieAudioKey(
+                context.read<ActiveProfileProvider?>()?.activeId,
+                state.metadata,
+                state.selectedMediaIndex,
+                state.sourcePartId,
+              )
+            : null;
+        final group = player.playerType == 'mpv' && !state.isTranscoding
+            ? EpisodeFileBounds.identify(
+                context.read<ActiveProfileProvider?>()?.activeId,
+                state.metadata,
+                state.metadata?.mediaVersions?.elementAtOrNull(state.selectedMediaIndex) ??
+                    state.availableVersions.elementAtOrNull(state.selectedMediaIndex),
+                state.sourcePartId,
+                context.read<PlaybackStateProvider?>()?.loadedItems ?? [],
+              )
+            : null;
+        final showAudio = group != null || cut != null || useSourceAudio || playerAudioTracks.length > 1;
         final showSubtitles = state.hasSubtitleControls(tracks);
 
         final String title;
@@ -96,7 +119,7 @@ class TrackSheet extends StatelessWidget {
 
               final supportsSecondary = player.supportsSecondarySubtitles;
 
-              Widget audioColumnFor(TrackSelection sel, bool showHeader) {
+              Widget trackList(TrackSelection sel, bool showHeader) {
                 if (useSourceAudio) {
                   return _SourceAudioColumn(
                     tracks: state.sourceAudioTracks,
@@ -114,6 +137,46 @@ class TrackSheet extends StatelessWidget {
                   player: player,
                   onTrackChanged: state.onAudioTrackChanged,
                   showHeader: showHeader,
+                );
+              }
+
+              Widget audioColumnFor(TrackSelection sel, bool header) {
+                final tracks = trackList(sel, header);
+                if (cut == null && group == null) return tracks;
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(child: tracks),
+                    if (group != null)
+                      PopupMenuButton<int>(
+                        tooltip: t.viewing.episodeStarts(episode: (state.metadata?.index ?? group.first) + 1),
+                        itemBuilder: (_) => [
+                          for (var n = group.first + 1; n <= group.last; n++)
+                            PopupMenuItem(
+                              value: n,
+                              child: Text(t.viewing.episodeStarts(episode: n)),
+                            ),
+                        ],
+                        child: ListTile(
+                          leading: const Icon(Icons.bookmark_add),
+                          title: Text(t.viewing.episodeStarts(episode: (state.metadata?.index ?? group.first) + 1)),
+                        ),
+                        onSelected: (n) async {
+                          try {
+                            await group.mark(n, (player.currentPosition - player.timelineOffset).inMilliseconds, []);
+                            if (context.mounted) OverlaySheetController.of(context).close();
+                          } catch (e) {
+                            if (context.mounted) showErrorSnackBar(context, e.toString());
+                          }
+                        },
+                      ),
+                    if (cut != null)
+                      ListTile(
+                        leading: const Icon(Icons.library_music),
+                        title: Text(t.viewing.attachAudio),
+                        onTap: () => _editMovieAudio(context, MovieAudioAttachment.forCut(player, cut)),
+                      ),
+                  ],
                 );
               }
 
@@ -1126,4 +1189,128 @@ Future<String?> _selectArchivedSubtitle(
   final paths = await document.materialize(selected);
   if (paths.isEmpty) return null;
   return paths.first;
+}
+
+Future<void> _editMovieAudio(BuildContext context, MovieAudioAttachment attachment) async {
+  final player = attachment.player;
+  final opened = await player.getProperty('path');
+  if (!context.mounted) return;
+  await attachment.read();
+  if (!context.mounted) return;
+  await showDialog<void>(
+    context: context,
+    builder: (dialog) {
+      var busy = false;
+      String? error;
+      return StatefulBuilder(
+        builder: (ctx, update) {
+          bool current() => dialog.mounted && !player.disposed;
+          Future<void> run(Future<void> Function() action) async {
+            if (busy) return;
+            update(() {
+              busy = true;
+              error = null;
+            });
+            try {
+              if (await player.getProperty('path') == opened && current()) await action();
+            } catch (e) {
+              error = e.toString();
+            } finally {
+              if (dialog.mounted) update(() => busy = false);
+            }
+          }
+
+          Widget gain(String name, double value, ValueChanged<double> change) => Column(
+            children: [
+              Text(name),
+              Slider(
+                value: value,
+                onChanged: busy ? null : (v) => update(() => change(v)),
+                onChangeEnd: (_) => run(() async {
+                  await attachment.apply(current);
+                  await attachment.persist();
+                }),
+              ),
+            ],
+          );
+          return AlertDialog(
+            title: Text(t.viewing.attachAudio),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (attachment.label != null) Text(attachment.label!),
+                  for (final mix in [false, true])
+                    ListTile(
+                      enabled: !busy,
+                      title: Text(mix ? t.viewing.mixMovie : t.viewing.replaceSoundtrack),
+                      onTap: () => run(() async {
+                        final pick = await FilePickerService.instance.pickFiles(
+                          type: FileType.custom,
+                          allowedExtensions: const [
+                            'aac',
+                            'ac3',
+                            'dts',
+                            'eac3',
+                            'flac',
+                            'm4a',
+                            'mka',
+                            'mp3',
+                            'ogg',
+                            'opus',
+                            'wav',
+                          ],
+                        );
+                        final file = pick?.files.firstOrNull;
+                        if (file?.path != null && await player.getProperty('path') == opened && current()) {
+                          await attachment.attach(File(file!.path!), file.name, mix, current);
+                        }
+                      }),
+                    ),
+                  if (attachment.path != null) ...[
+                    if (attachment.mix) ...[
+                      gain(t.viewing.movieLevel, attachment.movieGain, (v) => attachment.movieGain = v),
+                      gain(t.viewing.commentaryLevel, attachment.voiceGain, (v) => attachment.voiceGain = v),
+                    ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed: busy
+                              ? null
+                              : () => run(() async {
+                                  attachment.delayMs = (attachment.delayMs - 100).clamp(-30000, 30000);
+                                  await attachment.apply(current);
+                                  await attachment.persist();
+                                }),
+                        ),
+                        Text('${attachment.delayMs} ms'),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: busy
+                              ? null
+                              : () => run(() async {
+                                  attachment.delayMs = (attachment.delayMs + 100).clamp(-30000, 30000);
+                                  await attachment.apply(current);
+                                  await attachment.persist();
+                                }),
+                        ),
+                      ],
+                    ),
+                    TextButton(
+                      onPressed: busy ? null : () => run(attachment.forget),
+                      child: Text(t.viewing.clearAudio),
+                    ),
+                  ],
+                  if (error != null) Text(error!),
+                ],
+              ),
+            ),
+            actions: [TextButton(onPressed: busy ? null : () => Navigator.pop(dialog), child: Text(t.common.close))],
+          );
+        },
+      );
+    },
+  );
 }

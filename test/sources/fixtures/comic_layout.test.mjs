@@ -35,3 +35,12 @@ test('an issue correction isolates either half and repairs the following pairs i
     assert.deepEqual(pairs({direction:'rtl',soloPages:[1,4]}),[[0],[1],[3,2],[4],[6,5],[7]]);
     assert.deepEqual(pairs({soloPages:[]}),[[0],[1,2],[3,4],[5,6],[7]]);
 });
+test('guided frames retain authored order in RTL, survive rotation and preserve old locators',()=>{
+    const pages=[{frames:[[300,0,600,600],[0,0,300,600]]},{}];
+    for(const [w,h] of [[320,640],[640,320]]) {
+        assert.deepEqual(comicTurns(pages,{comicMode:'panels',direction:'rtl'},w,h),
+            [[{index:0,panel:0}],[{index:0,panel:1}],[{index:1}]]);
+    }
+    assert.equal(parseComicLocator(comicLocator(0,undefined,0,1)).panel,1);
+    assert.equal(parseComicLocator(comicLocator(0,undefined)).panel,undefined);
+});
