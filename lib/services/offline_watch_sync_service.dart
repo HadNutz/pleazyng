@@ -463,9 +463,28 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
   Future<int> getPendingSyncCount() async {
     await _adoptLegacyWatchActionsForActiveProfile();
     final profileId = _activeProfileId;
-    return profileId == null || profileId.isEmpty
-        ? _database.getPendingSyncCount(maxSyncAttempts: maxSyncAttempts)
-        : _database.getPendingSyncCount(profileId: profileId, maxSyncAttempts: maxSyncAttempts);
+    return profileId == null || profileId.isEmpty ? 0 : _database.getPendingSyncCount(profileId: profileId);
+  }
+
+  bool _canRetry(OfflineWatchProgressItem row) =>
+      row.profileId != null &&
+      row.profileId == _activeProfileId &&
+      row.syncAttempts >= maxSyncAttempts &&
+      (row.clientScopeId == null || row.clientScopeId == _activeClientScopeIdForGlobalKey(row.globalKey));
+
+  Future<List<OfflineWatchProgressItem>> stalledWatchActions() async {
+    final profile = _activeProfileId;
+    if (profile == null || profile.isEmpty) return [];
+    final rows = await _database.getPendingWatchActions(profileId: profile);
+    return rows.where(_canRetry).toList();
+  }
+
+  Future<void> retryWatchAction(OfflineWatchProgressItem row) async {
+    if (!_canRetry(row)) return;
+    if (await _database.resetWatchAttempts(row.id, row.updatedAt, row.profileId!, row.clientScopeId)) {
+      safeNotifyListeners();
+      if (_activeProfileId == row.profileId) await syncPendingItems();
+    }
   }
 
   /// Sync all pending items to their respective servers.

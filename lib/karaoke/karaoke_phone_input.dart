@@ -1,3 +1,4 @@
+import 'karaoke_take_metadata.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -98,7 +99,7 @@ class KaraokePhoneInputs {
           'input': 'phone',
           'latencyQuality': 'unmeasured',
         };
-        await File(p.join(dir.path, 'take.json')).writeAsString(jsonEncode(lease.metadata), flush: true);
+        await writeTakeMetadata(dir, lease.metadata);
         lease.file = await File(p.join(dir.path, 'dry.wav')).open(mode: FileMode.write);
         await lease.file!.writeFrom(_header(0));
       }
@@ -178,7 +179,7 @@ class KaraokePhoneInputs {
       lease.metadata!['complete'] = true;
       lease.metadata!['frames'] = lease.bytes ~/ 2;
       lease.metadata!['score'] = null;
-      await File(p.join(dir.path, 'take.json')).writeAsString(jsonEncode(lease.metadata), flush: true);
+      await writeTakeMetadata(dir, lease.metadata);
     }
     await session.save();
   }

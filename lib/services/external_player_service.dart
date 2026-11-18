@@ -381,7 +381,7 @@ class ExternalPlayerService {
     final reportedDuration = _callbackNumber(params['duration']);
     final msPerUnit = _callbackMsPerUnit(reportedDuration, session.metadata.durationMs);
     final durationMs = reportedDuration == null ? null : (reportedDuration * msPerUnit).round();
-    final position = _callbackNumber(params['position']);
+    final position = _callbackNumber(params['position'], allowZero: true);
     final positionMs = position == null ? null : (position * msPerUnit).round();
     // A reported position always wins. Without one, success means the video
     // finished only for players that call it on completion (not VLC, which
@@ -432,9 +432,9 @@ class ExternalPlayerService {
     return true;
   }
 
-  static double? _callbackNumber(String? value) {
+  static double? _callbackNumber(String? value, {bool allowZero = false}) {
     final number = value == null ? null : double.tryParse(value);
-    return number != null && number.isFinite && number > 0 ? number : null;
+    return number != null && number.isFinite && (number > 0 || allowZero && number == 0) ? number : null;
   }
 
   /// Milliseconds per reported time unit. Players report seconds (Outplayer
@@ -544,13 +544,13 @@ class ExternalPlayerService {
     if (partTimeline != null) {
       final part = partTimeline.current;
       durationMs = partTimeline.duration.inMilliseconds;
-      final filePositionMs = _positive(result.positionMs);
+      final filePositionMs = _position(result.positionMs);
       reportedPositionMs = filePositionMs != null
           ? part.start.inMilliseconds + filePositionMs
           : (result.playbackCompleted ? part.end.inMilliseconds : null);
     } else {
       durationMs = _positive(result.durationMs) ?? _positive(metadata.durationMs);
-      reportedPositionMs = _positive(result.positionMs) ?? (result.playbackCompleted ? durationMs : null);
+      reportedPositionMs = _position(result.positionMs) ?? (result.playbackCompleted ? durationMs : null);
     }
     if (reportedPositionMs == null) return;
 
@@ -673,6 +673,8 @@ class ExternalPlayerService {
       duration: duration?.inMilliseconds,
     );
   }
+
+  static int? _position(int? value) => value != null && value >= 0 ? value : null;
 
   static int? _positive(int? value) => value != null && value > 0 ? value : null;
 }

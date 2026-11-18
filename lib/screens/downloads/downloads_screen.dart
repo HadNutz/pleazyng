@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import '../../media/ids.dart';
+import '../../services/offline_watch_sync_service.dart';
+import '../../database/app_database.dart' show OfflineWatchProgressItem;
 
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
@@ -327,6 +329,36 @@ class DownloadsScreenState extends State<DownloadsScreen>
                 },
               ),
             ],
+          ),
+          SliverToBoxAdapter(
+            child: Consumer<OfflineWatchSyncService?>(
+              builder: (context, sync, _) => sync == null
+                  ? const SizedBox.shrink()
+                  : FutureBuilder<List<OfflineWatchProgressItem>>(
+                      future: sync.stalledWatchActions(),
+                      builder: (context, state) {
+                        final failures = state.connectionState == ConnectionState.done ? state.data : null;
+                        if (failures == null || failures.isEmpty) return const SizedBox.shrink();
+                        return ExpansionTile(
+                          title: Text('${t.downloads.retryFailed} (${failures.length})'),
+                          children: [
+                            for (final row in failures)
+                              ListTile(
+                                title: Text(
+                                  context.read<DownloadProvider>().getMetadata(row.globalKey)?.displayTitle ??
+                                      row.ratingKey,
+                                ),
+                                subtitle: Text(row.actionType),
+                                trailing: TextButton(
+                                  onPressed: () => sync.retryWatchAction(row),
+                                  child: Text(t.common.retry),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
+            ),
           ),
           SliverFillRemaining(
             // Horizontal-only SafeArea: chips and rows clear a landscape

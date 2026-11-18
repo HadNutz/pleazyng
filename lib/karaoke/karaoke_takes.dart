@@ -1,3 +1,4 @@
+import 'karaoke_take_metadata.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -55,7 +56,7 @@ class KaraokeTakes {
     }
     final takes = <KaraokeTake>[];
     await for (final directory in root.list(followLinks: false)) {
-      if (directory is! Directory || takes.length >= 1000) {
+      if (directory is! Directory) {
         continue;
       }
       final file = File(p.join(directory.path, 'take.json'));
@@ -71,7 +72,10 @@ class KaraokeTakes {
         continue;
       }
     }
-    takes.sort((a, b) => (b.metadata['created'] as String? ?? '').compareTo(a.metadata['created'] as String? ?? ''));
+    takes.sort((a, b) {
+      final order = (b.metadata['created'] as String? ?? '').compareTo(a.metadata['created'] as String? ?? '');
+      return order == 0 ? a.id.compareTo(b.id) : order;
+    });
     return takes;
   }
 
@@ -107,7 +111,7 @@ class KaraokeTakes {
     take.metadata['recovered'] = true;
     take.metadata['complete'] = true;
     take.metadata['score'] = null;
-    await File(p.join(take.directory.path, 'take.json')).writeAsString(jsonEncode(take.metadata), flush: true);
+    await writeTakeMetadata(take.directory, take.metadata);
   }
 
   Future<void> saveRecipe(KaraokeTake take, Map<String, dynamic> recipe) async {
@@ -193,7 +197,7 @@ class KaraokeTakes {
       renditionId: track.id,
     );
     take.metadata['renderJobId'] = result['id'];
-    await File(p.join(take.directory.path, 'take.json')).writeAsString(jsonEncode(take.metadata), flush: true);
+    await writeTakeMetadata(take.directory, take.metadata);
     return result;
   }
 
@@ -359,7 +363,7 @@ class KaraokeTakes {
       metadata['mergeApproved'] = false;
       metadata['private'] = true;
       metadata['score'] = null;
-      await File(p.join(dir.path, 'take.json')).writeAsString(jsonEncode(metadata), flush: true);
+      await writeTakeMetadata(dir, metadata);
       return KaraokeTake(dir, metadata);
     } finally {
       await session.packages.evict(result.track.id, pinned: session.pinned);
@@ -388,12 +392,12 @@ class KaraokeTakes {
     take.metadata['digests'] = List<String>.from(invitation['digests'] as List);
     take.metadata['part'] = part;
     take.metadata['private'] = true;
-    await File(p.join(take.directory.path, 'take.json')).writeAsString(jsonEncode(take.metadata), flush: true);
+    await writeTakeMetadata(take.directory, take.metadata);
   }
 
   Future<void> markListened(KaraokeTake take) async {
     take.metadata['listened'] = true;
-    await File(p.join(take.directory.path, 'take.json')).writeAsString(jsonEncode(take.metadata), flush: true);
+    await writeTakeMetadata(take.directory, take.metadata);
   }
 
   Future<void> approveMerge(KaraokeTake take) async {
@@ -401,6 +405,6 @@ class KaraokeTakes {
       throw StateError('Listen to the complete response before approving a duet merge');
     }
     take.metadata['mergeApproved'] = true;
-    await File(p.join(take.directory.path, 'take.json')).writeAsString(jsonEncode(take.metadata), flush: true);
+    await writeTakeMetadata(take.directory, take.metadata);
   }
 }

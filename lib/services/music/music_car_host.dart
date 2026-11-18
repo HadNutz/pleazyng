@@ -729,8 +729,9 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     final hidden = context.read<HiddenLibrariesProvider?>();
     await hidden?.ensureInitialized();
     if (!_current || downloads == null || downloads.isDisposed || downloads.activeProfileId != _profileId) return [];
+    final denied = _hiddenCarLibraries();
     return downloads.downloadedTracks
-        .where((track) => hidden?.isLibraryHidden('${track.serverId}:${track.libraryId}') != true)
+        .where((track) => !denied.contains('${track.serverId}:${track.libraryId}'))
         .toList();
   }
 
@@ -1054,6 +1055,13 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         return requestCurrent() ? resolved.take(10).toList() : [];
       case 'playItem':
         var id = args['id'] as String? ?? '';
+        if (id.startsWith('spokenAction:')) {
+          final parts = id.split(':');
+          if (parts.length < 3 || !['play', 'next', 'later', 'remove'].contains(parts[1])) return false;
+          if (parts[1] != 'play') args['queue'] = parts[1];
+          id = parts.skip(2).join(':');
+          if (!id.startsWith('spokenQueue:$_itemScope:') && !_audiobookEntries.containsKey(id)) return false;
+        }
         if (id.startsWith('shuffle:')) {
           id = id.substring(8);
           args['shuffle'] = true;
@@ -1206,6 +1214,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           }
           final index = int.tryParse(parts[3]);
           if (index == null || index < 0 || index >= _music.queue.length) throw PlatformException(code: 'stale_queue');
+          if (!await commit()) return false;
           if (!await commit()) return false;
           await _music.jumpTo(index);
         } else if (id.startsWith('serverRadio:')) {
@@ -1693,6 +1702,20 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     }
     final sources = _sourceController;
     final hasSpoken = sources != null && !sources.blocked && sources.profileId == _profileId;
+    if (id.startsWith('spokenOptions:')) {
+      final target = id.substring('spokenOptions:'.length);
+      final queued = target.startsWith('spokenQueue:$_itemScope:');
+      if (!queued && !_audiobookEntries.containsKey(target)) return [];
+      return [
+        for (final action in {
+          'play': t.universalMedia.playNow,
+          if (queued) 'remove': t.musicExperience.remove,
+          if (!queued) 'next': t.music.playNext,
+          if (!queued) 'later': t.music.addToQueue,
+        }.entries)
+          {'id': 'spokenAction:${action.key}:$target', 'playable': true, 'title': action.value},
+      ];
+    }
     if (id == 'root') {
       return [
         _folder('home', t.common.home),
@@ -1745,6 +1768,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           for (final pin in pins.take(4)) {..._item(pin.item), 'playable': true},
         if (_videoCapable) _folder('continueCarVideo', t.fileSources.continueWatching),
         _folder('queue', t.music.queue),
+        if (Platform.isAndroid && _ratingState?.kind == 'rating') _folder('rating', t.mediaMenu.rate),
         ...stationPins,
         if (Platform.isIOS && _connected && _music.currentTrack != null && context.read<GuestJukebox?>() != null)
           _folder('guest', t.livingRoom.jukebox),
@@ -1841,6 +1865,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       return [
         {'id': 'downloadMix:$_itemScope', 'title': '${t.common.shuffle} · ${t.navigation.downloads}', 'playable': true},
         _folder('offline', t.libraries.groupings.tracks),
+        _folder('offlineChart', t.discover.mostPlayedIn(library: t.navigation.downloads)),
         _folder('offlineAlbums', t.libraries.groupings.albums),
         _folder('offlinePlaylists', t.common.mediaKind.playlist),
         _folder('offlineArtists', t.libraries.groupings.artists),
@@ -1850,6 +1875,22 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           _folder('downloadEpisodes', t.podcasts.title),
         ],
       ];
+    }
+    if (id == 'offlineChart' || id.startsWith('offlineChart:')) {
+      final owned = await _visibleDownloads();
+      if (!_current) return [];
+      final libraries = {for (final l in context.read<LibrariesProvider>().libraries) l.globalKey: l.title};
+      String library(MediaItem track) => '${track.serverId}:${track.libraryId}';
+      if (id == 'offlineChart') {
+        final keys = owned.map(library).toSet().toList()..sort();
+        return _page(keys.map((k) => _folder('offlineChart:$k', libraries[k] ?? k)), id, offset);
+      }
+      final tracks = {
+        for (final item in owned.where((e) => library(e) == id.substring('offlineChart:'.length))) item.globalKey: item,
+      };
+      final keys = await MusicLibraryStore(context.read<AppDatabase>(), _profileId!).rankDownloaded(tracks.keys);
+      if (!mounted || !_current) return [];
+      return _page(keys.map((k) => _item(tracks[k]!, offline: true)), id, offset);
     }
     if (id == 'offlinePlaylists') {
       final store = MusicLibraryStore(context.read<AppDatabase>(), _profileId!);
@@ -2190,7 +2231,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       );
     }
     if (id.startsWith('radioLibrary:')) {
-      return _page(await _serverRadioRows(libraryKey: id.substring(13)), id, offset);
+      return _page(await _serverRadioRows(libraryKey: id.substring('offlineChart:'.length)), id, offset);
     }
     if (id == 'libraries') {
       return _page(libraries.map((library) => _folder('library:${library.globalKey}', library.title)), id, offset);
@@ -2399,62 +2440,84 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     }
   }
 
+  Set<String> _hiddenCarLibraries() => {
+    ...?context.read<HiddenLibrariesProvider?>()?.hiddenLibraryKeys,
+    for (final library in context.read<LibrariesProvider?>()?.libraries ?? [])
+      if (library.hidden) library.globalKey,
+  };
+
   Future<List<MediaItem>> _search(String query) async {
-    if (query.trim().isEmpty || query.length > 200) return [];
-    final result = <String, MediaItem>{};
-    final sources = <String, bool Function()>{};
+    final term = _voiceName(query);
+    if (term.isEmpty || query.length > 200) return [];
     final generation = _profiles.identityMutationGeneration;
-    bool current() => _current && generation == _profiles.identityMutationGeneration;
-    final offlineKeys = <String>{};
-    final hidden = context.read<HiddenLibrariesProvider>();
-    await hidden.ensureInitialized();
-    if (!mounted || !current()) return [];
-    final normalized = query.trim().toLowerCase();
-    for (final track in context.read<DownloadProvider>().downloadedTracks) {
-      if (track.displayTitle.toLowerCase().contains(normalized) ||
-          (track.trackArtistTitle ?? '').toLowerCase().contains(normalized)) {
-        result[track.globalKey] = track;
-        offlineKeys.add(track.globalKey);
-      }
-      if (result.length >= 100) break;
+    bool current() => mounted && _current && generation == _profiles.identityMutationGeneration;
+    final local = await _visibleDownloads();
+    if (!current()) return [];
+    final matches = <String, ({MediaItem item, int rank, bool Function() valid})>{};
+    void add(MediaItem item, bool Function() valid, {required bool remote}) {
+      final title = _voiceName(item.displayTitle);
+      final artist = _voiceName(item.trackArtistTitle ?? '');
+      final rank = title == term
+          ? (item.kind == MediaKind.track ? 1 : 0)
+          : title.startsWith(term)
+          ? 2
+          : title.contains(term)
+          ? 3
+          : artist.contains(term)
+          ? 4
+          : 5;
+      if (!remote && rank == 5) return;
+      matches.putIfAbsent('${item.backend.name}:${item.globalKey}', () => (item: item, rank: rank, valid: valid));
     }
-    final clients = context.read<MultiServerProvider>().serverManager.visibleOnlineClients;
-    for (final client in clients.values) {
-      final sourceCurrent = _readClient(client);
-      final excluded = context
-          .read<LibrariesProvider>()
-          .libraries
-          .where((l) => l.serverId == client.serverId.value && hidden.hiddenLibraryKeys.contains(l.globalKey))
-          .map((l) => l.id)
-          .toSet();
-      List<MediaItem> items;
-      try {
-        items = await client.searchItems(query, limit: 30, excludedLibraryIds: excluded);
-      } catch (_) {
-        // One unreachable server must not hide downloaded/other-server matches.
-        continue;
-      }
-      if (!mounted || !current()) return [];
-      if (!sourceCurrent()) continue;
-      for (final item in items) {
-        if (item.serverId == client.serverId.value &&
-            const [MediaKind.track, MediaKind.album, MediaKind.artist, MediaKind.playlist].contains(item.kind) &&
-            !hidden.hiddenLibraryKeys.contains('${item.serverId}:${item.libraryId}')) {
-          result[item.globalKey] = item;
-          sources[item.globalKey] = sourceCurrent;
+
+    for (final track in local) {
+      add(track, current, remote: false);
+    }
+    final denied = _hiddenCarLibraries();
+    final clients = context.read<MultiServerProvider>().serverManager.visibleOnlineClients.values.toList();
+    var next = 0, finished = false;
+    Future<void> worker() async {
+      while (!finished && current() && next < clients.length) {
+        final client = clients[next++];
+        final authorized = _readClient(client);
+        final excluded = context
+            .read<LibrariesProvider>()
+            .libraries
+            .where((l) => l.serverId == client.serverId.value && denied.contains(l.globalKey))
+            .map((l) => l.id)
+            .toSet();
+        try {
+          final items = await client
+              .searchItems(query, limit: 30, excludedLibraryIds: excluded)
+              .timeout(const Duration(milliseconds: 850));
+          if (finished || !current() || !authorized()) continue;
+          for (final item in items) {
+            if (item.serverId == client.serverId.value &&
+                item.backend == client.backend &&
+                const [MediaKind.track, MediaKind.album, MediaKind.artist, MediaKind.playlist].contains(item.kind)) {
+              add(item, authorized, remote: true);
+            }
+          }
+        } catch (_) {
+          /* Keep matches from the other servers and downloads. */
         }
       }
-      if (result.length >= 100) break;
     }
-    if (!_current) return [];
-    return result.values
-        .where((item) {
-          if (offlineKeys.contains(item.globalKey)) return true;
-          final source = sources[item.globalKey];
-          return source != null && source() && !hidden.hiddenLibraryKeys.contains('${item.serverId}:${item.libraryId}');
-        })
-        .take(100)
-        .toList();
+
+    final budget = Duration(milliseconds: matches.values.any((r) => r.rank <= 1) ? 550 : 2100);
+    await Future.wait(List.generate(clients.length.clamp(0, 4), (_) => worker())).timeout(budget, onTimeout: () => []);
+    finished = true;
+    if (!current()) return [];
+    final hidden = _hiddenCarLibraries();
+    final visible =
+        matches.values.where((r) => r.valid() && !hidden.contains('${r.item.serverId}:${r.item.libraryId}')).toList()
+          ..sort((a, b) {
+            final rank = a.rank.compareTo(b.rank);
+            if (rank != 0) return rank;
+            final title = a.item.displayTitle.compareTo(b.item.displayTitle);
+            return title != 0 ? title : a.item.globalKey.compareTo(b.item.globalKey);
+          });
+    return visible.take(100).map((r) => r.item).toList();
   }
 
   void _drivingOwnerChanged() {

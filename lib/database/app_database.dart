@@ -1932,6 +1932,19 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
+  Future<bool> resetWatchAttempts(int id, int revision, String profile, String? account) => _runPendingMutation(
+    () async =>
+        await (update(offlineWatchProgress)..where(
+              (r) =>
+                  r.id.equals(id) &
+                  r.updatedAt.equals(revision) &
+                  r.profileId.equals(profile) &
+                  _nullableTextPredicate(r.clientScopeId, account),
+            ))
+            .write(const OfflineWatchProgressCompanion(syncAttempts: Value(0), lastError: Value(null))) ==
+        1,
+  );
+
   Future<int> getPendingSyncCount({String? profileId, int? maxSyncAttempts}) async {
     final query = selectOnly(offlineWatchProgress)..addColumns([offlineWatchProgress.id.count()]);
     if (profileId != null) {

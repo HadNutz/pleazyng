@@ -457,6 +457,22 @@ class MusicLibraryStore {
     });
   }
 
+  Future<List<String>> rankDownloaded(Iterable<String> keys) async {
+    final owned = keys.toSet();
+    if (!active || owned.isEmpty) return [];
+    final rows = await database
+        .customSelect(
+          'SELECT track_key, COUNT(*) AS plays, SUM(listened_ms) AS total FROM music_listens '
+          'WHERE profile_id=? AND qualified=1 GROUP BY track_key ORDER BY plays DESC, total DESC, track_key',
+          variables: [Variable(profileId)],
+        )
+        .get();
+    return [
+      for (final row in rows)
+        if (owned.contains(row.read<String>('track_key'))) row.read<String>('track_key'),
+    ];
+  }
+
   Future<List<MusicChartEntry>> chart({
     required DateTime from,
     required DateTime until,

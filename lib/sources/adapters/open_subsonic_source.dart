@@ -211,41 +211,39 @@ class OpenSubsonicSourceAdapter extends SourceAdapter {
       final result = await _request('search3', {
         'query': query!.trim(),
         'artistCount': '100',
-        'artistOffset': '0',
+        'artistOffset': '$offset',
         'albumCount': '100',
-        'albumOffset': '0',
+        'albumOffset': '$offset',
         'songCount': '100',
         'songOffset': '$offset',
       });
       final data = sourceMap(result['searchResult3']);
       final entries = <SourceEntry>[
-        if (offset == 0)
-          for (final row in _items(data, 'artist'))
-            if (_validId(sourceMap(row)['id']))
-              _folder(
-                _folderId('artist', sourceMap(row)['id']),
-                '${sourceMap(row)['name'] ?? ''}',
-                identifiers: {'subsonicId': '${sourceMap(row)['id']}'},
-              ),
-        if (offset == 0)
-          for (final row in _items(data, 'album'))
-            if (_validId(sourceMap(row)['id']))
-              _folder(
-                _folderId('album', sourceMap(row)['id']),
-                '${sourceMap(row)['name'] ?? ''}',
-                author: '${sourceMap(row)['artist'] ?? ''}',
-                coverId: _validId(sourceMap(row)['coverArt']) ? '${sourceMap(row)['coverArt']}' : null,
-                identifiers: {
-                  'subsonicId': '${sourceMap(row)['id']}',
-                  if (sourceMap(row)['artist'] != null) 'artist': '${sourceMap(row)['artist']}',
-                  if (_validId(sourceMap(row)['coverArt'])) 'coverArt': '${sourceMap(row)['coverArt']}',
-                },
-              ),
+        for (final row in _items(data, 'artist'))
+          if (_validId(sourceMap(row)['id']))
+            _folder(
+              _folderId('artist', sourceMap(row)['id']),
+              '${sourceMap(row)['name'] ?? ''}',
+              identifiers: {'subsonicId': '${sourceMap(row)['id']}'},
+            ),
+        for (final row in _items(data, 'album'))
+          if (_validId(sourceMap(row)['id']))
+            _folder(
+              _folderId('album', sourceMap(row)['id']),
+              '${sourceMap(row)['name'] ?? ''}',
+              author: '${sourceMap(row)['artist'] ?? ''}',
+              coverId: _validId(sourceMap(row)['coverArt']) ? '${sourceMap(row)['coverArt']}' : null,
+              identifiers: {
+                'subsonicId': '${sourceMap(row)['id']}',
+                if (sourceMap(row)['artist'] != null) 'artist': '${sourceMap(row)['artist']}',
+                if (_validId(sourceMap(row)['coverArt'])) 'coverArt': '${sourceMap(row)['coverArt']}',
+              },
+            ),
         for (final row in _items(data, 'song'))
           if (_validId(sourceMap(row)['id'])) _song(sourceMap(row)),
       ];
-      final songs = _items(data, 'song');
-      return SourcePage(entries, next: songs.length >= 100 ? '${offset + songs.length}' : null);
+      final more = ['artist', 'album', 'song'].any((kind) => _items(data, kind).length >= 100);
+      return SourcePage(entries, next: more ? '${offset + 100}' : null);
     }
 
     if (parent == null) {

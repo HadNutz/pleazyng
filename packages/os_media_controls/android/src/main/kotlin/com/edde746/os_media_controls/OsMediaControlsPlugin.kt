@@ -110,15 +110,48 @@ class OsMediaControlsPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
 
         MusicCarApi.attach(binding.binaryMessenger)
         setupMediaSession()
+        MusicCarApi.failureHandler = ::showCarFailure
         MusicCarApi.addListener(carChanged)
         MediaSessionHolder.setMediaSession(mediaSession.sessionToken)
+    }
+
+    private fun showCarFailure(code: String) {
+        if (currentState == PlaybackStateCompat.STATE_PLAYING || code == "disconnected") return
+        val labels = MusicCarApi.snapshot["carLabels"] as? Map<*, *>
+        val locked = code == "profile_unavailable"
+        val text = when (code) {
+            "profile_unavailable" -> "Unlock Pleazyng"
+            "loading" -> labels?.get("loading") as? String ?: "Loading Pleazyng"
+            "no_match", "ambiguous_search" -> MusicCarApi.snapshot["noMatch"] as? String ?: "No matching media"
+            "stale_queue", "stale_widget" -> "Select the item again"
+            else -> labels?.get("unavailable") as? String ?: "Media unavailable. Try again."
+        }
+        val state = PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_ERROR, currentPosition, currentSpeed)
+            .setActions(buildPlaybackActions()).setErrorMessage(if (locked) PlaybackStateCompat.ERROR_CODE_AUTHENTICATION_EXPIRED
+                else PlaybackStateCompat.ERROR_CODE_APP_ERROR, text)
+        if (locked) context.packageManager.getLaunchIntentForPackage(context.packageName)?.let { intent ->
+            val pending = android.app.PendingIntent.getActivity(context, 0, intent,
+                android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE)
+            state.setExtras(android.os.Bundle().apply {
+                putParcelable(androidx.media.utils.MediaConstants.PLAYBACK_STATE_EXTRAS_KEY_ERROR_RESOLUTION_ACTION_INTENT, pending)
+                putString(androidx.media.utils.MediaConstants.PLAYBACK_STATE_EXTRAS_KEY_ERROR_RESOLUTION_ACTION_LABEL, text)
+            })
+        }
+        mediaSession.setPlaybackState(state.build())
+    }
+
+    private fun requestPlayback(method: String, args: Map<String, Any?>) {
+        var failed = false
+        MusicCarApi.request(method, args, { code -> failed = true; showCarFailure(code) }) {
+            if (!failed && it != true) showCarFailure(if (method == "playSearch") "no_match" else "unavailable")
+        }
     }
 
     private fun setupMediaSession() {
         mediaSession = MediaSessionCompat(context, "OsMediaControls").apply {
             setCallback(object : MediaSessionCompat.Callback() {
                 override fun onPlayFromMediaId(mediaId: String?, extras: android.os.Bundle?) {
-                    if (mediaId != null) MusicCarApi.request("playItem", mapOf("id" to mediaId)) { }
+                    if (mediaId != null) requestPlayback("playItem", mapOf("id" to mediaId))
                 }
 
                 override fun onPlayFromSearch(query: String?, extras: android.os.Bundle?) {
@@ -141,15 +174,7 @@ class OsMediaControlsPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
                     }
                     val args = mapOf("query" to (name?.takeIf { it.isNotBlank() } ?: query.orEmpty()),
                         "artist" to artist, "album" to album, "kind" to kind)
-                    MusicCarApi.request("playSearch", args) { result ->
-                        if (result != true && currentState != PlaybackStateCompat.STATE_PLAYING) {
-                            this@OsMediaControlsPlugin.mediaSession.setPlaybackState(PlaybackStateCompat.Builder()
-                                .setState(PlaybackStateCompat.STATE_ERROR, currentPosition, currentSpeed)
-                                .setActions(buildPlaybackActions())
-                                .setErrorMessage(PlaybackStateCompat.ERROR_CODE_END_OF_QUEUE,
-                                    MusicCarApi.snapshot["noMatch"] as? String ?: "No matching media").build())
-                        }
-                    }
+                    requestPlayback("playSearch", args)
                 }
 
                 override fun onSkipToQueueItem(id: Long) {
@@ -619,6 +644,7 @@ class OsMediaControlsPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         // Never leak a silent notification or a headless service past the
         // engine's lifetime.
+        MusicCarApi.failureHandler = null
         MusicCarApi.removeListener(carChanged)
         MusicCarApi.detach()
         MediaSessionHolder.backgroundModeEnabled = false

@@ -6,6 +6,7 @@ import android.os.Process
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
 import androidx.media.MediaBrowserServiceCompat
+import androidx.media.utils.MediaConstants
 import androidx.media.MediaSessionManager
 import com.edde746.os_media_controls.MediaSessionHolder
 import com.edde746.os_media_controls.MusicCarApi
@@ -75,14 +76,28 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
     ensureMusicEngine()
     MediaSessionHolder.sessionToken?.let { if (sessionToken == null) setSessionToken(it) }
     if (acceptedHost) MusicCarApi.connection(true)
-    return BrowserRoot("root", Bundle().apply { putBoolean("android.media.browse.SEARCH_SUPPORTED", true) })
+    val limit = rootHints?.getInt(MediaConstants.BROWSER_ROOT_HINTS_KEY_ROOT_CHILDREN_LIMIT, 4) ?: 4
+    return BrowserRoot(if (limit in 1..3) "rootLimit:$limit" else "root", Bundle().apply { putBoolean("android.media.browse.SEARCH_SUPPORTED", true) })
   }
 
   override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaBrowserCompat.MediaItem>>) {
     if (loadedParents.size >= 100) loadedParents.remove(loadedParents.first())
     loadedParents.add(parentId)
     result.detach()
-    MusicCarApi.request("browse", mapOf("id" to parentId)) { raw -> result.sendResult(if (raw is List<*>) items(raw) else null) }
+    val limit = parentId.removePrefix("rootLimit:").toIntOrNull()?.coerceIn(1, 3)
+    val overflow = parentId.removePrefix("rootMore:").toIntOrNull()?.coerceIn(0, 2)
+    val id = if (limit != null || overflow != null) "root" else parentId
+    MusicCarApi.request("browse", mapOf("id" to id), { code -> MusicCarApi.reportFailure(code) }) { raw ->
+      if (raw !is List<*>) { result.sendResult(null); return@request }
+      val rows = when {
+        overflow != null -> raw.drop(overflow)
+        limit != null && raw.size > limit -> raw.take(limit - 1) + listOf(mapOf(
+          "id" to "rootMore:${limit - 1}", "title" to ((MusicCarApi.snapshot["carLabels"] as? Map<*, *>)?.get("more") ?: "More")
+        ))
+        else -> raw
+      }
+      result.sendResult(items(rows))
+    }
   }
 
   override fun onSearch(query: String, extras: Bundle?, result: Result<MutableList<MediaBrowserCompat.MediaItem>>) {
@@ -94,7 +109,8 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
     val row = value as? Map<*, *> ?: return@mapNotNull null
     val id = row["id"] as? String ?: return@mapNotNull null
     val title = row["title"] as? String ?: return@mapNotNull null
-    val description = MediaDescriptionCompat.Builder().setMediaId(id).setTitle(title)
+    val spoken = row["quickResume"] != true && (row["kind"] in setOf("podcast", "audiobook") || row["queuedSpoken"] == true)
+    val description = MediaDescriptionCompat.Builder().setMediaId(if (spoken) "spokenOptions:$id" else id).setTitle(title)
       .setSubtitle(row["subtitle"] as? String)
     if (row["artwork"] == true) {
       description.setIconUri(
@@ -102,12 +118,13 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
           .authority("$packageName.car.artwork").appendPath(id).build()
       )
     }
-    MediaBrowserCompat.MediaItem(description.build(), if (row["playable"] == true) MediaBrowserCompat.MediaItem.FLAG_PLAYABLE else MediaBrowserCompat.MediaItem.FLAG_BROWSABLE)
+    MediaBrowserCompat.MediaItem(description.build(), if (!spoken && row["playable"] == true) MediaBrowserCompat.MediaItem.FLAG_PLAYABLE else MediaBrowserCompat.MediaItem.FLAG_BROWSABLE)
   }?.toMutableList() ?: mutableListOf()
 
   override fun onDestroy() {
     MusicCarApi.removeListener(changed)
     if (acceptedHost) MusicCarApi.connection(false)
+    if (MusicCarApi.embeddedBrowserBound) MusicCarApi.retireRequests()
     MusicCarApi.embeddedBrowserBound = false
     super.onDestroy()
   }
@@ -117,6 +134,7 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
       acceptedHost = false
       MusicCarApi.connection(false)
     }
+    if (MusicCarApi.embeddedBrowserBound) MusicCarApi.retireRequests()
     MusicCarApi.embeddedBrowserBound = false
     return super.onUnbind(intent)
   }

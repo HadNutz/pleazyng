@@ -1,3 +1,4 @@
+import 'karaoke_take_metadata.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -405,7 +406,7 @@ class KaraokeAudio extends ChangeNotifier with WidgetsBindingObserver {
           'digests': session.duetInvitation!['digests'],
         },
       };
-      await File(p.join(dir.path, 'take.json')).writeAsString(jsonEncode(metadata), flush: true);
+      await writeTakeMetadata(dir, metadata);
       final file = await File(p.join(dir.path, 'dry.wav')).open(mode: FileMode.write);
       await file.writeFrom(_wavHeader(0));
       if (!capturing || generation != _generation) {
@@ -475,7 +476,7 @@ class KaraokeAudio extends ChangeNotifier with WidgetsBindingObserver {
     metadata['complete'] = !_writeFailed;
     metadata['frames'] = written ~/ 2;
     metadata['score'] = _writeFailed ? null : score?.result();
-    await File(p.join(dir.path, 'take.json')).writeAsString(jsonEncode(metadata), flush: true);
+    await writeTakeMetadata(dir, metadata);
     _notify();
   }
 

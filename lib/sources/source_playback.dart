@@ -883,11 +883,24 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
     ];
   }
 
+  Future<List<Map<String, dynamic>>> _pruneSpoken(String profile, int epoch) async {
+    final rows = await _spokenRows(profile);
+    if (!sources.current(epoch) || sources.loading || rows.isEmpty) return rows;
+    final entries = await sources.repository.entriesByKeys(profile, rows.map((r) => r['key'] as String));
+    if (!sources.current(epoch) || sources.loading) return rows;
+    final valid = entries.where(_ownsSpoken).map((e) => e.key).toSet();
+    final kept = rows.where((r) => valid.contains(r['key'])).toList();
+    if (kept.length != rows.length) {
+      await sources.repository.savePreference(profile, _spokenQueueKey, {'rows': kept});
+    }
+    return kept;
+  }
+
   Future<void> enqueueSpoken(SourceEntry item, {required bool next, required bool offline}) {
     final epoch = sources.generation, profile = sources.profileId;
     return _serialize(() async {
       if (profile == null || !sources.current(epoch) || !_ownsSpoken(item)) throw StateError('Spoken library changed');
-      final rows = await _spokenRows(profile);
+      final rows = await _pruneSpoken(profile, epoch);
       if (!sources.current(epoch) || rows.length >= 500) throw StateError('Spoken queue unavailable');
       rows.insert(next ? 0 : rows.length, {'id': const Uuid().v4(), 'key': item.key, 'offline': offline});
       await sources.repository.savePreference(profile, _spokenQueueKey, {'rows': rows});
@@ -900,7 +913,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
     var removed = false;
     await _serialize(() async {
       if (profile == null || !sources.current(epoch)) return;
-      final rows = await _spokenRows(profile);
+      final rows = await _pruneSpoken(profile, epoch);
       final index = rows.indexWhere((row) => row['id'] == id);
       if (index < 0 || !sources.current(epoch)) return;
       rows.removeAt(index);
@@ -923,7 +936,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
   Future<bool> _advanceSpoken([String? id]) async {
     final profile = sources.profileId, epoch = sources.generation;
     if (profile == null || !sources.current(epoch)) return false;
-    final rows = await _spokenRows(profile);
+    final rows = await _pruneSpoken(profile, epoch);
     for (final row in rows.where((r) => id == null || r['id'] == id).toList()) {
       final item = await sources.repository.entryByKey(profile, row['key'] as String);
       if (!sources.current(epoch)) return false;
@@ -932,7 +945,14 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       if (!sources.current(epoch)) return false;
       final local = PublicationOfflineReadiness.evaluate(item, verified).canListen;
       if (!local && (row['offline'] == true || item.unavailable)) continue;
-      final fresh = local ? item : await sources.hydrate(item);
+      late final SourceEntry fresh;
+      try {
+        fresh = local ? item : await sources.hydrate(item);
+      } catch (_) {
+        if (id != null) rethrow;
+        if (!sources.current(epoch)) return false;
+        continue;
+      }
       if (!sources.current(epoch) || fresh.key != item.key || !_ownsSpoken(fresh)) return false;
       if (fresh.audio.isEmpty) continue;
       await _start(fresh, fresh.audio, isStartCurrent: () => sources.current(epoch) && _ownsSpoken(fresh));
