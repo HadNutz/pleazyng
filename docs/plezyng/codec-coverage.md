@@ -49,12 +49,12 @@ source. Native webOS, Tizen and ExoPlayer never inherit mpv's inventory.
 - Companion `snapetech-org/mpv-build` preserves the broad built-in FFmpeg
   decoder, demuxer, parser and bitstream-filter sets. Linux packages generate
   a binary-hashed inventory and require a software AV1 implementation.
-  Its Linux, Android, Apple and Windows source graphs include EVC, AVS2,
-  AVS3 and static LCEVCdec. The Linux release gate requires H.264, HEVC,
+  Its Linux, Android, Apple and Windows source graphs include AV2, EVC,
+  AVS2, AVS3 and static LCEVCdec. The Linux release gate requires H.264, HEVC,
   software AV1, VP9, MPEG-2, VC-1, MPEG-4, VVC, EVC, AVS2 and AVS3, plus
   generated decode/seek corpus and LCEVC reconstruction checks on both native
-  architectures. The pinned AVS2 dependency is 8-bit only. The application
-  lock consumes verified published native packages for all four platform groups.
+  architectures. The AVS2 integration selects the 8-bit or Main 10 decoder
+  from the stream headers.
 
 - For the selected AC-4 or MPEG-H audio track, a measured decoder absence
   requests server audio conversion with video stream copy available. This
@@ -67,14 +67,27 @@ The companion producer runs a Linux release corpus covering software
 decode and seek, codec bit depths and chroma formats, HLS/DASH VOD, DTS and
 TrueHD PCM, and six text or bitmap subtitle formats. Four passthrough cases
 check software IEC 61937 output. Hash-pinned reference vectors cover
-APV, VVC, EVC, AVS2, AVS3 and both JPEG XL forms.
+AV2, APV, VVC, EVC, AVS2, AVS3 and both JPEG XL forms.
 
-The native manifest at `7aff0ff256b7` pins Linux and Android packages with
-JPEG XL and DASH enabled. Its Linux x86_64 and ARM64 builds passed 52 playback
-checks including DASH, plus the reference JPEG XL cases, DVD title playback
-and recovery from an injected HTTP 503 during HLS playback. The hosted
-Android build passed all four ABIs and packaged the AAR.
-See the [producer coverage report](https://github.com/snapetech-org/mpv-build/blob/main/docs/codec-coverage.md#reference-vectors-and-dash).
+Native manifest `ab5e90ab2cb7` published the following results from the
+[release build](https://github.com/snapetech-org/mpv-build/actions/runs/44209533457).
+
+| Platform | Evidence |
+| --- | --- |
+| Linux x86_64 and ARM64 | Each shipped library reported 489 decoder identities and passed 68 generated playback checks, 12 reference cases, audio CD, DVD, Blu-ray, interrupted HLS recovery and LCEVC reconstruction. Both decoded and sought through 8-bit and 10-bit AV2. |
+| Apple | All six targets built. The published Libavcodec and Libavformat archives contain the AV2 decoder, its dav2d implementation, the IVF reader and the raw AV2 OBU reader in all 11 architecture slices. |
+| Windows x64 and ARM64 | Both DLLs built and passed packaging. Running the published DLLs against the playback corpus on Windows remains open. |
+| Android armeabi-v7a, arm64-v8a, x86 and x86_64 | The AAR's FFmpeg libraries decoded the two AV2 IVF vectors and the raw 8-bit OBU vector on Android API 25. The decoded frame counts and full-sequence pixel digests matched the independent AVM reference on each ABI. The full player in this AAR fails to load due to unresolved Brotli imports. |
+
+Android AAR `2c3eac114e23` and the preceding x86_64 native package
+`1adb03337a50` omit part of Brotli from libmpv's FreeType dependency.
+The Android loader rejects the library before opening media. The
+[producer fix](https://github.com/snapetech-org/mpv-build/commit/4f394a24d88dc40f269f9c3d3ddffd43c56a1b15)
+links Brotli's common code statically into the player and checks imports
+in each release tarball and the stripped AAR against Android API 25.
+A locally rebuilt x86_64 libmpv opened the 480×270 AV2 IVF, sought to
+one second and resumed to EOF under Android 7.1 with the packaged FFmpeg
+libraries. The app needs a new published Android package for this fix.
 
 ## Coverage order and remaining qualification
 
@@ -110,8 +123,7 @@ Android AAR assets and the application's Licenses screen. BSD-3-Clause-Clear
 and the additional licensing information remain the SDK's own terms; they
 explicitly exclude a patent license. See the [pinned SDK source and terms](https://github.com/v-novaltd/LCEVCdec/tree/e295d8438ba554bc541fb269baa9cbd567b626a8).
 
-The application lock now consumes the producer's verified published artifacts
-for all four platform groups. Apple passed all six target builds and iOS/tvOS
+The initial LCEVC release covered all four platform groups. Apple passed all six target builds and iOS/tvOS
 Objective-C-only SwiftPM consumer links; Android passed all four ABI builds and
 AAR/JVM checks; both Linux architectures passed the 28-case decode/seek corpus
 and enhanced-resolution LCEVC checks. Windows x64 and ARM64 passed production
@@ -141,7 +153,7 @@ and the producer's [SDK bundling decisions](https://github.com/snapetech-org/mpv
 Unavailable decoder routes must keep an honest unsupported or available
 server-conversion result; recognition never substitutes for an implementation.
 
-The native producer's local validation now includes exact upstream YUV hashes
+The native producer's local validation includes exact upstream YUV hashes
 for AVS2 8-bit and AVS3 8/10-bit, Android final shared FFmpeg links for all four
 ABIs, and a headless VA-API control test for LCEVC. The latter reproduced a
 silent base-layer-only hardware result and verified targeted software replay
