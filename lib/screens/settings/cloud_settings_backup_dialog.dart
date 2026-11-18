@@ -158,8 +158,9 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
       _message = null;
     });
     try {
-      if (_formOwner?.call() != true)
+      if (_formOwner?.call() != true) {
         throw const CloudSettingsBackupException('Reopen backup settings for the active profile.');
+      }
       final message = await operation();
       if (mounted) setState(() => _message = message);
     } catch (error, stackTrace) {

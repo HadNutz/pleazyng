@@ -37,8 +37,9 @@ class CloudSettingsBackupService {
   Future<String> _activeConfigurationKey() async {
     final storage = await StorageService.getInstance();
     final profile = storage.getActiveProfileId(), owner = storage.activeUserScope();
-    if (profile == null || owner == null)
+    if (profile == null || owner == null) {
       throw const CloudSettingsBackupException('Choose a profile before configuring a backup.');
+    }
     return _profileKey(profile, owner);
   }
 
