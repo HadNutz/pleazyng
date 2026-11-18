@@ -9,10 +9,14 @@ abstract final class CodecCatalog {
     final dot = name.indexOf('.');
     if (dot > 0 && dot < name.length - 1) {
       final fourcc = name.substring(0, dot);
+      if (fourcc == 'av2e' && _av2Profile.hasMatch(name.substring(dot + 1))) return 'av2';
       if (_profiledSampleEntries.contains(fourcc)) return aliases[fourcc]!;
     }
     return aliases[name] ?? name;
   }
+
+  // AOMedia's AV2 ISOBMFF working draft uses av2e/av2E sample entries.
+  static final _av2Profile = RegExp(r'^[0-9a-v]{2}[mh]$');
 
   static const _profiledSampleEntries = {
     'av01',
@@ -41,6 +45,7 @@ abstract final class CodecCatalog {
     'x265': 'hevc',
     'av01': 'av1',
     'av02': 'av2',
+    'av2e': 'av2',
     'vp09': 'vp9',
     'x-vnd.on2.vp9': 'vp9',
     'x-vnd.on2.vp8': 'vp8',

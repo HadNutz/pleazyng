@@ -26,11 +26,19 @@ List<Map<String, Object?>> _videoDirectPlayProfiles({bool? allowAudioStreamCopy}
     'avplayer' || 'mediafoundation' || 'mediaplayer' || 'gstreamer' => {
       'mp4,m4v,mov': codecs.intersection({'h264', 'hevc'}),
     },
-    _ => {RuntimePlaybackCapabilities.mpvVideoContainers.join(','): codecs},
+    _ => {
+      RuntimePlaybackCapabilities.mpvVideoContainers.join(','): codecs.difference({'av2'}),
+    },
   };
+  final av2Containers = RuntimePlaybackCapabilities.mpvAv2Containers;
+  final profiles = [
+    ...containers.entries,
+    if (engine == 'mpv' && codecs.contains('av2') && av2Containers.isNotEmpty)
+      MapEntry(av2Containers.join(','), {'av2'}),
+  ];
   final audio = RuntimePlaybackCapabilities.videoAudioCodecs;
   return [
-    for (final MapEntry(key: container, value: supported) in containers.entries)
+    for (final MapEntry(key: container, value: supported) in profiles)
       if (container.isNotEmpty && supported.any(codecs.contains))
         {
           'Type': 'Video',
@@ -323,7 +331,11 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     final forceVideoConversion =
         !isTrack &&
         (options.forceVideoConversion ||
-            await VideoDecodeCapabilities.sourceFormatUnavailable(sourceCodec, mediaInfo.displayCriteria));
+            await VideoDecodeCapabilities.sourceFormatUnavailable(
+              sourceCodec,
+              mediaInfo.displayCriteria,
+              container: bundle.container,
+            ));
     if (forceCompatibleDolbyVisionTranscode &&
         !options.hasServerDolbyVisionSdrRoute(
           mediaInfo,

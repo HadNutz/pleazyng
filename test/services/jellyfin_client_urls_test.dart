@@ -2953,6 +2953,29 @@ void main() {
       }
     });
 
+    test('AV2 direct play requires a matching container binding in the installed player', () async {
+      addTearDown(RuntimePlaybackCapabilities.reset);
+      RuntimePlaybackCapabilities.recordMpvDecoders([
+        {'codec': 'av2', 'driver': 'libdav2d'},
+        {'codec': 'h264', 'driver': 'h264'},
+      ]);
+      RuntimePlaybackCapabilities.recordMpvDemuxers(['mov', 'matroska', 'ivf', 'av2']);
+      late List<dynamic> profiles;
+      final scoped = JellyfinClient.forTesting(
+        connection: _conn(),
+        httpClient: MockClient((request) async {
+          profiles = jsonDecode(request.body)['DeviceProfile']['DirectPlayProfiles'];
+          return jsonResponse({'MediaSources': []});
+        }),
+      );
+      addTearDown(scoped.close);
+      await scoped.getPlaybackInfo('movie');
+      final av2 = profiles.where((row) => (row['VideoCodec'] as String).split(',').contains('av2')).single;
+      expect((av2['Container'] as String).split(','), unorderedEquals(['ivf', 'av2', 'obu']));
+      final ordinary = profiles.where((row) => (row['Container'] as String).split(',').contains('mp4')).single;
+      expect(ordinary['VideoCodec'], 'h264');
+    });
+
     test('video audio negotiation uses measured decoders without claiming output support', () async {
       RuntimePlaybackCapabilities.recordMpvDecoders([
         {'codec': 'h264', 'driver': 'h264'},

@@ -123,6 +123,10 @@ AV2 direct play requires a loaded mpv engine reporting the AV2 decoder. The
 native producer integrates VideoLAN dav2d with FFmpeg for AV02 IVF and raw
 OBU streams. The Linux reference check covers 130 frames and a one-second
 IVF seek. File discovery recognizes the raw `.av2` and `.obu` extensions.
+Jellyfin and Emby advertise AV2 only with its matching demuxers. For MP4
+and Matroska, the current integration requests conversion. The draft MP4
+sample-entry names `av2e` and `av2E` identify the codec for that decision.
+[AOMedia AV2 ISOBMFF working draft](https://aomediacodec.github.io/av2-isobmff/main/index.html).
 Clients running older native packages still request an available server
 conversion for AV2. Native TV and Android platform engines negotiate separately.
 [Decoder source](https://code.videolan.org/videolan/dav2d).

@@ -4495,12 +4495,14 @@ class PlexClient
                   !tizenSourceAudio.contains(selectedAudioCodec.toLowerCase())) ||
               RuntimePlaybackCapabilities.sourceAudioDecoderUnavailable(selectedAudioCodec));
       final sourceCodecRefused = !isTrack && _sourceCodecRefused(data);
+      final selectedVersion = _selectedVersion(data);
       final forceVideoConversion =
           !isTrack &&
           (options.forceVideoConversion ||
               await VideoDecodeCapabilities.sourceFormatUnavailable(
-                _selectedVersion(data)?.videoCodec,
+                selectedVersion?.videoCodec,
                 data.mediaInfo?.displayCriteria,
+                container: selectedVersion?.container,
               ));
       final forceCompatibleDolbyVisionTranscode = options.requestsCompatibleDolbyVisionRendition(data.mediaInfo);
       if (forceCompatibleDolbyVisionTranscode &&

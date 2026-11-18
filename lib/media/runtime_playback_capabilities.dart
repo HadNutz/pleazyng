@@ -155,6 +155,22 @@ abstract final class RuntimePlaybackCapabilities {
     'flc': 'flic',
   };
 
+  // The dav2d build binds AV2 to IVF and the raw AV2 OBU demuxer.
+  // The presence of a general MP4 or Matroska demuxer does not establish a binding.
+  static const _av2Demuxers = {'ivf': 'ivf', 'av2': 'av2', 'obu': 'av2'};
+
+  static List<String> get mpvAv2Containers => [
+    for (final entry in _av2Demuxers.entries)
+      if (_demuxers?.contains(entry.value) == true) entry.key,
+  ];
+
+  static bool mpvAv2ContainerUnavailable(String? container) {
+    final name = container?.trim().toLowerCase();
+    if (name == null || name.isEmpty) return false;
+    final demuxer = _av2Demuxers[name];
+    return demuxer == null || _demuxers?.contains(demuxer) == false;
+  }
+
   static List<String> get mpvVideoContainers {
     final measured = negotiationEngine == 'mpv' ? _demuxers : null;
     if (measured == null) return const ['mp4', 'mkv', 'm4v', 'webm', 'mov', 'ts', 'mpegts'];

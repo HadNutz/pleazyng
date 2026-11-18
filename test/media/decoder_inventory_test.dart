@@ -67,6 +67,12 @@ void main() {
       {'codec': 'av2', 'driver': 'libdav2d'},
     ]);
     expect(VideoDecodeCapabilities.directPlayVideoCodecs, contains('av2'));
+    RuntimePlaybackCapabilities.recordMpvDemuxers(['mov,mp4', 'ivf', 'matroska']);
+    expect(await VideoDecodeCapabilities.sourceFormatUnavailable('av2e.00M', null, container: 'mp4'), isTrue);
+    expect(await VideoDecodeCapabilities.sourceFormatUnavailable('AV02', null, container: 'IVF'), isFalse);
+    expect(await VideoDecodeCapabilities.sourceFormatUnavailable('av2', null, container: 'obu'), isTrue);
+    RuntimePlaybackCapabilities.recordMpvDemuxers(['ivf', 'av2']);
+    expect(await VideoDecodeCapabilities.sourceFormatUnavailable('av2', null, container: 'obu'), isFalse);
     expect(VideoDecodeCapabilities.transcodeVideoCodecs.map((codec) => codec.id), isNot(contains('av2')));
     await RuntimePlaybackCapabilities.withVideoEngine('tizen', () async {
       expect(VideoDecodeCapabilities.directPlayVideoCodecs, isNot(contains('av2')));
@@ -108,7 +114,10 @@ void main() {
     ]);
     expect(VideoDecodeCapabilities.directPlayVideoCodecs, ['h264']);
     RuntimePlaybackCapabilities.activeVideoEngine = 'tizen';
-    expect(VideoDecodeCapabilities.directPlayVideoCodecs, ['h264']);
+    expect(
+      VideoDecodeCapabilities.directPlayVideoCodecs,
+      unorderedEquals(['h264', 'hevc', 'av1', 'mpeg2video', 'vp8', 'vp9']),
+    );
     RuntimePlaybackCapabilities.activeVideoEngine = 'webos';
     expect(VideoDecodeCapabilities.directPlayVideoCodecs, containsAll(['h264', 'hevc', 'mpeg2video']));
     expect(VideoDecodeCapabilities.directPlayVideoCodecs, isNot(contains('av1')));
@@ -212,6 +221,9 @@ void main() {
     expect(CodecCatalog.normalize('hvc1.2.4.L153.B0'), 'hevc');
     expect(CodecCatalog.normalize('video/x-vnd.on2.vp9'), 'vp9');
     expect(CodecCatalog.normalize('AV02'), 'av2');
+    expect(CodecCatalog.normalize('av2e.00M'), 'av2');
+    expect(CodecCatalog.normalize('av2E.4AH'), 'av2');
+    expect(CodecCatalog.normalize('av2E.4AW'), 'av2e.4aw');
     expect(CodecCatalog.normalize('mp4a.40.42'), 'mp4a.40.42');
     expect(RankedVideoCodec.fromServerCodec('hvc1'), RankedVideoCodec.hevc);
     expect(RankedVideoCodec.fromServerCodec('av01.0.08M.10'), RankedVideoCodec.av1);

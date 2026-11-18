@@ -236,8 +236,11 @@ class VideoDecodeCapabilities {
   /// Android validates the selected stream against a single platform decoder's
   /// profile, dimensions and rate together. Dolby Vision has its own routing
   /// and ExoPlayer can recover via mpv when the platform cannot answer.
-  static Future<bool> sourceFormatUnavailable(String? codec, MediaDisplayCriteria? source) async {
+  static Future<bool> sourceFormatUnavailable(String? codec, MediaDisplayCriteria? source, {String? container}) async {
     if (sourceDecoderUnavailable(codec)) return true;
+    if (videoEngine == 'mpv' && codec != null && CodecCatalog.normalize(codec) == 'av2') {
+      return RuntimePlaybackCapabilities.mpvAv2ContainerUnavailable(container);
+    }
     if (videoEngine == 'webos' && codec != null && source != null && !source.hasDolbyVision) {
       return webosVideoFormatUnavailable(CodecCatalog.normalize(codec), source, uhd: _singleton.instance?._webosUhd);
     }
