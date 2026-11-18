@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Fix phone karaoke take metadata and localize Dispatcharr recording status and actions.
+
 - Use the rounded group and copy icons for music passenger requests and playback diagnostics.
 
 - CarPlay skips profile-specific station and download lookups when the profile is unavailable and discards stale browse results after disconnecting.

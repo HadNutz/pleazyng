@@ -1,6 +1,5 @@
 import 'karaoke_take_metadata.dart';
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:math' as math;

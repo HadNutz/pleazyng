@@ -1535,8 +1535,9 @@ class IptvSourceRepository {
         try {
           await client.scheduleChannel(remote, program);
         } on SourceException catch (error) {
-          if ({400, 401, 403, 404, 405, 422}.contains(error.status))
+          if ({400, 401, 403, 404, 405, 422}.contains(error.status)) {
             await change('transfer_pending', 'scheduled', null);
+          }
           rethrow;
         }
         verified = await verify();

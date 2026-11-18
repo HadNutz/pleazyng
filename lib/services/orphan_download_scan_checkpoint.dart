@@ -141,8 +141,9 @@ extension ResumableOrphanScan on OrphanDownloadCleanupService {
             sizeBytes: 0,
             modified: DateTime.fromMillisecondsSinceEpoch(0),
           );
-          if (_isRecognizedCandidate(file, segments) && await state.isWithinRoot(full))
+          if (_isRecognizedCandidate(file, segments) && await state.isWithinRoot(full)) {
             await state.addCandidate(full, tag);
+          }
         }
       }
       frame['after'] = name;
@@ -157,7 +158,7 @@ extension ResumableOrphanScan on OrphanDownloadCleanupService {
     try {
       for (var n = 0; n < chunks; n++) {
         for (final r in jsonDecode(await File(path.join(directory.path, '$n.json')).readAsString()) as List) {
-          if (!protectedTags.contains(r[1]))
+          if (!protectedTags.contains(r[1])) {
             files.add(
               OrphanDownloadFile(
                 relativePath: r[0],
@@ -166,6 +167,7 @@ extension ResumableOrphanScan on OrphanDownloadCleanupService {
                 modified: DateTime.fromMicrosecondsSinceEpoch(r[3]),
               ),
             );
+          }
         }
       }
     } on Object {

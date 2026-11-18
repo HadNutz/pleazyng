@@ -133,8 +133,9 @@ class DispatcharrDvrClient {
             next.path != endpoint.path ||
             next.userInfo.isNotEmpty ||
             !visited.add(next) ||
-            visited.length > 1000)
+            visited.length > 1000) {
           throw const SourceException(SourceFailure.invalidData);
+        }
         page = await _requestUri('GET', next);
       }
     }

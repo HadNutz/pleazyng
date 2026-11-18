@@ -344,14 +344,14 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           'title': t.music.queue,
           'rows': [
             if (spoken != null && spoken.entry != null)
-              {'index': -1, 'id': 'resume', 'title': spoken.entry!.displayTitle, 'artist': spoken.entry!.series ?? ''},
+              {'index': -1, 'id': 'resume', 'title': spoken.entry!.displayTitle, 'artist': spoken.entry!.series},
             if (spokenRows != null)
               for (final (index, row) in spokenRows.take(49).indexed)
                 {
                   'index': index,
                   'id': 'spokenQueue:$_itemScope:${row.id}',
                   'title': row.item.displayTitle,
-                  'artist': row.item.series ?? '',
+                  'artist': row.item.series,
                 },
             if (spoken == null)
               for (var i = start; i < queue.length && i < start + 50; i++)
@@ -757,7 +757,9 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     final downloads = context.read<DownloadProvider?>();
     final hidden = context.read<HiddenLibrariesProvider?>();
     await hidden?.ensureInitialized();
-    if (!_current || downloads == null || downloads.isDisposed || downloads.activeProfileId != _profileId) return [];
+    if (!mounted || !_current || downloads == null || downloads.isDisposed || downloads.activeProfileId != _profileId) {
+      return [];
+    }
     final denied = _hiddenCarLibraries(), manager = context.read<MultiServerProvider?>()?.serverManager;
     return downloads.downloadedTracks
         .where(
@@ -1058,8 +1060,9 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         for (final row in resolved) {
           if (resolved.where((other) => other['title'] == row['title']).length < 2) continue;
           final source = _authorizations[row['id']]?.client?.serverName;
-          if (source != null)
+          if (source != null) {
             row['subtitle'] = [row['subtitle'], source].whereType<String>().where((s) => s.isNotEmpty).join(' · ');
+          }
         }
         if (!mounted || !requestCurrent()) return [];
         resolved.addAll(
@@ -1121,7 +1124,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         if (Platform.isAndroid &&
             id == 'guestPhone:$_itemScope' &&
             (_connected || PlatformDetector.isAutomotiveMedia())) {
-          if (!await commit() || context.read<GuestJukebox?>() == null) return false;
+          if (!await commit() || !mounted || context.read<GuestJukebox?>() == null) return false;
           _guestPending = true;
           _openGuestWhenAvailable();
           return true;
@@ -1956,7 +1959,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     }
     if (id == 'offlineChart' || id.startsWith('offlineChart:')) {
       final owned = await _visibleDownloads();
-      if (!_current) return [];
+      if (!mounted || !_current) return [];
       final libraries = {for (final l in context.read<LibrariesProvider>().libraries) l.globalKey: l.title};
       String library(MediaItem track) => '${track.serverId}:${track.libraryId}';
       if (id == 'offlineChart') {
@@ -2593,7 +2596,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     final generation = _profiles.identityMutationGeneration;
     bool current() => mounted && _current && generation == _profiles.identityMutationGeneration;
     final local = await _visibleDownloads();
-    if (!current()) return [];
+    if (!mounted || !current()) return [];
     final matches = <String, ({MediaItem item, int rank, bool Function() valid})>{};
     void add(MediaItem item, bool Function() valid, {required bool remote}) {
       final title = _voiceName(item.displayTitle);
@@ -2618,7 +2621,8 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     final clients = context.read<MultiServerProvider>().serverManager.visibleOnlineClients.values.toList();
     var next = 0, finished = false;
     Future<void> worker() async {
-      while (!finished && current() && next < clients.length) {
+      while (!finished && next < clients.length) {
+        if (!mounted || !current()) return;
         final client = clients[next++];
         final authorized = _readClient(client);
         final excluded = context
@@ -2716,11 +2720,13 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         !_current ||
         _profiles.isBinding ||
         !_profiles.lastBindingSucceeded ||
-        WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed)
+        WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
       return;
+    }
     if (PlatformDetector.isAutomotiveMedia() &&
-        CarUxRestrictionsService.instance.state != CarUxRestrictionState.unrestricted)
+        CarUxRestrictionsService.instance.state != CarUxRestrictionState.unrestricted) {
       return;
+    }
     final screen = widget.navigatorKey.currentState?.overlay?.context;
     if (screen == null) return;
     _guestPending = false;

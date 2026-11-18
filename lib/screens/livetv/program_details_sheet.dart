@@ -243,7 +243,7 @@ class _ProgramDetailsSheetContentState extends State<_ProgramDetailsSheetContent
         (program.endsAt ?? 0) > DateTime.now().millisecondsSinceEpoch ~/ 1000) {
       actions.add(
         _SheetAction(
-          label: 'Dispatcharr · ${t.iptv.scheduleRecording}',
+          label: '${t.iptv.dispatcharr} · ${t.iptv.scheduleRecording}',
           icon: Symbols.fiber_manual_record_rounded,
           style: _ActionStyle.filled,
           onPressed: () async {

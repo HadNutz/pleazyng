@@ -207,8 +207,9 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
         localRecordings = await repository.localRecordings(profileId);
         localSchedules = await repository.localRecordingSchedules(profileId: profileId);
         for (final source in await repository.sources(profileId)) {
-          if (localSchedules.isNotEmpty && await repository.supportsDispatcharrDvr(profileId, source.id))
+          if (localSchedules.isNotEmpty && await repository.supportsDispatcharrDvr(profileId, source.id)) {
             transfers[source.id] = source.displayName;
+          }
         }
       } on Object catch (error, stackTrace) {
         iptvFailed = true;
@@ -376,15 +377,16 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
         destination = await showDialog<String>(
           context: context,
           builder: (dialog) => SimpleDialog(
-            title: Text('Dispatcharr · ${t.iptv.scheduleRecording}'),
+            title: Text('${t.iptv.dispatcharr} · ${t.iptv.scheduleRecording}'),
             children: [
               for (final target in _transferSources.entries)
                 SimpleDialogOption(onPressed: () => Navigator.pop(dialog, target.key), child: Text(target.value)),
             ],
           ),
         );
-        if (destination == null || !mounted || context.read<ActiveProfileProvider>().activeId != schedule.profileId)
+        if (destination == null || !mounted || context.read<ActiveProfileProvider>().activeId != schedule.profileId) {
           return;
+        }
       }
       await context.read<IptvSourceRepository>().transferLocalRecording(schedule, targetSourceId: destination);
       if (mounted) showSnackBar(context, t.iptv.dispatcharrRecordings);
@@ -733,7 +735,7 @@ class _LocalIptvScheduleTile extends StatelessWidget {
       if (active) t.viewing.recordsUntil(time: TimeOfDay.fromDateTime(ends).format(context)),
     ].join(' · ');
     final stateLabel = schedule.state == 'transfer_pending'
-        ? 'Dispatcharr · ${t.common.pending}'
+        ? '${t.iptv.dispatcharr} · ${t.explore.badge.requested}'
         : active
         ? t.iptv.recordingInProgressLocal
         : failed
@@ -795,7 +797,7 @@ class _LocalIptvScheduleTile extends StatelessWidget {
                 IconButton(
                   tooltip: schedule.state == 'transfer_pending'
                       ? t.common.retry
-                      : 'Dispatcharr · ${t.iptv.scheduleRecording}',
+                      : '${t.iptv.dispatcharr} · ${t.iptv.scheduleRecording}',
                   onPressed: onTransfer,
                   icon: const AppIcon(Symbols.cloud_upload_rounded),
                 ),

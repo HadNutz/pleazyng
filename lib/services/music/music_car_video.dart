@@ -196,8 +196,9 @@ extension _CarVideo on _MusicCarHostState {
           timeline.current.start != expected.start ||
           url == null ||
           !{'https', 'http'}.contains(url.scheme) ||
-          url.host.isEmpty)
+          url.host.isEmpty) {
         return false;
+      }
       session.id = const Uuid().v4();
       session.timeline = timeline;
       session.offset = timeline.current.start.inMilliseconds;
@@ -233,8 +234,9 @@ extension _CarVideo on _MusicCarHostState {
           ? timeline.current.end.inMilliseconds
           : null;
       if (next != null) {
-        if (!await _openVideoPosition(session, next, playing: seek == null || args['paused'] != true))
+        if (!await _openVideoPosition(session, next, playing: seek == null || args['paused'] != true)) {
           await _finishCarVideo();
+        }
         return true;
       }
     }

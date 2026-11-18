@@ -216,8 +216,9 @@ class MusicLibraryStore {
     final count = legacy?.length ?? doc['count'];
     if (count is! int ||
         start > count ||
-        legacy == null && (doc['version'] != 2 || doc['pages'] != (count + 255) ~/ 256))
+        legacy == null && (doc['version'] != 2 || doc['pages'] != (count + 255) ~/ 256)) {
       return null;
+    }
     final result = <MediaItem>[];
     var position = start, pageIndex = -1;
     List? ids;
@@ -255,8 +256,9 @@ class MusicLibraryStore {
     final doc = await document('offlinePlaylist', playlist.globalKey);
     if (doc == null ||
         account != null && doc['accountScope'] != account ||
-        revision != null && (doc['revision'] ?? 'legacy') != revision)
+        revision != null && (doc['revision'] ?? 'legacy') != revision) {
       return <MediaItem>[];
+    }
     final owned = {
       for (final track in downloads)
         if (track.backend == playlist.backend && track.serverId == playlist.serverId && track.kind == MediaKind.track)

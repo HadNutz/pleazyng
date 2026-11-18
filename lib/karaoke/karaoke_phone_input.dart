@@ -141,7 +141,7 @@ class KaraokePhoneInputs {
         throw const FormatException('Phone recording size bound reached');
       }
       if (lease.bytes == 0) {
-        lease.metadata!['sourceStartMs'] = (source - 150 * lease.tempo).round().clamp(0, 86400000);
+        lease.metadata['sourceStartMs'] = (source - 150 * lease.tempo).round().clamp(0, 86400000);
       }
       await lease.file!.writeFrom(bytes);
       lease.bytes += bytes.length;
@@ -176,9 +176,9 @@ class KaraokePhoneInputs {
       } finally {
         await file.close();
       }
-      lease.metadata!['complete'] = true;
-      lease.metadata!['frames'] = lease.bytes ~/ 2;
-      lease.metadata!['score'] = null;
+      lease.metadata['complete'] = true;
+      lease.metadata['frames'] = lease.bytes ~/ 2;
+      lease.metadata['score'] = null;
       await writeTakeMetadata(dir, lease.metadata);
     }
     await session.save();
@@ -240,6 +240,7 @@ class _PhoneLease {
   String? fingerprint;
   RandomAccessFile? file;
   Directory? directory;
-  Map<String, dynamic>? metadata;
+  // A recording lease initializes its metadata before opening the audio file.
+  late final Map<String, dynamic> metadata;
   KaraokeScore? score;
 }

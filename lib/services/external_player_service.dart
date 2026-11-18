@@ -228,7 +228,7 @@ class ExternalPlayerService {
         return launchResult.launched;
       }
 
-      if (!current()) return false;
+      if (!context.mounted || !current()) return false;
       onHandoffPending?.call();
       final launchWithOptions = player.launchWithOptions;
       final bool launched;
@@ -274,12 +274,13 @@ class ExternalPlayerService {
         _callbackLog('launch returned $launched');
         if (!launched && identical(_callbackSession, session)) {
           _callbackSession = null;
-          if (journal != null)
+          if (journal != null) {
             await journal.database.transaction(() async {
               if ((await journal.document('externalPlayer', 'pending'))?['id'] == session.id) {
                 await journal.deleteDocument('externalPlayer', 'pending');
               }
             });
+          }
         }
       } else {
         launched = await player.launch(resolvedUrl);
@@ -402,8 +403,9 @@ class ExternalPlayerService {
     final store = MusicLibraryStore(context.read<AppDatabase>(), profile);
     return store.database.transaction(() async {
       final saved = await store.document('externalPlayer', 'pending');
-      if (!context.mounted || profiles.identityMutationGeneration != epoch || saved == null || saved['id'] != id)
+      if (!context.mounted || profiles.identityMutationGeneration != epoch || saved == null || saved['id'] != id) {
         return null;
+      }
       if ((saved['expires'] as int) < DateTime.now().millisecondsSinceEpoch) {
         await store.deleteDocument('externalPlayer', 'pending');
         return null;
@@ -414,8 +416,9 @@ class ExternalPlayerService {
       if (account != null && (live == null || _account(live) != account)) return null;
       final downloads = context.read<DownloadProvider?>();
       if (account == null &&
-          (downloads?.activeProfileId != profile || downloads?.getMetadata(item.globalKey)?.backend != item.backend))
+          (downloads?.activeProfileId != profile || downloads?.getMetadata(item.globalKey)?.backend != item.backend)) {
         return null;
+      }
       final durations = saved['parts'] as List?;
       final timeline = durations == null
           ? null
