@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Keep App Icon directly below Theme and allow playback reloads when no profile is available for restoring external audio.
+
 - Use the app’s rounded icons for rewind, source relocation, and track controls.
 
 - Normalize translation catalog order so the 3.0.38 release checks pass.

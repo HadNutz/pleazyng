@@ -48,6 +48,7 @@ class AppearanceSettingsScreen extends StatelessWidget {
           title: t.settings.display,
           children: [
             _themeSelector(),
+            if (AppIconSetting.isShown(context)) const AppIconSetting(),
             if (PlatformDetector.isDesktopOS() || PlatformDetector.isTV())
               SettingNavigationTile(
                 icon: Symbols.aspect_ratio_rounded,
@@ -55,7 +56,6 @@ class AppearanceSettingsScreen extends StatelessWidget {
                 subtitle: t.livingRoom.fitHelp,
                 destinationBuilder: (_) => const ProjectorSetupScreen(),
               ),
-            if (AppIconSetting.isShown(context)) const AppIconSetting(),
             SettingNavigationTile(
               icon: Symbols.accessibility_new_rounded,
               title: t.accessibility.title,

@@ -434,7 +434,7 @@ extension _VideoPlayerPlaybackServiceMethods on VideoPlayerScreenState {
     if (currentPlayer == null) return;
 
     if (!widget.isLive && currentPlayer.playerType == 'mpv') {
-      final profile = context.read<ActiveProfileProvider>().activeId;
+      final profile = context.read<ActiveProfileProvider?>()?.activeId;
       final key = movieAudioKey(profile, metadata, _effectiveSelectedMediaIndex, mediaInfo?.partId);
       if (key != null) {
         final session = _playbackSession;
@@ -445,7 +445,7 @@ extension _VideoPlayerPlaybackServiceMethods on VideoPlayerScreenState {
             identical(session, _playbackSession) &&
             identical(currentPlayer, player) &&
             _currentMetadata.globalKey == metadata.globalKey &&
-            context.read<ActiveProfileProvider>().activeId == profile;
+            context.read<ActiveProfileProvider?>()?.activeId == profile;
         unawaited(
           attachment.read().then((_) => attachment.apply(current)).catchError((Object e) {
             appLogger.w('External movie audio could not be restored', error: e);

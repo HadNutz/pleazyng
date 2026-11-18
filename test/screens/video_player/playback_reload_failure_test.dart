@@ -1201,6 +1201,9 @@ class _ReloadPlayer extends FakeSyncPlayer {
   bool opens;
   int openCalls = 0;
 
+  @override
+  Duration timelineOffset = Duration.zero;
+
   /// When set, open() waits for it before loading.
   Completer<void>? openGate;
   int stopCalls = 0;
@@ -1246,6 +1249,7 @@ class _ReloadPlayer extends FakeSyncPlayer {
     final gate = openGate;
     if (gate != null) await gate.future;
     if (!opens) throw StateError('open failed before the open boundary');
+    this.timelineOffset = timelineOffset;
     setPosition(media.start ?? Duration.zero);
     setCompleted(false);
     emitPlaying(play);

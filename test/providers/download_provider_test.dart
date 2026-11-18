@@ -65,6 +65,9 @@ class _MusicExpansionClient with TestMediaServerClientDefaults implements MediaS
   final fetchPlayableDescendantsCalls = <String>[];
 
   @override
+  final Object authenticationSessionId = Object();
+
+  @override
   Future<List<MediaItem>> fetchPlayableDescendants(String parentId) async {
     fetchPlayableDescendantsCalls.add(parentId);
     if (started != null && !started!.isCompleted) started!.complete();
