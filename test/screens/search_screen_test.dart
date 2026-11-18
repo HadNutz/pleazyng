@@ -1332,6 +1332,7 @@ class _SearchSourceRepository extends SourceRepository {
     String? source,
     String? parent,
     bool filterParent = false,
+    bool downloadedOnly = false,
     PublicationShelf? shelf,
     String? query,
     String? cursor,

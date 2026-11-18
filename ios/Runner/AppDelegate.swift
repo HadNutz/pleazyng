@@ -594,7 +594,9 @@ final class MusicCarBridge {
 }
 
 @objc(MusicCarSceneDelegate)
-final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate, CPNowPlayingTemplateObserver, CPTabBarTemplateDelegate {
+final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate, CPNowPlayingTemplateObserver,
+  CPTabBarTemplateDelegate
+{
   private var controller: CPInterfaceController?
   private var artworkGeneration = 0
 
@@ -628,10 +630,12 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
 
   func refreshPlaybackList() {
     guard let controller else { return }
-    let list = controller.topTemplate as? CPListTemplate ??
-      (controller.topTemplate as? CPTabBarTemplate)?.selectedTemplate as? CPListTemplate
+    let list =
+      controller.topTemplate as? CPListTemplate ?? (controller.topTemplate as? CPTabBarTemplate)?.selectedTemplate
+      as? CPListTemplate
     guard let list, let id = pages.object(forKey: list) as String?,
-          ["home", "queue", "chapters", "bookmarks", "spoken"].contains(id) else { return }
+      ["home", "queue", "chapters", "bookmarks", "spoken"].contains(id)
+    else { return }
     show(id: id, title: list.title ?? "Pleazyng", target: list)
   }
 
@@ -657,12 +661,16 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
     let template = CPNowPlayingTemplate.shared
     let actions = snapshot["actions"] as? [String: String] ?? [:]
     let spoken = snapshot["spoken"] as? Bool == true
-    template.isUpNextButtonEnabled = bridge.ready && (spoken ? snapshot["hasChapters"] as? Bool == true : snapshot["hasQueue"] as? Bool == true)
+    template.isUpNextButtonEnabled =
+      bridge.ready && (spoken ? snapshot["hasChapters"] as? Bool == true : snapshot["hasQueue"] as? Bool == true)
     let labels = snapshot["carLabels"] as? [String: String] ?? [:]
     template.upNextTitle = labels[spoken ? "chapters" : "queue"] ?? (spoken ? "Chapters" : "Up Next")
-    let symbols = ["favorite": "heart", "shuffle": "shuffle", "repeat": snapshot["repeatMode"] as? String == "one" ? "repeat.1" : "repeat",
-                   "radio": "dot.radiowaves.left.and.right", "bookmark": "bookmark", "speed": "speedometer",
-                   "back15": "gobackward.15", "forward30": "goforward.30"]
+    let symbols = [
+      "favorite": "heart", "shuffle": "shuffle",
+      "repeat": snapshot["repeatMode"] as? String == "one" ? "repeat.1" : "repeat",
+      "radio": "dot.radiowaves.left.and.right", "bookmark": "bookmark", "speed": "speedometer",
+      "back15": "gobackward.15", "forward30": "goforward.30",
+    ]
     let order = spoken ? ["back15", "forward30", "speed", "bookmark"] : ["favorite", "shuffle", "repeat", "radio"]
     let buttons: [CPNowPlayingButton] = order.compactMap { action in
       guard bridge.ready, let label = actions[action], let symbol = symbols[action],
@@ -672,8 +680,9 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
       let button = CPNowPlayingImageButton(image: image) { _ in
         bridge.request("transport", ["scope": scope, "revision": revision, "command": action]) { _ in }
       }
-      button.isSelected = (action == "shuffle" && snapshot["shuffled"] as? Bool == true) ||
-        (action == "repeat" && snapshot["repeatMode"] as? String != "off")
+      button.isSelected =
+        (action == "shuffle" && snapshot["shuffled"] as? Bool == true)
+        || (action == "repeat" && snapshot["repeatMode"] as? String != "off")
       return button
     }
     template.updateNowPlayingButtons(buttons)
@@ -785,7 +794,7 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
                 if self?.controller?.templates.contains(where: { $0 === CPNowPlayingTemplate.shared }) == true {
                   self?.controller?.pop(to: CPNowPlayingTemplate.shared, animated: true, completion: nil)
                 } else {
-                guard let controller = self?.controller else { done(); return }
+                  guard let controller = self?.controller else { done(); return }
                   if controller.templates.count >= 5 {
                     controller.popTemplate(animated: false) { ok, _ in
                       if ok { controller.pushTemplate(CPNowPlayingTemplate.shared, animated: true, completion: nil) }
@@ -796,11 +805,13 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
                 }
               }
               if success as? Bool != true, let self, let controller = self.controller {
-                let alert = CPAlertTemplate(titleVariants: [labels["unavailable"] ?? "Media unavailable"], actions: [
-                  CPAlertAction(title: labels["close"] ?? "Close", style: .cancel) { _ in
-                    controller.dismissTemplate(animated: true, completion: nil)
-                  }
-                ])
+                let alert = CPAlertTemplate(
+                  titleVariants: [labels["unavailable"] ?? "Media unavailable"],
+                  actions: [
+                    CPAlertAction(title: labels["close"] ?? "Close", style: .cancel) { _ in
+                      controller.dismissTemplate(animated: true, completion: nil)
+                    }
+                  ])
                 controller.presentTemplate(alert, animated: true, completion: nil)
               }
               done()
@@ -816,13 +827,18 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
       if hasMore {
         let more = CPListItem(text: labels["more"] ?? "More", detailText: nil)
         more.handler = { [weak self] _, done in
-          self?.show(id: id, title: title, target: (self?.controller?.topTemplate as? CPListTemplate) ?? (self?.controller?.topTemplate as? CPTabBarTemplate)?.selectedTemplate as? CPListTemplate, offset: offset + pageSize)
+          self?.show(
+            id: id, title: title,
+            target: (self?.controller?.topTemplate as? CPListTemplate)
+              ?? (self?.controller?.topTemplate as? CPTabBarTemplate)?.selectedTemplate as? CPListTemplate,
+            offset: offset + pageSize)
           done()
         }
         displayed.append(more)
       }
       if !(value is [[String: Any]]) {
-        let retry = CPListItem(text: labels["retry"] ?? "Retry", detailText: labels["unavailable"] ?? "Library unavailable")
+        let retry = CPListItem(
+          text: labels["retry"] ?? "Retry", detailText: labels["unavailable"] ?? "Library unavailable")
         retry.handler = { [weak self] _, done in
           self?.show(id: id, title: title, root: root, target: self?.controller?.topTemplate as? CPListTemplate)
           done()
@@ -837,7 +853,9 @@ final class MusicCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelega
         target.updateSections(template.sections)
       } else if root {
         controller.setRootTemplate(template, animated: false, completion: nil)
-      } else if id.hasPrefix("page:") || id.hasPrefix("audiobookPage:") || id.hasPrefix("downloadBookPage:") || controller.templates.count >= 5, let current = controller.topTemplate as? CPListTemplate {
+      } else if id.hasPrefix("page:") || id.hasPrefix("audiobookPage:") || id.hasPrefix("downloadBookPage:")
+        || controller.templates.count >= 5, let current = controller.topTemplate as? CPListTemplate
+      {
         // Pagination updates the current level instead of exhausting CarPlay's
         // template stack after a few pages of a large music library.
         self.pages.setObject(id as NSString, forKey: current)
@@ -869,7 +887,8 @@ final class MusicPlayIntentHandler: NSObject, INPlayMediaIntentHandling {
       }
       if let selected = intent.mediaItems?.first,
         (selected.identifier?.hasPrefix("item:") == true || selected.identifier?.hasPrefix("audiobook:") == true
-          || selected.identifier?.hasPrefix("serverRadio:") == true || selected.identifier?.hasPrefix("favorites:") == true
+          || selected.identifier?.hasPrefix("serverRadio:") == true
+          || selected.identifier?.hasPrefix("favorites:") == true
           || selected.identifier?.hasPrefix("station:") == true || selected.identifier?.hasPrefix("recipe:") == true)
       {
         // The play command revalidates this identifier against the active map.
@@ -906,8 +925,9 @@ final class MusicPlayIntentHandler: NSObject, INPlayMediaIntentHandling {
                 ? .radioStation
                 : row["kind"] as? String == "audiobook"
                   ? .audioBook
-                  : row["kind"] as? String == "podcast" ? .podcastEpisode
-                  : row["kind"] as? String == "playlist" ? .playlist : .song
+                  : row["kind"] as? String == "podcast"
+                    ? .podcastEpisode
+                    : row["kind"] as? String == "playlist" ? .playlist : .song
           return INMediaItem(
             identifier: id, title: title, type: type, artwork: nil,
             artist: row["subtitle"] as? String)

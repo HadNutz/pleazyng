@@ -19,6 +19,7 @@ class _Downloads implements DownloadProvider {
     List<MediaItem> items,
     MediaServerClient client, {
     DownloadFilter filter = DownloadFilter.all,
+    MediaItem? playlist,
     SyncRuleItem? syncRule,
     bool Function()? sourceCurrent,
   }) async {

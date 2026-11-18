@@ -96,8 +96,12 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
     val title = row["title"] as? String ?: return@mapNotNull null
     val description = MediaDescriptionCompat.Builder().setMediaId(id).setTitle(title)
       .setSubtitle(row["subtitle"] as? String)
-    if (row["artwork"] == true) description.setIconUri(android.net.Uri.Builder().scheme("content")
-        .authority("${packageName}.car.artwork").appendPath(id).build())
+    if (row["artwork"] == true) {
+      description.setIconUri(
+        android.net.Uri.Builder().scheme("content")
+          .authority("$packageName.car.artwork").appendPath(id).build()
+      )
+    }
     MediaBrowserCompat.MediaItem(description.build(), if (row["playable"] == true) MediaBrowserCompat.MediaItem.FLAG_PLAYABLE else MediaBrowserCompat.MediaItem.FLAG_BROWSABLE)
   }?.toMutableList() ?: mutableListOf()
 
