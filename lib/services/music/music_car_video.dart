@@ -1,17 +1,29 @@
 part of 'music_car_host.dart';
 
 class _CarVideoSession {
-  _CarVideoSession(this.id, this.client, this.item, this.serverSession, this.offset, this.position, this.authorized);
-  final String id;
+  _CarVideoSession(
+    this.id,
+    this.client,
+    this.item,
+    this.serverSession,
+    this.mediaSource,
+    this.timeline,
+    this.offset,
+    this.position,
+    this.authorized,
+  );
+  String id;
   final MediaServerClient client;
   final MediaItem item;
   final String? serverSession;
-  final int offset;
+  final String? mediaSource;
+  MediaPartTimeline? timeline;
+  int offset;
   int position;
   final bool Function() authorized;
   bool reported = false;
   Duration get time => Duration(milliseconds: position);
-  Duration get duration => Duration(milliseconds: item.durationMs ?? 0);
+  Duration get duration => timeline?.duration ?? Duration(milliseconds: item.durationMs ?? 0);
 }
 
 extension _CarVideo on _MusicCarHostState {
@@ -94,6 +106,8 @@ extension _CarVideo on _MusicCarHostState {
       client,
       item,
       target.playSessionId,
+      target.mediaInfo?.mediaSourceId,
+      timeline,
       offset,
       start + offset,
       authorized,
@@ -112,6 +126,9 @@ extension _CarVideo on _MusicCarHostState {
         'url': url.toString(),
         'title': item.displayTitle,
         'position': start,
+        'offset': offset,
+        'duration': session.duration.inMilliseconds,
+        'multipart': timeline != null,
       });
       if (opened != true || !current()) {
         await _finishCarVideo();
@@ -157,11 +174,68 @@ extension _CarVideo on _MusicCarHostState {
     }
   }
 
+  Future<bool> _openVideoPosition(_CarVideoSession session, int position) async {
+    final before = session.timeline;
+    if (before == null) return false;
+    final time = Duration(milliseconds: position.clamp(0, before.duration.inMilliseconds));
+    final expected = before.parts[before.indexAt(time)];
+    final intent = _videoIntent;
+    bool current() =>
+        _connected && _videoCapable && identical(_video, session) && intent == _videoIntent && session.authorized();
+    try {
+      final target = await session.client.resolveExternalPlayback(
+        session.item,
+        position: time,
+        mediaSourceId: session.mediaSource,
+        registerPlayback: false,
+      );
+      final timeline = target?.partTimeline, url = Uri.tryParse(target?.url ?? '');
+      if (!current() ||
+          timeline == null ||
+          timeline.current.partId != expected.partId ||
+          timeline.current.start != expected.start ||
+          url == null ||
+          !{'https', 'http'}.contains(url.scheme) ||
+          url.host.isEmpty)
+        return false;
+      session.id = const Uuid().v4();
+      session.timeline = timeline;
+      session.offset = timeline.current.start.inMilliseconds;
+      session.position = time.inMilliseconds;
+      return await _MusicCarHostState._channel.invokeMethod<bool>('openCarVideo', {
+                'id': session.id,
+                'url': url.toString(),
+                'title': session.item.displayTitle,
+                'position': session.position - session.offset,
+                'offset': session.offset,
+                'duration': timeline.duration.inMilliseconds,
+                'multipart': true,
+              }) ==
+              true &&
+          current();
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<bool> _carVideoEvent(Map<String, dynamic> args) async {
     final session = _video;
     if (session == null || session.id != args['id']) return false;
     final ms = args['position'];
     if (ms is int && ms >= 0) session.position = ms + session.offset;
+    final timeline = session.timeline;
+    if (session.authorized() && _connected && timeline != null) {
+      final seek = args['seek'];
+      final next = seek is int
+          ? seek
+          : args['reason'] == 'completed' && timeline.hasNext
+          ? timeline.current.end.inMilliseconds
+          : null;
+      if (next != null) {
+        if (!await _openVideoPosition(session, next)) await _finishCarVideo();
+        return true;
+      }
+    }
     if (args['ended'] == true || !session.authorized() || !_connected) {
       await _finishCarVideo();
       return true;

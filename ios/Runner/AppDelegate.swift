@@ -537,13 +537,14 @@ final class MusicCarBridge {
           let raw = args["url"] as? String, let url = URL(string: raw), ["https", "http"].contains(url.scheme ?? "")
         else { result(false); return }
         self.stopVideo()
-        let video = CarVideoPlayer(id: id, url: url, title: args["title"] as? String ?? "Pleazyng")
+        let video = CarVideoPlayer(id: id, url: url, title: args["title"] as? String ?? "Pleazyng",
+          offset: args["offset"] as? Int ?? 0, duration: args["duration"] as? Int ?? 0, multipart: args["multipart"] as? Bool ?? false)
         self.carVideo = video
         video.open(position: args["position"] as? Int ?? 0, ready: { ok in result(ok) }) {
-          [weak self, weak video] position, paused, ended in
+          [weak self, weak video] position, paused, reason, seek in
           guard let self, let video, self.carVideo === video else { return }
           self.channel?.invokeMethod(
-            "videoEvent", arguments: ["id": id, "position": position, "paused": paused, "ended": ended])
+            "videoEvent", arguments: ["id": id, "position": position, "paused": paused, "ended": reason == "completed" || reason == "failed", "reason": reason, "seek": seek as Any])
         }
       case "stopCarVideo":
         if #available(iOS 27.0, *), let video = self.carVideo as? CarVideoPlayer, video.id == call.arguments as? String
@@ -683,7 +684,15 @@ private final class CarVideoPlayer {
     return seconds.isFinite ? max(0, Int(seconds * 1000)) : 0
   }
 
-  init(id: String, url: URL, title: String) {
+  private let offset: Int
+  private let duration: Int
+  private let multipart: Bool
+  private let title: String
+  init(id: String, url: URL, title: String, offset: Int, duration: Int, multipart: Bool) {
+    self.offset = offset
+    self.duration = duration
+    self.multipart = multipart
+    self.title = title
     self.id = id
     let item = AVPlayerItem(url: url)
     let metadata = AVMutableMetadataItem()
@@ -694,10 +703,10 @@ private final class CarVideoPlayer {
     player = AVPlayer(playerItem: item)
     player.allowsExternalPlayback = true
     session = MPNowPlayingSession(players: [player])
-    session.automaticallyPublishesNowPlayingInfo = true
+    session.automaticallyPublishesNowPlayingInfo = !multipart
   }
 
-  func open(position: Int, ready: @escaping (Bool) -> Void, event: @escaping (Int, Bool, Bool) -> Void) {
+  func open(position: Int, ready: @escaping (Bool) -> Void, event: @escaping (Int, Bool, String, Int?) -> Void) {
     guard let item = player.currentItem else { ready(false); return }
     opening = ready
     do {
@@ -717,33 +726,44 @@ private final class CarVideoPlayer {
     register(center.pauseCommand) { [weak self] _ in
       self?.player.pause(); return .success
     }
-    register(center.changePlaybackPositionCommand) { [weak self] event in
-      guard let event = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
-      self?.player.seek(to: CMTime(seconds: event.positionTime, preferredTimescale: 1000))
+    register(center.changePlaybackPositionCommand) { [weak self] command in
+      guard let self, let command = command as? MPChangePlaybackPositionCommandEvent, command.positionTime.isFinite else { return .commandFailed }
+      if self.multipart {
+        let milliseconds = Int(min(Double(self.duration), max(0, command.positionTime * 1000)))
+        event(self.position, self.player.timeControlStatus == .paused, "seek", milliseconds)
+      } else {
+        self.player.seek(to: CMTime(seconds: command.positionTime, preferredTimescale: 1000))
+      }
       return .success
     }
-    func report(_ ended: Bool) {
+    func report(_ reason: String) {
       guard !stopped, opening == nil else { return }
-      event(self.position, player.timeControlStatus == .paused, ended)
+      if multipart {
+        session.nowPlayingInfoCenter.nowPlayingInfo = [MPMediaItemPropertyTitle: title,
+          MPMediaItemPropertyPlaybackDuration: Double(duration) / 1000,
+          MPNowPlayingInfoPropertyElapsedPlaybackTime: Double(offset + self.position) / 1000,
+          MPNowPlayingInfoPropertyPlaybackRate: player.rate]
+      }
+      event(self.position, player.timeControlStatus == .paused, reason, nil)
     }
     for name in [AVPlayerItem.didPlayToEndTimeNotification, AVPlayerItem.failedToPlayToEndTimeNotification] {
       notifications.append(
         NotificationCenter.default.addObserver(forName: name, object: item, queue: .main) { [weak self] _ in
           guard let self else { return }
-          if self.opening != nil { self.finishOpening(false) } else { report(true) }
+          if self.opening != nil { self.finishOpening(false) } else { report(name == AVPlayerItem.didPlayToEndTimeNotification ? "completed" : "failed") }
         })
     }
     observer = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 10, preferredTimescale: 1), queue: .main) {
-      _ in report(false)
+      _ in report("progress")
     }
     playbackStatus = player.observe(\.timeControlStatus, options: [.new]) { _, _ in
-      DispatchQueue.main.async { report(false) }
+      DispatchQueue.main.async { report("progress") }
     }
     status = item.observe(\.status, options: [.initial, .new]) { [weak self] item, _ in
       DispatchQueue.main.async {
         guard let self, !self.stopped else { return }
         if item.status == .failed {
-          if self.opening != nil { self.finishOpening(false) } else { report(true) }
+          if self.opening != nil { self.finishOpening(false) } else { report("failed") }
         } else if item.status == .readyToPlay && self.opening != nil {
           self.player.seek(to: CMTime(value: Int64(position), timescale: 1000)) { [weak self] ok in
             DispatchQueue.main.async {

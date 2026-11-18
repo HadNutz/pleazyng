@@ -1,3 +1,11 @@
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
+import '../media/media_part.dart';
+import '../profiles/active_profile_provider.dart';
+import '../providers/download_provider.dart';
+import '../utils/provider_extensions.dart';
+import 'music/music_account_scope.dart';
+import 'music/music_library_store.dart';
 import 'dart:async';
 import '../media/ids.dart';
 import 'dart:io';
@@ -234,6 +242,25 @@ class ExternalPlayerService {
           playSessionId: playSessionId,
           partTimeline: partTimeline,
         );
+        final profile = context.read<ActiveProfileProvider?>()?.activeId;
+        final database = context.read<AppDatabase?>();
+        final journal = database == null || profile == null ? null : MusicLibraryStore(database, profile);
+        if (journal != null) {
+          final timeline = session.partTimeline;
+          await journal.saveDocument('externalPlayer', 'pending', {
+            'id': session.id,
+            'player': player.id,
+            'expires': DateTime.now().add(const Duration(hours: 48)).millisecondsSinceEpoch,
+            'item': musicIdentity(metadata).toJson(),
+            'duration': metadata.durationMs,
+            'account': client == null ? null : _account(client),
+            'source': mediaSourceId,
+            'session': playSessionId,
+            if (timeline != null) 'parts': [for (final span in timeline.parts) span.duration.inMilliseconds],
+            if (timeline != null) 'index': timeline.currentIndex,
+          });
+          if (!current() || !identical(_callbackSession, session)) return false;
+        }
         final options = ExternalPlayerLaunchOptions(
           startPosition: startPosition,
           returnLinks: returnLinks(session.id),
@@ -245,7 +272,15 @@ class ExternalPlayerService {
         );
         launched = await launchWithOptions(resolvedUrl, options);
         _callbackLog('launch returned $launched');
-        if (!launched && identical(_callbackSession, session)) _callbackSession = null;
+        if (!launched && identical(_callbackSession, session)) {
+          _callbackSession = null;
+          if (journal != null)
+            await journal.database.transaction(() async {
+              if ((await journal.document('externalPlayer', 'pending'))?['id'] == session.id) {
+                await journal.deleteDocument('externalPlayer', 'pending');
+              }
+            });
+        }
       } else {
         launched = await player.launch(resolvedUrl);
       }
@@ -358,7 +393,52 @@ class ExternalPlayerService {
   /// syncs the position it reports. `DeepLinkService` hands every
   /// [ExternalPlayerReturnLink] here. Returns whether the link belonged to
   /// the pending launch.
-  static Future<bool> handleCallbackUrl(Object input) async {
+  static String _account(MediaServerClient client) => sha256.convert(utf8.encode(musicAccountScope(client))).toString();
+
+  static Future<_CallbackSession?> _claimReturn(BuildContext context, String id) async {
+    final profiles = context.read<ActiveProfileProvider?>();
+    final profile = profiles?.activeId, epoch = profiles?.identityMutationGeneration;
+    if (profile == null || profiles == null || profiles.isBinding || !profiles.lastBindingSucceeded) return null;
+    final store = MusicLibraryStore(context.read<AppDatabase>(), profile);
+    return store.database.transaction(() async {
+      final saved = await store.document('externalPlayer', 'pending');
+      if (!context.mounted || profiles.identityMutationGeneration != epoch || saved == null || saved['id'] != id)
+        return null;
+      if ((saved['expires'] as int) < DateTime.now().millisecondsSinceEpoch) {
+        await store.deleteDocument('externalPlayer', 'pending');
+        return null;
+      }
+      final item = MediaItem.fromJson({...saved['item'] as Map<String, dynamic>, 'durationMs': saved['duration']});
+      final live = context.getMediaClientForItemOrNull(item);
+      final account = saved['account'];
+      if (account != null && (live == null || _account(live) != account)) return null;
+      final downloads = context.read<DownloadProvider?>();
+      if (account == null &&
+          (downloads?.activeProfileId != profile || downloads?.getMetadata(item.globalKey)?.backend != item.backend))
+        return null;
+      final durations = saved['parts'] as List?;
+      final timeline = durations == null
+          ? null
+          : MediaPartTimeline.fromParts([
+              for (final (index, ms) in durations.indexed) MediaPart(id: '$index', durationMs: ms as int),
+            ], currentIndex: saved['index'] as int);
+      final offline = context.read<OfflineWatchSyncService?>();
+      await store.deleteDocument('externalPlayer', 'pending');
+      if (!context.mounted || profiles.identityMutationGeneration != epoch) return null;
+      return _CallbackSession(
+        id: id,
+        playerId: saved['player'] as String,
+        metadata: item,
+        client: account == null ? null : live,
+        offlineWatchService: offline,
+        mediaSourceId: saved['source'] as String?,
+        playSessionId: saved['session'] as String?,
+        partTimeline: timeline,
+      );
+    });
+  }
+
+  static Future<bool> handleCallbackUrl(Object input, {BuildContext? context}) async {
     final uri = input is Uri ? input : Uri.tryParse(input.toString());
     if (uri == null) {
       _callbackLog('not a parseable URI; ignoring');
@@ -370,12 +450,14 @@ class ExternalPlayerService {
       _callbackLog('not an external-player return link; ignoring');
       return false;
     }
-    final session = _callbackSession;
+    final profiles = context?.read<ActiveProfileProvider?>();
+    final epoch = profiles?.identityMutationGeneration;
+    final session = context == null ? _callbackSession : await _claimReturn(context, segments[1]);
     if (session == null || session.id != segments[1]) {
       _callbackLog('session does not match the pending external-player launch; ignoring');
       return false;
     }
-    _callbackSession = null;
+    if (_callbackSession?.id == session.id) _callbackSession = null;
 
     final params = uri.queryParameters;
     final reportedDuration = _callbackNumber(params['duration']);
@@ -415,6 +497,7 @@ class ExternalPlayerService {
       await _reportExternalProgress(
         result,
         metadata: session.metadata,
+        isLaunchCurrent: () => profiles == null || profiles.identityMutationGeneration == epoch && !profiles.isBinding,
         client: session.client,
         offlineWatchService: session.offlineWatchService,
         mediaSourceId: session.mediaSourceId,

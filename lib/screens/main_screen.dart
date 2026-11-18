@@ -1,3 +1,4 @@
+import '../services/external_player_service.dart';
 import 'games/games_screen.dart';
 import 'requests/requests_screen.dart';
 import 'dart:async';
@@ -998,6 +999,7 @@ class _MainScreenState extends State<MainScreen>
     if (!mounted || _isShowingProfileSelection) return;
     final session = _deepLinkSession ??= DeepLinkSession(
       profileId: context.read<ActiveProfileProvider>().activeId,
+      externalReturn: (uri) => ExternalPlayerService.handleCallbackUrl(uri, context: context),
       launch: (link) async {
         if (mounted) await launchDeepLink(context, link, isOffline: _isOffline);
       },

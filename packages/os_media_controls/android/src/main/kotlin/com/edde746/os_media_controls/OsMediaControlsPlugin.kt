@@ -54,9 +54,12 @@ class OsMediaControlsPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
                 val index = row["index"] as? Number ?: return@mapNotNull null
                 if (scope == null || revision == null) return@mapNotNull null
                 val id = ++nextQueueId
-                carQueue[id] = mapOf("scope" to scope, "revision" to revision, "index" to index)
+                val target = row["id"] as? String
+                val command = mutableMapOf<String, Any>("scope" to scope, "revision" to revision, "index" to index)
+                if (target != null) command["id"] = target
+                carQueue[id] = command
                 MediaSessionCompat.QueueItem(MediaDescriptionCompat.Builder()
-                    .setMediaId("queue:$scope:${revision.toLong()}:${index.toInt()}")
+                    .setMediaId(target ?: "queue:$scope:${revision.toLong()}:${index.toInt()}")
                     .setTitle(row["title"] as? String).setSubtitle(row["artist"] as? String).build(), id)
             }
             mediaSession.setQueue(items)
@@ -129,7 +132,10 @@ class OsMediaControlsPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
         val state = PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_ERROR, currentPosition, currentSpeed)
             .setActions(buildPlaybackActions()).setErrorMessage(if (locked) PlaybackStateCompat.ERROR_CODE_AUTHENTICATION_EXPIRED
                 else PlaybackStateCompat.ERROR_CODE_APP_ERROR, text)
-        if (locked) context.packageManager.getLaunchIntentForPackage(context.packageName)?.let { intent ->
+        if (locked) (context.packageManager.getLaunchIntentForPackage(context.packageName)
+            ?: Intent(Intent.ACTION_APPLICATION_PREFERENCES).setPackage(context.packageName).takeIf {
+                it.resolveActivity(context.packageManager) != null
+            })?.let { intent ->
             val pending = android.app.PendingIntent.getActivity(context, 0, intent,
                 android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE)
             state.setExtras(android.os.Bundle().apply {

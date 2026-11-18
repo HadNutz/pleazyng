@@ -197,6 +197,7 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
     final profileId = context.read<ActiveProfileProvider>().activeId;
     var localRecordings = <IptvLocalRecording>[];
     var localSchedules = <IptvLocalRecordingSchedule>[];
+    final transfers = <String>{};
     var dispatcharrRecordings = <IptvDispatcharrRecording>[];
     var dispatcharrRules = <IptvDispatcharrRule>[];
     var iptvFailed = false;
@@ -205,6 +206,9 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
       try {
         localRecordings = await repository.localRecordings(profileId);
         localSchedules = await repository.localRecordingSchedules(profileId: profileId);
+        for (final source in localSchedules.map((s) => s.sourceId).toSet()) {
+          if (await repository.supportsDispatcharrDvr(profileId, source)) transfers.add(source);
+        }
       } on Object catch (error, stackTrace) {
         iptvFailed = true;
         appLogger.e('Failed to load local IPTV recordings', error: error, stackTrace: stackTrace);
@@ -223,6 +227,7 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
       _serverRecordings = results;
       _localRecordings = localRecordings;
       _localSchedules = localSchedules;
+      _transferSources = transfers;
       _dispatcharrRecordings = dispatcharrRecordings;
       _dispatcharrRules = dispatcharrRules;
       _iptvError = iptvFailed ? t.iptv.recordingLoadFailed : null;
@@ -358,6 +363,19 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
       await _load();
     } on Object {
       if (mounted) showErrorSnackBar(context, t.iptv.recordingActionFailed);
+    }
+  }
+
+  Set<String> _transferSources = {};
+  Future<void> _transferSchedule(IptvLocalRecordingSchedule schedule) async {
+    if (context.read<ActiveProfileProvider>().activeId != schedule.profileId) return;
+    try {
+      await context.read<IptvSourceRepository>().transferLocalRecording(schedule);
+      if (mounted) showSnackBar(context, t.iptv.dispatcharrRecordings);
+    } on Object {
+      if (mounted) showErrorSnackBar(context, t.iptv.recordingActionFailed);
+    } finally {
+      if (mounted) await _load();
     }
   }
 
@@ -545,6 +563,13 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
               for (var i = 0; i < _localSchedules.length; i++)
                 _LocalIptvScheduleTile(
                   schedule: _localSchedules[i],
+                  onTransfer:
+                      _transferSources.contains(_localSchedules[i].sourceId) &&
+                          (_localSchedules[i].state == 'transfer_pending' ||
+                              _localSchedules[i].state == 'scheduled' &&
+                                  _localSchedules[i].startsAt.isAfter(DateTime.now()))
+                      ? () => _transferSchedule(_localSchedules[i])
+                      : null,
                   autofocus: i == 0,
                   focusNode: i == 0 ? _firstTileFocusNode : null,
                   onNavigateUp: i == 0 ? widget.onNavigateUp : null,
@@ -654,6 +679,7 @@ class _LocalIptvScheduleTile extends StatelessWidget {
     required this.schedule,
     required this.onExtend,
     required this.onCancel,
+    this.onTransfer,
     required this.autofocus,
     this.focusNode,
     this.onNavigateUp,
@@ -663,6 +689,7 @@ class _LocalIptvScheduleTile extends StatelessWidget {
   final IptvLocalRecordingSchedule schedule;
   final ValueChanged<IptvLocalRecordingSchedule> onExtend;
   final VoidCallback onCancel;
+  final VoidCallback? onTransfer;
   final bool autofocus;
   final FocusNode? focusNode;
   final VoidCallback? onNavigateUp;
@@ -689,7 +716,9 @@ class _LocalIptvScheduleTile extends StatelessWidget {
       if (missed) t.iptv.recordingMissed,
       if (active) t.viewing.recordsUntil(time: TimeOfDay.fromDateTime(ends).format(context)),
     ].join(' · ');
-    final stateLabel = active
+    final stateLabel = schedule.state == 'transfer_pending'
+        ? 'Dispatcharr · ${t.common.pending}'
+        : active
         ? t.iptv.recordingInProgressLocal
         : failed
         ? t.iptv.recordingInterrupted
@@ -746,6 +775,12 @@ class _LocalIptvScheduleTile extends StatelessWidget {
                     ? theme.colorScheme.error
                     : theme.colorScheme.primary,
               ),
+              if (onTransfer != null)
+                IconButton(
+                  tooltip: schedule.state == 'transfer_pending' ? t.common.retry : t.iptv.scheduleRecording,
+                  onPressed: onTransfer,
+                  icon: const AppIcon(Symbols.cloud_upload_rounded),
+                ),
               if (schedule.state == 'recording')
                 IconButton(
                   tooltip: t.viewing.extendRecording,

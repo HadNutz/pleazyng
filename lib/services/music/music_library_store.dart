@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:uuid/uuid.dart';
 
 import 'package:drift/drift.dart' show Variable, TableUpdate, TableUpdateQuery;
 
@@ -191,6 +192,7 @@ class MusicLibraryStore {
         }
         await saveDocument('offlinePlaylist', key, {
           'version': 2,
+          'revision': const Uuid().v4(),
           'accountScope': account,
           'playlist': musicIdentity(playlist).toJson(),
           'pages': pages,
@@ -198,14 +200,60 @@ class MusicLibraryStore {
         });
       });
 
+  Future<({List<MediaItem> tracks, int? next, String revision})?> ownedPlaylistWindow(
+    MediaItem playlist,
+    Map<String, MediaItem> owned,
+    String? account, {
+    required int start,
+    required int limit,
+    String? revision,
+  }) => database.transaction(() async {
+    final doc = await document('offlinePlaylist', playlist.globalKey);
+    if (doc == null || account != null && doc['accountScope'] != account || start < 0 || limit < 1) return null;
+    final version = doc['revision'] as String? ?? 'legacy';
+    if (revision != null && version != revision) return null;
+    final legacy = doc['version'] == 1 ? doc['tracks'] as List? : null;
+    final count = legacy?.length ?? doc['count'];
+    if (count is! int ||
+        start > count ||
+        legacy == null && (doc['version'] != 2 || doc['pages'] != (count + 255) ~/ 256))
+      return null;
+    final result = <MediaItem>[];
+    var position = start, pageIndex = -1;
+    List? ids;
+    while (position < count && result.length < limit) {
+      Object? id;
+      if (legacy != null) {
+        final row = legacy[position];
+        if (row is Map && row['serverId'] == playlist.serverId) id = row['id'];
+      } else {
+        if (pageIndex != position ~/ 256) {
+          pageIndex = position ~/ 256;
+          final page = await document('offlinePlaylistPage', jsonEncode([playlist.globalKey, pageIndex]));
+          ids = page?['ids'] as List?;
+          if (ids == null || ids.length != (count - pageIndex * 256).clamp(0, 256)) return null;
+        }
+        id = ids![position % 256];
+      }
+      final track = owned[id];
+      if (track != null) result.add(track);
+      position++;
+    }
+    return (tracks: result, next: position < count ? position : null, revision: version);
+  });
+
   Future<List<MediaItem>> ownedPlaylistTracks(
     MediaItem playlist,
     List<MediaItem> downloads,
     String? account, {
     bool firstOnly = false,
+    String? revision,
   }) => database.transaction(() async {
     final doc = await document('offlinePlaylist', playlist.globalKey);
-    if (doc == null || account != null && doc['accountScope'] != account) return <MediaItem>[];
+    if (doc == null ||
+        account != null && doc['accountScope'] != account ||
+        revision != null && (doc['revision'] ?? 'legacy') != revision)
+      return <MediaItem>[];
     final owned = {
       for (final track in downloads)
         if (track.backend == playlist.backend && track.serverId == playlist.serverId && track.kind == MediaKind.track)

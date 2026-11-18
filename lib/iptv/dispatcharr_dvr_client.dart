@@ -66,8 +66,13 @@ class DispatcharrDvrClient {
   }
 
   Future<IptvDispatcharrRecording> schedule({required LiveTvChannel channel, required LiveTvProgram program}) async {
+    final remoteChannelId = await resolveChannel(channel);
+    return scheduleChannel(remoteChannelId, program);
+  }
+
+  Future<Object> resolveChannel(LiveTvChannel channel) async {
     final tvgId = channel.identifier?.trim();
-    if (tvgId == null || tvgId.isEmpty || program.beginsAt == null || program.endsAt == null) {
+    if (tvgId == null || tvgId.isEmpty) {
       throw const SourceException(SourceFailure.unsupported);
     }
     final channels = _rows(await _requestWithFallback('GET', const ['/api/channels/channels/', '/api/channels/']));
@@ -88,6 +93,11 @@ class DispatcharrDvrClient {
     if (matches.length != 1) throw const SourceException(SourceFailure.unsupported);
     final remoteChannelId = matches.single['id'];
     if (remoteChannelId == null) throw const SourceException(SourceFailure.invalidData);
+    return remoteChannelId;
+  }
+
+  Future<IptvDispatcharrRecording> scheduleChannel(Object remoteChannelId, LiveTvProgram program) async {
+    if (program.beginsAt == null || program.endsAt == null) throw const SourceException(SourceFailure.invalidData);
     final start = DateTime.fromMillisecondsSinceEpoch(program.beginsAt! * 1000, isUtc: true).toIso8601String();
     final end = DateTime.fromMillisecondsSinceEpoch(program.endsAt! * 1000, isUtc: true).toIso8601String();
     final body = jsonEncode({
@@ -190,6 +200,7 @@ class IptvDispatcharrRecording {
     required this.title,
     required this.state,
     this.channelName,
+    this.channelId,
     this.startedAt,
     this.endsAt,
     this.filePath,
@@ -200,6 +211,7 @@ class IptvDispatcharrRecording {
   final String sourceName;
   final String title;
   final String state;
+  final String? channelId;
   final String? channelName;
   final DateTime? startedAt;
   final DateTime? endsAt;
@@ -228,6 +240,7 @@ class IptvDispatcharrRecording {
       sourceName: sourceName,
       title: '${row['title'] ?? row['name'] ?? row['program_title'] ?? 'Recording'}',
       state: '${row['status'] ?? row['state'] ?? row['recording_status'] ?? 'scheduled'}',
+      channelId: (channel['id'] ?? row['channel_id'] ?? (row['channel'] is Map ? null : row['channel']))?.toString(),
       channelName: '${channel['name'] ?? row['channel_name'] ?? ''}'.trim().isEmpty
           ? null
           : '${channel['name'] ?? row['channel_name']}',

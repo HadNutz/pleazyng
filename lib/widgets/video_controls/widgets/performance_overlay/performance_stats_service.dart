@@ -1,3 +1,4 @@
+import '../../../../mpv/player/platform/player_system.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform, ProcessInfo;
@@ -574,6 +575,7 @@ class PerformanceStatsService {
           'tizen' => 'tizen-native',
           _ => null,
         };
+    final native = player is PlayerSystem ? await player.getStats() : const <String, dynamic>{};
     final videoWidth = _parseInt(results[1] ?? (webosDimensions.isEmpty ? null : webosDimensions[0]));
     final videoHeight = _parseInt(results[2] ?? (webosDimensions.length < 2 ? null : webosDimensions[1]));
     final sourceWidth = _parseInt(results[1]);
@@ -634,6 +636,9 @@ class PerformanceStatsService {
     final stats = PerformanceStats(
       playerType: player.playerType,
       videoCodec: _formatVideoCodecName(results.first),
+      outputWidth: (native['outputWidth'] as num?)?.toInt(),
+      outputHeight: (native['outputHeight'] as num?)?.toInt(),
+      displayMode: native['displayMode'] as String?,
       videoWidth: videoWidth,
       videoHeight: videoHeight,
       videoFps: _parseDouble(results[3]),

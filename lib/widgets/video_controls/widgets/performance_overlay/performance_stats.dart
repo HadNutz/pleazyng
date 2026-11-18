@@ -44,6 +44,8 @@ class PerformanceStats {
   final String playerType;
 
   final String? videoCodec;
+  final int? outputWidth, outputHeight;
+  final String? displayMode;
   final int? videoWidth;
   final int? videoHeight;
   final double? videoFps;
@@ -132,6 +134,9 @@ class PerformanceStats {
   const PerformanceStats({
     this.playerType = 'unknown',
     this.videoCodec,
+    this.outputWidth,
+    this.outputHeight,
+    this.displayMode,
     this.videoWidth,
     this.videoHeight,
     this.videoFps,
@@ -203,6 +208,17 @@ class PerformanceStats {
 
   /// Creates an empty stats object (used as initial state).
   const PerformanceStats.empty() : this();
+
+  String get comparison => [
+    'Engine: $playerType',
+    'Source dimensions: $resolution',
+    'Output dimensions: ${outputWidth == null || outputHeight == null ? t.common.notAvailable : "${outputWidth}x$outputHeight"}',
+    'Output: ${currentVideoOutput ?? t.common.notAvailable}',
+    'Display mode: ${displayMode ?? t.common.notAvailable}',
+    'Decoder: ${videoDecoderName ?? hwdecCurrent ?? t.common.notAvailable}',
+    'Source transfer: ${gamma ?? t.common.notAvailable}',
+    'Source HDR: ${playbackCapabilityReport?.sourceIsHdr ?? t.common.notAvailable}',
+  ].join('\n');
 
   String get resolution {
     if (videoWidth == null || videoHeight == null) return t.common.notAvailable;

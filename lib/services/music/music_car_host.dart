@@ -23,6 +23,7 @@ import '../../media/ids.dart';
 import '../../media/library_query.dart';
 import '../../media/media_filter.dart';
 import '../../media/media_item.dart';
+import '../../media/media_part_timeline.dart';
 import '../../media/media_kind.dart';
 import '../../media/media_server_client.dart';
 import '../../profiles/active_profile_provider.dart';
@@ -80,6 +81,9 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
   final _artworkItems =
       <String, ({MediaItem item, MediaServerClient? client, Object? authentication, String? scope})>{};
   final Map<String, MediaItem> _items = {};
+  final _playlistRevisions = <String, String>{};
+  final _ownedByServer = <(String, String?), Map<String, MediaItem>>{};
+  int _downloadGeneration = 0;
   final _parents = <String, ({MediaItem item, int index})>{};
   final Map<String, SourceEntry> _audiobookEntries = {};
   final _offlineSpoken = <String>{};
@@ -222,7 +226,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
               musicAccountScope(client),
             ],
         ],
-        context.read<LibrariesProvider?>()?.libraries.map((library) => library.globalKey).toList(),
+        context.read<LibrariesProvider?>()?.libraries.map((library) => [library.globalKey, library.hidden]).toList(),
         context.read<DownloadProvider?>()?.downloadedTracks.map((track) => track.globalKey).toList(),
         hidden,
       ]);
@@ -231,6 +235,8 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         if (!session.authorized()) unawaited(_stopCarVideo());
       }
       _catalogShape = shape;
+      _downloadGeneration++;
+      _ownedByServer.clear();
       _serverRadios.clear();
       _artworkItems.clear();
       _carArtwork.clear();
@@ -276,6 +282,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     final shape = (
       _spoken?.entry?.key,
       _spoken?.progress?.session,
+      _spoken?.spokenQueueRevision,
       _music.queueSessionRevision,
       _music.currentIndex,
       queue is MusicQueueView ? queue : jsonEncode(queue.map((item) => item.globalKey).toList()),
@@ -322,18 +329,31 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     _publishedStatus = status;
     if (changed) {
       final start = _music.currentIndex.clamp(0, queue.length);
-      unawaited(
-        _send('queueWindow', {
+      final revision = _catalogRevision;
+      unawaited(() async {
+        final spokenRows = await spoken?.spokenQueue();
+        if (!_current || revision != _catalogRevision) return;
+        await _send('queueWindow', {
           'scope': _itemScope,
-          'revision': _catalogRevision,
+          'revision': revision,
           'title': t.music.queue,
           'rows': [
+            if (spoken != null && spoken.entry != null)
+              {'index': -1, 'id': 'resume', 'title': spoken.entry!.displayTitle, 'artist': spoken.entry!.series ?? ''},
+            if (spokenRows != null)
+              for (final (index, row) in spokenRows.take(49).indexed)
+                {
+                  'index': index,
+                  'id': 'spokenQueue:$_itemScope:${row.id}',
+                  'title': row.item.displayTitle,
+                  'artist': row.item.series ?? '',
+                },
             if (spoken == null)
               for (var i = start; i < queue.length && i < start + 50; i++)
                 {'index': i, 'title': queue[i].displayTitle, 'artist': queue[i].trackArtistTitle ?? ''},
           ],
-        }),
-      );
+        });
+      }());
     }
     unawaited(
       _send('snapshot', {
@@ -438,6 +458,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       final first = _items.keys.first;
       _items.remove(first);
       _parents.remove(first);
+      _playlistRevisions.remove(first);
       _offlineRows.remove(first);
       _authorizations.remove(first);
     }
@@ -896,9 +917,17 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         return _browse(args['id'] as String? ?? 'root');
       case 'search':
         final query = args['query'] as String? ?? '';
-        final results = await _search(query);
-        final books = await _searchAudiobooks(query);
-        return _current ? [...results.map(_item), ...books] : [];
+        final (results, books) = await (_search(query), _searchAudiobooks(query)).wait;
+        final owned = {for (final row in await _visibleDownloads()) (row.backend, row.globalKey)};
+        final denied = requestCurrent() ? _hiddenCarLibraries() : <String>{};
+        return requestCurrent()
+            ? [
+                for (final row in results)
+                  if (!denied.contains('${row.serverId}:${row.libraryId}'))
+                    _item(row, offline: owned.contains((row.backend, row.globalKey))),
+                ...books,
+              ]
+            : [];
       case 'resolveVoice':
         final title = _voiceName(args['query'] as String? ?? '');
         final artist = _voiceName(args['artist'] as String? ?? '');
@@ -1377,6 +1406,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
               item,
               await _visibleDownloads(),
               client == null ? null : musicAccountScope(client),
+              revision: _playlistRevisions[id],
             );
             if (!mounted || !_catalogItemCurrent(id) || playlistTracks.isEmpty) return false;
           }
@@ -1468,6 +1498,10 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         return _handle(MethodCall('playItem', {...args, 'id': (matches.single as Map)['id']}));
       case 'jump':
         if (args.containsKey('scope') && args['scope'] != _itemScope) return false;
+        if (args['id'] case final String target) {
+          if (args['revision'] != _catalogRevision || _spoken == null) return false;
+          return _handle(MethodCall('playItem', {...args, 'id': target}));
+        }
         final index = args['index'] as int?;
         if (args['revision'] != _catalogRevision || index == null || index < 0 || index >= _music.queue.length) {
           throw PlatformException(code: 'stale_queue');
@@ -1688,6 +1722,16 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
   }
 
   Future<List<Map<String, Object?>>> _browse(String id) async {
+    var manifestStart = 0, ordinal = 0;
+    String? manifestRevision;
+    if (id.startsWith('playlistPage:')) {
+      final cursor = jsonDecode(utf8.decode(base64Url.decode(id.substring(13)))) as List;
+      if (cursor.length != 5 || cursor[4] != _downloadGeneration) return [];
+      id = cursor[0] as String;
+      manifestStart = cursor[1] as int;
+      ordinal = cursor[2] as int;
+      manifestRevision = cursor[3] as String;
+    }
     var offset = 0;
     if (id.startsWith('page:')) {
       final parts = id.split(':');
@@ -2291,21 +2335,43 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       if (_profileId == null || !_catalogItemCurrent(id)) return [];
       final client = _authorizations[id]?.client;
       final store = MusicLibraryStore(context.read<AppDatabase>(), _profileId);
-      final ordered = item.kind == MediaKind.playlist
-          ? await store.ownedPlaylistTracks(
-              item,
-              await _visibleDownloads(),
-              client == null ? null : musicAccountScope(client),
-            )
-          : null;
+      if (item.kind == MediaKind.playlist) {
+        final generation = _downloadGeneration;
+        final key = (item.backend.name, item.serverId);
+        final cached = _ownedByServer[key];
+        final owned =
+            cached ??
+            {
+              for (final track in await _visibleDownloads())
+                if (track.backend == item.backend && track.serverId == item.serverId) track.id: track,
+            };
+        if (!mounted || !_catalogItemCurrent(id) || generation != _downloadGeneration) return [];
+        _ownedByServer[key] = owned;
+        final page = await store.ownedPlaylistWindow(
+          item,
+          owned,
+          client == null ? null : musicAccountScope(client),
+          start: manifestStart,
+          limit: _pageSize - 2,
+          revision: manifestRevision,
+        );
+        if (!mounted || !_catalogItemCurrent(id) || generation != _downloadGeneration || page == null) return [];
+        final children = <Map<String, Object?>>[];
+        if (manifestStart == 0) children.addAll(_containerActions(id));
+        _playlistRevisions[id] = page.revision;
+        for (final track in page.tracks) {
+          final row = _item(track, offline: true, parent: (item: item, index: ordinal++));
+          _playlistRevisions[row['id'] as String] = page.revision;
+          children.add(row);
+        }
+        if (page.next != null) {
+          final cursor = base64Url.encode(utf8.encode(jsonEncode([id, page.next, ordinal, page.revision, generation])));
+          children.add(_folder('playlistPage:$cursor', t.fileSources.loadMore));
+        }
+        return children;
+      }
       if (!mounted || !_catalogItemCurrent(id)) return [];
-      final scope = await MusicReadScope.forItem(
-        context,
-        item,
-        selectedClient: client,
-        offline: true,
-        offlinePlaylistTracks: ordered,
-      );
+      final scope = await MusicReadScope.forItem(context, item, selectedClient: client, offline: true);
       if (scope == null || !scope.current || !_catalogItemCurrent(id)) return [];
       final tracks = scope.offlineTracks;
       final children = item.kind == MediaKind.artist

@@ -1,3 +1,5 @@
+import 'jukebox_dialog.dart';
+import '../../services/music/guest_jukebox.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import '../../widgets/app_icon.dart';
 import 'package:flutter/material.dart';
@@ -117,6 +119,14 @@ class MusicDrivingScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(t.musicExperience.driving),
+        actions: [
+          if (track != null && context.read<GuestJukebox?>() != null)
+            IconButton(
+              tooltip: t.livingRoom.jukebox,
+              icon: const Icon(Icons.group_add),
+              onPressed: () => showGuestJukebox(context),
+            ),
+        ],
         leading: IconButton(
           tooltip: t.musicExperience.exitDriving,
           icon: const AppIcon(Symbols.close_rounded),

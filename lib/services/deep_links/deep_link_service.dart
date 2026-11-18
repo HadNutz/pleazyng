@@ -8,7 +8,6 @@ import '../../i18n/strings.g.dart';
 import '../../profiles/profile.dart';
 import '../../utils/app_logger.dart';
 import '../../utils/snackbar_helper.dart';
-import '../external_player_service.dart';
 import 'deep_link.dart';
 
 /// Switches profiles for links. Lives at the root of the widget tree, which
@@ -26,8 +25,9 @@ abstract interface class DeepLinkProfileHost {
 
 /// A profile session that acts on links: the main screen of [profileId].
 class DeepLinkSession {
-  DeepLinkSession({required this.profileId, required this.launch});
+  DeepLinkSession({required this.profileId, required this.launch, this.externalReturn});
 
+  final Future<bool> Function(Uri)? externalReturn;
   final String? profileId;
   final Future<void> Function(DeepLink link) launch;
 }
@@ -46,7 +46,7 @@ class DeepLinkSession {
 class DeepLinkService {
   DeepLinkService._(this._channel, this._platformDelivers)
     : _report = showMainSnackBar,
-      _handleExternalPlayerReturn = ExternalPlayerService.handleCallbackUrl {
+      _handleExternalPlayerReturn = null {
     if (_platformDelivers) _channel.setMethodCallHandler(_handleMethodCall);
   }
 
@@ -71,7 +71,8 @@ class DeepLinkService {
   final MethodChannel _channel;
   final bool _platformDelivers;
   final void Function(String message) _report;
-  final Future<bool> Function(Uri uri) _handleExternalPlayerReturn;
+  final Future<bool> Function(Uri uri)? _handleExternalPlayerReturn;
+  ExternalPlayerReturnLink? _pendingReturn;
 
   /// Applies a link's profile once startup is over. Installed by the app root.
   DeepLinkProfileHost? host;
@@ -143,7 +144,12 @@ class DeepLinkService {
 
   Future<void> _returnFromExternalPlayer(ExternalPlayerReturnLink link) async {
     try {
-      await _handleExternalPlayerReturn(link.uri);
+      final handle = _session?.externalReturn ?? _handleExternalPlayerReturn;
+      if (handle == null) {
+        _pendingReturn = link;
+        return;
+      }
+      await handle(link.uri);
     } catch (e, stackTrace) {
       appLogger.w('Deep link: external player return failed', error: e, stackTrace: stackTrace);
     }
@@ -189,6 +195,9 @@ class DeepLinkService {
   /// not (a first sign-in reaches the session without SetupScreen's bind).
   void attach(DeepLinkSession session) {
     _session = session;
+    final pending = _pendingReturn;
+    _pendingReturn = null;
+    if (pending != null) unawaited(_returnFromExternalPlayer(pending));
     unawaited(fetchInitialLink());
     _pump();
   }

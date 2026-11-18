@@ -131,7 +131,19 @@ class GuestJukebox extends ChangeNotifier {
         out.statusCode = 410;
         return;
       }
-      if (request.method == 'GET' && request.uri.path == '/songs') {
+      if (request.method == 'GET' && request.uri.path == '/queue') {
+        final start = (_music.currentIndex + 1).clamp(0, _music.queue.length);
+        out.headers.contentType = ContentType.json;
+        out.write(
+          jsonEncode([
+            for (final item in _music.queue.skip(start).take(50))
+              if (item.backend == selected.backend &&
+                  item.serverId == selected.serverId &&
+                  item.libraryId == selected.id)
+                {'title': item.displayTitle, 'artist': item.trackArtistTitle ?? ''},
+          ]),
+        );
+      } else if (request.method == 'GET' && request.uri.path == '/songs') {
         final search = request.uri.queryParameters['q']?.trim() ?? '';
         if (search.length < 2 || search.length > 100) {
           out.statusCode = 400;
@@ -170,8 +182,13 @@ class GuestJukebox extends ChangeNotifier {
           out.statusCode = 410;
           return;
         }
-        _music.addToEnd([track]);
-        out.statusCode = 204;
+        final accepted = await _music.acceptGuestTrack(track);
+        if (!accepted || epoch != _epoch) {
+          out.statusCode = 409;
+          return;
+        }
+        out.headers.contentType = ContentType.json;
+        out.write(jsonEncode({'accepted': true, 'title': track.displayTitle}));
       } else {
         out.statusCode = 404;
       }
@@ -194,7 +211,7 @@ class GuestJukebox extends ChangeNotifier {
 <style>html{color-scheme:dark}body{max-width:36rem;margin:2rem auto;padding:0 1rem;font:1.05rem system-ui;background:#151717;color:#fafafa}input,button{font:inherit;padding:.7rem;border-radius:.4rem}input{width:65%}ul{padding:0}li{display:flex;align-items:center;justify-content:space-between;gap:1rem;border-bottom:1px solid #555;padding:.6rem 0}button{cursor:pointer}</style></head>
 <body data-error="${escape(s.roomUnavailable)}" data-added="${escape(s.added)}" data-empty="${escape(s.noSongs)}" data-add="${escape(t.music.addToQueue)}">
 <h1>${escape(s.jukebox)}</h1><form><label for="q">${escape(s.searchSongs)}</label><br><input id="q" required minlength="2" maxlength="100"><button>${escape(t.common.search)}</button></form>
-<p role="status"></p><ul></ul><script src="/room.js"></script></body></html>''';
+<p role="status"></p><ul></ul><h2>${escape(t.music.upNext)}</h2><ol></ol><script src="/room.js"></script></body></html>''';
   }
 }
 
@@ -203,7 +220,21 @@ const token=location.hash.slice(1);
 const headers={'X-Room':token};
 const words=document.body.dataset;
 const form=document.querySelector('form'), list=document.querySelector('ul'), statusText=document.querySelector('[role=status]');
-let sequence=0;
+let sequence=0, reading=false;
+async function queue(){
+  if(reading || document.hidden) return;
+  reading=true;
+  try {
+    const response=await fetch('/queue',{headers});
+    if(!response.ok) throw Error();
+    const rows=await response.json();
+    document.querySelector('ol').replaceChildren(...rows.map(song=>{
+      const row=document.createElement('li'); row.textContent=[song.title,song.artist].filter(Boolean).join(' · '); return row;
+    }));
+  } catch { document.querySelector('ol').replaceChildren(); statusText.textContent=words.error; }
+  finally { reading=false; }
+}
+queue(); setInterval(queue,10000); document.addEventListener('visibilitychange',queue);
 form.onsubmit=async function(event){
   event.preventDefault();
   const current=++sequence;
@@ -222,7 +253,8 @@ form.onsubmit=async function(event){
         add.disabled=true;
         try {
           const result=await fetch('/add/'+encodeURIComponent(song.id),{method:'POST',headers});
-          if(!result.ok) throw Error();
+          if(!result.ok || !(await result.json()).accepted) throw Error();
+          queue();
           add.textContent=words.added; statusText.textContent=song.title+' · '+words.added;
         } catch {statusText.textContent=words.error;}
       };

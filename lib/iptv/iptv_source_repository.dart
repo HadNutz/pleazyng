@@ -1136,7 +1136,7 @@ class IptvSourceRepository {
       SELECT id, profile_id, source_id, channel_id, title, programme_title, starts_at, ends_at, state,
              recording_id, error_code, created_at, updated_at
       FROM iptv_recording_schedules
-      WHERE (? IS NULL OR profile_id=?) AND state IN ('scheduled', 'starting', 'recording', 'failed', 'missed')
+      WHERE (? IS NULL OR profile_id=?) AND state IN ('scheduled', 'starting', 'recording', 'failed', 'missed', 'transfer_pending')
       ORDER BY starts_at, title COLLATE NOCASE
     ''',
           variables: [Variable(profileId), Variable(profileId)],
@@ -1217,14 +1217,21 @@ class IptvSourceRepository {
     if (!const {'scheduled', 'starting', 'recording', 'completed', 'failed', 'missed', 'cancelled'}.contains(state)) {
       throw const IptvImportException('invalid_data');
     }
-    await _database.runIdentityMutation(
-      () => _database.customStatement(
-        '''
-      UPDATE iptv_recording_schedules SET state=?, recording_id=?, error_code=?, updated_at=? WHERE id=?
-    ''',
-        [state, recordingId, errorCode, DateTime.now().millisecondsSinceEpoch ~/ 1000, scheduleId],
+    final changed = await _database.runIdentityMutation(
+      () => _database.customUpdate(
+        "UPDATE iptv_recording_schedules SET state=?, recording_id=?, error_code=?, updated_at=? WHERE id=? "
+        "AND state NOT IN ('transfer_pending','transferred','cancelled') AND (? != 'starting' OR state='scheduled')",
+        variables: [
+          Variable(state),
+          Variable(recordingId),
+          Variable(errorCode),
+          Variable(DateTime.now().millisecondsSinceEpoch ~/ 1000),
+          Variable(scheduleId),
+          Variable(state),
+        ],
       ),
     );
+    if (state == 'starting' && changed != 1) throw const IptvImportException('recording_schedule_invalid');
   }
 
   Future<void> recoverLocalRecordingSchedules() async {
@@ -1459,6 +1466,71 @@ class IptvSourceRepository {
       await client.deleteRule(rule);
     } on SourceException catch (error) {
       throw IptvImportException(_iptvCodeForSourceFailure(error));
+    } finally {
+      client.close();
+    }
+  }
+
+  /// Claim the local timer before issuing a remote write. An uncertain reply
+  /// remains recoverable by reading the server schedule, even after restart.
+  Future<void> transferLocalRecording(IptvLocalRecordingSchedule job) async {
+    final config = await configuration(job.profileId, job.sourceId);
+    if (config == null || !config.supportsDispatcharrDvr) throw const IptvImportException('dvr_unavailable');
+    final client = DispatcharrDvrClient(config);
+    final start = job.startsAt.millisecondsSinceEpoch ~/ 1000, end = job.endsAt.millisecondsSinceEpoch ~/ 1000;
+    final program = LiveTvProgram(title: job.programmeTitle ?? job.title, beginsAt: start, endsAt: end);
+    Future<int> change(String from, String to, String? remoteId) => _database.runIdentityMutation(
+      () => _database.customUpdate(
+        'UPDATE iptv_recording_schedules SET state=?, recording_id=?, updated_at=? '
+        "WHERE id=? AND profile_id=? AND source_id=? AND state=? AND (state!='scheduled' OR starts_at>?)",
+        variables: [
+          Variable(to),
+          Variable(remoteId),
+          Variable(DateTime.now().millisecondsSinceEpoch ~/ 1000),
+          Variable(job.id),
+          Variable(job.profileId),
+          Variable(job.sourceId),
+          Variable(from),
+          Variable(DateTime.now().millisecondsSinceEpoch ~/ 1000),
+        ],
+      ),
+    );
+    try {
+      final channel = (await channels(
+        job.profileId,
+      )).where((c) => c.iptvSourceId == job.sourceId && c.iptvChannelId == job.channelId).single;
+      final remote = await client.resolveChannel(channel);
+      Future<IptvDispatcharrRecording?> verify() async {
+        final matches = (await client.recordings())
+            .where(
+              (r) =>
+                  r.id.isNotEmpty &&
+                  r.channelId == remote.toString() &&
+                  r.startedAt?.millisecondsSinceEpoch == start * 1000 &&
+                  r.endsAt?.millisecondsSinceEpoch == end * 1000 &&
+                  !{'failed', 'cancelled', 'canceled', 'error'}.contains(r.state.toLowerCase()),
+            )
+            .toList();
+        if (matches.length > 1) throw const IptvImportException('recording_schedule_exists');
+        return matches.firstOrNull;
+      }
+
+      final prior = await verify();
+      final claimed = job.state == 'scheduled' && await change('scheduled', 'transfer_pending', null) == 1;
+      if (!claimed && job.state != 'transfer_pending') throw const IptvImportException('recording_schedule_invalid');
+      var verified = prior;
+      if (claimed && prior == null) {
+        try {
+          await client.scheduleChannel(remote, program);
+        } on SourceException catch (error) {
+          if ({400, 401, 403, 404, 405, 422}.contains(error.status))
+            await change('transfer_pending', 'scheduled', null);
+          rethrow;
+        }
+        verified = await verify();
+      }
+      if (verified == null) throw const IptvImportException('dvr_unavailable');
+      await change('transfer_pending', 'transferred', verified.id);
     } finally {
       client.close();
     }

@@ -37,6 +37,7 @@ class _KaraokeTakesScreenState extends State<KaraokeTakesScreen> {
   StreamSubscription<bool>? _previewCompleted;
   // ignore: cancel_subscriptions
   StreamSubscription<Duration>? _musicPreviewPosition;
+  int _visibleCount = 50;
   bool _busy = false;
   bool _previewUsesMusic = false;
   bool _previewMarksListened = false;
@@ -472,7 +473,7 @@ class _KaraokeTakesScreenState extends State<KaraokeTakesScreen> {
             ),
           ),
         Text(l10n.t.karaokeUi.recordingsRemainPrivateExportCreatesAFileYouCan),
-        for (final take in _takes)
+        for (final take in _takes.take(_visibleCount))
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -551,6 +552,8 @@ class _KaraokeTakesScreenState extends State<KaraokeTakesScreen> {
               ),
             ),
           ),
+        if (_takes.length > _visibleCount)
+          TextButton(onPressed: () => setState(() => _visibleCount += 50), child: Text(l10n.t.fileSources.loadMore)),
       ],
     ),
   );

@@ -4785,6 +4785,19 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
   @override
   void addToEnd(List<MediaItem> tracks) => _enqueue(tracks, next: false);
 
+  @override
+  Future<bool> acceptGuestTrack(MediaItem track) async {
+    final output = _musicDeviceOutput;
+    if (output == null) return super.acceptGuestTrack(track);
+    final transfer = MusicTransferSnapshot(
+      queue: _captureTransferQueueState([track]),
+      position: Duration.zero,
+      playing: false,
+    );
+    await output.control('addToEnd', {'tracks': transfer.toJson(itemLimit: MusicTransferSnapshot.maxTransferItems)});
+    return identical(output, _musicDeviceOutput);
+  }
+
   /// Queue edits while idle start a session parked on the first added track
   /// (mini-player appears paused) instead of silently dropping the action
   /// or surprising the user with audio.

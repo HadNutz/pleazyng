@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -97,9 +98,20 @@ class _PlayerPerformanceOverlayState extends State<PlayerPerformanceOverlay> {
     final isMpv = _stats.playerType == 'mpv';
 
     final sections = <Widget>[
+      Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: TextButton.icon(
+          icon: const Icon(Icons.copy, size: 16),
+          label: Text(t.startup.copyDetails),
+          onPressed: () => Clipboard.setData(ClipboardData(text: _stats.comparison)),
+        ),
+      ),
       _buildSection(Symbols.videocam_rounded, t.fileInfo.video, [
         _metric(t.fileInfo.codec, _stats.videoCodec ?? t.common.notAvailable),
         _metric(t.fileInfo.resolution, _stats.resolution),
+        if (_stats.outputWidth != null && _stats.outputHeight != null)
+          _metric(t.performanceOverlay.videoOutput, '${_stats.outputWidth}×${_stats.outputHeight}'),
+        if (_stats.displayMode case final mode?) _metric(t.performanceOverlay.videoOutput, mode),
         if (_stats.playbackCapabilityReport?.sourceIsHdr case final sourceIsHdr?)
           _metric(t.videoSettings.hdr, sourceIsHdr ? t.common.yes : t.common.no),
         if (_stats.hasValidVideoFps || _stats.hasSourceCadenceReport)

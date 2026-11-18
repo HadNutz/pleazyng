@@ -851,6 +851,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
     return next;
   }
 
+  int spokenQueueRevision = 0;
   static const _spokenQueueKey = 'spokenUpNext.v1';
 
   bool _ownsSpoken(SourceEntry item) =>
@@ -892,6 +893,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
     final kept = rows.where((r) => valid.contains(r['key'])).toList();
     if (kept.length != rows.length) {
       await sources.repository.savePreference(profile, _spokenQueueKey, {'rows': kept});
+      spokenQueueRevision++;
     }
     return kept;
   }
@@ -904,6 +906,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       if (!sources.current(epoch) || rows.length >= 500) throw StateError('Spoken queue unavailable');
       rows.insert(next ? 0 : rows.length, {'id': const Uuid().v4(), 'key': item.key, 'offline': offline});
       await sources.repository.savePreference(profile, _spokenQueueKey, {'rows': rows});
+      spokenQueueRevision++;
       _notify();
     });
   }
@@ -918,6 +921,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       if (index < 0 || !sources.current(epoch)) return;
       rows.removeAt(index);
       await sources.repository.savePreference(profile, _spokenQueueKey, {'rows': rows});
+      spokenQueueRevision++;
       removed = true;
       _notify();
     });
@@ -959,6 +963,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       if (!sources.current(epoch) || !active || entry?.key != fresh.key) return false;
       rows.remove(row);
       await sources.repository.savePreference(profile, _spokenQueueKey, {'rows': rows});
+      spokenQueueRevision++;
       _notify();
       return true;
     }

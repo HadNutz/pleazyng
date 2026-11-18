@@ -605,8 +605,8 @@ class PlayerTizen extends PlayerBase implements SubtitlePcmCaptureSource, Native
     'time-pos' => ((_controller?.value.position.inMilliseconds ?? 0) / 1000).toString(),
     'duration' => ((_controller?.value.duration.end.inMilliseconds ?? 0) / 1000).toString(),
     'seekable' => state.seekable ? 'yes' : 'no',
-    'width' || 'dwidth' => _controller?.value.size.width.toInt().toString(),
-    'height' || 'dheight' => _controller?.value.size.height.toInt().toString(),
+    'video-params/w' || 'width' || 'dwidth' => _controller?.value.size.width.toInt().toString(),
+    'video-params/h' || 'height' || 'dheight' => _controller?.value.size.height.toInt().toString(),
     'current-vo' => 'tizen-native',
     'audio-codec-name' =>
       state.track.audio?.codec == null
