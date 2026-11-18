@@ -147,14 +147,6 @@ class _Translations$viewing$pl extends Translations$viewing$en {
 	final TranslationsPl _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Nagrywaj jeszcze 30 minut';
-	@override String recordsUntil({required Object time}) => 'Nagrywanie do ${time}';
-	@override String get extendFailed => 'Nie udało się przedłużyć nagrania';
-	@override String get originalDialogue => 'Preferuj oryginalne dialogi';
-	@override String get soloPage => 'Wyświetl tę stronę osobno';
-	@override String get pairPage => 'Ponownie połącz tę stronę w parę';
-	@override String get listenPhone => 'Słuchaj na tym telefonie';
-	@override String get audioUnavailable => 'Plik lub ścieżka dźwiękowa jest niedostępna na tym telefonie.';
 	@override String get guidedPanels => 'Czytanie kadr po kadrze';
 	@override String get rewind => 'Przewiń wstecz';
 	@override String get attachAudio => 'Dodaj plik audio';
@@ -170,6 +162,14 @@ class _Translations$viewing$pl extends Translations$viewing$en {
 	@override String get clearAudio => 'Usuń dodany dźwięk';
 	@override String keepFrom({required Object time}) => 'Zachowaj od ${time}';
 	@override String get recordNow => 'Nagrywaj od teraz';
+	@override String get extendRecording => 'Nagrywaj jeszcze 30 minut';
+	@override String recordsUntil({required Object time}) => 'Nagrywanie do ${time}';
+	@override String get extendFailed => 'Nie udało się przedłużyć nagrania';
+	@override String get originalDialogue => 'Preferuj oryginalne dialogi';
+	@override String get soloPage => 'Wyświetl tę stronę osobno';
+	@override String get pairPage => 'Ponownie połącz tę stronę w parę';
+	@override String get listenPhone => 'Słuchaj na tym telefonie';
+	@override String get audioUnavailable => 'Plik lub ścieżka dźwiękowa jest niedostępna na tym telefonie.';
 }
 
 // Path: livingRoom
@@ -5688,14 +5688,6 @@ extension on TranslationsPl {
 			'mediaConveniences.missingEpisode' => 'Brakujący odcinek',
 			'mediaConveniences.stereoChannel' => 'Kanał dla obu głośników',
 			'mediaConveniences.hdrBrightness' => 'Jasność napisów HDR',
-			'viewing.extendRecording' => 'Nagrywaj jeszcze 30 minut',
-			'viewing.recordsUntil' => ({required Object time}) => 'Nagrywanie do ${time}',
-			'viewing.extendFailed' => 'Nie udało się przedłużyć nagrania',
-			'viewing.originalDialogue' => 'Preferuj oryginalne dialogi',
-			'viewing.soloPage' => 'Wyświetl tę stronę osobno',
-			'viewing.pairPage' => 'Ponownie połącz tę stronę w parę',
-			'viewing.listenPhone' => 'Słuchaj na tym telefonie',
-			'viewing.audioUnavailable' => 'Plik lub ścieżka dźwiękowa jest niedostępna na tym telefonie.',
 			'viewing.guidedPanels' => 'Czytanie kadr po kadrze',
 			'viewing.rewind' => 'Przewiń wstecz',
 			'viewing.attachAudio' => 'Dodaj plik audio',
@@ -5711,6 +5703,14 @@ extension on TranslationsPl {
 			'viewing.clearAudio' => 'Usuń dodany dźwięk',
 			'viewing.keepFrom' => ({required Object time}) => 'Zachowaj od ${time}',
 			'viewing.recordNow' => 'Nagrywaj od teraz',
+			'viewing.extendRecording' => 'Nagrywaj jeszcze 30 minut',
+			'viewing.recordsUntil' => ({required Object time}) => 'Nagrywanie do ${time}',
+			'viewing.extendFailed' => 'Nie udało się przedłużyć nagrania',
+			'viewing.originalDialogue' => 'Preferuj oryginalne dialogi',
+			'viewing.soloPage' => 'Wyświetl tę stronę osobno',
+			'viewing.pairPage' => 'Ponownie połącz tę stronę w parę',
+			'viewing.listenPhone' => 'Słuchaj na tym telefonie',
+			'viewing.audioUnavailable' => 'Plik lub ścieżka dźwiękowa jest niedostępna na tym telefonie.',
 			'livingRoom.fitScreen' => 'Dopasuj do mojego ekranu',
 			'livingRoom.fitHelp' => 'Wybierz krawędź i przesuń ją strzałkami, aż zobaczysz znaczniki. Powtórz dla każdej krawędzi.',
 			'livingRoom.left' => 'Lewa',

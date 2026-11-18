@@ -147,14 +147,6 @@ class _Translations$viewing$da extends Translations$viewing$en {
 	final TranslationsDa _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Optag 30 minutter mere';
-	@override String recordsUntil({required Object time}) => 'Optager indtil ${time}';
-	@override String get extendFailed => 'Kunne ikke forlænge optagelsen';
-	@override String get originalDialogue => 'Foretræk original dialog';
-	@override String get soloPage => 'Vis denne side alene';
-	@override String get pairPage => 'Par denne side igen';
-	@override String get listenPhone => 'Lyt på denne telefon';
-	@override String get audioUnavailable => 'Filen eller lydsporet er ikke tilgængeligt på denne telefon.';
 	@override String get guidedPanels => 'Læs panel for panel';
 	@override String get rewind => 'Spol tilbage';
 	@override String get attachAudio => 'Tilføj lydfil';
@@ -170,6 +162,14 @@ class _Translations$viewing$da extends Translations$viewing$en {
 	@override String get clearAudio => 'Fjern tilføjet lyd';
 	@override String keepFrom({required Object time}) => 'Behold fra ${time}';
 	@override String get recordNow => 'Optag fra nu';
+	@override String get extendRecording => 'Optag 30 minutter mere';
+	@override String recordsUntil({required Object time}) => 'Optager indtil ${time}';
+	@override String get extendFailed => 'Kunne ikke forlænge optagelsen';
+	@override String get originalDialogue => 'Foretræk original dialog';
+	@override String get soloPage => 'Vis denne side alene';
+	@override String get pairPage => 'Par denne side igen';
+	@override String get listenPhone => 'Lyt på denne telefon';
+	@override String get audioUnavailable => 'Filen eller lydsporet er ikke tilgængeligt på denne telefon.';
 }
 
 // Path: livingRoom
@@ -5638,14 +5638,6 @@ extension on TranslationsDa {
 			'mediaConveniences.missingEpisode' => 'Manglende afsnit',
 			'mediaConveniences.stereoChannel' => 'Kanal til begge højttalere',
 			'mediaConveniences.hdrBrightness' => 'Lysstyrke for HDR-undertekster',
-			'viewing.extendRecording' => 'Optag 30 minutter mere',
-			'viewing.recordsUntil' => ({required Object time}) => 'Optager indtil ${time}',
-			'viewing.extendFailed' => 'Kunne ikke forlænge optagelsen',
-			'viewing.originalDialogue' => 'Foretræk original dialog',
-			'viewing.soloPage' => 'Vis denne side alene',
-			'viewing.pairPage' => 'Par denne side igen',
-			'viewing.listenPhone' => 'Lyt på denne telefon',
-			'viewing.audioUnavailable' => 'Filen eller lydsporet er ikke tilgængeligt på denne telefon.',
 			'viewing.guidedPanels' => 'Læs panel for panel',
 			'viewing.rewind' => 'Spol tilbage',
 			'viewing.attachAudio' => 'Tilføj lydfil',
@@ -5661,6 +5653,14 @@ extension on TranslationsDa {
 			'viewing.clearAudio' => 'Fjern tilføjet lyd',
 			'viewing.keepFrom' => ({required Object time}) => 'Behold fra ${time}',
 			'viewing.recordNow' => 'Optag fra nu',
+			'viewing.extendRecording' => 'Optag 30 minutter mere',
+			'viewing.recordsUntil' => ({required Object time}) => 'Optager indtil ${time}',
+			'viewing.extendFailed' => 'Kunne ikke forlænge optagelsen',
+			'viewing.originalDialogue' => 'Foretræk original dialog',
+			'viewing.soloPage' => 'Vis denne side alene',
+			'viewing.pairPage' => 'Par denne side igen',
+			'viewing.listenPhone' => 'Lyt på denne telefon',
+			'viewing.audioUnavailable' => 'Filen eller lydsporet er ikke tilgængeligt på denne telefon.',
 			'livingRoom.fitScreen' => 'Tilpas til min skærm',
 			'livingRoom.fitHelp' => 'Vælg en kant, og flyt den med piletasterne, til markeringerne er synlige. Gentag for hver kant.',
 			'livingRoom.left' => 'Venstre',

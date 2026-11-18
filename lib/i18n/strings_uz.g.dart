@@ -147,14 +147,6 @@ class _Translations$viewing$uz extends Translations$viewing$en {
 	final TranslationsUz _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Yana 30 daqiqa yozish';
-	@override String recordsUntil({required Object time}) => 'Yozish ${time} gacha davom etadi';
-	@override String get extendFailed => 'Yozuvni uzaytirib boʻlmadi';
-	@override String get originalDialogue => 'Asl dialogni afzal koʻrish';
-	@override String get soloPage => 'Bu sahifani alohida koʻrsatish';
-	@override String get pairPage => 'Bu sahifani yana juftlash';
-	@override String get listenPhone => 'Shu telefonda tinglash';
-	@override String get audioUnavailable => 'Fayl yoki ovoz yoʻlagi bu telefonda mavjud emas.';
 	@override String get guidedPanels => 'Panelma-panel o‘qish';
 	@override String get rewind => 'Orqaga o‘rash';
 	@override String get attachAudio => 'Audio fayl qo‘shish';
@@ -170,6 +162,14 @@ class _Translations$viewing$uz extends Translations$viewing$en {
 	@override String get clearAudio => 'Qo‘shilgan audioni olib tashlash';
 	@override String keepFrom({required Object time}) => '${time} dan saqlash';
 	@override String get recordNow => 'Hozirdan yozish';
+	@override String get extendRecording => 'Yana 30 daqiqa yozish';
+	@override String recordsUntil({required Object time}) => 'Yozish ${time} gacha davom etadi';
+	@override String get extendFailed => 'Yozuvni uzaytirib boʻlmadi';
+	@override String get originalDialogue => 'Asl dialogni afzal koʻrish';
+	@override String get soloPage => 'Bu sahifani alohida koʻrsatish';
+	@override String get pairPage => 'Bu sahifani yana juftlash';
+	@override String get listenPhone => 'Shu telefonda tinglash';
+	@override String get audioUnavailable => 'Fayl yoki ovoz yoʻlagi bu telefonda mavjud emas.';
 }
 
 // Path: livingRoom
@@ -5638,14 +5638,6 @@ extension on TranslationsUz {
 			'mediaConveniences.missingEpisode' => 'Yetishmayotgan qism',
 			'mediaConveniences.stereoChannel' => 'Ikkala karnayda ijro etiladigan kanal',
 			'mediaConveniences.hdrBrightness' => 'HDR subtitrlar yorqinligi',
-			'viewing.extendRecording' => 'Yana 30 daqiqa yozish',
-			'viewing.recordsUntil' => ({required Object time}) => 'Yozish ${time} gacha davom etadi',
-			'viewing.extendFailed' => 'Yozuvni uzaytirib boʻlmadi',
-			'viewing.originalDialogue' => 'Asl dialogni afzal koʻrish',
-			'viewing.soloPage' => 'Bu sahifani alohida koʻrsatish',
-			'viewing.pairPage' => 'Bu sahifani yana juftlash',
-			'viewing.listenPhone' => 'Shu telefonda tinglash',
-			'viewing.audioUnavailable' => 'Fayl yoki ovoz yoʻlagi bu telefonda mavjud emas.',
 			'viewing.guidedPanels' => 'Panelma-panel o‘qish',
 			'viewing.rewind' => 'Orqaga o‘rash',
 			'viewing.attachAudio' => 'Audio fayl qo‘shish',
@@ -5661,6 +5653,14 @@ extension on TranslationsUz {
 			'viewing.clearAudio' => 'Qo‘shilgan audioni olib tashlash',
 			'viewing.keepFrom' => ({required Object time}) => '${time} dan saqlash',
 			'viewing.recordNow' => 'Hozirdan yozish',
+			'viewing.extendRecording' => 'Yana 30 daqiqa yozish',
+			'viewing.recordsUntil' => ({required Object time}) => 'Yozish ${time} gacha davom etadi',
+			'viewing.extendFailed' => 'Yozuvni uzaytirib boʻlmadi',
+			'viewing.originalDialogue' => 'Asl dialogni afzal koʻrish',
+			'viewing.soloPage' => 'Bu sahifani alohida koʻrsatish',
+			'viewing.pairPage' => 'Bu sahifani yana juftlash',
+			'viewing.listenPhone' => 'Shu telefonda tinglash',
+			'viewing.audioUnavailable' => 'Fayl yoki ovoz yoʻlagi bu telefonda mavjud emas.',
 			'livingRoom.fitScreen' => 'Ekranimga moslash',
 			'livingRoom.fitHelp' => 'Bir chetni tanlang va belgilari ko‘ringuncha strelkalar bilan siljiting. Har bir chet uchun takrorlang.',
 			'livingRoom.left' => 'Chap',

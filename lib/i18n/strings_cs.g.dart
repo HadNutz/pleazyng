@@ -147,14 +147,6 @@ class _Translations$viewing$cs extends Translations$viewing$en {
 	final TranslationsCs _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Nahrávat dalších 30 minut';
-	@override String recordsUntil({required Object time}) => 'Nahrávání do ${time}';
-	@override String get extendFailed => 'Nahrávání se nepodařilo prodloužit';
-	@override String get originalDialogue => 'Upřednostnit původní dialogy';
-	@override String get soloPage => 'Zobrazit tuto stránku samostatně';
-	@override String get pairPage => 'Znovu spárovat tuto stránku';
-	@override String get listenPhone => 'Poslouchat na tomto telefonu';
-	@override String get audioUnavailable => 'Soubor nebo zvuková stopa nejsou na tomto telefonu dostupné.';
 	@override String get guidedPanels => 'Čtení po panelech';
 	@override String get rewind => 'Přetočit zpět';
 	@override String get attachAudio => 'Přidat zvukový soubor';
@@ -170,6 +162,14 @@ class _Translations$viewing$cs extends Translations$viewing$en {
 	@override String get clearAudio => 'Odebrat připojený zvuk';
 	@override String keepFrom({required Object time}) => 'Uložit od ${time}';
 	@override String get recordNow => 'Nahrávat odteď';
+	@override String get extendRecording => 'Nahrávat dalších 30 minut';
+	@override String recordsUntil({required Object time}) => 'Nahrávání do ${time}';
+	@override String get extendFailed => 'Nahrávání se nepodařilo prodloužit';
+	@override String get originalDialogue => 'Upřednostnit původní dialogy';
+	@override String get soloPage => 'Zobrazit tuto stránku samostatně';
+	@override String get pairPage => 'Znovu spárovat tuto stránku';
+	@override String get listenPhone => 'Poslouchat na tomto telefonu';
+	@override String get audioUnavailable => 'Soubor nebo zvuková stopa nejsou na tomto telefonu dostupné.';
 }
 
 // Path: livingRoom
@@ -5682,14 +5682,6 @@ extension on TranslationsCs {
 			'mediaConveniences.missingEpisode' => 'Chybějící díl',
 			'mediaConveniences.stereoChannel' => 'Kanál pro oba reproduktory',
 			'mediaConveniences.hdrBrightness' => 'Jas titulků HDR',
-			'viewing.extendRecording' => 'Nahrávat dalších 30 minut',
-			'viewing.recordsUntil' => ({required Object time}) => 'Nahrávání do ${time}',
-			'viewing.extendFailed' => 'Nahrávání se nepodařilo prodloužit',
-			'viewing.originalDialogue' => 'Upřednostnit původní dialogy',
-			'viewing.soloPage' => 'Zobrazit tuto stránku samostatně',
-			'viewing.pairPage' => 'Znovu spárovat tuto stránku',
-			'viewing.listenPhone' => 'Poslouchat na tomto telefonu',
-			'viewing.audioUnavailable' => 'Soubor nebo zvuková stopa nejsou na tomto telefonu dostupné.',
 			'viewing.guidedPanels' => 'Čtení po panelech',
 			'viewing.rewind' => 'Přetočit zpět',
 			'viewing.attachAudio' => 'Přidat zvukový soubor',
@@ -5705,6 +5697,14 @@ extension on TranslationsCs {
 			'viewing.clearAudio' => 'Odebrat připojený zvuk',
 			'viewing.keepFrom' => ({required Object time}) => 'Uložit od ${time}',
 			'viewing.recordNow' => 'Nahrávat odteď',
+			'viewing.extendRecording' => 'Nahrávat dalších 30 minut',
+			'viewing.recordsUntil' => ({required Object time}) => 'Nahrávání do ${time}',
+			'viewing.extendFailed' => 'Nahrávání se nepodařilo prodloužit',
+			'viewing.originalDialogue' => 'Upřednostnit původní dialogy',
+			'viewing.soloPage' => 'Zobrazit tuto stránku samostatně',
+			'viewing.pairPage' => 'Znovu spárovat tuto stránku',
+			'viewing.listenPhone' => 'Poslouchat na tomto telefonu',
+			'viewing.audioUnavailable' => 'Soubor nebo zvuková stopa nejsou na tomto telefonu dostupné.',
 			'livingRoom.fitScreen' => 'Přizpůsobit obrazovce',
 			'livingRoom.fitHelp' => 'Vyberte okraj a posouvejte jej šipkami, dokud neuvidíte jeho značky. Opakujte pro každý okraj.',
 			'livingRoom.left' => 'Vlevo',

@@ -147,14 +147,6 @@ class _Translations$viewing$he extends Translations$viewing$en {
 	final TranslationsHe _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'הקלטה לעוד 30 דקות';
-	@override String recordsUntil({required Object time}) => 'הקלטה עד ${time}';
-	@override String get extendFailed => 'לא ניתן להאריך את ההקלטה';
-	@override String get originalDialogue => 'העדפת הדיאלוג המקורי';
-	@override String get soloPage => 'הצגת העמוד הזה לבד';
-	@override String get pairPage => 'צימוד העמוד מחדש';
-	@override String get listenPhone => 'האזנה בטלפון הזה';
-	@override String get audioUnavailable => 'הקובץ או רצועת השמע אינם זמינים בטלפון הזה.';
 	@override String get guidedPanels => 'קריאה לפי חלוניות';
 	@override String get rewind => 'הרצה לאחור';
 	@override String get attachAudio => 'הוספת קובץ שמע';
@@ -170,6 +162,14 @@ class _Translations$viewing$he extends Translations$viewing$en {
 	@override String get clearAudio => 'הסרת שמע מצורף';
 	@override String keepFrom({required Object time}) => 'שמירה החל מ־${time}';
 	@override String get recordNow => 'הקלטה מעכשיו';
+	@override String get extendRecording => 'הקלטה לעוד 30 דקות';
+	@override String recordsUntil({required Object time}) => 'הקלטה עד ${time}';
+	@override String get extendFailed => 'לא ניתן להאריך את ההקלטה';
+	@override String get originalDialogue => 'העדפת הדיאלוג המקורי';
+	@override String get soloPage => 'הצגת העמוד הזה לבד';
+	@override String get pairPage => 'צימוד העמוד מחדש';
+	@override String get listenPhone => 'האזנה בטלפון הזה';
+	@override String get audioUnavailable => 'הקובץ או רצועת השמע אינם זמינים בטלפון הזה.';
 }
 
 // Path: livingRoom
@@ -5646,14 +5646,6 @@ extension on TranslationsHe {
 			'mediaConveniences.missingEpisode' => 'פרק חסר',
 			'mediaConveniences.stereoChannel' => 'ערוץ להשמעה בשני הרמקולים',
 			'mediaConveniences.hdrBrightness' => 'בהירות כתוביות HDR',
-			'viewing.extendRecording' => 'הקלטה לעוד 30 דקות',
-			'viewing.recordsUntil' => ({required Object time}) => 'הקלטה עד ${time}',
-			'viewing.extendFailed' => 'לא ניתן להאריך את ההקלטה',
-			'viewing.originalDialogue' => 'העדפת הדיאלוג המקורי',
-			'viewing.soloPage' => 'הצגת העמוד הזה לבד',
-			'viewing.pairPage' => 'צימוד העמוד מחדש',
-			'viewing.listenPhone' => 'האזנה בטלפון הזה',
-			'viewing.audioUnavailable' => 'הקובץ או רצועת השמע אינם זמינים בטלפון הזה.',
 			'viewing.guidedPanels' => 'קריאה לפי חלוניות',
 			'viewing.rewind' => 'הרצה לאחור',
 			'viewing.attachAudio' => 'הוספת קובץ שמע',
@@ -5669,6 +5661,14 @@ extension on TranslationsHe {
 			'viewing.clearAudio' => 'הסרת שמע מצורף',
 			'viewing.keepFrom' => ({required Object time}) => 'שמירה החל מ־${time}',
 			'viewing.recordNow' => 'הקלטה מעכשיו',
+			'viewing.extendRecording' => 'הקלטה לעוד 30 דקות',
+			'viewing.recordsUntil' => ({required Object time}) => 'הקלטה עד ${time}',
+			'viewing.extendFailed' => 'לא ניתן להאריך את ההקלטה',
+			'viewing.originalDialogue' => 'העדפת הדיאלוג המקורי',
+			'viewing.soloPage' => 'הצגת העמוד הזה לבד',
+			'viewing.pairPage' => 'צימוד העמוד מחדש',
+			'viewing.listenPhone' => 'האזנה בטלפון הזה',
+			'viewing.audioUnavailable' => 'הקובץ או רצועת השמע אינם זמינים בטלפון הזה.',
 			'livingRoom.fitScreen' => 'התאמה למסך שלי',
 			'livingRoom.fitHelp' => 'בחרו קצה והזיזו אותו בעזרת החצים עד שרואים את הסימונים שלו. חזרו על הפעולה בכל קצה.',
 			'livingRoom.left' => 'שמאל',

@@ -8,14 +8,6 @@
     "hdrBrightness": "Lysstyrke for HDR-undertekster"
   },
   "viewing": {
-    "extendRecording": "Optag 30 minutter mere",
-    "recordsUntil": "Optager indtil ${time}",
-    "extendFailed": "Kunne ikke forlænge optagelsen",
-    "originalDialogue": "Foretræk original dialog",
-    "soloPage": "Vis denne side alene",
-    "pairPage": "Par denne side igen",
-    "listenPhone": "Lyt på denne telefon",
-    "audioUnavailable": "Filen eller lydsporet er ikke tilgængeligt på denne telefon.",
     "guidedPanels": "Læs panel for panel",
     "rewind": "Spol tilbage",
     "attachAudio": "Tilføj lydfil",
@@ -30,7 +22,15 @@
     "relinkNone": "Ingen matchende filer fundet",
     "clearAudio": "Fjern tilføjet lyd",
     "keepFrom": "Behold fra ${time}",
-    "recordNow": "Optag fra nu"
+    "recordNow": "Optag fra nu",
+    "extendRecording": "Optag 30 minutter mere",
+    "recordsUntil": "Optager indtil ${time}",
+    "extendFailed": "Kunne ikke forlænge optagelsen",
+    "originalDialogue": "Foretræk original dialog",
+    "soloPage": "Vis denne side alene",
+    "pairPage": "Par denne side igen",
+    "listenPhone": "Lyt på denne telefon",
+    "audioUnavailable": "Filen eller lydsporet er ikke tilgængeligt på denne telefon."
   },
   "livingRoom": {
     "fitScreen": "Tilpas til min skærm",

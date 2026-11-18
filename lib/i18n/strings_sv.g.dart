@@ -147,14 +147,6 @@ class _Translations$viewing$sv extends Translations$viewing$en {
 	final TranslationsSv _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Spela in 30 minuter till';
-	@override String recordsUntil({required Object time}) => 'Inspelning till ${time}';
-	@override String get extendFailed => 'Det gick inte att förlänga inspelningen';
-	@override String get originalDialogue => 'Föredra originaldialog';
-	@override String get soloPage => 'Visa sidan separat';
-	@override String get pairPage => 'Para ihop sidan igen';
-	@override String get listenPhone => 'Lyssna på den här telefonen';
-	@override String get audioUnavailable => 'Filen eller ljudspåret är inte tillgängligt på den här telefonen.';
 	@override String get guidedPanels => 'Läs ruta för ruta';
 	@override String get rewind => 'Spola tillbaka';
 	@override String get attachAudio => 'Lägg till ljudfil';
@@ -170,6 +162,14 @@ class _Translations$viewing$sv extends Translations$viewing$en {
 	@override String get clearAudio => 'Ta bort tillagt ljud';
 	@override String keepFrom({required Object time}) => 'Behåll från ${time}';
 	@override String get recordNow => 'Spela in från nu';
+	@override String get extendRecording => 'Spela in 30 minuter till';
+	@override String recordsUntil({required Object time}) => 'Inspelning till ${time}';
+	@override String get extendFailed => 'Det gick inte att förlänga inspelningen';
+	@override String get originalDialogue => 'Föredra originaldialog';
+	@override String get soloPage => 'Visa sidan separat';
+	@override String get pairPage => 'Para ihop sidan igen';
+	@override String get listenPhone => 'Lyssna på den här telefonen';
+	@override String get audioUnavailable => 'Filen eller ljudspåret är inte tillgängligt på den här telefonen.';
 }
 
 // Path: livingRoom
@@ -5638,14 +5638,6 @@ extension on TranslationsSv {
 			'mediaConveniences.missingEpisode' => 'Avsnitt saknas',
 			'mediaConveniences.stereoChannel' => 'Kanal för båda högtalarna',
 			'mediaConveniences.hdrBrightness' => 'Ljusstyrka för HDR-undertexter',
-			'viewing.extendRecording' => 'Spela in 30 minuter till',
-			'viewing.recordsUntil' => ({required Object time}) => 'Inspelning till ${time}',
-			'viewing.extendFailed' => 'Det gick inte att förlänga inspelningen',
-			'viewing.originalDialogue' => 'Föredra originaldialog',
-			'viewing.soloPage' => 'Visa sidan separat',
-			'viewing.pairPage' => 'Para ihop sidan igen',
-			'viewing.listenPhone' => 'Lyssna på den här telefonen',
-			'viewing.audioUnavailable' => 'Filen eller ljudspåret är inte tillgängligt på den här telefonen.',
 			'viewing.guidedPanels' => 'Läs ruta för ruta',
 			'viewing.rewind' => 'Spola tillbaka',
 			'viewing.attachAudio' => 'Lägg till ljudfil',
@@ -5661,6 +5653,14 @@ extension on TranslationsSv {
 			'viewing.clearAudio' => 'Ta bort tillagt ljud',
 			'viewing.keepFrom' => ({required Object time}) => 'Behåll från ${time}',
 			'viewing.recordNow' => 'Spela in från nu',
+			'viewing.extendRecording' => 'Spela in 30 minuter till',
+			'viewing.recordsUntil' => ({required Object time}) => 'Inspelning till ${time}',
+			'viewing.extendFailed' => 'Det gick inte att förlänga inspelningen',
+			'viewing.originalDialogue' => 'Föredra originaldialog',
+			'viewing.soloPage' => 'Visa sidan separat',
+			'viewing.pairPage' => 'Para ihop sidan igen',
+			'viewing.listenPhone' => 'Lyssna på den här telefonen',
+			'viewing.audioUnavailable' => 'Filen eller ljudspåret är inte tillgängligt på den här telefonen.',
 			'livingRoom.fitScreen' => 'Anpassa till min skärm',
 			'livingRoom.fitHelp' => 'Välj en kant och flytta den med piltangenterna tills markeringarna syns. Upprepa för varje kant.',
 			'livingRoom.left' => 'Vänster',

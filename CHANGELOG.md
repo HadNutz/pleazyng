@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Normalize translation catalog order so the 3.0.38 release checks pass.
+
 - Fetch the pinned Linux ONNX Runtime SDK and runtime from Microsoft’s NuGet package.
 
 - Fix the native source formatting check that blocked the 3.0.38 release build.

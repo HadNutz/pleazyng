@@ -147,14 +147,6 @@ class _Translations$viewing$uk extends Translations$viewing$en {
 	final TranslationsUk _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Записувати ще 30 хвилин';
-	@override String recordsUntil({required Object time}) => 'Запис до ${time}';
-	@override String get extendFailed => 'Не вдалося подовжити запис';
-	@override String get originalDialogue => 'Віддавати перевагу оригінальній озвучці';
-	@override String get soloPage => 'Показати цю сторінку окремо';
-	@override String get pairPage => 'Знову поєднати сторінку в розворот';
-	@override String get listenPhone => 'Слухати на цьому телефоні';
-	@override String get audioUnavailable => 'Файл або звукова доріжка недоступні на цьому телефоні.';
 	@override String get guidedPanels => 'Читання за кадрами';
 	@override String get rewind => 'Перемотати назад';
 	@override String get attachAudio => 'Додати аудіофайл';
@@ -170,6 +162,14 @@ class _Translations$viewing$uk extends Translations$viewing$en {
 	@override String get clearAudio => 'Видалити додане аудіо';
 	@override String keepFrom({required Object time}) => 'Зберегти починаючи з ${time}';
 	@override String get recordNow => 'Записувати відтепер';
+	@override String get extendRecording => 'Записувати ще 30 хвилин';
+	@override String recordsUntil({required Object time}) => 'Запис до ${time}';
+	@override String get extendFailed => 'Не вдалося подовжити запис';
+	@override String get originalDialogue => 'Віддавати перевагу оригінальній озвучці';
+	@override String get soloPage => 'Показати цю сторінку окремо';
+	@override String get pairPage => 'Знову поєднати сторінку в розворот';
+	@override String get listenPhone => 'Слухати на цьому телефоні';
+	@override String get audioUnavailable => 'Файл або звукова доріжка недоступні на цьому телефоні.';
 }
 
 // Path: livingRoom
@@ -5682,14 +5682,6 @@ extension on TranslationsUk {
 			'mediaConveniences.missingEpisode' => 'Відсутня серія',
 			'mediaConveniences.stereoChannel' => 'Канал для обох динаміків',
 			'mediaConveniences.hdrBrightness' => 'Яскравість субтитрів HDR',
-			'viewing.extendRecording' => 'Записувати ще 30 хвилин',
-			'viewing.recordsUntil' => ({required Object time}) => 'Запис до ${time}',
-			'viewing.extendFailed' => 'Не вдалося подовжити запис',
-			'viewing.originalDialogue' => 'Віддавати перевагу оригінальній озвучці',
-			'viewing.soloPage' => 'Показати цю сторінку окремо',
-			'viewing.pairPage' => 'Знову поєднати сторінку в розворот',
-			'viewing.listenPhone' => 'Слухати на цьому телефоні',
-			'viewing.audioUnavailable' => 'Файл або звукова доріжка недоступні на цьому телефоні.',
 			'viewing.guidedPanels' => 'Читання за кадрами',
 			'viewing.rewind' => 'Перемотати назад',
 			'viewing.attachAudio' => 'Додати аудіофайл',
@@ -5705,6 +5697,14 @@ extension on TranslationsUk {
 			'viewing.clearAudio' => 'Видалити додане аудіо',
 			'viewing.keepFrom' => ({required Object time}) => 'Зберегти починаючи з ${time}',
 			'viewing.recordNow' => 'Записувати відтепер',
+			'viewing.extendRecording' => 'Записувати ще 30 хвилин',
+			'viewing.recordsUntil' => ({required Object time}) => 'Запис до ${time}',
+			'viewing.extendFailed' => 'Не вдалося подовжити запис',
+			'viewing.originalDialogue' => 'Віддавати перевагу оригінальній озвучці',
+			'viewing.soloPage' => 'Показати цю сторінку окремо',
+			'viewing.pairPage' => 'Знову поєднати сторінку в розворот',
+			'viewing.listenPhone' => 'Слухати на цьому телефоні',
+			'viewing.audioUnavailable' => 'Файл або звукова доріжка недоступні на цьому телефоні.',
 			'livingRoom.fitScreen' => 'Припасувати до мого екрана',
 			'livingRoom.fitHelp' => 'Виберіть край і пересувайте його стрілками, доки не побачите позначки. Повторіть для кожного краю.',
 			'livingRoom.left' => 'Ліворуч',

@@ -147,14 +147,6 @@ class _Translations$viewing$de extends Translations$viewing$en {
 	final TranslationsDe _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => '30 Minuten länger aufnehmen';
-	@override String recordsUntil({required Object time}) => 'Aufnahme bis ${time}';
-	@override String get extendFailed => 'Aufnahme konnte nicht verlängert werden';
-	@override String get originalDialogue => 'Originalton bevorzugen';
-	@override String get soloPage => 'Diese Seite einzeln anzeigen';
-	@override String get pairPage => 'Diese Seite wieder paaren';
-	@override String get listenPhone => 'Auf diesem Smartphone hören';
-	@override String get audioUnavailable => 'Die Datei oder Tonspur ist auf diesem Smartphone nicht verfügbar.';
 	@override String get guidedPanels => 'Panelweise lesen';
 	@override String get rewind => 'Zurückspulen';
 	@override String get attachAudio => 'Audiodatei hinzufügen';
@@ -170,6 +162,14 @@ class _Translations$viewing$de extends Translations$viewing$en {
 	@override String get clearAudio => 'Hinzugefügtes Audio entfernen';
 	@override String keepFrom({required Object time}) => 'Ab ${time} behalten';
 	@override String get recordNow => 'Ab jetzt aufnehmen';
+	@override String get extendRecording => '30 Minuten länger aufnehmen';
+	@override String recordsUntil({required Object time}) => 'Aufnahme bis ${time}';
+	@override String get extendFailed => 'Aufnahme konnte nicht verlängert werden';
+	@override String get originalDialogue => 'Originalton bevorzugen';
+	@override String get soloPage => 'Diese Seite einzeln anzeigen';
+	@override String get pairPage => 'Diese Seite wieder paaren';
+	@override String get listenPhone => 'Auf diesem Smartphone hören';
+	@override String get audioUnavailable => 'Die Datei oder Tonspur ist auf diesem Smartphone nicht verfügbar.';
 }
 
 // Path: livingRoom
@@ -5638,14 +5638,6 @@ extension on TranslationsDe {
 			'mediaConveniences.missingEpisode' => 'Fehlende Folge',
 			'mediaConveniences.stereoChannel' => 'Kanal für beide Lautsprecher',
 			'mediaConveniences.hdrBrightness' => 'Helligkeit der HDR-Untertitel',
-			'viewing.extendRecording' => '30 Minuten länger aufnehmen',
-			'viewing.recordsUntil' => ({required Object time}) => 'Aufnahme bis ${time}',
-			'viewing.extendFailed' => 'Aufnahme konnte nicht verlängert werden',
-			'viewing.originalDialogue' => 'Originalton bevorzugen',
-			'viewing.soloPage' => 'Diese Seite einzeln anzeigen',
-			'viewing.pairPage' => 'Diese Seite wieder paaren',
-			'viewing.listenPhone' => 'Auf diesem Smartphone hören',
-			'viewing.audioUnavailable' => 'Die Datei oder Tonspur ist auf diesem Smartphone nicht verfügbar.',
 			'viewing.guidedPanels' => 'Panelweise lesen',
 			'viewing.rewind' => 'Zurückspulen',
 			'viewing.attachAudio' => 'Audiodatei hinzufügen',
@@ -5661,6 +5653,14 @@ extension on TranslationsDe {
 			'viewing.clearAudio' => 'Hinzugefügtes Audio entfernen',
 			'viewing.keepFrom' => ({required Object time}) => 'Ab ${time} behalten',
 			'viewing.recordNow' => 'Ab jetzt aufnehmen',
+			'viewing.extendRecording' => '30 Minuten länger aufnehmen',
+			'viewing.recordsUntil' => ({required Object time}) => 'Aufnahme bis ${time}',
+			'viewing.extendFailed' => 'Aufnahme konnte nicht verlängert werden',
+			'viewing.originalDialogue' => 'Originalton bevorzugen',
+			'viewing.soloPage' => 'Diese Seite einzeln anzeigen',
+			'viewing.pairPage' => 'Diese Seite wieder paaren',
+			'viewing.listenPhone' => 'Auf diesem Smartphone hören',
+			'viewing.audioUnavailable' => 'Die Datei oder Tonspur ist auf diesem Smartphone nicht verfügbar.',
 			'livingRoom.fitScreen' => 'An meinen Bildschirm anpassen',
 			'livingRoom.fitHelp' => 'Wähle einen Rand und verschiebe ihn mit den Pfeiltasten, bis seine Markierungen sichtbar sind. Wiederhole das für jeden Rand.',
 			'livingRoom.left' => 'Links',

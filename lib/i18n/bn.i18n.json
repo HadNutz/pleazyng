@@ -8,14 +8,6 @@
     "hdrBrightness": "HDR সাবটাইটেলের উজ্জ্বলতা"
   },
   "viewing": {
-    "extendRecording": "আরও ৩০ মিনিট রেকর্ড করুন",
-    "recordsUntil": "${time} পর্যন্ত রেকর্ডিং",
-    "extendFailed": "রেকর্ডিং বাড়ানো যায়নি",
-    "originalDialogue": "মূল সংলাপকে অগ্রাধিকার দিন",
-    "soloPage": "এই পৃষ্ঠাটি আলাদা দেখান",
-    "pairPage": "এই পৃষ্ঠাটি আবার জোড়া দিন",
-    "listenPhone": "এই ফোনে শুনুন",
-    "audioUnavailable": "এই ফোনে ফাইল বা অডিও ট্র্যাকটি উপলব্ধ নেই।",
     "guidedPanels": "প্যানেল ধরে পড়ুন",
     "rewind": "পেছনে যান",
     "attachAudio": "অডিও ফাইল যোগ করুন",
@@ -30,7 +22,15 @@
     "relinkNone": "মিলে যাওয়া ফাইল পাওয়া যায়নি",
     "clearAudio": "যুক্ত অডিও সরান",
     "keepFrom": "${time} থেকে রাখুন",
-    "recordNow": "এখন থেকে রেকর্ড করুন"
+    "recordNow": "এখন থেকে রেকর্ড করুন",
+    "extendRecording": "আরও ৩০ মিনিট রেকর্ড করুন",
+    "recordsUntil": "${time} পর্যন্ত রেকর্ডিং",
+    "extendFailed": "রেকর্ডিং বাড়ানো যায়নি",
+    "originalDialogue": "মূল সংলাপকে অগ্রাধিকার দিন",
+    "soloPage": "এই পৃষ্ঠাটি আলাদা দেখান",
+    "pairPage": "এই পৃষ্ঠাটি আবার জোড়া দিন",
+    "listenPhone": "এই ফোনে শুনুন",
+    "audioUnavailable": "এই ফোনে ফাইল বা অডিও ট্র্যাকটি উপলব্ধ নেই।"
   },
   "livingRoom": {
     "fitScreen": "আমার পর্দার সঙ্গে মেলান",

@@ -8,14 +8,6 @@
     "hdrBrightness": "HDR 字幕亮度"
   },
   "viewing": {
-    "extendRecording": "再錄製 30 分鐘",
-    "recordsUntil": "錄製至 ${time}",
-    "extendFailed": "無法延長錄製時間",
-    "originalDialogue": "優先播放原聲對白",
-    "soloPage": "單獨顯示此頁",
-    "pairPage": "重新配對此頁",
-    "listenPhone": "在這支手機上收聽",
-    "audioUnavailable": "這支手機無法播放目前的檔案或音軌。",
     "guidedPanels": "逐格閱讀",
     "rewind": "倒帶",
     "attachAudio": "新增音訊檔案",
@@ -30,7 +22,15 @@
     "relinkNone": "找不到相符檔案",
     "clearAudio": "移除已新增的音訊",
     "keepFrom": "從 ${time} 開始保留",
-    "recordNow": "從現在開始錄製"
+    "recordNow": "從現在開始錄製",
+    "extendRecording": "再錄製 30 分鐘",
+    "recordsUntil": "錄製至 ${time}",
+    "extendFailed": "無法延長錄製時間",
+    "originalDialogue": "優先播放原聲對白",
+    "soloPage": "單獨顯示此頁",
+    "pairPage": "重新配對此頁",
+    "listenPhone": "在這支手機上收聽",
+    "audioUnavailable": "這支手機無法播放目前的檔案或音軌。"
   },
   "livingRoom": {
     "fitScreen": "配合我的螢幕大小",

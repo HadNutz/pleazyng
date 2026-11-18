@@ -147,14 +147,6 @@ class _Translations$viewing$kk extends Translations$viewing$en {
 	final TranslationsKk _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Тағы 30 минут жазу';
-	@override String recordsUntil({required Object time}) => 'Жазбаның аяқталу уақыты: ${time}';
-	@override String get extendFailed => 'Жазбаны ұзарту мүмкін болмады';
-	@override String get originalDialogue => 'Түпнұсқа диалогқа басымдық беру';
-	@override String get soloPage => 'Бұл бетті жеке көрсету';
-	@override String get pairPage => 'Бұл бетті қайта жұптау';
-	@override String get listenPhone => 'Осы телефонда тыңдау';
-	@override String get audioUnavailable => 'Бұл телефонда файл немесе дыбыс жолы қолжетімсіз.';
 	@override String get guidedPanels => 'Панельдер бойынша оқу';
 	@override String get rewind => 'Артқа айналдыру';
 	@override String get attachAudio => 'Аудио файл қосу';
@@ -170,6 +162,14 @@ class _Translations$viewing$kk extends Translations$viewing$en {
 	@override String get clearAudio => 'Қосылған аудионы алып тастау';
 	@override String keepFrom({required Object time}) => '${time} уақытынан сақтау';
 	@override String get recordNow => 'Қазірден бастап жазу';
+	@override String get extendRecording => 'Тағы 30 минут жазу';
+	@override String recordsUntil({required Object time}) => 'Жазбаның аяқталу уақыты: ${time}';
+	@override String get extendFailed => 'Жазбаны ұзарту мүмкін болмады';
+	@override String get originalDialogue => 'Түпнұсқа диалогқа басымдық беру';
+	@override String get soloPage => 'Бұл бетті жеке көрсету';
+	@override String get pairPage => 'Бұл бетті қайта жұптау';
+	@override String get listenPhone => 'Осы телефонда тыңдау';
+	@override String get audioUnavailable => 'Бұл телефонда файл немесе дыбыс жолы қолжетімсіз.';
 }
 
 // Path: livingRoom
@@ -5638,14 +5638,6 @@ extension on TranslationsKk {
 			'mediaConveniences.missingEpisode' => 'Жетіспейтін бөлім',
 			'mediaConveniences.stereoChannel' => 'Екі динамикте ойнатылатын арна',
 			'mediaConveniences.hdrBrightness' => 'HDR субтитрлерінің жарықтығы',
-			'viewing.extendRecording' => 'Тағы 30 минут жазу',
-			'viewing.recordsUntil' => ({required Object time}) => 'Жазбаның аяқталу уақыты: ${time}',
-			'viewing.extendFailed' => 'Жазбаны ұзарту мүмкін болмады',
-			'viewing.originalDialogue' => 'Түпнұсқа диалогқа басымдық беру',
-			'viewing.soloPage' => 'Бұл бетті жеке көрсету',
-			'viewing.pairPage' => 'Бұл бетті қайта жұптау',
-			'viewing.listenPhone' => 'Осы телефонда тыңдау',
-			'viewing.audioUnavailable' => 'Бұл телефонда файл немесе дыбыс жолы қолжетімсіз.',
 			'viewing.guidedPanels' => 'Панельдер бойынша оқу',
 			'viewing.rewind' => 'Артқа айналдыру',
 			'viewing.attachAudio' => 'Аудио файл қосу',
@@ -5661,6 +5653,14 @@ extension on TranslationsKk {
 			'viewing.clearAudio' => 'Қосылған аудионы алып тастау',
 			'viewing.keepFrom' => ({required Object time}) => '${time} уақытынан сақтау',
 			'viewing.recordNow' => 'Қазірден бастап жазу',
+			'viewing.extendRecording' => 'Тағы 30 минут жазу',
+			'viewing.recordsUntil' => ({required Object time}) => 'Жазбаның аяқталу уақыты: ${time}',
+			'viewing.extendFailed' => 'Жазбаны ұзарту мүмкін болмады',
+			'viewing.originalDialogue' => 'Түпнұсқа диалогқа басымдық беру',
+			'viewing.soloPage' => 'Бұл бетті жеке көрсету',
+			'viewing.pairPage' => 'Бұл бетті қайта жұптау',
+			'viewing.listenPhone' => 'Осы телефонда тыңдау',
+			'viewing.audioUnavailable' => 'Бұл телефонда файл немесе дыбыс жолы қолжетімсіз.',
 			'livingRoom.fitScreen' => 'Экраныма сыйдыру',
 			'livingRoom.fitHelp' => 'Бір шетін таңдап, белгілері көрінгенше көрсеткілермен жылжытыңыз. Әр шеті үшін қайталаңыз.',
 			'livingRoom.left' => 'Сол жақ',

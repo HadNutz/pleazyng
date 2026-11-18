@@ -8,14 +8,6 @@
     "hdrBrightness": "Jas titulků HDR"
   },
   "viewing": {
-    "extendRecording": "Nahrávat dalších 30 minut",
-    "recordsUntil": "Nahrávání do ${time}",
-    "extendFailed": "Nahrávání se nepodařilo prodloužit",
-    "originalDialogue": "Upřednostnit původní dialogy",
-    "soloPage": "Zobrazit tuto stránku samostatně",
-    "pairPage": "Znovu spárovat tuto stránku",
-    "listenPhone": "Poslouchat na tomto telefonu",
-    "audioUnavailable": "Soubor nebo zvuková stopa nejsou na tomto telefonu dostupné.",
     "guidedPanels": "Čtení po panelech",
     "rewind": "Přetočit zpět",
     "attachAudio": "Přidat zvukový soubor",
@@ -30,7 +22,15 @@
     "relinkNone": "Nenalezeny žádné odpovídající soubory",
     "clearAudio": "Odebrat připojený zvuk",
     "keepFrom": "Uložit od ${time}",
-    "recordNow": "Nahrávat odteď"
+    "recordNow": "Nahrávat odteď",
+    "extendRecording": "Nahrávat dalších 30 minut",
+    "recordsUntil": "Nahrávání do ${time}",
+    "extendFailed": "Nahrávání se nepodařilo prodloužit",
+    "originalDialogue": "Upřednostnit původní dialogy",
+    "soloPage": "Zobrazit tuto stránku samostatně",
+    "pairPage": "Znovu spárovat tuto stránku",
+    "listenPhone": "Poslouchat na tomto telefonu",
+    "audioUnavailable": "Soubor nebo zvuková stopa nejsou na tomto telefonu dostupné."
   },
   "livingRoom": {
     "fitScreen": "Přizpůsobit obrazovce",

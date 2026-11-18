@@ -147,14 +147,6 @@ class _Translations$viewing$fa extends Translations$viewing$en {
 	final TranslationsFa _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => '۳۰ دقیقه بیشتر ضبط کن';
-	@override String recordsUntil({required Object time}) => 'ضبط تا ${time}';
-	@override String get extendFailed => 'تمدید ضبط ممکن نشد';
-	@override String get originalDialogue => 'ترجیح گفت‌وگوی اصلی';
-	@override String get soloPage => 'نمایش این صفحه به‌تنهایی';
-	@override String get pairPage => 'جفت کردن دوبارهٔ این صفحه';
-	@override String get listenPhone => 'گوش دادن با این تلفن';
-	@override String get audioUnavailable => 'این فایل یا قطعهٔ صوتی در این تلفن در دسترس نیست.';
 	@override String get guidedPanels => 'نمایش قاب‌به‌قاب';
 	@override String get rewind => 'عقب بردن';
 	@override String get attachAudio => 'افزودن فایل صوتی';
@@ -170,6 +162,14 @@ class _Translations$viewing$fa extends Translations$viewing$en {
 	@override String get clearAudio => 'حذف صدای پیوست‌شده';
 	@override String keepFrom({required Object time}) => 'نگه‌داری از ${time}';
 	@override String get recordNow => 'ضبط از اکنون';
+	@override String get extendRecording => '۳۰ دقیقه بیشتر ضبط کن';
+	@override String recordsUntil({required Object time}) => 'ضبط تا ${time}';
+	@override String get extendFailed => 'تمدید ضبط ممکن نشد';
+	@override String get originalDialogue => 'ترجیح گفت‌وگوی اصلی';
+	@override String get soloPage => 'نمایش این صفحه به‌تنهایی';
+	@override String get pairPage => 'جفت کردن دوبارهٔ این صفحه';
+	@override String get listenPhone => 'گوش دادن با این تلفن';
+	@override String get audioUnavailable => 'این فایل یا قطعهٔ صوتی در این تلفن در دسترس نیست.';
 }
 
 // Path: livingRoom
@@ -5638,14 +5638,6 @@ extension on TranslationsFa {
 			'mediaConveniences.missingEpisode' => 'قسمت موجود نیست',
 			'mediaConveniences.stereoChannel' => 'کانال پخش در هر دو بلندگو',
 			'mediaConveniences.hdrBrightness' => 'روشنایی زیرنویس HDR',
-			'viewing.extendRecording' => '۳۰ دقیقه بیشتر ضبط کن',
-			'viewing.recordsUntil' => ({required Object time}) => 'ضبط تا ${time}',
-			'viewing.extendFailed' => 'تمدید ضبط ممکن نشد',
-			'viewing.originalDialogue' => 'ترجیح گفت‌وگوی اصلی',
-			'viewing.soloPage' => 'نمایش این صفحه به‌تنهایی',
-			'viewing.pairPage' => 'جفت کردن دوبارهٔ این صفحه',
-			'viewing.listenPhone' => 'گوش دادن با این تلفن',
-			'viewing.audioUnavailable' => 'این فایل یا قطعهٔ صوتی در این تلفن در دسترس نیست.',
 			'viewing.guidedPanels' => 'نمایش قاب‌به‌قاب',
 			'viewing.rewind' => 'عقب بردن',
 			'viewing.attachAudio' => 'افزودن فایل صوتی',
@@ -5661,6 +5653,14 @@ extension on TranslationsFa {
 			'viewing.clearAudio' => 'حذف صدای پیوست‌شده',
 			'viewing.keepFrom' => ({required Object time}) => 'نگه‌داری از ${time}',
 			'viewing.recordNow' => 'ضبط از اکنون',
+			'viewing.extendRecording' => '۳۰ دقیقه بیشتر ضبط کن',
+			'viewing.recordsUntil' => ({required Object time}) => 'ضبط تا ${time}',
+			'viewing.extendFailed' => 'تمدید ضبط ممکن نشد',
+			'viewing.originalDialogue' => 'ترجیح گفت‌وگوی اصلی',
+			'viewing.soloPage' => 'نمایش این صفحه به‌تنهایی',
+			'viewing.pairPage' => 'جفت کردن دوبارهٔ این صفحه',
+			'viewing.listenPhone' => 'گوش دادن با این تلفن',
+			'viewing.audioUnavailable' => 'این فایل یا قطعهٔ صوتی در این تلفن در دسترس نیست.',
 			'livingRoom.fitScreen' => 'تنظیم متناسب با صفحه‌نمایش من',
 			'livingRoom.fitHelp' => 'یک لبه را انتخاب کنید و با کلیدهای جهت آن را جابه‌جا کنید تا نشانه‌هایش دیده شوند. برای هر لبه تکرار کنید.',
 			'livingRoom.left' => 'چپ',

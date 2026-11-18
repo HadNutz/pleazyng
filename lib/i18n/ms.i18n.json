@@ -8,14 +8,6 @@
     "hdrBrightness": "Kecerahan sari kata HDR"
   },
   "viewing": {
-    "extendRecording": "Rakam 30 minit lagi",
-    "recordsUntil": "Merakam sehingga ${time}",
-    "extendFailed": "Rakaman tidak dapat dilanjutkan",
-    "originalDialogue": "Utamakan dialog asal",
-    "soloPage": "Paparkan halaman ini secara berasingan",
-    "pairPage": "Pasangkan semula halaman ini",
-    "listenPhone": "Dengar pada telefon ini",
-    "audioUnavailable": "Fail atau trek audio tidak tersedia pada telefon ini.",
     "guidedPanels": "Baca panel demi panel",
     "rewind": "Undur",
     "attachAudio": "Tambah fail audio",
@@ -30,7 +22,15 @@
     "relinkNone": "Tiada fail sepadan ditemui",
     "clearAudio": "Buang audio yang dilampirkan",
     "keepFrom": "Simpan dari ${time}",
-    "recordNow": "Rakam mulai sekarang"
+    "recordNow": "Rakam mulai sekarang",
+    "extendRecording": "Rakam 30 minit lagi",
+    "recordsUntil": "Merakam sehingga ${time}",
+    "extendFailed": "Rakaman tidak dapat dilanjutkan",
+    "originalDialogue": "Utamakan dialog asal",
+    "soloPage": "Paparkan halaman ini secara berasingan",
+    "pairPage": "Pasangkan semula halaman ini",
+    "listenPhone": "Dengar pada telefon ini",
+    "audioUnavailable": "Fail atau trek audio tidak tersedia pada telefon ini."
   },
   "livingRoom": {
     "fitScreen": "Padankan dengan skrin saya",

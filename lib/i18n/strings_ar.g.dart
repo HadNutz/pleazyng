@@ -147,14 +147,6 @@ class _Translations$viewing$ar extends Translations$viewing$en {
 	final TranslationsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'التسجيل لمدة ٣٠ دقيقة إضافية';
-	@override String recordsUntil({required Object time}) => 'يستمر التسجيل حتى ${time}';
-	@override String get extendFailed => 'تعذّر تمديد التسجيل';
-	@override String get originalDialogue => 'تفضيل الحوار الأصلي';
-	@override String get soloPage => 'عرض هذه الصفحة منفردة';
-	@override String get pairPage => 'إقران هذه الصفحة من جديد';
-	@override String get listenPhone => 'الاستماع على هذا الهاتف';
-	@override String get audioUnavailable => 'الملف أو المسار الصوتي غير متاح على هذا الهاتف.';
 	@override String get guidedPanels => 'عرض اللوحات بالتتابع';
 	@override String get rewind => 'إرجاع';
 	@override String get attachAudio => 'إضافة ملف صوتي';
@@ -170,6 +162,14 @@ class _Translations$viewing$ar extends Translations$viewing$en {
 	@override String get clearAudio => 'إزالة الصوت المرفق';
 	@override String keepFrom({required Object time}) => 'الاحتفاظ بدءًا من ${time}';
 	@override String get recordNow => 'التسجيل من الآن';
+	@override String get extendRecording => 'التسجيل لمدة ٣٠ دقيقة إضافية';
+	@override String recordsUntil({required Object time}) => 'يستمر التسجيل حتى ${time}';
+	@override String get extendFailed => 'تعذّر تمديد التسجيل';
+	@override String get originalDialogue => 'تفضيل الحوار الأصلي';
+	@override String get soloPage => 'عرض هذه الصفحة منفردة';
+	@override String get pairPage => 'إقران هذه الصفحة من جديد';
+	@override String get listenPhone => 'الاستماع على هذا الهاتف';
+	@override String get audioUnavailable => 'الملف أو المسار الصوتي غير متاح على هذا الهاتف.';
 }
 
 // Path: livingRoom
@@ -5738,14 +5738,6 @@ extension on TranslationsAr {
 			'mediaConveniences.missingEpisode' => 'حلقة مفقودة',
 			'mediaConveniences.stereoChannel' => 'القناة التي تُشغّل عبر مكبّري الصوت',
 			'mediaConveniences.hdrBrightness' => 'سطوع ترجمة HDR',
-			'viewing.extendRecording' => 'التسجيل لمدة ٣٠ دقيقة إضافية',
-			'viewing.recordsUntil' => ({required Object time}) => 'يستمر التسجيل حتى ${time}',
-			'viewing.extendFailed' => 'تعذّر تمديد التسجيل',
-			'viewing.originalDialogue' => 'تفضيل الحوار الأصلي',
-			'viewing.soloPage' => 'عرض هذه الصفحة منفردة',
-			'viewing.pairPage' => 'إقران هذه الصفحة من جديد',
-			'viewing.listenPhone' => 'الاستماع على هذا الهاتف',
-			'viewing.audioUnavailable' => 'الملف أو المسار الصوتي غير متاح على هذا الهاتف.',
 			'viewing.guidedPanels' => 'عرض اللوحات بالتتابع',
 			'viewing.rewind' => 'إرجاع',
 			'viewing.attachAudio' => 'إضافة ملف صوتي',
@@ -5761,6 +5753,14 @@ extension on TranslationsAr {
 			'viewing.clearAudio' => 'إزالة الصوت المرفق',
 			'viewing.keepFrom' => ({required Object time}) => 'الاحتفاظ بدءًا من ${time}',
 			'viewing.recordNow' => 'التسجيل من الآن',
+			'viewing.extendRecording' => 'التسجيل لمدة ٣٠ دقيقة إضافية',
+			'viewing.recordsUntil' => ({required Object time}) => 'يستمر التسجيل حتى ${time}',
+			'viewing.extendFailed' => 'تعذّر تمديد التسجيل',
+			'viewing.originalDialogue' => 'تفضيل الحوار الأصلي',
+			'viewing.soloPage' => 'عرض هذه الصفحة منفردة',
+			'viewing.pairPage' => 'إقران هذه الصفحة من جديد',
+			'viewing.listenPhone' => 'الاستماع على هذا الهاتف',
+			'viewing.audioUnavailable' => 'الملف أو المسار الصوتي غير متاح على هذا الهاتف.',
 			'livingRoom.fitScreen' => 'ملاءمة شاشتي',
 			'livingRoom.fitHelp' => 'اختر حافة وحرّكها بالأسهم حتى ترى علاماتها. كرّر ذلك لكل حافة.',
 			'livingRoom.left' => 'اليسار',

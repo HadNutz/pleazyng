@@ -8,14 +8,6 @@
     "hdrBrightness": "HDR 자막 밝기"
   },
   "viewing": {
-    "extendRecording": "30분 더 녹화",
-    "recordsUntil": "${time} 까지 녹화",
-    "extendFailed": "녹화를 연장할 수 없습니다",
-    "originalDialogue": "원어 음성 우선",
-    "soloPage": "이 페이지만 따로 표시",
-    "pairPage": "이 페이지를 다시 묶기",
-    "listenPhone": "이 휴대전화로 듣기",
-    "audioUnavailable": "이 휴대전화에서 현재 파일 또는 오디오 트랙을 사용할 수 없습니다.",
     "guidedPanels": "패널별로 읽기",
     "rewind": "되감기",
     "attachAudio": "오디오 파일 추가",
@@ -30,7 +22,15 @@
     "relinkNone": "일치하는 파일이 없습니다",
     "clearAudio": "추가한 오디오 제거",
     "keepFrom": "${time}부터 저장",
-    "recordNow": "지금부터 녹화"
+    "recordNow": "지금부터 녹화",
+    "extendRecording": "30분 더 녹화",
+    "recordsUntil": "${time} 까지 녹화",
+    "extendFailed": "녹화를 연장할 수 없습니다",
+    "originalDialogue": "원어 음성 우선",
+    "soloPage": "이 페이지만 따로 표시",
+    "pairPage": "이 페이지를 다시 묶기",
+    "listenPhone": "이 휴대전화로 듣기",
+    "audioUnavailable": "이 휴대전화에서 현재 파일 또는 오디오 트랙을 사용할 수 없습니다."
   },
   "livingRoom": {
     "fitScreen": "내 화면에 맞추기",

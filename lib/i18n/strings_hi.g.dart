@@ -147,14 +147,6 @@ class _Translations$viewing$hi extends Translations$viewing$en {
 	final TranslationsHi _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => '30 मिनट और रिकॉर्ड करें';
-	@override String recordsUntil({required Object time}) => '${time} तक रिकॉर्डिंग';
-	@override String get extendFailed => 'रिकॉर्डिंग नहीं बढ़ाई जा सकी';
-	@override String get originalDialogue => 'मूल संवाद को प्राथमिकता दें';
-	@override String get soloPage => 'यह पृष्ठ अकेले दिखाएँ';
-	@override String get pairPage => 'इस पृष्ठ की फिर से जोड़ी बनाएँ';
-	@override String get listenPhone => 'इस फ़ोन पर सुनें';
-	@override String get audioUnavailable => 'इस फ़ोन पर फ़ाइल या ऑडियो ट्रैक उपलब्ध नहीं है।';
 	@override String get guidedPanels => 'पैनल दर पैनल पढ़ें';
 	@override String get rewind => 'पीछे करें';
 	@override String get attachAudio => 'ऑडियो फ़ाइल जोड़ें';
@@ -170,6 +162,14 @@ class _Translations$viewing$hi extends Translations$viewing$en {
 	@override String get clearAudio => 'जोड़ा गया ऑडियो हटाएँ';
 	@override String keepFrom({required Object time}) => '${time} से रखें';
 	@override String get recordNow => 'अभी से रिकॉर्ड करें';
+	@override String get extendRecording => '30 मिनट और रिकॉर्ड करें';
+	@override String recordsUntil({required Object time}) => '${time} तक रिकॉर्डिंग';
+	@override String get extendFailed => 'रिकॉर्डिंग नहीं बढ़ाई जा सकी';
+	@override String get originalDialogue => 'मूल संवाद को प्राथमिकता दें';
+	@override String get soloPage => 'यह पृष्ठ अकेले दिखाएँ';
+	@override String get pairPage => 'इस पृष्ठ की फिर से जोड़ी बनाएँ';
+	@override String get listenPhone => 'इस फ़ोन पर सुनें';
+	@override String get audioUnavailable => 'इस फ़ोन पर फ़ाइल या ऑडियो ट्रैक उपलब्ध नहीं है।';
 }
 
 // Path: livingRoom
@@ -5638,14 +5638,6 @@ extension on TranslationsHi {
 			'mediaConveniences.missingEpisode' => 'अनुपलब्ध एपिसोड',
 			'mediaConveniences.stereoChannel' => 'दोनों स्पीकर में बजने वाला चैनल',
 			'mediaConveniences.hdrBrightness' => 'HDR सबटाइटल की चमक',
-			'viewing.extendRecording' => '30 मिनट और रिकॉर्ड करें',
-			'viewing.recordsUntil' => ({required Object time}) => '${time} तक रिकॉर्डिंग',
-			'viewing.extendFailed' => 'रिकॉर्डिंग नहीं बढ़ाई जा सकी',
-			'viewing.originalDialogue' => 'मूल संवाद को प्राथमिकता दें',
-			'viewing.soloPage' => 'यह पृष्ठ अकेले दिखाएँ',
-			'viewing.pairPage' => 'इस पृष्ठ की फिर से जोड़ी बनाएँ',
-			'viewing.listenPhone' => 'इस फ़ोन पर सुनें',
-			'viewing.audioUnavailable' => 'इस फ़ोन पर फ़ाइल या ऑडियो ट्रैक उपलब्ध नहीं है।',
 			'viewing.guidedPanels' => 'पैनल दर पैनल पढ़ें',
 			'viewing.rewind' => 'पीछे करें',
 			'viewing.attachAudio' => 'ऑडियो फ़ाइल जोड़ें',
@@ -5661,6 +5653,14 @@ extension on TranslationsHi {
 			'viewing.clearAudio' => 'जोड़ा गया ऑडियो हटाएँ',
 			'viewing.keepFrom' => ({required Object time}) => '${time} से रखें',
 			'viewing.recordNow' => 'अभी से रिकॉर्ड करें',
+			'viewing.extendRecording' => '30 मिनट और रिकॉर्ड करें',
+			'viewing.recordsUntil' => ({required Object time}) => '${time} तक रिकॉर्डिंग',
+			'viewing.extendFailed' => 'रिकॉर्डिंग नहीं बढ़ाई जा सकी',
+			'viewing.originalDialogue' => 'मूल संवाद को प्राथमिकता दें',
+			'viewing.soloPage' => 'यह पृष्ठ अकेले दिखाएँ',
+			'viewing.pairPage' => 'इस पृष्ठ की फिर से जोड़ी बनाएँ',
+			'viewing.listenPhone' => 'इस फ़ोन पर सुनें',
+			'viewing.audioUnavailable' => 'इस फ़ोन पर फ़ाइल या ऑडियो ट्रैक उपलब्ध नहीं है।',
 			'livingRoom.fitScreen' => 'मेरी स्क्रीन में फ़िट करें',
 			'livingRoom.fitHelp' => 'कोई किनारा चुनें और तीर वाले बटनों से उसे तब तक खिसकाएँ जब तक उसके निशान दिखने लगें। हर किनारे के लिए दोहराएँ।',
 			'livingRoom.left' => 'बायाँ',

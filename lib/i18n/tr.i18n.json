@@ -8,14 +8,6 @@
     "hdrBrightness": "HDR altyazı parlaklığı"
   },
   "viewing": {
-    "extendRecording": "30 dakika daha kaydet",
-    "recordsUntil": "Kayıt bitişi: ${time}",
-    "extendFailed": "Kayıt uzatılamadı",
-    "originalDialogue": "Özgün diyaloğu tercih et",
-    "soloPage": "Bu sayfayı tek göster",
-    "pairPage": "Bu sayfayı yeniden eşleştir",
-    "listenPhone": "Bu telefonda dinle",
-    "audioUnavailable": "Dosya veya ses parçası bu telefonda kullanılamıyor.",
     "guidedPanels": "Panel panel oku",
     "rewind": "Geri sar",
     "attachAudio": "Ses dosyası ekle",
@@ -30,7 +22,15 @@
     "relinkNone": "Eşleşen dosya bulunamadı",
     "clearAudio": "Eklenen sesi kaldır",
     "keepFrom": "${time} itibarıyla sakla",
-    "recordNow": "Şimdiden kaydet"
+    "recordNow": "Şimdiden kaydet",
+    "extendRecording": "30 dakika daha kaydet",
+    "recordsUntil": "Kayıt bitişi: ${time}",
+    "extendFailed": "Kayıt uzatılamadı",
+    "originalDialogue": "Özgün diyaloğu tercih et",
+    "soloPage": "Bu sayfayı tek göster",
+    "pairPage": "Bu sayfayı yeniden eşleştir",
+    "listenPhone": "Bu telefonda dinle",
+    "audioUnavailable": "Dosya veya ses parçası bu telefonda kullanılamıyor."
   },
   "livingRoom": {
     "fitScreen": "Ekranıma sığdır",

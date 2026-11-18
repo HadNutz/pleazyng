@@ -147,14 +147,6 @@ class _Translations$viewing$nl extends Translations$viewing$en {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => '30 minuten langer opnemen';
-	@override String recordsUntil({required Object time}) => 'Opname tot ${time}';
-	@override String get extendFailed => 'Verlengen van de opname is mislukt';
-	@override String get originalDialogue => 'Voorkeur voor originele dialogen';
-	@override String get soloPage => 'Deze pagina apart tonen';
-	@override String get pairPage => 'Deze pagina weer koppelen';
-	@override String get listenPhone => 'Op deze telefoon luisteren';
-	@override String get audioUnavailable => 'Het bestand of het geluidsspoor is niet beschikbaar op deze telefoon.';
 	@override String get guidedPanels => 'Paneel voor paneel lezen';
 	@override String get rewind => 'Terugspoelen';
 	@override String get attachAudio => 'Audiobestand toevoegen';
@@ -170,6 +162,14 @@ class _Translations$viewing$nl extends Translations$viewing$en {
 	@override String get clearAudio => 'Toegevoegde audio verwijderen';
 	@override String keepFrom({required Object time}) => 'Bewaren vanaf ${time}';
 	@override String get recordNow => 'Vanaf nu opnemen';
+	@override String get extendRecording => '30 minuten langer opnemen';
+	@override String recordsUntil({required Object time}) => 'Opname tot ${time}';
+	@override String get extendFailed => 'Verlengen van de opname is mislukt';
+	@override String get originalDialogue => 'Voorkeur voor originele dialogen';
+	@override String get soloPage => 'Deze pagina apart tonen';
+	@override String get pairPage => 'Deze pagina weer koppelen';
+	@override String get listenPhone => 'Op deze telefoon luisteren';
+	@override String get audioUnavailable => 'Het bestand of het geluidsspoor is niet beschikbaar op deze telefoon.';
 }
 
 // Path: livingRoom
@@ -5638,14 +5638,6 @@ extension on TranslationsNl {
 			'mediaConveniences.missingEpisode' => 'Ontbrekende aflevering',
 			'mediaConveniences.stereoChannel' => 'Kanaal voor beide luidsprekers',
 			'mediaConveniences.hdrBrightness' => 'Helderheid van HDR-ondertitels',
-			'viewing.extendRecording' => '30 minuten langer opnemen',
-			'viewing.recordsUntil' => ({required Object time}) => 'Opname tot ${time}',
-			'viewing.extendFailed' => 'Verlengen van de opname is mislukt',
-			'viewing.originalDialogue' => 'Voorkeur voor originele dialogen',
-			'viewing.soloPage' => 'Deze pagina apart tonen',
-			'viewing.pairPage' => 'Deze pagina weer koppelen',
-			'viewing.listenPhone' => 'Op deze telefoon luisteren',
-			'viewing.audioUnavailable' => 'Het bestand of het geluidsspoor is niet beschikbaar op deze telefoon.',
 			'viewing.guidedPanels' => 'Paneel voor paneel lezen',
 			'viewing.rewind' => 'Terugspoelen',
 			'viewing.attachAudio' => 'Audiobestand toevoegen',
@@ -5661,6 +5653,14 @@ extension on TranslationsNl {
 			'viewing.clearAudio' => 'Toegevoegde audio verwijderen',
 			'viewing.keepFrom' => ({required Object time}) => 'Bewaren vanaf ${time}',
 			'viewing.recordNow' => 'Vanaf nu opnemen',
+			'viewing.extendRecording' => '30 minuten langer opnemen',
+			'viewing.recordsUntil' => ({required Object time}) => 'Opname tot ${time}',
+			'viewing.extendFailed' => 'Verlengen van de opname is mislukt',
+			'viewing.originalDialogue' => 'Voorkeur voor originele dialogen',
+			'viewing.soloPage' => 'Deze pagina apart tonen',
+			'viewing.pairPage' => 'Deze pagina weer koppelen',
+			'viewing.listenPhone' => 'Op deze telefoon luisteren',
+			'viewing.audioUnavailable' => 'Het bestand of het geluidsspoor is niet beschikbaar op deze telefoon.',
 			'livingRoom.fitScreen' => 'Aanpassen aan mijn scherm',
 			'livingRoom.fitHelp' => 'Kies een rand en verplaats die met de pijltjes tot de markeringen zichtbaar zijn. Herhaal dit voor elke rand.',
 			'livingRoom.left' => 'Links',

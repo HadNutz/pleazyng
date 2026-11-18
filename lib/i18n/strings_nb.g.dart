@@ -147,14 +147,6 @@ class _Translations$viewing$nb extends Translations$viewing$en {
 	final TranslationsNb _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Ta opp 30 minutter til';
-	@override String recordsUntil({required Object time}) => 'Opptak frem til ${time}';
-	@override String get extendFailed => 'Kunne ikke forlenge opptaket';
-	@override String get originalDialogue => 'Foretrekk originaldialog';
-	@override String get soloPage => 'Vis denne siden alene';
-	@override String get pairPage => 'Par denne siden igjen';
-	@override String get listenPhone => 'Lytt på denne telefonen';
-	@override String get audioUnavailable => 'Filen eller lydsporet er utilgjengelig på denne telefonen.';
 	@override String get guidedPanels => 'Les rute for rute';
 	@override String get rewind => 'Spol tilbake';
 	@override String get attachAudio => 'Legg til lydfil';
@@ -170,6 +162,14 @@ class _Translations$viewing$nb extends Translations$viewing$en {
 	@override String get clearAudio => 'Fjern lagt til lyd';
 	@override String keepFrom({required Object time}) => 'Behold fra ${time}';
 	@override String get recordNow => 'Ta opp fra nå';
+	@override String get extendRecording => 'Ta opp 30 minutter til';
+	@override String recordsUntil({required Object time}) => 'Opptak frem til ${time}';
+	@override String get extendFailed => 'Kunne ikke forlenge opptaket';
+	@override String get originalDialogue => 'Foretrekk originaldialog';
+	@override String get soloPage => 'Vis denne siden alene';
+	@override String get pairPage => 'Par denne siden igjen';
+	@override String get listenPhone => 'Lytt på denne telefonen';
+	@override String get audioUnavailable => 'Filen eller lydsporet er utilgjengelig på denne telefonen.';
 }
 
 // Path: livingRoom
@@ -5638,14 +5638,6 @@ extension on TranslationsNb {
 			'mediaConveniences.missingEpisode' => 'Manglende episode',
 			'mediaConveniences.stereoChannel' => 'Kanal for begge høyttalerne',
 			'mediaConveniences.hdrBrightness' => 'Lysstyrke for HDR-undertekster',
-			'viewing.extendRecording' => 'Ta opp 30 minutter til',
-			'viewing.recordsUntil' => ({required Object time}) => 'Opptak frem til ${time}',
-			'viewing.extendFailed' => 'Kunne ikke forlenge opptaket',
-			'viewing.originalDialogue' => 'Foretrekk originaldialog',
-			'viewing.soloPage' => 'Vis denne siden alene',
-			'viewing.pairPage' => 'Par denne siden igjen',
-			'viewing.listenPhone' => 'Lytt på denne telefonen',
-			'viewing.audioUnavailable' => 'Filen eller lydsporet er utilgjengelig på denne telefonen.',
 			'viewing.guidedPanels' => 'Les rute for rute',
 			'viewing.rewind' => 'Spol tilbake',
 			'viewing.attachAudio' => 'Legg til lydfil',
@@ -5661,6 +5653,14 @@ extension on TranslationsNb {
 			'viewing.clearAudio' => 'Fjern lagt til lyd',
 			'viewing.keepFrom' => ({required Object time}) => 'Behold fra ${time}',
 			'viewing.recordNow' => 'Ta opp fra nå',
+			'viewing.extendRecording' => 'Ta opp 30 minutter til',
+			'viewing.recordsUntil' => ({required Object time}) => 'Opptak frem til ${time}',
+			'viewing.extendFailed' => 'Kunne ikke forlenge opptaket',
+			'viewing.originalDialogue' => 'Foretrekk originaldialog',
+			'viewing.soloPage' => 'Vis denne siden alene',
+			'viewing.pairPage' => 'Par denne siden igjen',
+			'viewing.listenPhone' => 'Lytt på denne telefonen',
+			'viewing.audioUnavailable' => 'Filen eller lydsporet er utilgjengelig på denne telefonen.',
 			'livingRoom.fitScreen' => 'Tilpass til skjermen min',
 			'livingRoom.fitHelp' => 'Velg en kant og flytt den med piltastene til markeringene er synlige. Gjenta for hver kant.',
 			'livingRoom.left' => 'Venstre',

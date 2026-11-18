@@ -8,14 +8,6 @@
     "hdrBrightness": "בהירות כתוביות HDR"
   },
   "viewing": {
-    "extendRecording": "הקלטה לעוד 30 דקות",
-    "recordsUntil": "הקלטה עד ${time}",
-    "extendFailed": "לא ניתן להאריך את ההקלטה",
-    "originalDialogue": "העדפת הדיאלוג המקורי",
-    "soloPage": "הצגת העמוד הזה לבד",
-    "pairPage": "צימוד העמוד מחדש",
-    "listenPhone": "האזנה בטלפון הזה",
-    "audioUnavailable": "הקובץ או רצועת השמע אינם זמינים בטלפון הזה.",
     "guidedPanels": "קריאה לפי חלוניות",
     "rewind": "הרצה לאחור",
     "attachAudio": "הוספת קובץ שמע",
@@ -30,7 +22,15 @@
     "relinkNone": "לא נמצאו קבצים תואמים",
     "clearAudio": "הסרת שמע מצורף",
     "keepFrom": "שמירה החל מ־${time}",
-    "recordNow": "הקלטה מעכשיו"
+    "recordNow": "הקלטה מעכשיו",
+    "extendRecording": "הקלטה לעוד 30 דקות",
+    "recordsUntil": "הקלטה עד ${time}",
+    "extendFailed": "לא ניתן להאריך את ההקלטה",
+    "originalDialogue": "העדפת הדיאלוג המקורי",
+    "soloPage": "הצגת העמוד הזה לבד",
+    "pairPage": "צימוד העמוד מחדש",
+    "listenPhone": "האזנה בטלפון הזה",
+    "audioUnavailable": "הקובץ או רצועת השמע אינם זמינים בטלפון הזה."
   },
   "livingRoom": {
     "fitScreen": "התאמה למסך שלי",

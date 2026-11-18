@@ -8,14 +8,6 @@
     "hdrBrightness": "Kecerahan takarir HDR"
   },
   "viewing": {
-    "extendRecording": "Rekam 30 menit lagi",
-    "recordsUntil": "Merekam hingga ${time}",
-    "extendFailed": "Rekaman tidak dapat diperpanjang",
-    "originalDialogue": "Utamakan dialog asli",
-    "soloPage": "Tampilkan halaman ini sendiri",
-    "pairPage": "Pasangkan kembali halaman ini",
-    "listenPhone": "Dengarkan di ponsel ini",
-    "audioUnavailable": "Berkas atau trek audio tidak tersedia di ponsel ini.",
     "guidedPanels": "Baca per panel",
     "rewind": "Putar mundur",
     "attachAudio": "Tambahkan berkas audio",
@@ -30,7 +22,15 @@
     "relinkNone": "Tidak ada berkas yang cocok",
     "clearAudio": "Hapus audio tambahan",
     "keepFrom": "Simpan mulai ${time}",
-    "recordNow": "Rekam mulai sekarang"
+    "recordNow": "Rekam mulai sekarang",
+    "extendRecording": "Rekam 30 menit lagi",
+    "recordsUntil": "Merekam hingga ${time}",
+    "extendFailed": "Rekaman tidak dapat diperpanjang",
+    "originalDialogue": "Utamakan dialog asli",
+    "soloPage": "Tampilkan halaman ini sendiri",
+    "pairPage": "Pasangkan kembali halaman ini",
+    "listenPhone": "Dengarkan di ponsel ini",
+    "audioUnavailable": "Berkas atau trek audio tidak tersedia di ponsel ini."
   },
   "livingRoom": {
     "fitScreen": "Sesuaikan dengan layar saya",

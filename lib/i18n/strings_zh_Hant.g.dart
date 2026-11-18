@@ -148,14 +148,6 @@ class _Translations$viewing$zh_Hant extends Translations$viewing$zh {
 	final TranslationsZhHant _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => '再錄製 30 分鐘';
-	@override String recordsUntil({required Object time}) => '錄製至 ${time}';
-	@override String get extendFailed => '無法延長錄製時間';
-	@override String get originalDialogue => '優先播放原聲對白';
-	@override String get soloPage => '單獨顯示此頁';
-	@override String get pairPage => '重新配對此頁';
-	@override String get listenPhone => '在這支手機上收聽';
-	@override String get audioUnavailable => '這支手機無法播放目前的檔案或音軌。';
 	@override String get guidedPanels => '逐格閱讀';
 	@override String get rewind => '倒帶';
 	@override String get attachAudio => '新增音訊檔案';
@@ -171,6 +163,14 @@ class _Translations$viewing$zh_Hant extends Translations$viewing$zh {
 	@override String get clearAudio => '移除已新增的音訊';
 	@override String keepFrom({required Object time}) => '從 ${time} 開始保留';
 	@override String get recordNow => '從現在開始錄製';
+	@override String get extendRecording => '再錄製 30 分鐘';
+	@override String recordsUntil({required Object time}) => '錄製至 ${time}';
+	@override String get extendFailed => '無法延長錄製時間';
+	@override String get originalDialogue => '優先播放原聲對白';
+	@override String get soloPage => '單獨顯示此頁';
+	@override String get pairPage => '重新配對此頁';
+	@override String get listenPhone => '在這支手機上收聽';
+	@override String get audioUnavailable => '這支手機無法播放目前的檔案或音軌。';
 }
 
 // Path: livingRoom
@@ -5634,14 +5634,6 @@ extension on TranslationsZhHant {
 			'mediaConveniences.missingEpisode' => '缺少集數',
 			'mediaConveniences.stereoChannel' => '在兩個喇叭播放的聲道',
 			'mediaConveniences.hdrBrightness' => 'HDR 字幕亮度',
-			'viewing.extendRecording' => '再錄製 30 分鐘',
-			'viewing.recordsUntil' => ({required Object time}) => '錄製至 ${time}',
-			'viewing.extendFailed' => '無法延長錄製時間',
-			'viewing.originalDialogue' => '優先播放原聲對白',
-			'viewing.soloPage' => '單獨顯示此頁',
-			'viewing.pairPage' => '重新配對此頁',
-			'viewing.listenPhone' => '在這支手機上收聽',
-			'viewing.audioUnavailable' => '這支手機無法播放目前的檔案或音軌。',
 			'viewing.guidedPanels' => '逐格閱讀',
 			'viewing.rewind' => '倒帶',
 			'viewing.attachAudio' => '新增音訊檔案',
@@ -5657,6 +5649,14 @@ extension on TranslationsZhHant {
 			'viewing.clearAudio' => '移除已新增的音訊',
 			'viewing.keepFrom' => ({required Object time}) => '從 ${time} 開始保留',
 			'viewing.recordNow' => '從現在開始錄製',
+			'viewing.extendRecording' => '再錄製 30 分鐘',
+			'viewing.recordsUntil' => ({required Object time}) => '錄製至 ${time}',
+			'viewing.extendFailed' => '無法延長錄製時間',
+			'viewing.originalDialogue' => '優先播放原聲對白',
+			'viewing.soloPage' => '單獨顯示此頁',
+			'viewing.pairPage' => '重新配對此頁',
+			'viewing.listenPhone' => '在這支手機上收聽',
+			'viewing.audioUnavailable' => '這支手機無法播放目前的檔案或音軌。',
 			'livingRoom.fitScreen' => '配合我的螢幕大小',
 			'livingRoom.fitHelp' => '選擇一條邊，用方向鍵移動，直到看見該邊的標記。逐一調整每條邊。',
 			'livingRoom.left' => '左',

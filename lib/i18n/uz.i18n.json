@@ -8,14 +8,6 @@
     "hdrBrightness": "HDR subtitrlar yorqinligi"
   },
   "viewing": {
-    "extendRecording": "Yana 30 daqiqa yozish",
-    "recordsUntil": "Yozish ${time} gacha davom etadi",
-    "extendFailed": "Yozuvni uzaytirib boʻlmadi",
-    "originalDialogue": "Asl dialogni afzal koʻrish",
-    "soloPage": "Bu sahifani alohida koʻrsatish",
-    "pairPage": "Bu sahifani yana juftlash",
-    "listenPhone": "Shu telefonda tinglash",
-    "audioUnavailable": "Fayl yoki ovoz yoʻlagi bu telefonda mavjud emas.",
     "guidedPanels": "Panelma-panel o‘qish",
     "rewind": "Orqaga o‘rash",
     "attachAudio": "Audio fayl qo‘shish",
@@ -30,7 +22,15 @@
     "relinkNone": "Mos fayllar topilmadi",
     "clearAudio": "Qo‘shilgan audioni olib tashlash",
     "keepFrom": "${time} dan saqlash",
-    "recordNow": "Hozirdan yozish"
+    "recordNow": "Hozirdan yozish",
+    "extendRecording": "Yana 30 daqiqa yozish",
+    "recordsUntil": "Yozish ${time} gacha davom etadi",
+    "extendFailed": "Yozuvni uzaytirib boʻlmadi",
+    "originalDialogue": "Asl dialogni afzal koʻrish",
+    "soloPage": "Bu sahifani alohida koʻrsatish",
+    "pairPage": "Bu sahifani yana juftlash",
+    "listenPhone": "Shu telefonda tinglash",
+    "audioUnavailable": "Fayl yoki ovoz yoʻlagi bu telefonda mavjud emas."
   },
   "livingRoom": {
     "fitScreen": "Ekranimga moslash",

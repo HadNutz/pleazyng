@@ -147,14 +147,6 @@ class _Translations$viewing$bn extends Translations$viewing$en {
 	final TranslationsBn _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'আরও ৩০ মিনিট রেকর্ড করুন';
-	@override String recordsUntil({required Object time}) => '${time} পর্যন্ত রেকর্ডিং';
-	@override String get extendFailed => 'রেকর্ডিং বাড়ানো যায়নি';
-	@override String get originalDialogue => 'মূল সংলাপকে অগ্রাধিকার দিন';
-	@override String get soloPage => 'এই পৃষ্ঠাটি আলাদা দেখান';
-	@override String get pairPage => 'এই পৃষ্ঠাটি আবার জোড়া দিন';
-	@override String get listenPhone => 'এই ফোনে শুনুন';
-	@override String get audioUnavailable => 'এই ফোনে ফাইল বা অডিও ট্র্যাকটি উপলব্ধ নেই।';
 	@override String get guidedPanels => 'প্যানেল ধরে পড়ুন';
 	@override String get rewind => 'পেছনে যান';
 	@override String get attachAudio => 'অডিও ফাইল যোগ করুন';
@@ -170,6 +162,14 @@ class _Translations$viewing$bn extends Translations$viewing$en {
 	@override String get clearAudio => 'যুক্ত অডিও সরান';
 	@override String keepFrom({required Object time}) => '${time} থেকে রাখুন';
 	@override String get recordNow => 'এখন থেকে রেকর্ড করুন';
+	@override String get extendRecording => 'আরও ৩০ মিনিট রেকর্ড করুন';
+	@override String recordsUntil({required Object time}) => '${time} পর্যন্ত রেকর্ডিং';
+	@override String get extendFailed => 'রেকর্ডিং বাড়ানো যায়নি';
+	@override String get originalDialogue => 'মূল সংলাপকে অগ্রাধিকার দিন';
+	@override String get soloPage => 'এই পৃষ্ঠাটি আলাদা দেখান';
+	@override String get pairPage => 'এই পৃষ্ঠাটি আবার জোড়া দিন';
+	@override String get listenPhone => 'এই ফোনে শুনুন';
+	@override String get audioUnavailable => 'এই ফোনে ফাইল বা অডিও ট্র্যাকটি উপলব্ধ নেই।';
 }
 
 // Path: livingRoom
@@ -5638,14 +5638,6 @@ extension on TranslationsBn {
 			'mediaConveniences.missingEpisode' => 'অনুপস্থিত পর্ব',
 			'mediaConveniences.stereoChannel' => 'দুই স্পিকারে যে চ্যানেল বাজবে',
 			'mediaConveniences.hdrBrightness' => 'HDR সাবটাইটেলের উজ্জ্বলতা',
-			'viewing.extendRecording' => 'আরও ৩০ মিনিট রেকর্ড করুন',
-			'viewing.recordsUntil' => ({required Object time}) => '${time} পর্যন্ত রেকর্ডিং',
-			'viewing.extendFailed' => 'রেকর্ডিং বাড়ানো যায়নি',
-			'viewing.originalDialogue' => 'মূল সংলাপকে অগ্রাধিকার দিন',
-			'viewing.soloPage' => 'এই পৃষ্ঠাটি আলাদা দেখান',
-			'viewing.pairPage' => 'এই পৃষ্ঠাটি আবার জোড়া দিন',
-			'viewing.listenPhone' => 'এই ফোনে শুনুন',
-			'viewing.audioUnavailable' => 'এই ফোনে ফাইল বা অডিও ট্র্যাকটি উপলব্ধ নেই।',
 			'viewing.guidedPanels' => 'প্যানেল ধরে পড়ুন',
 			'viewing.rewind' => 'পেছনে যান',
 			'viewing.attachAudio' => 'অডিও ফাইল যোগ করুন',
@@ -5661,6 +5653,14 @@ extension on TranslationsBn {
 			'viewing.clearAudio' => 'যুক্ত অডিও সরান',
 			'viewing.keepFrom' => ({required Object time}) => '${time} থেকে রাখুন',
 			'viewing.recordNow' => 'এখন থেকে রেকর্ড করুন',
+			'viewing.extendRecording' => 'আরও ৩০ মিনিট রেকর্ড করুন',
+			'viewing.recordsUntil' => ({required Object time}) => '${time} পর্যন্ত রেকর্ডিং',
+			'viewing.extendFailed' => 'রেকর্ডিং বাড়ানো যায়নি',
+			'viewing.originalDialogue' => 'মূল সংলাপকে অগ্রাধিকার দিন',
+			'viewing.soloPage' => 'এই পৃষ্ঠাটি আলাদা দেখান',
+			'viewing.pairPage' => 'এই পৃষ্ঠাটি আবার জোড়া দিন',
+			'viewing.listenPhone' => 'এই ফোনে শুনুন',
+			'viewing.audioUnavailable' => 'এই ফোনে ফাইল বা অডিও ট্র্যাকটি উপলব্ধ নেই।',
 			'livingRoom.fitScreen' => 'আমার পর্দার সঙ্গে মেলান',
 			'livingRoom.fitHelp' => 'একটি প্রান্ত বেছে নিয়ে তীরচিহ্নের বোতাম দিয়ে সরান, যতক্ষণ না তার চিহ্নগুলো দেখা যায়। প্রতিটি প্রান্তের জন্য একই কাজ করুন।',
 			'livingRoom.left' => 'বাঁ',

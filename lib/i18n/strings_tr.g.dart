@@ -147,14 +147,6 @@ class _Translations$viewing$tr extends Translations$viewing$en {
 	final TranslationsTr _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => '30 dakika daha kaydet';
-	@override String recordsUntil({required Object time}) => 'Kayıt bitişi: ${time}';
-	@override String get extendFailed => 'Kayıt uzatılamadı';
-	@override String get originalDialogue => 'Özgün diyaloğu tercih et';
-	@override String get soloPage => 'Bu sayfayı tek göster';
-	@override String get pairPage => 'Bu sayfayı yeniden eşleştir';
-	@override String get listenPhone => 'Bu telefonda dinle';
-	@override String get audioUnavailable => 'Dosya veya ses parçası bu telefonda kullanılamıyor.';
 	@override String get guidedPanels => 'Panel panel oku';
 	@override String get rewind => 'Geri sar';
 	@override String get attachAudio => 'Ses dosyası ekle';
@@ -170,6 +162,14 @@ class _Translations$viewing$tr extends Translations$viewing$en {
 	@override String get clearAudio => 'Eklenen sesi kaldır';
 	@override String keepFrom({required Object time}) => '${time} itibarıyla sakla';
 	@override String get recordNow => 'Şimdiden kaydet';
+	@override String get extendRecording => '30 dakika daha kaydet';
+	@override String recordsUntil({required Object time}) => 'Kayıt bitişi: ${time}';
+	@override String get extendFailed => 'Kayıt uzatılamadı';
+	@override String get originalDialogue => 'Özgün diyaloğu tercih et';
+	@override String get soloPage => 'Bu sayfayı tek göster';
+	@override String get pairPage => 'Bu sayfayı yeniden eşleştir';
+	@override String get listenPhone => 'Bu telefonda dinle';
+	@override String get audioUnavailable => 'Dosya veya ses parçası bu telefonda kullanılamıyor.';
 }
 
 // Path: livingRoom
@@ -5638,14 +5638,6 @@ extension on TranslationsTr {
 			'mediaConveniences.missingEpisode' => 'Eksik bölüm',
 			'mediaConveniences.stereoChannel' => 'Her iki hoparlörde çalınacak kanal',
 			'mediaConveniences.hdrBrightness' => 'HDR altyazı parlaklığı',
-			'viewing.extendRecording' => '30 dakika daha kaydet',
-			'viewing.recordsUntil' => ({required Object time}) => 'Kayıt bitişi: ${time}',
-			'viewing.extendFailed' => 'Kayıt uzatılamadı',
-			'viewing.originalDialogue' => 'Özgün diyaloğu tercih et',
-			'viewing.soloPage' => 'Bu sayfayı tek göster',
-			'viewing.pairPage' => 'Bu sayfayı yeniden eşleştir',
-			'viewing.listenPhone' => 'Bu telefonda dinle',
-			'viewing.audioUnavailable' => 'Dosya veya ses parçası bu telefonda kullanılamıyor.',
 			'viewing.guidedPanels' => 'Panel panel oku',
 			'viewing.rewind' => 'Geri sar',
 			'viewing.attachAudio' => 'Ses dosyası ekle',
@@ -5661,6 +5653,14 @@ extension on TranslationsTr {
 			'viewing.clearAudio' => 'Eklenen sesi kaldır',
 			'viewing.keepFrom' => ({required Object time}) => '${time} itibarıyla sakla',
 			'viewing.recordNow' => 'Şimdiden kaydet',
+			'viewing.extendRecording' => '30 dakika daha kaydet',
+			'viewing.recordsUntil' => ({required Object time}) => 'Kayıt bitişi: ${time}',
+			'viewing.extendFailed' => 'Kayıt uzatılamadı',
+			'viewing.originalDialogue' => 'Özgün diyaloğu tercih et',
+			'viewing.soloPage' => 'Bu sayfayı tek göster',
+			'viewing.pairPage' => 'Bu sayfayı yeniden eşleştir',
+			'viewing.listenPhone' => 'Bu telefonda dinle',
+			'viewing.audioUnavailable' => 'Dosya veya ses parçası bu telefonda kullanılamıyor.',
 			'livingRoom.fitScreen' => 'Ekranıma sığdır',
 			'livingRoom.fitHelp' => 'Bir kenar seçip işaretleri görünene kadar oklarla hareket ettirin. Her kenar için tekrarlayın.',
 			'livingRoom.left' => 'Sol',

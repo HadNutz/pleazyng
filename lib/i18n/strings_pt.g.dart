@@ -147,14 +147,6 @@ class Translations$viewing$pt extends Translations$viewing$en {
 	final TranslationsPt _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Gravar mais 30 minutos';
-	@override String recordsUntil({required Object time}) => 'Gravação até às ${time}';
-	@override String get extendFailed => 'Não foi possível prolongar a gravação';
-	@override String get originalDialogue => 'Preferir o diálogo original';
-	@override String get soloPage => 'Mostrar esta página sozinha';
-	@override String get pairPage => 'Voltar a emparelhar esta página';
-	@override String get listenPhone => 'Ouvir neste telefone';
-	@override String get audioUnavailable => 'O ficheiro ou a faixa de áudio não está disponível neste telefone.';
 	@override String get guidedPanels => 'Leitura por painéis';
 	@override String get rewind => 'Rebobinar';
 	@override String get attachAudio => 'Adicionar ficheiro de áudio';
@@ -170,6 +162,14 @@ class Translations$viewing$pt extends Translations$viewing$en {
 	@override String get clearAudio => 'Remover áudio adicionado';
 	@override String keepFrom({required Object time}) => 'Guardar desde ${time}';
 	@override String get recordNow => 'Gravar a partir de agora';
+	@override String get extendRecording => 'Gravar mais 30 minutos';
+	@override String recordsUntil({required Object time}) => 'Gravação até às ${time}';
+	@override String get extendFailed => 'Não foi possível prolongar a gravação';
+	@override String get originalDialogue => 'Preferir o diálogo original';
+	@override String get soloPage => 'Mostrar esta página sozinha';
+	@override String get pairPage => 'Voltar a emparelhar esta página';
+	@override String get listenPhone => 'Ouvir neste telefone';
+	@override String get audioUnavailable => 'O ficheiro ou a faixa de áudio não está disponível neste telefone.';
 }
 
 // Path: livingRoom
@@ -5645,14 +5645,6 @@ extension on TranslationsPt {
 			'mediaConveniences.missingEpisode' => 'Episódio em falta',
 			'mediaConveniences.stereoChannel' => 'Canal para os dois altifalantes',
 			'mediaConveniences.hdrBrightness' => 'Brilho das legendas HDR',
-			'viewing.extendRecording' => 'Gravar mais 30 minutos',
-			'viewing.recordsUntil' => ({required Object time}) => 'Gravação até às ${time}',
-			'viewing.extendFailed' => 'Não foi possível prolongar a gravação',
-			'viewing.originalDialogue' => 'Preferir o diálogo original',
-			'viewing.soloPage' => 'Mostrar esta página sozinha',
-			'viewing.pairPage' => 'Voltar a emparelhar esta página',
-			'viewing.listenPhone' => 'Ouvir neste telefone',
-			'viewing.audioUnavailable' => 'O ficheiro ou a faixa de áudio não está disponível neste telefone.',
 			'viewing.guidedPanels' => 'Leitura por painéis',
 			'viewing.rewind' => 'Rebobinar',
 			'viewing.attachAudio' => 'Adicionar ficheiro de áudio',
@@ -5668,6 +5660,14 @@ extension on TranslationsPt {
 			'viewing.clearAudio' => 'Remover áudio adicionado',
 			'viewing.keepFrom' => ({required Object time}) => 'Guardar desde ${time}',
 			'viewing.recordNow' => 'Gravar a partir de agora',
+			'viewing.extendRecording' => 'Gravar mais 30 minutos',
+			'viewing.recordsUntil' => ({required Object time}) => 'Gravação até às ${time}',
+			'viewing.extendFailed' => 'Não foi possível prolongar a gravação',
+			'viewing.originalDialogue' => 'Preferir o diálogo original',
+			'viewing.soloPage' => 'Mostrar esta página sozinha',
+			'viewing.pairPage' => 'Voltar a emparelhar esta página',
+			'viewing.listenPhone' => 'Ouvir neste telefone',
+			'viewing.audioUnavailable' => 'O ficheiro ou a faixa de áudio não está disponível neste telefone.',
 			'livingRoom.fitScreen' => 'Ajustar à tela',
 			'livingRoom.fitHelp' => 'Selecione uma borda e mova-a com as setas até ver as marcas. Repita para as outras bordas.',
 			'livingRoom.left' => 'Esquerda',

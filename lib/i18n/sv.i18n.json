@@ -8,14 +8,6 @@
     "hdrBrightness": "Ljusstyrka för HDR-undertexter"
   },
   "viewing": {
-    "extendRecording": "Spela in 30 minuter till",
-    "recordsUntil": "Inspelning till ${time}",
-    "extendFailed": "Det gick inte att förlänga inspelningen",
-    "originalDialogue": "Föredra originaldialog",
-    "soloPage": "Visa sidan separat",
-    "pairPage": "Para ihop sidan igen",
-    "listenPhone": "Lyssna på den här telefonen",
-    "audioUnavailable": "Filen eller ljudspåret är inte tillgängligt på den här telefonen.",
     "guidedPanels": "Läs ruta för ruta",
     "rewind": "Spola tillbaka",
     "attachAudio": "Lägg till ljudfil",
@@ -30,7 +22,15 @@
     "relinkNone": "Inga matchande filer hittades",
     "clearAudio": "Ta bort tillagt ljud",
     "keepFrom": "Behåll från ${time}",
-    "recordNow": "Spela in från nu"
+    "recordNow": "Spela in från nu",
+    "extendRecording": "Spela in 30 minuter till",
+    "recordsUntil": "Inspelning till ${time}",
+    "extendFailed": "Det gick inte att förlänga inspelningen",
+    "originalDialogue": "Föredra originaldialog",
+    "soloPage": "Visa sidan separat",
+    "pairPage": "Para ihop sidan igen",
+    "listenPhone": "Lyssna på den här telefonen",
+    "audioUnavailable": "Filen eller ljudspåret är inte tillgängligt på den här telefonen."
   },
   "livingRoom": {
     "fitScreen": "Anpassa till min skärm",

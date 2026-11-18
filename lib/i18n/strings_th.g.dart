@@ -147,14 +147,6 @@ class _Translations$viewing$th extends Translations$viewing$en {
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'บันทึกต่ออีก 30 นาที';
-	@override String recordsUntil({required Object time}) => 'บันทึกถึง ${time}';
-	@override String get extendFailed => 'ขยายเวลาบันทึกไม่ได้';
-	@override String get originalDialogue => 'ใช้เสียงบทสนทนาต้นฉบับเป็นอันดับแรก';
-	@override String get soloPage => 'แสดงหน้านี้แยกเดี่ยว';
-	@override String get pairPage => 'จับคู่หน้านี้อีกครั้ง';
-	@override String get listenPhone => 'ฟังบนโทรศัพท์เครื่องนี้';
-	@override String get audioUnavailable => 'ไฟล์หรือแทร็กเสียงไม่พร้อมใช้งานบนโทรศัพท์เครื่องนี้';
 	@override String get guidedPanels => 'อ่านทีละช่อง';
 	@override String get rewind => 'กรอกลับ';
 	@override String get attachAudio => 'เพิ่มไฟล์เสียง';
@@ -170,6 +162,14 @@ class _Translations$viewing$th extends Translations$viewing$en {
 	@override String get clearAudio => 'นำเสียงที่เพิ่มออก';
 	@override String keepFrom({required Object time}) => 'เก็บตั้งแต่ ${time}';
 	@override String get recordNow => 'บันทึกตั้งแต่ตอนนี้';
+	@override String get extendRecording => 'บันทึกต่ออีก 30 นาที';
+	@override String recordsUntil({required Object time}) => 'บันทึกถึง ${time}';
+	@override String get extendFailed => 'ขยายเวลาบันทึกไม่ได้';
+	@override String get originalDialogue => 'ใช้เสียงบทสนทนาต้นฉบับเป็นอันดับแรก';
+	@override String get soloPage => 'แสดงหน้านี้แยกเดี่ยว';
+	@override String get pairPage => 'จับคู่หน้านี้อีกครั้ง';
+	@override String get listenPhone => 'ฟังบนโทรศัพท์เครื่องนี้';
+	@override String get audioUnavailable => 'ไฟล์หรือแทร็กเสียงไม่พร้อมใช้งานบนโทรศัพท์เครื่องนี้';
 }
 
 // Path: livingRoom
@@ -5613,14 +5613,6 @@ extension on TranslationsTh {
 			'mediaConveniences.missingEpisode' => 'ตอนที่ขาดไป',
 			'mediaConveniences.stereoChannel' => 'ช่องเสียงที่จะเล่นผ่านลำโพงทั้งสองข้าง',
 			'mediaConveniences.hdrBrightness' => 'ความสว่างของคำบรรยาย HDR',
-			'viewing.extendRecording' => 'บันทึกต่ออีก 30 นาที',
-			'viewing.recordsUntil' => ({required Object time}) => 'บันทึกถึง ${time}',
-			'viewing.extendFailed' => 'ขยายเวลาบันทึกไม่ได้',
-			'viewing.originalDialogue' => 'ใช้เสียงบทสนทนาต้นฉบับเป็นอันดับแรก',
-			'viewing.soloPage' => 'แสดงหน้านี้แยกเดี่ยว',
-			'viewing.pairPage' => 'จับคู่หน้านี้อีกครั้ง',
-			'viewing.listenPhone' => 'ฟังบนโทรศัพท์เครื่องนี้',
-			'viewing.audioUnavailable' => 'ไฟล์หรือแทร็กเสียงไม่พร้อมใช้งานบนโทรศัพท์เครื่องนี้',
 			'viewing.guidedPanels' => 'อ่านทีละช่อง',
 			'viewing.rewind' => 'กรอกลับ',
 			'viewing.attachAudio' => 'เพิ่มไฟล์เสียง',
@@ -5636,6 +5628,14 @@ extension on TranslationsTh {
 			'viewing.clearAudio' => 'นำเสียงที่เพิ่มออก',
 			'viewing.keepFrom' => ({required Object time}) => 'เก็บตั้งแต่ ${time}',
 			'viewing.recordNow' => 'บันทึกตั้งแต่ตอนนี้',
+			'viewing.extendRecording' => 'บันทึกต่ออีก 30 นาที',
+			'viewing.recordsUntil' => ({required Object time}) => 'บันทึกถึง ${time}',
+			'viewing.extendFailed' => 'ขยายเวลาบันทึกไม่ได้',
+			'viewing.originalDialogue' => 'ใช้เสียงบทสนทนาต้นฉบับเป็นอันดับแรก',
+			'viewing.soloPage' => 'แสดงหน้านี้แยกเดี่ยว',
+			'viewing.pairPage' => 'จับคู่หน้านี้อีกครั้ง',
+			'viewing.listenPhone' => 'ฟังบนโทรศัพท์เครื่องนี้',
+			'viewing.audioUnavailable' => 'ไฟล์หรือแทร็กเสียงไม่พร้อมใช้งานบนโทรศัพท์เครื่องนี้',
 			'livingRoom.fitScreen' => 'ปรับให้พอดีกับหน้าจอ',
 			'livingRoom.fitHelp' => 'เลือกขอบแล้วใช้ปุ่มลูกศรเลื่อนจนเห็นเครื่องหมาย ทำซ้ำจนครบทุกขอบ',
 			'livingRoom.left' => 'ซ้าย',

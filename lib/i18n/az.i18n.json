@@ -8,14 +8,6 @@
     "hdrBrightness": "HDR subtitrlərinin parlaqlığı"
   },
   "viewing": {
-    "extendRecording": "Daha 30 dəqiqə yaz",
-    "recordsUntil": "Yazı ${time} vaxtına qədər davam edir",
-    "extendFailed": "Yazını uzatmaq mümkün olmadı",
-    "originalDialogue": "Orijinal dialoqa üstünlük ver",
-    "soloPage": "Bu səhifəni tək göstər",
-    "pairPage": "Bu səhifəni yenidən cütləşdir",
-    "listenPhone": "Bu telefonda dinlə",
-    "audioUnavailable": "Fayl və ya səs treki bu telefonda əlçatan deyil.",
     "guidedPanels": "Panellərə ardıcıl baxış",
     "rewind": "Geri sar",
     "attachAudio": "Audio faylı əlavə et",
@@ -30,7 +22,15 @@
     "relinkNone": "Uyğun fayl tapılmadı",
     "clearAudio": "Əlavə edilmiş audionu sil",
     "keepFrom": "${time} vaxtından saxla",
-    "recordNow": "İndidən yaz"
+    "recordNow": "İndidən yaz",
+    "extendRecording": "Daha 30 dəqiqə yaz",
+    "recordsUntil": "Yazı ${time} vaxtına qədər davam edir",
+    "extendFailed": "Yazını uzatmaq mümkün olmadı",
+    "originalDialogue": "Orijinal dialoqa üstünlük ver",
+    "soloPage": "Bu səhifəni tək göstər",
+    "pairPage": "Bu səhifəni yenidən cütləşdir",
+    "listenPhone": "Bu telefonda dinlə",
+    "audioUnavailable": "Fayl və ya səs treki bu telefonda əlçatan deyil."
   },
   "livingRoom": {
     "fitScreen": "Ekranıma uyğunlaşdır",

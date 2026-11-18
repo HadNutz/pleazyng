@@ -147,14 +147,6 @@ class _Translations$viewing$hu extends Translations$viewing$en {
 	final TranslationsHu _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Felvétel további 30 percig';
-	@override String recordsUntil({required Object time}) => 'Felvétel eddig: ${time}';
-	@override String get extendFailed => 'A felvételt nem sikerült meghosszabbítani';
-	@override String get originalDialogue => 'Eredeti párbeszéd előnyben részesítése';
-	@override String get soloPage => 'Az oldal megjelenítése külön';
-	@override String get pairPage => 'Az oldal újbóli párosítása';
-	@override String get listenPhone => 'Hallgatás ezen a telefonon';
-	@override String get audioUnavailable => 'A fájl vagy a hangsáv nem érhető el ezen a telefonon.';
 	@override String get guidedPanels => 'Olvasás képkockánként';
 	@override String get rewind => 'Visszatekerés';
 	@override String get attachAudio => 'Hangfájl hozzáadása';
@@ -170,6 +162,14 @@ class _Translations$viewing$hu extends Translations$viewing$en {
 	@override String get clearAudio => 'Hozzáadott hang eltávolítása';
 	@override String keepFrom({required Object time}) => 'Megtartás ${time} időponttól';
 	@override String get recordNow => 'Felvétel mostantól';
+	@override String get extendRecording => 'Felvétel további 30 percig';
+	@override String recordsUntil({required Object time}) => 'Felvétel eddig: ${time}';
+	@override String get extendFailed => 'A felvételt nem sikerült meghosszabbítani';
+	@override String get originalDialogue => 'Eredeti párbeszéd előnyben részesítése';
+	@override String get soloPage => 'Az oldal megjelenítése külön';
+	@override String get pairPage => 'Az oldal újbóli párosítása';
+	@override String get listenPhone => 'Hallgatás ezen a telefonon';
+	@override String get audioUnavailable => 'A fájl vagy a hangsáv nem érhető el ezen a telefonon.';
 }
 
 // Path: livingRoom
@@ -5638,14 +5638,6 @@ extension on TranslationsHu {
 			'mediaConveniences.missingEpisode' => 'Hiányzó epizód',
 			'mediaConveniences.stereoChannel' => 'Mindkét hangszórón lejátszott csatorna',
 			'mediaConveniences.hdrBrightness' => 'HDR-feliratok fényereje',
-			'viewing.extendRecording' => 'Felvétel további 30 percig',
-			'viewing.recordsUntil' => ({required Object time}) => 'Felvétel eddig: ${time}',
-			'viewing.extendFailed' => 'A felvételt nem sikerült meghosszabbítani',
-			'viewing.originalDialogue' => 'Eredeti párbeszéd előnyben részesítése',
-			'viewing.soloPage' => 'Az oldal megjelenítése külön',
-			'viewing.pairPage' => 'Az oldal újbóli párosítása',
-			'viewing.listenPhone' => 'Hallgatás ezen a telefonon',
-			'viewing.audioUnavailable' => 'A fájl vagy a hangsáv nem érhető el ezen a telefonon.',
 			'viewing.guidedPanels' => 'Olvasás képkockánként',
 			'viewing.rewind' => 'Visszatekerés',
 			'viewing.attachAudio' => 'Hangfájl hozzáadása',
@@ -5661,6 +5653,14 @@ extension on TranslationsHu {
 			'viewing.clearAudio' => 'Hozzáadott hang eltávolítása',
 			'viewing.keepFrom' => ({required Object time}) => 'Megtartás ${time} időponttól',
 			'viewing.recordNow' => 'Felvétel mostantól',
+			'viewing.extendRecording' => 'Felvétel további 30 percig',
+			'viewing.recordsUntil' => ({required Object time}) => 'Felvétel eddig: ${time}',
+			'viewing.extendFailed' => 'A felvételt nem sikerült meghosszabbítani',
+			'viewing.originalDialogue' => 'Eredeti párbeszéd előnyben részesítése',
+			'viewing.soloPage' => 'Az oldal megjelenítése külön',
+			'viewing.pairPage' => 'Az oldal újbóli párosítása',
+			'viewing.listenPhone' => 'Hallgatás ezen a telefonon',
+			'viewing.audioUnavailable' => 'A fájl vagy a hangsáv nem érhető el ezen a telefonon.',
 			'livingRoom.fitScreen' => 'Igazítás a képernyőmhöz',
 			'livingRoom.fitHelp' => 'Válassz egy szélt, és mozgasd a nyilakkal, amíg meg nem jelennek a jelölései. Ismételd meg minden szélnél.',
 			'livingRoom.left' => 'Bal',

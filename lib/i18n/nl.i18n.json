@@ -8,14 +8,6 @@
     "hdrBrightness": "Helderheid van HDR-ondertitels"
   },
   "viewing": {
-    "extendRecording": "30 minuten langer opnemen",
-    "recordsUntil": "Opname tot ${time}",
-    "extendFailed": "Verlengen van de opname is mislukt",
-    "originalDialogue": "Voorkeur voor originele dialogen",
-    "soloPage": "Deze pagina apart tonen",
-    "pairPage": "Deze pagina weer koppelen",
-    "listenPhone": "Op deze telefoon luisteren",
-    "audioUnavailable": "Het bestand of het geluidsspoor is niet beschikbaar op deze telefoon.",
     "guidedPanels": "Paneel voor paneel lezen",
     "rewind": "Terugspoelen",
     "attachAudio": "Audiobestand toevoegen",
@@ -30,7 +22,15 @@
     "relinkNone": "Geen overeenkomende bestanden gevonden",
     "clearAudio": "Toegevoegde audio verwijderen",
     "keepFrom": "Bewaren vanaf ${time}",
-    "recordNow": "Vanaf nu opnemen"
+    "recordNow": "Vanaf nu opnemen",
+    "extendRecording": "30 minuten langer opnemen",
+    "recordsUntil": "Opname tot ${time}",
+    "extendFailed": "Verlengen van de opname is mislukt",
+    "originalDialogue": "Voorkeur voor originele dialogen",
+    "soloPage": "Deze pagina apart tonen",
+    "pairPage": "Deze pagina weer koppelen",
+    "listenPhone": "Op deze telefoon luisteren",
+    "audioUnavailable": "Het bestand of het geluidsspoor is niet beschikbaar op deze telefoon."
   },
   "livingRoom": {
     "fitScreen": "Aanpassen aan mijn scherm",

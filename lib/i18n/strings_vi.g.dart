@@ -147,14 +147,6 @@ class _Translations$viewing$vi extends Translations$viewing$en {
 	final TranslationsVi _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Ghi thêm 30 phút';
-	@override String recordsUntil({required Object time}) => 'Ghi đến ${time}';
-	@override String get extendFailed => 'Không thể kéo dài bản ghi';
-	@override String get originalDialogue => 'Ưu tiên lời thoại gốc';
-	@override String get soloPage => 'Hiển thị riêng trang này';
-	@override String get pairPage => 'Ghép lại trang này';
-	@override String get listenPhone => 'Nghe trên điện thoại này';
-	@override String get audioUnavailable => 'Tệp hoặc bản âm thanh không khả dụng trên điện thoại này.';
 	@override String get guidedPanels => 'Đọc theo từng khung';
 	@override String get rewind => 'Tua lại';
 	@override String get attachAudio => 'Thêm tệp âm thanh';
@@ -170,6 +162,14 @@ class _Translations$viewing$vi extends Translations$viewing$en {
 	@override String get clearAudio => 'Xóa âm thanh đã thêm';
 	@override String keepFrom({required Object time}) => 'Giữ từ ${time}';
 	@override String get recordNow => 'Ghi từ bây giờ';
+	@override String get extendRecording => 'Ghi thêm 30 phút';
+	@override String recordsUntil({required Object time}) => 'Ghi đến ${time}';
+	@override String get extendFailed => 'Không thể kéo dài bản ghi';
+	@override String get originalDialogue => 'Ưu tiên lời thoại gốc';
+	@override String get soloPage => 'Hiển thị riêng trang này';
+	@override String get pairPage => 'Ghép lại trang này';
+	@override String get listenPhone => 'Nghe trên điện thoại này';
+	@override String get audioUnavailable => 'Tệp hoặc bản âm thanh không khả dụng trên điện thoại này.';
 }
 
 // Path: livingRoom
@@ -5613,14 +5613,6 @@ extension on TranslationsVi {
 			'mediaConveniences.missingEpisode' => 'Thiếu tập',
 			'mediaConveniences.stereoChannel' => 'Kênh phát trên cả hai loa',
 			'mediaConveniences.hdrBrightness' => 'Độ sáng phụ đề HDR',
-			'viewing.extendRecording' => 'Ghi thêm 30 phút',
-			'viewing.recordsUntil' => ({required Object time}) => 'Ghi đến ${time}',
-			'viewing.extendFailed' => 'Không thể kéo dài bản ghi',
-			'viewing.originalDialogue' => 'Ưu tiên lời thoại gốc',
-			'viewing.soloPage' => 'Hiển thị riêng trang này',
-			'viewing.pairPage' => 'Ghép lại trang này',
-			'viewing.listenPhone' => 'Nghe trên điện thoại này',
-			'viewing.audioUnavailable' => 'Tệp hoặc bản âm thanh không khả dụng trên điện thoại này.',
 			'viewing.guidedPanels' => 'Đọc theo từng khung',
 			'viewing.rewind' => 'Tua lại',
 			'viewing.attachAudio' => 'Thêm tệp âm thanh',
@@ -5636,6 +5628,14 @@ extension on TranslationsVi {
 			'viewing.clearAudio' => 'Xóa âm thanh đã thêm',
 			'viewing.keepFrom' => ({required Object time}) => 'Giữ từ ${time}',
 			'viewing.recordNow' => 'Ghi từ bây giờ',
+			'viewing.extendRecording' => 'Ghi thêm 30 phút',
+			'viewing.recordsUntil' => ({required Object time}) => 'Ghi đến ${time}',
+			'viewing.extendFailed' => 'Không thể kéo dài bản ghi',
+			'viewing.originalDialogue' => 'Ưu tiên lời thoại gốc',
+			'viewing.soloPage' => 'Hiển thị riêng trang này',
+			'viewing.pairPage' => 'Ghép lại trang này',
+			'viewing.listenPhone' => 'Nghe trên điện thoại này',
+			'viewing.audioUnavailable' => 'Tệp hoặc bản âm thanh không khả dụng trên điện thoại này.',
 			'livingRoom.fitScreen' => 'Chỉnh vừa màn hình',
 			'livingRoom.fitHelp' => 'Chọn một cạnh rồi dùng phím mũi tên để di chuyển cho đến khi thấy các dấu ở cạnh đó. Lặp lại với từng cạnh.',
 			'livingRoom.left' => 'Trái',

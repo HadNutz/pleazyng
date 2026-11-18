@@ -8,14 +8,6 @@
     "hdrBrightness": "HDR字幕の明るさ"
   },
   "viewing": {
-    "extendRecording": "録画を30分延長",
-    "recordsUntil": "${time} まで録画",
-    "extendFailed": "録画を延長できませんでした",
-    "originalDialogue": "オリジナル音声を優先",
-    "soloPage": "このページを単独で表示",
-    "pairPage": "このページを見開きに戻す",
-    "listenPhone": "このスマートフォンで聴く",
-    "audioUnavailable": "このスマートフォンでは現在のファイルまたは音声トラックを再生できません。",
     "guidedPanels": "コマごとに読む",
     "rewind": "巻き戻し",
     "attachAudio": "音声ファイルを追加",
@@ -30,7 +22,15 @@
     "relinkNone": "一致するファイルが見つかりません",
     "clearAudio": "追加した音声を削除",
     "keepFrom": "${time}から保存",
-    "recordNow": "今から録画"
+    "recordNow": "今から録画",
+    "extendRecording": "録画を30分延長",
+    "recordsUntil": "${time} まで録画",
+    "extendFailed": "録画を延長できませんでした",
+    "originalDialogue": "オリジナル音声を優先",
+    "soloPage": "このページを単独で表示",
+    "pairPage": "このページを見開きに戻す",
+    "listenPhone": "このスマートフォンで聴く",
+    "audioUnavailable": "このスマートフォンでは現在のファイルまたは音声トラックを再生できません。"
   },
   "livingRoom": {
     "fitScreen": "画面に合わせる",

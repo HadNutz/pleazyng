@@ -147,14 +147,6 @@ class _Translations$viewing$ru extends Translations$viewing$en {
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Записывать ещё 30 минут';
-	@override String recordsUntil({required Object time}) => 'Запись до ${time}';
-	@override String get extendFailed => 'Не удалось продлить запись';
-	@override String get originalDialogue => 'Предпочитать оригинальную озвучку';
-	@override String get soloPage => 'Показать эту страницу отдельно';
-	@override String get pairPage => 'Снова объединить страницу в разворот';
-	@override String get listenPhone => 'Слушать на этом телефоне';
-	@override String get audioUnavailable => 'Файл или звуковая дорожка недоступны на этом телефоне.';
 	@override String get guidedPanels => 'Чтение по кадрам';
 	@override String get rewind => 'Перемотка назад';
 	@override String get attachAudio => 'Добавить аудиофайл';
@@ -170,6 +162,14 @@ class _Translations$viewing$ru extends Translations$viewing$en {
 	@override String get clearAudio => 'Удалить добавленное аудио';
 	@override String keepFrom({required Object time}) => 'Сохранить начиная с ${time}';
 	@override String get recordNow => 'Записывать с текущего момента';
+	@override String get extendRecording => 'Записывать ещё 30 минут';
+	@override String recordsUntil({required Object time}) => 'Запись до ${time}';
+	@override String get extendFailed => 'Не удалось продлить запись';
+	@override String get originalDialogue => 'Предпочитать оригинальную озвучку';
+	@override String get soloPage => 'Показать эту страницу отдельно';
+	@override String get pairPage => 'Снова объединить страницу в разворот';
+	@override String get listenPhone => 'Слушать на этом телефоне';
+	@override String get audioUnavailable => 'Файл или звуковая дорожка недоступны на этом телефоне.';
 }
 
 // Path: livingRoom
@@ -5688,14 +5688,6 @@ extension on TranslationsRu {
 			'mediaConveniences.missingEpisode' => 'Отсутствует серия',
 			'mediaConveniences.stereoChannel' => 'Канал для обоих динамиков',
 			'mediaConveniences.hdrBrightness' => 'Яркость субтитров HDR',
-			'viewing.extendRecording' => 'Записывать ещё 30 минут',
-			'viewing.recordsUntil' => ({required Object time}) => 'Запись до ${time}',
-			'viewing.extendFailed' => 'Не удалось продлить запись',
-			'viewing.originalDialogue' => 'Предпочитать оригинальную озвучку',
-			'viewing.soloPage' => 'Показать эту страницу отдельно',
-			'viewing.pairPage' => 'Снова объединить страницу в разворот',
-			'viewing.listenPhone' => 'Слушать на этом телефоне',
-			'viewing.audioUnavailable' => 'Файл или звуковая дорожка недоступны на этом телефоне.',
 			'viewing.guidedPanels' => 'Чтение по кадрам',
 			'viewing.rewind' => 'Перемотка назад',
 			'viewing.attachAudio' => 'Добавить аудиофайл',
@@ -5711,6 +5703,14 @@ extension on TranslationsRu {
 			'viewing.clearAudio' => 'Удалить добавленное аудио',
 			'viewing.keepFrom' => ({required Object time}) => 'Сохранить начиная с ${time}',
 			'viewing.recordNow' => 'Записывать с текущего момента',
+			'viewing.extendRecording' => 'Записывать ещё 30 минут',
+			'viewing.recordsUntil' => ({required Object time}) => 'Запись до ${time}',
+			'viewing.extendFailed' => 'Не удалось продлить запись',
+			'viewing.originalDialogue' => 'Предпочитать оригинальную озвучку',
+			'viewing.soloPage' => 'Показать эту страницу отдельно',
+			'viewing.pairPage' => 'Снова объединить страницу в разворот',
+			'viewing.listenPhone' => 'Слушать на этом телефоне',
+			'viewing.audioUnavailable' => 'Файл или звуковая дорожка недоступны на этом телефоне.',
 			'livingRoom.fitScreen' => 'Подогнать под мой экран',
 			'livingRoom.fitHelp' => 'Выберите край и перемещайте его стрелками, пока не станут видны метки. Повторите для каждого края.',
 			'livingRoom.left' => 'Слева',

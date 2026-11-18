@@ -147,14 +147,6 @@ class _Translations$viewing$ms extends Translations$viewing$en {
 	final TranslationsMs _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Rakam 30 minit lagi';
-	@override String recordsUntil({required Object time}) => 'Merakam sehingga ${time}';
-	@override String get extendFailed => 'Rakaman tidak dapat dilanjutkan';
-	@override String get originalDialogue => 'Utamakan dialog asal';
-	@override String get soloPage => 'Paparkan halaman ini secara berasingan';
-	@override String get pairPage => 'Pasangkan semula halaman ini';
-	@override String get listenPhone => 'Dengar pada telefon ini';
-	@override String get audioUnavailable => 'Fail atau trek audio tidak tersedia pada telefon ini.';
 	@override String get guidedPanels => 'Baca panel demi panel';
 	@override String get rewind => 'Undur';
 	@override String get attachAudio => 'Tambah fail audio';
@@ -170,6 +162,14 @@ class _Translations$viewing$ms extends Translations$viewing$en {
 	@override String get clearAudio => 'Buang audio yang dilampirkan';
 	@override String keepFrom({required Object time}) => 'Simpan dari ${time}';
 	@override String get recordNow => 'Rakam mulai sekarang';
+	@override String get extendRecording => 'Rakam 30 minit lagi';
+	@override String recordsUntil({required Object time}) => 'Merakam sehingga ${time}';
+	@override String get extendFailed => 'Rakaman tidak dapat dilanjutkan';
+	@override String get originalDialogue => 'Utamakan dialog asal';
+	@override String get soloPage => 'Paparkan halaman ini secara berasingan';
+	@override String get pairPage => 'Pasangkan semula halaman ini';
+	@override String get listenPhone => 'Dengar pada telefon ini';
+	@override String get audioUnavailable => 'Fail atau trek audio tidak tersedia pada telefon ini.';
 }
 
 // Path: livingRoom
@@ -5613,14 +5613,6 @@ extension on TranslationsMs {
 			'mediaConveniences.missingEpisode' => 'Episod tiada',
 			'mediaConveniences.stereoChannel' => 'Saluran untuk kedua-dua pembesar suara',
 			'mediaConveniences.hdrBrightness' => 'Kecerahan sari kata HDR',
-			'viewing.extendRecording' => 'Rakam 30 minit lagi',
-			'viewing.recordsUntil' => ({required Object time}) => 'Merakam sehingga ${time}',
-			'viewing.extendFailed' => 'Rakaman tidak dapat dilanjutkan',
-			'viewing.originalDialogue' => 'Utamakan dialog asal',
-			'viewing.soloPage' => 'Paparkan halaman ini secara berasingan',
-			'viewing.pairPage' => 'Pasangkan semula halaman ini',
-			'viewing.listenPhone' => 'Dengar pada telefon ini',
-			'viewing.audioUnavailable' => 'Fail atau trek audio tidak tersedia pada telefon ini.',
 			'viewing.guidedPanels' => 'Baca panel demi panel',
 			'viewing.rewind' => 'Undur',
 			'viewing.attachAudio' => 'Tambah fail audio',
@@ -5636,6 +5628,14 @@ extension on TranslationsMs {
 			'viewing.clearAudio' => 'Buang audio yang dilampirkan',
 			'viewing.keepFrom' => ({required Object time}) => 'Simpan dari ${time}',
 			'viewing.recordNow' => 'Rakam mulai sekarang',
+			'viewing.extendRecording' => 'Rakam 30 minit lagi',
+			'viewing.recordsUntil' => ({required Object time}) => 'Merakam sehingga ${time}',
+			'viewing.extendFailed' => 'Rakaman tidak dapat dilanjutkan',
+			'viewing.originalDialogue' => 'Utamakan dialog asal',
+			'viewing.soloPage' => 'Paparkan halaman ini secara berasingan',
+			'viewing.pairPage' => 'Pasangkan semula halaman ini',
+			'viewing.listenPhone' => 'Dengar pada telefon ini',
+			'viewing.audioUnavailable' => 'Fail atau trek audio tidak tersedia pada telefon ini.',
 			'livingRoom.fitScreen' => 'Padankan dengan skrin saya',
 			'livingRoom.fitHelp' => 'Pilih tepi dan gerakkannya dengan kekunci anak panah sehingga penandanya kelihatan. Ulang untuk setiap tepi.',
 			'livingRoom.left' => 'Kiri',

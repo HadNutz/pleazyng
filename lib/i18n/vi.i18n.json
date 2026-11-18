@@ -8,14 +8,6 @@
     "hdrBrightness": "Độ sáng phụ đề HDR"
   },
   "viewing": {
-    "extendRecording": "Ghi thêm 30 phút",
-    "recordsUntil": "Ghi đến ${time}",
-    "extendFailed": "Không thể kéo dài bản ghi",
-    "originalDialogue": "Ưu tiên lời thoại gốc",
-    "soloPage": "Hiển thị riêng trang này",
-    "pairPage": "Ghép lại trang này",
-    "listenPhone": "Nghe trên điện thoại này",
-    "audioUnavailable": "Tệp hoặc bản âm thanh không khả dụng trên điện thoại này.",
     "guidedPanels": "Đọc theo từng khung",
     "rewind": "Tua lại",
     "attachAudio": "Thêm tệp âm thanh",
@@ -30,7 +22,15 @@
     "relinkNone": "Không tìm thấy tệp khớp",
     "clearAudio": "Xóa âm thanh đã thêm",
     "keepFrom": "Giữ từ ${time}",
-    "recordNow": "Ghi từ bây giờ"
+    "recordNow": "Ghi từ bây giờ",
+    "extendRecording": "Ghi thêm 30 phút",
+    "recordsUntil": "Ghi đến ${time}",
+    "extendFailed": "Không thể kéo dài bản ghi",
+    "originalDialogue": "Ưu tiên lời thoại gốc",
+    "soloPage": "Hiển thị riêng trang này",
+    "pairPage": "Ghép lại trang này",
+    "listenPhone": "Nghe trên điện thoại này",
+    "audioUnavailable": "Tệp hoặc bản âm thanh không khả dụng trên điện thoại này."
   },
   "livingRoom": {
     "fitScreen": "Chỉnh vừa màn hình",

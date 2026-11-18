@@ -8,14 +8,6 @@
     "hdrBrightness": "HDR-feliratok fényereje"
   },
   "viewing": {
-    "extendRecording": "Felvétel további 30 percig",
-    "recordsUntil": "Felvétel eddig: ${time}",
-    "extendFailed": "A felvételt nem sikerült meghosszabbítani",
-    "originalDialogue": "Eredeti párbeszéd előnyben részesítése",
-    "soloPage": "Az oldal megjelenítése külön",
-    "pairPage": "Az oldal újbóli párosítása",
-    "listenPhone": "Hallgatás ezen a telefonon",
-    "audioUnavailable": "A fájl vagy a hangsáv nem érhető el ezen a telefonon.",
     "guidedPanels": "Olvasás képkockánként",
     "rewind": "Visszatekerés",
     "attachAudio": "Hangfájl hozzáadása",
@@ -30,7 +22,15 @@
     "relinkNone": "Nincs egyező fájl",
     "clearAudio": "Hozzáadott hang eltávolítása",
     "keepFrom": "Megtartás ${time} időponttól",
-    "recordNow": "Felvétel mostantól"
+    "recordNow": "Felvétel mostantól",
+    "extendRecording": "Felvétel további 30 percig",
+    "recordsUntil": "Felvétel eddig: ${time}",
+    "extendFailed": "A felvételt nem sikerült meghosszabbítani",
+    "originalDialogue": "Eredeti párbeszéd előnyben részesítése",
+    "soloPage": "Az oldal megjelenítése külön",
+    "pairPage": "Az oldal újbóli párosítása",
+    "listenPhone": "Hallgatás ezen a telefonon",
+    "audioUnavailable": "A fájl vagy a hangsáv nem érhető el ezen a telefonon."
   },
   "livingRoom": {
     "fitScreen": "Igazítás a képernyőmhöz",

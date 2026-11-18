@@ -147,14 +147,6 @@ class _Translations$viewing$ja extends Translations$viewing$en {
 	final TranslationsJa _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => '録画を30分延長';
-	@override String recordsUntil({required Object time}) => '${time} まで録画';
-	@override String get extendFailed => '録画を延長できませんでした';
-	@override String get originalDialogue => 'オリジナル音声を優先';
-	@override String get soloPage => 'このページを単独で表示';
-	@override String get pairPage => 'このページを見開きに戻す';
-	@override String get listenPhone => 'このスマートフォンで聴く';
-	@override String get audioUnavailable => 'このスマートフォンでは現在のファイルまたは音声トラックを再生できません。';
 	@override String get guidedPanels => 'コマごとに読む';
 	@override String get rewind => '巻き戻し';
 	@override String get attachAudio => '音声ファイルを追加';
@@ -170,6 +162,14 @@ class _Translations$viewing$ja extends Translations$viewing$en {
 	@override String get clearAudio => '追加した音声を削除';
 	@override String keepFrom({required Object time}) => '${time}から保存';
 	@override String get recordNow => '今から録画';
+	@override String get extendRecording => '録画を30分延長';
+	@override String recordsUntil({required Object time}) => '${time} まで録画';
+	@override String get extendFailed => '録画を延長できませんでした';
+	@override String get originalDialogue => 'オリジナル音声を優先';
+	@override String get soloPage => 'このページを単独で表示';
+	@override String get pairPage => 'このページを見開きに戻す';
+	@override String get listenPhone => 'このスマートフォンで聴く';
+	@override String get audioUnavailable => 'このスマートフォンでは現在のファイルまたは音声トラックを再生できません。';
 }
 
 // Path: livingRoom
@@ -5633,14 +5633,6 @@ extension on TranslationsJa {
 			'mediaConveniences.missingEpisode' => '見つからないエピソード',
 			'mediaConveniences.stereoChannel' => '両方のスピーカーで再生するチャンネル',
 			'mediaConveniences.hdrBrightness' => 'HDR字幕の明るさ',
-			'viewing.extendRecording' => '録画を30分延長',
-			'viewing.recordsUntil' => ({required Object time}) => '${time} まで録画',
-			'viewing.extendFailed' => '録画を延長できませんでした',
-			'viewing.originalDialogue' => 'オリジナル音声を優先',
-			'viewing.soloPage' => 'このページを単独で表示',
-			'viewing.pairPage' => 'このページを見開きに戻す',
-			'viewing.listenPhone' => 'このスマートフォンで聴く',
-			'viewing.audioUnavailable' => 'このスマートフォンでは現在のファイルまたは音声トラックを再生できません。',
 			'viewing.guidedPanels' => 'コマごとに読む',
 			'viewing.rewind' => '巻き戻し',
 			'viewing.attachAudio' => '音声ファイルを追加',
@@ -5656,6 +5648,14 @@ extension on TranslationsJa {
 			'viewing.clearAudio' => '追加した音声を削除',
 			'viewing.keepFrom' => ({required Object time}) => '${time}から保存',
 			'viewing.recordNow' => '今から録画',
+			'viewing.extendRecording' => '録画を30分延長',
+			'viewing.recordsUntil' => ({required Object time}) => '${time} まで録画',
+			'viewing.extendFailed' => '録画を延長できませんでした',
+			'viewing.originalDialogue' => 'オリジナル音声を優先',
+			'viewing.soloPage' => 'このページを単独で表示',
+			'viewing.pairPage' => 'このページを見開きに戻す',
+			'viewing.listenPhone' => 'このスマートフォンで聴く',
+			'viewing.audioUnavailable' => 'このスマートフォンでは現在のファイルまたは音声トラックを再生できません。',
 			'livingRoom.fitScreen' => '画面に合わせる',
 			'livingRoom.fitHelp' => '辺を選び、目印が見える位置まで矢印キーで移動します。残りの辺も同様に調整してください。',
 			'livingRoom.left' => '左',

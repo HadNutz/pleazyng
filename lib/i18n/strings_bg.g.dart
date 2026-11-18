@@ -147,14 +147,6 @@ class _Translations$viewing$bg extends Translations$viewing$en {
 	final TranslationsBg _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => 'Записване още 30 минути';
-	@override String recordsUntil({required Object time}) => 'Запис до ${time}';
-	@override String get extendFailed => 'Записът не можа да бъде удължен';
-	@override String get originalDialogue => 'Предпочитане на оригиналния диалог';
-	@override String get soloPage => 'Показване на тази страница отделно';
-	@override String get pairPage => 'Повторно сдвояване на страницата';
-	@override String get listenPhone => 'Слушане на този телефон';
-	@override String get audioUnavailable => 'Файлът или звуковата пътека не са достъпни на този телефон.';
 	@override String get guidedPanels => 'Преглед по панели';
 	@override String get rewind => 'Превъртане назад';
 	@override String get attachAudio => 'Добавяне на аудиофайл';
@@ -170,6 +162,14 @@ class _Translations$viewing$bg extends Translations$viewing$en {
 	@override String get clearAudio => 'Премахване на добавеното аудио';
 	@override String keepFrom({required Object time}) => 'Запазване от ${time}';
 	@override String get recordNow => 'Запис от сега';
+	@override String get extendRecording => 'Записване още 30 минути';
+	@override String recordsUntil({required Object time}) => 'Запис до ${time}';
+	@override String get extendFailed => 'Записът не можа да бъде удължен';
+	@override String get originalDialogue => 'Предпочитане на оригиналния диалог';
+	@override String get soloPage => 'Показване на тази страница отделно';
+	@override String get pairPage => 'Повторно сдвояване на страницата';
+	@override String get listenPhone => 'Слушане на този телефон';
+	@override String get audioUnavailable => 'Файлът или звуковата пътека не са достъпни на този телефон.';
 }
 
 // Path: livingRoom
@@ -5638,14 +5638,6 @@ extension on TranslationsBg {
 			'mediaConveniences.missingEpisode' => 'Липсващ епизод',
 			'mediaConveniences.stereoChannel' => 'Канал за двата високоговорителя',
 			'mediaConveniences.hdrBrightness' => 'Яркост на HDR субтитрите',
-			'viewing.extendRecording' => 'Записване още 30 минути',
-			'viewing.recordsUntil' => ({required Object time}) => 'Запис до ${time}',
-			'viewing.extendFailed' => 'Записът не можа да бъде удължен',
-			'viewing.originalDialogue' => 'Предпочитане на оригиналния диалог',
-			'viewing.soloPage' => 'Показване на тази страница отделно',
-			'viewing.pairPage' => 'Повторно сдвояване на страницата',
-			'viewing.listenPhone' => 'Слушане на този телефон',
-			'viewing.audioUnavailable' => 'Файлът или звуковата пътека не са достъпни на този телефон.',
 			'viewing.guidedPanels' => 'Преглед по панели',
 			'viewing.rewind' => 'Превъртане назад',
 			'viewing.attachAudio' => 'Добавяне на аудиофайл',
@@ -5661,6 +5653,14 @@ extension on TranslationsBg {
 			'viewing.clearAudio' => 'Премахване на добавеното аудио',
 			'viewing.keepFrom' => ({required Object time}) => 'Запазване от ${time}',
 			'viewing.recordNow' => 'Запис от сега',
+			'viewing.extendRecording' => 'Записване още 30 минути',
+			'viewing.recordsUntil' => ({required Object time}) => 'Запис до ${time}',
+			'viewing.extendFailed' => 'Записът не можа да бъде удължен',
+			'viewing.originalDialogue' => 'Предпочитане на оригиналния диалог',
+			'viewing.soloPage' => 'Показване на тази страница отделно',
+			'viewing.pairPage' => 'Повторно сдвояване на страницата',
+			'viewing.listenPhone' => 'Слушане на този телефон',
+			'viewing.audioUnavailable' => 'Файлът или звуковата пътека не са достъпни на този телефон.',
 			'livingRoom.fitScreen' => 'Побиране в моя екран',
 			'livingRoom.fitHelp' => 'Изберете ръб и го местете със стрелките, докато видите маркерите. Повторете за всеки ръб.',
 			'livingRoom.left' => 'Ляво',

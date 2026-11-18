@@ -147,14 +147,6 @@ class _Translations$viewing$ko extends Translations$viewing$en {
 	final TranslationsKo _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => '30분 더 녹화';
-	@override String recordsUntil({required Object time}) => '${time} 까지 녹화';
-	@override String get extendFailed => '녹화를 연장할 수 없습니다';
-	@override String get originalDialogue => '원어 음성 우선';
-	@override String get soloPage => '이 페이지만 따로 표시';
-	@override String get pairPage => '이 페이지를 다시 묶기';
-	@override String get listenPhone => '이 휴대전화로 듣기';
-	@override String get audioUnavailable => '이 휴대전화에서 현재 파일 또는 오디오 트랙을 사용할 수 없습니다.';
 	@override String get guidedPanels => '패널별로 읽기';
 	@override String get rewind => '되감기';
 	@override String get attachAudio => '오디오 파일 추가';
@@ -170,6 +162,14 @@ class _Translations$viewing$ko extends Translations$viewing$en {
 	@override String get clearAudio => '추가한 오디오 제거';
 	@override String keepFrom({required Object time}) => '${time}부터 저장';
 	@override String get recordNow => '지금부터 녹화';
+	@override String get extendRecording => '30분 더 녹화';
+	@override String recordsUntil({required Object time}) => '${time} 까지 녹화';
+	@override String get extendFailed => '녹화를 연장할 수 없습니다';
+	@override String get originalDialogue => '원어 음성 우선';
+	@override String get soloPage => '이 페이지만 따로 표시';
+	@override String get pairPage => '이 페이지를 다시 묶기';
+	@override String get listenPhone => '이 휴대전화로 듣기';
+	@override String get audioUnavailable => '이 휴대전화에서 현재 파일 또는 오디오 트랙을 사용할 수 없습니다.';
 }
 
 // Path: livingRoom
@@ -5633,14 +5633,6 @@ extension on TranslationsKo {
 			'mediaConveniences.missingEpisode' => '누락된 에피소드',
 			'mediaConveniences.stereoChannel' => '양쪽 스피커로 재생할 채널',
 			'mediaConveniences.hdrBrightness' => 'HDR 자막 밝기',
-			'viewing.extendRecording' => '30분 더 녹화',
-			'viewing.recordsUntil' => ({required Object time}) => '${time} 까지 녹화',
-			'viewing.extendFailed' => '녹화를 연장할 수 없습니다',
-			'viewing.originalDialogue' => '원어 음성 우선',
-			'viewing.soloPage' => '이 페이지만 따로 표시',
-			'viewing.pairPage' => '이 페이지를 다시 묶기',
-			'viewing.listenPhone' => '이 휴대전화로 듣기',
-			'viewing.audioUnavailable' => '이 휴대전화에서 현재 파일 또는 오디오 트랙을 사용할 수 없습니다.',
 			'viewing.guidedPanels' => '패널별로 읽기',
 			'viewing.rewind' => '되감기',
 			'viewing.attachAudio' => '오디오 파일 추가',
@@ -5656,6 +5648,14 @@ extension on TranslationsKo {
 			'viewing.clearAudio' => '추가한 오디오 제거',
 			'viewing.keepFrom' => ({required Object time}) => '${time}부터 저장',
 			'viewing.recordNow' => '지금부터 녹화',
+			'viewing.extendRecording' => '30분 더 녹화',
+			'viewing.recordsUntil' => ({required Object time}) => '${time} 까지 녹화',
+			'viewing.extendFailed' => '녹화를 연장할 수 없습니다',
+			'viewing.originalDialogue' => '원어 음성 우선',
+			'viewing.soloPage' => '이 페이지만 따로 표시',
+			'viewing.pairPage' => '이 페이지를 다시 묶기',
+			'viewing.listenPhone' => '이 휴대전화로 듣기',
+			'viewing.audioUnavailable' => '이 휴대전화에서 현재 파일 또는 오디오 트랙을 사용할 수 없습니다.',
 			'livingRoom.fitScreen' => '내 화면에 맞추기',
 			'livingRoom.fitHelp' => '가장자리를 선택한 뒤 표시가 보일 때까지 방향키로 옮기세요. 나머지 가장자리도 같은 방법으로 조정하세요.',
 			'livingRoom.left' => '왼쪽',

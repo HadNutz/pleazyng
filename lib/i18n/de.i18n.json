@@ -8,14 +8,6 @@
     "hdrBrightness": "Helligkeit der HDR-Untertitel"
   },
   "viewing": {
-    "extendRecording": "30 Minuten länger aufnehmen",
-    "recordsUntil": "Aufnahme bis ${time}",
-    "extendFailed": "Aufnahme konnte nicht verlängert werden",
-    "originalDialogue": "Originalton bevorzugen",
-    "soloPage": "Diese Seite einzeln anzeigen",
-    "pairPage": "Diese Seite wieder paaren",
-    "listenPhone": "Auf diesem Smartphone hören",
-    "audioUnavailable": "Die Datei oder Tonspur ist auf diesem Smartphone nicht verfügbar.",
     "guidedPanels": "Panelweise lesen",
     "rewind": "Zurückspulen",
     "attachAudio": "Audiodatei hinzufügen",
@@ -30,7 +22,15 @@
     "relinkNone": "Keine passenden Dateien gefunden",
     "clearAudio": "Hinzugefügtes Audio entfernen",
     "keepFrom": "Ab ${time} behalten",
-    "recordNow": "Ab jetzt aufnehmen"
+    "recordNow": "Ab jetzt aufnehmen",
+    "extendRecording": "30 Minuten länger aufnehmen",
+    "recordsUntil": "Aufnahme bis ${time}",
+    "extendFailed": "Aufnahme konnte nicht verlängert werden",
+    "originalDialogue": "Originalton bevorzugen",
+    "soloPage": "Diese Seite einzeln anzeigen",
+    "pairPage": "Diese Seite wieder paaren",
+    "listenPhone": "Auf diesem Smartphone hören",
+    "audioUnavailable": "Die Datei oder Tonspur ist auf diesem Smartphone nicht verfügbar."
   },
   "livingRoom": {
     "fitScreen": "An meinen Bildschirm anpassen",

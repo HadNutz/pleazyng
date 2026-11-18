@@ -147,14 +147,6 @@ class Translations$viewing$zh extends Translations$viewing$en {
 	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
-	@override String get extendRecording => '再录制 30 分钟';
-	@override String recordsUntil({required Object time}) => '录制至 ${time}';
-	@override String get extendFailed => '无法延长录制时间';
-	@override String get originalDialogue => '优先播放原声对白';
-	@override String get soloPage => '单独显示此页';
-	@override String get pairPage => '重新配对此页';
-	@override String get listenPhone => '在此手机上收听';
-	@override String get audioUnavailable => '此手机无法播放当前文件或音轨。';
 	@override String get guidedPanels => '逐格阅读';
 	@override String get rewind => '倒带';
 	@override String get attachAudio => '添加音频文件';
@@ -170,6 +162,14 @@ class Translations$viewing$zh extends Translations$viewing$en {
 	@override String get clearAudio => '移除已添加的音频';
 	@override String keepFrom({required Object time}) => '从 ${time} 开始保留';
 	@override String get recordNow => '从现在开始录制';
+	@override String get extendRecording => '再录制 30 分钟';
+	@override String recordsUntil({required Object time}) => '录制至 ${time}';
+	@override String get extendFailed => '无法延长录制时间';
+	@override String get originalDialogue => '优先播放原声对白';
+	@override String get soloPage => '单独显示此页';
+	@override String get pairPage => '重新配对此页';
+	@override String get listenPhone => '在此手机上收听';
+	@override String get audioUnavailable => '此手机无法播放当前文件或音轨。';
 }
 
 // Path: livingRoom
@@ -5633,14 +5633,6 @@ extension on TranslationsZh {
 			'mediaConveniences.missingEpisode' => '缺少剧集',
 			'mediaConveniences.stereoChannel' => '在两个扬声器上播放的声道',
 			'mediaConveniences.hdrBrightness' => 'HDR 字幕亮度',
-			'viewing.extendRecording' => '再录制 30 分钟',
-			'viewing.recordsUntil' => ({required Object time}) => '录制至 ${time}',
-			'viewing.extendFailed' => '无法延长录制时间',
-			'viewing.originalDialogue' => '优先播放原声对白',
-			'viewing.soloPage' => '单独显示此页',
-			'viewing.pairPage' => '重新配对此页',
-			'viewing.listenPhone' => '在此手机上收听',
-			'viewing.audioUnavailable' => '此手机无法播放当前文件或音轨。',
 			'viewing.guidedPanels' => '逐格阅读',
 			'viewing.rewind' => '倒带',
 			'viewing.attachAudio' => '添加音频文件',
@@ -5656,6 +5648,14 @@ extension on TranslationsZh {
 			'viewing.clearAudio' => '移除已添加的音频',
 			'viewing.keepFrom' => ({required Object time}) => '从 ${time} 开始保留',
 			'viewing.recordNow' => '从现在开始录制',
+			'viewing.extendRecording' => '再录制 30 分钟',
+			'viewing.recordsUntil' => ({required Object time}) => '录制至 ${time}',
+			'viewing.extendFailed' => '无法延长录制时间',
+			'viewing.originalDialogue' => '优先播放原声对白',
+			'viewing.soloPage' => '单独显示此页',
+			'viewing.pairPage' => '重新配对此页',
+			'viewing.listenPhone' => '在此手机上收听',
+			'viewing.audioUnavailable' => '此手机无法播放当前文件或音轨。',
 			'livingRoom.fitScreen' => '适配我的屏幕',
 			'livingRoom.fitHelp' => '选择一条边，用方向键移动，直到看到该边的标记。依次调整每条边。',
 			'livingRoom.left' => '左',

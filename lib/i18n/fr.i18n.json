@@ -8,14 +8,6 @@
     "hdrBrightness": "Luminosité des sous-titres HDR"
   },
   "viewing": {
-    "extendRecording": "Enregistrer 30 minutes de plus",
-    "recordsUntil": "Enregistrement jusqu’à ${time}",
-    "extendFailed": "Impossible de prolonger cet enregistrement",
-    "originalDialogue": "Préférer les dialogues originaux",
-    "soloPage": "Afficher cette page seule",
-    "pairPage": "Associer à nouveau cette page",
-    "listenPhone": "Écouter sur ce téléphone",
-    "audioUnavailable": "Le fichier ou la piste audio est indisponible sur ce téléphone.",
     "guidedPanels": "Lecture case par case",
     "rewind": "Rembobiner",
     "attachAudio": "Ajouter un fichier audio",
@@ -30,7 +22,15 @@
     "relinkNone": "Aucun fichier correspondant trouvé",
     "clearAudio": "Retirer l’audio ajouté",
     "keepFrom": "Conserver depuis ${time}",
-    "recordNow": "Enregistrer à partir de maintenant"
+    "recordNow": "Enregistrer à partir de maintenant",
+    "extendRecording": "Enregistrer 30 minutes de plus",
+    "recordsUntil": "Enregistrement jusqu’à ${time}",
+    "extendFailed": "Impossible de prolonger cet enregistrement",
+    "originalDialogue": "Préférer les dialogues originaux",
+    "soloPage": "Afficher cette page seule",
+    "pairPage": "Associer à nouveau cette page",
+    "listenPhone": "Écouter sur ce téléphone",
+    "audioUnavailable": "Le fichier ou la piste audio est indisponible sur ce téléphone."
   },
   "livingRoom": {
     "fitScreen": "Ajuster à mon écran",
