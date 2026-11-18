@@ -3208,6 +3208,7 @@ class ExoPlayerCore(private val activity: Activity) :
       audioTrackConfig: AudioSink.AudioTrackConfig
     ) {
       lastAudioTrackConfig = audioTrackConfig
+      delegate?.onEvent("audio-route-ready", null)
       val audioFormat = selectedAudioFormat()
       persistRuntimePlaybackDiagnostics(audioFormat, audioDecoderInitName ?: "direct")
       emitLog(
@@ -3673,6 +3674,8 @@ class ExoPlayerCore(private val activity: Activity) :
     decoderInitName = null
     audioDecoderInitName = null
     lastAudioTrackConfig = null
+    dualMonoChannel = null
+    applyDualMonoMatrix()
     lastAudioSinkError = null
     audioRecoveryAttempts = 0
     lastAudioRecoveryAction = null
@@ -3897,6 +3900,36 @@ class ExoPlayerCore(private val activity: Activity) :
     // bounce the renderer to re-evaluate. Coefficient-only changes are picked
     // up live by queueInput without a bounce.
     startAudioRendererBounce("audio-downmix")
+  }
+
+  private var dualMonoChannel: Int? = null
+
+  fun dualMonoAvailable(): Boolean {
+    // Disabling the renderer during activation temporarily clears its selected
+    // format. Preserve the requested lane until the new sink reports its route.
+    if (pendingAudioRendererBounce && dualMonoChannel != null) return true
+    val config = lastAudioTrackConfig ?: return false
+    return isInitialized && renderersFactory != null && !currentTunneledPlayback &&
+      !config.tunneling && !config.offload && config.encoding == C.ENCODING_PCM_16BIT &&
+      selectedAudioFormat()?.channelCount == 2
+  }
+
+  fun setDualMonoChannel(channel: Int?): Boolean {
+    if (channel != null && (channel !in 0..1 || !dualMonoAvailable())) return false
+    if (dualMonoChannel == channel) return true
+    val activeChanged = (dualMonoChannel == null) != (channel == null)
+    dualMonoChannel = channel
+    applyDualMonoMatrix()
+    // Media3 latches processor activation on configure. Left/right switches
+    // only change coefficients in an already active processor.
+    if (activeChanged && dualMonoAvailable()) startAudioRendererBounce("dual-mono")
+    return true
+  }
+
+  private fun applyDualMonoMatrix() {
+    renderersFactory?.channelMixProcessor?.putChannelMixingMatrix(
+      ChannelMixingMatrix(2, 2, DownmixMatrices.dualMonoCoefficients(dualMonoChannel))
+    )
   }
 
   private fun applyDownmixMatrices() {

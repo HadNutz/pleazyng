@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "अगला पढ़ें",
+    "showRotation": "बारी-बारी से सीरीज़",
+    "rotationHelp": "सीरीज़ के मेन्यू से उन्हें जोड़ें। हर दौर में हर सीरीज़ का अगला एपिसोड चलेगा।",
+    "missingEpisode": "अनुपलब्ध एपिसोड",
+    "stereoChannel": "दोनों स्पीकर में बजने वाला चैनल",
+    "hdrBrightness": "HDR सबटाइटल की चमक"
+  },
   "viewing": {
     "extendRecording": "30 मिनट और रिकॉर्ड करें",
     "recordsUntil": "${time} तक रिकॉर्डिंग",

@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Növbətini oxu",
+    "showRotation": "Serial növbəsi",
+    "rotationHelp": "Serialları öz menyularından əlavə edin. Hər turda hər serialın növbəti bölümü göstərilir.",
+    "missingEpisode": "Çatışmayan bölüm",
+    "stereoChannel": "Hər iki dinamikdə səslənəcək kanal",
+    "hdrBrightness": "HDR subtitrlərinin parlaqlığı"
+  },
   "viewing": {
     "extendRecording": "Daha 30 dəqiqə yaz",
     "recordsUntil": "Yazı ${time} vaxtına qədər davam edir",

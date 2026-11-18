@@ -589,6 +589,13 @@ class PlayerNative extends PlayerBase
         }
       } else {
         await observeCoreProperties(trackListFormat: _nodeFormat);
+        for (final property in playbackPresentationProperties) {
+          try {
+            await observeProperty(property, 'string');
+          } on PlatformException catch (error) {
+            appLogger.d('Optional playback property unavailable: $property', error: error);
+          }
+        }
         await observeProperty('secondary-sid', 'string');
         await observeProperty('demuxer-cache-state', _nodeFormat);
         await observeProperty('audio-device-list', _nodeFormat);
@@ -683,6 +690,7 @@ class PlayerNative extends PlayerBase
     if (_nativeCoreUnavailable) {
       return null;
     }
+    await setDualMonoChannel(null);
     media.replayGain?.validate();
     final previousIsLivePlayback = _isLivePlayback;
     _isLivePlayback = isLive;
@@ -1084,8 +1092,19 @@ class PlayerNative extends PlayerBase
     }
   }
 
+  static const playbackPresentationProperties = {
+    'current-vo',
+    'video-target-params/gamma',
+    'video-params/gamma',
+    'display-names',
+    'audio-params/channels',
+    'audio-out-params/format',
+    'current-tracks/sub/codec',
+  };
+
   @override
   void handlePropertyChange(String name, dynamic value, {int? sourceId}) {
+    if (playbackPresentationProperties.contains(name) || name == 'aid' || name == 'sid') onPresentationChanged?.call();
     if (name == 'decoder-list') {
       RuntimePlaybackCapabilities.recordMpvDecoders(value);
       return;
@@ -1166,6 +1185,7 @@ class PlayerNative extends PlayerBase
       _handleAudioFileLoaded();
     }
     super.handlePlayerEvent(name, data);
+    if (name == 'file-loaded' || name == 'playback-restart') onPresentationChanged?.call();
   }
 
   /// Gapless auto-advance detection: a `file-loaded` that open() didn't
@@ -1247,7 +1267,9 @@ class PlayerNative extends PlayerBase
     if (_nativeCoreUnavailable) {
       return;
     }
+    await setDualMonoChannel(null);
     await setProperty('aid', track.id);
+    onPresentationChanged?.call();
   }
 
   @override

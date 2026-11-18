@@ -58,11 +58,12 @@ class KomgaSourceAdapter extends SourceAdapter {
       title: title,
       kind: imageBook ? SourceItemKind.comic : SourceItemKind.ebook,
       parentId: parent ?? 'series:${value['seriesId']}',
-      series: '${value['seriesTitle'] ?? ''}',
+      series: '${value['seriesTitle'] ?? value['seriesName'] ?? ''}',
       seriesOrder: (meta['numberSort'] as num?)?.toDouble(),
       description: '${meta['summary'] ?? ''}',
       author: sourceList(meta['authors']).map(sourceMap).map((a) => '${a['name'] ?? ''}').join(', '),
-      identifiers: {'komga': id, 'pages': '$count'},
+      releaseYear: DateTime.tryParse('${meta['releaseDate'] ?? ''}')?.year,
+      identifiers: {'komga': id, 'pages': '$count', if (meta['number'] != null) 'issueNumber': '${meta['number']}'},
       files: [
         PublicationFile(
           id: id,

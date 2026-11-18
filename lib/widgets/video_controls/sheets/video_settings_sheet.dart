@@ -1,6 +1,8 @@
 import 'package:plezy/i18n/presentation_formats.dart';
 
 import 'dart:async';
+import 'playback_presentation_controls.dart';
+import '../../../services/playback_presentation.dart';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -1228,6 +1230,7 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
             onTap: () => _navigateTo(_SettingsView.audioChannelLimit),
           ),
 
+        if (PlaybackPresentation.of(widget.player) != null) PlaybackPresentationControl(player: widget.player),
         if (widget.player.playerType == 'mpv' && widget.player is AudioEqualizerCapable)
           _SettingsMenuItem(
             icon: Symbols.graphic_eq_rounded,

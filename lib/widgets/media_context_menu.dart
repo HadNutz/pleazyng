@@ -5,6 +5,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/watch_state_store.dart';
+import '../screens/show_rotation_screen.dart';
 import '../media/media_backend.dart';
 import '../media/media_item.dart';
 import '../media/media_item_labels.dart';
@@ -700,6 +701,8 @@ class MediaContextMenuState extends State<MediaContextMenu> {
     final itemSeriesKey = mediaKind == MediaKind.episode ? mediaItem.grandparentId : mediaItem.parentId;
 
     return [
+      if (mediaKind == MediaKind.show && mediaItem.serverId != null)
+        _MenuAction(value: 'show_rotation', icon: Symbols.shuffle_rounded, label: t.mediaConveniences.showRotation),
       if (mediaKind.isMusic) ..._musicMenuActions(context, menu, mediaItem),
       for (var index = 0; index < menu.seerrActions.length; index++)
         _MenuAction(
@@ -972,6 +975,10 @@ class MediaContextMenuState extends State<MediaContextMenu> {
   }) async {
     final mediaItem = menu.mediaItem!;
     switch (selected) {
+      case 'show_rotation':
+        outcome.didNavigate = true;
+        await Navigator.push(context, MaterialPageRoute(builder: (_) => ShowRotationScreen(show: mediaItem)));
+        break;
       case 'play_from_beginning':
         outcome.didNavigate = true;
         if (context.mounted) {

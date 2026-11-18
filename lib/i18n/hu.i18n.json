@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Következő olvasása",
+    "showRotation": "Sorozatok felváltva",
+    "rotationHelp": "A sorozatokat a menüjükből adhatod hozzá. Körönként minden sorozat következő epizódja kerül sorra.",
+    "missingEpisode": "Hiányzó epizód",
+    "stereoChannel": "Mindkét hangszórón lejátszott csatorna",
+    "hdrBrightness": "HDR-feliratok fényereje"
+  },
   "viewing": {
     "extendRecording": "Felvétel további 30 percig",
     "recordsUntil": "Felvétel eddig: ${time}",

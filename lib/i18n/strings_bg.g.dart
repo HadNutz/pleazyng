@@ -40,6 +40,7 @@ class TranslationsBg extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsBg $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsBg(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$mediaConveniences$bg mediaConveniences = _Translations$mediaConveniences$bg._(_root);
 	@override late final _Translations$viewing$bg viewing = _Translations$viewing$bg._(_root);
 	@override late final _Translations$livingRoom$bg livingRoom = _Translations$livingRoom$bg._(_root);
 	@override late final _Translations$app$bg app = _Translations$app$bg._(_root);
@@ -122,6 +123,21 @@ class TranslationsBg extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$bg musicExperience = _Translations$musicExperience$bg._(_root);
 	@override late final _Translations$musicTools$bg musicTools = _Translations$musicTools$bg._(_root);
 	@override late final _Translations$musicDevices$bg musicDevices = _Translations$musicDevices$bg._(_root);
+}
+
+// Path: mediaConveniences
+class _Translations$mediaConveniences$bg extends Translations$mediaConveniences$en {
+	_Translations$mediaConveniences$bg._(TranslationsBg root) : this._root = root, super.internal(root);
+
+	final TranslationsBg _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'Прочети следващия';
+	@override String get showRotation => 'Редуване на сериали';
+	@override String get rotationHelp => 'Добавяйте сериали от менютата им. Във всеки кръг се пуска следващият епизод от всеки сериал.';
+	@override String get missingEpisode => 'Липсващ епизод';
+	@override String get stereoChannel => 'Канал за двата високоговорителя';
+	@override String get hdrBrightness => 'Яркост на HDR субтитрите';
 }
 
 // Path: viewing
@@ -5604,6 +5620,12 @@ class _Translations$services$trackerDescriptions$bg extends Translations$service
 extension on TranslationsBg {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'Прочети следващия',
+			'mediaConveniences.showRotation' => 'Редуване на сериали',
+			'mediaConveniences.rotationHelp' => 'Добавяйте сериали от менютата им. Във всеки кръг се пуска следващият епизод от всеки сериал.',
+			'mediaConveniences.missingEpisode' => 'Липсващ епизод',
+			'mediaConveniences.stereoChannel' => 'Канал за двата високоговорителя',
+			'mediaConveniences.hdrBrightness' => 'Яркост на HDR субтитрите',
 			'viewing.extendRecording' => 'Записване още 30 минути',
 			'viewing.recordsUntil' => ({required Object time}) => 'Запис до ${time}',
 			'viewing.extendFailed' => 'Записът не можа да бъде удължен',
@@ -6110,14 +6132,14 @@ extension on TranslationsBg {
 			'settings.audioPassthroughDescription' => 'Изпращай Dolby/DTS звук към приемника или телевизора без прекодиране, за да запазиш съраунд звука. Изключи настройката, ако няма звук.',
 			'settings.audioPassthroughDescriptionApple' => 'Използвай вградения декодер на Apple за Dolby Digital Plus, включително Atmos. DTS и TrueHD продължават да се възпроизвеждат като многоканален PCM. Изключи настройката, ако няма звук.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Използвай вградения декодер на Apple за Dolby Digital Plus, включително Atmos. На iOS, iPadOS и tvOS 26 или по-нова версия TrueHD Atmos и DTS:X се възпроизвеждат като пространствено аудио. Останалите DTS и TrueHD пътечки се възпроизвеждат като многоканален PCM. Изключи настройката, ако няма звук.',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Изключено, докато е включено нормализирането на силата на звука',
 			'settings.audioChannelLimit' => 'Аудио канали',
 			'settings.audioChannelLimitDescription' => 'Смесва декодираното аудио до по-малко канали за тонколони, слушалки или HDMI системи, които не могат да възпроизвеждат всички канали',
 			'settings.audioChannelLimitOriginal' => 'Оригинални',
 			'settings.audioChannelLimitOriginalDescription' => 'Възпроизвежда всички канали от пътечката',
 			'settings.audioChannelLimitSurround51' => 'До 5.1',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Смесва 7.1 до 5.1 за телевизори и приемници, които приемат само 5.1 PCM. Директното предаване не се засяга.',
 			'settings.audioChannelLimitStereo' => 'Стерео',
 			'settings.audioChannelLimitStereoDescription' => 'Смесва до два канала за стерео тонколони или слушалки. Изключва директното предаване.',
@@ -6624,14 +6646,14 @@ extension on TranslationsBg {
 			'videoControls.sleepTimerDurationHeader' => 'Таймер',
 			'videoControls.playbackWillPauseAtEnd' => 'Възпроизвеждането ще спре в края на това видео',
 			'videoControls.stillWatching' => 'Още ли гледате?',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Пауза след ${seconds} сек.',
 			'videoControls.continueWatching' => 'Продължи',
 			'videoControls.autoPlayNext' => 'Автоматично пусни следващото',
 			'videoControls.playNext' => 'Пусни следващото',
 			'videoControls.playButton' => 'Пусни',
 			'videoControls.pauseButton' => 'Пауза',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'На пауза',
 			'videoControls.playbackResumed' => 'Възпроизвежда се',
 			'videoControls.loadingVideo' => 'Зареждане на видеото',
@@ -7138,14 +7160,14 @@ extension on TranslationsBg {
 			'libraries.playRandomMovie' => 'Играй случайно филм',
 			'libraries.randomPickFailed' => 'Не може да избереш случайно филм от тази библиотека.',
 			'libraries.title' => 'Библиотеки',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Библиотека',
 			'libraries.scanLibraryFiles' => 'Сканирай файловете на библиотеката',
 			'libraries.scanLibrary' => 'Сканирай библиотеката',
 			'libraries.analyze' => 'Анализирай',
 			'libraries.analyzeLibrary' => 'Анализирай библиотеката',
 			'libraries.refreshMetadata' => 'Опресни метаданни',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Изпразни кошчето',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Изпразване на кошчето за "${title}"...',
 			'libraries.trashEmptied' => ({required Object title}) => 'Кошчето е изпразнено за "${title}"',
@@ -7652,14 +7674,14 @@ extension on TranslationsBg {
 			'music.instantMix' => 'Мигновен микс',
 			'music.playNext' => 'Пусни следващото',
 			'music.addToQueue' => 'Добави към опашката',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Диск ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bg'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} песен', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} песни', ), 
 			'music.nowPlaying' => 'Сега се възпроизвежда',
 			'music.playingFrom' => ({required Object title}) => 'Възпроизвеждане от ${title}',
 			'music.queue' => 'Опашка',
 			'music.clearQueue' => 'Изчисти опашката',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => 'Текст на песента',
 			'music.visualizer' => 'Визуализатор',
 			'music.visualizerProfileLoading' => 'Прочетете проучване на трафика...',
@@ -8166,14 +8188,14 @@ extension on TranslationsBg {
 			'performanceOverlay.memory' => 'Памет',
 			'performanceOverlay.uiFps' => 'FPS на интерфейса',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Софтуерен',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Хардуерен',
 			'performanceOverlay.tunnelingActive' => 'Активно',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (неуспешни: ${failures})',
@@ -8680,14 +8702,14 @@ extension on TranslationsBg {
 			'homeLayout.noCustomRows' => 'Няма още корекции',
 			'homeLayout.addRowHint' => 'Използвайте Добавяне на домашна линия, за да създадете една.',
 			'homeLayout.addHomeRow' => 'Добавяне на домашна линия',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Изберете категория; новата линия се добавя към Организатор автоматично',
 			'homeLayout.removeRow' => 'Изтриване на ред',
 			'homeLayout.recentlyAdded' => 'Наскоро добавени',
 			'homeLayout.recentlyReleased' => 'Неотдавна освободени',
 			'homeLayout.movieCollections' => 'Филмови колекции',
 			'homeLayout.showCollections' => 'Покажи колекции',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Роу заглавие',
 			'homeLayout.content' => 'Съдържание',
 			'homeLayout.showThisRowIn' => 'Показвайте тази линия в:',
@@ -9194,14 +9216,14 @@ extension on TranslationsBg {
 			'sourceSetup.dlnaHelp' => 'Откриването зависи от multicast в локалната мрежа. Ако не се появи сървър, въведете по-горе URL адреса на описанието на устройството му.',
 			'sourceSetup.dlnaRoot' => 'ID на DLNA обект; оставете празно, за да използвате корена на устройството.',
 			'sourceSetup.passwordOrKey' => 'Въведете парола или добавете частен ключ по-долу.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SHA256 отпечатък на SSH ключа на хоста',
 			'sourceSetup.sshFingerprintHelp' => 'Проверете го с администратора на сървъра. На сървъра изпълнете ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub и използвайте стойността SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Оставете празно, за да запазите фиксирания отпечатък, или въведете нов отпечатък на сървъра.',
 			'sourceSetup.sshAuthentication' => 'SSH удостоверяване с публичен ключ',
 			'sourceSetup.sshAuthenticationHelp' => 'Незадължително; поддържа се и удостоверяване с парола.',
 			'sourceSetup.privateKey' => 'Частен ключ (формат PEM или OpenSSH)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Паролна фраза на частния ключ',
 			'sourceSetup.nfsMountPort' => 'TCP порт на услугата за монтиране на NFS',
 			'sourceSetup.nfsMountPortHelp' => 'По подразбиране: 20048',
@@ -9708,14 +9730,14 @@ extension on TranslationsBg {
 			'musicTools.pinToHome' => 'Закачи в началната страница за музика',
 			'musicTools.unpin' => 'Откачи',
 			'musicTools.serverAnalysis' => 'Анализ на сървъра',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Звуков анализ',
 			'musicTools.serverAnalysisScope' => 'Всички подходящи музикални библиотеки на този сървър. Настройките им за анализ не се променят.',
 			'musicTools.serverActivities' => 'Дейности на сървъра',
 			'musicTools.playlistSharing' => 'Достъп до плейлист',
 			'musicTools.playlistRecipient' => 'Plex потребителско име или имейл',
 			'musicTools.playlistSharingHint' => 'Дайте достъп до този плейлист и песните му. Получателят може да трябва да приеме покана.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Неуспешна заявка за достъп до плейлиста.',
 			'musicTools.playlistSharingAccepted' => 'Plex прие заявката за достъп.',
 			'musicTools.playlistAccessList' => 'Текущ достъп',

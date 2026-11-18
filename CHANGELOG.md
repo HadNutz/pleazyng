@@ -3,6 +3,10 @@
 ## [Unreleased]
 
 - Prefer compatible hardware video decoders on every platform. ExoPlayer and GStreamer keep software fallback available, and playback statistics report the decoder observed for the stream.
+- HDR subtitle brightness draws on the OLED viewing problem addressed by [barnebyte’s PlexOledSubtitles](https://github.com/barnebyte/PlexOledSubtitles). Pleazyng adjusts playback rendering and keeps the subtitle file intact.
+- Series rotation draws on [raykwonx’s next-unwatched shuffle request](https://forums.plex.tv/t/shuffle-play-my-shows-but-only-play-the-next-unwatched-episode-of-that-show/936507).
+- Stereo channel selection addresses the [bilingual soundtrack use case reported by Plex viewers](https://www.reddit.com/r/PleX/comments/oqu872/).
+- Cross-library reading lists draw on [Kavita’s CBL importer](https://wiki.kavitareader.com/guides/features/cbl-import/) and the [Komga reading-order discussion](https://github.com/gotson/komga/issues/1803).
 
 - Choose a video engine in Playback settings. Android offers mpv, Media3 ExoPlayer and Android MediaPlayer. Apple platforms offer AVPlayer, Windows offers Media Foundation, and Linux offers GStreamer alongside mpv.
 - Add mpv to the LG and Samsung TV builds. LG mpv can feed the TV video plane directly. TV mpv can also try V4L2 hardware decoding. Samsung original-quality sources can reach the native decoder at UHD resolution. See [video engines and device qualification](docs/plezyng/video-engines.md).

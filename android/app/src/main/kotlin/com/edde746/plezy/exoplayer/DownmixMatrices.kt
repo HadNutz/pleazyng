@@ -14,6 +14,12 @@ import kotlin.math.pow
  * All coefficients must stay >= 0: ChannelMixingMatrix throws on negatives.
  */
 object DownmixMatrices {
+  fun dualMonoCoefficients(channel: Int?): FloatArray = when (channel) {
+    0 -> floatArrayOf(1f, 1f, 0f, 0f)
+    1 -> floatArrayOf(0f, 0f, 1f, 1f)
+    else -> identityCoefficients(2)
+  }
+
   const val MIN_DOWNMIX_INPUT_CHANNELS = 3
   const val MAX_DOWNMIX_INPUT_CHANNELS = 8
   const val MAX_CENTER_BOOST_DB = 12

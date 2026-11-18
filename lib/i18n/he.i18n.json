@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "קריאת הגיליון הבא",
+    "showRotation": "סבב סדרות",
+    "rotationHelp": "אפשר להוסיף סדרות דרך התפריט שלהן. בכל סבב יופעל הפרק הבא של כל סדרה.",
+    "missingEpisode": "פרק חסר",
+    "stereoChannel": "ערוץ להשמעה בשני הרמקולים",
+    "hdrBrightness": "בהירות כתוביות HDR"
+  },
   "viewing": {
     "extendRecording": "הקלטה לעוד 30 דקות",
     "recordsUntil": "הקלטה עד ${time}",

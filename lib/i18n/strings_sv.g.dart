@@ -40,6 +40,7 @@ class TranslationsSv extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsSv $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsSv(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$mediaConveniences$sv mediaConveniences = _Translations$mediaConveniences$sv._(_root);
 	@override late final _Translations$viewing$sv viewing = _Translations$viewing$sv._(_root);
 	@override late final _Translations$livingRoom$sv livingRoom = _Translations$livingRoom$sv._(_root);
 	@override late final _Translations$app$sv app = _Translations$app$sv._(_root);
@@ -122,6 +123,21 @@ class TranslationsSv extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$sv musicExperience = _Translations$musicExperience$sv._(_root);
 	@override late final _Translations$musicTools$sv musicTools = _Translations$musicTools$sv._(_root);
 	@override late final _Translations$musicDevices$sv musicDevices = _Translations$musicDevices$sv._(_root);
+}
+
+// Path: mediaConveniences
+class _Translations$mediaConveniences$sv extends Translations$mediaConveniences$en {
+	_Translations$mediaConveniences$sv._(TranslationsSv root) : this._root = root, super.internal(root);
+
+	final TranslationsSv _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'Läs nästa';
+	@override String get showRotation => 'Växla mellan serier';
+	@override String get rotationHelp => 'Lägg till serier via deras menyer. Nästa avsnitt från varje serie spelas en gång per omgång.';
+	@override String get missingEpisode => 'Avsnitt saknas';
+	@override String get stereoChannel => 'Kanal för båda högtalarna';
+	@override String get hdrBrightness => 'Ljusstyrka för HDR-undertexter';
 }
 
 // Path: viewing
@@ -5604,6 +5620,12 @@ class _Translations$services$trackerDescriptions$sv extends Translations$service
 extension on TranslationsSv {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'Läs nästa',
+			'mediaConveniences.showRotation' => 'Växla mellan serier',
+			'mediaConveniences.rotationHelp' => 'Lägg till serier via deras menyer. Nästa avsnitt från varje serie spelas en gång per omgång.',
+			'mediaConveniences.missingEpisode' => 'Avsnitt saknas',
+			'mediaConveniences.stereoChannel' => 'Kanal för båda högtalarna',
+			'mediaConveniences.hdrBrightness' => 'Ljusstyrka för HDR-undertexter',
 			'viewing.extendRecording' => 'Spela in 30 minuter till',
 			'viewing.recordsUntil' => ({required Object time}) => 'Inspelning till ${time}',
 			'viewing.extendFailed' => 'Det gick inte att förlänga inspelningen',
@@ -6110,14 +6132,14 @@ extension on TranslationsSv {
 			'settings.audioPassthroughDescription' => 'Skicka Dolby-/DTS-ljud till receivern eller TV:n utan omkodning så att surroundljudet bevaras. Stäng av om inget ljud hörs.',
 			'settings.audioPassthroughDescriptionApple' => 'Använd Apples inbyggda Dolby-avkodare för Dolby Digital Plus, inklusive Atmos. DTS och TrueHD spelas fortfarande upp som flerkanaligt PCM-ljud. Stäng av om inget ljud hörs.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Använd Apples inbyggda Dolby-avkodare för Dolby Digital Plus, inklusive Atmos. På iOS, iPadOS och tvOS 26 eller senare spelas TrueHD Atmos och DTS:X upp som rumsligt ljud. Övriga DTS- och TrueHD-spår spelas upp som flerkanaligt PCM-ljud. Stäng av om inget ljud hörs.',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Av medan ljudstyrkenormalisering är på',
 			'settings.audioChannelLimit' => 'Ljudkanaler',
 			'settings.audioChannelLimitDescription' => 'Mixa ned avkodat ljud för högtalare, hörlurar eller HDMI-uppsättningar som inte kan spela upp alla kanaler',
 			'settings.audioChannelLimitOriginal' => 'Original',
 			'settings.audioChannelLimitOriginalDescription' => 'Spela upp alla kanaler i spåret',
 			'settings.audioChannelLimitSurround51' => 'Upp till 5.1',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Mixa ned 7.1 till 5.1 för TV-apparater och receivrar som bara tar emot 5.1 PCM. Genomströmning påverkas inte.',
 			'settings.audioChannelLimitStereo' => 'Stereo',
 			'settings.audioChannelLimitStereoDescription' => 'Mixa ned till två kanaler för stereohögtalare eller hörlurar. Stänger av genomströmning.',
@@ -6624,14 +6646,14 @@ extension on TranslationsSv {
 			'videoControls.sleepTimerDurationHeader' => 'Timer',
 			'videoControls.playbackWillPauseAtEnd' => 'Uppspelningen pausas i slutet av denna video',
 			'videoControls.stillWatching' => 'Tittar du fortfarande?',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pausar om ${seconds}s',
 			'videoControls.continueWatching' => 'Fortsätt',
 			'videoControls.autoPlayNext' => 'Spela nästa automatiskt',
 			'videoControls.playNext' => 'Spela nästa',
 			'videoControls.playButton' => 'Spela',
 			'videoControls.pauseButton' => 'Pausa',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'Pausad',
 			'videoControls.playbackResumed' => 'Spelar',
 			'videoControls.loadingVideo' => 'Laddar video',
@@ -7138,14 +7160,14 @@ extension on TranslationsSv {
 			'libraries.playRandomMovie' => 'Spela en slumpmässig film',
 			'libraries.randomPickFailed' => 'Jag kan inte välja en slumpmässig film från denna bibliotek.',
 			'libraries.title' => 'Bibliotek',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Bibliotek',
 			'libraries.scanLibraryFiles' => 'Skanna biblioteksfiler',
 			'libraries.scanLibrary' => 'Skanna bibliotek',
 			'libraries.analyze' => 'Analysera',
 			'libraries.analyzeLibrary' => 'Analysera bibliotek',
 			'libraries.refreshMetadata' => 'Uppdatera metadata',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Töm papperskorg',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Tömmer papperskorgen för "${title}"...',
 			'libraries.trashEmptied' => ({required Object title}) => 'Papperskorgen har tömts för "${title}"',
@@ -7652,14 +7674,14 @@ extension on TranslationsSv {
 			'music.instantMix' => 'Snabbmix',
 			'music.playNext' => 'Spela härnäst',
 			'music.addToQueue' => 'Lägg till i kö',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Skiva ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sv'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} låt', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} låtar', ), 
 			'music.nowPlaying' => 'Spelas nu',
 			'music.playingFrom' => ({required Object title}) => 'Spelar från ${title}',
 			'music.queue' => 'Kö',
 			'music.clearQueue' => 'Rensa kön',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => 'Låttext',
 			'music.visualizer' => 'Visualisera',
 			'music.visualizerProfileLoading' => 'Läs track analys...',
@@ -8166,14 +8188,14 @@ extension on TranslationsSv {
 			'performanceOverlay.memory' => 'Minne',
 			'performanceOverlay.uiFps' => 'UI FPS',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Programvara',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Maskinvara',
 			'performanceOverlay.tunnelingActive' => 'Aktiv',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} misslyckades)',
@@ -8680,14 +8702,14 @@ extension on TranslationsSv {
 			'homeLayout.noCustomRows' => 'Inga vanliga rader än',
 			'homeLayout.addRowHint' => 'Använd Lägg till hem rad för att skapa en.',
 			'homeLayout.addHomeRow' => 'Lägg till Home Rue',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Välj en kategori; den nya raden läggs till i Organiseraren automatiskt',
 			'homeLayout.removeRow' => 'Ta bort rad',
 			'homeLayout.recentlyAdded' => 'Nyligen tillagda',
 			'homeLayout.recentlyReleased' => 'Nyligen släppt',
 			'homeLayout.movieCollections' => 'Filmsamlingar',
 			'homeLayout.showCollections' => 'Visa samlingar',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Rö titel',
 			'homeLayout.content' => 'innehåll',
 			'homeLayout.showThisRowIn' => 'Visa denna rad i:',
@@ -9194,14 +9216,14 @@ extension on TranslationsSv {
 			'sourceSetup.dlnaHelp' => 'Sökningen kräver multicast i det lokala nätverket. Om ingen server visas anger du URL:en till dess enhetsbeskrivning ovan.',
 			'sourceSetup.dlnaRoot' => 'DLNA-objekt-ID; lämna tomt för att använda enhetens rot.',
 			'sourceSetup.passwordOrKey' => 'Ange ett lösenord eller lägg till en privat nyckel nedan.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SHA256-fingeravtryck för SSH-värdnyckeln',
 			'sourceSetup.sshFingerprintHelp' => 'Kontrollera det med serveradministratören. Kör ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub på servern och använd dess SHA256-värde.',
 			'sourceSetup.sshFingerprintKeep' => 'Lämna tomt för att behålla det låsta fingeravtrycket eller ange ett nytt serverfingeravtryck.',
 			'sourceSetup.sshAuthentication' => 'SSH-autentisering med offentlig nyckel',
 			'sourceSetup.sshAuthenticationHelp' => 'Valfritt; autentisering med lösenord stöds också.',
 			'sourceSetup.privateKey' => 'Privat nyckel (PEM- eller OpenSSH-format)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Lösenfras för den privata nyckeln',
 			'sourceSetup.nfsMountPort' => 'TCP-port för NFS-monteringstjänsten',
 			'sourceSetup.nfsMountPortHelp' => 'Standard: 20048',
@@ -9708,14 +9730,14 @@ extension on TranslationsSv {
 			'musicTools.pinToHome' => 'Fäst på musikstartsidan',
 			'musicTools.unpin' => 'Lossa',
 			'musicTools.serverAnalysis' => 'Serveranalys',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Ljudanalys',
 			'musicTools.serverAnalysisScope' => 'Alla kvalificerade musikbibliotek på den här servern. Deras analysinställningar ändras inte.',
 			'musicTools.serverActivities' => 'Serveraktiviteter',
 			'musicTools.playlistSharing' => 'Åtkomst till spellista',
 			'musicTools.playlistRecipient' => 'Plex-användarnamn eller e-post',
 			'musicTools.playlistSharingHint' => 'Ge åtkomst till den här spellistan och dess spår. Mottagaren kan behöva godkänna en inbjudan.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Kunde inte begära åtkomst till spellistan.',
 			'musicTools.playlistSharingAccepted' => 'Plex tog emot åtkomstbegäran.',
 			'musicTools.playlistAccessList' => 'Nuvarande åtkomst',

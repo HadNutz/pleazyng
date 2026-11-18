@@ -40,6 +40,7 @@ class TranslationsZh extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsZh $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsZh(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final Translations$mediaConveniences$zh mediaConveniences = Translations$mediaConveniences$zh.internal(_root);
 	@override late final Translations$viewing$zh viewing = Translations$viewing$zh.internal(_root);
 	@override late final Translations$livingRoom$zh livingRoom = Translations$livingRoom$zh.internal(_root);
 	@override late final Translations$app$zh app = Translations$app$zh.internal(_root);
@@ -122,6 +123,21 @@ class TranslationsZh extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$zh musicExperience = Translations$musicExperience$zh.internal(_root);
 	@override late final Translations$musicTools$zh musicTools = Translations$musicTools$zh.internal(_root);
 	@override late final Translations$musicDevices$zh musicDevices = Translations$musicDevices$zh.internal(_root);
+}
+
+// Path: mediaConveniences
+class Translations$mediaConveniences$zh extends Translations$mediaConveniences$en {
+	Translations$mediaConveniences$zh.internal(TranslationsZh root) : this._root = root, super.internal(root);
+
+	final TranslationsZh _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => '阅读下一本';
+	@override String get showRotation => '剧集轮播';
+	@override String get rotationHelp => '从各部剧集的菜单中添加。每轮依次播放每部剧的下一集。';
+	@override String get missingEpisode => '缺少剧集';
+	@override String get stereoChannel => '在两个扬声器上播放的声道';
+	@override String get hdrBrightness => 'HDR 字幕亮度';
 }
 
 // Path: viewing
@@ -5599,6 +5615,12 @@ class Translations$services$trackerDescriptions$zh extends Translations$services
 extension on TranslationsZh {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => '阅读下一本',
+			'mediaConveniences.showRotation' => '剧集轮播',
+			'mediaConveniences.rotationHelp' => '从各部剧集的菜单中添加。每轮依次播放每部剧的下一集。',
+			'mediaConveniences.missingEpisode' => '缺少剧集',
+			'mediaConveniences.stereoChannel' => '在两个扬声器上播放的声道',
+			'mediaConveniences.hdrBrightness' => 'HDR 字幕亮度',
 			'viewing.extendRecording' => '再录制 30 分钟',
 			'viewing.recordsUntil' => ({required Object time}) => '录制至 ${time}',
 			'viewing.extendFailed' => '无法延长录制时间',
@@ -6105,14 +6127,14 @@ extension on TranslationsZh {
 			'settings.audioPassthroughDescription' => '将 Dolby/DTS 音频不经重新编码直接发送到功放或电视，保留环绕声。如果没有声音，请关闭。',
 			'settings.audioPassthroughDescriptionApple' => '对 Dolby Digital Plus（含 Atmos）使用 Apple 原生 Dolby 解码器。DTS 和 TrueHD 仍以多声道 PCM 播放。如果没有声音，请关闭。',
 			'settings.audioPassthroughDescriptionAppleSpatial' => '对 Dolby Digital Plus（含 Atmos）使用 Apple 原生 Dolby 解码器。在 iOS、iPadOS 和 tvOS 26 或更高版本上，TrueHD Atmos 和 DTS:X 以空间音频播放。其他 DTS 和 TrueHD 音轨以多声道 PCM 播放。如果没有声音，请关闭。',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => '响度标准化开启时停用',
 			'settings.audioChannelLimit' => '音频声道',
 			'settings.audioChannelLimitDescription' => '为无法播放所有声道的扬声器、耳机或 HDMI 设备下混解码后的音频',
 			'settings.audioChannelLimitOriginal' => '原始',
 			'settings.audioChannelLimitOriginalDescription' => '播放音轨中的所有声道',
 			'settings.audioChannelLimitSurround51' => '最多 5.1',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => '为仅支持 5.1 PCM 的电视和功放将 7.1 下混为 5.1。不影响直通。',
 			'settings.audioChannelLimitStereo' => '立体声',
 			'settings.audioChannelLimitStereoDescription' => '下混为双声道，适用于立体声扬声器或耳机。将关闭直通。',
@@ -6619,14 +6641,14 @@ extension on TranslationsZh {
 			'videoControls.sleepTimerDurationHeader' => '定时器',
 			'videoControls.playbackWillPauseAtEnd' => '播放将在此视频结束时暂停',
 			'videoControls.stillWatching' => '还在看吗？',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds} 秒后暂停',
 			'videoControls.continueWatching' => '继续',
 			'videoControls.autoPlayNext' => '自动播放下一集',
 			'videoControls.playNext' => '播放下一集',
 			'videoControls.playButton' => '播放',
 			'videoControls.pauseButton' => '暂停',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => '已暂停',
 			'videoControls.playbackResumed' => '正在播放',
 			'videoControls.loadingVideo' => '正在加载视频',
@@ -7133,14 +7155,14 @@ extension on TranslationsZh {
 			'libraries.playRandomMovie' => '随机电影播放',
 			'libraries.randomPickFailed' => '不能从这本图书馆选择随机电影。',
 			'libraries.title' => '媒体库',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => '媒体库',
 			'libraries.scanLibraryFiles' => '扫描媒体库文件',
 			'libraries.scanLibrary' => '扫描媒体库',
 			'libraries.analyze' => '分析',
 			'libraries.analyzeLibrary' => '分析媒体库',
 			'libraries.refreshMetadata' => '刷新元数据',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => '清空回收站',
 			'libraries.emptyingTrash' => ({required Object title}) => '正在清空“${title}”的回收站…',
 			'libraries.trashEmptied' => ({required Object title}) => '已清空“${title}”的回收站',
@@ -7647,14 +7669,14 @@ extension on TranslationsZh {
 			'music.instantMix' => '即时混合播放',
 			'music.playNext' => '下一首播放',
 			'music.addToQueue' => '添加到队列',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => '碟片 ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} 路径', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} 首', ), 
 			'music.nowPlaying' => '正在播放',
 			'music.playingFrom' => ({required Object title}) => '播放来源：${title}',
 			'music.queue' => '播放队列',
 			'music.clearQueue' => '清空队列',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => '歌词',
 			'music.visualizer' => '视觉化',
 			'music.visualizerProfileLoading' => '阅读路径分析',
@@ -8161,14 +8183,14 @@ extension on TranslationsZh {
 			'performanceOverlay.memory' => '内存',
 			'performanceOverlay.uiFps' => 'UI FPS',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android 硬件',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA 硬件',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm 硬件',
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek 硬件',
 			'performanceOverlay.decoderExynosHw' => 'Exynos 硬件',
 			'performanceOverlay.decoderSoftware' => '软件',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => '硬件',
 			'performanceOverlay.tunnelingActive' => '已启用',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted}（${failures} 个失败）',
@@ -8675,14 +8697,14 @@ extension on TranslationsZh {
 			'homeLayout.noCustomRows' => '尚未有定位',
 			'homeLayout.addRowHint' => '使用添加主行创建一个。',
 			'homeLayout.addHomeRow' => '添加 Home Rue',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => '选择类别;新行将自动添加到组织者',
 			'homeLayout.removeRow' => '取消行列',
 			'homeLayout.recentlyAdded' => '最近添加',
 			'homeLayout.recentlyReleased' => '最近发布',
 			'homeLayout.movieCollections' => '电影收藏',
 			'homeLayout.showCollections' => '展示集合',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => '路 标题',
 			'homeLayout.content' => '内容',
 			'homeLayout.showThisRowIn' => '显示此行在:',
@@ -9189,14 +9211,14 @@ extension on TranslationsZh {
 			'sourceSetup.dlnaHelp' => '设备发现需要本地网络支持组播。如果没有找到服务器，请在上方输入设备描述文件的地址。',
 			'sourceSetup.dlnaRoot' => 'DLNA 对象 ID；留空以使用设备根目录。',
 			'sourceSetup.passwordOrKey' => '请输入密码，或在下方添加私钥。',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SSH 主机密钥 SHA256 指纹',
 			'sourceSetup.sshFingerprintHelp' => '请向服务器管理员核实。在服务器上运行 ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub，并使用显示的 SHA256 值。',
 			'sourceSetup.sshFingerprintKeep' => '留空以保留当前固定的指纹，或输入新的服务器指纹。',
 			'sourceSetup.sshAuthentication' => 'SSH 公钥认证',
 			'sourceSetup.sshAuthenticationHelp' => '可选；也支持密码认证。',
 			'sourceSetup.privateKey' => '私钥（PEM 或 OpenSSH 格式）',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => '私钥口令',
 			'sourceSetup.nfsMountPort' => 'NFS 挂载服务 TCP 端口',
 			'sourceSetup.nfsMountPortHelp' => '默认值：20048',
@@ -9703,14 +9725,14 @@ extension on TranslationsZh {
 			'musicTools.pinToHome' => '置顶到音乐主页',
 			'musicTools.unpin' => '取消置顶',
 			'musicTools.serverAnalysis' => '服务器分析',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => '音频特征分析',
 			'musicTools.serverAnalysisScope' => '此服务器上所有符合条件的音乐资料库。不会更改其分析设置。',
 			'musicTools.serverActivities' => '服务器任务',
 			'musicTools.playlistSharing' => '播放列表访问权限',
 			'musicTools.playlistRecipient' => 'Plex 用户名或电子邮件',
 			'musicTools.playlistSharingHint' => '授予对此播放列表及其曲目的访问权限。接收者可能需要接受邀请。',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => '无法请求播放列表访问权限。',
 			'musicTools.playlistSharingAccepted' => 'Plex 已接受访问请求。',
 			'musicTools.playlistAccessList' => '当前访问权限',

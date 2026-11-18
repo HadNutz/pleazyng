@@ -40,6 +40,7 @@ class TranslationsDe extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsDe $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsDe(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$mediaConveniences$de mediaConveniences = _Translations$mediaConveniences$de._(_root);
 	@override late final _Translations$viewing$de viewing = _Translations$viewing$de._(_root);
 	@override late final _Translations$livingRoom$de livingRoom = _Translations$livingRoom$de._(_root);
 	@override late final _Translations$app$de app = _Translations$app$de._(_root);
@@ -122,6 +123,21 @@ class TranslationsDe extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$de musicExperience = _Translations$musicExperience$de._(_root);
 	@override late final _Translations$musicTools$de musicTools = _Translations$musicTools$de._(_root);
 	@override late final _Translations$musicDevices$de musicDevices = _Translations$musicDevices$de._(_root);
+}
+
+// Path: mediaConveniences
+class _Translations$mediaConveniences$de extends Translations$mediaConveniences$en {
+	_Translations$mediaConveniences$de._(TranslationsDe root) : this._root = root, super.internal(root);
+
+	final TranslationsDe _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'Als Nächstes lesen';
+	@override String get showRotation => 'Serien im Wechsel';
+	@override String get rotationHelp => 'Füge Serien über ihr Menü hinzu. Pro Runde läuft die nächste Folge jeder Serie.';
+	@override String get missingEpisode => 'Fehlende Folge';
+	@override String get stereoChannel => 'Kanal für beide Lautsprecher';
+	@override String get hdrBrightness => 'Helligkeit der HDR-Untertitel';
 }
 
 // Path: viewing
@@ -5604,6 +5620,12 @@ class _Translations$services$trackerDescriptions$de extends Translations$service
 extension on TranslationsDe {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'Als Nächstes lesen',
+			'mediaConveniences.showRotation' => 'Serien im Wechsel',
+			'mediaConveniences.rotationHelp' => 'Füge Serien über ihr Menü hinzu. Pro Runde läuft die nächste Folge jeder Serie.',
+			'mediaConveniences.missingEpisode' => 'Fehlende Folge',
+			'mediaConveniences.stereoChannel' => 'Kanal für beide Lautsprecher',
+			'mediaConveniences.hdrBrightness' => 'Helligkeit der HDR-Untertitel',
 			'viewing.extendRecording' => '30 Minuten länger aufnehmen',
 			'viewing.recordsUntil' => ({required Object time}) => 'Aufnahme bis ${time}',
 			'viewing.extendFailed' => 'Aufnahme konnte nicht verlängert werden',
@@ -6110,14 +6132,14 @@ extension on TranslationsDe {
 			'settings.audioPassthroughDescription' => 'Dolby/DTS-Audio ohne Neukodierung an deinen Receiver oder Fernseher senden und Surround-Sound erhalten. Deaktivieren, wenn kein Ton zu hören ist.',
 			'settings.audioPassthroughDescriptionApple' => 'Apples nativen Dolby-Decoder für Dolby Digital Plus einschließlich Atmos verwenden. DTS und TrueHD werden weiterhin als Mehrkanal-PCM wiedergegeben. Deaktivieren, wenn kein Ton zu hören ist.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Apples nativen Dolby-Decoder für Dolby Digital Plus einschließlich Atmos verwenden. Unter iOS, iPadOS und tvOS 26 oder neuer werden TrueHD Atmos und DTS:X als 3D-Audio wiedergegeben. Andere DTS- und TrueHD-Spuren werden als Mehrkanal-PCM wiedergegeben. Deaktivieren, wenn kein Ton zu hören ist.',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Aus, solange die Lautstärkenormalisierung aktiv ist',
 			'settings.audioChannelLimit' => 'Audiokanäle',
 			'settings.audioChannelLimitDescription' => 'Dekodierten Ton für Lautsprecher, Kopfhörer oder HDMI-Setups heruntermischen, die nicht alle Kanäle wiedergeben können',
 			'settings.audioChannelLimitOriginal' => 'Original',
 			'settings.audioChannelLimitOriginalDescription' => 'Alle Kanäle der Spur wiedergeben',
 			'settings.audioChannelLimitSurround51' => 'Bis zu 5.1',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => '7.1 auf 5.1 heruntermischen für Fernseher und Receiver, die nur 5.1-PCM annehmen. Die Durchleitung ist davon nicht betroffen.',
 			'settings.audioChannelLimitStereo' => 'Stereo',
 			'settings.audioChannelLimitStereoDescription' => 'Auf zwei Kanäle für Stereolautsprecher oder Kopfhörer heruntermischen. Deaktiviert die Durchleitung.',
@@ -6624,14 +6646,14 @@ extension on TranslationsDe {
 			'videoControls.sleepTimerDurationHeader' => 'Timer',
 			'videoControls.playbackWillPauseAtEnd' => 'Wiedergabe wird am Ende dieses Videos pausiert',
 			'videoControls.stillWatching' => 'Schaust du noch?',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pause in ${seconds}s',
 			'videoControls.continueWatching' => 'Weiter',
 			'videoControls.autoPlayNext' => 'Nächstes automatisch abspielen',
 			'videoControls.playNext' => 'Nächstes abspielen',
 			'videoControls.playButton' => 'Abspielen',
 			'videoControls.pauseButton' => 'Pause',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'Pausiert',
 			'videoControls.playbackResumed' => 'Wird abgespielt',
 			'videoControls.loadingVideo' => 'Video wird geladen',
@@ -7138,14 +7160,14 @@ extension on TranslationsDe {
 			'libraries.playRandomMovie' => 'Spielen Sie einen Random-Film',
 			'libraries.randomPickFailed' => 'Ich kann nicht einen Film aus dieser Bibliothek wählen.',
 			'libraries.title' => 'Mediatheken',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Mediathek',
 			'libraries.scanLibraryFiles' => 'Mediatheksdateien scannen',
 			'libraries.scanLibrary' => 'Mediathek scannen',
 			'libraries.analyze' => 'Analysieren',
 			'libraries.analyzeLibrary' => 'Mediathek analysieren',
 			'libraries.refreshMetadata' => 'Metadaten aktualisieren',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Papierkorb leeren',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Papierkorb für „${title}“ wird geleert...',
 			'libraries.trashEmptied' => ({required Object title}) => 'Papierkorb für „${title}“ geleert',
@@ -7652,14 +7674,14 @@ extension on TranslationsDe {
 			'music.instantMix' => 'Instant-Mix',
 			'music.playNext' => 'Als Nächstes abspielen',
 			'music.addToQueue' => 'Zur Warteschlange hinzufügen',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Disc ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('de'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} Titel', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} Titel', ), 
 			'music.nowPlaying' => 'Wird wiedergegeben',
 			'music.playingFrom' => ({required Object title}) => 'Wiedergabe von ${title}',
 			'music.queue' => 'Warteschlange',
 			'music.clearQueue' => 'Warteschlange leeren',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => 'Songtext',
 			'music.visualizer' => 'Visualisieren',
 			'music.visualizerProfileLoading' => 'Lesen Sie Track Analysen ...',
@@ -8166,14 +8188,14 @@ extension on TranslationsDe {
 			'performanceOverlay.memory' => 'Speicher',
 			'performanceOverlay.uiFps' => 'UI-FPS',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Software',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Hardware',
 			'performanceOverlay.tunnelingActive' => 'Aktiv',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} fehlgeschlagen)',
@@ -8680,14 +8702,14 @@ extension on TranslationsDe {
 			'homeLayout.noCustomRows' => 'Keine Standard-Rennen noch',
 			'homeLayout.addRowHint' => 'Verwenden Sie Add Home Range, um einen zu erstellen.',
 			'homeLayout.addHomeRow' => 'Home Rue hinzufügen',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Wählen Sie eine Kategorie aus; die neue Reihe wird automatisch an den Organizer hinzugefügt',
 			'homeLayout.removeRow' => 'Rückschluss entfernen',
 			'homeLayout.recentlyAdded' => 'Kürzlich hinzugefügt',
 			'homeLayout.recentlyReleased' => 'kürzlich veröffentlicht',
 			'homeLayout.movieCollections' => 'Filmkollektionen',
 			'homeLayout.showCollections' => 'Show Kollektionen',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Röhrtitel',
 			'homeLayout.content' => 'Inhalt',
 			'homeLayout.showThisRowIn' => 'Zeigen Sie diese Reihe in:',
@@ -9194,14 +9216,14 @@ extension on TranslationsDe {
 			'sourceSetup.dlnaHelp' => 'Die Suche benötigt Multicast im lokalen Netzwerk. Falls kein Server erscheint, gib oben die URL seiner Gerätebeschreibung ein.',
 			'sourceSetup.dlnaRoot' => 'DLNA-Objekt-ID; leer lassen, um das Stammverzeichnis des Geräts zu verwenden.',
 			'sourceSetup.passwordOrKey' => 'Gib ein Passwort ein oder füge unten einen privaten Schlüssel hinzu.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SHA256-Fingerabdruck des SSH-Hostschlüssels',
 			'sourceSetup.sshFingerprintHelp' => 'Prüfe ihn mit dem Serveradministrator. Führe auf dem Server ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub aus und verwende den SHA256-Wert.',
 			'sourceSetup.sshFingerprintKeep' => 'Leer lassen, um den aktuell festgelegten Fingerabdruck beizubehalten, oder einen neuen Serverfingerabdruck eingeben.',
 			'sourceSetup.sshAuthentication' => 'SSH-Authentifizierung mit öffentlichem Schlüssel',
 			'sourceSetup.sshAuthenticationHelp' => 'Optional; die Authentifizierung mit Passwort wird ebenfalls unterstützt.',
 			'sourceSetup.privateKey' => 'Privater Schlüssel (PEM- oder OpenSSH-Format)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Passphrase des privaten Schlüssels',
 			'sourceSetup.nfsMountPort' => 'TCP-Port des NFS-Mount-Dienstes',
 			'sourceSetup.nfsMountPortHelp' => 'Standard: 20048',
@@ -9708,14 +9730,14 @@ extension on TranslationsDe {
 			'musicTools.pinToHome' => 'An Musikstartseite anheften',
 			'musicTools.unpin' => 'Lösen',
 			'musicTools.serverAnalysis' => 'Serveranalyse',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Klanganalyse',
 			'musicTools.serverAnalysisScope' => 'Alle geeigneten Musikbibliotheken auf diesem Server. Ihre Analyseeinstellungen werden nicht geändert.',
 			'musicTools.serverActivities' => 'Serveraktivitäten',
 			'musicTools.playlistSharing' => 'Playlist-Zugriff',
 			'musicTools.playlistRecipient' => 'Plex-Benutzername oder E-Mail',
 			'musicTools.playlistSharingHint' => 'Zugriff auf diese Playlist und ihre Titel gewähren. Der Empfänger muss eventuell eine Einladung annehmen.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Playlist-Zugriff konnte nicht angefordert werden.',
 			'musicTools.playlistSharingAccepted' => 'Plex hat die Zugriffsanfrage angenommen.',
 			'musicTools.playlistAccessList' => 'Aktueller Zugriff',

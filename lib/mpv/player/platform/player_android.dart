@@ -165,10 +165,14 @@ class PlayerAndroid extends PlayerBase implements VideoRectSupport, PlayerAudioF
         clearTracks();
       }
       backendSwitchedController.add(null);
+      onPresentationChanged?.call();
       return;
     }
 
     super.handlePlayerEvent(name, data);
+    if (name == 'audio-route-ready' || name == 'file-loaded' || name == 'playback-restart') {
+      onPresentationChanged?.call();
+    }
   }
 
   @override
@@ -182,6 +186,7 @@ class PlayerAndroid extends PlayerBase implements VideoRectSupport, PlayerAudioF
       return;
     }
     super.handlePropertyChange(name, value, sourceId: sourceId);
+    if (name == "aid" || name == "track-list") onPresentationChanged?.call();
   }
 
   // Memoizes the in-flight init Future so concurrent callers share one
@@ -542,9 +547,18 @@ class PlayerAndroid extends PlayerBase implements VideoRectSupport, PlayerAudioF
   }
 
   @override
+  Future<void> setDualMonoChannel(int? channel) async {
+    if (disposed || _usingMpvFallback) return;
+    final applied = await invoke<bool>('setDualMonoChannel', {'channel': channel});
+    if (channel != null && applied != true) throw UnsupportedError('Stereo PCM is unavailable');
+  }
+
+  @override
   Future<String?> getProperty(String name) async {
     if (disposed) return null;
     switch (name) {
+      case 'dual-mono-available':
+        return !_usingMpvFallback && await invoke<bool>('dualMonoAvailable') == true ? 'yes' : 'no';
       case 'pause':
         return state.playing ? 'no' : 'yes';
       case 'volume':

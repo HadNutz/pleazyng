@@ -40,6 +40,7 @@ class TranslationsJa extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsJa $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsJa(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$mediaConveniences$ja mediaConveniences = _Translations$mediaConveniences$ja._(_root);
 	@override late final _Translations$viewing$ja viewing = _Translations$viewing$ja._(_root);
 	@override late final _Translations$livingRoom$ja livingRoom = _Translations$livingRoom$ja._(_root);
 	@override late final _Translations$app$ja app = _Translations$app$ja._(_root);
@@ -122,6 +123,21 @@ class TranslationsJa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ja musicExperience = _Translations$musicExperience$ja._(_root);
 	@override late final _Translations$musicTools$ja musicTools = _Translations$musicTools$ja._(_root);
 	@override late final _Translations$musicDevices$ja musicDevices = _Translations$musicDevices$ja._(_root);
+}
+
+// Path: mediaConveniences
+class _Translations$mediaConveniences$ja extends Translations$mediaConveniences$en {
+	_Translations$mediaConveniences$ja._(TranslationsJa root) : this._root = root, super.internal(root);
+
+	final TranslationsJa _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => '次を読む';
+	@override String get showRotation => 'シリーズを順番に再生';
+	@override String get rotationHelp => '各シリーズのメニューから追加できます。1巡する間に各シリーズの次の話を1話ずつ再生します。';
+	@override String get missingEpisode => '見つからないエピソード';
+	@override String get stereoChannel => '両方のスピーカーで再生するチャンネル';
+	@override String get hdrBrightness => 'HDR字幕の明るさ';
 }
 
 // Path: viewing
@@ -5599,6 +5615,12 @@ class _Translations$services$trackerDescriptions$ja extends Translations$service
 extension on TranslationsJa {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => '次を読む',
+			'mediaConveniences.showRotation' => 'シリーズを順番に再生',
+			'mediaConveniences.rotationHelp' => '各シリーズのメニューから追加できます。1巡する間に各シリーズの次の話を1話ずつ再生します。',
+			'mediaConveniences.missingEpisode' => '見つからないエピソード',
+			'mediaConveniences.stereoChannel' => '両方のスピーカーで再生するチャンネル',
+			'mediaConveniences.hdrBrightness' => 'HDR字幕の明るさ',
 			'viewing.extendRecording' => '録画を30分延長',
 			'viewing.recordsUntil' => ({required Object time}) => '${time} まで録画',
 			'viewing.extendFailed' => '録画を延長できませんでした',
@@ -6105,14 +6127,14 @@ extension on TranslationsJa {
 			'settings.audioPassthroughDescription' => 'Dolby/DTS音声を再エンコードせずにレシーバーやテレビに送り、サラウンドを維持します。音が出ない場合は無効にしてください。',
 			'settings.audioPassthroughDescriptionApple' => 'Dolby Atmosを含むDolby Digital PlusにはApple標準のDolbyデコーダーを使用します。DTSとTrueHDは引き続きマルチチャンネルPCMで再生されます。音が出ない場合は無効にしてください。',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Dolby Atmosを含むDolby Digital PlusにはApple標準のDolbyデコーダーを使用します。iOS、iPadOS、tvOS 26以降では、TrueHD AtmosとDTS:Xが空間オーディオとして再生されます。その他のDTSとTrueHDのトラックはマルチチャンネルPCMで再生されます。音が出ない場合は無効にしてください。',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'ラウドネス正規化がオンの間はオフ',
 			'settings.audioChannelLimit' => '音声チャンネル',
 			'settings.audioChannelLimitDescription' => 'すべてのチャンネルを再生できないスピーカー、ヘッドホン、HDMI環境に合わせて、デコードした音声をダウンミックスします',
 			'settings.audioChannelLimitOriginal' => 'オリジナル',
 			'settings.audioChannelLimitOriginalDescription' => 'トラックのすべてのチャンネルを再生します',
 			'settings.audioChannelLimitSurround51' => '最大5.1ch',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => '5.1chのPCMにしか対応していないテレビやレシーバー向けに、7.1chを5.1chにダウンミックスします。パススルーには影響しません。',
 			'settings.audioChannelLimitStereo' => 'ステレオ',
 			'settings.audioChannelLimitStereoDescription' => 'ステレオスピーカーやヘッドホン向けに2チャンネルにダウンミックスします。パススルーはオフになります。',
@@ -6619,14 +6641,14 @@ extension on TranslationsJa {
 			'videoControls.sleepTimerDurationHeader' => 'タイマー',
 			'videoControls.playbackWillPauseAtEnd' => '再生はこの動画の最後に一時停止します',
 			'videoControls.stillWatching' => 'まだ視聴中ですか？',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds}秒後に一時停止',
 			'videoControls.continueWatching' => '続ける',
 			'videoControls.autoPlayNext' => '次を自動再生',
 			'videoControls.playNext' => '次を再生',
 			'videoControls.playButton' => '再生',
 			'videoControls.pauseButton' => '一時停止',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => '一時停止中',
 			'videoControls.playbackResumed' => '再生中',
 			'videoControls.loadingVideo' => '動画を読み込み中',
@@ -7133,14 +7155,14 @@ extension on TranslationsJa {
 			'libraries.playRandomMovie' => 'ランダム映画を演じる',
 			'libraries.randomPickFailed' => 'この図書館からランダム映画を選ぶことはできません。',
 			'libraries.title' => 'ライブラリ',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'ライブラリ',
 			'libraries.scanLibraryFiles' => 'ライブラリファイルをスキャン',
 			'libraries.scanLibrary' => 'ライブラリをスキャン',
 			'libraries.analyze' => '解析',
 			'libraries.analyzeLibrary' => 'ライブラリを解析',
 			'libraries.refreshMetadata' => 'メタデータを更新',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => 'ゴミ箱を空にする',
 			'libraries.emptyingTrash' => ({required Object title}) => '「${title}」のゴミ箱を空にしています…',
 			'libraries.trashEmptied' => ({required Object title}) => '「${title}」のゴミ箱を空にしました',
@@ -7647,14 +7669,14 @@ extension on TranslationsJa {
 			'music.instantMix' => 'インスタントミックス',
 			'music.playNext' => '次に再生',
 			'music.addToQueue' => 'キューに追加',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'ディスク ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} トラック', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)}曲', ), 
 			'music.nowPlaying' => '再生中',
 			'music.playingFrom' => ({required Object title}) => '${title}から再生',
 			'music.queue' => '再生キュー',
 			'music.clearQueue' => 'キューをクリア',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => '歌詞',
 			'music.visualizer' => 'ビジュアル',
 			'music.visualizerProfileLoading' => 'トラック分析の読み方...',
@@ -8161,14 +8183,14 @@ extension on TranslationsJa {
 			'performanceOverlay.memory' => 'メモリ',
 			'performanceOverlay.uiFps' => 'UI FPS',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'ソフトウェア',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'ハードウェア',
 			'performanceOverlay.tunnelingActive' => '有効',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted}（${failures}件失敗）',
@@ -8675,14 +8697,14 @@ extension on TranslationsJa {
 			'homeLayout.noCustomRows' => 'まだカスタムライトなし',
 			'homeLayout.addRowHint' => 'ホーム を追加して 1 つを作成します。',
 			'homeLayout.addHomeRow' => 'HOME ローブを追加',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'カテゴリを選択し、新しい順位が自動的に組織に追加されます。',
 			'homeLayout.removeRow' => 'ラウを取り除く',
 			'homeLayout.recentlyAdded' => '最近追加されたコンテンツ',
 			'homeLayout.recentlyReleased' => '最近リリース',
 			'homeLayout.movieCollections' => '映画コレクション',
 			'homeLayout.showCollections' => 'コレクション展示',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'ロータイトル',
 			'homeLayout.content' => 'コンテンツ',
 			'homeLayout.showThisRowIn' => 'この順番を表示する:',
@@ -9189,14 +9211,14 @@ extension on TranslationsJa {
 			'sourceSetup.dlnaHelp' => '検出にはローカルネットワークのマルチキャストを使用します。サーバーが表示されない場合は、上にデバイス記述の URL を入力してください。',
 			'sourceSetup.dlnaRoot' => 'DLNA オブジェクト ID。空欄にするとデバイスのルートを使用します。',
 			'sourceSetup.passwordOrKey' => 'パスワードを入力するか、下に秘密鍵を追加してください。',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SSH ホスト鍵の SHA256 フィンガープリント',
 			'sourceSetup.sshFingerprintHelp' => 'サーバー管理者に確認してください。サーバーで ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub を実行し、表示された SHA256 値を使用します。',
 			'sourceSetup.sshFingerprintKeep' => '現在固定されているフィンガープリントを維持するには空欄にします。変更する場合は新しいサーバーのフィンガープリントを入力してください。',
 			'sourceSetup.sshAuthentication' => 'SSH 公開鍵認証',
 			'sourceSetup.sshAuthenticationHelp' => '任意です。パスワード認証も利用できます。',
 			'sourceSetup.privateKey' => '秘密鍵（PEM または OpenSSH 形式）',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => '秘密鍵のパスフレーズ',
 			'sourceSetup.nfsMountPort' => 'NFS マウントサービスの TCP ポート',
 			'sourceSetup.nfsMountPortHelp' => '既定値: 20048',
@@ -9703,14 +9725,14 @@ extension on TranslationsJa {
 			'musicTools.pinToHome' => '音楽ホームに固定',
 			'musicTools.unpin' => '固定を解除',
 			'musicTools.serverAnalysis' => 'サーバー解析',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => '音響解析',
 			'musicTools.serverAnalysisScope' => 'このサーバー上の対象となるすべての音楽ライブラリ。解析設定は変更されません。',
 			'musicTools.serverActivities' => 'サーバーの処理状況',
 			'musicTools.playlistSharing' => 'プレイリストへのアクセス',
 			'musicTools.playlistRecipient' => 'Plexユーザー名またはメール',
 			'musicTools.playlistSharingHint' => 'このプレイリストと曲へのアクセスを許可します。受信者による招待の承諾が必要な場合があります。',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'プレイリストへのアクセスをリクエストできませんでした。',
 			'musicTools.playlistSharingAccepted' => 'Plexがアクセスのリクエストを受け付けました。',
 			'musicTools.playlistAccessList' => '現在のアクセス権',

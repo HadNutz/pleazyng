@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Volgende lezen",
+    "showRotation": "Series afwisselen",
+    "rotationHelp": "Voeg series toe via hun menu. Elke ronde wordt de volgende aflevering van elke serie afgespeeld.",
+    "missingEpisode": "Ontbrekende aflevering",
+    "stereoChannel": "Kanaal voor beide luidsprekers",
+    "hdrBrightness": "Helderheid van HDR-ondertitels"
+  },
   "viewing": {
     "extendRecording": "30 minuten langer opnemen",
     "recordsUntil": "Opname tot ${time}",

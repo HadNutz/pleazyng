@@ -40,6 +40,7 @@ class TranslationsRu extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsRu $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsRu(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$mediaConveniences$ru mediaConveniences = _Translations$mediaConveniences$ru._(_root);
 	@override late final _Translations$viewing$ru viewing = _Translations$viewing$ru._(_root);
 	@override late final _Translations$livingRoom$ru livingRoom = _Translations$livingRoom$ru._(_root);
 	@override late final _Translations$app$ru app = _Translations$app$ru._(_root);
@@ -122,6 +123,21 @@ class TranslationsRu extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ru musicExperience = _Translations$musicExperience$ru._(_root);
 	@override late final _Translations$musicTools$ru musicTools = _Translations$musicTools$ru._(_root);
 	@override late final _Translations$musicDevices$ru musicDevices = _Translations$musicDevices$ru._(_root);
+}
+
+// Path: mediaConveniences
+class _Translations$mediaConveniences$ru extends Translations$mediaConveniences$en {
+	_Translations$mediaConveniences$ru._(TranslationsRu root) : this._root = root, super.internal(root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'Читать дальше';
+	@override String get showRotation => 'Сериалы по очереди';
+	@override String get rotationHelp => 'Добавляйте сериалы через их меню. В каждом круге воспроизводится следующая серия каждого сериала.';
+	@override String get missingEpisode => 'Отсутствует серия';
+	@override String get stereoChannel => 'Канал для обоих динамиков';
+	@override String get hdrBrightness => 'Яркость субтитров HDR';
 }
 
 // Path: viewing
@@ -5654,6 +5670,12 @@ class _Translations$services$trackerDescriptions$ru extends Translations$service
 extension on TranslationsRu {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'Читать дальше',
+			'mediaConveniences.showRotation' => 'Сериалы по очереди',
+			'mediaConveniences.rotationHelp' => 'Добавляйте сериалы через их меню. В каждом круге воспроизводится следующая серия каждого сериала.',
+			'mediaConveniences.missingEpisode' => 'Отсутствует серия',
+			'mediaConveniences.stereoChannel' => 'Канал для обоих динамиков',
+			'mediaConveniences.hdrBrightness' => 'Яркость субтитров HDR',
 			'viewing.extendRecording' => 'Записывать ещё 30 минут',
 			'viewing.recordsUntil' => ({required Object time}) => 'Запись до ${time}',
 			'viewing.extendFailed' => 'Не удалось продлить запись',
@@ -6160,14 +6182,14 @@ extension on TranslationsRu {
 			'settings.audioPassthroughDescription' => 'Передавать звук Dolby/DTS на ресивер или телевизор без перекодирования, сохраняя объёмный звук. Отключите, если нет звука.',
 			'settings.audioPassthroughDescriptionApple' => 'Использовать встроенный декодер Dolby от Apple для Dolby Digital Plus, включая Atmos. DTS и TrueHD по-прежнему воспроизводятся как многоканальный PCM. Отключите, если звук отсутствует.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Использовать встроенный декодер Dolby от Apple для Dolby Digital Plus, включая Atmos. В iOS, iPadOS и tvOS 26 и новее TrueHD Atmos и DTS:X воспроизводятся как пространственное аудио. Остальные дорожки DTS и TrueHD воспроизводятся как многоканальный PCM. Отключите, если звук отсутствует.',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Отключено при включённой нормализации громкости',
 			'settings.audioChannelLimit' => 'Аудиоканалы',
 			'settings.audioChannelLimitDescription' => 'Сводить декодированный звук к меньшему числу каналов для колонок, наушников или HDMI-систем, которые воспроизводят не все каналы',
 			'settings.audioChannelLimitOriginal' => 'Исходные',
 			'settings.audioChannelLimitOriginalDescription' => 'Воспроизводить все каналы дорожки',
 			'settings.audioChannelLimitSurround51' => 'До 5.1',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Сводить 7.1 в 5.1 для телевизоров и ресиверов, принимающих только 5.1 PCM. На сквозной вывод не влияет.',
 			'settings.audioChannelLimitStereo' => 'Стерео',
 			'settings.audioChannelLimitStereoDescription' => 'Сводить в два канала для стереоколонок или наушников. Отключает сквозной вывод.',
@@ -6674,14 +6696,14 @@ extension on TranslationsRu {
 			'videoControls.sleepTimerDurationHeader' => 'Таймер',
 			'videoControls.playbackWillPauseAtEnd' => 'Воспроизведение будет приостановлено в конце этого видео',
 			'videoControls.stillWatching' => 'Всё ещё смотрите?',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Пауза через ${seconds}с',
 			'videoControls.continueWatching' => 'Продолжить',
 			'videoControls.autoPlayNext' => 'Автовоспроизведение следующего',
 			'videoControls.playNext' => 'Следующее',
 			'videoControls.playButton' => 'Воспроизвести',
 			'videoControls.pauseButton' => 'Пауза',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'На паузе',
 			'videoControls.playbackResumed' => 'Воспроизведение',
 			'videoControls.loadingVideo' => 'Загрузка видео',
@@ -7188,14 +7210,14 @@ extension on TranslationsRu {
 			'libraries.playRandomMovie' => 'Играть в случайный фильм',
 			'libraries.randomPickFailed' => 'Нельзя выбрать случайный фильм из этой библиотеки.',
 			'libraries.title' => 'Библиотеки',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Библиотека',
 			'libraries.scanLibraryFiles' => 'Сканировать файлы библиотеки',
 			'libraries.scanLibrary' => 'Сканировать библиотеку',
 			'libraries.analyze' => 'Анализировать',
 			'libraries.analyzeLibrary' => 'Анализировать библиотеку',
 			'libraries.refreshMetadata' => 'Обновить метаданные',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Очистить корзину',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Очистка корзины для "${title}"...',
 			'libraries.trashEmptied' => ({required Object title}) => 'Корзина очищена для "${title}"',
@@ -7702,14 +7724,14 @@ extension on TranslationsRu {
 			'music.instantMix' => 'Быстрый микс',
 			'music.playNext' => 'Воспроизвести следующим',
 			'music.addToQueue' => 'Добавить в очередь',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Диск ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} трек', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} трека', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} треков', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} трека', ), 
 			'music.nowPlaying' => 'Сейчас играет',
 			'music.playingFrom' => ({required Object title}) => 'Воспроизведение из ${title}',
 			'music.queue' => 'Очередь',
 			'music.clearQueue' => 'Очистить очередь',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => 'Текст песни',
 			'music.visualizer' => 'Визуализация',
 			'music.visualizerProfileLoading' => 'Читать траекторию анализов...',
@@ -8216,14 +8238,14 @@ extension on TranslationsRu {
 			'performanceOverlay.memory' => 'Память',
 			'performanceOverlay.uiFps' => 'FPS интерфейса',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android, аппаратный',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA, аппаратный',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm, аппаратный',
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek, аппаратный',
 			'performanceOverlay.decoderExynosHw' => 'Exynos, аппаратный',
 			'performanceOverlay.decoderSoftware' => 'Программный',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Аппаратный',
 			'performanceOverlay.tunnelingActive' => 'Активно',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (ошибок: ${failures})',
@@ -8730,14 +8752,14 @@ extension on TranslationsRu {
 			'homeLayout.noCustomRows' => 'Не существует обычных строк',
 			'homeLayout.addRowHint' => 'Используйте Добавить домашний ряд для создания одного.',
 			'homeLayout.addHomeRow' => 'Добавить Home Rue',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Выберите категорию; новый ряд автоматически добавляется в Организатор',
 			'homeLayout.removeRow' => 'Удаление роу',
 			'homeLayout.recentlyAdded' => 'Недавно добавленное',
 			'homeLayout.recentlyReleased' => 'Недавно выпущен',
 			'homeLayout.movieCollections' => 'Фильмы Коллекции',
 			'homeLayout.showCollections' => 'Покажите коллекции',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Роу титул',
 			'homeLayout.content' => 'Содержание',
 			'homeLayout.showThisRowIn' => 'Показать эту строку в:',
@@ -9244,14 +9266,14 @@ extension on TranslationsRu {
 			'sourceSetup.dlnaHelp' => 'Обнаружение зависит от многоадресной рассылки в локальной сети. Если сервер не появляется, введите выше URL описания его устройства.',
 			'sourceSetup.dlnaRoot' => 'ID объекта DLNA; оставьте пустым, чтобы использовать корень устройства.',
 			'sourceSetup.passwordOrKey' => 'Введите пароль или добавьте закрытый ключ ниже.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'Отпечаток SHA256 ключа хоста SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Сверьте его с администратором сервера. На сервере выполните ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub и используйте значение SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Оставьте пустым, чтобы сохранить закреплённый отпечаток, или введите новый отпечаток сервера.',
 			'sourceSetup.sshAuthentication' => 'Аутентификация SSH по открытому ключу',
 			'sourceSetup.sshAuthenticationHelp' => 'Необязательно; аутентификация по паролю также поддерживается.',
 			'sourceSetup.privateKey' => 'Закрытый ключ (формат PEM или OpenSSH)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Парольная фраза закрытого ключа',
 			'sourceSetup.nfsMountPort' => 'TCP-порт службы монтирования NFS',
 			'sourceSetup.nfsMountPortHelp' => 'По умолчанию: 20048',
@@ -9758,14 +9780,14 @@ extension on TranslationsRu {
 			'musicTools.pinToHome' => 'Закрепить на главной странице музыки',
 			'musicTools.unpin' => 'Открепить',
 			'musicTools.serverAnalysis' => 'Анализ сервера',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Звуковой анализ',
 			'musicTools.serverAnalysisScope' => 'Все подходящие музыкальные библиотеки на этом сервере. Их настройки анализа не изменяются.',
 			'musicTools.serverActivities' => 'Задачи сервера',
 			'musicTools.playlistSharing' => 'Доступ к плейлисту',
 			'musicTools.playlistRecipient' => 'Имя пользователя Plex или эл. почта',
 			'musicTools.playlistSharingHint' => 'Предоставьте доступ к этому плейлисту и его трекам. Получателю может потребоваться принять приглашение.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Не удалось запросить доступ к плейлисту.',
 			'musicTools.playlistSharingAccepted' => 'Plex принял запрос на доступ.',
 			'musicTools.playlistAccessList' => 'Текущий доступ',

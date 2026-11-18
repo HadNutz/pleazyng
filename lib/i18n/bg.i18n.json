@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Прочети следващия",
+    "showRotation": "Редуване на сериали",
+    "rotationHelp": "Добавяйте сериали от менютата им. Във всеки кръг се пуска следващият епизод от всеки сериал.",
+    "missingEpisode": "Липсващ епизод",
+    "stereoChannel": "Канал за двата високоговорителя",
+    "hdrBrightness": "Яркост на HDR субтитрите"
+  },
   "viewing": {
     "extendRecording": "Записване още 30 минути",
     "recordsUntil": "Запис до ${time}",

@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Læs næste",
+    "showRotation": "Skift mellem serier",
+    "rotationHelp": "Tilføj serier fra deres menuer. Hver serie afspiller næste afsnit én gang pr. runde.",
+    "missingEpisode": "Manglende afsnit",
+    "stereoChannel": "Kanal til begge højttalere",
+    "hdrBrightness": "Lysstyrke for HDR-undertekster"
+  },
   "viewing": {
     "extendRecording": "Optag 30 minutter mere",
     "recordsUntil": "Optager indtil ${time}",

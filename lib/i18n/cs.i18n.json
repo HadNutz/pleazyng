@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Číst další",
+    "showRotation": "Střídání seriálů",
+    "rotationHelp": "Seriály přidejte z jejich nabídky. V každém kole se přehraje další díl každého seriálu.",
+    "missingEpisode": "Chybějící díl",
+    "stereoChannel": "Kanál pro oba reproduktory",
+    "hdrBrightness": "Jas titulků HDR"
+  },
   "viewing": {
     "extendRecording": "Nahrávat dalších 30 minut",
     "recordsUntil": "Nahrávání do ${time}",

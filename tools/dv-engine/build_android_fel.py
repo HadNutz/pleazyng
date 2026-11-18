@@ -106,7 +106,7 @@ def configure_mp_build(source: Path) -> None:
                  '\t--enable-{jni,mediacodec,openssl,libdav1d,libdovi} --disable-vulkan \\\n',
                  '\t--enable-{jni,mediacodec,openssl,libdav1d} --disable-vulkan \\\n')
     replace_once(ffmpeg, '\t--enable-filter=bwdif,decimate,fieldmatch,loudnorm,aresample \\\n',
-                 '\t--enable-filter=bwdif,decimate,fieldmatch,loudnorm,aresample \\\n'
+                 '\t--enable-filter=bwdif,decimate,fieldmatch,loudnorm,aresample,aeval \\\n'
                  '\t--enable-bsf=dovi_split \\\n')
 
     download = android / "download.sh"

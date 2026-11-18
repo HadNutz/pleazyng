@@ -40,6 +40,7 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsFa $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsFa(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$mediaConveniences$fa mediaConveniences = _Translations$mediaConveniences$fa._(_root);
 	@override late final _Translations$viewing$fa viewing = _Translations$viewing$fa._(_root);
 	@override late final _Translations$livingRoom$fa livingRoom = _Translations$livingRoom$fa._(_root);
 	@override late final _Translations$app$fa app = _Translations$app$fa._(_root);
@@ -122,6 +123,21 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$fa musicExperience = _Translations$musicExperience$fa._(_root);
 	@override late final _Translations$musicTools$fa musicTools = _Translations$musicTools$fa._(_root);
 	@override late final _Translations$musicDevices$fa musicDevices = _Translations$musicDevices$fa._(_root);
+}
+
+// Path: mediaConveniences
+class _Translations$mediaConveniences$fa extends Translations$mediaConveniences$en {
+	_Translations$mediaConveniences$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'خواندن مورد بعدی';
+	@override String get showRotation => 'پخش نوبتی سریال‌ها';
+	@override String get rotationHelp => 'سریال‌ها را از منوی آن‌ها اضافه کنید. در هر دور قسمت بعدی هر سریال پخش می‌شود.';
+	@override String get missingEpisode => 'قسمت موجود نیست';
+	@override String get stereoChannel => 'کانال پخش در هر دو بلندگو';
+	@override String get hdrBrightness => 'روشنایی زیرنویس HDR';
 }
 
 // Path: viewing
@@ -5604,6 +5620,12 @@ class _Translations$services$trackerDescriptions$fa extends Translations$service
 extension on TranslationsFa {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'خواندن مورد بعدی',
+			'mediaConveniences.showRotation' => 'پخش نوبتی سریال‌ها',
+			'mediaConveniences.rotationHelp' => 'سریال‌ها را از منوی آن‌ها اضافه کنید. در هر دور قسمت بعدی هر سریال پخش می‌شود.',
+			'mediaConveniences.missingEpisode' => 'قسمت موجود نیست',
+			'mediaConveniences.stereoChannel' => 'کانال پخش در هر دو بلندگو',
+			'mediaConveniences.hdrBrightness' => 'روشنایی زیرنویس HDR',
 			'viewing.extendRecording' => '۳۰ دقیقه بیشتر ضبط کن',
 			'viewing.recordsUntil' => ({required Object time}) => 'ضبط تا ${time}',
 			'viewing.extendFailed' => 'تمدید ضبط ممکن نشد',
@@ -6110,14 +6132,14 @@ extension on TranslationsFa {
 			'settings.audioPassthroughDescription' => 'ارسال صدا Dolby/DTS به گیرنده یا تلویزیون بدون رمزگذاری مجدد، حفظ صدا اطراف.',
 			'settings.audioPassthroughDescriptionApple' => 'از دکوراسیون دلفی بومی Apple برای دلفی دیجیتال پلاس، از جمله Atmos استفاده کنید. DTS و TrueHD هنوز هم به عنوان PCM چند کانال بازی می کنند.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'از دکوراسیون دلفی بومی Apple برای Dolby Digital Plus، از جمله Atmos استفاده کنید.در iOS، iPadOS و tvOS 26 یا بعد، TrueHD Atmos و DTS:X به عنوان صدا فضایی پخش می شود.در سایر ردیف های DTS و TrueHD به عنوان PCM چند کانال پخش می شود.',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'در حالی که صداها به حالت عادی می رسند',
 			'settings.audioChannelLimit' => 'کانال های صوتی',
 			'settings.audioChannelLimitDescription' => 'مخلوط کردن صدا رمزگذاری شده برای بلندگوها، گوشی های هوشمند و یا تنظیمات HDMI که نمی تواند هر کانال پخش',
 			'settings.audioChannelLimitOriginal' => 'اصلی',
 			'settings.audioChannelLimitOriginalDescription' => 'بازی هر کانال در مسیر',
 			'settings.audioChannelLimitSurround51' => 'تا 5.1',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'مخلوط 7.1 به 5.1 برای تلویزیون ها و گیرنده هایی که فقط 5.1 PCM را می گیرند.',
 			'settings.audioChannelLimitStereo' => 'استریو',
 			'settings.audioChannelLimitStereoDescription' => 'مخلوط کردن به دو کانال برای بلندگوهای استریو یا گوشی های هوشمند.',
@@ -6624,14 +6646,14 @@ extension on TranslationsFa {
 			'videoControls.sleepTimerDurationHeader' => 'زمان',
 			'videoControls.playbackWillPauseAtEnd' => 'Playback در پایان این ویدئو تعطیل خواهد شد',
 			'videoControls.stillWatching' => 'هنوز هم تماشا می کنید؟',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'استراحت در ${seconds}s',
 			'videoControls.continueWatching' => 'ادامه مطلب',
 			'videoControls.autoPlayNext' => 'بازی اتوماتیک بعدی',
 			'videoControls.playNext' => 'بعدی را اجرا کن',
 			'videoControls.playButton' => 'اجرا کردن',
 			'videoControls.pauseButton' => 'مکث',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'استراحت',
 			'videoControls.playbackResumed' => 'بازی کردن',
 			'videoControls.loadingVideo' => 'دانلود ویدئو',
@@ -7138,14 +7160,14 @@ extension on TranslationsFa {
 			'libraries.playRandomMovie' => 'بازی یک فیلم تصادفی',
 			'libraries.randomPickFailed' => 'من نمی توانم یک فیلم تصادفی را از این کتابخانه انتخاب کنم.',
 			'libraries.title' => 'کتابخانه‌ها',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'کتابخانه',
 			'libraries.scanLibraryFiles' => 'اسکن کتابخانه فایل ها',
 			'libraries.scanLibrary' => 'کتابخانه را اسکن کنید',
 			'libraries.analyze' => 'تحلیل',
 			'libraries.analyzeLibrary' => 'تجزیه و تحلیل کتابخانه',
 			'libraries.refreshMetadata' => 'تازه کردن متادیتا',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => 'تریش خالی',
 			'libraries.emptyingTrash' => ({required Object title}) => 'در این مطلب به نقل از «${title}» می پردازیم.',
 			'libraries.trashEmptied' => ({required Object title}) => 'تریلر جدید «${title}»',
@@ -7652,14 +7674,14 @@ extension on TranslationsFa {
 			'music.instantMix' => 'درهم کردن فوری',
 			'music.playNext' => 'بعدی را اجرا کن',
 			'music.addToQueue' => 'اضافه کردن به Queue',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'دیسک ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fa'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} مسیر', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ردیف ها', ), 
 			'music.nowPlaying' => 'اکنون بازی',
 			'music.playingFrom' => ({required Object title}) => 'بازی از ${title}',
 			'music.queue' => 'کوی',
 			'music.clearQueue' => 'پاکسازی صف',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => 'متن ترانه',
 			'music.visualizer' => 'بصری',
 			'music.visualizerProfileLoading' => 'در ادامه به بررسی تراکتور...',
@@ -8166,14 +8188,14 @@ extension on TranslationsFa {
 			'performanceOverlay.memory' => 'حافظه',
 			'performanceOverlay.uiFps' => 'FPS FPS',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'کوالکام HW',
 			'performanceOverlay.decoderMediatekHw' => 'رسانه ها HW',
 			'performanceOverlay.decoderExynosHw' => 'بیوگرافی HW',
 			'performanceOverlay.decoderSoftware' => 'نرم افزار',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'سخت افزار',
 			'performanceOverlay.tunnelingActive' => 'فعال',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} شکست خورده)',
@@ -8680,14 +8702,14 @@ extension on TranslationsFa {
 			'homeLayout.noCustomRows' => 'هنوز هیچ خطوط معمولی',
 			'homeLayout.addRowHint' => 'از اضافه کردن خانه برای ایجاد یکی استفاده کنید.',
 			'homeLayout.addHomeRow' => 'اضافه کردن خانه راوی',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'یک دسته را انتخاب کنید؛ ردیف جدید به ترتیب به ترتیب به ترتیب اضافه می شود.',
 			'homeLayout.removeRow' => 'حذف ردیف',
 			'homeLayout.recentlyAdded' => 'جدیدترین‌ها',
 			'homeLayout.recentlyReleased' => 'اخیرا منتشر شد',
 			'homeLayout.movieCollections' => 'مجموعه فیلم ها',
 			'homeLayout.showCollections' => 'نمایش مجموعه ها',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'راوی عنوان',
 			'homeLayout.content' => 'محتوای',
 			'homeLayout.showThisRowIn' => 'این ردیف را در:',
@@ -9194,14 +9216,14 @@ extension on TranslationsFa {
 			'sourceSetup.dlnaHelp' => 'کشف دستگاه به چندپخشی در شبکهٔ محلی وابسته است. اگر سروری ظاهر نشد، نشانی توضیحات دستگاه را در بالا وارد کنید.',
 			'sourceSetup.dlnaRoot' => 'شناسهٔ شیء DLNA؛ برای استفاده از ریشهٔ دستگاه، خالی بگذارید.',
 			'sourceSetup.passwordOrKey' => 'گذرواژه وارد کنید یا در پایین یک کلید خصوصی اضافه کنید.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'اثر انگشت SHA256 کلید میزبان SSH',
 			'sourceSetup.sshFingerprintHelp' => 'با مدیر سرور تأیید کنید. روی سرور، دستور ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub را اجرا کنید و از مقدار SHA256 آن استفاده کنید.',
 			'sourceSetup.sshFingerprintKeep' => 'برای حفظ اثر انگشت تثبیت‌شدهٔ فعلی خالی بگذارید، یا اثر انگشت جدید سرور را وارد کنید.',
 			'sourceSetup.sshAuthentication' => 'احراز هویت با کلید عمومی SSH',
 			'sourceSetup.sshAuthenticationHelp' => 'اختیاری است؛ احراز هویت با گذرواژه نیز پشتیبانی می‌شود.',
 			'sourceSetup.privateKey' => 'کلید خصوصی (با قالب PEM یا OpenSSH)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'عبارت عبور کلید خصوصی',
 			'sourceSetup.nfsMountPort' => 'درگاه TCP سرویس mount NFS',
 			'sourceSetup.nfsMountPortHelp' => 'پیش‌فرض: 20048',
@@ -9708,14 +9730,14 @@ extension on TranslationsFa {
 			'musicTools.pinToHome' => 'سنجاق به صفحهٔ اصلی موسیقی',
 			'musicTools.unpin' => 'برداشتن سنجاق',
 			'musicTools.serverAnalysis' => 'تحلیل سرور',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'تحلیل صوتی',
 			'musicTools.serverAnalysisScope' => 'همهٔ کتابخانه‌های موسیقی واجد شرایط در این سرور. تنظیمات تحلیل آن‌ها تغییر نمی‌کند.',
 			'musicTools.serverActivities' => 'فعالیت‌های سرور',
 			'musicTools.playlistSharing' => 'دسترسی به فهرست پخش',
 			'musicTools.playlistRecipient' => 'نام کاربری Plex یا ایمیل',
 			'musicTools.playlistSharingHint' => 'به این فهرست پخش و آهنگ‌های آن دسترسی بدهید. گیرنده ممکن است لازم باشد دعوتی را بپذیرد.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'درخواست دسترسی به فهرست پخش ممکن نشد.',
 			'musicTools.playlistSharingAccepted' => 'Plex درخواست دسترسی را پذیرفت.',
 			'musicTools.playlistAccessList' => 'دسترسی فعلی',

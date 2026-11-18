@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "اقرأ التالي",
+    "showRotation": "تناوب المسلسلات",
+    "rotationHelp": "أضف المسلسلات من قوائمها. تُعرض الحلقة التالية من كل مسلسل مرة في كل جولة.",
+    "missingEpisode": "حلقة مفقودة",
+    "stereoChannel": "القناة التي تُشغّل عبر مكبّري الصوت",
+    "hdrBrightness": "سطوع ترجمة HDR"
+  },
   "viewing": {
     "extendRecording": "التسجيل لمدة ٣٠ دقيقة إضافية",
     "recordsUntil": "يستمر التسجيل حتى ${time}",

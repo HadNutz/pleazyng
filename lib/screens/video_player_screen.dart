@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import '../services/playback_launch_observer.dart';
+import '../services/playback_presentation.dart';
 import '../media/ids.dart';
 import '../providers/hidden_libraries_provider.dart';
 import '../providers/libraries_provider.dart';
@@ -686,6 +687,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   Future<void>? _playerInitializationOperation;
   int _playerInitializationGeneration = 0;
   Future<void>? _shutdownOperation;
+  PlaybackPresentation? _presentation;
   PlayerNative? _iptvRecordingPlayer;
   File? _iptvRecordingTarget;
   File? _iptvRecordingPartial;
@@ -2835,6 +2837,32 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       );
 
       player = currentPlayer;
+      _presentation?.dispose();
+      _presentation = (currentPlayer is PlayerNative || currentPlayer is PlayerAndroid)
+          ? PlaybackPresentation(currentPlayer as PlayerBase, () {
+              if (!mounted || _shuttingDown || !identical(player, currentPlayer)) return null;
+              final profile = context.read<ActiveProfileProvider>().activeId;
+              final info = _currentMediaInfo;
+              final display = View.of(context).display.id.toString();
+              final audioId = _selectedAudioStreamId ?? info?.defaultAudioStreamIndex;
+              final audio = info?.audioTracks
+                  .where((track) => audioId == null ? track.selected : track.id == audioId)
+                  .firstOrNull;
+
+              return (
+                file: presentationKey([
+                  profile,
+                  _currentMetadata.globalKey,
+                  info?.mediaSourceId,
+                  info?.mediaIndex ?? _effectiveSelectedMediaIndex,
+                  info?.partId,
+                  info?.partIndex,
+                ]),
+                display: display,
+                stereoSource: !widget.isLive && (!_isTranscoding || audio?.channels == 2),
+              );
+            })
+          : null;
       _attachSubtitleMuteVolumeListener(_volumeController!);
       if (workspace != null && workspace.sessionCount > 0) {
         _registerVideoWorkspaceSession(workspace);
@@ -3350,6 +3378,8 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
     _detachSubtitleMuteTrackCatalogListener();
     _volumeController = null;
     volumeController?.dispose();
+    _presentation?.dispose();
+    _presentation = null;
     final playerToDispose = player;
     player = null;
     if (playerToDispose != null) {

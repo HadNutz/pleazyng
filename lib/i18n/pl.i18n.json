@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Czytaj następny",
+    "showRotation": "Seriale na zmianę",
+    "rotationHelp": "Dodawaj seriale z ich menu. W każdej rundzie odtwarzany jest następny odcinek każdego serialu.",
+    "missingEpisode": "Brakujący odcinek",
+    "stereoChannel": "Kanał dla obu głośników",
+    "hdrBrightness": "Jasność napisów HDR"
+  },
   "viewing": {
     "extendRecording": "Nagrywaj jeszcze 30 minut",
     "recordsUntil": "Nagrywanie do ${time}",

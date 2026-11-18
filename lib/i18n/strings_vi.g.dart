@@ -40,6 +40,7 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsVi $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsVi(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$mediaConveniences$vi mediaConveniences = _Translations$mediaConveniences$vi._(_root);
 	@override late final _Translations$viewing$vi viewing = _Translations$viewing$vi._(_root);
 	@override late final _Translations$livingRoom$vi livingRoom = _Translations$livingRoom$vi._(_root);
 	@override late final _Translations$app$vi app = _Translations$app$vi._(_root);
@@ -122,6 +123,21 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$vi musicExperience = _Translations$musicExperience$vi._(_root);
 	@override late final _Translations$musicTools$vi musicTools = _Translations$musicTools$vi._(_root);
 	@override late final _Translations$musicDevices$vi musicDevices = _Translations$musicDevices$vi._(_root);
+}
+
+// Path: mediaConveniences
+class _Translations$mediaConveniences$vi extends Translations$mediaConveniences$en {
+	_Translations$mediaConveniences$vi._(TranslationsVi root) : this._root = root, super.internal(root);
+
+	final TranslationsVi _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'Đọc số tiếp theo';
+	@override String get showRotation => 'Luân phiên phim bộ';
+	@override String get rotationHelp => 'Thêm phim bộ từ trình đơn của từng phim. Mỗi lượt sẽ phát tập tiếp theo của mỗi phim.';
+	@override String get missingEpisode => 'Thiếu tập';
+	@override String get stereoChannel => 'Kênh phát trên cả hai loa';
+	@override String get hdrBrightness => 'Độ sáng phụ đề HDR';
 }
 
 // Path: viewing
@@ -5579,6 +5595,12 @@ class _Translations$services$trackerDescriptions$vi extends Translations$service
 extension on TranslationsVi {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'Đọc số tiếp theo',
+			'mediaConveniences.showRotation' => 'Luân phiên phim bộ',
+			'mediaConveniences.rotationHelp' => 'Thêm phim bộ từ trình đơn của từng phim. Mỗi lượt sẽ phát tập tiếp theo của mỗi phim.',
+			'mediaConveniences.missingEpisode' => 'Thiếu tập',
+			'mediaConveniences.stereoChannel' => 'Kênh phát trên cả hai loa',
+			'mediaConveniences.hdrBrightness' => 'Độ sáng phụ đề HDR',
 			'viewing.extendRecording' => 'Ghi thêm 30 phút',
 			'viewing.recordsUntil' => ({required Object time}) => 'Ghi đến ${time}',
 			'viewing.extendFailed' => 'Không thể kéo dài bản ghi',
@@ -6085,14 +6107,14 @@ extension on TranslationsVi {
 			'settings.audioPassthroughDescription' => 'Gửi âm thanh Dolby/DTS đến máy nhận hoặc TV của bạn mà không cần mã hóa lại, duy trì âm thanh xung quanh.',
 			'settings.audioPassthroughDescriptionApple' => 'Sử dụng bộ giải mã Dolby gốc của Apple cho Dolby Digital Plus, bao gồm Atmos. DTS và TrueHD vẫn chơi như PCM đa kênh.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Sử dụng bộ giải mã Dolby bản địa của Apple cho Dolby Digital Plus, bao gồm Atmos. Trên iOS, iPadOS và tvOS 26 hoặc sau đó, TrueHD Atmos và DTS:X chơi như âm thanh không gian.',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Tắt trong khi bình thường hóa âm thanh',
 			'settings.audioChannelLimit' => 'Kênh âm thanh',
 			'settings.audioChannelLimitDescription' => 'Thay đổi âm thanh giải mã xuống cho các loa, tai nghe, hoặc cài đặt HDMI mà không thể phát tất cả các kênh',
 			'settings.audioChannelLimitOriginal' => 'nguyên bản',
 			'settings.audioChannelLimitOriginalDescription' => 'Chơi mỗi kênh trong track',
 			'settings.audioChannelLimitSurround51' => 'Đến 5.1',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Trộn 7.1 xuống 5.1 cho các TV và máy nhận mà chỉ mất 5.1 PCM.',
 			'settings.audioChannelLimitStereo' => 'Âm Thanh Nổi',
 			'settings.audioChannelLimitStereoDescription' => 'Thay vào hai kênh cho các loa stereo hoặc tai nghe.',
@@ -6599,14 +6621,14 @@ extension on TranslationsVi {
 			'videoControls.sleepTimerDurationHeader' => 'Thời gian',
 			'videoControls.playbackWillPauseAtEnd' => 'Playback sẽ nghỉ ngơi vào cuối video này',
 			'videoControls.stillWatching' => 'vẫn đang xem?',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Đánh giá tại ${seconds}s',
 			'videoControls.continueWatching' => 'tiếp tục',
 			'videoControls.autoPlayNext' => 'Auto-Play tiếp theo',
 			'videoControls.playNext' => 'Phát kế tiếp',
 			'videoControls.playButton' => 'Phát',
 			'videoControls.pauseButton' => 'Tạm dừng',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'nghỉ ngơi',
 			'videoControls.playbackResumed' => 'chơi',
 			'videoControls.loadingVideo' => 'tải video',
@@ -7113,14 +7135,14 @@ extension on TranslationsVi {
 			'libraries.playRandomMovie' => 'Chơi một bộ phim ngẫu nhiên',
 			'libraries.randomPickFailed' => 'Không thể chọn một bộ phim ngẫu nhiên từ thư viện này.',
 			'libraries.title' => 'Thư viện',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Thư viện',
 			'libraries.scanLibraryFiles' => 'Scan thư viện file',
 			'libraries.scanLibrary' => 'Quét thư viện',
 			'libraries.analyze' => 'phân tích',
 			'libraries.analyzeLibrary' => 'Phân tích Thư viện',
 			'libraries.refreshMetadata' => 'Làm mới dữ liệu mô tả',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Dọn sạch thùng rác',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Khả năng làm sạch bụi bẩn cho "${title}..."',
 			'libraries.trashEmptied' => ({required Object title}) => 'Trash emptied cho "${title}"',
@@ -7627,14 +7649,14 @@ extension on TranslationsVi {
 			'music.instantMix' => 'Trộn Lẫn Nhanh',
 			'music.playNext' => 'Phát kế tiếp',
 			'music.addToQueue' => 'Thêm vào Queue',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Đĩa ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('vi'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} đường dẫn', ), 
 			'music.nowPlaying' => 'Bây giờ chơi',
 			'music.playingFrom' => ({required Object title}) => 'Chơi từ ${title}',
 			'music.queue' => 'Quay',
 			'music.clearQueue' => 'Xóa hàng đợi',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => 'Lời bài hát',
 			'music.visualizer' => 'hình ảnh',
 			'music.visualizerProfileLoading' => 'Đọc Track Analysis...',
@@ -8141,14 +8163,14 @@ extension on TranslationsVi {
 			'performanceOverlay.memory' => 'ký ức',
 			'performanceOverlay.uiFps' => 'Đánh giá FPS',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'Đánh giá NVIDIA',
 			'performanceOverlay.decoderQualcommHw' => 'Đánh giá Qualcomm HW',
 			'performanceOverlay.decoderMediatekHw' => 'Thông tin HW',
 			'performanceOverlay.decoderExynosHw' => 'Đánh giá HW',
 			'performanceOverlay.decoderSoftware' => 'Phần mềm',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Phần cứng',
 			'performanceOverlay.tunnelingActive' => 'hoạt động',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} thất bại)',
@@ -8655,14 +8677,14 @@ extension on TranslationsVi {
 			'homeLayout.noCustomRows' => 'Không có dòng tiêu chuẩn',
 			'homeLayout.addRowHint' => 'Sử dụng Add Home row để tạo một.',
 			'homeLayout.addHomeRow' => 'Thêm Home Row',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Chọn một thể loại; dòng mới được thêm vào Nhà tổ chức tự động',
 			'homeLayout.removeRow' => 'Xóa dòng',
 			'homeLayout.recentlyAdded' => 'Thêm Gần Đây',
 			'homeLayout.recentlyReleased' => 'Gần đây phát hành',
 			'homeLayout.movieCollections' => 'Bộ sưu tập phim',
 			'homeLayout.showCollections' => 'Hiển thị bộ sưu tập',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Row tiêu đề',
 			'homeLayout.content' => 'Nội dung',
 			'homeLayout.showThisRowIn' => 'Hiển thị dòng này trong:',
@@ -9169,14 +9191,14 @@ extension on TranslationsVi {
 			'sourceSetup.dlnaHelp' => 'Việc dò tìm phụ thuộc vào multicast trên mạng cục bộ. Nếu không thấy máy chủ, hãy nhập URL mô tả thiết bị của máy chủ đó ở trên.',
 			'sourceSetup.dlnaRoot' => 'ID đối tượng DLNA; để trống để dùng thư mục gốc của thiết bị.',
 			'sourceSetup.passwordOrKey' => 'Nhập mật khẩu hoặc thêm khóa riêng bên dưới.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'Dấu vân tay SHA256 của khóa máy chủ SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Xác minh với quản trị viên máy chủ. Trên máy chủ, chạy ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub và dùng giá trị SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Để trống để giữ dấu vân tay đang được ghim, hoặc nhập dấu vân tay máy chủ mới.',
 			'sourceSetup.sshAuthentication' => 'Xác thực SSH bằng khóa công khai',
 			'sourceSetup.sshAuthenticationHelp' => 'Không bắt buộc; cũng hỗ trợ xác thực bằng mật khẩu.',
 			'sourceSetup.privateKey' => 'Khóa riêng (định dạng PEM hoặc OpenSSH)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Cụm mật khẩu của khóa riêng',
 			'sourceSetup.nfsMountPort' => 'Cổng TCP của dịch vụ gắn kết NFS',
 			'sourceSetup.nfsMountPortHelp' => 'Mặc định: 20048',
@@ -9683,14 +9705,14 @@ extension on TranslationsVi {
 			'musicTools.pinToHome' => 'Ghim vào trang chủ âm nhạc',
 			'musicTools.unpin' => 'Bỏ ghim',
 			'musicTools.serverAnalysis' => 'Phân tích máy chủ',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Phân tích âm thanh',
 			'musicTools.serverAnalysisScope' => 'Tất cả thư viện nhạc đủ điều kiện trên máy chủ này. Không thay đổi cài đặt phân tích của chúng.',
 			'musicTools.serverActivities' => 'Hoạt động máy chủ',
 			'musicTools.playlistSharing' => 'Quyền truy cập danh sách phát',
 			'musicTools.playlistRecipient' => 'Tên người dùng Plex hoặc email',
 			'musicTools.playlistSharingHint' => 'Cấp quyền truy cập danh sách phát này và các bản nhạc. Người nhận có thể cần chấp nhận lời mời.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Không thể yêu cầu truy cập danh sách phát.',
 			'musicTools.playlistSharingAccepted' => 'Plex đã tiếp nhận yêu cầu truy cập.',
 			'musicTools.playlistAccessList' => 'Quyền truy cập hiện tại',

@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Sıradakini oku",
+    "showRotation": "Dizileri sırayla oynat",
+    "rotationHelp": "Dizileri kendi menülerinden ekleyin. Her turda her dizinin bir sonraki bölümü oynatılır.",
+    "missingEpisode": "Eksik bölüm",
+    "stereoChannel": "Her iki hoparlörde çalınacak kanal",
+    "hdrBrightness": "HDR altyazı parlaklığı"
+  },
   "viewing": {
     "extendRecording": "30 dakika daha kaydet",
     "recordsUntil": "Kayıt bitişi: ${time}",

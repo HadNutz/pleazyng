@@ -9,6 +9,15 @@ import org.junit.Test
 
 class DownmixMatricesTest {
 
+  @Test
+  fun dualMonoRoutesOneInputToBothOutputsAndRestoresStereo() {
+    for ((channel, expected) in listOf(null to listOf(2f, 7f), 0 to listOf(2f, 2f), 1 to listOf(7f, 7f))) {
+      val matrix = DownmixMatrices.dualMonoCoefficients(channel)
+      val output = (0..1).map { 2f * coeff(matrix, 0, it) + 7f * coeff(matrix, 1, it) }
+      assertEquals(expected, output)
+    }
+  }
+
   private fun coeff(matrix: FloatArray, input: Int, output: Int) = matrix[input * 2 + output]
 
   private fun columnSum(matrix: FloatArray, output: Int): Float {

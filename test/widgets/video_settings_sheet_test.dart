@@ -581,6 +581,10 @@ void main() {
         of: find.text(t.videoSettings.audioSpatializer),
         matching: find.byType(SwitchListTile),
       );
+      // The label can already be visible while the centre of its two-line
+      // switch tile is still outside the viewport.
+      await Scrollable.ensureVisible(tester.element(spatializer), alignment: 0.5);
+      await tester.pumpAndSettle();
       await tester.tap(spatializer);
       await tester.pumpAndSettle();
       expect(effectsWrites.last.spatializer, isTrue);

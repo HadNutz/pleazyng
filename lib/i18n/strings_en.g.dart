@@ -40,6 +40,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
+	late final Translations$mediaConveniences$en mediaConveniences = Translations$mediaConveniences$en.internal(_root);
 	late final Translations$viewing$en viewing = Translations$viewing$en.internal(_root);
 	late final Translations$livingRoom$en livingRoom = Translations$livingRoom$en.internal(_root);
 	late final Translations$app$en app = Translations$app$en.internal(_root);
@@ -129,6 +130,33 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$musicExperience$en musicExperience = Translations$musicExperience$en.internal(_root);
 	late final Translations$musicTools$en musicTools = Translations$musicTools$en.internal(_root);
 	late final Translations$musicDevices$en musicDevices = Translations$musicDevices$en.internal(_root);
+}
+
+// Path: mediaConveniences
+class Translations$mediaConveniences$en {
+	Translations$mediaConveniences$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Read next'
+	String get readNext => 'Read next';
+
+	/// en: 'Show rotation'
+	String get showRotation => 'Show rotation';
+
+	/// en: 'Add shows from their menus. Each show plays its next episode once per round.'
+	String get rotationHelp => 'Add shows from their menus. Each show plays its next episode once per round.';
+
+	/// en: 'Missing episode'
+	String get missingEpisode => 'Missing episode';
+
+	/// en: 'Channel to play through both speakers'
+	String get stereoChannel => 'Channel to play through both speakers';
+
+	/// en: 'HDR subtitle brightness'
+	String get hdrBrightness => 'HDR subtitle brightness';
 }
 
 // Path: viewing
@@ -18179,6 +18207,12 @@ class Translations$bonusExtras$kind$en {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'Read next',
+			'mediaConveniences.showRotation' => 'Show rotation',
+			'mediaConveniences.rotationHelp' => 'Add shows from their menus. Each show plays its next episode once per round.',
+			'mediaConveniences.missingEpisode' => 'Missing episode',
+			'mediaConveniences.stereoChannel' => 'Channel to play through both speakers',
+			'mediaConveniences.hdrBrightness' => 'HDR subtitle brightness',
 			'viewing.extendRecording' => 'Record 30 more minutes',
 			'viewing.recordsUntil' => ({required Object time}) => 'Recording until ${time}',
 			'viewing.extendFailed' => 'Couldn’t extend this recording',
@@ -18685,14 +18719,14 @@ extension on Translations {
 			'settings.matchContentResolution' => 'Match Content Resolution',
 			'settings.matchContentResolutionDescription' => 'Switch the display to the video\'s native resolution so your TV handles upscaling. Menus and subtitles are upscaled too during playback',
 			'settings.matchRefreshRate' => 'Match Refresh Rate',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchRefreshRateDescription' => 'Match display refresh rate in fullscreen',
 			'settings.motionProcessing' => 'Motion processing',
 			'settings.motionSmoothing' => 'Motion smoothing',
 			'settings.motionSmoothingDescription' => 'Display-synchronized frame resampling on supported MPV GPU outputs; fast motion can look soft or show artifacts.',
 			'settings.motionSmoothingUnavailableDescription' => 'If this player has no display-synchronized GPU renderer, MPV smoothing is skipped and playback continues normally.',
 			'settings.motionSmoothingApplyFailed' => 'The player could not apply motion smoothing. Playback will continue unchanged.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.motionSmoothingLiveUnavailableDescription' => 'Motion smoothing is disabled for live playback to preserve stream timing.',
 			'settings.motionSmoothingNotActiveDescription' => 'MPV has not activated display-synchronized interpolation for this session.',
 			'settings.motionSmoothingNextPlayback' => 'Saved for the next video. The player prepares its motion processor when playback starts.',
@@ -19199,14 +19233,14 @@ extension on Translations {
 			'accessibility.autoScrollPause' => 'Pause auto-scroll',
 			'accessibility.hueShort' => 'H',
 			'accessibility.saturationShort' => 'S',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.valueShort' => 'V',
 			'accessibility.red' => 'Red',
 			'accessibility.green' => 'Green',
 			'accessibility.blue' => 'Blue',
 			'accessibility.redShort' => 'R',
 			'accessibility.greenShort' => 'G',
-			_ => null,
-		} ?? switch (path) {
 			'accessibility.blueShort' => 'B',
 			'accessibility.colorModeHsv' => 'HSV',
 			'accessibility.colorModeRgb' => 'RGB',
@@ -19713,14 +19747,14 @@ extension on Translations {
 			'iptv.deleteRecordingRuleConfirm' => 'Delete this rule from Dispatcharr?',
 			'iptv.dispatcharrRecordings' => 'Dispatcharr recordings',
 			'iptv.dispatcharrRules' => 'Dispatcharr rules',
+			_ => null,
+		} ?? switch (path) {
 			'iptv.scheduleRecording' => 'Schedule recording',
 			'iptv.recordingActionUnavailable' => 'This Dispatcharr channel could not be matched to the guide channel.',
 			'iptv.genericError' => 'Could not save this IPTV source. Check the details and retry.',
 			'accountPreferences.sectionTitle' => 'Account preferences',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Audio, subtitle and library options saved on ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Audio, subtitle and library options saved on ${count} accounts',
-			_ => null,
-		} ?? switch (path) {
 			'accountPreferences.pickAccount' => 'Every account stores its own preferences. Pick the one to edit.',
 			'accountPreferences.storedOnAccount' => 'These options are saved on the account itself, so every app signed in to it uses them — including Pleazyng on your other devices.',
 			'accountPreferences.noAccounts' => 'No accounts to configure',
@@ -20227,14 +20261,14 @@ extension on Translations {
 			'explore.searchEmpty' => ({required Object query}) => 'No results for "${query}"',
 			'explore.searchPrompt' => ({required Object source}) => 'Search for movies and shows on ${source}.',
 			'explore.searchFailed' => 'Search failed. Check your connection and try again.',
+			_ => null,
+		} ?? switch (path) {
 			'explore.badge.rankPopular' => ({required Object n}) => '#${n} popular',
 			'explore.badge.rankAiring' => ({required Object n}) => '#${n} airing',
 			'explore.badge.rankRated' => ({required Object n}) => '#${n} rated',
 			'explore.badge.rankTrending' => ({required Object n}) => '#${n} trending',
 			'explore.badge.rankSeasonal' => ({required Object n, required Object season}) => '#${n} in ${season}',
 			'explore.badge.watchingNow' => ({required Object n}) => '${n} watching',
-			_ => null,
-		} ?? switch (path) {
 			'explore.badge.available' => 'Available',
 			'explore.badge.partiallyAvailable' => 'Partly available',
 			'explore.badge.availableIn4k' => '4K available',
@@ -20741,14 +20775,14 @@ extension on Translations {
 			'downloads.syncedNewEpisodes' => ({required Object count, required Object title}) => 'Synced ${count} new episodes for ${title}',
 			'downloads.syncNow' => 'Sync now',
 			'downloads.downloadsUpToDate' => 'Downloads are up to date',
+			_ => null,
+		} ?? switch (path) {
 			'downloads.syncComplete' => ({required Object queued, required Object removed}) => 'Sync complete · ${queued} queued, ${removed} removed',
 			'downloads.activeSyncRules' => 'Sync rules',
 			'downloads.reviewOrphanFiles' => 'Review orphaned downloads',
 			'downloads.orphanReviewTitle' => 'Review orphaned downloads',
 			'downloads.orphanReviewDescription' => 'These tagged files are in Pleazyng\'s default app-managed download folders and have no matching download record or active task. Check the list before deleting them.',
 			'downloads.orphanReviewCount' => ({required Object count, required Object size}) => '${count} files · ${size}',
-			_ => null,
-		} ?? switch (path) {
 			'downloads.orphanDeleteFiles' => ({required Object count}) => 'Delete ${count} files',
 			'downloads.orphanCleanupNone' => 'No orphaned download files found',
 			'downloads.orphanCleanupFailed' => 'Pleazyng could not safely scan the managed downloads folder. No files were deleted.',
@@ -21255,14 +21289,14 @@ extension on Translations {
 			'trakt.watchedSyncDescription' => 'When you mark items as watched in Pleazyng, they are also marked as watched on Trakt.',
 			'trakt.historyExport' => 'Export to Letterboxd',
 			'trakt.historyExportDescription' => 'Create a local CSV from Trakt movie history. Nothing is uploaded.',
+			_ => null,
+		} ?? switch (path) {
 			'trakt.historyExportLoading' => 'Loading Trakt movie history…',
 			'trakt.historyExportReviewTitle' => 'Export movie history',
 			'trakt.historyExportReview' => ({required Object plays, required Object movies, required Object files}) => 'This will save ${plays} movie watch entries covering ${movies} movies in ${files} Letterboxd import CSV file(s). Files include available TMDB/IMDb IDs, titles, years, and watched dates using this device\'s local calendar date. TV episodes and ratings are excluded; nothing is uploaded. Letterboxd may combine repeat watches on the same date. Each file stays below Letterboxd\'s 1 MB import limit.',
 			'trakt.historyExportSkipped' => ({required Object count}) => '${count} incomplete entries could not be included.',
 			'trakt.historyExportNoHistory' => 'No exportable movie history was found in Trakt.',
 			'trakt.historyExportFailed' => 'Couldn\'t load Trakt movie history. Try again.',
-			_ => null,
-		} ?? switch (path) {
 			'trakt.historyExportSave' => 'Save CSV',
 			'trakt.historyExportPart' => ({required Object part, required Object total}) => 'Save Letterboxd file ${part} of ${total}',
 			'trakt.historyExportSaved' => ({required Object count}) => 'Saved ${count} Letterboxd CSV file(s).',
@@ -21769,14 +21803,14 @@ extension on Translations {
 			'universalMedia.saveFavorite' => 'Save favorite',
 			'universalMedia.playNow' => 'Play now',
 			'universalMedia.favoriteSaved' => 'Stream favorite saved to this profile',
+			_ => null,
+		} ?? switch (path) {
 			'universalMedia.skippedEntries' => ({required num n, required Object count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Skipped ${count} unsupported or unsafe playlist entry.', other: 'Skipped ${count} unsupported or unsafe playlist entries.', ), 
 			'universalMedia.playlistAddress' => 'Playlist address',
 			'universalMedia.playlistAddressHelp' => 'Open an M3U, M3U8, or PLS playlist from a web address. Direct stream links do not save the playlist.',
 			'universalMedia.choosePlaylist' => 'Choose playlist file',
 			'universalMedia.openPlaylist' => 'Open playlist',
 			'universalMedia.playlistFormatsHelp' => 'A playlist can contain at most 1,000 items and 2 MB. HLS manifests open as streams so the player can choose a quality.',
-			_ => null,
-		} ?? switch (path) {
 			'universalMedia.saveQueuePlaylist' => 'Save queue as playlist',
 			'universalMedia.queuePlaylistSaved' => 'Playlist saved beside the media files.',
 			'universalMedia.queuePlaylistUnavailable' => 'This queue can’t be saved as a reusable local playlist.',
@@ -22283,14 +22317,14 @@ extension on Translations {
 			'sourceSetup.metadataNoAutomaticMatch' => 'No automatic title match was found. Search for the title to choose a match.',
 			'sourceSetup.metadataFailed' => 'Online metadata could not be loaded. Playback and local details are still available.',
 			'sourceSetup.videoDetailsLoading' => 'Loading video details',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.subtitleKeyRequired' => 'OpenSubtitles API key required',
 			'sourceSetup.subtitleKeyHelp' => 'Edit this file source and add an OpenSubtitles API key in its optional subtitle settings.',
 			'sourceSetup.subtitleSearchFailed' => 'Subtitle search failed. Check the API key, connection, and service access.',
 			'sourceSetup.subtitleApplyFailed' => 'Could not download or apply this subtitle. Check your connection and try another result.',
 			'sourceSetup.subtitleSearch' => 'Search OpenSubtitles',
 			'sourceSetup.subtitleSearchPrivacy' => 'Search uses the title and available IMDb/TMDB IDs. The video file stays on its source. Check language, forced or hearing-impaired flags, and rating before choosing.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.movieOrShow' => 'Movie or show',
 			'sourceSetup.subtitleTitleHint' => 'Enter a title to refine results',
 			'sourceSetup.subtitleLanguage' => 'Subtitle language',
@@ -22797,14 +22831,14 @@ extension on Translations {
 			'podcasts.removeFinishedAfter' => 'Remove finished downloads after',
 			'subtitleAiUi.cutRepair' => 'Cut repair',
 			'subtitleAiUi.automaticSync' => 'Automatic sync',
+			_ => null,
+		} ?? switch (path) {
 			'subtitleAiUi.cutRepairLowercase' => 'cut repair',
 			'subtitleAiUi.syncLowercase' => 'sync',
 			'subtitleAiUi.subtitleReferenceSync' => 'Subtitle-reference sync',
 			'subtitleAiUi.capturedEvidenceTimingNote' => 'Cues outside captured evidence kept their original timing. ',
 			'subtitleAiUi.uploadedToServerLibraryNote' => ' Uploaded to the server library.',
 			'subtitleAiUi.glossaryMismatchOne' => ({required Object count}) => 'Glossary check found ${count} possible mismatch. Review these cues before attaching.',
-			_ => null,
-		} ?? switch (path) {
 			'subtitleAiUi.glossaryMismatchMany' => ({required Object count}) => 'Glossary check found ${count} possible mismatches. Review these cues before attaching.',
 			'subtitleAiUi.generatedCueCountAndDuration' => ({required Object cueCount, required Object durationMinutes, required Object speechStatus, required Object providerLabel, required Object placementEvidence, required Object uploadedNote}) => 'Generated ${cueCount} cues from ${durationMinutes} minutes of audio. ${speechStatus}. Requested/initialized backend: ${providerLabel}. Placement evidence: ${placementEvidence}. Original audio remains unchanged.${uploadedNote}',
 			'subtitleAiUi.sourceTranscriptReusableInSessionProfileNeededForPersistentCache' => 'Source transcript is reusable in this session; an active profile is needed for persistent caching.',
@@ -23311,14 +23345,14 @@ extension on Translations {
 			'karaokeUi.comfortableRangeSavedMIDISuggestedKey' => ({required Object value1, required Object value2, required Object value3}) => 'Comfortable range saved: ${value1}–${value2} MIDI. Suggested key: ${value3}.',
 			'karaokeUi.saveMyComfortableRange' => 'Save my comfortable range',
 			'karaokeUi.lyricTiming' => 'Lyric timing',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.editWordSyllableTiming' => 'Edit word/syllable timing',
 			'karaokeUi.timeTheLineBeforeEditingSyllables' => 'Set a start time for this lyric line before editing its syllables.',
 			'karaokeUi.splitClearsSpanPronunciationAndConfidence' => 'Splitting clears the span reading and confidence. Merging requires matching singer parts, readings, and confidence.',
 			'karaokeUi.syllableText' => 'Word or syllable text',
 			'karaokeUi.splitSpan' => 'Split span',
 			'karaokeUi.mergeWithNext' => 'Merge with next',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.firstSyllable' => 'First segment text',
 			'karaokeUi.secondSyllable' => 'Second segment text',
 			'karaokeUi.splitBoundaryMs' => 'Split boundary (ms)',

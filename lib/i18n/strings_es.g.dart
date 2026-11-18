@@ -40,6 +40,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsEs $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsEs(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final Translations$mediaConveniences$es mediaConveniences = Translations$mediaConveniences$es.internal(_root);
 	@override late final Translations$viewing$es viewing = Translations$viewing$es.internal(_root);
 	@override late final Translations$livingRoom$es livingRoom = Translations$livingRoom$es.internal(_root);
 	@override late final Translations$app$es app = Translations$app$es.internal(_root);
@@ -123,6 +124,21 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$es musicExperience = Translations$musicExperience$es.internal(_root);
 	@override late final Translations$musicTools$es musicTools = Translations$musicTools$es.internal(_root);
 	@override late final Translations$musicDevices$es musicDevices = Translations$musicDevices$es.internal(_root);
+}
+
+// Path: mediaConveniences
+class Translations$mediaConveniences$es extends Translations$mediaConveniences$en {
+	Translations$mediaConveniences$es.internal(TranslationsEs root) : this._root = root, super.internal(root);
+
+	final TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'Leer el siguiente';
+	@override String get showRotation => 'Turnos de series';
+	@override String get rotationHelp => 'Añade series desde sus menús. En cada ronda se reproduce el siguiente episodio de cada serie.';
+	@override String get missingEpisode => 'Falta el episodio';
+	@override String get stereoChannel => 'Canal para ambos altavoces';
+	@override String get hdrBrightness => 'Brillo de los subtítulos HDR';
 }
 
 // Path: viewing
@@ -5728,6 +5744,12 @@ class Translations$bonusExtras$kind$es extends Translations$bonusExtras$kind$en 
 extension on TranslationsEs {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'Leer el siguiente',
+			'mediaConveniences.showRotation' => 'Turnos de series',
+			'mediaConveniences.rotationHelp' => 'Añade series desde sus menús. En cada ronda se reproduce el siguiente episodio de cada serie.',
+			'mediaConveniences.missingEpisode' => 'Falta el episodio',
+			'mediaConveniences.stereoChannel' => 'Canal para ambos altavoces',
+			'mediaConveniences.hdrBrightness' => 'Brillo de los subtítulos HDR',
 			'viewing.extendRecording' => 'Grabar 30 minutos más',
 			'viewing.recordsUntil' => ({required Object time}) => 'Grabando hasta las ${time}',
 			'viewing.extendFailed' => 'No se pudo ampliar la grabación',
@@ -6234,14 +6256,14 @@ extension on TranslationsEs {
 			'settings.tunneledPlayback' => 'Reproducción tunelizada',
 			'settings.tunneledPlaybackDescription' => 'Usar tunelización de video. Desactívala si HDR muestra video negro o el movimiento se entrecorta.',
 			'settings.audioPassthrough' => 'Transferencia directa de audio',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughDescription' => 'Envía el audio Dolby/DTS a tu receptor o TV sin recodificar, conservando el sonido envolvente. Desactívala si no tienes sonido.',
 			'settings.audioPassthroughDescriptionApple' => 'Usa el decodificador Dolby nativo de Apple para Dolby Digital Plus, incluido Atmos. DTS y TrueHD se siguen reproduciendo como PCM multicanal. Desactívalo si no tienes sonido.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Usa el decodificador Dolby nativo de Apple para Dolby Digital Plus, incluido Atmos. En iOS, iPadOS y tvOS 26 o posterior, TrueHD Atmos y DTS:X se reproducen como audio espacial. El resto de pistas DTS y TrueHD se reproducen como PCM multicanal. Desactívalo si no tienes sonido.',
 			'settings.audioPassthroughOverriddenByNormalization' => 'Desactivada mientras la normalización de volumen esté activada',
 			'settings.audioChannelLimit' => 'Canales de audio',
 			'settings.audioChannelLimitDescription' => 'Mezcla el audio decodificado a menos canales para altavoces, auriculares o equipos HDMI que no pueden reproducir todos los canales',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitOriginal' => 'Original',
 			'settings.audioChannelLimitOriginalDescription' => 'Reproduce todos los canales de la pista',
 			'settings.audioChannelLimitSurround51' => 'Hasta 5.1',
@@ -6748,14 +6770,14 @@ extension on TranslationsEs {
 			'videoControls.playbackWillPauseIn' => ({required Object duration}) => 'La reproducción se pausará en ${duration}',
 			'videoControls.sleepTimerEndOfVideo' => 'Fin del video actual',
 			'videoControls.sleepTimerStopAtHeader' => 'Detener en',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.sleepTimerDurationHeader' => 'Temporizador',
 			'videoControls.playbackWillPauseAtEnd' => 'La reproducción se pausará al final de este video',
 			'videoControls.stillWatching' => '¿Sigues viendo?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Se pausará en ${seconds}s',
 			'videoControls.continueWatching' => 'Continuar',
 			'videoControls.autoPlayNext' => 'Reproducir siguiente automáticamente',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playNext' => 'Reproducir siguiente',
 			'videoControls.playButton' => 'Reproducir',
 			'videoControls.pauseButton' => 'Pausar',
@@ -7262,14 +7284,14 @@ extension on TranslationsEs {
 			'errors.searchUnavailable' => 'La búsqueda no pudo alcanzar ningún servidor de medios.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Tiempo de conexión agotado al cargar ${context}',
 			'errors.connectionFailed' => 'No se puede conectar al servidor multimedia',
+			_ => null,
+		} ?? switch (path) {
 			'errors.unableToLoad' => ({required Object context}) => 'No se pudo cargar ${context}. Inténtalo de nuevo.',
 			'errors.noClientAvailable' => 'No hay cliente disponible',
 			'errors.pleaseEnterToken' => 'Introduce un token',
 			'errors.invalidToken' => 'Token no válido',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Error al verificar el token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Error al cambiar al perfil ${displayName}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Error al eliminar ${displayName}',
 			'errors.failedToRate' => 'No se pudo actualizar la valoración',
 			'errors.reasonTimedOut' => 'se agotó el tiempo de conexión',
@@ -7776,14 +7798,14 @@ extension on TranslationsEs {
 			'playlists.smartPlaylist' => 'Lista de reproducción inteligente',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} elemento', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} elementos', ), 
 			'playlists.emptyPlaylist' => 'Esta lista de reproducción está vacía',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.deleteConfirm' => '¿Eliminar lista de reproducción?',
 			'playlists.deleteMessage' => ({required Object name}) => '¿Estás seguro de que quieres eliminar "${name}"?',
 			'playlists.created' => 'Lista de reproducción creada',
 			'playlists.deleted' => 'Lista de reproducción eliminada',
 			'playlists.itemAdded' => 'Añadido a la lista de reproducción',
 			'playlists.itemRemoved' => 'Eliminado de la lista de reproducción',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Seleccionar lista de reproducción',
 			'playlists.searchPlaylists' => 'Buscar listas de reproducción...',
 			'playlists.errorCreating' => 'Error al crear la lista de reproducción',
@@ -8290,14 +8312,14 @@ extension on TranslationsEs {
 			'performanceOverlay.matrix' => 'Matriz',
 			'performanceOverlay.primaries' => 'Primarios',
 			'performanceOverlay.transfer' => 'Transferencia',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.renderFps' => 'FPS render',
 			'performanceOverlay.displayFps' => 'FPS pantalla',
 			'performanceOverlay.avSync' => 'Sincronía A/V',
 			'performanceOverlay.dropped' => 'Descartados',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
 			'performanceOverlay.dvRpuAverage' => 'Prom. DV RPU',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'Prom. muestra DV',
 			'performanceOverlay.maxLuma' => 'Luma máx.',
 			'performanceOverlay.minLuma' => 'Luma mín.',
@@ -8804,14 +8826,14 @@ extension on TranslationsEs {
 			'homeLayout.removeFromHome' => 'Removir de casa',
 			'homeLayout.selectRowsFirst' => 'Seleccione las líneas de inicio debajo primero.',
 			'homeLayout.plexManagedRows' => ({required Object n}) => '${n} Plex líneas gestionadas',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.continueWatching' => 'Seguir viendo',
 			'homeLayout.continueWatchingLibraryDescription' => 'La red de resumen de la propia biblioteca',
 			'homeLayout.continueWatchingHomeDescription' => 'La línea de progreso de resumen mostrada en Home',
 			'homeLayout.nextUpHomeDescription' => 'La siguiente secuencia de episodios no observados se muestra separadamente en Home',
 			'homeLayout.library' => 'Biblioteca',
 			'homeLayout.showInRecommended' => 'Presentación en Biblioteca Recomendada',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.customPlexRow' => 'Conexión Plex',
 			'homeLayout.heroNeedsLibrary' => 'Véase la biblioteca primero — El héroe necesita algo para mostrar',
 			'homeLayout.heroNeedsSurface' => 'Véase la Biblioteca o la Casa primero — El héroe necesita algo para mostrar',
@@ -9318,14 +9340,14 @@ extension on TranslationsEs {
 			'audiobook.sortNarrator' => 'narración',
 			'audiobook.sortSeries' => 'Orden de serie',
 			'audiobook.sortRecent' => 'recientemente abierto',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.statusFilter' => 'El estado de lectura',
 			'audiobook.statusAll' => 'Todos los libros',
 			'audiobook.statusNew' => 'No comenzó',
 			'audiobook.statusProgress' => 'En el progreso',
 			'audiobook.statusFinished' => 'Finalizado',
 			'audiobook.goToTime' => 'Vuelve al tiempo',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.timeHelp' => 'Horas: minutos: segundos o minutos: segundos',
 			'audiobook.recoveryHelp' => 'Exportar una copia cifrada reciente antes de mover o reparar los datos de sincronización. las importaciones se fusionan con el estado actual; nunca sustituyen la historia de la sincronía local.',
 			'audiobook.recoveryExport' => 'Exportación de archivos de recuperación cifrados',
@@ -9832,14 +9854,14 @@ extension on TranslationsEs {
 			'bonusExtras.completed' => 'Completado',
 			'bonusExtras.markCompleted' => 'Marcar como completado',
 			'bonusExtras.resume' => 'Reanudar extra',
+			_ => null,
+		} ?? switch (path) {
 			'bonusExtras.restricted' => 'Los extras en línea no están disponibles para este perfil.',
 			'bonusExtras.kind.makingOf' => 'Cómo se hizo',
 			'bonusExtras.kind.effects' => 'Efectos y escenas de riesgo',
 			'bonusExtras.kind.makeup' => 'Maquillaje y vestuario',
 			'bonusExtras.kind.interview' => 'Entrevistas',
 			'bonusExtras.kind.deletedScene' => 'Escenas eliminadas',
-			_ => null,
-		} ?? switch (path) {
 			'bonusExtras.kind.bloopers' => 'Tomas falsas',
 			'bonusExtras.kind.commentary' => 'Comentarios',
 			'bonusExtras.kind.trailer' => 'Tráilers',

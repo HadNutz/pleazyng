@@ -40,6 +40,7 @@ class TranslationsIt extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsIt $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsIt(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$mediaConveniences$it mediaConveniences = _Translations$mediaConveniences$it._(_root);
 	@override late final _Translations$viewing$it viewing = _Translations$viewing$it._(_root);
 	@override late final _Translations$livingRoom$it livingRoom = _Translations$livingRoom$it._(_root);
 	@override late final _Translations$app$it app = _Translations$app$it._(_root);
@@ -122,6 +123,21 @@ class TranslationsIt extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$it musicExperience = _Translations$musicExperience$it._(_root);
 	@override late final _Translations$musicTools$it musicTools = _Translations$musicTools$it._(_root);
 	@override late final _Translations$musicDevices$it musicDevices = _Translations$musicDevices$it._(_root);
+}
+
+// Path: mediaConveniences
+class _Translations$mediaConveniences$it extends Translations$mediaConveniences$en {
+	_Translations$mediaConveniences$it._(TranslationsIt root) : this._root = root, super.internal(root);
+
+	final TranslationsIt _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'Leggi il prossimo';
+	@override String get showRotation => 'Serie a rotazione';
+	@override String get rotationHelp => 'Aggiungi le serie dai rispettivi menu. A ogni giro viene riprodotto il prossimo episodio di ogni serie.';
+	@override String get missingEpisode => 'Episodio mancante';
+	@override String get stereoChannel => 'Canale per entrambi gli altoparlanti';
+	@override String get hdrBrightness => 'Luminosità dei sottotitoli HDR';
 }
 
 // Path: viewing
@@ -5611,6 +5627,12 @@ class _Translations$services$trackerDescriptions$it extends Translations$service
 extension on TranslationsIt {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'Leggi il prossimo',
+			'mediaConveniences.showRotation' => 'Serie a rotazione',
+			'mediaConveniences.rotationHelp' => 'Aggiungi le serie dai rispettivi menu. A ogni giro viene riprodotto il prossimo episodio di ogni serie.',
+			'mediaConveniences.missingEpisode' => 'Episodio mancante',
+			'mediaConveniences.stereoChannel' => 'Canale per entrambi gli altoparlanti',
+			'mediaConveniences.hdrBrightness' => 'Luminosità dei sottotitoli HDR',
 			'viewing.extendRecording' => 'Registra altri 30 minuti',
 			'viewing.recordsUntil' => ({required Object time}) => 'Registrazione fino alle ${time}',
 			'viewing.extendFailed' => 'Impossibile prolungare la registrazione',
@@ -6117,14 +6139,14 @@ extension on TranslationsIt {
 			'settings.audioPassthroughDescription' => 'Invia l\'audio Dolby/DTS al ricevitore o al televisore senza ricodificarlo, preservando l\'audio surround. Disattiva questa opzione se non senti alcun suono.',
 			'settings.audioPassthroughDescriptionApple' => 'Usa il decoder Dolby nativo di Apple per Dolby Digital Plus, incluso Atmos. DTS e TrueHD vengono comunque riprodotti come PCM multicanale. Disattiva questa opzione se non senti alcun suono.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Usa il decoder Dolby nativo di Apple per Dolby Digital Plus, incluso Atmos. Su iOS, iPadOS e tvOS 26 o versioni successive, TrueHD Atmos e DTS:X vengono riprodotti come audio spaziale. Le altre tracce DTS e TrueHD vengono riprodotte come PCM multicanale. Disattiva questa opzione se non senti alcun suono.',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Disattivato mentre la normalizzazione del volume è attiva',
 			'settings.audioChannelLimit' => 'Canali audio',
 			'settings.audioChannelLimitDescription' => 'Esegui il downmix dell\'audio decodificato per altoparlanti, cuffie o configurazioni HDMI che non possono riprodurre tutti i canali',
 			'settings.audioChannelLimitOriginal' => 'Originale',
 			'settings.audioChannelLimitOriginalDescription' => 'Riproduci tutti i canali della traccia',
 			'settings.audioChannelLimitSurround51' => 'Fino a 5.1',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Esegui il downmix da 7.1 a 5.1 per televisori e ricevitori che accettano solo PCM 5.1. Il passthrough non viene modificato.',
 			'settings.audioChannelLimitStereo' => 'Stereo',
 			'settings.audioChannelLimitStereoDescription' => 'Esegui il downmix a due canali per altoparlanti stereo o cuffie. Disattiva il passthrough.',
@@ -6631,14 +6653,14 @@ extension on TranslationsIt {
 			'videoControls.sleepTimerDurationHeader' => 'Timer',
 			'videoControls.playbackWillPauseAtEnd' => 'La riproduzione verrà messa in pausa alla fine di questo video',
 			'videoControls.stillWatching' => 'Stai ancora guardando?',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pausa tra ${seconds}s',
 			'videoControls.continueWatching' => 'Continua',
 			'videoControls.autoPlayNext' => 'Riproduci automaticamente il successivo',
 			'videoControls.playNext' => 'Riproduci il successivo',
 			'videoControls.playButton' => 'Riproduci',
 			'videoControls.pauseButton' => 'Pausa',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'In pausa',
 			'videoControls.playbackResumed' => 'Riproduzione',
 			'videoControls.loadingVideo' => 'Caricamento video',
@@ -7145,14 +7167,14 @@ extension on TranslationsIt {
 			'libraries.playRandomMovie' => 'Gioca un film casuale',
 			'libraries.randomPickFailed' => 'Non si può scegliere un film casuale da questa biblioteca.',
 			'libraries.title' => 'Librerie',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Libreria',
 			'libraries.scanLibraryFiles' => 'Scansiona i file della libreria',
 			'libraries.scanLibrary' => 'Scansiona libreria',
 			'libraries.analyze' => 'Analizza',
 			'libraries.analyzeLibrary' => 'Analizza libreria',
 			'libraries.refreshMetadata' => 'Aggiorna metadati',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Svuota cestino',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Svuotamento del cestino di "${title}"...',
 			'libraries.trashEmptied' => ({required Object title}) => 'Cestino di "${title}" svuotato',
@@ -7659,14 +7681,14 @@ extension on TranslationsIt {
 			'music.instantMix' => 'Mix istantaneo',
 			'music.playNext' => 'Riproduci come prossimo',
 			'music.addToQueue' => 'Aggiungi alla coda',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Disco ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('it'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} brano', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} brani', ), 
 			'music.nowPlaying' => 'In riproduzione',
 			'music.playingFrom' => ({required Object title}) => 'Riproduzione da ${title}',
 			'music.queue' => 'Coda',
 			'music.clearQueue' => 'Svuota la coda',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => 'Testo',
 			'music.visualizer' => 'Visualizzatore',
 			'music.visualizerProfileLoading' => 'Leggi il track analysis...',
@@ -8173,14 +8195,14 @@ extension on TranslationsIt {
 			'performanceOverlay.memory' => 'Memoria',
 			'performanceOverlay.uiFps' => 'FPS UI',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Software',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Hardware',
 			'performanceOverlay.tunnelingActive' => 'Attivo',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} errori)',
@@ -8687,14 +8709,14 @@ extension on TranslationsIt {
 			'homeLayout.noCustomRows' => 'Non ci sono ancora linee',
 			'homeLayout.addRowHint' => 'Utilizzare Add Home row per creare uno.',
 			'homeLayout.addHomeRow' => 'Aggiungi Home Rue',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Selezionare una categoria; la nuova linea viene aggiunta automaticamente all\'Organizzatore',
 			'homeLayout.removeRow' => 'Rimuovere la linea',
 			'homeLayout.recentlyAdded' => 'Aggiunti di recente',
 			'homeLayout.recentlyReleased' => 'Rilasciato di recente',
 			'homeLayout.movieCollections' => 'Film Collezioni',
 			'homeLayout.showCollections' => 'Mostra le collezioni',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Titolo Row',
 			'homeLayout.content' => 'contenuto',
 			'homeLayout.showThisRowIn' => 'Mostra questa riga in:',
@@ -9201,14 +9223,14 @@ extension on TranslationsIt {
 			'sourceSetup.dlnaHelp' => 'Il rilevamento dipende dal multicast sulla rete locale. Se non compare alcun server, inserisci qui sopra l’URL della sua descrizione del dispositivo.',
 			'sourceSetup.dlnaRoot' => 'ID dell’oggetto DLNA; lascia vuoto per usare la radice del dispositivo.',
 			'sourceSetup.passwordOrKey' => 'Inserisci una password oppure aggiungi una chiave privata qui sotto.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'Impronta SHA256 della chiave host SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Verificala con l’amministratore del server. Sul server, esegui ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub e usa il valore SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Lascia vuoto per mantenere l’impronta attualmente fissata oppure inserisci una nuova impronta del server.',
 			'sourceSetup.sshAuthentication' => 'Autenticazione SSH con chiave pubblica',
 			'sourceSetup.sshAuthenticationHelp' => 'Facoltativa; è supportata anche l’autenticazione con password.',
 			'sourceSetup.privateKey' => 'Chiave privata (formato PEM o OpenSSH)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Passphrase della chiave privata',
 			'sourceSetup.nfsMountPort' => 'Porta TCP del servizio di montaggio NFS',
 			'sourceSetup.nfsMountPortHelp' => 'Predefinita: 20048',
@@ -9715,14 +9737,14 @@ extension on TranslationsIt {
 			'musicTools.pinToHome' => 'Fissa nella home della musica',
 			'musicTools.unpin' => 'Rimuovi',
 			'musicTools.serverAnalysis' => 'Analisi del server',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Analisi sonora',
 			'musicTools.serverAnalysisScope' => 'Tutte le librerie musicali idonee su questo server. Le impostazioni di analisi non vengono modificate.',
 			'musicTools.serverActivities' => 'Attività del server',
 			'musicTools.playlistSharing' => 'Accesso alla playlist',
 			'musicTools.playlistRecipient' => 'Nome utente Plex o email',
 			'musicTools.playlistSharingHint' => 'Concedi l’accesso a questa playlist e ai suoi brani. Il destinatario potrebbe dover accettare un invito.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Impossibile richiedere l’accesso alla playlist.',
 			'musicTools.playlistSharingAccepted' => 'Plex ha accettato la richiesta di accesso.',
 			'musicTools.playlistAccessList' => 'Accesso attuale',

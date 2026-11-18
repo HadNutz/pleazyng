@@ -1,5 +1,7 @@
 import '../../app_icon.dart';
 import 'dart:async';
+import 'playback_presentation_controls.dart';
+import '../../../services/playback_presentation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -108,6 +110,10 @@ class _InPlayerSubtitleStyleSheetState extends State<InPlayerSubtitleStyleSheet>
       }
     } catch (error, stackTrace) {
       appLogger.w('Could not update subtitle style during playback', error: error, stackTrace: stackTrace);
+    } finally {
+      PlaybackPresentation.of(widget.player)?.subtitleStyleApplied(
+        _safeColor(settings.read(SettingsService.subtitleTextColor), SettingsService.subtitleTextColor.defaultValue),
+      );
     }
   }
 
@@ -153,6 +159,7 @@ class _InPlayerSubtitleStyleSheetState extends State<InPlayerSubtitleStyleSheet>
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  PlaybackPresentationControl(player: widget.player, brightness: true),
                   _StyleSlider(
                     title: t.subtitlingStyling.fontSize,
                     value: _fontSize.toDouble(),

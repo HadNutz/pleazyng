@@ -291,6 +291,9 @@ open class ExoPlayerPlugin(
       "setAudioNormalization" -> handleSetAudioNormalization(call, result)
       "setAudioPassthrough" -> handleSetAudioPassthrough(call, result)
       "setAudioDownmix" -> handleSetAudioDownmix(call, result)
+      "dualMonoAvailable" -> result.success(!usingMpvFallback && !fallbackInProgress && playerCore?.dualMonoAvailable() == true)
+      "setDualMonoChannel" -> result.success(!usingMpvFallback && !fallbackInProgress &&
+        playerCore?.setDualMonoChannel(call.argument<Int>("channel")) == true)
       "observeProperty" -> handleObserveProperty(call, result)
       "setMpvProperty" -> handleSetMpvProperty(call, result)
       "setLogLevel" -> {

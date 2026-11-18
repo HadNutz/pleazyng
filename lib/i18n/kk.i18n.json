@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Келесісін оқу",
+    "showRotation": "Сериалдарды кезекпен көру",
+    "rotationHelp": "Сериалдарды өз мәзірінен қосыңыз. Әр айналымда әр сериалдың келесі бөлімі көрсетіледі.",
+    "missingEpisode": "Жетіспейтін бөлім",
+    "stereoChannel": "Екі динамикте ойнатылатын арна",
+    "hdrBrightness": "HDR субтитрлерінің жарықтығы"
+  },
   "viewing": {
     "extendRecording": "Тағы 30 минут жазу",
     "recordsUntil": "Жазбаның аяқталу уақыты: ${time}",

@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "อ่านเล่มถัดไป",
+    "showRotation": "สลับเล่นซีรีส์",
+    "rotationHelp": "เพิ่มซีรีส์จากเมนูของแต่ละเรื่อง แต่ละรอบจะเล่นตอนถัดไปของทุกเรื่องอย่างละหนึ่งตอน",
+    "missingEpisode": "ตอนที่ขาดไป",
+    "stereoChannel": "ช่องเสียงที่จะเล่นผ่านลำโพงทั้งสองข้าง",
+    "hdrBrightness": "ความสว่างของคำบรรยาย HDR"
+  },
   "viewing": {
     "extendRecording": "บันทึกต่ออีก 30 นาที",
     "recordsUntil": "บันทึกถึง ${time}",

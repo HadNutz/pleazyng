@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Đọc số tiếp theo",
+    "showRotation": "Luân phiên phim bộ",
+    "rotationHelp": "Thêm phim bộ từ trình đơn của từng phim. Mỗi lượt sẽ phát tập tiếp theo của mỗi phim.",
+    "missingEpisode": "Thiếu tập",
+    "stereoChannel": "Kênh phát trên cả hai loa",
+    "hdrBrightness": "Độ sáng phụ đề HDR"
+  },
   "viewing": {
     "extendRecording": "Ghi thêm 30 phút",
     "recordsUntil": "Ghi đến ${time}",

@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Baca berikutnya",
+    "showRotation": "Giliran serial",
+    "rotationHelp": "Tambahkan serial dari menunya. Setiap putaran memutar episode berikutnya dari tiap serial.",
+    "missingEpisode": "Episode tidak tersedia",
+    "stereoChannel": "Kanal untuk kedua speaker",
+    "hdrBrightness": "Kecerahan takarir HDR"
+  },
   "viewing": {
     "extendRecording": "Rekam 30 menit lagi",
     "recordsUntil": "Merekam hingga ${time}",

@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "次を読む",
+    "showRotation": "シリーズを順番に再生",
+    "rotationHelp": "各シリーズのメニューから追加できます。1巡する間に各シリーズの次の話を1話ずつ再生します。",
+    "missingEpisode": "見つからないエピソード",
+    "stereoChannel": "両方のスピーカーで再生するチャンネル",
+    "hdrBrightness": "HDR字幕の明るさ"
+  },
   "viewing": {
     "extendRecording": "録画を30分延長",
     "recordsUntil": "${time} まで録画",

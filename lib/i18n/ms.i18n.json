@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Baca seterusnya",
+    "showRotation": "Giliran siri",
+    "rotationHelp": "Tambah siri daripada menunya. Setiap pusingan memainkan episod seterusnya bagi setiap siri.",
+    "missingEpisode": "Episod tiada",
+    "stereoChannel": "Saluran untuk kedua-dua pembesar suara",
+    "hdrBrightness": "Kecerahan sari kata HDR"
+  },
   "viewing": {
     "extendRecording": "Rakam 30 minit lagi",
     "recordsUntil": "Merakam sehingga ${time}",

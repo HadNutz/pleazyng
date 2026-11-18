@@ -40,6 +40,8 @@ import '../../widgets/app_menu.dart';
 import '../../widgets/focused_scroll_scaffold.dart';
 import 'add_source_screen.dart';
 import 'source_detail_screen.dart';
+import 'comic_reading_lists_screen.dart';
+import '../../utils/platform_detector.dart';
 import 'source_widgets.dart';
 import 'open_media_screen.dart';
 import '../../sources/publication_shelf.dart';
@@ -799,6 +801,13 @@ class _SourcesScreenState extends State<SourcesScreen> {
           ),
       focusableAppBarActions: true,
       actions: [
+        if (widget.shelf == PublicationShelf.comics && !PlatformDetector.isTV())
+          IconButton(
+            tooltip: t.comics.readLists,
+            icon: const Icon(Icons.library_books_outlined),
+            onPressed: () =>
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const ComicReadingListsScreen())),
+          ),
         AppMenuButton<String>(
           tooltip: t.common.options,
           icon: const AppIcon(Symbols.more_vert_rounded),

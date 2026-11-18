@@ -1678,9 +1678,25 @@ abstract class PlayerBase
     }
   }
 
+  void Function()? onPresentationChanged;
+  int? _dualMonoChannel;
+
+  Future<void> setDualMonoChannel(int? channel) async {
+    if (channel == _dualMonoChannel) return;
+    if (channel == null) {
+      await command(['af', 'remove', '@pleazyng_dual_mono']);
+    } else {
+      await command(['af', 'pre', dualMonoFilter(channel)]);
+    }
+    _dualMonoChannel = channel;
+  }
+
+  static String dualMonoFilter(int channel) =>
+      "@pleazyng_dual_mono:lavfi=[aeval=exprs='if(eq(nb_in_channels,2),val($channel),val(ch))':c=same]";
+
   Future<void> _applyAudioFilters() async {
     if (Platform.isAndroid && playerType != 'mpv') return;
-    final filters = <String>[];
+    final filters = <String>[if (_dualMonoChannel case final channel?) dualMonoFilter(channel)];
     for (var index = 0; index < _audioEqualizerFrequencies.length; index++) {
       final gain = _audioEqualizerBandGains[index];
       if (gain.abs() < 0.05) continue;

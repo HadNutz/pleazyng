@@ -40,6 +40,7 @@ class TranslationsTh extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsTh $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsTh(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$mediaConveniences$th mediaConveniences = _Translations$mediaConveniences$th._(_root);
 	@override late final _Translations$viewing$th viewing = _Translations$viewing$th._(_root);
 	@override late final _Translations$livingRoom$th livingRoom = _Translations$livingRoom$th._(_root);
 	@override late final _Translations$app$th app = _Translations$app$th._(_root);
@@ -122,6 +123,21 @@ class TranslationsTh extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$th musicExperience = _Translations$musicExperience$th._(_root);
 	@override late final _Translations$musicTools$th musicTools = _Translations$musicTools$th._(_root);
 	@override late final _Translations$musicDevices$th musicDevices = _Translations$musicDevices$th._(_root);
+}
+
+// Path: mediaConveniences
+class _Translations$mediaConveniences$th extends Translations$mediaConveniences$en {
+	_Translations$mediaConveniences$th._(TranslationsTh root) : this._root = root, super.internal(root);
+
+	final TranslationsTh _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'อ่านเล่มถัดไป';
+	@override String get showRotation => 'สลับเล่นซีรีส์';
+	@override String get rotationHelp => 'เพิ่มซีรีส์จากเมนูของแต่ละเรื่อง แต่ละรอบจะเล่นตอนถัดไปของทุกเรื่องอย่างละหนึ่งตอน';
+	@override String get missingEpisode => 'ตอนที่ขาดไป';
+	@override String get stereoChannel => 'ช่องเสียงที่จะเล่นผ่านลำโพงทั้งสองข้าง';
+	@override String get hdrBrightness => 'ความสว่างของคำบรรยาย HDR';
 }
 
 // Path: viewing
@@ -5579,6 +5595,12 @@ class _Translations$services$trackerDescriptions$th extends Translations$service
 extension on TranslationsTh {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'อ่านเล่มถัดไป',
+			'mediaConveniences.showRotation' => 'สลับเล่นซีรีส์',
+			'mediaConveniences.rotationHelp' => 'เพิ่มซีรีส์จากเมนูของแต่ละเรื่อง แต่ละรอบจะเล่นตอนถัดไปของทุกเรื่องอย่างละหนึ่งตอน',
+			'mediaConveniences.missingEpisode' => 'ตอนที่ขาดไป',
+			'mediaConveniences.stereoChannel' => 'ช่องเสียงที่จะเล่นผ่านลำโพงทั้งสองข้าง',
+			'mediaConveniences.hdrBrightness' => 'ความสว่างของคำบรรยาย HDR',
 			'viewing.extendRecording' => 'บันทึกต่ออีก 30 นาที',
 			'viewing.recordsUntil' => ({required Object time}) => 'บันทึกถึง ${time}',
 			'viewing.extendFailed' => 'ขยายเวลาบันทึกไม่ได้',
@@ -6085,14 +6107,14 @@ extension on TranslationsTh {
 			'settings.audioPassthroughDescription' => 'ส่งเสียง Dolby / DTS ไปยังรับหรือทีวีของคุณโดยไม่ต้องเข้ารหัสใหม่และยังคงเสียงรอบ ปิดถ้าคุณไม่มีเสียง',
 			'settings.audioPassthroughDescriptionApple' => 'ใช้ decoder Dolby ที่เกิดจาก Apple สําหรับ Dolby Digital Plus รวมถึง Atmos DTS และ TrueHD ยังคงเล่นเป็น PCM มัลติช่อง ปิดถ้าคุณไม่มีเสียง',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'ใช้ decoder Dolby ที่เกิดจาก Apple สําหรับ Dolby Digital Plus รวมถึง Atmos. บน iOS, iPadOS และ tvOS 26 หรือภายหลัง, TrueHD Atmos และ DTS:X เล่นเป็นเสียงพื้นที่. ระยะทาง DTS และ TrueHD อื่น ๆ เล่นเป็น PCM มัลติช่อง. ปิดถ้าคุณไม่มีเสียง.',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'ปิดขณะที่เสียง normalization เป็น',
 			'settings.audioChannelLimit' => 'ช่องเสียง',
 			'settings.audioChannelLimitDescription' => 'ลดจำนวนช่องเสียงที่ถอดรหัสแล้วให้เหมาะกับลำโพง หูฟัง หรือระบบ HDMI ที่ไม่สามารถเล่นได้ครบทุกช่อง',
 			'settings.audioChannelLimitOriginal' => 'หลัก',
 			'settings.audioChannelLimitOriginalDescription' => 'เล่นทุกช่องในทิศทาง',
 			'settings.audioChannelLimitSurround51' => 'สูงสุด 5.1',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'ผสม 7.1 ลงไป 5.1 สําหรับทีวีและผู้รับที่ใช้ PCM 5.1 เท่านั้น Passthrough ไม่ได้รับผลกระทบ',
 			'settings.audioChannelLimitStereo' => 'สเตียรอยด์',
 			'settings.audioChannelLimitStereoDescription' => 'ผสมลงไปสองช่องสําหรับสเตียรอยด์หรือหัวข้อ แปลงไปตรงไปตรงไปตรง',
@@ -6599,14 +6621,14 @@ extension on TranslationsTh {
 			'videoControls.sleepTimerDurationHeader' => 'เวลา',
 			'videoControls.playbackWillPauseAtEnd' => 'Playback จะหยุดในตอนท้ายของวิดีโอนี้',
 			'videoControls.stillWatching' => 'ยังคงดู?',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'การพักผ่อนใน ${seconds}s',
 			'videoControls.continueWatching' => 'เสร็จสิ้น',
 			'videoControls.autoPlayNext' => 'การเล่นอัตโนมัติ',
 			'videoControls.playNext' => 'เล่นต่อไป',
 			'videoControls.playButton' => 'เล่น',
 			'videoControls.pauseButton' => 'หยุดชั่วคราว',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'สะพาน',
 			'videoControls.playbackResumed' => 'เล่น',
 			'videoControls.loadingVideo' => 'วิดีโอโหลด',
@@ -7113,14 +7135,14 @@ extension on TranslationsTh {
 			'libraries.playRandomMovie' => 'เล่นภาพยนตร์สุ่ม',
 			'libraries.randomPickFailed' => 'ไม่สามารถเลือกภาพยนตร์สุ่มจากห้องสมุดนี้ได้',
 			'libraries.title' => 'ห้องสมุด',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'คลังสื่อ',
 			'libraries.scanLibraryFiles' => 'ไฟล์สแกนห้องสมุด',
 			'libraries.scanLibrary' => 'แสกนไลบรารี่',
 			'libraries.analyze' => 'การวิเคราะห์',
 			'libraries.analyzeLibrary' => 'การวิเคราะห์ห้องสมุด',
 			'libraries.refreshMetadata' => 'การปรับปรุง Metadata',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => 'ระยําที่ว่างเปล่า',
 			'libraries.emptyingTrash' => ({required Object title}) => 'ปิดฝุ่นสําหรับ "${title}..."',
 			'libraries.trashEmptied' => ({required Object title}) => 'โลหะที่ถูกเก็บไว้สําหรับ "${title}"',
@@ -7627,14 +7649,14 @@ extension on TranslationsTh {
 			'music.instantMix' => 'ผสมทันที',
 			'music.playNext' => 'เล่นต่อไป',
 			'music.addToQueue' => 'เพิ่มให้ Queue',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'ดิสก์ ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('th'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ล้อ', ), 
 			'music.nowPlaying' => 'ตอนนี้เล่น',
 			'music.playingFrom' => ({required Object title}) => 'เล่นจาก ${title}',
 			'music.queue' => 'สิทธิ',
 			'music.clearQueue' => 'ล้างคิว',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => 'เนื้อเพลง',
 			'music.visualizer' => 'วิดีโอ',
 			'music.visualizerProfileLoading' => 'อ่าน track analysis ...',
@@ -8141,14 +8163,14 @@ extension on TranslationsTh {
 			'performanceOverlay.memory' => 'ความจํา',
 			'performanceOverlay.uiFps' => 'ภาษาไทย',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'คอลัมคัม HW',
 			'performanceOverlay.decoderMediatekHw' => 'โมเดียม HW',
 			'performanceOverlay.decoderExynosHw' => 'แอพลิเคชัน HW',
 			'performanceOverlay.decoderSoftware' => 'ซอฟต์แวร์',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'ฮาร์ดแวร์',
 			'performanceOverlay.tunnelingActive' => 'การใช้งาน',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} ไม่สําเร็จ)',
@@ -8655,14 +8677,14 @@ extension on TranslationsTh {
 			'homeLayout.noCustomRows' => 'ไม่มีการกําหนดเอง',
 			'homeLayout.addRowHint' => 'ใช้ Add Home เถวเพื่อสร้างหนึ่ง',
 			'homeLayout.addHomeRow' => 'เพิ่มเรือนบ้าน',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'เลือกหมวดหมู่ ใบสั่งใหม่จะถูกเพิ่มไปยังผู้จัดงานโดยอัตโนมัติ',
 			'homeLayout.removeRow' => 'ลบแถว',
 			'homeLayout.recentlyAdded' => 'เพิ่มล่าสุด',
 			'homeLayout.recentlyReleased' => 'ปล่อยล่าสุด',
 			'homeLayout.movieCollections' => 'คอลเลกชันภาพยนตร์',
 			'homeLayout.showCollections' => 'แสดงคอลเลกชัน',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'รูชื่อ',
 			'homeLayout.content' => 'ความสุข',
 			'homeLayout.showThisRowIn' => 'แสดงแถวนี้ใน:',
@@ -9169,14 +9191,14 @@ extension on TranslationsTh {
 			'sourceSetup.dlnaHelp' => 'การค้นหาต้องอาศัยมัลติคาสต์ในเครือข่ายภายใน หากไม่พบเซิร์ฟเวอร์ ให้ป้อน URL คำอธิบายอุปกรณ์ของเซิร์ฟเวอร์นั้นด้านบน',
 			'sourceSetup.dlnaRoot' => 'ID ออบเจ็กต์ DLNA เว้นว่างไว้เพื่อใช้ระดับรากของอุปกรณ์',
 			'sourceSetup.passwordOrKey' => 'ป้อนรหัสผ่านหรือเพิ่มกุญแจส่วนตัวด้านล่าง',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'ลายนิ้วมือ SHA256 ของกุญแจโฮสต์ SSH',
 			'sourceSetup.sshFingerprintHelp' => 'ตรวจสอบกับผู้ดูแลเซิร์ฟเวอร์ เรียกใช้ ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub บนเซิร์ฟเวอร์ แล้วใช้ค่า SHA256',
 			'sourceSetup.sshFingerprintKeep' => 'เว้นว่างไว้เพื่อคงลายนิ้วมือที่ตรึงไว้อยู่ หรือป้อนลายนิ้วมือเซิร์ฟเวอร์ใหม่',
 			'sourceSetup.sshAuthentication' => 'การยืนยันตัวตน SSH ด้วยกุญแจสาธารณะ',
 			'sourceSetup.sshAuthenticationHelp' => 'ไม่บังคับ รองรับการยืนยันตัวตนด้วยรหัสผ่านด้วย',
 			'sourceSetup.privateKey' => 'กุญแจส่วนตัว (รูปแบบ PEM หรือ OpenSSH)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'วลีรหัสผ่านของกุญแจส่วนตัว',
 			'sourceSetup.nfsMountPort' => 'พอร์ต TCP ของบริการเมานต์ NFS',
 			'sourceSetup.nfsMountPortHelp' => 'ค่าเริ่มต้น: 20048',
@@ -9683,14 +9705,14 @@ extension on TranslationsTh {
 			'musicTools.pinToHome' => 'ปักหมุดในหน้าหลักเพลง',
 			'musicTools.unpin' => 'เลิกปักหมุด',
 			'musicTools.serverAnalysis' => 'การวิเคราะห์เซิร์ฟเวอร์',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'การวิเคราะห์เสียง',
 			'musicTools.serverAnalysisScope' => 'คลังเพลงที่เข้าเกณฑ์ทั้งหมดบนเซิร์ฟเวอร์นี้ การตั้งค่าการวิเคราะห์ของคลังจะไม่เปลี่ยนแปลง',
 			'musicTools.serverActivities' => 'กิจกรรมเซิร์ฟเวอร์',
 			'musicTools.playlistSharing' => 'สิทธิ์เข้าถึงเพลย์ลิสต์',
 			'musicTools.playlistRecipient' => 'ชื่อผู้ใช้ Plex หรืออีเมล',
 			'musicTools.playlistSharingHint' => 'ให้สิทธิ์เข้าถึงเพลย์ลิสต์นี้และเพลงในรายการ ผู้รับอาจต้องตอบรับคำเชิญ',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'ไม่สามารถขอสิทธิ์เข้าถึงเพลย์ลิสต์ได้',
 			'musicTools.playlistSharingAccepted' => 'Plex ยอมรับคำขอสิทธิ์เข้าถึงแล้ว',
 			'musicTools.playlistAccessList' => 'สิทธิ์เข้าถึงปัจจุบัน',

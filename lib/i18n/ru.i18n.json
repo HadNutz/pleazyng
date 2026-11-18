@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Читать дальше",
+    "showRotation": "Сериалы по очереди",
+    "rotationHelp": "Добавляйте сериалы через их меню. В каждом круге воспроизводится следующая серия каждого сериала.",
+    "missingEpisode": "Отсутствует серия",
+    "stereoChannel": "Канал для обоих динамиков",
+    "hdrBrightness": "Яркость субтитров HDR"
+  },
   "viewing": {
     "extendRecording": "Записывать ещё 30 минут",
     "recordsUntil": "Запись до ${time}",

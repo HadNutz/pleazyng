@@ -38,7 +38,28 @@ Pair the Android or iOS companion remote with the playback device on your local 
 
 Keep the listening screen open. The phone follows TV pauses, playback speed, seeks and edition changes. Use the audio sync slider to compensate for headphone delay. When headphones disconnect, playback on the phone pauses. Reconnect or use the on-screen play control to resume. Leaving the screen ends personal listening.
 
+## Show rotation
+
+Open a show's menu, select **Show rotation**, and add the show. Repeat from any connected TV library, then choose **Play**. Each round plays the next unwatched episode of each eligible series in a shuffled show order. In-progress episodes keep their resume position. The next session checks watch history again and continues the saved round. A missing numbered episode holds that series at the gap. Other shows can continue.
+
+## HDR subtitle brightness
+
+During HDR playback, open **Tracks → Subtitle styling → HDR subtitle brightness**. The preview pauses on the current frame. Adjust the level, then save or cancel to return to playback. The saved level follows the display. On mpv GPU Next, the control uses the installed text or image subtitle white-level option when supported. The native text option also changes mpv's own on-screen text. Embedded mpv renderers can dim plain text using its foreground colour when they report HDR output. Returning to SDR restores the ordinary style.
+
+## Bilingual stereo tracks
+
+In the player's audio settings, choose **Channel to play through both speakers**. Select **Left**, **Right**, or **Stereo** to audition it, then save for the current version and file. The mpv path uses a labelled decoded-audio filter. Android ExoPlayer uses its stereo PCM mixing matrix when the active output supports processing. Encoded passthrough, multichannel input, and ExoPlayer tunnelling or offload keep their existing audio route.
+
+## Comic reading lists
+
+In the Comics shelf, open **Reading lists** and import a ComicRack `.cbl` file. Scan the connected comic sources first. Each list keeps its original order, including missing issues and alternate editions. Use the link button to choose an edition or search the indexed comics across sources. **Read next** opens the earliest unfinished position in the reader, or opens the picker if that position needs a match. Choose a later row to read ahead. Matching choices and reading progress belong to the active profile.
+
 ## Upstream sources
+
+- HDR subtitle brightness draws on the OLED viewing problem addressed by [barnebyte’s PlexOledSubtitles](https://github.com/barnebyte/PlexOledSubtitles). Pleazyng adjusts playback rendering and keeps the subtitle file intact.
+- Series rotation draws on [raykwonx’s next-unwatched shuffle request](https://forums.plex.tv/t/shuffle-play-my-shows-but-only-play-the-next-unwatched-episode-of-that-show/936507).
+- Stereo channel selection addresses the [bilingual soundtrack use case reported by Plex viewers](https://www.reddit.com/r/PleX/comments/oqu872/).
+- Cross-library reading lists draw on [Kavita’s CBL importer](https://wiki.kavitareader.com/guides/features/cbl-import/) and the [Komga reading-order discussion](https://github.com/gotson/komga/issues/1803).
 
 - Hardware Play on a focused poster draws on the upstream feature requests [Plezy #1510](https://github.com/edde746/plezy/issues/1510) by [@enchained](https://github.com/enchained) and [Plezy #3038](https://github.com/edde746/plezy/issues/3038) by [@fillilutten](https://github.com/fillilutten).
 - The missing-episode prompt draws on the upstream feature request [Jellyfin Android TV #4566](https://github.com/jellyfin/jellyfin-androidtv/issues/4566) by [@hufforguk](https://github.com/hufforguk).

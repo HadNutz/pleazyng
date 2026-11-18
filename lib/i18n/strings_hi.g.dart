@@ -40,6 +40,7 @@ class TranslationsHi extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsHi $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsHi(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$mediaConveniences$hi mediaConveniences = _Translations$mediaConveniences$hi._(_root);
 	@override late final _Translations$viewing$hi viewing = _Translations$viewing$hi._(_root);
 	@override late final _Translations$livingRoom$hi livingRoom = _Translations$livingRoom$hi._(_root);
 	@override late final _Translations$app$hi app = _Translations$app$hi._(_root);
@@ -122,6 +123,21 @@ class TranslationsHi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$hi musicExperience = _Translations$musicExperience$hi._(_root);
 	@override late final _Translations$musicTools$hi musicTools = _Translations$musicTools$hi._(_root);
 	@override late final _Translations$musicDevices$hi musicDevices = _Translations$musicDevices$hi._(_root);
+}
+
+// Path: mediaConveniences
+class _Translations$mediaConveniences$hi extends Translations$mediaConveniences$en {
+	_Translations$mediaConveniences$hi._(TranslationsHi root) : this._root = root, super.internal(root);
+
+	final TranslationsHi _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'अगला पढ़ें';
+	@override String get showRotation => 'बारी-बारी से सीरीज़';
+	@override String get rotationHelp => 'सीरीज़ के मेन्यू से उन्हें जोड़ें। हर दौर में हर सीरीज़ का अगला एपिसोड चलेगा।';
+	@override String get missingEpisode => 'अनुपलब्ध एपिसोड';
+	@override String get stereoChannel => 'दोनों स्पीकर में बजने वाला चैनल';
+	@override String get hdrBrightness => 'HDR सबटाइटल की चमक';
 }
 
 // Path: viewing
@@ -5604,6 +5620,12 @@ class _Translations$services$trackerDescriptions$hi extends Translations$service
 extension on TranslationsHi {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'अगला पढ़ें',
+			'mediaConveniences.showRotation' => 'बारी-बारी से सीरीज़',
+			'mediaConveniences.rotationHelp' => 'सीरीज़ के मेन्यू से उन्हें जोड़ें। हर दौर में हर सीरीज़ का अगला एपिसोड चलेगा।',
+			'mediaConveniences.missingEpisode' => 'अनुपलब्ध एपिसोड',
+			'mediaConveniences.stereoChannel' => 'दोनों स्पीकर में बजने वाला चैनल',
+			'mediaConveniences.hdrBrightness' => 'HDR सबटाइटल की चमक',
 			'viewing.extendRecording' => '30 मिनट और रिकॉर्ड करें',
 			'viewing.recordsUntil' => ({required Object time}) => '${time} तक रिकॉर्डिंग',
 			'viewing.extendFailed' => 'रिकॉर्डिंग नहीं बढ़ाई जा सकी',
@@ -6110,14 +6132,14 @@ extension on TranslationsHi {
 			'settings.audioPassthroughDescription' => 'अपने रिसेप्टर या टीवी को फिर से एन्कोडिंग के बिना Dolby/DTS ऑडियो भेजें, आसपास के ध्वनि को बनाए रखें. यदि आपके पास कोई ध्वनि नहीं है तो बंद करें.',
 			'settings.audioPassthroughDescriptionApple' => 'Dolby Digital Plus के लिए मूल Dolby decoder Apple का उपयोग करें, जिसमें Atmos भी शामिल है. DTS और TrueHD अभी भी मल्टीचैनल पीसीएम के रूप में खेलते हैं. यदि आपके पास कोई ध्वनि नहीं है तो बंद करें.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'डोलबी डिजिटल प्लस के लिए Apple के मूल डोलबी डिकोडर का उपयोग करें, जिसमें Atmos शामिल है. iOS, iPadOS और tvOS 26 या बाद में, TrueHD Atmos और DTS:X को अंतरिक्ष ऑडियो के रूप में खेला जाता है. अन्य DTS और TrueHD ट्रैक को मल्टीचैनल पीसीएम के रूप में खेला जाता है. बंद करें यदि आपके पास कोई ध्वनि नहीं है.',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'जबकि ध्वनि सामान्यीकरण के लिए बंद हो जाता है',
 			'settings.audioChannelLimit' => 'ऑडियो चैनल',
 			'settings.audioChannelLimitDescription' => 'स्पीकर, हेडफोन, या HDMI सेटिंग्स के लिए डिकोड ऑडियो डाउनलोड करें जो किसी भी चैनल को नहीं खेल सकते हैं',
 			'settings.audioChannelLimitOriginal' => 'मूल',
 			'settings.audioChannelLimitOriginalDescription' => 'ट्रैक में हर चैनल खेलें',
 			'settings.audioChannelLimitSurround51' => '5.1 तक',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'टीवी और रिसीवरों के लिए 7.1 से 5.1 तक मिश्रण करें जो केवल 5.1 पीसीएम लेते हैं।',
 			'settings.audioChannelLimitStereo' => 'स्टेनलेस',
 			'settings.audioChannelLimitStereoDescription' => 'स्टेरेओ स्पीकर या हेडफोन के लिए दो चैनलों में मिश्रण करें।',
@@ -6624,14 +6646,14 @@ extension on TranslationsHi {
 			'videoControls.sleepTimerDurationHeader' => 'टाइमर',
 			'videoControls.playbackWillPauseAtEnd' => 'Playback इस वीडियो के अंत में रुक जाएगा',
 			'videoControls.stillWatching' => 'अभी भी देखते हैं?',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds} में आराम',
 			'videoControls.continueWatching' => 'जारी है',
 			'videoControls.autoPlayNext' => 'अगला Auto-Play',
 			'videoControls.playNext' => 'Next खेलना',
 			'videoControls.playButton' => 'खेलना',
 			'videoControls.pauseButton' => 'रोकें',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'आराम',
 			'videoControls.playbackResumed' => 'खेलना',
 			'videoControls.loadingVideo' => 'वीडियो लोड',
@@ -7138,14 +7160,14 @@ extension on TranslationsHi {
 			'libraries.playRandomMovie' => 'एक यादृच्छिक फिल्म खेलना',
 			'libraries.randomPickFailed' => 'मैं इस पुस्तकालय से एक यादृच्छिक फिल्म नहीं चुन सकता था।',
 			'libraries.title' => 'पुस्तकालय',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'लाइब्रेरी',
 			'libraries.scanLibraryFiles' => 'पुस्तकालय फ़ाइलों का स्कैन',
 			'libraries.scanLibrary' => 'पुस्तकालय स्कैन',
 			'libraries.analyze' => 'विश्लेषण',
 			'libraries.analyzeLibrary' => 'पुस्तकालय विश्लेषण',
 			'libraries.refreshMetadata' => 'मेटाडेटा को ताज़ा करें',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => 'खाली ट्रैश',
 			'libraries.emptyingTrash' => ({required Object title}) => '"${title}" के लिए खाली कचरा ...',
 			'libraries.trashEmptied' => ({required Object title}) => '"${title}" के लिए ट्रैश एम्टिड',
@@ -7652,14 +7674,14 @@ extension on TranslationsHi {
 			'music.instantMix' => 'मिश्रण मिक्स',
 			'music.playNext' => 'अगला खेल',
 			'music.addToQueue' => 'क्यूए में जोड़ें',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'डिस्क ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hi'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ट्रैक', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ट्रैक', ), 
 			'music.nowPlaying' => 'अब खेलते हैं',
 			'music.playingFrom' => ({required Object title}) => 'खेलने के लिए ${title}',
 			'music.queue' => 'क्यूए',
 			'music.clearQueue' => 'कतार साफ़ करें',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => 'लिंग',
 			'music.visualizer' => 'दृश्य',
 			'music.visualizerProfileLoading' => 'ट्रैक विश्लेषण पढ़ने के लिए ...',
@@ -8166,14 +8188,14 @@ extension on TranslationsHi {
 			'performanceOverlay.memory' => 'स्मृति',
 			'performanceOverlay.uiFps' => 'एफपीएस',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android एचडब्ल्यू',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW के बारे में',
 			'performanceOverlay.decoderQualcommHw' => 'क्लॉम HW',
 			'performanceOverlay.decoderMediatekHw' => 'मीडिया एचएच',
 			'performanceOverlay.decoderExynosHw' => 'एक्सिनोस एचड',
 			'performanceOverlay.decoderSoftware' => 'सॉफ्टवेयर',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'हार्डवेयर',
 			'performanceOverlay.tunnelingActive' => 'सक्रिय',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} असफल)',
@@ -8680,14 +8702,14 @@ extension on TranslationsHi {
 			'homeLayout.noCustomRows' => 'अभी तक कोई कस्टम नहीं',
 			'homeLayout.addRowHint' => 'एक को बनाने के लिए Home Range का उपयोग करें।',
 			'homeLayout.addHomeRow' => 'होम लाइन जोड़ें',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'एक श्रेणी का चयन करें; नए पंक्ति को स्वचालित रूप से संगठित करने के लिए जोड़ा जाता है',
 			'homeLayout.removeRow' => 'लाइन को हटा दें',
 			'homeLayout.recentlyAdded' => 'हाल ही में जोड़ा',
 			'homeLayout.recentlyReleased' => 'हाल ही में रिलीज',
 			'homeLayout.movieCollections' => 'फिल्म संग्रह',
 			'homeLayout.showCollections' => 'संग्रह दिखाएं',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'रॉ नाम',
 			'homeLayout.content' => 'संतुष्टि',
 			'homeLayout.showThisRowIn' => 'इस पंक्ति को दिखाएं:',
@@ -9194,14 +9216,14 @@ extension on TranslationsHi {
 			'sourceSetup.dlnaHelp' => 'डिवाइस खोजने के लिए स्थानीय नेटवर्क का मल्टीकास्ट ज़रूरी है। कोई सर्वर न दिखे तो ऊपर उसके डिवाइस विवरण का URL दर्ज करें।',
 			'sourceSetup.dlnaRoot' => 'DLNA ऑब्जेक्ट ID; डिवाइस का रूट इस्तेमाल करने के लिए खाली छोड़ें।',
 			'sourceSetup.passwordOrKey' => 'पासवर्ड दर्ज करें या नीचे निजी कुंजी जोड़ें।',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SSH होस्ट कुंजी का SHA256 फ़िंगरप्रिंट',
 			'sourceSetup.sshFingerprintHelp' => 'सर्वर व्यवस्थापक से इसकी पुष्टि करें। सर्वर पर ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub चलाएँ और उससे मिलने वाला SHA256 मान इस्तेमाल करें।',
 			'sourceSetup.sshFingerprintKeep' => 'मौजूदा पिन किया गया फ़िंगरप्रिंट रखने के लिए खाली छोड़ें, या सर्वर का नया फ़िंगरप्रिंट दर्ज करें।',
 			'sourceSetup.sshAuthentication' => 'SSH सार्वजनिक कुंजी से प्रमाणीकरण',
 			'sourceSetup.sshAuthenticationHelp' => 'वैकल्पिक; पासवर्ड से प्रमाणीकरण भी समर्थित है।',
 			'sourceSetup.privateKey' => 'निजी कुंजी (PEM या OpenSSH प्रारूप)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'निजी कुंजी का पासफ़्रेज़',
 			'sourceSetup.nfsMountPort' => 'NFS माउंट सेवा का TCP पोर्ट',
 			'sourceSetup.nfsMountPortHelp' => 'डिफ़ॉल्ट: 20048',
@@ -9708,14 +9730,14 @@ extension on TranslationsHi {
 			'musicTools.pinToHome' => 'संगीत होम पर पिन करें',
 			'musicTools.unpin' => 'पिन हटाएँ',
 			'musicTools.serverAnalysis' => 'सर्वर विश्लेषण',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'ध्वनि विश्लेषण',
 			'musicTools.serverAnalysisScope' => 'इस सर्वर की सभी पात्र संगीत लाइब्रेरी। इससे उनकी विश्लेषण सेटिंग नहीं बदलती।',
 			'musicTools.serverActivities' => 'सर्वर गतिविधियाँ',
 			'musicTools.playlistSharing' => 'प्लेलिस्ट का ऐक्सेस',
 			'musicTools.playlistRecipient' => 'Plex उपयोगकर्ता नाम या ईमेल',
 			'musicTools.playlistSharingHint' => 'इस प्लेलिस्ट और इसके ट्रैक का ऐक्सेस दें। प्राप्तकर्ता को निमंत्रण स्वीकार करना पड़ सकता है।',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'प्लेलिस्ट के ऐक्सेस का अनुरोध नहीं किया जा सका।',
 			'musicTools.playlistSharingAccepted' => 'Plex ने ऐक्सेस अनुरोध स्वीकार कर लिया।',
 			'musicTools.playlistAccessList' => 'मौजूदा ऐक्सेस',

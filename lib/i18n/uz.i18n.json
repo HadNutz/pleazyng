@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Keyingisini o‘qish",
+    "showRotation": "Seriallarni navbat bilan ko‘rish",
+    "rotationHelp": "Seriallarni o‘z menyusidan qo‘shing. Har bir davrada har bir serialning keyingi qismi ijro etiladi.",
+    "missingEpisode": "Yetishmayotgan qism",
+    "stereoChannel": "Ikkala karnayda ijro etiladigan kanal",
+    "hdrBrightness": "HDR subtitrlar yorqinligi"
+  },
   "viewing": {
     "extendRecording": "Yana 30 daqiqa yozish",
     "recordsUntil": "Yozish ${time} gacha davom etadi",

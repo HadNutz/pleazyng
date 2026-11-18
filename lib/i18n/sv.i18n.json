@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Läs nästa",
+    "showRotation": "Växla mellan serier",
+    "rotationHelp": "Lägg till serier via deras menyer. Nästa avsnitt från varje serie spelas en gång per omgång.",
+    "missingEpisode": "Avsnitt saknas",
+    "stereoChannel": "Kanal för båda högtalarna",
+    "hdrBrightness": "Ljusstyrka för HDR-undertexter"
+  },
   "viewing": {
     "extendRecording": "Spela in 30 minuter till",
     "recordsUntil": "Inspelning till ${time}",

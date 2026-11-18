@@ -40,6 +40,7 @@ class TranslationsBn extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsBn $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsBn(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$mediaConveniences$bn mediaConveniences = _Translations$mediaConveniences$bn._(_root);
 	@override late final _Translations$viewing$bn viewing = _Translations$viewing$bn._(_root);
 	@override late final _Translations$livingRoom$bn livingRoom = _Translations$livingRoom$bn._(_root);
 	@override late final _Translations$app$bn app = _Translations$app$bn._(_root);
@@ -122,6 +123,21 @@ class TranslationsBn extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$bn musicExperience = _Translations$musicExperience$bn._(_root);
 	@override late final _Translations$musicTools$bn musicTools = _Translations$musicTools$bn._(_root);
 	@override late final _Translations$musicDevices$bn musicDevices = _Translations$musicDevices$bn._(_root);
+}
+
+// Path: mediaConveniences
+class _Translations$mediaConveniences$bn extends Translations$mediaConveniences$en {
+	_Translations$mediaConveniences$bn._(TranslationsBn root) : this._root = root, super.internal(root);
+
+	final TranslationsBn _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'পরেরটি পড়ুন';
+	@override String get showRotation => 'সিরিজ পালাবদল';
+	@override String get rotationHelp => 'সিরিজের মেনু থেকে যোগ করুন। প্রতি দফায় প্রতিটি সিরিজের পরবর্তী পর্ব চলবে।';
+	@override String get missingEpisode => 'অনুপস্থিত পর্ব';
+	@override String get stereoChannel => 'দুই স্পিকারে যে চ্যানেল বাজবে';
+	@override String get hdrBrightness => 'HDR সাবটাইটেলের উজ্জ্বলতা';
 }
 
 // Path: viewing
@@ -5604,6 +5620,12 @@ class _Translations$services$trackerDescriptions$bn extends Translations$service
 extension on TranslationsBn {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'পরেরটি পড়ুন',
+			'mediaConveniences.showRotation' => 'সিরিজ পালাবদল',
+			'mediaConveniences.rotationHelp' => 'সিরিজের মেনু থেকে যোগ করুন। প্রতি দফায় প্রতিটি সিরিজের পরবর্তী পর্ব চলবে।',
+			'mediaConveniences.missingEpisode' => 'অনুপস্থিত পর্ব',
+			'mediaConveniences.stereoChannel' => 'দুই স্পিকারে যে চ্যানেল বাজবে',
+			'mediaConveniences.hdrBrightness' => 'HDR সাবটাইটেলের উজ্জ্বলতা',
 			'viewing.extendRecording' => 'আরও ৩০ মিনিট রেকর্ড করুন',
 			'viewing.recordsUntil' => ({required Object time}) => '${time} পর্যন্ত রেকর্ডিং',
 			'viewing.extendFailed' => 'রেকর্ডিং বাড়ানো যায়নি',
@@ -6110,14 +6132,14 @@ extension on TranslationsBn {
 			'settings.audioPassthroughDescription' => 'ডলবি / ডিটিএস অডিও আপনার রিপোর্টার বা টেলিভিশনে রেকর্ডিং ছাড়া পাঠান, পরিবেশের শব্দ সংরক্ষণ করুন. শব্দ না হলে বন্ধ করুন.',
 			'settings.audioPassthroughDescriptionApple' => 'Atmos সহ Dolby Digital Plus-এর জন্য Apple-এর নিজস্ব Dolby ডিকোডার ব্যবহার করুন। DTS ও TrueHD মাল্টিচ্যানেল PCM হিসেবেই চলবে। শব্দ না শুনলে এটি বন্ধ করুন।',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'ডলবি ডিজিটাল প্লাস জন্য Apple এর প্রাকৃতিক ডলবি ডকোডার ব্যবহার করুন, অথবা Atmos. iOS, iPadOS এবং tvOS 26 বা তারপর, TrueHD Atmos এবং DTS:X স্পেশাল অডিও হিসাবে খেলতে হবে. অন্যান্য DTS এবং TrueHD ট্র্যাক multichannel PCM হিসাবে খেলতে হবে. আপনি কোন শব্দ না থাকলে বন্ধ করুন.',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'যদিও শব্দের স্বাভাবিকতা থাকে, তখন',
 			'settings.audioChannelLimit' => 'অডিও চ্যানেল',
 			'settings.audioChannelLimitDescription' => 'ডাউনলোড করা অডিও মিশ্র করুন শব্দ, হোডফোন, বা HDMI সেটপগুলিতে যা কোনও চ্যানেল খেলতে পারে না',
 			'settings.audioChannelLimitOriginal' => 'মূল',
 			'settings.audioChannelLimitOriginalDescription' => 'প্রতিটি চ্যানেলটি ট্র্যাকে খেলুন',
 			'settings.audioChannelLimitSurround51' => '5.1 পর্যন্ত',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'মিশ্র 7.1 থেকে 5.1 পর্যন্ত টেলিভিশন এবং রেকর্ডারগুলির জন্য যারা কেবল 5.1 PCM গ্রহণ করে।',
 			'settings.audioChannelLimitStereo' => 'স্টেরিও',
 			'settings.audioChannelLimitStereoDescription' => 'স্টেরিও শব্দক বা হোডফোনের জন্য দুটি চ্যানেলের মধ্যে মিশ্রণ করুন।',
@@ -6624,14 +6646,14 @@ extension on TranslationsBn {
 			'videoControls.sleepTimerDurationHeader' => 'টাইম',
 			'videoControls.playbackWillPauseAtEnd' => 'এই ভিডিও শেষে Playback বন্ধ হবে',
 			'videoControls.stillWatching' => 'এখনও দেখতে চান?',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds} সেকেন্ড পরে বিরতি দেওয়া হবে',
 			'videoControls.continueWatching' => 'চলুন',
 			'videoControls.autoPlayNext' => 'Next গাড়ি খেলা',
 			'videoControls.playNext' => 'Next খেলুন',
 			'videoControls.playButton' => 'খেলা',
 			'videoControls.pauseButton' => 'বিরতি',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'দাঁড়িয়ে',
 			'videoControls.playbackResumed' => 'খেলতে',
 			'videoControls.loadingVideo' => 'ভিডিও ডাউনলোড',
@@ -7138,14 +7160,14 @@ extension on TranslationsBn {
 			'libraries.playRandomMovie' => 'একটি random movie খেলুন',
 			'libraries.randomPickFailed' => 'এই লাইব্রেরি থেকে একটি অসাধারণ সিনেমা নির্বাচন করতে পারবেন না।',
 			'libraries.title' => 'বইয়েরা',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'লাইব্রেরি',
 			'libraries.scanLibraryFiles' => 'স্ক্যান লাইব্রেরি ফাইল',
 			'libraries.scanLibrary' => 'স্ক্যান লাইব্রেরি',
 			'libraries.analyze' => 'বিশ্লেষণ',
 			'libraries.analyzeLibrary' => 'বিবেচনা লাইব্রেরি',
 			'libraries.refreshMetadata' => 'মেটাদাডেট ফ্রিজ করুন',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => 'ভূষণ ট্রাস',
 			'libraries.emptyingTrash' => ({required Object title}) => '“${title}” এর জন্য মুক্ত পুষ্টি...',
 			'libraries.trashEmptied' => ({required Object title}) => '‘${title}’ এর জন্য ট্র্যাশ প্রচারিত',
@@ -7652,14 +7674,14 @@ extension on TranslationsBn {
 			'music.instantMix' => 'দ্রুত মিশন',
 			'music.playNext' => 'Next খেলুন',
 			'music.addToQueue' => 'কুকুরে যোগ করুন',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'ডিজিটাল ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bn'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ট্র্যাক', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} পাসপোর্ট', ), 
 			'music.nowPlaying' => 'এখন খেলতে',
 			'music.playingFrom' => ({required Object title}) => 'খেলা ${title} থেকে',
 			'music.queue' => 'কুরআন',
 			'music.clearQueue' => 'কিউগুলো মুছুন',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => 'গানের কথা',
 			'music.visualizer' => 'Visualizator',
 			'music.visualizerProfileLoading' => 'Read track বিশ্লেষণ ...',
@@ -8166,14 +8188,14 @@ extension on TranslationsBn {
 			'performanceOverlay.memory' => 'স্মৃতি',
 			'performanceOverlay.uiFps' => 'ফিপিএস',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'Nvidia HW',
 			'performanceOverlay.decoderQualcommHw' => 'কোলকোম HW',
 			'performanceOverlay.decoderMediatekHw' => 'মিডিয়াম HW',
 			'performanceOverlay.decoderExynosHw' => 'হ্যাঁ হ্যাঁ',
 			'performanceOverlay.decoderSoftware' => 'সফটওয়্যার',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'হার্ডওয়ার্ক',
 			'performanceOverlay.tunnelingActive' => 'আক্রমণ',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} অসম্ভব)',
@@ -8680,14 +8702,14 @@ extension on TranslationsBn {
 			'homeLayout.noCustomRows' => 'এখনো কোন কাস্টম রাইড নেই',
 			'homeLayout.addRowHint' => 'একটি তৈরি করার জন্য বাড়ি লাইন যোগ করুন।',
 			'homeLayout.addHomeRow' => 'বাড়ি রান করুন',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'একটি বিভাগ নির্বাচন করুন; নতুন পর্যায়ে স্বয়ংক্রিয়ভাবে সংস্থার যোগ করা হয়',
 			'homeLayout.removeRow' => 'রানী মুছে ফেলে',
 			'homeLayout.recentlyAdded' => 'সম্প্রতি যোগ করা',
 			'homeLayout.recentlyReleased' => 'সম্প্রতি মুক্তি',
 			'homeLayout.movieCollections' => 'চলচ্চিত্র সংগ্রহ',
 			'homeLayout.showCollections' => 'সংগ্রহ দেখুন',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'রু টাইম',
 			'homeLayout.content' => 'উপভোগ',
 			'homeLayout.showThisRowIn' => 'এই রান দেখুন:',
@@ -9194,14 +9216,14 @@ extension on TranslationsBn {
 			'sourceSetup.dlnaHelp' => 'ডিভাইস খুঁজতে স্থানীয় নেটওয়ার্কে মাল্টিকাস্ট প্রয়োজন। কোনো সার্ভার না দেখালে উপরে তার ডিভাইসের বিবরণের URL লিখুন।',
 			'sourceSetup.dlnaRoot' => 'DLNA অবজেক্ট ID; ডিভাইসের রুট ব্যবহার করতে ফাঁকা রাখুন।',
 			'sourceSetup.passwordOrKey' => 'পাসওয়ার্ড লিখুন অথবা নিচে একটি ব্যক্তিগত কী যোগ করুন।',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SSH হোস্ট কী-এর SHA256 ফিঙ্গারপ্রিন্ট',
 			'sourceSetup.sshFingerprintHelp' => 'সার্ভারের প্রশাসকের কাছে যাচাই করুন। সার্ভারে ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub চালিয়ে পাওয়া SHA256 মানটি ব্যবহার করুন।',
 			'sourceSetup.sshFingerprintKeep' => 'বর্তমানে পিন করা ফিঙ্গারপ্রিন্ট রাখতে ফাঁকা রাখুন, অথবা সার্ভারের নতুন ফিঙ্গারপ্রিন্ট লিখুন।',
 			'sourceSetup.sshAuthentication' => 'SSH পাবলিক কী দিয়ে পরিচয় যাচাই',
 			'sourceSetup.sshAuthenticationHelp' => 'ঐচ্ছিক; পাসওয়ার্ড দিয়েও পরিচয় যাচাই করা যায়।',
 			'sourceSetup.privateKey' => 'ব্যক্তিগত কী (PEM বা OpenSSH ফরম্যাট)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'ব্যক্তিগত কী-এর পাসফ্রেজ',
 			'sourceSetup.nfsMountPort' => 'NFS মাউন্ট সেবার TCP পোর্ট',
 			'sourceSetup.nfsMountPortHelp' => 'ডিফল্ট: 20048',
@@ -9708,14 +9730,14 @@ extension on TranslationsBn {
 			'musicTools.pinToHome' => 'সঙ্গীতের হোমে পিন করুন',
 			'musicTools.unpin' => 'পিন সরান',
 			'musicTools.serverAnalysis' => 'সার্ভার বিশ্লেষণ',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'সোনিক বিশ্লেষণ',
 			'musicTools.serverAnalysisScope' => 'এই সার্ভারের সব উপযুক্ত সঙ্গীত লাইব্রেরি। এতে তাদের বিশ্লেষণ সেটিংস বদলাবে না।',
 			'musicTools.serverActivities' => 'সার্ভারের কার্যকলাপ',
 			'musicTools.playlistSharing' => 'প্লেলিস্টে প্রবেশাধিকার',
 			'musicTools.playlistRecipient' => 'Plex ব্যবহারকারীর নাম বা ইমেইল',
 			'musicTools.playlistSharingHint' => 'এই প্লেলিস্ট ও এর ট্র্যাকগুলোতে প্রবেশাধিকার দিন। প্রাপককে আমন্ত্রণ গ্রহণ করতে হতে পারে।',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'প্লেলিস্টে প্রবেশাধিকারের অনুরোধ করা যায়নি।',
 			'musicTools.playlistSharingAccepted' => 'Plex প্রবেশাধিকারের অনুরোধ গ্রহণ করেছে।',
 			'musicTools.playlistAccessList' => 'বর্তমান প্রবেশাধিকার',

@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Leer el siguiente",
+    "showRotation": "Turnos de series",
+    "rotationHelp": "Añade series desde sus menús. En cada ronda se reproduce el siguiente episodio de cada serie.",
+    "missingEpisode": "Falta el episodio",
+    "stereoChannel": "Canal para ambos altavoces",
+    "hdrBrightness": "Brillo de los subtítulos HDR"
+  },
   "viewing": {
     "extendRecording": "Grabar 30 minutos más",
     "recordsUntil": "Grabando hasta las ${time}",

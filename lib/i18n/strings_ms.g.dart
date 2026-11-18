@@ -40,6 +40,7 @@ class TranslationsMs extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsMs $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsMs(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$mediaConveniences$ms mediaConveniences = _Translations$mediaConveniences$ms._(_root);
 	@override late final _Translations$viewing$ms viewing = _Translations$viewing$ms._(_root);
 	@override late final _Translations$livingRoom$ms livingRoom = _Translations$livingRoom$ms._(_root);
 	@override late final _Translations$app$ms app = _Translations$app$ms._(_root);
@@ -122,6 +123,21 @@ class TranslationsMs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ms musicExperience = _Translations$musicExperience$ms._(_root);
 	@override late final _Translations$musicTools$ms musicTools = _Translations$musicTools$ms._(_root);
 	@override late final _Translations$musicDevices$ms musicDevices = _Translations$musicDevices$ms._(_root);
+}
+
+// Path: mediaConveniences
+class _Translations$mediaConveniences$ms extends Translations$mediaConveniences$en {
+	_Translations$mediaConveniences$ms._(TranslationsMs root) : this._root = root, super.internal(root);
+
+	final TranslationsMs _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'Baca seterusnya';
+	@override String get showRotation => 'Giliran siri';
+	@override String get rotationHelp => 'Tambah siri daripada menunya. Setiap pusingan memainkan episod seterusnya bagi setiap siri.';
+	@override String get missingEpisode => 'Episod tiada';
+	@override String get stereoChannel => 'Saluran untuk kedua-dua pembesar suara';
+	@override String get hdrBrightness => 'Kecerahan sari kata HDR';
 }
 
 // Path: viewing
@@ -5579,6 +5595,12 @@ class _Translations$services$trackerDescriptions$ms extends Translations$service
 extension on TranslationsMs {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'Baca seterusnya',
+			'mediaConveniences.showRotation' => 'Giliran siri',
+			'mediaConveniences.rotationHelp' => 'Tambah siri daripada menunya. Setiap pusingan memainkan episod seterusnya bagi setiap siri.',
+			'mediaConveniences.missingEpisode' => 'Episod tiada',
+			'mediaConveniences.stereoChannel' => 'Saluran untuk kedua-dua pembesar suara',
+			'mediaConveniences.hdrBrightness' => 'Kecerahan sari kata HDR',
 			'viewing.extendRecording' => 'Rakam 30 minit lagi',
 			'viewing.recordsUntil' => ({required Object time}) => 'Merakam sehingga ${time}',
 			'viewing.extendFailed' => 'Rakaman tidak dapat dilanjutkan',
@@ -6085,14 +6107,14 @@ extension on TranslationsMs {
 			'settings.audioPassthroughDescription' => 'Hantar audio Dolby/DTS ke penerima atau TV anda tanpa mengekod semula, mengekalkan bunyi sekitar.',
 			'settings.audioPassthroughDescriptionApple' => 'Gunakan decoder Dolby asli Apple untuk Dolby Digital Plus, termasuk Atmos. DTS dan TrueHD masih memainkan PCM pelbagai saluran.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Gunakan decoder Dolby asli Apple untuk Dolby Digital Plus, termasuk Atmos. Pada iOS, iPadOS dan tvOS 26 atau lebih lama, TrueHD Atmos dan DTS:X memainkan sebagai audio ruang.',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Hentikan semasa normalisasi bunyi',
 			'settings.audioChannelLimit' => 'saluran audio',
 			'settings.audioChannelLimitDescription' => 'Campurkan audio yang dikodkan ke bawah untuk speaker, headphone, atau setup HDMI yang tidak boleh memainkan setiap saluran',
 			'settings.audioChannelLimitOriginal' => 'asal',
 			'settings.audioChannelLimitOriginalDescription' => 'Mainkan setiap saluran dalam trek',
 			'settings.audioChannelLimitSurround51' => 'sehingga 5.1',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'Campurkan 7.1 ke bawah kepada 5.1 untuk TV dan penerima yang hanya mengambil 5.1 PCM.',
 			'settings.audioChannelLimitStereo' => 'Stereo',
 			'settings.audioChannelLimitStereoDescription' => 'Campurkan ke dua saluran untuk speaker stereo atau headphone.',
@@ -6599,14 +6621,14 @@ extension on TranslationsMs {
 			'videoControls.sleepTimerDurationHeader' => 'Masa yang',
 			'videoControls.playbackWillPauseAtEnd' => 'Playback Akan Berhenti Pada Akhir Video Ini',
 			'videoControls.stillWatching' => 'Masih boleh tengok?',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Berhenti dalam ${seconds}s',
 			'videoControls.continueWatching' => 'teruskan',
 			'videoControls.autoPlayNext' => 'Auto-Play yang seterusnya',
 			'videoControls.playNext' => 'Bermain seterusnya',
 			'videoControls.playButton' => 'Bermain',
 			'videoControls.pauseButton' => 'Henti Sejenak',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'beristirahat',
 			'videoControls.playbackResumed' => 'Bermain',
 			'videoControls.loadingVideo' => 'Penghantaran Video',
@@ -7113,14 +7135,14 @@ extension on TranslationsMs {
 			'libraries.playRandomMovie' => 'Mainkan sebuah filem rawak',
 			'libraries.randomPickFailed' => 'Tidak boleh memilih filem rawak daripada perpustakaan ini.',
 			'libraries.title' => 'Pustaka',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Pustaka',
 			'libraries.scanLibraryFiles' => 'Perpustakaan fail',
 			'libraries.scanLibrary' => 'Perpustakaan Scan',
 			'libraries.analyze' => 'Analisis',
 			'libraries.analyzeLibrary' => 'Analisis Perpustakaan',
 			'libraries.refreshMetadata' => 'Meningkatkan Metadata',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => 'Kerosakan kosong',
 			'libraries.emptyingTrash' => ({required Object title}) => 'Pembersihan sampah untuk "${title}"',
 			'libraries.trashEmptied' => ({required Object title}) => 'Perbincangan:Penggambaran untuk "${title}"',
@@ -7627,14 +7649,14 @@ extension on TranslationsMs {
 			'music.instantMix' => 'Tag: campuran instan',
 			'music.playNext' => 'Bermain selanjutnya',
 			'music.addToQueue' => 'Tambah kepada Queue',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Perbincangan:Disk ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ms'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} laluan', ), 
 			'music.nowPlaying' => 'Bermain sekarang',
 			'music.playingFrom' => ({required Object title}) => 'Bermain daripada ${title}',
 			'music.queue' => 'Perbincangan',
 			'music.clearQueue' => 'Kosongkan barisan',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => 'Lirik',
 			'music.visualizer' => 'Visualisasi',
 			'music.visualizerProfileLoading' => 'Membaca Analisis Track ...',
@@ -8141,14 +8163,14 @@ extension on TranslationsMs {
 			'performanceOverlay.memory' => 'Memori yang',
 			'performanceOverlay.uiFps' => 'Perbezaan FPS',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'Perkhidmatan NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Perkhidmatan Qualcomm HW',
 			'performanceOverlay.decoderMediatekHw' => 'Perbincangan HW',
 			'performanceOverlay.decoderExynosHw' => 'Perbezaan HW',
 			'performanceOverlay.decoderSoftware' => 'Perisian',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'Perkakasan',
 			'performanceOverlay.tunnelingActive' => 'Aktiviti',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} gagal)',
@@ -8655,14 +8677,14 @@ extension on TranslationsMs {
 			'homeLayout.noCustomRows' => 'Tiada rangkaian biasa lagi',
 			'homeLayout.addRowHint' => 'Gunakan Add Home row untuk membuat satu.',
 			'homeLayout.addHomeRow' => 'Menambah Home Ronde',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Pilih kategori; baris baru ditambah kepada Penganjur secara automatik',
 			'homeLayout.removeRow' => 'Menghapuskan baris',
 			'homeLayout.recentlyAdded' => 'baru-baru ini ditambah',
 			'homeLayout.recentlyReleased' => 'baru-baru ini dikeluarkan',
 			'homeLayout.movieCollections' => 'Koleksi filem',
 			'homeLayout.showCollections' => 'Tunjukkan koleksi',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'Tajuk Row',
 			'homeLayout.content' => 'Kesan',
 			'homeLayout.showThisRowIn' => 'Tunjukkan baris ini dalam:',
@@ -9169,14 +9191,14 @@ extension on TranslationsMs {
 			'sourceSetup.dlnaHelp' => 'Penemuan bergantung pada multisiar rangkaian setempat. Jika tiada pelayan muncul, masukkan URL perihalan perantinya di atas.',
 			'sourceSetup.dlnaRoot' => 'ID objek DLNA; biarkan kosong untuk menggunakan akar peranti.',
 			'sourceSetup.passwordOrKey' => 'Masukkan kata laluan atau tambah kunci peribadi di bawah.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'Cap jari SHA256 kunci hos SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Sahkan dengan pentadbir pelayan. Pada pelayan, jalankan ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub dan gunakan nilai SHA256-nya.',
 			'sourceSetup.sshFingerprintKeep' => 'Biarkan kosong untuk mengekalkan cap jari yang ditetapkan sekarang, atau masukkan cap jari pelayan yang baharu.',
 			'sourceSetup.sshAuthentication' => 'Pengesahan SSH dengan kunci awam',
 			'sourceSetup.sshAuthenticationHelp' => 'Pilihan; pengesahan dengan kata laluan juga disokong.',
 			'sourceSetup.privateKey' => 'Kunci peribadi (format PEM atau OpenSSH)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'Frasa laluan kunci peribadi',
 			'sourceSetup.nfsMountPort' => 'Port TCP perkhidmatan lekap NFS',
 			'sourceSetup.nfsMountPortHelp' => 'Lalai: 20048',
@@ -9683,14 +9705,14 @@ extension on TranslationsMs {
 			'musicTools.pinToHome' => 'Semat pada Laman Utama Muzik',
 			'musicTools.unpin' => 'Nyahsemat',
 			'musicTools.serverAnalysis' => 'Analisis pelayan',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Analisis sonik',
 			'musicTools.serverAnalysisScope' => 'Semua pustaka muzik yang layak pada pelayan ini. Tetapan analisisnya tidak diubah.',
 			'musicTools.serverActivities' => 'Aktiviti pelayan',
 			'musicTools.playlistSharing' => 'Akses senarai main',
 			'musicTools.playlistRecipient' => 'Nama pengguna Plex atau e-mel',
 			'musicTools.playlistSharingHint' => 'Berikan akses kepada senarai main ini dan lagunya. Penerima mungkin perlu menerima jemputan.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'Tidak dapat meminta akses senarai main.',
 			'musicTools.playlistSharingAccepted' => 'Plex menerima permintaan akses.',
 			'musicTools.playlistAccessList' => 'Akses semasa',

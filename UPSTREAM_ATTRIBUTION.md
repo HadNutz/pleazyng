@@ -8,6 +8,11 @@ The PR list comes from explicit “Squash of upstream” commit records and the 
 
 ## Living-room playback and music
 
+- HDR subtitle brightness draws on the OLED viewing problem addressed by [barnebyte’s PlexOledSubtitles](https://github.com/barnebyte/PlexOledSubtitles). Pleazyng adjusts playback rendering and keeps the subtitle file intact.
+- Series rotation draws on [raykwonx’s next-unwatched shuffle request](https://forums.plex.tv/t/shuffle-play-my-shows-but-only-play-the-next-unwatched-episode-of-that-show/936507).
+- Stereo channel selection addresses the [bilingual soundtrack use case reported by Plex viewers](https://www.reddit.com/r/PleX/comments/oqu872/).
+- Cross-library reading lists draw on [Kavita’s CBL importer](https://wiki.kavitareader.com/guides/features/cbl-import/) and the [Komga reading-order discussion](https://github.com/gotson/komga/issues/1803).
+
 These authors proposed the linked behaviors to their respective projects. Pleazyng independently implemented the features described below.
 
 - Hardware Play on a focused poster draws on the upstream feature requests [Plezy #1510](https://github.com/edde746/plezy/issues/1510) by [@enchained](https://github.com/enchained) and [Plezy #3038](https://github.com/edde746/plezy/issues/3038) by [@fillilutten](https://github.com/fillilutten).

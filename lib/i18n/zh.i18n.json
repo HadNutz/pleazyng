@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "阅读下一本",
+    "showRotation": "剧集轮播",
+    "rotationHelp": "从各部剧集的菜单中添加。每轮依次播放每部剧的下一集。",
+    "missingEpisode": "缺少剧集",
+    "stereoChannel": "在两个扬声器上播放的声道",
+    "hdrBrightness": "HDR 字幕亮度"
+  },
   "viewing": {
     "extendRecording": "再录制 30 分钟",
     "recordsUntil": "录制至 ${time}",

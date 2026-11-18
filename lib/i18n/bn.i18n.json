@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "পরেরটি পড়ুন",
+    "showRotation": "সিরিজ পালাবদল",
+    "rotationHelp": "সিরিজের মেনু থেকে যোগ করুন। প্রতি দফায় প্রতিটি সিরিজের পরবর্তী পর্ব চলবে।",
+    "missingEpisode": "অনুপস্থিত পর্ব",
+    "stereoChannel": "দুই স্পিকারে যে চ্যানেল বাজবে",
+    "hdrBrightness": "HDR সাবটাইটেলের উজ্জ্বলতা"
+  },
   "viewing": {
     "extendRecording": "আরও ৩০ মিনিট রেকর্ড করুন",
     "recordsUntil": "${time} পর্যন্ত রেকর্ডিং",

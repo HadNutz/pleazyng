@@ -41,6 +41,7 @@ class TranslationsPtBr extends TranslationsPt with BaseTranslations<AppLocale, T
 	TranslationsPtBr $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsPtBr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final Translations$mediaConveniences$pt_BR mediaConveniences = Translations$mediaConveniences$pt_BR.internal(_root);
 	@override late final Translations$viewing$pt_BR viewing = Translations$viewing$pt_BR.internal(_root);
 	@override late final Translations$cast$pt_BR cast = Translations$cast$pt_BR.internal(_root);
 	@override late final Translations$appIcon$pt_BR appIcon = Translations$appIcon$pt_BR.internal(_root);
@@ -91,6 +92,21 @@ class TranslationsPtBr extends TranslationsPt with BaseTranslations<AppLocale, T
 	@override late final Translations$musicTools$pt_BR musicTools = Translations$musicTools$pt_BR.internal(_root);
 	@override late final Translations$musicExperience$pt_BR musicExperience = Translations$musicExperience$pt_BR.internal(_root);
 	@override late final Translations$subtitleAiUi$pt_BR subtitleAiUi = Translations$subtitleAiUi$pt_BR.internal(_root);
+}
+
+// Path: mediaConveniences
+class Translations$mediaConveniences$pt_BR extends Translations$mediaConveniences$pt {
+	Translations$mediaConveniences$pt_BR.internal(TranslationsPtBr root) : this._root = root, super.internal(root);
+
+	final TranslationsPtBr _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'Ler o próximo';
+	@override String get showRotation => 'Rodízio de séries';
+	@override String get rotationHelp => 'Adicione séries pelos respectivos menus. Cada rodada reproduz o próximo episódio de cada série.';
+	@override String get missingEpisode => 'Episódio ausente';
+	@override String get stereoChannel => 'Canal para os dois alto-falantes';
+	@override String get hdrBrightness => 'Brilho das legendas HDR';
 }
 
 // Path: viewing
@@ -1392,6 +1408,12 @@ class Translations$services$libraryFilter$pt_BR extends Translations$services$li
 extension on TranslationsPtBr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'Ler o próximo',
+			'mediaConveniences.showRotation' => 'Rodízio de séries',
+			'mediaConveniences.rotationHelp' => 'Adicione séries pelos respectivos menus. Cada rodada reproduz o próximo episódio de cada série.',
+			'mediaConveniences.missingEpisode' => 'Episódio ausente',
+			'mediaConveniences.stereoChannel' => 'Canal para os dois alto-falantes',
+			'mediaConveniences.hdrBrightness' => 'Brilho das legendas HDR',
 			'viewing.extendRecording' => 'Gravar mais 30 minutos',
 			'viewing.recordsUntil' => ({required Object time}) => 'Gravando até ${time}',
 			'viewing.extendFailed' => 'Não foi possível estender a gravação',
@@ -1898,14 +1920,14 @@ extension on TranslationsPtBr {
 			'romm.manual' => 'Manual',
 			'romm.importSave' => 'Import save',
 			'romm.exportSave' => 'Export',
+			_ => null,
+		} ?? switch (path) {
 			'romm.importState' => 'Import state',
 			'romm.saveImported' => 'Save imported',
 			'romm.saveExported' => 'Save exported',
 			'romm.engine' => 'Emulator identity',
 			'romm.slot' => 'Save slot',
 			'romm.core' => 'Core identity',
-			_ => null,
-		} ?? switch (path) {
 			'romm.compatibilityHelp' => 'Save states require the same emulator and compatible core version. Choose the exact game copy before importing.',
 			'romm.saveConflict' => 'Both copies changed. Keep both versions, use the server copy, or explicitly replace it.',
 			'romm.keepBoth' => 'Keep both',

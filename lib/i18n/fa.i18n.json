@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "خواندن مورد بعدی",
+    "showRotation": "پخش نوبتی سریال‌ها",
+    "rotationHelp": "سریال‌ها را از منوی آن‌ها اضافه کنید. در هر دور قسمت بعدی هر سریال پخش می‌شود.",
+    "missingEpisode": "قسمت موجود نیست",
+    "stereoChannel": "کانال پخش در هر دو بلندگو",
+    "hdrBrightness": "روشنایی زیرنویس HDR"
+  },
   "viewing": {
     "extendRecording": "۳۰ دقیقه بیشتر ضبط کن",
     "recordsUntil": "ضبط تا ${time}",

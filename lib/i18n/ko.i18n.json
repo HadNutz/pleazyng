@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "다음 호 읽기",
+    "showRotation": "시리즈 번갈아 재생",
+    "rotationHelp": "각 시리즈의 메뉴에서 추가하세요. 한 바퀴마다 각 시리즈의 다음 에피소드를 한 편씩 재생합니다.",
+    "missingEpisode": "누락된 에피소드",
+    "stereoChannel": "양쪽 스피커로 재생할 채널",
+    "hdrBrightness": "HDR 자막 밝기"
+  },
   "viewing": {
     "extendRecording": "30분 더 녹화",
     "recordsUntil": "${time} 까지 녹화",

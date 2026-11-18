@@ -1,4 +1,12 @@
 {
+  "mediaConveniences": {
+    "readNext": "Read next",
+    "showRotation": "Show rotation",
+    "rotationHelp": "Add shows from their menus. Each show plays its next episode once per round.",
+    "missingEpisode": "Missing episode",
+    "stereoChannel": "Channel to play through both speakers",
+    "hdrBrightness": "HDR subtitle brightness"
+  },
   "viewing": {
     "extendRecording": "Record 30 more minutes",
     "recordsUntil": "Recording until ${time}",

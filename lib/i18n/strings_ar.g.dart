@@ -40,6 +40,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsAr $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsAr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Translations$mediaConveniences$ar mediaConveniences = _Translations$mediaConveniences$ar._(_root);
 	@override late final _Translations$viewing$ar viewing = _Translations$viewing$ar._(_root);
 	@override late final _Translations$livingRoom$ar livingRoom = _Translations$livingRoom$ar._(_root);
 	@override late final _Translations$app$ar app = _Translations$app$ar._(_root);
@@ -122,6 +123,21 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ar musicExperience = _Translations$musicExperience$ar._(_root);
 	@override late final _Translations$musicTools$ar musicTools = _Translations$musicTools$ar._(_root);
 	@override late final _Translations$musicDevices$ar musicDevices = _Translations$musicDevices$ar._(_root);
+}
+
+// Path: mediaConveniences
+class _Translations$mediaConveniences$ar extends Translations$mediaConveniences$en {
+	_Translations$mediaConveniences$ar._(TranslationsAr root) : this._root = root, super.internal(root);
+
+	final TranslationsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get readNext => 'اقرأ التالي';
+	@override String get showRotation => 'تناوب المسلسلات';
+	@override String get rotationHelp => 'أضف المسلسلات من قوائمها. تُعرض الحلقة التالية من كل مسلسل مرة في كل جولة.';
+	@override String get missingEpisode => 'حلقة مفقودة';
+	@override String get stereoChannel => 'القناة التي تُشغّل عبر مكبّري الصوت';
+	@override String get hdrBrightness => 'سطوع ترجمة HDR';
 }
 
 // Path: viewing
@@ -5704,6 +5720,12 @@ class _Translations$services$trackerDescriptions$ar extends Translations$service
 extension on TranslationsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'mediaConveniences.readNext' => 'اقرأ التالي',
+			'mediaConveniences.showRotation' => 'تناوب المسلسلات',
+			'mediaConveniences.rotationHelp' => 'أضف المسلسلات من قوائمها. تُعرض الحلقة التالية من كل مسلسل مرة في كل جولة.',
+			'mediaConveniences.missingEpisode' => 'حلقة مفقودة',
+			'mediaConveniences.stereoChannel' => 'القناة التي تُشغّل عبر مكبّري الصوت',
+			'mediaConveniences.hdrBrightness' => 'سطوع ترجمة HDR',
 			'viewing.extendRecording' => 'التسجيل لمدة ٣٠ دقيقة إضافية',
 			'viewing.recordsUntil' => ({required Object time}) => 'يستمر التسجيل حتى ${time}',
 			'viewing.extendFailed' => 'تعذّر تمديد التسجيل',
@@ -6210,14 +6232,14 @@ extension on TranslationsAr {
 			'settings.audioPassthroughDescription' => 'إرسال صوت Dolby/DTS إلى المستلم أو التلفزيون دون إعادة التشفير، والحفاظ على الصوت المحيط.',
 			'settings.audioPassthroughDescriptionApple' => 'استخدم محفز Dolby الأصلي من Apple لـ Dolby Digital Plus ، بما في ذلك Atmos. DTS و TrueHD لا تزال تلعب كPCM متعدد القنوات.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'استخدم محفز Dolby الأصلي من Apple لـ Dolby Digital Plus ، بما في ذلك Atmos. على iOS ، iPadOS و tvOS 26 أو لاحقًا ، يلعب TrueHD Atmos و DTS:X كصوت فضاء.',
+			_ => null,
+		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'انقطع أثناء تشغيل الضوضاء',
 			'settings.audioChannelLimit' => 'قنوات الصوت',
 			'settings.audioChannelLimitDescription' => 'يخلط الصوت المكسور إلى أسفل للمكبرات الصوتية أو سماعات الرأس أو إعدادات HDMI التي لا يمكن تشغيل كل قناة',
 			'settings.audioChannelLimitOriginal' => 'الأصلي',
 			'settings.audioChannelLimitOriginalDescription' => 'لعب كل قناة في المسار',
 			'settings.audioChannelLimitSurround51' => 'حتى 5.1',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioChannelLimitSurround51Description' => 'يخلط 7.1 إلى 5.1 بالنسبة للتلفزيونات والمستلمين الذين يستغرقون 5.1 PCM فقط.',
 			'settings.audioChannelLimitStereo' => 'ستيريو (Stereo)',
 			'settings.audioChannelLimitStereoDescription' => 'يخلط إلى اثنين من القنوات للمكبرات الصوتية الستيريو أو سماعات الرأس.',
@@ -6724,14 +6746,14 @@ extension on TranslationsAr {
 			'videoControls.sleepTimerDurationHeader' => 'تيمير',
 			'videoControls.playbackWillPauseAtEnd' => 'لعبة Playback ستتوقف في نهاية هذا الفيديو',
 			'videoControls.stillWatching' => 'لا يزال ينظر؟',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'استراحة في ${seconds}s',
 			'videoControls.continueWatching' => 'مواصلة',
 			'videoControls.autoPlayNext' => 'اللعب التالي',
 			'videoControls.playNext' => 'تشغيل التالي',
 			'videoControls.playButton' => 'تشغيل',
 			'videoControls.pauseButton' => 'إيقاف مؤقت',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.playbackPaused' => 'استراحة',
 			'videoControls.playbackResumed' => 'اللعب',
 			'videoControls.loadingVideo' => 'تحميل الفيديو',
@@ -7238,14 +7260,14 @@ extension on TranslationsAr {
 			'libraries.playRandomMovie' => 'لعب فيلم عشوائي',
 			'libraries.randomPickFailed' => 'لا يمكن أن تختار فيلم عشوائي من هذه المكتبة.',
 			'libraries.title' => 'المكتبات',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'المكتبة',
 			'libraries.scanLibraryFiles' => 'فحص المكتبة الملفات',
 			'libraries.scanLibrary' => 'فحص المكتبة',
 			'libraries.analyze' => 'تحليل',
 			'libraries.analyzeLibrary' => 'تحليل المكتبة',
 			'libraries.refreshMetadata' => 'تحديث البيانات الوصفية',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.emptyTrash' => 'الفراغ الفراغ',
 			'libraries.emptyingTrash' => ({required Object title}) => 'إزالة القمامة لـ "${title}" ...',
 			'libraries.trashEmptied' => ({required Object title}) => 'أضف تعليق حول "${title}"',
@@ -7752,14 +7774,14 @@ extension on TranslationsAr {
 			'music.instantMix' => 'مزيج فوري',
 			'music.playNext' => 'تشغيل التالي',
 			'music.addToQueue' => 'إضافة إلى كوشنر',
+			_ => null,
+		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'القرص ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} مقطع', one: 'مقطع واحد', two: 'مقطعان', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} مقاطع', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} مقطع', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} مقطع', ), 
 			'music.nowPlaying' => 'اللعب الآن',
 			'music.playingFrom' => ({required Object title}) => 'اللعب من ${title}',
 			'music.queue' => 'كوي',
 			'music.clearQueue' => 'مسح قائمة التشغيل الحالية',
-			_ => null,
-		} ?? switch (path) {
 			'music.lyrics' => 'الكلمات',
 			'music.visualizer' => 'التصور',
 			'music.visualizerProfileLoading' => 'قراءة تحليل المسار ...',
@@ -8266,14 +8288,14 @@ extension on TranslationsAr {
 			'performanceOverlay.memory' => 'الذاكرة',
 			'performanceOverlay.uiFps' => 'فاي FPS',
 			'performanceOverlay.fps' => 'FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'كوالكوم HW',
 			'performanceOverlay.decoderMediatekHw' => 'الوسائط HW',
 			'performanceOverlay.decoderExynosHw' => 'إكسينوس HW',
 			'performanceOverlay.decoderSoftware' => 'البرمجة',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderHardware' => 'الأجهزة',
 			'performanceOverlay.tunnelingActive' => 'نشطة',
 			'performanceOverlay.dvRpuFailed' => ({required Object converted, required Object failures}) => '${converted} (${failures} فاشلة)',
@@ -8780,14 +8802,14 @@ extension on TranslationsAr {
 			'homeLayout.noCustomRows' => 'لا توجد صفوف مخصّصة بعد',
 			'homeLayout.addRowHint' => 'اختر «إضافة صف إلى الرئيسية» لإنشاء صف.',
 			'homeLayout.addHomeRow' => 'إضافة صف إلى الرئيسية',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'اختر فئة، وسيُضاف الصف الجديد إلى منظّم الصفوف تلقائيًا',
 			'homeLayout.removeRow' => 'إزالة الصف',
 			'homeLayout.recentlyAdded' => 'أُضيف مؤخرًا',
 			'homeLayout.recentlyReleased' => 'صدر مؤخرًا',
 			'homeLayout.movieCollections' => 'مجموعات الأفلام',
 			'homeLayout.showCollections' => 'مجموعات المسلسلات',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.rowTitle' => 'عنوان الصف',
 			'homeLayout.content' => 'المحتوى',
 			'homeLayout.showThisRowIn' => 'إظهار هذا الصف في:',
@@ -9294,14 +9316,14 @@ extension on TranslationsAr {
 			'sourceSetup.dlnaHelp' => 'يعتمد الاكتشاف على البث المتعدد في الشبكة المحلية. إذا لم يظهر أي خادم، فأدخل عنوان وصف الجهاز أعلاه.',
 			'sourceSetup.dlnaRoot' => 'معرّف عنصر DLNA؛ اتركه فارغًا لاستخدام جذر الجهاز.',
 			'sourceSetup.passwordOrKey' => 'أدخل كلمة مرور أو أضف مفتاحًا خاصًا أدناه.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'بصمة SHA256 لمفتاح مضيف SSH',
 			'sourceSetup.sshFingerprintHelp' => 'تحقّق منها مع مسؤول الخادم. شغّل على الخادم الأمر ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub واستخدم قيمة SHA256 التي يعرضها.',
 			'sourceSetup.sshFingerprintKeep' => 'اتركه فارغًا للاحتفاظ بالبصمة المثبّتة حاليًا، أو أدخل بصمة خادم جديدة.',
 			'sourceSetup.sshAuthentication' => 'المصادقة بمفتاح SSH عام',
 			'sourceSetup.sshAuthenticationHelp' => 'اختياري؛ تُدعم المصادقة بكلمة مرور أيضًا.',
 			'sourceSetup.privateKey' => 'المفتاح الخاص (بتنسيق PEM أو OpenSSH)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.privateKeyPassphrase' => 'عبارة مرور المفتاح الخاص',
 			'sourceSetup.nfsMountPort' => 'منفذ TCP لخدمة تركيب NFS',
 			'sourceSetup.nfsMountPortHelp' => 'الافتراضي: 20048',
@@ -9808,14 +9830,14 @@ extension on TranslationsAr {
 			'musicTools.pinToHome' => 'تثبيت في صفحة الموسيقى الرئيسية',
 			'musicTools.unpin' => 'إلغاء التثبيت',
 			'musicTools.serverAnalysis' => 'تحليل الخادم',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'التحليل الصوتي',
 			'musicTools.serverAnalysisScope' => 'كل مكتبات الموسيقى المؤهلة على هذا الخادم. لا يغيّر هذا إعدادات التحليل الخاصة بها.',
 			'musicTools.serverActivities' => 'أنشطة الخادم',
 			'musicTools.playlistSharing' => 'الوصول إلى قائمة التشغيل',
 			'musicTools.playlistRecipient' => 'اسم مستخدم Plex أو البريد الإلكتروني',
 			'musicTools.playlistSharingHint' => 'امنح الوصول إلى قائمة التشغيل هذه ومقاطعها. قد يحتاج المستلم إلى قبول دعوة.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharingFailed' => 'تعذر طلب الوصول إلى قائمة التشغيل.',
 			'musicTools.playlistSharingAccepted' => 'قبل Plex طلب الوصول.',
 			'musicTools.playlistAccessList' => 'الوصول الحالي',
