@@ -15,7 +15,22 @@
     "soloPage": "このページを単独で表示",
     "pairPage": "このページを見開きに戻す",
     "listenPhone": "このスマートフォンで聴く",
-    "audioUnavailable": "このスマートフォンでは現在のファイルまたは音声トラックを再生できません。"
+    "audioUnavailable": "このスマートフォンでは現在のファイルまたは音声トラックを再生できません。",
+    "guidedPanels": "コマごとに読む",
+    "rewind": "巻き戻し",
+    "attachAudio": "音声ファイルを追加",
+    "replaceSoundtrack": "音声トラックを置き換え",
+    "mixMovie": "映画の音声とミックス",
+    "commentaryLevel": "解説の音量",
+    "movieLevel": "映画の音量",
+    "episodeStarts": "エピソード${episode}はここから",
+    "locateMovedFolder": "移動したフォルダーを探す",
+    "relinkMatched": "一致する${count}件を再接続",
+    "relinkAmbiguous": "確認が必要",
+    "relinkNone": "一致するファイルが見つかりません",
+    "clearAudio": "追加した音声を削除",
+    "keepFrom": "${time}から保存",
+    "recordNow": "今から録画"
   },
   "livingRoom": {
     "fitScreen": "画面に合わせる",

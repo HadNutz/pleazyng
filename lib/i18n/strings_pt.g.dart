@@ -155,6 +155,21 @@ class Translations$viewing$pt extends Translations$viewing$en {
 	@override String get pairPage => 'Voltar a emparelhar esta página';
 	@override String get listenPhone => 'Ouvir neste telefone';
 	@override String get audioUnavailable => 'O ficheiro ou a faixa de áudio não está disponível neste telefone.';
+	@override String get guidedPanels => 'Leitura por painéis';
+	@override String get rewind => 'Rebobinar';
+	@override String get attachAudio => 'Adicionar ficheiro de áudio';
+	@override String get replaceSoundtrack => 'Substituir faixa sonora';
+	@override String get mixMovie => 'Misturar com o filme';
+	@override String get commentaryLevel => 'Volume do comentário';
+	@override String get movieLevel => 'Volume do filme';
+	@override String episodeStarts({required Object episode}) => 'O episódio ${episode} começa aqui';
+	@override String get locateMovedFolder => 'Localizar pasta movida';
+	@override String relinkMatched({required Object count}) => 'Voltar a associar ${count} entradas correspondentes';
+	@override String get relinkAmbiguous => 'Requer revisão';
+	@override String get relinkNone => 'Não foram encontrados ficheiros correspondentes';
+	@override String get clearAudio => 'Remover áudio adicionado';
+	@override String keepFrom({required Object time}) => 'Guardar desde ${time}';
+	@override String get recordNow => 'Gravar a partir de agora';
 }
 
 // Path: livingRoom
@@ -5638,6 +5653,21 @@ extension on TranslationsPt {
 			'viewing.pairPage' => 'Voltar a emparelhar esta página',
 			'viewing.listenPhone' => 'Ouvir neste telefone',
 			'viewing.audioUnavailable' => 'O ficheiro ou a faixa de áudio não está disponível neste telefone.',
+			'viewing.guidedPanels' => 'Leitura por painéis',
+			'viewing.rewind' => 'Rebobinar',
+			'viewing.attachAudio' => 'Adicionar ficheiro de áudio',
+			'viewing.replaceSoundtrack' => 'Substituir faixa sonora',
+			'viewing.mixMovie' => 'Misturar com o filme',
+			'viewing.commentaryLevel' => 'Volume do comentário',
+			'viewing.movieLevel' => 'Volume do filme',
+			'viewing.episodeStarts' => ({required Object episode}) => 'O episódio ${episode} começa aqui',
+			'viewing.locateMovedFolder' => 'Localizar pasta movida',
+			'viewing.relinkMatched' => ({required Object count}) => 'Voltar a associar ${count} entradas correspondentes',
+			'viewing.relinkAmbiguous' => 'Requer revisão',
+			'viewing.relinkNone' => 'Não foram encontrados ficheiros correspondentes',
+			'viewing.clearAudio' => 'Remover áudio adicionado',
+			'viewing.keepFrom' => ({required Object time}) => 'Guardar desde ${time}',
+			'viewing.recordNow' => 'Gravar a partir de agora',
 			'livingRoom.fitScreen' => 'Ajustar à tela',
 			'livingRoom.fitHelp' => 'Selecione uma borda e mova-a com as setas até ver as marcas. Repita para as outras bordas.',
 			'livingRoom.left' => 'Esquerda',
@@ -6121,6 +6151,8 @@ extension on TranslationsPt {
 			'settings.companionRemoteServerStopFailed' => 'Não foi possível parar o servidor de controle remoto',
 			'settings.autoPip' => 'Picture-in-picture automático',
 			'settings.autoPipDescription' => 'Entrar automaticamente no modo picture-in-picture ao sair do app durante a reprodução',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Ajustar à taxa de quadros do conteúdo',
 			'settings.matchContentFrameRateDescription' => 'Ajustar a taxa de atualização da tela ao conteúdo de vídeo',
 			'settings.matchContentResolution' => 'Ajustar à resolução do conteúdo',
@@ -6136,8 +6168,6 @@ extension on TranslationsPt {
 			'settings.audioPassthroughDescription' => 'Enviar o áudio Dolby/DTS ao receptor ou à TV sem recodificação, preservando o som surround. Desative se não houver som.',
 			'settings.audioPassthroughDescriptionApple' => 'Usar o decodificador Dolby nativo da Apple para Dolby Digital Plus, incluindo Atmos. DTS e TrueHD continuam sendo reproduzidos como PCM multicanal. Desative se não houver som.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Usar o decodificador Dolby nativo da Apple para Dolby Digital Plus, incluindo Atmos. No iOS, iPadOS e tvOS 26 ou posterior, TrueHD Atmos e DTS:X são reproduzidos como áudio espacial. As demais faixas DTS e TrueHD são reproduzidas como PCM multicanal. Desative se não houver som.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Desativada enquanto a normalização de intensidade sonora estiver ativa',
 			'settings.audioChannelLimit' => 'Canais de áudio',
 			'settings.audioChannelLimitDescription' => 'Mixar o áudio decodificado em menos canais para alto-falantes, fones de ouvido ou sistemas HDMI que não reproduzem todos os canais',
@@ -6635,6 +6665,8 @@ extension on TranslationsPt {
 			'tooltips.markAsUnwatched' => 'Marcar como não assistido',
 			'audioTracks.track' => ({required Object n}) => 'Faixa de áudio ${n}',
 			'videoControls.audioLabel' => 'Áudio',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Legendas',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Letterbox',
@@ -6650,8 +6682,6 @@ extension on TranslationsPt {
 			'videoControls.stillWatching' => 'Ainda assistindo?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pausando em ${seconds}s',
 			'videoControls.continueWatching' => 'Continuar',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Reproduzir Próximo Automaticamente',
 			'videoControls.playNext' => 'Reproduzir Próximo',
 			'videoControls.playButton' => 'Reproduzir',
@@ -7149,6 +7179,8 @@ extension on TranslationsPt {
 			'errors.pleaseEnterToken' => 'Insira um token',
 			'errors.invalidToken' => 'Token inválido',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Falha ao verificar token: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Falha ao trocar para ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Falha ao excluir ${displayName}',
 			'errors.failedToRate' => 'Não foi possível atualizar a classificação',
@@ -7164,8 +7196,6 @@ extension on TranslationsPt {
 			'libraries.title' => 'Bibliotecas',
 			'libraries.fallbackTitle' => 'Biblioteca',
 			'libraries.scanLibraryFiles' => 'Escanear Arquivos da Biblioteca',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Escanear Biblioteca',
 			'libraries.analyze' => 'Analisar',
 			'libraries.analyzeLibrary' => 'Analisar Biblioteca',
@@ -7663,6 +7693,8 @@ extension on TranslationsPt {
 			'playlists.deleted' => 'Playlist excluída',
 			'playlists.itemAdded' => 'Adicionado à playlist',
 			'playlists.itemRemoved' => 'Removido da playlist',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Selecionar Playlist',
 			'playlists.searchPlaylists' => 'Pesquisar playlists...',
 			'playlists.errorCreating' => 'Falha ao criar playlist',
@@ -7678,8 +7710,6 @@ extension on TranslationsPt {
 			'music.addToQueue' => 'Adicionar à fila',
 			'music.discNumber' => ({required Object n}) => 'Disco ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} faixa', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} faixas', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'Reproduzindo agora',
 			'music.playingFrom' => ({required Object title}) => 'Reproduzindo de ${title}',
 			'music.queue' => 'Fila',
@@ -8177,6 +8207,8 @@ extension on TranslationsPt {
 			'performanceOverlay.dropped' => 'Descartados',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
 			'performanceOverlay.dvRpuAverage' => 'Média DV RPU',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'Média amostra DV',
 			'performanceOverlay.maxLuma' => 'Luma máx.',
 			'performanceOverlay.minLuma' => 'Luma mín.',
@@ -8192,8 +8224,6 @@ extension on TranslationsPt {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Software',
@@ -8691,6 +8721,8 @@ extension on TranslationsPt {
 			'homeLayout.noPlexRows' => 'No Plex linhas gerenciadas retornou para esta biblioteca.',
 			'homeLayout.openDetails' => 'Detalhes abertos',
 			'homeLayout.heroCards' => 'Cartões de herói',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Tapeando um cartão de herói',
 			'homeLayout.tvPlayFocus' => 'TV remoto: botão de gravação',
 			'homeLayout.tvPlayFocusDescription' => 'O D-pad para baixo parou no botão Play antes de se mover para a próxima linha.',
@@ -8706,8 +8738,6 @@ extension on TranslationsPt {
 			'homeLayout.addHomeRowDescription' => 'Escolha uma categoria; a nova linha é adicionada ao Organizador automaticamente',
 			'homeLayout.removeRow' => 'Remover a linha',
 			'homeLayout.recentlyAdded' => 'Adicionados recentemente',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Recentemente liberado',
 			'homeLayout.movieCollections' => 'Filmes Colecções',
 			'homeLayout.showCollections' => 'Mostrar coleções',
@@ -9205,6 +9235,8 @@ extension on TranslationsPt {
 			'audiobook.recoveryImported' => 'Dados de recuperação combinados.',
 			'sourceSetup.bookorbitHelp' => 'Entre com sua própria conta BookOrbit para navegar e reproduzir seus livros. Pedidos de títulos ausentes continuam passando pela sua instância SeerrNG conectada.',
 			'sourceSetup.bookorbitOpen' => 'Abrir no BookOrbit',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Veja este título no BookOrbit para gerir os detalhes da biblioteca e os formatos que o Pleazyng não consegue abrir. O progresso de audição é sincronizado com a sua conta BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Certificado do servidor salvo',
 			'sourceSetup.nfsEndpointInvalid' => 'Digite uma URL NFS, como nfs://nas:2049/export.',
@@ -9220,8 +9252,6 @@ extension on TranslationsPt {
 			'sourceSetup.sshFingerprint' => 'Impressão digital SHA256 da chave de host SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Verifique com o administrador do servidor. No servidor, execute ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub e use o valor SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Deixe em branco para manter a impressão digital fixada atual ou digite uma nova impressão digital do servidor.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Autenticação SSH por chave pública',
 			'sourceSetup.sshAuthenticationHelp' => 'Opcional; a autenticação por senha também é aceita.',
 			'sourceSetup.privateKey' => 'Chave privada (formato PEM ou OpenSSH)',
@@ -9719,6 +9749,8 @@ extension on TranslationsPt {
 			'musicTools.exclusiveOutput' => 'Saída de áudio exclusiva',
 			'musicTools.preamp' => 'Pré-amplificação',
 			'musicTools.ratingPending' => 'Salvo neste dispositivo; aguardando sincronização',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Deslocamento da letra',
 			'musicTools.anniversaries' => 'Aniversários de álbuns',
 			'musicTools.outputPreset' => 'Equalizador desta saída',
@@ -9734,8 +9766,6 @@ extension on TranslationsPt {
 			'musicTools.sonicAnalysis' => 'Análise sonora',
 			'musicTools.serverAnalysisScope' => 'Todas as bibliotecas de música elegíveis neste servidor. As definições de análise não são alteradas.',
 			'musicTools.serverActivities' => 'Atividades do servidor',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Acesso à lista',
 			'musicTools.playlistRecipient' => 'Nome de utilizador Plex ou e-mail',
 			'musicTools.playlistSharingHint' => 'Conceda acesso a esta lista e às suas faixas. O destinatário poderá ter de aceitar um convite.',

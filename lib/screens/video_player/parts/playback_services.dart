@@ -536,6 +536,8 @@ extension _VideoPlayerPlaybackServiceMethods on VideoPlayerScreenState {
       // play queue holding the siblings is created fire-and-forget and may
       // not exist yet when the tracker is wired.
       final playbackState = context.read<PlaybackStateProvider>();
+      final boundedEpisode = _boundedEpisode == metadata.globalKey;
+      final boundedEpisodeNumbers = Set<int>.of(_boundedEpisodeNumbers);
       final effectivePlayMethod = playMethod ?? (_isTranscoding ? 'Transcode' : 'DirectPlay');
       _progressTracker = PlaybackProgressTracker(
         client: mediaClient,
@@ -571,10 +573,10 @@ extension _VideoPlayerPlaybackServiceMethods on VideoPlayerScreenState {
           // emission and the Jellyfin double-scrobble guard (#1287); the
           // trackers hear about a sibling the same way any other watched mark
           // reaches them, since no playback session was ever opened for it.
-          if (_boundedEpisode == metadata.globalKey) return;
+          if (boundedEpisode) return;
           final siblings = playbackState.sameFileSiblings(metadata, playedPartId: mediaInfo?.partId?.toString());
           for (final sibling in siblings) {
-            if (sibling.isWatched) continue;
+            if (sibling.isWatched || boundedEpisodeNumbers.contains(sibling.index)) continue;
             await mediaClient.markWatchedFromPlaybackStop(sibling);
             await TrackerCoordinator.instance.markWatched(sibling, mediaClient);
             appLogger.d('Scrobbled same-file sibling ${sibling.id} of ${metadata.id}');

@@ -156,6 +156,21 @@ class Translations$viewing$fr extends Translations$viewing$en {
 	@override String get pairPage => 'Associer à nouveau cette page';
 	@override String get listenPhone => 'Écouter sur ce téléphone';
 	@override String get audioUnavailable => 'Le fichier ou la piste audio est indisponible sur ce téléphone.';
+	@override String get guidedPanels => 'Lecture case par case';
+	@override String get rewind => 'Rembobiner';
+	@override String get attachAudio => 'Ajouter un fichier audio';
+	@override String get replaceSoundtrack => 'Remplacer la bande-son';
+	@override String get mixMovie => 'Mixer avec le film';
+	@override String get commentaryLevel => 'Volume du commentaire';
+	@override String get movieLevel => 'Volume du film';
+	@override String episodeStarts({required Object episode}) => 'L’épisode ${episode} commence ici';
+	@override String get locateMovedFolder => 'Localiser le dossier déplacé';
+	@override String relinkMatched({required Object count}) => 'Rétablir ${count} correspondances';
+	@override String get relinkAmbiguous => 'À vérifier';
+	@override String get relinkNone => 'Aucun fichier correspondant trouvé';
+	@override String get clearAudio => 'Retirer l’audio ajouté';
+	@override String keepFrom({required Object time}) => 'Conserver depuis ${time}';
+	@override String get recordNow => 'Enregistrer à partir de maintenant';
 }
 
 // Path: livingRoom
@@ -5675,6 +5690,21 @@ extension on TranslationsFr {
 			'viewing.pairPage' => 'Associer à nouveau cette page',
 			'viewing.listenPhone' => 'Écouter sur ce téléphone',
 			'viewing.audioUnavailable' => 'Le fichier ou la piste audio est indisponible sur ce téléphone.',
+			'viewing.guidedPanels' => 'Lecture case par case',
+			'viewing.rewind' => 'Rembobiner',
+			'viewing.attachAudio' => 'Ajouter un fichier audio',
+			'viewing.replaceSoundtrack' => 'Remplacer la bande-son',
+			'viewing.mixMovie' => 'Mixer avec le film',
+			'viewing.commentaryLevel' => 'Volume du commentaire',
+			'viewing.movieLevel' => 'Volume du film',
+			'viewing.episodeStarts' => ({required Object episode}) => 'L’épisode ${episode} commence ici',
+			'viewing.locateMovedFolder' => 'Localiser le dossier déplacé',
+			'viewing.relinkMatched' => ({required Object count}) => 'Rétablir ${count} correspondances',
+			'viewing.relinkAmbiguous' => 'À vérifier',
+			'viewing.relinkNone' => 'Aucun fichier correspondant trouvé',
+			'viewing.clearAudio' => 'Retirer l’audio ajouté',
+			'viewing.keepFrom' => ({required Object time}) => 'Conserver depuis ${time}',
+			'viewing.recordNow' => 'Enregistrer à partir de maintenant',
 			'livingRoom.fitScreen' => 'Ajuster à mon écran',
 			'livingRoom.fitHelp' => 'Sélectionnez un bord, puis déplacez-le avec les flèches jusqu’à voir ses repères. Répétez pour chaque bord.',
 			'livingRoom.left' => 'Gauche',
@@ -6158,6 +6188,8 @@ extension on TranslationsFr {
 			'settings.companionRemoteServerStopFailed' => 'Impossible d\'arrêter le serveur de télécommande',
 			'settings.autoPip' => 'Mode image dans l’image automatique',
 			'settings.autoPipDescription' => 'Passer en mode image dans l’image si vous quittez l’application pendant la lecture',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Adapter la fréquence d’images au contenu',
 			'settings.matchContentFrameRateDescription' => 'Adapter la fréquence de rafraîchissement de l’écran au contenu vidéo',
 			'settings.matchContentResolution' => 'Adapter à la résolution du contenu',
@@ -6173,8 +6205,6 @@ extension on TranslationsFr {
 			'settings.audioPassthroughDescription' => 'Envoyer l’audio Dolby/DTS à votre ampli ou téléviseur sans le réencoder afin de préserver le son surround. Désactivez cette option en l’absence de son.',
 			'settings.audioPassthroughDescriptionApple' => 'Utiliser le décodeur Dolby natif d’Apple pour le Dolby Digital Plus, y compris Atmos. Le DTS et le TrueHD sont toujours lus en PCM multicanal. Désactivez cette option en l’absence de son.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Utiliser le décodeur Dolby natif d’Apple pour le Dolby Digital Plus, y compris Atmos. Sous iOS, iPadOS et tvOS 26 ou version ultérieure, le TrueHD Atmos et le DTS:X sont lus en audio spatial. Les autres pistes DTS et TrueHD sont lues en PCM multicanal. Désactivez cette option en l’absence de son.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Désactivée tant que la normalisation du volume est active',
 			'settings.audioChannelLimit' => 'Canaux audio',
 			'settings.audioChannelLimitDescription' => 'Réduire le nombre de canaux de l’audio décodé pour les enceintes, casques ou installations HDMI qui ne peuvent pas restituer tous les canaux',
@@ -6672,6 +6702,8 @@ extension on TranslationsFr {
 			'tooltips.markAsUnwatched' => 'Marquer comme non vu',
 			'audioTracks.track' => ({required Object n}) => 'Piste audio ${n}',
 			'videoControls.audioLabel' => 'Audio',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Sous-titres',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Format letterbox',
@@ -6687,8 +6719,6 @@ extension on TranslationsFr {
 			'videoControls.stillWatching' => 'Toujours en train de regarder ?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pause dans ${seconds}s',
 			'videoControls.continueWatching' => 'Continuer',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Lecture automatique de l’élément suivant',
 			'videoControls.playNext' => 'Lire l\'épisode suivant',
 			'videoControls.playButton' => 'Lire',
@@ -7186,6 +7216,8 @@ extension on TranslationsFr {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (à ${age} ans)',
 			'errors.searchFailed' => ({required Object error}) => 'Échec de la recherche : ${error}',
 			'errors.searchUnavailable' => 'La recherche n\'a pu atteindre aucun serveur multimédia.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.connectionTimeout' => ({required Object context}) => 'Délai d\'attente de connexion dépassé pendant le chargement ${context}',
 			'errors.connectionFailed' => 'Impossible de se connecter au serveur multimédia',
 			'errors.unableToLoad' => ({required Object context}) => 'Impossible de charger ${context}. Réessayez.',
@@ -7201,8 +7233,6 @@ extension on TranslationsFr {
 			'errors.reasonRefused' => 'le serveur a refusé la requête',
 			'errors.reasonNotFound' => 'l\'élément ne se trouve plus sur le serveur',
 			'errors.reasonServerError' => 'le serveur a signalé une erreur',
-			_ => null,
-		} ?? switch (path) {
 			'errors.reasonCancelled' => 'la requête a été annulée',
 			'errors.reasonUnexpected' => 'une erreur inattendue s\'est produite',
 			'libraries.playRandomMovie' => 'Jouer un film aléatoire',
@@ -7700,6 +7730,8 @@ extension on TranslationsFr {
 			'playlists.removeItem' => 'Retirer de la playlist',
 			'playlists.smartPlaylist' => 'Playlist intelligente',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} élément', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} éléments', ), 
+			_ => null,
+		} ?? switch (path) {
 			'playlists.emptyPlaylist' => 'Cette playlist est vide',
 			'playlists.deleteConfirm' => 'Supprimer la playlist ?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Voulez-vous vraiment supprimer « ${name} » ?',
@@ -7715,8 +7747,6 @@ extension on TranslationsFr {
 			'playlists.errorAdding' => 'Échec de l’ajout à la playlist',
 			'playlists.errorReordering' => 'Échec de la réorganisation de l’élément de la playlist',
 			'playlists.errorRemoving' => 'Échec du retrait de l’élément de la playlist',
-			_ => null,
-		} ?? switch (path) {
 			'music.goToAlbum' => 'Aller à l\'album',
 			'music.goToArtist' => 'Aller à l\'artiste',
 			'music.instantMix' => 'Mix instantané',
@@ -8214,6 +8244,8 @@ extension on TranslationsFr {
 			'performanceOverlay.hwFormat' => 'Fmt HW',
 			'performanceOverlay.matrix' => 'Matrice',
 			'performanceOverlay.primaries' => 'Primaires',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.transfer' => 'Transfert',
 			'performanceOverlay.renderFps' => 'FPS rendu',
 			'performanceOverlay.displayFps' => 'FPS écran',
@@ -8229,8 +8261,6 @@ extension on TranslationsFr {
 			'performanceOverlay.cacheUsed' => 'Cache utilisé',
 			'performanceOverlay.cacheLimit' => 'Limite du cache',
 			'performanceOverlay.speed' => 'Vitesse',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.player' => 'Lecteur',
 			'performanceOverlay.playMethod' => 'Le jeu méthode',
 			'performanceOverlay.memory' => 'Mémoire',
@@ -8728,6 +8758,8 @@ extension on TranslationsFr {
 			'homeLayout.nextUpHomeDescription' => 'La prochaine série de l\'épisode non vu diffusée séparément sur Home',
 			'homeLayout.library' => 'Bibliothèque',
 			'homeLayout.showInRecommended' => 'Présentation dans la bibliothèque recommandée',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.customPlexRow' => 'Résultats de la Plex',
 			'homeLayout.heroNeedsLibrary' => 'Vérifier la bibliothèque d\'abord - Le héros a besoin d\'un endroit où il faut montrer',
 			'homeLayout.heroNeedsSurface' => 'Vérifier la bibliothèque ou la maison d\'abord - Le héros a besoin d\'un endroit où il faut montrer',
@@ -8743,8 +8775,6 @@ extension on TranslationsFr {
 			'homeLayout.castOnHero' => 'Les Banner Hero',
 			'homeLayout.castOnHeroDescription' => 'Affiche le cast le long du fond d\'un banner héros. Off ne tient que le titre et le résumé.',
 			'homeLayout.customRows' => 'Ronde de Custom',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.loading' => 'La mise à jour de la maison...',
 			'homeLayout.noCustomRows' => 'Pas de coutures encore',
 			'homeLayout.addRowHint' => 'Utilisez Add Home row pour créer un.',
@@ -9242,6 +9272,8 @@ extension on TranslationsFr {
 			'audiobook.statusProgress' => 'Au progrès',
 			'audiobook.statusFinished' => 'terminé',
 			'audiobook.goToTime' => 'Aller dans le temps',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.timeHelp' => 'Hores : minutes : secondes ou minutes : secondes',
 			'audiobook.recoveryHelp' => 'Exporter une récente copie cryptée avant de déplacer ou de réparer les données synchronisées. Les importations se fusionnent avec l\'état actuel; elles ne remplacent jamais l\'historique locale de la syncation.',
 			'audiobook.recoveryExport' => 'Export de fichiers de récupération cryptés',
@@ -9257,8 +9289,6 @@ extension on TranslationsFr {
 			'sourceSetup.dlnaNone' => 'Aucun serveur DLNA trouvé. Saisissez manuellement l’URL de description de l’appareil.',
 			'sourceSetup.dlnaServers' => 'Serveurs multimédias DLNA',
 			'sourceSetup.dlnaUnavailable' => 'La découverte DLNA est indisponible sur ce réseau. Saisissez manuellement l’URL de description de l’appareil.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.dlnaSearching' => 'Recherche de serveurs DLNA sur le réseau local',
 			'sourceSetup.networkSearching' => 'Recherche sur le réseau local…',
 			'sourceSetup.dlnaDiscover' => 'Découvrir les serveurs DLNA',
@@ -9756,6 +9786,8 @@ extension on TranslationsFr {
 			'musicTools.loudnessMissing' => 'Aucune donnée de sonie renvoyée',
 			'musicTools.loudnessRequested' => 'Demande d’analyse envoyée',
 			'musicTools.loudnessUnsupported' => 'Cette version du serveur ne prend pas en charge les demandes d’analyse',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.serverHistory' => 'Historique de lecture du serveur',
 			'musicTools.nfcWrite' => 'Écrire un tag NFC',
 			'musicTools.nfcRead' => 'Scanner une étiquette NFC',
@@ -9771,8 +9803,6 @@ extension on TranslationsFr {
 			'musicTools.consent' => 'Envoyer ma description à ce fournisseur',
 			'musicTools.promptHint' => 'Décrivez la musique souhaitée',
 			'musicTools.noHistory' => 'Aucune musique à afficher',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.historyHint' => 'Historique d’écoute de ce profil',
 			'musicTools.days' => 'Jours',
 			'musicTools.albumBlocks' => 'Garder les albums entiers',

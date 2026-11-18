@@ -155,6 +155,21 @@ class _Translations$viewing$kk extends Translations$viewing$en {
 	@override String get pairPage => 'Бұл бетті қайта жұптау';
 	@override String get listenPhone => 'Осы телефонда тыңдау';
 	@override String get audioUnavailable => 'Бұл телефонда файл немесе дыбыс жолы қолжетімсіз.';
+	@override String get guidedPanels => 'Панельдер бойынша оқу';
+	@override String get rewind => 'Артқа айналдыру';
+	@override String get attachAudio => 'Аудио файл қосу';
+	@override String get replaceSoundtrack => 'Дыбыс жолын ауыстыру';
+	@override String get mixMovie => 'Фильммен араластыру';
+	@override String get commentaryLevel => 'Түсіндірме дыбысының деңгейі';
+	@override String get movieLevel => 'Фильм дыбысының деңгейі';
+	@override String episodeStarts({required Object episode}) => '${episode}-бөлім осы жерден басталады';
+	@override String get locateMovedFolder => 'Жылжытылған қалтаны табу';
+	@override String relinkMatched({required Object count}) => 'Сәйкес ${count} жазбаны қайта байланыстыру';
+	@override String get relinkAmbiguous => 'Тексеру қажет';
+	@override String get relinkNone => 'Сәйкес файлдар табылмады';
+	@override String get clearAudio => 'Қосылған аудионы алып тастау';
+	@override String keepFrom({required Object time}) => '${time} уақытынан сақтау';
+	@override String get recordNow => 'Қазірден бастап жазу';
 }
 
 // Path: livingRoom
@@ -5631,6 +5646,21 @@ extension on TranslationsKk {
 			'viewing.pairPage' => 'Бұл бетті қайта жұптау',
 			'viewing.listenPhone' => 'Осы телефонда тыңдау',
 			'viewing.audioUnavailable' => 'Бұл телефонда файл немесе дыбыс жолы қолжетімсіз.',
+			'viewing.guidedPanels' => 'Панельдер бойынша оқу',
+			'viewing.rewind' => 'Артқа айналдыру',
+			'viewing.attachAudio' => 'Аудио файл қосу',
+			'viewing.replaceSoundtrack' => 'Дыбыс жолын ауыстыру',
+			'viewing.mixMovie' => 'Фильммен араластыру',
+			'viewing.commentaryLevel' => 'Түсіндірме дыбысының деңгейі',
+			'viewing.movieLevel' => 'Фильм дыбысының деңгейі',
+			'viewing.episodeStarts' => ({required Object episode}) => '${episode}-бөлім осы жерден басталады',
+			'viewing.locateMovedFolder' => 'Жылжытылған қалтаны табу',
+			'viewing.relinkMatched' => ({required Object count}) => 'Сәйкес ${count} жазбаны қайта байланыстыру',
+			'viewing.relinkAmbiguous' => 'Тексеру қажет',
+			'viewing.relinkNone' => 'Сәйкес файлдар табылмады',
+			'viewing.clearAudio' => 'Қосылған аудионы алып тастау',
+			'viewing.keepFrom' => ({required Object time}) => '${time} уақытынан сақтау',
+			'viewing.recordNow' => 'Қазірден бастап жазу',
 			'livingRoom.fitScreen' => 'Экраныма сыйдыру',
 			'livingRoom.fitHelp' => 'Бір шетін таңдап, белгілері көрінгенше көрсеткілермен жылжытыңыз. Әр шеті үшін қайталаңыз.',
 			'livingRoom.left' => 'Сол жақ',
@@ -6114,6 +6144,8 @@ extension on TranslationsKk {
 			'settings.companionRemoteServerStopFailed' => 'Көмекші серверді тоқтату мүмкін болмады',
 			'settings.autoPip' => 'Автоматты Суреттегі сурет (PiP)',
 			'settings.autoPipDescription' => 'Видео ойнап жатқанда қолданбадан шыққанда авто-PiP режиміне өту',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Кадр жиілігін сәйкестендіру',
 			'settings.matchContentFrameRateDescription' => 'Экран жиілігін видео мазмұнына сәйкестендіру',
 			'settings.matchContentResolution' => 'Мазмұнның ажыратымдылығына бейімдеу',
@@ -6129,8 +6161,6 @@ extension on TranslationsKk {
 			'settings.audioPassthroughDescription' => 'Dolby/DTS дыбысын қайта кодтамай, көлемдік дыбысты сақтап ресиверге немесе теледидарға жіберу. Дыбыс болмаса, өшіріңіз.',
 			'settings.audioPassthroughDescriptionApple' => 'Dolby Digital Plus, соның ішінде Atmos үшін Apple-дың өз Dolby декодерін пайдалану. DTS және TrueHD бұрынғыша көпарналы PCM ретінде ойнатылады. Дыбыс болмаса, өшіріңіз.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Dolby Digital Plus, соның ішінде Atmos үшін Apple-дың өз Dolby декодерін пайдалану. iOS, iPadOS және tvOS 26 немесе жаңарақ нұсқаларында TrueHD Atmos пен DTS:X кеңістіктік дыбыс ретінде ойнатылады. Басқа DTS және TrueHD жолдары көпарналы PCM ретінде ойнатылады. Дыбыс болмаса, өшіріңіз.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Дыбыс деңгейін нормалау қосулы кезде өшірулі',
 			'settings.audioChannelLimit' => 'Аудио арналары',
 			'settings.audioChannelLimitDescription' => 'Барлық арнаны ойната алмайтын динамиктер, құлаққаптар немесе HDMI жүйелері үшін декодталған дыбысты азырақ арнаға түрлендіру',
@@ -6628,6 +6658,8 @@ extension on TranslationsKk {
 			'tooltips.markAsUnwatched' => 'Көрілмеді деп белгілеу',
 			'audioTracks.track' => ({required Object n}) => 'Аудиожол ${n}',
 			'videoControls.audioLabel' => 'Дыбыс',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Субтитр',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Кең экран (Letterbox)',
@@ -6643,8 +6675,6 @@ extension on TranslationsKk {
 			'videoControls.stillWatching' => 'Әлі де көріп отырсыз ба?',
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds}сек кейін кідіртіледі',
 			'videoControls.continueWatching' => 'Жалғастыру',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Келесіні автоматты ойнату',
 			'videoControls.playNext' => 'Келесіні ойнату',
 			'videoControls.playButton' => 'Ойнату',
@@ -7142,6 +7172,8 @@ extension on TranslationsKk {
 			'errors.pleaseEnterToken' => 'Токенді енгізіңіз',
 			'errors.invalidToken' => 'Жарамсыз токен',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Токенді тексеру мүмкін болмады: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName} профиліне ауысу мүмкін болмады',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName} профилін өшіру мүмкін болмады',
 			'errors.failedToRate' => 'Рейтингті жаңарту мүмкін болмады',
@@ -7157,8 +7189,6 @@ extension on TranslationsKk {
 			'libraries.title' => 'Кітапханалар',
 			'libraries.fallbackTitle' => 'Кітапхана',
 			'libraries.scanLibraryFiles' => 'Файлдарды сканерлеу',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Кітапхананы сканерлеу',
 			'libraries.analyze' => 'Талдау жасау',
 			'libraries.analyzeLibrary' => 'Кітапханаға талдау жасау',
@@ -7656,6 +7686,8 @@ extension on TranslationsKk {
 			'playlists.deleted' => 'Ойнату тізімі өшірілді',
 			'playlists.itemAdded' => 'Тізімге қосылды',
 			'playlists.itemRemoved' => 'Тізімнен өшірілді',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Тізімді таңдау',
 			'playlists.searchPlaylists' => 'Ойнату тізімдерінен іздеу...',
 			'playlists.errorCreating' => 'Тізімді жасау мүмкін болмады',
@@ -7671,8 +7703,6 @@ extension on TranslationsKk {
 			'music.addToQueue' => 'Кезекке қосу',
 			'music.discNumber' => ({required Object n}) => '${n}-диск',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('kk'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ән', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ән', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'Қазір ойнатылуда',
 			'music.playingFrom' => ({required Object title}) => '${title} дереккөзінен',
 			'music.queue' => 'Кезек',
@@ -8170,6 +8200,8 @@ extension on TranslationsKk {
 			'performanceOverlay.dropped' => 'Өткізілген кадрлар',
 			'performanceOverlay.dvRpus' => 'DV RPU-лар',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU Орт.',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV Үлгі Орт.',
 			'performanceOverlay.maxLuma' => 'Макс Luma',
 			'performanceOverlay.minLuma' => 'Мин Luma',
@@ -8185,8 +8217,6 @@ extension on TranslationsKk {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Бағдарламалық',
@@ -8684,6 +8714,8 @@ extension on TranslationsKk {
 			'homeLayout.noPlexRows' => 'Бұл кітапхана үшін Plex басқаратын қатарлар табылмады.',
 			'homeLayout.openDetails' => 'Одандық детайл',
 			'homeLayout.heroCards' => 'Үлкен картасы',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Жүктесі картасы',
 			'homeLayout.tvPlayFocus' => 'Телевизорда көтеріп: «Жеңір» бутон',
 			'homeLayout.tvPlayFocusDescription' => 'Бұл үшін, «Д-пады» және «Д-пай» және «Сейп» және «Бай» және басқа да «Сейб» және «Аль-Кай» және т.б.',
@@ -8699,8 +8731,6 @@ extension on TranslationsKk {
 			'homeLayout.addHomeRowDescription' => '«Аяқтық» бағдарламасы: «Аяқытары» бағдарламасы автоматикалық',
 			'homeLayout.removeRow' => 'Оған қосылды',
 			'homeLayout.recentlyAdded' => 'Соңғы қосылғандар',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Олардың ең көне ұлы',
 			'homeLayout.movieCollections' => 'кино коллекциясы',
 			'homeLayout.showCollections' => 'Колекциясы',
@@ -9198,6 +9228,8 @@ extension on TranslationsKk {
 			'audiobook.recoveryImported' => 'Ауыздан дағдарыста.',
 			'sourceSetup.bookorbitHelp' => 'Кітаптарды қарау және ойнату үшін өз BookOrbit тіркелгіңізге кіріңіз. Жоқ тақырыптарға арналған сұраулар әлі де қосылған SeerrNG данасы арқылы жіберіледі.',
 			'sourceSetup.bookorbitOpen' => 'BookOrbit ішінде ашу',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Кітапхана мәліметтерін және Pleazyng аша алмайтын пішімдерді басқару үшін бұл тақырыпты BookOrbit ішінде қараңыз. Тыңдау барысы BookOrbit тіркелгісімен синхрондалады.',
 			'sourceSetup.savedCertificate' => 'Сақталған сервер сертификаты',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export сияқты NFS URL мекенжайын енгізіңіз.',
@@ -9213,8 +9245,6 @@ extension on TranslationsKk {
 			'sourceSetup.sshFingerprint' => 'SSH хост кілтінің SHA256 ізі',
 			'sourceSetup.sshFingerprintHelp' => 'Оны сервер әкімшісімен тексеріңіз. Серверде ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub пәрменін орындап, SHA256 мәнін пайдаланыңыз.',
 			'sourceSetup.sshFingerprintKeep' => 'Қазір бекітілген ізді сақтау үшін бос қалдырыңыз немесе сервердің жаңа ізін енгізіңіз.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Ашық кілтпен SSH аутентификациясы',
 			'sourceSetup.sshAuthenticationHelp' => 'Міндетті емес; құпиясөзбен аутентификация да қолданылады.',
 			'sourceSetup.privateKey' => 'Жеке кілт (PEM немесе OpenSSH пішімі)',
@@ -9712,6 +9742,8 @@ extension on TranslationsKk {
 			'musicTools.exclusiveOutput' => 'Эксклюзивті аудио шығыс',
 			'musicTools.preamp' => 'Алдын ала күшейту',
 			'musicTools.ratingPending' => 'Осы құрылғыда сақталды; синхрондау күтілуде',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Ән мәтінінің уақыт ығысуы',
 			'musicTools.anniversaries' => 'Альбом мерейтойлары',
 			'musicTools.outputPreset' => 'Осы шығысқа арналған эквалайзер',
@@ -9727,8 +9759,6 @@ extension on TranslationsKk {
 			'musicTools.sonicAnalysis' => 'Дыбыстық талдау',
 			'musicTools.serverAnalysisScope' => 'Осы сервердегі барлық жарамды музыка кітапханалары. Олардың талдау параметрлері өзгермейді.',
 			'musicTools.serverActivities' => 'Сервер әрекеттері',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Ойнату тізіміне қатынау',
 			'musicTools.playlistRecipient' => 'Plex пайдаланушы аты немесе электрондық пошта',
 			'musicTools.playlistSharingHint' => 'Осы тізімге және оның тректеріне қатынау беріңіз. Алушы шақыруды қабылдауы қажет болуы мүмкін.',

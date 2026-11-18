@@ -156,6 +156,21 @@ class Translations$viewing$es extends Translations$viewing$en {
 	@override String get pairPage => 'Volver a emparejar esta página';
 	@override String get listenPhone => 'Escuchar en este teléfono';
 	@override String get audioUnavailable => 'El archivo o la pista de audio no está disponible en este teléfono.';
+	@override String get guidedPanels => 'Lectura por viñetas';
+	@override String get rewind => 'Rebobinar';
+	@override String get attachAudio => 'Añadir archivo de audio';
+	@override String get replaceSoundtrack => 'Reemplazar banda sonora';
+	@override String get mixMovie => 'Mezclar con la película';
+	@override String get commentaryLevel => 'Volumen del comentario';
+	@override String get movieLevel => 'Volumen de la película';
+	@override String episodeStarts({required Object episode}) => 'El episodio ${episode} empieza aquí';
+	@override String get locateMovedFolder => 'Localizar carpeta movida';
+	@override String relinkMatched({required Object count}) => 'Volver a vincular ${count} entradas coincidentes';
+	@override String get relinkAmbiguous => 'Requiere revisión';
+	@override String get relinkNone => 'No se encontraron archivos coincidentes';
+	@override String get clearAudio => 'Quitar audio añadido';
+	@override String keepFrom({required Object time}) => 'Conservar desde ${time}';
+	@override String get recordNow => 'Grabar desde ahora';
 }
 
 // Path: livingRoom
@@ -5755,6 +5770,21 @@ extension on TranslationsEs {
 			'viewing.pairPage' => 'Volver a emparejar esta página',
 			'viewing.listenPhone' => 'Escuchar en este teléfono',
 			'viewing.audioUnavailable' => 'El archivo o la pista de audio no está disponible en este teléfono.',
+			'viewing.guidedPanels' => 'Lectura por viñetas',
+			'viewing.rewind' => 'Rebobinar',
+			'viewing.attachAudio' => 'Añadir archivo de audio',
+			'viewing.replaceSoundtrack' => 'Reemplazar banda sonora',
+			'viewing.mixMovie' => 'Mezclar con la película',
+			'viewing.commentaryLevel' => 'Volumen del comentario',
+			'viewing.movieLevel' => 'Volumen de la película',
+			'viewing.episodeStarts' => ({required Object episode}) => 'El episodio ${episode} empieza aquí',
+			'viewing.locateMovedFolder' => 'Localizar carpeta movida',
+			'viewing.relinkMatched' => ({required Object count}) => 'Volver a vincular ${count} entradas coincidentes',
+			'viewing.relinkAmbiguous' => 'Requiere revisión',
+			'viewing.relinkNone' => 'No se encontraron archivos coincidentes',
+			'viewing.clearAudio' => 'Quitar audio añadido',
+			'viewing.keepFrom' => ({required Object time}) => 'Conservar desde ${time}',
+			'viewing.recordNow' => 'Grabar desde ahora',
 			'livingRoom.fitScreen' => 'Ajustar a mi pantalla',
 			'livingRoom.fitHelp' => 'Selecciona un borde y muévelo con las flechas hasta ver sus marcas. Repite el ajuste en cada borde.',
 			'livingRoom.left' => 'Izquierda',
@@ -6238,6 +6268,8 @@ extension on TranslationsEs {
 			'settings.companionRemoteServer' => 'Servidor de control remoto',
 			'settings.companionRemoteServerDescription' => 'Permitir que dispositivos móviles en tu red controlen esta aplicación',
 			'settings.companionRemoteServerStartFailed' => 'No se pudo iniciar el servidor de control remoto',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStopFailed' => 'No se pudo detener el servidor de control remoto',
 			'settings.autoPip' => 'Imagen en imagen automática',
 			'settings.autoPipDescription' => 'Activar automáticamente el modo de imagen en imagen al salir de la aplicación durante la reproducción',
@@ -6253,8 +6285,6 @@ extension on TranslationsEs {
 			'settings.tunneledPlayback' => 'Reproducción tunelizada',
 			'settings.tunneledPlaybackDescription' => 'Usar tunelización de video. Desactívala si HDR muestra video negro o el movimiento se entrecorta.',
 			'settings.audioPassthrough' => 'Transferencia directa de audio',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughDescription' => 'Envía el audio Dolby/DTS a tu receptor o TV sin recodificar, conservando el sonido envolvente. Desactívala si no tienes sonido.',
 			'settings.audioPassthroughDescriptionApple' => 'Usa el decodificador Dolby nativo de Apple para Dolby Digital Plus, incluido Atmos. DTS y TrueHD se siguen reproduciendo como PCM multicanal. Desactívalo si no tienes sonido.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Usa el decodificador Dolby nativo de Apple para Dolby Digital Plus, incluido Atmos. En iOS, iPadOS y tvOS 26 o posterior, TrueHD Atmos y DTS:X se reproducen como audio espacial. El resto de pistas DTS y TrueHD se reproducen como PCM multicanal. Desactívalo si no tienes sonido.',
@@ -6752,6 +6782,8 @@ extension on TranslationsEs {
 			'tooltips.shufflePlay' => 'Reproducción aleatoria',
 			'tooltips.playTrailer' => 'Reproducir tráiler',
 			'tooltips.markAsWatched' => 'Marcar como visto',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Marcar como no visto',
 			'audioTracks.track' => ({required Object n}) => 'Pista de audio ${n}',
 			'videoControls.audioLabel' => 'Audio',
@@ -6767,8 +6799,6 @@ extension on TranslationsEs {
 			'videoControls.sleepTimerStopAtHeader' => 'Detener en',
 			'videoControls.sleepTimerDurationHeader' => 'Temporizador',
 			'videoControls.playbackWillPauseAtEnd' => 'La reproducción se pausará al final de este video',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.stillWatching' => '¿Sigues viendo?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Se pausará en ${seconds}s',
 			'videoControls.continueWatching' => 'Continuar',
@@ -7266,6 +7296,8 @@ extension on TranslationsEs {
 			'discover.director' => 'Director',
 			'discover.directors' => 'Directores',
 			'discover.movie' => 'Película',
+			_ => null,
+		} ?? switch (path) {
 			'discover.tvShow' => 'Serie de TV',
 			'discover.minutesLeft' => ({required Object minutes}) => 'quedan ${minutes} min',
 			'discover.moreLikeThis' => 'Más contenido similar',
@@ -7281,8 +7313,6 @@ extension on TranslationsEs {
 			'errors.connectionFailed' => 'No se puede conectar al servidor multimedia',
 			'errors.unableToLoad' => ({required Object context}) => 'No se pudo cargar ${context}. Inténtalo de nuevo.',
 			'errors.noClientAvailable' => 'No hay cliente disponible',
-			_ => null,
-		} ?? switch (path) {
 			'errors.pleaseEnterToken' => 'Introduce un token',
 			'errors.invalidToken' => 'Token no válido',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Error al verificar el token: ${error}',
@@ -7780,6 +7810,8 @@ extension on TranslationsEs {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '¿Eliminar "${title}" de esta colección?',
 			'collections.removedFromCollection' => 'Eliminado de la colección',
 			'collections.removeFromCollectionFailed' => 'Error al eliminar de la colección',
+			_ => null,
+		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Error al eliminar de la colección: ${error}',
 			'collections.searchCollections' => 'Buscar colecciones...',
 			'playlists.title' => 'Listas de reproducción',
@@ -7795,8 +7827,6 @@ extension on TranslationsEs {
 			'playlists.emptyPlaylist' => 'Esta lista de reproducción está vacía',
 			'playlists.deleteConfirm' => '¿Eliminar lista de reproducción?',
 			'playlists.deleteMessage' => ({required Object name}) => '¿Estás seguro de que quieres eliminar "${name}"?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Lista de reproducción creada',
 			'playlists.deleted' => 'Lista de reproducción eliminada',
 			'playlists.itemAdded' => 'Añadido a la lista de reproducción',
@@ -8294,6 +8324,8 @@ extension on TranslationsEs {
 			'performanceOverlay.dvPath' => 'Ruta DV',
 			'performanceOverlay.dvRouteDecoder' => 'Decodificador Dolby Vision',
 			'performanceOverlay.dvRouteDecoderP81' => 'Decodificador Dolby Vision (P7→8.1)',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Capa base',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Capa base HDR10',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Capa base HLG',
@@ -8309,8 +8341,6 @@ extension on TranslationsEs {
 			'performanceOverlay.transfer' => 'Transferencia',
 			'performanceOverlay.renderFps' => 'FPS render',
 			'performanceOverlay.displayFps' => 'FPS pantalla',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'Sincronía A/V',
 			'performanceOverlay.dropped' => 'Descartados',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
@@ -8808,6 +8838,8 @@ extension on TranslationsEs {
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} líneas: movimiento, Hero, Auto-slide, eliminación',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organizar ${library} líneas',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continuar Vea + ${n} líneas: movimiento, Biblioteca, Casa, Héroe, Auto-slide',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.renderAsHero' => 'Render como una tarjeta de héroe',
 			'homeLayout.heroOnlySingleCollection' => 'Sólo disponible cuando esta línea se resuelva a los títulos reales de una sola colección',
 			'homeLayout.hero' => 'Hermano',
@@ -8823,8 +8855,6 @@ extension on TranslationsEs {
 			'homeLayout.continueWatching' => 'Seguir viendo',
 			'homeLayout.continueWatchingLibraryDescription' => 'La red de resumen de la propia biblioteca',
 			'homeLayout.continueWatchingHomeDescription' => 'La línea de progreso de resumen mostrada en Home',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.nextUpHomeDescription' => 'La siguiente secuencia de episodios no observados se muestra separadamente en Home',
 			'homeLayout.library' => 'Biblioteca',
 			'homeLayout.showInRecommended' => 'Presentación en Biblioteca Recomendada',
@@ -9322,6 +9352,8 @@ extension on TranslationsEs {
 			'audiobook.customSpeed' => 'Velocidad de reproducción personalizada',
 			'audiobook.speedHelp' => 'Seleccione una velocidad de 0.25× a 4×.',
 			'audiobook.apply' => 'Aplique',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Calendario de sueño personalizado',
 			'audiobook.sleepMinutes' => 'Minutos (1 a 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Parar después de ${count} capítulos',
@@ -9337,8 +9369,6 @@ extension on TranslationsEs {
 			'audiobook.statusFilter' => 'El estado de lectura',
 			'audiobook.statusAll' => 'Todos los libros',
 			'audiobook.statusNew' => 'No comenzó',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.statusProgress' => 'En el progreso',
 			'audiobook.statusFinished' => 'Finalizado',
 			'audiobook.goToTime' => 'Vuelve al tiempo',
@@ -9836,6 +9866,8 @@ extension on TranslationsEs {
 			'bonusExtras.invalidLink' => 'Introduce un título y un enlace HTTPS válido a un vídeo de YouTube o Vimeo.',
 			'bonusExtras.showHidden' => 'Restablecer extras y editores ocultos',
 			'bonusExtras.clearCache' => 'Borrar la caché de descubrimiento',
+			_ => null,
+		} ?? switch (path) {
 			'bonusExtras.transcript' => 'Buscar en la transcripción',
 			'bonusExtras.importTranscript' => 'Importar transcripción SRT o VTT',
 			'bonusExtras.transcriptHint' => 'Usa una transcripción que tengas permiso para procesar. Se conserva en este perfil; la IA solo la usa con el modo que hayas seleccionado.',
@@ -9851,8 +9883,6 @@ extension on TranslationsEs {
 			'bonusExtras.restricted' => 'Los extras en línea no están disponibles para este perfil.',
 			'bonusExtras.kind.makingOf' => 'Cómo se hizo',
 			'bonusExtras.kind.effects' => 'Efectos y escenas de riesgo',
-			_ => null,
-		} ?? switch (path) {
 			'bonusExtras.kind.makeup' => 'Maquillaje y vestuario',
 			'bonusExtras.kind.interview' => 'Entrevistas',
 			'bonusExtras.kind.deletedScene' => 'Escenas eliminadas',

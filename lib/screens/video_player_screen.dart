@@ -693,6 +693,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   Future<void>? _shutdownOperation;
   PlaybackPresentation? _presentation;
   String? _boundedEpisode;
+  Set<int> _boundedEpisodeNumbers = const {};
   Future<void>? _iptvFinishing;
   bool _iptvStarting = false;
   BufferedIptvCapture? _bufferedIptvCapture;

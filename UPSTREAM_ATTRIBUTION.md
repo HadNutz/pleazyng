@@ -6,6 +6,16 @@ The linked people made their reports, suggestions, discussions, or code contribu
 
 The PR list comes from explicit “Squash of upstream” commit records and the selected November follow-up. The commit list covers follow-up changes that were sourced from upstream commits rather than PR records.
 
+## Media-file workflows and format documentation
+
+- The retained live-buffer recording interaction draws on [TiVo’s viewer guide](https://www.tivo.com/assets/pdfs/accessibility/TiVo_VG_Complete.pdf).
+- The two external-audio use cases draw on [Jellyfin’s movie/external-audio documentation](https://jellyfin.org/docs/general/server/media/movies/) and [RiffTrax’s playback guide](https://www.rifftrax.com/howto).
+- CUE album interpretation draws on [Kodi’s CUE-sheet documentation](https://kodi.wiki/view/Cue_sheets).
+- Authored comic frames follow the [ACBF specification maintained by the ACBF project](https://github.com/ACBF-Advanced-Comic-Book-Format/ACBF).
+- [Plex’s multi-episode file naming guide](https://support.plex.tv/articles/naming-and-organizing-your-tv-show-files/) describes the shared-file data model addressed by episode-boundary mapping.
+
+These are format-documentation and interaction credits. Pleazyng independently implemented its recording recovery, episode maps, folder relinking, audio attachment, CUE indexing, guided reader and rewind integration. See [the feature guide](docs/features/media-file-tools.md) for verified scope and native packaging status.
+
 ## Living-room playback and music
 
 - HDR subtitle brightness draws on the OLED viewing problem addressed by [barnebyte’s PlexOledSubtitles](https://github.com/barnebyte/PlexOledSubtitles). Pleazyng adjusts playback rendering and keeps the subtitle file intact.

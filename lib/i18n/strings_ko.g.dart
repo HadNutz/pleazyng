@@ -155,6 +155,21 @@ class _Translations$viewing$ko extends Translations$viewing$en {
 	@override String get pairPage => '이 페이지를 다시 묶기';
 	@override String get listenPhone => '이 휴대전화로 듣기';
 	@override String get audioUnavailable => '이 휴대전화에서 현재 파일 또는 오디오 트랙을 사용할 수 없습니다.';
+	@override String get guidedPanels => '패널별로 읽기';
+	@override String get rewind => '되감기';
+	@override String get attachAudio => '오디오 파일 추가';
+	@override String get replaceSoundtrack => '사운드트랙 교체';
+	@override String get mixMovie => '영화와 믹싱';
+	@override String get commentaryLevel => '해설 음량';
+	@override String get movieLevel => '영화 음량';
+	@override String episodeStarts({required Object episode}) => '에피소드 ${episode} 시작 위치';
+	@override String get locateMovedFolder => '이동한 폴더 찾기';
+	@override String relinkMatched({required Object count}) => '일치하는 항목 ${count}개 다시 연결';
+	@override String get relinkAmbiguous => '검토 필요';
+	@override String get relinkNone => '일치하는 파일이 없습니다';
+	@override String get clearAudio => '추가한 오디오 제거';
+	@override String keepFrom({required Object time}) => '${time}부터 저장';
+	@override String get recordNow => '지금부터 녹화';
 }
 
 // Path: livingRoom
@@ -5626,6 +5641,21 @@ extension on TranslationsKo {
 			'viewing.pairPage' => '이 페이지를 다시 묶기',
 			'viewing.listenPhone' => '이 휴대전화로 듣기',
 			'viewing.audioUnavailable' => '이 휴대전화에서 현재 파일 또는 오디오 트랙을 사용할 수 없습니다.',
+			'viewing.guidedPanels' => '패널별로 읽기',
+			'viewing.rewind' => '되감기',
+			'viewing.attachAudio' => '오디오 파일 추가',
+			'viewing.replaceSoundtrack' => '사운드트랙 교체',
+			'viewing.mixMovie' => '영화와 믹싱',
+			'viewing.commentaryLevel' => '해설 음량',
+			'viewing.movieLevel' => '영화 음량',
+			'viewing.episodeStarts' => ({required Object episode}) => '에피소드 ${episode} 시작 위치',
+			'viewing.locateMovedFolder' => '이동한 폴더 찾기',
+			'viewing.relinkMatched' => ({required Object count}) => '일치하는 항목 ${count}개 다시 연결',
+			'viewing.relinkAmbiguous' => '검토 필요',
+			'viewing.relinkNone' => '일치하는 파일이 없습니다',
+			'viewing.clearAudio' => '추가한 오디오 제거',
+			'viewing.keepFrom' => ({required Object time}) => '${time}부터 저장',
+			'viewing.recordNow' => '지금부터 녹화',
 			'livingRoom.fitScreen' => '내 화면에 맞추기',
 			'livingRoom.fitHelp' => '가장자리를 선택한 뒤 표시가 보일 때까지 방향키로 옮기세요. 나머지 가장자리도 같은 방법으로 조정하세요.',
 			'livingRoom.left' => '왼쪽',
@@ -6109,6 +6139,8 @@ extension on TranslationsKo {
 			'settings.companionRemoteServerStopFailed' => '컴패니언 리모트 서버를 중지할 수 없습니다',
 			'settings.autoPip' => '자동 PIP 모드',
 			'settings.autoPipDescription' => '재생 중 앱을 떠나면 자동으로 화면 속 화면 모드로 전환합니다',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => '콘텐츠 프레임 레이트 맞춤',
 			'settings.matchContentFrameRateDescription' => '디스플레이 새로 고침 빈도를 동영상 콘텐츠에 맞춤',
 			'settings.matchContentResolution' => '콘텐츠 해상도에 맞추기',
@@ -6124,8 +6156,6 @@ extension on TranslationsKo {
 			'settings.audioPassthroughDescription' => 'Dolby/DTS 오디오를 재인코딩 없이 리시버나 TV로 전송하여 서라운드 사운드를 유지합니다. 소리가 나지 않으면 비활성화하세요.',
 			'settings.audioPassthroughDescriptionApple' => 'Dolby Digital Plus(Atmos 포함)에 Apple의 기본 Dolby 디코더를 사용합니다. DTS와 TrueHD는 계속 멀티채널 PCM으로 재생됩니다. 소리가 나지 않으면 비활성화하세요.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Dolby Digital Plus(Atmos 포함)에 Apple의 기본 Dolby 디코더를 사용합니다. iOS, iPadOS, tvOS 26 이상에서는 TrueHD Atmos와 DTS:X가 공간 오디오로 재생됩니다. 그 밖의 DTS 및 TrueHD 트랙은 멀티채널 PCM으로 재생됩니다. 소리가 나지 않으면 비활성화하세요.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => '음량 정규화가 켜져 있는 동안 꺼짐',
 			'settings.audioChannelLimit' => '오디오 채널',
 			'settings.audioChannelLimitDescription' => '모든 채널을 재생할 수 없는 스피커, 헤드폰 또는 HDMI 환경에 맞게 디코딩된 오디오를 다운믹스합니다',
@@ -6623,6 +6653,8 @@ extension on TranslationsKo {
 			'tooltips.markAsUnwatched' => '미시청으로 표시',
 			'audioTracks.track' => ({required Object n}) => '오디오 트랙 ${n}',
 			'videoControls.audioLabel' => '오디오',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => '자막',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => '레터박스 모드',
@@ -6638,8 +6670,6 @@ extension on TranslationsKo {
 			'videoControls.stillWatching' => '아직 시청 중이신가요?',
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds}초 후 일시 정지',
 			'videoControls.continueWatching' => '계속',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => '다음 자동 재생',
 			'videoControls.playNext' => '다음 재생',
 			'videoControls.playButton' => '재생',
@@ -7137,6 +7167,8 @@ extension on TranslationsKo {
 			'errors.pleaseEnterToken' => '토큰을 입력해 주세요',
 			'errors.invalidToken' => '토큰이 유효하지 않습니다',
 			'errors.failedToVerifyToken' => ({required Object error}) => '토큰을 확인할 수 없습니다: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName}으로 전환할 수 없습니다',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName}을(를) 삭제할 수 없습니다',
 			'errors.failedToRate' => '평점을 업데이트하지 못했습니다',
@@ -7152,8 +7184,6 @@ extension on TranslationsKo {
 			'libraries.title' => '미디어 라이브러리',
 			'libraries.fallbackTitle' => '라이브러리',
 			'libraries.scanLibraryFiles' => '미디어 라이브러리 파일 스캔',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => '미디어 라이브러리 스캔',
 			'libraries.analyze' => '분석',
 			'libraries.analyzeLibrary' => '미디어 라이브러리 분석',
@@ -7651,6 +7681,8 @@ extension on TranslationsKo {
 			'playlists.deleted' => '재생 목록이 삭제되었습니다',
 			'playlists.itemAdded' => '재생 목록에 추가되었습니다',
 			'playlists.itemRemoved' => '재생 목록에서 제거됨',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => '재생 목록 선택',
 			'playlists.searchPlaylists' => '재생 목록 검색...',
 			'playlists.errorCreating' => '재생 목록 생성 실패',
@@ -7666,8 +7698,6 @@ extension on TranslationsKo {
 			'music.addToQueue' => '대기열에 추가',
 			'music.discNumber' => ({required Object n}) => '디스크 ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} 트랙', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)}곡', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => '재생 중',
 			'music.playingFrom' => ({required Object title}) => '${title}에서 재생 중',
 			'music.queue' => '재생 대기열',
@@ -8165,6 +8195,8 @@ extension on TranslationsKo {
 			'performanceOverlay.dropped' => '드롭됨',
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU 평균',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV 샘플 평균',
 			'performanceOverlay.maxLuma' => '최대 휘도',
 			'performanceOverlay.minLuma' => '최소 휘도',
@@ -8180,8 +8212,6 @@ extension on TranslationsKo {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => '소프트웨어',
@@ -8679,6 +8709,8 @@ extension on TranslationsKo {
 			'homeLayout.noPlexRows' => 'No. Plex 관리 라인이 이 도서관에 반환되었습니다.',
 			'homeLayout.openDetails' => '개방된 세부 사항',
 			'homeLayout.heroCards' => '영웅 카드',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => '히어로 카드를 탭할 때',
 			'homeLayout.tvPlayFocus' => 'TV 원격: 히틀러 플레이 버튼',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad 아래는 다음 라인으로 이동하기 전에 플레이 버튼을 멈추고 다음 라인에 직접 스키를 끄십시오.',
@@ -8694,8 +8726,6 @@ extension on TranslationsKo {
 			'homeLayout.addHomeRowDescription' => '카테고리를 선택; 새 라인은 자동으로 조직에 추가됩니다.',
 			'homeLayout.removeRow' => '라인 삭제',
 			'homeLayout.recentlyAdded' => '최근에 추가됨',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => '최근에 출시된',
 			'homeLayout.movieCollections' => '영화 컬렉션',
 			'homeLayout.showCollections' => '컬렉션 보기',
@@ -9193,6 +9223,8 @@ extension on TranslationsKo {
 			'audiobook.recoveryImported' => '복구 데이터가 합쳐졌습니다.',
 			'sourceSetup.bookorbitHelp' => 'BookOrbit 도서를 둘러보고 재생하려면 본인 BookOrbit 계정으로 로그인하세요. 없는 작품의 요청은 계속 연결된 SeerrNG 인스턴스를 통해 전송됩니다.',
 			'sourceSetup.bookorbitOpen' => 'BookOrbit에서 열기',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => '라이브러리 세부 정보와 Pleazyng에서 열 수 없는 형식을 관리하려면 BookOrbit에서 이 작품을 확인하세요. 청취 진행 상황은 BookOrbit 계정과 동기화됩니다.',
 			'sourceSetup.savedCertificate' => '저장된 서버 인증서',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export와 같은 NFS URL을 입력하세요.',
@@ -9208,8 +9240,6 @@ extension on TranslationsKo {
 			'sourceSetup.sshFingerprint' => 'SSH 호스트 키의 SHA256 지문',
 			'sourceSetup.sshFingerprintHelp' => '서버 관리자에게 확인하세요. 서버에서 ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub 명령을 실행하고 표시된 SHA256 값을 사용하세요.',
 			'sourceSetup.sshFingerprintKeep' => '현재 고정된 지문을 유지하려면 비워 두세요. 변경하려면 새 서버 지문을 입력하세요.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH 공개 키 인증',
 			'sourceSetup.sshAuthenticationHelp' => '선택 사항입니다. 비밀번호 인증도 지원합니다.',
 			'sourceSetup.privateKey' => '개인 키(PEM 또는 OpenSSH 형식)',
@@ -9707,6 +9737,8 @@ extension on TranslationsKo {
 			'musicTools.exclusiveOutput' => '독점 오디오 출력',
 			'musicTools.preamp' => '프리앰프',
 			'musicTools.ratingPending' => '이 기기에 저장됨; 동기화 대기 중',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => '가사 타이밍 조정',
 			'musicTools.anniversaries' => '앨범 발매 기념일',
 			'musicTools.outputPreset' => '이 출력의 EQ',
@@ -9722,8 +9754,6 @@ extension on TranslationsKo {
 			'musicTools.sonicAnalysis' => '음향 분석',
 			'musicTools.serverAnalysisScope' => '이 서버에서 분석 가능한 모든 음악 라이브러리에 적용됩니다. 분석 설정은 변경되지 않습니다.',
 			'musicTools.serverActivities' => '서버 작업',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => '재생목록 접근',
 			'musicTools.playlistRecipient' => 'Plex 사용자 이름 또는 이메일',
 			'musicTools.playlistSharingHint' => '이 재생목록과 트랙에 대한 접근을 허용합니다. 수신자가 초대를 수락해야 할 수 있습니다.',

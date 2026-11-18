@@ -1,3 +1,4 @@
+import '../mpv/player/player_native.dart';
 import 'dart:async';
 import 'cue_album.dart';
 import 'dart:convert';
@@ -240,9 +241,8 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
 
   bool get playing => player?.state.isActive ?? false;
   bool get canUseDirectQueueControls =>
-      isTransientInput &&
       !isLiveInput &&
-      files.length > 1 &&
+      ((isTransientInput && files.length > 1) || files.any((file) => file.cueStart != null)) &&
       (entry?.kind == SourceItemKind.music || entry?.kind == SourceItemKind.video);
   bool get queueShuffled => _queueShuffled;
   MusicRepeatMode get queueRepeatMode => _queueRepeatMode;
@@ -960,7 +960,13 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       _gateway = SourceStreamGateway(valid: () => _valid && entry == item);
       final native =
           _playerFactory?.call(video) ??
-          (video ? Player(videoPlayerSlot: videoPlayerSlot?.index ?? 0) : Player.audio());
+          (video
+              ? Player(videoPlayerSlot: videoPlayerSlot?.index ?? 0)
+              // EDL supplies sample-bounded CUE tracks on every platform,
+              // including TVs whose default music engine cannot parse EDL.
+              : files.any((file) => file.cueStart != null)
+              ? PlayerNative.audio()
+              : Player.audio());
       player = native;
       await native.setWorkspaceAudioFocusEnabled(_workspaceAudioEnabled);
       await _applyOutputVolume();

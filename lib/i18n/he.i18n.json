@@ -15,7 +15,22 @@
     "soloPage": "הצגת העמוד הזה לבד",
     "pairPage": "צימוד העמוד מחדש",
     "listenPhone": "האזנה בטלפון הזה",
-    "audioUnavailable": "הקובץ או רצועת השמע אינם זמינים בטלפון הזה."
+    "audioUnavailable": "הקובץ או רצועת השמע אינם זמינים בטלפון הזה.",
+    "guidedPanels": "קריאה לפי חלוניות",
+    "rewind": "הרצה לאחור",
+    "attachAudio": "הוספת קובץ שמע",
+    "replaceSoundtrack": "החלפת פסקול",
+    "mixMovie": "ערבוב עם הסרט",
+    "commentaryLevel": "עוצמת שמע הפרשנות",
+    "movieLevel": "עוצמת שמע הסרט",
+    "episodeStarts": "פרק ${episode} מתחיל כאן",
+    "locateMovedFolder": "איתור תיקייה שהועברה",
+    "relinkMatched": "קישור מחדש של ${count} פריטים תואמים",
+    "relinkAmbiguous": "נדרשת בדיקה",
+    "relinkNone": "לא נמצאו קבצים תואמים",
+    "clearAudio": "הסרת שמע מצורף",
+    "keepFrom": "שמירה החל מ־${time}",
+    "recordNow": "הקלטה מעכשיו"
   },
   "livingRoom": {
     "fitScreen": "התאמה למסך שלי",

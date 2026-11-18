@@ -82,6 +82,7 @@ class EpisodeNavigationService {
     required BuildContext context,
     required MediaItem metadata,
     String? playedPartId,
+    Set<int> boundedEpisodes = const {},
   }) async {
     try {
       // Resolve providers up-front so we don't reach for `context` after
@@ -106,9 +107,14 @@ class EpisodeNavigationService {
       final nextResult = await playbackState.getNextEpisode(
         metadata.globalKey,
         loopQueue: playbackState.isRepeatActive,
+        boundedEpisodes: boundedEpisodes,
         playedPartId: playedPartId,
       );
-      final previousResult = await playbackState.getPreviousEpisode(metadata.globalKey, playedPartId: playedPartId);
+      final previousResult = await playbackState.getPreviousEpisode(
+        metadata.globalKey,
+        playedPartId: playedPartId,
+        boundedEpisodes: boundedEpisodes,
+      );
       final nextStatus = nextResult.status == QueueNavigationStatus.unavailable
           ? QueueNavigationStatus.failed
           : nextResult.status;

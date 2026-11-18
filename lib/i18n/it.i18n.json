@@ -15,7 +15,22 @@
     "soloPage": "Mostra questa pagina da sola",
     "pairPage": "Abbina di nuovo questa pagina",
     "listenPhone": "Ascolta su questo telefono",
-    "audioUnavailable": "Il file o la traccia audio non è disponibile su questo telefono."
+    "audioUnavailable": "Il file o la traccia audio non è disponibile su questo telefono.",
+    "guidedPanels": "Lettura per vignette",
+    "rewind": "Riavvolgi",
+    "attachAudio": "Aggiungi file audio",
+    "replaceSoundtrack": "Sostituisci traccia audio",
+    "mixMovie": "Miscela con il film",
+    "commentaryLevel": "Volume del commento",
+    "movieLevel": "Volume del film",
+    "episodeStarts": "L’episodio ${episode} inizia qui",
+    "locateMovedFolder": "Trova cartella spostata",
+    "relinkMatched": "Ricollega ${count} voci corrispondenti",
+    "relinkAmbiguous": "Da verificare",
+    "relinkNone": "Nessun file corrispondente trovato",
+    "clearAudio": "Rimuovi audio aggiunto",
+    "keepFrom": "Conserva da ${time}",
+    "recordNow": "Registra da ora"
   },
   "livingRoom": {
     "fitScreen": "Adatta al mio schermo",

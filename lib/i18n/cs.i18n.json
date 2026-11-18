@@ -15,7 +15,22 @@
     "soloPage": "Zobrazit tuto stránku samostatně",
     "pairPage": "Znovu spárovat tuto stránku",
     "listenPhone": "Poslouchat na tomto telefonu",
-    "audioUnavailable": "Soubor nebo zvuková stopa nejsou na tomto telefonu dostupné."
+    "audioUnavailable": "Soubor nebo zvuková stopa nejsou na tomto telefonu dostupné.",
+    "guidedPanels": "Čtení po panelech",
+    "rewind": "Přetočit zpět",
+    "attachAudio": "Přidat zvukový soubor",
+    "replaceSoundtrack": "Nahradit zvukovou stopu",
+    "mixMovie": "Smíchat s filmem",
+    "commentaryLevel": "Hlasitost komentáře",
+    "movieLevel": "Hlasitost filmu",
+    "episodeStarts": "Epizoda ${episode} začíná zde",
+    "locateMovedFolder": "Najít přesunutou složku",
+    "relinkMatched": "Znovu propojit ${count} odpovídajících položek",
+    "relinkAmbiguous": "Vyžaduje kontrolu",
+    "relinkNone": "Nenalezeny žádné odpovídající soubory",
+    "clearAudio": "Odebrat připojený zvuk",
+    "keepFrom": "Uložit od ${time}",
+    "recordNow": "Nahrávat odteď"
   },
   "livingRoom": {
     "fitScreen": "Přizpůsobit obrazovce",

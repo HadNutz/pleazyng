@@ -155,6 +155,21 @@ class _Translations$viewing$ja extends Translations$viewing$en {
 	@override String get pairPage => 'このページを見開きに戻す';
 	@override String get listenPhone => 'このスマートフォンで聴く';
 	@override String get audioUnavailable => 'このスマートフォンでは現在のファイルまたは音声トラックを再生できません。';
+	@override String get guidedPanels => 'コマごとに読む';
+	@override String get rewind => '巻き戻し';
+	@override String get attachAudio => '音声ファイルを追加';
+	@override String get replaceSoundtrack => '音声トラックを置き換え';
+	@override String get mixMovie => '映画の音声とミックス';
+	@override String get commentaryLevel => '解説の音量';
+	@override String get movieLevel => '映画の音量';
+	@override String episodeStarts({required Object episode}) => 'エピソード${episode}はここから';
+	@override String get locateMovedFolder => '移動したフォルダーを探す';
+	@override String relinkMatched({required Object count}) => '一致する${count}件を再接続';
+	@override String get relinkAmbiguous => '確認が必要';
+	@override String get relinkNone => '一致するファイルが見つかりません';
+	@override String get clearAudio => '追加した音声を削除';
+	@override String keepFrom({required Object time}) => '${time}から保存';
+	@override String get recordNow => '今から録画';
 }
 
 // Path: livingRoom
@@ -5626,6 +5641,21 @@ extension on TranslationsJa {
 			'viewing.pairPage' => 'このページを見開きに戻す',
 			'viewing.listenPhone' => 'このスマートフォンで聴く',
 			'viewing.audioUnavailable' => 'このスマートフォンでは現在のファイルまたは音声トラックを再生できません。',
+			'viewing.guidedPanels' => 'コマごとに読む',
+			'viewing.rewind' => '巻き戻し',
+			'viewing.attachAudio' => '音声ファイルを追加',
+			'viewing.replaceSoundtrack' => '音声トラックを置き換え',
+			'viewing.mixMovie' => '映画の音声とミックス',
+			'viewing.commentaryLevel' => '解説の音量',
+			'viewing.movieLevel' => '映画の音量',
+			'viewing.episodeStarts' => ({required Object episode}) => 'エピソード${episode}はここから',
+			'viewing.locateMovedFolder' => '移動したフォルダーを探す',
+			'viewing.relinkMatched' => ({required Object count}) => '一致する${count}件を再接続',
+			'viewing.relinkAmbiguous' => '確認が必要',
+			'viewing.relinkNone' => '一致するファイルが見つかりません',
+			'viewing.clearAudio' => '追加した音声を削除',
+			'viewing.keepFrom' => ({required Object time}) => '${time}から保存',
+			'viewing.recordNow' => '今から録画',
 			'livingRoom.fitScreen' => '画面に合わせる',
 			'livingRoom.fitHelp' => '辺を選び、目印が見える位置まで矢印キーで移動します。残りの辺も同様に調整してください。',
 			'livingRoom.left' => '左',
@@ -6109,6 +6139,8 @@ extension on TranslationsJa {
 			'settings.companionRemoteServerStopFailed' => 'コンパニオンリモートサーバーを停止できませんでした',
 			'settings.autoPip' => '自動ピクチャーインピクチャー',
 			'settings.autoPipDescription' => '再生中にアプリを離れると、自動的にピクチャーインピクチャーに切り替えます',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'コンテンツのフレームレートに合わせる',
 			'settings.matchContentFrameRateDescription' => '表示のリフレッシュレートを動画コンテンツに合わせます',
 			'settings.matchContentResolution' => 'コンテンツの解像度に合わせる',
@@ -6124,8 +6156,6 @@ extension on TranslationsJa {
 			'settings.audioPassthroughDescription' => 'Dolby/DTS音声を再エンコードせずにレシーバーやテレビに送り、サラウンドを維持します。音が出ない場合は無効にしてください。',
 			'settings.audioPassthroughDescriptionApple' => 'Dolby Atmosを含むDolby Digital PlusにはApple標準のDolbyデコーダーを使用します。DTSとTrueHDは引き続きマルチチャンネルPCMで再生されます。音が出ない場合は無効にしてください。',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Dolby Atmosを含むDolby Digital PlusにはApple標準のDolbyデコーダーを使用します。iOS、iPadOS、tvOS 26以降では、TrueHD AtmosとDTS:Xが空間オーディオとして再生されます。その他のDTSとTrueHDのトラックはマルチチャンネルPCMで再生されます。音が出ない場合は無効にしてください。',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'ラウドネス正規化がオンの間はオフ',
 			'settings.audioChannelLimit' => '音声チャンネル',
 			'settings.audioChannelLimitDescription' => 'すべてのチャンネルを再生できないスピーカー、ヘッドホン、HDMI環境に合わせて、デコードした音声をダウンミックスします',
@@ -6623,6 +6653,8 @@ extension on TranslationsJa {
 			'tooltips.markAsUnwatched' => '未視聴にする',
 			'audioTracks.track' => ({required Object n}) => '音声トラック${n}',
 			'videoControls.audioLabel' => '音声',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => '字幕',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'レターボックス',
@@ -6638,8 +6670,6 @@ extension on TranslationsJa {
 			'videoControls.stillWatching' => 'まだ視聴中ですか？',
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds}秒後に一時停止',
 			'videoControls.continueWatching' => '続ける',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => '次を自動再生',
 			'videoControls.playNext' => '次を再生',
 			'videoControls.playButton' => '再生',
@@ -7137,6 +7167,8 @@ extension on TranslationsJa {
 			'errors.pleaseEnterToken' => 'トークンを入力してください',
 			'errors.invalidToken' => '無効なトークン',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'トークンの検証に失敗しました: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName}への切替に失敗しました',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName}の削除に失敗しました',
 			'errors.failedToRate' => '評価を更新できませんでした',
@@ -7152,8 +7184,6 @@ extension on TranslationsJa {
 			'libraries.title' => 'ライブラリ',
 			'libraries.fallbackTitle' => 'ライブラリ',
 			'libraries.scanLibraryFiles' => 'ライブラリファイルをスキャン',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'ライブラリをスキャン',
 			'libraries.analyze' => '解析',
 			'libraries.analyzeLibrary' => 'ライブラリを解析',
@@ -7651,6 +7681,8 @@ extension on TranslationsJa {
 			'playlists.deleted' => 'プレイリストを削除しました',
 			'playlists.itemAdded' => 'プレイリストに追加しました',
 			'playlists.itemRemoved' => 'プレイリストから削除しました',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'プレイリストを選択',
 			'playlists.searchPlaylists' => 'プレイリストを検索…',
 			'playlists.errorCreating' => 'プレイリストの作成に失敗しました',
@@ -7666,8 +7698,6 @@ extension on TranslationsJa {
 			'music.addToQueue' => 'キューに追加',
 			'music.discNumber' => ({required Object n}) => 'ディスク ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} トラック', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)}曲', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => '再生中',
 			'music.playingFrom' => ({required Object title}) => '${title}から再生',
 			'music.queue' => '再生キュー',
@@ -8165,6 +8195,8 @@ extension on TranslationsJa {
 			'performanceOverlay.dropped' => 'ドロップ',
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU 平均',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV サンプル平均',
 			'performanceOverlay.maxLuma' => '最大輝度',
 			'performanceOverlay.minLuma' => '最小輝度',
@@ -8180,8 +8212,6 @@ extension on TranslationsJa {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'ソフトウェア',
@@ -8679,6 +8709,8 @@ extension on TranslationsJa {
 			'homeLayout.noPlexRows' => '番号 Plex 管理行がこの図書館に戻りました。',
 			'homeLayout.openDetails' => 'オープン 詳細',
 			'homeLayout.heroCards' => 'ヒーローカード',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'ヒーローカードを打ち出す',
 			'homeLayout.tvPlayFocus' => 'テレビ: リモート: ハイライト Play ボタン',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad down は、次の行に移動する前に Play ボタンで停止します。',
@@ -8694,8 +8726,6 @@ extension on TranslationsJa {
 			'homeLayout.addHomeRowDescription' => 'カテゴリを選択し、新しい順位が自動的に組織に追加されます。',
 			'homeLayout.removeRow' => 'ラウを取り除く',
 			'homeLayout.recentlyAdded' => '最近追加されたコンテンツ',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => '最近リリース',
 			'homeLayout.movieCollections' => '映画コレクション',
 			'homeLayout.showCollections' => 'コレクション展示',
@@ -9193,6 +9223,8 @@ extension on TranslationsJa {
 			'audiobook.recoveryImported' => 'リハビリデータが合併。',
 			'sourceSetup.bookorbitHelp' => 'ご自身のBookOrbitアカウントにサインインすると、本を閲覧して再生できます。未登録タイトルのリクエストは、接続済みのSeerrNGインスタンスを通じて送信されます。',
 			'sourceSetup.bookorbitOpen' => 'BookOrbitで開く',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'このタイトルをBookOrbitで表示して、ライブラリの詳細やPleazyngで開けない形式を管理できます。再生位置はBookOrbitアカウントと同期されます。',
 			'sourceSetup.savedCertificate' => '保存済みのサーバー証明書',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export のような NFS URL を入力してください。',
@@ -9208,8 +9240,6 @@ extension on TranslationsJa {
 			'sourceSetup.sshFingerprint' => 'SSH ホスト鍵の SHA256 フィンガープリント',
 			'sourceSetup.sshFingerprintHelp' => 'サーバー管理者に確認してください。サーバーで ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub を実行し、表示された SHA256 値を使用します。',
 			'sourceSetup.sshFingerprintKeep' => '現在固定されているフィンガープリントを維持するには空欄にします。変更する場合は新しいサーバーのフィンガープリントを入力してください。',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH 公開鍵認証',
 			'sourceSetup.sshAuthenticationHelp' => '任意です。パスワード認証も利用できます。',
 			'sourceSetup.privateKey' => '秘密鍵（PEM または OpenSSH 形式）',
@@ -9707,6 +9737,8 @@ extension on TranslationsJa {
 			'musicTools.exclusiveOutput' => '排他オーディオ出力',
 			'musicTools.preamp' => 'プリアンプ',
 			'musicTools.ratingPending' => 'この端末に保存済み・同期待ち',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => '歌詞のタイミング調整',
 			'musicTools.anniversaries' => 'アルバムの発売記念日',
 			'musicTools.outputPreset' => 'この出力のEQ',
@@ -9722,8 +9754,6 @@ extension on TranslationsJa {
 			'musicTools.sonicAnalysis' => '音響解析',
 			'musicTools.serverAnalysisScope' => 'このサーバー上の対象となるすべての音楽ライブラリ。解析設定は変更されません。',
 			'musicTools.serverActivities' => 'サーバーの処理状況',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'プレイリストへのアクセス',
 			'musicTools.playlistRecipient' => 'Plexユーザー名またはメール',
 			'musicTools.playlistSharingHint' => 'このプレイリストと曲へのアクセスを許可します。受信者による招待の承諾が必要な場合があります。',

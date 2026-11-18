@@ -15,7 +15,22 @@
     "soloPage": "Bu sahifani alohida koʻrsatish",
     "pairPage": "Bu sahifani yana juftlash",
     "listenPhone": "Shu telefonda tinglash",
-    "audioUnavailable": "Fayl yoki ovoz yoʻlagi bu telefonda mavjud emas."
+    "audioUnavailable": "Fayl yoki ovoz yoʻlagi bu telefonda mavjud emas.",
+    "guidedPanels": "Panelma-panel o‘qish",
+    "rewind": "Orqaga o‘rash",
+    "attachAudio": "Audio fayl qo‘shish",
+    "replaceSoundtrack": "Ovoz yo‘lini almashtirish",
+    "mixMovie": "Film bilan aralashtirish",
+    "commentaryLevel": "Sharh ovozi balandligi",
+    "movieLevel": "Film ovozi balandligi",
+    "episodeStarts": "${episode}-qism shu yerdan boshlanadi",
+    "locateMovedFolder": "Ko‘chirilgan jildni topish",
+    "relinkMatched": "Mos kelgan ${count} yozuvni qayta bog‘lash",
+    "relinkAmbiguous": "Tekshirish kerak",
+    "relinkNone": "Mos fayllar topilmadi",
+    "clearAudio": "Qo‘shilgan audioni olib tashlash",
+    "keepFrom": "${time} dan saqlash",
+    "recordNow": "Hozirdan yozish"
   },
   "livingRoom": {
     "fitScreen": "Ekranimga moslash",

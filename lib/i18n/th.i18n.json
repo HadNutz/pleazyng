@@ -15,7 +15,22 @@
     "soloPage": "แสดงหน้านี้แยกเดี่ยว",
     "pairPage": "จับคู่หน้านี้อีกครั้ง",
     "listenPhone": "ฟังบนโทรศัพท์เครื่องนี้",
-    "audioUnavailable": "ไฟล์หรือแทร็กเสียงไม่พร้อมใช้งานบนโทรศัพท์เครื่องนี้"
+    "audioUnavailable": "ไฟล์หรือแทร็กเสียงไม่พร้อมใช้งานบนโทรศัพท์เครื่องนี้",
+    "guidedPanels": "อ่านทีละช่อง",
+    "rewind": "กรอกลับ",
+    "attachAudio": "เพิ่มไฟล์เสียง",
+    "replaceSoundtrack": "แทนที่แทร็กเสียง",
+    "mixMovie": "ผสมกับเสียงภาพยนตร์",
+    "commentaryLevel": "ระดับเสียงคำบรรยายเสียง",
+    "movieLevel": "ระดับเสียงภาพยนตร์",
+    "episodeStarts": "ตอนที่ ${episode} เริ่มตรงนี้",
+    "locateMovedFolder": "ค้นหาโฟลเดอร์ที่ย้าย",
+    "relinkMatched": "เชื่อมต่อรายการที่ตรงกัน ${count} รายการอีกครั้ง",
+    "relinkAmbiguous": "ต้องตรวจสอบ",
+    "relinkNone": "ไม่พบไฟล์ที่ตรงกัน",
+    "clearAudio": "นำเสียงที่เพิ่มออก",
+    "keepFrom": "เก็บตั้งแต่ ${time}",
+    "recordNow": "บันทึกตั้งแต่ตอนนี้"
   },
   "livingRoom": {
     "fitScreen": "ปรับให้พอดีกับหน้าจอ",

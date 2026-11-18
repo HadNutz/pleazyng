@@ -22,6 +22,8 @@ import '../media/media_item.dart';
 import '../media/media_item_merge.dart';
 import '../media/media_item_types.dart';
 import '../media/media_kind.dart';
+import '../media/shared_episode_file.dart';
+import 'downloaded_video_source.dart';
 import '../media/media_server_client.dart';
 import 'api_cache.dart';
 import 'connectivity_probe.dart';
@@ -2047,6 +2049,8 @@ class DownloadManagerService {
 
   /// Process the download queue — prepares and enqueues items with background_downloader.
   /// Non-blocking: returns after all queued items are enqueued (downloads run natively).
+  final Map<String, String> _sharedEpisodeWaiters = {};
+
   Future<void> _processQueue(MediaServerClient client) async {
     if (_disposed || _skipDownloadsUnsupported('download queue processing') || _queueBlockedByStorageFailure) {
       return;
@@ -2074,7 +2078,11 @@ class DownloadManagerService {
         _queueRerunRequested = false;
         // Heads whose client could not be resolved this cycle: excluded from the
         // next lookup so the drain advances instead of re-reading the same row.
-        final skippedGlobalKeys = <String>{};
+        for (final pending in _sharedEpisodeWaiters.entries.toList()) {
+          final dependency = await _database.getDownloadedMedia(pending.value);
+          if (dependency?.status != DownloadStatus.downloading.index) _sharedEpisodeWaiters.remove(pending.key);
+        }
+        final skippedGlobalKeys = <String>{..._sharedEpisodeWaiters.keys};
         while (!_disposed && !_queueBlockedByStorageFailure) {
           if (_consecutiveQueueFailures >= _maxConsecutiveFailures) {
             appLogger.w('Circuit breaker: $_consecutiveQueueFailures consecutive failures, pausing queue');
@@ -2092,6 +2100,8 @@ class DownloadManagerService {
             continue;
           }
           final enqueued = await _prepareAndEnqueueDownload(nextItem.mediaGlobalKey, itemClient, nextItem);
+          if (_sharedEpisodeWaiters.containsKey(nextItem.mediaGlobalKey))
+            skippedGlobalKeys.add(nextItem.mediaGlobalKey);
           if (enqueued) {
             _consecutiveQueueFailures = 0;
           } else {
@@ -2322,6 +2332,11 @@ class DownloadManagerService {
         return true;
       }
 
+      if (quality == null &&
+          await _reuseSharedEpisodeDownload(globalKey, metadata, existing, client, queueItem, resolution)) {
+        return true;
+      }
+
       final partIndex = await _partToDownload(globalKey, resolution);
 
       final showYear = metadata.isEpisode
@@ -2341,6 +2356,105 @@ class DownloadManagerService {
     } catch (e, st) {
       return _handleEnqueueFailure(globalKey, client, e, st);
     }
+  }
+
+  /// A separately addressable episode keeps its own ownership, metadata and
+  /// progress row while referencing the same complete original bytes. The
+  /// existing deletion reference checks preserve the file until its last row
+  /// is removed. Never reuse another account's private metadata namespace.
+  Future<bool> _reuseSharedEpisodeDownload(
+    String globalKey,
+    MediaItem metadata,
+    DownloadedMediaItem existing,
+    MediaServerClient client,
+    DownloadQueueItem queue,
+    DownloadResolution resolution,
+  ) async {
+    if (!metadata.isEpisode || metadata.parentId == null) return false;
+    final versions = metadata.mediaVersions;
+    final selected =
+        versions?.where((v) => v.id == resolution.mediaSourceId).firstOrNull ??
+        versions?.elementAtOrNull(existing.mediaIndex);
+    if (selected == null || selected.parts.length != 1) return false;
+    final rows = await _database.getDownloadsByServerId(ServerId(metadata.serverId!));
+    for (final row in rows) {
+      if (row.globalKey == globalKey ||
+          !{DownloadStatus.completed.index, DownloadStatus.downloading.index}.contains(row.status) ||
+          row.clientScopeId != existing.clientScopeId ||
+          row.parentRatingKey != existing.parentRatingKey ||
+          _storedDownloadQuality(row) != null ||
+          row.partCount != 1) {
+        continue;
+      }
+      final other = await _lookupMetadata(ServerId(row.serverId), row.ratingKey, clientScopeId: row.clientScopeId);
+      if (other == null) continue;
+      final stored =
+          other.mediaVersions?.where((v) => v.id == row.mediaSourceId).firstOrNull ??
+          other.mediaVersions?.elementAtOrNull(row.mediaIndex);
+      if (!sameSelectedEpisodeFile(metadata, selected, other, stored)) continue;
+      if (row.status == DownloadStatus.downloading.index && row.bgTaskId != null) {
+        _sharedEpisodeWaiters[globalKey] = row.globalKey;
+        await _transitionStatus(globalKey, DownloadStatus.queued);
+        return true;
+      }
+      if (row.status != DownloadStatus.completed.index || await resolveDownloadedVideoSource(row) == null) continue;
+      if (await _isCancelledOrDeleted(globalKey)) return true;
+      final reused = await _database.transaction(() async {
+        final fresh = await _database.getDownloadedMedia(row.globalKey);
+        final target = await _database.getDownloadedMedia(globalKey);
+        if (fresh?.status != DownloadStatus.completed.index ||
+            fresh?.videoFilePath != row.videoFilePath ||
+            target?.status != DownloadStatus.downloading.index ||
+            _cancellingKeys.contains(globalKey)) {
+          return false;
+        }
+        await _database.resetDownloadParts(globalKey, additionalPartCount: 0);
+        await _database.updateVideoFilePath(globalKey, row.videoFilePath!);
+        await _database.updateDownloadProgress(
+          globalKey,
+          100,
+          row.downloadedBytes,
+          row.totalBytes ?? row.downloadedBytes,
+        );
+        await _database.updateDownloadStatus(globalKey, DownloadStatus.completed.index);
+        return true;
+      });
+      if (!reused) continue;
+      _emitProgress(globalKey, DownloadStatus.completed, 100);
+      // Keep the durable queue row until each episode's own subtitles/artwork
+      // have settled. A failed enrichment never invalidates the shared video.
+      try {
+        final settled = await _runSupplementaryDownloads(
+          globalKey,
+          metadata,
+          client,
+          isRepair: true,
+          downloadArtwork: queue.downloadArtwork,
+          downloadSubtitles: queue.downloadSubtitles,
+          record: await _database.getDownloadedMedia(globalKey),
+          showYear: await _fetchShowYear(
+            ServerId(metadata.serverId!),
+            metadata.grandparentId,
+            clientScopeId: existing.clientScopeId,
+          ),
+          partPaths: [row.videoFilePath],
+          preresolvedSubtitles: resolution.externalSubtitlesResolved ? _subtitlesPerPart(resolution) : null,
+        );
+        if (settled.artwork && settled.subtitles) {
+          await _database.removeFromQueue(globalKey);
+        } else {
+          await _database.updateSupplementaryQueueIntent(
+            globalKey,
+            downloadArtwork: !settled.artwork,
+            downloadSubtitles: !settled.subtitles,
+          );
+        }
+      } catch (error, stack) {
+        appLogger.w('Shared episode supplementary work deferred', error: error, stackTrace: stack);
+      }
+      return true;
+    }
+    return false;
   }
 
   /// The quality [row] was queued to be converted to, or null for the

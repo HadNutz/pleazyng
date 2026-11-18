@@ -155,6 +155,21 @@ class _Translations$viewing$vi extends Translations$viewing$en {
 	@override String get pairPage => 'Ghép lại trang này';
 	@override String get listenPhone => 'Nghe trên điện thoại này';
 	@override String get audioUnavailable => 'Tệp hoặc bản âm thanh không khả dụng trên điện thoại này.';
+	@override String get guidedPanels => 'Đọc theo từng khung';
+	@override String get rewind => 'Tua lại';
+	@override String get attachAudio => 'Thêm tệp âm thanh';
+	@override String get replaceSoundtrack => 'Thay thế bản âm thanh';
+	@override String get mixMovie => 'Trộn với âm thanh phim';
+	@override String get commentaryLevel => 'Âm lượng bình luận';
+	@override String get movieLevel => 'Âm lượng phim';
+	@override String episodeStarts({required Object episode}) => 'Tập ${episode} bắt đầu tại đây';
+	@override String get locateMovedFolder => 'Tìm thư mục đã di chuyển';
+	@override String relinkMatched({required Object count}) => 'Liên kết lại ${count} mục khớp';
+	@override String get relinkAmbiguous => 'Cần xem xét';
+	@override String get relinkNone => 'Không tìm thấy tệp khớp';
+	@override String get clearAudio => 'Xóa âm thanh đã thêm';
+	@override String keepFrom({required Object time}) => 'Giữ từ ${time}';
+	@override String get recordNow => 'Ghi từ bây giờ';
 }
 
 // Path: livingRoom
@@ -5606,6 +5621,21 @@ extension on TranslationsVi {
 			'viewing.pairPage' => 'Ghép lại trang này',
 			'viewing.listenPhone' => 'Nghe trên điện thoại này',
 			'viewing.audioUnavailable' => 'Tệp hoặc bản âm thanh không khả dụng trên điện thoại này.',
+			'viewing.guidedPanels' => 'Đọc theo từng khung',
+			'viewing.rewind' => 'Tua lại',
+			'viewing.attachAudio' => 'Thêm tệp âm thanh',
+			'viewing.replaceSoundtrack' => 'Thay thế bản âm thanh',
+			'viewing.mixMovie' => 'Trộn với âm thanh phim',
+			'viewing.commentaryLevel' => 'Âm lượng bình luận',
+			'viewing.movieLevel' => 'Âm lượng phim',
+			'viewing.episodeStarts' => ({required Object episode}) => 'Tập ${episode} bắt đầu tại đây',
+			'viewing.locateMovedFolder' => 'Tìm thư mục đã di chuyển',
+			'viewing.relinkMatched' => ({required Object count}) => 'Liên kết lại ${count} mục khớp',
+			'viewing.relinkAmbiguous' => 'Cần xem xét',
+			'viewing.relinkNone' => 'Không tìm thấy tệp khớp',
+			'viewing.clearAudio' => 'Xóa âm thanh đã thêm',
+			'viewing.keepFrom' => ({required Object time}) => 'Giữ từ ${time}',
+			'viewing.recordNow' => 'Ghi từ bây giờ',
 			'livingRoom.fitScreen' => 'Chỉnh vừa màn hình',
 			'livingRoom.fitHelp' => 'Chọn một cạnh rồi dùng phím mũi tên để di chuyển cho đến khi thấy các dấu ở cạnh đó. Lặp lại với từng cạnh.',
 			'livingRoom.left' => 'Trái',
@@ -6089,6 +6119,8 @@ extension on TranslationsVi {
 			'settings.companionRemoteServerStopFailed' => 'Không thể dừng lại máy chủ đồng nghiệp',
 			'settings.autoPip' => 'Ảnh Auto Picture in Picture',
 			'settings.autoPipDescription' => 'Tự động nhập hình ảnh trong khi bạn rời khỏi ứng dụng trong khi chơi',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Match Content Frame Tỷ lệ',
 			'settings.matchContentFrameRateDescription' => 'Match hiển thị tốc độ phục hồi cho nội dung video',
 			'settings.matchContentResolution' => 'Match Content Quyết định',
@@ -6104,8 +6136,6 @@ extension on TranslationsVi {
 			'settings.audioPassthroughDescription' => 'Gửi âm thanh Dolby/DTS đến máy nhận hoặc TV của bạn mà không cần mã hóa lại, duy trì âm thanh xung quanh.',
 			'settings.audioPassthroughDescriptionApple' => 'Sử dụng bộ giải mã Dolby gốc của Apple cho Dolby Digital Plus, bao gồm Atmos. DTS và TrueHD vẫn chơi như PCM đa kênh.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Sử dụng bộ giải mã Dolby bản địa của Apple cho Dolby Digital Plus, bao gồm Atmos. Trên iOS, iPadOS và tvOS 26 hoặc sau đó, TrueHD Atmos và DTS:X chơi như âm thanh không gian.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Tắt trong khi bình thường hóa âm thanh',
 			'settings.audioChannelLimit' => 'Kênh âm thanh',
 			'settings.audioChannelLimitDescription' => 'Thay đổi âm thanh giải mã xuống cho các loa, tai nghe, hoặc cài đặt HDMI mà không thể phát tất cả các kênh',
@@ -6603,6 +6633,8 @@ extension on TranslationsVi {
 			'tooltips.markAsUnwatched' => 'Mark như không được xem',
 			'audioTracks.track' => ({required Object n}) => 'Âm thanh Track ${n}',
 			'videoControls.audioLabel' => 'Âm thanh',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Phụ đề',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Bảng Letterbox',
@@ -6618,8 +6650,6 @@ extension on TranslationsVi {
 			'videoControls.stillWatching' => 'vẫn đang xem?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Đánh giá tại ${seconds}s',
 			'videoControls.continueWatching' => 'tiếp tục',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Auto-Play tiếp theo',
 			'videoControls.playNext' => 'Phát kế tiếp',
 			'videoControls.playButton' => 'Phát',
@@ -7117,6 +7147,8 @@ extension on TranslationsVi {
 			'errors.pleaseEnterToken' => 'Vui lòng nhập token',
 			'errors.invalidToken' => 'Mã xác thực không hợp lệ',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Không xác minh token: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Không thể chuyển sang ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Không xóa ${displayName}',
 			'errors.failedToRate' => 'Không thể update rating',
@@ -7132,8 +7164,6 @@ extension on TranslationsVi {
 			'libraries.title' => 'Thư viện',
 			'libraries.fallbackTitle' => 'Thư viện',
 			'libraries.scanLibraryFiles' => 'Scan thư viện file',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Quét thư viện',
 			'libraries.analyze' => 'phân tích',
 			'libraries.analyzeLibrary' => 'Phân tích Thư viện',
@@ -7631,6 +7661,8 @@ extension on TranslationsVi {
 			'playlists.deleted' => 'Playlist xóa',
 			'playlists.itemAdded' => 'Thêm vào playlist',
 			'playlists.itemRemoved' => 'Xóa khỏi playlist',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Chọn Playlist',
 			'playlists.searchPlaylists' => 'Tìm kiếm playlists',
 			'playlists.errorCreating' => 'Không thể tạo playlist',
@@ -7646,8 +7678,6 @@ extension on TranslationsVi {
 			'music.addToQueue' => 'Thêm vào Queue',
 			'music.discNumber' => ({required Object n}) => 'Đĩa ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('vi'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} đường dẫn', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'Bây giờ chơi',
 			'music.playingFrom' => ({required Object title}) => 'Chơi từ ${title}',
 			'music.queue' => 'Quay',
@@ -8145,6 +8175,8 @@ extension on TranslationsVi {
 			'performanceOverlay.dropped' => 'bị rơi',
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'Đánh giá RPU AVG',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'Đánh giá DV Sample Avg',
 			'performanceOverlay.maxLuma' => 'Độ chói tối đa',
 			'performanceOverlay.minLuma' => 'Lúa Lúa',
@@ -8160,8 +8192,6 @@ extension on TranslationsVi {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'Đánh giá NVIDIA',
 			'performanceOverlay.decoderQualcommHw' => 'Đánh giá Qualcomm HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'Thông tin HW',
 			'performanceOverlay.decoderExynosHw' => 'Đánh giá HW',
 			'performanceOverlay.decoderSoftware' => 'Phần mềm',
@@ -8659,6 +8689,8 @@ extension on TranslationsVi {
 			'homeLayout.noPlexRows' => 'Số Plex hàng quản lý đã trở lại cho thư viện này.',
 			'homeLayout.openDetails' => 'chi tiết mở',
 			'homeLayout.heroCards' => 'thẻ anh hùng',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Tải thẻ anh hùng',
 			'homeLayout.tvPlayFocus' => 'TV từ xa: nhấn nút Play',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad xuống dừng lại trên nút Play trước khi di chuyển đến hàng tiếp theo.',
@@ -8674,8 +8706,6 @@ extension on TranslationsVi {
 			'homeLayout.addHomeRowDescription' => 'Chọn một thể loại; dòng mới được thêm vào Nhà tổ chức tự động',
 			'homeLayout.removeRow' => 'Xóa dòng',
 			'homeLayout.recentlyAdded' => 'Thêm Gần Đây',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Gần đây phát hành',
 			'homeLayout.movieCollections' => 'Bộ sưu tập phim',
 			'homeLayout.showCollections' => 'Hiển thị bộ sưu tập',
@@ -9173,6 +9203,8 @@ extension on TranslationsVi {
 			'audiobook.recoveryImported' => 'Dữ liệu phục hồi kết hợp.',
 			'sourceSetup.bookorbitHelp' => 'Đăng nhập bằng tài khoản BookOrbit của riêng bạn để duyệt và phát sách. Yêu cầu các tựa sách còn thiếu vẫn được gửi qua phiên bản SeerrNG đã kết nối.',
 			'sourceSetup.bookorbitOpen' => 'Mở trong BookOrbit',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Xem tựa sách này trong BookOrbit để quản lý thông tin thư viện và các định dạng Pleazyng không thể mở. Tiến độ nghe được đồng bộ với tài khoản BookOrbit của bạn.',
 			'sourceSetup.savedCertificate' => 'Chứng chỉ máy chủ đã lưu',
 			'sourceSetup.nfsEndpointInvalid' => 'Nhập URL NFS, chẳng hạn nfs://nas:2049/export.',
@@ -9188,8 +9220,6 @@ extension on TranslationsVi {
 			'sourceSetup.sshFingerprint' => 'Dấu vân tay SHA256 của khóa máy chủ SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Xác minh với quản trị viên máy chủ. Trên máy chủ, chạy ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub và dùng giá trị SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Để trống để giữ dấu vân tay đang được ghim, hoặc nhập dấu vân tay máy chủ mới.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Xác thực SSH bằng khóa công khai',
 			'sourceSetup.sshAuthenticationHelp' => 'Không bắt buộc; cũng hỗ trợ xác thực bằng mật khẩu.',
 			'sourceSetup.privateKey' => 'Khóa riêng (định dạng PEM hoặc OpenSSH)',
@@ -9687,6 +9717,8 @@ extension on TranslationsVi {
 			'musicTools.exclusiveOutput' => 'Đầu ra âm thanh độc quyền',
 			'musicTools.preamp' => 'Tiền khuếch đại',
 			'musicTools.ratingPending' => 'Đã lưu trên thiết bị này; đang chờ đồng bộ',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Độ lệch thời gian lời bài hát',
 			'musicTools.anniversaries' => 'Kỷ niệm phát hành album',
 			'musicTools.outputPreset' => 'EQ cho đầu ra này',
@@ -9702,8 +9734,6 @@ extension on TranslationsVi {
 			'musicTools.sonicAnalysis' => 'Phân tích âm thanh',
 			'musicTools.serverAnalysisScope' => 'Tất cả thư viện nhạc đủ điều kiện trên máy chủ này. Không thay đổi cài đặt phân tích của chúng.',
 			'musicTools.serverActivities' => 'Hoạt động máy chủ',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Quyền truy cập danh sách phát',
 			'musicTools.playlistRecipient' => 'Tên người dùng Plex hoặc email',
 			'musicTools.playlistSharingHint' => 'Cấp quyền truy cập danh sách phát này và các bản nhạc. Người nhận có thể cần chấp nhận lời mời.',

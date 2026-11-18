@@ -15,7 +15,22 @@
     "soloPage": "Bu səhifəni tək göstər",
     "pairPage": "Bu səhifəni yenidən cütləşdir",
     "listenPhone": "Bu telefonda dinlə",
-    "audioUnavailable": "Fayl və ya səs treki bu telefonda əlçatan deyil."
+    "audioUnavailable": "Fayl və ya səs treki bu telefonda əlçatan deyil.",
+    "guidedPanels": "Panellərə ardıcıl baxış",
+    "rewind": "Geri sar",
+    "attachAudio": "Audio faylı əlavə et",
+    "replaceSoundtrack": "Səs yolunu əvəz et",
+    "mixMovie": "Filmlə qarışdır",
+    "commentaryLevel": "Şərhin səs səviyyəsi",
+    "movieLevel": "Filmin səs səviyyəsi",
+    "episodeStarts": "${episode}-ci bölüm burada başlayır",
+    "locateMovedFolder": "Köçürülmüş qovluğu tap",
+    "relinkMatched": "${count} uyğun elementi yenidən bağla",
+    "relinkAmbiguous": "Yoxlama tələb olunur",
+    "relinkNone": "Uyğun fayl tapılmadı",
+    "clearAudio": "Əlavə edilmiş audionu sil",
+    "keepFrom": "${time} vaxtından saxla",
+    "recordNow": "İndidən yaz"
   },
   "livingRoom": {
     "fitScreen": "Ekranıma uyğunlaşdır",

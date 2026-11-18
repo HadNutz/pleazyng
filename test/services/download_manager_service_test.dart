@@ -19,6 +19,8 @@ import 'package:plezy/media/download_resolution.dart';
 import 'package:plezy/media/media_backend.dart';
 import 'package:plezy/media/media_item.dart';
 import 'package:plezy/media/media_kind.dart';
+import 'package:plezy/media/media_version.dart';
+import 'package:plezy/media/media_part.dart';
 import 'package:plezy/media/media_source_info.dart';
 import 'package:plezy/media/media_server_client.dart';
 import 'package:plezy/models/download_models.dart';
@@ -43,6 +45,120 @@ import '../test_helpers/media_items.dart';
 import '../test_helpers/media_server_client_test_defaults.dart';
 
 void main() {
+  for (final sourceInProgress in [false, true]) {
+    test('combined episode downloads share bytes with an in-progress source: $sourceInProgress', () async {
+      final fixture = await _createSupplementaryFixture();
+      MediaItem episode(int n) => testMediaItem(
+        id: 'episode-$n',
+        backend: MediaBackend.plex,
+        kind: MediaKind.episode,
+        serverId: ServerId('srv'),
+        parentId: 'season',
+        parentIndex: 1,
+        grandparentId: 'show',
+        index: n,
+        title: 'Episode $n',
+        mediaVersions: [
+          MediaVersion(
+            id: 'v$n',
+            parts: [MediaPart(id: '$n', file: '/TV/S01E01-E02.mkv', sizeBytes: 4, durationMs: 4000)],
+          ),
+        ],
+      );
+      for (var n = 1; n <= 2; n++) {
+        await PlexApiCache.instance.put(ServerId('srv'), '/library/metadata/episode-$n', {
+          'MediaContainer': {
+            'Metadata': [
+              {
+                'ratingKey': 'episode-$n',
+                'type': 'episode',
+                'title': 'Episode $n',
+                'index': n,
+                'parentRatingKey': 'season',
+                'parentIndex': 1,
+                'grandparentRatingKey': 'show',
+                'Media': [
+                  {
+                    'id': 'v$n',
+                    'Part': [
+                      {'id': '$n', 'file': '/TV/S01E01-E02.mkv', 'size': 4, 'duration': 4000},
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        });
+      }
+      final original = await File('${fixture.tempDir.path}/combined.mkv').writeAsString('file');
+      await fixture.db.insertDownload(
+        serverId: ServerId('srv'),
+        ratingKey: 'episode-1',
+        globalKey: 'srv:episode-1',
+        type: 'episode',
+        parentRatingKey: 'season',
+        grandparentRatingKey: 'show',
+        status: sourceInProgress ? DownloadStatus.downloading.index : DownloadStatus.completed.index,
+      );
+      await fixture.db.updateVideoFilePath('srv:episode-1', original.path);
+      if (sourceInProgress) await fixture.db.updateBgTaskId('srv:episode-1', 'original-transfer');
+      await fixture.db.updateDownloadProgress('srv:episode-1', 100, 4, 4);
+      final client = _SupplementaryClient(
+        metadata: episode(2),
+        resolution: () => const DownloadResolution(videoUrl: 'https://example.test/combined.mkv', mediaSourceId: 'v2'),
+      );
+      final manager = DownloadManagerService(
+        database: fixture.db,
+        storageService: fixture.storage,
+        clientResolver: (serverId, {clientScopeId}) => client,
+        downloadsSupportedOverride: true,
+        fileDownloaderInitializerOverride: () async {},
+        enqueueTaskOverride: (_) async => fail('shared file must not download again'),
+      );
+      addTearDown(manager.disposeAndDrain);
+      var sawDownloading = false;
+      final observer = manager.progressStream.listen((event) {
+        if (event.globalKey == 'srv:episode-2' && event.status == DownloadStatus.downloading) sawDownloading = true;
+      });
+      addTearDown(observer.cancel);
+      final deferred = sourceInProgress
+          ? manager.progressStream.firstWhere(
+              (event) => event.globalKey == 'srv:episode-2' && event.status == DownloadStatus.queued && sawDownloading,
+            )
+          : null;
+      final completed = manager.progressStream.firstWhere(
+        (p) => p.globalKey == 'srv:episode-2' && p.status == DownloadStatus.completed,
+      );
+      await manager.queueDownload(
+        metadata: episode(2),
+        client: client,
+        downloadArtwork: false,
+        downloadSubtitles: false,
+      );
+      if (deferred != null) {
+        await deferred.timeout(const Duration(seconds: 10));
+        expect((await fixture.db.getDownloadedMedia('srv:episode-2'))!.status, DownloadStatus.queued.index);
+        await fixture.db.updateBgTaskId('srv:episode-1', null);
+        await fixture.db.updateDownloadStatus('srv:episode-1', DownloadStatus.completed.index);
+        await manager.queueDownload(
+          metadata: episode(2),
+          client: client,
+          downloadArtwork: false,
+          downloadSubtitles: false,
+        );
+      }
+      await completed.timeout(const Duration(seconds: 10));
+      final second = await fixture.db.getDownloadedMedia('srv:episode-2');
+      expect(second!.videoFilePath, original.path);
+      expect(second.downloadedBytes, 4);
+      await manager.deleteDownload('srv:episode-1');
+      expect(await original.exists(), isTrue);
+      expect(await resolveDownloadedVideoSource(second), isNotNull);
+      await manager.deleteDownload('srv:episode-2');
+      expect(await original.exists(), isFalse);
+    });
+  }
+
   group('downloadExtensionFromUrl', () {
     test('uses path extension when present', () {
       expect(downloadExtensionFromUrl('https://example.com/movie.mkv?Container=mp4'), 'mkv');

@@ -317,6 +317,30 @@ extension _VideoPlayerBuildMethods on VideoPlayerScreenState {
                         volumeController: _volumeController!,
                         metadata: _currentMetadata,
                         onNext: onNext,
+                        onEpisodeBoundaryMarked: (number) async {
+                          if (!mounted || _shuttingDown) return;
+                          final current = _currentMetadata;
+                          final target = context
+                              .read<PlaybackStateProvider>()
+                              .loadedItems
+                              .where(
+                                (item) =>
+                                    item.index == number &&
+                                    item.serverId == current.serverId &&
+                                    item.parentId == current.parentId &&
+                                    (item.globalKey == current.globalKey ||
+                                        current.sharesFileWith(
+                                          item,
+                                          playedPartId: _currentMediaInfo?.partId?.toString(),
+                                        )),
+                              )
+                              .firstOrNull;
+                          if (target != null) {
+                            await _navigateToEpisode(target);
+                          } else {
+                            await _loadAdjacentEpisodes();
+                          }
+                        },
                         onPrevious: onPrevious,
                         availableVersions: _availableVersions,
                         selectedMediaIndex: _effectiveSelectedMediaIndex,

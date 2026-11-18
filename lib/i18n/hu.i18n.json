@@ -15,7 +15,22 @@
     "soloPage": "Az oldal megjelenítése külön",
     "pairPage": "Az oldal újbóli párosítása",
     "listenPhone": "Hallgatás ezen a telefonon",
-    "audioUnavailable": "A fájl vagy a hangsáv nem érhető el ezen a telefonon."
+    "audioUnavailable": "A fájl vagy a hangsáv nem érhető el ezen a telefonon.",
+    "guidedPanels": "Olvasás képkockánként",
+    "rewind": "Visszatekerés",
+    "attachAudio": "Hangfájl hozzáadása",
+    "replaceSoundtrack": "Hangsáv cseréje",
+    "mixMovie": "Keverés a filmmel",
+    "commentaryLevel": "Kommentár hangereje",
+    "movieLevel": "Film hangereje",
+    "episodeStarts": "A(z) ${episode}. epizód itt kezdődik",
+    "locateMovedFolder": "Áthelyezett mappa keresése",
+    "relinkMatched": "${count} egyező bejegyzés újracsatolása",
+    "relinkAmbiguous": "Ellenőrzést igényel",
+    "relinkNone": "Nincs egyező fájl",
+    "clearAudio": "Hozzáadott hang eltávolítása",
+    "keepFrom": "Megtartás ${time} időponttól",
+    "recordNow": "Felvétel mostantól"
   },
   "livingRoom": {
     "fitScreen": "Igazítás a képernyőmhöz",

@@ -15,7 +15,22 @@
     "soloPage": "Vis denne side alene",
     "pairPage": "Par denne side igen",
     "listenPhone": "Lyt på denne telefon",
-    "audioUnavailable": "Filen eller lydsporet er ikke tilgængeligt på denne telefon."
+    "audioUnavailable": "Filen eller lydsporet er ikke tilgængeligt på denne telefon.",
+    "guidedPanels": "Læs panel for panel",
+    "rewind": "Spol tilbage",
+    "attachAudio": "Tilføj lydfil",
+    "replaceSoundtrack": "Erstat lydspor",
+    "mixMovie": "Bland med filmen",
+    "commentaryLevel": "Kommentarens lydstyrke",
+    "movieLevel": "Filmens lydstyrke",
+    "episodeStarts": "Afsnit ${episode} starter her",
+    "locateMovedFolder": "Find flyttet mappe",
+    "relinkMatched": "Forbind ${count} matchende elementer igen",
+    "relinkAmbiguous": "Skal gennemgås",
+    "relinkNone": "Ingen matchende filer fundet",
+    "clearAudio": "Fjern tilføjet lyd",
+    "keepFrom": "Behold fra ${time}",
+    "recordNow": "Optag fra nu"
   },
   "livingRoom": {
     "fitScreen": "Tilpas til min skærm",

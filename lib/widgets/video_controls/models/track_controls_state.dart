@@ -27,6 +27,8 @@ class TrackControlsState {
   final int? selectedSecondarySubtitleStreamId;
   final List<PlaybackSubtitleSidecar> sourceSubtitleSidecars;
   final int? sourcePartId;
+  final List<MediaChapter> episodeChapters;
+  final Future<void> Function(int)? onEpisodeBoundaryMarked;
 
   /// Total media duration in milliseconds. Used by the version/quality sheet
   /// to show estimated file sizes per preset (bitrate × duration).
@@ -109,6 +111,8 @@ class TrackControlsState {
     this.selectedSecondarySubtitleStreamId,
     this.sourceSubtitleSidecars = const <PlaybackSubtitleSidecar>[],
     this.sourcePartId,
+    this.episodeChapters = const [],
+    this.onEpisodeBoundaryMarked,
     this.sourceDurationMs,
     this.boxFitMode = 0,
     this.videoZoomScale = 1.0,

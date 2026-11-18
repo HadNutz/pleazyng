@@ -15,7 +15,22 @@
     "soloPage": "यह पृष्ठ अकेले दिखाएँ",
     "pairPage": "इस पृष्ठ की फिर से जोड़ी बनाएँ",
     "listenPhone": "इस फ़ोन पर सुनें",
-    "audioUnavailable": "इस फ़ोन पर फ़ाइल या ऑडियो ट्रैक उपलब्ध नहीं है।"
+    "audioUnavailable": "इस फ़ोन पर फ़ाइल या ऑडियो ट्रैक उपलब्ध नहीं है।",
+    "guidedPanels": "पैनल दर पैनल पढ़ें",
+    "rewind": "पीछे करें",
+    "attachAudio": "ऑडियो फ़ाइल जोड़ें",
+    "replaceSoundtrack": "साउंडट्रैक बदलें",
+    "mixMovie": "फ़िल्म के साथ मिलाएँ",
+    "commentaryLevel": "टिप्पणी की आवाज़",
+    "movieLevel": "फ़िल्म की आवाज़",
+    "episodeStarts": "एपिसोड ${episode} यहाँ शुरू होता है",
+    "locateMovedFolder": "स्थानांतरित फ़ोल्डर ढूँढें",
+    "relinkMatched": "${count} मिलती प्रविष्टियाँ फिर जोड़ें",
+    "relinkAmbiguous": "समीक्षा चाहिए",
+    "relinkNone": "कोई मिलती फ़ाइल नहीं मिली",
+    "clearAudio": "जोड़ा गया ऑडियो हटाएँ",
+    "keepFrom": "${time} से रखें",
+    "recordNow": "अभी से रिकॉर्ड करें"
   },
   "livingRoom": {
     "fitScreen": "मेरी स्क्रीन में फ़िट करें",

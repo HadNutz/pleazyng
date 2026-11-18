@@ -5,6 +5,14 @@
 - Fetch the pinned Linux ONNX Runtime SDK and runtime from Microsoft’s NuGet package.
 
 - Fix the native source formatting check that blocked the 3.0.38 release build.
+- Preserve interrupted manual IPTV captures and offer recording from the retained live buffer on mpv.
+- Map individual episodes inside a combined file to their own playback clocks and watched credit.
+- Reconnect moved local folders while retaining reading history, bookmarks and reading-list matches.
+- Attach an alternate soundtrack or mix commentary with independent volume and persistent cut-specific alignment.
+- Index local/SMB CUE albums as individually playable tracks sharing their original audio file.
+- Read authored ACBF comic panels in order, with full-page overview and page/panel resume.
+- Rewind compatible native RomM cores using a bounded session-only state history.
+- The buffer interaction draws on TiVo’s viewer guide; the audio use cases draw on Jellyfin and RiffTrax documentation, CUE behavior on Kodi’s guide, and authored panels on the ACBF specification. See [feature details and source credits](docs/features/media-file-tools.md) for capability and native-build qualification.
 
 - Prefer compatible hardware video decoders on every platform. ExoPlayer and GStreamer keep software fallback available, and playback statistics report the decoder observed for the stream.
 - HDR subtitle brightness draws on the OLED viewing problem addressed by [barnebyte’s PlexOledSubtitles](https://github.com/barnebyte/PlexOledSubtitles). Pleazyng adjusts playback rendering and keeps the subtitle file intact.

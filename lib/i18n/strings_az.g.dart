@@ -155,6 +155,21 @@ class _Translations$viewing$az extends Translations$viewing$en {
 	@override String get pairPage => 'Bu səhifəni yenidən cütləşdir';
 	@override String get listenPhone => 'Bu telefonda dinlə';
 	@override String get audioUnavailable => 'Fayl və ya səs treki bu telefonda əlçatan deyil.';
+	@override String get guidedPanels => 'Panellərə ardıcıl baxış';
+	@override String get rewind => 'Geri sar';
+	@override String get attachAudio => 'Audio faylı əlavə et';
+	@override String get replaceSoundtrack => 'Səs yolunu əvəz et';
+	@override String get mixMovie => 'Filmlə qarışdır';
+	@override String get commentaryLevel => 'Şərhin səs səviyyəsi';
+	@override String get movieLevel => 'Filmin səs səviyyəsi';
+	@override String episodeStarts({required Object episode}) => '${episode}-ci bölüm burada başlayır';
+	@override String get locateMovedFolder => 'Köçürülmüş qovluğu tap';
+	@override String relinkMatched({required Object count}) => '${count} uyğun elementi yenidən bağla';
+	@override String get relinkAmbiguous => 'Yoxlama tələb olunur';
+	@override String get relinkNone => 'Uyğun fayl tapılmadı';
+	@override String get clearAudio => 'Əlavə edilmiş audionu sil';
+	@override String keepFrom({required Object time}) => '${time} vaxtından saxla';
+	@override String get recordNow => 'İndidən yaz';
 }
 
 // Path: livingRoom
@@ -5631,6 +5646,21 @@ extension on TranslationsAz {
 			'viewing.pairPage' => 'Bu səhifəni yenidən cütləşdir',
 			'viewing.listenPhone' => 'Bu telefonda dinlə',
 			'viewing.audioUnavailable' => 'Fayl və ya səs treki bu telefonda əlçatan deyil.',
+			'viewing.guidedPanels' => 'Panellərə ardıcıl baxış',
+			'viewing.rewind' => 'Geri sar',
+			'viewing.attachAudio' => 'Audio faylı əlavə et',
+			'viewing.replaceSoundtrack' => 'Səs yolunu əvəz et',
+			'viewing.mixMovie' => 'Filmlə qarışdır',
+			'viewing.commentaryLevel' => 'Şərhin səs səviyyəsi',
+			'viewing.movieLevel' => 'Filmin səs səviyyəsi',
+			'viewing.episodeStarts' => ({required Object episode}) => '${episode}-ci bölüm burada başlayır',
+			'viewing.locateMovedFolder' => 'Köçürülmüş qovluğu tap',
+			'viewing.relinkMatched' => ({required Object count}) => '${count} uyğun elementi yenidən bağla',
+			'viewing.relinkAmbiguous' => 'Yoxlama tələb olunur',
+			'viewing.relinkNone' => 'Uyğun fayl tapılmadı',
+			'viewing.clearAudio' => 'Əlavə edilmiş audionu sil',
+			'viewing.keepFrom' => ({required Object time}) => '${time} vaxtından saxla',
+			'viewing.recordNow' => 'İndidən yaz',
 			'livingRoom.fitScreen' => 'Ekranıma uyğunlaşdır',
 			'livingRoom.fitHelp' => 'Kənarı seçin və işarələr görünənədək oxlarla hərəkət etdirin. Bunu hər kənar üçün təkrarlayın.',
 			'livingRoom.left' => 'Sol',
@@ -6114,6 +6144,8 @@ extension on TranslationsAz {
 			'settings.companionRemoteServerStopFailed' => 'Köməkçi pult serveri dayandırıla bilmədi',
 			'settings.autoPip' => 'Avtomatik Pəncərə daxilində Pəncərə (PiP)',
 			'settings.autoPipDescription' => 'Oynatma zamanı tətbiqdən çıxdıqda avtomatik PiP rejiminə keç',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Kadr tezliyini uyğunlaşdır',
 			'settings.matchContentFrameRateDescription' => 'Ekran yenilənmə tezliyini video məzmununa uyğunlaşdır',
 			'settings.matchContentResolution' => 'Məzmunun görüntü keyfiyyətinə uyğunlaş',
@@ -6129,8 +6161,6 @@ extension on TranslationsAz {
 			'settings.audioPassthroughDescription' => 'Dolby/DTS səslərini yenidən kodlamadan TV və ya resiverə göndərir. Səs gəlmirsə söndürün.',
 			'settings.audioPassthroughDescriptionApple' => 'Atmos daxil olmaqla Dolby Digital Plus üçün Apple-ın daxili dekoderini istifadə edin. DTS və TrueHD yenə də çoxkanallı PCM kimi oynadılır. Səs gəlmirsə söndürün.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Atmos daxil olmaqla Dolby Digital Plus üçün Apple-ın daxili Dolby dekoderini istifadə edin. iOS, iPadOS və tvOS 26 və ya daha yeni versiyalarda TrueHD Atmos və DTS:X məkan səsi kimi oynadılır. Digər DTS və TrueHD trekləri çoxkanallı PCM kimi oynadılır. Səs gəlmirsə söndürün.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Səsin gurluğunu normallaşdırma aktivkən söndürülüb',
 			'settings.audioChannelLimit' => 'Səs kanalları',
 			'settings.audioChannelLimitDescription' => 'Bütün kanalları oynada bilməyən dinamiklər, qulaqlıqlar və ya HDMI qurğuları üçün dekodlanmış səsi daha az kanala endir',
@@ -6628,6 +6658,8 @@ extension on TranslationsAz {
 			'tooltips.markAsUnwatched' => 'Baxılmadı olaraq işarələ',
 			'audioTracks.track' => ({required Object n}) => 'Səs zolağı ${n}',
 			'videoControls.audioLabel' => 'Səs',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Altyazı',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Geniş ekran (Letterbox)',
@@ -6643,8 +6675,6 @@ extension on TranslationsAz {
 			'videoControls.stillWatching' => 'Hələ də baxırsınız?',
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds}san sonra fasilə edilir',
 			'videoControls.continueWatching' => 'Davam et',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Növbətini avtomatik oynat',
 			'videoControls.playNext' => 'Növbətini oynat',
 			'videoControls.playButton' => 'Oynat',
@@ -7142,6 +7172,8 @@ extension on TranslationsAz {
 			'errors.pleaseEnterToken' => 'Lütfən token daxil edin',
 			'errors.invalidToken' => 'Yanlış token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Token təsdiqlənə bilmədi: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName} profilinə keçilə bilmədi',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName} profili silinə bilmədi',
 			'errors.failedToRate' => 'Reytinq yenilənə bilmədi',
@@ -7157,8 +7189,6 @@ extension on TranslationsAz {
 			'libraries.title' => 'Kitabxanalar',
 			'libraries.fallbackTitle' => 'Kitabxana',
 			'libraries.scanLibraryFiles' => 'Kitabxana fayllarını skan et',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Kitabxananı skan et',
 			'libraries.analyze' => 'Analiz et',
 			'libraries.analyzeLibrary' => 'Kitabxananı analiz et',
@@ -7656,6 +7686,8 @@ extension on TranslationsAz {
 			'playlists.deleted' => 'Oynatma siyahısı silindi',
 			'playlists.itemAdded' => 'Oynatma siyahısına əlavə edildi',
 			'playlists.itemRemoved' => 'Oynatma siyahısından silindi',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Oynatma siyahısı seç',
 			'playlists.searchPlaylists' => 'Oynatma siyahılarında axtar...',
 			'playlists.errorCreating' => 'Oynatma siyahısı yaradıla bilmədi',
@@ -7671,8 +7703,6 @@ extension on TranslationsAz {
 			'music.addToQueue' => 'Növbəyə əlavə et',
 			'music.discNumber' => ({required Object n}) => 'Disk ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('az'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} mahnı', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} mahnı', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'İndi oynadılır',
 			'music.playingFrom' => ({required Object title}) => '${title} mənbəsindən oynadılır',
 			'music.queue' => 'Növbə',
@@ -8170,6 +8200,8 @@ extension on TranslationsAz {
 			'performanceOverlay.dropped' => 'İtirilmiş kadrlar',
 			'performanceOverlay.dvRpus' => 'DV RPU-ları',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU Ort.',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV Nümunə Ort.',
 			'performanceOverlay.maxLuma' => 'Maks Luma',
 			'performanceOverlay.minLuma' => 'Min Luma',
@@ -8185,8 +8217,6 @@ extension on TranslationsAz {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Proqram təminatı',
@@ -8684,6 +8714,8 @@ extension on TranslationsAz {
 			'homeLayout.noPlexRows' => 'Bu kütüphane üçün Plex-managed sıra qayıtılıb.',
 			'homeLayout.openDetails' => 'Açıklama Detayları',
 			'homeLayout.heroCards' => 'Hero kartları',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Bir kahramanın kartı',
 			'homeLayout.tvPlayFocus' => 'Televiziyası: Play düğmesi',
 			'homeLayout.tvPlayFocusDescription' => 'D-Pad aşağı durur, bir sonraki sıraya çıxmadan önce Play düğmesine.',
@@ -8699,8 +8731,6 @@ extension on TranslationsAz {
 			'homeLayout.addHomeRowDescription' => 'Bir kategoriyi seçin; yeni sıra automatik olarak Organizer-a daxil edilir',
 			'homeLayout.removeRow' => 'Rövidini kaldırır',
 			'homeLayout.recentlyAdded' => 'Son əlavə olunanlar',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Son zamanlarda yayımlanan',
 			'homeLayout.movieCollections' => 'Film Koleksiya',
 			'homeLayout.showCollections' => 'Koleksiya göstərişi',
@@ -9198,6 +9228,8 @@ extension on TranslationsAz {
 			'audiobook.recoveryImported' => 'İtraf verileri birləşmişdir.',
 			'sourceSetup.bookorbitHelp' => 'Kitablarına baxmaq və onları oxutmaq üçün öz BookOrbit hesabınızla daxil olun. Çatışmayan başlıqlar üçün sorğular yenə də qoşulmuş SeerrNG instansiyanız vasitəsilə göndərilir.',
 			'sourceSetup.bookorbitOpen' => 'BookOrbit-də aç',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Kitabxana təfərrüatlarını və Pleazyng-in aça bilmədiyi formatları idarə etmək üçün bu başlığı BookOrbit-də açın. Dinləmə irəliləyişi BookOrbit hesabınızla sinxronlaşdırılır.',
 			'sourceSetup.savedCertificate' => 'Yadda saxlanmış server sertifikatı',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export kimi NFS URL-i daxil edin.',
@@ -9213,8 +9245,6 @@ extension on TranslationsAz {
 			'sourceSetup.sshFingerprint' => 'SSH host açarının SHA256 izi',
 			'sourceSetup.sshFingerprintHelp' => 'Server administratoru ilə yoxlayın. Serverdə ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub əmrini işlədin və SHA256 dəyərini istifadə edin.',
 			'sourceSetup.sshFingerprintKeep' => 'Hazırda sabitlənmiş izi saxlamaq üçün boş saxlayın və ya serverin yeni izini daxil edin.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Açıq açarla SSH kimlik təsdiqi',
 			'sourceSetup.sshAuthenticationHelp' => 'İstəyə bağlıdır; şifrə ilə kimlik təsdiqi də dəstəklənir.',
 			'sourceSetup.privateKey' => 'Özəl açar (PEM və ya OpenSSH formatı)',
@@ -9712,6 +9742,8 @@ extension on TranslationsAz {
 			'musicTools.exclusiveOutput' => 'Eksklüziv səs çıxışı',
 			'musicTools.preamp' => 'Ön gücləndirmə',
 			'musicTools.ratingPending' => 'Bu cihazda saxlanıldı; sinxronizasiya gözlənilir',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Mahnı sözlərinin vaxt fərqi',
 			'musicTools.anniversaries' => 'Albomların ildönümləri',
 			'musicTools.outputPreset' => 'Bu çıxış üçün ekvalayzer',
@@ -9727,8 +9759,6 @@ extension on TranslationsAz {
 			'musicTools.sonicAnalysis' => 'Səs analizi',
 			'musicTools.serverAnalysisScope' => 'Bu serverdəki bütün uyğun musiqi kitabxanaları. Onların analiz parametrləri dəyişmir.',
 			'musicTools.serverActivities' => 'Server fəaliyyətləri',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Pleylistə giriş',
 			'musicTools.playlistRecipient' => 'Plex istifadəçi adı və ya e-poçt',
 			'musicTools.playlistSharingHint' => 'Bu pleylistə və treklərinə giriş verin. Alıcı dəvəti qəbul etməli ola bilər.',

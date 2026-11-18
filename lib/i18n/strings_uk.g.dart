@@ -155,6 +155,21 @@ class _Translations$viewing$uk extends Translations$viewing$en {
 	@override String get pairPage => 'Знову поєднати сторінку в розворот';
 	@override String get listenPhone => 'Слухати на цьому телефоні';
 	@override String get audioUnavailable => 'Файл або звукова доріжка недоступні на цьому телефоні.';
+	@override String get guidedPanels => 'Читання за кадрами';
+	@override String get rewind => 'Перемотати назад';
+	@override String get attachAudio => 'Додати аудіофайл';
+	@override String get replaceSoundtrack => 'Замінити звукову доріжку';
+	@override String get mixMovie => 'Змішати з фільмом';
+	@override String get commentaryLevel => 'Гучність коментаря';
+	@override String get movieLevel => 'Гучність фільму';
+	@override String episodeStarts({required Object episode}) => 'Епізод ${episode} починається тут';
+	@override String get locateMovedFolder => 'Знайти переміщену теку';
+	@override String relinkMatched({required Object count}) => 'Знову зв’язати ${count} відповідних записів';
+	@override String get relinkAmbiguous => 'Потребує перевірки';
+	@override String get relinkNone => 'Відповідних файлів не знайдено';
+	@override String get clearAudio => 'Видалити додане аудіо';
+	@override String keepFrom({required Object time}) => 'Зберегти починаючи з ${time}';
+	@override String get recordNow => 'Записувати відтепер';
 }
 
 // Path: livingRoom
@@ -5675,6 +5690,21 @@ extension on TranslationsUk {
 			'viewing.pairPage' => 'Знову поєднати сторінку в розворот',
 			'viewing.listenPhone' => 'Слухати на цьому телефоні',
 			'viewing.audioUnavailable' => 'Файл або звукова доріжка недоступні на цьому телефоні.',
+			'viewing.guidedPanels' => 'Читання за кадрами',
+			'viewing.rewind' => 'Перемотати назад',
+			'viewing.attachAudio' => 'Додати аудіофайл',
+			'viewing.replaceSoundtrack' => 'Замінити звукову доріжку',
+			'viewing.mixMovie' => 'Змішати з фільмом',
+			'viewing.commentaryLevel' => 'Гучність коментаря',
+			'viewing.movieLevel' => 'Гучність фільму',
+			'viewing.episodeStarts' => ({required Object episode}) => 'Епізод ${episode} починається тут',
+			'viewing.locateMovedFolder' => 'Знайти переміщену теку',
+			'viewing.relinkMatched' => ({required Object count}) => 'Знову зв’язати ${count} відповідних записів',
+			'viewing.relinkAmbiguous' => 'Потребує перевірки',
+			'viewing.relinkNone' => 'Відповідних файлів не знайдено',
+			'viewing.clearAudio' => 'Видалити додане аудіо',
+			'viewing.keepFrom' => ({required Object time}) => 'Зберегти починаючи з ${time}',
+			'viewing.recordNow' => 'Записувати відтепер',
 			'livingRoom.fitScreen' => 'Припасувати до мого екрана',
 			'livingRoom.fitHelp' => 'Виберіть край і пересувайте його стрілками, доки не побачите позначки. Повторіть для кожного краю.',
 			'livingRoom.left' => 'Ліворуч',
@@ -6158,6 +6188,8 @@ extension on TranslationsUk {
 			'settings.companionRemoteServerStopFailed' => 'Не можна було зупинити сервер товаришів',
 			'settings.autoPip' => 'Створення Auto Picture-in-Picture',
 			'settings.autoPipDescription' => 'Автоматично введіть зображення в зображення, коли ви покидаєте додаток під час відтворення',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Матч Content Frame Rate',
 			'settings.matchContentFrameRateDescription' => 'Матч показує відновлювальний показ до відеоконтенту',
 			'settings.matchContentResolution' => 'Матч контент резолюція',
@@ -6173,8 +6205,6 @@ extension on TranslationsUk {
 			'settings.audioPassthroughDescription' => 'Надіслати звук Dolby/DTS на ваш приймач або телевізор без перекодування, зберігаючи звук навколо.',
 			'settings.audioPassthroughDescriptionApple' => 'Використовуйте корінний декодер Dolby Apple для Dolby Digital Plus, в тому числі Atmos. DTS і TrueHD все ще грають як багатоканальний PCM.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Використовувати власний декодер Dolby від Apple для Dolby Digital Plus, зокрема Atmos. На iOS, iPadOS і tvOS 26 або новіших TrueHD Atmos та DTS:X відтворюються як просторове аудіо. Інші доріжки DTS і TrueHD відтворюються як багатоканальний PCM. Вимкніть, якщо немає звуку.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Вимкніть, поки звукова нормалізація на',
 			'settings.audioChannelLimit' => 'Аудіоканали',
 			'settings.audioChannelLimitDescription' => 'Змішайте розшифрований аудіо для голосових пристроїв, наушників або налаштувань HDMI, які не можуть грати в будь-який канал',
@@ -6672,6 +6702,8 @@ extension on TranslationsUk {
 			'tooltips.markAsUnwatched' => 'Марк як невідомий',
 			'audioTracks.track' => ({required Object n}) => 'Анонс звуку ${n}',
 			'videoControls.audioLabel' => 'Аудіо',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Субтитри',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Літературний ящик',
@@ -6687,8 +6719,6 @@ extension on TranslationsUk {
 			'videoControls.stillWatching' => 'Чи все ще дивитися?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Позиція в ${seconds}s',
 			'videoControls.continueWatching' => 'Продовжуйте',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Автомобільні наступні',
 			'videoControls.playNext' => 'Наступне',
 			'videoControls.playButton' => 'Грати',
@@ -7186,6 +7216,8 @@ extension on TranslationsUk {
 			'errors.pleaseEnterToken' => 'Будь ласка, введіть токен',
 			'errors.invalidToken' => 'Недійсний токен',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Невідомий токен: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Не вдалося перейти до ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Не вдалося видалити ${displayName}',
 			'errors.failedToRate' => 'Не можна оновити рейтинг',
@@ -7201,8 +7233,6 @@ extension on TranslationsUk {
 			'libraries.title' => 'Медіатеки',
 			'libraries.fallbackTitle' => 'Медіатека',
 			'libraries.scanLibraryFiles' => 'Сканування бібліотечних файлів',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Сканувати медіатеку',
 			'libraries.analyze' => 'Аналіз',
 			'libraries.analyzeLibrary' => 'Аналіз бібліотеки',
@@ -7700,6 +7730,8 @@ extension on TranslationsUk {
 			'playlists.deleted' => 'Завантажити Playlist',
 			'playlists.itemAdded' => 'Додано до Playlist',
 			'playlists.itemRemoved' => 'Вилучено з Playlist',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Виберіть Playlist',
 			'playlists.searchPlaylists' => 'Пошук гравців...',
 			'playlists.errorCreating' => 'Не вдалося створити плей-лист',
@@ -7715,8 +7747,6 @@ extension on TranslationsUk {
 			'music.addToQueue' => 'Додати до ковбасу',
 			'music.discNumber' => ({required Object n}) => 'Диск ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uk'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} композиція', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} композиції', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} композицій', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} композиції', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'Тепер грати',
 			'music.playingFrom' => ({required Object title}) => 'Ігри з ${title}',
 			'music.queue' => 'Квітень',
@@ -8214,6 +8244,8 @@ extension on TranslationsUk {
 			'performanceOverlay.dropped' => 'розбито',
 			'performanceOverlay.dvRpus' => 'ДВ РПУ',
 			'performanceOverlay.dvRpuAverage' => 'ДВ РПУ АВГ',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'ДВ Семп Avg',
 			'performanceOverlay.maxLuma' => 'Макс Люма',
 			'performanceOverlay.minLuma' => 'Мінус Лума',
@@ -8229,8 +8261,6 @@ extension on TranslationsUk {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'Створення NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm Світовий',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'Створення MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Екзотичний HW',
 			'performanceOverlay.decoderSoftware' => 'Програмне забезпечення',
@@ -8728,6 +8758,8 @@ extension on TranslationsUk {
 			'homeLayout.noPlexRows' => 'No Plex-управлені рядки повернулися для цієї бібліотеки.',
 			'homeLayout.openDetails' => 'Відкриті деталі',
 			'homeLayout.heroCards' => 'Герої картки',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Завантажити картку героя',
 			'homeLayout.tvPlayFocus' => 'Телевізор віддалений: підкреслює кнопку Play',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad down зупиняється на кнопці Play, перш ніж перейти до наступного рядка.',
@@ -8743,8 +8775,6 @@ extension on TranslationsUk {
 			'homeLayout.addHomeRowDescription' => 'Виберіть категорію; новий ряд додається до Організатора автоматично',
 			'homeLayout.removeRow' => 'Зняти ряд',
 			'homeLayout.recentlyAdded' => 'Нещодавно додані',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Нещодавно звільнений',
 			'homeLayout.movieCollections' => 'Колекції фільмів',
 			'homeLayout.showCollections' => 'Покажіть колекції',
@@ -9242,6 +9272,8 @@ extension on TranslationsUk {
 			'audiobook.recoveryImported' => 'Відновлення даних поєднуються.',
 			'sourceSetup.bookorbitHelp' => 'Увійдіть у власний обліковий запис BookOrbit, щоб переглядати й відтворювати свої книжки. Запити на відсутні книжки й надалі надсилатимуться через підключений екземпляр SeerrNG.',
 			'sourceSetup.bookorbitOpen' => 'Відкрити в BookOrbit',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Перегляньте цю книжку в BookOrbit, щоб керувати відомостями бібліотеки та форматами, які Pleazyng не може відкрити. Прогрес прослуховування синхронізується з вашим обліковим записом BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Збережений сертифікат сервера',
 			'sourceSetup.nfsEndpointInvalid' => 'Введіть URL NFS, наприклад nfs://nas:2049/export.',
@@ -9257,8 +9289,6 @@ extension on TranslationsUk {
 			'sourceSetup.sshFingerprint' => 'Відбиток SHA256 ключа хоста SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Звірте його з адміністратором сервера. На сервері виконайте ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub і використайте значення SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Залиште порожнім, щоб зберегти закріплений відбиток, або введіть новий відбиток сервера.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Автентифікація SSH за відкритим ключем',
 			'sourceSetup.sshAuthenticationHelp' => 'Необов’язково; автентифікація за паролем також підтримується.',
 			'sourceSetup.privateKey' => 'Приватний ключ (формат PEM або OpenSSH)',
@@ -9756,6 +9786,8 @@ extension on TranslationsUk {
 			'musicTools.exclusiveOutput' => 'Монопольний аудіовихід',
 			'musicTools.preamp' => 'Попереднє підсилення',
 			'musicTools.ratingPending' => 'Збережено на пристрої; очікує синхронізації',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Зсув тексту пісні',
 			'musicTools.anniversaries' => 'Річниці альбомів',
 			'musicTools.outputPreset' => 'Еквалайзер для цього виходу',
@@ -9771,8 +9803,6 @@ extension on TranslationsUk {
 			'musicTools.sonicAnalysis' => 'Звуковий аналіз',
 			'musicTools.serverAnalysisScope' => 'Усі відповідні музичні бібліотеки на цьому сервері. Їхні налаштування аналізу не змінюються.',
 			'musicTools.serverActivities' => 'Завдання сервера',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Доступ до списку відтворення',
 			'musicTools.playlistRecipient' => 'Ім’я користувача Plex або ел. пошта',
 			'musicTools.playlistSharingHint' => 'Надайте доступ до цього списку та його композицій. Одержувачу може знадобитися прийняти запрошення.',

@@ -646,6 +646,7 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
         generation == _transitionGate.generation &&
         _transitionGate.transition == PlaybackTransition.idle &&
         context.read<ActiveProfileProvider>().activeId == profileId;
+    final repository = context.read<IptvSourceRepository>();
     final programme = _liveTimelineForPosition(currentPlayer.currentPosition).program;
     final window = _freshLiveBuffer;
     double? offset;
@@ -676,13 +677,16 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
           offset = start - fresh.startedAt;
           startedAt = DateTime.fromMillisecondsSinceEpoch((start * 1000).round());
         } else {
-          startedAt = DateTime.now();
+          final fresh = session.captureBuffer;
+          if (fresh == null || fresh.startedAt != window.startedAt) return;
+          offset = (currentPlayer.currentPosition - currentPlayer.timelineOffset).inMilliseconds / 1000.0;
+          offset = offset.clamp(fresh.seekStartSeconds, fresh.seekEndSeconds);
+          startedAt = DateTime.fromMillisecondsSinceEpoch(((fresh.startedAt + offset) * 1000).round());
         }
       }
     }
     final id = const Uuid().v4();
     final title = programme?.displayTitle ?? selectedChannel.displayName;
-    final repository = context.read<IptvSourceRepository>();
     File? partial;
     BufferedIptvCapture? buffered;
     try {

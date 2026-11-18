@@ -211,7 +211,9 @@ class LocalSourceAdapter extends SourceAdapter {
                       mimeType: '',
                       size: stat.size,
                       revision:
-                          relink != null && relink.newRevision == '${stat.modified.microsecondsSinceEpoch}:${stat.size}'
+                          relink != null &&
+                              relink.verified &&
+                              relink.newRevision == '${stat.modified.microsecondsSinceEpoch}:${stat.size}'
                           ? relink.oldRevision
                           : '${stat.modified.microsecondsSinceEpoch}:${stat.size}',
                     ),

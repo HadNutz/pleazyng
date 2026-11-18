@@ -155,6 +155,21 @@ class _Translations$viewing$de extends Translations$viewing$en {
 	@override String get pairPage => 'Diese Seite wieder paaren';
 	@override String get listenPhone => 'Auf diesem Smartphone hören';
 	@override String get audioUnavailable => 'Die Datei oder Tonspur ist auf diesem Smartphone nicht verfügbar.';
+	@override String get guidedPanels => 'Panelweise lesen';
+	@override String get rewind => 'Zurückspulen';
+	@override String get attachAudio => 'Audiodatei hinzufügen';
+	@override String get replaceSoundtrack => 'Tonspur ersetzen';
+	@override String get mixMovie => 'Mit Film mischen';
+	@override String get commentaryLevel => 'Kommentarlautstärke';
+	@override String get movieLevel => 'Filmlautstärke';
+	@override String episodeStarts({required Object episode}) => 'Folge ${episode} beginnt hier';
+	@override String get locateMovedFolder => 'Verschobenen Ordner suchen';
+	@override String relinkMatched({required Object count}) => '${count} passende Einträge neu verknüpfen';
+	@override String get relinkAmbiguous => 'Prüfung erforderlich';
+	@override String get relinkNone => 'Keine passenden Dateien gefunden';
+	@override String get clearAudio => 'Hinzugefügtes Audio entfernen';
+	@override String keepFrom({required Object time}) => 'Ab ${time} behalten';
+	@override String get recordNow => 'Ab jetzt aufnehmen';
 }
 
 // Path: livingRoom
@@ -5631,6 +5646,21 @@ extension on TranslationsDe {
 			'viewing.pairPage' => 'Diese Seite wieder paaren',
 			'viewing.listenPhone' => 'Auf diesem Smartphone hören',
 			'viewing.audioUnavailable' => 'Die Datei oder Tonspur ist auf diesem Smartphone nicht verfügbar.',
+			'viewing.guidedPanels' => 'Panelweise lesen',
+			'viewing.rewind' => 'Zurückspulen',
+			'viewing.attachAudio' => 'Audiodatei hinzufügen',
+			'viewing.replaceSoundtrack' => 'Tonspur ersetzen',
+			'viewing.mixMovie' => 'Mit Film mischen',
+			'viewing.commentaryLevel' => 'Kommentarlautstärke',
+			'viewing.movieLevel' => 'Filmlautstärke',
+			'viewing.episodeStarts' => ({required Object episode}) => 'Folge ${episode} beginnt hier',
+			'viewing.locateMovedFolder' => 'Verschobenen Ordner suchen',
+			'viewing.relinkMatched' => ({required Object count}) => '${count} passende Einträge neu verknüpfen',
+			'viewing.relinkAmbiguous' => 'Prüfung erforderlich',
+			'viewing.relinkNone' => 'Keine passenden Dateien gefunden',
+			'viewing.clearAudio' => 'Hinzugefügtes Audio entfernen',
+			'viewing.keepFrom' => ({required Object time}) => 'Ab ${time} behalten',
+			'viewing.recordNow' => 'Ab jetzt aufnehmen',
 			'livingRoom.fitScreen' => 'An meinen Bildschirm anpassen',
 			'livingRoom.fitHelp' => 'Wähle einen Rand und verschiebe ihn mit den Pfeiltasten, bis seine Markierungen sichtbar sind. Wiederhole das für jeden Rand.',
 			'livingRoom.left' => 'Links',
@@ -6114,6 +6144,8 @@ extension on TranslationsDe {
 			'settings.companionRemoteServerStopFailed' => 'Companion-Fernbedienungsserver konnte nicht gestoppt werden',
 			'settings.autoPip' => 'Automatisches Bild-in-Bild',
 			'settings.autoPipDescription' => 'Beim Verlassen der App während der Wiedergabe automatisch Bild-in-Bild starten',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Inhalts-Bildrate anpassen',
 			'settings.matchContentFrameRateDescription' => 'Bildwiederholrate des Displays an Videoinhalt anpassen',
 			'settings.matchContentResolution' => 'An Auflösung des Inhalts anpassen',
@@ -6129,8 +6161,6 @@ extension on TranslationsDe {
 			'settings.audioPassthroughDescription' => 'Dolby/DTS-Audio ohne Neukodierung an deinen Receiver oder Fernseher senden und Surround-Sound erhalten. Deaktivieren, wenn kein Ton zu hören ist.',
 			'settings.audioPassthroughDescriptionApple' => 'Apples nativen Dolby-Decoder für Dolby Digital Plus einschließlich Atmos verwenden. DTS und TrueHD werden weiterhin als Mehrkanal-PCM wiedergegeben. Deaktivieren, wenn kein Ton zu hören ist.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Apples nativen Dolby-Decoder für Dolby Digital Plus einschließlich Atmos verwenden. Unter iOS, iPadOS und tvOS 26 oder neuer werden TrueHD Atmos und DTS:X als 3D-Audio wiedergegeben. Andere DTS- und TrueHD-Spuren werden als Mehrkanal-PCM wiedergegeben. Deaktivieren, wenn kein Ton zu hören ist.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Aus, solange die Lautstärkenormalisierung aktiv ist',
 			'settings.audioChannelLimit' => 'Audiokanäle',
 			'settings.audioChannelLimitDescription' => 'Dekodierten Ton für Lautsprecher, Kopfhörer oder HDMI-Setups heruntermischen, die nicht alle Kanäle wiedergeben können',
@@ -6628,6 +6658,8 @@ extension on TranslationsDe {
 			'tooltips.markAsUnwatched' => 'Als ungesehen markieren',
 			'audioTracks.track' => ({required Object n}) => 'Audiospur ${n}',
 			'videoControls.audioLabel' => 'Audio',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Untertitel',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Letterbox',
@@ -6643,8 +6675,6 @@ extension on TranslationsDe {
 			'videoControls.stillWatching' => 'Schaust du noch?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pause in ${seconds}s',
 			'videoControls.continueWatching' => 'Weiter',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Nächstes automatisch abspielen',
 			'videoControls.playNext' => 'Nächstes abspielen',
 			'videoControls.playButton' => 'Abspielen',
@@ -7142,6 +7172,8 @@ extension on TranslationsDe {
 			'errors.pleaseEnterToken' => 'Bitte Token eingeben',
 			'errors.invalidToken' => 'Ungültiges Token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Token-Verifizierung fehlgeschlagen: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Profilwechsel zu ${displayName} fehlgeschlagen',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Löschen von ${displayName} fehlgeschlagen',
 			'errors.failedToRate' => 'Bewertung konnte nicht aktualisiert werden',
@@ -7157,8 +7189,6 @@ extension on TranslationsDe {
 			'libraries.title' => 'Mediatheken',
 			'libraries.fallbackTitle' => 'Mediathek',
 			'libraries.scanLibraryFiles' => 'Mediatheksdateien scannen',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Mediathek scannen',
 			'libraries.analyze' => 'Analysieren',
 			'libraries.analyzeLibrary' => 'Mediathek analysieren',
@@ -7656,6 +7686,8 @@ extension on TranslationsDe {
 			'playlists.deleted' => 'Wiedergabeliste gelöscht',
 			'playlists.itemAdded' => 'Zur Wiedergabeliste hinzugefügt',
 			'playlists.itemRemoved' => 'Aus Wiedergabeliste entfernt',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Wiedergabeliste auswählen',
 			'playlists.searchPlaylists' => 'Wiedergabelisten durchsuchen...',
 			'playlists.errorCreating' => 'Wiedergabeliste konnte nicht erstellt werden',
@@ -7671,8 +7703,6 @@ extension on TranslationsDe {
 			'music.addToQueue' => 'Zur Warteschlange hinzufügen',
 			'music.discNumber' => ({required Object n}) => 'Disc ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('de'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} Titel', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} Titel', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'Wird wiedergegeben',
 			'music.playingFrom' => ({required Object title}) => 'Wiedergabe von ${title}',
 			'music.queue' => 'Warteschlange',
@@ -8170,6 +8200,8 @@ extension on TranslationsDe {
 			'performanceOverlay.dropped' => 'Verworfen',
 			'performanceOverlay.dvRpus' => 'DV-RPUs',
 			'performanceOverlay.dvRpuAverage' => 'DV-RPU Ø',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV-Sample Ø',
 			'performanceOverlay.maxLuma' => 'Max. Luma',
 			'performanceOverlay.minLuma' => 'Min. Luma',
@@ -8185,8 +8217,6 @@ extension on TranslationsDe {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Software',
@@ -8684,6 +8714,8 @@ extension on TranslationsDe {
 			'homeLayout.noPlexRows' => 'Nr. Plex-verwaltete Zeilen zurückkehren für diese Bibliothek.',
 			'homeLayout.openDetails' => 'Offene Details',
 			'homeLayout.heroCards' => 'Hero Karten',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Ein Hero-Karte zu schlagen',
 			'homeLayout.tvPlayFocus' => 'Fernseher: Highlight Play-Button',
 			'homeLayout.tvPlayFocusDescription' => 'D-Pad Down stoppt auf der Play-Taste, bevor Sie in die nächste Reihe gehen.',
@@ -8699,8 +8731,6 @@ extension on TranslationsDe {
 			'homeLayout.addHomeRowDescription' => 'Wählen Sie eine Kategorie aus; die neue Reihe wird automatisch an den Organizer hinzugefügt',
 			'homeLayout.removeRow' => 'Rückschluss entfernen',
 			'homeLayout.recentlyAdded' => 'Kürzlich hinzugefügt',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'kürzlich veröffentlicht',
 			'homeLayout.movieCollections' => 'Filmkollektionen',
 			'homeLayout.showCollections' => 'Show Kollektionen',
@@ -9198,6 +9228,8 @@ extension on TranslationsDe {
 			'audiobook.recoveryImported' => 'Wiederherstellungsdaten sind zusammengefasst.',
 			'sourceSetup.bookorbitHelp' => 'Melde dich mit deinem eigenen BookOrbit-Konto an, um die Bücher zu durchstöbern und abzuspielen. Anfragen für fehlende Titel laufen weiterhin über deine verbundene SeerrNG-Instanz.',
 			'sourceSetup.bookorbitOpen' => 'In BookOrbit öffnen',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Rufe diesen Titel in BookOrbit auf, um Bibliotheksdetails und Formate zu verwalten, die Pleazyng nicht öffnen kann. Der Hörfortschritt wird mit deinem BookOrbit-Konto synchronisiert.',
 			'sourceSetup.savedCertificate' => 'Gespeichertes Serverzertifikat',
 			'sourceSetup.nfsEndpointInvalid' => 'Gib eine NFS-URL wie nfs://nas:2049/export ein.',
@@ -9213,8 +9245,6 @@ extension on TranslationsDe {
 			'sourceSetup.sshFingerprint' => 'SHA256-Fingerabdruck des SSH-Hostschlüssels',
 			'sourceSetup.sshFingerprintHelp' => 'Prüfe ihn mit dem Serveradministrator. Führe auf dem Server ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub aus und verwende den SHA256-Wert.',
 			'sourceSetup.sshFingerprintKeep' => 'Leer lassen, um den aktuell festgelegten Fingerabdruck beizubehalten, oder einen neuen Serverfingerabdruck eingeben.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH-Authentifizierung mit öffentlichem Schlüssel',
 			'sourceSetup.sshAuthenticationHelp' => 'Optional; die Authentifizierung mit Passwort wird ebenfalls unterstützt.',
 			'sourceSetup.privateKey' => 'Privater Schlüssel (PEM- oder OpenSSH-Format)',
@@ -9712,6 +9742,8 @@ extension on TranslationsDe {
 			'musicTools.exclusiveOutput' => 'Exklusive Audioausgabe',
 			'musicTools.preamp' => 'Vorverstärkung',
 			'musicTools.ratingPending' => 'Auf diesem Gerät gespeichert; Synchronisierung ausstehend',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Zeitversatz der Liedtexte',
 			'musicTools.anniversaries' => 'Albumjubiläen',
 			'musicTools.outputPreset' => 'EQ für diesen Ausgang',
@@ -9727,8 +9759,6 @@ extension on TranslationsDe {
 			'musicTools.sonicAnalysis' => 'Klanganalyse',
 			'musicTools.serverAnalysisScope' => 'Alle geeigneten Musikbibliotheken auf diesem Server. Ihre Analyseeinstellungen werden nicht geändert.',
 			'musicTools.serverActivities' => 'Serveraktivitäten',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Playlist-Zugriff',
 			'musicTools.playlistRecipient' => 'Plex-Benutzername oder E-Mail',
 			'musicTools.playlistSharingHint' => 'Zugriff auf diese Playlist und ihre Titel gewähren. Der Empfänger muss eventuell eine Einladung annehmen.',

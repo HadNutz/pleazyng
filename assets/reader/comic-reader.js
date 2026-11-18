@@ -1,4 +1,4 @@
-import {comicTurns, comicLocator, parseComicLocator} from './comic-layout.js';
+import {comicTurns, comicLocator, parseComicLocator, comicPanelBounds} from './comic-layout.js';
 
 // The existing reader shell owns chrome, localization, notes and persistence.
 // This element owns image layout and keeps only nearby images resident.
@@ -150,7 +150,8 @@ export class ComicReader extends HTMLElement {
         }else{
             const turn=this.turns()[this.currentTurn()];
             const item=turn[0], page=this.pages[item.index];
-            const frame = !this.overview && item.panel!==undefined ? page.frames[item.panel] : null;
+            this.panel=item.panel;
+            const frame = !this.overview && item.panel!==undefined ? comicPanelBounds(page,item.panel) : null;
             if(frame) {
                 const [x,y,right,bottom]=frame, width=right-x, height=bottom-y;
                 const scale=Math.min(this.clientWidth/width,this.clientHeight/height);
@@ -278,6 +279,7 @@ export class ComicReader extends HTMLElement {
         if(e.target.closest('button') || e.altKey)return;
         let action;
         if((e.ctrlKey||e.metaKey)&&['+','=','-','0'].includes(e.key))action=()=>this.zoom(e.key==='0'?'fit-page':e.key==='-'?'out':'in');
+        else if(e.key==='Enter'&&this.settings.comicMode==='panels')action=()=>{this.overview=!this.overview;this.render();};
         else if(e.key==='Home')action=()=>this.page(1);
         else if(e.key==='End')action=()=>this.page(this.pages.length);
         else if(e.key==='PageDown'||e.key===' ')action=()=>this.settings.comicMode==='webtoon'?this.pan({y:this.clientHeight*.9}):e.shiftKey?this.prev():this.next();

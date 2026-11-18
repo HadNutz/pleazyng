@@ -93,6 +93,7 @@ extension _VideoPlayerEpisodeQueueMethods on VideoPlayerScreenState {
               // entries of a Plex multi-episode file (#1500). MediaSourceInfo
               // carries the Plex numeric part id; MediaPart.id is its string form.
               playedPartId: _currentMediaInfo?.partId?.toString(),
+              boundedEpisodes: _boundedEpisodeNumbers,
             );
       _commitAdjacentEpisodes(targetMetadata, adjacentEpisodes, attempt);
     } catch (e, st) {
@@ -126,8 +127,18 @@ extension _VideoPlayerEpisodeQueueMethods on VideoPlayerScreenState {
       // Same-file siblings are skipped by file-path intersection of the
       // stored metadata (#1500) — offline media info doesn't carry the
       // server part id, so the helpers compare the items' own parts.
-      final previous = previousEpisodeSkippingSameFile(sorted, currentIdx);
-      final next = nextEpisodeSkippingSameFile(sorted, currentIdx);
+      MediaItem? mapped(int i) {
+        final item = sorted.elementAtOrNull(i);
+        return item != null &&
+                metadata.sharesFileWith(item) &&
+                item.parentId == metadata.parentId &&
+                _boundedEpisodeNumbers.contains(item.index)
+            ? item
+            : null;
+      }
+
+      final previous = mapped(currentIdx - 1) ?? previousEpisodeSkippingSameFile(sorted, currentIdx);
+      final next = mapped(currentIdx + 1) ?? nextEpisodeSkippingSameFile(sorted, currentIdx);
       return AdjacentEpisodes(
         next: next,
         previous: previous,

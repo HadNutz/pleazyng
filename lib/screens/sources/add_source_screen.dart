@@ -65,7 +65,7 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
     final epoch = controller.generation;
     try {
       final entries = await controller.repository.entries(source.profileId, source: source.id);
-      final folders = <String>{};
+      final folders = <String>{'.'};
       for (final entry in entries.where((e) => e.files.isNotEmpty)) {
         var folder = p.dirname(entry.id);
         while (folder != '.' && folder.isNotEmpty && p.dirname(folder) != folder) {
@@ -141,7 +141,10 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
         all.removeWhere((_, old) => old.path == r.path);
         all[r.id] = r;
       }
-      setState(() => _fileRelinks = jsonEncode(all.values.map((r) => r.toJson()).toList()));
+      setState(() {
+        _fileRelinks = jsonEncode(all.values.map((r) => r.toJson()).toList());
+        if (path != source.root && !p.isWithin(source.root, path)) field('root').text = path;
+      });
     } catch (error) {
       if (mounted) setState(() => _error = error);
     }
@@ -506,7 +509,7 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
         root: field('root').text.trim(),
         options: {
           ...preservedOptions,
-          if (_fileRelinks != null) 'fileRelinks': _fileRelinks!,
+          'fileRelinks': ?_fileRelinks,
           'allowHttp': '${_kind != FileSourceKind.smb && _allowHttp}',
           if (_kind == FileSourceKind.smb) 'encryptSmb': '$_encryptSmb',
           'shelves': _shelves.map((s) => s.name).join(','),

@@ -13,6 +13,7 @@ const root = resolve(__dirname, '../..');
 const env = {...process.env, PLEZY_PLAYWRIGHT_PATH: playwrightPath, PLEZY_CHROME_PATH: chrome};
 for (const [command, args] of [
   [process.execPath, ['--test', 'test/sources/fixtures/comic_layout.test.mjs']],
+  [process.execPath, ['test/sources/fixtures/guided_panels_browser.cjs']],
   [process.platform === 'win32' ? 'flutter.bat' : 'flutter', ['test', '--no-pub', 'test/sources/publication_browser_test.dart']],
 ]) {
   const result = spawnSync(command, args, {cwd: root, env, stdio: 'inherit', timeout: 240000});

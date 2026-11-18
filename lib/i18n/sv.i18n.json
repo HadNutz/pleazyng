@@ -15,7 +15,22 @@
     "soloPage": "Visa sidan separat",
     "pairPage": "Para ihop sidan igen",
     "listenPhone": "Lyssna på den här telefonen",
-    "audioUnavailable": "Filen eller ljudspåret är inte tillgängligt på den här telefonen."
+    "audioUnavailable": "Filen eller ljudspåret är inte tillgängligt på den här telefonen.",
+    "guidedPanels": "Läs ruta för ruta",
+    "rewind": "Spola tillbaka",
+    "attachAudio": "Lägg till ljudfil",
+    "replaceSoundtrack": "Ersätt ljudspår",
+    "mixMovie": "Blanda med filmen",
+    "commentaryLevel": "Kommentarvolym",
+    "movieLevel": "Filmvolym",
+    "episodeStarts": "Avsnitt ${episode} börjar här",
+    "locateMovedFolder": "Hitta flyttad mapp",
+    "relinkMatched": "Återanslut ${count} matchande poster",
+    "relinkAmbiguous": "Behöver granskas",
+    "relinkNone": "Inga matchande filer hittades",
+    "clearAudio": "Ta bort tillagt ljud",
+    "keepFrom": "Behåll från ${time}",
+    "recordNow": "Spela in från nu"
   },
   "livingRoom": {
     "fitScreen": "Anpassa till min skärm",

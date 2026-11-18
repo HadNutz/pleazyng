@@ -15,7 +15,22 @@
     "soloPage": "单独显示此页",
     "pairPage": "重新配对此页",
     "listenPhone": "在此手机上收听",
-    "audioUnavailable": "此手机无法播放当前文件或音轨。"
+    "audioUnavailable": "此手机无法播放当前文件或音轨。",
+    "guidedPanels": "逐格阅读",
+    "rewind": "倒带",
+    "attachAudio": "添加音频文件",
+    "replaceSoundtrack": "替换音轨",
+    "mixMovie": "与电影混音",
+    "commentaryLevel": "解说音量",
+    "movieLevel": "电影音量",
+    "episodeStarts": "第 ${episode} 集从此处开始",
+    "locateMovedFolder": "查找已移动的文件夹",
+    "relinkMatched": "重新关联 ${count} 个匹配条目",
+    "relinkAmbiguous": "需要检查",
+    "relinkNone": "未找到匹配文件",
+    "clearAudio": "移除已添加的音频",
+    "keepFrom": "从 ${time} 开始保留",
+    "recordNow": "从现在开始录制"
   },
   "livingRoom": {
     "fitScreen": "适配我的屏幕",

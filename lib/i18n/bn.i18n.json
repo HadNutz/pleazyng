@@ -15,7 +15,22 @@
     "soloPage": "এই পৃষ্ঠাটি আলাদা দেখান",
     "pairPage": "এই পৃষ্ঠাটি আবার জোড়া দিন",
     "listenPhone": "এই ফোনে শুনুন",
-    "audioUnavailable": "এই ফোনে ফাইল বা অডিও ট্র্যাকটি উপলব্ধ নেই।"
+    "audioUnavailable": "এই ফোনে ফাইল বা অডিও ট্র্যাকটি উপলব্ধ নেই।",
+    "guidedPanels": "প্যানেল ধরে পড়ুন",
+    "rewind": "পেছনে যান",
+    "attachAudio": "অডিও ফাইল যোগ করুন",
+    "replaceSoundtrack": "সাউন্ডট্র্যাক বদলান",
+    "mixMovie": "সিনেমার সঙ্গে মেশান",
+    "commentaryLevel": "ধারাভাষ্যের শব্দমাত্রা",
+    "movieLevel": "সিনেমার শব্দমাত্রা",
+    "episodeStarts": "পর্ব ${episode} এখানে শুরু হয়",
+    "locateMovedFolder": "সরানো ফোল্ডার খুঁজুন",
+    "relinkMatched": "${count}টি মিলে যাওয়া এন্ট্রি পুনরায় যুক্ত করুন",
+    "relinkAmbiguous": "পর্যালোচনা প্রয়োজন",
+    "relinkNone": "মিলে যাওয়া ফাইল পাওয়া যায়নি",
+    "clearAudio": "যুক্ত অডিও সরান",
+    "keepFrom": "${time} থেকে রাখুন",
+    "recordNow": "এখন থেকে রেকর্ড করুন"
   },
   "livingRoom": {
     "fitScreen": "আমার পর্দার সঙ্গে মেলান",

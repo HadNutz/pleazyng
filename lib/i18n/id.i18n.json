@@ -15,7 +15,22 @@
     "soloPage": "Tampilkan halaman ini sendiri",
     "pairPage": "Pasangkan kembali halaman ini",
     "listenPhone": "Dengarkan di ponsel ini",
-    "audioUnavailable": "Berkas atau trek audio tidak tersedia di ponsel ini."
+    "audioUnavailable": "Berkas atau trek audio tidak tersedia di ponsel ini.",
+    "guidedPanels": "Baca per panel",
+    "rewind": "Putar mundur",
+    "attachAudio": "Tambahkan berkas audio",
+    "replaceSoundtrack": "Ganti trek suara",
+    "mixMovie": "Campur dengan film",
+    "commentaryLevel": "Volume komentar",
+    "movieLevel": "Volume film",
+    "episodeStarts": "Episode ${episode} dimulai di sini",
+    "locateMovedFolder": "Cari folder yang dipindahkan",
+    "relinkMatched": "Hubungkan kembali ${count} entri yang cocok",
+    "relinkAmbiguous": "Perlu ditinjau",
+    "relinkNone": "Tidak ada berkas yang cocok",
+    "clearAudio": "Hapus audio tambahan",
+    "keepFrom": "Simpan mulai ${time}",
+    "recordNow": "Rekam mulai sekarang"
   },
   "livingRoom": {
     "fitScreen": "Sesuaikan dengan layar saya",

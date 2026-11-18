@@ -154,7 +154,7 @@ class ComicDocument {
     final embedded = <String, String>{};
     final pages = <ComicPage>[];
     final cover = info?.getElement('coverpage');
-    for (final node in [if (cover != null) cover, ...body.findElements('page')]) {
+    for (final node in [?cover, ...body.findElements('page')]) {
       if (pages.length >= 10000) return null;
       final href = node.getElement('image')?.attributes.where((a) => a.name.local == 'href').firstOrNull?.value;
       if (href == null) return null;

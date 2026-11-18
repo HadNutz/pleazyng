@@ -155,6 +155,21 @@ class _Translations$viewing$bg extends Translations$viewing$en {
 	@override String get pairPage => 'Повторно сдвояване на страницата';
 	@override String get listenPhone => 'Слушане на този телефон';
 	@override String get audioUnavailable => 'Файлът или звуковата пътека не са достъпни на този телефон.';
+	@override String get guidedPanels => 'Преглед по панели';
+	@override String get rewind => 'Превъртане назад';
+	@override String get attachAudio => 'Добавяне на аудиофайл';
+	@override String get replaceSoundtrack => 'Замяна на звуковата пътека';
+	@override String get mixMovie => 'Смесване с филма';
+	@override String get commentaryLevel => 'Сила на коментара';
+	@override String get movieLevel => 'Сила на звука на филма';
+	@override String episodeStarts({required Object episode}) => 'Епизод ${episode} започва тук';
+	@override String get locateMovedFolder => 'Намиране на преместена папка';
+	@override String relinkMatched({required Object count}) => 'Свързване отново на ${count} съвпадащи записа';
+	@override String get relinkAmbiguous => 'Нуждае се от преглед';
+	@override String get relinkNone => 'Няма намерени съвпадащи файлове';
+	@override String get clearAudio => 'Премахване на добавеното аудио';
+	@override String keepFrom({required Object time}) => 'Запазване от ${time}';
+	@override String get recordNow => 'Запис от сега';
 }
 
 // Path: livingRoom
@@ -5631,6 +5646,21 @@ extension on TranslationsBg {
 			'viewing.pairPage' => 'Повторно сдвояване на страницата',
 			'viewing.listenPhone' => 'Слушане на този телефон',
 			'viewing.audioUnavailable' => 'Файлът или звуковата пътека не са достъпни на този телефон.',
+			'viewing.guidedPanels' => 'Преглед по панели',
+			'viewing.rewind' => 'Превъртане назад',
+			'viewing.attachAudio' => 'Добавяне на аудиофайл',
+			'viewing.replaceSoundtrack' => 'Замяна на звуковата пътека',
+			'viewing.mixMovie' => 'Смесване с филма',
+			'viewing.commentaryLevel' => 'Сила на коментара',
+			'viewing.movieLevel' => 'Сила на звука на филма',
+			'viewing.episodeStarts' => ({required Object episode}) => 'Епизод ${episode} започва тук',
+			'viewing.locateMovedFolder' => 'Намиране на преместена папка',
+			'viewing.relinkMatched' => ({required Object count}) => 'Свързване отново на ${count} съвпадащи записа',
+			'viewing.relinkAmbiguous' => 'Нуждае се от преглед',
+			'viewing.relinkNone' => 'Няма намерени съвпадащи файлове',
+			'viewing.clearAudio' => 'Премахване на добавеното аудио',
+			'viewing.keepFrom' => ({required Object time}) => 'Запазване от ${time}',
+			'viewing.recordNow' => 'Запис от сега',
 			'livingRoom.fitScreen' => 'Побиране в моя екран',
 			'livingRoom.fitHelp' => 'Изберете ръб и го местете със стрелките, докато видите маркерите. Повторете за всеки ръб.',
 			'livingRoom.left' => 'Ляво',
@@ -6114,6 +6144,8 @@ extension on TranslationsBg {
 			'settings.companionRemoteServerStopFailed' => 'Сървърът за дистанционно управление не можа да бъде спрян',
 			'settings.autoPip' => 'Автоматичен режим картина в картината',
 			'settings.autoPipDescription' => 'Автоматично включвай режима картина в картината при излизане от приложението по време на възпроизвеждане',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Напасване към кадровата честота на съдържанието',
 			'settings.matchContentFrameRateDescription' => 'Напасни честотата на опресняване на дисплея към видео съдържанието',
 			'settings.matchContentResolution' => 'Съобразяване с разделителната способност на съдържанието',
@@ -6129,8 +6161,6 @@ extension on TranslationsBg {
 			'settings.audioPassthroughDescription' => 'Изпращай Dolby/DTS звук към приемника или телевизора без прекодиране, за да запазиш съраунд звука. Изключи настройката, ако няма звук.',
 			'settings.audioPassthroughDescriptionApple' => 'Използвай вградения декодер на Apple за Dolby Digital Plus, включително Atmos. DTS и TrueHD продължават да се възпроизвеждат като многоканален PCM. Изключи настройката, ако няма звук.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Използвай вградения декодер на Apple за Dolby Digital Plus, включително Atmos. На iOS, iPadOS и tvOS 26 или по-нова версия TrueHD Atmos и DTS:X се възпроизвеждат като пространствено аудио. Останалите DTS и TrueHD пътечки се възпроизвеждат като многоканален PCM. Изключи настройката, ако няма звук.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Изключено, докато е включено нормализирането на силата на звука',
 			'settings.audioChannelLimit' => 'Аудио канали',
 			'settings.audioChannelLimitDescription' => 'Смесва декодираното аудио до по-малко канали за тонколони, слушалки или HDMI системи, които не могат да възпроизвеждат всички канали',
@@ -6628,6 +6658,8 @@ extension on TranslationsBg {
 			'tooltips.markAsUnwatched' => 'Маркирай като негледано',
 			'audioTracks.track' => ({required Object n}) => 'Аудиопътечка ${n}',
 			'videoControls.audioLabel' => 'Аудио',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Субтитри',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Черни ленти',
@@ -6643,8 +6675,6 @@ extension on TranslationsBg {
 			'videoControls.stillWatching' => 'Още ли гледате?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Пауза след ${seconds} сек.',
 			'videoControls.continueWatching' => 'Продължи',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Автоматично пусни следващото',
 			'videoControls.playNext' => 'Пусни следващото',
 			'videoControls.playButton' => 'Пусни',
@@ -7142,6 +7172,8 @@ extension on TranslationsBg {
 			'errors.pleaseEnterToken' => 'Моля, въведете токен',
 			'errors.invalidToken' => 'Невалиден токен',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Неуспешна проверка на токена: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Неуспешна смяна към ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Неуспешно изтриване на ${displayName}',
 			'errors.failedToRate' => 'Оценката не можа да бъде обновена',
@@ -7157,8 +7189,6 @@ extension on TranslationsBg {
 			'libraries.title' => 'Библиотеки',
 			'libraries.fallbackTitle' => 'Библиотека',
 			'libraries.scanLibraryFiles' => 'Сканирай файловете на библиотеката',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Сканирай библиотеката',
 			'libraries.analyze' => 'Анализирай',
 			'libraries.analyzeLibrary' => 'Анализирай библиотеката',
@@ -7656,6 +7686,8 @@ extension on TranslationsBg {
 			'playlists.deleted' => 'Плейлистът е изтрит',
 			'playlists.itemAdded' => 'Добавено към плейлист',
 			'playlists.itemRemoved' => 'Премахнато от плейлист',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Избери плейлист',
 			'playlists.searchPlaylists' => 'Търсене в плейлисти...',
 			'playlists.errorCreating' => 'Неуспешно създаване на плейлист',
@@ -7671,8 +7703,6 @@ extension on TranslationsBg {
 			'music.addToQueue' => 'Добави към опашката',
 			'music.discNumber' => ({required Object n}) => 'Диск ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bg'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} песен', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} песни', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'Сега се възпроизвежда',
 			'music.playingFrom' => ({required Object title}) => 'Възпроизвеждане от ${title}',
 			'music.queue' => 'Опашка',
@@ -8170,6 +8200,8 @@ extension on TranslationsBg {
 			'performanceOverlay.dropped' => 'Пропуснати кадри',
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'Средно DV RPU',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'Средно DV семпл',
 			'performanceOverlay.maxLuma' => 'Макс. яркост',
 			'performanceOverlay.minLuma' => 'Мин. яркост',
@@ -8185,8 +8217,6 @@ extension on TranslationsBg {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Софтуерен',
@@ -8684,6 +8714,8 @@ extension on TranslationsBg {
 			'homeLayout.noPlexRows' => 'No Plex управлявани редове се връщат за тази библиотека.',
 			'homeLayout.openDetails' => 'Отворени детайли',
 			'homeLayout.heroCards' => 'Герои карти',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Изтегляне на карта на герой',
 			'homeLayout.tvPlayFocus' => 'Телевизия от разстояние: бутон за игра',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad надолу спира върху бутона Play преди да се движи към следващия ред. Отпътуване на корабите директно към следващия рейтинг.',
@@ -8699,8 +8731,6 @@ extension on TranslationsBg {
 			'homeLayout.addHomeRowDescription' => 'Изберете категория; новата линия се добавя към Организатор автоматично',
 			'homeLayout.removeRow' => 'Изтриване на ред',
 			'homeLayout.recentlyAdded' => 'Наскоро добавени',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Неотдавна освободени',
 			'homeLayout.movieCollections' => 'Филмови колекции',
 			'homeLayout.showCollections' => 'Покажи колекции',
@@ -9198,6 +9228,8 @@ extension on TranslationsBg {
 			'audiobook.recoveryImported' => 'Данните за възстановяване се сливат.',
 			'sourceSetup.bookorbitHelp' => 'Влезте със собствения си акаунт в BookOrbit, за да разглеждате и четете книгите му. Заявките за липсващи заглавия продължават да минават през свързания ви екземпляр на SeerrNG.',
 			'sourceSetup.bookorbitOpen' => 'Отвори в BookOrbit',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Прегледайте това заглавие в BookOrbit, за да управлявате подробностите за библиотеката и форматите, които Pleazyng не може да отвори. Напредъкът при слушане се синхронизира с акаунта ви в BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Запазен сертификат на сървъра',
 			'sourceSetup.nfsEndpointInvalid' => 'Въведете NFS URL, например nfs://nas:2049/export.',
@@ -9213,8 +9245,6 @@ extension on TranslationsBg {
 			'sourceSetup.sshFingerprint' => 'SHA256 отпечатък на SSH ключа на хоста',
 			'sourceSetup.sshFingerprintHelp' => 'Проверете го с администратора на сървъра. На сървъра изпълнете ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub и използвайте стойността SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Оставете празно, за да запазите фиксирания отпечатък, или въведете нов отпечатък на сървъра.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH удостоверяване с публичен ключ',
 			'sourceSetup.sshAuthenticationHelp' => 'Незадължително; поддържа се и удостоверяване с парола.',
 			'sourceSetup.privateKey' => 'Частен ключ (формат PEM или OpenSSH)',
@@ -9712,6 +9742,8 @@ extension on TranslationsBg {
 			'musicTools.exclusiveOutput' => 'Изключителен аудиоизход',
 			'musicTools.preamp' => 'Предусилване',
 			'musicTools.ratingPending' => 'Запазено на това устройство; чака синхронизиране',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Отместване на текста',
 			'musicTools.anniversaries' => 'Годишнини на албуми',
 			'musicTools.outputPreset' => 'Еквалайзер за този изход',
@@ -9727,8 +9759,6 @@ extension on TranslationsBg {
 			'musicTools.sonicAnalysis' => 'Звуков анализ',
 			'musicTools.serverAnalysisScope' => 'Всички подходящи музикални библиотеки на този сървър. Настройките им за анализ не се променят.',
 			'musicTools.serverActivities' => 'Дейности на сървъра',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Достъп до плейлист',
 			'musicTools.playlistRecipient' => 'Plex потребителско име или имейл',
 			'musicTools.playlistSharingHint' => 'Дайте достъп до този плейлист и песните му. Получателят може да трябва да приеме покана.',

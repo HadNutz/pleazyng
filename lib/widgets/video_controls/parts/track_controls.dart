@@ -174,6 +174,8 @@ extension _PlexVideoControlsTrackMethods on _PlexVideoControlsState {
           ? widget.sourceSubtitleSidecars
           : const <PlaybackSubtitleSidecar>[],
       sourcePartId: widget.sourcePartId,
+      episodeChapters: _chapters,
+      onEpisodeBoundaryMarked: widget.onEpisodeBoundaryMarked,
       sourceDurationMs: widget.metadata.durationMs,
       boxFitMode: widget.boxFitMode,
       videoZoomScale: widget.videoZoomScale,

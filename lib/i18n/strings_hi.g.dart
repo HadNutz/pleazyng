@@ -155,6 +155,21 @@ class _Translations$viewing$hi extends Translations$viewing$en {
 	@override String get pairPage => 'इस पृष्ठ की फिर से जोड़ी बनाएँ';
 	@override String get listenPhone => 'इस फ़ोन पर सुनें';
 	@override String get audioUnavailable => 'इस फ़ोन पर फ़ाइल या ऑडियो ट्रैक उपलब्ध नहीं है।';
+	@override String get guidedPanels => 'पैनल दर पैनल पढ़ें';
+	@override String get rewind => 'पीछे करें';
+	@override String get attachAudio => 'ऑडियो फ़ाइल जोड़ें';
+	@override String get replaceSoundtrack => 'साउंडट्रैक बदलें';
+	@override String get mixMovie => 'फ़िल्म के साथ मिलाएँ';
+	@override String get commentaryLevel => 'टिप्पणी की आवाज़';
+	@override String get movieLevel => 'फ़िल्म की आवाज़';
+	@override String episodeStarts({required Object episode}) => 'एपिसोड ${episode} यहाँ शुरू होता है';
+	@override String get locateMovedFolder => 'स्थानांतरित फ़ोल्डर ढूँढें';
+	@override String relinkMatched({required Object count}) => '${count} मिलती प्रविष्टियाँ फिर जोड़ें';
+	@override String get relinkAmbiguous => 'समीक्षा चाहिए';
+	@override String get relinkNone => 'कोई मिलती फ़ाइल नहीं मिली';
+	@override String get clearAudio => 'जोड़ा गया ऑडियो हटाएँ';
+	@override String keepFrom({required Object time}) => '${time} से रखें';
+	@override String get recordNow => 'अभी से रिकॉर्ड करें';
 }
 
 // Path: livingRoom
@@ -5631,6 +5646,21 @@ extension on TranslationsHi {
 			'viewing.pairPage' => 'इस पृष्ठ की फिर से जोड़ी बनाएँ',
 			'viewing.listenPhone' => 'इस फ़ोन पर सुनें',
 			'viewing.audioUnavailable' => 'इस फ़ोन पर फ़ाइल या ऑडियो ट्रैक उपलब्ध नहीं है।',
+			'viewing.guidedPanels' => 'पैनल दर पैनल पढ़ें',
+			'viewing.rewind' => 'पीछे करें',
+			'viewing.attachAudio' => 'ऑडियो फ़ाइल जोड़ें',
+			'viewing.replaceSoundtrack' => 'साउंडट्रैक बदलें',
+			'viewing.mixMovie' => 'फ़िल्म के साथ मिलाएँ',
+			'viewing.commentaryLevel' => 'टिप्पणी की आवाज़',
+			'viewing.movieLevel' => 'फ़िल्म की आवाज़',
+			'viewing.episodeStarts' => ({required Object episode}) => 'एपिसोड ${episode} यहाँ शुरू होता है',
+			'viewing.locateMovedFolder' => 'स्थानांतरित फ़ोल्डर ढूँढें',
+			'viewing.relinkMatched' => ({required Object count}) => '${count} मिलती प्रविष्टियाँ फिर जोड़ें',
+			'viewing.relinkAmbiguous' => 'समीक्षा चाहिए',
+			'viewing.relinkNone' => 'कोई मिलती फ़ाइल नहीं मिली',
+			'viewing.clearAudio' => 'जोड़ा गया ऑडियो हटाएँ',
+			'viewing.keepFrom' => ({required Object time}) => '${time} से रखें',
+			'viewing.recordNow' => 'अभी से रिकॉर्ड करें',
 			'livingRoom.fitScreen' => 'मेरी स्क्रीन में फ़िट करें',
 			'livingRoom.fitHelp' => 'कोई किनारा चुनें और तीर वाले बटनों से उसे तब तक खिसकाएँ जब तक उसके निशान दिखने लगें। हर किनारे के लिए दोहराएँ।',
 			'livingRoom.left' => 'बायाँ',
@@ -6114,6 +6144,8 @@ extension on TranslationsHi {
 			'settings.companionRemoteServerStopFailed' => 'साथी सर्वर को रोक नहीं पाया',
 			'settings.autoPip' => 'Auto Picture-in-Picture के बारे में टिप्पणियाँ',
 			'settings.autoPipDescription' => 'स्वचालित रूप से छवि-इन-चित्र दर्ज करें जब आप प्लेबैक के दौरान ऐप छोड़ देते हैं',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'मैच सामग्री फ्रेम दर',
 			'settings.matchContentFrameRateDescription' => 'मैच डिस्प्ले वीडियो सामग्री के लिए ताज़ा दर',
 			'settings.matchContentResolution' => 'मैच सामग्री संकल्प',
@@ -6129,8 +6161,6 @@ extension on TranslationsHi {
 			'settings.audioPassthroughDescription' => 'अपने रिसेप्टर या टीवी को फिर से एन्कोडिंग के बिना Dolby/DTS ऑडियो भेजें, आसपास के ध्वनि को बनाए रखें. यदि आपके पास कोई ध्वनि नहीं है तो बंद करें.',
 			'settings.audioPassthroughDescriptionApple' => 'Dolby Digital Plus के लिए मूल Dolby decoder Apple का उपयोग करें, जिसमें Atmos भी शामिल है. DTS और TrueHD अभी भी मल्टीचैनल पीसीएम के रूप में खेलते हैं. यदि आपके पास कोई ध्वनि नहीं है तो बंद करें.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'डोलबी डिजिटल प्लस के लिए Apple के मूल डोलबी डिकोडर का उपयोग करें, जिसमें Atmos शामिल है. iOS, iPadOS और tvOS 26 या बाद में, TrueHD Atmos और DTS:X को अंतरिक्ष ऑडियो के रूप में खेला जाता है. अन्य DTS और TrueHD ट्रैक को मल्टीचैनल पीसीएम के रूप में खेला जाता है. बंद करें यदि आपके पास कोई ध्वनि नहीं है.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'जबकि ध्वनि सामान्यीकरण के लिए बंद हो जाता है',
 			'settings.audioChannelLimit' => 'ऑडियो चैनल',
 			'settings.audioChannelLimitDescription' => 'स्पीकर, हेडफोन, या HDMI सेटिंग्स के लिए डिकोड ऑडियो डाउनलोड करें जो किसी भी चैनल को नहीं खेल सकते हैं',
@@ -6628,6 +6658,8 @@ extension on TranslationsHi {
 			'tooltips.markAsUnwatched' => 'अनदेखी के रूप में मार्क',
 			'audioTracks.track' => ({required Object n}) => 'ऑडियो ट्रैक ${n}',
 			'videoControls.audioLabel' => 'ऑडियो',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'उपशीर्षक',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'पत्रबॉक्स',
@@ -6643,8 +6675,6 @@ extension on TranslationsHi {
 			'videoControls.stillWatching' => 'अभी भी देखते हैं?',
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds} में आराम',
 			'videoControls.continueWatching' => 'जारी है',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'अगला Auto-Play',
 			'videoControls.playNext' => 'Next खेलना',
 			'videoControls.playButton' => 'खेलना',
@@ -7142,6 +7172,8 @@ extension on TranslationsHi {
 			'errors.pleaseEnterToken' => 'कृपया एक टोकन दर्ज करें',
 			'errors.invalidToken' => 'अयोग्य टोकन',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'टोकन की पुष्टि नहीं की गई: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName} पर स्विच करने में विफल',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName} को हटाने में विफलता',
 			'errors.failedToRate' => 'रेटिंग नहीं कर सकते',
@@ -7157,8 +7189,6 @@ extension on TranslationsHi {
 			'libraries.title' => 'पुस्तकालय',
 			'libraries.fallbackTitle' => 'लाइब्रेरी',
 			'libraries.scanLibraryFiles' => 'पुस्तकालय फ़ाइलों का स्कैन',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'पुस्तकालय स्कैन',
 			'libraries.analyze' => 'विश्लेषण',
 			'libraries.analyzeLibrary' => 'पुस्तकालय विश्लेषण',
@@ -7656,6 +7686,8 @@ extension on TranslationsHi {
 			'playlists.deleted' => 'Playlist हटा दिया गया',
 			'playlists.itemAdded' => 'Playlist में शामिल',
 			'playlists.itemRemoved' => 'Playlist से हटाए गए',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Playlist का चयन करें',
 			'playlists.searchPlaylists' => 'खेलों की खोज...',
 			'playlists.errorCreating' => 'Playlist बनाने में असफल',
@@ -7671,8 +7703,6 @@ extension on TranslationsHi {
 			'music.addToQueue' => 'क्यूए में जोड़ें',
 			'music.discNumber' => ({required Object n}) => 'डिस्क ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hi'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ट्रैक', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ट्रैक', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'अब खेलते हैं',
 			'music.playingFrom' => ({required Object title}) => 'खेलने के लिए ${title}',
 			'music.queue' => 'क्यूए',
@@ -8170,6 +8200,8 @@ extension on TranslationsHi {
 			'performanceOverlay.dropped' => 'टूट गया',
 			'performanceOverlay.dvRpus' => 'डीवी आरपीयू',
 			'performanceOverlay.dvRpuAverage' => 'डीवी आरपीयू AVG',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'डीवी नमूना AVG',
 			'performanceOverlay.maxLuma' => 'मैक्स लूमा',
 			'performanceOverlay.minLuma' => 'लूमा',
@@ -8185,8 +8217,6 @@ extension on TranslationsHi {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW के बारे में',
 			'performanceOverlay.decoderQualcommHw' => 'क्लॉम HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'मीडिया एचएच',
 			'performanceOverlay.decoderExynosHw' => 'एक्सिनोस एचड',
 			'performanceOverlay.decoderSoftware' => 'सॉफ्टवेयर',
@@ -8684,6 +8714,8 @@ extension on TranslationsHi {
 			'homeLayout.noPlexRows' => 'नंबर Plex-प्रबंधित पंक्तियां इस पुस्तकालय के लिए वापस आ गई हैं।',
 			'homeLayout.openDetails' => 'खुले विवरण',
 			'homeLayout.heroCards' => 'नायक कार्ड',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'एक नायक का कार्ड',
 			'homeLayout.tvPlayFocus' => 'टीवी रिमोट: उच्चारण Play बटन',
 			'homeLayout.tvPlayFocusDescription' => 'डी-पैड नीचे खेल बटन पर रुकता है, इससे पहले कि अगले पंक्ति में आगे बढ़ें।',
@@ -8699,8 +8731,6 @@ extension on TranslationsHi {
 			'homeLayout.addHomeRowDescription' => 'एक श्रेणी का चयन करें; नए पंक्ति को स्वचालित रूप से संगठित करने के लिए जोड़ा जाता है',
 			'homeLayout.removeRow' => 'लाइन को हटा दें',
 			'homeLayout.recentlyAdded' => 'हाल ही में जोड़ा',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'हाल ही में रिलीज',
 			'homeLayout.movieCollections' => 'फिल्म संग्रह',
 			'homeLayout.showCollections' => 'संग्रह दिखाएं',
@@ -9198,6 +9228,8 @@ extension on TranslationsHi {
 			'audiobook.recoveryImported' => 'पुनर्प्राप्ति डेटा मिश्रित है।',
 			'sourceSetup.bookorbitHelp' => 'अपनी BookOrbit पुस्तकों को ब्राउज़ करने और चलाने के लिए अपने BookOrbit खाते से साइन इन करें। अनुपलब्ध शीर्षकों के अनुरोध फिर भी आपके कनेक्ट किए गए SeerrNG इंस्टेंस से भेजे जाते हैं।',
 			'sourceSetup.bookorbitOpen' => 'BookOrbit में खोलें',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'लाइब्रेरी का विवरण और वे फ़ॉर्मैट प्रबंधित करने के लिए यह शीर्षक BookOrbit में देखें जिन्हें Pleazyng खोल नहीं सकता। सुनने की प्रगति आपके BookOrbit खाते के साथ सिंक होती है।',
 			'sourceSetup.savedCertificate' => 'सहेजा गया सर्वर प्रमाणपत्र',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export जैसा NFS URL दर्ज करें।',
@@ -9213,8 +9245,6 @@ extension on TranslationsHi {
 			'sourceSetup.sshFingerprint' => 'SSH होस्ट कुंजी का SHA256 फ़िंगरप्रिंट',
 			'sourceSetup.sshFingerprintHelp' => 'सर्वर व्यवस्थापक से इसकी पुष्टि करें। सर्वर पर ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub चलाएँ और उससे मिलने वाला SHA256 मान इस्तेमाल करें।',
 			'sourceSetup.sshFingerprintKeep' => 'मौजूदा पिन किया गया फ़िंगरप्रिंट रखने के लिए खाली छोड़ें, या सर्वर का नया फ़िंगरप्रिंट दर्ज करें।',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH सार्वजनिक कुंजी से प्रमाणीकरण',
 			'sourceSetup.sshAuthenticationHelp' => 'वैकल्पिक; पासवर्ड से प्रमाणीकरण भी समर्थित है।',
 			'sourceSetup.privateKey' => 'निजी कुंजी (PEM या OpenSSH प्रारूप)',
@@ -9712,6 +9742,8 @@ extension on TranslationsHi {
 			'musicTools.exclusiveOutput' => 'विशेष ऑडियो आउटपुट',
 			'musicTools.preamp' => 'प्रीएम्प',
 			'musicTools.ratingPending' => 'इस डिवाइस पर सहेजा गया; सिंक की प्रतीक्षा में',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'गीत के बोल का समय अंतर',
 			'musicTools.anniversaries' => 'एल्बम की वर्षगाँठ',
 			'musicTools.outputPreset' => 'इस आउटपुट का इक्वलाइज़र',
@@ -9727,8 +9759,6 @@ extension on TranslationsHi {
 			'musicTools.sonicAnalysis' => 'ध्वनि विश्लेषण',
 			'musicTools.serverAnalysisScope' => 'इस सर्वर की सभी पात्र संगीत लाइब्रेरी। इससे उनकी विश्लेषण सेटिंग नहीं बदलती।',
 			'musicTools.serverActivities' => 'सर्वर गतिविधियाँ',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'प्लेलिस्ट का ऐक्सेस',
 			'musicTools.playlistRecipient' => 'Plex उपयोगकर्ता नाम या ईमेल',
 			'musicTools.playlistSharingHint' => 'इस प्लेलिस्ट और इसके ट्रैक का ऐक्सेस दें। प्राप्तकर्ता को निमंत्रण स्वीकार करना पड़ सकता है।',

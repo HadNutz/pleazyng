@@ -2,9 +2,10 @@
 export const isWide = page => page.doublePage || (page.width > 0 && page.height > 0 && page.width > page.height);
 export function comicTurns(pages, settings, width, height) {
     if (settings.comicMode === 'panels') {
-        return pages.flatMap((page,index) => page.frames?.length
-            ? page.frames.map((_,panel) => [{index,panel}])
-            : [[{index}]]);
+        return pages.flatMap((page,index) => {
+            const frames = (page.frames ?? []).flatMap((_,panel) => comicPanelBounds(page,panel) ? [[{index,panel}]] : []);
+            return frames.length ? frames : [[{index}]];
+        });
     }
     const double = settings.comicMode !== 'webtoon' && !settings.splitWide &&
         (settings.spread === 'double' || (settings.spread === 'auto' && width >= 900 && width > height));
@@ -32,4 +33,15 @@ export function parseComicLocator(value, fallback = 0) {
     // Foliate CBZ CFIs encoded spine index as an even step: /6/2, /6/4, ...
     const legacy = /^epubcfi\(\/6\/(\d+)/.exec(value ?? '');
     return {index: legacy ? Math.max(0, Math.floor(Number(legacy[1]) / 2) - 1) : fallback, offset: 0};
+}
+
+// Reject empty/out-of-image frames, while retaining their original sequence.
+// Bounds only describe a zoom viewport; the page image is never rewritten.
+export function comicPanelBounds(page, panel) {
+    const value = page.frames?.[panel];
+    if (!Array.isArray(value) || value.length !== 4 || !value.every(Number.isFinite)) return null;
+    const [x,y,right,bottom] = value;
+    const bounds = [Math.max(0,x),Math.max(0,y),
+        Math.min(page.width ?? right,right),Math.min(page.height ?? bottom,bottom)];
+    return bounds[2] > bounds[0] && bounds[3] > bounds[1] ? bounds : null;
 }

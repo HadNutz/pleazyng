@@ -155,6 +155,21 @@ class _Translations$viewing$bn extends Translations$viewing$en {
 	@override String get pairPage => 'এই পৃষ্ঠাটি আবার জোড়া দিন';
 	@override String get listenPhone => 'এই ফোনে শুনুন';
 	@override String get audioUnavailable => 'এই ফোনে ফাইল বা অডিও ট্র্যাকটি উপলব্ধ নেই।';
+	@override String get guidedPanels => 'প্যানেল ধরে পড়ুন';
+	@override String get rewind => 'পেছনে যান';
+	@override String get attachAudio => 'অডিও ফাইল যোগ করুন';
+	@override String get replaceSoundtrack => 'সাউন্ডট্র্যাক বদলান';
+	@override String get mixMovie => 'সিনেমার সঙ্গে মেশান';
+	@override String get commentaryLevel => 'ধারাভাষ্যের শব্দমাত্রা';
+	@override String get movieLevel => 'সিনেমার শব্দমাত্রা';
+	@override String episodeStarts({required Object episode}) => 'পর্ব ${episode} এখানে শুরু হয়';
+	@override String get locateMovedFolder => 'সরানো ফোল্ডার খুঁজুন';
+	@override String relinkMatched({required Object count}) => '${count}টি মিলে যাওয়া এন্ট্রি পুনরায় যুক্ত করুন';
+	@override String get relinkAmbiguous => 'পর্যালোচনা প্রয়োজন';
+	@override String get relinkNone => 'মিলে যাওয়া ফাইল পাওয়া যায়নি';
+	@override String get clearAudio => 'যুক্ত অডিও সরান';
+	@override String keepFrom({required Object time}) => '${time} থেকে রাখুন';
+	@override String get recordNow => 'এখন থেকে রেকর্ড করুন';
 }
 
 // Path: livingRoom
@@ -5631,6 +5646,21 @@ extension on TranslationsBn {
 			'viewing.pairPage' => 'এই পৃষ্ঠাটি আবার জোড়া দিন',
 			'viewing.listenPhone' => 'এই ফোনে শুনুন',
 			'viewing.audioUnavailable' => 'এই ফোনে ফাইল বা অডিও ট্র্যাকটি উপলব্ধ নেই।',
+			'viewing.guidedPanels' => 'প্যানেল ধরে পড়ুন',
+			'viewing.rewind' => 'পেছনে যান',
+			'viewing.attachAudio' => 'অডিও ফাইল যোগ করুন',
+			'viewing.replaceSoundtrack' => 'সাউন্ডট্র্যাক বদলান',
+			'viewing.mixMovie' => 'সিনেমার সঙ্গে মেশান',
+			'viewing.commentaryLevel' => 'ধারাভাষ্যের শব্দমাত্রা',
+			'viewing.movieLevel' => 'সিনেমার শব্দমাত্রা',
+			'viewing.episodeStarts' => ({required Object episode}) => 'পর্ব ${episode} এখানে শুরু হয়',
+			'viewing.locateMovedFolder' => 'সরানো ফোল্ডার খুঁজুন',
+			'viewing.relinkMatched' => ({required Object count}) => '${count}টি মিলে যাওয়া এন্ট্রি পুনরায় যুক্ত করুন',
+			'viewing.relinkAmbiguous' => 'পর্যালোচনা প্রয়োজন',
+			'viewing.relinkNone' => 'মিলে যাওয়া ফাইল পাওয়া যায়নি',
+			'viewing.clearAudio' => 'যুক্ত অডিও সরান',
+			'viewing.keepFrom' => ({required Object time}) => '${time} থেকে রাখুন',
+			'viewing.recordNow' => 'এখন থেকে রেকর্ড করুন',
 			'livingRoom.fitScreen' => 'আমার পর্দার সঙ্গে মেলান',
 			'livingRoom.fitHelp' => 'একটি প্রান্ত বেছে নিয়ে তীরচিহ্নের বোতাম দিয়ে সরান, যতক্ষণ না তার চিহ্নগুলো দেখা যায়। প্রতিটি প্রান্তের জন্য একই কাজ করুন।',
 			'livingRoom.left' => 'বাঁ',
@@ -6114,6 +6144,8 @@ extension on TranslationsBn {
 			'settings.companionRemoteServerStopFailed' => 'সার্ভার বন্ধ করতে পারত না।',
 			'settings.autoPip' => 'Auto Picture-in-Picture গাড়ি',
 			'settings.autoPipDescription' => 'আপনি Playback সময় অ্যাপটি ছেড়ে যখন স্বয়ংক্রিয়ভাবে ছবি-এ-ফটো প্রবেশ করুন',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'ফ্রেম ফ্রেম ফ্রেম ফ্রেম ফ্রেম',
 			'settings.matchContentFrameRateDescription' => 'ভিডিও প্রদর্শন ফ্রেসিং রেস্টুরেন্ট ফ্রেসিং রেস্টুরেন্ট',
 			'settings.matchContentResolution' => 'Match Content সংশ্লিষ্ট',
@@ -6129,8 +6161,6 @@ extension on TranslationsBn {
 			'settings.audioPassthroughDescription' => 'ডলবি / ডিটিএস অডিও আপনার রিপোর্টার বা টেলিভিশনে রেকর্ডিং ছাড়া পাঠান, পরিবেশের শব্দ সংরক্ষণ করুন. শব্দ না হলে বন্ধ করুন.',
 			'settings.audioPassthroughDescriptionApple' => 'Atmos সহ Dolby Digital Plus-এর জন্য Apple-এর নিজস্ব Dolby ডিকোডার ব্যবহার করুন। DTS ও TrueHD মাল্টিচ্যানেল PCM হিসেবেই চলবে। শব্দ না শুনলে এটি বন্ধ করুন।',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'ডলবি ডিজিটাল প্লাস জন্য Apple এর প্রাকৃতিক ডলবি ডকোডার ব্যবহার করুন, অথবা Atmos. iOS, iPadOS এবং tvOS 26 বা তারপর, TrueHD Atmos এবং DTS:X স্পেশাল অডিও হিসাবে খেলতে হবে. অন্যান্য DTS এবং TrueHD ট্র্যাক multichannel PCM হিসাবে খেলতে হবে. আপনি কোন শব্দ না থাকলে বন্ধ করুন.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'যদিও শব্দের স্বাভাবিকতা থাকে, তখন',
 			'settings.audioChannelLimit' => 'অডিও চ্যানেল',
 			'settings.audioChannelLimitDescription' => 'ডাউনলোড করা অডিও মিশ্র করুন শব্দ, হোডফোন, বা HDMI সেটপগুলিতে যা কোনও চ্যানেল খেলতে পারে না',
@@ -6628,6 +6658,8 @@ extension on TranslationsBn {
 			'tooltips.markAsUnwatched' => 'মার্ক অবিশ্বাসিত',
 			'audioTracks.track' => ({required Object n}) => 'অডিও ট্র্যাক ${n}',
 			'videoControls.audioLabel' => 'অডিও',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'সাবটাইটেল',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'বাক্স',
@@ -6643,8 +6675,6 @@ extension on TranslationsBn {
 			'videoControls.stillWatching' => 'এখনও দেখতে চান?',
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds} সেকেন্ড পরে বিরতি দেওয়া হবে',
 			'videoControls.continueWatching' => 'চলুন',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Next গাড়ি খেলা',
 			'videoControls.playNext' => 'Next খেলুন',
 			'videoControls.playButton' => 'খেলা',
@@ -7142,6 +7172,8 @@ extension on TranslationsBn {
 			'errors.pleaseEnterToken' => 'দয়া করে একটি টকেন লিখুন',
 			'errors.invalidToken' => 'অসুবিধা টকেন',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'টকেন সনাক্ত করতে পারিনি: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'পাশাপাশি পাশাপাশি পাশাপাশি ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'অপসারণ করা হয় না ${displayName}',
 			'errors.failedToRate' => 'Rating আপডেট করতে পারবেন না',
@@ -7157,8 +7189,6 @@ extension on TranslationsBn {
 			'libraries.title' => 'বইয়েরা',
 			'libraries.fallbackTitle' => 'লাইব্রেরি',
 			'libraries.scanLibraryFiles' => 'স্ক্যান লাইব্রেরি ফাইল',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'স্ক্যান লাইব্রেরি',
 			'libraries.analyze' => 'বিশ্লেষণ',
 			'libraries.analyzeLibrary' => 'বিবেচনা লাইব্রেরি',
@@ -7656,6 +7686,8 @@ extension on TranslationsBn {
 			'playlists.deleted' => 'Playlist 삭제',
 			'playlists.itemAdded' => 'Playlist এ যোগ করা',
 			'playlists.itemRemoved' => 'Playlist থেকে মুছে ফেলুন',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Playlist নির্বাচন করুন',
 			'playlists.searchPlaylists' => 'খেলা খেলা খেলা খেলা...',
 			'playlists.errorCreating' => 'খেলা তালিকা তৈরি করতে পারিনি',
@@ -7671,8 +7703,6 @@ extension on TranslationsBn {
 			'music.addToQueue' => 'কুকুরে যোগ করুন',
 			'music.discNumber' => ({required Object n}) => 'ডিজিটাল ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bn'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ট্র্যাক', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} পাসপোর্ট', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'এখন খেলতে',
 			'music.playingFrom' => ({required Object title}) => 'খেলা ${title} থেকে',
 			'music.queue' => 'কুরআন',
@@ -8170,6 +8200,8 @@ extension on TranslationsBn {
 			'performanceOverlay.dropped' => 'ধ্বংস',
 			'performanceOverlay.dvRpus' => 'ডিপিএল',
 			'performanceOverlay.dvRpuAverage' => 'ডিপিএল এভগ',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'ডিএসএইচএইচএইচ',
 			'performanceOverlay.maxLuma' => 'ম্যাক্স লুমা',
 			'performanceOverlay.minLuma' => 'মিন লুমা',
@@ -8185,8 +8217,6 @@ extension on TranslationsBn {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'Nvidia HW',
 			'performanceOverlay.decoderQualcommHw' => 'কোলকোম HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'মিডিয়াম HW',
 			'performanceOverlay.decoderExynosHw' => 'হ্যাঁ হ্যাঁ',
 			'performanceOverlay.decoderSoftware' => 'সফটওয়্যার',
@@ -8684,6 +8714,8 @@ extension on TranslationsBn {
 			'homeLayout.noPlexRows' => 'নম্বর Plex পরিচালিত লাইন এই লাইব্রেরি জন্য ফিরে এসেছে।',
 			'homeLayout.openDetails' => 'খোলা বিস্তারিত',
 			'homeLayout.heroCards' => 'হেরো কার্ড',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'হ্যারিয়ার কার্ড খুঁজে বের',
 			'homeLayout.tvPlayFocus' => 'টেলিভিশন দূরে: উচ্চ আলো Play बटन',
 			'homeLayout.tvPlayFocusDescription' => 'ড-প্যাড ডাউনলোড খেলা বোতামটি বন্ধ করে, পরবর্তী লাইন থেকে চলে যাওয়ার আগে।',
@@ -8699,8 +8731,6 @@ extension on TranslationsBn {
 			'homeLayout.addHomeRowDescription' => 'একটি বিভাগ নির্বাচন করুন; নতুন পর্যায়ে স্বয়ংক্রিয়ভাবে সংস্থার যোগ করা হয়',
 			'homeLayout.removeRow' => 'রানী মুছে ফেলে',
 			'homeLayout.recentlyAdded' => 'সম্প্রতি যোগ করা',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'সম্প্রতি মুক্তি',
 			'homeLayout.movieCollections' => 'চলচ্চিত্র সংগ্রহ',
 			'homeLayout.showCollections' => 'সংগ্রহ দেখুন',
@@ -9198,6 +9228,8 @@ extension on TranslationsBn {
 			'audiobook.recoveryImported' => 'রেকর্ড ডেটা একত্রিত।',
 			'sourceSetup.bookorbitHelp' => 'বইগুলো দেখতে ও পড়তে আপনার নিজের BookOrbit অ্যাকাউন্টে সাইন ইন করুন। অনুপস্থিত শিরোনামের অনুরোধ এখনও আপনার সংযুক্ত SeerrNG ইনস্ট্যান্সের মাধ্যমেই যাবে।',
 			'sourceSetup.bookorbitOpen' => 'BookOrbit-এ খুলুন',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'লাইব্রেরির বিবরণ এবং Pleazyng যে ফরম্যাট খুলতে পারে না সেগুলো পরিচালনা করতে BookOrbit-এ এই শিরোনামটি দেখুন। শোনার অগ্রগতি আপনার BookOrbit অ্যাকাউন্টের সঙ্গে সিঙ্ক হয়।',
 			'sourceSetup.savedCertificate' => 'সংরক্ষিত সার্ভার সার্টিফিকেট',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export-এর মতো একটি NFS URL লিখুন।',
@@ -9213,8 +9245,6 @@ extension on TranslationsBn {
 			'sourceSetup.sshFingerprint' => 'SSH হোস্ট কী-এর SHA256 ফিঙ্গারপ্রিন্ট',
 			'sourceSetup.sshFingerprintHelp' => 'সার্ভারের প্রশাসকের কাছে যাচাই করুন। সার্ভারে ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub চালিয়ে পাওয়া SHA256 মানটি ব্যবহার করুন।',
 			'sourceSetup.sshFingerprintKeep' => 'বর্তমানে পিন করা ফিঙ্গারপ্রিন্ট রাখতে ফাঁকা রাখুন, অথবা সার্ভারের নতুন ফিঙ্গারপ্রিন্ট লিখুন।',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH পাবলিক কী দিয়ে পরিচয় যাচাই',
 			'sourceSetup.sshAuthenticationHelp' => 'ঐচ্ছিক; পাসওয়ার্ড দিয়েও পরিচয় যাচাই করা যায়।',
 			'sourceSetup.privateKey' => 'ব্যক্তিগত কী (PEM বা OpenSSH ফরম্যাট)',
@@ -9712,6 +9742,8 @@ extension on TranslationsBn {
 			'musicTools.exclusiveOutput' => 'একচেটিয়া অডিও আউটপুট',
 			'musicTools.preamp' => 'প্রিঅ্যাম্প',
 			'musicTools.ratingPending' => 'এই ডিভাইসে সংরক্ষিত; সিঙ্কের অপেক্ষায়',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'গানের কথার সময়ের ব্যবধান',
 			'musicTools.anniversaries' => 'অ্যালবামের বর্ষপূর্তি',
 			'musicTools.outputPreset' => 'এই আউটপুটের ইকুয়ালাইজার',
@@ -9727,8 +9759,6 @@ extension on TranslationsBn {
 			'musicTools.sonicAnalysis' => 'সোনিক বিশ্লেষণ',
 			'musicTools.serverAnalysisScope' => 'এই সার্ভারের সব উপযুক্ত সঙ্গীত লাইব্রেরি। এতে তাদের বিশ্লেষণ সেটিংস বদলাবে না।',
 			'musicTools.serverActivities' => 'সার্ভারের কার্যকলাপ',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'প্লেলিস্টে প্রবেশাধিকার',
 			'musicTools.playlistRecipient' => 'Plex ব্যবহারকারীর নাম বা ইমেইল',
 			'musicTools.playlistSharingHint' => 'এই প্লেলিস্ট ও এর ট্র্যাকগুলোতে প্রবেশাধিকার দিন। প্রাপককে আমন্ত্রণ গ্রহণ করতে হতে পারে।',

@@ -155,6 +155,21 @@ class _Translations$viewing$he extends Translations$viewing$en {
 	@override String get pairPage => 'צימוד העמוד מחדש';
 	@override String get listenPhone => 'האזנה בטלפון הזה';
 	@override String get audioUnavailable => 'הקובץ או רצועת השמע אינם זמינים בטלפון הזה.';
+	@override String get guidedPanels => 'קריאה לפי חלוניות';
+	@override String get rewind => 'הרצה לאחור';
+	@override String get attachAudio => 'הוספת קובץ שמע';
+	@override String get replaceSoundtrack => 'החלפת פסקול';
+	@override String get mixMovie => 'ערבוב עם הסרט';
+	@override String get commentaryLevel => 'עוצמת שמע הפרשנות';
+	@override String get movieLevel => 'עוצמת שמע הסרט';
+	@override String episodeStarts({required Object episode}) => 'פרק ${episode} מתחיל כאן';
+	@override String get locateMovedFolder => 'איתור תיקייה שהועברה';
+	@override String relinkMatched({required Object count}) => 'קישור מחדש של ${count} פריטים תואמים';
+	@override String get relinkAmbiguous => 'נדרשת בדיקה';
+	@override String get relinkNone => 'לא נמצאו קבצים תואמים';
+	@override String get clearAudio => 'הסרת שמע מצורף';
+	@override String keepFrom({required Object time}) => 'שמירה החל מ־${time}';
+	@override String get recordNow => 'הקלטה מעכשיו';
 }
 
 // Path: livingRoom
@@ -5639,6 +5654,21 @@ extension on TranslationsHe {
 			'viewing.pairPage' => 'צימוד העמוד מחדש',
 			'viewing.listenPhone' => 'האזנה בטלפון הזה',
 			'viewing.audioUnavailable' => 'הקובץ או רצועת השמע אינם זמינים בטלפון הזה.',
+			'viewing.guidedPanels' => 'קריאה לפי חלוניות',
+			'viewing.rewind' => 'הרצה לאחור',
+			'viewing.attachAudio' => 'הוספת קובץ שמע',
+			'viewing.replaceSoundtrack' => 'החלפת פסקול',
+			'viewing.mixMovie' => 'ערבוב עם הסרט',
+			'viewing.commentaryLevel' => 'עוצמת שמע הפרשנות',
+			'viewing.movieLevel' => 'עוצמת שמע הסרט',
+			'viewing.episodeStarts' => ({required Object episode}) => 'פרק ${episode} מתחיל כאן',
+			'viewing.locateMovedFolder' => 'איתור תיקייה שהועברה',
+			'viewing.relinkMatched' => ({required Object count}) => 'קישור מחדש של ${count} פריטים תואמים',
+			'viewing.relinkAmbiguous' => 'נדרשת בדיקה',
+			'viewing.relinkNone' => 'לא נמצאו קבצים תואמים',
+			'viewing.clearAudio' => 'הסרת שמע מצורף',
+			'viewing.keepFrom' => ({required Object time}) => 'שמירה החל מ־${time}',
+			'viewing.recordNow' => 'הקלטה מעכשיו',
 			'livingRoom.fitScreen' => 'התאמה למסך שלי',
 			'livingRoom.fitHelp' => 'בחרו קצה והזיזו אותו בעזרת החצים עד שרואים את הסימונים שלו. חזרו על הפעולה בכל קצה.',
 			'livingRoom.left' => 'שמאל',
@@ -6122,6 +6152,8 @@ extension on TranslationsHe {
 			'settings.companionRemoteServerStopFailed' => 'לא יכולתי לעצור את שרת החברות.',
 			'settings.autoPip' => 'צילום: Auto Picture in Picture',
 			'settings.autoPipDescription' => 'כניסת תמונה בתמונה באופן אוטומטי כאשר אתה עוזב את האפליקציה במהלך הצגת',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'תחרות תוכן Frame',
 			'settings.matchContentFrameRateDescription' => 'משחק תצוגה שיעור חידוש לתוכן וידאו',
 			'settings.matchContentResolution' => 'פתרון תוכן Match',
@@ -6137,8 +6169,6 @@ extension on TranslationsHe {
 			'settings.audioPassthroughDescription' => 'שלח קול Dolby/DTS למקבל או לטלוויזיה שלך ללא הקוד מחדש, שמירה על הקול הסובב.',
 			'settings.audioPassthroughDescriptionApple' => 'השתמש ב-Dolby Decoder המקומי של Apple עבור Dolby Digital Plus, כולל Atmos. DTS ו-TrueHD עדיין משחקים כ-PCM רב ערוצים.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'השתמש ב-Dolby Decoder המקומי של Apple עבור Dolby Digital Plus, כולל Atmos. ב- iOS, iPadOS ו- tvOS 26 או מאוחר יותר, TrueHD Atmos ו- DTS:X משחקים כאודיו חלקי.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'כשמדובר בנורמליזציה של צליל',
 			'settings.audioChannelLimit' => 'ערוצי שמע',
 			'settings.audioChannelLimitDescription' => 'לערבב את האודיו המודפס למטה עבור שמיעה, אוזניות, או HDMI הגדרות שאינן יכולות לשחק כל ערוץ',
@@ -6636,6 +6666,8 @@ extension on TranslationsHe {
 			'tooltips.markAsUnwatched' => 'מארק כבלתי צפוי',
 			'audioTracks.track' => ({required Object n}) => 'אודיו טרק ${n}',
 			'videoControls.audioLabel' => 'שמע',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'כתוביות',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'תיבת הדואר',
@@ -6651,8 +6683,6 @@ extension on TranslationsHe {
 			'videoControls.stillWatching' => 'עדיין לצפות?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'הפסקה ב ${seconds}s',
 			'videoControls.continueWatching' => 'המשך',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'המשחק הבא',
 			'videoControls.playNext' => 'נגן את הבא',
 			'videoControls.playButton' => 'נגן',
@@ -7150,6 +7180,8 @@ extension on TranslationsHe {
 			'errors.pleaseEnterToken' => 'אנא הקלד טוקן',
 			'errors.invalidToken' => 'טוקיו חסר תועלת',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'לא ניתן לבדוק טוקן: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'לא הצלחתי לעבור ל- ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'לא הצלחתי למחוק ${displayName}',
 			'errors.failedToRate' => 'לא ניתן לשדרג את הדירוג',
@@ -7165,8 +7197,6 @@ extension on TranslationsHe {
 			'libraries.title' => 'ספריות',
 			'libraries.fallbackTitle' => 'ספרייה',
 			'libraries.scanLibraryFiles' => 'סריקת קבצים ספרייה',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'סרוק ספרייה',
 			'libraries.analyze' => 'ניתוח',
 			'libraries.analyzeLibrary' => 'ניתוח הספרייה',
@@ -7664,6 +7694,8 @@ extension on TranslationsHe {
 			'playlists.deleted' => 'Playlist מוחלף',
 			'playlists.itemAdded' => 'הוספת ל playlist',
 			'playlists.itemRemoved' => 'הוסרו מהפלאי',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'בחר Playlist',
 			'playlists.searchPlaylists' => 'מחפשים רשימת משחקים',
 			'playlists.errorCreating' => 'לא הצלחתי ליצור רשימת משחקים',
@@ -7679,8 +7711,6 @@ extension on TranslationsHe {
 			'music.addToQueue' => 'הוסף ל- Queue',
 			'music.discNumber' => ({required Object n}) => 'דיסק ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} מסלול', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} רצועות', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'משחק עכשיו',
 			'music.playingFrom' => ({required Object title}) => 'משחקים מתוך ${title}',
 			'music.queue' => 'קווי',
@@ -8178,6 +8208,8 @@ extension on TranslationsHe {
 			'performanceOverlay.dropped' => 'נופל',
 			'performanceOverlay.dvRpus' => 'דב RPU',
 			'performanceOverlay.dvRpuAverage' => 'ה-RPU AVG',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'דוגמאות AVG',
 			'performanceOverlay.maxLuma' => 'מקס לומה',
 			'performanceOverlay.minLuma' => 'לומא',
@@ -8193,8 +8225,6 @@ extension on TranslationsHe {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'מיקרוסופט HW',
 			'performanceOverlay.decoderExynosHw' => 'יונייטד HW',
 			'performanceOverlay.decoderSoftware' => 'תוכנה',
@@ -8692,6 +8722,8 @@ extension on TranslationsHe {
 			'homeLayout.noPlexRows' => 'מספר Plex שורות המנוהלות חזרה לספריה זו.',
 			'homeLayout.openDetails' => 'פרטים פתוחים',
 			'homeLayout.heroCards' => 'כרטיסי גיבור',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'להדביק כרטיס גיבור',
 			'homeLayout.tvPlayFocus' => 'טלוויזיה מרחוק: כפתור Play',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad למטה עוצר על כפתור המשחק לפני העברת השורה הבאה.',
@@ -8707,8 +8739,6 @@ extension on TranslationsHe {
 			'homeLayout.addHomeRowDescription' => 'בחר קטגוריה; השורה החדשה מוסיפה באופן אוטומטי למארגן',
 			'homeLayout.removeRow' => 'להסיר שורה',
 			'homeLayout.recentlyAdded' => 'אחרון',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'שוחרר לאחרונה',
 			'homeLayout.movieCollections' => 'קולקציות סרטים',
 			'homeLayout.showCollections' => 'הצג אוסף',
@@ -9206,6 +9236,8 @@ extension on TranslationsHe {
 			'audiobook.recoveryImported' => 'נתוני ההחזרה מתמזגים.',
 			'sourceSetup.bookorbitHelp' => 'יש להתחבר לחשבון BookOrbit האישי שלך כדי לעיין בספרים ולנגן אותם. בקשות לכותרות חסרות עדיין עוברות דרך מופע SeerrNG המחובר שלך.',
 			'sourceSetup.bookorbitOpen' => 'פתיחה ב-BookOrbit',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'אפשר לצפות בכותר הזה ב-BookOrbit כדי לנהל את פרטי הספרייה ואת הפורמטים ש-Pleazyng לא יכול לפתוח. התקדמות ההאזנה מסתנכרנת עם חשבון BookOrbit שלך.',
 			'sourceSetup.savedCertificate' => 'אישור השרת השמור',
 			'sourceSetup.nfsEndpointInvalid' => 'יש להזין כתובת NFS, למשל nfs://nas:2049/export.',
@@ -9221,8 +9253,6 @@ extension on TranslationsHe {
 			'sourceSetup.sshFingerprint' => 'טביעת אצבע SHA256 של מפתח מארח SSH',
 			'sourceSetup.sshFingerprintHelp' => 'יש לאמת מול מנהל השרת. בשרת, יש להריץ ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub ולהשתמש בערך SHA256 שמתקבל.',
 			'sourceSetup.sshFingerprintKeep' => 'יש להשאיר ריק כדי לשמור על טביעת האצבע המקובעת הנוכחית, או להזין טביעת אצבע חדשה של השרת.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'אימות באמצעות מפתח ציבורי של SSH',
 			'sourceSetup.sshAuthenticationHelp' => 'לא חובה; אפשר גם לבצע אימות באמצעות סיסמה.',
 			'sourceSetup.privateKey' => 'מפתח פרטי (בפורמט PEM או OpenSSH)',
@@ -9720,6 +9750,8 @@ extension on TranslationsHe {
 			'musicTools.exclusiveOutput' => 'פלט שמע בלעדי',
 			'musicTools.preamp' => 'קדם־הגברה',
 			'musicTools.ratingPending' => 'נשמר במכשיר הזה; ממתין לסנכרון',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'היסט תזמון המילים',
 			'musicTools.anniversaries' => 'ימי שנה לאלבומים',
 			'musicTools.outputPreset' => 'אקולייזר לפלט הזה',
@@ -9735,8 +9767,6 @@ extension on TranslationsHe {
 			'musicTools.sonicAnalysis' => 'ניתוח צליל',
 			'musicTools.serverAnalysisScope' => 'כל ספריות המוזיקה המתאימות בשרת זה. הגדרות הניתוח שלהן לא ישתנו.',
 			'musicTools.serverActivities' => 'פעילויות השרת',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'גישה לרשימת השמעה',
 			'musicTools.playlistRecipient' => 'שם משתמש Plex או דוא״ל',
 			'musicTools.playlistSharingHint' => 'הענקת גישה לרשימה זו ולרצועות שלה. ייתכן שהנמען יצטרך לאשר הזמנה.',

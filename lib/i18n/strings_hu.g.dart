@@ -155,6 +155,21 @@ class _Translations$viewing$hu extends Translations$viewing$en {
 	@override String get pairPage => 'Az oldal újbóli párosítása';
 	@override String get listenPhone => 'Hallgatás ezen a telefonon';
 	@override String get audioUnavailable => 'A fájl vagy a hangsáv nem érhető el ezen a telefonon.';
+	@override String get guidedPanels => 'Olvasás képkockánként';
+	@override String get rewind => 'Visszatekerés';
+	@override String get attachAudio => 'Hangfájl hozzáadása';
+	@override String get replaceSoundtrack => 'Hangsáv cseréje';
+	@override String get mixMovie => 'Keverés a filmmel';
+	@override String get commentaryLevel => 'Kommentár hangereje';
+	@override String get movieLevel => 'Film hangereje';
+	@override String episodeStarts({required Object episode}) => 'A(z) ${episode}. epizód itt kezdődik';
+	@override String get locateMovedFolder => 'Áthelyezett mappa keresése';
+	@override String relinkMatched({required Object count}) => '${count} egyező bejegyzés újracsatolása';
+	@override String get relinkAmbiguous => 'Ellenőrzést igényel';
+	@override String get relinkNone => 'Nincs egyező fájl';
+	@override String get clearAudio => 'Hozzáadott hang eltávolítása';
+	@override String keepFrom({required Object time}) => 'Megtartás ${time} időponttól';
+	@override String get recordNow => 'Felvétel mostantól';
 }
 
 // Path: livingRoom
@@ -5631,6 +5646,21 @@ extension on TranslationsHu {
 			'viewing.pairPage' => 'Az oldal újbóli párosítása',
 			'viewing.listenPhone' => 'Hallgatás ezen a telefonon',
 			'viewing.audioUnavailable' => 'A fájl vagy a hangsáv nem érhető el ezen a telefonon.',
+			'viewing.guidedPanels' => 'Olvasás képkockánként',
+			'viewing.rewind' => 'Visszatekerés',
+			'viewing.attachAudio' => 'Hangfájl hozzáadása',
+			'viewing.replaceSoundtrack' => 'Hangsáv cseréje',
+			'viewing.mixMovie' => 'Keverés a filmmel',
+			'viewing.commentaryLevel' => 'Kommentár hangereje',
+			'viewing.movieLevel' => 'Film hangereje',
+			'viewing.episodeStarts' => ({required Object episode}) => 'A(z) ${episode}. epizód itt kezdődik',
+			'viewing.locateMovedFolder' => 'Áthelyezett mappa keresése',
+			'viewing.relinkMatched' => ({required Object count}) => '${count} egyező bejegyzés újracsatolása',
+			'viewing.relinkAmbiguous' => 'Ellenőrzést igényel',
+			'viewing.relinkNone' => 'Nincs egyező fájl',
+			'viewing.clearAudio' => 'Hozzáadott hang eltávolítása',
+			'viewing.keepFrom' => ({required Object time}) => 'Megtartás ${time} időponttól',
+			'viewing.recordNow' => 'Felvétel mostantól',
 			'livingRoom.fitScreen' => 'Igazítás a képernyőmhöz',
 			'livingRoom.fitHelp' => 'Válassz egy szélt, és mozgasd a nyilakkal, amíg meg nem jelennek a jelölései. Ismételd meg minden szélnél.',
 			'livingRoom.left' => 'Bal',
@@ -6114,6 +6144,8 @@ extension on TranslationsHu {
 			'settings.companionRemoteServerStopFailed' => 'Nem sikerült leállítani a kísérőtávirányító szerverét',
 			'settings.autoPip' => 'Automatikus kép a képben (PiP)',
 			'settings.autoPipDescription' => 'Lejátszás közben az alkalmazás elhagyásakor automatikusan kép a képben módra vált',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Képkockasebesség illesztése a tartalomhoz',
 			'settings.matchContentFrameRateDescription' => 'A kijelző frissítési frekvenciájának igazítása a videóhoz',
 			'settings.matchContentResolution' => 'Igazítás a tartalom felbontásához',
@@ -6129,8 +6161,6 @@ extension on TranslationsHu {
 			'settings.audioPassthroughDescription' => 'Dolby/DTS-hang továbbítása az erősítőre vagy a TV-re újrakódolás nélkül, a térhangzás megőrzésével. Kapcsold ki, ha nincs hang.',
 			'settings.audioPassthroughDescriptionApple' => 'Az Apple natív Dolby-dekóderének használata Dolby Digital Plushoz, az Atmost is beleértve. A DTS és a TrueHD továbbra is többcsatornás PCM-ként szól. Kapcsold ki, ha nincs hang.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Az Apple natív Dolby-dekóderének használata Dolby Digital Plushoz, az Atmost is beleértve. iOS, iPadOS és tvOS 26 vagy újabb rendszeren a TrueHD Atmos és a DTS:X térbeli hangzásként szól. A többi DTS- és TrueHD-sáv többcsatornás PCM-ként szól. Kapcsold ki, ha nincs hang.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Ki, amíg a hangerőnormalizálás be van kapcsolva',
 			'settings.audioChannelLimit' => 'Hangcsatornák',
 			'settings.audioChannelLimitDescription' => 'A dekódolt hang lekeverése olyan hangszórókhoz, fejhallgatókhoz vagy HDMI-rendszerekhez, amelyek nem tudják lejátszani az összes csatornát',
@@ -6628,6 +6658,8 @@ extension on TranslationsHu {
 			'tooltips.markAsUnwatched' => 'Megjelölés nem megtekintettként',
 			'audioTracks.track' => ({required Object n}) => '${n}. hangsáv',
 			'videoControls.audioLabel' => 'Hang',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Feliratok',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Fekete sávok',
@@ -6643,8 +6675,6 @@ extension on TranslationsHu {
 			'videoControls.stillWatching' => 'Még nézed?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Szüneteltetés ${seconds} mp múlva',
 			'videoControls.continueWatching' => 'Folytatás',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Következő automatikus lejátszása',
 			'videoControls.playNext' => 'Következő lejátszása',
 			'videoControls.playButton' => 'Lejátszás',
@@ -7142,6 +7172,8 @@ extension on TranslationsHu {
 			'errors.pleaseEnterToken' => 'Adj meg egy tokent',
 			'errors.invalidToken' => 'Érvénytelen token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Nem sikerült a token ellenőrzése: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Nem sikerült átváltani a következő profilra: ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Nem sikerült törölni a következőt: ${displayName}',
 			'errors.failedToRate' => 'Nem sikerült frissíteni az értékelést',
@@ -7157,8 +7189,6 @@ extension on TranslationsHu {
 			'libraries.title' => 'Könyvtárak',
 			'libraries.fallbackTitle' => 'Könyvtár',
 			'libraries.scanLibraryFiles' => 'Könyvtárfájlok beolvasása',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Könyvtár beolvasása',
 			'libraries.analyze' => 'Elemzés',
 			'libraries.analyzeLibrary' => 'Könyvtár elemzése',
@@ -7656,6 +7686,8 @@ extension on TranslationsHu {
 			'playlists.deleted' => 'Lejátszási lista törölve',
 			'playlists.itemAdded' => 'Hozzáadva a lejátszási listához',
 			'playlists.itemRemoved' => 'Eltávolítva a lejátszási listáról',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Lejátszási lista kiválasztása',
 			'playlists.searchPlaylists' => 'Lejátszási listák keresése...',
 			'playlists.errorCreating' => 'Nem sikerült a lejátszási lista létrehozása',
@@ -7671,8 +7703,6 @@ extension on TranslationsHu {
 			'music.addToQueue' => 'Hozzáadás a lejátszási sorhoz',
 			'music.discNumber' => ({required Object n}) => '${n}. lemez',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hu'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} zeneszám', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} zeneszám', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'Most szól',
 			'music.playingFrom' => ({required Object title}) => 'Lejátszás innen: ${title}',
 			'music.queue' => 'Lejátszási sor',
@@ -8170,6 +8200,8 @@ extension on TranslationsHu {
 			'performanceOverlay.dropped' => 'Eldobva',
 			'performanceOverlay.dvRpus' => 'DV RPU-k',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU-átlag',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV-mintaátlag',
 			'performanceOverlay.maxLuma' => 'Maximális luma',
 			'performanceOverlay.minLuma' => 'Minimális luma',
@@ -8185,8 +8217,6 @@ extension on TranslationsHu {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Szoftveres',
@@ -8684,6 +8714,8 @@ extension on TranslationsHu {
 			'homeLayout.noPlexRows' => 'A Plex-es irányított sorok visszatértek erre a könyvtárra.',
 			'homeLayout.openDetails' => 'Nyitott részletek',
 			'homeLayout.heroCards' => 'Hős kártyák',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Hős kártyát kap',
 			'homeLayout.tvPlayFocus' => 'Televízió távoli: hangsúlyt a Play gomb',
 			'homeLayout.tvPlayFocusDescription' => 'A D-pad leáll a Play gombra, mielőtt a következő sorba halad.',
@@ -8699,8 +8731,6 @@ extension on TranslationsHu {
 			'homeLayout.addHomeRowDescription' => 'Válasszon egy kategóriát; az új sor automatikusan hozzáadódik a Szervezőhez',
 			'homeLayout.removeRow' => 'eltávolítása sor',
 			'homeLayout.recentlyAdded' => 'Legutóbb hozzáadva',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Nemrégiben kiadott',
 			'homeLayout.movieCollections' => 'Filmgyűjtemények',
 			'homeLayout.showCollections' => 'Kollekciók bemutatása',
@@ -9198,6 +9228,8 @@ extension on TranslationsHu {
 			'audiobook.recoveryImported' => 'A helyreállítási adatok összegyűltek.',
 			'sourceSetup.bookorbitHelp' => 'Jelentkezz be a saját BookOrbit-fiókoddal a könyvek böngészéséhez és lejátszásához. A hiányzó címek igénylései továbbra is a csatlakoztatott SeerrNG-példányodon keresztül történnek.',
 			'sourceSetup.bookorbitOpen' => 'Megnyitás a BookOrbitban',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'A könyvtár adatainak és a Pleazyng által meg nem nyitható formátumok kezeléséhez tekintsd meg ezt a címet a BookOrbitban. A hallgatási folyamat szinkronizálódik a BookOrbit-fiókoddal.',
 			'sourceSetup.savedCertificate' => 'Mentett szervertanúsítvány',
 			'sourceSetup.nfsEndpointInvalid' => 'Adj meg egy NFS URL-t, például: nfs://nas:2049/export.',
@@ -9213,8 +9245,6 @@ extension on TranslationsHu {
 			'sourceSetup.sshFingerprint' => 'Az SSH-gépkulcs SHA256-ujjlenyomata',
 			'sourceSetup.sshFingerprintHelp' => 'Ellenőrizd a szerver rendszergazdájával. A szerveren futtasd az ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub parancsot, és használd az SHA256-értékét.',
 			'sourceSetup.sshFingerprintKeep' => 'Hagyd üresen a jelenleg rögzített ujjlenyomat megőrzéséhez, vagy adj meg új szerverujjlenyomatot.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH-hitelesítés nyilvános kulccsal',
 			'sourceSetup.sshAuthenticationHelp' => 'Nem kötelező; a jelszavas hitelesítés is támogatott.',
 			'sourceSetup.privateKey' => 'Privát kulcs (PEM- vagy OpenSSH-formátum)',
@@ -9712,6 +9742,8 @@ extension on TranslationsHu {
 			'musicTools.exclusiveOutput' => 'Kizárólagos hangkimenet',
 			'musicTools.preamp' => 'Előerősítés',
 			'musicTools.ratingPending' => 'Ezen az eszközön mentve; szinkronizálásra vár',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Dalszöveg időeltolása',
 			'musicTools.anniversaries' => 'Albumévfordulók',
 			'musicTools.outputPreset' => 'EQ ehhez a kimenethez',
@@ -9727,8 +9759,6 @@ extension on TranslationsHu {
 			'musicTools.sonicAnalysis' => 'Hangelemzés',
 			'musicTools.serverAnalysisScope' => 'A szerver összes alkalmas zenei könyvtára. Az elemzési beállításaik nem változnak.',
 			'musicTools.serverActivities' => 'Szervertevékenységek',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Lejátszási lista elérése',
 			'musicTools.playlistRecipient' => 'Plex-felhasználónév vagy e-mail',
 			'musicTools.playlistSharingHint' => 'Adjon hozzáférést ehhez a listához és számaihoz. A címzettnek esetleg el kell fogadnia egy meghívást.',

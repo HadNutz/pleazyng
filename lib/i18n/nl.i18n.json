@@ -15,7 +15,22 @@
     "soloPage": "Deze pagina apart tonen",
     "pairPage": "Deze pagina weer koppelen",
     "listenPhone": "Op deze telefoon luisteren",
-    "audioUnavailable": "Het bestand of het geluidsspoor is niet beschikbaar op deze telefoon."
+    "audioUnavailable": "Het bestand of het geluidsspoor is niet beschikbaar op deze telefoon.",
+    "guidedPanels": "Paneel voor paneel lezen",
+    "rewind": "Terugspoelen",
+    "attachAudio": "Audiobestand toevoegen",
+    "replaceSoundtrack": "Geluidsspoor vervangen",
+    "mixMovie": "Met film mengen",
+    "commentaryLevel": "Commentaarvolume",
+    "movieLevel": "Filmvolume",
+    "episodeStarts": "Aflevering ${episode} begint hier",
+    "locateMovedFolder": "Verplaatste map zoeken",
+    "relinkMatched": "${count} overeenkomende items opnieuw koppelen",
+    "relinkAmbiguous": "Controle nodig",
+    "relinkNone": "Geen overeenkomende bestanden gevonden",
+    "clearAudio": "Toegevoegde audio verwijderen",
+    "keepFrom": "Bewaren vanaf ${time}",
+    "recordNow": "Vanaf nu opnemen"
   },
   "livingRoom": {
     "fitScreen": "Aanpassen aan mijn scherm",

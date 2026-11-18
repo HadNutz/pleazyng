@@ -475,7 +475,10 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
     GamepadButton.rightShoulder: 11,
   };
   void _rewind(bool active) {
-    if (_rewinding == active || active && (!_ready || _paused || _closing || _restoring || _capturing || !live)) return;
+    if (_rewinding == active ||
+        active && (!_ready || _paused || _closing || _restoring || _capturing || !_runtime.canRewind || !live)) {
+      return;
+    }
     _rewinding = active;
     _runtime.rewind(active);
   }
@@ -957,11 +960,19 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
             ),
             Tooltip(
               message: t.viewing.rewind,
-              child: Listener(
-                onPointerDown: (_) => _rewind(true),
-                onPointerUp: (_) => _rewind(false),
-                onPointerCancel: (_) => _rewind(false),
-                child: SizedBox.square(dimension: 48, child: Icon(Icons.fast_rewind, semanticLabel: t.viewing.rewind)),
+              child: Semantics(
+                button: true,
+                enabled: _runtime.canRewind,
+                label: t.viewing.rewind,
+                child: Listener(
+                  onPointerDown: (_) => _rewind(true),
+                  onPointerUp: (_) => _rewind(false),
+                  onPointerCancel: (_) => _rewind(false),
+                  child: SizedBox.square(
+                    dimension: 48,
+                    child: Icon(Icons.fast_rewind, color: _runtime.canRewind ? null : Theme.of(context).disabledColor),
+                  ),
+                ),
               ),
             ),
             IconButton(

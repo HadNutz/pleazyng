@@ -155,6 +155,21 @@ class _Translations$viewing$nl extends Translations$viewing$en {
 	@override String get pairPage => 'Deze pagina weer koppelen';
 	@override String get listenPhone => 'Op deze telefoon luisteren';
 	@override String get audioUnavailable => 'Het bestand of het geluidsspoor is niet beschikbaar op deze telefoon.';
+	@override String get guidedPanels => 'Paneel voor paneel lezen';
+	@override String get rewind => 'Terugspoelen';
+	@override String get attachAudio => 'Audiobestand toevoegen';
+	@override String get replaceSoundtrack => 'Geluidsspoor vervangen';
+	@override String get mixMovie => 'Met film mengen';
+	@override String get commentaryLevel => 'Commentaarvolume';
+	@override String get movieLevel => 'Filmvolume';
+	@override String episodeStarts({required Object episode}) => 'Aflevering ${episode} begint hier';
+	@override String get locateMovedFolder => 'Verplaatste map zoeken';
+	@override String relinkMatched({required Object count}) => '${count} overeenkomende items opnieuw koppelen';
+	@override String get relinkAmbiguous => 'Controle nodig';
+	@override String get relinkNone => 'Geen overeenkomende bestanden gevonden';
+	@override String get clearAudio => 'Toegevoegde audio verwijderen';
+	@override String keepFrom({required Object time}) => 'Bewaren vanaf ${time}';
+	@override String get recordNow => 'Vanaf nu opnemen';
 }
 
 // Path: livingRoom
@@ -5631,6 +5646,21 @@ extension on TranslationsNl {
 			'viewing.pairPage' => 'Deze pagina weer koppelen',
 			'viewing.listenPhone' => 'Op deze telefoon luisteren',
 			'viewing.audioUnavailable' => 'Het bestand of het geluidsspoor is niet beschikbaar op deze telefoon.',
+			'viewing.guidedPanels' => 'Paneel voor paneel lezen',
+			'viewing.rewind' => 'Terugspoelen',
+			'viewing.attachAudio' => 'Audiobestand toevoegen',
+			'viewing.replaceSoundtrack' => 'Geluidsspoor vervangen',
+			'viewing.mixMovie' => 'Met film mengen',
+			'viewing.commentaryLevel' => 'Commentaarvolume',
+			'viewing.movieLevel' => 'Filmvolume',
+			'viewing.episodeStarts' => ({required Object episode}) => 'Aflevering ${episode} begint hier',
+			'viewing.locateMovedFolder' => 'Verplaatste map zoeken',
+			'viewing.relinkMatched' => ({required Object count}) => '${count} overeenkomende items opnieuw koppelen',
+			'viewing.relinkAmbiguous' => 'Controle nodig',
+			'viewing.relinkNone' => 'Geen overeenkomende bestanden gevonden',
+			'viewing.clearAudio' => 'Toegevoegde audio verwijderen',
+			'viewing.keepFrom' => ({required Object time}) => 'Bewaren vanaf ${time}',
+			'viewing.recordNow' => 'Vanaf nu opnemen',
 			'livingRoom.fitScreen' => 'Aanpassen aan mijn scherm',
 			'livingRoom.fitHelp' => 'Kies een rand en verplaats die met de pijltjes tot de markeringen zichtbaar zijn. Herhaal dit voor elke rand.',
 			'livingRoom.left' => 'Links',
@@ -6114,6 +6144,8 @@ extension on TranslationsNl {
 			'settings.companionRemoteServerStopFailed' => 'Kan de Companion Remote-server niet stoppen',
 			'settings.autoPip' => 'Automatische beeld-in-beeld',
 			'settings.autoPipDescription' => 'Schakel over naar beeld-in-beeld als je tijdens het afspelen de app verlaat',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Inhoudsframesnelheid afstemmen',
 			'settings.matchContentFrameRateDescription' => 'Stem schermverversing af op videocontent',
 			'settings.matchContentResolution' => 'Aanpassen aan resolutie van content',
@@ -6129,8 +6161,6 @@ extension on TranslationsNl {
 			'settings.audioPassthroughDescription' => 'Stuur Dolby/DTS-audio zonder hercodering naar je receiver of tv en behoud surroundgeluid. Schakel uit als je geen geluid hebt.',
 			'settings.audioPassthroughDescriptionApple' => 'Gebruik de ingebouwde Dolby-decoder van Apple voor Dolby Digital Plus, inclusief Atmos. DTS en TrueHD worden nog steeds als meerkanaals-PCM afgespeeld. Schakel dit uit als je geen geluid hoort.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Gebruik de ingebouwde Dolby-decoder van Apple voor Dolby Digital Plus, inclusief Atmos. Op iOS, iPadOS en tvOS 26 of nieuwer worden TrueHD Atmos en DTS:X als ruimtelijke audio afgespeeld. Andere DTS- en TrueHD-sporen worden als meerkanaals-PCM afgespeeld. Schakel dit uit als je geen geluid hoort.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Uit zolang volumenormalisatie aan staat',
 			'settings.audioChannelLimit' => 'Audiokanalen',
 			'settings.audioChannelLimitDescription' => 'Downmix gedecodeerde audio voor luidsprekers, koptelefoons of HDMI-opstellingen die niet elk kanaal kunnen afspelen',
@@ -6628,6 +6658,8 @@ extension on TranslationsNl {
 			'tooltips.markAsUnwatched' => 'Als ongekeken markeren',
 			'audioTracks.track' => ({required Object n}) => 'Audiospoor ${n}',
 			'videoControls.audioLabel' => 'Audio',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Ondertitels',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Letterbox',
@@ -6643,8 +6675,6 @@ extension on TranslationsNl {
 			'videoControls.stillWatching' => 'Kijk je nog?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pauze over ${seconds}s',
 			'videoControls.continueWatching' => 'Doorgaan',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Volgende automatisch afspelen',
 			'videoControls.playNext' => 'Volgende afspelen',
 			'videoControls.playButton' => 'Afspelen',
@@ -7142,6 +7172,8 @@ extension on TranslationsNl {
 			'errors.pleaseEnterToken' => 'Voer een token in',
 			'errors.invalidToken' => 'Ongeldig token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Kon token niet verifiëren: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Kon niet wisselen naar ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Kon ${displayName} niet verwijderen',
 			'errors.failedToRate' => 'Beoordeling kon niet worden bijgewerkt',
@@ -7157,8 +7189,6 @@ extension on TranslationsNl {
 			'libraries.title' => 'Bibliotheken',
 			'libraries.fallbackTitle' => 'Bibliotheek',
 			'libraries.scanLibraryFiles' => 'Bibliotheekbestanden scannen',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Bibliotheek scannen',
 			'libraries.analyze' => 'Analyseren',
 			'libraries.analyzeLibrary' => 'Bibliotheek analyseren',
@@ -7656,6 +7686,8 @@ extension on TranslationsNl {
 			'playlists.deleted' => 'Afspeellijst verwijderd',
 			'playlists.itemAdded' => 'Toegevoegd aan afspeellijst',
 			'playlists.itemRemoved' => 'Verwijderd uit afspeellijst',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Afspeellijst selecteren',
 			'playlists.searchPlaylists' => 'Afspeellijsten zoeken...',
 			'playlists.errorCreating' => 'Afspeellijst maken mislukt',
@@ -7671,8 +7703,6 @@ extension on TranslationsNl {
 			'music.addToQueue' => 'Toevoegen aan wachtrij',
 			'music.discNumber' => ({required Object n}) => 'Schijf ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('nl'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} nummer', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} nummers', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'Nu afspelen',
 			'music.playingFrom' => ({required Object title}) => 'Afspelen vanaf ${title}',
 			'music.queue' => 'Wachtrij',
@@ -8170,6 +8200,8 @@ extension on TranslationsNl {
 			'performanceOverlay.dropped' => 'Gedropt',
 			'performanceOverlay.dvRpus' => 'DV RPU’s',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU gem.',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV-sample gem.',
 			'performanceOverlay.maxLuma' => 'Max luma',
 			'performanceOverlay.minLuma' => 'Min luma',
@@ -8185,8 +8217,6 @@ extension on TranslationsNl {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Software',
@@ -8684,6 +8714,8 @@ extension on TranslationsNl {
 			'homeLayout.noPlexRows' => 'Nr. Plex-geheerd rijen teruggekeerd voor deze bibliotheek.',
 			'homeLayout.openDetails' => 'Open details',
 			'homeLayout.heroCards' => 'Hero kaartjes',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Een heldenkaart te verliezen',
 			'homeLayout.tvPlayFocus' => 'Televisie op afstand: de hoogtepunt Play-knop',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad down stopt op de Play-knop voordat u naar de volgende rij gaat.',
@@ -8699,8 +8731,6 @@ extension on TranslationsNl {
 			'homeLayout.addHomeRowDescription' => 'Kies een categorie; de nieuwe rij wordt automatisch toegevoegd aan de Organisator',
 			'homeLayout.removeRow' => 'Verwijder Roi',
 			'homeLayout.recentlyAdded' => 'Recent toegevoegd',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Onlangs vrijgegeven',
 			'homeLayout.movieCollections' => 'Filmcollecties',
 			'homeLayout.showCollections' => 'Show collecties',
@@ -9198,6 +9228,8 @@ extension on TranslationsNl {
 			'audiobook.recoveryImported' => 'Recovery data samengesteld.',
 			'sourceSetup.bookorbitHelp' => 'Meld je aan met je eigen BookOrbit-account om de boeken daar te bekijken en af te spelen. Aanvragen voor ontbrekende titels worden nog steeds via je gekoppelde SeerrNG-instantie verstuurd.',
 			'sourceSetup.bookorbitOpen' => 'Openen in BookOrbit',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Bekijk deze titel in BookOrbit om bibliotheekgegevens en indelingen te beheren die Pleazyng niet kan openen. Je luistervoortgang wordt gesynchroniseerd met je BookOrbit-account.',
 			'sourceSetup.savedCertificate' => 'Opgeslagen servercertificaat',
 			'sourceSetup.nfsEndpointInvalid' => 'Voer een NFS-URL in, zoals nfs://nas:2049/export.',
@@ -9213,8 +9245,6 @@ extension on TranslationsNl {
 			'sourceSetup.sshFingerprint' => 'SHA256-vingerafdruk van de SSH-hostsleutel',
 			'sourceSetup.sshFingerprintHelp' => 'Controleer deze bij de serverbeheerder. Voer op de server ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub uit en gebruik de SHA256-waarde.',
 			'sourceSetup.sshFingerprintKeep' => 'Laat leeg om de huidige vastgelegde vingerafdruk te behouden, of voer een nieuwe servervingerafdruk in.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH-authenticatie met openbare sleutel',
 			'sourceSetup.sshAuthenticationHelp' => 'Optioneel; authenticatie met een wachtwoord wordt ook ondersteund.',
 			'sourceSetup.privateKey' => 'Privésleutel (PEM- of OpenSSH-formaat)',
@@ -9712,6 +9742,8 @@ extension on TranslationsNl {
 			'musicTools.exclusiveOutput' => 'Exclusieve audio-uitvoer',
 			'musicTools.preamp' => 'Voorversterking',
 			'musicTools.ratingPending' => 'Op dit apparaat opgeslagen; wacht op synchronisatie',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Tijdsverschuiving songtekst',
 			'musicTools.anniversaries' => 'Albumjubilea',
 			'musicTools.outputPreset' => 'EQ voor deze uitgang',
@@ -9727,8 +9759,6 @@ extension on TranslationsNl {
 			'musicTools.sonicAnalysis' => 'Geluidsanalyse',
 			'musicTools.serverAnalysisScope' => 'Alle geschikte muziekbibliotheken op deze server. Hun analyse-instellingen worden niet gewijzigd.',
 			'musicTools.serverActivities' => 'Serveractiviteiten',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Toegang tot afspeellijst',
 			'musicTools.playlistRecipient' => 'Plex-gebruikersnaam of e-mail',
 			'musicTools.playlistSharingHint' => 'Geef toegang tot deze afspeellijst en de nummers. De ontvanger moet mogelijk een uitnodiging accepteren.',

@@ -15,7 +15,22 @@
     "soloPage": "عرض هذه الصفحة منفردة",
     "pairPage": "إقران هذه الصفحة من جديد",
     "listenPhone": "الاستماع على هذا الهاتف",
-    "audioUnavailable": "الملف أو المسار الصوتي غير متاح على هذا الهاتف."
+    "audioUnavailable": "الملف أو المسار الصوتي غير متاح على هذا الهاتف.",
+    "guidedPanels": "عرض اللوحات بالتتابع",
+    "rewind": "إرجاع",
+    "attachAudio": "إضافة ملف صوتي",
+    "replaceSoundtrack": "استبدال المسار الصوتي",
+    "mixMovie": "مزج مع الفيلم",
+    "commentaryLevel": "مستوى صوت التعليق",
+    "movieLevel": "مستوى صوت الفيلم",
+    "episodeStarts": "الحلقة ${episode} تبدأ هنا",
+    "locateMovedFolder": "تحديد موقع المجلد المنقول",
+    "relinkMatched": "إعادة ربط ${count} عناصر متطابقة",
+    "relinkAmbiguous": "بحاجة إلى مراجعة",
+    "relinkNone": "لم يتم العثور على ملفات مطابقة",
+    "clearAudio": "إزالة الصوت المرفق",
+    "keepFrom": "الاحتفاظ بدءًا من ${time}",
+    "recordNow": "التسجيل من الآن"
   },
   "livingRoom": {
     "fitScreen": "ملاءمة شاشتي",

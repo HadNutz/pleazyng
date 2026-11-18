@@ -155,6 +155,21 @@ class _Translations$viewing$nb extends Translations$viewing$en {
 	@override String get pairPage => 'Par denne siden igjen';
 	@override String get listenPhone => 'Lytt på denne telefonen';
 	@override String get audioUnavailable => 'Filen eller lydsporet er utilgjengelig på denne telefonen.';
+	@override String get guidedPanels => 'Les rute for rute';
+	@override String get rewind => 'Spol tilbake';
+	@override String get attachAudio => 'Legg til lydfil';
+	@override String get replaceSoundtrack => 'Erstatt lydspor';
+	@override String get mixMovie => 'Bland med filmen';
+	@override String get commentaryLevel => 'Kommentarvolum';
+	@override String get movieLevel => 'Filmvolum';
+	@override String episodeStarts({required Object episode}) => 'Episode ${episode} starter her';
+	@override String get locateMovedFolder => 'Finn flyttet mappe';
+	@override String relinkMatched({required Object count}) => 'Koble til ${count} samsvarende oppføringer igjen';
+	@override String get relinkAmbiguous => 'Må gjennomgås';
+	@override String get relinkNone => 'Ingen samsvarende filer funnet';
+	@override String get clearAudio => 'Fjern lagt til lyd';
+	@override String keepFrom({required Object time}) => 'Behold fra ${time}';
+	@override String get recordNow => 'Ta opp fra nå';
 }
 
 // Path: livingRoom
@@ -5631,6 +5646,21 @@ extension on TranslationsNb {
 			'viewing.pairPage' => 'Par denne siden igjen',
 			'viewing.listenPhone' => 'Lytt på denne telefonen',
 			'viewing.audioUnavailable' => 'Filen eller lydsporet er utilgjengelig på denne telefonen.',
+			'viewing.guidedPanels' => 'Les rute for rute',
+			'viewing.rewind' => 'Spol tilbake',
+			'viewing.attachAudio' => 'Legg til lydfil',
+			'viewing.replaceSoundtrack' => 'Erstatt lydspor',
+			'viewing.mixMovie' => 'Bland med filmen',
+			'viewing.commentaryLevel' => 'Kommentarvolum',
+			'viewing.movieLevel' => 'Filmvolum',
+			'viewing.episodeStarts' => ({required Object episode}) => 'Episode ${episode} starter her',
+			'viewing.locateMovedFolder' => 'Finn flyttet mappe',
+			'viewing.relinkMatched' => ({required Object count}) => 'Koble til ${count} samsvarende oppføringer igjen',
+			'viewing.relinkAmbiguous' => 'Må gjennomgås',
+			'viewing.relinkNone' => 'Ingen samsvarende filer funnet',
+			'viewing.clearAudio' => 'Fjern lagt til lyd',
+			'viewing.keepFrom' => ({required Object time}) => 'Behold fra ${time}',
+			'viewing.recordNow' => 'Ta opp fra nå',
 			'livingRoom.fitScreen' => 'Tilpass til skjermen min',
 			'livingRoom.fitHelp' => 'Velg en kant og flytt den med piltastene til markeringene er synlige. Gjenta for hver kant.',
 			'livingRoom.left' => 'Venstre',
@@ -6114,6 +6144,8 @@ extension on TranslationsNb {
 			'settings.companionRemoteServerStopFailed' => 'Kunne ikke stoppe fjernkontrollserveren',
 			'settings.autoPip' => 'Automatisk bilde-i-bilde',
 			'settings.autoPipDescription' => 'Åpne bilde-i-bilde når du forlater appen under avspilling',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Tilpass innholdets bildefrekvens',
 			'settings.matchContentFrameRateDescription' => 'Tilpass skjermens oppdateringsfrekvens til videoinnhold',
 			'settings.matchContentResolution' => 'Tilpass til innholdets oppløsning',
@@ -6129,8 +6161,6 @@ extension on TranslationsNb {
 			'settings.audioPassthroughDescription' => 'Send Dolby/DTS-lyd til mottakeren eller TV-en uten omkoding, slik at surroundlyd bevares. Slå av hvis du ikke har lyd.',
 			'settings.audioPassthroughDescriptionApple' => 'Bruk Apples innebygde Dolby-dekoder for Dolby Digital Plus, inkludert Atmos. DTS og TrueHD spilles fortsatt av som flerkanals PCM. Slå av hvis du ikke har lyd.',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'Bruk Apples innebygde Dolby-dekoder for Dolby Digital Plus, inkludert Atmos. På iOS, iPadOS og tvOS 26 eller nyere spilles TrueHD Atmos og DTS:X av som romlig lyd. Andre DTS- og TrueHD-spor spilles av som flerkanals PCM. Slå av hvis du ikke har lyd.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'Av mens lydstyrkenormalisering er på',
 			'settings.audioChannelLimit' => 'Lydkanaler',
 			'settings.audioChannelLimitDescription' => 'Miks dekodet lyd ned for høyttalere, hodetelefoner eller HDMI-oppsett som ikke kan spille av alle kanalene',
@@ -6628,6 +6658,8 @@ extension on TranslationsNb {
 			'tooltips.markAsUnwatched' => 'Merk som usett',
 			'audioTracks.track' => ({required Object n}) => 'Lydspor ${n}',
 			'videoControls.audioLabel' => 'Lyd',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Undertekster',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Letterbox',
@@ -6643,8 +6675,6 @@ extension on TranslationsNb {
 			'videoControls.stillWatching' => 'Ser du fortsatt?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pauser om ${seconds}s',
 			'videoControls.continueWatching' => 'Fortsett',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Spill av neste automatisk',
 			'videoControls.playNext' => 'Spill neste',
 			'videoControls.playButton' => 'Spill av',
@@ -7142,6 +7172,8 @@ extension on TranslationsNb {
 			'errors.pleaseEnterToken' => 'Vennligst skriv inn et token',
 			'errors.invalidToken' => 'Ugyldig token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Kunne ikke verifisere token: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Kunne ikke bytte til ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Kunne ikke slette ${displayName}',
 			'errors.failedToRate' => 'Kunne ikke oppdatere vurderingen',
@@ -7157,8 +7189,6 @@ extension on TranslationsNb {
 			'libraries.title' => 'Biblioteker',
 			'libraries.fallbackTitle' => 'Bibliotek',
 			'libraries.scanLibraryFiles' => 'Skann bibliotekfiler',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Skann bibliotek',
 			'libraries.analyze' => 'Analyser',
 			'libraries.analyzeLibrary' => 'Analyser bibliotek',
@@ -7656,6 +7686,8 @@ extension on TranslationsNb {
 			'playlists.deleted' => 'Spilleliste slettet',
 			'playlists.itemAdded' => 'Lagt til i spilleliste',
 			'playlists.itemRemoved' => 'Fjernet fra spilleliste',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Velg spilleliste',
 			'playlists.searchPlaylists' => 'Søk i spillelister...',
 			'playlists.errorCreating' => 'Kunne ikke opprette spilleliste',
@@ -7671,8 +7703,6 @@ extension on TranslationsNb {
 			'music.addToQueue' => 'Legg til i kø',
 			'music.discNumber' => ({required Object n}) => 'Plate ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('nb'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} spor', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} spor', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'Spilles nå',
 			'music.playingFrom' => ({required Object title}) => 'Spiller fra ${title}',
 			'music.queue' => 'Kø',
@@ -8170,6 +8200,8 @@ extension on TranslationsNb {
 			'performanceOverlay.dropped' => 'Tapte',
 			'performanceOverlay.dvRpus' => 'DV RPU-er',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU snitt',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV-sample snitt',
 			'performanceOverlay.maxLuma' => 'Maks luma',
 			'performanceOverlay.minLuma' => 'Min luma',
@@ -8185,8 +8217,6 @@ extension on TranslationsNb {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA-maskinvare',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm-maskinvare',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek-maskinvare',
 			'performanceOverlay.decoderExynosHw' => 'Exynos-maskinvare',
 			'performanceOverlay.decoderSoftware' => 'Programvare',
@@ -8684,6 +8714,8 @@ extension on TranslationsNb {
 			'homeLayout.noPlexRows' => 'No. Plex-styrt rader returnerte for denne biblioteket.',
 			'homeLayout.openDetails' => 'Åpne detaljer',
 			'homeLayout.heroCards' => 'Hero kort',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Tapping av en helte kort',
 			'homeLayout.tvPlayFocus' => 'TV fjern: Highlight Play-knappen',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad ned stopper på Play-knappen før du går til neste rad.',
@@ -8699,8 +8731,6 @@ extension on TranslationsNb {
 			'homeLayout.addHomeRowDescription' => 'Velg en kategori; den nye raden blir automatisk lagt til i Organiser',
 			'homeLayout.removeRow' => 'Fjern runde',
 			'homeLayout.recentlyAdded' => 'Nylig lagt til',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Nylig frigjort',
 			'homeLayout.movieCollections' => 'Filmsamlinger',
 			'homeLayout.showCollections' => 'Vis innsamling',
@@ -9198,6 +9228,8 @@ extension on TranslationsNb {
 			'audiobook.recoveryImported' => 'Data om gjenoppretting sammensatt.',
 			'sourceSetup.bookorbitHelp' => 'Logg på med din egen BookOrbit-konto for å bla gjennom og spille av bøkene der. Forespørsler om titler som mangler, sendes fortsatt via den tilkoblede SeerrNG-instansen.',
 			'sourceSetup.bookorbitOpen' => 'Åpne i BookOrbit',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Vis denne tittelen i BookOrbit for å administrere bibliotekdetaljer og formater Pleazyng ikke kan åpne. Lyttefremdriften synkroniseres med BookOrbit-kontoen din.',
 			'sourceSetup.savedCertificate' => 'Lagret serversertifikat',
 			'sourceSetup.nfsEndpointInvalid' => 'Angi en NFS-URL, for eksempel nfs://nas:2049/export.',
@@ -9213,8 +9245,6 @@ extension on TranslationsNb {
 			'sourceSetup.sshFingerprint' => 'SHA256-fingeravtrykk for SSH-vertsnøkkel',
 			'sourceSetup.sshFingerprintHelp' => 'Kontroller det med serveradministratoren. Kjør ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub på serveren og bruk SHA256-verdien.',
 			'sourceSetup.sshFingerprintKeep' => 'La stå tomt for å beholde det fastlåste fingeravtrykket, eller angi et nytt serverfingeravtrykk.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH-autentisering med offentlig nøkkel',
 			'sourceSetup.sshAuthenticationHelp' => 'Valgfritt; autentisering med passord støttes også.',
 			'sourceSetup.privateKey' => 'Privat nøkkel (PEM- eller OpenSSH-format)',
@@ -9712,6 +9742,8 @@ extension on TranslationsNb {
 			'musicTools.exclusiveOutput' => 'Eksklusiv lydutgang',
 			'musicTools.preamp' => 'Forforsterkning',
 			'musicTools.ratingPending' => 'Lagret på denne enheten; venter på synkronisering',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Tidsforskyvning for sangtekst',
 			'musicTools.anniversaries' => 'Albumjubileer',
 			'musicTools.outputPreset' => 'EQ for denne utgangen',
@@ -9727,8 +9759,6 @@ extension on TranslationsNb {
 			'musicTools.sonicAnalysis' => 'Lydanalyse',
 			'musicTools.serverAnalysisScope' => 'Alle kvalifiserte musikkbiblioteker på denne serveren. Analyseinnstillingene deres endres ikke.',
 			'musicTools.serverActivities' => 'Serveraktiviteter',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Tilgang til spilleliste',
 			'musicTools.playlistRecipient' => 'Plex-brukernavn eller e-post',
 			'musicTools.playlistSharingHint' => 'Gi tilgang til denne spillelisten og sporene. Mottakeren må kanskje godta en invitasjon.',

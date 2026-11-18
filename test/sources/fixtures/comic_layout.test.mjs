@@ -44,3 +44,15 @@ test('guided frames retain authored order in RTL, survive rotation and preserve 
     assert.equal(parseComicLocator(comicLocator(0,undefined,0,1)).panel,1);
     assert.equal(parseComicLocator(comicLocator(0,undefined)).panel,undefined);
 });
+
+test('panel bounds clip to known image size and reject empty frames',async()=>{
+    const {comicPanelBounds}=await import('../../../assets/reader/comic-layout.js');
+    assert.deepEqual(comicPanelBounds({width:800,height:1000,frames:[[-5,10,900,1200]]},0),[0,10,800,1000]);
+    assert.equal(comicPanelBounds({width:800,height:1000,frames:[[900,0,1000,500]]},0),null);
+    assert.equal(comicPanelBounds({frames:[[0,0,0,500]]},0),null);
+});
+
+test('guided mode skips out-of-image frames and keeps unmarked pages readable',()=>{
+    assert.deepEqual(comicTurns([{width:100,height:100,frames:[[110,0,120,20],[0,0,20,20]]},{}],
+        {comicMode:'panels'},320,640),[[{index:0,panel:1}],[{index:1}]]);
+});

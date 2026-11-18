@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
-import 'dart:collection';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'romm_capabilities.dart';
 import 'romm_models.dart';
+import 'romm_rewind.dart';
 
 String rommNativeEmulatorPrefix(String core) {
   const ids = {'snes9x': 's9', 'gambatte': 'gb', 'mgba': 'mg', 'fceumm': 'fc', 'genesis_plus_gx': 'gx'};
@@ -209,6 +209,12 @@ class RommNative extends ChangeNotifier {
           notifyListeners();
         }
       }
+      if (row['rewindAvailable'] is bool && !_closed && !_retired) {
+        canRewind = row['rewindAvailable'] == true;
+        isRewinding = row['rewinding'] == true;
+        rewindSeconds = (row['rewindSeconds'] as num? ?? 0).toDouble();
+        notifyListeners();
+      }
       if (row['pixels'] is TransferableTypedData) {
         if (!_closed && !_retired) {
           pixels = (row['pixels'] as TransferableTypedData).materialize().asUint8List();
@@ -272,6 +278,9 @@ class RommNative extends ChangeNotifier {
       _commands?.send({'action': 'input', 'port': port, 'buttons': buttons});
     }
   }
+
+  bool canRewind = false, isRewinding = false;
+  double rewindSeconds = 0;
 
   void rewind(bool active) {
     if (!_closed && !_retired) _commands?.send({'action': 'rewind', 'active': active});
@@ -407,49 +416,64 @@ void _retroWorker(Map<String, Object?> args) {
     final interval = Duration(microseconds: (1000000 / binding.fps().clamp(15, 120)).round());
     // Rewind snapshots live exclusively in this session and never enter the save store.
     // Bound both memory and serialization cost on smaller TV receivers.
-    final history = ListQueue<Uint8List>();
-    const byteBudget = 16 * 1024 * 1024;
-    var bytesHeld = 0, frameNumber = 0, step = 0;
+    final history = RommRewindHistory();
+    var frameNumber = 0, step = 0;
     var captureInterval = (500000 / interval.inMicroseconds).round().clamp(1, 120);
     var rewindEnabled = true, rewinding = false;
+    void reportRewind() => out.send({
+      'rewindAvailable': rewindEnabled && !history.isEmpty,
+      'rewinding': rewinding,
+      'rewindSeconds': history.firstFrame == null
+          ? 0
+          : (frameNumber - history.firstFrame!) * interval.inMicroseconds / 1000000,
+    });
     void clearHistory() {
       history.clear();
-      bytesHeld = 0;
+      reportRewind();
     }
 
     void remember() {
       final cost = Stopwatch()..start();
       final size = binding.capture(1);
-      if (size <= 0 || size > byteBudget ~/ 2) {
+      if (size <= 0 ||
+          size > history.byteBudget ~/ 2 ||
+          !history.add(binding.snapshot().asTypedList(size), frameNumber)) {
         rewindEnabled = false;
         clearHistory();
         return;
       }
-      while (history.isNotEmpty && (bytesHeld + size > byteBudget || history.length >= 60)) {
-        bytesHeld -= history.removeFirst().length;
+      // Refuse a core that stalls normal rendering. Smaller serialization
+      // costs can be amortized by reducing the snapshot rate.
+      if (cost.elapsedMicroseconds > interval.inMicroseconds) {
+        rewindEnabled = false;
+        clearHistory();
+      } else if (cost.elapsedMicroseconds > interval.inMicroseconds ~/ 4) {
+        captureInterval = (captureInterval * 2).clamp(1, (4000000 / interval.inMicroseconds).round());
       }
-      history.addLast(Uint8List.fromList(binding.snapshot().asTypedList(size)));
-      bytesHeld += size;
-      if (cost.elapsedMicroseconds > interval.inMicroseconds ~/ 2) {
-        captureInterval *= 2;
-        if (captureInterval * interval.inMicroseconds > 4000000) {
-          rewindEnabled = false;
-          clearHistory();
-        }
-      }
+      reportRewind();
     }
 
     bool rewindStep() {
-      if (history.isEmpty) return false;
-      final bytes = history.removeLast();
-      bytesHeld -= bytes.length;
-      final memory = binding.alloc(bytes.length);
-      if (memory == nullptr) return false;
+      final snapshot = history.takeLast();
+      if (snapshot == null) return false;
+      final memory = binding.alloc(snapshot.bytes.length);
+      if (memory == nullptr) {
+        rewindEnabled = false;
+        clearHistory();
+        return false;
+      }
       try {
-        memory.asTypedList(bytes.length).setAll(0, bytes);
-        return binding.restore(memory, bytes.length, 1) == 1;
+        memory.asTypedList(snapshot.bytes.length).setAll(0, snapshot.bytes);
+        if (binding.restore(memory, snapshot.bytes.length, 1) != 1) {
+          rewindEnabled = false;
+          clearHistory();
+          return false;
+        }
+        frameNumber = snapshot.frame;
+        return true;
       } finally {
         binding.free(memory);
+        reportRewind();
       }
     }
 
@@ -489,18 +513,23 @@ void _retroWorker(Map<String, Object?> args) {
           case 'frameAck':
             framePending = false;
           case 'rewind':
-            rewinding = row['active'] == true && !paused && rewindEnabled && history.isNotEmpty;
+            rewinding = row['active'] == true && !paused && rewindEnabled && !history.isEmpty;
             step = 0;
+            for (var port = 0; port < 4; port++) {
+              binding.buttons(port, 0);
+            }
             binding.pauseAudio(paused || rewinding ? 1 : 0);
+            reportRewind();
           case 'pause':
             rewinding = false;
             paused = row['paused'] == true;
             binding.pauseAudio(paused ? 1 : 0);
+            reportRewind();
             for (var port = 0; port < 4; port++) {
               binding.buttons(port, 0);
             }
           case 'input':
-            binding.buttons(rommInt(row['port']), rommInt(row['buttons']));
+            if (!rewinding) binding.buttons(rommInt(row['port']), rommInt(row['buttons']));
           case 'capture':
             final size = binding.capture(row['state'] == true ? 1 : 0);
             if (size > 0) {
@@ -516,6 +545,8 @@ void _retroWorker(Map<String, Object?> args) {
             }
             result = progress;
           case 'restore':
+            rewinding = false;
+            binding.pauseAudio(paused ? 1 : 0);
             clearHistory();
             final bytes = (row['bytes'] as TransferableTypedData).materialize().asUint8List();
             final data = binding.alloc(bytes.length);

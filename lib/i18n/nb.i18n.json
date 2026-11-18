@@ -15,7 +15,22 @@
     "soloPage": "Vis denne siden alene",
     "pairPage": "Par denne siden igjen",
     "listenPhone": "Lytt på denne telefonen",
-    "audioUnavailable": "Filen eller lydsporet er utilgjengelig på denne telefonen."
+    "audioUnavailable": "Filen eller lydsporet er utilgjengelig på denne telefonen.",
+    "guidedPanels": "Les rute for rute",
+    "rewind": "Spol tilbake",
+    "attachAudio": "Legg til lydfil",
+    "replaceSoundtrack": "Erstatt lydspor",
+    "mixMovie": "Bland med filmen",
+    "commentaryLevel": "Kommentarvolum",
+    "movieLevel": "Filmvolum",
+    "episodeStarts": "Episode ${episode} starter her",
+    "locateMovedFolder": "Finn flyttet mappe",
+    "relinkMatched": "Koble til ${count} samsvarende oppføringer igjen",
+    "relinkAmbiguous": "Må gjennomgås",
+    "relinkNone": "Ingen samsvarende filer funnet",
+    "clearAudio": "Fjern lagt til lyd",
+    "keepFrom": "Behold fra ${time}",
+    "recordNow": "Ta opp fra nå"
   },
   "livingRoom": {
     "fitScreen": "Tilpass til skjermen min",

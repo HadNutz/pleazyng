@@ -393,6 +393,7 @@ class PlaybackStateProvider with ChangeNotifier, DisposableChangeNotifierMixin {
   Future<QueueNavigationResult> getNextEpisode(
     String currentItemKey, {
     bool loopQueue = false,
+    Set<int> boundedEpisodes = const {},
     String? playedPartId,
   }) async {
     if (!_isQueueMode) return const QueueNavigationResult.unavailable();
@@ -430,7 +431,8 @@ class PlaybackStateProvider with ChangeNotifier, DisposableChangeNotifierMixin {
         return result;
       }
 
-      if (!current.sharesFileWith(candidate, playedPartId: playedPartId)) {
+      if (!current.sharesFileWith(candidate, playedPartId: playedPartId) ||
+          (candidate.parentId == current.parentId && boundedEpisodes.contains(candidate.index))) {
         return result;
       }
       anchor = candidate;
@@ -445,7 +447,11 @@ class PlaybackStateProvider with ChangeNotifier, DisposableChangeNotifierMixin {
   /// backed by the file that's playing are skipped, and the result is
   /// collapsed to the first episode of its same-file group so a
   /// multi-episode file is entered at the episode that fronts it.
-  Future<QueueNavigationResult> getPreviousEpisode(String currentItemKey, {String? playedPartId}) async {
+  Future<QueueNavigationResult> getPreviousEpisode(
+    String currentItemKey, {
+    String? playedPartId,
+    Set<int> boundedEpisodes = const {},
+  }) async {
     if (!_isQueueMode) return const QueueNavigationResult.unavailable();
 
     final indexResult = await _getCurrentIndex(currentItemKey, loadIfMissing: true);
@@ -462,6 +468,11 @@ class PlaybackStateProvider with ChangeNotifier, DisposableChangeNotifierMixin {
         return result;
       }
       candidate = before;
+      if (candidate.parentId == current.parentId &&
+          boundedEpisodes.contains(candidate.index) &&
+          current.sharesFileWith(candidate, playedPartId: playedPartId)) {
+        return result;
+      }
       if (!current.sharesFileWith(candidate, playedPartId: playedPartId)) break;
     }
 

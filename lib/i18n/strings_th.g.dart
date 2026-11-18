@@ -155,6 +155,21 @@ class _Translations$viewing$th extends Translations$viewing$en {
 	@override String get pairPage => 'จับคู่หน้านี้อีกครั้ง';
 	@override String get listenPhone => 'ฟังบนโทรศัพท์เครื่องนี้';
 	@override String get audioUnavailable => 'ไฟล์หรือแทร็กเสียงไม่พร้อมใช้งานบนโทรศัพท์เครื่องนี้';
+	@override String get guidedPanels => 'อ่านทีละช่อง';
+	@override String get rewind => 'กรอกลับ';
+	@override String get attachAudio => 'เพิ่มไฟล์เสียง';
+	@override String get replaceSoundtrack => 'แทนที่แทร็กเสียง';
+	@override String get mixMovie => 'ผสมกับเสียงภาพยนตร์';
+	@override String get commentaryLevel => 'ระดับเสียงคำบรรยายเสียง';
+	@override String get movieLevel => 'ระดับเสียงภาพยนตร์';
+	@override String episodeStarts({required Object episode}) => 'ตอนที่ ${episode} เริ่มตรงนี้';
+	@override String get locateMovedFolder => 'ค้นหาโฟลเดอร์ที่ย้าย';
+	@override String relinkMatched({required Object count}) => 'เชื่อมต่อรายการที่ตรงกัน ${count} รายการอีกครั้ง';
+	@override String get relinkAmbiguous => 'ต้องตรวจสอบ';
+	@override String get relinkNone => 'ไม่พบไฟล์ที่ตรงกัน';
+	@override String get clearAudio => 'นำเสียงที่เพิ่มออก';
+	@override String keepFrom({required Object time}) => 'เก็บตั้งแต่ ${time}';
+	@override String get recordNow => 'บันทึกตั้งแต่ตอนนี้';
 }
 
 // Path: livingRoom
@@ -5606,6 +5621,21 @@ extension on TranslationsTh {
 			'viewing.pairPage' => 'จับคู่หน้านี้อีกครั้ง',
 			'viewing.listenPhone' => 'ฟังบนโทรศัพท์เครื่องนี้',
 			'viewing.audioUnavailable' => 'ไฟล์หรือแทร็กเสียงไม่พร้อมใช้งานบนโทรศัพท์เครื่องนี้',
+			'viewing.guidedPanels' => 'อ่านทีละช่อง',
+			'viewing.rewind' => 'กรอกลับ',
+			'viewing.attachAudio' => 'เพิ่มไฟล์เสียง',
+			'viewing.replaceSoundtrack' => 'แทนที่แทร็กเสียง',
+			'viewing.mixMovie' => 'ผสมกับเสียงภาพยนตร์',
+			'viewing.commentaryLevel' => 'ระดับเสียงคำบรรยายเสียง',
+			'viewing.movieLevel' => 'ระดับเสียงภาพยนตร์',
+			'viewing.episodeStarts' => ({required Object episode}) => 'ตอนที่ ${episode} เริ่มตรงนี้',
+			'viewing.locateMovedFolder' => 'ค้นหาโฟลเดอร์ที่ย้าย',
+			'viewing.relinkMatched' => ({required Object count}) => 'เชื่อมต่อรายการที่ตรงกัน ${count} รายการอีกครั้ง',
+			'viewing.relinkAmbiguous' => 'ต้องตรวจสอบ',
+			'viewing.relinkNone' => 'ไม่พบไฟล์ที่ตรงกัน',
+			'viewing.clearAudio' => 'นำเสียงที่เพิ่มออก',
+			'viewing.keepFrom' => ({required Object time}) => 'เก็บตั้งแต่ ${time}',
+			'viewing.recordNow' => 'บันทึกตั้งแต่ตอนนี้',
 			'livingRoom.fitScreen' => 'ปรับให้พอดีกับหน้าจอ',
 			'livingRoom.fitHelp' => 'เลือกขอบแล้วใช้ปุ่มลูกศรเลื่อนจนเห็นเครื่องหมาย ทำซ้ำจนครบทุกขอบ',
 			'livingRoom.left' => 'ซ้าย',
@@ -6089,6 +6119,8 @@ extension on TranslationsTh {
 			'settings.companionRemoteServerStopFailed' => 'ไม่สามารถหยุดเซิร์ฟเวอร์พันธมิตร',
 			'settings.autoPip' => 'ภาพถ่ายในภาพ',
 			'settings.autoPipDescription' => 'เข้าสู่ภาพในภาพโดยอัตโนมัติเมื่อคุณออกจากแอปในระหว่างการเล่น',
+			_ => null,
+		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Match Content Frame Rate ความเร็ว',
 			'settings.matchContentFrameRateDescription' => 'การแสดงผล Match อัตราการฟื้นฟูไปยังเนื้อหาวิดีโอ',
 			'settings.matchContentResolution' => 'โซลูชั่นเนื้อหา Match',
@@ -6104,8 +6136,6 @@ extension on TranslationsTh {
 			'settings.audioPassthroughDescription' => 'ส่งเสียง Dolby / DTS ไปยังรับหรือทีวีของคุณโดยไม่ต้องเข้ารหัสใหม่และยังคงเสียงรอบ ปิดถ้าคุณไม่มีเสียง',
 			'settings.audioPassthroughDescriptionApple' => 'ใช้ decoder Dolby ที่เกิดจาก Apple สําหรับ Dolby Digital Plus รวมถึง Atmos DTS และ TrueHD ยังคงเล่นเป็น PCM มัลติช่อง ปิดถ้าคุณไม่มีเสียง',
 			'settings.audioPassthroughDescriptionAppleSpatial' => 'ใช้ decoder Dolby ที่เกิดจาก Apple สําหรับ Dolby Digital Plus รวมถึง Atmos. บน iOS, iPadOS และ tvOS 26 หรือภายหลัง, TrueHD Atmos และ DTS:X เล่นเป็นเสียงพื้นที่. ระยะทาง DTS และ TrueHD อื่น ๆ เล่นเป็น PCM มัลติช่อง. ปิดถ้าคุณไม่มีเสียง.',
-			_ => null,
-		} ?? switch (path) {
 			'settings.audioPassthroughOverriddenByNormalization' => 'ปิดขณะที่เสียง normalization เป็น',
 			'settings.audioChannelLimit' => 'ช่องเสียง',
 			'settings.audioChannelLimitDescription' => 'ลดจำนวนช่องเสียงที่ถอดรหัสแล้วให้เหมาะกับลำโพง หูฟัง หรือระบบ HDMI ที่ไม่สามารถเล่นได้ครบทุกช่อง',
@@ -6603,6 +6633,8 @@ extension on TranslationsTh {
 			'tooltips.markAsUnwatched' => 'หมายเลขรุ่น: Unwatched',
 			'audioTracks.track' => ({required Object n}) => 'ลวดเสียง ${n}',
 			'videoControls.audioLabel' => 'เสียง',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'คำบรรยาย',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'กล่องข้อความ',
@@ -6618,8 +6650,6 @@ extension on TranslationsTh {
 			'videoControls.stillWatching' => 'ยังคงดู?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'การพักผ่อนใน ${seconds}s',
 			'videoControls.continueWatching' => 'เสร็จสิ้น',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'การเล่นอัตโนมัติ',
 			'videoControls.playNext' => 'เล่นต่อไป',
 			'videoControls.playButton' => 'เล่น',
@@ -7117,6 +7147,8 @@ extension on TranslationsTh {
 			'errors.pleaseEnterToken' => 'กรุณาใส่ token',
 			'errors.invalidToken' => 'โค้นที่ผิดพลาด',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'ไม่สามารถตรวจสอบ token: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'ไม่สามารถเปลี่ยนไป ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'ไม่สามารถลบได้ ${displayName}',
 			'errors.failedToRate' => 'ไม่สามารถปรับปรุงการรับรอง',
@@ -7132,8 +7164,6 @@ extension on TranslationsTh {
 			'libraries.title' => 'ห้องสมุด',
 			'libraries.fallbackTitle' => 'คลังสื่อ',
 			'libraries.scanLibraryFiles' => 'ไฟล์สแกนห้องสมุด',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.scanLibrary' => 'แสกนไลบรารี่',
 			'libraries.analyze' => 'การวิเคราะห์',
 			'libraries.analyzeLibrary' => 'การวิเคราะห์ห้องสมุด',
@@ -7631,6 +7661,8 @@ extension on TranslationsTh {
 			'playlists.deleted' => 'Playlist ลบ',
 			'playlists.itemAdded' => 'เพิ่มขึ้นใน Playlist',
 			'playlists.itemRemoved' => 'ลบออกจาก Playlist',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'เลือก Playlist',
 			'playlists.searchPlaylists' => 'ค้นหารายการเล่น',
 			'playlists.errorCreating' => 'ไม่ได้สร้าง playlist',
@@ -7646,8 +7678,6 @@ extension on TranslationsTh {
 			'music.addToQueue' => 'เพิ่มให้ Queue',
 			'music.discNumber' => ({required Object n}) => 'ดิสก์ ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('th'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ล้อ', ), 
-			_ => null,
-		} ?? switch (path) {
 			'music.nowPlaying' => 'ตอนนี้เล่น',
 			'music.playingFrom' => ({required Object title}) => 'เล่นจาก ${title}',
 			'music.queue' => 'สิทธิ',
@@ -8145,6 +8175,8 @@ extension on TranslationsTh {
 			'performanceOverlay.dropped' => 'ละลาย',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU AVG',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV ตัวอย่าง Avg',
 			'performanceOverlay.maxLuma' => 'แม็กซ์ Luma',
 			'performanceOverlay.minLuma' => 'มิน Luma',
@@ -8160,8 +8192,6 @@ extension on TranslationsTh {
 			'performanceOverlay.fps' => 'FPS',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'คอลัมคัม HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'โมเดียม HW',
 			'performanceOverlay.decoderExynosHw' => 'แอพลิเคชัน HW',
 			'performanceOverlay.decoderSoftware' => 'ซอฟต์แวร์',
@@ -8659,6 +8689,8 @@ extension on TranslationsTh {
 			'homeLayout.noPlexRows' => 'หมายเลข Plex-จัดการสายกลับสําหรับห้องสมุดนี้',
 			'homeLayout.openDetails' => 'รายละเอียดเปิด',
 			'homeLayout.heroCards' => 'บัตรฮีโร่',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'การสูญเสียการ์ดฮีโร่',
 			'homeLayout.tvPlayFocus' => 'โทรทัศน์ระยะไกล: ปุ่ม Play',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad down stops on the Play button before moving to the next row ปิดสกีตรงไปสู่ row ต่อไป',
@@ -8674,8 +8706,6 @@ extension on TranslationsTh {
 			'homeLayout.addHomeRowDescription' => 'เลือกหมวดหมู่ ใบสั่งใหม่จะถูกเพิ่มไปยังผู้จัดงานโดยอัตโนมัติ',
 			'homeLayout.removeRow' => 'ลบแถว',
 			'homeLayout.recentlyAdded' => 'เพิ่มล่าสุด',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'ปล่อยล่าสุด',
 			'homeLayout.movieCollections' => 'คอลเลกชันภาพยนตร์',
 			'homeLayout.showCollections' => 'แสดงคอลเลกชัน',
@@ -9173,6 +9203,8 @@ extension on TranslationsTh {
 			'audiobook.recoveryImported' => 'ข้อมูลการกู้คืนรวม',
 			'sourceSetup.bookorbitHelp' => 'ลงชื่อเข้าใช้บัญชี BookOrbit ของคุณเพื่อเรียกดูและเล่นหนังสือ คำขอสำหรับเรื่องที่ไม่มีให้บริการยังคงส่งผ่าน SeerrNG ที่เชื่อมต่อไว้',
 			'sourceSetup.bookorbitOpen' => 'เปิดใน BookOrbit',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'ดูเรื่องนี้ใน BookOrbit เพื่อจัดการรายละเอียดในคลังและรูปแบบไฟล์ที่ Pleazyng เปิดไม่ได้ ความคืบหน้าในการฟังจะซิงค์กับบัญชี BookOrbit ของคุณ',
 			'sourceSetup.savedCertificate' => 'ใบรับรองเซิร์ฟเวอร์ที่บันทึกไว้',
 			'sourceSetup.nfsEndpointInvalid' => 'ป้อน URL ของ NFS เช่น nfs://nas:2049/export.',
@@ -9188,8 +9220,6 @@ extension on TranslationsTh {
 			'sourceSetup.sshFingerprint' => 'ลายนิ้วมือ SHA256 ของกุญแจโฮสต์ SSH',
 			'sourceSetup.sshFingerprintHelp' => 'ตรวจสอบกับผู้ดูแลเซิร์ฟเวอร์ เรียกใช้ ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub บนเซิร์ฟเวอร์ แล้วใช้ค่า SHA256',
 			'sourceSetup.sshFingerprintKeep' => 'เว้นว่างไว้เพื่อคงลายนิ้วมือที่ตรึงไว้อยู่ หรือป้อนลายนิ้วมือเซิร์ฟเวอร์ใหม่',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'การยืนยันตัวตน SSH ด้วยกุญแจสาธารณะ',
 			'sourceSetup.sshAuthenticationHelp' => 'ไม่บังคับ รองรับการยืนยันตัวตนด้วยรหัสผ่านด้วย',
 			'sourceSetup.privateKey' => 'กุญแจส่วนตัว (รูปแบบ PEM หรือ OpenSSH)',
@@ -9687,6 +9717,8 @@ extension on TranslationsTh {
 			'musicTools.exclusiveOutput' => 'เอาต์พุตเสียงแบบเอกสิทธิ์',
 			'musicTools.preamp' => 'ปรีแอมป์',
 			'musicTools.ratingPending' => 'บันทึกบนอุปกรณ์นี้แล้ว รอซิงค์',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'ปรับเวลาเนื้อเพลง',
 			'musicTools.anniversaries' => 'ครบรอบการออกอัลบั้ม',
 			'musicTools.outputPreset' => 'EQ สำหรับเอาต์พุตนี้',
@@ -9702,8 +9734,6 @@ extension on TranslationsTh {
 			'musicTools.sonicAnalysis' => 'การวิเคราะห์เสียง',
 			'musicTools.serverAnalysisScope' => 'คลังเพลงที่เข้าเกณฑ์ทั้งหมดบนเซิร์ฟเวอร์นี้ การตั้งค่าการวิเคราะห์ของคลังจะไม่เปลี่ยนแปลง',
 			'musicTools.serverActivities' => 'กิจกรรมเซิร์ฟเวอร์',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'สิทธิ์เข้าถึงเพลย์ลิสต์',
 			'musicTools.playlistRecipient' => 'ชื่อผู้ใช้ Plex หรืออีเมล',
 			'musicTools.playlistSharingHint' => 'ให้สิทธิ์เข้าถึงเพลย์ลิสต์นี้และเพลงในรายการ ผู้รับอาจต้องตอบรับคำเชิญ',

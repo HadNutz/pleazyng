@@ -15,7 +15,22 @@
     "soloPage": "Paparkan halaman ini secara berasingan",
     "pairPage": "Pasangkan semula halaman ini",
     "listenPhone": "Dengar pada telefon ini",
-    "audioUnavailable": "Fail atau trek audio tidak tersedia pada telefon ini."
+    "audioUnavailable": "Fail atau trek audio tidak tersedia pada telefon ini.",
+    "guidedPanels": "Baca panel demi panel",
+    "rewind": "Undur",
+    "attachAudio": "Tambah fail audio",
+    "replaceSoundtrack": "Ganti runut bunyi",
+    "mixMovie": "Campur dengan filem",
+    "commentaryLevel": "Kelantangan ulasan",
+    "movieLevel": "Kelantangan filem",
+    "episodeStarts": "Episod ${episode} bermula di sini",
+    "locateMovedFolder": "Cari folder yang dipindahkan",
+    "relinkMatched": "Sambung semula ${count} entri yang sepadan",
+    "relinkAmbiguous": "Perlu disemak",
+    "relinkNone": "Tiada fail sepadan ditemui",
+    "clearAudio": "Buang audio yang dilampirkan",
+    "keepFrom": "Simpan dari ${time}",
+    "recordNow": "Rakam mulai sekarang"
   },
   "livingRoom": {
     "fitScreen": "Padankan dengan skrin saya",

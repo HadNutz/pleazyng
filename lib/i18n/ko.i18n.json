@@ -15,7 +15,22 @@
     "soloPage": "이 페이지만 따로 표시",
     "pairPage": "이 페이지를 다시 묶기",
     "listenPhone": "이 휴대전화로 듣기",
-    "audioUnavailable": "이 휴대전화에서 현재 파일 또는 오디오 트랙을 사용할 수 없습니다."
+    "audioUnavailable": "이 휴대전화에서 현재 파일 또는 오디오 트랙을 사용할 수 없습니다.",
+    "guidedPanels": "패널별로 읽기",
+    "rewind": "되감기",
+    "attachAudio": "오디오 파일 추가",
+    "replaceSoundtrack": "사운드트랙 교체",
+    "mixMovie": "영화와 믹싱",
+    "commentaryLevel": "해설 음량",
+    "movieLevel": "영화 음량",
+    "episodeStarts": "에피소드 ${episode} 시작 위치",
+    "locateMovedFolder": "이동한 폴더 찾기",
+    "relinkMatched": "일치하는 항목 ${count}개 다시 연결",
+    "relinkAmbiguous": "검토 필요",
+    "relinkNone": "일치하는 파일이 없습니다",
+    "clearAudio": "추가한 오디오 제거",
+    "keepFrom": "${time}부터 저장",
+    "recordNow": "지금부터 녹화"
   },
   "livingRoom": {
     "fitScreen": "내 화면에 맞추기",

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/iptv/iptv_manual_capture.dart';
 
@@ -30,4 +31,32 @@ void main() {
       if (mode == 'collision') expect(await target.readAsString(), 'unrelated');
     });
   }
+  test('buffered capture starts while its async dump remains open and flushes on stop', () async {
+    final folder = await Directory.systemTemp.createTemp('iptv-buffer');
+    addTearDown(() => folder.delete(recursive: true));
+    final output = File('${folder.path}/capture.ts');
+    final dumping = Completer<void>();
+    final requests = <List<String>>[];
+    final capture = BufferedIptvCapture((args) async {
+      requests.add(args);
+      if (args.last.isEmpty) {
+        await output.writeAsBytes([4, 5, 6], mode: FileMode.append);
+        dumping.complete();
+      } else {
+        await output.writeAsBytes([1, 2, 3]);
+        await dumping.future;
+      }
+    });
+    await capture.start(output, 12.345);
+    expect(dumping.isCompleted, isFalse);
+    expect(requests.single, ['dump-cache', '12.345', 'no', output.path]);
+    await capture.stop();
+    expect(await output.readAsBytes(), [1, 2, 3, 4, 5, 6]);
+  });
+  test('buffered capture reports a rejected command instead of claiming success', () async {
+    final folder = await Directory.systemTemp.createTemp('iptv-buffer-error');
+    addTearDown(() => folder.delete(recursive: true));
+    final capture = BufferedIptvCapture((_) async => throw StateError('not supported'));
+    await expectLater(capture.start(File('${folder.path}/capture.ts'), 0), throwsStateError);
+  });
 }

@@ -1509,6 +1509,8 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
     void Function()? onOpened,
     void Function(bool available)? onMediaAvailabilityChanged,
   }) async {
+    final activeProfile = context.read<ActiveProfileProvider?>();
+    final queue = context.read<PlaybackStateProvider>();
     final displayCriteria = result.mediaInfo?.displayCriteria;
     final motionCompensatedOutputRate = ScopedPlayerPrefs.resolve(ScopedPlayerPrefs.motionClarityOutputRate, metadata);
     final motionCompensatedRequested =
@@ -1590,20 +1592,25 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
       );
       if (!isCurrent()) return false;
       Duration? episodeEnd;
+      var episodeNumbers = const <int>{};
       if (currentPlayer is PlayerNative &&
           metadata.isEpisode &&
           !result.isTranscoding &&
           result.mediaInfo?.partTimeline == null) {
         final group = EpisodeFileBounds.identify(
-          context.read<ActiveProfileProvider>().activeId,
+          activeProfile?.activeId,
           metadata,
           result.selectedVersion ?? metadata.mediaVersions?.elementAtOrNull(_effectiveSelectedMediaIndex),
           result.mediaInfo?.partId,
-          context.read<PlaybackStateProvider>().loadedItems,
+          queue.loadedItems,
         );
         if (group != null) {
           final starts = await group.starts(result.mediaInfo?.chapters ?? []);
           if (!isCurrent()) return false;
+          episodeNumbers = {
+            for (var i = group.first; i <= group.last; i++)
+              if (group.slice(i, starts) != null) i,
+          };
           final slice = group.slice(metadata.index!, starts);
           if (slice != null) {
             final length = slice.end - slice.start;
@@ -1617,7 +1624,6 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
           }
         }
       }
-      _boundedEpisode = episodeEnd == null ? null : metadata.globalKey;
       if (PlatformDetector.isWebOSBuild()) {
         await currentPlayer.setProperty(
           'webos-source-has-audio',
@@ -1662,6 +1668,8 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
       // A false didOpen means shouldContinue stopped the sequence pre-open;
       // open failures throw to the caller instead.
       if (!openResult.didOpen || !isCurrent()) return false;
+      _boundedEpisodeNumbers = episodeNumbers;
+      _boundedEpisode = episodeEnd == null ? null : metadata.globalKey;
       if (openResult.sidecarFallbackUsed) {
         openSession = _commitSidecarFallbackSession(openSession);
         openSubtitleSelection = openSession.subtitleSelection;

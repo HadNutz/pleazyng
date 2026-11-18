@@ -15,7 +15,22 @@
     "soloPage": "Hiển thị riêng trang này",
     "pairPage": "Ghép lại trang này",
     "listenPhone": "Nghe trên điện thoại này",
-    "audioUnavailable": "Tệp hoặc bản âm thanh không khả dụng trên điện thoại này."
+    "audioUnavailable": "Tệp hoặc bản âm thanh không khả dụng trên điện thoại này.",
+    "guidedPanels": "Đọc theo từng khung",
+    "rewind": "Tua lại",
+    "attachAudio": "Thêm tệp âm thanh",
+    "replaceSoundtrack": "Thay thế bản âm thanh",
+    "mixMovie": "Trộn với âm thanh phim",
+    "commentaryLevel": "Âm lượng bình luận",
+    "movieLevel": "Âm lượng phim",
+    "episodeStarts": "Tập ${episode} bắt đầu tại đây",
+    "locateMovedFolder": "Tìm thư mục đã di chuyển",
+    "relinkMatched": "Liên kết lại ${count} mục khớp",
+    "relinkAmbiguous": "Cần xem xét",
+    "relinkNone": "Không tìm thấy tệp khớp",
+    "clearAudio": "Xóa âm thanh đã thêm",
+    "keepFrom": "Giữ từ ${time}",
+    "recordNow": "Ghi từ bây giờ"
   },
   "livingRoom": {
     "fitScreen": "Chỉnh vừa màn hình",

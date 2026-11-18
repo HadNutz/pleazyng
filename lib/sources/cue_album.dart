@@ -24,6 +24,7 @@ Future<List<SourceEntry>> cueAlbumEntries({
   } on FormatException {
     text = latin1.decode(bytes);
   }
+  text = text.replaceFirst('\uFEFF', '');
   final tracks = <_CueTrack>[];
   String? filename;
   var album = '', artist = '';
@@ -62,7 +63,9 @@ Future<List<SourceEntry>> cueAlbumEntries({
         if (idx != null && track != null) {
           final seconds = int.parse(idx[2]!), frames = int.parse(idx[3]!);
           if (seconds >= 60 || frames >= 75 || track.start != null) return [];
-          track.start = (int.parse(idx[1]!) * 60 + seconds) * 75 + frames;
+          final minutes = int.tryParse(idx[1]!);
+          if (minutes == null || minutes > 1000000) return [];
+          track.start = (minutes * 60 + seconds) * 75 + frames;
         }
     }
   }
@@ -83,7 +86,7 @@ Future<List<SourceEntry>> cueAlbumEntries({
     final slice = PublicationFile.fromJson({
       ...file.toJson(),
       'cueStart': start,
-      if (end != null) 'cueEnd': end,
+      'cueEnd': ?end,
       'durationMs': end == null ? null : ((end - start) * 1000 / 75).round(),
     });
     entries.add(
@@ -99,7 +102,7 @@ Future<List<SourceEntry>> cueAlbumEntries({
         files: [slice],
       ),
     );
-    if (media.length == 1)
+    if (media.length == 1) {
       chapters.add(
         BookChapter(
           title: title,
@@ -107,6 +110,7 @@ Future<List<SourceEntry>> cueAlbumEntries({
           endMs: end == null ? 0 : (end * 1000 / 75).round(),
         ),
       );
+    }
   }
   return [
     SourceEntry(

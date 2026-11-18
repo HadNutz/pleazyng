@@ -15,7 +15,22 @@
     "soloPage": "Bu sayfayı tek göster",
     "pairPage": "Bu sayfayı yeniden eşleştir",
     "listenPhone": "Bu telefonda dinle",
-    "audioUnavailable": "Dosya veya ses parçası bu telefonda kullanılamıyor."
+    "audioUnavailable": "Dosya veya ses parçası bu telefonda kullanılamıyor.",
+    "guidedPanels": "Panel panel oku",
+    "rewind": "Geri sar",
+    "attachAudio": "Ses dosyası ekle",
+    "replaceSoundtrack": "Ses parçasını değiştir",
+    "mixMovie": "Filmle karıştır",
+    "commentaryLevel": "Yorum sesi düzeyi",
+    "movieLevel": "Film sesi düzeyi",
+    "episodeStarts": "${episode}. bölüm burada başlıyor",
+    "locateMovedFolder": "Taşınan klasörü bul",
+    "relinkMatched": "Eşleşen ${count} kaydı yeniden bağla",
+    "relinkAmbiguous": "İnceleme gerekiyor",
+    "relinkNone": "Eşleşen dosya bulunamadı",
+    "clearAudio": "Eklenen sesi kaldır",
+    "keepFrom": "${time} itibarıyla sakla",
+    "recordNow": "Şimdiden kaydet"
   },
   "livingRoom": {
     "fitScreen": "Ekranıma sığdır",
