@@ -1,4 +1,5 @@
 import AVFoundation
+import VideoToolbox
 #if os(macOS)
 import AppKit
 import FlutterMacOS
@@ -127,6 +128,16 @@ final class SystemVideoPlugin: NSObject, FlutterPlatformViewFactory {
   func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol { FlutterStandardMessageCodec.sharedInstance() }
 
   private func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    if call.method == "decoderInventory" {
+      let formats: [(String, String, CMVideoCodecType)] = [
+        ("h264", "avc1.4D4029", kCMVideoCodecType_H264),
+        ("hevc", "hvc1.1.6.L120.B0", kCMVideoCodecType_HEVC),
+        ("av1", "av01.0.08M.08", kCMVideoCodecType_AV1),
+      ]
+      let playable = formats.filter { AVURLAsset.isPlayableExtendedMIMEType("video/mp4; codecs=\"\($0.1)\"") }
+      result(["video": playable.map { $0.0 }, "hardware": playable.filter { VTIsHardwareDecodeSupported($0.2) }.map { $0.0 }])
+      return
+    }
     guard let args = call.arguments as? [String: Any], let id = (args["id"] as? NSNumber)?.int64Value else {
       result(FlutterError(code: "id", message: "Missing session", details: nil))
       return

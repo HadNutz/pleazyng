@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -54,6 +56,9 @@ class VideoDecodeCapabilities {
   bool? _hardwareHevc;
   bool? _hardwareAv1;
   Set<String>? _androidVideoCodecs;
+  Set<String>? _systemVideoCodecs;
+  Set<String> _systemHardwareCodecs = const {};
+  Set<String> _systemContainers = const {'mp4'};
   bool? _webosUhd;
   int? _webosSdkMajor;
   Set<int> _nativeDolbyVisionProfiles = const {};
@@ -89,6 +94,25 @@ class VideoDecodeCapabilities {
       }
       return;
     }
+    if (Platform.isLinux || Platform.isWindows || Platform.isMacOS || Platform.isIOS) {
+      final channel = Platform.isWindows
+          ? const MethodChannel('plezy/window')
+          : const MethodChannel('org.snapetech.pleazyng/system_video');
+      try {
+        final result = await channel.invokeMapMethod<String, dynamic>('decoderInventory');
+        if (result?['video'] case final List codecs) {
+          _systemVideoCodecs = codecs.whereType<String>().map(CodecCatalog.normalize).toSet();
+          _systemHardwareCodecs = (result?['hardware'] as List? ?? []).whereType<String>().toSet();
+          if (result?['containers'] case final List containers) {
+            _systemContainers = containers.whereType<String>().toSet();
+          }
+        }
+      } on MissingPluginException {
+        // An older player has the baseline profile.
+      } on PlatformException {
+        // The decoder registry may be unavailable during startup.
+      }
+    }
     try {
       final result = await deviceChannel.invokeMapMethod<String, dynamic>('getVideoDecodeCapabilities');
       if (result != null) {
@@ -119,7 +143,12 @@ class VideoDecodeCapabilities {
   /// Whether [codec] should be advertised to a media server. Safe before init.
   static bool accepts(RankedVideoCodec codec) {
     if (isRefusedByUser(codec)) return false;
-    if (const {'gstreamer', 'mediafoundation'}.contains(videoEngine)) return codec == RankedVideoCodec.h264;
+    final instance = _singleton.instance;
+    if (const {'gstreamer', 'mediafoundation', 'avplayer'}.contains(videoEngine) &&
+        instance?._systemVideoCodecs != null) {
+      return codec == RankedVideoCodec.h264 || instance!._systemHardwareCodecs.contains(codec.id);
+    }
+    if (videoEngine == 'gstreamer' || videoEngine == 'mediafoundation') return codec == RankedVideoCodec.h264;
     if (videoEngine == 'tvmpv' || videoEngine == 'tizen') {
       return codec == RankedVideoCodec.h264 ||
           (codec == RankedVideoCodec.hevc &&
@@ -133,7 +162,6 @@ class VideoDecodeCapabilities {
     if (videoEngine == 'exoplayer' || videoEngine == 'mediaplayer') {
       return codec == RankedVideoCodec.h264 || (_singleton.instance?._androidVideoCodecs?.contains(codec.id) ?? false);
     }
-    final instance = _singleton.instance;
     return switch (codec) {
       RankedVideoCodec.av1 => instance?._hardwareAv1 ?? true,
       RankedVideoCodec.hevc => instance?._hardwareHevc ?? true,
@@ -186,9 +214,10 @@ class VideoDecodeCapabilities {
         return tizenVideoContainers.values.expand((codecs) => codecs).toSet().where(_allowSourceCodec).toList();
       case 'mediafoundation':
       case 'gstreamer':
-        return const ['h264'];
       case 'avplayer':
-        return ['h264', if (accepts(RankedVideoCodec.hevc)) 'hevc'];
+        final measured = _singleton.instance?._systemVideoCodecs;
+        if (measured != null) return measured.where(_allowSourceCodec).toList();
+        return ['h264', if (videoEngine == 'avplayer' && accepts(RankedVideoCodec.hevc)) 'hevc'];
       case 'webos':
         return webosDirectPlayContainers.values.expand((codecs) => codecs).toSet().where(_allowSourceCodec).toList();
       case 'mediaplayer':
@@ -209,6 +238,8 @@ class VideoDecodeCapabilities {
     ];
   }
 
+  static Set<String> get systemContainers => _singleton.instance?._systemContainers ?? const {'mp4'};
+
   static bool _mpvCanDirectPlay(String codec, DecoderInventory? measured, VideoDecodeCapabilities? instance) {
     final ranked = RankedVideoCodec.fromServerCodec(codec);
     final hasHardware = switch (ranked) {
@@ -228,6 +259,13 @@ class VideoDecodeCapabilities {
 
   static bool sourceDecoderUnavailable(String? codec) {
     if (codec == null || codec.trim().isEmpty) return false;
+    final system = _singleton.instance?._systemVideoCodecs;
+    if (system != null && const {'gstreamer', 'mediafoundation', 'avplayer'}.contains(videoEngine)) {
+      final normalized = CodecCatalog.normalize(codec);
+      // All three probes cover the ranked delivery codecs. Other originals
+      // may be playable even when their format was outside this probe.
+      return RankedVideoCodec.fromServerCodec(normalized) != null && !system.contains(normalized);
+    }
     if (videoEngine != 'mpv') return false;
     final measured = RuntimePlaybackCapabilities.videoDecoders;
     return measured != null && !measured.contains(codec);

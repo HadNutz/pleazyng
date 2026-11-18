@@ -3,6 +3,7 @@ project(runner LANGUAGES CXX)
 
 add_executable(${BINARY_NAME} WIN32
   "flutter_window.cpp"
+  "media_foundation_decoders.cpp"
   "workspace_views.cpp"
   "main.cpp"
   "utils.cpp"
@@ -36,7 +37,7 @@ target_compile_features(simdutf PUBLIC cxx_std_17)
 target_compile_options(simdutf PRIVATE /W0)
 
 target_link_libraries(${BINARY_NAME} PRIVATE flutter flutter_wrapper_app flutter_wrapper_plugin)
-target_link_libraries(${BINARY_NAME} PRIVATE "dwmapi.lib" "comctl32.lib" "dxgi.lib" "advapi32.lib")
+target_link_libraries(${BINARY_NAME} PRIVATE "dwmapi.lib" "comctl32.lib" "dxgi.lib" "advapi32.lib" "mfuuid.lib")
 target_link_libraries(${BINARY_NAME} PRIVATE "${MPV_LIB_DIR}/libmpv.dll.a")
 target_link_libraries(${BINARY_NAME} PRIVATE simdutf opengl32 windowscodecs ole32 bcrypt plezy_motion_engine)
 

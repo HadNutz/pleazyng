@@ -205,6 +205,51 @@ struct Session {
   }
 };
 
+FlValue* decoderInventory() {
+  if (!gst_init_check(nullptr, nullptr, nullptr)) return fl_value_new_null();
+  auto* result = fl_value_new_map();
+  auto* video = fl_value_new_list();
+  auto* hardware = fl_value_new_list();
+  auto* containers = fl_value_new_list();
+  fl_value_set_string_take(result, "video", video);
+  fl_value_set_string_take(result, "hardware", hardware);
+  fl_value_set_string_take(result, "containers", containers);
+  auto* decoders = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER |
+      GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO, GST_RANK_MARGINAL);
+  auto* demuxers = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DEMUXER, GST_RANK_MARGINAL);
+  struct Format { const char* id; const char* caps; };
+  const Format codecs[] = {{"h264", "video/x-h264"}, {"hevc", "video/x-h265"}, {"av1", "video/x-av1"},
+      {"vp9", "video/x-vp9"}, {"vp8", "video/x-vp8"}, {"mpeg2video", "video/mpeg,mpegversion=(int)2,systemstream=(boolean)false"},
+      {"mpeg4", "video/mpeg,mpegversion=(int)4,systemstream=(boolean)false"}};
+  const Format formats[] = {{"mp4", "video/quicktime,variant=(string)iso"}, {"mkv", "video/x-matroska"},
+      {"webm", "video/webm"}, {"mpegts", "video/mpegts,systemstream=(boolean)true"}};
+  auto matches = [](GList* factories, const char* type) {
+    GstCaps* caps = gst_caps_from_string(type);
+    GList* found = gst_element_factory_list_filter(factories, caps, GST_PAD_SINK, FALSE);
+    gst_caps_unref(caps);
+    return found;
+  };
+  for (auto entry : codecs) {
+    GList* found = matches(decoders, entry.caps);
+    if (found) fl_value_append_take(video, fl_value_new_string(entry.id));
+    for (GList* node = found; node; node = node->next) {
+      if (gst_element_factory_list_is_type(GST_ELEMENT_FACTORY(node->data), GST_ELEMENT_FACTORY_TYPE_HARDWARE)) {
+        fl_value_append_take(hardware, fl_value_new_string(entry.id));
+        break;
+      }
+    }
+    gst_plugin_feature_list_free(found);
+  }
+  for (auto entry : formats) {
+    GList* found = matches(demuxers, entry.caps);
+    if (found) fl_value_append_take(containers, fl_value_new_string(entry.id));
+    gst_plugin_feature_list_free(found);
+  }
+  gst_plugin_feature_list_free(decoders);
+  gst_plugin_feature_list_free(demuxers);
+  return result;
+}
+
 struct Host {
   FlTextureRegistrar* registrar;
   std::map<int64_t, std::unique_ptr<Session>> sessions;
@@ -212,6 +257,11 @@ struct Host {
 
 void handle(FlMethodChannel*, FlMethodCall* call, gpointer data) {
   auto* host = static_cast<Host*>(data);
+  if (!strcmp(fl_method_call_get_name(call), "decoderInventory")) {
+    g_autoptr(FlValue) inventory = decoderInventory();
+    fl_method_call_respond_success(call, inventory, nullptr);
+    return;
+  }
   auto* args = fl_method_call_get_args(call);
   auto* key = fl_value_lookup_string(args, "id");
   auto* value = fl_value_lookup_string(args, "value");

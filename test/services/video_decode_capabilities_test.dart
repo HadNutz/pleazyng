@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/media/media_display_criteria.dart';
@@ -56,6 +58,30 @@ void main() {
     expect(VideoDecodeCapabilities.describeDolbyVisionProfilesSync(), '5,7,8');
   });
 
+  test('a system player preserves installed source codecs and requests accelerated transcode targets', () async {
+    final channel = Platform.isWindows
+        ? const MethodChannel('plezy/window')
+        : const MethodChannel('org.snapetech.pleazyng/system_video');
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      channel,
+      (call) async => {
+        'video': ['h264', 'hevc', 'vp9'],
+        'hardware': ['hevc'],
+        'containers': ['mp4', 'mkv'],
+      },
+    );
+    addTearDown(() => binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, null));
+    await VideoDecodeCapabilities.getInstance();
+    RuntimePlaybackCapabilities.withVideoEngine('gstreamer', () {
+      expect(VideoDecodeCapabilities.directPlayVideoCodecs, containsAll(['hevc', 'vp9']));
+      expect(VideoDecodeCapabilities.transcodeVideoCodecs, [RankedVideoCodec.hevc, RankedVideoCodec.h264]);
+      expect(VideoDecodeCapabilities.systemContainers, {'mp4', 'mkv'});
+      expect(VideoDecodeCapabilities.sourceDecoderUnavailable('av1'), isTrue);
+      expect(VideoDecodeCapabilities.sourceDecoderUnavailable('h265'), isFalse);
+      expect(VideoDecodeCapabilities.sourceDecoderUnavailable('theora'), isFalse);
+    });
+  });
+
   test('a missing codec entry counts as no hardware decoder', () async {
     stubProbe(<String, Object?>{'hevc': true});
 
@@ -64,8 +90,7 @@ void main() {
     expect(acceptsAv1(), isFalse);
   });
 
-  // Desktop implements no probe at all, so the advertised codec list must stay
-  // wide there: those platforms software-decode both codecs in real time.
+  // Keep the default mpv transcode list when the platform probe is unavailable.
   test('an unanswered probe keeps both codecs advertised', () async {
     stubProbe(null);
 

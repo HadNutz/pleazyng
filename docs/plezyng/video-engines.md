@@ -11,7 +11,7 @@ Choose an engine under **Settings → Playback → Video player**. The selection
 | LG webOS | LG native media player, mpv | LG native media player |
 | Samsung Tizen | Samsung native media player, mpv | Samsung native media player |
 
-ExoPlayer uses Android APIs. The system choices use each OS's playback stack. An installed decoder, a decoder selected for a stream, and the signal actually presented by a display are separate observations. Server negotiation follows the engine selected for that source. Original quality on TV preserves source resolution. Lower quality presets continue to request their configured dimensions.
+ExoPlayer uses Android APIs. The system choices use each OS's playback stack. An installed decoder, a decoder selected for a stream, and the signal actually presented by a display are separate observations. Server negotiation follows the engine selected for that source. Original quality on TV preserves source resolution. Lower quality presets continue to request their configured dimensions. For the desktop system players the app queries GStreamer's installed decoders and demuxers, Media Foundation's decoder transforms, or AVFoundation's playable MP4 codecs. A software decoder can accept an original file. A reported hardware decoder also enables HEVC or AV1 as a preferred server transcode output.
 
 ## TV hardware paths
 

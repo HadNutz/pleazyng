@@ -23,7 +23,18 @@ List<Map<String, Object?>> _videoDirectPlayProfiles({bool? allowAudioStreamCopy}
     'webos' => VideoDecodeCapabilities.webosDirectPlayContainers,
     'exoplayer' => _exoVideoContainers,
     'tvmpv' => {'mkv,mp4,m4v,mov,avi,ts,mpegts,mpg,webm': codecs},
-    'avplayer' || 'mediafoundation' || 'mediaplayer' || 'gstreamer' => {
+    'gstreamer' => {
+      if (VideoDecodeCapabilities.systemContainers.contains('mp4'))
+        'mp4,m4v,mov': codecs.intersection({'h264', 'hevc', 'av1', 'vp9', 'mpeg4'}),
+      if (VideoDecodeCapabilities.systemContainers.contains('mkv')) 'mkv': codecs,
+      if (VideoDecodeCapabilities.systemContainers.contains('webm')) 'webm': codecs.intersection({'av1', 'vp8', 'vp9'}),
+      if (VideoDecodeCapabilities.systemContainers.contains('mpegts'))
+        'ts,mpegts,m2ts': codecs.intersection({'h264', 'hevc', 'mpeg2video'}),
+    },
+    'avplayer' || 'mediafoundation' => {
+      'mp4,m4v,mov': codecs.intersection({'h264', 'hevc', 'av1', 'vp9'}),
+    },
+    'mediaplayer' => {
       'mp4,m4v,mov': codecs.intersection({'h264', 'hevc'}),
     },
     _ => {

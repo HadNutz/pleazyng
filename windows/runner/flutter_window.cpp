@@ -1,6 +1,7 @@
 #include "flutter_window.h"
 
 #include <wincred.h>
+#include "media_foundation_decoders.h"
 
 #include <algorithm>
 #include <cctype>
@@ -338,7 +339,9 @@ void FlutterWindow::RegisterWindowChannel() {
                                             const flutter::MethodCall<flutter::EncodableValue>& call,
                                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     const std::string& name = call.method_name();
-    if (name == "setFullScreen") {
+    if (name == "decoderInventory") {
+      result->Success(MediaFoundationDecoderInventory());
+    } else if (name == "setFullScreen") {
       bool value = false;
       if (const auto* args = std::get_if<flutter::EncodableMap>(call.arguments())) {
         auto it = args->find(flutter::EncodableValue("isFullScreen"));
