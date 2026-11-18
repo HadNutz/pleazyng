@@ -70,6 +70,22 @@ List<Map<String, Object?>> _videoDirectPlayProfiles({bool? allowAudioStreamCopy}
   ];
 }
 
+Iterable<Map<String, Object?>> _musicDirectPlayProfiles() sync* {
+  final profiles = VideoDecodeCapabilities.videoEngine == 'mpv' ? RuntimePlaybackCapabilities.mpvMusicProfiles : null;
+  if (profiles == null) {
+    // Existing profile for native TV engines and for a cold or older music core.
+    yield const {
+      'Type': 'Audio',
+      'Container': 'flac,mp3,ogg,oga,opus,m4a,m4b,aac,alac,wav,aiff,wma,webma',
+      'AudioCodec': 'flac,mp3,aac,alac,opus,vorbis,wav,wma',
+    };
+    return;
+  }
+  for (final entry in profiles) {
+    yield {'Type': 'Audio', 'Container': entry.key, 'AudioCodec': entry.value};
+  }
+}
+
 /// Video codecs the client accepts as a transcode output, best first — unlike
 /// the direct-play list this one is an ordered preference and the server
 /// encodes to the first entry. Jellyfin first rotates codecs the admin has not
@@ -1192,16 +1208,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
           ],
           'DirectPlayProfiles': <Map<String, Object?>>[
             ..._videoDirectPlayProfiles(allowAudioStreamCopy: allowAudioStreamCopy),
-            // Music containers/codecs mpv plays natively everywhere. This one
-            // keeps its `AudioCodec` because Jellyfin falls back to the
-            // container list for `Type: Audio`, and a multi-container entry is
-            // not a codec name.
-            if (audioProfile)
-              const {
-                'Type': 'Audio',
-                'Container': 'flac,mp3,ogg,oga,opus,m4a,m4b,aac,alac,wav,aiff,wma,webma',
-                'AudioCodec': 'flac,mp3,aac,alac,opus,vorbis,wav,wma',
-              },
+            if (audioProfile) ..._musicDirectPlayProfiles(),
           ],
           // `Embed` covers direct play and an mkv remux, where the native
           // player reads the subtitle stream straight out of the container.

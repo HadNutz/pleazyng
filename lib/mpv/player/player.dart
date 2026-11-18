@@ -465,10 +465,9 @@ abstract class Player {
   /// `PlaybackCoordinator`), and the video core only exists while the video
   /// player screen is open.
   factory Player.audio({bool exclusiveAudio = true}) {
-    if (PlatformDetector.isTizenBuild()) return PlayerTizen(audioOnly: true);
-    if (PlatformDetector.isWebOSBuild()) {
-      return PlayerWebOS(audioOnly: true);
-    }
+    final engine = PlatformDetector.localMusicEngine;
+    if (engine == 'tizen') return PlayerTizen(audioOnly: true);
+    if (engine == 'webos') return PlayerWebOS(audioOnly: true);
     if (Platform.isAndroid || Platform.isMacOS || Platform.isIOS || Platform.isWindows || Platform.isLinux) {
       return PlayerNative.audio(exclusiveAudio: exclusiveAudio);
     }

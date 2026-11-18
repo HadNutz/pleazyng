@@ -176,8 +176,11 @@ The package SHA-256 is `046e2939689c4d9603951307e233451e16d87890cb004cfcace4864e
 The AV2 FFmpeg decoder and IVF/raw OBU demuxers at native revision
 `b2ed619` also cross-compiled and linked for armeabi-v7a, arm64-v8a, x86
 and x86_64 against the pinned Android NDK at API 25. The same decoder and both demuxers linked as Windows x64 and ARM64 FFmpeg
-DLLs using LLVM-MinGW 22.1.8. These were cross-builds. Playback on native
-Windows and Android devices remains unverified.
+DLLs using LLVM-MinGW 22.1.8. Android-targeted Bionic executables then decoded both IVF references and the
+raw 8-bit OBU reference on each ABI. All 12 runs matched the independent AVM
+pixel hashes. x86_64 ran directly on Linux and the other three ran under
+QEMU user-mode emulation. Physical Android and Windows playback remains
+unverified.
 
 Apple published all six XCFramework variants from revision `85d395c`.
 The Libavcodec archive (SHA-256 `9ee6a5a4f1e1f1fdbbc36d7b6ebc679f475526035c3a6afb9e0f5051d027e61b`)
@@ -196,6 +199,19 @@ still-image reader displayed one frame of a 50-frame capture. The file-local
 choice displayed all 50. Raw AVC, HEVC, MPEG-2, AV1 OBU and YUV4MPEG also
 displayed all 50 frames through the published Linux package. Offline cleanup uses the same file
 extensions as the source browser and retains its item identity and path checks.
+
+For local music, Jellyfin and Emby receive the dedicated audio engine’s
+container and decoder pairs, independently of the video engine preference.
+These include PCM and ADPCM variants, WavPack, True Audio, Monkey’s Audio,
+TAK, Shorten, Musepack, DSD/DST, ATRAC and RealAudio. The Linux x86_64
+package at app pin `7aff0ff` played 14 FFmpeg reference clips to EOF,
+including both Musepack versions, three ATRAC generations, DSDIFF/DST and
+four older lossless formats (TAK, Shorten, RKA and OSQ). All 14 produced
+the reference duration at 48 kHz. At 44.1 kHz, 12 produced byte-identical
+stereo PCM to the host FFmpeg decoder. The ATRAC3 and DSDIFF/DST
+conversions differed at that output rate. Shorten, RKA, OSQ and MLP
+also matched FFmpeg’s published PCM digests at their native sample rate.
+[FFmpeg reference samples](https://fate-suite.ffmpeg.org/).
 
 AC-4 software qualification covered two implementations. The FFmpeg proposal
 decoded the stereo reference exactly and the short 5.1 stream. Its immersive

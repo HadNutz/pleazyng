@@ -101,6 +101,80 @@ abstract final class RuntimePlaybackCapabilities {
     _markInventoryObserved();
   }
 
+  // Each container requires its own FFmpeg demuxer and an observed audio decoder.
+  static const _musicFormats = <(String, String, String)>[
+    ('flac', 'flac', 'flac'),
+    ('mp3', 'mp1,mp2,mp3,mpa', 'mp1,mp2,mp3'),
+    ('aac', 'aac', 'aac'),
+    ('mov', 'mp4,m4a,m4b,mov,alac', 'aac,alac,mp3,mp4als,ac3,eac3,flac,opus'),
+    ('ogg', 'ogg,oga,opus,spx', 'opus,vorbis,flac,speex'),
+    (
+      'matroska',
+      'mka,mkv',
+      'aac,alac,ac3,eac3,dts,truehd,flac,mp1,mp2,mp3,opus,vorbis,tta,wavpack,pcm_s16le,pcm_s24le,pcm_s32le',
+    ),
+    ('matroska', 'webma,webm', 'opus,vorbis'),
+    ('asf', 'asf,wma', 'wmav1,wmav2,wmapro,wmalossless,wmavoice,mp3'),
+    (
+      'wav',
+      'wav,wave,rf64,at3',
+      'pcm_u8,pcm_s16le,pcm_s24le,pcm_s32le,pcm_f32le,pcm_f64le,pcm_alaw,pcm_mulaw,adpcm_ima_wav,adpcm_ms,mp3,atrac3',
+    ),
+    (
+      'w64',
+      'w64',
+      'pcm_u8,pcm_s16le,pcm_s24le,pcm_s32le,pcm_f32le,pcm_f64le,pcm_alaw,pcm_mulaw,adpcm_ima_wav,adpcm_ms',
+    ),
+    (
+      'aiff',
+      'aif,aiff,aifc',
+      'pcm_s8,pcm_s16be,pcm_s24be,pcm_s32be,pcm_s16le,pcm_f32be,pcm_f64be,pcm_alaw,pcm_mulaw,adpcm_ima_qt',
+    ),
+    (
+      'caf',
+      'caf',
+      'alac,aac,adpcm_ima_qt,pcm_s16le,pcm_s16be,pcm_s24le,pcm_s24be,pcm_s32le,pcm_s32be,pcm_f32le,pcm_f32be',
+    ),
+    ('wv', 'wv', 'wavpack'),
+    ('tta', 'tta', 'tta'),
+    ('ape', 'ape', 'ape'),
+    ('tak', 'tak', 'tak'),
+    ('shn', 'shn', 'shorten'),
+    ('rka', 'rka', 'rka'),
+    ('osq', 'osq', 'osq'),
+    ('aea', 'aea', 'atrac1'),
+    ('rm', 'ra,rm,rmvb', 'ra_144,ra_288,ralf,cook,sipr,atrac3,aac,ac3'),
+    ('mpc', 'mpc,mpp', 'musepack7'),
+    ('mpc8', 'mpc', 'musepack8'),
+    ('dsf', 'dsf', 'dsd_lsbf_planar,dsd_msbf_planar'),
+    ('iff', 'dff', 'dsd_msbf,dst'),
+    ('iff', '8svx', 'pcm_s8,8svx_exp,8svx_fib'),
+    ('au', 'au,snd', 'pcm_s8,pcm_s16be,pcm_s24be,pcm_s32be,pcm_f32be,pcm_f64be,pcm_alaw,pcm_mulaw'),
+    ('amr', 'amr,awb', 'amr_nb,amr_wb'),
+    ('ac3', 'ac3', 'ac3'),
+    ('eac3', 'eac3,ec3', 'eac3'),
+    ('dts', 'dts', 'dts'),
+    ('dtshd', 'dtshd', 'dts'),
+    ('truehd', 'thd,truehd', 'truehd'),
+    ('mlp', 'mlp', 'mlp'),
+    ('oma', 'oma,aa3', 'atrac3,atrac3p,atrac3al,atrac3pal,mp3'),
+  ];
+
+  /// Direct-play music profiles for the current request’s engine. Cold
+  /// inventories yield null so the server client can use its compatibility profile.
+  static List<MapEntry<String, String>>? get mpvMusicProfiles {
+    final inventory = videoDecoders;
+    final demuxers = _demuxers;
+    if (inventory == null || demuxers == null) return null;
+    final profiles = <MapEntry<String, String>>[];
+    for (final (demuxer, containers, codecs) in _musicFormats) {
+      if (!demuxers.contains(demuxer)) continue;
+      final supported = codecs.split(',').where(inventory.hasSoftwareDecoder).join(',');
+      if (supported.isNotEmpty) profiles.add(MapEntry(containers, supported));
+    }
+    return profiles;
+  }
+
   static const videoContainerDemuxers = <String, String>{
     'mp4': 'mov',
     'm4v': 'mov',

@@ -1,8 +1,11 @@
 import '../../database/app_database.dart';
 import '../../i18n/strings.g.dart';
+import '../../media/media_backend.dart';
 import '../../media/media_item.dart';
 import '../../media/media_server_client.dart';
 import '../../media/media_source_info.dart';
+import '../../media/runtime_playback_capabilities.dart';
+import '../../utils/platform_detector.dart';
 import '../../models/transcode_quality_preset.dart';
 import '../../models/audio_quality_preset.dart';
 import '../../media/ids.dart';
@@ -85,6 +88,10 @@ class ServerMusicSourceResolver implements MusicSourceResolver {
       onCellularOnly: !offline && cellular != null && (await ConnectivityProbe.check()).isCellularOnly,
       onRemoteConnection: track.serverId != null && serverManager.isRemoteConnection(ServerId(track.serverId!)),
     );
+    final engine = PlatformDetector.localMusicEngine;
+    if (!offline && engine == 'mpv' && (track.backend == MediaBackend.jellyfin || track.backend == MediaBackend.emby)) {
+      await RuntimePlaybackCapabilities.waitForMpvInventory();
+    }
     final context = await PlaybackSourceResolver(serverManager: serverManager, database: database).resolve(
       PlaybackInitializationOptions(
         metadata: track,
@@ -99,6 +106,7 @@ class ServerMusicSourceResolver implements MusicSourceResolver {
         transcodeSessionId: generateSessionIdentifier(),
       ),
       offlineLibraryMode: offline,
+      videoEngine: engine,
     );
 
     final result = context.result;

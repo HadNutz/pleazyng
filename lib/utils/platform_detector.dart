@@ -273,6 +273,14 @@ class PlatformDetector {
 
   static bool isTizenBuild() => _tizenBuild;
 
+  /// The dedicated music player uses native TV audio on webOS and Tizen and
+  /// libmpv on the other supported platforms, independently of video settings.
+  static String get localMusicEngine => isTizenBuild()
+      ? 'tizen'
+      : isWebOSBuild()
+      ? 'webos'
+      : 'mpv';
+
   /// These TV ports use the manufacturer's media pipeline, without libmpv.
   static bool usesNativeTvMedia() => _webOSBuild || _tizenBuild;
 

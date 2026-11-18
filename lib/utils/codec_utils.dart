@@ -182,6 +182,7 @@ class CodecUtils {
       'eac3' || 'ec3' || 'ec-3' => 'E-AC3',
       'truehd' || 'mlpa' => 'TrueHD',
       'dts' || 'dca' || 'dtsc' => 'DTS',
+      'mp4als' || 'als' => 'ALS',
       'dtse' => 'DTS Express',
       'dca-ma' => 'DTS-HD MA',
       'dca-hra' => 'DTS-HD HRA',

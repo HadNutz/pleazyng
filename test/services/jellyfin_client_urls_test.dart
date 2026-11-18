@@ -3010,6 +3010,50 @@ void main() {
       expect(codecsFor('obu'), {'av1'});
     });
 
+    for (final emby in [false, true]) {
+      test('music profiles match the local audio engine and container (emby=$emby)', () async {
+        addTearDown(RuntimePlaybackCapabilities.reset);
+        late Map<String, dynamic> profile;
+        final scoped = _clientWithPlaybackInfo((request) async {
+          profile = jsonDecode(request.body)['DeviceProfile'];
+          return jsonResponse({'MediaSources': []});
+        }, emby: emby);
+        addTearDown(scoped.close);
+        Set<String> codecsFor(String container) => {
+          for (final row in profile['DirectPlayProfiles'])
+            if (row['Type'] == 'Audio' && (row['Container'] as String).split(',').contains(container))
+              ...(row['AudioCodec'] as String).split(','),
+        };
+        RuntimePlaybackCapabilities.activeVideoEngine = 'exoplayer';
+        RuntimePlaybackCapabilities.recordMpvDecoders([
+          for (final codec in ['wavpack', 'tta', 'mp4als', 'musepack7', 'musepack8', 'pcm_s24le', 'adpcm_ms'])
+            {'codec': codec, 'driver': codec},
+        ]);
+        Future<void> fromMusic() => RuntimePlaybackCapabilities.withVideoEngine('mpv', () async {
+          await scoped.getPlaybackInfo('item-1', audioProfile: true);
+        });
+        await fromMusic();
+        expect(codecsFor('wv'), isEmpty);
+        expect(codecsFor('flac'), contains('flac'));
+        RuntimePlaybackCapabilities.recordMpvDemuxers(['wv', 'mov,mp4,m4a', 'wav', 'mpc8']);
+        await fromMusic();
+        expect(codecsFor('wv'), {'wavpack'});
+        expect(codecsFor('m4b'), {'mp4als'});
+        expect(codecsFor('mpc'), {'musepack8'});
+        expect(codecsFor('wav'), {'pcm_s24le', 'adpcm_ms'});
+        expect(codecsFor('tta'), isEmpty);
+        expect(codecsFor('tak'), isEmpty);
+        expect(
+          (profile['TranscodingProfiles'] as List).singleWhere((row) => row['Type'] == 'Audio')['AudioCodec'],
+          'mp3',
+        );
+        await scoped.getPlaybackInfo('item-1', audioProfile: true);
+        expect(codecsFor('wv'), isEmpty);
+        await scoped.getPlaybackInfo('item-1');
+        expect(profile['DirectPlayProfiles'].where((row) => row['Type'] == 'Audio'), isEmpty);
+      });
+    }
+
     test('video audio negotiation uses measured decoders without claiming output support', () async {
       RuntimePlaybackCapabilities.recordMpvDecoders([
         {'codec': 'h264', 'driver': 'h264'},

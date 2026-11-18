@@ -33,7 +33,7 @@ abstract final class CodecCatalog {
     32: 'mp1',
     33: 'mp2',
     34: 'mp3',
-    36: 'als',
+    36: 'mp4als',
   };
 
   static const _profiledSampleEntries = {
@@ -94,6 +94,7 @@ abstract final class CodecCatalog {
     'mjp2': 'jpeg2000',
     'samr': 'amr_nb',
     'sawb': 'amr_wb',
+    'als': 'mp4als',
     'ima4': 'adpcm_ima_qt',
     'mp4a.66': 'aac',
     'mp4a.67': 'aac',
@@ -253,7 +254,6 @@ abstract final class CodecCatalog {
     'ilbc',
     'g723_1',
     'g729',
-    'als',
     's302m',
     'dsd_lsbf',
     'dsd_msbf',
@@ -381,6 +381,9 @@ abstract final class CodecCatalog {
     '.tak',
     '.tta',
     '.shn',
+    '.rka',
+    '.osq',
+    '.aea',
     '.dts',
     '.dtshd',
     '.thd',
