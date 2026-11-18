@@ -29,17 +29,20 @@ const library = MediaLibrary(
 
 class _Music extends Fake implements MusicPlaybackService {
   @override
-  MediaItem get currentTrack => song;
+  final List<MediaItem> queue = [song];
+  @override
+  int get currentIndex => 0;
+  @override
+  MediaItem get currentTrack => queue[currentIndex];
   @override
   int queueSessionRevision = 1;
-  final queued = <MediaItem>[];
   void Function()? changed;
   @override
   void addListener(void Function() listener) => changed = listener;
   @override
   void removeListener(void Function() listener) => changed = null;
   @override
-  void addToEnd(List<MediaItem> tracks) => queued.addAll(tracks);
+  void addToEnd(List<MediaItem> tracks) => queue.addAll(tracks);
 }
 
 class _Client extends Fake implements MediaServerClient {
@@ -92,9 +95,11 @@ void main() {
     expect(rows, hasLength(1));
     final add = '/add/${rows.single['id']}';
     expect((await call('POST', add, token: url.fragment, origin: 'http://example.invalid')).$1, 403);
-    expect((await call('POST', add, token: url.fragment)).$1, 204);
+    final accepted = await call('POST', add, token: url.fragment);
+    expect(accepted.$1, HttpStatus.ok);
+    expect(jsonDecode(accepted.$2), {'accepted': true, 'title': song.displayTitle});
     expect((await call('POST', add, token: url.fragment)).$1, 410);
-    expect(music.queued.map((item) => item.id), [song.id]);
+    expect(music.queue.skip(music.currentIndex + 1).map((item) => item.id), [song.id]);
     expect((await call('POST', '/skip', token: url.fragment)).$1, 404);
     allowed = false;
     expect((await call('GET', '/songs?q=Song', token: url.fragment)).$1, 410);
