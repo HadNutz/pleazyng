@@ -16,6 +16,12 @@ SECURITY_ENGINE_PUBLISHER = Path(".github/workflows/publish-security-engine.yml"
 # The owner authorized this exact main-only, provenance-checked binary publisher.
 # Any workflow edit must be reviewed alongside an explicit digest update.
 SECURITY_ENGINE_PUBLISHER_SHA256 = 'b83b9dfd7ef222448ab9dc3cf5e51e2c048eb3f8f62c95e9ee1aacd4c0c693f5'
+# Recovery reads GitHub-authored annotations and retries only the failed jobs of
+# a completed, same-repository main dispatch. Pin its privileged trigger too.
+AUDITED_WORKFLOW_RUN = {
+    SECURITY_ENGINE_PUBLISHER: SECURITY_ENGINE_PUBLISHER_SHA256,
+    Path(".github/workflows/recover-hosted-capacity.yml"): "db293843f6ba36bd32e055d170f86be7cb1b8687d6de6de8551560bdfcadc038",
+}
 FULL_SHA = re.compile(r"[0-9a-f]{40}")
 
 
@@ -109,12 +115,11 @@ def check_workflow(path: Path, text: str) -> list[str]:
 
     for dangerous_trigger in ("pull_request_target", "workflow_run"):
         if _has_trigger(active, dangerous_trigger):
-            audited_publisher = (
+            audited_workflow = (
                 dangerous_trigger == 'workflow_run'
-                and path.as_posix() == SECURITY_ENGINE_PUBLISHER.as_posix()
-                and hashlib.sha256(text.encode('utf-8')).hexdigest() == SECURITY_ENGINE_PUBLISHER_SHA256
+                and hashlib.sha256(text.encode('utf-8')).hexdigest() == AUDITED_WORKFLOW_RUN.get(path)
             )
-            if not audited_publisher:
+            if not audited_workflow:
                 errors.append(f"{path}: unaudited privileged trigger {dangerous_trigger}")
 
     pull_request = _has_trigger(active, "pull_request")
