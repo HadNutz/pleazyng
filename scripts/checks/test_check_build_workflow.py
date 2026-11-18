@@ -32,9 +32,24 @@ WINDOWS_TORRENT_DEPENDENCIES_DOWNLOADER = (
 WINDOWS_TOOLCHAIN_LOCK = ROOT / "windows/tool/build-toolchain.lock.json"
 PLEZY_TORRENT_CMAKE = ROOT / "packages/plezy_torrent/src/CMakeLists.txt"
 STEAM_CMAKE = ROOT / "native/games/steam/CMakeLists.txt"
+APPLE_NATIVE_ACTION = ROOT / ".github/actions/apple-native-reliability/action.yml"
 
 
 class BuildWorkflowGuardTest(unittest.TestCase):
+    def test_sherpa_cocoapods_diagnostic_uses_the_real_script_not_appledouble_sidecars(self):
+        action = APPLE_NATIVE_ACTION.read_text(encoding="utf-8")
+        diagnostic = action.split(
+            "    - name: Diagnose iOS torrent CocoaPods integration\n", 1
+        )[1].split("\n    - name:", 1)[0]
+
+        self.assertIn(
+            'copy_script = sherpa_support / "sherpa_onnx_ios-xcframeworks.sh"',
+            diagnostic,
+        )
+        self.assertIn("if not copy_script.is_file():", diagnostic)
+        self.assertIn('"SherpaOnnxC.xcframework" in contents', diagnostic)
+        self.assertNotIn("glob(*xcframeworks.sh)", diagnostic)
+
     def test_append_only_apple_recovery_skips_unrelated_core_assembly_steps(self):
         workflow = yaml.safe_load(self._workflow())
         steps = workflow['jobs']['create-release']['steps']

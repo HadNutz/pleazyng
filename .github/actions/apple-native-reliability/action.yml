@@ -262,14 +262,14 @@ runs:
             raise SystemExit("sherpa_onnx_ios Podspec does not include the CocoaPods source anchor")
 
         sherpa_support = Path("ios/Pods/Target Support Files/sherpa_onnx_ios")
-        copy_scripts = sorted(sherpa_support.glob("*xcframeworks.sh"))
-        if not copy_scripts:
-            raise SystemExit("CocoaPods did not generate the sherpa_onnx_ios XCFramework copy phase")
-        for copy_script in copy_scripts:
-            contents = copy_script.read_text(encoding="utf-8", errors="replace")
-            print(f"sherpa_copy_script={copy_script} has_framework={('SherpaOnnxC.xcframework' in contents)}")
-            if "SherpaOnnxC.xcframework" not in contents:
-                raise SystemExit(f"SherpaOnnxC is absent from {copy_script}")
+        copy_script = sherpa_support / "sherpa_onnx_ios-xcframeworks.sh"
+        if not copy_script.is_file():
+            raise SystemExit(f"CocoaPods did not generate {copy_script}")
+        contents = copy_script.read_text(encoding="utf-8", errors="replace")
+        has_framework = "SherpaOnnxC.xcframework" in contents
+        print(f"sherpa_copy_script={copy_script} has_framework={has_framework}")
+        if not has_framework:
+            raise SystemExit(f"SherpaOnnxC is absent from {copy_script}")
         PY
 
     - name: Install tvOS CocoaPods dependencies
