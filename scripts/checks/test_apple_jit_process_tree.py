@@ -380,6 +380,11 @@ class CancellationTests(unittest.TestCase):
                     if 'bash scripts/cleanup_apple_jit_scratch.sh' in step.get('run', ''):
                         self.assertEqual(step.get('env', {}).get('APPLE_JIT_JOB_STATUS'), '${{ job.status }}')
 
+        action = yaml.safe_load((ROOT / ".github/actions/apple-native-reliability/action.yml").read_text())
+        for step in action['runs']['steps']:
+            if 'APPLE_JIT_JOB_STATUS' in step.get('env', {}):
+                self.assertEqual(step['env']['APPLE_JIT_JOB_STATUS'], '${{ job.status }}')
+
 
 class DarwinAdapterTests(unittest.TestCase):
     def test_slow_process_query_retries_without_abandoning_observation(self):

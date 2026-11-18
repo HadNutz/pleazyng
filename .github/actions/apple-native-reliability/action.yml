@@ -433,7 +433,7 @@ runs:
       shell: bash
       env:
         SIMULATOR_RUNTIME: ${{ steps.scratch.outputs.runtime }}
-        APPLE_JIT_JOB_STATUS: ${{ cancelled() && 'cancelled' || github.action_status }}
+        APPLE_JIT_JOB_STATUS: ${{ job.status }}
       run: python3 scripts/apple/select_test_destination.py --cleanup
 
     - name: Retain Apple simulator ownership receipt
@@ -455,7 +455,7 @@ runs:
       if: always() && steps.scratch.outcome == 'success'
       shell: bash
       env:
-        APPLE_JIT_JOB_STATUS: ${{ cancelled() && 'cancelled' || github.action_status }}
+        APPLE_JIT_JOB_STATUS: ${{ job.status }}
         APPLE_HOSTED_SCRATCH: ${{ steps.scratch.outputs.APPLE_HOSTED_SCRATCH }}
         APPLE_SCRATCH_JOB: ${{ steps.scratch.outputs.project }}
         SUITE_ROOT: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
