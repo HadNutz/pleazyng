@@ -64,7 +64,7 @@
 			repositoryURL = "https://github.com/snapetech-org/mpv-build";
 			requirement = {
 				kind = revision;
-				revision = c37a7e3aefaf6567dc320f66a0242aa27a844182;
+				revision = e6a33c8605f80e88883f88b8e9d91e0e6c2df07c;
 			};
 		};
 		A511D0000000000000000010 /* Build configuration list for PBXProject "Probe" */ = {isa = XCConfigurationList; buildConfigurations = (A511D0000000000000000012 /* Debug */, A511D0000000000000000013 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
