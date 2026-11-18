@@ -63,6 +63,17 @@ class HostedCleanupTests(unittest.TestCase):
         self.assertFalse(self.sidecar.exists())
         self.assertTrue(self.protected.exists())
 
+    def test_native_ci_cleanup_requires_the_matching_suite(self):
+        for invalid in ('', 'tvos', '../macos'):
+            with self.subTest(invalid=invalid):
+                result = self.invoke(GITHUB_JOB='apple-native-test', APPLE_SCRATCH_JOB=invalid)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertTrue(self.sidecar.exists())
+        result = self.invoke(GITHUB_JOB='apple-native-test', APPLE_SCRATCH_JOB='macos')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(self.sidecar.exists())
+        self.assertTrue(self.protected.exists())
+
     def test_wrong_or_malformed_packaging_source_cannot_delete_sidecars(self):
         for source in ('b' * 40, 'not-a-commit'):
             with self.subTest(source=source):

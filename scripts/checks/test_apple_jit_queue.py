@@ -33,30 +33,93 @@ cleanup = load_script("cleanup_apple_jit_derived_data")
 def apple_job(status="queued"):
     return {
         "id": 123,
-        "name": "Apple job",
+        "name": "build-ios",
+        "run_id": 42, "run_attempt": 1, "head_sha": "a" * 40,
         "status": status,
         "conclusion": "success" if status == "completed" else None,
-        "labels": ["private-apple", "macOS", "ARM64", "gha-42-build-ios"],
+        "labels": ["self-hosted", "private-apple", "macOS", "ARM64", "ng-shared-main-pleazyng",
+                   "ng-main-run-42", "gha-42-build-ios"],
     }
 
 
 def failed_release():
     return {"id": 42, "status": "in_progress", "event": "workflow_dispatch",
             "head_branch": "main", "head_repository": {"full_name": queue.REPOSITORY},
+            "run_attempt": 1, "head_sha": "a" * 40,
+            "repository": {"full_name": queue.REPOSITORY}, "actor": {"login": "snapetech"},
             "path": ".github/workflows/build.yml", "display_title": "action:release:pool:private:tag:v3.0.3"}
 
 
+def private_release_ci():
+    sha = 'a' * 40
+    run = {**failed_release(), 'display_title': 'action:release:pool:public:tag:v3.0.38',
+           'repository': {'full_name': queue.REPOSITORY}, 'actor': {'login': 'snapetech'},
+           'head_sha': sha, 'run_attempt': 2, 'referenced_workflows': [
+               {'path': f'{queue.REPOSITORY}/.github/workflows/ci.yml@{sha}',
+                'sha': sha, 'ref': 'refs/heads/main'}]}
+    job = {**apple_job(), 'name': 'Release CI / Apple native reliability',
+           'run_id': 42, 'run_attempt': 2, 'head_sha': sha, 'labels': [
+               'self-hosted', 'macOS', 'ARM64', 'private-apple', 'ng-shared-main-pleazyng',
+               'ng-main-run-42', 'gha-42-apple-native-test']}
+    return run, job
+
+
 class AppleQueueTests(unittest.TestCase):
-    def test_reusable_ci_job_keeps_the_same_run_scoped_apple_identity(self):
+    def test_only_exact_private_release_ci_job_is_admitted(self):
+        run, job = private_release_ci()
+        self.assertTrue(queue.is_apple_job(job, '42', run))
+        self.assertFalse(queue.is_apple_job(job, '43', run))
+        for changed in (
+            {'event': 'pull_request_target'}, {'head_branch': 'other'},
+            {'head_repository': {'full_name': 'fork/pleazyng'}},
+            {'repository': {'full_name': 'fork/pleazyng'}}, {'actor': {'login': 'other'}},
+            {'path': '.github/workflows/ci.yml'}, {'path': '.github/workflows/other.yml'},
+            {'display_title': 'action:ci:pool:private'}, {'run_attempt': 1},
+            {'referenced_workflows': []}, {'head_sha': 'b' * 40},
+            {'referenced_workflows': [{**run['referenced_workflows'][0], 'ref': 'refs/heads/other'}]},
+        ):
+            with self.subTest(run_change=changed):
+                self.assertFalse(queue.is_apple_job(job, '42', {**run, **changed}))
+        for changed in (
+            {'name': 'Apple native reliability'}, {'name': job['name'] + ' (iOS)'},
+            {'labels': ['macos-26']}, {'labels': job['labels'] + ['other']},
+            {'run_id': 43}, {'run_attempt': 1}, {'head_sha': 'b' * 40},
+            {'labels': [*job['labels'][:-1], 'gha-42-build-ios']},
+            *({'labels': [item for item in job['labels'] if item != label]} for label in job['labels']),
+        ):
+            with self.subTest(job_change=changed):
+                self.assertFalse(queue.is_apple_job({**job, **changed}, '42', run))
+
+    def test_standalone_launcher_uses_same_admission_decision(self):
+        run, job = private_release_ci()
+        for labels, expected in ((job['labels'], 0), (['macos-26'], 1)):
+            with self.subTest(labels=labels):
+                result = subprocess.run(
+                    [sys.executable, str(ROOT / 'scripts/launch_queued_apple_jit_jobs.py'), '42', '--check-admission'],
+                    input=json.dumps([run, {**job, 'labels': labels}]), capture_output=True, text=True)
+                self.assertEqual(result.returncode, expected, result.stderr)
+
+    def test_existing_signed_jobs_keep_their_own_workflow_name_and_labels(self):
+        run = failed_release()
         job = apple_job()
-        job['name'] = 'Release CI / Apple native reliability (iOS)'
-        job['labels'][-1] = 'gha-42-0-apple-native-test'
-        self.assertTrue(queue.is_apple_job(job, '42'))
-        self.assertFalse(queue.is_apple_job(job, '43'))
+        for name, suffix in (('build-ios', 'build-ios'), ('build-macos', 'build-macos'),
+                             ('Build tvOS developer package (arm64)', 'build-tvos')):
+            labels = [*job['labels'][:-1], f'gha-42-{suffix}']
+            signed = {**job, 'name': name, 'labels': labels}
+            with self.subTest(name=name):
+                self.assertTrue(queue.is_apple_job(signed, '42', run))
+                for change in ({'name': 'Unrelated job'}, {'labels': labels[:-1]}, {'head_sha': 'b' * 40}):
+                    self.assertFalse(queue.is_apple_job({**signed, **change}, '42', run))
+                for change in ({'actor': {'login': 'other'}}, {'head_branch': 'other'},
+                               {'run_attempt': 2}, {'path': '.github/workflows/ci.yml'}):
+                    self.assertFalse(queue.is_apple_job(signed, '42', {**run, **change}))
+        store = {**job, 'name': 'Build and upload signed Mac App Store package',
+                 'labels': ['self-hosted', 'macOS', 'ARM64', 'private-apple', 'gha-42-build-upload']}
+        self.assertTrue(queue.is_apple_job(store, '42', {**run, 'path': queue.MAC_STORE_WORKFLOW}))
+        self.assertFalse(queue.is_apple_job(store, '42', run))
 
     def test_one_failed_ci_child_does_not_strand_the_remaining_apple_matrix(self):
-        pending = apple_job()
-        pending['name'] = 'Release CI / Apple native reliability (iOS)'
+        run, pending = private_release_ci()
         passed = {**pending, 'status': 'completed', 'conclusion': 'success'}
         failed = {'name': 'Release CI / Code Analysis', 'status': 'completed', 'conclusion': 'failure'}
         blocked = [{'name': 'Freeze qualified source', 'status': 'queued'},
@@ -66,7 +129,7 @@ class AppleQueueTests(unittest.TestCase):
         self.assertFalse(release.failed_build_has_drained(failed_release(), first))
         final = [failed, passed, *[{**job, 'status': 'completed', 'conclusion': 'skipped'} for job in blocked]]
         with tempfile.TemporaryDirectory() as directory, \
-                patch.object(queue, 'get_run', side_effect=[failed_release(), {**failed_release(), 'status': 'completed'}]), \
+                patch.object(queue, 'get_run', side_effect=[run, {**run, 'status': 'completed'}]), \
                 patch.object(queue, 'get_jobs', side_effect=[first, final]), \
                 patch.object(queue, 'get_job', return_value=passed), \
                 patch.object(queue, 'active_run_scoped_apple_runner', return_value=False), \
@@ -129,7 +192,7 @@ class AppleQueueTests(unittest.TestCase):
     def test_recovery_mode_completes_apple_jobs_after_a_non_apple_failure(self):
         failure = {"id": 2, "name": "WebOS", "status": "completed", "conclusion": "failure"}
         with tempfile.TemporaryDirectory() as scratch, \
-                patch.object(queue, "get_run", side_effect=[failed_release(), {"status": "completed"}]), \
+                patch.object(queue, "get_run", side_effect=[failed_release(), {**failed_release(), "status": "completed"}]), \
                 patch.object(queue, "get_jobs", side_effect=[[failure, apple_job()], [failure, apple_job("completed")]]), \
                 patch.object(queue, "get_job", return_value=apple_job("completed")), \
                 patch.object(queue, "active_run_scoped_apple_runner", return_value=False), \
@@ -239,8 +302,7 @@ class AppleQueueTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="pleazyng-apple-queue-test-") as scratch:
             with (
                 patch.object(queue, "get_run", side_effect=[
-                    {"status": "in_progress"}, {"status": "in_progress"},
-                    {"status": "completed"},
+                    failed_release(), failed_release(), {**failed_release(), "status": "completed"},
                 ]),
                 patch.object(queue, "get_jobs", side_effect=job_lists),
                 patch.object(queue, "active_run_scoped_apple_runner",

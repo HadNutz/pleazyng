@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Route explicitly selected Apple release qualification through the private ARM64 JIT runner with run-bound admission and isolated scratch cleanup; standalone CI remains on hosted Macs.
+
 - Fix phone karaoke take metadata and localize Dispatcharr recording status and actions.
 
 - Use the rounded group and copy icons for music passenger requests and playback diagnostics.

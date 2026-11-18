@@ -186,8 +186,10 @@ each job still run in order.
 
 Capacity determines which eligible jobs start. Linux, Android, Tizen, and
 Windows jobs use public hosted runners concurrently. Apple CI and unsigned
-packages use hosted macOS; only requested signing or notarization can use
-private Apple JIT. WebOS uses its one Linux x64 overflow route because its
+packages default to hosted macOS. Selecting `tvos_runner_pool=private` on a
+trusted main release routes the single unsigned Apple native CI job and its
+iOS/tvOS packaging jobs to private Apple JIT. Standalone CI stays hosted.
+WebOS uses its one Linux x64 overflow route because its
 source build requires 60 GiB free and the standard public Ubuntu runner has a
 14 GB SSD. It can remain queued until that compatible capacity is available;
 it has no dependency on an Apple job. The stage-by-stage waits in
@@ -812,9 +814,8 @@ For the historical `v3.0.33` Apple recovery, validate the RommWorker App Store p
 against every checked-in Enhanced Security entitlement before archiving. A
 stale active profile is not sufficient merely because its bundle, team and
 certificate match. That recovery predates the hosted-default policy. New
-releases do not automatically retry hosted tvOS on private Apple JIT; request
-private Apple only for signed or notarized work and preserve successful
-artifacts during explicit recovery.
+releases do not automatically retry hosted tvOS on private Apple JIT. Preserve
+successful artifacts during explicit recovery.
 
 The assembly publishes a schema-2 `platform-reuse-provenance.json` bound by the
 attested SHA256SUMS manifest. It identifies product, packaging and workflow SHAs,

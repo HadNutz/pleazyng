@@ -91,10 +91,9 @@ class NativePreparationOrderTests(unittest.TestCase):
                 for match in re.finditer(rf'flutter build {slug}\b', body):
                     self.assertLess(body.index(refresh), match.start())
 
-    def test_one_hosted_job_requires_all_three_suite_outcomes(self):
+    def test_one_apple_job_requires_all_three_suite_outcomes(self):
         apple = yaml.safe_load(WORKFLOW.read_text())['jobs']['apple-native-test']
         self.assertEqual(apple['name'], 'Apple native reliability')
-        self.assertEqual(apple['runs-on'], 'macos-26')
         self.assertNotIn('strategy', apple)
         self.assertFalse(apple.get('continue-on-error'))
         suite_steps = [s for s in apple['steps'] if s.get('uses') == './.github/actions/apple-native-reliability']
@@ -133,6 +132,38 @@ class NativePreparationOrderTests(unittest.TestCase):
         tools = step(body, 'Ensure CMake for the embedded Steam receiver')
         self.assertIn('command -v xcodegen >/dev/null || brew install xcodegen', tools)
         self.assertIn('command -v git-lfs >/dev/null || brew install git-lfs', tools)
+
+    def test_private_apple_suites_verify_their_selected_sdk_before_allocating_scratch(self):
+        prepare = yaml.safe_load(APPLE_SUITE.read_text())['runs']['steps'][0]['run']
+        probes = """
+            xcodebuild() { [[ "$*" == '-version' ]] && echo "Xcode $XCODE_VERSION"; }
+            xcrun() { [[ "$*" == "--sdk $EXPECTED_SDK --show-sdk-version" ]] && echo "$SDK_VERSION"; }
+            bash() { [[ "$1" == scripts/prepare_apple_jit_scratch.sh ]]; }
+        """
+        for platform, sdk in [('iOS', 'iphonesimulator'), ('macOS', 'macosx'), ('tvOS', 'appletvsimulator')]:
+            for runner, xcode, actual_sdk, ok in [
+                ('self-hosted', '27.0', '27.0', True),
+                ('self-hosted', '26.5', '27.0', False),
+                ('self-hosted', '27.0', '26.5', False),
+                ('github-hosted', '26.5', '26.5', True),
+            ]:
+                with self.subTest(platform=platform, runner=runner, xcode=xcode, sdk=actual_sdk):
+                    env = dict(RUNNER_ENVIRONMENT=runner, PLATFORM=platform, XCODE_VERSION=xcode,
+                               EXPECTED_SDK=sdk, SDK_VERSION=actual_sdk, GITHUB_OUTPUT='/dev/null',
+                               RUNNER_TEMP='/fixture', PUB_CACHE=f'/fixture/apple-native-pub-{platform}')
+                    result = subprocess.run(['bash', '-euo', 'pipefail', '-c', probes + prepare],
+                                            env=env, capture_output=True, text=True)
+                    self.assertEqual(result.returncode == 0, ok, result.stderr)
+
+    def test_private_checkout_and_cleanup_preserve_scratch_ownership(self):
+        steps = {s['name']: s for s in yaml.safe_load(APPLE_SUITE.read_text())['runs']['steps']}
+        checkout = steps['Check out the exact source for this suite']['run']
+        self.assertIn('if [[ "$RUNNER_ENVIRONMENT" == self-hosted ]]; then', checkout)
+        self.assertIn('scripts/copy_apple_jit_sources.py "$GITHUB_WORKSPACE" "$SUITE_ROOT" "$GITHUB_SHA"', checkout)
+        self.assertIn('ln -s "$APPLE_LOCAL_BUILD_DIR" "$SUITE_ROOT/build"', checkout)
+        cleanup = steps['Clean Apple build scratch']['run']
+        self.assertRegex(cleanup, r'if \[\[ "\$APPLE_HOSTED_SCRATCH" == 1 && [^\n]+\n\s+git worktree remove')
+        self.assertIn('bash scripts/cleanup_apple_jit_scratch.sh "$APPLE_SCRATCH_JOB"', cleanup)
 
     def test_apple_simulator_evidence_is_retained_before_scratch_cleanup(self):
         action_steps = yaml.safe_load(APPLE_SUITE.read_text())['runs']['steps']

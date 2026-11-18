@@ -1,6 +1,6 @@
 # ng-runner-policy: hosted-default-v2
-# CI uses public GitHub-hosted runners for every compatible job. Apple CI is
-# unsigned and hosted; no CI job requires the MacBook Air.
+# CI defaults to public GitHub-hosted runners. A trusted main release can
+# explicitly select its private Apple runner for the unsigned native tests.
 name: CI - Sanity Checks
 run-name: ${{ format('action:{0}:pool:{1}:apple:{2}', inputs.action, inputs.runner_pool, inputs.apple_runner_pool) }}
 
@@ -50,7 +50,7 @@ on:
         default: false
         type: boolean
       apple_runner_pool:
-        description: CI Apple validation is unsigned and always uses hosted macOS
+        description: Standalone CI uses hosted macOS for unsigned Apple validation
         required: false
         type: choice
         options: [hosted]
@@ -683,7 +683,7 @@ jobs:
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (inputs.execution_profile != 'hybrid' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
     timeout-minutes: 360
     # Native tests and their simulator dependencies build arm64 on every platform.
-    runs-on: macos-26
+    runs-on: ${{ inputs.apple_runner_pool == 'private' && github.event_name == 'workflow_dispatch' && github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && github.workflow_ref == 'snapetech-org/pleazyng/.github/workflows/build.yml@refs/heads/main' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-apple-native-test"]}}', github.run_id)) || 'macos-26' }}
     permissions:
       contents: read
     env:

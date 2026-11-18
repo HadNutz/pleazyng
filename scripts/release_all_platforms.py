@@ -325,7 +325,7 @@ def failed_build_has_drained(run: dict, jobs: list[dict]) -> bool:
     return all(
         job.get("status") == "completed"
         or (job.get("status") == "queued" and (
-            apple_queue.is_apple_job(job, str(run.get("id")))
+            apple_queue.is_apple_job(job, str(run.get("id")), run)
             or job.get("name") == "create-release"
         ))
         for job in jobs

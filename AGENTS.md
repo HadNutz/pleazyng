@@ -7,7 +7,9 @@ and ordinary Apple tests use hosted runners and must continue when that Mac is
 offline.
 
 Private ephemeral JIT is not a general build pool. Use it only for requested
-Apple signing/notarization and the one verified webOS capacity overflow. The
+Apple signing/notarization, explicitly selected Apple native CI in a trusted
+`build.yml` release dispatch on canonical `main`, and the one verified webOS
+capacity overflow. Standalone CI uses hosted macOS. The
 webOS source build preflights for 60 GiB under `RUNNER_TEMP`; this organization
 has no configured GitHub larger runners, and standard Ubuntu hosted runners
 provide only 14 GB. Keep that webOS lane on Linux x64 JIT until the build fits a

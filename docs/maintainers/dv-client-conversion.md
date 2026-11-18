@@ -110,7 +110,7 @@ Local validation for this change: 44 compiled Kotlin policy tests and 24 Python
 route/output tests passed. Kotlin tests exercise real policy classes with JUnit,
 not translated replicas. Full Android core/plugin compilation and device video
 playback were not run locally. No HDR/FEL pixel accuracy or throughput result is
-inferred from policy tests. Run integration checks on public GitHub-hosted runners under root `AGENTS.md`; qualify target hardware manually. Private JIT is limited to requested Apple signing and the documented webOS storage overflow.
+inferred from policy tests. Run integration checks on public GitHub-hosted runners under root `AGENTS.md`; qualify target hardware manually. Private JIT supports requested Apple signing, explicitly selected Apple native CI in a trusted main release, and the documented webOS storage overflow.
 
 Device qualification should cover P5/P7 MEL/P7 FEL/P8.1/P8.4 on DV, HDR10-only,
 HLG, and SDR outputs; repeated seek and pause; preference changes while playing;

@@ -108,10 +108,14 @@ require(
     and "hosted failures never reroute to private JIT automatically" in release_driver_text,
     "hosted Apple build failures must not trigger private runner retries",
 )
+ci_apple_pools = re.findall(r"(?m)^      apple_runner_pool:\n((?:        [^\n]+\n)+)", ci_text)
 require(
-    "apple_runner_pool: hosted"
-    in job("release-ci"),
-    "Release CI must use public hosted runners even when a signed package route is requested",
+    re.search(r"(?m)^      apple_runner_pool: \$\{\{ inputs\.tvos_runner_pool \}\}$", job("release-ci"))
+    and len(ci_apple_pools) == 2
+    and all("        default: hosted\n" in pool for pool in ci_apple_pools)
+    and "        type: string\n" in ci_apple_pools[0]
+    and "        options: [hosted]\n" in ci_apple_pools[1],
+    "Only the captured release may pass its explicit Apple pool to CI; standalone CI must default to and offer only hosted",
 )
 require(
     "inputs.action == 'release' && 'pleazyng-versioned-release-v2'" in text
@@ -1286,6 +1290,26 @@ require(
 )
 
 apple_native = job_block(ci_text, "apple-native-test")
+apple_runner = re.search(
+    r"(?m)^    runs-on: \$\{\{ (.+) && fromJSON\(format\('([^']+)', github\.run_id\)\) \|\| 'macos-26' \}\}$",
+    apple_native,
+)
+private_apple_conditions = {
+    "inputs.apple_runner_pool == 'private'",
+    "github.event_name == 'workflow_dispatch'",
+    "github.repository == 'snapetech-org/pleazyng'",
+    "github.ref == 'refs/heads/main'",
+    "github.workflow_ref == 'snapetech-org/pleazyng/.github/workflows/build.yml@refs/heads/main'",
+}
+private_apple_target = (
+    '{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple",'
+    '"ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-apple-native-test"]}}'
+)
+require(
+    apple_runner is not None and set(apple_runner[1].split(" && ")) == private_apple_conditions
+    and apple_runner[2] == private_apple_target,
+    "Apple native qualification must use hosted ARM64 by default and scope the private job to its exact trusted release dispatch",
+)
 apple_suite = (ROOT / ".github/actions/apple-native-reliability/action.yml").read_text(encoding="utf-8")
 linux_native = job_block(ci_text, "linux-native-test")
 linux_tests = (ROOT / "linux/runner/CMakeLists.txt").read_text(encoding="utf-8")
@@ -1552,15 +1576,14 @@ for apple_job_name in ("build-ios", "build-tvos"):
         f"{apple_job_name} signing archives and DerivedData must stay on local APFS",
     )
 require(
-    re.search(r"(?m)^    runs-on: macos-26$", apple_native) is not None
-    and "timeout-minutes: 360" in apple_native
+    "timeout-minutes: 360" in apple_native
     and "75m xcodebuild test" in mobile_apple_test
     and "hosted-xcode-version: '26.5'" in apple_native
     and 'test "$(uname -m)" = arm64' in named_step(apple_native, "Require native Apple Silicon host")
     and "ARCHS=arm64" in macos_apple_build
     and "ARCHS=arm64" in mobile_apple_test
     and "ARCHS=arm64" in named_step(apple_suite, "Build CocoaPods aggregate framework"),
-    "Apple native qualification must use compatible public Apple Silicon hosts and toolchains",
+    "Apple native qualification must use compatible Apple Silicon hosts and toolchains",
 )
 require(
     "scripts/refresh_apple_spm.sh ios" in apple_suite

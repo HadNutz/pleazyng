@@ -61,6 +61,11 @@ if [[ "$(jq -r '.status' <<<"$job_json")" != queued ]]; then
   exit 1
 fi
 
+# Use the queue controller's identical admission decision even when an operator
+# invokes this single-job launcher directly. Check before touching the Mac.
+printf '%s\n%s\n' "$run_json" "$job_json" | jq -s . \
+  | python3 "$SCRIPT_DIR/launch_queued_apple_jit_jobs.py" "$run_id" --check-admission
+
 labels_json="$(jq -c '.labels' <<<"$job_json")"
 jq -e 'index("private-apple") and index("macOS") and index("ARM64")' <<<"$labels_json" >/dev/null || {
   echo "Job $job_id is not assigned to the native private Apple runner route." >&2

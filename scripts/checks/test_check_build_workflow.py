@@ -351,8 +351,15 @@ sys.exit(1 if len(calls) <= int(os.environ['FAIL_UNTIL']) else 0)
         self.assertIsNotNone(job_match)
         apple_job = job_match.group(0)
         changes = [
-            ("runs-on: macos-26", "runs-on: macos-26-intel"),
-            ("runs-on: macos-26", "runs-on: macos-15"),
+            ("|| 'macos-26'", "|| 'macos-26-intel'"),
+            ("|| 'macos-26'", "|| 'macos-15'"),
+            ("inputs.apple_runner_pool == 'private' && ", ""),
+            ("github.event_name == 'workflow_dispatch' && ", ""),
+            ("github.repository == 'snapetech-org/pleazyng' && ", ""),
+            ("github.ref == 'refs/heads/main' && ", ""),
+            ("github.workflow_ref == 'snapetech-org/pleazyng/.github/workflows/build.yml@refs/heads/main' && ", ""),
+            ('"ng-main-run-{0}",', ''),
+            ('"gha-{0}-apple-native-test"', '"gha-apple-native-test"'),
             ("hosted-xcode-version: '26.5'",
              "hosted-xcode-version: '26.3'"),
             ('test "$(uname -m)" = arm64', 'true'),

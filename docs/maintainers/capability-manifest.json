@@ -205,7 +205,7 @@
         ".github/workflows/ci.yml",
         ".github/workflows/build.yml"
       ],
-      "open": "Use public GitHub-hosted runners for compatible jobs and qualify hardware on target devices. Private ephemeral JIT is limited to requested Apple signing and the documented webOS storage overflow. Existing builds validate their own revisions, not subsequent remediation commits."
+      "open": "Use public GitHub-hosted runners for compatible jobs and qualify hardware on target devices. Private JIT supports requested Apple signing, explicitly selected Apple native CI in a trusted main release, and the documented webOS storage overflow. Existing builds validate their own revisions, not subsequent remediation commits."
     }
   ],
   "findings": [

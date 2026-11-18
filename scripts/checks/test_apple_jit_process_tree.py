@@ -463,10 +463,13 @@ key=' '.join(args)
 counts[key]=counts.get(key,0)+1
 state.write_text(json.dumps(counts))
 run={'id':42,'run_attempt':1,'status':'completed','conclusion':'cancelled',
-     'event':'workflow_dispatch','head_branch':'main',
+     'event':'workflow_dispatch','head_branch':'main','head_sha':'a'*40,
+     'actor':{'login':'snapetech'},'path':'.github/workflows/build.yml',
+     'repository':{'full_name':'snapetech-org/pleazyng'},
      'head_repository':{'full_name':'snapetech-org/pleazyng'}}
 job={'id':123,'run_id':42,'run_attempt':1,'status':'completed','conclusion':'cancelled',
-     'labels':['private-apple','macOS','ARM64','gha-42-build-macos']}
+     'name':'build-macos','head_sha':'a'*40,'labels':['self-hosted','private-apple','macOS',
+     'ARM64','ng-shared-main-pleazyng','ng-main-run-42','gha-42-build-macos']}
 if args[:2]==['repo','view']:
  print('snapetech-org/pleazyng')
 elif any('generate-jitconfig' in value for value in args):

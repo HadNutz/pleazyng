@@ -12,6 +12,7 @@ runs:
       shell: bash
       env:
         PLATFORM: ${{ inputs.platform }}
+        RUNNER_ENVIRONMENT: ${{ runner.environment }}
       run: |
         case "$PLATFORM" in
           iOS)   project=ios;   sdk=iphonesimulator;  runtime=iOS;  destination='' ;;
@@ -19,6 +20,10 @@ runs:
           macOS) project=macos; sdk='';               runtime='';   destination='platform=macOS' ;;
           *) echo "::error::Unsupported Apple platform $PLATFORM"; exit 1 ;;
         esac
+        if [[ "$RUNNER_ENVIRONMENT" == self-hosted ]]; then
+          xcodebuild -version | grep -Fx 'Xcode 27.0'
+          test "$(xcrun --sdk "${sdk:-macosx}" --show-sdk-version)" = '27.0'
+        fi
         [[ "$PUB_CACHE" == "$RUNNER_TEMP/apple-native-pub-$PLATFORM" ]]
         [[ ! -e "$PUB_CACHE" && ! -L "$PUB_CACHE" ]]
         printf 'project=%s\nsdk=%s\nruntime=%s\ndestination=%s\n' \
@@ -32,8 +37,15 @@ runs:
       env:
         SUITE_ROOT: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
         APPLE_LOCAL_BUILD_DIR: ${{ steps.scratch.outputs.APPLE_LOCAL_BUILD_DIR }}
+        APPLE_SCRATCH_JOB: ${{ steps.scratch.outputs.project }}
+        RUNNER_ENVIRONMENT: ${{ runner.environment }}
       run: |
-        git worktree add --detach "$SUITE_ROOT" "$GITHUB_SHA"
+        if [[ "$RUNNER_ENVIRONMENT" == self-hosted ]]; then
+          python3 scripts/copy_apple_jit_sources.py "$GITHUB_WORKSPACE" "$SUITE_ROOT" "$GITHUB_SHA"
+          bash scripts/clean_appledouble_sidecars.sh "$SUITE_ROOT"
+        else
+          git worktree add --detach "$SUITE_ROOT" "$GITHUB_SHA"
+        fi
         ln -s "$APPLE_LOCAL_BUILD_DIR" "$SUITE_ROOT/build"
 
     - name: Restore platform Pub dependencies
@@ -274,6 +286,15 @@ runs:
         ruby tvos/scripts/test_wire_mpv.rb
         ruby tvos/scripts/test_wire_top_shelf.rb
 
+    - name: Remove AppleDouble sidecars from private native test sources
+      if: runner.environment == 'self-hosted'
+      env:
+        APPLE_SCRATCH_JOB: ${{ steps.scratch.outputs.project }}
+        SUITE_ROOT: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+        RUNNER_ENVIRONMENT: ${{ runner.environment }}
+      shell: bash
+      run: bash scripts/clean_appledouble_sidecars.sh "$SUITE_ROOT"
+
     - name: Resolve pinned Apple Swift packages for native tests
       env:
         APPLE_DERIVED_DATA_PATH: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}
@@ -441,7 +462,7 @@ runs:
         CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}
         PLATFORM: ${{ inputs.platform }}
       run: |
-        if [[ "$APPLE_JIT_JOB_STATUS" != cancelled && "$CHECKOUT_OUTCOME" == success ]]; then
+        if [[ "$APPLE_HOSTED_SCRATCH" == 1 && "$APPLE_JIT_JOB_STATUS" != cancelled && "$CHECKOUT_OUTCOME" == success ]]; then
           git worktree remove --force "$SUITE_ROOT"
         fi
         bash scripts/cleanup_apple_jit_scratch.sh "$APPLE_SCRATCH_JOB"

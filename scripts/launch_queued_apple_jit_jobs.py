@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run explicitly requested Apple signing/notarization jobs on private JIT."""
+"""Run requested Apple signing and release qualification jobs on private JIT."""
 
 from __future__ import annotations
 
@@ -18,6 +18,18 @@ ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "snapetech-org/pleazyng"
 RUNNER_GROUP_ID = os.environ.get("APPLE_JIT_RUNNER_GROUP_ID", "8")
 APPLE_LABELS = {"private-apple", "macOS", "ARM64"}
+BUILD_WORKFLOW = ".github/workflows/build.yml"
+MAC_STORE_WORKFLOW = ".github/workflows/macos-app-store-signed.yml"
+APPLE_CI_JOB = "Release CI / Apple native reliability"
+PRIVATE_APPLE_JOBS = {
+    BUILD_WORKFLOW: {
+        APPLE_CI_JOB: "apple-native-test",
+        "build-ios": "build-ios",
+        "Build tvOS developer package (arm64)": "build-tvos",
+        "build-macos": "build-macos",
+    },
+    MAC_STORE_WORKFLOW: {"Build and upload signed Mac App Store package": "build-upload"},
+}
 POLL_SECONDS = 15
 MAX_LAUNCH_ATTEMPTS = 3
 
@@ -76,11 +88,43 @@ def get_jobs(run_id: str) -> list[dict]:
     return jobs
 
 
-def is_apple_job(job: dict, run_id: str) -> bool:
-    labels = set(job.get("labels", []))
-    return (
-        APPLE_LABELS.issubset(labels)
-        and any(label.startswith(f"gha-{run_id}-") for label in labels)
+def is_apple_job(job: dict, run_id: str, run: dict) -> bool:
+    """Admit only a known private job in the same attempt of a trusted main dispatch."""
+    path = run.get("path")
+    name = job.get("name")
+    suffix = PRIVATE_APPLE_JOBS.get(path, {}).get(name)
+    if not suffix:
+        return False
+    sha = run.get("head_sha") or ""
+    if not (
+        run.get("event") == "workflow_dispatch" and run.get("head_branch") == "main"
+        and (run.get("repository") or {}).get("full_name") == REPOSITORY
+        and (run.get("head_repository") or {}).get("full_name") == REPOSITORY
+        and (run.get("actor") or {}).get("login") == "snapetech"
+        and str(run.get("id")) == run_id and job.get("run_id") == run["id"]
+        and type(run.get("run_attempt")) is int and run["run_attempt"] > 0
+        and job.get("run_attempt") == run["run_attempt"]
+        and re.fullmatch(r"[0-9a-f]{40}", sha) and job.get("head_sha") == sha
+    ):
+        return False
+    expected = {"self-hosted", *APPLE_LABELS, f"gha-{run_id}-{suffix}"}
+    if path == BUILD_WORKFLOW:
+        expected.update({"ng-shared-main-pleazyng", f"ng-main-run-{run_id}"})
+    labels = job.get("labels") or []
+    if not isinstance(labels, list) or not all(isinstance(label, str) for label in labels):
+        return False
+    if set(labels) != expected or len(labels) != len(expected):
+        return False
+    if name != APPLE_CI_JOB:
+        return True
+    # The unsigned suite is admitted only as a same-commit reusable job of
+    # a versioned release. Standalone ci.yml keeps using hosted runners.
+    return bool(
+        re.fullmatch(r"action:release:pool:public:tag:v[0-9]+\.[0-9]+\.[0-9]+", run.get("display_title") or "")
+        and any(isinstance(workflow, dict)
+                and workflow.get("path") == f"{REPOSITORY}/.github/workflows/ci.yml@{sha}"
+                and workflow.get("ref") == "refs/heads/main" and workflow.get("sha") == sha
+                for workflow in run.get("referenced_workflows") or [])
     )
 
 
@@ -184,11 +228,11 @@ def launch_job(run_id: str, job_id: int, attempt: int, evidence_run_dir: Path) -
 
 
 def save_github_logs(run_id: str, jobs: list[dict], evidence_run_dir: Path) -> None:
+    """Save the completed logs of jobs already admitted by run_queue."""
     evidence_run_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
     os.chmod(evidence_run_dir, 0o700)
     for job in jobs:
-        if (not is_apple_job(job, run_id) or job.get("status") != "completed"
-                or job.get("conclusion") == "skipped"):
+        if job.get("status") != "completed" or job.get("conclusion") == "skipped":
             continue
         job_id = job.get("id")
         if not isinstance(job_id, int):
@@ -226,9 +270,11 @@ def save_github_logs(run_id: str, jobs: list[dict], evidence_run_dir: Path) -> N
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run_id", help="Pleazyng workflow run ID")
-    parser.add_argument(
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check-admission", action="store_true",
+                      help="Verify a GitHub [run, job] pair on standard input before single-job launch")
+    mode.add_argument(
         "--evidence-dir",
-        required=True,
         type=Path,
         help="Task scratch directory for launcher output, runner diagnostics, and job logs",
     )
@@ -246,7 +292,7 @@ def run_queue(run_id: str, evidence_root: Path, *, continue_after_platform_failu
     while True:
         run = get_run(run_id)
         jobs = get_jobs(run_id)
-        apple_jobs = [job for job in jobs if is_apple_job(job, run_id)]
+        apple_jobs = [job for job in jobs if is_apple_job(job, run_id, run)]
         if run.get("status") == "completed":
             break
 
@@ -355,6 +401,11 @@ def main() -> int:
     args = parse_args()
     if not args.run_id.isdigit():
         raise QueueError("Workflow run ID must be numeric.")
+    if args.check_admission:
+        run, job = json.load(sys.stdin)
+        if not is_apple_job(job, args.run_id, run):
+            raise QueueError("GitHub run and job do not match an approved private Apple route.")
+        return 0
     requested_evidence_root = args.evidence_dir.expanduser()
     if requested_evidence_root.is_symlink():
         raise QueueError(f"Apple evidence path cannot be a symlink: {requested_evidence_root}")

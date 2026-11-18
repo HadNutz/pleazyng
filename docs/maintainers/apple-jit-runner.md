@@ -1,10 +1,11 @@
-# Pleazyng Apple signing runner
+# Pleazyng Apple JIT runner
 
-Use public GitHub-hosted macOS runners for Apple CI, tests, and unsigned release
-artifacts. The private Apple JIT lane is optional and only for explicitly
-requested signing/notarization work. If its Mac is offline, skip or fail that
-Apple signing lane cleanly while the unsigned Apple jobs and all other release
-platforms continue.
+Apple CI and unsigned packages default to public GitHub-hosted macOS runners.
+A release dispatched through `build.yml` on canonical `main` can explicitly
+select `tvos_runner_pool=private` to run its Apple native reliability job on
+the private Mac and select private iOS/tvOS packaging. The CI job runs the
+iOS, macOS and tvOS suites sequentially with signing disabled. Standalone CI
+uses hosted macOS. Private signing and notarization also require the Mac online.
 
 Hosted queue delays and build failures never trigger an automatic private retry.
 Preserve active jobs and diagnose the exact failure. Reuse successful immutable
@@ -23,7 +24,9 @@ packages may select private Apple JIT explicitly when the Mac is online.
 `--tvos-runner-pool hosted|private` selects the signed iOS/tvOS package route;
 `--apple-arm-runner-pool hosted|private` selects the signed/notarized macOS
 package route. `--ios-runner-pool private` selects the explicitly requested
-signed Apple route. Apple CI tests remain unsigned on public hosted Macs.
+signed Apple route. The embedded CI job uses the run-scoped
+`gha-<run-id>-apple-native-test` label. Hosted CI uses Xcode 26.5. Private CI
+uses Xcode 27.0 with the macOS, iOS Simulator and tvOS Simulator 27.0 SDKs.
 
 ## Pinned tvOS host tools on Apple silicon
 
@@ -95,7 +98,7 @@ directory as shown above. Keep the controller attached through post-job cleanup
 and diagnostic archival. The workflow path must remain selected in the
 `private-apple-builds` runner group's workflow allow-list.
 
-The iOS and macOS source workspaces use a shared local Git clone of the exact
+The private native CI suites and iOS and macOS packaging use a shared local Git clone of the exact
 job revision. This copies tracked sources without ignored caches, checkout
 credentials, or APFS provenance attributes. The clone borrows Git objects from
 the original job checkout, which must remain present until all job consumers
