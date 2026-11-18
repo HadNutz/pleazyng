@@ -316,6 +316,7 @@ extension _VideoPlayerBuildMethods on VideoPlayerScreenState {
                         player: player!,
                         volumeController: _volumeController!,
                         metadata: _currentMetadata,
+                        isEpisodeSegment: _boundedEpisode == _currentMetadata.globalKey,
                         onNext: onNext,
                         onEpisodeBoundaryMarked: (number) async {
                           if (!mounted || _shuttingDown) return;

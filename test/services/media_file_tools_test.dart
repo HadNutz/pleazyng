@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:plezy/media/media_item.dart';
 import 'package:plezy/media/media_kind.dart';
+import 'package:plezy/media/shared_episode_file.dart';
 import 'package:plezy/media/media_part.dart';
 import 'package:plezy/media/media_version.dart';
 import 'package:plezy/media/media_source_info.dart';
@@ -183,5 +184,53 @@ FILE "Concert.flac" WAVE
     expect((await browse(verified)).id, oldFile.id);
     expect((await browse(verified)).fingerprint, oldFile.fingerprint);
     expect((await browse(unknown)).revision, isNot('old'));
+  });
+  test('bounded episode chapters and skip markers stay on its own clock', () {
+    final raw = PlaybackExtras(
+      chapters: [
+        MediaChapter(id: 1, startTimeOffset: 0, endTimeOffset: 600000, title: 'Episode 1'),
+        MediaChapter(id: 2, startTimeOffset: 600000, title: 'Episode 2'),
+        MediaChapter(id: 3, startTimeOffset: 1200000, title: 'Scene'),
+        MediaChapter(id: 4, startTimeOffset: 2700000, title: 'Episode 3'),
+      ],
+      markers: [
+        MediaMarker(id: 1, type: 'credits', startTimeOffset: 550000, endTimeOffset: 600000),
+        MediaMarker(id: 2, type: 'intro', startTimeOffset: 600000, endTimeOffset: 650000),
+        MediaMarker(id: 3, type: 'credits', startTimeOffset: 2600000, endTimeOffset: 2800000),
+        MediaMarker(id: 4, type: 'intro', startTimeOffset: 2700000, endTimeOffset: 2750000),
+      ],
+    );
+    final clipped = EpisodeFileBounds.clipExtras(raw, startMs: 600000, durationMs: 2100000);
+    expect(clipped.chapters.map((c) => c.startTimeOffset), [0, 600000]);
+    expect(clipped.chapters.map((c) => c.endTimeOffset), [600000, 2100000]);
+    expect(clipped.markers.map((m) => m.id), [2, 3]);
+    expect(clipped.markers.last.endTimeOffset, 2100000);
+    expect(raw.chapters[1].startTimeOffset, 600000);
+  });
+  test('download sharing requires the exact selected original file', () {
+    expect(sameSelectedEpisodeFile(episode(1), version(), episode(2), version()), isTrue);
+    expect(sameSelectedEpisodeFile(episode(1), version(), episode(2), version(size: 2048)), isFalse);
+    expect(sameSelectedEpisodeFile(episode(1), version(), episode(2), version(path: '/other/S01E01-E03.mkv')), isFalse);
+    expect(sameSelectedEpisodeFile(episode(1), version(), episode(2), null), isFalse);
+  });
+  test('a relocated source root reconnects even when the old root no longer exists', () async {
+    final directory = await Directory.systemTemp.createTemp('moved-root');
+    addTearDown(() => directory.delete(recursive: true));
+    final oldRoot = await Directory('${directory.path}/old').create();
+    await File('${oldRoot.path}/book.cbz').writeAsString('book');
+    final cached = await File('${directory.path}/cached').writeAsString('book');
+    final root = await oldRoot.rename('${directory.path}/new');
+    const file = PublicationFile(id: 'book.cbz', name: 'book.cbz', mimeType: '', size: 4, revision: 'original');
+    final rows = await LocalFileRelink.preview(
+      root: oldRoot.path,
+      oldFolder: '.',
+      newFolder: root.path,
+      entries: [
+        const SourceEntry(sourceId: 's', id: 'book.cbz', title: 'Book', kind: SourceItemKind.comic, files: [file]),
+      ],
+      offlineCopy: (_) async => cached,
+    );
+    expect(rows.single.path, 'book.cbz');
+    expect(rows.single.verified, isTrue);
   });
 }

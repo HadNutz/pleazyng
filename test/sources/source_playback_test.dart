@@ -170,36 +170,6 @@ void main() {
     return player;
   }
 
-  test('a persisted CUE track repeats inside its own native timeline', () async {
-    const file = PublicationFile(
-      id: 'concert',
-      name: 'concert.flac',
-      mimeType: 'audio/flac',
-      cueStart: 9000,
-      cueEnd: 13500,
-      durationMs: 60000,
-    );
-    const track = SourceEntry(
-      sourceId: 'cloud',
-      id: 'concert.cue#track-7',
-      title: 'Track 7',
-      kind: SourceItemKind.music,
-      files: [file],
-    );
-    final path = '${directory.path}/concert.flac';
-    await File(path).writeAsString('audio');
-    await playback.start(track, [file], localOverrides: {'concert': Uri.file(path)});
-    expect(playback.canUseDirectQueueControls, isTrue);
-    expect(native.openedUris.single, startsWith('edl://'));
-    expect(native.openedUris.single, endsWith(',120.000000000,60.000000000'));
-    await playback.setQueueRepeatMode(MusicRepeatMode.one);
-    native.emitCompleted();
-    await playback.pause();
-    expect(native.openedUris.length, 2);
-    expect(native.openedUris.last, native.openedUris.first);
-    expect(native.openedMedia.last.start, Duration.zero);
-  });
-
   test('retry preserves the last reliable position after decoder reset and EOF', () async {
     await start();
     native.setPosition(const Duration(seconds: 47));

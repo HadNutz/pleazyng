@@ -492,7 +492,11 @@ extension _VideoPlayerPlaybackServiceMethods on VideoPlayerScreenState {
       mediaControlsManager.updateMetadata(
         metadata: metadata,
         client: mediaClient,
-        duration: metadata.durationMs != null ? Duration(milliseconds: metadata.durationMs!) : null,
+        duration: _boundedEpisode == metadata.globalKey && (player?.state.duration ?? Duration.zero) > Duration.zero
+            ? player?.state.duration
+            : metadata.durationMs != null
+            ? Duration(milliseconds: metadata.durationMs!)
+            : null,
       ),
     );
   }

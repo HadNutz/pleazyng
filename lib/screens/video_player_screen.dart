@@ -1460,7 +1460,9 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
     return updated;
   }
 
-  ScrubFrame? _getThumbnailData(Duration time) => _scrubPreviewSource?.getFrame(time);
+  ScrubFrame? _getThumbnailData(Duration time) => _scrubPreviewSource?.getFrame(
+    _boundedEpisode == _currentMetadata.globalKey ? time - (player?.timelineOffset ?? Duration.zero) : time,
+  );
 
   /// The attempt whose open the screen currently owns; [_abortCurrentOpen]
   /// collapses its waiters. Superseded by every [_beginPlaybackAttempt].

@@ -35,9 +35,15 @@ extension _PlexVideoControlsPlaybackExtrasMethods on _PlexVideoControlsState {
 
   void _applyPlaybackExtras(PlaybackExtras extras) {
     if (!mounted) return;
+    _unclippedEpisodeExtras = extras;
+    _extrasEpisodeStart = -widget.player.timelineOffset.inMilliseconds;
+    _extrasEpisodeDuration = widget.player.state.duration.inMilliseconds;
+    final presented = widget.isEpisodeSegment
+        ? EpisodeFileBounds.clipExtras(extras, startMs: _extrasEpisodeStart!, durationMs: _extrasEpisodeDuration!)
+        : extras;
     _setControlsState(() {
-      _chapters = extras.chapters;
-      _markers = extras.markers;
+      _chapters = presented.chapters;
+      _markers = presented.markers;
       _chaptersLoaded = true;
       _markersLoaded = true;
     });

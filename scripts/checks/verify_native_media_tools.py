@@ -175,7 +175,19 @@ def verify_recording(mpv, root):
     assert float(metadata['format']['duration']) > 4
     assert requests == ['/channel.ts'], requests
     ffmpeg('-i', output, '-map', '0:v', '-map', '0:a', '-f', 'null', '-')
-    print('buffer: pre-roll and live continuation decode with one provider connection', flush=True)
+    def frame_hashes(path):
+        rows = ffmpeg('-i', path, '-map', '0:v:0', '-f', 'framemd5', '-').decode().splitlines()
+        return [row.rsplit(',', 1)[-1].strip() for row in rows if row and not row.startswith('#')]
+    reference, saved = frame_hashes(source), frame_hashes(output)
+    first = reference.index(saved[0])
+    assert saved == reference[first:first + len(saved)], 'buffer/live join duplicated or lost video frames'
+    assert saved.count(reference[30]) == 1, 'the pre-recording goal frame must appear exactly once'
+    packets = json.loads(subprocess.check_output(['ffprobe', '-v', 'error', '-select_streams', 'a:0',
+        '-show_packets', '-show_entries', 'packet=pts_time,duration_time', '-of', 'json', output]))['packets']
+    for previous, current in zip(packets, packets[1:]):
+        gap = float(current['pts_time']) - float(previous['pts_time']) - float(previous['duration_time'])
+        assert abs(gap) < .001, ('audio gap or duplicate packet at buffer/live join', gap)
+    print('buffer: one provider connection, contiguous video, one goal, continuous audio and decoded live continuation', flush=True)
 
 
 def main():

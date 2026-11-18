@@ -118,4 +118,41 @@ class EpisodeFileBounds {
     }
     return (start: start, end: end);
   }
+
+  /// Convert source-file chapters and skip ranges to an episode's zero-based
+  /// clock. Keep the original extras separately for authoring boundaries.
+  static PlaybackExtras clipExtras(PlaybackExtras source, {required int startMs, required int durationMs}) {
+    if (startMs < 0 || durationMs <= 0) return PlaybackExtras(chapters: [], markers: []);
+    final endMs = startMs + durationMs;
+    final chapters = <MediaChapter>[];
+    for (var i = 0; i < source.chapters.length; i++) {
+      final c = source.chapters[i];
+      final start = c.startTimeOffset ?? 0;
+      final end = c.endTimeOffset ?? source.chapters.elementAtOrNull(i + 1)?.startTimeOffset ?? endMs;
+      if (end <= startMs || start >= endMs || end <= start) continue;
+      chapters.add(
+        MediaChapter(
+          id: c.id,
+          index: c.index,
+          title: c.title,
+          thumb: c.thumb,
+          startTimeOffset: (start - startMs).clamp(0, durationMs),
+          endTimeOffset: (end - startMs).clamp(0, durationMs),
+        ),
+      );
+    }
+    return PlaybackExtras(
+      chapters: chapters,
+      markers: [
+        for (final m in source.markers)
+          if (m.endTimeOffset > startMs && m.startTimeOffset < endMs && m.endTimeOffset > m.startTimeOffset)
+            MediaMarker(
+              id: m.id,
+              type: m.type,
+              startTimeOffset: (m.startTimeOffset - startMs).clamp(0, durationMs),
+              endTimeOffset: (m.endTimeOffset - startMs).clamp(0, durationMs),
+            ),
+      ],
+    );
+  }
 }

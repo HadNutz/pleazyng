@@ -20,6 +20,7 @@ import 'package:flutter/services.dart'
     show LogicalKeyboardKey, PhysicalKeyboardKey, KeyEvent, KeyDownEvent, KeyUpEvent, KeyRepeatEvent, HardwareKeyboard;
 
 import '../../services/fullscreen_state_manager.dart';
+import '../../services/episode_file_boundaries.dart';
 import '../../services/macos_window_service.dart';
 import '../../services/pip_service.dart';
 import '../../services/playback_initialization_types.dart';
@@ -612,6 +613,7 @@ class PlexVideoControls extends StatefulWidget {
   final Player player;
   final VideoVolumeController volumeController;
   final MediaItem metadata;
+  final bool isEpisodeSegment;
   final VoidCallback? onNext;
   final Future<void> Function(int)? onEpisodeBoundaryMarked;
   final VoidCallback? onPrevious;
@@ -760,6 +762,7 @@ class PlexVideoControls extends StatefulWidget {
     required this.player,
     required this.volumeController,
     required this.metadata,
+    this.isEpisodeSegment = false,
     required this.toastController,
     this.autoSubtitleFetch,
     this.initialChapters,
@@ -871,6 +874,8 @@ class _PlexVideoControlsState extends State<PlexVideoControls>
   // item can start while a stale one is still in flight (and the stale
   // response is discarded).
   String? _extrasLoadKey;
+  PlaybackExtras? _unclippedEpisodeExtras;
+  int? _extrasEpisodeStart, _extrasEpisodeDuration;
   late List<MediaChapter> _chapters = widget.initialChapters ?? [];
   late bool _chaptersLoaded = widget.initialChapters != null;
   bool _isAlwaysOnTop = false;
@@ -1242,12 +1247,18 @@ class _PlexVideoControlsState extends State<PlexVideoControls>
       _dismissSkipFeedback();
       _setControlsState(() {
         _chapters = [];
+        _unclippedEpisodeExtras = null;
         _chaptersLoaded = false;
         _markers = [];
         _markersLoaded = false;
       });
       _clearCurrentMarker();
       _loadPlaybackExtras();
+    } else if (_unclippedEpisodeExtras != null &&
+        (oldWidget.isEpisodeSegment != widget.isEpisodeSegment ||
+            _extrasEpisodeStart != -widget.player.timelineOffset.inMilliseconds ||
+            _extrasEpisodeDuration != widget.player.state.duration.inMilliseconds)) {
+      _applyPlaybackExtras(_unclippedEpisodeExtras!);
     }
     _configureChromeController();
   }

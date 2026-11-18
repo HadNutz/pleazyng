@@ -2100,8 +2100,9 @@ class DownloadManagerService {
             continue;
           }
           final enqueued = await _prepareAndEnqueueDownload(nextItem.mediaGlobalKey, itemClient, nextItem);
-          if (_sharedEpisodeWaiters.containsKey(nextItem.mediaGlobalKey))
+          if (_sharedEpisodeWaiters.containsKey(nextItem.mediaGlobalKey)) {
             skippedGlobalKeys.add(nextItem.mediaGlobalKey);
+          }
           if (enqueued) {
             _consecutiveQueueFailures = 0;
           } else {

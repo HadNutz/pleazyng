@@ -30,7 +30,8 @@ starts here**. Choose the episode number. The saved map belongs to the current
 profile and the exact server file, size and duration.
 
 Mapped episodes have their own playback duration, seek clock and watched
-credit. Next/previous navigation visits a mapped sibling in the same file.
+credit. Chapter/skip controls, scrub previews and system media-control duration
+use that same episode clock. Next/previous navigation visits a mapped sibling in the same file.
 Unequal runtimes work without dividing the total duration into equal pieces.
 Original-quality downloads of separately queued sibling episodes reuse the same complete file when server path, size and duration match. Each episode retains its own row and progress, and deleting one preserves the bytes while another references them.
 
@@ -119,7 +120,7 @@ performance still needs device qualification.
 
 The native muxer/filter build changes are in
 [mpv-build 31c7da3](https://github.com/snapetech-org/mpv-build/commit/31c7da326fc9975311ff68851d691267ecb810c3).
-The all-platform hosted build is queued; the previously pinned artifacts do not
+The hosted native build is in progress; the previously pinned artifacts do not
 qualify the new recording/commentary paths. Artifact promotion must retain
 verified checksums and complete platform coverage.
 
