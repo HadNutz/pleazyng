@@ -17,6 +17,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import zipfile
 
 from apple_signing_material import decode_secret, run, signing_identity
 from pubspec_version import parse_pubspec_version
@@ -34,6 +35,7 @@ PROFILE_KEYS = {
     'tvos': [('Runner', BUNDLE, 'TVOS_PROVISIONING_PROFILE_BASE64'),
              ('TopShelfExtension', BUNDLE + '.TopShelfExtension', 'TVOS_TOPSHELF_PROVISIONING_PROFILE_BASE64')],
 }
+CAR_CAPABILITIES = ('com.apple.developer.carplay-audio', 'com.apple.developer.siri')
 MUSIC_NFC_ENTITLEMENT = 'com.apple.developer.nfc.readersession.formats'
 MUSIC_NFC_FILE = 'Runner/MusicNFC.entitlements'
 RELEASE_ENTITLEMENTS_FILE = 'Runner/Release.entitlements'
@@ -99,8 +101,14 @@ def validate_profile(profile: dict, *, bundle: str, platform: str, team: str, ce
     return uuid
 
 
+def authorized_car_capabilities(profile: dict, platform: str, target: str) -> list[str]:
+    if platform != 'ios' or target != 'Runner':
+        return []
+    return [key for key in CAR_CAPABILITIES if profile['Entitlements'].get(key) is True]
+
+
 def configure_project(project: dict, bindings: dict[str, dict], team: str, fingerprint: str, keychain: Path,
-                      widget_host_entitlements: Path | None = None) -> None:
+                      widget_host_entitlements: Path | None = None, car_entitlements: Path | None = None) -> None:
     objects = project['objects']
     targets = [objects[key] for key in objects[project['rootObject']]['targets']]
     for name, binding in bindings.items():
@@ -119,6 +127,14 @@ def configure_project(project: dict, bindings: dict[str, dict], team: str, finge
                 None, '', MUSIC_NFC_FILE, RELEASE_ENTITLEMENTS_FILE):
             settings['CODE_SIGN_ENTITLEMENTS'] = MUSIC_NFC_FILE
             settings['PLEAZYNG_MUSIC_NFC_ENABLED'] = 'YES'
+        if name == 'Runner' and binding.get('car_capabilities'):
+            if car_entitlements is None:
+                raise ValueError('Missing iOS host entitlement output')
+            source = settings.get('CODE_SIGN_ENTITLEMENTS')
+            entitlements = plistlib.loads((Path('ios') / source).read_bytes()) if source else {}
+            entitlements.update({key: True for key in binding['car_capabilities'] if key in CAR_CAPABILITIES})
+            car_entitlements.write_bytes(plistlib.dumps(entitlements))
+            settings['CODE_SIGN_ENTITLEMENTS'] = str(car_entitlements.absolute())
         if name == 'Runner' and widget_host_entitlements is not None:
             source = settings.get('CODE_SIGN_ENTITLEMENTS')
             entitlements = plistlib.loads((Path('ios') / source).read_bytes()) if source else {}
@@ -176,7 +192,8 @@ def archive(platform: str, archive_path: Path, export_path: Path, derived_data: 
                 profile = plistlib.loads(run(['security', 'cms', '-D', '-i', str(profile_path)]))
                 uuid = validate_profile(profile, bundle=bundle, platform=platform, team=team, certificate=certificate)
                 bindings[target] = {'bundle': bundle, 'uuid': uuid,
-                                    'music_nfc': target == 'Runner' and music_nfc_allowed(profile, platform)}
+                                    'music_nfc': target == 'Runner' and music_nfc_allowed(profile, platform),
+                                    'car_capabilities': authorized_car_capabilities(profile, platform, target)}
                 installed = Path.home() / 'Library/MobileDevice/Provisioning Profiles' / f'{uuid}.mobileprovision'
                 installed.parent.mkdir(parents=True, exist_ok=True)
                 if installed.exists():
@@ -190,7 +207,8 @@ def archive(platform: str, archive_path: Path, export_path: Path, derived_data: 
             if widget_enabled:
                 add_music_widget_target(project)
             configure_project(project, bindings, team, fingerprint, keychain,
-                              widget_host_entitlements=stage / 'RunnerWidget.entitlements' if widget_enabled else None)
+                              widget_host_entitlements=stage / 'RunnerWidget.entitlements' if widget_enabled else None,
+                              car_entitlements=stage / 'RunnerCar.entitlements')
             # Xcode accepts XML project plists. Restore the original bytes after
             # this job's archive/export, including on failure.
             project_path.write_bytes(plistlib.dumps(project, sort_keys=False))
@@ -226,6 +244,19 @@ def archive(platform: str, archive_path: Path, export_path: Path, derived_data: 
                 ipas[0], platform=platform, expected_version=source_version.split('+', 1)[0],
                 expected_build=source_build,
             )
+            if platform == 'ios':
+                with zipfile.ZipFile(ipas[0]) as package:
+                    plist_name, = [name for name in package.namelist()
+                                   if re.fullmatch(r'Payload/[^/]+[.]app/Info[.]plist', name)]
+                    executable = plistlib.loads(package.read(plist_name))['CFBundleExecutable']
+                    binary = stage / 'exported-runner'
+                    with package.open(plist_name.rsplit('/', 1)[0] + '/' + executable) as src, binary.open('wb') as dst:
+                        shutil.copyfileobj(src, dst)
+                    signed = plistlib.loads(run(['codesign', '-d', '--entitlements', '-', str(binary)]))
+                    actual = [key for key in CAR_CAPABILITIES if signed.get(key) is True]
+                    if actual != bindings['Runner']['car_capabilities']:
+                        raise ValueError('Exported car capabilities differ from the authorized host configuration')
+                    report['signed_car_capabilities'] = actual
             if widget_enabled:
                 verify_music_widget(ipas[0])
             destination = Path(f'pleazyng-{platform}-appstore.ipa')

@@ -4,6 +4,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/sources/source_database.dart';
 import 'package:plezy/sources/source_models.dart';
+import 'package:plezy/sources/publication_shelf.dart';
 
 void main() {
   late SourceDatabase database;
@@ -25,6 +26,46 @@ void main() {
     repository = SourceRepository(database, protect: (s) async => 'encrypted:$s', reveal: (s) async => s.substring(10));
   });
   tearDown(() async => database.close());
+  test('downloaded spoken catalogs select owned occurrences before paging', () async {
+    const file = PublicationFile(id: 'audio-42', name: 'chapter.mp3', mimeType: 'audio/mpeg');
+    const book = SourceEntry(
+      sourceId: 'drive',
+      id: 'book',
+      title: 'My book',
+      kind: SourceItemKind.audiobook,
+      files: [file],
+    );
+    const episode = SourceEntry(
+      sourceId: 'drive',
+      id: 'episode',
+      title: 'Episode',
+      kind: SourceItemKind.music,
+      identifiers: {'podcast': 'episode'},
+      files: [file],
+    );
+    final other = SourceEntry(
+      sourceId: 'drive',
+      title: 'Other',
+      kind: SourceItemKind.audiobook,
+      id: 'absent',
+      files: [const PublicationFile(id: 'other-file', name: 'other.mp3', mimeType: 'audio/mpeg')],
+    );
+    for (final profile in ['one', 'two']) {
+      await repository.cacheEntries(profile, [other, book, episode]);
+    }
+    await repository.recordDownload('one', sourceKey('drive', file.id), 'test.mp3', file.fingerprint, 100);
+    final page = await repository.entriesPage(
+      'one',
+      shelf: PublicationShelf.audiobooks,
+      downloadedOnly: true,
+      limit: 1,
+    );
+    expect(page.items.map((item) => item.id), ['book']);
+    expect((await repository.podcastEntries('one', downloadedOnly: true)).map((item) => item.id), ['episode']);
+    expect((await repository.entriesPage('two', downloadedOnly: true)).items, isEmpty);
+    expect(await repository.podcastEntries('two', downloadedOnly: true), isEmpty);
+  });
+
   test('public source configuration rejects URL credentials before storage', () async {
     for (final url in [
       'https://user:password@files.example/books',

@@ -63,18 +63,29 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       CarUxRestrictionsService.instance.listenable.addListener(_carChanged);
     }
   }
+  bool get _automotiveSpokenAudio =>
+      PlatformDetector.isAutomotiveMedia() &&
+      !video &&
+      (entry?.kind == SourceItemKind.audiobook ||
+          entry?.identifiers['podcast'] == 'episode' ||
+          entry?.identifiers.containsKey('feed') == true) &&
+      entry?.kind != SourceItemKind.video &&
+      files.isNotEmpty &&
+      files.every((f) => f.kind == SourceItemKind.music || f.kind == SourceItemKind.audiobook);
+  bool _allowedInVehicle() => _automotiveSpokenAudio || automotivePlaybackAllowedNow();
+
   void _carChanged() {
     if (!_valid) {
       return;
     }
-    if (!automotivePlaybackAllowedNow()) {
+    if (!_allowedInVehicle()) {
       unawaited(pause());
     }
     unawaited(
       _controls?.setBackgroundMode(
         !video &&
-            CarUxRestrictionsService.instance.state != CarUxRestrictionState.unknown &&
-            automotivePlaybackAllowedNow(),
+            (_automotiveSpokenAudio || CarUxRestrictionsService.instance.state != CarUxRestrictionState.unknown) &&
+            _allowedInVehicle(),
       ),
     );
   }
@@ -1091,8 +1102,8 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       await _controls!.setBackgroundMode(
         !video &&
             (!PlatformDetector.isAutomotive() ||
-                CarUxRestrictionsService.instance.state != CarUxRestrictionState.unknown &&
-                    automotivePlaybackAllowedNow()),
+                (_automotiveSpokenAudio || CarUxRestrictionsService.instance.state != CarUxRestrictionState.unknown) &&
+                    _allowedInVehicle()),
       );
       _subscriptions.add(_controls!.controlEvents.listen(_onControl));
       _hardware = MusicHardwareTransportHandler(
@@ -2553,7 +2564,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
             ? p.extension(file.name).replaceFirst('.', '')
             : null,
       ),
-      play: play && automotivePlaybackAllowedNow(),
+      play: play && _allowedInVehicle(),
       isLive: _liveInput,
     );
     await native.setRate(speed);
@@ -2751,7 +2762,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
   Future<void> retry() {
     _cancelDailySleepFade(restoreVolume: true);
     return _serialize(() async {
-      if (!canRetry || !automotivePlaybackAllowedNow()) {
+      if (!canRetry || !_allowedInVehicle()) {
         return;
       }
       final position = currentFilePositionMs;
@@ -2786,7 +2797,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       return retry();
     }
     return _serialize(() async {
-      if (!_valid || player == null || !automotivePlaybackAllowedNow()) {
+      if (!_valid || player == null || !_allowedInVehicle()) {
         return;
       }
       if (_persistProgress && !playing && progress != null && entry != null) {
@@ -3375,7 +3386,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
     }
     final router = MediaControlRouter(
       canControlPlayback: () => true,
-      canNavigateMediaItems: automotivePlaybackAllowedNow,
+      canNavigateMediaItems: _allowedInVehicle,
       onPlay: () => unawaited(play()),
       onPause: () => unawaited(pause()),
       onTogglePlayPause: () => unawaited(toggle()),

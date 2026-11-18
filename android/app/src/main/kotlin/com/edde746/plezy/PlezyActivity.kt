@@ -939,13 +939,13 @@ class PlezyActivity : FlutterActivity() {
 
   override fun provideFlutterEngine(context: Context): FlutterEngine? = FlutterEngineCache.getInstance().get(MusicBrowserService.ENGINE_ID)
 
-  override fun shouldDestroyEngineWithHost(): Boolean = !MusicCarApi.hasCarHost
+  override fun shouldDestroyEngineWithHost(): Boolean = !MusicCarApi.retainsEngine
 
   override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
-    if (!MusicCarApi.hasCarHost) {
+    if (!MusicCarApi.retainsEngine) {
       FlutterEngineCache.getInstance().remove(MusicBrowserService.ENGINE_ID)
     }
-    if (MusicCarApi.hasCarHost) {
+    if (MusicCarApi.retainsEngine) {
       (flutterEngine.plugins.get(MusicBackgroundPlatformPlugin::class.java) as? MusicBackgroundPlatformPlugin)?.activateHeadless()
     }
     super.cleanUpFlutterEngine(flutterEngine)

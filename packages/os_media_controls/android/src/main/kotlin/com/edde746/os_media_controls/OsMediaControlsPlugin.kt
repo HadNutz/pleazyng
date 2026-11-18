@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.provider.MediaStore
+import android.support.v4.media.MediaDescriptionCompat
 import android.media.AudioManager
 import android.os.Build
 import android.os.Handler
@@ -36,6 +38,32 @@ class OsMediaControlsPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
     private var eventSink: EventChannel.EventSink? = null
 
     private lateinit var mediaSession: MediaSessionCompat
+
+    private var publishedWindow: Map<*, *>? = null
+    private val carQueue = mutableMapOf<Long, Map<String, Any>>()
+    private var nextQueueId = 0L
+    private val carChanged: () -> Unit = {
+        val window = MusicCarApi.queueWindow
+        if (publishedWindow !== window) {
+            publishedWindow = window
+            carQueue.clear()
+            val scope = window["scope"] as? String
+            val revision = window["revision"] as? Number
+            val items = (window["rows"] as? List<*>)?.take(50)?.mapNotNull { raw ->
+                val row = raw as? Map<*, *> ?: return@mapNotNull null
+                val index = row["index"] as? Number ?: return@mapNotNull null
+                if (scope == null || revision == null) return@mapNotNull null
+                val id = ++nextQueueId
+                carQueue[id] = mapOf("scope" to scope, "revision" to revision, "index" to index)
+                MediaSessionCompat.QueueItem(MediaDescriptionCompat.Builder()
+                    .setMediaId("queue:$scope:${revision.toLong()}:${index.toInt()}")
+                    .setTitle(row["title"] as? String).setSubtitle(row["artist"] as? String).build(), id)
+            }
+            mediaSession.setQueue(items)
+            mediaSession.setQueueTitle(window["title"] as? String)
+        }
+        updatePlaybackState()
+    }
 
     private var currentState: Int = PlaybackStateCompat.STATE_NONE
     private var currentPosition: Long = 0
@@ -82,6 +110,7 @@ class OsMediaControlsPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
 
         MusicCarApi.attach(binding.binaryMessenger)
         setupMediaSession()
+        MusicCarApi.addListener(carChanged)
         MediaSessionHolder.setMediaSession(mediaSession.sessionToken)
     }
 
@@ -93,11 +122,47 @@ class OsMediaControlsPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
                 }
 
                 override fun onPlayFromSearch(query: String?, extras: android.os.Bundle?) {
-                    if (!query.isNullOrBlank()) MusicCarApi.request("playSearch", mapOf("query" to query)) { }
+                    val artist = extras?.getString(MediaStore.EXTRA_MEDIA_ARTIST)
+                    val album = extras?.getString(MediaStore.EXTRA_MEDIA_ALBUM)
+                    val kind = when (extras?.getString(MediaStore.EXTRA_MEDIA_FOCUS)) {
+                        MediaStore.Audio.Artists.ENTRY_CONTENT_TYPE -> "artist"
+                        MediaStore.Audio.Albums.ENTRY_CONTENT_TYPE -> "album"
+                        MediaStore.Audio.Playlists.ENTRY_CONTENT_TYPE -> "playlist"
+                        MediaStore.Audio.Genres.ENTRY_CONTENT_TYPE -> "genre"
+                        MediaStore.Audio.Media.ENTRY_CONTENT_TYPE -> "track"
+                        else -> null
+                    }
+                    val name = when (kind) {
+                        "artist" -> artist
+                        "album" -> album
+                        "genre" -> extras?.getString(MediaStore.EXTRA_MEDIA_GENRE)
+                        "playlist" -> extras?.getString(MediaStore.EXTRA_MEDIA_PLAYLIST)
+                        else -> extras?.getString(MediaStore.EXTRA_MEDIA_TITLE)
+                    }
+                    val args = mapOf("query" to (name?.takeIf { it.isNotBlank() } ?: query.orEmpty()),
+                        "artist" to artist, "album" to album, "kind" to kind)
+                    MusicCarApi.request("playSearch", args) { result ->
+                        if (result != true && currentState != PlaybackStateCompat.STATE_PLAYING) {
+                            this@OsMediaControlsPlugin.mediaSession.setPlaybackState(PlaybackStateCompat.Builder()
+                                .setState(PlaybackStateCompat.STATE_ERROR, currentPosition, currentSpeed)
+                                .setActions(buildPlaybackActions())
+                                .setErrorMessage(PlaybackStateCompat.ERROR_CODE_END_OF_QUEUE,
+                                    MusicCarApi.snapshot["noMatch"] as? String ?: "No matching media").build())
+                        }
+                    }
                 }
 
                 override fun onSkipToQueueItem(id: Long) {
-                    MusicCarApi.request("jump", mapOf("index" to id, "revision" to MusicCarApi.snapshot["revision"])) { }
+                    carQueue[id]?.let { MusicCarApi.request("jump", it) { } }
+                }
+
+                override fun onCustomAction(action: String?, extras: android.os.Bundle?) {
+                    val snapshot = MusicCarApi.snapshot
+                    val command = action?.substringBefore(':') ?: return
+                    if (action != "$command:${snapshot["scope"]}:${snapshot["revision"]}" ||
+                        (snapshot["actions"] as? Map<*, *>)?.containsKey(command) != true) return
+                    MusicCarApi.request("transport", mapOf("scope" to snapshot["scope"],
+                        "revision" to snapshot["revision"], "command" to command)) { }
                 }
 
                 override fun onPlay() {
@@ -459,17 +524,31 @@ class OsMediaControlsPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
     }
 
     private fun updatePlaybackState() {
-        val playbackState = PlaybackStateCompat.Builder()
+        val builder = PlaybackStateCompat.Builder()
             .setState(currentState, currentPosition, currentSpeed)
             .setActions(buildPlaybackActions())
-            .build()
-
-        mediaSession.setPlaybackState(playbackState)
+        carQueue.keys.firstOrNull()?.let { builder.setActiveQueueItemId(it) }
+        val actions = MusicCarApi.snapshot["actions"] as? Map<*, *>
+        actions?.forEach { (key, label) ->
+            val icon = when (key) {
+                "shuffle" -> R.drawable.car_shuffle
+                "repeat" -> R.drawable.car_repeat
+                "favorite" -> android.R.drawable.btn_star_big_on
+                "radio" -> R.drawable.car_radio
+                "bookmark" -> R.drawable.car_bookmark
+                "speed" -> R.drawable.car_speed
+                // Android already exposes seek steps through its standard transport controls.
+                else -> return@forEach
+            }
+            if (key is String && label is String && label.isNotBlank()) builder.addCustomAction("$key:${MusicCarApi.snapshot["scope"]}:${MusicCarApi.snapshot["revision"]}", label, icon)
+        }
+        mediaSession.setPlaybackState(builder.build())
     }
 
     private fun buildPlaybackActions(): Long {
         var actions = PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID or PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
 
+        if (carQueue.isNotEmpty()) actions = actions or PlaybackStateCompat.ACTION_SKIP_TO_QUEUE_ITEM
         if (enabledControls.contains("play")) {
             actions = actions or PlaybackStateCompat.ACTION_PLAY
         }
@@ -540,6 +619,7 @@ class OsMediaControlsPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         // Never leak a silent notification or a headless service past the
         // engine's lifetime.
+        MusicCarApi.removeListener(carChanged)
         MusicCarApi.detach()
         MediaSessionHolder.backgroundModeEnabled = false
         MediaSessionHolder.service?.stopAndCancel()

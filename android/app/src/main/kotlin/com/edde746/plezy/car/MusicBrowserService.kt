@@ -40,10 +40,19 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
       listOf("--pleazyng-car-host")
     )
   }
+  private var observedCatalog = -1L
+  private var observedWindow: Map<*, *>? = null
+  private val loadedParents = LinkedHashSet<String>()
   private val changed: () -> Unit = {
     MediaSessionHolder.sessionToken?.let { if (sessionToken == null) setSessionToken(it) }
-    notifyChildrenChanged("root")
-    notifyChildrenChanged("queue")
+    if (observedCatalog != MusicCarApi.catalogVersion) {
+      observedCatalog = MusicCarApi.catalogVersion
+      for (parent in loadedParents.toList() + "root") notifyChildrenChanged(parent)
+    }
+    if (observedWindow !== MusicCarApi.queueWindow) {
+      observedWindow = MusicCarApi.queueWindow
+      for (parent in listOf("home", "queue", "spoken", "chapters")) notifyChildrenChanged(parent)
+    }
   }
 
   override fun onCreate() {
@@ -62,6 +71,7 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
           clientPackageName == "com.google.android.projection.gearhead" ||
           packageManager.hasSystemFeature("android.hardware.type.automotive")
         )
+    if (BuildConfig.AUTOMOTIVE_MEDIA) MusicCarApi.embeddedBrowserBound = true
     ensureMusicEngine()
     MediaSessionHolder.sessionToken?.let { if (sessionToken == null) setSessionToken(it) }
     if (acceptedHost) MusicCarApi.connection(true)
@@ -69,13 +79,15 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
   }
 
   override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaBrowserCompat.MediaItem>>) {
+    if (loadedParents.size >= 100) loadedParents.remove(loadedParents.first())
+    loadedParents.add(parentId)
     result.detach()
-    MusicCarApi.request("browse", mapOf("id" to parentId)) { raw -> result.sendResult(items(raw)) }
+    MusicCarApi.request("browse", mapOf("id" to parentId)) { raw -> result.sendResult(if (raw is List<*>) items(raw) else null) }
   }
 
   override fun onSearch(query: String, extras: Bundle?, result: Result<MutableList<MediaBrowserCompat.MediaItem>>) {
     result.detach()
-    MusicCarApi.request("search", mapOf("query" to query)) { raw -> result.sendResult(items(raw)) }
+    MusicCarApi.request("search", mapOf("query" to query)) { raw -> result.sendResult(if (raw is List<*>) items(raw) else null) }
   }
 
   private fun items(raw: Any?): MutableList<MediaBrowserCompat.MediaItem> = (raw as? List<*>)?.take(100)?.mapNotNull { value ->
@@ -83,13 +95,16 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
     val id = row["id"] as? String ?: return@mapNotNull null
     val title = row["title"] as? String ?: return@mapNotNull null
     val description = MediaDescriptionCompat.Builder().setMediaId(id).setTitle(title)
-      .setSubtitle(row["subtitle"] as? String).build()
-    MediaBrowserCompat.MediaItem(description, if (row["playable"] == true) MediaBrowserCompat.MediaItem.FLAG_PLAYABLE else MediaBrowserCompat.MediaItem.FLAG_BROWSABLE)
+      .setSubtitle(row["subtitle"] as? String)
+    if (row["artwork"] == true) description.setIconUri(android.net.Uri.Builder().scheme("content")
+        .authority("${packageName}.car.artwork").appendPath(id).build())
+    MediaBrowserCompat.MediaItem(description.build(), if (row["playable"] == true) MediaBrowserCompat.MediaItem.FLAG_PLAYABLE else MediaBrowserCompat.MediaItem.FLAG_BROWSABLE)
   }?.toMutableList() ?: mutableListOf()
 
   override fun onDestroy() {
     MusicCarApi.removeListener(changed)
     if (acceptedHost) MusicCarApi.connection(false)
+    MusicCarApi.embeddedBrowserBound = false
     super.onDestroy()
   }
 
@@ -98,6 +113,7 @@ class MusicBrowserService : MediaBrowserServiceCompat() {
       acceptedHost = false
       MusicCarApi.connection(false)
     }
+    MusicCarApi.embeddedBrowserBound = false
     return super.onUnbind(intent)
   }
 }

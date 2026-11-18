@@ -36,6 +36,7 @@ import 'watch_state_store.dart';
 import '../media/media_server_client.dart';
 import '../services/sync_rule_executor.dart';
 import '../services/music/music_library_store.dart';
+import '../services/music/music_account_scope.dart';
 import '../services/music/music_offline_bundle.dart';
 import '../utils/app_logger.dart';
 import '../utils/deletion_notifier.dart';
@@ -1734,12 +1735,19 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     MediaServerClient client, {
     DownloadFilter filter = DownloadFilter.all,
     SyncRuleItem? syncRule,
+    MediaItem? playlist,
     bool Function()? sourceCurrent,
   }) async {
     if (!_downloadManager.downloadsSupported) return 0;
 
     final ownership = _captureQueueOwnership();
-    bool current() => _isQueueOwnershipCurrent(ownership) && (sourceCurrent?.call() ?? true);
+    final account = musicAccountScope(client);
+    final authentication = client.authenticationSessionId;
+    bool current() =>
+        identical(client.authenticationSessionId, authentication) &&
+        musicAccountScope(client) == account &&
+        _isQueueOwnershipCurrent(ownership) &&
+        (sourceCurrent?.call() ?? true);
     if (!current()) return 0;
     if (await DownloadManagerService.shouldBlockDownloadOnCellular()) {
       throw CellularDownloadBlockedException();
@@ -1779,6 +1787,24 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
       }
     }
 
+    final profile = activeProfileId;
+    if (playlist?.kind == MediaKind.playlist &&
+        playlist!.serverId == client.serverId.value &&
+        profile != null &&
+        candidates.length <= 5000 &&
+        candidates.isNotEmpty &&
+        candidates.every(
+          (item) => item.kind == MediaKind.track && (item.serverId == null || item.serverId == client.serverId.value),
+        )) {
+      await MusicLibraryStore(_database, profile).saveDocument('offlinePlaylist', playlist.globalKey, {
+        'version': 1,
+        'accountScope': account,
+        'playlist': musicIdentity(playlist).toJson(),
+        'tracks': [
+          for (final track in candidates) {'serverId': client.serverId.value, 'id': track.id},
+        ],
+      });
+    }
     final relatedContext = _RelatedMetadataDownloadContext();
     var count = 0;
     for (final item in candidates) {

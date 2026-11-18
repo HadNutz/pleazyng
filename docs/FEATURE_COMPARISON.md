@@ -90,9 +90,12 @@ specific additions compared in the README.
 
 ### Car and voice integrations
 
-Plexamp integrates with CarPlay, Android Auto and Siri. Neither fork documents
-equivalent integrations. Detecting Android Automotive for layout purposes is
-not Android Auto projection. [Plexamp platform features](https://www.plex.tv/plexamp/).
+Pleazyng implements native CarPlay browsing and Now Playing, Siri media intents,
+an Android Auto media browser and a dedicated Android Automotive audio target.
+Plexamp also supports CarPlay, Android Auto and Siri. Pleazyng's signed CarPlay
+availability depends on the entitlement in the exported iOS app. Physical host
+qualification is tracked in [Music car integration](plezyng/music/CAR_INTEGRATION.md).
+[Plexamp platform features](https://www.plex.tv/plexamp/).
 
 ### Headless music
 

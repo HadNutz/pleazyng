@@ -140,6 +140,29 @@ class AppleStoreSigningTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             configure_project(project, {'Absent': bindings['Runner']}, TEAM, 'fingerprint', Path('/tmp/keychain'))
 
+    def test_only_explicit_ios_host_capabilities_enter_signed_release_entitlements(self):
+        car, siri = archive_helper.CAR_CAPABILITIES
+        profile = self.profile()
+        profile['Entitlements'].update({car: True, siri: 'true'})
+        self.assertEqual(archive_helper.authorized_car_capabilities(profile, 'ios', 'Runner'), [car])
+        self.assertEqual(archive_helper.authorized_car_capabilities(profile, 'tvos', 'Runner'), [])
+        self.assertEqual(archive_helper.authorized_car_capabilities(profile, 'ios', 'MusicWidget'), [])
+        with tempfile.TemporaryDirectory() as temp:
+            original = Path(temp) / 'existing.plist'
+            original.write_bytes(plistlib.dumps({'existing': ['preserved']}))
+            generated = Path(temp) / 'car.plist'
+            settings = {'CODE_SIGN_ENTITLEMENTS': str(original)}
+            project = {'rootObject': 'root', 'objects': {
+                'root': {'targets': ['app']},
+                'app': {'isa': 'PBXNativeTarget', 'name': 'Runner', 'buildConfigurationList': 'configs'},
+                'configs': {'buildConfigurations': ['release']},
+                'release': {'name': 'Release', 'buildSettings': settings},
+            }}
+            configure_project(project, {'Runner': {'uuid': UUID, 'bundle': BUNDLE, 'car_capabilities': [car]}},
+                              TEAM, 'certificate', Path(temp), car_entitlements=generated)
+            self.assertEqual(plistlib.loads(Path(settings['CODE_SIGN_ENTITLEMENTS']).read_bytes()),
+                             {'existing': ['preserved'], car: True})
+
     def test_nfc_requires_explicit_tag_capability_without_replacing_other_entitlements(self):
         profile = self.profile()
         self.assertFalse(music_nfc_allowed(profile, 'ios'))

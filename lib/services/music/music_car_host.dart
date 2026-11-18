@@ -17,6 +17,7 @@ import '../../database/app_database.dart';
 import '../../i18n/strings.g.dart';
 import '../../media/ids.dart';
 import '../../media/library_query.dart';
+import '../../media/media_filter.dart';
 import '../../media/media_item.dart';
 import '../../media/media_kind.dart';
 import '../../media/media_server_client.dart';
@@ -28,10 +29,13 @@ import '../../providers/multi_server_provider.dart';
 import '../../screens/music/music_driving_screen.dart';
 import '../../services/settings_service.dart';
 import '../../sources/publication_shelf.dart';
+import '../../sources/offline_readiness.dart';
+import '../../widgets/music/music_favorites_shelf.dart';
 import '../../sources/source_controller.dart';
 import '../../sources/source_models.dart';
 import '../../sources/source_playback.dart';
 import '../../utils/provider_extensions.dart';
+import '../../utils/formatters.dart' show formatDurationTimestamp;
 import '../../utils/music_read_scope.dart';
 import 'music_tracks_loader.dart';
 import '../../utils/media_server_http_client.dart';
@@ -71,6 +75,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       <String, ({MediaItem item, MediaServerClient? client, Object? authentication, String? scope})>{};
   final Map<String, MediaItem> _items = {};
   final Map<String, SourceEntry> _audiobookEntries = {};
+  final _offlineSpoken = <String>{};
   SourceController? _sourceController;
   int _audiobookSequence = 0;
   bool _audiobookRefreshPending = false;
@@ -78,6 +83,17 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
   final _authorizations =
       <String, ({MediaServerClient? client, Object? authentication, String? account, int generation})>{};
   Object? _queueShape;
+  Object? _publishedStatus;
+  DateTime _lastStatus = DateTime.fromMillisecondsSinceEpoch(0);
+  SourcePlayback? _spokenPlayer;
+  final _offlineRows = <String>{};
+  bool _isEpisode(SourceEntry entry) =>
+      entry.kind != SourceItemKind.video &&
+      (entry.identifiers['podcast'] == 'episode' || entry.identifiers.containsKey('feed'));
+  bool _isSpoken(SourceEntry? e) => e != null && (e.kind == SourceItemKind.audiobook || _isEpisode(e));
+  SourcePlayback? get _spoken =>
+      _isSpoken(_spokenPlayer?.entry) && _spokenPlayer?.video == false ? _spokenPlayer : null;
+
   String? _catalogShape;
   final List<Listenable> _catalogSources = [];
   bool _catalogPending = false;
@@ -102,6 +118,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     _profiles = context.read<ActiveProfileProvider>();
     _profileId = _profiles.activeId;
     _music = context.read<MusicPlaybackService>()..addListener(_publish);
+    _spokenPlayer = context.read<SourcePlayback?>()?..addListener(_publish);
     _sourceController = context.read<SourceController?>();
     _sourceController?.addListener(_audiobookCatalogChanged);
     for (final source in [
@@ -157,6 +174,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       _audiobookRefreshPending = false;
       if (!_current) return;
       _audiobookEntries.clear();
+      _offlineSpoken.clear();
       _carArtwork.clear();
       unawaited(_send('catalogChanged'));
     });
@@ -201,13 +219,65 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     // updates must not decode a whole file-backed queue, and duplicate rows
     // must still retire old native positions after a reorder.
     final shape = (
+      _spoken?.entry?.key,
+      _spoken?.progress?.session,
       _music.queueSessionRevision,
       _music.currentIndex,
       queue is MusicQueueView ? queue : jsonEncode(queue.map((item) => item.globalKey).toList()),
     );
-    if (_queueShape != shape) {
+    final changed = _queueShape != shape;
+    if (changed) {
       _queueShape = shape;
       _catalogRevision++;
+    }
+    final spoken = _spoken;
+    final track = _music.currentTrack;
+    final client = track == null ? null : context.getMediaClientForItemOrNull(track);
+    final actions = <String, String>{
+      if (spoken != null) ...{
+        'back15': t.fileSources.skipBack,
+        'forward30': t.fileSources.skipForward,
+        'speed': '${t.fileSources.speed} · ${spoken.speed}×',
+        'bookmark': t.fileSources.bookmark,
+      } else if (track != null) ...{
+        'shuffle': t.common.shuffle,
+        'repeat': switch (_music.repeatMode) {
+          MusicRepeatMode.all => t.music.repeatAll,
+          MusicRepeatMode.one => t.music.repeatOne,
+          _ => t.music.repeat,
+        },
+        if (client?.capabilities.instantMix == true) 'radio': t.music.instantMix,
+        if (client?.capabilities.userFavorites == true || client?.capabilities.numericUserRating == true)
+          'favorite': t.libraries.filterCategories.favorites,
+      },
+    };
+    final status = (
+      _catalogRevision,
+      spoken?.playing ?? _music.isPlaying,
+      track?.displayTitle,
+      spoken?.entry?.displayTitle,
+      _music.shuffled,
+      spoken?.chapters.length,
+      jsonEncode(actions),
+      track?.trackArtistTitle,
+    );
+    if (_publishedStatus == status && DateTime.now().difference(_lastStatus) < const Duration(minutes: 5)) return;
+    _lastStatus = DateTime.now();
+    _publishedStatus = status;
+    if (changed) {
+      final start = _music.currentIndex.clamp(0, queue.length);
+      unawaited(
+        _send('queueWindow', {
+          'scope': _itemScope,
+          'revision': _catalogRevision,
+          'title': t.music.queue,
+          'rows': [
+            if (spoken == null)
+              for (var i = start; i < queue.length && i < start + 50; i++)
+                {'index': i, 'title': queue[i].displayTitle, 'artist': queue[i].trackArtistTitle ?? ''},
+          ],
+        }),
+      );
     }
     unawaited(
       _send('snapshot', {
@@ -219,10 +289,27 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           'next': t.music.nextTrack,
         },
         'revision': _catalogRevision,
-        'playing': _music.isPlaying,
+        'actions': actions,
+        'noMatch': t.messages.noResultsFound,
+        'hasQueue': queue.isNotEmpty,
+        'hasChapters': spoken?.chapters.isNotEmpty == true,
+        'carLabels': {
+          'queue': t.music.queue,
+          'chapters': t.fileSources.chapters,
+          'loading': t.common.loading,
+          'more': t.fileSources.loadMore,
+          'close': t.common.close,
+          'retry': t.common.retry,
+          'empty': t.messages.noResultsFound,
+          'unavailable': t.fileSources.errorUnavailable,
+        },
+        'shuffled': _music.shuffled,
+        'repeatMode': _music.repeatMode.name,
+        'spoken': spoken != null,
+        'playing': spoken?.playing ?? _music.isPlaying,
         'index': _music.currentIndex,
-        'title': _music.currentTrack?.displayTitle,
-        'artist': _music.currentTrack?.trackArtistTitle,
+        'title': spoken?.entry?.displayTitle ?? _music.currentTrack?.displayTitle,
+        'artist': spoken?.entry?.author ?? _music.currentTrack?.trackArtistTitle,
       }),
     );
   }
@@ -241,9 +328,11 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       });
     }
     _music.removeListener(_publish);
+    _spokenPlayer?.removeListener(_publish);
     _sourceController?.removeListener(_audiobookCatalogChanged);
     _sourceController = null;
     _audiobookEntries.clear();
+    _offlineSpoken.clear();
     for (final source in _catalogSources) {
       source.removeListener(_catalogChanged);
     }
@@ -276,15 +365,17 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
   }
 
   Map<String, Object?> _folder(String id, String title) => {'id': id, 'title': title, 'playable': false};
-  Map<String, Object?> _item(MediaItem item) {
+  Map<String, Object?> _item(MediaItem item, {bool offline = false}) {
     final id = 'item:$_itemScope:${++_itemSequence}';
     // Bounded lookup table also invalidates stale native rows after a profile switch.
     if (_items.length >= 2000 && !_items.containsKey(id)) {
       final first = _items.keys.first;
       _items.remove(first);
+      _offlineRows.remove(first);
       _authorizations.remove(first);
     }
     _items[id] = item;
+    if (offline) _offlineRows.add(id);
     _rememberArtwork(id, item);
     final client = context.getMediaClientForItemOrNull(item);
     _authorizations[id] = (
@@ -317,7 +408,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
   }
 
   Map<String, Object?> _queueItem(MediaItem item, int index) {
-    final id = 'queue:$_catalogRevision:$index';
+    final id = 'queue:$_itemScope:$_catalogRevision:$index';
     _rememberArtwork(id, item);
     return {
       'id': id,
@@ -328,17 +419,19 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     };
   }
 
-  Map<String, Object?> _audiobookItem(SourceEntry entry) {
+  Map<String, Object?> _audiobookItem(SourceEntry entry, {bool offline = false}) {
     final id = 'audiobook:$_itemScope:${++_audiobookSequence}';
     if (_audiobookEntries.length >= 2000) {
+      _offlineSpoken.remove(_audiobookEntries.keys.first);
       _audiobookEntries.remove(_audiobookEntries.keys.first);
     }
     _audiobookEntries[id] = entry;
+    if (offline) _offlineSpoken.add(id);
     return {
       'id': id,
       'title': entry.displayTitle,
       'subtitle': entry.narrator.isNotEmpty ? entry.narrator : entry.author,
-      'kind': 'audiobook',
+      'kind': _isEpisode(entry) ? 'podcast' : 'audiobook',
       'playable': true,
       'artwork': true,
     };
@@ -391,9 +484,10 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       }
       if (id.startsWith('queue:')) {
         final parts = id.split(':');
-        final index = parts.length == 3 ? int.tryParse(parts[2]) : null;
-        if (parts.length != 3 ||
-            int.tryParse(parts[1]) != _catalogRevision ||
+        final index = parts.length == 4 ? int.tryParse(parts[3]) : null;
+        if (parts.length != 4 ||
+            parts[1] != _itemScope ||
+            int.tryParse(parts[2]) != _catalogRevision ||
             index == null ||
             index < 0 ||
             index >= _music.queue.length ||
@@ -443,7 +537,11 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     final owner = _authorizations[id];
     if (!_current || owner == null || owner.generation != _profiles.identityMutationGeneration) return false;
     final client = owner.client, item = _items[id];
-    if (client != null && !client.isOfflineMode && item?.libraryId != null && item!.kind != MediaKind.playlist) {
+    if (!_offlineRows.contains(id) &&
+        client != null &&
+        !client.isOfflineMode &&
+        item?.libraryId != null &&
+        item!.kind != MediaKind.playlist) {
       final libraries = context.read<LibrariesProvider?>();
       if (libraries != null &&
           (libraries.isDisposed ||
@@ -483,8 +581,22 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
 
   Future<bool> _carTransport(String command) async {
     final sourcePlayback = context.read<SourcePlayback?>();
-    if (sourcePlayback != null && sourcePlayback.active && sourcePlayback.entry?.kind == SourceItemKind.audiobook) {
+    if (sourcePlayback != null && sourcePlayback.active && !sourcePlayback.video && _isSpoken(sourcePlayback.entry)) {
       switch (command) {
+        case 'back15':
+          await sourcePlayback.skip(-15);
+          return true;
+        case 'forward30':
+          await sourcePlayback.skip(30);
+          return true;
+        case 'bookmark':
+          await sourcePlayback.bookmark();
+          await _send('catalogChanged');
+          return true;
+        case 'speed':
+          const speeds = [1.0, 1.25, 1.5, 1.75, 2.0];
+          await sourcePlayback.setSpeed(speeds.where((s) => s > sourcePlayback.speed).firstOrNull ?? 1);
+          return true;
         case 'play':
           await sourcePlayback.play();
           return sourcePlayback.playing;
@@ -499,7 +611,26 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           return true;
       }
     }
+    if (!mounted || !_current) return false;
     switch (command) {
+      case 'shuffle':
+        _music.toggleShuffle();
+        return true;
+      case 'repeat':
+        final modes = MusicRepeatMode.values;
+        _music.setRepeatMode(modes[(_music.repeatMode.index + 1) % modes.length]);
+        return true;
+      case 'radio':
+        final track = _music.currentTrack;
+        if (track == null || context.getMediaClientForItemOrNull(track)?.capabilities.instantMix != true) return false;
+        return await _music.playInstantMix(track) == InstantMixOutcome.started;
+      case 'favorite':
+        final track = _music.currentTrack, ratings = context.read<MusicExperience?>()?.ratings;
+        if (track == null || ratings == null) return false;
+        final caps = context.getMediaClientForItemOrNull(track)?.capabilities;
+        if (caps?.userFavorites == true) return ratings.favorite(track, true);
+        if (caps?.numericUserRating == true) return ratings.rate(track, 10);
+        return false;
       case 'play':
         await _music.play();
         return _music.isPlaying;
@@ -517,6 +648,113 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     }
   }
 
+  String _voiceName(String text) => text
+      .toLowerCase()
+      .replaceAll(RegExp(r"['’]"), '')
+      .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
+      .trim();
+
+  Future<List<MediaItem>> _visibleDownloads() async {
+    final downloads = context.read<DownloadProvider?>();
+    final hidden = context.read<HiddenLibrariesProvider?>();
+    await hidden?.ensureInitialized();
+    if (!_current || downloads == null || downloads.isDisposed || downloads.activeProfileId != _profileId) return [];
+    return downloads.downloadedTracks
+        .where((track) => hidden?.isLibraryHidden('${track.serverId}:${track.libraryId}') != true)
+        .toList();
+  }
+
+  Future<bool> _playGenre(String query) async {
+    final name = _voiceName(query);
+    if (name.isEmpty || name.length > 200) return false;
+    final intent = _music.beginPlayIntent(), generation = _profiles.identityMutationGeneration;
+    bool current() =>
+        _current && generation == _profiles.identityMutationGeneration && _music.isPlayIntentCurrent(intent);
+    final hidden = context.read<HiddenLibrariesProvider?>();
+    final libraries = context.read<LibrariesProvider?>();
+    final downloads = context.read<DownloadProvider?>();
+    final servers = context.read<MultiServerProvider?>();
+    await hidden?.ensureInitialized();
+    if (!current()) return false;
+    final batches = await Future.wait(
+      (libraries?.libraries ?? [])
+          .where(
+            (library) =>
+                library.kind == MediaKind.artist &&
+                !library.hidden &&
+                library.serverId != null &&
+                hidden?.isLibraryHidden(library.globalKey) != true,
+          )
+          .take(16)
+          .map((library) async {
+            final id = ServerId(library.serverId!);
+            final client = servers?.getClientForServer(id);
+            if (client == null || client.backend != library.backend || client.isOfflineMode) return null;
+            final owner = _readClient(client);
+            bool authorized() =>
+                current() &&
+                owner() &&
+                hidden?.isLibraryHidden(library.globalKey) != true &&
+                libraries!.libraries.any(
+                  (row) => row.globalKey == library.globalKey && row.backend == client.backend && !row.hidden,
+                );
+            if (!authorized()) return null;
+            try {
+              final result = await client.fetchLibraryFiltersWithValues(library.id, libraryKind: MediaKind.track);
+              if (!mounted || !authorized()) return null;
+              for (final filter in result.filters.where(
+                (filter) => filter.filter.split('.').last.toLowerCase() == 'genre' && filter.hasValueList,
+              )) {
+                if (!mounted || !authorized()) return null;
+                final values =
+                    result.cachedValues[filter.filter] ??
+                    await context.tryGetPlexClientForServer(id)?.getFilterValues(filter.key) ??
+                    [];
+                if (!authorized()) return null;
+                final ids = values
+                    .where((v) => _voiceName(v.title) == name)
+                    .map((v) => libraryFilterValueId(v.key, filter.filter))
+                    .toSet();
+                if (ids.isEmpty) continue;
+                return await MusicStation(
+                  id: 'voiceGenre',
+                  title: query,
+                  serverId: id.value,
+                  libraryId: library.id,
+                  filters: [LibraryFilter(field: filter.filter, values: ids.toList())],
+                ).preview(client, current: authorized);
+              }
+            } on Exception {
+              // Other libraries and verified local tracks can still answer this request.
+            }
+            return null;
+          }),
+    );
+    if (!current()) return false;
+    final online = MusicDiscovery.interleave([
+      for (final batch in batches.whereType<MusicStationBatch>())
+        if (batch.isCurrent()) batch.tracks,
+    ], limit: 200);
+    final local = downloads == null || downloads.activeProfileId != _profileId
+        ? <MediaItem>[]
+        : downloads.downloadedTracks
+              .where(
+                (track) =>
+                    hidden?.isLibraryHidden('${track.serverId}:${track.libraryId}') != true &&
+                    track.genres?.any((genre) => _voiceName(genre) == name) == true,
+              )
+              .take(200)
+              .toList();
+    if (online.isEmpty && local.isEmpty) return false;
+    await _music.playFromList(
+      tracks: online.isEmpty ? local : online,
+      offline: online.isEmpty,
+      shuffle: true,
+      playContext: MusicPlayContext(title: query.trim(), kind: MusicPlayContextKind.mix),
+    );
+    return _current && _music.isPlaying;
+  }
+
   Future<Object?> _handle(MethodCall call) async {
     if (!mounted || !_current || _profileId == null) throw PlatformException(code: 'profile_unavailable');
     final requestGeneration = _profiles.identityMutationGeneration;
@@ -527,8 +765,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         if (args['scope'] != _itemScope || args['revision'] != _catalogRevision) {
           throw PlatformException(code: 'stale_widget');
         }
-        await _carTransport(args['command'] as String? ?? '');
-        return null;
+        return _carTransport(args['command'] as String? ?? '');
       case 'artwork':
         return _artwork(args);
       case 'browse':
@@ -539,19 +776,44 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         final books = await _searchAudiobooks(query);
         return _current ? [...results.map(_item), ...books] : [];
       case 'resolveVoice':
-        final title = (args['query'] as String? ?? '').trim().toLowerCase();
-        final artist = (args['artist'] as String? ?? '').trim().toLowerCase();
-        final album = (args['album'] as String? ?? '').trim().toLowerCase();
+        final title = _voiceName(args['query'] as String? ?? '');
+        final artist = _voiceName(args['artist'] as String? ?? '');
+        final album = _voiceName(args['album'] as String? ?? '');
         final kind = args['kind'] as String?;
+        if (title.isEmpty || title.length > 200) return [];
+        if ((kind == null || kind == 'playlist') &&
+            artist.isEmpty &&
+            album.isEmpty &&
+            (title == _voiceName(t.libraries.filterCategories.favorites) ||
+                (LocaleSettings.currentLocale.languageCode == 'en' &&
+                    const {'favorites', 'favourites', 'my favorites', 'my favourites'}.contains(title)))) {
+          final selection = await loadProfileMusicFavorites(context);
+          if (requestCurrent() && selection.tracks.isNotEmpty) {
+            return [
+              {
+                'id': 'favorites:$_itemScope',
+                'title': t.libraries.filterCategories.favorites,
+                'kind': 'playlist',
+                'playable': true,
+              },
+            ];
+          }
+        }
         final results = await _search(args['query'] as String? ?? '');
         if (!mounted || !requestCurrent()) return [];
         final resolved = results
             .where(
               (item) =>
-                  item.displayTitle.trim().toLowerCase() == title &&
+                  _voiceName(item.displayTitle) == title &&
                   (artist.isEmpty ||
-                      (item.trackArtistTitle ?? item.albumArtistTitle ?? '').trim().toLowerCase() == artist) &&
-                  (album.isEmpty || (item.albumTitle ?? '').trim().toLowerCase() == album) &&
+                      _voiceName(
+                            item.kind == MediaKind.artist
+                                ? item.displayTitle
+                                : item.trackArtistTitle ?? item.albumArtistTitle ?? '',
+                          ) ==
+                          artist) &&
+                  (album.isEmpty ||
+                      _voiceName(item.kind == MediaKind.album ? item.displayTitle : item.albumTitle ?? '') == album) &&
                   (kind == null || item.kind.name == kind),
             )
             .take(10)
@@ -562,23 +824,22 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         resolved.addAll(
           audiobookMatches.where(
             (row) =>
-                (row['title'] as String? ?? '').trim().toLowerCase() == title &&
-                (artist.isEmpty || (row['subtitle'] as String? ?? '').trim().toLowerCase() == artist) &&
-                (kind == null || kind == 'audiobook'),
+                _voiceName(row['title'] as String? ?? '') == title &&
+                (artist.isEmpty || _voiceName(row['subtitle'] as String? ?? '') == artist) &&
+                (kind == null || kind == row['kind']),
           ),
         );
         if (artist.isEmpty && album.isEmpty && (kind == null || kind == 'station' || kind == 'playlist')) {
           final store = MusicLibraryStore(context.read<AppDatabase>(), _profileId);
-          final stations = await store.documents('station');
-          final recipes = await MusicRecipeStore(store.database, _profileId).load();
+          final stations = kind == 'playlist' ? <Map<String, dynamic>>[] : await store.documents('station');
+          final recipes = kind == 'station'
+              ? <MusicRecipe>[]
+              : await MusicRecipeStore(store.database, _profileId).load();
           if (!requestCurrent()) return [];
           resolved.addAll(
             stations
                 .where(
-                  (row) =>
-                      row['id'] is String &&
-                      row['title'] is String &&
-                      (row['title'] as String).trim().toLowerCase() == title,
+                  (row) => row['id'] is String && row['title'] is String && _voiceName(row['title'] as String) == title,
                 )
                 .map(
                   (row) => {'id': 'station:${row['id']}', 'title': row['title'], 'kind': 'station', 'playable': true},
@@ -586,7 +847,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           );
           resolved.addAll(
             recipes
-                .where((recipe) => recipe.title.trim().toLowerCase() == title)
+                .where((recipe) => _voiceName(recipe.title) == title)
                 .map(
                   (recipe) => {
                     'id': 'recipe:${recipe.id}',
@@ -600,11 +861,73 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         if (artist.isEmpty && album.isEmpty && (kind == null || kind == 'station')) {
           final radios = await _serverRadioRows();
           if (!requestCurrent()) return [];
-          resolved.addAll(radios.where((row) => (row['title'] as String).trim().toLowerCase() == title));
+          resolved.addAll(radios.where((row) => _voiceName(row['title'] as String) == title));
         }
         return requestCurrent() ? resolved.take(10).toList() : [];
       case 'playItem':
         final id = args['id'] as String? ?? '';
+        if (id == 'favorites:$_itemScope') {
+          final intent = _music.beginPlayIntent();
+          final selection = await loadProfileMusicFavorites(context);
+          if (!requestCurrent() || !_music.isPlayIntentCurrent(intent)) return false;
+          final tracks = selection.tracks;
+          if (tracks.isEmpty) return false;
+          if (!_enqueueRequested(tracks, args)) {
+            await _music.playFromList(
+              tracks: tracks,
+              shuffle: args['shuffle'] == true,
+              playContext: MusicPlayContext(
+                title: t.libraries.filterCategories.favorites,
+                kind: MusicPlayContextKind.tracks,
+              ),
+            );
+          }
+          return true;
+        }
+        if (id == 'resume') return _carTransport('play');
+        if (id.startsWith('bookmark:')) {
+          final spoken = _spoken, source = _sourceController, entry = spoken?.entry, revision = _catalogRevision;
+          final prefix = 'bookmark:$_itemScope:$revision:';
+          if (!id.startsWith(prefix) ||
+              source == null ||
+              source.blocked ||
+              source.profileId != _profileId ||
+              entry == null) {
+            return false;
+          }
+          final notes = await source.repository.annotations(_profileId, entry.key);
+          if (!requestCurrent() || source.blocked || _spoken?.entry?.key != entry.key || _catalogRevision != revision) {
+            return false;
+          }
+          final note = notes
+              .where(
+                (note) =>
+                    note.id == id.substring(prefix.length) &&
+                    note.mode == PublicationMode.listening &&
+                    note.edition == spoken!.progress?.edition &&
+                    note.positionMs != null,
+              )
+              .firstOrNull;
+          if (note == null) return false;
+          await spoken!.seekBookmark(note);
+          return true;
+        }
+        if (id.startsWith('chapter:')) {
+          final parts = id.split(':');
+          final index = int.tryParse(parts.last);
+          final spoken = _spoken;
+          if (parts.length != 4 ||
+              parts[1] != _itemScope ||
+              parts[2] != '$_catalogRevision' ||
+              spoken == null ||
+              index == null ||
+              index < 0 ||
+              index >= spoken.chapters.length) {
+            return false;
+          }
+          await spoken.seekChapter(index);
+          return true;
+        }
         if (id.startsWith('audiobook:')) {
           final entry = _audiobookEntries[id];
           final sources = _sourceController;
@@ -620,19 +943,29 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
               !sources.sources.any((source) => source.id == entry.sourceId && source.profileId == _profileId)) {
             throw PlatformException(code: 'stale_audiobook');
           }
-          final fresh = await sources.hydrate(entry);
-          if (!mounted || !requestCurrent()) return false;
-          if (fresh.kind != SourceItemKind.audiobook || fresh.unavailable || fresh.audio.isEmpty) {
+          final epoch = sources.generation;
+          final verified = await sources.downloads.verifiedFiles(_profileId, [entry]);
+          if (!requestCurrent() || !sources.current(epoch)) return false;
+          final local = PublicationOfflineReadiness.evaluate(entry, verified).canListen;
+          if (_offlineSpoken.contains(id) && !local) return false;
+          final fresh = local ? entry : await sources.hydrate(entry);
+          if (!mounted || !requestCurrent() || !sources.current(epoch)) return false;
+          if (fresh.key != entry.key ||
+              sources.blocked ||
+              sources.profileId != _profileId ||
+              !sources.sources.any((source) => source.id == entry.sourceId) ||
+              !_isSpoken(fresh) ||
+              fresh.audio.isEmpty) {
             throw PlatformException(code: 'unavailable_audiobook');
           }
           await playback.start(fresh, fresh.audio, isStartCurrent: requestCurrent);
           return requestCurrent() && playback.active && playback.entry?.key == fresh.key;
         } else if (id.startsWith('queue:')) {
           final parts = id.split(':');
-          if (parts.length != 3 || int.tryParse(parts[1]) != _catalogRevision) {
+          if (parts.length != 4 || parts[1] != _itemScope || int.tryParse(parts[2]) != _catalogRevision) {
             throw PlatformException(code: 'stale_queue');
           }
-          final index = int.tryParse(parts[2]);
+          final index = int.tryParse(parts[3]);
           if (index == null || index < 0 || index >= _music.queue.length) throw PlatformException(code: 'stale_queue');
           await _music.jumpTo(index);
         } else if (id.startsWith('serverRadio:')) {
@@ -660,12 +993,12 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
             shuffle: args['shuffle'] == true,
           );
           if (outcome != InstantMixOutcome.started) return false;
-        } else if (id.startsWith('station:')) {
+        } else if (id.startsWith('station:') || id.startsWith('offlineStation:')) {
           final generation = _profiles.identityMutationGeneration;
           bool stationCurrent() => _current && generation == _profiles.identityMutationGeneration;
           final intent = _music.beginPlayIntent();
           final store = MusicLibraryStore(context.read<AppDatabase>(), _profileId);
-          final row = await store.document('station', id.substring(8));
+          final row = await store.document('station', id.substring(id.indexOf(':') + 1));
           if (!mounted || !stationCurrent() || row == null) return false;
           final station = MusicStation.fromJson(row);
           final hidden = context.read<HiddenLibrariesProvider>();
@@ -674,7 +1007,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
             return false;
           }
           final client = context.read<MultiServerProvider>().getClientForServer(ServerId(station.serverId));
-          final offline = client == null || client.isOfflineMode;
+          final offline = client == null || client.isOfflineMode || id.startsWith('offlineStation:');
           final authentication = client?.authenticationSessionId;
           final accountScope = client == null ? null : musicAccountScope(client);
           final downloads = offline ? context.read<DownloadProvider>() : null;
@@ -783,11 +1116,26 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           }
           if (!_catalogItemCurrent(id)) return false;
           final client = _authorizations[id]!.client;
+          List<MediaItem>? playlistTracks;
+          if (_offlineRows.contains(id) && item.kind == MediaKind.playlist) {
+            final doc = await MusicLibraryStore(
+              context.read<AppDatabase>(),
+              _profileId,
+            ).document('offlinePlaylist', item.globalKey);
+            if (!mounted ||
+                !_catalogItemCurrent(id) ||
+                doc == null ||
+                client != null && musicAccountScope(client) != doc['accountScope']) {
+              return false;
+            }
+            playlistTracks = musicSnapshotTracks(doc, context.read<DownloadProvider>().downloadedTracks);
+          }
           final scope = await MusicReadScope.forItem(
             context,
             item,
             selectedClient: client,
-            offline: client == null || client.isOfflineMode,
+            offlinePlaylistTracks: playlistTracks,
+            offline: _offlineRows.contains(id) || client == null || client.isOfflineMode,
           );
           bool current() => _catalogItemCurrent(id) && _music.isPlayIntentCurrent(intent) && scope?.current == true;
           if (!current()) return false;
@@ -836,12 +1184,20 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         if (args['repeat'] == 'all') _music.setRepeatMode(MusicRepeatMode.all);
         return _music.isPlaying;
       case 'playSearch':
+        if (args['kind'] == 'genre') return _playGenre(args['query'] as String? ?? '');
+        if ((args['query'] as String? ?? '').trim().isEmpty) {
+          if (_spoken != null || _music.currentTrack != null) return _carTransport('play');
+          final recent = await _browse('recent');
+          if (!requestCurrent() || recent.isEmpty) return false;
+          return _handle(MethodCall('playItem', {'id': recent.first['id']}));
+        }
         final intent = _music.beginPlayIntent();
         final matches = await _handle(MethodCall('resolveVoice', args)) as List;
         if (!mounted || !_current || !_music.isPlayIntentCurrent(intent)) return false;
         if (matches.length != 1) throw PlatformException(code: 'ambiguous_search');
         return _handle(MethodCall('playItem', {...args, 'id': (matches.single as Map)['id']}));
       case 'jump':
+        if (args.containsKey('scope') && args['scope'] != _itemScope) return false;
         final index = args['index'] as int?;
         if (args['revision'] != _catalogRevision || index == null || index < 0 || index >= _music.queue.length) {
           throw PlatformException(code: 'stale_queue');
@@ -988,14 +1344,170 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         throw PlatformException(code: 'invalid_page');
       }
     }
+    final sources = _sourceController;
+    final hasSpoken = sources != null && !sources.blocked && sources.profileId == _profileId;
     if (id == 'root') {
       return [
-        if (_sourceController != null && !_sourceController!.blocked) ...[
-          _folder('continueAudiobooks', t.fileSources.continueListening),
-          _folder('audiobooks', t.fileSources.audiobooks),
-        ],
+        _folder('home', t.common.home),
+        _folder('music', t.musicTools.home),
+        if (hasSpoken) _folder('spoken', '${t.fileSources.audiobooks} · ${t.podcasts.title}'),
+        _folder('downloads', t.navigation.downloads),
+      ];
+    }
+    if (id == 'home') {
+      return [
+        if (_spoken != null || _music.currentTrack != null)
+          {
+            'id': 'resume',
+            'title': t.common.resume,
+            'subtitle': _spoken?.entry?.displayTitle ?? _music.currentTrack?.displayTitle,
+            'playable': true,
+          },
         _folder('queue', t.music.queue),
-        _folder('offline', t.navigation.downloads),
+        _folder('pins', t.musicTools.pins),
+        _folder('favorites', t.libraries.filterCategories.favorites),
+        _folder('recent', t.musicTools.recent),
+        _folder('stations', t.musicTools.stations),
+      ];
+    }
+    if (id == 'favorites') {
+      final selection = await loadProfileMusicFavorites(context);
+      return _current ? _page(selection.tracks.map(_item), id, offset) : [];
+    }
+    if (id == 'pins') {
+      final pins = await context.read<MusicExperience?>()?.pins.load();
+      return _current && pins != null ? _page(pins.map((pin) => _item(pin.item)), id, offset) : [];
+    }
+    if (id == 'spoken') {
+      return [
+        _folder('continueAudiobooks', t.fileSources.continueListening),
+        if (_spoken?.chapters.isNotEmpty == true) _folder('chapters', t.fileSources.chapters),
+        if (_spoken != null) _folder('bookmarks', t.fileSources.bookmarks),
+        _folder('audiobooks', t.fileSources.audiobooks),
+        _folder('episodes', t.podcasts.episodes),
+        _folder('subscriptions', t.podcasts.shows),
+        _folder('downloadEpisodes', t.navigation.downloads),
+      ];
+    }
+    if (id == 'bookmarks') {
+      final spoken = _spoken, entry = spoken?.entry, revision = _catalogRevision;
+      if (!hasSpoken || entry == null || spoken?.progress == null) return [];
+      final notes = await sources.repository.annotations(_profileId!, entry.key);
+      if (!_current || _spoken?.entry?.key != entry.key || revision != _catalogRevision) return [];
+      return _page(
+        notes
+            .where(
+              (note) =>
+                  note.mode == PublicationMode.listening &&
+                  note.edition == spoken!.progress?.edition &&
+                  note.positionMs != null,
+            )
+            .map((note) {
+              final timestamp = formatDurationTimestamp(Duration(milliseconds: note.positionMs!));
+              return {
+                'id': 'bookmark:$_itemScope:$revision:${note.id}',
+                'title': note.note.isEmpty ? timestamp : note.note,
+                'subtitle': note.note.isEmpty ? null : timestamp,
+                'playable': true,
+              };
+            }),
+        id,
+        offset,
+      );
+    }
+    if (id == 'chapters') {
+      final chapters = _spoken?.chapters ?? [];
+      return _page(
+        [
+          for (final (i, ch) in chapters.indexed)
+            {'id': 'chapter:$_itemScope:$_catalogRevision:$i', 'title': ch.title, 'playable': true},
+        ],
+        id,
+        offset,
+      );
+    }
+    if (id == 'downloads') {
+      return [
+        _folder('offline', t.libraries.groupings.tracks),
+        _folder('offlineAlbums', t.libraries.groupings.albums),
+        _folder('offlinePlaylists', t.common.mediaKind.playlist),
+        _folder('offlineArtists', t.libraries.groupings.artists),
+        _folder('offlineStations', t.musicTools.stations),
+        if (hasSpoken) ...[
+          _folder('downloadBooks', t.fileSources.audiobooks),
+          _folder('downloadEpisodes', t.podcasts.title),
+        ],
+      ];
+    }
+    if (id == 'offlinePlaylists') {
+      final store = MusicLibraryStore(context.read<AppDatabase>(), _profileId!);
+      final docs = await store.documents('offlinePlaylist', limit: _pageSize, offset: offset);
+      if (!mounted || !_current) return [];
+      final downloads = await _visibleDownloads();
+      if (!mounted || !_current) return [];
+      final rows = <Map<String, Object?>>[];
+      for (final doc in docs) {
+        final metadata = doc['playlist'];
+        if (metadata is! Map<String, dynamic>) continue;
+        final playlist = MediaItem.fromJson(metadata);
+        final client = context.getMediaClientForItemOrNull(playlist);
+        if (client != null && musicAccountScope(client) != doc['accountScope']) continue;
+        if (musicSnapshotTracks(doc, downloads).isEmpty) continue;
+        final row = _item(playlist, offline: true);
+        rows.add({...row, 'playable': true});
+      }
+      if (docs.length == _pageSize) rows.add(_nextPage(id, offset + docs.length));
+      return rows;
+    }
+    if (id == 'offlineAlbums' || id == 'offlineArtists') {
+      final albums = id == 'offlineAlbums';
+      final groups = <String, MediaItem>{};
+      for (final track in await _visibleDownloads()) {
+        final key = albums ? track.parentId : track.grandparentId;
+        final title = albums ? track.albumTitle : track.trackArtistTitle;
+        if (key == null || title == null || key.isEmpty) continue;
+        final item = track.copyWith(id: key, title: title, kind: albums ? MediaKind.album : MediaKind.artist);
+        groups[item.globalKey] = item;
+      }
+      final rows = groups.values.toList()..sort((a, b) => a.displayTitle.compareTo(b.displayTitle));
+      return _page(rows.map((e) => {..._item(e, offline: true), 'playable': true}), id, offset);
+    }
+    if (id == 'subscriptions' && hasSpoken) {
+      return _page(
+        sources.sources
+            .where((s) => s.kind == FileSourceKind.podcastRss || s.kind == FileSourceKind.audiobookshelf)
+            .map((s) => _folder('feed:${s.id}', s.name)),
+        id,
+        offset,
+      );
+    }
+    if (id == 'episodes' || id == 'downloadEpisodes' || id.startsWith('feed:')) {
+      if (!hasSpoken) return [];
+      final source = id.startsWith('feed:') ? id.substring(5) : null;
+      final epoch = sources.generation;
+      if (source != null && !sources.sources.any((s) => s.id == source)) return [];
+      final batch = await sources.repository.podcastEntries(
+        _profileId!,
+        source: source,
+        downloadedOnly: id == 'downloadEpisodes',
+        offset: offset,
+        limit: _pageSize,
+      );
+      if (!_current || !sources.current(epoch)) return [];
+      final verified = id == 'downloadEpisodes' ? await sources.downloads.verifiedFiles(_profileId, batch) : null;
+      if (!_current || !sources.current(epoch)) return [];
+      return [
+        for (final e in batch)
+          if (_isEpisode(e) &&
+              e.audio.isNotEmpty &&
+              sources.sources.any((s) => s.id == e.sourceId) &&
+              (verified == null ? !e.unavailable : PublicationOfflineReadiness.evaluate(e, verified).canListen))
+            _audiobookItem(e, offline: verified != null),
+        if (batch.length == _pageSize) _nextPage(id, offset + batch.length),
+      ];
+    }
+    if (id == 'music') {
+      return [
         _folder('libraries', t.navigation.libraries),
         _folder('playlists', t.common.mediaKind.playlist),
         _folder('recipes', t.musicExperience.saved),
@@ -1020,7 +1532,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           .map((row) => row.$1)
           .where(
             (entry) =>
-                entry.kind == SourceItemKind.audiobook &&
+                _isSpoken(entry) &&
                 entry.audio.isNotEmpty &&
                 !entry.unavailable &&
                 configured.contains(entry.sourceId) &&
@@ -1029,31 +1541,42 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           .map(_audiobookItem);
       return _page(entries, id, offset);
     }
-    if (id == 'audiobooks' || id.startsWith('audiobookPage:')) {
+    if (id == 'audiobooks' ||
+        id == 'downloadBooks' ||
+        id.startsWith('audiobookPage:') ||
+        id.startsWith('downloadBookPage:')) {
       final sources = _sourceController;
       if (sources == null || sources.blocked || _profileId == null || sources.profileId != _profileId) return [];
       String? cursor;
-      if (id.startsWith('audiobookPage:')) {
-        final value = id.substring('audiobookPage:'.length);
+      final offline = id == 'downloadBooks' || id.startsWith('downloadBookPage:');
+      final epoch = sources.generation;
+      if (id.contains(':')) {
+        final value = id.split(':').last;
         if (!RegExp(r'^\d{1,12}$').hasMatch(value)) throw PlatformException(code: 'invalid_audiobook_page');
         cursor = value;
       }
       final page = await sources.repository.entriesPage(
         _profileId,
         shelf: PublicationShelf.audiobooks,
+        downloadedOnly: offline,
         cursor: cursor,
         limit: _pageSize,
       );
       if (!mounted || !_current || sources.profileId != _profileId || sources.blocked) return [];
+      final verified = offline ? await sources.downloads.verifiedFiles(_profileId, page.items) : null;
+      if (!_current || !sources.current(epoch)) return [];
       final configured = sources.sources.map((source) => source.id).toSet();
       final rows = <Map<String, Object?>>[
         for (final entry in page.items)
           if (entry.kind == SourceItemKind.audiobook &&
               entry.audio.isNotEmpty &&
-              !entry.unavailable &&
+              (verified == null
+                  ? !entry.unavailable
+                  : PublicationOfflineReadiness.evaluate(entry, verified).canListen) &&
               configured.contains(entry.sourceId))
-            _audiobookItem(entry),
-        if (page.cursor case final cursor?) _folder('audiobookPage:$cursor', t.fileSources.loadMore),
+            _audiobookItem(entry, offline: offline),
+        if (page.cursor case final cursor?)
+          _folder(offline ? 'downloadBookPage:$cursor' : 'audiobookPage:$cursor', t.fileSources.loadMore),
       ];
       return rows;
     }
@@ -1106,14 +1629,36 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           _nextPage(id, offset + page.items.length),
       ];
     }
-    if (id == 'offline') return _page(context.read<DownloadProvider>().downloadedTracks.map(_item), id, offset);
+    if (id == 'offline') {
+      return _page((await _visibleDownloads()).map((e) => _item(e, offline: true)), id, offset);
+    }
     if (id == 'recent') {
       final rows = await MusicLibraryStore(context.read<AppDatabase>(), _profileId!).recent(limit: 100);
       return _current ? _page(rows.map(_item), id, offset) : [];
     }
-    if (id == 'stations') {
+    if (id == 'stations' || id == 'offlineStations') {
       final rows = await MusicLibraryStore(context.read<AppDatabase>(), _profileId!).documents('station', limit: 100);
-      if (!_current) return [];
+      if (!mounted || !_current) return [];
+      if (id == 'offlineStations') {
+        final store = MusicLibraryStore(context.read<AppDatabase>(), _profileId);
+        final owned = await _visibleDownloads();
+        if (!_current) return [];
+        final saved = <Map<String, Object?>>[];
+        for (final row in rows) {
+          final station = MusicStation.fromJson(row);
+          final snapshot = await store.document('stationSnapshot', station.id);
+          if (!mounted || !_current) return [];
+          final client = context.read<MultiServerProvider?>()?.getClientForServer(ServerId(station.serverId));
+          if (musicSnapshotTracks(
+            snapshot,
+            owned,
+            accountScope: client == null ? null : musicAccountScope(client),
+          ).isNotEmpty) {
+            saved.add({'id': 'offlineStation:${station.id}', 'title': station.title, 'playable': true});
+          }
+        }
+        return _page(saved, id, offset);
+      }
       return _page(
         rows
             .where((row) => row['id'] is String && row['title'] is String)
@@ -1328,13 +1873,12 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         limit: 100,
       );
       if (!mounted || !_current || sources.profileId != _profileId || sources.blocked) return [];
+      final podcasts = await sources.repository.podcastEntries(_profileId, query: normalized, limit: 50);
+      if (!_current || sources.profileId != _profileId || sources.blocked) return [];
       final configured = sources.sources.map((source) => source.id).toSet();
       return [
-        for (final entry in page.items)
-          if (entry.kind == SourceItemKind.audiobook &&
-              entry.audio.isNotEmpty &&
-              !entry.unavailable &&
-              configured.contains(entry.sourceId))
+        for (final entry in [...page.items, ...podcasts])
+          if (_isSpoken(entry) && entry.audio.isNotEmpty && !entry.unavailable && configured.contains(entry.sourceId))
             _audiobookItem(entry),
       ];
     } on Object {

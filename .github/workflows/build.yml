@@ -1012,6 +1012,29 @@ jobs:
             dmesg --ctime 2>/dev/null | grep -Ei 'out of memory|oom-kill|killed process|memory cgroup' | tail -n 40 || true
           fi
 
+      - name: Build signed Automotive audio App Bundle
+        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' && steps.android-signing.outputs.configured == 'true' }}
+        env:
+          ORG_GRADLE_PROJECT_pleazyngAutomotiveMedia: 'true'
+          REVIEW_ACCESS_PUBLIC_KEY: ${{ vars.REVIEW_ACCESS_PUBLIC_KEY }}
+        run: |
+          python3 scripts/run_android_build.py flutter --verbose build appbundle --release ${{ env.RELEASE_DART_DEFINES }} --dart-define=SUPPORTER_MODE=iap --dart-define=REVIEW_ACCESS_PUBLIC_KEY="$REVIEW_ACCESS_PUBLIC_KEY" --obfuscate --split-debug-info=debug-info/automotive-play
+          cp build/app/outputs/bundle/release/app-release.aab pleazyng-automotive-play.aab
+
+      - name: Build and verify Automotive audio APK
+        env:
+          ORG_GRADLE_PROJECT_pleazyngAutomotiveMedia: 'true'
+        run: |
+          python3 scripts/run_android_build.py flutter --verbose build apk --release ${{ env.RELEASE_DART_DEFINES }} --split-debug-info=debug-info/automotive
+          cp build/app/outputs/flutter-apk/app-release.apk pleazyng-automotive-music.apk
+          tools="$ANDROID_HOME/build-tools/36.1.0"
+          "$tools/apksigner" verify pleazyng-automotive-music.apk
+          "$tools/aapt" dump badging pleazyng-automotive-music.apk > "$RUNNER_TEMP/automotive-badging"
+          grep -Fq "uses-feature: name='android.hardware.type.automotive'" "$RUNNER_TEMP/automotive-badging"
+          "$tools/aapt" dump xmltree pleazyng-automotive-music.apk AndroidManifest.xml > "$RUNNER_TEMP/automotive-manifest"
+          grep -Fq 'android.media.browse.MediaBrowserService' "$RUNNER_TEMP/automotive-manifest"
+          if grep -Fq 'com.google.android.gms.car.application' "$RUNNER_TEMP/automotive-manifest"; then exit 1; fi
+
       - name: Clean up keystore
         if: ${{ always() && (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') }}
         run: rm -f android/app/upload-keystore.jks android/key.properties
@@ -1022,6 +1045,7 @@ jobs:
         with:
           subject-path: |
             pleazyng-android-arm64-v8a.tar.gz
+            pleazyng-automotive-music.apk
             pleazyng-android-armeabi-v7a.tar.gz
             pleazyng-android-x86_64.tar.gz
             pleazyng-moonlight-android-source.tar.gz
@@ -1032,6 +1056,7 @@ jobs:
         with:
           subject-path: |
             pleazyng-android-play.aab
+            pleazyng-automotive-play.aab
 
       - name: Attest signed Fire TV APK
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
@@ -1057,10 +1082,12 @@ jobs:
           name: android-apk
           path: |
             pleazyng-android-arm64-v8a.tar.gz
+            pleazyng-automotive-music.apk
             pleazyng-android-armeabi-v7a.tar.gz
             pleazyng-android-x86_64.tar.gz
             pleazyng-moonlight-android-source.tar.gz
             pleazyng-android-play.aab
+            pleazyng-automotive-play.aab
             pleazyng-amazon-firetv.apk
             pleazyng-amazon-firetv-provenance.json
           if-no-files-found: warn
@@ -3958,6 +3985,7 @@ jobs:
         run: |
           {
             echo 'files<<EOF'
+            echo artifacts/android-apk/pleazyng-automotive-music.apk
             echo artifacts/android-apk/pleazyng-android-arm64-v8a.tar.gz
             echo artifacts/android-apk/pleazyng-android-armeabi-v7a.tar.gz
             echo artifacts/android-apk/pleazyng-android-x86_64.tar.gz
@@ -3995,6 +4023,7 @@ jobs:
             echo artifacts/tizen/pleazyng-tizen-arm-tester-handoff.zip
             if [ -f artifacts/android-apk/pleazyng-android-play.aab ]; then
               echo artifacts/android-apk/pleazyng-android-play.aab
+              echo artifacts/android-apk/pleazyng-automotive-play.aab
             fi
             echo artifacts/android-apk/pleazyng-amazon-firetv.apk
             echo artifacts/android-apk/pleazyng-amazon-firetv-provenance.json

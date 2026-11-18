@@ -787,6 +787,17 @@ class SourceRepository {
     return fingerprints;
   }
 
+  // Apply the membership filter before pagination. File existence and edition
+  // fingerprints are verified by the caller before displaying or playing a row.
+  static String _hasDownloadedFile(String table) =>
+      """
+    EXISTS (SELECT 1 FROM json_each($table.payload, '\$.files') f
+      WHERE EXISTS (SELECT 1 FROM downloads d WHERE d.profile=$table.profile AND d.complete=1
+        AND d.key=json_array($table.source, json_extract(f.value,'\$.id')))
+      OR EXISTS (SELECT 1 FROM retired_downloads d WHERE d.profile=$table.profile AND d.complete=1
+        AND d.key=json_array($table.source, json_extract(f.value,'\$.id'))))
+  """;
+
   /// Latest indexed episodes across RSS and Audiobookshelf, scoped before
   /// decoding so opening Podcasts never loads the entire media catalogue.
   Future<List<SourceEntry>> podcastEntries(
@@ -797,6 +808,7 @@ class SourceRepository {
     String? parent,
     String query = '',
     bool oldestFirst = false,
+    bool downloadedOnly = false,
   }) async {
     final rows = await database
         .customSelect(
@@ -804,6 +816,7 @@ class SourceRepository {
           "AND json_extract(e.payload,'\$.kind') != 'folder' "
           "AND (json_extract(e.payload,'\$.identifiers.podcast')='episode' "
           "OR json_extract(e.payload,'\$.identifiers.feed') IS NOT NULL) "
+          "${downloadedOnly ? 'AND ${_hasDownloadedFile('e')} ' : ''}"
           '${source == null ? '' : 'AND e.source=? '}'
           '${parent == null ? '' : 'AND e.parent=? '}'
           '${query.trim().isEmpty ? '' : 'AND instr(e.search,?)>0 '}'
@@ -975,9 +988,10 @@ class SourceRepository {
     String? query,
     String? cursor,
     int limit = 200,
+    bool downloadedOnly = false,
   }) async {
     final safeLimit = limit.clamp(1, 500).toInt();
-    final predicates = <String>['profile=?'];
+    final predicates = <String>['profile=?', if (downloadedOnly) _hasDownloadedFile('entries')];
     final variables = <Variable<Object>>[Variable(profile)];
     if (source != null) {
       predicates.add('source=?');

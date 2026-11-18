@@ -13,27 +13,40 @@ object MusicCarApi {
     private var epoch = 0
     var hasCarHost = false
         private set
+    var embeddedBrowserBound = false
+    val retainsEngine get() = hasCarHost || embeddedBrowserBound
     var ready = false
         private set
     var snapshot: Map<*, *> = emptyMap<Any, Any>()
         private set
 
+    var queueWindow: Map<*, *> = emptyMap<Any, Any>()
+        private set
+    var catalogVersion = 0L
+        private set
+    private fun catalogChanged() {
+        catalogVersion++
+        listeners.toList().forEach { it() }
+    }
     fun attach(messenger: BinaryMessenger) {
         epoch++
         ready = false
+        snapshot = emptyMap<Any, Any>()
+        queueWindow = emptyMap<Any, Any>()
         channel = MethodChannel(messenger, "com.pleazyng/music_car").also { pipe ->
             pipe.setMethodCallHandler { call, result ->
                 when (call.method) {
-                    "ready" -> { epoch++; ready = true; if (hasCarHost) connection(true); listeners.toList().forEach { it() }; result.success(null) }
-                    "catalogChanged" -> { listeners.toList().forEach { it() }; result.success(null) }
+                    "ready" -> { epoch++; ready = true; if (hasCarHost) connection(true); catalogChanged(); result.success(null) }
+                    "catalogChanged" -> { catalogChanged(); result.success(null) }
+                    "queueWindow" -> { queueWindow = call.arguments as? Map<*, *> ?: emptyMap<Any, Any>(); listeners.toList().forEach { it() }; result.success(null) }
                     "snapshot" -> { snapshot = call.arguments as? Map<*, *> ?: emptyMap<Any, Any>(); listeners.toList().forEach { it() }; result.success(null) }
-                    "close" -> { epoch++; ready = false; snapshot = emptyMap<Any, Any>(); listeners.toList().forEach { it() }; result.success(null) }
+                    "close" -> { epoch++; ready = false; snapshot = emptyMap<Any, Any>(); queueWindow = emptyMap<Any, Any>(); catalogChanged(); result.success(null) }
                     else -> result.notImplemented()
                 }
             }
         }
     }
-    fun detach() { epoch++; ready = false; snapshot = emptyMap<Any, Any>(); channel?.setMethodCallHandler(null); channel = null }
+    fun detach() { epoch++; ready = false; snapshot = emptyMap<Any, Any>(); queueWindow = emptyMap<Any, Any>(); channel?.setMethodCallHandler(null); channel = null }
     fun addListener(listener: () -> Unit) { listeners.add(listener) }
     fun removeListener(listener: () -> Unit) { listeners.remove(listener) }
     fun connection(connected: Boolean) { hasCarHost = connected; channel?.invokeMethod("connection", mapOf("connected" to connected)) }

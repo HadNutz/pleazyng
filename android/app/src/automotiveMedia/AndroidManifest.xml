@@ -40,5 +40,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <provider android:name=".car.CarArtworkProvider" android:authorities="${applicationId}.car.artwork"
+            android:exported="true" />
     </application>
 </manifest>

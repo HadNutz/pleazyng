@@ -31,6 +31,16 @@ preserving duplicates and rejecting a changed account or excessive response.
 CarPlay continuation folders update the current template instead of increasing
 the navigation stack depth.
 
+The native sections are Home, Music, Audiobooks & Podcasts and Downloads.
+Home exposes resume, queue, pins, favorites, recent listening and stations.
+Downloaded albums and artists are grouped from completed tracks. Playlist
+downloads retain ordered occurrences and intersect them with the active
+profile's completed files. Existing individual downloads still appear under
+Tracks, Albums and Artists. Station snapshots also require owned tracks.
+Completed spoken editions can start from their indexed files offline.
+Podcasts support feeds, recent episodes, continuing and verified downloads.
+Spoken controls include chapters, skipping, speed and a position bookmark.
+
 Library visibility, account sessions and completed-download membership changes
 refresh native catalogs. Progress-only download notifications do not repeatedly
 reload a car browser. Playback rechecks hidden-library access at selection time.
@@ -69,15 +79,12 @@ These are source implementations with Dart scheduling tests. Android Auto host
 recognition, activity plugins and callback/process-recreation ordering still
 require a new native build and actual-host qualification.
 
-A disconnected browser clears its connection state and pauses through the shared
-Dart session. Existing audio-focus/noisy-route logic remains in the playback
-backend. Browse/service lifetime alone does not prove all Bluetooth, wired and
-wireless route transitions; selected Bluetooth car identification is not added.
-
-The existing AAOS parked-video/game restrictions remain. This branch does not
-change those restrictions into a certified moving-vehicle media target. A media
-store/distribution target and independently qualified audio policy are still
-required.
+A projected host disconnect routes through the shared session. An embedded
+AAOS browser retains the engine while connected, including when the parked
+activity closes. Structured Android voice requests include artist, album,
+playlist, track and genre. Android publishes the current and next 49 queue
+occurrences through MediaSession, with the rest available through browse.
+Artwork uses a bounded read-only content provider for trusted media controllers.
 
 ## iOS
 
@@ -86,14 +93,14 @@ channel and existing MPNowPlaying/remote-command implementation. Info.plist
 registers the CarPlay scene. A locked/uninitialized profile exposes an unlock
 message, not a previous profile's catalog.
 
-Actual signed CarPlay availability requires Apple's approved audio entitlement
-and a provisioning profile containing it. [CarPlay.entitlements](CarPlay.entitlements)
-is the entitlement input, not an activated project signing configuration. Once
-approval is present, merge it with the target's existing entitlements and set the
-appropriate `CODE_SIGN_ENTITLEMENTS` in the signed build configuration; preserve
-all other entitlements. Do not replace production signing with an unapproved
-profile. Verify the resulting signed app's entitlements and run the CarPlay
-simulator/device tests before distribution.
+The App Store archive reads the distribution profile's CarPlay audio and Siri
+grants independently. It merges granted capabilities with the Runner release
+entitlements, checks the exported executable with codesign and records
+`signed_car_capabilities` in the archive report. Apple's CarPlay approval
+and a regenerated distribution profile are necessary for signed CarPlay use.
+
+CarPlay uses native tabs, host list limits, loading and retry states. Now
+Playing opens Up Next or Chapters and exposes actions for the current player.
 
 `AppDelegate.ensureMusicEngine` now runs one explicit headless-capable Flutter
 engine and registers the application's normal plugins. `MusicPhoneSceneDelegate`
@@ -113,7 +120,7 @@ and [music integration documentation](https://developer.apple.com/documentation/
 
 The additional scene/intent sources have not been compiled with Xcode in this
 workspace. Audiobook browse and Now Playing artwork are wired in source, but
-signed entitlement verification, plugin lifecycle checks and simulator/hardware
+a signed archive with CarPlay approval, plugin lifecycle checks and simulator/hardware
 qualification remain. Neither source registration nor a simulator session would
 establish final App Store/device approval.
 
@@ -155,7 +162,7 @@ and has no launcher/video deep-link entry. The host renders browse and playback.
 An APPLICATION_PREFERENCES activity offers parked setup with the existing account
 bootstrap and music home. OAuth callbacks are retained. Do not label setup as
 distraction optimized. The native build identity is delivered through both
-foreground and headless device channels. Only this target permits music while
+foreground and headless device channels. This target permits music and audio-only spoken playback while
 restrictions are active; all video playback and normal app distributions keep
 the parked-only gate. AAOS browser unbinding is not physical audio-output loss.
 
@@ -163,6 +170,12 @@ The source follows Android's [media manifest](https://developer.android.com/trai
 and [Automotive media](https://developer.android.com/training/cars/media/automotive-os)
 contracts. Store approval, OEM behavior and native/device qualification are
 separate from this source implementation.
+
+The Android release workflow packages an AAOS APK, verifies its signature and
+manifest, and creates a separate signed Automotive Play bundle when release
+signing is configured. Dedicated AAOS build codes start at 1,000,000,000 plus
+the application build number. The phone and embedded-car bundles have
+independent Play tracks. The workflow produces artifacts for distribution.
 
 ## Selected Bluetooth driving outputs
 

@@ -385,7 +385,9 @@ void main() {
       final servers = testMultiServer(clients: [client]);
       await mount(tester, music, profiles, servers: servers.provider, hidden: hidden, libraries: libraries);
       final root = await native('browse', {'id': 'root'}) as List;
-      expect(root.where((row) => row['id'] == 'serverRadio'), hasLength(1));
+      expect(root.map((row) => row['id']), containsAllInOrder(['home', 'music', 'downloads']));
+      final musicFolders = await native('browse', {'id': 'music'}) as List;
+      expect(musicFolders.where((row) => row['id'] == 'serverRadio'), hasLength(1));
       final folders = await native('browse', {'id': 'serverRadio'}) as List;
       expect(folders.single['id'], 'radioLibrary:s:library');
       final rows = await native('browse', {'id': folders.single['id']}) as List;
@@ -1048,6 +1050,21 @@ void main() {
     libraries.dispose();
   });
 
+  testWidgets('car queue window jumps are scoped to one profile and queue revision', (tester) async {
+    final music = Music(), profiles = Profiles(), calls = <MethodCall>[];
+    await mount(tester, music, profiles, onNative: calls.add);
+    final window = Map<String, dynamic>.from(calls.lastWhere((c) => c.method == 'queueWindow').arguments as Map);
+    expect((window['rows'] as List).map((r) => r['index']), [0, 1]);
+    final args = {'scope': window['scope'], 'revision': window['revision'], 'index': 1};
+    expect(await native('jump', {...args, 'scope': 'another profile'}), false);
+    expect(music.jumped, isNull);
+    expect(await native('jump', args), true);
+    expect(music.jumped, 1);
+    music.edit();
+    await tester.pump();
+    await expectLater(native('jump', args), throwsA(isA<PlatformException>()));
+  });
+
   testWidgets('an account change after native browse cannot reuse the old item', (tester) async {
     final music = Music(), profiles = Profiles(), downloads = CatalogDownloads(), client = CatalogClient();
     final servers = testMultiServer(clients: [client]);
@@ -1061,6 +1078,43 @@ void main() {
     music.dispose();
     profiles.dispose();
     downloads.dispose();
+  });
+
+  testWidgets('download browsing groups owned visible tracks and plays genres offline', (tester) async {
+    final music = Music(), profiles = Profiles(), downloads = CatalogDownloads(), hidden = CatalogHidden();
+    final jazz = musicTrack('one', album: 'first').copyWith(parentTitle: 'First', genres: ['Jazz']);
+    final hiddenTrack = jazz.copyWith(id: 'two', libraryId: 'hidden', parentTitle: 'Private');
+    hidden.hiddenLibraryKeys.add('s:hidden');
+    downloads.tracks = [jazz, hiddenTrack];
+    await mount(tester, music, profiles, downloads: downloads, hidden: hidden);
+    final folders = await native('browse', {'id': 'downloads'}) as List;
+    expect(
+      folders.map((row) => row['id']),
+      containsAll(['offline', 'offlineAlbums', 'offlineArtists', 'offlinePlaylists', 'offlineStations']),
+    );
+    final tracks = await native('browse', {'id': 'offline'}) as List;
+    expect(tracks, hasLength(1));
+    final albums = await native('browse', {'id': 'offlineAlbums'}) as List;
+    expect(albums.single['title'], 'First');
+    expect(albums.single['playable'], true);
+    await native('playSearch', {'kind': 'genre', 'query': 'JAZZ'});
+    expect(music.started?.map((item) => item.id), ['one']);
+    expect(music.startedOffline, true);
+    expect(await native('playSearch', {'kind': 'genre', 'query': 'Folk'}), false);
+  });
+
+  testWidgets('queue item IDs from a previous attachment cannot select the same index', (tester) async {
+    final music = Music(), profiles = Profiles();
+    await mount(tester, music, profiles);
+    final old = (await native('browse', {'id': 'queue'}) as List).first['id'];
+    await tester.pumpWidget(const SizedBox());
+    await mount(tester, music, profiles);
+    final fresh = (await native('browse', {'id': 'queue'}) as List).first['id'];
+    expect(fresh, isNot(old));
+    await expectLater(native('playItem', {'id': old}), throwsA(isA<PlatformException>()));
+    expect(music.jumped, isNull);
+    await native('playItem', {'id': fresh});
+    expect(music.jumped, 0);
   });
 
   testWidgets('native queue rows contain no URLs and reject edits that changed their indices', (tester) async {

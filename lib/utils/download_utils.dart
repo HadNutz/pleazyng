@@ -356,6 +356,7 @@ Future<DownloadResult?> showListDownloadOptionsAndQueue(
     client,
     filter: selectedFilter,
     syncRule: syncRule,
+    playlist: targetType == ContentTypes.playlist ? rootMetadata : null,
     sourceCurrent: current,
   );
   if (!context.mounted || !current()) return null;

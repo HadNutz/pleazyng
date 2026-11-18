@@ -1112,7 +1112,8 @@ android {
     }
     minSdk = if (automotiveMediaBuild) 28 else 25 // Fire OS 6.x (API 25); the mpv-android AAR shares the same floor
     targetSdk = flutter.targetSdkVersion
-    versionCode = flutter.versionCode
+    // The dedicated Automotive Play track shares the package name and needs its own version codes.
+    versionCode = if (automotiveMediaBuild) 1_000_000_000 + flutter.versionCode else flutter.versionCode
     versionName = flutter.versionName
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
