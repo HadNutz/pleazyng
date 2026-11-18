@@ -15,7 +15,7 @@ index 825168d..c6a4de2 100644
 +++ b/scripts/shared/_audio_only.sh
 @@ -754,0 +755 @@ ${_small_flag}
 +--enable-libdav1d
-@@ -974,7 +975,7 @@ verify_ffmpeg_config() {
+@@ -974,7 +975,8 @@ verify_ffmpeg_config() {
 -  # Audio-only invariant: the 4 most common video decoders MUST be off.
 -  # If one is present, the binary is at least 30% larger than necessary
 -  # (and the audio-only branding is a lie).
@@ -25,6 +25,7 @@ index 825168d..c6a4de2 100644
 -  assert_define "$cmp" "CONFIG_AV1_DECODER"  "0"
 +  # The TV renderer needs both the compatibility decoders and hardware wrappers.
 +  assert_define "$cmp" "CONFIG_H264_V4L2M2M_DECODER" "1"
++  assert_define "$cmp" "CONFIG_HEVC_V4L2M2M_DECODER" "1"
 +  assert_define "$cmp" "CONFIG_LIBDAV1D_DECODER" "1"
 +  assert_define "$cmp" "CONFIG_H264_DECODER" "1"
 +  assert_define "$cmp" "CONFIG_HEVC_DECODER" "1"

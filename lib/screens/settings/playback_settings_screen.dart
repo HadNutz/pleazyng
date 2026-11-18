@@ -131,7 +131,7 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
                 _playerBackendSelector(),
                 if (PlatformDetector.supportsExternalPlayers()) _externalPlayerTile(),
                 if (mpvActive) _mpvConfigTile(),
-                if (mpvActive || exoActive) _hardwareDecodingTile(),
+                if (mpvActive || exoActive || engine == 'tvmpv') _hardwareDecodingTile(),
                 if (exoActive) _playbackBufferTile(),
                 if (mpvActive || exoActive) _streamBufferSizeTile(exoActive: exoActive),
                 if (exoActive) _tunneledPlaybackTile(),
