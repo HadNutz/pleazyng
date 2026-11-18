@@ -748,7 +748,7 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
                       if (widget.existing?.kind == FileSourceKind.local)
                         OutlinedButton.icon(
                           onPressed: _busy ? null : _locateMovedFolder,
-                          icon: const Icon(Icons.drive_file_move),
+                          icon: const AppIcon(Symbols.drive_file_move_rounded),
                           label: Text(t.viewing.locateMovedFolder),
                         ),
                       input('root', t.fileSources.root, required: true),

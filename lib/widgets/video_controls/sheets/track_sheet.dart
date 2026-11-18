@@ -160,7 +160,7 @@ class TrackSheet extends StatelessWidget {
                             ),
                         ],
                         child: ListTile(
-                          leading: const Icon(Icons.bookmark_add),
+                          leading: const AppIcon(Symbols.bookmark_add_rounded),
                           title: Text(
                             t.viewing.episodeStarts(
                               episode: ((state.metadata?.index ?? group.first) + 1).clamp(group.first + 1, group.last),
@@ -184,7 +184,7 @@ class TrackSheet extends StatelessWidget {
                       ),
                     if (cut != null)
                       ListTile(
-                        leading: const Icon(Icons.library_music),
+                        leading: const AppIcon(Symbols.library_music_rounded),
                         title: Text(t.viewing.attachAudio),
                         onTap: () => _editMovieAudio(context, MovieAudioAttachment.forCut(player, cut)),
                       ),
@@ -1302,7 +1302,7 @@ Future<void> _editMovieAudio(BuildContext context, MovieAudioAttachment attachme
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.remove),
+                            icon: const AppIcon(Symbols.remove_rounded),
                             onPressed: busy
                                 ? null
                                 : () => run(() async {
@@ -1313,7 +1313,7 @@ Future<void> _editMovieAudio(BuildContext context, MovieAudioAttachment attachme
                           ),
                           Text('${attachment.delayMs} ms'),
                           IconButton(
-                            icon: const Icon(Icons.add),
+                            icon: const AppIcon(Symbols.add_rounded),
                             onPressed: busy
                                 ? null
                                 : () => run(() async {

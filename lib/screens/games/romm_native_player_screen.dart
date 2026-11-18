@@ -970,7 +970,10 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
                   onPointerCancel: (_) => _rewind(false),
                   child: SizedBox.square(
                     dimension: 48,
-                    child: Icon(Icons.fast_rewind, color: _runtime.canRewind ? null : Theme.of(context).disabledColor),
+                    child: AppIcon(
+                      Symbols.fast_rewind_rounded,
+                      color: _runtime.canRewind ? null : Theme.of(context).disabledColor,
+                    ),
                   ),
                 ),
               ),

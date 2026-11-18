@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Use the app’s rounded icons for rewind, source relocation, and track controls.
+
 - Normalize translation catalog order so the 3.0.38 release checks pass.
 
 - Fetch the pinned Linux ONNX Runtime SDK and runtime from Microsoft’s NuGet package.
