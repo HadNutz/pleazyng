@@ -48,7 +48,7 @@ class SourceQueueSheet extends StatelessWidget {
     } else {
       Navigator.of(context).pop();
     }
-    if (fileIndex != playback.fileIndex) unawaited(playback.selectQueueFile(fileIndex));
+    unawaited(playback.selectQueueFile(fileIndex));
   }
 
   @override
@@ -60,7 +60,9 @@ class SourceQueueSheet extends StatelessWidget {
       animation: playback,
       builder: (context, _) {
         final queue = playback.queueFileIndices;
-        final current = playback.fileIndex;
+        final cueTrack =
+            playback.files.length == 1 && playback.files.single.cueStart != null && !playback.isTransientInput;
+        final current = cueTrack ? playback.selectedCueIndex : playback.fileIndex;
         final trackCountLabel = t.music.trackCount(n: queue.length);
         final compactTrackCount = MediaQuery.textScalerOf(context).scale(13) > 20;
         final trackCountText = Text(
@@ -120,14 +122,14 @@ class SourceQueueSheet extends StatelessWidget {
                   itemCount: queue.length,
                   itemBuilder: (context, index) {
                     final fileIndex = queue[index];
-                    final file = playback.files[fileIndex];
+                    final track = cueTrack ? playback.cueQueueEntry(fileIndex) : null;
                     final isCurrent = fileIndex == current;
                     return Semantics(
                       selected: isCurrent,
                       child: SourceTile(
                         key: ValueKey('source-queue-$fileIndex'),
-                        title: _fileLabel(file),
-                        subtitle: isCurrent ? t.music.nowPlaying : null,
+                        title: track == null ? _fileLabel(playback.files[fileIndex]) : isolateDisplayText(track.title),
+                        subtitle: isCurrent ? t.music.nowPlaying : track?.author,
                         leading: AppIcon(
                           isCurrent
                               ? Symbols.equalizer_rounded

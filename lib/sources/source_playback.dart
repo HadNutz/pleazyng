@@ -1,6 +1,7 @@
 import '../mpv/player/player_native.dart';
 import 'dart:async';
 import 'cue_album.dart';
+import 'cue_listening.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
@@ -49,9 +50,12 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
     MediaControlsManager Function()? controlsFactory,
     WakelockPlatformToggle? wakelockToggle,
     math.Random? shuffleRandom,
+    int Function()? listeningElapsedMs,
   }) : _shuffleRandom = shuffleRandom ?? math.Random(),
        _wakelock = WakelockController(platformToggle: wakelockToggle),
        _controlsFactory = controlsFactory ?? MediaControlsManager.new {
+    final clock = Stopwatch()..start();
+    _listeningElapsedMs = listeningElapsedMs ?? () => clock.elapsedMilliseconds;
     sources.stopPlayback = stop;
     PlaybackCoordinator.instance.registerFileSession(stop, isActive: () => active || opening);
     WidgetsBinding.instance.addObserver(this);
@@ -123,6 +127,11 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
   int _fileIndex = 0;
   List<int> _queueOrder = const [];
   bool _queueShuffled = false;
+  CueTrackQueue? _cueQueue;
+  CueListeningClock? _cueClock;
+  List<SourceEntry> _cueAlbumTracks = const [];
+  late final int Function() _listeningElapsedMs;
+  Future<void> _cueWrites = Future.value();
   MusicRepeatMode _queueRepeatMode = MusicRepeatMode.off;
   int _lastKnownFilePositionMs = 0;
   int? _failedFilePositionMs;
@@ -244,10 +253,60 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       !isLiveInput &&
       ((isTransientInput && files.length > 1) || files.any((file) => file.cueStart != null)) &&
       (entry?.kind == SourceItemKind.music || entry?.kind == SourceItemKind.video);
-  bool get queueShuffled => _queueShuffled;
+  bool get queueShuffled => _cueQueue?.shuffled ?? _queueShuffled;
+  SourceEntry? cueQueueEntry(int index) => _cueQueue?.entries.elementAtOrNull(index);
+  int get selectedCueIndex => _cueQueue?.index ?? 0;
+  bool get canAppendCue => !active || (_valid && _cueQueue != null);
+
+  Future<void> addCueTrack(SourceEntry track) {
+    final epoch = sources.generation;
+    return _serialize(() async {
+      sources.requireSession(epoch);
+      if (!isCueTrack(track) || !canAppendCue) throw const SourceException(SourceFailure.unsupported);
+      final queue = _cueQueue;
+      if (queue == null) {
+        await _start(track, track.files, isStartCurrent: () => sources.current(epoch), restartCue: true);
+        return;
+      }
+      queue.append(track);
+      if (_completedEpoch == _fileEpoch && progress?.finished == true) {
+        await _openQueuedCue(queue, queue.entries.length - 1);
+      }
+      _notify();
+    });
+  }
+
+  Future<void> _openQueuedCue(CueTrackQueue queue, int index) async {
+    final profile = _profile, epoch = _profileGeneration;
+    if (!_valid || queue != _cueQueue || index < 0 || index >= queue.entries.length) return;
+    final track = queue.entries[index];
+    final sleepEnd = sleepDeadline, sleepCount = _sleepUntilQueuePosition;
+    final repeat = _queueRepeatMode;
+    bool stillCurrent() => sources.current(epoch) && sources.profileId == profile && !sources.blocked;
+    queue.index = index;
+    await _start(
+      track,
+      track.files,
+      cueQueue: queue,
+      cueRepeat: repeat,
+      restartCue: true,
+      isStartCurrent: stillCurrent,
+    );
+    if (!stillCurrent() || _cueQueue != queue) return;
+    _sleepUntilQueuePosition = sleepCount;
+    if (sleepEnd != null) {
+      final remaining = sleepEnd.difference(DateTime.now());
+      if (remaining > Duration.zero) {
+        sleepFor(remaining);
+      } else {
+        await player?.pause();
+      }
+    }
+  }
+
   MusicRepeatMode get queueRepeatMode => _queueRepeatMode;
-  int get currentQueuePosition => _queuePosition;
-  List<int> get queueFileIndices => List.unmodifiable(_queueOrder);
+  int get currentQueuePosition => _cueQueue?.order.indexOf(selectedCueIndex) ?? _queuePosition;
+  List<int> get queueFileIndices => List.unmodifiable(_cueQueue?.order ?? _queueOrder);
 
   /// Whether the current queue can be offered for a same-folder M3U export.
   /// Temporary copies, network addresses, and picker paths without stable
@@ -662,6 +721,14 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
   int get positionMs => _offset + currentFilePositionMs;
 
   Future<void> toggleQueueShuffle() => _serialize(() async {
+    final cue = _cueQueue;
+    if (cue != null) {
+      if (cue.entries.length > 1) {
+        cue.toggleShuffle(_shuffleRandom);
+        _notify();
+      }
+      return;
+    }
     if (!canUseDirectQueueControls || _queueOrder.length < 2) {
       return;
     }
@@ -691,6 +758,11 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
   });
 
   Future<void> selectQueueFile(int fileIndex) => _serialize(() async {
+    final cue = _cueQueue;
+    if (cue != null) {
+      if (fileIndex != cue.index) await _openQueuedCue(cue, fileIndex);
+      return;
+    }
     if (!canUseDirectQueueControls || !_queueOrder.contains(fileIndex) || player == null) {
       return;
     }
@@ -783,7 +855,47 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
     SourcePreviewSession? samplePreview,
     Map<String, String> directPlayerAddresses = const {},
     Map<String, String> localPlayerOptions = const {},
-  }) => _serialize(() async {
+  }) => _serialize(
+    () => _start(
+      item,
+      selected,
+      playbackMode: playbackMode,
+      onlyIfIdle: onlyIfIdle,
+      isStartCurrent: isStartCurrent,
+      localOverrides: localOverrides,
+      localOverrideHeaders: localOverrideHeaders,
+      persistProgress: persistProgress,
+      initialPositionMs: initialPositionMs,
+      onTransientProgress: onTransientProgress,
+      liveInput: liveInput,
+      temporaryMediaFiles: temporaryMediaFiles,
+      samplePreview: samplePreview,
+      directPlayerAddresses: directPlayerAddresses,
+      localPlayerOptions: localPlayerOptions,
+    ),
+  );
+
+  Future<void> _start(
+    SourceEntry item,
+    List<PublicationFile> selected, {
+    PublicationMode? playbackMode,
+    bool onlyIfIdle = false,
+    bool Function()? isStartCurrent,
+    Map<String, Uri> localOverrides = const {},
+    Map<String, Map<String, String>> localOverrideHeaders = const {},
+    bool persistProgress = true,
+    int initialPositionMs = 0,
+    Future<void> Function(PublicationProgress progress)? onTransientProgress,
+    bool liveInput = false,
+    List<File> temporaryMediaFiles = const [],
+    SourcePreviewSession? samplePreview,
+    Map<String, String> directPlayerAddresses = const {},
+    Map<String, String> localPlayerOptions = const {},
+    CueTrackQueue? cueQueue,
+    MusicRepeatMode cueRepeat = MusicRepeatMode.off,
+    bool restartCue = false,
+  }) async {
+    final launchEpoch = sources.generation;
     if ((onlyIfIdle && active) || !(isStartCurrent?.call() ?? true)) return;
     await _stop();
     if (!(isStartCurrent?.call() ?? true)) return;
@@ -860,7 +972,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
           !coordinator.workspaceHasCompetingAudioOwner &&
           !coordinator.workspaceRetainsMusic &&
           (requestedMode != PublicationMode.watching || videoPlayerSlot == VideoPlayerSlot.primary);
-      sources.requireSession();
+      sources.requireSession(launchEpoch);
       _profile = sources.profileId;
       _profileGeneration = sources.generation;
       entry = item;
@@ -871,7 +983,12 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       });
       _queueOrder = List<int>.generate(files.length, (index) => index);
       _queueShuffled = false;
-      _queueRepeatMode = MusicRepeatMode.off;
+      _cueQueue = cueQueue ?? (persistProgress && isCueTrack(item) ? CueTrackQueue(item) : null);
+      _queueRepeatMode = cueRepeat;
+      _cueAlbumTracks = persistProgress && isCueAlbum(item)
+          ? await sources.repository.cueAlbumTracks(_profile!, item)
+          : const [];
+      sources.requireSession(_profileGeneration);
       _directPlayerAddresses = Map.unmodifiable(directPlayerAddresses);
       _localPlayerOptions = Map.unmodifiable(localPlayerOptions);
       _persistProgress = persistProgress;
@@ -918,7 +1035,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
         );
       }
       _undoSeek = null;
-      if (persistProgress && progress!.finished) {
+      if (persistProgress && (progress!.finished || (restartCue && progress!.positionMs != 0))) {
         progress = await sources.repository.saveProgress(
           _profile!,
           progress!.copyWith(positionMs: 0, filePositionMs: 0, fileIndex: 0, fraction: 0, finished: false),
@@ -997,7 +1114,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
         canStop: true,
         canSkip: !_liveInput,
         canSetSpeed: true,
-        preferSkipOverTrackButtons: true,
+        preferSkipOverTrackButtons: _cueQueue == null,
         skipInterval: Duration(seconds: backwardSeconds),
       );
       final generation = _generation;
@@ -1012,6 +1129,25 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
           // stream failure. Explicit seeks/open operations set zero themselves.
           if (position > 0 || _lastKnownFilePositionMs == 0) {
             _lastKnownFilePositionMs = math.max(0, position);
+          }
+          if (playing && !native.state.buffering && failure == null) {
+            final listen = _cueClock?.observe(
+              position: position,
+              duration: currentFileDurationMs,
+              elapsed: _listeningElapsedMs(),
+              now: DateTime.now(),
+            );
+            if (listen != null) {
+              final profile = _profile!;
+              _cueWrites = _cueWrites
+                  .then((_) => sources.repository.recordCueListen(profile, listen))
+                  .catchError(
+                    (Object error, StackTrace stack) =>
+                        appLogger.w('Could not save CUE listen', error: error, stackTrace: stack),
+                  );
+            }
+          } else {
+            _cueClock?.discontinuity();
           }
           _checkDailySleepDeadline();
           if (_sleepAtMs != null && positionMs >= _sleepAtMs!) {
@@ -1032,9 +1168,15 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       _subscriptions.add(
         native.streams.playing.listen((playing) {
           if (current()) {
+            _cueClock?.discontinuity();
             unawaited(_wakelock.setEnabled(video && playing));
             _notify();
           }
+        }),
+      );
+      _subscriptions.add(
+        native.streams.buffering.listen((_) {
+          if (current()) _cueClock?.discontinuity();
         }),
       );
       _subscriptions.add(
@@ -1106,7 +1248,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
               }
               if (_sleepBoundaryFile == _fileIndex ||
                   (_sleepAtMs != null && _offset + (_durations[_fileIndex] ?? 0) >= _sleepAtMs!) ||
-                  (_sleepUntilQueuePosition != null && _queuePosition >= _sleepUntilQueuePosition!)) {
+                  (_sleepUntilQueuePosition != null && currentQueuePosition >= _sleepUntilQueuePosition!)) {
                 _sleepBoundaryFile = _fileIndex;
                 clearSleep();
                 await native.pause();
@@ -1118,6 +1260,15 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
               if (canUseDirectQueueControls && _queueRepeatMode == MusicRepeatMode.one) {
                 await _persist();
                 await _openFile(_fileIndex, 0);
+              } else if (_cueQueue case final queue?) {
+                await _persist(finished: true);
+                final next = queue.neighbor(1, wrap: _queueRepeatMode == MusicRepeatMode.all);
+                if (next == null) {
+                  await native.pause();
+                  _notify();
+                } else {
+                  await _openQueuedCue(queue, next);
+                }
               } else if (_nextPlaybackFileIndex() case final nextIndex?) {
                 await _persist();
                 await _openFile(nextIndex, 0);
@@ -1142,10 +1293,19 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       });
       await _loadDailySleepSchedule();
     } catch (_) {
-      await _stop();
+      // Keep an unavailable queued track selected so Retry and Next can use
+      // the ordinary player controls after a share goes offline.
+      if (cueQueue != null && _valid && player != null) {
+        opening = false;
+        failure = SourceFailure.unavailable;
+        _notify();
+      } else {
+        await _stop();
+      }
       rethrow;
     }
-  });
+  }
+
   Future<void> applyExternalSubtitle({
     required String name,
     required List<int> bytes,
@@ -2335,6 +2495,10 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
     _lastKnownFilePositionMs = math.max(0, localPosition);
     _failedFilePositionMs = null;
     final file = files[index], item = entry!, native = player!;
+    final cueTracks = _persistProgress && isCueTrack(item)
+        ? [item]
+        : _cueAlbumTracks.where((t) => t.files.single.fingerprint == file.fingerprint).toList();
+    _cueClock = cueTracks.isEmpty ? null : CueListeningClock(cueTracks, sliced: file.cueStart != null);
     final directAddress = _directPlayerAddresses[file.id];
     final Uri? uri;
     final String mediaAddress;
@@ -2653,6 +2817,14 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
           }
         }
       }
+      if (_sleepBoundaryFile == _fileIndex && _completedEpoch == _fileEpoch && _cueQueue != null) {
+        final queue = _cueQueue!;
+        final next = queue.neighbor(1, wrap: _queueRepeatMode == MusicRepeatMode.all);
+        if (next != null) {
+          await _openQueuedCue(queue, next);
+          return;
+        }
+      }
       if (_sleepBoundaryFile == _fileIndex && _completedEpoch == _fileEpoch) {
         final nextIndex = _nextPlaybackFileIndex();
         if (nextIndex != null) {
@@ -2749,6 +2921,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       await _openFile(previous.file, previous.position, play: shouldPlay);
     } else {
       _lastKnownFilePositionMs = math.max(0, previous.position);
+      _cueClock?.discontinuity();
       await player!.seek(Duration(milliseconds: previous.position));
     }
     await _persist();
@@ -2758,6 +2931,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
     if (!_valid || player == null || _liveInput) {
       return;
     }
+    _cueClock?.discontinuity();
     final maximum = hasCompleteTimeline
         ? durationMs
         : (_durations[_fileIndex] ?? player!.state.duration.inMilliseconds) + _offset;
@@ -2794,6 +2968,11 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<void> skip(int seconds) => _liveInput ? Future.value() : seek(positionMs + seconds * 1000);
   Future<void> nextChapter() async {
+    if (_cueQueue case final queue?) {
+      final next = queue.neighbor(1, wrap: _queueRepeatMode == MusicRepeatMode.all);
+      if (next != null) await _serialize(() => _openQueuedCue(queue, next));
+      return;
+    }
     if (!hasCompleteTimeline && chapters.length == files.length) {
       final nextPosition = _queuePosition + 1;
       if (nextPosition < _queueOrder.length) {
@@ -2815,6 +2994,15 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   Future<void> previousChapter() async {
+    if (_cueQueue case final queue?) {
+      final previous = queue.neighbor(-1, wrap: _queueRepeatMode == MusicRepeatMode.all);
+      if (currentFilePositionMs > 3000 || previous == null) {
+        await seek(0);
+      } else {
+        await _serialize(() => _openQueuedCue(queue, previous));
+      }
+      return;
+    }
     if (!hasCompleteTimeline && chapters.length == files.length) {
       final targetPosition = currentFilePositionMs > 3000 ? _queuePosition : math.max(0, _queuePosition - 1);
       final wrappedPosition =
@@ -3123,7 +3311,9 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       throw const SourceException(SourceFailure.invalidData);
     }
     clearSleep();
-    if (hasCompleteTimeline && chapters.isNotEmpty) {
+    if (_cueQueue case final queue?) {
+      _sleepUntilQueuePosition = (currentQueuePosition + count - 1).clamp(0, queue.order.length - 1);
+    } else if (hasCompleteTimeline && chapters.isNotEmpty) {
       final current = chapters.indexOf(currentChapter ?? chapters.first);
       final index = (current + count - 1).clamp(0, chapters.length - 1);
       final endMs = chapters[index].endMs > 0 ? chapters[index].endMs : durationMs;
@@ -3355,6 +3545,10 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
     entry = null;
     files = const [];
     chapters = const [];
+    _cueClock = null;
+    _cueQueue = null;
+    _cueAlbumTracks = const [];
+    await _cueWrites;
     _queueOrder = const [];
     _queueShuffled = false;
     _queueRepeatMode = MusicRepeatMode.off;

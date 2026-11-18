@@ -9,7 +9,7 @@
 - Map individual episodes inside a combined file to their own playback clocks and watched credit.
 - Reconnect moved local folders while retaining reading history, bookmarks and reading-list matches.
 - Attach an alternate soundtrack or mix commentary with independent volume and persistent cut-specific alignment.
-- Index local/SMB CUE albums as individually playable tracks sharing their original audio file.
+- Queue tracks from local and SMB CUE albums, download the shared audio file once, and export per-song listens from individual tracks or uninterrupted album playback.
 - Read authored ACBF comic panels in order, with full-page overview and page/panel resume.
 - Rewind compatible native RomM cores using a bounded session-only state history.
 - The buffer interaction draws on TiVo’s viewer guide; the audio use cases draw on Jellyfin and RiffTrax documentation, CUE behavior on Kodi’s guide, and authored panels on the ACBF specification. See [feature details and source credits](docs/features/media-file-tools.md) for capability and native-build qualification.

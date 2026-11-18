@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:convert';
+import 'package:plezy/sources/cue_album.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -15,6 +17,14 @@ class _CuePlayer extends PlayerBase {
   _CuePlayer() : super(listenToNativeEvents: false);
   final opened = <Media>[];
   final properties = <String, String>{'sub-delay': '0', 'sub-speed': '1'};
+  Future<void> sample(int positionMs) async {
+    final tick = streams.position.first;
+    handlePropertyChange('time-pos', positionMs / 1000);
+    positionController.add(Duration(milliseconds: positionMs));
+    await tick;
+    await Future<void>.delayed(Duration.zero);
+  }
+
   void finish() => completedController.add(true);
   @override
   String get playerType => 'mpv';
@@ -116,5 +126,98 @@ void main() {
     expect(native.opened.length, 2);
     expect(native.opened.last.uri, native.opened.first.uri);
     expect(native.opened.last.start, Duration.zero);
+  });
+  test('cross-source queue, continuous album and per-track scrobbles survive seeks and profile isolation', () async {
+    final directory = await Directory.systemTemp.createTemp('cue-queue');
+    final db = SourceDatabase(NativeDatabase.memory());
+    final sources = MemorySources(SourceRepository(db), directory);
+    final players = <_CuePlayer>[];
+    var elapsed = 0;
+    final playback = SourcePlayback(
+      sources,
+      playerFactory: (_) {
+        final p = _CuePlayer();
+        players.add(p);
+        return p;
+      },
+      controlsFactory: () => MediaControlsManager(platformSupported: false),
+      wakelockToggle: (_) async {},
+      listeningElapsedMs: () => elapsed,
+    );
+    addTearDown(() async {
+      await playback.stop();
+      playback.dispose();
+      await playback.stop();
+      sources.dispose();
+      await db.close();
+      await directory.delete(recursive: true);
+    });
+    final cache = await Directory('${directory.path}/${sourceDigest("alice")}').create();
+    Future<List<SourceEntry>> index(String source) async {
+      final album = await cueAlbumEntries(
+        bytes: utf8.encode(
+          'PERFORMER "Band"\nTITLE "Live"\nFILE "same.flac" WAVE\nTRACK 01 AUDIO\n'
+          'TITLE "First"\nINDEX 01 00:00:00\nTRACK 02 AUDIO\nTITLE "Encore"\nINDEX 01 01:00:00',
+        ),
+        source: source,
+        parent: '',
+        sheet: 'album.cue',
+        lookup: (id) async => PublicationFile(id: id, name: id, mimeType: 'audio/flac', size: 1),
+      );
+      final f = album.first.files.single;
+      final path = await File('${cache.path}/$source.flac').writeAsString('a');
+      await sources.repository.recordDownload('alice', sources.downloads.key(source, f), path.path, f.fingerprint, 1);
+      await sources.repository.cacheEntries('alice', album);
+      return album;
+    }
+
+    final a = await index('local'), b = await index('smb');
+    await playback.addCueTrack(a[1]);
+    await playback.addCueTrack(b[2]);
+    expect(players, hasLength(1));
+    expect(playback.queueFileIndices.map((i) => playback.cueQueueEntry(i)?.title), ['First', 'Encore']);
+    await playback.previousChapter();
+    expect(players.length, 1);
+    final completion = players.single.streams.completed.firstWhere((v) => v);
+    players.single.finish();
+    await completion;
+    await playback.pause();
+    expect(playback.entry?.key, b[2].key);
+    expect(players.last.opened.single.uri, contains('smb.flac,60.000000000'));
+    expect(playback.currentQueuePosition, 1);
+    await playback.setQueueRepeatMode(MusicRepeatMode.all);
+    await playback.nextChapter();
+    expect(playback.entry?.key, a[1].key);
+    expect(playback.queueRepeatMode, MusicRepeatMode.all);
+    await playback.start(a.first, a.first.files);
+    final native = players.last;
+    native.handlePropertyChange('duration', 120.0);
+    await Future<void>.delayed(Duration.zero);
+    expect(native.opened.single.uri, isNot(startsWith('edl://')));
+    Future<void> sample(int position, int delta) async {
+      elapsed += delta;
+      await native.sample(position);
+    }
+
+    await sample(0, 0);
+    await sample(31000, 31000);
+    await playback.seek(100000);
+    await sample(100000, 10);
+    await sample(110000, 10000);
+    await playback.pause();
+    var log = await sources.repository.exportCueListens('alice');
+    expect(log, contains('Band\tLive\tFirst\t1\t60\tL\t'));
+    expect(log, isNot(contains('Encore')));
+    await playback.play();
+    await playback.seek(60000);
+    await sample(60000, 40000);
+    await sample(91000, 31000);
+    await playback.stop();
+    log = await sources.repository.exportCueListens('alice');
+    expect(log!.split('\n').where((line) => line.startsWith('Band')), hasLength(2));
+    expect(log, contains('Band\tLive\tEncore\t2\t60\tL\t'));
+    expect(await sources.repository.exportCueListens('bob'), isNull);
+    await sources.repository.forgetProfile('alice');
+    expect(await sources.repository.exportCueListens('alice'), isNull);
   });
 }

@@ -43,7 +43,7 @@ Future<List<SourceEntry>> cueAlbumEntries({
         final row = RegExp(r'^(\d{1,3})\s+AUDIO$', caseSensitive: false).firstMatch(value);
         if (row == null || filename == null || tracks.length >= 100) return [];
         final n = int.parse(row[1]!);
-        if (n < 1 || tracks.any((t) => t.number == n)) return [];
+        if (n < 1 || tracks.isNotEmpty && tracks.last.number >= n) return [];
         track = _CueTrack(n, filename, artist);
         tracks.add(track);
       case 'TITLE':
@@ -70,6 +70,14 @@ Future<List<SourceEntry>> cueAlbumEntries({
     }
   }
   if (tracks.isEmpty || tracks.any((t) => t.start == null)) return [];
+  // Each physical file plays once in album mode. A sheet that returns to
+  // an earlier FILE cannot use that continuous layout.
+  final fileOrder = <String>{};
+  String? previousFile;
+  for (final track in tracks) {
+    if (track.file != previousFile && !fileOrder.add(track.file)) return [];
+    previousFile = track.file;
+  }
   final media = <String, PublicationFile>{};
   for (final name in tracks.map((t) => t.file).toSet()) {
     final file = await lookup(name);

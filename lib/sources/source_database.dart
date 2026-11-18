@@ -12,6 +12,7 @@ import '../services/credential_vault.dart';
 import '../media/canonical_library.dart';
 import 'kavita_opds.dart';
 import 'publication_shelf.dart';
+import 'cue_listening.dart';
 import 'source_models.dart';
 
 String _entrySearchText(SourceEntry entry) => [
@@ -62,7 +63,7 @@ class SourceDatabase extends GeneratedDatabase {
   }
 
   @override
-  int get schemaVersion => 16;
+  int get schemaVersion => 17;
   @override
   Iterable<TableInfo<Table, Object?>> get allTables => const [];
   @override
@@ -93,6 +94,7 @@ class SourceDatabase extends GeneratedDatabase {
       }
       await _createRemoteWorkerSchema();
       await _createPodcastSyncSchema();
+      await _createCueListenSchema();
       await _createRetiredDownloadSchema();
       await _createSubtitleCaptureJobSchema();
       await _createEntrySearchIndex();
@@ -218,6 +220,7 @@ class SourceDatabase extends GeneratedDatabase {
       if (from >= 11 && from < 14) {
         await customStatement("ALTER TABLE canonical_copies ADD COLUMN scan_generation TEXT NOT NULL DEFAULT ''");
       }
+      if (from < 17) await _createCueListenSchema();
       if (from < 15) {
         await _createSubtitleCaptureJobSchema();
       } else if (from < 16) {
@@ -226,6 +229,11 @@ class SourceDatabase extends GeneratedDatabase {
         );
       }
     },
+  );
+
+  Future<void> _createCueListenSchema() => customStatement(
+    'CREATE TABLE cue_listens (profile TEXT NOT NULL, id TEXT NOT NULL, started INTEGER NOT NULL, '
+    'log_line TEXT NOT NULL, PRIMARY KEY(profile,id))',
   );
 
   Future<void> _createPodcastSyncSchema() async {
@@ -385,6 +393,7 @@ class SourceRepository {
         'remote_stream_state',
         'remote_preparation_claims',
         'podcast_sync_ack',
+        'cue_listens',
       ]) {
         await database.customStatement('DELETE FROM $table WHERE profile=?', [profile]);
       }
@@ -1078,6 +1087,52 @@ class SourceRepository {
         )
         .get();
     return rows.map((row) => SourceEntry.fromJson(sourceMap(jsonDecode(row.read<String>('payload'))))).toList();
+  }
+
+  Future<List<SourceEntry>> cueAlbumTracks(String profile, SourceEntry album) async {
+    final rows = await database
+        .customSelect(
+          'SELECT payload FROM entries WHERE profile=? AND source=? AND id>=? AND id<?',
+          variables: [
+            Variable(profile),
+            Variable(album.sourceId),
+            Variable('${album.id}#track-'),
+            Variable('${album.id}#track.'),
+          ],
+        )
+        .get();
+    return rows
+        .map((row) => SourceEntry.fromJson(sourceMap(jsonDecode(row.read<String>('payload')))))
+        .where(isCueTrack)
+        .toList()
+      ..sort((a, b) => a.files.single.cueStart!.compareTo(b.files.single.cueStart!));
+  }
+
+  Future<void> recordCueListen(String profile, CueListen listen) {
+    _writable(profile);
+    return database.customStatement('INSERT OR IGNORE INTO cue_listens VALUES (?,?,?,?)', [
+      profile,
+      listen.id,
+      listen.startedAt.millisecondsSinceEpoch,
+      listen.logLine,
+    ]);
+  }
+
+  Future<String?> exportCueListens(String profile) async {
+    final rows = await database
+        .customSelect(
+          'SELECT log_line FROM cue_listens WHERE profile=? ORDER BY started,id',
+          variables: [Variable(profile)],
+        )
+        .get();
+    if (rows.isEmpty) return null;
+    return [
+      '#AUDIOSCROBBLER/1.1',
+      '#TZ/UTC',
+      '#CLIENT/Pleazyng',
+      ...rows.map((row) => row.read<String>('log_line')),
+      '',
+    ].join('\n');
   }
 
   Future<SourceEntry?> entryById(String profile, String source, String id) async {

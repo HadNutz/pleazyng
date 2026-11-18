@@ -69,7 +69,7 @@ unrelated native audio graph is preserved.
 
 Local folders and SMB shares recognize `.cue` sheets alongside supported audio
 files. Album and track titles, performers and track order enter the source
-index. Individual track entries are searchable and can be queued. INDEX 01
+index. Open an indexed track and select **Add to queue**. Tracks from local folders and SMB shares can share a queue, including tracks stored under identical filenames. Queue selection, shuffle, repeat and system transport buttons use the track entries. INDEX 01
 provides sample-accurate CD-frame offsets; INDEX 00 pregaps remain with the
 preceding track. Playing the album opens the original continuous files.
 
@@ -79,6 +79,14 @@ physical file fingerprint, so the download is stored once. CUE playback uses
 mpv, including on TVs whose normal music engine cannot parse EDL. Invalid,
 missing-file, traversal and reversed-timing sheets are ignored while their
 ordinary media files remain browsable.
+
+For albums with performer metadata, playing a track individually or playing the
+continuous album records qualified listens per song. A song longer than 30
+seconds qualifies after half its duration or four minutes of observed playback,
+whichever comes first. Pauses and seeks do not earn listening time. Use the
+export icon on a CUE album or track to save the current profile’s CUE listening
+history in Audioscrobbler 1.1 format. The log can be imported into a compatible
+scrobbler. Submission to a listening service is a separate user action.
 
 ## Read authored comic panels
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -17,6 +18,8 @@ import '../../services/trackers/trakt/trakt_constants.dart';
 import '../../services/external_access_directory.dart';
 import '../../widgets/comic_commerce_section.dart';
 import '../../widgets/hardcover_shelf_status.dart';
+import '../../services/file_picker_service.dart';
+import '../../sources/cue_listening.dart';
 import '../../sources/source_controller.dart';
 import '../../sources/source_models.dart';
 import '../../sources/source_playback.dart';
@@ -542,6 +545,28 @@ class _SourceDetailScreenState extends State<SourceDetailScreen> {
     return (source.endpoint.endsWith('/') ? base : Uri.parse('${source.endpoint}/')).resolve('book/${_entry.id}');
   }
 
+  Future<void> _addCueTrack() async {
+    await context.read<SourcePlayback>().addCueTrack(_entry);
+    if (mounted) showSnackBar(context, t.livingRoom.added);
+  }
+
+  Future<void> _exportCueListens() async {
+    final sources = context.read<SourceController>();
+    sources.requireSession();
+    final epoch = sources.generation;
+    final log = await sources.repository.exportCueListens(sources.profileId!);
+    sources.requireSession(epoch);
+    if (!mounted) return;
+    if (log == null) {
+      showSnackBar(context, t.musicTools.noHistory);
+      return;
+    }
+    await FilePickerService.instance.saveFile(
+      fileName: 'pleazyng-scrobbler.log',
+      bytes: Uint8List.fromList(utf8.encode(log)),
+    );
+  }
+
   Future<void> _play(List<PublicationFile> files) async {
     if (files.isEmpty) {
       return;
@@ -768,12 +793,19 @@ class _SourceDetailScreenState extends State<SourceDetailScreen> {
         .toList(growable: false);
     final hasTrakt = context.watch<TrackersProvider>().traktCatalogClient != null;
     final source = context.watch<SourceController>().sources.where((item) => item.id == _entry.sourceId).firstOrNull;
+    final cueCanAppend = isCueTrack(_entry) && context.select<SourcePlayback, bool>((s) => s.canAppendCue);
     final bookOrbitPage = _bookOrbitPage(source);
     final automaticMetadataEnabled = source?.options['onlineMetadata'] == 'true';
     return FocusedScrollScaffold(
       title: Text(_entry.displayTitle),
       focusableAppBarActions: true,
       actions: [
+        if (isCueTrack(_entry) || isCueAlbum(_entry))
+          IconButton(
+            tooltip: t.karaokeUi.export(value1: '${t.musicTools.recent} (.scrobbler.log)'),
+            icon: const AppIcon(Symbols.file_download_rounded),
+            onPressed: () => sourceAction(context, _exportCueListens),
+          ),
         if (_entry.identifiers['transcript'] == 'available')
           IconButton(
             tooltip: t.subtitleAiUi.searchTranscript,
@@ -928,6 +960,12 @@ class _SourceDetailScreenState extends State<SourceDetailScreen> {
                                     onPressed: () => sourceAction(context, () => _play(audio)),
                                     icon: const AppIcon(Symbols.headphones_rounded),
                                     label: Text(t.fileSources.listen),
+                                  ),
+                                if (cueCanAppend)
+                                  OutlinedButton.icon(
+                                    onPressed: () => sourceAction(context, _addCueTrack),
+                                    icon: const AppIcon(Symbols.queue_music_rounded),
+                                    label: Text(t.music.addToQueue),
                                   ),
                                 if (bookOrbitPage != null)
                                   Tooltip(
