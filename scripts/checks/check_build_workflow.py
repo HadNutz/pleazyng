@@ -70,7 +70,7 @@ def job(name: str) -> str:
 
 def named_step(block: str, name: str) -> str:
     match = re.search(
-        rf"(?ms)^      - name: {re.escape(name)}\n.*?(?=^      - |\Z)",
+        rf"(?ms)^(?P<indent> +)- name: {re.escape(name)}\n.*?(?=^(?P=indent)- |\Z)",
         block,
     )
     require(match is not None, f"missing '{name}' step")
@@ -1286,6 +1286,7 @@ require(
 )
 
 apple_native = job_block(ci_text, "apple-native-test")
+apple_suite = (ROOT / ".github/actions/apple-native-reliability/action.yml").read_text(encoding="utf-8")
 linux_native = job_block(ci_text, "linux-native-test")
 linux_tests = (ROOT / "linux/runner/CMakeLists.txt").read_text(encoding="utf-8")
 registered_tests = re.findall(r"add_test\(NAME\s+(\w+)\s+COMMAND\s+\1\)", linux_tests)
@@ -1329,23 +1330,25 @@ require(
     "Stable tags and platform builds must remain gated by verified exact-source reusable CI",
 )
 require(
-    "scripts/apple/select_test_destination.py" in apple_native
-    and "SIMULATOR_SDK: ${{ matrix.pods_sdk }}" in apple_native
-    and "devices[0]" not in apple_native,
+    "scripts/apple/select_test_destination.py" in apple_suite
+    and "SIMULATOR_SDK: ${{ steps.scratch.outputs.sdk }}" in apple_suite
+    and all(re.search(rf"(?m)^\s*{platform}\)\s+project={project};\s+sdk={sdk};\s+runtime={platform};", apple_suite)
+            for platform, project, sdk in (("iOS", "ios", "iphonesimulator"), ("tvOS", "tvos", "appletvsimulator")))
+    and "devices[0]" not in apple_suite,
     "Apple tests must select the intended SDK runtime instead of an older installed simulator",
 )
 require(
-    "-parallel-testing-enabled NO" in named_step(apple_native, "Run Apple native reliability tests")
-    and "scripts/apple/select_test_destination.py --cleanup" in apple_native
-    and "Retain Apple simulator ownership receipt" in apple_native,
+    "-parallel-testing-enabled NO" in named_step(apple_suite, "Run Apple native reliability tests")
+    and "scripts/apple/select_test_destination.py --cleanup" in apple_suite
+    and "Retain Apple simulator ownership receipt" in apple_suite,
     "Apple native tests must use and clean their owned simulator without untracked parallel clones",
 )
 require(
     "ruby scripts/check_podspec_locks.rb"
-    in named_step(apple_native, "Check local CocoaPods lock checksums")
-    and 0 <= apple_native.find("      - name: Install CocoaPods")
-    < apple_native.find("      - name: Check local CocoaPods lock checksums")
-    < apple_native.find("      - name: Build and verify iOS native torrent framework"),
+    in named_step(apple_suite, "Check local CocoaPods lock checksums")
+    and 0 <= apple_native.find("- name: Install CocoaPods") < apple_native.find("uses: ./.github/actions/apple-native-reliability")
+    and 0 <= apple_suite.find("- name: Check local CocoaPods lock checksums")
+    < apple_suite.find("- name: Build and verify iOS native torrent framework"),
     "Apple CI must verify local podspec metadata checksums before native compilation",
 )
 require(
@@ -1353,13 +1356,13 @@ require(
     "Apple CI must use a UTF-8 locale for CocoaPods and Ruby",
 )
 apple_prepare_scratch = named_step(
-    apple_native, "Prepare local Xcode and SwiftPM scratch"
+    apple_suite, "Prepare local Xcode and SwiftPM scratch"
 )
 require(
-    'bash scripts/prepare_apple_jit_scratch.sh "$APPLE_SCRATCH_JOB" 20 local-xcode'
+    'bash scripts/prepare_apple_jit_scratch.sh "$project" 20 local-xcode'
     in apple_prepare_scratch
-    and "result_bundle=\"$APPLE_RESULT_BUNDLE\"" in apple_native
-    and apple_native.count('-derivedDataPath "$APPLE_DERIVED_DATA_PATH"') == 4,
+    and "result_bundle=\"$APPLE_RESULT_BUNDLE\"" in apple_suite
+    and apple_suite.count('-derivedDataPath "$APPLE_DERIVED_DATA_PATH"') == 4,
     "Apple CI must keep SwiftPM sources, DerivedData, and results on local APFS",
 )
 apple_scratch_script = (ROOT / "scripts/prepare_apple_jit_scratch.sh").read_text()
@@ -1382,11 +1385,22 @@ require(
     "Apple SwiftPM checkouts must match Flutter's local build/<platform>/SourcePackages path",
 )
 macos_apple_build = named_step(
-    apple_native, "Build macOS application and XCTest bundle"
+    apple_suite, "Build macOS application and XCTest bundle"
+)
+mobile_apple_test = named_step(apple_suite, "Run Apple native reliability tests")
+require(
+    "if: inputs.platform == 'macOS'" in macos_apple_build and "xcodebuild build-for-testing" in macos_apple_build
+    and '-clonedSourcePackagesDirPath "$APPLE_SOURCE_PACKAGES_DIR"' in macos_apple_build
+    and "continue-on-error" not in macos_apple_build,
+    "macOS Apple CI must build the XCTest bundle with the run-scoped SwiftPM checkout",
 )
 require(
-    '-clonedSourcePackagesDirPath "$APPLE_SOURCE_PACKAGES_DIR"' in macos_apple_build,
-    "macOS Apple CI must reuse the run-scoped SwiftPM checkout during the build",
+    "if: inputs.platform != 'macOS'" in mobile_apple_test
+    and "continue-on-error" not in mobile_apple_test
+    and 'if [ "$PLATFORM" = "tvOS" ] && [ "$test_status" -eq 0 ]' in mobile_apple_test
+    and 'scripts/checks/check_tvos_startup_result.py "$startup_results"' in mobile_apple_test
+    and 'exit "$test_status"' in mobile_apple_test,
+    "Apple CI must run both simulator suites and verify the tvOS startup assertion",
 )
 for apple_job_name, scratch_job in (
     ("build-ios", "ios"),
@@ -1539,23 +1553,25 @@ for apple_job_name in ("build-ios", "build-tvos"):
     )
 require(
     re.search(r"(?m)^    runs-on: macos-26$", apple_native) is not None
-    and "timeout-minutes: 120" in apple_native
-    and "timeout-minutes: 75" in named_step(apple_native, "Run Apple native reliability tests")
+    and "timeout-minutes: 360" in apple_native
+    and "75m xcodebuild test" in mobile_apple_test
     and "hosted-xcode-version: '26.5'" in apple_native
     and 'test "$(uname -m)" = arm64' in named_step(apple_native, "Require native Apple Silicon host")
-    and "ARCHS=arm64" in apple_native,
+    and "ARCHS=arm64" in macos_apple_build
+    and "ARCHS=arm64" in mobile_apple_test
+    and "ARCHS=arm64" in named_step(apple_suite, "Build CocoaPods aggregate framework"),
     "Apple native qualification must use compatible public Apple Silicon hosts and toolchains",
 )
 require(
-    "scripts/refresh_apple_spm.sh ios" in apple_native
-    and "scripts/refresh_apple_spm.sh macos" in apple_native
-    and "xcodebuild -resolvePackageDependencies -workspace" in apple_native
-    and "-disableAutomaticPackageResolution" in apple_native,
+    "scripts/refresh_apple_spm.sh ios" in apple_suite
+    and "scripts/refresh_apple_spm.sh macos" in apple_suite
+    and "xcodebuild -resolvePackageDependencies -workspace" in apple_suite
+    and "-disableAutomaticPackageResolution" in apple_suite,
     "Apple CI must refresh pinned SwiftPM mirrors and resolve exact locked packages before Xcode tests",
 )
 require(
     '-derivedDataPath "$APPLE_DERIVED_DATA_PATH"' in named_step(
-        apple_native, "Resolve pinned Apple Swift packages for native tests"
+        apple_suite, "Resolve pinned Apple Swift packages for native tests"
     )
     and '-derivedDataPath "$APPLE_DERIVED_DATA_PATH"' in named_step(
         job("build-tvos"), "Resolve pinned tvOS Swift packages"

@@ -63,13 +63,13 @@ def expected_ci_jobs(workflow: str) -> tuple[set[str], set[str]]:
         "test",
         "android-test",
         "native-format",
+        "apple-native-test",
         "dependency-check",
         "server",
     )
     required = {display_name(workflow, key) for key in direct}
     for key, field in (
         ("linux-native-test", "sanitizer"),
-        ("apple-native-test", "platform"),
         ("windows-native-test", "arch"),
     ):
         required.update(matrix_job_names(workflow, key, field))

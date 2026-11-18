@@ -261,7 +261,7 @@ done
 
 The archive builder includes transitive crypto archives and verifies architecture
 slices before replacing its final archive. Then build the actual Runner
-workspaces and their native tests. The `apple-native-test` CI matrix now prepares
+workspaces and their native tests. The `apple-native-test` CI job prepares
 Metal, probes actual sources and preserves receipts before its existing Flutter,
 locked CocoaPods/SPM and Xcode test steps. It covers macOS plus iOS/tvOS simulators.
 Use the same locked dependency preparation for **device SDK** builds as well:

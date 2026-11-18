@@ -197,7 +197,7 @@ class PreflightCIFastFailTests(unittest.TestCase):
                 self.assertFalse(trusted_preflight_ci_run({**self.run, **changes}, "snapetech-org/pleazyng"))
 
     def test_requires_a_completed_failing_job(self) -> None:
-        active = {"name": "Apple native reliability (macOS)", "status": "in_progress"}
+        active = {"name": "Apple native reliability", "status": "in_progress"}
         passed = {"name": "Code Analysis", "status": "completed", "conclusion": "success"}
         failed = {"name": "Unit Tests", "status": "completed", "conclusion": "failure"}
         self.assertFalse(failed_preflight_ci_run(self.run, [active, passed]))
@@ -226,7 +226,7 @@ class PreflightCIFastFailTests(unittest.TestCase):
         popen.side_effect = [apple_controller, watcher]
         jobs = [
             {"name": "Unit Tests", "status": "completed", "conclusion": "failure"},
-            {"name": "Apple native reliability (macOS)", "status": "in_progress", "conclusion": None},
+            {"name": "Apple native reliability", "status": "in_progress", "conclusion": None},
         ]
         completed_cancelled = {"id": 7, "status": "completed", "conclusion": "cancelled"}
         gh_json.side_effect = [
@@ -354,7 +354,7 @@ class ReleaseCIGateManifestTests(unittest.TestCase):
         )
 
     def test_standalone_gate_uses_the_manifest_at_the_exact_release_sha(self) -> None:
-        required = ["Historical exact-source required job"]
+        required = [f"Apple native reliability ({platform})" for platform in ("iOS", "macOS", "tvOS")]
         manifest = {"release": {"requiredCiJobs": required, "releaseGate": {
             "branch": "main", "event": "workflow_dispatch", "workflowId": "ci.yml",
             "requiredJobs": required,

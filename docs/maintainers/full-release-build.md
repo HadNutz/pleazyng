@@ -84,10 +84,17 @@ equivalence checks; do not dispatch another complete build for a delivery error.
 
 ## Apple native qualification
 
-Apple native reliability CI and unsigned iOS, tvOS and macOS packages use
-compatible public GitHub-hosted Macs, with explicit Xcode 26.5 and native ARM64
-checks. Release orchestration never probes the MacBook for unsigned work and
-does not automatically retry a failed hosted tvOS job on private JIT.
+Apple native reliability CI acquires one public ARM64 Mac with Xcode 26.5.
+It runs XCTest on the iOS and tvOS simulators and builds the macOS application
+and XCTest bundle. All three suites must pass. Unsigned Apple packages continue
+on the compatible public runner for each build.
+
+For a trusted main dispatch, the recovery workflow checks every unsuccessful
+job against GitHub's allocation annotations. If all failures occurred before
+runner assignment, it requests a failed-job retry on the same run. The local
+release controller can make the same request if the recovery workflow itself
+is queued. Both paths preserve successful jobs and stop after eight attempts.
+Execution failures remain visible for diagnosis.
 
 Private Apple JIT is reserved for requested Store signing or notarization.
 When such a lane is requested, `release_all_platforms.py` probes
@@ -146,7 +153,7 @@ The real H.264 pixel test waits through XCTest so the main run loop remains
 available, then checks decoded pixels and teardown. tvOS additionally waits
 for the real Dart database bootstrap and checks its SQLite version against
 the packaged source receipt. Failed iOS/tvOS XCTest bundles are retained as
-`apple-native-results-<platform>-<run ID>` artifacts for diagnosis before
+`apple-native-results-<platform>-<run ID>-<run attempt>` artifacts for diagnosis before
 task scratch cleanup. Simulator results do not establish physical-device or
 store qualification.
 
@@ -550,8 +557,7 @@ The orchestrator uses the current machine's GitHub CLI authentication only for
 workflow dispatch, repository commits, and the version tag. Its default hybrid
 profile sends compatible jobs to public GitHub-hosted runners. Private JIT is
 limited to requested Apple signing and the verified 60 GiB webOS capacity
-overflow; hosted queue failures require explicit repair and never silently
-route to the Mac. The script does not
+overflow. Confirmed hosted allocation failures retry on hosted runners. The script does not
 accept custom runner labels or store or print credentials.
 It stops on a failed native group, FFmpeg signature, CI run,
 tag conflict, or release build. Re-running it reuses successful native,
@@ -569,7 +575,7 @@ python3 scripts/release_all_platforms.py --version 3.0.1 \
 
 Recovery requires successful Tizen, Linux, Apple, and both Windows builds
 and packaging in a completed trusted-main release run. Its exact source commit
-must have all 13 required CI jobs green. A strict file allowlist rejects changes
+must pass every CI job listed in that commit's capability manifest. A strict file allowlist rejects changes
 to application sources, dependencies, or native toolchain inputs between that
 run and main. Android and WebOS rebuild on main with their infrastructure fixes. Every
 reused artifact's GitHub SHA-256 digest and source identity are checked before

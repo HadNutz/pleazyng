@@ -679,43 +679,15 @@ jobs:
         run: ctest --test-dir build/games-steam-tests --output-on-failure
 
   apple-native-test:
-    name: Apple native reliability (${{ matrix.platform }})
+    name: Apple native reliability
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (inputs.execution_profile != 'hybrid' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
-    timeout-minutes: 120
+    timeout-minutes: 360
     # Native tests and their simulator dependencies build arm64 on every platform.
     runs-on: macos-26
     permissions:
       contents: read
     env:
-      PUB_CACHE: ${{ github.workspace }}/.cache/plezy-pub-cache
       LANG: en_US.UTF-8
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: iOS
-            source_packages_directory: ios
-            project_directory: ios
-            workspace: ios/Runner.xcworkspace
-            pods_sdk: iphonesimulator
-            simulator_runtime: iOS
-            simulator_platform: iOS
-            static_destination: ""
-          - platform: macOS
-            source_packages_directory: macos
-            project_directory: macos
-            workspace: macos/Runner.xcworkspace
-            simulator_runtime: ""
-            simulator_platform: ""
-            static_destination: platform=macOS
-          - platform: tvOS
-            source_packages_directory: tvos
-            project_directory: tvos
-            workspace: tvos/Runner.xcworkspace
-            pods_sdk: appletvsimulator
-            simulator_runtime: tvOS
-            simulator_platform: tvOS
-            static_destination: ""
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -736,20 +708,6 @@ jobs:
           hosted-xcode-version: '26.5'
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
-      - name: Cache Pub dependencies
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: ${{ github.workspace }}/.cache/plezy-pub-cache
-          key: ${{ runner.os }}-${{ runner.arch }}-plezy-pub-v2-${{ hashFiles('pubspec.yaml', 'pubspec.lock') }}
-
-      - name: Prepare local Xcode and SwiftPM scratch
-        shell: bash
-        env:
-          APPLE_SCRATCH_JOB: ${{ matrix.source_packages_directory }}
-        run: |
-          set -euo pipefail
-          bash scripts/prepare_apple_jit_scratch.sh "$APPLE_SCRATCH_JOB" 20 local-xcode >/dev/null
-
       - name: Ensure CMake for the embedded Steam receiver
         shell: bash
         run: |
@@ -758,9 +716,11 @@ jobs:
           command -v cmake >/dev/null || brew install cmake
           command -v xcodegen >/dev/null || brew install xcodegen
           command -v git-lfs >/dev/null || brew install git-lfs
+          command -v gtimeout >/dev/null || brew install coreutils
           cmake --version
 
       - name: Install CocoaPods
+        id: apple_tools
         shell: bash
         run: |
           set -euo pipefail
@@ -780,311 +740,49 @@ jobs:
           export PATH="$RUNNER_TEMP/cocoapods-bin:/opt/homebrew/bin:$PATH"
           pod --version
 
-      - name: Check local CocoaPods lock checksums
-        run: ruby scripts/check_podspec_locks.rb
-
-      - name: Build and verify iOS native torrent framework
-        if: matrix.platform == 'iOS'
-        run: |
-          python3 scripts/p2p/build_apple.py ios
-          framework=packages/plezy_torrent/ios/Frameworks/ios/PlezyTorrent.xcframework
-          test -f "$framework/Info.plist"
-          test -d "$framework/ios-arm64/PlezyTorrent.framework"
-          test -d "$framework/ios-arm64_x86_64-simulator/PlezyTorrent.framework"
-
-      - name: Build and verify macOS native torrent framework
-        if: matrix.platform == 'macOS'
-        run: |
-          python3 scripts/p2p/build_apple.py macos
-          framework=packages/plezy_torrent/macos/Frameworks/macos/PlezyTorrent.xcframework
-          test -f "$framework/Info.plist"
-          test -d "$framework/macos-arm64_x86_64/PlezyTorrent.framework"
-
-      - name: Install locked Dart dependencies
-        if: matrix.platform != 'tvOS'
-        run: flutter pub get --enforce-lockfile --no-example
-
-      - name: Verify Sherpa ONNX iOS simulator framework
-        if: matrix.platform == 'iOS'
-        run: |
-          python3 - <<'PY'
-          import hashlib
-          import json
-          from pathlib import Path
-          from urllib.parse import unquote, urlparse
-
-          config = json.loads(Path(".dart_tool/package_config.json").read_text())
-          package = next(item for item in config["packages"] if item["name"] == "sherpa_onnx_ios")
-          root = Path(unquote(urlparse(package["rootUri"]).path))
-          framework = root / "ios/sherpa_onnx_ios/SherpaOnnxC.xcframework"
-          simulator_binary = framework / "ios-arm64_x86_64-simulator/SherpaOnnxC.framework/SherpaOnnxC"
-          if not (framework / "Info.plist").is_file() or not simulator_binary.is_file():
-              raise SystemExit(f"Sherpa ONNX iOS simulator XCFramework is incomplete: {framework}")
-          digest = hashlib.sha256(simulator_binary.read_bytes()).hexdigest()
-          print(f"sherpa_onnx_ios_root={root}")
-          print(f"sherpa_onnx_ios_simulator_binary={simulator_binary} bytes={simulator_binary.stat().st_size} sha256={digest}")
-          PY
-
-      - name: Install tvOS dependencies with the unsupported SMB native asset stub
-        if: matrix.platform == 'tvOS'
-        run: tvos/scripts/pub_get.sh
-
-      - name: Record committed CocoaPods lockfile
-        if: matrix.platform != 'tvOS'
-        env:
-          PODFILE_LOCK: ${{ matrix.project_directory }}/Podfile.lock
-        run: |
-          test -f "$PODFILE_LOCK"
-          shasum -a 256 "$PODFILE_LOCK" > "$RUNNER_TEMP/plezy-podfile-lock.sha256"
-
-      - name: Verify iOS Xcode project syntax
-        if: matrix.platform == 'iOS'
-        run: plutil -lint ios/Runner.xcodeproj/project.pbxproj
-
-      - name: Refresh pinned iOS Swift packages
-        if: matrix.platform == 'iOS'
-        run: scripts/refresh_apple_spm.sh ios
-
-      - name: Prepare iOS Flutter build settings
-        if: matrix.platform == 'iOS'
-        run: flutter build ios --config-only --simulator --debug --no-pub
-
-      - name: Refresh pinned macOS Swift packages
-        if: matrix.platform == 'macOS'
-        run: scripts/refresh_apple_spm.sh macos
-
-      - name: Prepare macOS Flutter build settings
-        if: matrix.platform == 'macOS'
-        run: flutter build macos --config-only --debug --no-pub
-
-      - name: Prepare tvOS Flutter engine
-        if: matrix.platform == 'tvOS'
-        run: tvos/scripts/fetch_engine.sh
-
-      - name: Restore and verify committed CocoaPods lockfile
-        if: matrix.platform != 'tvOS'
-        env:
-          PODFILE_LOCK: ${{ matrix.project_directory }}/Podfile.lock
-        run: |
-          git restore --source=HEAD --worktree -- "$PODFILE_LOCK"
-          shasum -a 256 --check "$RUNNER_TEMP/plezy-podfile-lock.sha256"
-
-      - name: Install locked CocoaPods dependencies
-        if: matrix.platform != 'tvOS'
-        working-directory: ${{ matrix.project_directory }}
-        run: pod install --deployment
-
-      - name: Diagnose iOS torrent CocoaPods integration
-        if: matrix.platform == 'iOS'
-        run: |
-          python3 - <<'PY'
-          import json
-          import plistlib
-          from pathlib import Path
-
-          plugin = Path("ios/.symlinks/plugins/plezy_torrent/ios")
-          framework = Path("packages/plezy_torrent/ios/Frameworks/ios/PlezyTorrent.xcframework")
-          print(f"plugin_path={plugin.resolve(strict=False)} exists={plugin.exists()}")
-          print(f"framework_path={framework.resolve(strict=False)} exists={framework.exists()}")
-          info = framework / "Info.plist"
-          if info.is_file():
-              with info.open("rb") as source:
-                  plist = plistlib.load(source)
-              slices = [
-                  {key: item.get(key) for key in ("LibraryIdentifier", "SupportedPlatform", "SupportedPlatformVariant", "SupportedArchitectures")}
-                  for item in plist.get("AvailableLibraries", [])
-              ]
-              print(f"framework_slices={slices}")
-
-          podspec = Path("ios/Pods/Local Podspecs/plezy_torrent.podspec.json")
-          if podspec.is_file():
-              spec = json.loads(podspec.read_text(encoding="utf-8"))
-              print(f"vendored_frameworks={spec.get('vendored_frameworks')}")
-          else:
-              print(f"local_podspec_missing={podspec}")
-
-          support = Path("ios/Pods/Target Support Files")
-          for path in sorted(support.glob("*plezy_torrent*")):
-              print(f"pod_support_path={path}")
-              if path.is_dir():
-                  for child in sorted(path.rglob("*")):
-                      if child.is_file() and child.suffix in {".sh", ".xcfilelist", ".json"}:
-                          print(f"pod_support_file={child}")
-                          for number, line in enumerate(child.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
-                              if "PlezyTorrent" in line or "XCFrameworkIntermediates" in line:
-                                  print(f"{child}:{number}:{line[:240]}")
-
-          for path in sorted((support / "Pods-Runner").glob("Pods-Runner-frameworks*")):
-              print(f"runner_framework_support_file={path}")
-              if path.is_file():
-                  for number, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
-                      if "plezy_torrent" in line or "PlezyTorrent" in line or "XCFrameworkIntermediates" in line:
-                          print(f"{path}:{number}:{line[:240]}")
-
-          for project_name, project in (
-              ("Runner", Path("ios/Runner.xcodeproj/project.pbxproj")),
-              ("Pods", Path("ios/Pods/Pods.xcodeproj/project.pbxproj")),
-          ):
-              print(f"{project_name}_project_file={project} exists={project.is_file()}")
-              if project.is_file():
-                  for number, line in enumerate(project.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
-                      if any(token in line for token in ("plezy_torrent", "PlezyTorrent", "Copy XCFrameworks")):
-                          print(f"{project_name}_project:{number}:{line[:240]}")
-
-          sherpa_plugin = Path("ios/.symlinks/plugins/sherpa_onnx_ios")
-          sherpa_podspec = sherpa_plugin / "ios/sherpa_onnx_ios.podspec"
-          sherpa_source = sherpa_plugin / "ios/sherpa_onnx_ios/Sources/sherpa_onnx_ios/SherpaOnnxIosPlugin.swift"
-          sherpa_framework = sherpa_plugin / "ios/sherpa_onnx_ios/SherpaOnnxC.xcframework"
-          expected_source = "s.source_files = 'sherpa_onnx_ios/Sources/sherpa_onnx_ios/SherpaOnnxIosPlugin.swift'"
-          print(f"sherpa_plugin={sherpa_plugin.resolve(strict=False)} exists={sherpa_plugin.exists()}")
-          print(f"sherpa_source_exists={sherpa_source.is_file()} sherpa_framework_exists={sherpa_framework.is_dir()}")
-          if not sherpa_podspec.is_file() or not sherpa_source.is_file() or not sherpa_framework.is_dir():
-              raise SystemExit("resolved sherpa_onnx_ios package is missing its Podspec, source anchor, or XCFramework")
-          if expected_source not in sherpa_podspec.read_text(encoding="utf-8"):
-              raise SystemExit("sherpa_onnx_ios Podspec does not include the CocoaPods source anchor")
-
-          sherpa_support = Path("ios/Pods/Target Support Files/sherpa_onnx_ios")
-          copy_scripts = sorted(sherpa_support.glob("*xcframeworks.sh"))
-          if not copy_scripts:
-              raise SystemExit("CocoaPods did not generate the sherpa_onnx_ios XCFramework copy phase")
-          for copy_script in copy_scripts:
-              contents = copy_script.read_text(encoding="utf-8", errors="replace")
-              print(f"sherpa_copy_script={copy_script} has_framework={('SherpaOnnxC.xcframework' in contents)}")
-              if "SherpaOnnxC.xcframework" not in contents:
-                  raise SystemExit(f"SherpaOnnxC is absent from {copy_script}")
-          PY
-
-      - name: Install tvOS CocoaPods dependencies
-        if: matrix.platform == 'tvOS'
-        run: tvos/scripts/pod_install.sh
-
-      - name: Verify tvOS project wiring
-        if: matrix.platform == 'tvOS'
-        run: |
-          ruby tvos/scripts/test_wire_mpv.rb
-          ruby tvos/scripts/test_wire_top_shelf.rb
-
-      - name: Resolve pinned Apple Swift packages for native tests
-        run: xcodebuild -resolvePackageDependencies -workspace "${{ matrix.workspace }}" -scheme Runner -clonedSourcePackagesDirPath "$APPLE_SOURCE_PACKAGES_DIR" -derivedDataPath "$APPLE_DERIVED_DATA_PATH"
-
-      - name: Remove AMSMB2 unsafe warning flag from the pinned tvOS checkout
-        if: matrix.platform == 'tvOS'
-        run: |
-          python3 scripts/patch_amsmb2_manifest.py \
-            --source-packages-dir "$APPLE_SOURCE_PACKAGES_DIR" \
-            --resolved-package tvos/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
-
-      - name: Select Apple test destination
-        env:
-          SIMULATOR_RUNTIME: ${{ matrix.simulator_runtime }}
-          SIMULATOR_SDK: ${{ matrix.pods_sdk }}
-          STATIC_DESTINATION: ${{ matrix.static_destination }}
-        run: python3 scripts/apple/select_test_destination.py
-
-      - name: Build CocoaPods aggregate framework
-        if: matrix.platform != 'macOS'
-        env:
-          PODS_PROJECT: ${{ matrix.project_directory }}/Pods/Pods.xcodeproj
-          PODS_SDK: ${{ matrix.pods_sdk }}
-          PODS_SIMULATOR_PLATFORM: ${{ matrix.simulator_platform }}
-        run: |
-          pods_products_dir="$APPLE_DERIVED_DATA_PATH/Build/Products/Debug-$PODS_SDK"
-          xcodebuild build \
-            -project "$PODS_PROJECT" \
-            -scheme Pods-Runner \
-            -configuration Debug \
-            -sdk "$PODS_SDK" \
-            -destination "generic/platform=$PODS_SIMULATOR_PLATFORM Simulator" \
-            -derivedDataPath "$APPLE_DERIVED_DATA_PATH" \
-            CONFIGURATION_BUILD_DIR="$pods_products_dir" \
-            PODS_CONFIGURATION_BUILD_DIR="$pods_products_dir" \
-            CODE_SIGNING_ALLOWED=NO \
-            COMPILER_INDEX_STORE_ENABLE=NO \
-            ARCHS=arm64
-          test -f "$pods_products_dir/Pods_Runner.framework/Pods_Runner" || {
-            echo "::error::CocoaPods aggregate framework binary is missing from $pods_products_dir/Pods_Runner.framework"
-            exit 1
-          }
-
-      - name: Run Apple native reliability tests
-        if: matrix.platform != 'macOS'
-        timeout-minutes: 75
-        run: |
-          result_bundle="$APPLE_RESULT_BUNDLE"
-          test_log="$(dirname "$result_bundle")/native-test-output.log"
-          set -o pipefail
-          set +e
-          xcodebuild test \
-            -workspace "${{ matrix.workspace }}" \
-            -scheme Runner \
-            -configuration Debug \
-            -destination "$APPLE_TEST_DESTINATION" \
-            -parallel-testing-enabled NO \
-            -derivedDataPath "$APPLE_DERIVED_DATA_PATH" \
-            -clonedSourcePackagesDirPath "$APPLE_SOURCE_PACKAGES_DIR" \
-            -disableAutomaticPackageResolution \
-            -resultBundlePath "$result_bundle" \
-            CODE_SIGNING_ALLOWED=NO \
-            COMPILER_INDEX_STORE_ENABLE=NO \
-            ARCHS=arm64 2>&1 | tee "$test_log"
-          test_status=$?
-          set -e
-          if [ "$test_status" -ne 0 ]; then
-            xcrun xcresulttool get test-results tests --path "$result_bundle"
-          fi
-          if [ "${{ matrix.platform }}" = "tvOS" ] && [ "$test_status" -eq 0 ]; then
-            startup_results="$(dirname "$result_bundle")/native-test-results.json"
-            xcrun xcresulttool get test-results tests --path "$result_bundle" > "$startup_results"
-            python3 scripts/checks/check_tvos_startup_result.py "$startup_results"
-          fi
-          exit "$test_status"
-
-      - name: Build macOS application and XCTest bundle
-        if: matrix.platform == 'macOS'
-        run: |
-          xcodebuild build-for-testing \
-            -workspace "${{ matrix.workspace }}" \
-            -scheme Runner \
-            -configuration Debug \
-            -destination "$APPLE_TEST_DESTINATION" \
-            -derivedDataPath "$APPLE_DERIVED_DATA_PATH" \
-            -clonedSourcePackagesDirPath "$APPLE_SOURCE_PACKAGES_DIR" \
-            -disableAutomaticPackageResolution \
-            CODE_SIGNING_ALLOWED=NO \
-            COMPILER_INDEX_STORE_ENABLE=NO \
-            ARCHS=arm64
-
-      - name: Retain failed Apple native test results
-        if: failure() && matrix.platform != 'macOS'
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+      - name: Qualify iOS native components
+        id: ios
+        if: ${{ !cancelled() && steps.apple_tools.outcome == 'success' }}
+        uses: ./.github/actions/apple-native-reliability
+        timeout-minutes: 110
         with:
-          name: apple-native-results-${{ matrix.platform }}-${{ github.run_id }}
-          path: ${{ env.APPLE_RESULT_BUNDLE }}
-          retention-days: 7
-          if-no-files-found: warn
+          platform: iOS
+        env:
+          PUB_CACHE: ${{ runner.temp }}/apple-native-pub-iOS
 
-      - name: Clean Apple build scratch
-        if: always()
+      - name: Qualify macOS native components
+        id: macos
+        if: ${{ !cancelled() && steps.apple_tools.outcome == 'success' }}
+        uses: ./.github/actions/apple-native-reliability
+        timeout-minutes: 110
+        with:
+          platform: macOS
+        env:
+          PUB_CACHE: ${{ runner.temp }}/apple-native-pub-macOS
+
+      - name: Qualify tvOS native components
+        id: tvos
+        if: ${{ !cancelled() && steps.apple_tools.outcome == 'success' }}
+        uses: ./.github/actions/apple-native-reliability
+        timeout-minutes: 110
+        with:
+          platform: tvOS
+        env:
+          PUB_CACHE: ${{ runner.temp }}/apple-native-pub-tvOS
+
+      - name: Require every Apple native suite
+        if: ${{ !cancelled() }}
         shell: bash
         env:
-          APPLE_JIT_JOB_STATUS: ${{ job.status }}
-          APPLE_SCRATCH_JOB: ${{ matrix.source_packages_directory }}
-        run: bash scripts/cleanup_apple_jit_scratch.sh "$APPLE_SCRATCH_JOB"
-
-      - name: Remove job-owned Apple test simulator
-        if: always() && matrix.platform != 'macOS'
-        env:
-          SIMULATOR_RUNTIME: ${{ matrix.simulator_runtime }}
-          APPLE_JIT_JOB_STATUS: ${{ job.status }}
-        run: python3 scripts/apple/select_test_destination.py --cleanup
-
-      - name: Retain Apple simulator ownership receipt
-        if: always() && env.APPLE_SIMULATOR_RECEIPT != ''
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: apple-simulator-${{ matrix.platform }}-${{ github.run_id }}
-          path: ${{ env.APPLE_SIMULATOR_RECEIPT }}
-          retention-days: 7
+          IOS_OUTCOME: ${{ steps.ios.outcome }}
+          MACOS_OUTCOME: ${{ steps.macos.outcome }}
+          TVOS_OUTCOME: ${{ steps.tvos.outcome }}
+        run: |
+          printf '| Platform | Qualification | Outcome |\n| --- | --- | --- |\n' >> "$GITHUB_STEP_SUMMARY"
+          printf '| iOS | Simulator tests | %s |\n' "$IOS_OUTCOME" >> "$GITHUB_STEP_SUMMARY"
+          printf '| macOS | Build application and XCTest bundle | %s |\n' "$MACOS_OUTCOME" >> "$GITHUB_STEP_SUMMARY"
+          printf '| tvOS | Simulator tests and startup assertion | %s |\n' "$TVOS_OUTCOME" >> "$GITHUB_STEP_SUMMARY"
+          [[ "$IOS_OUTCOME" == success && "$MACOS_OUTCOME" == success && "$TVOS_OUTCOME" == success ]]
 
   windows-native-test:
     name: Windows native reliability (${{ matrix.arch }})

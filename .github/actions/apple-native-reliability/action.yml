@@ -1,0 +1,451 @@
+name: Apple native reliability
+description: Qualify a single native Apple platform in its own checkout, Xcode scratch and simulator.
+inputs:
+  platform:
+    description: iOS, macOS or tvOS.
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Prepare local Xcode and SwiftPM scratch
+      id: scratch
+      shell: bash
+      env:
+        PLATFORM: ${{ inputs.platform }}
+      run: |
+        case "$PLATFORM" in
+          iOS)   project=ios;   sdk=iphonesimulator;  runtime=iOS;  destination='' ;;
+          tvOS)  project=tvos;  sdk=appletvsimulator; runtime=tvOS; destination='' ;;
+          macOS) project=macos; sdk='';               runtime='';   destination='platform=macOS' ;;
+          *) echo "::error::Unsupported Apple platform $PLATFORM"; exit 1 ;;
+        esac
+        [[ "$PUB_CACHE" == "$RUNNER_TEMP/apple-native-pub-$PLATFORM" ]]
+        [[ ! -e "$PUB_CACHE" && ! -L "$PUB_CACHE" ]]
+        printf 'project=%s\nsdk=%s\nruntime=%s\ndestination=%s\n' \
+          "$project" "$sdk" "$runtime" "$destination" >> "$GITHUB_OUTPUT"
+        # Keep scratch paths scoped to this invocation of the composite.
+        GITHUB_ENV="$GITHUB_OUTPUT" bash scripts/prepare_apple_jit_scratch.sh "$project" 20 local-xcode >/dev/null
+
+    - name: Check out the exact source for this suite
+      id: checkout
+      shell: bash
+      env:
+        SUITE_ROOT: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+        APPLE_LOCAL_BUILD_DIR: ${{ steps.scratch.outputs.APPLE_LOCAL_BUILD_DIR }}
+      run: |
+        git worktree add --detach "$SUITE_ROOT" "$GITHUB_SHA"
+        ln -s "$APPLE_LOCAL_BUILD_DIR" "$SUITE_ROOT/build"
+
+    - name: Restore platform Pub dependencies
+      id: pub
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      with:
+        path: ${{ env.PUB_CACHE }}
+        key: ${{ runner.os }}-${{ runner.arch }}-pub-${{ inputs.platform }}-v1-${{ hashFiles('pubspec.yaml', 'pubspec.lock') }}
+
+    - name: Check local CocoaPods lock checksums
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: ruby scripts/check_podspec_locks.rb
+
+    - name: Build and verify iOS native torrent framework
+      if: inputs.platform == 'iOS'
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: |
+        python3 scripts/p2p/build_apple.py ios
+        framework=packages/plezy_torrent/ios/Frameworks/ios/PlezyTorrent.xcframework
+        test -f "$framework/Info.plist"
+        test -d "$framework/ios-arm64/PlezyTorrent.framework"
+        test -d "$framework/ios-arm64_x86_64-simulator/PlezyTorrent.framework"
+
+    - name: Build and verify macOS native torrent framework
+      if: inputs.platform == 'macOS'
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: |
+        python3 scripts/p2p/build_apple.py macos
+        framework=packages/plezy_torrent/macos/Frameworks/macos/PlezyTorrent.xcframework
+        test -f "$framework/Info.plist"
+        test -d "$framework/macos-arm64_x86_64/PlezyTorrent.framework"
+
+    - name: Install locked Dart dependencies
+      if: inputs.platform != 'tvOS'
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: flutter pub get --enforce-lockfile --no-example
+
+    - name: Verify Sherpa ONNX iOS simulator framework
+      if: inputs.platform == 'iOS'
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: |
+        python3 - <<'PY'
+        import hashlib
+        import json
+        from pathlib import Path
+        from urllib.parse import unquote, urlparse
+
+        config = json.loads(Path(".dart_tool/package_config.json").read_text())
+        package = next(item for item in config["packages"] if item["name"] == "sherpa_onnx_ios")
+        root = Path(unquote(urlparse(package["rootUri"]).path))
+        framework = root / "ios/sherpa_onnx_ios/SherpaOnnxC.xcframework"
+        simulator_binary = framework / "ios-arm64_x86_64-simulator/SherpaOnnxC.framework/SherpaOnnxC"
+        if not (framework / "Info.plist").is_file() or not simulator_binary.is_file():
+            raise SystemExit(f"Sherpa ONNX iOS simulator XCFramework is incomplete: {framework}")
+        digest = hashlib.sha256(simulator_binary.read_bytes()).hexdigest()
+        print(f"sherpa_onnx_ios_root={root}")
+        print(f"sherpa_onnx_ios_simulator_binary={simulator_binary} bytes={simulator_binary.stat().st_size} sha256={digest}")
+        PY
+
+    - name: Install tvOS dependencies with the unsupported SMB native asset stub
+      if: inputs.platform == 'tvOS'
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: tvos/scripts/pub_get.sh
+
+    - name: Record committed CocoaPods lockfile
+      if: inputs.platform != 'tvOS'
+      env:
+        APPLE_LOCAL_BUILD_DIR: ${{ steps.scratch.outputs.APPLE_LOCAL_BUILD_DIR }}
+        PODFILE_LOCK: ${{ steps.scratch.outputs.project }}/Podfile.lock
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: |
+        test -f "$PODFILE_LOCK"
+        shasum -a 256 "$PODFILE_LOCK" > "$APPLE_LOCAL_BUILD_DIR/plezy-podfile-lock.sha256"
+
+    - name: Verify iOS Xcode project syntax
+      if: inputs.platform == 'iOS'
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: plutil -lint ios/Runner.xcodeproj/project.pbxproj
+
+    - name: Refresh pinned iOS Swift packages
+      if: inputs.platform == 'iOS'
+      env:
+        APPLE_SCRATCH_MODE: ${{ steps.scratch.outputs.APPLE_SCRATCH_MODE }}
+        APPLE_SOURCE_PACKAGES_DIR: ${{ steps.scratch.outputs.APPLE_SOURCE_PACKAGES_DIR }}
+        APPLE_DERIVED_DATA_PATH: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: scripts/refresh_apple_spm.sh ios
+
+    - name: Prepare iOS Flutter build settings
+      if: inputs.platform == 'iOS'
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: flutter build ios --config-only --simulator --debug --no-pub
+
+    - name: Refresh pinned macOS Swift packages
+      if: inputs.platform == 'macOS'
+      env:
+        APPLE_SCRATCH_MODE: ${{ steps.scratch.outputs.APPLE_SCRATCH_MODE }}
+        APPLE_SOURCE_PACKAGES_DIR: ${{ steps.scratch.outputs.APPLE_SOURCE_PACKAGES_DIR }}
+        APPLE_DERIVED_DATA_PATH: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: scripts/refresh_apple_spm.sh macos
+
+    - name: Prepare macOS Flutter build settings
+      if: inputs.platform == 'macOS'
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: flutter build macos --config-only --debug --no-pub
+
+    - name: Prepare tvOS Flutter engine
+      if: inputs.platform == 'tvOS'
+      env:
+        FLUTTER_TVOS_ENGINE_CACHE: ${{ steps.scratch.outputs.APPLE_LOCAL_BUILD_DIR }}/flutter-tvos-engine
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: tvos/scripts/fetch_engine.sh
+
+    - name: Restore and verify committed CocoaPods lockfile
+      if: inputs.platform != 'tvOS'
+      env:
+        APPLE_LOCAL_BUILD_DIR: ${{ steps.scratch.outputs.APPLE_LOCAL_BUILD_DIR }}
+        PODFILE_LOCK: ${{ steps.scratch.outputs.project }}/Podfile.lock
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: |
+        git restore --source=HEAD --worktree -- "$PODFILE_LOCK"
+        shasum -a 256 --check "$APPLE_LOCAL_BUILD_DIR/plezy-podfile-lock.sha256"
+
+    - name: Install locked CocoaPods dependencies
+      if: inputs.platform != 'tvOS'
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}/${{ steps.scratch.outputs.project }}
+      run: pod install --deployment
+
+    - name: Diagnose iOS torrent CocoaPods integration
+      if: inputs.platform == 'iOS'
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: |
+        python3 - <<'PY'
+        import json
+        import plistlib
+        from pathlib import Path
+
+        plugin = Path("ios/.symlinks/plugins/plezy_torrent/ios")
+        framework = Path("packages/plezy_torrent/ios/Frameworks/ios/PlezyTorrent.xcframework")
+        print(f"plugin_path={plugin.resolve(strict=False)} exists={plugin.exists()}")
+        print(f"framework_path={framework.resolve(strict=False)} exists={framework.exists()}")
+        info = framework / "Info.plist"
+        if info.is_file():
+            with info.open("rb") as source:
+                plist = plistlib.load(source)
+            slices = [
+                {key: item.get(key) for key in ("LibraryIdentifier", "SupportedPlatform", "SupportedPlatformVariant", "SupportedArchitectures")}
+                for item in plist.get("AvailableLibraries", [])
+            ]
+            print(f"framework_slices={slices}")
+
+        podspec = Path("ios/Pods/Local Podspecs/plezy_torrent.podspec.json")
+        if podspec.is_file():
+            spec = json.loads(podspec.read_text(encoding="utf-8"))
+            print(f"vendored_frameworks={spec.get('vendored_frameworks')}")
+        else:
+            print(f"local_podspec_missing={podspec}")
+
+        support = Path("ios/Pods/Target Support Files")
+        for path in sorted(support.glob("*plezy_torrent*")):
+            print(f"pod_support_path={path}")
+            if path.is_dir():
+                for child in sorted(path.rglob("*")):
+                    if child.is_file() and child.suffix in {".sh", ".xcfilelist", ".json"}:
+                        print(f"pod_support_file={child}")
+                        for number, line in enumerate(child.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+                            if "PlezyTorrent" in line or "XCFrameworkIntermediates" in line:
+                                print(f"{child}:{number}:{line[:240]}")
+
+        for path in sorted((support / "Pods-Runner").glob("Pods-Runner-frameworks*")):
+            print(f"runner_framework_support_file={path}")
+            if path.is_file():
+                for number, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+                    if "plezy_torrent" in line or "PlezyTorrent" in line or "XCFrameworkIntermediates" in line:
+                        print(f"{path}:{number}:{line[:240]}")
+
+        for project_name, project in (
+            ("Runner", Path("ios/Runner.xcodeproj/project.pbxproj")),
+            ("Pods", Path("ios/Pods/Pods.xcodeproj/project.pbxproj")),
+        ):
+            print(f"{project_name}_project_file={project} exists={project.is_file()}")
+            if project.is_file():
+                for number, line in enumerate(project.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+                    if any(token in line for token in ("plezy_torrent", "PlezyTorrent", "Copy XCFrameworks")):
+                        print(f"{project_name}_project:{number}:{line[:240]}")
+
+        sherpa_plugin = Path("ios/.symlinks/plugins/sherpa_onnx_ios")
+        sherpa_podspec = sherpa_plugin / "ios/sherpa_onnx_ios.podspec"
+        sherpa_source = sherpa_plugin / "ios/sherpa_onnx_ios/Sources/sherpa_onnx_ios/SherpaOnnxIosPlugin.swift"
+        sherpa_framework = sherpa_plugin / "ios/sherpa_onnx_ios/SherpaOnnxC.xcframework"
+        expected_source = "s.source_files = 'sherpa_onnx_ios/Sources/sherpa_onnx_ios/SherpaOnnxIosPlugin.swift'"
+        print(f"sherpa_plugin={sherpa_plugin.resolve(strict=False)} exists={sherpa_plugin.exists()}")
+        print(f"sherpa_source_exists={sherpa_source.is_file()} sherpa_framework_exists={sherpa_framework.is_dir()}")
+        if not sherpa_podspec.is_file() or not sherpa_source.is_file() or not sherpa_framework.is_dir():
+            raise SystemExit("resolved sherpa_onnx_ios package is missing its Podspec, source anchor, or XCFramework")
+        if expected_source not in sherpa_podspec.read_text(encoding="utf-8"):
+            raise SystemExit("sherpa_onnx_ios Podspec does not include the CocoaPods source anchor")
+
+        sherpa_support = Path("ios/Pods/Target Support Files/sherpa_onnx_ios")
+        copy_scripts = sorted(sherpa_support.glob("*xcframeworks.sh"))
+        if not copy_scripts:
+            raise SystemExit("CocoaPods did not generate the sherpa_onnx_ios XCFramework copy phase")
+        for copy_script in copy_scripts:
+            contents = copy_script.read_text(encoding="utf-8", errors="replace")
+            print(f"sherpa_copy_script={copy_script} has_framework={('SherpaOnnxC.xcframework' in contents)}")
+            if "SherpaOnnxC.xcframework" not in contents:
+                raise SystemExit(f"SherpaOnnxC is absent from {copy_script}")
+        PY
+
+    - name: Install tvOS CocoaPods dependencies
+      if: inputs.platform == 'tvOS'
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: tvos/scripts/pod_install.sh
+
+    - name: Verify tvOS project wiring
+      if: inputs.platform == 'tvOS'
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: |
+        ruby tvos/scripts/test_wire_mpv.rb
+        ruby tvos/scripts/test_wire_top_shelf.rb
+
+    - name: Resolve pinned Apple Swift packages for native tests
+      env:
+        APPLE_DERIVED_DATA_PATH: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}
+        APPLE_SOURCE_PACKAGES_DIR: ${{ steps.scratch.outputs.APPLE_SOURCE_PACKAGES_DIR }}
+        NATIVE_WORKSPACE: ${{ steps.scratch.outputs.project }}/Runner.xcworkspace
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: xcodebuild -resolvePackageDependencies -workspace "$NATIVE_WORKSPACE" -scheme Runner -clonedSourcePackagesDirPath "$APPLE_SOURCE_PACKAGES_DIR" -derivedDataPath "$APPLE_DERIVED_DATA_PATH"
+
+    - name: Remove AMSMB2 unsafe warning flag from the pinned tvOS checkout
+      if: inputs.platform == 'tvOS'
+      env:
+        APPLE_SOURCE_PACKAGES_DIR: ${{ steps.scratch.outputs.APPLE_SOURCE_PACKAGES_DIR }}
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: |
+        python3 scripts/patch_amsmb2_manifest.py \
+          --source-packages-dir "$APPLE_SOURCE_PACKAGES_DIR" \
+          --resolved-package tvos/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+
+    - name: Select Apple test destination
+      id: destination
+      env:
+        SIMULATOR_RUNTIME: ${{ steps.scratch.outputs.runtime }}
+        SIMULATOR_SDK: ${{ steps.scratch.outputs.sdk }}
+        STATIC_DESTINATION: ${{ steps.scratch.outputs.destination }}
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: GITHUB_ENV="$GITHUB_OUTPUT" python3 scripts/apple/select_test_destination.py
+
+    - name: Build CocoaPods aggregate framework
+      if: inputs.platform != 'macOS'
+      env:
+        APPLE_DERIVED_DATA_PATH: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}
+        PODS_PROJECT: ${{ steps.scratch.outputs.project }}/Pods/Pods.xcodeproj
+        PODS_SDK: ${{ steps.scratch.outputs.sdk }}
+        PODS_SIMULATOR_PLATFORM: ${{ steps.scratch.outputs.runtime }}
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: |
+        pods_products_dir="$APPLE_DERIVED_DATA_PATH/Build/Products/Debug-$PODS_SDK"
+        xcodebuild build \
+          -project "$PODS_PROJECT" \
+          -scheme Pods-Runner \
+          -configuration Debug \
+          -sdk "$PODS_SDK" \
+          -destination "generic/platform=$PODS_SIMULATOR_PLATFORM Simulator" \
+          -derivedDataPath "$APPLE_DERIVED_DATA_PATH" \
+          CONFIGURATION_BUILD_DIR="$pods_products_dir" \
+          PODS_CONFIGURATION_BUILD_DIR="$pods_products_dir" \
+          CODE_SIGNING_ALLOWED=NO \
+          COMPILER_INDEX_STORE_ENABLE=NO \
+          ARCHS=arm64
+        test -f "$pods_products_dir/Pods_Runner.framework/Pods_Runner" || {
+          echo "::error::CocoaPods aggregate framework binary is missing from $pods_products_dir/Pods_Runner.framework"
+          exit 1
+        }
+
+    - name: Run Apple native reliability tests
+      if: inputs.platform != 'macOS'
+      env:
+        APPLE_LOCAL_BUILD_DIR: ${{ steps.scratch.outputs.APPLE_LOCAL_BUILD_DIR }}
+        APPLE_DERIVED_DATA_PATH: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}
+        APPLE_RESULT_BUNDLE: ${{ steps.scratch.outputs.APPLE_RESULT_BUNDLE }}
+        APPLE_SOURCE_PACKAGES_DIR: ${{ steps.scratch.outputs.APPLE_SOURCE_PACKAGES_DIR }}
+        NATIVE_WORKSPACE: ${{ steps.scratch.outputs.project }}/Runner.xcworkspace
+        APPLE_TEST_DESTINATION: ${{ steps.destination.outputs.APPLE_TEST_DESTINATION }}
+        PLATFORM: ${{ inputs.platform }}
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: |
+        result_bundle="$APPLE_RESULT_BUNDLE"
+        test_log="$APPLE_LOCAL_BUILD_DIR/native-test-output.log"
+        set -o pipefail
+        set +e
+        gtimeout --kill-after=30s 75m xcodebuild test \
+          -workspace "$NATIVE_WORKSPACE" \
+          -scheme Runner \
+          -configuration Debug \
+          -destination "$APPLE_TEST_DESTINATION" \
+          -parallel-testing-enabled NO \
+          -derivedDataPath "$APPLE_DERIVED_DATA_PATH" \
+          -clonedSourcePackagesDirPath "$APPLE_SOURCE_PACKAGES_DIR" \
+          -disableAutomaticPackageResolution \
+          -resultBundlePath "$result_bundle" \
+          CODE_SIGNING_ALLOWED=NO \
+          COMPILER_INDEX_STORE_ENABLE=NO \
+          ARCHS=arm64 2>&1 | tee "$test_log"
+        test_status=$?
+        set -e
+        if [[ "$test_status" -ne 0 && -d "$result_bundle" ]]; then
+          xcrun xcresulttool get test-results tests --path "$result_bundle" || true
+        fi
+        if [ "$PLATFORM" = "tvOS" ] && [ "$test_status" -eq 0 ]; then
+          startup_results="$(dirname "$result_bundle")/native-test-results.json"
+          xcrun xcresulttool get test-results tests --path "$result_bundle" > "$startup_results"
+          python3 scripts/checks/check_tvos_startup_result.py "$startup_results"
+        fi
+        exit "$test_status"
+
+    - name: Build macOS application and XCTest bundle
+      if: inputs.platform == 'macOS'
+      env:
+        APPLE_DERIVED_DATA_PATH: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}
+        APPLE_SOURCE_PACKAGES_DIR: ${{ steps.scratch.outputs.APPLE_SOURCE_PACKAGES_DIR }}
+        NATIVE_WORKSPACE: ${{ steps.scratch.outputs.project }}/Runner.xcworkspace
+        APPLE_TEST_DESTINATION: ${{ steps.destination.outputs.APPLE_TEST_DESTINATION }}
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: |
+        xcodebuild build-for-testing \
+          -workspace "$NATIVE_WORKSPACE" \
+          -scheme Runner \
+          -configuration Debug \
+          -destination "$APPLE_TEST_DESTINATION" \
+          -derivedDataPath "$APPLE_DERIVED_DATA_PATH" \
+          -clonedSourcePackagesDirPath "$APPLE_SOURCE_PACKAGES_DIR" \
+          -disableAutomaticPackageResolution \
+          CODE_SIGNING_ALLOWED=NO \
+          COMPILER_INDEX_STORE_ENABLE=NO \
+          ARCHS=arm64
+
+    - name: Retain failed Apple native test results
+      if: failure() && inputs.platform != 'macOS' && steps.scratch.outcome == 'success'
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+      with:
+        name: apple-native-results-${{ inputs.platform }}-${{ github.run_id }}-${{ github.run_attempt }}
+        path: |
+          ${{ steps.scratch.outputs.APPLE_RESULT_BUNDLE }}
+          ${{ steps.scratch.outputs.APPLE_LOCAL_BUILD_DIR }}/native-test-output.log
+        retention-days: 7
+        if-no-files-found: warn
+
+    - name: Remove job-owned Apple test simulator
+      if: always() && steps.scratch.outcome == 'success' && inputs.platform != 'macOS'
+      shell: bash
+      env:
+        SIMULATOR_RUNTIME: ${{ steps.scratch.outputs.runtime }}
+        APPLE_JIT_JOB_STATUS: ${{ cancelled() && 'cancelled' || github.action_status }}
+      run: python3 scripts/apple/select_test_destination.py --cleanup
+
+    - name: Retain Apple simulator ownership receipt
+      if: always() && steps.destination.outputs.APPLE_SIMULATOR_RECEIPT != ''
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+      with:
+        name: apple-simulator-${{ inputs.platform }}-${{ github.run_id }}-${{ github.run_attempt }}
+        path: ${{ steps.destination.outputs.APPLE_SIMULATOR_RECEIPT }}
+        retention-days: 7
+
+    - name: Save platform Pub dependencies
+      if: success() && steps.pub.outputs.cache-hit != 'true'
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      with:
+        path: ${{ env.PUB_CACHE }}
+        key: ${{ steps.pub.outputs.cache-primary-key }}
+
+    - name: Clean Apple build scratch
+      if: always() && steps.scratch.outcome == 'success'
+      shell: bash
+      env:
+        APPLE_JIT_JOB_STATUS: ${{ cancelled() && 'cancelled' || github.action_status }}
+        APPLE_HOSTED_SCRATCH: ${{ steps.scratch.outputs.APPLE_HOSTED_SCRATCH }}
+        APPLE_SCRATCH_JOB: ${{ steps.scratch.outputs.project }}
+        SUITE_ROOT: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+        CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}
+        PLATFORM: ${{ inputs.platform }}
+      run: |
+        if [[ "$APPLE_JIT_JOB_STATUS" != cancelled && "$CHECKOUT_OUTCOME" == success ]]; then
+          git worktree remove --force "$SUITE_ROOT"
+        fi
+        bash scripts/cleanup_apple_jit_scratch.sh "$APPLE_SCRATCH_JOB"
+        if [[ "$APPLE_JIT_JOB_STATUS" != cancelled ]]; then
+          [[ "$PUB_CACHE" == "$RUNNER_TEMP/apple-native-pub-$PLATFORM" ]]
+          rm -rf -- "$PUB_CACHE"
+        fi
