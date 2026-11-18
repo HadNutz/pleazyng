@@ -18,6 +18,10 @@ class LocalFileRelink {
   final bool verified;
   final String? mountRoot, progressEdition;
   static String mountId(String root) => '@moved-${sourceDigest(root)}';
+  static Map<String, String> mounts(Iterable<LocalFileRelink> rows) => {
+    for (final root in rows.map((row) => row.mountRoot).nonNulls) mountId(root): root,
+  };
+
   String get replacementId => '@replacement-${sourceDigest(id)}';
   static String physicalPath(String root, String catalogPath, String? mount) {
     if (mount == null) return p.join(root, catalogPath);
@@ -33,8 +37,8 @@ class LocalFileRelink {
     'oldRevision': oldRevision,
     'newRevision': newRevision,
     'verified': verified,
-    if (mountRoot != null) 'mountRoot': mountRoot!,
-    if (progressEdition != null) 'progressEdition': progressEdition!,
+    'mountRoot': ?mountRoot,
+    'progressEdition': ?progressEdition,
   };
 
   static List<LocalFileRelink> decode(String? value) {

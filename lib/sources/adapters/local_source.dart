@@ -28,10 +28,7 @@ class LocalSourceAdapter extends SourceAdapter {
   late final _relinks = LocalFileRelink.decode(source.options['fileRelinks']);
   late final _byId = {for (final r in _relinks) r.id: r};
   late final _byPath = {for (final r in _relinks) r.path: r};
-  late final _mounts = {
-    for (final row in _relinks)
-      if (row.mountRoot case final root?) LocalFileRelink.mountId(root): root,
-  };
+  late final _mounts = LocalFileRelink.mounts(_relinks);
   late final _replacements = {
     for (final row in _relinks)
       if (row.path != row.id) row.replacementId: row.id,

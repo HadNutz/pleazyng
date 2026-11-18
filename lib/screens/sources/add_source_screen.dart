@@ -66,10 +66,7 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
     try {
       final entries = await controller.repository.entries(source.profileId, source: source.id);
       final previous = LocalFileRelink.decode(_fileRelinks ?? source.options['fileRelinks']);
-      final mounts = {
-        for (final row in previous)
-          if (row.mountRoot case final root?) LocalFileRelink.mountId(root): root,
-      };
+      final mounts = LocalFileRelink.mounts(previous);
       String folderLabel(String folder) {
         final mount = mounts[p.split(folder).firstOrNull];
         return mount == null ? folder : LocalFileRelink.physicalPath(source.root, folder, mount);
