@@ -2980,7 +2980,19 @@ void main() {
       addTearDown(RuntimePlaybackCapabilities.reset);
       RuntimePlaybackCapabilities.activeVideoEngine = 'mpv';
       RuntimePlaybackCapabilities.recordMpvDecoders([
-        for (final codec in ['h264', 'hevc', 'evc', 'mjpeg', 'jpegxl', 'jpegxl_anim'])
+        for (final codec in [
+          'h261',
+          'h263',
+          'vc1',
+          'wmv3',
+          'dvvideo',
+          'h264',
+          'hevc',
+          'evc',
+          'mjpeg',
+          'jpegxl',
+          'jpegxl_anim',
+        ])
           {'codec': codec, 'driver': codec},
         {'codec': 'av1', 'driver': 'libdav1d'},
       ]);
@@ -3005,9 +3017,19 @@ void main() {
       expect(codecsFor('jxl'), {'jpegxl_anim'});
       expect(codecsFor('mjpeg'), isEmpty);
       expect(codecsFor('obu'), isEmpty);
-      RuntimePlaybackCapabilities.recordMpvDemuxers(['av1', 'obu']);
+      expect(codecsFor('rcv'), isEmpty);
+      RuntimePlaybackCapabilities.recordMpvDemuxers(['av1', 'obu', 'h261', 'h263', 'vc1', 'dv']);
       await scoped.getPlaybackInfo('movie');
       expect(codecsFor('obu'), {'av1'});
+      expect(codecsFor('261'), {'h261'});
+      expect(codecsFor('h263'), {'h263'});
+      expect(codecsFor('vc1'), {'vc1'});
+      expect(codecsFor('dif'), {'dvvideo'});
+      expect(codecsFor('rcv'), isEmpty);
+      RuntimePlaybackCapabilities.recordMpvDemuxers(['vc1test']);
+      await scoped.getPlaybackInfo('movie');
+      expect(codecsFor('vc1'), isEmpty);
+      expect(codecsFor('rcv'), {'wmv3'});
     });
 
     for (final emby in [false, true]) {

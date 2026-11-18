@@ -231,6 +231,13 @@ void main() {
       '.mpegts',
       '.avc',
       '.h26l',
+      '.h261',
+      '.261',
+      '.h263',
+      '.263',
+      '.vc1',
+      '.rcv',
+      '.dif',
     ]) {
       expect(classifySourceFile('sample$extension'), SourceItemKind.video);
     }

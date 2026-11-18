@@ -85,9 +85,9 @@ The Android loader rejects the library before opening media. The
 [producer fix](https://github.com/snapetech-org/mpv-build/commit/4f394a24d88dc40f269f9c3d3ddffd43c56a1b15)
 links Brotli's common code statically into the player and checks imports
 in each release tarball and the stripped AAR against Android API 25.
-A locally rebuilt x86_64 libmpv opened the 480×270 AV2 IVF, sought to
-one second and resumed to EOF under Android 7.1 with the packaged FFmpeg
-libraries. The app needs a new published Android package for this fix.
+Locally rebuilt players on all four ABIs loaded the packaged JNI bridge,
+opened the 480×270 AV2 IVF, sought to 1.000 seconds and resumed to EOF
+at 2.134 seconds under Android 7.1 with the packaged FFmpeg libraries. The app needs a new published Android package for this fix.
 
 ## Coverage order and remaining qualification
 
@@ -211,6 +211,13 @@ still-image reader displayed one frame of a 50-frame capture. The file-local
 choice displayed all 50. Raw AVC, HEVC, MPEG-2, AV1 OBU and YUV4MPEG also
 displayed all 50 frames through the published Linux package. Offline cleanup uses the same file
 extensions as the source browser and retains its item identity and path checks.
+
+Raw H.261, H.263, VC-1 elementary streams, WMV3 RCV files and DV/DIF
+captures also use measured, codec-specific server profiles. The published
+Linux x86_64 player displayed all 50 frames in each H.261/H.263 fixture,
+all 15 in the VC-1 reference, all 25 in the WMV3 RCV reference and all 25
+in a PAL DV capture. The RCV and VC-1 readers are separate.
+[VC-1 reference streams](https://fate-suite.ffmpeg.org/vc1/).
 
 For local music, Jellyfin and Emby receive the dedicated audio engine’s
 container and decoder pairs, independently of the video engine preference.

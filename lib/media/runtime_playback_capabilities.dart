@@ -227,9 +227,14 @@ abstract final class RuntimePlaybackCapabilities {
     'flc': 'flic',
   };
 
-  // Each elementary stream carries a specific codec family. A server profile
-  // pairs those codecs with the input formats present in this build.
+  // Elementary streams and DV/DIF carry a specific video codec family.
+  // Bind each server profile to the corresponding measured input format.
   static const _elementaryFormats = <({Set<String> containers, Set<String> demuxers, Set<String> codecs})>[
+    (containers: {'h261', '261'}, demuxers: {'h261'}, codecs: {'h261'}),
+    (containers: {'h263', '263'}, demuxers: {'h263'}, codecs: {'h263'}),
+    (containers: {'vc1'}, demuxers: {'vc1'}, codecs: {'vc1'}),
+    (containers: {'rcv'}, demuxers: {'vc1test'}, codecs: {'wmv3'}),
+    (containers: {'dv', 'dif'}, demuxers: {'dv'}, codecs: {'dvvideo'}),
     (containers: {'h264', '264', 'avc', 'h26l'}, demuxers: {'h264'}, codecs: {'h264'}),
     (containers: {'hevc', 'h265', '265'}, demuxers: {'hevc'}, codecs: {'hevc'}),
     (containers: {'vvc', 'h266', '266'}, demuxers: {'vvc'}, codecs: {'vvc'}),
