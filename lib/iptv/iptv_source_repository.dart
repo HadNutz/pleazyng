@@ -1264,7 +1264,8 @@ class IptvSourceRepository {
       final profile = row.read<String>('profile_id');
       try {
         var file = File(row.read<String>('file_path'));
-        if (!await file.exists() && RegExp(r'^[a-f0-9-]{36}$', caseSensitive: false).hasMatch(id)) {
+        if ((!await file.exists() || await file.length() == 0) &&
+            RegExp(r'^[a-f0-9-]{36}$', caseSensitive: false).hasMatch(id)) {
           final legacy = File(p.join(file.parent.path, '.$id.partial.ts'));
           if (await legacy.exists()) {
             file = legacy;

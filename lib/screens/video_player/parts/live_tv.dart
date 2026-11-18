@@ -609,6 +609,16 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
   void _toggleIptvRecording() => unawaited(_isRecordingIptv ? _finishIptvRecording(player) : _startIptvRecording());
 
   Future<void> _startIptvRecording() async {
+    if (_iptvStarting || _isRecordingIptv || _iptvFinishing != null) return;
+    _iptvStarting = true;
+    try {
+      await _beginIptvRecording();
+    } finally {
+      _iptvStarting = false;
+    }
+  }
+
+  Future<void> _beginIptvRecording() async {
     final currentPlayer = player;
     final session = _live.session;
     final profileId = context.read<ActiveProfileProvider>().activeId;
@@ -667,7 +677,7 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
           channelId: selectedChannel.iptvChannelId,
           title: selectedChannel.displayName,
           programmeTitle: programme?.displayTitle,
-          filePath: recordingTarget.path,
+          filePath: recordingPartial.path,
           startedAt: startedAt,
           state: 'recording',
         ),
@@ -688,7 +698,8 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
       }
     } catch (error) {
       try {
-        if (partial != null && await partial.exists()) {
+        final size = partial != null && await partial.exists() ? await partial.length() : 0;
+        if (size == 0 && partial != null && await partial.exists()) {
           await partial.delete();
         }
         final records = await repository.localRecordings(profileId);
@@ -697,6 +708,7 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
             profileId: profileId,
             recordingId: id,
             completed: false,
+            sizeBytes: size,
             errorCode: 'start_failed',
           );
         }
@@ -721,7 +733,10 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
     return slug.length <= 64 ? slug : slug.substring(0, 64);
   }
 
-  Future<void> _finishIptvRecording(Player? activePlayer, {bool notify = true}) async {
+  Future<void> _finishIptvRecording(Player? activePlayer, {bool notify = true}) =>
+      _iptvFinishing ??= _finalizeIptvRecording(activePlayer, notify: notify).whenComplete(() => _iptvFinishing = null);
+
+  Future<void> _finalizeIptvRecording(Player? activePlayer, {required bool notify}) async {
     final partial = _iptvRecordingPartial;
     final target = _iptvRecordingTarget;
     final id = _iptvRecordingId;
@@ -733,47 +748,39 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
     }
     final repository = context.read<IptvSourceRepository>();
     try {
-      if (native != null && !native.disposed) {
-        await native.setProperty('file-local-options/stream-record', '');
-      }
-      if (!await partial.exists() || await partial.length() == 0) {
-        throw const IptvImportException('recording_empty');
-      }
-      if (await target.exists()) {
-        throw const IptvImportException('recording_conflict');
-      }
-      final size = await partial.length();
-      await partial.rename(target.path);
+      final result = await finishManualCapture(
+        partial: partial,
+        target: target,
+        closeWriter: () async {
+          if (native != null && !native.disposed) await native.setProperty('file-local-options/stream-record', '');
+        },
+        journal: (path) =>
+            repository.updateLocalRecordingFilePath(profileId: profileId, recordingId: id, filePath: path),
+      );
       await repository.finishLocalRecording(
         profileId: profileId,
         recordingId: id,
-        completed: true,
+        completed: result.complete,
         durationSeconds: startedAt == null ? null : DateTime.now().difference(startedAt).inSeconds,
-        sizeBytes: size,
+        sizeBytes: result.size,
+        errorCode: result.complete ? null : 'finalize_failed',
       );
       if (notify && mounted) {
-        ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(t.universalMedia.recordingSaved)));
-      }
-    } catch (_) {
-      try {
-        if (await partial.exists()) {
-          await partial.delete();
-        }
-        final retainedSize = await target.exists() ? await target.length() : null;
-        await repository.finishLocalRecording(
-          profileId: profileId,
-          recordingId: id,
-          completed: false,
-          durationSeconds: startedAt == null ? null : DateTime.now().difference(startedAt).inSeconds,
-          sizeBytes: retainedSize,
-          errorCode: 'finalize_failed',
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          SnackBar(
+            content: Text(
+              result.complete
+                  ? t.universalMedia.recordingSaved
+                  : result.size > 0
+                  ? t.iptv.recordingInterrupted
+                  : t.iptv.recordingSaveFailed,
+            ),
+          ),
         );
-      } on Object {
-        // Playback teardown must keep moving even if the recording store fails.
       }
-      if (notify && mounted) {
-        showGlobalErrorSnackBar(t.iptv.recordingSaveFailed);
-      }
+    } catch (error, stack) {
+      appLogger.w('Could not finalize recording', error: error, stackTrace: stack);
+      if (notify && mounted) showGlobalErrorSnackBar(t.iptv.recordingSaveFailed);
     } finally {
       _iptvRecordingPlayer = null;
       _iptvRecordingTarget = null;

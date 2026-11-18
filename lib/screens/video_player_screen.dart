@@ -83,6 +83,7 @@ import '../profiles/active_profile_provider.dart';
 import '../iptv/iptv_source_repository.dart';
 import '../iptv/iptv_parental_access_service.dart';
 import '../iptv/iptv_live_tv_session.dart';
+import '../iptv/iptv_manual_capture.dart';
 import '../iptv/iptv_models.dart';
 import '../services/fullscreen_state_manager.dart';
 import '../services/car_ux_restrictions_service.dart';
@@ -688,6 +689,8 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   int _playerInitializationGeneration = 0;
   Future<void>? _shutdownOperation;
   PlaybackPresentation? _presentation;
+  Future<void>? _iptvFinishing;
+  bool _iptvStarting = false;
   PlayerNative? _iptvRecordingPlayer;
   File? _iptvRecordingTarget;
   File? _iptvRecordingPartial;
