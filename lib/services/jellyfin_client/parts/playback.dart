@@ -44,6 +44,7 @@ List<Map<String, Object?>> _videoDirectPlayProfiles({bool? allowAudioStreamCopy}
   final av2Containers = RuntimePlaybackCapabilities.mpvAv2Containers;
   final profiles = [
     ...containers.entries,
+    if (engine == 'mpv') ...RuntimePlaybackCapabilities.mpvElementaryVideoProfiles,
     if (engine == 'mpv' && codecs.contains('av2') && av2Containers.isNotEmpty)
       MapEntry(av2Containers.join(','), {'av2'}),
   ];

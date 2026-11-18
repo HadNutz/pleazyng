@@ -141,8 +141,6 @@ abstract final class RuntimePlaybackCapabilities {
     'mxf': 'mxf',
     'nut': 'nut',
     'nuv': 'nuv',
-    'dv': 'dv',
-    'y4m': 'yuv4mpegpipe',
     'wtv': 'wtv',
     'gxf': 'gxf',
     'lxf': 'lxf',
@@ -154,6 +152,46 @@ abstract final class RuntimePlaybackCapabilities {
     'fli': 'flic',
     'flc': 'flic',
   };
+
+  // Each elementary stream carries a specific codec family. A server profile
+  // pairs those codecs with the input formats present in this build.
+  static const _elementaryFormats = <({Set<String> containers, Set<String> demuxers, Set<String> codecs})>[
+    (containers: {'h264', '264', 'avc', 'h26l'}, demuxers: {'h264'}, codecs: {'h264'}),
+    (containers: {'hevc', 'h265', '265'}, demuxers: {'hevc'}, codecs: {'hevc'}),
+    (containers: {'vvc', 'h266', '266'}, demuxers: {'vvc'}, codecs: {'vvc'}),
+    (containers: {'av1', 'obu'}, demuxers: {'av1', 'obu'}, codecs: {'av1'}),
+    (containers: {'evc'}, demuxers: {'evc'}, codecs: {'evc'}),
+    (containers: {'avs2'}, demuxers: {'avs2'}, codecs: {'avs2'}),
+    (containers: {'avs3'}, demuxers: {'avs3'}, codecs: {'avs3'}),
+    (containers: {'apv'}, demuxers: {'apv'}, codecs: {'apv'}),
+    (containers: {'m1v', 'm2v', 'mpv'}, demuxers: {'mpegvideo'}, codecs: {'mpeg1video', 'mpeg2video'}),
+    (containers: {'jxl'}, demuxers: {'jpegxl_pipe'}, codecs: {'jpegxl'}),
+    (containers: {'jxl'}, demuxers: {'jpegxl_anim'}, codecs: {'jpegxl_anim'}),
+    (containers: {'dv'}, demuxers: {'dv'}, codecs: {'dvvideo'}),
+    (containers: {'y4m'}, demuxers: {'yuv4mpegpipe'}, codecs: {'rawvideo'}),
+  ];
+
+  static Iterable<MapEntry<String, Set<String>>> get mpvElementaryVideoProfiles sync* {
+    final measured = _demuxers;
+    if (measured == null) return;
+    for (final format in _elementaryFormats) {
+      // Both AV1 framings may have the same suffix. Advertise it only if either framing will open.
+      if (format.demuxers.every(measured.contains)) yield MapEntry(format.containers.join(','), format.codecs);
+    }
+  }
+
+  static bool mpvElementaryContainerUnavailable(String codec, String? container) {
+    final measured = _demuxers;
+    if (measured == null || container == null) return false;
+    final name = container.trim().toLowerCase();
+    var recognized = false;
+    for (final format in _elementaryFormats) {
+      if (!format.containers.contains(name)) continue;
+      recognized = true;
+      if (format.codecs.contains(codec) && format.demuxers.any(measured.contains)) return false;
+    }
+    return recognized;
+  }
 
   // The dav2d build binds AV2 to IVF and the raw AV2 OBU demuxer.
   // The presence of a general MP4 or Matroska demuxer does not establish a binding.

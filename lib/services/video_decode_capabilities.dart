@@ -276,8 +276,10 @@ class VideoDecodeCapabilities {
   /// and ExoPlayer can recover via mpv when the platform cannot answer.
   static Future<bool> sourceFormatUnavailable(String? codec, MediaDisplayCriteria? source, {String? container}) async {
     if (sourceDecoderUnavailable(codec)) return true;
-    if (videoEngine == 'mpv' && codec != null && CodecCatalog.normalize(codec) == 'av2') {
-      return RuntimePlaybackCapabilities.mpvAv2ContainerUnavailable(container);
+    if (videoEngine == 'mpv' && codec != null) {
+      final normalized = CodecCatalog.normalize(codec);
+      if (normalized == 'av2') return RuntimePlaybackCapabilities.mpvAv2ContainerUnavailable(container);
+      return RuntimePlaybackCapabilities.mpvElementaryContainerUnavailable(normalized, container);
     }
     if (videoEngine == 'webos' && codec != null && source != null && !source.hasDolbyVision) {
       return webosVideoFormatUnavailable(CodecCatalog.normalize(codec), source, uhd: _singleton.instance?._webosUhd);

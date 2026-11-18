@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
+import '../media/codec_catalog.dart';
+
 enum OrphanDownloadScanFailure { unsafeRoot, tooManyEntries, scanFailed }
 
 /// A file in Pleazyng's recognized, app-managed download layout that no stored
@@ -56,64 +58,7 @@ class OrphanDownloadCleanupResult {
 class OrphanDownloadCleanupService {
   const OrphanDownloadCleanupService({this.maxEntries = 20000});
 
-  static const _videoExtensions = {
-    '.3g2',
-    '.3gp',
-    '.asf',
-    '.avi',
-    '.divx',
-    '.f4v',
-    '.flv',
-    '.m2ts',
-    '.m2v',
-    '.m4v',
-    '.mkv',
-    '.mov',
-    '.mp4',
-    '.mpe',
-    '.mpeg',
-    '.mpg',
-    '.mpegts',
-    '.mts',
-    '.mxf',
-    '.ogv',
-    '.qt',
-    '.rm',
-    '.rmvb',
-    '.ts',
-    '.vob',
-    '.webm',
-    '.wmv',
-  };
-  static const _audioExtensions = {
-    '.mp3',
-    '.m4a',
-    '.m4b',
-    '.webma',
-    '.aac',
-    '.amr',
-    '.ogg',
-    '.oga',
-    '.opus',
-    '.flac',
-    '.wav',
-    '.aiff',
-    '.aif',
-    '.alac',
-    '.ape',
-    '.au',
-    '.dff',
-    '.dsf',
-    '.mid',
-    '.midi',
-    '.mpc',
-    '.ra',
-    '.tta',
-    '.voc',
-    '.wma',
-    '.mka',
-    '.wv',
-  };
+  static const _audioExtensions = {...CodecCatalog.audioExtensions, '.m4b'};
   static final _tagAtEnd = RegExp(r'\[([0-9a-f]{8})\](?: - part(?:[2-9]|[1-9][0-9]+))?$');
   static final _subtitleDirectoryTag = RegExp(r'\[([0-9a-f]{8})\](?: - part(?:[2-9]|[1-9][0-9]+))?_subs$');
   static final _subtitleFile = RegExp(r'^\d+\.(srt|ass|vtt|sup|sub)$', caseSensitive: false);
@@ -257,11 +202,11 @@ class OrphanDownloadCleanupService {
     final fileName = segments.last;
     final extension = path.extension(fileName).toLowerCase();
     if (category == 'Movies' && segments.length == 3) {
-      return _videoExtensions.contains(extension) &&
+      return CodecCatalog.videoExtensions.contains(extension) &&
           _extractTag(path.basenameWithoutExtension(fileName)) == candidate.itemTag;
     }
     if (category == 'TV Shows' && segments.length == 4 && _seasonDirectory.hasMatch(segments[2])) {
-      return (_videoExtensions.contains(extension) || extension == '.jpg') &&
+      return (CodecCatalog.videoExtensions.contains(extension) || extension == '.jpg') &&
           _extractTag(path.basenameWithoutExtension(fileName)) == candidate.itemTag;
     }
     if (category == 'Music' && segments.length == 4) {
@@ -329,7 +274,8 @@ class OrphanDownloadCleanupService {
       if (tag == null || state.protectedTags.contains(tag)) continue;
 
       final recognized = switch (category) {
-        _Category.video => _videoExtensions.contains(extension) || (includeThumbnails && extension == '.jpg'),
+        _Category.video =>
+          CodecCatalog.videoExtensions.contains(extension) || (includeThumbnails && extension == '.jpg'),
         _Category.audio => _audioExtensions.contains(extension),
       };
       if (recognized) await state.addCandidate(entity.path, tag);

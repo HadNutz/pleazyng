@@ -204,8 +204,34 @@ void main() {
     expect(RuntimePlaybackCapabilities.mpvVideoContainers, isNot(contains('mkv')));
   });
 
+  test('elementary stream preflight uses the codec-specific native reader', () async {
+    RuntimePlaybackCapabilities.recordMpvDecoders([
+      for (final codec in ['h264', 'hevc', 'av1', 'jpegxl', 'jpegxl_anim']) {'codec': codec, 'driver': codec},
+    ]);
+    RuntimePlaybackCapabilities.recordMpvDemuxers(['h264', 'obu', 'jpegxl_pipe', 'matroska']);
+    expect(await VideoDecodeCapabilities.sourceFormatUnavailable('avc1', null, container: '264'), isFalse);
+    expect(await VideoDecodeCapabilities.sourceFormatUnavailable('h265', null, container: '265'), isTrue);
+    expect(await VideoDecodeCapabilities.sourceFormatUnavailable('h265', null, container: 'mkv'), isFalse);
+    expect(await VideoDecodeCapabilities.sourceFormatUnavailable('av1', null, container: 'obu'), isFalse);
+    expect(await VideoDecodeCapabilities.sourceFormatUnavailable('jpegxl', null, container: 'jxl'), isFalse);
+    expect(await VideoDecodeCapabilities.sourceFormatUnavailable('jpegxl_anim', null, container: 'jxl'), isTrue);
+  });
+
   test('new and legacy media reach source browsing without claiming decode support', () {
-    for (final extension in ['.vvc', '.ivf', '.obu', '.apv', '.jxl', '.nut', '.bik', '.dvr-ms', '.m2t']) {
+    for (final extension in [
+      '.vvc',
+      '.ivf',
+      '.obu',
+      '.apv',
+      '.jxl',
+      '.nut',
+      '.bik',
+      '.dvr-ms',
+      '.m2t',
+      '.mpegts',
+      '.avc',
+      '.h26l',
+    ]) {
       expect(classifySourceFile('sample$extension'), SourceItemKind.video);
     }
     for (final extension in ['.tak', '.tta', '.shn', '.dts', '.truehd', '.aifc']) {

@@ -3678,6 +3678,9 @@ void main() {
       );
       final safStorage = _FakeSafStorage();
       final firstName = storage.getMovieSafFileName(movie, 'mkv');
+      final unrelated = safStorage.addMovieFile(storage, movie, p.setExtension(firstName, '.nfo'));
+      final stackedNote = safStorage.addMovieFile(storage, movie, storage.partFilePath(firstName, 1, 'nfo'));
+      final unstored = safStorage.addMovieFile(storage, movie, storage.partFilePath(firstName, 3, 'MXF'));
       final uris = [
         safStorage.addMovieFile(storage, movie, firstName),
         safStorage.addMovieFile(storage, movie, storage.partFilePath(firstName, 1, 'mkv')),
@@ -3705,6 +3708,9 @@ void main() {
       await manager.deleteDownload(movie.globalKey);
 
       expect(await db.getDownloadedMedia(movie.globalKey), isNull);
+      expect(safStorage.existsSync(unrelated), isTrue);
+      expect(safStorage.existsSync(stackedNote), isTrue);
+      expect(safStorage.existsSync(unstored), isFalse);
       for (final uri in uris) {
         expect(safStorage.existsSync(uri), isFalse, reason: uri);
       }

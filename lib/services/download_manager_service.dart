@@ -15,6 +15,7 @@ import 'package:plezy/utils/media_server_http_client.dart';
 import '../exceptions/media_server_exceptions.dart';
 import '../database/app_database.dart';
 import '../database/download_operations.dart';
+import '../media/codec_catalog.dart';
 import '../media/download_resolution.dart';
 import '../media/media_backend.dart';
 import '../media/media_item.dart';
@@ -212,7 +213,6 @@ class DownloadManagerService {
   static const _nativeRetries = 5;
   static const _defaultAutoRetryDelay = Duration(seconds: 30);
   static const _progressDebounceDelay = Duration(seconds: 2);
-  static const _videoExtensions = {'.mp4', '.ogv', '.mkv', '.m4v', '.avi'};
 
   // Keys currently being paused — prevents holding queue from promoting them
   final Set<String> _pausingKeys = {};
@@ -1891,7 +1891,11 @@ class DownloadManagerService {
     final children = await _safStorage.list(dirUri);
     if (children == null) return null;
     for (final child in children) {
-      if (!child.isDir && path.basenameWithoutExtension(child.name) == baseName) return child;
+      if (!child.isDir &&
+          path.basenameWithoutExtension(child.name) == baseName &&
+          CodecCatalog.videoExtensions.contains(path.extension(child.name).toLowerCase())) {
+        return child;
+      }
     }
     return null;
   }
@@ -4608,7 +4612,7 @@ class DownloadManagerService {
             (e) =>
                 e is File &&
                 path.basenameWithoutExtension(e.path) == baseName &&
-                _videoExtensions.contains(path.extension(e.path).toLowerCase()),
+                CodecCatalog.videoExtensions.contains(path.extension(e.path).toLowerCase()),
           )
           .toList();
 
@@ -4656,7 +4660,7 @@ class DownloadManagerService {
           .where(
             (e) =>
                 e is File &&
-                _videoExtensions.contains(path.extension(e.path).toLowerCase()) &&
+                CodecCatalog.videoExtensions.contains(path.extension(e.path).toLowerCase()) &&
                 _storageService.isPartFileBaseName(firstBaseName, path.basenameWithoutExtension(e.path)),
           )
           .toList();
@@ -4680,6 +4684,7 @@ class DownloadManagerService {
     if (children == null) return;
     for (final child in children) {
       if (!child.isDir &&
+          CodecCatalog.videoExtensions.contains(path.extension(child.name).toLowerCase()) &&
           _storageService.isPartFileBaseName(firstBaseName, path.basenameWithoutExtension(child.name))) {
         await _tryDeleteSaf(child.uri, isDir: false, description: 'SAF stacked video file');
       }

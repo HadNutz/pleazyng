@@ -63,10 +63,10 @@ source. Native webOS, Tizen and ExoPlayer never inherit mpv's inventory.
 
 ## Expanded qualification
 
-The companion producer adds a 48-fixture Linux release corpus covering software
+The companion producer runs a Linux release corpus covering software
 decode and seek, codec bit depths and chroma formats, HLS/DASH VOD, DTS and
 TrueHD PCM, and six text or bitmap subtitle formats. Four passthrough cases
-check software IEC 61937 output. Eight hash-pinned reference vectors cover
+check software IEC 61937 output. Hash-pinned reference vectors cover
 APV, VVC, EVC, AVS2, AVS3 and both JPEG XL forms.
 
 The native manifest at `7aff0ff256b7` pins Linux and Android packages with
@@ -175,8 +175,23 @@ The package SHA-256 is `046e2939689c4d9603951307e233451e16d87890cb004cfcace4864e
 
 The AV2 FFmpeg decoder and IVF/raw OBU demuxers at native revision
 `b2ed619` also cross-compiled and linked for armeabi-v7a, arm64-v8a, x86
-and x86_64 against the pinned Android NDK at API 25. Runtime verification
-on Android hardware is pending.
+and x86_64 against the pinned Android NDK at API 25. The same decoder and both demuxers linked as Windows x64 and ARM64 FFmpeg
+DLLs using LLVM-MinGW 22.1.8. These were cross-builds. Playback on native
+Windows and Android devices remains unverified.
+
+Apple published all six XCFramework variants from revision `85d395c`.
+The Libavcodec archive (SHA-256 `9ee6a5a4f1e1f1fdbbc36d7b6ebc679f475526035c3a6afb9e0f5051d027e61b`)
+contains the JPEG XL and AVS2 decoder wrappers and implementations in all 11
+architecture slices. The hosted iOS and tvOS SwiftPM consumer links passed.
+Apple hardware playback is pending.
+
+All 68 generated playback checks in [the expanded release gate](https://github.com/snapetech-org/mpv-build/commit/e79431f088fedc32455281bb8e5e0abbc6bc196c)
+passed through the same published x86_64 Linux library. This includes DNxHR LB,
+10-bit CineForm, PAL DV, v210, Ut Video, DOSBox recordings, TTA and ADPCM.
+Raw AVC, HEVC, VVC, AVS2/3, EVC, APV, MPEG video and YUV4MPEG server
+profiles now use measured demuxers and matching codecs. JPEG XL still and
+animation have separate demuxer checks. Offline cleanup uses the same file
+extensions as the source browser and retains its item identity and path checks.
 
 AC-4 software qualification covered two implementations. The FFmpeg proposal
 decoded the stereo reference exactly and the short 5.1 stream. Its immersive

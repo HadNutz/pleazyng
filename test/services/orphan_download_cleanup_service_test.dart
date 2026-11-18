@@ -39,6 +39,8 @@ void main() {
 
     await write('Movies/Example Movie (2020)/Example Movie [$orphanTag].mkv', [1, 2, 3]);
     await write('Movies/Transport/Transport [$mpegTsTag].mpegts', [1]);
+    await write('Movies/Transport/Transport [$mpegTsTag] - part2.IVF', [1]);
+    await write('Music/Example Artist/Example Album/03 - Track [$webmaTag].DTSHD', [1]);
     await write('TV Shows/Example Show/Season 01/S01E01 - Pilot [$episodeTag].mp4', [1, 2]);
     await write('TV Shows/Example Show/Season 01/S01E01 - Pilot [$episodeTag].jpg', [1]);
     await write('TV Shows/Example Show/Season 01/S01E01 - Pilot [$episodeTag]_subs/12.srt', [1, 2, 3, 4]);
@@ -60,6 +62,8 @@ void main() {
     expect(scan.files.map((file) => file.relativePath).toSet(), {
       path.join('Movies', 'Example Movie (2020)', 'Example Movie [$orphanTag].mkv'),
       path.join('Movies', 'Transport', 'Transport [$mpegTsTag].mpegts'),
+      path.join('Movies', 'Transport', 'Transport [$mpegTsTag] - part2.IVF'),
+      path.join('Music', 'Example Artist', 'Example Album', '03 - Track [$webmaTag].DTSHD'),
       path.join('TV Shows', 'Example Show', 'Season 01', 'S01E01 - Pilot [$episodeTag].mp4'),
       path.join('TV Shows', 'Example Show', 'Season 01', 'S01E01 - Pilot [$episodeTag].jpg'),
       path.join('TV Shows', 'Example Show', 'Season 01', 'S01E01 - Pilot [$episodeTag]_subs', '12.srt'),
@@ -67,7 +71,7 @@ void main() {
       path.join('TV Shows', 'Example Show', 'Season 01', 'S01E01 - Pilot [$episodeTag] - part10_subs', '12.srt'),
       path.join('Music', 'Example Artist', 'Example Album', '02 - Track [$webmaTag].webma'),
     });
-    expect(scan.totalBytes, 14);
+    expect(scan.totalBytes, 16);
   });
 
   test('rechecks retained tags before deletion', () async {

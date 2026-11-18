@@ -2976,6 +2976,40 @@ void main() {
       expect(ordinary['VideoCodec'], 'h264');
     });
 
+    test('raw video profiles pair each measured demuxer with its codecs', () async {
+      addTearDown(RuntimePlaybackCapabilities.reset);
+      RuntimePlaybackCapabilities.activeVideoEngine = 'mpv';
+      RuntimePlaybackCapabilities.recordMpvDecoders([
+        for (final codec in ['h264', 'hevc', 'evc', 'mjpeg', 'jpegxl', 'jpegxl_anim'])
+          {'codec': codec, 'driver': codec},
+        {'codec': 'av1', 'driver': 'libdav1d'},
+      ]);
+      RuntimePlaybackCapabilities.recordMpvDemuxers(['h264', 'hevc', 'evc', 'obu', 'jpegxl_anim']);
+      late List<dynamic> profiles;
+      final scoped = JellyfinClient.forTesting(
+        connection: _conn(),
+        httpClient: MockClient((request) async {
+          profiles = jsonDecode(request.body)['DeviceProfile']['DirectPlayProfiles'];
+          return jsonResponse({'MediaSources': []});
+        }),
+      );
+      addTearDown(scoped.close);
+      await scoped.getPlaybackInfo('movie');
+      Set<String> codecsFor(String container) => {
+        for (final row in profiles)
+          if ((row['Container'] as String).split(',').contains(container)) ...(row['VideoCodec'] as String).split(','),
+      };
+      expect(codecsFor('264'), {'h264'});
+      expect(codecsFor('hevc'), {'hevc', 'h265'});
+      expect(codecsFor('evc'), {'evc'});
+      expect(codecsFor('jxl'), {'jpegxl_anim'});
+      expect(codecsFor('mjpeg'), isEmpty);
+      expect(codecsFor('obu'), isEmpty);
+      RuntimePlaybackCapabilities.recordMpvDemuxers(['av1', 'obu']);
+      await scoped.getPlaybackInfo('movie');
+      expect(codecsFor('obu'), {'av1'});
+    });
+
     test('video audio negotiation uses measured decoders without claiming output support', () async {
       RuntimePlaybackCapabilities.recordMpvDecoders([
         {'codec': 'h264', 'driver': 'h264'},
