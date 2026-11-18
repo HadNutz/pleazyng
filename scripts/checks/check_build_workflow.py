@@ -110,12 +110,12 @@ require(
 )
 ci_apple_pools = re.findall(r"(?m)^      apple_runner_pool:\n((?:        [^\n]+\n)+)", ci_text)
 require(
-    re.search(r"(?m)^      apple_runner_pool: \$\{\{ inputs\.tvos_runner_pool \}\}$", job("release-ci"))
+    re.search(r"(?m)^      apple_runner_pool: hosted$", job("release-ci"))
     and len(ci_apple_pools) == 2
     and all("        default: hosted\n" in pool for pool in ci_apple_pools)
     and "        type: string\n" in ci_apple_pools[0]
     and "        options: [hosted]\n" in ci_apple_pools[1],
-    "Only the captured release may pass its explicit Apple pool to CI; standalone CI must default to and offer only hosted",
+    "Release CI and standalone CI must use hosted Macs for unsigned Apple validation",
 )
 require(
     "inputs.action == 'release' && 'pleazyng-versioned-release-v2'" in text

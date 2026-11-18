@@ -244,7 +244,7 @@ jobs:
       execution_profile: hybrid
       build_linux_packages: true
       # CI Apple validation is unsigned and always uses hosted Macs.
-      apple_runner_pool: ${{ inputs.tvos_runner_pool }}
+      apple_runner_pool: hosted
 
   freeze-qualified-source:
     name: Freeze qualified source
