@@ -115,7 +115,10 @@ verification, ACBF parsing, attachment restoration and rewind memory limits.
 `python3 scripts/checks/verify_native_media_tools.py --libmpv /path/to/libmpv`
 executes generated commentary pulses before and after seeking, episode/CUE
 slices and one-connection buffered recording against the supplied native build.
-It checks decoded output, not only command acceptance. Physical TV/controller
+`dart scripts/checks/verify_manual_capture_recovery.dart` generates a playable
+transport stream, injects writer/destination/journal faults into the production
+finalizer, checks every surviving byte and decodes its video and audio.
+These checks inspect decoded output, not only command acceptance. Physical TV/controller
 performance still needs device qualification.
 
 The native muxer/filter build changes are in

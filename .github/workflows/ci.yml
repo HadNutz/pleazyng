@@ -251,6 +251,9 @@ jobs:
             echo "No tests found, skipping test execution"
           fi
 
+      - name: Decode fault-injected manual recordings
+        run: dart scripts/checks/verify_manual_capture_recovery.dart
+
       - name: Run TV platform acceptance tests
         run: |
           flutter test --no-pub -j 2 --dart-define=PLEZY_TIZEN=true \
