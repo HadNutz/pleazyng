@@ -136,12 +136,13 @@ finalizer, checks every surviving byte and decodes its video and audio.
 These checks inspect decoded output, not only command acceptance. Physical TV/controller
 performance still needs device qualification.
 
-The native muxer/filter build changes are in
-[mpv-build 31c7da3](https://github.com/snapetech-org/mpv-build/commit/31c7da326fc9975311ff68851d691267ecb810c3).
-The Linux x86-64 artifact from [native build 73](https://github.com/snapetech-org/mpv-build/actions/runs/44227223847)
-passed the decoded commentary, episode, CUE and buffered recording checks.
-The release controller verifies the current producer manifest and pins the
-platform checksums before packaging the app.
+The app pins [native manifest c37a7e3](https://github.com/snapetech-org/mpv-build/commit/c37a7e3aefaf6567dc320f66a0242aa27a844182).
+It records the Apple, Android and Linux artifacts from
+[native build 73](https://github.com/snapetech-org/mpv-build/actions/runs/44227223847)
+and the existing Windows binaries whose build inputs already matched.
+All four groups passed source-key, package-receipt and release-checksum checks.
+The pinned Linux x86-64 archive (`3121c3b78a55`) passed decoded commentary,
+episode, CUE and single-connection buffered recording tests.
 
 ## Upstream sources
 
