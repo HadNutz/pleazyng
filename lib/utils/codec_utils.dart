@@ -1,4 +1,5 @@
 import '../i18n/strings.g.dart';
+import '../media/codec_catalog.dart';
 
 /// Utility class for codec-related operations.
 ///
@@ -151,10 +152,13 @@ class CodecUtils {
     if (lower.startsWith('audio/')) {
       return switch (lower.substring('audio/'.length)) {
         'mp4a-latm' => 'AAC',
-        'mpeg' || 'mpeg-l2' => 'MP3',
+        'mpeg' => 'MP3',
+        'mpeg-l1' => 'MP1',
+        'mpeg-l2' => 'MP2',
         'true-hd' => 'TrueHD',
         'vnd.dts' => 'DTS',
-        'vnd.dts.hd' || 'vnd.dts.hd;profile=lbr' => 'DTS-HD',
+        'vnd.dts.hd' => 'DTS-HD',
+        'vnd.dts.hd;profile=lbr' => 'DTS Express',
         'vnd.dts.uhd;audio=p2' => 'DTS:X',
         'ac3' => 'AC3',
         'eac3' || 'eac3-joc' => 'E-AC3',
@@ -164,17 +168,21 @@ class CodecUtils {
         final rest => formatAudioCodec(rest),
       };
     }
-    // MP4 object types 0x69/0x6B under the mp4a prefix are MPEG layer
-    // audio; every other mp4a object type in the wild is an AAC variant.
-    if (lower == 'mp4a.69' || lower == 'mp4a.6b') return 'MP3';
-    if (lower == 'mp4a' || lower.startsWith('mp4a.')) return 'AAC';
+    if (lower == 'mp4a' || lower == 'mp4a.40') return 'MPEG-4 Audio';
+    if (lower == 'mp4a.69' || lower == 'mp4a.6b') return 'MPEG Audio';
+    if (lower == 'mp4a.40.42') return 'USAC';
+    if (lower.startsWith('mp4a.')) {
+      final identity = CodecCatalog.normalize(lower);
+      return identity == lower ? codec.toUpperCase() : formatAudioCodec(identity);
+    }
     if (lower == 'ac-4' || lower.startsWith('ac-4.')) return 'AC4';
     return switch (lower) {
       'aac' => 'AAC',
       'ac3' || 'ac-3' => 'AC3',
       'eac3' || 'ec3' || 'ec-3' => 'E-AC3',
       'truehd' || 'mlpa' => 'TrueHD',
-      'dts' || 'dca' || 'dtsc' || 'dtse' => 'DTS',
+      'dts' || 'dca' || 'dtsc' => 'DTS',
+      'dtse' => 'DTS Express',
       'dca-ma' => 'DTS-HD MA',
       'dca-hra' => 'DTS-HD HRA',
       'dtshd' || 'dts-hd' || 'dtsh' || 'dtsl' => 'DTS-HD',

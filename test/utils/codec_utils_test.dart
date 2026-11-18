@@ -187,10 +187,18 @@ void main() {
       expect(CodecUtils.formatAudioCodec('MP4A.40.2'), 'AAC');
       expect(CodecUtils.formatAudioCodec('mp4a.40.5'), 'AAC');
       expect(CodecUtils.formatAudioCodec('mp4a.40.29'), 'AAC');
-      expect(CodecUtils.formatAudioCodec('mp4a'), 'AAC');
+      expect(CodecUtils.formatAudioCodec('mp4a'), 'MPEG-4 Audio');
       // MPEG layer audio object types under the mp4a prefix.
-      expect(CodecUtils.formatAudioCodec('mp4a.69'), 'MP3');
-      expect(CodecUtils.formatAudioCodec('mp4a.6B'), 'MP3');
+      expect(CodecUtils.formatAudioCodec('mp4a.69'), 'MPEG Audio');
+      expect(CodecUtils.formatAudioCodec('mp4a.6B'), 'MPEG Audio');
+      expect(CodecUtils.formatAudioCodec('mp4a.40.32'), 'MP1');
+      expect(CodecUtils.formatAudioCodec('mp4a.40.33'), 'MP2');
+      expect(CodecUtils.formatAudioCodec('mp4a.40.34'), 'MP3');
+      expect(CodecUtils.formatAudioCodec('mp4a.40.36'), 'ALS');
+      expect(CodecUtils.formatAudioCodec('mp4a.40.42'), 'USAC');
+      expect(CodecUtils.formatAudioCodec('mp4a.40.99'), 'MP4A.40.99');
+      expect(CodecUtils.formatAudioCodec('audio/mpeg-L1'), 'MP1');
+      expect(CodecUtils.formatAudioCodec('audio/mpeg-L2'), 'MP2');
       // Dolby and DTS sample entry names.
       expect(CodecUtils.formatAudioCodec('ac-3'), 'AC3');
       expect(CodecUtils.formatAudioCodec('ec-3'), 'E-AC3');
@@ -198,7 +206,7 @@ void main() {
       expect(CodecUtils.formatAudioCodec('ac-4.02.01.01'), 'AC4');
       expect(CodecUtils.formatAudioCodec('mlpa'), 'TrueHD');
       expect(CodecUtils.formatAudioCodec('dtsc'), 'DTS');
-      expect(CodecUtils.formatAudioCodec('dtse'), 'DTS');
+      expect(CodecUtils.formatAudioCodec('dtse'), 'DTS Express');
       expect(CodecUtils.formatAudioCodec('dtsh'), 'DTS-HD');
       expect(CodecUtils.formatAudioCodec('dtsl'), 'DTS-HD');
       expect(CodecUtils.formatAudioCodec('dtsx'), 'DTS:X');
@@ -229,7 +237,7 @@ void main() {
       expect(CodecUtils.formatAudioCodec('audio/true-hd'), 'TrueHD');
       expect(CodecUtils.formatAudioCodec('audio/vnd.dts'), 'DTS');
       expect(CodecUtils.formatAudioCodec('audio/vnd.dts.hd'), 'DTS-HD');
-      expect(CodecUtils.formatAudioCodec('audio/vnd.dts.hd;profile=lbr'), 'DTS-HD');
+      expect(CodecUtils.formatAudioCodec('audio/vnd.dts.hd;profile=lbr'), 'DTS Express');
       expect(CodecUtils.formatAudioCodec('audio/vnd.dts.uhd;audio=p2'), 'DTS:X');
       expect(CodecUtils.formatAudioCodec('audio/flac'), 'FLAC');
       expect(CodecUtils.formatAudioCodec('audio/opus'), 'Opus');

@@ -6,6 +6,10 @@ abstract final class CodecCatalog {
   static String normalize(String value) {
     var name = value.trim().toLowerCase();
     if (name.startsWith('video/') || name.startsWith('audio/')) name = name.substring(name.indexOf('/') + 1);
+    if (name.startsWith('mp4a.40.')) {
+      final objectType = _mpeg4AudioObject.firstMatch(name)?.group(1);
+      return _mpeg4AudioCodecs[int.tryParse(objectType ?? '')] ?? name;
+    }
     final dot = name.indexOf('.');
     if (dot > 0 && dot < name.length - 1) {
       final fourcc = name.substring(0, dot);
@@ -17,6 +21,20 @@ abstract final class CodecCatalog {
 
   // AOMedia's AV2 ISOBMFF working draft uses av2e/av2E sample entries.
   static final _av2Profile = RegExp(r'^[0-9a-v]{2}[mh]$');
+
+  // RFC 6381 uses a decimal Audio Object Type after the hexadecimal 40.
+  static final _mpeg4AudioObject = RegExp(r'^mp4a\.40\.([0-9]{1,3})$');
+  static const _mpeg4AudioCodecs = {
+    1: 'aac',
+    2: 'aac',
+    4: 'aac',
+    5: 'aac',
+    29: 'aac',
+    32: 'mp1',
+    33: 'mp2',
+    34: 'mp3',
+    36: 'als',
+  };
 
   static const _profiledSampleEntries = {
     'av01',
@@ -58,6 +76,28 @@ abstract final class CodecCatalog {
     'xvid': 'mpeg4',
     'divx': 'mpeg4',
     'dx50': 'mpeg4',
+    'vc-1': 'vc1',
+    'apco': 'prores',
+    'apcs': 'prores',
+    'apcn': 'prores',
+    'apch': 'prores',
+    'ap4h': 'prores',
+    'ap4x': 'prores',
+    'aprn': 'prores_raw',
+    'aprh': 'prores_raw',
+    'avdn': 'dnxhd',
+    'avdh': 'dnxhd',
+    'dnxhr': 'dnxhd',
+    'jpeg': 'mjpeg',
+    'mjpa': 'mjpeg',
+    'mjpb': 'mjpegb',
+    'mjp2': 'jpeg2000',
+    'samr': 'amr_nb',
+    'sawb': 'amr_wb',
+    'ima4': 'adpcm_ima_qt',
+    'mp4a.66': 'aac',
+    'mp4a.67': 'aac',
+    'mp4a.68': 'aac',
     'wvc1': 'vc1',
     'dca': 'dts',
     'dtsc': 'dts',

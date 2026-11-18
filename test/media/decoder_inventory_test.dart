@@ -243,6 +243,21 @@ void main() {
     expect(classifySourceFile('archive.dat'), SourceItemKind.unknown);
   });
 
+  test('editing and QuickTime codec tags use their corresponding installed decoder', () {
+    RuntimePlaybackCapabilities.recordMpvDecoders([
+      for (final codec in ['prores', 'dnxhd', 'mjpeg', 'jpeg2000']) {'codec': codec, 'driver': codec},
+    ]);
+    for (final tag in ['apch', 'ap4x', 'AVdn', 'AVdh', 'DNxHR', 'mjpa', 'mjp2']) {
+      expect(VideoDecodeCapabilities.sourceDecoderUnavailable(tag), isFalse, reason: tag);
+    }
+    for (final tag in ['aprn', 'aprh', 'mjpb']) {
+      expect(VideoDecodeCapabilities.sourceDecoderUnavailable(tag), isTrue, reason: tag);
+    }
+    expect(CodecCatalog.normalize('mp4a.40.02'), 'aac');
+    expect(CodecCatalog.normalize('mp4a.40.34'), 'mp3');
+    expect(CodecCatalog.normalize('mp4a.40.2trailing'), 'mp4a.40.2trailing');
+  });
+
   test('codec aliases preserve profile-independent identity', () {
     expect(CodecCatalog.normalize('hvc1.2.4.L153.B0'), 'hevc');
     expect(CodecCatalog.normalize('video/x-vnd.on2.vp9'), 'vp9');
