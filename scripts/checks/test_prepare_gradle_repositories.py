@@ -104,9 +104,16 @@ class GradleRepositoryTests(unittest.TestCase):
 
     def test_android_builds_are_observed_without_changing_release_variants(self):
         release = job_block((ROOT / ".github/workflows/build.yml").read_text(), "build-android")
-        self.assertEqual(release.count("scripts/run_android_build.py flutter --verbose build "), 3)
+        self.assertEqual(release.count("scripts/run_android_build.py flutter --verbose build "), 5)
         for flag in ("--split-per-abi", "--dart-define=SUPPORTER_MODE=iap", "--dart-define=AMAZON_STORE=true"):
             self.assertIn(flag, release)
+        for artifact in (
+            "pleazyng-android-play.aab",
+            "pleazyng-amazon-firetv.apk",
+            "pleazyng-automotive-play.aab",
+            "pleazyng-automotive-music.apk",
+        ):
+            self.assertIn(artifact, release)
 
 
 class ObservedAndroidBuildTests(unittest.TestCase):
