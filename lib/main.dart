@@ -1459,7 +1459,9 @@ void _registerAppLicenses() {
   LicenseRegistry.addLicense(() async* {
     yield LicenseEntryWithLineBreaks(const [
       'XEVD (MPEG-5 EVC)',
+      'dav2d (AV2)',
       'davs2 (AVS2)',
+      'libjxl (JPEG XL), Brotli, Highway and Little CMS',
       'uavs3d (AVS3)',
     ], await rootBundle.loadString('assets/licenses/NativeVideoDecoders.txt'));
   });

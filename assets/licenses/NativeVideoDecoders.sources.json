@@ -11,13 +11,38 @@
     "version": "1.7",
     "files": {
       "COPYING": "971f09fd8dedc915472df12845fb7c653563689672fb1a658e28004887ba4a07"
-    }
+    },
+    "additionalSources": [
+      {
+        "commit": "f50435051b72c168c2b566c544e27fcff71ba61a",
+        "version": "1.7-f504350",
+        "url": "https://github.com/saindriches/davs2"
+      }
+    ]
   },
   "uavs3d": {
     "commit": "0e20d2c291853f196c68922a264bcd8471d75b68",
     "version": "1.2",
     "files": {
       "COPYING": "5a8dcb7da222df8a81b6e334000f859248196335e2d28e1db9f3c552827d7cdf"
+    }
+  },
+  "dav2d": {
+    "commit": "79ef921b885e720b25cc6a62e5c67599d9f0fd2b",
+    "version": "0.0.1-79ef921",
+    "files": {
+      "COPYING": "c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b"
+    }
+  },
+  "libjxl": {
+    "commit": "332feb17d17311c748445f7ee75c4fb55cc38530",
+    "version": "0.11.2",
+    "files": {
+      "LICENSE": "8405932022a556380c2d8c272eff154a923feb197233f348ce5f7334fb0a5ede",
+      "LICENSE.brotli": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94",
+      "LICENSE.highway": "43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1",
+      "LICENSE.lcms": "6dbd60437f8ef91d8de1f08ad75882547fd4931bfcc3566a0735f28db1484d31",
+      "PATENTS": "91915f8ae056a68a3c5bdf05d9f6f78bb6903e27a8ca3a8434c9e4ac87300575"
     }
   }
 }

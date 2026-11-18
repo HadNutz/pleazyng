@@ -164,3 +164,24 @@ When the root response lacks the playlist header, its content type or final
 URL chooses DASH or SmoothStreaming, with progressive sniffing for other
 payloads. The retry is limited to once per open. The Android unit tests
 instantiate the actual factories and exercise the HLS parser’s error path.
+
+
+The Linux x86_64 AVS2 Main 10 package from native revision `85d395c`
+passed ten reference cases after publication. These included the 4K 10-bit
+AVS2 broadcast with a seek, the EVC MP4 seek through 23.96 seconds and both
+JPEG XL references. A separate two-track audio CD seek produced stereo PCM.
+The package SHA-256 is `046e2939689c4d9603951307e233451e16d87890cb004cfcace4864ee8690e46`.
+[Native build and publication](https://github.com/snapetech-org/mpv-build/actions/runs/44198900192).
+
+The AV2 FFmpeg decoder and IVF/raw OBU demuxers at native revision
+`b2ed619` also cross-compiled and linked for armeabi-v7a, arm64-v8a, x86
+and x86_64 against the pinned Android NDK at API 25. Runtime verification
+on Android hardware is pending.
+
+AC-4 software qualification covered two implementations. The FFmpeg proposal
+decoded the stereo reference exactly and the short 5.1 stream. Its immersive
+transport stream produced no PCM and its 5.1.4 MP4 failed during playback.
+The alternate decoder emitted PCM for that MP4 but lost audio on the immersive
+transport stream and aborted on the immersive raw sample. These builds keep
+the available platform or server route for AC-4.
+[FFmpeg decoder proposal](https://code.ffmpeg.org/FFmpeg/FFmpeg/pulls/25444).
