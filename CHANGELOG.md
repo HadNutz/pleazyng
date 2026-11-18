@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Restore CarPlay build validation for the expanded browsing and playback controls.
+
 - Show the CUE export filename in its tooltip and a translated error when saving an episode boundary fails.
 
 - Keep App Icon directly below Theme and allow playback reloads when no profile is available for restoring external audio.
