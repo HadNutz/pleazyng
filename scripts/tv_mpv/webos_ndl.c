@@ -105,6 +105,11 @@ PUBLIC void mpv_pleazyng_ndl_release(void)
 
 PUBLIC int mpv_pleazyng_ndl_status(void) { return atomic_load(&status); }
 
+// AVC and HEVC allow up to 16 reordered pictures. Only a stream without
+// decode timestamps needs lookahead. The device still sees packets in their
+// original order with their original PTS, including on variable-rate video.
+enum { PACING_WINDOW = 17 };
+
 struct decoder {
     struct mp_decoder public;
     struct mp_codec_params *codec;
@@ -112,6 +117,10 @@ struct decoder {
     int source;
     NDL_DIRECTVIDEO_HDR_INFO_T hdr;
     bool hdr_enabled;
+    bool presentation_clock, draining;
+    int pending;
+    struct mp_image *packets[PACING_WINDOW];
+    double times[PACING_WINDOW];
 };
 
 static const struct {const char *name; int source; const char *filter;} formats[] = {
@@ -153,13 +162,41 @@ static void update_metadata(NDL_DIRECTVIDEO_HDR_INFO_T *hdr, const AVPacketSideD
 }
 static void free_packet(void *p) { AVPacket *pkt = p; av_packet_free(&pkt); }
 
+static void emit_paced_packet(struct mp_filter *f)
+{
+    struct decoder *d = f->priv;
+    int earliest = 0;
+    for (int i = 1; i < d->pending; ++i) {
+        if (d->times[i] < d->times[earliest]) earliest = i;
+    }
+    struct mp_image *out = d->packets[0];
+    out->pts = out->dts = d->times[earliest];
+    d->times[earliest] = d->times[--d->pending];
+    memmove(d->packets, d->packets + 1, d->pending * sizeof(d->packets[0]));
+    mp_pin_in_write(f->ppins[1], MAKE_FRAME(MP_FRAME_VIDEO, out));
+}
+
 static void process(struct mp_filter *f)
 {
     struct decoder *d = f->priv;
+    if (d->draining && mp_pin_in_needs_data(f->ppins[1])) {
+        if (d->pending) {
+            emit_paced_packet(f);
+        } else {
+            d->draining = false;
+            mp_pin_in_write(f->ppins[1], MP_EOF_FRAME);
+        }
+        return;
+    }
     if (!mp_pin_can_transfer_data(f->ppins[1], f->ppins[0])) return;
     struct mp_frame in = mp_pin_out_read(f->ppins[0]);
     if (in.type == MP_FRAME_EOF) {
-        mp_pin_in_write(f->ppins[1], in);
+        if (d->pending) {
+            d->draining = true;
+            emit_paced_packet(f);
+        } else {
+            mp_pin_in_write(f->ppins[1], in);
+        }
         return;
     }
     if (in.type != MP_FRAME_PACKET) { mp_frame_unref(&in); return; }
@@ -173,7 +210,12 @@ static void process(struct mp_filter *f)
     mp_image_set_size(&img, d->codec->disp_w, d->codec->disp_h);
     // Feed the device in decode order. The hardware receives the original PTS
     // separately and reorders B pictures. mpv paces access units on its clock.
-    img.dts = img.pts = src->dts == MP_NOPTS_VALUE ? src->pts : src->dts;
+    if (src->dts == MP_NOPTS_VALUE && src->pts != MP_NOPTS_VALUE && !d->codec->avi_dts &&
+        (d->source == NDL_DIRECTVIDEO_SRC_TYPE_H264 || d->source == NDL_DIRECTVIDEO_SRC_TYPE_HEVC))
+        d->presentation_clock = true;
+    bool pace_by_pts = src->dts == MP_NOPTS_VALUE ||
+                       (d->presentation_clock && src->pts != MP_NOPTS_VALUE);
+    img.pts = img.dts = pace_by_pts ? src->pts : src->dts;
     img.pkt_duration = src->duration;
     img.params.p_w = MPMAX(1, d->codec->par_w);
     img.params.p_h = MPMAX(1, d->codec->par_h);
@@ -199,7 +241,17 @@ static void process(struct mp_filter *f)
     img.planes[1] = (uint8_t *)(uintptr_t)d->source;
     struct mp_image *out = mp_image_new_custom_ref(&img, pkt, free_packet);
     if (!out) return; // the reference constructor releases pkt
-    mp_pin_in_write(f->ppins[1], MAKE_FRAME(MP_FRAME_VIDEO, out));
+    if (d->presentation_clock) {
+        d->packets[d->pending] = out;
+        d->times[d->pending++] = out->pts;
+        if (d->pending == PACING_WINDOW) {
+            emit_paced_packet(f);
+        } else {
+            mp_filter_internal_mark_progress(f);
+        }
+    } else {
+        mp_pin_in_write(f->ppins[1], MAKE_FRAME(MP_FRAME_VIDEO, out));
+    }
     return;
 fail:
     av_packet_free(&pkt);
@@ -210,12 +262,16 @@ fail:
 static void reset(struct mp_filter *f)
 {
     struct decoder *d = f->priv;
+    for (int i = 0; i < d->pending; ++i) talloc_free(d->packets[i]);
+    d->pending = 0;
+    d->presentation_clock = d->draining = false;
     if (d->bsf) av_bsf_flush(d->bsf);
 }
 
 static void destroy(struct mp_filter *f)
 {
     struct decoder *d = f->priv;
+    reset(f);
     av_bsf_free(&d->bsf);
 }
 
@@ -233,6 +289,7 @@ static struct mp_decoder *create(struct mp_filter *parent, struct mp_codec_param
         struct mp_filter *f = mp_filter_create(parent, &filter);
         struct decoder *d = f->priv;
         d->public.f = f;
+        d->public.preserve_missing_dts = true;
         d->codec = codec;
         d->source = formats[i].source;
         const AVBitStreamFilter *bsf = av_bsf_get_by_name(formats[i].filter);

@@ -22,6 +22,12 @@ def integrate(tree):
     replace("video/out/vo.c", "extern const struct vo_driver video_out_null;",
             "extern const struct vo_driver video_out_webos_ndl;\nextern const struct vo_driver video_out_null;")
     replace("video/out/vo.c", "    &video_out_null,", "    &video_out_null,\n    &video_out_webos_ndl,")
+    # Compressed passthrough must distinguish real decode timestamps from
+    # the presentation timestamps supplied for conventional decoders.
+    replace("filters/f_decoder_wrapper.h", "    // Can be set by decoder impl.",
+            "    bool preserve_missing_dts;\n\n    // Can be set by decoder impl.")
+    replace("filters/f_decoder_wrapper.c", "&& !p->codec->avi_dts)",
+            "&& !p->codec->avi_dts && !p->decoder->preserve_missing_dts)")
     replace("filters/f_decoder_wrapper.c", "        fallback = \"h264\";", """        fallback = "h264";
         if (user_list && !strcmp(user_list, "webos-ndl")) {
             extern const struct mp_decoder_fns vd_webos_ndl;
