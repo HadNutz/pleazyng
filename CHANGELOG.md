@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Fetch the pinned Linux ONNX Runtime SDK and runtime from Microsoft’s NuGet package.
+
 - Fix the native source formatting check that blocked the 3.0.38 release build.
 
 - Prefer compatible hardware video decoders on every platform. ExoPlayer and GStreamer keep software fallback available, and playback statistics report the decoder observed for the stream.

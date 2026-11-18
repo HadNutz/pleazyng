@@ -56,32 +56,30 @@ endif()
 # mode keeps the official API-v27 SDK for compilation but stages AMD's pinned
 # ORT 1.23 runtime and built-in provider from the matching ROCm wheel.
 if(UNIX AND NOT APPLE)
-  if(FLUTTER_TARGET_PLATFORM STREQUAL "linux-arm64")
+  if(FLUTTER_TARGET_PLATFORM STREQUAL "linux-arm64" OR
+      (NOT FLUTTER_TARGET_PLATFORM AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$"))
     set(PLEZY_ORT_PLATFORM "linux-aarch64")
-    set(PLEZY_ORT_SHA256 "33c67e33d1e25b816878366ea276589a024f71f000e7ff955c4b33224d639edd")
-  elseif(FLUTTER_TARGET_PLATFORM STREQUAL "linux-x64")
+    set(PLEZY_ORT_NUGET_RID "linux-arm64")
+  elseif(FLUTTER_TARGET_PLATFORM STREQUAL "linux-x64" OR
+      (NOT FLUTTER_TARGET_PLATFORM AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64)$"))
     set(PLEZY_ORT_PLATFORM "linux-x64")
-    set(PLEZY_ORT_SHA256 "25b1ef1fea1acd210d63f8f24dc870ad6e077795ce1f54876252c6d3803c15af")
-  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$")
-    set(PLEZY_ORT_PLATFORM "linux-aarch64")
-    set(PLEZY_ORT_SHA256 "33c67e33d1e25b816878366ea276589a024f71f000e7ff955c4b33224d639edd")
-  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64)$")
-    set(PLEZY_ORT_PLATFORM "linux-x64")
-    set(PLEZY_ORT_SHA256 "25b1ef1fea1acd210d63f8f24dc870ad6e077795ce1f54876252c6d3803c15af")
+    set(PLEZY_ORT_NUGET_RID "linux-x64")
   else()
     message(FATAL_ERROR "No pinned ONNX Runtime package for Linux target '${FLUTTER_TARGET_PLATFORM}' (${CMAKE_SYSTEM_PROCESSOR})")
   endif()
 endif()
 
 if(UNIX AND NOT APPLE AND NOT ONNXRUNTIME_ROOT)
+  # Microsoft's NuGet distribution includes the native SDK, both Linux
+  # runtimes and their redistribution notices in one versioned package.
   set(PLEZY_ORT_VERSION "1.27.1")
-  set(PLEZY_ORT_ARCHIVE_NAME "onnxruntime-${PLEZY_ORT_PLATFORM}-${PLEZY_ORT_VERSION}.tgz")
+  set(PLEZY_ORT_SHA256 "9359e46eba4482ded00e678c98f22b68f51bb411d7934f5516d64050edfa3383")
   set(PLEZY_ORT_CACHE_DIR "${CMAKE_BINARY_DIR}/onnxruntime/${PLEZY_ORT_VERSION}")
-  set(PLEZY_ORT_DOWNLOAD_DIR "${PLEZY_ORT_CACHE_DIR}/downloads")
-  set(PLEZY_ORT_EXTRACT_DIR "${PLEZY_ORT_CACHE_DIR}/sdk")
-  set(PLEZY_ORT_ROOT "${PLEZY_ORT_EXTRACT_DIR}/onnxruntime-${PLEZY_ORT_PLATFORM}-${PLEZY_ORT_VERSION}")
-  set(PLEZY_ORT_ARCHIVE "${PLEZY_ORT_DOWNLOAD_DIR}/${PLEZY_ORT_ARCHIVE_NAME}")
-  file(MAKE_DIRECTORY "${PLEZY_ORT_DOWNLOAD_DIR}" "${PLEZY_ORT_EXTRACT_DIR}")
+  set(PLEZY_ORT_ARCHIVE_NAME "microsoft.ml.onnxruntime.${PLEZY_ORT_VERSION}.nupkg")
+  set(PLEZY_ORT_ARCHIVE "${PLEZY_ORT_CACHE_DIR}/downloads/${PLEZY_ORT_ARCHIVE_NAME}")
+  set(PLEZY_ORT_SOURCE_DIR "${PLEZY_ORT_CACHE_DIR}/nuget")
+  set(PLEZY_ORT_ROOT "${PLEZY_ORT_CACHE_DIR}/sdk/${PLEZY_ORT_NUGET_RID}-nuget")
+  file(MAKE_DIRECTORY "${PLEZY_ORT_CACHE_DIR}/downloads")
 
   if(EXISTS "${PLEZY_ORT_ARCHIVE}")
     file(SHA256 "${PLEZY_ORT_ARCHIVE}" PLEZY_ORT_CACHED_SHA256)
@@ -90,28 +88,36 @@ if(UNIX AND NOT APPLE AND NOT ONNXRUNTIME_ROOT)
     endif()
   endif()
   if(NOT EXISTS "${PLEZY_ORT_ARCHIVE}")
-    message(STATUS "Downloading pinned ONNX Runtime ${PLEZY_ORT_VERSION} for ${PLEZY_ORT_PLATFORM}")
+    message(STATUS "Downloading pinned Microsoft.ML.OnnxRuntime ${PLEZY_ORT_VERSION}")
     file(DOWNLOAD
-      "https://github.com/microsoft/onnxruntime/releases/download/v${PLEZY_ORT_VERSION}/${PLEZY_ORT_ARCHIVE_NAME}"
+      "https://api.nuget.org/v3-flatcontainer/microsoft.ml.onnxruntime/${PLEZY_ORT_VERSION}/${PLEZY_ORT_ARCHIVE_NAME}"
       "${PLEZY_ORT_ARCHIVE}"
       EXPECTED_HASH "SHA256=${PLEZY_ORT_SHA256}"
-      STATUS PLEZY_ORT_DOWNLOAD_STATUS
+      TLS_VERIFY ON
     )
-    list(GET PLEZY_ORT_DOWNLOAD_STATUS 0 PLEZY_ORT_DOWNLOAD_RESULT)
-    if(NOT PLEZY_ORT_DOWNLOAD_RESULT EQUAL 0)
-      file(REMOVE "${PLEZY_ORT_ARCHIVE}")
-      message(FATAL_ERROR "Could not download the verified ONNX Runtime package: ${PLEZY_ORT_DOWNLOAD_STATUS}")
-    endif()
   endif()
-  if(NOT EXISTS "${PLEZY_ORT_ROOT}/include/onnxruntime_c_api.h")
+
+  if(NOT EXISTS "${PLEZY_ORT_ROOT}/lib/libonnxruntime.so")
+    set(PLEZY_ORT_NATIVE_PATH "runtimes/${PLEZY_ORT_NUGET_RID}/native")
+    file(MAKE_DIRECTORY "${PLEZY_ORT_SOURCE_DIR}" "${PLEZY_ORT_ROOT}/lib")
     execute_process(
-      COMMAND "${CMAKE_COMMAND}" -E tar xzf "${PLEZY_ORT_ARCHIVE}"
-      WORKING_DIRECTORY "${PLEZY_ORT_EXTRACT_DIR}"
+      COMMAND "${CMAKE_COMMAND}" -E tar xf "${PLEZY_ORT_ARCHIVE}" --
+        build/native/include "${PLEZY_ORT_NATIVE_PATH}" LICENSE ThirdPartyNotices.txt
+      WORKING_DIRECTORY "${PLEZY_ORT_SOURCE_DIR}"
       RESULT_VARIABLE PLEZY_ORT_EXTRACT_RESULT
     )
-    if(NOT PLEZY_ORT_EXTRACT_RESULT EQUAL 0 OR NOT EXISTS "${PLEZY_ORT_ROOT}/include/onnxruntime_c_api.h")
+    if(NOT PLEZY_ORT_EXTRACT_RESULT EQUAL 0)
       message(FATAL_ERROR "Could not extract the pinned ONNX Runtime SDK")
     endif()
+    file(COPY "${PLEZY_ORT_SOURCE_DIR}/build/native/include"
+      "${PLEZY_ORT_SOURCE_DIR}/LICENSE" "${PLEZY_ORT_SOURCE_DIR}/ThirdPartyNotices.txt"
+      DESTINATION "${PLEZY_ORT_ROOT}")
+    file(COPY "${PLEZY_ORT_SOURCE_DIR}/${PLEZY_ORT_NATIVE_PATH}/libonnxruntime_providers_shared.so"
+      DESTINATION "${PLEZY_ORT_ROOT}/lib")
+    configure_file("${PLEZY_ORT_SOURCE_DIR}/${PLEZY_ORT_NATIVE_PATH}/libonnxruntime.so"
+      "${PLEZY_ORT_ROOT}/lib/libonnxruntime.so.${PLEZY_ORT_VERSION}" COPYONLY)
+    file(CREATE_LINK "libonnxruntime.so.${PLEZY_ORT_VERSION}" "${PLEZY_ORT_ROOT}/lib/libonnxruntime.so.1" SYMBOLIC)
+    file(CREATE_LINK "libonnxruntime.so.1" "${PLEZY_ORT_ROOT}/lib/libonnxruntime.so" SYMBOLIC)
   endif()
   set(ONNXRUNTIME_ROOT "${PLEZY_ORT_ROOT}")
   if(NOT PME_ORT_RUNTIME_USER_SUPPLIED AND NOT PLEZY_ORT_LINUX_VARIANT STREQUAL "amd-migraphx")
