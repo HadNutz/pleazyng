@@ -846,8 +846,6 @@ class _Translations$settings$ko extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => '중앙 채널에서 대화를 높이면 주변 오디오가 스테레오로 혼합됩니다.';
 	@override String get displaySwitchDelayDescription => '디스플레이 모드를 변경하기 전에 TV 또는 수신기가 이전 스위치를 완료 할 수 있도록 기다리십시오.';
 	@override String get playerBackendDescription => '어떤 재생 엔진이 이 장치에서 비디오를 해독하고 회전하는지 선택합니다.';
-	@override String get exoPlayerDescription => '안드로이드의 원주민 Media3 기반 플레이어와 지원되는 하드웨어 경로를 사용하십시오.';
-	@override String get mpvDescription => 'MPV를 사용하여 추가 재생, 하위 제목 및 비디오 처리 컨트롤을 표시합니다.';
 	@override String get scopeOffDescription => '현재 플레이백 세션에 대한 변경 사항만 유지합니다.';
 	@override String get scopeGlobalDescription => '각 도서관 및 제목에 대해 동일한 가치를 다시 사용합니다.';
 	@override String get scopeLibraryDescription => '각 도서관에 대한 별도의 가치를 기억하십시오.';
@@ -2626,7 +2624,6 @@ class _Translations$performanceOverlay$ko extends Translations$performanceOverla
 	@override String get memory => '메모리';
 	@override String get uiFps => 'UI FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm HW';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6294,8 +6291,6 @@ extension on TranslationsKo {
 			'settings.downmixCenterBoostDescription' => '중앙 채널에서 대화를 높이면 주변 오디오가 스테레오로 혼합됩니다.',
 			'settings.displaySwitchDelayDescription' => '디스플레이 모드를 변경하기 전에 TV 또는 수신기가 이전 스위치를 완료 할 수 있도록 기다리십시오.',
 			'settings.playerBackendDescription' => '어떤 재생 엔진이 이 장치에서 비디오를 해독하고 회전하는지 선택합니다.',
-			'settings.exoPlayerDescription' => '안드로이드의 원주민 Media3 기반 플레이어와 지원되는 하드웨어 경로를 사용하십시오.',
-			'settings.mpvDescription' => 'MPV를 사용하여 추가 재생, 하위 제목 및 비디오 처리 컨트롤을 표시합니다.',
 			'settings.scopeOffDescription' => '현재 플레이백 세션에 대한 변경 사항만 유지합니다.',
 			'settings.scopeGlobalDescription' => '각 도서관 및 제목에 대해 동일한 가치를 다시 사용합니다.',
 			'settings.scopeLibraryDescription' => '각 도서관에 대한 별도의 가치를 기억하십시오.',
@@ -6641,10 +6636,10 @@ extension on TranslationsKo {
 			'videoControls.sleepTimerDurationHeader' => '타이머',
 			'videoControls.playbackWillPauseAtEnd' => '재생이 이 비디오의 끝에서 일시 중지됩니다',
 			'videoControls.stillWatching' => '아직 시청 중이신가요?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds}초 후 일시 정지',
 			'videoControls.continueWatching' => '계속',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => '다음 자동 재생',
 			'videoControls.playNext' => '다음 재생',
 			'videoControls.playButton' => '재생',
@@ -7155,10 +7150,10 @@ extension on TranslationsKo {
 			'libraries.playRandomMovie' => '우연한 영화를 재생합니다.',
 			'libraries.randomPickFailed' => '이 도서관에서 우연한 영화를 선택할 수 없습니다.',
 			'libraries.title' => '미디어 라이브러리',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => '라이브러리',
 			'libraries.scanLibraryFiles' => '미디어 라이브러리 파일 스캔',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => '미디어 라이브러리 스캔',
 			'libraries.analyze' => '분석',
 			'libraries.analyzeLibrary' => '미디어 라이브러리 분석',
@@ -7669,10 +7664,10 @@ extension on TranslationsKo {
 			'music.instantMix' => '인스턴트 믹스',
 			'music.playNext' => '다음에 재생',
 			'music.addToQueue' => '대기열에 추가',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => '디스크 ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} 트랙', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)}곡', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => '재생 중',
 			'music.playingFrom' => ({required Object title}) => '${title}에서 재생 중',
 			'music.queue' => '재생 대기열',
@@ -8183,11 +8178,10 @@ extension on TranslationsKo {
 			'performanceOverlay.memory' => '메모리',
 			'performanceOverlay.uiFps' => 'UI FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => '소프트웨어',
@@ -8697,11 +8691,11 @@ extension on TranslationsKo {
 			'homeLayout.noCustomRows' => '아직 흔적이 없음',
 			'homeLayout.addRowHint' => 'Home 라인을 추가하여 하나를 만들 수 있습니다.',
 			'homeLayout.addHomeRow' => 'Home 라인 추가',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => '카테고리를 선택; 새 라인은 자동으로 조직에 추가됩니다.',
 			'homeLayout.removeRow' => '라인 삭제',
 			'homeLayout.recentlyAdded' => '최근에 추가됨',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => '최근에 출시된',
 			'homeLayout.movieCollections' => '영화 컬렉션',
 			'homeLayout.showCollections' => '컬렉션 보기',
@@ -9211,11 +9205,11 @@ extension on TranslationsKo {
 			'sourceSetup.dlnaHelp' => '장치를 찾으려면 로컬 네트워크의 멀티캐스트가 필요합니다. 서버가 나타나지 않으면 위에 장치 설명 URL을 입력하세요.',
 			'sourceSetup.dlnaRoot' => 'DLNA 개체 ID입니다. 비워 두면 장치의 루트를 사용합니다.',
 			'sourceSetup.passwordOrKey' => '비밀번호를 입력하거나 아래에 개인 키를 추가하세요.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SSH 호스트 키의 SHA256 지문',
 			'sourceSetup.sshFingerprintHelp' => '서버 관리자에게 확인하세요. 서버에서 ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub 명령을 실행하고 표시된 SHA256 값을 사용하세요.',
 			'sourceSetup.sshFingerprintKeep' => '현재 고정된 지문을 유지하려면 비워 두세요. 변경하려면 새 서버 지문을 입력하세요.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH 공개 키 인증',
 			'sourceSetup.sshAuthenticationHelp' => '선택 사항입니다. 비밀번호 인증도 지원합니다.',
 			'sourceSetup.privateKey' => '개인 키(PEM 또는 OpenSSH 형식)',
@@ -9725,11 +9719,11 @@ extension on TranslationsKo {
 			'musicTools.pinToHome' => '음악 홈에 고정',
 			'musicTools.unpin' => '고정 해제',
 			'musicTools.serverAnalysis' => '서버 분석',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => '음향 분석',
 			'musicTools.serverAnalysisScope' => '이 서버에서 분석 가능한 모든 음악 라이브러리에 적용됩니다. 분석 설정은 변경되지 않습니다.',
 			'musicTools.serverActivities' => '서버 작업',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => '재생목록 접근',
 			'musicTools.playlistRecipient' => 'Plex 사용자 이름 또는 이메일',
 			'musicTools.playlistSharingHint' => '이 재생목록과 트랙에 대한 접근을 허용합니다. 수신자가 초대를 수락해야 할 수 있습니다.',

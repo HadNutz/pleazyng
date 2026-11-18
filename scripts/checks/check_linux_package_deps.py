@@ -34,6 +34,16 @@ RUNTIME_PACKAGES = {
     "gtk+-3.0": {"deb": "libgtk-3-0", "rpm": "gtk3", "pacman": "gtk3"},
     "libsecret-1": {"deb": "libsecret-1-0", "rpm": "libsecret", "pacman": "libsecret"},
     "webkit2gtk-4.1": {"deb": "libwebkit2gtk-4.1-0", "rpm": "webkit2gtk4.1", "pacman": "webkit2gtk-4.1"},
+    "gstreamer-app-1.0": {
+        "deb": "libgstreamer-plugins-base1.0-0",
+        "rpm": "gstreamer1-plugins-base",
+        "pacman": "gst-plugins-base-libs",
+    },
+    "gstreamer-video-1.0": {
+        "deb": "libgstreamer-plugins-base1.0-0",
+        "rpm": "gstreamer1-plugins-base",
+        "pacman": "gst-plugins-base-libs",
+    },
     "epoxy": {"deb": "libepoxy0", "rpm": "libepoxy", "pacman": "libepoxy"},
     # Reached through the `flutter` INTERFACE target.
     "glib-2.0": {"deb": "libglib2.0-0", "rpm": "glib2", "pacman": "glib2"},

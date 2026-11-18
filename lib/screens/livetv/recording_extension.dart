@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:plezy/widgets/app_icon.dart';
 import 'package:provider/provider.dart';
 
 import '../../i18n/strings.g.dart';
@@ -45,12 +47,12 @@ class LiveRecordingExtension extends StatelessWidget {
         final extension = schedules.length == 1
             ? IconButton(
                 tooltip: t.viewing.extendRecording,
-                icon: const Icon(Icons.more_time, color: Colors.white),
+                icon: const AppIcon(Symbols.more_time_rounded, color: Colors.white),
                 onPressed: () => extendIptvRecording(context, schedules.single),
               )
             : PopupMenuButton<IptvLocalRecordingSchedule>(
                 tooltip: t.viewing.extendRecording,
-                icon: const Icon(Icons.more_time, color: Colors.white),
+                icon: const AppIcon(Symbols.more_time_rounded, color: Colors.white),
                 onSelected: (schedule) => extendIptvRecording(context, schedule),
                 itemBuilder: (_) => [
                   for (final s in schedules)

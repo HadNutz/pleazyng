@@ -851,8 +851,6 @@ class Translations$settings$fr extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Augmentez le dialogue dans le canal central lorsque l\'audio environnante est mélangée vers le stéréo.';
 	@override String get displaySwitchDelayDescription => 'Attendre avant de changer le mode d\'affichage afin que la télévision ou le récepteur puisse terminer son précédent interrupteur.';
 	@override String get playerBackendDescription => 'Choisissez le moteur de lecture qui découvre et rend la vidéo sur cet appareil.';
-	@override String get exoPlayerDescription => 'Utilisez le lecteur natif Media3 d\'Android et les voies matérielles soutenues.';
-	@override String get mpvDescription => 'Utilisez mpv, qui expose des contrôles de lecture supplémentaires, sous-titres et traitement vidéo.';
 	@override String get scopeOffDescription => 'Remplacer les changements pour la session actuelle de reprise uniquement.';
 	@override String get scopeGlobalDescription => 'Réutiliser la même valeur pour chaque bibliothèque et titre.';
 	@override String get scopeLibraryDescription => 'Rappelez-vous une valeur distincte pour chaque bibliothèque.';
@@ -2647,7 +2645,6 @@ class Translations$performanceOverlay$fr extends Translations$performanceOverlay
 	@override String get memory => 'Mémoire';
 	@override String get uiFps => 'FPS UI';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Matériel Android';
 	@override String get decoderNvidiaHw => 'Matériel NVIDIA';
 	@override String get decoderQualcommHw => 'Matériel Qualcomm';
 	@override String get decoderMediatekHw => 'Matériel MediaTek';
@@ -6343,8 +6340,6 @@ extension on TranslationsFr {
 			'settings.downmixCenterBoostDescription' => 'Augmentez le dialogue dans le canal central lorsque l\'audio environnante est mélangée vers le stéréo.',
 			'settings.displaySwitchDelayDescription' => 'Attendre avant de changer le mode d\'affichage afin que la télévision ou le récepteur puisse terminer son précédent interrupteur.',
 			'settings.playerBackendDescription' => 'Choisissez le moteur de lecture qui découvre et rend la vidéo sur cet appareil.',
-			'settings.exoPlayerDescription' => 'Utilisez le lecteur natif Media3 d\'Android et les voies matérielles soutenues.',
-			'settings.mpvDescription' => 'Utilisez mpv, qui expose des contrôles de lecture supplémentaires, sous-titres et traitement vidéo.',
 			'settings.scopeOffDescription' => 'Remplacer les changements pour la session actuelle de reprise uniquement.',
 			'settings.scopeGlobalDescription' => 'Réutiliser la même valeur pour chaque bibliothèque et titre.',
 			'settings.scopeLibraryDescription' => 'Rappelez-vous une valeur distincte pour chaque bibliothèque.',
@@ -6690,10 +6685,10 @@ extension on TranslationsFr {
 			'videoControls.sleepTimerDurationHeader' => 'Minuterie',
 			'videoControls.playbackWillPauseAtEnd' => 'La lecture sera mise en pause à la fin de cette vidéo',
 			'videoControls.stillWatching' => 'Toujours en train de regarder ?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pause dans ${seconds}s',
 			'videoControls.continueWatching' => 'Continuer',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Lecture automatique de l’élément suivant',
 			'videoControls.playNext' => 'Lire l\'épisode suivant',
 			'videoControls.playButton' => 'Lire',
@@ -7204,10 +7199,10 @@ extension on TranslationsFr {
 			'errors.reasonTimedOut' => 'le délai d\'attente de la connexion a été dépassé',
 			'errors.reasonUnreachable' => 'le serveur n\'a pas pu être atteint',
 			'errors.reasonRefused' => 'le serveur a refusé la requête',
-			_ => null,
-		} ?? switch (path) {
 			'errors.reasonNotFound' => 'l\'élément ne se trouve plus sur le serveur',
 			'errors.reasonServerError' => 'le serveur a signalé une erreur',
+			_ => null,
+		} ?? switch (path) {
 			'errors.reasonCancelled' => 'la requête a été annulée',
 			'errors.reasonUnexpected' => 'une erreur inattendue s\'est produite',
 			'libraries.playRandomMovie' => 'Jouer un film aléatoire',
@@ -7718,10 +7713,10 @@ extension on TranslationsFr {
 			'playlists.errorDeleting' => 'Échec de la suppression de la playlist',
 			'playlists.errorLoading' => 'Échec du chargement des playlists',
 			'playlists.errorAdding' => 'Échec de l’ajout à la playlist',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.errorReordering' => 'Échec de la réorganisation de l’élément de la playlist',
 			'playlists.errorRemoving' => 'Échec du retrait de l’élément de la playlist',
+			_ => null,
+		} ?? switch (path) {
 			'music.goToAlbum' => 'Aller à l\'album',
 			'music.goToArtist' => 'Aller à l\'artiste',
 			'music.instantMix' => 'Mix instantané',
@@ -8232,16 +8227,15 @@ extension on TranslationsFr {
 			'performanceOverlay.maxCll' => 'MaxCLL',
 			'performanceOverlay.maxFall' => 'MaxFALL',
 			'performanceOverlay.cacheUsed' => 'Cache utilisé',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.cacheLimit' => 'Limite du cache',
 			'performanceOverlay.speed' => 'Vitesse',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.player' => 'Lecteur',
 			'performanceOverlay.playMethod' => 'Le jeu méthode',
 			'performanceOverlay.memory' => 'Mémoire',
 			'performanceOverlay.uiFps' => 'FPS UI',
 			'performanceOverlay.fps' => 'FPS',
-			'performanceOverlay.decoderAndroidHw' => 'Matériel Android',
 			'performanceOverlay.decoderNvidiaHw' => 'Matériel NVIDIA',
 			'performanceOverlay.decoderQualcommHw' => 'Matériel Qualcomm',
 			'performanceOverlay.decoderMediatekHw' => 'Matériel MediaTek',
@@ -8746,11 +8740,11 @@ extension on TranslationsFr {
 			'homeLayout.tvPlayFocusDescription' => 'D-pad descendre s\'arrête sur le bouton Play avant de se déplacer à la prochaine ligne.',
 			'homeLayout.tvWrap' => 'TV Remote : cartes de la bande-annonce',
 			'homeLayout.tvWrapDescription' => 'Ensuite, le dernier passe à la première carte, le dernier se passe à la dernière carte, le premier passe toujours à la barre.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.castOnHero' => 'Les Banner Hero',
 			'homeLayout.castOnHeroDescription' => 'Affiche le cast le long du fond d\'un banner héros. Off ne tient que le titre et le résumé.',
 			'homeLayout.customRows' => 'Ronde de Custom',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.loading' => 'La mise à jour de la maison...',
 			'homeLayout.noCustomRows' => 'Pas de coutures encore',
 			'homeLayout.addRowHint' => 'Utilisez Add Home row pour créer un.',
@@ -9260,11 +9254,11 @@ extension on TranslationsFr {
 			'sourceSetup.bookorbitDetailHelp' => 'Consultez ce titre dans BookOrbit pour gérer les détails de la bibliothèque et les formats que Pleazyng ne peut pas ouvrir. La progression d’écoute est synchronisée avec votre compte BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Certificat du serveur enregistré',
 			'sourceSetup.nfsEndpointInvalid' => 'Saisissez une URL NFS, par exemple nfs://nas:2049/export.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.dlnaNone' => 'Aucun serveur DLNA trouvé. Saisissez manuellement l’URL de description de l’appareil.',
 			'sourceSetup.dlnaServers' => 'Serveurs multimédias DLNA',
 			'sourceSetup.dlnaUnavailable' => 'La découverte DLNA est indisponible sur ce réseau. Saisissez manuellement l’URL de description de l’appareil.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.dlnaSearching' => 'Recherche de serveurs DLNA sur le réseau local',
 			'sourceSetup.networkSearching' => 'Recherche sur le réseau local…',
 			'sourceSetup.dlnaDiscover' => 'Découvrir les serveurs DLNA',
@@ -9774,11 +9768,11 @@ extension on TranslationsFr {
 			'musicTools.prompt' => 'Playlist par description',
 			'musicTools.provider' => 'URL du fournisseur de génération',
 			'musicTools.model' => 'Nom du modèle',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.consent' => 'Envoyer ma description à ce fournisseur',
 			'musicTools.promptHint' => 'Décrivez la musique souhaitée',
 			'musicTools.noHistory' => 'Aucune musique à afficher',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.historyHint' => 'Historique d’écoute de ce profil',
 			'musicTools.days' => 'Jours',
 			'musicTools.albumBlocks' => 'Garder les albums entiers',

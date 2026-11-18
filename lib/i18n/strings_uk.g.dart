@@ -852,8 +852,6 @@ class _Translations$settings$uk extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Підвищити діалог в центральному каналі, коли оточуючий звук змішується до стерео.';
 	@override String get displaySwitchDelayDescription => 'Чекайте, перш ніж змінити режим екрану, щоб телевізор або приймач могли завершити попередній перехід.';
 	@override String get playerBackendDescription => 'Виберіть, який двигун відтворення декодує і передає відео на цьому пристрої.';
-	@override String get exoPlayerDescription => 'Використовуйте плеєр на базі Android Media3 і підтримувані харчові шляхи.';
-	@override String get mpvDescription => 'Використовуйте mpv, який виявляє додаткові відтворення, субтитри та відеообробки контролів.';
 	@override String get scopeOffDescription => 'Зберігайте зміни тільки для поточної сесії відтворення.';
 	@override String get scopeGlobalDescription => 'Повторне використання однієї і тієї ж цінності для кожної бібліотеки та заголовку.';
 	@override String get scopeLibraryDescription => 'Зверніть увагу на окрему цінність для кожної бібліотеки.';
@@ -2664,7 +2662,6 @@ class _Translations$performanceOverlay$uk extends Translations$performanceOverla
 	@override String get memory => 'Пам\'ять';
 	@override String get uiFps => 'ФПС';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android ХВ';
 	@override String get decoderNvidiaHw => 'Створення NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm Світовий';
 	@override String get decoderMediatekHw => 'Створення MediaTek HW';
@@ -6343,8 +6340,6 @@ extension on TranslationsUk {
 			'settings.downmixCenterBoostDescription' => 'Підвищити діалог в центральному каналі, коли оточуючий звук змішується до стерео.',
 			'settings.displaySwitchDelayDescription' => 'Чекайте, перш ніж змінити режим екрану, щоб телевізор або приймач могли завершити попередній перехід.',
 			'settings.playerBackendDescription' => 'Виберіть, який двигун відтворення декодує і передає відео на цьому пристрої.',
-			'settings.exoPlayerDescription' => 'Використовуйте плеєр на базі Android Media3 і підтримувані харчові шляхи.',
-			'settings.mpvDescription' => 'Використовуйте mpv, який виявляє додаткові відтворення, субтитри та відеообробки контролів.',
 			'settings.scopeOffDescription' => 'Зберігайте зміни тільки для поточної сесії відтворення.',
 			'settings.scopeGlobalDescription' => 'Повторне використання однієї і тієї ж цінності для кожної бібліотеки та заголовку.',
 			'settings.scopeLibraryDescription' => 'Зверніть увагу на окрему цінність для кожної бібліотеки.',
@@ -6690,10 +6685,10 @@ extension on TranslationsUk {
 			'videoControls.sleepTimerDurationHeader' => 'Час',
 			'videoControls.playbackWillPauseAtEnd' => 'Playback буде перерватися в кінці цього відео',
 			'videoControls.stillWatching' => 'Чи все ще дивитися?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Позиція в ${seconds}s',
 			'videoControls.continueWatching' => 'Продовжуйте',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Автомобільні наступні',
 			'videoControls.playNext' => 'Наступне',
 			'videoControls.playButton' => 'Грати',
@@ -7204,10 +7199,10 @@ extension on TranslationsUk {
 			'libraries.playRandomMovie' => 'Грати в випадковий фільм',
 			'libraries.randomPickFailed' => 'Я не можу вибрати фільм з цієї бібліотеки.',
 			'libraries.title' => 'Медіатеки',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Медіатека',
 			'libraries.scanLibraryFiles' => 'Сканування бібліотечних файлів',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Сканувати медіатеку',
 			'libraries.analyze' => 'Аналіз',
 			'libraries.analyzeLibrary' => 'Аналіз бібліотеки',
@@ -7718,10 +7713,10 @@ extension on TranslationsUk {
 			'music.instantMix' => 'Миттєвий мікс',
 			'music.playNext' => 'Наступне',
 			'music.addToQueue' => 'Додати до ковбасу',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Диск ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uk'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} композиція', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} композиції', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} композицій', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} композиції', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Тепер грати',
 			'music.playingFrom' => ({required Object title}) => 'Ігри з ${title}',
 			'music.queue' => 'Квітень',
@@ -8232,11 +8227,10 @@ extension on TranslationsUk {
 			'performanceOverlay.memory' => 'Пам\'ять',
 			'performanceOverlay.uiFps' => 'ФПС',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android ХВ',
 			'performanceOverlay.decoderNvidiaHw' => 'Створення NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm Світовий',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'Створення MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Екзотичний HW',
 			'performanceOverlay.decoderSoftware' => 'Програмне забезпечення',
@@ -8746,11 +8740,11 @@ extension on TranslationsUk {
 			'homeLayout.noCustomRows' => 'Досі немає звичайних рядків',
 			'homeLayout.addRowHint' => 'Використовуйте Додати домашній ряд, щоб створити один.',
 			'homeLayout.addHomeRow' => 'Додати додому',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Виберіть категорію; новий ряд додається до Організатора автоматично',
 			'homeLayout.removeRow' => 'Зняти ряд',
 			'homeLayout.recentlyAdded' => 'Нещодавно додані',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Нещодавно звільнений',
 			'homeLayout.movieCollections' => 'Колекції фільмів',
 			'homeLayout.showCollections' => 'Покажіть колекції',
@@ -9260,11 +9254,11 @@ extension on TranslationsUk {
 			'sourceSetup.dlnaHelp' => 'Виявлення залежить від багатоадресної розсилки в локальній мережі. Якщо сервер не з’являється, введіть вище URL опису його пристрою.',
 			'sourceSetup.dlnaRoot' => 'ID об’єкта DLNA; залиште порожнім, щоб використати корінь пристрою.',
 			'sourceSetup.passwordOrKey' => 'Введіть пароль або додайте приватний ключ нижче.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'Відбиток SHA256 ключа хоста SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Звірте його з адміністратором сервера. На сервері виконайте ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub і використайте значення SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Залиште порожнім, щоб зберегти закріплений відбиток, або введіть новий відбиток сервера.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Автентифікація SSH за відкритим ключем',
 			'sourceSetup.sshAuthenticationHelp' => 'Необов’язково; автентифікація за паролем також підтримується.',
 			'sourceSetup.privateKey' => 'Приватний ключ (формат PEM або OpenSSH)',
@@ -9774,11 +9768,11 @@ extension on TranslationsUk {
 			'musicTools.pinToHome' => 'Закріпити на головній сторінці музики',
 			'musicTools.unpin' => 'Відкріпити',
 			'musicTools.serverAnalysis' => 'Аналіз сервера',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Звуковий аналіз',
 			'musicTools.serverAnalysisScope' => 'Усі відповідні музичні бібліотеки на цьому сервері. Їхні налаштування аналізу не змінюються.',
 			'musicTools.serverActivities' => 'Завдання сервера',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Доступ до списку відтворення',
 			'musicTools.playlistRecipient' => 'Ім’я користувача Plex або ел. пошта',
 			'musicTools.playlistSharingHint' => 'Надайте доступ до цього списку та його композицій. Одержувачу може знадобитися прийняти запрошення.',

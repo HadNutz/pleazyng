@@ -848,8 +848,6 @@ class _Translations$settings$bg extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Повишаване на диалога в централния канал, когато surround аудио се смесва надолу към стерео.';
 	@override String get displaySwitchDelayDescription => 'Изчакайте, преди да промените режима на дисплея, така че телевизорът или приемникът да може да завърши предишния си превключвател.';
 	@override String get playerBackendDescription => 'Изберете коя игрална система декодира и предава видеото на това устройство.';
-	@override String get exoPlayerDescription => 'Използвайте индианския Player Media3 на Android и поддържаните хардуерни пътища.';
-	@override String get mpvDescription => 'Използвайте mpv, който излага допълнителни възпроизвеждане, субтитри и видео обработка контрола.';
 	@override String get scopeOffDescription => 'Съхранявайте промените само за текущата сесия на възпроизвеждане.';
 	@override String get scopeGlobalDescription => 'Повторно използвайте една и съща стойност за всяка библиотека и заглавие.';
 	@override String get scopeLibraryDescription => 'Имайте предвид отделна стойност за всяка библиотека.';
@@ -2630,7 +2628,6 @@ class _Translations$performanceOverlay$bg extends Translations$performanceOverla
 	@override String get memory => 'Памет';
 	@override String get uiFps => 'FPS на интерфейса';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm HW';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6299,8 +6296,6 @@ extension on TranslationsBg {
 			'settings.downmixCenterBoostDescription' => 'Повишаване на диалога в централния канал, когато surround аудио се смесва надолу към стерео.',
 			'settings.displaySwitchDelayDescription' => 'Изчакайте, преди да промените режима на дисплея, така че телевизорът или приемникът да може да завърши предишния си превключвател.',
 			'settings.playerBackendDescription' => 'Изберете коя игрална система декодира и предава видеото на това устройство.',
-			'settings.exoPlayerDescription' => 'Използвайте индианския Player Media3 на Android и поддържаните хардуерни пътища.',
-			'settings.mpvDescription' => 'Използвайте mpv, който излага допълнителни възпроизвеждане, субтитри и видео обработка контрола.',
 			'settings.scopeOffDescription' => 'Съхранявайте промените само за текущата сесия на възпроизвеждане.',
 			'settings.scopeGlobalDescription' => 'Повторно използвайте една и съща стойност за всяка библиотека и заглавие.',
 			'settings.scopeLibraryDescription' => 'Имайте предвид отделна стойност за всяка библиотека.',
@@ -6646,10 +6641,10 @@ extension on TranslationsBg {
 			'videoControls.sleepTimerDurationHeader' => 'Таймер',
 			'videoControls.playbackWillPauseAtEnd' => 'Възпроизвеждането ще спре в края на това видео',
 			'videoControls.stillWatching' => 'Още ли гледате?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Пауза след ${seconds} сек.',
 			'videoControls.continueWatching' => 'Продължи',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Автоматично пусни следващото',
 			'videoControls.playNext' => 'Пусни следващото',
 			'videoControls.playButton' => 'Пусни',
@@ -7160,10 +7155,10 @@ extension on TranslationsBg {
 			'libraries.playRandomMovie' => 'Играй случайно филм',
 			'libraries.randomPickFailed' => 'Не може да избереш случайно филм от тази библиотека.',
 			'libraries.title' => 'Библиотеки',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Библиотека',
 			'libraries.scanLibraryFiles' => 'Сканирай файловете на библиотеката',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Сканирай библиотеката',
 			'libraries.analyze' => 'Анализирай',
 			'libraries.analyzeLibrary' => 'Анализирай библиотеката',
@@ -7674,10 +7669,10 @@ extension on TranslationsBg {
 			'music.instantMix' => 'Мигновен микс',
 			'music.playNext' => 'Пусни следващото',
 			'music.addToQueue' => 'Добави към опашката',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Диск ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bg'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} песен', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} песни', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Сега се възпроизвежда',
 			'music.playingFrom' => ({required Object title}) => 'Възпроизвеждане от ${title}',
 			'music.queue' => 'Опашка',
@@ -8188,11 +8183,10 @@ extension on TranslationsBg {
 			'performanceOverlay.memory' => 'Памет',
 			'performanceOverlay.uiFps' => 'FPS на интерфейса',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Софтуерен',
@@ -8702,11 +8696,11 @@ extension on TranslationsBg {
 			'homeLayout.noCustomRows' => 'Няма още корекции',
 			'homeLayout.addRowHint' => 'Използвайте Добавяне на домашна линия, за да създадете една.',
 			'homeLayout.addHomeRow' => 'Добавяне на домашна линия',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Изберете категория; новата линия се добавя към Организатор автоматично',
 			'homeLayout.removeRow' => 'Изтриване на ред',
 			'homeLayout.recentlyAdded' => 'Наскоро добавени',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Неотдавна освободени',
 			'homeLayout.movieCollections' => 'Филмови колекции',
 			'homeLayout.showCollections' => 'Покажи колекции',
@@ -9216,11 +9210,11 @@ extension on TranslationsBg {
 			'sourceSetup.dlnaHelp' => 'Откриването зависи от multicast в локалната мрежа. Ако не се появи сървър, въведете по-горе URL адреса на описанието на устройството му.',
 			'sourceSetup.dlnaRoot' => 'ID на DLNA обект; оставете празно, за да използвате корена на устройството.',
 			'sourceSetup.passwordOrKey' => 'Въведете парола или добавете частен ключ по-долу.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SHA256 отпечатък на SSH ключа на хоста',
 			'sourceSetup.sshFingerprintHelp' => 'Проверете го с администратора на сървъра. На сървъра изпълнете ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub и използвайте стойността SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Оставете празно, за да запазите фиксирания отпечатък, или въведете нов отпечатък на сървъра.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH удостоверяване с публичен ключ',
 			'sourceSetup.sshAuthenticationHelp' => 'Незадължително; поддържа се и удостоверяване с парола.',
 			'sourceSetup.privateKey' => 'Частен ключ (формат PEM или OpenSSH)',
@@ -9730,11 +9724,11 @@ extension on TranslationsBg {
 			'musicTools.pinToHome' => 'Закачи в началната страница за музика',
 			'musicTools.unpin' => 'Откачи',
 			'musicTools.serverAnalysis' => 'Анализ на сървъра',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Звуков анализ',
 			'musicTools.serverAnalysisScope' => 'Всички подходящи музикални библиотеки на този сървър. Настройките им за анализ не се променят.',
 			'musicTools.serverActivities' => 'Дейности на сървъра',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Достъп до плейлист',
 			'musicTools.playlistRecipient' => 'Plex потребителско име или имейл',
 			'musicTools.playlistSharingHint' => 'Дайте достъп до този плейлист и песните му. Получателят може да трябва да приеме покана.',

@@ -83,12 +83,16 @@ internal class MusicAudioRouteBridge(context: Context, messenger: BinaryMessenge
   private val headphones = EventChannel(messenger, "com.pleazyng/phone_listening/headphones")
   private var headphoneCallback: AudioDeviceCallback? = null
 
-  private fun privateOutput(device: AudioDeviceInfo) = device.isSink && device.type in setOf(
-    AudioDeviceInfo.TYPE_WIRED_HEADPHONES, AudioDeviceInfo.TYPE_WIRED_HEADSET,
-    AudioDeviceInfo.TYPE_USB_HEADSET, AudioDeviceInfo.TYPE_BLUETOOTH_A2DP,
-    AudioDeviceInfo.TYPE_BLUETOOTH_SCO, AudioDeviceInfo.TYPE_HEARING_AID,
-    AudioDeviceInfo.TYPE_BLE_HEADSET
-  )
+  private fun privateOutput(device: AudioDeviceInfo) = device.isSink &&
+    device.type in setOf(
+      AudioDeviceInfo.TYPE_WIRED_HEADPHONES,
+      AudioDeviceInfo.TYPE_WIRED_HEADSET,
+      AudioDeviceInfo.TYPE_USB_HEADSET,
+      AudioDeviceInfo.TYPE_BLUETOOTH_A2DP,
+      AudioDeviceInfo.TYPE_BLUETOOTH_SCO,
+      AudioDeviceInfo.TYPE_HEARING_AID,
+      AudioDeviceInfo.TYPE_BLE_HEADSET
+    )
 
   private fun stopHeadphones() {
     headphoneCallback?.let { audio.unregisterAudioDeviceCallback(it) }

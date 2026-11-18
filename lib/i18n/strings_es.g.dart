@@ -854,8 +854,6 @@ class Translations$settings$es extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Aumentar el diálogo en el canal central cuando el audio circular se mezcla hacia abajo al estereo.';
 	@override String get displaySwitchDelayDescription => 'Espera antes de cambiar el modo de pantalla para que la TV o receptor pueda terminar su anterior interrupción.';
 	@override String get playerBackendDescription => 'Seleccione qué motor de reproducción decode y retrasa el vídeo en este dispositivo.';
-	@override String get exoPlayerDescription => 'Utilice el reproductor nativo de Android Media3 y los caminos de hardware apoyados.';
-	@override String get mpvDescription => 'Utilice mpv, que expone controles adicionales de reproducción, subtítulos y procesamiento de vídeo.';
 	@override String get scopeOffDescription => 'Sólo mantenga los cambios para la sesión de reproducción actual.';
 	@override String get scopeGlobalDescription => 'Reutilizar el mismo valor para cada biblioteca y título.';
 	@override String get scopeLibraryDescription => 'Recuerda un valor separado para cada biblioteca.';
@@ -2638,7 +2636,6 @@ class Translations$performanceOverlay$es extends Translations$performanceOverlay
 	@override String get memory => 'Memoria';
 	@override String get uiFps => 'FPS UI';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'HW de Android';
 	@override String get decoderNvidiaHw => 'HW de NVIDIA';
 	@override String get decoderQualcommHw => 'HW de Qualcomm';
 	@override String get decoderMediatekHw => 'HW de MediaTek';
@@ -6426,8 +6423,6 @@ extension on TranslationsEs {
 			'settings.downmixCenterBoostDescription' => 'Aumentar el diálogo en el canal central cuando el audio circular se mezcla hacia abajo al estereo.',
 			'settings.displaySwitchDelayDescription' => 'Espera antes de cambiar el modo de pantalla para que la TV o receptor pueda terminar su anterior interrupción.',
 			'settings.playerBackendDescription' => 'Seleccione qué motor de reproducción decode y retrasa el vídeo en este dispositivo.',
-			'settings.exoPlayerDescription' => 'Utilice el reproductor nativo de Android Media3 y los caminos de hardware apoyados.',
-			'settings.mpvDescription' => 'Utilice mpv, que expone controles adicionales de reproducción, subtítulos y procesamiento de vídeo.',
 			'settings.scopeOffDescription' => 'Sólo mantenga los cambios para la sesión de reproducción actual.',
 			'settings.scopeGlobalDescription' => 'Reutilizar el mismo valor para cada biblioteca y título.',
 			'settings.scopeLibraryDescription' => 'Recuerda un valor separado para cada biblioteca.',
@@ -6770,10 +6765,10 @@ extension on TranslationsEs {
 			'videoControls.playbackWillPauseIn' => ({required Object duration}) => 'La reproducción se pausará en ${duration}',
 			'videoControls.sleepTimerEndOfVideo' => 'Fin del video actual',
 			'videoControls.sleepTimerStopAtHeader' => 'Detener en',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.sleepTimerDurationHeader' => 'Temporizador',
 			'videoControls.playbackWillPauseAtEnd' => 'La reproducción se pausará al final de este video',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.stillWatching' => '¿Sigues viendo?',
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Se pausará en ${seconds}s',
 			'videoControls.continueWatching' => 'Continuar',
@@ -7284,10 +7279,10 @@ extension on TranslationsEs {
 			'errors.searchUnavailable' => 'La búsqueda no pudo alcanzar ningún servidor de medios.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Tiempo de conexión agotado al cargar ${context}',
 			'errors.connectionFailed' => 'No se puede conectar al servidor multimedia',
-			_ => null,
-		} ?? switch (path) {
 			'errors.unableToLoad' => ({required Object context}) => 'No se pudo cargar ${context}. Inténtalo de nuevo.',
 			'errors.noClientAvailable' => 'No hay cliente disponible',
+			_ => null,
+		} ?? switch (path) {
 			'errors.pleaseEnterToken' => 'Introduce un token',
 			'errors.invalidToken' => 'Token no válido',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Error al verificar el token: ${error}',
@@ -7798,10 +7793,10 @@ extension on TranslationsEs {
 			'playlists.smartPlaylist' => 'Lista de reproducción inteligente',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} elemento', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} elementos', ), 
 			'playlists.emptyPlaylist' => 'Esta lista de reproducción está vacía',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.deleteConfirm' => '¿Eliminar lista de reproducción?',
 			'playlists.deleteMessage' => ({required Object name}) => '¿Estás seguro de que quieres eliminar "${name}"?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Lista de reproducción creada',
 			'playlists.deleted' => 'Lista de reproducción eliminada',
 			'playlists.itemAdded' => 'Añadido a la lista de reproducción',
@@ -8312,10 +8307,10 @@ extension on TranslationsEs {
 			'performanceOverlay.matrix' => 'Matriz',
 			'performanceOverlay.primaries' => 'Primarios',
 			'performanceOverlay.transfer' => 'Transferencia',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.renderFps' => 'FPS render',
 			'performanceOverlay.displayFps' => 'FPS pantalla',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'Sincronía A/V',
 			'performanceOverlay.dropped' => 'Descartados',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
@@ -8333,7 +8328,6 @@ extension on TranslationsEs {
 			'performanceOverlay.memory' => 'Memoria',
 			'performanceOverlay.uiFps' => 'FPS UI',
 			'performanceOverlay.fps' => 'FPS',
-			'performanceOverlay.decoderAndroidHw' => 'HW de Android',
 			'performanceOverlay.decoderNvidiaHw' => 'HW de NVIDIA',
 			'performanceOverlay.decoderQualcommHw' => 'HW de Qualcomm',
 			'performanceOverlay.decoderMediatekHw' => 'HW de MediaTek',
@@ -8826,11 +8820,11 @@ extension on TranslationsEs {
 			'homeLayout.removeFromHome' => 'Removir de casa',
 			'homeLayout.selectRowsFirst' => 'Seleccione las líneas de inicio debajo primero.',
 			'homeLayout.plexManagedRows' => ({required Object n}) => '${n} Plex líneas gestionadas',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.continueWatching' => 'Seguir viendo',
 			'homeLayout.continueWatchingLibraryDescription' => 'La red de resumen de la propia biblioteca',
 			'homeLayout.continueWatchingHomeDescription' => 'La línea de progreso de resumen mostrada en Home',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.nextUpHomeDescription' => 'La siguiente secuencia de episodios no observados se muestra separadamente en Home',
 			'homeLayout.library' => 'Biblioteca',
 			'homeLayout.showInRecommended' => 'Presentación en Biblioteca Recomendada',
@@ -9340,11 +9334,11 @@ extension on TranslationsEs {
 			'audiobook.sortNarrator' => 'narración',
 			'audiobook.sortSeries' => 'Orden de serie',
 			'audiobook.sortRecent' => 'recientemente abierto',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.statusFilter' => 'El estado de lectura',
 			'audiobook.statusAll' => 'Todos los libros',
 			'audiobook.statusNew' => 'No comenzó',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.statusProgress' => 'En el progreso',
 			'audiobook.statusFinished' => 'Finalizado',
 			'audiobook.goToTime' => 'Vuelve al tiempo',
@@ -9854,11 +9848,11 @@ extension on TranslationsEs {
 			'bonusExtras.completed' => 'Completado',
 			'bonusExtras.markCompleted' => 'Marcar como completado',
 			'bonusExtras.resume' => 'Reanudar extra',
-			_ => null,
-		} ?? switch (path) {
 			'bonusExtras.restricted' => 'Los extras en línea no están disponibles para este perfil.',
 			'bonusExtras.kind.makingOf' => 'Cómo se hizo',
 			'bonusExtras.kind.effects' => 'Efectos y escenas de riesgo',
+			_ => null,
+		} ?? switch (path) {
 			'bonusExtras.kind.makeup' => 'Maquillaje y vestuario',
 			'bonusExtras.kind.interview' => 'Entrevistas',
 			'bonusExtras.kind.deletedScene' => 'Escenas eliminadas',

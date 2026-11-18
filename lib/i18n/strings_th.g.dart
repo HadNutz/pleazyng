@@ -846,8 +846,6 @@ class _Translations$settings$th extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'เพิ่มการสนทนาในช่องกลางเมื่อเสียงรอบผสมลงไปสเตอริโอ';
 	@override String get displaySwitchDelayDescription => 'รอก่อนที่จะเปลี่ยนโหมดจอแสดงผลเพื่อให้ทีวีหรือผู้รับสามารถเสร็จสิ้นการสลับก่อนหน้านี้';
 	@override String get playerBackendDescription => 'เลือกเครื่องเล่นที่ decodes และ renders วีดีโอ บนอุปกรณ์นี้';
-	@override String get exoPlayerDescription => 'ใช้ผู้เล่น Media3 ที่มาของ Android และวิธีการฮาร์ดแวร์ที่ได้รับการสนับสนุน';
-	@override String get mpvDescription => 'ใช้ mpv ซึ่งแสดงให้เห็นการเล่นเพิ่มเติมหัวข้อและควบคุมการประมวลผลวิดีโอ';
 	@override String get scopeOffDescription => 'เก็บการเปลี่ยนแปลงสําหรับเซสชั่น playback ปัจจุบันเท่านั้น';
 	@override String get scopeGlobalDescription => 'ใช้ใหม่ค่าเดียวกันสําหรับแต่ละห้องสมุดและชื่อ';
 	@override String get scopeLibraryDescription => 'โปรดจําไว้ค่าที่แยกต่างหากสําหรับแต่ละห้องสมุด';
@@ -2611,7 +2609,6 @@ class _Translations$performanceOverlay$th extends Translations$performanceOverla
 	@override String get memory => 'ความจํา';
 	@override String get uiFps => 'ภาษาไทย';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'คอลัมคัม HW';
 	@override String get decoderMediatekHw => 'โมเดียม HW';
@@ -6274,8 +6271,6 @@ extension on TranslationsTh {
 			'settings.downmixCenterBoostDescription' => 'เพิ่มการสนทนาในช่องกลางเมื่อเสียงรอบผสมลงไปสเตอริโอ',
 			'settings.displaySwitchDelayDescription' => 'รอก่อนที่จะเปลี่ยนโหมดจอแสดงผลเพื่อให้ทีวีหรือผู้รับสามารถเสร็จสิ้นการสลับก่อนหน้านี้',
 			'settings.playerBackendDescription' => 'เลือกเครื่องเล่นที่ decodes และ renders วีดีโอ บนอุปกรณ์นี้',
-			'settings.exoPlayerDescription' => 'ใช้ผู้เล่น Media3 ที่มาของ Android และวิธีการฮาร์ดแวร์ที่ได้รับการสนับสนุน',
-			'settings.mpvDescription' => 'ใช้ mpv ซึ่งแสดงให้เห็นการเล่นเพิ่มเติมหัวข้อและควบคุมการประมวลผลวิดีโอ',
 			'settings.scopeOffDescription' => 'เก็บการเปลี่ยนแปลงสําหรับเซสชั่น playback ปัจจุบันเท่านั้น',
 			'settings.scopeGlobalDescription' => 'ใช้ใหม่ค่าเดียวกันสําหรับแต่ละห้องสมุดและชื่อ',
 			'settings.scopeLibraryDescription' => 'โปรดจําไว้ค่าที่แยกต่างหากสําหรับแต่ละห้องสมุด',
@@ -6621,10 +6616,10 @@ extension on TranslationsTh {
 			'videoControls.sleepTimerDurationHeader' => 'เวลา',
 			'videoControls.playbackWillPauseAtEnd' => 'Playback จะหยุดในตอนท้ายของวิดีโอนี้',
 			'videoControls.stillWatching' => 'ยังคงดู?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'การพักผ่อนใน ${seconds}s',
 			'videoControls.continueWatching' => 'เสร็จสิ้น',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'การเล่นอัตโนมัติ',
 			'videoControls.playNext' => 'เล่นต่อไป',
 			'videoControls.playButton' => 'เล่น',
@@ -7135,10 +7130,10 @@ extension on TranslationsTh {
 			'libraries.playRandomMovie' => 'เล่นภาพยนตร์สุ่ม',
 			'libraries.randomPickFailed' => 'ไม่สามารถเลือกภาพยนตร์สุ่มจากห้องสมุดนี้ได้',
 			'libraries.title' => 'ห้องสมุด',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'คลังสื่อ',
 			'libraries.scanLibraryFiles' => 'ไฟล์สแกนห้องสมุด',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'แสกนไลบรารี่',
 			'libraries.analyze' => 'การวิเคราะห์',
 			'libraries.analyzeLibrary' => 'การวิเคราะห์ห้องสมุด',
@@ -7649,10 +7644,10 @@ extension on TranslationsTh {
 			'music.instantMix' => 'ผสมทันที',
 			'music.playNext' => 'เล่นต่อไป',
 			'music.addToQueue' => 'เพิ่มให้ Queue',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'ดิสก์ ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('th'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ล้อ', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'ตอนนี้เล่น',
 			'music.playingFrom' => ({required Object title}) => 'เล่นจาก ${title}',
 			'music.queue' => 'สิทธิ',
@@ -8163,11 +8158,10 @@ extension on TranslationsTh {
 			'performanceOverlay.memory' => 'ความจํา',
 			'performanceOverlay.uiFps' => 'ภาษาไทย',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'คอลัมคัม HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'โมเดียม HW',
 			'performanceOverlay.decoderExynosHw' => 'แอพลิเคชัน HW',
 			'performanceOverlay.decoderSoftware' => 'ซอฟต์แวร์',
@@ -8677,11 +8671,11 @@ extension on TranslationsTh {
 			'homeLayout.noCustomRows' => 'ไม่มีการกําหนดเอง',
 			'homeLayout.addRowHint' => 'ใช้ Add Home เถวเพื่อสร้างหนึ่ง',
 			'homeLayout.addHomeRow' => 'เพิ่มเรือนบ้าน',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'เลือกหมวดหมู่ ใบสั่งใหม่จะถูกเพิ่มไปยังผู้จัดงานโดยอัตโนมัติ',
 			'homeLayout.removeRow' => 'ลบแถว',
 			'homeLayout.recentlyAdded' => 'เพิ่มล่าสุด',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'ปล่อยล่าสุด',
 			'homeLayout.movieCollections' => 'คอลเลกชันภาพยนตร์',
 			'homeLayout.showCollections' => 'แสดงคอลเลกชัน',
@@ -9191,11 +9185,11 @@ extension on TranslationsTh {
 			'sourceSetup.dlnaHelp' => 'การค้นหาต้องอาศัยมัลติคาสต์ในเครือข่ายภายใน หากไม่พบเซิร์ฟเวอร์ ให้ป้อน URL คำอธิบายอุปกรณ์ของเซิร์ฟเวอร์นั้นด้านบน',
 			'sourceSetup.dlnaRoot' => 'ID ออบเจ็กต์ DLNA เว้นว่างไว้เพื่อใช้ระดับรากของอุปกรณ์',
 			'sourceSetup.passwordOrKey' => 'ป้อนรหัสผ่านหรือเพิ่มกุญแจส่วนตัวด้านล่าง',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'ลายนิ้วมือ SHA256 ของกุญแจโฮสต์ SSH',
 			'sourceSetup.sshFingerprintHelp' => 'ตรวจสอบกับผู้ดูแลเซิร์ฟเวอร์ เรียกใช้ ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub บนเซิร์ฟเวอร์ แล้วใช้ค่า SHA256',
 			'sourceSetup.sshFingerprintKeep' => 'เว้นว่างไว้เพื่อคงลายนิ้วมือที่ตรึงไว้อยู่ หรือป้อนลายนิ้วมือเซิร์ฟเวอร์ใหม่',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'การยืนยันตัวตน SSH ด้วยกุญแจสาธารณะ',
 			'sourceSetup.sshAuthenticationHelp' => 'ไม่บังคับ รองรับการยืนยันตัวตนด้วยรหัสผ่านด้วย',
 			'sourceSetup.privateKey' => 'กุญแจส่วนตัว (รูปแบบ PEM หรือ OpenSSH)',
@@ -9705,11 +9699,11 @@ extension on TranslationsTh {
 			'musicTools.pinToHome' => 'ปักหมุดในหน้าหลักเพลง',
 			'musicTools.unpin' => 'เลิกปักหมุด',
 			'musicTools.serverAnalysis' => 'การวิเคราะห์เซิร์ฟเวอร์',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'การวิเคราะห์เสียง',
 			'musicTools.serverAnalysisScope' => 'คลังเพลงที่เข้าเกณฑ์ทั้งหมดบนเซิร์ฟเวอร์นี้ การตั้งค่าการวิเคราะห์ของคลังจะไม่เปลี่ยนแปลง',
 			'musicTools.serverActivities' => 'กิจกรรมเซิร์ฟเวอร์',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'สิทธิ์เข้าถึงเพลย์ลิสต์',
 			'musicTools.playlistRecipient' => 'ชื่อผู้ใช้ Plex หรืออีเมล',
 			'musicTools.playlistSharingHint' => 'ให้สิทธิ์เข้าถึงเพลย์ลิสต์นี้และเพลงในรายการ ผู้รับอาจต้องตอบรับคำเชิญ',

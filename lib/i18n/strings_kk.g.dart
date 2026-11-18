@@ -848,8 +848,6 @@ class _Translations$settings$kk extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Содан соң, облыс әкімі мердігер ұйымдардың басшыларымен кеңес өткізді.';
 	@override String get displaySwitchDelayDescription => 'Қаланың тұрақты тұрғындарының саны 3 адамды құрайды және 1 адамды қауымдастырды.';
 	@override String get playerBackendDescription => 'Қазіргі таңда бүкіл әлемде өте көп айтылады.';
-	@override String get exoPlayerDescription => 'Содан соң, Android Media3 бастыратын жүктеулер мен жабдықтарлық трассы бар.';
-	@override String get mpvDescription => 'Қандай mpv, бұл жүктеу аудармасын, субтитри және видео процессинг контрольдер.';
 	@override String get scopeOffDescription => 'Ауызды іске қосып, жүктеу сезімдер.';
 	@override String get scopeGlobalDescription => 'Өмірінің соңына дейін осында тұрып қара сөздерін, аудармаларын жазды.';
 	@override String get scopeLibraryDescription => 'Өмірінің соңына дейін библиотекасы бар.';
@@ -2630,7 +2628,6 @@ class _Translations$performanceOverlay$kk extends Translations$performanceOverla
 	@override String get memory => 'Жады';
 	@override String get uiFps => 'Интерфейс (UI) FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm HW';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6299,8 +6296,6 @@ extension on TranslationsKk {
 			'settings.downmixCenterBoostDescription' => 'Содан соң, облыс әкімі мердігер ұйымдардың басшыларымен кеңес өткізді.',
 			'settings.displaySwitchDelayDescription' => 'Қаланың тұрақты тұрғындарының саны 3 адамды құрайды және 1 адамды қауымдастырды.',
 			'settings.playerBackendDescription' => 'Қазіргі таңда бүкіл әлемде өте көп айтылады.',
-			'settings.exoPlayerDescription' => 'Содан соң, Android Media3 бастыратын жүктеулер мен жабдықтарлық трассы бар.',
-			'settings.mpvDescription' => 'Қандай mpv, бұл жүктеу аудармасын, субтитри және видео процессинг контрольдер.',
 			'settings.scopeOffDescription' => 'Ауызды іске қосып, жүктеу сезімдер.',
 			'settings.scopeGlobalDescription' => 'Өмірінің соңына дейін осында тұрып қара сөздерін, аудармаларын жазды.',
 			'settings.scopeLibraryDescription' => 'Өмірінің соңына дейін библиотекасы бар.',
@@ -6646,10 +6641,10 @@ extension on TranslationsKk {
 			'videoControls.sleepTimerDurationHeader' => 'Таймер',
 			'videoControls.playbackWillPauseAtEnd' => 'Ойнату осы видеоның соңында кідіртіледі',
 			'videoControls.stillWatching' => 'Әлі де көріп отырсыз ба?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds}сек кейін кідіртіледі',
 			'videoControls.continueWatching' => 'Жалғастыру',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Келесіні автоматты ойнату',
 			'videoControls.playNext' => 'Келесіні ойнату',
 			'videoControls.playButton' => 'Ойнату',
@@ -7160,10 +7155,10 @@ extension on TranslationsKk {
 			'libraries.playRandomMovie' => 'Ауыз фильмдер',
 			'libraries.randomPickFailed' => 'Бұл кинодан бір-бірімен не күтіледі.',
 			'libraries.title' => 'Кітапханалар',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Кітапхана',
 			'libraries.scanLibraryFiles' => 'Файлдарды сканерлеу',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Кітапхананы сканерлеу',
 			'libraries.analyze' => 'Талдау жасау',
 			'libraries.analyzeLibrary' => 'Кітапханаға талдау жасау',
@@ -7674,10 +7669,10 @@ extension on TranslationsKk {
 			'music.instantMix' => 'Сәттік микс',
 			'music.playNext' => 'Келесіні ойнату',
 			'music.addToQueue' => 'Кезекке қосу',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => '${n}-диск',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('kk'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ән', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ән', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Қазір ойнатылуда',
 			'music.playingFrom' => ({required Object title}) => '${title} дереккөзінен',
 			'music.queue' => 'Кезек',
@@ -8188,11 +8183,10 @@ extension on TranslationsKk {
 			'performanceOverlay.memory' => 'Жады',
 			'performanceOverlay.uiFps' => 'Интерфейс (UI) FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Бағдарламалық',
@@ -8702,11 +8696,11 @@ extension on TranslationsKk {
 			'homeLayout.noCustomRows' => 'Бұл үшін не қазір',
 			'homeLayout.addRowHint' => 'Бұл үшін «Home» бағдарламасы бар.',
 			'homeLayout.addHomeRow' => 'Өнімдер мен қабығы',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => '«Аяқтық» бағдарламасы: «Аяқытары» бағдарламасы автоматикалық',
 			'homeLayout.removeRow' => 'Оған қосылды',
 			'homeLayout.recentlyAdded' => 'Соңғы қосылғандар',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Олардың ең көне ұлы',
 			'homeLayout.movieCollections' => 'кино коллекциясы',
 			'homeLayout.showCollections' => 'Колекциясы',
@@ -9216,11 +9210,11 @@ extension on TranslationsKk {
 			'sourceSetup.dlnaHelp' => 'Іздеу жергілікті желідегі multicast таратылымына байланысты. Сервер көрінбесе, жоғарыда оның құрылғы сипаттамасының URL мекенжайын енгізіңіз.',
 			'sourceSetup.dlnaRoot' => 'DLNA нысанының ID мәні; құрылғының түбірін пайдалану үшін бос қалдырыңыз.',
 			'sourceSetup.passwordOrKey' => 'Құпиясөз енгізіңіз немесе төменде жеке кілт қосыңыз.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SSH хост кілтінің SHA256 ізі',
 			'sourceSetup.sshFingerprintHelp' => 'Оны сервер әкімшісімен тексеріңіз. Серверде ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub пәрменін орындап, SHA256 мәнін пайдаланыңыз.',
 			'sourceSetup.sshFingerprintKeep' => 'Қазір бекітілген ізді сақтау үшін бос қалдырыңыз немесе сервердің жаңа ізін енгізіңіз.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Ашық кілтпен SSH аутентификациясы',
 			'sourceSetup.sshAuthenticationHelp' => 'Міндетті емес; құпиясөзбен аутентификация да қолданылады.',
 			'sourceSetup.privateKey' => 'Жеке кілт (PEM немесе OpenSSH пішімі)',
@@ -9730,11 +9724,11 @@ extension on TranslationsKk {
 			'musicTools.pinToHome' => 'Музыка басты бетіне бекіту',
 			'musicTools.unpin' => 'Бекітуді алу',
 			'musicTools.serverAnalysis' => 'Серверді талдау',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Дыбыстық талдау',
 			'musicTools.serverAnalysisScope' => 'Осы сервердегі барлық жарамды музыка кітапханалары. Олардың талдау параметрлері өзгермейді.',
 			'musicTools.serverActivities' => 'Сервер әрекеттері',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Ойнату тізіміне қатынау',
 			'musicTools.playlistRecipient' => 'Plex пайдаланушы аты немесе электрондық пошта',
 			'musicTools.playlistSharingHint' => 'Осы тізімге және оның тректеріне қатынау беріңіз. Алушы шақыруды қабылдауы қажет болуы мүмкін.',

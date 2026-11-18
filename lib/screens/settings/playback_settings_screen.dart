@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:plezy/widgets/app_icon.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
@@ -920,7 +921,7 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
     final host = VideoHost.current;
     if (host.choices.length == 1) {
       return ListTile(
-        leading: const Icon(Symbols.play_circle_rounded),
+        leading: const AppIcon(Symbols.play_circle_rounded),
         title: Text(t.settings.playerBackend),
         subtitle: Text(host.nativeLabel),
       );

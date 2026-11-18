@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:plezy/widgets/app_icon.dart';
 import 'package:provider/provider.dart';
 
 import '../../i18n/strings.g.dart';
@@ -12,6 +14,8 @@ import '../../sources/source_controller.dart';
 import '../../sources/source_models.dart';
 import '../../utils/snackbar_helper.dart';
 import 'publication_reader_screen.dart';
+
+const _readingListExtension = 'cbl';
 
 class ComicReadingListsScreen extends StatelessWidget {
   const ComicReadingListsScreen({super.key});
@@ -86,7 +90,11 @@ class _ReadingListsState extends State<_ReadingLists> {
   Future<void> _import() async {
     final sources = context.read<SourceController>(), epoch = sources.generation;
     try {
-      final pick = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['cbl'], withReadStream: true);
+      final pick = await FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: [_readingListExtension],
+        withReadStream: true,
+      );
       if (!mounted || !valid(sources, epoch) || pick == null) return;
       final file = pick.files.single;
       if (file.size > ComicReadingList.maxBytes) throw const FormatException();
@@ -187,6 +195,7 @@ class _ReadingListsState extends State<_ReadingLists> {
 
   @override
   Widget build(BuildContext context) {
+    final importLabel = '${t.fileSources.importFiles} (.$_readingListExtension)';
     final data = sourceMap(lists[selected]);
     final list = data.isEmpty ? null : ComicReadingList.fromJson(data);
     final overrides = sourceMap(data['overrides']);
@@ -226,15 +235,11 @@ class _ReadingListsState extends State<_ReadingLists> {
             if (list != null)
               IconButton(
                 tooltip: t.common.delete,
-                icon: const Icon(Icons.delete_outline),
+                icon: const AppIcon(Symbols.delete_rounded),
                 onPressed: () => _remove(selected!, list.title),
               ),
             if (list == null)
-              IconButton(
-                tooltip: '${t.fileSources.importFiles} (.cbl)',
-                icon: const Icon(Icons.file_open_outlined),
-                onPressed: _import,
-              ),
+              IconButton(tooltip: importLabel, icon: const AppIcon(Symbols.file_open_rounded), onPressed: _import),
           ],
         ),
         body: loading
@@ -244,8 +249,8 @@ class _ReadingListsState extends State<_ReadingLists> {
                   ? Center(
                       child: OutlinedButton.icon(
                         onPressed: _import,
-                        icon: const Icon(Icons.file_open),
-                        label: Text('${t.fileSources.importFiles} (.cbl)'),
+                        icon: const AppIcon(Symbols.file_open_rounded),
+                        label: Text(importLabel),
                       ),
                     )
                   : ListView(
@@ -253,7 +258,7 @@ class _ReadingListsState extends State<_ReadingLists> {
                         for (final e in lists.entries)
                           ListTile(
                             title: Text(sourceMap(e.value)['title'] as String),
-                            trailing: const Icon(Icons.chevron_right),
+                            trailing: const AppIcon(Symbols.chevron_right_rounded),
                             onTap: () => setState(() => selected = e.key),
                           ),
                       ],
@@ -263,7 +268,7 @@ class _ReadingListsState extends State<_ReadingLists> {
                   ListTile(
                     title: Text(next < 0 ? t.fileSources.finished : t.mediaConveniences.readNext),
                     subtitle: Text('${rows.where((r) => r.finished).length} / ${rows.length}'),
-                    trailing: next < 0 ? null : const Icon(Icons.menu_book),
+                    trailing: next < 0 ? null : const AppIcon(Symbols.menu_book_rounded),
                     onTap: next < 0 ? null : () => open(next),
                   ),
                   Expanded(
@@ -272,7 +277,7 @@ class _ReadingListsState extends State<_ReadingLists> {
                       itemBuilder: (_, i) {
                         final row = rows[i], entry = row.entry;
                         return ListTile(
-                          leading: row.finished ? const Icon(Icons.check) : Text('${i + 1}'),
+                          leading: row.finished ? const AppIcon(Symbols.check_rounded) : Text('${i + 1}'),
                           title: Text(row.issue.label),
                           subtitle: Text(
                             entry?.title ??
@@ -283,7 +288,7 @@ class _ReadingListsState extends State<_ReadingLists> {
                           onTap: () => open(i),
                           trailing: IconButton(
                             tooltip: t.matchScreen.search,
-                            icon: const Icon(Icons.link),
+                            icon: const AppIcon(Symbols.link_rounded),
                             onPressed: () => _resolve(i, row.issue, row.matches),
                           ),
                         );
@@ -324,7 +329,7 @@ class _ComicPickerState extends State<_ComicPicker> {
       body: Column(
         children: [
           TextField(
-            decoration: InputDecoration(prefixIcon: const Icon(Icons.search), labelText: t.common.search),
+            decoration: InputDecoration(prefixIcon: const AppIcon(Symbols.search_rounded), labelText: t.common.search),
             onChanged: (s) => setState(() => query = s.trim().toLowerCase()),
           ),
           Expanded(

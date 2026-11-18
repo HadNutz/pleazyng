@@ -852,8 +852,6 @@ class _Translations$settings$cs extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Zvýšte dialog v centrálním kanálu, když je surround audio smícháno dolů na stereo.';
 	@override String get displaySwitchDelayDescription => 'Počkejte před změnou režimu zobrazení, aby televizor nebo přijímač mohl dokončit svůj předchozí přepín.';
 	@override String get playerBackendDescription => 'Vyberte si, který přehrávač dekóduje a renderuje video na tomto zařízení.';
-	@override String get exoPlayerDescription => 'Použijte nativní přehrávač založený na Media3 a podporované hardwarové trasy systému Android.';
-	@override String get mpvDescription => 'Použijte mpv, který vystavuje další playback, subtitle a video zpracování ovládacích prvků.';
 	@override String get scopeOffDescription => 'Udržujte změny pouze pro aktuální playback.';
 	@override String get scopeGlobalDescription => 'Opět použijte stejnou hodnotu pro každou knihovnu a titul.';
 	@override String get scopeLibraryDescription => 'Pamatujte si na samostatnou hodnotu pro každou knihovnu.';
@@ -2664,7 +2662,6 @@ class _Translations$performanceOverlay$cs extends Translations$performanceOverla
 	@override String get memory => 'Paměť';
 	@override String get uiFps => 'UI FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'Nvidia HW';
 	@override String get decoderQualcommHw => 'Štítek Qualcomm';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6343,8 +6340,6 @@ extension on TranslationsCs {
 			'settings.downmixCenterBoostDescription' => 'Zvýšte dialog v centrálním kanálu, když je surround audio smícháno dolů na stereo.',
 			'settings.displaySwitchDelayDescription' => 'Počkejte před změnou režimu zobrazení, aby televizor nebo přijímač mohl dokončit svůj předchozí přepín.',
 			'settings.playerBackendDescription' => 'Vyberte si, který přehrávač dekóduje a renderuje video na tomto zařízení.',
-			'settings.exoPlayerDescription' => 'Použijte nativní přehrávač založený na Media3 a podporované hardwarové trasy systému Android.',
-			'settings.mpvDescription' => 'Použijte mpv, který vystavuje další playback, subtitle a video zpracování ovládacích prvků.',
 			'settings.scopeOffDescription' => 'Udržujte změny pouze pro aktuální playback.',
 			'settings.scopeGlobalDescription' => 'Opět použijte stejnou hodnotu pro každou knihovnu a titul.',
 			'settings.scopeLibraryDescription' => 'Pamatujte si na samostatnou hodnotu pro každou knihovnu.',
@@ -6690,10 +6685,10 @@ extension on TranslationsCs {
 			'videoControls.sleepTimerDurationHeader' => 'Časový',
 			'videoControls.playbackWillPauseAtEnd' => 'Playback se zastaví na konci tohoto videa',
 			'videoControls.stillWatching' => 'Stále se díváte?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Odpočinek v ${seconds}s',
 			'videoControls.continueWatching' => 'pokračovat',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Auto-Play Další',
 			'videoControls.playNext' => 'Přehrát jako další',
 			'videoControls.playButton' => 'Přehrát',
@@ -7204,10 +7199,10 @@ extension on TranslationsCs {
 			'libraries.playRandomMovie' => 'Zahrajte si náhodný film',
 			'libraries.randomPickFailed' => 'Nemohla bych si vybrat náhodný film z této knihovny.',
 			'libraries.title' => 'Knihovny',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Knihovna',
 			'libraries.scanLibraryFiles' => 'Scan knihovny souborů',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Skenovat knihovnu',
 			'libraries.analyze' => 'Analýza',
 			'libraries.analyzeLibrary' => 'Analýza knihovny',
@@ -7718,10 +7713,10 @@ extension on TranslationsCs {
 			'music.instantMix' => 'Rychlý mix',
 			'music.playNext' => 'Přehrát jako další',
 			'music.addToQueue' => 'Přidejte na kousek',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Disk ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('cs'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} skladba', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} skladby', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} skladby', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} skladeb', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Nyní hrát',
 			'music.playingFrom' => ({required Object title}) => 'Hraje se z ${title}',
 			'music.queue' => 'Kouč',
@@ -8232,11 +8227,10 @@ extension on TranslationsCs {
 			'performanceOverlay.memory' => 'Paměť',
 			'performanceOverlay.uiFps' => 'UI FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'Nvidia HW',
 			'performanceOverlay.decoderQualcommHw' => 'Štítek Qualcomm',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Software',
@@ -8746,11 +8740,11 @@ extension on TranslationsCs {
 			'homeLayout.noCustomRows' => 'Žádné klasické řádky',
 			'homeLayout.addRowHint' => 'Použijte přidání řádku Domů k vytvoření jednoho.',
 			'homeLayout.addHomeRow' => 'Přidat domácí řádek',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Výběr kategorie; nový řádek se automaticky přidává k Organizátoru',
 			'homeLayout.removeRow' => 'Odstranit řádek',
 			'homeLayout.recentlyAdded' => 'Nedávno přidáno',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Nedávno uvolněné',
 			'homeLayout.movieCollections' => 'Filmové sbírky',
 			'homeLayout.showCollections' => 'Zobrazení kolekcí',
@@ -9260,11 +9254,11 @@ extension on TranslationsCs {
 			'sourceSetup.dlnaHelp' => 'Vyhledávání závisí na multicastu v místní síti. Pokud se žádný server nezobrazí, zadejte výše adresu jeho popisu zařízení.',
 			'sourceSetup.dlnaRoot' => 'ID objektu DLNA; ponechte prázdné pro kořen zařízení.',
 			'sourceSetup.passwordOrKey' => 'Zadejte heslo nebo níže přidejte soukromý klíč.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'Otisk SHA256 hostitelského klíče SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Ověřte jej u správce serveru. Na serveru spusťte ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub a použijte hodnotu SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Ponechte prázdné pro zachování připnutého otisku nebo zadejte nový otisk serveru.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Ověření SSH veřejným klíčem',
 			'sourceSetup.sshAuthenticationHelp' => 'Nepovinné; podporováno je i ověření heslem.',
 			'sourceSetup.privateKey' => 'Soukromý klíč (formát PEM nebo OpenSSH)',
@@ -9774,11 +9768,11 @@ extension on TranslationsCs {
 			'musicTools.pinToHome' => 'Připnout na úvodní stránku hudby',
 			'musicTools.unpin' => 'Odepnout',
 			'musicTools.serverAnalysis' => 'Analýza serveru',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Zvuková analýza',
 			'musicTools.serverAnalysisScope' => 'Všechny způsobilé hudební knihovny na tomto serveru. Jejich nastavení analýzy se nezmění.',
 			'musicTools.serverActivities' => 'Aktivity serveru',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Přístup k playlistu',
 			'musicTools.playlistRecipient' => 'Uživatelské jméno Plex nebo e-mail',
 			'musicTools.playlistSharingHint' => 'Udělte přístup k tomuto playlistu a jeho skladbám. Příjemce možná bude muset přijmout pozvánku.',

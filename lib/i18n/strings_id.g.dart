@@ -846,8 +846,6 @@ class _Translations$settings$id extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Meningkatkan dialog di saluran pusat ketika audio sekitar dicampur ke bawah ke stereo.';
 	@override String get displaySwitchDelayDescription => 'Tunggu sebelum mengubah mode paparan sehingga TV atau penerima dapat menyelesaikan switch sebelumnya.';
 	@override String get playerBackendDescription => 'Pilih mesin playback mana yang mendekorasi dan menghasilkan video pada perangkat ini.';
-	@override String get exoPlayerDescription => 'Gunakan pemutar asli Android yang berbasis Media3 dan jalur perangkat keras yang didukung.';
-	@override String get mpvDescription => 'Gunakan mpv, yang mendedahkan pemutaran tambahan, subtitle, dan kontrol pemrosesan video.';
 	@override String get scopeOffDescription => 'Hanya menyimpan perubahan untuk sesi playback saat ini.';
 	@override String get scopeGlobalDescription => 'Gunakan kembali nilai yang sama untuk setiap perpustakaan dan judul.';
 	@override String get scopeLibraryDescription => 'Ingatlah nilai yang berbeda untuk setiap perpustakaan.';
@@ -2611,7 +2609,6 @@ class _Translations$performanceOverlay$id extends Translations$performanceOverla
 	@override String get memory => 'memori';
 	@override String get uiFps => 'FPS yang';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'Nvidia HW';
 	@override String get decoderQualcommHw => 'Keterangan Qualcomm HW';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6274,8 +6271,6 @@ extension on TranslationsId {
 			'settings.downmixCenterBoostDescription' => 'Meningkatkan dialog di saluran pusat ketika audio sekitar dicampur ke bawah ke stereo.',
 			'settings.displaySwitchDelayDescription' => 'Tunggu sebelum mengubah mode paparan sehingga TV atau penerima dapat menyelesaikan switch sebelumnya.',
 			'settings.playerBackendDescription' => 'Pilih mesin playback mana yang mendekorasi dan menghasilkan video pada perangkat ini.',
-			'settings.exoPlayerDescription' => 'Gunakan pemutar asli Android yang berbasis Media3 dan jalur perangkat keras yang didukung.',
-			'settings.mpvDescription' => 'Gunakan mpv, yang mendedahkan pemutaran tambahan, subtitle, dan kontrol pemrosesan video.',
 			'settings.scopeOffDescription' => 'Hanya menyimpan perubahan untuk sesi playback saat ini.',
 			'settings.scopeGlobalDescription' => 'Gunakan kembali nilai yang sama untuk setiap perpustakaan dan judul.',
 			'settings.scopeLibraryDescription' => 'Ingatlah nilai yang berbeda untuk setiap perpustakaan.',
@@ -6621,10 +6616,10 @@ extension on TranslationsId {
 			'videoControls.sleepTimerDurationHeader' => 'Waktu',
 			'videoControls.playbackWillPauseAtEnd' => 'Playback Akan Berhenti di Akhir Video Ini',
 			'videoControls.stillWatching' => 'Masih menonton?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Berhenti di ${seconds}s',
 			'videoControls.continueWatching' => 'Selanjutnya',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Auto-Play selanjutnya',
 			'videoControls.playNext' => 'Mainkan selanjutnya',
 			'videoControls.playButton' => 'Putar',
@@ -7135,10 +7130,10 @@ extension on TranslationsId {
 			'libraries.playRandomMovie' => 'Mainkan film yang rahasia',
 			'libraries.randomPickFailed' => 'Tidak bisa memilih film rawak dari perpustakaan ini.',
 			'libraries.title' => 'Pustaka',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Pustaka',
 			'libraries.scanLibraryFiles' => 'Perpustakaan file scan',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Pindai pustaka',
 			'libraries.analyze' => 'Analisis',
 			'libraries.analyzeLibrary' => 'Analisis Perpustakaan',
@@ -7649,10 +7644,10 @@ extension on TranslationsId {
 			'music.instantMix' => 'Mix Instan',
 			'music.playNext' => 'Mainkan selanjutnya',
 			'music.addToQueue' => 'Tambahkan ke kue',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Disk ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('id'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} jalur', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Sekarang Bermain',
 			'music.playingFrom' => ({required Object title}) => 'Bermain dari ${title}',
 			'music.queue' => 'Keuangan',
@@ -8163,11 +8158,10 @@ extension on TranslationsId {
 			'performanceOverlay.memory' => 'memori',
 			'performanceOverlay.uiFps' => 'FPS yang',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'Nvidia HW',
 			'performanceOverlay.decoderQualcommHw' => 'Keterangan Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Keberadaan HW',
 			'performanceOverlay.decoderSoftware' => 'Software yang',
@@ -8677,11 +8671,11 @@ extension on TranslationsId {
 			'homeLayout.noCustomRows' => 'Belum ada rangkaian',
 			'homeLayout.addRowHint' => 'Gunakan Add Home row untuk membuat satu.',
 			'homeLayout.addHomeRow' => 'Menambahkan Home Rue',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Pilih kategori; baris baru ditambahkan ke Organisator secara otomatis',
 			'homeLayout.removeRow' => 'Menghilangkan Ronde',
 			'homeLayout.recentlyAdded' => 'Terbaru',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Baru-baru ini dilepaskan',
 			'homeLayout.movieCollections' => 'Koleksi Film',
 			'homeLayout.showCollections' => 'Tunjukkan Koleksi',
@@ -9191,11 +9185,11 @@ extension on TranslationsId {
 			'sourceSetup.dlnaHelp' => 'Penemuan bergantung pada multicast jaringan lokal. Jika tidak ada server yang muncul, masukkan URL deskripsi perangkatnya di atas.',
 			'sourceSetup.dlnaRoot' => 'ID objek DLNA; kosongkan untuk menggunakan akar perangkat.',
 			'sourceSetup.passwordOrKey' => 'Masukkan kata sandi atau tambahkan kunci privat di bawah.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'Sidik jari SHA256 kunci host SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Verifikasi dengan administrator server. Di server, jalankan ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub dan gunakan nilai SHA256-nya.',
 			'sourceSetup.sshFingerprintKeep' => 'Kosongkan untuk mempertahankan sidik jari yang disematkan saat ini, atau masukkan sidik jari server yang baru.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Autentikasi SSH dengan kunci publik',
 			'sourceSetup.sshAuthenticationHelp' => 'Opsional; autentikasi kata sandi juga didukung.',
 			'sourceSetup.privateKey' => 'Kunci privat (format PEM atau OpenSSH)',
@@ -9705,11 +9699,11 @@ extension on TranslationsId {
 			'musicTools.pinToHome' => 'Sematkan ke Beranda Musik',
 			'musicTools.unpin' => 'Lepas sematan',
 			'musicTools.serverAnalysis' => 'Analisis server',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Analisis sonik',
 			'musicTools.serverAnalysisScope' => 'Semua pustaka musik yang memenuhi syarat di server ini. Pengaturan analisisnya tidak diubah.',
 			'musicTools.serverActivities' => 'Aktivitas server',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Akses daftar putar',
 			'musicTools.playlistRecipient' => 'Nama pengguna Plex atau email',
 			'musicTools.playlistSharingHint' => 'Berikan akses ke daftar putar ini dan lagunya. Penerima mungkin perlu menerima undangan.',

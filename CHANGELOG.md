@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Fix the native source formatting check that blocked the 3.0.38 release build.
+
 - Prefer compatible hardware video decoders on every platform. ExoPlayer and GStreamer keep software fallback available, and playback statistics report the decoder observed for the stream.
 - HDR subtitle brightness draws on the OLED viewing problem addressed by [barnebyte’s PlexOledSubtitles](https://github.com/barnebyte/PlexOledSubtitles). Pleazyng adjusts playback rendering and keeps the subtitle file intact.
 - Series rotation draws on [raykwonx’s next-unwatched shuffle request](https://forums.plex.tv/t/shuffle-play-my-shows-but-only-play-the-next-unwatched-episode-of-that-show/936507).

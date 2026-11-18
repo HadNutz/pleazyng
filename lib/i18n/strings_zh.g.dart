@@ -846,8 +846,6 @@ class Translations$settings$zh extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => '在周围的音频被混合到斯特里奥时,在中间频道上增加对话。';
 	@override String get displaySwitchDelayDescription => '在更改显示模式之前等待,以便电视或接收器可以完成其以前的交换。';
 	@override String get playerBackendDescription => '选择哪个播放引擎在该设备上扫描和播放视频。';
-	@override String get exoPlayerDescription => '使用 Android 的本地 Media3 基于播放器和支持的硬件路径。';
-	@override String get mpvDescription => '使用 mpv,它暴露了额外的播放、子标题和视频处理控制。';
 	@override String get scopeOffDescription => '只保留当前播放会的更改。';
 	@override String get scopeGlobalDescription => '重复使用每个图书馆和标题的相同值。';
 	@override String get scopeLibraryDescription => '记住每个图书馆的单独价值。';
@@ -2626,7 +2624,6 @@ class Translations$performanceOverlay$zh extends Translations$performanceOverlay
 	@override String get memory => '内存';
 	@override String get uiFps => 'UI FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android 硬件';
 	@override String get decoderNvidiaHw => 'NVIDIA 硬件';
 	@override String get decoderQualcommHw => 'Qualcomm 硬件';
 	@override String get decoderMediatekHw => 'MediaTek 硬件';
@@ -6294,8 +6291,6 @@ extension on TranslationsZh {
 			'settings.downmixCenterBoostDescription' => '在周围的音频被混合到斯特里奥时,在中间频道上增加对话。',
 			'settings.displaySwitchDelayDescription' => '在更改显示模式之前等待,以便电视或接收器可以完成其以前的交换。',
 			'settings.playerBackendDescription' => '选择哪个播放引擎在该设备上扫描和播放视频。',
-			'settings.exoPlayerDescription' => '使用 Android 的本地 Media3 基于播放器和支持的硬件路径。',
-			'settings.mpvDescription' => '使用 mpv,它暴露了额外的播放、子标题和视频处理控制。',
 			'settings.scopeOffDescription' => '只保留当前播放会的更改。',
 			'settings.scopeGlobalDescription' => '重复使用每个图书馆和标题的相同值。',
 			'settings.scopeLibraryDescription' => '记住每个图书馆的单独价值。',
@@ -6641,10 +6636,10 @@ extension on TranslationsZh {
 			'videoControls.sleepTimerDurationHeader' => '定时器',
 			'videoControls.playbackWillPauseAtEnd' => '播放将在此视频结束时暂停',
 			'videoControls.stillWatching' => '还在看吗？',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds} 秒后暂停',
 			'videoControls.continueWatching' => '继续',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => '自动播放下一集',
 			'videoControls.playNext' => '播放下一集',
 			'videoControls.playButton' => '播放',
@@ -7155,10 +7150,10 @@ extension on TranslationsZh {
 			'libraries.playRandomMovie' => '随机电影播放',
 			'libraries.randomPickFailed' => '不能从这本图书馆选择随机电影。',
 			'libraries.title' => '媒体库',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => '媒体库',
 			'libraries.scanLibraryFiles' => '扫描媒体库文件',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => '扫描媒体库',
 			'libraries.analyze' => '分析',
 			'libraries.analyzeLibrary' => '分析媒体库',
@@ -7669,10 +7664,10 @@ extension on TranslationsZh {
 			'music.instantMix' => '即时混合播放',
 			'music.playNext' => '下一首播放',
 			'music.addToQueue' => '添加到队列',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => '碟片 ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} 路径', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} 首', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => '正在播放',
 			'music.playingFrom' => ({required Object title}) => '播放来源：${title}',
 			'music.queue' => '播放队列',
@@ -8183,11 +8178,10 @@ extension on TranslationsZh {
 			'performanceOverlay.memory' => '内存',
 			'performanceOverlay.uiFps' => 'UI FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android 硬件',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA 硬件',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm 硬件',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek 硬件',
 			'performanceOverlay.decoderExynosHw' => 'Exynos 硬件',
 			'performanceOverlay.decoderSoftware' => '软件',
@@ -8697,11 +8691,11 @@ extension on TranslationsZh {
 			'homeLayout.noCustomRows' => '尚未有定位',
 			'homeLayout.addRowHint' => '使用添加主行创建一个。',
 			'homeLayout.addHomeRow' => '添加 Home Rue',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => '选择类别;新行将自动添加到组织者',
 			'homeLayout.removeRow' => '取消行列',
 			'homeLayout.recentlyAdded' => '最近添加',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => '最近发布',
 			'homeLayout.movieCollections' => '电影收藏',
 			'homeLayout.showCollections' => '展示集合',
@@ -9211,11 +9205,11 @@ extension on TranslationsZh {
 			'sourceSetup.dlnaHelp' => '设备发现需要本地网络支持组播。如果没有找到服务器，请在上方输入设备描述文件的地址。',
 			'sourceSetup.dlnaRoot' => 'DLNA 对象 ID；留空以使用设备根目录。',
 			'sourceSetup.passwordOrKey' => '请输入密码，或在下方添加私钥。',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SSH 主机密钥 SHA256 指纹',
 			'sourceSetup.sshFingerprintHelp' => '请向服务器管理员核实。在服务器上运行 ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub，并使用显示的 SHA256 值。',
 			'sourceSetup.sshFingerprintKeep' => '留空以保留当前固定的指纹，或输入新的服务器指纹。',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH 公钥认证',
 			'sourceSetup.sshAuthenticationHelp' => '可选；也支持密码认证。',
 			'sourceSetup.privateKey' => '私钥（PEM 或 OpenSSH 格式）',
@@ -9725,11 +9719,11 @@ extension on TranslationsZh {
 			'musicTools.pinToHome' => '置顶到音乐主页',
 			'musicTools.unpin' => '取消置顶',
 			'musicTools.serverAnalysis' => '服务器分析',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => '音频特征分析',
 			'musicTools.serverAnalysisScope' => '此服务器上所有符合条件的音乐资料库。不会更改其分析设置。',
 			'musicTools.serverActivities' => '服务器任务',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => '播放列表访问权限',
 			'musicTools.playlistRecipient' => 'Plex 用户名或电子邮件',
 			'musicTools.playlistSharingHint' => '授予对此播放列表及其曲目的访问权限。接收者可能需要接受邀请。',

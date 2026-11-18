@@ -852,8 +852,6 @@ class _Translations$settings$ru extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Повышение диалога в центральном канале, когда окружающий звук смешивается в стерео.';
 	@override String get displaySwitchDelayDescription => 'Дождайтесь, прежде чем изменить режим дисплея, чтобы телевизор или приемник смог завершить предыдущий переключатель.';
 	@override String get playerBackendDescription => 'Выберите, какой игровой двигатель декодирует и передает видео на этом устройстве.';
-	@override String get exoPlayerDescription => 'Используйте оригинальный медиа-базированный игрок Android и поддерживаемые аппаратные пути.';
-	@override String get mpvDescription => 'Используйте mpv, который выставляет дополнительные контролеры воспроизведения, субтитра и обработки видео.';
 	@override String get scopeOffDescription => 'Сохраняйте изменения только для текущей сессии воспроизведения.';
 	@override String get scopeGlobalDescription => 'Повторно использовать ту же ценность для каждой библиотеки и названия.';
 	@override String get scopeLibraryDescription => 'Помните о отдельной стоимости для каждой библиотеки.';
@@ -2668,7 +2666,6 @@ class _Translations$performanceOverlay$ru extends Translations$performanceOverla
 	@override String get memory => 'Память';
 	@override String get uiFps => 'FPS интерфейса';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android, аппаратный';
 	@override String get decoderNvidiaHw => 'NVIDIA, аппаратный';
 	@override String get decoderQualcommHw => 'Qualcomm, аппаратный';
 	@override String get decoderMediatekHw => 'MediaTek, аппаратный';
@@ -6349,8 +6346,6 @@ extension on TranslationsRu {
 			'settings.downmixCenterBoostDescription' => 'Повышение диалога в центральном канале, когда окружающий звук смешивается в стерео.',
 			'settings.displaySwitchDelayDescription' => 'Дождайтесь, прежде чем изменить режим дисплея, чтобы телевизор или приемник смог завершить предыдущий переключатель.',
 			'settings.playerBackendDescription' => 'Выберите, какой игровой двигатель декодирует и передает видео на этом устройстве.',
-			'settings.exoPlayerDescription' => 'Используйте оригинальный медиа-базированный игрок Android и поддерживаемые аппаратные пути.',
-			'settings.mpvDescription' => 'Используйте mpv, который выставляет дополнительные контролеры воспроизведения, субтитра и обработки видео.',
 			'settings.scopeOffDescription' => 'Сохраняйте изменения только для текущей сессии воспроизведения.',
 			'settings.scopeGlobalDescription' => 'Повторно использовать ту же ценность для каждой библиотеки и названия.',
 			'settings.scopeLibraryDescription' => 'Помните о отдельной стоимости для каждой библиотеки.',
@@ -6696,10 +6691,10 @@ extension on TranslationsRu {
 			'videoControls.sleepTimerDurationHeader' => 'Таймер',
 			'videoControls.playbackWillPauseAtEnd' => 'Воспроизведение будет приостановлено в конце этого видео',
 			'videoControls.stillWatching' => 'Всё ещё смотрите?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Пауза через ${seconds}с',
 			'videoControls.continueWatching' => 'Продолжить',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Автовоспроизведение следующего',
 			'videoControls.playNext' => 'Следующее',
 			'videoControls.playButton' => 'Воспроизвести',
@@ -7210,10 +7205,10 @@ extension on TranslationsRu {
 			'libraries.playRandomMovie' => 'Играть в случайный фильм',
 			'libraries.randomPickFailed' => 'Нельзя выбрать случайный фильм из этой библиотеки.',
 			'libraries.title' => 'Библиотеки',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Библиотека',
 			'libraries.scanLibraryFiles' => 'Сканировать файлы библиотеки',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Сканировать библиотеку',
 			'libraries.analyze' => 'Анализировать',
 			'libraries.analyzeLibrary' => 'Анализировать библиотеку',
@@ -7724,10 +7719,10 @@ extension on TranslationsRu {
 			'music.instantMix' => 'Быстрый микс',
 			'music.playNext' => 'Воспроизвести следующим',
 			'music.addToQueue' => 'Добавить в очередь',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Диск ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} трек', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} трека', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} треков', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} трека', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Сейчас играет',
 			'music.playingFrom' => ({required Object title}) => 'Воспроизведение из ${title}',
 			'music.queue' => 'Очередь',
@@ -8238,11 +8233,10 @@ extension on TranslationsRu {
 			'performanceOverlay.memory' => 'Память',
 			'performanceOverlay.uiFps' => 'FPS интерфейса',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android, аппаратный',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA, аппаратный',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm, аппаратный',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek, аппаратный',
 			'performanceOverlay.decoderExynosHw' => 'Exynos, аппаратный',
 			'performanceOverlay.decoderSoftware' => 'Программный',
@@ -8752,11 +8746,11 @@ extension on TranslationsRu {
 			'homeLayout.noCustomRows' => 'Не существует обычных строк',
 			'homeLayout.addRowHint' => 'Используйте Добавить домашний ряд для создания одного.',
 			'homeLayout.addHomeRow' => 'Добавить Home Rue',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Выберите категорию; новый ряд автоматически добавляется в Организатор',
 			'homeLayout.removeRow' => 'Удаление роу',
 			'homeLayout.recentlyAdded' => 'Недавно добавленное',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Недавно выпущен',
 			'homeLayout.movieCollections' => 'Фильмы Коллекции',
 			'homeLayout.showCollections' => 'Покажите коллекции',
@@ -9266,11 +9260,11 @@ extension on TranslationsRu {
 			'sourceSetup.dlnaHelp' => 'Обнаружение зависит от многоадресной рассылки в локальной сети. Если сервер не появляется, введите выше URL описания его устройства.',
 			'sourceSetup.dlnaRoot' => 'ID объекта DLNA; оставьте пустым, чтобы использовать корень устройства.',
 			'sourceSetup.passwordOrKey' => 'Введите пароль или добавьте закрытый ключ ниже.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'Отпечаток SHA256 ключа хоста SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Сверьте его с администратором сервера. На сервере выполните ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub и используйте значение SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Оставьте пустым, чтобы сохранить закреплённый отпечаток, или введите новый отпечаток сервера.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Аутентификация SSH по открытому ключу',
 			'sourceSetup.sshAuthenticationHelp' => 'Необязательно; аутентификация по паролю также поддерживается.',
 			'sourceSetup.privateKey' => 'Закрытый ключ (формат PEM или OpenSSH)',
@@ -9780,11 +9774,11 @@ extension on TranslationsRu {
 			'musicTools.pinToHome' => 'Закрепить на главной странице музыки',
 			'musicTools.unpin' => 'Открепить',
 			'musicTools.serverAnalysis' => 'Анализ сервера',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Звуковой анализ',
 			'musicTools.serverAnalysisScope' => 'Все подходящие музыкальные библиотеки на этом сервере. Их настройки анализа не изменяются.',
 			'musicTools.serverActivities' => 'Задачи сервера',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Доступ к плейлисту',
 			'musicTools.playlistRecipient' => 'Имя пользователя Plex или эл. почта',
 			'musicTools.playlistSharingHint' => 'Предоставьте доступ к этому плейлисту и его трекам. Получателю может потребоваться принять приглашение.',

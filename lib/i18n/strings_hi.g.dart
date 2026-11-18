@@ -848,8 +848,6 @@ class _Translations$settings$hi extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'केंद्रीय चैनल में बातचीत बढ़ाएं जब आसपास के ऑडियो को स्टीरियो में मिश्रित किया जाता है।';
 	@override String get displaySwitchDelayDescription => 'प्रदर्शनी मोड बदलने से पहले इंतजार करें ताकि टीवी या रिसीवर अपने पिछले स्विच को समाप्त कर सके।';
 	@override String get playerBackendDescription => 'यह चुनें कि किस प्लेबैक इंजन को डिकोड और इस डिवाइस पर वीडियो रेंडर करता है।';
-	@override String get exoPlayerDescription => 'एंड्रॉइड के मूल मीडिया3 आधारित प्लेयर और समर्थित हार्डवेयर मार्गों का उपयोग करें।';
-	@override String get mpvDescription => 'MPV का उपयोग करें, जो अतिरिक्त प्लेबैक, उपशीर्षक और वीडियो प्रसंस्करण नियंत्रण को उजागर करता है।';
 	@override String get scopeOffDescription => 'केवल वर्तमान प्लेबैक सत्र के लिए परिवर्तन रखें।';
 	@override String get scopeGlobalDescription => 'प्रत्येक पुस्तकालय और शीर्षक के लिए एक ही मूल्य का पुन: उपयोग करें।';
 	@override String get scopeLibraryDescription => 'प्रत्येक पुस्तकालय के लिए एक अलग मूल्य याद रखें।';
@@ -2630,7 +2628,6 @@ class _Translations$performanceOverlay$hi extends Translations$performanceOverla
 	@override String get memory => 'स्मृति';
 	@override String get uiFps => 'एफपीएस';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android एचडब्ल्यू';
 	@override String get decoderNvidiaHw => 'NVIDIA HW के बारे में';
 	@override String get decoderQualcommHw => 'क्लॉम HW';
 	@override String get decoderMediatekHw => 'मीडिया एचएच';
@@ -6299,8 +6296,6 @@ extension on TranslationsHi {
 			'settings.downmixCenterBoostDescription' => 'केंद्रीय चैनल में बातचीत बढ़ाएं जब आसपास के ऑडियो को स्टीरियो में मिश्रित किया जाता है।',
 			'settings.displaySwitchDelayDescription' => 'प्रदर्शनी मोड बदलने से पहले इंतजार करें ताकि टीवी या रिसीवर अपने पिछले स्विच को समाप्त कर सके।',
 			'settings.playerBackendDescription' => 'यह चुनें कि किस प्लेबैक इंजन को डिकोड और इस डिवाइस पर वीडियो रेंडर करता है।',
-			'settings.exoPlayerDescription' => 'एंड्रॉइड के मूल मीडिया3 आधारित प्लेयर और समर्थित हार्डवेयर मार्गों का उपयोग करें।',
-			'settings.mpvDescription' => 'MPV का उपयोग करें, जो अतिरिक्त प्लेबैक, उपशीर्षक और वीडियो प्रसंस्करण नियंत्रण को उजागर करता है।',
 			'settings.scopeOffDescription' => 'केवल वर्तमान प्लेबैक सत्र के लिए परिवर्तन रखें।',
 			'settings.scopeGlobalDescription' => 'प्रत्येक पुस्तकालय और शीर्षक के लिए एक ही मूल्य का पुन: उपयोग करें।',
 			'settings.scopeLibraryDescription' => 'प्रत्येक पुस्तकालय के लिए एक अलग मूल्य याद रखें।',
@@ -6646,10 +6641,10 @@ extension on TranslationsHi {
 			'videoControls.sleepTimerDurationHeader' => 'टाइमर',
 			'videoControls.playbackWillPauseAtEnd' => 'Playback इस वीडियो के अंत में रुक जाएगा',
 			'videoControls.stillWatching' => 'अभी भी देखते हैं?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds} में आराम',
 			'videoControls.continueWatching' => 'जारी है',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'अगला Auto-Play',
 			'videoControls.playNext' => 'Next खेलना',
 			'videoControls.playButton' => 'खेलना',
@@ -7160,10 +7155,10 @@ extension on TranslationsHi {
 			'libraries.playRandomMovie' => 'एक यादृच्छिक फिल्म खेलना',
 			'libraries.randomPickFailed' => 'मैं इस पुस्तकालय से एक यादृच्छिक फिल्म नहीं चुन सकता था।',
 			'libraries.title' => 'पुस्तकालय',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'लाइब्रेरी',
 			'libraries.scanLibraryFiles' => 'पुस्तकालय फ़ाइलों का स्कैन',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'पुस्तकालय स्कैन',
 			'libraries.analyze' => 'विश्लेषण',
 			'libraries.analyzeLibrary' => 'पुस्तकालय विश्लेषण',
@@ -7674,10 +7669,10 @@ extension on TranslationsHi {
 			'music.instantMix' => 'मिश्रण मिक्स',
 			'music.playNext' => 'अगला खेल',
 			'music.addToQueue' => 'क्यूए में जोड़ें',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'डिस्क ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hi'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ट्रैक', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ट्रैक', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'अब खेलते हैं',
 			'music.playingFrom' => ({required Object title}) => 'खेलने के लिए ${title}',
 			'music.queue' => 'क्यूए',
@@ -8188,11 +8183,10 @@ extension on TranslationsHi {
 			'performanceOverlay.memory' => 'स्मृति',
 			'performanceOverlay.uiFps' => 'एफपीएस',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android एचडब्ल्यू',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW के बारे में',
 			'performanceOverlay.decoderQualcommHw' => 'क्लॉम HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'मीडिया एचएच',
 			'performanceOverlay.decoderExynosHw' => 'एक्सिनोस एचड',
 			'performanceOverlay.decoderSoftware' => 'सॉफ्टवेयर',
@@ -8702,11 +8696,11 @@ extension on TranslationsHi {
 			'homeLayout.noCustomRows' => 'अभी तक कोई कस्टम नहीं',
 			'homeLayout.addRowHint' => 'एक को बनाने के लिए Home Range का उपयोग करें।',
 			'homeLayout.addHomeRow' => 'होम लाइन जोड़ें',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'एक श्रेणी का चयन करें; नए पंक्ति को स्वचालित रूप से संगठित करने के लिए जोड़ा जाता है',
 			'homeLayout.removeRow' => 'लाइन को हटा दें',
 			'homeLayout.recentlyAdded' => 'हाल ही में जोड़ा',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'हाल ही में रिलीज',
 			'homeLayout.movieCollections' => 'फिल्म संग्रह',
 			'homeLayout.showCollections' => 'संग्रह दिखाएं',
@@ -9216,11 +9210,11 @@ extension on TranslationsHi {
 			'sourceSetup.dlnaHelp' => 'डिवाइस खोजने के लिए स्थानीय नेटवर्क का मल्टीकास्ट ज़रूरी है। कोई सर्वर न दिखे तो ऊपर उसके डिवाइस विवरण का URL दर्ज करें।',
 			'sourceSetup.dlnaRoot' => 'DLNA ऑब्जेक्ट ID; डिवाइस का रूट इस्तेमाल करने के लिए खाली छोड़ें।',
 			'sourceSetup.passwordOrKey' => 'पासवर्ड दर्ज करें या नीचे निजी कुंजी जोड़ें।',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SSH होस्ट कुंजी का SHA256 फ़िंगरप्रिंट',
 			'sourceSetup.sshFingerprintHelp' => 'सर्वर व्यवस्थापक से इसकी पुष्टि करें। सर्वर पर ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub चलाएँ और उससे मिलने वाला SHA256 मान इस्तेमाल करें।',
 			'sourceSetup.sshFingerprintKeep' => 'मौजूदा पिन किया गया फ़िंगरप्रिंट रखने के लिए खाली छोड़ें, या सर्वर का नया फ़िंगरप्रिंट दर्ज करें।',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH सार्वजनिक कुंजी से प्रमाणीकरण',
 			'sourceSetup.sshAuthenticationHelp' => 'वैकल्पिक; पासवर्ड से प्रमाणीकरण भी समर्थित है।',
 			'sourceSetup.privateKey' => 'निजी कुंजी (PEM या OpenSSH प्रारूप)',
@@ -9730,11 +9724,11 @@ extension on TranslationsHi {
 			'musicTools.pinToHome' => 'संगीत होम पर पिन करें',
 			'musicTools.unpin' => 'पिन हटाएँ',
 			'musicTools.serverAnalysis' => 'सर्वर विश्लेषण',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'ध्वनि विश्लेषण',
 			'musicTools.serverAnalysisScope' => 'इस सर्वर की सभी पात्र संगीत लाइब्रेरी। इससे उनकी विश्लेषण सेटिंग नहीं बदलती।',
 			'musicTools.serverActivities' => 'सर्वर गतिविधियाँ',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'प्लेलिस्ट का ऐक्सेस',
 			'musicTools.playlistRecipient' => 'Plex उपयोगकर्ता नाम या ईमेल',
 			'musicTools.playlistSharingHint' => 'इस प्लेलिस्ट और इसके ट्रैक का ऐक्सेस दें। प्राप्तकर्ता को निमंत्रण स्वीकार करना पड़ सकता है।',

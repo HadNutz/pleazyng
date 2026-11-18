@@ -848,8 +848,6 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Öka dialogen i den centrala kanalen när surroundljud blandas ned till stereo.';
 	@override String get displaySwitchDelayDescription => 'Vänta innan du ändrar skärmläget så att TV:n eller mottagaren kan avsluta sin föregående switch.';
 	@override String get playerBackendDescription => 'Välj vilken spelmotor som decoderar och renderar video på den här enheten.';
-	@override String get exoPlayerDescription => 'Använd Androids inhemska Media3-baserade spelare och stödda hårdvaruprocesser.';
-	@override String get mpvDescription => 'Använd mpv, som exponerar ytterligare playback, subtitle och video bearbetning kontroller.';
 	@override String get scopeOffDescription => 'Håll ändringar endast för den aktuella playback-sessionen.';
 	@override String get scopeGlobalDescription => 'Återanvända samma värde för varje bibliotek och titel.';
 	@override String get scopeLibraryDescription => 'Kom ihåg en separat värde för varje bibliotek.';
@@ -2630,7 +2628,6 @@ class _Translations$performanceOverlay$sv extends Translations$performanceOverla
 	@override String get memory => 'Minne';
 	@override String get uiFps => 'UI FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm HW';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6299,8 +6296,6 @@ extension on TranslationsSv {
 			'settings.downmixCenterBoostDescription' => 'Öka dialogen i den centrala kanalen när surroundljud blandas ned till stereo.',
 			'settings.displaySwitchDelayDescription' => 'Vänta innan du ändrar skärmläget så att TV:n eller mottagaren kan avsluta sin föregående switch.',
 			'settings.playerBackendDescription' => 'Välj vilken spelmotor som decoderar och renderar video på den här enheten.',
-			'settings.exoPlayerDescription' => 'Använd Androids inhemska Media3-baserade spelare och stödda hårdvaruprocesser.',
-			'settings.mpvDescription' => 'Använd mpv, som exponerar ytterligare playback, subtitle och video bearbetning kontroller.',
 			'settings.scopeOffDescription' => 'Håll ändringar endast för den aktuella playback-sessionen.',
 			'settings.scopeGlobalDescription' => 'Återanvända samma värde för varje bibliotek och titel.',
 			'settings.scopeLibraryDescription' => 'Kom ihåg en separat värde för varje bibliotek.',
@@ -6646,10 +6641,10 @@ extension on TranslationsSv {
 			'videoControls.sleepTimerDurationHeader' => 'Timer',
 			'videoControls.playbackWillPauseAtEnd' => 'Uppspelningen pausas i slutet av denna video',
 			'videoControls.stillWatching' => 'Tittar du fortfarande?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pausar om ${seconds}s',
 			'videoControls.continueWatching' => 'Fortsätt',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Spela nästa automatiskt',
 			'videoControls.playNext' => 'Spela nästa',
 			'videoControls.playButton' => 'Spela',
@@ -7160,10 +7155,10 @@ extension on TranslationsSv {
 			'libraries.playRandomMovie' => 'Spela en slumpmässig film',
 			'libraries.randomPickFailed' => 'Jag kan inte välja en slumpmässig film från denna bibliotek.',
 			'libraries.title' => 'Bibliotek',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Bibliotek',
 			'libraries.scanLibraryFiles' => 'Skanna biblioteksfiler',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Skanna bibliotek',
 			'libraries.analyze' => 'Analysera',
 			'libraries.analyzeLibrary' => 'Analysera bibliotek',
@@ -7674,10 +7669,10 @@ extension on TranslationsSv {
 			'music.instantMix' => 'Snabbmix',
 			'music.playNext' => 'Spela härnäst',
 			'music.addToQueue' => 'Lägg till i kö',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Skiva ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sv'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} låt', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} låtar', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Spelas nu',
 			'music.playingFrom' => ({required Object title}) => 'Spelar från ${title}',
 			'music.queue' => 'Kö',
@@ -8188,11 +8183,10 @@ extension on TranslationsSv {
 			'performanceOverlay.memory' => 'Minne',
 			'performanceOverlay.uiFps' => 'UI FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Programvara',
@@ -8702,11 +8696,11 @@ extension on TranslationsSv {
 			'homeLayout.noCustomRows' => 'Inga vanliga rader än',
 			'homeLayout.addRowHint' => 'Använd Lägg till hem rad för att skapa en.',
 			'homeLayout.addHomeRow' => 'Lägg till Home Rue',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Välj en kategori; den nya raden läggs till i Organiseraren automatiskt',
 			'homeLayout.removeRow' => 'Ta bort rad',
 			'homeLayout.recentlyAdded' => 'Nyligen tillagda',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Nyligen släppt',
 			'homeLayout.movieCollections' => 'Filmsamlingar',
 			'homeLayout.showCollections' => 'Visa samlingar',
@@ -9216,11 +9210,11 @@ extension on TranslationsSv {
 			'sourceSetup.dlnaHelp' => 'Sökningen kräver multicast i det lokala nätverket. Om ingen server visas anger du URL:en till dess enhetsbeskrivning ovan.',
 			'sourceSetup.dlnaRoot' => 'DLNA-objekt-ID; lämna tomt för att använda enhetens rot.',
 			'sourceSetup.passwordOrKey' => 'Ange ett lösenord eller lägg till en privat nyckel nedan.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SHA256-fingeravtryck för SSH-värdnyckeln',
 			'sourceSetup.sshFingerprintHelp' => 'Kontrollera det med serveradministratören. Kör ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub på servern och använd dess SHA256-värde.',
 			'sourceSetup.sshFingerprintKeep' => 'Lämna tomt för att behålla det låsta fingeravtrycket eller ange ett nytt serverfingeravtryck.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH-autentisering med offentlig nyckel',
 			'sourceSetup.sshAuthenticationHelp' => 'Valfritt; autentisering med lösenord stöds också.',
 			'sourceSetup.privateKey' => 'Privat nyckel (PEM- eller OpenSSH-format)',
@@ -9730,11 +9724,11 @@ extension on TranslationsSv {
 			'musicTools.pinToHome' => 'Fäst på musikstartsidan',
 			'musicTools.unpin' => 'Lossa',
 			'musicTools.serverAnalysis' => 'Serveranalys',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Ljudanalys',
 			'musicTools.serverAnalysisScope' => 'Alla kvalificerade musikbibliotek på den här servern. Deras analysinställningar ändras inte.',
 			'musicTools.serverActivities' => 'Serveraktiviteter',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Åtkomst till spellista',
 			'musicTools.playlistRecipient' => 'Plex-användarnamn eller e-post',
 			'musicTools.playlistSharingHint' => 'Ge åtkomst till den här spellistan och dess spår. Mottagaren kan behöva godkänna en inbjudan.',

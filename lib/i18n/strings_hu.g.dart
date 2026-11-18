@@ -848,8 +848,6 @@ class _Translations$settings$hu extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Emelje fel a párbeszédet a központi csatornában, amikor a környező hangot sztereóba keverjük össze.';
 	@override String get displaySwitchDelayDescription => 'Várjon, mielőtt megváltoztatná a kijelző üzemmódját, hogy a TV vagy a fogadó befejezheti az előző váltót.';
 	@override String get playerBackendDescription => 'Válassza ki, melyik lejátszó motor dekódolja és visszahívja a videót ezen az eszközön.';
-	@override String get exoPlayerDescription => 'Használja az Android indiai Media3 alapú lejátszóját és a támogatott hardverpályait.';
-	@override String get mpvDescription => 'Használja az MPV-t, amely további lejátszásokat, alfejezeteket és videó feldolgozási ellenőrzéseket mutat be.';
 	@override String get scopeOffDescription => 'Csak a jelenlegi lejátszásra vonatkozó módosításokat tartsa fenn.';
 	@override String get scopeGlobalDescription => 'Ismét használja ugyanazt az értéket minden könyvtár és cím.';
 	@override String get scopeLibraryDescription => 'Emlékezzünk egy külön értékre minden könyvtár számára.';
@@ -2630,7 +2628,6 @@ class _Translations$performanceOverlay$hu extends Translations$performanceOverla
 	@override String get memory => 'Memória';
 	@override String get uiFps => 'Felület-FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm HW';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6299,8 +6296,6 @@ extension on TranslationsHu {
 			'settings.downmixCenterBoostDescription' => 'Emelje fel a párbeszédet a központi csatornában, amikor a környező hangot sztereóba keverjük össze.',
 			'settings.displaySwitchDelayDescription' => 'Várjon, mielőtt megváltoztatná a kijelző üzemmódját, hogy a TV vagy a fogadó befejezheti az előző váltót.',
 			'settings.playerBackendDescription' => 'Válassza ki, melyik lejátszó motor dekódolja és visszahívja a videót ezen az eszközön.',
-			'settings.exoPlayerDescription' => 'Használja az Android indiai Media3 alapú lejátszóját és a támogatott hardverpályait.',
-			'settings.mpvDescription' => 'Használja az MPV-t, amely további lejátszásokat, alfejezeteket és videó feldolgozási ellenőrzéseket mutat be.',
 			'settings.scopeOffDescription' => 'Csak a jelenlegi lejátszásra vonatkozó módosításokat tartsa fenn.',
 			'settings.scopeGlobalDescription' => 'Ismét használja ugyanazt az értéket minden könyvtár és cím.',
 			'settings.scopeLibraryDescription' => 'Emlékezzünk egy külön értékre minden könyvtár számára.',
@@ -6646,10 +6641,10 @@ extension on TranslationsHu {
 			'videoControls.sleepTimerDurationHeader' => 'Időzítő',
 			'videoControls.playbackWillPauseAtEnd' => 'A lejátszás szünetel a videó végén',
 			'videoControls.stillWatching' => 'Még nézed?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Szüneteltetés ${seconds} mp múlva',
 			'videoControls.continueWatching' => 'Folytatás',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Következő automatikus lejátszása',
 			'videoControls.playNext' => 'Következő lejátszása',
 			'videoControls.playButton' => 'Lejátszás',
@@ -7160,10 +7155,10 @@ extension on TranslationsHu {
 			'libraries.playRandomMovie' => 'Játssz egy véletlenszerű filmet',
 			'libraries.randomPickFailed' => 'Nem tudtam kiválasztani egy véletlenszerű filmet ebből a könyvtárból.',
 			'libraries.title' => 'Könyvtárak',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Könyvtár',
 			'libraries.scanLibraryFiles' => 'Könyvtárfájlok beolvasása',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Könyvtár beolvasása',
 			'libraries.analyze' => 'Elemzés',
 			'libraries.analyzeLibrary' => 'Könyvtár elemzése',
@@ -7674,10 +7669,10 @@ extension on TranslationsHu {
 			'music.instantMix' => 'Azonnali keverés',
 			'music.playNext' => 'Következő lejátszása',
 			'music.addToQueue' => 'Hozzáadás a lejátszási sorhoz',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => '${n}. lemez',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hu'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} zeneszám', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} zeneszám', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Most szól',
 			'music.playingFrom' => ({required Object title}) => 'Lejátszás innen: ${title}',
 			'music.queue' => 'Lejátszási sor',
@@ -8188,11 +8183,10 @@ extension on TranslationsHu {
 			'performanceOverlay.memory' => 'Memória',
 			'performanceOverlay.uiFps' => 'Felület-FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Szoftveres',
@@ -8702,11 +8696,11 @@ extension on TranslationsHu {
 			'homeLayout.noCustomRows' => 'Még nincs szokásos sor',
 			'homeLayout.addRowHint' => 'Használja a Hozzáadása Home sor, hogy hozzon létre egy.',
 			'homeLayout.addHomeRow' => 'Hozzáadása Home Rue',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Válasszon egy kategóriát; az új sor automatikusan hozzáadódik a Szervezőhez',
 			'homeLayout.removeRow' => 'eltávolítása sor',
 			'homeLayout.recentlyAdded' => 'Legutóbb hozzáadva',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Nemrégiben kiadott',
 			'homeLayout.movieCollections' => 'Filmgyűjtemények',
 			'homeLayout.showCollections' => 'Kollekciók bemutatása',
@@ -9216,11 +9210,11 @@ extension on TranslationsHu {
 			'sourceSetup.dlnaHelp' => 'A felderítés a helyi hálózat multicast-forgalmától függ. Ha nem jelenik meg kiszolgáló, add meg fent az eszközleírásának URL-jét.',
 			'sourceSetup.dlnaRoot' => 'DLNA-objektumazonosító; üresen hagyva az eszköz gyökerét használja.',
 			'sourceSetup.passwordOrKey' => 'Adj meg egy jelszót, vagy adj hozzá lent egy privát kulcsot.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'Az SSH-gépkulcs SHA256-ujjlenyomata',
 			'sourceSetup.sshFingerprintHelp' => 'Ellenőrizd a szerver rendszergazdájával. A szerveren futtasd az ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub parancsot, és használd az SHA256-értékét.',
 			'sourceSetup.sshFingerprintKeep' => 'Hagyd üresen a jelenleg rögzített ujjlenyomat megőrzéséhez, vagy adj meg új szerverujjlenyomatot.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH-hitelesítés nyilvános kulccsal',
 			'sourceSetup.sshAuthenticationHelp' => 'Nem kötelező; a jelszavas hitelesítés is támogatott.',
 			'sourceSetup.privateKey' => 'Privát kulcs (PEM- vagy OpenSSH-formátum)',
@@ -9730,11 +9724,11 @@ extension on TranslationsHu {
 			'musicTools.pinToHome' => 'Rögzítés a zenei kezdőlapon',
 			'musicTools.unpin' => 'Rögzítés feloldása',
 			'musicTools.serverAnalysis' => 'Szerverelemzés',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Hangelemzés',
 			'musicTools.serverAnalysisScope' => 'A szerver összes alkalmas zenei könyvtára. Az elemzési beállításaik nem változnak.',
 			'musicTools.serverActivities' => 'Szervertevékenységek',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Lejátszási lista elérése',
 			'musicTools.playlistRecipient' => 'Plex-felhasználónév vagy e-mail',
 			'musicTools.playlistSharingHint' => 'Adjon hozzáférést ehhez a listához és számaihoz. A címzettnek esetleg el kell fogadnia egy meghívást.',

@@ -852,8 +852,6 @@ class _Translations$settings$pl extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Wzmocnij dialog w kanałach centralnych, gdy audio otoczenia jest mieszane w dół do stereo.';
 	@override String get displaySwitchDelayDescription => 'Poczekaj przed zmianą trybu wyświetlania, aby telewizor lub odbiornik mógł zakończyć swój poprzedni przełącznik.';
 	@override String get playerBackendDescription => 'Wybierz, który silnik odtwarzania decyduje i renderuje wideo na tym urządzeniu.';
-	@override String get exoPlayerDescription => 'Korzystaj z native Media3 Player i wspieranych ścieżek sprzętowych dla Androida.';
-	@override String get mpvDescription => 'Użyj mpv, który eksponuje dodatkowe odtwarzania, podtytuły i kontrolki przetwarzania wideo.';
 	@override String get scopeOffDescription => 'Utrzymuj zmiany tylko na bieżącej sesji odtwarzania.';
 	@override String get scopeGlobalDescription => 'Ponownie używać tej samej wartości dla każdej biblioteki i tytułu.';
 	@override String get scopeLibraryDescription => 'Pamiętaj o oddzielnej wartości dla każdej biblioteki.';
@@ -2668,7 +2666,6 @@ class _Translations$performanceOverlay$pl extends Translations$performanceOverla
 	@override String get memory => 'Pamięć';
 	@override String get uiFps => 'FPS interfejsu';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android (sprzętowy)';
 	@override String get decoderNvidiaHw => 'NVIDIA (sprzętowy)';
 	@override String get decoderQualcommHw => 'Qualcomm (sprzętowy)';
 	@override String get decoderMediatekHw => 'MediaTek (sprzętowy)';
@@ -6349,8 +6346,6 @@ extension on TranslationsPl {
 			'settings.downmixCenterBoostDescription' => 'Wzmocnij dialog w kanałach centralnych, gdy audio otoczenia jest mieszane w dół do stereo.',
 			'settings.displaySwitchDelayDescription' => 'Poczekaj przed zmianą trybu wyświetlania, aby telewizor lub odbiornik mógł zakończyć swój poprzedni przełącznik.',
 			'settings.playerBackendDescription' => 'Wybierz, który silnik odtwarzania decyduje i renderuje wideo na tym urządzeniu.',
-			'settings.exoPlayerDescription' => 'Korzystaj z native Media3 Player i wspieranych ścieżek sprzętowych dla Androida.',
-			'settings.mpvDescription' => 'Użyj mpv, który eksponuje dodatkowe odtwarzania, podtytuły i kontrolki przetwarzania wideo.',
 			'settings.scopeOffDescription' => 'Utrzymuj zmiany tylko na bieżącej sesji odtwarzania.',
 			'settings.scopeGlobalDescription' => 'Ponownie używać tej samej wartości dla każdej biblioteki i tytułu.',
 			'settings.scopeLibraryDescription' => 'Pamiętaj o oddzielnej wartości dla każdej biblioteki.',
@@ -6696,10 +6691,10 @@ extension on TranslationsPl {
 			'videoControls.sleepTimerDurationHeader' => 'Minutnik',
 			'videoControls.playbackWillPauseAtEnd' => 'Odtwarzanie zatrzyma się na końcu tego wideo',
 			'videoControls.stillWatching' => 'Nadal oglądasz?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pauza za ${seconds}s',
 			'videoControls.continueWatching' => 'Kontynuuj',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Automatycznie odtwórz następny',
 			'videoControls.playNext' => 'Odtwórz następny',
 			'videoControls.playButton' => 'Odtwórz',
@@ -7210,10 +7205,10 @@ extension on TranslationsPl {
 			'libraries.playRandomMovie' => 'Zagraj w filmie randomizowanym',
 			'libraries.randomPickFailed' => 'Nie można wybrać filmów z tej biblioteki.',
 			'libraries.title' => 'Biblioteki',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Biblioteka',
 			'libraries.scanLibraryFiles' => 'Skanuj pliki biblioteki',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Skanuj bibliotekę',
 			'libraries.analyze' => 'Analizuj',
 			'libraries.analyzeLibrary' => 'Analizuj bibliotekę',
@@ -7724,10 +7719,10 @@ extension on TranslationsPl {
 			'music.instantMix' => 'Miks błyskawiczny',
 			'music.playNext' => 'Odtwórz następny',
 			'music.addToQueue' => 'Dodaj do kolejki',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Płyta ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pl'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} utwór', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} utwory', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} utworów', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} utworu', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Teraz odtwarzane',
 			'music.playingFrom' => ({required Object title}) => 'Odtwarzanie z ${title}',
 			'music.queue' => 'Kolejka',
@@ -8238,11 +8233,10 @@ extension on TranslationsPl {
 			'performanceOverlay.memory' => 'Pamięć',
 			'performanceOverlay.uiFps' => 'FPS interfejsu',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android (sprzętowy)',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA (sprzętowy)',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm (sprzętowy)',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek (sprzętowy)',
 			'performanceOverlay.decoderExynosHw' => 'Exynos (sprzętowy)',
 			'performanceOverlay.decoderSoftware' => 'Programowy',
@@ -8752,11 +8746,11 @@ extension on TranslationsPl {
 			'homeLayout.noCustomRows' => 'Nie ma jeszcze kolejek',
 			'homeLayout.addRowHint' => 'Użyj Dodaj kolejkę domową, aby utworzyć jedną.',
 			'homeLayout.addHomeRow' => 'Dodaj domowy rzęs',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Wybierz kategorię; nowy pasek zostanie automatycznie dodany do Organizator',
 			'homeLayout.removeRow' => 'Usuń kolejkę',
 			'homeLayout.recentlyAdded' => 'Ostatnio dodane',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Niedawno wydane',
 			'homeLayout.movieCollections' => 'Filmowe kolekcje',
 			'homeLayout.showCollections' => 'Wyświetla kolekcje',
@@ -9266,11 +9260,11 @@ extension on TranslationsPl {
 			'sourceSetup.dlnaHelp' => 'Wykrywanie wymaga transmisji multicast w sieci lokalnej. Jeśli serwer się nie pojawi, wprowadź powyżej adres URL opisu jego urządzenia.',
 			'sourceSetup.dlnaRoot' => 'ID obiektu DLNA; pozostaw puste, aby użyć katalogu głównego urządzenia.',
 			'sourceSetup.passwordOrKey' => 'Wprowadź hasło lub dodaj klucz prywatny poniżej.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'Odcisk SHA256 klucza hosta SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Zweryfikuj go z administratorem serwera. Na serwerze uruchom ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub i użyj wartości SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Pozostaw puste, aby zachować przypięty odcisk, lub wprowadź nowy odcisk serwera.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Uwierzytelnianie SSH kluczem publicznym',
 			'sourceSetup.sshAuthenticationHelp' => 'Opcjonalne; obsługiwane jest również uwierzytelnianie hasłem.',
 			'sourceSetup.privateKey' => 'Klucz prywatny (format PEM lub OpenSSH)',
@@ -9780,11 +9774,11 @@ extension on TranslationsPl {
 			'musicTools.pinToHome' => 'Przypnij na stronie głównej muzyki',
 			'musicTools.unpin' => 'Odepnij',
 			'musicTools.serverAnalysis' => 'Analiza serwera',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Analiza dźwięku',
 			'musicTools.serverAnalysisScope' => 'Wszystkie kwalifikujące się biblioteki muzyczne na tym serwerze. Ich ustawienia analizy nie zostaną zmienione.',
 			'musicTools.serverActivities' => 'Aktywność serwera',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Dostęp do playlisty',
 			'musicTools.playlistRecipient' => 'Nazwa użytkownika Plex lub e-mail',
 			'musicTools.playlistSharingHint' => 'Przyznaj dostęp do tej playlisty i jej utworów. Odbiorca może musieć zaakceptować zaproszenie.',

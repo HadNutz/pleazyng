@@ -848,8 +848,6 @@ class _Translations$settings$de extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Erhöhen Sie den Dialog im Zentralkanal, wenn das umliegende Audio nach unten in Stereo gemischt wird.';
 	@override String get displaySwitchDelayDescription => 'Warten Sie, bevor Sie den Displaymodus ändern, damit der Fernseher oder Empfänger seinen vorherigen Schalter beenden kann.';
 	@override String get playerBackendDescription => 'Wählen Sie aus, welcher Playback-Motor Video auf diesem Gerät dekodiert und rendiert.';
-	@override String get exoPlayerDescription => 'Verwenden Sie Android native Media3-basierte Player und unterstützte Hardware-Paths.';
-	@override String get mpvDescription => 'Verwenden Sie MPV, die zusätzliche Playback, Subtitle und Video-Verarbeitungskontrolle exponiert.';
 	@override String get scopeOffDescription => 'Behalten Sie Änderungen für die aktuelle Playback-Sitzung nur.';
 	@override String get scopeGlobalDescription => 'Wieder verwenden Sie den gleichen Wert für jede Bibliothek und Titel.';
 	@override String get scopeLibraryDescription => 'Erinnern Sie sich an einen separaten Wert für jede Bibliothek.';
@@ -2630,7 +2628,6 @@ class _Translations$performanceOverlay$de extends Translations$performanceOverla
 	@override String get memory => 'Speicher';
 	@override String get uiFps => 'UI-FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm HW';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6299,8 +6296,6 @@ extension on TranslationsDe {
 			'settings.downmixCenterBoostDescription' => 'Erhöhen Sie den Dialog im Zentralkanal, wenn das umliegende Audio nach unten in Stereo gemischt wird.',
 			'settings.displaySwitchDelayDescription' => 'Warten Sie, bevor Sie den Displaymodus ändern, damit der Fernseher oder Empfänger seinen vorherigen Schalter beenden kann.',
 			'settings.playerBackendDescription' => 'Wählen Sie aus, welcher Playback-Motor Video auf diesem Gerät dekodiert und rendiert.',
-			'settings.exoPlayerDescription' => 'Verwenden Sie Android native Media3-basierte Player und unterstützte Hardware-Paths.',
-			'settings.mpvDescription' => 'Verwenden Sie MPV, die zusätzliche Playback, Subtitle und Video-Verarbeitungskontrolle exponiert.',
 			'settings.scopeOffDescription' => 'Behalten Sie Änderungen für die aktuelle Playback-Sitzung nur.',
 			'settings.scopeGlobalDescription' => 'Wieder verwenden Sie den gleichen Wert für jede Bibliothek und Titel.',
 			'settings.scopeLibraryDescription' => 'Erinnern Sie sich an einen separaten Wert für jede Bibliothek.',
@@ -6646,10 +6641,10 @@ extension on TranslationsDe {
 			'videoControls.sleepTimerDurationHeader' => 'Timer',
 			'videoControls.playbackWillPauseAtEnd' => 'Wiedergabe wird am Ende dieses Videos pausiert',
 			'videoControls.stillWatching' => 'Schaust du noch?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pause in ${seconds}s',
 			'videoControls.continueWatching' => 'Weiter',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Nächstes automatisch abspielen',
 			'videoControls.playNext' => 'Nächstes abspielen',
 			'videoControls.playButton' => 'Abspielen',
@@ -7160,10 +7155,10 @@ extension on TranslationsDe {
 			'libraries.playRandomMovie' => 'Spielen Sie einen Random-Film',
 			'libraries.randomPickFailed' => 'Ich kann nicht einen Film aus dieser Bibliothek wählen.',
 			'libraries.title' => 'Mediatheken',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Mediathek',
 			'libraries.scanLibraryFiles' => 'Mediatheksdateien scannen',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Mediathek scannen',
 			'libraries.analyze' => 'Analysieren',
 			'libraries.analyzeLibrary' => 'Mediathek analysieren',
@@ -7674,10 +7669,10 @@ extension on TranslationsDe {
 			'music.instantMix' => 'Instant-Mix',
 			'music.playNext' => 'Als Nächstes abspielen',
 			'music.addToQueue' => 'Zur Warteschlange hinzufügen',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Disc ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('de'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} Titel', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} Titel', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Wird wiedergegeben',
 			'music.playingFrom' => ({required Object title}) => 'Wiedergabe von ${title}',
 			'music.queue' => 'Warteschlange',
@@ -8188,11 +8183,10 @@ extension on TranslationsDe {
 			'performanceOverlay.memory' => 'Speicher',
 			'performanceOverlay.uiFps' => 'UI-FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Software',
@@ -8702,11 +8696,11 @@ extension on TranslationsDe {
 			'homeLayout.noCustomRows' => 'Keine Standard-Rennen noch',
 			'homeLayout.addRowHint' => 'Verwenden Sie Add Home Range, um einen zu erstellen.',
 			'homeLayout.addHomeRow' => 'Home Rue hinzufügen',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Wählen Sie eine Kategorie aus; die neue Reihe wird automatisch an den Organizer hinzugefügt',
 			'homeLayout.removeRow' => 'Rückschluss entfernen',
 			'homeLayout.recentlyAdded' => 'Kürzlich hinzugefügt',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'kürzlich veröffentlicht',
 			'homeLayout.movieCollections' => 'Filmkollektionen',
 			'homeLayout.showCollections' => 'Show Kollektionen',
@@ -9216,11 +9210,11 @@ extension on TranslationsDe {
 			'sourceSetup.dlnaHelp' => 'Die Suche benötigt Multicast im lokalen Netzwerk. Falls kein Server erscheint, gib oben die URL seiner Gerätebeschreibung ein.',
 			'sourceSetup.dlnaRoot' => 'DLNA-Objekt-ID; leer lassen, um das Stammverzeichnis des Geräts zu verwenden.',
 			'sourceSetup.passwordOrKey' => 'Gib ein Passwort ein oder füge unten einen privaten Schlüssel hinzu.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SHA256-Fingerabdruck des SSH-Hostschlüssels',
 			'sourceSetup.sshFingerprintHelp' => 'Prüfe ihn mit dem Serveradministrator. Führe auf dem Server ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub aus und verwende den SHA256-Wert.',
 			'sourceSetup.sshFingerprintKeep' => 'Leer lassen, um den aktuell festgelegten Fingerabdruck beizubehalten, oder einen neuen Serverfingerabdruck eingeben.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH-Authentifizierung mit öffentlichem Schlüssel',
 			'sourceSetup.sshAuthenticationHelp' => 'Optional; die Authentifizierung mit Passwort wird ebenfalls unterstützt.',
 			'sourceSetup.privateKey' => 'Privater Schlüssel (PEM- oder OpenSSH-Format)',
@@ -9730,11 +9724,11 @@ extension on TranslationsDe {
 			'musicTools.pinToHome' => 'An Musikstartseite anheften',
 			'musicTools.unpin' => 'Lösen',
 			'musicTools.serverAnalysis' => 'Serveranalyse',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Klanganalyse',
 			'musicTools.serverAnalysisScope' => 'Alle geeigneten Musikbibliotheken auf diesem Server. Ihre Analyseeinstellungen werden nicht geändert.',
 			'musicTools.serverActivities' => 'Serveraktivitäten',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Playlist-Zugriff',
 			'musicTools.playlistRecipient' => 'Plex-Benutzername oder E-Mail',
 			'musicTools.playlistSharingHint' => 'Zugriff auf diese Playlist und ihre Titel gewähren. Der Empfänger muss eventuell eine Einladung annehmen.',

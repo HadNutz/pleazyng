@@ -848,8 +848,6 @@ class _Translations$settings$nl extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Verhoog de dialoog in het centraal kanaal wanneer surround audio wordt gemengd naar beneden op stereo.';
 	@override String get displaySwitchDelayDescription => 'Wacht voordat u het displaymodus wijzigt, zodat de tv of ontvanger zijn vorige schakelaar kan beëindigen.';
 	@override String get playerBackendDescription => 'Selecteer welke playback-machine video op dit apparaat decodeert en rendert.';
-	@override String get exoPlayerDescription => 'Gebruik Android\'s native Media3-gebaseerde speler en ondersteunde hardware paden.';
-	@override String get mpvDescription => 'Gebruik mpv, die extra playback, subtitle en video-verwerking controles blootstelt.';
 	@override String get scopeOffDescription => 'Behoud wijzigingen voor de huidige playback-sessie alleen.';
 	@override String get scopeGlobalDescription => 'Hergebruik dezelfde waarde voor elke bibliotheek en titel.';
 	@override String get scopeLibraryDescription => 'Vergeet een aparte waarde voor elke bibliotheek.';
@@ -2630,7 +2628,6 @@ class _Translations$performanceOverlay$nl extends Translations$performanceOverla
 	@override String get memory => 'Geheugen';
 	@override String get uiFps => 'UI FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm HW';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6299,8 +6296,6 @@ extension on TranslationsNl {
 			'settings.downmixCenterBoostDescription' => 'Verhoog de dialoog in het centraal kanaal wanneer surround audio wordt gemengd naar beneden op stereo.',
 			'settings.displaySwitchDelayDescription' => 'Wacht voordat u het displaymodus wijzigt, zodat de tv of ontvanger zijn vorige schakelaar kan beëindigen.',
 			'settings.playerBackendDescription' => 'Selecteer welke playback-machine video op dit apparaat decodeert en rendert.',
-			'settings.exoPlayerDescription' => 'Gebruik Android\'s native Media3-gebaseerde speler en ondersteunde hardware paden.',
-			'settings.mpvDescription' => 'Gebruik mpv, die extra playback, subtitle en video-verwerking controles blootstelt.',
 			'settings.scopeOffDescription' => 'Behoud wijzigingen voor de huidige playback-sessie alleen.',
 			'settings.scopeGlobalDescription' => 'Hergebruik dezelfde waarde voor elke bibliotheek en titel.',
 			'settings.scopeLibraryDescription' => 'Vergeet een aparte waarde voor elke bibliotheek.',
@@ -6646,10 +6641,10 @@ extension on TranslationsNl {
 			'videoControls.sleepTimerDurationHeader' => 'Timer',
 			'videoControls.playbackWillPauseAtEnd' => 'Afspelen wordt gepauzeerd aan het einde van deze video',
 			'videoControls.stillWatching' => 'Kijk je nog?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pauze over ${seconds}s',
 			'videoControls.continueWatching' => 'Doorgaan',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Volgende automatisch afspelen',
 			'videoControls.playNext' => 'Volgende afspelen',
 			'videoControls.playButton' => 'Afspelen',
@@ -7160,10 +7155,10 @@ extension on TranslationsNl {
 			'libraries.playRandomMovie' => 'Speel een willekeurige film',
 			'libraries.randomPickFailed' => 'Ik kan geen film van deze bibliotheek kiezen.',
 			'libraries.title' => 'Bibliotheken',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Bibliotheek',
 			'libraries.scanLibraryFiles' => 'Bibliotheekbestanden scannen',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Bibliotheek scannen',
 			'libraries.analyze' => 'Analyseren',
 			'libraries.analyzeLibrary' => 'Bibliotheek analyseren',
@@ -7674,10 +7669,10 @@ extension on TranslationsNl {
 			'music.instantMix' => 'Instantmix',
 			'music.playNext' => 'Hierna afspelen',
 			'music.addToQueue' => 'Toevoegen aan wachtrij',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Schijf ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('nl'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} nummer', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} nummers', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Nu afspelen',
 			'music.playingFrom' => ({required Object title}) => 'Afspelen vanaf ${title}',
 			'music.queue' => 'Wachtrij',
@@ -8188,11 +8183,10 @@ extension on TranslationsNl {
 			'performanceOverlay.memory' => 'Geheugen',
 			'performanceOverlay.uiFps' => 'UI FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Software',
@@ -8702,11 +8696,11 @@ extension on TranslationsNl {
 			'homeLayout.noCustomRows' => 'Geen custom runs nog',
 			'homeLayout.addRowHint' => 'Gebruik Home-lijn toe om een te maken.',
 			'homeLayout.addHomeRow' => 'Home Ronde toevoegen',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Kies een categorie; de nieuwe rij wordt automatisch toegevoegd aan de Organisator',
 			'homeLayout.removeRow' => 'Verwijder Roi',
 			'homeLayout.recentlyAdded' => 'Recent toegevoegd',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Onlangs vrijgegeven',
 			'homeLayout.movieCollections' => 'Filmcollecties',
 			'homeLayout.showCollections' => 'Show collecties',
@@ -9216,11 +9210,11 @@ extension on TranslationsNl {
 			'sourceSetup.dlnaHelp' => 'Detectie gebruikt multicast op het lokale netwerk. Verschijnt er geen server, voer dan hierboven de URL van de apparaatbeschrijving in.',
 			'sourceSetup.dlnaRoot' => 'DLNA-object-ID; laat leeg om de hoofdmap van het apparaat te gebruiken.',
 			'sourceSetup.passwordOrKey' => 'Voer een wachtwoord in of voeg hieronder een privésleutel toe.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SHA256-vingerafdruk van de SSH-hostsleutel',
 			'sourceSetup.sshFingerprintHelp' => 'Controleer deze bij de serverbeheerder. Voer op de server ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub uit en gebruik de SHA256-waarde.',
 			'sourceSetup.sshFingerprintKeep' => 'Laat leeg om de huidige vastgelegde vingerafdruk te behouden, of voer een nieuwe servervingerafdruk in.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH-authenticatie met openbare sleutel',
 			'sourceSetup.sshAuthenticationHelp' => 'Optioneel; authenticatie met een wachtwoord wordt ook ondersteund.',
 			'sourceSetup.privateKey' => 'Privésleutel (PEM- of OpenSSH-formaat)',
@@ -9730,11 +9724,11 @@ extension on TranslationsNl {
 			'musicTools.pinToHome' => 'Vastmaken aan muziekstartpagina',
 			'musicTools.unpin' => 'Losmaken',
 			'musicTools.serverAnalysis' => 'Serveranalyse',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Geluidsanalyse',
 			'musicTools.serverAnalysisScope' => 'Alle geschikte muziekbibliotheken op deze server. Hun analyse-instellingen worden niet gewijzigd.',
 			'musicTools.serverActivities' => 'Serveractiviteiten',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Toegang tot afspeellijst',
 			'musicTools.playlistRecipient' => 'Plex-gebruikersnaam of e-mail',
 			'musicTools.playlistSharingHint' => 'Geef toegang tot deze afspeellijst en de nummers. De ontvanger moet mogelijk een uitnodiging accepteren.',

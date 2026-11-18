@@ -848,8 +848,6 @@ class _Translations$settings$tr extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Orta kanalda diyaloğu yükseltin, çevresel ses stereo\'ya karıştırıldığında.';
 	@override String get displaySwitchDelayDescription => 'Ekran modunu değiştirmeden önce bekleyin, böylece TV veya alıcı önceki anahtarını tamamlayabilir.';
 	@override String get playerBackendDescription => 'Hangi oynatma motoru bu cihazda videoyu dekore eder ve geri dönüştürür.';
-	@override String get exoPlayerDescription => 'Android\'in yerli Media3 tabanlı oyuncusu ve desteklenen donanım yollarını kullanın.';
-	@override String get mpvDescription => 'MPV\'yi kullanın, ek oynatma, alt başlık ve video işleme kontrollerini ortaya çıkarır.';
 	@override String get scopeOffDescription => 'Sadece geçerli playback oturumu için değişiklikleri tutun.';
 	@override String get scopeGlobalDescription => 'Her kütüphane ve başlık için aynı değeri tekrar kullanın.';
 	@override String get scopeLibraryDescription => 'Her kütüphane için ayrı bir değer hatırlayın.';
@@ -2630,7 +2628,6 @@ class _Translations$performanceOverlay$tr extends Translations$performanceOverla
 	@override String get memory => 'Bellek';
 	@override String get uiFps => 'Arayüz (UI) FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android Donanım';
 	@override String get decoderNvidiaHw => 'NVIDIA Donanım';
 	@override String get decoderQualcommHw => 'Qualcomm Donanım';
 	@override String get decoderMediatekHw => 'MediaTek Donanım';
@@ -6299,8 +6296,6 @@ extension on TranslationsTr {
 			'settings.downmixCenterBoostDescription' => 'Orta kanalda diyaloğu yükseltin, çevresel ses stereo\'ya karıştırıldığında.',
 			'settings.displaySwitchDelayDescription' => 'Ekran modunu değiştirmeden önce bekleyin, böylece TV veya alıcı önceki anahtarını tamamlayabilir.',
 			'settings.playerBackendDescription' => 'Hangi oynatma motoru bu cihazda videoyu dekore eder ve geri dönüştürür.',
-			'settings.exoPlayerDescription' => 'Android\'in yerli Media3 tabanlı oyuncusu ve desteklenen donanım yollarını kullanın.',
-			'settings.mpvDescription' => 'MPV\'yi kullanın, ek oynatma, alt başlık ve video işleme kontrollerini ortaya çıkarır.',
 			'settings.scopeOffDescription' => 'Sadece geçerli playback oturumu için değişiklikleri tutun.',
 			'settings.scopeGlobalDescription' => 'Her kütüphane ve başlık için aynı değeri tekrar kullanın.',
 			'settings.scopeLibraryDescription' => 'Her kütüphane için ayrı bir değer hatırlayın.',
@@ -6646,10 +6641,10 @@ extension on TranslationsTr {
 			'videoControls.sleepTimerDurationHeader' => 'Zamanlayıcı',
 			'videoControls.playbackWillPauseAtEnd' => 'Oynatma bu videonun sonunda duraklatılacak',
 			'videoControls.stillWatching' => 'Hâlâ izliyor musunuz?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds}sn içinde duraklatılıyor',
 			'videoControls.continueWatching' => 'Devam Et',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Sonrakini Otomatik Oynat',
 			'videoControls.playNext' => 'Sonrakini Oynat',
 			'videoControls.playButton' => 'Oynat',
@@ -7160,10 +7155,10 @@ extension on TranslationsTr {
 			'libraries.playRandomMovie' => 'rastgele bir film izle',
 			'libraries.randomPickFailed' => 'Bu kitaplıkta rastgele bir film seçemezsiniz.',
 			'libraries.title' => 'Kitaplıklar',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Kitaplık',
 			'libraries.scanLibraryFiles' => 'Kitaplık Dosyalarını Tarayınız',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Kitaplığı Taramak',
 			'libraries.analyze' => 'Analiz Et',
 			'libraries.analyzeLibrary' => 'Kitaplığı Analiz Et',
@@ -7674,10 +7669,10 @@ extension on TranslationsTr {
 			'music.instantMix' => 'Anında Karışım',
 			'music.playNext' => 'Sonrakini oynat',
 			'music.addToQueue' => 'Kuyruğa ekle',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Disk ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('tr'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} parça', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} parça', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Şimdi Oynatılıyor',
 			'music.playingFrom' => ({required Object title}) => '${title} kaynağından oynatılıyor',
 			'music.queue' => 'Kuyruk',
@@ -8188,11 +8183,10 @@ extension on TranslationsTr {
 			'performanceOverlay.memory' => 'Bellek',
 			'performanceOverlay.uiFps' => 'Arayüz (UI) FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android Donanım',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA Donanım',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm Donanım',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek Donanım',
 			'performanceOverlay.decoderExynosHw' => 'Exynos Donanım',
 			'performanceOverlay.decoderSoftware' => 'Yazılım',
@@ -8702,11 +8696,11 @@ extension on TranslationsTr {
 			'homeLayout.noCustomRows' => 'Hiçbir sıralama henüz',
 			'homeLayout.addRowHint' => 'Birini oluşturmak için Home Add satırını kullanın.',
 			'homeLayout.addHomeRow' => 'Home Row ekleme',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Bir kategoriyi seçin; Yeni satır otomatik olarak Organizatör\'e eklenir',
 			'homeLayout.removeRow' => 'REV İÇİN',
 			'homeLayout.recentlyAdded' => 'Son Eklenenler',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Son zamanlarda serbest bırakıldı',
 			'homeLayout.movieCollections' => 'Film Koleksiyonları',
 			'homeLayout.showCollections' => 'Koleksiyonlar göster',
@@ -9216,11 +9210,11 @@ extension on TranslationsTr {
 			'sourceSetup.dlnaHelp' => 'Keşif, yerel ağdaki çok noktaya yayına bağlıdır. Sunucu görünmezse aygıt açıklamasının URL’sini yukarıya girin.',
 			'sourceSetup.dlnaRoot' => 'DLNA nesne kimliği; aygıtın kökünü kullanmak için boş bırakın.',
 			'sourceSetup.passwordOrKey' => 'Bir parola girin veya aşağıdan özel anahtar ekleyin.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SSH ana makine anahtarının SHA256 parmak izi',
 			'sourceSetup.sshFingerprintHelp' => 'Sunucu yöneticisiyle doğrulayın. Sunucuda ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub komutunu çalıştırıp SHA256 değerini kullanın.',
 			'sourceSetup.sshFingerprintKeep' => 'Geçerli sabitlenmiş parmak izini korumak için boş bırakın veya yeni sunucu parmak izini girin.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH açık anahtar kimlik doğrulaması',
 			'sourceSetup.sshAuthenticationHelp' => 'İsteğe bağlıdır; parolayla kimlik doğrulama da desteklenir.',
 			'sourceSetup.privateKey' => 'Özel anahtar (PEM veya OpenSSH biçiminde)',
@@ -9730,11 +9724,11 @@ extension on TranslationsTr {
 			'musicTools.pinToHome' => 'Müzik ana sayfasına sabitle',
 			'musicTools.unpin' => 'Sabitlemeyi kaldır',
 			'musicTools.serverAnalysis' => 'Sunucu analizi',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Ses analizi',
 			'musicTools.serverAnalysisScope' => 'Bu sunucudaki uygun tüm müzik kitaplıkları. Analiz ayarları değiştirilmez.',
 			'musicTools.serverActivities' => 'Sunucu etkinlikleri',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Çalma listesi erişimi',
 			'musicTools.playlistRecipient' => 'Plex kullanıcı adı veya e-posta',
 			'musicTools.playlistSharingHint' => 'Bu çalma listesine ve parçalarına erişim verin. Alıcının bir daveti kabul etmesi gerekebilir.',

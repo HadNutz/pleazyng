@@ -848,8 +848,6 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'افزایش گفتگو در کانال مرکزی هنگامی که صدا اطراف به استریو مخلوط می شود.';
 	@override String get displaySwitchDelayDescription => 'قبل از تغییر حالت نمایش منتظر بمانید تا تلویزیون یا گیرنده بتواند سوئیچ قبلی خود را به پایان برساند.';
 	@override String get playerBackendDescription => 'انتخاب کنید که کدام موتور پخش ویدئو را بر روی این دستگاه دکوراسیون و بازگرداند.';
-	@override String get exoPlayerDescription => 'از پخش کننده مادری آندروید مبتنی بر Media3 و مسیرهای سخت افزاری پشتیبانی شده استفاده کنید.';
-	@override String get mpvDescription => 'از mpv استفاده کنید، که بازتاب اضافی، زیرنویس و کنترل های پردازش ویدئو را نشان می دهد.';
 	@override String get scopeOffDescription => 'فقط تغییرات مربوط به جلسه پخش فعلی را حفظ کنید.';
 	@override String get scopeGlobalDescription => 'همان مقدار را برای هر کتابخانه و عنوان تکرار کنید.';
 	@override String get scopeLibraryDescription => 'به یاد داشته باشید که ارزش جداگانه ای برای هر کتابخانه وجود دارد.';
@@ -2630,7 +2628,6 @@ class _Translations$performanceOverlay$fa extends Translations$performanceOverla
 	@override String get memory => 'حافظه';
 	@override String get uiFps => 'FPS FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'کوالکام HW';
 	@override String get decoderMediatekHw => 'رسانه ها HW';
@@ -6299,8 +6296,6 @@ extension on TranslationsFa {
 			'settings.downmixCenterBoostDescription' => 'افزایش گفتگو در کانال مرکزی هنگامی که صدا اطراف به استریو مخلوط می شود.',
 			'settings.displaySwitchDelayDescription' => 'قبل از تغییر حالت نمایش منتظر بمانید تا تلویزیون یا گیرنده بتواند سوئیچ قبلی خود را به پایان برساند.',
 			'settings.playerBackendDescription' => 'انتخاب کنید که کدام موتور پخش ویدئو را بر روی این دستگاه دکوراسیون و بازگرداند.',
-			'settings.exoPlayerDescription' => 'از پخش کننده مادری آندروید مبتنی بر Media3 و مسیرهای سخت افزاری پشتیبانی شده استفاده کنید.',
-			'settings.mpvDescription' => 'از mpv استفاده کنید، که بازتاب اضافی، زیرنویس و کنترل های پردازش ویدئو را نشان می دهد.',
 			'settings.scopeOffDescription' => 'فقط تغییرات مربوط به جلسه پخش فعلی را حفظ کنید.',
 			'settings.scopeGlobalDescription' => 'همان مقدار را برای هر کتابخانه و عنوان تکرار کنید.',
 			'settings.scopeLibraryDescription' => 'به یاد داشته باشید که ارزش جداگانه ای برای هر کتابخانه وجود دارد.',
@@ -6646,10 +6641,10 @@ extension on TranslationsFa {
 			'videoControls.sleepTimerDurationHeader' => 'زمان',
 			'videoControls.playbackWillPauseAtEnd' => 'Playback در پایان این ویدئو تعطیل خواهد شد',
 			'videoControls.stillWatching' => 'هنوز هم تماشا می کنید؟',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'استراحت در ${seconds}s',
 			'videoControls.continueWatching' => 'ادامه مطلب',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'بازی اتوماتیک بعدی',
 			'videoControls.playNext' => 'بعدی را اجرا کن',
 			'videoControls.playButton' => 'اجرا کردن',
@@ -7160,10 +7155,10 @@ extension on TranslationsFa {
 			'libraries.playRandomMovie' => 'بازی یک فیلم تصادفی',
 			'libraries.randomPickFailed' => 'من نمی توانم یک فیلم تصادفی را از این کتابخانه انتخاب کنم.',
 			'libraries.title' => 'کتابخانه‌ها',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'کتابخانه',
 			'libraries.scanLibraryFiles' => 'اسکن کتابخانه فایل ها',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'کتابخانه را اسکن کنید',
 			'libraries.analyze' => 'تحلیل',
 			'libraries.analyzeLibrary' => 'تجزیه و تحلیل کتابخانه',
@@ -7674,10 +7669,10 @@ extension on TranslationsFa {
 			'music.instantMix' => 'درهم کردن فوری',
 			'music.playNext' => 'بعدی را اجرا کن',
 			'music.addToQueue' => 'اضافه کردن به Queue',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'دیسک ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fa'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} مسیر', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ردیف ها', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'اکنون بازی',
 			'music.playingFrom' => ({required Object title}) => 'بازی از ${title}',
 			'music.queue' => 'کوی',
@@ -8188,11 +8183,10 @@ extension on TranslationsFa {
 			'performanceOverlay.memory' => 'حافظه',
 			'performanceOverlay.uiFps' => 'FPS FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'کوالکام HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'رسانه ها HW',
 			'performanceOverlay.decoderExynosHw' => 'بیوگرافی HW',
 			'performanceOverlay.decoderSoftware' => 'نرم افزار',
@@ -8702,11 +8696,11 @@ extension on TranslationsFa {
 			'homeLayout.noCustomRows' => 'هنوز هیچ خطوط معمولی',
 			'homeLayout.addRowHint' => 'از اضافه کردن خانه برای ایجاد یکی استفاده کنید.',
 			'homeLayout.addHomeRow' => 'اضافه کردن خانه راوی',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'یک دسته را انتخاب کنید؛ ردیف جدید به ترتیب به ترتیب به ترتیب اضافه می شود.',
 			'homeLayout.removeRow' => 'حذف ردیف',
 			'homeLayout.recentlyAdded' => 'جدیدترین‌ها',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'اخیرا منتشر شد',
 			'homeLayout.movieCollections' => 'مجموعه فیلم ها',
 			'homeLayout.showCollections' => 'نمایش مجموعه ها',
@@ -9216,11 +9210,11 @@ extension on TranslationsFa {
 			'sourceSetup.dlnaHelp' => 'کشف دستگاه به چندپخشی در شبکهٔ محلی وابسته است. اگر سروری ظاهر نشد، نشانی توضیحات دستگاه را در بالا وارد کنید.',
 			'sourceSetup.dlnaRoot' => 'شناسهٔ شیء DLNA؛ برای استفاده از ریشهٔ دستگاه، خالی بگذارید.',
 			'sourceSetup.passwordOrKey' => 'گذرواژه وارد کنید یا در پایین یک کلید خصوصی اضافه کنید.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'اثر انگشت SHA256 کلید میزبان SSH',
 			'sourceSetup.sshFingerprintHelp' => 'با مدیر سرور تأیید کنید. روی سرور، دستور ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub را اجرا کنید و از مقدار SHA256 آن استفاده کنید.',
 			'sourceSetup.sshFingerprintKeep' => 'برای حفظ اثر انگشت تثبیت‌شدهٔ فعلی خالی بگذارید، یا اثر انگشت جدید سرور را وارد کنید.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'احراز هویت با کلید عمومی SSH',
 			'sourceSetup.sshAuthenticationHelp' => 'اختیاری است؛ احراز هویت با گذرواژه نیز پشتیبانی می‌شود.',
 			'sourceSetup.privateKey' => 'کلید خصوصی (با قالب PEM یا OpenSSH)',
@@ -9730,11 +9724,11 @@ extension on TranslationsFa {
 			'musicTools.pinToHome' => 'سنجاق به صفحهٔ اصلی موسیقی',
 			'musicTools.unpin' => 'برداشتن سنجاق',
 			'musicTools.serverAnalysis' => 'تحلیل سرور',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'تحلیل صوتی',
 			'musicTools.serverAnalysisScope' => 'همهٔ کتابخانه‌های موسیقی واجد شرایط در این سرور. تنظیمات تحلیل آن‌ها تغییر نمی‌کند.',
 			'musicTools.serverActivities' => 'فعالیت‌های سرور',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'دسترسی به فهرست پخش',
 			'musicTools.playlistRecipient' => 'نام کاربری Plex یا ایمیل',
 			'musicTools.playlistSharingHint' => 'به این فهرست پخش و آهنگ‌های آن دسترسی بدهید. گیرنده ممکن است لازم باشد دعوتی را بپذیرد.',

@@ -35,6 +35,7 @@ Requires:       xdg-dbus-proxy
 Requires:       gtk3
 Requires:       webkit2gtk4.1
 Requires:       libsecret
+Requires:       gstreamer1-plugins-base
 Requires:       libepoxy
 Requires:       alsa-lib
 Requires:       libevdev

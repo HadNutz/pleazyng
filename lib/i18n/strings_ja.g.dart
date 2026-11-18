@@ -846,8 +846,6 @@ class _Translations$settings$ja extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'セントラルチャンネルで対話を上げると、周囲のオーディオがステレオに混ぜる。';
 	@override String get displaySwitchDelayDescription => '表示モードを変更する前に待って、テレビや受信者が以前のスイッチを完了することができます。';
 	@override String get playerBackendDescription => 'このデバイスでどの再生エンジンが動画を削除し、リダイレクトするかを選択します。';
-	@override String get exoPlayerDescription => 'Androidの先住民メディア3ベースのプレーヤーとサポートされたハードウェアパスを使用します。';
-	@override String get mpvDescription => 'MPV を使用して、追加の再生、サブタイトル、ビデオ処理コントロールを表示します。';
 	@override String get scopeOffDescription => '現在の再生セッションでのみ変更を保持します。';
 	@override String get scopeGlobalDescription => 'すべての図書館とタイトルのための同じ値を再利用します。';
 	@override String get scopeLibraryDescription => 'それぞれの図書館に別々の価値があることを覚えておく。';
@@ -2626,7 +2624,6 @@ class _Translations$performanceOverlay$ja extends Translations$performanceOverla
 	@override String get memory => 'メモリ';
 	@override String get uiFps => 'UI FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm HW';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6294,8 +6291,6 @@ extension on TranslationsJa {
 			'settings.downmixCenterBoostDescription' => 'セントラルチャンネルで対話を上げると、周囲のオーディオがステレオに混ぜる。',
 			'settings.displaySwitchDelayDescription' => '表示モードを変更する前に待って、テレビや受信者が以前のスイッチを完了することができます。',
 			'settings.playerBackendDescription' => 'このデバイスでどの再生エンジンが動画を削除し、リダイレクトするかを選択します。',
-			'settings.exoPlayerDescription' => 'Androidの先住民メディア3ベースのプレーヤーとサポートされたハードウェアパスを使用します。',
-			'settings.mpvDescription' => 'MPV を使用して、追加の再生、サブタイトル、ビデオ処理コントロールを表示します。',
 			'settings.scopeOffDescription' => '現在の再生セッションでのみ変更を保持します。',
 			'settings.scopeGlobalDescription' => 'すべての図書館とタイトルのための同じ値を再利用します。',
 			'settings.scopeLibraryDescription' => 'それぞれの図書館に別々の価値があることを覚えておく。',
@@ -6641,10 +6636,10 @@ extension on TranslationsJa {
 			'videoControls.sleepTimerDurationHeader' => 'タイマー',
 			'videoControls.playbackWillPauseAtEnd' => '再生はこの動画の最後に一時停止します',
 			'videoControls.stillWatching' => 'まだ視聴中ですか？',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds}秒後に一時停止',
 			'videoControls.continueWatching' => '続ける',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => '次を自動再生',
 			'videoControls.playNext' => '次を再生',
 			'videoControls.playButton' => '再生',
@@ -7155,10 +7150,10 @@ extension on TranslationsJa {
 			'libraries.playRandomMovie' => 'ランダム映画を演じる',
 			'libraries.randomPickFailed' => 'この図書館からランダム映画を選ぶことはできません。',
 			'libraries.title' => 'ライブラリ',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'ライブラリ',
 			'libraries.scanLibraryFiles' => 'ライブラリファイルをスキャン',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'ライブラリをスキャン',
 			'libraries.analyze' => '解析',
 			'libraries.analyzeLibrary' => 'ライブラリを解析',
@@ -7669,10 +7664,10 @@ extension on TranslationsJa {
 			'music.instantMix' => 'インスタントミックス',
 			'music.playNext' => '次に再生',
 			'music.addToQueue' => 'キューに追加',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'ディスク ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} トラック', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)}曲', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => '再生中',
 			'music.playingFrom' => ({required Object title}) => '${title}から再生',
 			'music.queue' => '再生キュー',
@@ -8183,11 +8178,10 @@ extension on TranslationsJa {
 			'performanceOverlay.memory' => 'メモリ',
 			'performanceOverlay.uiFps' => 'UI FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'ソフトウェア',
@@ -8697,11 +8691,11 @@ extension on TranslationsJa {
 			'homeLayout.noCustomRows' => 'まだカスタムライトなし',
 			'homeLayout.addRowHint' => 'ホーム を追加して 1 つを作成します。',
 			'homeLayout.addHomeRow' => 'HOME ローブを追加',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'カテゴリを選択し、新しい順位が自動的に組織に追加されます。',
 			'homeLayout.removeRow' => 'ラウを取り除く',
 			'homeLayout.recentlyAdded' => '最近追加されたコンテンツ',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => '最近リリース',
 			'homeLayout.movieCollections' => '映画コレクション',
 			'homeLayout.showCollections' => 'コレクション展示',
@@ -9211,11 +9205,11 @@ extension on TranslationsJa {
 			'sourceSetup.dlnaHelp' => '検出にはローカルネットワークのマルチキャストを使用します。サーバーが表示されない場合は、上にデバイス記述の URL を入力してください。',
 			'sourceSetup.dlnaRoot' => 'DLNA オブジェクト ID。空欄にするとデバイスのルートを使用します。',
 			'sourceSetup.passwordOrKey' => 'パスワードを入力するか、下に秘密鍵を追加してください。',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SSH ホスト鍵の SHA256 フィンガープリント',
 			'sourceSetup.sshFingerprintHelp' => 'サーバー管理者に確認してください。サーバーで ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub を実行し、表示された SHA256 値を使用します。',
 			'sourceSetup.sshFingerprintKeep' => '現在固定されているフィンガープリントを維持するには空欄にします。変更する場合は新しいサーバーのフィンガープリントを入力してください。',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH 公開鍵認証',
 			'sourceSetup.sshAuthenticationHelp' => '任意です。パスワード認証も利用できます。',
 			'sourceSetup.privateKey' => '秘密鍵（PEM または OpenSSH 形式）',
@@ -9725,11 +9719,11 @@ extension on TranslationsJa {
 			'musicTools.pinToHome' => '音楽ホームに固定',
 			'musicTools.unpin' => '固定を解除',
 			'musicTools.serverAnalysis' => 'サーバー解析',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => '音響解析',
 			'musicTools.serverAnalysisScope' => 'このサーバー上の対象となるすべての音楽ライブラリ。解析設定は変更されません。',
 			'musicTools.serverActivities' => 'サーバーの処理状況',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'プレイリストへのアクセス',
 			'musicTools.playlistRecipient' => 'Plexユーザー名またはメール',
 			'musicTools.playlistSharingHint' => 'このプレイリストと曲へのアクセスを許可します。受信者による招待の承諾が必要な場合があります。',

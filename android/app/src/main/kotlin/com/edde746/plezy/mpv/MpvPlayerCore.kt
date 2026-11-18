@@ -1906,10 +1906,17 @@ class MpvPlayerCore private constructor(
     PlayerDebugLog.d(TAG) { "Decode routing: codec=$codec profile=$codecProfile hardwareHigh10=$hardwareHigh10 hardwareAv1=$hardwareAv1" }
     // MPEG-4 Part 2 decoders often implement Simple Profile only. Keep
     // Xvid/DivX on GL unless a hardware component reports this stream's format.
-    val unsupportedMpeg4 = track != null && codec == "mpeg4" && MediaCodecQuery.supportsVideoFormat(
-      codec, track.optInt("demux-w"), track.optInt("demux-h"), track.optDouble("demux-fps"),
-      codecProfile, null, hardwareOnly = true
-    ) != true
+    val unsupportedMpeg4 = track != null &&
+      codec == "mpeg4" &&
+      MediaCodecQuery.supportsVideoFormat(
+        codec,
+        track.optInt("demux-w"),
+        track.optInt("demux-h"),
+        track.optDouble("demux-fps"),
+        codecProfile,
+        null,
+        hardwareOnly = true
+      ) != true
     val needs = unsupportedMpeg4 || GpuVoPolicy.needsSoftwareDecode(codec, codecProfile, hardwareHigh10, hardwareAv1)
     if (holdHwdec(p, GpuVoPolicy.REASON_CODEC_SW_DECODE, needs) && needs) {
       Log.i(TAG, "$codec profile=$codecProfile without hardware support: native software decode on the GL vo")

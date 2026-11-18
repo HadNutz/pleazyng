@@ -850,8 +850,6 @@ class _Translations$settings$he extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'הגדלת דיאלוג בערוץ המרכזי כאשר האודיו הסובב מעורבב למטה לסטריאו.';
 	@override String get displaySwitchDelayDescription => 'לחכות לפני שינוי מצב ההצגה, כך שהטלוויזיה או הקבלן יוכלו לסיים את המעבר הקודם.';
 	@override String get playerBackendDescription => 'בחר איזה מנוע משחקים מעקב ומשחרר וידאו במכשיר זה.';
-	@override String get exoPlayerDescription => 'השתמש במשחק המקומי של אנדרואיד המבוסס על Media3 ודרך החומרה תומכת.';
-	@override String get mpvDescription => 'השתמש ב-MPV, אשר מציג משחקים נוספים, תת-כותרות וקונסולות עיבוד וידאו.';
 	@override String get scopeOffDescription => 'שמור את השינויים עבור הפגישה הנוכחית בלבד.';
 	@override String get scopeGlobalDescription => 'השתמשו שוב באותו ערך עבור כל ספרייה וכתובת.';
 	@override String get scopeLibraryDescription => 'זכור ערך נפרד עבור כל ספרייה.';
@@ -2634,7 +2632,6 @@ class _Translations$performanceOverlay$he extends Translations$performanceOverla
 	@override String get memory => 'זיכרון';
 	@override String get uiFps => 'תגית FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm HW';
 	@override String get decoderMediatekHw => 'מיקרוסופט HW';
@@ -6307,8 +6304,6 @@ extension on TranslationsHe {
 			'settings.downmixCenterBoostDescription' => 'הגדלת דיאלוג בערוץ המרכזי כאשר האודיו הסובב מעורבב למטה לסטריאו.',
 			'settings.displaySwitchDelayDescription' => 'לחכות לפני שינוי מצב ההצגה, כך שהטלוויזיה או הקבלן יוכלו לסיים את המעבר הקודם.',
 			'settings.playerBackendDescription' => 'בחר איזה מנוע משחקים מעקב ומשחרר וידאו במכשיר זה.',
-			'settings.exoPlayerDescription' => 'השתמש במשחק המקומי של אנדרואיד המבוסס על Media3 ודרך החומרה תומכת.',
-			'settings.mpvDescription' => 'השתמש ב-MPV, אשר מציג משחקים נוספים, תת-כותרות וקונסולות עיבוד וידאו.',
 			'settings.scopeOffDescription' => 'שמור את השינויים עבור הפגישה הנוכחית בלבד.',
 			'settings.scopeGlobalDescription' => 'השתמשו שוב באותו ערך עבור כל ספרייה וכתובת.',
 			'settings.scopeLibraryDescription' => 'זכור ערך נפרד עבור כל ספרייה.',
@@ -6654,10 +6649,10 @@ extension on TranslationsHe {
 			'videoControls.sleepTimerDurationHeader' => 'זמן',
 			'videoControls.playbackWillPauseAtEnd' => 'Playback יפסיק בסוף הסרטון',
 			'videoControls.stillWatching' => 'עדיין לצפות?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'הפסקה ב ${seconds}s',
 			'videoControls.continueWatching' => 'המשך',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'המשחק הבא',
 			'videoControls.playNext' => 'נגן את הבא',
 			'videoControls.playButton' => 'נגן',
@@ -7168,10 +7163,10 @@ extension on TranslationsHe {
 			'libraries.playRandomMovie' => 'צפו בסרט אקראי',
 			'libraries.randomPickFailed' => 'לא יכולתי לבחור סרט אקראי מהספרייה הזאת.',
 			'libraries.title' => 'ספריות',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'ספרייה',
 			'libraries.scanLibraryFiles' => 'סריקת קבצים ספרייה',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'סרוק ספרייה',
 			'libraries.analyze' => 'ניתוח',
 			'libraries.analyzeLibrary' => 'ניתוח הספרייה',
@@ -7682,10 +7677,10 @@ extension on TranslationsHe {
 			'music.instantMix' => 'מיקס מיידי',
 			'music.playNext' => 'נגן את הבא',
 			'music.addToQueue' => 'הוסף ל- Queue',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'דיסק ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} מסלול', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} רצועות', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'משחק עכשיו',
 			'music.playingFrom' => ({required Object title}) => 'משחקים מתוך ${title}',
 			'music.queue' => 'קווי',
@@ -8196,11 +8191,10 @@ extension on TranslationsHe {
 			'performanceOverlay.memory' => 'זיכרון',
 			'performanceOverlay.uiFps' => 'תגית FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'מיקרוסופט HW',
 			'performanceOverlay.decoderExynosHw' => 'יונייטד HW',
 			'performanceOverlay.decoderSoftware' => 'תוכנה',
@@ -8710,11 +8704,11 @@ extension on TranslationsHe {
 			'homeLayout.noCustomRows' => 'עדיין אין שורות קבועות',
 			'homeLayout.addRowHint' => 'השתמשו בסדרת הוספת הבית כדי ליצור אחד.',
 			'homeLayout.addHomeRow' => 'להוסיף Home Row',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'בחר קטגוריה; השורה החדשה מוסיפה באופן אוטומטי למארגן',
 			'homeLayout.removeRow' => 'להסיר שורה',
 			'homeLayout.recentlyAdded' => 'אחרון',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'שוחרר לאחרונה',
 			'homeLayout.movieCollections' => 'קולקציות סרטים',
 			'homeLayout.showCollections' => 'הצג אוסף',
@@ -9224,11 +9218,11 @@ extension on TranslationsHe {
 			'sourceSetup.dlnaHelp' => 'הגילוי תלוי בשידור מרובה יעדים ברשת המקומית. אם לא מופיע שרת, יש להזין למעלה את כתובת תיאור ההתקן שלו.',
 			'sourceSetup.dlnaRoot' => 'מזהה אובייקט DLNA; יש להשאיר ריק כדי להשתמש בתיקיית השורש של ההתקן.',
 			'sourceSetup.passwordOrKey' => 'יש להזין סיסמה או להוסיף מפתח פרטי למטה.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'טביעת אצבע SHA256 של מפתח מארח SSH',
 			'sourceSetup.sshFingerprintHelp' => 'יש לאמת מול מנהל השרת. בשרת, יש להריץ ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub ולהשתמש בערך SHA256 שמתקבל.',
 			'sourceSetup.sshFingerprintKeep' => 'יש להשאיר ריק כדי לשמור על טביעת האצבע המקובעת הנוכחית, או להזין טביעת אצבע חדשה של השרת.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'אימות באמצעות מפתח ציבורי של SSH',
 			'sourceSetup.sshAuthenticationHelp' => 'לא חובה; אפשר גם לבצע אימות באמצעות סיסמה.',
 			'sourceSetup.privateKey' => 'מפתח פרטי (בפורמט PEM או OpenSSH)',
@@ -9738,11 +9732,11 @@ extension on TranslationsHe {
 			'musicTools.pinToHome' => 'הצמדה לדף הבית של המוזיקה',
 			'musicTools.unpin' => 'ביטול הצמדה',
 			'musicTools.serverAnalysis' => 'ניתוח בשרת',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'ניתוח צליל',
 			'musicTools.serverAnalysisScope' => 'כל ספריות המוזיקה המתאימות בשרת זה. הגדרות הניתוח שלהן לא ישתנו.',
 			'musicTools.serverActivities' => 'פעילויות השרת',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'גישה לרשימת השמעה',
 			'musicTools.playlistRecipient' => 'שם משתמש Plex או דוא״ל',
 			'musicTools.playlistSharingHint' => 'הענקת גישה לרשימה זו ולרצועות שלה. ייתכן שהנמען יצטרך לאשר הזמנה.',

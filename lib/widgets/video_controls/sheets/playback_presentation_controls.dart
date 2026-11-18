@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:plezy/widgets/app_icon.dart';
 
 import '../../../i18n/presentation_formats.dart';
 import '../../../i18n/strings.g.dart';
@@ -75,7 +77,11 @@ class PlaybackPresentationControl extends StatelessWidget {
                         for (final choice in StereoLane.values)
                           ListTile(
                             selected: choice == lane,
-                            leading: Icon(choice == lane ? Icons.radio_button_checked : Icons.radio_button_unchecked),
+                            leading: AppIcon(
+                              choice == lane
+                                  ? Symbols.radio_button_checked_rounded
+                                  : Symbols.radio_button_unchecked_rounded,
+                            ),
                             title: Text(_laneLabel(choice)),
                             onTap: () {
                               update(() => lane = choice);
@@ -121,7 +127,7 @@ class PlaybackPresentationControl extends StatelessWidget {
         final key = brightness ? session.hdrKey : session.stereoKey;
         if (key == null) return const SizedBox.shrink();
         return ListTile(
-          leading: Icon(brightness ? Icons.brightness_6_outlined : Icons.speaker_group_outlined),
+          leading: AppIcon(brightness ? Symbols.brightness_6_rounded : Symbols.speaker_group_rounded),
           title: Text(brightness ? t.mediaConveniences.hdrBrightness : t.mediaConveniences.stereoChannel),
           subtitle: Text(brightness ? formatPercent(session.brightness / 100) : _laneLabel(session.lane)),
           onTap: () => _open(context, session, key),

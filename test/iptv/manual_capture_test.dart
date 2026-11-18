@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import '../../lib/iptv/iptv_manual_capture.dart';
+import 'package:plezy/iptv/iptv_manual_capture.dart';
 
 void main() {
   for (final mode in ['normal', 'close failure', 'collision', 'journal failure']) {

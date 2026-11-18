@@ -747,7 +747,11 @@ class _LocalIptvScheduleTile extends StatelessWidget {
                     : theme.colorScheme.primary,
               ),
               if (schedule.state == 'recording')
-                IconButton(tooltip: t.viewing.extendRecording, onPressed: action, icon: const Icon(Icons.more_time)),
+                IconButton(
+                  tooltip: t.viewing.extendRecording,
+                  onPressed: action,
+                  icon: const AppIcon(Symbols.more_time_rounded),
+                ),
               if (schedule.state == 'scheduled')
                 IconButton(
                   tooltip: t.iptv.cancelSchedule,
@@ -849,7 +853,11 @@ class _LocalIptvRecordingTile extends StatelessWidget {
               ),
             ),
             if (extend != null)
-              IconButton(onPressed: extend, tooltip: t.viewing.extendRecording, icon: const Icon(Icons.more_time)),
+              IconButton(
+                onPressed: extend,
+                tooltip: t.viewing.extendRecording,
+                icon: const AppIcon(Symbols.more_time_rounded),
+              ),
             if (isRecording)
               StatusPill(label: t.iptv.recordingInProgressLocal, color: Colors.red)
             else

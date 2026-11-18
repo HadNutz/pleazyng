@@ -1,7 +1,6 @@
 #include "flutter_window.h"
 
 #include <wincred.h>
-#include "media_foundation_decoders.h"
 
 #include <algorithm>
 #include <cctype>
@@ -9,6 +8,7 @@
 #include <string>
 
 #include "flutter/generated_plugin_registrant.h"
+#include "media_foundation_decoders.h"
 #include "mpv/display_mode_manager.h"
 #include "mpv/mpv_plugin.h"
 #ifdef PLEZY_STEAM_RECEIVER

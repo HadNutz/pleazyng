@@ -203,9 +203,6 @@ class Translations$viewing$en {
 	/// en: 'No matching files found'
 	String get relinkNone => 'No matching files found';
 
-	/// en: 'Select folder'
-	String get selectFolder => 'Select folder';
-
 	/// en: 'Remove attached audio'
 	String get clearAudio => 'Remove attached audio';
 
@@ -2256,12 +2253,6 @@ class Translations$settings$en {
 
 	/// en: 'Choose which playback engine decodes and renders video on this device.'
 	String get playerBackendDescription => 'Choose which playback engine decodes and renders video on this device.';
-
-	/// en: 'Use Android’s native Media3-based player and supported hardware paths.'
-	String get exoPlayerDescription => 'Use Android’s native Media3-based player and supported hardware paths.';
-
-	/// en: 'Use mpv, which exposes additional playback, subtitle, and video processing controls.'
-	String get mpvDescription => 'Use mpv, which exposes additional playback, subtitle, and video processing controls.';
 
 	/// en: 'Keep changes for the current playback session only.'
 	String get scopeOffDescription => 'Keep changes for the current playback session only.';
@@ -7587,9 +7578,6 @@ class Translations$performanceOverlay$en {
 
 	/// en: 'FPS'
 	String get fps => 'FPS';
-
-	/// en: 'Android HW'
-	String get decoderAndroidHw => 'Android HW';
 
 	/// en: 'NVIDIA HW'
 	String get decoderNvidiaHw => 'NVIDIA HW';
@@ -18273,7 +18261,6 @@ extension on Translations {
 			'viewing.relinkMatched' => ({required Object count}) => 'Reconnect ${count} matching entries',
 			'viewing.relinkAmbiguous' => 'Needs review',
 			'viewing.relinkNone' => 'No matching files found',
-			'viewing.selectFolder' => 'Select folder',
 			'viewing.clearAudio' => 'Remove attached audio',
 			'viewing.keepFrom' => ({required Object time}) => 'Keep from ${time}',
 			'viewing.recordNow' => 'Record from now',
@@ -18767,9 +18754,9 @@ extension on Translations {
 			'settings.maxVolume' => 'Maximum Volume',
 			'settings.maxVolumeDescription' => 'Allow volume boost above 100% for quiet media',
 			'settings.maxVolumePercent' => ({required Object percent}) => '${percent}%',
+			'settings.discordRichPresence' => 'Discord Rich Presence',
 			_ => null,
 		} ?? switch (path) {
-			'settings.discordRichPresence' => 'Discord Rich Presence',
 			'settings.discordRichPresenceDescription' => 'Show what you\'re watching on Discord',
 			'settings.services' => 'Services',
 			'settings.servicesDescription' => 'Connect Trakt, MyAnimeList, Seerr, and more',
@@ -18983,8 +18970,6 @@ extension on Translations {
 			'settings.downmixCenterBoostDescription' => 'Raise dialogue in the center channel when surround audio is mixed down to stereo.',
 			'settings.displaySwitchDelayDescription' => 'Wait before changing display mode so the TV or receiver can finish its previous switch.',
 			'settings.playerBackendDescription' => 'Choose which playback engine decodes and renders video on this device.',
-			'settings.exoPlayerDescription' => 'Use Android’s native Media3-based player and supported hardware paths.',
-			'settings.mpvDescription' => 'Use mpv, which exposes additional playback, subtitle, and video processing controls.',
 			'settings.scopeOffDescription' => 'Keep changes for the current playback session only.',
 			'settings.scopeGlobalDescription' => 'Reuse the same value for every library and title.',
 			'settings.scopeLibraryDescription' => 'Remember a separate value for each library.',
@@ -19281,11 +19266,11 @@ extension on Translations {
 			'accessibility.tapToPlay' => 'Tap to play',
 			'accessibility.decrease' => 'Decrease',
 			'accessibility.increase' => 'Increase',
-			_ => null,
-		} ?? switch (path) {
 			'accessibility.decreaseValue' => ({required Object label}) => 'Decrease ${label}',
 			'accessibility.increaseValue' => ({required Object label}) => 'Increase ${label}',
 			'accessibility.hue' => 'Hue',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.saturation' => 'Saturation',
 			'accessibility.brightness' => 'Brightness',
 			'accessibility.hexColor' => 'Hex color',
@@ -19795,11 +19780,11 @@ extension on Translations {
 			'iptv.scheduleRecordingOnDevice' => 'Schedule local recording',
 			'iptv.localRecordingScheduled' => 'Local recording scheduled. Pleazyng must be running when it starts.',
 			'iptv.localRecordingAlreadyScheduled' => 'This program is already scheduled for local recording.',
-			_ => null,
-		} ?? switch (path) {
 			'iptv.localRecordingSchedules' => 'Local recording schedule',
 			'iptv.scheduledOnThisDevice' => 'Scheduled on this device',
 			'iptv.cancelLocalRecording' => 'Cancel local recording?',
+			_ => null,
+		} ?? switch (path) {
 			'iptv.cancelLocalRecordingConfirm' => ({required Object programme}) => 'Cancel the local recording of ${programme}?',
 			'iptv.cancelSchedule' => 'Cancel schedule',
 			'iptv.localRecordingCancelled' => 'Local recording schedule cancelled.',
@@ -20309,11 +20294,11 @@ extension on Translations {
 			'explore.episodeCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episode', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episodes', ), 
 			'explore.cast' => 'Cast',
 			'explore.characters' => 'Characters',
-			_ => null,
-		} ?? switch (path) {
 			'explore.addToWatchlist' => 'Add to Watchlist',
 			'explore.removeFromWatchlist' => 'Remove from Watchlist',
 			'explore.addedToWatchlist' => 'Added to watchlist',
+			_ => null,
+		} ?? switch (path) {
 			'explore.removedFromWatchlist' => 'Removed from watchlist',
 			'explore.watchlistUpdateFailed' => 'Couldn\'t update watchlist',
 			'explore.watchlistNoMatch' => 'Couldn\'t match this item to a watchlist',
@@ -20823,11 +20808,11 @@ extension on Translations {
 			'downloads.invalidEpisodeCount' => 'Enter a valid episode count.',
 			'downloads.keepSynced' => 'Keep synced',
 			'downloads.downloadOnce' => 'Download once',
-			_ => null,
-		} ?? switch (path) {
 			'downloads.keepNUnwatched' => ({required Object count}) => 'Keep ${count} unwatched',
 			'downloads.editSyncRule' => 'Edit sync rule',
 			'downloads.removeSyncRule' => 'Remove sync rule',
+			_ => null,
+		} ?? switch (path) {
 			'downloads.removeSyncRuleConfirm' => ({required Object title}) => 'Stop syncing "${title}"? Downloaded episodes will be kept.',
 			'downloads.removeListSyncRuleConfirm' => ({required Object title}) => 'Stop syncing "${title}"?',
 			'downloads.deleteSyncRuleDownloads' => 'Also delete associated downloads',
@@ -21213,7 +21198,6 @@ extension on Translations {
 			'performanceOverlay.memory' => 'Memory',
 			'performanceOverlay.uiFps' => 'UI FPS',
 			'performanceOverlay.fps' => 'FPS',
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
@@ -21337,12 +21321,12 @@ extension on Translations {
 			'matchScreen.noMatchesFound' => 'No matches found',
 			'matchScreen.plexDiscover' => 'Plex Discover',
 			'matchScreen.plexLibrary' => 'Plex library',
-			_ => null,
-		} ?? switch (path) {
 			'matchScreen.jellyfinLibrary' => 'Jellyfin library',
 			'matchScreen.embyLibrary' => 'Emby library',
 			'serverTasks.title' => 'Server Tasks',
 			'serverTasks.failedToLoad' => 'Failed to load tasks',
+			_ => null,
+		} ?? switch (path) {
 			'serverTasks.noTasks' => 'No tasks running',
 			'trakt.title' => 'Trakt',
 			'trakt.connected' => 'Connected',
@@ -21851,12 +21835,12 @@ extension on Translations {
 			'universalMedia.intro' => 'Open a link, playlist, or file. Playback uses Pleazyng’s standard player and does not add history to your library.',
 			'universalMedia.openWhat' => 'What would you like to open?',
 			'universalMedia.stream' => 'Stream address',
-			_ => null,
-		} ?? switch (path) {
 			'universalMedia.playlist' => 'Playlist',
 			'universalMedia.files' => 'Device files',
 			'universalMedia.favorites' => 'Saved stream favorites',
 			'universalMedia.address' => 'Media address',
+			_ => null,
+		} ?? switch (path) {
 			'universalMedia.addressHelp' => 'HTTPS is preferred. URLs with recognized credential or signature parameters are used only for this session and cannot be saved as favorites.',
 			'universalMedia.displayName' => 'Display name (optional)',
 			'universalMedia.displayNameHelp' => 'Choose a short name for the player and system media controls.',
@@ -22365,12 +22349,12 @@ extension on Translations {
 			'sourceSetup.subtitleSetup' => 'Optional subtitle search for standalone videos.',
 			'sourceSetup.apiKey' => 'API key',
 			'sourceSetup.optionalUsername' => 'Account username (optional)',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.optionalPassword' => 'Account password (optional)',
 			'sourceSetup.subtitlePrivacy' => 'Get an API key from opensubtitles.com. Search sends the video title and available IMDb/TMDB IDs, never the video file. The key and optional account credentials are encrypted with this source.',
 			'sourceSetup.automaticMetadata' => 'Automatic online video metadata',
 			'sourceSetup.metadataPrivacy' => 'Sends only filename title/year and episode numbers or an NFO ID, never media or credentials. NFO fields stay authoritative.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsEncryptionFailure' => 'For encrypted NFS, check RFC 9289 and TLS 1.3 support on both NAS services, the certificate name, and the export UID/GID. Pleazyng will not retry this connection without encryption.',
 			'sourceSetup.sourceConnecting' => 'Connecting to source',
 			'sourceSetup.metadataSearchPrivacy' => 'This title search goes to Trakt. It sends the title you enter, not the video or source credentials.',
@@ -22879,12 +22863,12 @@ extension on Translations {
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
 			'podcasts.imported' => 'Subscriptions imported.',
 			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
-			_ => null,
-		} ?? switch (path) {
 			'podcasts.serverHelp' => 'Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.',
 			'podcasts.viewAll' => 'Show more episodes',
 			'podcasts.inLibrary' => 'Open podcast',
 			'podcasts.rateLimited' => 'Wait a few seconds before searching again.',
+			_ => null,
+		} ?? switch (path) {
 			'podcasts.syncConnect' => 'gpodder-compatible sync',
 			'podcasts.syncPrivacy' => 'This server receives subscription and episode URLs, which may contain private membership tokens, and listening positions. Credentials and sync checkpoints are encrypted on this device. Subscription removal is synchronized; existing downloads and history are retained.',
 			'podcasts.syncConsent' => 'Share podcast URLs and listening progress with this server',
@@ -23393,12 +23377,12 @@ extension on Translations {
 			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',
 			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',
 			'karaokeUi.phoneInputRequiresSecureContext' => 'A trusted HTTPS connection is required.',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.phoneInputRequires16kHzCapture' => 'This browser cannot supply the required 16 kHz capture path.',
 			'karaokeUi.phoneInputNeedsActivePerformance' => 'Return to an active performance before enabling capture.',
 			'karaokeUi.phoneCaptureRequiresTrustedHTTPS' => 'Phone capture requires the host HTTPS room with a certificate trusted by this phone. The ordinary LAN songbook remains available.',
 			'karaokeUi.phoneInputNeedsAssignedSinger' => 'The host must start a request assigned to your singer before you enable input.',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.phoneInputUncalibratedPracticeOnly' => 'Phone timing is uncalibrated. Feedback is for practice and does not enter competitive leaderboards.',
 			'karaokeUi.pitchMIDI' => ({required Object value1}) => 'Pitch: MIDI ${value1}',
 			'karaokeUi.performanceScore' => ({required Object value1, required Object value2}) => 'Score: ${value1} / 10000 · ${value2}',

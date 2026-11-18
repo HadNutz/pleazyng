@@ -1,11 +1,11 @@
 import AVFoundation
 import VideoToolbox
 #if os(macOS)
-import AppKit
-import FlutterMacOS
+  import AppKit
+  import FlutterMacOS
 #else
-import UIKit
-import Flutter
+  import UIKit
+  import Flutter
 #endif
 
 /// AVPlayer owns decode, timing and presentation. Keeping the AVPlayerLayer
@@ -25,12 +25,14 @@ private final class AVVideoSession {
     layer = AVPlayerLayer(player: player)
     layer.videoGravity = .resizeAspect
     let center = NotificationCenter.default
-    observers.append(center.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main) {
-      [weak self] _ in self?.ended = true
-    })
-    observers.append(center.addObserver(forName: .AVPlayerItemFailedToPlayToEndTime, object: item, queue: .main) {
-      [weak self] _ in self?.failed = true
-    })
+    observers.append(
+      center.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main) {
+        [weak self] _ in self?.ended = true
+      })
+    observers.append(
+      center.addObserver(forName: .AVPlayerItemFailedToPlayToEndTime, object: item, queue: .main) {
+        [weak self] _ in self?.failed = true
+      })
   }
 
   deinit {
@@ -44,12 +46,14 @@ private final class AVVideoSession {
       let seconds = time.seconds
       return seconds.isFinite && seconds > 0 ? Int(seconds * 1000) : 0
     }
-    return ["ready": item.status == .readyToPlay, "failed": failed || item.status == .failed,
-            "width": item.presentationSize.width, "height": item.presentationSize.height,
-            "playing": player.timeControlStatus == .playing,
-            "buffering": player.timeControlStatus == .waitingToPlayAtSpecifiedRate,
-            "position": ms(player.currentTime()), "duration": ms(item.duration),
-            "frame": layer.isReadyForDisplay, "ended": ended]
+    return [
+      "ready": item.status == .readyToPlay, "failed": failed || item.status == .failed,
+      "width": item.presentationSize.width, "height": item.presentationSize.height,
+      "playing": player.timeControlStatus == .playing,
+      "buffering": player.timeControlStatus == .waitingToPlayAtSpecifiedRate,
+      "position": ms(player.currentTime()), "duration": ms(item.duration),
+      "frame": layer.isReadyForDisplay, "ended": ended,
+    ]
   }
 
   func tracks() -> [[String: Any]] {
@@ -58,9 +62,11 @@ private final class AVVideoSession {
       guard let group = item.asset.mediaSelectionGroup(forMediaCharacteristic: characteristic) else { continue }
       let selected = item.currentMediaSelection.selectedMediaOption(in: group)
       for (index, option) in group.options.enumerated() {
-        rows.append(["id": String(index), "type": type, "title": option.displayName,
-                     "language": option.extendedLanguageTag ?? option.locale?.identifier ?? "und",
-                     "selected": option == selected])
+        rows.append([
+          "id": String(index), "type": type, "title": option.displayName,
+          "language": option.extendedLanguageTag ?? option.locale?.identifier ?? "und",
+          "selected": option == selected,
+        ])
       }
     }
     return rows
@@ -68,36 +74,36 @@ private final class AVVideoSession {
 }
 
 #if os(macOS)
-private final class AVVideoView: NSView {
-  private let video: AVPlayerLayer?
-  init(video: AVPlayerLayer?) {
-    self.video = video
-    super.init(frame: .zero)
-    wantsLayer = true
-    if let video { layer?.addSublayer(video) }
+  private final class AVVideoView: NSView {
+    private let video: AVPlayerLayer?
+    init(video: AVPlayerLayer?) {
+      self.video = video
+      super.init(frame: .zero)
+      wantsLayer = true
+      if let video { layer?.addSublayer(video) }
+    }
+    required init?(coder: NSCoder) { nil }
+    override func layout() {
+      super.layout()
+      video?.frame = bounds
+    }
   }
-  required init?(coder: NSCoder) { nil }
-  override func layout() {
-    super.layout()
-    video?.frame = bounds
-  }
-}
 #else
-private final class AVVideoView: UIView, FlutterPlatformView {
-  private let video: AVPlayerLayer?
-  init(frame: CGRect, video: AVPlayerLayer?) {
-    self.video = video
-    super.init(frame: frame)
-    if let video { layer.addSublayer(video) }
-    isUserInteractionEnabled = false
+  private final class AVVideoView: UIView, FlutterPlatformView {
+    private let video: AVPlayerLayer?
+    init(frame: CGRect, video: AVPlayerLayer?) {
+      self.video = video
+      super.init(frame: frame)
+      if let video { layer.addSublayer(video) }
+      isUserInteractionEnabled = false
+    }
+    required init?(coder: NSCoder) { nil }
+    override func layoutSubviews() {
+      super.layoutSubviews()
+      video?.frame = bounds
+    }
+    func view() -> UIView { self }
   }
-  required init?(coder: NSCoder) { nil }
-  override func layoutSubviews() {
-    super.layoutSubviews()
-    video?.frame = bounds
-  }
-  func view() -> UIView { self }
-}
 #endif
 
 final class SystemVideoPlugin: NSObject, FlutterPlatformViewFactory {
@@ -105,9 +111,9 @@ final class SystemVideoPlugin: NSObject, FlutterPlatformViewFactory {
 
   static func register(with registrar: FlutterPluginRegistrar) {
     #if os(macOS)
-    let messenger = registrar.messenger
+      let messenger = registrar.messenger
     #else
-    let messenger = registrar.messenger()
+      let messenger = registrar.messenger()
     #endif
     let factory = SystemVideoPlugin()
     registrar.register(factory, withId: "org.snapetech.pleazyng/avplayer")
@@ -116,13 +122,13 @@ final class SystemVideoPlugin: NSObject, FlutterPlatformViewFactory {
   }
 
   #if os(macOS)
-  func create(withViewIdentifier viewId: Int64, arguments args: Any?) -> NSView {
-    AVVideoView(video: (args as? NSNumber).flatMap { sessions[$0.int64Value]?.layer })
-  }
+    func create(withViewIdentifier viewId: Int64, arguments args: Any?) -> NSView {
+      AVVideoView(video: (args as? NSNumber).flatMap { sessions[$0.int64Value]?.layer })
+    }
   #else
-  func create(withFrame frame: CGRect, viewIdentifier viewId: Int64, arguments args: Any?) -> FlutterPlatformView {
-    AVVideoView(frame: frame, video: (args as? NSNumber).flatMap { sessions[$0.int64Value]?.layer })
-  }
+    func create(withFrame frame: CGRect, viewIdentifier viewId: Int64, arguments args: Any?) -> FlutterPlatformView {
+      AVVideoView(frame: frame, video: (args as? NSNumber).flatMap { sessions[$0.int64Value]?.layer })
+    }
   #endif
 
   func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol { FlutterStandardMessageCodec.sharedInstance() }
@@ -135,7 +141,9 @@ final class SystemVideoPlugin: NSObject, FlutterPlatformViewFactory {
         ("av1", "av01.0.08M.08", kCMVideoCodecType_AV1),
       ]
       let playable = formats.filter { AVURLAsset.isPlayableExtendedMIMEType("video/mp4; codecs=\"\($0.1)\"") }
-      result(["video": playable.map { $0.0 }, "hardware": playable.filter { VTIsHardwareDecodeSupported($0.2) }.map { $0.0 }])
+      result([
+        "video": playable.map { $0.0 }, "hardware": playable.filter { VTIsHardwareDecodeSupported($0.2) }.map { $0.0 },
+      ])
       return
     }
     guard let args = call.arguments as? [String: Any], let id = (args["id"] as? NSNumber)?.int64Value else {
@@ -175,10 +183,13 @@ final class SystemVideoPlugin: NSObject, FlutterPlatformViewFactory {
       let kind: AVMediaCharacteristic = call.method == "audio" ? .audible : .legible
       let key = args["value"] as? String
       if let group = session.item.asset.mediaSelectionGroup(forMediaCharacteristic: kind) {
-        if key == "no" { session.item.select(nil, in: group) }
-        else if let index = Int(key ?? ""), group.options.indices.contains(index) {
+        if key == "no" {
+          session.item.select(nil, in: group)
+        } else if let index = Int(key ?? ""), group.options.indices.contains(index) {
           session.item.select(group.options[index], in: group)
-        } else { result(FlutterError(code: "track", message: "Track unavailable", details: nil)); return }
+        } else {
+          result(FlutterError(code: "track", message: "Track unavailable", details: nil)); return
+        }
       }
     default: result(FlutterMethodNotImplemented); return
     }

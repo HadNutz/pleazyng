@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:plezy/widgets/app_icon.dart';
 import 'package:provider/provider.dart';
 
 import '../i18n/strings.g.dart';
@@ -163,19 +165,19 @@ class _RotationState extends State<ShowRotationScreen> {
                 Padding(padding: const EdgeInsets.all(16), child: Text(t.mediaConveniences.rotationHelp)),
                 if (!shows.containsKey(key))
                   ListTile(
-                    leading: const Icon(Icons.add),
+                    leading: const AppIcon(Symbols.add_rounded),
                     title: Text(show.title ?? key),
                     subtitle: Text(show.serverName ?? ''),
                     onTap: busy ? null : () => _toggle(key),
                   ),
                 for (final entry in shows.entries)
                   ListTile(
-                    leading: const Icon(Icons.tv),
+                    leading: const AppIcon(Symbols.tv_rounded),
                     title: Text(sourceMap(entry.value)['title'] as String? ?? entry.key),
                     subtitle: Text(statuses[entry.key] ?? sourceMap(entry.value)['serverName'] as String? ?? ''),
                     trailing: IconButton(
                       tooltip: t.homeLayout.remove,
-                      icon: const Icon(Icons.remove_circle_outline),
+                      icon: const AppIcon(Symbols.remove_circle_rounded),
                       onPressed: busy ? null : () => _toggle(entry.key),
                     ),
                   ),
@@ -186,7 +188,7 @@ class _RotationState extends State<ShowRotationScreen> {
                     padding: const EdgeInsets.all(16),
                     child: FilledButton.icon(
                       onPressed: _play,
-                      icon: const Icon(Icons.shuffle),
+                      icon: const AppIcon(Symbols.shuffle_rounded),
                       label: Text(t.common.play),
                     ),
                   ),

@@ -856,8 +856,6 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'رفع الحوار في القناة المركزية عندما يتم خلط الصوت المحيط إلى أسفل إلى ستيريو.';
 	@override String get displaySwitchDelayDescription => 'انتظر قبل تغيير وضع العرض حتى يتمكن التلفزيون أو المستلم من الانتهاء من التبديل السابق.';
 	@override String get playerBackendDescription => 'اختر أي محرك تشغيل يزيل ويعرض الفيديو على هذا الجهاز.';
-	@override String get exoPlayerDescription => 'استخدم مشغل Android الأصلي على أساس Media3 وطرق الأجهزة المدعومة.';
-	@override String get mpvDescription => 'استخدم mpv، الذي يعرض إضافية تشغيل العناوين، و subtitle، والسيطرة على معالجة الفيديو.';
 	@override String get scopeOffDescription => 'الحفاظ على التغييرات فقط لفترة اللعب الحالية.';
 	@override String get scopeGlobalDescription => 'إعادة استخدام نفس القيمة لكل مكتبة وعنوان.';
 	@override String get scopeLibraryDescription => 'تذكر قيمة منفصلة لكل مكتبة.';
@@ -2706,7 +2704,6 @@ class _Translations$performanceOverlay$ar extends Translations$performanceOverla
 	@override String get memory => 'الذاكرة';
 	@override String get uiFps => 'فاي FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'كوالكوم HW';
 	@override String get decoderMediatekHw => 'الوسائط HW';
@@ -6399,8 +6396,6 @@ extension on TranslationsAr {
 			'settings.downmixCenterBoostDescription' => 'رفع الحوار في القناة المركزية عندما يتم خلط الصوت المحيط إلى أسفل إلى ستيريو.',
 			'settings.displaySwitchDelayDescription' => 'انتظر قبل تغيير وضع العرض حتى يتمكن التلفزيون أو المستلم من الانتهاء من التبديل السابق.',
 			'settings.playerBackendDescription' => 'اختر أي محرك تشغيل يزيل ويعرض الفيديو على هذا الجهاز.',
-			'settings.exoPlayerDescription' => 'استخدم مشغل Android الأصلي على أساس Media3 وطرق الأجهزة المدعومة.',
-			'settings.mpvDescription' => 'استخدم mpv، الذي يعرض إضافية تشغيل العناوين، و subtitle، والسيطرة على معالجة الفيديو.',
 			'settings.scopeOffDescription' => 'الحفاظ على التغييرات فقط لفترة اللعب الحالية.',
 			'settings.scopeGlobalDescription' => 'إعادة استخدام نفس القيمة لكل مكتبة وعنوان.',
 			'settings.scopeLibraryDescription' => 'تذكر قيمة منفصلة لكل مكتبة.',
@@ -6746,10 +6741,10 @@ extension on TranslationsAr {
 			'videoControls.sleepTimerDurationHeader' => 'تيمير',
 			'videoControls.playbackWillPauseAtEnd' => 'لعبة Playback ستتوقف في نهاية هذا الفيديو',
 			'videoControls.stillWatching' => 'لا يزال ينظر؟',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'استراحة في ${seconds}s',
 			'videoControls.continueWatching' => 'مواصلة',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'اللعب التالي',
 			'videoControls.playNext' => 'تشغيل التالي',
 			'videoControls.playButton' => 'تشغيل',
@@ -7260,10 +7255,10 @@ extension on TranslationsAr {
 			'libraries.playRandomMovie' => 'لعب فيلم عشوائي',
 			'libraries.randomPickFailed' => 'لا يمكن أن تختار فيلم عشوائي من هذه المكتبة.',
 			'libraries.title' => 'المكتبات',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'المكتبة',
 			'libraries.scanLibraryFiles' => 'فحص المكتبة الملفات',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'فحص المكتبة',
 			'libraries.analyze' => 'تحليل',
 			'libraries.analyzeLibrary' => 'تحليل المكتبة',
@@ -7774,10 +7769,10 @@ extension on TranslationsAr {
 			'music.instantMix' => 'مزيج فوري',
 			'music.playNext' => 'تشغيل التالي',
 			'music.addToQueue' => 'إضافة إلى كوشنر',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'القرص ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} مقطع', one: 'مقطع واحد', two: 'مقطعان', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} مقاطع', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} مقطع', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} مقطع', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'اللعب الآن',
 			'music.playingFrom' => ({required Object title}) => 'اللعب من ${title}',
 			'music.queue' => 'كوي',
@@ -8288,11 +8283,10 @@ extension on TranslationsAr {
 			'performanceOverlay.memory' => 'الذاكرة',
 			'performanceOverlay.uiFps' => 'فاي FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'كوالكوم HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'الوسائط HW',
 			'performanceOverlay.decoderExynosHw' => 'إكسينوس HW',
 			'performanceOverlay.decoderSoftware' => 'البرمجة',
@@ -8802,11 +8796,11 @@ extension on TranslationsAr {
 			'homeLayout.noCustomRows' => 'لا توجد صفوف مخصّصة بعد',
 			'homeLayout.addRowHint' => 'اختر «إضافة صف إلى الرئيسية» لإنشاء صف.',
 			'homeLayout.addHomeRow' => 'إضافة صف إلى الرئيسية',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'اختر فئة، وسيُضاف الصف الجديد إلى منظّم الصفوف تلقائيًا',
 			'homeLayout.removeRow' => 'إزالة الصف',
 			'homeLayout.recentlyAdded' => 'أُضيف مؤخرًا',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'صدر مؤخرًا',
 			'homeLayout.movieCollections' => 'مجموعات الأفلام',
 			'homeLayout.showCollections' => 'مجموعات المسلسلات',
@@ -9316,11 +9310,11 @@ extension on TranslationsAr {
 			'sourceSetup.dlnaHelp' => 'يعتمد الاكتشاف على البث المتعدد في الشبكة المحلية. إذا لم يظهر أي خادم، فأدخل عنوان وصف الجهاز أعلاه.',
 			'sourceSetup.dlnaRoot' => 'معرّف عنصر DLNA؛ اتركه فارغًا لاستخدام جذر الجهاز.',
 			'sourceSetup.passwordOrKey' => 'أدخل كلمة مرور أو أضف مفتاحًا خاصًا أدناه.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'بصمة SHA256 لمفتاح مضيف SSH',
 			'sourceSetup.sshFingerprintHelp' => 'تحقّق منها مع مسؤول الخادم. شغّل على الخادم الأمر ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub واستخدم قيمة SHA256 التي يعرضها.',
 			'sourceSetup.sshFingerprintKeep' => 'اتركه فارغًا للاحتفاظ بالبصمة المثبّتة حاليًا، أو أدخل بصمة خادم جديدة.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'المصادقة بمفتاح SSH عام',
 			'sourceSetup.sshAuthenticationHelp' => 'اختياري؛ تُدعم المصادقة بكلمة مرور أيضًا.',
 			'sourceSetup.privateKey' => 'المفتاح الخاص (بتنسيق PEM أو OpenSSH)',
@@ -9830,11 +9824,11 @@ extension on TranslationsAr {
 			'musicTools.pinToHome' => 'تثبيت في صفحة الموسيقى الرئيسية',
 			'musicTools.unpin' => 'إلغاء التثبيت',
 			'musicTools.serverAnalysis' => 'تحليل الخادم',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'التحليل الصوتي',
 			'musicTools.serverAnalysisScope' => 'كل مكتبات الموسيقى المؤهلة على هذا الخادم. لا يغيّر هذا إعدادات التحليل الخاصة بها.',
 			'musicTools.serverActivities' => 'أنشطة الخادم',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'الوصول إلى قائمة التشغيل',
 			'musicTools.playlistRecipient' => 'اسم مستخدم Plex أو البريد الإلكتروني',
 			'musicTools.playlistSharingHint' => 'امنح الوصول إلى قائمة التشغيل هذه ومقاطعها. قد يحتاج المستلم إلى قبول دعوة.',

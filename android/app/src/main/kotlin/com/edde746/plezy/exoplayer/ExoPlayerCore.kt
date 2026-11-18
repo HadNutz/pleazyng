@@ -3111,8 +3111,13 @@ class ExoPlayerCore(private val activity: Activity) :
       error: java.io.IOException,
       wasCanceled: Boolean
     ) {
-      if (mediaGenerationAt(eventTime) != currentMediaGeneration || !currentMediaIsLive ||
-        mediaLoadData.dataType != C.DATA_TYPE_MANIFEST || loadEventInfo.dataSpec.uri.toString() != currentMediaUri) return
+      if (mediaGenerationAt(eventTime) != currentMediaGeneration ||
+        !currentMediaIsLive ||
+        mediaLoadData.dataType != C.DATA_TYPE_MANIFEST ||
+        loadEventInfo.dataSpec.uri.toString() != currentMediaUri
+      ) {
+        return
+      }
       liveSourceRoute.observeManifestError(loadEventInfo.dataSpec.uri, loadEventInfo.uri, loadEventInfo.responseHeaders, error)
     }
 
@@ -3909,8 +3914,12 @@ class ExoPlayerCore(private val activity: Activity) :
     // format. Preserve the requested lane until the new sink reports its route.
     if (pendingAudioRendererBounce && dualMonoChannel != null) return true
     val config = lastAudioTrackConfig ?: return false
-    return isInitialized && renderersFactory != null && !currentTunneledPlayback &&
-      !config.tunneling && !config.offload && config.encoding == C.ENCODING_PCM_16BIT &&
+    return isInitialized &&
+      renderersFactory != null &&
+      !currentTunneledPlayback &&
+      !config.tunneling &&
+      !config.offload &&
+      config.encoding == C.ENCODING_PCM_16BIT &&
       selectedAudioFormat()?.channelCount == 2
   }
 

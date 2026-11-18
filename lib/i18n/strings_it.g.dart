@@ -850,8 +850,6 @@ class _Translations$settings$it extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Aumentare il dialogo nel canale centrale quando l\'audio circostante viene mescolato in stereo.';
 	@override String get displaySwitchDelayDescription => 'Aspettate prima di cambiare il modo di visualizzazione in modo che la TV o il ricevitore possa completare il suo precedente switch.';
 	@override String get playerBackendDescription => 'Selezionare quale motore di riproduzione decodifica e renderà il video su questo dispositivo.';
-	@override String get exoPlayerDescription => 'Utilizzare il player basato su Media3 nativo di Android e i percorsi hardware supportati.';
-	@override String get mpvDescription => 'Utilizzare mpv, che esprime ulteriori controlli di riproduzione, sottotitoli e video processing.';
 	@override String get scopeOffDescription => 'Mantenere i cambiamenti per l\'attuale sessione di riproduzione solo.';
 	@override String get scopeGlobalDescription => 'Ripristinare lo stesso valore per ogni biblioteca e titolo.';
 	@override String get scopeLibraryDescription => 'Ricordate un valore separato per ciascuna biblioteca.';
@@ -2633,7 +2631,6 @@ class _Translations$performanceOverlay$it extends Translations$performanceOverla
 	@override String get memory => 'Memoria';
 	@override String get uiFps => 'FPS UI';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm HW';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6306,8 +6303,6 @@ extension on TranslationsIt {
 			'settings.downmixCenterBoostDescription' => 'Aumentare il dialogo nel canale centrale quando l\'audio circostante viene mescolato in stereo.',
 			'settings.displaySwitchDelayDescription' => 'Aspettate prima di cambiare il modo di visualizzazione in modo che la TV o il ricevitore possa completare il suo precedente switch.',
 			'settings.playerBackendDescription' => 'Selezionare quale motore di riproduzione decodifica e renderà il video su questo dispositivo.',
-			'settings.exoPlayerDescription' => 'Utilizzare il player basato su Media3 nativo di Android e i percorsi hardware supportati.',
-			'settings.mpvDescription' => 'Utilizzare mpv, che esprime ulteriori controlli di riproduzione, sottotitoli e video processing.',
 			'settings.scopeOffDescription' => 'Mantenere i cambiamenti per l\'attuale sessione di riproduzione solo.',
 			'settings.scopeGlobalDescription' => 'Ripristinare lo stesso valore per ogni biblioteca e titolo.',
 			'settings.scopeLibraryDescription' => 'Ricordate un valore separato per ciascuna biblioteca.',
@@ -6653,10 +6648,10 @@ extension on TranslationsIt {
 			'videoControls.sleepTimerDurationHeader' => 'Timer',
 			'videoControls.playbackWillPauseAtEnd' => 'La riproduzione verrà messa in pausa alla fine di questo video',
 			'videoControls.stillWatching' => 'Stai ancora guardando?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pausa tra ${seconds}s',
 			'videoControls.continueWatching' => 'Continua',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Riproduci automaticamente il successivo',
 			'videoControls.playNext' => 'Riproduci il successivo',
 			'videoControls.playButton' => 'Riproduci',
@@ -7167,10 +7162,10 @@ extension on TranslationsIt {
 			'libraries.playRandomMovie' => 'Gioca un film casuale',
 			'libraries.randomPickFailed' => 'Non si può scegliere un film casuale da questa biblioteca.',
 			'libraries.title' => 'Librerie',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Libreria',
 			'libraries.scanLibraryFiles' => 'Scansiona i file della libreria',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Scansiona libreria',
 			'libraries.analyze' => 'Analizza',
 			'libraries.analyzeLibrary' => 'Analizza libreria',
@@ -7681,10 +7676,10 @@ extension on TranslationsIt {
 			'music.instantMix' => 'Mix istantaneo',
 			'music.playNext' => 'Riproduci come prossimo',
 			'music.addToQueue' => 'Aggiungi alla coda',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Disco ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('it'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} brano', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} brani', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'In riproduzione',
 			'music.playingFrom' => ({required Object title}) => 'Riproduzione da ${title}',
 			'music.queue' => 'Coda',
@@ -8195,11 +8190,10 @@ extension on TranslationsIt {
 			'performanceOverlay.memory' => 'Memoria',
 			'performanceOverlay.uiFps' => 'FPS UI',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Software',
@@ -8709,11 +8703,11 @@ extension on TranslationsIt {
 			'homeLayout.noCustomRows' => 'Non ci sono ancora linee',
 			'homeLayout.addRowHint' => 'Utilizzare Add Home row per creare uno.',
 			'homeLayout.addHomeRow' => 'Aggiungi Home Rue',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Selezionare una categoria; la nuova linea viene aggiunta automaticamente all\'Organizzatore',
 			'homeLayout.removeRow' => 'Rimuovere la linea',
 			'homeLayout.recentlyAdded' => 'Aggiunti di recente',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Rilasciato di recente',
 			'homeLayout.movieCollections' => 'Film Collezioni',
 			'homeLayout.showCollections' => 'Mostra le collezioni',
@@ -9223,11 +9217,11 @@ extension on TranslationsIt {
 			'sourceSetup.dlnaHelp' => 'Il rilevamento dipende dal multicast sulla rete locale. Se non compare alcun server, inserisci qui sopra l’URL della sua descrizione del dispositivo.',
 			'sourceSetup.dlnaRoot' => 'ID dell’oggetto DLNA; lascia vuoto per usare la radice del dispositivo.',
 			'sourceSetup.passwordOrKey' => 'Inserisci una password oppure aggiungi una chiave privata qui sotto.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'Impronta SHA256 della chiave host SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Verificala con l’amministratore del server. Sul server, esegui ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub e usa il valore SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Lascia vuoto per mantenere l’impronta attualmente fissata oppure inserisci una nuova impronta del server.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Autenticazione SSH con chiave pubblica',
 			'sourceSetup.sshAuthenticationHelp' => 'Facoltativa; è supportata anche l’autenticazione con password.',
 			'sourceSetup.privateKey' => 'Chiave privata (formato PEM o OpenSSH)',
@@ -9737,11 +9731,11 @@ extension on TranslationsIt {
 			'musicTools.pinToHome' => 'Fissa nella home della musica',
 			'musicTools.unpin' => 'Rimuovi',
 			'musicTools.serverAnalysis' => 'Analisi del server',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Analisi sonora',
 			'musicTools.serverAnalysisScope' => 'Tutte le librerie musicali idonee su questo server. Le impostazioni di analisi non vengono modificate.',
 			'musicTools.serverActivities' => 'Attività del server',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Accesso alla playlist',
 			'musicTools.playlistRecipient' => 'Nome utente Plex o email',
 			'musicTools.playlistSharingHint' => 'Concedi l’accesso a questa playlist e ai suoi brani. Il destinatario potrebbe dover accettare un invito.',

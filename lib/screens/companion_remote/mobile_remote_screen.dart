@@ -334,7 +334,7 @@ class _RemoteControlContentState extends State<_RemoteControlContent> {
             remote.supportsPhoneListening &&
             remote.isPlayerActive)
           ListTile(
-            leading: const Icon(Icons.headphones),
+            leading: const AppIcon(Symbols.headphones_rounded),
             title: Text(t.viewing.listenPhone),
             onTap: () =>
                 Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const PhoneListeningScreen())),

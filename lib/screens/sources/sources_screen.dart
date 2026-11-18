@@ -804,7 +804,7 @@ class _SourcesScreenState extends State<SourcesScreen> {
         if (widget.shelf == PublicationShelf.comics && !PlatformDetector.isTV())
           IconButton(
             tooltip: t.comics.readLists,
-            icon: const Icon(Icons.library_books_outlined),
+            icon: const AppIcon(Symbols.library_books_rounded),
             onPressed: () =>
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const ComicReadingListsScreen())),
           ),

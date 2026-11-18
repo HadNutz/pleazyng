@@ -848,8 +848,6 @@ class _Translations$settings$nb extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Øke dialogen i sentralkanalen når omgivende lyd blandes ned til stereo.';
 	@override String get displaySwitchDelayDescription => 'Vennligst vent før du endrer skjermmodus slik at TV-en eller mottakeren kan fullføre sin tidligere skift.';
 	@override String get playerBackendDescription => 'Velg hvilken spillmotor som dekoder og renderer video på denne enheten.';
-	@override String get exoPlayerDescription => 'Bruk Androids innfødte Media3-baserte spiller og støttet maskinvareveier.';
-	@override String get mpvDescription => 'Bruk mpv, som viser ytterligere playback, undertittel og videobehandling kontroller.';
 	@override String get scopeOffDescription => 'Lagre endringer for den nåværende playback-sesjonen bare.';
 	@override String get scopeGlobalDescription => 'Åpne samme verdi for hver bibliotek og tittel.';
 	@override String get scopeLibraryDescription => 'Husk en separat verdi for hver bibliotek.';
@@ -2630,7 +2628,6 @@ class _Translations$performanceOverlay$nb extends Translations$performanceOverla
 	@override String get memory => 'Minne';
 	@override String get uiFps => 'UI FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android-maskinvare';
 	@override String get decoderNvidiaHw => 'NVIDIA-maskinvare';
 	@override String get decoderQualcommHw => 'Qualcomm-maskinvare';
 	@override String get decoderMediatekHw => 'MediaTek-maskinvare';
@@ -6299,8 +6296,6 @@ extension on TranslationsNb {
 			'settings.downmixCenterBoostDescription' => 'Øke dialogen i sentralkanalen når omgivende lyd blandes ned til stereo.',
 			'settings.displaySwitchDelayDescription' => 'Vennligst vent før du endrer skjermmodus slik at TV-en eller mottakeren kan fullføre sin tidligere skift.',
 			'settings.playerBackendDescription' => 'Velg hvilken spillmotor som dekoder og renderer video på denne enheten.',
-			'settings.exoPlayerDescription' => 'Bruk Androids innfødte Media3-baserte spiller og støttet maskinvareveier.',
-			'settings.mpvDescription' => 'Bruk mpv, som viser ytterligere playback, undertittel og videobehandling kontroller.',
 			'settings.scopeOffDescription' => 'Lagre endringer for den nåværende playback-sesjonen bare.',
 			'settings.scopeGlobalDescription' => 'Åpne samme verdi for hver bibliotek og tittel.',
 			'settings.scopeLibraryDescription' => 'Husk en separat verdi for hver bibliotek.',
@@ -6646,10 +6641,10 @@ extension on TranslationsNb {
 			'videoControls.sleepTimerDurationHeader' => 'Varighet',
 			'videoControls.playbackWillPauseAtEnd' => 'Avspilling vil pause på slutten av denne videoen',
 			'videoControls.stillWatching' => 'Ser du fortsatt?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pauser om ${seconds}s',
 			'videoControls.continueWatching' => 'Fortsett',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Spill av neste automatisk',
 			'videoControls.playNext' => 'Spill neste',
 			'videoControls.playButton' => 'Spill av',
@@ -7160,10 +7155,10 @@ extension on TranslationsNb {
 			'libraries.playRandomMovie' => 'Spill en tilfeldig film',
 			'libraries.randomPickFailed' => 'Kan ikke velge en tilfeldig film fra denne biblioteket.',
 			'libraries.title' => 'Biblioteker',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Bibliotek',
 			'libraries.scanLibraryFiles' => 'Skann bibliotekfiler',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Skann bibliotek',
 			'libraries.analyze' => 'Analyser',
 			'libraries.analyzeLibrary' => 'Analyser bibliotek',
@@ -7674,10 +7669,10 @@ extension on TranslationsNb {
 			'music.instantMix' => 'Direktemiks',
 			'music.playNext' => 'Spill neste',
 			'music.addToQueue' => 'Legg til i kø',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Plate ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('nb'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} spor', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} spor', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Spilles nå',
 			'music.playingFrom' => ({required Object title}) => 'Spiller fra ${title}',
 			'music.queue' => 'Kø',
@@ -8188,11 +8183,10 @@ extension on TranslationsNb {
 			'performanceOverlay.memory' => 'Minne',
 			'performanceOverlay.uiFps' => 'UI FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android-maskinvare',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA-maskinvare',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm-maskinvare',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek-maskinvare',
 			'performanceOverlay.decoderExynosHw' => 'Exynos-maskinvare',
 			'performanceOverlay.decoderSoftware' => 'Programvare',
@@ -8702,11 +8696,11 @@ extension on TranslationsNb {
 			'homeLayout.noCustomRows' => 'Ingen vanlig runde ennå',
 			'homeLayout.addRowHint' => 'Bruk Home-runde for å lage en.',
 			'homeLayout.addHomeRow' => 'Legg til Home Rue',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Velg en kategori; den nye raden blir automatisk lagt til i Organiser',
 			'homeLayout.removeRow' => 'Fjern runde',
 			'homeLayout.recentlyAdded' => 'Nylig lagt til',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Nylig frigjort',
 			'homeLayout.movieCollections' => 'Filmsamlinger',
 			'homeLayout.showCollections' => 'Vis innsamling',
@@ -9216,11 +9210,11 @@ extension on TranslationsNb {
 			'sourceSetup.dlnaHelp' => 'Oppdagelse avhenger av multicast på lokalnettet. Hvis ingen server vises, angir du URL-en til enhetsbeskrivelsen ovenfor.',
 			'sourceSetup.dlnaRoot' => 'DLNA-objekt-ID; la stå tomt for å bruke enhetens rot.',
 			'sourceSetup.passwordOrKey' => 'Angi et passord eller legg til en privat nøkkel nedenfor.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SHA256-fingeravtrykk for SSH-vertsnøkkel',
 			'sourceSetup.sshFingerprintHelp' => 'Kontroller det med serveradministratoren. Kjør ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub på serveren og bruk SHA256-verdien.',
 			'sourceSetup.sshFingerprintKeep' => 'La stå tomt for å beholde det fastlåste fingeravtrykket, eller angi et nytt serverfingeravtrykk.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH-autentisering med offentlig nøkkel',
 			'sourceSetup.sshAuthenticationHelp' => 'Valgfritt; autentisering med passord støttes også.',
 			'sourceSetup.privateKey' => 'Privat nøkkel (PEM- eller OpenSSH-format)',
@@ -9730,11 +9724,11 @@ extension on TranslationsNb {
 			'musicTools.pinToHome' => 'Fest til musikkhjem',
 			'musicTools.unpin' => 'Løsne',
 			'musicTools.serverAnalysis' => 'Serveranalyse',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Lydanalyse',
 			'musicTools.serverAnalysisScope' => 'Alle kvalifiserte musikkbiblioteker på denne serveren. Analyseinnstillingene deres endres ikke.',
 			'musicTools.serverActivities' => 'Serveraktiviteter',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Tilgang til spilleliste',
 			'musicTools.playlistRecipient' => 'Plex-brukernavn eller e-post',
 			'musicTools.playlistSharingHint' => 'Gi tilgang til denne spillelisten og sporene. Mottakeren må kanskje godta en invitasjon.',

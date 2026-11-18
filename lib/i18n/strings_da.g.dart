@@ -848,8 +848,6 @@ class _Translations$settings$da extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Øge dialogen i den centrale kanal, når omgivende lyd blandes ned til stereo.';
 	@override String get displaySwitchDelayDescription => 'Vent før du ændrer displayen, så TV\'en eller modtageren kan afslutte sin tidligere switch.';
 	@override String get playerBackendDescription => 'Vælg, hvilken playback-motor decoder og renderer video på denne enhed.';
-	@override String get exoPlayerDescription => 'Brug Android\'s indfødte Media3-baserede spiller og understøttede hardwareveje.';
-	@override String get mpvDescription => 'Brug mpv, som udsætter yderligere playback, subtitle og video-behandlingskontroller.';
 	@override String get scopeOffDescription => 'Hold ændringer for den nuværende playback session kun.';
 	@override String get scopeGlobalDescription => 'Gennemgang af samme værdi for hver bibliotek og titel.';
 	@override String get scopeLibraryDescription => 'Husk en separat værdi for hver bibliotek.';
@@ -2630,7 +2628,6 @@ class _Translations$performanceOverlay$da extends Translations$performanceOverla
 	@override String get memory => 'Hukommelse';
 	@override String get uiFps => 'UI-FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm HW';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6299,8 +6296,6 @@ extension on TranslationsDa {
 			'settings.downmixCenterBoostDescription' => 'Øge dialogen i den centrale kanal, når omgivende lyd blandes ned til stereo.',
 			'settings.displaySwitchDelayDescription' => 'Vent før du ændrer displayen, så TV\'en eller modtageren kan afslutte sin tidligere switch.',
 			'settings.playerBackendDescription' => 'Vælg, hvilken playback-motor decoder og renderer video på denne enhed.',
-			'settings.exoPlayerDescription' => 'Brug Android\'s indfødte Media3-baserede spiller og understøttede hardwareveje.',
-			'settings.mpvDescription' => 'Brug mpv, som udsætter yderligere playback, subtitle og video-behandlingskontroller.',
 			'settings.scopeOffDescription' => 'Hold ændringer for den nuværende playback session kun.',
 			'settings.scopeGlobalDescription' => 'Gennemgang af samme værdi for hver bibliotek og titel.',
 			'settings.scopeLibraryDescription' => 'Husk en separat værdi for hver bibliotek.',
@@ -6646,10 +6641,10 @@ extension on TranslationsDa {
 			'videoControls.sleepTimerDurationHeader' => 'Varighed',
 			'videoControls.playbackWillPauseAtEnd' => 'Afspilningen sættes på pause ved slutningen af denne video',
 			'videoControls.stillWatching' => 'Ser du stadig?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Sætter på pause om ${seconds} s',
 			'videoControls.continueWatching' => 'Fortsæt',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Afspil næste automatisk',
 			'videoControls.playNext' => 'Afspil næste',
 			'videoControls.playButton' => 'Afspil',
@@ -7160,10 +7155,10 @@ extension on TranslationsDa {
 			'libraries.playRandomMovie' => 'Spil en tilfældig film',
 			'libraries.randomPickFailed' => 'Jeg kan ikke vælge en tilfældig film fra denne bibliotek.',
 			'libraries.title' => 'Biblioteker',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Bibliotek',
 			'libraries.scanLibraryFiles' => 'Scan biblioteksfiler',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Scan bibliotek',
 			'libraries.analyze' => 'Analysér',
 			'libraries.analyzeLibrary' => 'Analysér bibliotek',
@@ -7674,10 +7669,10 @@ extension on TranslationsDa {
 			'music.instantMix' => 'Direkte miks',
 			'music.playNext' => 'Afspil næste',
 			'music.addToQueue' => 'Føj til kø',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Disk ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('da'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} nummer', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} numre', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Afspiller nu',
 			'music.playingFrom' => ({required Object title}) => 'Afspiller fra ${title}',
 			'music.queue' => 'Kø',
@@ -8188,11 +8183,10 @@ extension on TranslationsDa {
 			'performanceOverlay.memory' => 'Hukommelse',
 			'performanceOverlay.uiFps' => 'UI-FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Software',
@@ -8702,11 +8696,11 @@ extension on TranslationsDa {
 			'homeLayout.noCustomRows' => 'Ingen sædvanlige ruter endnu',
 			'homeLayout.addRowHint' => 'Brug Home-range til at oprette en.',
 			'homeLayout.addHomeRow' => 'Tilføj Home Rue',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Vælg en kategori; den nye række tilføjes automatisk til Organiser',
 			'homeLayout.removeRow' => 'Fjern runde',
 			'homeLayout.recentlyAdded' => 'Nyligt tilføjet',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Nyligt frigivet',
 			'homeLayout.movieCollections' => 'Filmsamlinger',
 			'homeLayout.showCollections' => 'Se kollektioner',
@@ -9216,11 +9210,11 @@ extension on TranslationsDa {
 			'sourceSetup.dlnaHelp' => 'Søgningen afhænger af multicast på det lokale netværk. Hvis ingen server vises, skal du angive URL’en til dens enhedsbeskrivelse ovenfor.',
 			'sourceSetup.dlnaRoot' => 'DLNA-objekt-ID; lad feltet stå tomt for at bruge enhedens rod.',
 			'sourceSetup.passwordOrKey' => 'Angiv en adgangskode, eller tilføj en privat nøgle nedenfor.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SHA256-fingeraftryk for SSH-værtsnøglen',
 			'sourceSetup.sshFingerprintHelp' => 'Kontrollér det med serveradministratoren. Kør ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub på serveren, og brug dens SHA256-værdi.',
 			'sourceSetup.sshFingerprintKeep' => 'Lad feltet stå tomt for at beholde det fastlåste fingeraftryk, eller angiv et nyt serverfingeraftryk.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH-godkendelse med offentlig nøgle',
 			'sourceSetup.sshAuthenticationHelp' => 'Valgfrit; godkendelse med adgangskode understøttes også.',
 			'sourceSetup.privateKey' => 'Privat nøgle (PEM- eller OpenSSH-format)',
@@ -9730,11 +9724,11 @@ extension on TranslationsDa {
 			'musicTools.pinToHome' => 'Fastgør på musikforsiden',
 			'musicTools.unpin' => 'Frigør',
 			'musicTools.serverAnalysis' => 'Serveranalyse',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Lydanalyse',
 			'musicTools.serverAnalysisScope' => 'Alle egnede musikbiblioteker på denne server. Deres analyseindstillinger ændres ikke.',
 			'musicTools.serverActivities' => 'Serveraktiviteter',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Adgang til afspilningsliste',
 			'musicTools.playlistRecipient' => 'Plex-brugernavn eller e-mail',
 			'musicTools.playlistSharingHint' => 'Giv adgang til denne afspilningsliste og dens numre. Modtageren skal muligvis acceptere en invitation.',

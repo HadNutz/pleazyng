@@ -846,8 +846,6 @@ class _Translations$settings$vi extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Tăng sự đối thoại trong kênh trung tâm khi âm thanh xung quanh được trộn xuống stereo.';
 	@override String get displaySwitchDelayDescription => 'Đợi trước khi thay đổi chế độ hiển thị để TV hoặc người nhận có thể hoàn thành chuyển đổi trước đó.';
 	@override String get playerBackendDescription => 'Chọn động cơ playback nào giải mã và render video trên thiết bị này.';
-	@override String get exoPlayerDescription => 'Sử dụng người chơi gốc của Android dựa trên Media3 và các con đường phần cứng được hỗ trợ.';
-	@override String get mpvDescription => 'Sử dụng mpv, mà tiết lộ thêm playback, subtitle và kiểm soát xử lý video.';
 	@override String get scopeOffDescription => 'Chỉ giữ các thay đổi cho phiên bản playback hiện tại.';
 	@override String get scopeGlobalDescription => 'Sử dụng lại cùng một giá trị cho mỗi thư viện và tiêu đề.';
 	@override String get scopeLibraryDescription => 'Hãy nhớ một giá trị riêng biệt cho mỗi thư viện.';
@@ -2611,7 +2609,6 @@ class _Translations$performanceOverlay$vi extends Translations$performanceOverla
 	@override String get memory => 'ký ức';
 	@override String get uiFps => 'Đánh giá FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'Đánh giá NVIDIA';
 	@override String get decoderQualcommHw => 'Đánh giá Qualcomm HW';
 	@override String get decoderMediatekHw => 'Thông tin HW';
@@ -6274,8 +6271,6 @@ extension on TranslationsVi {
 			'settings.downmixCenterBoostDescription' => 'Tăng sự đối thoại trong kênh trung tâm khi âm thanh xung quanh được trộn xuống stereo.',
 			'settings.displaySwitchDelayDescription' => 'Đợi trước khi thay đổi chế độ hiển thị để TV hoặc người nhận có thể hoàn thành chuyển đổi trước đó.',
 			'settings.playerBackendDescription' => 'Chọn động cơ playback nào giải mã và render video trên thiết bị này.',
-			'settings.exoPlayerDescription' => 'Sử dụng người chơi gốc của Android dựa trên Media3 và các con đường phần cứng được hỗ trợ.',
-			'settings.mpvDescription' => 'Sử dụng mpv, mà tiết lộ thêm playback, subtitle và kiểm soát xử lý video.',
 			'settings.scopeOffDescription' => 'Chỉ giữ các thay đổi cho phiên bản playback hiện tại.',
 			'settings.scopeGlobalDescription' => 'Sử dụng lại cùng một giá trị cho mỗi thư viện và tiêu đề.',
 			'settings.scopeLibraryDescription' => 'Hãy nhớ một giá trị riêng biệt cho mỗi thư viện.',
@@ -6621,10 +6616,10 @@ extension on TranslationsVi {
 			'videoControls.sleepTimerDurationHeader' => 'Thời gian',
 			'videoControls.playbackWillPauseAtEnd' => 'Playback sẽ nghỉ ngơi vào cuối video này',
 			'videoControls.stillWatching' => 'vẫn đang xem?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Đánh giá tại ${seconds}s',
 			'videoControls.continueWatching' => 'tiếp tục',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Auto-Play tiếp theo',
 			'videoControls.playNext' => 'Phát kế tiếp',
 			'videoControls.playButton' => 'Phát',
@@ -7135,10 +7130,10 @@ extension on TranslationsVi {
 			'libraries.playRandomMovie' => 'Chơi một bộ phim ngẫu nhiên',
 			'libraries.randomPickFailed' => 'Không thể chọn một bộ phim ngẫu nhiên từ thư viện này.',
 			'libraries.title' => 'Thư viện',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Thư viện',
 			'libraries.scanLibraryFiles' => 'Scan thư viện file',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Quét thư viện',
 			'libraries.analyze' => 'phân tích',
 			'libraries.analyzeLibrary' => 'Phân tích Thư viện',
@@ -7649,10 +7644,10 @@ extension on TranslationsVi {
 			'music.instantMix' => 'Trộn Lẫn Nhanh',
 			'music.playNext' => 'Phát kế tiếp',
 			'music.addToQueue' => 'Thêm vào Queue',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Đĩa ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('vi'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} đường dẫn', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Bây giờ chơi',
 			'music.playingFrom' => ({required Object title}) => 'Chơi từ ${title}',
 			'music.queue' => 'Quay',
@@ -8163,11 +8158,10 @@ extension on TranslationsVi {
 			'performanceOverlay.memory' => 'ký ức',
 			'performanceOverlay.uiFps' => 'Đánh giá FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'Đánh giá NVIDIA',
 			'performanceOverlay.decoderQualcommHw' => 'Đánh giá Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'Thông tin HW',
 			'performanceOverlay.decoderExynosHw' => 'Đánh giá HW',
 			'performanceOverlay.decoderSoftware' => 'Phần mềm',
@@ -8677,11 +8671,11 @@ extension on TranslationsVi {
 			'homeLayout.noCustomRows' => 'Không có dòng tiêu chuẩn',
 			'homeLayout.addRowHint' => 'Sử dụng Add Home row để tạo một.',
 			'homeLayout.addHomeRow' => 'Thêm Home Row',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Chọn một thể loại; dòng mới được thêm vào Nhà tổ chức tự động',
 			'homeLayout.removeRow' => 'Xóa dòng',
 			'homeLayout.recentlyAdded' => 'Thêm Gần Đây',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Gần đây phát hành',
 			'homeLayout.movieCollections' => 'Bộ sưu tập phim',
 			'homeLayout.showCollections' => 'Hiển thị bộ sưu tập',
@@ -9191,11 +9185,11 @@ extension on TranslationsVi {
 			'sourceSetup.dlnaHelp' => 'Việc dò tìm phụ thuộc vào multicast trên mạng cục bộ. Nếu không thấy máy chủ, hãy nhập URL mô tả thiết bị của máy chủ đó ở trên.',
 			'sourceSetup.dlnaRoot' => 'ID đối tượng DLNA; để trống để dùng thư mục gốc của thiết bị.',
 			'sourceSetup.passwordOrKey' => 'Nhập mật khẩu hoặc thêm khóa riêng bên dưới.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'Dấu vân tay SHA256 của khóa máy chủ SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Xác minh với quản trị viên máy chủ. Trên máy chủ, chạy ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub và dùng giá trị SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Để trống để giữ dấu vân tay đang được ghim, hoặc nhập dấu vân tay máy chủ mới.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Xác thực SSH bằng khóa công khai',
 			'sourceSetup.sshAuthenticationHelp' => 'Không bắt buộc; cũng hỗ trợ xác thực bằng mật khẩu.',
 			'sourceSetup.privateKey' => 'Khóa riêng (định dạng PEM hoặc OpenSSH)',
@@ -9705,11 +9699,11 @@ extension on TranslationsVi {
 			'musicTools.pinToHome' => 'Ghim vào trang chủ âm nhạc',
 			'musicTools.unpin' => 'Bỏ ghim',
 			'musicTools.serverAnalysis' => 'Phân tích máy chủ',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Phân tích âm thanh',
 			'musicTools.serverAnalysisScope' => 'Tất cả thư viện nhạc đủ điều kiện trên máy chủ này. Không thay đổi cài đặt phân tích của chúng.',
 			'musicTools.serverActivities' => 'Hoạt động máy chủ',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Quyền truy cập danh sách phát',
 			'musicTools.playlistRecipient' => 'Tên người dùng Plex hoặc email',
 			'musicTools.playlistSharingHint' => 'Cấp quyền truy cập danh sách phát này và các bản nhạc. Người nhận có thể cần chấp nhận lời mời.',

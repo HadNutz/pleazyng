@@ -848,8 +848,6 @@ class _Translations$settings$bn extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'সারাউন্ড অডিও স্টেরিওতে মিক্স ডাউন হলে সেন্টার চ্যানেলের সংলাপের মাত্রা বাড়ান।';
 	@override String get displaySwitchDelayDescription => 'ডিসপ্লে মোড বদলানোর আগে অপেক্ষা করুন, যাতে টিভি বা রিসিভার আগের সুইচটি শেষ করতে পারে।';
 	@override String get playerBackendDescription => 'এই ডিভাইসটিতে কোন প্লেব্যাক ইঞ্জিন ডকোড করে এবং ভিডিও ফেরত দেয় তা নির্বাচন করুন।';
-	@override String get exoPlayerDescription => 'অ্যান্ড্রয়েডের মিডিয়া3-এ ভিত্তিক খেলোয়াড় এবং সমর্থিত হার্ডওয়্যার পথগুলি ব্যবহার করুন।';
-	@override String get mpvDescription => 'MPV ব্যবহার করুন, যা আরও Playback, Subtitle এবং ভিডিও প্রক্রিয়াকরণ কন্ট্রোলগুলি প্রকাশ করে।';
 	@override String get scopeOffDescription => 'শুধুমাত্র বর্তমান প্লেব্যাক সেশন জন্য পরিবর্তন রাখুন।';
 	@override String get scopeGlobalDescription => 'প্রতিটি লাইব্রেরি এবং টাইটার জন্য একই মূল্য পুনরায় ব্যবহার করুন।';
 	@override String get scopeLibraryDescription => 'প্রতিটি লাইব্রেরির জন্য একটি নির্দিষ্ট মূল্য মনে রাখুন।';
@@ -2630,7 +2628,6 @@ class _Translations$performanceOverlay$bn extends Translations$performanceOverla
 	@override String get memory => 'স্মৃতি';
 	@override String get uiFps => 'ফিপিএস';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'Nvidia HW';
 	@override String get decoderQualcommHw => 'কোলকোম HW';
 	@override String get decoderMediatekHw => 'মিডিয়াম HW';
@@ -6299,8 +6296,6 @@ extension on TranslationsBn {
 			'settings.downmixCenterBoostDescription' => 'সারাউন্ড অডিও স্টেরিওতে মিক্স ডাউন হলে সেন্টার চ্যানেলের সংলাপের মাত্রা বাড়ান।',
 			'settings.displaySwitchDelayDescription' => 'ডিসপ্লে মোড বদলানোর আগে অপেক্ষা করুন, যাতে টিভি বা রিসিভার আগের সুইচটি শেষ করতে পারে।',
 			'settings.playerBackendDescription' => 'এই ডিভাইসটিতে কোন প্লেব্যাক ইঞ্জিন ডকোড করে এবং ভিডিও ফেরত দেয় তা নির্বাচন করুন।',
-			'settings.exoPlayerDescription' => 'অ্যান্ড্রয়েডের মিডিয়া3-এ ভিত্তিক খেলোয়াড় এবং সমর্থিত হার্ডওয়্যার পথগুলি ব্যবহার করুন।',
-			'settings.mpvDescription' => 'MPV ব্যবহার করুন, যা আরও Playback, Subtitle এবং ভিডিও প্রক্রিয়াকরণ কন্ট্রোলগুলি প্রকাশ করে।',
 			'settings.scopeOffDescription' => 'শুধুমাত্র বর্তমান প্লেব্যাক সেশন জন্য পরিবর্তন রাখুন।',
 			'settings.scopeGlobalDescription' => 'প্রতিটি লাইব্রেরি এবং টাইটার জন্য একই মূল্য পুনরায় ব্যবহার করুন।',
 			'settings.scopeLibraryDescription' => 'প্রতিটি লাইব্রেরির জন্য একটি নির্দিষ্ট মূল্য মনে রাখুন।',
@@ -6646,10 +6641,10 @@ extension on TranslationsBn {
 			'videoControls.sleepTimerDurationHeader' => 'টাইম',
 			'videoControls.playbackWillPauseAtEnd' => 'এই ভিডিও শেষে Playback বন্ধ হবে',
 			'videoControls.stillWatching' => 'এখনও দেখতে চান?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds} সেকেন্ড পরে বিরতি দেওয়া হবে',
 			'videoControls.continueWatching' => 'চলুন',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Next গাড়ি খেলা',
 			'videoControls.playNext' => 'Next খেলুন',
 			'videoControls.playButton' => 'খেলা',
@@ -7160,10 +7155,10 @@ extension on TranslationsBn {
 			'libraries.playRandomMovie' => 'একটি random movie খেলুন',
 			'libraries.randomPickFailed' => 'এই লাইব্রেরি থেকে একটি অসাধারণ সিনেমা নির্বাচন করতে পারবেন না।',
 			'libraries.title' => 'বইয়েরা',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'লাইব্রেরি',
 			'libraries.scanLibraryFiles' => 'স্ক্যান লাইব্রেরি ফাইল',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'স্ক্যান লাইব্রেরি',
 			'libraries.analyze' => 'বিশ্লেষণ',
 			'libraries.analyzeLibrary' => 'বিবেচনা লাইব্রেরি',
@@ -7674,10 +7669,10 @@ extension on TranslationsBn {
 			'music.instantMix' => 'দ্রুত মিশন',
 			'music.playNext' => 'Next খেলুন',
 			'music.addToQueue' => 'কুকুরে যোগ করুন',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'ডিজিটাল ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bn'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ট্র্যাক', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} পাসপোর্ট', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'এখন খেলতে',
 			'music.playingFrom' => ({required Object title}) => 'খেলা ${title} থেকে',
 			'music.queue' => 'কুরআন',
@@ -8188,11 +8183,10 @@ extension on TranslationsBn {
 			'performanceOverlay.memory' => 'স্মৃতি',
 			'performanceOverlay.uiFps' => 'ফিপিএস',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'Nvidia HW',
 			'performanceOverlay.decoderQualcommHw' => 'কোলকোম HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'মিডিয়াম HW',
 			'performanceOverlay.decoderExynosHw' => 'হ্যাঁ হ্যাঁ',
 			'performanceOverlay.decoderSoftware' => 'সফটওয়্যার',
@@ -8702,11 +8696,11 @@ extension on TranslationsBn {
 			'homeLayout.noCustomRows' => 'এখনো কোন কাস্টম রাইড নেই',
 			'homeLayout.addRowHint' => 'একটি তৈরি করার জন্য বাড়ি লাইন যোগ করুন।',
 			'homeLayout.addHomeRow' => 'বাড়ি রান করুন',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'একটি বিভাগ নির্বাচন করুন; নতুন পর্যায়ে স্বয়ংক্রিয়ভাবে সংস্থার যোগ করা হয়',
 			'homeLayout.removeRow' => 'রানী মুছে ফেলে',
 			'homeLayout.recentlyAdded' => 'সম্প্রতি যোগ করা',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'সম্প্রতি মুক্তি',
 			'homeLayout.movieCollections' => 'চলচ্চিত্র সংগ্রহ',
 			'homeLayout.showCollections' => 'সংগ্রহ দেখুন',
@@ -9216,11 +9210,11 @@ extension on TranslationsBn {
 			'sourceSetup.dlnaHelp' => 'ডিভাইস খুঁজতে স্থানীয় নেটওয়ার্কে মাল্টিকাস্ট প্রয়োজন। কোনো সার্ভার না দেখালে উপরে তার ডিভাইসের বিবরণের URL লিখুন।',
 			'sourceSetup.dlnaRoot' => 'DLNA অবজেক্ট ID; ডিভাইসের রুট ব্যবহার করতে ফাঁকা রাখুন।',
 			'sourceSetup.passwordOrKey' => 'পাসওয়ার্ড লিখুন অথবা নিচে একটি ব্যক্তিগত কী যোগ করুন।',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SSH হোস্ট কী-এর SHA256 ফিঙ্গারপ্রিন্ট',
 			'sourceSetup.sshFingerprintHelp' => 'সার্ভারের প্রশাসকের কাছে যাচাই করুন। সার্ভারে ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub চালিয়ে পাওয়া SHA256 মানটি ব্যবহার করুন।',
 			'sourceSetup.sshFingerprintKeep' => 'বর্তমানে পিন করা ফিঙ্গারপ্রিন্ট রাখতে ফাঁকা রাখুন, অথবা সার্ভারের নতুন ফিঙ্গারপ্রিন্ট লিখুন।',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'SSH পাবলিক কী দিয়ে পরিচয় যাচাই',
 			'sourceSetup.sshAuthenticationHelp' => 'ঐচ্ছিক; পাসওয়ার্ড দিয়েও পরিচয় যাচাই করা যায়।',
 			'sourceSetup.privateKey' => 'ব্যক্তিগত কী (PEM বা OpenSSH ফরম্যাট)',
@@ -9730,11 +9724,11 @@ extension on TranslationsBn {
 			'musicTools.pinToHome' => 'সঙ্গীতের হোমে পিন করুন',
 			'musicTools.unpin' => 'পিন সরান',
 			'musicTools.serverAnalysis' => 'সার্ভার বিশ্লেষণ',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'সোনিক বিশ্লেষণ',
 			'musicTools.serverAnalysisScope' => 'এই সার্ভারের সব উপযুক্ত সঙ্গীত লাইব্রেরি। এতে তাদের বিশ্লেষণ সেটিংস বদলাবে না।',
 			'musicTools.serverActivities' => 'সার্ভারের কার্যকলাপ',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'প্লেলিস্টে প্রবেশাধিকার',
 			'musicTools.playlistRecipient' => 'Plex ব্যবহারকারীর নাম বা ইমেইল',
 			'musicTools.playlistSharingHint' => 'এই প্লেলিস্ট ও এর ট্র্যাকগুলোতে প্রবেশাধিকার দিন। প্রাপককে আমন্ত্রণ গ্রহণ করতে হতে পারে।',

@@ -7,7 +7,7 @@ url='https://github.com/snapetech-org/pleazyng'
 license=('GPL-3.0-only')
 # Preserve the released native engines and provider binaries.
 options=('!strip' '!debug')
-depends=('alsa-lib' 'glib2' 'gtk3' 'webkit2gtk-4.1' 'libsecret' 'libdrm' 'libepoxy' 'libevdev' 'libglvnd' 'libva' 'libvdpau' 'vulkan-icd-loader' 'libx11' 'libxcb' 'libxext' 'mesa' 'wayland')
+depends=('alsa-lib' 'glib2' 'gtk3' 'webkit2gtk-4.1' 'libsecret' 'gst-plugins-base-libs' 'libdrm' 'libepoxy' 'libevdev' 'libglvnd' 'libva' 'libvdpau' 'vulkan-icd-loader' 'libx11' 'libxcb' 'libxext' 'mesa' 'wayland')
 depends+=('bubblewrap' 'xdg-dbus-proxy')
 makedepends=('python' 'binutils' 'zstd' 'gdk-pixbuf2' 'pkgconf')
 provides=('pleazyng')

@@ -848,8 +848,6 @@ class _Translations$settings$uz extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Dialogu qentri kanalda qoʻyadi koʻyada stereo-ga yoʻyad.';
 	@override String get displaySwitchDelayDescription => 'Televizor o‘zayni bilan qaytadi, televizor o’zaydi bilan bilan qaytar.';
 	@override String get playerBackendDescription => 'Bu cihazda video\'yi decoding və rendering üçün bir playback motor seçin.';
-	@override String get exoPlayerDescription => 'Android\'nin nadi Media3 bazlı oynatıclar ve supported hardware yollar kullan.';
-	@override String get mpvDescription => 'Mpv, o‘yadi ek playback, subtitle, video processing kontrollar.';
 	@override String get scopeOffDescription => 'U‘zizga xiyimadi bilan bilan bilan qaytadi.';
 	@override String get scopeGlobalDescription => 'O‘qizda librarik o‘qızlar o’qizdan o\'qizlar o‘cizlar.';
 	@override String get scopeLibraryDescription => 'Bu librariyalar için ayrı bir değerdir.';
@@ -2630,7 +2628,6 @@ class _Translations$performanceOverlay$uz extends Translations$performanceOverla
 	@override String get memory => 'Xotira';
 	@override String get uiFps => 'Interfeys (UI) FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm HW';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6299,8 +6296,6 @@ extension on TranslationsUz {
 			'settings.downmixCenterBoostDescription' => 'Dialogu qentri kanalda qoʻyadi koʻyada stereo-ga yoʻyad.',
 			'settings.displaySwitchDelayDescription' => 'Televizor o‘zayni bilan qaytadi, televizor o’zaydi bilan bilan qaytar.',
 			'settings.playerBackendDescription' => 'Bu cihazda video\'yi decoding və rendering üçün bir playback motor seçin.',
-			'settings.exoPlayerDescription' => 'Android\'nin nadi Media3 bazlı oynatıclar ve supported hardware yollar kullan.',
-			'settings.mpvDescription' => 'Mpv, o‘yadi ek playback, subtitle, video processing kontrollar.',
 			'settings.scopeOffDescription' => 'U‘zizga xiyimadi bilan bilan bilan qaytadi.',
 			'settings.scopeGlobalDescription' => 'O‘qizda librarik o‘qızlar o’qizdan o\'qizlar o‘cizlar.',
 			'settings.scopeLibraryDescription' => 'Bu librariyalar için ayrı bir değerdir.',
@@ -6646,10 +6641,10 @@ extension on TranslationsUz {
 			'videoControls.sleepTimerDurationHeader' => 'Taymer',
 			'videoControls.playbackWillPauseAtEnd' => 'Ijro ushbu videoning oxirida toʻxtatiladi',
 			'videoControls.stillWatching' => 'Hali ham tomosha qilyapsizmi?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => '${seconds}son-dan keyin toʻxtatiladi',
 			'videoControls.continueWatching' => 'Davom ettirish',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Keyingisini avtomatik ijro etish',
 			'videoControls.playNext' => 'Keyingisini ijro etish',
 			'videoControls.playButton' => 'Ijro etish',
@@ -7160,10 +7155,10 @@ extension on TranslationsUz {
 			'libraries.playRandomMovie' => 'Film o‘zari film o‘zadi',
 			'libraries.randomPickFailed' => 'Bu librariyadan film o‘zilmaydi.',
 			'libraries.title' => 'Kutubxonalar',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Kutubxona',
 			'libraries.scanLibraryFiles' => 'Fayllarni skanerlash',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Kutubxonani skanerlash',
 			'libraries.analyze' => 'Tahlil qilish',
 			'libraries.analyzeLibrary' => 'Kutubxonani tahlil qilish',
@@ -7674,10 +7669,10 @@ extension on TranslationsUz {
 			'music.instantMix' => 'Tezkor miks',
 			'music.playNext' => 'Keyingisini ijro etish',
 			'music.addToQueue' => 'Navbatga qoʻshish',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => '${n}-disk',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} tarona', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} tarona', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Hozir ijro etilmoqda',
 			'music.playingFrom' => ({required Object title}) => '${title} manbasidan',
 			'music.queue' => 'Navbat',
@@ -8188,11 +8183,10 @@ extension on TranslationsUz {
 			'performanceOverlay.memory' => 'Xotira',
 			'performanceOverlay.uiFps' => 'Interfeys (UI) FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Dasturiy',
@@ -8702,11 +8696,11 @@ extension on TranslationsUz {
 			'homeLayout.noCustomRows' => 'U‘zari ko‘zari yok',
 			'homeLayout.addRowHint' => 'U\'zadi\'ni birini yaratmaq üçün Home Row\'ni qo‘zadi.',
 			'homeLayout.addHomeRow' => 'Home Riyadh',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Bir kategoriyiz seçin; Yeni seri automatik olarak Organizator\'a qo‘zilgan.',
 			'homeLayout.removeRow' => 'Riyadhdan',
 			'homeLayout.recentlyAdded' => 'Yaqinda qoʻshilganlar',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Songa bilan bilan bilan',
 			'homeLayout.movieCollections' => 'Film Koleksiya',
 			'homeLayout.showCollections' => 'Koleksiya ko‘z',
@@ -9216,11 +9210,11 @@ extension on TranslationsUz {
 			'sourceSetup.dlnaHelp' => 'Qidirish mahalliy tarmoqdagi multicast uzatishiga bog‘liq. Server ko‘rinmasa, yuqoriga uning qurilma tavsifi URL manzilini kiriting.',
 			'sourceSetup.dlnaRoot' => 'DLNA obyekt ID-si; qurilmaning asosiy bo‘limini ishlatish uchun bo‘sh qoldiring.',
 			'sourceSetup.passwordOrKey' => 'Parol kiriting yoki quyida maxfiy kalit qo‘shing.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'SSH host kalitining SHA256 izi',
 			'sourceSetup.sshFingerprintHelp' => 'Server administratori bilan tekshiring. Serverda ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub buyrug‘ini bajaring va SHA256 qiymatidan foydalaning.',
 			'sourceSetup.sshFingerprintKeep' => 'Joriy qat’iy belgilangan izni saqlash uchun bo‘sh qoldiring yoki serverning yangi izini kiriting.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Ochiq kalit bilan SSH autentifikatsiyasi',
 			'sourceSetup.sshAuthenticationHelp' => 'Ixtiyoriy; parol orqali autentifikatsiya ham qo‘llab-quvvatlanadi.',
 			'sourceSetup.privateKey' => 'Maxfiy kalit (PEM yoki OpenSSH formati)',
@@ -9730,11 +9724,11 @@ extension on TranslationsUz {
 			'musicTools.pinToHome' => 'Musiqa bosh sahifasiga qadash',
 			'musicTools.unpin' => 'Qadashni bekor qilish',
 			'musicTools.serverAnalysis' => 'Server tahlili',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Ovoz tahlili',
 			'musicTools.serverAnalysisScope' => 'Ushbu serverdagi barcha mos musiqa kutubxonalari. Ularning tahlil sozlamalari o‘zgarmaydi.',
 			'musicTools.serverActivities' => 'Server faoliyati',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Pleylistga kirish',
 			'musicTools.playlistRecipient' => 'Plex foydalanuvchi nomi yoki email',
 			'musicTools.playlistSharingHint' => 'Bu pleylist va uning treklariga kirishga ruxsat bering. Qabul qiluvchi taklifni qabul qilishi kerak bo‘lishi mumkin.',

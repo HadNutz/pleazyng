@@ -850,8 +850,6 @@ class Translations$settings$pt extends Translations$settings$en {
 	@override String get downmixCenterBoostDescription => 'Aumente o diálogo no canal central quando o áudio circundante é misturado para baixo em estereó.';
 	@override String get displaySwitchDelayDescription => 'Aguarde antes de alterar o modo de exibição para que a TV ou receptor possa terminar seu switch anterior.';
 	@override String get playerBackendDescription => 'Escolha qual motor de reprodução decode e retrata vídeo neste dispositivo.';
-	@override String get exoPlayerDescription => 'Use o jogador nativo do Android baseado no Media3 e as vias de hardware suportadas.';
-	@override String get mpvDescription => 'Use mpv, que expõe controles adicionais de reprodução, subtítulos e processamento de vídeo.';
 	@override String get scopeOffDescription => 'Mantenha as alterações apenas para a sessão de reprodução atual.';
 	@override String get scopeGlobalDescription => 'Reutilizar o mesmo valor para cada biblioteca e título.';
 	@override String get scopeLibraryDescription => 'Lembre-se de um valor separado para cada biblioteca.';
@@ -2633,7 +2631,6 @@ class Translations$performanceOverlay$pt extends Translations$performanceOverlay
 	@override String get memory => 'Memória';
 	@override String get uiFps => 'UI FPS';
 	@override String get fps => 'FPS';
-	@override String get decoderAndroidHw => 'Android HW';
 	@override String get decoderNvidiaHw => 'NVIDIA HW';
 	@override String get decoderQualcommHw => 'Qualcomm HW';
 	@override String get decoderMediatekHw => 'MediaTek HW';
@@ -6306,8 +6303,6 @@ extension on TranslationsPt {
 			'settings.downmixCenterBoostDescription' => 'Aumente o diálogo no canal central quando o áudio circundante é misturado para baixo em estereó.',
 			'settings.displaySwitchDelayDescription' => 'Aguarde antes de alterar o modo de exibição para que a TV ou receptor possa terminar seu switch anterior.',
 			'settings.playerBackendDescription' => 'Escolha qual motor de reprodução decode e retrata vídeo neste dispositivo.',
-			'settings.exoPlayerDescription' => 'Use o jogador nativo do Android baseado no Media3 e as vias de hardware suportadas.',
-			'settings.mpvDescription' => 'Use mpv, que expõe controles adicionais de reprodução, subtítulos e processamento de vídeo.',
 			'settings.scopeOffDescription' => 'Mantenha as alterações apenas para a sessão de reprodução atual.',
 			'settings.scopeGlobalDescription' => 'Reutilizar o mesmo valor para cada biblioteca e título.',
 			'settings.scopeLibraryDescription' => 'Lembre-se de um valor separado para cada biblioteca.',
@@ -6653,10 +6648,10 @@ extension on TranslationsPt {
 			'videoControls.sleepTimerDurationHeader' => 'Temporizador',
 			'videoControls.playbackWillPauseAtEnd' => 'A reprodução pausará no final deste vídeo',
 			'videoControls.stillWatching' => 'Ainda assistindo?',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.pausingIn' => ({required Object seconds}) => 'Pausando em ${seconds}s',
 			'videoControls.continueWatching' => 'Continuar',
+			_ => null,
+		} ?? switch (path) {
 			'videoControls.autoPlayNext' => 'Reproduzir Próximo Automaticamente',
 			'videoControls.playNext' => 'Reproduzir Próximo',
 			'videoControls.playButton' => 'Reproduzir',
@@ -7167,10 +7162,10 @@ extension on TranslationsPt {
 			'libraries.playRandomMovie' => 'Jogue um filme aleatório',
 			'libraries.randomPickFailed' => 'Não podia escolher um filme aleatório desta biblioteca.',
 			'libraries.title' => 'Bibliotecas',
-			_ => null,
-		} ?? switch (path) {
 			'libraries.fallbackTitle' => 'Biblioteca',
 			'libraries.scanLibraryFiles' => 'Escanear Arquivos da Biblioteca',
+			_ => null,
+		} ?? switch (path) {
 			'libraries.scanLibrary' => 'Escanear Biblioteca',
 			'libraries.analyze' => 'Analisar',
 			'libraries.analyzeLibrary' => 'Analisar Biblioteca',
@@ -7681,10 +7676,10 @@ extension on TranslationsPt {
 			'music.instantMix' => 'Mix instantâneo',
 			'music.playNext' => 'Reproduzir a seguir',
 			'music.addToQueue' => 'Adicionar à fila',
-			_ => null,
-		} ?? switch (path) {
 			'music.discNumber' => ({required Object n}) => 'Disco ${n}',
 			'music.trackCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} faixa', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} faixas', ), 
+			_ => null,
+		} ?? switch (path) {
 			'music.nowPlaying' => 'Reproduzindo agora',
 			'music.playingFrom' => ({required Object title}) => 'Reproduzindo de ${title}',
 			'music.queue' => 'Fila',
@@ -8195,11 +8190,10 @@ extension on TranslationsPt {
 			'performanceOverlay.memory' => 'Memória',
 			'performanceOverlay.uiFps' => 'UI FPS',
 			'performanceOverlay.fps' => 'FPS',
-			_ => null,
-		} ?? switch (path) {
-			'performanceOverlay.decoderAndroidHw' => 'Android HW',
 			'performanceOverlay.decoderNvidiaHw' => 'NVIDIA HW',
 			'performanceOverlay.decoderQualcommHw' => 'Qualcomm HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.decoderMediatekHw' => 'MediaTek HW',
 			'performanceOverlay.decoderExynosHw' => 'Exynos HW',
 			'performanceOverlay.decoderSoftware' => 'Software',
@@ -8709,11 +8703,11 @@ extension on TranslationsPt {
 			'homeLayout.noCustomRows' => 'Não há rodas de costume ainda',
 			'homeLayout.addRowHint' => 'Use Acesso à linha de casa para criar uma.',
 			'homeLayout.addHomeRow' => 'Adicionar Home Rue',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.addHomeRowDescription' => 'Escolha uma categoria; a nova linha é adicionada ao Organizador automaticamente',
 			'homeLayout.removeRow' => 'Remover a linha',
 			'homeLayout.recentlyAdded' => 'Adicionados recentemente',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.recentlyReleased' => 'Recentemente liberado',
 			'homeLayout.movieCollections' => 'Filmes Colecções',
 			'homeLayout.showCollections' => 'Mostrar coleções',
@@ -9223,11 +9217,11 @@ extension on TranslationsPt {
 			'sourceSetup.dlnaHelp' => 'A descoberta depende de multicast na rede local. Se nenhum servidor aparecer, digite acima a URL de descrição do dispositivo dele.',
 			'sourceSetup.dlnaRoot' => 'ID do objeto DLNA; deixe em branco para usar a raiz do dispositivo.',
 			'sourceSetup.passwordOrKey' => 'Digite uma senha ou adicione uma chave privada abaixo.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.sshFingerprint' => 'Impressão digital SHA256 da chave de host SSH',
 			'sourceSetup.sshFingerprintHelp' => 'Verifique com o administrador do servidor. No servidor, execute ssh-keygen -lf /path/to/ssh_host_ed25519_key.pub e use o valor SHA256.',
 			'sourceSetup.sshFingerprintKeep' => 'Deixe em branco para manter a impressão digital fixada atual ou digite uma nova impressão digital do servidor.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.sshAuthentication' => 'Autenticação SSH por chave pública',
 			'sourceSetup.sshAuthenticationHelp' => 'Opcional; a autenticação por senha também é aceita.',
 			'sourceSetup.privateKey' => 'Chave privada (formato PEM ou OpenSSH)',
@@ -9737,11 +9731,11 @@ extension on TranslationsPt {
 			'musicTools.pinToHome' => 'Fixar na página inicial de música',
 			'musicTools.unpin' => 'Desafixar',
 			'musicTools.serverAnalysis' => 'Análise do servidor',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.sonicAnalysis' => 'Análise sonora',
 			'musicTools.serverAnalysisScope' => 'Todas as bibliotecas de música elegíveis neste servidor. As definições de análise não são alteradas.',
 			'musicTools.serverActivities' => 'Atividades do servidor',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.playlistSharing' => 'Acesso à lista',
 			'musicTools.playlistRecipient' => 'Nome de utilizador Plex ou e-mail',
 			'musicTools.playlistSharingHint' => 'Conceda acesso a esta lista e às suas faixas. O destinatário poderá ter de aceitar um convite.',

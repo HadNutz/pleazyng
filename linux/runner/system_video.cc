@@ -16,15 +16,22 @@ struct VideoPixelsData {
   std::mutex mutex;
   GstSample* latest = nullptr;
   std::vector<uint8_t> output;
-  ~VideoPixelsData() { if (latest) gst_sample_unref(latest); }
+  ~VideoPixelsData() {
+    if (latest) gst_sample_unref(latest);
+  }
 };
 
-struct VideoPixels { FlPixelBufferTexture parent; VideoPixelsData* frame; };
-struct VideoPixelsClass { FlPixelBufferTextureClass parent; };
+struct VideoPixels {
+  FlPixelBufferTexture parent;
+  VideoPixelsData* frame;
+};
+struct VideoPixelsClass {
+  FlPixelBufferTextureClass parent;
+};
 G_DEFINE_TYPE(VideoPixels, video_pixels, fl_pixel_buffer_texture_get_type())
 
-static gboolean copy_video_pixels(FlPixelBufferTexture* base, const uint8_t** buffer,
-                                  uint32_t* width, uint32_t* height, GError**) {
+static gboolean copy_video_pixels(
+    FlPixelBufferTexture* base, const uint8_t** buffer, uint32_t* width, uint32_t* height, GError**) {
   auto* frame = reinterpret_cast<VideoPixels*>(base)->frame;
   GstSample* sample;
   {
@@ -64,9 +71,10 @@ static void video_pixels_init(VideoPixels* pixels) { pixels->frame = new VideoPi
 
 namespace {
 bool isHardwareVideoDecoder(GstElementFactory* factory) {
-  return factory && gst_element_factory_list_is_type(factory, GST_ELEMENT_FACTORY_TYPE_DECODER |
-      GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO) &&
-      gst_element_factory_list_is_type(factory, GST_ELEMENT_FACTORY_TYPE_HARDWARE);
+  return factory &&
+         gst_element_factory_list_is_type(
+             factory, GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO) &&
+         gst_element_factory_list_is_type(factory, GST_ELEMENT_FACTORY_TYPE_HARDWARE);
 }
 
 // uridecodebin uses GValueArray for this signal even on current GStreamer.
@@ -78,7 +86,9 @@ GValueArray* orderVideoDecoders(GstElement*, GstPad*, GstCaps*, GValueArray* fac
   for (guint i = 0; i < factories->n_values; ++i) {
     auto* value = g_value_array_get_nth(factories, i);
     auto* factory = GST_ELEMENT_FACTORY(g_value_get_object(value));
-    if (!gst_element_factory_list_is_type(factory, GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO)) continue;
+    if (!gst_element_factory_list_is_type(
+            factory, GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO))
+      continue;
     slots.push_back(i);
     video.push_back(value);
   }
@@ -137,24 +147,29 @@ struct Session {
     pixels = reinterpret_cast<VideoPixels*>(g_object_new(video_pixels_get_type(), nullptr));
     registered = fl_texture_registrar_register_texture(registrar, FL_TEXTURE(pixels));
     if (!registered) return false;
-    g_signal_connect(pipeline, "element-setup", G_CALLBACK(+[](GstElement*, GstElement* child, gpointer data) {
-      auto* self = static_cast<Session*>(data);
-      auto* factory = gst_element_get_factory(child);
-      if (!factory) return;
-      if (isHardwareVideoDecoder(factory)) self->hardware_attempted = true;
-      if (!strcmp(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory)), "uridecodebin")) {
-        g_signal_connect(child, "autoplug-sort", G_CALLBACK(orderVideoDecoders), &self->prefer_hardware);
-      }
-    }), this);
+    g_signal_connect(
+        pipeline, "element-setup", G_CALLBACK(+[](GstElement*, GstElement* child, gpointer data) {
+          auto* self = static_cast<Session*>(data);
+          auto* factory = gst_element_get_factory(child);
+          if (!factory) return;
+          if (isHardwareVideoDecoder(factory)) self->hardware_attempted = true;
+          if (!strcmp(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory)), "uridecodebin")) {
+            g_signal_connect(child, "autoplug-sort", G_CALLBACK(orderVideoDecoders), &self->prefer_hardware);
+          }
+        }),
+        this);
     g_object_set(pipeline, "uri", uri, "video-sink", sink, nullptr);
     bus = gst_element_get_bus(pipeline);
     auto change = gst_element_set_state(pipeline, GST_STATE_PAUSED);
     if (change == GST_STATE_CHANGE_FAILURE && !retryPreroll()) return false;
     if (change == GST_STATE_CHANGE_NO_PREROLL) ready = true;
-    timer = g_timeout_add(12, [](gpointer data) -> gboolean {
-      static_cast<Session*>(data)->tick();
-      return G_SOURCE_CONTINUE;
-    }, this);
+    timer = g_timeout_add(
+        12,
+        [](gpointer data) -> gboolean {
+          static_cast<Session*>(data)->tick();
+          return G_SOURCE_CONTINUE;
+        },
+        this);
     return true;
   }
 
@@ -178,14 +193,16 @@ struct Session {
           GError* error = nullptr;
           gst_message_parse_error(msg, &error, nullptr);
           const bool decodeError = error && error->domain == GST_STREAM_ERROR &&
-              (error->code == GST_STREAM_ERROR_DECODE || error->code == GST_STREAM_ERROR_FORMAT);
+                                   (error->code == GST_STREAM_ERROR_DECODE || error->code == GST_STREAM_ERROR_FORMAT);
           const bool fromHardware = GST_IS_ELEMENT(GST_MESSAGE_SRC(msg)) &&
-              isHardwareVideoDecoder(gst_element_get_factory(GST_ELEMENT(GST_MESSAGE_SRC(msg))));
+                                    isHardwareVideoDecoder(gst_element_get_factory(GST_ELEMENT(GST_MESSAGE_SRC(msg))));
           failed = !((decodeError || fromHardware) && retryPreroll());
           g_clear_error(&error);
           break;
         }
-        case GST_MESSAGE_EOS: ended = true; break;
+        case GST_MESSAGE_EOS:
+          ended = true;
+          break;
         case GST_MESSAGE_STATE_CHANGED:
           if (GST_MESSAGE_SRC(msg) == GST_OBJECT(pipeline)) {
             GstState state;
@@ -200,7 +217,8 @@ struct Session {
           if (wants_play) gst_element_set_state(pipeline, buffering ? GST_STATE_PAUSED : GST_STATE_PLAYING);
           break;
         }
-        default: break;
+        default:
+          break;
       }
       gst_message_unref(msg);
     }
@@ -226,9 +244,10 @@ struct Session {
     return std::max<gint64>(0, current);
   }
   bool seek(gint64 ns, double speed) {
-    if (!gst_element_seek(pipeline, speed, GST_FORMAT_TIME,
-                          GstSeekFlags(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE),
-                          GST_SEEK_TYPE_SET, ns, GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE)) return false;
+    if (!gst_element_seek(
+            pipeline, speed, GST_FORMAT_TIME, GstSeekFlags(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE),
+            GST_SEEK_TYPE_SET, ns, GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE))
+      return false;
     rate = speed;
     ended = false;
     return true;
@@ -256,8 +275,8 @@ struct Session {
     g_object_get(pipeline, "flags", &flags, nullptr);
     for (bool audio : {true, false}) {
       int count = 0, selected = -1;
-      g_object_get(pipeline, audio ? "n-audio" : "n-text", &count,
-                   audio ? "current-audio" : "current-text", &selected, nullptr);
+      g_object_get(
+          pipeline, audio ? "n-audio" : "n-text", &count, audio ? "current-audio" : "current-text", &selected, nullptr);
       for (int i = 0; i < count; ++i) {
         auto* row = fl_value_new_map();
         GstTagList* tags = nullptr;
@@ -287,15 +306,26 @@ FlValue* decoderInventory() {
   fl_value_set_string_take(result, "video", video);
   fl_value_set_string_take(result, "hardware", hardware);
   fl_value_set_string_take(result, "containers", containers);
-  auto* decoders = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER |
-      GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO, GST_RANK_MARGINAL);
+  auto* decoders = gst_element_factory_list_get_elements(
+      GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO, GST_RANK_MARGINAL);
   auto* demuxers = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DEMUXER, GST_RANK_MARGINAL);
-  struct Format { const char* id; const char* caps; };
-  const Format codecs[] = {{"h264", "video/x-h264"}, {"hevc", "video/x-h265"}, {"av1", "video/x-av1"},
-      {"vp9", "video/x-vp9"}, {"vp8", "video/x-vp8"}, {"mpeg2video", "video/mpeg,mpegversion=(int)2,systemstream=(boolean)false"},
+  struct Format {
+    const char* id;
+    const char* caps;
+  };
+  const Format codecs[] = {
+      {"h264", "video/x-h264"},
+      {"hevc", "video/x-h265"},
+      {"av1", "video/x-av1"},
+      {"vp9", "video/x-vp9"},
+      {"vp8", "video/x-vp8"},
+      {"mpeg2video", "video/mpeg,mpegversion=(int)2,systemstream=(boolean)false"},
       {"mpeg4", "video/mpeg,mpegversion=(int)4,systemstream=(boolean)false"}};
-  const Format formats[] = {{"mp4", "video/quicktime,variant=(string)iso"}, {"mkv", "video/x-matroska"},
-      {"webm", "video/webm"}, {"mpegts", "video/mpegts,systemstream=(boolean)true"}};
+  const Format formats[] = {
+      {"mp4", "video/quicktime,variant=(string)iso"},
+      {"mkv", "video/x-matroska"},
+      {"webm", "video/webm"},
+      {"mpegts", "video/mpegts,systemstream=(boolean)true"}};
   auto matches = [](GList* factories, const char* type) {
     GstCaps* caps = gst_caps_from_string(type);
     GList* found = gst_element_factory_list_filter(factories, caps, GST_PAD_SINK, FALSE);
@@ -356,15 +386,20 @@ void handle(FlMethodChannel*, FlMethodCall* call, gpointer data) {
       host->sessions.erase(id);
     } else if (host->sessions.count(id)) {
       auto& s = *host->sessions.at(id);
-      if (method == "state") reply = s.state();
-      else if (method == "tracks") reply = s.tracks();
+      if (method == "state")
+        reply = s.state();
+      else if (method == "tracks")
+        reply = s.tracks();
       else if (method == "play" || method == "pause") {
         s.wants_play = method == "play";
-        ok = gst_element_set_state(s.pipeline, s.wants_play && !s.buffering ? GST_STATE_PLAYING : GST_STATE_PAUSED)
-              != GST_STATE_CHANGE_FAILURE;
-      } else if (method == "volume") g_object_set(s.pipeline, "volume", fl_value_get_float(value), nullptr);
-      else if (method == "rate") ok = s.seek(s.position(), fl_value_get_float(value));
-      else if (method == "seek") ok = s.seek(fl_value_get_int(value) * GST_MSECOND, s.rate);
+        ok = gst_element_set_state(s.pipeline, s.wants_play && !s.buffering ? GST_STATE_PLAYING : GST_STATE_PAUSED) !=
+             GST_STATE_CHANGE_FAILURE;
+      } else if (method == "volume")
+        g_object_set(s.pipeline, "volume", fl_value_get_float(value), nullptr);
+      else if (method == "rate")
+        ok = s.seek(s.position(), fl_value_get_float(value));
+      else if (method == "seek")
+        ok = s.seek(fl_value_get_int(value) * GST_MSECOND, s.rate);
       else if (method == "audio" || method == "subtitle") {
         const char* selection = fl_value_get_string(value);
         const bool enabled = strcmp(selection, "no") != 0;
@@ -373,20 +408,29 @@ void handle(FlMethodChannel*, FlMethodCall* call, gpointer data) {
           g_object_get(s.pipeline, "flags", &flags, nullptr);
           g_object_set(s.pipeline, "flags", enabled ? flags | 4u : flags & ~4u, nullptr);
         }
-        if (enabled) g_object_set(s.pipeline, method == "audio" ? "current-audio" : "current-text",
-                                  static_cast<int>(g_ascii_strtoll(selection, nullptr, 10)), nullptr);
-      } else { fl_method_call_respond_not_implemented(call, nullptr); return; }
-    } else ok = false;
+        if (enabled)
+          g_object_set(
+              s.pipeline, method == "audio" ? "current-audio" : "current-text",
+              static_cast<int>(g_ascii_strtoll(selection, nullptr, 10)), nullptr);
+      } else {
+        fl_method_call_respond_not_implemented(call, nullptr);
+        return;
+      }
+    } else
+      ok = false;
   }
-  if (ok) fl_method_call_respond_success(call, reply, nullptr);
-  else fl_method_call_respond_error(call, "gstreamer", "GStreamer rejected the operation", nullptr, nullptr);
+  if (ok)
+    fl_method_call_respond_success(call, reply, nullptr);
+  else
+    fl_method_call_respond_error(call, "gstreamer", "GStreamer rejected the operation", nullptr, nullptr);
 }
 }  // namespace
 
 void register_system_video(FlPluginRegistrar* registrar) {
   g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
-  g_autoptr(FlMethodChannel) channel = fl_method_channel_new(fl_plugin_registrar_get_messenger(registrar),
-      "org.snapetech.pleazyng/system_video", FL_METHOD_CODEC(codec));
+  g_autoptr(FlMethodChannel) channel = fl_method_channel_new(
+      fl_plugin_registrar_get_messenger(registrar), "org.snapetech.pleazyng/system_video", FL_METHOD_CODEC(codec));
   auto* host = new Host{fl_plugin_registrar_get_texture_registrar(registrar), {}};
-  fl_method_channel_set_method_call_handler(channel, handle, host, [](gpointer data) { delete static_cast<Host*>(data); });
+  fl_method_channel_set_method_call_handler(
+      channel, handle, host, [](gpointer data) { delete static_cast<Host*>(data); });
 }
