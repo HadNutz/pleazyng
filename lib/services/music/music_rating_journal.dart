@@ -66,6 +66,7 @@ class MusicRatingJournal {
         final offline = client == null ? await offlineAccountFor?.call(item) : null;
         final capabilities = client?.capabilities ?? offline?.capabilities;
         if (capabilities == null) throw StateError('Music account unavailable');
+        if (kind == 'favorite' && !capabilities.userFavorites) throw UnsupportedError('No favorite flag');
         final scope = client == null ? offline!.scope : musicAccountScope(client);
         final id = '$kind:${sha256.convert(utf8.encode(scope))}:${item.globalKey}';
         final previous = await store.document('ratingPending', id);
@@ -85,7 +86,7 @@ class MusicRatingJournal {
                 value != -1 && (value < 0 || value > 10))) {
           throw ArgumentError('Invalid rating');
         }
-        if (kind == 'favorite' && (!capabilities.userFavorites || value is! bool)) {
+        if (kind == 'favorite' && value is! bool) {
           throw ArgumentError('Invalid favorite');
         }
         final stillCurrent = client == null

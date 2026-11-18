@@ -2,6 +2,8 @@ import 'package:plezy/services/music/server_music_radio.dart';
 import 'package:drift/native.dart';
 import 'package:plezy/database/app_database.dart';
 import 'package:plezy/services/music/music_experience.dart';
+import 'package:plezy/services/music/music_home_pins.dart';
+import 'package:plezy/services/music/music_rating_journal.dart';
 import 'package:plezy/services/music/music_driving_routes.dart';
 import 'package:plezy/services/music/music_library_store.dart';
 import 'package:plezy/services/music/music_system_audio_routes.dart';
@@ -58,9 +60,22 @@ class Profiles extends ChangeNotifier implements ActiveProfileProvider {
 }
 
 class _Experience extends ChangeNotifier implements MusicExperience {
-  _Experience(this.drivingRoutes);
+  _Experience(this.drivingRoutes)
+    : pins = MusicHomePins(store: drivingRoutes.store, clientFor: (_) => null),
+      ratings = MusicRatingJournal(drivingRoutes.store, (_) => null);
   @override
   final MusicDrivingRoutes drivingRoutes;
+  @override
+  final MusicHomePins pins;
+  @override
+  final MusicRatingJournal ratings;
+  @override
+  void dispose() {
+    pins.dispose();
+    ratings.dispose();
+    super.dispose();
+  }
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -299,6 +314,8 @@ class ServerRadioMusic extends RadioMusic implements MusicServerRadioControls {
 class CatalogDownloads extends ChangeNotifier implements DownloadProvider {
   List<MediaItem> tracks = [];
   @override
+  MediaItem? getMetadata(String globalKey) => tracks.where((item) => item.globalKey == globalKey).firstOrNull;
+  @override
   String get activeProfileId => 'one';
   @override
   bool get isDisposed => false;
@@ -338,6 +355,13 @@ void main() {
       ),
     );
     return result.future;
+  }
+
+  Future<List<dynamic>> containerChildren(String id) async {
+    final rows = await native('browse', {'id': id}) as List;
+    expect(rows.take(2).map((row) => row['id']), [id, 'shuffle:$id']);
+    expect(rows.take(2).map((row) => row['playable']), [true, true]);
+    return rows.skip(2).toList();
   }
 
   Future<void> mount(
@@ -959,10 +983,10 @@ void main() {
     );
     await mount(tester, music, profiles, servers: servers.provider, hidden: hidden, libraries: libraries);
     final artists = await native('browse', {'id': 'library:s:library'}) as List;
-    final albums = await native('browse', {'id': artists.single['id']}) as List;
+    final albums = await containerChildren(artists.single['id']);
     expect(albums, hasLength(1));
     expect(albums.single['title'], album.displayTitle);
-    final tracks = await native('browse', {'id': albums.single['id']}) as List;
+    final tracks = await containerChildren(albums.single['id']);
     expect(tracks, hasLength(1));
     expect(tracks.single['title'], track.displayTitle);
     await tester.pumpWidget(const SizedBox());
@@ -1001,9 +1025,9 @@ void main() {
       await mount(tester, music, profiles, servers: servers.provider, hidden: hidden, libraries: libraries);
       final artists = await native('browse', {'id': 'library:s:library'}) as List;
       expect(artists, hasLength(1));
-      final albums = await native('browse', {'id': artists.single['id']}) as List;
+      final albums = await containerChildren(artists.single['id']);
       expect(albums, hasLength(1));
-      final tracks = await native('browse', {'id': albums.single['id']}) as List;
+      final tracks = await containerChildren(albums.single['id']);
       expect(tracks, hasLength(1));
       expect(tracks.single['title'], 'track');
       expect(client.trackLibrary, 'library');
@@ -1082,11 +1106,21 @@ void main() {
 
   testWidgets('download browsing groups owned visible tracks and plays genres offline', (tester) async {
     final music = Music(), profiles = Profiles(), downloads = CatalogDownloads(), hidden = CatalogHidden();
+    final database = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(database.close);
     final jazz = musicTrack('one', album: 'first').copyWith(parentTitle: 'First', genres: ['Jazz']);
     final hiddenTrack = jazz.copyWith(id: 'two', libraryId: 'hidden', parentTitle: 'Private');
     hidden.hiddenLibraryKeys.add('s:hidden');
     downloads.tracks = [jazz, hiddenTrack];
-    await mount(tester, music, profiles, downloads: downloads, hidden: hidden);
+    await mount(
+      tester,
+      music,
+      profiles,
+      downloads: downloads,
+      hidden: hidden,
+      database: database,
+      libraries: CatalogLibraries(),
+    );
     final folders = await native('browse', {'id': 'downloads'}) as List;
     expect(
       folders.map((row) => row['id']),
@@ -1096,7 +1130,10 @@ void main() {
     expect(tracks, hasLength(1));
     final albums = await native('browse', {'id': 'offlineAlbums'}) as List;
     expect(albums.single['title'], 'First');
-    expect(albums.single['playable'], true);
+    expect(albums.single['playable'], false);
+    final albumTracks = await containerChildren(albums.single['id']);
+    expect(albumTracks.single['title'], jazz.displayTitle);
+    expect(albumTracks.single['playable'], true);
     await native('playSearch', {'kind': 'genre', 'query': 'JAZZ'});
     expect(music.started?.map((item) => item.id), ['one']);
     expect(music.startedOffline, true);

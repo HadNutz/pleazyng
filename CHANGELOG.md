@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - CarPlay skips profile-specific station and download lookups when the profile is unavailable and discards stale browse results after disconnecting.
+- Preserve the unsupported-favorites error for music servers without favorites support.
 
 - Show the CUE export filename in its tooltip and a translated error when saving an episode boundary fails.
 
