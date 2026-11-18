@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Restore CarPlay build validation for the expanded browsing and playback controls.
+- CarPlay skips profile-specific station and download lookups when the profile is unavailable and discards stale browse results after disconnecting.
 
 - Show the CUE export filename in its tooltip and a translated error when saving an episode boundary fails.
 

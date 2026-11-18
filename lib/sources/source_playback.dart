@@ -1382,8 +1382,9 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
                 await _persist(finished: true);
                 await native.pause();
                 _notify();
-                if (current() && _fileEpoch == epoch && !video && entry != null && _ownsSpoken(entry!))
+                if (current() && _fileEpoch == epoch && !video && entry != null && _ownsSpoken(entry!)) {
                   await _advanceSpoken();
+                }
               }
             }),
           );

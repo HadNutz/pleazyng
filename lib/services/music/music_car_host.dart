@@ -855,14 +855,15 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         if (room == null || !_connected || args['scope'] != _itemScope) return false;
         final action = args['action'];
         if (action == 'invite') return room.link?.toString();
-        if (action == 'close' && await commit()) {
+        if (action == 'close') {
+          if (!await commit()) return false;
           room.close();
           return true;
         }
         if (action != 'open') return false;
         final hidden = context.read<HiddenLibrariesProvider>();
         await hidden.ensureInitialized();
-        if (!requestCurrent() || !_connected) return false;
+        if (!mounted || !requestCurrent() || !_connected) return false;
         final library = context
             .read<LibrariesProvider>()
             .libraries
@@ -879,8 +880,9 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
             network == null ||
             !(await KaraokeRoomServer.addresses()).contains(network) ||
             !await commit() ||
-            !_connected)
+            !_connected) {
           return false;
+        }
         await room.open(library, address: network);
         if (!requestCurrent() || !_connected || hidden.isLibraryHidden(library.globalKey)) {
           room.close();
@@ -923,6 +925,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
               {'id': 'downloadMix:$_itemScope', 'title': t.navigation.downloads, 'kind': 'playlist', 'playable': true},
             ];
           }
+          if (!mounted || !requestCurrent()) return [];
           if ((args['similar'] == true || english && {'more like this', 'play more like this'}.contains(title)) &&
               _music.currentTrack != null &&
               context.getMediaClientForItemOrNull(_music.currentTrack!)?.capabilities.instantMix == true) {
@@ -945,21 +948,22 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           final sources = _sourceController;
           if (showName.isNotEmpty && sources != null && !sources.blocked && sources.profileId == _profileId) {
             final epoch = sources.generation;
-            final shows = await sources.repository.podcastShows(_profileId!, title: showName, limit: 10);
+            final shows = await sources.repository.podcastShows(_profileId, title: showName, limit: 10);
             final choices = <Map<String, Object?>>[];
             for (final show in shows) {
               if (!requestCurrent() || !sources.current(epoch)) return [];
               if (!sources.sources.any((s) => s.id == show.source)) continue;
               final episodes = await sources.repository.podcastEntries(
-                _profileId!,
+                _profileId,
                 source: show.source,
                 parent: show.parent.isEmpty ? null : show.parent,
                 unplayedOnly: true,
                 limit: 1,
               );
               if (!requestCurrent() || !sources.current(epoch)) return [];
-              if (episodes.isNotEmpty && !episodes.first.unavailable && episodes.first.audio.isNotEmpty)
+              if (episodes.isNotEmpty && !episodes.first.unavailable && episodes.first.audio.isNotEmpty) {
                 choices.add(_audiobookItem(episodes.first));
+              }
             }
             return choices;
           }
@@ -970,6 +974,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
             (title == _voiceName(t.libraries.filterCategories.favorites) ||
                 (LocaleSettings.currentLocale.languageCode == 'en' &&
                     const {'favorites', 'favourites', 'my favorites', 'my favourites'}.contains(title)))) {
+          if (!mounted || !requestCurrent()) return [];
           final selection = await loadProfileMusicFavorites(context);
           if (requestCurrent() && selection.tracks.isNotEmpty) {
             return [
@@ -1081,8 +1086,9 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           if (args['queue'] != null) return false;
           return _playGenre(utf8.decode(base64Url.decode(id.split(':').last)), commit: commit);
         }
-        if (id == 'similar:$_itemScope:$_catalogRevision')
+        if (id == 'similar:$_itemScope:$_catalogRevision') {
           return args['queue'] == null && await commit() && await _carTransport('radio');
+        }
         if (id == 'favorites:$_itemScope') {
           final intent = _music.beginPlayIntent();
           final selection = await loadProfileMusicFavorites(context);
@@ -1397,8 +1403,9 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
                   start >= playable.length ||
                   playable[start].globalKey != selected.globalKey ||
                   playable[start].backend != selected.backend ||
-                  playable[start].playlistItemId != selected.playlistItemId))
+                  playable[start].playlistItemId != selected.playlistItemId)) {
             return false;
+          }
           if (!await commit() || !current()) return false;
           if (args['queue'] == 'next') {
             _music.addNext(playable);
@@ -1476,6 +1483,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         if (!connected) {
           ++_videoIntent;
           await _stopCarVideo();
+          if (!mounted || !requestCurrent()) return false;
         }
 
         if (_connected && !connected) {
@@ -1597,6 +1605,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
   }
 
   Future<List<Map<String, Object?>>> _stationPins() async {
+    if (_profileId == null) return [];
     final store = MusicLibraryStore(context.read<AppDatabase>(), _profileId);
     final hidden = context.read<HiddenLibrariesProvider>();
     await hidden.ensureInitialized();
@@ -1607,7 +1616,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       final id = pin['id'];
       if (id is! String || pin['account'] is! String) continue;
       final doc = await store.document('station', id);
-      if (!_current) return [];
+      if (!mounted || !_current) return [];
       if (doc == null) continue;
       final station = MusicStation.fromJson(doc);
       if (hidden.isLibraryHidden('${station.serverId}:${station.libraryId}')) continue;
@@ -1618,8 +1627,9 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       if (!online) {
         final snapshot = await store.document('stationSnapshot', id);
         if (!_current || snapshot?['accountScope'] != pin['account']) continue;
-        if (musicSnapshotTracks(snapshot, await _visibleDownloads(), accountScope: pin['account'] as String).isEmpty)
+        if (musicSnapshotTracks(snapshot, await _visibleDownloads(), accountScope: pin['account'] as String).isEmpty) {
           continue;
+        }
       }
       if (!_current) return [];
       result.add({'id': '${online ? 'station' : 'offlineStation'}:$id', 'title': station.title, 'playable': true});
@@ -1721,7 +1731,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       final resume = hasSpoken
           ? (await _browse('continueAudiobooks')).where((r) => r['playable'] == true).firstOrNull
           : null;
-      if (!_current) return [];
+      if (!mounted || !_current) return [];
       return [
         if (_spoken != null || _music.currentTrack != null)
           {
@@ -1766,12 +1776,13 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         _folder('downloadEpisodes', t.navigation.downloads),
       ];
     }
-    if (id == 'spokenControls')
+    if (id == 'spokenControls') {
       return [
         _folder('spokenQueue', t.music.upNext),
         if (_spoken?.chapters.isNotEmpty == true) _folder('chapters', t.fileSources.chapters),
         if (_spoken != null) _folder('bookmarks', t.fileSources.bookmarks),
       ];
+    }
     if (id == 'spokenQueue' && hasSpoken) {
       final queued = await context.read<SourcePlayback?>()?.spokenQueue();
       if (!_current || queued == null) return [];
@@ -2122,7 +2133,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     if (id == 'guest' || id.startsWith('guestNetwork:$_itemScope:')) {
       final room = context.read<GuestJukebox?>();
       if (!_connected || room == null || _music.currentTrack == null) return [];
-      if (room.link != null)
+      if (room.link != null) {
         return [
           {
             'id': 'guestInvite',
@@ -2133,6 +2144,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           },
           {'id': 'guestClose', 'title': t.common.close, 'guest': 'close', 'scope': _itemScope},
         ];
+      }
       final manager = context.read<MultiServerProvider>().serverManager;
       final choices = libraries.where(
         (l) =>
@@ -2140,8 +2152,9 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
             manager.isClientOnline(ServerId(l.serverId!)) &&
             manager.isServerVisible(ServerId(l.serverId!)),
       );
-      if (id == 'guest')
+      if (id == 'guest') {
         return _page(choices.map((l) => _folder('guestNetwork:$_itemScope:${l.globalKey}', l.title)), id, offset);
+      }
       final library = choices.where((l) => id == 'guestNetwork:$_itemScope:${l.globalKey}').firstOrNull;
       if (library == null) return [];
       final networks = await KaraokeRoomServer.addresses();
@@ -2234,7 +2247,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
     final item = _items[id];
     if (item == null) return [];
     if (_offlineRows.contains(id)) {
-      if (!_catalogItemCurrent(id)) return [];
+      if (_profileId == null || !_catalogItemCurrent(id)) return [];
       final client = _authorizations[id]?.client;
       final store = MusicLibraryStore(context.read<AppDatabase>(), _profileId);
       final ordered = item.kind == MediaKind.playlist
@@ -2244,7 +2257,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
               client == null ? null : musicAccountScope(client),
             )
           : null;
-      if (!_catalogItemCurrent(id)) return [];
+      if (!mounted || !_catalogItemCurrent(id)) return [];
       final scope = await MusicReadScope.forItem(
         context,
         item,

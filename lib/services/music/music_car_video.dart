@@ -20,8 +20,9 @@ extension _CarVideo on _MusicCarHostState {
         item.backend != client.backend ||
         item.serverId != client.serverId.value ||
         item.libraryId == null ||
-        (item.kind != MediaKind.movie && item.kind != MediaKind.episode))
+        (item.kind != MediaKind.movie && item.kind != MediaKind.episode)) {
       return false;
+    }
     final hidden = context.read<HiddenLibrariesProvider>();
     return hidden.isInitialized &&
         !hidden.isLibraryHidden('${item.serverId}:${item.libraryId}') &&
@@ -34,7 +35,7 @@ extension _CarVideo on _MusicCarHostState {
     if (!_connected || !_videoCapable) return [];
     final hidden = context.read<HiddenLibrariesProvider>();
     await hidden.ensureInitialized();
-    if (!_current || !_connected) return [];
+    if (!mounted || !_current || !_connected) return [];
     final clients = context.read<MultiServerProvider>().serverManager.visibleOnlineClients.values.toList();
     final batches = await Future.wait(
       clients.map((client) async {
@@ -63,8 +64,9 @@ extension _CarVideo on _MusicCarHostState {
 
   Future<bool> _startCarVideo(String id, int intent, Future<bool> Function() commit) async {
     final client = _authorizations[id]?.client, item = _items[id];
-    if (client == null || item == null || !_catalogItemCurrent(id) || !_videoCapable || !_visibleVideo(item, client))
+    if (client == null || item == null || !_catalogItemCurrent(id) || !_videoCapable || !_visibleVideo(item, client)) {
       return false;
+    }
     final actor = _readClient(client);
     bool authorized() => actor() && _visibleVideo(item, client);
     bool current() => intent == _videoIntent && _connected && _videoCapable && authorized();
@@ -76,8 +78,9 @@ extension _CarVideo on _MusicCarHostState {
         !{'https', 'http'}.contains(url.scheme) ||
         url.host.isEmpty ||
         !current() ||
-        !await commit())
+        !await commit()) {
       return false;
+    }
     final coordinator = PlaybackCoordinator.instance;
     await _finishCarVideo();
     if (!current() || !await coordinator.stopVideoAndExit() || !current()) return false;
@@ -143,13 +146,14 @@ extension _CarVideo on _MusicCarHostState {
       final position = await _MusicCarHostState._channel.invokeMethod<int>('stopCarVideo', session.id);
       if (position != null && position >= 0) session.position = position + session.offset;
     } finally {
-      if (session.reported && session.authorized())
+      if (session.reported && session.authorized()) {
         await session.client.reportPlaybackStopped(
           itemId: session.item.id,
           position: session.time,
           duration: session.duration,
           playSessionId: session.serverSession,
         );
+      }
     }
   }
 
@@ -162,7 +166,7 @@ extension _CarVideo on _MusicCarHostState {
       await _finishCarVideo();
       return true;
     }
-    if (session.reported)
+    if (session.reported) {
       await session.client.reportPlaybackProgress(
         itemId: session.item.id,
         position: session.time,
@@ -170,6 +174,7 @@ extension _CarVideo on _MusicCarHostState {
         isPaused: args['paused'] == true,
         playSessionId: session.serverSession,
       );
+    }
     return true;
   }
 }

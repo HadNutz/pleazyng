@@ -46,8 +46,9 @@ class MusicRatingJournal {
         !store.active ||
         (client == null
             ? (await offlineAccountFor?.call(item))?.scope != scope
-            : !identical(clientFor(item), client) || musicAccountScope(client) != scope))
+            : !identical(clientFor(item), client) || musicAccountScope(client) != scope)) {
       return null;
+    }
     return (
       kind: kind,
       value: pending?['value'] ?? (usable ? saved['value'] : observed),
@@ -81,10 +82,12 @@ class MusicRatingJournal {
             (!capabilities.numericUserRating ||
                 value is! double ||
                 !value.isFinite ||
-                value != -1 && (value < 0 || value > 10)))
+                value != -1 && (value < 0 || value > 10))) {
           throw ArgumentError('Invalid rating');
-        if (kind == 'favorite' && (!capabilities.userFavorites || value is! bool))
+        }
+        if (kind == 'favorite' && (!capabilities.userFavorites || value is! bool)) {
           throw ArgumentError('Invalid favorite');
+        }
         final stillCurrent = client == null
             ? (await offlineAccountFor?.call(item))?.scope == scope
             : identical(clientFor(item), client) && musicAccountScope(client) == scope;
