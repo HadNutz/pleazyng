@@ -65,9 +65,19 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
     final epoch = controller.generation;
     try {
       final entries = await controller.repository.entries(source.profileId, source: source.id);
+      final previous = LocalFileRelink.decode(_fileRelinks ?? source.options['fileRelinks']);
+      final mounts = {
+        for (final row in previous)
+          if (row.mountRoot case final root?) LocalFileRelink.mountId(root): root,
+      };
+      String folderLabel(String folder) {
+        final mount = mounts[p.split(folder).firstOrNull];
+        return mount == null ? folder : LocalFileRelink.physicalPath(source.root, folder, mount);
+      }
+
       final folders = <String>{'.'};
       for (final entry in entries.where((e) => e.files.isNotEmpty)) {
-        var folder = p.dirname(entry.id);
+        var folder = entry.parentId ?? p.dirname(entry.id);
         while (folder != '.' && folder.isNotEmpty && p.dirname(folder) != folder) {
           folders.add(folder);
           folder = p.dirname(folder);
@@ -80,7 +90,7 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
           title: Text(t.viewing.locateMovedFolder),
           children: [
             for (final f in folders.toList()..sort())
-              SimpleDialogOption(child: Text(f), onPressed: () => Navigator.pop(dialog, f)),
+              SimpleDialogOption(child: Text(folderLabel(f)), onPressed: () => Navigator.pop(dialog, f)),
           ],
         ),
       );
@@ -88,7 +98,8 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
       final path = await FilePicker.getDirectoryPath();
       if (path == null) return;
       final preview = await LocalFileRelink.preview(
-        root: source.root,
+        root: field('root').text,
+        previous: previous,
         oldFolder: old,
         newFolder: path,
         entries: entries,
@@ -112,7 +123,11 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
                         final r = preview[i];
                         return CheckboxListTile(
                           value: chosen.contains(r),
-                          title: Text(r.path),
+                          title: Text(
+                            r.mountRoot == null
+                                ? r.path
+                                : LocalFileRelink.physicalPath(source.root, r.path, r.mountRoot),
+                          ),
                           subtitle: Text(r.verified ? r.id : '${t.viewing.relinkAmbiguous} · ${r.id}'),
                           onChanged: (v) => update(() {
                             if (v == true) {
@@ -143,7 +158,7 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
       }
       setState(() {
         _fileRelinks = jsonEncode(all.values.map((r) => r.toJson()).toList());
-        if (path != source.root && !p.isWithin(source.root, path)) field('root').text = path;
+        if (old == '.' && path != source.root && !p.isWithin(source.root, path)) field('root').text = path;
       });
     } catch (error) {
       if (mounted) setState(() => _error = error);

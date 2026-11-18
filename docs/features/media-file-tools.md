@@ -49,8 +49,12 @@ bookmarks and manual comic-list matches.
 A candidate with a downloaded copy is selected automatically only when the
 complete bytes match. Same-name/same-size candidates without those bytes need
 explicit review. Different bytes are excluded. Only verified copies retain the
-old offline revision; manually accepted candidates get a new revision. Moving
-to another root also updates the source root. No NAS-wide content scan is used.
+old offline revision. A manually confirmed match carries its reading position,
+bookmarks and comic settings to the new file while keeping offline content
+verification independent. Moving the entire root updates the source location.
+Moving just one shelf to another disk adds that folder alongside the existing
+shelves. A different book later added at the old path receives a separate
+entry. No NAS-wide content scan is used.
 
 ## Add a soundtrack or commentary
 

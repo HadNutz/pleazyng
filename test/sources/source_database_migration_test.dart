@@ -18,6 +18,7 @@ class _Version8Database extends SourceDatabase {
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (migrator) async {
       await super.migration.onCreate(migrator);
+      await customStatement('DROP TABLE cue_listens');
       for (final table in [
         'podcast_sync_ack',
         'canonical_cards',
@@ -59,6 +60,7 @@ class _Version14Database extends SourceDatabase {
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (migrator) async {
       await super.migration.onCreate(migrator);
+      await customStatement('DROP TABLE cue_listens');
       await customStatement('ALTER TABLE canonical_copies DROP COLUMN scan_generation');
       await customStatement('DROP TABLE subtitle_capture_jobs');
       await customStatement('DROP TABLE subtitle_capture_deleted_profiles');
@@ -76,6 +78,7 @@ class _Version15Database extends SourceDatabase {
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (migrator) async {
       await super.migration.onCreate(migrator);
+      await customStatement('DROP TABLE cue_listens');
       await customStatement('ALTER TABLE subtitle_capture_jobs DROP COLUMN timeline_offset_ms');
     },
   );
@@ -94,11 +97,12 @@ void main() {
     addTearDown(database.close);
     final columns = await database.customSelect("PRAGMA table_info('subtitle_capture_jobs')").get();
     expect(columns.any((row) => row.read<String>('name') == 'profile_hash'), isTrue);
+    expect(await database.customSelect('SELECT id FROM cue_listens').get(), isEmpty);
     expect(columns.any((row) => row.read<String>('name') == 'media_hash'), isTrue);
     expect(columns.any((row) => row.read<String>('name') == 'audio_hash'), isTrue);
     expect(columns.any((row) => row.read<String>('name') == 'timeline_offset_ms'), isTrue);
     final version = await database.customSelect('PRAGMA user_version').getSingle();
-    expect(version.read<int>('user_version'), 16);
+    expect(version.read<int>('user_version'), database.schemaVersion);
   });
 
   test('schema 15 upgrade adds a zero-default capture timeline offset', () async {
@@ -120,7 +124,7 @@ void main() {
     final row = await database.customSelect('SELECT timeline_offset_ms FROM subtitle_capture_jobs').getSingle();
     expect(row.read<int>('timeline_offset_ms'), 0);
     final version = await database.customSelect('PRAGMA user_version').getSingle();
-    expect(version.read<int>('user_version'), 16);
+    expect(version.read<int>('user_version'), database.schemaVersion);
   });
 
   test('schema 9 upgrade indexes identified titles without changing entries or progress', () async {
@@ -149,6 +153,7 @@ void main() {
       ),
     );
     for (final table in [
+      'cue_listens',
       'podcast_sync_ack',
       'canonical_cards',
       'canonical_aliases',

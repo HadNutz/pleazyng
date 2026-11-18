@@ -205,6 +205,7 @@ class PublicationFile {
     this.streamOnly = false,
     this.sampleOnly = false,
     this.sealedAccessHint,
+    this.relinkedEdition,
     this.cueStart,
     this.cueEnd,
   });
@@ -224,6 +225,11 @@ class PublicationFile {
   /// Adapter-owned, vault-encrypted resource locator. Never part of edition identity.
   final String? sealedAccessHint;
   final int? cueStart, cueEnd;
+
+  /// A user-confirmed move may carry reading/listening state to a file whose
+  /// bytes have not been verified. Offline content always uses [fingerprint].
+  final String? relinkedEdition;
+  String get progressFingerprint => relinkedEdition ?? fingerprint;
   SourceItemKind get kind => classifySourceFile(name, mimeType);
   bool get previewableSample =>
       sampleOnly &&
@@ -242,6 +248,7 @@ class PublicationFile {
     'mimeType': mimeType,
     'size': size,
     'revision': revision,
+    if (relinkedEdition != null) 'relinkedEdition': relinkedEdition,
     if (cueStart != null) 'cueStart': cueStart,
     if (cueEnd != null) 'cueEnd': cueEnd,
     'durationMs': durationMs,
@@ -257,6 +264,7 @@ class PublicationFile {
     size: sourceInt(j['size']),
     revision: j['revision'] as String?,
     durationMs: sourceInt(j['durationMs']),
+    relinkedEdition: j['relinkedEdition'] as String?,
     cueStart: sourceInt(j['cueStart']),
     cueEnd: sourceInt(j['cueEnd']),
     primary: j['primary'] as bool? ?? true,

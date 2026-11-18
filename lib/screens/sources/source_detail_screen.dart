@@ -103,21 +103,21 @@ class _SourceDetailScreenState extends State<SourceDetailScreen> {
         for (final f in _entry.ebooks)
           PublicationProgress(
             entryKey: _entry.key,
-            edition: f.fingerprint,
+            edition: f.progressFingerprint,
             mode: PublicationMode.reading,
             session: const Uuid().v4(),
           ),
         if (_entry.audio.isNotEmpty)
           PublicationProgress(
             entryKey: _entry.key,
-            edition: sourceDigest(jsonEncode(_entry.audio.map((f) => f.fingerprint).toList())),
+            edition: sourceDigest(jsonEncode(_entry.audio.map((f) => f.progressFingerprint).toList())),
             mode: PublicationMode.listening,
             session: const Uuid().v4(),
           ),
         for (final file in _entry.files.where((file) => file.kind == SourceItemKind.video && !file.sampleOnly))
           PublicationProgress(
             entryKey: _entry.key,
-            edition: sourceDigest(jsonEncode([file.fingerprint])),
+            edition: sourceDigest(jsonEncode([file.progressFingerprint])),
             mode: PublicationMode.watching,
             session: const Uuid().v4(),
           ),

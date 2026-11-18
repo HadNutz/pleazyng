@@ -33,7 +33,7 @@ class ExternalVideoProgressSession {
     final generation = sources.generation;
     final initial = PublicationProgress(
       entryKey: entry.key,
-      edition: sourceDigest(jsonEncode([file.fingerprint])),
+      edition: sourceDigest(jsonEncode([file.progressFingerprint])),
       mode: PublicationMode.watching,
       session: const Uuid().v4(),
     );

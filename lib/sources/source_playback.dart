@@ -1016,7 +1016,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
           _durations[i] = files[i].durationMs!;
         }
       }
-      final edition = sourceDigest(jsonEncode(files.map((f) => f.fingerprint).toList()));
+      final edition = sourceDigest(jsonEncode(files.map((f) => f.progressFingerprint).toList()));
       final initial = PublicationProgress(entryKey: item.key, edition: edition, mode: mode, session: const Uuid().v4());
       if (persistProgress) {
         progress = await sources.openProgress(item, initial);

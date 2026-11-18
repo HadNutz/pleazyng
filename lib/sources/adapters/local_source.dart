@@ -28,11 +28,24 @@ class LocalSourceAdapter extends SourceAdapter {
   late final _relinks = LocalFileRelink.decode(source.options['fileRelinks']);
   late final _byId = {for (final r in _relinks) r.id: r};
   late final _byPath = {for (final r in _relinks) r.path: r};
+  late final _mounts = {
+    for (final row in _relinks)
+      if (row.mountRoot case final root?) LocalFileRelink.mountId(root): root,
+  };
+  late final _replacements = {
+    for (final row in _relinks)
+      if (row.path != row.id) row.replacementId: row.id,
+  };
+
+  // An unrelated file can occupy the original location after a move.
+  String _entryId(String path) => _byPath[path]?.id ?? _byId[path]?.replacementId ?? path;
+
   Future<String> _contained(String value) async {
-    final root = await Directory(source.root).resolveSymbolicLinks();
-    final moved = _byId[value];
-    final original = p.join(root, value);
-    final path = p.normalize(moved != null && !await File(original).exists() ? p.join(root, moved.path) : original);
+    final catalogPath = _replacements[value] ?? _byId[value]?.path ?? value;
+    final mount = _mounts[p.split(catalogPath).firstOrNull];
+    final root = await Directory(mount ?? source.root).resolveSymbolicLinks();
+    if (mount != null && !p.equals(mount, root)) throw const SourceException(SourceFailure.permission);
+    final path = p.normalize(LocalFileRelink.physicalPath(root, catalogPath, mount));
     if (path != root && !p.isWithin(root, path)) throw const SourceException(SourceFailure.permission);
     final resolved = await File(path).resolveSymbolicLinks();
     if (resolved != root && !p.isWithin(root, resolved)) throw const SourceException(SourceFailure.permission);
@@ -41,8 +54,7 @@ class LocalSourceAdapter extends SourceAdapter {
 
   @override
   Future<SourcePage> browse({String? parent, String? cursor, String? query}) async {
-    final relative = parent ?? '';
-    final root = await Directory(source.root).resolveSymbolicLinks();
+    final relative = parent == null || parent == '.' ? '' : parent;
     final directory = await _contained(relative);
     final stamp = (await Directory(directory).stat()).modified.microsecondsSinceEpoch;
     final normalizedQuery = query?.trim().toLowerCase() ?? '';
@@ -85,11 +97,11 @@ class LocalSourceAdapter extends SourceAdapter {
       }
       start = offset;
       _discardSnapshot(snapshotKey);
-      snapshot = await _enumerate(directory, root, relative, expectedStamp, snapshotKey, normalizedQuery);
+      snapshot = await _enumerate(directory, relative, expectedStamp, snapshotKey, normalizedQuery);
     } else if (cursor == null) {
       start = 0;
       _discardSnapshot(snapshotKey);
-      snapshot = await _enumerate(directory, root, relative, stamp, snapshotKey, normalizedQuery);
+      snapshot = await _enumerate(directory, relative, stamp, snapshotKey, normalizedQuery);
     } else {
       throw const SourceException(SourceFailure.cancelled);
     }
@@ -114,7 +126,6 @@ class LocalSourceAdapter extends SourceAdapter {
 
   Future<_LocalDirectorySnapshot> _enumerate(
     String directory,
-    String root,
     String relative,
     int initialStamp,
     String snapshotKey,
@@ -146,6 +157,22 @@ class LocalSourceAdapter extends SourceAdapter {
     }
 
     try {
+      if (relative.isEmpty || relative == '.') {
+        for (final mount in _mounts.entries) {
+          final title = p.basename(mount.value);
+          if (query.isEmpty || title.toLowerCase().contains(query)) {
+            entries.add(
+              SourceEntry(
+                sourceId: source.id,
+                id: mount.key,
+                title: title,
+                parentId: relative,
+                kind: SourceItemKind.folder,
+              ),
+            );
+          }
+        }
+      }
       final albumFiles = <String>{};
       await for (final sidecar in Directory(directory).list(followLinks: false)) {
         if (sidecar is! File || !sidecar.path.toLowerCase().endsWith('.cue')) continue;
@@ -155,13 +182,13 @@ class LocalSourceAdapter extends SourceAdapter {
           bytes: bytes,
           source: source.id,
           parent: relative,
-          sheet: p.relative(sidecar.path, from: root),
+          sheet: p.join(relative, p.basename(sidecar.path)),
           lookup: (name) async {
             final path = p.join(directory, name);
             if (await FileSystemEntity.type(path, followLinks: false) != FileSystemEntityType.file) return null;
             final stat = await File(path).stat();
             return PublicationFile(
-              id: p.relative(path, from: root),
+              id: _entryId(p.join(relative, name)),
               name: name,
               mimeType: '',
               size: stat.size,
@@ -180,10 +207,9 @@ class LocalSourceAdapter extends SourceAdapter {
       }
       await for (final entity in Directory(directory).list(followLinks: false)) {
         if (entity is Link) continue;
-        final physicalId = p.relative(entity.path, from: root);
-        final candidate = _byPath[physicalId];
-        final relink = candidate != null && !await File(p.join(root, candidate.id)).exists() ? candidate : null;
-        final id = relink?.id ?? physicalId;
+        final physicalId = p.join(relative, p.basename(entity.path));
+        final relink = _byPath[physicalId];
+        final id = _entryId(physicalId);
         if (albumFiles.contains(id)) continue;
         final name = p.basename(entity.path);
         if (name.startsWith('.')) continue;
@@ -194,6 +220,8 @@ class LocalSourceAdapter extends SourceAdapter {
         recognizedEntries++;
         if (query.isNotEmpty && !name.toLowerCase().contains(query)) continue;
         final stat = await entity.stat();
+        final stamp = '${stat.modified.microsecondsSinceEpoch}:${stat.size}';
+        final match = relink?.newRevision == stamp ? relink : null;
         if (entries.length == _maxCachedEntries) await flushRun();
         entries.add(
           SourceEntry(
@@ -210,12 +238,14 @@ class LocalSourceAdapter extends SourceAdapter {
                       name: name,
                       mimeType: '',
                       size: stat.size,
-                      revision:
-                          relink != null &&
-                              relink.verified &&
-                              relink.newRevision == '${stat.modified.microsecondsSinceEpoch}:${stat.size}'
-                          ? relink.oldRevision
-                          : '${stat.modified.microsecondsSinceEpoch}:${stat.size}',
+                      revision: match?.verified == true
+                          ? match!.oldRevision
+                          : match?.oldRevision == stamp
+                          ? 'relocated:$stamp'
+                          : stamp,
+                      relinkedEdition:
+                          match?.progressEdition ??
+                          (match == null ? null : sourceDigest(jsonEncode([id, match.oldRevision, stat.size]))),
                     ),
                   ],
           ),
@@ -499,8 +529,7 @@ class LocalSourceAdapter extends SourceAdapter {
 
       var hydrated = metadata?.applyTo(entry) ?? entry;
       if (poster != null) {
-        final root = await Directory(source.root).resolveSymbolicLinks();
-        hydrated = hydrated.copyWith(coverId: p.relative(poster.path, from: root));
+        hydrated = hydrated.copyWith(coverId: p.join(entry.parentId ?? '', p.basename(poster.path)));
       }
       return hydrated;
     } on FileSystemException {

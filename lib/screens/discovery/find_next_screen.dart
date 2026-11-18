@@ -1229,7 +1229,7 @@ class _FindNextScreenState extends State<FindNextScreen> {
     var unitLabel = '';
     if (entry.kind == SourceItemKind.audiobook && entry.chapters.isNotEmpty && audio.isNotEmpty) {
       try {
-        final edition = sourceDigest(jsonEncode(audio.map((file) => file.fingerprint).toList()));
+        final edition = sourceDigest(jsonEncode(audio.map((file) => file.progressFingerprint).toList()));
         final progress = await controller.repository.progress(profileId, jsonEncode([entry.key, edition, 'listening']));
         final position = progress?.positionMs ?? 0;
         final speed = progress?.speed ?? 1.0;

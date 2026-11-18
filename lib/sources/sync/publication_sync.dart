@@ -304,21 +304,21 @@ class PublicationSync {
 
     if (mode == PublicationMode.reading) {
       for (final file in entry.ebooks) {
-        add([file], file.fingerprint);
+        add([file], file.progressFingerprint);
       }
     } else if (mode == PublicationMode.listening) {
       if (entry.audio.isNotEmpty) {
-        add(entry.audio, sourceDigest(jsonEncode(entry.audio.map((f) => f.fingerprint).toList())));
+        add(entry.audio, sourceDigest(jsonEncode(entry.audio.map((f) => f.progressFingerprint).toList())));
       }
       for (final file in ordinaryFiles) {
-        add([file], sourceDigest(jsonEncode([file.fingerprint])));
+        add([file], sourceDigest(jsonEncode([file.progressFingerprint])));
       }
     } else {
       if (ordinaryFiles.isNotEmpty) {
-        add(ordinaryFiles, sourceDigest(jsonEncode(ordinaryFiles.map((f) => f.fingerprint).toList())));
+        add(ordinaryFiles, sourceDigest(jsonEncode(ordinaryFiles.map((f) => f.progressFingerprint).toList())));
       }
       for (final file in ordinaryFiles) {
-        add([file], sourceDigest(jsonEncode([file.fingerprint])));
+        add([file], sourceDigest(jsonEncode([file.progressFingerprint])));
       }
     }
     return [for (final candidate in byEdition.entries) (edition: candidate.key, descriptor: candidate.value)];

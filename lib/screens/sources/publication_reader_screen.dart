@@ -90,7 +90,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
   }
 
   String get _preferenceKey => widget.file.kind == SourceItemKind.comic
-      ? 'comicReader:${widget.entry.key}:${widget.file.fingerprint}'
+      ? 'comicReader:${widget.entry.key}:${widget.file.progressFingerprint}'
       : 'reader';
   Object _viewZoom = 'fit-page';
   MultiviewWorkspaceController? _workspaceController;
@@ -226,7 +226,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
       title: widget.entry.title.trim().isEmpty ? t.common.unknown : widget.entry.title,
       subtitle: widget.file.name,
       mediaKey: sourceDigest(idSeed),
-      progressOwner: sourceDigest('${_profile ?? 'profile'}:${widget.entry.key}:${widget.file.fingerprint}'),
+      progressOwner: sourceDigest('${_profile ?? 'profile'}:${widget.entry.key}:${widget.file.progressFingerprint}'),
       hasAudio: _speaking || _readAlong,
       hasVideo: false,
       openedAt: DateTime.now(),
@@ -364,7 +364,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
       if (!_previewOnly) {
         final initial = PublicationProgress(
           entryKey: widget.entry.key,
-          edition: widget.file.fingerprint,
+          edition: widget.file.progressFingerprint,
           mode: PublicationMode.reading,
           session: const Uuid().v4(),
         );
@@ -390,7 +390,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
           : (await sources.repository.annotations(
               _profile!,
               widget.entry.key,
-            )).where((a) => a.edition == widget.file.fingerprint && a.mode == PublicationMode.reading).toList();
+            )).where((a) => a.edition == widget.file.progressFingerprint && a.mode == PublicationMode.reading).toList();
       final temp = await getTemporaryDirectory();
       final offlineFileLease = _previewOnly
           ? null
@@ -707,7 +707,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
         final annotation = BookAnnotation(
           id: const Uuid().v4(),
           entryKey: widget.entry.key,
-          edition: widget.file.fingerprint,
+          edition: widget.file.progressFingerprint,
           mode: PublicationMode.reading,
           locator: ReadingLocator(cfi: cfi, href: _progress?.locator?.href ?? ''),
           note: (message['note'] as String? ?? '').substring(
@@ -784,7 +784,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
     final annotation = BookAnnotation(
       id: existing?.id ?? const Uuid().v4(),
       entryKey: widget.entry.key,
-      edition: widget.file.fingerprint,
+      edition: widget.file.progressFingerprint,
       mode: PublicationMode.reading,
       locator: locator,
       note: note,
@@ -807,15 +807,18 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
     final annotation = await Navigator.push<BookAnnotation>(
       context,
       MaterialPageRoute(
-        builder: (_) =>
-            SourceNotesScreen(entry: widget.entry, edition: widget.file.fingerprint, mode: PublicationMode.reading),
+        builder: (_) => SourceNotesScreen(
+          entry: widget.entry,
+          edition: widget.file.progressFingerprint,
+          mode: PublicationMode.reading,
+        ),
       ),
     );
     if (!valid) return;
     final latest = (await _sources!.repository.annotations(
       _profile!,
       widget.entry.key,
-    )).where((a) => a.edition == widget.file.fingerprint).toList();
+    )).where((a) => a.edition == widget.file.progressFingerprint).toList();
     for (final removed in _annotations.where((a) => !latest.any((n) => n.id == a.id))) {
       if (removed.locator?.cfi != null) await _js('remove', removed.locator!.cfi);
     }
