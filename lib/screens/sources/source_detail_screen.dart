@@ -60,6 +60,7 @@ class SourceDetailScreen extends StatefulWidget {
 }
 
 class _SourceDetailScreenState extends State<SourceDetailScreen> {
+  static const _cueListensFilename = 'pleazyng-scrobbler.log';
   late SourceEntry _entry = widget.entry;
   bool _busy = false;
   bool _metadataLookupPending = false;
@@ -562,7 +563,7 @@ class _SourceDetailScreenState extends State<SourceDetailScreen> {
       return;
     }
     await FilePickerService.instance.saveFile(
-      fileName: 'pleazyng-scrobbler.log',
+      fileName: _cueListensFilename,
       bytes: Uint8List.fromList(utf8.encode(log)),
     );
   }
@@ -802,7 +803,7 @@ class _SourceDetailScreenState extends State<SourceDetailScreen> {
       actions: [
         if (isCueTrack(_entry) || isCueAlbum(_entry))
           IconButton(
-            tooltip: t.karaokeUi.export(value1: '${t.musicTools.recent} (.scrobbler.log)'),
+            tooltip: t.karaokeUi.export(value1: '${t.musicTools.recent} ($_cueListensFilename)'),
             icon: const AppIcon(Symbols.file_download_rounded),
             onPressed: () => sourceAction(context, _exportCueListens),
           ),

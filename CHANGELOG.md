@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Show the CUE export filename in its tooltip and a translated error when saving an episode boundary fails.
+
 - Keep App Icon directly below Theme and allow playback reloads when no profile is available for restoring external audio.
 
 - Use the app’s rounded icons for rewind, source relocation, and track controls.

@@ -87,10 +87,11 @@ Future<List<SourceEntry>> cueAlbumEntries({
   final name = album.isEmpty ? sheet.split('/').last.replaceFirst(RegExp(r'\.cue$', caseSensitive: false), '') : album;
   final entries = <SourceEntry>[], chapters = <BookChapter>[];
   for (var i = 0; i < tracks.length; i++) {
-    final t = tracks[i], start = t.start!, next = tracks.elementAtOrNull(i + 1);
-    final end = next?.file == t.file ? next?.start : null;
+    final track = tracks[i], start = track.start!, next = tracks.elementAtOrNull(i + 1);
+    final end = next?.file == track.file ? next?.start : null;
     if (end != null && end <= start) return [];
-    final file = media[t.file]!, title = t.title.isEmpty ? t.number.toString().padLeft(2, '0') : t.title;
+    final file = media[track.file]!,
+        title = track.title.isEmpty ? track.number.toString().padLeft(2, '0') : track.title;
     final slice = PublicationFile.fromJson({
       ...file.toJson(),
       'cueStart': start,
@@ -100,12 +101,12 @@ Future<List<SourceEntry>> cueAlbumEntries({
     entries.add(
       SourceEntry(
         sourceId: source,
-        id: '$sheet#track-${t.number}',
+        id: '$sheet#track-${track.number}',
         parentId: parent,
         title: title,
-        author: t.artist,
+        author: track.artist,
         series: name,
-        seriesOrder: t.number.toDouble(),
+        seriesOrder: track.number.toDouble(),
         kind: SourceItemKind.music,
         files: [slice],
       ),

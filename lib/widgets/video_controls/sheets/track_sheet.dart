@@ -177,8 +177,9 @@ class TrackSheet extends StatelessWidget {
                             if (!context.mounted) return;
                             OverlaySheetController.of(context).close();
                             await state.onEpisodeBoundaryMarked?.call(n);
-                          } catch (e) {
-                            if (context.mounted) showErrorSnackBar(context, e.toString());
+                          } catch (error, stackTrace) {
+                            appLogger.w('Could not mark episode start', error: error, stackTrace: stackTrace);
+                            if (context.mounted) showErrorSnackBar(context, t.settings.saveFailed);
                           }
                         },
                       ),
