@@ -2628,7 +2628,7 @@ def validate_release_outputs(
         "ANDROID_KEYSTORE_BASE64", "ANDROID_STORE_PASSWORD", "ANDROID_KEY_PASSWORD", "ANDROID_KEY_ALIAS",
     }
     if android_signing.issubset(secrets):
-        required.update({"pleazyng-android-play.aab", "pleazyng-amazon-firetv.apk"})
+        required.update({"pleazyng-android-play.aab", "pleazyng-amazon-firetv.apk", "pleazyng-automotive-music.apk", "pleazyng-automotive-play.aab"})
     if all(publication_settings.get(name, "").strip() for name in MSSTORE_BUILD_VARIABLES):
         required.add("pleazyng-windows.msixbundle")
     if include_apple_store_build:
@@ -2755,6 +2755,16 @@ def publish_configured_channels(
                        "channel": "google-play", "play_track": play_track, "play_release_status": play_status},
             "secrets": {"GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"}, "variables": set(),
             "assets": {"pleazyng-android-play.aab", "SHA256SUMS.txt"},
+        },
+        {
+            "name": f"Google Play Automotive {play_track} {play_status}",
+            "readiness_flag": "GOOGLE_PLAY_AUTOMOTIVE_BOOTSTRAP_COMPLETE",
+            "workflow": "publish-app-stores.yml",
+            "title": f"action:publish-app-stores:pool:public:tag:{tag}:channel:google-play-automotive:track:{play_track}:status:{play_status}",
+            "fields": {"action": "publish-app-stores", "runner_pool": "public", "release_tag": tag,
+                       "channel": "google-play-automotive", "play_track": play_track, "play_release_status": play_status},
+            "secrets": {"GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"}, "variables": set(),
+            "assets": {"pleazyng-automotive-play.aab", "SHA256SUMS.txt"},
         },
         {
             "name": "Amazon Appstore upload",
@@ -2914,7 +2924,7 @@ def publish_configured_channels(
                 ),
             })
             continue
-        if spec["fields"].get("channel") == "google-play" and play_error:
+        if spec["fields"].get("channel") in {"google-play", "google-play-automotive"} and play_error:
             failures.append(f"Google Play configuration: {play_error}")
             continue
         readiness_flag = spec.get("readiness_flag")

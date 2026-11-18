@@ -197,7 +197,7 @@ def restore_receipt(tag, code, digest, track, destination):
     if code < 189 or not re.fullmatch(r"[0-9a-f]{64}", digest):
         raise ValueError("Invalid expected release bundle identity")
     runs = pages(f"actions/workflows/{WORKFLOW}/runs?event=workflow_dispatch&per_page=100", "workflow_runs")
-    candidates = [run for run in runs if ':channel:google-play:track:' in run.get('display_title', '')
+    candidates = [run for run in runs if any(marker in run.get('display_title', '') for marker in (':channel:google-play:track:', ':channel:google-play-automotive:track:'))
                   and run.get('head_branch') == 'main' and run.get('status') == 'completed'
                   and str(run['id']) != os.environ.get('GITHUB_RUN_ID')]
     identity = {'release_tag': tag, 'version_code': code, 'aab_sha256': digest, 'track': track}

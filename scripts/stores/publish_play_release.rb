@@ -39,7 +39,7 @@ class PlayReleasePublisher
     @tag = ENV.fetch('PLAY_RELEASE_TAG')
     @track = ENV.fetch('PLAY_TRACK', 'internal')
     @status = ENV.fetch('PLAY_RELEASE_STATUS', 'completed')
-    raise 'Unexpected release delivery target' unless @code >= 189 && @tag.match?(/\Av\d+\.\d+\.\d+\z/) && %w[internal alpha beta production].include?(@track) && %w[draft completed inProgress].include?(@status)
+    raise 'Unexpected release delivery target' unless @code >= 189 && @tag.match?(/\Av\d+\.\d+\.\d+\z/) && %w[internal alpha beta production automotive:qa automotive:alpha automotive:beta automotive:production].include?(@track) && %w[draft completed inProgress].include?(@status)
     if @status == 'inProgress'
       @fraction = Float(ENV.fetch('PLAY_ROLLOUT_FRACTION', '0.1'))
       raise 'Staged rollout fraction must be greater than zero and less than one' unless @fraction > 0 && @fraction < 1
@@ -169,7 +169,7 @@ class PlayReleasePublisher
       @receipt.delete('manual_review_reason')
     end
     if %i[delivered superseded].include?(plan)
-      @receipt['distributed'] = plan == :delivered && @track == 'internal' && @status == 'completed'
+      @receipt['distributed'] = plan == :delivered && %w[internal automotive:qa].include?(@track) && @status == 'completed'
       @receipt['verified_track'] = track
       @receipt.delete('manual_review_required')
       @receipt.delete('manual_review_reason')
@@ -207,8 +207,8 @@ class PlayReleasePublisher
       verified = PlayDeliveryPolicy.plan(current, current_bundles, @code, @digest, @status, @fraction)
       raise 'Committed Play version/status was not verified' unless %i[delivered superseded].include?(verified)
       @receipt['verified_track'] = current
-      @receipt['distributed'] = verified == :delivered && @track == 'internal' && @status == 'completed'
-      @receipt['review_state'] = @track == 'internal' ? 'internal test distribution' : 'Google review/activation requires separate verification'
+      @receipt['distributed'] = verified == :delivered && %w[internal automotive:qa].include?(@track) && @status == 'completed'
+      @receipt['review_state'] = %w[internal automotive:qa].include?(@track) ? 'internal test distribution' : 'Google review/activation requires separate verification'
       save
     ensure
       api('delete', "/edits/#{verification}")
