@@ -30,11 +30,13 @@ on:
         required: true
         type: choice
         options: [ci]
+        default: ci
       runner_pool:
         description: Public GitHub-hosted runners
         required: true
         type: choice
         options: [public]
+        default: public
       execution_profile:
         description: Use standard hosted runners for compatible Linux, Windows, and Apple validation work
         required: true
