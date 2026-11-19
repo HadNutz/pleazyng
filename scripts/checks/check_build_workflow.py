@@ -1457,12 +1457,24 @@ for apple_job_name, workspace_label in (
         if apple_job_name == "build-ios"
         else "Stage macOS sources and Git objects on local APFS"
     )
+    prepare_step_name = (
+        "Prepare iOS local APFS scratch"
+        if apple_job_name == "build-ios"
+        else "Prepare macOS local APFS scratch"
+    )
+    workspace_scratch_job = "ios" if apple_job_name == "build-ios" else "macos"
+    prepare_step = named_step(apple_release_job, prepare_step_name)
     stage_step = named_step(apple_release_job, stage_step_name)
     require(
-        'python3 scripts/copy_apple_jit_sources.py "$GITHUB_WORKSPACE" "$source_root" "$COMPILE_SOURCE_SHA"' in stage_step
+        f"scripts/prepare_apple_jit_scratch.sh {workspace_scratch_job} 40 local-xcode" in prepare_step
+        and apple_release_job.index(prepare_step) < apple_release_job.index(stage_step)
+        and "scripts/prepare_apple_jit_scratch.sh" not in stage_step
+        and 'source_root="$PLEZYNG_APPLE_LOCAL_SOURCE_ROOT"' in stage_step
+        and 'printf \'PLEZYNG_APPLE_LOCAL_SOURCE_ROOT=%s\\n\' "$local_source_root"' in apple_scratch_script
+        and 'printf \'PLEZYNG_APPLE_WORKSPACE=%s\\n\' "$local_source_root"' in apple_scratch_script
+        and 'python3 scripts/copy_apple_jit_sources.py "$GITHUB_WORKSPACE" "$source_root" "$COMPILE_SOURCE_SHA"' in stage_step
         and '--remote-url "https://github.com/${GITHUB_REPOSITORY}.git"' in stage_step
-        and 'ditto "$GITHUB_WORKSPACE/."' not in stage_step
-        and 'source_root="$PLEZYNG_APPLE_LOCAL_SOURCE_ROOT"' in stage_step,
+        and 'ditto "$GITHUB_WORKSPACE/."' not in stage_step,
         f"{workspace_label} release must stage tracked sources and Git objects on local APFS",
     )
     xcode_step_name = (

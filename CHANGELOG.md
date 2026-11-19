@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Prepare the Apple release scratch environment before source staging so iOS and macOS builds receive the hosted local APFS workspace paths.
 - Resolve any additional release qualification issues found during the 3.0.39 build.
 
 ## [3.0.39] - 2026-11-18

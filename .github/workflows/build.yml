@@ -1397,14 +1397,15 @@ jobs:
           export PATH="$RUNNER_TEMP/cocoapods-bin:/opt/homebrew/bin:$PATH"
           pod --version
 
+      - name: Prepare iOS local APFS scratch
+        shell: bash
+        run: bash scripts/prepare_apple_jit_scratch.sh ios 40 local-xcode
+
       - name: Stage iOS sources and Git objects on local APFS
         shell: bash
         run: |
           set -euo pipefail
-          short_root="$(bash scripts/prepare_apple_jit_scratch.sh ios 40 local-xcode)"
-          runner_temp_real="$(cd "$RUNNER_TEMP" && pwd -P)"
           source_root="$PLEZYNG_APPLE_LOCAL_SOURCE_ROOT"
-          APPLE_LOCAL_BUILD_DIR="$runner_temp_real/pleazyng-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-ios-xcode/build"
           python3 scripts/copy_apple_jit_sources.py "$GITHUB_WORKSPACE" "$source_root" "$COMPILE_SOURCE_SHA" \
             --remote-url "https://github.com/${GITHUB_REPOSITORY}.git"
           bash "$source_root/scripts/clean_appledouble_sidecars.sh" "$source_root"
@@ -2155,15 +2156,17 @@ jobs:
           export PATH="$RUNNER_TEMP/cocoapods-bin:/opt/homebrew/bin:$PATH"
           pod --version
 
+      - name: Prepare macOS local APFS scratch
+        if: inputs.macos_compilation_job_id == ''
+        shell: bash
+        run: bash scripts/prepare_apple_jit_scratch.sh macos 40 local-xcode
+
       - name: Stage macOS sources and Git objects on local APFS
         if: inputs.macos_compilation_job_id == ''
         shell: bash
         run: |
           set -euo pipefail
-          short_root="$(bash scripts/prepare_apple_jit_scratch.sh macos 40 local-xcode)"
-          runner_temp_real="$(cd "$RUNNER_TEMP" && pwd -P)"
           source_root="$PLEZYNG_APPLE_LOCAL_SOURCE_ROOT"
-          APPLE_LOCAL_BUILD_DIR="$runner_temp_real/pleazyng-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-macos-xcode/build"
           python3 scripts/copy_apple_jit_sources.py "$GITHUB_WORKSPACE" "$source_root" "$COMPILE_SOURCE_SHA" \
             --remote-url "https://github.com/${GITHUB_REPOSITORY}.git"
           bash "$source_root/scripts/clean_appledouble_sidecars.sh" "$source_root"
