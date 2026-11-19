@@ -81,11 +81,14 @@ def inspect_apk(apk: Path, build_tools: Path) -> dict:
     if re.search(r"^uses-feature: name='android.hardware.touchscreen'", badging, re.MULTILINE):
         raise ValueError('Fire TV APK must not require a touchscreen')
     with zipfile.ZipFile(apk) as archive:
-        abis = sorted({name.split('/')[1] for name in archive.namelist()
+        names = set(archive.namelist())
+        abis = sorted({name.split('/')[1] for name in names
                        if name.startswith('lib/') and name.endswith('/libflutter.so')})
-        if not {'armeabi-v7a', 'arm64-v8a'}.issubset(abis):
-            raise ValueError('Fire TV APK must include both ARMv7 and ARM64 Flutter runtimes')
-        if 'assets/AppstoreAuthenticationKey.pem' not in archive.namelist():
+        if not {'armeabi-v7a', 'arm64-v8a', 'x86_64'}.issubset(abis):
+            raise ValueError('Fire TV APK must include ARMv7, ARM64, and x86_64 Flutter runtimes for Fire TV emulator qualification')
+        if not all(f'lib/{abi}/libapp.so' in names for abi in ('armeabi-v7a', 'arm64-v8a', 'x86_64')):
+            raise ValueError('Fire TV APK must include the Flutter AOT application runtime for all device and emulator ABIs')
+        if 'assets/AppstoreAuthenticationKey.pem' not in names:
             raise ValueError('Amazon Appstore authentication public key is missing')
     version = re.search(r"versionName='([^']+)'", badging)
     with apk.open('rb') as stream:
@@ -113,7 +116,7 @@ def verify_receipt(apk: Path, receipt_path: Path) -> dict:
             or receipt.get('package') != 'org.snapetech.pleazyng'
             or receipt.get('leanback_launcher') is not True
             or receipt.get('debug_certificate') is not False
-            or not {'armeabi-v7a', 'arm64-v8a'}.issubset(receipt.get('abis', []))
+            or not {'armeabi-v7a', 'arm64-v8a', 'x86_64'}.issubset(receipt.get('abis', []))
             or not receipt.get('signer_sha256')
             or not all(re.fullmatch(r'[0-9a-f]{64}', value) for value in receipt['signer_sha256'])):
         raise ValueError('Fire TV verification receipt does not match this signed release APK')

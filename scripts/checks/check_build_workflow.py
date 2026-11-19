@@ -2169,6 +2169,7 @@ require(
     "android-validation" in android_job
     and "Signed Fire TV release assets require all four Android signing secrets" in android_job
     and "scripts/verify_firetv_apk.py pleazyng-amazon-firetv.apk" in android_job
+    and "--target-platform android-arm,android-arm64,android-x64" in android_job
     and "--dart-define=LIFETIME_UNLOCK_PRODUCT_ID=pleazyng_lifetime_unlock" in android_job
     and "pleazyng-amazon-firetv-provenance.json" in android_job,
     "Android releases must build and verify a signed Amazon TV APK with the current lifetime SKU",

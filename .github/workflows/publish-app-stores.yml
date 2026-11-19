@@ -292,6 +292,52 @@ jobs:
           python3 "$GITHUB_WORKSPACE/scripts/verify_firetv_apk.py" pleazyng-amazon-firetv.apk \
             --receipt pleazyng-amazon-firetv-provenance.json
 
+      - name: Install Android TV emulator image
+        run: |
+          set -euo pipefail
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          AVDMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager"
+          set +o pipefail
+          yes | "$SDKMANAGER" --licenses >/dev/null
+          set -o pipefail
+          "$SDKMANAGER" --install emulator platform-tools 'system-images;android-35;android-tv;x86_64'
+          printf 'no\n' | "$AVDMANAGER" create avd --force --name pleazyng-firetv-api35 \
+            --package 'system-images;android-35;android-tv;x86_64' --device tv_1080p
+
+      - name: Boot Fire TV emulator and run Amazon APK qualification
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$ANDROID_HOME/emulator/emulator" -avd pleazyng-firetv-api35 -no-window -no-audio \
+            -no-boot-anim -no-snapshot -gpu swiftshader_indirect -memory 4096 -cores 4 \
+            -port 5586 > "$RUNNER_TEMP/firetv-emulator.log" 2>&1 &
+          echo "$!" > "$RUNNER_TEMP/firetv-emulator.pid"
+          trap 'kill "$(cat "$RUNNER_TEMP/firetv-emulator.pid")" 2>/dev/null || true' EXIT
+          timeout 300 adb -s emulator-5586 wait-for-device
+          for _ in $(seq 1 150); do
+            [[ "$(adb -s emulator-5586 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" == 1 ]] && break
+            sleep 2
+          done
+          if [[ "$(adb -s emulator-5586 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" != 1 ]]; then
+            cat "$RUNNER_TEMP/firetv-emulator.log"
+            echo 'Fire TV form-factor emulator failed to boot.' >&2
+            exit 1
+          fi
+          python3 scripts/qa/test_firetv_emulator.py \
+            --apk "$RUNNER_TEMP/store-assets/pleazyng-amazon-firetv.apk" \
+            --serial emulator-5586 --output-dir "$RUNNER_TEMP/firetv-qualification"
+
+      - name: Retain Fire TV emulator qualification evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: firetv-emulator-qualification-${{ inputs.release_tag }}
+          path: |
+            ${{ runner.temp }}/firetv-qualification/
+            ${{ runner.temp }}/firetv-emulator.log
+          if-no-files-found: warn
+          retention-days: 90
+
       - name: Install native Ruby extension tools on public Linux
         if: inputs.runner_pool == 'public'
         run: |

@@ -2,8 +2,9 @@
 
 The signed universal `pleazyng-amazon-firetv.apk` is required for every versioned
 release, alongside `pleazyng-amazon-firetv-provenance.json`. It includes ARMv7 and
-ARM64 for compatible Fire OS TVs and Sticks. This Android APK does not establish
-compatibility with Amazon devices running a different operating system.
+ARM64 for Fire TV hardware plus x86_64 so the exact signed APK can run in the
+Android TV form-factor emulator before an Amazon upload. This Android APK does not
+establish compatibility with Amazon devices running a different operating system.
 
 The release job uses the existing Android signing secrets and fails if they are
 missing or incomplete. It selects the Amazon OpenIAP dependency and compiles
@@ -13,10 +14,19 @@ SKU has that identifier, updated name/description/artwork, and the retained USD
 $2.99 base price. Apple and Google store records must be reconciled separately.
 
 `verify_firetv_apk.py` verifies the APK signature, rejects Android debug signing,
-checks `org.snapetech.pleazyng`, the enabled/exported Leanback launcher activity or alias in the compiled manifest, optional touchscreen,
-both ARM runtimes, and the bundled Amazon authentication public key. Its receipt
-records the APK hash, size, signer fingerprint, version and static qualification.
-GitHub attests and publishes both files. This is not playback or IAP qualification.
+checks `org.snapetech.pleazyng`, the enabled/exported Leanback launcher activity or
+alias in the compiled manifest, optional touchscreen, ARMv7/ARM64/x86_64 runtimes,
+and the bundled Amazon authentication public key. Its receipt records the APK
+hash, size, signer fingerprint, version and static qualification.
+
+Every Amazon store-upload run installs the exact signed release APK into an
+Android TV API 35 x86_64 emulator. `scripts/qa/test_firetv_emulator.py` verifies
+the emulator ABI, installs the package, launches its Leanback entry point, checks
+that the app remains in the foreground after remote D-pad input, scans app logcat
+for fatal crashes, and retains a screenshot, log, and hash-bound JSON receipt.
+This gate runs before Fastlane can upload anything to Amazon; emulator or app
+failure stops the upload. The emulator is a repeatable TV-form-factor smoke test,
+not a substitute for Fire OS device, playback, billing or purchase qualification.
 
 To produce only the signed Amazon APK from current main, without creating or changing
 a release or uploading to a store:

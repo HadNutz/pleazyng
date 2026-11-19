@@ -23,6 +23,17 @@ $lanes.fetch(:publish_amazon_appstore).call
 
 @unittest.skipUnless(RUBY, 'Ruby is required for the Fastlane DSL test')
 class AmazonStoreLaneTest(unittest.TestCase):
+    def test_store_upload_is_after_signed_apk_emulator_qualification(self):
+        workflow = (ROOT / '.github/workflows/publish-app-stores.yml').read_text()
+        amazon_job = workflow.split('  publish-amazon-appstore:', 1)[1].split('  publish-apple-app-store:', 1)[0]
+        emulator_gate = amazon_job.index('Install Android TV emulator image')
+        qualification = amazon_job.index('Boot Fire TV emulator and run Amazon APK qualification')
+        upload = amazon_job.index('Upload the APK without submitting it for review')
+        self.assertLess(emulator_gate, qualification)
+        self.assertLess(qualification, upload)
+        self.assertIn('scripts/qa/test_firetv_emulator.py', amazon_job)
+        self.assertIn('if: always()', amazon_job)
+
     def run_lane(self, app_id):
         environment = {
             'PATH': os.environ.get('PATH', ''),

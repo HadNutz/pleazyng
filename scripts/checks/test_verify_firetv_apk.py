@@ -52,12 +52,13 @@ class CompiledManifestLauncherTest(unittest.TestCase):
 
 
 class FireTVAPKTest(unittest.TestCase):
-    def inspect(self, *, debug=False, tv=True, abis=('armeabi-v7a', 'arm64-v8a'), key=True):
+    def inspect(self, *, debug=False, tv=True, abis=('armeabi-v7a', 'arm64-v8a', 'x86_64'), key=True):
         with tempfile.TemporaryDirectory() as directory:
             apk = Path(directory) / 'app.apk'
             with zipfile.ZipFile(apk, 'w') as archive:
                 for abi in abis:
                     archive.writestr(f'lib/{abi}/libflutter.so', b'fixture')
+                    archive.writestr(f'lib/{abi}/libapp.so', b'fixture')
                 if key:
                     archive.writestr('assets/AppstoreAuthenticationKey.pem', 'public key fixture')
             signature = 'Signer #1 certificate SHA-256 digest: ' + 'a' * 64
@@ -71,10 +72,10 @@ class FireTVAPKTest(unittest.TestCase):
             ]):
                 return inspect_apk(apk, Path('/fixture/build-tools'))
 
-    def test_signed_tv_apk_records_certificate_and_both_arm_abis(self):
+    def test_signed_tv_apk_records_emulator_and_both_device_abis(self):
         receipt = self.inspect()
         self.assertEqual(receipt['signer_sha256'], ['a' * 64])
-        self.assertEqual(receipt['abis'], ['arm64-v8a', 'armeabi-v7a'])
+        self.assertEqual(receipt['abis'], ['arm64-v8a', 'armeabi-v7a', 'x86_64'])
         self.assertEqual(len(receipt['sha256']), 64)
 
     def test_debug_signing_is_rejected(self):
@@ -86,8 +87,12 @@ class FireTVAPKTest(unittest.TestCase):
             self.inspect(tv=False)
 
     def test_missing_stick_abi_is_rejected(self):
-        with self.assertRaisesRegex(ValueError, 'ARMv7 and ARM64'):
+        with self.assertRaisesRegex(ValueError, 'ARMv7, ARM64'):
             self.inspect(abis=('arm64-v8a',))
+
+    def test_missing_emulator_abi_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'x86_64'):
+            self.inspect(abis=('armeabi-v7a', 'arm64-v8a'))
 
     def test_missing_amazon_key_is_rejected(self):
         with self.assertRaisesRegex(ValueError, 'public key'):
@@ -109,7 +114,7 @@ class FireTVReceiptTest(unittest.TestCase):
                 'sha256': hashlib.sha256(apk.read_bytes()).hexdigest(),
                 'size_bytes': apk.stat().st_size, 'package': 'org.snapetech.pleazyng',
                 'leanback_launcher': True, 'debug_certificate': False,
-                'abis': ['armeabi-v7a', 'arm64-v8a'], 'signer_sha256': ['a' * 64],
+                'abis': ['armeabi-v7a', 'arm64-v8a', 'x86_64'], 'signer_sha256': ['a' * 64],
             }
             if mutate:
                 mutate(receipt)
