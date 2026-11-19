@@ -40,7 +40,7 @@ if [[ "${RUNNER_ENVIRONMENT:-}" == "github-hosted" ]]; then
     exit 1
   fi
   task_root="$hosted_tmp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
-  hosted_source_root="$task_root/source"
+  hosted_source_root="$task_root"
   if [[ -L "$task_root" || ! -d "$task_root" || "$(cd "$task_root" && /bin/pwd -P)" != "$task_root" \
       || "$workspace" != "$hosted_source_root" || -L "$workspace" || ! -d "$workspace" \
       || "$(cd "$workspace" && /bin/pwd -P)" != "$hosted_source_root" ]]; then

@@ -67,14 +67,14 @@ if [[ "${RUNNER_ENVIRONMENT:-}" == "github-hosted" ]]; then
   task_root="$hosted_tmp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
   runner_temp_real="$(cd "$RUNNER_TEMP" && /bin/pwd -P)"
   local_xcode_root="$runner_temp_real/pleazyng-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}-xcode"
-  local_source_root="$task_root/source"
+  local_source_root="$task_root"
   local_build_dir="$local_xcode_root/build"
   if [[ -e "$task_root" || -L "$task_root" || -e "$local_xcode_root" || -L "$local_xcode_root" ]]; then
     echo "Refusing to reuse existing hosted Apple scratch paths." >&2
     exit 1
   fi
   umask 077
-  /bin/mkdir -m 700 "$task_root" "$local_source_root" "$local_xcode_root" "$local_build_dir"
+  /bin/mkdir -m 700 "$task_root" "$local_xcode_root" "$local_build_dir"
   {
     printf 'APPLE_HOSTED_SCRATCH=1\n'
     printf 'PLEZYNG_HOSTED_APPLE_SCRATCH_ROOT=%s\n' "$hosted_tmp_real"
