@@ -802,6 +802,17 @@ class ImmutableReleaseTagTests(unittest.TestCase):
         with self.assertRaisesRegex(ReleaseError, "non-release source files"):
             release_ci_source(self.checkout, "v3.0.0", changed, self.tag_commit)
 
+    def test_apple_workspace_staging_helper_is_release_infrastructure(self) -> None:
+        main_commit = self.commit_file(
+            "scripts/prepare_apple_jit_scratch.sh",
+            "#!/usr/bin/env bash\n# Stage release-only Apple workspaces.\n",
+        )
+
+        self.assertEqual(
+            release_ci_source(self.checkout, "v3.0.0", main_commit, self.tag_commit),
+            self.tag_commit,
+        )
+
     def test_workflow_ci_uses_the_validated_immutable_tag(self) -> None:
         import yaml
         workflow = yaml.safe_load((ROOT / ".github/workflows/build.yml").read_text())
