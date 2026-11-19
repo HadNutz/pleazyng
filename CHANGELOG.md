@@ -5,6 +5,7 @@
 - Fetch webOS's checksum-pinned bzip2 source from the verified GStreamer mirror when sourceware.org blocks the build runner.
 - Prevent Android App Bundle packaging from exhausting Gradle heap by limiting ZIP compression parallelism and allocating a larger CI heap.
 - Keep unsigned Apple CI qualification on hosted Macs when signed App Store builds select private Apple JIT.
+- Check required iOS App Store provisioning entitlements before compiling the signed store artifact, so stale profiles fail at setup instead of during archive creation.
 - Route explicitly selected Apple release qualification through the private ARM64 JIT runner with run-bound admission and isolated scratch cleanup; standalone CI remains on hosted Macs.
 - Use the supported `job.status` context for cleanup in the composite Apple action so its runner manifest loads successfully.
 

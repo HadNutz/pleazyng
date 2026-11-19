@@ -42,6 +42,9 @@ RECOVERY_FILES = frozenset({
     "docs/maintainers/full-release-build.md", "docs/maintainers/apple-jit-runner.md",
     "docs/maintainers/release-channels.md", "docs/maintainers/tizen-tv.md",
     "scripts/launch_apple_jit_runner.sh",
+    # The iOS store preflight only moves an existing entitlement failure ahead
+    # of the expensive compile; archive/export and shipped bytes are unchanged.
+    "scripts/preflight_ios_store_profile.py",
     "scripts/release_all_platforms.py",
     "scripts/prepare_gradle_repositories.py", "scripts/run_android_build.py", "scripts/gradle/plezyng-maven-mirror.init.gradle",
     "scripts/checks/test_prepare_gradle_repositories.py", "scripts/recover_release_platforms.py",

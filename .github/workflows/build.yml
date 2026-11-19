@@ -1490,6 +1490,17 @@ jobs:
           fi
           echo "configured=true" >> "$GITHUB_OUTPUT"
 
+      - name: Validate iOS App Store provisioning entitlements
+        if: steps.ios-signing.outputs.configured == 'true'
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64: ${{ env.IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64 }}
+          PLEAZYNG_REQUIRED_CAR_CAPABILITIES: ${{ vars.PLEAZYNG_REQUIRED_CAR_CAPABILITIES || 'audio,siri' }}
+        run: python3 "$GITHUB_WORKSPACE/scripts/preflight_ios_store_profile.py"
+
       - name: Pin iOS device builds to the packaged native ABI
         run: |
           set -euo pipefail
