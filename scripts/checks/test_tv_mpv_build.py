@@ -46,7 +46,7 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
             self.assertIn("https://gstreamer.freedesktop.org/src/mirror/bzip2/bzip2-${BZIP2_VERSION}.tar.gz", cross)
             self.assertIn("https://dev-www.libreoffice.org/src/libpng-${LIBPNG_VERSION}.tar.xz", linux)
             self.assertIn(
-                "https://download.savannah.gnu.org/releases/freetype/freetype-${FREETYPE_VERSION}.tar.xz",
+                "https://download-mirror.savannah.gnu.org/releases/freetype/freetype-${FREETYPE_VERSION}.tar.xz",
                 linux,
             )
             self.assertIn(
@@ -56,7 +56,7 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
             )
             self.assertIn(
                 "93cd47eb719c325107f2d3cf087d06299e944c3b48a40b55537302304dea1dd5  "
-                "https://download.savannah.gnu.org/releases/freetype/freetype-2.15.0.tar.xz",
+                "https://download-mirror.savannah.gnu.org/releases/freetype/freetype-2.15.0.tar.xz",
                 manifest,
             )
             self.assertNotIn("downloads.sourceforge.net/libpng", linux + manifest)
