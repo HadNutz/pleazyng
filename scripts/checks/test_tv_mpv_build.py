@@ -21,7 +21,7 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
         )
         (scripts / "build_libmpv_linux.sh").write_text(
             'download "https://downloads.sourceforge.net/libpng/libpng-${LIBPNG_VERSION}.tar.xz"\n'
-            'download "https://downloads.sourceforge.net/freetype/freetype-${FREETYPE_VERSION}.tar.xz"\n',
+            'download "https://downloads.sourceforge.net/freetype/freetype-${FREETYPE_VERSION}.tar.xz" "$src"\n',
             encoding="utf-8",
         )
         (scripts / "shared/_sources.sha256").write_text(
@@ -34,7 +34,7 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
         )
         return root
 
-    def test_rewrites_only_pinned_archives_to_verified_mirrors(self) -> None:
+    def test_adds_a_checksum_pinned_freetype_fallback(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             checkout = self._recipe(Path(temporary) / "recipe")
 
@@ -46,7 +46,8 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
             self.assertIn("https://gstreamer.freedesktop.org/src/mirror/bzip2/bzip2-${BZIP2_VERSION}.tar.gz", cross)
             self.assertIn("https://dev-www.libreoffice.org/src/libpng-${LIBPNG_VERSION}.tar.xz", linux)
             self.assertIn(
-                "https://download-mirror.savannah.gnu.org/releases/freetype/freetype-${FREETYPE_VERSION}.tar.xz",
+                'download "https://downloads.sourceforge.net/freetype/freetype-${FREETYPE_VERSION}.tar.xz" "$src" '
+                '"https://dev-www.libreoffice.org/src/freetype-${FREETYPE_VERSION}.tar.xz"',
                 linux,
             )
             self.assertIn(
@@ -56,11 +57,10 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
             )
             self.assertIn(
                 "93cd47eb719c325107f2d3cf087d06299e944c3b48a40b55537302304dea1dd5  "
-                "https://download-mirror.savannah.gnu.org/releases/freetype/freetype-2.15.0.tar.xz",
+                "https://downloads.sourceforge.net/freetype/freetype-2.15.0.tar.xz",
                 manifest,
             )
             self.assertNotIn("downloads.sourceforge.net/libpng", linux + manifest)
-            self.assertNotIn("downloads.sourceforge.net/freetype", linux + manifest)
 
     def test_rejects_a_changed_libpng_checksum_in_the_pinned_recipe(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

@@ -36,11 +36,13 @@ def rewrite_webos_source_mirrors(checkout):
     linux_script.write_text(linux_text.replace(libpng_sourceforge_url, libpng_mirror_url))
 
     freetype_sourceforge_url = "https://downloads.sourceforge.net/freetype/freetype-${FREETYPE_VERSION}.tar.xz"
-    freetype_mirror_url = "https://download-mirror.savannah.gnu.org/releases/freetype/freetype-${FREETYPE_VERSION}.tar.xz"
-    if linux_text.count(freetype_sourceforge_url) != 1:
+    freetype_mirror_url = "https://dev-www.libreoffice.org/src/freetype-${FREETYPE_VERSION}.tar.xz"
+    freetype_download = f'download "{freetype_sourceforge_url}" "$src"'
+    freetype_download_with_mirror = f'{freetype_download} "{freetype_mirror_url}"'
+    if linux_text.count(freetype_download) != 1:
         raise ValueError("pinned TV recipe no longer has its expected FreeType download URL")
     linux_script.write_text(
-        linux_script.read_text().replace(freetype_sourceforge_url, freetype_mirror_url)
+        linux_script.read_text().replace(freetype_download, freetype_download_with_mirror)
     )
 
     source_manifest = checkout / "scripts/shared/_sources.sha256"
@@ -58,18 +60,18 @@ def rewrite_webos_source_mirrors(checkout):
             "https://dev-www.libreoffice.org/src/libpng-1.6.59.tar.xz",
             "libpng",
         ),
-        (
-            "93cd47eb719c325107f2d3cf087d06299e944c3b48a40b55537302304dea1dd5",
-            "https://downloads.sourceforge.net/freetype/freetype-2.15.0.tar.xz",
-            "https://download-mirror.savannah.gnu.org/releases/freetype/freetype-2.15.0.tar.xz",
-            "FreeType",
-        ),
     )
     for digest, original_url, replacement_url, name in pinned_sources:
         pinned_line = f"{digest}  {original_url}"
         if manifest_text.count(pinned_line) != 1:
             raise ValueError(f"pinned TV recipe no longer has its expected {name} SHA-256 entry")
         manifest_text = manifest_text.replace(pinned_line, f"{digest}  {replacement_url}")
+    freetype_pin = (
+        "93cd47eb719c325107f2d3cf087d06299e944c3b48a40b55537302304dea1dd5  "
+        "https://downloads.sourceforge.net/freetype/freetype-2.15.0.tar.xz"
+    )
+    if manifest_text.count(freetype_pin) != 1:
+        raise ValueError("pinned TV recipe no longer has its expected FreeType SHA-256 entry")
     source_manifest.write_text(manifest_text)
 
 

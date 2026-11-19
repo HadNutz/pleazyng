@@ -5,12 +5,11 @@
 - Run exact-source Apple native release qualification on the private Apple Silicon JIT when signed App Store builds are explicitly requested; keep unsigned and standalone CI on hosted Macs.
 - Install and exercise the signed Amazon APK in an Android TV emulator before allowing store upload.
 - Archive the pinned MilkRust source before native compilation so Apple packaging cannot trigger a late lazy fetch from a failed GitHub connection.
-- Use Savannah's working official FreeType download mirror for the checksum-pinned webOS source.
+- Add a checksum-verified LibreOffice mirror fallback for FreeType so webOS builds continue when runner egress blocks SourceForge.
 - Prepare the Apple release scratch environment before source staging so iOS and macOS builds receive the hosted local APFS workspace paths.
 - Allow the Apple staging helper through both immutable-tag recovery guards.
 - Accept the hosted Apple source subtree in the sidecar cleanup guard.
 - Keep hosted Apple source checkouts under canonical `/private/tmp` so native-asset install-name updates fit the bundled macOS dylib headers.
-- Fetch webOS's checksum-pinned FreeType source from the official Savannah mirror when the restricted runner proxy blocks SourceForge.
 - Bound the pinned macOS Flutter SDK download and report slow range progress so hosted Apple setup cannot hang indefinitely on a slow byte stream.
 - Fetch the checksum-pinned webOS libpng source from the LibreOffice mirror when the restricted runner proxy blocks SourceForge.
 - Allow verified release recovery to reuse tagged platform artifacts after infrastructure-only Apple and webOS fixes.
