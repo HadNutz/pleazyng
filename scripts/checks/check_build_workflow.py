@@ -111,12 +111,14 @@ require(
 )
 ci_apple_pools = re.findall(r"(?m)^      apple_runner_pool:\n((?:        [^\n]+\n)+)", ci_text)
 require(
-    re.search(r"(?m)^      apple_runner_pool: hosted$", job("release-ci"))
+    "inputs.include_apple_store_build" in job("release-ci")
+    and "inputs.tvos_runner_pool == 'private'" in job("release-ci")
+    and "'private' || 'hosted'" in job("release-ci")
     and len(ci_apple_pools) == 2
     and all("        default: hosted\n" in pool for pool in ci_apple_pools)
     and "        type: string\n" in ci_apple_pools[0]
     and "        options: [hosted]\n" in ci_apple_pools[1],
-    "Release CI and standalone CI must use hosted Macs for unsigned Apple validation",
+    "Only explicitly signed Apple Store releases may route native CI to the selected private Apple JIT",
 )
 require(
     "inputs.action == 'release' && 'pleazyng-versioned-release-v2'" in text

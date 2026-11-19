@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Run exact-source Apple native release qualification on the private Apple Silicon JIT when signed App Store builds are explicitly requested; keep unsigned and standalone CI on hosted Macs.
 - Install and exercise the signed Amazon APK in an Android TV emulator before allowing store upload.
 - Archive the pinned MilkRust source before native compilation so Apple packaging cannot trigger a late lazy fetch from a failed GitHub connection.
 - Use Savannah's working official FreeType download mirror for the checksum-pinned webOS source.

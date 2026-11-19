@@ -243,8 +243,9 @@ jobs:
       runner_pool: public
       execution_profile: hybrid
       build_linux_packages: true
-      # CI Apple validation is unsigned and always uses hosted Macs.
-      apple_runner_pool: hosted
+      # Signed App Store releases explicitly reserve the Apple Silicon JIT for
+      # exact-source native qualification; unsigned and ordinary CI stay hosted.
+      apple_runner_pool: ${{ inputs.include_apple_store_build && inputs.tvos_runner_pool == 'private' && 'private' || 'hosted' }}
 
   freeze-qualified-source:
     name: Freeze qualified source
