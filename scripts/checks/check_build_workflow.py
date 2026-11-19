@@ -47,6 +47,7 @@ PLEZY_TORRENT_CMAKE = WORKFLOW.parents[2] / "packages/plezy_torrent/src/CMakeLis
 WEBOS_CANDIDATE_BUILDER = ROOT / "tools/webos/build_release_candidate.sh"
 WEBOS_IPK_BUILDER = ROOT / "tools/webos/build_ipk.sh"
 WEBOS_RELEASE_GATE = ROOT / "tools/webos/check_release_package.py"
+TV_MPV_BUILDER = ROOT / "scripts/tv_mpv/build.py"
 SNAP_BUILDER = ROOT / "scripts/build_snap.sh"
 TIZEN_WORKFLOW = ROOT / ".github/workflows/tizen.yml"
 RELEASE_CHECKSUMS = ROOT / "scripts/create_release_checksums.py"
@@ -2194,6 +2195,16 @@ require(
         for name in ("memory.current", "memory.max", "memory.peak", "memory.events")
     ),
     "Android release builds must limit native parallelism and log hosted memory state even on failure",
+)
+tv_mpv_builder = TV_MPV_BUILDER.read_text(encoding="utf-8")
+require(
+    '"https://gstreamer.freedesktop.org/src/mirror/bzip2/bzip2-1.0.8.tar.gz"'
+    in tv_mpv_builder
+    and "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269"
+    in tv_mpv_builder
+    and "pinned TV recipe no longer has its expected bzip2 download URL"
+    in tv_mpv_builder,
+    "webOS must use the verified checksum-pinned bzip2 mirror for hosted builds",
 )
 
 require(
