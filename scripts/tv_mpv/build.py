@@ -35,6 +35,14 @@ def rewrite_webos_source_mirrors(checkout):
         raise ValueError("pinned TV recipe no longer has its expected libpng download URL")
     linux_script.write_text(linux_text.replace(libpng_sourceforge_url, libpng_mirror_url))
 
+    freetype_sourceforge_url = "https://downloads.sourceforge.net/freetype/freetype-${FREETYPE_VERSION}.tar.xz"
+    freetype_mirror_url = "https://download.savannah.gnu.org/releases/freetype/freetype-${FREETYPE_VERSION}.tar.xz"
+    if linux_text.count(freetype_sourceforge_url) != 1:
+        raise ValueError("pinned TV recipe no longer has its expected FreeType download URL")
+    linux_script.write_text(
+        linux_script.read_text().replace(freetype_sourceforge_url, freetype_mirror_url)
+    )
+
     source_manifest = checkout / "scripts/shared/_sources.sha256"
     manifest_text = source_manifest.read_text()
     pinned_sources = (
@@ -49,6 +57,12 @@ def rewrite_webos_source_mirrors(checkout):
             "https://downloads.sourceforge.net/libpng/libpng-1.6.59.tar.xz",
             "https://dev-www.libreoffice.org/src/libpng-1.6.59.tar.xz",
             "libpng",
+        ),
+        (
+            "93cd47eb719c325107f2d3cf087d06299e944c3b48a40b55537302304dea1dd5",
+            "https://downloads.sourceforge.net/freetype/freetype-2.15.0.tar.xz",
+            "https://download.savannah.gnu.org/releases/freetype/freetype-2.15.0.tar.xz",
+            "FreeType",
         ),
     )
     for digest, original_url, replacement_url, name in pinned_sources:
