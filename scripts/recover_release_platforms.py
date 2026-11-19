@@ -46,7 +46,11 @@ RECOVERY_FILES = frozenset({
     "scripts/cache_macos_flutter_sdk.py",
     "scripts/checks/test_cache_macos_flutter_sdk.py",
     "scripts/clean_appledouble_sidecars.sh",
+    "scripts/cleanup_apple_jit_scratch.sh",
     "scripts/checks/test_clean_appledouble_sidecars.py",
+    "scripts/checks/check_build_workflow.py",
+    "scripts/checks/test_recover_release_platforms.py",
+    "scripts/checks/test_release_ci_gate.py",
     "scripts/checks/test_tv_mpv_build.py",
     # The iOS store preflight only moves an existing entitlement failure ahead
     # of the expensive compile; archive/export and shipped bytes are unchanged.

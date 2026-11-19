@@ -33,8 +33,13 @@ if [[ "${RUNNER_ENVIRONMENT:-}" == "github-hosted" ]]; then
     echo "Hosted AppleDouble cleanup requires a real RUNNER_TEMP." >&2
     exit 1
   fi
-  runner_temp_real="$(cd "$RUNNER_TEMP" && /bin/pwd -P)"
-  task_root="$runner_temp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
+  hosted_tmp_real="${PLEZYNG_HOSTED_APPLE_SCRATCH_ROOT:-}"
+  if [[ -z "$hosted_tmp_real" || ! -d "$hosted_tmp_real" || -L "$hosted_tmp_real" \
+      || "$(cd "$hosted_tmp_real" && /bin/pwd -P)" != "$hosted_tmp_real" ]]; then
+    echo "Hosted Apple scratch root is missing or redirected: $hosted_tmp_real" >&2
+    exit 1
+  fi
+  task_root="$hosted_tmp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
   hosted_source_root="$task_root/source"
   if [[ -L "$task_root" || ! -d "$task_root" || "$(cd "$task_root" && /bin/pwd -P)" != "$task_root" \
       || "$workspace" != "$hosted_source_root" || -L "$workspace" || ! -d "$workspace" \

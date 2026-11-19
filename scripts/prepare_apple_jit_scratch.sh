@@ -43,23 +43,29 @@ if [[ -z "${GITHUB_SHA:-}" || -z "${GITHUB_ENV:-}" || ! -w "$GITHUB_ENV" ]]; the
 fi
 
 # GitHub-hosted macOS runners do not mount the private NFS workspace. Keep the
-# same short, per-run path contract entirely inside RUNNER_TEMP; the hosted VM
-# is already disposable, and the paired cleanup helper removes these exact
-# task-owned directories before the job exits.
+# source checkout under /tmp (canonicalized to /private/tmp on macOS): Dart's
+# native-assets hook writes absolute Mach-O install names, and RUNNER_TEMP's
+# longer path can exceed the bundled libsmb2 dylib's load-command padding. The
+# hosted VM is disposable, and cleanup removes these exact task-owned paths.
 if [[ "${RUNNER_ENVIRONMENT:-}" == "github-hosted" ]]; then
   if [[ -z "${RUNNER_TEMP:-}" || ! -d "$RUNNER_TEMP" ]]; then
     echo "A real RUNNER_TEMP directory is required for hosted Apple scratch." >&2
     exit 1
   fi
-  runner_temp_real="$(cd "$RUNNER_TEMP" && /bin/pwd -P)"
-  free_kib="$(/bin/df -Pk "$runner_temp_real" | /usr/bin/awk 'NR == 2 { print $4 }')"
+  hosted_tmp_real="$(cd /tmp && /bin/pwd -P)"
+  if [[ "$hosted_tmp_real" != "/private/tmp" ]]; then
+    echo "Expected the canonical hosted macOS scratch root /private/tmp; found: $hosted_tmp_real" >&2
+    exit 1
+  fi
+  free_kib="$(/bin/df -Pk "$hosted_tmp_real" | /usr/bin/awk 'NR == 2 { print $4 }')"
   minimum_free_kib=$((minimum_free_gib * 1024 * 1024))
   if [[ ! "$free_kib" =~ ^[0-9]+$ ]] || (( free_kib < minimum_free_kib )); then
     echo "Hosted Apple scratch needs ${minimum_free_gib} GiB free before starting." >&2
-    /bin/df -h "$runner_temp_real" >&2
+    /bin/df -h "$hosted_tmp_real" >&2
     exit 1
   fi
-  task_root="$runner_temp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
+  task_root="$hosted_tmp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
+  runner_temp_real="$(cd "$RUNNER_TEMP" && /bin/pwd -P)"
   local_xcode_root="$runner_temp_real/pleazyng-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}-xcode"
   local_source_root="$task_root/source"
   local_build_dir="$local_xcode_root/build"
@@ -71,6 +77,7 @@ if [[ "${RUNNER_ENVIRONMENT:-}" == "github-hosted" ]]; then
   /bin/mkdir -m 700 "$task_root" "$local_source_root" "$local_xcode_root" "$local_build_dir"
   {
     printf 'APPLE_HOSTED_SCRATCH=1\n'
+    printf 'PLEZYNG_HOSTED_APPLE_SCRATCH_ROOT=%s\n' "$hosted_tmp_real"
     printf 'PLEZYNG_APPLE_TASK_ROOT=%s\n' "$task_root"
     printf 'PLEZYNG_APPLE_WORKSPACE=%s\n' "$local_source_root"
     printf 'PLEZYNG_APPLE_LOCAL_SOURCE_ROOT=%s\n' "$local_source_root"
@@ -80,7 +87,7 @@ if [[ "${RUNNER_ENVIRONMENT:-}" == "github-hosted" ]]; then
     printf 'APPLE_DERIVED_DATA_PATH=%s/DerivedData\n' "$local_xcode_root"
     printf 'APPLE_RESULT_BUNDLE=%s/apple-native-reliability.xcresult\n' "$local_xcode_root"
   } >> "$GITHUB_ENV"
-  echo "Prepared hosted per-run Apple scratch under $runner_temp_real." >&2
+  echo "Prepared hosted Apple source under $task_root and Xcode scratch under $runner_temp_real." >&2
   printf '%s\n' "$task_root"
   exit 0
 fi

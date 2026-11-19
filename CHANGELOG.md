@@ -5,6 +5,7 @@
 - Prepare the Apple release scratch environment before source staging so iOS and macOS builds receive the hosted local APFS workspace paths.
 - Allow the Apple staging helper through both immutable-tag recovery guards.
 - Accept the hosted Apple source subtree in the sidecar cleanup guard.
+- Keep hosted Apple source checkouts under canonical `/private/tmp` so native-asset install-name updates fit the bundled macOS dylib headers.
 - Bound the pinned macOS Flutter SDK download and report slow range progress so hosted Apple setup cannot hang indefinitely on a slow byte stream.
 - Fetch the checksum-pinned webOS libpng source from the LibreOffice mirror when the restricted runner proxy blocks SourceForge.
 - Allow verified release recovery to reuse tagged platform artifacts after infrastructure-only Apple and webOS fixes.

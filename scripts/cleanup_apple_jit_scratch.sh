@@ -27,8 +27,14 @@ if [[ "${APPLE_HOSTED_SCRATCH:-}" == 1 ]]; then
     echo "RUNNER_TEMP is unavailable; refusing hosted Apple scratch cleanup." >&2
     exit 1
   fi
+  hosted_tmp_real="${PLEZYNG_HOSTED_APPLE_SCRATCH_ROOT:-}"
+  if [[ -z "$hosted_tmp_real" || ! -d "$hosted_tmp_real" || -L "$hosted_tmp_real" \
+      || "$(cd "$hosted_tmp_real" && /bin/pwd -P)" != "$hosted_tmp_real" ]]; then
+    echo "Hosted Apple scratch root is missing or redirected: $hosted_tmp_real" >&2
+    exit 1
+  fi
   runner_temp_real="$(cd "$RUNNER_TEMP" && /bin/pwd -P)"
-  task_root="$runner_temp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
+  task_root="$hosted_tmp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
   local_xcode_root="$runner_temp_real/pleazyng-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}-xcode"
   for path in "$task_root" "$local_xcode_root"; do
     if [[ -L "$path" || ( -e "$path" && ! -d "$path" ) ]]; then

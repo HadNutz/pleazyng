@@ -27,6 +27,7 @@ class HostedCleanupTests(unittest.TestCase):
         sha = subprocess.check_output(['git', '-C', str(self.workspace), 'rev-parse', 'HEAD'], text=True).strip()
         self.environment = {**os.environ, 'RUNNER_OS': 'macOS', 'RUNNER_ENVIRONMENT': 'github-hosted',
                             'RUNNER_TEMP': str(self.root), 'GITHUB_RUN_ID': '123', 'GITHUB_RUN_ATTEMPT': '1',
+                            'PLEZYNG_HOSTED_APPLE_SCRATCH_ROOT': str(self.root),
                             'GITHUB_JOB': 'build-macos', 'GITHUB_SHA': sha}
         self.sidecar = source_dir / '._source.dart'
         self.sidecar.write_text('task-owned sidecar')

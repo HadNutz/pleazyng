@@ -1401,6 +1401,9 @@ require(
     and 'readonly NFS_PRIMARY_MOUNT="/Volumes/plezyng-native-build-kspld0"' in apple_scratch_script
     and 'if [[ "$short_source" != "$primary_source" ]]' in apple_scratch_script
     and all('readonly NFS_MOUNT="/Volumes/plezyng-native-build-kspld0"' not in script for script in apple_scratch_helper_scripts)
+    and 'hosted_tmp_real="$(cd /tmp && /bin/pwd -P)"' in apple_scratch_script
+    and '[[ "$hosted_tmp_real" != "/private/tmp" ]]' in apple_scratch_script
+    and "printf 'PLEZYNG_HOSTED_APPLE_SCRATCH_ROOT=%s\\n' \"$hosted_tmp_real\"" in apple_scratch_script
     and 'expected_cloned_dir="/Volumes/p/runs/' in (ROOT / "scripts/refresh_apple_spm.sh").read_text(),
     "Apple source workspaces must use the short NFS alias so native-asset install names fit Mach-O headers",
 )

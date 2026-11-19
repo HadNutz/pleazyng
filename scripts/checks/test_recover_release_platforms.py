@@ -46,8 +46,12 @@ class SourceProofTests(unittest.TestCase):
         paths = {
             "scripts/cache_macos_flutter_sdk.py",
             "scripts/checks/test_cache_macos_flutter_sdk.py",
+            "scripts/cleanup_apple_jit_scratch.sh",
             "scripts/clean_appledouble_sidecars.sh",
             "scripts/checks/test_clean_appledouble_sidecars.py",
+            "scripts/checks/check_build_workflow.py",
+            "scripts/checks/test_recover_release_platforms.py",
+            "scripts/checks/test_release_ci_gate.py",
             "scripts/tv_mpv/build.py",
             "scripts/checks/test_tv_mpv_build.py",
         }
