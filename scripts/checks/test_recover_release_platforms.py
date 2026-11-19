@@ -166,6 +166,19 @@ class SourceProofTests(unittest.TestCase):
     def test_all_platforms_can_be_recovered_after_only_bootstrap_fix(self):
         self.assertEqual(self.prove()["source_sha"], "a" * 40)
 
+    def test_android_heap_and_tv_mirror_fixes_are_infrastructure_only(self):
+        self.compare["files"] = [
+            {"filename": path}
+            for path in (
+                "CHANGELOG.md",
+                "android/gradle.properties",
+                "scripts/checks/check_build_workflow.py",
+                "scripts/tv_mpv/build.py",
+                "scripts/tv_mpv/video.patch",
+            )
+        ]
+        self.assertEqual(self.prove()["source_sha"], "a" * 40)
+
     def test_cancelled_or_timed_out_android_requires_a_new_build(self):
         for conclusion in ("cancelled", "timed_out"):
             with self.subTest(conclusion=conclusion):
