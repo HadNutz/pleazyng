@@ -2178,7 +2178,8 @@ require(
     "Android FFmpeg prefetch must support the selected runner egress and verify its pinned SHA-256",
 )
 require(
-    "-Xmx3G" in android_gradle_properties
+    "-Xmx6G" in android_gradle_properties
+    and "-XX:ActiveProcessorCount=2" in android_gradle_properties
     and "kotlin.compiler.execution.strategy=in-process" in android_gradle_properties
     and "org.gradle.workers.max=1" in android_gradle_properties
     and "android.nonFinalResIds=false" in android_gradle_properties
