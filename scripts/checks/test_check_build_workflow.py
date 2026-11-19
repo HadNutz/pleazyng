@@ -880,6 +880,11 @@ sys.exit(1 if len(calls) <= int(os.environ['FAIL_UNTIL']) else 0)
         self.assertIn("release tags must be immutable ancestors of trusted main", result.stderr)
 
     def test_release_tag_changed_path_allowlist_is_required(self) -> None:
+        self.assertIn(
+            "scripts/prepare_apple_jit_scratch.sh",
+            self._workflow(),
+            "Apple workspace staging must be allowed by the workflow's frozen-tag guard",
+        )
         workflow = self._workflow().replace(
             "tools/webos/compatibility.json|",
             "",
