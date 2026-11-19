@@ -42,6 +42,18 @@ class SourceProofTests(unittest.TestCase):
         self.jobs += [{"name": "build-android", "status": "completed", "conclusion": "failure"},
                       {"name": "create-release", "status": "completed", "conclusion": "skipped"}]
 
+    def test_infrastructure_recovery_accepts_ci_fixes_already_allowlisted_for_frozen_tags(self):
+        paths = {
+            "scripts/cache_macos_flutter_sdk.py",
+            "scripts/checks/test_cache_macos_flutter_sdk.py",
+            "scripts/clean_appledouble_sidecars.sh",
+            "scripts/checks/test_clean_appledouble_sidecars.py",
+            "scripts/tv_mpv/build.py",
+            "scripts/checks/test_tv_mpv_build.py",
+        }
+        self.assertTrue(paths <= recovery.RECOVERY_FILES)
+        self.assertTrue(paths <= controller.RELEASE_TAG_REUSE_ALLOWLIST)
+
     def prove(self, *, run_id=42, head_sha="b" * 40, version="3.0.0", **options):
         with patch.object(recovery, "api", side_effect=[self.source, self.compare]), \
              patch.object(recovery, "collection", return_value=self.jobs), \

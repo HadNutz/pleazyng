@@ -43,6 +43,11 @@ RECOVERY_FILES = frozenset({
     "docs/maintainers/release-channels.md", "docs/maintainers/tizen-tv.md",
     "scripts/launch_apple_jit_runner.sh",
     "scripts/prepare_apple_jit_scratch.sh",
+    "scripts/cache_macos_flutter_sdk.py",
+    "scripts/checks/test_cache_macos_flutter_sdk.py",
+    "scripts/clean_appledouble_sidecars.sh",
+    "scripts/checks/test_clean_appledouble_sidecars.py",
+    "scripts/checks/test_tv_mpv_build.py",
     # The iOS store preflight only moves an existing entitlement failure ahead
     # of the expensive compile; archive/export and shipped bytes are unchanged.
     "scripts/preflight_ios_store_profile.py",
