@@ -457,6 +457,7 @@ runs:
       env:
         APPLE_JIT_JOB_STATUS: ${{ job.status }}
         APPLE_HOSTED_SCRATCH: ${{ steps.scratch.outputs.APPLE_HOSTED_SCRATCH }}
+        PLEZYNG_HOSTED_APPLE_SCRATCH_ROOT: ${{ steps.scratch.outputs.PLEZYNG_HOSTED_APPLE_SCRATCH_ROOT }}
         APPLE_SCRATCH_JOB: ${{ steps.scratch.outputs.project }}
         SUITE_ROOT: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
         CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}

@@ -37,6 +37,11 @@ for checker in \
 done
 
 for guard_test in scripts/test_*.py scripts/*/test_*.py tools/dv-engine/test_apple_runtime.py; do
+  # Command-driven device QA scripts require an artifact and attached device;
+  # their owning QA workflow supplies those arguments instead of the unit-test glob.
+  if [[ "$guard_test" == scripts/qa/* ]]; then
+    continue
+  fi
   # This compiles and executes the native descriptor worker against libretro
   # headers provisioned by its dedicated workflow; it is not a unit guard.
   if [[ "$guard_test" == "scripts/games/test_romm_descriptor_worker.py" ]]; then

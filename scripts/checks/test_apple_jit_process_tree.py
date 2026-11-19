@@ -382,8 +382,12 @@ class CancellationTests(unittest.TestCase):
 
         action = yaml.safe_load((ROOT / ".github/actions/apple-native-reliability/action.yml").read_text())
         for step in action['runs']['steps']:
-            if 'APPLE_JIT_JOB_STATUS' in step.get('env', {}):
+            if 'bash scripts/cleanup_apple_jit_scratch.sh' in step.get('run', ''):
                 self.assertEqual(step['env']['APPLE_JIT_JOB_STATUS'], '${{ job.status }}')
+                self.assertEqual(
+                    step.get('env', {}).get('PLEZYNG_HOSTED_APPLE_SCRATCH_ROOT'),
+                    '${{ steps.scratch.outputs.PLEZYNG_HOSTED_APPLE_SCRATCH_ROOT }}',
+                )
 
 
 class DarwinAdapterTests(unittest.TestCase):
