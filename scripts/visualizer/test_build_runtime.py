@@ -6,6 +6,7 @@ import os
 from unittest import mock
 import subprocess
 import tempfile
+import tarfile
 import unittest
 
 import build_runtime
@@ -216,6 +217,17 @@ class RuntimeReceiptTests(unittest.TestCase):
             self.assertFalse((source / 'content').exists())
             self.assertEqual(subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD'], text=True).strip(), revision)
             self.assertEqual(subprocess.check_output(['git', '-C', str(source), 'status', '--porcelain']), b'')
+
+            archive = root / 'milkrust-source.tar.gz'
+            build_runtime.archive_runtime_source(source, revision, archive)
+            first_digest = build_runtime.digest(archive)
+            with tarfile.open(archive, 'r:gz') as bundle:
+                names = bundle.getnames()
+            self.assertIn(f'milkrust-{revision}/Cargo.toml', names)
+            self.assertTrue(any(name.startswith(f'milkrust-{revision}/crates/') for name in names))
+            self.assertFalse(any('/content/' in name for name in names))
+            build_runtime.archive_runtime_source(source, revision, archive)
+            self.assertEqual(build_runtime.digest(archive), first_digest)
 
     def test_hosted_private_and_local_build_contexts_are_distinct(self):
         self.assertEqual(build_runtime.build_context({}), ("local", "local", None))

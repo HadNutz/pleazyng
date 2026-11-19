@@ -50,6 +50,17 @@ def checkout_runtime_source(source, revision):
     run("git", "checkout", "--detach", revision, cwd=source)
 
 
+def archive_runtime_source(source, revision, destination):
+    """Materialize the exact corresponding-source archive before compilation."""
+    source_tar = destination.with_suffix(".tar")
+    run("git", "archive", "--format=tar", f"--prefix=milkrust-{revision}/", "-o", source_tar,
+        revision, "--", *SOURCE_PATHS, cwd=source)
+    with source_tar.open("rb") as original, destination.open("wb") as file:
+        with gzip.GzipFile(filename="", fileobj=file, mode="wb", mtime=0) as compressed:
+            shutil.copyfileobj(original, compressed)
+    source_tar.unlink()
+
+
 def valid_files(output, files):
     if not isinstance(files, dict) or not files or len(files) > 32:
         return False
@@ -159,6 +170,11 @@ def build(args):
         actual = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=source, text=True).strip()
         if actual != lock["commit"]:
             raise ValueError("MilkRust source identity changed")
+        # A partial clone may otherwise lazily fetch archive blobs after Cargo
+        # has spent many minutes compiling. Fetch and freeze the exact source
+        # archive now, while source-network failures are still cheap to retry.
+        source_archive = work / "milkrust-source.tar.gz"
+        archive_runtime_source(source, lock["commit"], source_archive)
         env = os.environ.copy()
         for name in list(env):
             if name in ("RUSTFLAGS", "CARGO_ENCODED_RUSTFLAGS", "CC", "CXX", "AR", "CFLAGS", "CXXFLAGS") or name.startswith(("CC_", "CXX_", "AR_", "CFLAGS_", "CXXFLAGS_", "CARGO_TARGET_")):
@@ -210,12 +226,7 @@ def build(args):
             run("xcrun", "lipo", "-create", *libraries, "-output", staged / "libmilkrust_native.a")
         assets = staged / "assets" / "visualizer-notices"
         assets.mkdir(parents=True)
-        source_tar = work / "source.tar"
-        run("git", "archive", "--format=tar", f"--prefix=milkrust-{lock['commit']}/", "-o", source_tar,
-            lock["commit"], "--", *SOURCE_PATHS, cwd=source)
-        with source_tar.open("rb") as original, (assets / "milkrust-source.tar.gz").open("wb") as file:
-            with gzip.GzipFile(filename="", fileobj=file, mode="wb", mtime=0) as compressed:
-                shutil.copyfileobj(original, compressed)
+        shutil.copyfile(source_archive, assets / "milkrust-source.tar.gz")
         notice = (ROOT / "native/visualizer/notices/MilkRust-AGPL-3.0.txt").read_text()
         notice += "\n\nHLSLParser (MIT):\n" + (source / "crates/milkrust-hlsl/vendor/hlslparser/LICENSE").read_text()
         notice += "\n\nMilkRust core third-party notices:\n" + (source / "crates/milkrust-core/THIRD_PARTY_NOTICES.md").read_text()

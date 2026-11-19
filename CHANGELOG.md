@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Archive the pinned MilkRust source before native compilation so Apple packaging cannot trigger a late lazy fetch from a failed GitHub connection.
+- Use Savannah's working official FreeType download mirror for the checksum-pinned webOS source.
 - Prepare the Apple release scratch environment before source staging so iOS and macOS builds receive the hosted local APFS workspace paths.
 - Allow the Apple staging helper through both immutable-tag recovery guards.
 - Accept the hosted Apple source subtree in the sidecar cleanup guard.

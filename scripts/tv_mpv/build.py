@@ -36,7 +36,7 @@ def rewrite_webos_source_mirrors(checkout):
     linux_script.write_text(linux_text.replace(libpng_sourceforge_url, libpng_mirror_url))
 
     freetype_sourceforge_url = "https://downloads.sourceforge.net/freetype/freetype-${FREETYPE_VERSION}.tar.xz"
-    freetype_mirror_url = "https://download.savannah.gnu.org/releases/freetype/freetype-${FREETYPE_VERSION}.tar.xz"
+    freetype_mirror_url = "https://download-mirror.savannah.gnu.org/releases/freetype/freetype-${FREETYPE_VERSION}.tar.xz"
     if linux_text.count(freetype_sourceforge_url) != 1:
         raise ValueError("pinned TV recipe no longer has its expected FreeType download URL")
     linux_script.write_text(
@@ -61,7 +61,7 @@ def rewrite_webos_source_mirrors(checkout):
         (
             "93cd47eb719c325107f2d3cf087d06299e944c3b48a40b55537302304dea1dd5",
             "https://downloads.sourceforge.net/freetype/freetype-2.15.0.tar.xz",
-            "https://download.savannah.gnu.org/releases/freetype/freetype-2.15.0.tar.xz",
+            "https://download-mirror.savannah.gnu.org/releases/freetype/freetype-2.15.0.tar.xz",
             "FreeType",
         ),
     )
