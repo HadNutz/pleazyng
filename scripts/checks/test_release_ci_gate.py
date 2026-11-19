@@ -54,6 +54,18 @@ class AppleRunnerRoutingTests(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertIn(path, case)
 
+    def test_macos_flutter_download_deadline_is_allowlisted_by_both_tag_guards(self) -> None:
+        paths = {
+            "scripts/cache_macos_flutter_sdk.py",
+            "scripts/checks/test_cache_macos_flutter_sdk.py",
+        }
+        self.assertTrue(paths <= RELEASE_TAG_REUSE_ALLOWLIST)
+        workflow = (ROOT / ".github/workflows/build.yml").read_text(encoding="utf-8")
+        case = workflow.split('case "$changed_file" in', 1)[1].split("              *)", 1)[0]
+        for path in paths:
+            with self.subTest(path=path):
+                self.assertIn(path, case)
+
     def test_automatic_route_uses_compatible_hosted_apple_first(self) -> None:
         self.assertEqual(select_apple_runner_pool("auto"), "hosted")
 

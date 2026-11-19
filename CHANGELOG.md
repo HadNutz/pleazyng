@@ -5,6 +5,7 @@
 - Prepare the Apple release scratch environment before source staging so iOS and macOS builds receive the hosted local APFS workspace paths.
 - Allow the Apple staging helper through both immutable-tag recovery guards.
 - Accept the hosted Apple source subtree in the sidecar cleanup guard.
+- Bound the pinned macOS Flutter SDK download and report slow range progress so hosted Apple setup cannot hang indefinitely on a slow byte stream.
 - Resolve any additional release qualification issues found during the 3.0.39 build.
 
 ## [3.0.39] - 2026-11-18

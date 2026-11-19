@@ -197,6 +197,46 @@ class FlutterSdkCacheTest(unittest.TestCase):
                     self.assertEqual(list(Path(temporary).glob(".*.part-*")), [])
             self.assertEqual(len(head_requests), 1, "the preflight size must avoid a second HEAD")
 
+    def test_slow_trickling_range_obeys_one_total_archive_deadline(self) -> None:
+        payload = b"abc"
+
+        class SlowRangeHandler(BaseHTTPRequestHandler):
+            def do_GET(self) -> None:
+                self.send_response(206)
+                self.send_header("Content-Range", f"bytes 0-2/{len(payload)}")
+                self.send_header("Content-Length", str(len(payload)))
+                self.end_headers()
+                try:
+                    for byte in payload:
+                        self.wfile.write(bytes([byte]))
+                        self.wfile.flush()
+                        threading.Event().wait(0.04)
+                except (BrokenPipeError, ConnectionResetError):
+                    pass
+
+            def log_message(self, format: str, *args: object) -> None:
+                return
+
+        server = ThreadingHTTPServer(("127.0.0.1", 0), SlowRangeHandler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+        self.addCleanup(thread.join, 2)
+
+        with tempfile.TemporaryDirectory() as temporary, patch(
+            "scripts.cache_macos_flutter_sdk.ARCHIVE_DOWNLOAD_TIMEOUT_SECONDS", 0.06
+        ):
+            with self.assertRaisesRegex(RuntimeError, "total deadline"):
+                download_archive(
+                    f"http://127.0.0.1:{server.server_port}/flutter.zip",
+                    sha256(payload).hexdigest(),
+                    Path(temporary) / "flutter.zip",
+                    segment_bytes=len(payload),
+                    max_workers=1,
+                    expected_size=len(payload),
+                )
+
     def test_invalid_download_size_never_starts_a_network_request(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             for invalid in (0, -1, True, 1.5):

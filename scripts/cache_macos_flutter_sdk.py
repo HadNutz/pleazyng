@@ -29,6 +29,8 @@ SEGMENT_BYTES = 64 * 1024 * 1024
 MAX_WORKERS = 16
 MAX_ATTEMPTS = 8
 READ_SIZE = 1024 * 1024
+REQUEST_TIMEOUT_SECONDS = 90
+ARCHIVE_DOWNLOAD_TIMEOUT_SECONDS = 15 * 60
 # Keep this per-job SDK cache under RUNNER_TEMP so the worker removes it after
 # each job. Account for the actual download/extraction peak plus metadata
 # headroom. Build workspaces live on NFS; local APFS needs only a small reserve
@@ -205,13 +207,19 @@ def _archive_length(url: str) -> int:
     return length
 
 
-def _download_range(url: str, path: Path, start: int, end: int, total: int) -> Path:
+def _download_range(url: str, path: Path, start: int, end: int, total: int, deadline: float) -> Path:
     expected_size = end - start + 1
     _require_regular_or_missing(path)
     if path.exists() and path.stat().st_size > expected_size:
         path.unlink()
 
     for attempt in range(MAX_ATTEMPTS):
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise RuntimeError(
+                f"Flutter archive download exceeded its {ARCHIVE_DOWNLOAD_TIMEOUT_SECONDS}s total deadline "
+                f"while fetching range {start}-{end}"
+            )
         current_size = path.stat().st_size if path.exists() else 0
         if current_size == expected_size:
             return path
@@ -225,21 +233,51 @@ def _download_range(url: str, path: Path, start: int, end: int, total: int) -> P
             },
         )
         try:
-            with urllib.request.urlopen(request, timeout=90) as response:
+            with urllib.request.urlopen(request, timeout=min(REQUEST_TIMEOUT_SECONDS, remaining)) as response:
                 content_range = response.headers.get("Content-Range", "")
                 match = CONTENT_RANGE_RE.fullmatch(content_range)
                 if response.getcode() != 206 or not match:
                     raise RuntimeError("Flutter archive server ignored a byte-range request")
                 if tuple(map(int, match.groups())) != (offset, end, total):
                     raise RuntimeError("Flutter archive server returned the wrong byte range")
+                transferred = current_size
+                last_progress = time.monotonic()
                 with path.open("ab" if current_size else "wb") as output:
-                    while chunk := response.read(READ_SIZE):
+                    while True:
+                        remaining = deadline - time.monotonic()
+                        if remaining <= 0:
+                            raise TimeoutError("total Flutter archive download deadline expired")
+                        # read1 returns available data without waiting to fill the
+                        # full buffer, so the total deadline is checked between
+                        # network reads even when a server slowly trickles bytes.
+                        raw = getattr(getattr(response, "fp", None), "raw", None)
+                        sock = getattr(raw, "_sock", None)
+                        if sock is not None:
+                            sock.settimeout(min(REQUEST_TIMEOUT_SECONDS, remaining))
+                        reader = getattr(response, "read1", response.read)
+                        chunk = reader(READ_SIZE)
+                        if not chunk:
+                            break
                         output.write(chunk)
+                        transferred += len(chunk)
+                        now = time.monotonic()
+                        if now - last_progress >= 60:
+                            print(
+                                f"Flutter archive range {start}-{end}: "
+                                f"{transferred:,}/{expected_size:,} bytes received.",
+                                flush=True,
+                            )
+                            last_progress = now
             actual_size = path.stat().st_size
             if actual_size == expected_size:
                 return path
             raise OSError(f"short range download: received {actual_size} of {expected_size} bytes")
         except (OSError, urllib.error.URLError, RuntimeError) as exc:
+            if time.monotonic() >= deadline:
+                raise RuntimeError(
+                    f"Flutter archive download exceeded its {ARCHIVE_DOWNLOAD_TIMEOUT_SECONDS}s total deadline "
+                    f"while fetching range {start}-{end}: {exc}"
+                ) from exc
             if attempt + 1 == MAX_ATTEMPTS:
                 raise RuntimeError(f"Flutter archive range {start}-{end} failed after retries: {exc}") from exc
             delay = min(2**attempt, 30)
@@ -249,7 +287,7 @@ def _download_range(url: str, path: Path, start: int, end: int, total: int) -> P
                 file=sys.stderr,
                 flush=True,
             )
-            time.sleep(delay)
+            time.sleep(min(delay, max(0, deadline - time.monotonic())))
     raise AssertionError("unreachable download retry state")
 
 
@@ -293,9 +331,10 @@ def download_archive(
         f"({total / 1024**3:.2f} GiB, {min(max_workers, len(ranges))} connections).",
         flush=True,
     )
+    download_deadline = time.monotonic() + ARCHIVE_DOWNLOAD_TIMEOUT_SECONDS
     with ThreadPoolExecutor(max_workers=min(max_workers, len(ranges))) as executor:
         futures = [
-            executor.submit(_download_range, url, part, start, end, total)
+            executor.submit(_download_range, url, part, start, end, total, download_deadline)
             # Apple Silicon JIT runners may provide Python 3.9, which predates
             # zip(strict=...). Both lists are built from the same range count.
             for part, (start, end) in zip(parts, ranges)
