@@ -128,6 +128,7 @@ task_root="$NFS_RUNS_ROOT/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}
 owner_file="$NFS_RUNS_ROOT/.plezyng-apple-scratch-p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}.owner"
 local_xcode_root=""
 local_build_dir=""
+local_source_root=""
 if [[ "$scratch_mode" == "local-xcode" ]]; then
   if [[ -z "${RUNNER_TEMP:-}" || ! -d "$RUNNER_TEMP" ]]; then
     echo "A real RUNNER_TEMP directory is required for local Xcode scratch." >&2
@@ -136,12 +137,16 @@ if [[ "$scratch_mode" == "local-xcode" ]]; then
   runner_temp_real="$(cd "$RUNNER_TEMP" && /bin/pwd -P)"
   local_xcode_root="$runner_temp_real/pleazyng-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}-xcode"
   local_build_dir="$local_xcode_root/build"
+  if [[ "${GITHUB_JOB:-}" == build-ios || "${GITHUB_JOB:-}" == build-macos ]]; then
+    local_tmp_real="$(cd /tmp && /bin/pwd -P)"
+    local_source_root="$local_tmp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
+  fi
 fi
 if (( ${#task_root} > 64 )); then
   echo "NFS Apple workspace path is unexpectedly long (${#task_root} characters): $task_root" >&2
   exit 1
 fi
-if [[ -e "$task_root" || -L "$task_root" || -e "$owner_file" || -L "$owner_file" || ( -n "$local_xcode_root" && ( -e "$local_xcode_root" || -L "$local_xcode_root" ) ) ]]; then
+if [[ -e "$task_root" || -L "$task_root" || -e "$owner_file" || -L "$owner_file" || ( -n "$local_xcode_root" && ( -e "$local_xcode_root" || -L "$local_xcode_root" ) ) || ( -n "$local_source_root" && ( -e "$local_source_root" || -L "$local_source_root" ) ) ]]; then
   echo "Refusing to reuse existing Apple JIT scratch paths: $task_root ${local_xcode_root:+and $local_xcode_root}" >&2
   exit 1
 fi
@@ -154,6 +159,9 @@ cleanup_partial() {
   trap - EXIT
   if (( created_local_xcode_root )) && [[ -n "$local_xcode_root" && -d "$local_xcode_root" && ! -L "$local_xcode_root" ]]; then
     /bin/rm -rf -- "$local_xcode_root"
+  fi
+  if [[ -n "$local_source_root" && -d "$local_source_root" && ! -L "$local_source_root" ]]; then
+    /bin/rm -rf -- "$local_source_root"
   fi
   if (( created_root )) && [[ "$task_root" == "$NFS_RUNS_ROOT/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}" && -d "$task_root" && ! -L "$task_root" ]]; then
     /bin/rm -rf -- "$task_root"
@@ -172,6 +180,9 @@ if [[ -n "$local_xcode_root" ]]; then
   /bin/mkdir -m 700 "$local_xcode_root"
   created_local_xcode_root=1
   /bin/mkdir -m 700 "$local_build_dir"
+  if [[ -n "$local_source_root" ]]; then
+    /bin/mkdir -m 700 "$local_source_root"
+  fi
 fi
 {
   printf 'run_id=%s\n' "$GITHUB_RUN_ID"
@@ -181,6 +192,7 @@ fi
   printf 'scratch_mode=%s\n' "$scratch_mode"
   printf 'task_root=%s\n' "$task_root"
   printf 'local_xcode_root=%s\n' "$local_xcode_root"
+  printf 'local_source_root=%s\n' "$local_source_root"
 } > "$owner_file"
 created_owner=1
 
@@ -197,7 +209,10 @@ probe_dir="$task_root/.nfs-probe"
 {
   printf 'PLEZYNG_APPLE_TASK_ROOT=%s\n' "$task_root"
   printf 'PLEZYNG_APPLE_TASK_OWNER_FILE=%s\n' "$owner_file"
-  printf 'PLEZYNG_APPLE_WORKSPACE=%s\n' "$task_root"
+  printf 'PLEZYNG_APPLE_WORKSPACE=%s\n' "${local_source_root:-$task_root}"
+  if [[ -n "$local_source_root" ]]; then
+    printf 'PLEZYNG_APPLE_LOCAL_SOURCE_ROOT=%s\n' "$local_source_root"
+  fi
   printf 'APPLE_LOCAL_BUILD_DIR=%s\n' "$local_build_dir"
   if [[ -n "$local_xcode_root" ]]; then
     printf 'APPLE_SCRATCH_MODE=%s\n' "$scratch_mode"

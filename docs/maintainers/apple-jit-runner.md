@@ -308,7 +308,7 @@ Every platform remains required, including the verified original webOS IPK.
 The macOS workflow validates its Developer ID identity, signs and verifies a
 small native executable with Apple's timestamp service, and checks notary API
 authentication immediately after checkout. These steps precede Flutter setup,
-NFS source preparation, CocoaPods and application compilation. A certificate
+local APFS source preparation, CocoaPods and application compilation. A certificate
 or credential failure should take minutes rather than discard a completed
 application build.
 
@@ -317,7 +317,12 @@ its own temporary keychain. It selects the one valid identity for the configured
 team and does not depend on an interactive login keychain or previous GUI use
 of the CI account. Cleanup restores the original keychain search list, preserves
 any later additions, and deletes only this job's keychain and credential files.
-It also runs when signing fails before the NFS workspace exists.
+It also runs when signing fails before the NFS scratch root exists. For private
+iOS and macOS release builds, the exact pinned commit is fetched from the
+canonical GitHub remote into a short-path local APFS checkout before Flutter or
+Xcode reads the source tree. This avoids traversing the NFS checkout for Git
+metadata or source files. NFS is limited to task-owned shared scratch metadata;
+SwiftPM, DerivedData, archives, and build outputs stay on local APFS.
 
 The 3.0.3 attempt at `63f6d4ca4` compiled the application successfully but failed
 at identity validation; the headless account also lacked the Developer ID

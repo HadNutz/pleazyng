@@ -3,6 +3,7 @@
 
 import importlib.util
 import os
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -59,17 +60,26 @@ class SourceCopyTests(unittest.TestCase):
             self.assertFalse((self.destination / name).exists())
             self.assertTrue((self.source / name).exists())
         self.assertNotIn("fixture-header", (self.destination / ".git/config").read_text())
-        self.assertEqual((self.destination / ".git/objects/info/alternates").read_text().strip(),
-                         str(self.source / ".git/objects"))
+        self.assertFalse((self.destination / ".git/objects/info/alternates").exists())
+        # The staged repository owns its objects; source-side NFS access is
+        # unnecessary after the one-time copy completes.
+        shutil.rmtree(self.source / ".git")
+        self.assertEqual(self.git("log", "-1", "--format=%H", root=self.destination), self.revision)
 
-    def test_rejects_modified_or_staged_tracked_sources_before_copying(self):
-        for staged in [False, True]:
-            with self.subTest(staged=staged):
-                (self.source / "script.sh").write_text("changed source")
-                if staged:
-                    self.git("add", "script.sh")
-                with self.assertRaisesRegex(ValueError, "modified tracked"):
-                    self.stage()
+    def test_stages_requested_commit_without_copying_uncommitted_checkout_edits(self):
+        (self.source / "script.sh").write_text("changed source")
+        self.stage()
+        self.assertEqual((self.destination / "script.sh").read_text(), "#!/bin/sh\nexit 0\n")
+
+    def test_remote_mode_rejects_noncanonical_or_credentialed_urls(self):
+        for remote in (
+            "http://github.com/snapetech-org/pleazyng.git",
+            "https://github.com/other/repo.git",
+            "https://user:secret@github.com/snapetech-org/pleazyng.git",
+        ):
+            with self.subTest(remote=remote):
+                with self.assertRaisesRegex(ValueError, "canonical Pleazyng"):
+                    copy.copy_sources(self.source, self.destination, self.revision, remote)
                 self.assertEqual(list(self.destination.iterdir()), [])
 
     def test_rejects_a_different_revision(self):

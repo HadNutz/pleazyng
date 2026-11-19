@@ -40,14 +40,21 @@ if [[ "${RUNNER_ENVIRONMENT:-}" == "github-hosted" ]]; then
     exit 1
   fi
 else
-  task_root="$NFS_RUNS_ROOT/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
+  nfs_task_root="$NFS_RUNS_ROOT/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
   owner_file="$NFS_RUNS_ROOT/.plezyng-apple-scratch-p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}.owner"
-  workspace="$1"
-  if [[ "$workspace" != "$task_root" || -L "$workspace" || ! -d "$workspace" ]]; then
+  if /usr/bin/grep -q '^local_source_root=.' "$owner_file"; then
+    local_tmp_real="$(cd /tmp && /bin/pwd -P)"
+    local_source_root="$local_tmp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
+    task_root="$local_source_root"
+  else
+    task_root="$nfs_task_root"
+    local_source_root="$task_root"
+  fi
+  if [[ "$workspace" != "$local_source_root" || -L "$workspace" || ! -d "$workspace" ]]; then
     echo "Refusing to clean an unexpected or redirected Apple workspace: $workspace" >&2
     exit 1
   fi
-  if [[ "$(cd "$workspace" && /bin/pwd -P)" != "$task_root" ]]; then
+  if [[ "$(cd "$workspace" && /bin/pwd -P)" != "$local_source_root" ]]; then
     echo "Refusing to clean an Apple workspace that resolves elsewhere: $workspace" >&2
     exit 1
   fi
@@ -71,12 +78,17 @@ else
     "job=$GITHUB_JOB" \
     "sha=${GITHUB_SHA:-}" \
     "scratch_mode=local-xcode" \
-    "task_root=$task_root"; do
+    "task_root=$nfs_task_root"; do
     if ! /usr/bin/grep -Fqx "$expected" "$owner_file"; then
       echo "Refusing to clean Apple workspace without its matching owner record: $owner_file" >&2
       exit 1
     fi
   done
+  if [[ "$local_source_root" != "$nfs_task_root" ]] && ! /usr/bin/grep -Fqx "local_source_root=$local_source_root" "$owner_file"; then
+    echo "Refusing to clean local Apple workspace without its task owner record: $owner_file" >&2
+    exit 1
+  fi
+  task_root="$workspace"
 fi
 
 

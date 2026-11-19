@@ -114,6 +114,25 @@ if /usr/bin/grep -Fqx 'scratch_mode=local-xcode' "$owner_file"; then
     fi
     /bin/rm -rf -- "$local_xcode_root"
   fi
+  if /usr/bin/grep -q '^local_source_root=.' "$owner_file"; then
+    local_tmp_real="$(cd /tmp && /bin/pwd -P)"
+    local_source_root="$local_tmp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
+    if ! /usr/bin/grep -Fqx "local_source_root=$local_source_root" "$owner_file"; then
+      echo "Refusing to clean local Apple sources without their matching owner record: $local_source_root" >&2
+      exit 1
+    fi
+    if [[ -L "$local_source_root" || ( -e "$local_source_root" && ! -d "$local_source_root" ) ]]; then
+      echo "Refusing to clean redirected or non-directory local Apple sources: $local_source_root" >&2
+      exit 1
+    fi
+    if [[ -d "$local_source_root" ]]; then
+      if [[ "$(cd "$local_source_root" && /bin/pwd -P)" != "$local_source_root" ]]; then
+        echo "Refusing to clean local Apple sources that resolve elsewhere: $local_source_root" >&2
+        exit 1
+      fi
+      /bin/rm -rf -- "$local_source_root"
+    fi
+  fi
 fi
 
 /bin/rm -rf -- "$task_root"

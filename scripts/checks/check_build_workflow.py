@@ -1448,20 +1448,22 @@ for apple_job_name, workspace_label in (
 ):
     apple_release_job = job(apple_job_name)
     require(
-        'ln -s "$APPLE_LOCAL_BUILD_DIR" "$short_root/build"' in apple_release_job
-        and '"$(cd "$short_root/build" && pwd -P)" == "$APPLE_LOCAL_BUILD_DIR"' in apple_release_job,
+        'ln -s "$APPLE_LOCAL_BUILD_DIR" "$source_root/build"' in apple_release_job
+        and '"$(cd "$source_root/build" && pwd -P)" == "$APPLE_LOCAL_BUILD_DIR"' in apple_release_job,
         f"{workspace_label} release Flutter/Xcode build output must resolve to local APFS",
     )
     stage_step_name = (
-        "Prepare NFS source workspace and local APFS iOS build output"
+        "Stage iOS sources and Git objects on local APFS"
         if apple_job_name == "build-ios"
-        else "Prepare NFS source workspace and local APFS macOS build output"
+        else "Stage macOS sources and Git objects on local APFS"
     )
     stage_step = named_step(apple_release_job, stage_step_name)
     require(
-        'python3 scripts/copy_apple_jit_sources.py "$GITHUB_WORKSPACE" "$short_root" "$COMPILE_SOURCE_SHA"'
-        in stage_step and 'ditto "$GITHUB_WORKSPACE/."' not in stage_step,
-        f"{workspace_label} release must stage tracked sources without copying ignored caches or APFS attributes",
+        'python3 scripts/copy_apple_jit_sources.py "$GITHUB_WORKSPACE" "$source_root" "$COMPILE_SOURCE_SHA"' in stage_step
+        and '--remote-url "https://github.com/${GITHUB_REPOSITORY}.git"' in stage_step
+        and 'ditto "$GITHUB_WORKSPACE/."' not in stage_step
+        and 'source_root="$PLEZYNG_APPLE_LOCAL_SOURCE_ROOT"' in stage_step,
+        f"{workspace_label} release must stage tracked sources and Git objects on local APFS",
     )
     xcode_step_name = (
         "Build iOS (no codesign)" if apple_job_name == "build-ios" else "Build macOS"
@@ -1536,12 +1538,12 @@ for apple_job_name, workspace_label in (
     )
     cleanup_step = named_step(apple_release_job, cleanup_step_name)
     require(
-        'bash "$short_root/scripts/clean_appledouble_sidecars.sh" "$short_root"' in stage_step
+        'bash "$source_root/scripts/clean_appledouble_sidecars.sh" "$source_root"' in stage_step
         and "scripts/clean_appledouble_sidecars.sh" in cleanup_step
         and apple_release_job.find(f"      - name: {stage_step_name}")
         < apple_release_job.find(f"      - name: {cleanup_step_name}")
         < apple_release_job.find(f"      - name: {xcode_step_name}"),
-        f"{workspace_label} NFS source must remove AppleDouble sidecars before Xcode builds",
+        f"{workspace_label} local source must remove AppleDouble sidecars before Xcode builds",
     )
     clean_appledouble_script = (ROOT / "scripts/clean_appledouble_sidecars.sh").read_text()
     pruned_appledouble_scan = (
@@ -2018,9 +2020,19 @@ require(
     "iOS device compilation must use the packaged arm64 ABI",
 )
 require(
-    all('"$(git -C "$short_root" rev-parse HEAD)" == "$COMPILE_SOURCE_SHA"' in job(name)
+    all('"$(git -C "$source_root" rev-parse HEAD)" == "$COMPILE_SOURCE_SHA"' in job(name)
         for name in ('build-ios', 'build-macos')),
     "Apple source staging must verify the actual packaging checkout identity",
+)
+apple_source_copy = (ROOT / "scripts/copy_apple_jit_sources.py").read_text()
+require(
+    '"--dissociate"' in apple_source_copy
+    and '"--remote-url"' in apple_source_copy
+    and 'parsed.hostname != "github.com"' in apple_source_copy
+    and '"status", "--porcelain"' not in apple_source_copy
+    and 'local_source_root="$local_tmp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"' in apple_scratch_script
+    and 'local_source_root="$local_tmp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"' in (ROOT / "scripts/cleanup_apple_jit_scratch.sh").read_text(),
+    "Private Apple release sources and Git objects must be copied to and cleaned from local APFS, not traversed over NFS",
 )
 
 for build_job in ('build-android', 'build-webos', 'build-ios', 'build-tvos',
