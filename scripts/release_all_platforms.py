@@ -132,6 +132,8 @@ RELEASE_TAG_REUSE_ALLOWLIST = frozenset({
     "scripts/cleanup_apple_jit_derived_data.py",
     "scripts/apple_jit_process_tree.py",
     "scripts/cleanup_apple_jit_scratch.sh",
+    "scripts/clean_appledouble_sidecars.sh",
+    "scripts/checks/test_clean_appledouble_sidecars.py",
     "scripts/checks/test_apple_jit_process_tree.py",
     "scripts/copy_apple_jit_sources.py",
     "scripts/checks/test_copy_apple_jit_sources.py",

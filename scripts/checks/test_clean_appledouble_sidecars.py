@@ -14,8 +14,9 @@ class HostedCleanupTests(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory(prefix='pleazyng-apple-cleanup-test-')
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name).resolve()
-        self.workspace = self.root / 'p123-1-macos'
-        self.workspace.mkdir()
+        self.task_root = self.root / 'p123-1-macos'
+        self.workspace = self.task_root / 'source'
+        self.workspace.mkdir(parents=True)
         subprocess.run(['git', 'init', '-q', str(self.workspace)], check=True)
         (self.workspace / 'source').write_text('tracked source')
         source_dir = self.workspace / 'lib'
@@ -29,7 +30,7 @@ class HostedCleanupTests(unittest.TestCase):
                             'GITHUB_JOB': 'build-macos', 'GITHUB_SHA': sha}
         self.sidecar = source_dir / '._source.dart'
         self.sidecar.write_text('task-owned sidecar')
-        self.root_sidecar = self.workspace / '._source'
+        self.root_sidecar = self.task_root / '._source'
         self.root_sidecar.write_text('task-owned root sidecar')
         self.git_admin_sidecar = self.workspace / '.git' / '._config'
         self.git_admin_sidecar.write_text('Git administrative sidecar')
@@ -87,6 +88,7 @@ class HostedCleanupTests(unittest.TestCase):
                 self.assertNotEqual(self.invoke(**environment).returncode, 0)
                 self.assertTrue(self.sidecar.exists())
         self.assertNotEqual(self.invoke(self.outside).returncode, 0)
+        self.assertNotEqual(self.invoke(self.task_root).returncode, 0)
         self.assertTrue(self.protected.exists())
 
     def test_private_runner_does_not_gain_hosted_path_access(self):

@@ -22,6 +22,7 @@ import verify_release_ci as release_ci  # noqa: E402
 from verify_release_ci import _manifest_gate  # noqa: E402
 from verify_tvos_runner_acquisition import RunnerAcquisitionError  # noqa: E402
 from release_all_platforms import (  # noqa: E402
+    RELEASE_TAG_REUSE_ALLOWLIST,
     ReleaseError,
     await_hosted_retry,
     apple_workflow_route,
@@ -41,6 +42,18 @@ from release_all_platforms import (  # noqa: E402
 
 
 class AppleRunnerRoutingTests(unittest.TestCase):
+    def test_hosted_apple_sidecar_cleanup_is_allowlisted_by_both_tag_guards(self) -> None:
+        paths = {
+            "scripts/clean_appledouble_sidecars.sh",
+            "scripts/checks/test_clean_appledouble_sidecars.py",
+        }
+        self.assertTrue(paths <= RELEASE_TAG_REUSE_ALLOWLIST)
+        workflow = (ROOT / ".github/workflows/build.yml").read_text(encoding="utf-8")
+        case = workflow.split('case "$changed_file" in', 1)[1].split("              *)", 1)[0]
+        for path in paths:
+            with self.subTest(path=path):
+                self.assertIn(path, case)
+
     def test_automatic_route_uses_compatible_hosted_apple_first(self) -> None:
         self.assertEqual(select_apple_runner_pool("auto"), "hosted")
 

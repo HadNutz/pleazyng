@@ -35,7 +35,10 @@ if [[ "${RUNNER_ENVIRONMENT:-}" == "github-hosted" ]]; then
   fi
   runner_temp_real="$(cd "$RUNNER_TEMP" && /bin/pwd -P)"
   task_root="$runner_temp_real/p${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${scratch_job}"
-  if [[ "$workspace" != "$task_root" || -L "$workspace" || ! -d "$workspace" || "$(cd "$workspace" && /bin/pwd -P)" != "$task_root" ]]; then
+  hosted_source_root="$task_root/source"
+  if [[ -L "$task_root" || ! -d "$task_root" || "$(cd "$task_root" && /bin/pwd -P)" != "$task_root" \
+      || "$workspace" != "$hosted_source_root" || -L "$workspace" || ! -d "$workspace" \
+      || "$(cd "$workspace" && /bin/pwd -P)" != "$hosted_source_root" ]]; then
     echo "Refusing to clean an unexpected or redirected hosted Apple workspace: $workspace" >&2
     exit 1
   fi
