@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "snapetech-org/pleazyng"
 # Application sources, dependency pins, and native toolchain inputs are excluded.
 # The signed visualizer catalog is published and verified independently at runtime.
-# Gradle heap/worker tuning and the checksum-preserving TV mirror route are infrastructure-only.
+# Gradle heap/worker tuning, Apple scratch setup, and the checksum-preserving TV mirror route are infrastructure-only.
 RECOVERY_FILES = frozenset({
     "content/visualizer-catalog.json",
     "android/gradle.properties",
@@ -42,6 +42,7 @@ RECOVERY_FILES = frozenset({
     "docs/maintainers/full-release-build.md", "docs/maintainers/apple-jit-runner.md",
     "docs/maintainers/release-channels.md", "docs/maintainers/tizen-tv.md",
     "scripts/launch_apple_jit_runner.sh",
+    "scripts/prepare_apple_jit_scratch.sh",
     # The iOS store preflight only moves an existing entitlement failure ahead
     # of the expensive compile; archive/export and shipped bytes are unchanged.
     "scripts/preflight_ios_store_profile.py",

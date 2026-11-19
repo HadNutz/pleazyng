@@ -173,6 +173,7 @@ class SourceProofTests(unittest.TestCase):
                 "CHANGELOG.md",
                 "android/gradle.properties",
                 "scripts/checks/check_build_workflow.py",
+                "scripts/prepare_apple_jit_scratch.sh",
                 "scripts/tv_mpv/build.py",
                 "scripts/tv_mpv/video.patch",
             )
