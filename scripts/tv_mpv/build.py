@@ -15,6 +15,50 @@ HERE = Path(__file__).resolve().parent
 LIBRARY = "libpleazyng_tv_mpv.so"
 
 
+def rewrite_webos_source_mirrors(checkout):
+    """Use reachable mirrors for pinned sources while retaining archive hashes."""
+    sourceware_url = "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"
+    mirror_url = "https://gstreamer.freedesktop.org/src/mirror/bzip2/bzip2-1.0.8.tar.gz"
+    sourceware_build_url = "https://sourceware.org/pub/bzip2/bzip2-${BZIP2_VERSION}.tar.gz"
+    mirror_build_url = "https://gstreamer.freedesktop.org/src/mirror/bzip2/bzip2-${BZIP2_VERSION}.tar.gz"
+    cross_script = checkout / "scripts/shared/_cross.sh"
+    cross_text = cross_script.read_text()
+    if cross_text.count(sourceware_build_url) != 1:
+        raise ValueError("pinned TV recipe no longer has its expected bzip2 download URL")
+    cross_script.write_text(cross_text.replace(sourceware_build_url, mirror_build_url))
+
+    libpng_sourceforge_url = "https://downloads.sourceforge.net/libpng/libpng-${LIBPNG_VERSION}.tar.xz"
+    libpng_mirror_url = "https://dev-www.libreoffice.org/src/libpng-${LIBPNG_VERSION}.tar.xz"
+    linux_script = checkout / "scripts/build_libmpv_linux.sh"
+    linux_text = linux_script.read_text()
+    if linux_text.count(libpng_sourceforge_url) != 1:
+        raise ValueError("pinned TV recipe no longer has its expected libpng download URL")
+    linux_script.write_text(linux_text.replace(libpng_sourceforge_url, libpng_mirror_url))
+
+    source_manifest = checkout / "scripts/shared/_sources.sha256"
+    manifest_text = source_manifest.read_text()
+    pinned_sources = (
+        (
+            "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269",
+            sourceware_url,
+            mirror_url,
+            "bzip2",
+        ),
+        (
+            "d80dd2a38a37f803cb9b6ac7b14bd6e74ddc3b654780a8380bdf93523fdb4389",
+            "https://downloads.sourceforge.net/libpng/libpng-1.6.59.tar.xz",
+            "https://dev-www.libreoffice.org/src/libpng-1.6.59.tar.xz",
+            "libpng",
+        ),
+    )
+    for digest, original_url, replacement_url, name in pinned_sources:
+        pinned_line = f"{digest}  {original_url}"
+        if manifest_text.count(pinned_line) != 1:
+            raise ValueError(f"pinned TV recipe no longer has its expected {name} SHA-256 entry")
+        manifest_text = manifest_text.replace(pinned_line, f"{digest}  {replacement_url}")
+    source_manifest.write_text(manifest_text)
+
+
 def build(target, arch, out, webos_ndk=None):
     if target == "webos" and (arch != "armv7l" or webos_ndk is None):
         raise ValueError("webOS needs the armv7l target and its NDK")
@@ -27,37 +71,9 @@ def build(target, arch, out, webos_ndk=None):
         git("fetch", "--quiet", "--depth=1", ORIGIN, RECIPE)
         git("checkout", "--quiet", "--detach", "FETCH_HEAD")
         git("apply", "--unidiff-zero", HERE / "video.patch")
-        # Sourceware blocks GitHub-hosted webOS runners; the GStreamer mirror
-        # serves the identical archive, verified by the pinned SHA-256.
-        sourceware_url = "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"
-        mirror_url = "https://gstreamer.freedesktop.org/src/mirror/bzip2/bzip2-1.0.8.tar.gz"
-        sourceware_build_url = (
-            "https://sourceware.org/pub/bzip2/bzip2-${BZIP2_VERSION}.tar.gz"
-        )
-        mirror_build_url = (
-            "https://gstreamer.freedesktop.org/src/mirror/bzip2/"
-            "bzip2-${BZIP2_VERSION}.tar.gz"
-        )
-        cross_script = checkout / "scripts/shared/_cross.sh"
-        cross_text = cross_script.read_text()
-        if cross_text.count(sourceware_build_url) != 1:
-            raise ValueError(
-                "pinned TV recipe no longer has its expected bzip2 download URL"
-            )
-        cross_script.write_text(cross_text.replace(sourceware_build_url, mirror_build_url))
-        source_manifest = checkout / "scripts/shared/_sources.sha256"
-        manifest_text = source_manifest.read_text()
-        pinned_source = (
-            "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269  "
-            + sourceware_url
-        )
-        if manifest_text.count(pinned_source) != 1:
-            raise ValueError("pinned TV recipe no longer has the expected bzip2 SHA-256 entry")
-        source_manifest.write_text(
-            manifest_text.replace(
-                pinned_source, pinned_source.replace(sourceware_url, mirror_url)
-            )
-        )
+        # Sourceware and SourceForge are unreachable from the hosted webOS JIT
+        # egress proxy. The mirrors serve byte-identical, checksum-pinned archives.
+        rewrite_webos_source_mirrors(checkout)
         # Share the checksum-pinned Linux cross-build functions for the TV font stack.
         scripts = checkout / "scripts"
         linux = (scripts / "build_libmpv_linux.sh").read_text()

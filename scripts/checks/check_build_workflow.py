@@ -2224,6 +2224,8 @@ tv_mpv_builder = TV_MPV_BUILDER.read_text(encoding="utf-8")
 require(
     '"https://gstreamer.freedesktop.org/src/mirror/bzip2/bzip2-1.0.8.tar.gz"'
     in tv_mpv_builder
+    and '"https://dev-www.libreoffice.org/src/libpng-1.6.59.tar.xz"' in tv_mpv_builder
+    and "d80dd2a38a37f803cb9b6ac7b14bd6e74ddc3b654780a8380bdf93523fdb4389" in tv_mpv_builder
     and "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269"
     in tv_mpv_builder
     and "pinned TV recipe no longer has its expected bzip2 download URL"

@@ -141,6 +141,8 @@ RELEASE_TAG_REUSE_ALLOWLIST = frozenset({
     "scripts/prepare_apple_jit_scratch.sh",
     "scripts/cache_macos_flutter_sdk.py",
     "scripts/checks/test_cache_macos_flutter_sdk.py",
+    "scripts/tv_mpv/build.py",
+    "scripts/checks/test_tv_mpv_build.py",
     "scripts/prepare_android_sdk.py", "scripts/test_prepare_android_sdk.py",
     "scripts/prepare_gradle_repositories.py", "scripts/run_android_build.py",
     "scripts/gradle/plezyng-maven-mirror.init.gradle",
