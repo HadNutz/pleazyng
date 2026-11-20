@@ -1066,6 +1066,11 @@ require(
     "release mode must validate the requested version and pushed v-tag before building",
 )
 build_webos = job("build-webos")
+prepare_webos = job("prepare-webos-dav1d-source")
+require(
+    "if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success'" in prepare_webos,
+    "webOS source preparation must run after successful validation even when an unrelated ancestor was skipped",
+)
 require(
     "needs.validate-trusted-ref.outputs.mode == 'webos-validation'" in build_webos
     and "needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_webos_build == 'true'" in build_webos
