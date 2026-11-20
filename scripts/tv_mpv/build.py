@@ -87,7 +87,9 @@ def rewrite_webos_source_mirrors(checkout):
     libxml_script.write_text(libxml_text.replace(
         libxml_download, f'{libxml_download} "{libxml_mirror_url}"'
     ))
-    dav1d_script = checkout / "scripts/build_libmpv_webos.sh"
+    # video.patch adds dav1d to the shared cross-build functions, which are
+    # sourced by the webOS script; the download line lives in _cross.sh.
+    dav1d_script = checkout / "scripts/shared/_cross.sh"
     dav1d_original_url = (
         'https://download.videolan.org/pub/videolan/dav1d/1.5.1/dav1d-1.5.1.tar.xz'
     )
