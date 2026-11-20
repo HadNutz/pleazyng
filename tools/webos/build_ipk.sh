@@ -149,7 +149,19 @@ if [[ "$PACKAGER_VERSION" != "pleazyng-ipk-packager 2" ]]; then
 fi
 export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-0}"
 
-export PATH="$ROOT/tools/webos/bin:$SDK_ROOT/bin:$SDK_ROOT/flutter/bin:$PATH"
+if [[ -n "${WEBOS_NINJA_BIN:-}" ]]; then
+  if [[ ! -x "$WEBOS_NINJA_BIN" ]]; then
+    echo "The pinned webOS Ninja binary is missing or not executable: $WEBOS_NINJA_BIN" >&2
+    exit 1
+  fi
+  export PATH="$(dirname -- "$WEBOS_NINJA_BIN"):$ROOT/tools/webos/bin:$SDK_ROOT/bin:$SDK_ROOT/flutter/bin:$PATH"
+  if [[ "$(command -v ninja)" != "$WEBOS_NINJA_BIN" ]]; then
+    echo "The webOS package build did not resolve the pinned Ninja binary first on PATH." >&2
+    exit 1
+  fi
+else
+  export PATH="$ROOT/tools/webos/bin:$SDK_ROOT/bin:$SDK_ROOT/flutter/bin:$PATH"
+fi
 export FLUTTER_GIT_URL="https://github.com/lg-flutter-webos/flutter-webos.git"
 export WEBOS_ENGINE_LOCAL_PATH="$ENGINE_ARCHIVE"
 

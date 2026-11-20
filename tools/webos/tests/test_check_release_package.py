@@ -30,6 +30,14 @@ TESTER_PROFILE = {
 
 
 class ReleasePackageTests(unittest.TestCase):
+    def test_package_build_uses_the_pinned_ninja_before_depot_tools(self):
+        script = (Path(__file__).resolve().parents[1] / 'build_ipk.sh').read_text()
+        self.assertIn(
+            'export PATH="$(dirname -- "$WEBOS_NINJA_BIN"):$ROOT/tools/webos/bin:$SDK_ROOT/bin:$SDK_ROOT/flutter/bin:$PATH"',
+            script,
+        )
+        self.assertIn('if [[ "$(command -v ninja)" != "$WEBOS_NINJA_BIN" ]]; then', script)
+
     def test_builder_provenance_uses_the_project_version_after_rebranding(self):
         script = (Path(__file__).resolve().parents[1] / 'build_ipk.sh').read_text()
         generation = script.split("<<'PYPROVENANCE'\n", 1)[1].split('\nPYPROVENANCE', 1)[0]
