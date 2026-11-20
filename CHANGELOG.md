@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Keep a verified WebOS IPK in recovery release assembly while skipping its rebuild.
 - Convert the reused unsigned iOS artifact run identity into the verifier's exact run-ID option during release assembly.
 - Put the checksum-pinned webOS Ninja first on PATH during IPK packaging so FreeType's CMake build cannot select the incompatible depot_tools Ninja.
 - Run exact-source Apple native release qualification on the private Apple Silicon JIT when signed App Store builds are explicitly requested; keep unsigned and standalone CI on hosted Macs.

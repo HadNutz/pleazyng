@@ -1955,8 +1955,9 @@ def ensure_release(
             options["macos_run"] = reuse_macos_run_id
         if reuse_android_run_id:
             options["android_run"] = reuse_android_run_id
-        if not include_webos_build:
-            options["include_webos_build"] = False
+        # The reused package remains part of the release even when the
+        # workflow skips rebuilding WebOS. Do not pass the build-skip flag to
+        # the proof composer, where it means the artifact is omitted.
         if repair:
             options.update(packaging_source_sha=packaging_source_sha,
                            workflow_source_sha=workflow_source_sha,

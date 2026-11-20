@@ -1622,7 +1622,7 @@ class ControllerTests(unittest.TestCase):
                                   reuse_webos_run_id=42, rebuild_tvos=True)
         verify.assert_called_once_with(42, "b" * 40, "3.0.0", rebuild_tvos=True,
                                        webos_run=42, android_run=42,
-                                       include_webos_build=False, wait_complete=True)
+                                       wait_complete=True)
         fields = dispatch.call_args.args[3]
         self.assertEqual(fields["rebuild_tvos"], "true")
         self.assertEqual(fields["reuse_android_run_id"], "42")
@@ -1653,8 +1653,7 @@ class ControllerTests(unittest.TestCase):
     def test_recovery_dispatch_is_distinct_and_reuses_no_unverified_run(self, dispatch, _main, _matching, verify):
         controller.ensure_release("v3.0.0", "b" * 40, include_webos_release=True,
                                   reuse_platform_run_id=42)
-        verify.assert_called_once_with(42, "b" * 40, "3.0.0", webos_run=42,
-                                       include_webos_build=False)
+        verify.assert_called_once_with(42, "b" * 40, "3.0.0", webos_run=42)
         self.assertEqual(dispatch.call_args.args[3]["reuse_platform_run_id"], "42")
         self.assertEqual(dispatch.call_args.kwargs["expected_title"],
                          "action:release:pool:public:tag:v3.0.0")
@@ -1683,9 +1682,9 @@ class ControllerTests(unittest.TestCase):
         controller.ensure_release("v3.0.0", "b" * 40,
             include_webos_release=True, include_webos_build=False,
             reuse_platform_run_id=42)
-        verify.assert_called_once_with(42, "b" * 40, "3.0.0", webos_run=42,
-                                       include_webos_build=False)
+        verify.assert_called_once_with(42, "b" * 40, "3.0.0", webos_run=42)
         self.assertEqual(dispatch.call_args.args[3]["reuse_webos_run_id"], "42")
+        self.assertEqual(dispatch.call_args.args[3]["include_webos_build"], "false")
 
 
 class AndroidSourceTests(unittest.TestCase):
@@ -1795,7 +1794,7 @@ class UnsignedIOSReuseTests(unittest.TestCase):
                                   reuse_ios_developer_run_id=43)
         verify.assert_called_once_with(42, "b" * 40, "3.0.42", android_run=42,
                                        ios_developer_run=43, webos_run=42,
-                                       include_webos_build=False, wait_complete=True)
+                                       wait_complete=True)
         fields = dispatch.call_args.args[3]
         self.assertEqual(fields["reuse_repaired_run_id"], "ios-developer:43")
         self.assertEqual(fields["reuse_platform_run_id"], "42")

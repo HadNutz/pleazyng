@@ -766,7 +766,7 @@ jobs:
           if [[ "$HOMEBREW" == true ]]; then options+=(--require-homebrew-cask); fi
           if [[ -n "$ANDROID_RUN" ]]; then options+=(--android-run "$ANDROID_RUN"); fi
           if [[ -n "$MACOS_RUN" ]]; then options+=(--macos-run "$MACOS_RUN"); fi
-          if [[ "$WEBOS_BUILD" != true ]]; then options+=(--skip-webos-build); fi
+          if [[ "$WEBOS_BUILD" != true && -z "$WEBOS_RUN" ]]; then options+=(--skip-webos-build); fi
           python3 scripts/recover_release_platforms.py "$SOURCE_RUN" --head-sha "$HEAD_SHA" --version "$VERSION" --allow-building "${options[@]}"
 
       - name: Require successful CI for this commit
@@ -3684,7 +3684,7 @@ jobs:
           if [[ "$HOMEBREW" == true ]]; then options+=(--require-homebrew-cask); fi
           if [[ -n "$ANDROID_RUN" ]]; then options+=(--android-run "$ANDROID_RUN"); fi
           if [[ -n "$MACOS_RUN" ]]; then options+=(--macos-run "$MACOS_RUN"); fi
-          if [[ "$WEBOS_BUILD" != true ]]; then options+=(--skip-webos-build); fi
+          if [[ "$WEBOS_BUILD" != true && -z "$WEBOS_RUN" ]]; then options+=(--skip-webos-build); fi
           python3 scripts/recover_release_platforms.py "$SOURCE_RUN" --head-sha "$HEAD_SHA" --version "$VERSION" --download artifacts --wait-for-source 10800 "${options[@]}"
 
       - name: Download Android artifacts

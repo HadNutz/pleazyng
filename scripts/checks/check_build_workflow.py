@@ -2122,6 +2122,8 @@ require(
     and "needs.validate-trusted-ref.outputs.webos_source_sha != ''" in release_condition
     and "--webos-run" in recovery_gate
     and "--webos-run" in recovery_download
+    and 'if [[ "$WEBOS_BUILD" != true && -z "$WEBOS_RUN" ]]' in recovery_gate
+    and 'if [[ "$WEBOS_BUILD" != true && -z "$WEBOS_RUN" ]]' in recovery_download
     and "--android-run" in recovery_gate
     and "--android-run" in recovery_download
     and "inputs.reuse_android_run_id == ''" in job("build-android").split("needs:", 1)[0]
