@@ -1763,9 +1763,9 @@ def ensure_release(
 ) -> dict:
     reuse_repaired_run_id = parse_repaired_run_reference(reuse_repaired_run_id)
     if reuse_platform_run_id and not rebuild_webos:
-        # Ordinary platform recovery reuses the existing WebOS package unless
-        # the caller explicitly requests a WebOS rebuild.
-        include_webos_build = False
+        # A complete versioned release must include WebOS. The reuse run ID
+        # prevents a rebuild; keep the release-coverage input enabled.
+        include_webos_build = True
         reuse_webos_run_id = reuse_webos_run_id or reuse_platform_run_id
     elif rebuild_webos and reuse_webos_run_id:
         raise ReleaseError("A WebOS recovery cannot rebuild and reuse WebOS from the same request.")

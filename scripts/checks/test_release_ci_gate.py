@@ -779,7 +779,7 @@ class ReleaseCandidateBuildGateTests(unittest.TestCase):
         verify_tvos.assert_called_once_with(47, "c" * 40, "3.0.36", action="release")
         verify_recovery.assert_called_once_with(
             47, "c" * 40, "3.0.36", rebuild_tvos=True,
-            webos_run=47, android_run=47, wait_complete=True,
+            webos_run=47, android_run=47,
         )
         fields = dispatch.call_args.args[3]
         self.assertEqual(fields["tvos_runner_pool"], "private")

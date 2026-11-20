@@ -1621,8 +1621,7 @@ class ControllerTests(unittest.TestCase):
                                   reuse_platform_run_id=42, reuse_android_run_id=42,
                                   reuse_webos_run_id=42, rebuild_tvos=True)
         verify.assert_called_once_with(42, "b" * 40, "3.0.0", rebuild_tvos=True,
-                                       webos_run=42, android_run=42,
-                                       wait_complete=True)
+                                       webos_run=42, android_run=42)
         fields = dispatch.call_args.args[3]
         self.assertEqual(fields["rebuild_tvos"], "true")
         self.assertEqual(fields["reuse_android_run_id"], "42")
@@ -1659,7 +1658,7 @@ class ControllerTests(unittest.TestCase):
                          "action:release:pool:public:tag:v3.0.0")
         self.assertEqual(dispatch.call_args.kwargs["expected_sha"], "b" * 40)
         self.assertEqual(dispatch.call_args.args[3]["include_webos_release"], "true")
-        self.assertEqual(dispatch.call_args.args[3]["include_webos_build"], "false")
+        self.assertEqual(dispatch.call_args.args[3]["include_webos_build"], "true")
 
     def test_recovery_rejects_signed_store_mode(self):
         with self.assertRaises(controller.ReleaseError):
@@ -1684,7 +1683,7 @@ class ControllerTests(unittest.TestCase):
             reuse_platform_run_id=42)
         verify.assert_called_once_with(42, "b" * 40, "3.0.0", webos_run=42)
         self.assertEqual(dispatch.call_args.args[3]["reuse_webos_run_id"], "42")
-        self.assertEqual(dispatch.call_args.args[3]["include_webos_build"], "false")
+        self.assertEqual(dispatch.call_args.args[3]["include_webos_build"], "true")
 
 
 class AndroidSourceTests(unittest.TestCase):
@@ -1793,13 +1792,12 @@ class UnsignedIOSReuseTests(unittest.TestCase):
                                   reuse_platform_run_id=42, reuse_android_run_id=42,
                                   reuse_ios_developer_run_id=43)
         verify.assert_called_once_with(42, "b" * 40, "3.0.42", android_run=42,
-                                       ios_developer_run=43, webos_run=42,
-                                       wait_complete=True)
+                                       ios_developer_run=43, webos_run=42)
         fields = dispatch.call_args.args[3]
         self.assertEqual(fields["reuse_repaired_run_id"], "ios-developer:43")
         self.assertEqual(fields["reuse_platform_run_id"], "42")
         self.assertEqual(fields["reuse_webos_run_id"], "42")
-        self.assertEqual(fields["include_webos_build"], "false")
+        self.assertEqual(fields["include_webos_build"], "true")
         self.assertNotIn("rebuild_ios", fields)
 
 

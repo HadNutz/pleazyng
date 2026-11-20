@@ -129,7 +129,7 @@ class MacPackagingProofTests(unittest.TestCase):
             fields=dispatch.call_args.args[3]
             self.assertEqual(fields['reuse_macos_package_run_id'],'43')
             self.assertEqual(fields['reuse_android_run_id'],'42')
-            self.assertEqual(fields['include_webos_build'],'false')
+            self.assertEqual(fields['include_webos_build'],'true')
             self.assertEqual(fields['include_webos_release'],'true')
 
     def test_download_uses_replacement_mac_and_original_android_webos(self):
