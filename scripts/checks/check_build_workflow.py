@@ -121,7 +121,7 @@ require(
     "Only explicitly signed Apple Store releases may route native CI to the selected private Apple JIT",
 )
 require(
-    "inputs.action == 'release' && 'pleazyng-versioned-release-v2'" in text
+    "inputs.action == 'release' && format('pleazyng-versioned-release-{0}', inputs.candidate_ref)" in text
     and "inputs.action == 'build' && 'pleazyng-candidate-build-v2'" in text,
     "nonpublishing build requests must not hold the versioned release concurrency group",
 )
@@ -1216,7 +1216,7 @@ require(
     and 'persist-credentials: false' in profile_preflight
     and "pleazyng-apple-signing-preflight" in concurrency_group
     and "pleazyng-tvos-repair-{0}" in concurrency_group
-    and "pleazyng-versioned-release-v2" in concurrency_group
+    and "pleazyng-versioned-release-{0}" in concurrency_group
     and "pleazyng-candidate-build-v2" in concurrency_group
     and "pleazyng-core-release-v2" in concurrency_group,
     "iOS profile preflight must stay separate, approved tvOS repair retained, and package builds separated from versioned releases",

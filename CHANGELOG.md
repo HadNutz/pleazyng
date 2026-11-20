@@ -6,6 +6,7 @@
 - Keep the unsigned iOS developer IPA build available when the separate Store signing preflight fails.
 - Recognize the split Apple native CI job when cleaning its task-owned source workspace.
 - Keep the complete unsigned Apple core release moving when Store signing preflight or packaging fails, and report the blocked Apple Store channel separately.
+- Scope release concurrency to the immutable candidate so a superseded run cannot hold newer release work behind its queue.
 - Prepare any configured app-store listings that require a separate manual review submission after the verified 3.0.44 binaries are uploaded.
 
 ## [3.0.44] - 2026-11-20

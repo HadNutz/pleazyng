@@ -141,7 +141,7 @@ class BuildWorkflowGuardTest(unittest.TestCase):
         self.assertIn('options+=(--ios-developer-run "${BASH_REMATCH[1]}")', run)
         self.assertLess(run.index(ios_developer_case), run.index('elif [[ -n "$PACKAGING_SHA" ]]'))
 
-    def test_profile_preflight_cannot_leave_trusted_native_bounded_route_or_break_core_serialization(self):
+    def test_profile_preflight_cannot_leave_trusted_route_or_break_candidate_scoped_serialization(self):
         original = self._workflow()
         begin = original.index('  apple-signing-preflight:\n')
         end = original.index('  capture-candidate:\n', begin)
@@ -156,7 +156,7 @@ class BuildWorkflowGuardTest(unittest.TestCase):
                 result = self._run(original[:begin] + invalid + original[end:])
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn('iOS profile preflight must stay separate', result.stderr)
-        for group in ('pleazyng-core-release-v2', 'pleazyng-versioned-release-v2',
+        for group in ('pleazyng-core-release-v2', 'pleazyng-versioned-release-{0}',
                       'pleazyng-candidate-build-v2'):
             with self.subTest(group=group):
                 changed = original.replace(f"'{group}'", "github.run_id")
