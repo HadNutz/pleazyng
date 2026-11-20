@@ -1411,7 +1411,7 @@ jobs:
           exit 1
 
   build-ios:
-    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (needs.validate-trusted-ref.outputs.include_apple_store_build != 'true' || needs.preflight-ios-store-signing.result == 'success') && (inputs.reuse_platform_run_id == '' || inputs.rebuild_ios) && !(inputs.reuse_platform_run_id != '' && startsWith(inputs.reuse_repaired_run_id, 'ios-developer:')) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_ios) && !(inputs.reuse_platform_run_id != '' && startsWith(inputs.reuse_repaired_run_id, 'ios-developer:')) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: [validate-trusted-ref, preflight-ios-store-signing]
     timeout-minutes: 240
     runs-on: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-build-ios"]}}', github.run_id)) || 'macos-26-intel' }}
@@ -1546,6 +1546,7 @@ jobs:
         id: ios-signing
         env:
           INCLUDE_APPLE_STORE_BUILD: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build }}
+          IOS_STORE_PREFLIGHT_RESULT: ${{ needs.preflight-ios-store-signing.result }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_BASE64 }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -1558,6 +1559,11 @@ jobs:
           if [[ "$INCLUDE_APPLE_STORE_BUILD" != "true" ]]; then
             echo "configured=false" >> "$GITHUB_OUTPUT"
             echo "Signed iOS App Store IPA disabled; unsigned developer artifact remains available."
+            exit 0
+          fi
+          if [[ "$IOS_STORE_PREFLIGHT_RESULT" != "success" ]]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "iOS Store signing preflight did not pass; continuing with the unsigned developer IPA."
             exit 0
           fi
           for name in APPLE_TEAM_ID APPLE_DISTRIBUTION_CERTIFICATE_BASE64 APPLE_CERTIFICATE_PASSWORD IOS_PROVISIONING_PROFILE_BASE64; do

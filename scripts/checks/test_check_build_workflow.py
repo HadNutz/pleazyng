@@ -36,7 +36,7 @@ APPLE_NATIVE_ACTION = ROOT / ".github/actions/apple-native-reliability/action.ym
 
 
 class BuildWorkflowGuardTest(unittest.TestCase):
-    def test_store_entitlements_are_preflighted_before_only_signed_ios_build(self):
+    def test_store_entitlement_preflight_does_not_block_unsigned_ios_build(self):
         workflow = yaml.safe_load(self._workflow())
         jobs = workflow['jobs']
         preflight = jobs['preflight-ios-store-signing']
@@ -47,8 +47,14 @@ class BuildWorkflowGuardTest(unittest.TestCase):
         self.assertIn('--prepare-ios-worker-profile', preflight['steps'][1]['run'])
         ios = jobs['build-ios']
         self.assertIn('preflight-ios-store-signing', ios['needs'])
-        self.assertIn("outputs.include_apple_store_build != 'true'", ios['if'])
-        self.assertIn("needs.preflight-ios-store-signing.result == 'success'", ios['if'])
+        self.assertNotIn("needs.preflight-ios-store-signing.result == 'success'", ios['if'])
+        steps = {step.get('name'): step for step in ios['steps']}
+        signing = steps['Configure optional iOS App Store signing']
+        self.assertIn('needs.preflight-ios-store-signing.result', signing['env']['IOS_STORE_PREFLIGHT_RESULT'])
+        self.assertIn('IOS_STORE_PREFLIGHT_RESULT', signing['run'])
+        self.assertIn('unsigned developer IPA', signing['run'])
+        self.assertIn('steps.ios-signing.outputs.configured', steps['Validate iOS App Store provisioning entitlements']['if'])
+        self.assertIn('steps.ios-signing.outputs.configured', steps['Build signed iOS App Store IPA']['if'])
 
     def test_sherpa_cocoapods_diagnostic_uses_the_real_script_not_appledouble_sidecars(self):
         action = APPLE_NATIVE_ACTION.read_text(encoding="utf-8")
