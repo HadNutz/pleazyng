@@ -54,6 +54,12 @@ class SourceProofTests(unittest.TestCase):
             "scripts/checks/test_release_ci_gate.py",
             "scripts/tv_mpv/build.py",
             "scripts/checks/test_tv_mpv_build.py",
+            ".github/release-packaging-repairs.json",
+            "scripts/apple_jit_process_tree.py",
+            "scripts/checks/test_apple_jit_process_tree.py",
+            "scripts/checks/test_verify_frozen_packaging_repair.py",
+            "scripts/verify_frozen_packaging_repair.py",
+            "tools/webos/tests/test_build_release_candidate_dirs.py",
         }
         self.assertTrue(paths <= recovery.RECOVERY_FILES)
         self.assertTrue(paths <= controller.RELEASE_TAG_REUSE_ALLOWLIST)

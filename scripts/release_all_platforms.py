@@ -69,6 +69,12 @@ NATIVE_FAILED_RUN_QUEUE_TIMEOUT_SECONDS = 15 * 60
 APPLE_JIT_EVIDENCE_ROOT: Path | None = None
 APPLE_JIT_SSH_TARGET = os.environ.get("APPLE_JIT_SSH_TARGET", "keith@100.64.0.3")
 RELEASE_TAG_REUSE_ALLOWLIST = frozenset({
+    # Recovery proof and the exact webOS bootstrap regression test are
+    # release infrastructure, not changes to the frozen application inputs.
+    ".github/release-packaging-repairs.json",
+    "scripts/checks/test_verify_frozen_packaging_repair.py",
+    "scripts/verify_frozen_packaging_repair.py",
+    "tools/webos/tests/test_build_release_candidate_dirs.py",
     # This signed envelope is fetched and verified by the app at runtime; it is
     # published independently and is not embedded in platform build artifacts.
     "content/visualizer-catalog.json",

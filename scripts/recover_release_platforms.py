@@ -28,6 +28,14 @@ REPOSITORY = "snapetech-org/pleazyng"
 # The signed visualizer catalog is published and verified independently at runtime.
 # Gradle heap/worker tuning, Apple scratch setup, and the checksum-preserving TV mirror route are infrastructure-only.
 RECOVERY_FILES = frozenset({
+    # Exact release-controller recovery changes shipped after the frozen
+    # product source; these do not change application or native inputs.
+    ".github/release-packaging-repairs.json",
+    "scripts/apple_jit_process_tree.py",
+    "scripts/checks/test_apple_jit_process_tree.py",
+    "scripts/checks/test_verify_frozen_packaging_repair.py",
+    "scripts/verify_frozen_packaging_repair.py",
+    "tools/webos/tests/test_build_release_candidate_dirs.py",
     "content/visualizer-catalog.json",
     "android/gradle.properties",
     "scripts/tv_mpv/build.py", "scripts/tv_mpv/video.patch",
