@@ -3464,6 +3464,7 @@ def main() -> int:
             private_apple_signing_unavailable=private_apple_signing_unavailable,
             allow_private_apple_retry=False,
             **({"rebuild_linux": True} if args.rebuild_linux else {}),
+            **({"rebuild_webos": True} if args.rebuild_webos else {}),
             **({"rebuild_macos": True} if args.rebuild_macos else {}),
             **({"rebuild_tvos": True} if args.rebuild_tvos else {}),
             **({"rebuild_ios": True} if args.rebuild_ios else {}),
