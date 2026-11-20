@@ -125,10 +125,11 @@ class MacPackagingProofTests(unittest.TestCase):
             controller.ensure_release('v3.0.3','c'*40,include_webos_release=True,execution_profile='hybrid',
                 prepare_homebrew_cask=True,reuse_platform_run_id=42,reuse_android_run_id=42,reuse_macos_run_id=43)
             self.assertEqual(verify.call_args.kwargs['macos_run'],43)
+            self.assertEqual(verify.call_args.kwargs['webos_run'],42)
             fields=dispatch.call_args.args[3]
             self.assertEqual(fields['reuse_macos_package_run_id'],'43')
             self.assertEqual(fields['reuse_android_run_id'],'42')
-            self.assertEqual(fields['include_webos_build'],'true')
+            self.assertEqual(fields['include_webos_build'],'false')
             self.assertEqual(fields['include_webos_release'],'true')
 
     def test_download_uses_replacement_mac_and_original_android_webos(self):

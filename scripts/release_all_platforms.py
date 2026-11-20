@@ -1740,6 +1740,7 @@ def ensure_release(
     reuse_macos_run_id: int | None = None,
     include_webos_build: bool = True,
     rebuild_linux: bool = False,
+    rebuild_webos: bool = False,
     rebuild_macos: bool = False,
     rebuild_tvos: bool = False,
     rebuild_ios: bool = False,
@@ -1760,6 +1761,13 @@ def ensure_release(
     allow_private_apple_retry: bool = False,
 ) -> dict:
     reuse_repaired_run_id = parse_repaired_run_reference(reuse_repaired_run_id)
+    if reuse_platform_run_id and not rebuild_webos:
+        # Ordinary platform recovery reuses the existing WebOS package unless
+        # the caller explicitly requests a WebOS rebuild.
+        include_webos_build = False
+        reuse_webos_run_id = reuse_webos_run_id or reuse_platform_run_id
+    elif rebuild_webos and reuse_webos_run_id:
+        raise ReleaseError("A WebOS recovery cannot rebuild and reuse WebOS from the same request.")
     if reuse_ios_developer_run_id is not None:
         if (reuse_ios_developer_run_id < 1 or not reuse_platform_run_id or rebuild_ios
                 or include_apple_store_build or prepare_homebrew_cask or reuse_ios_run_id
@@ -1785,7 +1793,7 @@ def ensure_release(
         macos_runner_pool = "private"
     if reuse_android_run_id and not reuse_platform_run_id:
         raise ReleaseError("Android reuse requires a verified platform source run.")
-    if not include_webos_release or not include_webos_build:
+    if not include_webos_release or (not include_webos_build and not reuse_webos_run_id):
         raise ReleaseError("Every versioned release requires its successful webOS build and public artifact.")
     if candidate_ref:
         if candidate_ref != f"{tag}-candidate.{commit_sha}":
@@ -1801,6 +1809,8 @@ def ensure_release(
             raise ReleaseError("A full runner-acquisition retry requires one exact failed release run.")
         run_title += f":runner-retry-of:{runner_acquisition_retry_of}"
         tvos_runner_pool = "private"
+    elif not repair and reuse_platform_run_id and rebuild_webos:
+        run_title += f":recovery:source:{reuse_platform_run_id}:webos"
     elif not repair and reuse_platform_run_id and rebuild_tvos:
         run_title += f":recovery:source:{reuse_platform_run_id}:tvos"
     if reuse_tvos_run_id and (not repair or rebuild_tvos or reuse_repaired_run_id):

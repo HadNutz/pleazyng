@@ -15,6 +15,7 @@
 - Fetch the checksum-pinned webOS libpng source from the LibreOffice mirror when the restricted runner proxy blocks SourceForge.
 - Fetch webOS's checksum-pinned libxml2 source from the verified MacPorts mirror when GNOME downloads return HTTP 403.
 - Stage the checksum-pinned webOS dav1d archive from a hosted runner so restricted JIT egress cannot block the build.
+- Route WebOS-only recovery through its explicit build/reuse input while preserving every other platform artifact.
 - Allow verified release recovery to reuse tagged platform artifacts after infrastructure-only Apple and webOS fixes.
 - Reuse an attested unsigned iOS IPA from a successful recovery run while rebuilding only the failed release platform.
 - Resolve any additional release qualification issues found during the 3.0.39 build.

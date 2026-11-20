@@ -1620,7 +1620,8 @@ class ControllerTests(unittest.TestCase):
                                   reuse_platform_run_id=42, reuse_android_run_id=42,
                                   reuse_webos_run_id=42, rebuild_tvos=True)
         verify.assert_called_once_with(42, "b" * 40, "3.0.0", rebuild_tvos=True,
-                                       webos_run=42, android_run=42)
+                                       webos_run=42, android_run=42,
+                                       include_webos_build=False, wait_complete=True)
         fields = dispatch.call_args.args[3]
         self.assertEqual(fields["rebuild_tvos"], "true")
         self.assertEqual(fields["reuse_android_run_id"], "42")
@@ -1632,31 +1633,58 @@ class ControllerTests(unittest.TestCase):
     @patch.object(controller, "matching_run", return_value=None)
     @patch.object(controller, "ensure_remote_main_sha")
     @patch.object(controller, "dispatch")
+    def test_webos_recovery_dispatches_only_webos_rebuild(self, dispatch, _main, _matching, verify):
+        controller.ensure_release("v3.0.0", "b" * 40, include_webos_release=True,
+                                  reuse_platform_run_id=42, reuse_android_run_id=42,
+                                  rebuild_webos=True)
+        verify.assert_called_once_with(42, "b" * 40, "3.0.0", android_run=42)
+        fields = dispatch.call_args.args[3]
+        self.assertEqual(fields["reuse_platform_run_id"], "42")
+        self.assertEqual(fields["reuse_android_run_id"], "42")
+        self.assertEqual(fields["include_webos_build"], "true")
+        self.assertEqual(dispatch.call_args.kwargs["expected_title"],
+                         "action:release:pool:public:tag:v3.0.0:recovery:source:42:webos")
+
+    @patch.object(controller, "verify_platform_recovery")
+    @patch.object(controller, "matching_run", return_value=None)
+    @patch.object(controller, "ensure_remote_main_sha")
+    @patch.object(controller, "dispatch")
     def test_recovery_dispatch_is_distinct_and_reuses_no_unverified_run(self, dispatch, _main, _matching, verify):
         controller.ensure_release("v3.0.0", "b" * 40, include_webos_release=True,
                                   reuse_platform_run_id=42)
-        verify.assert_called_once_with(42, "b" * 40, "3.0.0")
+        verify.assert_called_once_with(42, "b" * 40, "3.0.0", webos_run=42,
+                                       include_webos_build=False)
         self.assertEqual(dispatch.call_args.args[3]["reuse_platform_run_id"], "42")
         self.assertEqual(dispatch.call_args.kwargs["expected_title"],
                          "action:release:pool:public:tag:v3.0.0")
         self.assertEqual(dispatch.call_args.kwargs["expected_sha"], "b" * 40)
         self.assertEqual(dispatch.call_args.args[3]["include_webos_release"], "true")
-        self.assertEqual(dispatch.call_args.args[3]["include_webos_build"], "true")
+        self.assertEqual(dispatch.call_args.args[3]["include_webos_build"], "false")
 
     def test_recovery_rejects_signed_store_mode(self):
         with self.assertRaises(controller.ReleaseError):
             controller.ensure_release("v3.0.0", "b" * 40, include_webos_release=True,
                                       include_apple_store_build=True, reuse_platform_run_id=42)
 
-    def test_recovery_cannot_omit_required_webos_artifact_or_build(self):
-        for include_release, include_build in ((False, True), (True, False), (False, False)):
-            with self.subTest(release=include_release, build=include_build), \
-                 patch.object(controller, "verify_platform_recovery") as verify, \
-                 self.assertRaises(controller.ReleaseError):
-                controller.ensure_release("v3.0.0", "b" * 40,
-                    include_webos_release=include_release, include_webos_build=include_build,
-                    reuse_platform_run_id=42)
-            verify.assert_not_called()
+    @patch.object(controller, "verify_platform_recovery")
+    @patch.object(controller, "matching_run", return_value=None)
+    @patch.object(controller, "ensure_remote_main_sha")
+    @patch.object(controller, "dispatch")
+    def test_recovery_cannot_omit_required_webos_artifact_or_build(
+        self, dispatch, _main, _matching, verify
+    ):
+        with self.assertRaises(controller.ReleaseError):
+            controller.ensure_release("v3.0.0", "b" * 40,
+                include_webos_release=False, include_webos_build=True,
+                reuse_platform_run_id=42)
+        verify.assert_not_called()
+
+        controller.ensure_release("v3.0.0", "b" * 40,
+            include_webos_release=True, include_webos_build=False,
+            reuse_platform_run_id=42)
+        verify.assert_called_once_with(42, "b" * 40, "3.0.0", webos_run=42,
+                                       include_webos_build=False)
+        self.assertEqual(dispatch.call_args.args[3]["reuse_webos_run_id"], "42")
 
 
 class AndroidSourceTests(unittest.TestCase):
@@ -1765,10 +1793,13 @@ class UnsignedIOSReuseTests(unittest.TestCase):
                                   reuse_platform_run_id=42, reuse_android_run_id=42,
                                   reuse_ios_developer_run_id=43)
         verify.assert_called_once_with(42, "b" * 40, "3.0.42", android_run=42,
-                                       ios_developer_run=43)
+                                       ios_developer_run=43, webos_run=42,
+                                       include_webos_build=False, wait_complete=True)
         fields = dispatch.call_args.args[3]
         self.assertEqual(fields["reuse_repaired_run_id"], "ios-developer:43")
         self.assertEqual(fields["reuse_platform_run_id"], "42")
+        self.assertEqual(fields["reuse_webos_run_id"], "42")
+        self.assertEqual(fields["include_webos_build"], "false")
         self.assertNotIn("rebuild_ios", fields)
 
 

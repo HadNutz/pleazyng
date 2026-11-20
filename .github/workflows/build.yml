@@ -106,7 +106,7 @@ on:
         required: false
         type: string
       include_webos_build:
-        description: Build and verify the experimental ARM webOS candidate in this workflow run
+        description: Build webOS; recovery runs can disable this only when reusing an already verified webOS artifact
         required: true
         type: boolean
         default: true
@@ -1096,7 +1096,7 @@ jobs:
           if-no-files-found: warn
 
   prepare-webos-dav1d-source:
-    if: ${{ needs.validate-trusted-ref.result == 'success' && inputs.reuse_webos_run_id == '' && inputs.reuse_macos_package_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'webos-validation' || (needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_webos_build == 'true')) }}
+    if: ${{ needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.include_webos_build) && inputs.reuse_webos_run_id == '' && inputs.reuse_macos_package_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'webos-validation' || (needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_webos_build == 'true')) }}
     needs: validate-trusted-ref
     name: Prepare checksum-pinned WebOS dav1d source
     runs-on: ubuntu-latest
@@ -1126,7 +1126,7 @@ jobs:
           retention-days: 2
 
   build-webos:
-    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.prepare-webos-dav1d-source.result == 'success' && inputs.reuse_webos_run_id == '' && inputs.reuse_macos_package_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'webos-validation' || (needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_webos_build == 'true')) }}
+    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.prepare-webos-dav1d-source.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.include_webos_build) && inputs.reuse_webos_run_id == '' && inputs.reuse_macos_package_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'webos-validation' || (needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_webos_build == 'true')) }}
     needs: [validate-trusted-ref, prepare-webos-dav1d-source]
     name: Build WebOS TV package (ARMv7)
     timeout-minutes: 360

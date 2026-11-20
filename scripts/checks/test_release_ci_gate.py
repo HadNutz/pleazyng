@@ -772,11 +772,13 @@ class ReleaseCandidateBuildGateTests(unittest.TestCase):
         verify_tvos.assert_called_once_with(47, "c" * 40, "3.0.36", action="release")
         verify_recovery.assert_called_once_with(
             47, "c" * 40, "3.0.36", rebuild_tvos=True,
-            webos_run=47, android_run=47,
+            webos_run=47, android_run=47, include_webos_build=False,
+            wait_complete=True,
         )
         fields = dispatch.call_args.args[3]
         self.assertEqual(fields["tvos_runner_pool"], "private")
         self.assertEqual(fields["reuse_platform_run_id"], "47")
+        self.assertEqual(fields["reuse_webos_run_id"], "47")
 
 
 class ImmutableReleaseTagTests(unittest.TestCase):
