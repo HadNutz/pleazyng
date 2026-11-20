@@ -90,7 +90,7 @@ on:
         required: false
         type: string
       reuse_repaired_run_id:
-        description: Reuse signed Apple sibling runs (tvos:ID,ios:ID), repaired Linux/Mac outputs, or mark a tvOS retry source run ID
+        description: Reuse signed Apple sibling runs, repaired Linux/Mac outputs, or ios-developer:ID for a verified unsigned IPA
         required: false
         type: string
       reuse_platform_run_id:
@@ -744,7 +744,9 @@ jobs:
           if [[ "$REBUILD_MACOS" == true ]]; then options+=(--rebuild-macos); fi
           if [[ "$REBUILD_TVOS" == true ]]; then options+=(--rebuild-tvos); fi
           if [[ "$REBUILD_IOS" == true ]]; then options+=(--rebuild-ios); fi
-          if [[ -n "$REPAIRED_RUN" ]]; then
+          if [[ "$REPAIRED_RUN" =~ ^ios-developer:([1-9][0-9]*)$ ]]; then
+            options+=(--ios-developer-run "${BASH_REMATCH[1]}")
+          elif [[ -n "$REPAIRED_RUN" ]]; then
             if [[ -n "$PACKAGING_SHA" ]]; then
               if [[ "$REPAIRED_RUN" =~ ^tvos:([1-9][0-9]*),ios:([1-9][0-9]*)$ ]]; then
                 options+=(--tvos-run "${BASH_REMATCH[1]}" --ios-run "${BASH_REMATCH[2]}")
@@ -1327,7 +1329,7 @@ jobs:
           exit 1
 
   build-ios:
-    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_ios) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_ios) && !(inputs.reuse_platform_run_id != '' && startsWith(inputs.reuse_repaired_run_id, 'ios-developer:')) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: validate-trusted-ref
     timeout-minutes: 240
     runs-on: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-build-ios"]}}', github.run_id)) || 'macos-26-intel' }}

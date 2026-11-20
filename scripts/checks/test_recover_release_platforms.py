@@ -1733,6 +1733,46 @@ class AndroidSourceTests(unittest.TestCase):
             recovery.compose_proof({"pending_jobs": ["build-android"]})
 
 
+
+class UnsignedIOSReuseTests(unittest.TestCase):
+    def test_verifies_trusted_successful_developer_ipa_source(self):
+        source = {"id": 44691563399, "status": "completed", "event": "workflow_dispatch",
+                  "head_branch": "main", "head_repository": {"full_name": recovery.REPOSITORY},
+                  "path": ".github/workflows/build.yml@refs/heads/main", "head_sha": "a" * 40,
+                  "run_attempt": 1, "display_title": "action:release:pool:public:tag:v3.0.42"}
+        lineage = {"status": "ahead", "merge_base_commit": {"sha": "a" * 40},
+                   "files": [{"filename": "scripts/tv_mpv/build.py"}]}
+        steps = [{"name": name, "status": "completed", "conclusion": "success"} for name in (
+            "Build iOS (no codesign)", "Create unsigned developer IPA",
+            "Retain unsigned iOS developer checkpoint", "Attest unsigned developer IPA", "Upload IPA")]
+        job = {"id": 10, "name": "build-ios", "status": "completed", "conclusion": "success", "steps": steps}
+        artifact = {"id": 11, "name": "ios-ipa", "expired": False,
+                    "digest": "sha256:" + "c" * 64,
+                    "workflow_run": {"id": 44691563399, "head_sha": "a" * 40}}
+        with patch.object(recovery, "api", side_effect=[source, lineage]), \
+             patch.object(recovery, "collection", side_effect=[[job], [artifact]]):
+            result = recovery.verify_unsigned_ios_run(44691563399, "b" * 40, "3.0.42")
+        self.assertEqual(result["artifact_id"], 11)
+        self.assertEqual(result["source_sha"], "a" * 40)
+
+    @patch.object(controller, "verify_platform_recovery")
+    @patch.object(controller, "matching_run", return_value=None)
+    @patch.object(controller, "ensure_remote_main_sha")
+    @patch.object(controller, "dispatch")
+    def test_unsigned_ios_reuse_dispatches_typed_provenance_and_skips_rebuild(
+            self, dispatch, _main, _matching, verify):
+        controller.ensure_release("v3.0.42", "b" * 40, include_webos_release=True,
+                                  reuse_platform_run_id=42, reuse_android_run_id=42,
+                                  reuse_ios_developer_run_id=43)
+        verify.assert_called_once_with(42, "b" * 40, "3.0.42", android_run=42,
+                                       ios_developer_run=43)
+        fields = dispatch.call_args.args[3]
+        self.assertEqual(fields["reuse_repaired_run_id"], "ios-developer:43")
+        self.assertEqual(fields["reuse_platform_run_id"], "42")
+        self.assertNotIn("rebuild_ios", fields)
+
+
+
 class RepairedSourceTests(unittest.TestCase):
     def setUp(self):
         recovery.immutable_content.cache_clear()

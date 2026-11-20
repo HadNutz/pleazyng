@@ -322,12 +322,15 @@ def parse_repaired_run_reference(value):
     match = re.fullmatch(r"assembly-tvos:([1-9][0-9]*)", value)
     if match:
         return f"assembly-tvos:{int(match.group(1))}"
-    raise ReleaseError("Repaired run must be a positive ID or assembly-tvos:<ID>.")
+    match = re.fullmatch(r"ios-developer:([1-9][0-9]*)", value)
+    if match:
+        return f"ios-developer:{int(match.group(1))}"
+    raise ReleaseError("Repaired run must be a positive ID, assembly-tvos:<ID>, or ios-developer:<ID>.")
 
 
 def assembly_tvos_run_id(value) -> int | None:
     value = parse_repaired_run_reference(value)
-    if isinstance(value, str):
+    if isinstance(value, str) and value.startswith("assembly-tvos:"):
         return int(value.split(":", 1)[1])
     return None
 
@@ -1743,6 +1746,7 @@ def ensure_release(
     reuse_repaired_run_id: int | str | None = None,
     reuse_tvos_run_id: int | None = None,
     reuse_ios_run_id: int | None = None,
+    reuse_ios_developer_run_id: int | None = None,
     reuse_webos_run_id: int | None = None,
     candidate_ref: str | None = None,
     start_only: bool = False,
@@ -1756,6 +1760,12 @@ def ensure_release(
     allow_private_apple_retry: bool = False,
 ) -> dict:
     reuse_repaired_run_id = parse_repaired_run_reference(reuse_repaired_run_id)
+    if reuse_ios_developer_run_id is not None:
+        if (reuse_ios_developer_run_id < 1 or not reuse_platform_run_id or rebuild_ios
+                or include_apple_store_build or prepare_homebrew_cask or reuse_ios_run_id
+                or reuse_tvos_run_id or reuse_repaired_run_id is not None):
+            raise ReleaseError("Unsigned iOS artifact reuse requires ordinary unsigned platform recovery only.")
+        reuse_repaired_run_id = f"ios-developer:{reuse_ios_developer_run_id}"
     built_tvos_run_id = assembly_tvos_run_id(reuse_repaired_run_id)
     if built_tvos_run_id is not None and (
             packaging_source_sha is None or reuse_platform_run_id is None
@@ -1920,12 +1930,14 @@ def ensure_release(
             options["rebuild_ios"] = True
         if built_tvos_run_id is not None:
             options["built_tvos_run"] = built_tvos_run_id
-        elif reuse_repaired_run_id:
+        elif reuse_repaired_run_id and not (isinstance(reuse_repaired_run_id, str) and reuse_repaired_run_id.startswith("ios-developer:")):
             options["repaired_run"] = reuse_repaired_run_id
         if reuse_tvos_run_id:
             options['tvos_run'] = reuse_tvos_run_id
         if reuse_ios_run_id:
             options['ios_run'] = reuse_ios_run_id
+        if reuse_ios_developer_run_id:
+            options['ios_developer_run'] = reuse_ios_developer_run_id
         if reuse_webos_run_id:
             options["webos_run"] = reuse_webos_run_id
         if prepare_homebrew_cask and not reuse_macos_run_id:
@@ -2095,7 +2107,7 @@ def verify_platform_recovery(run_id: int, commit_sha: str, version: str, *,
                              android_run=None, macos_run=None, webos_run=None, include_webos_build=True, wait_complete=False,
                              rebuild_linux=False, rebuild_macos=False, rebuild_tvos=False, rebuild_ios=False, repaired_run=None, require_homebrew_cask=False,
                              packaging_source_sha=None, workflow_source_sha=None, include_apple_store_build=False, tvos_run=None, ios_run=None,
-                             built_tvos_run=None) -> dict:
+                             ios_developer_run=None, built_tvos_run=None) -> dict:
     from recover_release_platforms import RecoveryError, compose_proof, verify_source_run, wait_for_source_run, verify_macos_packaging_recovery
 
     if (rebuild_tvos or rebuild_ios) and (macos_run or repaired_run):
@@ -2116,6 +2128,10 @@ def verify_platform_recovery(run_id: int, commit_sha: str, version: str, *,
         if not tvos_run or rebuild_ios:
             raise ReleaseError('Signed iOS reuse requires approved assembly-only recovery.')
         options['ios_run'] = ios_run
+    if ios_developer_run:
+        if packaging_source_sha or include_apple_store_build or rebuild_ios or ios_run or tvos_run:
+            raise ReleaseError('Unsigned iOS reuse cannot be combined with signed Apple packaging.')
+        options['ios_developer_run'] = ios_developer_run
     if rebuild_linux:
         options["rebuild_linux"] = True
     if rebuild_macos:
@@ -2137,7 +2153,7 @@ def verify_platform_recovery(run_id: int, commit_sha: str, version: str, *,
         source = (verify_macos_packaging_recovery(run_id, macos_run, commit_sha, version) if macos_run else
                   wait_for_source_run(run_id, commit_sha, version, 10800, **options) if wait_complete else
                   verify_source_run(run_id, commit_sha, version, allow_pending=True, **options))
-        return compose_proof(source, android_run, include_webos_build, webos_run)
+        return compose_proof(source, android_run, include_webos_build, webos_run, ios_developer_run)
     except (RecoveryError, RuntimeError) as error:
         raise ReleaseError(f"Platform artifact recovery rejected: {error}") from error
 
@@ -3036,6 +3052,7 @@ def parse_args() -> argparse.Namespace:
                         help="Reuse repaired Linux/Mac outputs by ID or a signed tvOS package as assembly-tvos:<ID>")
     parser.add_argument('--reuse-tvos-run', type=int, help='Reuse successful signed TV output from an approved sibling Apple packaging repair')
     parser.add_argument('--reuse-ios-run', type=int, help='Reuse successful signed iOS output from an approved sibling Apple packaging repair')
+    parser.add_argument('--reuse-ios-developer-run', type=int, help='Reuse an attested unsigned developer IPA from a successful recovery run')
     parser.add_argument("--rebuild-ios", action="store_true", help="Rebuild iOS during verified platform recovery")
     parser.add_argument("--rebuild-webos", action="store_true", help="Rebuild webOS during verified platform recovery")
     parser.add_argument("--rebuild-tvos", action="store_true", help="Rebuild only tvOS during verified platform recovery")
@@ -3124,6 +3141,11 @@ def main() -> int:
         raise ReleaseError('Signed TV reuse requires approved iOS-only sibling packaging recovery.')
     if args.reuse_ios_run and (args.reuse_ios_run < 1 or not args.reuse_tvos_run or args.rebuild_ios):
         raise ReleaseError('Signed iOS reuse requires a distinct signed TV sibling source.')
+    if args.reuse_ios_developer_run and (
+            args.reuse_ios_developer_run < 1 or not args.reuse_platform_run or args.rebuild_ios
+            or args.include_apple_store_build or args.prepare_homebrew_cask or args.reuse_ios_run
+            or args.reuse_tvos_run or args.reuse_repaired_run or args.reuse_macos_run):
+        raise ReleaseError('Unsigned iOS reuse requires ordinary unsigned platform recovery only.')
     if packaging_repair and (not (args.rebuild_ios or args.rebuild_tvos or args.rebuild_macos or args.rebuild_webos
                                   or args.reuse_ios_run or built_tvos_run is not None)
                             or args.rebuild_linux or args.reuse_macos_run or repaired_platform_run):
@@ -3289,6 +3311,7 @@ def main() -> int:
                 **({"built_tvos_run": built_tvos_run} if built_tvos_run is not None else {}),
                 **({'tvos_run': args.reuse_tvos_run} if args.reuse_tvos_run else {}),
                 **({'ios_run': args.reuse_ios_run} if args.reuse_ios_run else {}),
+                **({'ios_developer_run': args.reuse_ios_developer_run} if args.reuse_ios_developer_run else {}),
                 **({"webos_run": args.reuse_webos_run} if args.reuse_webos_run else {}),
                 **({"require_homebrew_cask": True} if args.prepare_homebrew_cask and not args.reuse_macos_run else {}),
                 **({"macos_run": args.reuse_macos_run} if args.reuse_macos_run else {}),
@@ -3436,6 +3459,7 @@ def main() -> int:
             **({"reuse_repaired_run_id": args.reuse_repaired_run} if args.reuse_repaired_run else {}),
             **({'reuse_tvos_run_id': args.reuse_tvos_run} if args.reuse_tvos_run else {}),
             **({'reuse_ios_run_id': args.reuse_ios_run} if args.reuse_ios_run else {}),
+            **({'reuse_ios_developer_run_id': args.reuse_ios_developer_run} if args.reuse_ios_developer_run else {}),
             **({"reuse_webos_run_id": args.reuse_webos_run} if args.reuse_webos_run else {}),
             **({"reuse_platform_run_id": args.reuse_platform_run} if args.reuse_platform_run else {}),
             **({"reuse_android_run_id": args.reuse_android_run} if args.reuse_android_run else {}),
