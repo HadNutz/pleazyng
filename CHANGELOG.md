@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Rebuild amd64 and arm64 Snap packages from refreshed Ubuntu 24.04 packages to address USN-9152-1.
+
+## [3.0.43] - 2026-11-20
+
 - Keep a verified WebOS IPK in recovery release assembly while skipping its rebuild.
 - Convert the reused unsigned iOS artifact run identity into the verifier's exact run-ID option during release assembly.
 - Put the checksum-pinned webOS Ninja first on PATH during IPK packaging so FreeType's CMake build cannot select the incompatible depot_tools Ninja.
@@ -24,7 +28,7 @@
 - Run WebOS recovery after intentionally skipped candidate jobs and retain the canonical title the JIT broker recognizes.
 - Allow verified release recovery to reuse tagged platform artifacts after infrastructure-only Apple and webOS fixes.
 - Reuse an attested unsigned iOS IPA from a successful recovery run while rebuilding only the failed release platform.
-- Resolve any additional release qualification issues found during the 3.0.39 build.
+- Resolve release qualification issues found during the 3.0.42 build.
 
 ## [3.0.39] - 2026-11-18
 
