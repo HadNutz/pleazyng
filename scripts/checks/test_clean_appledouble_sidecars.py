@@ -76,6 +76,36 @@ class HostedCleanupTests(unittest.TestCase):
         self.assertFalse(self.sidecar.exists())
         self.assertTrue(self.protected.exists())
 
+    def test_split_apple_native_suite_job_cleans_only_its_owned_workspace(self):
+        task_root = self.root / 'p123-1-tvos'
+        task_root.mkdir()
+        subprocess.run(['git', 'init', '-q', str(task_root)], check=True)
+        source = task_root / 'source'
+        source.write_text('tracked tvOS source')
+        subprocess.run(['git', '-C', str(task_root), 'add', 'source'], check=True)
+        subprocess.run([
+            'git', '-C', str(task_root), '-c', 'user.name=Fixture',
+            '-c', 'user.email=fixture@example.test', 'commit', '-qm', 'tvOS fixture',
+        ], check=True)
+        sha = subprocess.check_output(['git', '-C', str(task_root), 'rev-parse', 'HEAD'], text=True).strip()
+        sidecar = task_root / '._tracked-source'
+        sidecar.write_text('task-owned sidecar')
+        environment = {
+            'PLEZYNG_HOSTED_APPLE_SCRATCH_ROOT': str(self.root),
+            'GITHUB_JOB': 'apple-native-suite',
+            'APPLE_SCRATCH_JOB': 'tvos',
+            'GITHUB_SHA': sha,
+        }
+        result = self.invoke(task_root, **environment)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(sidecar.exists())
+        self.assertTrue(self.protected.exists())
+
+        sidecar.write_text('task-owned sidecar')
+        result = self.invoke(task_root, **{**environment, 'APPLE_SCRATCH_JOB': '../outside'})
+        self.assertNotEqual(result.returncode, 0)
+        self.assertTrue(sidecar.exists())
+
     def test_wrong_or_malformed_packaging_source_cannot_delete_sidecars(self):
         for source in ('b' * 40, 'not-a-commit'):
             with self.subTest(source=source):

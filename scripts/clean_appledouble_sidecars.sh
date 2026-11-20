@@ -21,6 +21,11 @@ case "${GITHUB_JOB:-}:${APPLE_SCRATCH_JOB:-}" in
   build-ios:*) scratch_job="ios" ;;
   build-macos:*) scratch_job="macos" ;;
   apple-native-test:ios|apple-native-test:macos|apple-native-test:tvos) scratch_job="$APPLE_SCRATCH_JOB" ;;
+  apple-native-suite:ios|apple-native-suite:macos|apple-native-suite:tvos) scratch_job="$APPLE_SCRATCH_JOB" ;;
+  apple-native-suite:*)
+    echo "AppleDouble cleanup requires a recognized Apple native suite: ${APPLE_SCRATCH_JOB:-unset}" >&2
+    exit 1
+    ;;
   *)
     echo "AppleDouble cleanup is not configured for this job: ${GITHUB_JOB:-unset}" >&2
     exit 1
