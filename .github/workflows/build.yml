@@ -236,6 +236,8 @@ jobs:
     if: ${{ always() && !cancelled() && (inputs.action == 'release' || inputs.action == 'build') && inputs.include_apple_store_build && (inputs.candidate_ref == '' || needs.capture-candidate.result == 'success') }}
     runs-on: macos-26
     timeout-minutes: 15
+    outputs:
+      ios_store_signing_ready: ${{ steps.ios-store-preflight.outcome == 'success' }}
     permissions:
       contents: read
     steps:
@@ -244,6 +246,8 @@ jobs:
           ref: ${{ github.sha }}
           persist-credentials: false
       - name: Prepare worker profile and check actual Store entitlements
+        id: ios-store-preflight
+        continue-on-error: true
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_BASE64 }}
@@ -262,6 +266,14 @@ jobs:
               --public-report "$RUNNER_TEMP/ios-signing-preflight-report.json"
           fi
           python3 scripts/preflight_ios_store_profile.py
+      - name: Explain blocked iOS Store lane
+        if: steps.ios-store-preflight.outcome == 'failure'
+        run: |
+          echo "::warning title=iOS Store delivery blocked::The iOS Store signing preflight failed. The unsigned iOS developer IPA will still be built and included in the core release."
+          {
+            echo '### iOS App Store delivery'
+            echo 'Blocked by the signing entitlement preflight. The unsigned iOS developer IPA remains eligible for the core release; signed Store delivery requires a corrected App Store provisioning profile.'
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Retain sanitized preflight result
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
@@ -1414,7 +1426,9 @@ jobs:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_ios) && !(inputs.reuse_platform_run_id != '' && startsWith(inputs.reuse_repaired_run_id, 'ios-developer:')) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: [validate-trusted-ref, preflight-ios-store-signing]
     timeout-minutes: 240
-    runs-on: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-build-ios"]}}', github.run_id)) || 'macos-26-intel' }}
+    outputs:
+      ios_store_package_available: ${{ steps.ios-store-package.outcome == 'success' }}
+    runs-on: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.preflight-ios-store-signing.outputs.ios_store_signing_ready == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-build-ios"]}}', github.run_id)) || 'macos-26-intel' }}
     permissions:
       id-token: write
       attestations: write
@@ -1546,7 +1560,7 @@ jobs:
         id: ios-signing
         env:
           INCLUDE_APPLE_STORE_BUILD: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build }}
-          IOS_STORE_PREFLIGHT_RESULT: ${{ needs.preflight-ios-store-signing.result }}
+          IOS_STORE_PREFLIGHT_RESULT: ${{ needs.preflight-ios-store-signing.outputs.ios_store_signing_ready }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_BASE64 }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -1561,7 +1575,7 @@ jobs:
             echo "Signed iOS App Store IPA disabled; unsigned developer artifact remains available."
             exit 0
           fi
-          if [[ "$IOS_STORE_PREFLIGHT_RESULT" != "success" ]]; then
+          if [[ "$IOS_STORE_PREFLIGHT_RESULT" != "true" ]]; then
             echo "configured=false" >> "$GITHUB_OUTPUT"
             echo "iOS Store signing preflight did not pass; continuing with the unsigned developer IPA."
             exit 0
@@ -1585,6 +1599,8 @@ jobs:
           echo "configured=true" >> "$GITHUB_OUTPUT"
 
       - name: Validate iOS App Store provisioning entitlements
+        id: ios-store-entitlements
+        continue-on-error: true
         if: steps.ios-signing.outputs.configured == 'true'
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -1666,7 +1682,9 @@ jobs:
           retention-days: 14
 
       - name: Build signed iOS App Store IPA
-        if: steps.ios-signing.outputs.configured == 'true'
+        id: ios-store-package
+        continue-on-error: true
+        if: steps.ios-signing.outputs.configured == 'true' && steps.ios-store-entitlements.outcome == 'success'
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_BASE64 }}
@@ -1700,7 +1718,7 @@ jobs:
           fi
 
       - name: Attest signed iOS App Store IPA
-        if: steps.ios-signing.outputs.configured == 'true'
+        if: steps.ios-store-package.outcome == 'success'
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: pleazyng-ios-appstore.ipa
@@ -1758,6 +1776,8 @@ jobs:
   build-tvos:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_tvos) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: validate-trusted-ref
+    outputs:
+      tvos_store_package_available: ${{ steps.tvos-store-package.outcome == 'success' }}
     timeout-minutes: 180
     name: Build tvOS developer package (arm64)
     runs-on: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-build-tvos"]}}', github.run_id)) || 'macos-26' }}
@@ -1905,8 +1925,9 @@ jobs:
           fi
           for name in APPLE_TEAM_ID APPLE_DISTRIBUTION_CERTIFICATE_BASE64 APPLE_CERTIFICATE_PASSWORD TVOS_PROVISIONING_PROFILE_BASE64 TVOS_TOPSHELF_PROVISIONING_PROFILE_BASE64; do
             if [[ -z "${!name}" ]]; then
-              echo "Missing required Apple signing secret: $name" >&2
-              exit 1
+              echo "configured=false" >> "$GITHUB_OUTPUT"
+              echo "::warning title=tvOS Store delivery blocked::Missing Apple signing secret: $name. The unsigned tvOS developer IPA will still be built."
+              exit 0
             fi
           done
           echo "configured=true" >> "$GITHUB_OUTPUT"
@@ -1974,6 +1995,8 @@ jobs:
           retention-days: 30
 
       - name: Build signed tvOS App Store IPA
+        id: tvos-store-package
+        continue-on-error: true
         if: steps.tvos-signing.outputs.configured == 'true'
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -1992,7 +2015,7 @@ jobs:
 
       - name: Verify tvOS runtime dependencies
         env:
-          TVOS_SIGNED_BUILD: ${{ steps.tvos-signing.outputs.configured }}
+          TVOS_SIGNED_BUILD: ${{ steps.tvos-store-package.outcome == 'success' }}
           TVOS_PRODUCT_SOURCE_SHA: ${{ inputs.recovery_product_sha || github.sha }}
         run: |
           set -euo pipefail
@@ -2036,7 +2059,7 @@ jobs:
             tvos-runtime-dependency-receipt.json
 
       - name: Attest signed tvOS App Store package
-        if: steps.tvos-signing.outputs.configured == 'true'
+        if: steps.tvos-store-package.outcome == 'success'
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: pleazyng-tvos-appstore.ipa
@@ -3704,6 +3727,24 @@ jobs:
           RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.release_tag }}
           PACKAGING_SOURCE_SHA: ${{ inputs.recovery_source_sha }}
         run: python3 scripts/release_assembly_mode.py
+
+      - name: Report optional Apple Store delivery status
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' }}
+        env:
+          IOS_STORE_PACKAGE: ${{ needs.build-ios.outputs.ios_store_package_available }}
+          TVOS_STORE_PACKAGE: ${{ needs.build-tvos.outputs.tvos_store_package_available }}
+        run: |
+          if [[ "$IOS_STORE_PACKAGE" == "true" && "$TVOS_STORE_PACKAGE" == "true" ]]; then
+            echo 'Both signed Apple Store packages are available for a later Store submission.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning title=Apple Store delivery blocked::The core release will proceed with unsigned Apple developer packages; signed Store delivery remains blocked until valid provisioning profiles are available."
+            {
+              echo '### Apple Store delivery'
+              [[ "$IOS_STORE_PACKAGE" == "true" ]] && echo '- iOS signed package: available' || echo '- iOS signed package: blocked by signing preflight or package failure'
+              [[ "$TVOS_STORE_PACKAGE" == "true" ]] && echo '- tvOS signed package: available' || echo '- tvOS signed package: blocked by signing configuration or package failure'
+              echo 'Unsigned iOS and tvOS packages remain included in the core release.'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:

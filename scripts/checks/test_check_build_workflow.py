@@ -43,18 +43,24 @@ class BuildWorkflowGuardTest(unittest.TestCase):
         self.assertIn('capture-candidate', preflight['needs'])
         self.assertIn('always()', preflight['if'])
         self.assertIn('inputs.include_apple_store_build', preflight['if'])
+        self.assertIn('ios_store_signing_ready', preflight['outputs'])
+        self.assertTrue(preflight['steps'][1]['continue-on-error'])
         self.assertIn('scripts/preflight_ios_store_profile.py', preflight['steps'][1]['run'])
         self.assertIn('--prepare-ios-worker-profile', preflight['steps'][1]['run'])
         ios = jobs['build-ios']
         self.assertIn('preflight-ios-store-signing', ios['needs'])
         self.assertNotIn("needs.preflight-ios-store-signing.result == 'success'", ios['if'])
+        self.assertIn('needs.preflight-ios-store-signing.outputs.ios_store_signing_ready', ios['runs-on'])
         steps = {step.get('name'): step for step in ios['steps']}
         signing = steps['Configure optional iOS App Store signing']
-        self.assertIn('needs.preflight-ios-store-signing.result', signing['env']['IOS_STORE_PREFLIGHT_RESULT'])
+        self.assertIn('needs.preflight-ios-store-signing.outputs.ios_store_signing_ready', signing['env']['IOS_STORE_PREFLIGHT_RESULT'])
         self.assertIn('IOS_STORE_PREFLIGHT_RESULT', signing['run'])
         self.assertIn('unsigned developer IPA', signing['run'])
         self.assertIn('steps.ios-signing.outputs.configured', steps['Validate iOS App Store provisioning entitlements']['if'])
-        self.assertIn('steps.ios-signing.outputs.configured', steps['Build signed iOS App Store IPA']['if'])
+        self.assertTrue(steps['Validate iOS App Store provisioning entitlements']['continue-on-error'])
+        self.assertIn('steps.ios-store-entitlements.outcome', steps['Build signed iOS App Store IPA']['if'])
+        self.assertTrue(steps['Build signed iOS App Store IPA']['continue-on-error'])
+        self.assertIn('Report optional Apple Store delivery status', {step.get('name') for step in jobs['create-release']['steps']})
 
     def test_sherpa_cocoapods_diagnostic_uses_the_real_script_not_appledouble_sidecars(self):
         action = APPLE_NATIVE_ACTION.read_text(encoding="utf-8")

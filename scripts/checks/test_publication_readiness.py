@@ -60,6 +60,41 @@ class PublicationReadinessTests(unittest.TestCase):
             for item in skipped
         ))
 
+    def test_blocked_apple_signing_skips_store_channels_without_failing_core_delivery(self):
+        calls = []
+        settings = {
+            'APPLE_STORE_UPLOAD_READY': 'true',
+            'GOOGLE_PLAY_BOOTSTRAP_COMPLETE': 'true',
+            'GOOGLE_PLAY_TRACK': 'internal',
+        }
+        secrets = {
+            'APPLE_API_KEY_ID', 'APPLE_API_ISSUER_ID', 'APPLE_API_PRIVATE_KEY',
+            'GOOGLE_PLAY_SERVICE_ACCOUNT_JSON',
+        }
+        assets = {'SHA256SUMS.txt', 'pleazyng-android-play.aab'}
+        def dispatch(workflow, title, fields, purpose, **kwargs):
+            calls.append(fields)
+            return {'databaseId': 1}
+
+        with contextlib.redirect_stdout(io.StringIO()), \
+                patch.object(release, 'release_metadata', return_value={'assets': [{'name': x} for x in assets]}), \
+                patch.object(release, 'configured_repo_names', return_value=secrets), \
+                patch.object(release, 'configured_repo_variables', return_value=settings), \
+                patch.object(release, 'ensure_channel_run', side_effect=dispatch):
+            _, skipped, failures = release.publish_configured_channels(
+                'v3.0.1', '3.0.1', release_sha='a' * 40, include_webos_release=False
+            )
+
+        self.assertFalse(failures)
+        self.assertFalse(any(x.get('channel', '').startswith('app-store-') for x in calls))
+        for channel, asset in (
+            ('Apple App Store Connect iOS upload', 'pleazyng-ios-appstore.ipa'),
+            ('Apple App Store Connect tvOS upload', 'pleazyng-tvos-appstore.ipa'),
+        ):
+            entry = next(item for item in skipped if item['channel'] == channel)
+            self.assertIn(asset, entry['reason'])
+            self.assertIn('unsigned developer package', entry['reason'])
+
     def test_production_and_unrecognized_settings_are_rejected(self):
         for settings in [{'GOOGLE_PLAY_TRACK': 'production'}, {'GOOGLE_PLAY_RELEASE_STATUS': 'inProgress'}]:
             with self.assertRaises(release.ReleaseError):

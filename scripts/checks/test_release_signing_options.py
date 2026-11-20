@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Independent signing qualification must not enable store publication."""
 import contextlib
+import io
 import json
 from pathlib import Path
 import subprocess
@@ -24,15 +25,13 @@ class SigningOptionsTests(unittest.TestCase):
                 self.assertFalse(args.publish)
 
     def test_dispatch_and_reuse_require_every_requested_step(self):
-        apple = [("build-ios", "Build signed iOS App Store IPA"),
-                 ("Build tvOS developer package (arm64)", "Build signed tvOS App Store IPA")]
         mac = [("build-macos", "Notarize Application"),
                ("build-macos", "Wait for notarization acceptance"),
                ("build-macos", "Verify Gatekeeper acceptance for Homebrew Cask")]
         cask = [("create-release", "Generate Homebrew Cask candidate"),
                 ("create-release", "Attest Homebrew Cask candidate")]
         for candidate in (True, False):
-            required = apple + mac + ([] if candidate else cask)
+            required = mac + ([] if candidate else cask)
             for missing in [None, *required]:
                 with self.subTest(candidate=candidate, missing=missing), contextlib.ExitStack() as stack:
                     existing = {"databaseId": 42, "status": "completed", "conclusion": "success"}
@@ -75,19 +74,39 @@ class SigningOptionsTests(unittest.TestCase):
             matching.assert_not_called()
             dispatch.assert_not_called()
 
-    def test_requested_assets_required_without_legacy_apple_secrets(self):
-        # Platform matrix is checked separately. Capture the required-set error
-        # with no assets to verify signing is never gated on legacy API secrets.
+    def test_unsigned_apple_core_assets_suffice_when_store_signing_is_blocked(self):
+        # Store credentials affect the optional Store channel, not completeness
+        # of the unsigned iOS/tvOS assets in the core release.
+        core_assets = {
+            "SHA256SUMS.txt", "appcast.xml", "pleazyng-android-arm64-v8a.tar.gz",
+            "pleazyng-android-armeabi-v7a.tar.gz", "pleazyng-android-x86_64.tar.gz",
+            "pleazyng-ios-unsigned.ipa", "pleazyng-tvos-unsigned.ipa", "pleazyng-macos.dmg",
+            "pleazyng-windows-x64-portable.7z", "pleazyng-windows-arm64-portable.zip",
+            "pleazyng-windows-installer.exe", "pleazyng-linux-x64.tar.gz", "pleazyng-linux-x64.deb",
+            "pleazyng-linux-x64.rpm", "pleazyng-linux-x64.pkg.tar.zst", "pleazyng-linux-x64.flatpak",
+            "pleazyng-linux-x64.snap", "pleazyng-linux-arm64.tar.gz", "pleazyng-linux-arm64.deb",
+            "pleazyng-linux-arm64.rpm", "pleazyng-linux-arm64.pkg.tar.zst", "pleazyng-linux-arm64.flatpak",
+            "pleazyng-linux-arm64.snap", "pleazyng-linux-x86_64.AppImage",
+            "pleazyng-tizen-arm-tester-handoff.zip", "pleazyng-amazon-firetv.apk",
+            "pleazyng-amazon-firetv-provenance.json", "webos-SHA256SUMS.txt", "pleazyng-webos.ipk",
+        }
+        with patch.object(release, "release_metadata", return_value={"assets": [{"name": name} for name in core_assets]}), \
+             patch.object(release, "configured_repo_names", return_value=set()), \
+             patch.object(release, "configured_repo_variables", return_value={}):
+            with contextlib.redirect_stdout(io.StringIO()) as output:
+                release.validate_release_outputs("v3.0.1", "3.0.1", include_webos_release=True,
+                    include_apple_store_build=True, prepare_homebrew_cask=False)
+            self.assertIn("Apple Store delivery remains blocked by signing readiness", output.getvalue())
+
+    def test_homebrew_candidate_remains_required_when_requested(self):
         with patch.object(release, "release_metadata", return_value={"assets": []}), \
              patch.object(release, "missing_assets", return_value=[]), \
              patch.object(release, "configured_repo_names", return_value=set()), \
              patch.object(release, "configured_repo_variables", return_value={}):
-            for enabled in (False, True):
-                with self.subTest(enabled=enabled), self.assertRaises(release.ReleaseError) as raised:
-                    release.validate_release_outputs("v3.0.1", "3.0.1", include_webos_release=True,
-                        include_apple_store_build=enabled, prepare_homebrew_cask=enabled)
-                for name in ("pleazyng-ios-appstore.ipa", "pleazyng-tvos-appstore.ipa", "snapetech-pleazyng.rb"):
-                    self.assertEqual(name in str(raised.exception), enabled)
+            with self.assertRaises(release.ReleaseError) as raised:
+                release.validate_release_outputs("v3.0.1", "3.0.1", include_webos_release=True,
+                    include_apple_store_build=False, prepare_homebrew_cask=True)
+            self.assertIn("snapetech-pleazyng.rb", str(raised.exception))
 
     def test_github_only_frozen_release_propagates_flags_without_store_uploads(self):
         with tempfile.TemporaryDirectory() as scratch, contextlib.ExitStack() as stack:

@@ -1399,14 +1399,6 @@ def ensure_candidate_build(
         complete = execution_profile != "hybrid" or run_has_successful_job(
             PLEZY_REPO, run, "Build Windows (arm64)"
         )
-        if include_apple_store_build:
-            complete = complete and all(
-                run_has_successful_step(PLEZY_REPO, run, job_name, step_name)
-                for job_name, step_name in (
-                    ("build-ios", "Build signed iOS App Store IPA"),
-                    ("Build tvOS developer package (arm64)", "Build signed tvOS App Store IPA"),
-                )
-            )
         if prepare_homebrew_cask:
             complete = complete and all(
                 run_has_successful_step(PLEZY_REPO, run, job_name, step_name)
@@ -2006,7 +1998,7 @@ def ensure_release(
         complete = bool(reuse_platform_run_id) or execution_profile != "hybrid" or run_has_successful_job(
             PLEZY_REPO, existing, "Build Windows (arm64)"
         )
-        if include_apple_store_build:
+        if include_apple_store_build and repair:
             complete = complete and all(
                 run_has_successful_step(PLEZY_REPO, existing, job_name, step_name)
                 for job_name, step_name in (
@@ -2685,9 +2677,6 @@ def validate_release_outputs(
         required.update({"pleazyng-android-play.aab", "pleazyng-amazon-firetv.apk", "pleazyng-automotive-music.apk", "pleazyng-automotive-play.aab"})
     if all(publication_settings.get(name, "").strip() for name in MSSTORE_BUILD_VARIABLES):
         required.add("pleazyng-windows.msixbundle")
-    if include_apple_store_build:
-        required.update({"pleazyng-ios-appstore.ipa", "pleazyng-tvos-appstore.ipa",
-                         "APPLE-STORE-SHA256SUMS.txt", "APPLE-STORE-RECOVERY.json"})
     if prepare_homebrew_cask:
         required.add("snapetech-pleazyng.rb")
 
@@ -2698,6 +2687,22 @@ def validate_release_outputs(
             "It remains a draft; no public release or store/package publication was started."
         )
     print(f"Verified {len(required)} required release assets for {tag} before publication.")
+    if include_apple_store_build:
+        store_assets = {"pleazyng-ios-appstore.ipa", "pleazyng-tvos-appstore.ipa"}
+        missing_store = sorted(store_assets - assets)
+        if missing_store:
+            print(
+                "Apple Store delivery remains blocked by signing readiness; the complete unsigned "
+                "iOS/tvOS core-release assets are present. Missing signed assets: "
+                + ", ".join(missing_store)
+            )
+        elif not {"APPLE-STORE-SHA256SUMS.txt", "APPLE-STORE-RECOVERY.json"}.issubset(assets):
+            print(
+                "Signed Apple packages are attached, but Store upload remains blocked until the "
+                "append-only recovery sidecars are prepared."
+            )
+        else:
+            print("Signed iOS and tvOS Store packages are attached with their recovery sidecars.")
 
 
 def configured_repo_names(kind: str) -> set[str]:
@@ -2998,6 +3003,16 @@ def publish_configured_channels(
         predicate = spec.get("asset_predicate")
         required_assets = set(spec["assets"])
         if spec["fields"].get("channel") in {"app-store-ios", "app-store-tvos"}:
+            store_asset = next(iter(spec["assets"] - {"SHA256SUMS.txt"}), None)
+            if store_asset and store_asset not in assets:
+                skipped.append({
+                    "channel": spec["name"],
+                    "reason": (
+                        f"{store_asset} is unavailable because Apple signing is blocked; "
+                        "the core release retains the unsigned developer package."
+                    ),
+                })
+                continue
             recovery_assets = {"APPLE-STORE-SHA256SUMS.txt", "APPLE-STORE-RECOVERY.json"}
             if assets & recovery_assets:
                 required_assets.update(recovery_assets)

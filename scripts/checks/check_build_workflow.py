@@ -2112,7 +2112,7 @@ require(
 ios_worker_stage = named_step(job("build-ios"), "Stage locked iOS worker frameworks for Release")
 require(
     "(inputs.reuse_platform_run_id == '' || inputs.rebuild_ios)" in job("build-ios")
-    and "needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format(" in job("build-ios")
+    and "needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.preflight-ios-store-signing.outputs.ios_store_signing_ready == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format(" in job("build-ios")
     and "--rebuild-ios" in recovery_gate and "--rebuild-ios" in recovery_download
     and "inputs.rebuild_ios && needs.build-ios.result == 'success'" in release_condition
     and "!inputs.rebuild_ios && needs.build-ios.result == 'skipped'" in release_condition
