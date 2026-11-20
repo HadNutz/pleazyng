@@ -92,9 +92,9 @@ class BuildWorkflowGuardTest(unittest.TestCase):
         workflow = yaml.safe_load(self._workflow())
         steps = workflow['jobs']['create-release']['steps']
         recovery_step = next(step for step in steps if step.get('name') == 'Recover verified platform artifacts')
-        match = re.search(r'if \[\[ "\$REPAIRED_RUN" =~ (.+?) \]\]; then', recovery_step['run'])
-        self.assertIsNotNone(match)
-        pattern = match.group(1)
+        patterns = re.findall(r'if \[\[ "\$REPAIRED_RUN" =~ (.+?) \]\]; then', recovery_step['run'])
+        pattern = next((value for value in patterns if value.startswith('^tvos:')), None)
+        self.assertIsNotNone(pattern)
         self.assertEqual(pattern, r'^tvos:([1-9][0-9]*),ios:([1-9][0-9]*)$')
         for value in ('tvos:84,ios:84', 'tvos:84,ios:85'):
             self.assertIsNotNone(re.fullmatch(pattern, value))
@@ -104,6 +104,16 @@ class BuildWorkflowGuardTest(unittest.TestCase):
                 self.assertIsNone(re.fullmatch(pattern, value))
         self.assertIn('--tvos-run "${BASH_REMATCH[1]}"', recovery_step['run'])
         self.assertIn('--ios-run "${BASH_REMATCH[2]}"', recovery_step['run'])
+
+    def test_release_assembly_unpacks_unsigned_ios_run_identity(self):
+        workflow = yaml.safe_load(self._workflow())
+        steps = workflow['jobs']['create-release']['steps']
+        recovery_step = next(step for step in steps if step.get('name') == 'Recover verified platform artifacts')
+        run = recovery_step['run']
+        ios_developer_case = 'if [[ "$REPAIRED_RUN" =~ ^ios-developer:([1-9][0-9]*)$ ]]; then'
+        self.assertIn(ios_developer_case, run)
+        self.assertIn('options+=(--ios-developer-run "${BASH_REMATCH[1]}")', run)
+        self.assertLess(run.index(ios_developer_case), run.index('elif [[ -n "$PACKAGING_SHA" ]]'))
 
     def test_profile_preflight_cannot_leave_trusted_native_bounded_route_or_break_core_serialization(self):
         original = self._workflow()

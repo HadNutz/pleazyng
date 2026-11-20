@@ -3663,7 +3663,9 @@ jobs:
           if [[ "$REBUILD_TVOS" == true ]]; then options+=(--rebuild-tvos); fi
           if [[ "$REBUILD_IOS" == true ]]; then options+=(--rebuild-ios); fi
           if [[ -n "$REPAIRED_RUN" ]]; then
-            if [[ -n "$PACKAGING_SHA" ]]; then
+            if [[ "$REPAIRED_RUN" =~ ^ios-developer:([1-9][0-9]*)$ ]]; then
+              options+=(--ios-developer-run "${BASH_REMATCH[1]}")
+            elif [[ -n "$PACKAGING_SHA" ]]; then
               if [[ "$REPAIRED_RUN" =~ ^tvos:([1-9][0-9]*),ios:([1-9][0-9]*)$ ]]; then
                 options+=(--tvos-run "${BASH_REMATCH[1]}" --ios-run "${BASH_REMATCH[2]}")
               elif [[ "$REPAIRED_RUN" =~ ^assembly-tvos:([1-9][0-9]*)$ ]]; then

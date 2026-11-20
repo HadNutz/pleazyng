@@ -2075,9 +2075,10 @@ recovery_download = named_step(release, "Recover verified platform artifacts")
 require(
     '--tvos-run "$REPAIRED_RUN"' in recovery_gate
     and '--tvos-run "$REPAIRED_RUN"' in recovery_download
+    and '--ios-developer-run "${BASH_REMATCH[1]}"' in recovery_download
     and 'if [[ -n "$PACKAGING_SHA" ]]' in recovery_gate
     and '--repaired-run "$REPAIRED_RUN"' in recovery_gate,
-    "approved Apple recovery must distinguish signed TV reuse from legacy Linux/Mac repair reuse",
+    "artifact recovery must distinguish unsigned iOS reuse, signed TV reuse, and legacy Linux/Mac repair reuse",
 )
 ios_worker_stage = named_step(job("build-ios"), "Stage locked iOS worker frameworks for Release")
 require(
