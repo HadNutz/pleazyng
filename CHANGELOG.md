@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Prepare any configured app-store listings that require a separate manual review submission after the verified 3.0.44 binaries are uploaded.
+
+## [3.0.44] - 2026-11-20
+
 - Split Apple native qualification into independently rerunnable iOS, macOS, and tvOS jobs; preflight signing and reusable artifact provenance, build captured candidates alongside qualification, resume from verified attempt history, and checkpoint macOS/tvOS artifacts and notarization state.
 - Rebuild amd64 and arm64 Snap packages from refreshed Ubuntu 24.04 packages to address USN-9152-1.
 
