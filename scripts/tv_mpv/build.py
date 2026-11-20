@@ -87,6 +87,19 @@ def rewrite_webos_source_mirrors(checkout):
     libxml_script.write_text(libxml_text.replace(
         libxml_download, f'{libxml_download} "{libxml_mirror_url}"'
     ))
+    dav1d_script = checkout / "scripts/build_libmpv_webos.sh"
+    dav1d_original_url = (
+        'https://download.videolan.org/pub/videolan/dav1d/1.5.1/dav1d-1.5.1.tar.xz'
+    )
+    dav1d_download = f'download "{dav1d_original_url}" "$dav_tar"'
+    dav1d_mirrors = (
+        '"https://mirror.csclub.uwaterloo.ca/vlc/dav1d/1.5.1/dav1d-1.5.1.tar.xz" '
+        '"https://veronanetworks.mm.fcix.net/videolan-ftp/dav1d/1.5.1/dav1d-1.5.1.tar.xz"'
+    )
+    dav1d_text = dav1d_script.read_text()
+    if dav1d_text.count(dav1d_download) != 1:
+        raise ValueError("pinned TV recipe no longer has its expected dav1d download URL")
+    dav1d_script.write_text(dav1d_text.replace(dav1d_download, f'{dav1d_download} {dav1d_mirrors}'))
     libxml_pin = (
         "98087fd181d9070724f3fbc65c7377db03038eb92bd882374daff44940138821  "
         "https://download.gnome.org/sources/libxml2/2.15/libxml2-2.15.4.tar.xz"

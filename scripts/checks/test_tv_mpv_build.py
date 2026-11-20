@@ -25,6 +25,10 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
             'download "https://downloads.sourceforge.net/freetype/freetype-${FREETYPE_VERSION}.tar.xz" "$src"\n',
             encoding="utf-8",
         )
+        (scripts / "build_libmpv_webos.sh").write_text(
+            'download "https://download.videolan.org/pub/videolan/dav1d/1.5.1/dav1d-1.5.1.tar.xz" "$dav_tar"\n',
+            encoding="utf-8",
+        )
         (scripts / "shared/_sources.sha256").write_text(
             "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269  "
             "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz\n"
@@ -45,6 +49,7 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
 
             cross = (checkout / "scripts/shared/_cross.sh").read_text(encoding="utf-8")
             linux = (checkout / "scripts/build_libmpv_linux.sh").read_text(encoding="utf-8")
+            webos = (checkout / "scripts/build_libmpv_webos.sh").read_text(encoding="utf-8")
             manifest = (checkout / "scripts/shared/_sources.sha256").read_text(encoding="utf-8")
             self.assertIn("https://gstreamer.freedesktop.org/src/mirror/bzip2/bzip2-${BZIP2_VERSION}.tar.gz", cross)
             self.assertIn(
@@ -52,6 +57,12 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
                 'libxml2-${LIBXML2_VERSION}.tar.xz" "$src" '
                 '"https://dev-www.libreoffice.org/src/libxml2-${LIBXML2_VERSION}.tar.xz"',
                 cross,
+            )
+            self.assertIn(
+                'download "https://download.videolan.org/pub/videolan/dav1d/1.5.1/dav1d-1.5.1.tar.xz" '
+                '"$dav_tar" "https://mirror.csclub.uwaterloo.ca/vlc/dav1d/1.5.1/dav1d-1.5.1.tar.xz" '
+                '"https://veronanetworks.mm.fcix.net/videolan-ftp/dav1d/1.5.1/dav1d-1.5.1.tar.xz"',
+                webos,
             )
             self.assertIn("https://dev-www.libreoffice.org/src/libpng-${LIBPNG_VERSION}.tar.xz", linux)
             self.assertIn(
@@ -96,6 +107,15 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
             )
 
             with self.assertRaisesRegex(ValueError, "expected libxml2 SHA-256"):
+                rewrite_webos_source_mirrors(checkout)
+
+    def test_rejects_a_changed_dav1d_download_in_the_pinned_recipe(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            checkout = self._recipe(Path(temporary) / "recipe")
+            script = checkout / "scripts/build_libmpv_webos.sh"
+            script.write_text("download changed-url $dav_tar\n", encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "expected dav1d download URL"):
                 rewrite_webos_source_mirrors(checkout)
 
     def test_rejects_a_changed_freetype_checksum_in_the_pinned_recipe(self) -> None:
