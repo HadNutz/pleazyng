@@ -93,21 +93,39 @@ class DarwinProcesses:
                 "seconds": int(after.seconds), "microseconds": int(after.microseconds),
                 "executable": os.fsdecode(path.value)}
 
-    def snapshot(self):
+    def process_ids(self):
         while True:
             try:
                 pids = subprocess.check_output(["/bin/ps", "-U", str(self.uid), "-o", "pid="],
                                                text=True, timeout=30)
-                break
+                return {int(value) for value in pids.split()}
             except subprocess.TimeoutExpired:
                 # Xcode/simulator pressure can delay a read-only process query.
                 # Keep the build running and retry observation; a slow ps is not
                 # a build failure and must not permanently disable its observer.
                 print("Process query delayed; retrying observation without stopping the build.", flush=True)
                 time.sleep(1)
+
+    def snapshot(self):
         result = {}
-        for value in pids.split():
-            process = self.read(int(value))
+        for pid in self.process_ids():
+            for attempt in range(3):
+                try:
+                    process = self.read(pid)
+                    break
+                except RuntimeError:
+                    # `ps` and proc_pidinfo are separate kernel queries. A
+                    # short-lived process can exit between them; on Darwin the
+                    # latter may report a short read without ESRCH. Recheck the
+                    # owner's live PID set before retrying. Only ignore it when
+                    # it has actually disappeared; a still-live but uninspectable
+                    # process remains a hard error for safe teardown accounting.
+                    if pid not in self.process_ids():
+                        process = None
+                        break
+                    if attempt == 2:
+                        raise
+                    time.sleep(0.05 * (attempt + 1))
             if process is not None:
                 result[process["pid"]] = process
         return result

@@ -22,6 +22,44 @@ processes = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(processes)
 
 
+class DarwinSnapshotTests(unittest.TestCase):
+    def snapshot_reader(self, pids, reads):
+        backend = processes.DarwinProcesses.__new__(processes.DarwinProcesses)
+        backend.uid = os.geteuid()
+        backend.process_ids = Mock(side_effect=pids)
+        backend.read = Mock(side_effect=reads)
+        return backend
+
+    def test_snapshot_ignores_pid_that_disappears_between_kernel_queries(self):
+        backend = self.snapshot_reader(
+            [{44765}, set()],
+            [RuntimeError("Cannot establish kernel identity for PID 44765.")],
+        )
+
+        self.assertEqual(backend.snapshot(), {})
+        self.assertEqual(backend.process_ids.call_count, 2)
+
+    def test_snapshot_retries_a_live_pid_after_transient_kernel_query_failure(self):
+        process = {"pid": 44765, "uid": os.geteuid(), "executable": "/usr/bin/xcodebuild"}
+        backend = self.snapshot_reader(
+            [{44765}, {44765}],
+            [RuntimeError("Cannot establish kernel identity for PID 44765."), process],
+        )
+
+        self.assertEqual(backend.snapshot(), {44765: process})
+        self.assertEqual(backend.read.call_count, 2)
+
+    def test_snapshot_keeps_failing_when_live_pid_cannot_be_inspected(self):
+        backend = self.snapshot_reader(
+            [{44765}] * 4,
+            [RuntimeError("Cannot establish kernel identity for PID 44765.")] * 3,
+        )
+
+        with self.assertRaisesRegex(RuntimeError, "Cannot establish kernel identity"):
+            backend.snapshot()
+        self.assertEqual(backend.read.call_count, 3)
+
+
 class FakeKernel:
     def __init__(self, values=()):
         self.values = {item["pid"]: dict(item) for item in values}
