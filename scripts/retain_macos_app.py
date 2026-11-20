@@ -66,6 +66,9 @@ def checkpoint(app, archive, receipt_path):
     """Create a portable, source-bound app archive before signing/notarization."""
     if sys.platform != 'darwin' or app.is_symlink() or not app.is_dir() or app.suffix != '.app':
         raise ValueError('Expected a real native macOS application bundle')
+    app = app.resolve(strict=True)
+    if not app.is_relative_to(Path(os.environ['RUNNER_TEMP']).resolve()):
+        raise ValueError('Only this job temporary build output may be checkpointed')
     source = os.environ['GITHUB_SHA']
     run = int(os.environ['GITHUB_RUN_ID'])
     attempt = int(os.environ['GITHUB_RUN_ATTEMPT'])

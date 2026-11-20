@@ -43,6 +43,18 @@ class CompilationCacheTests(unittest.TestCase):
         self.assertFalse(snapshot.exists())
         self.assertEqual((self.app/'Contents/binary').read_bytes(),b'compiled application')
 
+    def test_tree_digest_accepts_internal_symlinks_through_symlinked_build_parent(self):
+        actual_root=self.runner/'real-build';actual_root.mkdir()
+        actual_app=actual_root/'Pleazyng.app'
+        (actual_app/'Contents').mkdir(parents=True)
+        (actual_app/'Contents/binary').write_bytes(b'compiled application')
+        (actual_app/'Contents/alias').symlink_to('binary')
+        linked_root=self.runner/'linked-build'
+        linked_root.symlink_to(actual_root, target_is_directory=True)
+        linked_app=linked_root/'Pleazyng.app'
+
+        self.assertEqual(cache.tree_digest(linked_app),cache.tree_digest(actual_app))
+
     def test_another_job_cannot_remove_retained_evidence(self):
         snapshot=self.capture()
         with patch.dict(os.environ,{**self.environment,'GITHUB_RUN_ID':'43'}),\

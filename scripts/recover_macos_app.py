@@ -72,6 +72,13 @@ def build_contract(text):
 
 
 def tree_digest(app):
+    # Apple build workspaces may reach RUNNER_TEMP through the workflow's
+    # short-path symlink (for example /private/tmp/.../build -> $RUNNER_TEMP).
+    # Compare descendants against the same canonical root or valid framework
+    # symlinks inside the .app appear to escape it.
+    app = Path(app).resolve(strict=True)
+    if not app.is_dir():
+        raise ValueError('Retained app is not a directory')
     digest = hashlib.sha256()
     for path in sorted(app.rglob('*')):
         relative = path.relative_to(app).as_posix()
