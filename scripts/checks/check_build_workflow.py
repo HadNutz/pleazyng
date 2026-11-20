@@ -2238,6 +2238,13 @@ require(
     in tv_mpv_builder,
     "webOS must use the verified checksum-pinned bzip2 mirror for hosted builds",
 )
+require(
+    '"https://distfiles.macports.org/libxml2/libxml2-${LIBXML2_VERSION}.tar.xz"'
+    in tv_mpv_builder
+    and "98087fd181d9070724f3fbc65c7377db03038eb92bd882374daff44940138821"
+    in tv_mpv_builder,
+    "webOS must fall back to the byte-verified libxml2 mirror while retaining its pinned source hash",
+)
 
 require(
     re.search(r'(?m)^  FLUTTER_VERSION:', text) is None

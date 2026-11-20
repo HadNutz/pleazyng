@@ -16,7 +16,8 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
         scripts = root / "scripts"
         (scripts / "shared").mkdir(parents=True)
         (scripts / "shared/_cross.sh").write_text(
-            'download "https://sourceware.org/pub/bzip2/bzip2-${BZIP2_VERSION}.tar.gz"\n',
+            'download "https://sourceware.org/pub/bzip2/bzip2-${BZIP2_VERSION}.tar.gz"\n'
+            'download "https://download.gnome.org/sources/libxml2/${LIBXML2_VERSION%.*}/libxml2-${LIBXML2_VERSION}.tar.xz" "$src"\n',
             encoding="utf-8",
         )
         (scripts / "build_libmpv_linux.sh").write_text(
@@ -29,7 +30,9 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
             "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz\n"
             f"{libpng_digest}  https://downloads.sourceforge.net/libpng/libpng-1.6.59.tar.xz\n"
             "93cd47eb719c325107f2d3cf087d06299e944c3b48a40b55537302304dea1dd5  "
-            "https://downloads.sourceforge.net/freetype/freetype-2.15.0.tar.xz\n",
+            "https://downloads.sourceforge.net/freetype/freetype-2.15.0.tar.xz\n"
+            "98087fd181d9070724f3fbc65c7377db03038eb92bd882374daff44940138821  "
+            "https://download.gnome.org/sources/libxml2/2.15/libxml2-2.15.4.tar.xz\n",
             encoding="utf-8",
         )
         return root
@@ -44,6 +47,12 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
             linux = (checkout / "scripts/build_libmpv_linux.sh").read_text(encoding="utf-8")
             manifest = (checkout / "scripts/shared/_sources.sha256").read_text(encoding="utf-8")
             self.assertIn("https://gstreamer.freedesktop.org/src/mirror/bzip2/bzip2-${BZIP2_VERSION}.tar.gz", cross)
+            self.assertIn(
+                'download "https://download.gnome.org/sources/libxml2/${LIBXML2_VERSION%.*}/'
+                'libxml2-${LIBXML2_VERSION}.tar.xz" "$src" '
+                '"https://distfiles.macports.org/libxml2/libxml2-${LIBXML2_VERSION}.tar.xz"',
+                cross,
+            )
             self.assertIn("https://dev-www.libreoffice.org/src/libpng-${LIBPNG_VERSION}.tar.xz", linux)
             self.assertIn(
                 'download "https://downloads.sourceforge.net/freetype/freetype-${FREETYPE_VERSION}.tar.xz" "$src" '
@@ -60,6 +69,11 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
                 "https://downloads.sourceforge.net/freetype/freetype-2.15.0.tar.xz",
                 manifest,
             )
+            self.assertIn(
+                "98087fd181d9070724f3fbc65c7377db03038eb92bd882374daff44940138821  "
+                "https://download.gnome.org/sources/libxml2/2.15/libxml2-2.15.4.tar.xz",
+                manifest,
+            )
             self.assertNotIn("downloads.sourceforge.net/libpng", linux + manifest)
 
     def test_rejects_a_changed_libpng_checksum_in_the_pinned_recipe(self) -> None:
@@ -67,6 +81,21 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
             checkout = self._recipe(Path(temporary) / "recipe", libpng_digest="0" * 64)
 
             with self.assertRaisesRegex(ValueError, "expected libpng SHA-256"):
+                rewrite_webos_source_mirrors(checkout)
+
+    def test_rejects_a_changed_libxml2_checksum_in_the_pinned_recipe(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            checkout = self._recipe(Path(temporary) / "recipe")
+            manifest = checkout / "scripts/shared/_sources.sha256"
+            manifest.write_text(
+                manifest.read_text().replace(
+                    "98087fd181d9070724f3fbc65c7377db03038eb92bd882374daff44940138821",
+                    "0" * 64,
+                ),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "expected libxml2 SHA-256"):
                 rewrite_webos_source_mirrors(checkout)
 
     def test_rejects_a_changed_freetype_checksum_in_the_pinned_recipe(self) -> None:

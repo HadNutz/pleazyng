@@ -72,6 +72,27 @@ def rewrite_webos_source_mirrors(checkout):
     )
     if manifest_text.count(freetype_pin) != 1:
         raise ValueError("pinned TV recipe no longer has its expected FreeType SHA-256 entry")
+    libxml_original_url = (
+        "https://download.gnome.org/sources/libxml2/${LIBXML2_VERSION%.*}/"
+        "libxml2-${LIBXML2_VERSION}.tar.xz"
+    )
+    libxml_mirror_url = (
+        "https://distfiles.macports.org/libxml2/libxml2-${LIBXML2_VERSION}.tar.xz"
+    )
+    libxml_script = checkout / "scripts/shared/_cross.sh"
+    libxml_text = libxml_script.read_text()
+    libxml_download = f'download "{libxml_original_url}" "$src"'
+    if libxml_text.count(libxml_download) != 1:
+        raise ValueError("pinned TV recipe no longer has its expected libxml2 download URL")
+    libxml_script.write_text(libxml_text.replace(
+        libxml_download, f'{libxml_download} "{libxml_mirror_url}"'
+    ))
+    libxml_pin = (
+        "98087fd181d9070724f3fbc65c7377db03038eb92bd882374daff44940138821  "
+        "https://download.gnome.org/sources/libxml2/2.15/libxml2-2.15.4.tar.xz"
+    )
+    if source_manifest.read_text().count(libxml_pin) != 1:
+        raise ValueError("pinned TV recipe no longer has its expected libxml2 SHA-256 entry")
     source_manifest.write_text(manifest_text)
 
 
