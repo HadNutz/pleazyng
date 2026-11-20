@@ -52,6 +52,10 @@ ALLOWED_REPAIR_FILES = frozenset({
     'scripts/checks/test_macos_validation_request.py',
     'tools/dv-engine/build_apple_runtime.py',
     'tools/dv-engine/test_apple_runtime.py',
+    'scripts/apple_jit_process_tree.py',
+    'scripts/checks/test_apple_jit_process_tree.py',
+    'tools/webos/build_release_candidate.sh',
+    'tools/webos/tests/test_build_release_candidate_dirs.py',
     'CHANGELOG.md',
     'docs/maintainers/full-release-build.md',
 })
@@ -171,15 +175,22 @@ def verify_frozen_packaging_repair(product_sha, packaging_sha, workflow_sha, api
                  and _sha(commit.get('tree', {}).get('sha')), 'Immutable source commit/tree is missing')
     parents = repair.get('parents')
     _require(isinstance(parents, list) and len(parents) == 1
-             and isinstance(parents[0], dict) and parents[0].get('sha') == product_sha,
-             'Packaging repair must have the frozen product as its sole parent')
+             and isinstance(parents[0], dict) and _sha(parents[0].get('sha')),
+             'Packaging repair must have one canonical parent')
     comparison = api(f'{prefix}/compare/{product_sha}...{packaging_sha}')
     _ancestor(comparison, product_sha, strict=True)
-    _require(comparison.get('ahead_by') == 1 and comparison.get('total_commits') == 1
-             and isinstance(comparison.get('commits'), list) and len(comparison['commits']) == 1
-             and isinstance(comparison['commits'][0], dict)
-             and comparison['commits'][0].get('sha') == packaging_sha,
-             'Packaging comparison must contain exactly the approved repair commit')
+    total_commits = comparison.get('total_commits')
+    commits = comparison.get('commits')
+    _require(type(total_commits) is int and 0 < total_commits <= 3
+             and comparison.get('ahead_by') == total_commits
+             and isinstance(commits, list) and len(commits) == total_commits
+             and isinstance(commits[-1], dict)
+             and commits[-1].get('sha') == packaging_sha
+             and all(isinstance(item, dict) and _sha(item.get('sha')) for item in commits),
+             'Packaging comparison must contain only a short, complete, approved repair series')
+    expected_parent = product_sha if total_commits == 1 else commits[-2]['sha']
+    _require(parents[0].get('sha') == expected_parent,
+             'Packaging repair series is not a direct linear descendant of the frozen product')
     changes = comparison.get('files')
     _require(isinstance(changes, list) and 0 < len(changes) < 300
              and comparison.get('truncated', False) is False,

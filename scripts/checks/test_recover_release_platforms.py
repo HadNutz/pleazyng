@@ -503,6 +503,18 @@ class SourceProofTests(unittest.TestCase):
             with self.assertRaisesRegex(recovery.RecoveryError, 'not uniquely successful'):
                 recovery.compose_proof(proof, android_run=42, webos_run=42)
 
+    def test_frozen_repair_rebuilds_webos_without_aliasing_the_failed_source(self):
+        proof = {'recovery_policy': 'frozen-apple-packaging-v1', 'source_run_id': 42,
+                 'source_sha': 'a' * 40, 'rebuilt_jobs': list(recovery.REBUILT_JOBS)}
+        jobs = [{'id': 7, 'name': 'build-android', 'status': 'completed', 'conclusion': 'success'},
+                {'id': 8, 'name': 'Build WebOS TV package (ARMv7)',
+                 'status': 'completed', 'conclusion': 'failure'}]
+        with patch.object(recovery, 'collection', return_value=jobs):
+            result = recovery.compose_proof(proof, android_run=42, webos_run=None)
+        self.assertEqual(result['android_source']['job_id'], 7)
+        self.assertNotIn('webos_source', result)
+        self.assertIn('Build WebOS TV package (ARMv7)', result['rebuilt_jobs'])
+
     def test_tv_sibling_reuse_replaces_original_failed_tv_without_rebuilding_it(self):
         tv = {'source_run_id': 84, 'source_sha': 'd' * 40, 'workflow_source_sha': 'e' * 40}
         with patch('verify_frozen_packaging_repair.verify_frozen_packaging_repair', return_value={'approved': True}), \

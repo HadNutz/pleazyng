@@ -1119,19 +1119,28 @@ def verify_android_run(run_id, head_sha, version, repository=REPOSITORY, *, allo
 def compose_proof(proof, android_run=None, include_webos_build=True, webos_run=None):
     if proof.get('recovery_policy') == 'frozen-apple-packaging-v1':
         source_run = proof['source_run_id']
-        if (str(android_run) != str(source_run) or str(webos_run) != str(source_run)
-                or not include_webos_build):
-            raise RecoveryError('Frozen Apple repair must reuse the original Android and webOS outputs')
+        if str(android_run) != str(source_run) or not include_webos_build:
+            raise RecoveryError('Frozen product repair must reuse Android and include webOS')
         jobs = collection(f'repos/{REPOSITORY}/actions/runs/{source_run}/jobs', 'jobs')
         aliases = {}
-        for key, name in (('android_source', 'build-android'), ('webos_source', 'Build WebOS TV package (ARMv7)')):
+        for key, name in (('android_source', 'build-android'),):
             matches = [job for job in jobs if job.get('name') == name]
             if (len(matches) != 1 or matches[0].get('status') != 'completed'
                     or matches[0].get('conclusion') != 'success'):
                 raise RecoveryError(f'Original reused platform is not uniquely successful: {name}')
             aliases[key] = {'source_run_id': source_run, 'source_sha': proof['source_sha'],
                             'job_id': matches[0]['id'], 'platforms_complete': True}
-        rebuilt = set(proof['rebuilt_jobs']) - {'build-android', 'Build WebOS TV package (ARMv7)'}
+        rebuilt = set(proof['rebuilt_jobs']) - {'build-android'}
+        if str(webos_run) == str(source_run):
+            matches = [job for job in jobs if job.get('name') == 'Build WebOS TV package (ARMv7)']
+            if (len(matches) != 1 or matches[0].get('status') != 'completed'
+                    or matches[0].get('conclusion') != 'success'):
+                raise RecoveryError('Original webOS output is not uniquely successful')
+            aliases['webos_source'] = {'source_run_id': source_run, 'source_sha': proof['source_sha'],
+                                       'job_id': matches[0]['id'], 'platforms_complete': True}
+            rebuilt.discard('Build WebOS TV package (ARMv7)')
+        elif webos_run is not None:
+            raise RecoveryError('Frozen product repair cannot substitute an unrelated webOS run')
         return {**proof, **aliases, 'rebuilt_jobs': sorted(rebuilt), 'excluded_optional_jobs': []}
     if proof.get("profile") == "macos-packaging":
         if webos_run:

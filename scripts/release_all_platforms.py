@@ -3031,6 +3031,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--reuse-tvos-run', type=int, help='Reuse successful signed TV output from an approved sibling Apple packaging repair')
     parser.add_argument('--reuse-ios-run', type=int, help='Reuse successful signed iOS output from an approved sibling Apple packaging repair')
     parser.add_argument("--rebuild-ios", action="store_true", help="Rebuild iOS during verified platform recovery")
+    parser.add_argument("--rebuild-webos", action="store_true", help="Rebuild webOS during verified platform recovery")
     parser.add_argument("--rebuild-tvos", action="store_true", help="Rebuild only tvOS during verified platform recovery")
     parser.add_argument("--rebuild-macos", action="store_true", help="Build and qualify macOS during verified platform recovery")
     parser.add_argument("--reuse-android-run", type=int, help="Reuse a separately successful Android release artifact.")
@@ -3117,7 +3118,7 @@ def main() -> int:
         raise ReleaseError('Signed TV reuse requires approved iOS-only sibling packaging recovery.')
     if args.reuse_ios_run and (args.reuse_ios_run < 1 or not args.reuse_tvos_run or args.rebuild_ios):
         raise ReleaseError('Signed iOS reuse requires a distinct signed TV sibling source.')
-    if packaging_repair and (not (args.rebuild_ios or args.rebuild_tvos or args.rebuild_macos
+    if packaging_repair and (not (args.rebuild_ios or args.rebuild_tvos or args.rebuild_macos or args.rebuild_webos
                                   or args.reuse_ios_run or built_tvos_run is not None)
                             or args.rebuild_linux or args.reuse_macos_run or repaired_platform_run):
         raise ReleaseError("Approved packaging recovery rebuilds only requested Apple packages.")

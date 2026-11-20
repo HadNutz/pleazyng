@@ -73,6 +73,14 @@ class FrozenPackagingRepairTests(unittest.TestCase):
         self.responses[f'{PREFIX}/compare/{W}...main']['status'] = 'identical'
         self.verify()
 
+    def test_short_linear_packaging_repair_series_is_accepted(self):
+        middle = '9' * 40
+        self.responses[f'{PREFIX}/git/commits/{R}']['parents'] = [{'sha': middle}]
+        comparison = self.responses[f'{PREFIX}/compare/{S}...{R}']
+        comparison.update(ahead_by=2, total_commits=2,
+                          commits=[{'sha': middle}, {'sha': R}])
+        self.verify()
+
     def test_static_framework_parser_repair_requires_exact_reviewed_blobs(self):
         files = {'scripts/apple/prune_static_mpv_frameworks.py': NEW,
                  'scripts/checks/test_prune_static_mpv_frameworks.py': '6' * 40}
@@ -134,7 +142,7 @@ class FrozenPackagingRepairTests(unittest.TestCase):
         for parents in ([], [{'sha': 'f' * 40}], [{'sha': S}, {'sha': W}]):
             with self.subTest(parents=parents):
                 self.responses[f'{PREFIX}/git/commits/{R}']['parents'] = parents
-                with self.assertRaisesRegex(repair.FrozenPackagingRepairError, 'sole parent'):
+                with self.assertRaisesRegex(repair.FrozenPackagingRepairError, 'parent|descendant'):
                     self.verify()
 
     def test_unapproved_blob_rename_removal_or_incomplete_diff_is_rejected(self):

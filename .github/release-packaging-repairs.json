@@ -195,6 +195,16 @@
         "test/native/tvos_plugin_wiring_test.rb": "eed032a17fccbdf67cd77b8aa6c01ebcf9e60731",
         "tvos/scripts/wire_plugins.rb": "e8d5dffdb0dfb6586671f4e02e19da7149597910"
       }
+    },
+    {
+      "product_source_sha": "95c9c102491df65ddedeca6b05d003ec3557e47f",
+      "packaging_source_sha": "334eb39acb55afb1ebf3a23af68cdbfa32f49167",
+      "files": {
+        "scripts/apple_jit_process_tree.py": "4e4e779ff3d50d89b2272295dbad852573b68d1d",
+        "scripts/checks/test_apple_jit_process_tree.py": "d65977693e3b3e7b1b0bb8a95503b49d2ac4b3a9",
+        "tools/webos/build_release_candidate.sh": "e5c39d211cd08c4b35f9b0a21558b41bb2018276",
+        "tools/webos/tests/test_build_release_candidate_dirs.py": "8b085daa2ab085a04ea0a0214de5774a559b4b75"
+      }
     }
   ]
 }
