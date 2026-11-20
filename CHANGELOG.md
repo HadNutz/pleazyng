@@ -19,7 +19,7 @@
 - Allow the signed-release recovery regression check alongside the immutable release tag's infrastructure changes.
 - Keep that recovery regression test in the verified platform-reuse allowlist as well.
 - Carry the explicit WebOS rebuild choice through local release orchestration into workflow dispatch.
-- Run validated WebOS recovery after intentionally skipped candidate jobs, and match it by its distinct Actions title.
+- Run WebOS recovery after intentionally skipped candidate jobs and retain the canonical title the JIT broker recognizes.
 - Allow verified release recovery to reuse tagged platform artifacts after infrastructure-only Apple and webOS fixes.
 - Reuse an attested unsigned iOS IPA from a successful recovery run while rebuilding only the failed release platform.
 - Resolve any additional release qualification issues found during the 3.0.39 build.

@@ -1644,7 +1644,7 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(fields["reuse_android_run_id"], "42")
         self.assertEqual(fields["include_webos_build"], "true")
         self.assertEqual(dispatch.call_args.kwargs["expected_title"],
-                         "action:release:pool:public:tag:v3.0.0:recovery:source:42:webos")
+                         "action:release:pool:public:tag:v3.0.0")
 
     @patch.object(controller, "verify_platform_recovery")
     @patch.object(controller, "matching_run", return_value=None)

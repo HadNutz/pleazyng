@@ -1810,8 +1810,6 @@ def ensure_release(
             raise ReleaseError("A full runner-acquisition retry requires one exact failed release run.")
         run_title += f":runner-retry-of:{runner_acquisition_retry_of}"
         tvos_runner_pool = "private"
-    elif not repair and reuse_platform_run_id and rebuild_webos:
-        run_title += f":recovery:source:{reuse_platform_run_id}:webos"
     elif not repair and reuse_platform_run_id and rebuild_tvos:
         run_title += f":recovery:source:{reuse_platform_run_id}:tvos"
     if reuse_tvos_run_id and (not repair or rebuild_tvos or reuse_repaired_run_id):
