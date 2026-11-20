@@ -69,6 +69,39 @@ class EmbeddedQualificationTests(unittest.TestCase):
         jobs = [{**job, 'run_attempt': 1} for job in self.jobs]
         self.assertEqual(self.verify(jobs=jobs)['jobs'][0]['attempt'], 1)
 
+    def test_partial_rerun_combines_latest_success_for_each_suite_on_same_candidate(self):
+        attempt_one = [{**job, 'run_attempt': 1} for job in deepcopy(self.jobs)]
+        attempt_two = []
+        ios_name = embedded.PREFIX + 'Apple native reliability (iOS)'
+        mac_name = embedded.PREFIX + 'Apple native reliability (macOS)'
+        tv_name = embedded.PREFIX + 'Apple native reliability (tvOS)'
+        # Model the three independent Apple matrix jobs, where the final tvOS
+        # result is produced by a later attempt and siblings remain reusable.
+        attempt_two.extend([
+            {'id': 900, 'name': tv_name, 'run_attempt': 2,
+             'status': 'completed', 'conclusion': 'success'},
+        ])
+        resolved = embedded.latest_attempt_jobs([attempt_one, attempt_two])
+        proof = self.verify(run={**self.run, 'run_attempt': 2}, jobs=resolved)
+        by_name = {item['name']: item for item in proof['jobs']}
+        self.assertEqual(by_name[ios_name]['attempt'], 1)
+        self.assertEqual(by_name[mac_name]['attempt'], 1)
+        self.assertEqual(by_name[tv_name]['attempt'], 2)
+
+    def test_later_failure_or_ambiguous_job_cannot_be_hidden_by_earlier_success(self):
+        first = deepcopy(self.jobs)
+        required = embedded.PREFIX + self.required[0]
+        with self.assertRaises(GateError):
+            embedded.latest_attempt_jobs([first, [
+                {'id': 99, 'name': required, 'run_attempt': 2,
+                 'status': 'completed', 'conclusion': 'failure'}]])
+        with self.assertRaises(GateError):
+            embedded.latest_attempt_jobs([first, [
+                {'id': 99, 'name': required, 'run_attempt': 2,
+                 'status': 'completed', 'conclusion': 'success'},
+                {'id': 100, 'name': required, 'run_attempt': 2,
+                 'status': 'completed', 'conclusion': 'success'}]])
+
     def test_a_failed_optional_child_also_blocks_freezing(self):
         jobs = self.jobs + [{'id': 99, 'name': embedded.PREFIX + 'Optional smoke',
                             'status': 'completed', 'conclusion': 'failure'}]
@@ -77,13 +110,14 @@ class EmbeddedQualificationTests(unittest.TestCase):
 
     def recover(self, *, jobs=None, run=None):
         source_run = {**self.run, 'status': 'completed', 'conclusion': 'failure', 'html_url': 'https://example.test/run/42'}
-        source_jobs = self.jobs + [
-            {'id': 98, 'name': 'Freeze qualified source', 'status': 'completed', 'conclusion': 'success'},
-            {'id': 99, 'name': 'build-ios', 'status': 'completed', 'conclusion': 'failure'}]
+        source_jobs = [{**job, 'run_attempt': 1} for job in self.jobs] + [
+            {'id': 98, 'run_attempt': 1, 'name': 'Freeze qualified source', 'status': 'completed', 'conclusion': 'success'},
+            {'id': 99, 'run_attempt': 1, 'name': 'build-ios', 'status': 'completed', 'conclusion': 'failure'}]
         manifest = {'release': {'releaseGate': {'requiredJobs': self.required}}}
         with patch.object(recovery, 'api', side_effect=[source_run if run is None else run,
                 {'status': 'ahead', 'base_commit': {'sha': self.sha}}]), \
-                patch.object(recovery, 'collection', return_value=source_jobs if jobs is None else jobs), \
+                patch.object(recovery, 'collection', side_effect=lambda path, key: (source_jobs if jobs is None else jobs)
+                             if '/attempts/1/' in path else []), \
                 patch.object(recovery, 'immutable_content', return_value=json.dumps(manifest)):
             return recovery.embedded_source_ci(embedded.REPOSITORY, self.sha, 42)
 

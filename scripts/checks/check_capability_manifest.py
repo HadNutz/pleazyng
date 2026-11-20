@@ -68,6 +68,7 @@ def expected_ci_jobs(workflow: str) -> tuple[set[str], set[str]]:
         "server",
     )
     required = {display_name(workflow, key) for key in direct}
+    required.update(matrix_job_names(workflow, "apple-native-suite", "platform"))
     for key, field in (
         ("linux-native-test", "sanitizer"),
         ("windows-native-test", "arch"),

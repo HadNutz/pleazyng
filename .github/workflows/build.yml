@@ -230,6 +230,47 @@ jobs:
           python3 tools/webos/verify_package.py --project-metadata
           python3 scripts/sync_native_revision.py --check
 
+  preflight-ios-store-signing:
+    name: Preflight iOS Store signing entitlements
+    needs: capture-candidate
+    if: ${{ always() && !cancelled() && (inputs.action == 'release' || inputs.action == 'build') && inputs.include_apple_store_build && (inputs.candidate_ref == '' || needs.capture-candidate.result == 'success') }}
+    runs-on: macos-26
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Prepare worker profile and check actual Store entitlements
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64 }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_PRIVATE_KEY: ${{ secrets.APPLE_API_PRIVATE_KEY }}
+          PLEAZYNG_REQUIRED_CAR_CAPABILITIES: ${{ vars.PLEAZYNG_REQUIRED_CAR_CAPABILITIES || 'audio,siri' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64" ]]; then
+            python3 scripts/build_apple_store_archive.py --prepare-ios-worker-profile \
+              --public-report "$RUNNER_TEMP/ios-signing-preflight-report.json"
+          fi
+          python3 scripts/preflight_ios_store_profile.py
+      - name: Retain sanitized preflight result
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ios-store-signing-preflight-${{ github.run_id }}
+          path: ${{ runner.temp }}/ios-signing-preflight-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+
   release-ci:
     name: Release CI
     needs: capture-candidate
@@ -246,6 +287,8 @@ jobs:
       # Signed App Store releases explicitly reserve the Apple Silicon JIT for
       # exact-source native qualification; unsigned and ordinary CI stay hosted.
       apple_runner_pool: ${{ inputs.include_apple_store_build && inputs.tvos_runner_pool == 'private' && 'private' || 'hosted' }}
+      # Explicitly document that the early signing preflight is independent;
+      # its result gates only build-ios below.
 
   freeze-qualified-source:
     name: Freeze qualified source
@@ -277,8 +320,8 @@ jobs:
 
   validate-trusted-ref:
     name: Validate release request
-    needs: freeze-qualified-source
-    if: ${{ always() && inputs.runner_pool == 'public' && (inputs.action == 'build' || inputs.action == 'release') && (inputs.candidate_ref == '' || needs.freeze-qualified-source.result == 'success') }}
+    needs: capture-candidate
+    if: ${{ always() && inputs.runner_pool == 'public' && (inputs.action == 'build' || inputs.action == 'release') && (inputs.candidate_ref == '' || needs.capture-candidate.result == 'success') }}
     runs-on: ubuntu-24.04
     outputs:
       action: ${{ steps.request.outputs.action }}
@@ -286,7 +329,7 @@ jobs:
       execution_profile: ${{ steps.request.outputs.execution_profile }}
       mode: ${{ steps.request.outputs.mode }}
       release_tag: ${{ steps.request.outputs.release_tag }}
-      release_commit: ${{ steps.release-tag.outputs.commit }}
+      release_commit: ${{ steps.release-tag.outputs.commit || github.sha }}
       reuse_source_sha: ${{ steps.reuse-platforms.outputs.source_sha }}
       android_source_sha: ${{ steps.reuse-platforms.outputs.android_source_sha }}
       webos_source_sha: ${{ steps.reuse-platforms.outputs.webos_source_sha }}
@@ -584,7 +627,9 @@ jobs:
 
       - name: Validate immutable release tag against trusted main
         id: release-tag
-        if: ${{ inputs.action == 'release' }}
+        # Candidate artifacts are built from the exact captured main SHA while
+        # CI qualifies it. The stable tag remains a post-qualification gate.
+        if: ${{ inputs.action == 'release' && inputs.candidate_ref == '' }}
         shell: bash
         env:
           RELEASE_TAG: ${{ steps.request.outputs.release_tag }}
@@ -770,7 +815,7 @@ jobs:
           python3 scripts/recover_release_platforms.py "$SOURCE_RUN" --head-sha "$HEAD_SHA" --version "$VERSION" --allow-building "${options[@]}"
 
       - name: Require successful CI for this commit
-        if: ${{ steps.request.outputs.mode == 'release' && steps.request.outputs.action == 'release' && inputs.reuse_platform_run_id == '' }}
+        if: ${{ steps.request.outputs.mode == 'release' && steps.request.outputs.action == 'release' && inputs.candidate_ref == '' && inputs.reuse_platform_run_id == '' }}
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -1366,8 +1411,8 @@ jobs:
           exit 1
 
   build-ios:
-    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_ios) && !(inputs.reuse_platform_run_id != '' && startsWith(inputs.reuse_repaired_run_id, 'ios-developer:')) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
-    needs: validate-trusted-ref
+    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (needs.validate-trusted-ref.outputs.include_apple_store_build != 'true' || needs.preflight-ios-store-signing.result == 'success') && (inputs.reuse_platform_run_id == '' || inputs.rebuild_ios) && !(inputs.reuse_platform_run_id != '' && startsWith(inputs.reuse_repaired_run_id, 'ios-developer:')) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: [validate-trusted-ref, preflight-ios-store-signing]
     timeout-minutes: 240
     runs-on: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-build-ios"]}}', github.run_id)) || 'macos-26-intel' }}
     permissions:
@@ -1886,6 +1931,42 @@ jobs:
           cp -R "$app_path" tvos-payload/Payload/
           (cd tvos-payload && zip -qr ../pleazyng-tvos-unsigned.ipa Payload)
 
+      - name: Verify unsigned tvOS runtime dependencies
+        env:
+          TVOS_PRODUCT_SOURCE_SHA: ${{ inputs.recovery_product_sha || github.sha }}
+        run: |
+          set -euo pipefail
+          xcrun --sdk appletvos --show-sdk-path > "$RUNNER_TEMP/tvos-sdk-root"
+          xcrun --sdk appletvos --show-sdk-version > "$RUNNER_TEMP/tvos-sdk-version"
+          python3 scripts/verify_apple_macho_dependencies.py \
+            --product-root "$GITHUB_WORKSPACE" \
+            --unsigned-ipa "$GITHUB_WORKSPACE/pleazyng-tvos-unsigned.ipa" \
+            --product-source-sha "$TVOS_PRODUCT_SOURCE_SHA" \
+            --packaging-source-sha "$COMPILE_SOURCE_SHA" \
+            --workflow-source-sha "$GITHUB_SHA" \
+            --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT" \
+            --repository "$GITHUB_REPOSITORY" \
+            --sdk-root "$(cat "$RUNNER_TEMP/tvos-sdk-root")" \
+            --sdk-version "$(cat "$RUNNER_TEMP/tvos-sdk-version")" \
+            --receipt "$GITHUB_WORKSPACE/tvos-unsigned-runtime-dependency-receipt.json"
+
+      - name: Attest unsigned tvOS checkpoint
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: |
+            pleazyng-tvos-unsigned.ipa
+            tvos-unsigned-runtime-dependency-receipt.json
+
+      - name: Upload durable unsigned tvOS checkpoint
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: tvos-unsigned-checkpoint
+          path: |
+            pleazyng-tvos-unsigned.ipa
+            tvos-unsigned-runtime-dependency-receipt.json
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Build signed tvOS App Store IPA
         if: steps.tvos-signing.outputs.configured == 'true'
         env:
@@ -2006,6 +2087,13 @@ jobs:
           ref: ${{ inputs.recovery_source_sha || github.sha }}
           persist-credentials: false
 
+      - name: Restore prior notarization submission checkpoint
+        id: restore-notarization
+        if: ${{ needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true' && github.run_attempt > 1 }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/apple/resume_notarization_checkpoint.py --output "$GITHUB_WORKSPACE"
+
       - name: Check macOS signing configuration
         id: macos-signing
         env:
@@ -2066,8 +2154,8 @@ jobs:
           fi
 
       - name: Import Code Signing Certificate
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && (steps.macos-signing.outputs.codesign == 'true') }}
         id: macos-signing-identity
-        if: steps.macos-signing.outputs.codesign == 'true'
         env:
           MACOS_CERTIFICATE_BASE64: ${{ secrets.MACOS_CERTIFICATE_BASE64 }}
           MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
@@ -2133,7 +2221,7 @@ jobs:
           xcrun notarytool history --key "$API_KEY_PATH" --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER_ID" --output-format json > /dev/null
 
       - name: Recover verified native macOS compilation
-        if: inputs.macos_compilation_job_id != ''
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && (inputs.macos_compilation_job_id != '') }}
         env:
           GH_TOKEN: ${{ github.token }}
           COMPILED_JOB_ID: ${{ inputs.macos_compilation_job_id }}
@@ -2144,18 +2232,20 @@ jobs:
         run: python3 scripts/flutter/load_sdk_pin.py --github-env
 
       - name: Setup Flutter
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' }}
         uses: ./.github/actions/setup-flutter-apple
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Cache Pub dependencies
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' }}
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ github.workspace }}/.cache/plezy-pub-cache
           key: ${{ env.TRUSTED_BUILD_CACHE_VERSION }}-${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ hashFiles('pubspec.yaml', 'pubspec.lock') }}
 
       - name: Cache CocoaPods
-        if: inputs.macos_compilation_job_id == ''
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && (inputs.macos_compilation_job_id == '') }}
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: |
@@ -2165,7 +2255,7 @@ jobs:
           key: ${{ env.TRUSTED_BUILD_CACHE_VERSION }}-${{ runner.os }}-macos-pods-${{ hashFiles('**/Podfile.lock') }}
 
       - name: Ensure CMake for the embedded Steam receiver
-        if: inputs.macos_compilation_job_id == ''
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && (inputs.macos_compilation_job_id == '') }}
         shell: bash
         run: |
           set -euo pipefail
@@ -2176,7 +2266,7 @@ jobs:
           cmake --version
 
       - name: Install CocoaPods
-        if: inputs.macos_compilation_job_id == ''
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && (inputs.macos_compilation_job_id == '') }}
         shell: bash
         run: |
           set -euo pipefail
@@ -2197,12 +2287,12 @@ jobs:
           pod --version
 
       - name: Prepare macOS local APFS scratch
-        if: inputs.macos_compilation_job_id == ''
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && (inputs.macos_compilation_job_id == '') }}
         shell: bash
         run: bash scripts/prepare_apple_jit_scratch.sh macos 40 local-xcode
 
       - name: Stage macOS sources and Git objects on local APFS
-        if: inputs.macos_compilation_job_id == ''
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && (inputs.macos_compilation_job_id == '') }}
         shell: bash
         run: |
           set -euo pipefail
@@ -2223,22 +2313,24 @@ jobs:
           echo "Prepared local APFS macOS sources and build output: $source_root -> $APPLE_LOCAL_BUILD_DIR"
 
       - name: Install dependencies
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' }}
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         run: flutter pub get --enforce-lockfile --no-example
 
       - name: Prefetch checksum-pinned macos native downloads
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' }}
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 "$GITHUB_WORKSPACE/scripts/prepare_native_downloads.py" --sqlite-platform macos
 
       - name: Refresh pinned mpv Swift packages
-        if: inputs.macos_compilation_job_id == ''
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && (inputs.macos_compilation_job_id == '') }}
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         run: scripts/refresh_apple_spm.sh macos
 
       - name: Configure repository updater trust root
-        if: inputs.macos_compilation_job_id == ''
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && (inputs.macos_compilation_job_id == '') }}
         shell: bash
         env:
           SPARKLE_PUBLIC_KEY: ${{ vars.SPARKLE_PUBLIC_KEY }}
@@ -2247,11 +2339,11 @@ jobs:
         run: dart run scripts/configure_updater.dart
 
       - name: Remove AppleDouble sidecars before macOS Xcode build
-        if: inputs.macos_compilation_job_id == ''
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && (inputs.macos_compilation_job_id == '') }}
         run: bash "$GITHUB_WORKSPACE/scripts/clean_appledouble_sidecars.sh" "$PLEZYNG_APPLE_WORKSPACE"
 
       - name: Build macOS
-        if: inputs.macos_compilation_job_id == ''
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && (inputs.macos_compilation_job_id == '') }}
         timeout-minutes: 150
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         env:
@@ -2262,6 +2354,7 @@ jobs:
         run: flutter build macos --release --verbose ${{ env.RELEASE_DART_DEFINES }} ${{ env.NATIVE_UPDATER_DEFINE }} --dart-define=SUPPORTER_MODE=unlocked --split-debug-info=debug-info/macos
 
       - name: Verify universal macOS executable
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' }}
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         run: |
           set -euo pipefail
@@ -2275,9 +2368,39 @@ jobs:
             fi
           done
 
+      - name: Create portable unsigned macOS compilation checkpoint
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' }}
+        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 "$GITHUB_WORKSPACE/scripts/retain_macos_app.py" checkpoint \
+            build/macos/Build/Products/Release/Pleazyng.app \
+            build/macos/Build/Products/Release/macos-compilation-checkpoint.json
+
+      - name: Attest portable macOS compilation checkpoint
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' }}
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: |
+            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/build/macos/Build/Products/Release/compiled-macos-app.tar.gz
+            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/build/macos/Build/Products/Release/macos-compilation-checkpoint.json
+
+      - name: Upload portable macOS compilation checkpoint
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: macos-compiled-app-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/build/macos/Build/Products/Release/compiled-macos-app.tar.gz
+            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/build/macos/Build/Products/Release/macos-compilation-checkpoint.json
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Retain native macOS compilation for packaging recovery
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && (inputs.macos_compilation_job_id == '') }}
         id: macos-compilation-cache
-        if: inputs.macos_compilation_job_id == ''
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
@@ -2285,7 +2408,7 @@ jobs:
         run: python3 "$GITHUB_WORKSPACE/scripts/retain_macos_app.py" capture build/macos/Build/Products/Release/Pleazyng.app
 
       - name: Sign Application
-        if: steps.macos-signing.outputs.codesign == 'true'
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && (steps.macos-signing.outputs.codesign == 'true') }}
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
@@ -2345,7 +2468,8 @@ jobs:
           codesign --verify --deep --strict --verbose=2 "$APP_PATH"
 
       - name: Notarize Application
-        if: steps.macos-signing.outputs.notarize == 'true'
+        id: notarization
+        if: ${{ steps.restore-notarization.outputs.restored != 'true' && steps.macos-signing.outputs.notarize == 'true' }}
         env:
           APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
           APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
@@ -2361,9 +2485,79 @@ jobs:
           echo "Creating ZIP for notarization..."
           ditto -c -k --keepParent "$APP_PATH" notarization.zip
           echo "Submitting to Apple's notary service..."
-          xcrun notarytool submit notarization.zip --key "$API_KEY_PATH" --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER_ID" --wait
+          xcrun notarytool submit notarization.zip --key "$API_KEY_PATH" --key-id "$APPLE_API_KEY_ID" \
+            --issuer "$APPLE_API_ISSUER_ID" --output-format json > notary-submission.json
+          submission_id=$(python3 "$GITHUB_WORKSPACE/scripts/apple/notarization_checkpoint.py" record \
+            notarization.zip notary-submission.json notarization-checkpoint.json)
+          echo "submission_id=$submission_id" >> "$GITHUB_OUTPUT"
 
+      - name: Attest notarization submission checkpoint
+        if: ${{ steps.notarization.outcome == 'success' || steps.restore-notarization.outputs.restored == 'true' }}
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: |
+            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/notarization.zip
+            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/notarization-checkpoint.json
+
+      - name: Upload durable notarization checkpoint
+        if: steps.notarization.outcome == 'success'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: macos-notarization-checkpoint-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/notarization.zip
+            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/notarization-checkpoint.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Wait for notarization acceptance
+        if: ${{ steps.notarization.outcome == 'success' || steps.restore-notarization.outputs.restored == 'true' }}
+        id: notarization-status
+        env:
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+          APPLE_API_PRIVATE_KEY: ${{ secrets.APPLE_API_PRIVATE_KEY }}
+          NOTARIZATION_SUBMISSION_ID: ${{ steps.restore-notarization.outputs.submission_id || steps.notarization.outputs.submission_id }}
+        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
+        run: |
+          set -euo pipefail
+          API_KEY_PATH="$RUNNER_TEMP/pleazyng-macos-notary-api-key.p8"
+          umask 077
+          printf '%s' "$APPLE_API_PRIVATE_KEY" > "$API_KEY_PATH"
+          python3 "$GITHUB_WORKSPACE/scripts/apple/notarization_checkpoint.py" verify \
+            notarization.zip notarization-checkpoint.json "$NOTARIZATION_SUBMISSION_ID" \
+            --source-sha "$GITHUB_SHA" --product-source-sha "$COMPILE_SOURCE_SHA"
+          while true; do
+            xcrun notarytool info "$NOTARIZATION_SUBMISSION_ID" --key "$API_KEY_PATH" \
+              --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER_ID" \
+              --output-format json > notary-result.json
+            status=$(python3 -c 'import json; print(json.load(open("notary-result.json")).get("status", ""))')
+            case "$status" in
+              Accepted) break ;;
+              "In Progress") sleep 30 ;;
+              *) echo "Apple notarization ended with status: $status" >&2; exit 1 ;;
+            esac
+          done
+          python3 "$GITHUB_WORKSPACE/scripts/apple/notarization_checkpoint.py" accept \
+            notarization.zip notary-result.json notarization-checkpoint.json "$NOTARIZATION_SUBMISSION_ID"
+
+      - name: Upload resumed notarization checkpoint
+        if: ${{ steps.restore-notarization.outputs.restored == 'true' && steps.notarization-status.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: macos-notarization-checkpoint-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/notarization.zip
+            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/notarization-checkpoint.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Staple notarization ticket
+        if: steps.notarization-status.outcome == 'success'
+        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
+        run: |
           echo "Stapling the notarization ticket to the app..."
+          APP_PATH="build/macos/Build/Products/Release/Pleazyng.app"
           xcrun stapler staple "$APP_PATH"
           echo "Verifying notarization..."
           xcrun stapler validate "$APP_PATH"
@@ -2550,8 +2744,8 @@ jobs:
         run: python3 scripts/flutter/load_sdk_pin.py --github-env
 
       - name: Setup Flutter
-        id: setup_flutter_windows
         if: matrix.flutter_setup == 'action'
+        id: setup_flutter_windows
         uses: ./.github/actions/setup-flutter-windows
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -3461,8 +3655,8 @@ jobs:
             pleazyng-linux-x86_64.AppImage.zsync
 
   create-release:
-    needs: [validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, build-windows, package-windows, build-linux]
-    if: ${{ always() && inputs.runner_pool != '' && inputs.action == 'release' && needs.validate-trusted-ref.outputs.runner_pool == 'public' && needs.validate-trusted-ref.outputs.action == 'release' && needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.result == 'success' && (needs.build-android.result == 'success' || (inputs.reuse_android_run_id != '' && needs.validate-trusted-ref.outputs.android_source_sha != '' && needs.build-android.result == 'skipped')) && ((inputs.reuse_platform_run_id == '' && needs.build-ios.result == 'success' && needs.build-tvos.result == 'success' && needs.build-macos.result == 'success' && needs.build-windows.result == 'success' && needs.package-windows.result == 'success' && needs.build-linux.result == 'success' && (needs.build-webos.result == 'success' || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && (needs.build-tizen.result == 'success' || (needs.validate-trusted-ref.outputs.include_tizen_build != 'true' && needs.build-tizen.result == 'skipped'))) || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && ((inputs.rebuild_ios && needs.build-ios.result == 'success') || (!inputs.rebuild_ios && needs.build-ios.result == 'skipped')) && ((inputs.rebuild_tvos && needs.build-tvos.result == 'success') || (!inputs.rebuild_tvos && needs.build-tvos.result == 'skipped')) && ((inputs.rebuild_macos && needs.build-macos.result == 'success') || (!inputs.rebuild_macos && needs.build-macos.result == 'skipped')) && needs.build-windows.result == 'skipped' && needs.package-windows.result == 'skipped' && ((inputs.rebuild_linux && needs.build-linux.result == 'success') || (!inputs.rebuild_linux && needs.build-linux.result == 'skipped')) && (needs.build-webos.result == 'success' || (inputs.reuse_webos_run_id != '' && needs.validate-trusted-ref.outputs.webos_source_sha != '' && needs.build-webos.result == 'skipped') || (inputs.reuse_macos_package_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.build-webos.result == 'skipped') || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && needs.build-tizen.result == 'skipped')) && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
+    needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, build-windows, package-windows, build-linux]
+    if: ${{ always() && needs.freeze-qualified-source.result == 'success' && inputs.runner_pool != '' && inputs.action == 'release' && needs.validate-trusted-ref.outputs.runner_pool == 'public' && needs.validate-trusted-ref.outputs.action == 'release' && needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.result == 'success' && (needs.build-android.result == 'success' || (inputs.reuse_android_run_id != '' && needs.validate-trusted-ref.outputs.android_source_sha != '' && needs.build-android.result == 'skipped')) && ((inputs.reuse_platform_run_id == '' && needs.build-ios.result == 'success' && needs.build-tvos.result == 'success' && needs.build-macos.result == 'success' && needs.build-windows.result == 'success' && needs.package-windows.result == 'success' && needs.build-linux.result == 'success' && (needs.build-webos.result == 'success' || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && (needs.build-tizen.result == 'success' || (needs.validate-trusted-ref.outputs.include_tizen_build != 'true' && needs.build-tizen.result == 'skipped'))) || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && ((inputs.rebuild_ios && needs.build-ios.result == 'success') || (!inputs.rebuild_ios && needs.build-ios.result == 'skipped')) && ((inputs.rebuild_tvos && needs.build-tvos.result == 'success') || (!inputs.rebuild_tvos && needs.build-tvos.result == 'skipped')) && ((inputs.rebuild_macos && needs.build-macos.result == 'success') || (!inputs.rebuild_macos && needs.build-macos.result == 'skipped')) && needs.build-windows.result == 'skipped' && needs.package-windows.result == 'skipped' && ((inputs.rebuild_linux && needs.build-linux.result == 'success') || (!inputs.rebuild_linux && needs.build-linux.result == 'skipped')) && (needs.build-webos.result == 'success' || (inputs.reuse_webos_run_id != '' && needs.validate-trusted-ref.outputs.webos_source_sha != '' && needs.build-webos.result == 'skipped') || (inputs.reuse_macos_package_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.build-webos.result == 'skipped') || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && needs.build-tizen.result == 'skipped')) && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
     runs-on: ubuntu-24.04
     permissions:
       contents: write

@@ -20,10 +20,14 @@ RUNNER_GROUP_ID = os.environ.get("APPLE_JIT_RUNNER_GROUP_ID", "8")
 APPLE_LABELS = {"private-apple", "macOS", "ARM64"}
 BUILD_WORKFLOW = ".github/workflows/build.yml"
 MAC_STORE_WORKFLOW = ".github/workflows/macos-app-store-signed.yml"
-APPLE_CI_JOB = "Release CI / Apple native reliability"
+APPLE_CI_JOBS = {
+    "Release CI / Apple native reliability (iOS)": "apple-native-test-ios",
+    "Release CI / Apple native reliability (macOS)": "apple-native-test-macos",
+    "Release CI / Apple native reliability (tvOS)": "apple-native-test-tvos",
+}
 PRIVATE_APPLE_JOBS = {
     BUILD_WORKFLOW: {
-        APPLE_CI_JOB: "apple-native-test",
+        **APPLE_CI_JOBS,
         "build-ios": "build-ios",
         "Build tvOS developer package (arm64)": "build-tvos",
         "build-macos": "build-macos",
@@ -115,7 +119,7 @@ def is_apple_job(job: dict, run_id: str, run: dict) -> bool:
         return False
     if set(labels) != expected or len(labels) != len(expected):
         return False
-    if name != APPLE_CI_JOB:
+    if name not in APPLE_CI_JOBS:
         return True
     # The unsigned suite is admitted only as a same-commit reusable job of
     # a versioned release. Standalone ci.yml keeps using hosted runners.

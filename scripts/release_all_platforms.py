@@ -1412,6 +1412,7 @@ def ensure_candidate_build(
                 run_has_successful_step(PLEZY_REPO, run, job_name, step_name)
                 for job_name, step_name in (
                     ("build-macos", "Notarize Application"),
+                    ("build-macos", "Wait for notarization acceptance"),
                     ("build-macos", "Verify Gatekeeper acceptance for Homebrew Cask"),
                 )
             )
@@ -2018,7 +2019,7 @@ def ensure_release(
             complete = complete and all(
                 run_has_successful_step(PLEZY_REPO, existing, job_name, step_name)
                 for job_name, step_name in (
-                    *(("build-macos", name) for name in ("Notarize Application", "Verify Gatekeeper acceptance for Homebrew Cask") if (rebuild_macos or not (reuse_macos_run_id or reuse_platform_run_id))),
+                    *(("build-macos", name) for name in ("Notarize Application", "Wait for notarization acceptance", "Verify Gatekeeper acceptance for Homebrew Cask") if (rebuild_macos or not (reuse_macos_run_id or reuse_platform_run_id))),
                     ("create-release", "Generate Homebrew Cask candidate"),
                     ("create-release", "Attest Homebrew Cask candidate"),
                 )
@@ -2105,7 +2106,8 @@ def ensure_release(
         if prepare_homebrew_cask:
             if rebuild_macos:
                 required_steps.extend(("build-macos", name) for name in
-                                      ("Notarize Application", "Verify Gatekeeper acceptance for Homebrew Cask"))
+                                      ("Notarize Application", "Wait for notarization acceptance",
+                                       "Verify Gatekeeper acceptance for Homebrew Cask"))
             required_steps.extend(("create-release", name) for name in
                                   ("Generate Homebrew Cask candidate", "Attest Homebrew Cask candidate"))
         if any(not run_has_successful_step(PLEZY_REPO, result, job, step) for job, step in required_steps):
@@ -2163,7 +2165,11 @@ def verify_platform_recovery(run_id: int, commit_sha: str, version: str, *,
         source = (verify_macos_packaging_recovery(run_id, macos_run, commit_sha, version) if macos_run else
                   wait_for_source_run(run_id, commit_sha, version, 10800, **options) if wait_complete else
                   verify_source_run(run_id, commit_sha, version, allow_pending=True, **options))
-        return compose_proof(source, android_run, include_webos_build, webos_run, ios_developer_run)
+        proof = compose_proof(source, android_run, include_webos_build, webos_run, ios_developer_run)
+        if proof.get('platforms_complete') and not proof.get('pending_jobs'):
+            from recover_release_platforms import preflight_platform_artifacts
+            proof['artifact_preflight'] = preflight_platform_artifacts(proof)
+        return proof
     except (RecoveryError, RuntimeError) as error:
         raise ReleaseError(f"Platform artifact recovery rejected: {error}") from error
 
@@ -2473,16 +2479,21 @@ def validate_selected_source(selected_commit: str, *, frozen: bool,
 
 
 def embedded_ci_proof(run_id: int, source_sha: str) -> dict:
-    from verify_embedded_release_ci import verify_jobs
+    from verify_embedded_release_ci import latest_attempt_jobs, verify_jobs
     run = gh_json("api", f"repos/{PLEZY_REPO}/actions/runs/{run_id}")
     attempt = run.get("run_attempt")
     if not isinstance(attempt, int) or attempt < 1:
         raise ReleaseError("Captured build omitted its qualification attempt.")
-    pages = gh_json("api", "--paginate", "--slurp",
-                    f"repos/{PLEZY_REPO}/actions/runs/{run_id}/attempts/{attempt}/jobs?per_page=100")
-    if not isinstance(pages, list) or any(not isinstance(page, dict) or not isinstance(page.get("jobs"), list) for page in pages):
-        raise ReleaseError("Captured build omitted its qualification jobs.")
-    jobs = [job for page in pages for job in page["jobs"]]
+    if attempt > 100:
+        raise ReleaseError("Captured build attempt history exceeds the supported bound.")
+    history = []
+    for number in range(1, attempt + 1):
+        pages = gh_json("api", "--paginate", "--slurp",
+                        f"repos/{PLEZY_REPO}/actions/runs/{run_id}/attempts/{number}/jobs?per_page=100")
+        if not isinstance(pages, list) or any(not isinstance(page, dict) or not isinstance(page.get("jobs"), list) for page in pages):
+            raise ReleaseError(f"Captured build omitted qualification jobs for attempt {number}.")
+        history.append([job for page in pages for job in page["jobs"]])
+    jobs = latest_attempt_jobs(history)
     manifest = json.loads(command(["git", "show", f"{source_sha}:docs/maintainers/capability-manifest.json"],
                                   cwd=ROOT, capture=True).stdout)
     required = manifest["release"]["releaseGate"]["requiredJobs"]

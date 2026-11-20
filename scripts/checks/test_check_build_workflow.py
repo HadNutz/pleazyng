@@ -36,6 +36,20 @@ APPLE_NATIVE_ACTION = ROOT / ".github/actions/apple-native-reliability/action.ym
 
 
 class BuildWorkflowGuardTest(unittest.TestCase):
+    def test_store_entitlements_are_preflighted_before_only_signed_ios_build(self):
+        workflow = yaml.safe_load(self._workflow())
+        jobs = workflow['jobs']
+        preflight = jobs['preflight-ios-store-signing']
+        self.assertIn('capture-candidate', preflight['needs'])
+        self.assertIn('always()', preflight['if'])
+        self.assertIn('inputs.include_apple_store_build', preflight['if'])
+        self.assertIn('scripts/preflight_ios_store_profile.py', preflight['steps'][1]['run'])
+        self.assertIn('--prepare-ios-worker-profile', preflight['steps'][1]['run'])
+        ios = jobs['build-ios']
+        self.assertIn('preflight-ios-store-signing', ios['needs'])
+        self.assertIn("outputs.include_apple_store_build != 'true'", ios['if'])
+        self.assertIn("needs.preflight-ios-store-signing.result == 'success'", ios['if'])
+
     def test_sherpa_cocoapods_diagnostic_uses_the_real_script_not_appledouble_sidecars(self):
         action = APPLE_NATIVE_ACTION.read_text(encoding="utf-8")
         diagnostic = action.split(
@@ -224,7 +238,8 @@ sys.exit(1 if len(calls) <= int(os.environ['FAIL_UNTIL']) else 0)
     def test_captured_release_cannot_skip_qualified_source_or_inherit_ci_secrets(self):
         original = self._workflow()
         variants = [original.replace("needs.release-ci.result == 'success'", "needs.release-ci.result == 'skipped'"),
-                    original.replace('    needs: freeze-qualified-source\n', '    needs: capture-candidate\n'),
+                    original.replace('  validate-trusted-ref:\n    name: Validate release request\n    needs: capture-candidate\n',
+                                     '  validate-trusted-ref:\n    name: Validate release request\n    needs: freeze-qualified-source\n'),
                     original.replace('    uses: ./.github/workflows/ci.yml\n',
                                      '    uses: ./.github/workflows/ci.yml\n    secrets: inherit\n')]
         for workflow in variants:
@@ -371,7 +386,7 @@ sys.exit(1 if len(calls) <= int(os.environ['FAIL_UNTIL']) else 0)
         original = Path.read_text
         ci = original(ci_path, encoding='utf-8')
         job_match = re.search(
-            r"(?ms)^  apple-native-test:\n.*?(?=^  [A-Za-z0-9_-]+:\n|\Z)", ci
+            r"(?ms)^  apple-native-suite:\n.*?(?=^  [A-Za-z0-9_-]+:\n|\Z)", ci
         )
         self.assertIsNotNone(job_match)
         apple_job = job_match.group(0)
@@ -384,7 +399,7 @@ sys.exit(1 if len(calls) <= int(os.environ['FAIL_UNTIL']) else 0)
             ("github.ref == 'refs/heads/main' && ", ""),
             ("github.workflow_ref == 'snapetech-org/pleazyng/.github/workflows/build.yml@refs/heads/main' && ", ""),
             ('"ng-main-run-{0}",', ''),
-            ('"gha-{0}-apple-native-test"', '"gha-apple-native-test"'),
+            ('"gha-{0}-apple-native-test-{1}"', '"gha-apple-native-test-{1}"'),
             ("hosted-xcode-version: '26.5'",
              "hosted-xcode-version: '26.3'"),
             ('test "$(uname -m)" = arm64', 'true'),

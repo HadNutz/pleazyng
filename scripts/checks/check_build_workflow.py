@@ -1297,9 +1297,9 @@ require(
     "Linux package smoke artifacts must use the locked Sherpa ONNX library pair before bundling",
 )
 
-apple_native = job_block(ci_text, "apple-native-test")
+apple_native = job_block(ci_text, "apple-native-suite")
 apple_runner = re.search(
-    r"(?m)^    runs-on: \$\{\{ (.+) && fromJSON\(format\('([^']+)', github\.run_id\)\) \|\| 'macos-26' \}\}$",
+    r"(?m)^    runs-on: \$\{\{ (.+) && fromJSON\(format\('([^']+)', github\.run_id, matrix\.slug\)\) \|\| 'macos-26' \}\}$",
     apple_native,
 )
 private_apple_conditions = {
@@ -1311,12 +1311,18 @@ private_apple_conditions = {
 }
 private_apple_target = (
     '{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple",'
-    '"ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-apple-native-test"]}}'
+    '"ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-apple-native-test-{1}"]}}'
 )
 require(
     apple_runner is not None and set(apple_runner[1].split(" && ")) == private_apple_conditions
     and apple_runner[2] == private_apple_target,
     "Apple native qualification must use hosted ARM64 by default and scope the private job to its exact trusted release dispatch",
+)
+require(
+    "fail-fast: false" in apple_native and "matrix:" in apple_native
+    and all(f"platform: {platform}" in apple_native for platform in ("iOS", "macOS", "tvOS"))
+    and 'needs: apple-native-suite' in job_block(ci_text, "apple-native-test"),
+    "Apple platform suites must be independently rerunnable and feed the aggregate reliability gate",
 )
 apple_suite = (ROOT / ".github/actions/apple-native-reliability/action.yml").read_text(encoding="utf-8")
 linux_native = job_block(ci_text, "linux-native-test")
@@ -1355,11 +1361,34 @@ require(
     and "--create-tag" in freeze_source
     and "contents: write" in freeze_source
     and "COMMIT_SHA: ${{ github.sha }}" in freeze_source
-    and "needs: freeze-qualified-source" in trusted_gate
-    and "inputs.candidate_ref == '' || needs.freeze-qualified-source.result == 'success'" in trusted_gate
+    and "needs: capture-candidate" in trusted_gate
+    and "inputs.candidate_ref == '' || needs.capture-candidate.result == 'success'" in trusted_gate
+    and "inputs.candidate_ref == '' }" in trusted_gate
+    and "needs: capture-candidate" in trusted_gate
+    and "needs.capture-candidate.result == 'success'" in trusted_gate
+    and "needs: capture-candidate" in captured_ci
+    and "needs.freeze-qualified-source.result == 'success'" in job("create-release")
+    and "--create-tag" in freeze_source
     and "python3 scripts/verify_embedded_release_ci.py" in trusted_gate
     and "python3 scripts/verify_release_ci.py" in trusted_gate,
     "Stable tags and platform builds must remain gated by verified exact-source reusable CI",
+)
+require(
+    "inputs.candidate_ref == ''" in named_step(trusted_gate, "Validate immutable release tag against trusted main")
+    and "inputs.candidate_ref == ''" in named_step(trusted_gate, "Require successful CI for this commit")
+    and "release_commit: ${{ steps.release-tag.outputs.commit || github.sha }}" in trusted_gate
+    and "needs.freeze-qualified-source.result == 'success'" in job("create-release")
+    and "needs: [freeze-qualified-source," in job("create-release"),
+    "Candidate artifacts may overlap CI, but release assembly must still wait for the stable-tag qualification gate",
+)
+macos_restore = named_step(job("build-macos"), "Restore prior notarization submission checkpoint")
+require(
+    "github.run_attempt > 1" in macos_restore
+    and "resume_notarization_checkpoint.py" in macos_restore
+    and "steps.restore-notarization.outputs.restored != 'true'" in named_step(job("build-macos"), "Build macOS")
+    and "steps.restore-notarization.outputs.restored == 'true'" in named_step(job("build-macos"), "Upload resumed notarization checkpoint")
+    and "steps.restore-notarization.outputs.submission_id || steps.notarization.outputs.submission_id" in named_step(job("build-macos"), "Wait for notarization acceptance"),
+    "Mac reruns must restore and resume a verified earlier notarization submission without recompiling",
 )
 require(
     "scripts/apple/select_test_destination.py" in apple_suite
@@ -1785,7 +1814,7 @@ for action_pool_job in (
 
 release = job("create-release")
 require(
-    "needs: [validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, build-windows, package-windows, build-linux]"
+    "needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, build-windows, package-windows, build-linux]"
     in release,
     "release dependencies must include the trust gate, all platform builds, and Windows packaging",
 )
@@ -2171,7 +2200,8 @@ for protected_job in (
     "build-linux",
 ):
     require(
-        "needs: validate-trusted-ref" in job(protected_job),
+        ("needs: validate-trusted-ref" in job(protected_job)
+         or "needs: [validate-trusted-ref, preflight-ios-store-signing]" in job(protected_job)),
         f"{protected_job} must depend on trusted-ref validation",
     )
 

@@ -678,12 +678,22 @@ jobs:
           UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
         run: ctest --test-dir build/games-steam-tests --output-on-failure
 
-  apple-native-test:
-    name: Apple native reliability
+  apple-native-suite:
+    name: Apple native reliability (${{ matrix.platform }})
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (inputs.execution_profile != 'hybrid' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
     timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: iOS
+            slug: ios
+          - platform: macOS
+            slug: macos
+          - platform: tvOS
+            slug: tvos
     # Native tests and their simulator dependencies build arm64 on every platform.
-    runs-on: ${{ inputs.apple_runner_pool == 'private' && github.event_name == 'workflow_dispatch' && github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && github.workflow_ref == 'snapetech-org/pleazyng/.github/workflows/build.yml@refs/heads/main' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-apple-native-test"]}}', github.run_id)) || 'macos-26' }}
+    runs-on: ${{ inputs.apple_runner_pool == 'private' && github.event_name == 'workflow_dispatch' && github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && github.workflow_ref == 'snapetech-org/pleazyng/.github/workflows/build.yml@refs/heads/main' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-apple-native-test-{1}"]}}', github.run_id, matrix.slug)) || 'macos-26' }}
     permissions:
       contents: read
     env:
@@ -693,21 +703,17 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-
       - name: Require native Apple Silicon host
         shell: bash
         run: test "$(uname -m)" = arm64
-
       - name: Load pinned Flutter SDK
         shell: bash
         run: python3 scripts/flutter/load_sdk_pin.py --github-env
-
       - name: Setup Flutter
         uses: ./.github/actions/setup-flutter-apple
         with:
           hosted-xcode-version: '26.5'
           flutter-version: ${{ env.FLUTTER_VERSION }}
-
       - name: Ensure CMake for the embedded Steam receiver
         shell: bash
         run: |
@@ -718,71 +724,40 @@ jobs:
           command -v git-lfs >/dev/null || brew install git-lfs
           command -v gtimeout >/dev/null || brew install coreutils
           cmake --version
-
       - name: Install CocoaPods
-        id: apple_tools
         shell: bash
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/bin:$PATH"
           gem install cocoapods --version 1.17.0 --no-document \
-            --install-dir "$RUNNER_TEMP/cocoapods-gems" \
-            --bindir "$RUNNER_TEMP/cocoapods-bin"
+            --install-dir "$RUNNER_TEMP/cocoapods-gems" --bindir "$RUNNER_TEMP/cocoapods-bin"
           gem_path="$RUNNER_TEMP/cocoapods-gems:$(gem env gempath)"
-          {
-            echo "GEM_HOME=$RUNNER_TEMP/cocoapods-gems"
-            echo "GEM_PATH=$gem_path"
-          } >> "$GITHUB_ENV"
+          { echo "GEM_HOME=$RUNNER_TEMP/cocoapods-gems"; echo "GEM_PATH=$gem_path"; } >> "$GITHUB_ENV"
           echo "/opt/homebrew/bin" >> "$GITHUB_PATH"
           echo "$RUNNER_TEMP/cocoapods-bin" >> "$GITHUB_PATH"
-          export GEM_HOME="$RUNNER_TEMP/cocoapods-gems"
-          export GEM_PATH="$gem_path"
+          export GEM_HOME="$RUNNER_TEMP/cocoapods-gems" GEM_PATH="$gem_path"
           export PATH="$RUNNER_TEMP/cocoapods-bin:/opt/homebrew/bin:$PATH"
           pod --version
-
-      - name: Qualify iOS native components
-        id: ios
-        if: ${{ !cancelled() && steps.apple_tools.outcome == 'success' }}
+      - name: Qualify Apple native components
         uses: ./.github/actions/apple-native-reliability
         timeout-minutes: 110
         with:
-          platform: iOS
+          platform: ${{ matrix.platform }}
         env:
-          PUB_CACHE: ${{ runner.temp }}/apple-native-pub-iOS
+          PUB_CACHE: ${{ runner.temp }}/apple-native-pub-${{ matrix.slug }}
 
-      - name: Qualify macOS native components
-        id: macos
-        if: ${{ !cancelled() && steps.apple_tools.outcome == 'success' }}
-        uses: ./.github/actions/apple-native-reliability
-        timeout-minutes: 110
-        with:
-          platform: macOS
+  apple-native-test:
+    name: Apple native reliability
+    if: ${{ always() && !cancelled() }}
+    needs: apple-native-suite
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Require all Apple native suites
         env:
-          PUB_CACHE: ${{ runner.temp }}/apple-native-pub-macOS
-
-      - name: Qualify tvOS native components
-        id: tvos
-        if: ${{ !cancelled() && steps.apple_tools.outcome == 'success' }}
-        uses: ./.github/actions/apple-native-reliability
-        timeout-minutes: 110
-        with:
-          platform: tvOS
-        env:
-          PUB_CACHE: ${{ runner.temp }}/apple-native-pub-tvOS
-
-      - name: Require every Apple native suite
-        if: ${{ !cancelled() }}
-        shell: bash
-        env:
-          IOS_OUTCOME: ${{ steps.ios.outcome }}
-          MACOS_OUTCOME: ${{ steps.macos.outcome }}
-          TVOS_OUTCOME: ${{ steps.tvos.outcome }}
-        run: |
-          printf '| Platform | Qualification | Outcome |\n| --- | --- | --- |\n' >> "$GITHUB_STEP_SUMMARY"
-          printf '| iOS | Simulator tests | %s |\n' "$IOS_OUTCOME" >> "$GITHUB_STEP_SUMMARY"
-          printf '| macOS | Build application and XCTest bundle | %s |\n' "$MACOS_OUTCOME" >> "$GITHUB_STEP_SUMMARY"
-          printf '| tvOS | Simulator tests and startup assertion | %s |\n' "$TVOS_OUTCOME" >> "$GITHUB_STEP_SUMMARY"
-          [[ "$IOS_OUTCOME" == success && "$MACOS_OUTCOME" == success && "$TVOS_OUTCOME" == success ]]
+          SUITE_RESULT: ${{ needs.apple-native-suite.result }}
+        run: test "$SUITE_RESULT" = success
 
   windows-native-test:
     name: Windows native reliability (${{ matrix.arch }})

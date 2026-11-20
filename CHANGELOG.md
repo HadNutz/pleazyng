@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Split Apple native qualification into independently rerunnable iOS, macOS, and tvOS jobs; preflight signing and reusable artifact provenance, build captured candidates alongside qualification, resume from verified attempt history, and checkpoint macOS/tvOS artifacts and notarization state.
 - Rebuild amd64 and arm64 Snap packages from refreshed Ubuntu 24.04 packages to address USN-9152-1.
 
 ## [3.0.43] - 2026-11-20

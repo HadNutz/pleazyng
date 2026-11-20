@@ -91,44 +91,26 @@ class NativePreparationOrderTests(unittest.TestCase):
                 for match in re.finditer(rf'flutter build {slug}\b', body):
                     self.assertLess(body.index(refresh), match.start())
 
-    def test_one_apple_job_requires_all_three_suite_outcomes(self):
-        apple = yaml.safe_load(WORKFLOW.read_text())['jobs']['apple-native-test']
-        self.assertEqual(apple['name'], 'Apple native reliability')
-        self.assertNotIn('strategy', apple)
-        self.assertFalse(apple.get('continue-on-error'))
-        suite_steps = [s for s in apple['steps'] if s.get('uses') == './.github/actions/apple-native-reliability']
-        self.assertCountEqual([(s['id'], s['with']['platform']) for s in suite_steps],
-                              [('ios', 'iOS'), ('macos', 'macOS'), ('tvos', 'tvOS')])
-        gate = next(s for s in apple['steps'] if s.get('name') == 'Require every Apple native suite')
-        self.assertEqual(gate.get('if'), '${{ !cancelled() }}')
-        self.assertFalse(gate.get('continue-on-error'))
-        shared_tools = next(s for s in apple['steps'] if s.get('id') == 'apple_tools')
-        for suite in suite_steps:
-            self.assertFalse(suite.get('continue-on-error'))
-            self.assertEqual(suite.get('if'), "${{ !cancelled() && steps.apple_tools.outcome == 'success' }}")
-            self.assertLess(apple['steps'].index(shared_tools), apple['steps'].index(suite))
-            self.assertLess(apple['steps'].index(suite), apple['steps'].index(gate))
-        # Exercise the checked-in shell gate with the actual step-outcome bindings.
-        bindings = {}
-        for key, value in gate['env'].items():
-            match = re.fullmatch(r'\$\{\{ steps\.(ios|macos|tvos)\.outcome \}\}', value)
-            if match:
-                bindings[match[1]] = key
-        self.assertEqual(set(bindings), {'ios', 'macos', 'tvos'})
-        outcomes = {**dict.fromkeys(bindings.values(), 'success'), 'GITHUB_STEP_SUMMARY': '/dev/null'}
-
-        def status(env):
-            return subprocess.run(['bash', '-euo', 'pipefail', '-c', gate['run']], env=env,
-                                  capture_output=True, text=True).returncode
-
-        self.assertEqual(status(outcomes), 0)
-        for platform, key in bindings.items():
-            for outcome in ('failure', 'skipped', 'cancelled'):
-                with self.subTest(platform=platform, outcome=outcome):
-                    self.assertNotEqual(status({**outcomes, key: outcome}), 0)
+    def test_apple_platform_suites_are_independent_and_aggregate_gate_is_required(self):
+        jobs = yaml.safe_load(WORKFLOW.read_text())['jobs']
+        apple = jobs['apple-native-suite']
+        self.assertEqual(apple['strategy']['fail-fast'], False)
+        self.assertCountEqual([row['platform'] for row in apple['strategy']['matrix']['include']],
+                              ['iOS', 'macOS', 'tvOS'])
+        self.assertEqual(apple['name'], 'Apple native reliability (${{ matrix.platform }})')
+        suite = next(s for s in apple['steps'] if s.get('uses') == './.github/actions/apple-native-reliability')
+        self.assertEqual(suite['with']['platform'], '${{ matrix.platform }}')
+        self.assertEqual(suite['timeout-minutes'], 110)
+        gate = jobs['apple-native-test']
+        self.assertEqual(gate['name'], 'Apple native reliability')
+        self.assertEqual(gate['needs'], 'apple-native-suite')
+        self.assertIn('always()', gate['if'])
+        self.assertEqual(gate['steps'][0]['env']['SUITE_RESULT'], '${{ needs.apple-native-suite.result }}')
+        self.assertEqual(gate['steps'][0]['run'], 'test "$SUITE_RESULT" = success')
+        self.assertIn('gha-{0}-apple-native-test-{1}', apple['runs-on'])
 
     def test_apple_native_job_installs_required_runtime_generators(self):
-        body = job(WORKFLOW.read_text(), 'apple-native-test')
+        body = job(WORKFLOW.read_text(), 'apple-native-suite')
         tools = step(body, 'Ensure CMake for the embedded Steam receiver')
         self.assertIn('command -v xcodegen >/dev/null || brew install xcodegen', tools)
         self.assertIn('command -v git-lfs >/dev/null || brew install git-lfs', tools)

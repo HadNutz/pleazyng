@@ -11,6 +11,11 @@ worker registration platform/case status and profile UUID, never a profile
 payload or API credential. A successful preflight does not qualify an archive,
 App Store processing, purchase/restore or device playback.
 
+The release workflow also runs the actual Store entitlement check on a hosted
+Mac immediately after candidate capture. This catches missing CarPlay Audio
+and Siri capabilities before the longer native suites, and gates only signed
+iOS packaging.
+
 Apple defines [bundle IDs as case-insensitive](https://developer.apple.com/documentation/bundleresources/information-property-list/cfbundleidentifier)
 and [`UNIVERSAL` registrations as supporting all platforms](https://developer.apple.com/documentation/appstoreconnectapi/bundleidplatform).
 The helper accepts those identities while requiring the exact full identifier,
@@ -48,10 +53,13 @@ Run the complete release from an authenticated `gh` session. The driver verifies
 native pins, creates an immutable `vVERSION-candidate.FULL_SHA` reference, then
 captures one `build.yml` dispatch on `main` at that exact SHA. The run keeps its
 source even if `main` advances. Its local reusable `ci.yml` comes from the same
-commit. Every required CI child must pass before a separate job verifies the
-GitHub job records and creates the stable version tag. All platform jobs remain
-blocked until that qualification and tag binding succeed. A failed preflight
-consumes no stable version; a new source receives a different candidate name.
+commit. Candidate platform builds start from that captured SHA while reusable
+CI qualifies it. Build setup checks the requested version and immutable source;
+it does not create a stable tag or publish a release. Every required CI child
+must pass before a separate job verifies the GitHub job records and creates the
+stable version tag. Final assembly and publication wait for both the tag gate
+and every required platform build. A failed preflight consumes no stable
+version; a new source receives a different candidate name.
 
 Compatible Linux, Android, Tizen, Windows x64 and native Windows ARM64 jobs use
 public GitHub-hosted runners. webOS remains on the single Linux x64 private
@@ -73,21 +81,56 @@ the operator's authorization. Package and store delivery still runs. This flag
 does not change release-event workflow activation; control that separately and
 restore any temporarily changed activation state after the operation.
 
-If a later platform fails, recovery verifies the original build's current-attempt
+If a later platform fails, recovery verifies the original build's attempt-history
 embedded CI records, successful source freeze, immutable tag and source-bound
-job contract. The platform failure does not invalidate passing CI, but failed or
-missing CI never falls back to another run. Older releases retain their separate
+job contract. It selects the newest result for each logical CI job across all
+attempts, allowing a tvOS retry to retain successful iOS and macOS results while
+rejecting duplicate or superseded job records. Reused artifact inventories,
+expiry, source identity and digests are checked before dispatch, then full
+artifact downloads and provenance are verified again at assembly. The platform
+failure does not invalidate passing CI, but failed or missing CI never falls
+back to another run. Older releases retain their separate
 `ci.yml` proof, using the `capability-manifest.json` from that exact CI source
 SHA so later workflow metadata cannot redefine the historical required-job
 contract. Reuse successful platform artifacts under the existing product
 equivalence checks; do not dispatch another complete build for a delivery error.
 
+For a failed candidate whose required outputs have not expired, run
+`python3 scripts/resume_release.py RUN_ID`. It verifies the canonical main
+workflow/source, attempt history, artifact identities and digests, reports
+which jobs passed and which artifacts expired, then calls GitHub's failed-jobs
+rerun for that same immutable run. GitHub retains green jobs and re-executes
+failed jobs plus their dependent release assembly. If the run is active or
+successful, the command refuses to interfere. If required artifacts are
+expired, use the explicit platform-recovery flow below so the missing producer
+jobs are rebuilt instead of repeatedly retrying assembly.
+
 ## Apple native qualification
 
-Apple native reliability CI acquires one public ARM64 Mac with Xcode 26.5.
-It runs XCTest on the iOS and tvOS simulators and builds the macOS application
-and XCTest bundle. All three suites must pass. Unsigned Apple packages continue
-on the compatible public runner for each build.
+Apple native reliability runs iOS, macOS, and tvOS as separate matrix jobs with
+`fail-fast` disabled. Each suite can be rerun independently; the required
+`Apple native reliability` aggregate passes only when all three platform jobs
+pass. Public ARM64 Macs with Xcode 26.5 are the default. A selected trusted
+release dispatch may route the three suites to the private Apple runner group,
+where the single Mac slot will serialize allocation but retain selective reruns.
+Unsigned Apple packages continue on the compatible public runner for each build.
+
+The tvOS unsigned developer IPA is uploaded as a 30-day digest-attested
+checkpoint immediately after its runtime validation, before signed Store
+packaging. The Mac app likewise has a portable, source-bound compilation
+checkpoint so a later packaging recovery can use another runner. A Developer ID
+notarization submission stores its signed input archive, archive digest,
+submission UUID and exact run/source identity. If the Mac job is rerun after a
+runner loss, it restores the latest verified checkpoint from an earlier attempt,
+checks that same Apple submission, and staples its ticket without recompiling
+or submitting a duplicate archive. The normal signed artifact and Gatekeeper
+checks still run after stapling.
+
+For signed iOS Store releases, a short hosted Mac preflight prepares the worker
+profile when needed and runs the same CarPlay Audio and Siri entitlement check
+used by the build. It starts before native iOS compilation and gates only signed
+iOS work; unsigned Apple and unrelated platform builds continue independently.
+The in-build entitlement check remains as defense in depth.
 
 For a trusted main dispatch, the recovery workflow checks every unsuccessful
 job against GitHub's allocation annotations. If all failures occurred before

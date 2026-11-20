@@ -193,7 +193,16 @@ def embedded_source_ci(repository, source_sha, source_run):
     attempt = run.get("run_attempt")
     if not isinstance(attempt, int) or attempt < 1:
         raise RecoveryError("Original build omitted its current attempt")
-    jobs = collection(f"repos/{repository}/actions/runs/{source_run}/attempts/{attempt}/jobs", "jobs")
+    from verify_embedded_release_ci import latest_attempt_jobs
+    from verify_release_ci import GateError
+    if attempt > 100:
+        raise RecoveryError("Original build attempt history exceeds the supported bound")
+    try:
+        history = [collection(f"repos/{repository}/actions/runs/{source_run}/attempts/{number}/jobs", "jobs")
+                   for number in range(1, attempt + 1)]
+        jobs = latest_attempt_jobs(history)
+    except GateError as error:
+        raise RecoveryError(f"Embedded CI attempt history is invalid: {error}") from error
     if not any(str(job.get("name", "")).startswith(PREFIX) for job in jobs):
         return None  # Legacy releases qualified in a separate ci.yml run.
     manifest = json.loads(immutable_content(repository, source_sha, "docs/maintainers/capability-manifest.json"))
@@ -320,7 +329,8 @@ def verify_repaired_run(run_id, head_sha, version, repository, *, allow_pending=
         if job.get("status") != "completed" or job.get("conclusion") != "success":
             raise RecoveryError(f"Repaired platform job did not succeed: {name}")
         if name == "build-macos":
-            steps = ["Build macOS"] + (["Notarize Application", "Verify Gatekeeper acceptance for Homebrew Cask"] if require_homebrew_cask else [])
+            steps = ["Build macOS"] + (["Notarize Application", "Wait for notarization acceptance",
+                                         "Verify Gatekeeper acceptance for Homebrew Cask"] if require_homebrew_cask else [])
             if any(not any(step.get("name") == required and step.get("conclusion") == "success" and step.get("status") == "completed" for step in job.get("steps", [])) for required in steps):
                 raise RecoveryError("Repaired Mac lacks full compilation or required notarization/Gatekeeper qualification")
     for job in jobs:
@@ -335,7 +345,8 @@ def verify_repaired_run(run_id, head_sha, version, repository, *, allow_pending=
         raise RecoveryError("Repaired source already attempted publication; inspect side effects")
     macos = next((job for job in jobs if job.get("name") == "build-macos"), {})
     qualified = all(any(step.get("name") == name and step.get("conclusion") == "success" and step.get("status") == "completed" for step in macos.get("steps", []))
-                    for name in ("Notarize Application", "Verify Gatekeeper acceptance for Homebrew Cask"))
+                    for name in ("Notarize Application", "Wait for notarization acceptance",
+                                 "Verify Gatekeeper acceptance for Homebrew Cask"))
     return {"source_run_id": int(run_id), "source_sha": source_sha, "reused_jobs": list(names),
             "macos_cask_qualified": qualified,
             "platforms_complete": run.get("status") == "completed", "pending_jobs": pending_jobs}
@@ -979,6 +990,8 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
             job = next(job for job in jobs if job.get('name') == name)
             if name == 'Build tvOS developer package (arm64)':
                 required_steps = (step, 'Package unsigned tvOS developer IPA',
+                                  'Verify unsigned tvOS runtime dependencies',
+                                  'Attest unsigned tvOS checkpoint', 'Upload durable unsigned tvOS checkpoint',
                                   'Attest unsigned tvOS developer package', 'Verify tvOS runtime dependencies')
             else:
                 required_steps = (step,)
@@ -993,6 +1006,9 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
         if 'Build tvOS developer package (arm64)' not in pending_jobs:
             for required_step in (
                     'Package unsigned tvOS developer IPA',
+                    'Verify unsigned tvOS runtime dependencies',
+                    'Attest unsigned tvOS checkpoint',
+                    'Upload durable unsigned tvOS checkpoint',
                     'Verify tvOS runtime dependencies',
                     'Attest unsigned tvOS developer package',
                     'Upload tvOS package'):
@@ -1027,7 +1043,8 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
         raise RecoveryError("The source run already attempted release creation; inspect its side effects.")
     macos = next(job for job in jobs if job.get("name") == "build-macos")
     cask_qualified = all(any(step.get("name") == name and step.get("status") == "completed" and step.get("conclusion") == "success" for step in macos.get("steps", []))
-                         for name in ("Notarize Application", "Verify Gatekeeper acceptance for Homebrew Cask"))
+                         for name in ("Notarize Application", "Wait for notarization acceptance",
+                                      "Verify Gatekeeper acceptance for Homebrew Cask"))
     if require_homebrew_cask and not rebuild_macos and not repaired and macos.get("status") == "completed" and not cask_qualified:
         raise RecoveryError("Reusable Mac build lacks successful notarization and Homebrew Gatekeeper qualification")
     reused_jobs = [*required_jobs, *( ["build-ios"] if ios_developer_source else [])]
@@ -1096,6 +1113,22 @@ def verify_macos_packaging_recovery(run_id, macos_run, head_sha, version, reposi
     mac = api(f"repos/{repository}/actions/jobs/{macs[0]['id']}")
     if not any(s.get("name") == "Build macOS" and s.get("conclusion") == "success" for s in mac.get("steps", [])):
         raise RecoveryError("The original native application compilation did not succeed.")
+    checkpoint_name = f'macos-compiled-app-{run_id}-{mac.get("run_attempt")}'
+    checkpoint_inventory = collection(f'repos/{repository}/actions/runs/{run_id}/artifacts', 'artifacts')
+    checkpoint_matches = [item for item in checkpoint_inventory
+                          if item.get('name') == checkpoint_name and item.get('expired') is False]
+    if (len(checkpoint_matches) != 1
+            or not re.fullmatch(r'sha256:[0-9a-f]{64}', str(checkpoint_matches[0].get('digest', '')))
+            or (checkpoint_matches[0].get('workflow_run') or {}).get('head_sha') != source_sha):
+        raise RecoveryError('Original Mac compilation lacks its durable digest-bound app checkpoint.')
+    checkpoint_metadata = api(f'repos/{repository}/actions/artifacts/{checkpoint_matches[0]["id"]}')
+    if (checkpoint_metadata.get('id') != checkpoint_matches[0]['id']
+            or checkpoint_metadata.get('name') != checkpoint_name
+            or checkpoint_metadata.get('expired') is not False
+            or checkpoint_metadata.get('digest') != checkpoint_matches[0]['digest']
+            or (checkpoint_metadata.get('workflow_run') or {}).get('id') != run_id
+            or (checkpoint_metadata.get('workflow_run') or {}).get('head_sha') != source_sha):
+        raise RecoveryError('Durable Mac compilation checkpoint metadata changed after selection.')
     if any(j.get("conclusion") in {"failure", "cancelled", "timed_out"} and j.get("name") != "build-macos" for j in jobs):
         raise RecoveryError("Another original platform failed; do not assemble a partial release.")
     if any(j.get("name") == "create-release" and j.get("conclusion") != "skipped" for j in jobs):
@@ -1107,6 +1140,7 @@ def verify_macos_packaging_recovery(run_id, macos_run, head_sha, version, reposi
     recovered_job = api(f"repos/{repository}/actions/jobs/{recovered[0]['id']}")
     required_steps = ("Recover verified native macOS compilation", "Import Code Signing Certificate",
                       "Sign Application", "Verify Signature", "Notarize Application",
+                      "Wait for notarization acceptance",
                       "Verify Gatekeeper acceptance for Homebrew Cask", "Sign DMG for Sparkle (EdDSA)",
                       "Attest macOS DMG", "Attest recovered macOS compilation provenance", "Upload macOS DMG")
     for name in required_steps:
@@ -1629,6 +1663,74 @@ def verify_unsigned_ios_attestation(directory, source, repository=REPOSITORY):
         raise RecoveryError('Reused iOS IPA attestation does not bind the original workflow and run')
     with path.open('rb') as package:
         return hashlib.file_digest(package, 'sha256').hexdigest()
+
+
+def preflight_platform_artifacts(proof, repository=REPOSITORY):
+    """Reject unusable reused artifacts before starting replacement builds."""
+    run_id = proof['source_run_id']
+    sources = {run_id: proof}
+    for key in ('tvos_source', 'ios_source', 'ios_developer_source', 'android_source',
+                'macos_source', 'repaired_source', 'webos_source'):
+        source = proof.get(key)
+        if source:
+            sources[source['source_run_id']] = source
+    inventories = {source_run: collection(
+        f'repos/{repository}/actions/runs/{source_run}/artifacts', 'artifacts')
+        for source_run in sources}
+    wanted = {}
+    if proof.get('append_apple_only'):
+        wanted.update({'ios-ipa': proof.get('ios_source'), 'tvos-ipa': proof.get('tvos_source')})
+    else:
+        for name in ARTIFACTS:
+            if (proof.get('rebuild_linux') and name.startswith('linux-')
+                    or proof.get('rebuild_macos') and name == 'macos-dmg'
+                    or proof.get('rebuild_tvos') and name == 'tvos-ipa'
+                    or proof.get('rebuild_ios') and name == 'ios-ipa'
+                    or proof.get('ios_developer_source') and name == 'ios-ipa'):
+                continue
+            wanted[name] = proof
+        if proof.get('android_source'):
+            wanted['android-apk'] = proof['android_source']
+        if proof.get('webos_source'):
+            wanted['webos-ipk'] = proof['webos_source']
+        if proof.get('ios_developer_source'):
+            wanted['ios-ipa'] = proof['ios_developer_source']
+        if proof.get('ios_source'):
+            wanted['ios-ipa'] = proof['ios_source']
+        if proof.get('tvos_source'):
+            wanted['tvos-ipa'] = proof['tvos_source']
+        if proof.get('macos_source'):
+            wanted['webos-ipk'] = proof['macos_source']
+        if proof.get('repaired_source'):
+            for name in ('linux-x64', 'linux-arm64', 'linux-x64-appimage', 'macos-dmg'):
+                if name in wanted:
+                    wanted[name] = proof['repaired_source']
+    selected = []
+    for name, source in wanted.items():
+        if source is None:
+            raise RecoveryError(f'Reusable artifact has no verified source record: {name}')
+        source_run = source['source_run_id']
+        matches = [item for item in inventories[source_run]
+                   if item.get('name') == name and item.get('expired') is False]
+        if len(matches) != 1:
+            raise RecoveryError(f'Reusable artifact is missing, expired, or ambiguous: {name}')
+        artifact = matches[0]
+        digest = artifact.get('digest')
+        expected_sha = source.get('workflow_source_sha') or source['source_sha']
+        identity = artifact.get('workflow_run') or {}
+        if (type(artifact.get('id')) is not int or artifact['id'] < 1
+                or not re.fullmatch(r'sha256:[0-9a-f]{64}', str(digest))
+                or identity.get('id') != source_run or identity.get('head_sha') != expected_sha):
+            raise RecoveryError(f'Reusable artifact identity or digest is invalid: {name}')
+        metadata = api(f'repos/{repository}/actions/artifacts/{artifact["id"]}')
+        metadata_run = metadata.get('workflow_run') or {}
+        if (metadata.get('id') != artifact['id'] or metadata.get('name') != name
+                or metadata.get('expired') is not False or metadata.get('digest') != digest
+                or metadata_run.get('id') != source_run or metadata_run.get('head_sha') != expected_sha):
+            raise RecoveryError(f'Reusable artifact metadata changed after source validation: {name}')
+        selected.append({'name': name, 'artifact_id': artifact['id'], 'source_run_id': source_run,
+                         'source_sha': source.get('source_sha'), 'digest': digest})
+    return selected
 
 
 def download_platforms(proof, destination, repository=REPOSITORY):

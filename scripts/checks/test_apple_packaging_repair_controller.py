@@ -162,7 +162,8 @@ class PackagingRepairControllerTests(unittest.TestCase):
 
     def test_explicit_mac_rebuild_requires_notarization_and_gatekeeper(self):
         existing = {'databaseId': 99, 'headSha': self.workflow, 'status': 'completed', 'conclusion': 'success'}
-        for missing in (None, 'Notarize Application', 'Verify Gatekeeper acceptance for Homebrew Cask'):
+        for missing in (None, 'Notarize Application', 'Wait for notarization acceptance',
+                        'Verify Gatekeeper acceptance for Homebrew Cask'):
             with self.subTest(missing=missing), \
                     patch.object(release, 'matching_packaging_repair_run', return_value=existing), \
                     patch.object(release, 'verify_platform_recovery', return_value=self.proof()) as verify, \

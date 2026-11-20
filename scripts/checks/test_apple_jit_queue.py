@@ -57,10 +57,10 @@ def private_release_ci():
            'head_sha': sha, 'run_attempt': 2, 'referenced_workflows': [
                {'path': f'{queue.REPOSITORY}/.github/workflows/ci.yml@{sha}',
                 'sha': sha, 'ref': 'refs/heads/main'}]}
-    job = {**apple_job(), 'name': 'Release CI / Apple native reliability',
+    job = {**apple_job(), 'name': 'Release CI / Apple native reliability (iOS)',
            'run_id': 42, 'run_attempt': 2, 'head_sha': sha, 'labels': [
                'self-hosted', 'macOS', 'ARM64', 'private-apple', 'ng-shared-main-pleazyng',
-               'ng-main-run-42', 'gha-42-apple-native-test']}
+               'ng-main-run-42', 'gha-42-apple-native-test-ios']}
     return run, job
 
 
@@ -81,7 +81,7 @@ class AppleQueueTests(unittest.TestCase):
             with self.subTest(run_change=changed):
                 self.assertFalse(queue.is_apple_job(job, '42', {**run, **changed}))
         for changed in (
-            {'name': 'Apple native reliability'}, {'name': job['name'] + ' (iOS)'},
+            {'name': 'Apple native reliability'}, {'name': 'Release CI / Apple native reliability (tvOS)'},
             {'labels': ['macos-26']}, {'labels': job['labels'] + ['other']},
             {'run_id': 43}, {'run_attempt': 1}, {'head_sha': 'b' * 40},
             {'labels': [*job['labels'][:-1], 'gha-42-build-ios']},

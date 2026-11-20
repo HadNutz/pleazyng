@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 """Retain failed Mac packaging inputs without accumulating successful builds."""
 import argparse
+import hashlib
+import io
 import json
 import os
 from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tarfile
+import tempfile
+import plistlib
 
-from recover_macos_app import api, tree_digest
+from recover_macos_app import api, build_contract, tree_digest
 
 
 def cache_root():
@@ -57,6 +62,39 @@ def capture(app):
     print(f'Retained verified compilation for job {job}; failed packaging preserves this snapshot.')
 
 
+def checkpoint(app, archive, receipt_path):
+    """Create a portable, source-bound app archive before signing/notarization."""
+    if sys.platform != 'darwin' or app.is_symlink() or not app.is_dir() or app.suffix != '.app':
+        raise ValueError('Expected a real native macOS application bundle')
+    source = os.environ['GITHUB_SHA']
+    run = int(os.environ['GITHUB_RUN_ID'])
+    attempt = int(os.environ['GITHUB_RUN_ATTEMPT'])
+    version = subprocess.check_output([sys.executable, str(Path(__file__).with_name('pubspec_version.py')),
+                                       str(Path.cwd() / 'pubspec.yaml')], text=True).strip()
+    fingerprint = tree_digest(app)
+    archive.parent.mkdir(parents=True, exist_ok=True)
+    with tarfile.open(archive, 'w:gz') as output:
+        output.add(app, arcname='Pleazyng.app', recursive=True)
+    archive_hash = hashlib.sha256(archive.read_bytes()).hexdigest()
+    workflow = (Path(__file__).resolve().parents[1] / '.github/workflows/build.yml').read_text()
+    contract = hashlib.sha256(json.dumps(build_contract(workflow), sort_keys=True).encode()).hexdigest()
+    plist = plistlib.loads((app / 'Contents/Info.plist').read_bytes())
+    receipt = {'schema_version': 1, 'source_sha': source, 'workflow_source_sha': source,
+               'run_id': run, 'run_attempt': attempt, 'app_tree_sha256': fingerprint,
+               'archive_sha256': archive_hash, 'workflow_contract_sha256': contract,
+               'version': version, 'bundle_marketing_version': plist.get('CFBundleShortVersionString'),
+               'bundle_build_version': plist.get('CFBundleVersion'),
+               'flutter_version': os.environ.get('FLUTTER_VERSION'),
+               'xcode_version': subprocess.check_output(['xcodebuild', '-version'], text=True).splitlines()[0],
+               'macos_sdk_version': subprocess.check_output(
+                   ['xcrun', '--sdk', 'macosx', '--show-sdk-version'], text=True).strip(),
+               'platform': 'macos', 'flavor': 'universal-release',
+               'signed': False, 'notarized': False}
+    receipt_path.parent.mkdir(parents=True, exist_ok=True)
+    receipt_path.write_text(json.dumps(receipt, indent=2) + '\n')
+    print(f'Created portable unsigned macOS checkpoint for run {run}, attempt {attempt}.')
+
+
 def discard(snapshot):
     root = cache_root()
     if snapshot.is_symlink() or snapshot.parent != root or snapshot.resolve() != snapshot:
@@ -75,7 +113,13 @@ def discard(snapshot):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('operation', choices=['capture', 'discard'])
+    parser.add_argument('operation', choices=['capture', 'discard', 'checkpoint'])
     parser.add_argument('path', type=Path)
+    parser.add_argument('receipt', type=Path, nargs='?')
     args = parser.parse_args()
-    (capture if args.operation == 'capture' else discard)(args.path)
+    if args.operation == 'checkpoint':
+        if args.receipt is None:
+            parser.error('checkpoint requires an archive and receipt path')
+        checkpoint(args.path, args.path.parent / 'compiled-macos-app.tar.gz', args.receipt)
+    else:
+        (capture if args.operation == 'capture' else discard)(args.path)

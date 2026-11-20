@@ -27,6 +27,7 @@ class SigningOptionsTests(unittest.TestCase):
         apple = [("build-ios", "Build signed iOS App Store IPA"),
                  ("Build tvOS developer package (arm64)", "Build signed tvOS App Store IPA")]
         mac = [("build-macos", "Notarize Application"),
+               ("build-macos", "Wait for notarization acceptance"),
                ("build-macos", "Verify Gatekeeper acceptance for Homebrew Cask")]
         cask = [("create-release", "Generate Homebrew Cask candidate"),
                 ("create-release", "Attest Homebrew Cask candidate")]

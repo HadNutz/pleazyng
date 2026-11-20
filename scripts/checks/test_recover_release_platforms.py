@@ -22,6 +22,52 @@ import recover_release_platforms as recovery
 import release_all_platforms as controller
 
 
+class ArtifactPreflightTests(unittest.TestCase):
+    def setUp(self):
+        self.run_id = 77
+        self.sha = 'a' * 40
+        self.inventory = [
+            {'id': index + 1, 'name': name, 'expired': False,
+             'digest': 'sha256:' + format(index + 1, '064x'),
+             'workflow_run': {'id': self.run_id, 'head_sha': self.sha}}
+            for index, name in enumerate(recovery.ARTIFACTS)
+        ]
+        self.proof = {'source_run_id': self.run_id, 'source_sha': self.sha,
+                      'platforms_complete': True}
+
+    def preflight(self, inventory=None, metadata_change=None):
+        inventory = self.inventory if inventory is None else inventory
+        def metadata(path):
+            artifact_id = int(path.rsplit('/', 1)[-1])
+            artifact = next(item for item in inventory if item['id'] == artifact_id)
+            result = {**artifact, 'workflow_run': dict(artifact['workflow_run'])}
+            if metadata_change:
+                metadata_change(result)
+            return result
+        with patch.object(recovery, 'collection', return_value=inventory), \
+                patch.object(recovery, 'api', side_effect=metadata):
+            return recovery.preflight_platform_artifacts(self.proof)
+
+    def test_all_reused_artifact_metadata_is_bound_before_download(self):
+        records = self.preflight()
+        self.assertEqual({item['name'] for item in records}, set(recovery.ARTIFACTS))
+        self.assertTrue(all(item['source_run_id'] == self.run_id for item in records))
+
+    def test_missing_duplicate_expired_wrong_source_and_malformed_digest_fail_closed(self):
+        cases = [self.inventory[1:]]
+        cases.append(self.inventory + [dict(self.inventory[0])])
+        cases.append([{**self.inventory[0], 'expired': True}, *self.inventory[1:]])
+        cases.append([{**self.inventory[0], 'workflow_run': {'id': 88, 'head_sha': self.sha}}, *self.inventory[1:]])
+        cases.append([{**self.inventory[0], 'digest': 'sha256:bad'}, *self.inventory[1:]])
+        for inventory in cases:
+            with self.subTest(first=inventory[0]), self.assertRaises(recovery.RecoveryError):
+                self.preflight(inventory)
+
+    def test_metadata_endpoint_must_still_match_the_inventory(self):
+        with self.assertRaisesRegex(recovery.RecoveryError, 'metadata changed'):
+            self.preflight(metadata_change=lambda item: item.update(digest='sha256:' + 'f' * 64))
+
+
 class SourceProofTests(unittest.TestCase):
     def setUp(self):
         self.source = {
@@ -37,7 +83,9 @@ class SourceProofTests(unittest.TestCase):
         tvos = next(job for job in self.jobs if job['name'] == 'Build tvOS developer package (arm64)')
         tvos['steps'] = [
             {'name': name, 'status': 'completed', 'conclusion': 'success'}
-            for name in ('Package unsigned tvOS developer IPA', 'Verify tvOS runtime dependencies',
+            for name in ('Package unsigned tvOS developer IPA', 'Verify unsigned tvOS runtime dependencies',
+                         'Attest unsigned tvOS checkpoint', 'Upload durable unsigned tvOS checkpoint',
+                         'Verify tvOS runtime dependencies',
                          'Attest unsigned tvOS developer package', 'Upload tvOS package')]
         self.jobs += [{"name": "build-android", "status": "completed", "conclusion": "failure"},
                       {"name": "create-release", "status": "completed", "conclusion": "skipped"}]
@@ -265,7 +313,9 @@ class SourceProofTests(unittest.TestCase):
         tvos = next(job for job in self.jobs if job['name'] == 'Build tvOS developer package (arm64)')
         self.assertTrue(self.prove()['runtime_dependency_receipt_required'])
         original = copy.deepcopy(tvos['steps'])
-        for missing in ('Package unsigned tvOS developer IPA', 'Verify tvOS runtime dependencies',
+        for missing in ('Package unsigned tvOS developer IPA', 'Verify unsigned tvOS runtime dependencies',
+                        'Attest unsigned tvOS checkpoint', 'Upload durable unsigned tvOS checkpoint',
+                        'Verify tvOS runtime dependencies',
                         'Attest unsigned tvOS developer package', 'Upload tvOS package'):
             tvos['steps'] = [step for step in original if step['name'] != missing]
             with self.subTest(step=missing), self.assertRaisesRegex(
@@ -310,7 +360,7 @@ class SourceProofTests(unittest.TestCase):
         with self.assertRaisesRegex(recovery.RecoveryError, "qualification"):
             self.prove(require_homebrew_cask=True)
         mac = next(job for job in self.jobs if job["name"] == "build-macos")
-        mac["steps"] = [{"name": name, "status": "completed", "conclusion": "success"} for name in ("Notarize Application", "Verify Gatekeeper acceptance for Homebrew Cask")]
+        mac["steps"] = [{"name": name, "status": "completed", "conclusion": "success"} for name in ("Notarize Application", "Wait for notarization acceptance", "Verify Gatekeeper acceptance for Homebrew Cask")]
         self.assertTrue(self.prove(require_homebrew_cask=True)["macos_cask_qualified"])
 
     def test_original_failed_linux_and_mac_require_verified_repair_sources(self):
@@ -478,12 +528,14 @@ class SourceProofTests(unittest.TestCase):
                 {'name': step, 'conclusion': 'success', 'status': 'completed'}
                 for step in ('Build signed tvOS App Store IPA', 'Package unsigned tvOS developer IPA',
                              'Attest unsigned tvOS developer package')]
-            with self.assertRaisesRegex(recovery.RecoveryError, 'Verify tvOS runtime dependencies'):
+            with self.assertRaisesRegex(recovery.RecoveryError, 'Verify unsigned tvOS runtime dependencies'):
                 self.frozen()
             tvos_job['steps'] = [
                 {'name': step, 'conclusion': 'success', 'status': 'completed'}
                 for step in ('Build signed tvOS App Store IPA', 'Package unsigned tvOS developer IPA',
-                             'Attest unsigned tvOS developer package', 'Verify tvOS runtime dependencies',
+                             'Verify unsigned tvOS runtime dependencies', 'Attest unsigned tvOS checkpoint',
+                             'Upload durable unsigned tvOS checkpoint', 'Attest unsigned tvOS developer package',
+                             'Verify tvOS runtime dependencies',
                              'Upload tvOS package')]
             proof = self.frozen()
             self.assertTrue(proof['include_apple_store_build'])
@@ -1812,7 +1864,7 @@ class RepairedSourceTests(unittest.TestCase):
         self.jobs = [{"name": name, "status": "completed", "conclusion": "success"} for name in
                      ("Validate release request", "Build Linux (x64)", "Build Linux (arm64)", "build-macos")]
         self.jobs[-1]["steps"] = [{"name": name, "status": "completed", "conclusion": "success"} for name in
-                                  ("Build macOS", "Notarize Application", "Verify Gatekeeper acceptance for Homebrew Cask")]
+                                  ("Build macOS", "Notarize Application", "Wait for notarization acceptance", "Verify Gatekeeper acceptance for Homebrew Cask")]
         self.jobs += [{"name": "Build WebOS TV package (ARMv7)", "status": "completed", "conclusion": "failure"},
                       {"name": "create-release", "status": "completed", "conclusion": "skipped"}]
         self.workflow = 'env:\n  SDK: pinned\njobs:\n  build-macos:\n    run: compile-mac\n  build-linux:\n    run: compile-linux\n  other:\n'

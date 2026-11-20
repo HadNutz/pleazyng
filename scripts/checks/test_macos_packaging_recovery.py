@@ -30,8 +30,11 @@ class MacPackagingProofTests(unittest.TestCase):
         self.jobs.extend([{'id':99,'name':'build-macos','status':'completed','conclusion':'failure'},
                           {'id':101,'name':'create-release','status':'completed','conclusion':'skipped'}])
         self.original_mac={'id':99,'steps':[{'name':'Build macOS','conclusion':'success'}]}
+        self.original_mac['run_attempt']=1
+        self.compilation_checkpoint={'id':501,'name':'macos-compiled-app-42-1','expired':False,
+            'digest':'sha256:'+'d'*64,'workflow_run':{'id':42,'head_sha':'a'*40}}
         names=['Recover verified native macOS compilation','Import Code Signing Certificate','Sign Application','Verify Signature',
-               'Notarize Application','Verify Gatekeeper acceptance for Homebrew Cask','Sign DMG for Sparkle (EdDSA)',
+               'Notarize Application','Wait for notarization acceptance','Verify Gatekeeper acceptance for Homebrew Cask','Sign DMG for Sparkle (EdDSA)',
                'Attest macOS DMG','Attest recovered macOS compilation provenance','Upload macOS DMG']
         self.recovered={'id':100,'name':'build-macos','conclusion':'success','steps':[{'name':n,'conclusion':'success'} for n in names]}
         self.changed_contract=False
@@ -47,8 +50,12 @@ class MacPackagingProofTests(unittest.TestCase):
                 return {'content':base64.b64encode(text.encode()).decode()}
             if path.endswith('/jobs/99'):return self.original_mac
             if path.endswith('/jobs/100'):return self.recovered
+            if path.endswith('/artifacts/501'):
+                return {**self.compilation_checkpoint,'workflow_run':{'id':42,'head_sha':'a'*40}}
             raise AssertionError(path)
-        def collection(path,key):return self.jobs if '/runs/42/' in path else [self.recovered]
+        def collection(path,key):
+            if path.endswith('/runs/42/artifacts'):return [self.compilation_checkpoint]
+            return self.jobs if '/runs/42/' in path else [self.recovered]
         with patch.object(recovery,'api',side_effect=api),patch.object(recovery,'collection',side_effect=collection),\
              patch.object(recovery,'ci_proof',return_value={'ci_run_id':23}):
             return recovery.verify_macos_packaging_recovery(42,43,'c'*40,'3.0.3')

@@ -111,6 +111,45 @@ def verify_jobs(run, jobs, sha, run_id, attempt, required):
             'workflow': '.github/workflows/build.yml', 'ci_workflow': '.github/workflows/ci.yml', 'jobs': records}
 
 
+def latest_attempt_jobs(attempt_pages):
+    """Resolve rerun history by logical job, retaining each newest execution."""
+    latest = {}
+    seen = set()
+    for attempt, jobs in enumerate(attempt_pages, start=1):
+        if not isinstance(jobs, list):
+            raise GateError('A CI attempt omitted its job inventory.')
+        names_in_attempt = set()
+        for raw in jobs:
+            if not isinstance(raw, dict) or not isinstance(raw.get('name'), str):
+                raise GateError('A CI attempt contains a malformed job record.')
+            name = raw['name']
+            if name in names_in_attempt:
+                raise GateError(f'CI attempt {attempt} contains an ambiguous duplicate job: {name}')
+            names_in_attempt.add(name)
+            job = dict(raw)
+            recorded_attempt = job.get('run_attempt', attempt)
+            if recorded_attempt != attempt:
+                raise GateError('GitHub returned a job under a different attempt than its endpoint.')
+            job['run_attempt'] = attempt
+            key = (name, attempt)
+            if key in seen:
+                raise GateError('CI attempt history contains a duplicate job record.')
+            seen.add(key)
+            latest[name] = job
+    return list(latest.values())
+
+
+def fetch_attempt_history(run_id, attempt, token):
+    """Fetch every immutable attempt so successful sibling suites remain reusable."""
+    if type(attempt) is not int or not 1 <= attempt <= 100:
+        raise GateError('Captured CI attempt count is outside the supported bound.')
+    pages = []
+    for number in range(1, attempt + 1):
+        jobs = _pages(f'{API_BASE}/repos/{REPOSITORY}/actions/runs/{run_id}/attempts/{number}/jobs', token, 'jobs')
+        pages.append(jobs)
+    return latest_attempt_jobs(pages)
+
+
 def verify_created_tag(token, tag, sha):
     # GitHub may accept the ref before either its ref or annotated object is
     # visible to a subsequent read. Retry only those 404s, never the POSTs.
@@ -163,7 +202,7 @@ def main():
         return 0
     run_id, attempt = int(os.environ['GITHUB_RUN_ID']), int(os.environ['GITHUB_RUN_ATTEMPT'])
     run = api(f'actions/runs/{run_id}', token)
-    jobs = _pages(f'{API_BASE}/repos/{repository}/actions/runs/{run_id}/attempts/{attempt}/jobs', token, 'jobs')
+    jobs = fetch_attempt_history(run_id, attempt, token)
     proof = verify_jobs(run, jobs, sha, run_id, attempt, _manifest_gate()['requiredJobs'])
     if args.create_tag:
         create_stable_tag(token, tag, sha)

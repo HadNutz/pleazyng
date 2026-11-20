@@ -183,8 +183,22 @@ def _check_jobs(token: str, repository: str, run: dict, gate: dict) -> list[str]
     attempt = run.get("run_attempt")
     if not isinstance(run_id, int) or not isinstance(attempt, int) or attempt < 1:
         raise GateError("The selected CI run is missing its run or attempt identity.")
-    url = f"{API_BASE}/repos/{path}/actions/runs/{run_id}/attempts/{attempt}/jobs"
-    jobs = _pages(url, token, "jobs")
+    if attempt > 100:
+        return ["run attempt history exceeds the supported bound"]
+    latest = {}
+    for number in range(1, attempt + 1):
+        url = f"{API_BASE}/repos/{path}/actions/runs/{run_id}/attempts/{number}/jobs"
+        records = _pages(url, token, "jobs")
+        names = set()
+        for job in records:
+            name = job.get("name")
+            if not isinstance(name, str) or name in names:
+                return [f"attempt {number}: malformed or duplicate job record"]
+            names.add(name)
+            if job.get("run_attempt", number) != number:
+                return [f"attempt {number}: job record belongs to a different attempt"]
+            latest[name] = job
+    jobs = list(latest.values())
     errors = []
     for required_name in gate["requiredJobs"]:
         matches = [job for job in jobs if job.get("name") == required_name]
