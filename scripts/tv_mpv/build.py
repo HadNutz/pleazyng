@@ -101,7 +101,13 @@ def rewrite_webos_source_mirrors(checkout):
     dav1d_text = dav1d_script.read_text()
     if dav1d_text.count(dav1d_download) != 1:
         raise ValueError("pinned TV recipe no longer has its expected dav1d download URL")
-    dav1d_script.write_text(dav1d_text.replace(dav1d_download, f'{dav1d_download} {dav1d_mirrors}'))
+    dav1d_staged_download = (
+        'if [[ -n "${PLEAZYNG_DAV1D_ARCHIVE:-}" ]]; then '
+        'mkdir -p "$(dirname "$dav_tar")"; '
+        'cp "$PLEAZYNG_DAV1D_ARCHIVE" "$dav_tar"; '
+        f'else {dav1d_download} {dav1d_mirrors}; fi'
+    )
+    dav1d_script.write_text(dav1d_text.replace(dav1d_download, dav1d_staged_download))
     libxml_pin = (
         "98087fd181d9070724f3fbc65c7377db03038eb92bd882374daff44940138821  "
         "https://download.gnome.org/sources/libxml2/2.15/libxml2-2.15.4.tar.xz"
@@ -138,6 +144,16 @@ def build(target, arch, out, webos_ndk=None):
         (scripts / "shared/_font_stack.sh").write_text(unibreak + "\n" + font_stack)
         shutil.copyfile(HERE / "video-options.sh", checkout / "scripts/shared/_user_overrides.sh")
         env = {**os.environ, "PLEAZYNG_TV_MPV_SOURCE": str(HERE), "STRICT_SOURCES": "1", "ENABLE_LTO_DEPS": "0"}
+        dav1d_archive = env.get("PLEAZYNG_DAV1D_ARCHIVE")
+        if target == "webos" and dav1d_archive:
+            archive_path = Path(dav1d_archive).resolve()
+            if not archive_path.is_file():
+                raise FileNotFoundError(f"staged dav1d archive not found: {archive_path}")
+            if hashlib.sha256(archive_path.read_bytes()).hexdigest() != (
+                "401813f1f89fa8fd4295805aa5284d9aed9bc7fc1fdbe554af4292f64cbabe21"
+            ):
+                raise ValueError("staged dav1d archive failed its pinned SHA-256 check")
+            env["PLEAZYNG_DAV1D_ARCHIVE"] = str(archive_path)
         if webos_ndk:
             env["WEBOS_NDK"] = str(webos_ndk.resolve())
         for key in ("BUILD_DIR", "RECORD_SOURCES", "KEEP_BUILD"):

@@ -1095,9 +1095,39 @@ jobs:
             pleazyng-amazon-firetv-provenance.json
           if-no-files-found: warn
 
-  build-webos:
-    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && inputs.reuse_webos_run_id == '' && inputs.reuse_macos_package_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'webos-validation' || (needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_webos_build == 'true')) }}
+  prepare-webos-dav1d-source:
+    if: ${{ needs.validate-trusted-ref.result == 'success' && inputs.reuse_webos_run_id == '' && inputs.reuse_macos_package_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'webos-validation' || (needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_webos_build == 'true')) }}
     needs: validate-trusted-ref
+    name: Prepare checksum-pinned WebOS dav1d source
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.recovery_source_sha || github.sha }}
+          persist-credentials: false
+      - name: Download and verify dav1d 1.5.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/dav1d-1.5.1.tar.xz"
+          curl --fail --location --retry 5 --retry-all-errors --retry-delay 2 \
+            https://download.videolan.org/pub/videolan/dav1d/1.5.1/dav1d-1.5.1.tar.xz \
+            --output "$archive"
+          printf '%s  %s\n' \
+            401813f1f89fa8fd4295805aa5284d9aed9bc7fc1fdbe554af4292f64cbabe21 \
+            "$archive" | sha256sum --check --status
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: webos-dav1d-source
+          path: ${{ runner.temp }}/dav1d-1.5.1.tar.xz
+          if-no-files-found: error
+          retention-days: 2
+
+  build-webos:
+    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.prepare-webos-dav1d-source.result == 'success' && inputs.reuse_webos_run_id == '' && inputs.reuse_macos_package_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'webos-validation' || (needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_webos_build == 'true')) }}
+    needs: [validate-trusted-ref, prepare-webos-dav1d-source]
     name: Build WebOS TV package (ARMv7)
     timeout-minutes: 360
     runs-on:
@@ -1118,6 +1148,12 @@ jobs:
         with:
           ref: ${{ inputs.recovery_source_sha || github.sha }}
           persist-credentials: false
+
+      - name: Download verified WebOS dav1d source
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: webos-dav1d-source
+          path: ${{ runner.temp }}/webos-dav1d-source
 
       - name: Verify private WebOS output storage
         run: python3 tools/webos/retain_private_candidate.py --preflight
@@ -1197,6 +1233,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PLEZYNG_WEBOS_TASK_ROOT: ${{ runner.temp }}/pleazyng-webos-${{ github.run_id }}
+          PLEAZYNG_DAV1D_ARCHIVE: ${{ runner.temp }}/webos-dav1d-source/dav1d-1.5.1.tar.xz
           PLEZY_WEBOS_RELEASE_BUILD: ${{ needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_webos_release == 'true' }}
 
       - name: Retain verified WebOS candidate for private device testing

@@ -64,6 +64,7 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
                 '"https://veronanetworks.mm.fcix.net/videolan-ftp/dav1d/1.5.1/dav1d-1.5.1.tar.xz"',
                 cross,
             )
+            self.assertIn('cp "$PLEAZYNG_DAV1D_ARCHIVE" "$dav_tar"', cross)
             self.assertIn("https://dev-www.libreoffice.org/src/libpng-${LIBPNG_VERSION}.tar.xz", linux)
             self.assertIn(
                 'download "https://downloads.sourceforge.net/freetype/freetype-${FREETYPE_VERSION}.tar.xz" "$src" '
