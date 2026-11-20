@@ -52,6 +52,7 @@ class SourceProofTests(unittest.TestCase):
             "scripts/checks/check_build_workflow.py",
             "scripts/checks/test_recover_release_platforms.py",
             "scripts/checks/test_release_ci_gate.py",
+            "scripts/checks/test_release_signing_options.py",
             "scripts/tv_mpv/build.py",
             "scripts/checks/test_tv_mpv_build.py",
             ".github/release-packaging-repairs.json",

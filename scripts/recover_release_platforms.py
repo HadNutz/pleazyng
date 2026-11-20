@@ -59,6 +59,7 @@ RECOVERY_FILES = frozenset({
     "scripts/checks/check_build_workflow.py",
     "scripts/checks/test_recover_release_platforms.py",
     "scripts/checks/test_release_ci_gate.py",
+    "scripts/checks/test_release_signing_options.py",
     "scripts/checks/test_tv_mpv_build.py",
     # The iOS store preflight only moves an existing entitlement failure ahead
     # of the expensive compile; archive/export and shipped bytes are unchanged.
