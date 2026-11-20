@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Match Apple native test dependency-cache paths to the normalized platform slugs on all runner types.
 - Prepare any configured app-store listings that require a separate manual review submission after the verified 3.0.44 binaries are uploaded.
 
 ## [3.0.44] - 2026-11-20

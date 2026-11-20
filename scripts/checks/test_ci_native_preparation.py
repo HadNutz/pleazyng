@@ -122,7 +122,9 @@ class NativePreparationOrderTests(unittest.TestCase):
             xcrun() { [[ "$*" == "--sdk $EXPECTED_SDK --show-sdk-version" ]] && echo "$SDK_VERSION"; }
             bash() { [[ "$1" == scripts/prepare_apple_jit_scratch.sh ]]; }
         """
-        for platform, sdk in [('iOS', 'iphonesimulator'), ('macOS', 'macosx'), ('tvOS', 'appletvsimulator')]:
+        for platform, sdk, slug in [('iOS', 'iphonesimulator', 'ios'),
+                                    ('macOS', 'macosx', 'macos'),
+                                    ('tvOS', 'appletvsimulator', 'tvos')]:
             for runner, xcode, actual_sdk, ok in [
                 ('self-hosted', '27.0', '27.0', True),
                 ('self-hosted', '26.5', '27.0', False),
@@ -132,7 +134,7 @@ class NativePreparationOrderTests(unittest.TestCase):
                 with self.subTest(platform=platform, runner=runner, xcode=xcode, sdk=actual_sdk):
                     env = dict(RUNNER_ENVIRONMENT=runner, PLATFORM=platform, XCODE_VERSION=xcode,
                                EXPECTED_SDK=sdk, SDK_VERSION=actual_sdk, GITHUB_OUTPUT='/dev/null',
-                               RUNNER_TEMP='/fixture', PUB_CACHE=f'/fixture/apple-native-pub-{platform}')
+                               RUNNER_TEMP='/fixture', PUB_CACHE=f'/fixture/apple-native-pub-{slug}')
                     result = subprocess.run(['bash', '-euo', 'pipefail', '-c', probes + prepare],
                                             env=env, capture_output=True, text=True)
                     self.assertEqual(result.returncode == 0, ok, result.stderr)
