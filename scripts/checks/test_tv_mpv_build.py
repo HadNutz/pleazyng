@@ -50,7 +50,7 @@ class TvMpvSourceMirrorTests(unittest.TestCase):
             self.assertIn(
                 'download "https://download.gnome.org/sources/libxml2/${LIBXML2_VERSION%.*}/'
                 'libxml2-${LIBXML2_VERSION}.tar.xz" "$src" '
-                '"https://distfiles.macports.org/libxml2/libxml2-${LIBXML2_VERSION}.tar.xz"',
+                '"https://dev-www.libreoffice.org/src/libxml2-${LIBXML2_VERSION}.tar.xz"',
                 cross,
             )
             self.assertIn("https://dev-www.libreoffice.org/src/libpng-${LIBPNG_VERSION}.tar.xz", linux)

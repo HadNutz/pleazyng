@@ -77,7 +77,7 @@ def rewrite_webos_source_mirrors(checkout):
         "libxml2-${LIBXML2_VERSION}.tar.xz"
     )
     libxml_mirror_url = (
-        "https://distfiles.macports.org/libxml2/libxml2-${LIBXML2_VERSION}.tar.xz"
+        "https://dev-www.libreoffice.org/src/libxml2-${LIBXML2_VERSION}.tar.xz"
     )
     libxml_script = checkout / "scripts/shared/_cross.sh"
     libxml_text = libxml_script.read_text()
@@ -108,8 +108,8 @@ def build(target, arch, out, webos_ndk=None):
         git("fetch", "--quiet", "--depth=1", ORIGIN, RECIPE)
         git("checkout", "--quiet", "--detach", "FETCH_HEAD")
         git("apply", "--unidiff-zero", HERE / "video.patch")
-        # Sourceware and SourceForge are unreachable from the hosted webOS JIT
-        # egress proxy. The mirrors serve byte-identical, checksum-pinned archives.
+        # Sourceware, SourceForge, and some GNOME/MacPorts hosts are unreachable
+        # from the webOS JIT egress proxy. Mirrors serve byte-identical pinned archives.
         rewrite_webos_source_mirrors(checkout)
         # Share the checksum-pinned Linux cross-build functions for the TV font stack.
         scripts = checkout / "scripts"

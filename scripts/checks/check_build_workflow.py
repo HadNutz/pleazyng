@@ -2239,7 +2239,7 @@ require(
     "webOS must use the verified checksum-pinned bzip2 mirror for hosted builds",
 )
 require(
-    '"https://distfiles.macports.org/libxml2/libxml2-${LIBXML2_VERSION}.tar.xz"'
+    '"https://dev-www.libreoffice.org/src/libxml2-${LIBXML2_VERSION}.tar.xz"'
     in tv_mpv_builder
     and "98087fd181d9070724f3fbc65c7377db03038eb92bd882374daff44940138821"
     in tv_mpv_builder,
