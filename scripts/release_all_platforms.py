@@ -131,6 +131,7 @@ RELEASE_TAG_REUSE_ALLOWLIST = frozenset({
     "scripts/checks/check_build_workflow.py",
     "scripts/checks/test_check_build_workflow.py",
     "scripts/checks/test_release_ci_gate.py",
+    "scripts/checks/test_release_signing_options.py",
     "scripts/checks/test_release_core_publication.py",
     "scripts/checks/test_apple_jit_queue.py",
     "scripts/checks/test_verify_tvos_runner_acquisition.py",

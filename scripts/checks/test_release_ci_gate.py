@@ -78,6 +78,13 @@ class AppleRunnerRoutingTests(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertIn(path, case)
 
+    def test_signing_recovery_test_is_allowlisted_by_both_tag_guards(self) -> None:
+        path = "scripts/checks/test_release_signing_options.py"
+        self.assertIn(path, RELEASE_TAG_REUSE_ALLOWLIST)
+        workflow = (ROOT / ".github/workflows/build.yml").read_text(encoding="utf-8")
+        case = workflow.split('case "$changed_file" in', 1)[1].split("              *)", 1)[0]
+        self.assertIn(path, case)
+
     def test_automatic_route_uses_compatible_hosted_apple_first(self) -> None:
         self.assertEqual(select_apple_runner_pool("auto"), "hosted")
 
