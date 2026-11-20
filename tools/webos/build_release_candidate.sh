@@ -255,8 +255,14 @@ export DEPOT_TOOLS_UPDATE=0
 export VPYTHON_BYPASS="manually managed python not supported by chrome operations"
 export CIPD_CACHE_DIR="$TASK_ROOT/cipd-cache"
 mkdir -m 700 -- "$CIPD_CACHE_DIR"
+ln -s -- "$NINJA_BIN" "$HOST_TOOLS/ninja"
 export PATH="$HOST_TOOLS:$BOOTSTRAP_DEPOT_TOOLS:$PATH"
 ln -s -- "$PYTHON_BIN" "$HOST_TOOLS/python3"
+SELECTED_NINJA="$(command -v ninja || true)"
+if [[ -z "$SELECTED_NINJA" || "$(readlink -f -- "$SELECTED_NINJA")" != "$(readlink -f -- "$NINJA_BIN")" ]]; then
+  echo "The webOS release recipe did not resolve the hash-locked Ninja binary before depot_tools." >&2
+  exit 1
+fi
 
 DEPOT_TOOLS_PYTHON_REQUIREMENTS_PATH="$(read_lock engineBuild depotToolsPythonRequirements path)"
 DEPOT_TOOLS_PYTHON_REQUIREMENTS_SHA256="$(read_lock engineBuild depotToolsPythonRequirements sha256)"

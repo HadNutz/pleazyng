@@ -1,4 +1,6 @@
+import os
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -8,6 +10,42 @@ SCRIPT = Path(__file__).resolve().parents[1] / "build_release_candidate.sh"
 
 
 class BuildReleaseCandidateDirectoriesTests(unittest.TestCase):
+    def test_native_recipe_resolves_the_verified_ninja_before_depot_tools(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        link = 'ln -s -- "$NINJA_BIN" "$HOST_TOOLS/ninja"'
+        path = 'export PATH="$HOST_TOOLS:$BOOTSTRAP_DEPOT_TOOLS:$PATH"'
+        verify = '"$(readlink -f -- "$SELECTED_NINJA")" != "$(readlink -f -- "$NINJA_BIN")"'
+        self.assertIn(link, script)
+        self.assertLess(script.index(link), script.index(path))
+        self.assertIn(verify, script)
+
+        setup_start = script.index(link)
+        setup_end = script.index("DEPOT_TOOLS_PYTHON_REQUIREMENTS_PATH=", setup_start)
+        setup = script[setup_start:setup_end]
+        with tempfile.TemporaryDirectory(prefix="plezy-webos-pinned-ninja-") as temporary:
+            root = Path(temporary)
+            host_tools = root / "host-tools"
+            depot_tools = root / "depot-tools"
+            host_tools.mkdir()
+            depot_tools.mkdir()
+            pinned_ninja = root / "ninja-1.13.2"
+            pinned_ninja.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+            pinned_ninja.chmod(0o755)
+            (depot_tools / "ninja").write_text("#!/bin/sh\nexit 9\n", encoding="utf-8")
+            (depot_tools / "ninja").chmod(0o755)
+            subprocess.run(
+                ["bash", "-c", "set -euo pipefail\n" + setup],
+                check=True,
+                env={
+                    **os.environ,
+                    "NINJA_BIN": str(pinned_ninja),
+                    "HOST_TOOLS": str(host_tools),
+                    "BOOTSTRAP_DEPOT_TOOLS": str(depot_tools),
+                    "CIPD_CACHE_DIR": str(root / "cipd-cache"),
+                    "PYTHON_BIN": sys.executable,
+                },
+            )
+
     def test_lg_ndk_installer_does_not_inherit_python_library_path(self):
         script = SCRIPT.read_text(encoding="utf-8")
         self.assertIn(
