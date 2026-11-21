@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Align the pinned x64 and ARM64 WebKit helper packages with Ubuntu 24.04's current updates archive, keeping Linux release artifacts and package-channel repackaging byte-matched.
+- Complete the explicit fresh-install onboarding choice in native aerynOS release qualification before connecting its Jellyfin fixture.
 - Match Apple native test dependency-cache paths to the normalized platform slugs on all runner types.
 - Keep the unsigned iOS developer IPA build available when the separate Store signing preflight fails.
 - Recognize the split Apple native CI job when cleaning its task-owned source workspace.

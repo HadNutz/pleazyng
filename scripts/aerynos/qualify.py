@@ -27,6 +27,16 @@ from vm import Guest, ISO_SHA256, ISO_URL, port, run
 HERE = Path(__file__).resolve().parent
 
 
+def initial_setup_action(control_names):
+    """Return the explicit first-run choice needed before server sign-in."""
+    controls = set(control_names)
+    if 'Connect to Jellyfin' in controls:
+        return None
+    if 'Start fresh' in controls:
+        return 'Start fresh'
+    return None
+
+
 def digest(path):
     with Path(path).open('rb') as stream:
         return hashlib.file_digest(stream, 'sha256').hexdigest()
@@ -243,6 +253,10 @@ class AppQA:
             time.sleep(0.2)
 
     def sign_in(self, server_port):
+        controls = {(node['name'] or '').split('\n', 1)[0] for node in self.ui()}
+        setup_action = initial_setup_action(controls)
+        if setup_action:
+            self.ui('click', setup_action)
         self.wait('Connect to Jellyfin')
         self.ui('click', 'Connect to Jellyfin')
         self.wait('Server URLs')
