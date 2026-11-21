@@ -103,7 +103,14 @@ class AppQA:
             args.append(name)
         if value is not None:
             args.append(value)
-        return json.loads(self.guest.user(shlex.join(args)).stdout)
+        try:
+            result = self.guest.user(shlex.join(args))
+        except subprocess.CalledProcessError as error:
+            detail = (error.stderr or error.stdout or b'').decode(errors='replace').strip()
+            if detail:
+                raise RuntimeError(f'Guest accessibility request {action!r} for {name!r} failed: {detail[-2000:]}') from error
+            raise
+        return json.loads(result.stdout)
 
     def wait(self, name, timeout=120):
         deadline = time.monotonic() + timeout
@@ -116,6 +123,15 @@ class AppQA:
             time.sleep(1)
         self.guest.screenshot(self.evidence / 'ui-timeout.png')
         raise TimeoutError(f'App control did not appear: {name}')
+
+    def wait_absent(self, name, timeout=15):
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            if not any((n['name'] or '').split('\n', 1)[0] == name for n in self.ui()):
+                return
+            time.sleep(0.2)
+        self.guest.screenshot(self.evidence / 'ui-dismiss-timeout.png')
+        raise TimeoutError(f'App control remained visible after dismissal: {name}')
 
     def key(self, key):
         self.guest.qmp('human-monitor-command', {'command-line': 'sendkey ' + key})
@@ -577,6 +593,7 @@ class AppQA:
         self.guest.screenshot(self.evidence / 'bookmark-after-save.png')
         self.wait(bookmark_label, timeout=20)
         self.key('esc')
+        self.wait_absent('Chapters and bookmarks')
         self.controls()
         self.ui('click', 'Seek forward 10 seconds')
         self.ui('click', 'Seek forward 10 seconds')
@@ -584,6 +601,8 @@ class AppQA:
         moved = self.clock()
         if moved < bookmark + 15:
             raise RuntimeError('Bookmark test did not first move away from its saved position')
+        self.controls()
+        self.wait('Chapters')
         self.ui('click', 'Chapters')
         self.wait(bookmark_label)
         self.ui('click', bookmark_label)
