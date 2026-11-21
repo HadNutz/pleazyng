@@ -99,3 +99,42 @@ jobs:
           python3 scripts/checks/native_lint.py clang --tool "$LINTER" --database "$RUNNER_TEMP/engine" --changed-lines "$base"
       - name: Run native target tests
         run: ctest --test-dir "$RUNNER_TEMP/engine" --output-on-failure --no-tests=error
+  windows-target:
+    name: C++ target (Windows Media Foundation and microphone)
+    runs-on: windows-2025
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Prepare pinned Steam native dependencies
+        run: python scripts/games/prepare_steam.py
+      - name: Compile Windows sinks and analyze changes against their SDK
+        env:
+          TARGET_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vs = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (!$vs) { throw 'Visual C++ tools and a Windows SDK are required' }
+          $developer = Join-Path $vs 'Common7\Tools\VsDevCmd.bat'
+          $environment = & cmd /d /s /c "call `"$developer`" -no_logo -arch=x64 >nul && set"
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          foreach ($line in $environment) {
+            if ($line -match '^([^=]+)=(.*)$') { [Environment]::SetEnvironmentVariable($Matches[1], $Matches[2], 'Process') }
+          }
+          $llvm = Join-Path $env:ProgramFiles 'LLVM\bin'
+          $compiler = Join-Path $llvm 'clang-cl.exe'
+          $tidy = Join-Path $llvm 'clang-tidy.exe'
+          & $tidy --version
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          $build = Join-Path $env:RUNNER_TEMP 'steam-windows'
+          cmake -G Ninja -S native/games/steam -B $build "-DCMAKE_C_COMPILER=$compiler" "-DCMAKE_CXX_COMPILER=$compiler" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug -DPLEZY_STEAM_PYROWAVE=ON
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          cmake --build $build --target plezy_steam_windows --parallel 2
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          $base = $env:TARGET_BASE
+          if (!$base -or $base -match '^0+$' -or $env:GITHUB_REF -like 'refs/heads/integration/upstream-*') { $base = 'origin/main' }
+          python scripts/checks/native_lint.py clang --tool $tidy --database $build --changed-lines $base
+          exit $LASTEXITCODE

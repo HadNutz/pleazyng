@@ -1212,6 +1212,7 @@ jobs:
         with:
           ref: ${{ inputs.recovery_source_sha || github.sha }}
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Download verified WebOS dav1d source
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
@@ -1256,6 +1257,19 @@ jobs:
           cmake --version
           pkg-config --modversion gtk+-3.0
           clang --version
+
+      - name: Select SDK clang-tidy for changed NDL source
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="$(git describe --tags --abbrev=0 --match 'v[0-9]*' HEAD^ 2>/dev/null || git rev-parse HEAD^)"
+          if git diff --quiet "$base" HEAD -- scripts/tv_mpv/webos_ndl.c; then exit 0; fi
+          if ! command -v clang-tidy >/dev/null; then
+            sudo apt-get install -y --no-install-recommends -o Acquire::Retries=3 clang-tidy
+          fi
+          clang-tidy --version
+          echo "PLEAZYNG_WEBOS_TIDY_BASE=$base" >> "$GITHUB_ENV"
+          echo "PLEAZYNG_WEBOS_TIDY=$(command -v clang-tidy)" >> "$GITHUB_ENV"
 
       - name: Prefetch and install the checksum-pinned WebOS Python archive
         shell: bash

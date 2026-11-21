@@ -15,6 +15,8 @@ on:
       - '.github/actions/apple-native-reliability/**'
       - '.github/actions/setup-flutter-apple/**'
       - '.github/workflows/apple-compile.yml'
+      - 'scripts/checks/clang_compilation_fragments.py'
+      - 'scripts/checks/native_lint.py'
   pull_request:
     branches: [main]
     paths:
@@ -30,6 +32,8 @@ on:
       - '.github/actions/apple-native-reliability/**'
       - '.github/actions/setup-flutter-apple/**'
       - '.github/workflows/apple-compile.yml'
+      - 'scripts/checks/clang_compilation_fragments.py'
+      - 'scripts/checks/native_lint.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -61,6 +65,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          fetch-depth: 0
       - name: Require native Apple Silicon host
         shell: bash
         run: test "$(uname -m)" = arm64
@@ -96,6 +101,24 @@ jobs:
           export GEM_HOME="$RUNNER_TEMP/cocoapods-gems" GEM_PATH="$gem_path"
           export PATH="$RUNNER_TEMP/cocoapods-bin:/opt/homebrew/bin:$PATH"
           pod --version
+      - name: Select clang-tidy for changed Apple native sources
+        shell: bash
+        env:
+          TARGET_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          base="${TARGET_BASE:-HEAD^}"
+          if [[ "$GITHUB_REF" == refs/heads/integration/upstream-* || "$base" =~ ^0+$ ]]; then base=origin/main; fi
+          base="$(git merge-base "$base" HEAD)"
+          if git diff --quiet "$base" HEAD -- native/games/apple ':(glob)native/games/steam/**/*.h'; then exit 0; fi
+          if ! command -v clang-tidy >/dev/null; then
+            brew list --versions llvm >/dev/null || brew install llvm
+            tidy="$(brew --prefix llvm)/bin/clang-tidy"
+          else
+            tidy="$(command -v clang-tidy)"
+          fi
+          "$tidy" --version
+          echo "PLEAZYNG_APPLE_TIDY=$tidy" >> "$GITHUB_ENV"
+          echo "PLEAZYNG_APPLE_TIDY_BASE=$base" >> "$GITHUB_ENV"
       - name: Test Dolby Vision runtime preparation and compatibility fallback
         if: matrix.slug == 'macos'
         run: swift test --package-path shared/apple/DVRuntimeAPI --scratch-path "$RUNNER_TEMP/dv-runtime-api"

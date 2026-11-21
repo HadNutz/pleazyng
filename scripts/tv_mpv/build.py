@@ -4,6 +4,8 @@ import argparse
 import hashlib
 import json
 import os
+import shlex
+import sys
 from pathlib import Path
 import shutil
 import subprocess
@@ -117,6 +119,27 @@ def rewrite_webos_source_mirrors(checkout):
     source_manifest.write_text(manifest_text)
 
 
+def lint_webos_ndl(checkout, arch, base, tool):
+    """Use the actual Meson invocation and LG compiler wrapper for the staged mpv unit."""
+    work = checkout / "builds/work/webOS" / arch
+    database = work / "build/mpv"
+    entries = json.loads((database / "compile_commands.json").read_text())
+    copies = {(Path(entry["directory"]) / entry["file"]).resolve() for entry in entries
+              if Path(entry["file"]).name == "webos_ndl.c"}
+    if len(copies) != 1:
+        raise ValueError("Expected exactly one staged webOS NDL translation unit")
+    wrapper = work / "bin/arm-linux-gnueabi-gcc"
+    invocation, = [shlex.split(line) for line in wrapper.read_text().splitlines() if line.startswith("exec ")]
+    if invocation[-1] != "$@":
+        raise ValueError("Unrecognized webOS compiler wrapper argument forwarding")
+    target = subprocess.check_output([wrapper, "-dumpmachine"], text=True).strip()
+    flags = ["--target=" + target, *invocation[2:-1]]
+    subprocess.run([sys.executable, HERE.parent / "checks/native_lint.py", "clang", "--tool", tool,
+                    "--database", database, "--changed-lines", base,
+                    "--mapped-unit", "scripts/tv_mpv/webos_ndl.c", copies.pop(),
+                    *["--compiler-arg=" + flag for flag in flags]], check=True)
+
+
 def build(target, arch, out, webos_ndk=None):
     if target == "webos" and (arch != "armv7l" or webos_ndk is None):
         raise ValueError("webOS needs the armv7l target and its NDK")
@@ -158,8 +181,13 @@ def build(target, arch, out, webos_ndk=None):
             env["WEBOS_NDK"] = str(webos_ndk.resolve())
         for key in ("BUILD_DIR", "RECORD_SOURCES", "KEEP_BUILD"):
             env.pop(key, None)
+        lint_base = env.get("PLEAZYNG_WEBOS_TIDY_BASE") if target == "webos" else None
+        if lint_base:
+            env["KEEP_BUILD"] = "1"
         subprocess.run(["bash", checkout / f"scripts/build_libmpv_{target}.sh", f"--arch={arch}"],
                        cwd=checkout, env=env, check=True)
+        if lint_base:
+            lint_webos_ndl(checkout, arch, lint_base, env.get("PLEAZYNG_WEBOS_TIDY", "clang-tidy"))
         release = checkout / "builds/release"
         label = f"{target}-{arch}"
         library = release / f"libmpv_{label}.so"

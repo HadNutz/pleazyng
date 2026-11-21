@@ -1,17 +1,38 @@
 from __future__ import annotations
 
+import json
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from scripts.tv_mpv.build import rewrite_webos_source_mirrors
+from scripts.tv_mpv.build import lint_webos_ndl, rewrite_webos_source_mirrors
 
 
 class TvMpvSourceMirrorTests(unittest.TestCase):
+    def test_ndl_analysis_uses_the_lg_wrapper_and_meson_staged_source(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            work = root / "builds/work/webOS/armv7l"
+            db = work / "build/mpv"
+            db.mkdir(parents=True)
+            unit = work / "src/mpv/video/out/webos_ndl.c"
+            (db / "compile_commands.json").write_text(json.dumps([{"directory": str(work), "file": str(unit)}]))
+            tool = work / "bin/arm-linux-gnueabi-gcc"
+            tool.parent.mkdir()
+            tool.write_text('exec "/sdk/bin/gcc" --sysroot="/sdk path" -mthumb "$@"\n')
+            with patch("scripts.tv_mpv.build.subprocess.check_output", return_value="arm-linux-gnueabi\n"), \
+                    patch("scripts.tv_mpv.build.subprocess.run") as run:
+                lint_webos_ndl(root, "armv7l", "revision", "clang-tidy")
+                command = run.call_args.args[0]
+                for argument in ["--compiler-arg=--target=arm-linux-gnueabi", "--compiler-arg=--sysroot=/sdk path",
+                                 "--compiler-arg=-mthumb", unit, db]:
+                    self.assertIn(argument, command)
+
     def test_tizen_kernel_headers_have_checksum_verified_fallback(self) -> None:
         patch = (ROOT / "scripts/tv_mpv/video.patch").read_text(encoding="utf-8")
         headers = {
