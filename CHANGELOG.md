@@ -6,6 +6,7 @@
 - Prepare configured app-store listings for manual review submission after verified 3.0.45 binaries and refreshed release facts are available.
 - Retry truncated GitHub API responses in the Apple JIT queue controller so transient JSON failures do not strand release jobs.
 - Revalidate macOS packaging recovery receipts against live source runs and artifact inventories when refreshing published release facts.
+- Recover a failed Tizen package by rebuilding only that artifact from verified current source while reusing the other platform outputs.
 
 ## [3.0.45] - 2026-11-21
 

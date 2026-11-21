@@ -147,6 +147,7 @@ class SourceProofTests(unittest.TestCase):
             "AGENTS.md",
             "scripts/tv_mpv/build.py",
             "scripts/checks/test_tv_mpv_build.py",
+            "scripts/tv_mpv/video.patch",
             ".github/release-packaging-repairs.json",
             "scripts/apple_jit_process_tree.py",
             "scripts/checks/test_apple_jit_process_tree.py",
@@ -352,6 +353,21 @@ class SourceProofTests(unittest.TestCase):
         next(job for job in self.jobs if job["name"] == "build-ios")["conclusion"] = "failure"
         with self.assertRaises(recovery.RecoveryError):
             self.prove(rebuild_tvos=True)
+
+    def test_failed_tizen_package_can_be_rebuilt_without_reusing_its_artifact(self):
+        package = next(job for job in self.jobs if job["name"] == recovery.TIZEN_PACKAGE_JOB)
+        package["conclusion"] = "failure"
+        self.source["conclusion"] = "failure"
+        with self.assertRaises(recovery.RecoveryError):
+            self.prove()
+        proof = self.prove(rebuild_tizen=True)
+        self.assertTrue(proof["rebuild_tizen"])
+        self.assertNotIn(recovery.TIZEN_PACKAGE_JOB, proof["reused_jobs"])
+        self.assertIn(recovery.TIZEN_PACKAGE_JOB, proof["rebuilt_jobs"])
+        validation = next(job for job in self.jobs if job["name"].endswith("/ validate"))
+        validation["conclusion"] = "failure"
+        with self.assertRaises(recovery.RecoveryError):
+            self.prove(rebuild_tizen=True)
 
     def test_reused_tvos_requires_runtime_receipt_production_and_attestation_steps(self):
         tvos = next(job for job in self.jobs if job['name'] == 'Build tvOS developer package (arm64)')
@@ -1394,6 +1410,15 @@ class ArtifactTests(unittest.TestCase):
             with self.assertRaises(recovery.RecoveryError):
                 recovery.download_platforms(proof, self.root)
 
+    def test_tizen_is_not_downloaded_from_failed_original_when_rebuilt(self):
+        proof = {"source_run_id": 42, "source_sha": "a" * 40, "rebuild_tizen": True}
+        with patch.object(recovery, "ARTIFACTS", {"pleazyng-tizen-arm-experimental": "tizen"}), \
+             patch.object(recovery, "collection", return_value=[]), \
+             patch.object(recovery.subprocess, "run") as download:
+            result = recovery.download_platforms(proof, self.root)
+            download.assert_not_called()
+            self.assertEqual(result["artifacts"], [])
+
     def test_rebuilt_tv_artifact_is_downloaded_from_verified_sibling_when_reused(self):
         archive = self.archive('pleazyng-tvos-appstore.ipa', b'signed tvOS IPA')
         artifact = {'id': 9, 'name': 'tvos-ipa', 'expired': False,
@@ -1723,6 +1748,21 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(fields["reuse_android_run_id"], "42")
         self.assertEqual(fields["reuse_webos_run_id"], "42")
         self.assertNotIn("rebuild_macos", fields)
+        self.assertNotIn("rebuild_linux", fields)
+
+    @patch.object(controller, "verify_platform_recovery")
+    @patch.object(controller, "matching_run", return_value=None)
+    @patch.object(controller, "ensure_remote_main_sha")
+    @patch.object(controller, "dispatch")
+    def test_tizen_only_recovery_reuses_successful_platform_outputs(self, dispatch, _main, _matching, verify):
+        controller.ensure_release("v3.0.46", "b" * 40, include_webos_release=True,
+                                  reuse_platform_run_id=44907167387, rebuild_tizen=True)
+        verify.assert_called_once_with(44907167387, "b" * 40, "3.0.46", rebuild_tizen=True,
+                                       webos_run=44907167387, android_run=44907167387)
+        fields = dispatch.call_args.args[3]
+        self.assertEqual(fields["reuse_repaired_run_id"], "tizen-rebuild")
+        self.assertEqual(fields["reuse_platform_run_id"], "44907167387")
+        self.assertNotIn("rebuild_android", fields)
         self.assertNotIn("rebuild_linux", fields)
 
     @patch.object(controller, "verify_platform_recovery")

@@ -79,6 +79,7 @@ RECOVERY_FILES = frozenset({
     "scripts/checks/test_macos_validation_request.py", "scripts/checks/test_macos_packaging_recovery.py",
 })
 REBUILT_JOBS = frozenset({"build-android", "Build WebOS TV package (ARMv7)"})
+TIZEN_PACKAGE_JOB = "Build Samsung Tizen TV package (ARM) / package"
 REQUIRED_JOBS = (
     "Validate release request",
     "Build tvOS developer package (arm64)", "build-ios", "build-macos",
@@ -863,7 +864,7 @@ def verify_unsigned_ios_run(run_id, head_sha, version, repository=REPOSITORY):
             "platforms_complete": True}
 
 
-def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow_pending=False, rebuild_linux=False, rebuild_macos=False, rebuild_tvos=False, rebuild_ios=False, repaired_run=None, require_homebrew_cask=False, packaging_source_sha=None, workflow_source_sha=None, include_apple_store_build=False, tvos_run=None, ios_run=None, ios_developer_run=None, built_tvos_run=None, append_apple_only=False):
+def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow_pending=False, rebuild_linux=False, rebuild_macos=False, rebuild_tvos=False, rebuild_ios=False, rebuild_tizen=False, repaired_run=None, require_homebrew_cask=False, packaging_source_sha=None, workflow_source_sha=None, include_apple_store_build=False, tvos_run=None, ios_run=None, ios_developer_run=None, built_tvos_run=None, append_apple_only=False):
     if ios_run and not tvos_run:
         raise RecoveryError('Signed iOS sibling reuse requires a distinct signed TV sibling')
     if built_tvos_run is not None:
@@ -919,6 +920,10 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
                 'reused_jobs': [*proof['reused_jobs'], 'Build tvOS developer package (arm64)']}
     if (rebuild_tvos or rebuild_ios) and repaired_run:
         raise RecoveryError("Apple device rebuilding cannot substitute repaired Linux/Mac outputs")
+    if rebuild_tizen and (packaging_source_sha or workflow_source_sha or include_apple_store_build
+                          or rebuild_linux or rebuild_macos or rebuild_tvos or rebuild_ios
+                          or repaired_run or require_homebrew_cask or append_apple_only):
+        raise RecoveryError("Tizen packaging recovery cannot be combined with signed Apple or unrelated rebuild modes")
     if repository != REPOSITORY or not str(run_id).isdigit() or not re.fullmatch(r"[0-9a-f]{40}", head_sha):
         raise RecoveryError("Recovery requires the Pleazyng repository and exact run/commit identities.")
     source = api(f"repos/{repository}/actions/runs/{run_id}")
@@ -967,13 +972,14 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
                           if not ((rebuild_linux or repaired) and name.startswith("Build Linux ("))
                           and not ((rebuild_macos or repaired or append_apple_only) and name == "build-macos")
                           and not (rebuild_tvos and name == "Build tvOS developer package (arm64)")
-                          and not ((rebuild_ios or ios_developer_source) and name == "build-ios"))
+                          and not ((rebuild_ios or ios_developer_source) and name == "build-ios")
+                          and not (rebuild_tizen and name == TIZEN_PACKAGE_JOB))
     if append_apple_only:
         macos_jobs = [job for job in jobs if job.get('name') == 'build-macos']
         if (len(macos_jobs) != 1 or macos_jobs[0].get('status') != 'completed'
                 or macos_jobs[0].get('conclusion') not in {'success', 'failure'}):
             raise RecoveryError('Append-only Apple recovery requires a completed original Mac job')
-    rebuilt_jobs = set(REBUILT_JOBS) | ({"Build Linux (x64)", "Build Linux (arm64)"} if rebuild_linux else set()) | ({"build-macos"} if rebuild_macos else set()) | ({"Build tvOS developer package (arm64)"} if rebuild_tvos else set()) | ({"build-ios"} if rebuild_ios else set())
+    rebuilt_jobs = set(REBUILT_JOBS) | ({"Build Linux (x64)", "Build Linux (arm64)"} if rebuild_linux else set()) | ({"build-macos"} if rebuild_macos else set()) | ({"Build tvOS developer package (arm64)"} if rebuild_tvos else set()) | ({"build-ios"} if rebuild_ios else set()) | ({TIZEN_PACKAGE_JOB} if rebuild_tizen else set())
     for name in required_jobs:
         matches = [job for job in jobs if job.get("name") == name]
         if len(matches) == 1 and pending and matches[0].get("status") in {"queued", "in_progress", "waiting", "pending", "requested"} and not matches[0].get("conclusion"):
@@ -1052,7 +1058,7 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
     return {"source_run_id": int(run_id), "source_sha": source_sha, "head_sha": head_sha,
             "run_attempt": source.get("run_attempt"),
             "version": version, "reused_jobs": reused_jobs,
-            "rebuilt_jobs": sorted(rebuilt_jobs), "rebuild_linux": rebuild_linux, "rebuild_macos": rebuild_macos, "rebuild_tvos": rebuild_tvos, "rebuild_ios": rebuild_ios,
+            "rebuilt_jobs": sorted(rebuilt_jobs), "rebuild_linux": rebuild_linux, "rebuild_macos": rebuild_macos, "rebuild_tvos": rebuild_tvos, "rebuild_ios": rebuild_ios, "rebuild_tizen": rebuild_tizen,
             "macos_cask_qualified": repaired["macos_cask_qualified"] if repaired else cask_qualified,
             "webos_link_compatibility_repaired": any(entry.get("filename") == "webos/CMakeLists.txt" for entry in changed),
             "platforms_complete": source.get("status") == "completed" and (not repaired or repaired["platforms_complete"]),
@@ -1713,6 +1719,7 @@ def preflight_platform_artifacts(proof, repository=REPOSITORY):
                     or proof.get('rebuild_macos') and name == 'macos-dmg'
                     or proof.get('rebuild_tvos') and name == 'tvos-ipa'
                     or proof.get('rebuild_ios') and name == 'ios-ipa'
+                    or proof.get('rebuild_tizen') and name == 'pleazyng-tizen-arm-experimental'
                     or proof.get('ios_developer_source') and name == 'ios-ipa'):
                 continue
             wanted[name] = proof
@@ -1785,6 +1792,7 @@ def download_platforms(proof, destination, repository=REPOSITORY):
                   and not (proof.get("rebuild_macos") and name == "macos-dmg")
                   and not (proof.get("rebuild_tvos") and name == "tvos-ipa")
                   and not (proof.get("rebuild_ios") and name == "ios-ipa")
+                  and not (proof.get("rebuild_tizen") and name == "pleazyng-tizen-arm-experimental")
                   and not (proof.get("ios_developer_source") and name == "ios-ipa")}
         if any(item.get("name") == "windows-msix" for item in inventory):
             wanted["windows-msix"] = "windows-msix"
@@ -1925,6 +1933,7 @@ def main():
     parser.add_argument("--rebuild-linux", action="store_true", help="Rebuild both Linux architectures instead of reusing their artifacts")
     parser.add_argument("--rebuild-ios", action="store_true", help="Rebuild the iOS developer package instead of reusing its original artifact")
     parser.add_argument("--rebuild-tvos", action="store_true", help="Rebuild tvOS instead of reusing its original artifact")
+    parser.add_argument("--rebuild-tizen", action="store_true", help="Rebuild Tizen instead of reusing its original artifact")
     parser.add_argument("--rebuild-macos", action="store_true", help="Build and qualify a fresh Mac package instead of reusing a failed Mac job")
     parser.add_argument("--repaired-run", help="Reuse verified Linux and fully qualified Mac jobs from a prior repair run")
     parser.add_argument('--tvos-run', help='Reuse signed TV bytes from an independently approved sibling Apple repair')
@@ -1953,6 +1962,11 @@ def main():
         parser.error('Frozen packaging requires both packaging and workflow identities')
     if args.packaging_source_sha and (args.macos_run or args.repaired_run):
         parser.error('Frozen packaging cannot substitute unrelated signing or repair runs')
+    if args.rebuild_tizen and (args.packaging_source_sha or args.include_apple_store_build
+                               or args.macos_run or args.repaired_run or args.rebuild_linux
+                               or args.rebuild_macos or args.rebuild_tvos or args.rebuild_ios
+                               or args.require_homebrew_cask):
+        parser.error('Tizen recovery cannot be combined with signed Apple or unrelated rebuild modes')
     if args.tvos_run and (not args.packaging_source_sha or args.repaired_run or args.macos_run or args.rebuild_tvos):
         parser.error('TV reuse requires approved frozen iOS-only packaging recovery')
     if args.ios_run and (not args.tvos_run or args.rebuild_ios or args.rebuild_tvos):
@@ -1975,9 +1989,9 @@ def main():
         frozen_options['ios_run'] = args.ios_run
     proof = (verify_macos_packaging_recovery(args.source_run, args.macos_run, args.head_sha, args.version)
              if args.macos_run else
-             wait_for_source_run(args.source_run, args.head_sha, args.version, args.wait_for_source, rebuild_linux=args.rebuild_linux, rebuild_macos=args.rebuild_macos, rebuild_tvos=args.rebuild_tvos, rebuild_ios=args.rebuild_ios, repaired_run=args.repaired_run, require_homebrew_cask=args.require_homebrew_cask, **frozen_options)
+             wait_for_source_run(args.source_run, args.head_sha, args.version, args.wait_for_source, rebuild_linux=args.rebuild_linux, rebuild_macos=args.rebuild_macos, rebuild_tvos=args.rebuild_tvos, rebuild_ios=args.rebuild_ios, rebuild_tizen=args.rebuild_tizen, repaired_run=args.repaired_run, require_homebrew_cask=args.require_homebrew_cask, **frozen_options)
              if args.wait_for_source else
-             verify_source_run(args.source_run, args.head_sha, args.version, allow_pending=args.allow_building, rebuild_linux=args.rebuild_linux, rebuild_macos=args.rebuild_macos, rebuild_tvos=args.rebuild_tvos, rebuild_ios=args.rebuild_ios, repaired_run=args.repaired_run, require_homebrew_cask=args.require_homebrew_cask, ios_developer_run=args.ios_developer_run, **frozen_options))
+             verify_source_run(args.source_run, args.head_sha, args.version, allow_pending=args.allow_building, rebuild_linux=args.rebuild_linux, rebuild_macos=args.rebuild_macos, rebuild_tvos=args.rebuild_tvos, rebuild_ios=args.rebuild_ios, rebuild_tizen=args.rebuild_tizen, repaired_run=args.repaired_run, require_homebrew_cask=args.require_homebrew_cask, ios_developer_run=args.ios_developer_run, **frozen_options))
     proof = compose_proof(proof, args.android_run, not args.skip_webos_build, args.webos_run,
                           args.ios_developer_run)
     if args.download:

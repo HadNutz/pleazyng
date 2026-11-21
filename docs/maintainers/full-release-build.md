@@ -747,6 +747,16 @@ and version stay immutable. `--publish-github-only` publishes the complete
 validated core release; configured channel delivery then uses those same
 artifacts. Never treat the original missing tvOS artifact as reusable.
 
+Use `--rebuild-tizen` when the Samsung Tizen package job alone failed. After
+the original run finishes, reuse its verified platform, Android, and webOS
+outputs; rebuild only the Tizen tester package from current `main`, then assemble
+the same version after source and digest checks pass. This mode is restricted to
+unsigned platform recovery and uses the existing typed recovery input, so the
+workflow stays within GitHub's 25-input limit. A Tizen packaging fix does not
+require another application version or a new candidate build. The failed
+package artifact is excluded from source recovery and must be replaced by the
+successful recovery job.
+
 Use `--rebuild-ios` for a failed iOS package, independently or alongside the
 other explicit rebuild flags. Fresh iOS and tvOS artifacts must come from
 successful jobs in the recovery run. A failed original webOS job remains a

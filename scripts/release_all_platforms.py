@@ -75,6 +75,7 @@ RELEASE_TAG_REUSE_ALLOWLIST = frozenset({
     "scripts/checks/test_verify_frozen_packaging_repair.py",
     "scripts/verify_frozen_packaging_repair.py",
     "tools/webos/tests/test_build_release_candidate_dirs.py",
+    "scripts/tv_mpv/video.patch",
     # This signed envelope is fetched and verified by the app at runtime; it is
     # published independently and is not embedded in platform build artifacts.
     "content/visualizer-catalog.json",
@@ -1738,6 +1739,7 @@ def ensure_release(
     rebuild_macos: bool = False,
     rebuild_tvos: bool = False,
     rebuild_ios: bool = False,
+    rebuild_tizen: bool = False,
     reuse_repaired_run_id: int | str | None = None,
     reuse_tvos_run_id: int | None = None,
     reuse_ios_run_id: int | None = None,
@@ -1755,6 +1757,8 @@ def ensure_release(
     allow_private_apple_retry: bool = False,
 ) -> dict:
     reuse_repaired_run_id = parse_repaired_run_reference(reuse_repaired_run_id)
+    if rebuild_tizen and not reuse_platform_run_id:
+        raise ReleaseError("Tizen rebuilding requires ordinary verified platform recovery.")
     if reuse_platform_run_id and reuse_android_run_id is None:
         # A platform recovery reuses Android from the same verified source run
         # unless a caller explicitly selects a different verified Android run.
@@ -1813,6 +1817,8 @@ def ensure_release(
         run_title += f":assembly:source:{reuse_platform_run_id}:macos:{reuse_macos_run_id}"
     elif not repair and reuse_platform_run_id and rebuild_tvos:
         run_title += f":recovery:source:{reuse_platform_run_id}:tvos"
+    elif not repair and reuse_platform_run_id and rebuild_tizen:
+        run_title += f":recovery:source:{reuse_platform_run_id}:tizen"
     if reuse_tvos_run_id and (not repair or rebuild_tvos or reuse_repaired_run_id):
         raise ReleaseError('Signed TV reuse requires approved Apple packaging recovery without another repair source.')
     if reuse_ios_run_id and (not reuse_tvos_run_id or rebuild_ios or reuse_ios_run_id == reuse_tvos_run_id):
@@ -1936,6 +1942,8 @@ def ensure_release(
             options["rebuild_macos"] = True
         if rebuild_tvos:
             options["rebuild_tvos"] = True
+        if rebuild_tizen:
+            options["rebuild_tizen"] = True
         if rebuild_ios:
             options["rebuild_ios"] = True
         if built_tvos_run_id is not None:
@@ -2061,6 +2069,10 @@ def ensure_release(
         fields["rebuild_macos"] = "true"
     if rebuild_tvos:
         fields["rebuild_tvos"] = "true"
+    if rebuild_tizen:
+        # Preserve GitHub's 25-input ceiling by using the existing typed
+        # recovery slot for this mutually exclusive Tizen-only mode.
+        fields["reuse_repaired_run_id"] = "tizen-rebuild"
     if rebuild_ios:
         fields["rebuild_ios"] = "true"
     if reuse_repaired_run_id is not None:
@@ -2117,13 +2129,16 @@ def ensure_release(
 
 def verify_platform_recovery(run_id: int, commit_sha: str, version: str, *,
                              android_run=None, macos_run=None, webos_run=None, include_webos_build=True, wait_complete=False,
-                             rebuild_linux=False, rebuild_macos=False, rebuild_tvos=False, rebuild_ios=False, repaired_run=None, require_homebrew_cask=False,
+                             rebuild_linux=False, rebuild_macos=False, rebuild_tvos=False, rebuild_ios=False, rebuild_tizen=False, repaired_run=None, require_homebrew_cask=False,
                              packaging_source_sha=None, workflow_source_sha=None, include_apple_store_build=False, tvos_run=None, ios_run=None,
                              ios_developer_run=None, built_tvos_run=None) -> dict:
     from recover_release_platforms import RecoveryError, compose_proof, verify_source_run, wait_for_source_run, verify_macos_packaging_recovery
 
-    if (rebuild_tvos or rebuild_ios) and (macos_run or repaired_run):
-        raise ReleaseError("Apple device rebuilding requires ordinary verified platform recovery")
+    if (rebuild_tvos or rebuild_ios or rebuild_tizen) and (macos_run or repaired_run):
+        raise ReleaseError("Platform rebuilding requires ordinary verified platform recovery")
+    if rebuild_tizen and (rebuild_linux or rebuild_macos or rebuild_tvos or rebuild_ios
+                          or packaging_source_sha or include_apple_store_build or require_homebrew_cask):
+        raise ReleaseError("Tizen recovery cannot be combined with Apple signing or unrelated rebuild modes")
     if built_tvos_run is not None:
         if (not packaging_source_sha or not workflow_source_sha or not include_apple_store_build
                 or rebuild_tvos or rebuild_ios or rebuild_linux or rebuild_macos
@@ -2152,6 +2167,8 @@ def verify_platform_recovery(run_id: int, commit_sha: str, version: str, *,
         options["rebuild_tvos"] = True
     if rebuild_ios:
         options["rebuild_ios"] = True
+    if rebuild_tizen:
+        options["rebuild_tizen"] = True
     if repaired_run:
         options["repaired_run"] = repaired_run
     if require_homebrew_cask:
@@ -3100,6 +3117,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--rebuild-ios", action="store_true", help="Rebuild iOS during verified platform recovery")
     parser.add_argument("--rebuild-webos", action="store_true", help="Rebuild webOS during verified platform recovery")
     parser.add_argument("--rebuild-tvos", action="store_true", help="Rebuild only tvOS during verified platform recovery")
+    parser.add_argument("--rebuild-tizen", action="store_true", help="Rebuild only Tizen during verified platform recovery")
     parser.add_argument("--rebuild-macos", action="store_true", help="Build and qualify macOS during verified platform recovery")
     parser.add_argument("--reuse-android-run", type=int, help="Reuse a separately successful Android release artifact.")
     parser.add_argument("--skip-webos-build", action="store_true", help=argparse.SUPPRESS)
@@ -3219,6 +3237,11 @@ def main() -> int:
         raise ReleaseError("iOS rebuilding requires ordinary verified platform recovery")
     if args.rebuild_tvos and (not args.reuse_platform_run or args.reuse_macos_run or args.reuse_repaired_run):
         raise ReleaseError("tvOS rebuilding requires ordinary verified platform recovery")
+    if args.rebuild_tizen and (not args.reuse_platform_run or args.reuse_macos_run or args.reuse_repaired_run
+                               or packaging_repair or args.rebuild_linux or args.rebuild_macos
+                               or args.rebuild_tvos or args.rebuild_ios or args.rebuild_webos
+                               or args.include_apple_store_build or args.prepare_homebrew_cask):
+        raise ReleaseError("Tizen rebuilding requires ordinary unsigned platform recovery by itself")
     if args.rebuild_macos and (not args.reuse_platform_run or args.reuse_macos_run):
         raise ReleaseError("Fresh Mac rebuilding requires ordinary verified platform recovery")
     if args.rebuild_linux and (not args.reuse_platform_run or args.reuse_macos_run):
@@ -3350,6 +3373,7 @@ def main() -> int:
                 **({"rebuild_linux": True} if args.rebuild_linux else {}),
                 **({"rebuild_macos": True} if args.rebuild_macos else {}),
                 **({"rebuild_tvos": True} if args.rebuild_tvos else {}),
+                **({"rebuild_tizen": True} if args.rebuild_tizen else {}),
                 **({"rebuild_ios": True} if args.rebuild_ios else {}),
                 **({"repaired_run": repaired_platform_run} if repaired_platform_run else {}),
                 **({"built_tvos_run": built_tvos_run} if built_tvos_run is not None else {}),
@@ -3500,6 +3524,7 @@ def main() -> int:
             **({"rebuild_webos": True} if args.rebuild_webos else {}),
             **({"rebuild_macos": True} if args.rebuild_macos else {}),
             **({"rebuild_tvos": True} if args.rebuild_tvos else {}),
+            **({"rebuild_tizen": True} if args.rebuild_tizen else {}),
             **({"rebuild_ios": True} if args.rebuild_ios else {}),
             **({"reuse_repaired_run_id": args.reuse_repaired_run} if args.reuse_repaired_run else {}),
             **({'reuse_tvos_run_id': args.reuse_tvos_run} if args.reuse_tvos_run else {}),

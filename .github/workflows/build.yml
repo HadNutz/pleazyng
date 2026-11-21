@@ -2,7 +2,7 @@
 # Public GitHub-hosted runners are required for all compatible jobs; only
 # requested Apple signing and the verified webOS storage overflow use JIT.
 name: Pleazyng Release
-run-name: ${{ format('{0}{1}', inputs.private_apple_signing_unavailable && 'apple-signing-unavailable:' || '', inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos && inputs.reuse_platform_run_id == '' && inputs.action == 'build' && format('action:{0}:pool:{1}:mode:{2}:version:{3}:runner-retry-of:{4}', inputs.action, inputs.runner_pool, inputs.mode, inputs.build_version, inputs.reuse_repaired_run_id) || inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos && inputs.reuse_platform_run_id == '' && inputs.action == 'release' && format('action:{0}:pool:{1}:tag:v{2}:runner-retry-of:{3}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_repaired_run_id) || inputs.recovery_source_sha != '' && startsWith(inputs.reuse_repaired_run_id, 'assembly-tvos:') && format('action:{0}:pool:{1}:tag:v{2}:repair:{3}:{4}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.recovery_source_sha, inputs.reuse_repaired_run_id) || inputs.recovery_source_sha != '' && format('action:{0}:pool:{1}:tag:v{2}:repair:{3}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.recovery_source_sha) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.reuse_macos_package_run_id != '' && !inputs.rebuild_macos && format('action:{0}:pool:{1}:tag:v{2}:assembly:source:{3}:macos:{4}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id, inputs.reuse_macos_package_run_id) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.rebuild_macos && format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:macos', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.rebuild_tvos && format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:tvos', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id) || inputs.action == 'release' && format('action:{0}:pool:{1}:tag:v{2}', inputs.action, inputs.runner_pool, inputs.build_version) || inputs.action == 'build' && inputs.mode == 'release' && inputs.build_version != '' && format('action:{0}:pool:{1}:mode:{2}:version:{3}', inputs.action, inputs.runner_pool, inputs.mode, inputs.build_version) || format('action:{0}:pool:{1}', inputs.action, inputs.runner_pool)) }}
+run-name: ${{ format('{0}{1}', inputs.private_apple_signing_unavailable && 'apple-signing-unavailable:' || '', inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos && inputs.reuse_platform_run_id == '' && inputs.action == 'build' && format('action:{0}:pool:{1}:mode:{2}:version:{3}:runner-retry-of:{4}', inputs.action, inputs.runner_pool, inputs.mode, inputs.build_version, inputs.reuse_repaired_run_id) || inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos && inputs.reuse_platform_run_id == '' && inputs.action == 'release' && format('action:{0}:pool:{1}:tag:v{2}:runner-retry-of:{3}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_repaired_run_id) || inputs.recovery_source_sha != '' && startsWith(inputs.reuse_repaired_run_id, 'assembly-tvos:') && format('action:{0}:pool:{1}:tag:v{2}:repair:{3}:{4}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.recovery_source_sha, inputs.reuse_repaired_run_id) || inputs.recovery_source_sha != '' && format('action:{0}:pool:{1}:tag:v{2}:repair:{3}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.recovery_source_sha) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.reuse_macos_package_run_id != '' && !inputs.rebuild_macos && format('action:{0}:pool:{1}:tag:v{2}:assembly:source:{3}:macos:{4}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id, inputs.reuse_macos_package_run_id) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.rebuild_macos && format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:macos', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.rebuild_tvos && format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:tvos', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.reuse_repaired_run_id == 'tizen-rebuild' && format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:tizen', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id) || inputs.action == 'release' && format('action:{0}:pool:{1}:tag:v{2}', inputs.action, inputs.runner_pool, inputs.build_version) || inputs.action == 'build' && inputs.mode == 'release' && inputs.build_version != '' && format('action:{0}:pool:{1}:mode:{2}:version:{3}', inputs.action, inputs.runner_pool, inputs.mode, inputs.build_version) || format('action:{0}:pool:{1}', inputs.action, inputs.runner_pool)) }}
 
 on:
   workflow_dispatch:
@@ -769,6 +769,7 @@ jobs:
           REBUILD_LINUX: ${{ inputs.rebuild_linux }}
           REBUILD_MACOS: ${{ inputs.rebuild_macos }}
           REBUILD_TVOS: ${{ inputs.rebuild_tvos }}
+          REBUILD_TIZEN: ${{ inputs.reuse_repaired_run_id == 'tizen-rebuild' }}
           REBUILD_IOS: ${{ inputs.rebuild_ios }}
           REPAIRED_RUN: ${{ inputs.reuse_repaired_run_id }}
           WEBOS_RUN: ${{ inputs.reuse_webos_run_id }}
@@ -800,6 +801,7 @@ jobs:
           if [[ "$REBUILD_LINUX" == true ]]; then options+=(--rebuild-linux); fi
           if [[ "$REBUILD_MACOS" == true ]]; then options+=(--rebuild-macos); fi
           if [[ "$REBUILD_TVOS" == true ]]; then options+=(--rebuild-tvos); fi
+          if [[ "$REBUILD_TIZEN" == true ]]; then options+=(--rebuild-tizen); fi
           if [[ "$REBUILD_IOS" == true ]]; then options+=(--rebuild-ios); fi
           if [[ "$REPAIRED_RUN" =~ ^ios-developer:([1-9][0-9]*)$ ]]; then
             options+=(--ios-developer-run "${BASH_REMATCH[1]}")
@@ -1394,7 +1396,7 @@ jobs:
           retention-days: 14
 
   build-tizen:
-    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && inputs.reuse_platform_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_tizen_build == 'true' }}
+    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.reuse_repaired_run_id == 'tizen-rebuild') && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_tizen_build == 'true' }}
     needs: validate-trusted-ref
     name: Build Samsung Tizen TV package (ARM)
     permissions:
@@ -3685,7 +3687,7 @@ jobs:
 
   create-release:
     needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, build-windows, package-windows, build-linux]
-    if: ${{ always() && (needs.freeze-qualified-source.result == 'success' || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.freeze-qualified-source.result == 'skipped')) && inputs.runner_pool != '' && inputs.action == 'release' && needs.validate-trusted-ref.outputs.runner_pool == 'public' && needs.validate-trusted-ref.outputs.action == 'release' && needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.result == 'success' && (needs.build-android.result == 'success' || (inputs.reuse_android_run_id != '' && needs.validate-trusted-ref.outputs.android_source_sha != '' && needs.build-android.result == 'skipped')) && ((inputs.reuse_platform_run_id == '' && needs.build-ios.result == 'success' && needs.build-tvos.result == 'success' && needs.build-macos.result == 'success' && needs.build-windows.result == 'success' && needs.package-windows.result == 'success' && needs.build-linux.result == 'success' && (needs.build-webos.result == 'success' || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && (needs.build-tizen.result == 'success' || (needs.validate-trusted-ref.outputs.include_tizen_build != 'true' && needs.build-tizen.result == 'skipped'))) || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && ((inputs.rebuild_ios && needs.build-ios.result == 'success') || (!inputs.rebuild_ios && needs.build-ios.result == 'skipped')) && ((inputs.rebuild_tvos && needs.build-tvos.result == 'success') || (!inputs.rebuild_tvos && needs.build-tvos.result == 'skipped')) && ((inputs.rebuild_macos && needs.build-macos.result == 'success') || (!inputs.rebuild_macos && needs.build-macos.result == 'skipped')) && needs.build-windows.result == 'skipped' && needs.package-windows.result == 'skipped' && ((inputs.rebuild_linux && needs.build-linux.result == 'success') || (!inputs.rebuild_linux && needs.build-linux.result == 'skipped')) && (needs.build-webos.result == 'success' || (inputs.reuse_webos_run_id != '' && needs.validate-trusted-ref.outputs.webos_source_sha != '' && needs.build-webos.result == 'skipped') || (inputs.reuse_macos_package_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.build-webos.result == 'skipped') || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && needs.build-tizen.result == 'skipped')) && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
+    if: ${{ always() && (needs.freeze-qualified-source.result == 'success' || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.freeze-qualified-source.result == 'skipped')) && inputs.runner_pool != '' && inputs.action == 'release' && needs.validate-trusted-ref.outputs.runner_pool == 'public' && needs.validate-trusted-ref.outputs.action == 'release' && needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.result == 'success' && (needs.build-android.result == 'success' || (inputs.reuse_android_run_id != '' && needs.validate-trusted-ref.outputs.android_source_sha != '' && needs.build-android.result == 'skipped')) && ((inputs.reuse_platform_run_id == '' && needs.build-ios.result == 'success' && needs.build-tvos.result == 'success' && needs.build-macos.result == 'success' && needs.build-windows.result == 'success' && needs.package-windows.result == 'success' && needs.build-linux.result == 'success' && (needs.build-webos.result == 'success' || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && (needs.build-tizen.result == 'success' || (needs.validate-trusted-ref.outputs.include_tizen_build != 'true' && needs.build-tizen.result == 'skipped'))) || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && ((inputs.rebuild_ios && needs.build-ios.result == 'success') || (!inputs.rebuild_ios && needs.build-ios.result == 'skipped')) && ((inputs.rebuild_tvos && needs.build-tvos.result == 'success') || (!inputs.rebuild_tvos && needs.build-tvos.result == 'skipped')) && ((inputs.rebuild_macos && needs.build-macos.result == 'success') || (!inputs.rebuild_macos && needs.build-macos.result == 'skipped')) && needs.build-windows.result == 'skipped' && needs.package-windows.result == 'skipped' && ((inputs.rebuild_linux && needs.build-linux.result == 'success') || (!inputs.rebuild_linux && needs.build-linux.result == 'skipped')) && (needs.build-webos.result == 'success' || (inputs.reuse_webos_run_id != '' && needs.validate-trusted-ref.outputs.webos_source_sha != '' && needs.build-webos.result == 'skipped') || (inputs.reuse_macos_package_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.build-webos.result == 'skipped') || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && ((inputs.reuse_repaired_run_id == 'tizen-rebuild' && needs.build-tizen.result == 'success') || (inputs.reuse_repaired_run_id != 'tizen-rebuild' && needs.build-tizen.result == 'skipped')))) && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -3882,6 +3884,7 @@ jobs:
           REBUILD_LINUX: ${{ inputs.rebuild_linux }}
           REBUILD_MACOS: ${{ inputs.rebuild_macos }}
           REBUILD_TVOS: ${{ inputs.rebuild_tvos }}
+          REBUILD_TIZEN: ${{ inputs.reuse_repaired_run_id == 'tizen-rebuild' }}
           REBUILD_IOS: ${{ inputs.rebuild_ios }}
           REPAIRED_RUN: ${{ inputs.reuse_repaired_run_id }}
           WEBOS_RUN: ${{ inputs.reuse_webos_run_id }}
@@ -3902,8 +3905,11 @@ jobs:
           if [[ "$REBUILD_LINUX" == true ]]; then options+=(--rebuild-linux); fi
           if [[ "$REBUILD_MACOS" == true ]]; then options+=(--rebuild-macos); fi
           if [[ "$REBUILD_TVOS" == true ]]; then options+=(--rebuild-tvos); fi
+          if [[ "$REBUILD_TIZEN" == true ]]; then options+=(--rebuild-tizen); fi
           if [[ "$REBUILD_IOS" == true ]]; then options+=(--rebuild-ios); fi
-          if [[ -n "$REPAIRED_RUN" ]]; then
+          if [[ "$REPAIRED_RUN" == tizen-rebuild ]]; then
+            : # The typed sentinel selects same-version Tizen-only recovery.
+          elif [[ -n "$REPAIRED_RUN" ]]; then
             if [[ "$REPAIRED_RUN" =~ ^ios-developer:([1-9][0-9]*)$ ]]; then
               options+=(--ios-developer-run "${BASH_REMATCH[1]}")
             elif [[ -n "$PACKAGING_SHA" ]]; then
@@ -3974,7 +3980,7 @@ jobs:
         run: mv artifacts/webos/SHA256SUMS.txt artifacts/webos/webos-SHA256SUMS.txt
 
       - name: Download Tizen ARM tester handoff
-        if: ${{ steps.release-mode.outputs.append_only != 'true' && inputs.reuse_platform_run_id == '' }}
+        if: ${{ steps.release-mode.outputs.append_only != 'true' && (inputs.reuse_platform_run_id == '' || inputs.reuse_repaired_run_id == 'tizen-rebuild') }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: pleazyng-tizen-arm-experimental
@@ -3983,7 +3989,7 @@ jobs:
       - name: Verify and archive Tizen tester handoff
         if: ${{ steps.release-mode.outputs.append_only != 'true' }}
         env:
-          EXPECTED_SOURCE_COMMIT: ${{ needs.validate-trusted-ref.outputs.reuse_source_sha || github.sha }}
+          EXPECTED_SOURCE_COMMIT: ${{ inputs.reuse_repaired_run_id == 'tizen-rebuild' && github.sha || needs.validate-trusted-ref.outputs.reuse_source_sha || github.sha }}
         run: |
           set -euo pipefail
           package_dir=artifacts/tizen

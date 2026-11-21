@@ -1160,6 +1160,10 @@ require(
     and "include_seller_office_handoff: false" in tizen_job,
     "versioned builds must call the ARM Tizen tester workflow without store handoff",
 )
+require(
+    "inputs.reuse_platform_run_id == '' || inputs.reuse_repaired_run_id == 'tizen-rebuild'" in tizen_job,
+    "Tizen-only recovery must rebuild the package while reusing other platform outputs",
+)
 tizen_workflow = (
     TIZEN_WORKFLOW.read_text(encoding="utf-8") if TIZEN_WORKFLOW.is_file() else ""
 )
@@ -1783,6 +1787,8 @@ require(
     and "format('action:{0}:pool:{1}:tag:v{2}:assembly:source:{3}:macos:{4}'" in run_name_expression
     and "format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:macos'" in run_name_expression
     and "format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:tvos'" in run_name_expression
+    and "inputs.reuse_repaired_run_id == 'tizen-rebuild'" in run_name_expression
+    and "recovery:source:{3}:tizen'" in run_name_expression
     and "recovery:source:{3}:webos" not in run_name_expression
     and "inputs.action == 'build' && inputs.mode == 'release' && inputs.build_version != ''" in run_name_expression
     and "format('action:{0}:pool:{1}:mode:{2}:version:{3}'" in run_name_expression
@@ -2008,6 +2014,7 @@ require(
     and "needs.build-webos.result == 'skipped'" in release_condition
     and "needs.build-tizen.result == 'success'" in release_condition
     and "needs.build-tizen.result == 'skipped'" in release_condition
+    and "inputs.reuse_repaired_run_id == 'tizen-rebuild'" in release_condition
     and "contains(needs.*.result, 'failure')" in release_condition
     and "contains(needs.*.result, 'cancelled')" in release_condition,
     "draft release creation must require a successful complete build",
@@ -2161,11 +2168,14 @@ require(
     and 'if [[ "$WEBOS_BUILD" != true && -z "$WEBOS_RUN" ]]' in recovery_download
     and "--android-run" in recovery_gate
     and "--android-run" in recovery_download
+    and "--rebuild-tizen" in recovery_gate
+    and "--rebuild-tizen" in recovery_download
+    and "EXPECTED_SOURCE_COMMIT: ${{ inputs.reuse_repaired_run_id == 'tizen-rebuild' && github.sha" in release
     and "inputs.reuse_android_run_id == ''" in job("build-android").split("needs:", 1)[0]
     and all(
         "inputs.reuse_platform_run_id == ''" in job(name).split("needs:", 1)[0]
         and f"needs.{name}.result == 'skipped'" in release_condition
-        for name in ("build-ios", "build-tvos", "build-macos", "build-tizen",
+        for name in ("build-ios", "build-tvos", "build-macos",
                      "build-linux", "build-windows", "package-windows")
     ),
     "platform artifact recovery must verify its source and preserve honest job results and provenance",
