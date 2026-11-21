@@ -145,6 +145,7 @@ import '../utils/app_logger.dart';
 import '../utils/dialogs.dart';
 import '../utils/iphone_duo.dart';
 import '../widgets/fold_regions.dart';
+import '../navigation/video_task_restoration.dart';
 import '../utils/log_redaction_manager.dart';
 import '../utils/immersive_mode_guard.dart';
 import '../utils/live_tv_player_navigation.dart';
@@ -587,6 +588,7 @@ class VideoPlayerScreen extends StatefulWidget {
   /// for it.
   final WatchCopy? watchTogetherCopy;
   final Duration? initialPosition;
+  final bool initiallyPaused;
   final bool strictMediaSelection;
   final bool Function()? isLaunchCurrent;
   final PlaybackLaunchObserver? launchObserver;
@@ -626,6 +628,7 @@ class VideoPlayerScreen extends StatefulWidget {
     this.isPreroll = false,
     this.watchTogetherCopy,
     this.initialPosition,
+    this.initiallyPaused = false,
     this.strictMediaSelection = false,
     this.isLaunchCurrent,
     this.launchObserver,
@@ -1752,6 +1755,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   @override
   void initState() {
     super.initState();
+    _playbackIntentShouldPlay = !widget.initiallyPaused;
     _activeExternalPlaybackSource = widget.externalPlaybackSource;
     try {
       _externalSourceController = context.read<SourceController?>();

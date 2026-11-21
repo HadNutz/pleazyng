@@ -1,4 +1,9 @@
 import '../utils/platform_detector.dart';
+import '../providers/download_provider.dart';
+import '../services/playback_coordinator.dart';
+import '../utils/global_key_utils.dart';
+import '../utils/video_player_navigation.dart';
+import 'video_task_restoration.dart';
 import '../services/music/music_car_host.dart';
 import '../services/music/music_experience.dart';
 import '../services/music/music_offline_rating_account.dart';
@@ -560,7 +565,108 @@ class _ProfileSessionNavigator extends StatefulWidget {
   State<_ProfileSessionNavigator> createState() => _ProfileSessionNavigatorState();
 }
 
-class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> {
+class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> with RestorationMixin {
+  final _savedVideo = RestorableStringN(null);
+  late final _videoTasks = VideoTaskObserver((value) {
+    if (mounted && !restorePending) _savedVideo.value = value;
+  });
+  int _restoreAttempt = 0;
+  @override
+  String get restorationId => 'playback-task';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_savedVideo, 'video');
+    final task = SavedVideoTask.decode(_savedVideo.value);
+    final attempt = ++_restoreAttempt;
+    if (task != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && attempt == _restoreAttempt) unawaited(_restoreVideo(task, attempt));
+      });
+    }
+  }
+
+  Future<void> _restoreVideo(SavedVideoTask task, int attempt) async {
+    final nav = _navigatorKey.currentState;
+    if (nav == null || nav.canPop()) return;
+    final profile = context.read<ActiveProfileProvider>();
+    final owner = profile.activeId;
+    final revision = profile.identityMutationGeneration;
+    final routeGeneration = _videoTasks.navigationGeneration;
+    bool current() =>
+        mounted &&
+        owner != null &&
+        profile.activeId == owner &&
+        profile.identityMutationGeneration == revision &&
+        (ModalRoute.of(context)?.isCurrent ?? true) &&
+        (WidgetsBinding.instance.lifecycleState == null ||
+            WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) &&
+        attempt == _restoreAttempt &&
+        routeGeneration == _videoTasks.navigationGeneration &&
+        !nav.canPop() &&
+        !PlaybackCoordinator.instance.hasVideoSession &&
+        context.read<MusicPlaybackService?>()?.currentTrack == null &&
+        context.read<WatchTogetherProvider?>()?.isInSession != true;
+    if (!current()) return;
+    final servers = context.read<MultiServerProvider>();
+    final hidden = context.read<HiddenLibrariesProvider>();
+    final downloads = context.read<DownloadProvider?>();
+    final id = ServerId(task.server);
+    final key = buildGlobalKey(id, task.item);
+    try {
+      await hidden.ensureInitialized();
+      // Profile binding, download hydration and server discovery can complete
+      // after the shell has already painted. Yield to any new user action.
+      for (var i = 0; i < 24 && current(); i++) {
+        final client = servers.serverManager.isServerVisible(id) ? servers.getClientForServer(id) : null;
+        final local = downloads != null && downloads.activeProfileId == owner && downloads.isDownloaded(key);
+        if ((task.offline && local) || (!task.offline && client != null)) {
+          final item = task.offline ? downloads!.metadata[key] : await client!.fetchItem(task.item);
+          if (!current() ||
+              (!task.offline &&
+                  (!servers.serverManager.isServerVisible(id) || !identical(servers.getClientForServer(id), client)))) {
+            return;
+          }
+          if (item == null ||
+              item.globalKey != key ||
+              item.backend.name != task.backend ||
+              (item.libraryGlobalKey != null && hidden.isLibraryHidden(item.libraryGlobalKey!))) {
+            _savedVideo.value = null;
+            return;
+          }
+          var edition = task.edition;
+          final versions = item.mediaVersions;
+          if (task.source != null && versions != null && versions.isNotEmpty) {
+            edition = versions.indexWhere((version) => version.id == task.source);
+            if (edition < 0) {
+              _savedVideo.value = null;
+              return;
+            }
+          }
+          _savedVideo.value = null;
+          final route = VideoPlayerRoute(
+            joinsWatchTogether: true,
+            builder: (_) => VideoPlayerScreen(
+              metadata: item,
+              isOffline: task.offline,
+              selectedMediaIndex: edition,
+              selectedMediaSourceId: task.source,
+              initialPosition: Duration(milliseconds: task.positionMs),
+              initiallyPaused: task.paused,
+              strictMediaSelection: true,
+            ),
+          );
+          unawaited(route.push(nav));
+          _videoTasks.record(route, task);
+          return;
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+      }
+    } catch (error) {
+      appLogger.d('Could not reopen restored video task', error: error);
+    }
+  }
+
   final _navigatorKey = GlobalKey<NavigatorState>();
   final _workspaceOverlayKey = GlobalKey<OverlayState>();
   final _mainScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -584,6 +690,7 @@ class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> {
   void dispose() {
     profileNavigationRegistry.detachNavigator(_navigatorKey);
     profileNavigationRegistry.detachMainScaffoldMessenger(_mainScaffoldMessengerKey);
+    _savedVideo.dispose();
     _miniPlayerInsets.dispose();
     _musicRouteObserver.suppress.dispose();
     super.dispose();
@@ -619,6 +726,7 @@ class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> {
           child: MultiProvider(
             providers: [
               ChangeNotifierProvider<MiniPlayerInsetController>.value(value: _miniPlayerInsets),
+              Provider<VideoTaskObserver>.value(value: _videoTasks),
               Provider<MusicUiRouteObserver>.value(value: _musicRouteObserver),
             ],
             // The mini-player mounts ABOVE the nested navigator so it persists
@@ -632,11 +740,17 @@ class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> {
                 navigatorKey: _navigatorKey,
                 child: Stack(
                   children: [
-                    Navigator(
-                      key: _navigatorKey,
-                      restorationScopeId: 'navigation',
-                      observers: [_routeObserver, _musicRouteObserver, _settingsRouteTracker],
-                      onGenerateRoute: _onGenerateRoute,
+                    Listener(
+                      onPointerDown: (_) {
+                        _restoreAttempt++;
+                        if (!_videoTasks.hasOwner && !restorePending) _savedVideo.value = null;
+                      },
+                      child: Navigator(
+                        key: _navigatorKey,
+                        restorationScopeId: 'navigation',
+                        observers: [_routeObserver, _musicRouteObserver, _settingsRouteTracker, _videoTasks],
+                        onGenerateRoute: _onGenerateRoute,
+                      ),
                     ),
                     const Positioned.fill(child: MusicMiniPlayerOverlay()),
                     Positioned.fill(
