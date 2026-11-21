@@ -2603,6 +2603,17 @@ class $OfflineWatchProgressTable extends OfflineWatchProgress
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _accountScopeMeta = const VerificationMeta(
+    'accountScope',
+  );
+  @override
+  late final GeneratedColumn<String> accountScope = GeneratedColumn<String>(
+    'account_scope',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _ratingKeyMeta = const VerificationMeta(
     'ratingKey',
   );
@@ -2724,6 +2735,7 @@ class $OfflineWatchProgressTable extends OfflineWatchProgress
     profileId,
     serverId,
     clientScopeId,
+    accountScope,
     ratingKey,
     globalKey,
     actionType,
@@ -2770,6 +2782,15 @@ class $OfflineWatchProgressTable extends OfflineWatchProgress
         clientScopeId.isAcceptableOrUnknown(
           data['client_scope_id']!,
           _clientScopeIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('account_scope')) {
+      context.handle(
+        _accountScopeMeta,
+        accountScope.isAcceptableOrUnknown(
+          data['account_scope']!,
+          _accountScopeMeta,
         ),
       );
     }
@@ -2877,6 +2898,10 @@ class $OfflineWatchProgressTable extends OfflineWatchProgress
         DriftSqlType.string,
         data['${effectivePrefix}client_scope_id'],
       ),
+      accountScope: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_scope'],
+      ),
       ratingKey: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}rating_key'],
@@ -2941,6 +2966,10 @@ class OfflineWatchProgressItem extends DataClass
   /// shared by multiple users on the same server.
   final String? clientScopeId;
 
+  /// Server principal that created this intent. Direct Plex connections use a
+  /// credential fingerprint because a local profile may change server users.
+  final String? accountScope;
+
   /// Rating key of the media item
   final String ratingKey;
 
@@ -2976,6 +3005,7 @@ class OfflineWatchProgressItem extends DataClass
     this.profileId,
     required this.serverId,
     this.clientScopeId,
+    this.accountScope,
     required this.ratingKey,
     required this.globalKey,
     required this.actionType,
@@ -2997,6 +3027,9 @@ class OfflineWatchProgressItem extends DataClass
     map['server_id'] = Variable<String>(serverId);
     if (!nullToAbsent || clientScopeId != null) {
       map['client_scope_id'] = Variable<String>(clientScopeId);
+    }
+    if (!nullToAbsent || accountScope != null) {
+      map['account_scope'] = Variable<String>(accountScope);
     }
     map['rating_key'] = Variable<String>(ratingKey);
     map['global_key'] = Variable<String>(globalKey);
@@ -3027,6 +3060,9 @@ class OfflineWatchProgressItem extends DataClass
       clientScopeId: clientScopeId == null && nullToAbsent
           ? const Value.absent()
           : Value(clientScopeId),
+      accountScope: accountScope == null && nullToAbsent
+          ? const Value.absent()
+          : Value(accountScope),
       ratingKey: Value(ratingKey),
       globalKey: Value(globalKey),
       actionType: Value(actionType),
@@ -3056,6 +3092,7 @@ class OfflineWatchProgressItem extends DataClass
       profileId: serializer.fromJson<String?>(json['profileId']),
       serverId: serializer.fromJson<String>(json['serverId']),
       clientScopeId: serializer.fromJson<String?>(json['clientScopeId']),
+      accountScope: serializer.fromJson<String?>(json['accountScope']),
       ratingKey: serializer.fromJson<String>(json['ratingKey']),
       globalKey: serializer.fromJson<String>(json['globalKey']),
       actionType: serializer.fromJson<String>(json['actionType']),
@@ -3076,6 +3113,7 @@ class OfflineWatchProgressItem extends DataClass
       'profileId': serializer.toJson<String?>(profileId),
       'serverId': serializer.toJson<String>(serverId),
       'clientScopeId': serializer.toJson<String?>(clientScopeId),
+      'accountScope': serializer.toJson<String?>(accountScope),
       'ratingKey': serializer.toJson<String>(ratingKey),
       'globalKey': serializer.toJson<String>(globalKey),
       'actionType': serializer.toJson<String>(actionType),
@@ -3094,6 +3132,7 @@ class OfflineWatchProgressItem extends DataClass
     Value<String?> profileId = const Value.absent(),
     String? serverId,
     Value<String?> clientScopeId = const Value.absent(),
+    Value<String?> accountScope = const Value.absent(),
     String? ratingKey,
     String? globalKey,
     String? actionType,
@@ -3111,6 +3150,7 @@ class OfflineWatchProgressItem extends DataClass
     clientScopeId: clientScopeId.present
         ? clientScopeId.value
         : this.clientScopeId,
+    accountScope: accountScope.present ? accountScope.value : this.accountScope,
     ratingKey: ratingKey ?? this.ratingKey,
     globalKey: globalKey ?? this.globalKey,
     actionType: actionType ?? this.actionType,
@@ -3132,6 +3172,9 @@ class OfflineWatchProgressItem extends DataClass
       clientScopeId: data.clientScopeId.present
           ? data.clientScopeId.value
           : this.clientScopeId,
+      accountScope: data.accountScope.present
+          ? data.accountScope.value
+          : this.accountScope,
       ratingKey: data.ratingKey.present ? data.ratingKey.value : this.ratingKey,
       globalKey: data.globalKey.present ? data.globalKey.value : this.globalKey,
       actionType: data.actionType.present
@@ -3160,6 +3203,7 @@ class OfflineWatchProgressItem extends DataClass
           ..write('profileId: $profileId, ')
           ..write('serverId: $serverId, ')
           ..write('clientScopeId: $clientScopeId, ')
+          ..write('accountScope: $accountScope, ')
           ..write('ratingKey: $ratingKey, ')
           ..write('globalKey: $globalKey, ')
           ..write('actionType: $actionType, ')
@@ -3180,6 +3224,7 @@ class OfflineWatchProgressItem extends DataClass
     profileId,
     serverId,
     clientScopeId,
+    accountScope,
     ratingKey,
     globalKey,
     actionType,
@@ -3199,6 +3244,7 @@ class OfflineWatchProgressItem extends DataClass
           other.profileId == this.profileId &&
           other.serverId == this.serverId &&
           other.clientScopeId == this.clientScopeId &&
+          other.accountScope == this.accountScope &&
           other.ratingKey == this.ratingKey &&
           other.globalKey == this.globalKey &&
           other.actionType == this.actionType &&
@@ -3217,6 +3263,7 @@ class OfflineWatchProgressCompanion
   final Value<String?> profileId;
   final Value<String> serverId;
   final Value<String?> clientScopeId;
+  final Value<String?> accountScope;
   final Value<String> ratingKey;
   final Value<String> globalKey;
   final Value<String> actionType;
@@ -3232,6 +3279,7 @@ class OfflineWatchProgressCompanion
     this.profileId = const Value.absent(),
     this.serverId = const Value.absent(),
     this.clientScopeId = const Value.absent(),
+    this.accountScope = const Value.absent(),
     this.ratingKey = const Value.absent(),
     this.globalKey = const Value.absent(),
     this.actionType = const Value.absent(),
@@ -3248,6 +3296,7 @@ class OfflineWatchProgressCompanion
     this.profileId = const Value.absent(),
     required String serverId,
     this.clientScopeId = const Value.absent(),
+    this.accountScope = const Value.absent(),
     required String ratingKey,
     required String globalKey,
     required String actionType,
@@ -3269,6 +3318,7 @@ class OfflineWatchProgressCompanion
     Expression<String>? profileId,
     Expression<String>? serverId,
     Expression<String>? clientScopeId,
+    Expression<String>? accountScope,
     Expression<String>? ratingKey,
     Expression<String>? globalKey,
     Expression<String>? actionType,
@@ -3285,6 +3335,7 @@ class OfflineWatchProgressCompanion
       if (profileId != null) 'profile_id': profileId,
       if (serverId != null) 'server_id': serverId,
       if (clientScopeId != null) 'client_scope_id': clientScopeId,
+      if (accountScope != null) 'account_scope': accountScope,
       if (ratingKey != null) 'rating_key': ratingKey,
       if (globalKey != null) 'global_key': globalKey,
       if (actionType != null) 'action_type': actionType,
@@ -3303,6 +3354,7 @@ class OfflineWatchProgressCompanion
     Value<String?>? profileId,
     Value<String>? serverId,
     Value<String?>? clientScopeId,
+    Value<String?>? accountScope,
     Value<String>? ratingKey,
     Value<String>? globalKey,
     Value<String>? actionType,
@@ -3319,6 +3371,7 @@ class OfflineWatchProgressCompanion
       profileId: profileId ?? this.profileId,
       serverId: serverId ?? this.serverId,
       clientScopeId: clientScopeId ?? this.clientScopeId,
+      accountScope: accountScope ?? this.accountScope,
       ratingKey: ratingKey ?? this.ratingKey,
       globalKey: globalKey ?? this.globalKey,
       actionType: actionType ?? this.actionType,
@@ -3346,6 +3399,9 @@ class OfflineWatchProgressCompanion
     }
     if (clientScopeId.present) {
       map['client_scope_id'] = Variable<String>(clientScopeId.value);
+    }
+    if (accountScope.present) {
+      map['account_scope'] = Variable<String>(accountScope.value);
     }
     if (ratingKey.present) {
       map['rating_key'] = Variable<String>(ratingKey.value);
@@ -3387,6 +3443,7 @@ class OfflineWatchProgressCompanion
           ..write('profileId: $profileId, ')
           ..write('serverId: $serverId, ')
           ..write('clientScopeId: $clientScopeId, ')
+          ..write('accountScope: $accountScope, ')
           ..write('ratingKey: $ratingKey, ')
           ..write('globalKey: $globalKey, ')
           ..write('actionType: $actionType, ')
@@ -11501,6 +11558,7 @@ typedef $$OfflineWatchProgressTableCreateCompanionBuilder =
       Value<String?> profileId,
       required String serverId,
       Value<String?> clientScopeId,
+      Value<String?> accountScope,
       required String ratingKey,
       required String globalKey,
       required String actionType,
@@ -11518,6 +11576,7 @@ typedef $$OfflineWatchProgressTableUpdateCompanionBuilder =
       Value<String?> profileId,
       Value<String> serverId,
       Value<String?> clientScopeId,
+      Value<String?> accountScope,
       Value<String> ratingKey,
       Value<String> globalKey,
       Value<String> actionType,
@@ -11556,6 +11615,11 @@ class $$OfflineWatchProgressTableFilterComposer
 
   ColumnFilters<String> get clientScopeId => $composableBuilder(
     column: $table.clientScopeId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get accountScope => $composableBuilder(
+    column: $table.accountScope,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -11639,6 +11703,11 @@ class $$OfflineWatchProgressTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get accountScope => $composableBuilder(
+    column: $table.accountScope,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get ratingKey => $composableBuilder(
     column: $table.ratingKey,
     builder: (column) => ColumnOrderings(column),
@@ -11710,6 +11779,11 @@ class $$OfflineWatchProgressTableAnnotationComposer
 
   GeneratedColumn<String> get clientScopeId => $composableBuilder(
     column: $table.clientScopeId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get accountScope => $composableBuilder(
+    column: $table.accountScope,
     builder: (column) => column,
   );
 
@@ -11799,6 +11873,7 @@ class $$OfflineWatchProgressTableTableManager
                 Value<String?> profileId = const Value.absent(),
                 Value<String> serverId = const Value.absent(),
                 Value<String?> clientScopeId = const Value.absent(),
+                Value<String?> accountScope = const Value.absent(),
                 Value<String> ratingKey = const Value.absent(),
                 Value<String> globalKey = const Value.absent(),
                 Value<String> actionType = const Value.absent(),
@@ -11814,6 +11889,7 @@ class $$OfflineWatchProgressTableTableManager
                 profileId: profileId,
                 serverId: serverId,
                 clientScopeId: clientScopeId,
+                accountScope: accountScope,
                 ratingKey: ratingKey,
                 globalKey: globalKey,
                 actionType: actionType,
@@ -11831,6 +11907,7 @@ class $$OfflineWatchProgressTableTableManager
                 Value<String?> profileId = const Value.absent(),
                 required String serverId,
                 Value<String?> clientScopeId = const Value.absent(),
+                Value<String?> accountScope = const Value.absent(),
                 required String ratingKey,
                 required String globalKey,
                 required String actionType,
@@ -11846,6 +11923,7 @@ class $$OfflineWatchProgressTableTableManager
                 profileId: profileId,
                 serverId: serverId,
                 clientScopeId: clientScopeId,
+                accountScope: accountScope,
                 ratingKey: ratingKey,
                 globalKey: globalKey,
                 actionType: actionType,

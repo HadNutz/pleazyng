@@ -1,10 +1,9 @@
 {
   "locale": "fr-CA",
   "inherits": "fr",
-  "catalogSha256": "4e057a7840d8b1140409c81ff716099ff392a481df7f18fe1e564262bddeb18b",
+  "catalogSha256": "0f77c0e5310b21fbdafc64f503f274d6c4e75d4f02df775a57c7a6c74c3ee44e",
   "nativeSpeakerReviewed": false,
   "messages": {
-    "cast.subtitle": "jellyfin-web:Subtitles",
     "cast.castToDevice": "jellyfin-web:ButtonCast",
     "appIcon.defaultIcon": "jellyfin-web:Default",
     "auth.quickConnect": "jellyfin-web:QuickConnect",

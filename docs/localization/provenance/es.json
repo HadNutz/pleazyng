@@ -1,7 +1,7 @@
 {
   "locale": "es",
   "inherits": null,
-  "catalogSha256": "31b35c2fab3212e26d0deb3b069ac9a0b1eca4ea49ea9b1b4446961b2eca1b30",
+  "catalogSha256": "d48cf3c56a1504701f05e52c3b19a564ce4e9b005631d6192f58b947d72e6978",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -10,7 +10,6 @@
     "cast.connectedTo": "m2m100-draft",
     "cast.device": "m2m100-draft",
     "cast.readyToCast": "m2m100-draft",
-    "cast.subtitle": "translation-memory",
     "cast.serverNotAvailable": "m2m100-draft",
     "cast.stopCasting": "m2m100-draft",
     "cast.castToDevice": "m2m100-draft",
@@ -359,7 +358,6 @@
     "settings.importSettings": "existing",
     "settings.importSettingsDescription": "existing",
     "settings.importSettingsConfirm": "existing",
-    "settings.importSettingsSuccess": "existing",
     "settings.importSettingsInvalidFile": "existing",
     "settings.importSettingsNoUser": "existing",
     "settings.cloudBackup": "m2m100-draft",
@@ -372,7 +370,6 @@
     "settings.cloudBackupComplete": "assistant-semantic-review-2026-11-21",
     "settings.cloudBackupRestore": "m2m100-draft",
     "settings.cloudBackupRestoreConfirm": "m2m100-draft",
-    "settings.cloudBackupRestored": "m2m100-draft",
     "settings.shortcutsReset": "existing",
     "settings.resetShortcutsConfirm": "existing",
     "settings.about": "existing",

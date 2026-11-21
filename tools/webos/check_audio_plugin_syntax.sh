@@ -53,6 +53,10 @@ if (root / 'webos/CMakeLists.txt').read_text().count('target_link_libraries(${BI
     raise SystemExit('The webOS runner must link the SDK Flutter/common interface directly.')
 PY
 
+# Exercise late raster callbacks using the exact embedder's pixel buffer ABI.
+c++ -std=c++17 -O2 -pthread -I"$scratch_dir/include" "$ROOT/tools/webos/tests/texture_lifetime.cc" -o "$scratch_dir/texture-lifetime"
+"$scratch_dir/texture-lifetime"
+
 "$WEBOS_PYTHON_BIN" "$ROOT/tools/webos/ndk_environment.py" \
   --root "$WEBOS_NDK_ROOT" --verify
 "$WEBOS_PYTHON_BIN" "$ROOT/tools/webos/ndk_environment.py" \

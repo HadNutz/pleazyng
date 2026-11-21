@@ -17,9 +17,7 @@
     "listenPhone": "Ouvir neste celular",
     "audioUnavailable": "O arquivo ou a faixa de áudio não está disponível neste celular."
   },
-  "cast": {
-    "subtitle": "Legendas"
-  },
+  "cast": {},
   "appIcon": {
     "defaultIcon": "Padrão"
   },

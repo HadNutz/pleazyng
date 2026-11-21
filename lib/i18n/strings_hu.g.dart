@@ -342,6 +342,9 @@ class _Translations$common$hu extends Translations$common$en {
 	@override String get notAvailable => 'N/A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Szimbólumok';
+	@override String get keyboardLetters => 'Betűk';
+	@override String get keyboardNewLine => 'Új sor';
 	@override late final _Translations$common$mediaKind$hu mediaKind = _Translations$common$mediaKind$hu._(_root);
 }
 
@@ -571,7 +574,7 @@ class _Translations$settings$hu extends Translations$settings$en {
 	@override String get importSettings => 'Beállítások importálása';
 	@override String get importSettingsDescription => 'Beállítások visszaállítása fájlból';
 	@override String get importSettingsConfirm => 'Ez felülírja a jelenlegi beállításaidat. Folytatod?';
-	@override String get importSettingsSuccess => 'Beállítások importálva';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Alkalmazott beállítások: ${applied}. Kihagyva: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Ez a fájl nem érvényes Pleazyng-beállításexport';
 	@override String get importSettingsNoUser => 'Jelentkezz be a beállítások importálása előtt';
 	@override String get cloudBackup => 'Felhőalapú biztonsági mentés';
@@ -584,7 +587,6 @@ class _Translations$settings$hu extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'A biztonsági mentés feltöltve. Mentsd el ezt az URL-t. Új telepítés után add meg a felhőalapú mentésnél, majd válaszd ezt: „${action}”.';
 	@override String get cloudBackupRestore => 'Backup visszaállítása';
 	@override String get cloudBackupRestoreConfirm => 'Ez helyettesíti a hordozható beállítások megfelelését ezen a készüléken.';
-	@override String get cloudBackupRestored => 'A felhő biztonsági mentéséből helyreállított beállítások';
 	@override String get shortcutsReset => 'A billentyűparancsok visszaálltak az alapértelmezettekre';
 	@override String get resetShortcutsConfirm => 'Ezzel az egyéni billentyűparancsaid helyére az alapértelmezettek kerülnek. Folytatod?';
 	@override String get about => 'Névjegy';
@@ -3126,7 +3128,6 @@ class _Translations$cast$hu extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Kapcsolódó oldalak ${device}';
 	@override String get device => 'Cast eszköz';
 	@override String get readyToCast => 'Kész a kiadásra';
-	@override String get subtitle => 'Feliratok';
 	@override String get serverNotAvailable => 'A média szerver nem elérhető.';
 	@override String get stopCasting => 'Csatlakozás megáll';
 	@override String get startFailed => 'Nem tudok elkezdeni a szétválasztást. ellenőrizze a szervert, és próbáljon újra.';
@@ -5830,6 +5831,9 @@ extension on TranslationsHu {
 			'common.notAvailable' => 'N/A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Szimbólumok',
+			'common.keyboardLetters' => 'Betűk',
+			'common.keyboardNewLine' => 'Új sor',
 			'common.mediaKind.movie' => 'Film',
 			'common.mediaKind.show' => 'Sorozat',
 			'common.mediaKind.season' => 'Évad',
@@ -6038,7 +6042,7 @@ extension on TranslationsHu {
 			'settings.importSettings' => 'Beállítások importálása',
 			'settings.importSettingsDescription' => 'Beállítások visszaállítása fájlból',
 			'settings.importSettingsConfirm' => 'Ez felülírja a jelenlegi beállításaidat. Folytatod?',
-			'settings.importSettingsSuccess' => 'Beállítások importálva',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Alkalmazott beállítások: ${applied}. Kihagyva: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Ez a fájl nem érvényes Pleazyng-beállításexport',
 			'settings.importSettingsNoUser' => 'Jelentkezz be a beállítások importálása előtt',
 			'settings.cloudBackup' => 'Felhőalapú biztonsági mentés',
@@ -6051,7 +6055,6 @@ extension on TranslationsHu {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'A biztonsági mentés feltöltve. Mentsd el ezt az URL-t. Új telepítés után add meg a felhőalapú mentésnél, majd válaszd ezt: „${action}”.',
 			'settings.cloudBackupRestore' => 'Backup visszaállítása',
 			'settings.cloudBackupRestoreConfirm' => 'Ez helyettesíti a hordozható beállítások megfelelését ezen a készüléken.',
-			'settings.cloudBackupRestored' => 'A felhő biztonsági mentéséből helyreállított beállítások',
 			'settings.shortcutsReset' => 'A billentyűparancsok visszaálltak az alapértelmezettekre',
 			'settings.resetShortcutsConfirm' => 'Ezzel az egyéni billentyűparancsaid helyére az alapértelmezettek kerülnek. Folytatod?',
 			'settings.about' => 'Névjegy',
@@ -6150,10 +6153,10 @@ extension on TranslationsHu {
 			'settings.companionRemoteServer' => 'Kísérőtávirányító szervere',
 			'settings.companionRemoteServerDescription' => 'Lehetővé teszi, hogy a hálózaton lévő mobileszközökről vezéreld az alkalmazást',
 			'settings.companionRemoteServerStartFailed' => 'Nem sikerült elindítani a kísérőtávirányító szerverét',
-			'settings.companionRemoteServerStopFailed' => 'Nem sikerült leállítani a kísérőtávirányító szerverét',
-			'settings.autoPip' => 'Automatikus kép a képben (PiP)',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Nem sikerült leállítani a kísérőtávirányító szerverét',
+			'settings.autoPip' => 'Automatikus kép a képben (PiP)',
 			'settings.autoPipDescription' => 'Lejátszás közben az alkalmazás elhagyásakor automatikusan kép a képben módra vált',
 			'settings.matchContentFrameRate' => 'Képkockasebesség illesztése a tartalomhoz',
 			'settings.matchContentFrameRateDescription' => 'A kijelző frissítési frekvenciájának igazítása a videóhoz',
@@ -6664,10 +6667,10 @@ extension on TranslationsHu {
 			'accessibility.reduceMotionHint' => 'Állítsd le a fókuszjelző mozgását, az oldalátmeneteket és a díszítő animációkat.',
 			'accessibility.largeTargets' => 'Nagyabb érintkezési célok',
 			'accessibility.largeTargetsHint' => 'A megosztott vezérlők több helyet biztosítanak a hozzáféréshez és a segéd navigációhoz.',
-			'accessibility.navigationHint' => 'A Tab és a Shift+Tab billentyűkkel léphetsz a vezérlők között, az Enter vagy a szóköz aktiválja őket, az Escape vagy a Vissza pedig bezár. Megnyitott könyvnél a nagyítás és az olvasási beállítások is elérhetők.',
-			'accessibility.textSizeDescription' => 'Skála felület szöveg Pleazyng-ben a készülék rendszer szöveges méretének beállítása mellett.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'A Tab és a Shift+Tab billentyűkkel léphetsz a vezérlők között, az Enter vagy a szóköz aktiválja őket, az Escape vagy a Vissza pedig bezár. Megnyitott könyvnél a nagyítás és az olvasási beállítások is elérhetők.',
+			'accessibility.textSizeDescription' => 'Skála felület szöveg Pleazyng-ben a készülék rendszer szöveges méretének beállítása mellett.',
 			'accessibility.boldTextHint' => 'Használjon súlyosabb felület címkéket és üzeneteket, hogy könnyebben megkülönböztessék őket.',
 			'tooltips.shufflePlay' => 'Véletlenszerű lejátszás',
 			'tooltips.playTrailer' => 'Előzetes lejátszása',
@@ -7178,10 +7181,10 @@ extension on TranslationsHu {
 			'discover.person.birthplace' => 'Születési hely',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age} éves)',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (${age} évesen)',
-			'errors.searchFailed' => ({required Object error}) => 'Keresés sikertelen: ${error}',
-			'errors.searchUnavailable' => 'A keresés egyetlen médiaszervert sem tudott elérni.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => 'Keresés sikertelen: ${error}',
+			'errors.searchUnavailable' => 'A keresés egyetlen médiaszervert sem tudott elérni.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Hálózati időtúllépés a következő betöltésekor: ${context}',
 			'errors.connectionFailed' => 'Nem sikerült csatlakozni a médiaszerverhez',
 			'errors.unableToLoad' => ({required Object context}) => 'Nem sikerült betölteni a következőt: ${context}. Próbáld újra.',
@@ -7692,10 +7695,10 @@ extension on TranslationsHu {
 			'playlists.enterPlaylistName' => 'Add meg a lejátszási lista nevét',
 			'playlists.delete' => 'Lejátszási lista törlése',
 			'playlists.removeItem' => 'Eltávolítás a lejátszási listáról',
-			'playlists.smartPlaylist' => 'Okos lejátszási lista',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hu'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} elem', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} elem', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => 'Okos lejátszási lista',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hu'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} elem', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} elem', ), 
 			'playlists.emptyPlaylist' => 'Ez a lejátszási lista üres',
 			'playlists.deleteConfirm' => 'Törlöd a lejátszási listát?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Biztosan törölni szeretnéd a következőt: "${name}"?',
@@ -8206,10 +8209,10 @@ extension on TranslationsHu {
 			'performanceOverlay.sampleRate' => 'Mintavételezési frekvencia',
 			'performanceOverlay.pixelFormat' => 'Képpontformátum',
 			'performanceOverlay.hwFormat' => 'Hardverformátum',
-			'performanceOverlay.matrix' => 'Mátrix',
-			'performanceOverlay.primaries' => 'Elsődleges színek',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => 'Mátrix',
+			'performanceOverlay.primaries' => 'Elsődleges színek',
 			'performanceOverlay.transfer' => 'Átvitel',
 			'performanceOverlay.renderFps' => 'Renderelési FPS',
 			'performanceOverlay.displayFps' => 'Kijelző-FPS',
@@ -8646,7 +8649,6 @@ extension on TranslationsHu {
 			'cast.connectedTo' => ({required Object device}) => 'Kapcsolódó oldalak ${device}',
 			'cast.device' => 'Cast eszköz',
 			'cast.readyToCast' => 'Kész a kiadásra',
-			'cast.subtitle' => 'Feliratok',
 			'cast.serverNotAvailable' => 'A média szerver nem elérhető.',
 			'cast.stopCasting' => 'Csatlakozás megáll',
 			'cast.startFailed' => 'Nem tudok elkezdeni a szétválasztást. ellenőrizze a szervert, és próbáljon újra.',
@@ -8721,9 +8723,9 @@ extension on TranslationsHu {
 			'homeLayout.continueWatchingLibraryDescription' => 'A könyvtár saját újjáépítésének sorrendje',
 			'homeLayout.continueWatchingHomeDescription' => 'A folyamatos folyamatok újbóli sorát mutatják be otthon',
 			'homeLayout.nextUpHomeDescription' => 'A következő nem figyelt epizód sorozatot külön-külön mutatott a Home',
-			'homeLayout.library' => 'Könyvtár',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => 'Könyvtár',
 			'homeLayout.showInRecommended' => 'A könyvtárban ajánlott',
 			'homeLayout.customPlexRow' => 'Személyes Plex sor',
 			'homeLayout.heroNeedsLibrary' => 'Kövesse a könyvtárat először – Hero kell valahol megmutatni',
@@ -9235,9 +9237,9 @@ extension on TranslationsHu {
 			'audiobook.statusProgress' => 'előrehaladás',
 			'audiobook.statusFinished' => 'befejezett',
 			'audiobook.goToTime' => 'Menj az időbe',
-			'audiobook.timeHelp' => 'Idők: percek: másodpercek, vagy percek: másodpercek',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => 'Idők: percek: másodpercek, vagy percek: másodpercek',
 			'audiobook.recoveryHelp' => 'A szinkronizációs adatok áthelyezése vagy javítása előtt exportáljon egy nemrégiben titkosított másolatot. Az importok összeolvadnak a jelenlegi állapotgal; soha nem helyettesítik a helyi szinkrálás történetét.',
 			'audiobook.recoveryExport' => 'Export titkosított helyreállítási fájl',
 			'audiobook.recoveryImport' => 'Import titkosított helyreállítási fájl',
@@ -9749,9 +9751,9 @@ extension on TranslationsHu {
 			'musicTools.historyHint' => 'A profil lejátszási előzményei',
 			'musicTools.days' => 'Napok',
 			'musicTools.albumBlocks' => 'Teljes albumok együtt tartása',
-			'musicTools.home' => 'Zene',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => 'Zene',
 			'musicTools.recent' => 'Legutóbb lejátszott',
 			'musicTools.apiKey' => 'API-kulcs',
 			'musicTools.missing' => 'N/A',

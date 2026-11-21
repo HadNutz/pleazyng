@@ -342,6 +342,9 @@ class _Translations$common$bn extends Translations$common$en {
 	@override String get notAvailable => 'ন/এ';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'প্রতীক';
+	@override String get keyboardLetters => 'অক্ষর';
+	@override String get keyboardNewLine => 'নতুন লাইন';
 	@override late final _Translations$common$mediaKind$bn mediaKind = _Translations$common$mediaKind$bn._(_root);
 }
 
@@ -571,7 +574,7 @@ class _Translations$settings$bn extends Translations$settings$en {
 	@override String get importSettings => 'Import Settings প্রদর্শন';
 	@override String get importSettingsDescription => 'একটি ফাইল থেকে পছন্দ ফেরত';
 	@override String get importSettingsConfirm => 'এটাই আপনাকে বর্তমান পরামর্শগুলি বদলে দেবে।';
-	@override String get importSettingsSuccess => 'আউটডোজ করা';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'প্রয়োগ করা সেটিংস: ${applied}। বাদ দেওয়া হয়েছে: ${skipped}।';
 	@override String get importSettingsInvalidFile => 'এই ফাইলটি একটি সঠিক Pleazyng সেটিংগুলি অ্যাক্সেস নয়';
 	@override String get importSettingsNoUser => 'প্রদর্শন করার আগে সাইন করুন';
 	@override String get cloudBackup => 'ক্লাউড সার্ভিস';
@@ -584,7 +587,6 @@ class _Translations$settings$bn extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'ব্যাকআপ আপলোড হয়েছে। এই URL সংরক্ষণ করুন। নতুন করে ইনস্টল করার পর ক্লাউড ব্যাকআপে URL লিখে “${action}” বেছে নিন।';
 	@override String get cloudBackupRestore => 'Backup পুনরাবৃত্তি';
 	@override String get cloudBackupRestoreConfirm => 'এই ডিভাইসের পোর্টেবল সিস্টেমগুলি সমাধান করবে. চলুন?';
-	@override String get cloudBackupRestored => 'Cloud Backup থেকে পুনরাবৃত্তি';
 	@override String get shortcutsReset => 'দূতাবাসের জন্য দূতাবাস ফিরে আসুন';
 	@override String get resetShortcutsConfirm => 'এটি আপনার কাস্টম কুরআনগুলি ভিত্তিতে বদলে দেবে।';
 	@override String get about => 'সম্পর্কে';
@@ -3126,7 +3128,6 @@ class _Translations$cast$bn extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'সংযোগ ${device}';
 	@override String get device => 'কাস্ট ডিভাইস';
 	@override String get readyToCast => 'কাস্ট করার জন্য প্রস্তুত';
-	@override String get subtitle => 'সাবটাইটেল';
 	@override String get serverNotAvailable => 'মিডিয়া সার্ভার পাওয়া যায় না।';
 	@override String get stopCasting => 'কাস্ট করা বন্ধ করুন';
 	@override String get startFailed => 'সার্ভার দেখুন এবং আবার চেষ্টা করুন।';
@@ -5830,6 +5831,9 @@ extension on TranslationsBn {
 			'common.notAvailable' => 'ন/এ',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'প্রতীক',
+			'common.keyboardLetters' => 'অক্ষর',
+			'common.keyboardNewLine' => 'নতুন লাইন',
 			'common.mediaKind.movie' => 'চলচ্চিত্র',
 			'common.mediaKind.show' => 'প্রদর্শন',
 			'common.mediaKind.season' => 'সপ্তাহ',
@@ -6038,7 +6042,7 @@ extension on TranslationsBn {
 			'settings.importSettings' => 'Import Settings প্রদর্শন',
 			'settings.importSettingsDescription' => 'একটি ফাইল থেকে পছন্দ ফেরত',
 			'settings.importSettingsConfirm' => 'এটাই আপনাকে বর্তমান পরামর্শগুলি বদলে দেবে।',
-			'settings.importSettingsSuccess' => 'আউটডোজ করা',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'প্রয়োগ করা সেটিংস: ${applied}। বাদ দেওয়া হয়েছে: ${skipped}।',
 			'settings.importSettingsInvalidFile' => 'এই ফাইলটি একটি সঠিক Pleazyng সেটিংগুলি অ্যাক্সেস নয়',
 			'settings.importSettingsNoUser' => 'প্রদর্শন করার আগে সাইন করুন',
 			'settings.cloudBackup' => 'ক্লাউড সার্ভিস',
@@ -6051,7 +6055,6 @@ extension on TranslationsBn {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'ব্যাকআপ আপলোড হয়েছে। এই URL সংরক্ষণ করুন। নতুন করে ইনস্টল করার পর ক্লাউড ব্যাকআপে URL লিখে “${action}” বেছে নিন।',
 			'settings.cloudBackupRestore' => 'Backup পুনরাবৃত্তি',
 			'settings.cloudBackupRestoreConfirm' => 'এই ডিভাইসের পোর্টেবল সিস্টেমগুলি সমাধান করবে. চলুন?',
-			'settings.cloudBackupRestored' => 'Cloud Backup থেকে পুনরাবৃত্তি',
 			'settings.shortcutsReset' => 'দূতাবাসের জন্য দূতাবাস ফিরে আসুন',
 			'settings.resetShortcutsConfirm' => 'এটি আপনার কাস্টম কুরআনগুলি ভিত্তিতে বদলে দেবে।',
 			'settings.about' => 'সম্পর্কে',
@@ -6150,10 +6153,10 @@ extension on TranslationsBn {
 			'settings.companionRemoteServer' => 'Remote সার্ভার',
 			'settings.companionRemoteServerDescription' => 'আপনার নেটওয়ার্কের মোবাইল ডিভাইসগুলি এই অ্যাপটি নিয়ন্ত্রণ করার অনুমতি দেয়',
 			'settings.companionRemoteServerStartFailed' => 'সার্ভার সার্ভার শুরু করতে পারেনি।',
-			'settings.companionRemoteServerStopFailed' => 'সার্ভার বন্ধ করতে পারত না।',
-			'settings.autoPip' => 'Auto Picture-in-Picture গাড়ি',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'সার্ভার বন্ধ করতে পারত না।',
+			'settings.autoPip' => 'Auto Picture-in-Picture গাড়ি',
 			'settings.autoPipDescription' => 'আপনি Playback সময় অ্যাপটি ছেড়ে যখন স্বয়ংক্রিয়ভাবে ছবি-এ-ফটো প্রবেশ করুন',
 			'settings.matchContentFrameRate' => 'ফ্রেম ফ্রেম ফ্রেম ফ্রেম ফ্রেম',
 			'settings.matchContentFrameRateDescription' => 'ভিডিও প্রদর্শন ফ্রেসিং রেস্টুরেন্ট ফ্রেসিং রেস্টুরেন্ট',
@@ -6664,10 +6667,10 @@ extension on TranslationsBn {
 			'accessibility.reduceMotionHint' => 'ফোকাসের নির্দেশক, পৃষ্ঠা পরিবর্তন ও সাজসজ্জার প্রভাবগুলির নড়াচড়া বন্ধ রাখুন।',
 			'accessibility.largeTargets' => 'বড় ট্যাক্স টার্গেট',
 			'accessibility.largeTargetsHint' => 'স্পর্শ ও সহায়ক প্রযুক্তির মাধ্যমে চলাচল সহজ করতে সাধারণ নিয়ন্ত্রণগুলির জায়গা বড় করুন।',
-			'accessibility.navigationHint' => 'নিয়ন্ত্রণগুলির মধ্যে যেতে Tab ও Shift+Tab, সক্রিয় করতে Enter বা Space এবং বন্ধ করতে Escape বা ফিরে যাওয়ার বোতাম ব্যবহার করুন। বই খোলা থাকলে জুম ও পড়ার পছন্দগুলি বদলানো যায়।',
-			'accessibility.textSizeDescription' => 'আপনার ডিভাইসের সিস্টেম টেক্সটের আকারের সেটিংয়ের পাশাপাশি Pleazyng ইন্টারফেসের লেখার আকারও পরিবর্তন করুন।',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'নিয়ন্ত্রণগুলির মধ্যে যেতে Tab ও Shift+Tab, সক্রিয় করতে Enter বা Space এবং বন্ধ করতে Escape বা ফিরে যাওয়ার বোতাম ব্যবহার করুন। বই খোলা থাকলে জুম ও পড়ার পছন্দগুলি বদলানো যায়।',
+			'accessibility.textSizeDescription' => 'আপনার ডিভাইসের সিস্টেম টেক্সটের আকারের সেটিংয়ের পাশাপাশি Pleazyng ইন্টারফেসের লেখার আকারও পরিবর্তন করুন।',
 			'accessibility.boldTextHint' => 'ইন্টারফেস ট্যাগ এবং বার্তাগুলির জন্য একটি গভীর ওজন ব্যবহার করুন যা তাদের বিতর্ক করা সহজ করে।',
 			'tooltips.shufflePlay' => 'শফল খেলা',
 			'tooltips.playTrailer' => 'ট্র্যালার খেলুন',
@@ -7178,10 +7181,10 @@ extension on TranslationsBn {
 			'discover.person.birthplace' => 'জন্মস্থান',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (আজ ${age})',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (আজ ${age})',
-			'errors.searchFailed' => ({required Object error}) => 'অনুসন্ধান ভুল হয়েছে: ${error}',
-			'errors.searchUnavailable' => 'কোন মিডিয়া সার্ভারে অনুসন্ধান পাওয়া যায়নি।',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => 'অনুসন্ধান ভুল হয়েছে: ${error}',
+			'errors.searchUnavailable' => 'কোন মিডিয়া সার্ভারে অনুসন্ধান পাওয়া যায়নি।',
 			'errors.connectionTimeout' => ({required Object context}) => 'লোডিং সময়মাত্রা ${context}',
 			'errors.connectionFailed' => 'মিডিয়া সার্ভারের সাথে যোগাযোগ করতে পারবেন না',
 			'errors.unableToLoad' => ({required Object context}) => '${context} পুনরায় চেষ্টা করুন।',
@@ -7692,10 +7695,10 @@ extension on TranslationsBn {
 			'playlists.enterPlaylistName' => 'Playlist নাম লিখুন',
 			'playlists.delete' => 'Playlist খেলা',
 			'playlists.removeItem' => 'Playlist থেকে মুছে ফেলুন',
-			'playlists.smartPlaylist' => 'স্মার্ট Playlist',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bn'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}টি আইটেম', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}টি আইটেম', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => 'স্মার্ট Playlist',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bn'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}টি আইটেম', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}টি আইটেম', ), 
 			'playlists.emptyPlaylist' => 'এই খেলাটি खाली',
 			'playlists.deleteConfirm' => 'Playlist খেলা?',
 			'playlists.deleteMessage' => ({required Object name}) => 'আপনি কি নিশ্চিত যে আপনি "${name}" মুছে ফেলতে চান?',
@@ -8206,10 +8209,10 @@ extension on TranslationsBn {
 			'performanceOverlay.sampleRate' => 'নমুনা হার',
 			'performanceOverlay.pixelFormat' => 'পিক্সেল Fmt',
 			'performanceOverlay.hwFormat' => 'ফিএমএফ',
-			'performanceOverlay.matrix' => 'ম্যাট্রিক্স',
-			'performanceOverlay.primaries' => 'প্রাথমিক',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => 'ম্যাট্রিক্স',
+			'performanceOverlay.primaries' => 'প্রাথমিক',
 			'performanceOverlay.transfer' => 'ট্রান্সফার',
 			'performanceOverlay.renderFps' => 'ফিপিএস ফিপিএস',
 			'performanceOverlay.displayFps' => 'ফিপিএস প্রদর্শন',
@@ -8646,7 +8649,6 @@ extension on TranslationsBn {
 			'cast.connectedTo' => ({required Object device}) => 'সংযোগ ${device}',
 			'cast.device' => 'কাস্ট ডিভাইস',
 			'cast.readyToCast' => 'কাস্ট করার জন্য প্রস্তুত',
-			'cast.subtitle' => 'সাবটাইটেল',
 			'cast.serverNotAvailable' => 'মিডিয়া সার্ভার পাওয়া যায় না।',
 			'cast.stopCasting' => 'কাস্ট করা বন্ধ করুন',
 			'cast.startFailed' => 'সার্ভার দেখুন এবং আবার চেষ্টা করুন।',
@@ -8721,9 +8723,9 @@ extension on TranslationsBn {
 			'homeLayout.continueWatchingLibraryDescription' => 'এই লাইব্রেরির নিজস্ব পুনরাবৃত্তি-প্রগ্রেস লাইন',
 			'homeLayout.continueWatchingHomeDescription' => 'বাড়িতে প্রদর্শনিত পুনরাবৃত্তি-প্রদর্শন পর্যায়ে',
 			'homeLayout.nextUpHomeDescription' => 'Next Unwatched Episode পরবর্তী পরিস্থিতি নির্দিষ্টভাবে দেখানো হয় Home',
-			'homeLayout.library' => 'লাইব্রেরি',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => 'লাইব্রেরি',
 			'homeLayout.showInRecommended' => 'লাইব্রেরিতে প্রদর্শন করা উচিত',
 			'homeLayout.customPlexRow' => 'কাস্টম Plex রান',
 			'homeLayout.heroNeedsLibrary' => 'প্রথমে লাইব্রেরি চেক করুন — হ্যারো দেখার জন্য কোথাও প্রয়োজন',
@@ -9235,9 +9237,9 @@ extension on TranslationsBn {
 			'audiobook.statusProgress' => 'প্রদর্শন',
 			'audiobook.statusFinished' => 'শেষ',
 			'audiobook.goToTime' => 'সময় নিয়ে যান',
-			'audiobook.timeHelp' => 'ঘণ্টা : মিনিট : সেকেন্ড বা মিনিট : সেকেন্ড',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => 'ঘণ্টা : মিনিট : সেকেন্ড বা মিনিট : সেকেন্ড',
 			'audiobook.recoveryHelp' => 'সিঙ্ক ডেটা সরানোর বা মেরামত করার আগে সাম্প্রতিক এনক্রিপ্ট করা কপি রপ্তানি করুন। আমদানি করলে বর্তমান অবস্থার সঙ্গে ডেটা মিশে যাবে; স্থানীয় সিঙ্ক ইতিহাস কখনো প্রতিস্থাপিত হবে না। সিঙ্ক কোড আলাদা করে রাখুন।',
 			'audiobook.recoveryExport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
 			'audiobook.recoveryImport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
@@ -9749,9 +9751,9 @@ extension on TranslationsBn {
 			'musicTools.historyHint' => 'এই প্রোফাইলের প্লেব্যাক ইতিহাস',
 			'musicTools.days' => 'দিন',
 			'musicTools.albumBlocks' => 'সম্পূর্ণ অ্যালবাম একসাথে রাখুন',
-			'musicTools.home' => 'সঙ্গীত',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => 'সঙ্গীত',
 			'musicTools.recent' => 'সম্প্রতি শোনা',
 			'musicTools.apiKey' => 'API কী',
 			'musicTools.missing' => 'ন/এ',

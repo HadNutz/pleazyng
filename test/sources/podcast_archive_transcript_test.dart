@@ -9,6 +9,72 @@ import 'package:plezy/sources/source_models.dart';
 import 'package:plezy/sources/source_transport.dart';
 
 void main() {
+  test('indexed Atom audio works offline at the feed, renews rotated URLs and retains the redirect base', () async {
+    final sealed = <String, String>{};
+    var available = true, reads = 0, token = 'old', length = 100;
+    final requests = <http.Request>[];
+    PodcastRssSourceAdapter adapter() => PodcastRssSourceAdapter(
+      const FileSource(
+        id: 'show',
+        profileId: 'me',
+        name: 'Show',
+        kind: FileSourceKind.podcastRss,
+        endpoint: 'https://alias.example',
+      ),
+      SourceTransport(
+        client: MockClient((request) async {
+          requests.add(request);
+          if (request.url.host == 'alias.example') {
+            reads++;
+            if (!available) return http.Response('', 503);
+            return http.Response('', 301, headers: {'location': 'https://host.example/pod/feed.xml'});
+          }
+          expect(request.headers['Authorization'], isNull);
+          expect(request.url.path, '/pod/feed.xml');
+          return http.Response(
+            '<feed xmlns="http://www.w3.org/2005/Atom"><title>Feed</title>'
+            '<entry><id>stable</id><title>Episode</title><link rel="enclosure" type="audio/mpeg" '
+            'length="$length" href="episodes/one.mp3?token=$token"/></entry></feed>',
+            200,
+          );
+        }),
+      ),
+      () async => {'feedUrl': 'https://alias.example/show', 'username': 'me', 'password': 'secret'},
+      protect: (value) async {
+        final key = 'enc:v2:${sealed.length}';
+        sealed[key] = value;
+        return key;
+      },
+      reveal: (key) async => sealed[key],
+    );
+    final first = adapter();
+    final episode = (await first.browse(parent: 'podcast:episodes')).entries.single;
+    first.close();
+    final source = adapter();
+    addTearDown(source.close);
+    final file = episode.files.single;
+    final seals = sealed.length;
+    available = false;
+    final cached = await source.hydrate(episode);
+    final lease = await source.resolve(cached.files.single);
+    expect(lease.uri.toString(), 'https://host.example/pod/episodes/one.mp3?token=old');
+    expect(lease.headers['Authorization'], isNull);
+    expect(reads, 1);
+    expect(sealed.length, seals);
+    available = true;
+    token = 'new';
+    expect(source.shouldRenewLease(403), isTrue);
+    expect(source.shouldRenewLease(404), isTrue);
+    expect((await source.renewLease(file)).uri.queryParameters['token'], 'new');
+    expect(reads, 2);
+    expect(requests.last.headers['Authorization'], isNull);
+    length++;
+    await expectLater(
+      source.renewLease(file),
+      throwsA(isA<SourceException>().having((e) => e.reason, 'reason', SourceFailure.conflict)),
+    );
+  });
+
   test('private archives paginate, preserve enclosure identity and survive adapter restart', () async {
     final sealed = <String, String>{};
     var serial = 0;

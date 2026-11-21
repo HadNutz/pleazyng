@@ -1,7 +1,7 @@
 {
   "locale": "th",
   "inherits": null,
-  "catalogSha256": "cdab9bbb9f307d5d4d2e4b075b2349f391af2fc6004a4ca66aeb509e0c72b84c",
+  "catalogSha256": "42148cc69985ac29de0564de5a77e71af1541f599abc7bea194c716714f8f657",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -10,7 +10,6 @@
     "cast.connectedTo": "m2m100-draft",
     "cast.device": "targeted-ai-review",
     "cast.readyToCast": "targeted-ai-review",
-    "cast.subtitle": "targeted-ai-review",
     "cast.serverNotAvailable": "m2m100-draft",
     "cast.stopCasting": "targeted-ai-review",
     "cast.castToDevice": "targeted-ai-review",
@@ -359,7 +358,6 @@
     "settings.importSettings": "m2m100-draft",
     "settings.importSettingsDescription": "m2m100-draft",
     "settings.importSettingsConfirm": "m2m100-draft",
-    "settings.importSettingsSuccess": "m2m100-draft",
     "settings.importSettingsInvalidFile": "m2m100-draft",
     "settings.importSettingsNoUser": "m2m100-draft",
     "settings.cloudBackup": "m2m100-draft",
@@ -372,7 +370,6 @@
     "settings.cloudBackupComplete": "assistant-semantic-review-2026-11-21",
     "settings.cloudBackupRestore": "m2m100-draft",
     "settings.cloudBackupRestoreConfirm": "m2m100-draft",
-    "settings.cloudBackupRestored": "m2m100-draft",
     "settings.shortcutsReset": "m2m100-draft",
     "settings.resetShortcutsConfirm": "m2m100-draft",
     "settings.about": "m2m100-draft",

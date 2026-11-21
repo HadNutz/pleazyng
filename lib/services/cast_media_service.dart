@@ -8,7 +8,6 @@ import 'package:flutter_chrome_cast/flutter_chrome_cast.dart';
 import '../i18n/strings.g.dart';
 import '../media/media_item.dart';
 import '../media/media_server_client.dart';
-import '../mpv/models.dart';
 import '../widgets/app_icon.dart';
 import '../utils/app_logger.dart';
 import '../utils/platform_detector.dart';
@@ -17,6 +16,7 @@ import '../utils/serial_future_queue.dart';
 import '../utils/session_identifier.dart';
 import 'cast_playback_ownership.dart';
 import 'cast_video_transfer.dart';
+import 'cast_video_queue.dart';
 import 'music/cast_music_output.dart';
 import 'music/cast_music_queue.dart';
 import 'music/cast_music_recovery.dart';
@@ -51,6 +51,12 @@ class CastMediaService extends ChangeNotifier {
   Duration _partStart = Duration.zero;
   Duration? _partEnd;
   Duration? _duration;
+  List<CastVideoPart> _parts = const [];
+  int _partIndex = 0;
+  bool _replacingReceiver = false;
+  bool _reporting = false;
+  Timer? _nextPartTimer;
+  Future<void>? _previousPartStopped;
   PlaybackReportSession? _reportSession;
   Timer? _progressTimer;
   StreamSubscription<GoogleCastSession?>? _sessionSubscription;
@@ -300,7 +306,7 @@ class CastMediaService extends ChangeNotifier {
     _statusSubscription = _remote.mediaStatusStream.listen(_onMediaStatusChanged);
     _queueSubscription = _remote.queueItemsStream.listen((_) => notifyListeners());
     _positionSubscription = _remote.playerPositionStream.listen((_) {
-      if (_ownsReceiver() && _remote.mediaStatus?.playerState != CastMediaPlayerState.idle) {
+      if (!_replacingReceiver && _ownsReceiver() && _remote.mediaStatus?.playerState != CastMediaPlayerState.idle) {
         _lastOwnedPosition = _currentItemPosition();
       }
       notifyListeners();
@@ -340,9 +346,12 @@ class CastMediaService extends ChangeNotifier {
     if (!current() || !context.mounted || (device == null && !_sessions.hasConnectedSession)) return null;
     return _loads.run(() async {
       if (!current()) return null;
-      await _finishPlayback(_lastOwnedPosition);
-      if (!current()) return null;
       if (device != null) {
+        if (_activeItem != null && _matchesReceiver()) {
+          if (!await _stopMatchedReceiver(confirm: true)) return null;
+          await _finishPlayback(_lastOwnedPosition);
+        }
+        if (!current()) return null;
         if (!await _sessions.startSessionWithDevice(device)) {
           throw const CastPlaybackException('Could not connect to that Cast device.');
         }
@@ -433,7 +442,7 @@ class CastMediaService extends ChangeNotifier {
           invalidated: _sessions.currentSessionStream
               .where((value) => castReceiverKey(value) != connection)
               .map<void>((_) {}),
-          load: (items, options) => dispatchCastMusicQueue(items, options, android: Platform.isAndroid),
+          load: (items, options) => dispatchCastQueue(items, options, android: Platform.isAndroid),
           play: _remote.play,
           armRepeat: (status) => queue.armRepeat(connection, status),
           finish: session.finishTransfer,
@@ -590,224 +599,236 @@ class CastMediaService extends ChangeNotifier {
     final intent = ++_loadIntent;
     final profile = _profileRevision;
     final authentication = client.authenticationSessionId;
-    bool current() =>
-        intent == _loadIntent &&
-        profile == _profileRevision &&
-        identical(authentication, client.authenticationSessionId);
+    bool accountCurrent() => profile == _profileRevision && identical(authentication, client.authenticationSessionId);
+    bool current() => accountCurrent() && intent == _loadIntent && source.isCurrent();
     return _loads.run(() async {
-      if (!current() || !source.isCurrent()) return null;
-      await _finishPlayback(_lastOwnedPosition);
-      if (!current() || !source.isCurrent()) return null;
-      return _loadOwnedMedia(
-        device,
+      if (!current()) return null;
+      final token = generateSessionIdentifier();
+      final initialPosition = source.position();
+      final parts = await prepareCastVideoParts(
         client: client,
         item: item,
         mediaIndex: mediaIndex,
         mediaSourceId: mediaSourceId,
+        position: initialPosition,
+        token: token,
+        selectedSubtitle: source.selectedSubtitle,
         current: current,
-        source: source,
       );
+      if (!current()) return null;
+      final previousDevice = _matchesReceiver() ? _sessions.currentSession?.device : null;
+      final needsConnection = castReceiverKey(_sessions.currentSession)?.device != device.deviceID;
+      late CastReceiverKey connection;
+      var opened = false;
+      var previousStopped = false;
+      bool connected() => opened && castReceiverKey(_sessions.currentSession) == connection;
+      final candidate = CastPlaybackOwnership()..begin(token, accountCurrent);
+      final replacedAt = _ownsReceiver() ? _currentItemPosition() : _lastOwnedPosition;
+      final previousPlaying =
+          _remote.mediaStatus?.playerState == CastMediaPlayerState.playing ||
+          _remote.mediaStatus?.playerState == CastMediaPlayerState.buffering;
+      bool candidateMatches() {
+        final status = _remote.mediaStatus;
+        return connected() && status != null && candidate.matches(_ownerToken(status), status.mediaSessionID);
+      }
+
+      void checkCurrent() {
+        if (!current() || !candidateMatches()) throw CastPlaybackException(t.cast.startFailed);
+      }
+
+      Future<bool> stopCandidate() async {
+        if (!candidateMatches()) return false;
+        try {
+          await loadAcknowledgedCastMedia(
+            statuses: _remote.mediaStatusStream,
+            acknowledge: (status) => status == null || status.playerState == CastMediaPlayerState.idle,
+            invalidated: _disconnected(connection),
+            load: _remote.stop,
+            timeout: const Duration(seconds: 5),
+          );
+          return true;
+        } catch (_) {
+          return false;
+        }
+      }
+
+      _replacingReceiver = true;
+      CastVideoPoint? committed;
+      try {
+        if (needsConnection) {
+          // A sender controls a single receiver connection. Keep the reporting
+          // session and prior queue while switching, so a failed B can restore A.
+          if (_activeItem != null && previousDevice != null) {
+            if (!await _stopMatchedReceiver(confirm: true)) throw CastPlaybackException(t.cast.startFailed);
+            previousStopped = true;
+          }
+          if (!current() || !await _sessions.startSessionWithDevice(device)) {
+            throw CastPlaybackException(t.cast.startFailed);
+          }
+          await _waitForConnection(device.deviceID);
+        }
+        final key = castReceiverKey(_sessions.currentSession);
+        if (!current() || key == null || key.device != device.deviceID) throw CastPlaybackException(t.cast.startFailed);
+        connection = key;
+        opened = true;
+        await _loadVideoQueue(parts, 0, initialPosition, candidate, connection);
+        checkCurrent();
+        final frozen = await commitPreparedCastVideo(
+          source: source,
+          positionReceiver: (position) async {
+            checkCurrent();
+            if (parts.first.target.partTimeline?.covers(position) == false) {
+              throw CastPlaybackException(t.cast.startFailed);
+            }
+            if (position != initialPosition) {
+              await _remote
+                  .seek(GoogleCastMediaSeekOption(position: position - parts.first.start))
+                  .timeout(const Duration(seconds: 10));
+            }
+            checkCurrent();
+            if (_remote.mediaStatus?.playerState != CastMediaPlayerState.paused) {
+              throw CastPlaybackException(t.cast.startFailed);
+            }
+          },
+          playReceiver: () async {
+            await loadAcknowledgedCastMedia(
+              statuses: _remote.mediaStatusStream,
+              invalidated: _disconnected(connection),
+              acknowledge: (status) =>
+                  current() &&
+                  status != null &&
+                  candidate.owns(_ownerToken(status), status.mediaSessionID) &&
+                  status.playerState == CastMediaPlayerState.playing,
+              load: _remote.play,
+            );
+            checkCurrent();
+          },
+          stopReceiver: stopCandidate,
+        );
+        committed = frozen;
+        checkCurrent();
+        // The current movie owns its reporting identity until the receiver acknowledges the replacement.
+        await _ownership.replaceWith(
+          candidate,
+          finishPrevious: () => _finishPlayback(replacedAt),
+          current: () => current() && candidateMatches(),
+        );
+        _receiverKey = connection;
+        _deviceName = device.friendlyName;
+        _activeItem = item;
+        _activeClient = client;
+        _parts = parts;
+        _adoptPart(0);
+        _duration = parts.first.target.partTimeline?.duration ?? parts.first.end;
+        _lastPausedState = null;
+        _lastOwnedPosition = frozen.position;
+        notifyListeners();
+        return CastVideoPlayback._(this, _ownership.revision, item.displayTitle, device.friendlyName, connection);
+      } catch (_) {
+        final candidateStopped = !candidateMatches() || await stopCandidate();
+        if (committed?.playing == true && candidateStopped && source.isCurrent()) await source.restore();
+        // A rejected LOAD may leave A running untouched. If the receiver
+        // actually displaced A, restore it only on a receiver still ours/idle.
+        if (_activeItem != null && (previousStopped || !_matchesReceiver())) {
+          try {
+            if (!_ownership.authorized || !candidateStopped || _parts.isEmpty) {
+              throw StateError('The previous Cast session cannot be restored');
+            }
+            if (previousStopped && previousDevice != null) {
+              if (castReceiverKey(_sessions.currentSession)?.device != previousDevice.deviceID) {
+                if (!await _sessions.startSessionWithDevice(previousDevice)) throw StateError('Receiver unavailable');
+                await _waitForConnection(previousDevice.deviceID);
+              }
+              final key = castReceiverKey(_sessions.currentSession);
+              if (key == null || key.device != previousDevice.deviceID) throw StateError('Receiver changed');
+              connection = key;
+              opened = true;
+            }
+            final status = _remote.mediaStatus;
+            final idle = status == null || status.playerState == CastMediaPlayerState.idle;
+            if (!_ownership.authorized || !connected() || (!idle && !_matchesReceiver() && !candidateMatches())) {
+              throw StateError('The receiver changed owners');
+            }
+            await _loadVideoQueue(_parts, _partIndex, replacedAt, _ownership, connection);
+            _receiverKey = connection;
+            if (previousPlaying && _ownsReceiver()) await _remote.play();
+          } catch (_) {
+            await _finishPlayback(replacedAt);
+          }
+        }
+        rethrow;
+      } finally {
+        _replacingReceiver = false;
+        notifyListeners();
+      }
     });
   }
 
-  Future<CastVideoPlayback?> _loadOwnedMedia(
-    GoogleCastDevice device, {
-    required MediaServerClient client,
-    required MediaItem item,
-    required int mediaIndex,
-    required bool Function() current,
-    required CastVideoSource source,
-    String? mediaSourceId,
-  }) async {
-    final needsConnection = castReceiverKey(_sessions.currentSession)?.device != device.deviceID;
-    if (needsConnection) {
-      final started = await _sessions.startSessionWithDevice(device);
-      if (!started) throw const CastPlaybackException('Could not connect to that Cast device.');
-    }
+  Stream<void> _disconnected(CastReceiverKey connection) =>
+      _sessions.currentSessionStream.where((session) => castReceiverKey(session) != connection).map<void>((_) {});
 
-    try {
-      if (needsConnection) await _waitForConnection();
-      if (!current() || !source.isCurrent()) return null;
-      final connection = castReceiverKey(_sessions.currentSession);
-      if (connection == null || device.deviceID != connection.device) {
-        throw const CastPlaybackException('The Cast device is no longer connected.');
-      }
-      bool authorized() => current() && castReceiverKey(_sessions.currentSession) == connection;
-      final initialPosition = source.position();
-      final target = await client.resolveExternalPlayback(
-        item,
-        mediaIndex: mediaIndex,
-        mediaSourceId: mediaSourceId,
-        position: initialPosition,
-      );
-      if (!authorized() || !source.isCurrent()) return null;
-      if (target == null || target.url.isEmpty) {
-        throw const CastPlaybackException('This item is not available for casting.');
-      }
-      final uri = Uri.tryParse(target.url);
-      if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https') || uri.host.isEmpty) {
-        throw const CastPlaybackException('The server did not provide a Cast-compatible stream.');
-      }
-
-      final timeline = target.partTimeline;
-      if (timeline != null && !timeline.covers(initialPosition)) throw CastPlaybackException(t.cast.startFailed);
-      final part = timeline?.current;
-      final partStart = part?.start ?? Duration.zero;
-      final duration =
-          timeline?.duration ??
-          (item.durationMs != null && item.durationMs! > 0 ? Duration(milliseconds: item.durationMs!) : null);
-      final textTracks = _castTracks(target.subtitles);
-      final streamType = CastMediaStreamType.buffered;
-      final token = generateSessionIdentifier();
-      _receiverKey = connection;
-      _ownership.begin(token, authorized);
-      final information = GoogleCastMediaInformation(
-        contentId: uri.toString(),
-        contentUrl: uri,
-        contentType: _contentType(uri),
-        streamType: streamType,
-        duration: part?.duration ?? duration,
-        metadata: GoogleCastGenericMediaMetadata(title: item.displayTitle, subtitle: item.displaySubtitle),
-        tracks: textTracks.tracks.isEmpty ? null : textTracks.tracks,
-        customData: {'pleazyngOwner': token},
-      );
-
-      final invalidated = _sessions.currentSessionStream
-          .where((session) => castReceiverKey(session) != connection)
-          .map<void>((_) {});
-      await loadAcknowledgedCastMedia(
-        statuses: _remote.mediaStatusStream,
-        acknowledge: (status) =>
-            status != null &&
-            _ownership.acknowledge(_ownerToken(status), status.mediaSessionID) &&
-            status.playerState == CastMediaPlayerState.paused,
-        invalidated: invalidated,
-        load: () => _remote.loadMedia(
-          information,
-          autoPlay: false,
-          playPosition: initialPosition - partStart,
-          activeTrackIds: textTracks.defaultTrackIds.isEmpty ? null : textTracks.defaultTrackIds,
+  Future<void> _loadVideoQueue(
+    List<CastVideoPart> parts,
+    int index,
+    Duration position,
+    CastPlaybackOwnership owner,
+    CastReceiverKey connection,
+  ) async {
+    final part = parts[index];
+    final offset = position - part.start;
+    final items = [
+      for (final (i, entry) in parts.indexed)
+        GoogleCastQueueItem(
+          mediaInformation: entry.item.mediaInformation,
+          activeTrackIds: entry.item.activeTrackIds,
+          autoPlay: i != index,
         ),
-      );
-      void checkCurrent() {
-        if (!_ownsReceiver() || !source.isCurrent()) throw CastPlaybackException(t.cast.startFailed);
-      }
+    ];
+    await loadAcknowledgedCastMedia(
+      statuses: _remote.mediaStatusStream,
+      invalidated: _disconnected(connection),
+      acknowledge: (status) =>
+          status != null &&
+          _statusPart(status) == index &&
+          owner.acknowledgeQueueItem(_ownerToken(status), status.mediaSessionID) &&
+          status.playerState == CastMediaPlayerState.paused,
+      load: () => dispatchCastQueue(
+        items,
+        GoogleCastQueueLoadOptions(startIndex: index, playPosition: offset, repeatMode: GoogleCastMediaRepeatMode.off),
+        android: Platform.isAndroid,
+      ),
+    );
+  }
 
-      checkCurrent();
-      final frozen = await commitPreparedCastVideo(
-        source: source,
-        positionReceiver: (position) async {
-          checkCurrent();
-          if (timeline != null && !timeline.covers(position)) throw CastPlaybackException(t.cast.startFailed);
-          if (position != initialPosition) {
-            await _remote
-                .seek(GoogleCastMediaSeekOption(position: position - partStart))
-                .timeout(const Duration(seconds: 10));
-          }
-          checkCurrent();
-          if (_remote.mediaStatus?.playerState != CastMediaPlayerState.paused) {
-            throw CastPlaybackException(t.cast.startFailed);
-          }
-        },
-        playReceiver: () async {
-          await loadAcknowledgedCastMedia(
-            statuses: _remote.mediaStatusStream,
-            acknowledge: (status) =>
-                status != null &&
-                authorized() &&
-                _ownership.owns(_ownerToken(status), status.mediaSessionID) &&
-                status.playerState == CastMediaPlayerState.playing,
-            invalidated: invalidated,
-            load: _remote.play,
-            timeout: const Duration(seconds: 10),
-          );
-          checkCurrent();
-        },
-        stopReceiver: () => _stopMatchedReceiver(confirm: true),
-      );
+  int? _statusPart(GoggleCastMediaStatus? status) =>
+      int.tryParse(status?.mediaInformation?.customData?['pleazyngPart']?.toString() ?? '');
 
-      _deviceName = device.friendlyName;
-      _activeItem = item;
-      _activeClient = client;
-      _playSessionId = target.playSessionId;
-      _partStart = partStart;
-      _partEnd = part?.end ?? duration;
-      _duration = duration;
-      _lastPausedState = null;
-      _lastOwnedPosition = frozen.position;
-      notifyListeners();
-      return CastVideoPlayback._(this, _ownership.revision, item.displayTitle, device.friendlyName, connection);
-    } catch (error) {
-      await _stopMatchedReceiver();
-      _ownership.clear();
-      _receiverKey = null;
-      if (error is CastPlaybackException || error is CastVideoTransferUncertain) rethrow;
-      appLogger.w('Google Cast could not load media (${error.runtimeType})');
-      throw const CastPlaybackException('Could not start playback on this Cast device.');
-    } finally {
-      if (_activeItem == null) {
-        _ownership.clear();
-        _receiverKey = null;
-      }
+  void _adoptPart(int index) {
+    _nextPartTimer?.cancel();
+    _nextPartTimer = null;
+    _partIndex = index;
+    final part = _parts[index];
+    _partStart = part.start;
+    _partEnd = part.end;
+    _playSessionId = part.target.playSessionId ?? _parts.first.target.playSessionId;
+  }
+
+  Future<void> _waitForConnection([String? deviceId]) async {
+    bool matches(GoogleCastSession? session) {
+      final key = castReceiverKey(session);
+      return key != null && (deviceId == null || key.device == deviceId);
     }
-  }
 
-  Future<void> _waitForConnection() async {
-    if (_sessions.hasConnectedSession) return;
-    await _sessions.currentSessionStream
-        .firstWhere((session) => session?.connectionState == GoogleCastConnectState.connected)
-        .timeout(const Duration(seconds: 30));
-  }
-
-  ({List<GoogleCastMediaTrack> tracks, List<int> defaultTrackIds}) _castTracks(List<SubtitleTrack> subtitles) {
-    final tracks = <GoogleCastMediaTrack>[];
-    final defaults = <int>[];
-    for (final subtitle in subtitles) {
-      final rawUri = subtitle.uri;
-      if (rawUri == null) continue;
-      final uri = Uri.tryParse(rawUri);
-      if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https')) continue;
-      final extension = uri.pathSegments.isEmpty ? '' : uri.pathSegments.last.split('.').last.toLowerCase();
-      final contentType = switch (extension) {
-        'vtt' => 'text/vtt',
-        'srt' => 'application/x-subrip',
-        _ => null,
-      };
-      if (contentType == null) continue;
-      final id = tracks.length + 1;
-      tracks.add(
-        GoogleCastMediaTrack(
-          trackId: id,
-          type: TrackType.text,
-          subtype: TextTrackType.subtitles,
-          trackContentId: uri.toString(),
-          trackContentType: contentType,
-          name: subtitle.title ?? subtitle.language ?? t.cast.subtitle,
-        ),
-      );
-      if (subtitle.isDefault) defaults.add(id);
-    }
-    return (tracks: tracks, defaultTrackIds: defaults);
-  }
-
-  static String _contentType(Uri uri) {
-    final name = uri.pathSegments.isEmpty ? '' : uri.pathSegments.last.toLowerCase();
-    if (name.endsWith('.m3u8')) return 'application/x-mpegURL';
-    if (name.endsWith('.mpd')) return 'application/dash+xml';
-    if (name.endsWith('.webm')) return 'video/webm';
-    if (name.endsWith('.mov')) return 'video/quicktime';
-    if (name.endsWith('.mkv')) return 'video/x-matroska';
-    if (name.endsWith('.ts')) return 'video/mp2t';
-    if (name.endsWith('.mp3')) return 'audio/mpeg';
-    if (name.endsWith('.m4a')) return 'audio/mp4';
-    return 'video/mp4';
+    if (matches(_sessions.currentSession)) return;
+    await _sessions.currentSessionStream.firstWhere(matches).timeout(const Duration(seconds: 30));
   }
 
   void _beginProgressReporting() {
     final item = _activeItem;
     final client = _activeClient;
     final duration = _duration;
-    if (item == null || client == null || !_ownership.authorized) return;
+    if (item == null || client == null || !_ownership.authorized || _reporting) return;
+    _reporting = true;
 
     if (duration != null && duration > Duration.zero) {
       _reportSession = PlaybackReportSession(
@@ -821,6 +842,7 @@ class CastMediaService extends ChangeNotifier {
     unawaited(TrackerCoordinator.instance.startPlayback(item, client));
     _progressTimer?.cancel();
     _progressTimer = Timer.periodic(const Duration(seconds: 15), (_) {
+      if (_replacingReceiver || _nextPartTimer != null) return;
       if (_ownsReceiver()) {
         unawaited(_reportPosition(_currentItemPosition(), isStopped: false));
       } else {
@@ -830,7 +852,9 @@ class CastMediaService extends ChangeNotifier {
     });
   }
 
-  Duration _currentItemPosition() => _partStart + _remote.playerPosition;
+  Duration _currentItemPosition() {
+    return _parts.isEmpty ? _lastOwnedPosition : _parts[_partIndex].itemPosition(_remote.playerPosition);
+  }
 
   CastVideoState? _videoState(int revision) {
     if (revision != _ownership.revision || _activeItem == null || _finishingPlayback || !_ownsReceiver()) return null;
@@ -856,6 +880,14 @@ class CastMediaService extends ChangeNotifier {
     final client = _activeClient;
     final duration = _duration;
     final reportSession = _reportSession;
+    final sourceId = _parts.isEmpty ? null : _parts[_partIndex].target.mediaInfo?.mediaSourceId;
+    final terminalPart = _partIndex == _parts.length - 1;
+    final barrier = _previousPartStopped;
+    if (barrier != null) {
+      await barrier;
+      if (!identical(_reportSession, reportSession) || !_ownership.authorized) return;
+    }
+
     if (item == null || client == null || !_ownership.authorized) return;
     if (!isStopped && !_ownsReceiver()) return;
     final revision = _ownership.revision;
@@ -888,10 +920,11 @@ class CastMediaService extends ChangeNotifier {
                 : 'playing',
             position: clampedPosition,
             duration: duration,
+            resolveStreamSelection: () => PlaybackStreamSelection(mediaSourceId: sourceId),
           ),
         );
         if (isStopped) stoppedReportSucceeded = delivered;
-        if (!isStopped && current()) {
+        if (!isStopped && current() && delivered) {
           WatchStateNotifier().notifyProgress(
             item: item,
             cacheServerId: client.cacheServerId,
@@ -909,6 +942,7 @@ class CastMediaService extends ChangeNotifier {
     if (!isStopped ||
         !current() ||
         !stoppedReportSucceeded ||
+        !terminalPart ||
         duration == null ||
         clampedPosition.inMilliseconds < duration.inMilliseconds * client.watchedThreshold) {
       return;
@@ -925,29 +959,92 @@ class CastMediaService extends ChangeNotifier {
   void _onSessionChanged(GoogleCastSession? session) {
     _checkDetached();
     _tryRecoverDetached();
-    if (castReceiverKey(session) != _receiverKey && _activeItem != null && !_finishingPlayback) {
+    if (!_replacingReceiver && castReceiverKey(session) != _receiverKey && _activeItem != null && !_finishingPlayback) {
       _retirePlayback();
     }
     if (session?.device?.friendlyName case final String name) _deviceName = name;
     notifyListeners();
   }
 
+  void _awaitNextPart() {
+    _nextPartTimer ??= Timer(const Duration(seconds: 15), () {
+      _nextPartTimer = null;
+      if (_remote.mediaStatus?.playerState == CastMediaPlayerState.idle || !_ownsReceiver()) _retirePlayback();
+    });
+  }
+
   void _onMediaStatusChanged(GoggleCastMediaStatus? status) {
     _checkDetached();
     _tryRecoverDetached();
+    if (_replacingReceiver) return;
     if (_activeItem != null) {
+      if (status == null && _parts[_partIndex].hasNext && castReceiverKey(_sessions.currentSession) == _receiverKey) {
+        _awaitNextPart();
+        return;
+      }
+      final index = _statusPart(status);
+      if (status != null &&
+          index != null &&
+          index >= 0 &&
+          index < _parts.length &&
+          _receiverKey == castReceiverKey(_sessions.currentSession) &&
+          _ownership.acknowledgeQueueItem(_ownerToken(status), status.mediaSessionID) &&
+          index != _partIndex) {
+        final previous = _reportSession;
+        final oldPart = _parts[_partIndex];
+        final duration = _duration;
+        final changesServerItem = _activeClient!.backend.usesMediaBrowserApi;
+        if (changesServerItem && previous != null && duration != null) {
+          final snapshot = PlaybackReportSnapshot(
+            state: 'stopped',
+            position: _lastOwnedPosition,
+            duration: duration,
+            resolveStreamSelection: () =>
+                PlaybackStreamSelection(mediaSourceId: oldPart.target.mediaInfo?.mediaSourceId),
+          );
+          final revision = _ownership.revision;
+          final pending = _previousPartStopped ?? Future<void>.value();
+          _previousPartStopped = pending
+              .then((_) async {
+                if (_ownership.revision == revision && _ownership.authorized) await previous.report(snapshot);
+              })
+              .catchError((Object error) => appLogger.d('Cast part stop failed (${error.runtimeType})'));
+        }
+        _adoptPart(index);
+        _lastOwnedPosition = _partStart;
+        _lastPausedState = null;
+        if (changesServerItem && _reporting) {
+          _reportSession = PlaybackReportSession(
+            client: _activeClient!,
+            itemId: _activeItem!.id,
+            playMethod: 'DirectPlay',
+            playSessionId: _playSessionId,
+          );
+        }
+      }
       if (!_ownsReceiver()) {
         _progressTimer?.cancel();
         unawaited(_stopMatchedReceiver());
         _retirePlayback();
         return;
       }
-      if (status?.playerState != CastMediaPlayerState.idle) _lastOwnedPosition = _currentItemPosition();
+      if (status?.playerState != CastMediaPlayerState.idle) {
+        _nextPartTimer?.cancel();
+        _nextPartTimer = null;
+        _lastOwnedPosition = _currentItemPosition();
+      }
       if (status?.playerState == CastMediaPlayerState.idle &&
           status?.idleReason != null &&
           status?.idleReason != GoogleCastMediaIdleReason.none) {
-        if (status?.idleReason == GoogleCastMediaIdleReason.finished && _duration != null) {
-          _lastOwnedPosition = _duration!;
+        if (status?.idleReason == GoogleCastMediaIdleReason.finished && _partEnd != null) {
+          _lastOwnedPosition = _partEnd!;
+          if (_parts[_partIndex].hasNext) {
+            // The receiver queue advances by itself. Its FINISHED belongs to
+            // the current file. Keep the item session for the next status.
+            _awaitNextPart();
+            notifyListeners();
+            return;
+          }
         }
         _retirePlayback();
       } else if ((status?.playerState == CastMediaPlayerState.playing ||
@@ -968,6 +1065,12 @@ class CastMediaService extends ChangeNotifier {
       if (_ownership.authorized) await _reportPosition(position, isStopped: true);
       await TrackerCoordinator.instance.stopPlayback();
       _reportSession = null;
+      _reporting = false;
+      _parts = const [];
+      _partIndex = 0;
+      _nextPartTimer?.cancel();
+      _nextPartTimer = null;
+      _previousPartStopped = null;
       _activeItem = null;
       _activeClient = null;
       _playSessionId = null;
@@ -1120,10 +1223,14 @@ class CastVideoPlayback {
 
   Listenable get changes => _service;
   CastVideoState? get state => _service._videoState(_revision);
-  bool get connected => castReceiverKey(_service._sessions.currentSession) == _connection;
+  bool get connected => _revision == _service._ownership.revision
+      ? (_service._replacingReceiver ||
+            (_service._receiverKey != null &&
+                castReceiverKey(_service._sessions.currentSession) == _service._receiverKey))
+      : castReceiverKey(_service._sessions.currentSession) == _connection;
 
   void startReporting() {
-    if (state != null) _service._beginProgressReporting();
+    if (_revision == _service._ownership.revision && _service._activeItem != null) _service._beginProgressReporting();
   }
 
   Future<void> toggle() =>

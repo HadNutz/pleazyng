@@ -343,6 +343,9 @@ class Translations$common$fr extends Translations$common$en {
 	@override String get notAvailable => 'N/D';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Symboles';
+	@override String get keyboardLetters => 'Lettres';
+	@override String get keyboardNewLine => 'Nouvelle ligne';
 	@override late final Translations$common$mediaKind$fr mediaKind = Translations$common$mediaKind$fr.internal(_root);
 }
 
@@ -574,7 +577,7 @@ class Translations$settings$fr extends Translations$settings$en {
 	@override String get importSettings => 'Importer les paramètres';
 	@override String get importSettingsDescription => 'Restaurer les préférences depuis un fichier';
 	@override String get importSettingsConfirm => 'Cela remplacera vos paramètres actuels. Continuer ?';
-	@override String get importSettingsSuccess => 'Paramètres importés';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Paramètres appliqués : ${applied}. Ignorés : ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Ce fichier n’est pas une exportation valide des paramètres de Pleazyng';
 	@override String get importSettingsNoUser => 'Connectez-vous avant d’importer les paramètres';
 	@override String get cloudBackup => 'Cloud de sauvegarde';
@@ -587,7 +590,6 @@ class Translations$settings$fr extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Sauvegarde envoyée. Conservez cette URL. Après une nouvelle installation, saisissez-la dans la rubrique de sauvegarde en ligne et choisissez « ${action} ».';
 	@override String get cloudBackupRestore => 'Récupérer Backup';
 	@override String get cloudBackupRestoreConfirm => 'Cela remplacera les paramètres portables correspondants sur ce dispositif.';
-	@override String get cloudBackupRestored => 'Récupération de la récupération de la sauvegarde cloud';
 	@override String get shortcutsReset => 'Raccourcis réinitialisés aux valeurs par défaut';
 	@override String get resetShortcutsConfirm => 'Cela remplacera vos raccourcis personnalisés par les raccourcis par défaut. Continuer ?';
 	@override String get about => 'À propos';
@@ -3143,7 +3145,6 @@ class Translations$cast$fr extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Connectez-vous à ${device}';
 	@override String get device => 'Dispositif de casting';
 	@override String get readyToCast => 'Prêt à lancer';
-	@override String get subtitle => 'Sous-titres';
 	@override String get serverNotAvailable => 'Le serveur de médias n’est pas disponible.';
 	@override String get stopCasting => 'Arrêter de casting';
 	@override String get startFailed => 'Je ne peux pas commencer à lancer. vérifier le serveur et essayer à nouveau.';
@@ -5874,6 +5875,9 @@ extension on TranslationsFr {
 			'common.notAvailable' => 'N/D',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Symboles',
+			'common.keyboardLetters' => 'Lettres',
+			'common.keyboardNewLine' => 'Nouvelle ligne',
 			'common.mediaKind.movie' => 'Film',
 			'common.mediaKind.show' => 'Série',
 			'common.mediaKind.season' => 'Saison',
@@ -6082,7 +6086,7 @@ extension on TranslationsFr {
 			'settings.importSettings' => 'Importer les paramètres',
 			'settings.importSettingsDescription' => 'Restaurer les préférences depuis un fichier',
 			'settings.importSettingsConfirm' => 'Cela remplacera vos paramètres actuels. Continuer ?',
-			'settings.importSettingsSuccess' => 'Paramètres importés',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Paramètres appliqués : ${applied}. Ignorés : ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Ce fichier n’est pas une exportation valide des paramètres de Pleazyng',
 			'settings.importSettingsNoUser' => 'Connectez-vous avant d’importer les paramètres',
 			'settings.cloudBackup' => 'Cloud de sauvegarde',
@@ -6095,7 +6099,6 @@ extension on TranslationsFr {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Sauvegarde envoyée. Conservez cette URL. Après une nouvelle installation, saisissez-la dans la rubrique de sauvegarde en ligne et choisissez « ${action} ».',
 			'settings.cloudBackupRestore' => 'Récupérer Backup',
 			'settings.cloudBackupRestoreConfirm' => 'Cela remplacera les paramètres portables correspondants sur ce dispositif.',
-			'settings.cloudBackupRestored' => 'Récupération de la récupération de la sauvegarde cloud',
 			'settings.shortcutsReset' => 'Raccourcis réinitialisés aux valeurs par défaut',
 			'settings.resetShortcutsConfirm' => 'Cela remplacera vos raccourcis personnalisés par les raccourcis par défaut. Continuer ?',
 			'settings.about' => 'À propos',
@@ -6194,10 +6197,10 @@ extension on TranslationsFr {
 			'settings.companionRemoteServer' => 'Serveur de télécommande',
 			'settings.companionRemoteServerDescription' => 'Autoriser les appareils mobiles de votre réseau à contrôler cette application',
 			'settings.companionRemoteServerStartFailed' => 'Impossible de démarrer le serveur de télécommande',
-			'settings.companionRemoteServerStopFailed' => 'Impossible d\'arrêter le serveur de télécommande',
-			'settings.autoPip' => 'Mode image dans l’image automatique',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Impossible d\'arrêter le serveur de télécommande',
+			'settings.autoPip' => 'Mode image dans l’image automatique',
 			'settings.autoPipDescription' => 'Passer en mode image dans l’image si vous quittez l’application pendant la lecture',
 			'settings.matchContentFrameRate' => 'Adapter la fréquence d’images au contenu',
 			'settings.matchContentFrameRateDescription' => 'Adapter la fréquence de rafraîchissement de l’écran au contenu vidéo',
@@ -6708,10 +6711,10 @@ extension on TranslationsFr {
 			'accessibility.reduceMotionHint' => 'Arrêter les animations du repère de focus, les transitions de page et les effets décoratifs.',
 			'accessibility.largeTargets' => 'Objectifs touchés',
 			'accessibility.largeTargetsHint' => 'Donnez plus de place aux contrôles partagés pour la navigation touchante et assistante.',
-			'accessibility.navigationHint' => 'Utilisez Tab et Shift+Tab pour passer d’une commande à l’autre, Enter ou la barre d’espace pour l’activer, et Escape ou Retour pour fermer. Le zoom et les préférences de lecture sont disponibles lorsqu’un livre est ouvert.',
-			'accessibility.textSizeDescription' => 'Texte de l\'interface d\'échelle dans Pleazyng en plus de la configuration de taille du texte système de votre appareil.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'Utilisez Tab et Shift+Tab pour passer d’une commande à l’autre, Enter ou la barre d’espace pour l’activer, et Escape ou Retour pour fermer. Le zoom et les préférences de lecture sont disponibles lorsqu’un livre est ouvert.',
+			'accessibility.textSizeDescription' => 'Texte de l\'interface d\'échelle dans Pleazyng en plus de la configuration de taille du texte système de votre appareil.',
 			'accessibility.boldTextHint' => 'Utilisez un poids plus lourd pour les étiquettes et les messages d’interface afin de les rendre plus faciles à distinguer.',
 			'tooltips.shufflePlay' => 'Lecture aléatoire',
 			'tooltips.playTrailer' => 'Lire la bande-annonce',
@@ -7222,10 +7225,10 @@ extension on TranslationsFr {
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'Série TV',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min restantes',
-			'discover.moreLikeThis' => 'Plus de contenus similaires',
-			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titre', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titres', ), 
 			_ => null,
 		} ?? switch (path) {
+			'discover.moreLikeThis' => 'Plus de contenus similaires',
+			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titre', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titres', ), 
 			'discover.person.born' => 'Naissance',
 			'discover.person.died' => 'Décès',
 			'discover.person.birthplace' => 'Lieu de naissance',
@@ -7736,10 +7739,10 @@ extension on TranslationsFr {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Erreur lors du retrait de la collection : ${error}',
 			'collections.searchCollections' => 'Rechercher des collections...',
 			'playlists.title' => 'Playlists',
-			'playlists.playlist' => 'Playlist',
-			'playlists.noPlaylists' => 'Aucune playlist trouvée',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.playlist' => 'Playlist',
+			'playlists.noPlaylists' => 'Aucune playlist trouvée',
 			'playlists.create' => 'Créer une playlist',
 			'playlists.playlistName' => 'Nom de playlist',
 			'playlists.enterPlaylistName' => 'Saisissez le nom de la playlist',
@@ -8250,10 +8253,10 @@ extension on TranslationsFr {
 			'performanceOverlay.dvRouteBaseLayer' => 'Couche de base',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Couche de base HDR10',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Couche de base HLG',
-			'performanceOverlay.dvRouteBaseLayerSdr' => 'Couche de base SDR',
-			'performanceOverlay.dvRouteReshaped' => 'Remodelage RPU (gpu-next)',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerSdr' => 'Couche de base SDR',
+			'performanceOverlay.dvRouteReshaped' => 'Remodelage RPU (gpu-next)',
 			'performanceOverlay.dvRouteFelGraphActive' => 'Graphique expérimental P7 FEL (non qualifié)',
 			'performanceOverlay.p7Conversion' => 'Conv. P7',
 			'performanceOverlay.sampleRate' => 'Fréquence d’échantillonnage',
@@ -8697,7 +8700,6 @@ extension on TranslationsFr {
 			'cast.connectedTo' => ({required Object device}) => 'Connectez-vous à ${device}',
 			'cast.device' => 'Dispositif de casting',
 			'cast.readyToCast' => 'Prêt à lancer',
-			'cast.subtitle' => 'Sous-titres',
 			'cast.serverNotAvailable' => 'Le serveur de médias n’est pas disponible.',
 			'cast.stopCasting' => 'Arrêter de casting',
 			'cast.startFailed' => 'Je ne peux pas commencer à lancer. vérifier le serveur et essayer à nouveau.',
@@ -8765,9 +8767,9 @@ extension on TranslationsFr {
 			'homeLayout.enableHeroFirst' => 'Un héros en premier',
 			'homeLayout.showOnHome' => 'Afficher sur l\'écran de maison',
 			'homeLayout.home' => 'Accueil',
-			'homeLayout.removeFromHome' => 'Retirez de chez vous',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.removeFromHome' => 'Retirez de chez vous',
 			'homeLayout.selectRowsFirst' => 'Sélectionnez les lignes de maison ci-dessous d\'abord.',
 			'homeLayout.plexManagedRows' => ({required Object n}) => '${n} Plex rangées gérées',
 			'homeLayout.continueWatching' => 'Continuer à regarder',
@@ -9279,9 +9281,9 @@ extension on TranslationsFr {
 			'audiobook.librarySort' => 'Les livres sortants',
 			'audiobook.sortTitle' => 'Titre',
 			'audiobook.sortAuthor' => 'Auteur',
-			'audiobook.sortNarrator' => 'Narrateur',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'Narrateur',
 			'audiobook.sortSeries' => 'Commande série',
 			'audiobook.sortRecent' => 'récemment ouvert',
 			'audiobook.statusFilter' => 'Le statut de lecture',
@@ -9793,9 +9795,9 @@ extension on TranslationsFr {
 			'musicExperience.error' => 'La demande musicale a échoué',
 			'musicExperience.on' => 'sur',
 			'musicExperience.off' => 'Désactivé',
-			'musicExperience.unknown' => 'Inconnu',
 			_ => null,
 		} ?? switch (path) {
+			'musicExperience.unknown' => 'Inconnu',
 			'musicExperience.routeLost' => 'Sortie audio déconnectée. Lecture en pause.',
 			'musicExperience.autoDriving' => 'Ouvrir le mode conduite à la connexion à une voiture',
 			'musicExperience.routeHint' => 'Le système de la voiture décide si l’application peut s’afficher automatiquement.',

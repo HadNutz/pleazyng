@@ -342,6 +342,9 @@ class _Translations$common$nl extends Translations$common$en {
 	@override String get notAvailable => 'N/A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Symbolen';
+	@override String get keyboardLetters => 'Letters';
+	@override String get keyboardNewLine => 'Nieuwe regel';
 	@override late final _Translations$common$mediaKind$nl mediaKind = _Translations$common$mediaKind$nl._(_root);
 }
 
@@ -571,7 +574,7 @@ class _Translations$settings$nl extends Translations$settings$en {
 	@override String get importSettings => 'Instellingen importeren';
 	@override String get importSettingsDescription => 'Voorkeuren herstellen vanuit een bestand';
 	@override String get importSettingsConfirm => 'Hiermee worden je huidige instellingen vervangen. Doorgaan?';
-	@override String get importSettingsSuccess => 'Instellingen geïmporteerd';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Toegepaste instellingen: ${applied}. Overgeslagen: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Dit bestand is geen geldige Pleazyng-export';
 	@override String get importSettingsNoUser => 'Meld je aan voordat je instellingen importeert';
 	@override String get cloudBackup => 'Cloudback-up';
@@ -584,7 +587,6 @@ class _Translations$settings$nl extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'De back-up is geüpload. Bewaar deze URL. Voer de URL na een nieuwe installatie in bij de cloudback-up en kies ‘${action}’.';
 	@override String get cloudBackupRestore => 'Herstel backup';
 	@override String get cloudBackupRestoreConfirm => 'Dit zal de overeenkomstige portable instellingen op deze apparaat vervangen.';
-	@override String get cloudBackupRestored => 'Instellingen hersteld van cloud backup';
 	@override String get shortcutsReset => 'Sneltoetsen gereset naar standaard';
 	@override String get resetShortcutsConfirm => 'Hiermee worden je aangepaste sneltoetsen vervangen door de standaardinstellingen. Doorgaan?';
 	@override String get about => 'Over';
@@ -3126,7 +3128,6 @@ class _Translations$cast$nl extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Geleid naar ${device}';
 	@override String get device => 'Cast apparaat';
 	@override String get readyToCast => 'Bereid om te casten';
-	@override String get subtitle => 'Ondertitels';
 	@override String get serverNotAvailable => 'De media server is niet beschikbaar.';
 	@override String get stopCasting => 'Stop met casting';
 	@override String get startFailed => 'Kan niet beginnen met casting. check the server and try again.';
@@ -5830,6 +5831,9 @@ extension on TranslationsNl {
 			'common.notAvailable' => 'N/A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Symbolen',
+			'common.keyboardLetters' => 'Letters',
+			'common.keyboardNewLine' => 'Nieuwe regel',
 			'common.mediaKind.movie' => 'Film',
 			'common.mediaKind.show' => 'Serie',
 			'common.mediaKind.season' => 'Seizoen',
@@ -6038,7 +6042,7 @@ extension on TranslationsNl {
 			'settings.importSettings' => 'Instellingen importeren',
 			'settings.importSettingsDescription' => 'Voorkeuren herstellen vanuit een bestand',
 			'settings.importSettingsConfirm' => 'Hiermee worden je huidige instellingen vervangen. Doorgaan?',
-			'settings.importSettingsSuccess' => 'Instellingen geïmporteerd',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Toegepaste instellingen: ${applied}. Overgeslagen: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Dit bestand is geen geldige Pleazyng-export',
 			'settings.importSettingsNoUser' => 'Meld je aan voordat je instellingen importeert',
 			'settings.cloudBackup' => 'Cloudback-up',
@@ -6051,7 +6055,6 @@ extension on TranslationsNl {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'De back-up is geüpload. Bewaar deze URL. Voer de URL na een nieuwe installatie in bij de cloudback-up en kies ‘${action}’.',
 			'settings.cloudBackupRestore' => 'Herstel backup',
 			'settings.cloudBackupRestoreConfirm' => 'Dit zal de overeenkomstige portable instellingen op deze apparaat vervangen.',
-			'settings.cloudBackupRestored' => 'Instellingen hersteld van cloud backup',
 			'settings.shortcutsReset' => 'Sneltoetsen gereset naar standaard',
 			'settings.resetShortcutsConfirm' => 'Hiermee worden je aangepaste sneltoetsen vervangen door de standaardinstellingen. Doorgaan?',
 			'settings.about' => 'Over',
@@ -6150,10 +6153,10 @@ extension on TranslationsNl {
 			'settings.companionRemoteServer' => 'Companion Remote-server',
 			'settings.companionRemoteServerDescription' => 'Sta mobiele apparaten op je netwerk toe om deze app te bedienen',
 			'settings.companionRemoteServerStartFailed' => 'Kan de Companion Remote-server niet starten',
-			'settings.companionRemoteServerStopFailed' => 'Kan de Companion Remote-server niet stoppen',
-			'settings.autoPip' => 'Automatische beeld-in-beeld',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Kan de Companion Remote-server niet stoppen',
+			'settings.autoPip' => 'Automatische beeld-in-beeld',
 			'settings.autoPipDescription' => 'Schakel over naar beeld-in-beeld als je tijdens het afspelen de app verlaat',
 			'settings.matchContentFrameRate' => 'Inhoudsframesnelheid afstemmen',
 			'settings.matchContentFrameRateDescription' => 'Stem schermverversing af op videocontent',
@@ -6664,10 +6667,10 @@ extension on TranslationsNl {
 			'accessibility.reduceMotionHint' => 'Animaties van de focusindicator, paginaovergangen en decoratieve effecten stilzetten.',
 			'accessibility.largeTargets' => 'Grotere touch doelen',
 			'accessibility.largeTargetsHint' => 'Geef gedeelde controles meer ruimte voor touch en assistieve navigatie.',
-			'accessibility.navigationHint' => 'Gebruik Tab en Shift+Tab om tussen bedieningselementen te bewegen, Enter of de spatiebalk om ze te activeren en Escape of Terug om te sluiten. Als een boek geopend is, zijn zoom en leesvoorkeuren beschikbaar.',
-			'accessibility.textSizeDescription' => 'Scale interface tekst in Pleazyng naast de systeem-text-size instelling van uw apparaat.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'Gebruik Tab en Shift+Tab om tussen bedieningselementen te bewegen, Enter of de spatiebalk om ze te activeren en Escape of Terug om te sluiten. Als een boek geopend is, zijn zoom en leesvoorkeuren beschikbaar.',
+			'accessibility.textSizeDescription' => 'Scale interface tekst in Pleazyng naast de systeem-text-size instelling van uw apparaat.',
 			'accessibility.boldTextHint' => 'Gebruik een zwaarder gewicht voor interface labels en berichten om ze gemakkelijker te onderscheiden.',
 			'tooltips.shufflePlay' => 'Willekeurig afspelen',
 			'tooltips.playTrailer' => 'Trailer afspelen',
@@ -7178,10 +7181,10 @@ extension on TranslationsNl {
 			'discover.person.birthplace' => 'Geboorteplaats',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age} jaar)',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (op ${age}-jarige leeftijd)',
-			'errors.searchFailed' => ({required Object error}) => 'Zoeken mislukt: ${error}',
-			'errors.searchUnavailable' => 'Zoeken kon geen enkele mediaserver bereiken.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => 'Zoeken mislukt: ${error}',
+			'errors.searchUnavailable' => 'Zoeken kon geen enkele mediaserver bereiken.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Time-out van verbinding tijdens het laden van ${context}',
 			'errors.connectionFailed' => 'Kan geen verbinding maken met mediaserver',
 			'errors.unableToLoad' => ({required Object context}) => 'Kan ${context} niet laden. Probeer het opnieuw.',
@@ -7692,10 +7695,10 @@ extension on TranslationsNl {
 			'playlists.enterPlaylistName' => 'Voer een naam voor de afspeellijst in',
 			'playlists.delete' => 'Afspeellijst verwijderen',
 			'playlists.removeItem' => 'Verwijderen uit afspeellijst',
-			'playlists.smartPlaylist' => 'Slimme afspeellijst',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('nl'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} item', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} items', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => 'Slimme afspeellijst',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('nl'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} item', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} items', ), 
 			'playlists.emptyPlaylist' => 'Deze afspeellijst is leeg',
 			'playlists.deleteConfirm' => 'Afspeellijst verwijderen?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Weet je zeker dat je "${name}" wilt verwijderen?',
@@ -8206,10 +8209,10 @@ extension on TranslationsNl {
 			'performanceOverlay.sampleRate' => 'Samplefrequentie',
 			'performanceOverlay.pixelFormat' => 'Pixelformaat',
 			'performanceOverlay.hwFormat' => 'HW-formaat',
-			'performanceOverlay.matrix' => 'Matrix',
-			'performanceOverlay.primaries' => 'Primaire kleuren',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => 'Matrix',
+			'performanceOverlay.primaries' => 'Primaire kleuren',
 			'performanceOverlay.transfer' => 'Overdracht',
 			'performanceOverlay.renderFps' => 'Render-FPS',
 			'performanceOverlay.displayFps' => 'Scherm-FPS',
@@ -8646,7 +8649,6 @@ extension on TranslationsNl {
 			'cast.connectedTo' => ({required Object device}) => 'Geleid naar ${device}',
 			'cast.device' => 'Cast apparaat',
 			'cast.readyToCast' => 'Bereid om te casten',
-			'cast.subtitle' => 'Ondertitels',
 			'cast.serverNotAvailable' => 'De media server is niet beschikbaar.',
 			'cast.stopCasting' => 'Stop met casting',
 			'cast.startFailed' => 'Kan niet beginnen met casting. check the server and try again.',
@@ -8721,9 +8723,9 @@ extension on TranslationsNl {
 			'homeLayout.continueWatchingLibraryDescription' => 'De eigen resume-progress-rond van deze bibliotheek',
 			'homeLayout.continueWatchingHomeDescription' => 'De herhaling-progress-lijn getoond op Home',
 			'homeLayout.nextUpHomeDescription' => 'De volgende onbewaarde episode rij verschijnt afzonderlijk op Home',
-			'homeLayout.library' => 'Bibliotheek',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => 'Bibliotheek',
 			'homeLayout.showInRecommended' => 'In de bibliotheek aanbevolen',
 			'homeLayout.customPlexRow' => 'Kijk naar Plex',
 			'homeLayout.heroNeedsLibrary' => 'Check Library first — Hero heeft ergens nodig om te tonen',
@@ -9235,9 +9237,9 @@ extension on TranslationsNl {
 			'audiobook.statusProgress' => 'In vooruitgang',
 			'audiobook.statusFinished' => 'Afgerond',
 			'audiobook.goToTime' => 'Ga naar de tijd',
-			'audiobook.timeHelp' => 'uur: minuten: seconden of minuten: seconden',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => 'uur: minuten: seconden of minuten: seconden',
 			'audiobook.recoveryHelp' => 'Exporteer een recente versleutelde kopie voor het verplaatsen of repareren van synchronisatiegegevens.Importeren verschijnt met de huidige toestand; ze vervangen nooit de lokale sync-geschiedenis.',
 			'audiobook.recoveryExport' => 'Export versleutelde herstel bestanden',
 			'audiobook.recoveryImport' => 'Geïmporteerde versleutelde herstelbestanden',
@@ -9749,9 +9751,9 @@ extension on TranslationsNl {
 			'musicTools.historyHint' => 'Afspeelgeschiedenis voor dit profiel',
 			'musicTools.days' => 'Dagen',
 			'musicTools.albumBlocks' => 'Volledige albums bij elkaar houden',
-			'musicTools.home' => 'Muziek',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => 'Muziek',
 			'musicTools.recent' => 'Onlangs afgespeeld',
 			'musicTools.apiKey' => 'API-sleutel',
 			'musicTools.missing' => 'N/A',

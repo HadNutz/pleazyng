@@ -70,6 +70,18 @@ class GoogleDriveSourceAdapter extends OAuthSourceAdapter {
   GoogleDriveSourceAdapter(super.source, super.transport, super.token, [super.backgroundCredentials]);
   static const _fields =
       'id,name,mimeType,size,modifiedTime,md5Checksum,version,capabilities(canDownload),shortcutDetails(targetId,targetMimeType, targetResourceKey),resourceKey';
+  Future<Map<String, dynamic>> _fileMetadata(String id, String? resourceKey) => api(
+    'GET',
+    Uri.https('www.googleapis.com', '/drive/v3/files/$id', {
+      'fields': 'id,size,md5Checksum,version,modifiedTime',
+      'supportsAllDrives': 'true',
+    }),
+    headers: {if (resourceKey != null) 'X-Goog-Drive-Resource-Keys': '$id/$resourceKey'},
+  );
+
+  String? _revision(Map<String, dynamic> metadata) =>
+      (metadata['md5Checksum'] ?? metadata['version'] ?? metadata['modifiedTime'])?.toString();
+
   String _quote(String value) => value.replaceAll('\\', '\\\\').replaceAll("'", "\\'");
   @override
   Future<SourcePage> browse({String? parent, String? cursor, String? query}) async {
@@ -107,13 +119,25 @@ class GoogleDriveSourceAdapter extends OAuthSourceAdapter {
       if (kind == SourceItemKind.unknown) continue;
       final resourceKey = (shortcut['targetResourceKey'] ?? j['resourceKey']) as String?;
       final fileId = resourceKey == null ? id : jsonEncode({'id': id, 'resourceKey': resourceKey});
+      final shortcutId = shortcut['targetId'] == null ? null : j['id'] as String;
+      var metadata = j;
+      if (shortcutId != null && !folderItem) {
+        try {
+          metadata = await _fileMetadata(id, resourceKey);
+        } on SourceException catch (error) {
+          // An inaccessible or deleted target should not hide the rest of the folder.
+          if (error.status == 403 || error.status == 404) continue;
+          rethrow;
+        }
+      }
       result.add(
         SourceEntry(
           sourceId: source.id,
-          id: fileId,
+          id: shortcutId == null ? fileId : jsonEncode({'id': id, 'shortcut': shortcutId, 'resourceKey': ?resourceKey}),
           title: name,
           kind: kind,
           parentId: parentKey,
+          identifiers: {if (shortcutId != null && _revision(j) != null) 'driveShortcutRevision': _revision(j)!},
           files: folderItem
               ? []
               : [
@@ -121,8 +145,8 @@ class GoogleDriveSourceAdapter extends OAuthSourceAdapter {
                     id: fileId,
                     name: name,
                     mimeType: mime,
-                    size: sourceInt(j['size']),
-                    revision: (j['md5Checksum'] ?? j['version'] ?? j['modifiedTime'])?.toString(),
+                    size: sourceInt(metadata['size']),
+                    revision: _revision(metadata),
                   ),
                 ],
         ),
@@ -132,18 +156,39 @@ class GoogleDriveSourceAdapter extends OAuthSourceAdapter {
   }
 
   @override
+  Future<SourceEntry> hydrate(SourceEntry entry) async {
+    // Older catalogues stored the target ID alongside the shortcut's own
+    // version and empty size. Check the original folder before repairing it.
+    final file = entry.files.singleOrNull;
+    if (file == null ||
+        entry.id != file.id ||
+        (file.size ?? 0) != 0 ||
+        file.revision == null ||
+        entry.parentId == null ||
+        RegExp(r'^[a-fA-F0-9]{32}$').hasMatch(file.revision!)) {
+      return entry;
+    }
+    String? cursor;
+    do {
+      final page = await browse(parent: entry.parentId, cursor: cursor, query: entry.title);
+      for (final match in page.entries) {
+        if (match.title == entry.title &&
+            match.identifiers['driveShortcutRevision'] == file.revision &&
+            match.files.singleOrNull?.id == file.id) {
+          return entry.copyWith(files: match.files);
+        }
+      }
+      cursor = page.next;
+    } while (cursor != null);
+    return entry;
+  }
+
+  @override
   Future<ContentLease> resolve(PublicationFile file) async {
     final ref = file.id.startsWith('{') ? sourceMap(jsonDecode(file.id)) : {'id': file.id};
     final id = ref['id'] as String;
-    final metadata = await api(
-      'GET',
-      Uri.https('www.googleapis.com', '/drive/v3/files/$id', {
-        'fields': 'id,size,md5Checksum,version,modifiedTime',
-        'supportsAllDrives': 'true',
-      }),
-      headers: {if (ref['resourceKey'] != null) 'X-Goog-Drive-Resource-Keys': '$id/${ref['resourceKey']}'},
-    );
-    final revision = (metadata['md5Checksum'] ?? metadata['version'] ?? metadata['modifiedTime'])?.toString();
+    final metadata = await _fileMetadata(id, ref['resourceKey'] as String?);
+    final revision = _revision(metadata);
     if (file.revision != null && revision != null && file.revision != revision) {
       throw const SourceException(SourceFailure.conflict);
     }

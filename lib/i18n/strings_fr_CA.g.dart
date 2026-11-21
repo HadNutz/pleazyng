@@ -41,7 +41,6 @@ class TranslationsFrCa extends TranslationsFr with BaseTranslations<AppLocale, T
 	TranslationsFrCa $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsFrCa(meta: meta ?? this.$meta);
 
 	// Translations
-	@override late final _Translations$cast$fr_CA cast = _Translations$cast$fr_CA._(_root);
 	@override late final _Translations$appIcon$fr_CA appIcon = _Translations$appIcon$fr_CA._(_root);
 	@override late final _Translations$auth$fr_CA auth = _Translations$auth$fr_CA._(_root);
 	@override late final _Translations$common$fr_CA common = _Translations$common$fr_CA._(_root);
@@ -90,16 +89,6 @@ class TranslationsFrCa extends TranslationsFr with BaseTranslations<AppLocale, T
 	@override late final _Translations$musicTools$fr_CA musicTools = _Translations$musicTools$fr_CA._(_root);
 	@override late final _Translations$musicExperience$fr_CA musicExperience = _Translations$musicExperience$fr_CA._(_root);
 	@override late final _Translations$subtitleAiUi$fr_CA subtitleAiUi = _Translations$subtitleAiUi$fr_CA._(_root);
-}
-
-// Path: cast
-class _Translations$cast$fr_CA extends Translations$cast$fr {
-	_Translations$cast$fr_CA._(TranslationsFrCa root) : this._root = root, super.internal(root);
-
-	final TranslationsFrCa _root; // ignore: unused_field
-
-	// Translations
-	@override String get subtitle => 'Sous-titres';
 }
 
 // Path: appIcon
@@ -1344,7 +1333,6 @@ class _Translations$services$libraryFilter$fr_CA extends Translations$services$l
 extension on TranslationsFrCa {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'cast.subtitle' => 'Sous-titres',
 			'appIcon.defaultIcon' => 'Par défaut',
 			'auth.quickConnect' => 'Connexion rapide',
 			'auth.useQuickConnect' => 'Utiliser la connexion rapide',
@@ -1856,9 +1844,9 @@ extension on TranslationsFrCa {
 			'romm.copyLink' => 'Copy game link',
 			'romm.linkCopied' => 'Game link copied',
 			'romm.openLink' => 'Open game link',
+			'romm.linkHelp' => 'Paste a Pleazyng game link. Connect the matching RomM server before opening it.',
 			_ => null,
 		} ?? switch (path) {
-			'romm.linkHelp' => 'Paste a Pleazyng game link. Connect the matching RomM server before opening it.',
 			'romm.copyMismatch' => 'This link identifies a different copy. Choose the intended game from your library.',
 			'romm.requestStatus' => 'Library indexing',
 			'romm.notIndexed' => 'The requested game is not indexed in this library yet.',

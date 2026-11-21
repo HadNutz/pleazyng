@@ -7,6 +7,7 @@ import '../../focus/focusable_text_field.dart';
 import '../../i18n/strings.g.dart';
 import '../../profiles/active_profile_provider.dart';
 import '../../services/cloud_settings_backup_service.dart';
+import '../../services/settings_export_service.dart';
 import '../../services/storage_service.dart';
 import '../../utils/app_logger.dart';
 import '../../utils/snackbar_helper.dart';
@@ -17,7 +18,7 @@ class CloudSettingsBackupDialog extends StatefulWidget {
   const CloudSettingsBackupDialog({super.key, required this.beforeRestore, required this.afterRestore});
 
   final VoidCallback beforeRestore;
-  final Future<void> Function() afterRestore;
+  final Future<void> Function(ImportResult) afterRestore;
 
   @override
   State<CloudSettingsBackupDialog> createState() => _CloudSettingsBackupDialogState();
@@ -130,14 +131,14 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
         isCurrentSession: _formOwner,
       );
       widget.beforeRestore();
-      await _backup.restore(
+      final result = await _backup.restore(
         importPortableFile: portable,
         expectedProfileId: owner.profileId,
         expectedOwner: owner.owner,
         isCurrentSession: owner.isCurrent,
       );
-      await widget.afterRestore();
-      return t.settings.cloudBackupRestored;
+      if (result.keysImported > 0) await widget.afterRestore(result);
+      return result.summary;
     });
   }
 

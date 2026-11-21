@@ -16,12 +16,17 @@ import '../utils/app_logger.dart';
 import '../utils/active_client_scope.dart';
 import '../utils/global_key_utils.dart';
 import 'offline_mode_source.dart';
+import 'offline_watch_owner.dart';
 import '../utils/watch_state_notifier.dart';
 import 'multi_server_manager.dart';
 import 'plex_client.dart';
 import 'settings_service.dart';
 import 'trackers/tracker_coordinator.dart';
 import 'watch_state_resolver.dart';
+
+class _RetiredWatchOwner implements Exception {
+  const _RetiredWatchOwner();
+}
 
 typedef QueuedOfflineWatchAction = ({String? clientScopeId, String? profileId, int rowId, int revision});
 
@@ -145,10 +150,13 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
   Future<void> _discardQueuedProgress(ServerId serverId, String itemId, {String? eventScope}) async {
     final profileId = _activeProfileId;
     try {
+      final owner = await _watchOwner(serverId, itemId, profileId);
+      if (eventScope != null && eventScope != owner.scope) return;
       final removed = await _database.deleteQueuedProgressForItem(
         profileId: profileId,
         serverId: serverId,
-        clientScopeId: eventScope ?? await _clientScopeIdForItem(serverId, itemId, profileId),
+        clientScopeId: eventScope ?? owner.scope,
+        accountScope: owner.account,
         ratingKey: itemId,
       );
       if (removed == 0) return;
@@ -336,12 +344,14 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
     final shouldMarkWatched =
         duration != null && isWatchedByProgress(viewOffset, duration, serverId: ServerId(serverId));
     final profileId = _activeProfileId;
-    final clientScopeId = await _clientScopeIdForItem(serverId, itemId, profileId);
+    final owner = await _watchOwner(serverId, itemId, profileId);
+    final clientScopeId = owner.scope;
 
     final queued = await _database.upsertProgressAction(
       profileId: profileId,
       serverId: serverId,
       clientScopeId: clientScopeId,
+      accountScope: owner.account,
       ratingKey: itemId,
       viewOffset: viewOffset,
       duration: duration,
@@ -372,11 +382,13 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
     required String actionType,
   }) async {
     final profileId = _activeProfileId;
-    final clientScopeId = await _clientScopeIdForItem(serverId, itemId, profileId);
+    final owner = await _watchOwner(serverId, itemId, profileId);
+    final clientScopeId = owner.scope;
     final queued = await _database.insertWatchAction(
       profileId: profileId,
       serverId: serverId,
       clientScopeId: clientScopeId,
+      accountScope: owner.account,
       ratingKey: itemId,
       actionType: actionType,
     );
@@ -409,7 +421,7 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
       clientScopeId: expectedScope,
       filterClientScope: expectedScope != null,
     );
-    return WatchStateResolver.fromActions(actions).isWatched;
+    return WatchStateResolver.fromActions(await _visibleActions(actions)).isWatched;
   }
 
   /// Get local watch statuses for multiple items in a single database query.
@@ -434,7 +446,7 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
     final result = <String, bool?>{};
 
     for (final key in globalKeys) {
-      result[key] = WatchStateResolver.fromActions(actions[key] ?? const []).isWatched;
+      result[key] = WatchStateResolver.fromActions(await _visibleActions(actions[key] ?? const [])).isWatched;
     }
 
     return result;
@@ -455,7 +467,7 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
       clientScopeId: expectedScope,
       filterClientScope: expectedScope != null,
     );
-    final snapshot = WatchStateResolver.fromActions(actions);
+    final snapshot = WatchStateResolver.fromActions(await _visibleActions(actions));
     final offset = snapshot.hasViewOffsetMs ? snapshot.viewOffsetMs : null;
     return offset != null && offset > 0 ? offset : null;
   }
@@ -469,8 +481,8 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
   Future<bool> _canRetry(OfflineWatchProgressItem row) async {
     final profile = _activeProfileId, epoch = _profileGeneration;
     if (profile == null || row.profileId != profile || row.syncAttempts < maxSyncAttempts) return false;
-    final scope = await _clientScopeIdForItem(ServerId(row.serverId), row.ratingKey, profile);
-    return epoch == _profileGeneration && scope == row.clientScopeId;
+    final owner = await _watchOwner(ServerId(row.serverId), row.ratingKey, profile);
+    return epoch == _profileGeneration && owner.scope == row.clientScopeId && owner.account == row.accountScope;
   }
 
   Future<List<OfflineWatchProgressItem>> stalledWatchActions() async {
@@ -563,6 +575,8 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
               WatchPatchId.offlineAction(profileId: result.profileId, rowId: result.rowId, revision: result.revision),
             );
             appLogger.d('Successfully synced action ${action.id}: ${action.actionType} for ${action.ratingKey}');
+          } on _RetiredWatchOwner {
+            return;
           } catch (e) {
             appLogger.w('Failed to sync action ${action.id}: $e');
             await _database.updateSyncAttemptIfUnchanged(action.id, action.updatedAt, e.toString());
@@ -579,21 +593,14 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
     }
   }
 
-  Future<String?> _clientScopeIdForItem(ServerId serverId, String itemId, String? profileId) async {
-    // A downloaded row's clientScopeId is a cache/source hint, not an owner.
-    // Offline watch actions are user-owned, so a new local action follows the
-    // currently active scoped client. Once queued, _clientForAction replays
-    // that exact scope even if the active user changes later.
-    final client = _serverManager.getClient(serverId);
-    final activeScopeId = resolveActiveClientScopeId(serverId: serverId, cacheServerId: client?.cacheServerId);
-    if (activeScopeId != null) return activeScopeId;
-    final download = await _database.getDownloadedMedia(buildGlobalKey(ServerId(serverId), itemId));
-    final downloadedScope = resolveActiveClientScopeId(serverId: serverId, cacheServerId: download?.clientScopeId);
-    if (downloadedScope != null && isPlexProfileScopeId(downloadedScope) && profileId != null && profileId.isNotEmpty) {
-      return buildPlexProfileScopeId(serverId: serverId, profileId: profileId);
-    }
-    return downloadedScope;
-  }
+  Future<({String? scope, String? account})> _watchOwner(ServerId serverId, String itemId, String? profileId) =>
+      resolveOfflineWatchOwner(_database, _serverManager.getClient(serverId), serverId, itemId, profileId);
+
+  Future<List<OfflineWatchProgressItem>> _visibleActions(List<OfflineWatchProgressItem> actions) => visibleWatchActions(
+    _database,
+    actions.isEmpty ? null : _serverManager.getClient(ServerId(actions.first.serverId)),
+    actions,
+  );
 
   Future<({MediaServerClient client, String? clientScopeId})?> _clientForAction(OfflineWatchProgressItem action) async {
     final scopeId = resolveActiveClientScopeId(
@@ -601,11 +608,21 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
       cacheServerId: action.clientScopeId,
     );
     if (scopeId != null) {
+      if (action.accountScope == null &&
+          action.profileId != null &&
+          isJellyfinUserScopeId(serverId: ServerId(action.serverId), cacheServerId: scopeId)) {
+        // Before v39 an offline co-owner could enqueue the original downloader’s
+        // namespace. Do not send or silently reassign a disputed old intent.
+        final owner = await _database.getDownloadOwner(profileId: action.profileId!, globalKey: action.globalKey);
+        if (owner?.clientScopeId != null && owner!.clientScopeId != scopeId) return null;
+      }
       final scoped = _serverManager.getClientByScope(scopeId);
-      return scoped == null ? null : (client: scoped, clientScopeId: scopeId);
+      return scoped == null || !offlineWatchAccountMatches(action, scoped)
+          ? null
+          : (client: scoped, clientScopeId: scopeId);
     }
     final client = _serverManager.getClient(ServerId(action.serverId));
-    if (client == null) return null;
+    if (client == null || !offlineWatchAccountMatches(action, client)) return null;
     if (client.backend.usesMediaBrowserApi && client.cacheServerId != action.serverId) {
       appLogger.w(
         'Refusing to sync unscoped MediaBrowser action ${action.id} for ${action.serverId}:${action.ratingKey}; '
@@ -713,18 +730,33 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
       serverId: action.serverId,
     );
 
+    final scope = resolveActiveClientScopeId(serverId: ServerId(action.serverId), cacheServerId: clientScopeId);
+    bool ownerCurrent() =>
+        _activeProfileId == action.profileId &&
+        identical(
+          scope == null ? _serverManager.getClient(ServerId(action.serverId)) : _serverManager.getClientByScope(scope),
+          client,
+        ) &&
+        offlineWatchAccountMatches(action, client);
+    void requireOwner() {
+      if (!ownerCurrent()) {
+        throw const _RetiredWatchOwner();
+      }
+    }
+
+    requireOwner();
     var persisted = false;
     switch (action.actionType) {
       case 'watched':
         await client.markWatched(item);
         persisted = true;
-        await TrackerCoordinator.instance.markWatched(item, client);
+        if (ownerCurrent()) await TrackerCoordinator.instance.markWatched(item, client);
         break;
 
       case 'unwatched':
         await client.markUnwatched(item);
         persisted = true;
-        await TrackerCoordinator.instance.markUnwatched(item, client);
+        if (ownerCurrent()) await TrackerCoordinator.instance.markUnwatched(item, client);
         break;
 
       case 'progress':
@@ -752,6 +784,7 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
               appLogger.d('Offline progress: started call failed (continuing)', error: e);
             }
           }
+          requireOwner();
           await client.reportPlaybackStopped(
             itemId: action.ratingKey,
             position: position,
@@ -768,10 +801,11 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
           // Plex still needs the explicit transport call, but replay must not
           // emit another semantic event for an action already emitted offline.
           if (!client.marksWatchedOnPlaybackStopped) {
+            requireOwner();
             await client.markWatched(item);
             persisted = true;
           }
-          await TrackerCoordinator.instance.markWatched(item, client);
+          if (ownerCurrent()) await TrackerCoordinator.instance.markWatched(item, client);
         }
         break;
     }

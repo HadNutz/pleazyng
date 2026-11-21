@@ -342,6 +342,9 @@ class _Translations$common$he extends Translations$common$en {
 	@override String get notAvailable => 'N / A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'סמלים';
+	@override String get keyboardLetters => 'אותיות';
+	@override String get keyboardNewLine => 'שורה חדשה';
 	@override late final _Translations$common$mediaKind$he mediaKind = _Translations$common$mediaKind$he._(_root);
 }
 
@@ -573,7 +576,7 @@ class _Translations$settings$he extends Translations$settings$en {
 	@override String get importSettings => 'הגדרות ייבוא';
 	@override String get importSettingsDescription => 'לשחזר העדפות מתוך קובץ';
 	@override String get importSettingsConfirm => 'זה יחליף את ההגדרות הנוכחיות שלך.';
-	@override String get importSettingsSuccess => 'הגדרות ייבוא';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'הגדרות שהוחלו: ${applied}. הגדרות שדולגו: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'קובץ זה אינו ייצוא של הגדרות Pleazyng בתוקף';
 	@override String get importSettingsNoUser => 'הקלד לפני ייבוא ההגדרות';
 	@override String get cloudBackup => 'ענן גיבוי';
@@ -586,7 +589,6 @@ class _Translations$settings$he extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'הגיבוי הועלה. יש לשמור את הכתובת הזו. לאחר התקנה חדשה, יש להזין אותה במסך הגיבוי בענן ולבחור באפשרות „${action}”.';
 	@override String get cloudBackupRestore => 'לשחזר גיבוי';
 	@override String get cloudBackupRestoreConfirm => 'זה יחליף את ההגדרות הניידות המתאימות במכשיר זה.';
-	@override String get cloudBackupRestored => 'הגדרות שחוזרות מענן גיבוי';
 	@override String get shortcutsReset => 'קצוות מחדש לתוך הפסקות';
 	@override String get resetShortcutsConfirm => 'זה יחליף את הקצוות המותאמים אישית שלך עם הפסקות.';
 	@override String get about => 'אודות';
@@ -3130,7 +3132,6 @@ class _Translations$cast$he extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'חיבור ל- ${device}';
 	@override String get device => 'מכשיר לשידור';
 	@override String get readyToCast => 'מוכן לשידור';
-	@override String get subtitle => 'כתוביות';
 	@override String get serverNotAvailable => 'שרת התקשורת אינו זמין.';
 	@override String get stopCasting => 'הפסקת השידור';
 	@override String get startFailed => 'לא יכול להתחיל לגרד.בדוק את השרת ולנסות שוב.';
@@ -5838,6 +5839,9 @@ extension on TranslationsHe {
 			'common.notAvailable' => 'N / A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'סמלים',
+			'common.keyboardLetters' => 'אותיות',
+			'common.keyboardNewLine' => 'שורה חדשה',
 			'common.mediaKind.movie' => 'סרט',
 			'common.mediaKind.show' => 'תצוגה',
 			'common.mediaKind.season' => 'עונה',
@@ -6046,7 +6050,7 @@ extension on TranslationsHe {
 			'settings.importSettings' => 'הגדרות ייבוא',
 			'settings.importSettingsDescription' => 'לשחזר העדפות מתוך קובץ',
 			'settings.importSettingsConfirm' => 'זה יחליף את ההגדרות הנוכחיות שלך.',
-			'settings.importSettingsSuccess' => 'הגדרות ייבוא',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'הגדרות שהוחלו: ${applied}. הגדרות שדולגו: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'קובץ זה אינו ייצוא של הגדרות Pleazyng בתוקף',
 			'settings.importSettingsNoUser' => 'הקלד לפני ייבוא ההגדרות',
 			'settings.cloudBackup' => 'ענן גיבוי',
@@ -6059,7 +6063,6 @@ extension on TranslationsHe {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'הגיבוי הועלה. יש לשמור את הכתובת הזו. לאחר התקנה חדשה, יש להזין אותה במסך הגיבוי בענן ולבחור באפשרות „${action}”.',
 			'settings.cloudBackupRestore' => 'לשחזר גיבוי',
 			'settings.cloudBackupRestoreConfirm' => 'זה יחליף את ההגדרות הניידות המתאימות במכשיר זה.',
-			'settings.cloudBackupRestored' => 'הגדרות שחוזרות מענן גיבוי',
 			'settings.shortcutsReset' => 'קצוות מחדש לתוך הפסקות',
 			'settings.resetShortcutsConfirm' => 'זה יחליף את הקצוות המותאמים אישית שלך עם הפסקות.',
 			'settings.about' => 'אודות',
@@ -6158,10 +6161,10 @@ extension on TranslationsHe {
 			'settings.companionRemoteServer' => 'שרת מרחוק',
 			'settings.companionRemoteServerDescription' => 'תאפשר למכשירים ניידים ברשת שלך לשלוט באפליקציה זו',
 			'settings.companionRemoteServerStartFailed' => 'לא יכולתי להתחיל את שרת החברות',
-			'settings.companionRemoteServerStopFailed' => 'לא יכולתי לעצור את שרת החברות.',
-			'settings.autoPip' => 'צילום: Auto Picture in Picture',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'לא יכולתי לעצור את שרת החברות.',
+			'settings.autoPip' => 'צילום: Auto Picture in Picture',
 			'settings.autoPipDescription' => 'כניסת תמונה בתמונה באופן אוטומטי כאשר אתה עוזב את האפליקציה במהלך הצגת',
 			'settings.matchContentFrameRate' => 'תחרות תוכן Frame',
 			'settings.matchContentFrameRateDescription' => 'משחק תצוגה שיעור חידוש לתוכן וידאו',
@@ -6672,10 +6675,10 @@ extension on TranslationsHe {
 			'accessibility.reduceMotionHint' => 'להפסיק את התנועה של סימון המיקוד, מעברי העמודים והאפקטים הדקורטיביים.',
 			'accessibility.largeTargets' => 'מטרות מגע גדולות',
 			'accessibility.largeTargetsHint' => 'להגדיל את השטח של הפקדים המשותפים כדי להקל על מגע ועל ניווט בעזרת טכנולוגיות מסייעות.',
-			'accessibility.navigationHint' => 'אפשר להשתמש ב-Tab וב-Shift+Tab כדי לעבור בין הפקדים, ב-Enter או ב-Space כדי להפעיל, וב-Escape או בכפתור החזרה כדי לסגור. כשספר פתוח, אפשר לשנות את הזום ואת העדפות הקריאה.',
-			'accessibility.textSizeDescription' => 'טקסט אינטראקציה בקנה מידה ב- Pleazyng מלבד הגדרת גודל הטקסט של המערכת במכשיר שלך.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'אפשר להשתמש ב-Tab וב-Shift+Tab כדי לעבור בין הפקדים, ב-Enter או ב-Space כדי להפעיל, וב-Escape או בכפתור החזרה כדי לסגור. כשספר פתוח, אפשר לשנות את הזום ואת העדפות הקריאה.',
+			'accessibility.textSizeDescription' => 'טקסט אינטראקציה בקנה מידה ב- Pleazyng מלבד הגדרת גודל הטקסט של המערכת במכשיר שלך.',
 			'accessibility.boldTextHint' => 'השתמש במשקל כבד יותר עבור תוויות ממשק והודעות כדי להפוך אותם קל יותר להבדיל.',
 			'tooltips.shufflePlay' => 'שושן משחק',
 			'tooltips.playTrailer' => 'משחק טריילר',
@@ -7186,10 +7189,10 @@ extension on TranslationsHe {
 			'discover.person.birthplace' => 'מקום לידה',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (גיל ${age})',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (בגיל ${age})',
-			'errors.searchFailed' => ({required Object error}) => 'חיפוש לא הצליח: ${error}',
-			'errors.searchUnavailable' => 'החיפוש לא יכול להגיע לשירותי התקשורת.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => 'חיפוש לא הצליח: ${error}',
+			'errors.searchUnavailable' => 'החיפוש לא יכול להגיע לשירותי התקשורת.',
 			'errors.connectionTimeout' => ({required Object context}) => 'זמן חיבור בזמן הטעינה ${context}',
 			'errors.connectionFailed' => 'אי אפשר להתחבר לשרת מדיה',
 			'errors.unableToLoad' => ({required Object context}) => 'אין אפשרות להעלות ${context}.',
@@ -7700,10 +7703,10 @@ extension on TranslationsHe {
 			'playlists.enterPlaylistName' => 'כניסת שם playlist',
 			'playlists.delete' => 'מחיקת רשימת השמעה',
 			'playlists.removeItem' => 'הסר מרשימת הניגון',
-			'playlists.smartPlaylist' => 'חכמה Playlist',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} פריט', two: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} פריטים', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} פריטים', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => 'חכמה Playlist',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} פריט', two: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} פריטים', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} פריטים', ), 
 			'playlists.emptyPlaylist' => 'רשימת המשחקים הזאת ריקה',
 			'playlists.deleteConfirm' => 'לשחרר את Playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'האם אתה בטוח שאתה רוצה למחוק את "${name}"?',
@@ -8214,10 +8217,10 @@ extension on TranslationsHe {
 			'performanceOverlay.sampleRate' => 'קצב דגימה',
 			'performanceOverlay.pixelFormat' => 'פיקסל Fmt',
 			'performanceOverlay.hwFormat' => 'ה-Fmt',
-			'performanceOverlay.matrix' => 'מתיקס',
-			'performanceOverlay.primaries' => 'ראשוני',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => 'מתיקס',
+			'performanceOverlay.primaries' => 'ראשוני',
 			'performanceOverlay.transfer' => 'העברה',
 			'performanceOverlay.renderFps' => 'רנדה FPS',
 			'performanceOverlay.displayFps' => 'תצוגה FPS',
@@ -8654,7 +8657,6 @@ extension on TranslationsHe {
 			'cast.connectedTo' => ({required Object device}) => 'חיבור ל- ${device}',
 			'cast.device' => 'מכשיר לשידור',
 			'cast.readyToCast' => 'מוכן לשידור',
-			'cast.subtitle' => 'כתוביות',
 			'cast.serverNotAvailable' => 'שרת התקשורת אינו זמין.',
 			'cast.stopCasting' => 'הפסקת השידור',
 			'cast.startFailed' => 'לא יכול להתחיל לגרד.בדוק את השרת ולנסות שוב.',
@@ -8729,9 +8731,9 @@ extension on TranslationsHe {
 			'homeLayout.continueWatchingLibraryDescription' => 'ספריית התקדמות עצמית של הספרייה',
 			'homeLayout.continueWatchingHomeDescription' => 'רצועת ההתקדמות המוצגת בבית',
 			'homeLayout.nextUpHomeDescription' => 'השורה הבאה של הפרק לא נצפה הוצגה בנפרד בבית',
-			'homeLayout.library' => 'ספרייה',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => 'ספרייה',
 			'homeLayout.showInRecommended' => 'תגית: הספרייה המומלצת',
 			'homeLayout.customPlexRow' => 'אישית Plex שורה',
 			'homeLayout.heroNeedsLibrary' => 'ראשית, בדוק את הספרייה – גיבור צריך איפשהו להראות',
@@ -9243,9 +9245,9 @@ extension on TranslationsHe {
 			'audiobook.statusProgress' => 'התקדמות',
 			'audiobook.statusFinished' => 'הסתיימה',
 			'audiobook.goToTime' => 'ללכת בזמן',
-			'audiobook.timeHelp' => 'שעות: דקות: שניות או דקות: שניות',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => 'שעות: דקות: שניות או דקות: שניות',
 			'audiobook.recoveryHelp' => 'ייצוא עותק מוצפן לאחרונה לפני העברת או תיקון נתוני סינכרון.יבואים מתמזגים עם המצב הנוכחי; הם לעולם לא מחליפים היסטוריה מקומית של סינן.',
 			'audiobook.recoveryExport' => 'ייצוא קובץ ההחזרה מוצפן',
 			'audiobook.recoveryImport' => 'ייבוא קובץ ההחזרה מוצפן',
@@ -9757,9 +9759,9 @@ extension on TranslationsHe {
 			'musicTools.historyHint' => 'היסטוריית ההשמעה של הפרופיל הזה',
 			'musicTools.days' => 'ימים',
 			'musicTools.albumBlocks' => 'שמירה על אלבומים שלמים ביחד',
-			'musicTools.home' => 'מוסיקה',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => 'מוסיקה',
 			'musicTools.recent' => 'הושמעו לאחרונה',
 			'musicTools.apiKey' => 'מפתח API',
 			'musicTools.missing' => 'N / A',

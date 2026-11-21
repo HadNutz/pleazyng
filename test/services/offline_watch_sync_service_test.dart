@@ -10,6 +10,7 @@ import 'package:plezy/connection/connection.dart';
 import 'package:plezy/database/app_database.dart';
 import 'package:plezy/database/download_operations.dart';
 import 'package:plezy/media/media_backend.dart';
+import 'package:plezy/models/plex/plex_config.dart';
 import 'package:plezy/media/media_item.dart';
 import 'package:plezy/media/media_kind.dart';
 import 'package:plezy/media/media_server_client.dart';
@@ -118,17 +119,24 @@ class _RecordingMediaClient with PlaybackReportRecorder implements MediaServerCl
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class _ScopedRecordingMediaClient extends _RecordingMediaClient implements ScopedMediaServerClient {
-  _ScopedRecordingMediaClient({required super.serverId, required super.backend, required this.scopedServerId});
+class _RecordingPlexClient extends _RecordingMediaClient implements PlexClient, ScopedMediaServerClient {
+  _RecordingPlexClient({required super.serverId, required String profileId, String token = 'original'})
+    : config = PlexConfig(
+        baseUrl: 'https://plex.invalid',
+        token: token,
+        clientIdentifier: 'test',
+        product: 'test',
+        version: '1',
+      ),
+      profileScopeId = buildPlexProfileScopeId(serverId: serverId, profileId: profileId),
+      super(backend: MediaBackend.plex);
 
   @override
-  final String scopedServerId;
-}
-
-class _RecordingPlexClient extends _RecordingMediaClient implements PlexClient, ScopedMediaServerClient {
-  _RecordingPlexClient({required super.serverId, required String profileId})
-    : profileScopeId = buildPlexProfileScopeId(serverId: serverId, profileId: profileId),
-      super(backend: MediaBackend.plex);
+  PlexConfig config;
+  @override
+  String? plexAccountId = 'plex-direct-plex-machine';
+  @override
+  String? plexMusicUserIdentifier;
 
   @override
   PlexProfileScopeId profileScopeId;
@@ -792,6 +800,32 @@ void main() {
       expect(await svc.getPendingSyncCount(), 0);
     });
 
+    test('a replacement Direct Plex account cannot consume or merge the prior user’s intent', () async {
+      final (svc: service, db: database, mgr: manager) = _makeService();
+      const profile = 'shared-local';
+      final server = ServerId('plex-machine');
+      final first = _RecordingPlexClient(serverId: server, profileId: profile, token: 'account-A');
+      final next = _RecordingPlexClient(serverId: server, profileId: profile, token: 'account-B');
+      service.setActiveProfileId(profile);
+      manager.debugRegisterClientForTesting(first);
+      await service.queueMarkWatched(serverId: server, itemId: 'film');
+      manager.removeServer(server);
+      manager.debugRegisterClientForTesting(next);
+      await service.syncPendingItems();
+      expect(next.watched, isEmpty);
+      expect(await service.getLocalWatchStatus('plex-machine:film'), isNull);
+      expect(await database.getPendingWatchActions(), hasLength(1));
+      await service.queueMarkWatched(serverId: server, itemId: 'film');
+      expect(await database.getPendingWatchActions(), hasLength(2));
+      await service.syncPendingItems();
+      expect(next.watched, ['film']);
+      manager.removeServer(server);
+      manager.debugRegisterClientForTesting(first);
+      await service.syncPendingItems();
+      expect(first.watched, ['film']);
+      expect(await database.getPendingWatchActions(), isEmpty);
+    });
+
     test('does not replay a queued Plex owner action through a foreign active profile', () async {
       final (svc: svc, db: db, mgr: mgr) = _makeService();
       svc.setActiveProfileId('profile-a');
@@ -814,48 +848,32 @@ void main() {
   });
 
   group('Jellyfin scoped sync', () {
-    test('empty active scope falls back to the downloaded scope during client pre-bind', () async {
-      final (svc: svc, db: db, mgr: mgr) = _makeService();
-
-      await db.insertDownload(
-        serverId: ServerId('jf-machine'),
-        clientScopeId: 'jf-machine/user-a',
-        ratingKey: 'item-1',
-        globalKey: 'jf-machine:item-1',
+    test('pre-bind shared files use the active profile’s owned Jellyfin account', () async {
+      final (svc: service, db: database, mgr: _) = _makeService();
+      final server = ServerId('jf-machine');
+      service.setActiveProfileId('local-b');
+      await database.insertDownload(
+        serverId: server,
+        clientScopeId: 'jf-machine/a',
+        ratingKey: 'film',
+        globalKey: 'jf-machine:film',
         type: 'movie',
         status: 3,
       );
-      mgr.debugRegisterClientForTesting(
-        _ScopedRecordingMediaClient(
-          serverId: ServerId('jf-machine'),
-          backend: MediaBackend.jellyfin,
-          scopedServerId: '',
-        ),
-      );
-
-      final returnedScope = await svc.queueMarkWatched(serverId: ServerId('jf-machine'), itemId: 'item-1');
-
-      final queued = await db.getPendingWatchActions();
-      expect(returnedScope.clientScopeId, 'jf-machine/user-a');
-      expect(queued.single.clientScopeId, 'jf-machine/user-a');
-    });
-
-    test('queues with downloaded Jellyfin source scope when no active client is registered', () async {
-      final (svc: svc, db: db, mgr: _) = _makeService();
-
-      await db.insertDownload(
-        serverId: ServerId('jf-machine'),
-        clientScopeId: 'jf-machine/user-a',
-        ratingKey: 'item-1',
-        globalKey: 'jf-machine:item-1',
-        type: 'movie',
-        status: 3,
-      );
-
-      await svc.queueMarkWatched(serverId: ServerId('jf-machine'), itemId: 'item-1');
-
-      final queued = await db.getPendingWatchActions();
-      expect(queued.single.clientScopeId, 'jf-machine/user-a');
+      for (final user in ['a', 'b']) {
+        await database.addDownloadOwner(
+          profileId: 'local-$user',
+          globalKey: 'jf-machine:film',
+          backendId: 'jellyfin',
+          clientScopeId: 'jf-machine/$user',
+        );
+      }
+      final queued = await service.queueMarkWatched(serverId: server, itemId: 'film');
+      expect(queued.profileId, 'local-b');
+      expect(queued.clientScopeId, 'jf-machine/b');
+      service.setActiveProfileId('unrelated');
+      final unknown = await service.queueMarkWatched(serverId: server, itemId: 'film');
+      expect(unknown.clientScopeId, isNull);
     });
 
     test('local status and resume offset use active scope over downloaded source scope', () async {

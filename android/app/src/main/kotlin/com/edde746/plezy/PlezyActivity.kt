@@ -322,13 +322,14 @@ class PlezyActivity : FlutterActivity() {
     if (hasTelevisionFeature) reasons.add("television_feature")
     if (hasLeanback) reasons.add("leanback")
     if (hasFireTvFeature) reasons.add("fire_tv")
+    val hasTvSignal = reasons.isNotEmpty()
     if (!hasTouchscreen) reasons.add("no_touchscreen")
 
     return mapOf(
       // A car is never a TV: rotary-only head units report no touchscreen, and
       // an OEM image can carry a stray leanback flag. Keep the raw reasons for
       // diagnostics, but never let them promote a vehicle to the TV experience.
-      "isTv" to (!isAutomotive && reasons.isNotEmpty()),
+      "isTv" to (!isAutomotive && hasTvSignal),
       "isAutomotive" to isAutomotive,
       "isAutomotiveMedia" to (isAutomotive && BuildConfig.AUTOMOTIVE_MEDIA),
       "reasons" to reasons,

@@ -342,6 +342,9 @@ class _Translations$common$ru extends Translations$common$en {
 	@override String get notAvailable => 'Н/Д';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'АБВ';
+	@override String get keyboardSymbols => 'Символы';
+	@override String get keyboardLetters => 'Буквы';
+	@override String get keyboardNewLine => 'Новая строка';
 	@override late final _Translations$common$mediaKind$ru mediaKind = _Translations$common$mediaKind$ru._(_root);
 }
 
@@ -575,7 +578,7 @@ class _Translations$settings$ru extends Translations$settings$en {
 	@override String get importSettings => 'Импорт настроек';
 	@override String get importSettingsDescription => 'Восстановить настройки из файла';
 	@override String get importSettingsConfirm => 'Это заменит ваши текущие настройки. Продолжить?';
-	@override String get importSettingsSuccess => 'Настройки импортированы';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Применено настроек: ${applied}. Пропущено: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Этот файл не является действительным экспортом настроек Pleazyng';
 	@override String get importSettingsNoUser => 'Войдите в систему перед импортом настроек';
 	@override String get cloudBackup => 'Облачный резервный';
@@ -588,7 +591,6 @@ class _Translations$settings$ru extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Резервная копия загружена. Сохраните этот URL. После новой установки введите его в разделе резервного копирования в облаке и выберите «${action}».';
 	@override String get cloudBackupRestore => 'восстановление резервного копирования';
 	@override String get cloudBackupRestoreConfirm => 'Это заменит соответствующие портативные настройки на этом устройстве.';
-	@override String get cloudBackupRestored => 'Настройки восстановлены из облачной резервной копии';
 	@override String get shortcutsReset => 'Горячие клавиши сброшены по умолчанию';
 	@override String get resetShortcutsConfirm => 'Это заменит ваши горячие клавиши стандартными. Продолжить?';
 	@override String get about => 'О приложении';
@@ -3164,7 +3166,6 @@ class _Translations$cast$ru extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Подключен к ${device}';
 	@override String get device => 'Кастинг устройства';
 	@override String get readyToCast => 'Готов выпустить';
-	@override String get subtitle => 'Субтитры';
 	@override String get serverNotAvailable => 'Медийный сервер не доступен.';
 	@override String get stopCasting => 'Спрете кастировать';
 	@override String get startFailed => 'Нельзя начать кастинг. проверьте сервер и попробуйте снова.';
@@ -5880,6 +5881,9 @@ extension on TranslationsRu {
 			'common.notAvailable' => 'Н/Д',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'АБВ',
+			'common.keyboardSymbols' => 'Символы',
+			'common.keyboardLetters' => 'Буквы',
+			'common.keyboardNewLine' => 'Новая строка',
 			'common.mediaKind.movie' => 'Фильм',
 			'common.mediaKind.show' => 'Сериал',
 			'common.mediaKind.season' => 'Сезон',
@@ -6088,7 +6092,7 @@ extension on TranslationsRu {
 			'settings.importSettings' => 'Импорт настроек',
 			'settings.importSettingsDescription' => 'Восстановить настройки из файла',
 			'settings.importSettingsConfirm' => 'Это заменит ваши текущие настройки. Продолжить?',
-			'settings.importSettingsSuccess' => 'Настройки импортированы',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Применено настроек: ${applied}. Пропущено: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Этот файл не является действительным экспортом настроек Pleazyng',
 			'settings.importSettingsNoUser' => 'Войдите в систему перед импортом настроек',
 			'settings.cloudBackup' => 'Облачный резервный',
@@ -6101,7 +6105,6 @@ extension on TranslationsRu {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Резервная копия загружена. Сохраните этот URL. После новой установки введите его в разделе резервного копирования в облаке и выберите «${action}».',
 			'settings.cloudBackupRestore' => 'восстановление резервного копирования',
 			'settings.cloudBackupRestoreConfirm' => 'Это заменит соответствующие портативные настройки на этом устройстве.',
-			'settings.cloudBackupRestored' => 'Настройки восстановлены из облачной резервной копии',
 			'settings.shortcutsReset' => 'Горячие клавиши сброшены по умолчанию',
 			'settings.resetShortcutsConfirm' => 'Это заменит ваши горячие клавиши стандартными. Продолжить?',
 			'settings.about' => 'О приложении',
@@ -6200,10 +6203,10 @@ extension on TranslationsRu {
 			'settings.companionRemoteServer' => 'Сервер удалённого управления',
 			'settings.companionRemoteServerDescription' => 'Разрешить мобильным устройствам в сети управлять этим приложением',
 			'settings.companionRemoteServerStartFailed' => 'Не удалось запустить сервер удалённого управления',
-			'settings.companionRemoteServerStopFailed' => 'Не удалось остановить сервер удалённого управления',
-			'settings.autoPip' => 'Автоматический режим «картинка в картинке»',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Не удалось остановить сервер удалённого управления',
+			'settings.autoPip' => 'Автоматический режим «картинка в картинке»',
 			'settings.autoPipDescription' => 'Автоматически включать режим «картинка в картинке» при выходе из приложения во время воспроизведения',
 			'settings.matchContentFrameRate' => 'Соответствие частоты кадров контента',
 			'settings.matchContentFrameRateDescription' => 'Подстраивать частоту обновления экрана под видео',
@@ -6714,10 +6717,10 @@ extension on TranslationsRu {
 			'accessibility.reduceMotionHint' => 'Остановить анимацию индикатора фокуса, переходы страниц и декоративные эффекты.',
 			'accessibility.largeTargets' => 'Большие цели доступа',
 			'accessibility.largeTargetsHint' => 'Давайте совместным контролям больше места для дотика и ассистивной навигации.',
-			'accessibility.navigationHint' => 'Используйте Tab и Shift+Tab для перехода между элементами управления, Enter или пробел для активации, Escape или кнопку «Назад» для закрытия. Когда книга открыта, доступны масштабирование и настройки чтения.',
-			'accessibility.textSizeDescription' => 'Скалируйте текст интерфейса в Pleazyng, помимо настройки размеров текста системы вашего устройства.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'Используйте Tab и Shift+Tab для перехода между элементами управления, Enter или пробел для активации, Escape или кнопку «Назад» для закрытия. Когда книга открыта, доступны масштабирование и настройки чтения.',
+			'accessibility.textSizeDescription' => 'Скалируйте текст интерфейса в Pleazyng, помимо настройки размеров текста системы вашего устройства.',
 			'accessibility.boldTextHint' => 'Используйте более тяжёлый вес для интерфейсов и сообщений, чтобы их было легче отличить.',
 			'tooltips.shufflePlay' => 'Случайное воспроизведение',
 			'tooltips.playTrailer' => 'Воспроизвести трейлер',
@@ -7228,10 +7231,10 @@ extension on TranslationsRu {
 			'discover.person.birthplace' => 'Место рождения',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (возраст: ${age})',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (в возрасте ${age})',
-			'errors.searchFailed' => ({required Object error}) => 'Ошибка поиска: ${error}',
-			'errors.searchUnavailable' => 'Поиску не удалось связаться ни с одним медиасервером.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => 'Ошибка поиска: ${error}',
+			'errors.searchUnavailable' => 'Поиску не удалось связаться ни с одним медиасервером.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Таймаут подключения при загрузке ${context}',
 			'errors.connectionFailed' => 'Не удалось подключиться к медиасерверу',
 			'errors.unableToLoad' => ({required Object context}) => 'Не удалось загрузить ${context}. Повторите попытку.',
@@ -7742,10 +7745,10 @@ extension on TranslationsRu {
 			'playlists.enterPlaylistName' => 'Введите название плейлиста',
 			'playlists.delete' => 'Удалить плейлист',
 			'playlists.removeItem' => 'Удалить из плейлиста',
-			'playlists.smartPlaylist' => 'Умный плейлист',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемент', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемента', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элементов', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемента', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => 'Умный плейлист',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемент', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемента', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элементов', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемента', ), 
 			'playlists.emptyPlaylist' => 'Этот плейлист пуст',
 			'playlists.deleteConfirm' => 'Удалить плейлист?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Вы уверены, что хотите удалить "${name}"?',
@@ -8256,10 +8259,10 @@ extension on TranslationsRu {
 			'performanceOverlay.sampleRate' => 'Частота дискр.',
 			'performanceOverlay.pixelFormat' => 'Формат пикселей',
 			'performanceOverlay.hwFormat' => 'Формат HW',
-			'performanceOverlay.matrix' => 'Матрица',
-			'performanceOverlay.primaries' => 'Основные цвета',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => 'Матрица',
+			'performanceOverlay.primaries' => 'Основные цвета',
 			'performanceOverlay.transfer' => 'Передача',
 			'performanceOverlay.renderFps' => 'FPS рендера',
 			'performanceOverlay.displayFps' => 'FPS дисплея',
@@ -8696,7 +8699,6 @@ extension on TranslationsRu {
 			'cast.connectedTo' => ({required Object device}) => 'Подключен к ${device}',
 			'cast.device' => 'Кастинг устройства',
 			'cast.readyToCast' => 'Готов выпустить',
-			'cast.subtitle' => 'Субтитры',
 			'cast.serverNotAvailable' => 'Медийный сервер не доступен.',
 			'cast.stopCasting' => 'Спрете кастировать',
 			'cast.startFailed' => 'Нельзя начать кастинг. проверьте сервер и попробуйте снова.',
@@ -8771,9 +8773,9 @@ extension on TranslationsRu {
 			'homeLayout.continueWatchingLibraryDescription' => 'В этой библиотеке есть собственная рецидивирующая линия',
 			'homeLayout.continueWatchingHomeDescription' => 'Резюме-прогресс-регион показаны на домашних',
 			'homeLayout.nextUpHomeDescription' => 'Следующая не наблюдаемая серия эпизодов показывается отдельно на Home',
-			'homeLayout.library' => 'Библиотека',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => 'Библиотека',
 			'homeLayout.showInRecommended' => 'Показать в библиотеке рекомендуется',
 			'homeLayout.customPlexRow' => 'Собственный Plex ряд',
 			'homeLayout.heroNeedsLibrary' => 'Проверьте библиотеку сначала — Герою нужно где-то показать',
@@ -9285,9 +9287,9 @@ extension on TranslationsRu {
 			'audiobook.statusProgress' => 'В прогрессе',
 			'audiobook.statusFinished' => 'Завершился',
 			'audiobook.goToTime' => 'Идите в Время',
-			'audiobook.timeHelp' => 'Часы: минуты: секунды или минуты: секунды',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => 'Часы: минуты: секунды или минуты: секунды',
 			'audiobook.recoveryHelp' => 'Экспортируйте недавно зашифрованную копию перед перемещением или восстановлением данных синхронизации. Импорты сливаются с текущим состоянием; они никогда не замещают историю локальной синхронности.',
 			'audiobook.recoveryExport' => 'Экспорт шифрованных файлов восстановления',
 			'audiobook.recoveryImport' => 'Импорт шифрованных файлов восстановления',
@@ -9799,9 +9801,9 @@ extension on TranslationsRu {
 			'musicTools.historyHint' => 'История прослушиваний этого профиля',
 			'musicTools.days' => 'Дни',
 			'musicTools.albumBlocks' => 'Сохранять альбомы целиком',
-			'musicTools.home' => 'Музыка',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => 'Музыка',
 			'musicTools.recent' => 'Недавно прослушанные',
 			'musicTools.apiKey' => 'Ключ API',
 			'musicTools.missing' => 'Н/Д',

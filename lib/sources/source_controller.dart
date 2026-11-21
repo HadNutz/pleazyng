@@ -693,9 +693,9 @@ class SourceController extends ChangeNotifier {
     await ready;
     requireSession();
     final epoch = generation, profile = profileId!;
-    final result = (await repository.sources(profile))
-        .where((source) => source.profileId == profile)
-        .toList(growable: false);
+    final result = (await repository.sources(
+      profile,
+    )).where((source) => source.profileId == profile).toList(growable: false);
     if (!current(epoch)) {
       return;
     }
@@ -1644,7 +1644,55 @@ class SourceController extends ChangeNotifier {
     }
     final sourceAdapter = adapter(sourceId);
     requireSession(epoch);
-    await downloads.download(profile, sourceAdapter, file, label: row['label'] as String? ?? '');
+    final label = row['label'] as String? ?? '';
+    try {
+      await downloads.download(profile, sourceAdapter, file, label: label);
+    } on SourceException catch (error) {
+      requireSession(epoch);
+      const nas = {FileSourceKind.sftp, FileSourceKind.nfs, FileSourceKind.smb, FileSourceKind.ftp};
+      if (!nas.contains(source.kind) ||
+          !const {
+            SourceFailure.conflict,
+            SourceFailure.invalidData,
+            SourceFailure.unavailable,
+          }.contains(error.reason) ||
+          file.cueStart != null ||
+          file.cueEnd != null) {
+        rethrow;
+      }
+      // Retry is an explicit request for this NAS file. Re-list its directory
+      // so an atomic replacement also refreshes cached NFS file handles.
+      // Only a different edition at the exact same path may replace the job.
+      final owner = await repository.entryById(profile, sourceId, file.id);
+      requireSession(epoch);
+      final slash = file.id.lastIndexOf('/');
+      final parent = owner?.parentId ?? (slash > 0 ? file.id.substring(0, slash) : null);
+      String? cursor;
+      final seen = <String>{};
+      do {
+        final page = await browse(sourceId, parent: parent, cursor: cursor, query: file.name);
+        final entry = page.entries.where((item) => item.id == file.id && item.sourceId == sourceId).firstOrNull;
+        final replacement = entry?.files
+            .where((candidate) => candidate.id == file.id && !candidate.sampleOnly && !candidate.streamOnly)
+            .firstOrNull;
+        if (replacement != null) {
+          if (replacement.fingerprint == file.fingerprint) rethrow;
+          final current = await repository.download(profile, downloadKey);
+          requireSession(epoch);
+          if (current == null ||
+              current['fingerprint'] != file.fingerprint ||
+              current['complete'] == 1 ||
+              !identical(adapter(sourceId), sourceAdapter)) {
+            throw const SourceException(SourceFailure.cancelled);
+          }
+          await downloads.download(profile, sourceAdapter, replacement, label: label);
+          requireSession(epoch);
+          return;
+        }
+        cursor = page.next;
+      } while (cursor != null && seen.add(cursor));
+      rethrow;
+    }
     requireSession(epoch);
   }
 

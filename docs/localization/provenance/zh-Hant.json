@@ -1,7 +1,7 @@
 {
   "locale": "zh-Hant",
   "inherits": null,
-  "catalogSha256": "0b4c6c37408172cbc79330a14485b092fc03ca92a7d5772a26a6c9ff178f8bc5",
+  "catalogSha256": "a1c57240eee56a5b064db6517fec7fb5641dd3ac3ef6d72e0d2a02225fd89829",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -10,7 +10,6 @@
     "cast.connectedTo": "m2m100-draft+opencc-s2twp",
     "cast.device": "m2m100-draft+opencc-s2twp",
     "cast.readyToCast": "m2m100-draft+opencc-s2twp",
-    "cast.subtitle": "translation-memory",
     "cast.serverNotAvailable": "m2m100-draft+opencc-s2twp",
     "cast.stopCasting": "m2m100-draft",
     "cast.castToDevice": "m2m100-draft+opencc-s2twp",
@@ -359,7 +358,6 @@
     "settings.importSettings": "existing",
     "settings.importSettingsDescription": "existing",
     "settings.importSettingsConfirm": "existing",
-    "settings.importSettingsSuccess": "existing",
     "settings.importSettingsInvalidFile": "existing",
     "settings.importSettingsNoUser": "existing",
     "settings.cloudBackup": "m2m100-draft+opencc-s2twp",
@@ -372,7 +370,6 @@
     "settings.cloudBackupComplete": "assistant-semantic-review-2026-11-21",
     "settings.cloudBackupRestore": "m2m100-draft+opencc-s2twp",
     "settings.cloudBackupRestoreConfirm": "m2m100-draft+opencc-s2twp",
-    "settings.cloudBackupRestored": "m2m100-draft",
     "settings.shortcutsReset": "existing",
     "settings.resetShortcutsConfirm": "existing",
     "settings.about": "existing",

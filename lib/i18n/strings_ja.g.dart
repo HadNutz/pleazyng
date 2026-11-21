@@ -342,6 +342,9 @@ class _Translations$common$ja extends Translations$common$en {
 	@override String get notAvailable => 'N/A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => '記号';
+	@override String get keyboardLetters => '文字';
+	@override String get keyboardNewLine => '改行';
 	@override late final _Translations$common$mediaKind$ja mediaKind = _Translations$common$mediaKind$ja._(_root);
 }
 
@@ -569,7 +572,7 @@ class _Translations$settings$ja extends Translations$settings$en {
 	@override String get importSettings => '設定をインポート';
 	@override String get importSettingsDescription => 'ファイルから設定を復元';
 	@override String get importSettingsConfirm => '現在の設定を置き換えます。続行しますか？';
-	@override String get importSettingsSuccess => '設定をインポートしました';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => '適用した設定：${applied}件。スキップ：${skipped}件。';
 	@override String get importSettingsInvalidFile => 'このファイルは有効なPlezyの設定エクスポートではありません';
 	@override String get importSettingsNoUser => '設定をインポートする前にサインインしてください';
 	@override String get cloudBackup => 'クラウドバックアップ';
@@ -582,7 +585,6 @@ class _Translations$settings$ja extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'バックアップをアップロードしました。このURLを保存してください。再インストール後、クラウドバックアップ画面にこのURLを入力し、「${action}」を選んでください。';
 	@override String get cloudBackupRestore => 'バックアップ復元';
 	@override String get cloudBackupRestoreConfirm => 'これは、このデバイス上の適合する携帯設定を置き換えるでしょう。';
-	@override String get cloudBackupRestored => '設定は、Cloud Backup から復元';
 	@override String get shortcutsReset => 'ショートカットをデフォルトにリセットしました';
 	@override String get resetShortcutsConfirm => 'カスタムショートカットがデフォルトに置き換えられます。続行しますか？';
 	@override String get about => 'アプリについて';
@@ -3122,7 +3124,6 @@ class _Translations$cast$ja extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => '接続番号: ${device}';
 	@override String get device => 'キャストデバイス';
 	@override String get readyToCast => '投げる準備';
-	@override String get subtitle => '字幕';
 	@override String get serverNotAvailable => 'メディアサーバーは利用できません。';
 	@override String get stopCasting => 'キャストをやめる';
 	@override String get startFailed => 'サーバーをチェックして再度試してみる';
@@ -5825,6 +5826,9 @@ extension on TranslationsJa {
 			'common.notAvailable' => 'N/A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => '記号',
+			'common.keyboardLetters' => '文字',
+			'common.keyboardNewLine' => '改行',
 			'common.mediaKind.movie' => '映画',
 			'common.mediaKind.show' => 'テレビ番組',
 			'common.mediaKind.season' => 'シーズン',
@@ -6033,7 +6037,7 @@ extension on TranslationsJa {
 			'settings.importSettings' => '設定をインポート',
 			'settings.importSettingsDescription' => 'ファイルから設定を復元',
 			'settings.importSettingsConfirm' => '現在の設定を置き換えます。続行しますか？',
-			'settings.importSettingsSuccess' => '設定をインポートしました',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => '適用した設定：${applied}件。スキップ：${skipped}件。',
 			'settings.importSettingsInvalidFile' => 'このファイルは有効なPlezyの設定エクスポートではありません',
 			'settings.importSettingsNoUser' => '設定をインポートする前にサインインしてください',
 			'settings.cloudBackup' => 'クラウドバックアップ',
@@ -6046,7 +6050,6 @@ extension on TranslationsJa {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'バックアップをアップロードしました。このURLを保存してください。再インストール後、クラウドバックアップ画面にこのURLを入力し、「${action}」を選んでください。',
 			'settings.cloudBackupRestore' => 'バックアップ復元',
 			'settings.cloudBackupRestoreConfirm' => 'これは、このデバイス上の適合する携帯設定を置き換えるでしょう。',
-			'settings.cloudBackupRestored' => '設定は、Cloud Backup から復元',
 			'settings.shortcutsReset' => 'ショートカットをデフォルトにリセットしました',
 			'settings.resetShortcutsConfirm' => 'カスタムショートカットがデフォルトに置き換えられます。続行しますか？',
 			'settings.about' => 'アプリについて',
@@ -6145,10 +6148,10 @@ extension on TranslationsJa {
 			'settings.companionRemoteServer' => 'コンパニオンリモートサーバー',
 			'settings.companionRemoteServerDescription' => 'ネットワーク上のモバイルデバイスからこのアプリを操作できるようにする',
 			'settings.companionRemoteServerStartFailed' => 'コンパニオンリモートサーバーを開始できませんでした',
-			'settings.companionRemoteServerStopFailed' => 'コンパニオンリモートサーバーを停止できませんでした',
-			'settings.autoPip' => '自動ピクチャーインピクチャー',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'コンパニオンリモートサーバーを停止できませんでした',
+			'settings.autoPip' => '自動ピクチャーインピクチャー',
 			'settings.autoPipDescription' => '再生中にアプリを離れると、自動的にピクチャーインピクチャーに切り替えます',
 			'settings.matchContentFrameRate' => 'コンテンツのフレームレートに合わせる',
 			'settings.matchContentFrameRateDescription' => '表示のリフレッシュレートを動画コンテンツに合わせます',
@@ -6659,10 +6662,10 @@ extension on TranslationsJa {
 			'accessibility.reduceMotionHint' => 'フォーカス表示、ページ切り替え、装飾効果の動きを止めます。',
 			'accessibility.largeTargets' => 'タッチターゲットの拡大',
 			'accessibility.largeTargetsHint' => '共通の操作ボタンの領域を広げ、タッチ操作や支援技術による操作をしやすくします。',
-			'accessibility.navigationHint' => 'TabとShift+Tabで操作項目を移動し、EnterまたはSpaceで実行、Escapeまたは戻るボタンで閉じます。本を開いている間は、拡大率や読書設定を変更できます。',
-			'accessibility.textSizeDescription' => 'Pleazyng のスケールインターフェイスのテキストは、デバイスのシステムのテキスタイル設定に加えて。',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'TabとShift+Tabで操作項目を移動し、EnterまたはSpaceで実行、Escapeまたは戻るボタンで閉じます。本を開いている間は、拡大率や読書設定を変更できます。',
+			'accessibility.textSizeDescription' => 'Pleazyng のスケールインターフェイスのテキストは、デバイスのシステムのテキスタイル設定に加えて。',
 			'accessibility.boldTextHint' => 'インターフェイスラベルやメッセージに重い重さを使用して、それらを区別しやすくなります。',
 			'tooltips.shufflePlay' => 'シャッフル再生',
 			'tooltips.playTrailer' => '予告編を再生',
@@ -7173,10 +7176,10 @@ extension on TranslationsJa {
 			'discover.person.birthplace' => '出生地',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date}（${age}歳）',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date}（${age}歳没）',
-			'errors.searchFailed' => ({required Object error}) => '検索に失敗しました: ${error}',
-			'errors.searchUnavailable' => '検索中にメディアサーバーへ接続できませんでした。',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => '検索に失敗しました: ${error}',
+			'errors.searchUnavailable' => '検索中にメディアサーバーへ接続できませんでした。',
 			'errors.connectionTimeout' => ({required Object context}) => '${context}の読み込み中に接続がタイムアウトしました',
 			'errors.connectionFailed' => 'メディアサーバーに接続できません',
 			'errors.unableToLoad' => ({required Object context}) => '${context}を読み込めませんでした。もう一度お試しください。',
@@ -7687,10 +7690,10 @@ extension on TranslationsJa {
 			'playlists.enterPlaylistName' => 'プレイリスト名を入力',
 			'playlists.delete' => 'プレイリストを削除',
 			'playlists.removeItem' => 'プレイリストから削除',
-			'playlists.smartPlaylist' => 'スマートプレイリスト',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}件', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => 'スマートプレイリスト',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}件', ), 
 			'playlists.emptyPlaylist' => 'このプレイリストは空です',
 			'playlists.deleteConfirm' => 'プレイリストを削除しますか？',
 			'playlists.deleteMessage' => ({required Object name}) => '「${name}」を削除しますか？',
@@ -8201,10 +8204,10 @@ extension on TranslationsJa {
 			'performanceOverlay.sampleRate' => 'サンプルレート',
 			'performanceOverlay.pixelFormat' => 'ピクセル形式',
 			'performanceOverlay.hwFormat' => 'HW 形式',
-			'performanceOverlay.matrix' => 'マトリクス',
-			'performanceOverlay.primaries' => 'プライマリ',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => 'マトリクス',
+			'performanceOverlay.primaries' => 'プライマリ',
 			'performanceOverlay.transfer' => '伝達特性',
 			'performanceOverlay.renderFps' => '描画 FPS',
 			'performanceOverlay.displayFps' => '表示 FPS',
@@ -8641,7 +8644,6 @@ extension on TranslationsJa {
 			'cast.connectedTo' => ({required Object device}) => '接続番号: ${device}',
 			'cast.device' => 'キャストデバイス',
 			'cast.readyToCast' => '投げる準備',
-			'cast.subtitle' => '字幕',
 			'cast.serverNotAvailable' => 'メディアサーバーは利用できません。',
 			'cast.stopCasting' => 'キャストをやめる',
 			'cast.startFailed' => 'サーバーをチェックして再度試してみる',
@@ -8716,9 +8718,9 @@ extension on TranslationsJa {
 			'homeLayout.continueWatchingLibraryDescription' => 'この図書館のリサイクル・進歩の順番',
 			'homeLayout.continueWatchingHomeDescription' => 'ホーム で表示される再生進歩の順番',
 			'homeLayout.nextUpHomeDescription' => '次の未見のエピソードの順番がホームで別々に表示されます。',
-			'homeLayout.library' => 'ライブラリ',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => 'ライブラリ',
 			'homeLayout.showInRecommended' => '図書館で紹介される',
 			'homeLayout.customPlexRow' => '定制 Plex ライン',
 			'homeLayout.heroNeedsLibrary' => '図書館をチェックするには、まずヒーローがどこかで表示する必要があります。',
@@ -9230,9 +9232,9 @@ extension on TranslationsJa {
 			'audiobook.statusProgress' => '進歩中',
 			'audiobook.statusFinished' => '終了',
 			'audiobook.goToTime' => '時間へ行く',
-			'audiobook.timeHelp' => '時間:分:秒、または分:秒',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => '時間:分:秒、または分:秒',
 			'audiobook.recoveryHelp' => '同期データを移動または修正する前に、最近暗号化されたコピーを輸出します. インポートは現在の状態と合併し、現地の同期史を決して置き換えることはありません。',
 			'audiobook.recoveryExport' => 'エクスポート暗号化回復ファイル',
 			'audiobook.recoveryImport' => '暗号化された復元ファイルの輸入',
@@ -9744,9 +9746,9 @@ extension on TranslationsJa {
 			'musicTools.historyHint' => 'このプロフィールの再生履歴',
 			'musicTools.days' => '日',
 			'musicTools.albumBlocks' => 'アルバム全体をまとめる',
-			'musicTools.home' => '音楽',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => '音楽',
 			'musicTools.recent' => '最近再生した曲',
 			'musicTools.apiKey' => 'API キー',
 			'musicTools.missing' => 'N/A',

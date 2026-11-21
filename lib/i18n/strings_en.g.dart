@@ -690,6 +690,15 @@ class Translations$common$en {
 	/// en: 'ABC'
 	String get letterKeys => 'ABC';
 
+	/// en: 'Symbols'
+	String get keyboardSymbols => 'Symbols';
+
+	/// en: 'Letters'
+	String get keyboardLetters => 'Letters';
+
+	/// en: 'New line'
+	String get keyboardNewLine => 'New line';
+
 	late final Translations$common$mediaKind$en mediaKind = Translations$common$mediaKind$en.internal(_root);
 }
 
@@ -1310,8 +1319,8 @@ class Translations$settings$en {
 	/// en: 'This will replace your current settings. Continue?'
 	String get importSettingsConfirm => 'This will replace your current settings. Continue?';
 
-	/// en: 'Settings imported'
-	String get importSettingsSuccess => 'Settings imported';
+	/// en: 'Settings applied: ${applied}. Skipped: ${skipped}.'
+	String importSettingsCounts({required Object applied, required Object skipped}) => 'Settings applied: ${applied}. Skipped: ${skipped}.';
 
 	/// en: 'This file isn't a valid Pleazyng settings export'
 	String get importSettingsInvalidFile => 'This file isn\'t a valid Pleazyng settings export';
@@ -1348,9 +1357,6 @@ class Translations$settings$en {
 
 	/// en: 'This will replace matching portable settings on this device. Continue?'
 	String get cloudBackupRestoreConfirm => 'This will replace matching portable settings on this device. Continue?';
-
-	/// en: 'Settings restored from cloud backup'
-	String get cloudBackupRestored => 'Settings restored from cloud backup';
 
 	/// en: 'Shortcuts reset to defaults'
 	String get shortcutsReset => 'Shortcuts reset to defaults';
@@ -8958,9 +8964,6 @@ class Translations$cast$en {
 
 	/// en: 'Ready to cast'
 	String get readyToCast => 'Ready to cast';
-
-	/// en: 'Subtitles'
-	String get subtitle => 'Subtitles';
 
 	/// en: 'The media server is not available.'
 	String get serverNotAvailable => 'The media server is not available.';
@@ -18467,6 +18470,9 @@ extension on Translations {
 			'common.notAvailable' => 'N/A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Symbols',
+			'common.keyboardLetters' => 'Letters',
+			'common.keyboardNewLine' => 'New line',
 			'common.mediaKind.movie' => 'Movie',
 			'common.mediaKind.show' => 'Show',
 			'common.mediaKind.season' => 'Season',
@@ -18675,7 +18681,7 @@ extension on Translations {
 			'settings.importSettings' => 'Import Settings',
 			'settings.importSettingsDescription' => 'Restore preferences from a file',
 			'settings.importSettingsConfirm' => 'This will replace your current settings. Continue?',
-			'settings.importSettingsSuccess' => 'Settings imported',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Settings applied: ${applied}. Skipped: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'This file isn\'t a valid Pleazyng settings export',
 			'settings.importSettingsNoUser' => 'Sign in before importing settings',
 			'settings.cloudBackup' => 'Cloud Backup',
@@ -18688,7 +18694,6 @@ extension on Translations {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Backup uploaded. Save this URL. On a new installation, enter it in Cloud Backup and choose “${action}”.',
 			'settings.cloudBackupRestore' => 'Restore Backup',
 			'settings.cloudBackupRestoreConfirm' => 'This will replace matching portable settings on this device. Continue?',
-			'settings.cloudBackupRestored' => 'Settings restored from cloud backup',
 			'settings.shortcutsReset' => 'Shortcuts reset to defaults',
 			'settings.resetShortcutsConfirm' => 'This will replace your custom shortcuts with the defaults. Continue?',
 			'settings.about' => 'About',
@@ -18777,10 +18782,10 @@ extension on Translations {
 			'settings.askDownloadQualityEachTimeDescription' => 'Show the quality picker before queueing each video download',
 			'settings.cellularDownloadBlocked' => 'Downloads are blocked on cellular. Use Wi-Fi or change the setting.',
 			'settings.maxVolume' => 'Maximum Volume',
-			'settings.maxVolumeDescription' => 'Allow volume boost above 100% for quiet media',
-			'settings.maxVolumePercent' => ({required Object percent}) => '${percent}%',
 			_ => null,
 		} ?? switch (path) {
+			'settings.maxVolumeDescription' => 'Allow volume boost above 100% for quiet media',
+			'settings.maxVolumePercent' => ({required Object percent}) => '${percent}%',
 			'settings.discordRichPresence' => 'Discord Rich Presence',
 			'settings.discordRichPresenceDescription' => 'Show what you\'re watching on Discord',
 			'settings.services' => 'Services',
@@ -19291,10 +19296,10 @@ extension on Translations {
 			'accessibility.mediaCardShow' => ({required Object title}) => '${title}, TV show',
 			'accessibility.mediaCardEpisode' => ({required Object title, required Object episodeInfo}) => '${title}, ${episodeInfo}',
 			'accessibility.mediaCardSeason' => ({required Object title, required Object seasonInfo}) => '${title}, ${seasonInfo}',
-			'accessibility.mediaCardWatched' => 'watched',
-			'accessibility.mediaCardPartiallyWatched' => ({required Object percent}) => '${percent} percent watched',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.mediaCardWatched' => 'watched',
+			'accessibility.mediaCardPartiallyWatched' => ({required Object percent}) => '${percent} percent watched',
 			'accessibility.mediaCardUnwatched' => 'unwatched',
 			'accessibility.tapToPlay' => 'Tap to play',
 			'accessibility.decrease' => 'Decrease',
@@ -19805,10 +19810,10 @@ extension on Translations {
 			'iptv.deleteRecording' => 'Delete recording',
 			'iptv.deleteRecordingConfirm' => 'Delete this recording and its file from this device?',
 			'iptv.deleteDispatcharrRecordingConfirm' => 'Delete this recording and its file from the Dispatcharr server?',
-			'iptv.stopRecording' => 'Stop recording',
-			'iptv.recordingDeleted' => 'Recording deleted.',
 			_ => null,
 		} ?? switch (path) {
+			'iptv.stopRecording' => 'Stop recording',
+			'iptv.recordingDeleted' => 'Recording deleted.',
 			'iptv.recordingScheduled' => 'Recording scheduled on Dispatcharr.',
 			'iptv.scheduleRecordingOnDevice' => 'Schedule local recording',
 			'iptv.localRecordingScheduled' => 'Local recording scheduled. Pleazyng must be running when it starts.',
@@ -20319,10 +20324,10 @@ extension on Translations {
 			'explore.rows.upcomingMovies' => 'Upcoming Movies',
 			'explore.rows.upcomingShows' => 'Upcoming Shows',
 			'explore.status.airing' => 'Airing',
-			'explore.status.ended' => 'Ended',
-			'explore.status.canceled' => 'Canceled',
 			_ => null,
 		} ?? switch (path) {
+			'explore.status.ended' => 'Ended',
+			'explore.status.canceled' => 'Canceled',
 			'explore.status.upcoming' => 'Upcoming',
 			'explore.episodeCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episode', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episodes', ), 
 			'explore.cast' => 'Cast',
@@ -20833,10 +20838,10 @@ extension on Translations {
 			'downloads.nextNUnwatched' => ({required Object count}) => 'Next ${count} unwatched',
 			'downloads.customAmount' => 'Custom amount...',
 			'downloads.customAmountAny' => 'Custom amount (any)...',
-			'downloads.randomEpisodes' => 'Random episodes',
-			'downloads.includeSpecials' => 'Include Specials',
 			_ => null,
 		} ?? switch (path) {
+			'downloads.randomEpisodes' => 'Random episodes',
+			'downloads.includeSpecials' => 'Include Specials',
 			'downloads.howManyEpisodes' => 'How many episodes?',
 			'downloads.invalidEpisodeCount' => 'Enter a valid episode count.',
 			'downloads.keepSynced' => 'Keep synced',
@@ -21347,10 +21352,10 @@ extension on Translations {
 			'matchScreen.matchApplied' => 'Match applied',
 			'matchScreen.matchFailed' => 'Failed to apply match',
 			'matchScreen.titleHint' => 'Title',
-			'matchScreen.yearHint' => 'Year',
-			'matchScreen.search' => 'Search',
 			_ => null,
 		} ?? switch (path) {
+			'matchScreen.yearHint' => 'Year',
+			'matchScreen.search' => 'Search',
 			'matchScreen.noMatchesFound' => 'No matches found',
 			'matchScreen.plexDiscover' => 'Plex Discover',
 			'matchScreen.plexLibrary' => 'Plex library',
@@ -21688,7 +21693,6 @@ extension on Translations {
 			'cast.connectedTo' => ({required Object device}) => 'Connected to ${device}',
 			'cast.device' => 'Cast device',
 			'cast.readyToCast' => 'Ready to cast',
-			'cast.subtitle' => 'Subtitles',
 			'cast.serverNotAvailable' => 'The media server is not available.',
 			'cast.stopCasting' => 'Stop casting',
 			'cast.startFailed' => 'Could not start casting. Check the server and try again.',
@@ -21862,9 +21866,9 @@ extension on Translations {
 			'platform.locationPermission' => 'Pleazyng uses location access when iOS requires it to detect your local network and connect to your media servers.',
 			'platform.photoLibraryPermission' => 'Choose images from your photo library to use as media artwork.',
 			'platform.cameraPermission' => 'Scan QR codes to pair a Companion Remote.',
-			'universalMedia.title' => 'Open media',
 			_ => null,
 		} ?? switch (path) {
+			'universalMedia.title' => 'Open media',
 			'universalMedia.shortcutHelp' => 'Play a link, playlist, or file for this session.',
 			'universalMedia.intro' => 'Open a link, playlist, or file. Playback uses Pleazyng’s standard player and does not add history to your library.',
 			'universalMedia.openWhat' => 'What would you like to open?',
@@ -22376,9 +22380,9 @@ extension on Translations {
 			'sourceSetup.nfsSetupHelp' => 'NFS setup help',
 			'sourceSetup.nfsSetupHint' => 'Check these settings if the connection does not open.',
 			'sourceSetup.nfsSetupDetails' => 'Use an NFSv3 TCP export. The NFS service and mount service must both support RPC-with-TLS when encryption is required. Leave the custom certificate blank for a server certificate trusted by this device, or add the NAS CA/self-signed certificate. The certificate name must match the host in the endpoint. If the NAS asks for mutual TLS, add its PKCS#12 client identity. Finally, confirm the export allows the configured AUTH_SYS UID/GID and the client port policy.',
-			'sourceSetup.ftpHelp' => 'FTP uses passive mode. Use ftp:// for plain FTP, ftpes:// for explicit TLS, or ftps:// for TLS (implicit on port 990; explicit on other ports).',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.ftpHelp' => 'FTP uses passive mode. Use ftp:// for plain FTP, ftpes:// for explicit TLS, or ftps:// for TLS (implicit on port 990; explicit on other ports).',
 			'sourceSetup.openSubtitles' => 'OpenSubtitles',
 			'sourceSetup.subtitleSetup' => 'Optional subtitle search for standalone videos.',
 			'sourceSetup.apiKey' => 'API key',
@@ -22890,9 +22894,9 @@ extension on Translations {
 			'podcasts.country' => 'Country (two-letter code)',
 			'podcasts.directoryLink' => 'Open directory listing',
 			'podcasts.feedAdded' => 'Podcast added.',
-			'podcasts.refreshPartial' => 'Some feeds could not refresh. Cached episodes remain available.',
 			_ => null,
 		} ?? switch (path) {
+			'podcasts.refreshPartial' => 'Some feeds could not refresh. Cached episodes remain available.',
 			'podcasts.importOpml' => 'Import subscriptions (OPML)',
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
 			'podcasts.imported' => 'Subscriptions imported.',
@@ -23404,9 +23408,9 @@ extension on Translations {
 			'karaokeUi.phoneMicrophoneInputHelp' => 'Use headphones. This input provides pitch feedback and an optional private dry recording on the host. It does not amplify your voice through the stage speakers.',
 			'karaokeUi.sendRawVocalAudioForPrivateTake' => 'Send raw vocal audio to save a private take on the host',
 			'karaokeUi.enablePhoneMicrophone' => 'Enable phone microphone',
-			'karaokeUi.muteAndSavePhoneInput' => 'Mute and save',
 			_ => null,
 		} ?? switch (path) {
+			'karaokeUi.muteAndSavePhoneInput' => 'Mute and save',
 			'karaokeUi.pitchMIDIPracticeOnly' => ({required Object value1}) => 'Pitch MIDI ${value1} · practice only',
 			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',
 			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',

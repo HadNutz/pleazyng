@@ -342,6 +342,9 @@ class _Translations$common$ko extends Translations$common$en {
 	@override String get notAvailable => 'N/A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => '기호';
+	@override String get keyboardLetters => '문자';
+	@override String get keyboardNewLine => '줄 바꿈';
 	@override late final _Translations$common$mediaKind$ko mediaKind = _Translations$common$mediaKind$ko._(_root);
 }
 
@@ -569,7 +572,7 @@ class _Translations$settings$ko extends Translations$settings$en {
 	@override String get importSettings => '설정 가져오기';
 	@override String get importSettingsDescription => '파일에서 기본 설정 복원';
 	@override String get importSettingsConfirm => '현재 설정을 대체합니다. 계속하시겠습니까?';
-	@override String get importSettingsSuccess => '설정 가져오기 완료';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => '적용된 설정: ${applied}개. 건너뛴 설정: ${skipped}개.';
 	@override String get importSettingsInvalidFile => '유효한 Pleazyng 설정 내보내기 파일이 아닙니다';
 	@override String get importSettingsNoUser => '설정을 가져오기 전에 로그인하세요';
 	@override String get cloudBackup => '클라우드 백업';
@@ -582,7 +585,6 @@ class _Translations$settings$ko extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => '백업을 업로드했습니다. 이 URL을 보관하세요. 앱을 새로 설치한 후 클라우드 백업에 이 URL을 입력하고 ‘${action}’을 선택하세요.';
 	@override String get cloudBackupRestore => 'Backup 복구';
 	@override String get cloudBackupRestoreConfirm => '이 장치에서 해당 휴대용 설정을 대체합니다.';
-	@override String get cloudBackupRestored => 'Cloud Backup에서 복구된 설정';
 	@override String get shortcutsReset => '단축키가 기본값으로 재설정되었습니다';
 	@override String get resetShortcutsConfirm => '사용자 지정 단축키가 기본값으로 대체됩니다. 계속하시겠습니까?';
 	@override String get about => '정보';
@@ -3122,7 +3124,6 @@ class _Translations$cast$ko extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => '${device}에 연결된';
 	@override String get device => '장치 캡처';
 	@override String get readyToCast => '던져질 준비';
-	@override String get subtitle => '자막';
 	@override String get serverNotAvailable => '미디어 서버는 사용할 수 없습니다.';
 	@override String get stopCasting => '카스팅을 멈추세요';
 	@override String get startFailed => '캐스트를 시작할 수 없습니다. 서버를 확인하고 다시 시도하세요.';
@@ -5825,6 +5826,9 @@ extension on TranslationsKo {
 			'common.notAvailable' => 'N/A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => '기호',
+			'common.keyboardLetters' => '문자',
+			'common.keyboardNewLine' => '줄 바꿈',
 			'common.mediaKind.movie' => '영화',
 			'common.mediaKind.show' => '시리즈',
 			'common.mediaKind.season' => '시즌',
@@ -6033,7 +6037,7 @@ extension on TranslationsKo {
 			'settings.importSettings' => '설정 가져오기',
 			'settings.importSettingsDescription' => '파일에서 기본 설정 복원',
 			'settings.importSettingsConfirm' => '현재 설정을 대체합니다. 계속하시겠습니까?',
-			'settings.importSettingsSuccess' => '설정 가져오기 완료',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => '적용된 설정: ${applied}개. 건너뛴 설정: ${skipped}개.',
 			'settings.importSettingsInvalidFile' => '유효한 Pleazyng 설정 내보내기 파일이 아닙니다',
 			'settings.importSettingsNoUser' => '설정을 가져오기 전에 로그인하세요',
 			'settings.cloudBackup' => '클라우드 백업',
@@ -6046,7 +6050,6 @@ extension on TranslationsKo {
 			'settings.cloudBackupComplete' => ({required Object action}) => '백업을 업로드했습니다. 이 URL을 보관하세요. 앱을 새로 설치한 후 클라우드 백업에 이 URL을 입력하고 ‘${action}’을 선택하세요.',
 			'settings.cloudBackupRestore' => 'Backup 복구',
 			'settings.cloudBackupRestoreConfirm' => '이 장치에서 해당 휴대용 설정을 대체합니다.',
-			'settings.cloudBackupRestored' => 'Cloud Backup에서 복구된 설정',
 			'settings.shortcutsReset' => '단축키가 기본값으로 재설정되었습니다',
 			'settings.resetShortcutsConfirm' => '사용자 지정 단축키가 기본값으로 대체됩니다. 계속하시겠습니까?',
 			'settings.about' => '정보',
@@ -6145,10 +6148,10 @@ extension on TranslationsKo {
 			'settings.companionRemoteServer' => '컴패니언 리모트 서버',
 			'settings.companionRemoteServerDescription' => '네트워크의 모바일 기기가 이 앱을 제어할 수 있도록 허용',
 			'settings.companionRemoteServerStartFailed' => '컴패니언 리모트 서버를 시작할 수 없습니다',
-			'settings.companionRemoteServerStopFailed' => '컴패니언 리모트 서버를 중지할 수 없습니다',
-			'settings.autoPip' => '자동 PIP 모드',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => '컴패니언 리모트 서버를 중지할 수 없습니다',
+			'settings.autoPip' => '자동 PIP 모드',
 			'settings.autoPipDescription' => '재생 중 앱을 떠나면 자동으로 화면 속 화면 모드로 전환합니다',
 			'settings.matchContentFrameRate' => '콘텐츠 프레임 레이트 맞춤',
 			'settings.matchContentFrameRateDescription' => '디스플레이 새로 고침 빈도를 동영상 콘텐츠에 맞춤',
@@ -6659,10 +6662,10 @@ extension on TranslationsKo {
 			'accessibility.reduceMotionHint' => '포커스 표시, 페이지 전환 및 장식 효과의 움직임을 멈춥니다.',
 			'accessibility.largeTargets' => '더 큰 터치 목표',
 			'accessibility.largeTargetsHint' => '공통 컨트롤의 영역을 넓혀 터치와 보조 기술을 통한 탐색을 쉽게 합니다.',
-			'accessibility.navigationHint' => 'Tab과 Shift+Tab으로 컨트롤 사이를 이동하고, Enter 또는 Space로 실행하고, Escape 또는 뒤로 버튼으로 닫으세요. 책을 열면 확대/축소와 읽기 설정을 사용할 수 있습니다.',
-			'accessibility.textSizeDescription' => 'Pleazyng에서 스케일 인터페이스 텍스트는 장치의 시스템 텍스트 크기 설정 외에도.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'Tab과 Shift+Tab으로 컨트롤 사이를 이동하고, Enter 또는 Space로 실행하고, Escape 또는 뒤로 버튼으로 닫으세요. 책을 열면 확대/축소와 읽기 설정을 사용할 수 있습니다.',
+			'accessibility.textSizeDescription' => 'Pleazyng에서 스케일 인터페이스 텍스트는 장치의 시스템 텍스트 크기 설정 외에도.',
 			'accessibility.boldTextHint' => '인터페이스 라벨과 메시지에 더 무거운 무게를 사용하여 구별하기 쉽습니다.',
 			'tooltips.shufflePlay' => '무작위 재생',
 			'tooltips.playTrailer' => '예고편 재생',
@@ -7173,10 +7176,10 @@ extension on TranslationsKo {
 			'discover.person.birthplace' => '출생지',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age}세)',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (향년 ${age}세)',
-			'errors.searchFailed' => ({required Object error}) => '검색 실패: ${error}',
-			'errors.searchUnavailable' => '검색이 어떤 미디어 서버에도 연결할 수 없습니다.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => '검색 실패: ${error}',
+			'errors.searchUnavailable' => '검색이 어떤 미디어 서버에도 연결할 수 없습니다.',
 			'errors.connectionTimeout' => ({required Object context}) => '${context} 로드 중 연결 시간 초과',
 			'errors.connectionFailed' => '미디어 서버에 연결할 수 없습니다',
 			'errors.unableToLoad' => ({required Object context}) => '${context}을(를) 불러올 수 없습니다. 다시 시도하세요.',
@@ -7687,10 +7690,10 @@ extension on TranslationsKo {
 			'playlists.enterPlaylistName' => '재생 목록 이름 입력',
 			'playlists.delete' => '재생 목록 삭제',
 			'playlists.removeItem' => '재생 목록에서 항목 제거',
-			'playlists.smartPlaylist' => '스마트 재생 목록',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}개 항목', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => '스마트 재생 목록',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}개 항목', ), 
 			'playlists.emptyPlaylist' => '이 재생 목록은 비어 있습니다',
 			'playlists.deleteConfirm' => '재생 목록을 삭제하시겠습니까?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}"을(를) 삭제하시겠습니까?',
@@ -8201,10 +8204,10 @@ extension on TranslationsKo {
 			'performanceOverlay.sampleRate' => '샘플 레이트',
 			'performanceOverlay.pixelFormat' => '픽셀 형식',
 			'performanceOverlay.hwFormat' => 'HW 형식',
-			'performanceOverlay.matrix' => '매트릭스',
-			'performanceOverlay.primaries' => '원색',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => '매트릭스',
+			'performanceOverlay.primaries' => '원색',
 			'performanceOverlay.transfer' => '전송',
 			'performanceOverlay.renderFps' => '렌더 FPS',
 			'performanceOverlay.displayFps' => '디스플레이 FPS',
@@ -8641,7 +8644,6 @@ extension on TranslationsKo {
 			'cast.connectedTo' => ({required Object device}) => '${device}에 연결된',
 			'cast.device' => '장치 캡처',
 			'cast.readyToCast' => '던져질 준비',
-			'cast.subtitle' => '자막',
 			'cast.serverNotAvailable' => '미디어 서버는 사용할 수 없습니다.',
 			'cast.stopCasting' => '카스팅을 멈추세요',
 			'cast.startFailed' => '캐스트를 시작할 수 없습니다. 서버를 확인하고 다시 시도하세요.',
@@ -8716,9 +8718,9 @@ extension on TranslationsKo {
 			'homeLayout.continueWatchingLibraryDescription' => '이 도서관의 자체 재구성-진보 순서',
 			'homeLayout.continueWatchingHomeDescription' => 'Home에 표시된 재현 진행 순서',
 			'homeLayout.nextUpHomeDescription' => '다음 무시된 에피소드 순서가 집에서 별도로 표시됩니다.',
-			'homeLayout.library' => '라이브러리',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => '라이브러리',
 			'homeLayout.showInRecommended' => '추천 도서관에서 제공하는',
 			'homeLayout.customPlexRow' => '사용자 정의 Plex 라인',
 			'homeLayout.heroNeedsLibrary' => '도서관을 먼저 확인하십시오 - 영웅은 어디서나 보여줄 필요가 있습니다.',
@@ -9230,9 +9232,9 @@ extension on TranslationsKo {
 			'audiobook.statusProgress' => '진행 중에',
 			'audiobook.statusFinished' => '마무리',
 			'audiobook.goToTime' => '시간에 가라',
-			'audiobook.timeHelp' => '시간:분:초 또는 분:초',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => '시간:분:초 또는 분:초',
 			'audiobook.recoveryHelp' => '동기화 데이터를 이동하거나 복구하기 전에 최근 암호화 된 복사본을 수출합니다.수입은 현재 상태와 결합됩니다; 그들은 결코 지역 동기 역사를 대체하지 않습니다.',
 			'audiobook.recoveryExport' => '수출 암호화 된 복구 파일',
 			'audiobook.recoveryImport' => '암호화된 복구 파일 수입',
@@ -9744,9 +9746,9 @@ extension on TranslationsKo {
 			'musicTools.historyHint' => '이 프로필의 재생 기록',
 			'musicTools.days' => '일',
 			'musicTools.albumBlocks' => '앨범 전체를 함께 유지',
-			'musicTools.home' => '음악',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => '음악',
 			'musicTools.recent' => '최근 재생한 음악',
 			'musicTools.apiKey' => 'API 키',
 			'musicTools.missing' => 'N/A',

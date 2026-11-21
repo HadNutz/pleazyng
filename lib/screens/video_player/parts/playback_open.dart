@@ -1263,6 +1263,13 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
   /// Returns whether open was issued and whether a selected remote sidecar
   /// stalled after the primary media was ready, requiring an automatic reopen
   /// without subtitles.
+  MotionProcessingMode _motionModeForPlayback(SettingsService settings) {
+    final mode = settings.read(SettingsService.motionProcessingMode);
+    if (!PlatformDetector.usesNativeTvMedia() || mode != MotionProcessingMode.off) return mode;
+    final preset = ScopedPlayerPrefs.resolve(ScopedPlayerPrefs.motionClarityPreset, _currentMetadata);
+    return preset.interpolationEnabled ? MotionProcessingMode.mpv : mode;
+  }
+
   Future<_MediaOpenResult> _openMediaOnPlayer({
     required Player player,
     required SettingsService settingsService,
@@ -1325,7 +1332,7 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
       try {
         await MotionProcessingService.configureForPlayback(
           player,
-          settingsService.read(SettingsService.motionProcessingMode),
+          _motionModeForPlayback(settingsService),
           isLive: widget.isLive,
           isTranscoding: isTranscoding,
           selectedVersion: selectedVersion,

@@ -534,6 +534,8 @@ Future<bool?> navigateToVideoPlayer(
             launched = await ExternalPlayerService.launch(
               context: context,
               videoUrl: videoUrl,
+              initialPosition: initialPosition,
+              allowServerFallback: !isOffline,
               metadata: metadata,
               client: mediaClient,
               offlineWatchService: offlineWatchService,

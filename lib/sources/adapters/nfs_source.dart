@@ -451,13 +451,13 @@ class NfsSourceAdapter extends SourceAdapter {
     reader.uint32();
     reader.uint64();
     reader.uint64();
-    final atimeSec = reader.uint32();
+    reader.uint32();
     reader.uint32();
     final mtimeSec = reader.uint32();
+    final mtimeNanos = reader.uint32();
     reader.uint32();
     reader.uint32();
-    reader.uint32();
-    return _NfsAttributes(type, size, mtimeSec == 0 ? atimeSec : mtimeSec);
+    return _NfsAttributes(type, size, mtimeSec, mtimeNanos);
   }
 
   Future<_NfsAttributes> _getAttributes(List<int> handle) async {
@@ -466,9 +466,8 @@ class NfsSourceAdapter extends SourceAdapter {
     final reader = _XdrReader(response);
     final status = reader.uint32();
     if (status != 0) throw _nfsError(status);
-    final attributes = _postAttributes(reader);
-    if (attributes == null) throw const SourceException(SourceFailure.invalidData);
-    return attributes;
+    // GETATTR3resok carries fattr3 directly, unlike the optional attributes on LOOKUP and READ.
+    return _attributes(reader);
   }
 
   Future<_NfsDirectoryPage> _readDirectory(
@@ -581,7 +580,7 @@ class NfsSourceAdapter extends SourceAdapter {
       final kind = isDirectory ? SourceItemKind.folder : classifySourceFile(row.name, lookupMimeType(row.name) ?? '');
       if (kind == SourceItemKind.unknown) continue;
       final size = row.attributes?.size;
-      final revision = row.attributes == null ? null : '${size?.toString() ?? ''}:${row.attributes!.modifiedSeconds}';
+      final revision = row.attributes?.revision;
       entries.add(
         SourceEntry(
           sourceId: source.id,
@@ -833,10 +832,16 @@ class NfsSourceAdapter extends SourceAdapter {
     final handle = await _handleForPath(file.id);
     final attributes = await _getAttributes(handle);
     final size = attributes.size;
+    final revision = attributes.revision;
+    final legacy = file.revision == '$size:${attributes.modifiedSeconds}';
+    if (file.size != null && file.size != size || file.revision != null && !legacy && file.revision != revision) {
+      throw const SourceException(SourceFailure.conflict);
+    }
     if (offset > size) throw const SourceException(SourceFailure.invalidData);
     final actualLength = length > size - offset ? size - offset : length;
     return SourceByteStream(
       stream: _readRange(handle, size, offset, actualLength),
+      validatedRevision: file.revision == revision ? revision : null,
       size: size,
       offset: offset,
       length: actualLength,
@@ -884,10 +889,12 @@ class _NfsReadLimiter {
 }
 
 class _NfsAttributes {
-  const _NfsAttributes(this.type, this.size, this.modifiedSeconds);
+  const _NfsAttributes(this.type, this.size, this.modifiedSeconds, this.modifiedNanos);
   final int type;
   final int size;
   final int modifiedSeconds;
+  final int modifiedNanos;
+  String? get revision => modifiedSeconds == 0 && modifiedNanos == 0 ? null : '$size:$modifiedSeconds.$modifiedNanos';
 }
 
 class _NfsDirectoryEntry {

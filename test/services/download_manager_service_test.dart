@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:plezy/media/ids.dart';
+import 'package:plezy/database/download_conversion_operations.dart';
 
 import 'dart:io';
 
@@ -1453,6 +1454,42 @@ void main() {
       final stored = await fixture.db.getDownloadedMedia(fixture.metadata.globalKey);
       expect(stored?.status, DownloadStatus.failed.index);
       expect(stored?.errorMessage, t.downloads.errorDownloadFailedWithReason(reason: t.errors.reasonRefused));
+    });
+
+    test('an offline cancellation survives row deletion and reaches only the owning Plex queue on reconnect', () async {
+      final fixture = await _createSupplementaryFixture();
+      final client = _CancellableClient(metadata: fixture.metadata, owner: 'owner');
+      final foreign = _CancellableClient(metadata: fixture.metadata, owner: 'different');
+      _CancellableClient? online = client;
+      final manager = DownloadManagerService(
+        database: fixture.db,
+        storageService: fixture.storage,
+        clientResolver: (serverId, {clientScopeId}) => online,
+        downloadsSupportedOverride: true,
+        fileDownloaderInitializerOverride: () async {},
+        enqueueTaskOverride: (task) async => fail('conversion still in progress'),
+      );
+      addTearDown(manager.disposeAndDrain);
+      final pending = manager.progressStream.firstWhere((event) => event.serverConverting);
+      await manager.queueDownload(
+        metadata: fixture.metadata,
+        client: client,
+        downloadQuality: TranscodeQualityPreset.p720_2mbps,
+      );
+      await pending;
+      online = null;
+      await manager.cancelAndRemoveDownload(fixture.metadata.globalKey);
+      expect(await fixture.db.getDownloadedMedia(fixture.metadata.globalKey), isNull);
+      expect(await fixture.db.cancelledDownloadConversions(key: fixture.metadata.globalKey), hasLength(1));
+      online = foreign;
+      manager.resumeQueuedDownloads(foreign);
+      await Future<void>.delayed(Duration.zero);
+      expect(foreign.cancelled.isCompleted, isFalse);
+      online = client;
+      manager.resumeQueuedDownloads(client);
+      expect(await client.cancelled.future.timeout(const Duration(seconds: 5)), (queueId: 4, itemId: 23));
+      await manager.disposeAndDrain();
+      expect(await fixture.db.cancelledDownloadConversions(key: fixture.metadata.globalKey), isEmpty);
     });
 
     test('a converted download waits for the server, then fetches the converted file', () async {
@@ -4174,9 +4211,36 @@ class _ConvertingClient extends _SupplementaryClient implements ConvertedDownloa
     required int mediaIndex,
     String? mediaSourceId,
     required TranscodeQualityPreset preset,
+    Future<void> Function(DownloadConversionHandle job)? onAccepted,
   }) async {
     requests.add(preset);
     return states.removeAt(0);
+  }
+}
+
+class _CancellableClient extends _SupplementaryClient
+    implements ConvertedDownloadClient, CancellableDownloadConversion {
+  _CancellableClient({required super.metadata, required this.owner})
+    : super(resolution: () => const DownloadResolution(videoUrl: 'https://example.test/original.mkv'));
+  final String owner;
+  final cancelled = Completer<DownloadConversionHandle>();
+  @override
+  String get downloadConversionOwner => owner;
+  @override
+  Future<void> cancelDownloadConversion(DownloadConversionHandle job) async {
+    if (!cancelled.isCompleted) cancelled.complete(job);
+  }
+
+  @override
+  Future<ConvertedDownloadState> requestConvertedDownload(
+    MediaItem item, {
+    required int mediaIndex,
+    String? mediaSourceId,
+    required TranscodeQualityPreset preset,
+    Future<void> Function(DownloadConversionHandle job)? onAccepted,
+  }) async {
+    await onAccepted!((queueId: 4, itemId: 23));
+    return const ConvertedDownloadPending(retryAfter: Duration(hours: 1));
   }
 }
 

@@ -1124,7 +1124,7 @@ class IptvSourceRepository {
     } on IptvImportException {
       rethrow;
     } on Object {
-      throw const IptvImportException('recording_schedule_exists');
+      throw const IptvImportException('recording_action_failed');
     }
     return id;
   }
@@ -1724,6 +1724,15 @@ class IptvSourceRepository {
         variables: [Variable(profileId), Variable(sourceId)],
       ),
     );
+  }
+
+  Future<void> deleteAllProfiles() async {
+    final owners = await _database
+        .customSelect('SELECT profile_id FROM iptv_sources UNION SELECT profile_id FROM iptv_recordings')
+        .get();
+    for (final owner in owners) {
+      await deleteProfile(owner.read<String>('profile_id'));
+    }
   }
 
   Future<void> deleteProfile(String profileId) async {

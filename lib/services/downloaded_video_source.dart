@@ -12,7 +12,7 @@ import 'saf_storage_service.dart';
 /// A downloaded copy resolved to a playable location, plus the version that is
 /// actually on disk — which can differ from the requested one when
 /// [resolveDownloadedVideoSource] was allowed to fall back.
-typedef DownloadedVideoSource = ({String path, int mediaIndex, String? mediaSourceId, bool converted});
+typedef DownloadedVideoSource = ({String path, int mediaIndex, String? mediaSourceId, bool converted, int partCount});
 
 /// Single source of truth for "where is the playable copy of this downloaded
 /// row, and is it the version that was asked for".
@@ -98,6 +98,7 @@ Future<DownloadedVideoSource?> resolveDownloadedVideoSource(
     path: readablePath,
     mediaIndex: row.mediaIndex,
     mediaSourceId: row.mediaSourceId,
-    converted: preset != null && !preset.isOriginal && row.partCount == 1,
+    converted: preset != null && !preset.isOriginal,
+    partCount: row.partCount,
   );
 }

@@ -3,6 +3,10 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/models/video_backend.dart';
+import 'package:plezy/models/player_setting_scope.dart';
+import 'package:plezy/services/player_sync_offsets.dart';
+import 'package:plezy/services/scoped_player_prefs.dart';
+import '../test_helpers/media_items.dart';
 import 'package:plezy/mpv/models.dart';
 import 'package:plezy/mpv/player/player.dart';
 import 'package:plezy/mpv/player/platform/player_system.dart';
@@ -79,6 +83,16 @@ void main() {
     });
     final player = PlayerSystem('gstreamer');
     try {
+      resetSharedPreferencesForTest();
+      SettingsService.resetForTesting();
+      final settings = await SettingsService.getInstance();
+      await settings.write(SettingsService.syncOffsetScope, PlayerSettingScope.title);
+      final item = testMediaItem(id: 'film', serverId: 'server');
+      await ScopedPlayerPrefs.write(ScopedPlayerPrefs.audioSyncOffset, item, -125);
+      final offsets = PlayerSyncOffsets.of(player);
+      await offsets.applyOnStartup(item, mediaReady: false);
+      expect(calls.where((c) => c.method == 'audioDelay'), isEmpty);
+      expect(offsets.audioMs, 0);
       await player.setVolume(40);
       await player.open(
         Media('file:///tmp/test.mp4', start: const Duration(seconds: 22)),
@@ -90,6 +104,9 @@ void main() {
       expect(calls.where((c) => c.method == 'seek').single.arguments['value'], 2000);
       expect(calls.where((c) => c.method == 'volume').single.arguments['value'], 0.4);
       expect(calls.where((c) => c.method == 'play'), isEmpty);
+      await offsets.applyOnStartup(item, mediaReady: true);
+      expect(offsets.audioMs, -125);
+      expect(calls.where((c) => c.method == 'audioDelay').single.arguments['value'], -125000);
       await player.play();
       await player.stop();
       expect(player.state.seekable, isFalse);
@@ -128,6 +145,66 @@ void main() {
       await player.open(Media('file:///live.ts'), isLive: true);
       await player.open(Media('file:///next.mp4'));
       expect(creates.map((args) => args['motion']), [true, null, null]);
+    } finally {
+      await player.dispose();
+      messenger.setMockMethodCallHandler(channel, null);
+    }
+  });
+
+  test('TV exposes surface dimensions while waiting for the first frame', () async {
+    final waiting = Completer<void>();
+    final painted = Completer<void>();
+    var polls = 0;
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      switch (call.method) {
+        case 'create':
+          return 1;
+        case 'state':
+          if (++polls == 1) return {'loaded': true, 'width': 640, 'height': 360};
+          if (!waiting.isCompleted) waiting.complete();
+          await painted.future;
+          return {'ready': true, 'frame': true, 'width': 640, 'height': 360};
+        case 'tracks':
+          return [];
+      }
+      return null;
+    });
+    final player = PlayerSystem('tvmpv');
+    try {
+      final open = player.open(Media('file:///movie.mp4'));
+      await waiting.future.timeout(const Duration(seconds: 3));
+      expect(await player.getProperty('width'), '640');
+      painted.complete();
+      await open;
+    } finally {
+      if (!painted.isCompleted) painted.complete();
+      await player.dispose();
+      messenger.setMockMethodCallHandler(channel, null);
+    }
+  });
+
+  test('TV motion preroll failure reopens the same source once without the filter', () async {
+    final creates = <Map<dynamic, dynamic>>[];
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      switch (call.method) {
+        case 'create':
+          creates.add(call.arguments as Map);
+          return 1;
+        case 'state':
+          if (creates.length == 1) return {'failed': true};
+          return {'ready': true, 'frame': true, 'width': 640, 'height': 360};
+        case 'tracks':
+          return [];
+      }
+      return null;
+    });
+    final player = PlayerSystem('tvmpv');
+    try {
+      player.prepareTvMotion(true);
+      await player.open(Media('file:///movie.mp4'));
+      expect(creates.map((request) => request['motion']), [true, null]);
+      expect(creates.last['uri'], creates.first['uri']);
+      expect(player.tvMotionRequested, isTrue);
     } finally {
       await player.dispose();
       messenger.setMockMethodCallHandler(channel, null);

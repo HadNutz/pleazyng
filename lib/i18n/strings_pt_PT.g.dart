@@ -41,7 +41,6 @@ class TranslationsPtPt extends TranslationsPt with BaseTranslations<AppLocale, T
 	TranslationsPtPt $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsPtPt(meta: meta ?? this.$meta);
 
 	// Translations
-	@override late final Translations$cast$pt_PT cast = Translations$cast$pt_PT.internal(_root);
 	@override late final Translations$appIcon$pt_PT appIcon = Translations$appIcon$pt_PT.internal(_root);
 	@override late final Translations$auth$pt_PT auth = Translations$auth$pt_PT.internal(_root);
 	@override late final Translations$common$pt_PT common = Translations$common$pt_PT.internal(_root);
@@ -106,16 +105,6 @@ class TranslationsPtPt extends TranslationsPt with BaseTranslations<AppLocale, T
 	@override late final Translations$serverTasks$pt_PT serverTasks = Translations$serverTasks$pt_PT.internal(_root);
 	@override late final Translations$trakt$pt_PT trakt = Translations$trakt$pt_PT.internal(_root);
 	@override late final Translations$deepLinks$pt_PT deepLinks = Translations$deepLinks$pt_PT.internal(_root);
-}
-
-// Path: cast
-class Translations$cast$pt_PT extends Translations$cast$pt {
-	Translations$cast$pt_PT.internal(TranslationsPtPt root) : this._root = root, super.internal(root);
-
-	final TranslationsPtPt _root; // ignore: unused_field
-
-	// Translations
-	@override String get subtitle => 'Legendas';
 }
 
 // Path: appIcon
@@ -253,6 +242,7 @@ class Translations$settings$pt_PT extends Translations$settings$pt {
 	@override String get playbackBufferExtraLarge => 'Extragrande';
 	@override String get musicQualityTitle => 'Qualidade da música';
 	@override String get subtitleStyling => 'Estilo de legendas';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Definições aplicadas: ${applied}. Ignoradas: ${skipped}.';
 	@override String get cloudBackupUsername => 'Nome de utilizador';
 	@override String get cloudBackupPassword => 'Palavra-passe';
 	@override String get skipMarkerModeOff => 'Desativado';
@@ -413,7 +403,6 @@ class Translations$settings$pt_PT extends Translations$settings$pt {
 	@override String get importSettings => 'Importar definições';
 	@override String get importSettingsDescription => 'Restaurar preferências a partir de um ficheiro';
 	@override String get importSettingsConfirm => 'Isto substituirá as suas definições atuais. Continuar?';
-	@override String get importSettingsSuccess => 'Definições importadas';
 	@override String get importSettingsNoUser => 'Inicie sessão antes de importar as definições';
 	@override String get shortcutsReset => 'Atalhos repostos para os predefinidos';
 	@override String get resetShortcutsConfirm => 'Isto substituirá os seus atalhos personalizados pelos predefinidos. Continuar?';
@@ -3720,7 +3709,6 @@ class Translations$services$pendingAuth$pt_PT extends Translations$services$pend
 extension on TranslationsPtPt {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'cast.subtitle' => 'Legendas',
 			'appIcon.defaultIcon' => 'Predefinição',
 			'appIcon.title' => 'Ícone da aplicação',
 			'appIcon.current' => 'Ícone atual',
@@ -3859,6 +3847,7 @@ extension on TranslationsPtPt {
 			'settings.playbackBufferExtraLarge' => 'Extragrande',
 			'settings.musicQualityTitle' => 'Qualidade da música',
 			'settings.subtitleStyling' => 'Estilo de legendas',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Definições aplicadas: ${applied}. Ignoradas: ${skipped}.',
 			'settings.cloudBackupUsername' => 'Nome de utilizador',
 			'settings.cloudBackupPassword' => 'Palavra-passe',
 			'settings.skipMarkerModeOff' => 'Desativado',
@@ -4011,7 +4000,6 @@ extension on TranslationsPtPt {
 			'settings.importSettings' => 'Importar definições',
 			'settings.importSettingsDescription' => 'Restaurar preferências a partir de um ficheiro',
 			'settings.importSettingsConfirm' => 'Isto substituirá as suas definições atuais. Continuar?',
-			'settings.importSettingsSuccess' => 'Definições importadas',
 			'settings.importSettingsNoUser' => 'Inicie sessão antes de importar as definições',
 			'settings.shortcutsReset' => 'Atalhos repostos para os predefinidos',
 			'settings.resetShortcutsConfirm' => 'Isto substituirá os seus atalhos personalizados pelos predefinidos. Continuar?',
@@ -4232,9 +4220,9 @@ extension on TranslationsPtPt {
 			'hotkeys.actions.fullscreenToggle' => 'Alternar ecrã inteiro',
 			'hotkeys.actions.muteToggle' => 'Alternar silêncio',
 			'hotkeys.actions.subtitleToggle' => 'Alternar legendas',
+			'hotkeys.actions.audioTrackNext' => 'Próxima faixa de áudio',
 			_ => null,
 		} ?? switch (path) {
-			'hotkeys.actions.audioTrackNext' => 'Próxima faixa de áudio',
 			'hotkeys.actions.subtitleTrackNext' => 'Próxima faixa de legenda',
 			'hotkeys.actions.episodePrevious' => 'Episódio anterior',
 			'hotkeys.actions.speedIncrease' => 'Aumentar velocidade',
@@ -4746,9 +4734,9 @@ extension on TranslationsPtPt {
 			'accountPreferences.displayMissingEpisodesDescription' => 'Listar episódios que o servidor conhece, mas para os quais não há ficheiro.',
 			'accountPreferences.hidePlayedInLatest' => 'Ocultar itens vistos em Recentes',
 			'accountPreferences.hidePlayedInLatestDescription' => 'Manter fora das linhas Recentes do servidor os itens que já viu.',
+			'accountPreferences.displayCollectionsView' => 'Mostrar a vista de Coleções',
 			_ => null,
 		} ?? switch (path) {
-			'accountPreferences.displayCollectionsView' => 'Mostrar a vista de Coleções',
 			'accountPreferences.displayCollectionsViewDescription' => 'Oferecer a vista de Coleções do servidor juntamente com as suas bibliotecas.',
 			'accountPreferences.rewatchingInNextUp' => 'Manter em A seguir as séries que está a rever',
 			'accountPreferences.rewatchingInNextUpDescription' => 'Ao terminar uma série, comece a vê-la de novo e A seguir acompanha a nova visualização em vez de remover a série.',
@@ -5260,9 +5248,9 @@ extension on TranslationsPtPt {
 			'watchTogether.reconnectingDescription' => 'A ligação caiu. Vai voltar à sala automaticamente.',
 			'watchTogether.connected' => 'Ligado',
 			'watchTogether.disconnected' => 'Desligado',
+			'watchTogether.youAreHost' => 'É o anfitrião',
 			_ => null,
 		} ?? switch (path) {
-			'watchTogether.youAreHost' => 'É o anfitrião',
 			'watchTogether.hostedBy' => ({required Object name}) => 'Anfitrião: ${name}',
 			'watchTogether.hostControlsPlayback' => 'O anfitrião controla a reprodução',
 			'watchTogether.anyoneCanControl' => 'Qualquer pessoa pode controlar a reprodução',
@@ -5774,9 +5762,9 @@ extension on TranslationsPtPt {
 			'seerr.languageProfile' => 'Perfil de idioma',
 			'seerr.noTags' => 'Sem etiquetas',
 			'seerr.defaultOption' => ({required Object name}) => '${name} (predefinido)',
+			'seerr.animeNote' => 'Esta série é um anime.',
 			_ => null,
 		} ?? switch (path) {
-			'seerr.animeNote' => 'Esta série é um anime.',
 			'seerr.requestSubmitted' => 'Pedido enviado',
 			'seerr.requestFailed' => ({required Object error}) => 'Falha no pedido: ${error}',
 			'seerr.requestsLoadFailed' => 'Não foi possível carregar as opções de pedido',

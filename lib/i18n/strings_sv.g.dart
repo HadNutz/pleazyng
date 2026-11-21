@@ -342,6 +342,9 @@ class _Translations$common$sv extends Translations$common$en {
 	@override String get notAvailable => 'N/A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Symboler';
+	@override String get keyboardLetters => 'Bokstäver';
+	@override String get keyboardNewLine => 'Ny rad';
 	@override late final _Translations$common$mediaKind$sv mediaKind = _Translations$common$mediaKind$sv._(_root);
 }
 
@@ -571,7 +574,7 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String get importSettings => 'Importera inställningar';
 	@override String get importSettingsDescription => 'Återställ inställningar från en fil';
 	@override String get importSettingsConfirm => 'Detta ersätter dina nuvarande inställningar. Fortsätta?';
-	@override String get importSettingsSuccess => 'Inställningar importerade';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Tillämpade inställningar: ${applied}. Överhoppade: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Filen är inte en giltig export av Pleazyng-inställningar';
 	@override String get importSettingsNoUser => 'Logga in innan du importerar inställningar';
 	@override String get cloudBackup => 'Cloud Backup för';
@@ -584,7 +587,6 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Säkerhetskopian har laddats upp. Spara den här webbadressen. Efter en ny installation anger du den under molnsäkerhetskopiering och väljer ”${action}”.';
 	@override String get cloudBackupRestore => 'Återställ backup';
 	@override String get cloudBackupRestoreConfirm => 'Detta kommer att ersätta matchande bärbara inställningar på denna enhet.';
-	@override String get cloudBackupRestored => 'Inställningar återställda från moln backup';
 	@override String get shortcutsReset => 'Genvägarna har återställts till standard';
 	@override String get resetShortcutsConfirm => 'Detta ersätter dina anpassade genvägar med standardgenvägarna. Fortsätta?';
 	@override String get about => 'Om';
@@ -3126,7 +3128,6 @@ class _Translations$cast$sv extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Anslut till ${device}';
 	@override String get device => 'Castanläggning';
 	@override String get readyToCast => 'Redo att kasta';
-	@override String get subtitle => 'Undertexter';
 	@override String get serverNotAvailable => 'Media server är inte tillgänglig.';
 	@override String get stopCasting => 'Sluta casting';
 	@override String get startFailed => 'Kan inte börja kastar. kontrollera serveren och försök igen.';
@@ -5830,6 +5831,9 @@ extension on TranslationsSv {
 			'common.notAvailable' => 'N/A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Symboler',
+			'common.keyboardLetters' => 'Bokstäver',
+			'common.keyboardNewLine' => 'Ny rad',
 			'common.mediaKind.movie' => 'Film',
 			'common.mediaKind.show' => 'Serie',
 			'common.mediaKind.season' => 'Säsong',
@@ -6038,7 +6042,7 @@ extension on TranslationsSv {
 			'settings.importSettings' => 'Importera inställningar',
 			'settings.importSettingsDescription' => 'Återställ inställningar från en fil',
 			'settings.importSettingsConfirm' => 'Detta ersätter dina nuvarande inställningar. Fortsätta?',
-			'settings.importSettingsSuccess' => 'Inställningar importerade',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Tillämpade inställningar: ${applied}. Överhoppade: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Filen är inte en giltig export av Pleazyng-inställningar',
 			'settings.importSettingsNoUser' => 'Logga in innan du importerar inställningar',
 			'settings.cloudBackup' => 'Cloud Backup för',
@@ -6051,7 +6055,6 @@ extension on TranslationsSv {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Säkerhetskopian har laddats upp. Spara den här webbadressen. Efter en ny installation anger du den under molnsäkerhetskopiering och väljer ”${action}”.',
 			'settings.cloudBackupRestore' => 'Återställ backup',
 			'settings.cloudBackupRestoreConfirm' => 'Detta kommer att ersätta matchande bärbara inställningar på denna enhet.',
-			'settings.cloudBackupRestored' => 'Inställningar återställda från moln backup',
 			'settings.shortcutsReset' => 'Genvägarna har återställts till standard',
 			'settings.resetShortcutsConfirm' => 'Detta ersätter dina anpassade genvägar med standardgenvägarna. Fortsätta?',
 			'settings.about' => 'Om',
@@ -6150,10 +6153,10 @@ extension on TranslationsSv {
 			'settings.companionRemoteServer' => 'Server för fjärrkontroll',
 			'settings.companionRemoteServerDescription' => 'Tillåt att mobila enheter i nätverket styr appen',
 			'settings.companionRemoteServerStartFailed' => 'Kunde inte starta servern för fjärrkontroll',
-			'settings.companionRemoteServerStopFailed' => 'Kunde inte stoppa servern för fjärrkontroll',
-			'settings.autoPip' => 'Automatisk bild-i-bild',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Kunde inte stoppa servern för fjärrkontroll',
+			'settings.autoPip' => 'Automatisk bild-i-bild',
 			'settings.autoPipDescription' => 'Aktivera bild-i-bild om du lämnar appen under uppspelning',
 			'settings.matchContentFrameRate' => 'Matcha innehållets bildfrekvens',
 			'settings.matchContentFrameRateDescription' => 'Matcha skärmens uppdateringsfrekvens med videoinnehållet',
@@ -6664,10 +6667,10 @@ extension on TranslationsSv {
 			'accessibility.reduceMotionHint' => 'Stoppa rörelser i fokusmarkeringar, sidövergångar och dekorativa effekter.',
 			'accessibility.largeTargets' => 'Större touchmål',
 			'accessibility.largeTargetsHint' => 'Ge delade kontroller mer utrymme för beröring och assistent navigering.',
-			'accessibility.navigationHint' => 'Använd Tab och Shift+Tab för att flytta mellan kontroller, Enter eller mellanslag för att aktivera och Escape eller Tillbaka för att stänga. Zoom och läsinställningar är tillgängliga när en bok är öppen.',
-			'accessibility.textSizeDescription' => 'Skala gränssnittet text i Pleazyng utöver enhetens systemtextstorlek inställning.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'Använd Tab och Shift+Tab för att flytta mellan kontroller, Enter eller mellanslag för att aktivera och Escape eller Tillbaka för att stänga. Zoom och läsinställningar är tillgängliga när en bok är öppen.',
+			'accessibility.textSizeDescription' => 'Skala gränssnittet text i Pleazyng utöver enhetens systemtextstorlek inställning.',
 			'accessibility.boldTextHint' => 'Använd en tyngre vikt för gränssnittets etiketter och meddelanden för att göra dem lättare att skilja.',
 			'tooltips.shufflePlay' => 'Blanda uppspelning',
 			'tooltips.playTrailer' => 'Spela trailer',
@@ -7178,10 +7181,10 @@ extension on TranslationsSv {
 			'discover.person.birthplace' => 'Födelseort',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age} år)',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (blev ${age} år)',
-			'errors.searchFailed' => ({required Object error}) => 'Sökningen misslyckades: ${error}',
-			'errors.searchUnavailable' => 'Sökningen kunde inte nå någon medieserver.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => 'Sökningen misslyckades: ${error}',
+			'errors.searchUnavailable' => 'Sökningen kunde inte nå någon medieserver.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Anslutningen tog för lång tid när ${context} lästes in',
 			'errors.connectionFailed' => 'Det gick inte att ansluta till medieservern',
 			'errors.unableToLoad' => ({required Object context}) => 'Det gick inte att läsa in ${context}. Försök igen.',
@@ -7692,10 +7695,10 @@ extension on TranslationsSv {
 			'playlists.enterPlaylistName' => 'Ange spellistans namn',
 			'playlists.delete' => 'Ta bort spellista',
 			'playlists.removeItem' => 'Ta bort från spellista',
-			'playlists.smartPlaylist' => 'Smart spellista',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sv'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} objekt', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} objekt', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => 'Smart spellista',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sv'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} objekt', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} objekt', ), 
 			'playlists.emptyPlaylist' => 'Denna spellista är tom',
 			'playlists.deleteConfirm' => 'Ta bort spellista?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Är du säker på att du vill ta bort "${name}"?',
@@ -8206,10 +8209,10 @@ extension on TranslationsSv {
 			'performanceOverlay.sampleRate' => 'Samplingsfrekvens',
 			'performanceOverlay.pixelFormat' => 'Pixelformat',
 			'performanceOverlay.hwFormat' => 'HW-format',
-			'performanceOverlay.matrix' => 'Matris',
-			'performanceOverlay.primaries' => 'Primärfärger',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => 'Matris',
+			'performanceOverlay.primaries' => 'Primärfärger',
 			'performanceOverlay.transfer' => 'Överföring',
 			'performanceOverlay.renderFps' => 'Renderings-FPS',
 			'performanceOverlay.displayFps' => 'Skärm-FPS',
@@ -8646,7 +8649,6 @@ extension on TranslationsSv {
 			'cast.connectedTo' => ({required Object device}) => 'Anslut till ${device}',
 			'cast.device' => 'Castanläggning',
 			'cast.readyToCast' => 'Redo att kasta',
-			'cast.subtitle' => 'Undertexter',
 			'cast.serverNotAvailable' => 'Media server är inte tillgänglig.',
 			'cast.stopCasting' => 'Sluta casting',
 			'cast.startFailed' => 'Kan inte börja kastar. kontrollera serveren och försök igen.',
@@ -8721,9 +8723,9 @@ extension on TranslationsSv {
 			'homeLayout.continueWatchingLibraryDescription' => 'Denna biblioteks egna resume-progress rad',
 			'homeLayout.continueWatchingHomeDescription' => 'Den återkommande framsteg raden visas på hemmet',
 			'homeLayout.nextUpHomeDescription' => 'Nästa oövervakas episod rad visas separat på Home',
-			'homeLayout.library' => 'Bibliotek',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => 'Bibliotek',
 			'homeLayout.showInRecommended' => 'Utställning i biblioteket rekommenderas',
 			'homeLayout.customPlexRow' => 'Anpassad Plex rad',
 			'homeLayout.heroNeedsLibrary' => 'Kolla biblioteket först – Hero behöver någonstans att visa',
@@ -9235,9 +9237,9 @@ extension on TranslationsSv {
 			'audiobook.statusProgress' => 'I framsteg',
 			'audiobook.statusFinished' => 'Avslutad',
 			'audiobook.goToTime' => 'Gå till tiden',
-			'audiobook.timeHelp' => 'Klockor: minuter: sekunder eller minuter: sekunder',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => 'Klockor: minuter: sekunder eller minuter: sekunder',
 			'audiobook.recoveryHelp' => 'Exportera en nyligen krypterad kopia innan du flyttar eller reparerar synkroniseringsdata. Importer går ihop med den aktuella tillståndet; de ersätter aldrig lokal synkroniseringshistoria. Håll synkronkoden separat.',
 			'audiobook.recoveryExport' => 'Export krypterad återhämtningsfil',
 			'audiobook.recoveryImport' => 'Import krypterad återhämtningsfil',
@@ -9749,9 +9751,9 @@ extension on TranslationsSv {
 			'musicTools.historyHint' => 'Uppspelningshistorik för den här profilen',
 			'musicTools.days' => 'Dagar',
 			'musicTools.albumBlocks' => 'Håll hela album samman',
-			'musicTools.home' => 'Musik',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Senast spelat',
 			'musicTools.apiKey' => 'API-nyckel',
 			'musicTools.missing' => 'N/A',

@@ -1,4 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
+
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:plezy/sources/adapters/audiobookshelf_source.dart';
 import 'dart:math' as math;
 
 import 'package:drift/native.dart';
@@ -168,6 +173,81 @@ void main() {
       liveInput: true,
     );
     return player;
+  }
+
+  for (final missingPart in [0, 2]) {
+    test('Audiobookshelf protects a remote resume point when part ${missingPart + 1} has no duration', () async {
+      final book = item.copyWith(
+        files: [
+          for (var index = 0; index < 3; index++)
+            PublicationFile(
+              id: 'part$index',
+              name: 'Part$index.mp3',
+              mimeType: 'audio/mpeg',
+              durationMs: index == missingPart ? null : 3600000,
+            ),
+        ],
+      );
+      Map<String, dynamic>? patch;
+      final adapter = AudiobookshelfSourceAdapter(
+        const FileSource(
+          id: 'cloud',
+          profileId: 'alice',
+          kind: FileSourceKind.audiobookshelf,
+          name: 'Books',
+          endpoint: 'https://abs.example',
+        ),
+        SourceTransport(
+          client: MockClient((request) async {
+            if (request.method == 'PATCH') {
+              patch = jsonDecode(request.body);
+              return http.Response('{}', 200);
+            }
+            return http.Response(
+              jsonEncode({
+                'currentTime': 3900,
+                'progress': .46,
+                'isFinished': false,
+                'lastUpdate': DateTime.now().millisecondsSinceEpoch,
+              }),
+              200,
+            );
+          }),
+        ),
+        () async => {'token': 'fixture'},
+      );
+      addTearDown(adapter.close);
+      final initial = PublicationProgress(
+        entryKey: book.key,
+        edition: sourceDigest(jsonEncode(book.audio.map((file) => file.fingerprint).toList())),
+        mode: PublicationMode.listening,
+        session: 'fresh',
+      );
+      final remote = (await adapter.readProgress(book, initial))!;
+      await sources.repository.saveProgress('alice', remote, kind: 'remote');
+      final start = playback.start(
+        book,
+        book.audio,
+        localOverrides: {for (final file in book.audio) file.id: Uri.file('${directory.path}/${file.name}')},
+      );
+      if (missingPart == 0) {
+        await expectLater(start, throwsA(isA<SourceException>()));
+        expect(native.openedUris, isEmpty);
+        final stored = await sources.repository.progress('alice', initial.key);
+        expect(stored!.positionMs, 3900000);
+        expect(stored.needsAudioTimeline, isTrue);
+        await expectLater(adapter.writeProgress(book, stored), throwsA(isA<SourceException>()));
+        expect(patch, isNull);
+      } else {
+        await start;
+        expect(playback.fileIndex, 1);
+        expect(native.openStarts.single, const Duration(minutes: 5));
+        native.setPosition(const Duration(minutes: 5, seconds: 10));
+        await playback.pause();
+        await adapter.writeProgress(book, playback.progress!);
+        expect(patch!['currentTime'], 3910);
+      }
+    });
   }
 
   test('retry preserves the last reliable position after decoder reset and EOF', () async {

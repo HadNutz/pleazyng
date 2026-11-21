@@ -1,7 +1,7 @@
 {
   "locale": "en",
   "inherits": null,
-  "catalogSha256": "9abfbf572fb250ff55515e8f27c59f216cb08947e2d2323e3bb9b90293087428",
+  "catalogSha256": "e9e3f8b841ee70201223b5e167e84fd07d458d7f2a0a994d2d5c0019aa706c27",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "source-english",
@@ -10,7 +10,6 @@
     "cast.connectedTo": "source-english",
     "cast.device": "source-english",
     "cast.readyToCast": "source-english",
-    "cast.subtitle": "source-english",
     "cast.serverNotAvailable": "source-english",
     "cast.stopCasting": "source-english",
     "cast.castToDevice": "source-english",
@@ -359,7 +358,6 @@
     "settings.importSettings": "source-english",
     "settings.importSettingsDescription": "source-english",
     "settings.importSettingsConfirm": "source-english",
-    "settings.importSettingsSuccess": "source-english",
     "settings.importSettingsInvalidFile": "source-english",
     "settings.importSettingsNoUser": "source-english",
     "settings.cloudBackup": "source-english",
@@ -372,7 +370,6 @@
     "settings.cloudBackupComplete": "source-english",
     "settings.cloudBackupRestore": "source-english",
     "settings.cloudBackupRestoreConfirm": "source-english",
-    "settings.cloudBackupRestored": "source-english",
     "settings.shortcutsReset": "source-english",
     "settings.resetShortcutsConfirm": "source-english",
     "settings.about": "source-english",

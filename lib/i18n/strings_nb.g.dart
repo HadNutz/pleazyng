@@ -342,6 +342,9 @@ class _Translations$common$nb extends Translations$common$en {
 	@override String get notAvailable => 'I/T';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Symboler';
+	@override String get keyboardLetters => 'Bokstaver';
+	@override String get keyboardNewLine => 'Ny linje';
 	@override late final _Translations$common$mediaKind$nb mediaKind = _Translations$common$mediaKind$nb._(_root);
 }
 
@@ -571,7 +574,7 @@ class _Translations$settings$nb extends Translations$settings$en {
 	@override String get importSettings => 'Importer innstillinger';
 	@override String get importSettingsDescription => 'Gjenopprett innstillinger fra en fil';
 	@override String get importSettingsConfirm => 'Dette vil erstatte nåværende innstillinger. Fortsette?';
-	@override String get importSettingsSuccess => 'Innstillinger importert';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Innstillinger tatt i bruk: ${applied}. Hoppet over: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Denne filen er ikke en gyldig Pleazyng-innstillingseksport';
 	@override String get importSettingsNoUser => 'Logg inn før import av innstillinger';
 	@override String get cloudBackup => 'Sikkerhetskopi i skyen';
@@ -584,7 +587,6 @@ class _Translations$settings$nb extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Sikkerhetskopien er lastet opp. Ta vare på denne nettadressen. Etter en ny installasjon skriver du den inn under sikkerhetskopiering i skyen og velger «${action}».';
 	@override String get cloudBackupRestore => 'Åpne backup';
 	@override String get cloudBackupRestoreConfirm => 'Dette vil erstatte matching bærbare innstillinger på denne enheten.';
-	@override String get cloudBackupRestored => 'Innstillinger gjenopprettet fra cloud backup';
 	@override String get shortcutsReset => 'Snarveier tilbakestilt til standard';
 	@override String get resetShortcutsConfirm => 'Dette vil erstatte de egendefinerte snarveiene dine med standardsnarveiene. Fortsette?';
 	@override String get about => 'Om';
@@ -3126,7 +3128,6 @@ class _Translations$cast$nb extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Tilkoblet til ${device}';
 	@override String get device => 'Cast utstyr';
 	@override String get readyToCast => 'Klar til å kastes';
-	@override String get subtitle => 'Undertekster';
 	@override String get serverNotAvailable => 'Media server er ikke tilgjengelig.';
 	@override String get stopCasting => 'Stoppe casting';
 	@override String get startFailed => 'Kan ikke begynne å kaste. sjekk serveren og prøv igjen.';
@@ -5830,6 +5831,9 @@ extension on TranslationsNb {
 			'common.notAvailable' => 'I/T',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Symboler',
+			'common.keyboardLetters' => 'Bokstaver',
+			'common.keyboardNewLine' => 'Ny linje',
 			'common.mediaKind.movie' => 'Film',
 			'common.mediaKind.show' => 'Serie',
 			'common.mediaKind.season' => 'Sesong',
@@ -6038,7 +6042,7 @@ extension on TranslationsNb {
 			'settings.importSettings' => 'Importer innstillinger',
 			'settings.importSettingsDescription' => 'Gjenopprett innstillinger fra en fil',
 			'settings.importSettingsConfirm' => 'Dette vil erstatte nåværende innstillinger. Fortsette?',
-			'settings.importSettingsSuccess' => 'Innstillinger importert',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Innstillinger tatt i bruk: ${applied}. Hoppet over: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Denne filen er ikke en gyldig Pleazyng-innstillingseksport',
 			'settings.importSettingsNoUser' => 'Logg inn før import av innstillinger',
 			'settings.cloudBackup' => 'Sikkerhetskopi i skyen',
@@ -6051,7 +6055,6 @@ extension on TranslationsNb {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Sikkerhetskopien er lastet opp. Ta vare på denne nettadressen. Etter en ny installasjon skriver du den inn under sikkerhetskopiering i skyen og velger «${action}».',
 			'settings.cloudBackupRestore' => 'Åpne backup',
 			'settings.cloudBackupRestoreConfirm' => 'Dette vil erstatte matching bærbare innstillinger på denne enheten.',
-			'settings.cloudBackupRestored' => 'Innstillinger gjenopprettet fra cloud backup',
 			'settings.shortcutsReset' => 'Snarveier tilbakestilt til standard',
 			'settings.resetShortcutsConfirm' => 'Dette vil erstatte de egendefinerte snarveiene dine med standardsnarveiene. Fortsette?',
 			'settings.about' => 'Om',
@@ -6150,10 +6153,10 @@ extension on TranslationsNb {
 			'settings.companionRemoteServer' => 'Fjernkontrollserver',
 			'settings.companionRemoteServerDescription' => 'La mobilenheter på nettverket styre denne appen',
 			'settings.companionRemoteServerStartFailed' => 'Kunne ikke starte fjernkontrollserveren',
-			'settings.companionRemoteServerStopFailed' => 'Kunne ikke stoppe fjernkontrollserveren',
-			'settings.autoPip' => 'Automatisk bilde-i-bilde',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Kunne ikke stoppe fjernkontrollserveren',
+			'settings.autoPip' => 'Automatisk bilde-i-bilde',
 			'settings.autoPipDescription' => 'Åpne bilde-i-bilde når du forlater appen under avspilling',
 			'settings.matchContentFrameRate' => 'Tilpass innholdets bildefrekvens',
 			'settings.matchContentFrameRateDescription' => 'Tilpass skjermens oppdateringsfrekvens til videoinnhold',
@@ -6664,10 +6667,10 @@ extension on TranslationsNb {
 			'accessibility.reduceMotionHint' => 'Stopp bevegelser i fokusmarkeringer, sideoverganger og dekorative effekter.',
 			'accessibility.largeTargets' => 'Større touch mål',
 			'accessibility.largeTargetsHint' => 'Gi delte kontroller mer plass for berøring og assistent navigasjon.',
-			'accessibility.navigationHint' => 'Bruk Tab og Shift+Tab for å flytte mellom kontroller, Enter eller mellomrom for å aktivere og Escape eller Tilbake for å lukke. Zoom og leseinnstillinger er tilgjengelige når en bok er åpen.',
-			'accessibility.textSizeDescription' => 'Skala grensesnitt tekst i Pleazyng i tillegg til enhetens system tekst-størrelse innstilling.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'Bruk Tab og Shift+Tab for å flytte mellom kontroller, Enter eller mellomrom for å aktivere og Escape eller Tilbake for å lukke. Zoom og leseinnstillinger er tilgjengelige når en bok er åpen.',
+			'accessibility.textSizeDescription' => 'Skala grensesnitt tekst i Pleazyng i tillegg til enhetens system tekst-størrelse innstilling.',
 			'accessibility.boldTextHint' => 'Bruk en tyngre vekt for grensesnitt etiketter og meldinger for å gjøre dem enklere å skille mellom.',
 			'tooltips.shufflePlay' => 'Tilfeldig avspilling',
 			'tooltips.playTrailer' => 'Spill trailer',
@@ -7178,10 +7181,10 @@ extension on TranslationsNb {
 			'discover.person.birthplace' => 'Fødested',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age} år)',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (${age} år gammel)',
-			'errors.searchFailed' => ({required Object error}) => 'Søk mislyktes: ${error}',
-			'errors.searchUnavailable' => 'Søket kunne ikke nå noen medieserver.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => 'Søk mislyktes: ${error}',
+			'errors.searchUnavailable' => 'Søket kunne ikke nå noen medieserver.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Tidsavbrudd ved lasting av ${context}',
 			'errors.connectionFailed' => 'Kan ikke koble til medieserver',
 			'errors.unableToLoad' => ({required Object context}) => 'Kunne ikke laste ${context}. Prøv igjen.',
@@ -7692,10 +7695,10 @@ extension on TranslationsNb {
 			'playlists.enterPlaylistName' => 'Skriv inn spillelistenavn',
 			'playlists.delete' => 'Slett spilleliste',
 			'playlists.removeItem' => 'Fjern fra spilleliste',
-			'playlists.smartPlaylist' => 'Smart spilleliste',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('nb'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} element', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} elementer', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => 'Smart spilleliste',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('nb'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} element', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} elementer', ), 
 			'playlists.emptyPlaylist' => 'Denne spillelisten er tom',
 			'playlists.deleteConfirm' => 'Slett spilleliste?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Er du sikker på at du vil slette "${name}"?',
@@ -8206,10 +8209,10 @@ extension on TranslationsNb {
 			'performanceOverlay.sampleRate' => 'Samplingsrate',
 			'performanceOverlay.pixelFormat' => 'Pikselformat',
 			'performanceOverlay.hwFormat' => 'HW-format',
-			'performanceOverlay.matrix' => 'Matrise',
-			'performanceOverlay.primaries' => 'Primærfarger',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => 'Matrise',
+			'performanceOverlay.primaries' => 'Primærfarger',
 			'performanceOverlay.transfer' => 'Overføring',
 			'performanceOverlay.renderFps' => 'Gjengivelses-FPS',
 			'performanceOverlay.displayFps' => 'Skjerm-FPS',
@@ -8646,7 +8649,6 @@ extension on TranslationsNb {
 			'cast.connectedTo' => ({required Object device}) => 'Tilkoblet til ${device}',
 			'cast.device' => 'Cast utstyr',
 			'cast.readyToCast' => 'Klar til å kastes',
-			'cast.subtitle' => 'Undertekster',
 			'cast.serverNotAvailable' => 'Media server er ikke tilgjengelig.',
 			'cast.stopCasting' => 'Stoppe casting',
 			'cast.startFailed' => 'Kan ikke begynne å kaste. sjekk serveren og prøv igjen.',
@@ -8721,9 +8723,9 @@ extension on TranslationsNb {
 			'homeLayout.continueWatchingLibraryDescription' => 'Denne bibliotekets egen resume-progress-runde',
 			'homeLayout.continueWatchingHomeDescription' => 'Den gjenoppgående fremskritt rad vist på Hjem',
 			'homeLayout.nextUpHomeDescription' => 'Neste uoppdaget episode ser ut separat på Home',
-			'homeLayout.library' => 'Bibliotek',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => 'Bibliotek',
 			'homeLayout.showInRecommended' => 'Utstilling i biblioteket anbefales',
 			'homeLayout.customPlexRow' => 'Tilpasset Plex rad',
 			'homeLayout.heroNeedsLibrary' => 'Sjekk biblioteket først – Hero trenger noe å vise',
@@ -9235,9 +9237,9 @@ extension on TranslationsNb {
 			'audiobook.statusProgress' => 'I fremskritt',
 			'audiobook.statusFinished' => 'Avslutter',
 			'audiobook.goToTime' => 'Gå til tid',
-			'audiobook.timeHelp' => 'Tider: minutter: sekunder eller minutter: sekunder',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => 'Tider: minutter: sekunder eller minutter: sekunder',
 			'audiobook.recoveryHelp' => 'Eksport en nylig kryptert kopi før du flytter eller reparerer synkronisering data. Importerer fusjon med nåværende tilstand; de erstattes aldri lokal synkroniseringshistorie.',
 			'audiobook.recoveryExport' => 'Eksport kryptert gjenoppretting filer',
 			'audiobook.recoveryImport' => 'Import kryptert gjenoppretting filer',
@@ -9749,9 +9751,9 @@ extension on TranslationsNb {
 			'musicTools.historyHint' => 'Avspillingshistorikk for denne profilen',
 			'musicTools.days' => 'Dager',
 			'musicTools.albumBlocks' => 'Hold hele album samlet',
-			'musicTools.home' => 'Musikk',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => 'Musikk',
 			'musicTools.recent' => 'Nylig spilt',
 			'musicTools.apiKey' => 'API-nøkkel',
 			'musicTools.missing' => 'I/T',

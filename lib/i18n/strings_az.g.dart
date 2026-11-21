@@ -342,6 +342,9 @@ class _Translations$common$az extends Translations$common$en {
 	@override String get notAvailable => 'Yoxdur';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Simvollar';
+	@override String get keyboardLetters => 'Hərflər';
+	@override String get keyboardNewLine => 'Yeni sətir';
 	@override late final _Translations$common$mediaKind$az mediaKind = _Translations$common$mediaKind$az._(_root);
 }
 
@@ -571,7 +574,7 @@ class _Translations$settings$az extends Translations$settings$en {
 	@override String get importSettings => 'Tənzimləmələri idxal et';
 	@override String get importSettingsDescription => 'Seçimləri fayldan bərpa edin';
 	@override String get importSettingsConfirm => 'Bu cari tənzimləmələrinizin üzərinə yazacaq. Davam edilsin?';
-	@override String get importSettingsSuccess => 'Tənzimləmələr idxal edildi';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Tətbiq olunan ayarlar: ${applied}. Buraxılan: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Bu fayl düzgün Pleazyng tənzimləmələr faylı deyil';
 	@override String get importSettingsNoUser => 'Tənzimləmələri idxal etməzdən əvvəl daxil olun';
 	@override String get cloudBackup => 'Qıraqlı Qıraqlı';
@@ -584,7 +587,6 @@ class _Translations$settings$az extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Ehtiyat nüsxə yükləndi. Bu URL-i saxlayın. Tətbiqi yenidən quraşdırdıqdan sonra URL-i bulud ehtiyat nüsxəsi bölməsinə daxil edin və “${action}” seçin.';
 	@override String get cloudBackupRestore => 'Backup qayıtmaq';
 	@override String get cloudBackupRestoreConfirm => 'Bu, bu cihazda uyumlu mobil ayarların yerini alacaq.';
-	@override String get cloudBackupRestored => '“Cloud Backup”dan qayıtılmış ayarlar';
 	@override String get shortcutsReset => 'Qısayollar defolt vəziyyətə sıfırlandı';
 	@override String get resetShortcutsConfirm => 'Bu, xüsusi qısayollarınızı defolt qısayollarla əvəz edəcək. Davam edilsin?';
 	@override String get about => 'Haqqında';
@@ -3126,7 +3128,6 @@ class _Translations$cast$az extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Qəzaqə ${device}';
 	@override String get device => 'Xatırma aparatı';
 	@override String get readyToCast => 'Hazır atmaq';
-	@override String get subtitle => 'Altyazılar';
 	@override String get serverNotAvailable => 'Medya serveri yoxdur.';
 	@override String get stopCasting => 'Qısağı durdurma';
 	@override String get startFailed => 'Yayımı başlatmaq mümkün olmadı. Serveri yoxlayın və yenidən cəhd edin.';
@@ -5830,6 +5831,9 @@ extension on TranslationsAz {
 			'common.notAvailable' => 'Yoxdur',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Simvollar',
+			'common.keyboardLetters' => 'Hərflər',
+			'common.keyboardNewLine' => 'Yeni sətir',
 			'common.mediaKind.movie' => 'Film',
 			'common.mediaKind.show' => 'Serial',
 			'common.mediaKind.season' => 'Sezon',
@@ -6038,7 +6042,7 @@ extension on TranslationsAz {
 			'settings.importSettings' => 'Tənzimləmələri idxal et',
 			'settings.importSettingsDescription' => 'Seçimləri fayldan bərpa edin',
 			'settings.importSettingsConfirm' => 'Bu cari tənzimləmələrinizin üzərinə yazacaq. Davam edilsin?',
-			'settings.importSettingsSuccess' => 'Tənzimləmələr idxal edildi',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Tətbiq olunan ayarlar: ${applied}. Buraxılan: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Bu fayl düzgün Pleazyng tənzimləmələr faylı deyil',
 			'settings.importSettingsNoUser' => 'Tənzimləmələri idxal etməzdən əvvəl daxil olun',
 			'settings.cloudBackup' => 'Qıraqlı Qıraqlı',
@@ -6051,7 +6055,6 @@ extension on TranslationsAz {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Ehtiyat nüsxə yükləndi. Bu URL-i saxlayın. Tətbiqi yenidən quraşdırdıqdan sonra URL-i bulud ehtiyat nüsxəsi bölməsinə daxil edin və “${action}” seçin.',
 			'settings.cloudBackupRestore' => 'Backup qayıtmaq',
 			'settings.cloudBackupRestoreConfirm' => 'Bu, bu cihazda uyumlu mobil ayarların yerini alacaq.',
-			'settings.cloudBackupRestored' => '“Cloud Backup”dan qayıtılmış ayarlar',
 			'settings.shortcutsReset' => 'Qısayollar defolt vəziyyətə sıfırlandı',
 			'settings.resetShortcutsConfirm' => 'Bu, xüsusi qısayollarınızı defolt qısayollarla əvəz edəcək. Davam edilsin?',
 			'settings.about' => 'Haqqında',
@@ -6150,10 +6153,10 @@ extension on TranslationsAz {
 			'settings.companionRemoteServer' => 'Köməkçi pult serveri',
 			'settings.companionRemoteServerDescription' => 'Şəbəkənizdəki mobil cihazların bu tətbiqi idarə etməsinə icazə verin',
 			'settings.companionRemoteServerStartFailed' => 'Köməkçi pult serveri başladıla bilmədi',
-			'settings.companionRemoteServerStopFailed' => 'Köməkçi pult serveri dayandırıla bilmədi',
-			'settings.autoPip' => 'Avtomatik Pəncərə daxilində Pəncərə (PiP)',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Köməkçi pult serveri dayandırıla bilmədi',
+			'settings.autoPip' => 'Avtomatik Pəncərə daxilində Pəncərə (PiP)',
 			'settings.autoPipDescription' => 'Oynatma zamanı tətbiqdən çıxdıqda avtomatik PiP rejiminə keç',
 			'settings.matchContentFrameRate' => 'Kadr tezliyini uyğunlaşdır',
 			'settings.matchContentFrameRateDescription' => 'Ekran yenilənmə tezliyini video məzmununa uyğunlaşdır',
@@ -6664,10 +6667,10 @@ extension on TranslationsAz {
 			'accessibility.reduceMotionHint' => 'Fokus göstəricisinin hərəkətini, səhifə keçidlərini və dekorativ effektləri dayandırın.',
 			'accessibility.largeTargets' => 'Təkimlər daha çox',
 			'accessibility.largeTargetsHint' => '“Müşən” komandaları daha çox touch və asistivi navigasiya üçün yer verir.',
-			'accessibility.navigationHint' => 'İdarəetmə elementləri arasında keçmək üçün Tab və Shift+Tab, aktivləşdirmək üçün Enter və ya Boşluq, bağlamaq üçün Escape və ya Geri düyməsindən istifadə edin. Kitab açıq olduqda böyütmə və oxu tənzimləmələri əlçatandır.',
-			'accessibility.textSizeDescription' => 'VVD-nin textiyi, sistemin texti-büyüklüğü ayarının yanı sıra Pleazyng-də ölçülür.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'İdarəetmə elementləri arasında keçmək üçün Tab və Shift+Tab, aktivləşdirmək üçün Enter və ya Boşluq, bağlamaq üçün Escape və ya Geri düyməsindən istifadə edin. Kitab açıq olduqda böyütmə və oxu tənzimləmələri əlçatandır.',
+			'accessibility.textSizeDescription' => 'VVD-nin textiyi, sistemin texti-büyüklüğü ayarının yanı sıra Pleazyng-də ölçülür.',
 			'accessibility.boldTextHint' => 'İnternet etiketləri və mesajları üçün daha ağır bir ağırlık kullanın ki, onları ayırt etmək kolaydır.',
 			'tooltips.shufflePlay' => 'Qarışıq oynat',
 			'tooltips.playTrailer' => 'Treyleri oynat',
@@ -7178,10 +7181,10 @@ extension on TranslationsAz {
 			'discover.person.birthplace' => 'Doğum yeri',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age} yaş)',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (${age} yaşında)',
-			'errors.searchFailed' => ({required Object error}) => 'Axtarış uğursuz oldu: ${error}',
-			'errors.searchUnavailable' => 'Axtarış heç bir media serverinə çata bilmədi.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => 'Axtarış uğursuz oldu: ${error}',
+			'errors.searchUnavailable' => 'Axtarış heç bir media serverinə çata bilmədi.',
 			'errors.connectionTimeout' => ({required Object context}) => '${context} yüklənərkən vaxt bitdi',
 			'errors.connectionFailed' => 'Media serverinə qoşulmaq olmur',
 			'errors.unableToLoad' => ({required Object context}) => '${context} yüklənə bilmədi. Lütfən təzədən cəhd edin.',
@@ -7692,10 +7695,10 @@ extension on TranslationsAz {
 			'playlists.enterPlaylistName' => 'Oynatma siyahısı adını daxil edin',
 			'playlists.delete' => 'Oynatma siyahısını sil',
 			'playlists.removeItem' => 'Oynatma siyahısından sil',
-			'playlists.smartPlaylist' => 'Ağıllı oynatma siyahısı',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('az'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} element', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} element', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => 'Ağıllı oynatma siyahısı',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('az'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} element', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} element', ), 
 			'playlists.emptyPlaylist' => 'Bu oynatma siyahısı boşdur',
 			'playlists.deleteConfirm' => 'Oynatma siyahısı silinsin?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}" siyahısını silmək istədiyinizdən əminsiniz?',
@@ -8206,10 +8209,10 @@ extension on TranslationsAz {
 			'performanceOverlay.sampleRate' => 'Diskretləşdirmə tezliyi',
 			'performanceOverlay.pixelFormat' => 'Piksel formatı',
 			'performanceOverlay.hwFormat' => 'HW formatı',
-			'performanceOverlay.matrix' => 'Matrisa',
-			'performanceOverlay.primaries' => 'Əsas rənglər',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => 'Matrisa',
+			'performanceOverlay.primaries' => 'Əsas rənglər',
 			'performanceOverlay.transfer' => 'Ötürmə',
 			'performanceOverlay.renderFps' => 'Emal FPS-i',
 			'performanceOverlay.displayFps' => 'Ekran FPS-i',
@@ -8646,7 +8649,6 @@ extension on TranslationsAz {
 			'cast.connectedTo' => ({required Object device}) => 'Qəzaqə ${device}',
 			'cast.device' => 'Xatırma aparatı',
 			'cast.readyToCast' => 'Hazır atmaq',
-			'cast.subtitle' => 'Altyazılar',
 			'cast.serverNotAvailable' => 'Medya serveri yoxdur.',
 			'cast.stopCasting' => 'Qısağı durdurma',
 			'cast.startFailed' => 'Yayımı başlatmaq mümkün olmadı. Serveri yoxlayın və yenidən cəhd edin.',
@@ -8721,9 +8723,9 @@ extension on TranslationsAz {
 			'homeLayout.continueWatchingLibraryDescription' => 'Bu kütüphaneye öz-düzgün-gelişmiş yol',
 			'homeLayout.continueWatchingHomeDescription' => 'Evdə göstərilmiş olan “Gözlük”',
 			'homeLayout.nextUpHomeDescription' => 'Sonraki İçerikDünyanın ən azı yerləri evdə',
-			'homeLayout.library' => 'Kitabxana',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => 'Kitabxana',
 			'homeLayout.showInRecommended' => 'İnternet-kitabətdə danışılanlar',
 			'homeLayout.customPlexRow' => 'Xərimlər Plex',
 			'homeLayout.heroNeedsLibrary' => 'Birincisi, “Bibliothèque” – “Hero”ın bir yerə baxması lazımdır.',
@@ -9235,9 +9237,9 @@ extension on TranslationsAz {
 			'audiobook.statusProgress' => 'Gəlimdə',
 			'audiobook.statusFinished' => 'Hazırda',
 			'audiobook.goToTime' => 'Zamanla gəlin',
-			'audiobook.timeHelp' => 'Saatlar:minutlar:saniyələr və ya minutlar:saniyələr',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => 'Saatlar:minutlar:saniyələr və ya minutlar:saniyələr',
 			'audiobook.recoveryHelp' => 'Son zamanlarda şifrə edilmiş bir kopyayı ithal etmədən əvvəl və ya sinqlər verilerini düzeltmək. İthalatlar mevcut durumla birleşir; yerel sinq tarihini asılmazlar. Sinq kodunu ayrı tutun.',
 			'audiobook.recoveryExport' => 'Şifrelə qayıtma dosyası',
 			'audiobook.recoveryImport' => 'Şifrelə qayıtma dosyası',
@@ -9749,9 +9751,9 @@ extension on TranslationsAz {
 			'musicTools.historyHint' => 'Bu profilin dinləmə tarixçəsi',
 			'musicTools.days' => 'Günlər',
 			'musicTools.albumBlocks' => 'Albomları bütöv saxla',
-			'musicTools.home' => 'Musiqi',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => 'Musiqi',
 			'musicTools.recent' => 'Son dinlənilənlər',
 			'musicTools.apiKey' => 'API açarı',
 			'musicTools.missing' => 'Yoxdur',

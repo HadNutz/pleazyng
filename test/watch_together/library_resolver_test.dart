@@ -182,6 +182,13 @@ void main() {
       );
     });
 
+    test('an inaccessible version yields no candidate from a shortcut or catalogue', () async {
+      final item = _movie('m1', 'nas', durationMs: 7020000, versions: [_version('gone', accessible: false)]);
+      servers['nas'] = _Server('nas', items: {'m1': item});
+      answer = (_) async => libraryLookupResult([item], succeeded: {'nas'});
+      expect(await resolver().resolve(_movieMedia(ext: _ext('nas', 'm1')), _Cancel()), isEmpty);
+    });
+
     test('an item without versions is one candidate with the item length', () async {
       final item = _movie('m1', 'nas', durationMs: 7020000);
       answer = (_) async => libraryLookupResult([item], succeeded: {'nas'});

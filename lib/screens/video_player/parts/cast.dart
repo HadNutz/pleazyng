@@ -50,6 +50,11 @@ extension _VideoPlayerCastMethods on VideoPlayerScreenState {
         mediaIndex: _effectiveSelectedMediaIndex,
         mediaSourceId: _requestedMediaSourceId,
         source: CastVideoSource(
+          selectedSubtitle:
+              _playbackSession?.subtitleSelection.primarySidecar?.track ??
+              _playbackSession?.subtitleSelection.primaryTrack ??
+              currentPlayer.state.track.subtitle ??
+              SubtitleTrack.off,
           position: () => currentPlayer.state.position,
           isCurrent: current,
           freeze: () async {

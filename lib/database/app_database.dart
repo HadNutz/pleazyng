@@ -12,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
 import 'tables.dart';
+import 'download_conversion_operations.dart';
 import 'plex_metadata_recovery.dart';
 import 'tvos_database_recovery_store.dart';
 import '../models/download_models.dart';
@@ -90,7 +91,7 @@ final class LegacyDesktopDatabasePreview {
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  static const int currentSchemaVersion = 38;
+  static const int currentSchemaVersion = 39;
 
   /// Resolves the current app-owned database path for first-run migration UI.
   /// This never scans or adopts another application's files.
@@ -202,6 +203,7 @@ class AppDatabase extends _$AppDatabase {
     'music_listens',
     'music_documents',
     'retained_download_owners',
+    'download_conversions',
   ];
 
   /// Resolves and opens the production database, removing orphaned WAL/SHM
@@ -808,7 +810,7 @@ class AppDatabase extends _$AppDatabase {
         if (row is Map<String, dynamic>)
           _decodeRecoveryRow(
             retired == null
-                ? row
+                ? (key == 'offlineWatchProgress' ? {'accountScope': null, ...row} : row)
                 : {
                     for (final entry in row.entries)
                       if (!retired.contains(entry.key)) entry.key: entry.value,
@@ -975,6 +977,7 @@ class AppDatabase extends _$AppDatabase {
       },
       onCreate: (Migrator m) async {
         await m.createAll();
+        await createDownloadConversionTable(this);
         await _createIptvTables();
         await _createIptvGuideCache();
         await _createRetainedDownloadOwners();
@@ -1160,6 +1163,14 @@ class AppDatabase extends _$AppDatabase {
             FROM iptv_channels c LEFT JOIN iptv_channel_overrides o
               ON o.source_id=c.source_id AND o.channel_id=c.channel_id
             WHERE c.logo_url IS NOT NULL AND COALESCE(NULLIF(o.guide_id_override,''),c.tvg_id) IS NOT NULL''');
+        }
+        if (from < 39) {
+          await createDownloadConversionTable(this);
+          await _ignoreAlreadyExists(
+            'offline watch account scope',
+            () => m.addColumn(offlineWatchProgress, offlineWatchProgress.accountScope),
+          );
+          await _migrateIptvVirtualProfileRecordings();
         }
         if (from < 35) {
           appLogger.i('Adding protected IPTV playback headers (v35 migration)');
@@ -1580,11 +1591,25 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
+  Future<void> _migrateIptvVirtualProfileRecordings() => transaction(() async {
+    for (final table in ['iptv_recordings', 'iptv_recording_schedules']) {
+      final constraints = await customSelect('PRAGMA foreign_key_list($table)').get();
+      if (!constraints.any((row) => row.read<String>('table') == 'profiles')) continue;
+      await customStatement('ALTER TABLE $table RENAME TO ${table}_v38');
+      final create = table == 'iptv_recordings' ? _createIptvRecordings : _createIptvRecordingSchedules;
+      await create();
+      await customStatement('INSERT INTO $table SELECT * FROM ${table}_v38');
+      await customStatement('DROP TABLE ${table}_v38');
+      // SQLite kept the original index names with the renamed table.
+      await create();
+    }
+  });
+
   Future<void> _createIptvRecordingSchedules() async {
     await customStatement('''
       CREATE TABLE IF NOT EXISTS iptv_recording_schedules (
         id TEXT NOT NULL PRIMARY KEY,
-        profile_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        profile_id TEXT NOT NULL,
         source_id TEXT NOT NULL REFERENCES iptv_sources(id) ON DELETE CASCADE,
         channel_id TEXT NOT NULL,
         title TEXT NOT NULL,
@@ -1643,10 +1668,14 @@ class AppDatabase extends _$AppDatabase {
       'CREATE INDEX IF NOT EXISTS idx_iptv_vod_items_category ON iptv_vod_items(source_id, kind, category_id, title)',
     );
     await _createIptvVodProgressTable();
+    await _createIptvRecordings();
+  }
+
+  Future<void> _createIptvRecordings() async {
     await customStatement('''
       CREATE TABLE IF NOT EXISTS iptv_recordings (
         id TEXT NOT NULL PRIMARY KEY,
-        profile_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        profile_id TEXT NOT NULL,
         source_id TEXT REFERENCES iptv_sources(id) ON DELETE SET NULL,
         channel_id TEXT,
         title TEXT NOT NULL,
@@ -1834,11 +1863,19 @@ class AppDatabase extends _$AppDatabase {
     return normalizedActual == normalizedExpected;
   }
 
+  /// MediaBrowser already included the server user in its cache namespace
+  /// before v39. New actions in that same namespace supersede older revisions.
+  Expression<bool> _watchAccountPredicate(GeneratedColumn<String> column, String? accountScope, String? clientScopeId) {
+    final exact = _nullableTextPredicate(column, accountScope);
+    return accountScope != null && accountScope == clientScopeId ? exact | column.isNull() : exact;
+  }
+
   /// Insert or update a progress action (merges with existing).
   Future<({int rowId, int revision})> upsertProgressAction({
     String? profileId,
     required ServerId serverId,
     String? clientScopeId,
+    String? accountScope,
     required String ratingKey,
     required int viewOffset,
     required int? duration,
@@ -1855,6 +1892,7 @@ class AppDatabase extends _$AppDatabase {
                     (t) =>
                         t.globalKey.equals(globalKey) &
                         _nullableTextPredicate(t.profileId, profileId) &
+                        _watchAccountPredicate(t.accountScope, accountScope, clientScopeId) &
                         _nullableTextPredicate(t.clientScopeId, clientScopeId) &
                         t.actionType.equals(OfflineActionType.progress.id),
                   )
@@ -1876,6 +1914,7 @@ class AppDatabase extends _$AppDatabase {
               shouldMarkWatched: Value(shouldMarkWatched),
               profileId: Value(profileId),
               clientScopeId: Value(clientScopeId),
+              accountScope: Value(accountScope),
               updatedAt: Value(revision),
               syncAttempts: const Value(0),
               lastError: const Value<String?>(null),
@@ -1893,6 +1932,7 @@ class AppDatabase extends _$AppDatabase {
             serverId: serverId,
             profileId: Value(profileId),
             clientScopeId: Value(clientScopeId),
+            accountScope: Value(accountScope),
             ratingKey: ratingKey,
             globalKey: globalKey,
             actionType: OfflineActionType.progress.id,
@@ -1914,6 +1954,7 @@ class AppDatabase extends _$AppDatabase {
     String? profileId,
     required ServerId serverId,
     String? clientScopeId,
+    String? accountScope,
     required String ratingKey,
     required String actionType, // 'watched' or 'unwatched'
   }) async {
@@ -1927,6 +1968,7 @@ class AppDatabase extends _$AppDatabase {
               (t) =>
                   t.globalKey.equals(globalKey) &
                   _nullableTextPredicate(t.profileId, profileId) &
+                  _watchAccountPredicate(t.accountScope, accountScope, clientScopeId) &
                   _nullableTextPredicate(t.clientScopeId, clientScopeId),
             ))
             .go();
@@ -1936,6 +1978,7 @@ class AppDatabase extends _$AppDatabase {
             serverId: serverId,
             profileId: Value(profileId),
             clientScopeId: Value(clientScopeId),
+            accountScope: Value(accountScope),
             ratingKey: ratingKey,
             globalKey: globalKey,
             actionType: actionType,
@@ -1965,6 +2008,7 @@ class AppDatabase extends _$AppDatabase {
     String? profileId,
     required ServerId serverId,
     String? clientScopeId,
+    String? accountScope,
     required String ratingKey,
     int? beforeRevision,
   }) {
@@ -1974,6 +2018,7 @@ class AppDatabase extends _$AppDatabase {
             (t) =>
                 t.globalKey.equals(globalKey) &
                 _nullableTextPredicate(t.profileId, profileId) &
+                _watchAccountPredicate(t.accountScope, accountScope, clientScopeId) &
                 _nullableTextPredicate(t.clientScopeId, clientScopeId) &
                 t.actionType.equals(OfflineActionType.progress.id) &
                 (beforeRevision == null ? const Constant(true) : t.updatedAt.isSmallerThanValue(beforeRevision)),

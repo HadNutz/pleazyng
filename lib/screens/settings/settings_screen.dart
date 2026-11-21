@@ -346,9 +346,7 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
 
                   if (UpdateService.isUpdateCheckAvailable) ...[_buildUpdateSection()],
 
-                  // Hidden on Android TV / tvOS (no document picker); desktop in
-                  // force-TV mode keeps it — FilePickerService works there.
-                  if (!PlatformDetector.isTV() || PlatformDetector.isDesktopOS()) _buildBackupSection(),
+                  _buildBackupSection(),
 
                   const SizedBox(height: 24),
                   SettingsGroup(
@@ -857,20 +855,22 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
     return SettingsGroup(
       title: t.settings.backup,
       children: [
-        SettingNavigationTile(
-          focusNode: _focusTracker.get(_kExportSettings),
-          icon: Symbols.upload_rounded,
-          title: t.settings.exportSettings,
-          subtitle: t.settings.exportSettingsDescription,
-          onTap: _handleExportSettings,
-        ),
-        SettingNavigationTile(
-          focusNode: _focusTracker.get(_kImportSettings),
-          icon: Symbols.download_rounded,
-          title: t.settings.importSettings,
-          subtitle: t.settings.importSettingsDescription,
-          onTap: _showImportSettingsDialog,
-        ),
+        if (!PlatformDetector.isTV() || PlatformDetector.isDesktopOS()) ...[
+          SettingNavigationTile(
+            focusNode: _focusTracker.get(_kExportSettings),
+            icon: Symbols.upload_rounded,
+            title: t.settings.exportSettings,
+            subtitle: t.settings.exportSettingsDescription,
+            onTap: _handleExportSettings,
+          ),
+          SettingNavigationTile(
+            focusNode: _focusTracker.get(_kImportSettings),
+            icon: Symbols.download_rounded,
+            title: t.settings.importSettings,
+            subtitle: t.settings.importSettingsDescription,
+            onTap: _showImportSettingsDialog,
+          ),
+        ],
         SettingNavigationTile(
           icon: Symbols.cloud_sync_rounded,
           title: t.settings.cloudBackup,
@@ -887,7 +887,7 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
       context: context,
       builder: (_) => CloudSettingsBackupDialog(
         beforeRestore: () => previousRootConfiguration = SettingsMutationService.captureRootConfiguration(),
-        afterRestore: () async {
+        afterRestore: (result) async {
           if (!mounted) return;
           _settingsService.refreshListenables();
           await context.read<HiddenLibrariesProvider>().refresh();
@@ -898,8 +898,7 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
             context,
             previousRootConfiguration: previousRootConfiguration ?? const [],
             beforeRootRebuild: (failures) {
-              if (failures.isEmpty) return;
-              showGlobalErrorSnackBar(failures.first.display);
+              _showGlobalMutationFeedback(failures, result.summary);
               feedbackShown = true;
             },
           );
@@ -1214,6 +1213,10 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
           final result = await (widget.settingsImporter ?? SettingsExportService.importFromFile)();
           if (!mounted) return;
           if (result == null) return; // user cancelled file picker
+          if (result.keysImported == 0) {
+            showAppSnackBar(context, result.summary);
+            return;
+          }
 
           final hiddenLibrariesProvider = context.read<HiddenLibrariesProvider>();
           final librariesProvider = context.read<LibrariesProvider>();
@@ -1229,12 +1232,12 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
             context,
             previousRootConfiguration: previousRootConfiguration,
             beforeRootRebuild: (failures) {
-              _showGlobalMutationFeedback(failures, t.settings.importSettingsSuccess);
+              _showGlobalMutationFeedback(failures, result.summary);
               feedbackShown = true;
             },
           );
 
-          if (!feedbackShown) _showMutationFeedback(failures, t.settings.importSettingsSuccess);
+          if (!feedbackShown) _showMutationFeedback(failures, result.summary);
         } on NoUserSignedInException {
           if (mounted) showErrorSnackBar(context, t.settings.importSettingsNoUser);
         } on InvalidExportFileException {

@@ -604,6 +604,8 @@ class PlayerTizen extends PlayerBase
         _subtitlesVisible =
             value == 'yes' && state.track.subtitle != null && state.track.subtitle?.id != SubtitleTrack.off.id;
         _updateCaption();
+      case 'audio-delay':
+        throw UnsupportedError('Audio delay is unavailable on $playerType');
       case 'sub-delay':
         _subtitleDelay = Duration(milliseconds: ((double.tryParse(value) ?? 0) * 1000).round());
         _updateCaption();

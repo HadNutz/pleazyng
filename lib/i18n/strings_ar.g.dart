@@ -342,6 +342,9 @@ class _Translations$common$ar extends Translations$common$en {
 	@override String get notAvailable => 'N / A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'الرموز';
+	@override String get keyboardLetters => 'الحروف';
+	@override String get keyboardNewLine => 'سطر جديد';
 	@override late final _Translations$common$mediaKind$ar mediaKind = _Translations$common$mediaKind$ar._(_root);
 }
 
@@ -579,7 +582,7 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String get importSettings => 'إعدادات الواردات';
 	@override String get importSettingsDescription => 'استعادة تفضيلات من ملف';
 	@override String get importSettingsConfirm => 'هذا سيحل محل إعداداتك الحالية.مواصلة؟';
-	@override String get importSettingsSuccess => 'الإعدادات المستوردة';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'الإعدادات المطبقة: ${applied}. الإعدادات التي تم تخطيها: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'هذا الملف غير صالحة Pleazyng إعدادات تصدير';
 	@override String get importSettingsNoUser => 'تسجيل الدخول قبل استيراد الإعدادات';
 	@override String get cloudBackup => 'سحابة النسخ الاحتياطي';
@@ -592,7 +595,6 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'رُفعت النسخة الاحتياطية. احفظ هذا الرابط. بعد تثبيت التطبيق من جديد، أدخله في إعدادات النسخ الاحتياطي السحابي واختر «${action}».';
 	@override String get cloudBackupRestore => 'استعادة النسخ الاحتياطي';
 	@override String get cloudBackupRestoreConfirm => 'هذا سوف يحل محل إعدادات المحمول المقابلة على هذا الجهاز.';
-	@override String get cloudBackupRestored => 'إعدادات استعادة من النسخ الاحتياطي السحابية';
 	@override String get shortcutsReset => 'إعادة تعيين القصص إلى الافتراضات';
 	@override String get resetShortcutsConfirm => 'هذا سوف يحل محل اختصاراتك المخصصة مع الافتراضات.';
 	@override String get about => 'حول';
@@ -3202,7 +3204,6 @@ class _Translations$cast$ar extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'متصل بـ ${device}';
 	@override String get device => 'جهاز البث';
 	@override String get readyToCast => 'جاهز للبث';
-	@override String get subtitle => 'الترجمة';
 	@override String get serverNotAvailable => 'خادم الوسائط غير متاح.';
 	@override String get stopCasting => 'إيقاف البث';
 	@override String get startFailed => 'تعذر بدء البث. تحقق من الخادم وحاول مرة أخرى.';
@@ -5930,6 +5931,9 @@ extension on TranslationsAr {
 			'common.notAvailable' => 'N / A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'الرموز',
+			'common.keyboardLetters' => 'الحروف',
+			'common.keyboardNewLine' => 'سطر جديد',
 			'common.mediaKind.movie' => 'فيلم',
 			'common.mediaKind.show' => 'عرض',
 			'common.mediaKind.season' => 'الموسم',
@@ -6138,7 +6142,7 @@ extension on TranslationsAr {
 			'settings.importSettings' => 'إعدادات الواردات',
 			'settings.importSettingsDescription' => 'استعادة تفضيلات من ملف',
 			'settings.importSettingsConfirm' => 'هذا سيحل محل إعداداتك الحالية.مواصلة؟',
-			'settings.importSettingsSuccess' => 'الإعدادات المستوردة',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'الإعدادات المطبقة: ${applied}. الإعدادات التي تم تخطيها: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'هذا الملف غير صالحة Pleazyng إعدادات تصدير',
 			'settings.importSettingsNoUser' => 'تسجيل الدخول قبل استيراد الإعدادات',
 			'settings.cloudBackup' => 'سحابة النسخ الاحتياطي',
@@ -6151,7 +6155,6 @@ extension on TranslationsAr {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'رُفعت النسخة الاحتياطية. احفظ هذا الرابط. بعد تثبيت التطبيق من جديد، أدخله في إعدادات النسخ الاحتياطي السحابي واختر «${action}».',
 			'settings.cloudBackupRestore' => 'استعادة النسخ الاحتياطي',
 			'settings.cloudBackupRestoreConfirm' => 'هذا سوف يحل محل إعدادات المحمول المقابلة على هذا الجهاز.',
-			'settings.cloudBackupRestored' => 'إعدادات استعادة من النسخ الاحتياطي السحابية',
 			'settings.shortcutsReset' => 'إعادة تعيين القصص إلى الافتراضات',
 			'settings.resetShortcutsConfirm' => 'هذا سوف يحل محل اختصاراتك المخصصة مع الافتراضات.',
 			'settings.about' => 'حول',
@@ -6250,10 +6253,10 @@ extension on TranslationsAr {
 			'settings.companionRemoteServer' => 'الخادم عن بعد',
 			'settings.companionRemoteServerDescription' => 'السماح للأجهزة المحمولة على شبكتك بالتحكم في هذا التطبيق',
 			'settings.companionRemoteServerStartFailed' => 'لا يمكن إطلاق الخادم المرافق',
-			'settings.companionRemoteServerStopFailed' => 'لا يمكن إيقاف الخادم المرافق',
-			'settings.autoPip' => 'صورة في صورة Auto Picture',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'لا يمكن إيقاف الخادم المرافق',
+			'settings.autoPip' => 'صورة في صورة Auto Picture',
 			'settings.autoPipDescription' => 'إدخال صورة في الصورة تلقائيًا عند مغادرة التطبيق أثناء تشغيل',
 			'settings.matchContentFrameRate' => 'مقارنة محتوى إطار معدل',
 			'settings.matchContentFrameRateDescription' => 'عرض المباراة معدل التجديد إلى محتوى الفيديو',
@@ -6764,10 +6767,10 @@ extension on TranslationsAr {
 			'accessibility.reduceMotionHint' => 'إيقاف حركة التركيز وانتقالات الصفحات والمؤثرات الزخرفية.',
 			'accessibility.largeTargets' => 'مساحات لمس أكبر',
 			'accessibility.largeTargetsHint' => 'توفير مساحة أوسع لعناصر التحكم المشتركة للمس والتنقل باستخدام التقنيات المساعدة.',
-			'accessibility.navigationHint' => 'استخدم Tab وShift+Tab للتنقل بين عناصر التحكم، وEnter أو مفتاح المسافة لتفعيلها، وEscape أو زر الرجوع للإغلاق. تتوفر خيارات التكبير وتفضيلات القراءة أثناء فتح الكتاب.',
-			'accessibility.textSizeDescription' => 'مقياس واجهة النص في Pleazyng بالإضافة إلى إعداد حجم النص النظام على جهازك.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'استخدم Tab وShift+Tab للتنقل بين عناصر التحكم، وEnter أو مفتاح المسافة لتفعيلها، وEscape أو زر الرجوع للإغلاق. تتوفر خيارات التكبير وتفضيلات القراءة أثناء فتح الكتاب.',
+			'accessibility.textSizeDescription' => 'مقياس واجهة النص في Pleazyng بالإضافة إلى إعداد حجم النص النظام على جهازك.',
 			'accessibility.boldTextHint' => 'استخدم وزنًا أثقل لعلامات الواجهة والرسائل لجعلها أسهل في التمييز.',
 			'tooltips.shufflePlay' => 'لعبة Shuffle',
 			'tooltips.playTrailer' => 'لعبة تريلر',
@@ -7278,10 +7281,10 @@ extension on TranslationsAr {
 			'discover.person.birthplace' => 'مكان الميلاد',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (العمر ${age})',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (العمر ${age})',
-			'errors.searchFailed' => ({required Object error}) => 'البحث فشل: ${error}',
-			'errors.searchUnavailable' => 'لم تتمكن البحث من الوصول إلى أي خادم وسائل الإعلام.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => 'البحث فشل: ${error}',
+			'errors.searchUnavailable' => 'لم تتمكن البحث من الوصول إلى أي خادم وسائل الإعلام.',
 			'errors.connectionTimeout' => ({required Object context}) => 'اتصال الوقت أثناء التحميل ${context}',
 			'errors.connectionFailed' => 'عدم القدرة على الاتصال بـ Media Server',
 			'errors.unableToLoad' => ({required Object context}) => 'لا يمكن تحميل ${context}. يرجى المحاولة مرة أخرى.',
@@ -7792,10 +7795,10 @@ extension on TranslationsAr {
 			'playlists.enterPlaylistName' => 'إدخال اسم playlist',
 			'playlists.delete' => 'حذف قائمة التشغيل',
 			'playlists.removeItem' => 'إزالة من قائمة التشغيل',
-			'playlists.smartPlaylist' => 'لعبة ذكية',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(count, zero: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عنصر', one: 'عنصر واحد', two: 'عنصران', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عناصر', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عنصرًا', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عنصر', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => 'لعبة ذكية',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(count, zero: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عنصر', one: 'عنصر واحد', two: 'عنصران', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عناصر', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عنصرًا', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عنصر', ), 
 			'playlists.emptyPlaylist' => 'هذه القائمة فارغة',
 			'playlists.deleteConfirm' => 'إلغاء اللعب؟',
 			'playlists.deleteMessage' => ({required Object name}) => 'هل أنت متأكد من أنك تريد إزالة "${name}"؟',
@@ -8306,10 +8309,10 @@ extension on TranslationsAr {
 			'performanceOverlay.sampleRate' => 'معدل العينة',
 			'performanceOverlay.pixelFormat' => 'بيكسل Fmt',
 			'performanceOverlay.hwFormat' => 'تنسيق العتاد',
-			'performanceOverlay.matrix' => 'ماتريكس',
-			'performanceOverlay.primaries' => 'الأوائل',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => 'ماتريكس',
+			'performanceOverlay.primaries' => 'الأوائل',
 			'performanceOverlay.transfer' => 'نقل',
 			'performanceOverlay.renderFps' => 'رينجر FPS',
 			'performanceOverlay.displayFps' => 'عرض FPS',
@@ -8746,7 +8749,6 @@ extension on TranslationsAr {
 			'cast.connectedTo' => ({required Object device}) => 'متصل بـ ${device}',
 			'cast.device' => 'جهاز البث',
 			'cast.readyToCast' => 'جاهز للبث',
-			'cast.subtitle' => 'الترجمة',
 			'cast.serverNotAvailable' => 'خادم الوسائط غير متاح.',
 			'cast.stopCasting' => 'إيقاف البث',
 			'cast.startFailed' => 'تعذر بدء البث. تحقق من الخادم وحاول مرة أخرى.',
@@ -8821,9 +8823,9 @@ extension on TranslationsAr {
 			'homeLayout.continueWatchingLibraryDescription' => 'صف استئناف المشاهدة الخاص بهذه المكتبة',
 			'homeLayout.continueWatchingHomeDescription' => 'صف استئناف المشاهدة المعروض في الصفحة الرئيسية',
 			'homeLayout.nextUpHomeDescription' => 'صف الحلقة التالية غير المشاهدة، ويظهر بشكل منفصل في الصفحة الرئيسية',
-			'homeLayout.library' => 'المكتبة',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => 'المكتبة',
 			'homeLayout.showInRecommended' => 'إظهار ضمن توصيات المكتبة',
 			'homeLayout.customPlexRow' => 'صف Plex مخصّص',
 			'homeLayout.heroNeedsLibrary' => 'حدّد المكتبة أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
@@ -9335,9 +9337,9 @@ extension on TranslationsAr {
 			'audiobook.statusProgress' => 'في التقدم',
 			'audiobook.statusFinished' => 'الانتهاء',
 			'audiobook.goToTime' => 'اذهب إلى الزمن',
-			'audiobook.timeHelp' => 'ساعات: دقائق: ثواني، أو دقائق: ثواني',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => 'ساعات: دقائق: ثواني، أو دقائق: ثواني',
 			'audiobook.recoveryHelp' => 'تصدير نسخة مشفرة مؤخرا قبل نقل أو إصلاح بيانات المزامنة.يتم دمج الواردات مع الحالة الحالية؛ أنها لا تحل محل تاريخ المزامن المحلي.',
 			'audiobook.recoveryExport' => 'تصدير ملف استرداد مشفرة',
 			'audiobook.recoveryImport' => 'استيراد ملف إعادة التدوير المشفرة',
@@ -9849,9 +9851,9 @@ extension on TranslationsAr {
 			'musicTools.historyHint' => 'سجل التشغيل لهذا الملف الشخصي',
 			'musicTools.days' => 'أيام',
 			'musicTools.albumBlocks' => 'إبقاء الألبومات كاملة معًا',
-			'musicTools.home' => 'الموسيقى',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => 'الموسيقى',
 			'musicTools.recent' => 'تم تشغيلها مؤخرًا',
 			'musicTools.apiKey' => 'مفتاح API',
 			'musicTools.missing' => 'N / A',

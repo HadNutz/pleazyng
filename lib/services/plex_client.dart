@@ -5,6 +5,8 @@ import 'music/music_discovery.dart';
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:crypto/crypto.dart' show sha256;
+
 import '../media/tizen_playback_profile.dart';
 import '../media/webos_playback_profile.dart';
 import '../utils/serial_future_queue.dart';
@@ -502,6 +504,7 @@ class PlexClient
         ScopedMediaServerClient,
         GracefullyCloseable,
         ConvertedDownloadClient,
+        CancellableDownloadConversion,
         MediaDeletionPermissionClient,
         PlaylistMetadataClient,
         ServerMusicRadioClient,
@@ -6097,15 +6100,24 @@ class PlexClient
     required int mediaIndex,
     String? mediaSourceId,
     required TranscodeQualityPreset preset,
+    Future<void> Function(DownloadConversionHandle job)? onAccepted,
   }) async {
+    var selectedIndex = mediaIndex;
+    if (mediaSourceId != null && mediaSourceId.isNotEmpty) {
+      final response = await _getWithFailover('/library/metadata/${item.id}');
+      final metadata = _validatedPlaybackMetadataJson(response.data as Map<String, dynamic>?);
+      final versions = _playbackMapCollection(metadata?['Media']);
+      selectedIndex = versions.indexWhere((version) => version['id']?.toString() == mediaSourceId);
+      if (selectedIndex < 0) return const ConvertedDownloadFailed('The selected download version is unavailable');
+    }
     try {
-      return await _requestConvertedDownload(item, mediaIndex: mediaIndex, preset: preset);
+      return await _requestConvertedDownload(item, mediaIndex: selectedIndex, preset: preset, onAccepted: onAccepted);
     } on MediaServerHttpException catch (e) {
       // A server restart can drop the queue the cached id points at.
       if (e.statusCode != 404 || _downloadQueueId == null) rethrow;
       appLogger.i('Plex download queue $_downloadQueueId is gone; creating a new one');
       _downloadQueueId = null;
-      return _requestConvertedDownload(item, mediaIndex: mediaIndex, preset: preset);
+      return _requestConvertedDownload(item, mediaIndex: selectedIndex, preset: preset, onAccepted: onAccepted);
     }
   }
 
@@ -6113,6 +6125,7 @@ class PlexClient
     MediaItem item, {
     required int mediaIndex,
     required TranscodeQualityPreset preset,
+    Future<void> Function(DownloadConversionHandle job)? onAccepted,
   }) async {
     final queueId = _downloadQueueId ??= await _fetchDownloadQueueId();
     final addResponse = await _postWithFailover(
@@ -6121,7 +6134,9 @@ class PlexClient
     );
     final added = _getMediaContainer(addResponse)?['AddedQueueItems'];
     final itemId = added is List && added.isNotEmpty && added.first is Map ? (added.first as Map)['id'] : null;
-    if (itemId == null) return const ConvertedDownloadFailed('Server did not accept the download conversion');
+    final id = int.tryParse(itemId?.toString() ?? '');
+    if (id == null) return const ConvertedDownloadFailed('Server did not accept the download conversion');
+    await onAccepted?.call((queueId: queueId, itemId: id));
 
     final itemResponse = await _getWithFailover('/downloadQueue/$queueId/items/$itemId');
     final items = _getMediaContainer(itemResponse)?['DownloadQueueItem'];
@@ -6159,6 +6174,20 @@ class PlexClient
             'Server could not convert the download (status ${status ?? 'unknown'})';
         return ConvertedDownloadFailed(reason);
     }
+  }
+
+  @override
+  String get downloadConversionOwner {
+    // A direct connection may lack an account id. Bind its handle to the
+    // current token without persisting that credential in the journal.
+    final user = musicHistoryAccountScope(this) ?? sha256.convert(utf8.encode(config.token ?? '')).toString();
+    return jsonEncode([config.clientIdentifier, user]);
+  }
+
+  @override
+  Future<void> cancelDownloadConversion(DownloadConversionHandle job) async {
+    final response = await _http.delete('/downloadQueue/${job.queueId}/items/${job.itemId}');
+    if (response.statusCode != 404) throwIfHttpError(response);
   }
 
   Future<int> _fetchDownloadQueueId() async {

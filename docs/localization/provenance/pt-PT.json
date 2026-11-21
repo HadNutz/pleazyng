@@ -1,10 +1,9 @@
 {
   "locale": "pt-PT",
   "inherits": "pt",
-  "catalogSha256": "cfbaf3234922c1e39ce6b68784cd45f6d603f0ea031639ec56ac3086c4097ca5",
+  "catalogSha256": "e3186babd8bcf51e5b8ee0c683a3c6620d816d6f550329bc425312447629b4cb",
   "nativeSpeakerReviewed": false,
   "messages": {
-    "cast.subtitle": "jellyfin-web:Subtitles",
     "cast.castToDevice": "jellyfin-web:ButtonCast",
     "appIcon.defaultIcon": "jellyfin-web:Default",
     "auth.quickConnect": "jellyfin-web:QuickConnect",
@@ -618,7 +617,6 @@
     "settings.importSettings": "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01",
     "settings.importSettingsDescription": "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01",
     "settings.importSettingsConfirm": "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01",
-    "settings.importSettingsSuccess": "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01",
     "settings.importSettingsNoUser": "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01",
     "settings.shortcutsReset": "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01",
     "settings.resetShortcutsConfirm": "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01",

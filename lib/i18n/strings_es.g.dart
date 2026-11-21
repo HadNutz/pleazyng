@@ -346,6 +346,9 @@ class Translations$common$es extends Translations$common$en {
 	@override String get notAvailable => 'N/D';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Símbolos';
+	@override String get keyboardLetters => 'Letras';
+	@override String get keyboardNewLine => 'Nueva línea';
 	@override late final Translations$common$mediaKind$es mediaKind = Translations$common$mediaKind$es.internal(_root);
 }
 
@@ -577,7 +580,7 @@ class Translations$settings$es extends Translations$settings$en {
 	@override String get importSettings => 'Importar configuración';
 	@override String get importSettingsDescription => 'Restaurar preferencias desde un archivo';
 	@override String get importSettingsConfirm => 'Esto reemplazará tu configuración actual. ¿Continuar?';
-	@override String get importSettingsSuccess => 'Configuración importada';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Ajustes aplicados: ${applied}. Omitidos: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Este archivo no es una exportación válida de Pleazyng';
 	@override String get importSettingsNoUser => 'Inicia sesión antes de importar la configuración';
 	@override String get cloudBackup => 'Nuevos Backup';
@@ -590,7 +593,6 @@ class Translations$settings$es extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Se ha subido la copia de seguridad. Guarda esta URL. Tras una nueva instalación, introdúcela en la sección de copias de seguridad en la nube y selecciona «${action}».';
 	@override String get cloudBackupRestore => 'Restaurar la Backup';
 	@override String get cloudBackupRestoreConfirm => 'Esto sustituirá las configuraciones portátiles que se ajustan a este dispositivo.';
-	@override String get cloudBackupRestored => 'Configuraciones restauradas de la backup en la nube';
 	@override String get shortcutsReset => 'Atajos restablecidos a los valores predeterminados';
 	@override String get resetShortcutsConfirm => 'Esto reemplazará tus atajos personalizados por los predeterminados. ¿Continuar?';
 	@override String get about => 'Acerca de';
@@ -3134,7 +3136,6 @@ class Translations$cast$es extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Conectado a ${device}';
 	@override String get device => 'Dispositivo de Cast';
 	@override String get readyToCast => 'Prepara para lanzar';
-	@override String get subtitle => 'Subtítulos';
 	@override String get serverNotAvailable => 'El servidor de medios no está disponible.';
 	@override String get stopCasting => 'Dejar de casting';
 	@override String get startFailed => 'No puedo empezar a casting. comprobar el servidor y intentarlo de nuevo.';
@@ -5957,6 +5958,9 @@ extension on TranslationsEs {
 			'common.notAvailable' => 'N/D',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Símbolos',
+			'common.keyboardLetters' => 'Letras',
+			'common.keyboardNewLine' => 'Nueva línea',
 			'common.mediaKind.movie' => 'Película',
 			'common.mediaKind.show' => 'Serie',
 			'common.mediaKind.season' => 'Temporada',
@@ -6165,7 +6169,7 @@ extension on TranslationsEs {
 			'settings.importSettings' => 'Importar configuración',
 			'settings.importSettingsDescription' => 'Restaurar preferencias desde un archivo',
 			'settings.importSettingsConfirm' => 'Esto reemplazará tu configuración actual. ¿Continuar?',
-			'settings.importSettingsSuccess' => 'Configuración importada',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Ajustes aplicados: ${applied}. Omitidos: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Este archivo no es una exportación válida de Pleazyng',
 			'settings.importSettingsNoUser' => 'Inicia sesión antes de importar la configuración',
 			'settings.cloudBackup' => 'Nuevos Backup',
@@ -6178,7 +6182,6 @@ extension on TranslationsEs {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Se ha subido la copia de seguridad. Guarda esta URL. Tras una nueva instalación, introdúcela en la sección de copias de seguridad en la nube y selecciona «${action}».',
 			'settings.cloudBackupRestore' => 'Restaurar la Backup',
 			'settings.cloudBackupRestoreConfirm' => 'Esto sustituirá las configuraciones portátiles que se ajustan a este dispositivo.',
-			'settings.cloudBackupRestored' => 'Configuraciones restauradas de la backup en la nube',
 			'settings.shortcutsReset' => 'Atajos restablecidos a los valores predeterminados',
 			'settings.resetShortcutsConfirm' => 'Esto reemplazará tus atajos personalizados por los predeterminados. ¿Continuar?',
 			'settings.about' => 'Acerca de',
@@ -6274,10 +6277,10 @@ extension on TranslationsEs {
 			'settings.services' => 'Servicios',
 			'settings.servicesDescription' => 'Conecta Trakt, MyAnimeList, Seerr y más',
 			'settings.manageLibrariesDescription' => 'Reordena y oculta bibliotecas',
-			'settings.companionRemoteServer' => 'Servidor de control remoto',
-			'settings.companionRemoteServerDescription' => 'Permitir que dispositivos móviles en tu red controlen esta aplicación',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServer' => 'Servidor de control remoto',
+			'settings.companionRemoteServerDescription' => 'Permitir que dispositivos móviles en tu red controlen esta aplicación',
 			'settings.companionRemoteServerStartFailed' => 'No se pudo iniciar el servidor de control remoto',
 			'settings.companionRemoteServerStopFailed' => 'No se pudo detener el servidor de control remoto',
 			'settings.autoPip' => 'Imagen en imagen automática',
@@ -6788,10 +6791,10 @@ extension on TranslationsEs {
 			'accessibility.highContrastHint' => 'Texto más fuerte, etiquetas y indicadores de foco en superficies de luz o oscuridad.',
 			'accessibility.interaction' => 'Movimiento y interacción',
 			'accessibility.reduceMotion' => 'Reducir movimiento',
-			'accessibility.reduceMotionHint' => 'Detener el movimiento del indicador de foco, las transiciones de página y los efectos decorativos.',
-			'accessibility.largeTargets' => 'Objetivos de mayor toque',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.reduceMotionHint' => 'Detener el movimiento del indicador de foco, las transiciones de página y los efectos decorativos.',
+			'accessibility.largeTargets' => 'Objetivos de mayor toque',
 			'accessibility.largeTargetsHint' => 'Dale controles compartidos más espacio para el toque y la navegación asistiva.',
 			'accessibility.navigationHint' => 'Usa Tab y Shift+Tab para moverte entre los controles, Enter o la barra espaciadora para activarlos y Escape o Atrás para cerrar. El zoom y las preferencias de lectura están disponibles cuando hay un libro abierto.',
 			'accessibility.textSizeDescription' => 'Escala el texto de la interfaz en Pleazyng además de la configuración de tamaño del texto del sistema de su dispositivo.',
@@ -7302,10 +7305,10 @@ extension on TranslationsEs {
 			'discover.findNext.controlsHelp' => 'Teclado o mando: enfoca un botón y pulsa Intro o Seleccionar. Deshacer restaura tu última elección.',
 			'discover.findNext.artworkLoading' => 'Cargando imagen…',
 			'discover.findNext.artworkUnavailable' => 'Imagen no disponible',
-			'discover.findNext.savedFeedback' => 'Añadido a las selecciones guardadas',
-			'discover.findNext.skippedFeedback' => 'Omitido por ahora',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'Añadido a las selecciones guardadas',
+			'discover.findNext.skippedFeedback' => 'Omitido por ahora',
 			'discover.findNext.releaseToConfirm' => 'Suelta para confirmar',
 			'discover.findNext.remoteHint' => 'Portada enfocada: ← / → elegir · Seleccionar: detalles · ↑ / ↓ mover el foco',
 			'discover.studio' => 'Estudio',
@@ -7816,10 +7819,10 @@ extension on TranslationsEs {
 			'collections.deleteFailed' => 'Error al eliminar la colección',
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Error al eliminar la colección: ${error}',
 			'collections.selectCollection' => 'Seleccionar colección',
-			'collections.collectionName' => 'Nombre de la colección',
-			'collections.enterCollectionName' => 'Introduce el nombre de la colección',
 			_ => null,
 		} ?? switch (path) {
+			'collections.collectionName' => 'Nombre de la colección',
+			'collections.enterCollectionName' => 'Introduce el nombre de la colección',
 			'collections.addedToCollection' => 'Añadido a la colección',
 			'collections.errorAddingToCollection' => 'Error al añadir a la colección',
 			'collections.created' => 'Colección creada',
@@ -8330,10 +8333,10 @@ extension on TranslationsEs {
 			'performanceOverlay.buffer' => 'Búfer',
 			'performanceOverlay.app' => 'App',
 			'performanceOverlay.decoder' => 'Decodificador',
-			'performanceOverlay.rawDecoder' => 'Decodificador sin procesar',
-			'performanceOverlay.tunneling' => 'Túnel',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.rawDecoder' => 'Decodificador sin procesar',
+			'performanceOverlay.tunneling' => 'Túnel',
 			'performanceOverlay.passthrough' => 'Transferencia directa',
 			'performanceOverlay.aspect' => 'Aspecto',
 			'performanceOverlay.rotation' => 'Rotación',
@@ -8789,7 +8792,6 @@ extension on TranslationsEs {
 			'cast.connectedTo' => ({required Object device}) => 'Conectado a ${device}',
 			'cast.device' => 'Dispositivo de Cast',
 			'cast.readyToCast' => 'Prepara para lanzar',
-			'cast.subtitle' => 'Subtítulos',
 			'cast.serverNotAvailable' => 'El servidor de medios no está disponible.',
 			'cast.stopCasting' => 'Dejar de casting',
 			'cast.startFailed' => 'No puedo empezar a casting. comprobar el servidor y intentarlo de nuevo.',
@@ -8845,9 +8847,9 @@ extension on TranslationsEs {
 			'homeLayout.sync' => 'Síntomas',
 			'homeLayout.syncAccountTitle' => 'Síntese el diseño con tu cuenta Plex',
 			'homeLayout.syncAccountOn' => 'En: este dispositivo comparte orden de línea, líneas, Hero y Auto-slide con sus otros dispositivos.',
-			'homeLayout.syncAccountOff' => 'Desactivado: este dispositivo mantiene su propio layout.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.syncAccountOff' => 'Desactivado: este dispositivo mantiene su propio layout.',
 			'homeLayout.syncNow' => 'Síntomas ahora',
 			'homeLayout.plexHomeManager' => 'Plex Director de la casa',
 			'homeLayout.managePlexRows' => 'Gestión Plex líneas en Pleazyng',
@@ -9359,9 +9361,9 @@ extension on TranslationsEs {
 			'audiobook.deletedBookmark' => 'Bookmark eliminado',
 			'audiobook.finished' => 'Finalizado',
 			'audiobook.readingPosition' => ({required Object percent}) => 'Leer · ${percent}%',
-			'audiobook.chapterTimeline' => 'Capítulo Progreso',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.chapterTimeline' => 'Capítulo Progreso',
 			'audiobook.bookTimeline' => 'Todo el libro Progreso',
 			'audiobook.bookRemaining' => ({required Object time}) => 'El tiempo que queda en este libro: ${time}',
 			'audiobook.chapterRemaining' => ({required Object time}) => 'Tiempo restante en este capítulo: ${time}',
@@ -9873,9 +9875,9 @@ extension on TranslationsEs {
 			'bonusExtras.aiNotice' => 'La IA recibe tu pregunta y los fragmentos permitidos de la transcripción solo cuando buscas. Al desactivarla, la búsqueda normal por tema y en la transcripción sigue disponible.',
 			'bonusExtras.deviceNotice' => 'La opción «En este dispositivo» requiere un entorno de ejecución compatible con OpenAI instalado en localhost.',
 			'bonusExtras.save' => 'Guardar',
-			'bonusExtras.cancel' => 'Cancelar',
 			_ => null,
 		} ?? switch (path) {
+			'bonusExtras.cancel' => 'Cancelar',
 			'bonusExtras.invalidSettings' => 'Comprueba las direcciones de los servidores y el nombre del modelo. El modo en la nube requiere HTTPS; el modo en este dispositivo requiere localhost.',
 			'bonusExtras.failed' => 'No se pudieron actualizar los extras. Los extras disponibles en tu biblioteca siguen siendo accesibles.',
 			'bonusExtras.partial' => 'Algunas fuentes en línea no están disponibles. Se muestran los resultados disponibles.',

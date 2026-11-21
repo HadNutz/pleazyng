@@ -57,7 +57,13 @@
 - Reuse the registered Plex client when a server returns with the same authentication and profile scope, so active playback keeps reporting progress. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/b179440450941150da98623e3a4fe3d2aebe900e) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 
 - Retry sleeping Plex servers after profile binding and resume with bounded, profile-aware backoff. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/4640404ce3c79d3a73271392cc6d5d18ca8ebedc) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+- Fix a webOS MPV crash when the Flutter renderer requests a retired video texture. Apply the OLED motion preset to eligible TV MPV sources and retry playback without smoothing if the first filtered frame fails.
+
 - Add hardware-probed motion blending to the LG webOS and Samsung Tizen MPV players, with software fallback and provider diagnostics. Add a libplacebo GPU route for Apple MPV smoothing and for devices without VideoToolbox interpolation support. Try software neural inference after eligible hardware providers on Android, Fire OS, Windows and Linux.
+- Keep Home layouts, pending watch actions and tracker updates with the account that made them when profiles switch or storage goes offline.
+- Preserve the selected edition, part, subtitles and resume position across downloads, Cast handoffs and external playback. Only offer audio sync on playback engines that apply the adjustment.
+- Recover interrupted network downloads safely, cancel remote Plex conversions, and improve access to FTP libraries, Google Drive shortcuts, S3 folders and previously indexed podcasts.
+- Preserve audiobook and reading progress on unavailable files. Restore IPTV recording and tuning for affected profiles, label TV keyboard actions for screen readers, and show the actual results of local and network settings restores.
 
 - Keep manual app-store review submissions tracked separately from successful artifact uploads.
 

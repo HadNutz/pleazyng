@@ -22,7 +22,6 @@ object TvDetection {
     return uiModeType == Configuration.UI_MODE_TYPE_TELEVISION ||
       pm.hasSystemFeature(PackageManager.FEATURE_TELEVISION) ||
       pm.hasSystemFeature(PackageManager.FEATURE_LEANBACK) ||
-      pm.hasSystemFeature("amazon.hardware.fire_tv") ||
-      !pm.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN)
+      pm.hasSystemFeature("amazon.hardware.fire_tv")
   }
 }

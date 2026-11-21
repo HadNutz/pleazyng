@@ -1,7 +1,5 @@
 {
-  "cast": {
-    "subtitle": "Legendas"
-  },
+  "cast": {},
   "appIcon": {
     "defaultIcon": "Predefinição",
     "title": "Ícone da aplicação",
@@ -155,6 +153,7 @@
     "playbackBufferExtraLarge": "Extragrande",
     "musicQualityTitle": "Qualidade da música",
     "subtitleStyling": "Estilo de legendas",
+    "importSettingsCounts": "Definições aplicadas: ${applied}. Ignoradas: ${skipped}.",
     "cloudBackupUsername": "Nome de utilizador",
     "cloudBackupPassword": "Palavra-passe",
     "skipMarkerModeOff": "Desativado",
@@ -324,7 +323,6 @@
     "importSettings": "Importar definições",
     "importSettingsDescription": "Restaurar preferências a partir de um ficheiro",
     "importSettingsConfirm": "Isto substituirá as suas definições atuais. Continuar?",
-    "importSettingsSuccess": "Definições importadas",
     "importSettingsNoUser": "Inicie sessão antes de importar as definições",
     "shortcutsReset": "Atalhos repostos para os predefinidos",
     "resetShortcutsConfirm": "Isto substituirá os seus atalhos personalizados pelos predefinidos. Continuar?",

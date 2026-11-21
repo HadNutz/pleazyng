@@ -80,11 +80,13 @@ view.addEventListener('show-annotation', ({detail:{value}}) => send('annotation'
 
 const readSMIL = async () => {
     const clips=[];
-    const time=value=>{
-        const text=(value??'0').replace(/^npt=/,'');
-        if(text.endsWith('ms'))return parseFloat(text)/1000;
-        const numbers=text.replace(/s$/,'').split(':').map(Number);
-        return numbers.reduce((a,n)=>a*60+n,0);
+    const time = value => {
+        const text = value.trim().replace(/^npt=/, '');
+        if (/^(?:\d+:){1,2}\d+(?:\.\d+)?$/.test(text))
+            return text.split(':').reduce((seconds, part) => seconds * 60 + Number(part), 0);
+        const match = /^(\d+(?:\.\d+)?|\.\d+)(h|min|s|ms)?$/.exec(text);
+        if (!match) return NaN;
+        return Number(match[1]) * ({ h: 3600, min: 60, s: 1, ms: .001 }[match[2] ?? 's']);
     };
     const relative=(base,ref)=>decodeURIComponent(new URL(ref,new URL(base,'https://publication.invalid/')).pathname.substring(1));
     for(const section of book.sections) {
@@ -95,11 +97,12 @@ const readSMIL = async () => {
         for(const par of doc.getElementsByTagNameNS('*','par')) {
             const audio=par.getElementsByTagNameNS('*','audio')[0],text=par.getElementsByTagNameNS('*','text')[0];
             if(!audio||!text)continue;
-            const begin=time(audio.getAttribute('clipBegin')),end=time(audio.getAttribute('clipEnd'));
+            const begin = time(audio.getAttribute('clipBegin') ?? '0');
+            const end = audio.hasAttribute('clipEnd') ? time(audio.getAttribute('clipEnd')) : null;
             const textRef=new URL(text.getAttribute('src'),new URL(href,'https://publication.invalid/'));
-            if(Number.isFinite(begin)&&Number.isFinite(end)&&end>begin)clips.push({
+            if (Number.isFinite(begin) && (end === null || (Number.isFinite(end) && end > begin))) clips.push({
                 audio:relative(href,audio.getAttribute('src')),href:decodeURIComponent(textRef.pathname.substring(1))+textRef.hash,
-                beginMs:Math.round(begin*1000),endMs:Math.round(end*1000)
+                beginMs:Math.round(begin*1000),endMs:end === null ? null : Math.round(end*1000)
             });
         }
     }

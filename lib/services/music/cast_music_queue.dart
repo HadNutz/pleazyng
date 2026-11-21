@@ -431,7 +431,7 @@ class CastMusicQueue {
   }
 }
 
-Future<void> dispatchCastMusicQueue(
+Future<void> dispatchCastQueue(
   List<GoogleCastQueueItem> items,
   GoogleCastQueueLoadOptions options, {
   required bool android,

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../media/media_item.dart';
 import '../mpv/mpv.dart';
+import '../mpv/player/platform/player_system.dart';
 import 'scoped_player_prefs.dart';
 
 /// The audio, primary-subtitle, and secondary-subtitle sync offsets one video
@@ -38,6 +39,13 @@ final class PlayerSyncOffsets extends ChangeNotifier {
   int get secondarySubtitleMs => _secondarySubtitleMs;
   double get subtitleRate => _subtitleRate;
 
+  /// System transports create the native session during open. Other engines
+  /// can configure sync before playback starts.
+  Future<void> applyOnStartup(MediaItem item, {required bool mediaReady}) async {
+    final needsSession = _player is PlayerSystem && _player.canAdjustAudioDelay;
+    if (needsSession == mediaReady) await applyFor(item);
+  }
+
   /// Make the player apply [item]'s scope-resolved offsets.
   ///
   /// Every item starts from its own resolved value, so a change made under
@@ -45,7 +53,9 @@ final class PlayerSyncOffsets extends ChangeNotifier {
   /// player into the next episode (#2449). An offset the player already
   /// applies is not rewritten.
   Future<void> applyFor(MediaItem item) async {
-    await _apply(audioProperty, ScopedPlayerPrefs.resolve(ScopedPlayerPrefs.audioSyncOffset, item));
+    if (_player.canAdjustAudioDelay) {
+      await _apply(audioProperty, ScopedPlayerPrefs.resolve(ScopedPlayerPrefs.audioSyncOffset, item));
+    }
     await _apply(subtitleProperty, ScopedPlayerPrefs.resolve(ScopedPlayerPrefs.subtitleSyncOffset, item));
     if (_player.supportsSecondarySubtitles) {
       await _apply(
@@ -92,7 +102,7 @@ final class PlayerSyncOffsets extends ChangeNotifier {
   void recordApplied(String property, int offsetMs) {
     switch (property) {
       case audioProperty:
-        if (_audioMs == offsetMs) return;
+        if (!_player.canAdjustAudioDelay || _audioMs == offsetMs) return;
         _audioMs = offsetMs;
       case subtitleProperty:
         if (_subtitleMs == offsetMs) return;

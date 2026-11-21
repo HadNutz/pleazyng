@@ -342,6 +342,9 @@ class _Translations$common$ms extends Translations$common$en {
 	@override String get notAvailable => 'N / A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'Tag : ABC';
+	@override String get keyboardSymbols => 'Simbol';
+	@override String get keyboardLetters => 'Huruf';
+	@override String get keyboardNewLine => 'Baris baharu';
 	@override late final _Translations$common$mediaKind$ms mediaKind = _Translations$common$mediaKind$ms._(_root);
 }
 
@@ -569,7 +572,7 @@ class _Translations$settings$ms extends Translations$settings$en {
 	@override String get importSettings => 'Pengenalan Import';
 	@override String get importSettingsDescription => 'Memulihkan keutamaan daripada fail';
 	@override String get importSettingsConfirm => 'Ini akan menggantikan tetapan semasa anda.Lanjutkan?';
-	@override String get importSettingsSuccess => 'Seting yang diimport';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Tetapan digunakan: ${applied}. Dilangkau: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Fail ini bukan pengeksportan tetapan Pleazyng yang sah';
 	@override String get importSettingsNoUser => 'Menandatangani sebelum mengimport tetapan';
 	@override String get cloudBackup => 'Penyelesaian Cloud Backup';
@@ -582,7 +585,6 @@ class _Translations$settings$ms extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Sandaran telah dimuat naik. Simpan URL ini. Selepas pemasangan baharu, masukkan URL ini dalam bahagian sandaran awan dan pilih “${action}”.';
 	@override String get cloudBackupRestore => 'Memulihkan Backup';
 	@override String get cloudBackupRestoreConfirm => 'Ini akan menggantikan tetapan mudah alih yang sepadan pada peranti ini.';
-	@override String get cloudBackupRestored => 'Seting yang dipulihkan daripada Cloud Backup';
 	@override String get shortcutsReset => 'Pengurangan semula kepada default';
 	@override String get resetShortcutsConfirm => 'Ini akan menggantikan kekurangan yang disesuaikan anda dengan kekurangan.';
 	@override String get about => 'Mengenai';
@@ -3107,7 +3109,6 @@ class _Translations$cast$ms extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Menghubungkan ke ${device}';
 	@override String get device => 'Peranti penghantaran';
 	@override String get readyToCast => 'Sedia untuk dihantar';
-	@override String get subtitle => 'Sari kata';
 	@override String get serverNotAvailable => 'Media server tidak tersedia.';
 	@override String get stopCasting => 'Hentikan penghantaran';
 	@override String get startFailed => 'Tidak boleh memulakan casting. semak pelayan dan cuba lagi.';
@@ -5805,6 +5806,9 @@ extension on TranslationsMs {
 			'common.notAvailable' => 'N / A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'Tag : ABC',
+			'common.keyboardSymbols' => 'Simbol',
+			'common.keyboardLetters' => 'Huruf',
+			'common.keyboardNewLine' => 'Baris baharu',
 			'common.mediaKind.movie' => 'filem',
 			'common.mediaKind.show' => 'Pameran',
 			'common.mediaKind.season' => 'Musim',
@@ -6013,7 +6017,7 @@ extension on TranslationsMs {
 			'settings.importSettings' => 'Pengenalan Import',
 			'settings.importSettingsDescription' => 'Memulihkan keutamaan daripada fail',
 			'settings.importSettingsConfirm' => 'Ini akan menggantikan tetapan semasa anda.Lanjutkan?',
-			'settings.importSettingsSuccess' => 'Seting yang diimport',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Tetapan digunakan: ${applied}. Dilangkau: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Fail ini bukan pengeksportan tetapan Pleazyng yang sah',
 			'settings.importSettingsNoUser' => 'Menandatangani sebelum mengimport tetapan',
 			'settings.cloudBackup' => 'Penyelesaian Cloud Backup',
@@ -6026,7 +6030,6 @@ extension on TranslationsMs {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Sandaran telah dimuat naik. Simpan URL ini. Selepas pemasangan baharu, masukkan URL ini dalam bahagian sandaran awan dan pilih “${action}”.',
 			'settings.cloudBackupRestore' => 'Memulihkan Backup',
 			'settings.cloudBackupRestoreConfirm' => 'Ini akan menggantikan tetapan mudah alih yang sepadan pada peranti ini.',
-			'settings.cloudBackupRestored' => 'Seting yang dipulihkan daripada Cloud Backup',
 			'settings.shortcutsReset' => 'Pengurangan semula kepada default',
 			'settings.resetShortcutsConfirm' => 'Ini akan menggantikan kekurangan yang disesuaikan anda dengan kekurangan.',
 			'settings.about' => 'Mengenai',
@@ -6125,10 +6128,10 @@ extension on TranslationsMs {
 			'settings.companionRemoteServer' => 'Pengenalan kepada Remote Server',
 			'settings.companionRemoteServerDescription' => 'Membolehkan peranti mudah alih di rangkaian anda untuk mengawal aplikasi ini',
 			'settings.companionRemoteServerStartFailed' => 'Tidak boleh memulakan pelayan rakan',
-			'settings.companionRemoteServerStopFailed' => 'Tidak boleh menghentikan pelayan rakan',
-			'settings.autoPip' => 'Pengenalan kepada Auto Picture-in-Picture',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Tidak boleh menghentikan pelayan rakan',
+			'settings.autoPip' => 'Pengenalan kepada Auto Picture-in-Picture',
 			'settings.autoPipDescription' => 'Secara automatik, masukkan imej dalam imej apabila anda meninggalkan aplikasi semasa pemutaran',
 			'settings.matchContentFrameRate' => 'Rata-rata Perlawanan Content Frame Rate',
 			'settings.matchContentFrameRateDescription' => 'Match menunjukkan kadar pembaharuan kepada kandungan video',
@@ -6639,10 +6642,10 @@ extension on TranslationsMs {
 			'accessibility.reduceMotionHint' => 'Hentikan animasi penunjuk fokus, peralihan halaman dan kesan hiasan.',
 			'accessibility.largeTargets' => 'Target sentuhan yang lebih besar',
 			'accessibility.largeTargetsHint' => 'Memberi kawalan berkongsi lebih banyak ruang untuk sentuhan dan navigasi bantuan.',
-			'accessibility.navigationHint' => 'Gunakan Tab dan Shift+Tab untuk bergerak antara kawalan, Enter atau Space untuk mengaktifkan, dan Escape atau butang Kembali untuk menutup. Zum dan keutamaan bacaan tersedia semasa buku dibuka.',
-			'accessibility.textSizeDescription' => 'Skala antara muka teks dalam Pleazyng di samping tetapan saiz teks sistem peranti anda.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'Gunakan Tab dan Shift+Tab untuk bergerak antara kawalan, Enter atau Space untuk mengaktifkan, dan Escape atau butang Kembali untuk menutup. Zum dan keutamaan bacaan tersedia semasa buku dibuka.',
+			'accessibility.textSizeDescription' => 'Skala antara muka teks dalam Pleazyng di samping tetapan saiz teks sistem peranti anda.',
 			'accessibility.boldTextHint' => 'Gunakan berat yang lebih berat untuk label antara muka dan mesej untuk memudahkan mereka untuk membezakan.',
 			'tooltips.shufflePlay' => 'Permainan Shuffle',
 			'tooltips.playTrailer' => 'Bermain Trailer',
@@ -7153,10 +7156,10 @@ extension on TranslationsMs {
 			'discover.person.birthplace' => 'tempat kelahiran',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (umur ${age})',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (usia ${age})',
-			'errors.searchFailed' => ({required Object error}) => 'Pencarian yang gagal: ${error}',
-			'errors.searchUnavailable' => 'Pencarian tidak boleh mencapai mana-mana pelayan media.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => 'Pencarian yang gagal: ${error}',
+			'errors.searchUnavailable' => 'Pencarian tidak boleh mencapai mana-mana pelayan media.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Sambungan timeout semasa muat ${context}',
 			'errors.connectionFailed' => 'Tidak dapat menyambung ke server media',
 			'errors.unableToLoad' => ({required Object context}) => 'Tidak boleh memuatkan ${context}. sila cuba lagi.',
@@ -7667,10 +7670,10 @@ extension on TranslationsMs {
 			'playlists.enterPlaylistName' => 'Masukkan nama playlist',
 			'playlists.delete' => 'Menghapuskan Playlist',
 			'playlists.removeItem' => 'Menghapus daripada Playlist',
-			'playlists.smartPlaylist' => 'Senarai Pemain Pintar',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ms'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} item', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => 'Senarai Pemain Pintar',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ms'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} item', ), 
 			'playlists.emptyPlaylist' => 'Senarai permainan ini kosong',
 			'playlists.deleteConfirm' => 'Menghapuskan Playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Adakah anda pasti anda mahu memadamkan "${name}"?',
@@ -8181,10 +8184,10 @@ extension on TranslationsMs {
 			'performanceOverlay.sampleRate' => 'Kadar sampel',
 			'performanceOverlay.pixelFormat' => 'Pengenalan kepada Pixel Fmt',
 			'performanceOverlay.hwFormat' => 'Format perkakasan',
-			'performanceOverlay.matrix' => 'Matriks',
-			'performanceOverlay.primaries' => 'Permulaan',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => 'Matriks',
+			'performanceOverlay.primaries' => 'Permulaan',
 			'performanceOverlay.transfer' => 'Penghantaran',
 			'performanceOverlay.renderFps' => 'Penghantaran FPS',
 			'performanceOverlay.displayFps' => 'Pemandangan FPS',
@@ -8621,7 +8624,6 @@ extension on TranslationsMs {
 			'cast.connectedTo' => ({required Object device}) => 'Menghubungkan ke ${device}',
 			'cast.device' => 'Peranti penghantaran',
 			'cast.readyToCast' => 'Sedia untuk dihantar',
-			'cast.subtitle' => 'Sari kata',
 			'cast.serverNotAvailable' => 'Media server tidak tersedia.',
 			'cast.stopCasting' => 'Hentikan penghantaran',
 			'cast.startFailed' => 'Tidak boleh memulakan casting. semak pelayan dan cuba lagi.',
@@ -8696,9 +8698,9 @@ extension on TranslationsMs {
 			'homeLayout.continueWatchingLibraryDescription' => 'Perpustakaan ini mempunyai rangkaian kemajuan semula',
 			'homeLayout.continueWatchingHomeDescription' => 'Rangkaian kemajuan semula yang ditunjukkan di Home',
 			'homeLayout.nextUpHomeDescription' => 'Next Unwatched episode rangkaian dipaparkan secara berasingan di Home',
-			'homeLayout.library' => 'Pustaka',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => 'Pustaka',
 			'homeLayout.showInRecommended' => 'Pameran dalam Perpustakaan yang disyorkan',
 			'homeLayout.customPlexRow' => 'Perbezaan Plex baris',
 			'homeLayout.heroNeedsLibrary' => 'Periksa Perpustakaan Pertama — Hero Perlu Di Mana-mana Untuk Tunjukkan',
@@ -9210,9 +9212,9 @@ extension on TranslationsMs {
 			'audiobook.statusProgress' => 'dalam kemajuan',
 			'audiobook.statusFinished' => 'selesai',
 			'audiobook.goToTime' => 'Pergi ke masa',
-			'audiobook.timeHelp' => 'Jam : minit : detik atau minit : detik',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => 'Jam : minit : detik atau minit : detik',
 			'audiobook.recoveryHelp' => 'Eksport salinan yang disulitkan baru-baru ini sebelum memindahkan atau memperbaiki data sink. Import bergabung dengan keadaan semasa; mereka tidak pernah menggantikan sejarah sink tempatan. Simpan kod sink secara berasingan.',
 			'audiobook.recoveryExport' => 'Mengeksport fail pemulihan yang disulitkan',
 			'audiobook.recoveryImport' => 'Import fail pemulihan yang disulitkan',
@@ -9724,9 +9726,9 @@ extension on TranslationsMs {
 			'musicTools.historyHint' => 'Sejarah main balik profil ini',
 			'musicTools.days' => 'Hari',
 			'musicTools.albumBlocks' => 'Kekalkan album penuh bersama',
-			'musicTools.home' => 'Muzik',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => 'Muzik',
 			'musicTools.recent' => 'Baru dimainkan',
 			'musicTools.apiKey' => 'Kunci API',
 			'musicTools.missing' => 'N / A',

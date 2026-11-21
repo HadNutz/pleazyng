@@ -26,6 +26,20 @@ void main() {
   MediaItem episode(String id, {String series = 'show-1'}) =>
       testMediaItem(id: id, kind: MediaKind.episode, grandparentId: series, serverId: 'server-a');
 
+  test('unsupported engines skip saved audio offsets and keep subtitle adjustment working', () async {
+    await settings.write(SettingsService.syncOffsetScope, PlayerSettingScope.title);
+    final item = episode('ep-1');
+    await ScopedPlayerPrefs.write(ScopedPlayerPrefs.audioSyncOffset, item, 250);
+    await ScopedPlayerPrefs.write(ScopedPlayerPrefs.subtitleSyncOffset, item, -125);
+    await offsets.applyFor(item);
+    expect(offsets.audioMs, 0);
+    expect(player.writes, [('sub-delay', '-0.125')]);
+    player.supportsAudioDelay = true;
+    await offsets.applyFor(item);
+    expect(player.writes.last, ('audio-delay', '0.25'));
+    expect(offsets.audioMs, 250);
+  });
+
   test('a "Don\'t save" offset stays with the episode it was set on (#2449)', () async {
     await settings.write(SettingsService.syncOffsetScope, PlayerSettingScope.off);
     await offsets.applyFor(episode('ep-1'));
@@ -59,7 +73,9 @@ void main() {
   });
 }
 
-class _RecordingPlayer implements Player {
+class _RecordingPlayer implements Player, AudioDelayCapability {
+  @override
+  bool supportsAudioDelay = false;
   @override
   bool get supportsSecondarySubtitles => false;
 

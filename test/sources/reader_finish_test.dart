@@ -68,7 +68,7 @@ void main() {
     sources.blocked = false;
     sources.loading = false;
   });
-  testWidgets('failed finish keeps the reader open and a successful retry closes it exactly once', (tester) async {
+  Future<GlobalKey<NavigatorState>> openReader(WidgetTester tester) async {
     final playback = SourcePlayback(sources);
     final workspace = MultiviewWorkspaceController();
     final navigator = GlobalKey<NavigatorState>();
@@ -105,6 +105,31 @@ void main() {
     }
     expect(repository.cursorOpened.isCompleted, isTrue);
     await tester.pump(const Duration(seconds: 1));
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox());
+      playback.dispose();
+      workspace.dispose();
+      sources.dispose();
+    });
+    return navigator;
+  }
+
+  testWidgets('closing a failed open does not create reading progress', (tester) async {
+    final navigator = await openReader(tester);
+    expect(sources.activeProgressKeys, hasLength(1));
+    repository.loading.completeError(const SourceException(SourceFailure.unavailable));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(tester.widget<AppMenuButton<String>>(find.byType(AppMenuButton<String>)).enabled, isFalse);
+    navigator.currentState!.pop();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(repository.snapshots, isEmpty);
+    expect(sources.activeProgressKeys, isEmpty);
+  });
+
+  testWidgets('failed finish keeps the reader open and a successful retry closes it exactly once', (tester) async {
+    final navigator = await openReader(tester);
     void finish() => tester.widget<AppMenuButton<String>>(find.byType(AppMenuButton<String>)).onSelected!('finished');
     finish();
     finish();
@@ -125,9 +150,5 @@ void main() {
     expect(repository.saves, hasLength(2));
     repository.loading.complete({});
     await tester.pump();
-    await tester.pumpWidget(const SizedBox());
-    playback.dispose();
-    workspace.dispose();
-    sources.dispose();
   });
 }

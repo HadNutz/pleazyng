@@ -64,20 +64,21 @@ class S3SourceAdapter extends SourceAdapter {
     );
   }
 
+  static String folderPrefix(String folder) => folder.isEmpty || folder.endsWith('/') ? folder : '$folder/';
+
   Uri get _base => Uri.parse(source.endpoint.endsWith('/') ? source.endpoint : '${source.endpoint}/');
   void _checkKey(String key) {
     if (key.startsWith('/') ||
         key.split('/').any((p) => p == '..' || p == '.') ||
         key.contains('\\') ||
-        (source.root.isNotEmpty &&
-            !(key == source.root || key.startsWith(source.root.endsWith('/') ? source.root : '${source.root}/')))) {
+        !key.startsWith(folderPrefix(source.root))) {
       throw const SourceException(SourceFailure.permission);
     }
   }
 
   @override
   Future<SourcePage> browse({String? parent, String? cursor, String? query}) async {
-    final prefix = parent ?? source.root;
+    final prefix = folderPrefix(parent ?? source.root);
     _checkKey(prefix);
     final target = _base.replace(
       queryParameters: {
@@ -96,7 +97,7 @@ class S3SourceAdapter extends SourceAdapter {
       if (node.name.local != 'CommonPrefixes' && node.name.local != 'Contents') continue;
       final folder = node.name.local == 'CommonPrefixes';
       final id = text(node, folder ? 'Prefix' : 'Key');
-      if (id == prefix || id.isEmpty) continue;
+      if (id == prefix || id.isEmpty || !id.startsWith(prefix)) continue;
       _checkKey(id);
       final name = id.replaceAll(RegExp(r'/+$'), '').split('/').last;
       if (query != null && !name.toLowerCase().contains(query.toLowerCase())) continue;

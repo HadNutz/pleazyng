@@ -259,7 +259,7 @@ void main() {
       });
       addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
       var completed = false;
-      final dispatch = dispatchCastMusicQueue(
+      final dispatch = dispatchCastQueue(
         queue.items,
         queue.options(_snapshot().position),
         android: android,

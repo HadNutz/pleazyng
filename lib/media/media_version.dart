@@ -54,7 +54,7 @@ class MediaVersion {
     this.name,
   });
 
-  MediaVersion copyWith({String? name}) => MediaVersion(
+  MediaVersion copyWith({String? name, List<MediaPart>? parts}) => MediaVersion(
     id: id,
     width: width,
     height: height,
@@ -62,7 +62,7 @@ class MediaVersion {
     videoCodec: videoCodec,
     bitrate: bitrate,
     container: container,
-    parts: parts,
+    parts: parts ?? this.parts,
     name: name ?? this.name,
   );
 

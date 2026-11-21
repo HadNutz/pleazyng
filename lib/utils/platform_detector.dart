@@ -50,20 +50,16 @@ AndroidTvFeatureDetection detectAndroidTvFromSystemFeatures(Iterable<String> fea
   if (featureSet.contains(_androidFeatureFireTv)) {
     reasons.add('fire_tv');
   }
+  final hasTvFeature = reasons.isNotEmpty;
   if (featureSet.isNotEmpty && !featureSet.contains(_androidFeatureTouchscreen)) {
     reasons.add('no_touchscreen');
   }
 
-  // A car is never a TV. Rotary-only head units report no touchscreen, and OEM
-  // images derived from other AOSP variants can carry a stray leanback flag;
-  // either would otherwise route a vehicle through the leanback experience.
+  // Non-touch laptops also lack a touchscreen. Only positive TV features
+  // select the TV layout, and automotive overrides even a stray leanback flag.
   final isAutomotive = featureSet.contains(_androidFeatureAutomotive);
 
-  return AndroidTvFeatureDetection(
-    isTv: !isAutomotive && reasons.isNotEmpty,
-    isAutomotive: isAutomotive,
-    reasons: reasons,
-  );
+  return AndroidTvFeatureDetection(isTv: !isAutomotive && hasTvFeature, isAutomotive: isAutomotive, reasons: reasons);
 }
 
 /// Whether a floating player may be offered, given the host platform's own

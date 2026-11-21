@@ -16,6 +16,7 @@ import '../../i18n/presentation_formats.dart';
 import '../../providers/trackers_provider.dart';
 import '../../sources/dlna_discovery.dart';
 import '../../sources/adapters/bookorbit_source.dart';
+import '../../sources/adapters/s3_source.dart';
 import '../../sources/kavita_opds.dart';
 import '../../sources/publication_shelf.dart';
 import '../../sources/source_controller.dart';
@@ -518,7 +519,9 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
         kind: _kind,
         name: field('name').text.trim().isEmpty ? sourceKindName(_kind) : field('name').text.trim(),
         endpoint: _kind == FileSourceKind.podcastRss ? sourceOrigin(Uri.parse(endpoint)) : endpoint,
-        root: field('root').text.trim(),
+        root: _kind == FileSourceKind.s3
+            ? S3SourceAdapter.folderPrefix(field('root').text.trim())
+            : field('root').text.trim(),
         options: {
           ...preservedOptions,
           'fileRelinks': ?_fileRelinks,

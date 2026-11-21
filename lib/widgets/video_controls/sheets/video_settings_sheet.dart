@@ -675,6 +675,7 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
 
   // Sync adjustments open as a compact top bar instead of a sub-view.
   void _openSyncBar({required bool isSubtitle, bool isSecondarySubtitle = false}) {
+    if (!isSubtitle && !widget.player.canAdjustAudioDelay) return;
     final controller = OverlaySheetController.maybeOf(context);
     if (controller == null) return;
 
@@ -1128,13 +1129,14 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
           },
         ),
 
-        _SettingsMenuItem(
-          icon: Symbols.sync_rounded,
-          title: t.videoSettings.audioSync,
-          valueText: formatSyncOffset(_audioSyncOffset.toDouble()),
-          isHighlighted: _audioSyncOffset != 0,
-          onTap: () => _openSyncBar(isSubtitle: false),
-        ),
+        if (widget.player.canAdjustAudioDelay)
+          _SettingsMenuItem(
+            icon: Symbols.sync_rounded,
+            title: t.videoSettings.audioSync,
+            valueText: formatSyncOffset(_audioSyncOffset.toDouble()),
+            isHighlighted: _audioSyncOffset != 0,
+            onTap: () => _openSyncBar(isSubtitle: false),
+          ),
 
         _SettingsMenuItem(
           icon: Symbols.subtitles_rounded,

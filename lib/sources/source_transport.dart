@@ -134,7 +134,7 @@ class SourceTransport {
             controller.stream,
             response.statusCode,
             contentLength: response.contentLength,
-            request: response.request,
+            request: request,
             headers: response.headers,
             persistentConnection: response.persistentConnection,
             isRedirect: response.isRedirect,
@@ -182,6 +182,15 @@ class SourceTransport {
     Object? body,
     int limit = 8 * 1024 * 1024,
     bool redirects = false,
+  }) async => (await textDocument(method, uri, headers: headers, body: body, limit: limit, redirects: redirects)).body;
+
+  Future<({String body, Uri uri})> textDocument(
+    String method,
+    Uri uri, {
+    Map<String, String> headers = const {},
+    Object? body,
+    int limit = 8 * 1024 * 1024,
+    bool redirects = false,
   }) async {
     final response = await send(method, uri, headers: headers, body: body, redirects: redirects);
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -193,7 +202,7 @@ class SourceTransport {
       if (bytes.length + chunk.length > limit) throw const SourceException(SourceFailure.invalidData);
       bytes.addAll(chunk);
     }
-    return utf8.decode(bytes);
+    return (body: utf8.decode(bytes), uri: response.request!.url);
   }
 
   Future<Object?> jsonValue(String method, Uri uri, {Map<String, String> headers = const {}, Object? body}) async =>
@@ -231,6 +240,12 @@ abstract class SourceAdapter {
   Future<ContentLease?> cover(SourceEntry entry) async => null;
   Future<List<int>?> coverBytes(SourceEntry entry) async => null;
   Future<void> refreshAuthorization() async {}
+  bool shouldRenewLease(int status) => status == 401 || status == 403;
+  Future<ContentLease> renewLease(PublicationFile file) async {
+    await refreshAuthorization();
+    return resolve(file);
+  }
+
   bool supportsAnnotations(SourceEntry entry) => capabilities.annotations;
   bool supportsProgress(SourceEntry entry, PublicationProgress progress) =>
       progress.mode == PublicationMode.reading ? capabilities.readingProgress : capabilities.audioProgress;

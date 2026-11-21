@@ -342,6 +342,9 @@ class Translations$common$pt extends Translations$common$en {
 	@override String get notAvailable => 'N/D';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Símbolos';
+	@override String get keyboardLetters => 'Letras';
+	@override String get keyboardNewLine => 'Nova linha';
 	@override late final Translations$common$mediaKind$pt mediaKind = Translations$common$mediaKind$pt.internal(_root);
 }
 
@@ -573,7 +576,7 @@ class Translations$settings$pt extends Translations$settings$en {
 	@override String get importSettings => 'Importar Configurações';
 	@override String get importSettingsDescription => 'Restaurar preferências a partir de um arquivo';
 	@override String get importSettingsConfirm => 'Isso substituirá suas configurações atuais. Continuar?';
-	@override String get importSettingsSuccess => 'Configurações importadas';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Configurações aplicadas: ${applied}. Ignoradas: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Este arquivo não é uma exportação válida do Pleazyng';
 	@override String get importSettingsNoUser => 'Entre na conta antes de importar as configurações';
 	@override String get cloudBackup => 'Nuvem Backup';
@@ -586,7 +589,6 @@ class Translations$settings$pt extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Cópia de segurança enviada. Guarde este URL. Após uma nova instalação, introduza-o na secção de cópias de segurança na nuvem e selecione «${action}».';
 	@override String get cloudBackupRestore => 'Restauração de backup';
 	@override String get cloudBackupRestoreConfirm => 'Isso substituirá as configurações portáteis correspondentes neste dispositivo.';
-	@override String get cloudBackupRestored => 'Atualização de configurações recuperadas da backup da nuvem';
 	@override String get shortcutsReset => 'Atalhos redefinidos para o padrão';
 	@override String get resetShortcutsConfirm => 'Isso substituirá seus atalhos personalizados pelos padrões. Continuar?';
 	@override String get about => 'Sobre';
@@ -3129,7 +3131,6 @@ class Translations$cast$pt extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Conectado a ${device}';
 	@override String get device => 'CAST DEFINITOR';
 	@override String get readyToCast => 'Pronto para jogar';
-	@override String get subtitle => 'Legendas';
 	@override String get serverNotAvailable => 'O servidor de mídia não está disponível.';
 	@override String get stopCasting => 'Parar de casting';
 	@override String get startFailed => 'Não pode começar a casting. verificar o servidor e tentar novamente.';
@@ -5837,6 +5838,9 @@ extension on TranslationsPt {
 			'common.notAvailable' => 'N/D',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Símbolos',
+			'common.keyboardLetters' => 'Letras',
+			'common.keyboardNewLine' => 'Nova linha',
 			'common.mediaKind.movie' => 'Filme',
 			'common.mediaKind.show' => 'Série',
 			'common.mediaKind.season' => 'Temporada',
@@ -6045,7 +6049,7 @@ extension on TranslationsPt {
 			'settings.importSettings' => 'Importar Configurações',
 			'settings.importSettingsDescription' => 'Restaurar preferências a partir de um arquivo',
 			'settings.importSettingsConfirm' => 'Isso substituirá suas configurações atuais. Continuar?',
-			'settings.importSettingsSuccess' => 'Configurações importadas',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Configurações aplicadas: ${applied}. Ignoradas: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Este arquivo não é uma exportação válida do Pleazyng',
 			'settings.importSettingsNoUser' => 'Entre na conta antes de importar as configurações',
 			'settings.cloudBackup' => 'Nuvem Backup',
@@ -6058,7 +6062,6 @@ extension on TranslationsPt {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Cópia de segurança enviada. Guarde este URL. Após uma nova instalação, introduza-o na secção de cópias de segurança na nuvem e selecione «${action}».',
 			'settings.cloudBackupRestore' => 'Restauração de backup',
 			'settings.cloudBackupRestoreConfirm' => 'Isso substituirá as configurações portáteis correspondentes neste dispositivo.',
-			'settings.cloudBackupRestored' => 'Atualização de configurações recuperadas da backup da nuvem',
 			'settings.shortcutsReset' => 'Atalhos redefinidos para o padrão',
 			'settings.resetShortcutsConfirm' => 'Isso substituirá seus atalhos personalizados pelos padrões. Continuar?',
 			'settings.about' => 'Sobre',
@@ -6157,10 +6160,10 @@ extension on TranslationsPt {
 			'settings.companionRemoteServer' => 'Servidor de controle remoto',
 			'settings.companionRemoteServerDescription' => 'Permitir que dispositivos móveis na sua rede controlem este app',
 			'settings.companionRemoteServerStartFailed' => 'Não foi possível iniciar o servidor de controle remoto',
-			'settings.companionRemoteServerStopFailed' => 'Não foi possível parar o servidor de controle remoto',
-			'settings.autoPip' => 'Picture-in-picture automático',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Não foi possível parar o servidor de controle remoto',
+			'settings.autoPip' => 'Picture-in-picture automático',
 			'settings.autoPipDescription' => 'Entrar automaticamente no modo picture-in-picture ao sair do app durante a reprodução',
 			'settings.matchContentFrameRate' => 'Ajustar à taxa de quadros do conteúdo',
 			'settings.matchContentFrameRateDescription' => 'Ajustar a taxa de atualização da tela ao conteúdo de vídeo',
@@ -6671,10 +6674,10 @@ extension on TranslationsPt {
 			'accessibility.reduceMotionHint' => 'Parar as animações do indicador de foco, as transições de página e os efeitos decorativos.',
 			'accessibility.largeTargets' => 'Objetivos de toque mais grandes',
 			'accessibility.largeTargetsHint' => 'Dê controles compartilhados mais espaço para toque e navegação assistiva.',
-			'accessibility.navigationHint' => 'Use Tab e Shift+Tab para navegar entre os controles, Enter ou a barra de espaço para ativar e Escape ou Voltar para fechar. O zoom e as preferências de leitura ficam disponíveis quando um livro está aberto.',
-			'accessibility.textSizeDescription' => 'Escala o texto de interface em Pleazyng, além da configuração do tamanho de texto do sistema do seu dispositivo.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'Use Tab e Shift+Tab para navegar entre os controles, Enter ou a barra de espaço para ativar e Escape ou Voltar para fechar. O zoom e as preferências de leitura ficam disponíveis quando um livro está aberto.',
+			'accessibility.textSizeDescription' => 'Escala o texto de interface em Pleazyng, além da configuração do tamanho de texto do sistema do seu dispositivo.',
 			'accessibility.boldTextHint' => 'Use um peso mais pesado para etiquetas de interface e mensagens para torná-los mais fáceis de distinguir.',
 			'tooltips.shufflePlay' => 'Reprodução aleatória',
 			'tooltips.playTrailer' => 'Reproduzir trailer',
@@ -7185,10 +7188,10 @@ extension on TranslationsPt {
 			'discover.person.birthplace' => 'Local de nascimento',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age} anos)',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (aos ${age} anos)',
-			'errors.searchFailed' => ({required Object error}) => 'Falha na busca: ${error}',
-			'errors.searchUnavailable' => 'A busca não conseguiu alcançar nenhum servidor de mídia.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => 'Falha na busca: ${error}',
+			'errors.searchUnavailable' => 'A busca não conseguiu alcançar nenhum servidor de mídia.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Tempo de conexão esgotado ao carregar ${context}',
 			'errors.connectionFailed' => 'Não foi possível conectar ao servidor de mídia',
 			'errors.unableToLoad' => ({required Object context}) => 'Não foi possível carregar ${context}. Tente novamente.',
@@ -7699,10 +7702,10 @@ extension on TranslationsPt {
 			'playlists.enterPlaylistName' => 'Insira o nome da playlist',
 			'playlists.delete' => 'Excluir Playlist',
 			'playlists.removeItem' => 'Remover da Playlist',
-			'playlists.smartPlaylist' => 'Playlist Inteligente',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} item', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} itens', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => 'Playlist Inteligente',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} item', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} itens', ), 
 			'playlists.emptyPlaylist' => 'Esta playlist está vazia',
 			'playlists.deleteConfirm' => 'Excluir Playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Tem certeza de que deseja excluir "${name}"?',
@@ -8213,10 +8216,10 @@ extension on TranslationsPt {
 			'performanceOverlay.sampleRate' => 'Taxa de amostragem',
 			'performanceOverlay.pixelFormat' => 'Formato de pixel',
 			'performanceOverlay.hwFormat' => 'Formato HW',
-			'performanceOverlay.matrix' => 'Matriz',
-			'performanceOverlay.primaries' => 'Primárias',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => 'Matriz',
+			'performanceOverlay.primaries' => 'Primárias',
 			'performanceOverlay.transfer' => 'Transferência',
 			'performanceOverlay.renderFps' => 'FPS de renderização',
 			'performanceOverlay.displayFps' => 'FPS da tela',
@@ -8653,7 +8656,6 @@ extension on TranslationsPt {
 			'cast.connectedTo' => ({required Object device}) => 'Conectado a ${device}',
 			'cast.device' => 'CAST DEFINITOR',
 			'cast.readyToCast' => 'Pronto para jogar',
-			'cast.subtitle' => 'Legendas',
 			'cast.serverNotAvailable' => 'O servidor de mídia não está disponível.',
 			'cast.stopCasting' => 'Parar de casting',
 			'cast.startFailed' => 'Não pode começar a casting. verificar o servidor e tentar novamente.',
@@ -8728,9 +8730,9 @@ extension on TranslationsPt {
 			'homeLayout.continueWatchingLibraryDescription' => 'A própria linha de progresso da biblioteca',
 			'homeLayout.continueWatchingHomeDescription' => 'A linha de progressão de recesso mostrada em Home',
 			'homeLayout.nextUpHomeDescription' => 'A próxima sequência de episódios não observados mostrada separadamente em Home',
-			'homeLayout.library' => 'Biblioteca',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => 'Biblioteca',
 			'homeLayout.showInRecommended' => 'Exposição em Biblioteca Recomendada',
 			'homeLayout.customPlexRow' => 'Cadeia de Cadeia Plex',
 			'homeLayout.heroNeedsLibrary' => 'Veja a Biblioteca primeiro – Hero precisa de algum lugar para mostrar',
@@ -9242,9 +9244,9 @@ extension on TranslationsPt {
 			'audiobook.statusProgress' => 'em progresso',
 			'audiobook.statusFinished' => 'Finalizado',
 			'audiobook.goToTime' => 'Vá ao tempo',
-			'audiobook.timeHelp' => 'Horas: minutos: segundos ou minutos: segundos',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => 'Horas: minutos: segundos ou minutos: segundos',
 			'audiobook.recoveryHelp' => 'Exportar uma cópia recentemente criptografada antes de mover ou reparar dados de sincronização. Importações se misturam com o estado atual; eles nunca substituem a história local da sincronización.',
 			'audiobook.recoveryExport' => 'Exportação de arquivos de recuperação criptografados',
 			'audiobook.recoveryImport' => 'Importar arquivo de recuperação criptografado',
@@ -9756,9 +9758,9 @@ extension on TranslationsPt {
 			'musicTools.historyHint' => 'Histórico de reprodução deste perfil',
 			'musicTools.days' => 'Dias',
 			'musicTools.albumBlocks' => 'Manter álbuns completos juntos',
-			'musicTools.home' => 'Música',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => 'Música',
 			'musicTools.recent' => 'Reproduzidas recentemente',
 			'musicTools.apiKey' => 'Chave API',
 			'musicTools.missing' => 'N/D',

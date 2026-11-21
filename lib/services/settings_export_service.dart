@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/shader_preset.dart';
+import '../i18n/presentation_formats.dart';
 import '../i18n/strings.g.dart';
 import '../utils/app_logger.dart';
 import '../utils/app_version.dart';
@@ -22,6 +23,9 @@ class ImportResult {
   final int keysImported;
   final int keysSkipped;
   const ImportResult({required this.keysImported, required this.keysSkipped});
+
+  String get summary =>
+      t.settings.importSettingsCounts(applied: formatCount(keysImported), skipped: formatCount(keysSkipped));
 }
 
 class SettingsExportException implements Exception {

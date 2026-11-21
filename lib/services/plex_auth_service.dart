@@ -454,7 +454,7 @@ class PlexAuthService {
     if (response.statusCode == 404) return const [];
     _checkStatus(response);
     final data = response.data;
-    if (data is! List) return const [];
+    if (data is! List) throw const FormatException('Invalid Plex account settings response');
     return [
       for (final entry in data)
         if (entry is Map) Map<String, dynamic>.from(entry),

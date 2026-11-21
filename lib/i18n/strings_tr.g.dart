@@ -342,6 +342,9 @@ class _Translations$common$tr extends Translations$common$en {
 	@override String get notAvailable => 'Yok';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Simgeler';
+	@override String get keyboardLetters => 'Harfler';
+	@override String get keyboardNewLine => 'Yeni satır';
 	@override late final _Translations$common$mediaKind$tr mediaKind = _Translations$common$mediaKind$tr._(_root);
 }
 
@@ -571,7 +574,7 @@ class _Translations$settings$tr extends Translations$settings$en {
 	@override String get importSettings => 'Ayarları İçe Aktar';
 	@override String get importSettingsDescription => 'Tercihleri bir dosyadan geri yükleyin';
 	@override String get importSettingsConfirm => 'Bu işlem mevcut ayarlarınızın üzerine yazacak. Devam edilsin mi?';
-	@override String get importSettingsSuccess => 'Ayarlar içe aktarıldı';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Uygulanan ayar: ${applied}. Atlanan: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Bu dosya geçerli bir Pleazyng ayar dosyası değil';
 	@override String get importSettingsNoUser => 'Ayarları içe aktarmadan önce giriş yapın';
 	@override String get cloudBackup => 'Cloud Backup için';
@@ -584,7 +587,6 @@ class _Translations$settings$tr extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Yedek yüklendi. Bu URL’yi saklayın. Yeni bir kurulumdan sonra URL’yi bulut yedekleme bölümüne girip “${action}” seçeneğini seçin.';
 	@override String get cloudBackupRestore => 'Backup Yöntemleri';
 	@override String get cloudBackupRestoreConfirm => 'Bu cihazda uyumlu taşınabilir ayarları değiştirecektir. devamı?';
-	@override String get cloudBackupRestored => 'Cloud Backup\'tan kurtarılan ayarlar';
 	@override String get shortcutsReset => 'Kısayollar varsayılana sıfırlandı';
 	@override String get resetShortcutsConfirm => 'Bu işlem özel kısayollarınızı varsayılanlarla değiştirecek. Devam edilsin mi?';
 	@override String get about => 'Hakkında';
@@ -3126,7 +3128,6 @@ class _Translations$cast$tr extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => '${device} ile bağlantılı';
 	@override String get device => 'Cast cihazı';
 	@override String get readyToCast => 'Hazırlık atmak';
-	@override String get subtitle => 'Altyazılar';
 	@override String get serverNotAvailable => 'Medya sunucusu mevcut değildir.';
 	@override String get stopCasting => 'Casting durdurma';
 	@override String get startFailed => 'Sunucu kontrol edemezsiniz.Sunucu kontrol edin ve tekrar deneyin.';
@@ -5830,6 +5831,9 @@ extension on TranslationsTr {
 			'common.notAvailable' => 'Yok',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Simgeler',
+			'common.keyboardLetters' => 'Harfler',
+			'common.keyboardNewLine' => 'Yeni satır',
 			'common.mediaKind.movie' => 'Film',
 			'common.mediaKind.show' => 'Dizi',
 			'common.mediaKind.season' => 'Sezon',
@@ -6038,7 +6042,7 @@ extension on TranslationsTr {
 			'settings.importSettings' => 'Ayarları İçe Aktar',
 			'settings.importSettingsDescription' => 'Tercihleri bir dosyadan geri yükleyin',
 			'settings.importSettingsConfirm' => 'Bu işlem mevcut ayarlarınızın üzerine yazacak. Devam edilsin mi?',
-			'settings.importSettingsSuccess' => 'Ayarlar içe aktarıldı',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Uygulanan ayar: ${applied}. Atlanan: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Bu dosya geçerli bir Pleazyng ayar dosyası değil',
 			'settings.importSettingsNoUser' => 'Ayarları içe aktarmadan önce giriş yapın',
 			'settings.cloudBackup' => 'Cloud Backup için',
@@ -6051,7 +6055,6 @@ extension on TranslationsTr {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Yedek yüklendi. Bu URL’yi saklayın. Yeni bir kurulumdan sonra URL’yi bulut yedekleme bölümüne girip “${action}” seçeneğini seçin.',
 			'settings.cloudBackupRestore' => 'Backup Yöntemleri',
 			'settings.cloudBackupRestoreConfirm' => 'Bu cihazda uyumlu taşınabilir ayarları değiştirecektir. devamı?',
-			'settings.cloudBackupRestored' => 'Cloud Backup\'tan kurtarılan ayarlar',
 			'settings.shortcutsReset' => 'Kısayollar varsayılana sıfırlandı',
 			'settings.resetShortcutsConfirm' => 'Bu işlem özel kısayollarınızı varsayılanlarla değiştirecek. Devam edilsin mi?',
 			'settings.about' => 'Hakkında',
@@ -6150,10 +6153,10 @@ extension on TranslationsTr {
 			'settings.companionRemoteServer' => 'Yardımcı Uzaktan Kumanda Sunucusu',
 			'settings.companionRemoteServerDescription' => 'Ağınızdaki mobil cihazların bu uygulamayı kontrol etmesine izin verin',
 			'settings.companionRemoteServerStartFailed' => 'Yardımcı sunucu başlatılamadı',
-			'settings.companionRemoteServerStopFailed' => 'Yardımcı sunucu durdurulamadı',
-			'settings.autoPip' => 'Otomatik Pencere İçinde Pencere (PiP)',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Yardımcı sunucu durdurulamadı',
+			'settings.autoPip' => 'Otomatik Pencere İçinde Pencere (PiP)',
 			'settings.autoPipDescription' => 'Oynatma sırasında uygulamadan çıktığınızda otomatik olarak pencere içinde pencere moduna geç',
 			'settings.matchContentFrameRate' => 'İçerik Kare Hızını Eşitle',
 			'settings.matchContentFrameRateDescription' => 'Ekran yenileme hızını video içeriğiyle eşitle',
@@ -6664,10 +6667,10 @@ extension on TranslationsTr {
 			'accessibility.reduceMotionHint' => 'Odak göstergesi hareketini, sayfa geçişlerini ve dekoratif efektleri durdurun.',
 			'accessibility.largeTargets' => 'Daha büyük dokunmatik hedefler',
 			'accessibility.largeTargetsHint' => 'Paylaşılan kontroller dokunmatik ve yardımcı navigasyon için daha fazla yer verir.',
-			'accessibility.navigationHint' => 'Kontroller arasında geçiş yapmak için Tab ve Shift+Tab, etkinleştirmek için Enter veya boşluk tuşu, kapatmak için Escape veya Geri düğmesini kullanın. Kitap açıkken yakınlaştırma ve okuma tercihleri kullanılabilir.',
-			'accessibility.textSizeDescription' => 'Pleazyng\'de ölçekli arayüz metni, cihazınızın sistem metin boyutu ayarına ek olarak.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.navigationHint' => 'Kontroller arasında geçiş yapmak için Tab ve Shift+Tab, etkinleştirmek için Enter veya boşluk tuşu, kapatmak için Escape veya Geri düğmesini kullanın. Kitap açıkken yakınlaştırma ve okuma tercihleri kullanılabilir.',
+			'accessibility.textSizeDescription' => 'Pleazyng\'de ölçekli arayüz metni, cihazınızın sistem metin boyutu ayarına ek olarak.',
 			'accessibility.boldTextHint' => 'Bir arayüz etiketleri ve mesajları için daha ağır bir ağırlık kullanın, bunları ayırt etmek kolay hale getirin.',
 			'tooltips.shufflePlay' => 'Karışık oynat',
 			'tooltips.playTrailer' => 'Fragmanı oynat',
@@ -7178,10 +7181,10 @@ extension on TranslationsTr {
 			'discover.person.birthplace' => 'Doğum yeri',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age} yaşında)',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (${age} yaşında)',
-			'errors.searchFailed' => ({required Object error}) => 'Arama başarısız: ${error}',
-			'errors.searchUnavailable' => 'Arama hiçbir medya sunucusuna ulaşamadı.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchFailed' => ({required Object error}) => 'Arama başarısız: ${error}',
+			'errors.searchUnavailable' => 'Arama hiçbir medya sunucusuna ulaşamadı.',
 			'errors.connectionTimeout' => ({required Object context}) => '${context} yüklenirken bağlantı zaman aşımına uğradı',
 			'errors.connectionFailed' => 'Medya sunucusuna bağlanılamıyor',
 			'errors.unableToLoad' => ({required Object context}) => '${context} yüklenemedi. Lütfen tekrar deneyin.',
@@ -7692,10 +7695,10 @@ extension on TranslationsTr {
 			'playlists.enterPlaylistName' => 'Oynatma listesi adını girin',
 			'playlists.delete' => 'Oynatma Listesini Sil',
 			'playlists.removeItem' => 'Oynatma Listesinden Kaldır',
-			'playlists.smartPlaylist' => 'Akıllı Oynatma Listesi',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('tr'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} öge', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} öge', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.smartPlaylist' => 'Akıllı Oynatma Listesi',
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('tr'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} öge', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} öge', ), 
 			'playlists.emptyPlaylist' => 'Bu oynatma listesi boş',
 			'playlists.deleteConfirm' => 'Oynatma Listesi Silinsin mi?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}" listesini silmek istediğinizden emin misiniz?',
@@ -8206,10 +8209,10 @@ extension on TranslationsTr {
 			'performanceOverlay.sampleRate' => 'Örnekleme Hızı',
 			'performanceOverlay.pixelFormat' => 'Piksel Biçimi',
 			'performanceOverlay.hwFormat' => 'HW Biçimi',
-			'performanceOverlay.matrix' => 'Matris',
-			'performanceOverlay.primaries' => 'Ana Renkler',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.matrix' => 'Matris',
+			'performanceOverlay.primaries' => 'Ana Renkler',
 			'performanceOverlay.transfer' => 'Aktarım',
 			'performanceOverlay.renderFps' => 'İşleme FPS',
 			'performanceOverlay.displayFps' => 'Ekran FPS',
@@ -8646,7 +8649,6 @@ extension on TranslationsTr {
 			'cast.connectedTo' => ({required Object device}) => '${device} ile bağlantılı',
 			'cast.device' => 'Cast cihazı',
 			'cast.readyToCast' => 'Hazırlık atmak',
-			'cast.subtitle' => 'Altyazılar',
 			'cast.serverNotAvailable' => 'Medya sunucusu mevcut değildir.',
 			'cast.stopCasting' => 'Casting durdurma',
 			'cast.startFailed' => 'Sunucu kontrol edemezsiniz.Sunucu kontrol edin ve tekrar deneyin.',
@@ -8721,9 +8723,9 @@ extension on TranslationsTr {
 			'homeLayout.continueWatchingLibraryDescription' => 'Bu kütüphanenin kendi yeniden ilerleme sırası',
 			'homeLayout.continueWatchingHomeDescription' => 'Home > Gelişmiş Gelişme > Evde Gösterilen Gelişmeler',
 			'homeLayout.nextUpHomeDescription' => 'Sonraki izlenmemiş bölüm sırası ayrı olarak gösterildi',
-			'homeLayout.library' => 'Kitaplık',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.library' => 'Kitaplık',
 			'homeLayout.showInRecommended' => 'Kütüphane önerilen',
 			'homeLayout.customPlexRow' => 'Özel Plex satır',
 			'homeLayout.heroNeedsLibrary' => 'İlk Kütüphaneyi Kontrol Edin - Kahramanın Gösterilmesi Gereken Bir Yer',
@@ -9235,9 +9237,9 @@ extension on TranslationsTr {
 			'audiobook.statusProgress' => 'Gelişmiş',
 			'audiobook.statusFinished' => 'bitmiş',
 			'audiobook.goToTime' => 'Zamanına gidin',
-			'audiobook.timeHelp' => 'Saatler: dakikalar: saniye veya dakikalar: saniye',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.timeHelp' => 'Saatler: dakikalar: saniye veya dakikalar: saniye',
 			'audiobook.recoveryHelp' => 'Son zamanlarda şifrelenmiş bir kopyasını aktarmadan önce veya senkronizasyon verilerini düzeltmeden önce ihraç edin. ithalat mevcut durumla birleşir; yerel senkrona geçmişi asla değiştirmezler. senkronu ayrı tutun.',
 			'audiobook.recoveryExport' => 'İhracat şifreli kurtarma dosyası',
 			'audiobook.recoveryImport' => 'İthalat Şifreli Kurtarma Dosyası',
@@ -9749,9 +9751,9 @@ extension on TranslationsTr {
 			'musicTools.historyHint' => 'Bu profilin dinleme geçmişi',
 			'musicTools.days' => 'Günler',
 			'musicTools.albumBlocks' => 'Albümleri bütün olarak tut',
-			'musicTools.home' => 'Müzik',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.home' => 'Müzik',
 			'musicTools.recent' => 'Son çalınanlar',
 			'musicTools.apiKey' => 'API anahtarı',
 			'musicTools.missing' => 'Yok',

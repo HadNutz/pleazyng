@@ -41,7 +41,6 @@ class TranslationsEs419 extends TranslationsEs with BaseTranslations<AppLocale, 
 	TranslationsEs419 $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsEs419(meta: meta ?? this.$meta);
 
 	// Translations
-	@override late final _Translations$cast$es_419 cast = _Translations$cast$es_419._(_root);
 	@override late final _Translations$appIcon$es_419 appIcon = _Translations$appIcon$es_419._(_root);
 	@override late final _Translations$auth$es_419 auth = _Translations$auth$es_419._(_root);
 	@override late final _Translations$common$es_419 common = _Translations$common$es_419._(_root);
@@ -90,16 +89,6 @@ class TranslationsEs419 extends TranslationsEs with BaseTranslations<AppLocale, 
 	@override late final _Translations$musicTools$es_419 musicTools = _Translations$musicTools$es_419._(_root);
 	@override late final _Translations$musicExperience$es_419 musicExperience = _Translations$musicExperience$es_419._(_root);
 	@override late final _Translations$subtitleAiUi$es_419 subtitleAiUi = _Translations$subtitleAiUi$es_419._(_root);
-}
-
-// Path: cast
-class _Translations$cast$es_419 extends Translations$cast$es {
-	_Translations$cast$es_419._(TranslationsEs419 root) : this._root = root, super.internal(root);
-
-	final TranslationsEs419 _root; // ignore: unused_field
-
-	// Translations
-	@override String get subtitle => 'Subtítulos';
 }
 
 // Path: appIcon
@@ -1373,7 +1362,6 @@ class _Translations$services$libraryFilter$es_419 extends Translations$services$
 extension on TranslationsEs419 {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'cast.subtitle' => 'Subtítulos',
 			'appIcon.defaultIcon' => 'Por defecto',
 			'auth.quickConnect' => 'Conexión rápida',
 			'auth.useQuickConnect' => 'Usar «Conexión rápida»',
@@ -1885,9 +1873,9 @@ extension on TranslationsEs419 {
 			'romm.sync' => 'Sync saves',
 			'romm.savedLocally' => 'Progress kept on this device; upload is pending.',
 			'romm.pause' => 'Pause',
+			'romm.kContinue' => 'Continue',
 			_ => null,
 		} ?? switch (path) {
-			'romm.kContinue' => 'Continue',
 			'romm.saveState' => 'Save state',
 			'romm.loadState' => 'Load state',
 			'romm.saveAndExit' => 'Save and exit',

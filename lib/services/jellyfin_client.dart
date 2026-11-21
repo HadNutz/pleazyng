@@ -84,6 +84,7 @@ import 'jellyfin_api_cache.dart';
 import 'jellyfin_mappers.dart';
 import 'jellyfin_media_info_mapper.dart';
 import 'jellyfin_playback_bundle.dart';
+import 'jellyfin_multipart.dart';
 import 'jellyfin_playback_urls.dart';
 import 'jellyfin_trickplay_service.dart';
 import 'media_browser_paths.dart';

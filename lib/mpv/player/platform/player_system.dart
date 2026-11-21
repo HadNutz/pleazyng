@@ -33,12 +33,15 @@ class PlayerSystem extends PlayerBase
   final String playerType;
   final bool hardwareDecoding;
   bool _nextTvMotion = false;
+  bool _tvMotionRequested = false;
+  bool get tvMotionRequested => _tvMotionRequested;
   String? _motionProvider;
 
   void prepareTvMotion(bool eligible) => _nextTvMotion = eligible;
 
   Future<void> disableTvMotion() async {
     _nextTvMotion = false;
+    _tvMotionRequested = false;
     await _control('disableMotion');
     _motionProvider = null;
   }
@@ -63,6 +66,9 @@ class PlayerSystem extends PlayerBase
   Media? _media;
   int _subtitleSelection = 0;
   Duration _subtitleDelay = Duration.zero;
+  int _audioDelayUs = 0;
+  @override
+  bool get supportsAudioDelay => playerType == 'gstreamer' || playerType == 'tvmpv';
   bool _subtitlesVisible = true;
   @override
   final surfaceRevision = ValueNotifier<int>(0);
@@ -231,6 +237,7 @@ class PlayerSystem extends PlayerBase
       final id = ++_nextId;
       _id = id;
       _media = media;
+      _tvMotionRequested = motion;
       _sidecars = externalSubtitles?.where((t) => t.uri != null).toList() ?? const [];
       _cues = null;
       _caption.value = '';
@@ -295,10 +302,10 @@ class PlayerSystem extends PlayerBase
         }
         if (!_current(generation)) return;
         try {
-          await _prepare(generation, id);
+          await _prepare(generation, id, canRetry: motion || _texture == -2);
         } catch (_) {
-          if (!_current(generation) || (_texture != -2 && _texture != -3)) rethrow;
-          // Renegotiate through the compatibility texture if the native plane rejects preroll.
+          if (!_current(generation) || (!motion && _texture != -2 && _texture != -3)) rethrow;
+          // A failed hardware plane or motion filter gets one clean, unfiltered texture open.
           await methodChannel.invokeMethod<void>('dispose', {'id': id});
           await _closeWindow();
           if (!_current(generation)) return;
@@ -306,6 +313,10 @@ class PlayerSystem extends PlayerBase
           await _prepare(generation, id);
         }
         if (!_current(generation)) return;
+        if (_audioDelayUs != 0 && supportsAudioDelay) {
+          await _control('audioDelay', _audioDelayUs);
+          if (!_current(generation)) return;
+        }
         await _readTracks(id);
         if (!_current(generation)) return;
         if (sourcePositionFor(start) > Duration.zero) await seek(start);
@@ -344,13 +355,15 @@ class PlayerSystem extends PlayerBase
     if (window != null) await WebOSVideoPlane.windows.invokeMethod<void>('dispose', {'windowId': window});
   }
 
-  Future<void> _prepare(int generation, int id) async {
+  Future<void> _prepare(int generation, int id, {bool canRetry = false}) async {
     surfaceRevision.value++;
     final elapsed = Stopwatch()..start();
+    Duration? firstFrameWait;
     while (_current(generation)) {
       final info = await _snapshot(id);
       if (!_current(generation)) return;
       if (info['failed'] == true) throw StateError('Could not prepare media');
+      if (playerType == 'tvmpv') _updateSurfaceGeometry(info);
       if (info['ready'] == true) {
         _ready = true;
         _trackRevision = info['trackRevision'] as int?;
@@ -358,6 +371,14 @@ class PlayerSystem extends PlayerBase
         primaryMediaReadyController.add(null);
         _update(info, id);
         return;
+      }
+      if (canRetry && info['loaded'] == true && info['buffering'] != true) {
+        firstFrameWait ??= elapsed.elapsed;
+        if (elapsed.elapsed - firstFrameWait > const Duration(seconds: 5)) {
+          throw TimeoutException('TV player produced no first frame');
+        }
+      } else {
+        firstFrameWait = null;
       }
       if (elapsed.elapsed > const Duration(seconds: 35)) throw TimeoutException('Native player preparation');
       await Future<void>.delayed(const Duration(milliseconds: 80));
@@ -441,13 +462,7 @@ class PlayerSystem extends PlayerBase
     handlePropertyChange('time-pos', position / 1000);
     handlePropertyChange('pause', info['playing'] != true);
     handlePropertyChange('paused-for-cache', info['buffering'] == true);
-    final size = Size((info['width'] as num?)?.toDouble() ?? 0, (info['height'] as num?)?.toDouble() ?? 0);
-    final overlay = info['overlayTexture'] as int?;
-    if (_size != size || _overlayTexture != overlay) {
-      _overlayTexture = overlay;
-      _size = size;
-      surfaceRevision.value++;
-    }
+    _updateSurfaceGeometry(info);
     if (!_rendered && info['frame'] == true) {
       _rendered = true;
       handlePlayerEvent('playback-restart', {'sourceId': id, 'positionSeconds': position / 1000});
@@ -455,6 +470,16 @@ class PlayerSystem extends PlayerBase
     if (!_ended && info['ended'] == true) {
       _ended = true;
       handlePropertyChange('eof-reached', true);
+    }
+  }
+
+  void _updateSurfaceGeometry(Map<dynamic, dynamic> info) {
+    final size = Size((info['width'] as num?)?.toDouble() ?? 0, (info['height'] as num?)?.toDouble() ?? 0);
+    final overlay = info['overlayTexture'] as int?;
+    if (_size != size || _overlayTexture != overlay) {
+      _overlayTexture = overlay;
+      _size = size;
+      surfaceRevision.value++;
     }
   }
 
@@ -565,6 +590,14 @@ class PlayerSystem extends PlayerBase
     switch (name) {
       case 'pause':
         await (value == 'yes' ? pause() : play());
+      case 'audio-delay':
+        if (!supportsAudioDelay) throw UnsupportedError('Audio delay is unavailable on $playerType');
+        if (!_ready || _closing || _id == null) throw StateError('No active playback session for audio delay.');
+        final generation = _generation;
+        final delayUs = (double.parse(value) * Duration.microsecondsPerSecond).round();
+        await _control('audioDelay', delayUs);
+        if (!_current(generation)) throw StateError('Playback session changed during audio adjustment.');
+        _audioDelayUs = delayUs;
       case 'sub-delay':
         if (playerType == 'tvmpv' && _ready) await _control('subtitleDelay', value);
         _subtitleDelay = Duration(milliseconds: ((double.tryParse(value) ?? 0) * 1000).round());
