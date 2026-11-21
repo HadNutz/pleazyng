@@ -21,6 +21,7 @@
 - Keep WebVTT word timestamps and adjacent cues aligned through subtitle corrections. Apply LRC offsets throughout the song and let users approve individual HTTP podcast subscriptions during OPML restore.
 - Cancel settings imports when their initiating profile changes, relocate Linux image loaders with a portable installation, and show skipped releases when checking for updates manually.
 
+- Allow a manual iPhone-only motion test and prefetch its checksum-pinned SQLite simulator library.
 - Add an iPhone simulator regression test for changing motion presets and turning smoothing off during AVFoundation playback.
 
 - Fix Linux Neural falling back to CPU on systems where the bundled WebGPU provider can run the model.

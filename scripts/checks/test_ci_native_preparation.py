@@ -109,6 +109,17 @@ class NativePreparationOrderTests(unittest.TestCase):
         self.assertEqual(gate['steps'][0]['run'], 'test "$SUITE_RESULT" = success')
         self.assertIn('gha-{0}-apple-native-test-{1}', apple['runs-on'])
 
+    def test_motion_dispatch_uses_only_the_hosted_iphone_suite(self):
+        jobs = yaml.safe_load(WORKFLOW.read_text())['jobs']
+        focused = jobs['ios-motion']
+        self.assertIn("github.event_name == 'workflow_dispatch'", focused['if'])
+        self.assertEqual(focused['runs-on'], 'xcode-27')
+        self.assertEqual(focused['strategy']['matrix']['include'], [{'platform': 'iOS', 'slug': 'ios'}])
+        self.assertEqual(focused['steps'], jobs['apple-native-suite']['steps'])
+        for name, config in jobs.items():
+            if name != 'ios-motion':
+                self.assertIn("inputs.action != 'ios-motion'", config['if'], name)
+
     def test_apple_native_job_installs_required_runtime_generators(self):
         body = job(WORKFLOW.read_text(), 'apple-native-suite')
         tools = step(body, 'Ensure CMake for the embedded Steam receiver')
