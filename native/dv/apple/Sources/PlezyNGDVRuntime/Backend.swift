@@ -17,6 +17,11 @@ public func createBackend() -> UnsafeMutableRawPointer {
   Unmanaged.passRetained(AppleDVBackend()).toOpaque()
 }
 
+private let motionCapabilities = [
+  "pleazyng-vt-motion-supported": "no",
+  "video-out-interpolation": "unavailable"
+]
+
 /// The app's ordinary transport controls and source ownership drive this
 /// backend. Engine availability never stands in for FEL pixel qualification.
 private final class AppleDVBackend: DVRuntimeBackend {
@@ -345,7 +350,7 @@ private final class AppleDVBackend: DVRuntimeBackend {
             "selected": engine.activeSubtitleTrackIndex == track.id,
           ] as [String: Any]
         }
-    default: return options[name]
+    default: return motionCapabilities[name] ?? options[name]
     }
   }
 }

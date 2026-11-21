@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:path/path.dart' as p;
 
 import '../media/media_stream.dart';
@@ -535,7 +536,7 @@ abstract final class MotionProcessingService {
           selectedVersion != null &&
           _supportsMotionSource(selectedVersion);
       _appleNeuralEligible[player] = sourceEligible;
-      await _configureAppleMotion(player, sourceEligible ? mode : MotionProcessingMode.off, neuralPreset);
+      await configureAppleMotion(player, sourceEligible ? mode : MotionProcessingMode.off, neuralPreset);
       _interpolationBufferReady[player] = avfoundationOutput;
       return;
     }
@@ -769,7 +770,7 @@ abstract final class MotionProcessingService {
     if (_isApplePlatform) {
       final output = await _videoOutputForConfiguration(player);
       final avfoundationOutput = output == null || output == 'avfoundation';
-      await _configureAppleMotion(
+      await configureAppleMotion(
         player,
         avfoundationOutput && _appleNeuralEligible[player] == true ? mode : MotionProcessingMode.off,
         neuralPreset,
@@ -831,12 +832,20 @@ abstract final class MotionProcessingService {
     }
   }
 
-  static Future<void> _configureAppleMotion(
+  @visibleForTesting
+  static Future<void> configureAppleMotion(
     Player player,
     MotionProcessingMode mode,
     NeuralInterpolationPreset preset,
   ) async {
-    final neural = mode.usesNeuralInterpolation && await player.getProperty('pleazyng-vt-motion-supported') != 'no';
+    var neural = false;
+    if (mode.usesNeuralInterpolation) {
+      try {
+        neural = await player.getProperty('pleazyng-vt-motion-supported') == 'yes';
+      } catch (error) {
+        appLogger.d('VideoToolbox capability query failed, trying the Apple frame mixer', error: error);
+      }
+    }
     final useGpu = mode != MotionProcessingMode.off && !neural;
     if (!useGpu) await _setAppleMixer(player, false);
     await _applyAppleInterpolation(player, neural, preset);
@@ -890,6 +899,7 @@ abstract final class MotionProcessingService {
   static Future<void> _applyAppleInterpolation(Player player, bool enabled, NeuralInterpolationPreset preset) async {
     var original = _appleOriginals[player];
     if (original == null) {
+      if (!enabled) return;
       original = _OriginalAppleMotionOptions(
         interpolation: await player.getProperty('avfoundation-motion-interpolation'),
         preset: await player.getProperty('avfoundation-motion-preset'),
@@ -916,6 +926,7 @@ abstract final class MotionProcessingService {
       await player.setProperty('avfoundation-motion-preset', original.preset ?? 'balanced');
       await player.setProperty('video-sync', original.videoSync ?? 'audio');
       _appleNeuralPreset[player] = null;
+      _appleOriginals[player] = null;
     }
   }
 
