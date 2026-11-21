@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
@@ -246,7 +247,42 @@ class WatchTogetherProvider extends ChangeNotifier {
     await _logFailure(create ? 'join or create' : 'join', () => _enterRoom(code: normalized, create: create));
   }
 
-  Future<String> _enterRoom({String? code, bool create = false}) async {
+  // The shell encrypts this payload before it enters a restoration bucket.
+  // Pin the relay scope at admission: preferences can change during playback.
+  String? get membershipForRestoration {
+    final saved = _party?.membership;
+    final owner = _profileId();
+    if (saved == null || owner == null || owner != _membershipOwner || _membershipScope == null) return null;
+    return jsonEncode([owner, _membershipScope, saved.code, saved.relay, saved.peer, saved.token]);
+  }
+
+  String? _membershipScope;
+  String? _membershipOwner;
+
+  Future<void> restoreMembership(String data, {required bool Function() current}) async {
+    if (data.length > 8192 || isInSession || !current()) return;
+    if (jsonDecode(data) case [
+      final String owner,
+      final String scope,
+      final String code,
+      final String relay,
+      final String peer,
+      final String token,
+    ]) {
+      if (owner != profileId || scope != relayScope) return;
+      await _logFailure(
+        'resume',
+        () => _enterRoom(code: code, restore: (relay: relay, peer: peer, token: token), canRestore: current),
+      );
+    }
+  }
+
+  Future<String> _enterRoom({
+    String? code,
+    bool create = false,
+    ({String relay, String peer, String token})? restore,
+    bool Function()? canRestore,
+  }) async {
     final generation = ++_roomGeneration;
     final shareGeneration = _shareGeneration;
     final owner = _profileId();
@@ -265,11 +301,24 @@ class WatchTogetherProvider extends ChangeNotifier {
     checkCurrent();
     final client = await _clientName();
     checkCurrent();
+    if (canRestore?.call() == false) throw const owp.PartyException(owp.ErrorCode.cancelled, 'restore cancelled');
+    _membershipScope = relayScopeOf(base);
+    _membershipOwner = owner;
     final party = _partyFactory(relays: _currentRelays(base), client: client, name: name, resolver: _resolver);
     _party = party;
     _openedKey = null;
     _playBlocked = false;
-    _stateSubscription = party.states.listen(_onState);
+    var awaitingAdmission = restore != null;
+    _stateSubscription = party.states.listen((next) {
+      if (awaitingAdmission && next.connection == owp.Connection.connected) {
+        awaitingAdmission = false;
+        if (canRestore?.call() == false || _profileId() != owner) {
+          party.leave();
+          return;
+        }
+      }
+      _onState(next);
+    });
     _eventSubscription = party.events.listen(_onEvent);
     final player = _player;
     if (player != null && !_isAway) {
@@ -277,13 +326,19 @@ class WatchTogetherProvider extends ChangeNotifier {
       _attached = true;
     }
     final String roomCode;
-    if (code == null) {
+    if (restore != null && code != null) {
+      roomCode = code;
+      await party.restoreMembership(code: code, relay: restore.relay, peer: restore.peer, token: restore.token);
+    } else if (code == null) {
       roomCode = await party.create();
     } else {
       roomCode = code;
       await party.join(roomCode, create: create);
     }
     checkCurrent();
+    if (restore != null && party.state.connection != owp.Connection.connected) {
+      throw const owp.PartyException(owp.ErrorCode.cancelled, 'restore cancelled');
+    }
     if (owner != null) await _rememberRoom(roomCode, owner, relayScopeOf(base));
     checkCurrent();
     if ((code == null || create) &&

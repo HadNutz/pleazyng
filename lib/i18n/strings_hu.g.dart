@@ -489,6 +489,7 @@ class _Translations$settings$hu extends Translations$settings$en {
 	@override String get playerBackend => 'Lejátszómotor';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Az összehajtható kijelző zsanérja';
 	@override String get hardwareDecoding => 'Hardveres dekódolás';
 	@override String get hardwareDecodingDescription => 'Hardveres gyorsítás használata, ha elérhető';
 	@override String get playbackBuffer => 'Lejátszási puffer';
@@ -6001,6 +6002,7 @@ extension on TranslationsHu {
 			'settings.playerBackend' => 'Lejátszómotor',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Az összehajtható kijelző zsanérja',
 			'settings.hardwareDecoding' => 'Hardveres dekódolás',
 			'settings.hardwareDecodingDescription' => 'Hardveres gyorsítás használata, ha elérhető',
 			'settings.playbackBuffer' => 'Lejátszási puffer',
@@ -6192,9 +6194,9 @@ extension on TranslationsHu {
 			'settings.manageLibrariesDescription' => 'Könyvtárak sorrendjének módosítása és elrejtése',
 			'settings.companionRemoteServer' => 'Kísérőtávirányító szervere',
 			'settings.companionRemoteServerDescription' => 'Lehetővé teszi, hogy a hálózaton lévő mobileszközökről vezéreld az alkalmazást',
-			'settings.companionRemoteServerStartFailed' => 'Nem sikerült elindítani a kísérőtávirányító szerverét',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Nem sikerült elindítani a kísérőtávirányító szerverét',
 			'settings.companionRemoteServerStopFailed' => 'Nem sikerült leállítani a kísérőtávirányító szerverét',
 			'settings.autoPip' => 'Automatikus kép a képben (PiP)',
 			'settings.autoPipDescription' => 'Lejátszás közben az alkalmazás elhagyásakor automatikusan kép a képben módra vált',
@@ -6706,9 +6708,9 @@ extension on TranslationsHu {
 			'accessibility.reduceMotion' => 'Mozgás csökkentése',
 			'accessibility.reduceMotionHint' => 'Állítsd le a fókuszjelző mozgását, az oldalátmeneteket és a díszítő animációkat.',
 			'accessibility.largeTargets' => 'Nagyabb érintkezési célok',
-			'accessibility.largeTargetsHint' => 'A megosztott vezérlők több helyet biztosítanak a hozzáféréshez és a segéd navigációhoz.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'A megosztott vezérlők több helyet biztosítanak a hozzáféréshez és a segéd navigációhoz.',
 			'accessibility.navigationHint' => 'A Tab és a Shift+Tab billentyűkkel léphetsz a vezérlők között, az Enter vagy a szóköz aktiválja őket, az Escape vagy a Vissza pedig bezár. Megnyitott könyvnél a nagyítás és az olvasási beállítások is elérhetők.',
 			'accessibility.textSizeDescription' => 'Skála felület szöveg Pleazyng-ben a készülék rendszer szöveges méretének beállítása mellett.',
 			'accessibility.boldTextHint' => 'Használjon súlyosabb felület címkéket és üzeneteket, hogy könnyebben megkülönböztessék őket.',
@@ -7220,9 +7222,9 @@ extension on TranslationsHu {
 			'discover.findNext.artworkLoading' => 'Kép betöltése…',
 			'discover.findNext.artworkUnavailable' => 'A kép nem érhető el',
 			'discover.findNext.savedFeedback' => 'Hozzáadva a mentett ajánlatokhoz',
-			'discover.findNext.skippedFeedback' => 'Most kihagyva',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'Most kihagyva',
 			'discover.findNext.releaseToConfirm' => 'Engedd el a megerősítéshez',
 			'discover.findNext.remoteHint' => 'Borító kijelölve: ← / → választás · Kiválasztás: részletek · ↑ / ↓ fókusz mozgatása',
 			'discover.studio' => 'Stúdió',
@@ -7734,9 +7736,9 @@ extension on TranslationsHu {
 			'collections.selectCollection' => 'Gyűjtemény kiválasztása',
 			'collections.collectionName' => 'Gyűjtemény neve',
 			'collections.enterCollectionName' => 'Add meg a gyűjtemény nevét',
-			'collections.addedToCollection' => 'Hozzáadva a gyűjteményhez',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Hozzáadva a gyűjteményhez',
 			'collections.errorAddingToCollection' => 'Nem sikerült a gyűjteményhez adni',
 			'collections.created' => 'Gyűjtemény létrehozva',
 			'collections.removeFromCollection' => 'Eltávolítás a gyűjteményből',
@@ -8248,9 +8250,9 @@ extension on TranslationsHu {
 			'performanceOverlay.decoder' => 'Dekóder',
 			'performanceOverlay.rawDecoder' => 'Nyers dekóder',
 			'performanceOverlay.tunneling' => 'Alagutazás',
-			'performanceOverlay.passthrough' => 'Passthrough',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Passthrough',
 			'performanceOverlay.aspect' => 'Méretarány',
 			'performanceOverlay.rotation' => 'Forgatás',
 			'performanceOverlay.dvSource' => 'DV-forrás',
@@ -8762,9 +8764,9 @@ extension on TranslationsHu {
 			'homeLayout.managePlexRowsDescription' => 'Nyitva a házilag kiválasztott sorok megszervezéséhez',
 			'homeLayout.organizeHomeRows' => 'Szervezze a házirendeket',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} sorok: mozog, Hős, Auto-slide, eltávolítása',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Szervezés ${library} sorok',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Szervezés ${library} sorok',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Folytatás Nézd + ${n} sorok: mozog, Könyvtár, Ház, Hős, Autó-szalag',
 			'homeLayout.renderAsHero' => 'Hősként válogatott kártyát',
 			'homeLayout.heroOnlySingleCollection' => 'Csak akkor érhető el, ha ez a sor egy gyűjtemény valós címére oldódik meg',
@@ -9276,9 +9278,9 @@ extension on TranslationsHu {
 			'audiobook.customSpeed' => 'Custom playback sebesség',
 			'audiobook.speedHelp' => 'Válasszon egy sebességet 0,25× és 4× között.',
 			'audiobook.apply' => 'alkalmazás',
-			'audiobook.customSleep' => 'Alvási időszámítás',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'Alvási időszámítás',
 			'audiobook.sleepMinutes' => 'percek (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} fejezetek után',
 			'audiobook.extendSleep' => 'Add hozzá 5 percet',
@@ -9790,9 +9792,9 @@ extension on TranslationsHu {
 			'musicExperience.bluetoothDrivingHint' => 'Válassza ki azokat a csatlakoztatott Bluetooth-kimeneteket, amelyek automatikusan megnyitják a vezetési nézetet.',
 			'musicTools.loudnessMissing' => 'Nem érkeztek hangerőadatok',
 			'musicTools.loudnessRequested' => 'Az elemzési kérés elküldve',
-			'musicTools.loudnessUnsupported' => 'Ez a kiszolgálóverzió nem támogatja az elemzési kéréseket',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Ez a kiszolgálóverzió nem támogatja az elemzési kéréseket',
 			'musicTools.serverHistory' => 'Szerver lejátszási előzményei',
 			'musicTools.nfcWrite' => 'NFC-címke írása',
 			'musicTools.nfcRead' => 'NFC-címke beolvasása',

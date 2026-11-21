@@ -347,6 +347,7 @@
     "playerBackend": "Wiedergabe-Engine",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Scharnier des Faltdisplays",
     "hardwareDecoding": "Hardwaredekodierung",
     "hardwareDecodingDescription": "Hardwarebeschleunigung verwenden, sofern verfügbar",
     "playbackBuffer": "Wiedergabepuffer",

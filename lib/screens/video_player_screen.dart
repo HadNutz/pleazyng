@@ -987,6 +987,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   LiveTvPlaybackSession? _liveGuideSession;
   final _liveGuideAge = Stopwatch();
   final _liveBufferAge = Stopwatch();
+  ({LiveTvPlaybackSession session, int intent, int epoch})? _lateLiveRestore;
   bool _liveGuideLoading = false;
   int _lastLiveIntent = 0;
 

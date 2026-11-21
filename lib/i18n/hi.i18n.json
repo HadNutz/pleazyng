@@ -347,6 +347,7 @@
     "playerBackend": "बैकएंड खिलाड़ी",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "फ़ोल्ड होने वाली स्क्रीन का हिंज",
     "hardwareDecoding": "हार्डवेयर डिकोडिंग",
     "hardwareDecodingDescription": "जब उपलब्ध हो तो हार्डवेयर गति का उपयोग करें",
     "playbackBuffer": "Playback बफर",

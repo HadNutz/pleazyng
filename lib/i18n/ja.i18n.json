@@ -347,6 +347,7 @@
     "playerBackend": "プレーヤーバックエンド",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "折りたたみ画面のヒンジ",
     "hardwareDecoding": "ハードウェアデコード",
     "hardwareDecodingDescription": "利用可能な場合にハードウェアアクセラレーションを使用",
     "playbackBuffer": "再生バッファー",

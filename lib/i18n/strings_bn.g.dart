@@ -489,6 +489,7 @@ class _Translations$settings$bn extends Translations$settings$en {
 	@override String get playerBackend => 'খেলোয়াড় Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'ভাঁজযোগ্য পর্দার কবজা';
 	@override String get hardwareDecoding => 'হার্ডওয়ার্ক ডকোডিং';
 	@override String get hardwareDecodingDescription => 'যখন উপলব্ধ হয় তখন হার্ডওয়্যার দ্রুততা ব্যবহার করুন';
 	@override String get playbackBuffer => 'Playback বাফার';
@@ -6001,6 +6002,7 @@ extension on TranslationsBn {
 			'settings.playerBackend' => 'খেলোয়াড় Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'ভাঁজযোগ্য পর্দার কবজা',
 			'settings.hardwareDecoding' => 'হার্ডওয়ার্ক ডকোডিং',
 			'settings.hardwareDecodingDescription' => 'যখন উপলব্ধ হয় তখন হার্ডওয়্যার দ্রুততা ব্যবহার করুন',
 			'settings.playbackBuffer' => 'Playback বাফার',
@@ -6192,9 +6194,9 @@ extension on TranslationsBn {
 			'settings.manageLibrariesDescription' => 'লাইব্রেরি রেকর্ড করুন এবং লুকিয়ে রাখুন',
 			'settings.companionRemoteServer' => 'Remote সার্ভার',
 			'settings.companionRemoteServerDescription' => 'আপনার নেটওয়ার্কের মোবাইল ডিভাইসগুলি এই অ্যাপটি নিয়ন্ত্রণ করার অনুমতি দেয়',
-			'settings.companionRemoteServerStartFailed' => 'সার্ভার সার্ভার শুরু করতে পারেনি।',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'সার্ভার সার্ভার শুরু করতে পারেনি।',
 			'settings.companionRemoteServerStopFailed' => 'সার্ভার বন্ধ করতে পারত না।',
 			'settings.autoPip' => 'Auto Picture-in-Picture গাড়ি',
 			'settings.autoPipDescription' => 'আপনি Playback সময় অ্যাপটি ছেড়ে যখন স্বয়ংক্রিয়ভাবে ছবি-এ-ফটো প্রবেশ করুন',
@@ -6706,9 +6708,9 @@ extension on TranslationsBn {
 			'accessibility.reduceMotion' => 'মোটর কমাতে',
 			'accessibility.reduceMotionHint' => 'ফোকাসের নির্দেশক, পৃষ্ঠা পরিবর্তন ও সাজসজ্জার প্রভাবগুলির নড়াচড়া বন্ধ রাখুন।',
 			'accessibility.largeTargets' => 'বড় ট্যাক্স টার্গেট',
-			'accessibility.largeTargetsHint' => 'স্পর্শ ও সহায়ক প্রযুক্তির মাধ্যমে চলাচল সহজ করতে সাধারণ নিয়ন্ত্রণগুলির জায়গা বড় করুন।',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'স্পর্শ ও সহায়ক প্রযুক্তির মাধ্যমে চলাচল সহজ করতে সাধারণ নিয়ন্ত্রণগুলির জায়গা বড় করুন।',
 			'accessibility.navigationHint' => 'নিয়ন্ত্রণগুলির মধ্যে যেতে Tab ও Shift+Tab, সক্রিয় করতে Enter বা Space এবং বন্ধ করতে Escape বা ফিরে যাওয়ার বোতাম ব্যবহার করুন। বই খোলা থাকলে জুম ও পড়ার পছন্দগুলি বদলানো যায়।',
 			'accessibility.textSizeDescription' => 'আপনার ডিভাইসের সিস্টেম টেক্সটের আকারের সেটিংয়ের পাশাপাশি Pleazyng ইন্টারফেসের লেখার আকারও পরিবর্তন করুন।',
 			'accessibility.boldTextHint' => 'ইন্টারফেস ট্যাগ এবং বার্তাগুলির জন্য একটি গভীর ওজন ব্যবহার করুন যা তাদের বিতর্ক করা সহজ করে।',
@@ -7220,9 +7222,9 @@ extension on TranslationsBn {
 			'discover.findNext.artworkLoading' => 'ছবি লোড হচ্ছে…',
 			'discover.findNext.artworkUnavailable' => 'ছবি উপলব্ধ নয়',
 			'discover.findNext.savedFeedback' => 'সংরক্ষিত পছন্দে যোগ করা হয়েছে',
-			'discover.findNext.skippedFeedback' => 'আপাতত এড়িয়ে যাওয়া হয়েছে',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'আপাতত এড়িয়ে যাওয়া হয়েছে',
 			'discover.findNext.releaseToConfirm' => 'নিশ্চিত করতে ছেড়ে দিন',
 			'discover.findNext.remoteHint' => 'প্রচ্ছদে ফোকাস: ← / → বেছে নিন · নির্বাচন বোতাম: বিস্তারিত · ↑ / ↓ ফোকাস বদলান',
 			'discover.studio' => 'স্টুডিও',
@@ -7734,9 +7736,9 @@ extension on TranslationsBn {
 			'collections.selectCollection' => 'ক্যালেকশন নির্বাচন',
 			'collections.collectionName' => 'সংগ্রহ নাম',
 			'collections.enterCollectionName' => 'সংগ্রহ নাম লিখুন',
-			'collections.addedToCollection' => 'সংগ্রহে যোগ করা',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'সংগ্রহে যোগ করা',
 			'collections.errorAddingToCollection' => 'সংগ্রহে যোগ করতে পারিনি',
 			'collections.created' => 'সংগ্রহ তৈরি',
 			'collections.removeFromCollection' => 'সংগ্রহ থেকে বের করুন',
@@ -8248,9 +8250,9 @@ extension on TranslationsBn {
 			'performanceOverlay.decoder' => 'ডকোডার',
 			'performanceOverlay.rawDecoder' => 'ডেকডার',
 			'performanceOverlay.tunneling' => 'টুইটার',
-			'performanceOverlay.passthrough' => 'পাস্টরো',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'পাস্টরো',
 			'performanceOverlay.aspect' => 'দৃষ্টি',
 			'performanceOverlay.rotation' => 'রোটেশন',
 			'performanceOverlay.dvSource' => 'ডি উৎস',
@@ -8762,9 +8764,9 @@ extension on TranslationsBn {
 			'homeLayout.managePlexRowsDescription' => 'Home-Selected রানগুলি সংগঠন করার জন্য খোলা',
 			'homeLayout.organizeHomeRows' => 'Home রানার সংগঠন',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} লাইন: গাড়ি, হেরো, অটো-স্লাইড, মুছে ফেলুন',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'সংগঠন ${library} লাইন',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'সংগঠন ${library} লাইন',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} লাইন: গাড়ি, লাইব্রেরি, বাড়ি, হেরো, অটো-স্লাইড',
 			'homeLayout.renderAsHero' => 'কার্ডের হেয়ার হিসাবে রেন্ডার',
 			'homeLayout.heroOnlySingleCollection' => 'শুধুমাত্র এই পর্যায়ে একক সংগ্রহের বাস্তব টাইমগুলিতে সমাধান করা হয়',
@@ -9276,9 +9278,9 @@ extension on TranslationsBn {
 			'audiobook.customSpeed' => 'কাস্টম Playback গতি',
 			'audiobook.speedHelp' => '0.25× থেকে 4× পর্যন্ত গতি নির্বাচন করুন।',
 			'audiobook.apply' => 'প্রয়োগ করুন',
-			'audiobook.customSleep' => 'কাস্টম Sleep Timer',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'কাস্টম Sleep Timer',
 			'audiobook.sleepMinutes' => 'মিনিট (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} বিভাগের পর বন্ধ',
 			'audiobook.extendSleep' => '৫ মিনিট যোগ করুন',
@@ -9790,9 +9792,9 @@ extension on TranslationsBn {
 			'musicExperience.bluetoothDrivingHint' => 'ড্রাইভিং ভিউ স্বয়ংক্রিয়ভাবে খোলার জন্য সংযুক্ত Bluetooth আউটপুট বেছে নিন।',
 			'musicTools.loudnessMissing' => 'শব্দের মাত্রার তথ্য ফেরত আসেনি',
 			'musicTools.loudnessRequested' => 'বিশ্লেষণের অনুরোধ পাঠানো হয়েছে',
-			'musicTools.loudnessUnsupported' => 'সার্ভারের এই সংস্করণ বিশ্লেষণের অনুরোধ সমর্থন করে না',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'সার্ভারের এই সংস্করণ বিশ্লেষণের অনুরোধ সমর্থন করে না',
 			'musicTools.serverHistory' => 'সার্ভারের প্লেব্যাক ইতিহাস',
 			'musicTools.nfcWrite' => 'NFC ট্যাগে লিখুন',
 			'musicTools.nfcRead' => 'NFC ট্যাগ স্ক্যান করুন',

@@ -1,7 +1,7 @@
 {
   "locale": "es",
   "inherits": null,
-  "catalogSha256": "0d41015ed907f01af349febd3fa49c8bffb9d27dfbd84b96dabac5fea54cf94b",
+  "catalogSha256": "cb24561d3b3b4b7b03715b98804245d698029b23c6068ea13f4dbdffb5415b8e",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3802,7 +3802,8 @@
     "iptv.pickerCredit": "fork-authored",
     "iptv.playlistBase": "fork-authored",
     "iptv.showMatches": "fork-authored",
-    "iptv.backupFeeds": "fork-authored"
+    "iptv.backupFeeds": "fork-authored",
+    "settings.foldableDisplay": "fork-authored"
   },
   "beforeIndependentQaCorrection": {
     "accessibility.reduceMotionHint": "m2m100-draft",

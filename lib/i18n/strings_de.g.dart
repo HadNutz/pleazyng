@@ -489,6 +489,7 @@ class _Translations$settings$de extends Translations$settings$en {
 	@override String get playerBackend => 'Wiedergabe-Engine';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Scharnier des Faltdisplays';
 	@override String get hardwareDecoding => 'Hardwaredekodierung';
 	@override String get hardwareDecodingDescription => 'Hardwarebeschleunigung verwenden, sofern verfügbar';
 	@override String get playbackBuffer => 'Wiedergabepuffer';
@@ -6001,6 +6002,7 @@ extension on TranslationsDe {
 			'settings.playerBackend' => 'Wiedergabe-Engine',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Scharnier des Faltdisplays',
 			'settings.hardwareDecoding' => 'Hardwaredekodierung',
 			'settings.hardwareDecodingDescription' => 'Hardwarebeschleunigung verwenden, sofern verfügbar',
 			'settings.playbackBuffer' => 'Wiedergabepuffer',
@@ -6192,9 +6194,9 @@ extension on TranslationsDe {
 			'settings.manageLibrariesDescription' => 'Mediatheken neu anordnen und ausblenden',
 			'settings.companionRemoteServer' => 'Companion-Fernbedienungsserver',
 			'settings.companionRemoteServerDescription' => 'Mobilgeräten in deinem Netzwerk erlauben, diese App zu steuern',
-			'settings.companionRemoteServerStartFailed' => 'Companion-Fernbedienungsserver konnte nicht gestartet werden',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Companion-Fernbedienungsserver konnte nicht gestartet werden',
 			'settings.companionRemoteServerStopFailed' => 'Companion-Fernbedienungsserver konnte nicht gestoppt werden',
 			'settings.autoPip' => 'Automatisches Bild-in-Bild',
 			'settings.autoPipDescription' => 'Beim Verlassen der App während der Wiedergabe automatisch Bild-in-Bild starten',
@@ -6706,9 +6708,9 @@ extension on TranslationsDe {
 			'accessibility.reduceMotion' => 'Bewegung reduzieren',
 			'accessibility.reduceMotionHint' => 'Animationen der Fokusanzeige, Seitenübergänge und dekorative Effekte anhalten.',
 			'accessibility.largeTargets' => 'Großer Touch-Ziel',
-			'accessibility.largeTargetsHint' => 'Geben Sie den gemeinsamen Kontroll mehr Platz für Berührung und assistive Navigation.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'Geben Sie den gemeinsamen Kontroll mehr Platz für Berührung und assistive Navigation.',
 			'accessibility.navigationHint' => 'Mit Tab und Shift+Tab wechselst du zwischen Bedienelementen, mit Enter oder der Leertaste aktivierst du sie, und mit Escape oder Zurück schließt du sie. Wenn ein Buch geöffnet ist, kannst du den Zoom und die Leseeinstellungen anpassen.',
 			'accessibility.textSizeDescription' => 'Scale-Interface Text in Pleazyng neben der Systemtextgröße Einstellung Ihres Geräts.',
 			'accessibility.boldTextHint' => 'Verwenden Sie ein schwerer Gewicht für Interface-Label und Nachrichten, um sie leichter zu unterscheiden.',
@@ -7220,9 +7222,9 @@ extension on TranslationsDe {
 			'discover.findNext.artworkLoading' => 'Cover wird geladen…',
 			'discover.findNext.artworkUnavailable' => 'Cover nicht verfügbar',
 			'discover.findNext.savedFeedback' => 'Zu den gespeicherten Vorschlägen hinzugefügt',
-			'discover.findNext.skippedFeedback' => 'Vorerst übersprungen',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'Vorerst übersprungen',
 			'discover.findNext.releaseToConfirm' => 'Zum Bestätigen loslassen',
 			'discover.findNext.remoteHint' => 'Cover im Fokus: ← / → wählen · Auswahltaste: Details · ↑ / ↓: Fokus bewegen',
 			'discover.studio' => 'Studio',
@@ -7734,9 +7736,9 @@ extension on TranslationsDe {
 			'collections.selectCollection' => 'Sammlung auswählen',
 			'collections.collectionName' => 'Sammlungsname',
 			'collections.enterCollectionName' => 'Sammlungsnamen eingeben',
-			'collections.addedToCollection' => 'Zur Sammlung hinzugefügt',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Zur Sammlung hinzugefügt',
 			'collections.errorAddingToCollection' => 'Fehler beim Hinzufügen zur Sammlung',
 			'collections.created' => 'Sammlung erstellt',
 			'collections.removeFromCollection' => 'Aus Sammlung entfernen',
@@ -8248,9 +8250,9 @@ extension on TranslationsDe {
 			'performanceOverlay.decoder' => 'Decoder',
 			'performanceOverlay.rawDecoder' => 'Raw-Decoder',
 			'performanceOverlay.tunneling' => 'Tunneling',
-			'performanceOverlay.passthrough' => 'Durchleitung',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Durchleitung',
 			'performanceOverlay.aspect' => 'Seitenverhältnis',
 			'performanceOverlay.rotation' => 'Drehung',
 			'performanceOverlay.dvSource' => 'DV-Quelle',
@@ -8762,9 +8764,9 @@ extension on TranslationsDe {
 			'homeLayout.managePlexRowsDescription' => 'Öffnen Sie die Home-Selected Routes',
 			'homeLayout.organizeHomeRows' => 'Home Runden organisieren',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} Zeilen: Bewegung, Hero, Auto-Slide, entfernen',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} Runden zu organisieren',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} Runden zu organisieren',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Weiterlesen + ${n} Zeilen: Bewegung, Bibliothek, Home, Hero, Auto-Slide',
 			'homeLayout.renderAsHero' => 'Render als Heldkarte',
 			'homeLayout.heroOnlySingleCollection' => 'Erhältlich nur, wenn diese Reihe auf die tatsächlichen Titel einer einzelnen Sammlung gelöst wird',
@@ -9276,9 +9278,9 @@ extension on TranslationsDe {
 			'audiobook.customSpeed' => 'Custom Playback Geschwindigkeit',
 			'audiobook.speedHelp' => 'Wählen Sie eine Geschwindigkeit von 0,25× bis 4×.',
 			'audiobook.apply' => 'Anwendung',
-			'audiobook.customSleep' => 'Personalisierter Schlaf Timer',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'Personalisierter Schlaf Timer',
 			'audiobook.sleepMinutes' => '1 Minute (1 bis 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Stopp nach ${count} Kapiteln',
 			'audiobook.extendSleep' => '5 Minuten hinzufügen',
@@ -9790,9 +9792,9 @@ extension on TranslationsDe {
 			'musicExperience.bluetoothDrivingHint' => 'Wähle verbundene Bluetooth-Ausgänge, die die Fahransicht automatisch öffnen.',
 			'musicTools.loudnessMissing' => 'Keine Lautheitsdaten erhalten',
 			'musicTools.loudnessRequested' => 'Analyse angefordert',
-			'musicTools.loudnessUnsupported' => 'Diese Serverversion unterstützt keine Analyseanfragen',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Diese Serverversion unterstützt keine Analyseanfragen',
 			'musicTools.serverHistory' => 'Wiedergabeverlauf des Servers',
 			'musicTools.nfcWrite' => 'NFC-Tag beschreiben',
 			'musicTools.nfcRead' => 'NFC-Tag scannen',

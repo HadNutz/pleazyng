@@ -489,6 +489,7 @@ class _Translations$settings$vi extends Translations$settings$en {
 	@override String get playerBackend => 'Trò chơi Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Bản lề màn hình gập';
 	@override String get hardwareDecoding => 'Phần cứng decoding';
 	@override String get hardwareDecodingDescription => 'Sử dụng phần cứng tăng tốc khi có sẵn';
 	@override String get playbackBuffer => 'Đánh giá Playback Buffer';
@@ -5976,6 +5977,7 @@ extension on TranslationsVi {
 			'settings.playerBackend' => 'Trò chơi Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Bản lề màn hình gập',
 			'settings.hardwareDecoding' => 'Phần cứng decoding',
 			'settings.hardwareDecodingDescription' => 'Sử dụng phần cứng tăng tốc khi có sẵn',
 			'settings.playbackBuffer' => 'Đánh giá Playback Buffer',
@@ -6167,9 +6169,9 @@ extension on TranslationsVi {
 			'settings.manageLibrariesDescription' => 'Đặt lại và ẩn thư viện',
 			'settings.companionRemoteServer' => 'Dịch vụ Remote Server',
 			'settings.companionRemoteServerDescription' => 'Cho phép các thiết bị di động trên mạng của bạn để kiểm soát ứng dụng này',
-			'settings.companionRemoteServerStartFailed' => 'Không thể khởi động máy chủ đồng nghiệp',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Không thể khởi động máy chủ đồng nghiệp',
 			'settings.companionRemoteServerStopFailed' => 'Không thể dừng lại máy chủ đồng nghiệp',
 			'settings.autoPip' => 'Ảnh Auto Picture in Picture',
 			'settings.autoPipDescription' => 'Tự động nhập hình ảnh trong khi bạn rời khỏi ứng dụng trong khi chơi',
@@ -6681,9 +6683,9 @@ extension on TranslationsVi {
 			'accessibility.reduceMotion' => 'Giảm động lực',
 			'accessibility.reduceMotionHint' => 'Dừng chuyển động của dấu chỉ tiêu điểm, hiệu ứng chuyển trang và các hiệu ứng trang trí.',
 			'accessibility.largeTargets' => 'Mục tiêu Touch lớn hơn',
-			'accessibility.largeTargetsHint' => 'Tăng diện tích các điều khiển dùng chung để dễ chạm và điều hướng bằng công nghệ hỗ trợ.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'Tăng diện tích các điều khiển dùng chung để dễ chạm và điều hướng bằng công nghệ hỗ trợ.',
 			'accessibility.navigationHint' => 'Dùng Tab và Shift+Tab để di chuyển giữa các điều khiển, Enter hoặc Space để kích hoạt, Escape hoặc nút Quay lại để đóng. Bạn có thể chỉnh mức thu phóng và tùy chọn đọc khi mở sách.',
 			'accessibility.textSizeDescription' => 'Tích hợp văn bản giao diện trong Pleazyng ngoài thiết lập kích thước văn bản hệ thống của thiết bị của bạn.',
 			'accessibility.boldTextHint' => 'Sử dụng trọng lượng nặng hơn cho các nhãn giao diện và tin nhắn để làm cho chúng dễ dàng phân biệt.',
@@ -7195,9 +7197,9 @@ extension on TranslationsVi {
 			'discover.findNext.artworkLoading' => 'Đang tải ảnh…',
 			'discover.findNext.artworkUnavailable' => 'Không có ảnh',
 			'discover.findNext.savedFeedback' => 'Đã thêm vào các lựa chọn đã lưu',
-			'discover.findNext.skippedFeedback' => 'Đã tạm bỏ qua',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'Đã tạm bỏ qua',
 			'discover.findNext.releaseToConfirm' => 'Thả để xác nhận',
 			'discover.findNext.remoteHint' => 'Khi chọn ảnh bìa: ← / → chọn · Nút Chọn: chi tiết · ↑ / ↓ chuyển tiêu điểm',
 			'discover.studio' => 'Hãng phim',
@@ -7709,9 +7711,9 @@ extension on TranslationsVi {
 			'collections.selectCollection' => 'Chọn bộ sưu tập',
 			'collections.collectionName' => 'Collection Tên',
 			'collections.enterCollectionName' => 'Nhập tên bộ sưu tập',
-			'collections.addedToCollection' => 'Thêm vào Collection',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Thêm vào Collection',
 			'collections.errorAddingToCollection' => 'Không thể thêm vào bộ sưu tập',
 			'collections.created' => 'Bộ sưu tập được tạo ra',
 			'collections.removeFromCollection' => 'Xóa khỏi bộ sưu tập',
@@ -8223,9 +8225,9 @@ extension on TranslationsVi {
 			'performanceOverlay.decoder' => 'Bộ giải mã',
 			'performanceOverlay.rawDecoder' => 'Mã Decoder',
 			'performanceOverlay.tunneling' => 'đường hầm',
-			'performanceOverlay.passthrough' => 'Truyền thẳng',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Truyền thẳng',
 			'performanceOverlay.aspect' => 'Khía cạnh',
 			'performanceOverlay.rotation' => 'Xoay',
 			'performanceOverlay.dvSource' => 'Nguồn DV',
@@ -8737,9 +8739,9 @@ extension on TranslationsVi {
 			'homeLayout.managePlexRowsDescription' => 'Mở để tổ chức các dòng được chọn tại nhà',
 			'homeLayout.organizeHomeRows' => 'Tổ chức Home Rows',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} hàng: di chuyển, Anh hùng, Auto-slide, loại bỏ',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Tổ chức ${library} hàng',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Tổ chức ${library} hàng',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Tiếp tục xem + ${n} hàng: di chuyển, Thư viện, Nhà, Anh hùng, tự động-slide',
 			'homeLayout.renderAsHero' => 'Render như một thẻ anh hùng',
 			'homeLayout.heroOnlySingleCollection' => 'Chỉ có sẵn khi hàng này được giải quyết cho các tiêu đề thực tế của một bộ sưu tập duy nhất',
@@ -9251,9 +9253,9 @@ extension on TranslationsVi {
 			'audiobook.customSpeed' => 'Tốc độ playback tùy chỉnh',
 			'audiobook.speedHelp' => 'Chọn tốc độ từ 0.25× đến 4×.',
 			'audiobook.apply' => 'Ứng dụng',
-			'audiobook.customSleep' => 'Thời gian giấc ngủ tùy chỉnh',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'Thời gian giấc ngủ tùy chỉnh',
 			'audiobook.sleepMinutes' => 'Thời gian (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Ngừng sau các chương ${count}',
 			'audiobook.extendSleep' => 'Thêm 5 phút',
@@ -9765,9 +9767,9 @@ extension on TranslationsVi {
 			'musicExperience.bluetoothDrivingHint' => 'Chọn đầu ra Bluetooth đã kết nối để tự động mở giao diện lái xe.',
 			'musicTools.loudnessMissing' => 'Không nhận được dữ liệu độ lớn âm thanh',
 			'musicTools.loudnessRequested' => 'Đã gửi yêu cầu phân tích',
-			'musicTools.loudnessUnsupported' => 'Phiên bản máy chủ này không hỗ trợ yêu cầu phân tích',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Phiên bản máy chủ này không hỗ trợ yêu cầu phân tích',
 			'musicTools.serverHistory' => 'Lịch sử phát trên máy chủ',
 			'musicTools.nfcWrite' => 'Ghi thẻ NFC',
 			'musicTools.nfcRead' => 'Quét thẻ NFC',

@@ -347,6 +347,7 @@
     "playerBackend": "Бэкенд плеера",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Шарнир складного экрана",
     "hardwareDecoding": "Аппаратное декодирование",
     "hardwareDecodingDescription": "Использовать аппаратное ускорение, когда доступно",
     "playbackBuffer": "Буфер воспроизведения",

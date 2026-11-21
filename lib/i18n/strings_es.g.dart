@@ -493,6 +493,7 @@ class Translations$settings$es extends Translations$settings$en {
 	@override String get playerBackend => 'Motor de reproducción';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Bisagra de la pantalla plegable';
 	@override String get hardwareDecoding => 'Decodificación por hardware';
 	@override String get hardwareDecodingDescription => 'Usar aceleración por hardware cuando esté disponible';
 	@override String get playbackBuffer => 'Búfer de reproducción';
@@ -6128,6 +6129,7 @@ extension on TranslationsEs {
 			'settings.playerBackend' => 'Motor de reproducción',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Bisagra de la pantalla plegable',
 			'settings.hardwareDecoding' => 'Decodificación por hardware',
 			'settings.hardwareDecodingDescription' => 'Usar aceleración por hardware cuando esté disponible',
 			'settings.playbackBuffer' => 'Búfer de reproducción',
@@ -6316,9 +6318,9 @@ extension on TranslationsEs {
 			'settings.discordRichPresenceDescription' => 'Mostrar lo que estás viendo en Discord',
 			'settings.services' => 'Servicios',
 			'settings.servicesDescription' => 'Conecta Trakt, MyAnimeList, Seerr y más',
-			'settings.manageLibrariesDescription' => 'Reordena y oculta bibliotecas',
 			_ => null,
 		} ?? switch (path) {
+			'settings.manageLibrariesDescription' => 'Reordena y oculta bibliotecas',
 			'settings.companionRemoteServer' => 'Servidor de control remoto',
 			'settings.companionRemoteServerDescription' => 'Permitir que dispositivos móviles en tu red controlen esta aplicación',
 			'settings.companionRemoteServerStartFailed' => 'No se pudo iniciar el servidor de control remoto',
@@ -6830,9 +6832,9 @@ extension on TranslationsEs {
 			'accessibility.highContrast' => 'El alto contraste',
 			'accessibility.highContrastHint' => 'Texto más fuerte, etiquetas y indicadores de foco en superficies de luz o oscuridad.',
 			'accessibility.interaction' => 'Movimiento y interacción',
-			'accessibility.reduceMotion' => 'Reducir movimiento',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.reduceMotion' => 'Reducir movimiento',
 			'accessibility.reduceMotionHint' => 'Detener el movimiento del indicador de foco, las transiciones de página y los efectos decorativos.',
 			'accessibility.largeTargets' => 'Objetivos de mayor toque',
 			'accessibility.largeTargetsHint' => 'Dale controles compartidos más espacio para el toque y la navegación asistiva.',
@@ -7344,9 +7346,9 @@ extension on TranslationsEs {
 			'discover.findNext.watchLive' => 'Ver en directo',
 			'discover.findNext.filterAnything' => 'Cualquier tipo',
 			'discover.findNext.filterWatch' => 'Ver',
-			'discover.findNext.filterListen' => 'Escuchar',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.filterListen' => 'Escuchar',
 			'discover.findNext.filterRead' => 'Leer',
 			'discover.findNext.twentyMinutes' => '20 min',
 			'discover.findNext.fortyFiveMinutes' => '45 min',
@@ -7858,9 +7860,9 @@ extension on TranslationsEs {
 			'liveTv.recordSettings.anyTime' => 'Grabar a cualquier hora',
 			'liveTv.recordSettings.skipInLibrary' => 'Omitir episodios que ya están en la biblioteca',
 			'liveTv.recordSettings.keepUpTo' => 'Episodios que conservar',
-			'liveTv.recordSettings.keepUpToHint' => '0 conserva todos los episodios',
 			_ => null,
 		} ?? switch (path) {
+			'liveTv.recordSettings.keepUpToHint' => '0 conserva todos los episodios',
 			'liveTv.startingInMinutes' => ({required Object minutes}) => 'Empieza en ${minutes} min',
 			'liveTv.dayAtTime' => ({required Object day, required Object time}) => '${day} a las ${time}',
 			'liveTv.invalidPlaybackData' => ({required Object product}) => '${product} devolvió datos de reproducción de TV en vivo no válidos',
@@ -8372,9 +8374,9 @@ extension on TranslationsEs {
 			'videoSettings.audioEqualizerDescription' => 'El equalizador de 10 bandas para MPVLos filtros de audio utilizan audio decodido y desactivan passthrough.',
 			'videoSettings.audioEqualizerFlat' => 'Plano',
 			'videoSettings.audioEqualizerActive' => 'Personalizado',
-			'videoSettings.audioEqualizerSaveFailed' => 'No podría salvar la configuración de audio equalizer.',
 			_ => null,
 		} ?? switch (path) {
+			'videoSettings.audioEqualizerSaveFailed' => 'No podría salvar la configuración de audio equalizer.',
 			'videoSettings.audioEffectsDescription' => 'Los efectos utilizan audio descifrado, por lo que los ajustes se vuelven. el ambiente de la habitación y la ampliación estereó depende del MPV Construir y rastrear.',
 			'videoSettings.audioStereoWidth' => 'Stereo extendido',
 			'videoSettings.audioSpatializer' => 'ambientes de la habitación',
@@ -8886,9 +8888,9 @@ extension on TranslationsEs {
 			'detail.endsAt' => ({required Object time}) => 'Termina a las ${time}',
 			'watchLink.serverUnavailable' => 'No podía llegar a un servidor Plex para este enlace.',
 			'watchLink.notFound' => 'No podría encontrar este espectáculo o película en sus servidores Plex.',
-			'watchLink.ambiguous' => 'Este enlace se ajusta a los elementos en más de un servidor.Añadir un servidor al enlace.',
 			_ => null,
 		} ?? switch (path) {
+			'watchLink.ambiguous' => 'Este enlace se ajusta a los elementos en más de un servidor.Añadir un servidor al enlace.',
 			'watchLink.plexOnly' => 'Los enlaces de seguimiento actualmente solo soportan los servidores Plex.',
 			'watchLink.unsupportedItem' => 'Las ligazones de visualización sólo pueden abrir un espectáculo o una película.',
 			'watchLink.menuItem' => 'Ver el enlace',
@@ -9400,9 +9402,9 @@ extension on TranslationsEs {
 			'audiobook.addSyncSource' => 'Añadir Google Drive, OneDrive, Dropbox, WebDAV o S3 en los archivos y libros primero.',
 			'audiobook.syncDestination' => 'Conta de almacenamiento de sincronización',
 			'audiobook.syncFolder' => 'Sincronización de la pasta o prefixo',
-			'audiobook.syncFolderHelp' => 'Elige una carpeta WebDAV existente y separada o un prefijo S3 exclusivo para los archivos de estado de la aplicación. Los archivos multimedia nunca se suben, sustituyen, renombran ni eliminan.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.syncFolderHelp' => 'Elige una carpeta WebDAV existente y separada o un prefijo S3 exclusivo para los archivos de estado de la aplicación. Los archivos multimedia nunca se suben, sustituyen, renombran ni eliminan.',
 			'audiobook.syncCode' => 'Código de sincronización privada',
 			'audiobook.syncCodeHelp' => 'Crea un código en tu primer dispositivo, luego introduzca ese código en tus otros dispositivos. Mantiene una copia privada: es la clave para tu estado cifrado. Utilice un código diferente para cada persona.',
 			'audiobook.showCode' => 'Mostrar o ocultar el código de sincronización',
@@ -9914,9 +9916,9 @@ extension on TranslationsEs {
 			'bonusExtras.providerNotice' => 'La reproducción se abre en el reproductor del proveedor y puede incluir sus recomendaciones.',
 			'bonusExtras.external' => 'En línea',
 			'bonusExtras.library' => 'En tu biblioteca',
-			'bonusExtras.personal' => 'Enlace personal',
 			_ => null,
 		} ?? switch (path) {
+			'bonusExtras.personal' => 'Enlace personal',
 			'bonusExtras.unknownLanguage' => 'Idioma no especificado',
 			'bonusExtras.spoilers' => 'Mostrar extras que pueden contener spoilers',
 			'bonusExtras.spoilerHint' => 'Los títulos que no has visto ocultan los extras, salvo que se haya verificado si contienen spoilers.',

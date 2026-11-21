@@ -489,6 +489,7 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String get playerBackend => 'اللاعب Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'مفصلة الشاشة القابلة للطي';
 	@override String get hardwareDecoding => 'التخزين الصلب';
 	@override String get hardwareDecodingDescription => 'استخدم تسارع الأجهزة عندما يكون متاحًا';
 	@override String get playbackBuffer => 'لعبة Playback Buffer';
@@ -6101,6 +6102,7 @@ extension on TranslationsAr {
 			'settings.playerBackend' => 'اللاعب Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'مفصلة الشاشة القابلة للطي',
 			'settings.hardwareDecoding' => 'التخزين الصلب',
 			'settings.hardwareDecodingDescription' => 'استخدم تسارع الأجهزة عندما يكون متاحًا',
 			'settings.playbackBuffer' => 'لعبة Playback Buffer',
@@ -6292,9 +6294,9 @@ extension on TranslationsAr {
 			'settings.manageLibrariesDescription' => 'إعادة ترتيب وإخفاء المكتبات',
 			'settings.companionRemoteServer' => 'الخادم عن بعد',
 			'settings.companionRemoteServerDescription' => 'السماح للأجهزة المحمولة على شبكتك بالتحكم في هذا التطبيق',
-			'settings.companionRemoteServerStartFailed' => 'لا يمكن إطلاق الخادم المرافق',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'لا يمكن إطلاق الخادم المرافق',
 			'settings.companionRemoteServerStopFailed' => 'لا يمكن إيقاف الخادم المرافق',
 			'settings.autoPip' => 'صورة في صورة Auto Picture',
 			'settings.autoPipDescription' => 'إدخال صورة في الصورة تلقائيًا عند مغادرة التطبيق أثناء تشغيل',
@@ -6806,9 +6808,9 @@ extension on TranslationsAr {
 			'accessibility.reduceMotion' => 'تقليل الحركة',
 			'accessibility.reduceMotionHint' => 'إيقاف حركة التركيز وانتقالات الصفحات والمؤثرات الزخرفية.',
 			'accessibility.largeTargets' => 'مساحات لمس أكبر',
-			'accessibility.largeTargetsHint' => 'توفير مساحة أوسع لعناصر التحكم المشتركة للمس والتنقل باستخدام التقنيات المساعدة.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'توفير مساحة أوسع لعناصر التحكم المشتركة للمس والتنقل باستخدام التقنيات المساعدة.',
 			'accessibility.navigationHint' => 'استخدم Tab وShift+Tab للتنقل بين عناصر التحكم، وEnter أو مفتاح المسافة لتفعيلها، وEscape أو زر الرجوع للإغلاق. تتوفر خيارات التكبير وتفضيلات القراءة أثناء فتح الكتاب.',
 			'accessibility.textSizeDescription' => 'مقياس واجهة النص في Pleazyng بالإضافة إلى إعداد حجم النص النظام على جهازك.',
 			'accessibility.boldTextHint' => 'استخدم وزنًا أثقل لعلامات الواجهة والرسائل لجعلها أسهل في التمييز.',
@@ -7320,9 +7322,9 @@ extension on TranslationsAr {
 			'discover.findNext.artworkLoading' => 'جارٍ تحميل الصورة…',
 			'discover.findNext.artworkUnavailable' => 'الصورة غير متاحة',
 			'discover.findNext.savedFeedback' => 'أُضيف إلى الاختيارات المحفوظة',
-			'discover.findNext.skippedFeedback' => 'تم التخطي حاليًا',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'تم التخطي حاليًا',
 			'discover.findNext.releaseToConfirm' => 'أفلت للتأكيد',
 			'discover.findNext.remoteHint' => 'عندما يكون التركيز على الغلاف: ← / → للاختيار · زر التحديد للتفاصيل · ↑ / ↓ لنقل التركيز',
 			'discover.studio' => 'الاستوديو',
@@ -7834,9 +7836,9 @@ extension on TranslationsAr {
 			'collections.selectCollection' => 'اختيار مجموعة',
 			'collections.collectionName' => 'اسم جمع',
 			'collections.enterCollectionName' => 'إدخال اسم مجموعة',
-			'collections.addedToCollection' => 'إضافة إلى مجموعة',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'إضافة إلى مجموعة',
 			'collections.errorAddingToCollection' => 'فشل في إضافة إلى المجموعة',
 			'collections.created' => 'مجموعة تم إنشاءها',
 			'collections.removeFromCollection' => 'إزالة من المجموعة',
@@ -8348,9 +8350,9 @@ extension on TranslationsAr {
 			'performanceOverlay.decoder' => 'ديكودر',
 			'performanceOverlay.rawDecoder' => 'أدوات التخفيف',
 			'performanceOverlay.tunneling' => 'النفقات',
-			'performanceOverlay.passthrough' => 'كسارة',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'كسارة',
 			'performanceOverlay.aspect' => 'وجهة نظر',
 			'performanceOverlay.rotation' => 'الدوران',
 			'performanceOverlay.dvSource' => 'مصدر DV',
@@ -8862,9 +8864,9 @@ extension on TranslationsAr {
 			'homeLayout.managePlexRowsDescription' => 'تنظيم الصفوف المختارة للصفحة الرئيسية',
 			'homeLayout.organizeHomeRows' => 'تنظيم صفوف الصفحة الرئيسية',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} صفوف: نقل، بطاقة بارزة، تنقّل تلقائي، إزالة',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'تنظيم صفوف ${library}',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'تنظيم صفوف ${library}',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'متابعة المشاهدة و${n} صفوف: نقل، مكتبة، رئيسية، بطاقة بارزة، تنقّل تلقائي',
 			'homeLayout.renderAsHero' => 'عرض كبطاقة بارزة',
 			'homeLayout.heroOnlySingleCollection' => 'متاح فقط عندما يعرض هذا الصف عناوين مجموعة واحدة مباشرةً',
@@ -9376,9 +9378,9 @@ extension on TranslationsAr {
 			'audiobook.customSpeed' => 'سرعة اللعب المخصصة',
 			'audiobook.speedHelp' => 'اختر سرعة تتراوح بين 0.25 × إلى 4 ×.',
 			'audiobook.apply' => 'تطبيق',
-			'audiobook.customSleep' => 'ساعات النوم المخصصة',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'ساعات النوم المخصصة',
 			'audiobook.sleepMinutes' => 'الدقائق (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'توقف بعد ${count} الفصول',
 			'audiobook.extendSleep' => 'إضافة 5 دقائق',
@@ -9890,9 +9892,9 @@ extension on TranslationsAr {
 			'musicExperience.bluetoothDrivingHint' => 'اختر مخارج بلوتوث المتصلة التي تفتح عرض القيادة تلقائيًا.',
 			'musicTools.loudnessMissing' => 'لم يُرجع الخادم بيانات مستوى الصوت',
 			'musicTools.loudnessRequested' => 'تم إرسال طلب التحليل',
-			'musicTools.loudnessUnsupported' => 'إصدار الخادم لا يدعم طلب التحليل',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'إصدار الخادم لا يدعم طلب التحليل',
 			'musicTools.serverHistory' => 'سجل التشغيل على الخادم',
 			'musicTools.nfcWrite' => 'كتابة علامة NFC',
 			'musicTools.nfcRead' => 'مسح علامة NFC',

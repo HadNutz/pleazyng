@@ -228,6 +228,7 @@ class Translations$settings$pt_BR extends Translations$settings$pt {
 	final TranslationsPtBr _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Dobradiça da tela dobrável';
 	@override String get title => 'Configurações';
 	@override String get language => 'Idioma';
 	@override String get theme => 'Tema';
@@ -1518,6 +1519,7 @@ extension on TranslationsPtBr {
 			'common.mediaKind.photoAlbum' => 'Álbum de fotos',
 			'screens.subtitleStyling' => 'Estilização da legenda',
 			'screens.logs' => 'Registros',
+			'settings.foldableDisplay' => 'Dobradiça da tela dobrável',
 			'settings.title' => 'Configurações',
 			'settings.language' => 'Idioma',
 			'settings.theme' => 'Tema',
@@ -1955,9 +1957,9 @@ extension on TranslationsPtBr {
 			'romm.download' => 'Keep offline',
 			'romm.offline' => 'Available offline',
 			'romm.downloadProgress' => 'Downloading…',
-			'romm.cancelDownload' => 'Cancel download',
 			_ => null,
 		} ?? switch (path) {
+			'romm.cancelDownload' => 'Cancel download',
 			'romm.removeOffline' => 'Remove offline copy',
 			'romm.storage' => 'Offline storage',
 			'romm.storageLimit' => 'Storage limit (GiB)',

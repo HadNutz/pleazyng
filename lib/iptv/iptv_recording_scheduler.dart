@@ -162,6 +162,14 @@ class IptvRecordingScheduler with WidgetsBindingObserver {
       if (config == null) {
         throw const IptvImportException('source_missing');
       }
+      if (!await _repository.seriesRules.canCapture(
+        schedule.id,
+        schedule.profileId,
+        schedule.sourceId,
+        schedule.channelId,
+      )) {
+        throw const IptvImportException('permission');
+      }
       session = await _repository.startPlayback(schedule.profileId, schedule.sourceId, schedule.channelId);
       if (session == null) {
         throw const IptvImportException('source_missing');

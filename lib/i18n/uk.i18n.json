@@ -347,6 +347,7 @@
     "playerBackend": "Гравець Backend",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Шарнір складаного екрана",
     "hardwareDecoding": "Декодування харчового обладнання",
     "hardwareDecodingDescription": "Використовуйте прискорення харчових пристроїв, коли вони доступні",
     "playbackBuffer": "Завантажити Playback Buffer",

@@ -67,6 +67,7 @@
     "logs": "Journaux"
   },
   "settings": {
+    "foldableDisplay": "Charnière de l’écran pliable",
     "title": "Paramètres",
     "language": "Langue",
     "theme": "Thème",

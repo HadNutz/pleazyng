@@ -1,3 +1,4 @@
+import '../../../iptv/iptv_series_rules.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -75,6 +76,7 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
   List<_ServerRecordings> _serverRecordings = [];
   List<IptvLocalRecording> _localRecordings = [];
   List<IptvLocalRecordingSchedule> _localSchedules = [];
+  List<IptvSeriesRule> _localSeries = [];
   List<IptvDispatcharrRecording> _dispatcharrRecordings = [];
   List<IptvDispatcharrRule> _dispatcharrRules = [];
   String? _iptvError;
@@ -85,6 +87,7 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
   int _loadGeneration = 0;
   Future<void>? _loadFuture;
   bool _loadPending = false;
+  final _firstSeriesFocusNode = FocusNode(debugLabel: 'recordings_tab_first_series');
   final _firstTileFocusNode = FocusNode(debugLabel: 'recordings_tab_first_tile');
 
   @override
@@ -110,6 +113,7 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
   @override
   void dispose() {
     _loadGeneration++;
+    _firstSeriesFocusNode.dispose();
     _firstTileFocusNode.dispose();
     super.dispose();
   }
@@ -120,7 +124,9 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
       return;
     }
     _pendingFocus = false;
-    if (_firstTileFocusNode.context != null) {
+    if (_firstSeriesFocusNode.context != null) {
+      _firstSeriesFocusNode.requestFocus();
+    } else if (_firstTileFocusNode.context != null) {
       _firstTileFocusNode.requestFocus();
     }
   }
@@ -200,11 +206,13 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
     var dispatcharrRecordings = <IptvDispatcharrRecording>[];
     var dispatcharrRules = <IptvDispatcharrRule>[];
     var iptvFailed = false;
+    List<IptvSeriesRule> localSeries = [];
     if (profileId != null) {
       final repository = context.read<IptvSourceRepository>();
       try {
         localRecordings = await repository.localRecordings(profileId);
         localSchedules = await repository.localRecordingSchedules(profileId: profileId);
+        localSeries = await repository.seriesRules.list(profileId);
         for (final source in await repository.sources(profileId)) {
           if (localSchedules.isNotEmpty && await repository.supportsDispatcharrDvr(profileId, source.id)) {
             transfers[source.id] = source.displayName;
@@ -228,6 +236,7 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
       _serverRecordings = results;
       _localRecordings = localRecordings;
       _localSchedules = localSchedules;
+      _localSeries = localSeries;
       _transferSources = transfers;
       _dispatcharrRecordings = dispatcharrRecordings;
       _dispatcharrRules = dispatcharrRules;
@@ -392,6 +401,27 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
     }
   }
 
+  Future<void> _removeSeries(IptvSeriesRule rule) async {
+    final approved = await showDialog<bool>(
+      context: context,
+      builder: (dialog) => AlertDialog(
+        title: Text(t.common.delete),
+        content: Text('${rule.title} · ${rule.channelName}'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(t.common.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(dialog, true), child: Text(t.common.delete)),
+        ],
+      ),
+    );
+    if (!mounted || approved != true || context.read<ActiveProfileProvider>().activeId != rule.profileId) return;
+    try {
+      await context.read<IptvSourceRepository>().seriesRules.remove(rule.profileId, rule.id);
+      if (mounted) await _load();
+    } catch (_) {
+      if (mounted) showErrorSnackBar(context, t.iptv.recordingActionFailed);
+    }
+  }
+
   Future<void> _cancelLocalSchedule(IptvLocalRecordingSchedule schedule) async {
     final profileId = context.read<ActiveProfileProvider>().activeId;
     if (profileId == null || schedule.state != 'scheduled') return;
@@ -535,6 +565,7 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
       return const Center(child: CircularProgressIndicator());
     }
     final hasIptvItems =
+        _localSeries.isNotEmpty ||
         _localRecordings.isNotEmpty ||
         _localSchedules.isNotEmpty ||
         _dispatcharrRecordings.isNotEmpty ||
@@ -552,6 +583,7 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
     if (grabs.isEmpty &&
         rules.isEmpty &&
         _localSchedules.isEmpty &&
+        _localSeries.isEmpty &&
         _localRecordings.isEmpty &&
         _dispatcharrRecordings.isEmpty &&
         _dispatcharrRules.isEmpty) {
@@ -568,6 +600,23 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
               _iptvError!,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error),
             ),
+          ),
+        if (_localSeries.isNotEmpty)
+          SettingsGroup(
+            title: t.liveTv.recordSeries,
+            children: [
+              for (final rule in _localSeries)
+                ListTile(
+                  title: Text(rule.title),
+                  subtitle: Text(rule.channelName),
+                  trailing: IconButton(
+                    tooltip: t.common.delete,
+                    icon: const Icon(Icons.delete_outline),
+                    focusNode: rule.id == _localSeries.first.id ? _firstSeriesFocusNode : null,
+                    onPressed: () => _removeSeries(rule),
+                  ),
+                ),
+            ],
           ),
         if (_localSchedules.isNotEmpty)
           SettingsGroup(

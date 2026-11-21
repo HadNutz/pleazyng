@@ -254,6 +254,7 @@ class Translations$settings$pt_PT extends Translations$settings$pt {
 	final TranslationsPtPt _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Dobradiça do ecrã dobrável';
 	@override String get title => 'Definições';
 	@override String get language => 'Idioma';
 	@override String get theme => 'Tema';
@@ -3887,6 +3888,7 @@ extension on TranslationsPtPt {
 			'screens.licenses' => 'Licenças',
 			'screens.switchProfile' => 'Mudar de perfil',
 			'screens.mpvConfig' => 'mpv.conf',
+			'settings.foldableDisplay' => 'Dobradiça do ecrã dobrável',
 			'settings.title' => 'Definições',
 			'settings.language' => 'Idioma',
 			'settings.theme' => 'Tema',
@@ -4259,9 +4261,9 @@ extension on TranslationsPtPt {
 			'themeEditor.previewCardSubtitle' => ({required Object minutes}) => '${minutes} min restantes',
 			'themeEditor.previewSwitch' => 'Reprodução automática',
 			'themeEditor.previewMutedText' => 'O texto secundário fica assim',
-			'search.people' => 'Pessoas',
 			_ => null,
 		} ?? switch (path) {
+			'search.people' => 'Pessoas',
 			'search.hint' => 'Pesquisar filmes, séries, músicas...',
 			'search.tryDifferentTerm' => 'Tente um termo de pesquisa diferente',
 			'search.searchYourMedia' => 'Pesquisar o seu conteúdo multimédia',
@@ -4773,9 +4775,9 @@ extension on TranslationsPtPt {
 			'accountPreferences.subtitleModes.alwaysDescription' => 'Ativar uma faixa de legendas no idioma preferido sempre que houver uma.',
 			'accountPreferences.subtitleModes.onlyForced' => 'Apenas legendas forçadas',
 			'accountPreferences.subtitleModes.onlyForcedDescription' => 'Carregar apenas as faixas marcadas como forçadas.',
-			'accountPreferences.subtitleModes.smart' => 'Mostrar com áudio estrangeiro',
 			_ => null,
 		} ?? switch (path) {
+			'accountPreferences.subtitleModes.smart' => 'Mostrar com áudio estrangeiro',
 			'accountPreferences.subtitleModes.smartDescription' => 'Ativar legendas apenas quando o áudio estiver noutro idioma.',
 			'accountPreferences.subtitleAccessibility' => 'Legendas SDH',
 			'accountPreferences.subtitleAccessibilityOptions.preferNonSdh' => 'Preferir legendas não SDH',
@@ -5287,9 +5289,9 @@ extension on TranslationsPtPt {
 			'watchTogether.connecting' => 'A ligar...',
 			'watchTogether.relayPublic' => 'As salas usam os servidores de retransmissão públicos do Open Watch Party.',
 			'watchTogether.relayCustom' => ({required Object url}) => 'As salas usam o seu servidor de retransmissão em ${url}.',
-			'watchTogether.recentRooms' => 'Salas recentes',
 			_ => null,
 		} ?? switch (path) {
+			'watchTogether.recentRooms' => 'Salas recentes',
 			'watchTogether.roomActions' => 'Ações da sala',
 			'watchTogether.renameRoom' => 'Renomear sala',
 			'watchTogether.enterRoomCode' => 'Introduza o código de 6 caracteres do anfitrião.',
@@ -5801,9 +5803,9 @@ extension on TranslationsPtPt {
 			'seerr.title' => 'Seerr',
 			'seerr.connectTitle' => 'Ligar ao Seerr',
 			'seerr.serverUrl' => 'URL do servidor',
-			'seerr.serverUrlHelper' => 'O endereço da sua instância do Seerr',
 			_ => null,
 		} ?? switch (path) {
+			'seerr.serverUrlHelper' => 'O endereço da sua instância do Seerr',
 			'seerr.checkServer' => 'Continuar',
 			'seerr.signInWithJellyfin' => 'Iniciar sessão com o Jellyfin',
 			'seerr.signInWithEmby' => 'Iniciar sessão com o Emby',

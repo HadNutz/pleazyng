@@ -1,0 +1,10 @@
+{
+  "app": {
+    "bundleName": "org.snapetech.pleazyng",
+    "vendor": "Snape Technologies",
+    "versionCode": 206,
+    "versionName": "3.0.47",
+    "icon": "$media:app_icon",
+    "label": "$string:app_name"
+  }
+}

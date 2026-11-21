@@ -192,6 +192,7 @@ class _Translations$settings$es_419 extends Translations$settings$es {
 	final TranslationsEs419 _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Bisagra de la pantalla plegable';
 	@override String get title => 'Configuración';
 	@override String get language => 'Idioma';
 	@override String get theme => 'Tema';
@@ -1458,6 +1459,7 @@ extension on TranslationsEs419 {
 			'common.mediaKind.photoAlbum' => 'Álbum de fotos',
 			'screens.subtitleStyling' => 'Estilo de subtítulos',
 			'screens.logs' => 'Registros',
+			'settings.foldableDisplay' => 'Bisagra de la pantalla plegable',
 			'settings.title' => 'Configuración',
 			'settings.language' => 'Idioma',
 			'settings.theme' => 'Tema',
@@ -1912,9 +1914,9 @@ extension on TranslationsEs419 {
 			'romm.achievementsHelp' => 'Achievement information comes from RomM. The browser player does not earn new achievements.',
 			'romm.screenshots' => 'Screenshots',
 			'romm.manual' => 'Manual',
-			'romm.importSave' => 'Import save',
 			_ => null,
 		} ?? switch (path) {
+			'romm.importSave' => 'Import save',
 			'romm.exportSave' => 'Export',
 			'romm.importState' => 'Import state',
 			'romm.saveImported' => 'Save imported',

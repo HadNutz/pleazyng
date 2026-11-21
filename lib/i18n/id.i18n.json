@@ -347,6 +347,7 @@
     "playerBackend": "Pembuat Backend",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Engsel layar lipat",
     "hardwareDecoding": "Hardware Dekodasi",
     "hardwareDecodingDescription": "Menggunakan akselerasi perangkat keras saat tersedia",
     "playbackBuffer": "Pemain Buffer",

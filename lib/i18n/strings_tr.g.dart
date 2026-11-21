@@ -489,6 +489,7 @@ class _Translations$settings$tr extends Translations$settings$en {
 	@override String get playerBackend => 'Oynatıcı Altyapısı';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Katlanabilir ekran menteşesi';
 	@override String get hardwareDecoding => 'Donanım Çözme';
 	@override String get hardwareDecodingDescription => 'Mümkün olduğunda donanım hızlandırmasını kullan';
 	@override String get playbackBuffer => 'Oynatma Tamponu';
@@ -6001,6 +6002,7 @@ extension on TranslationsTr {
 			'settings.playerBackend' => 'Oynatıcı Altyapısı',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Katlanabilir ekran menteşesi',
 			'settings.hardwareDecoding' => 'Donanım Çözme',
 			'settings.hardwareDecodingDescription' => 'Mümkün olduğunda donanım hızlandırmasını kullan',
 			'settings.playbackBuffer' => 'Oynatma Tamponu',
@@ -6192,9 +6194,9 @@ extension on TranslationsTr {
 			'settings.manageLibrariesDescription' => 'Kitaplıkları yeniden sıralayın ve gizleyin',
 			'settings.companionRemoteServer' => 'Yardımcı Uzaktan Kumanda Sunucusu',
 			'settings.companionRemoteServerDescription' => 'Ağınızdaki mobil cihazların bu uygulamayı kontrol etmesine izin verin',
-			'settings.companionRemoteServerStartFailed' => 'Yardımcı sunucu başlatılamadı',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Yardımcı sunucu başlatılamadı',
 			'settings.companionRemoteServerStopFailed' => 'Yardımcı sunucu durdurulamadı',
 			'settings.autoPip' => 'Otomatik Pencere İçinde Pencere (PiP)',
 			'settings.autoPipDescription' => 'Oynatma sırasında uygulamadan çıktığınızda otomatik olarak pencere içinde pencere moduna geç',
@@ -6706,9 +6708,9 @@ extension on TranslationsTr {
 			'accessibility.reduceMotion' => 'hareketleri azaltmak',
 			'accessibility.reduceMotionHint' => 'Odak göstergesi hareketini, sayfa geçişlerini ve dekoratif efektleri durdurun.',
 			'accessibility.largeTargets' => 'Daha büyük dokunmatik hedefler',
-			'accessibility.largeTargetsHint' => 'Paylaşılan kontroller dokunmatik ve yardımcı navigasyon için daha fazla yer verir.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'Paylaşılan kontroller dokunmatik ve yardımcı navigasyon için daha fazla yer verir.',
 			'accessibility.navigationHint' => 'Kontroller arasında geçiş yapmak için Tab ve Shift+Tab, etkinleştirmek için Enter veya boşluk tuşu, kapatmak için Escape veya Geri düğmesini kullanın. Kitap açıkken yakınlaştırma ve okuma tercihleri kullanılabilir.',
 			'accessibility.textSizeDescription' => 'Pleazyng\'de ölçekli arayüz metni, cihazınızın sistem metin boyutu ayarına ek olarak.',
 			'accessibility.boldTextHint' => 'Bir arayüz etiketleri ve mesajları için daha ağır bir ağırlık kullanın, bunları ayırt etmek kolay hale getirin.',
@@ -7220,9 +7222,9 @@ extension on TranslationsTr {
 			'discover.findNext.artworkLoading' => 'Görsel yükleniyor…',
 			'discover.findNext.artworkUnavailable' => 'Görsel kullanılamıyor',
 			'discover.findNext.savedFeedback' => 'Kayıtlı seçimlere eklendi',
-			'discover.findNext.skippedFeedback' => 'Şimdilik atlandı',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'Şimdilik atlandı',
 			'discover.findNext.releaseToConfirm' => 'Onaylamak için bırakın',
 			'discover.findNext.remoteHint' => 'Kapak odakta: ← / → seç · Seç tuşu: ayrıntılar · ↑ / ↓ odağı taşı',
 			'discover.studio' => 'Stüdyo',
@@ -7734,9 +7736,9 @@ extension on TranslationsTr {
 			'collections.selectCollection' => 'Koleksiyon Seç',
 			'collections.collectionName' => 'Koleksiyon Adı',
 			'collections.enterCollectionName' => 'Koleksiyon adını girin',
-			'collections.addedToCollection' => 'Koleksiyona eklendi',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Koleksiyona eklendi',
 			'collections.errorAddingToCollection' => 'Koleksiyona eklenemedi',
 			'collections.created' => 'Koleksiyon oluşturuldu',
 			'collections.removeFromCollection' => 'Koleksiyondan kaldır',
@@ -8248,9 +8250,9 @@ extension on TranslationsTr {
 			'performanceOverlay.decoder' => 'Çözücü',
 			'performanceOverlay.rawDecoder' => 'Ham Çözücü',
 			'performanceOverlay.tunneling' => 'Tünelleme',
-			'performanceOverlay.passthrough' => 'Doğrudan geçiş',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Doğrudan geçiş',
 			'performanceOverlay.aspect' => 'Oran',
 			'performanceOverlay.rotation' => 'Döndürme',
 			'performanceOverlay.dvSource' => 'DV Kaynağı',
@@ -8762,9 +8764,9 @@ extension on TranslationsTr {
 			'homeLayout.managePlexRowsDescription' => 'Ev seçimi için açık düzenleme',
 			'homeLayout.organizeHomeRows' => 'Home Routes düzenlemek',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} satırları: hareket, kahraman, otomatik kaydırma, kaldırma',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} satırları düzenleyin',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} satırları düzenleyin',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Devamını oku + ${n} satırları: hareket, Kütüphane, Ev, Kahraman, Otomatik slide',
 			'homeLayout.renderAsHero' => 'Bir kahraman kartı olarak',
 			'homeLayout.heroOnlySingleCollection' => 'Sadece bu satır tek bir koleksiyonun gerçek başlıklarına çözüldüğünde mevcuttur',
@@ -9276,9 +9278,9 @@ extension on TranslationsTr {
 			'audiobook.customSpeed' => 'Custom Playback Hızları',
 			'audiobook.speedHelp' => '0.25× ile 4× arasında bir hız seçin.',
 			'audiobook.apply' => 'Uygulama',
-			'audiobook.customSleep' => 'Özel uyku saatleri',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'Özel uyku saatleri',
 			'audiobook.sleepMinutes' => 'Dakikalar (1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} bölümlerinden sonra durun',
 			'audiobook.extendSleep' => '5 dakika ekleyin',
@@ -9790,9 +9792,9 @@ extension on TranslationsTr {
 			'musicExperience.bluetoothDrivingHint' => 'Sürüş görünümünü otomatik açan bağlı Bluetooth çıkışlarını seçin.',
 			'musicTools.loudnessMissing' => 'Ses yüksekliği verisi alınmadı',
 			'musicTools.loudnessRequested' => 'Analiz isteği gönderildi',
-			'musicTools.loudnessUnsupported' => 'Bu sunucu sürümü analiz isteklerini desteklemiyor',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Bu sunucu sürümü analiz isteklerini desteklemiyor',
 			'musicTools.serverHistory' => 'Sunucudaki oynatma geçmişi',
 			'musicTools.nfcWrite' => 'NFC etiketi yaz',
 			'musicTools.nfcRead' => 'NFC etiketini tara',

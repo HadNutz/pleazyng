@@ -490,6 +490,7 @@ class _Translations$settings$zh_Hant extends Translations$settings$zh {
 	@override String get playerBackend => '播放器引擎';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => '摺疊螢幕鉸鏈';
 	@override String get hardwareDecoding => '硬體解碼';
 	@override String get hardwareDecodingDescription => '如果支援，使用硬體加速';
 	@override String get playbackBuffer => '播放緩衝';
@@ -5997,6 +5998,7 @@ extension on TranslationsZhHant {
 			'settings.playerBackend' => '播放器引擎',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => '摺疊螢幕鉸鏈',
 			'settings.hardwareDecoding' => '硬體解碼',
 			'settings.hardwareDecodingDescription' => '如果支援，使用硬體加速',
 			'settings.playbackBuffer' => '播放緩衝',
@@ -6188,9 +6190,9 @@ extension on TranslationsZhHant {
 			'settings.manageLibrariesDescription' => '重新排序與隱藏媒體庫',
 			'settings.companionRemoteServer' => '隨身遙控器伺服器',
 			'settings.companionRemoteServerDescription' => '允許區域網路中的行動裝置控制此應用程式',
-			'settings.companionRemoteServerStartFailed' => '無法啟動隨身遙控器伺服器',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => '無法啟動隨身遙控器伺服器',
 			'settings.companionRemoteServerStopFailed' => '無法停止隨身遙控器伺服器',
 			'settings.autoPip' => '自動進入子母畫面',
 			'settings.autoPipDescription' => '播放影片時離開應用程式將自動進入子母畫面模式',
@@ -6702,9 +6704,9 @@ extension on TranslationsZhHant {
 			'accessibility.reduceMotion' => '減少動作',
 			'accessibility.reduceMotionHint' => '停止焦點指示器、頁面切換和裝飾效果的動畫。',
 			'accessibility.largeTargets' => '觸控目標',
-			'accessibility.largeTargetsHint' => '共享控制器提供更多觸控和輔助導航空間。',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => '共享控制器提供更多觸控和輔助導航空間。',
 			'accessibility.navigationHint' => '使用 Tab 和 Shift+Tab 在控制項之間移動，按 Enter 或空白鍵啟用，按 Escape 或返回按鈕關閉。開啟書籍後，可調整縮放比例和閱讀偏好設定。',
 			'accessibility.textSizeDescription' => '在 Pleazyng 中擴充套件介面文字,以及您的裝置的系統文字大小設定。',
 			'accessibility.boldTextHint' => '加粗介面標籤與訊息的字重，讓它們更容易辨識。',
@@ -7216,9 +7218,9 @@ extension on TranslationsZhHant {
 			'discover.findNext.artworkLoading' => '正在載入圖片…',
 			'discover.findNext.artworkUnavailable' => '圖片無法使用',
 			'discover.findNext.savedFeedback' => '已加入儲存的推薦',
-			'discover.findNext.skippedFeedback' => '已暫時略過',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => '已暫時略過',
 			'discover.findNext.releaseToConfirm' => '放開以確認',
 			'discover.findNext.remoteHint' => '封面取得焦點時：← / → 選擇 · 選取鍵查看詳細資訊 · ↑ / ↓ 移動焦點',
 			'discover.studio' => '製作商',
@@ -7730,9 +7732,9 @@ extension on TranslationsZhHant {
 			'collections.selectCollection' => '選擇收藏集',
 			'collections.collectionName' => '收藏集名稱',
 			'collections.enterCollectionName' => '輸入收藏集名稱',
-			'collections.addedToCollection' => '已新增至收藏集',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => '已新增至收藏集',
 			'collections.errorAddingToCollection' => '新增至收藏集失敗',
 			'collections.created' => '已建立收藏集',
 			'collections.removeFromCollection' => '從收藏集移除',
@@ -8244,9 +8246,9 @@ extension on TranslationsZhHant {
 			'performanceOverlay.decoder' => '解碼器',
 			'performanceOverlay.rawDecoder' => '原始解碼器',
 			'performanceOverlay.tunneling' => '通道模式',
-			'performanceOverlay.passthrough' => '直通',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => '直通',
 			'performanceOverlay.aspect' => '寬高比',
 			'performanceOverlay.rotation' => '旋轉角度',
 			'performanceOverlay.dvSource' => 'DV 來源',
@@ -8758,9 +8760,9 @@ extension on TranslationsZhHant {
 			'homeLayout.managePlexRowsDescription' => '開放組織主選行列',
 			'homeLayout.organizeHomeRows' => '安排家居行',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} 行: 移動, 英雄, 自動滑動, 移除',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => '組織 ${library} 行',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => '組織 ${library} 行',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '繼續觀看 + ${n} 行: 移動, 圖書館, 家, 英雄, 自動滑板',
 			'homeLayout.renderAsHero' => '顯示為焦點橫幅',
 			'homeLayout.heroOnlySingleCollection' => '只有當此行解決到單一集合的實際標題時才可用',
@@ -9272,9 +9274,9 @@ extension on TranslationsZhHant {
 			'audiobook.customSpeed' => '定製播放速度',
 			'audiobook.speedHelp' => '選擇速度從 0.25× 到 4×。',
 			'audiobook.apply' => '應用',
-			'audiobook.customSleep' => '定製睡眠時間',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => '定製睡眠時間',
 			'audiobook.sleepMinutes' => '時間(1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '播放完${count}章後停止',
 			'audiobook.extendSleep' => '新增5分鐘',
@@ -9786,9 +9788,9 @@ extension on TranslationsZhHant {
 			'musicExperience.bluetoothDrivingHint' => '選擇會自動開啟駕駛畫面的已連接藍牙輸出。',
 			'musicTools.loudnessMissing' => '未傳回響度資料',
 			'musicTools.loudnessRequested' => '已送出分析要求',
-			'musicTools.loudnessUnsupported' => '此伺服器版本不支援分析要求',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => '此伺服器版本不支援分析要求',
 			'musicTools.serverHistory' => '伺服器播放記錄',
 			'musicTools.nfcWrite' => '寫入 NFC 標籤',
 			'musicTools.nfcRead' => '掃描 NFC 標籤',

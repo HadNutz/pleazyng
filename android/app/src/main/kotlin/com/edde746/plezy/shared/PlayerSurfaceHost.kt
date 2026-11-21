@@ -2,6 +2,7 @@ package com.edde746.plezy.shared
 
 import android.app.Activity
 import android.graphics.Color
+import android.graphics.Rect
 import android.graphics.PixelFormat
 import android.view.Gravity
 import android.view.SurfaceHolder
@@ -19,7 +20,16 @@ internal object PlayerSurfaceHost {
    * is punched out of the window and the letterbox is that plane's pixels
    * instead; see [createOsdSurface].
    */
-  fun createContainer(activity: Activity, clipChildren: Boolean = false): FrameLayout = FrameLayout(activity).apply {
+  private class VideoPane(activity: Activity) : FrameLayout(activity)
+
+  fun pipSourceRect(activity: Activity): Rect? {
+    val content = activity.findViewById<ViewGroup>(android.R.id.content) ?: return null
+    val panes = (0 until content.childCount).map { content.getChildAt(it) }.filterIsInstance<VideoPane>()
+    val pane = panes.singleOrNull { it.isShown && it.width > 0 && it.height > 0 } ?: return null
+    return Rect().takeIf { pane.getGlobalVisibleRect(it) && !it.isEmpty }
+  }
+
+  fun createContainer(activity: Activity, clipChildren: Boolean = false): FrameLayout = VideoPane(activity).apply {
     layoutParams = ViewGroup.LayoutParams(
       ViewGroup.LayoutParams.MATCH_PARENT,
       ViewGroup.LayoutParams.MATCH_PARENT

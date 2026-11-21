@@ -489,6 +489,7 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String get playerBackend => 'Uppspelningsmotor';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Gångjärn på vikbar skärm';
 	@override String get hardwareDecoding => 'Hårdvaruavkodning';
 	@override String get hardwareDecodingDescription => 'Använd hårdvaruacceleration när tillgängligt';
 	@override String get playbackBuffer => 'Uppspelningsbuffert';
@@ -6001,6 +6002,7 @@ extension on TranslationsSv {
 			'settings.playerBackend' => 'Uppspelningsmotor',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Gångjärn på vikbar skärm',
 			'settings.hardwareDecoding' => 'Hårdvaruavkodning',
 			'settings.hardwareDecodingDescription' => 'Använd hårdvaruacceleration när tillgängligt',
 			'settings.playbackBuffer' => 'Uppspelningsbuffert',
@@ -6192,9 +6194,9 @@ extension on TranslationsSv {
 			'settings.manageLibrariesDescription' => 'Ordna om och dölj bibliotek',
 			'settings.companionRemoteServer' => 'Server för fjärrkontroll',
 			'settings.companionRemoteServerDescription' => 'Tillåt att mobila enheter i nätverket styr appen',
-			'settings.companionRemoteServerStartFailed' => 'Kunde inte starta servern för fjärrkontroll',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Kunde inte starta servern för fjärrkontroll',
 			'settings.companionRemoteServerStopFailed' => 'Kunde inte stoppa servern för fjärrkontroll',
 			'settings.autoPip' => 'Automatisk bild-i-bild',
 			'settings.autoPipDescription' => 'Aktivera bild-i-bild om du lämnar appen under uppspelning',
@@ -6706,9 +6708,9 @@ extension on TranslationsSv {
 			'accessibility.reduceMotion' => 'Sänk rörelse',
 			'accessibility.reduceMotionHint' => 'Stoppa rörelser i fokusmarkeringar, sidövergångar och dekorativa effekter.',
 			'accessibility.largeTargets' => 'Större touchmål',
-			'accessibility.largeTargetsHint' => 'Ge delade kontroller mer utrymme för beröring och assistent navigering.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'Ge delade kontroller mer utrymme för beröring och assistent navigering.',
 			'accessibility.navigationHint' => 'Använd Tab och Shift+Tab för att flytta mellan kontroller, Enter eller mellanslag för att aktivera och Escape eller Tillbaka för att stänga. Zoom och läsinställningar är tillgängliga när en bok är öppen.',
 			'accessibility.textSizeDescription' => 'Skala gränssnittet text i Pleazyng utöver enhetens systemtextstorlek inställning.',
 			'accessibility.boldTextHint' => 'Använd en tyngre vikt för gränssnittets etiketter och meddelanden för att göra dem lättare att skilja.',
@@ -7220,9 +7222,9 @@ extension on TranslationsSv {
 			'discover.findNext.artworkLoading' => 'Läser in bild…',
 			'discover.findNext.artworkUnavailable' => 'Bild saknas',
 			'discover.findNext.savedFeedback' => 'Tillagd bland sparade val',
-			'discover.findNext.skippedFeedback' => 'Överhoppad för tillfället',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'Överhoppad för tillfället',
 			'discover.findNext.releaseToConfirm' => 'Släpp för att bekräfta',
 			'discover.findNext.remoteHint' => 'Omslag i fokus: ← / → välj · Välj: detaljer · ↑ / ↓ flytta fokus',
 			'discover.studio' => 'Studio',
@@ -7734,9 +7736,9 @@ extension on TranslationsSv {
 			'collections.selectCollection' => 'Välj samling',
 			'collections.collectionName' => 'Samlingsnamn',
 			'collections.enterCollectionName' => 'Ange samlingsnamn',
-			'collections.addedToCollection' => 'Objektet har lagts till i samlingen',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Objektet har lagts till i samlingen',
 			'collections.errorAddingToCollection' => 'Det gick inte att lägga till objektet i samlingen',
 			'collections.created' => 'Samlingen har skapats',
 			'collections.removeFromCollection' => 'Ta bort från samlingen',
@@ -8248,9 +8250,9 @@ extension on TranslationsSv {
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Rå dekoder',
 			'performanceOverlay.tunneling' => 'Tunnling',
-			'performanceOverlay.passthrough' => 'Genomströmning',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Genomströmning',
 			'performanceOverlay.aspect' => 'Bildformat',
 			'performanceOverlay.rotation' => 'Rotation',
 			'performanceOverlay.dvSource' => 'DV-källa',
@@ -8762,9 +8764,9 @@ extension on TranslationsSv {
 			'homeLayout.managePlexRowsDescription' => 'Öppna för att organisera de hemvalda raderna',
 			'homeLayout.organizeHomeRows' => 'Organisera hemrutor',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rader: flytta, Hero, Auto-slide, ta bort',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organisera ${library} rader',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organisera ${library} rader',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Fortsätt Se + ${n} rader: rörelse, bibliotek, hem, hjälte, Auto-slide',
 			'homeLayout.renderAsHero' => 'Renderar som hjälte kort',
 			'homeLayout.heroOnlySingleCollection' => 'Endast tillgänglig när denna rad löser sig till en enda samlingens verkliga titlar',
@@ -9276,9 +9278,9 @@ extension on TranslationsSv {
 			'audiobook.customSpeed' => 'Custom playback hastighet',
 			'audiobook.speedHelp' => 'Välj en hastighet från 0,25× till 4×.',
 			'audiobook.apply' => 'Applicera',
-			'audiobook.customSleep' => 'Anpassad sömntimmar',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'Anpassad sömntimmar',
 			'audiobook.sleepMinutes' => 'Minuter (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Sluta efter ${count} kapitel',
 			'audiobook.extendSleep' => 'Lägg till 5 minuter',
@@ -9790,9 +9792,9 @@ extension on TranslationsSv {
 			'musicExperience.bluetoothDrivingHint' => 'Välj anslutna Bluetooth-utgångar som automatiskt öppnar körvyn.',
 			'musicTools.loudnessMissing' => 'Inga ljudstyrkedata returnerades',
 			'musicTools.loudnessRequested' => 'Analysbegäran skickad',
-			'musicTools.loudnessUnsupported' => 'Den här serverversionen stöder inte analysbegäranden',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Den här serverversionen stöder inte analysbegäranden',
 			'musicTools.serverHistory' => 'Serverns uppspelningshistorik',
 			'musicTools.nfcWrite' => 'Skriv NFC-tagg',
 			'musicTools.nfcRead' => 'Skanna NFC-tagg',

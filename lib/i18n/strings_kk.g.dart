@@ -489,6 +489,7 @@ class _Translations$settings$kk extends Translations$settings$en {
 	@override String get playerBackend => 'Ойнатқыш инфрақұрылымы';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Жиналмалы экранның топсасы';
 	@override String get hardwareDecoding => 'Аппараттық декодтау';
 	@override String get hardwareDecodingDescription => 'Мүмкіндігінше аппараттық үдетуді пайдалану';
 	@override String get playbackBuffer => 'Ойнату буфері';
@@ -6001,6 +6002,7 @@ extension on TranslationsKk {
 			'settings.playerBackend' => 'Ойнатқыш инфрақұрылымы',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Жиналмалы экранның топсасы',
 			'settings.hardwareDecoding' => 'Аппараттық декодтау',
 			'settings.hardwareDecodingDescription' => 'Мүмкіндігінше аппараттық үдетуді пайдалану',
 			'settings.playbackBuffer' => 'Ойнату буфері',
@@ -6192,9 +6194,9 @@ extension on TranslationsKk {
 			'settings.manageLibrariesDescription' => 'Кітапханаларды қайта реттеу және жасыру',
 			'settings.companionRemoteServer' => 'Көмекші пульт сервері',
 			'settings.companionRemoteServerDescription' => 'Желідегі мобильді құрылғыларға осы қолданбаны басқаруға рұқсат беру',
-			'settings.companionRemoteServerStartFailed' => 'Көмекші серверді іске қосу мүмкін болмады',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Көмекші серверді іске қосу мүмкін болмады',
 			'settings.companionRemoteServerStopFailed' => 'Көмекші серверді тоқтату мүмкін болмады',
 			'settings.autoPip' => 'Автоматты Суреттегі сурет (PiP)',
 			'settings.autoPipDescription' => 'Видео ойнап жатқанда қолданбадан шыққанда авто-PiP режиміне өту',
@@ -6706,9 +6708,9 @@ extension on TranslationsKk {
 			'accessibility.reduceMotion' => 'Ақыттық рух',
 			'accessibility.reduceMotionHint' => 'Фокус көрсеткішінің қозғалысын, бет ауысу анимациясын және сәндік әсерлерді тоқтатыңыз.',
 			'accessibility.largeTargets' => 'Өнімдер сенімді',
-			'accessibility.largeTargetsHint' => '«Жеңіске» және «Жектеу» деген әлі де ұзақ уақытқа дейін ұзақ уақыт бойы жасылып отыр.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => '«Жеңіске» және «Жектеу» деген әлі де ұзақ уақытқа дейін ұзақ уақыт бойы жасылып отыр.',
 			'accessibility.navigationHint' => 'Басқару элементтері арасында ауысу үшін Tab және Shift+Tab, іске қосу үшін Enter немесе Бос орын, жабу үшін Escape немесе Артқа түймесін пайдаланыңыз. Кітап ашық кезде масштаб пен оқу параметрлерін өзгертуге болады.',
 			'accessibility.textSizeDescription' => 'Осылайша «Барселона» АҚ-ның «Атлантикалық» және «Текст-Системалық» АҚ қағидаларынан тұрады.',
 			'accessibility.boldTextHint' => 'Қандай-ақ интерфейс етикетке және мақалалар үшін көптеген жылдардан тұрады.',
@@ -7220,9 +7222,9 @@ extension on TranslationsKk {
 			'discover.findNext.artworkLoading' => 'Сурет жүктелуде…',
 			'discover.findNext.artworkUnavailable' => 'Сурет қолжетімсіз',
 			'discover.findNext.savedFeedback' => 'Сақталған таңдауларға қосылды',
-			'discover.findNext.skippedFeedback' => 'Әзірге өткізіліп жіберілді',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'Әзірге өткізіліп жіберілді',
 			'discover.findNext.releaseToConfirm' => 'Растау үшін жіберіңіз',
 			'discover.findNext.remoteHint' => 'Мұқаба таңдалғанда: ← / → таңдау · Таңдау түймесі: мәліметтер · ↑ / ↓ фокусты жылжыту',
 			'discover.studio' => 'Студия',
@@ -7734,9 +7736,9 @@ extension on TranslationsKk {
 			'collections.selectCollection' => 'Топтаманы таңдау',
 			'collections.collectionName' => 'Топтама атауы',
 			'collections.enterCollectionName' => 'Топтама атауын енгізіңіз',
-			'collections.addedToCollection' => 'Топтамаға қосылды',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Топтамаға қосылды',
 			'collections.errorAddingToCollection' => 'Топтамаға қосу мүмкін болмады',
 			'collections.created' => 'Топтама жасалды',
 			'collections.removeFromCollection' => 'Топтамадан өшіру',
@@ -8248,9 +8250,9 @@ extension on TranslationsKk {
 			'performanceOverlay.decoder' => 'Декодер',
 			'performanceOverlay.rawDecoder' => 'Өңделмеген декодер',
 			'performanceOverlay.tunneling' => 'Туннельдеу',
-			'performanceOverlay.passthrough' => 'Тікелей өткізу',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Тікелей өткізу',
 			'performanceOverlay.aspect' => 'Қатынас',
 			'performanceOverlay.rotation' => 'Бұрылыс',
 			'performanceOverlay.dvSource' => 'DV дереккөзі',
@@ -8762,9 +8764,9 @@ extension on TranslationsKk {
 			'homeLayout.managePlexRowsDescription' => 'Өнімдермен танымал, бірақ танымал, таңдардан танымал.',
 			'homeLayout.organizeHomeRows' => 'Өнімдермен өңдеу',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} қатар: жылжыту, баннер, автоматты ауысу, жою',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Қаланың тұрақты тұрғындарының саны ${library}',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Қаланың тұрақты тұрғындарының саны ${library}',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Өзінің қабырғасы + ${n} қабырғалары: қараша, Библиотека, Доминика, Героя, Авто-Слайд',
 			'homeLayout.renderAsHero' => 'Бұл үшін карталық карталық карта',
 			'homeLayout.heroOnlySingleCollection' => 'Бұл жануарлардың бір-бірімен бір-бірін бір-бірин бір-біректің бір-біремен бір-биректің бір',
@@ -9276,9 +9278,9 @@ extension on TranslationsKk {
 			'audiobook.customSpeed' => 'Өнімдер Playback Speed',
 			'audiobook.speedHelp' => 'Қазіргі уақытта 0.25× – 4× жылға дейін ұсынады.',
 			'audiobook.apply' => 'Қатысушы',
-			'audiobook.customSleep' => 'Сондай-ақ сағат',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'Сондай-ақ сағат',
 			'audiobook.sleepMinutes' => 'Қазіргі уақытта (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Қазіргі уақытта ${count} қағидалары',
 			'audiobook.extendSleep' => '5 минут',
@@ -9790,9 +9792,9 @@ extension on TranslationsKk {
 			'musicExperience.bluetoothDrivingHint' => 'Көлік жүргізу көрінісін автоматты түрде ашатын қосылған Bluetooth шығыстарын таңдаңыз.',
 			'musicTools.loudnessMissing' => 'Дыбыс қаттылығы туралы дерек алынбады',
 			'musicTools.loudnessRequested' => 'Талдау сұрауы жіберілді',
-			'musicTools.loudnessUnsupported' => 'Сервердің бұл нұсқасы талдау сұрауларын қолдамайды',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Сервердің бұл нұсқасы талдау сұрауларын қолдамайды',
 			'musicTools.serverHistory' => 'Сервердегі ойнату тарихы',
 			'musicTools.nfcWrite' => 'NFC тегіне жазу',
 			'musicTools.nfcRead' => 'NFC тегін сканерлеу',

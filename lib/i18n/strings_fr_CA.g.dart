@@ -193,6 +193,7 @@ class _Translations$settings$fr_CA extends Translations$settings$fr {
 	final TranslationsFrCa _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Charnière de l’écran pliable';
 	@override String get title => 'Paramètres';
 	@override String get language => 'Langue';
 	@override String get theme => 'Thème';
@@ -1427,6 +1428,7 @@ extension on TranslationsFrCa {
 			'common.mediaKind.photoAlbum' => 'Album photo',
 			'screens.subtitleStyling' => 'Style des sous-titres',
 			'screens.logs' => 'Journaux',
+			'settings.foldableDisplay' => 'Charnière de l’écran pliable',
 			'settings.title' => 'Paramètres',
 			'settings.language' => 'Langue',
 			'settings.theme' => 'Thème',
@@ -1883,9 +1885,9 @@ extension on TranslationsFrCa {
 			'romm.pause' => 'Pause',
 			'romm.kContinue' => 'Continue',
 			'romm.saveState' => 'Save state',
-			'romm.loadState' => 'Load state',
 			_ => null,
 		} ?? switch (path) {
+			'romm.loadState' => 'Load state',
 			'romm.saveAndExit' => 'Save and exit',
 			'romm.exitWithoutSaving' => 'Exit without saving',
 			'romm.exitConfirm' => 'Finish this game session?',

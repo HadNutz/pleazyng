@@ -44,6 +44,8 @@ import '../../iptv/iptv_sports_guide.dart';
 
 typedef _FavoriteScope = ({String source, String storeKey, FavoriteChannelPersistenceMode mode});
 
+typedef _SavedIptvGroup = ({String sourceId, String sourceName, IptvLineupGroup group});
+
 enum LiveTvTab { guide, whatsOn, recordings }
 
 class LiveTvScreen extends StatefulWidget {
@@ -83,6 +85,10 @@ class _LiveTvScreenState extends State<LiveTvScreen>
   bool _isLoading = true;
   String? _error;
   bool _hasIptvSources = false;
+  List<_SavedIptvGroup> _savedGroups = [];
+  String? _activeGroupId;
+  _SavedIptvGroup? get _activeGroup => _savedGroups.where((entry) => entry.group.id == _activeGroupId).firstOrNull;
+
   bool _hasIptvVodSources = false;
 
   // Favorites
@@ -109,13 +115,24 @@ class _LiveTvScreenState extends State<LiveTvScreen>
   bool _favoritesLoaded = false;
   bool _favoritesWritable = false;
 
-  List<LiveTvChannel> get _filteredChannels => filterLiveTvChannelsForFavorites(
-    channels: _channels,
-    favoritesOnly: _showFavoritesOnly,
-    favoritesLoaded: _favoritesLoaded,
-    favorites: _favoriteChannels,
-    sourceForChannel: _sourceForChannel,
-  );
+  List<LiveTvChannel> get _filteredChannels {
+    final selected = _activeGroup;
+    return filterLiveTvChannelsForFavorites(
+      channels: selected == null
+          ? _channels
+          : _channels
+                .where(
+                  (channel) =>
+                      channel.iptvSourceId == selected.sourceId &&
+                      selected.group.members.contains(channel.iptvChannelId),
+                )
+                .toList(),
+      favoritesOnly: _showFavoritesOnly,
+      favoritesLoaded: _favoritesLoaded,
+      favorites: _favoriteChannels,
+      sourceForChannel: _sourceForChannel,
+    );
+  }
 
   /// True when the favorites filter removed every loaded channel, so the guide
   /// tab shows an explanatory empty state instead of a bare timeline.
@@ -400,6 +417,7 @@ class _LiveTvScreenState extends State<LiveTvScreen>
       final iptvRepository = context.read<IptvSourceRepository>();
       var iptvChannels = <LiveTvChannel>[];
       var iptvSources = <IptvSourceSummary>[];
+      final groups = <_SavedIptvGroup>[];
       var iptvVodSources = <IptvSourceSummary>[];
       if (activeProfileId != null) {
         try {
@@ -422,12 +440,19 @@ class _LiveTvScreenState extends State<LiveTvScreen>
                 }),
           ]);
           iptvChannels = await iptvRepository.channels(activeProfileId);
+          for (final source in iptvSources) {
+            for (final g in await iptvRepository.lineupGroups(activeProfileId, source.id)) {
+              groups.add((sourceId: source.id, sourceName: source.displayName, group: g));
+            }
+          }
         } on Object catch (error, stackTrace) {
           appLogger.e('Failed to load IPTV channels', error: error, stackTrace: stackTrace);
         }
       }
       if (!mounted || context.read<ActiveProfileProvider>().activeId != activeProfileId) return;
 
+      _savedGroups = groups;
+      if (_activeGroup == null) _activeGroupId = null;
       _hasIptvSources = iptvSources.isNotEmpty;
       _hasIptvVodSources = iptvVodSources.isNotEmpty;
       _refreshVisibleTabs(multiServer);
@@ -703,7 +728,10 @@ class _LiveTvScreenState extends State<LiveTvScreen>
   /// replaces it so focus is not dropped.
   void _showAllChannelsFromEmptyState() {
     final hadFocus = _guideEmptyStateActionFocusNode.hasFocus;
-    _toggleFavoritesFilter();
+    setState(() {
+      _showFavoritesOnly = false;
+      _activeGroupId = null;
+    });
     if (!hadFocus) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _focusCurrentTab();
@@ -751,6 +779,30 @@ class _LiveTvScreenState extends State<LiveTvScreen>
     );
   }
 
+  Future<void> _selectLineupGroup() async {
+    final owner = context.read<ActiveProfileProvider>().activeId;
+    final selected = await showDialog<String>(
+      context: context,
+      builder: (dialog) => SimpleDialog(
+        title: Text(t.iptv.channelGroup),
+        children: [
+          SimpleDialogOption(onPressed: () => Navigator.pop(dialog, ''), child: Text(t.libraries.all)),
+          for (final entry in _savedGroups)
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(dialog, entry.group.id),
+              child: Text('${entry.group.name} · ${entry.sourceName}'),
+            ),
+        ],
+      ),
+    );
+    if (!mounted || selected == null || context.read<ActiveProfileProvider>().activeId != owner) return;
+    setState(() {
+      _activeGroupId = selected.isEmpty ? null : selected;
+      final idx = _visibleTabs.indexOf(LiveTvTab.guide);
+      if (idx >= 0 && tabController.index != idx) tabController.index = idx;
+    });
+  }
+
   void _showGuideSearch() {
     OverlaySheetController.showAdaptive(
       context,
@@ -766,6 +818,11 @@ class _LiveTvScreenState extends State<LiveTvScreen>
   void _jumpToGuideChannel(LiveTvChannel channel, {LiveTvProgram? program}) {
     // The guide only shows favorite rows while the filter is on — drop it so
     // the target channel's row exists to land on.
+    if (_activeGroup case final entry?) {
+      if (channel.iptvSourceId != entry.sourceId || !entry.group.members.contains(channel.iptvChannelId)) {
+        setState(() => _activeGroupId = null);
+      }
+    }
     if (_showFavoritesOnly && !_isFavoriteChannel(channel)) {
       setState(() => _showFavoritesOnly = false);
     }
@@ -926,6 +983,13 @@ class _LiveTvScreenState extends State<LiveTvScreen>
               // guide-only action would be unmounted before focus could ever
               // reach it. Selecting a result switches back to the guide tab.
               FocusableAction(icon: Symbols.search_rounded, tooltip: t.liveTv.searchGuide, onPressed: _showGuideSearch),
+              if (_savedGroups.isNotEmpty)
+                FocusableAction(
+                  icon: Symbols.folder_rounded,
+                  iconFill: _activeGroupId == null ? 0 : 1,
+                  tooltip: _activeGroup?.group.name ?? t.iptv.channelGroup,
+                  onPressed: _selectLineupGroup,
+                ),
               if (_hasIptvSources)
                 FocusableAction(
                   icon: Symbols.sports_rounded,
@@ -999,8 +1063,8 @@ class _LiveTvScreenState extends State<LiveTvScreen>
             : guideChannels.isEmpty
             ? EmptyStateWidget(
                 icon: Symbols.star_outline_rounded,
-                message: t.liveTv.noFavoriteChannels,
-                subtitle: t.liveTv.noFavoriteChannelsHint,
+                message: _activeGroup != null ? t.iptv.noChannels : t.liveTv.noFavoriteChannels,
+                subtitle: _activeGroup?.group.name ?? t.liveTv.noFavoriteChannelsHint,
                 actionLabel: t.liveTv.showAllChannels,
                 actionIcon: Symbols.list_rounded,
                 actionFocusNode: _guideEmptyStateActionFocusNode,

@@ -489,6 +489,7 @@ class _Translations$settings$az extends Translations$settings$en {
 	@override String get playerBackend => 'Oynadıcı infrastrukturu';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Qatlanan ekranın menteşəsi';
 	@override String get hardwareDecoding => 'Avadanlıq kod açılması';
 	@override String get hardwareDecodingDescription => 'Mümkün olduqda avadanlıq sürətləndirməsini istifadə et';
 	@override String get playbackBuffer => 'Oxutma buferi';
@@ -6001,6 +6002,7 @@ extension on TranslationsAz {
 			'settings.playerBackend' => 'Oynadıcı infrastrukturu',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Qatlanan ekranın menteşəsi',
 			'settings.hardwareDecoding' => 'Avadanlıq kod açılması',
 			'settings.hardwareDecodingDescription' => 'Mümkün olduqda avadanlıq sürətləndirməsini istifadə et',
 			'settings.playbackBuffer' => 'Oxutma buferi',
@@ -6192,9 +6194,9 @@ extension on TranslationsAz {
 			'settings.manageLibrariesDescription' => 'Kitabxanaları yenidən sıralayın və gizlədin',
 			'settings.companionRemoteServer' => 'Köməkçi pult serveri',
 			'settings.companionRemoteServerDescription' => 'Şəbəkənizdəki mobil cihazların bu tətbiqi idarə etməsinə icazə verin',
-			'settings.companionRemoteServerStartFailed' => 'Köməkçi pult serveri başladıla bilmədi',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Köməkçi pult serveri başladıla bilmədi',
 			'settings.companionRemoteServerStopFailed' => 'Köməkçi pult serveri dayandırıla bilmədi',
 			'settings.autoPip' => 'Avtomatik Pəncərə daxilində Pəncərə (PiP)',
 			'settings.autoPipDescription' => 'Oynatma zamanı tətbiqdən çıxdıqda avtomatik PiP rejiminə keç',
@@ -6706,9 +6708,9 @@ extension on TranslationsAz {
 			'accessibility.reduceMotion' => 'Movqeyi azaltır',
 			'accessibility.reduceMotionHint' => 'Fokus göstəricisinin hərəkətini, səhifə keçidlərini və dekorativ effektləri dayandırın.',
 			'accessibility.largeTargets' => 'Təkimlər daha çox',
-			'accessibility.largeTargetsHint' => '“Müşən” komandaları daha çox touch və asistivi navigasiya üçün yer verir.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => '“Müşən” komandaları daha çox touch və asistivi navigasiya üçün yer verir.',
 			'accessibility.navigationHint' => 'İdarəetmə elementləri arasında keçmək üçün Tab və Shift+Tab, aktivləşdirmək üçün Enter və ya Boşluq, bağlamaq üçün Escape və ya Geri düyməsindən istifadə edin. Kitab açıq olduqda böyütmə və oxu tənzimləmələri əlçatandır.',
 			'accessibility.textSizeDescription' => 'VVD-nin textiyi, sistemin texti-büyüklüğü ayarının yanı sıra Pleazyng-də ölçülür.',
 			'accessibility.boldTextHint' => 'İnternet etiketləri və mesajları üçün daha ağır bir ağırlık kullanın ki, onları ayırt etmək kolaydır.',
@@ -7220,9 +7222,9 @@ extension on TranslationsAz {
 			'discover.findNext.artworkLoading' => 'Şəkil yüklənir…',
 			'discover.findNext.artworkUnavailable' => 'Şəkil mövcud deyil',
 			'discover.findNext.savedFeedback' => 'Saxlanmış seçimlərə əlavə edildi',
-			'discover.findNext.skippedFeedback' => 'Hələlik keçildi',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'Hələlik keçildi',
 			'discover.findNext.releaseToConfirm' => 'Təsdiqləmək üçün buraxın',
 			'discover.findNext.remoteHint' => 'Üz qabığı fokusda: ← / → seçin · Seçim düyməsi: təfərrüatlar · ↑ / ↓ fokusu dəyişin',
 			'discover.studio' => 'Studiya',
@@ -7734,9 +7736,9 @@ extension on TranslationsAz {
 			'collections.selectCollection' => 'Kolleksiya seç',
 			'collections.collectionName' => 'Kolleksiya adı',
 			'collections.enterCollectionName' => 'Kolleksiya adını daxil edin',
-			'collections.addedToCollection' => 'Kolleksiyaya əlavə edildi',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Kolleksiyaya əlavə edildi',
 			'collections.errorAddingToCollection' => 'Kolleksiyaya əlavə edilə bilmədi',
 			'collections.created' => 'Kolleksiya yaradıldı',
 			'collections.removeFromCollection' => 'Kolleksiyadan sil',
@@ -8248,9 +8250,9 @@ extension on TranslationsAz {
 			'performanceOverlay.decoder' => 'Çözücü',
 			'performanceOverlay.rawDecoder' => 'Xam çözücü',
 			'performanceOverlay.tunneling' => 'Tünelləmə',
-			'performanceOverlay.passthrough' => 'Birbaşa ötürmə',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Birbaşa ötürmə',
 			'performanceOverlay.aspect' => 'Nisbət',
 			'performanceOverlay.rotation' => 'Dönmə',
 			'performanceOverlay.dvSource' => 'DV mənbəyi',
@@ -8762,9 +8764,9 @@ extension on TranslationsAz {
 			'homeLayout.managePlexRowsDescription' => 'Evdə seçilmiş yolların organizasiyası üçün açılır',
 			'homeLayout.organizeHomeRows' => 'Evdə qalıb',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} sıra: Moving, Hero, Auto-slide, kaldırma',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} yolları organizə edin',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} yolları organizə edin',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Qiyamış + ${n} sıra: Moving, Library, Home, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Bir kahramanın kartı kimi',
 			'homeLayout.heroOnlySingleCollection' => 'Bu sayı yalnız bir koleksiyonun gerçek başlıklarına çözüldüğünde mevcutdır.',
@@ -9276,9 +9278,9 @@ extension on TranslationsAz {
 			'audiobook.customSpeed' => 'Playback hızı',
 			'audiobook.speedHelp' => 'İndərlik: 0.25 x 4 x arasında seçilir.',
 			'audiobook.apply' => 'İhtiyaç',
-			'audiobook.customSleep' => 'Qadın uyku saatləri',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'Qadın uyku saatləri',
 			'audiobook.sleepMinutes' => '1 min və 1440 min arası',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} qapıdan sonra durun',
 			'audiobook.extendSleep' => '5 dəqiqə',
@@ -9790,9 +9792,9 @@ extension on TranslationsAz {
 			'musicExperience.bluetoothDrivingHint' => 'Sürücülük görünüşünü avtomatik açan qoşulmuş Bluetooth çıxışlarını seçin.',
 			'musicTools.loudnessMissing' => 'Səs ucalığı məlumatı qaytarılmadı',
 			'musicTools.loudnessRequested' => 'Analiz sorğusu göndərildi',
-			'musicTools.loudnessUnsupported' => 'Bu server versiyası analiz sorğusunu dəstəkləmir',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Bu server versiyası analiz sorğusunu dəstəkləmir',
 			'musicTools.serverHistory' => 'Serverdə oxutma tarixçəsi',
 			'musicTools.nfcWrite' => 'NFC etiketinə yaz',
 			'musicTools.nfcRead' => 'NFC etiketini skan et',

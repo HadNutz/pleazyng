@@ -1,7 +1,7 @@
 {
   "locale": "hu",
   "inherits": null,
-  "catalogSha256": "9a98e6d5171bdb49780c14d307e878b56959ef0bc96f51db1c4cd48dc004d1a8",
+  "catalogSha256": "e020dcb62b5019f34396eb162aa3e8057d8211cd73aa2ae3e8936b758f4a86b4",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3704,7 +3704,8 @@
     "iptv.pickerCredit": "fork-authored",
     "iptv.playlistBase": "fork-authored",
     "iptv.showMatches": "fork-authored",
-    "iptv.backupFeeds": "fork-authored"
+    "iptv.backupFeeds": "fork-authored",
+    "settings.foldableDisplay": "fork-authored"
   },
   "beforeIndependentQaCorrection": {
     "accessibility.reduceMotionHint": "m2m100-draft",

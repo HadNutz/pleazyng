@@ -347,6 +347,7 @@
     "playerBackend": "Ойнатқыш инфрақұрылымы",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Жиналмалы экранның топсасы",
     "hardwareDecoding": "Аппараттық декодтау",
     "hardwareDecodingDescription": "Мүмкіндігінше аппараттық үдетуді пайдалану",
     "playbackBuffer": "Ойнату буфері",

@@ -297,6 +297,10 @@ bool DisplayModeManager::SetDisplayMode(HWND window, DWORD width, DWORD height, 
   const std::wstring device_name = GetMonitorDeviceName(window);
   if (device_name.empty()) return false;
 
+  // A spanned player can move the picture to a second internal panel. Restore
+  // the first output before taking ownership of display settings on the next.
+  if (mode_changed_ && device_name != original_device_name_ && !RestoreOriginalMode(window)) return false;
+
   const bool mode_was_changed = mode_changed_;
   if (!mode_changed_) SaveOriginalMode(window);
   if (original_device_name_.empty() || original_devmode_.dmPelsWidth == 0 || original_devmode_.dmPelsHeight == 0 ||

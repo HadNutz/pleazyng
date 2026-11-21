@@ -347,6 +347,7 @@
     "playerBackend": "Moteur de lecture",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Charnière de l’écran pliable",
     "hardwareDecoding": "Décodage matériel",
     "hardwareDecodingDescription": "Utiliser l’accélération matérielle lorsqu’elle est disponible",
     "playbackBuffer": "Tampon de lecture",

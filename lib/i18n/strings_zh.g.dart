@@ -489,6 +489,7 @@ class Translations$settings$zh extends Translations$settings$en {
 	@override String get playerBackend => '播放器引擎';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => '折叠屏铰链';
 	@override String get hardwareDecoding => '硬件解码';
 	@override String get hardwareDecodingDescription => '如果可用，使用硬件加速';
 	@override String get playbackBuffer => '播放缓冲';
@@ -5996,6 +5997,7 @@ extension on TranslationsZh {
 			'settings.playerBackend' => '播放器引擎',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => '折叠屏铰链',
 			'settings.hardwareDecoding' => '硬件解码',
 			'settings.hardwareDecodingDescription' => '如果可用，使用硬件加速',
 			'settings.playbackBuffer' => '播放缓冲',
@@ -6187,9 +6189,9 @@ extension on TranslationsZh {
 			'settings.manageLibrariesDescription' => '重新排序和隐藏媒体库',
 			'settings.companionRemoteServer' => '远程控制服务器',
 			'settings.companionRemoteServerDescription' => '允许同一网络中的移动设备控制此应用',
-			'settings.companionRemoteServerStartFailed' => '无法启动远程控制服务器',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => '无法启动远程控制服务器',
 			'settings.companionRemoteServerStopFailed' => '无法停止远程控制服务器',
 			'settings.autoPip' => '自动画中画',
 			'settings.autoPipDescription' => '播放期间离开应用时自动进入画中画模式',
@@ -6701,9 +6703,9 @@ extension on TranslationsZh {
 			'accessibility.reduceMotion' => '减少动作',
 			'accessibility.reduceMotionHint' => '停止焦点指示器、页面切换和装饰效果的动画。',
 			'accessibility.largeTargets' => '触摸目标',
-			'accessibility.largeTargetsHint' => '共享控制器提供更多触摸和辅助导航空间。',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => '共享控制器提供更多触摸和辅助导航空间。',
 			'accessibility.navigationHint' => '使用 Tab 和 Shift+Tab 在控件之间移动，按 Enter 或空格键激活，按 Escape 或返回按钮关闭。打开书籍后，可调整缩放比例和阅读偏好。',
 			'accessibility.textSizeDescription' => '在 Pleazyng 中扩展接口文本,以及您的设备的系统文本大小设置。',
 			'accessibility.boldTextHint' => '加粗界面标签和消息的字重，让它们更容易辨认。',
@@ -7215,9 +7217,9 @@ extension on TranslationsZh {
 			'discover.findNext.artworkLoading' => '正在加载图片…',
 			'discover.findNext.artworkUnavailable' => '图片不可用',
 			'discover.findNext.savedFeedback' => '已加入保存的推荐',
-			'discover.findNext.skippedFeedback' => '已暂时跳过',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => '已暂时跳过',
 			'discover.findNext.releaseToConfirm' => '松开以确认',
 			'discover.findNext.remoteHint' => '封面获得焦点时：← / → 选择 · 选择键查看详情 · ↑ / ↓ 移动焦点',
 			'discover.studio' => '制作公司',
@@ -7729,9 +7731,9 @@ extension on TranslationsZh {
 			'collections.selectCollection' => '选择合集',
 			'collections.collectionName' => '合集名称',
 			'collections.enterCollectionName' => '输入合集名称',
-			'collections.addedToCollection' => '已添加到合集',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => '已添加到合集',
 			'collections.errorAddingToCollection' => '添加到合集失败',
 			'collections.created' => '已创建合集',
 			'collections.removeFromCollection' => '从合集移除',
@@ -8243,9 +8245,9 @@ extension on TranslationsZh {
 			'performanceOverlay.decoder' => '解码器',
 			'performanceOverlay.rawDecoder' => '原始解码器',
 			'performanceOverlay.tunneling' => '隧道',
-			'performanceOverlay.passthrough' => '直通',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => '直通',
 			'performanceOverlay.aspect' => '宽高比',
 			'performanceOverlay.rotation' => '旋转',
 			'performanceOverlay.dvSource' => 'DV 来源',
@@ -8757,9 +8759,9 @@ extension on TranslationsZh {
 			'homeLayout.managePlexRowsDescription' => '开放组织主选行列',
 			'homeLayout.organizeHomeRows' => '安排家居行',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} 行: 移动, 英雄, 自动滑动, 移除',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => '组织 ${library} 行',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => '组织 ${library} 行',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '继续观看 + ${n} 行: 移动, 图书馆, 家, 英雄, 自动滑板',
 			'homeLayout.renderAsHero' => '显示为焦点横幅',
 			'homeLayout.heroOnlySingleCollection' => '只有当此行解决到单一集合的实际标题时才可用',
@@ -9271,9 +9273,9 @@ extension on TranslationsZh {
 			'audiobook.customSpeed' => '定制播放速度',
 			'audiobook.speedHelp' => '选择速度从 0.25× 到 4×。',
 			'audiobook.apply' => '應用',
-			'audiobook.customSleep' => '定制睡眠时间',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => '定制睡眠时间',
 			'audiobook.sleepMinutes' => '时间(1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '播放完${count}章后停止',
 			'audiobook.extendSleep' => '添加5分钟',
@@ -9785,9 +9787,9 @@ extension on TranslationsZh {
 			'musicExperience.bluetoothDrivingHint' => '选择会自动打开驾驶视图的已连接蓝牙输出。',
 			'musicTools.loudnessMissing' => '未返回响度数据',
 			'musicTools.loudnessRequested' => '已发送分析请求',
-			'musicTools.loudnessUnsupported' => '此服务器版本不支持分析请求',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => '此服务器版本不支持分析请求',
 			'musicTools.serverHistory' => '服务器播放历史',
 			'musicTools.nfcWrite' => '写入 NFC 标签',
 			'musicTools.nfcRead' => '扫描 NFC 标签',

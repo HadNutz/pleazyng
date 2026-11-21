@@ -347,6 +347,7 @@
     "playerBackend": "Lejátszómotor",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Az összehajtható kijelző zsanérja",
     "hardwareDecoding": "Hardveres dekódolás",
     "hardwareDecodingDescription": "Hardveres gyorsítás használata, ha elérhető",
     "playbackBuffer": "Lejátszási puffer",

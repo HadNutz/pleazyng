@@ -489,6 +489,7 @@ class _Translations$settings$cs extends Translations$settings$en {
 	@override String get playerBackend => 'Hráč Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Pant skládacího displeje';
 	@override String get hardwareDecoding => 'Hardware dekódování';
 	@override String get hardwareDecodingDescription => 'Použijte hardware akcelerace, když je k dispozici';
 	@override String get playbackBuffer => 'Hrají buffer';
@@ -6045,6 +6046,7 @@ extension on TranslationsCs {
 			'settings.playerBackend' => 'Hráč Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Pant skládacího displeje',
 			'settings.hardwareDecoding' => 'Hardware dekódování',
 			'settings.hardwareDecodingDescription' => 'Použijte hardware akcelerace, když je k dispozici',
 			'settings.playbackBuffer' => 'Hrají buffer',
@@ -6236,9 +6238,9 @@ extension on TranslationsCs {
 			'settings.manageLibrariesDescription' => 'Přehrávat a skrývat knihovny',
 			'settings.companionRemoteServer' => 'Společnost Remote Server',
 			'settings.companionRemoteServerDescription' => 'Umožňujte mobilním zařízením v síti ovládat tuto aplikaci',
-			'settings.companionRemoteServerStartFailed' => 'Nemohla spustit server',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Nemohla spustit server',
 			'settings.companionRemoteServerStopFailed' => 'Nemohla jsem zastavit server',
 			'settings.autoPip' => 'Auto Picture v obraze',
 			'settings.autoPipDescription' => 'Automaticky zadejte obrázek v obrazu, když opustíte aplikaci během přehrávání',
@@ -6750,9 +6752,9 @@ extension on TranslationsCs {
 			'accessibility.reduceMotion' => 'Snížení pohybu',
 			'accessibility.reduceMotionHint' => 'Zastaví pohyb indikátoru zaměření, přechody stránek a dekorativní efekty.',
 			'accessibility.largeTargets' => 'větší cíle dotyku',
-			'accessibility.largeTargetsHint' => 'Dáváme sdíleným ovládacím prvkům více prostoru pro dotyk a asistenční navigaci.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'Dáváme sdíleným ovládacím prvkům více prostoru pro dotyk a asistenční navigaci.',
 			'accessibility.navigationHint' => 'Mezi ovládacími prvky se přesouvejte klávesami Tab a Shift+Tab, aktivujte je klávesou Enter nebo mezerníkem a zavírejte klávesou Escape nebo tlačítkem Zpět. Při otevřené knize je dostupné přiblížení a nastavení čtení.',
 			'accessibility.textSizeDescription' => 'Rozsah textového rozhraní v Pleazyng kromě nastavení velikosti textu systému vašeho zařízení.',
 			'accessibility.boldTextHint' => 'Použijte těžší váhu pro rozhraní etikety a zprávy, aby je jednodušší rozlišovat.',
@@ -7264,9 +7266,9 @@ extension on TranslationsCs {
 			'discover.findNext.artworkLoading' => 'Načítání obrázku…',
 			'discover.findNext.artworkUnavailable' => 'Obrázek není k dispozici',
 			'discover.findNext.savedFeedback' => 'Přidáno mezi uložené tipy',
-			'discover.findNext.skippedFeedback' => 'Zatím přeskočeno',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'Zatím přeskočeno',
 			'discover.findNext.releaseToConfirm' => 'Uvolněním potvrďte',
 			'discover.findNext.remoteHint' => 'Vybraný obal: ← / → volba · Vybrat: podrobnosti · ↑ / ↓ přesun výběru',
 			'discover.studio' => 'Studio',
@@ -7778,9 +7780,9 @@ extension on TranslationsCs {
 			'collections.selectCollection' => 'Vyberte kolekci',
 			'collections.collectionName' => 'Název kolekce',
 			'collections.enterCollectionName' => 'Vložte název kolekce',
-			'collections.addedToCollection' => 'Přidáno do sbírky',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Přidáno do sbírky',
 			'collections.errorAddingToCollection' => 'Nedokázal přidat do sbírky',
 			'collections.created' => 'Sbírka vytvořená',
 			'collections.removeFromCollection' => 'Odebrat z kolekce',
@@ -8292,9 +8294,9 @@ extension on TranslationsCs {
 			'performanceOverlay.decoder' => 'dekódování',
 			'performanceOverlay.rawDecoder' => 'Růžový decoder',
 			'performanceOverlay.tunneling' => 'tunelů',
-			'performanceOverlay.passthrough' => 'Pastrátová',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Pastrátová',
 			'performanceOverlay.aspect' => 'Pohled',
 			'performanceOverlay.rotation' => 'Rotace',
 			'performanceOverlay.dvSource' => 'Zdroj DV',
@@ -8806,9 +8808,9 @@ extension on TranslationsCs {
 			'homeLayout.managePlexRowsDescription' => 'Otevřeno pro organizaci domácího výběru řádků',
 			'homeLayout.organizeHomeRows' => 'Domácí řádky',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} řádky: pohyb, Hero, Auto-slide, odstranění',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Složení ${library} řádků',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Složení ${library} řádků',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Pokračovat v sledování + ${n} řádky: pohyb, knihovna, Domů, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Vstup jako hrdinská karta',
 			'homeLayout.heroOnlySingleCollection' => 'Dostupné pouze tehdy, když se tato řada vyřeší na skutečné tituly jedné kolekce',
@@ -9320,9 +9322,9 @@ extension on TranslationsCs {
 			'audiobook.customSpeed' => 'Přizpůsobená hrací rychlost',
 			'audiobook.speedHelp' => 'Vybírejte rychlost od 0,25× do 4×.',
 			'audiobook.apply' => 'aplikovat',
-			'audiobook.customSleep' => 'Přizpůsobený čas spánku',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'Přizpůsobený čas spánku',
 			'audiobook.sleepMinutes' => 'minuty (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Zastavte se po ${count} kapitolách',
 			'audiobook.extendSleep' => 'Přidejte 5 minut',
@@ -9834,9 +9836,9 @@ extension on TranslationsCs {
 			'musicExperience.bluetoothDrivingHint' => 'Vyberte připojené Bluetooth výstupy, které automaticky otevřou zobrazení pro řízení.',
 			'musicTools.loudnessMissing' => 'Server nevrátil údaje o hlasitosti',
 			'musicTools.loudnessRequested' => 'Požadavek na analýzu byl odeslán',
-			'musicTools.loudnessUnsupported' => 'Tato verze serveru nepodporuje požadavky na analýzu',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Tato verze serveru nepodporuje požadavky na analýzu',
 			'musicTools.serverHistory' => 'Historie přehrávání na serveru',
 			'musicTools.nfcWrite' => 'Zapsat NFC štítek',
 			'musicTools.nfcRead' => 'Naskenovat značku NFC',

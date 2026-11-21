@@ -1071,6 +1071,9 @@ class Translations$settings$en {
 	/// en: 'mpv'
 	String get mpv => 'mpv';
 
+	/// en: 'Foldable display hinge'
+	String get foldableDisplay => 'Foldable display hinge';
+
 	/// en: 'Hardware Decoding'
 	String get hardwareDecoding => 'Hardware Decoding';
 
@@ -18664,6 +18667,7 @@ extension on Translations {
 			'settings.playerBackend' => 'Player Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Foldable display hinge',
 			'settings.hardwareDecoding' => 'Hardware Decoding',
 			'settings.hardwareDecodingDescription' => 'Use hardware acceleration when available',
 			'settings.playbackBuffer' => 'Playback Buffer',
@@ -18845,9 +18849,9 @@ extension on Translations {
 			'settings.askDownloadQualityEachTime' => 'Choose quality for each download',
 			'settings.askDownloadQualityEachTimeDescription' => 'Show the quality picker before queueing each video download',
 			'settings.cellularDownloadBlocked' => 'Downloads are blocked on cellular. Use Wi-Fi or change the setting.',
-			'settings.maxVolume' => 'Maximum Volume',
 			_ => null,
 		} ?? switch (path) {
+			'settings.maxVolume' => 'Maximum Volume',
 			'settings.maxVolumeDescription' => 'Allow volume boost above 100% for quiet media',
 			'settings.maxVolumePercent' => ({required Object percent}) => '${percent}%',
 			'settings.discordRichPresence' => 'Discord Rich Presence',
@@ -19359,9 +19363,9 @@ extension on Translations {
 			'accessibility.mediaCardShow' => ({required Object title}) => '${title}, TV show',
 			'accessibility.mediaCardEpisode' => ({required Object title, required Object episodeInfo}) => '${title}, ${episodeInfo}',
 			'accessibility.mediaCardSeason' => ({required Object title, required Object seasonInfo}) => '${title}, ${seasonInfo}',
-			'accessibility.mediaCardWatched' => 'watched',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.mediaCardWatched' => 'watched',
 			'accessibility.mediaCardPartiallyWatched' => ({required Object percent}) => '${percent} percent watched',
 			'accessibility.mediaCardUnwatched' => 'unwatched',
 			'accessibility.tapToPlay' => 'Tap to play',
@@ -19873,9 +19877,9 @@ extension on Translations {
 			'iptv.allCategories' => 'All categories',
 			'iptv.noVodItems' => 'No titles in this category.',
 			'iptv.vodUnavailable' => 'This source could not load its catalogue. Check the provider credentials and retry.',
-			'iptv.vodPlaybackFailed' => 'Could not start this title. Check the provider connection and try again.',
 			_ => null,
 		} ?? switch (path) {
+			'iptv.vodPlaybackFailed' => 'Could not start this title. Check the provider connection and try again.',
 			'iptv.play' => 'Play',
 			'iptv.noEpisodes' => 'No episodes are available for this series.',
 			'iptv.season' => 'Season',
@@ -20387,9 +20391,9 @@ extension on Translations {
 			'explore.mdblistShelves.accountChanged' => 'The account or profile changed. Reopen these settings.',
 			'explore.mdblistShelves.settingsUnreadable' => 'Saved shelves could not be read. Select your lists again to replace these settings.',
 			'explore.title' => 'Explore',
-			'explore.selectSource' => 'Select source',
 			_ => null,
 		} ?? switch (path) {
+			'explore.selectSource' => 'Select source',
 			'explore.rows.watchlist' => 'Watchlist',
 			'explore.rows.recommendedMovies' => 'Recommended Movies',
 			'explore.rows.recommendedShows' => 'Recommended Shows',
@@ -20901,9 +20905,9 @@ extension on Translations {
 			'downloads.partialDownloadClickToComplete' => 'Partially downloaded - Click to complete',
 			'downloads.deleting' => 'Deleting...',
 			'downloads.deletingWithProgress' => ({required Object title, required Object current, required Object total}) => 'Deleting ${title}... (${current} of ${total})',
-			'downloads.queuedTooltip' => 'Queued',
 			_ => null,
 		} ?? switch (path) {
+			'downloads.queuedTooltip' => 'Queued',
 			'downloads.queuedFilesTooltip' => ({required Object files}) => 'Queued ${files}',
 			'downloads.downloadingTooltip' => 'Downloading...',
 			'downloads.downloadingFilesTooltip' => ({required Object files}) => 'Downloading ${files}',
@@ -21415,9 +21419,9 @@ extension on Translations {
 			'metadataEdit.tags' => 'Tags',
 			'metadataEdit.addTag' => 'Add tag',
 			'metadataEdit.genre' => 'Genre',
-			'metadataEdit.director' => 'Director',
 			_ => null,
 		} ?? switch (path) {
+			'metadataEdit.director' => 'Director',
 			'metadataEdit.writer' => 'Writer',
 			'metadataEdit.producer' => 'Producer',
 			'metadataEdit.country' => 'Country',
@@ -21929,9 +21933,9 @@ extension on Translations {
 			'homeLayout.reorderingUnlocked' => 'Reordering unlocked',
 			'homeLayout.reorderingLocked' => 'Reordering locked',
 			'homeLayout.rowsCanBeDragged' => 'Rows can be dragged — tap the lock to prevent that',
-			'homeLayout.tapLockToDrag' => 'Tap the lock to drag rows',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.tapLockToDrag' => 'Tap the lock to drag rows',
 			'homeLayout.customRowLabel' => ({required Object title}) => 'Custom: ${title}',
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
 			'homeLayout.hide' => 'Hide',
@@ -22443,9 +22447,9 @@ extension on Translations {
 			'sourceSetup.nfsEncryptionHelp' => 'Require TLS 1.3 for NFS and the mount service. Connections fail closed if the NAS does not support it.',
 			'sourceSetup.nfsTrustCertificate' => 'Custom NFS CA or server certificate (PEM, optional)',
 			'sourceSetup.nfsTrustHelp' => 'Leave blank for certificates trusted by this device. Add a private CA or self-signed server certificate when needed; its names must match the NFS URL host.',
-			'sourceSetup.nfsTrustInvalid' => 'Use a CA or server certificate in PEM format. Do not include a private key.',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.nfsTrustInvalid' => 'Use a CA or server certificate in PEM format. Do not include a private key.',
 			'sourceSetup.addTrustCertificate' => 'Add custom trust certificate',
 			'sourceSetup.replaceTrustCertificate' => 'Replace saved custom certificate',
 			'sourceSetup.nfsTlsHelp' => 'RPC-with-TLS uses the usual NFS and mount service ports and requires NAS support for RFC 9289. TLS 1.3 is required. The host name or IP must match the certificate. AUTH_SYS UID/GID still apply inside the encrypted channel.',
@@ -22957,9 +22961,9 @@ extension on Translations {
 			'podcasts.searchHint' => 'Search shows or paste an Apple Podcasts or Podcast Index link',
 			'podcasts.searchHelp' => 'Choose a directory to search. Add private RSS links with Add feed.',
 			'podcasts.addFeed' => 'Add feed',
-			'podcasts.addFeedHelp' => 'Paste a publisher RSS/Atom URL, including a private Patreon or other member feed. Use source setup for HTTP or password-protected feeds.',
 			_ => null,
 		} ?? switch (path) {
+			'podcasts.addFeedHelp' => 'Paste a publisher RSS/Atom URL, including a private Patreon or other member feed. Use source setup for HTTP or password-protected feeds.',
 			'podcasts.subscribe' => 'Subscribe',
 			'podcasts.subscribed' => 'Subscribed',
 			'podcasts.alreadySubscribed' => 'This feed is already subscribed.',
@@ -23471,9 +23475,9 @@ extension on Translations {
 			'subtitleCapture.transcribingProgress' => ({required Object percent}) => 'Transcribing audio locally (${percent}%)…',
 			'subtitleCapture.translating' => 'Translating speech to English locally…',
 			'subtitleCapture.translatingProgress' => ({required Object percent}) => 'Translating speech to English locally (${percent}%)…',
-			'subtitleCapture.processingAudio' => 'Processing audio locally…',
 			_ => null,
 		} ?? switch (path) {
+			'subtitleCapture.processingAudio' => 'Processing audio locally…',
 			'subtitleCapture.processingAudioProgress' => ({required Object percent}) => 'Processing audio locally (${percent}%)…',
 			'subtitleCapture.cpuFallback' => 'GPU speech processing failed. Retrying on CPU…',
 			'karaokeUi.chooseAMicrophone' => 'Choose a microphone',

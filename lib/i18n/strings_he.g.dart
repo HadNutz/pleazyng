@@ -489,6 +489,7 @@ class _Translations$settings$he extends Translations$settings$en {
 	@override String get playerBackend => 'שחקן Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'ציר המסך המתקפל';
 	@override String get hardwareDecoding => 'דקורטיבי חומרה';
 	@override String get hardwareDecodingDescription => 'השתמש בהאיץ חומרה כאשר זמין';
 	@override String get playbackBuffer => 'Playback בופר';
@@ -6009,6 +6010,7 @@ extension on TranslationsHe {
 			'settings.playerBackend' => 'שחקן Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'ציר המסך המתקפל',
 			'settings.hardwareDecoding' => 'דקורטיבי חומרה',
 			'settings.hardwareDecodingDescription' => 'השתמש בהאיץ חומרה כאשר זמין',
 			'settings.playbackBuffer' => 'Playback בופר',
@@ -6200,9 +6202,9 @@ extension on TranslationsHe {
 			'settings.manageLibrariesDescription' => 'מחזירים ומסתירים ספרייה',
 			'settings.companionRemoteServer' => 'שרת מרחוק',
 			'settings.companionRemoteServerDescription' => 'תאפשר למכשירים ניידים ברשת שלך לשלוט באפליקציה זו',
-			'settings.companionRemoteServerStartFailed' => 'לא יכולתי להתחיל את שרת החברות',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'לא יכולתי להתחיל את שרת החברות',
 			'settings.companionRemoteServerStopFailed' => 'לא יכולתי לעצור את שרת החברות.',
 			'settings.autoPip' => 'צילום: Auto Picture in Picture',
 			'settings.autoPipDescription' => 'כניסת תמונה בתמונה באופן אוטומטי כאשר אתה עוזב את האפליקציה במהלך הצגת',
@@ -6714,9 +6716,9 @@ extension on TranslationsHe {
 			'accessibility.reduceMotion' => 'הפחתת התנועה',
 			'accessibility.reduceMotionHint' => 'להפסיק את התנועה של סימון המיקוד, מעברי העמודים והאפקטים הדקורטיביים.',
 			'accessibility.largeTargets' => 'מטרות מגע גדולות',
-			'accessibility.largeTargetsHint' => 'להגדיל את השטח של הפקדים המשותפים כדי להקל על מגע ועל ניווט בעזרת טכנולוגיות מסייעות.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'להגדיל את השטח של הפקדים המשותפים כדי להקל על מגע ועל ניווט בעזרת טכנולוגיות מסייעות.',
 			'accessibility.navigationHint' => 'אפשר להשתמש ב-Tab וב-Shift+Tab כדי לעבור בין הפקדים, ב-Enter או ב-Space כדי להפעיל, וב-Escape או בכפתור החזרה כדי לסגור. כשספר פתוח, אפשר לשנות את הזום ואת העדפות הקריאה.',
 			'accessibility.textSizeDescription' => 'טקסט אינטראקציה בקנה מידה ב- Pleazyng מלבד הגדרת גודל הטקסט של המערכת במכשיר שלך.',
 			'accessibility.boldTextHint' => 'השתמש במשקל כבד יותר עבור תוויות ממשק והודעות כדי להפוך אותם קל יותר להבדיל.',
@@ -7228,9 +7230,9 @@ extension on TranslationsHe {
 			'discover.findNext.artworkLoading' => 'טוען תמונה…',
 			'discover.findNext.artworkUnavailable' => 'התמונה אינה זמינה',
 			'discover.findNext.savedFeedback' => 'נוסף לבחירות השמורות',
-			'discover.findNext.skippedFeedback' => 'דולג לעת עתה',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'דולג לעת עתה',
 			'discover.findNext.releaseToConfirm' => 'שחררו לאישור',
 			'discover.findNext.remoteHint' => 'כשהעטיפה במיקוד: ← / → בחירה · לחצן בחירה: פרטים · ↑ / ↓ העברת מיקוד',
 			'discover.studio' => 'סטודיו',
@@ -7742,9 +7744,9 @@ extension on TranslationsHe {
 			'collections.selectCollection' => 'בחר אוסף',
 			'collections.collectionName' => 'שם האוסף',
 			'collections.enterCollectionName' => 'כניסת שם האוסף',
-			'collections.addedToCollection' => 'הוספת לקהילה',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'הוספת לקהילה',
 			'collections.errorAddingToCollection' => 'לא הצלחתי להוסיף לאוסף',
 			'collections.created' => 'אוסף שנוצר',
 			'collections.removeFromCollection' => 'הסר מאוספים',
@@ -8256,9 +8258,9 @@ extension on TranslationsHe {
 			'performanceOverlay.decoder' => 'דקורטיבי',
 			'performanceOverlay.rawDecoder' => 'דקורטיבי Raw',
 			'performanceOverlay.tunneling' => 'טונל',
-			'performanceOverlay.passthrough' => 'פסטהרו',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'פסטהרו',
 			'performanceOverlay.aspect' => 'מבט',
 			'performanceOverlay.rotation' => 'סיבוב',
 			'performanceOverlay.dvSource' => 'מקור DV',
@@ -8770,9 +8772,9 @@ extension on TranslationsHe {
 			'homeLayout.managePlexRowsDescription' => 'פתוח לארגן את השורות שנבחרו בבית',
 			'homeLayout.organizeHomeRows' => 'ארגון שורות בית',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} שורות: זז, גיבור, אוטומטית, להסיר',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'ארגון ${library} שורות',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'ארגון ${library} שורות',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'המשך צפייה + ${n} שורות: תנועה, ספרייה, בית, גיבור, אוטומטית',
 			'homeLayout.renderAsHero' => 'רנדה ככרטיס גיבור',
 			'homeLayout.heroOnlySingleCollection' => 'זמין רק כאשר שורה זו מתפתחת לכותרות אמיתיות של אוסף יחיד',
@@ -9284,9 +9286,9 @@ extension on TranslationsHe {
 			'audiobook.customSpeed' => 'מהירות Playback Custom',
 			'audiobook.speedHelp' => 'בחר מהירות של 0.25× עד 4×.',
 			'audiobook.apply' => 'יישום',
-			'audiobook.customSleep' => 'שעות שינה מותאמות אישית',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'שעות שינה מותאמות אישית',
 			'audiobook.sleepMinutes' => 'דקות (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'עקבו אחרי ${count}',
 			'audiobook.extendSleep' => 'להוסיף 5 דקות',
@@ -9798,9 +9800,9 @@ extension on TranslationsHe {
 			'musicExperience.bluetoothDrivingHint' => 'בחרו יציאות Bluetooth מחוברות שיפתחו אוטומטית את תצוגת הנהיגה.',
 			'musicTools.loudnessMissing' => 'לא התקבלו נתוני עוצמת קול',
 			'musicTools.loudnessRequested' => 'בקשת ניתוח נשלחה',
-			'musicTools.loudnessUnsupported' => 'גרסת השרת הזו אינה תומכת בבקשות ניתוח',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'גרסת השרת הזו אינה תומכת בבקשות ניתוח',
 			'musicTools.serverHistory' => 'היסטוריית ניגון בשרת',
 			'musicTools.nfcWrite' => 'כתיבה לתג NFC',
 			'musicTools.nfcRead' => 'סריקת תג NFC',

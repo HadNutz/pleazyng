@@ -40,11 +40,14 @@ class LiveTvSessionArgs {
   /// Server-backed live channels and ordinary channel launches leave it null.
   final LiveTvProgram? initialProgram;
 
+  final int? restoredBroadcastEpoch;
+
   const LiveTvSessionArgs({
     required this.channel,
     this.channels,
     this.currentChannelIndex,
     this.startPosition = LiveTvStartPosition.ask,
     this.initialProgram,
+    this.restoredBroadcastEpoch,
   });
 }

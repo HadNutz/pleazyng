@@ -489,6 +489,7 @@ class _Translations$settings$th extends Translations$settings$en {
 	@override String get playerBackend => 'ผู้เล่น Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'บานพับของหน้าจอพับได้';
 	@override String get hardwareDecoding => 'การเข้ารหัสฮาร์ดแวร์';
 	@override String get hardwareDecodingDescription => 'ใช้ความเร็วฮาร์ดแวร์เมื่อมี';
 	@override String get playbackBuffer => 'บูฟเวอร์ Playback';
@@ -5976,6 +5977,7 @@ extension on TranslationsTh {
 			'settings.playerBackend' => 'ผู้เล่น Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'บานพับของหน้าจอพับได้',
 			'settings.hardwareDecoding' => 'การเข้ารหัสฮาร์ดแวร์',
 			'settings.hardwareDecodingDescription' => 'ใช้ความเร็วฮาร์ดแวร์เมื่อมี',
 			'settings.playbackBuffer' => 'บูฟเวอร์ Playback',
@@ -6167,9 +6169,9 @@ extension on TranslationsTh {
 			'settings.manageLibrariesDescription' => 'การจัดเก็บและซ่อนห้องสมุด',
 			'settings.companionRemoteServer' => 'เซิร์ฟเวอร์ระยะไกล',
 			'settings.companionRemoteServerDescription' => 'ให้อุปกรณ์มือถือบนเครือข่ายของคุณควบคุมแอปนี้',
-			'settings.companionRemoteServerStartFailed' => 'ไม่สามารถเริ่มต้นเซิร์ฟเวอร์คู่ค้าได้',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'ไม่สามารถเริ่มต้นเซิร์ฟเวอร์คู่ค้าได้',
 			'settings.companionRemoteServerStopFailed' => 'ไม่สามารถหยุดเซิร์ฟเวอร์พันธมิตร',
 			'settings.autoPip' => 'ภาพถ่ายในภาพ',
 			'settings.autoPipDescription' => 'เข้าสู่ภาพในภาพโดยอัตโนมัติเมื่อคุณออกจากแอปในระหว่างการเล่น',
@@ -6681,9 +6683,9 @@ extension on TranslationsTh {
 			'accessibility.reduceMotion' => 'ลดการเคลื่อนไหว',
 			'accessibility.reduceMotionHint' => 'หยุดการเคลื่อนไหวของตัวบอกโฟกัส การเปลี่ยนหน้า และเอฟเฟกต์ตกแต่ง',
 			'accessibility.largeTargets' => 'เป้าหมายสัมผัสขนาดใหญ่',
-			'accessibility.largeTargetsHint' => 'ให้การควบคุมร่วมกันพื้นที่มากขึ้นสําหรับสัมผัสและนิวเวชั่นช่วย',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'ให้การควบคุมร่วมกันพื้นที่มากขึ้นสําหรับสัมผัสและนิวเวชั่นช่วย',
 			'accessibility.navigationHint' => 'ใช้ Tab และ Shift+Tab เพื่อย้ายระหว่างควบคุม Enter หรือ Space เพื่อเปิดใช้งาน และ Escape หรือ Back เพื่อปิด โปรแกรมอ่าน zoom และเลือกอ่านพร้อมใช้งานในขณะที่หนังสือเปิด',
 			'accessibility.textSizeDescription' => 'หมายเลขอินเตอร์เฟซขนาดใน Pleazyng นอกจากการตั้งค่าขนาดข้อความระบบของอุปกรณ์ของคุณ',
 			'accessibility.boldTextHint' => 'ใช้น้ําหนักที่หนักขึ้นสําหรับแท็กอินเตอร์เฟซและข้อความเพื่อให้ง่ายต่อการแยกต่างหาก',
@@ -7195,9 +7197,9 @@ extension on TranslationsTh {
 			'discover.findNext.artworkLoading' => 'กำลังโหลดภาพ…',
 			'discover.findNext.artworkUnavailable' => 'ไม่มีภาพ',
 			'discover.findNext.savedFeedback' => 'เพิ่มในรายการที่บันทึกแล้ว',
-			'discover.findNext.skippedFeedback' => 'ข้ามไปก่อนแล้ว',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'ข้ามไปก่อนแล้ว',
 			'discover.findNext.releaseToConfirm' => 'ปล่อยเพื่อยืนยัน',
 			'discover.findNext.remoteHint' => 'เมื่อโฟกัสภาพปก: ← / → เลือก · ปุ่มเลือก: รายละเอียด · ↑ / ↓ ย้ายโฟกัส',
 			'discover.studio' => 'สตูดิโอ',
@@ -7709,9 +7711,9 @@ extension on TranslationsTh {
 			'collections.selectCollection' => 'เลือกชุด',
 			'collections.collectionName' => 'ชื่อการเก็บเกี่ยว',
 			'collections.enterCollectionName' => 'ระบุชื่อการเก็บรวบรวม',
-			'collections.addedToCollection' => 'เพิ่มเข้าสู่การเก็บเกี่ยว',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'เพิ่มเข้าสู่การเก็บเกี่ยว',
 			'collections.errorAddingToCollection' => 'ไม่สามารถเพิ่มเข้าสู่การเก็บเกี่ยว',
 			'collections.created' => 'การเก็บรวบรวม',
 			'collections.removeFromCollection' => 'การกําจัดจากการเก็บรวบรวม',
@@ -8223,9 +8225,9 @@ extension on TranslationsTh {
 			'performanceOverlay.decoder' => 'การตกแต่ง',
 			'performanceOverlay.rawDecoder' => 'วัตถุประสงค์',
 			'performanceOverlay.tunneling' => 'ทนเลอร์',
-			'performanceOverlay.passthrough' => 'โพสต์',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'โพสต์',
 			'performanceOverlay.aspect' => 'ความเห็น',
 			'performanceOverlay.rotation' => 'การหมุน',
 			'performanceOverlay.dvSource' => 'หลักฐาน',
@@ -8737,9 +8739,9 @@ extension on TranslationsTh {
 			'homeLayout.managePlexRowsDescription' => 'เปิดเพื่อจัดเตรียมเส้นที่เลือกในบ้าน',
 			'homeLayout.organizeHomeRows' => 'การจัดเรียงสายบ้าน',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} เถว: การเคลื่อนไหว, สัตว์ประหลาด, การลบอัตโนมัติ, ลบ',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'จัดการ ${library} เถว',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'จัดการ ${library} เถว',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} เกรด: การเคลื่อนไหว, ห้องสมุด, บ้าน, พระมหากษัตริย์, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render ในฐานะที่เป็นการ์ดฮีโร่',
 			'homeLayout.heroOnlySingleCollection' => 'เท่านั้นสามารถใช้ได้เมื่อแถวนี้ได้รับการแก้ไขกับชื่อจริงของชุดเดียว',
@@ -9251,9 +9253,9 @@ extension on TranslationsTh {
 			'audiobook.customSpeed' => 'ความเร็วการเล่นแบบกําหนดเอง',
 			'audiobook.speedHelp' => 'เลือกความเร็วจาก 0.25× ถึง 4×',
 			'audiobook.apply' => 'ใบสมัคร',
-			'audiobook.customSleep' => 'ช่วงเวลาการนอนหลับ',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'ช่วงเวลาการนอนหลับ',
 			'audiobook.sleepMinutes' => 'นาที (1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'หยุดหลังจาก ${count} ประเภท',
 			'audiobook.extendSleep' => 'เพิ่ม 5 นาที',
@@ -9765,9 +9767,9 @@ extension on TranslationsTh {
 			'musicExperience.bluetoothDrivingHint' => 'เลือกเอาต์พุต Bluetooth ที่เชื่อมต่อเพื่อเปิดมุมมองการขับรถโดยอัตโนมัติ',
 			'musicTools.loudnessMissing' => 'ไม่ได้รับข้อมูลความดัง',
 			'musicTools.loudnessRequested' => 'ส่งคำขอวิเคราะห์แล้ว',
-			'musicTools.loudnessUnsupported' => 'เซิร์ฟเวอร์เวอร์ชันนี้ไม่รองรับคำขอวิเคราะห์',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'เซิร์ฟเวอร์เวอร์ชันนี้ไม่รองรับคำขอวิเคราะห์',
 			'musicTools.serverHistory' => 'ประวัติการเล่นบนเซิร์ฟเวอร์',
 			'musicTools.nfcWrite' => 'เขียนแท็ก NFC',
 			'musicTools.nfcRead' => 'สแกนแท็ก NFC',

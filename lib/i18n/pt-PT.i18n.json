@@ -155,6 +155,7 @@
     "mpvConfig": "mpv.conf"
   },
   "settings": {
+    "foldableDisplay": "Dobradiça do ecrã dobrável",
     "title": "Definições",
     "language": "Idioma",
     "theme": "Tema",

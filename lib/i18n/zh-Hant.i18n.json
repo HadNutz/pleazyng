@@ -347,6 +347,7 @@
     "playerBackend": "播放器引擎",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "摺疊螢幕鉸鏈",
     "hardwareDecoding": "硬體解碼",
     "hardwareDecodingDescription": "如果支援，使用硬體加速",
     "playbackBuffer": "播放緩衝",

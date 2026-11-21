@@ -489,6 +489,7 @@ class _Translations$settings$ja extends Translations$settings$en {
 	@override String get playerBackend => 'プレーヤーバックエンド';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => '折りたたみ画面のヒンジ';
 	@override String get hardwareDecoding => 'ハードウェアデコード';
 	@override String get hardwareDecodingDescription => '利用可能な場合にハードウェアアクセラレーションを使用';
 	@override String get playbackBuffer => '再生バッファー';
@@ -5996,6 +5997,7 @@ extension on TranslationsJa {
 			'settings.playerBackend' => 'プレーヤーバックエンド',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => '折りたたみ画面のヒンジ',
 			'settings.hardwareDecoding' => 'ハードウェアデコード',
 			'settings.hardwareDecodingDescription' => '利用可能な場合にハードウェアアクセラレーションを使用',
 			'settings.playbackBuffer' => '再生バッファー',
@@ -6187,9 +6189,9 @@ extension on TranslationsJa {
 			'settings.manageLibrariesDescription' => 'ライブラリを並べ替えたり非表示にしたりできます',
 			'settings.companionRemoteServer' => 'コンパニオンリモートサーバー',
 			'settings.companionRemoteServerDescription' => 'ネットワーク上のモバイルデバイスからこのアプリを操作できるようにする',
-			'settings.companionRemoteServerStartFailed' => 'コンパニオンリモートサーバーを開始できませんでした',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'コンパニオンリモートサーバーを開始できませんでした',
 			'settings.companionRemoteServerStopFailed' => 'コンパニオンリモートサーバーを停止できませんでした',
 			'settings.autoPip' => '自動ピクチャーインピクチャー',
 			'settings.autoPipDescription' => '再生中にアプリを離れると、自動的にピクチャーインピクチャーに切り替えます',
@@ -6701,9 +6703,9 @@ extension on TranslationsJa {
 			'accessibility.reduceMotion' => '動きを減らす',
 			'accessibility.reduceMotionHint' => 'フォーカス表示、ページ切り替え、装飾効果の動きを止めます。',
 			'accessibility.largeTargets' => 'タッチターゲットの拡大',
-			'accessibility.largeTargetsHint' => '共通の操作ボタンの領域を広げ、タッチ操作や支援技術による操作をしやすくします。',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => '共通の操作ボタンの領域を広げ、タッチ操作や支援技術による操作をしやすくします。',
 			'accessibility.navigationHint' => 'TabとShift+Tabで操作項目を移動し、EnterまたはSpaceで実行、Escapeまたは戻るボタンで閉じます。本を開いている間は、拡大率や読書設定を変更できます。',
 			'accessibility.textSizeDescription' => 'Pleazyng のスケールインターフェイスのテキストは、デバイスのシステムのテキスタイル設定に加えて。',
 			'accessibility.boldTextHint' => 'インターフェイスラベルやメッセージに重い重さを使用して、それらを区別しやすくなります。',
@@ -7215,9 +7217,9 @@ extension on TranslationsJa {
 			'discover.findNext.artworkLoading' => '画像を読み込み中…',
 			'discover.findNext.artworkUnavailable' => '画像を表示できません',
 			'discover.findNext.savedFeedback' => '保存済み候補に追加しました',
-			'discover.findNext.skippedFeedback' => 'いったんスキップしました',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'いったんスキップしました',
 			'discover.findNext.releaseToConfirm' => '離して確定',
 			'discover.findNext.remoteHint' => '表紙にフォーカス：← / → で選択・決定で詳細・↑ / ↓ でフォーカス移動',
 			'discover.studio' => 'スタジオ',
@@ -7729,9 +7731,9 @@ extension on TranslationsJa {
 			'collections.selectCollection' => 'コレクションを選択',
 			'collections.collectionName' => 'コレクション名',
 			'collections.enterCollectionName' => 'コレクション名を入力',
-			'collections.addedToCollection' => 'コレクションに追加しました',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'コレクションに追加しました',
 			'collections.errorAddingToCollection' => 'コレクションへの追加に失敗しました',
 			'collections.created' => 'コレクションを作成しました',
 			'collections.removeFromCollection' => 'コレクションから削除',
@@ -8243,9 +8245,9 @@ extension on TranslationsJa {
 			'performanceOverlay.decoder' => 'デコーダー',
 			'performanceOverlay.rawDecoder' => 'Raw デコーダー',
 			'performanceOverlay.tunneling' => 'トンネリング',
-			'performanceOverlay.passthrough' => 'パススルー',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'パススルー',
 			'performanceOverlay.aspect' => 'アスペクト',
 			'performanceOverlay.rotation' => '回転',
 			'performanceOverlay.dvSource' => 'DV ソース',
@@ -8757,9 +8759,9 @@ extension on TranslationsJa {
 			'homeLayout.managePlexRowsDescription' => 'ホーム 選択のラインを整理するためにオープン',
 			'homeLayout.organizeHomeRows' => 'ホーム ラウンドの整理',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ライン: 移動、 ヒーロー、 自動スライド、 削除',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => '組織 ${library} ライン',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => '組織 ${library} ライン',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '続きを見る + ${n} 行: 移動, 図書館, ホーム, ヒーロー, 自動スライド',
 			'homeLayout.renderAsHero' => 'ヒーローカードとしての出張',
 			'homeLayout.heroOnlySingleCollection' => 'この行が単一のコレクションの実際のタイトルに解決する場合にのみ利用可能',
@@ -9271,9 +9273,9 @@ extension on TranslationsJa {
 			'audiobook.customSpeed' => 'Custom Playback スピード',
 			'audiobook.speedHelp' => '0.25×から4×までのスピードを選択します。',
 			'audiobook.apply' => '応募',
-			'audiobook.customSleep' => 'カスタム睡眠時間',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'カスタム睡眠時間',
 			'audiobook.sleepMinutes' => '時間(1～1440分)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} 章の後停止',
 			'audiobook.extendSleep' => '追加5分',
@@ -9785,9 +9787,9 @@ extension on TranslationsJa {
 			'musicExperience.bluetoothDrivingHint' => '運転画面を自動で開く、接続中のBluetooth出力を選択します。',
 			'musicTools.loudnessMissing' => 'ラウドネスデータが返されませんでした',
 			'musicTools.loudnessRequested' => '解析リクエストを送信しました',
-			'musicTools.loudnessUnsupported' => 'このサーバーバージョンは解析リクエストに対応していません',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'このサーバーバージョンは解析リクエストに対応していません',
 			'musicTools.serverHistory' => 'サーバーの再生履歴',
 			'musicTools.nfcWrite' => 'NFCタグに書き込む',
 			'musicTools.nfcRead' => 'NFCタグをスキャン',

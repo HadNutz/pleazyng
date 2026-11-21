@@ -347,6 +347,7 @@
     "playerBackend": "ผู้เล่น Backend",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "บานพับของหน้าจอพับได้",
     "hardwareDecoding": "การเข้ารหัสฮาร์ดแวร์",
     "hardwareDecodingDescription": "ใช้ความเร็วฮาร์ดแวร์เมื่อมี",
     "playbackBuffer": "บูฟเวอร์ Playback",

@@ -489,6 +489,7 @@ class _Translations$settings$da extends Translations$settings$en {
 	@override String get playerBackend => 'Afspillermotor';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Hængsel på foldbar skærm';
 	@override String get hardwareDecoding => 'Hardwaredekodning';
 	@override String get hardwareDecodingDescription => 'Brug hardwareacceleration, når den er tilgængelig';
 	@override String get playbackBuffer => 'Afspilningsbuffer';
@@ -6001,6 +6002,7 @@ extension on TranslationsDa {
 			'settings.playerBackend' => 'Afspillermotor',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Hængsel på foldbar skærm',
 			'settings.hardwareDecoding' => 'Hardwaredekodning',
 			'settings.hardwareDecodingDescription' => 'Brug hardwareacceleration, når den er tilgængelig',
 			'settings.playbackBuffer' => 'Afspilningsbuffer',
@@ -6192,9 +6194,9 @@ extension on TranslationsDa {
 			'settings.manageLibrariesDescription' => 'Omarranger og skjul biblioteker',
 			'settings.companionRemoteServer' => 'Fjernbetjeningsserver',
 			'settings.companionRemoteServerDescription' => 'Tillad mobilenheder på dit netværk at styre denne app',
-			'settings.companionRemoteServerStartFailed' => 'Fjernbetjeningsserveren kunne ikke startes',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Fjernbetjeningsserveren kunne ikke startes',
 			'settings.companionRemoteServerStopFailed' => 'Fjernbetjeningsserveren kunne ikke stoppes',
 			'settings.autoPip' => 'Automatisk billede-i-billede',
 			'settings.autoPipDescription' => 'Skift automatisk til billede-i-billede, når du forlader appen under afspilning',
@@ -6706,9 +6708,9 @@ extension on TranslationsDa {
 			'accessibility.reduceMotion' => 'Reduktion af bevægelsen',
 			'accessibility.reduceMotionHint' => 'Stop bevægelse i fokusmarkeringer, sideovergange og dekorative effekter.',
 			'accessibility.largeTargets' => 'Større touch mål',
-			'accessibility.largeTargetsHint' => 'Giv delte kontroller mere plads til touch og assistive navigation.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'Giv delte kontroller mere plads til touch og assistive navigation.',
 			'accessibility.navigationHint' => 'Brug Tab og Shift+Tab til at flytte mellem kontrolelementer, Enter eller mellemrum til at aktivere og Escape eller Tilbage til at lukke. Zoom og læseindstillinger er tilgængelige, når en bog er åben.',
 			'accessibility.textSizeDescription' => 'Skalagrænsefladet tekst i Pleazyng ud over enhedens systemtekst-størrelsesindstilling.',
 			'accessibility.boldTextHint' => 'Brug en tyngre vægt til grænseflader og meddelelser for at gøre dem lettere at skelne.',
@@ -7220,9 +7222,9 @@ extension on TranslationsDa {
 			'discover.findNext.artworkLoading' => 'Indlæser billede…',
 			'discover.findNext.artworkUnavailable' => 'Billede ikke tilgængeligt',
 			'discover.findNext.savedFeedback' => 'Føjet til gemte valg',
-			'discover.findNext.skippedFeedback' => 'Sprunget over for nu',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'Sprunget over for nu',
 			'discover.findNext.releaseToConfirm' => 'Slip for at bekræfte',
 			'discover.findNext.remoteHint' => 'Omslag i fokus: ← / → vælg · Vælg: detaljer · ↑ / ↓ flyt fokus',
 			'discover.studio' => 'Studie',
@@ -7734,9 +7736,9 @@ extension on TranslationsDa {
 			'collections.selectCollection' => 'Vælg samling',
 			'collections.collectionName' => 'Samlingsnavn',
 			'collections.enterCollectionName' => 'Indtast samlingsnavn',
-			'collections.addedToCollection' => 'Tilføjet til samling',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Tilføjet til samling',
 			'collections.errorAddingToCollection' => 'Kunne ikke tilføje til samling',
 			'collections.created' => 'Samling oprettet',
 			'collections.removeFromCollection' => 'Fjern fra samling',
@@ -8248,9 +8250,9 @@ extension on TranslationsDa {
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Rå dekoder',
 			'performanceOverlay.tunneling' => 'Tunneling',
-			'performanceOverlay.passthrough' => 'Passthrough',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Passthrough',
 			'performanceOverlay.aspect' => 'Billedformat',
 			'performanceOverlay.rotation' => 'Rotation',
 			'performanceOverlay.dvSource' => 'DV-kilde',
@@ -8762,9 +8764,9 @@ extension on TranslationsDa {
 			'homeLayout.managePlexRowsDescription' => 'Åbent til at organisere de hjemmelavede rækker',
 			'homeLayout.organizeHomeRows' => 'Organiser hjemmebane',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rækker: bevæge sig, Hero, Auto-slide, fjerne',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Udvikle ${library} rækker',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Udvikle ${library} rækker',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Fortsæt at se + ${n} rækker: bevæge sig, Biblioteket, Hjem, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render som en helt kort',
 			'homeLayout.heroOnlySingleCollection' => 'Kun tilgængelig, når denne række løser til en enkelt samlings virkelige titler',
@@ -9276,9 +9278,9 @@ extension on TranslationsDa {
 			'audiobook.customSpeed' => 'Custom playback hastighed',
 			'audiobook.speedHelp' => 'Vælg en hastighed fra 0.25× til 4×.',
 			'audiobook.apply' => 'Anvendelse',
-			'audiobook.customSleep' => 'Personlig søvn timer',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'Personlig søvn timer',
 			'audiobook.sleepMinutes' => 'Minuter (1 til 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Stop efter ${count} kapitel',
 			'audiobook.extendSleep' => 'Tilføj 5 minutter',
@@ -9790,9 +9792,9 @@ extension on TranslationsDa {
 			'musicExperience.bluetoothDrivingHint' => 'Vælg tilsluttede Bluetooth-udgange, der automatisk åbner kørevisningen.',
 			'musicTools.loudnessMissing' => 'Ingen data om lydstyrke modtaget',
 			'musicTools.loudnessRequested' => 'Anmodning om analyse sendt',
-			'musicTools.loudnessUnsupported' => 'Denne serverversion understøtter ikke analyseanmodninger',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Denne serverversion understøtter ikke analyseanmodninger',
 			'musicTools.serverHistory' => 'Afspilningshistorik på serveren',
 			'musicTools.nfcWrite' => 'Skriv NFC-mærke',
 			'musicTools.nfcRead' => 'Scan NFC-tag',

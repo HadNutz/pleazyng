@@ -2,6 +2,7 @@ package com.edde746.plezy
 
 import android.app.ActivityManager
 import android.app.AppOpsManager
+import com.edde746.plezy.shared.PlayerSurfaceHost
 import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
@@ -156,6 +157,19 @@ class PlezyActivity : FlutterActivity() {
     }
   }
 
+  private var lastPipRect: android.graphics.Rect? = null
+  private val refreshPipSource = android.view.ViewTreeObserver.OnGlobalLayoutListener {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && autoPipReady && !isInPictureInPictureMode) {
+      val rect = PlayerSurfaceHost.pipSourceRect(this)
+      if (rect != lastPipRect) {
+        try {
+          setPictureInPictureParams(buildPipParams(autoPipWidth, autoPipHeight, autoEnterEnabled = true))
+        } catch (error: IllegalStateException) {
+          Log.w(TAG, "PiP geometry unavailable during display transition", error)
+        }
+      }
+    }
+  }
   private var autoPipReady = false
   private var autoPipWidth: Int = 16
   private var autoPipHeight: Int = 9
@@ -536,6 +550,7 @@ class PlezyActivity : FlutterActivity() {
     ThemeHelper.themeColor(savedTheme)?.let { window.decorView.setBackgroundColor(it) }
 
     super.onCreate(savedInstanceState)
+    window.decorView.viewTreeObserver.addOnGlobalLayoutListener(refreshPipSource)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
       originalCutoutLayoutMode = window.attributes.layoutInDisplayCutoutMode
     }
@@ -680,6 +695,7 @@ class PlezyActivity : FlutterActivity() {
   }
 
   override fun onDestroy() {
+    window.decorView.viewTreeObserver.removeOnGlobalLayoutListener(refreshPipSource)
     steamStreamFactory?.closeAll()
     steamStreamFactory = null
     gameStreamFactory?.closeAll()
@@ -1393,6 +1409,8 @@ class PlezyActivity : FlutterActivity() {
     }
     val builder = PictureInPictureParams.Builder()
       .setAspectRatio(Rational(w, h))
+    lastPipRect = PlayerSurfaceHost.pipSourceRect(this)
+    lastPipRect?.let(builder::setSourceRectHint)
     if (autoEnterEnabled != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       builder.setAutoEnterEnabled(autoEnterEnabled)
     }

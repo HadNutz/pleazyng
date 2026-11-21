@@ -347,6 +347,7 @@
     "playerBackend": "Pleyer infratuzilmasi",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Buklanadigan ekran sharniri",
     "hardwareDecoding": "Apparatli dekodlash",
     "hardwareDecodingDescription": "Imkon qadar apparatli tezlashtirishdan foydalanish",
     "playbackBuffer": "Ijro buferi",

@@ -347,6 +347,7 @@
     "playerBackend": "Uppspelningsmotor",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Gångjärn på vikbar skärm",
     "hardwareDecoding": "Hårdvaruavkodning",
     "hardwareDecodingDescription": "Använd hårdvaruacceleration när tillgängligt",
     "playbackBuffer": "Uppspelningsbuffert",

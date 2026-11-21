@@ -347,6 +347,7 @@
     "playerBackend": "بازی Backend",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "لولای نمایشگر تاشو",
     "hardwareDecoding": "دکوراسیون سخت افزاری",
     "hardwareDecodingDescription": "استفاده از سرعت سخت افزاری هنگامی که در دسترس",
     "playbackBuffer": "بایگانی برچسب ها: playback buffer",

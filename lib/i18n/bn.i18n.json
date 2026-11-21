@@ -347,6 +347,7 @@
     "playerBackend": "খেলোয়াড় Backend",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "ভাঁজযোগ্য পর্দার কবজা",
     "hardwareDecoding": "হার্ডওয়ার্ক ডকোডিং",
     "hardwareDecodingDescription": "যখন উপলব্ধ হয় তখন হার্ডওয়্যার দ্রুততা ব্যবহার করুন",
     "playbackBuffer": "Playback বাফার",

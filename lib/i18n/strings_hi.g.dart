@@ -489,6 +489,7 @@ class _Translations$settings$hi extends Translations$settings$en {
 	@override String get playerBackend => 'बैकएंड खिलाड़ी';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'फ़ोल्ड होने वाली स्क्रीन का हिंज';
 	@override String get hardwareDecoding => 'हार्डवेयर डिकोडिंग';
 	@override String get hardwareDecodingDescription => 'जब उपलब्ध हो तो हार्डवेयर गति का उपयोग करें';
 	@override String get playbackBuffer => 'Playback बफर';
@@ -6001,6 +6002,7 @@ extension on TranslationsHi {
 			'settings.playerBackend' => 'बैकएंड खिलाड़ी',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'फ़ोल्ड होने वाली स्क्रीन का हिंज',
 			'settings.hardwareDecoding' => 'हार्डवेयर डिकोडिंग',
 			'settings.hardwareDecodingDescription' => 'जब उपलब्ध हो तो हार्डवेयर गति का उपयोग करें',
 			'settings.playbackBuffer' => 'Playback बफर',
@@ -6192,9 +6194,9 @@ extension on TranslationsHi {
 			'settings.manageLibrariesDescription' => 'पुस्तकालयों को रिकॉर्ड और छिपाना',
 			'settings.companionRemoteServer' => 'रिमोट सर्वर',
 			'settings.companionRemoteServerDescription' => 'अपने नेटवर्क पर मोबाइल उपकरणों को इस ऐप को नियंत्रित करने की अनुमति दें',
-			'settings.companionRemoteServerStartFailed' => 'साथी सर्वर शुरू नहीं किया जा सकता',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'साथी सर्वर शुरू नहीं किया जा सकता',
 			'settings.companionRemoteServerStopFailed' => 'साथी सर्वर को रोक नहीं पाया',
 			'settings.autoPip' => 'Auto Picture-in-Picture के बारे में टिप्पणियाँ',
 			'settings.autoPipDescription' => 'स्वचालित रूप से छवि-इन-चित्र दर्ज करें जब आप प्लेबैक के दौरान ऐप छोड़ देते हैं',
@@ -6706,9 +6708,9 @@ extension on TranslationsHi {
 			'accessibility.reduceMotion' => 'आंदोलन को कम करें',
 			'accessibility.reduceMotionHint' => 'फ़ोकस संकेतक, पृष्ठ परिवर्तन और सजावटी प्रभावों की गति बंद रखें।',
 			'accessibility.largeTargets' => 'अधिक लक्षित लक्ष्य',
-			'accessibility.largeTargetsHint' => 'साझा नियंत्रण को स्पर्श और सहायक नेविगेशन के लिए अधिक स्थान दें।',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'साझा नियंत्रण को स्पर्श और सहायक नेविगेशन के लिए अधिक स्थान दें।',
 			'accessibility.navigationHint' => 'नियंत्रणों के बीच जाने के लिए Tab और Shift+Tab, सक्रिय करने के लिए Enter या Space और बंद करने के लिए Escape या वापस जाने वाले बटन का उपयोग करें। किताब खुली होने पर ज़ूम और पढ़ने की प्राथमिकताएँ उपलब्ध रहती हैं।',
 			'accessibility.textSizeDescription' => 'अपने डिवाइस की सिस्टम टेक्स्ट आकार सेटिंग के अलावा Pleazyng इंटरफ़ेस का टेक्स्ट आकार बदलें।',
 			'accessibility.boldTextHint' => 'इंटरफ़ेस लेबल और संदेशों के लिए एक भारी वजन का उपयोग करें ताकि उन्हें अलग करना आसान हो सके।',
@@ -7220,9 +7222,9 @@ extension on TranslationsHi {
 			'discover.findNext.artworkLoading' => 'चित्र लोड हो रहा है…',
 			'discover.findNext.artworkUnavailable' => 'चित्र उपलब्ध नहीं है',
 			'discover.findNext.savedFeedback' => 'सहेजे गए विकल्पों में जोड़ा गया',
-			'discover.findNext.skippedFeedback' => 'अभी छोड़ दिया गया',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'अभी छोड़ दिया गया',
 			'discover.findNext.releaseToConfirm' => 'पुष्टि के लिए छोड़ें',
 			'discover.findNext.remoteHint' => 'कवर पर फ़ोकस: ← / → चुनें · चयन बटन: जानकारी · ↑ / ↓ फ़ोकस बदलें',
 			'discover.studio' => 'स्टूडियो',
@@ -7734,9 +7736,9 @@ extension on TranslationsHi {
 			'collections.selectCollection' => 'चयनित संग्रह',
 			'collections.collectionName' => 'संग्रह का नाम',
 			'collections.enterCollectionName' => 'संग्रह का नाम दर्ज करें',
-			'collections.addedToCollection' => 'संग्रह में जोड़ा',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'संग्रह में जोड़ा',
 			'collections.errorAddingToCollection' => 'संग्रह में जोड़ने में विफल',
 			'collections.created' => 'संग्रह बनाया',
 			'collections.removeFromCollection' => 'संग्रह से हटाएँ',
@@ -8248,9 +8250,9 @@ extension on TranslationsHi {
 			'performanceOverlay.decoder' => 'डिकोडर',
 			'performanceOverlay.rawDecoder' => 'रेड डिकोडर',
 			'performanceOverlay.tunneling' => 'टनल',
-			'performanceOverlay.passthrough' => 'पश्चाताप',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'पश्चाताप',
 			'performanceOverlay.aspect' => 'दृष्टि',
 			'performanceOverlay.rotation' => 'रोटेशन',
 			'performanceOverlay.dvSource' => 'डीवी स्रोत',
@@ -8762,9 +8764,9 @@ extension on TranslationsHi {
 			'homeLayout.managePlexRowsDescription' => 'Home-Selected लाइनों को व्यवस्थित करने के लिए खुला',
 			'homeLayout.organizeHomeRows' => 'Home रैखों का आयोजन',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} पंक्तियां: आंदोलन, नायक, स्वचालित स्लाइड, हटाने',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} पंक्तियों का आयोजन करें',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} पंक्तियों का आयोजन करें',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'जारी रखें + ${n} पंक्तियां: चलना, लाइब्रेरी, होम, नायक, ऑटो-स्लाइड',
 			'homeLayout.renderAsHero' => 'एक नायक कार्ड के रूप में रेंडर',
 			'homeLayout.heroOnlySingleCollection' => 'केवल तब उपलब्ध है जब यह पंक्ति एकल संग्रह के वास्तविक शीर्षकों के लिए हल हो जाती है',
@@ -9276,9 +9278,9 @@ extension on TranslationsHi {
 			'audiobook.customSpeed' => 'प्लेबैक की गति',
 			'audiobook.speedHelp' => '0.25× से 4× तक की गति का चयन करें।',
 			'audiobook.apply' => 'आवेदन करें',
-			'audiobook.customSleep' => 'कस्टम नींद टाइमर',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'कस्टम नींद टाइमर',
 			'audiobook.sleepMinutes' => 'मिनट (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} अध्याय के बाद रुकें',
 			'audiobook.extendSleep' => '5 मिनट जोड़ें',
@@ -9790,9 +9792,9 @@ extension on TranslationsHi {
 			'musicExperience.bluetoothDrivingHint' => 'वे कनेक्ट किए गए Bluetooth आउटपुट चुनें जो ड्राइविंग दृश्य अपने आप खोलते हैं।',
 			'musicTools.loudnessMissing' => 'ध्वनि की तीव्रता का डेटा नहीं मिला',
 			'musicTools.loudnessRequested' => 'विश्लेषण का अनुरोध भेजा गया',
-			'musicTools.loudnessUnsupported' => 'सर्वर का यह संस्करण विश्लेषण अनुरोधों का समर्थन नहीं करता',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'सर्वर का यह संस्करण विश्लेषण अनुरोधों का समर्थन नहीं करता',
 			'musicTools.serverHistory' => 'सर्वर का प्लेबैक इतिहास',
 			'musicTools.nfcWrite' => 'NFC टैग लिखें',
 			'musicTools.nfcRead' => 'NFC टैग स्कैन करें',

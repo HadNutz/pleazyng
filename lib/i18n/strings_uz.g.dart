@@ -489,6 +489,7 @@ class _Translations$settings$uz extends Translations$settings$en {
 	@override String get playerBackend => 'Pleyer infratuzilmasi';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Buklanadigan ekran sharniri';
 	@override String get hardwareDecoding => 'Apparatli dekodlash';
 	@override String get hardwareDecodingDescription => 'Imkon qadar apparatli tezlashtirishdan foydalanish';
 	@override String get playbackBuffer => 'Ijro buferi';
@@ -6001,6 +6002,7 @@ extension on TranslationsUz {
 			'settings.playerBackend' => 'Pleyer infratuzilmasi',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Buklanadigan ekran sharniri',
 			'settings.hardwareDecoding' => 'Apparatli dekodlash',
 			'settings.hardwareDecodingDescription' => 'Imkon qadar apparatli tezlashtirishdan foydalanish',
 			'settings.playbackBuffer' => 'Ijro buferi',
@@ -6192,9 +6194,9 @@ extension on TranslationsUz {
 			'settings.manageLibrariesDescription' => 'Kutubxonalarni tartiblash va yashirish',
 			'settings.companionRemoteServer' => 'Yordamchi pult serveri',
 			'settings.companionRemoteServerDescription' => 'Tarmoqdagi mobil qurilmalarga ushbu ilovani boshqarishga ruxsat berish',
-			'settings.companionRemoteServerStartFailed' => 'Yordamchi pult serverini ishga tushirib bo‘lmadi',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Yordamchi pult serverini ishga tushirib bo‘lmadi',
 			'settings.companionRemoteServerStopFailed' => 'Yordamchi pult serverini to‘xtatib bo‘lmadi',
 			'settings.autoPip' => 'Avtomatik Rasm ichida rasm (PiP)',
 			'settings.autoPipDescription' => 'Video ijro etilayotganda ilovadan chiqilganda avto-PiP rejimiga oʻtish',
@@ -6706,9 +6708,9 @@ extension on TranslationsUz {
 			'accessibility.reduceMotion' => 'Movsiya ko‘zadi',
 			'accessibility.reduceMotionHint' => 'Fokus ko‘rsatkichi harakatini, sahifa almashish animatsiyasini va bezak effektlarini to‘xtating.',
 			'accessibility.largeTargets' => 'Tadiqni sasni',
-			'accessibility.largeTargetsHint' => 'U\'zizga qo‘zlar, touch-i-asistivi navigation üçün daha fazla yer qo‘z.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'U\'zizga qo‘zlar, touch-i-asistivi navigation üçün daha fazla yer qo‘z.',
 			'accessibility.navigationHint' => 'Boshqaruv elementlari orasida yurish uchun Tab va Shift+Tab, ishga tushirish uchun Enter yoki Bo‘sh joy, yopish uchun Escape yoki Orqaga tugmasidan foydalaning. Kitob ochiq bo‘lsa, masshtab va o‘qish sozlamalarini o‘zgartirish mumkin.',
 			'accessibility.textSizeDescription' => 'Tekstil-Skala interfacing-i Pleazyng-da sistem-size-situasyonun yanı sıra cihazın texta-sized-settings.',
 			'accessibility.boldTextHint' => 'Interface etiketleri ve mesajlar için daha ağır bir ağır kullanın, onları ayırt etmek daha kolaydır.',
@@ -7220,9 +7222,9 @@ extension on TranslationsUz {
 			'discover.findNext.artworkLoading' => 'Rasm yuklanmoqda…',
 			'discover.findNext.artworkUnavailable' => 'Rasm mavjud emas',
 			'discover.findNext.savedFeedback' => 'Saqlangan tanlovlarga qo‘shildi',
-			'discover.findNext.skippedFeedback' => 'Hozircha o‘tkazib yuborildi',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'Hozircha o‘tkazib yuborildi',
 			'discover.findNext.releaseToConfirm' => 'Tasdiqlash uchun qo‘yib yuboring',
 			'discover.findNext.remoteHint' => 'Muqova fokusda bo‘lganda: ← / → tanlash · Tanlash tugmasi: tafsilotlar · ↑ / ↓ fokusni ko‘chirish',
 			'discover.studio' => 'Studiya',
@@ -7734,9 +7736,9 @@ extension on TranslationsUz {
 			'collections.selectCollection' => 'Toʻplamni tanlash',
 			'collections.collectionName' => 'Toʻplam nomi',
 			'collections.enterCollectionName' => 'Toʻplam nomini kiriting',
-			'collections.addedToCollection' => 'Toʻplamga qoʻshildi',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Toʻplamga qoʻshildi',
 			'collections.errorAddingToCollection' => 'Toʻplamga qoʻshib boʻlmadi',
 			'collections.created' => 'Toʻplam yaratildi',
 			'collections.removeFromCollection' => 'Toʻplamdan oʻchirish',
@@ -8248,9 +8250,9 @@ extension on TranslationsUz {
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Ishlov berilmagan dekoder',
 			'performanceOverlay.tunneling' => 'Tunnellash',
-			'performanceOverlay.passthrough' => 'Toʻgʻridan-toʻgʻri oʻtkazish',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Toʻgʻridan-toʻgʻri oʻtkazish',
 			'performanceOverlay.aspect' => 'Nisbat',
 			'performanceOverlay.rotation' => 'Aylanish',
 			'performanceOverlay.dvSource' => 'DV manbasi',
@@ -8762,9 +8764,9 @@ extension on TranslationsUz {
 			'homeLayout.managePlexRowsDescription' => 'U\'ziziziziz qiziziziyizizizimizizizizimiziziz',
 			'homeLayout.organizeHomeRows' => 'Home Riyadhlar',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ruzlar: Moving, Hero, Auto-slide, xifida',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} qaytlarlar',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} qaytlarlar',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '+ ${n} riylar: Moving, Library, Home, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Bir kartatda bir kahraman.',
 			'homeLayout.heroOnlySingleCollection' => 'Bu o‘ziz o‘z o‘z q‘z o’z o‘q‘z o\'z o‘y o‘z bu‘z o`z o‘s o‘z',
@@ -9276,9 +9278,9 @@ extension on TranslationsUz {
 			'audiobook.customSpeed' => 'Custom playback ritmi.',
 			'audiobook.speedHelp' => 'Siz 0.25 x 4 x o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z',
 			'audiobook.apply' => 'Diggadi',
-			'audiobook.customSleep' => 'Custom uyumalar',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'Custom uyumalar',
 			'audiobook.sleepMinutes' => '1 – 440 min)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} kapitallardan sonra durga',
 			'audiobook.extendSleep' => '5 dakikadi',
@@ -9790,9 +9792,9 @@ extension on TranslationsUz {
 			'musicExperience.bluetoothDrivingHint' => 'Haydash ko‘rinishini avtomatik ochadigan ulangan Bluetooth chiqishlarini tanlang.',
 			'musicTools.loudnessMissing' => 'Ovoz balandligi ma’lumotlari qaytarilmadi',
 			'musicTools.loudnessRequested' => 'Tahlil so‘rovi yuborildi',
-			'musicTools.loudnessUnsupported' => 'Serverning bu versiyasi tahlil so‘rovlarini qo‘llamaydi',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Serverning bu versiyasi tahlil so‘rovlarini qo‘llamaydi',
 			'musicTools.serverHistory' => 'Serverdagi ijro tarixi',
 			'musicTools.nfcWrite' => 'NFC tegiga yozish',
 			'musicTools.nfcRead' => 'NFC tegini skanerlash',

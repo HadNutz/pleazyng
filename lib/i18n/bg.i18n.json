@@ -347,6 +347,7 @@
     "playerBackend": "Система за възпроизвеждане",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Панта на сгъваемия дисплей",
     "hardwareDecoding": "Хардуерно декодиране",
     "hardwareDecodingDescription": "Използвай хардуерно ускорение, когато е налично",
     "playbackBuffer": "Буфер за възпроизвеждане",

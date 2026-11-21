@@ -347,6 +347,7 @@
     "playerBackend": "Afspeelbackend",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Scharnier van het vouwscherm",
     "hardwareDecoding": "Hardwaredecodering",
     "hardwareDecodingDescription": "Gebruik hardwareversnelling indien beschikbaar",
     "playbackBuffer": "Afspeelbuffer",

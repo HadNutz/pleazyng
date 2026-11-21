@@ -489,6 +489,7 @@ class _Translations$settings$nb extends Translations$settings$en {
 	@override String get playerBackend => 'Avspillingsmotor';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Hengsel på brettbar skjerm';
 	@override String get hardwareDecoding => 'Maskinvaredekoding';
 	@override String get hardwareDecodingDescription => 'Bruk maskinvareakselerasjon når tilgjengelig';
 	@override String get playbackBuffer => 'Avspillingsbuffer';
@@ -6001,6 +6002,7 @@ extension on TranslationsNb {
 			'settings.playerBackend' => 'Avspillingsmotor',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Hengsel på brettbar skjerm',
 			'settings.hardwareDecoding' => 'Maskinvaredekoding',
 			'settings.hardwareDecodingDescription' => 'Bruk maskinvareakselerasjon når tilgjengelig',
 			'settings.playbackBuffer' => 'Avspillingsbuffer',
@@ -6192,9 +6194,9 @@ extension on TranslationsNb {
 			'settings.manageLibrariesDescription' => 'Omorganiser og skjul biblioteker',
 			'settings.companionRemoteServer' => 'Fjernkontrollserver',
 			'settings.companionRemoteServerDescription' => 'La mobilenheter på nettverket styre denne appen',
-			'settings.companionRemoteServerStartFailed' => 'Kunne ikke starte fjernkontrollserveren',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Kunne ikke starte fjernkontrollserveren',
 			'settings.companionRemoteServerStopFailed' => 'Kunne ikke stoppe fjernkontrollserveren',
 			'settings.autoPip' => 'Automatisk bilde-i-bilde',
 			'settings.autoPipDescription' => 'Åpne bilde-i-bilde når du forlater appen under avspilling',
@@ -6706,9 +6708,9 @@ extension on TranslationsNb {
 			'accessibility.reduceMotion' => 'Redusere bevegelse',
 			'accessibility.reduceMotionHint' => 'Stopp bevegelser i fokusmarkeringer, sideoverganger og dekorative effekter.',
 			'accessibility.largeTargets' => 'Større touch mål',
-			'accessibility.largeTargetsHint' => 'Gi delte kontroller mer plass for berøring og assistent navigasjon.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'Gi delte kontroller mer plass for berøring og assistent navigasjon.',
 			'accessibility.navigationHint' => 'Bruk Tab og Shift+Tab for å flytte mellom kontroller, Enter eller mellomrom for å aktivere og Escape eller Tilbake for å lukke. Zoom og leseinnstillinger er tilgjengelige når en bok er åpen.',
 			'accessibility.textSizeDescription' => 'Skala grensesnitt tekst i Pleazyng i tillegg til enhetens system tekst-størrelse innstilling.',
 			'accessibility.boldTextHint' => 'Bruk en tyngre vekt for grensesnitt etiketter og meldinger for å gjøre dem enklere å skille mellom.',
@@ -7220,9 +7222,9 @@ extension on TranslationsNb {
 			'discover.findNext.artworkLoading' => 'Laster bilde…',
 			'discover.findNext.artworkUnavailable' => 'Bilde utilgjengelig',
 			'discover.findNext.savedFeedback' => 'Lagt til i lagrede valg',
-			'discover.findNext.skippedFeedback' => 'Hoppet over foreløpig',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'Hoppet over foreløpig',
 			'discover.findNext.releaseToConfirm' => 'Slipp for å bekrefte',
 			'discover.findNext.remoteHint' => 'Omslag i fokus: ← / → velg · Velg: detaljer · ↑ / ↓ flytt fokus',
 			'discover.studio' => 'Studio',
@@ -7734,9 +7736,9 @@ extension on TranslationsNb {
 			'collections.selectCollection' => 'Velg samling',
 			'collections.collectionName' => 'Samlingsnavn',
 			'collections.enterCollectionName' => 'Skriv inn samlingsnavn',
-			'collections.addedToCollection' => 'Lagt til i samling',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Lagt til i samling',
 			'collections.errorAddingToCollection' => 'Kunne ikke legge til i samling',
 			'collections.created' => 'Samling opprettet',
 			'collections.removeFromCollection' => 'Fjern fra samling',
@@ -8248,9 +8250,9 @@ extension on TranslationsNb {
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Rå dekoder',
 			'performanceOverlay.tunneling' => 'Tunneling',
-			'performanceOverlay.passthrough' => 'Direkte utgang',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Direkte utgang',
 			'performanceOverlay.aspect' => 'Format',
 			'performanceOverlay.rotation' => 'Rotasjon',
 			'performanceOverlay.dvSource' => 'DV-kilde',
@@ -8762,9 +8764,9 @@ extension on TranslationsNb {
 			'homeLayout.managePlexRowsDescription' => 'Åpne for å organisere de hjemmelavede radene',
 			'homeLayout.organizeHomeRows' => 'Organisere hjemmelavede rader',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rader: bevegelse, Hero, Auto-slide, fjerne',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organisere ${library} rader',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organisere ${library} rader',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Fortsett å se + ${n} rader: bevegelse, Biblioteket, Hjem, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render som en helt kort',
 			'homeLayout.heroOnlySingleCollection' => 'Kun tilgjengelig når denne raden løses til en enkelt samlings virkelige titler',
@@ -9276,9 +9278,9 @@ extension on TranslationsNb {
 			'audiobook.customSpeed' => 'Custom playback hastighet',
 			'audiobook.speedHelp' => 'Velg en hastighet fra 0.25× til 4×.',
 			'audiobook.apply' => 'Anvendt',
-			'audiobook.customSleep' => 'Personlig søvn timer',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'Personlig søvn timer',
 			'audiobook.sleepMinutes' => 'Minutter (1 til 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Stopp etter ${count} kapittel',
 			'audiobook.extendSleep' => 'Legg til 5 minutter',
@@ -9790,9 +9792,9 @@ extension on TranslationsNb {
 			'musicExperience.bluetoothDrivingHint' => 'Velg tilkoblede Bluetooth-utganger som automatisk åpner kjørevisningen.',
 			'musicTools.loudnessMissing' => 'Ingen lydstyrkedata ble returnert',
 			'musicTools.loudnessRequested' => 'Analyseforespørsel sendt',
-			'musicTools.loudnessUnsupported' => 'Denne serverversjonen støtter ikke analyseforespørsler',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Denne serverversjonen støtter ikke analyseforespørsler',
 			'musicTools.serverHistory' => 'Avspillingshistorikk på serveren',
 			'musicTools.nfcWrite' => 'Skriv NFC-brikke',
 			'musicTools.nfcRead' => 'Skann NFC-brikke',

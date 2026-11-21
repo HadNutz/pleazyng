@@ -171,7 +171,8 @@ dependencies:
   in_app_purchase_msstore: 0.1.0
   in_app_purchase_platform_interface: ^1.4.1
   in_app_purchase_storekit: ^0.4.13+3
-  openwatchparty: ^1.1.0
+  openwatchparty:
+    path: packages/openwatchparty
   flutter_chrome_cast: ^2.0.0
   flutter_local_notifications: ^22.3.3
   flutter_inapp_purchase: ^11.1.0

@@ -347,6 +347,7 @@
     "playerBackend": "Oynatıcı Altyapısı",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Katlanabilir ekran menteşesi",
     "hardwareDecoding": "Donanım Çözme",
     "hardwareDecodingDescription": "Mümkün olduğunda donanım hızlandırmasını kullan",
     "playbackBuffer": "Oynatma Tamponu",

@@ -46,8 +46,24 @@ The live playback route owns the decoder across pane changes. The Flutter geomet
 | Flip and Razr | Continue inside after using transport on the cover. On Samsung add the Flex Window widget and check play, skip and open. Test both OEM continue-on-cover settings. |
 | Multi-fold, tablet and standard phone | TriFold outer and fully open, narrow split-screen, compact phone and tablet. Check RTL manga, an EPUB reading anchor, PDF zoom, keyboard focus, large text and TalkBack or VoiceOver. |
 | Steam streaming and native output | While streaming, fold and rotate, check touch coordinates against all four video corners and test the controller. Repeat video transitions with offline and streamed media, Watch Together, supported HDR formats and each available engine. |
+| HarmonyOS NEXT | Build and sign the [native player](../../harmonyos/README.md). Test authenticated and local video, HDR and SDR, paused playback, tabletop, both creases on tri-fold hardware, PiP controls and return. |
 | Windows foldable | Resize, span and unspan, test touch and keyboard, and verify the physical video rectangle and audible session. |
 
-Record the commit, device model, OS, player backend, content mode, starting posture, final posture, observed position, audio and focus. An unrecorded case is unqualified. Native HarmonyOS NEXT requires a separately buildable application package and media integrations.
+Record the commit, device model, OS, player backend, content mode, starting posture, final posture, observed position, audio and focus. An unrecorded case is unqualified.
 
 The iOS native reliability job runs the phone-scene contract on the Duo simulator. On a hosted runner it also installs the built simulator app on an iOS 26 phone and checks that its process remains alive after launch. For Android, dispatch **Android foldable qualification** with the release workflow run ID. It installs that run's x86_64 APK on a Pixel Fold emulator and verifies the resumed activity and process identity across the supported closed, open and half-open states. Neither launch check substitutes for a media playback run on hardware.
+
+## Playback evidence on the candidate device
+
+For Android, start a movie on the desired engine, enable automatic PiP in the app and allow PiP in system settings. Use the device picker provided by standard ADB (for example, set `ANDROID_SERIAL`) when several devices are connected. Run these passes once while playing and again while paused. Enable and disable each OEM’s continue-on-cover setting in separate runs. A cover that the OS reserves for widgets must be recorded as such.
+
+```sh
+python3 scripts/qa/android_fold_smoke.py --playback --manual 'cover,inner,tabletop,inner' --commit "$(git rev-parse HEAD)" --evidence fold.json
+python3 scripts/qa/android_fold_smoke.py --playback --pip --commit "$(git rev-parse HEAD)" --evidence pip.json
+```
+
+Use `--states` with a comma-separated list of supported IDs on emulators or devices that allow shell posture overrides. The script checks the foreground activity, process identity and one active media session. It records transport and position and checks the pinned task for PiP. Inspect the picture and subtitles on the actual panel, check for duplicate audio and compare the HDR output using a known SDR/HDR pair. A capability flag alone cannot establish panel output.
+
+On Windows, span embedded panels, move the window until only one panel is visible, and repeat at different DPI and orientations. For a continuous internal panel, select the physical hinge direction under Settings → Playback → Foldable display hinge. Automatic uses the actual embedded-panel layout. On a spanned window or a detached mini-player, check that HDR and refresh-rate matching apply to the monitor containing the video and that both monitors recover their original settings. Normal external monitors and mirrored clones should not add hinges.
+
+For cold recovery, background a paused tuner or catch-up programme, allow the OS to save the task, then terminate the background process (on Android use `adb shell am kill org.snapetech.pleazyng`). Reopen from Recents. Verify the same channel, broadcast time and pause intent. Repeat after the broadcast has fallen outside the available buffer. A fresh tuner can only seek within its newly reported window. A memory-only buffer that died with the process falls back to live. Repeat with a locked Watch Together room as both host and guest, then after changing the profile, leaving the room or letting its server-side reconnect lease expire. Record room member identity and host control without recording the reconnect token.

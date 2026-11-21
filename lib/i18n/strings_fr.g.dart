@@ -489,6 +489,7 @@ class Translations$settings$fr extends Translations$settings$en {
 	@override String get playerBackend => 'Moteur de lecture';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Charnière de l’écran pliable';
 	@override String get hardwareDecoding => 'Décodage matériel';
 	@override String get hardwareDecodingDescription => 'Utiliser l’accélération matérielle lorsqu’elle est disponible';
 	@override String get playbackBuffer => 'Tampon de lecture';
@@ -6035,6 +6036,7 @@ extension on TranslationsFr {
 			'settings.playerBackend' => 'Moteur de lecture',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Charnière de l’écran pliable',
 			'settings.hardwareDecoding' => 'Décodage matériel',
 			'settings.hardwareDecodingDescription' => 'Utiliser l’accélération matérielle lorsqu’elle est disponible',
 			'settings.playbackBuffer' => 'Tampon de lecture',
@@ -6226,9 +6228,9 @@ extension on TranslationsFr {
 			'settings.manageLibrariesDescription' => 'Réorganiser et masquer les bibliothèques',
 			'settings.companionRemoteServer' => 'Serveur de télécommande',
 			'settings.companionRemoteServerDescription' => 'Autoriser les appareils mobiles de votre réseau à contrôler cette application',
-			'settings.companionRemoteServerStartFailed' => 'Impossible de démarrer le serveur de télécommande',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Impossible de démarrer le serveur de télécommande',
 			'settings.companionRemoteServerStopFailed' => 'Impossible d\'arrêter le serveur de télécommande',
 			'settings.autoPip' => 'Mode image dans l’image automatique',
 			'settings.autoPipDescription' => 'Passer en mode image dans l’image si vous quittez l’application pendant la lecture',
@@ -6740,9 +6742,9 @@ extension on TranslationsFr {
 			'accessibility.reduceMotion' => 'Réduire la motion',
 			'accessibility.reduceMotionHint' => 'Arrêter les animations du repère de focus, les transitions de page et les effets décoratifs.',
 			'accessibility.largeTargets' => 'Objectifs touchés',
-			'accessibility.largeTargetsHint' => 'Donnez plus de place aux contrôles partagés pour la navigation touchante et assistante.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'Donnez plus de place aux contrôles partagés pour la navigation touchante et assistante.',
 			'accessibility.navigationHint' => 'Utilisez Tab et Shift+Tab pour passer d’une commande à l’autre, Enter ou la barre d’espace pour l’activer, et Escape ou Retour pour fermer. Le zoom et les préférences de lecture sont disponibles lorsqu’un livre est ouvert.',
 			'accessibility.textSizeDescription' => 'Texte de l\'interface d\'échelle dans Pleazyng en plus de la configuration de taille du texte système de votre appareil.',
 			'accessibility.boldTextHint' => 'Utilisez un poids plus lourd pour les étiquettes et les messages d’interface afin de les rendre plus faciles à distinguer.',
@@ -7254,9 +7256,9 @@ extension on TranslationsFr {
 			'discover.findNext.savedLimit' => 'La liste des suggestions enregistrées est pleine. Retirez une suggestion pour en enregistrer une autre.',
 			'discover.findNext.chooseHint' => 'Ouvrez un titre, gardez-le pour plus tard ou passez au suivant.',
 			'discover.findNext.howItWorks' => 'Comment ça marche',
-			'discover.findNext.notNowHelp' => 'Passez ce titre pour le moment. Il reste dans votre bibliothèque.',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.notNowHelp' => 'Passez ce titre pour le moment. Il reste dans votre bibliothèque.',
 			'discover.findNext.saveHelp' => 'Gardez-le dans les sélections enregistrées de ce profil sur cet appareil. Cela ne le télécharge pas.',
 			'discover.findNext.openHelp' => 'Sélectionnez la couverture pour afficher les détails. Utilisez l’action principale pour lancer, lire ou ouvrir le titre.',
 			'discover.findNext.controlsHelp' => 'Clavier ou télécommande : sélectionnez un bouton, puis appuyez sur Entrée ou Sélectionner. Annuler rétablit votre dernier choix.',
@@ -7768,9 +7770,9 @@ extension on TranslationsFr {
 			'collections.collection' => 'Collection',
 			'collections.empty' => 'La collection est vide',
 			'collections.deleteCollection' => 'Supprimer la collection',
-			'collections.deleteConfirm' => ({required Object title}) => 'Supprimer "${title}" ? Action irréversible.',
 			_ => null,
 		} ?? switch (path) {
+			'collections.deleteConfirm' => ({required Object title}) => 'Supprimer "${title}" ? Action irréversible.',
 			'collections.deleted' => 'Collection supprimée',
 			'collections.deleteFailed' => 'Échec de la suppression de la collection',
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Échec de la suppression de la collection : ${error}',
@@ -8282,9 +8284,9 @@ extension on TranslationsFr {
 			'videoSettings.backgroundVideoAudioDescription' => 'Gardez la lecture audio vidéo lorsque vous quittez le lecteur; l\'image est cachée jusqu\'à ce que vous reveniez. Android utilise une notification de récupération médiatique.',
 			'videoSettings.audioNormalization' => 'Normaliser le volume',
 			'videoSettings.audioNormalizationDisablesPassthrough' => 'Décode l’audio en PCM ; la transmission directe est désactivée tant que cette option est active',
-			'performanceOverlay.color' => 'Couleur',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.color' => 'Couleur',
 			'performanceOverlay.performance' => 'Performances',
 			'performanceOverlay.buffer' => 'Tampon',
 			'performanceOverlay.app' => 'Application',
@@ -8796,9 +8798,9 @@ extension on TranslationsFr {
 			'homeLayout.sync' => 'Synchroniser',
 			'homeLayout.syncAccountTitle' => 'Synchroniser le layout avec votre compte Plex',
 			'homeLayout.syncAccountOn' => 'Sur : ce dispositif partage la commande de la ligne, les lignes, le héros et l\'automatisation avec vos autres appareils.',
-			'homeLayout.syncAccountOff' => 'Off : ce dispositif maintient son propre layout.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.syncAccountOff' => 'Off : ce dispositif maintient son propre layout.',
 			'homeLayout.syncNow' => 'Synchronisation maintenant',
 			'homeLayout.plexHomeManager' => 'Plex Gestion de la maison',
 			'homeLayout.managePlexRows' => 'Gérer Plex rangs dans Pleazyng',
@@ -9310,9 +9312,9 @@ extension on TranslationsFr {
 			'audiobook.deletedBookmark' => 'Bookmark supprimé',
 			'audiobook.finished' => 'terminé',
 			'audiobook.readingPosition' => ({required Object percent}) => 'Lire · ${percent}%',
-			'audiobook.chapterTimeline' => 'Chapitre Progrès',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.chapterTimeline' => 'Chapitre Progrès',
 			'audiobook.bookTimeline' => 'L\'ensemble du livre progrès',
 			'audiobook.bookRemaining' => ({required Object time}) => 'Le temps restant dans ce livre: ${time}',
 			'audiobook.chapterRemaining' => ({required Object time}) => 'Le temps restant dans ce chapitre: ${time}',
@@ -9824,9 +9826,9 @@ extension on TranslationsFr {
 			'musicExperience.driving' => 'Mode conduite',
 			'musicExperience.exitDriving' => 'Quitter le mode conduite',
 			'musicExperience.signalPath' => 'Parcours du signal audio',
-			'musicExperience.source' => 'source',
 			_ => null,
 		} ?? switch (path) {
+			'musicExperience.source' => 'source',
 			'musicExperience.local' => 'Audio téléchargé',
 			'musicExperience.network' => 'Audio du serveur',
 			'musicExperience.engine' => 'Moteur de lecture',

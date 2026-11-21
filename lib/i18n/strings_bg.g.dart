@@ -489,6 +489,7 @@ class _Translations$settings$bg extends Translations$settings$en {
 	@override String get playerBackend => 'Система за възпроизвеждане';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Панта на сгъваемия дисплей';
 	@override String get hardwareDecoding => 'Хардуерно декодиране';
 	@override String get hardwareDecodingDescription => 'Използвай хардуерно ускорение, когато е налично';
 	@override String get playbackBuffer => 'Буфер за възпроизвеждане';
@@ -6001,6 +6002,7 @@ extension on TranslationsBg {
 			'settings.playerBackend' => 'Система за възпроизвеждане',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Панта на сгъваемия дисплей',
 			'settings.hardwareDecoding' => 'Хардуерно декодиране',
 			'settings.hardwareDecodingDescription' => 'Използвай хардуерно ускорение, когато е налично',
 			'settings.playbackBuffer' => 'Буфер за възпроизвеждане',
@@ -6192,9 +6194,9 @@ extension on TranslationsBg {
 			'settings.manageLibrariesDescription' => 'Пренареждай и скривай библиотеки',
 			'settings.companionRemoteServer' => 'Сървър за дистанционно управление',
 			'settings.companionRemoteServerDescription' => 'Позволи на мобилни устройства във вашата мрежа да управляват това приложение',
-			'settings.companionRemoteServerStartFailed' => 'Сървърът за дистанционно управление не можа да бъде стартиран',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Сървърът за дистанционно управление не можа да бъде стартиран',
 			'settings.companionRemoteServerStopFailed' => 'Сървърът за дистанционно управление не можа да бъде спрян',
 			'settings.autoPip' => 'Автоматичен режим картина в картината',
 			'settings.autoPipDescription' => 'Автоматично включвай режима картина в картината при излизане от приложението по време на възпроизвеждане',
@@ -6706,9 +6708,9 @@ extension on TranslationsBg {
 			'accessibility.reduceMotion' => 'Намаляване на движението',
 			'accessibility.reduceMotionHint' => 'Спиране на анимациите на индикатора за фокус, преходите между страниците и декоративните ефекти.',
 			'accessibility.largeTargets' => 'По-големи цели за докосване',
-			'accessibility.largeTargetsHint' => 'Дават споделени контрола повече място за докосване и асистирана навигация.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'Дават споделени контрола повече място за докосване и асистирана навигация.',
 			'accessibility.navigationHint' => 'Използвайте Tab и Shift+Tab за преминаване между контролите, Enter или интервал за активиране и Escape или бутона Назад за затваряне. Когато е отворена книга, са достъпни мащабиране и настройки за четене.',
 			'accessibility.textSizeDescription' => 'Скалиране на интерфейса текст в Pleazyng в допълнение към настройката за текстови размери на устройството.',
 			'accessibility.boldTextHint' => 'Използвайте по-тежка тежест за етикетите на интерфейса и съобщенията, за да ги направите по-лесни за разграничаване.',
@@ -7220,9 +7222,9 @@ extension on TranslationsBg {
 			'discover.findNext.artworkLoading' => 'Зареждане на изображение…',
 			'discover.findNext.artworkUnavailable' => 'Изображението не е налично',
 			'discover.findNext.savedFeedback' => 'Добавено към запазените предложения',
-			'discover.findNext.skippedFeedback' => 'Пропуснато засега',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'Пропуснато засега',
 			'discover.findNext.releaseToConfirm' => 'Пуснете, за да потвърдите',
 			'discover.findNext.remoteHint' => 'Когато корицата е на фокус: ← / → избор · Избор: подробности · ↑ / ↓ премества фокуса',
 			'discover.studio' => 'Студио',
@@ -7734,9 +7736,9 @@ extension on TranslationsBg {
 			'collections.selectCollection' => 'Избери колекция',
 			'collections.collectionName' => 'Име на колекция',
 			'collections.enterCollectionName' => 'Въведете име на колекция',
-			'collections.addedToCollection' => 'Добавено към колекция',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Добавено към колекция',
 			'collections.errorAddingToCollection' => 'Неуспешно добавяне към колекция',
 			'collections.created' => 'Колекцията е създадена',
 			'collections.removeFromCollection' => 'Премахни от колекция',
@@ -8248,9 +8250,9 @@ extension on TranslationsBg {
 			'performanceOverlay.decoder' => 'Декодер',
 			'performanceOverlay.rawDecoder' => 'Суров декодер',
 			'performanceOverlay.tunneling' => 'Тунелиране',
-			'performanceOverlay.passthrough' => 'Директно предаване',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Директно предаване',
 			'performanceOverlay.aspect' => 'Съотношение',
 			'performanceOverlay.rotation' => 'Завъртане',
 			'performanceOverlay.dvSource' => 'DV източник',
@@ -8762,9 +8764,9 @@ extension on TranslationsBg {
 			'homeLayout.managePlexRowsDescription' => 'Отворено да организирате домашните редове',
 			'homeLayout.organizeHomeRows' => 'Организиране на домашни редове',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} редове: движение, герой, Авто-слайд, премахване',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Организирайте ${library} редове',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Организирайте ${library} редове',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} реда: движение, Библиотека, Дома, Герой, Авто-Слайд',
 			'homeLayout.renderAsHero' => 'Да се изкачи като герой',
 			'homeLayout.heroOnlySingleCollection' => 'Достъпна само когато тази линия се разрешава на действителните заглавия на една колекция',
@@ -9276,9 +9278,9 @@ extension on TranslationsBg {
 			'audiobook.customSpeed' => 'Специална скорост на възпроизвеждане',
 			'audiobook.speedHelp' => 'Изберете скорост от 0.25× до 4×.',
 			'audiobook.apply' => 'Прилагане',
-			'audiobook.customSleep' => 'Часовник за сън',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'Часовник за сън',
 			'audiobook.sleepMinutes' => 'Минути (1 до 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Прекъсване след ${count} глави',
 			'audiobook.extendSleep' => 'Добавете 5 минути',
@@ -9790,9 +9792,9 @@ extension on TranslationsBg {
 			'musicExperience.bluetoothDrivingHint' => 'Изберете свързани Bluetooth изходи, които автоматично отварят изгледа за шофиране.',
 			'musicTools.loudnessMissing' => 'Няма получени данни за силата на звука',
 			'musicTools.loudnessRequested' => 'Заявката за анализ е изпратена',
-			'musicTools.loudnessUnsupported' => 'Тази версия на сървъра не поддържа заявки за анализ',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Тази версия на сървъра не поддържа заявки за анализ',
 			'musicTools.serverHistory' => 'История на възпроизвеждане от сървъра',
 			'musicTools.nfcWrite' => 'Запис на NFC етикет',
 			'musicTools.nfcRead' => 'Сканиране на NFC етикет',

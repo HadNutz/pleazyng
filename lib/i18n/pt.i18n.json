@@ -347,6 +347,7 @@
     "playerBackend": "Mecanismo de reprodução",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Dobradiça do ecrã dobrável",
     "hardwareDecoding": "Decodificação por Hardware",
     "hardwareDecodingDescription": "Usar aceleração por hardware quando disponível",
     "playbackBuffer": "Buffer de reprodução",

@@ -347,6 +347,7 @@
     "playerBackend": "اللاعب Backend",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "مفصلة الشاشة القابلة للطي",
     "hardwareDecoding": "التخزين الصلب",
     "hardwareDecodingDescription": "استخدم تسارع الأجهزة عندما يكون متاحًا",
     "playbackBuffer": "لعبة Playback Buffer",

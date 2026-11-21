@@ -1,7 +1,7 @@
 {
   "locale": "pt-PT",
   "inherits": "pt",
-  "catalogSha256": "5f32df5f68be92aadbbb4ba28102dae8de1e76f48cb9c9c2097bfa710d580c9a",
+  "catalogSha256": "43b7edc2b0998b47deaeab67d0f21aeab98a799384497c6f9c4006e18447e2d2",
   "nativeSpeakerReviewed": false,
   "messages": {
     "cast.castToDevice": "jellyfin-web:ButtonCast",
@@ -2329,7 +2329,8 @@
     "iptv.pickerCredit": "fork-authored",
     "iptv.playlistBase": "fork-authored",
     "iptv.showMatches": "fork-authored",
-    "iptv.backupFeeds": "fork-authored"
+    "iptv.backupFeeds": "fork-authored",
+    "settings.foldableDisplay": "fork-authored"
   },
   "integrationAiQaReport": "../LANGUAGE_QA_INTEGRATION.md",
   "beforeMainMergeReview": {

@@ -347,6 +347,7 @@
     "playerBackend": "Motor de reproducción",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Bisagra de la pantalla plegable",
     "hardwareDecoding": "Decodificación por hardware",
     "hardwareDecodingDescription": "Usar aceleración por hardware cuando esté disponible",
     "playbackBuffer": "Búfer de reproducción",

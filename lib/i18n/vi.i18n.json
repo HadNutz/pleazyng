@@ -347,6 +347,7 @@
     "playerBackend": "Trò chơi Backend",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Bản lề màn hình gập",
     "hardwareDecoding": "Phần cứng decoding",
     "hardwareDecodingDescription": "Sử dụng phần cứng tăng tốc khi có sẵn",
     "playbackBuffer": "Đánh giá Playback Buffer",

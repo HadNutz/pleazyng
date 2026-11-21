@@ -489,6 +489,7 @@ class _Translations$settings$uk extends Translations$settings$en {
 	@override String get playerBackend => 'Гравець Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Шарнір складаного екрана';
 	@override String get hardwareDecoding => 'Декодування харчового обладнання';
 	@override String get hardwareDecodingDescription => 'Використовуйте прискорення харчових пристроїв, коли вони доступні';
 	@override String get playbackBuffer => 'Завантажити Playback Buffer';
@@ -6045,6 +6046,7 @@ extension on TranslationsUk {
 			'settings.playerBackend' => 'Гравець Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Шарнір складаного екрана',
 			'settings.hardwareDecoding' => 'Декодування харчового обладнання',
 			'settings.hardwareDecodingDescription' => 'Використовуйте прискорення харчових пристроїв, коли вони доступні',
 			'settings.playbackBuffer' => 'Завантажити Playback Buffer',
@@ -6236,9 +6238,9 @@ extension on TranslationsUk {
 			'settings.manageLibrariesDescription' => 'Завантажити та приховати бібліотеки',
 			'settings.companionRemoteServer' => 'Віддалені сервери',
 			'settings.companionRemoteServerDescription' => 'Дозвольте мобільним пристроям у вашій мережі контролювати цю програму',
-			'settings.companionRemoteServerStartFailed' => 'Не можна було запустити сервер товаришів',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Не можна було запустити сервер товаришів',
 			'settings.companionRemoteServerStopFailed' => 'Не можна було зупинити сервер товаришів',
 			'settings.autoPip' => 'Створення Auto Picture-in-Picture',
 			'settings.autoPipDescription' => 'Автоматично введіть зображення в зображення, коли ви покидаєте додаток під час відтворення',
@@ -6750,9 +6752,9 @@ extension on TranslationsUk {
 			'accessibility.reduceMotion' => 'Зменшення руху',
 			'accessibility.reduceMotionHint' => 'Зупиняє анімацію індикатора фокусу, переходи сторінок і декоративні ефекти.',
 			'accessibility.largeTargets' => 'Більшість цілей',
-			'accessibility.largeTargetsHint' => 'Дайте спільним контролям більше місця для дотику і асистентської навігації.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'Дайте спільним контролям більше місця для дотику і асистентської навігації.',
 			'accessibility.navigationHint' => 'Використовуйте Tab і Shift+Tab для переходу між елементами керування, Enter або пробіл для активації, а Escape або кнопку «Назад» для закриття. Коли книгу відкрито, доступні масштабування й налаштування читання.',
 			'accessibility.textSizeDescription' => 'Розмір інтерфейсу тексту в Pleazyng, а також налаштування розміру тексту системи вашого пристрою.',
 			'accessibility.boldTextHint' => 'Використовуйте більш важку вагу для етикетки інтерфейсу та повідомлень, щоб зробити їх простіше розрізняти.',
@@ -7264,9 +7266,9 @@ extension on TranslationsUk {
 			'discover.findNext.artworkLoading' => 'Завантаження обкладинки…',
 			'discover.findNext.artworkUnavailable' => 'Обкладинка недоступна',
 			'discover.findNext.savedFeedback' => 'Додано до збережених добірок',
-			'discover.findNext.skippedFeedback' => 'Наразі пропущено',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.skippedFeedback' => 'Наразі пропущено',
 			'discover.findNext.releaseToConfirm' => 'Відпустіть для підтвердження',
 			'discover.findNext.remoteHint' => 'Фокус на обкладинці: ← / → вибір · Кнопка вибору: подробиці · ↑ / ↓ переміщення фокусу',
 			'discover.studio' => 'Студія',
@@ -7778,9 +7780,9 @@ extension on TranslationsUk {
 			'collections.selectCollection' => 'Вибір колекції',
 			'collections.collectionName' => 'Колекційне ім\'я',
 			'collections.enterCollectionName' => 'Введіть колекційне ім\'я',
-			'collections.addedToCollection' => 'Додано до колекції',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Додано до колекції',
 			'collections.errorAddingToCollection' => 'Не вдалося додати до колекції',
 			'collections.created' => 'Колекція створена',
 			'collections.removeFromCollection' => 'Вилучити з колекції',
@@ -8292,9 +8294,9 @@ extension on TranslationsUk {
 			'performanceOverlay.decoder' => 'Декорація',
 			'performanceOverlay.rawDecoder' => 'РОЙ ДЕКОДЕР',
 			'performanceOverlay.tunneling' => 'тунелі',
-			'performanceOverlay.passthrough' => 'Пастирський',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Пастирський',
 			'performanceOverlay.aspect' => 'Погляд',
 			'performanceOverlay.rotation' => 'Обертання',
 			'performanceOverlay.dvSource' => 'ДВ джерела',
@@ -8806,9 +8808,9 @@ extension on TranslationsUk {
 			'homeLayout.managePlexRowsDescription' => 'Відкрито для організації домашньо вибраних рядків',
 			'homeLayout.organizeHomeRows' => 'Організуйте домашній ряд',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} рядки: переміщення, Герої, Авто-Слайд, видалення',
-			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Організуйте ${library} рядки',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Організуйте ${library} рядки',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Продовжуйте дивитися + ${n} рядки: переміщення, Бібліотека, Домашній, Герої, Авто-Слайд',
 			'homeLayout.renderAsHero' => 'Повернення як героїчна картка',
 			'homeLayout.heroOnlySingleCollection' => 'Доступно тільки тоді, коли ця рядка вирішується на реальні заголовки однієї колекції',
@@ -9320,9 +9322,9 @@ extension on TranslationsUk {
 			'audiobook.customSpeed' => 'Швидкість відтворення',
 			'audiobook.speedHelp' => 'Виберіть швидкість від 0,25× до 4×.',
 			'audiobook.apply' => 'Заявка',
-			'audiobook.customSleep' => 'Кваліфікований час сну',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.customSleep' => 'Кваліфікований час сну',
 			'audiobook.sleepMinutes' => '1 хвилини (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Залишився після розділів ${count}',
 			'audiobook.extendSleep' => 'Додайте 5 хвилин',
@@ -9834,9 +9836,9 @@ extension on TranslationsUk {
 			'musicExperience.bluetoothDrivingHint' => 'Виберіть підключені виходи Bluetooth, які автоматично відкривають режим водіння.',
 			'musicTools.loudnessMissing' => 'Дані про гучність не отримано',
 			'musicTools.loudnessRequested' => 'Запит на аналіз надіслано',
-			'musicTools.loudnessUnsupported' => 'Ця версія сервера не підтримує запити на аналіз',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Ця версія сервера не підтримує запити на аналіз',
 			'musicTools.serverHistory' => 'Історія відтворення на сервері',
 			'musicTools.nfcWrite' => 'Записати NFC-мітку',
 			'musicTools.nfcRead' => 'Сканувати NFC-мітку',

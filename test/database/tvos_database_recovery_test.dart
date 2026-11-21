@@ -413,8 +413,9 @@ void main() {
   });
 
   for (final missingKeys in [
-    ['iptvLineupGroups'],
-    ['iptvLineupGroups', 'iptvFeedAliases'],
+    ['iptvSeriesRules', 'iptvSeriesAirings'],
+    ['iptvSeriesRules', 'iptvSeriesAirings', 'iptvLineupGroups'],
+    ['iptvSeriesRules', 'iptvSeriesAirings', 'iptvLineupGroups', 'iptvFeedAliases'],
   ]) {
     test('a committed identity image predating ${missingKeys.join(" and ")} still restores', () async {
       final initial = await open();
