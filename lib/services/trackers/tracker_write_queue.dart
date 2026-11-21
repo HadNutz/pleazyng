@@ -237,38 +237,39 @@ class TrackerWriteQueue {
   /// guaranteed to also sweep a row that could only be buffered, not persisted.
   Future<void> enqueueAll(String userUuid, List<TrackerWriteQueueItem> items) {
     if (items.isEmpty) return Future.value();
-    return _locked(() async {
-      try {
-        final queued = await load(userUuid);
-        for (final item in items) {
-          final claim = item.progressClaim;
-          if (claim != null &&
-              queued.any((row) => row.coalesceKey == item.coalesceKey && (row.progressClaim ?? -1) > claim)) {
-            // A higher claim for the same entry is already waiting; this one
-            // would only walk it backwards.
-            continue;
-          }
-          queued.removeWhere((row) => row.coalesceKey == item.coalesceKey);
-          queued.add(item);
-        }
-        await _save(userUuid, queued);
-      } catch (e, st) {
-        appLogger.e(
-          'Tracker write queue: persist failed for ${items.length} ${items.first.service.name} row(s), '
-          'buffering in memory',
-          error: e,
-          stackTrace: st,
-        );
-        final fallback = _inMemoryFallbackByUser.putIfAbsent(userUuid, Queue<TrackerWriteQueueItem>.new);
-        for (final item in items) {
-          if (fallback.length >= _maxInMemoryFallback) {
-            final dropped = fallback.removeFirst();
-            appLogger.w('Tracker write queue: in-memory buffer full, dropping ${dropped.service.name}');
-          }
-          fallback.addLast(item);
-        }
+    return _locked(() => _persistWithFallback(userUuid, items));
+  }
+
+  void _coalesce(List<TrackerWriteQueueItem> queued, TrackerWriteQueueItem item) {
+    final claim = item.progressClaim;
+    if (claim != null &&
+        queued.any((row) => row.coalesceKey == item.coalesceKey && (row.progressClaim ?? -1) > claim)) {
+      return;
+    }
+    queued.removeWhere((row) => row.coalesceKey == item.coalesceKey);
+    queued.add(item);
+  }
+
+  // Called under the write lock. Incorporate buffered writes first so a newer
+  // intent always wins, whether the previous write reached disk or memory.
+  Future<void> _persistWithFallback(String userUuid, List<TrackerWriteQueueItem> items) async {
+    final pending = _inMemoryFallbackByUser.remove(userUuid)?.toList() ?? [];
+    for (final item in items) {
+      _coalesce(pending, item);
+    }
+    if (pending.isEmpty) return;
+    try {
+      final queued = await load(userUuid);
+      for (final item in pending) {
+        _coalesce(queued, item);
       }
-    });
+      await _save(userUuid, queued);
+    } catch (e, st) {
+      appLogger.e('Tracker write queue: buffering ${pending.length} pending row(s)', error: e, stackTrace: st);
+      final overflow = pending.length - _maxInMemoryFallback;
+      if (overflow > 0) appLogger.w('Tracker write queue: dropping $overflow oldest buffered row(s)');
+      _inMemoryFallbackByUser[userUuid] = Queue.of(pending.skip(overflow > 0 ? overflow : 0));
+    }
   }
 
   /// Drop queued writes that completed direct writes have superseded, keyed by
@@ -279,17 +280,18 @@ class TrackerWriteQueue {
   /// below the applied progress are covered; a queued higher claim is still a
   /// pending advance and survives.
   Future<void> invalidate(String userUuid, Map<String, int?> appliedProgressByKey) async {
-    // A profile whose queue has never been loaded is not assumed empty.
-    final pending = _pendingKeysByUser[userUuid];
-    if (pending != null && !appliedProgressByKey.keys.any(pending.contains)) return;
+    bool superseded(TrackerWriteQueueItem row) =>
+        appliedProgressByKey.containsKey(row.coalesceKey) &&
+        covers(appliedProgress: appliedProgressByKey[row.coalesceKey], item: row);
     await _locked(() async {
+      final buffered = _inMemoryFallbackByUser[userUuid];
+      buffered?.removeWhere(superseded);
+      if (buffered?.isEmpty == true) _inMemoryFallbackByUser.remove(userUuid);
+      final pending = _pendingKeysByUser[userUuid];
+      if (pending != null && !appliedProgressByKey.keys.any(pending.contains)) return;
       final items = await load(userUuid);
       final before = items.length;
-      items.removeWhere(
-        (queued) =>
-            appliedProgressByKey.containsKey(queued.coalesceKey) &&
-            covers(appliedProgress: appliedProgressByKey[queued.coalesceKey], item: queued),
-      );
+      items.removeWhere(superseded);
       if (items.length == before) return;
       appLogger.d('Tracker write queue: dropped ${before - items.length} superseded row(s)');
       await _save(userUuid, items);
@@ -521,14 +523,7 @@ class TrackerWriteQueue {
   /// Move items buffered because a prior disk write failed back onto the
   /// persistent queue. Best-effort: anything that still won't persist stays
   /// buffered for the next flush.
-  Future<void> _recoverInMemoryFallback(String userUuid) async {
-    final fallback = _inMemoryFallbackByUser[userUuid];
-    if (fallback == null || fallback.isEmpty) return;
-    final snapshot = List<TrackerWriteQueueItem>.from(fallback);
-    fallback.clear();
-    _inMemoryFallbackByUser.remove(userUuid);
-    await enqueueAll(userUuid, snapshot);
-  }
+  Future<void> _recoverInMemoryFallback(String userUuid) => _locked(() => _persistWithFallback(userUuid, const []));
 
   /// Convert the pre-consolidation Trakt-only queue into shared items.
   ///

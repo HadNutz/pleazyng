@@ -209,6 +209,9 @@
     "notAvailable": "Yoxdur",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "Simvollar",
+    "keyboardLetters": "Hərflər",
+    "keyboardNewLine": "Yeni sətir",
     "mediaKind": {
       "movie": "Film",
       "show": "Serial",
@@ -431,6 +434,7 @@
     "importSettingsDescription": "Seçimləri fayldan bərpa edin",
     "importSettingsConfirm": "Bu cari tənzimləmələrinizin üzərinə yazacaq. Davam edilsin?",
     "importSettingsSuccess": "Tənzimləmələr idxal edildi",
+    "importSettingsCounts": "Tətbiq olunan ayarlar: ${applied}. Buraxılan: ${skipped}.",
     "importSettingsInvalidFile": "Bu fayl düzgün Pleazyng tənzimləmələr faylı deyil",
     "importSettingsNoUser": "Tənzimləmələri idxal etməzdən əvvəl daxil olun",
     "cloudBackup": "Qıraqlı Qıraqlı",

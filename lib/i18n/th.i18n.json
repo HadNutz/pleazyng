@@ -209,6 +209,9 @@
     "notAvailable": "หมายเลขรุ่น: A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "สัญลักษณ์",
+    "keyboardLetters": "ตัวอักษร",
+    "keyboardNewLine": "ขึ้นบรรทัดใหม่",
     "mediaKind": {
       "movie": "ภาพยนตร์",
       "show": "แสดง",
@@ -429,6 +432,7 @@
     "importSettingsDescription": "การกู้คืนความต้องการจากไฟล์",
     "importSettingsConfirm": "สิ่งนี้จะเปลี่ยนการตั้งค่าปัจจุบันของคุณ ต่อเนื่อง?",
     "importSettingsSuccess": "การตั้งค่าที่นําเข้า",
+    "importSettingsCounts": "ใช้การตั้งค่าแล้ว ${applied} รายการ ข้าม ${skipped} รายการ",
     "importSettingsInvalidFile": "ไฟล์นี้ไม่ได้รับการส่งออกการตั้งค่า Pleazyng",
     "importSettingsNoUser": "ลงทะเบียนก่อนนําเข้าการตั้งค่า",
     "cloudBackup": "คล็อค Backup",

@@ -209,6 +209,9 @@
     "notAvailable": "ए / ए",
     "url": "URL",
     "letterKeys": "एबीसी",
+    "keyboardSymbols": "प्रतीक",
+    "keyboardLetters": "अक्षर",
+    "keyboardNewLine": "नई पंक्ति",
     "mediaKind": {
       "movie": "फिल्में",
       "show": "शो",
@@ -431,6 +434,7 @@
     "importSettingsDescription": "फ़ाइल से प्राथमिकताओं को पुनर्स्थापित करें",
     "importSettingsConfirm": "यह आपके वर्तमान सेटिंग्स को प्रतिस्थापित करेगा. आगे?",
     "importSettingsSuccess": "आयातित सेटिंग्स",
+    "importSettingsCounts": "लागू की गई सेटिंग: ${applied}। छोड़ी गई सेटिंग: ${skipped}।",
     "importSettingsInvalidFile": "यह फ़ाइल एक वैध Pleazyng सेटिंग्स निर्यात नहीं है",
     "importSettingsNoUser": "आयात से पहले इनपुट करें",
     "cloudBackup": "क्लाउड बैकअप",

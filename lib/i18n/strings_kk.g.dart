@@ -342,6 +342,9 @@ class _Translations$common$kk extends Translations$common$en {
 	@override String get notAvailable => 'N/A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Таңбалар';
+	@override String get keyboardLetters => 'Әріптер';
+	@override String get keyboardNewLine => 'Жаңа жол';
 	@override late final _Translations$common$mediaKind$kk mediaKind = _Translations$common$mediaKind$kk._(_root);
 }
 
@@ -572,6 +575,7 @@ class _Translations$settings$kk extends Translations$settings$en {
 	@override String get importSettingsDescription => 'Параметрлерді файлдан қалпына келтіріңіз';
 	@override String get importSettingsConfirm => 'Бұл ағымдағы баптауларыңыздың үстінен жазады. Жалғастырасыз ба?';
 	@override String get importSettingsSuccess => 'Баптаулар импортталды';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Қолданылған баптаулар: ${applied}. Өткізіп жіберілгені: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Бұл файл дұрыс Pleazyng баптаулар файлы емес';
 	@override String get importSettingsNoUser => 'Баптауларды импорттау алдында жүйеге кіріңіз';
 	@override String get cloudBackup => 'Ауыздылық Cloud';
@@ -5822,6 +5826,9 @@ extension on TranslationsKk {
 			'common.notAvailable' => 'N/A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Таңбалар',
+			'common.keyboardLetters' => 'Әріптер',
+			'common.keyboardNewLine' => 'Жаңа жол',
 			'common.mediaKind.movie' => 'Фильм',
 			'common.mediaKind.show' => 'Сериал',
 			'common.mediaKind.season' => 'Маусым',
@@ -6030,6 +6037,7 @@ extension on TranslationsKk {
 			'settings.importSettingsDescription' => 'Параметрлерді файлдан қалпына келтіріңіз',
 			'settings.importSettingsConfirm' => 'Бұл ағымдағы баптауларыңыздың үстінен жазады. Жалғастырасыз ба?',
 			'settings.importSettingsSuccess' => 'Баптаулар импортталды',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Қолданылған баптаулар: ${applied}. Өткізіп жіберілгені: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Бұл файл дұрыс Pleazyng баптаулар файлы емес',
 			'settings.importSettingsNoUser' => 'Баптауларды импорттау алдында жүйеге кіріңіз',
 			'settings.cloudBackup' => 'Ауыздылық Cloud',
@@ -6140,12 +6148,12 @@ extension on TranslationsKk {
 			'settings.manageLibrariesDescription' => 'Кітапханаларды қайта реттеу және жасыру',
 			'settings.companionRemoteServer' => 'Көмекші пульт сервері',
 			'settings.companionRemoteServerDescription' => 'Желідегі мобильді құрылғыларға осы қолданбаны басқаруға рұқсат беру',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Көмекші серверді іске қосу мүмкін болмады',
 			'settings.companionRemoteServerStopFailed' => 'Көмекші серверді тоқтату мүмкін болмады',
 			'settings.autoPip' => 'Автоматты Суреттегі сурет (PiP)',
 			'settings.autoPipDescription' => 'Видео ойнап жатқанда қолданбадан шыққанда авто-PiP режиміне өту',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Кадр жиілігін сәйкестендіру',
 			'settings.matchContentFrameRateDescription' => 'Экран жиілігін видео мазмұнына сәйкестендіру',
 			'settings.matchContentResolution' => 'Мазмұнның ажыратымдылығына бейімдеу',
@@ -6654,12 +6662,12 @@ extension on TranslationsKk {
 			'accessibility.boldTextHint' => 'Қандай-ақ интерфейс етикетке және мақалалар үшін көптеген жылдардан тұрады.',
 			'tooltips.shufflePlay' => 'Араластырып ойнату',
 			'tooltips.playTrailer' => 'Трейлерді ойнату',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Көрілді деп белгілеу',
 			'tooltips.markAsUnwatched' => 'Көрілмеді деп белгілеу',
 			'audioTracks.track' => ({required Object n}) => 'Аудиожол ${n}',
 			'videoControls.audioLabel' => 'Дыбыс',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Субтитр',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Кең экран (Letterbox)',
@@ -7168,12 +7176,12 @@ extension on TranslationsKk {
 			'errors.connectionTimeout' => ({required Object context}) => '${context} жүктеу уақыты өтті',
 			'errors.connectionFailed' => 'Медиа серверіне қосылу мүмкін емес',
 			'errors.unableToLoad' => ({required Object context}) => '${context} жүктеу мүмкін болмады.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Қолжетімді клиент жоқ',
 			'errors.pleaseEnterToken' => 'Токенді енгізіңіз',
 			'errors.invalidToken' => 'Жарамсыз токен',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Токенді тексеру мүмкін болмады: ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName} профиліне ауысу мүмкін болмады',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName} профилін өшіру мүмкін болмады',
 			'errors.failedToRate' => 'Рейтингті жаңарту мүмкін болмады',
@@ -7682,12 +7690,12 @@ extension on TranslationsKk {
 			'playlists.emptyPlaylist' => 'Бұл ойнату тізімі бос',
 			'playlists.deleteConfirm' => 'Ойнату тізімі өшірілсін бе?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}" өшірілсін бе?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Ойнату тізімі жасалды',
 			'playlists.deleted' => 'Ойнату тізімі өшірілді',
 			'playlists.itemAdded' => 'Тізімге қосылды',
 			'playlists.itemRemoved' => 'Тізімнен өшірілді',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Тізімді таңдау',
 			'playlists.searchPlaylists' => 'Ойнату тізімдерінен іздеу...',
 			'playlists.errorCreating' => 'Тізімді жасау мүмкін болмады',
@@ -8196,12 +8204,12 @@ extension on TranslationsKk {
 			'performanceOverlay.transfer' => 'Беріліс',
 			'performanceOverlay.renderFps' => 'Рендер FPS',
 			'performanceOverlay.displayFps' => 'Дисплей FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V синхрондау',
 			'performanceOverlay.dropped' => 'Өткізілген кадрлар',
 			'performanceOverlay.dvRpus' => 'DV RPU-лар',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU Орт.',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV Үлгі Орт.',
 			'performanceOverlay.maxLuma' => 'Макс Luma',
 			'performanceOverlay.minLuma' => 'Мин Luma',
@@ -8710,12 +8718,12 @@ extension on TranslationsKk {
 			'homeLayout.customPlexRow' => 'Қазір Plex қаңтар',
 			'homeLayout.heroNeedsLibrary' => '«Жеңіске үлес қосқандар» деген әйгілі әндердің авторы.',
 			'homeLayout.heroNeedsSurface' => '«Жеңіске» және «Жектесі» деген әйгілі әндер шыққан әндер шырқалып, биленді.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Өткен қағал',
 			'homeLayout.noPlexRows' => 'Бұл кітапхана үшін Plex басқаратын қатарлар табылмады.',
 			'homeLayout.openDetails' => 'Одандық детайл',
 			'homeLayout.heroCards' => 'Үлкен картасы',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Жүктесі картасы',
 			'homeLayout.tvPlayFocus' => 'Телевизорда көтеріп: «Жеңір» бутон',
 			'homeLayout.tvPlayFocusDescription' => 'Бұл үшін, «Д-пады» және «Д-пай» және «Сейп» және «Бай» және басқа да «Сейб» және «Аль-Кай» және т.б.',
@@ -9224,12 +9232,12 @@ extension on TranslationsKk {
 			'audiobook.recoveryExport' => 'Експортдық криптовалюттік файл',
 			'audiobook.recoveryImport' => 'Қандай-ақ криптовалюталық дағдарыс',
 			'audiobook.recoveryImportConfirm' => 'Бұл криптовалюталық дағдарыстағы қанағаттанды және жабдықтармен көруге болады? іс-әрекеттің историю бар. Жабдықтау библиотекасы және элементтік ID-дер не пайдаланылады; екеуінде импортируға дейін әртүрлі айналысатын идентификатордан қабылдайды.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Қазіргі уақытта өңдеуге кеңінен танымал.',
 			'audiobook.recoveryImported' => 'Ауыздан дағдарыста.',
 			'sourceSetup.bookorbitHelp' => 'Кітаптарды қарау және ойнату үшін өз BookOrbit тіркелгіңізге кіріңіз. Жоқ тақырыптарға арналған сұраулар әлі де қосылған SeerrNG данасы арқылы жіберіледі.',
 			'sourceSetup.bookorbitOpen' => 'BookOrbit ішінде ашу',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Кітапхана мәліметтерін және Pleazyng аша алмайтын пішімдерді басқару үшін бұл тақырыпты BookOrbit ішінде қараңыз. Тыңдау барысы BookOrbit тіркелгісімен синхрондалады.',
 			'sourceSetup.savedCertificate' => 'Сақталған сервер сертификаты',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export сияқты NFS URL мекенжайын енгізіңіз.',
@@ -9738,12 +9746,12 @@ extension on TranslationsKk {
 			'musicTools.apiKey' => 'API кілті',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Минут',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Фильтрлер',
 			'musicTools.exclusiveOutput' => 'Эксклюзивті аудио шығыс',
 			'musicTools.preamp' => 'Алдын ала күшейту',
 			'musicTools.ratingPending' => 'Осы құрылғыда сақталды; синхрондау күтілуде',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Ән мәтінінің уақыт ығысуы',
 			'musicTools.anniversaries' => 'Альбом мерейтойлары',
 			'musicTools.outputPreset' => 'Осы шығысқа арналған эквалайзер',

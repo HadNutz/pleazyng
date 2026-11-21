@@ -305,13 +305,13 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
   @override
   Future<PlaybackInitializationResult> getPlaybackInitialization(PlaybackInitializationOptions options) async {
     final metadata = options.metadata;
-    final JellyfinPlaybackBundle? bundle;
+    final JellyfinPlaybackBundle? original;
     try {
       // An immediate connection error is asked again (see
       // [retryTransientMediaServerCall]); the deadline only backstops the
       // HTTP layer's own connect, response and receive budgets, so it never
       // cuts a slow but working server short.
-      bundle = await retryTransientMediaServerCall(
+      original = await retryTransientMediaServerCall(
         operation: 'Jellyfin playback item',
         deadline: MediaServerTimeouts.connect + MediaServerTimeouts.response + MediaServerTimeouts.receive,
         call: (_, _) => fetchPlaybackBundle(
@@ -325,9 +325,14 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(classifyPlaybackFailure(error), stackTrace);
     }
-    if (bundle == null) {
+    if (original == null) {
       throw PlaybackException(t.messages.playbackNoMediaSources, reason: PlaybackFailureReason.noPlayableSource);
     }
+    final position =
+        options.startPosition ?? Duration(milliseconds: metadata.viewOffsetMs ?? original.multipart?.resumeMs ?? 0);
+    final partTimeline = original.multipart?.at(position);
+    final itemId = partTimeline?.current.partId ?? metadata.id;
+    final bundle = original.at(position);
     var mediaInfo = jellyfinMediaSourceToMediaSourceInfo(
       bundle.selectedSource,
       chapters: bundle.chapters,
@@ -441,16 +446,15 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
         // Non-original audio presets always carry a bitrate by construction.
         ? audioPreset.bitrateKbps! * 1000
         : (preset.videoBitrateKbps ?? 100_000) * 1000;
-    final resumeOffsetMs = options.startPosition?.inMilliseconds ?? metadata.viewOffsetMs;
-    final int? transcodeStartTimeTicks =
-        (!wantsOriginal || requiresConversion) && resumeOffsetMs != null && resumeOffsetMs > 0
+    final resumeOffsetMs = (position - (partTimeline?.current.start ?? Duration.zero)).inMilliseconds;
+    final int? transcodeStartTimeTicks = (!wantsOriginal || requiresConversion) && resumeOffsetMs > 0
         ? msToJellyfinTicks(resumeOffsetMs)
         : null;
     Map<String, dynamic>? negotiation;
     Map<String, dynamic>? chosenSource;
     try {
       negotiation = await getPlaybackInfo(
-        metadata.id,
+        itemId,
         maxStreamingBitrate: maxStreamingBitrate,
         videoQuality: isTrack ? null : preset,
         mediaSourceId: bundle.selectedSourceId,
@@ -517,9 +521,9 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
         if (forceCompatibleDolbyVisionTranscode) {
           await _verifyDolbyVisionSdrManifest(
             transcodingUrl,
-            itemId: metadata.id,
+            itemId: itemId,
             playSessionId: playSessionId,
-            position: options.startPosition ?? Duration.zero,
+            position: position - (partTimeline?.current.start ?? Duration.zero),
           );
         }
         videoUrl = _withApiKey(transcodingUrl);
@@ -561,7 +565,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     final subtitleSidecars = isTrack
         ? const <PlaybackSubtitleSidecar>[]
         : _buildExternalSubtitles(
-            metadata.id,
+            itemId,
             effectiveSourceId,
             mediaInfo,
             isTranscoding: isTranscoding,
@@ -574,13 +578,13 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     // every official client does.
     final pinnedSourceId = _normalizedSourceId(effectiveSourceId);
     videoUrl ??= isTrack
-        ? buildAudioDirectStreamUrl(metadata.id, container: effectiveContainer, mediaSourceId: pinnedSourceId)
-        : buildDirectStreamUrl(metadata.id, container: effectiveContainer, mediaSourceId: pinnedSourceId);
+        ? buildAudioDirectStreamUrl(itemId, container: effectiveContainer, mediaSourceId: pinnedSourceId)
+        : buildDirectStreamUrl(itemId, container: effectiveContainer, mediaSourceId: pinnedSourceId);
 
     return PlaybackInitializationResult(
       availableVersions: bundle.availableVersions,
       videoUrl: videoUrl,
-      mediaInfo: mediaInfo,
+      mediaInfo: partTimeline == null ? mediaInfo : mediaInfo.copyWith(partTimeline: partTimeline),
       subtitleSidecars: subtitleSidecars,
       isOffline: false,
       isTranscoding: isTranscoding,
@@ -589,6 +593,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
       playSessionId: playSessionId,
       playMethod: playMethod,
       selectedMediaIndex: bundle.selectedSourceIndex,
+      selectedMediaSourceId: original.selectedSourceId,
     );
   }
 
@@ -629,8 +634,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     }
   }
 
-  /// [position] is ignored: a MediaBrowser item is never stacked across
-  /// files (see [MediaPart]).
+  /// Resolves the physical item containing the requested item-relative position.
   @override
   Future<ExternalPlaybackTarget?> resolveExternalPlayback(
     MediaItem item, {
@@ -642,14 +646,17 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     // Tracks stream from /Audio/{id}/stream; the URL contract (Static=true,
     // api_key in the query string) is otherwise identical to the video one.
     final isTrack = item.kind == MediaKind.track;
-    final bundle = await fetchPlaybackBundle(item.id, sourceIndex: mediaIndex, sourceId: mediaSourceId);
-    if (bundle == null) {
+    final original = await fetchPlaybackBundle(item.id, sourceIndex: mediaIndex, sourceId: mediaSourceId);
+    if (original == null) {
       return ExternalPlaybackTarget(
         url: isTrack
             ? buildAudioDirectStreamUrl(item.id, containerExtension: true)
             : buildDirectStreamUrl(item.id, containerExtension: true),
       );
     }
+    final timeline = original.multipart?.at(position);
+    final itemId = timeline?.current.partId ?? item.id;
+    final bundle = original.at(position);
     final container = bundle.container;
     final pinnedSourceId = bundle.pinnedSourceId;
     // External players get `stream.{container}`: the extension is the only
@@ -673,10 +680,11 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
       mediaIndex: bundle.selectedSourceIndex,
     );
     return ExternalPlaybackTarget(
-      mediaInfo: mediaInfo,
-      url: buildDirectStreamUrl(item.id, container: container, mediaSourceId: pinnedSourceId, containerExtension: true),
+      mediaInfo: timeline == null ? mediaInfo : mediaInfo.copyWith(partTimeline: timeline),
+      partTimeline: timeline,
+      url: buildDirectStreamUrl(itemId, container: container, mediaSourceId: pinnedSourceId, containerExtension: true),
       subtitles: [
-        for (final sidecar in _buildExternalSubtitles(item.id, bundle.selectedSourceId, mediaInfo)) sidecar.track,
+        for (final sidecar in _buildExternalSubtitles(itemId, bundle.selectedSourceId, mediaInfo)) sidecar.track,
       ],
     );
   }
@@ -967,9 +975,18 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     if (index < 0 || index >= sources.length) index = 0;
     final source = sources[index];
     if (source is! Map<String, dynamic>) return null;
+    final multipart = JellyfinMultipart.fromItem(raw, index);
+    if (multipart != null) availableVersions[index] = availableVersions[index].copyWith(parts: multipart.parts);
+    if ((multipart != null || (flexibleInt(raw['PartCount']) ?? 1) == 1) && raw['Id'] is String) {
+      final key = (cacheServerId, raw['Id'] as String);
+      _reportStacks.remove(key);
+      if (_reportStacks.length >= 64) _reportStacks.remove(_reportStacks.keys.first);
+      _reportStacks[key] = multipart;
+    }
     final chapters = raw['Chapters'];
     return JellyfinPlaybackBundle(
       availableVersions: availableVersions,
+      multipart: multipart,
       selectedSource: source,
       chapters: chapters is List ? chapters : const [],
       container: source['Container'] as String?,
@@ -1320,6 +1337,44 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
   @override
   Map<String, String> get streamHeaders => const {};
 
+  // Scoped to this client. Preloading another file (e.g. Cast) never changes
+  // which one an earlier session reports: the source id selects its file.
+  final _reportStacks = <(String, String), JellyfinMultipart?>{};
+  Future<({String itemId, String? sourceId, Duration position})> _reportFile(
+    String itemId,
+    String? sourceId,
+    Duration position,
+  ) async {
+    final key = (cacheServerId, itemId);
+    var stack = _reportStacks[key];
+    if (!_reportStacks.containsKey(key)) {
+      // A callback or an offline report can arrive after the process restarted.
+      Map<String, dynamic>? raw;
+      try {
+        raw = await cache.get(
+          ServerId(cacheServerId),
+          '/Users/${_segment(connection.userId)}/Items/${_segment(itemId)}',
+        );
+      } catch (_) {
+        // Single-file and live sessions can be reported without metadata.
+      }
+      final sources = raw?['MediaSources'];
+      if (raw != null && raw[jellyfinAdditionalPartDetails] is List && sources is List) {
+        final own = sources.indexWhere((source) => source is Map && source['Id'] == itemId);
+        stack = JellyfinMultipart.fromItem(raw, own < 0 ? 0 : own);
+      }
+    }
+    if (stack == null) return (itemId: itemId, sourceId: sourceId, position: position);
+    final index = sourceId == null
+        ? stack.timeline.indexAt(position)
+        : stack.files.indexWhere((f) => f.sourceId == sourceId);
+    if (index < 0) return (itemId: itemId, sourceId: sourceId, position: position);
+    final file = stack.files[index];
+    final span = stack.timeline.parts[index];
+    final ms = (position - span.start).inMilliseconds.clamp(0, span.duration.inMilliseconds);
+    return (itemId: file.itemId, sourceId: file.sourceId, position: Duration(milliseconds: ms));
+  }
+
   /// Shared body for the `/Sessions/Playing[/Progress]` pair — only [path] and
   /// [isPaused] differ between start and progress. Shape mirrors the Jellyfin
   /// SDK's `PlaybackStartInfo`/`PlaybackProgressInfo`: Findroid sends the same
@@ -1337,21 +1392,24 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     int? audioStreamIndex,
     int? subtitleStreamIndex,
   }) async {
+    final file = liveStreamId == null
+        ? await _reportFile(itemId, mediaSourceId, position)
+        : (itemId: itemId, sourceId: mediaSourceId, position: position);
     final response = await _http.post(
       path,
       body: {
-        'ItemId': itemId,
-        'MediaSourceId': ?mediaSourceId,
+        'ItemId': file.itemId,
+        'MediaSourceId': ?file.sourceId,
         'AudioStreamIndex': ?audioStreamIndex,
         'SubtitleStreamIndex': ?subtitleStreamIndex,
-        'PositionTicks': msToJellyfinTicks(position.inMilliseconds),
+        'PositionTicks': msToJellyfinTicks(file.position.inMilliseconds),
         'CanSeek': true,
         'IsPaused': isPaused,
         'IsMuted': false,
         'PlayMethod': playMethod ?? 'DirectPlay',
         'RepeatMode': 'RepeatNone',
         'PlaybackOrder': 'Default',
-        'PlaySessionId': ?_resolvePlaySessionId(playSessionId, itemId),
+        'PlaySessionId': ?_resolvePlaySessionId(playSessionId, file.itemId),
         'LiveStreamId': ?liveStreamId,
       },
     );
@@ -1448,16 +1506,19 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     int? subtitleStreamIndex,
     PlaybackReportMetadata report = const PlaybackReportMetadata.live(),
   }) async {
+    final file = liveStreamId == null
+        ? await _reportFile(itemId, mediaSourceId, position)
+        : (itemId: itemId, sourceId: mediaSourceId, position: position);
     final response = await _http.post(
       '/Sessions/Playing/Stopped',
       body: {
-        'ItemId': itemId,
-        'MediaSourceId': ?mediaSourceId,
+        'ItemId': file.itemId,
+        'MediaSourceId': ?file.sourceId,
         'AudioStreamIndex': ?audioStreamIndex,
         'SubtitleStreamIndex': ?subtitleStreamIndex,
-        'PositionTicks': msToJellyfinTicks(position.inMilliseconds),
+        'PositionTicks': msToJellyfinTicks(file.position.inMilliseconds),
         'Failed': false,
-        'PlaySessionId': ?_resolvePlaySessionId(playSessionId, itemId),
+        'PlaySessionId': ?_resolvePlaySessionId(playSessionId, file.itemId),
         'LiveStreamId': ?liveStreamId,
       },
     );

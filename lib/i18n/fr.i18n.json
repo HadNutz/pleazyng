@@ -209,6 +209,9 @@
     "notAvailable": "N/D",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "Symboles",
+    "keyboardLetters": "Lettres",
+    "keyboardNewLine": "Nouvelle ligne",
     "mediaKind": {
       "movie": "Film",
       "show": "Série",
@@ -433,6 +436,7 @@
     "importSettingsDescription": "Restaurer les préférences depuis un fichier",
     "importSettingsConfirm": "Cela remplacera vos paramètres actuels. Continuer ?",
     "importSettingsSuccess": "Paramètres importés",
+    "importSettingsCounts": "Paramètres appliqués : ${applied}. Ignorés : ${skipped}.",
     "importSettingsInvalidFile": "Ce fichier n’est pas une exportation valide des paramètres de Pleazyng",
     "importSettingsNoUser": "Connectez-vous avant d’importer les paramètres",
     "cloudBackup": "Cloud de sauvegarde",

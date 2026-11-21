@@ -209,6 +209,9 @@
     "notAvailable": "N/A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "Szimbólumok",
+    "keyboardLetters": "Betűk",
+    "keyboardNewLine": "Új sor",
     "mediaKind": {
       "movie": "Film",
       "show": "Sorozat",
@@ -431,6 +434,7 @@
     "importSettingsDescription": "Beállítások visszaállítása fájlból",
     "importSettingsConfirm": "Ez felülírja a jelenlegi beállításaidat. Folytatod?",
     "importSettingsSuccess": "Beállítások importálva",
+    "importSettingsCounts": "Alkalmazott beállítások: ${applied}. Kihagyva: ${skipped}.",
     "importSettingsInvalidFile": "Ez a fájl nem érvényes Pleazyng-beállításexport",
     "importSettingsNoUser": "Jelentkezz be a beállítások importálása előtt",
     "cloudBackup": "Felhőalapú biztonsági mentés",

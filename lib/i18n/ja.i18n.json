@@ -209,6 +209,9 @@
     "notAvailable": "N/A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "記号",
+    "keyboardLetters": "文字",
+    "keyboardNewLine": "改行",
     "mediaKind": {
       "movie": "映画",
       "show": "テレビ番組",
@@ -429,6 +432,7 @@
     "importSettingsDescription": "ファイルから設定を復元",
     "importSettingsConfirm": "現在の設定を置き換えます。続行しますか？",
     "importSettingsSuccess": "設定をインポートしました",
+    "importSettingsCounts": "適用した設定：${applied}件。スキップ：${skipped}件。",
     "importSettingsInvalidFile": "このファイルは有効なPlezyの設定エクスポートではありません",
     "importSettingsNoUser": "設定をインポートする前にサインインしてください",
     "cloudBackup": "クラウドバックアップ",

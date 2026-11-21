@@ -21,6 +21,18 @@ import 'player_stream_controllers.dart';
 import 'player_streams.dart';
 import 'subtitle_pcm_capture_source.dart';
 
+/// Backends opt in only when their native transport applies signed audio delay.
+abstract interface class AudioDelayCapability {
+  bool get supportsAudioDelay;
+}
+
+extension PlayerAudioDelaySupport on Player {
+  bool get canAdjustAudioDelay {
+    final player = this;
+    return player is AudioDelayCapability && (player as AudioDelayCapability).supportsAudioDelay;
+  }
+}
+
 /// Optional capability for player implementations that can apply the
 /// device-local ten-band equalizer.
 abstract interface class AudioEqualizerCapable {
@@ -135,11 +147,15 @@ abstract class PlayerBase
     with PlayerStreamControllersMixin
     implements
         Player,
+        AudioDelayCapability,
         PlayerWorkspaceAudioCapabilitySource,
         AudioEqualizerCapable,
         ParametricEqualizerCapable,
         AudioEffectsCapable,
         SubtitlePcmTimelineSource {
+  @override
+  bool get supportsAudioDelay => false;
+
   int _subtitlePcmSeekGeneration = 0;
   Duration? _subtitlePcmSeekTarget;
   @override

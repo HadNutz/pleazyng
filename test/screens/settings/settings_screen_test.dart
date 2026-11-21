@@ -591,6 +591,36 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('TV settings expose network backup without document picker actions', (tester) async {
+    TvDetectionService.debugSetAppleTVOverride(true);
+    final harness = await _pumpSettingsScreen(tester);
+    addTearDown(() => harness.dispose(tester));
+    expect(find.text(t.settings.cloudBackup), findsOneWidget);
+    expect(find.text(t.settings.importSettings), findsNothing);
+    expect(find.text(t.settings.exportSettings), findsNothing);
+    await tester.tap(find.text(t.settings.cloudBackup));
+    await _pumpUi(tester);
+    expect(find.text(t.settings.cloudBackupRestore), findsOneWidget);
+  });
+
+  for (final result in [
+    const ImportResult(keysImported: 1, keysSkipped: 1),
+    const ImportResult(keysImported: 0, keysSkipped: 1),
+    const ImportResult(keysImported: 0, keysSkipped: 0),
+  ]) {
+    testWidgets('local import reports ${result.keysImported} applied and ${result.keysSkipped} skipped', (
+      tester,
+    ) async {
+      final harness = await _pumpSettingsScreen(tester, settingsImporter: () async => result);
+      addTearDown(() => harness.dispose(tester));
+      await tester.tap(find.text(t.settings.importSettings));
+      await _pumpUi(tester);
+      await tester.tap(find.widgetWithText(DialogActionButton, t.settings.importSettings));
+      await _pumpUi(tester);
+      expect(find.text(result.summary), findsOneWidget);
+    });
+  }
+
   testWidgets('late settings import failure does not use a disposed context', (tester) async {
     final importGate = Completer<ImportResult?>();
     final harness = await _pumpSettingsScreen(tester, settingsImporter: () => importGate.future);

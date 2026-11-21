@@ -115,10 +115,10 @@ class FtpSourceAdapter extends SourceAdapter {
     try {
       final sizeReply = await session.command('SIZE $path');
       if (sizeReply.code != 213) throw session.failure(sizeReply);
-      final size = int.tryParse(sizeReply.message.trim());
+      final size = int.tryParse(sizeReply.payload);
       if (size == null || size < 0) throw const SourceException(SourceFailure.invalidData);
       final modified = await session.command('MDTM $path');
-      final timestamp = modified.code == 213 ? modified.message.trim() : null;
+      final timestamp = modified.code == 213 ? modified.payload : null;
       return _FtpStat(size, timestamp == null ? null : '$size:$timestamp');
     } finally {
       await _release(session);
@@ -220,7 +220,7 @@ class FtpSourceAdapter extends SourceAdapter {
       caseSensitive: false,
     ).firstMatch(line);
     if (dos == null) return null;
-    return (name: dos[3]!, directory: dos[2]!.toUpperCase() == '<DIR>', size: int.tryParse(dos[2]!), modify: dos[1]);
+    return (name: dos[3]!, directory: dos[2]!.toUpperCase() == '<DIR>', size: int.tryParse(dos[2]!), modify: null);
   }
 
   @override
@@ -232,29 +232,41 @@ class FtpSourceAdapter extends SourceAdapter {
   @override
   Future<SourceByteStream?> openContent(PublicationFile file, {required int offset, required int length}) async {
     final current = await _stat(file.id);
+    // Old DOS LIST rows contain a local, minute-precision date, which
+    // cannot be compared with the UTC machine timestamp returned by MDTM.
+    final legacyDate = RegExp(r'^\d+:\d{2}-\d{2}-\d{2,4}\s').hasMatch(file.revision ?? '');
+    final expected = legacyDate ? null : file.revision;
     if (file.size != null && current.size != file.size ||
-        file.revision != null && current.revision != null && file.revision != current.revision) {
+        expected != null && current.revision != null && expected != current.revision) {
       throw const SourceException(SourceFailure.conflict);
     }
     if (offset < 0 || length < 0 || offset > current.size || length > current.size - offset) {
       throw const SourceException(SourceFailure.invalidData);
     }
     return SourceByteStream(
-      stream: _readRange(file.id, current.size, offset, length),
+      stream: _readRange(file.id, current, offset, length),
+      validatedRevision: expected == null ? null : current.revision,
       size: current.size,
       offset: offset,
       length: length,
     );
   }
 
-  Stream<List<int>> _readRange(String value, int size, int offset, int length) async* {
+  Stream<List<int>> _readRange(String value, _FtpStat initial, int offset, int length) async* {
+    final size = initial.size;
     if (length == 0) return;
     final path = _path(value);
     final session = await _connect();
     try {
       final current = await session.command('SIZE $path');
-      if (current.code != 213 || int.tryParse(current.message.trim()) != size) {
+      if (current.code != 213 || int.tryParse(current.payload) != size) {
         throw const SourceException(SourceFailure.conflict);
+      }
+      if (initial.revision != null) {
+        final modified = await session.command('MDTM $path');
+        if (modified.code != 213 || '$size:${modified.payload}' != initial.revision) {
+          throw const SourceException(SourceFailure.conflict);
+        }
       }
       if (offset > 0) {
         final restart = await session.command('REST $offset');
@@ -302,6 +314,10 @@ class _FtpReply {
   const _FtpReply(this.code, this.message);
   final int code;
   final String message;
+  String get payload {
+    final last = message.split('\n').last;
+    return last.length > 3 ? last.substring(4).trim() : '';
+  }
 }
 
 class _FtpSession {

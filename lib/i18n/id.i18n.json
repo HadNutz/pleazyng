@@ -209,6 +209,9 @@
     "notAvailable": "N / A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "Simbol",
+    "keyboardLetters": "Huruf",
+    "keyboardNewLine": "Baris baru",
     "mediaKind": {
       "movie": "Film",
       "show": "Pameran",
@@ -429,6 +432,7 @@
     "importSettingsDescription": "Memulihkan preferensi dari file",
     "importSettingsConfirm": "Ini akan menggantikan pengaturan Anda saat ini. lanjutkan?",
     "importSettingsSuccess": "Pengaturan yang diimpor",
+    "importSettingsCounts": "Pengaturan diterapkan: ${applied}. Dilewati: ${skipped}.",
     "importSettingsInvalidFile": "Fail ini tidak valid Pleazyng pengeksportan pengaturan",
     "importSettingsNoUser": "Mendaftar sebelum mengimport pengaturan",
     "cloudBackup": "Cloud Backup untuk",

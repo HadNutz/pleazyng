@@ -194,6 +194,7 @@ class Translations$settings$pt_PT extends Translations$settings$pt {
 	@override String get playbackBufferExtraLarge => 'Extragrande';
 	@override String get musicQualityTitle => 'Qualidade da música';
 	@override String get subtitleStyling => 'Estilo de legendas';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Definições aplicadas: ${applied}. Ignoradas: ${skipped}.';
 	@override String get cloudBackupUsername => 'Nome de utilizador';
 	@override String get cloudBackupPassword => 'Palavra-passe';
 	@override String get skipMarkerModeOff => 'Desativado';
@@ -1449,6 +1450,7 @@ extension on TranslationsPtPt {
 			'settings.playbackBufferExtraLarge' => 'Extragrande',
 			'settings.musicQualityTitle' => 'Qualidade da música',
 			'settings.subtitleStyling' => 'Estilo de legendas',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Definições aplicadas: ${applied}. Ignoradas: ${skipped}.',
 			'settings.cloudBackupUsername' => 'Nome de utilizador',
 			'settings.cloudBackupPassword' => 'Palavra-passe',
 			'settings.skipMarkerModeOff' => 'Desativado',
@@ -1902,9 +1904,9 @@ extension on TranslationsPtPt {
 			'romm.engine' => 'Emulator identity',
 			'romm.slot' => 'Save slot',
 			'romm.core' => 'Core identity',
-			'romm.compatibilityHelp' => 'Save states require the same emulator and compatible core version. Choose the exact game copy before importing.',
 			_ => null,
 		} ?? switch (path) {
+			'romm.compatibilityHelp' => 'Save states require the same emulator and compatible core version. Choose the exact game copy before importing.',
 			'romm.saveConflict' => 'Both copies changed. Keep both versions, use the server copy, or explicitly replace it.',
 			'romm.keepBoth' => 'Keep both',
 			'romm.useServer' => 'Use server copy',

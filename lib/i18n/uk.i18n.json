@@ -209,6 +209,9 @@
     "notAvailable": "Н / А",
     "url": "URL",
     "letterKeys": "АБС",
+    "keyboardSymbols": "Символи",
+    "keyboardLetters": "Літери",
+    "keyboardNewLine": "Новий рядок",
     "mediaKind": {
       "movie": "Фільми",
       "show": "показ",
@@ -435,6 +438,7 @@
     "importSettingsDescription": "Відновлення переваг з файлу",
     "importSettingsConfirm": "Це замінить ваші поточні налаштування.",
     "importSettingsSuccess": "Ввезені налаштування",
+    "importSettingsCounts": "Застосовано налаштувань: ${applied}. Пропущено: ${skipped}.",
     "importSettingsInvalidFile": "Цей файл не є дійсним експортом Pleazyng налаштувань",
     "importSettingsNoUser": "Зареєструйтесь перед імпортуванням",
     "cloudBackup": "Створення Cloud Backup",

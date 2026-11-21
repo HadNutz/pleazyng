@@ -342,6 +342,9 @@ class _Translations$common$da extends Translations$common$en {
 	@override String get notAvailable => 'N/A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Symboler';
+	@override String get keyboardLetters => 'Bogstaver';
+	@override String get keyboardNewLine => 'Ny linje';
 	@override late final _Translations$common$mediaKind$da mediaKind = _Translations$common$mediaKind$da._(_root);
 }
 
@@ -572,6 +575,7 @@ class _Translations$settings$da extends Translations$settings$en {
 	@override String get importSettingsDescription => 'Gendan præferencer fra en fil';
 	@override String get importSettingsConfirm => 'Dette vil erstatte dine nuværende indstillinger. Fortsæt?';
 	@override String get importSettingsSuccess => 'Indstillinger importeret';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Anvendte indstillinger: ${applied}. Sprunget over: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Denne fil er ikke en gyldig eksport af Pleazyng-indstillinger';
 	@override String get importSettingsNoUser => 'Log ind før import af indstillinger';
 	@override String get cloudBackup => 'Sikkerhedskopi i skyen';
@@ -5822,6 +5826,9 @@ extension on TranslationsDa {
 			'common.notAvailable' => 'N/A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Symboler',
+			'common.keyboardLetters' => 'Bogstaver',
+			'common.keyboardNewLine' => 'Ny linje',
 			'common.mediaKind.movie' => 'Film',
 			'common.mediaKind.show' => 'Serie',
 			'common.mediaKind.season' => 'Sæson',
@@ -6030,6 +6037,7 @@ extension on TranslationsDa {
 			'settings.importSettingsDescription' => 'Gendan præferencer fra en fil',
 			'settings.importSettingsConfirm' => 'Dette vil erstatte dine nuværende indstillinger. Fortsæt?',
 			'settings.importSettingsSuccess' => 'Indstillinger importeret',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Anvendte indstillinger: ${applied}. Sprunget over: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Denne fil er ikke en gyldig eksport af Pleazyng-indstillinger',
 			'settings.importSettingsNoUser' => 'Log ind før import af indstillinger',
 			'settings.cloudBackup' => 'Sikkerhedskopi i skyen',
@@ -6140,12 +6148,12 @@ extension on TranslationsDa {
 			'settings.manageLibrariesDescription' => 'Omarranger og skjul biblioteker',
 			'settings.companionRemoteServer' => 'Fjernbetjeningsserver',
 			'settings.companionRemoteServerDescription' => 'Tillad mobilenheder på dit netværk at styre denne app',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Fjernbetjeningsserveren kunne ikke startes',
 			'settings.companionRemoteServerStopFailed' => 'Fjernbetjeningsserveren kunne ikke stoppes',
 			'settings.autoPip' => 'Automatisk billede-i-billede',
 			'settings.autoPipDescription' => 'Skift automatisk til billede-i-billede, når du forlader appen under afspilning',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Tilpas billedhastigheden til indholdet',
 			'settings.matchContentFrameRateDescription' => 'Tilpas skærmens opdateringsfrekvens til videoindhold',
 			'settings.matchContentResolution' => 'Tilpas til indholdets opløsning',
@@ -6654,12 +6662,12 @@ extension on TranslationsDa {
 			'accessibility.boldTextHint' => 'Brug en tyngre vægt til grænseflader og meddelelser for at gøre dem lettere at skelne.',
 			'tooltips.shufflePlay' => 'Afspil tilfældigt',
 			'tooltips.playTrailer' => 'Afspil trailer',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Markér som set',
 			'tooltips.markAsUnwatched' => 'Markér som uset',
 			'audioTracks.track' => ({required Object n}) => 'Lydspor ${n}',
 			'videoControls.audioLabel' => 'Lyd',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Undertekster',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Letterbox',
@@ -7168,12 +7176,12 @@ extension on TranslationsDa {
 			'errors.connectionTimeout' => ({required Object context}) => 'Forbindelsen fik timeout under indlæsning af ${context}',
 			'errors.connectionFailed' => 'Kan ikke oprette forbindelse til medieserver',
 			'errors.unableToLoad' => ({required Object context}) => 'Kunne ikke indlæse ${context}. Prøv igen.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Ingen klient tilgængelig',
 			'errors.pleaseEnterToken' => 'Indtast et token',
 			'errors.invalidToken' => 'Ugyldigt token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Kunne ikke verificere token: ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Kunne ikke skifte til ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Kunne ikke slette ${displayName}',
 			'errors.failedToRate' => 'Kunne ikke opdatere bedømmelsen',
@@ -7682,12 +7690,12 @@ extension on TranslationsDa {
 			'playlists.emptyPlaylist' => 'Denne playliste er tom',
 			'playlists.deleteConfirm' => 'Slet playliste?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Er du sikker på, at du vil slette "${name}"?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Playliste oprettet',
 			'playlists.deleted' => 'Playliste slettet',
 			'playlists.itemAdded' => 'Tilføjet til playliste',
 			'playlists.itemRemoved' => 'Fjernet fra playliste',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Vælg playliste',
 			'playlists.searchPlaylists' => 'Søg i playlister...',
 			'playlists.errorCreating' => 'Kunne ikke oprette playliste',
@@ -8196,12 +8204,12 @@ extension on TranslationsDa {
 			'performanceOverlay.transfer' => 'Overførsel',
 			'performanceOverlay.renderFps' => 'Gengivelses-FPS',
 			'performanceOverlay.displayFps' => 'Skærm-FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V-synk.',
 			'performanceOverlay.dropped' => 'Tabte',
 			'performanceOverlay.dvRpus' => 'DV RPU’er',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU gns.',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV-sample gns.',
 			'performanceOverlay.maxLuma' => 'Maks. luma',
 			'performanceOverlay.minLuma' => 'Min. luma',
@@ -8710,12 +8718,12 @@ extension on TranslationsDa {
 			'homeLayout.customPlexRow' => 'Tilpasset Plex række',
 			'homeLayout.heroNeedsLibrary' => 'Se biblioteket først – Hero har brug for et sted at vise',
 			'homeLayout.heroNeedsSurface' => 'Se biblioteket eller hjemmet først – Hero har brug for et sted at vise',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Fjern Hub',
 			'homeLayout.noPlexRows' => 'Plex-forvaltet række tilbage til denne bibliotek.',
 			'homeLayout.openDetails' => 'Åbne detaljer',
 			'homeLayout.heroCards' => 'Hjælp kort',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Tapping af en helt kort',
 			'homeLayout.tvPlayFocus' => 'fjernsyn: højttal Play-knappen',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad ned stopper på Play-knappen, før du flytter til næste række.',
@@ -9224,12 +9232,12 @@ extension on TranslationsDa {
 			'audiobook.recoveryExport' => 'Eksport krypteret genopretning filer',
 			'audiobook.recoveryImport' => 'Import krypteret genopretning filer',
 			'audiobook.recoveryImportConfirm' => 'Kombinere denne krypterede genopretning fil med nuværende læsningspositioner og noter? eksisterende historie vil blive bevaret. Delte bibliotek og element ID\'er er ikke inkluderet; indstille matching ID\'erne på hver enhed før import.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Den krypterede genopretningsfil er gemt.',
 			'audiobook.recoveryImported' => 'Genopretning af data sammensat.',
 			'sourceSetup.bookorbitHelp' => 'Log ind med din egen BookOrbit-konto for at gennemse og afspille dens bøger. Anmodninger om manglende titler går stadig gennem din tilsluttede SeerrNG-instans.',
 			'sourceSetup.bookorbitOpen' => 'Åbn i BookOrbit',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Se denne titel i BookOrbit for at administrere biblioteksoplysninger og formater, som Pleazyng ikke kan åbne. Lyttefremskridt synkroniseres med din BookOrbit-konto.',
 			'sourceSetup.savedCertificate' => 'Gemt servercertifikat',
 			'sourceSetup.nfsEndpointInvalid' => 'Angiv en NFS-URL, f.eks. nfs://nas:2049/export.',
@@ -9738,12 +9746,12 @@ extension on TranslationsDa {
 			'musicTools.apiKey' => 'API-nøgle',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Minutter',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Filtre',
 			'musicTools.exclusiveOutput' => 'Eksklusiv lydudgang',
 			'musicTools.preamp' => 'Forforstærkning',
 			'musicTools.ratingPending' => 'Gemt på denne enhed; afventer synkronisering',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Tidsforskydning af sangtekst',
 			'musicTools.anniversaries' => 'Albumjubilæer',
 			'musicTools.outputPreset' => 'EQ til denne udgang',

@@ -18,6 +18,7 @@ import '../media/episode_collection.dart';
 import '../utils/global_key_utils.dart';
 import 'connectivity_probe.dart';
 import 'download_manager_service.dart';
+import 'offline_watch_owner.dart';
 import 'multi_server_manager.dart';
 import 'playlist_items_loader.dart';
 import 'music/music_library_store.dart';
@@ -818,7 +819,7 @@ class SyncRuleExecutor {
     final serverId = client.serverId;
     final clientScopeId = _clientScopeIdFor(client, serverId);
     final keys = episodes.map((ep) => buildGlobalKey(ServerId(serverId), ep.id)).toSet();
-    final actions = await _database.getLatestWatchActionsForKeys(
+    final actions = await _database.getWatchActionsForKeys(
       keys,
       profileId: profileId,
       filterProfile: true,
@@ -826,7 +827,9 @@ class SyncRuleExecutor {
     );
     if (actions.isEmpty) return episodes;
     return episodes.where((ep) {
-      final action = actions[buildGlobalKey(ServerId(serverId), ep.id)];
+      final action = actions[buildGlobalKey(ServerId(serverId), ep.id)]
+          ?.where((row) => offlineWatchAccountMatches(row, client))
+          .firstOrNull;
       if (action == null) return true;
       if (action.actionType == OfflineActionType.watched.id) return false;
       if (action.actionType == OfflineActionType.progress.id && action.shouldMarkWatched) return false;

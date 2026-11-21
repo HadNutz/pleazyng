@@ -63,6 +63,9 @@ class PlayerSystem extends PlayerBase
   Media? _media;
   int _subtitleSelection = 0;
   Duration _subtitleDelay = Duration.zero;
+  int _audioDelayUs = 0;
+  @override
+  bool get supportsAudioDelay => playerType == 'gstreamer' || playerType == 'tvmpv';
   bool _subtitlesVisible = true;
   @override
   final surfaceRevision = ValueNotifier<int>(0);
@@ -306,6 +309,10 @@ class PlayerSystem extends PlayerBase
           await _prepare(generation, id);
         }
         if (!_current(generation)) return;
+        if (_audioDelayUs != 0 && supportsAudioDelay) {
+          await _control('audioDelay', _audioDelayUs);
+          if (!_current(generation)) return;
+        }
         await _readTracks(id);
         if (!_current(generation)) return;
         if (sourcePositionFor(start) > Duration.zero) await seek(start);
@@ -565,6 +572,14 @@ class PlayerSystem extends PlayerBase
     switch (name) {
       case 'pause':
         await (value == 'yes' ? pause() : play());
+      case 'audio-delay':
+        if (!supportsAudioDelay) throw UnsupportedError('Audio delay is unavailable on $playerType');
+        if (!_ready || _closing || _id == null) throw StateError('No active playback session for audio delay.');
+        final generation = _generation;
+        final delayUs = (double.parse(value) * Duration.microsecondsPerSecond).round();
+        await _control('audioDelay', delayUs);
+        if (!_current(generation)) throw StateError('Playback session changed during audio adjustment.');
+        _audioDelayUs = delayUs;
       case 'sub-delay':
         if (playerType == 'tvmpv' && _ready) await _control('subtitleDelay', value);
         _subtitleDelay = Duration(milliseconds: ((double.tryParse(value) ?? 0) * 1000).round());

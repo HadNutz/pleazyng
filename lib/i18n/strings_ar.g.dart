@@ -342,6 +342,9 @@ class _Translations$common$ar extends Translations$common$en {
 	@override String get notAvailable => 'N / A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'الرموز';
+	@override String get keyboardLetters => 'الحروف';
+	@override String get keyboardNewLine => 'سطر جديد';
 	@override late final _Translations$common$mediaKind$ar mediaKind = _Translations$common$mediaKind$ar._(_root);
 }
 
@@ -580,6 +583,7 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String get importSettingsDescription => 'استعادة تفضيلات من ملف';
 	@override String get importSettingsConfirm => 'هذا سيحل محل إعداداتك الحالية.مواصلة؟';
 	@override String get importSettingsSuccess => 'الإعدادات المستوردة';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'الإعدادات المطبقة: ${applied}. الإعدادات التي تم تخطيها: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'هذا الملف غير صالحة Pleazyng إعدادات تصدير';
 	@override String get importSettingsNoUser => 'تسجيل الدخول قبل استيراد الإعدادات';
 	@override String get cloudBackup => 'سحابة النسخ الاحتياطي';
@@ -5922,6 +5926,9 @@ extension on TranslationsAr {
 			'common.notAvailable' => 'N / A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'الرموز',
+			'common.keyboardLetters' => 'الحروف',
+			'common.keyboardNewLine' => 'سطر جديد',
 			'common.mediaKind.movie' => 'فيلم',
 			'common.mediaKind.show' => 'عرض',
 			'common.mediaKind.season' => 'الموسم',
@@ -6130,6 +6137,7 @@ extension on TranslationsAr {
 			'settings.importSettingsDescription' => 'استعادة تفضيلات من ملف',
 			'settings.importSettingsConfirm' => 'هذا سيحل محل إعداداتك الحالية.مواصلة؟',
 			'settings.importSettingsSuccess' => 'الإعدادات المستوردة',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'الإعدادات المطبقة: ${applied}. الإعدادات التي تم تخطيها: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'هذا الملف غير صالحة Pleazyng إعدادات تصدير',
 			'settings.importSettingsNoUser' => 'تسجيل الدخول قبل استيراد الإعدادات',
 			'settings.cloudBackup' => 'سحابة النسخ الاحتياطي',
@@ -6240,12 +6248,12 @@ extension on TranslationsAr {
 			'settings.manageLibrariesDescription' => 'إعادة ترتيب وإخفاء المكتبات',
 			'settings.companionRemoteServer' => 'الخادم عن بعد',
 			'settings.companionRemoteServerDescription' => 'السماح للأجهزة المحمولة على شبكتك بالتحكم في هذا التطبيق',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'لا يمكن إطلاق الخادم المرافق',
 			'settings.companionRemoteServerStopFailed' => 'لا يمكن إيقاف الخادم المرافق',
 			'settings.autoPip' => 'صورة في صورة Auto Picture',
 			'settings.autoPipDescription' => 'إدخال صورة في الصورة تلقائيًا عند مغادرة التطبيق أثناء تشغيل',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'مقارنة محتوى إطار معدل',
 			'settings.matchContentFrameRateDescription' => 'عرض المباراة معدل التجديد إلى محتوى الفيديو',
 			'settings.matchContentResolution' => 'حل المحتوى Match',
@@ -6754,12 +6762,12 @@ extension on TranslationsAr {
 			'accessibility.boldTextHint' => 'استخدم وزنًا أثقل لعلامات الواجهة والرسائل لجعلها أسهل في التمييز.',
 			'tooltips.shufflePlay' => 'لعبة Shuffle',
 			'tooltips.playTrailer' => 'لعبة تريلر',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'مارك كما شاهدت',
 			'tooltips.markAsUnwatched' => 'مارك غير ملاحظة',
 			'audioTracks.track' => ({required Object n}) => 'سياق الصوت ${n}',
 			'videoControls.audioLabel' => 'الصوت',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'الترجمة',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'الكتب',
@@ -7268,12 +7276,12 @@ extension on TranslationsAr {
 			'errors.connectionTimeout' => ({required Object context}) => 'اتصال الوقت أثناء التحميل ${context}',
 			'errors.connectionFailed' => 'عدم القدرة على الاتصال بـ Media Server',
 			'errors.unableToLoad' => ({required Object context}) => 'لا يمكن تحميل ${context}. يرجى المحاولة مرة أخرى.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'لا يوجد عميل متاح',
 			'errors.pleaseEnterToken' => 'يرجى إدخال علامة',
 			'errors.invalidToken' => 'الرموز المعاقبة',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'عدم التحقق من الرموز: ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'لم يتم تحويلها إلى ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'لم يتم حذف ${displayName}',
 			'errors.failedToRate' => 'لا يمكن تحديث التصنيف',
@@ -7782,12 +7790,12 @@ extension on TranslationsAr {
 			'playlists.emptyPlaylist' => 'هذه القائمة فارغة',
 			'playlists.deleteConfirm' => 'إلغاء اللعب؟',
 			'playlists.deleteMessage' => ({required Object name}) => 'هل أنت متأكد من أنك تريد إزالة "${name}"؟',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'لعبة تم إنشاءها',
 			'playlists.deleted' => 'Playlist حذف',
 			'playlists.itemAdded' => 'إضافة إلى playlist',
 			'playlists.itemRemoved' => 'إزالة من قائمة اللعب',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'اختيار Playlist',
 			'playlists.searchPlaylists' => 'البحث عن ألعاب...',
 			'playlists.errorCreating' => 'فشل في إنشاء قائمة اللعب',
@@ -8296,12 +8304,12 @@ extension on TranslationsAr {
 			'performanceOverlay.transfer' => 'نقل',
 			'performanceOverlay.renderFps' => 'رينجر FPS',
 			'performanceOverlay.displayFps' => 'عرض FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A / V التزامن',
 			'performanceOverlay.dropped' => 'انقطاع',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
 			'performanceOverlay.dvRpuAverage' => 'رويترز RPU Avg',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV نموذج Avg',
 			'performanceOverlay.maxLuma' => 'ماكس لوما',
 			'performanceOverlay.minLuma' => 'لوميا',
@@ -8810,12 +8818,12 @@ extension on TranslationsAr {
 			'homeLayout.customPlexRow' => 'صف Plex مخصّص',
 			'homeLayout.heroNeedsLibrary' => 'حدّد المكتبة أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
 			'homeLayout.heroNeedsSurface' => 'حدّد المكتبة أو الصفحة الرئيسية أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'إزالة قسم المحتوى',
 			'homeLayout.noPlexRows' => 'لم يُرجع Plex أي صفوف يديرها لهذه المكتبة.',
 			'homeLayout.openDetails' => 'فتح التفاصيل',
 			'homeLayout.heroCards' => 'البطاقات البارزة',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'عند النقر على بطاقة بارزة',
 			'homeLayout.tvPlayFocus' => 'جهاز التحكم: الانتقال إلى زر التشغيل',
 			'homeLayout.tvPlayFocusDescription' => 'يتوقف التنقّل إلى الأسفل على زر التشغيل قبل الانتقال إلى الصف التالي. عند الإيقاف، ينتقل مباشرةً إلى الصف التالي.',
@@ -9324,12 +9332,12 @@ extension on TranslationsAr {
 			'audiobook.recoveryExport' => 'تصدير ملف استرداد مشفرة',
 			'audiobook.recoveryImport' => 'استيراد ملف إعادة التدوير المشفرة',
 			'audiobook.recoveryImportConfirm' => 'هل يجمع هذا ملف إعادة التأهيل المشفر مع مواقف القراءة الحالية والملاحظات؟ سيتم الحفاظ على التاريخ الحالي. لا يتم تضمين المكتبة المشتركة ومعارف العناصر؛ قم بتعيين المعارف المقابلة على كل جهاز قبل الاستيراد.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'تم حفظ ملف الاسترداد المشفر.',
 			'audiobook.recoveryImported' => 'استرداد البيانات مترابطة.',
 			'sourceSetup.bookorbitHelp' => 'سجّل الدخول باستخدام حساب BookOrbit الخاص بك لتصفح كتبه وتشغيلها. تظل طلبات العناوين غير المتوفرة تمر عبر مثيل SeerrNG المتصل بك.',
 			'sourceSetup.bookorbitOpen' => 'افتح في BookOrbit',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'اعرض هذا العنوان في BookOrbit لإدارة تفاصيله في مكتبتك وأي تنسيقات لا يستطيع Pleazyng فتحها. تتم مزامنة تقدم الاستماع مع حسابك في BookOrbit.',
 			'sourceSetup.savedCertificate' => 'شهادة الخادم المحفوظة',
 			'sourceSetup.nfsEndpointInvalid' => 'أدخل عنوان NFS مثل nfs://nas:2049/export.',
@@ -9838,12 +9846,12 @@ extension on TranslationsAr {
 			'musicTools.apiKey' => 'مفتاح API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'دقائق',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'الفلاتر',
 			'musicTools.exclusiveOutput' => 'إخراج صوت حصري',
 			'musicTools.preamp' => 'التضخيم المسبق',
 			'musicTools.ratingPending' => 'حُفظ على هذا الجهاز؛ بانتظار المزامنة',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'إزاحة توقيت الكلمات',
 			'musicTools.anniversaries' => 'ذكرى إصدار الألبومات',
 			'musicTools.outputPreset' => 'معادل الصوت لهذا المخرج',

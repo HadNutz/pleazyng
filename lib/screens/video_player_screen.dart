@@ -2719,7 +2719,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
         }
       }
 
-      await PlayerSyncOffsets.of(currentPlayer).applyFor(_currentMetadata);
+      await PlayerSyncOffsets.of(currentPlayer).applyOnStartup(_currentMetadata, mediaReady: false);
 
       if (settingsService.read(SettingsService.audioNormalization)) {
         await currentPlayer.setAudioNormalization(true);
@@ -2920,6 +2920,15 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       await _startPlayback();
       if (!_ownsPlayerInitializationAttempt(generation, currentPlayer)) {
         return;
+      }
+
+      if (!_hasFatalPlaybackError) {
+        try {
+          await PlayerSyncOffsets.of(currentPlayer).applyOnStartup(_currentMetadata, mediaReady: true);
+        } catch (error) {
+          appLogger.w('Could not apply saved sync offsets to the opened playback session', error: error);
+        }
+        if (!_ownsPlayerInitializationAttempt(generation, currentPlayer)) return;
       }
 
       // Set fullscreen mode and orientation based on rotation lock setting

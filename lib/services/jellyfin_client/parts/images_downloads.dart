@@ -69,6 +69,7 @@ mixin _JellyfinImageDownloadMethods on _JellyfinClientInternals implements Conve
     required int mediaIndex,
     String? mediaSourceId,
     required TranscodeQualityPreset preset,
+    Future<void> Function(DownloadConversionHandle job)? onAccepted,
   }) async {
     if (!item.kind.isVideo) {
       return const ConvertedDownloadFailed('Only video downloads can be converted');
@@ -81,22 +82,31 @@ mixin _JellyfinImageDownloadMethods on _JellyfinClientInternals implements Conve
 
     // A stable session id lets the downloader re-resolve the same transcode
     // after a retry instead of creating a new server session on every pass.
-    final sessionKey = [
-      connection.serverMachineId,
-      connection.userId,
-      connection.deviceId,
-      item.id,
-      selectedSourceId,
-      preset.name,
-    ].join(':');
-    final sessionId = crypto.sha256.convert(utf8.encode(sessionKey)).toString().substring(0, 32);
-    return ConvertedDownloadReady(
-      url: buildConvertedDownloadUrl(
-        itemId: item.id,
-        mediaSourceId: selectedSourceId,
+    String convertedUrl(String itemId, String sourceId) {
+      final sessionKey = [
+        connection.serverMachineId,
+        connection.userId,
+        connection.deviceId,
+        itemId,
+        sourceId,
+        preset.name,
+      ].join(':');
+      final sessionId = crypto.sha256.convert(utf8.encode(sessionKey)).toString().substring(0, 32);
+      return buildConvertedDownloadUrl(
+        itemId: itemId,
+        mediaSourceId: sourceId,
         preset: preset,
         playSessionId: sessionId,
-      ),
+      );
+    }
+
+    final files = bundle?.multipart?.files.skip(1) ?? const <JellyfinVideoPart>[];
+    if (files.any((file) => file.sourceId == null || file.sourceId!.isEmpty)) {
+      return const ConvertedDownloadFailed('The server did not identify an additional media source');
+    }
+    return ConvertedDownloadReady(
+      url: convertedUrl(item.id, selectedSourceId),
+      additionalPartUrls: [for (final file in files) convertedUrl(file.itemId, file.sourceId!)],
       container: 'mkv',
       supportsRangeResume: false,
     );
@@ -105,6 +115,9 @@ mixin _JellyfinImageDownloadMethods on _JellyfinClientInternals implements Conve
   @override
   Future<DownloadResolution> resolveDownload(MediaItem item, {int mediaIndex = 0, String? mediaSourceId}) async {
     final bundle = await fetchPlaybackBundle(item.id, sourceIndex: mediaIndex, sourceId: mediaSourceId);
+    if (bundle == null && (flexibleInt(item.raw?['PartCount']) ?? 1) > 1) {
+      throw const FormatException('Unable to resolve the multipart download');
+    }
     final selectedSourceId = bundle?.selectedSourceId;
     final requestedSourceId = mediaSourceId?.trim();
     if (requestedSourceId != null &&
@@ -124,9 +137,35 @@ mixin _JellyfinImageDownloadMethods on _JellyfinClientInternals implements Conve
       return DownloadResolution(videoUrl: audioUrl, mediaSourceId: selectedSourceId, externalSubtitles: const []);
     }
 
+    final first = await _resolveDownloadFile(item.id, bundle, mediaIndex);
+    final stack = bundle?.multipart;
+    if (stack == null) return first;
+    final rest = <DownloadPartResolution>[];
+    var resolved = first.externalSubtitlesResolved;
+    for (final span in stack.timeline.parts.skip(1)) {
+      final part = await _resolveDownloadFile(span.partId, bundle!.at(span.start), 0);
+      rest.add(DownloadPartResolution(url: part.videoUrl!, externalSubtitles: part.externalSubtitles));
+      resolved = resolved && part.externalSubtitlesResolved;
+    }
+    return DownloadResolution(
+      videoUrl: first.videoUrl,
+      mediaSourceId: selectedSourceId,
+      externalSubtitles: first.externalSubtitles,
+      externalSubtitlesResolved: resolved,
+      additionalParts: rest,
+    );
+  }
+
+  Future<DownloadResolution> _resolveDownloadFile(String itemId, JellyfinPlaybackBundle? bundle, int mediaIndex) async {
+    final selectedSourceId = bundle?.selectedSourceId;
     // Direct-stream the selected original file. Jellyfin's `Static=true`
     // skips the transcoder so the byte-for-byte source lands on disk.
-    final videoUrl = buildDirectStreamUrl(item.id, container: bundle?.container, mediaSourceId: bundle?.pinnedSourceId);
+    final videoUrl = buildDirectStreamUrl(
+      itemId,
+      container: bundle?.container,
+      mediaSourceId: bundle?.pinnedSourceId,
+      containerExtension: bundle?.multipart != null,
+    );
 
     // External subtitle sidecars are listed in the per-source MediaStreams.
     // PlaybackInfo gives us the canonical view including DeliveryUrl when
@@ -136,7 +175,7 @@ mixin _JellyfinImageDownloadMethods on _JellyfinClientInternals implements Conve
     final subtitles = <DownloadSubtitleSpec>[];
     Map<String, dynamic> playbackInfo;
     try {
-      playbackInfo = await getPlaybackInfo(item.id, mediaSourceId: selectedSourceId);
+      playbackInfo = await getPlaybackInfo(itemId, mediaSourceId: selectedSourceId);
     } catch (error, stackTrace) {
       if (!_canUseJellyfinStaticStreamFallback(error)) rethrow;
       appLogger.w(
@@ -163,7 +202,7 @@ mixin _JellyfinImageDownloadMethods on _JellyfinClientInternals implements Conve
       appLogger.w('Jellyfin download subtitle enrichment returned an invalid source id; using the static stream');
       return DownloadResolution(videoUrl: videoUrl, mediaSourceId: selectedSourceId, externalSubtitlesResolved: false);
     }
-    final subtitleMediaSourceId = rawMediaSourceId as String? ?? item.id;
+    final subtitleMediaSourceId = rawMediaSourceId as String? ?? itemId;
     for (final raw in streams) {
       if (raw is! Map<String, dynamic>) continue;
       if (raw['Type'] != 'Subtitle') continue;
@@ -177,7 +216,7 @@ mixin _JellyfinImageDownloadMethods on _JellyfinClientInternals implements Conve
       final url = _withApiKey(
         delivery != null && delivery.isNotEmpty
             ? delivery
-            : '/Videos/${_segment(item.id)}/${_segment(subtitleMediaSourceId)}/Subtitles/$index/$streamFile',
+            : '/Videos/${_segment(itemId)}/${_segment(subtitleMediaSourceId)}/Subtitles/$index/$streamFile',
       );
       subtitles.add(
         DownloadSubtitleSpec(

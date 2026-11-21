@@ -10,11 +10,9 @@ part 'media_part.g.dart';
 /// DVD/BluRay rips as several parts of one version, which play as one item
 /// timeline (`MediaPartTimeline`).
 ///
-/// Jellyfin and Emby items always map to a single part per media source.
-/// Those servers model a split file as separate hidden items (`PartCount`,
-/// `/Videos/{id}/AdditionalParts`) that each keep their own progress and
-/// watched state; the app does not follow them, so only the first file
-/// plays there.
+/// Jellyfin and Emby use one item id per physical file. The parent item
+/// provides their order through AdditionalParts; server sessions retain each
+/// child item's own clock.
 @JsonSerializable(includeIfNull: false)
 class MediaPart {
   /// Backend-opaque part identifier.

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart' show setEquals;
 import 'package:provider/provider.dart';
 
 import '../../i18n/strings.g.dart';
+import '../../iptv/iptv_source_repository.dart';
 import '../../media/episode_collection.dart';
 import '../../media/ids.dart';
 import '../../media/media_item.dart';
@@ -548,12 +549,35 @@ T _watchedLast<T>(List<T> entries, MediaItem Function(T entry) item) =>
 
 Future<void> _launchLiveLink(BuildContext context, LiveLink link, {required bool isOffline}) async {
   final multiServer = context.read<MultiServerProvider>();
+  final profiles = context.read<ActiveProfileProvider?>();
+  final profileId = profiles?.activeId;
+  final generation = profiles?.identityMutationGeneration;
+  bool current() =>
+      context.mounted &&
+      identical(context.read<ActiveProfileProvider?>(), profiles) &&
+      profiles?.activeId == profileId &&
+      profiles?.identityMutationGeneration == generation;
   List<LiveTvServerInfo> sources() => multiServer.liveTvServers
       .where((source) => link.serverId == null || source.serverId == link.serverId)
       .toList(growable: false);
 
+  final channels = <LiveTvChannel>[];
+  if (profileId != null) {
+    final iptv = context.read<IptvSourceRepository?>();
+    if (iptv != null) {
+      try {
+        final local = await iptv.channels(profileId);
+        if (!current()) return;
+        channels.addAll(local.where((c) => link.serverId == null || c.iptvSourceId == link.serverId));
+      } catch (error, trace) {
+        appLogger.w('Live link: could not read profile IPTV channels', error: error, stackTrace: trace);
+        if (!current()) return;
+      }
+    }
+  }
+
   var found = sources();
-  if (found.isEmpty && !isOffline) {
+  if (found.isEmpty && !isOffline && link.selectChannel(channels) == null) {
     // Live TV servers are known once their server has connected and been
     // probed; right after a cold start or a wake-up that may still be going.
     final serverId = link.serverId;
@@ -562,22 +586,21 @@ Future<void> _launchLiveLink(BuildContext context, LiveLink link, {required bool
       () => serverId == null ? multiServer.hasConnectedServers : multiServer.isServerOnline(serverId),
       timeout: deepLinkServerWait,
     );
-    if (!context.mounted) {
+    if (!current()) {
       return;
     }
     await multiServer.checkLiveTvAvailability();
     found = sources();
   }
-  if (!context.mounted) {
+  if (!current()) {
     return;
   }
-  if (found.isEmpty) {
+  if (found.isEmpty && channels.isEmpty) {
     appLogger.w('Live link: no Live TV server${link.serverId == null ? '' : ' ${link.serverId}'}');
     showMainSnackBar(t.deepLinks.noLiveTv);
     return;
   }
 
-  final channels = <LiveTvChannel>[];
   for (final source in found) {
     final client = multiServer.getClientForServer(ServerId(source.serverId));
     if (client == null) {
@@ -590,7 +613,7 @@ Future<void> _launchLiveLink(BuildContext context, LiveLink link, {required bool
       appLogger.w('Live link: fetching channels from ${source.serverId} failed', error: e, stackTrace: stackTrace);
     }
   }
-  if (!context.mounted) {
+  if (!context.mounted || !current()) {
     return;
   }
 
@@ -607,6 +630,7 @@ Future<void> _launchLiveLink(BuildContext context, LiveLink link, {required bool
       channel: match,
       channels: channels,
       startPosition: link.startPosition,
+      isLaunchCurrent: current,
     ),
   );
 }

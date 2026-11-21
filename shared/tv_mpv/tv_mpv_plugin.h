@@ -448,7 +448,9 @@ class TvMpvPlugin : public flutter::Plugin {
           s.set("pause", method == "pause" ? "yes" : "no");
         else {
           const auto& value = map.at(Value("value"));
-          if (method == "subtitleDelay")
+          if (method == "audioDelay")
+            s.set("audio-delay", std::to_string(value.LongValue() / 1000000.0));
+          else if (method == "subtitleDelay")
             s.set("sub-delay", std::get<std::string>(value));
           else if (method == "subtitleVisible")
             s.set("sub-visibility", std::get<std::string>(value));

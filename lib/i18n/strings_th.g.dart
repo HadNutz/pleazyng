@@ -342,6 +342,9 @@ class _Translations$common$th extends Translations$common$en {
 	@override String get notAvailable => 'หมายเลขรุ่น: A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'สัญลักษณ์';
+	@override String get keyboardLetters => 'ตัวอักษร';
+	@override String get keyboardNewLine => 'ขึ้นบรรทัดใหม่';
 	@override late final _Translations$common$mediaKind$th mediaKind = _Translations$common$mediaKind$th._(_root);
 }
 
@@ -570,6 +573,7 @@ class _Translations$settings$th extends Translations$settings$en {
 	@override String get importSettingsDescription => 'การกู้คืนความต้องการจากไฟล์';
 	@override String get importSettingsConfirm => 'สิ่งนี้จะเปลี่ยนการตั้งค่าปัจจุบันของคุณ ต่อเนื่อง?';
 	@override String get importSettingsSuccess => 'การตั้งค่าที่นําเข้า';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'ใช้การตั้งค่าแล้ว ${applied} รายการ ข้าม ${skipped} รายการ';
 	@override String get importSettingsInvalidFile => 'ไฟล์นี้ไม่ได้รับการส่งออกการตั้งค่า Pleazyng';
 	@override String get importSettingsNoUser => 'ลงทะเบียนก่อนนําเข้าการตั้งค่า';
 	@override String get cloudBackup => 'คล็อค Backup';
@@ -5797,6 +5801,9 @@ extension on TranslationsTh {
 			'common.notAvailable' => 'หมายเลขรุ่น: A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'สัญลักษณ์',
+			'common.keyboardLetters' => 'ตัวอักษร',
+			'common.keyboardNewLine' => 'ขึ้นบรรทัดใหม่',
 			'common.mediaKind.movie' => 'ภาพยนตร์',
 			'common.mediaKind.show' => 'แสดง',
 			'common.mediaKind.season' => 'ซีซัน',
@@ -6005,6 +6012,7 @@ extension on TranslationsTh {
 			'settings.importSettingsDescription' => 'การกู้คืนความต้องการจากไฟล์',
 			'settings.importSettingsConfirm' => 'สิ่งนี้จะเปลี่ยนการตั้งค่าปัจจุบันของคุณ ต่อเนื่อง?',
 			'settings.importSettingsSuccess' => 'การตั้งค่าที่นําเข้า',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'ใช้การตั้งค่าแล้ว ${applied} รายการ ข้าม ${skipped} รายการ',
 			'settings.importSettingsInvalidFile' => 'ไฟล์นี้ไม่ได้รับการส่งออกการตั้งค่า Pleazyng',
 			'settings.importSettingsNoUser' => 'ลงทะเบียนก่อนนําเข้าการตั้งค่า',
 			'settings.cloudBackup' => 'คล็อค Backup',
@@ -6115,12 +6123,12 @@ extension on TranslationsTh {
 			'settings.manageLibrariesDescription' => 'การจัดเก็บและซ่อนห้องสมุด',
 			'settings.companionRemoteServer' => 'เซิร์ฟเวอร์ระยะไกล',
 			'settings.companionRemoteServerDescription' => 'ให้อุปกรณ์มือถือบนเครือข่ายของคุณควบคุมแอปนี้',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'ไม่สามารถเริ่มต้นเซิร์ฟเวอร์คู่ค้าได้',
 			'settings.companionRemoteServerStopFailed' => 'ไม่สามารถหยุดเซิร์ฟเวอร์พันธมิตร',
 			'settings.autoPip' => 'ภาพถ่ายในภาพ',
 			'settings.autoPipDescription' => 'เข้าสู่ภาพในภาพโดยอัตโนมัติเมื่อคุณออกจากแอปในระหว่างการเล่น',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Match Content Frame Rate ความเร็ว',
 			'settings.matchContentFrameRateDescription' => 'การแสดงผล Match อัตราการฟื้นฟูไปยังเนื้อหาวิดีโอ',
 			'settings.matchContentResolution' => 'โซลูชั่นเนื้อหา Match',
@@ -6629,12 +6637,12 @@ extension on TranslationsTh {
 			'accessibility.boldTextHint' => 'ใช้น้ําหนักที่หนักขึ้นสําหรับแท็กอินเตอร์เฟซและข้อความเพื่อให้ง่ายต่อการแยกต่างหาก',
 			'tooltips.shufflePlay' => 'เล่น Shuffle',
 			'tooltips.playTrailer' => 'เล่น Trailer',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Mark ตามที่มองเห็น',
 			'tooltips.markAsUnwatched' => 'หมายเลขรุ่น: Unwatched',
 			'audioTracks.track' => ({required Object n}) => 'ลวดเสียง ${n}',
 			'videoControls.audioLabel' => 'เสียง',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'คำบรรยาย',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'กล่องข้อความ',
@@ -7143,12 +7151,12 @@ extension on TranslationsTh {
 			'errors.connectionTimeout' => ({required Object context}) => 'เวลาการเชื่อมต่อเมื่อโหลด ${context}',
 			'errors.connectionFailed' => 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์สื่อ',
 			'errors.unableToLoad' => ({required Object context}) => 'ไม่สามารถโหลด ${context} โปรดลองอีกครั้ง',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'ไม่มีลูกค้า',
 			'errors.pleaseEnterToken' => 'กรุณาใส่ token',
 			'errors.invalidToken' => 'โค้นที่ผิดพลาด',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'ไม่สามารถตรวจสอบ token: ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'ไม่สามารถเปลี่ยนไป ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'ไม่สามารถลบได้ ${displayName}',
 			'errors.failedToRate' => 'ไม่สามารถปรับปรุงการรับรอง',
@@ -7657,12 +7665,12 @@ extension on TranslationsTh {
 			'playlists.emptyPlaylist' => 'รายการเล่นนี้ว่างเปล่า',
 			'playlists.deleteConfirm' => 'ลบ Playlist',
 			'playlists.deleteMessage' => ({required Object name}) => 'คุณแน่ใจว่าคุณต้องการลบ "${name}"',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Playlist สร้างขึ้น',
 			'playlists.deleted' => 'Playlist ลบ',
 			'playlists.itemAdded' => 'เพิ่มขึ้นใน Playlist',
 			'playlists.itemRemoved' => 'ลบออกจาก Playlist',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'เลือก Playlist',
 			'playlists.searchPlaylists' => 'ค้นหารายการเล่น',
 			'playlists.errorCreating' => 'ไม่ได้สร้าง playlist',
@@ -8171,12 +8179,12 @@ extension on TranslationsTh {
 			'performanceOverlay.transfer' => 'การถ่ายโอน',
 			'performanceOverlay.renderFps' => 'ฟิล์ม',
 			'performanceOverlay.displayFps' => 'แสดง FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A / V Sync',
 			'performanceOverlay.dropped' => 'ละลาย',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU AVG',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV ตัวอย่าง Avg',
 			'performanceOverlay.maxLuma' => 'แม็กซ์ Luma',
 			'performanceOverlay.minLuma' => 'มิน Luma',
@@ -8685,12 +8693,12 @@ extension on TranslationsTh {
 			'homeLayout.customPlexRow' => 'คู่มือ Plex รอบ',
 			'homeLayout.heroNeedsLibrary' => 'ตรวจสอบห้องสมุดแรก — Hero ต้องการที่ไหนที่จะแสดง',
 			'homeLayout.heroNeedsSurface' => 'ตรวจสอบห้องสมุดหรือบ้านแรก — สัตว์ประหลาดต้องการที่ไหนที่จะแสดง',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'ลบ Hub',
 			'homeLayout.noPlexRows' => 'หมายเลข Plex-จัดการสายกลับสําหรับห้องสมุดนี้',
 			'homeLayout.openDetails' => 'รายละเอียดเปิด',
 			'homeLayout.heroCards' => 'บัตรฮีโร่',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'การสูญเสียการ์ดฮีโร่',
 			'homeLayout.tvPlayFocus' => 'โทรทัศน์ระยะไกล: ปุ่ม Play',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad down stops on the Play button before moving to the next row ปิดสกีตรงไปสู่ row ต่อไป',
@@ -9199,12 +9207,12 @@ extension on TranslationsTh {
 			'audiobook.recoveryExport' => 'การส่งออกไฟล์การกู้คืนที่เข้ารหัส',
 			'audiobook.recoveryImport' => 'นําเข้าไฟล์การกู้คืนที่เข้ารหัส',
 			'audiobook.recoveryImportConfirm' => 'ผสมไฟล์การกู้คืนที่เข้ารหัสนี้กับตําแหน่งอ่านปัจจุบันและบันทึก? ประวัติศาสตร์ที่มีอยู่จะถูกเก็บไว้. หมายเลขห้องสมุดร่วมกันและรายการไม่รวม; การตั้งค่าหมายเลขที่เกี่ยวข้องในแต่ละอุปกรณ์ก่อนที่จะนําเข้า',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'ไฟล์การกู้คืนที่เข้ารหัสถูกบันทึก',
 			'audiobook.recoveryImported' => 'ข้อมูลการกู้คืนรวม',
 			'sourceSetup.bookorbitHelp' => 'ลงชื่อเข้าใช้บัญชี BookOrbit ของคุณเพื่อเรียกดูและเล่นหนังสือ คำขอสำหรับเรื่องที่ไม่มีให้บริการยังคงส่งผ่าน SeerrNG ที่เชื่อมต่อไว้',
 			'sourceSetup.bookorbitOpen' => 'เปิดใน BookOrbit',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'ดูเรื่องนี้ใน BookOrbit เพื่อจัดการรายละเอียดในคลังและรูปแบบไฟล์ที่ Pleazyng เปิดไม่ได้ ความคืบหน้าในการฟังจะซิงค์กับบัญชี BookOrbit ของคุณ',
 			'sourceSetup.savedCertificate' => 'ใบรับรองเซิร์ฟเวอร์ที่บันทึกไว้',
 			'sourceSetup.nfsEndpointInvalid' => 'ป้อน URL ของ NFS เช่น nfs://nas:2049/export.',
@@ -9713,12 +9721,12 @@ extension on TranslationsTh {
 			'musicTools.apiKey' => 'คีย์ API',
 			'musicTools.missing' => 'หมายเลขรุ่น: A',
 			'musicTools.minutes' => 'นาที',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'ฟิล์ม',
 			'musicTools.exclusiveOutput' => 'เอาต์พุตเสียงแบบเอกสิทธิ์',
 			'musicTools.preamp' => 'ปรีแอมป์',
 			'musicTools.ratingPending' => 'บันทึกบนอุปกรณ์นี้แล้ว รอซิงค์',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'ปรับเวลาเนื้อเพลง',
 			'musicTools.anniversaries' => 'ครบรอบการออกอัลบั้ม',
 			'musicTools.outputPreset' => 'EQ สำหรับเอาต์พุตนี้',

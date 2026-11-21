@@ -342,6 +342,9 @@ class _Translations$common$tr extends Translations$common$en {
 	@override String get notAvailable => 'Yok';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Simgeler';
+	@override String get keyboardLetters => 'Harfler';
+	@override String get keyboardNewLine => 'Yeni satır';
 	@override late final _Translations$common$mediaKind$tr mediaKind = _Translations$common$mediaKind$tr._(_root);
 }
 
@@ -572,6 +575,7 @@ class _Translations$settings$tr extends Translations$settings$en {
 	@override String get importSettingsDescription => 'Tercihleri bir dosyadan geri yükleyin';
 	@override String get importSettingsConfirm => 'Bu işlem mevcut ayarlarınızın üzerine yazacak. Devam edilsin mi?';
 	@override String get importSettingsSuccess => 'Ayarlar içe aktarıldı';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Uygulanan ayar: ${applied}. Atlanan: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Bu dosya geçerli bir Pleazyng ayar dosyası değil';
 	@override String get importSettingsNoUser => 'Ayarları içe aktarmadan önce giriş yapın';
 	@override String get cloudBackup => 'Cloud Backup için';
@@ -5822,6 +5826,9 @@ extension on TranslationsTr {
 			'common.notAvailable' => 'Yok',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Simgeler',
+			'common.keyboardLetters' => 'Harfler',
+			'common.keyboardNewLine' => 'Yeni satır',
 			'common.mediaKind.movie' => 'Film',
 			'common.mediaKind.show' => 'Dizi',
 			'common.mediaKind.season' => 'Sezon',
@@ -6030,6 +6037,7 @@ extension on TranslationsTr {
 			'settings.importSettingsDescription' => 'Tercihleri bir dosyadan geri yükleyin',
 			'settings.importSettingsConfirm' => 'Bu işlem mevcut ayarlarınızın üzerine yazacak. Devam edilsin mi?',
 			'settings.importSettingsSuccess' => 'Ayarlar içe aktarıldı',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Uygulanan ayar: ${applied}. Atlanan: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Bu dosya geçerli bir Pleazyng ayar dosyası değil',
 			'settings.importSettingsNoUser' => 'Ayarları içe aktarmadan önce giriş yapın',
 			'settings.cloudBackup' => 'Cloud Backup için',
@@ -6140,12 +6148,12 @@ extension on TranslationsTr {
 			'settings.manageLibrariesDescription' => 'Kitaplıkları yeniden sıralayın ve gizleyin',
 			'settings.companionRemoteServer' => 'Yardımcı Uzaktan Kumanda Sunucusu',
 			'settings.companionRemoteServerDescription' => 'Ağınızdaki mobil cihazların bu uygulamayı kontrol etmesine izin verin',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Yardımcı sunucu başlatılamadı',
 			'settings.companionRemoteServerStopFailed' => 'Yardımcı sunucu durdurulamadı',
 			'settings.autoPip' => 'Otomatik Pencere İçinde Pencere (PiP)',
 			'settings.autoPipDescription' => 'Oynatma sırasında uygulamadan çıktığınızda otomatik olarak pencere içinde pencere moduna geç',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'İçerik Kare Hızını Eşitle',
 			'settings.matchContentFrameRateDescription' => 'Ekran yenileme hızını video içeriğiyle eşitle',
 			'settings.matchContentResolution' => 'İçerik çözünürlüğüne uyarla',
@@ -6654,12 +6662,12 @@ extension on TranslationsTr {
 			'accessibility.boldTextHint' => 'Bir arayüz etiketleri ve mesajları için daha ağır bir ağırlık kullanın, bunları ayırt etmek kolay hale getirin.',
 			'tooltips.shufflePlay' => 'Karışık oynat',
 			'tooltips.playTrailer' => 'Fragmanı oynat',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'İzlendi olarak işaretle',
 			'tooltips.markAsUnwatched' => 'İzlenmedi olarak işaretle',
 			'audioTracks.track' => ({required Object n}) => 'Ses Parçası ${n}',
 			'videoControls.audioLabel' => 'Ses',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Altyazı',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Geniş Ekran (Letterbox)',
@@ -7168,12 +7176,12 @@ extension on TranslationsTr {
 			'errors.connectionTimeout' => ({required Object context}) => '${context} yüklenirken bağlantı zaman aşımına uğradı',
 			'errors.connectionFailed' => 'Medya sunucusuna bağlanılamıyor',
 			'errors.unableToLoad' => ({required Object context}) => '${context} yüklenemedi. Lütfen tekrar deneyin.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Kullanılabilir istemci yok',
 			'errors.pleaseEnterToken' => 'Lütfen bir belirteç (token) girin',
 			'errors.invalidToken' => 'Geçersiz belirteç',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Belirteç doğrulanamadı: ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName} profiline geçilemedi',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName} profili silinemedi',
 			'errors.failedToRate' => 'Puan güncellenemedi',
@@ -7682,12 +7690,12 @@ extension on TranslationsTr {
 			'playlists.emptyPlaylist' => 'Bu oynatma listesi boş',
 			'playlists.deleteConfirm' => 'Oynatma Listesi Silinsin mi?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}" listesini silmek istediğinizden emin misiniz?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Oynatma listesi oluşturuldu',
 			'playlists.deleted' => 'Oynatma listesi silindi',
 			'playlists.itemAdded' => 'Oynatma listesine eklendi',
 			'playlists.itemRemoved' => 'Oynatma listesinden kaldırıldı',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Oynatma Listesi Seç',
 			'playlists.searchPlaylists' => 'Oynatma listelerinde ara...',
 			'playlists.errorCreating' => 'Oynatma listesi oluşturulamadı',
@@ -8196,12 +8204,12 @@ extension on TranslationsTr {
 			'performanceOverlay.transfer' => 'Aktarım',
 			'performanceOverlay.renderFps' => 'İşleme FPS',
 			'performanceOverlay.displayFps' => 'Ekran FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V Eşitleme',
 			'performanceOverlay.dropped' => 'Kare Kaybı',
 			'performanceOverlay.dvRpus' => 'DV RPU\'ları',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU Ort.',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV Örnek Ort.',
 			'performanceOverlay.maxLuma' => 'Maks Luma',
 			'performanceOverlay.minLuma' => 'Min Luma',
@@ -8710,12 +8718,12 @@ extension on TranslationsTr {
 			'homeLayout.customPlexRow' => 'Özel Plex satır',
 			'homeLayout.heroNeedsLibrary' => 'İlk Kütüphaneyi Kontrol Edin - Kahramanın Gösterilmesi Gereken Bir Yer',
 			'homeLayout.heroNeedsSurface' => 'İlk önce Kütüphane veya Ev\'i kontrol edin - Kahramanın göstermesi gereken bir yer var',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Hub kaldırma',
 			'homeLayout.noPlexRows' => 'Plex yönetilen satırlar bu kütüphane için geri döndü.',
 			'homeLayout.openDetails' => 'Açılış Detaylar',
 			'homeLayout.heroCards' => 'kahraman kartları',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Bir kahraman kartı çalınan',
 			'homeLayout.tvPlayFocus' => 'TV uzaktan: vurgulama Play düğmesi',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad aşağı, bir sonraki satırda ilerlemeden önce Play düğmesinde durur.',
@@ -9224,12 +9232,12 @@ extension on TranslationsTr {
 			'audiobook.recoveryExport' => 'İhracat şifreli kurtarma dosyası',
 			'audiobook.recoveryImport' => 'İthalat Şifreli Kurtarma Dosyası',
 			'audiobook.recoveryImportConfirm' => 'Bu şifreli kurtarma dosyasını mevcut okuma pozisyonları ve notları ile birleştirin? Mevcut geçmişi muhafaza edilecektir. Paylaşılan kütüphane ve öğe kimlikleri dahil değildir; ithal etmeden önce her cihazda eşleşen kimlikler ayarlayın.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Şifreli kurtarma dosyası kaydedildi.',
 			'audiobook.recoveryImported' => 'Kurtarma verileri birleşti.',
 			'sourceSetup.bookorbitHelp' => 'Kitaplarınıza göz atmak ve oynatmak için kendi BookOrbit hesabınızla giriş yapın. Eksik içerik istekleri bağlı SeerrNG örneğiniz üzerinden gönderilmeye devam eder.',
 			'sourceSetup.bookorbitOpen' => 'BookOrbit’te aç',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Kitaplık ayrıntılarını ve Pleazyng’in açamadığı biçimleri yönetmek için bu içeriği BookOrbit’te görüntüleyin. Dinleme ilerlemesi BookOrbit hesabınızla eşitlenir.',
 			'sourceSetup.savedCertificate' => 'Kaydedilmiş sunucu sertifikası',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export gibi bir NFS URL’si girin.',
@@ -9738,12 +9746,12 @@ extension on TranslationsTr {
 			'musicTools.apiKey' => 'API anahtarı',
 			'musicTools.missing' => 'Yok',
 			'musicTools.minutes' => 'Dakika',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Filtreler',
 			'musicTools.exclusiveOutput' => 'Özel ses çıkışı',
 			'musicTools.preamp' => 'Ön yükseltme',
 			'musicTools.ratingPending' => 'Bu cihaza kaydedildi; eşitleme bekleniyor',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Şarkı sözü zaman kaydırması',
 			'musicTools.anniversaries' => 'Albüm yıl dönümleri',
 			'musicTools.outputPreset' => 'Bu çıkış için ekolayzer',

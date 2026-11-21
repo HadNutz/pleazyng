@@ -342,6 +342,9 @@ class _Translations$common$bg extends Translations$common$en {
 	@override String get notAvailable => 'Н/Д';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'АБВ';
+	@override String get keyboardSymbols => 'Символи';
+	@override String get keyboardLetters => 'Букви';
+	@override String get keyboardNewLine => 'Нов ред';
 	@override late final _Translations$common$mediaKind$bg mediaKind = _Translations$common$mediaKind$bg._(_root);
 }
 
@@ -572,6 +575,7 @@ class _Translations$settings$bg extends Translations$settings$en {
 	@override String get importSettingsDescription => 'Възстанови предпочитания от файл';
 	@override String get importSettingsConfirm => 'Това ще замени текущите ви настройки. Продължавате ли?';
 	@override String get importSettingsSuccess => 'Настройките са импортирани';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Приложени настройки: ${applied}. Пропуснати: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Този файл не е валиден експорт на настройки от Pleazyng';
 	@override String get importSettingsNoUser => 'Влезте, преди да импортирате настройки';
 	@override String get cloudBackup => 'Облачна резервна копие';
@@ -5822,6 +5826,9 @@ extension on TranslationsBg {
 			'common.notAvailable' => 'Н/Д',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'АБВ',
+			'common.keyboardSymbols' => 'Символи',
+			'common.keyboardLetters' => 'Букви',
+			'common.keyboardNewLine' => 'Нов ред',
 			'common.mediaKind.movie' => 'Филм',
 			'common.mediaKind.show' => 'Сериал',
 			'common.mediaKind.season' => 'Сезон',
@@ -6030,6 +6037,7 @@ extension on TranslationsBg {
 			'settings.importSettingsDescription' => 'Възстанови предпочитания от файл',
 			'settings.importSettingsConfirm' => 'Това ще замени текущите ви настройки. Продължавате ли?',
 			'settings.importSettingsSuccess' => 'Настройките са импортирани',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Приложени настройки: ${applied}. Пропуснати: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Този файл не е валиден експорт на настройки от Pleazyng',
 			'settings.importSettingsNoUser' => 'Влезте, преди да импортирате настройки',
 			'settings.cloudBackup' => 'Облачна резервна копие',
@@ -6140,12 +6148,12 @@ extension on TranslationsBg {
 			'settings.manageLibrariesDescription' => 'Пренареждай и скривай библиотеки',
 			'settings.companionRemoteServer' => 'Сървър за дистанционно управление',
 			'settings.companionRemoteServerDescription' => 'Позволи на мобилни устройства във вашата мрежа да управляват това приложение',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Сървърът за дистанционно управление не можа да бъде стартиран',
 			'settings.companionRemoteServerStopFailed' => 'Сървърът за дистанционно управление не можа да бъде спрян',
 			'settings.autoPip' => 'Автоматичен режим картина в картината',
 			'settings.autoPipDescription' => 'Автоматично включвай режима картина в картината при излизане от приложението по време на възпроизвеждане',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Напасване към кадровата честота на съдържанието',
 			'settings.matchContentFrameRateDescription' => 'Напасни честотата на опресняване на дисплея към видео съдържанието',
 			'settings.matchContentResolution' => 'Съобразяване с разделителната способност на съдържанието',
@@ -6654,12 +6662,12 @@ extension on TranslationsBg {
 			'accessibility.boldTextHint' => 'Използвайте по-тежка тежест за етикетите на интерфейса и съобщенията, за да ги направите по-лесни за разграничаване.',
 			'tooltips.shufflePlay' => 'Разбъркано възпроизвеждане',
 			'tooltips.playTrailer' => 'Пусни трейлър',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Маркирай като гледано',
 			'tooltips.markAsUnwatched' => 'Маркирай като негледано',
 			'audioTracks.track' => ({required Object n}) => 'Аудиопътечка ${n}',
 			'videoControls.audioLabel' => 'Аудио',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Субтитри',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Черни ленти',
@@ -7168,12 +7176,12 @@ extension on TranslationsBg {
 			'errors.connectionTimeout' => ({required Object context}) => 'Изтече времето за връзка при зареждане на ${context}',
 			'errors.connectionFailed' => 'Не може да се осъществи връзка с медиен сървър',
 			'errors.unableToLoad' => ({required Object context}) => 'Не може да се зареди ${context}. Опитайте отново.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Няма наличен клиент',
 			'errors.pleaseEnterToken' => 'Моля, въведете токен',
 			'errors.invalidToken' => 'Невалиден токен',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Неуспешна проверка на токена: ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Неуспешна смяна към ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Неуспешно изтриване на ${displayName}',
 			'errors.failedToRate' => 'Оценката не можа да бъде обновена',
@@ -7682,12 +7690,12 @@ extension on TranslationsBg {
 			'playlists.emptyPlaylist' => 'Този плейлист е празен',
 			'playlists.deleteConfirm' => 'Да се изтрие ли плейлистът?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Сигурни ли сте, че искате да изтриете "${name}"?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Плейлистът е създаден',
 			'playlists.deleted' => 'Плейлистът е изтрит',
 			'playlists.itemAdded' => 'Добавено към плейлист',
 			'playlists.itemRemoved' => 'Премахнато от плейлист',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Избери плейлист',
 			'playlists.searchPlaylists' => 'Търсене в плейлисти...',
 			'playlists.errorCreating' => 'Неуспешно създаване на плейлист',
@@ -8196,12 +8204,12 @@ extension on TranslationsBg {
 			'performanceOverlay.transfer' => 'Трансфер',
 			'performanceOverlay.renderFps' => 'FPS при изобразяване',
 			'performanceOverlay.displayFps' => 'FPS на дисплея',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V синхр.',
 			'performanceOverlay.dropped' => 'Пропуснати кадри',
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'Средно DV RPU',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'Средно DV семпл',
 			'performanceOverlay.maxLuma' => 'Макс. яркост',
 			'performanceOverlay.minLuma' => 'Мин. яркост',
@@ -8710,12 +8718,12 @@ extension on TranslationsBg {
 			'homeLayout.customPlexRow' => 'Използвайте Plex ред',
 			'homeLayout.heroNeedsLibrary' => 'Проверете библиотеката първо — Героя трябва някъде да покаже',
 			'homeLayout.heroNeedsSurface' => 'Проверете Библиотеката или Дома първо — Героя трябва някъде да покаже',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Изтегляне на Hub',
 			'homeLayout.noPlexRows' => 'No Plex управлявани редове се връщат за тази библиотека.',
 			'homeLayout.openDetails' => 'Отворени детайли',
 			'homeLayout.heroCards' => 'Герои карти',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Изтегляне на карта на герой',
 			'homeLayout.tvPlayFocus' => 'Телевизия от разстояние: бутон за игра',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad надолу спира върху бутона Play преди да се движи към следващия ред. Отпътуване на корабите директно към следващия рейтинг.',
@@ -9224,12 +9232,12 @@ extension on TranslationsBg {
 			'audiobook.recoveryExport' => 'Износ на криптирани файлове за възстановяване',
 			'audiobook.recoveryImport' => 'Въвеждане на криптирани файлове за възстановяване',
 			'audiobook.recoveryImportConfirm' => 'Комбинирайте този криптиран файл за възстановяване с текущи позиции за четене и бележки? съществуващата история ще бъде запазена. споделена библиотека и идентификатори на елементи не са включени; зададете съответстващите идентификации на всяко устройство, преди да импортирате.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Закритирани файлове за възстановяване са спасени.',
 			'audiobook.recoveryImported' => 'Данните за възстановяване се сливат.',
 			'sourceSetup.bookorbitHelp' => 'Влезте със собствения си акаунт в BookOrbit, за да разглеждате и четете книгите му. Заявките за липсващи заглавия продължават да минават през свързания ви екземпляр на SeerrNG.',
 			'sourceSetup.bookorbitOpen' => 'Отвори в BookOrbit',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Прегледайте това заглавие в BookOrbit, за да управлявате подробностите за библиотеката и форматите, които Pleazyng не може да отвори. Напредъкът при слушане се синхронизира с акаунта ви в BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Запазен сертификат на сървъра',
 			'sourceSetup.nfsEndpointInvalid' => 'Въведете NFS URL, например nfs://nas:2049/export.',
@@ -9738,12 +9746,12 @@ extension on TranslationsBg {
 			'musicTools.apiKey' => 'API ключ',
 			'musicTools.missing' => 'Н/Д',
 			'musicTools.minutes' => 'Минути',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Филтри',
 			'musicTools.exclusiveOutput' => 'Изключителен аудиоизход',
 			'musicTools.preamp' => 'Предусилване',
 			'musicTools.ratingPending' => 'Запазено на това устройство; чака синхронизиране',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Отместване на текста',
 			'musicTools.anniversaries' => 'Годишнини на албуми',
 			'musicTools.outputPreset' => 'Еквалайзер за този изход',

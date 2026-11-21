@@ -381,6 +381,8 @@ class PlayerNative extends PlayerBase
 
   @override
   String get playerType => 'mpv';
+  @override
+  bool get supportsAudioDelay => true;
 
   @override
   bool get providesNativeStats => Platform.isAndroid;

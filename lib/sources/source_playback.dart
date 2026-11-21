@@ -1169,7 +1169,14 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       if (persistProgress && (progress!.finished || (restartCue && progress!.positionMs != 0))) {
         progress = await sources.repository.saveProgress(
           _profile!,
-          progress!.copyWith(positionMs: 0, filePositionMs: 0, fileIndex: 0, fraction: 0, finished: false),
+          progress!.copyWith(
+            positionMs: 0,
+            filePositionMs: 0,
+            fileIndex: 0,
+            fraction: 0,
+            finished: false,
+            needsAudioTimeline: false,
+          ),
           kind: 'restart',
         );
       }
@@ -1183,6 +1190,8 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
         await _stop();
         return;
       }
+      progress = _resolveResumeCursor(progress!);
+      if (progress!.needsAudioTimeline) throw const SourceException(SourceFailure.unavailable);
       _fileIndex = progress!.fileIndex.clamp(0, files.length - 1);
       var localPosition = progress!.filePositionMs;
       if (hasCompleteTimeline) {
@@ -2591,6 +2600,19 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
+  PublicationProgress _resolveResumeCursor(PublicationProgress value) {
+    // Older local records could have a server position paired with a default
+    // file-zero cursor. File zero always starts at absolute time zero.
+    if (!value.needsAudioTimeline) {
+      final possibleLegacyCursor = value.positionMs > 0 && value.fileIndex == 0 && value.filePositionMs == 0;
+      if (!possibleLegacyCursor ||
+          !sources.sources.any((s) => s.id == entry?.sourceId && s.kind == FileSourceKind.audiobookshelf)) {
+        return value;
+      }
+    }
+    return value.atAbsoluteAudioPosition(value.positionMs, [for (var i = 0; i < files.length; i++) _durations[i]]);
+  }
+
   int _indexAt(int absolute) {
     var total = 0;
     for (final index in _queueOrder) {
@@ -2826,7 +2848,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       return Future.value();
     }
     final profile = _profile, current = progress, native = player;
-    if (profile == null || current == null || native == null) {
+    if (profile == null || current == null || current.needsAudioTimeline || native == null) {
       return Future.value();
     }
     final index = _fileIndex, position = positionMs, filePosition = currentFilePositionMs;
@@ -2835,6 +2857,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
         : current.fraction;
     final snapshot = current.copyWith(
       positionMs: position,
+      needsAudioTimeline: false,
       filePositionMs: filePosition,
       fileIndex: index,
       fraction: fraction,
@@ -2934,16 +2957,18 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
           if (sources.cloudConflict(old.key) || await sources.repository.remoteConflict(_profile!, old.key) != null) {
             throw const SourceException(SourceFailure.conflict);
           }
-          if (latest.revision != old.revision) {
-            progress = latest;
-            final index = latest.fileIndex.clamp(0, files.length - 1);
+          if (latest.revision != old.revision || old.needsAudioTimeline) {
+            final cursor = _resolveResumeCursor(latest);
+            progress = cursor;
+            if (cursor.needsAudioTimeline) throw const SourceException(SourceFailure.unavailable);
+            final index = cursor.fileIndex.clamp(0, files.length - 1);
             if (index != _fileIndex) {
-              await _openFile(index, latest.filePositionMs, play: false);
+              await _openFile(index, cursor.filePositionMs, play: false);
             } else {
-              _lastKnownFilePositionMs = math.max(0, latest.filePositionMs);
-              await player!.seek(Duration(milliseconds: latest.filePositionMs));
+              _lastKnownFilePositionMs = math.max(0, cursor.filePositionMs);
+              await player!.seek(Duration(milliseconds: cursor.filePositionMs));
             }
-            await player!.setRate(latest.speed);
+            await player!.setRate(cursor.speed);
           }
         } finally {
           if (_valid) {

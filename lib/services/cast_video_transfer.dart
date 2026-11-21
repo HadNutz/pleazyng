@@ -1,8 +1,17 @@
+import '../mpv/models.dart';
+
 typedef CastVideoPoint = ({Duration position, bool playing});
 
 class CastVideoSource {
-  const CastVideoSource({required this.position, required this.isCurrent, required this.freeze, required this.restore});
+  const CastVideoSource({
+    required this.position,
+    required this.isCurrent,
+    required this.freeze,
+    required this.restore,
+    this.selectedSubtitle = SubtitleTrack.off,
+  });
 
+  final SubtitleTrack selectedSubtitle;
   final Duration Function() position;
   final bool Function() isCurrent;
   final Future<CastVideoPoint?> Function() freeze;

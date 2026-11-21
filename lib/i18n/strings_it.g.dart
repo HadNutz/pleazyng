@@ -342,6 +342,9 @@ class _Translations$common$it extends Translations$common$en {
 	@override String get notAvailable => 'N/D';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Simboli';
+	@override String get keyboardLetters => 'Lettere';
+	@override String get keyboardNewLine => 'Nuova riga';
 	@override late final _Translations$common$mediaKind$it mediaKind = _Translations$common$mediaKind$it._(_root);
 }
 
@@ -574,6 +577,7 @@ class _Translations$settings$it extends Translations$settings$en {
 	@override String get importSettingsDescription => 'Ripristina le preferenze da un file';
 	@override String get importSettingsConfirm => 'Questa azione sostituirà le impostazioni attuali. Continuare?';
 	@override String get importSettingsSuccess => 'Impostazioni importate';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Impostazioni applicate: ${applied}. Ignorate: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Questo file non è un\'esportazione Pleazyng valida';
 	@override String get importSettingsNoUser => 'Accedi prima di importare le impostazioni';
 	@override String get cloudBackup => 'Cloud Backup di sicurezza';
@@ -5829,6 +5833,9 @@ extension on TranslationsIt {
 			'common.notAvailable' => 'N/D',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Simboli',
+			'common.keyboardLetters' => 'Lettere',
+			'common.keyboardNewLine' => 'Nuova riga',
 			'common.mediaKind.movie' => 'Film',
 			'common.mediaKind.show' => 'Serie',
 			'common.mediaKind.season' => 'Stagione',
@@ -6037,6 +6044,7 @@ extension on TranslationsIt {
 			'settings.importSettingsDescription' => 'Ripristina le preferenze da un file',
 			'settings.importSettingsConfirm' => 'Questa azione sostituirà le impostazioni attuali. Continuare?',
 			'settings.importSettingsSuccess' => 'Impostazioni importate',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Impostazioni applicate: ${applied}. Ignorate: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Questo file non è un\'esportazione Pleazyng valida',
 			'settings.importSettingsNoUser' => 'Accedi prima di importare le impostazioni',
 			'settings.cloudBackup' => 'Cloud Backup di sicurezza',
@@ -6147,12 +6155,12 @@ extension on TranslationsIt {
 			'settings.manageLibrariesDescription' => 'Riordina e nascondi le librerie',
 			'settings.companionRemoteServer' => 'Server del telecomando',
 			'settings.companionRemoteServerDescription' => 'Consenti ai dispositivi mobili della tua rete di controllare questa app',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Impossibile avviare il server del telecomando',
 			'settings.companionRemoteServerStopFailed' => 'Impossibile arrestare il server del telecomando',
 			'settings.autoPip' => 'Picture-in-Picture automatica',
 			'settings.autoPipDescription' => 'Attiva automaticamente la modalità Picture-in-Picture quando esci dall\'app durante la riproduzione',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Adatta la frequenza dei fotogrammi',
 			'settings.matchContentFrameRateDescription' => 'Adatta la frequenza di aggiornamento dello schermo al contenuto video',
 			'settings.matchContentResolution' => 'Adatta alla risoluzione del contenuto',
@@ -6661,12 +6669,12 @@ extension on TranslationsIt {
 			'accessibility.boldTextHint' => 'Utilizzare un peso più pesante per le etichette e i messaggi di interfaccia per renderli più facili da distinguere.',
 			'tooltips.shufflePlay' => 'Riproduzione casuale',
 			'tooltips.playTrailer' => 'Riproduci trailer',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Segna come visto',
 			'tooltips.markAsUnwatched' => 'Segna come non visto',
 			'audioTracks.track' => ({required Object n}) => 'Traccia audio ${n}',
 			'videoControls.audioLabel' => 'Audio',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Sottotitoli',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Letterbox',
@@ -7175,12 +7183,12 @@ extension on TranslationsIt {
 			'errors.connectionTimeout' => ({required Object context}) => 'Tempo scaduto per la connessione durante il caricamento di ${context}',
 			'errors.connectionFailed' => 'Impossibile connettersi al server multimediale',
 			'errors.unableToLoad' => ({required Object context}) => 'Impossibile caricare ${context}. Riprova.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Nessun client disponibile',
 			'errors.pleaseEnterToken' => 'Inserisci un token',
 			'errors.invalidToken' => 'Token non valido',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Impossibile verificare il token: ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Impossibile passare a ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Impossibile eliminare ${displayName}',
 			'errors.failedToRate' => 'Impossibile aggiornare la valutazione',
@@ -7689,12 +7697,12 @@ extension on TranslationsIt {
 			'playlists.emptyPlaylist' => 'Questa playlist è vuota',
 			'playlists.deleteConfirm' => 'Eliminare playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Sei sicuro di voler eliminare "${name}"?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Playlist creata',
 			'playlists.deleted' => 'Playlist eliminata',
 			'playlists.itemAdded' => 'Aggiunto alla playlist',
 			'playlists.itemRemoved' => 'Rimosso dalla playlist',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Seleziona playlist',
 			'playlists.searchPlaylists' => 'Cerca playlist...',
 			'playlists.errorCreating' => 'Impossibile creare la playlist',
@@ -8203,12 +8211,12 @@ extension on TranslationsIt {
 			'performanceOverlay.transfer' => 'Trasferimento',
 			'performanceOverlay.renderFps' => 'FPS rendering',
 			'performanceOverlay.displayFps' => 'FPS display',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'Sync A/V',
 			'performanceOverlay.dropped' => 'Scartati',
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'Media DV RPU',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'Media camp. DV',
 			'performanceOverlay.maxLuma' => 'Luma max',
 			'performanceOverlay.minLuma' => 'Luma min',
@@ -8717,12 +8725,12 @@ extension on TranslationsIt {
 			'homeLayout.customPlexRow' => 'Modello di guida Plex',
 			'homeLayout.heroNeedsLibrary' => 'Scopri la biblioteca prima - Hero ha bisogno di qualche parte per mostrare',
 			'homeLayout.heroNeedsSurface' => 'Scopri la biblioteca o la casa prima - il protagonista ha bisogno di qualche parte per mostrare',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Rimuovere Hub',
 			'homeLayout.noPlexRows' => 'N. Plex rami gestiti restituiti per questa biblioteca.',
 			'homeLayout.openDetails' => 'Dettagli aperti',
 			'homeLayout.heroCards' => 'Carte di eroe',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Scopri una carta di eroe',
 			'homeLayout.tvPlayFocus' => 'Remote TV: il pulsante di gioco',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad down si ferma sul pulsante Play prima di muoversi alla prossima riga.',
@@ -9231,12 +9239,12 @@ extension on TranslationsIt {
 			'audiobook.recoveryExport' => 'Esporta il file di recupero crittografato',
 			'audiobook.recoveryImport' => 'Importa il file di recupero crittografato',
 			'audiobook.recoveryImportConfirm' => 'Combinare questo file di recupero crittografato con posizioni di lettura corrente e note? Storia esistente sarà conservata. ID della biblioteca condivisa e degli articoli non sono inclusi; impostare ID corrispondenti su ogni dispositivo prima dell\'importazione.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Il file di recupero crittografato salvato.',
 			'audiobook.recoveryImported' => 'I dati di recupero sono misti.',
 			'sourceSetup.bookorbitHelp' => 'Accedi con il tuo account BookOrbit per sfogliare e riprodurre i suoi libri. Le richieste per i titoli mancanti passano comunque dall\'istanza SeerrNG collegata.',
 			'sourceSetup.bookorbitOpen' => 'Apri in BookOrbit',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Visualizza questo titolo in BookOrbit per gestire i dettagli della libreria e i formati che Pleazyng non può aprire. I progressi di ascolto si sincronizzano con il tuo account BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Certificato del server salvato',
 			'sourceSetup.nfsEndpointInvalid' => 'Inserisci un URL NFS, ad esempio nfs://nas:2049/export.',
@@ -9745,12 +9753,12 @@ extension on TranslationsIt {
 			'musicTools.apiKey' => 'Chiave API',
 			'musicTools.missing' => 'N/D',
 			'musicTools.minutes' => 'Minuti',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Filtri',
 			'musicTools.exclusiveOutput' => 'Uscita audio esclusiva',
 			'musicTools.preamp' => 'Preamplificazione',
 			'musicTools.ratingPending' => 'Salvato sul dispositivo; sincronizzazione in attesa',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Sfasamento del testo',
 			'musicTools.anniversaries' => 'Anniversari degli album',
 			'musicTools.outputPreset' => 'Equalizzatore per questa uscita',

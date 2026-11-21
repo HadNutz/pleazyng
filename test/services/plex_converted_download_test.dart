@@ -99,6 +99,66 @@ void main() {
     expect(params['X-Plex-Client-Profile-Extra'], contains('container=mkv&videoCodec=h264'));
   });
 
+  test('conversion resolves the pinned file in the current version order and cancels the accepted job', () async {
+    final calls = <http.Request>[];
+    final client = testPlexClient(
+      handler: (request) async {
+        calls.add(request);
+        return switch (request.url.path) {
+          '/library/metadata/146' => json({
+            'MediaContainer': {
+              'Metadata': [
+                {
+                  'Media': [
+                    {'id': 34},
+                    {'id': 12},
+                  ],
+                },
+              ],
+            },
+          }),
+          '/downloadQueue' => json({
+            'MediaContainer': {
+              'DownloadQueue': [
+                {'id': 4},
+              ],
+            },
+          }),
+          '/downloadQueue/4/add' => json({
+            'MediaContainer': {
+              'AddedQueueItems': [
+                {'id': 23},
+              ],
+            },
+          }),
+          '/downloadQueue/4/items/23' when request.method == 'DELETE' => http.Response('', 404),
+          '/downloadQueue/4/items/23' => json(queueItem('processing')),
+          _ => http.Response('', 500),
+        };
+      },
+    );
+    DownloadConversionHandle? accepted;
+    final state = await client.requestConvertedDownload(
+      movie,
+      mediaIndex: 0,
+      mediaSourceId: '12',
+      preset: TranscodeQualityPreset.p720_2mbps,
+      onAccepted: (job) async => accepted = job,
+    );
+    expect(state, isA<ConvertedDownloadPending>());
+    expect(calls.singleWhere((r) => r.url.path.endsWith('/add')).url.queryParameters['mediaIndex'], '1');
+    expect(accepted, (queueId: 4, itemId: 23));
+    await client.cancelDownloadConversion(accepted!);
+    expect(calls.last.method, 'DELETE');
+    final lost = await client.requestConvertedDownload(
+      movie,
+      mediaIndex: 0,
+      mediaSourceId: 'missing',
+      preset: TranscodeQualityPreset.p720_2mbps,
+    );
+    expect(lost, isA<ConvertedDownloadFailed>());
+    expect(calls.where((r) => r.url.path.endsWith('/add')), hasLength(1));
+  });
   test('original quality is never sent to the download queue', () {
     expect(
       () => testPlexClient().buildConvertedDownloadParams(

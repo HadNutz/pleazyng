@@ -100,7 +100,7 @@ class PodcastRssSourceAdapter extends SourceAdapter {
       _pages.clear();
     }
     final feedUri = pageUri ?? rootFeedUri;
-    final response = await transport.text(
+    final documentResponse = await transport.textDocument(
       'GET',
       feedUri,
       headers: {
@@ -110,6 +110,8 @@ class PodcastRssSourceAdapter extends SourceAdapter {
       limit: 6 * 1024 * 1024,
       redirects: true,
     );
+    final response = documentResponse.body;
+    final documentUri = documentResponse.uri;
     if (_closed) {
       throw const SourceException(SourceFailure.cancelled);
     }
@@ -147,12 +149,12 @@ class PodcastRssSourceAdapter extends SourceAdapter {
           ?.getAttribute('href');
       final rawImage = itunesImage ?? imageUrl;
       if (rawImage.isNotEmpty) {
-        artwork = _safeResolve(feedUri, rawImage);
+        artwork = _safeResolve(documentUri, rawImage);
       }
     } else {
       final logo = childText(atom!, 'logo').isNotEmpty ? childText(atom, 'logo') : childText(atom, 'icon');
       if (logo.isNotEmpty) {
-        artwork = _safeResolve(feedUri, logo);
+        artwork = _safeResolve(documentUri, logo);
       }
       author =
           atom.childElements
@@ -189,7 +191,7 @@ class PodcastRssSourceAdapter extends SourceAdapter {
     for (final rel in ['prev-archive', 'next']) {
       final href = pageLinks.where((e) => e.getAttribute('rel') == rel).firstOrNull?.getAttribute('href');
       if (href != null) {
-        nextPage = _safeResolve(feedUri, href);
+        nextPage = _safeResolve(documentUri, href);
         break;
       }
     }
@@ -214,7 +216,7 @@ class PodcastRssSourceAdapter extends SourceAdapter {
       if (rawUrl == null || rawUrl.isEmpty) {
         continue;
       }
-      final audioUri = _safeResolve(feedUri, rawUrl);
+      final audioUri = _safeResolve(documentUri, rawUrl);
       if (audioUri == null) {
         continue;
       }
@@ -256,14 +258,14 @@ class PodcastRssSourceAdapter extends SourceAdapter {
           .where((e) => e.name.local == 'image' && e.getAttribute('href') != null)
           .firstOrNull
           ?.getAttribute('href');
-      final cover = enclosureImage == null ? artwork : _safeResolve(feedUri, enclosureImage) ?? artwork;
+      final cover = enclosureImage == null ? artwork : _safeResolve(documentUri, enclosureImage) ?? artwork;
       final fileName = _filename(episodeTitle, audioUri, mime);
       final date = parsePodcastDate(published);
       final chapterNode = links
           .where((e) => e.name.local == 'chapters' && e.namespaceUri == 'https://podcastindex.org/namespace/1.0')
           .firstOrNull;
       final rawChapters = chapterNode?.getAttribute('url');
-      final chapterUri = rawChapters == null ? null : _safeResolve(feedUri, rawChapters);
+      final chapterUri = rawChapters == null ? null : _safeResolve(documentUri, rawChapters);
       if (chapterUri != null && chapterNode?.getAttribute('type') == 'application/json+chapters') {
         chapterUrls[id] = chapterUri;
         if (_chapterUrls[id] == chapterUri && _chapters.containsKey(id)) {
@@ -301,7 +303,7 @@ class PodcastRssSourceAdapter extends SourceAdapter {
           .firstOrNull;
       final transcriptUri = transcriptNode?.getAttribute('url') == null
           ? null
-          : _safeResolve(feedUri, transcriptNode!.getAttribute('url')!);
+          : _safeResolve(documentUri, transcriptNode!.getAttribute('url')!);
       final transcriptType = transcriptNode?.getAttribute('type');
       if (transcriptUri != null && transcriptType != null) {
         transcriptUrls[id] = (uri: transcriptUri, type: transcriptType);
@@ -313,6 +315,7 @@ class PodcastRssSourceAdapter extends SourceAdapter {
           'source': source.id,
           'feed': sourceDigest(feedIdentity),
           'page': feedUri.toString(),
+          'episode': id,
           'enclosure': audioUri.toString(),
           if (cover != null) 'cover': cover.toString(),
           if (chapterUri != null) 'chapters': chapterUri.toString(),
@@ -674,10 +677,12 @@ class PodcastRssSourceAdapter extends SourceAdapter {
       final feed = await _loadFeed();
       return entry.copyWith(title: feed.title, description: '${feed.episodes.length} episodes');
     }
-    final hint = entry.files.firstOrNull?.sealedAccessHint;
-    final locator = hint == null ? null : await _decodeHint(hint);
-    final feed = locator == null ? await _loadFeed() : await _archivePage(_feedUri(locator['page'] as String));
-    final current = feed.episodes.map((episode) => episode.entry).where((e) => e.id == entry.id).firstOrNull;
+    final file = entry.files.firstOrNull;
+    final locator = file?.sealedAccessHint == null ? null : await _episodeHint(file!);
+    final feed = locator == null ? await _loadFeed() : _pages[locator['page']] ?? _feedCache;
+    final current =
+        feed?.episodes.map((episode) => episode.entry).where((e) => e.id == entry.id).firstOrNull ??
+        (locator == null ? null : entry);
     if (current == null) {
       throw const SourceException(SourceFailure.unavailable);
     }
@@ -708,27 +713,42 @@ class PodcastRssSourceAdapter extends SourceAdapter {
     return current.copyWith(chapters: _chapters[entry.id] ?? current.chapters);
   }
 
+  Future<Map<String, dynamic>> _episodeHint(PublicationFile file) async {
+    if (_closed) throw const SourceException(SourceFailure.cancelled);
+    final data = await _decodeHint(file.sealedAccessHint!);
+    if (data['episode'] != null && data['episode'] != file.id) {
+      throw const SourceException(SourceFailure.permission);
+    }
+    return data;
+  }
+
   @override
   Future<ContentLease> resolve(PublicationFile file) async {
-    if (file.sealedAccessHint case final hint?) {
-      final data = await _decodeHint(hint);
-      final page = await _fetchFeed(pageUri: _feedUri(data['page'] as String));
-      final episode = page.episodes.where((episode) => episode.entry.id == file.id).firstOrNull;
-      final uri = page.enclosures[file.id];
-      final resolved = uri ?? _feedUri(data['enclosure'] as String);
-      return ContentLease(
-        resolved,
-        headers: await _headers(resolved),
-        size: episode?.entry.files.firstOrNull?.size ?? file.size,
-      );
+    if (file.sealedAccessHint != null) {
+      final data = await _episodeHint(file);
+      final uri = _feedUri(data['enclosure'] as String);
+      return ContentLease(uri, headers: await _headers(uri), size: file.size);
     }
-    final current = await _loadFeed(refresh: true);
-    final uri = current.enclosures[file.id];
-    final episode = current.episodes.where((episode) => episode.entry.id == file.id).firstOrNull;
-    if (uri == null || episode == null) {
-      throw const SourceException(SourceFailure.unavailable);
+    return renewLease(file);
+  }
+
+  @override
+  bool shouldRenewLease(int status) => super.shouldRenewLease(status) || status == 404 || status == 410;
+
+  @override
+  Future<ContentLease> renewLease(PublicationFile file) async {
+    final data = file.sealedAccessHint == null ? null : await _episodeHint(file);
+    final page = data == null
+        ? await _loadFeed(refresh: true)
+        : await _fetchFeed(pageUri: _feedUri(data['page'] as String));
+    final uri = page.enclosures[file.id];
+    final currentFile = page.episodes.where((e) => e.entry.id == file.id).firstOrNull?.entry.files.firstOrNull;
+    if (uri == null || currentFile == null) throw const SourceException(SourceFailure.unavailable);
+    if ((file.size != null && currentFile.size != null && file.size != currentFile.size) ||
+        (file.revision != null && currentFile.revision != file.revision)) {
+      throw const SourceException(SourceFailure.conflict);
     }
-    return ContentLease(uri, headers: await _headers(uri), size: episode.entry.files.firstOrNull?.size ?? file.size);
+    return ContentLease(uri, headers: await _headers(uri), size: currentFile.size ?? file.size);
   }
 
   @override

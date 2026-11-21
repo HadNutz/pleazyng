@@ -108,7 +108,15 @@ class ConvertedDownloadReady extends ConvertedDownloadState {
   /// False for progressive transcodes that cannot safely resume by byte range.
   final bool supportsRangeResume;
 
-  const ConvertedDownloadReady({required this.url, this.container, this.supportsRangeResume = true});
+  /// Additional separately converted files, in source order.
+  final List<String> additionalPartUrls;
+
+  const ConvertedDownloadReady({
+    required this.url,
+    this.container,
+    this.supportsRangeResume = true,
+    this.additionalPartUrls = const [],
+  });
 }
 
 /// The server is still deciding or converting. Ask again after [retryAfter].
@@ -127,6 +135,14 @@ class ConvertedDownloadFailed extends ConvertedDownloadState {
   const ConvertedDownloadFailed(this.reason);
 }
 
+typedef DownloadConversionHandle = ({int queueId, int itemId});
+
+/// Persistent, user-scoped server work that survives local cancellation.
+abstract interface class CancellableDownloadConversion {
+  String get downloadConversionOwner;
+  Future<void> cancelDownloadConversion(DownloadConversionHandle job);
+}
+
 /// A backend that can convert a download to a lower quality on the server
 /// before the device fetches it, so a small screen does not have to store
 /// the full-size original.
@@ -140,5 +156,6 @@ abstract interface class ConvertedDownloadClient {
     required int mediaIndex,
     String? mediaSourceId,
     required TranscodeQualityPreset preset,
+    Future<void> Function(DownloadConversionHandle job)? onAccepted,
   });
 }

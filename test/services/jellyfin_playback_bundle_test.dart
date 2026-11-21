@@ -10,6 +10,9 @@ import 'package:plezy/database/app_database.dart';
 import 'package:plezy/media/media_server_client.dart';
 import 'package:plezy/services/jellyfin_api_cache.dart';
 import 'package:plezy/services/jellyfin_client.dart';
+import 'package:plezy/services/playback_initialization_types.dart';
+import 'package:plezy/models/transcode_quality_preset.dart';
+import 'package:plezy/media/download_resolution.dart';
 import 'package:plezy/services/plex_api_cache.dart';
 
 import '../test_helpers/backend_client_fixtures.dart';
@@ -60,7 +63,124 @@ void main() {
     );
   }
 
+  test('a truncated AdditionalParts response cannot produce a complete movie download', () async {
+    final client = testJellyfinClient(
+      connection: _conn(),
+      handler: (r) async {
+        final data = r.url.path.endsWith('/AdditionalParts')
+            ? {'Items': []}
+            : {
+                'Id': 'one',
+                'Type': 'Movie',
+                'PartCount': 2,
+                'MediaSources': [
+                  {'Id': 'one', 'RunTimeTicks': 10000000, 'Container': 'mkv'},
+                ],
+              };
+        return http.Response(jsonEncode(data), 200, headers: {'content-type': 'application/json'});
+      },
+    );
+    addTearDown(client.close);
+    await expectLater(client.fetchAuthorizedDownloadItem('one'), throwsFormatException);
+  });
   for (final emby in [false, true]) {
+    test('multipart $emby follows item-specific streams, subtitles, reports and conversions', () async {
+      final reports = <Map>[];
+      final details = <String>[];
+      Map<String, dynamic> file(String id, int seconds) => {
+        'Id': id,
+        'Type': 'Movie',
+        'Name': 'Movie',
+        'RunTimeTicks': seconds * 10000000,
+        if (id == 'one') 'PartCount': 2,
+        'UserData': id == 'one' ? {'Played': true} : {'PlaybackPositionTicks': 30000000},
+        'MediaSources': [
+          {
+            'Id': 'source-$id',
+            'Container': 'mkv',
+            'RunTimeTicks': seconds * 10000000,
+            'SupportsDirectPlay': true,
+            'MediaStreams': [
+              {'Index': 0, 'Type': 'Video', 'Codec': 'h264'},
+              {'Index': 3, 'Type': 'Subtitle', 'IsExternal': true, 'Codec': 'srt', 'DeliveryMethod': 'External'},
+            ],
+          },
+        ],
+      };
+      final client = testJellyfinClient(
+        connection: emby ? testEmbyConnection() : _conn(),
+        handler: (r) async {
+          final path = r.url.path;
+          Object body;
+          if (path.endsWith('/AdditionalParts')) {
+            expect(r.url.queryParameters['UserId'], 'user-1');
+            body = {
+              'Items': [
+                {'Id': 'two'},
+              ],
+            };
+          } else if (path.contains('/Users/user-1/Items/')) {
+            final id = path.split('/').last;
+            details.add(id);
+            body = file(id, id == 'one' ? 10 : 20);
+          } else if (path.endsWith('/PlaybackInfo')) {
+            final id = path.split('/').reversed.elementAt(1);
+            body = {'MediaSources': file(id, 10)['MediaSources']};
+          } else if (path.contains('/Sessions/Playing')) {
+            reports.add(jsonDecode(r.body) as Map);
+            body = {};
+          } else {
+            return http.Response('{}', 404);
+          }
+          return http.Response(jsonEncode(body), 200, headers: {'content-type': 'application/json'});
+        },
+      );
+      addTearDown(client.close);
+      final movie = (await client.fetchItem('one'))!;
+      expect(details, ['one', 'two']);
+      expect(movie.durationMs, 30000);
+      expect(movie.viewOffsetMs, 13000);
+      final result = await client.getPlaybackInitialization(
+        PlaybackInitializationOptions(
+          metadata: movie,
+          selectedMediaIndex: 0,
+          startPosition: const Duration(seconds: 13),
+        ),
+      );
+      expect(Uri.parse(result.videoUrl!).path, contains('/Videos/two/'));
+      expect(result.mediaInfo?.partTimeline?.currentIndex, 1);
+      expect(result.selectedVersion?.parts.map((p) => p.id), ['one', 'two']);
+      final target = await client.resolveExternalPlayback(movie, position: const Duration(seconds: 13));
+      expect(target?.partTimeline?.current.start, const Duration(seconds: 10));
+      expect(Uri.parse(target!.url).queryParameters['MediaSourceId'], 'source-two');
+      final original = await client.resolveDownload(movie);
+      expect(Uri.parse(original.additionalParts.single.url).path, contains('/Videos/two/'));
+      expect(original.additionalParts.single.externalSubtitles.single.url, contains('/two/source-two/'));
+      final converted = await client.requestConvertedDownload(
+        movie,
+        mediaIndex: 0,
+        preset: TranscodeQualityPreset.p720_2mbps,
+      );
+      expect(converted, isA<ConvertedDownloadReady>());
+      expect(
+        Uri.parse((converted as ConvertedDownloadReady).additionalPartUrls.single).queryParameters['MediaSourceId'],
+        'source-two',
+      );
+      await client.reportPlaybackStarted(
+        itemId: 'one',
+        mediaSourceId: 'source-two',
+        position: const Duration(seconds: 13),
+      );
+      await client.reportPlaybackStopped(
+        itemId: 'one',
+        mediaSourceId: 'source-one',
+        position: const Duration(seconds: 10),
+      );
+      expect(reports.map((r) => [r['ItemId'], r['MediaSourceId'], r['PositionTicks']]), [
+        ['two', 'source-two', 30000000],
+        ['one', 'source-one', 100000000],
+      ]);
+    });
     test('${emby ? 'Emby' : 'Jellyfin'} cache prediction resolves saved sources without PlaybackInfo', () async {
       var requests = 0;
       final raw = {

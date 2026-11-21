@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:plezy/sources/adapters/cloud_sources.dart';
 import 'package:plezy/sources/adapters/opds_source.dart';
+import 'package:plezy/sources/adapters/s3_source.dart';
 import 'package:plezy/sources/adapters/webdav_source.dart';
 import 'package:plezy/sources/source_models.dart';
 import 'package:plezy/sources/source_transport.dart';
@@ -98,6 +99,102 @@ void main() {
     expect(a.uri, isNot(b.uri));
     source.close();
   });
+  test('S3 directory roots scope every listing and reject sibling reads', () async {
+    for (final root in ['books', 'books/']) {
+      final source = S3SourceAdapter(
+        FileSource(
+          id: 's',
+          profileId: 'p',
+          kind: FileSourceKind.s3,
+          name: 'S3',
+          endpoint: 'https://store.example/bucket',
+          root: root,
+        ),
+        SourceTransport(
+          client: MockClient((request) async {
+            expect(request.url.queryParameters['prefix'], 'books/');
+            return http.Response(
+              '<ListBucketResult><Contents><Key>books/Novel.epub</Key></Contents>'
+              '<CommonPrefixes><Prefix>books-old/</Prefix></CommonPrefixes></ListBucketResult>',
+              200,
+            );
+          }),
+        ),
+        () async => {'accessKey': 'fixture', 'secretKey': 'fixture'},
+      );
+      addTearDown(source.close);
+      expect((await source.browse()).entries.single.title, 'Novel.epub');
+      await expectLater(
+        source.resolve(const PublicationFile(id: 'books-old/leak.mp3', name: 'leak.mp3', mimeType: 'audio/mpeg')),
+        throwsA(isA<SourceException>().having((e) => e.reason, 'reason', SourceFailure.permission)),
+      );
+    }
+  });
+
+  test('Drive shortcuts index the target edition, retain folder identity and reject target changes', () async {
+    const checksum = '610a88e326eaabdf6085fe642056c4bc';
+    var revision = checksum;
+    final source = GoogleDriveSourceAdapter(
+      const FileSource(id: 'drive', profileId: 'me', name: 'Drive', kind: FileSourceKind.googleDrive),
+      SourceTransport(
+        client: MockClient((request) async {
+          final target = {
+            'id': 'audio',
+            'name': 'Original.mp3',
+            'mimeType': 'audio/mpeg',
+            'size': '300',
+            'md5Checksum': revision,
+            'resourceKey': 'rk',
+          };
+          if (request.url.path.endsWith('/audio')) {
+            expect(request.headers['X-Goog-Drive-Resource-Keys'], 'audio/rk');
+            return http.Response(jsonEncode(target), 200);
+          }
+          return http.Response(
+            jsonEncode({
+              'files': [
+                {
+                  'id': 'alias',
+                  'name': 'Shortcut.mp3',
+                  'version': '1',
+                  'mimeType': 'application/vnd.google-apps.shortcut',
+                  'shortcutDetails': {'targetId': 'audio', 'targetMimeType': 'audio/mpeg', 'targetResourceKey': 'rk'},
+                },
+                target,
+              ],
+            }),
+            200,
+          );
+        }),
+      ),
+      ({bool refresh = false}) async => 'fixture',
+    );
+    addTearDown(source.close);
+    final entries = (await source.browse()).entries;
+    final shortcut = entries.first.files.single;
+    expect(entries.first.id, isNot(entries.last.id));
+    expect(shortcut.fingerprint, entries.last.files.single.fingerprint);
+    expect(shortcut.revision, checksum);
+    expect((await source.resolve(shortcut)).size, 300);
+    final oldFile = PublicationFile(id: shortcut.id, name: shortcut.name, mimeType: shortcut.mimeType, revision: '1');
+    final oldEntry = SourceEntry(
+      id: oldFile.id,
+      sourceId: 'drive',
+      title: oldFile.name,
+      kind: SourceItemKind.music,
+      parentId: 'root',
+      files: [oldFile],
+    );
+    final repaired = await source.hydrate(oldEntry);
+    expect(repaired.key, oldEntry.key);
+    expect(repaired.files.single.fingerprint, shortcut.fingerprint);
+    revision = 'different';
+    await expectLater(
+      source.resolve(shortcut),
+      throwsA(isA<SourceException>().having((e) => e.reason, 'reason', SourceFailure.conflict)),
+    );
+  });
+
   test('Drive API 401 refreshes once and retries with new token', () async {
     var calls = 0;
     final refreshes = <bool>[];

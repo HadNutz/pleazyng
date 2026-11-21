@@ -209,6 +209,9 @@
     "notAvailable": "N/A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "Belgilar",
+    "keyboardLetters": "Harflar",
+    "keyboardNewLine": "Yangi qator",
     "mediaKind": {
       "movie": "Film",
       "show": "Serial",
@@ -431,6 +434,7 @@
     "importSettingsDescription": "Parametrlarni fayldan tiklang",
     "importSettingsConfirm": "Bu joriy sozlamalaringiz ustidan yoziladi. Davom etasizmi?",
     "importSettingsSuccess": "Sozlamalar import qilindi",
+    "importSettingsCounts": "Qo‘llangan sozlamalar: ${applied}. O‘tkazib yuborilgan: ${skipped}.",
     "importSettingsInvalidFile": "Ushbu fayl toʻgʻri Pleazyng sozlamalar fayli emas",
     "importSettingsNoUser": "Sozlamalarni import qilishdan oldin tizimga kiring",
     "cloudBackup": "Bulutli zaxira nusxasi",

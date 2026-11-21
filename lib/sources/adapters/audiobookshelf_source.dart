@@ -422,11 +422,13 @@ class AudiobookshelfSourceAdapter extends SourceAdapter {
       rethrow;
     }
     if (j.isEmpty) return null;
-    final positionMs = ((j['currentTime'] as num? ?? 0) * 1000).round();
-    return local.copyWith(
-      positionMs: positionMs,
-      filePositionMs: entry.audio.length == 1 ? positionMs : local.filePositionMs,
-      fileIndex: entry.audio.length == 1 ? 0 : local.fileIndex,
+    final seconds = j['currentTime'] ?? 0;
+    if (seconds is! num || !seconds.isFinite || seconds < 0) throw const SourceException(SourceFailure.invalidData);
+    final positionMs = (seconds * 1000).round();
+    final cursor = local.mode == PublicationMode.listening
+        ? local.atAbsoluteAudioPosition(positionMs, entry.audio.map((file) => file.durationMs).toList())
+        : local.copyWith(positionMs: positionMs);
+    return cursor.copyWith(
       fraction: (j[local.mode == PublicationMode.reading ? 'ebookProgress' : 'progress'] as num?)?.toDouble() ?? 0,
       locator: local.mode == PublicationMode.reading && j['ebookLocation'] is String
           ? ReadingLocator(href: '', cfi: j['ebookLocation'] as String)
@@ -442,6 +444,9 @@ class AudiobookshelfSourceAdapter extends SourceAdapter {
   @override
   Future<void> writeProgress(SourceEntry entry, PublicationProgress progress) async {
     final reading = progress.mode == PublicationMode.reading;
+    if (!reading && progress.needsAudioTimeline && !progress.finished && progress.positionMs != 0) {
+      throw const SourceException(SourceFailure.unavailable);
+    }
     if (reading && !entry.ebooks.any((f) => f.primary && f.fingerprint == progress.edition)) {
       throw const SourceException(SourceFailure.unsupported);
     }

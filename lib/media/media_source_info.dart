@@ -76,6 +76,7 @@ class MediaSourceInfo {
     List<MediaAudioTrack>? audioTracks,
     List<MediaSubtitleTrack>? subtitleTracks,
     bool? hasRequestedAudioTrack,
+    MediaPartTimeline? partTimeline,
   }) {
     return MediaSourceInfo(
       videoUrl: videoUrl,
@@ -88,8 +89,8 @@ class MediaSourceInfo {
       displayCriteria: displayCriteria,
       mediaSourceId: mediaSourceId,
       mediaIndex: mediaIndex,
-      partIndex: partIndex,
-      partTimeline: partTimeline,
+      partIndex: partTimeline?.currentIndex ?? partIndex,
+      partTimeline: partTimeline ?? this.partTimeline,
       defaultAudioStreamIndex: defaultAudioStreamIndex,
       defaultSubtitleStreamIndex: defaultSubtitleStreamIndex,
       trickplayByWidth: trickplayByWidth,

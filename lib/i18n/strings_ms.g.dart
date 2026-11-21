@@ -342,6 +342,9 @@ class _Translations$common$ms extends Translations$common$en {
 	@override String get notAvailable => 'N / A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'Tag : ABC';
+	@override String get keyboardSymbols => 'Simbol';
+	@override String get keyboardLetters => 'Huruf';
+	@override String get keyboardNewLine => 'Baris baharu';
 	@override late final _Translations$common$mediaKind$ms mediaKind = _Translations$common$mediaKind$ms._(_root);
 }
 
@@ -570,6 +573,7 @@ class _Translations$settings$ms extends Translations$settings$en {
 	@override String get importSettingsDescription => 'Memulihkan keutamaan daripada fail';
 	@override String get importSettingsConfirm => 'Ini akan menggantikan tetapan semasa anda.Lanjutkan?';
 	@override String get importSettingsSuccess => 'Seting yang diimport';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Tetapan digunakan: ${applied}. Dilangkau: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Fail ini bukan pengeksportan tetapan Pleazyng yang sah';
 	@override String get importSettingsNoUser => 'Menandatangani sebelum mengimport tetapan';
 	@override String get cloudBackup => 'Penyelesaian Cloud Backup';
@@ -5797,6 +5801,9 @@ extension on TranslationsMs {
 			'common.notAvailable' => 'N / A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'Tag : ABC',
+			'common.keyboardSymbols' => 'Simbol',
+			'common.keyboardLetters' => 'Huruf',
+			'common.keyboardNewLine' => 'Baris baharu',
 			'common.mediaKind.movie' => 'filem',
 			'common.mediaKind.show' => 'Pameran',
 			'common.mediaKind.season' => 'Musim',
@@ -6005,6 +6012,7 @@ extension on TranslationsMs {
 			'settings.importSettingsDescription' => 'Memulihkan keutamaan daripada fail',
 			'settings.importSettingsConfirm' => 'Ini akan menggantikan tetapan semasa anda.Lanjutkan?',
 			'settings.importSettingsSuccess' => 'Seting yang diimport',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Tetapan digunakan: ${applied}. Dilangkau: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Fail ini bukan pengeksportan tetapan Pleazyng yang sah',
 			'settings.importSettingsNoUser' => 'Menandatangani sebelum mengimport tetapan',
 			'settings.cloudBackup' => 'Penyelesaian Cloud Backup',
@@ -6115,12 +6123,12 @@ extension on TranslationsMs {
 			'settings.manageLibrariesDescription' => 'Menyelamatkan dan menyembunyikan perpustakaan',
 			'settings.companionRemoteServer' => 'Pengenalan kepada Remote Server',
 			'settings.companionRemoteServerDescription' => 'Membolehkan peranti mudah alih di rangkaian anda untuk mengawal aplikasi ini',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Tidak boleh memulakan pelayan rakan',
 			'settings.companionRemoteServerStopFailed' => 'Tidak boleh menghentikan pelayan rakan',
 			'settings.autoPip' => 'Pengenalan kepada Auto Picture-in-Picture',
 			'settings.autoPipDescription' => 'Secara automatik, masukkan imej dalam imej apabila anda meninggalkan aplikasi semasa pemutaran',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Rata-rata Perlawanan Content Frame Rate',
 			'settings.matchContentFrameRateDescription' => 'Match menunjukkan kadar pembaharuan kepada kandungan video',
 			'settings.matchContentResolution' => 'Perlawanan Content Resolution',
@@ -6629,12 +6637,12 @@ extension on TranslationsMs {
 			'accessibility.boldTextHint' => 'Gunakan berat yang lebih berat untuk label antara muka dan mesej untuk memudahkan mereka untuk membezakan.',
 			'tooltips.shufflePlay' => 'Permainan Shuffle',
 			'tooltips.playTrailer' => 'Bermain Trailer',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Mark yang dilihat',
 			'tooltips.markAsUnwatched' => 'Tag: tidak dipantau',
 			'audioTracks.track' => ({required Object n}) => 'Perbincangan:Audio Track ${n}',
 			'videoControls.audioLabel' => 'Audio yang',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Sari kata',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Kotak Surat',
@@ -7143,12 +7151,12 @@ extension on TranslationsMs {
 			'errors.connectionTimeout' => ({required Object context}) => 'Sambungan timeout semasa muat ${context}',
 			'errors.connectionFailed' => 'Tidak dapat menyambung ke server media',
 			'errors.unableToLoad' => ({required Object context}) => 'Tidak boleh memuatkan ${context}. sila cuba lagi.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Tiada pelanggan yang tersedia',
 			'errors.pleaseEnterToken' => 'Sila masukkan token',
 			'errors.invalidToken' => 'Token yang tidak sah',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Token yang gagal disahkan: ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Kegagalan untuk menukar kepada ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Tidak boleh dipadamkan ${displayName}',
 			'errors.failedToRate' => 'Tidak boleh update rating',
@@ -7657,12 +7665,12 @@ extension on TranslationsMs {
 			'playlists.emptyPlaylist' => 'Senarai permainan ini kosong',
 			'playlists.deleteConfirm' => 'Menghapuskan Playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Adakah anda pasti anda mahu memadamkan "${name}"?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Playlist yang dibuat',
 			'playlists.deleted' => 'Playlist telah dihapuskan',
 			'playlists.itemAdded' => 'Ditambah ke playlist',
 			'playlists.itemRemoved' => 'Menghapus daripada playlist',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Pilih Playlist',
 			'playlists.searchPlaylists' => 'Mencari senarai permainan...',
 			'playlists.errorCreating' => 'gagal mencipta playlist',
@@ -8171,12 +8179,12 @@ extension on TranslationsMs {
 			'performanceOverlay.transfer' => 'Penghantaran',
 			'performanceOverlay.renderFps' => 'Penghantaran FPS',
 			'performanceOverlay.displayFps' => 'Pemandangan FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A / V Sinkron',
 			'performanceOverlay.dropped' => 'pecah',
 			'performanceOverlay.dvRpus' => 'RPU yang',
 			'performanceOverlay.dvRpuAverage' => 'Perbezaan RPU AVG',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'Perbezaan sampel AVG',
 			'performanceOverlay.maxLuma' => 'Tag: Max Luma',
 			'performanceOverlay.minLuma' => 'Luma min.',
@@ -8685,12 +8693,12 @@ extension on TranslationsMs {
 			'homeLayout.customPlexRow' => 'Perbezaan Plex baris',
 			'homeLayout.heroNeedsLibrary' => 'Periksa Perpustakaan Pertama — Hero Perlu Di Mana-mana Untuk Tunjukkan',
 			'homeLayout.heroNeedsSurface' => 'Periksa Perpustakaan atau Rumah terlebih dahulu — Hero perlu di mana-mana untuk menunjukkan',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Menghilangkan Hub',
 			'homeLayout.noPlexRows' => 'Nombor Plex baris yang dikendalikan dikembalikan untuk perpustakaan ini.',
 			'homeLayout.openDetails' => 'Maklumat Terbuka',
 			'homeLayout.heroCards' => 'Pemenang Kartu',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Menangkap Kad Pahlawan',
 			'homeLayout.tvPlayFocus' => 'Remote TV: menonjolkan butang Play',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad ke bawah berhenti pada butang Main sebelum bergerak ke baris seterusnya.',
@@ -9199,12 +9207,12 @@ extension on TranslationsMs {
 			'audiobook.recoveryExport' => 'Mengeksport fail pemulihan yang disulitkan',
 			'audiobook.recoveryImport' => 'Import fail pemulihan yang disulitkan',
 			'audiobook.recoveryImportConfirm' => 'Menggabungkan fail pemulihan yang disulitkan ini dengan kedudukan bacaan semasa dan nota? sejarah yang sedia ada akan dikekalkan. perpustakaan berkongsi dan ID item tidak termasuk; tetapkan ID yang sepadan pada setiap peranti sebelum mengimport.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Fail pemulihan yang disulitkan disimpan.',
 			'audiobook.recoveryImported' => 'Data pemulihan telah digabungkan.',
 			'sourceSetup.bookorbitHelp' => 'Log masuk dengan akaun BookOrbit anda sendiri untuk melayari dan memainkan bukunya. Permintaan untuk judul yang tiada tetap dihantar melalui tika SeerrNG yang disambungkan.',
 			'sourceSetup.bookorbitOpen' => 'Buka dalam BookOrbit',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Lihat judul ini dalam BookOrbit untuk mengurus butiran pustaka dan format yang tidak dapat dibuka oleh Pleazyng. Kemajuan pendengaran disegerakkan dengan akaun BookOrbit anda.',
 			'sourceSetup.savedCertificate' => 'Sijil pelayan yang disimpan',
 			'sourceSetup.nfsEndpointInvalid' => 'Masukkan URL NFS, contohnya nfs://nas:2049/export.',
@@ -9713,12 +9721,12 @@ extension on TranslationsMs {
 			'musicTools.apiKey' => 'Kunci API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'Minit',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Penapis',
 			'musicTools.exclusiveOutput' => 'Output audio eksklusif',
 			'musicTools.preamp' => 'Prapenguat',
 			'musicTools.ratingPending' => 'Disimpan pada peranti ini; menunggu penyegerakan',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Anjakan masa lirik',
 			'musicTools.anniversaries' => 'Ulang tahun album',
 			'musicTools.outputPreset' => 'EQ untuk output ini',

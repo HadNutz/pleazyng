@@ -209,6 +209,9 @@
     "notAvailable": "N/A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "Symboler",
+    "keyboardLetters": "Bokstäver",
+    "keyboardNewLine": "Ny rad",
     "mediaKind": {
       "movie": "Film",
       "show": "Serie",
@@ -431,6 +434,7 @@
     "importSettingsDescription": "Återställ inställningar från en fil",
     "importSettingsConfirm": "Detta ersätter dina nuvarande inställningar. Fortsätta?",
     "importSettingsSuccess": "Inställningar importerade",
+    "importSettingsCounts": "Tillämpade inställningar: ${applied}. Överhoppade: ${skipped}.",
     "importSettingsInvalidFile": "Filen är inte en giltig export av Pleazyng-inställningar",
     "importSettingsNoUser": "Logga in innan du importerar inställningar",
     "cloudBackup": "Cloud Backup för",

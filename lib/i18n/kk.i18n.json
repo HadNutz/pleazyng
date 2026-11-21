@@ -209,6 +209,9 @@
     "notAvailable": "N/A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "Таңбалар",
+    "keyboardLetters": "Әріптер",
+    "keyboardNewLine": "Жаңа жол",
     "mediaKind": {
       "movie": "Фильм",
       "show": "Сериал",
@@ -431,6 +434,7 @@
     "importSettingsDescription": "Параметрлерді файлдан қалпына келтіріңіз",
     "importSettingsConfirm": "Бұл ағымдағы баптауларыңыздың үстінен жазады. Жалғастырасыз ба?",
     "importSettingsSuccess": "Баптаулар импортталды",
+    "importSettingsCounts": "Қолданылған баптаулар: ${applied}. Өткізіп жіберілгені: ${skipped}.",
     "importSettingsInvalidFile": "Бұл файл дұрыс Pleazyng баптаулар файлы емес",
     "importSettingsNoUser": "Баптауларды импорттау алдында жүйеге кіріңіз",
     "cloudBackup": "Ауыздылық Cloud",

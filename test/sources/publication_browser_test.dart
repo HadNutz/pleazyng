@@ -41,8 +41,15 @@ void main() {
         final files = {
           'META-INF/container.xml':
               '<container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" version="1.0"><rootfiles><rootfile full-path="EPUB/package.opf" media-type="application/oebps-package+xml"/></rootfiles></container>',
+          'EPUB/one.smil':
+              '<smil xmlns="http://www.w3.org/ns/SMIL" version="3.0"><body>'
+              '<par><text src="one.xhtml"/><audio src="track.mp3" clipBegin="125ms" clipEnd="1min"/></par>'
+              '<par><text src="one.xhtml"/><audio src="track.mp3" clipBegin="1min" clipEnd="1h"/></par>'
+              '<par><text src="one.xhtml"/><audio src="track.mp3"/></par>'
+              '</body></smil>',
+          'EPUB/track.mp3': '',
           'EPUB/package.opf':
-              '<package xmlns="http://www.idpf.org/2007/opf" prefix="rendition: http://www.idpf.org/vocab/rendition/#" version="3.0" unique-identifier="id"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:identifier id="id">fixture</dc:identifier><dc:title>Reading fixture</dc:title><dc:language>en</dc:language>$renditionMetadata</metadata><manifest><item id="one" href="one.xhtml" media-type="application/xhtml+xml"/><item id="two" href="two.xhtml" media-type="application/xhtml+xml"/>$thirdItem<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/></manifest><spine>$spineItems</spine></package>',
+              '<package xmlns="http://www.idpf.org/2007/opf" prefix="rendition: http://www.idpf.org/vocab/rendition/#" version="3.0" unique-identifier="id"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:identifier id="id">fixture</dc:identifier><dc:title>Reading fixture</dc:title><dc:language>en</dc:language>$renditionMetadata</metadata><manifest><item id="one" href="one.xhtml" media-overlay="narration" media-type="application/xhtml+xml"/><item id="two" href="two.xhtml" media-type="application/xhtml+xml"/>$thirdItem<item id="narration" href="one.smil" media-type="application/smil+xml"/><item id="track" href="track.mp3" media-type="audio/mpeg"/><item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/></manifest><spine>$spineItems</spine></package>',
           'EPUB/nav.xhtml':
               '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><body><nav epub:type="toc"><ol><li><a href="one.xhtml">The shore</a></li><li><a href="two.xhtml">The crossing</a></li>$thirdNavigation</ol></nav></body></html>',
           'EPUB/one.xhtml':
@@ -70,6 +77,7 @@ void main() {
         final archive = await PublicationArchive.open(input, temporary, comic: comic);
         late PublicationServer server;
         Object? failure;
+        List<dynamic>? overlays;
         server = PublicationServer(
           archive,
           valid: () => true,
@@ -154,6 +162,8 @@ void main() {
               } catch (e) {
                 failure = e;
               }
+            } else if (events.first['type'] == 'ready') {
+              overlays = events.first['overlays'] as List<dynamic>;
             } else if (events.first['type'] == 'browserSettings') {
               await server.execute(
                 'settings',
@@ -176,6 +186,13 @@ void main() {
           ]);
           expect(result.exitCode, 0, reason: '${result.stderr}; bridge: $failure');
           expect(jsonDecode(result.stdout as String)['search'], greaterThan(0));
+          if (!comic) {
+            expect(overlays?.map((clip) => (clip['beginMs'], clip['endMs'])).toList(), [
+              (125, 60000),
+              (60000, 3600000),
+              (0, null),
+            ]);
+          }
         } finally {
           await server.close();
           await temporary.delete(recursive: true);

@@ -72,10 +72,10 @@ void main() {
       expect(detection.reasons, isNot(contains('no_touchscreen')));
     });
 
-    test('detects devices without real touchscreen capability', () {
+    test('a non-touch laptop needs affirmative TV evidence', () {
       final detection = detectAndroidTvFromSystemFeatures(['android.hardware.faketouch']);
 
-      expect(detection.isTv, isTrue);
+      expect(detection.isTv, isFalse);
       expect(detection.reasons, contains('no_touchscreen'));
     });
 

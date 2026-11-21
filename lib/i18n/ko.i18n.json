@@ -209,6 +209,9 @@
     "notAvailable": "N/A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "기호",
+    "keyboardLetters": "문자",
+    "keyboardNewLine": "줄 바꿈",
     "mediaKind": {
       "movie": "영화",
       "show": "시리즈",
@@ -429,6 +432,7 @@
     "importSettingsDescription": "파일에서 기본 설정 복원",
     "importSettingsConfirm": "현재 설정을 대체합니다. 계속하시겠습니까?",
     "importSettingsSuccess": "설정 가져오기 완료",
+    "importSettingsCounts": "적용된 설정: ${applied}개. 건너뛴 설정: ${skipped}개.",
     "importSettingsInvalidFile": "유효한 Pleazyng 설정 내보내기 파일이 아닙니다",
     "importSettingsNoUser": "설정을 가져오기 전에 로그인하세요",
     "cloudBackup": "클라우드 백업",

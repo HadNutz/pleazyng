@@ -209,6 +209,9 @@
     "notAvailable": "Yok",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "Simgeler",
+    "keyboardLetters": "Harfler",
+    "keyboardNewLine": "Yeni satır",
     "mediaKind": {
       "movie": "Film",
       "show": "Dizi",
@@ -431,6 +434,7 @@
     "importSettingsDescription": "Tercihleri bir dosyadan geri yükleyin",
     "importSettingsConfirm": "Bu işlem mevcut ayarlarınızın üzerine yazacak. Devam edilsin mi?",
     "importSettingsSuccess": "Ayarlar içe aktarıldı",
+    "importSettingsCounts": "Uygulanan ayar: ${applied}. Atlanan: ${skipped}.",
     "importSettingsInvalidFile": "Bu dosya geçerli bir Pleazyng ayar dosyası değil",
     "importSettingsNoUser": "Ayarları içe aktarmadan önce giriş yapın",
     "cloudBackup": "Cloud Backup için",

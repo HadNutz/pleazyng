@@ -15,6 +15,7 @@ import '../utils/jellyfin_time.dart';
 import '../utils/json_utils.dart';
 import '../utils/resolution_label.dart';
 import 'file_info_parser.dart';
+import 'jellyfin_multipart.dart';
 import 'jellyfin_display_metadata.dart';
 
 Map<String, dynamic>? jellyfinFirstVideoStream(Object? streams) {
@@ -216,6 +217,17 @@ class JellyfinMappers {
         ? const <String>[]
         : <String>[seriesBackdropPath];
 
+    final versions = _mediaVersions(item['MediaSources']);
+    JellyfinMultipart? multipart;
+    if (versions != null && item[jellyfinAdditionalPartDetails] is List) {
+      for (var i = 0; i < versions.length; i++) {
+        multipart = JellyfinMultipart.fromItem(item, i);
+        if (multipart != null) {
+          versions[i] = versions[i].copyWith(parts: multipart.parts);
+          break;
+        }
+      }
+    }
     final mapped = JellyfinMediaItem(
       dialect: dialect,
       id: id,
@@ -264,9 +276,17 @@ class JellyfinMappers {
       // parent's logo via ParentLogoItemId/ParentLogoImageTag, which is
       // what JF web renders on the hero card.
       clearLogoPath: _selfImagePath(id, item, 'Logo') ?? _parentLogoImage(item),
-      durationMs: jellyfinTicksToMs(item['RunTimeTicks']),
-      viewOffsetMs: jellyfinTicksToMs(_userData(item)?['PlaybackPositionTicks']),
-      viewCount: _viewCount(item),
+      durationMs: multipart?.timeline.duration.inMilliseconds ?? jellyfinTicksToMs(item['RunTimeTicks']),
+      viewOffsetMs:
+          item['PleazyngResumeMs'] as int? ??
+          multipart?.resumeMs ??
+          jellyfinTicksToMs(_userData(item)?['PlaybackPositionTicks']),
+      viewCount:
+          multipart != null &&
+              item['PleazyngResumeMs'] == null &&
+              !multipart.files.every((f) => f.item['UserData']?['Played'] == true)
+          ? 0
+          : _viewCount(item),
       lastViewedAt: jellyfinIsoToEpochSeconds(_userData(item)?['LastPlayedDate'] as String?),
       // leafCount also drives display counts. viewedLeafCount is watched-state
       // rollup and applies only to container kinds; Jellyfin may include
@@ -290,7 +310,7 @@ class JellyfinMappers {
       styles: null,
       moods: null,
       roles: _actors(item['People']),
-      mediaVersions: _mediaVersions(item['MediaSources']),
+      mediaVersions: versions,
       // Neither dialect sends a library field on an item DTO: `ParentId` is a
       // season or physical folder and `SeriesStudio` is a studio, never the
       // owning CollectionFolder. Library identity comes only from explicit

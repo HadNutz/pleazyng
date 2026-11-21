@@ -590,7 +590,16 @@ class ContentLease {
 
 /// Provider-native byte stream for sources without an HTTP media URL.
 class SourceByteStream {
-  const SourceByteStream({required this.stream, required this.size, required this.offset, required this.length});
+  const SourceByteStream({
+    this.validatedRevision,
+    required this.stream,
+    required this.size,
+    required this.offset,
+    required this.length,
+  });
+
+  /// Live provider revision checked before reading the requested range.
+  final String? validatedRevision;
   final Stream<List<int>> stream;
   final int size;
   final int offset;
@@ -624,6 +633,7 @@ class PublicationProgress {
     this.positionMs = 0,
     this.filePositionMs = 0,
     this.fileIndex = 0,
+    this.needsAudioTimeline = false,
     this.locator,
     this.fraction = 0,
     this.finished = false,
@@ -642,17 +652,40 @@ class PublicationProgress {
   /// Explicit file-relative cursor also works before all durations are known.
   final int filePositionMs;
   final int fileIndex;
+
+  /// The server supplied an absolute cursor that could not be mapped to a file.
+  final bool needsAudioTimeline;
   final ReadingLocator? locator;
   final double fraction;
   final bool finished;
   final double speed;
   final int updatedAt;
   String get key => jsonEncode([entryKey, edition, mode.name]);
+  PublicationProgress atAbsoluteAudioPosition(int absoluteMs, List<int?> durations) {
+    var remaining = absoluteMs;
+    for (var i = 0; i < durations.length; i++) {
+      final duration = durations[i] ?? 0;
+      if (remaining == 0 || duration > remaining || i == durations.length - 1) {
+        return copyWith(positionMs: absoluteMs, fileIndex: i, filePositionMs: remaining, needsAudioTimeline: false);
+      }
+      if (duration <= 0) {
+        // The same file-relative cursor is still valid when the server has not moved.
+        if (!needsAudioTimeline && positionMs == absoluteMs && fileIndex == i && filePositionMs == remaining) {
+          return this;
+        }
+        break;
+      }
+      remaining -= duration;
+    }
+    return copyWith(positionMs: absoluteMs, needsAudioTimeline: true);
+  }
+
   PublicationProgress copyWith({
     int? revision,
     int? positionMs,
     int? filePositionMs,
     int? fileIndex,
+    bool? needsAudioTimeline,
     ReadingLocator? locator,
     double? fraction,
     bool? finished,
@@ -668,6 +701,7 @@ class PublicationProgress {
     positionMs: positionMs ?? this.positionMs,
     filePositionMs: filePositionMs ?? this.filePositionMs,
     fileIndex: fileIndex ?? this.fileIndex,
+    needsAudioTimeline: needsAudioTimeline ?? this.needsAudioTimeline,
     locator: locator ?? this.locator,
     fraction: fraction ?? this.fraction,
     finished: finished ?? this.finished,
@@ -682,6 +716,7 @@ class PublicationProgress {
     'revision': revision,
     'positionMs': positionMs,
     'fileIndex': fileIndex,
+    if (needsAudioTimeline) 'needsAudioTimeline': true,
     'filePositionMs': filePositionMs,
     'locator': locator?.toJson(),
     'fraction': fraction,
@@ -697,6 +732,7 @@ class PublicationProgress {
     revision: sourceInt(j['revision']) ?? 0,
     positionMs: sourceInt(j['positionMs']) ?? 0,
     fileIndex: sourceInt(j['fileIndex']) ?? 0,
+    needsAudioTimeline: j['needsAudioTimeline'] == true,
     filePositionMs: sourceInt(j['filePositionMs']) ?? sourceInt(j['positionMs']) ?? 0,
     locator: j['locator'] == null ? null : ReadingLocator.fromJson(sourceMap(j['locator'])),
     fraction: ((j['fraction'] as num?)?.toDouble() ?? 0).clamp(0, 1),

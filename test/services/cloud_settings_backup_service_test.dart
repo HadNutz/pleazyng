@@ -2,16 +2,29 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'package:http/testing.dart';
+import 'package:plezy/i18n/strings.g.dart';
+import 'package:plezy/profiles/active_profile_provider.dart';
+import 'package:plezy/screens/settings/cloud_settings_backup_dialog.dart';
 import 'package:plezy/services/cloud_settings_backup_service.dart';
+import 'package:plezy/services/settings_export_service.dart';
 import 'package:plezy/services/settings_service.dart';
 import 'package:plezy/services/storage_service.dart';
+import 'package:provider/provider.dart';
 
 import '../test_helpers/local_tls.dart';
 import '../test_helpers/prefs.dart';
+
+class _BackupProfile extends Fake with ChangeNotifier implements ActiveProfileProvider {
+  @override
+  String get activeId => 'audit-local';
+  @override
+  int get identityMutationGeneration => 0;
+}
 
 class _LateBackupClient extends http.BaseClient {
   final response = Completer<http.StreamedResponse>();
@@ -56,6 +69,53 @@ void main() {
   Future<void> configure(CloudSettingsBackupService service, String url) =>
       service.saveConfiguration(url: url, username: 'dummy-user', password: 'dummy-password');
   Future<double?> volume() async => (await SettingsService.getInstance()).prefs.getDouble('volume');
+
+  for (final applyVolume in [false, true]) {
+    testWidgets('portable cloud import reports skipped keys and refreshes only when settings apply ($applyVolume)', (
+      tester,
+    ) async {
+      final profile = _BackupProfile();
+      addTearDown(profile.dispose);
+      final service = CloudSettingsBackupService();
+      await service.saveConfiguration(url: 'https://backup.test/recovery.json', username: '', password: '');
+      service.dispose();
+      final results = <ImportResult>[];
+      final summary = ImportResult(keysImported: applyVolume ? 1 : 0, keysSkipped: 1).summary;
+      final mock = MockClient(
+        (request) async => http.Response(
+          jsonEncode({
+            'formatVersion': 1,
+            'prefs': {
+              'unknown_setting': {'type': 'bool', 'value': true},
+              if (applyVolume) 'volume': {'type': 'double', 'value': 87.0},
+            },
+          }),
+          200,
+        ),
+      );
+
+      await http.runWithClient(() async {
+        await tester.pumpWidget(
+          ChangeNotifierProvider<ActiveProfileProvider>.value(
+            value: profile,
+            child: MaterialApp(
+              home: Scaffold(
+                body: CloudSettingsBackupDialog(beforeRestore: () {}, afterRestore: (r) async => results.add(r)),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(t.settings.importSettings));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(t.settings.importSettings).last);
+        await tester.pumpAndSettle();
+        expect(find.text(summary), findsOneWidget);
+        expect(results.length, applyVolume ? 1 : 0);
+        expect(await volume(), applyVolume ? 87.0 : 31.0);
+      }, () => mock);
+    });
+  }
 
   test('the recovery URL shown after backup imports into a new local profile', () async {
     final files = <Uri, String>{};

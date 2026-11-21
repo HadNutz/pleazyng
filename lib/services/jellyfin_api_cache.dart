@@ -145,6 +145,7 @@ class JellyfinApiCache extends ApiCache {
         final userData = (data['UserData'] is Map<String, dynamic>)
             ? (data['UserData'] as Map<String, dynamic>)
             : <String, dynamic>{};
+        if (data['PleazyngAdditionalPartDetails'] is List) data['PleazyngResumeMs'] = viewOffsetMs ?? 0;
         userData['Played'] = isWatched;
         final positionTicks = viewOffsetMs != null ? viewOffsetMs * 10_000 : 0;
         if (isWatched) {
