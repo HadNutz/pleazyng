@@ -140,6 +140,68 @@ void main() {
     );
   });
 
+  test('redirected playlists resolve both streams and guide relative to the final document', () async {
+    resetSharedPreferencesForTest();
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    addTearDown(() async {
+      await server.close(force: true);
+      await db.close();
+    });
+    final base = 'http://127.0.0.1:${server.port}';
+    server.listen((request) async {
+      switch (request.uri.path) {
+        case '/source':
+          request.response.statusCode = HttpStatus.found;
+          request.response.headers.set(HttpHeaders.locationHeader, '/provider/lineup.m3u');
+        case '/provider/lineup.m3u':
+          request.response.write('#EXTM3U url-tvg="guide.xml"\n#EXTINF:-1 tvg-id="tv",Station\nmedia/live');
+        case '/provider/guide.xml':
+          request.response.write(
+            '<tv><programme channel="tv" start="20261121100000 +0000" stop="20261121110000 +0000"><title>News</title></programme></tv>',
+          );
+        default:
+          request.response.statusCode = HttpStatus.notFound;
+      }
+      await request.response.close();
+    });
+    final repo = IptvSourceRepository(db);
+    final source = await repo.createSource(
+      profileId: 'p',
+      displayName: 'Provider',
+      kind: IptvInputKind.m3u,
+      endpoint: '$base/source',
+      allowHttp: true,
+    );
+    expect(await repo.refresh('p', source), 1);
+    final channel = (await repo.channels('p', sourceId: source)).single;
+    expect(await repo.resolveStream('p', source, channel.iptvChannelId!), '$base/provider/media/live');
+    expect((await repo.schedule('p', DateTime.utc(2026, 11, 21), DateTime.utc(2026, 11, 22))).single.title, 'News');
+  });
+
+  test('a 50,000-channel import publishes and resolves the last station through the repository', () async {
+    resetSharedPreferencesForTest();
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final body = StringBuffer('#EXTM3U\n');
+    for (var i = 1; i <= 50000; i++) {
+      body.write('#EXTINF:-1 tvg-id="ch$i",Channel $i\nhttps://streams.example/$i\n');
+    }
+    final repo = IptvSourceRepository(db);
+    final source = await repo.createSource(
+      profileId: 'large',
+      displayName: 'Large provider',
+      kind: IptvInputKind.m3uFile,
+      endpoint: '',
+      playlistContents: body.toString(),
+    );
+    expect(await repo.refresh('large', source), 50000);
+    final stations = await repo.channels('large', sourceId: source);
+    expect(stations, hasLength(50000));
+    final last = stations.singleWhere((c) => c.title == 'Channel 50000');
+    expect(await repo.resolveStream('large', source, last.iptvChannelId!), 'https://streams.example/50000');
+  }, timeout: const Timeout(Duration(minutes: 4)));
+
   test('file lineup survives refresh and profile-local edits without opening a playlist server', () async {
     resetSharedPreferencesForTest();
     final db = AppDatabase.forTesting(NativeDatabase.memory());

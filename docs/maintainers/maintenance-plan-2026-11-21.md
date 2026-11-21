@@ -86,8 +86,8 @@ in `UPSTREAM_ATTRIBUTION.md` or the changelog; 20 had no recorded decision.
 - **Static analysis**: add Android Lint, detekt, SwiftLint and clang-tidy (for
   `native/` and `scripts/tv_mpv`). Each starts from a baseline that accepts
   today's findings, so only new findings fail.
-- **CodeQL** is allowed again (owner directive, 2026-11-21) and may be added
-  as an additional analyzer on hosted runners.
+- **CodeQL** default setup must remain enabled (owner directive, 2026-11-21)
+  as an analyzer on compatible hosted runners.
 - **Apple compile checks**: when a push touches Apple sources, run a hosted
   macOS build-only job for iOS, tvOS and macOS. Unsigned builds are enough to
   catch SDK renames on the change that causes them.

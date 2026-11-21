@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
@@ -23,6 +24,7 @@ import 'iptv_live_tv_session.dart';
 import 'dispatcharr_dvr_client.dart';
 import 'stalker_portal_client.dart';
 import 'iptv_models.dart';
+import 'iptv_xtream_live_catalog.dart';
 import 'iptv_hls_archive.dart';
 import 'iptv_playlist_parser.dart';
 
@@ -46,6 +48,7 @@ class IptvSourceRepository {
   late final seriesRules = IptvSeriesRules(_database, (profile, source) => channels(profile, sourceId: source));
   static const _uuid = Uuid();
   static const maxPlaylistBytes = IptvPlaylistParser.maxCharacters;
+  static const maxUploadedBytes = IptvPlaylistParser.maxUploadedBytes;
   static const maxXmltvBytes = IptvXmltvParser.maxCharacters;
 
   Future<String> createSource({
@@ -108,12 +111,17 @@ class IptvSourceRepository {
 
   Future<String?> _protectPlaylist(IptvSourceConfiguration config, String? contents) async {
     if (contents == null) return null;
-    if (config.kind != IptvInputKind.m3uFile || utf8.encode(contents).length > maxPlaylistBytes) {
+    if (config.kind != IptvInputKind.m3uFile || contents.length > maxUploadedBytes) {
       throw const IptvImportException('source_invalid');
     }
     late final IptvPlaylistParseResult parsed;
     try {
-      parsed = IptvPlaylistParser.parse(contents, base: config.playlistUri(), allowHttp: config.allowHttp);
+      parsed = await IptvPlaylistParser.load(
+        contents,
+        base: config.playlistUri(),
+        allowHttp: config.allowHttp,
+        byteLimit: maxUploadedBytes,
+      );
     } on SourceException catch (error) {
       throw IptvImportException(_iptvCodeForSourceFailure(error));
     }
@@ -2076,42 +2084,14 @@ class IptvSourceRepository {
     final transport = SourceTransport(allowHttp: config.allowHttp);
     StalkerPortalClient? stalker;
     try {
-      late final Uri playlistUri;
       late final List<IptvPlaylistEntry> playlistEntries;
       Uri? playlistGuideUri;
       if (config.kind == IptvInputKind.stalker) {
         stalker = StalkerPortalClient(config);
-        playlistUri = stalker.loadUri;
         playlistEntries = await stalker.channels();
       } else {
-        playlistUri = config.playlistUri();
-        final String playlistBody;
-        if (config.kind == IptvInputKind.m3uFile) {
-          final row = await _database
-              .customSelect(
-                'SELECT playlist_ciphertext FROM iptv_sources WHERE id=? AND profile_id=?',
-                variables: [Variable(sourceId), Variable(profileId)],
-              )
-              .getSingleOrNull();
-          final ciphertext = row?.readNullable<String>('playlist_ciphertext');
-          if (ciphertext == null) throw const IptvImportException('playlist_missing');
-          final contents = await CredentialVault.reveal(ciphertext);
-          if (contents == null) throw const IptvImportException('credential_unavailable');
-          playlistBody = contents;
-        } else {
-          transport.validate(playlistUri);
-          playlistBody = await transport.text(
-            'GET',
-            playlistUri,
-            limit: maxPlaylistBytes,
-            redirects: true,
-            headers: const {'Accept': 'audio/x-mpegurl, application/vnd.apple.mpegurl, text/plain, */*'},
-          );
-        }
-        final playlist = IptvPlaylistParser.parse(playlistBody, base: playlistUri, allowHttp: config.allowHttp);
-        if (playlist.isHls) {
-          throw const IptvImportException('playlist_is_stream');
-        }
+        final playlist = await _loadChannelCatalog(config, transport);
+        if (playlist.isHls) throw const IptvImportException('playlist_is_stream');
         playlistEntries = playlist.entries;
         playlistGuideUri = playlist.guideUri;
       }
@@ -2231,6 +2211,48 @@ class IptvSourceRepository {
       stalker?.close();
       transport.close();
     }
+  }
+
+  Future<IptvPlaylistParseResult> _loadChannelCatalog(IptvSourceConfiguration config, SourceTransport transport) async {
+    final uri = config.playlistUri();
+    if (config.kind == IptvInputKind.m3uFile) {
+      final row = await _database
+          .customSelect(
+            'SELECT playlist_ciphertext FROM iptv_sources WHERE id=? AND profile_id=?',
+            variables: [Variable(config.id), Variable(config.profileId)],
+          )
+          .getSingleOrNull();
+      final ciphertext = row?.readNullable<String>('playlist_ciphertext');
+      if (ciphertext == null) throw const IptvImportException('playlist_missing');
+      final contents = await CredentialVault.reveal(ciphertext);
+      if (contents == null) throw const IptvImportException('credential_unavailable');
+      return IptvPlaylistParser.load(contents, base: uri, allowHttp: config.allowHttp);
+    }
+
+    Future<IptvPlaylistParseResult> readPlaylist() async {
+      final document = await transport.textDocument(
+        'GET',
+        uri,
+        limit: maxPlaylistBytes,
+        redirects: true,
+        headers: const {'Accept': 'audio/x-mpegurl, application/vnd.apple.mpegurl, text/plain, */*'},
+      );
+      return IptvPlaylistParser.load(document.body, base: document.uri, allowHttp: config.allowHttp);
+    }
+
+    if (config.kind != IptvInputKind.xtream) return readPlaylist();
+    final apiFirst = Uri.parse(config.endpoint).pathSegments.lastOrNull?.toLowerCase() == 'player_api.php';
+    Future<IptvPlaylistParseResult> readLiveApi() => IptvXtreamLiveCatalog.load(transport, config);
+    try {
+      final result = await (apiFirst ? readLiveApi() : readPlaylist());
+      if (!result.isHls) return result;
+    } on SourceDocumentLimit {
+      if (apiFirst) rethrow;
+      // A combined M3U may be too large while the provider's live-only list fits.
+    } on Object {
+      if (transport.isClosed) throw const SourceException(SourceFailure.cancelled);
+    }
+    return apiFirst ? readPlaylist() : readLiveApi();
   }
 
   // Reuse each previously published channel ID when its feed can be matched.
@@ -2447,12 +2469,12 @@ class IptvSourceRepository {
     final body = await transport.text(
       'GET',
       uri,
-      limit: 32 * 1024 * 1024,
+      limit: maxPlaylistBytes,
       redirects: true,
       headers: const {'Accept': 'application/json, text/plain, */*'},
     );
     try {
-      return jsonDecode(body);
+      return body.length < 256 * 1024 ? jsonDecode(body) : await Isolate.run(() => jsonDecode(body));
     } on FormatException {
       throw const IptvImportException('invalid_data');
     }

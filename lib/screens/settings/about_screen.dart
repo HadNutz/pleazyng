@@ -10,6 +10,7 @@ import '../../widgets/settings_section.dart';
 import '../../i18n/strings.g.dart';
 import '../../theme/mono_tokens.dart';
 import '../../utils/app_version.dart';
+import '../iptv/iptv_picker_credit.dart';
 import 'licenses_screen.dart';
 import 'privacy_screen.dart';
 
@@ -56,6 +57,7 @@ class AboutScreen extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: tokens(context).textMuted),
                           textAlign: TextAlign.center,
                         ),
+                        const IptvPickerCredit(),
                       ],
                     ),
                   ),

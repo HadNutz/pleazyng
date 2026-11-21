@@ -6,6 +6,8 @@
 
 - Preserve the saved per-show audio and subtitle choices when their stored data is unreadable. Playback continues and reports the unsuccessful preference write.
 
+- Xtream connections can use the provider’s live-only catalog, including category names and correctly escaped stream paths. Pleazyng tries the other provider endpoint when the selected API or playlist is unavailable. Inspired by the [M3U Web Picker provider loader](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/core.py) from [Zachary Schmook](https://github.com/zschmook) and contributors.
+- Import provider playlists up to 96 MiB and 50,000 stations and local files up to 50 MiB. Large playlists parse off the UI isolate. Relative guide and stream links follow a provider’s final playlist URL after redirects. These limits follow the [v49 provider settings](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/settings.py) from [Zachary Schmook](https://github.com/zschmook) and the M3U Web Picker contributors.
 - Schedule recurring IPTV programmes on this device from the native guide and manage the rules in Recordings. The scheduler matches guide updates, avoids duplicate episodes and preserves one-off or active captures when a rule is removed. Independently implemented from the [M3U Web Picker DVR](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/dvr.py) behavior by [Zachary Schmook](https://github.com/zschmook) and contributors.
 
 - Browse upcoming guide-listed sports fixtures, choose among simultaneous feeds and follow teams per profile. Organize stations into overlapping custom groups, filter by provider group or low bandwidth, and export matching unlocked channels. Choose ordered backup sources for live playback. Recovery matches station IDs or compatible full names and opens each backup with its own playback headers. Inspired by [M3U Web Picker v49](https://github.com/zschmook/m3u-web-picker/tree/8822e68538ac91ab25bf805a74fa6bacdc2b7897) by [Zachary Schmook](https://github.com/zschmook) and contributors.
@@ -25,6 +27,7 @@
 - Keep WebVTT word timestamps and adjacent cues aligned through subtitle corrections. Apply LRC offsets throughout the song and let users approve individual HTTP podcast subscriptions during OPML restore.
 - Cancel settings imports when their initiating profile changes, relocate Linux image loaders with a portable installation, and show skipped releases when checking for updates manually.
 
+- Allow a manual iPhone-only motion test and prefetch its checksum-pinned SQLite simulator library.
 - Add an iPhone simulator regression test for changing motion presets and turning smoothing off during AVFoundation playback.
 
 - Fix Linux Neural falling back to CPU on systems where the bundled WebGPU provider can run the model.

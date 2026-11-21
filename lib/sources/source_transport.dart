@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
@@ -7,6 +8,11 @@ import 'source_models.dart';
 import 'comic_document.dart';
 
 bool sameSourceOrigin(Uri a, Uri b) => a.scheme == b.scheme && a.host == b.host && a.port == b.port;
+
+/// A document exceeded an explicit transport or provider catalog budget.
+class SourceDocumentLimit extends SourceException {
+  const SourceDocumentLimit() : super(SourceFailure.invalidData);
+}
 
 class SourceTransport {
   SourceTransport({http.Client? client, this.allowHttp = false, this.requestTimeout = const Duration(seconds: 30)})
@@ -197,12 +203,12 @@ class SourceTransport {
       await response.stream.listen(null).cancel();
       check(response.statusCode);
     }
-    final bytes = <int>[];
+    final bytes = BytesBuilder(copy: false);
     await for (final chunk in response.stream.timeout(const Duration(seconds: 30))) {
-      if (bytes.length + chunk.length > limit) throw const SourceException(SourceFailure.invalidData);
-      bytes.addAll(chunk);
+      if (bytes.length + chunk.length > limit) throw const SourceDocumentLimit();
+      bytes.add(chunk);
     }
-    return (body: utf8.decode(bytes), uri: response.request!.url);
+    return (body: utf8.decode(bytes.takeBytes()), uri: response.request!.url);
   }
 
   Future<Object?> jsonValue(String method, Uri uri, {Map<String, String> headers = const {}, Object? body}) async =>

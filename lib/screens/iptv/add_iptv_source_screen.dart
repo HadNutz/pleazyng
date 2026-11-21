@@ -166,10 +166,10 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
       );
       if (result == null || !mounted) return;
       final selected = result.files.single;
-      if (selected.size > IptvSourceRepository.maxPlaylistBytes) throw const FormatException();
+      if (selected.size > IptvSourceRepository.maxUploadedBytes) throw const FormatException();
       final bytes = BytesBuilder(copy: false);
       await for (final chunk in selected.xFile.openRead()) {
-        if (bytes.length + chunk.length > IptvSourceRepository.maxPlaylistBytes) throw const FormatException();
+        if (bytes.length + chunk.length > IptvSourceRepository.maxUploadedBytes) throw const FormatException();
         bytes.add(chunk);
       }
       final contents = utf8.decode(bytes.takeBytes());

@@ -32,11 +32,13 @@ runner-group access to admit it.
 
 ## CodeQL — owner directive, 2026-11-21
 
-CodeQL is allowed in this repository again. The 2026-10-30 organization-wide
-CodeQL disable is withdrawn; remove or correct any instruction, workflow
-comment, ledger note or check that still says CodeQL is disabled or forbidden.
-CodeQL jobs follow the runner policy above: compatible GitHub-hosted runners,
-no secrets and minimal permissions for public pull-request code.
+Keep GitHub CodeQL default setup enabled for this repository. The owner has
+withdrawn the 2026-10-30 organization-wide disable and explicitly requires
+CodeQL to stay on. Do not disable CodeQL or remove its workflow/checks. Correct
+any live instruction, workflow comment, ledger note or check that says CodeQL
+is disabled or forbidden. CodeQL jobs follow the runner policy above:
+compatible GitHub-hosted runners, no secrets and minimal permissions for public
+pull-request code.
 
 ## Worktree and stash hygiene — owner directive, 2026-11-21
 

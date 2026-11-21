@@ -112,6 +112,8 @@ def sqlite_inputs(root):
 
 
 def sqlite_assets(platform, arch):
+    if platform == "ios-simulator":
+        return ["libsqlite3.arm64.ios_sim.dylib", "libsqlite3.arm64.macos.dylib"]
     if platform in {"ios", "tvos"}:
         return ["libsqlite3.arm64.ios.dylib", "libsqlite3.arm64.macos.dylib"]
     if platform == "macos":
@@ -440,6 +442,7 @@ def main():
     parser.add_argument("--project-root", type=Path, default=Path.cwd())
     parser.add_argument("--cache-dir", type=Path, default=Path(os.environ.get("PLEAZYNG_NATIVE_DOWNLOAD_CACHE", str(Path.home() / ".cache/pleazyng-native-downloads"))))
     parser.add_argument("--sqlite-platform", choices=("android", "ios", "tvos", "macos", "windows", "linux"))
+    parser.add_argument("--ios-simulator-sqlite", action="store_true", help="Stage the arm64 simulator and host SQLite hook libraries")
     parser.add_argument("--appimage-runtime", type=Path)
     parser.add_argument("--github-url")
     parser.add_argument("--webos-python", action="store_true")
@@ -450,8 +453,10 @@ def main():
     parser.add_argument("--cmake-deps", action="store_true")
     parser.add_argument("--curl-wrapper-dir", type=Path)
     args = parser.parse_args()
-    if not args.sqlite_platform and not args.appimage_runtime and not args.github_url and not args.webos_python:
+    if not args.sqlite_platform and not args.ios_simulator_sqlite and not args.appimage_runtime and not args.github_url and not args.webos_python:
         parser.error("Specify --sqlite-platform or --appimage-runtime")
+    if args.ios_simulator_sqlite:
+        prepare_sqlite(args.project_root.resolve(), "ios-simulator", "arm64", args.cache_dir.resolve())
     if args.webos_python:
         prepare_webos_python(args.cache_dir.resolve())
     if args.sqlite_platform:

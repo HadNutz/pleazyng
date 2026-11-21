@@ -37,6 +37,12 @@ extension _IptvLineupPersistence on IptvSourceRepository {
           variables: [Variable(sourceId)],
         )
         .get();
+    if (rows.isEmpty) {
+      for (final feed in feeds) {
+        result.putIfAbsent(feed.id, () => feed.id);
+      }
+      return result;
+    }
     String metadata(String? tvg, String title, String? number, String? group) =>
         jsonEncode([tvg, title.trim().toLowerCase(), number, group]);
     final byMetadata = <String, List<QueryRow>>{};
