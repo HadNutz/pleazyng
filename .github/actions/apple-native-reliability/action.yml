@@ -383,7 +383,7 @@ runs:
         test_log="$APPLE_LOCAL_BUILD_DIR/native-test-output.log"
         test_selection=()
         if [[ "$MOTION_TEST_ONLY" == true ]]; then
-          test_selection=(-only-testing:RunnerTests/RunnerTests/testVideoMotionOptionsCanChangeOnAnOpenAVFoundationStream)
+          test_selection=(-only-testing:RunnerTests/MpvPlayerContractTests/testVideoMotionOptionsCanChangeOnAnOpenAVFoundationStream)
         fi
         set -o pipefail
         set +e
