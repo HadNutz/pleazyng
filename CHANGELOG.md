@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Provision the matching Samsung SDK for x64 emulator tester builds.
+- Provision the matching Samsung SDK for x64 emulator tester builds and link host build tools with the host compiler.
 - Restore an interrupted mobile movie or episode from OS-saved state, including its position, edition and pause intent, after checking access for the active profile. A normal Back or replacement discards the old playback task.
 
 - Add an iPhone simulator regression test for changing motion presets and turning smoothing off during AVFoundation playback.
