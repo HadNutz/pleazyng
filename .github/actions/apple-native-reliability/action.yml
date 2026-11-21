@@ -24,7 +24,7 @@ runs:
           macOS) project=macos; sdk='';               runtime='';   destination='platform=macOS' ;;
           *) echo "::error::Unsupported Apple platform $PLATFORM"; exit 1 ;;
         esac
-        if [[ "$RUNNER_ENVIRONMENT" == self-hosted ]]; then
+        if [[ "$RUNNER_ENVIRONMENT" == self-hosted && "$PLATFORM" != iOS ]]; then
           xcodebuild -version | grep -Fx 'Xcode 27.0'
           test "$(xcrun --sdk "${sdk:-macosx}" --show-sdk-version)" = '27.0'
         fi
@@ -323,6 +323,7 @@ runs:
       if: inputs.build-only != 'true'
       id: destination
       env:
+        PREFERRED_SIMULATOR_TYPE: ${{ inputs.platform == 'iOS' && 'com.apple.CoreSimulator.SimDeviceType.iPhone-Duo' || '' }}
         SIMULATOR_RUNTIME: ${{ steps.scratch.outputs.runtime }}
         SIMULATOR_SDK: ${{ steps.scratch.outputs.sdk }}
         STATIC_DESTINATION: ${{ steps.scratch.outputs.destination }}
@@ -399,6 +400,14 @@ runs:
           python3 scripts/checks/check_tvos_startup_result.py "$startup_results"
         fi
         exit "$test_status"
+
+    - name: Launch the same iOS app on an older phone runtime
+      if: inputs.platform == 'iOS' && inputs.build-only != 'true' && runner.environment == 'github-hosted'
+      env:
+        PRODUCTS: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}/Build/Products/Debug-iphonesimulator
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: python3 scripts/apple/smoke_older_iphone.py "$PRODUCTS"
 
     - name: Build application and XCTest bundle
       if: inputs.platform == 'macOS' || inputs.build-only == 'true'

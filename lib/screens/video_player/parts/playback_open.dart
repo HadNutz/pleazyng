@@ -1265,7 +1265,11 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
   /// without subtitles.
   MotionProcessingMode _motionModeForPlayback(SettingsService settings) {
     final mode = settings.read(SettingsService.motionProcessingMode);
-    if (!PlatformDetector.usesNativeTvMedia() || mode != MotionProcessingMode.off) return mode;
+    if (!PlatformDetector.usesNativeTvMedia() ||
+        mode != MotionProcessingMode.off ||
+        settings.prefs.containsKey(SettingsService.motionProcessingMode.key)) {
+      return mode;
+    }
     final preset = ScopedPlayerPrefs.resolve(ScopedPlayerPrefs.motionClarityPreset, _currentMetadata);
     return preset.interpolationEnabled ? MotionProcessingMode.mpv : mode;
   }
@@ -1336,7 +1340,11 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
           isLive: widget.isLive,
           isTranscoding: isTranscoding,
           selectedVersion: selectedVersion,
-          neuralPreset: settingsService.read(SettingsService.neuralInterpolationPreset),
+          neuralPreset:
+              player.playerType == 'tvmpv' &&
+                  !settingsService.prefs.containsKey(SettingsService.neuralInterpolationPreset.key)
+              ? ScopedPlayerPrefs.resolve(ScopedPlayerPrefs.motionClarityPreset, _currentMetadata).tvMixerPreset
+              : settingsService.read(SettingsService.neuralInterpolationPreset),
         );
       } catch (error, stackTrace) {
         appLogger.w('VideoPlayerScreen: motion processing not applied', error: error, stackTrace: stackTrace);

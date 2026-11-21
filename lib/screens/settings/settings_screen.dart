@@ -1,3 +1,5 @@
+import '../../widgets/fold_regions.dart';
+
 import 'dart:async';
 import 'dart:io';
 
@@ -224,7 +226,9 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => FoldPrimaryPane(child: Builder(builder: _buildSettings));
+
+  Widget _buildSettings(BuildContext context) {
     final activeProfile = context.watch<ActiveProfileProvider>().active;
     final profileId = activeProfile?.id;
     if (_lastSettingsProfileId != profileId) {

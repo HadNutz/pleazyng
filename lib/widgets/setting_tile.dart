@@ -205,6 +205,7 @@ class SettingSelectionTile<T> extends StatelessWidget {
   final List<DialogOption<T>> options;
   final FutureOr<void> Function(T)? onAfterWrite;
   final FocusNode? focusNode;
+  final T? defaultValue;
 
   const SettingSelectionTile({
     super.key,
@@ -216,31 +217,35 @@ class SettingSelectionTile<T> extends StatelessWidget {
     required this.options,
     this.onAfterWrite,
     this.focusNode,
+    this.defaultValue,
   });
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<T>(
       valueListenable: SettingsService.instance.listenable(pref),
-      builder: (_, value, _) => _SettingRow(
-        focusNode: focusNode,
-        icon: icon,
-        title: title,
-        subtitle: SettingsHelpHint(text: _settingSummary(subtitleBuilder(value), description)),
-        onTap: () async {
-          final picked = await showSelectionDialog<T>(
-            context: context,
-            title: title,
-            description: description,
-            options: options,
-            currentValue: value,
-          );
-          // Null = dismissed; a picked option's value may itself be null
-          // (nullable prefs use a "same as default" option).
-          if (picked == null) return;
-          if (context.mounted) await _writeAndNotify(context, pref, picked.value, onAfterWrite);
-        },
-      ),
+      builder: (_, savedValue, _) {
+        final value = SettingsService.instance.prefs.containsKey(pref.key) ? savedValue : defaultValue ?? savedValue;
+        return _SettingRow(
+          focusNode: focusNode,
+          icon: icon,
+          title: title,
+          subtitle: SettingsHelpHint(text: _settingSummary(subtitleBuilder(value), description)),
+          onTap: () async {
+            final picked = await showSelectionDialog<T>(
+              context: context,
+              title: title,
+              description: description,
+              options: options,
+              currentValue: value,
+            );
+            // Null = dismissed; a picked option's value may itself be null
+            // (nullable prefs use a "same as default" option).
+            if (picked == null) return;
+            if (context.mounted) await _writeAndNotify(context, pref, picked.value, onAfterWrite);
+          },
+        );
+      },
     );
   }
 }

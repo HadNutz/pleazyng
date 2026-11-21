@@ -10,6 +10,14 @@ import 'package:plezy/screens/games/steam_touch_layout_dialog.dart';
 import 'package:plezy/theme/mono_theme.dart';
 
 void main() {
+  test('tabletop and narrow book panes retain all full-size touch targets', () {
+    for (final pane in [const Size(304, 600), const Size(400, 256), const Size(495, 300), const Size(496, 216)]) {
+      expect(SteamTouchLayout.fits(pane), isTrue);
+      for (final mirrored in [false, true]) {
+        expect(SteamTouchLayout.valid(SteamTouchLayout.defaults(pane, swapSides: mirrored), pane), isTrue);
+      }
+    }
+  });
   test('default geometry and swapped sides preserve non-overlapping hit targets', () {
     for (final size in [const Size(360, 352), const Size(400, 800), const Size(640, 216), const Size(1920, 1080)]) {
       for (final swap in [false, true]) {

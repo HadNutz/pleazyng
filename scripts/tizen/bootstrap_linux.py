@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install a pinned, isolated ARM Tizen build SDK from Samsung package archives.
+"""Install a pinned, isolated Tizen build SDK from Samsung package archives.
 
 This is the legacy Tizen 6-9 toolchain. It is not the 2026/GCC 14.2 target.
 No root account, GUI, host package manager, .NET or TV is needed. Samsung SDK
@@ -54,19 +54,21 @@ def extract_package(archive, destination):
                 target.chmod(mode & 0o777 or 0o644)
 
 
-def write_arm_toolchain(path, compiler, sysroot):
+def write_toolchain(path, compiler, sysroot, arch):
     """Write CMake settings that override Samsung GCC's build-host sysroot."""
+    processor = 'arm' if arch == 'arm' else 'x86_64'
+    flags = '-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16' if arch == 'arm' else '-m64'
     path = Path(path)
     path.write_text(f'''set(CMAKE_SYSTEM_NAME Linux)
-set(CMAKE_SYSTEM_PROCESSOR arm)
+set(CMAKE_SYSTEM_PROCESSOR {processor})
 set(CMAKE_C_COMPILER "{compiler}gcc")
 set(CMAKE_CXX_COMPILER "{compiler}g++")
 set(CMAKE_SYSROOT "{sysroot}")
 # CMake does not pass CMAKE_SYSROOT during its initial GCC compiler test.
 # Samsung's pinned compiler embeds its private .dibs build path, so pass the
 # extracted device rootstrap explicitly from the first compiler invocation.
-set(CMAKE_C_FLAGS_INIT "--sysroot=\\\"{sysroot}\\\" -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -fPIC")
-set(CMAKE_CXX_FLAGS_INIT "--sysroot=\\\"{sysroot}\\\" -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -fPIC")
+set(CMAKE_C_FLAGS_INIT "--sysroot=\\\"{sysroot}\\\" {flags} -fPIC")
+set(CMAKE_CXX_FLAGS_INIT "--sysroot=\\\"{sysroot}\\\" {flags} -fPIC")
 set(CMAKE_FIND_ROOT_PATH "{sysroot}")
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
@@ -75,7 +77,16 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 ''')
 
 
-def install(destination):
+def pins_for(arch):
+    if arch == 'arm':
+        return PINS
+    target = json.loads(Path(__file__).with_name('sdk-linux-x64.json').read_text())
+    common = [p for p in PINS['packages'] if not p['name'].startswith(('iot-headed-', 'cross-arm-'))]
+    return {**PINS, **target, 'packages': common + target['packages']}
+
+
+def install(destination, arch):
+    pins = pins_for(arch)
     destination = Path(destination).resolve()
     if destination.exists() and any(destination.iterdir()):
         raise ValueError('Choose an empty SDK directory')
@@ -84,7 +95,7 @@ def install(destination):
     data = destination / 'tizen-studio-data'
     sdk.mkdir()
     data.mkdir()
-    for package in PINS['packages']:
+    for package in pins['packages']:
         print('Installing', package['name'], package['version'], flush=True)
         with tempfile.TemporaryDirectory(prefix='download-', dir=destination) as temp:
             archive = Path(temp) / 'package.zip'
@@ -96,11 +107,15 @@ def install(destination):
             extract_package(archive, sdk)
     (sdk / 'sdk.info').write_text(f'TIZEN_SDK_INSTALLED_PATH={sdk}\nTIZEN_SDK_DATA_PATH={data}\nJDK_PATH={sdk / "jdk"}\n')
     (sdk / 'sdk.version').write_text('TIZEN_SDK_VERSION=' + PINS['sdk_version'] + '\n')
-    compiler = sdk / 'tools/arm-linux-gnueabi-gcc-9.2/bin/arm-linux-gnueabi-'
-    sysroot = sdk / 'platforms/tizen-6.0/iot-headed/rootstraps/iot-headed-6.0-device.core'
-    toolchain = destination / 'arm-toolchain.cmake'
-    write_arm_toolchain(toolchain, compiler, sysroot)
-    (destination / 'sdk-provenance.json').write_text(json.dumps(PINS, indent=2) + '\n')
+    if arch == 'arm':
+        compiler = sdk / 'tools/arm-linux-gnueabi-gcc-9.2/bin/arm-linux-gnueabi-'
+        sysroot = sdk / 'platforms/tizen-6.0/iot-headed/rootstraps/iot-headed-6.0-device.core'
+    else:
+        compiler = sdk / 'tools/x86_64-linux-gnu-gcc-9.2/bin/x86_64-linux-gnu-'
+        sysroot = sdk / 'platforms/tizen-8.0/tizen/rootstraps/tizen-8.0-emulator64.core'
+    toolchain = destination / f'{arch}-toolchain.cmake'
+    write_toolchain(toolchain, compiler, sysroot, arch)
+    (destination / 'sdk-provenance.json').write_text(json.dumps(pins, indent=2) + '\n')
     # LLVM 10 needs the legacy libtinfo ABI, absent on Ubuntu 24.04. Extract
     # this pinned Debian package locally; do not replace system libraries.
     compatibility = PINS['host_compatibility']
@@ -116,7 +131,7 @@ def install(destination):
     environment = os.environ.copy()
     environment['LD_LIBRARY_PATH'] = library_path + (':' + environment['LD_LIBRARY_PATH'] if environment.get('LD_LIBRARY_PATH') else '')
     (destination / 'build-environment.json').write_text(json.dumps({
-        'TIZEN_SDK': str(sdk), 'TIZEN_CMAKE_TOOLCHAIN_ARM': str(toolchain),
+        'TIZEN_SDK': str(sdk), f'TIZEN_CMAKE_TOOLCHAIN_{arch.upper()}': str(toolchain),
         'LD_LIBRARY_PATH': environment['LD_LIBRARY_PATH'], 'CI': 'true',
     }, indent=2) + '\n')
     subprocess.run([str(compiler) + 'gcc', '--version'], check=True)
@@ -128,6 +143,7 @@ def install(destination):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--directory', required=True)
+    parser.add_argument('--arch', choices=('arm', 'x64'), default='arm')
     parser.add_argument('--accept-license', action='store_true', required=True,
                         help='Accept Samsung SDK terms before downloading/installing')
     args = parser.parse_args()
@@ -136,7 +152,7 @@ def main():
     # CMake syntax cannot safely represent these characters in tool paths.
     if any(c in str(Path(args.directory).resolve()) for c in ('"', ';', '$', '\n', '\\')):
         parser.error('Choose a simple SDK path without CMake metacharacters')
-    install(args.directory)
+    install(args.directory, args.arch)
 
 
 if __name__ == '__main__':

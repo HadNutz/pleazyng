@@ -3,6 +3,8 @@ import '../../media/media_item.dart';
 import '../../media/media_kind.dart';
 import 'music_playback_service.dart';
 import 'music_queue_controller.dart';
+import 'music_station.dart';
+import 'server_music_radio.dart';
 
 enum MusicTransferResult { completed, unavailable, rejected, superseded }
 
@@ -20,12 +22,116 @@ abstract interface class MusicTransferSession {
   Future<bool> finishTransfer(MusicTransferOffer offer);
 }
 
+/// The catalog rule the rendering device uses to refill a radio queue.
+class MusicRadioContinuation {
+  const MusicRadioContinuation(
+    this.seed, {
+    this.albumRadio = false,
+    this.distance = .25,
+    this.station,
+    this.serverRadio,
+  });
+  final MediaItem seed;
+  final bool albumRadio;
+  final double distance;
+  final MusicStation? station;
+  final ServerMusicRadio? serverRadio;
+
+  Map<String, dynamic> toJson() => {
+    'seed': seed.id,
+    'server': seed.serverId,
+    'backend': seed.backend.id,
+    if (seed.title != null && seed.title!.length <= 256) 'title': seed.title,
+    'kind': seed.kind.name,
+    'library': ?seed.libraryId,
+    if (albumRadio) 'albumDistance': distance,
+    'station': ?station?.toJson(),
+    'serverRadio': ?serverRadio?.toJson(),
+  };
+
+  static MusicRadioContinuation? read(Object? value) {
+    if (value is! Map<String, dynamic> ||
+        value.keys.any(
+          (key) => !const {
+            'seed',
+            'server',
+            'backend',
+            'title',
+            'kind',
+            'library',
+            'albumDistance',
+            'station',
+            'serverRadio',
+          }.contains(key),
+        )) {
+      return null;
+    }
+    final id = value['seed'], title = value['title'], library = value['library'], distance = value['albumDistance'];
+    final server = value['server'];
+    final backend = MediaBackend.values.where((entry) => entry.id == value['backend']).firstOrNull;
+    if (server is! String || server.isEmpty || server.length > 160 || backend == null) return null;
+    final kind = const [
+      MediaKind.track,
+      MediaKind.artist,
+      MediaKind.album,
+    ].where((kind) => kind.name == value['kind']).firstOrNull;
+    if (id is! String ||
+        id.isEmpty ||
+        id.length > 160 ||
+        (title != null && (title is! String || title.length > 256)) ||
+        kind == null ||
+        (library != null && (library is! String || library.isEmpty || library.length > 160)) ||
+        (distance != null &&
+            (kind != MediaKind.album || distance is! num || !distance.isFinite || distance < 0 || distance > 1)) ||
+        [distance, value['station'], value['serverRadio']].where((rule) => rule != null).length > 1) {
+      return null;
+    }
+    try {
+      final station = value['station'] == null ? null : MusicStation.fromJson(value['station'] as Map<String, dynamic>);
+      final radio = value['serverRadio'] == null
+          ? null
+          : ServerMusicRadio.fromJson(value['serverRadio'] as Map<String, dynamic>);
+      if (station != null && (!station.continuous || station.serverId != server || station.libraryId != library) ||
+          radio != null && (backend != MediaBackend.plex || radio.serverId != server || radio.libraryId != library)) {
+        return null;
+      }
+      final seed = MediaItem(
+        id: id,
+        title: title is String && title.trim().isNotEmpty ? title : id,
+        kind: kind,
+        backend: backend,
+        serverId: server,
+        libraryId: library as String?,
+      );
+      return MusicRadioContinuation(
+        seed,
+        station: station,
+        serverRadio: radio,
+        albumRadio: distance != null,
+        distance: (distance as num?)?.toDouble() ?? .25,
+      );
+    } on FormatException {
+      return null;
+    } on ArgumentError {
+      return null;
+    } on TypeError {
+      return null;
+    }
+  }
+}
+
 /// A portable queue for an already paired receiver. Only catalog identities
 /// and display metadata cross the wire; the receiver resolves its own streams.
 /// Canonical order is retained separately from playback order so turning
 /// shuffle off after a transfer restores the original queue, including repeats.
 class MusicTransferSnapshot {
-  const MusicTransferSnapshot({required this.queue, required this.position, required this.playing, this.playContext});
+  const MusicTransferSnapshot({
+    required this.queue,
+    required this.position,
+    required this.playing,
+    this.playContext,
+    this.radio,
+  });
 
   static const maxItems = 128;
   static const maxTransferItems = 4096;
@@ -33,11 +139,15 @@ class MusicTransferSnapshot {
   final Duration position;
   final bool playing;
   final MusicPlayContext? playContext;
+  final MusicRadioContinuation? radio;
+
+  /// Every catalog source the receiver must authorize before accepting the queue.
+  Iterable<MediaItem> get catalogItems => radio == null ? queue.items : queue.items.followedBy([radio!.seed]);
 
   MusicTransferSnapshot at(Duration position, {required bool playing}) =>
-      MusicTransferSnapshot(queue: queue, position: position, playing: playing, playContext: playContext);
+      MusicTransferSnapshot(queue: queue, position: position, playing: playing, playContext: playContext, radio: radio);
 
-  Map<String, dynamic> toJson({int itemLimit = maxItems}) {
+  Map<String, dynamic> toJson({int itemLimit = maxItems, bool withRadio = false}) {
     if (!_validQueue(queue, itemLimit) ||
         position < Duration.zero ||
         position > const Duration(hours: 24) ||
@@ -46,6 +156,7 @@ class MusicTransferSnapshot {
     }
     return {
       'version': 1,
+      if (withRadio) 'radio': ?radio?.toJson(),
       'items': [
         for (final item in queue.items)
           {
@@ -54,6 +165,7 @@ class MusicTransferSnapshot {
             'backend': item.backend.id,
             'title': ?item.title,
             'album': ?item.parentTitle,
+            if (withRadio && radio != null) 'albumId': ?item.parentId,
             'library': ?item.libraryId,
             'duration': ?item.durationMs,
           },
@@ -84,6 +196,7 @@ class MusicTransferSnapshot {
             'position',
             'playing',
             'context',
+            'radio',
           }.contains(key),
         )) {
       return null;
@@ -114,7 +227,9 @@ class MusicTransferSnapshot {
     final items = <MediaItem>[];
     for (final raw in rawItems) {
       if (raw is! Map ||
-          raw.keys.any((key) => !{'id', 'server', 'backend', 'title', 'album', 'library', 'duration'}.contains(key))) {
+          raw.keys.any(
+            (key) => !{'id', 'server', 'backend', 'title', 'album', 'albumId', 'library', 'duration'}.contains(key),
+          )) {
         return null;
       }
       final id = raw['id'], server = raw['server'], backend = raw['backend'];
@@ -125,6 +240,7 @@ class MusicTransferSnapshot {
           !{'plex', 'jellyfin', 'emby'}.contains(backend) ||
           title != null && !_bounded(title, 256) ||
           album != null && !_bounded(album, 256) ||
+          raw['albumId'] != null && !_bounded(raw['albumId'], 160) ||
           library != null && !_bounded(library, 160) ||
           duration != null &&
               (duration is! int || duration < 0 || duration > const Duration(hours: 24).inMilliseconds)) {
@@ -138,6 +254,7 @@ class MusicTransferSnapshot {
           kind: MediaKind.track,
           title: title as String?,
           parentTitle: album as String?,
+          parentId: raw['albumId'] as String?,
           libraryId: library as String?,
           durationMs: duration as int?,
         ),
@@ -165,8 +282,11 @@ class MusicTransferSnapshot {
       repeatMode: mode,
     );
     if (!_validQueue(queue, itemLimit)) return null;
+    final radio = MusicRadioContinuation.read(value['radio']);
+    if (value['radio'] != null && radio == null) return null;
     return MusicTransferSnapshot(
       queue: queue,
+      radio: radio,
       position: Duration(milliseconds: position),
       playing: playing,
       playContext: playContext,

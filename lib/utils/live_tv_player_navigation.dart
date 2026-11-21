@@ -1,4 +1,6 @@
 import 'dart:async';
+
+import '../widgets/fold_browser.dart';
 import '../media/ids.dart';
 import '../media/media_backend.dart';
 
@@ -58,7 +60,7 @@ Future<void> navigateToLiveTv(
     return;
   }
 
-  final navigator = Navigator.of(context);
+  final navigator = FoldBrowserScope.of(context)?.owner ?? Navigator.of(context);
   appLogger.d('Navigating to live channel: ${channel.displayName} (${channel.key})');
 
   // The placeholder carries the actual backend through so any in-player

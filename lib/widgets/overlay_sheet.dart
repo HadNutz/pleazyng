@@ -316,6 +316,8 @@ class _OverlaySheetHostState extends State<OverlaySheetHost> with SingleTickerPr
   Color? _explicitBackgroundColor;
   Alignment _alignment = Alignment.bottomCenter;
   Offset? _lastPointerPosition;
+  Offset? _lastPress;
+  Offset? _foldAnchor;
   double? _sheetHorizontalAnchor;
 
   /// Bumped on every [_show]. Keys the resize animation so a freshly opened
@@ -404,6 +406,11 @@ class _OverlaySheetHostState extends State<OverlaySheetHost> with SingleTickerPr
     final completer = Completer<T?>();
     final entry = _OverlaySheetEntry(builder: builder, completer: completer, initialFocusNode: initialFocusNode);
     final horizontalAnchor = _resolveSheetHorizontalAnchor(alignment);
+    final focusBox = FocusManager.instance.primaryFocus?.context?.findRenderObject();
+    final keyboard = InputModeTracker.isKeyboardMode(context, listen: false);
+    final focusPoint = focusBox is RenderBox && focusBox.attached && focusBox.hasSize
+        ? focusBox.localToGlobal(focusBox.size.center(Offset.zero))
+        : null;
 
     setState(() {
       _pageStack.add(entry);
@@ -416,6 +423,8 @@ class _OverlaySheetHostState extends State<OverlaySheetHost> with SingleTickerPr
       _explicitBackgroundColor = backgroundColor;
       _alignment = alignment;
       _sheetHorizontalAnchor = horizontalAnchor;
+      _foldAnchor = keyboard ? focusPoint : _lastPress;
+      _lastPress = null;
       _dragOffset = 0;
       _isDragging = false;
     });
@@ -488,6 +497,7 @@ class _OverlaySheetHostState extends State<OverlaySheetHost> with SingleTickerPr
   }
 
   void _rememberPointerPosition(PointerEvent event) {
+    if (event is PointerDownEvent) _lastPress = event.position;
     if (event.kind != PointerDeviceKind.mouse) return;
     _lastPointerPosition = event.localPosition;
   }
@@ -731,7 +741,11 @@ class _OverlaySheetHostState extends State<OverlaySheetHost> with SingleTickerPr
         if (features.isEmpty) return sheet;
 
         final isRtl = Directionality.of(context) == TextDirection.rtl;
-        final anchor = Offset(isRtl ? bounds.right : bounds.left, _alignment.y < 0 ? bounds.top : bounds.bottom);
+        final fallback = Offset(isRtl ? bounds.right : bounds.left, _alignment.y < 0 ? bounds.top : bounds.bottom);
+        final point = _foldAnchor == null ? null : _foldAnchor! - origin;
+        final anchor = point != null && bounds.contains(point) && !features.any((r) => r.contains(point))
+            ? point
+            : fallback;
         double distance(Rect rect) {
           final dx = math.max(0.0, math.max(rect.left - anchor.dx, anchor.dx - rect.right));
           final dy = math.max(0.0, math.max(rect.top - anchor.dy, anchor.dy - rect.bottom));

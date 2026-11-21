@@ -31,6 +31,7 @@ import '../widgets/auth_error_banner.dart';
 import '../widgets/app_icon.dart';
 import '../widgets/focusable_list_tile.dart';
 import '../utils/iphone_duo.dart';
+import '../widgets/fold_browser.dart';
 import '../widgets/vertical_bar_shell.dart';
 import '../utils/platform_detector.dart';
 import '../utils/snackbar_helper.dart';
@@ -468,9 +469,34 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen>
-    with RouteAware, WindowListener, WidgetsBindingObserver, MountedSetStateMixin {
+    with RestorationMixin, RouteAware, WindowListener, WidgetsBindingObserver, MountedSetStateMixin {
   NavigationTabId _currentTab = NavigationTabId.discover;
   String? _selectedLibraryGlobalKey;
+  final _savedTab = RestorableStringN(null);
+  final _savedLibrary = RestorableStringN(null);
+  @override
+  String get restorationId => 'browse';
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_savedTab, 'tab');
+    registerForRestoration(_savedLibrary, 'library');
+    if (widget.initialSourceLibrary) return;
+    final restored = NavigationTabId.values.where((tab) => tab.name == _savedTab.value).firstOrNull;
+    if (restored == null) return;
+    // Settings and Explore still go through their normal profile access gates.
+    if (restored == NavigationTabId.explore) return;
+    _currentTab = _normalizeTabForMode(restored, _isOffline);
+    _pendingStartupTab = null;
+    _mountedTabs.add(_currentTab);
+    _screens = _buildScreens(_isOffline);
+    final library = _savedLibrary.value;
+    if (library != null && _currentTab == NavigationTabId.libraries) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _currentTab == NavigationTabId.libraries) _selectLibrary(library);
+      });
+    }
+  }
+
   Future<void>? _desktopExitFuture;
 
   /// Whether the app is in offline mode (no server connection)
@@ -1228,6 +1254,8 @@ class _MainScreenState extends State<MainScreen>
 
   @override
   void dispose() {
+    _savedTab.dispose();
+    _savedLibrary.dispose();
     if (_watchTogether?.navigatorOpener == _navigateToWatchTogetherMedia) _watchTogether?.navigatorOpener = null;
     WidgetsBinding.instance.removeObserver(this);
     HardwareKeyboard.instance.removeHandler(_handleScreensaverHardwareKey);
@@ -1410,20 +1438,25 @@ class _MainScreenState extends State<MainScreen>
 
   /// IndexedStack that disables tickers for offscreen children to prevent
   /// animation controllers on non-visible tabs from scheduling frames.
+  final _foldBrowser = GlobalKey<FoldBrowserState>();
+
   Widget _buildTickerAwareStack() {
-    return Column(
-      children: [
-        const AuthErrorBanner(),
-        Expanded(
-          child: IndexedStack(
-            index: _currentIndex,
-            clipBehavior: Clip.none,
-            children: [
-              for (var i = 0; i < _screens.length; i++) TickerMode(enabled: i == _currentIndex, child: _screens[i]),
-            ],
+    return FoldBrowser(
+      key: _foldBrowser,
+      child: Column(
+        children: [
+          const AuthErrorBanner(),
+          Expanded(
+            child: IndexedStack(
+              index: _currentIndex,
+              clipBehavior: Clip.none,
+              children: [
+                for (var i = 0; i < _screens.length; i++) TickerMode(enabled: i == _currentIndex, child: _screens[i]),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -1976,6 +2009,7 @@ class _MainScreenState extends State<MainScreen>
   /// goes home, home on Apple TV only logs, elsewhere home arms press-back-twice
   /// to exit.
   void _handleMainBack() {
+    if (_foldBrowser.currentState?.handleBack() == true) return;
     final tabs = _getVisibleTabs(_isOffline);
     if (tabs.isEmpty) return;
 
@@ -2207,6 +2241,7 @@ class _MainScreenState extends State<MainScreen>
   }
 
   void _selectTab(NavigationTabId tab, {bool focusSearchInput = true}) {
+    if (tab != _currentTab) _foldBrowser.currentState?.clearDetail();
     // Guard: ignore if tab isn't available in current mode
     if (!_getVisibleTabs(_isOffline).any((t) => t.id == tab)) return;
 
@@ -2224,6 +2259,7 @@ class _MainScreenState extends State<MainScreen>
     final wasMounted = _mountedTabs.contains(tab);
     setState(() {
       _currentTab = tab;
+      if (!restorePending) _savedTab.value = tab.name;
       if (!wasMounted) {
         _mountedTabs.add(tab);
         _screens = _buildScreens(_isOffline);
@@ -2305,6 +2341,7 @@ class _MainScreenState extends State<MainScreen>
     if (!_getVisibleTabs(_isOffline).any((tab) => tab.id == NavigationTabId.libraries)) return;
 
     _selectedLibraryGlobalKey = libraryGlobalKey;
+    if (!restorePending) _savedLibrary.value = libraryGlobalKey;
     _selectTab(NavigationTabId.libraries);
     // A first visit promotes LibrariesScreen in _selectTab. Wait for its State
     // before applying the requested library and focus; neither action may drop.
@@ -2334,6 +2371,7 @@ class _MainScreenState extends State<MainScreen>
   void _handleLibrariesScreenSelected(String libraryGlobalKey) {
     if (_selectedLibraryGlobalKey == libraryGlobalKey) return;
     setState(() => _selectedLibraryGlobalKey = libraryGlobalKey);
+    if (!restorePending) _savedLibrary.value = libraryGlobalKey;
   }
 
   void _showLibraryQuickPicker(BuildContext context) {

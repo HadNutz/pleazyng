@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../i18n/strings.g.dart';
 import '../../iptv/iptv_source_repository.dart';
+import '../../iptv/iptv_models.dart';
 import '../../models/livetv_channel.dart';
 import '../../models/livetv_program.dart';
 import '../../profiles/active_profile_provider.dart';
@@ -92,7 +93,14 @@ mixin LiveTvActionsMixin<T extends StatefulWidget> on State<T> {
     final profileId = effectiveContext.read<ActiveProfileProvider>().activeId;
     if (sourceId != null && channel?.iptvChannelId != null && profileId != null) {
       final repository = effectiveContext.read<IptvSourceRepository>();
-      if (program.beginsAt != null && (program.endsAt ?? 0) > DateTime.now().millisecondsSinceEpoch ~/ 1000) {
+      final end = program.endsAt;
+      if (programStart != null &&
+          end != null &&
+          IptvLocalRecordingSchedule.canSchedule(
+            start: DateTime.fromMillisecondsSinceEpoch(programStart * 1000),
+            end: DateTime.fromMillisecondsSinceEpoch(end * 1000),
+            now: DateTime.now(),
+          )) {
         onLocalIptvRecordProgram = () async {
           try {
             await repository.scheduleLocalRecording(profileId, channel!, program);

@@ -736,6 +736,19 @@ extension DownloadDatabaseOperations on AppDatabase {
     return rows.any((row) => row.storedPartPaths.contains(videoFilePath));
   }
 
+  /// Candidate paths whose persisted spelling might resolve to the same file.
+  /// Include stacked manifests, whose paths are JSON encoded.
+  Future<Set<String>> otherDownloadPathsForFilename(String filename, {required String excludingGlobalKey}) async {
+    final rows =
+        await (select(downloadedMedia)..where(
+              (t) =>
+                  t.globalKey.equals(excludingGlobalKey).not() &
+                  (t.videoFilePath.contains(filename) | t.additionalPartPaths.isNotNull()),
+            ))
+            .get();
+    return {for (final row in rows) ...row.storedPartPaths};
+  }
+
   Expression<bool> _optionalServerPredicate(GeneratedColumn<String> column, ServerId? serverId) {
     return serverId == null ? const Constant(true) : column.equals(serverId);
   }

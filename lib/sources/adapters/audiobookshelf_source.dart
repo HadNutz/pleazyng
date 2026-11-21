@@ -254,13 +254,14 @@ class AudiobookshelfSourceAdapter extends SourceAdapter {
       ..sort((a, b) => (sourceInt(a['index']) ?? 0).compareTo(sourceInt(b['index']) ?? 0));
     for (final file in audio) {
       final metadata = sourceMap(file['metadata']);
+      final duration = file['duration'];
       files.add(
         PublicationFile(
           id: jsonEncode({'item': id, 'ino': file['ino']}),
           name: metadata['filename'] as String? ?? '${file['ino']}.mp3',
           mimeType: file['mimeType'] as String? ?? 'audio/mpeg',
           size: sourceInt(metadata['size']),
-          durationMs: ((file['duration'] as num? ?? 0) * 1000).round(),
+          durationMs: duration is num && duration.isFinite && duration > 0 ? (duration * 1000).round() : null,
           revision: metadata['mtimeMs']?.toString(),
         ),
       );
@@ -453,7 +454,9 @@ class AudiobookshelfSourceAdapter extends SourceAdapter {
     final body = <String, dynamic>{
       if (reading) ...{
         'ebookLocation': progress.locator?.cfi,
-        'ebookProgress': progress.fraction,
+        // ABS shares isFinished with audio. Keep reading completion in the
+        // EPUB percentage and preserve the CFI, including at the final page.
+        'ebookProgress': progress.finished ? 1.0 : progress.fraction.clamp(0.0, 0.9999999),
       } else ...{
         if (entry.audio.every((file) => (file.durationMs ?? 0) > 0))
           'duration': entry.audio.fold<int>(0, (total, file) => total + (file.durationMs ?? 0)) / 1000,

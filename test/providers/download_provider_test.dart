@@ -1,7 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:background_downloader/background_downloader.dart'
     show DownloadTask, Task, TaskFileSystemException, TaskRecord, TaskStatus, TaskStatusUpdate;
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+import '../test_helpers/io_fakes.dart';
 import '../test_helpers/prefs.dart';
 import '../test_helpers/backend_client_fixtures.dart';
 import 'package:plezy/profiles/profile_connection_registry.dart';
@@ -2629,6 +2633,14 @@ void main() {
     });
 
     test('shared Jellyfin cache scope survives until its final download owner is released', () async {
+      final root = await Directory.systemTemp.createTemp('shared_download_cache');
+      final previousPaths = PathProviderPlatform.instance;
+      PathProviderPlatform.instance = FakePathProvider(root);
+      addTearDown(() async {
+        PathProviderPlatform.instance = previousPaths;
+        DownloadStorageService.resetForTesting();
+        await root.delete(recursive: true);
+      });
       const globalKey = 'jf-machine:movie-1';
       const scopeId = 'jf-machine/user-a';
       await insertJellyfinConnection('user-a');

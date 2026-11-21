@@ -1,0 +1,46 @@
+name: Android foldable qualification
+on:
+  workflow_dispatch:
+    inputs:
+      release_run:
+        description: Build workflow run ID containing the Android x86_64 release APK
+        type: string
+        required: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  fold:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: android-apk
+          path: ${{ runner.temp }}/release-apk
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.release_run }}
+      - name: Extract the release APK
+        run: tar -xOzf "$RUNNER_TEMP/release-apk/pleazyng-android-x86_64.tar.gz" pleazyng.apk > "$RUNNER_TEMP/pleazyng.apk"
+      - name: Create a Pixel Fold emulator
+        run: |
+          sudo setfacl -m "u:$(id -un):rw" /dev/kvm
+          system_image="system-images;android-36;google_apis;x86_64"
+          sdkmanager "emulator" "platform-tools" "$system_image"
+          echo no | avdmanager create avd -n fold -k "$system_image" -d pixel_fold
+          "$ANDROID_HOME/emulator/emulator" -avd fold -no-window -noaudio -no-snapshot -gpu swiftshader_indirect > "$RUNNER_TEMP/fold-emulator.log" 2>&1 &
+          adb wait-for-device
+          timeout 240 bash -c 'until [[ "$(adb shell getprop sys.boot_completed | tr -d "\r")" == 1 ]]; do sleep 2; done'
+      - name: Exercise release APK across postures
+        run: |
+          adb install "$RUNNER_TEMP/pleazyng.apk"
+          python3 scripts/qa/android_fold_smoke.py
+      - name: Print emulator diagnostics
+        if: failure()
+        run: |
+          tail -100 "$RUNNER_TEMP/fold-emulator.log" || true
+          adb shell cmd device_state print-states || true
+          adb logcat -b crash -d || true

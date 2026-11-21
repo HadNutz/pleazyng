@@ -37,8 +37,9 @@ deletion. No release or existing tag was rewritten.
 GitHub reports zero open Dependabot, code-scanning and secret-scanning alerts.
 Dependabot #57 is **fixed**, not dismissed: the vulnerable transitive deepmerge
 chain was removed entirely. Decky and reader-tool npm audits report zero
-vulnerabilities; a fresh Go vulnerability scan reports none. CodeQL execution
-remains disabled under the owner's directive. Zero alert counts do not close
+vulnerabilities; a fresh Go vulnerability scan reports none. CodeQL did not run
+at the time; the disable was withdrawn on 2026-11-21 and CodeQL is allowed.
+Zero alert counts do not close
 external deployment, device, signing-root or provider qualification items in the
 security ledger.
 

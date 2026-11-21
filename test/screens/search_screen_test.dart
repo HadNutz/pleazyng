@@ -68,6 +68,15 @@ import '../test_helpers/media_server_client_test_defaults.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  testWidgets('search text restores within the active restoration scope', (tester) async {
+    await _pumpTvSearchScreen(tester, tv: false);
+    await tester.enterText(find.byType(EditableText).first, 'Planetes');
+    await tester.pump(const Duration(seconds: 1));
+    await tester.restartAndRestore();
+    await tester.pump();
+    expect(_searchController(tester).text, 'Planetes');
+  });
+
   testWidgets('profile search history saves explicit submissions, reruns and clears queries', (tester) async {
     final database = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(database.close);
@@ -1162,6 +1171,7 @@ Future<(_FakeMediaServerClient, GlobalKey<State<SearchScreen>>)> _pumpTvSearchSc
           if (catalogSources != null) ChangeNotifierProvider<CatalogSourcesProvider>.value(value: catalogSources),
         ],
         child: MaterialApp(
+          restorationScopeId: 'test-profile',
           theme: monoTheme(MonoPalette.dark),
           home: SearchScreen(key: key),
         ),
@@ -1333,6 +1343,8 @@ class _SearchSourceRepository extends SourceRepository {
     String? parent,
     bool filterParent = false,
     bool downloadedOnly = false,
+    Set<String>? searchableSources,
+    Set<String> remoteCloudSources = const {},
     PublicationShelf? shelf,
     String? query,
     String? cursor,
@@ -1343,6 +1355,7 @@ class _SearchSourceRepository extends SourceRepository {
         .where(
           (entry) =>
               (source == null || entry.sourceId == source) &&
+              (searchableSources == null || searchableSources.contains(entry.sourceId)) &&
               (shelf == null || entry.kind == SourceItemKind.video) &&
               (query == null || entry.displayTitle.toLowerCase().contains(query.trim().toLowerCase())),
         )

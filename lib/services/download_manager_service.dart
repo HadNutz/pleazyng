@@ -191,6 +191,7 @@ class DownloadManagerService {
   final Map<String, Future<void>> _conversionTails = {};
 
   final SerialFutureQueue _safOwnershipQueue = SerialFutureQueue();
+  final _sharedFileOperations = SerialFutureQueue();
   final _progressController = StreamController<DownloadProgress>.broadcast();
   Stream<DownloadProgress> get progressStream => _progressController.stream;
 
@@ -357,6 +358,20 @@ class DownloadManagerService {
   /// of every item in the selected tree.
   bool get canReviewOrphanDownloads => downloadsSupported && !Platform.isIOS && !_storageService.isUsingCustomPath();
 
+  Future<Set<String>> _protectedDownloadTags() async {
+    final rows = await _database.select(_database.downloadedMedia).get();
+    final tasks = await _nativeOps.allTasks();
+    return {
+      for (final row in rows) ...[
+        DownloadStorageService.tagForGlobalKey(row.globalKey),
+        // Combined episodes can still reference the original episode's tagged file.
+        for (final stored in row.storedPartPaths) ?OrphanDownloadCleanupService.tagForStoredFile(stored),
+      ],
+      for (final task in tasks)
+        if (task.metaData.isNotEmpty) DownloadStorageService.tagForGlobalKey(task.metaData),
+    };
+  }
+
   bool _reviewRunning = false;
   Future<OrphanDownloadScan> scanOrphanDownloads({void Function(int)? onProgress, bool Function()? cancelled}) async {
     if (!canReviewOrphanDownloads || _reviewRunning) {
@@ -370,13 +385,7 @@ class DownloadManagerService {
 
     _reviewRunning = true;
     try {
-      final rows = await _database.select(_database.downloadedMedia).get();
-      final tasks = await _nativeOps.allTasks();
-      final protectedTags = <String>{
-        for (final row in rows) DownloadStorageService.tagForGlobalKey(row.globalKey),
-        for (final task in tasks)
-          if (task.metaData.isNotEmpty) DownloadStorageService.tagForGlobalKey(task.metaData),
-      };
+      final protectedTags = await _protectedDownloadTags();
       final root = await _storageService.getAppManagedDownloadsDirectory();
       if (!await root.exists()) return await _orphanDownloadCleanup.scan(root, protectedTags: protectedTags);
       final support = await getApplicationSupportDirectory();
@@ -400,33 +409,28 @@ class DownloadManagerService {
     }
   }
 
-  Future<OrphanDownloadCleanupResult> deleteOrphanDownloads(OrphanDownloadScan scan) async {
-    if (!canReviewOrphanDownloads || !scan.canDelete) {
-      return OrphanDownloadCleanupResult(deletedCount: 0, deletedBytes: 0, skippedCount: scan.files.length);
-    }
+  Future<OrphanDownloadCleanupResult> deleteOrphanDownloads(OrphanDownloadScan scan) =>
+      _sharedFileOperations.run(() async {
+        if (!canReviewOrphanDownloads || !scan.canDelete) {
+          return OrphanDownloadCleanupResult(deletedCount: 0, deletedBytes: 0, skippedCount: scan.files.length);
+        }
 
-    try {
-      final root = await _storageService.getAppManagedDownloadsDirectory();
-      final canonicalRoot = path.normalize(await root.resolveSymbolicLinks());
-      if (!path.equals(canonicalRoot, scan.rootPath)) {
-        return OrphanDownloadCleanupResult(deletedCount: 0, deletedBytes: 0, skippedCount: scan.files.length);
-      }
+        try {
+          final root = await _storageService.getAppManagedDownloadsDirectory();
+          final canonicalRoot = path.normalize(await root.resolveSymbolicLinks());
+          if (!path.equals(canonicalRoot, scan.rootPath)) {
+            return OrphanDownloadCleanupResult(deletedCount: 0, deletedBytes: 0, skippedCount: scan.files.length);
+          }
 
-      // Re-read both stores after the review dialog so downloads added while
-      // the user was deciding are kept. If task enumeration fails, fail closed.
-      final rows = await _database.select(_database.downloadedMedia).get();
-      final tasks = await _nativeOps.allTasks();
-      final protectedTags = <String>{
-        for (final row in rows) DownloadStorageService.tagForGlobalKey(row.globalKey),
-        for (final task in tasks)
-          if (task.metaData.isNotEmpty) DownloadStorageService.tagForGlobalKey(task.metaData),
-      };
-      return await _orphanDownloadCleanup.delete(scan, protectedTags: protectedTags);
-    } catch (error) {
-      appLogger.w('Could not safely delete reviewed orphan downloads', error: error);
-      return OrphanDownloadCleanupResult(deletedCount: 0, deletedBytes: 0, skippedCount: scan.files.length);
-    }
-  }
+          // Re-read both stores after the review dialog so downloads added while
+          // the user was deciding are kept. If task enumeration fails, fail closed.
+          final protectedTags = await _protectedDownloadTags();
+          return await _orphanDownloadCleanup.delete(scan, protectedTags: protectedTags);
+        } catch (error) {
+          appLogger.w('Could not safely delete reviewed orphan downloads', error: error);
+          return OrphanDownloadCleanupResult(deletedCount: 0, deletedBytes: 0, skippedCount: scan.files.length);
+        }
+      });
 
   NativeDownloaderOps get _nativeOps =>
       _nativeOpsOverride ??
@@ -1559,7 +1563,12 @@ class DownloadManagerService {
     await _database.updateBgTaskId(row.globalKey, null);
   }
 
-  Future<void> _cancelNativeTaskIds(String globalKey, Iterable<String> taskIds, {required String reason}) async {
+  Future<void> _cancelNativeTaskIds(
+    String globalKey,
+    Iterable<String> taskIds, {
+    required String reason,
+    bool requireStopped = false,
+  }) async {
     if (!downloadsSupported) return;
     final ids = taskIds.where((id) => id.isNotEmpty).toSet();
     if (ids.isEmpty) return;
@@ -1568,8 +1577,11 @@ class DownloadManagerService {
       final cancelled = await _nativeOps.cancelTaskIds(ids);
       if (cancelled) {
         appLogger.d('Cancelled ${ids.length} native task(s) for $globalKey ($reason): ${ids.join(', ')}');
+      } else if (requireStopped && (await _nativeOps.allTasks()).any((task) => ids.contains(task.taskId))) {
+        throw StateError('An active transfer could not be stopped');
       }
     } catch (e) {
+      if (requireStopped) rethrow;
       appLogger.w('Failed to cancel native tasks for $globalKey ($reason): ${ids.join(', ')}', error: e);
     }
   }
@@ -1799,21 +1811,19 @@ class DownloadManagerService {
   /// Returns true if file was deleted, false otherwise
   Future<bool> _deleteFileIfExists(File file, String description) async {
     try {
-      if (await file.exists()) {
-        await file.delete();
-        appLogger.i('Deleted $description: ${file.path}');
-        return true;
-      }
-    } catch (e) {
-      appLogger.w('Failed to delete $description: ${file.path}', error: e);
+      await file.delete();
+      appLogger.i('Deleted $description: ${file.path}');
+      return true;
+    } on PathNotFoundException {
+      return false;
     }
-    return false;
   }
 
   /// Delete a SAF file or directory. Missing targets are a silent no-op.
   Future<void> _tryDeleteSaf(String uri, {required bool isDir, required String description}) async {
     final ok = await _safStorage.delete(uri, isDir: isDir);
-    if (ok) appLogger.i('Deleted $description: $uri');
+    if (!ok) throw FileSystemException('Could not delete $description', uri);
+    appLogger.i('Deleted $description: $uri');
   }
 
   /// Delete [dirUri] and the SAF directories below it, deepest first, but only
@@ -1876,15 +1886,12 @@ class DownloadManagerService {
   }
 
   /// Delete the canonical target file and any pre-existing numbered duplicates
-  /// in [safDirUri] before re-enqueueing a SAF download. SAF DocumentsProviders
+  /// in the destination folder before re-enqueueing a SAF download. SAF DocumentsProviders
   /// auto-number on createDocument when a name conflict exists, which would
   /// otherwise produce "name (1).ext" / "name.ext (1)" corrupt duplicates on
   /// every app-level retry. Builds before 2.23.0 also numbered a numbered
   /// copy again ("name (1) (1).ext"), so any depth of numbering is swept.
-  Future<void> _cleanupSafTargetFile(String safDirUri, String safFileName) async {
-    final children = await _safStorage.list(safDirUri);
-    if (children == null) return;
-
+  Future<void> _cleanupSafTargetFile(String globalKey, List<SafDocumentFile> children, String safFileName) async {
     // Match BOTH numbering schemes a DocumentsProvider may use:
     //   "S02E11 - The Hunt (1).mkv"  - inserted before extension (most providers)
     //   "S02E11 - The Hunt.mkv (1)"  - appended after full name (Downloads tree)
@@ -1895,17 +1902,11 @@ class DownloadManagerService {
       '^${RegExp.escape(safFileName)}( \\(\\d+\\))+\$',
     );
 
-    await Future.wait([
-      for (final child in children)
-        if (!child.isDir && (child.name == safFileName || dup.hasMatch(child.name)))
-          _tryDeleteSaf(
-            child.uri,
-            isDir: false,
-            description: child.name == safFileName
-                ? 'stale SAF video before re-download'
-                : 'stale SAF numbered duplicate',
-          ),
-    ]);
+    for (final child in children) {
+      if (child.isDir || (child.name != safFileName && !dup.hasMatch(child.name))) continue;
+      if (await _pathSharedWithOtherDownload(globalKey, child.uri)) continue;
+      await _tryDeleteSaf(child.uri, isDir: false, description: 'stale SAF target');
+    }
   }
 
   /// Queue [metadata] for download. Returns the item actually stored —
@@ -2132,6 +2133,7 @@ class DownloadManagerService {
     String? includeTaskId,
     String? exceptTaskId,
     required String reason,
+    bool requireStopped = false,
   }) async {
     if (!downloadsSupported) return;
     final taskIds = <String>{};
@@ -2140,15 +2142,16 @@ class DownloadManagerService {
     if (!_fileDownloaderInitialized && taskIds.isEmpty) return;
 
     try {
-      final nativeTasks = await FileDownloader().allTasks(group: _downloadGroup);
+      final nativeTasks = await _nativeOps.allTasks();
       for (final task in nativeTasks) {
         if (task.metaData == globalKey && task.taskId != exceptTaskId) taskIds.add(task.taskId);
       }
     } catch (e) {
+      if (requireStopped) rethrow;
       appLogger.w('Failed to enumerate native tasks for $globalKey ($reason)', error: e);
     }
 
-    await _cancelNativeTaskIds(globalKey, taskIds, reason: reason);
+    await _cancelNativeTaskIds(globalKey, taskIds, reason: reason, requireStopped: requireStopped);
   }
 
   Future<DownloadedMediaItem?> _downloadForCurrentTaskSession(
@@ -2372,27 +2375,32 @@ class DownloadManagerService {
         await _transitionStatus(globalKey, DownloadStatus.queued);
         return true;
       }
-      if (row.status != DownloadStatus.completed.index || await resolveDownloadedVideoSource(row) == null) continue;
+      if (row.status != DownloadStatus.completed.index) continue;
       if (await _isCancelledOrDeleted(globalKey)) return true;
-      final reused = await _database.transaction(() async {
-        final fresh = await _database.getDownloadedMedia(row.globalKey);
-        final target = await _database.getDownloadedMedia(globalKey);
-        if (fresh?.status != DownloadStatus.completed.index ||
-            fresh?.videoFilePath != row.videoFilePath ||
-            target?.status != DownloadStatus.downloading.index ||
-            _cancellingKeys.contains(globalKey)) {
-          return false;
-        }
-        await _database.resetDownloadParts(globalKey, additionalPartCount: 0);
-        await _database.updateVideoFilePath(globalKey, row.videoFilePath!);
-        await _database.updateDownloadProgress(
-          globalKey,
-          100,
-          row.downloadedBytes,
-          row.totalBytes ?? row.downloadedBytes,
-        );
-        await _database.updateDownloadStatus(globalKey, DownloadStatus.completed.index);
-        return true;
+      // File deletion and alias publication must agree on the last reference.
+      final reused = await _sharedFileOperations.run(() async {
+        if (await resolveDownloadedVideoSource(row) == null) return false;
+        return _database.transaction(() async {
+          final fresh = await _database.getDownloadedMedia(row.globalKey);
+          final target = await _database.getDownloadedMedia(globalKey);
+          if (fresh?.status != DownloadStatus.completed.index ||
+              fresh?.videoFilePath != row.videoFilePath ||
+              _cancellingKeys.contains(row.globalKey) ||
+              target?.status != DownloadStatus.downloading.index ||
+              _cancellingKeys.contains(globalKey)) {
+            return false;
+          }
+          await _database.resetDownloadParts(globalKey, additionalPartCount: 0);
+          await _database.updateVideoFilePath(globalKey, row.videoFilePath!);
+          await _database.updateDownloadProgress(
+            globalKey,
+            100,
+            row.downloadedBytes,
+            row.totalBytes ?? row.downloadedBytes,
+          );
+          await _database.updateDownloadStatus(globalKey, DownloadStatus.completed.index);
+          return true;
+        });
       });
       if (!reused) continue;
       _emitProgress(globalKey, DownloadStatus.completed, 100);
@@ -2525,6 +2533,20 @@ class DownloadManagerService {
     return !stored.any(_storageService.isSafUri);
   }
 
+  /// A surviving combined-episode row can still play the canonical target
+  /// after its original owner is deleted. Reserve a different name for a
+  /// replacement edition, keeping its item tag at the end for orphan review.
+  Future<String> _unsharedDownloadTarget(String globalKey, String target, {List<SafDocumentFile>? documents}) async {
+    final name = path.basename(target);
+    var candidate = target;
+    for (var n = 2; ; n++) {
+      final stored = documents == null ? candidate : documents.where((d) => d.name == candidate).firstOrNull?.uri;
+      if (stored == null || !await _pathSharedWithOtherDownload(globalKey, stored)) return candidate;
+      final alternate = 'Copy $n - $name';
+      candidate = documents == null ? path.join(path.dirname(target), alternate) : alternate;
+    }
+  }
+
   /// Build and enqueue the native task for file [partIndex] of [resolution].
   /// The first file takes the item's download path; a later file of a stacked
   /// version is named after it ([DownloadStorageService.partFilePath]) in the
@@ -2578,14 +2600,16 @@ class DownloadManagerService {
         // run. Otherwise each window fails and spends a native retry, so a
         // download needing more than ~50 minutes restarts from 0% (#2556).
         final target = _storageService.safTarget(metadata, firstExt, showYear: showYear, serverId: serverId);
-        final fileName = partTarget(target.fileName);
 
         final safDirUri = await _safStorage.createNestedDirectories(rootUri, target.components);
         if (safDirUri == null) {
           throw Exception('Failed to create SAF directory');
         }
 
-        await _cleanupSafTargetFile(safDirUri, fileName);
+        final documents = await _safStorage.list(safDirUri);
+        if (documents == null) throw FileSystemException('Cannot inspect download folder', safDirUri);
+        final fileName = await _unsharedDownloadTarget(globalKey, partTarget(target.fileName), documents: documents);
+        await _cleanupSafTargetFile(globalKey, documents, fileName);
 
         task = UriDownloadTask(
           url: url,
@@ -2615,7 +2639,7 @@ class DownloadManagerService {
         } else {
           firstFilePath = await _storageService.getVideoFilePath(serverId, metadata.id, firstExt);
         }
-        final downloadFilePath = partTarget(firstFilePath);
+        final downloadFilePath = await _unsharedDownloadTarget(globalKey, partTarget(firstFilePath));
 
         // Clean up partial files from previous attempts to prevent
         // background_downloader from creating numbered copies (File (1).mp4).
@@ -3232,6 +3256,7 @@ class DownloadManagerService {
                   ctx.showYear,
                   safRootUri,
                   partIndex: ctx.partIndex,
+                  actualName: _alternateTargetName.hasMatch(task.filename) ? task.filename : null,
                 ) ??
                 '';
             if (storedPath.isEmpty) {
@@ -3284,6 +3309,7 @@ class DownloadManagerService {
                   ext,
                   safRootUri,
                   partIndex: partIndex,
+                  actualName: _alternateTargetName.hasMatch(task.filename) ? task.filename : null,
                   clientScopeId: existing?.clientScopeId,
                 ) ??
                 '';
@@ -3426,15 +3452,20 @@ class DownloadManagerService {
 
   /// Look up the SAF document of file [partIndex] of [metadata]'s download
   /// (0 = the first file) under [safRootUri]. [ext] is that file's extension.
+  static final _alternateTargetName = RegExp(r'^Copy [0-9]+ - ');
+
   Future<String?> _resolveSafStoredPath(
     MediaItem metadata,
     String ext,
     int? showYear,
     String safRootUri, {
     int partIndex = 0,
+    String? actualName,
   }) async {
     final target = _storageService.safTarget(metadata, ext, showYear: showYear, serverId: metadata.serverId);
-    final fileName = partIndex == 0 ? target.fileName : _storageService.partFilePath(target.fileName, partIndex, ext);
+    final fileName =
+        actualName ??
+        (partIndex == 0 ? target.fileName : _storageService.partFilePath(target.fileName, partIndex, ext));
 
     final dirUri = await _safStorage.createNestedDirectories(safRootUri, target.components);
     if (dirUri == null) return null;
@@ -3453,11 +3484,28 @@ class DownloadManagerService {
     String ext,
     String safRootUri, {
     int partIndex = 0,
+    String? actualName,
     String? clientScopeId,
   }) async {
     final showYear = await _resolveSafRecoveryShowYear(metadata, clientScopeId: clientScopeId);
-    return await _resolveSafStoredPath(metadata, ext, showYear, safRootUri, partIndex: partIndex) ??
-        (showYear == null ? null : await _resolveSafStoredPath(metadata, ext, null, safRootUri, partIndex: partIndex));
+    return await _resolveSafStoredPath(
+          metadata,
+          ext,
+          showYear,
+          safRootUri,
+          partIndex: partIndex,
+          actualName: actualName,
+        ) ??
+        (showYear == null
+            ? null
+            : await _resolveSafStoredPath(
+                metadata,
+                ext,
+                null,
+                safRootUri,
+                partIndex: partIndex,
+                actualName: actualName,
+              ));
   }
 
   Future<int?> _resolveSafRecoveryShowYear(MediaItem metadata, {String? clientScopeId}) {
@@ -3897,14 +3945,17 @@ class DownloadManagerService {
       // Serialize it with retirement so the job is durably removed on reconnect.
       await _database.retireDownloadConversions(globalKey);
       final bgTaskId = await _database.getBgTaskId(globalKey);
+      await _cancelNativeTasksForGlobalKey(globalKey, includeTaskId: bgTaskId, reason: reason, requireStopped: true);
       await _database.updateBgTaskId(globalKey, null);
-      await _cancelNativeTasksForGlobalKey(globalKey, includeTaskId: bgTaskId, reason: reason);
       _pendingDownloadContext.remove(globalKey);
-      await body();
-      await _serializeConversion(globalKey, () async {
-        await _database.retireDownloadConversions(globalKey);
-        await _cancelRecordedConversions(globalKey);
-      });
+      try {
+        await body();
+      } finally {
+        await _serializeConversion(globalKey, () async {
+          await _database.retireDownloadConversions(globalKey);
+          await _cancelRecordedConversions(globalKey);
+        });
+      }
     } finally {
       _cancellingKeys.remove(globalKey);
     }
@@ -3924,25 +3975,74 @@ class DownloadManagerService {
 
   /// Cancels native work before removing the durable row and reconciling its
   /// persisted SAF grant.
-  Future<void> cancelAndRemoveDownload(String globalKey) async {
-    await cancelDownload(globalKey);
-    await _deleteDownloadRowAndRelease(globalKey);
+  Future<void> cancelAndRemoveDownload(String globalKey) => deleteDownload(globalKey);
+
+  Future<void> deleteDownload(String globalKey) => _sharedFileOperations.run(() async {
+    try {
+      await _deleteDownload(globalKey);
+    } on FileSystemException {
+      // A multipart removal can fail after some files were already deleted.
+      // Keep the manifest visible for another Delete, without offering playback.
+      if (await _database.getDownloadedMedia(globalKey) != null) await _markCancelled(globalKey);
+      rethrow;
+    }
+  });
+
+  Future<void> _requireRecordedVolume(DownloadedMediaItem record) async {
+    final configured = _storageService.customFileRootPath;
+    for (final stored in record.storedPartPaths.where(path.isAbsolute)) {
+      if (_storageService.isSafUri(stored)) continue;
+      String? root;
+      if (configured != null && path.isWithin(configured, stored)) {
+        root = configured;
+      } else {
+        // Older external locations may no longer be selected. Use the known
+        // layout to locate their root; app-private legacy paths may relocate.
+        final resolved = await _storageService.ensureAbsolutePath(stored);
+        if (await File(resolved).exists() || path.isWithin(await _storageService.baseAppDirectoryPath(), resolved)) {
+          continue;
+        }
+        var directory = Directory(path.dirname(resolved));
+        while (directory.path != directory.parent.path) {
+          if (const {'Movies', 'TV Shows', 'Music'}.contains(path.basename(directory.path)) ||
+              path.basename(directory.path) == record.serverId) {
+            root = directory.parent.path;
+            break;
+          }
+          directory = directory.parent;
+        }
+      }
+      if (root != null) {
+        final directory = Directory(root);
+        // An unmounted volume can leave an empty mountpoint behind. A missing
+        // file on a reachable drive with its other folders or files intact
+        // is an ordinary successful, idempotent removal.
+        if (!await directory.exists() ||
+            (!await File(stored).exists() && await directory.list(followLinks: false).isEmpty)) {
+          throw FileSystemException('Download storage is unavailable', root);
+        }
+      }
+    }
   }
 
-  Future<void> deleteDownload(String globalKey) {
+  Future<void> _deleteDownload(String globalKey) {
     return _withCancellation(
       globalKey,
       reason: 'delete download',
       body: () async {
+        final prior = await _database.getDownloadedMedia(globalKey);
+        if (prior != null) await _requireRecordedVolume(prior);
+        if (prior != null && prior.status != DownloadStatus.completed.index) await _markCancelled(globalKey);
         final parsed = parseGlobalKey(globalKey);
         if (parsed == null) {
+          if (prior != null) await _deleteByFilePath(prior);
           await _deleteDownloadRowAndRelease(globalKey);
           return;
         }
 
         final serverId = parsed.serverId;
         final ratingKey = parsed.ratingKey;
-        final downloadRecord = await _database.getDownloadedMedia(globalKey);
+        final downloadRecord = prior;
         final clientScopeId = downloadRecord?.clientScopeId;
         final metadata = await _lookupMetadata(serverId, ratingKey, clientScopeId: clientScopeId);
 
@@ -4023,55 +4123,51 @@ class DownloadManagerService {
     required MediaItem? metadata,
     List<DownloadedMediaItem>? children,
   }) async {
-    try {
-      final scopeId = downloadRecord?.clientScopeId;
+    final scopeId = downloadRecord?.clientScopeId;
 
-      if (metadata == null) {
-        // Fallback: Try database record
-        if (downloadRecord != null && downloadRecord.storedPartPaths.isNotEmpty) {
-          await _deleteByFilePath(downloadRecord);
-          return;
-        }
-        appLogger.w('Cannot delete - no metadata for ${buildGlobalKey(ServerId(serverId), ratingKey)}');
+    if (metadata == null) {
+      // Fallback: Try database record
+      if (downloadRecord != null && downloadRecord.storedPartPaths.isNotEmpty) {
+        await _deleteByFilePath(downloadRecord);
         return;
       }
+      appLogger.w('Cannot delete - no metadata for ${buildGlobalKey(ServerId(serverId), ratingKey)}');
+      return;
+    }
 
-      switch (metadata.kind) {
-        case MediaKind.episode:
-          await _deleteEpisodeFiles(metadata, serverId, clientScopeId: scopeId);
-          break;
-        case MediaKind.season:
-        case MediaKind.show:
-          await _deleteEpisodeContainerFiles(metadata, serverId, episodes: children!, clientScopeId: scopeId);
-          break;
-        case MediaKind.movie:
-          await _deleteMovieFiles(metadata, serverId, clientScopeId: scopeId);
-          break;
-        // Track deletion is DB-record-driven rather than storage-template-driven
-        // like movies/episodes: the stored path covers both the current
-        // Music/{Artist}/{Album}/ layout and legacy {serverId}/{ratingKey}/
-        // downloads, and shared album/artist folders are only removed once empty.
-        case MediaKind.track:
-          if (downloadRecord != null) await _deleteTrackByRecord(downloadRecord);
-          break;
-        case MediaKind.album:
-        case MediaKind.artist:
-          appLogger.d('Deleting ${children!.length} tracks in container ${metadata.id}');
-          await _deleteLeavesInContainer(
-            leaves: children,
-            serverId: serverId,
-            clientScopeId: scopeId,
-            containerKey: metadata.id,
-            containerTitle: metadata.displayTitle,
-            leafNoun: 'track',
-            deleteFiles: (track, _) => _deleteTrackByRecord(track),
-          );
-          break;
-        default:
-          appLogger.w('Unknown type for deletion: ${metadata.kind.id}');
-      }
-    } catch (e, stack) {
-      appLogger.e('Error deleting files', error: e, stackTrace: stack);
+    switch (metadata.kind) {
+      case MediaKind.episode:
+        await _deleteEpisodeFiles(metadata, serverId, clientScopeId: scopeId);
+        break;
+      case MediaKind.season:
+      case MediaKind.show:
+        await _deleteEpisodeContainerFiles(metadata, serverId, episodes: children!, clientScopeId: scopeId);
+        break;
+      case MediaKind.movie:
+        await _deleteMovieFiles(metadata, serverId, clientScopeId: scopeId);
+        break;
+      // Track deletion is DB-record-driven rather than storage-template-driven
+      // like movies/episodes: the stored path covers both the current
+      // Music/{Artist}/{Album}/ layout and legacy {serverId}/{ratingKey}/
+      // downloads, and shared album/artist folders are only removed once empty.
+      case MediaKind.track:
+        if (downloadRecord != null) await _deleteByFilePath(downloadRecord);
+        break;
+      case MediaKind.album:
+      case MediaKind.artist:
+        appLogger.d('Deleting ${children!.length} tracks in container ${metadata.id}');
+        await _deleteLeavesInContainer(
+          leaves: children,
+          serverId: serverId,
+          clientScopeId: scopeId,
+          containerKey: metadata.id,
+          containerTitle: metadata.displayTitle,
+          leafNoun: 'track',
+          deleteFiles: (track, _) => _deleteByFilePath(track),
+        );
+        break;
+      default:
+        if (downloadRecord != null) await _deleteByFilePath(downloadRecord);
     }
   }
 
@@ -4187,19 +4283,19 @@ class DownloadManagerService {
     bool skipStorageVideoAndParents = false,
     Set<String> batchRatingKeys = const {},
   }) async {
-    try {
-      final parentMetadata = episode.grandparentId != null
-          ? await _lookupMetadata(serverId, episode.grandparentId!, clientScopeId: clientScopeId)
-          : null;
-      final showYear = parentMetadata?.year;
+    final parentMetadata = episode.grandparentId != null
+        ? await _lookupMetadata(serverId, episode.grandparentId!, clientScopeId: clientScopeId)
+        : null;
+    final showYear = parentMetadata?.year;
 
-      final storageDeletion = await _deleteEpisodeStorageVideo(
-        episode,
-        showYear: showYear,
-        skipVideo: skipStorageVideoAndParents,
-      );
+    final storageDeletion = await _deleteEpisodeStorageVideo(
+      episode,
+      showYear: showYear,
+      skipVideo: skipStorageVideoAndParents,
+    );
 
-      final thumbPath = await _storageService.getEpisodeThumbnailPath(episode, showYear: showYear);
+    final thumbPath = await _storageService.getEpisodeThumbnailPath(episode, showYear: showYear);
+    if (!await _pathSharedWithOtherDownload(episode.globalKey, thumbPath, sidecarStem: true)) {
       await _deleteFileIfExists(File(thumbPath), 'episode thumbnail');
 
       final subsDir = await _storageService.getEpisodeSubtitlesDirectory(episode, showYear: showYear);
@@ -4207,22 +4303,19 @@ class DownloadManagerService {
         await subsDir.delete(recursive: true);
         appLogger.i('Deleted episode subtitles: ${subsDir.path}');
       }
+    }
 
-      await _deleteChapterThumbnails(
-        serverId,
-        episode.id,
-        clientScopeId: clientScopeId,
-        batchRatingKeys: batchRatingKeys,
-      );
+    await _deleteChapterThumbnails(
+      serverId,
+      episode.id,
+      clientScopeId: clientScopeId,
+      batchRatingKeys: batchRatingKeys,
+    );
 
-      if (!skipStorageVideoAndParents) {
-        await _cleanupEpisodeStorageParents(episode, showYear, storageDeletion);
-        // Safety net: verify the actual DB-recorded file is gone.
-        await _ensureDbFileDeleted(serverId, episode.id);
-      }
-    } catch (e, stack) {
-      final storageLabel = _storageService.isUsingSaf ? 'SAF ' : '';
-      appLogger.e('Error deleting ${storageLabel}episode files', error: e, stackTrace: stack);
+    if (!skipStorageVideoAndParents) {
+      await _cleanupEpisodeStorageParents(episode, showYear, storageDeletion);
+      // Safety net: verify the actual DB-recorded file is gone.
+      await _ensureDbFileDeleted(serverId, episode.id);
     }
   }
 
@@ -4238,30 +4331,25 @@ class DownloadManagerService {
   }) async {
     final isSeason = container.kind == MediaKind.season;
     final label = isSeason ? 'season' : 'show';
-    try {
-      final showId = isSeason ? container.parentId : null;
-      final showYear = showId == null
-          ? null
-          : (await _lookupMetadata(serverId, showId, clientScopeId: clientScopeId))?.year;
+    final showId = isSeason ? container.parentId : null;
+    final showYear = showId == null
+        ? null
+        : (await _lookupMetadata(serverId, showId, clientScopeId: clientScopeId))?.year;
 
-      final storageLabel = _storageService.isUsingSaf ? ' (SAF)' : '';
-      appLogger.d('Deleting ${episodes.length} episodes in $label ${container.id}$storageLabel');
-      await _deleteEpisodesInCollection(
-        episodes: episodes,
-        serverId: serverId,
-        clientScopeId: clientScopeId,
-        parentKey: container.id,
-        parentTitle: container.displayTitle,
-      );
+    final storageLabel = _storageService.isUsingSaf ? ' (SAF)' : '';
+    appLogger.d('Deleting ${episodes.length} episodes in $label ${container.id}$storageLabel');
+    await _deleteEpisodesInCollection(
+      episodes: episodes,
+      serverId: serverId,
+      clientScopeId: clientScopeId,
+      parentKey: container.id,
+      parentTitle: container.displayTitle,
+    );
 
-      if (isSeason) {
-        await _deleteSeasonStorageDirectory(container, showYear);
-      } else {
-        await _deleteShowStorageDirectory(container);
-      }
-    } catch (e, stack) {
-      final storageLabel = _storageService.isUsingSaf ? 'SAF ' : '';
-      appLogger.e('Error deleting $storageLabel$label files', error: e, stackTrace: stack);
+    if (isSeason) {
+      await _deleteSeasonStorageDirectory(container, showYear);
+    } else {
+      await _deleteShowStorageDirectory(container);
     }
   }
 
@@ -4342,23 +4430,11 @@ class DownloadManagerService {
         ),
       );
 
+      await _requireRecordedVolume(leaf);
       await deleteFiles(leaf, scopeId);
       await _deleteForItemByServer(ServerId(serverId), leaf.ratingKey, clientScopeId: scopeId);
       await _deleteDownloadRowAndRelease(buildGlobalKey(ServerId(serverId), leaf.ratingKey));
     }
-  }
-
-  /// Delete a single downloaded track. File deletion runs off the DB record
-  /// (video + .part + empty-parent cleanup via [_deleteByFilePath], which also
-  /// handles SAF URIs); the album-cover thumb is reference-counted because
-  /// every track of an album shares the same artwork blob.
-  Future<void> _deleteTrackByRecord(DownloadedMediaItem record) async {
-    final parsed = parseGlobalKey(record.globalKey);
-    final keepThumb =
-        parsed != null &&
-        record.thumbPath != null &&
-        await _isThumbPathInUseByOthers(parsed.serverId, record.thumbPath!, excludingGlobalKey: record.globalKey);
-    await _deleteByFilePath(record, deleteThumb: !keepThumb);
   }
 
   /// Whether any other download row on [serverId] references [thumbPath].
@@ -4374,19 +4450,14 @@ class DownloadManagerService {
   }
 
   Future<void> _deleteMovieFiles(MediaItem movie, ServerId serverId, {String? clientScopeId}) async {
-    try {
-      await _deleteMovieStorageVideo(movie);
+    await _deleteMovieStorageVideo(movie);
 
-      await _deleteChapterThumbnails(serverId, movie.id, clientScopeId: clientScopeId);
+    await _deleteChapterThumbnails(serverId, movie.id, clientScopeId: clientScopeId);
 
-      // Safety net: verify the actual DB-recorded file is gone
-      await _ensureDbFileDeleted(serverId, movie.id);
+    // Safety net: verify the actual DB-recorded file is gone
+    await _ensureDbFileDeleted(serverId, movie.id);
 
-      await _pruneStorageDirectory(_storageService.getMovieSafPathComponents(movie));
-    } catch (e, stack) {
-      final storageLabel = _storageService.isUsingSaf ? 'SAF ' : '';
-      appLogger.e('Error deleting ${storageLabel}movie files', error: e, stackTrace: stack);
-    }
+    await _pruneStorageDirectory(_storageService.getMovieSafPathComponents(movie));
   }
 
   /// Remove the media directory at [components] (a `*SafPathComponents` list,
@@ -4422,19 +4493,23 @@ class DownloadManagerService {
       if (movieDir == null) return;
       final baseName = _storageService.getMovieSafBaseName(movie);
       final file = await _findSafFileByBaseName(movieDir.uri, baseName);
-      if (file != null) await _tryDeleteSaf(file.uri, isDir: false, description: 'SAF movie video');
-      await _deleteSafPartFiles(movieDir.uri, baseName);
+      if (file != null && !await _pathSharedWithOtherDownload(movie.globalKey, file.uri)) {
+        await _tryDeleteSaf(file.uri, isDir: false, description: 'SAF movie video');
+      }
+      await _deleteSafPartFiles(movieDir.uri, baseName, movie.globalKey);
       return;
     }
 
     final videoPathTemplate = await _storageService.getMovieVideoPath(movie, 'tmp');
     final videoPathWithoutExt = videoPathTemplate.substring(0, videoPathTemplate.lastIndexOf('.'));
-    await _deleteFilesystemPartFiles(videoPathWithoutExt);
+    await _deleteFilesystemPartFiles(videoPathWithoutExt, movie.globalKey);
     final actualVideoFile = await _findFileWithAnyExtension(videoPathWithoutExt);
     if (actualVideoFile != null) {
-      await _deleteFilesystemVideoAssets(actualVideoFile.path);
+      if (await _pathSharedWithOtherDownload(movie.globalKey, actualVideoFile.path)) return;
+      await _deleteFilesystemVideoAssets(movie.globalKey, actualVideoFile.path);
       return;
     }
+    if (await _pathSharedWithOtherDownload(movie.globalKey, videoPathTemplate, sidecarStem: true)) return;
     final subsDir = Directory(_storageService.sidecarSubtitlesDirectoryPath(videoPathTemplate));
     if (await subsDir.exists()) await subsDir.delete(recursive: true);
   }
@@ -4458,10 +4533,10 @@ class DownloadManagerService {
       if (seasonDirUri != null) {
         final baseName = _storageService.getEpisodeSafBaseName(episode);
         final file = await _findSafFileByBaseName(seasonDirUri, baseName);
-        if (file != null) {
+        if (file != null && !await _pathSharedWithOtherDownload(episode.globalKey, file.uri)) {
           await _tryDeleteSaf(file.uri, isDir: false, description: 'SAF episode video');
         }
-        await _deleteSafPartFiles(seasonDirUri, baseName);
+        await _deleteSafPartFiles(seasonDirUri, baseName, episode.globalKey);
       }
       return (seasonDirUri: seasonDirUri, showDirUri: showDirUri);
     }
@@ -4469,9 +4544,9 @@ class DownloadManagerService {
     if (!skipVideo) {
       final videoPathTemplate = await _storageService.getEpisodeVideoPath(episode, 'tmp', showYear: showYear);
       final videoPathWithoutExt = videoPathTemplate.substring(0, videoPathTemplate.lastIndexOf('.'));
-      await _deleteFilesystemPartFiles(videoPathWithoutExt);
+      await _deleteFilesystemPartFiles(videoPathWithoutExt, episode.globalKey);
       final actualVideoFile = await _findFileWithAnyExtension(videoPathWithoutExt);
-      if (actualVideoFile != null) {
+      if (actualVideoFile != null && !await _pathSharedWithOtherDownload(episode.globalKey, actualVideoFile.path)) {
         await _deleteFileIfExists(actualVideoFile, 'episode video');
         await _deleteFileIfExists(File('${actualVideoFile.path}.part'), 'partial download');
       }
@@ -4511,34 +4586,27 @@ class DownloadManagerService {
   /// Safety net: after metadata-based deletion, verify the actual DB-recorded
   /// video files are gone. If not, delete them and clean up parent directories.
   Future<void> _ensureDbFileDeleted(ServerId serverId, String ratingKey) async {
-    try {
-      final globalKey = buildGlobalKey(ServerId(serverId), ratingKey);
-      final record = await _database.getDownloadedMedia(globalKey);
-      if (record == null) return;
-      await _deleteAdditionalPartFiles(record);
-      if (record.videoFilePath == null) return;
+    final globalKey = buildGlobalKey(ServerId(serverId), ratingKey);
+    final record = await _database.getDownloadedMedia(globalKey);
+    if (record == null) return;
+    await _deleteAdditionalPartFiles(record);
+    if (record.videoFilePath == null) return;
 
-      final storedPath = record.videoFilePath!;
-      if (await _isVideoPathSharedWithOtherDownload(record, storedPath)) return;
-      if (_storageService.isSafUri(storedPath)) {
-        // SAF mode: parent cleanup is handled by the type-specific SAF helpers —
-        // here we only verify the video URI itself is gone.
-        if (await _safStorage.exists(storedPath, isDir: false)) {
-          appLogger.w('Safety net: SAF video still exists after metadata deletion, deleting: $storedPath');
-          await _safStorage.delete(storedPath, isDir: false);
-        }
-        return;
-      }
-
-      final videoPath = await _storageService.ensureAbsolutePath(storedPath);
-      final videoFile = File(videoPath);
-      if (await videoFile.exists()) {
-        appLogger.w('Safety net: video still exists after metadata deletion, deleting: $videoPath');
-      }
-      await _deleteFilesystemVideoAssets(videoPath, withThumbnail: record.type == MediaKind.episode.id);
-    } catch (e, stack) {
-      appLogger.w('Safety net deletion failed', error: e, stackTrace: stack);
+    final storedPath = record.videoFilePath!;
+    if (await _pathSharedWithOtherDownload(record.globalKey, storedPath)) return;
+    if (_storageService.isSafUri(storedPath)) {
+      // SAF mode: parent cleanup is handled by the type-specific SAF helpers —
+      // here we only verify the video URI itself is gone.
+      await _tryDeleteSaf(storedPath, isDir: false, description: 'stored video file');
+      return;
     }
+
+    final videoPath = await _storageService.ensureAbsolutePath(storedPath);
+    final videoFile = File(videoPath);
+    if (await videoFile.exists()) {
+      appLogger.w('Safety net: video still exists after metadata deletion, deleting: $videoPath');
+    }
+    await _deleteFilesystemVideoAssets(record.globalKey, videoPath, withThumbnail: record.type == MediaKind.episode.id);
   }
 
   /// Walk up from a directory toward the downloads root, removing empty dirs.
@@ -4642,10 +4710,11 @@ class DownloadManagerService {
   /// video removal must not strand `.part` files or subtitle directories.
   /// [withThumbnail] also removes the `{video}.jpg` thumbnail older versions
   /// wrote next to episodes.
-  Future<void> _deleteFilesystemVideoAssets(String videoPath, {bool withThumbnail = false}) async {
+  Future<void> _deleteFilesystemVideoAssets(String globalKey, String videoPath, {bool withThumbnail = false}) async {
     final videoFile = File(videoPath);
     await _deleteFileIfExists(videoFile, 'video file');
     await _deleteFileIfExists(File('$videoPath.part'), 'partial download');
+    if (await _pathSharedWithOtherDownload(globalKey, videoPath, sidecarStem: true)) return;
     if (withThumbnail) {
       await _deleteFileIfExists(File(path.setExtension(videoPath, '.jpg')), 'episode thumbnail');
     }
@@ -4664,42 +4733,34 @@ class DownloadManagerService {
   /// [firstFilePathWithoutExt] — by name, so a file still in flight goes too —
   /// with their `.part` and sidecar leftovers. Folders are left to the
   /// caller's cleanup.
-  Future<void> _deleteFilesystemPartFiles(String firstFilePathWithoutExt) async {
+  Future<void> _deleteFilesystemPartFiles(String firstFilePathWithoutExt, String globalKey) async {
     final dir = Directory(path.dirname(firstFilePathWithoutExt));
     if (!await dir.exists()) return;
     final firstBaseName = path.basename(firstFilePathWithoutExt);
-    try {
-      final partFiles = await dir
-          .list()
-          .where(
-            (e) =>
-                e is File &&
-                CodecCatalog.videoExtensions.contains(path.extension(e.path).toLowerCase()) &&
-                _storageService.isPartFileBaseName(firstBaseName, path.basenameWithoutExtension(e.path)),
-          )
-          .toList();
-      for (final file in partFiles) {
-        await _deleteFileIfExists(File(file.path), 'stacked video file');
-        await _deleteFileIfExists(File('${file.path}.part'), 'partial download');
-        final subsDir = Directory(_storageService.sidecarSubtitlesDirectoryPath(file.path));
-        if (await subsDir.exists()) {
-          await subsDir.delete(recursive: true);
-          appLogger.i('Deleted subtitles: ${subsDir.path}');
-        }
-      }
-    } catch (e) {
-      appLogger.w('Error deleting stacked files of $firstFilePathWithoutExt', error: e);
+    final partFiles = await dir
+        .list()
+        .where(
+          (e) =>
+              e is File &&
+              CodecCatalog.videoExtensions.contains(path.extension(e.path).toLowerCase()) &&
+              _storageService.isPartFileBaseName(firstBaseName, path.basenameWithoutExtension(e.path)),
+        )
+        .toList();
+    for (final file in partFiles) {
+      if (await _pathSharedWithOtherDownload(globalKey, file.path)) continue;
+      await _deleteFilesystemVideoAssets(globalKey, file.path);
     }
   }
 
   /// SAF counterpart of [_deleteFilesystemPartFiles] for the folder [dirUri].
-  Future<void> _deleteSafPartFiles(String dirUri, String firstBaseName) async {
+  Future<void> _deleteSafPartFiles(String dirUri, String firstBaseName, String globalKey) async {
     final children = await _safStorage.list(dirUri);
     if (children == null) return;
     for (final child in children) {
       if (!child.isDir &&
           CodecCatalog.videoExtensions.contains(path.extension(child.name).toLowerCase()) &&
           _storageService.isPartFileBaseName(firstBaseName, path.basenameWithoutExtension(child.name))) {
+        if (await _pathSharedWithOtherDownload(globalKey, child.uri)) continue;
         await _tryDeleteSaf(child.uri, isDir: false, description: 'SAF stacked video file');
       }
     }
@@ -4718,11 +4779,11 @@ class DownloadManagerService {
   /// Delete [storedPath], file [partIndex] of [record], with its sidecars —
   /// unless another download records the same file.
   Future<void> _deleteStoredPartFile(DownloadedMediaItem record, int partIndex, String storedPath) async {
-    if (await _isVideoPathSharedWithOtherDownload(record, storedPath)) return;
+    if (await _pathSharedWithOtherDownload(record.globalKey, storedPath)) return;
     if (_storageService.isSafUri(storedPath)) {
       await _tryDeleteSaf(storedPath, isDir: false, description: 'SAF video file ${partIndex + 1}');
     } else {
-      await _deleteFilesystemVideoAssets(await _storageService.ensureAbsolutePath(storedPath));
+      await _deleteFilesystemVideoAssets(record.globalKey, await _storageService.ensureAbsolutePath(storedPath));
     }
     if (partIndex == 0) return;
     // A SAF file's sidecars live in an app-managed folder of their own.
@@ -4738,52 +4799,57 @@ class DownloadManagerService {
     }
   }
 
-  /// Fallback deletion using file paths from database.
-  ///
-  /// [deleteThumb] lets callers preserve a shared artwork blob — album-cover
-  /// thumbs are deduped by path hash across every track of the album, so a
-  /// single-track delete must keep the file while sibling rows reference it.
-  Future<void> _deleteByFilePath(DownloadedMediaItem record, {bool deleteThumb = true}) async {
-    try {
-      final storedPath = record.videoFilePath;
-      if (storedPath != null && !await _isVideoPathSharedWithOtherDownload(record, storedPath)) {
-        if (_storageService.isSafUri(storedPath)) {
-          // Metadata is gone by the time this fallback runs, so parent-dir cleanup
-          // is not attempted here — SAF URIs don't expose a parent reliably.
-          await _tryDeleteSaf(storedPath, isDir: false, description: 'SAF video file');
-        } else {
-          final videoPath = await _storageService.ensureAbsolutePath(storedPath);
-          await _deleteFilesystemVideoAssets(videoPath, withThumbnail: record.type == MediaKind.episode.id);
-        }
+  /// Removes recorded files, preserving media and artwork other rows still use.
+  Future<void> _deleteByFilePath(DownloadedMediaItem record) async {
+    final storedPath = record.videoFilePath;
+    if (storedPath != null && !await _pathSharedWithOtherDownload(record.globalKey, storedPath)) {
+      if (_storageService.isSafUri(storedPath)) {
+        // Metadata is gone by the time this fallback runs, so parent-dir cleanup
+        // is not attempted here — SAF URIs don't expose a parent reliably.
+        await _tryDeleteSaf(storedPath, isDir: false, description: 'SAF video file');
+      } else {
+        final videoPath = await _storageService.ensureAbsolutePath(storedPath);
+        await _deleteFilesystemVideoAssets(
+          record.globalKey,
+          videoPath,
+          withThumbnail: record.type == MediaKind.episode.id,
+        );
       }
-      await _deleteAdditionalPartFiles(record);
+    }
+    await _deleteAdditionalPartFiles(record);
 
-      // thumbPath is a server-side API path (Plex /library/metadata/.../thumb,
-      // Jellyfin /Items/.../Images/Primary), not a local file path —
-      // resolve it via getArtworkPathFromThumb
-      if (deleteThumb && record.thumbPath != null) {
-        final parsed = parseGlobalKey(record.globalKey);
-        if (parsed != null) {
-          final thumbPath = await _storageService.getArtworkPathFromThumb(parsed.serverId, record.thumbPath!);
-          await _deleteFileIfExists(File(thumbPath), 'thumbnail');
-        }
+    // thumbPath is a server-side API path (Plex /library/metadata/.../thumb,
+    // Jellyfin /Items/.../Images/Primary), not a local file path —
+    // resolve it via getArtworkPathFromThumb
+    if (record.thumbPath != null) {
+      final parsed = parseGlobalKey(record.globalKey);
+      if (parsed != null &&
+          !await _isThumbPathInUseByOthers(parsed.serverId, record.thumbPath!, excludingGlobalKey: record.globalKey)) {
+        final thumbPath = await _storageService.getArtworkPathFromThumb(parsed.serverId, record.thumbPath!);
+        await _deleteFileIfExists(File(thumbPath), 'thumbnail');
       }
-    } catch (e, stack) {
-      appLogger.e('Error in fallback deletion', error: e, stackTrace: stack);
     }
   }
 
-  /// Whether [storedPath], a file [record] recorded, is also another
-  /// download's file. Paths used to be built from titles alone, so two items
-  /// with the same title (two libraries, or the same movie on Plex and
-  /// Jellyfin) could end up on one file; it stays while another row plays it.
-  Future<bool> _isVideoPathSharedWithOtherDownload(DownloadedMediaItem record, String storedPath) async {
-    final shared = await _database.isVideoFilePathRecordedByOtherDownload(
-      storedPath,
-      excludingGlobalKey: record.globalKey,
-    );
-    if (shared) appLogger.i('Keeping $storedPath: another download still records it');
-    return shared;
+  Future<bool> _pathSharedWithOtherDownload(String globalKey, String storedPath, {bool sidecarStem = false}) async {
+    if (_storageService.isSafUri(storedPath)) {
+      return _database.isVideoFilePathRecordedByOtherDownload(storedPath, excludingGlobalKey: globalKey);
+    }
+    // A database row can still contain an old container UUID or doubled
+    // app directory. Compare what playback opens, in both directions.
+    String identity(String value) => sidecarStem ? path.withoutExtension(value) : value;
+    final name = path.basename(identity(storedPath));
+    final others = await _database.otherDownloadPathsForFilename(name, excludingGlobalKey: globalKey);
+    if (others.contains(storedPath)) return true;
+    String? resolved;
+    for (final other in others) {
+      if (_storageService.isSafUri(other) || path.basename(identity(other)).toLowerCase() != name.toLowerCase()) {
+        continue;
+      }
+      resolved ??= identity(await _storageService.ensureAbsolutePath(storedPath));
+      if (path.equals(resolved, identity(await _storageService.ensureAbsolutePath(other)))) return true;
+    }
+    return false;
   }
 
   Future<List<DownloadedMediaItem>> getAllDownloads() {
@@ -4876,6 +4942,7 @@ class DownloadManagerService {
     while (_pendingBackgroundOperations.isNotEmpty) {
       await Future.wait(_pendingBackgroundOperations.toList(), eagerError: false);
     }
+    await _sharedFileOperations.settled;
     unawaited(_progressController.close());
     unawaited(_deletionProgressController.close());
   }

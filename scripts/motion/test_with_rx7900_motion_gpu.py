@@ -69,6 +69,12 @@ printf '%s\\n' \\
         (self.runtime_directory / "libplezy_motion_engine.so").touch()
         (self.runtime_directory / "libonnxruntime.so").touch()
 
+    def test_default_bundle_registers_the_webgpu_plugin_with_its_runtime_name(self) -> None:
+        manifests = ROOT / "shared/cpp/plezy_motion_engine"
+        plugin = (manifests / "providers.linux.webgpu.tsv").read_text().splitlines()[-1]
+        self.assertEqual(plugin.split("\t")[0], "WebGpuExecutionProvider")
+        self.assertIn(plugin, (manifests / "providers.linux.auto.tsv").read_text().splitlines())
+
     def _write_executable(self, path: Path, contents: str) -> None:
         path.write_text(contents, encoding="utf-8")
         path.chmod(0o755)

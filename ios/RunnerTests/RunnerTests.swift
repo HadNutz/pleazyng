@@ -244,6 +244,48 @@ final class MpvPlayerContractTests: XCTestCase {
     XCTAssertEqual((cancelled[0] as? FlutterError)?.code, "NOT_INITIALIZED")
   }
 
+  func testVideoMotionOptionsCanChangeOnAnOpenAVFoundationStream() throws {
+    let clip = try XCTUnwrap(Bundle(for: type(of: self)).url(forResource: "Butterfly-209", withExtension: "mp4"))
+    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 180))
+    window.isHidden = false
+    let core = MpvPlayerCore()
+    XCTAssertTrue(core.initialize(in: window))
+    defer {
+      core.dispose()
+      core.queue.sync {}
+      window.isHidden = true
+    }
+    core.setVisible(true)
+    func command(_ args: [String]) throws -> Int64? {
+      let accepted = expectation(description: args[0])
+      var result: Result<Int64?, Error>?
+      core.commandAsync(args) { reply in
+        result = reply
+        accepted.fulfill()
+      }
+      wait(for: [accepted], timeout: nativeCompletionTimeout)
+      return try XCTUnwrap(result).get()
+    }
+    let entry = try XCTUnwrap(command(["loadfile", clip.path]))
+    XCTAssertSuccess(awaitProperty(core, name: "pause", value: "no"))
+    let readyBy = Date().addingTimeInterval(nativeCompletionTimeout)
+    while Date() < readyBy && ((try? timePos(core)) ?? 0) < 0.1 { pump(0.05) }
+    XCTAssertEqual(try awaitGetProperty(core, name: "current-vo").get(), "avfoundation")
+    for preset in ["performance", "quality"] {
+      let before = try timePos(core)
+      XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-preset", value: preset))
+      XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "yes"))
+      pump(0.35)
+      XCTAssertGreaterThan(try timePos(core), before)
+      XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), String(entry))
+    }
+    XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "no"))
+    let before = try timePos(core)
+    pump(0.35)
+    XCTAssertGreaterThan(try timePos(core), before)
+    XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), String(entry))
+  }
+
   func testRealSetPropertyValidInvalidNonexistentAndPauseCache() {
     let core = MpvAudioPlayerCore()
     XCTAssertTrue(core.initialize())
@@ -1109,6 +1151,34 @@ final class DownloadBackupPolicyTests: XCTestCase {
     try manager.createDirectory(at: downloads, withIntermediateDirectories: true)
     XCTAssertTrue(try DownloadBackupPolicy.exclude(downloads, allowedRoots: [downloads]))
     XCTAssertEqual(try downloads.resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup, true)
+  }
+}
+
+
+@MainActor
+final class AdaptivePhoneSceneTests: XCTestCase {
+  func testActivePhoneScenePublishesWindowGeometry() async throws {
+    guard #available(iOS 27.1, *) else { throw XCTSkip("Duo geometry requires the iOS 27.1 runtime") }
+    let app = try XCTUnwrap(UIApplication.shared.delegate as? AppDelegate)
+    var controller: PlezyFlutterViewController?
+    for _ in 0..<50 {
+      controller = app.musicEngine?.viewController as? PlezyFlutterViewController
+      if controller?.viewIfLoaded?.window != nil { break }
+      try await Task.sleep(nanoseconds: 100_000_000)
+    }
+    let phone = try XCTUnwrap(controller)
+    XCTAssertNotNil(phone.viewIfLoaded?.window)
+    let state = phone.currentState()
+    for key in ["folds", "occlusions"] {
+      let rectangles = try XCTUnwrap(state[key] as? [[String: Double]])
+      for rect in rectangles {
+        for field in ["x", "y", "width", "height"] {
+          XCTAssertTrue(try XCTUnwrap(rect[field]).isFinite)
+        }
+        XCTAssertGreaterThanOrEqual(try XCTUnwrap(rect["width"]), 0)
+        XCTAssertGreaterThanOrEqual(try XCTUnwrap(rect["height"]), 0)
+      }
+    }
   }
 }
 

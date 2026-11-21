@@ -1,3 +1,4 @@
+import '../../widgets/fold_regions.dart';
 import '../../widgets/music/music_device_picker.dart';
 import '../../widgets/music/music_seek_print.dart';
 import 'music_discovery_screen.dart';
@@ -460,13 +461,87 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
       children: [
         _Background(track: track, client: client, heavyScrim: isTV),
         SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
+          child: FoldRegionBuilder(
+            builder: (context, regions) {
               if (isTV) {
                 return _buildTvLayout(service, track, client);
               }
-              final twoPane = constraints.maxWidth >= 800 && constraints.maxWidth > constraints.maxHeight;
-              return twoPane ? _buildWideLayout(service, track, client) : _buildPortraitLayout(service, track, client);
+              final usable = regions.usable(width: 220, height: 180);
+              if (usable.length > 1) {
+                return Stack(
+                  children: [
+                    regions.place(
+                      context,
+                      usable.first,
+                      Column(
+                        children: [
+                          _buildTopBar(service, track, service.playContext),
+                          Expanded(child: _buildArtworkOrLyrics(service, track, client)),
+                        ],
+                      ),
+                    ),
+                    regions.place(
+                      context,
+                      usable.last,
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final compact =
+                              constraints.maxHeight < 350 || MediaQuery.textScalerOf(context).scale(16) > 24;
+                          final controls = Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _buildTrackInfo(track, centered: true),
+                              _buildSeekBar(track),
+                              _buildTransportRow(service),
+                              _buildUtilityRow(showQueueButton: compact),
+                            ],
+                          );
+                          return compact
+                              ? SingleChildScrollView(child: controls)
+                              : Column(
+                                  children: [
+                                    controls,
+                                    const Expanded(child: QueueList()),
+                                  ],
+                                );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              }
+              final area = regions.largest;
+              if (area.height <= 390 && area.width < 550) {
+                return Stack(
+                  children: [
+                    regions.place(
+                      context,
+                      area,
+                      SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            _buildTopBar(service, track, service.playContext),
+                            _buildTrackInfo(track, centered: true),
+                            _buildTransportRow(service),
+                            _buildSeekBar(track),
+                            _buildUtilityRow(showQueueButton: true),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+              final twoPane = area.width >= 800 && area.width > area.height;
+              return Stack(
+                children: [
+                  regions.place(
+                    context,
+                    area,
+                    twoPane ? _buildWideLayout(service, track, client) : _buildPortraitLayout(service, track, client),
+                  ),
+                ],
+              );
             },
           ),
         ),

@@ -56,14 +56,29 @@ Future<List<MediaItem>> fetchAllCollectionItemsPaged(
   int pageSize = 100,
   String? libraryId,
   String? libraryTitle,
-}) => drainPages<MediaItem>(
-  (start, size) => client.fetchCollectionPage(
-    collectionId,
-    start: start,
-    size: size,
-    libraryId: libraryId,
-    libraryTitle: libraryTitle,
-  ),
-  pageSize: pageSize,
-  stopOnShortPage: true,
-);
+}) {
+  if (pageSize <= 0) throw ArgumentError.value(pageSize, 'pageSize');
+  final seen = <String>{};
+  var minimumTotal = 0;
+  return drainPages<MediaItem>((start, size) async {
+    final page = await client.fetchCollectionPage(
+      collectionId,
+      start: start,
+      size: size,
+      libraryId: libraryId,
+      libraryTitle: libraryTitle,
+    );
+    final end = start + page.items.length;
+    if (page.offset != start ||
+        end > page.totalCount ||
+        page.totalCount < minimumTotal ||
+        (page.items.isEmpty && start < page.totalCount) ||
+        page.items.any((item) => !seen.add(item.globalKey))) {
+      throw const FormatException('Incomplete collection membership');
+    }
+    // A backend without an exact total uses one lookahead row on a full
+    // page. Only that sentinel may disappear on the next request.
+    minimumTotal = page.totalCount == end + 1 && page.items.length == size ? end : page.totalCount;
+    return page;
+  }, pageSize: pageSize);
+}

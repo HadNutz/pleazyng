@@ -130,6 +130,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$musicExperience$en musicExperience = Translations$musicExperience$en.internal(_root);
 	late final Translations$musicTools$en musicTools = Translations$musicTools$en.internal(_root);
 	late final Translations$musicDevices$en musicDevices = Translations$musicDevices$en.internal(_root);
+	late final Translations$bookmarkMigration$en bookmarkMigration = Translations$bookmarkMigration$en.internal(_root);
 }
 
 // Path: mediaConveniences
@@ -7797,6 +7798,9 @@ class Translations$metadataEdit$en {
 
 	/// en: 'Metadata updated'
 	String get metadataUpdated => 'Metadata updated';
+
+	/// en: 'Another editor changed the same field. Reopen the editor to review the latest values before saving.'
+	String get metadataConflict => 'Another editor changed the same field. Reopen the editor to review the latest values before saving.';
 
 	/// en: 'Failed to update metadata'
 	String get metadataUpdateFailed => 'Failed to update metadata';
@@ -15670,6 +15674,21 @@ class Translations$musicDevices$en {
 	String get relayInvalid => 'Enter an HTTPS relay address.';
 }
 
+// Path: bookmarkMigration
+class Translations$bookmarkMigration$en {
+	Translations$bookmarkMigration$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Bookmarks from an unidentified version'
+	String get unassigned => 'Bookmarks from an unidentified version';
+
+	/// en: 'Assign to this version'
+	String get assignToVersion => 'Assign to this version';
+}
+
 // Path: appIcon.names
 class Translations$appIcon$names$en {
 	Translations$appIcon$names$en.internal(this._root);
@@ -21293,6 +21312,7 @@ extension on Translations {
 			'metadataEdit.enterImageUrl' => 'Enter image URL',
 			'metadataEdit.imageUrl' => 'Image URL',
 			'metadataEdit.metadataUpdated' => 'Metadata updated',
+			'metadataEdit.metadataConflict' => 'Another editor changed the same field. Reopen the editor to review the latest values before saving.',
 			'metadataEdit.metadataUpdateFailed' => 'Failed to update metadata',
 			'metadataEdit.artworkUpdated' => 'Artwork updated',
 			'metadataEdit.artworkUpdateFailed' => 'Failed to update artwork',
@@ -21351,9 +21371,9 @@ extension on Translations {
 			'matchScreen.unmatchFailed' => 'Failed to unmatch item',
 			'matchScreen.matchApplied' => 'Match applied',
 			'matchScreen.matchFailed' => 'Failed to apply match',
-			'matchScreen.titleHint' => 'Title',
 			_ => null,
 		} ?? switch (path) {
+			'matchScreen.titleHint' => 'Title',
 			'matchScreen.yearHint' => 'Year',
 			'matchScreen.search' => 'Search',
 			'matchScreen.noMatchesFound' => 'No matches found',
@@ -21865,9 +21885,9 @@ extension on Translations {
 			'platform.localNetworkPermission' => 'Pleazyng connects to your media servers and playback devices on your local network.',
 			'platform.locationPermission' => 'Pleazyng uses location access when iOS requires it to detect your local network and connect to your media servers.',
 			'platform.photoLibraryPermission' => 'Choose images from your photo library to use as media artwork.',
-			'platform.cameraPermission' => 'Scan QR codes to pair a Companion Remote.',
 			_ => null,
 		} ?? switch (path) {
+			'platform.cameraPermission' => 'Scan QR codes to pair a Companion Remote.',
 			'universalMedia.title' => 'Open media',
 			'universalMedia.shortcutHelp' => 'Play a link, playlist, or file for this session.',
 			'universalMedia.intro' => 'Open a link, playlist, or file. Playback uses Pleazyng’s standard player and does not add history to your library.',
@@ -22379,9 +22399,9 @@ extension on Translations {
 			'sourceSetup.nfsLimitations' => 'Read-only NFSv3 over TCP. Without RPC-with-TLS, NFS traffic is unencrypted. The NAS must allow the selected AUTH_SYS IDs and unprivileged client ports (often called the “insecure” export option). NFSv4 and UDP are not supported.',
 			'sourceSetup.nfsSetupHelp' => 'NFS setup help',
 			'sourceSetup.nfsSetupHint' => 'Check these settings if the connection does not open.',
-			'sourceSetup.nfsSetupDetails' => 'Use an NFSv3 TCP export. The NFS service and mount service must both support RPC-with-TLS when encryption is required. Leave the custom certificate blank for a server certificate trusted by this device, or add the NAS CA/self-signed certificate. The certificate name must match the host in the endpoint. If the NAS asks for mutual TLS, add its PKCS#12 client identity. Finally, confirm the export allows the configured AUTH_SYS UID/GID and the client port policy.',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.nfsSetupDetails' => 'Use an NFSv3 TCP export. The NFS service and mount service must both support RPC-with-TLS when encryption is required. Leave the custom certificate blank for a server certificate trusted by this device, or add the NAS CA/self-signed certificate. The certificate name must match the host in the endpoint. If the NAS asks for mutual TLS, add its PKCS#12 client identity. Finally, confirm the export allows the configured AUTH_SYS UID/GID and the client port policy.',
 			'sourceSetup.ftpHelp' => 'FTP uses passive mode. Use ftp:// for plain FTP, ftpes:// for explicit TLS, or ftps:// for TLS (implicit on port 990; explicit on other ports).',
 			'sourceSetup.openSubtitles' => 'OpenSubtitles',
 			'sourceSetup.subtitleSetup' => 'Optional subtitle search for standalone videos.',
@@ -22893,9 +22913,9 @@ extension on Translations {
 			'podcasts.indexSecret' => 'API secret',
 			'podcasts.country' => 'Country (two-letter code)',
 			'podcasts.directoryLink' => 'Open directory listing',
-			'podcasts.feedAdded' => 'Podcast added.',
 			_ => null,
 		} ?? switch (path) {
+			'podcasts.feedAdded' => 'Podcast added.',
 			'podcasts.refreshPartial' => 'Some feeds could not refresh. Cached episodes remain available.',
 			'podcasts.importOpml' => 'Import subscriptions (OPML)',
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
@@ -23407,9 +23427,9 @@ extension on Translations {
 			'karaokeUi.phonePitchAndPrivateRecording' => 'Phone pitch and private recording',
 			'karaokeUi.phoneMicrophoneInputHelp' => 'Use headphones. This input provides pitch feedback and an optional private dry recording on the host. It does not amplify your voice through the stage speakers.',
 			'karaokeUi.sendRawVocalAudioForPrivateTake' => 'Send raw vocal audio to save a private take on the host',
-			'karaokeUi.enablePhoneMicrophone' => 'Enable phone microphone',
 			_ => null,
 		} ?? switch (path) {
+			'karaokeUi.enablePhoneMicrophone' => 'Enable phone microphone',
 			'karaokeUi.muteAndSavePhoneInput' => 'Mute and save',
 			'karaokeUi.pitchMIDIPracticeOnly' => ({required Object value1}) => 'Pitch MIDI ${value1} · practice only',
 			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',
@@ -23846,6 +23866,8 @@ extension on Translations {
 			'musicDevices.relay' => 'Music relay URL',
 			'musicDevices.relayHint' => 'Enable this on the receiving device, then pair once on the same network. Keep Pleazyng open. The relay carries encrypted music controls and sees network addresses. Each player streams from its own media server.',
 			'musicDevices.relayInvalid' => 'Enter an HTTPS relay address.',
+			'bookmarkMigration.unassigned' => 'Bookmarks from an unidentified version',
+			'bookmarkMigration.assignToVersion' => 'Assign to this version',
 			_ => null,
 		};
 	}

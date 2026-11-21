@@ -1,3 +1,4 @@
+import '../widgets/fold_browser.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -208,8 +209,7 @@ Future<MediaNavigationResult> navigateToMediaItem(
 }) async {
   if (item is MediaPlaylist) {
     var changed = false;
-    final result = await Navigator.push<bool>(
-      context,
+    final result = await FoldBrowserScope.detailNavigator(context).push<bool>(
       MaterialPageRoute(
         builder: (context) => PlaylistDetailScreen(playlist: item, onChanged: () => changed = true),
       ),
@@ -313,8 +313,7 @@ Future<MediaNavigationResult> navigateToMediaItem(
 
   switch (mi.kind) {
     case MediaKind.collection:
-      final result = await Navigator.push<bool>(
-        context,
+      final result = await FoldBrowserScope.detailNavigator(context).push<bool>(
         MaterialPageRoute(
           builder: (context) => CollectionDetailScreen(collection: mi, isOffline: isOffline),
         ),
@@ -394,8 +393,8 @@ Future<MediaNavigationResult> navigateToMediaItemDetails(
   }
 
   final target = mediaDetailNavigationTargetFor(mi, metadataOverride: metadataOverride);
-  final result = await Navigator.push<bool>(
-    context,
+  final navigator = FoldBrowserScope.detailNavigator(context);
+  final result = await navigator.push<bool>(
     mediaDetailRoute(
       metadata: target.metadata,
       isOffline: isOffline,
@@ -424,8 +423,7 @@ Future<void> navigateToPersonMedia(
   String? serverName,
   required MediaBackend backend,
 }) async {
-  await Navigator.push<void>(
-    context,
+  await FoldBrowserScope.detailNavigator(context).push<void>(
     MaterialPageRoute(
       builder: (_) => ActorMediaScreen(
         actorName: name,

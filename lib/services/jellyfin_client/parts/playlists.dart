@@ -69,14 +69,20 @@ mixin _JellyfinPlaylistMethods on _JellyfinClientInternals {
   @override
   Future<MediaPlaylist?> fetchPlaylistMetadata(String id) async {
     final item = await fetchItem(id);
-    if (item == null) return null;
+    if (item == null || item.kind != MediaKind.playlist) return null;
+    var type = _declaredMediaType(item.raw?['MediaType']);
+    // Emby and older servers can omit the container's type.
+    if (type == null && !isOfflineMode && item.leafCount != 0) {
+      final first = (await fetchPlaylistPage(id, start: 0, size: 1)).items.firstOrNull;
+      if (first != null) type = _declaredMediaType(first.raw?['MediaType']) ?? _playlistMediaType(first);
+    }
     return MediaPlaylist(
       id: item.id,
       backend: dialect.backend,
       title: item.title ?? t.playlists.playlist,
       summary: item.summary,
       smart: false,
-      playlistType: _playlistMediaType(item),
+      playlistType: type ?? 'unknown',
       durationMs: item.durationMs,
       leafCount: item.leafCount,
       thumbPath: item.thumbPath,
@@ -203,7 +209,7 @@ mixin _JellyfinPlaylistMethods on _JellyfinClientInternals {
       title: json['Name'] as String? ?? t.playlists.playlist,
       summary: json['Overview'] as String?,
       smart: false,
-      playlistType: (json['MediaType'] as String?)?.toLowerCase() ?? labelType,
+      playlistType: _declaredMediaType(json['MediaType']) ?? labelType,
       leafCount: json['ChildCount'] as int?,
       addedAt: jellyfinIsoToEpochSeconds(json['DateCreated'] as String?),
       // Emby leaves `DateLastSaved` null on a playlist and carries the
@@ -216,10 +222,15 @@ mixin _JellyfinPlaylistMethods on _JellyfinClientInternals {
     );
   }
 
+  String? _declaredMediaType(Object? raw) {
+    final type = raw is String ? raw.trim().toLowerCase() : '';
+    return type.isEmpty || type == 'unknown' ? null : type;
+  }
+
   String _playlistMediaType(MediaItem item) {
     if (item.kind == MediaKind.track || item.kind == MediaKind.album) return 'audio';
     if (item.kind == MediaKind.photo) return 'photo';
-    return 'video';
+    return item.kind.isVideo ? 'video' : 'unknown';
   }
 
   String? _imageTagPath(String id, Object? tags) {

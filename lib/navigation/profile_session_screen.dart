@@ -211,8 +211,9 @@ class _ProfileSessionScreenState extends State<ProfileSessionScreen> {
       builder: (context, activeId, _) {
         _onSessionProfileChanged(activeId);
         final initialPromptHandled = widget.initialPromptHandled || _hasBuiltSession;
-        return KeyedSubtree(
+        return RootRestorationScope(
           key: ValueKey<String?>('profile-session:$activeId'),
+          restorationId: activeId == null ? null : 'profile-session:$activeId',
           child: MultiProvider(
             providers: [
               ChangeNotifierProvider<MultiviewWorkspaceController>(
@@ -633,6 +634,7 @@ class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> {
                   children: [
                     Navigator(
                       key: _navigatorKey,
+                      restorationScopeId: 'navigation',
                       observers: [_routeObserver, _musicRouteObserver, _settingsRouteTracker],
                       onGenerateRoute: _onGenerateRoute,
                     ),

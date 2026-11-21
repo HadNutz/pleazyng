@@ -789,7 +789,7 @@ def verify_frozen_apple_run(run_id, proof, repository=REPOSITORY):
 
 def _verify_frozen_apple_runner(job, run_id, platform):
     """Require one of the explicitly supported signed Apple runner routes."""
-    expected_label = 'macos-26-intel' if platform == 'ios' else 'macos-26'
+    expected_labels = ('macos-26-intel', 'xcode-27') if platform == 'ios' else ('macos-26',)
     labels = job.get('labels')
     runner_id = job.get('runner_id')
     runner_name = job.get('runner_name')
@@ -797,7 +797,7 @@ def _verify_frozen_apple_runner(job, run_id, platform):
     if (not isinstance(labels, list) or type(runner_id) is not int or runner_id < 1
             or not isinstance(runner_name, str) or not runner_name.strip()):
         raise RecoveryError(f'{platform} signed recovery lacks assigned runner metadata (run {run_id})')
-    if (group == 'GitHub Actions' and labels == [expected_label]
+    if (group == 'GitHub Actions' and len(labels) == 1 and labels[0] in expected_labels
             and re.fullmatch(r'GitHub Actions [1-9][0-9]*', runner_name)):
         return
     private_task_label = f'gha-{run_id}-build-{platform}'

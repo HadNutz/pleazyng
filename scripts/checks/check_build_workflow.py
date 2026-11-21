@@ -1300,7 +1300,7 @@ require(
 
 apple_native = job_block(ci_text, "apple-native-suite")
 apple_runner = re.search(
-    r"(?m)^    runs-on: \$\{\{ (.+) && fromJSON\(format\('([^']+)', github\.run_id, matrix\.slug\)\) \|\| 'macos-26' \}\}$",
+    r"(?m)^    runs-on: \$\{\{ (.+) && fromJSON\(format\('([^']+)', github\.run_id, matrix\.slug\)\) \|\| \(matrix\.slug == 'ios' && 'xcode-27' \|\| 'macos-26'\) \}\}$",
     apple_native,
 )
 private_apple_conditions = {
@@ -1643,7 +1643,9 @@ for apple_job_name in ("build-ios", "build-tvos"):
 require(
     "timeout-minutes: 360" in apple_native
     and "75m xcodebuild test" in mobile_apple_test
-    and "hosted-xcode-version: '26.5'" in apple_native
+    and "matrix.slug == 'ios' && '27.1' || '26.5'" in apple_native
+    and "require-duo-sdk: 'true'" in job("build-ios")
+    and "verify_duo_sdk.py pleazyng-ios-unsigned.ipa" in job("build-ios")
     and 'test "$(uname -m)" = arm64' in named_step(apple_native, "Require native Apple Silicon host")
     and "ARCHS=arm64" in macos_apple_build
     and "ARCHS=arm64" in mobile_apple_test

@@ -117,6 +117,30 @@ void main() {
     });
   }
 
+  test('WebDAV restores UTF-8 strings when it serves the uploaded bytes as a binary file', () async {
+    const pattern = 'Générique 日本語';
+    final settings = await SettingsService.getInstance();
+    await settings.write(SettingsService.introPattern, pattern);
+    late List<int> stored;
+    final service = CloudSettingsBackupService(
+      httpClient: MockClient((request) async {
+        if (request.method == 'PUT') {
+          stored = request.bodyBytes;
+          return http.Response('', 201);
+        }
+        return http.Response.bytes(stored, 200, headers: {'content-type': 'application/octet-stream'});
+      }),
+    );
+    addTearDown(service.dispose);
+    await configure(service, 'https://backup.test/settings.json');
+    await service.backUp(expectedProfileId: 'audit-local', expectedOwner: 'audit-local');
+    expect(utf8.decode(stored), contains(pattern));
+    await settings.write(SettingsService.introPattern, 'reset');
+    final result = await service.restore(expectedProfileId: 'audit-local', expectedOwner: 'audit-local');
+    expect(result.keysImported, greaterThan(0));
+    expect(settings.read(SettingsService.introPattern), pattern);
+  });
+
   test('the recovery URL shown after backup imports into a new local profile', () async {
     final files = <Uri, String>{};
     final service = CloudSettingsBackupService(
@@ -282,6 +306,22 @@ void main() {
 
     await expectLater(
       service.restore(expectedProfileId: 'audit-local', expectedOwner: 'audit-local'),
+      throwsA(isA<CloudSettingsBackupException>()),
+    );
+    expect(await volume(), 31.0);
+  });
+
+  test('invalid UTF-8 in a JSON string rejects the backup before settings are applied', () async {
+    final bytes = [
+      ...utf8.encode('{"formatVersion":1,"prefs":{"volume":{"type":"double","value":87}},"note":"'),
+      0xff,
+      ...utf8.encode('"}'),
+    ];
+    final service = CloudSettingsBackupService(httpClient: MockClient((_) async => http.Response.bytes(bytes, 200)));
+    addTearDown(service.dispose);
+    await configure(service, 'https://backup.test/settings.json');
+    await expectLater(
+      service.restore(expectedProfileId: 'audit-local', expectedOwner: 'audit-local', importPortableFile: true),
       throwsA(isA<CloudSettingsBackupException>()),
     );
     expect(await volume(), 31.0);

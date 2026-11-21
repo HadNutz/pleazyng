@@ -365,8 +365,9 @@ class KeyboardShortcutsService extends ChangeNotifier {
 
       void stepSubtitleDelay(int deltaMs) {
         final offsets = PlayerSyncOffsets.of(player);
+        if (deltaMs < 0 && offsets.minimumSubtitleMs == 0 && offsets.subtitleMs == 0) return;
         final offsetMs = (offsets.subtitleMs + deltaMs).clamp(
-          ScopedPlayerPrefs.minimumSyncOffsetMs,
+          offsets.minimumSubtitleMs,
           ScopedPlayerPrefs.maximumSyncOffsetMs,
         );
         unawaited(player.setProperty(PlayerSyncOffsets.subtitleProperty, (offsetMs / 1000.0).toString()));

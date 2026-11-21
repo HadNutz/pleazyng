@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import '../i18n/strings.g.dart';
 import '../mpv/player/player.dart';
@@ -65,6 +66,7 @@ class MotionClarityService {
   final Map<String, String?> _originalValues = {};
   bool _capturedOriginalValues = false;
   bool _sourceHasOpened = false;
+  bool _desktopFramePoolPrepared = false;
   bool _requiresSourceReload = false;
   bool _comparisonBypass = false;
   bool _mciFilterAdded = false;
@@ -91,6 +93,7 @@ class MotionClarityService {
 
   MotionClarityService._(this._player);
 
+  bool get desktopFramePoolPrepared => _desktopFramePoolPrepared;
   MotionClarityPreset get currentPreset => _currentPreset;
   MotionClarityPreset get lastEnabledPreset => _lastEnabledPreset;
   MotionTemporalKernel get currentKernel => _currentKernel;
@@ -232,6 +235,7 @@ class MotionClarityService {
     final driver = await _readOutputDriver();
     final fps = double.tryParse((await _readProperty('display-fps') ?? '').trim());
     final passthroughActive = _player.audioPassthroughActive;
+    if (beforeSourceOpen) _desktopFramePoolPrepared = false;
     if (requestedEngine == MotionClarityEngine.temporalBlend &&
         driver != null &&
         driver.isNotEmpty &&
@@ -251,6 +255,23 @@ class MotionClarityService {
         reason: 'The active mpv output ($driver) does not expose temporal interpolation.',
       );
       return result;
+    }
+
+    // The decoder allocates its reference surfaces when the file opens. Keep
+    // enough for either desktop filter even if the movie starts in Original.
+    if (beforeSourceOpen &&
+        (Platform.isWindows || Platform.isLinux) &&
+        (driver == null || _supportedOutputs.contains(driver))) {
+      final reserve = await _readProperty('hwdec-extra-frames');
+      try {
+        if ((int.tryParse(reserve ?? '') ?? 0) < 8) {
+          await _player.setProperty('hwdec-extra-frames', '8');
+        }
+        _desktopFramePoolPrepared = true;
+      } catch (error) {
+        _desktopFramePoolPrepared = false;
+        appLogger.d('MotionClarityService: could not prepare desktop decoder surfaces', error: error);
+      }
     }
 
     if (!preset.interpolationEnabled) {
@@ -301,7 +322,8 @@ class MotionClarityService {
     // mpv documents -1 as the explicit always-interpolate sentinel. The UI
     // exposes this as threshold 0%, so translate that choice directly.
     final mpvThreshold = effectiveThreshold == 0 ? '-1' : (effectiveThreshold / 100).toStringAsFixed(2);
-    final requiresReload = !beforeSourceOpen && _sourceHasOpened && !_currentPreset.interpolationEnabled;
+    final requiresReload =
+        !_desktopFramePoolPrepared && !beforeSourceOpen && _sourceHasOpened && !_currentPreset.interpolationEnabled;
 
     final writes = <(String, String)>[
       // Keep encoded audio passthrough intact; decoded PCM can use mpv's
@@ -315,7 +337,7 @@ class MotionClarityService {
       ('tscale-clamp', '1'),
       // mpv sizes hardware decoder surfaces when a source opens. This bounded
       // reserve supports the temporal filter's look-ahead on the next source.
-      ('hwdec-extra-frames', '4'),
+      if (!_desktopFramePoolPrepared) ('hwdec-extra-frames', '4'),
     ];
 
     try {
@@ -483,6 +505,7 @@ class MotionClarityService {
     final filterSpec =
         '@$_mciFilterLabel:lavfi=[minterpolate=fps=$rateText:mi_mode=mci:${mciQuality.ffmpegOptions}:scd=fdiff:scd_threshold=10]';
     final needsReload =
+        !_desktopFramePoolPrepared &&
         !beforeSourceOpen &&
         _sourceHasOpened &&
         (!_currentPreset.interpolationEnabled ||
@@ -495,7 +518,7 @@ class MotionClarityService {
       await _player.setProperty('interpolation', 'no');
       // Bidirectional motion search keeps reference frames; this reserve is
       // bounded and must be configured before the decoder opens.
-      if (!_mciDecoderFrameReserveConfigured) {
+      if (!_desktopFramePoolPrepared && !_mciDecoderFrameReserveConfigured) {
         await _player.setProperty('hwdec-extra-frames', '8');
         _mciDecoderFrameReserveConfigured = true;
       }
@@ -804,6 +827,7 @@ class MotionClarityService {
   Future<void> _restoreOriginalValues() async {
     await _removeMciFilter();
     for (final name in _trackedOptions.reversed) {
+      if (_desktopFramePoolPrepared && name == 'hwdec-extra-frames') continue;
       final value = _originalValues[name];
       if (value == null) continue;
       try {

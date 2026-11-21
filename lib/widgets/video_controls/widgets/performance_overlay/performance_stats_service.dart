@@ -557,12 +557,12 @@ class PerformanceStatsService {
       demuxChannelCount: results[20],
     );
 
-    final appleGpuOutput = MotionProcessingService.appleGpuOutputObserved(
+    final appleMixer = MotionProcessingService.observedAppleMixer(
       player,
       _parseDouble(results[3]),
       _parseDouble(results[4]),
     );
-    final nativeInterpolationStatus = appleGpuOutput ? 'libplacebo GPU' : videoResults?[17];
+    final nativeInterpolationStatus = appleMixer ?? videoResults?[17];
     final metadataProvider = videoResults?[18];
     final metadataProviderVendor = videoResults?[25];
     final metadataDeviceKind = videoResults?[26];
@@ -624,7 +624,7 @@ class PerformanceStatsService {
       renderedFps: _parseDouble(results[4]),
       droppedFrames: _parseInt(results[15]),
       decoderDroppedFrames: _parseInt(results[16]),
-      rendererInterpolationActive: appleGpuOutput ? true : _parseBool(videoResults?[16]),
+      rendererInterpolationActive: appleMixer != null ? true : _parseBool(videoResults?[16]),
       nativeInterpolationStatus: nativeInterpolationStatus,
       thermalStatus: playbackPlayerType == 'mpv' && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
           ? MotionProcessingService.thermalStatusForPlayer(player)
@@ -681,7 +681,7 @@ class PerformanceStatsService {
       displayFps: _parseDouble(videoResults?.first),
       currentVideoOutput: reportedVideoOutput,
       videoSync: videoResults?[15],
-      motionInterpolationActive: appleGpuOutput ? true : _parseBool(videoResults?[16]),
+      motionInterpolationActive: appleMixer != null ? true : _parseBool(videoResults?[16]),
       motionProviderStatus: nativeInterpolationStatus,
       neuralProvider: neuralProvider,
       neuralProviderVendor: metadataProviderVendor,

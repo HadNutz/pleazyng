@@ -1,6 +1,10 @@
 import 'dart:async';
 
+import 'dart:ui' show DisplayFeatureType;
+
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'iphone_duo.dart';
 import 'platform_detector.dart';
 
 class OrientationHelper {
@@ -14,6 +18,28 @@ class OrientationHelper {
   /// rotation filtered out by `config_allowAllRotations`. On a TV box that does
   /// not pin rotation itself, the app alone then renders upside down (#2401).
   static bool get _platformOwnsOrientation => PlatformDetector.isAutomotive() || PlatformDetector.isTV();
+
+  /// Use the complete view, even when the control lives in a pane-local
+  /// MediaQuery. A resized window and an open fold belong to the system.
+  static bool systemManagesPlaybackWindow(BuildContext context) {
+    final view = View.of(context);
+    final window = view.physicalSize / view.devicePixelRatio;
+    final display = view.display.size / view.display.devicePixelRatio;
+    final duo = IphoneDuo.of(context);
+    return view.displayFeatures.any(
+          (feature) => feature.type == DisplayFeatureType.fold || feature.type == DisplayFeatureType.hinge,
+        ) ||
+        duo.folds.isNotEmpty ||
+        duo.hingeStatus == HingeStatus.partiallyOpen ||
+        window.shortestSide >= 600 ||
+        (display.width - window.width > 64 || display.height - window.height > 64);
+  }
+
+  static Future<void> applyPlaybackLock(bool locked, {required bool systemManaged}) {
+    if (_platformOwnsOrientation) return Future.value();
+    if (systemManaged) return SystemChrome.setPreferredOrientations(const []);
+    return locked ? lockLandscapeOrientation() : restoreDefaultOrientations();
+  }
 
   /// Restores the app's default orientation preferences: every orientation
   /// on every handheld. Phones rotate into the landscape shell (leading

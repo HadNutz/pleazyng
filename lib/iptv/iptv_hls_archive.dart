@@ -88,7 +88,7 @@ class IptvHlsArchive {
       while (!_stopped && _now().isBefore(endsAt)) {
         _keys.clear(); // A publisher may rotate a key behind the same URI.
         try {
-          await Future.wait(tracks.map((track) => _captureTrack(transport, track)));
+          await Future.wait(tracks.map((track) => _captureTrack(transport, track, startedAt)));
           failures = 0;
           await _checkpoint(tracks, complete: false);
           if (tracks.every((track) => track.ended)) break;
@@ -114,8 +114,21 @@ class IptvHlsArchive {
             // TARGETDURATION is an upper bound and can be much greater than
             // the segments a frozen playlist actually delivered.
             final segment = Duration(microseconds: (track.segments.last.duration * 1000000).round());
-            return !track.hasGap &&
-                track.lastProgressAt != null &&
+            if (track.hasGap) return false;
+            if (track.segments.any((s) => s.startsAt != null)) {
+              // Boundary segments are stored whole. Count only continuous
+              // broadcast time inside the requested window as coverage.
+              var coveredUntil = startedAt;
+              for (final entry in track.segments) {
+                final start = entry.startsAt;
+                if (start == null) continue;
+                if (start.difference(coveredUntil) > const Duration(milliseconds: 1)) return false;
+                final end = start.add(Duration(microseconds: (entry.duration * 1000000).round()));
+                if (end.isAfter(coveredUntil)) coveredUntil = end;
+              }
+              return !coveredUntil.isBefore(endsAt);
+            }
+            return track.lastProgressAt != null &&
                 now.difference(track.lastProgressAt!) <= segment * 2 &&
                 capturedDuration + segment >= endsAt.difference(startedAt) &&
                 !now.add(segment).isBefore(endsAt);
@@ -134,16 +147,48 @@ class IptvHlsArchive {
     }
   }
 
-  Future<void> _captureTrack(SourceTransport transport, _ArchiveTrack track) async {
+  Future<void> _captureTrack(SourceTransport transport, _ArchiveTrack track, DateTime startedAt) async {
     final page = await _playlist(transport, track.uri);
     final parsed = _parse(page.text, page.base);
     track.targetDuration = parsed.targetDuration;
     track.ended = parsed.ended;
-    for (final segment in parsed.segments) {
+    // On a live playlist without a broadcast clock, estimate only the first
+    // page's overlap from the live edge. Never import a long sliding backlog
+    // as the start of a new recording. Later pages use sequence continuity.
+    var firstIndex = 0;
+    if (track.lastSequence == null &&
+        requestedStart != null &&
+        !parsed.ended &&
+        parsed.segments.isNotEmpty &&
+        parsed.segments.every((s) => s.startsAt == null)) {
+      var edge = _now();
+      firstIndex = parsed.segments.length - 1;
+      while (firstIndex > 0) {
+        edge = edge.subtract(parsed.segments[firstIndex].durationTime);
+        if (!edge.isAfter(startedAt)) break;
+        firstIndex--;
+      }
+    }
+    for (final (index, segment) in parsed.segments.indexed) {
       if (_stopped || !_now().isBefore(endsAt)) break;
+      if (segment.startsAt == null &&
+          parsed.sequenced &&
+          track.lastSequence == segment.sequence - 1 &&
+          track.lastContinuity == segment.continuity) {
+        // Sliding playlists can drop the original timestamp. The next
+        // consecutive segment on this timeline starts where the last one ended.
+        final previous = track.segments.last;
+        segment.startsAt = previous.startsAt?.add(Duration(microseconds: (previous.duration * 1000000).round()));
+      }
+      final start = segment.startsAt;
+      if (start != null && (!start.isBefore(endsAt) || !start.add(segment.durationTime).isAfter(startedAt))) continue;
       final identity = parsed.sequenced
           ? '${segment.continuity}:${segment.sequence}'
           : '${segment.continuity}:${segment.sequence}:${segment.uri}:${segment.range?.offset}:${segment.range?.length}';
+      if (index < firstIndex) {
+        track.seen.add(identity);
+        continue;
+      }
       if (track.seen.contains(identity)) continue;
       if (track.segments.length >= 50000) throw const SourceException(SourceFailure.invalidData);
       String? mapName;
@@ -185,6 +230,7 @@ class IptvHlsArchive {
         track.hasGap = true;
       }
       track.lastSequence = segment.sequence;
+      track.lastContinuity = segment.continuity;
       track.durationUs += (segment.duration * 1000000).round();
       track.lastProgressAt = _now();
       if (segment.duration.ceil() > track.targetDuration) track.targetDuration = segment.duration.ceil();
@@ -328,12 +374,53 @@ class IptvHlsArchive {
     } finally {
       await input.close();
     }
+    if (!prefix.startsWith('#EXTM3U')) return null;
     final match = RegExp(r'^#PLEZY-ARCHIVE:([A-Za-z0-9_.-]+\.media)$', multiLine: true).firstMatch(prefix);
     if (match == null || match.group(1)!.length > 160) return null;
     final folder = Directory(p.join(manifest.parent.path, match.group(1)!));
     return await FileSystemEntity.type(folder.path, followLinks: false) == FileSystemEntityType.directory
         ? folder
         : null;
+  }
+
+  /// Remove only the cataloged file and its explicitly marked, owned sidecar.
+  /// Never traverse linked directories or trust a marker naming another recording.
+  static Future<void> deleteRecordingFiles({
+    required Directory root,
+    required Set<String> profileFolders,
+    required File manifest,
+    required String recordingId,
+  }) async {
+    final rootPath = p.normalize(root.absolute.path);
+    final path = p.normalize(manifest.absolute.path);
+    final file = File(path);
+    if (!p.isWithin(rootPath, path) ||
+        !p.equals(file.parent.parent.path, rootPath) ||
+        !profileFolders.contains(p.basename(file.parent.path))) {
+      return;
+    }
+    var parent = file.parent;
+    while (p.isWithin(rootPath, parent.absolute.path) || p.equals(rootPath, parent.absolute.path)) {
+      final type = await FileSystemEntity.type(parent.path, followLinks: false);
+      if (type == FileSystemEntityType.link || type == FileSystemEntityType.notFound) return;
+      if (type != FileSystemEntityType.directory) throw FileSystemException('Invalid recording directory', parent.path);
+      parent = parent.parent;
+    }
+    final type = await FileSystemEntity.type(path, followLinks: false);
+    if (type == FileSystemEntityType.notFound) return;
+    if (type == FileSystemEntityType.link) {
+      await Link(path).delete();
+      return;
+    }
+    if (type != FileSystemEntityType.file) throw FileSystemException('Invalid recording file', path);
+    final folder = await mediaDirectory(file);
+    if (folder != null) {
+      final filename = p.basename(path);
+      final stem = p.basenameWithoutExtension(path);
+      final owned = {'.$recordingId.media', '$filename.media', '$stem.media', '.$stem.media'};
+      if (owned.contains(p.basename(folder.path))) await folder.delete(recursive: true);
+    }
+    await file.delete();
   }
 
   static Future<int> retainedBytes(File manifest) async {
@@ -380,8 +467,9 @@ class IptvHlsArchive {
       for (final line in const LineSplitter().convert(await playlist.readAsString())) {
         if (!line.startsWith('#EXTINF:')) continue;
         final value = double.tryParse(line.substring(8).split(',').first);
-        if (value == null || !value.isFinite || value <= 0 || value > 120)
+        if (value == null || !value.isFinite || value <= 0 || value > 120) {
           throw const FormatException('Invalid HLS duration');
+        }
         microseconds += (value * 1000000).round();
       }
       durations.add(Duration(microseconds: microseconds));
@@ -522,6 +610,13 @@ class IptvHlsArchive {
         duration = 0;
       }
     }
+    // A playlist may place its first timestamp after earlier segments.
+    for (var i = segments.length - 2; i >= 0; i--) {
+      final segment = segments[i], next = segments[i + 1];
+      if (segment.continuity == next.continuity) {
+        segment.startsAt ??= next.startsAt?.subtract(segment.durationTime);
+      }
+    }
     return (segments: segments, targetDuration: target, ended: ended, sequenced: sequenced);
   }
 
@@ -578,6 +673,7 @@ class _ArchiveTrack {
   int targetDuration = 4;
   bool ended = false;
   int? lastSequence;
+  int? lastContinuity;
   int durationUs = 0;
   bool hasGap = false;
   DateTime? lastProgressAt;
@@ -606,7 +702,7 @@ class _MapResource {
 }
 
 class _Segment {
-  const _Segment(
+  _Segment(
     this.uri,
     this.sequence,
     this.duration,
@@ -625,5 +721,6 @@ class _Segment {
   final _MapResource? map;
   final bool discontinuity;
   final int continuity;
-  final DateTime? startsAt;
+  DateTime? startsAt;
+  Duration get durationTime => Duration(microseconds: (duration * 1000000).round());
 }

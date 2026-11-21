@@ -281,6 +281,9 @@ def archive(platform: str, archive_path: Path, export_path: Path, derived_data: 
                         raise ValueError('Exported CarPlay video flag differs from signed capabilities')
                     report['embedded_car_capabilities'] = grants
                     report['signed_car_capabilities'] = actual
+            if platform == 'ios':
+                from apple.verify_duo_sdk import verify
+                verify(ipas[0])
             if widget_enabled:
                 verify_music_widget(ipas[0])
             destination = Path(f'pleazyng-{platform}-appstore.ipa')

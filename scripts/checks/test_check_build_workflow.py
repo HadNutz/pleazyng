@@ -412,8 +412,8 @@ sys.exit(1 if len(calls) <= int(os.environ['FAIL_UNTIL']) else 0)
             ("github.workflow_ref == 'snapetech-org/pleazyng/.github/workflows/build.yml@refs/heads/main' && ", ""),
             ('"ng-main-run-{0}",', ''),
             ('"gha-{0}-apple-native-test-{1}"', '"gha-apple-native-test-{1}"'),
-            ("hosted-xcode-version: '26.5'",
-             "hosted-xcode-version: '26.3'"),
+            ("matrix.slug == 'ios' && '27.1' || '26.5'",
+             "matrix.slug == 'ios' && '26.3' || '26.5'"),
             ('test "$(uname -m)" = arm64', 'true'),
         ]
         for before, after in changes:

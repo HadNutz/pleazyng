@@ -23,6 +23,7 @@ class LiveTvProgramGuide {
     required LiveTvChannel channel,
     required double fromEpoch,
     required double toEpoch,
+    double? nowEpoch,
     required Future<List<LiveTvProgram>> Function(DateTime from, DateTime to) fetch,
   }) async {
     if (!identical(owner, _owner)) reset(owner);
@@ -33,22 +34,30 @@ class LiveTvProgramGuide {
         DateTime.fromMillisecondsSinceEpoch((toEpoch * 1000).ceil(), isUtc: true),
       );
       if (!identical(owner, _owner) || generation != _generation) return false;
+      bool inWindow(LiveTvProgram p) =>
+          liveTvProgramMatchesChannel(p, channel) &&
+          p.beginsAt != null &&
+          p.endsAt != null &&
+          p.beginsAt! < p.endsAt! &&
+          p.endsAt! > fromEpoch &&
+          p.beginsAt! < toEpoch;
+      final fresh = fetched.where(inWindow).toList();
+      // An actual airing supersedes old entries starting during its broadcast.
+      // A nonempty refresh replaces the upcoming schedule. Providers can omit
+      // expired history, which remains useful when seeking backwards.
+      final retained = programs.where(
+        (old) =>
+            inWindow(old) &&
+            (fresh.isEmpty || nowEpoch == null || old.beginsAt! < nowEpoch) &&
+            !fresh.any((p) => p.beginsAt! <= old.beginsAt! && old.beginsAt! < p.endsAt!),
+      );
       final merged = <String, LiveTvProgram>{};
-      for (final program in [...programs, ...fetched]) {
-        if (!liveTvProgramMatchesChannel(program, channel) ||
-            program.beginsAt == null ||
-            program.endsAt == null ||
-            program.endsAt! <= fromEpoch ||
-            program.beginsAt! >= toEpoch) {
-          continue;
-        }
+      for (final program in [...retained, ...fresh]) {
         final key = '${program.beginsAt}:${program.ratingKey ?? program.key ?? program.guid ?? program.title}';
         merged[key] = program;
       }
       programs = merged.values.toList(growable: false);
-      // Plex's existing grid API returns empty on provider failures. An
-      // empty channel slice cannot prove retained history was refreshed.
-      stale = !fetched.any((program) => liveTvProgramMatchesChannel(program, channel));
+      stale = fresh.isEmpty;
       return true;
     } catch (_) {
       if (!identical(owner, _owner) || generation != _generation) return false;

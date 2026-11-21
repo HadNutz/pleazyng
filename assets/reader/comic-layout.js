@@ -8,7 +8,7 @@ export function comicTurns(pages, settings, width, height) {
         });
     }
     const double = settings.comicMode !== 'webtoon' && !settings.splitWide &&
-        (settings.spread === 'double' || (settings.spread === 'auto' && width >= 900 && width > height));
+        (settings.spread === 'double' || (settings.spread === 'auto' && (settings.foldPane > 0 || (width >= 900 && width > height))));
     const solo = new Set(settings.soloPages ?? []);
     const turns = [];
     for (let i = 0; i < pages.length; i++) {

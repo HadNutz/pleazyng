@@ -138,6 +138,10 @@ export class ComicReader extends HTMLElement {
     render() {
         if(!this.pages || !this.clientWidth || !this.clientHeight)return;
         this.stage.style.removeProperty('transform');this.stage.style.removeProperty('transform-origin');this.stage.style.removeProperty('will-change');
+        this.stage.style.removeProperty('display');
+        this.stage.style.removeProperty('grid-template-columns');
+        this.stage.style.removeProperty('column-gap');
+        this.stage.style.removeProperty('justify-items');
         this.epoch++;this.unload(this.stage);
         this.rendering=true;
         this.stage.className=this.settings.comicMode==='webtoon'?'strip':'';
@@ -163,6 +167,21 @@ export class ComicReader extends HTMLElement {
                 img.style.position='absolute';img.style.left=`${-x*scale}px`;img.style.top=`${-y*scale}px`;
                 this.viewport.scrollLeft=this.viewport.scrollTop=0;
                 this.rendering=false;this.location();return;
+            }
+            if (this.settings.foldPane > 0 && this.settings.zoom === 'fit-page') {
+                const gap = Math.max(0, this.settings.foldGap || 0);
+                const pane = Math.max(1, (this.clientWidth-gap)/2);
+                Object.assign(this.stage.style, {display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: `${gap}px`, justifyItems: 'center', width: '100%', height: '100%'});
+                for (const [i, pageItem] of turn.entries()) {
+                    const page = this.pages[pageItem.index];
+                    const scale = Math.min(pane/(page.width || 800),this.clientHeight/(page.height || 1200));
+                    const figure = this.figure(pageItem,false,scale);
+                    figure.style.gridColumn = (turn.length === 1 && this.settings.direction === 'rtl') ? '2' : String(i + 1);
+                    this.stage.append(figure);
+                    this.load(figure);
+                }
+                this.viewport.scrollLeft = this.viewport.scrollTop = 0;
+                this.rendering=false; this.location(); return;
             }
             const width=turn.reduce((sum,item)=>sum+(this.pages[item.index].width||800)/(item.half===undefined?1:2),0);
             const height=Math.max(...turn.map(item=>this.pages[item.index].height||1200));

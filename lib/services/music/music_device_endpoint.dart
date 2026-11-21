@@ -24,7 +24,7 @@ class MusicDeviceEndpoint {
 
   bool get current => !_closed && allowed();
 
-  MusicConnectMessage _state(String? known) {
+  MusicConnectMessage _state(String? known, {required bool withRadio}) {
     final offer = session.offerTransfer();
     final volume = session.playback.volume;
     if (offer == null) {
@@ -47,7 +47,11 @@ class MusicDeviceEndpoint {
       'position': offer.snapshot.position.inMilliseconds,
       'playing': offer.snapshot.playing,
       'volume': volume,
-      if (known != revision) 'queue': offer.snapshot.toJson(itemLimit: MusicTransferSnapshot.maxTransferItems),
+      'sleepEnd': session.playback.sleepTimerEndOfTrack,
+      'sleepMs': ?session.playback.sleepTimerDuration?.inMilliseconds,
+      if (session.playback case final MusicDiscoveryControls controls) 'continuation': controls.continuationEnabled,
+      if (known != revision)
+        'queue': offer.snapshot.toJson(itemLimit: MusicTransferSnapshot.maxTransferItems, withRadio: withRadio),
     };
   }
 
@@ -59,7 +63,7 @@ class MusicDeviceEndpoint {
     if (!current) return null;
     switch (message['op']) {
       case 'state':
-        return _state(message['revision'] as String?);
+        return _state(message['revision'] as String?, withRadio: message['radio'] == true);
       case 'prepare':
         final snapshot = MusicTransferSnapshot.tryParse(
           message['queue'],
@@ -150,7 +154,10 @@ class MusicDeviceEndpoint {
         final args = message['args'];
         if (action is! String || args is! Map<String, dynamic>) return const {'ok': false};
         final success = await _control(action, args);
-        return {'ok': success, if (success) 'state': _state(message['revision'] as String?)};
+        return {
+          'ok': success,
+          if (success) 'state': _state(message['revision'] as String?, withRadio: message['radio'] == true),
+        };
       default:
         return const {'ok': false};
     }
@@ -180,6 +187,18 @@ class MusicDeviceEndpoint {
         final volume = args['volume'];
         if (volume is! num || !volume.isFinite || volume < 0 || volume > 100) return false;
         await playback.setVolume(volume.toDouble());
+      case 'sleep':
+        final endOfTrack = args['endOfTrack'];
+        final ms = args['milliseconds'];
+        if (endOfTrack is! bool ||
+            (ms != null && (ms is! int || ms <= 0 || ms > const Duration(days: 1).inMilliseconds || endOfTrack))) {
+          return false;
+        }
+        playback.setSleepTimer(ms == null ? null : Duration(milliseconds: ms as int), endOfTrack: endOfTrack);
+      case 'continuation':
+        final enabled = args['enabled'];
+        if (enabled is! bool || playback is! MusicDiscoveryControls) return false;
+        (playback as MusicDiscoveryControls).setContinuationEnabled(enabled);
       case 'shuffle':
         playback.toggleShuffle();
       case 'repeat':

@@ -18,6 +18,7 @@ import '../../models.dart';
 import '../audio_rendering_mode.dart';
 import '../player_base.dart';
 import '../subtitle_pcm_capture_source.dart';
+import 'subtitle_cue_timeline.dart';
 import 'webos_media_proxy.dart';
 import 'native_tv_playback_metadata.dart';
 import 'webos_soloud_player.dart';
@@ -93,7 +94,7 @@ class PlayerWebOS extends PlayerBase
   List<Map<String, dynamic>> _sourceAudioMetadata = const [];
   String _audioMetadataOrigin = 'unreported';
   List<SubtitleTrack> _externalSubtitles = const [];
-  webos_media.ClosedCaptionFile? _captions;
+  SubtitleCueTimeline? _captions;
   PgsSubtitles? _pgs;
   final ValueNotifier<PgsCue?> pgsCue = ValueNotifier(null);
   final ValueNotifier<String> caption = ValueNotifier('');
@@ -1005,28 +1006,19 @@ class PlayerWebOS extends PlayerBase
     return bytes.takeBytes();
   }
 
-  webos_media.ClosedCaptionFile _parseLocalCaptions(SubtitleTrack track, Uint8List bytes) {
+  SubtitleCueTimeline _parseLocalCaptions(SubtitleTrack track, Uint8List bytes) {
     final uri = Uri.parse(track.uri!);
     final isVtt =
         const {'vtt', 'webvtt'}.contains(track.codec?.toLowerCase()) || uri.path.toLowerCase().endsWith('.vtt');
     final content = utf8.decode(bytes).replaceFirst(String.fromCharCode(0xFEFF), '');
-    return isVtt ? webos_media.WebVTTCaptionFile(content) : webos_media.SubRipCaptionFile(content);
+    final file = isVtt ? webos_media.WebVTTCaptionFile(content) : webos_media.SubRipCaptionFile(content);
+    return SubtitleCueTimeline(file.captions.map((cue) => (start: cue.start, end: cue.end, text: cue.text)));
   }
 
   void _updateCaption(Duration position) {
     final visiblePgs = _subtitlesVisible ? _pgs?.at(position - _subtitleDelay) : null;
     if (!identical(pgsCue.value, visiblePgs)) pgsCue.value = visiblePgs;
-    var text = '';
-    final cues = _captions?.captions;
-    if (_subtitlesVisible && cues != null) {
-      final adjusted = position - _subtitleDelay;
-      for (final cue in cues) {
-        if (adjusted >= cue.start && adjusted < cue.end) {
-          text = cue.text;
-          break;
-        }
-      }
-    }
+    final text = _subtitlesVisible ? _captions?.at(position - _subtitleDelay) ?? '' : '';
     if (caption.value != text) {
       caption.value = text;
     }

@@ -762,7 +762,10 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     if (identical(output, _musicDeviceOutput)) return;
     _musicDeviceOutput?.removeListener(_onMusicDeviceChanged);
     _musicDeviceOutput = output;
-    if (output != null) _finalizeCurrentTrack();
+    if (output != null) {
+      _finalizeCurrentTrack();
+      _cancelSleepTimer();
+    }
     _musicDeviceDiscrete = null;
     _musicDeviceMetadata = null;
     _musicDeviceRevision++;
@@ -783,7 +786,15 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     _volumeNotifier.value = state?.volume ?? _volume;
     _positionController.add(state?.snapshot?.position ?? position);
     final output = _musicDeviceOutput;
-    final discrete = (output, state?.revision, state?.snapshot?.playing, output?.connected);
+    final discrete = (
+      output,
+      state?.revision,
+      state?.snapshot?.playing,
+      output?.connected,
+      state?.sleepTimerDuration,
+      state?.sleepTimerEndOfTrack,
+      state?.continuationEnabled,
+    );
     final track = state?.track;
     if (track != null) {
       _ensureMediaControls();
@@ -836,7 +847,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     final revision = groupControlRevision;
     final intent = _playIntentGeneration;
     final clients = <MediaServerClient, Object?>{};
-    for (final item in snapshot.queue.items) {
+    for (final item in snapshot.catalogItems) {
       final client = _clientFor(item);
       if (client == null || client.isOfflineMode || client.backend != item.backend) return null;
       clients[client] = client.authenticationSessionId;
@@ -1273,12 +1284,17 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
   final Set<String> _continuationExcluded = {};
 
   @override
-  bool get continuationEnabled => _continuationSeed != null;
+  bool get continuationEnabled =>
+      _musicDeviceOutput == null ? _continuationSeed != null : _musicDeviceOutput?.state?.continuationEnabled == true;
   @override
-  bool get continuationLoading => _continuationLoading;
+  bool get continuationLoading => _musicDeviceOutput == null && _continuationLoading;
 
   @override
   void setContinuationEnabled(bool enabled) {
+    if (_musicDeviceOutput != null) {
+      unawaited(_controlMusicDevice('continuation', {'enabled': enabled}));
+      return;
+    }
     _continuationEpoch++;
     _continuationStation = null;
     _continuationServerRadio = null;
@@ -1791,6 +1807,15 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       position: position,
       playing: isPlaying,
       playContext: _playContext,
+      radio: _continuationSeed == null
+          ? null
+          : MusicRadioContinuation(
+              _continuationSeed!,
+              albumRadio: _continuationAlbumRadio,
+              distance: _continuationDistance,
+              station: _continuationStation,
+              serverRadio: _continuationServerRadio,
+            ),
     );
     try {
       snapshot.toJson(itemLimit: MusicTransferSnapshot.maxTransferItems);
@@ -1913,7 +1938,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     }
     if (_disposed || !active() || (snapshot.playing && !automotiveMusicPlaybackAllowedNow())) return false;
     final clients = <MediaServerClient, Object?>{};
-    for (final item in snapshot.queue.items) {
+    for (final item in snapshot.catalogItems) {
       final serverId = serverIdOrNull(item.serverId);
       if (serverId == null || !_serverManager.isServerVisible(serverId)) return false;
       final client = _serverManager.getClient(serverId);
@@ -1950,6 +1975,9 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       return false;
     }
     final expectedRevision = _queueSessionRevision + 1;
+    final previous = !group && snapshot.radio != null ? captureTransfer() : null;
+    final previousSource = previous == null ? null : _currentSource;
+    final previousAuthorized = previous == null ? null : _captureOutputAuthority();
     if (group) setMusicGroupFollower(true);
     await _startQueue(
       tracks: snapshot.queue.items,
@@ -1959,6 +1987,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       initialPosition: snapshot.position,
       restoredQueue: snapshot.queue,
       preparedSource: source,
+      recoverFailures: snapshot.radio == null,
     );
     if (!active()) {
       // The pairing disappeared or the request expired while opening. Leave
@@ -1976,8 +2005,13 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
         _queueSessionRevision == expectedRevision &&
         _queueEditRevision == edit &&
         _continuationResumeRevision == transport) {
-      await _stopSession(endStatus: MusicPlaybackStatus.idle);
+      if (previous != null && previousSource != null && previousAuthorized!() && _generation == generation + 1) {
+        await _acceptTransfer(previous, preparedSource: previousSource, current: previousAuthorized);
+      } else {
+        await _stopSession(endStatus: MusicPlaybackStatus.idle);
+      }
     }
+    if (accepted && snapshot.radio != null) _continueRadio(snapshot.radio!);
     return accepted;
   }
 
@@ -2237,13 +2271,15 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
   Stream<Object> get errors => _errorsController.stream;
 
   @override
-  bool get sleepTimerActive => _sleepTimer != null || _sleepTimerEndOfTrack;
+  bool get sleepTimerActive => sleepTimerDuration != null || sleepTimerEndOfTrack;
 
   @override
-  Duration? get sleepTimerDuration => _sleepTimerDuration;
+  Duration? get sleepTimerDuration =>
+      _musicDeviceOutput == null ? _sleepTimerDuration : _musicDeviceOutput?.state?.sleepTimerDuration;
 
   @override
-  bool get sleepTimerEndOfTrack => _sleepTimerEndOfTrack;
+  bool get sleepTimerEndOfTrack =>
+      _musicDeviceOutput == null ? _sleepTimerEndOfTrack : _musicDeviceOutput?.state?.sleepTimerEndOfTrack == true;
 
   @override
   int beginPlayIntent() => ++_playIntentGeneration;
@@ -2404,7 +2440,6 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       }
       throw PlaybackException(t.music.instantMixNoServer, reason: PlaybackFailureReason.serverUnavailable);
     }
-    final account = musicAccountScope(client);
     MusicDiscoveryBatch batch;
     var generating = true;
     try {
@@ -2440,23 +2475,18 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     if (startTrack != null && !batch.tracks.any((track) => track.globalKey == startTrack.globalKey)) {
       throw ArgumentError('The selected radio track is outside the preview');
     }
-    final expectedRevision = _queueSessionRevision + (_calderaAudioOwner != null ? 2 : 1);
-    await _startQueue(
-      tracks: batch.tracks,
-      sourceCurrent: batch.isCurrent,
+    return _startRadioQueue(
+      batch.tracks,
+      recipe: MusicRadioContinuation(
+        albumRadio ? _radioAlbum(batch.tracks.last) : seed,
+        albumRadio: albumRadio,
+        distance: maxDistance,
+      ),
+      title: preview?.recipe.title ?? seed.displayTitle,
       startTrack: startTrack,
-      playContext: MusicPlayContext(title: preview?.recipe.title ?? seed.displayTitle, kind: MusicPlayContextKind.mix),
+      current: batch.isCurrent,
+      intent: intent,
     );
-    if (_disposed || _queueSessionRevision != expectedRevision) return InstantMixOutcome.superseded;
-    if (batch.isCurrent()) {
-      _continuationSeed = albumRadio ? _radioAlbum(batch.tracks.last) : seed;
-      _continuationAccount = account;
-      _continuationAlbumRadio = albumRadio;
-      _continuationDistance = maxDistance;
-      _persistSessionSnapshot();
-      unawaited(_extendStation());
-    }
-    return InstantMixOutcome.started;
   }
 
   @override
@@ -2486,23 +2516,15 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     if (startTrack != null && !preview.tracks.any((track) => track.globalKey == startTrack.globalKey)) {
       throw ArgumentError('Selected station track is outside the preview');
     }
-    final expectedRevision = _queueSessionRevision + (_calderaAudioOwner != null ? 2 : 1);
-    await _startQueue(
-      tracks: preview.tracks,
-      sourceCurrent: current,
+    return _startRadioQueue(
+      preview.tracks,
+      recipe: MusicRadioContinuation(seed, station: station),
+      title: station.title,
       startTrack: startTrack,
-      playContext: MusicPlayContext(title: station.title, kind: MusicPlayContextKind.mix),
       shuffle: shuffle,
+      current: current,
+      intent: intent,
     );
-    if (_disposed || _queueSessionRevision != expectedRevision) return InstantMixOutcome.superseded;
-    if (current()) {
-      _continuationSeed = seed;
-      _continuationAccount = account;
-      _continuationStation = station;
-      _persistSessionSnapshot();
-      unawaited(_extendStation());
-    }
-    return InstantMixOutcome.started;
   }
 
   @override
@@ -2544,20 +2566,67 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       throw const FormatException('Foreign server radio track');
     }
     if (tracks.isEmpty) return InstantMixOutcome.empty;
+    return _startRadioQueue(
+      tracks,
+      recipe: MusicRadioContinuation(tracks.first, serverRadio: radio),
+      title: radio.title,
+      shuffle: shuffle,
+      current: current,
+      intent: intent,
+    );
+  }
+
+  Future<InstantMixOutcome> _startRadioQueue(
+    List<MediaItem> tracks, {
+    required MusicRadioContinuation recipe,
+    required String title,
+    required bool Function() current,
+    required int intent,
+    MediaItem? startTrack,
+    bool shuffle = false,
+  }) async {
+    final context = MusicPlayContext(title: title, kind: MusicPlayContextKind.mix);
+    final output = _musicDeviceOutput;
+    if (output != null) {
+      bool selected() => isPlayIntentCurrent(intent) && identical(output, _musicDeviceOutput) && current();
+      final snapshot = MusicTransferSnapshot(
+        queue: _captureTransferQueueState(tracks, startTrack: startTrack, shuffle: shuffle),
+        position: Duration.zero,
+        playing: true,
+        playContext: context,
+        radio: recipe,
+      );
+      final accepted = await output.playSnapshot(snapshot, current: selected);
+      if (!selected()) return InstantMixOutcome.superseded;
+      if (!accepted) throw StateError('The music device could not start this radio');
+      return InstantMixOutcome.started;
+    }
+
     final expectedRevision = _queueSessionRevision + (_calderaAudioOwner != null ? 2 : 1);
     await _startQueue(
       tracks: tracks,
       sourceCurrent: current,
       shuffle: shuffle,
-      playContext: MusicPlayContext(title: radio.title, kind: MusicPlayContextKind.mix),
+      startTrack: startTrack,
+      playContext: context,
     );
     if (_disposed || _queueSessionRevision != expectedRevision || !current()) return InstantMixOutcome.superseded;
-    _continuationSeed = tracks.first;
-    _continuationAccount = account;
-    _continuationServerRadio = radio;
-    _persistSessionSnapshot();
-    unawaited(_extendStation());
+    _continueRadio(recipe);
     return InstantMixOutcome.started;
+  }
+
+  void _continueRadio(MusicRadioContinuation recipe) {
+    final client = _clientFor(recipe.seed);
+    if (client == null || client.isOfflineMode) return;
+    _continuationSeed = recipe.seed;
+    _continuationAccount = musicAccountScope(client);
+    _continuationAlbumRadio = recipe.albumRadio;
+    _continuationDistance = recipe.distance;
+    _continuationStation = recipe.station;
+    _continuationServerRadio = recipe.serverRadio;
+    _persistSessionSnapshot();
+    notifyListeners();
+    unawaited(_extendStation());
   }
 
   Future<void> _startQueue({
@@ -2572,6 +2641,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     PlaybackLaunchObserver? launchObserver,
     MusicQueueState? restoredQueue,
     MusicSource? preparedSource,
+    bool recoverFailures = true,
     bool Function()? sourceCurrent,
   }) async {
     if (tracks.isEmpty || _disposed || sourceCurrent?.call() == false) {
@@ -2678,6 +2748,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       initialPosition: initialPosition,
       offline: offline,
       preparedSource: preparedSource,
+      recoverFailures: recoverFailures,
     );
   }
 
@@ -2707,7 +2778,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     void failed(Object error) {
       if (!launchCurrent()) return;
       if (recoverFailures) {
-        _handlePlaybackFailure(error);
+        _handlePlaybackFailure(error, play: play);
       } else {
         _currentSource = null;
         _pendingRestoreResume = _PendingResume(globalKey: track.globalKey, position: initialPosition ?? Duration.zero);
@@ -3474,12 +3545,12 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       return;
     }
     appLogger.w('Music player error: $error');
-    _handlePlaybackFailure(error);
+    _handlePlaybackFailure(error, play: _status != MusicPlaybackStatus.paused);
   }
 
   /// Shared recovery for resolve/open/player errors: surface, then skip to
   /// the next track; three consecutive strikes stop the session as failed.
-  void _handlePlaybackFailure(Object error) {
+  void _handlePlaybackFailure(Object error, {required bool play}) {
     _markLaunchTerminal('failed', failure: 'playbackFailed');
     _errorsController.add(error);
     _consecutiveFailures++;
@@ -3492,7 +3563,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       unawaited(_stopSession(endStatus: MusicPlaybackStatus.error));
       return;
     }
-    unawaited(_advanceTo(nextCursor));
+    unawaited(_advanceTo(nextCursor, play: play));
   }
 
   // ---------------------------------------------------------------------
@@ -4521,7 +4592,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       }
       _persistSessionSnapshot(positionOverride: Duration.zero);
       // The cursor already points at what used to be next — open it.
-      unawaited(_advanceTo(_queue.cursor));
+      unawaited(_advanceTo(_queue.cursor, play: _status != MusicPlaybackStatus.paused));
       return;
     }
     _afterQueueEdit();
@@ -4641,6 +4712,10 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
 
   @override
   void setSleepTimer(Duration? duration, {bool endOfTrack = false}) {
+    if (_musicDeviceOutput != null) {
+      unawaited(_controlMusicDevice('sleep', {'endOfTrack': endOfTrack, 'milliseconds': ?duration?.inMilliseconds}));
+      return;
+    }
     if (endOfTrack) _cancelOverlap();
     _sleepTimer?.cancel();
     _sleepTimer = null;

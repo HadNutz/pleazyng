@@ -54,9 +54,9 @@ enum DownloadBackupPolicy {
   // The normal Dart entry point owns authentication and the only music session.
   private(set) var musicEngine: FlutterEngine?
 
-  func ensureMusicEngine() -> FlutterEngine {
+  func ensureMusicEngine(restoringPhone: Bool = false) -> FlutterEngine {
     if let engine = musicEngine { return engine }
-    let engine = FlutterEngine(name: "pleazyng_shared_music", project: nil, allowHeadlessExecution: true)
+    let engine = FlutterEngine(name: "pleazyng_shared_music", project: nil, allowHeadlessExecution: true, restorationEnabled: restoringPhone)
     musicEngine = engine
     guard
       engine.run(
@@ -74,7 +74,11 @@ enum DownloadBackupPolicy {
   private let musicNfcBridge = MusicNfcBridge()
 
   override func application(_ application: UIApplication, handlerFor intent: INIntent) -> Any? {
-    intent is INPlayMediaIntent ? musicIntentHandler : super.application(application, handlerFor: intent)
+    if intent is INPlayMediaIntent {
+      _ = ensureMusicEngine()
+      return musicIntentHandler
+    }
+    return super.application(application, handlerFor: intent)
   }
 
   private var deviceAdjustmentChannel: FlutterMethodChannel?
@@ -113,7 +117,9 @@ enum DownloadBackupPolicy {
     }
 
     application.beginReceivingRemoteControlEvents()
-    _ = ensureMusicEngine()
+    // A phone scene can wait for UIKit restoration. Background and CarPlay-only
+    // launches must be able to produce a catalog without a Flutter view.
+    if application.applicationState == .background { _ = ensureMusicEngine() }
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
@@ -307,6 +313,7 @@ enum DownloadBackupPolicy {
   }
 
   private var activeWindow: UIWindow? {
+    if let primary = musicEngine?.viewController?.viewIfLoaded?.window { return primary }
     if #available(iOS 13.0, *) {
       for scene in UIApplication.shared.connectedScenes {
         guard let windowScene = scene as? UIWindowScene else { continue }
@@ -446,8 +453,14 @@ final class AppleMusicKitPlugin: NSObject, FlutterPlugin {
 /// authentication and background-download plugins retain their existing hooks.
 @objc(MusicPhoneSceneDelegate)
 final class MusicPhoneSceneDelegate: UIResponder, UIWindowSceneDelegate, FlutterSceneLifeCycleProvider {
-  var sceneLifeCycleDelegate = FlutterPluginSceneLifeCycleDelegate()
+  // Share the lifecycle adapter with Flutter's UIKit state-restoration delegate.
+  // It is the adapter to which the view registers its engine on attachment.
+  lazy var sceneLifeCycleDelegate: FlutterPluginSceneLifeCycleDelegate = {
+    (restorationDelegate as? FlutterSceneLifeCycleProvider)?.sceneLifeCycleDelegate ?? FlutterPluginSceneLifeCycleDelegate()
+  }()
   var window: UIWindow?
+  private var companion = false
+  private let restorationDelegate: UIWindowSceneDelegate = FlutterSceneDelegate()
 
   func scene(
     _ scene: UIScene, willConnectTo session: UISceneSession,
@@ -456,21 +469,37 @@ final class MusicPhoneSceneDelegate: UIResponder, UIWindowSceneDelegate, Flutter
     guard let windowScene = scene as? UIWindowScene,
       let app = UIApplication.shared.delegate as? AppDelegate
     else { return }
-    let engine = app.ensureMusicEngine()
+    let engine = app.ensureMusicEngine(restoringPhone: true)
     if let existing = engine.viewController?.viewIfLoaded?.window?.windowScene, existing != windowScene {
-      // CarPlay and external video scenes are independent native surfaces;
-      // a second phone window must not detach the first window's shared engine.
-      UIApplication.shared.requestSceneSessionDestruction(session, options: nil, errorHandler: nil)
+      companion = true
+      let window = UIWindow(windowScene: windowScene)
+      let browser = CompanionCatalogController(folder: "root", title: "Pleazyng")
+      window.rootViewController = UINavigationController(rootViewController: browser)
+      self.window = window
+      window.makeKeyAndVisible()
       return
     }
     let window = UIWindow(windowScene: windowScene)
-    window.rootViewController = PlezyFlutterViewController(engine: engine, nibName: nil, bundle: nil)
+    let controller = PlezyFlutterViewController(engine: engine, nibName: nil, bundle: nil)
+    controller.restorationIdentifier = "PleazyngPrimary"
+    window.rootViewController = controller
     self.window = window
     sceneLifeCycleDelegate.scene(scene, willConnectTo: session, options: connectionOptions)
     window.makeKeyAndVisible()
   }
 
+  func stateRestorationActivity(for scene: UIScene) -> NSUserActivity? {
+    guard !companion else { return nil }
+    return restorationDelegate.stateRestorationActivity?(for: scene) ?? nil
+  }
+
+  func scene(_ scene: UIScene, restoreInteractionStateWith stateRestorationActivity: NSUserActivity) {
+    guard !companion else { return }
+    restorationDelegate.scene?(scene, restoreInteractionStateWith: stateRestorationActivity)
+  }
+
   func sceneDidDisconnect(_ scene: UIScene) {
+    if companion { window = nil; companion = false; return }
     sceneLifeCycleDelegate.sceneDidDisconnect(scene)
     if let controller = window?.rootViewController as? FlutterViewController,
       let app = UIApplication.shared.delegate as? AppDelegate,
@@ -480,22 +509,110 @@ final class MusicPhoneSceneDelegate: UIResponder, UIWindowSceneDelegate, Flutter
     }
     window = nil
   }
-  func sceneWillEnterForeground(_ scene: UIScene) { sceneLifeCycleDelegate.sceneWillEnterForeground(scene) }
-  func sceneDidBecomeActive(_ scene: UIScene) { sceneLifeCycleDelegate.sceneDidBecomeActive(scene) }
-  func sceneWillResignActive(_ scene: UIScene) { sceneLifeCycleDelegate.sceneWillResignActive(scene) }
-  func sceneDidEnterBackground(_ scene: UIScene) { sceneLifeCycleDelegate.sceneDidEnterBackground(scene) }
+  func sceneWillEnterForeground(_ scene: UIScene) { if !companion { sceneLifeCycleDelegate.sceneWillEnterForeground(scene) } }
+  func sceneDidBecomeActive(_ scene: UIScene) { if !companion { sceneLifeCycleDelegate.sceneDidBecomeActive(scene) } }
+  func sceneWillResignActive(_ scene: UIScene) { if !companion { sceneLifeCycleDelegate.sceneWillResignActive(scene) } }
+  func sceneDidEnterBackground(_ scene: UIScene) { if !companion { sceneLifeCycleDelegate.sceneDidEnterBackground(scene) } }
   func scene(_ scene: UIScene, openURLContexts contexts: Set<UIOpenURLContext>) {
+    guard !companion else { return }
     sceneLifeCycleDelegate.scene(scene, openURLContexts: contexts)
   }
   func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    guard !companion else { return }
     sceneLifeCycleDelegate.scene(scene, continue: userActivity)
   }
   func windowScene(
     _ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem,
     completionHandler: @escaping (Bool) -> Void
   ) {
+    guard !companion else { completionHandler(false); return }
     sceneLifeCycleDelegate.windowScene(
       windowScene, performActionFor: shortcutItem, completionHandler: completionHandler)
+  }
+}
+
+/// A second application scene owns its own navigation, while transport and
+/// authorization stay on the existing profile's engine. UIKit supplies the
+/// hardware keyboard, VoiceOver, safe-area and resizable-window behavior.
+private final class CompanionCatalogController: UITableViewController {
+  private let folder: String
+  private var rows: [[String: Any]] = []
+  private var revision = 0
+
+  init(folder: String, title: String) {
+    self.folder = folder
+    super.init(style: .insetGrouped)
+    self.title = title
+  }
+
+  required init?(coder: NSCoder) { return nil }
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    NotificationCenter.default.addObserver(self, selector: #selector(scopeChanged),
+      name: MusicCarBridge.scopeChanged, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(reloadCatalog),
+      name: MusicCarBridge.catalogChanged, object: nil)
+    refreshControl = UIRefreshControl()
+    refreshControl?.addTarget(self, action: #selector(reloadCatalog), for: .valueChanged)
+  }
+
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    reloadCatalog()
+  }
+
+  @objc private func scopeChanged() {
+    revision += 1
+    rows = []
+    tableView.reloadData()
+    if folder == "root" {
+      navigationController?.popToRootViewController(animated: false)
+      reloadCatalog()
+    }
+  }
+
+  @objc private func reloadCatalog() {
+    revision += 1
+    let current = revision
+    MusicCarBridge.shared.request("browse", ["id": folder]) { [weak self] result in
+      guard let self, self.revision == current else { return }
+      self.rows = (result as? [[String: Any]] ?? []).filter { row in
+        guard let id = row["id"] as? String, row["title"] is String else { return false }
+        // Guest hosting and vehicle video require their dedicated CarPlay template.
+        return !id.hasPrefix("guest") && id != "continueCarVideo" && !id.hasPrefix("carVideo:")
+      }
+      self.tableView.reloadData()
+      self.refreshControl?.endRefreshing()
+    }
+  }
+
+  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { rows.count }
+  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    let cell = tableView.dequeueReusableCell(withIdentifier: "item") ?? UITableViewCell(style: .subtitle, reuseIdentifier: "item")
+    let row = rows[indexPath.row]
+    cell.textLabel?.text = row["title"] as? String
+    cell.detailTextLabel?.text = row["subtitle"] as? String
+    cell.textLabel?.numberOfLines = 0
+    cell.detailTextLabel?.numberOfLines = 0
+    cell.textLabel?.adjustsFontForContentSizeCategory = true
+    cell.detailTextLabel?.adjustsFontForContentSizeCategory = true
+    cell.accessoryType = row["playable"] as? Bool == true ? .none : .disclosureIndicator
+    return cell
+  }
+
+  override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    tableView.deselectRow(at: indexPath, animated: true)
+    guard MusicCarBridge.shared.ready, rows.indices.contains(indexPath.row),
+      let id = rows[indexPath.row]["id"] as? String else { return }
+    let row = rows[indexPath.row]
+    if row["playable"] as? Bool == true {
+      MusicCarBridge.shared.request("playItem", ["id": id]) { [weak self] value in
+        if value as? Bool != true { self?.reloadCatalog() }
+      }
+    } else {
+      navigationController?.pushViewController(CompanionCatalogController(folder: id, title: row["title"] as? String ?? ""), animated: true)
+    }
   }
 }
 
@@ -503,6 +620,8 @@ final class MusicPhoneSceneDelegate: UIResponder, UIWindowSceneDelegate, Flutter
 /// MPNowPlaying/remote commands remain owned by os_media_controls.
 final class MusicCarBridge {
   static let shared = MusicCarBridge()
+  static let scopeChanged = Notification.Name("PleazyngCompanionProfileChanged")
+  static let catalogChanged = Notification.Name("PleazyngCompanionCatalogChanged")
   private var channel: FlutterMethodChannel?
   private(set) var ready = false
   private var epoch = 0
@@ -525,6 +644,7 @@ final class MusicCarBridge {
     invalidateRequests()
     ready = false
     epoch += 1
+    NotificationCenter.default.post(name: Self.scopeChanged, object: self)
     playback = [:]
     updateWidget(nil)
     channel = FlutterMethodChannel(name: "com.pleazyng/music_car", binaryMessenger: messenger)
@@ -574,9 +694,11 @@ final class MusicCarBridge {
         self.updateWidget(nil)
         if self.connected { self.connection(true) }
         self.scene?.refresh()
+        NotificationCenter.default.post(name: Self.scopeChanged, object: self)
         result(nil)
       case "catalogChanged":
         self.scene?.refreshCatalog()
+        NotificationCenter.default.post(name: Self.catalogChanged, object: self)
         result(nil)
       case "snapshot":
         if self.ready {
@@ -597,6 +719,7 @@ final class MusicCarBridge {
         self.epoch += 1
         self.updateWidget(nil)
         self.scene?.refresh()
+        NotificationCenter.default.post(name: Self.scopeChanged, object: self)
         result(nil)
       default: result(FlutterMethodNotImplemented)
       }

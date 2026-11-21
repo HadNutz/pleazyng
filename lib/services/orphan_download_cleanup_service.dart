@@ -299,7 +299,9 @@ class OrphanDownloadCleanupService {
     }
   }
 
-  String? _extractTag(String baseName) => _tagAtEnd.firstMatch(baseName.toLowerCase())?.group(1);
+  static String? tagForStoredFile(String storedPath) => _extractTag(path.basenameWithoutExtension(storedPath));
+
+  static String? _extractTag(String baseName) => _tagAtEnd.firstMatch(baseName.toLowerCase())?.group(1);
 }
 
 enum _Category { video, audio }

@@ -2164,6 +2164,31 @@ void main() {
       });
     }
 
+    testWidgets('embedded Samsung timing slider starts at zero and disables advancing at the lower bound', (
+      tester,
+    ) async {
+      final offsets = <int>[];
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(extensions: const [testMonoTokens]),
+          home: Scaffold(
+            body: SyncOffsetControl(
+              player: _FakeSyncPlayer(supportsSubtitleAdvance: false),
+              propertyName: 'sub-delay',
+              initialOffset: 0,
+              onOffsetChanged: (offset) async => offsets.add(offset),
+            ),
+          ),
+        ),
+      );
+      final slider = tester.widget<Slider>(find.byType(Slider));
+      expect(slider.min, 0);
+      expect((slider.max - slider.min) / slider.divisions!, 50);
+      await tester.tap(find.byIcon(Symbols.remove_rounded));
+      await tester.pump();
+      expect(offsets, isEmpty);
+    });
+
     testWidgets('reconciles a failed current write without persisting it', (tester) async {
       final propertyWrite = Completer<void>();
       final persistedOffsets = <int>[];
@@ -2562,8 +2587,11 @@ Future<void> _pumpSkipMarkerButton(
   );
 }
 
-class _FakeSyncPlayer implements Player {
-  _FakeSyncPlayer({this.onSetProperty});
+class _FakeSyncPlayer implements Player, SubtitleAdvanceCapability {
+  _FakeSyncPlayer({this.onSetProperty, this.supportsSubtitleAdvance = true});
+
+  @override
+  final bool supportsSubtitleAdvance;
 
   final Future<void> Function(String name, String value)? onSetProperty;
 

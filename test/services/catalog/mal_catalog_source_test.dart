@@ -534,10 +534,13 @@ void main() {
       await source.ensureWatchlistLoaded();
       requests.clear();
 
-      handlers.add((request) => http.Response('{"status":"plan_to_watch"}', 200));
+      handlers
+        ..add((_) => _json({'id': 40028}))
+        ..add((_) => _json({'status': 'plan_to_watch'}));
       await source.addToWatchlist(MediaKind.show, const CatalogItemIds(mal: 40028));
 
-      final request = requests.single;
+      expect(requests.map((request) => request.method), ['GET', 'PUT']);
+      final request = requests.last;
       expect(request.method, 'PUT');
       expect(request.url.path, '/v2/anime/40028/my_list_status');
       expect(request.bodyFields, {'status': 'plan_to_watch'});
@@ -548,10 +551,12 @@ void main() {
       await source.ensureWatchlistLoaded();
       requests.clear();
 
-      handlers.add((request) => http.Response('{"status":"plan_to_watch"}', 200));
+      handlers
+        ..add((_) => _json({'id': 40028}))
+        ..add((_) => _json({'status': 'plan_to_watch'}));
       await source.addToWatchlist(MediaKind.show, const CatalogItemIds(tvdb: 267440));
 
-      expect(requests.single.url.path, '/v2/anime/16498/my_list_status');
+      expect(requests.last.url.path, '/v2/anime/16498/my_list_status');
     });
 
     test('mutating an unmappable item throws without a request', () async {
@@ -562,10 +567,48 @@ void main() {
     http.Response listStatus(String status) => http.Response(
       json.encode({
         'id': 16498,
-        'my_list_status': {'status': status, 'num_watched_episodes': 3},
+        'my_list_status': {'status': status},
       }),
       200,
     );
+
+    for (final status in ['watching', 'completed', 'on_hold', 'dropped']) {
+      test('adding to watchlist preserves a $status MAL entry', () async {
+        const ids = CatalogItemIds(mal: 40028);
+        await source.ensureWatchlistLoaded();
+        requests.clear();
+        handlers.add(
+          (_) => _json({
+            'my_list_status': {'status': status, 'score': 9, 'num_episodes_watched': 26},
+          }),
+        );
+
+        await expectLater(source.addToWatchlist(MediaKind.show, ids), throwsStateError);
+
+        expect(requests.map((request) => request.method), ['GET']);
+        expect(source.isOnWatchlist(MediaKind.show, ids), isFalse);
+      });
+    }
+
+    test('adding an already planned entry leaves it in place', () async {
+      handlers.add((_) => listStatus('plan_to_watch'));
+      await source.addToWatchlist(MediaKind.show, const CatalogItemIds(mal: 40028));
+      expect(requests.map((request) => request.method), ['GET']);
+    });
+
+    test('removing a planning entry with existing viewing history preserves it', () async {
+      const ids = CatalogItemIds(mal: 16498);
+      await source.ensureWatchlistLoaded();
+      requests.clear();
+      handlers.add(
+        (_) => _json({
+          'my_list_status': {'status': 'plan_to_watch', 'num_episodes_watched': 26},
+        }),
+      );
+      await expectLater(source.removeFromWatchlist(MediaKind.show, ids), throwsStateError);
+      expect(requests.map((request) => request.method), ['GET']);
+      expect(source.isOnWatchlist(MediaKind.show, ids), isTrue);
+    });
 
     test('removeFromWatchlist DELETEs and treats 404 as success', () async {
       await source.ensureWatchlistLoaded();

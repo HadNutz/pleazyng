@@ -29,7 +29,13 @@ class SteamTouchLayout {
     'start',
   ];
   static double extent(String key) => key.endsWith('Stick') ? 88 : 48;
-  static bool fits(Size size) => size.width >= 360 && size.height >= (size.width >= 640 ? 216 : 352);
+  static bool _wide(Size size) => size.width >= 640 || (size.width >= 496 && size.height < 352);
+  static bool _shortDeck(Size size) => !_wide(size) && size.height < 352;
+  static bool fits(Size size) => _wide(size)
+      ? size.height >= 216
+      : _shortDeck(size)
+      ? size.width >= 400 && size.height >= 256
+      : size.width >= 304;
   static Offset position(Offset normalized, Size size, String key) => Offset(
     8 + normalized.dx.clamp(0.0, 1.0) * (size.width - 16 - extent(key)),
     8 + normalized.dy.clamp(0.0, 1.0) * (size.height - 16 - extent(key)),
@@ -39,7 +45,7 @@ class SteamTouchLayout {
     ((position.dy - 8) / (size.height - 16 - extent(key))).clamp(0.0, 1.0),
   );
   static Map<String, Offset> defaults(Size size, {bool swapSides = false}) {
-    final wide = size.width >= 640;
+    final wide = _wide(size);
     final groupWidth = wide ? 240.0 : 144.0;
     final left = swapSides ? size.width - 8 - groupWidth : 8.0;
     final right = swapSides ? 8.0 : size.width - 8 - groupWidth;
@@ -49,6 +55,25 @@ class SteamTouchLayout {
       for (final entry in [Offset(48, 0), Offset(0, 48), Offset(96, 48), Offset(48, 96)].asMap().entries) {
         positions[names[entry.key]] = Offset(x, y) + entry.value;
       }
+    }
+
+    if (_shortDeck(size)) {
+      final middle = size.width / 2;
+      final sticksY = 8.0;
+      final leftX = swapSides ? size.width - 96 : 8.0;
+      final rightX = swapSides ? 8.0 : size.width - 96;
+      positions['leftStick'] = Offset(leftX, sticksY);
+      positions['rightStick'] = Offset(rightX, sticksY);
+      final shoulders = ['leftBumper', 'leftTrigger', 'rightTrigger', 'rightBumper'];
+      for (var i = 0; i < shoulders.length; i++) {
+        positions[shoulders[i]] = Offset(middle - 96 + 48 * (swapSides ? 3 - i : i), sticksY);
+      }
+      for (var i = 0; i < 3; i++) {
+        positions[['select', 'mode', 'start'][i]] = Offset(middle - 72 + 48 * i, sticksY + 48);
+      }
+      cross(left, size.height - 152, ['dpadUp', 'dpadLeft', 'dpadRight', 'dpadDown']);
+      cross(right, size.height - 152, ['y', 'x', 'b', 'a']);
+      return positions.map((key, value) => MapEntry(key, normalize(value, size, key)));
     }
 
     cross(left, top + (wide ? 0 : 136), ['dpadUp', 'dpadLeft', 'dpadRight', 'dpadDown']);
@@ -66,7 +91,7 @@ class SteamTouchLayout {
   }
 
   Map<String, Offset> resolve(Size size, {bool swapSides = false}) {
-    final saved = size.width >= 640 ? wide : compact;
+    final saved = _wide(size) ? wide : compact;
     final fallback = defaults(size, swapSides: swapSides);
     final candidate = {...fallback, ...saved};
     return valid(candidate, size) ? candidate : fallback;
@@ -90,7 +115,7 @@ class SteamTouchLayout {
 
   SteamTouchLayout replace(Size size, Map<String, Offset> positions) {
     if (!valid(positions, size)) throw const FormatException('Invalid touch layout');
-    return size.width >= 640
+    return _wide(size)
         ? SteamTouchLayout(wide: positions, compact: compact)
         : SteamTouchLayout(wide: wide, compact: positions);
   }

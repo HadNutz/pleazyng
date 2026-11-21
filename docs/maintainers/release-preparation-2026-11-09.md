@@ -87,7 +87,8 @@ paths and their existing adapter tests.
 - Use public GitHub-hosted runners for compatible jobs, including unsigned
   Apple builds. Private JIT is limited to requested Apple signing and the
   webOS 60 GiB storage overflow; inspect its live capacity without interrupting
-  active guests. CodeQL execution remains disabled.
+  active guests. (The CodeQL disable in force at that time was withdrawn on
+  2026-11-21; CodeQL is allowed.)
 - Enable automatic DV/FEL routing and compatibility fallback by default, preserve
   explicit runtime overrides, and include all corresponding native components.
   Neural motion processing remains off by default. Source tests do not claim device or provider qualification.

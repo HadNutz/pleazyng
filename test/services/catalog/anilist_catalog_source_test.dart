@@ -559,6 +559,11 @@ void main() {
         final body = _requestBody(request);
         final query = body['query'] as String;
         final variables = body['variables'] as Map<String, dynamic>;
+        if (query.contains('mediaListEntry')) {
+          return _data({
+            'Media': {'mediaListEntry': null},
+          });
+        }
         expect(query, contains('SaveMediaListEntry'));
         expect(query, isNot(contains('progress')));
         expect(variables, {'mediaId': 16498, 'status': 'PLANNING'});
@@ -568,7 +573,7 @@ void main() {
       };
 
       await source.addToWatchlist(MediaKind.show, const CatalogItemIds(anilist: 16498));
-      expect(requests, hasLength(1));
+      expect(requests, hasLength(2));
     });
 
     /// Answers the snapshot load with [planned] on Planning, and the entry
@@ -606,6 +611,61 @@ void main() {
         'Media': {'mediaListEntry': entry},
       });
     };
+
+    for (final status in ['CURRENT', 'COMPLETED', 'PAUSED', 'DROPPED', 'REPEATING']) {
+      test('adding to watchlist preserves a $status AniList entry', () async {
+        const ids = CatalogItemIds(anilist: 16498);
+        responder = listResponder(
+          planned: const [],
+          entry: {'id': 99, 'status': status, 'progress': 26, 'scoreRaw': 90},
+        );
+        await source.ensureWatchlistLoaded();
+        requests.clear();
+        await expectLater(source.addToWatchlist(MediaKind.show, ids), throwsStateError);
+        expect(_requestBody(requests.single)['query'], contains('mediaListEntry'));
+        expect(source.isOnWatchlist(MediaKind.show, ids), isFalse);
+      });
+    }
+
+    test('adding an existing Planning entry is idempotent', () async {
+      responder = listResponder(planned: const [], entry: {'id': 99, 'status': 'PLANNING'});
+      await source.addToWatchlist(MediaKind.show, const CatalogItemIds(anilist: 16498));
+      expect(_requestBody(requests.single)['query'], contains('mediaListEntry'));
+    });
+
+    test('removing a Planning entry with a saved score preserves it', () async {
+      const ids = CatalogItemIds(anilist: 16498);
+      responder = listResponder(planned: const [16498], entry: {'id': 99, 'status': 'PLANNING', 'scoreRaw': 90});
+      await source.ensureWatchlistLoaded();
+      requests.clear();
+      await expectLater(source.removeFromWatchlist(MediaKind.show, ids), throwsStateError);
+      expect(_requestBody(requests.single)['query'], contains('mediaListEntry'));
+      expect(source.isOnWatchlist(MediaKind.show, ids), isTrue);
+    });
+
+    test('removing an empty Planning entry deletes its entry id', () async {
+      responder = (request) {
+        final body = _requestBody(request);
+        if ((body['query'] as String).contains('DeleteMediaListEntry')) {
+          expect(body['variables'], {'id': 99});
+          return _data({
+            'DeleteMediaListEntry': {'deleted': true},
+          });
+        }
+        return _data({
+          'Media': {
+            'mediaListEntry': {
+              'id': 99,
+              'status': 'PLANNING',
+              'progress': 0,
+              'startedAt': {'year': null, 'month': null, 'day': null},
+            },
+          },
+        });
+      };
+      await source.removeFromWatchlist(MediaKind.show, const CatalogItemIds(anilist: 16498));
+      expect(requests, hasLength(2));
+    });
 
     test('remove is a no-op when the media-list entry is already absent', () async {
       responder = listResponder(planned: const [], entry: null);

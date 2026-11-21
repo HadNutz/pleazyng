@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+- Provision the matching Samsung SDK for x64 emulator tester builds.
+
+- Add an iPhone simulator regression test for changing motion presets and turning smoothing off during AVFoundation playback.
+
+- Fix Linux Neural falling back to CPU on systems where the bundled WebGPU provider can run the model.
+
+- Protect shared episode downloads when deleting media or signing out of Plex. Retain failed cleanup for retry, remove cancelled multipart downloads, and release local HLS archives when a profile is removed.
+- Preserve existing anime tracker entries when toggling watchlists, merge independent Jellyfin metadata edits, and keep video bookmarks with their editions. Older bookmarks can be assigned to a version explicitly.
+- Preserve manually grouped audiobooks through rescans. Sync reading progress, EPUB completion and WebDAV bookmark changes without letting a single invalid progress record block other titles.
+- Keep the previous TV guide after an unusable refresh, honor schedule corrections and recording windows, and check recording duration before accepting a timer.
+- Route mixes, radio and sleep timers to the selected music receiver, count listening once, and keep a paused queue paused when removing its current song. Restore Jellyfin audio playlist removal and collection pagination on capped servers.
+- Preserve non-ASCII settings in WebDAV restores, overlapping TV subtitles and delayed Samsung captions. Discard cancelled virtual-keyboard edits and retain selected lyrics when importing MIDI karaoke.
+- Enable motion processing during eligible playback on Android and Fire OS, desktop MPV, and LG and Samsung TV MPV. Change TV mixer strength while watching. On LG, the original hardware plane keeps playing while the filtered texture prepares.
+
+- Apply MPV smoothing toggles and Motion clarity preset changes during eligible Linux and Windows playback, including titles started with smoothing off.
+- Adapt video, music, Steam streaming, browsing and reading to separating folds and physical hinges. Keep the active player and detail view during live window resizing. Add compact cover controls and a Samsung Flex Window music widget.
+- Build iPhone releases with the Duo SDK and validate the SDK inside the IPA. A second iOS app window can browse the active audio catalog and send playback to the existing session.
+
+
 - Open individual Plex and Jellyfin photos full-screen and browse nested photo albums with pagination. The viewer bounds decoded images and uses the profile navigator’s Back handling. [jmtagarro](https://github.com/jmtagarro) proposed [Plezy PR #3020](https://github.com/edde746/plezy/pull/3020).
 
 - Allow the finish clock next to remaining time to be hidden independently on desktop, touch and remote controls. Existing users keep their visible finish clock. [jtlopezdev](https://github.com/jtlopezdev) proposed [Plezy PR #3070](https://github.com/edde746/plezy/pull/3070).

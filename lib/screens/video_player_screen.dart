@@ -145,6 +145,7 @@ import '../providers/account_preferences_controller.dart';
 import '../utils/app_logger.dart';
 import '../utils/dialogs.dart';
 import '../utils/iphone_duo.dart';
+import '../widgets/fold_regions.dart';
 import '../utils/log_redaction_manager.dart';
 import '../utils/immersive_mode_guard.dart';
 import '../utils/live_tv_player_navigation.dart';
@@ -2000,9 +2001,22 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
     }
   }
 
+  bool? _systemManagedWindow;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Reevaluate when view metrics change, including Android feature-only updates.
+    MediaQuery.sizeOf(context);
+    MediaQuery.displayFeaturesOf(context);
+    final managed = OrientationHelper.systemManagesPlaybackWindow(context);
+    final settings = SettingsService.instanceOrNull;
+    if (_systemManagedWindow != managed && _isPlayerInitialized && !_workspaceSurfaceDetached && settings != null) {
+      unawaited(
+        OrientationHelper.applyPlaybackLock(settings.read(SettingsService.rotationLocked), systemManaged: managed),
+      );
+    }
+    _systemManagedWindow = managed;
     final route = ModalRoute.of(context);
     _videoPlayerRoute = route is VideoPlayerRoute ? route : null;
 
@@ -2947,17 +2961,13 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       initPhase = 'applying orientation';
       if (mounted) {
         try {
-          // Check rotation lock setting before applying orientation
-          final isRotationLocked = settingsService.read(SettingsService.rotationLocked);
-
-          if (isRotationLocked) {
-            // Locked: Apply landscape orientation only
-            OrientationHelper.setLandscapeOrientation();
-          } else {
-            // Unlocked: Allow all orientations immediately
-            unawaited(OrientationHelper.restoreDefaultOrientations());
-            unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky));
-          }
+          unawaited(
+            OrientationHelper.applyPlaybackLock(
+              settingsService.read(SettingsService.rotationLocked),
+              systemManaged: _systemManagedWindow ?? false,
+            ),
+          );
+          unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky));
           // Immersive mode is requested once; a fold/unfold or display switch
           // keeps the activity resumed and lets Android re-show the bars. The
           // guard answers the engine's re-show callback until release.

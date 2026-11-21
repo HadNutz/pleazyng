@@ -44,13 +44,23 @@ class BootstrapTest(unittest.TestCase):
         sysroot = self.root / 'tizen sdk/rootstrap/device.core'
         toolchain = self.root / 'arm-toolchain.cmake'
 
-        bootstrap_linux.write_arm_toolchain(toolchain, compiler, sysroot)
+        bootstrap_linux.write_toolchain(toolchain, compiler, sysroot, 'arm')
 
         generated = toolchain.read_text()
         expected = f'--sysroot=\\"{sysroot}\\"'
         self.assertIn(f'set(CMAKE_C_FLAGS_INIT "{expected} -march=', generated)
         self.assertIn(f'set(CMAKE_CXX_FLAGS_INIT "{expected} -march=', generated)
         self.assertIn(f'set(CMAKE_SYSROOT "{sysroot}")', generated)
+
+    def test_x64_emulator_uses_the_matching_toolchain_and_rootstrap(self):
+        names = [p['name'] for p in bootstrap_linux.pins_for('x64')['packages']]
+        self.assertIn('cross-x86-64-gcc-9.2', names)
+        self.assertIn('tizen-8.0-rs-emulator64.core', names)
+        self.assertNotIn('cross-arm-gcc-9.2', names)
+        toolchain = self.root / 'emulator.cmake'
+        bootstrap_linux.write_toolchain(toolchain, self.root / 'gcc-', self.root / 'rootstrap', 'x64')
+        self.assertIn('set(CMAKE_SYSTEM_PROCESSOR x86_64)', toolchain.read_text())
+        self.assertNotIn('-march=arm', toolchain.read_text())
 
 
 if __name__ == '__main__':

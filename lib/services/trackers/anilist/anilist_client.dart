@@ -267,30 +267,38 @@ class AnilistClient implements DisposableTrackerClient {
     await query(mutation, variables: {'mediaId': mediaId, 'progress': progress, 'status': status, 'repeat': ?repeat});
   }
 
-  /// Delete the viewer's list entry for [mediaId] if it is still on Planning.
-  ///
-  /// AniList deletes the whole entry — progress, score, dates and rewatches —
-  /// so an entry that has moved on to another status is left alone. Returns
-  /// whether an entry was deleted; false when there was none on Planning.
-  Future<bool> deletePlanningMediaListEntry(int mediaId) async {
-    const idQuery = '''
+  /// Planning shares its entry with scores, progress, dates and rewatches.
+  Future<({int id, String status, bool hasHistory})?> getWatchlistEntry(int mediaId) async {
+    const entryQuery = '''
       query(\$mediaId: Int) {
         Media(id: \$mediaId, type: ANIME) {
           mediaListEntry {
-            id
-            status
+            id status progress repeat scoreRaw: score(format: POINT_100) notes
+            startedAt { year month day }
+            completedAt { year month day }
           }
         }
       }
     ''';
-    final data = await query(idQuery, variables: {'mediaId': mediaId});
+    final data = await query(entryQuery, variables: {'mediaId': mediaId});
     final media = data['Media'];
-    if (media is! Map) return false;
+    if (media is! Map || !media.containsKey('mediaListEntry')) throw const FormatException('Invalid AniList media');
     final entry = media['mediaListEntry'];
-    if (entry is! Map || entry['status'] != 'PLANNING') return false;
-    final entryId = flexibleInt(entry['id']);
-    if (entryId == null) return false;
+    if (entry == null) return null;
+    if (entry is! Map || entry['status'] is! String) throw const FormatException('Invalid AniList list status');
+    final id = flexibleInt(entry['id']);
+    if (id == null) throw const FormatException('Invalid AniList list entry id');
+    final hasHistory =
+        ['progress', 'repeat', 'scoreRaw'].any((field) => (flexibleInt(entry[field]) ?? 0) > 0) ||
+        (entry['notes'] is String && (entry['notes'] as String).isNotEmpty) ||
+        [
+          'startedAt',
+          'completedAt',
+        ].any((field) => entry[field] is Map && (entry[field] as Map).values.any((value) => value != null));
+    return (id: id, status: entry['status'] as String, hasHistory: hasHistory);
+  }
 
+  Future<void> deleteMediaListEntry(int entryId) async {
     const mutation = '''
       mutation(\$id: Int) {
         DeleteMediaListEntry(id: \$id) {
@@ -299,7 +307,6 @@ class AnilistClient implements DisposableTrackerClient {
       }
     ''';
     await query(mutation, variables: {'id': entryId});
-    return true;
   }
 
   Future<void> setMediaListScore({required int mediaId, required int score}) async {

@@ -1,3 +1,5 @@
+import 'motion_processing_mode.dart';
+
 /// Profiles for Pleazyng's optional motion-processing paths.
 ///
 /// Motion-compensated profiles synthesize frames at the configured output
@@ -25,6 +27,15 @@ enum MotionClarityPreset {
     MotionClarityPreset.smooth || MotionClarityPreset.sports => MotionTemporalKernel.gaussian,
     MotionClarityPreset.animation => MotionTemporalKernel.mitchell,
     MotionClarityPreset.custom => MotionTemporalKernel.linear,
+  };
+
+  // The TV temporal mixer exposes the portion of each frame interval to blend.
+  NeuralInterpolationPreset get tvMixerPreset => switch (this) {
+    MotionClarityPreset.cinema || MotionClarityPreset.animation => NeuralInterpolationPreset.performance,
+    MotionClarityPreset.oled ||
+    MotionClarityPreset.sports ||
+    MotionClarityPreset.smooth => NeuralInterpolationPreset.quality,
+    _ => NeuralInterpolationPreset.balanced,
   };
 
   int get defaultThresholdPercent => 1;

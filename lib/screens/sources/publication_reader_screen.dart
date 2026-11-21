@@ -32,6 +32,7 @@ import '../../sources/source_controller.dart';
 import '../../sources/source_models.dart';
 import '../../sources/source_playback.dart';
 import '../../sources/reader_preferences.dart';
+import '../../widgets/fold_regions.dart';
 import '../../theme/mono_tokens.dart';
 import '../../utils/dialogs.dart';
 import '../../utils/platform_detector.dart';
@@ -506,6 +507,42 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
     return result?.value;
   }
 
+  ({double pane, double gap})? _bookFold;
+
+  Widget _readerViewport(Widget body) => FoldRegionBuilder(
+    builder: (context, regions) {
+      var viewport = regions.largest;
+      ({double pane, double gap})? fold;
+      final pages = regions.usable(width: 180, height: 150)..sort((a, b) => a.left.compareTo(b.left));
+      final comic = _comic || widget.file.kind == SourceItemKind.comic;
+      final spread = comic
+          ? _settings['comicMode'] == 'paged' &&
+                _settings['splitWide'] != true &&
+                _settings['spread'] != 'single' &&
+                _settings['zoom'] == 'fit-page'
+          : !pdf && !_fixed && _settings['scrolled'] != true && _settings['columns'] == 2;
+      if (spread && pages.length == 2 && pages.first.right <= pages.last.left && pages.first.top == pages.last.top) {
+        final left = pages.first, right = pages.last;
+        final width = math.min(left.width, right.width);
+        viewport = Rect.fromLTRB(left.right - width, left.top, right.left + width, math.min(left.bottom, right.bottom));
+        fold = (pane: width, gap: right.left - left.right);
+      }
+      if (_bookFold != fold) {
+        _bookFold = fold;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && this.context.mounted && valid && _ready && _bookFold == fold && _web != null) {
+            unawaited(
+              sourceAction(this.context, () async {
+                await _js('settings', readerSettings());
+              }),
+            );
+          }
+        });
+      }
+      return Stack(children: [regions.place(context, viewport, body)]);
+    },
+  );
+
   Map<String, dynamic> readerSettings() {
     final theme = tokens(context), choice = _settings['theme'] ?? 'app';
     final dark = choice == 'night' || choice == 'app' && Theme.of(context).brightness == Brightness.dark;
@@ -524,6 +561,8 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
     };
     return {
       ..._settings,
+      'foldPane': _bookFold?.pane,
+      'foldGap': _bookFold?.gap,
       'dark': dark,
       'background': background,
       'foreground': foreground,
@@ -1456,7 +1495,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
           const SingleActivator(LogicalKeyboardKey.digit0, meta: true): () =>
               unawaited(sourceAction(context, () => _zoom('fit-page'))),
         },
-        child: SafeArea(child: body),
+        child: SafeArea(child: _readerViewport(body)),
       ),
       bottomNavigationBar: SafeArea(
         top: false,

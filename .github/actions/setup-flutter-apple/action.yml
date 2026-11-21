@@ -7,6 +7,9 @@ inputs:
   hosted-xcode-version:
     description: Exact Xcode version installed on the selected hosted image.
     default: '26.5'
+  require-duo-sdk:
+    description: Select a Duo-capable toolchain on private iOS builders as well.
+    default: 'false'
 runs:
   using: composite
   steps:
@@ -29,6 +32,25 @@ runs:
             test "$(DEVELOPER_DIR="$developer_dir" xcrun --sdk "$sdk" --show-sdk-version)" = '26.2'
           done
         fi
+
+    - name: Verify iPhone Duo SDK for device and simulator
+      if: inputs.require-duo-sdk == 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [[ "${RUNNER_ENVIRONMENT:-}" == self-hosted ]]; then
+          for candidate in /Applications/Xcode_27.2.app /Applications/Xcode_27.1.app; do
+            if [[ -d "$candidate" ]]; then
+              export DEVELOPER_DIR="$candidate/Contents/Developer"
+              echo "DEVELOPER_DIR=$DEVELOPER_DIR" >> "$GITHUB_ENV"
+              break
+            fi
+          done
+        fi
+        for sdk in iphoneos iphonesimulator; do
+          version="$(xcrun --sdk "$sdk" --show-sdk-version)"
+          python3 -c 'import sys; assert tuple(map(int, sys.argv[1].split(".")[:2])) >= (27, 1), sys.argv[1]' "$version"
+        done
 
     - name: Prepare the pinned Flutter SDK in local APFS cache
       shell: bash

@@ -399,6 +399,15 @@ class IptvVodSeriesDetails {
   final List<IptvVodEpisode> episodes;
 }
 
+/// Existing local recordings use these names for scheduled and manual capture.
+String iptvRecordingSlug(String value) {
+  final slug = value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9_-]+'), '-').replaceAll(RegExp(r'^-+|-+$'), '');
+  if (slug.isEmpty) return 'iptv';
+  return slug.length <= 64 ? slug : slug.substring(0, 64);
+}
+
+String iptvManualRecordingFolder(String profileId) => profileId.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_');
+
 class IptvLocalRecording {
   const IptvLocalRecording({
     required this.id,
@@ -434,6 +443,14 @@ class IptvLocalRecording {
 }
 
 class IptvLocalRecordingSchedule {
+  static const maxCaptureDuration = Duration(hours: 12);
+
+  static bool canSchedule({required DateTime start, required DateTime end, required DateTime now}) {
+    final effectiveStart = start.isAfter(now) ? start : now;
+    final remaining = end.difference(effectiveStart);
+    return remaining > Duration.zero && remaining <= maxCaptureDuration;
+  }
+
   const IptvLocalRecordingSchedule({
     required this.id,
     required this.profileId,

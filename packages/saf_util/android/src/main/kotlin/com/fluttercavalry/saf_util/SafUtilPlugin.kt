@@ -21,6 +21,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 import java.io.File
+import java.io.FileNotFoundException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -253,8 +254,12 @@ class SafUtilPlugin :
             val isDir = call.argument<Boolean>("isDir") as Boolean
 
             val df = documentFileFromUri(uri, isDir) ?: throw Exception("Failed to get DocumentFile from $uri")
+            val deleted = df.delete()
+            // File removal is idempotent. DocumentFile.exists() also returns
+            // false on denied access, which would lose the last cleanup handle.
+            val gone = deleted || (!isDir && documentIsMissing(df.uri))
             launch(Dispatchers.Main) {
-              result.success(df.delete())
+              result.success(gone)
             }
           } catch (err: Exception) {
             launch(Dispatchers.Main) {
@@ -835,6 +840,16 @@ class SafUtilPlugin :
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
     fileDescriptorRegistry.detach()
+  }
+
+  private fun documentIsMissing(uri: Uri): Boolean {
+    return try {
+      context.contentResolver.query(
+        uri, arrayOf(DocumentsContract.Document.COLUMN_DOCUMENT_ID), null, null, null
+      )?.use { !it.moveToFirst() } ?: false
+    } catch (_: FileNotFoundException) {
+      true
+    }
   }
 
   private fun documentFileFromUri(
