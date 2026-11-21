@@ -144,6 +144,126 @@
     "if (!so) { fprintf(stderr, \"%s\\n\",dlerror()); return 1; }"
   ],
   [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(build_program, \"clBuildProgram\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(create_buffer, \"clCreateBuffer\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(create_context, \"clCreateContext\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(create_kernel, \"clCreateKernel\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(create_program, \"clCreateProgramWithSource\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(create_queue, \"clCreateCommandQueue\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(enqueue, \"clEnqueueNDRangeKernel\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(finish, \"clFinish\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(get_devices, \"clGetDeviceIDs\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(read_rect, \"clEnqueueReadBufferRect\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(release_buffer, \"clReleaseMemObject\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(release_context, \"clReleaseContext\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(release_kernel, \"clReleaseKernel\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(release_program, \"clReleaseProgram\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(release_queue, \"clReleaseCommandQueue\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(set_arg, \"clSetKernelArg\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(write_rect, \"clEnqueueWriteBufferRect\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-easily-swappable-parameters",
+    "2 adjacent parameters of 'tv_blend_current_plane' of similar type ('int') are easily swapped by mistake",
+    "TvBlend* b, const uint8_t* a, int a_pitch, const uint8_t* c, int c_pitch, uint8_t* dst, int dst_pitch, int width,"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-multi-level-implicit-pointer-conversion",
+    "multilevel pointer conversion from 'void **' to 'const void *', please use explicit cast",
+    "if (!b->buffers[i] || b->set_arg(b->kernel, i, sizeof(void*), &b->buffers[i])) return 0;"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling",
+    "Call to function 'memset' is insecure as it does not provide security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'memset_s' in case of C11",
+    "memset(b, 0, sizeof(*b));"
+  ],
+  [
     "scripts/tv_mpv/render_smoke.c",
     "bugprone-implicit-widening-of-multiplication-result",
     "performing an implicit widening conversion to type 'size_t' (aka 'unsigned long') of a multiplication performed in type 'int'",

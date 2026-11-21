@@ -18,6 +18,7 @@ HOST_UNITS = {
     "native/games/romm/retro_worker.cpp": ["-std=c++17"],
     "native/games/steam/steam_h26x.cpp": ["-std=c++17"],
     "native/visualizer/tv_helper.cc": ["-std=c++17", "-Ipackages/tizen_plugins/video_player_videohole/tizen/inc"],
+    "scripts/tv_mpv/opencl_blend.h": ["-x", "c", "-std=gnu11", "-Ishared/tv_mpv"],
     "scripts/tv_mpv/render_smoke.c": ["-std=gnu11"],
     "scripts/tv_mpv/ndl_smoke.c": ["-std=gnu11"],
 }
