@@ -53,6 +53,11 @@ class PlezyFlutterViewController: FlutterViewController {
     #endif
   }
 
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    pushStateIfChanged()
+  }
+
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
     pushStateIfChanged()
@@ -96,9 +101,9 @@ class PlezyFlutterViewController: FlutterViewController {
   }
 
   func currentState() -> NSDictionary {
+    var state: [String: Any] = ["phoneWindowAttached": viewIfLoaded?.window != nil]
     #if compiler(>=6.4) && canImport(UIKit, _version: 9127.0.85)
-      guard #available(iOS 27.1, *) else { return [:] }
-      var state: [String: Any] = [:]
+      guard #available(iOS 27.1, *) else { return state as NSDictionary }
 
       switch traitCollection.verticalBarEdge {
       case .leading:
@@ -118,10 +123,8 @@ class PlezyFlutterViewController: FlutterViewController {
         .filter { $0.isActive && !$0.frame.isEmpty }
         .map { Self.encode($0.frame) }
 
-      return state as NSDictionary
-    #else
-      return [:]
     #endif
+    return state as NSDictionary
   }
 
   private var isRightToLeft: Bool {

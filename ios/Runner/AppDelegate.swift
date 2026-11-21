@@ -54,9 +54,9 @@ enum DownloadBackupPolicy {
   // The normal Dart entry point owns authentication and the only music session.
   private(set) var musicEngine: FlutterEngine?
 
-  func ensureMusicEngine(restoringPhone: Bool = false) -> FlutterEngine {
+  func ensureMusicEngine() -> FlutterEngine {
     if let engine = musicEngine { return engine }
-    let engine = FlutterEngine(name: "pleazyng_shared_music", project: nil, allowHeadlessExecution: true, restorationEnabled: restoringPhone)
+    let engine = FlutterEngine(name: "pleazyng_shared_music", project: nil, allowHeadlessExecution: true, restorationEnabled: true)
     musicEngine = engine
     guard
       engine.run(
@@ -117,9 +117,9 @@ enum DownloadBackupPolicy {
     }
 
     application.beginReceivingRemoteControlEvents()
-    // A phone scene can wait for UIKit restoration. Background and CarPlay-only
-    // launches must be able to produce a catalog without a Flutter view.
-    if application.applicationState == .background { _ = ensureMusicEngine() }
+    // Register plugins before delivering didFinishLaunching, including on a
+    // CarPlay-only start. Dart enables UI restoration once a phone attaches.
+    _ = ensureMusicEngine()
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
@@ -469,7 +469,7 @@ final class MusicPhoneSceneDelegate: UIResponder, UIWindowSceneDelegate, Flutter
     guard let windowScene = scene as? UIWindowScene,
       let app = UIApplication.shared.delegate as? AppDelegate
     else { return }
-    let engine = app.ensureMusicEngine(restoringPhone: true)
+    let engine = app.ensureMusicEngine()
     if let existing = engine.viewController?.viewIfLoaded?.window?.windowScene, existing != windowScene {
       companion = true
       let window = UIWindow(windowScene: windowScene)

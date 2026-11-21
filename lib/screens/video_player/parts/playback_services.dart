@@ -823,8 +823,9 @@ extension _VideoPlayerPlaybackServiceMethods on VideoPlayerScreenState {
         !_isPlayerInitialized ||
         !_firstFrame.rendered ||
         _hasFatalPlaybackError ||
-        !PlatformDetector.isMobile(context))
+        !PlatformDetector.isMobile(context)) {
       return;
+    }
     final observer = context.read<VideoTaskObserver?>();
     final route = _videoPlayerRoute;
     if (observer == null || route == null) return;

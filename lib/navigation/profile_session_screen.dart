@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+import '../utils/iphone_duo.dart';
 import '../utils/platform_detector.dart';
 import '../providers/download_provider.dart';
 import '../services/playback_coordinator.dart';
@@ -216,9 +218,12 @@ class _ProfileSessionScreenState extends State<ProfileSessionScreen> {
       builder: (context, activeId, _) {
         _onSessionProfileChanged(activeId);
         final initialPromptHandled = widget.initialPromptHandled || _hasBuiltSession;
+        // A CarPlay-only launch has no view controller to complete native
+        // state restoration. Let the audio catalog start immediately.
+        final canRestore = !Platform.isIOS || IphoneDuo.of(context).phoneWindowAttached;
         return RootRestorationScope(
           key: ValueKey<String?>('profile-session:$activeId'),
-          restorationId: activeId == null ? null : 'profile-session:$activeId',
+          restorationId: activeId == null || !canRestore ? null : 'profile-session:$activeId',
           child: MultiProvider(
             providers: [
               ChangeNotifierProvider<MultiviewWorkspaceController>(
