@@ -268,6 +268,8 @@ final class MpvPlayerContractTests: XCTestCase {
       wait(for: [accepted], timeout: nativeCompletionTimeout)
       return try XCTUnwrap(result).get()
     }
+    // The cold hosted simulator can take longer to settle than one pass of the fixture.
+    XCTAssertSuccess(awaitProperty(core, name: "loop-file", value: "inf"))
     _ = try command(["loadfile", clip.path])
     XCTAssertSuccess(awaitProperty(core, name: "pause", value: "no"))
     let readyBy = Date().addingTimeInterval(nativeCompletionTimeout)
@@ -291,6 +293,33 @@ final class MpvPlayerContractTests: XCTestCase {
     pump(0.35)
     XCTAssertGreaterThan(try timePos(core), before)
     XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
+
+    if try awaitGetProperty(core, name: "pleazyng-vt-motion-supported").get() == "no" {
+      let label = "@plezy-apple-motion"
+      let gpu = "libplacebo=fps=60:frame_mixer=oversample:format=yuv420p"
+      let cpu = "minterpolate=fps=60:mi_mode=blend"
+      let provider: String
+      do {
+        _ = try command(["vf", "add", "\(label):lavfi=[\(gpu)]"])
+        provider = "libplacebo GPU"
+      } catch {
+        _ = try command(["vf", "add", "\(label):lavfi=[\(cpu)]"])
+        provider = "FFmpeg CPU"
+      }
+      let deadline = Date().addingTimeInterval(nativeCompletionTimeout)
+      var measured = 0.0
+      repeat {
+        pump(0.1)
+        if let rate = try? awaitGetProperty(core, name: "estimated-vf-fps").get() {
+          measured = Double(rate) ?? 0
+        }
+      } while measured < 45 && Date() < deadline
+      XCTAssertGreaterThanOrEqual(measured, 45, "The 29.97 fps fixture must produce intermediate frames")
+      print("Live motion mixer: \(provider), measured \(measured) fps")
+      _ = try command(["vf", "remove", label])
+      XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
+      XCTAssertFalse((try awaitGetProperty(core, name: "vf").get() ?? "").contains(label))
+    }
   }
 
   func testRealSetPropertyValidInvalidNonexistentAndPauseCache() {

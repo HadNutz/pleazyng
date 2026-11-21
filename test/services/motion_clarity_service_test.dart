@@ -12,6 +12,29 @@ import 'package:plezy/mpv/mpv.dart';
 import 'package:plezy/services/motion_clarity_service.dart';
 
 void main() {
+  for (final gpuAvailable in [true, false]) {
+    test('Apple falls back on the open stream when the VideoToolbox probe is missing (GPU $gpuAvailable)', () async {
+      final player = _RecordingPlayer(60)..rejectGpuMixer = !gpuAvailable;
+      player._properties['hwdec'] = 'auto';
+      Future<void> setMode(MotionProcessingMode mode) =>
+          MotionProcessingService.configureAppleMotion(player, mode, NeuralInterpolationPreset.balanced);
+
+      await setMode(MotionProcessingMode.neural);
+      final filters = player.commands.where((command) => command.first == 'vf').toList();
+      expect(filters.first.last, contains('libplacebo'));
+      expect(filters.last.last, contains(gpuAvailable ? 'libplacebo' : 'minterpolate'));
+      expect(
+        MotionProcessingService.observedAppleMixer(player, 24, 60),
+        gpuAvailable ? 'libplacebo GPU' : 'FFmpeg CPU',
+      );
+      expect(player._properties.containsKey('avfoundation-motion-interpolation'), isFalse);
+      await setMode(MotionProcessingMode.off);
+      expect(player.commands.last, ['vf', 'remove', '@plezy-apple-motion']);
+      expect(player._properties['hwdec'], 'auto');
+      expect(player.commands.any((args) => args.first == 'loadfile'), isFalse);
+    });
+  }
+
   test('a desktop movie opened in Original can toggle and change presets in place', () async {
     final player = _RecordingPlayer(60);
     player._properties.addAll({
@@ -117,6 +140,7 @@ class _RecordingPlayer with PlayerStreamControllersMixin implements Player {
 
   final Map<String, String> _properties;
   final commands = <List<String>>[];
+  bool rejectGpuMixer = false;
   @override
   final String playerType = 'mpv';
   @override
@@ -133,6 +157,7 @@ class _RecordingPlayer with PlayerStreamControllersMixin implements Player {
   @override
   Future<void> command(List<String> args) async {
     commands.add(args);
+    if (rejectGpuMixer && args.last.contains('libplacebo')) throw UnsupportedError('GPU mixer unavailable');
   }
 
   @override
