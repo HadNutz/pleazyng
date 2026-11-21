@@ -25,7 +25,9 @@ import '../test_helpers/prefs.dart';
 void main() {
   late AppDatabase db;
 
-  setUp(() {
+  setUp(() async {
+    resetSharedPreferencesForTest();
+    await SettingsService.getInstance();
     db = AppDatabase.forTesting(NativeDatabase.memory());
     PlexApiCache.initialize(db);
   });
@@ -589,11 +591,6 @@ void main() {
   });
 
   group('show play queue', () {
-    setUp(() async {
-      resetSharedPreferencesForTest();
-      await SettingsService.getInstance();
-    });
-
     http.Response container(Map<String, dynamic> body) =>
         http.Response(jsonEncode({'MediaContainer': body}), 200, headers: {'content-type': 'application/json'});
 
