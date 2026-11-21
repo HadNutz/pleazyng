@@ -126,7 +126,11 @@ class NativePreparationOrderTests(unittest.TestCase):
                                     ('macOS', 'macosx', 'macos'),
                                     ('tvOS', 'appletvsimulator', 'tvos')]:
             for runner, xcode, actual_sdk, ok in [
-                ('self-hosted', '27.0', '27.0', True),
+                ('self-hosted', '27.0', '27.0', platform != 'iOS'),
+                ('self-hosted', '27.1', '27.1', platform == 'iOS'),
+                ('self-hosted', '27.2', '27.0', False),
+                ('self-hosted', '27.10', '27.2', platform == 'iOS'),
+                ('self-hosted', 'unknown', '27.2', False),
                 ('self-hosted', '26.5', '27.0', False),
                 ('self-hosted', '27.0', '26.5', False),
                 ('github-hosted', '26.5', '26.5', True),

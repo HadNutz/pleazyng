@@ -1,10 +1,10 @@
 name: Native static analysis
 on:
   pull_request:
-    paths: ['**/*.kt', '**/*.swift', 'native/**', 'scripts/tv_mpv/**', 'docs/maintainers/native-lint/**', 'scripts/checks/native_*.py', '.github/workflows/native-lint.yml']
+    paths: ['**/*.kt', '**/*.swift', 'native/**', 'scripts/tv_mpv/**', 'docs/maintainers/native-lint/**', 'android/app/lint-baseline.xml', 'scripts/checks/native_*.py', '.github/workflows/native-lint.yml']
   push:
     branches: [main, 'integration/upstream-*']
-    paths: ['**/*.kt', '**/*.swift', 'native/**', 'scripts/tv_mpv/**', 'docs/maintainers/native-lint/**', 'scripts/checks/native_*.py', '.github/workflows/native-lint.yml']
+    paths: ['**/*.kt', '**/*.swift', 'native/**', 'scripts/tv_mpv/**', 'docs/maintainers/native-lint/**', 'android/app/lint-baseline.xml', 'scripts/checks/native_*.py', '.github/workflows/native-lint.yml']
   workflow_dispatch:
 permissions:
   contents: read
