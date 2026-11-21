@@ -519,8 +519,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "fix(tv): reach the profile menu from an empty Home with the D-pad",
-      "disposition": "pending",
-      "evidence": "The fork has some toolbar/cloud-rail fallbacks, but a pending rail claim still returns on empty hubs and the TV error view wires Retry directly to load. Port the missing Retry/toolbar/sidebar transitions and cancellation when the user opens the profile menu. Test initial empty, error, and late data with fork-specific rails present and absent. [discover_screen.dart L298](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/discover_screen.dart#L298) · [discover_screen.dart L1333](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/discover_screen.dart#L1333) · [discover_screen_test.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/test/screens/discover_screen_test.dart)",
+      "disposition": "adapted",
+      "evidence": "Keep the TV profile menu, Retry and sidebar reachable when Home has no server rows, including the fork’s cloud-only rail.",
       "files": [
         "lib/focus/focusable_action_bar.dart",
         "lib/screens/discover_screen.dart",
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "pending": 14,
+    "pending": 13,
     "deferred": 1,
-    "adapted": 12,
+    "adapted": 13,
     "retained": 2
   }
 }

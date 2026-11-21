@@ -66,6 +66,8 @@ class RemoteCloudHomeRailState extends State<RemoteCloudHomeRail> {
     ];
   }
 
+  FocusNode? get firstAvailableFocusNode => hasEntries ? _firstCardFocusNode : null;
+
   void requestFirstCardFocus() {
     if (!hasEntries) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
