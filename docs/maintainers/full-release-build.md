@@ -95,15 +95,33 @@ SHA so later workflow metadata cannot redefine the historical required-job
 contract. Reuse successful platform artifacts under the existing product
 equivalence checks; do not dispatch another complete build for a delivery error.
 
-For a failed candidate whose required outputs have not expired, run
-`python3 scripts/resume_release.py RUN_ID`. It verifies the canonical main
-workflow/source, attempt history, artifact identities and digests, reports
-which jobs passed and which artifacts expired, then calls GitHub's failed-jobs
-rerun for that same immutable run. GitHub retains green jobs and re-executes
-failed jobs plus their dependent release assembly. If the run is active or
-successful, the command refuses to interfere. If required artifacts are
-expired, use the explicit platform-recovery flow below so the missing producer
-jobs are rebuilt instead of repeatedly retrying assembly.
+## Retrying a captured candidate
+
+Run `python3 scripts/resume_release.py RUN_ID --plan` to see successful jobs,
+failed jobs and missing or expired outputs. For a missing output, the plan
+prints the producing job and its GitHub rerun command. Once the required
+inputs are available, `python3 scripts/resume_release.py RUN_ID` requests a
+failed-jobs retry on the same immutable run. GitHub reruns the affected
+dependents. Console output includes the run URL.
+
+If the tag writer fails after **Record qualified source** succeeds, an operator
+with tag permission can verify the saved evidence with
+`python3 scripts/promote_qualified_release.py RUN_ID`. Add `--apply` to create
+the verified stable tag, then resume the original run. Promotion checks the
+candidate ref, source ancestry, recorded artifact digest and latest job
+identities. An existing stable tag must already point to that source.
+
+Android developer, Play, Fire TV and Automotive jobs each retain their outputs.
+Linux compiles the bundle once per architecture. Each architecture's distro,
+Flatpak, Snap and portable jobs consume its verified bundle independently.
+The candidate uses its actual x64 package checks for Linux smoke evidence.
+Standalone CI retains its Linux smoke build. Flutter tests run across three
+duration-weighted shards.
+
+Channel delivery runs up to four independent destinations at once, records the
+dispatched run IDs in the release driver's evidence directory, and serializes
+Google Play uploads. A retry can deliver the retained Mac App Store package or
+mirror the existing GHCR digest to Docker Hub.
 
 ## Apple native qualification
 
@@ -111,7 +129,7 @@ Apple native reliability runs iOS, macOS, and tvOS as separate matrix jobs with
 `fail-fast` disabled. Each suite can be rerun independently; the required
 `Apple native reliability` aggregate passes only when all three platform jobs
 pass. Public ARM64 Macs with Xcode 26.5 are the default. A selected trusted
-release dispatch may route the three suites to the private Apple runner group,
+release dispatch may use `APPLE_NATIVE_CI_RUNNER_POOL=private` to route all three suites to the private Apple runner group,
 where the single Mac slot will serialize allocation but retain selective reruns.
 Unsigned Apple packages continue on the compatible public runner for each build.
 
@@ -122,7 +140,7 @@ checkpoint so a later packaging recovery can use another runner. A Developer ID
 notarization submission stores its signed input archive, archive digest,
 submission UUID and exact run/source identity. If the Mac job is rerun after a
 runner loss, it restores the latest verified checkpoint from an earlier attempt,
-checks that same Apple submission, and staples its ticket without recompiling
+hands that same Apple submission to a hosted Mac for polling and stapling without recompiling
 or submitting a duplicate archive. The normal signed artifact and Gatekeeper
 checks still run after stapling.
 

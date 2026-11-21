@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Reuse completed Apple signing, Android variant and Linux package jobs across release retries. Independent platforms and store deliveries can proceed in parallel.
+
 - Keep manual app-store review submissions tracked separately from successful artifact uploads.
 
 ## [3.0.47] - 2026-11-21

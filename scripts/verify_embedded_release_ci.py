@@ -80,7 +80,7 @@ def verify_candidate(token, repository, sha, tag, candidate, *, root=ROOT, pubsp
         raise GateError('Existing stable release tag is immutable and points to different source.')
 
 
-def verify_jobs(run, jobs, sha, run_id, attempt, required):
+def verify_jobs(run, jobs, sha, run_id, attempt, required, *, require_candidate_guards=False):
     repository = run.get('repository') or {}
     head_repository = run.get('head_repository') or {}
     if (not isinstance(required, list) or not required
@@ -117,6 +117,14 @@ def verify_jobs(run, jobs, sha, run_id, attempt, required):
         job = matches[0]
         records.append({'id': job['id'], 'name': job['name'], 'attempt': job.get('run_attempt'),
                         'status': job['status'], 'conclusion': job['conclusion']})
+    if require_candidate_guards or any(job.get('name') == 'Record qualified source' for job in jobs):
+        for prefix, minimum in (('Candidate isolation / ', 4), ('Candidate security / ', 2)):
+            guards = sorted((job for job in jobs if job['name'].startswith(prefix)), key=lambda job: job['name'])
+            if len(guards) < minimum or any(job.get('status') != 'completed' or job.get('conclusion') != 'success'
+                                            or type(job.get('id')) is not int for job in guards):
+                raise GateError(f'Candidate qualification is incomplete: {prefix.rstrip(" /")}')
+            records.extend({'id': job['id'], 'name': job['name'], 'attempt': job['run_attempt'],
+                            'status': job['status'], 'conclusion': job['conclusion']} for job in guards)
     for job in jobs:
         if str(job.get('name', '')).startswith(PREFIX) and (job.get('status') != 'completed'
                 or job.get('conclusion') not in ('success', 'skipped')):
@@ -218,7 +226,7 @@ def main():
     run_id, attempt = int(os.environ['GITHUB_RUN_ID']), int(os.environ['GITHUB_RUN_ATTEMPT'])
     run = api(f'actions/runs/{run_id}', token)
     jobs = fetch_attempt_history(run_id, attempt, token)
-    proof = verify_jobs(run, jobs, sha, run_id, attempt, _manifest_gate()['requiredJobs'])
+    proof = verify_jobs(run, jobs, sha, run_id, attempt, _manifest_gate()['requiredJobs'], require_candidate_guards=True)
     if args.create_tag:
         create_stable_tag(token, tag, sha)
     elif not args.qualification_only and resolve_ref(tag, token) != sha:

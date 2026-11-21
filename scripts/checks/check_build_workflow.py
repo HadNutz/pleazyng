@@ -904,7 +904,7 @@ require(
     "Windows native CI must predownload and verify Boost/libtorrent before CMake configures",
 )
 
-linux = job("linux-bundle") + job("linux-format") + job("build-linux")
+linux = job("linux-bundle") + job("linux-bundle-arm64") + job("linux-format") + job("linux-format-arm64") + job("build-linux") + job("assemble-linux-arm64")
 require(
     "matrix.arch == 'x64'" in linux
     and "'ubuntu-24.04-arm'" in linux
@@ -1832,7 +1832,7 @@ for action_pool_job in (
 
 release = job("create-release")
 require(
-    "needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, finish-notarization, build-windows, package-windows, build-linux]"
+    "needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, finish-notarization, build-windows, package-windows, build-linux, assemble-linux-arm64]"
     in release,
     "release dependencies must include the trust gate, all platform builds, and Windows packaging",
 )

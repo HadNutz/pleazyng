@@ -65,6 +65,7 @@ permissions:
 concurrency:
   group: app-store-publish-${{ startsWith(inputs.channel, 'google-play') && 'google-play' || inputs.channel }}-${{ startsWith(inputs.channel, 'google-play') && 'org.snapetech.pleazyng' || inputs.release_tag }}
   cancel-in-progress: false
+  queue: max
 
 jobs:
   validate-release:

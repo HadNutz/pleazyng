@@ -19,6 +19,8 @@ on:
       - 'lib/**/romm*/**'
   workflow_call:
   workflow_dispatch:
+  schedule:
+    - cron: '41 6 * * 1'
 
 permissions:
   contents: read

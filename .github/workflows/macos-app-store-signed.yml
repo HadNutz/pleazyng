@@ -26,10 +26,6 @@ permissions:
   contents: read
   id-token: write
 
-concurrency:
-  group: pleazyng-macos-app-store-signing
-  cancel-in-progress: false
-
 env:
   GH_TOKEN: ${{ github.token }}
   PUB_CACHE: ${{ github.workspace }}/.cache/plezy-pub-cache
@@ -42,6 +38,10 @@ env:
 jobs:
   build-upload:
     name: Build and upload signed Mac App Store package
+    concurrency:
+      group: pleazyng-macos-app-store-signing
+      cancel-in-progress: false
+      queue: max
     if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && inputs.profile_inspection_only != true
     runs-on: ${{ fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","gha-{0}-build-upload"]}}', github.run_id)) }}
     timeout-minutes: 240
@@ -79,11 +79,6 @@ jobs:
             echo "Choose either signing preflight or profile inspection." >&2
             exit 1
           fi
-
-      - name: Configure isolated Ruby bundle path
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
-        shell: bash
-        run: echo "BUNDLE_PATH=$RUNNER_TEMP/fastlane-bundle" >> "$GITHUB_ENV"
 
       - name: Preflight macOS build disk capacity
         env:
@@ -209,23 +204,28 @@ jobs:
             --export-only --archive-path "$RUNNER_TEMP/macos-app-store-archive/Pleazyng.xcarchive" \
             --derived-data "$RUNNER_TEMP/macos-app-store-derived-data"
 
-      - name: Attest uploaded installer package
+      - name: Attest signed installer package
         if: success() && inputs.preflight_only != true && inputs.profile_inspection_only != true
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: ${{ runner.temp }}/macos-app-store-output/pleazyng-macos-appstore.pkg
 
-      - name: Retain signed package and App Store processing receipt
+      - name: Retain signing checkpoint or preflight receipt
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ${{ inputs.profile_inspection_only == true && 'pleazyng-macos-appstore-profile-inspection' || inputs.preflight_only == true && 'pleazyng-macos-appstore-signing-preflight' || 'pleazyng-macos-signed-checkpoint' }}-${{ inputs.release_tag }}-${{ github.run_id }}
           path: ${{ runner.temp }}/macos-app-store-output/
           if-no-files-found: ignore
+          overwrite: true
           retention-days: 30
 
   deliver:
     name: Deliver verified Mac App Store package
+    concurrency:
+      group: pleazyng-macos-app-store-delivery
+      cancel-in-progress: false
+      queue: max
     needs: build-upload
     if: inputs.preflight_only != true && inputs.profile_inspection_only != true
     runs-on: macos-26
@@ -332,4 +332,5 @@ jobs:
           name: pleazyng-macos-appstore-profile-inspection-${{ inputs.release_tag }}-${{ github.run_id }}
           path: ${{ runner.temp }}/macos-app-store-profile-inspection/
           if-no-files-found: ignore
+          overwrite: true
           retention-days: 30

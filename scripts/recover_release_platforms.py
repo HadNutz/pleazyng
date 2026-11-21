@@ -305,8 +305,13 @@ def verify_repaired_run(run_id, head_sha, version, repository, *, allow_pending=
     verify_webos_transport_patch(repository, source_sha, head_sha, files)
     workflows = [immutable_content(repository, revision, ".github/workflows/build.yml") for revision in (source_sha, head_sha)]
     patterns = [r"(?ms)^env:\n.*?(?=^jobs:)"]
-    patterns += [r"(?ms)^  " + job + r":\n.*?(?=^  [a-zA-Z0-9_-]+:|\Z)"
-                 for job in (("build-webos",) if webos_only else ("build-macos", "build-linux"))]
+    compiled_jobs = ["build-webos"] if webos_only else ["build-macos", "build-linux"]
+    if not webos_only:
+        for lane in ("finish-notarization", "linux-bundle", "linux-format", "linux-bundle-arm64",
+                     "linux-format-arm64", "assemble-linux-arm64"):
+            if any(f"\n  {lane}:\n" in workflow for workflow in workflows):
+                compiled_jobs.append(lane)
+    patterns += [r"(?ms)^  " + job + r":\n.*?(?=^  [a-zA-Z0-9_-]+:|\Z)" for job in compiled_jobs]
     for pattern in patterns:
         blocks = [re.findall(pattern, content) for content in workflows]
         if any(len(block) != 1 for block in blocks):

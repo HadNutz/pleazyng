@@ -2805,6 +2805,7 @@ def ensure_channel_run(
     *,
     release_sha: str,
     started=None,
+    recorded_run_id=None,
 ) -> dict:
     tag = fields.get("release_tag")
     if not tag:
@@ -2813,7 +2814,20 @@ def ensure_channel_run(
     # release. A release-event metadata commit may advance main between lanes;
     # that does not change the already verified product source or its assets.
     ensure_frozen_release_source(tag, release_sha)
-    for run in workflow_runs(PLEZY_REPO, workflow, ref="main"):
+    if recorded_run_id is None:
+        candidates = workflow_runs(PLEZY_REPO, workflow, ref="main")
+    else:
+        if type(recorded_run_id) is not int or recorded_run_id <= 0:
+            raise ReleaseError(f"{purpose} has an invalid saved run ID")
+        record = gh_json("api", f"repos/{PLEZY_REPO}/actions/runs/{recorded_run_id}")
+        if (record.get("id") != recorded_run_id or record.get("event") != "workflow_dispatch"
+                or record.get("head_branch") != "main" or record.get("display_title") != title
+                or record.get("path", "").split("@", 1)[0] != f".github/workflows/{workflow}"
+                or (record.get("head_repository") or {}).get("full_name") != PLEZY_REPO):
+            raise ReleaseError(f"{purpose} saved run does not match the immutable channel request")
+        candidates = [{"databaseId": record["id"], "displayTitle": title, "url": record["html_url"],
+                       "event": record["event"], "status": record["status"], "conclusion": record["conclusion"]}]
+    for run in candidates:
         if run.get("event") != "workflow_dispatch" or run.get("displayTitle") != title:
             continue
         if run.get("status") == "completed":
@@ -2822,6 +2836,8 @@ def ensure_channel_run(
                     f"Previous {purpose} run {run['databaseId']} concluded "
                     f"{run.get('conclusion')}; inspect its external side effects before retrying."
                 )
+            if started:
+                started(run)
             print(f"Reusing successful {purpose} run {run['databaseId']}.")
             return run
         if started:
@@ -3093,17 +3109,24 @@ def publish_configured_channels(
         eligible.append(spec)
 
     def deliver(spec):
+        identity = hashlib.sha256(spec["title"].encode()).hexdigest()[:16]
+        path = scratch_dir / f"channel-{spec['fields']['action']}-{identity}.json" if scratch_dir else None
+
         def persist(run):
-            if scratch_dir:
-                identity = hashlib.sha256(spec["title"].encode()).hexdigest()[:16]
-                path = scratch_dir / f"channel-{spec['fields']['action']}-{identity}.json"
+            if path:
                 temporary = path.with_suffix('.tmp')
                 temporary.write_text(json.dumps({'tag': tag, 'source': release_sha, 'run_id': run['databaseId']}))
                 temporary.replace(path)
         try:
+            options = {}
+            if path and path.is_file():
+                receipt = json.loads(path.read_text())
+                if receipt.get("tag") != tag or receipt.get("source") != release_sha:
+                    raise ReleaseError("Saved channel run belongs to a different release")
+                options["recorded_run_id"] = receipt["run_id"]
             result = ensure_channel_run(spec['workflow'], spec['title'], spec['fields'], spec['name'],
-                                        release_sha=release_sha, started=persist)
-        except (ReleaseError, OSError) as error:
+                                        release_sha=release_sha, started=persist, **options)
+        except (ReleaseError, OSError, ValueError, KeyError) as error:
             return spec, None, str(error)
         return spec, result, None
 

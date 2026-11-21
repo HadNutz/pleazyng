@@ -169,12 +169,9 @@ def compile_bundle(target, arch, out, webos_ndk=None):
         shutil.copyfile(HERE / "video-options.sh", checkout / "scripts/shared/_user_overrides.sh")
         env = {**os.environ, "PLEAZYNG_TV_MPV_SOURCE": str(HERE), "STRICT_SOURCES": "1", "ENABLE_LTO_DEPS": "0"}
         if os.environ.get("PLEAZYNG_TV_MPV_CACHE"):
-            import importlib.util
-            spec = importlib.util.spec_from_file_location("tv_mpv_sources", HERE / "sources.py")
-            source_tools = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(source_tools)
+            from sources import prefetch
             sources = Path(os.environ["PLEAZYNG_TV_MPV_CACHE"]) / "sources"
-            source_tools.prefetch(checkout, target, sources)
+            prefetch(checkout, target, sources)
             env["PLEAZYNG_TV_SOURCES"] = str(sources)
         dav1d_archive = env.get("PLEAZYNG_DAV1D_ARCHIVE")
         if target == "webos" and dav1d_archive:

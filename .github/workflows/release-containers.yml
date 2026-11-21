@@ -184,6 +184,7 @@ jobs:
     concurrency:
       group: relay-registry-latest
       cancel-in-progress: false
+      queue: max
     permissions:
       contents: read
       packages: write

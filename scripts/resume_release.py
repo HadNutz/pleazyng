@@ -88,14 +88,29 @@ def inspect_run(run_id: int, *, get=api):
     jobs_by_name = {j['name']: j for j in newest}
     if FINISH_MAC in jobs_by_name and jobs_by_name[FINISH_MAC].get('conclusion') != 'skipped':
         producers_by_output['macos-dmg'] = {FINISH_MAC}
+    def needs_replay(job, output):
+        return job in jobs_by_name and (output not in retained or jobs_by_name[job].get('conclusion') != 'success')
+
     for arch in ('x64', 'arm64'):
-        producers_by_output[f'linux-bundle-{arch}'] = {f'Compile Linux ({arch})'}
+        final_lane = f'Build Linux ({arch})'
         for fmt in ('distro', 'flatpak', 'snap', 'portable'):
-            producers_by_output[f'linux-format-{arch}-{fmt}'] = {f'Package Linux ({arch}, {fmt})'}
+            format_lane = f'Package Linux ({arch}, {fmt})'
+            checkpoint = f'linux-format-{arch}-{fmt}'
+            format_needed = needs_replay(final_lane, f'linux-{arch}')
+            appimage_needed = arch == 'x64' and fmt == 'portable' and 'linux-x64-appimage' not in retained
+            if format_needed:
+                producers_by_output[checkpoint] = {format_lane}
+            if (format_needed and needs_replay(format_lane, checkpoint)) or appimage_needed:
+                producers_by_output[f'linux-bundle-{arch}'] = {f'Compile Linux ({arch})'}
     if 'Package Linux (x64, portable)' in jobs_by_name:
         producers_by_output['linux-x64-appimage'] = {'Package Linux (x64, portable)'}
-    for variant in ('developer', 'play', 'firetv', 'automotive'):
-        producers_by_output[f'android-variant-{variant}'] = {f'Android release ({variant})'}
+    if needs_replay('build-android', 'android-apk'):
+        for variant in ('developer', 'play', 'firetv', 'automotive'):
+            producers_by_output[f'android-variant-{variant}'] = {f'Android release ({variant})'}
+    if needs_replay(FINISH_MAC, 'macos-dmg') and jobs_by_name[FINISH_MAC].get('conclusion') != 'skipped':
+        prefix = f'macos-notarization-checkpoint-{run_id}-'
+        if not any(re.fullmatch(re.escape(prefix) + r'[1-9][0-9]*', name) for name in retained):
+            producers_by_output[f'{prefix}{attempt}'] = {'build-macos'}
     for name, producers in producers_by_output.items():
         for job in newest:
             if job['name'] not in producers or job.get('conclusion') != 'success':

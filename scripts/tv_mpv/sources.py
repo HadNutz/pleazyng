@@ -2,6 +2,8 @@
 import base64
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
+import os
+import shutil
 from pathlib import Path
 import subprocess
 from urllib.parse import urlsplit
@@ -49,6 +51,14 @@ def prefetch(checkout, target, directory):
         if parsed.hostname == 'raw.githubusercontent.com' and parsed.path.startswith('/torvalds/linux/'):
             urls.append('https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux/+/' +
                         parsed.path.removeprefix('/torvalds/linux/') + '?format=TEXT')
+        staged_dav1d = os.environ.get('PLEAZYNG_DAV1D_ARCHIVE')
+        if staged_dav1d and parsed.path.endswith('/dav1d-1.5.1.tar.xz'):
+            local = Path(staged_dav1d)
+            if local.is_file() and digest_file(local) == digest:
+                shutil.copyfile(local, temp)
+                temp.replace(final)
+                return
+            urls.append('https://veronanetworks.mm.fcix.net/videolan-ftp/dav1d/1.5.1/dav1d-1.5.1.tar.xz')
         for candidate in urls:
             cmd = ['curl', '--fail', '--location', '--silent', '--show-error', '--max-time', '180',
                    '--retry', '2', '--output', str(temp), candidate]

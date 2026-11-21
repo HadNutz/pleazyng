@@ -21,7 +21,7 @@ def verified_proof(run_id, token):
     if run_id < 1:
         raise GateError("Run ID must be positive")
     run = api(f"actions/runs/{run_id}", token)
-    title = re.fullmatch(r"(?:apple-signing-unavailable:)?action:release:pool:public:tag:(v[0-9]+\\.[0-9]+\\.[0-9]+)",
+    title = re.fullmatch(r"(?:apple-signing-unavailable:)?action:release:pool:public:tag:(v[0-9]+\.[0-9]+\.[0-9]+)",
                          str(run.get("display_title")))
     if not title or run.get("status") != "completed" or run.get("conclusion") != "failure":
         raise GateError("Promotion requires a completed failed public release candidate")
@@ -29,7 +29,7 @@ def verified_proof(run_id, token):
     candidate = f"{tag}-candidate.{sha}"
     jobs = fetch_attempt_history(run_id, attempt, token)
     gate = _manifest_gate(_manifest_for_commit(token, REPOSITORY, sha))
-    current = verify_jobs(run, jobs, sha, run_id, attempt, gate["requiredJobs"])
+    current = verify_jobs(run, jobs, sha, run_id, attempt, gate["requiredJobs"], require_candidate_guards=True)
     by_name = {job["name"]: job for job in jobs}
     recorded = by_name.get("Record qualified source", {})
     if (recorded.get("conclusion") != "success" or

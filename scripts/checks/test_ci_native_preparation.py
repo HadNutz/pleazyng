@@ -168,6 +168,14 @@ class NativePreparationOrderTests(unittest.TestCase):
                 self.assertIn('${{ ' + output + ' }}', upload['with']['path'].splitlines())
                 self.assertLess(action_steps.index(upload), action_steps.index(cleanup))
 
+    def test_flutter_shards_cover_each_test_once_with_deterministic_assignment(self):
+        from ci.flutter_test_shard import partition
+        files = ['test/slow_test.dart', 'test/other_test.dart', 'test/new_test.dart', 'test/fast_test.dart']
+        groups = partition(files, {files[0]: 100}, 3)
+        self.assertEqual([files[0]], groups[0])
+        self.assertEqual(sorted(files), sorted(p for group in groups for p in group))
+        self.assertEqual(groups, partition(list(reversed(files)), {files[0]: 100}, 3))
+
     def test_unit_job_is_the_only_full_application_suite(self):
         workflow = WORKFLOW.read_text()
         analysis = job(workflow, 'analyze')
