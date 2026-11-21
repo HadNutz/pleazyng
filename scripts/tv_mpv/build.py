@@ -118,6 +118,30 @@ def rewrite_webos_source_mirrors(checkout):
 
 
 def build(target, arch, out, webos_ndk=None):
+    cache_dir = os.environ.get("PLEAZYNG_TV_MPV_CACHE")
+    if not cache_dir:
+        return compile_bundle(target, arch, out, webos_ndk)
+    cache = Path(cache_dir) / target / arch
+    receipt = cache / "checksums.json"
+    names = (LIBRARY, "TV-MPV-LICENSES.txt", "tv-mpv-build.json")
+
+    def checksums(directory):
+        return {name: hashlib.sha256((directory / name).read_bytes()).hexdigest() for name in names}
+
+    if receipt.is_file() and all((cache / name).is_file() for name in names):
+        if json.loads(receipt.read_text()) == checksums(cache):
+            out.mkdir(parents=True, exist_ok=True)
+            for name in names:
+                shutil.copyfile(cache / name, out / name)
+            return
+    compile_bundle(target, arch, out, webos_ndk)
+    cache.mkdir(parents=True, exist_ok=True)
+    for name in names:
+        shutil.copyfile(out / name, cache / name)
+    receipt.write_text(json.dumps(checksums(out), sort_keys=True))
+
+
+def compile_bundle(target, arch, out, webos_ndk=None):
     if target == "webos" and (arch != "armv7l" or webos_ndk is None):
         raise ValueError("webOS needs the armv7l target and its NDK")
     with tempfile.TemporaryDirectory(prefix="pleazyng-tv-mpv-") as temp:
@@ -144,6 +168,14 @@ def build(target, arch, out, webos_ndk=None):
         (scripts / "shared/_font_stack.sh").write_text(unibreak + "\n" + font_stack)
         shutil.copyfile(HERE / "video-options.sh", checkout / "scripts/shared/_user_overrides.sh")
         env = {**os.environ, "PLEAZYNG_TV_MPV_SOURCE": str(HERE), "STRICT_SOURCES": "1", "ENABLE_LTO_DEPS": "0"}
+        if os.environ.get("PLEAZYNG_TV_MPV_CACHE"):
+            import importlib.util
+            spec = importlib.util.spec_from_file_location("tv_mpv_sources", HERE / "sources.py")
+            source_tools = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(source_tools)
+            sources = Path(os.environ["PLEAZYNG_TV_MPV_CACHE"]) / "sources"
+            source_tools.prefetch(checkout, target, sources)
+            env["PLEAZYNG_TV_SOURCES"] = str(sources)
         dav1d_archive = env.get("PLEAZYNG_DAV1D_ARCHIVE")
         if target == "webos" and dav1d_archive:
             archive_path = Path(dav1d_archive).resolve()

@@ -103,16 +103,11 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           build-args: |
-            HTTP_PROXY=${{ steps.proxy.outputs.url }}
-            HTTPS_PROXY=${{ steps.proxy.outputs.url }}
-            http_proxy=${{ steps.proxy.outputs.url }}
-            https_proxy=${{ steps.proxy.outputs.url }}
             VERSION=${{ steps.release.outputs.version }}
             REVISION=${{ steps.release.outputs.commit }}
             BUILD_DATE=${{ steps.build-metadata.outputs.build_date }}
           tags: |
             ghcr.io/snapetech-org/pleazyng-relay:${{ steps.release.outputs.version }}
-            ghcr.io/snapetech-org/pleazyng-relay:latest
           labels: |
             org.opencontainers.image.title=Pleazyng Relay
             org.opencontainers.image.description=Pleazyng authentication and artifact relay service
@@ -124,7 +119,7 @@ jobs:
 
       - name: Verify GHCR architecture manifest
         env:
-          IMAGE: ghcr.io/snapetech-org/pleazyng-relay:${{ steps.release.outputs.version }}
+          IMAGE: ghcr.io/snapetech-org/pleazyng-relay@${{ steps.image.outputs.digest }}
         run: |
           set -euo pipefail
           docker buildx imagetools inspect "$IMAGE" --raw | jq -e '
@@ -152,6 +147,14 @@ jobs:
             echo 'Docker Hub credentials are not configured; GHCR remains the release registry.'
           fi
 
+      - name: Log in to GHCR
+        if: steps.dockerhub.outputs.available == 'true'
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
       - name: Log in to Docker Hub
         if: steps.dockerhub.outputs.available == 'true'
         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
@@ -171,8 +174,39 @@ jobs:
           sudo apt-get update && sudo apt-get install -y skopeo
           src=ghcr.io/snapetech-org/pleazyng-relay
           dst=docker.io/snapetech/pleazyng-relay
-          for tag in "$VERSION" latest; do
-            skopeo copy --authfile "$HOME/.docker/config.json" --all --preserve-digests "docker://$src@$DIGEST" "docker://$dst:$tag"
-            actual=$(skopeo inspect --raw "docker://$dst:$tag" | sha256sum)
-            test "${actual%% *}" = "${DIGEST#sha256:}"
-          done
+          skopeo copy --authfile "$HOME/.docker/config.json" --all --preserve-digests "docker://$src@$DIGEST" "docker://$dst:$VERSION"
+          actual=$(skopeo inspect --raw "docker://$dst:$VERSION" | sha256sum)
+          test "${actual%% *}" = "${DIGEST#sha256:}"
+  latest:
+    needs: [publish, mirror]
+    if: always() && needs.publish.result == 'success' && !cancelled()
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: relay-registry-latest
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Promote the published release digest to latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DIGEST: ${{ needs.publish.outputs.digest }}
+          VERSION: ${{ needs.publish.outputs.version }}
+          MIRROR_RESULT: ${{ needs.mirror.result }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          current=$(gh api "repos/$GITHUB_REPOSITORY/releases/latest" --jq .tag_name)
+          [[ "${current#v}" == "$VERSION" ]] || { echo "Latest release is $current"; exit 0; }
+          [[ "$DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]]
+          sudo apt-get update && sudo apt-get install -y skopeo
+          printf '%s' "$GH_TOKEN" | skopeo login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          src=ghcr.io/snapetech-org/pleazyng-relay
+          skopeo copy --all --preserve-digests "docker://$src@$DIGEST" "docker://$src:latest"
+          if [[ "$MIRROR_RESULT" == success && -n "$DOCKERHUB_USERNAME" && -n "$DOCKERHUB_TOKEN" ]]; then
+            printf '%s' "$DOCKERHUB_TOKEN" | skopeo login docker.io --username "$DOCKERHUB_USERNAME" --password-stdin
+            dst=docker.io/snapetech/pleazyng-relay
+            skopeo copy --all --preserve-digests "docker://$dst@$DIGEST" "docker://$dst:latest"
+          fi

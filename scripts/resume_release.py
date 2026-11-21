@@ -8,6 +8,7 @@ import re
 import subprocess
 import sys
 
+from release_job_inventory import FINISH_MAC, inventory
 from verify_embedded_release_ci import latest_attempt_jobs, GateError
 
 REPOSITORY = 'snapetech-org/pleazyng'
@@ -49,30 +50,22 @@ def inspect_run(run_id: int, *, get=api):
             or run.get('head_branch') != 'main' or run.get('path', '').split('@')[0] != WORKFLOW
             or (run.get('head_repository') or {}).get('full_name') != REPOSITORY
             or re.fullmatch(r'[0-9a-f]{40}', str(run.get('head_sha', ''))) is None
-            or not str(run.get('display_title', '')).startswith('action:release:pool:public:tag:v')):
+            or not str(run.get('display_title', '')).removeprefix('apple-signing-unavailable:').startswith('action:release:pool:public:tag:v')):
         raise GateError('Only a canonical main release candidate can be resumed.')
     if run.get('status') != 'completed' or run.get('conclusion') not in {'failure', 'cancelled', 'timed_out'}:
         raise GateError('Resume requires a completed failed candidate; active and successful runs are left untouched.')
     attempt = run.get('run_attempt')
     if type(attempt) is not int or not 1 <= attempt < MAX_ATTEMPTS:
         raise GateError('Run attempt is outside the supported recovery range.')
-    history = []
-    for number in range(1, attempt + 1):
-        response = get(f'actions/runs/{run_id}/attempts/{number}/jobs?per_page=100')
-        jobs = response.get('jobs')
-        if not isinstance(jobs, list) or response.get('total_count', len(jobs)) != len(jobs):
-            raise GateError(f'Attempt {number} has an incomplete job inventory.')
-        history.append(jobs)
+    history = [inventory(f'actions/runs/{run_id}/attempts/{number}/jobs', 'jobs', get, GateError)
+               for number in range(1, attempt + 1)]
     newest = latest_attempt_jobs(history)
     failed = sorted((job['name'] for job in newest
                      if job.get('status') == 'completed'
                      and job.get('conclusion') in {'failure', 'cancelled', 'timed_out'}))
     if not failed:
         raise GateError('Run conclusion is failed but no failed jobs were found in attempt history.')
-    artifacts_response = get(f'actions/runs/{run_id}/artifacts?per_page=100')
-    artifacts = artifacts_response.get('artifacts')
-    if not isinstance(artifacts, list) or artifacts_response.get('total_count', len(artifacts)) != len(artifacts):
-        raise GateError('Artifact inventory is incomplete; refusing an ambiguous recovery.')
+    artifacts = inventory(f'actions/runs/{run_id}/artifacts', 'artifacts', get, GateError)
     names = [a.get('name') for a in artifacts]
     if len(names) != len(set(names)):
         raise GateError('Artifact inventory contains duplicate names; refusing an ambiguous recovery.')
@@ -91,7 +84,19 @@ def inspect_run(run_id: int, *, get=api):
     retained = sorted(a['name'] for a in artifacts if a.get('expired') is False)
     expired = sorted(a['name'] for a in artifacts if a.get('expired') is True)
     missing = {}
-    for name, producers in ARTIFACT_PRODUCERS.items():
+    producers_by_output = ARTIFACT_PRODUCERS.copy()
+    jobs_by_name = {j['name']: j for j in newest}
+    if FINISH_MAC in jobs_by_name and jobs_by_name[FINISH_MAC].get('conclusion') != 'skipped':
+        producers_by_output['macos-dmg'] = {FINISH_MAC}
+    for arch in ('x64', 'arm64'):
+        producers_by_output[f'linux-bundle-{arch}'] = {f'Compile Linux ({arch})'}
+        for fmt in ('distro', 'flatpak', 'snap', 'portable'):
+            producers_by_output[f'linux-format-{arch}-{fmt}'] = {f'Package Linux ({arch}, {fmt})'}
+    if 'Package Linux (x64, portable)' in jobs_by_name:
+        producers_by_output['linux-x64-appimage'] = {'Package Linux (x64, portable)'}
+    for variant in ('developer', 'play', 'firetv', 'automotive'):
+        producers_by_output[f'android-variant-{variant}'] = {f'Android release ({variant})'}
+    for name, producers in producers_by_output.items():
         for job in newest:
             if job['name'] not in producers or job.get('conclusion') != 'success':
                 continue
@@ -120,7 +125,10 @@ def resume(run_id: int, *, plan_only=False, get=api, command=subprocess.run, out
     output(f'https://github.com/{REPOSITORY}/actions/runs/{run_id}')
     for name, producer in sorted(plan['missing_outputs'].items()):
         state = 'expired' if name in plan['expired_artifacts'] else 'missing'
+        job = next(j for j in plan['jobs'] if j['name'] == producer)
         output(f'{name}: {state}; replay producer {producer} before release assembly.')
+        if job.get('id'):
+            output(f"  gh run rerun {run_id} --job {job['id']} --repo {REPOSITORY}")
     if plan_only:
         return plan
     if plan['missing_outputs'] or plan['blocking_expired_artifacts']:

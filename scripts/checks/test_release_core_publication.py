@@ -91,7 +91,7 @@ class CorePublicationTests(unittest.TestCase):
         for name in ("Build installer and portables", "Attest Windows artifacts", "Upload installer"):
             self.assertFalse(steps[name].get("continue-on-error", False))
         self.assertTrue(steps["Package Chocolatey release"]["continue-on-error"])
-        linux = {step.get("name"): step for step in jobs["build-linux"]["steps"]}
+        linux = {step.get("name"): step for step in jobs["linux-format"]["steps"]}
         for name in ("Build Flatpak bundle", "Build Snap package"):
             self.assertFalse(linux[name].get("continue-on-error", False))
         release_steps = {step.get("name"): step for step in jobs["create-release"]["steps"]}

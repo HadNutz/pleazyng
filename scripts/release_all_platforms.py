@@ -817,10 +817,12 @@ def run_has_successful_step(repo: str, run: dict, job_name: str, step_name: str)
         run_id = run.get("databaseId")
         if not isinstance(run_id, int):
             raise ReleaseError("Cannot inspect a workflow run without its numeric run ID.")
-        details = gh_json("api", f"repos/{repo}/actions/runs/{run_id}/jobs")
-        jobs = details.get("jobs") if isinstance(details, dict) else None
+        from release_job_inventory import inventory
+        jobs = inventory(f"repos/{repo}/actions/runs/{run_id}/jobs", "jobs", lambda p: gh_json("api", p), ReleaseError)
     if not isinstance(jobs, list):
         raise ReleaseError(f"Could not inspect jobs for workflow run {run.get('databaseId')}.")
+    from release_job_inventory import mac_package_evidence
+    jobs = mac_package_evidence(jobs)
     matches = [job for job in jobs if isinstance(job, dict) and job.get("name") == job_name]
     if len(matches) != 1 or not isinstance(matches[0].get("steps"), list):
         return False
@@ -3093,7 +3095,8 @@ def publish_configured_channels(
     def deliver(spec):
         def persist(run):
             if scratch_dir:
-                path = scratch_dir / f"channel-{spec['fields']['action']}-{spec['fields'].get('channel', 'default')}.json"
+                identity = hashlib.sha256(spec["title"].encode()).hexdigest()[:16]
+                path = scratch_dir / f"channel-{spec['fields']['action']}-{identity}.json"
                 temporary = path.with_suffix('.tmp')
                 temporary.write_text(json.dumps({'tag': tag, 'source': release_sha, 'run_id': run['databaseId']}))
                 temporary.replace(path)

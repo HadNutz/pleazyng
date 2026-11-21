@@ -1264,8 +1264,10 @@ def deliver_package(output, release_tag, source_commit, stage):
     report_path = output / "pleazyng-macos-appstore.json"
     report = json.loads(report_path.read_text())
     package_path = output / "pleazyng-macos-appstore.pkg"
-    if (report.get("source_commit") != source_commit or report.get("workflow_commit") != os.environ["GITHUB_SHA"]
+    if (report.get("release_tag") != release_tag or report.get("source_commit") != source_commit or report.get("workflow_commit") != os.environ["GITHUB_SHA"]
             or report.get("candidate_state") != "signed-awaiting-upload"
+            or hashlib.sha256((output / "signed-app-info.plist").read_bytes()).hexdigest()
+            != report["application_category"]["archived_info_plist_sha256"]
             or hashlib.sha256(package_path.read_bytes()).hexdigest() != report["package"]["sha256"]):
         raise ValueError("Signed package differs from the verified immutable release")
     api_key_id = os.environ.get("APPLE_API_KEY_ID", "")

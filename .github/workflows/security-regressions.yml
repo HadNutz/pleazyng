@@ -5,6 +5,16 @@ name: Security regressions
 on:
   push:
     branches: [main, 'audit-remediation/**']
+    paths-ignore:
+      - 'CHANGELOG.md'
+      - 'UPSTREAM_ATTRIBUTION.md'
+      - 'docs/**/*.md'
+      - 'changelog.d/**'
+  workflow_call:
+    inputs:
+      flutter_suite_in_candidate:
+        type: boolean
+        default: false
   workflow_dispatch:
   schedule:
     - cron: '23 6 * * 1'
@@ -13,7 +23,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: security-regressions-${{ github.ref }}
+  group: security-regressions-${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -107,7 +117,7 @@ jobs:
       - name: Run the complete Dart and widget suite
         # Main, manual and scheduled runs always exercise the whole app.
         # Short-lived audit branches can validate isolated follow-up changes.
-        if: github.ref == 'refs/heads/main' || github.event_name != 'push'
+        if: ${{ !inputs.flutter_suite_in_candidate && (github.ref == 'refs/heads/main' || github.event_name != 'push') }}
         run: scripts/run_tests.sh --no-pub -j 2 --timeout=180s
       - name: Run all repository checker regressions with Dart available
         run: python3 -m unittest discover -s scripts/checks -p 'test_*.py'

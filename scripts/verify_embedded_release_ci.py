@@ -64,10 +64,10 @@ def resolve_ref(tag, token, *, missing=False):
     return target['sha']
 
 
-def verify_candidate(token, repository, sha, tag, candidate, *, root=ROOT):
+def verify_candidate(token, repository, sha, tag, candidate, *, root=ROOT, pubspec_text=None):
     if repository != REPOSITORY or re.fullmatch(r'[0-9a-f]{40}', sha) is None:
         raise GateError('Qualification requires the canonical repository and exact source SHA.')
-    version, _ = parse_pubspec_version((root / 'pubspec.yaml').read_text())
+    version, _ = parse_pubspec_version((root / 'pubspec.yaml').read_text() if pubspec_text is None else pubspec_text)
     if tag != 'v' + version.split('+')[0] or candidate != f'{tag}-candidate.{sha}':
         raise GateError('Candidate must bind the checked-out version and exact source SHA.')
     if resolve_ref(candidate, token) != sha:
@@ -97,6 +97,20 @@ def verify_jobs(run, jobs, sha, run_id, attempt, required):
     records = []
     for name in required:
         matches = [job for job in jobs if job.get('name') == PREFIX + name]
+        if name == 'Linux package smoke build' and len(matches) == 1 and matches[0].get('conclusion') == 'skipped':
+            # Captured candidates run the package checks on the production bundle.
+            for producer, step in (
+                    ('Compile Linux (x64)', 'Verify every unbundled library the bundle needs is declared'),
+                    ('Package Linux (x64, distro)', 'Verify the declared dependencies reached the package metadata'),
+                    ('Build Linux (x64)', 'Upload Linux x64 artifacts')):
+                evidence = [j for j in jobs if j['name'] == producer and j.get('conclusion') == 'success']
+                if len(evidence) != 1 or not any(st.get('name') == step and st.get('conclusion') == 'success'
+                                                for st in evidence[0].get('steps', [])):
+                    raise GateError(f'Release package qualification missing {producer}: {step}')
+                job = evidence[0]
+                records.append({'id': job['id'], 'name': producer, 'attempt': job['run_attempt'],
+                                'status': job['status'], 'conclusion': job['conclusion']})
+            continue
         if (len(matches) != 1 or matches[0].get('status') != 'completed' or matches[0].get('conclusion') != 'success'
                 or not isinstance(matches[0].get('id'), int)):
             raise GateError(f'Required embedded CI job did not pass uniquely: {name}')

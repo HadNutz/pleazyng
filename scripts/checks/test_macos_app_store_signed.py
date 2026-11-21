@@ -419,7 +419,8 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         self.assertIn('"labels":["self-hosted","macOS","ARM64","private-apple"', runner)
         self.assertIn(f'"gha-{{0}}-{job.group(1)}"', runner)
 
-        self.assertNotIn("ruby/setup-ruby", workflow)
+        self.assertNotIn("ruby/setup-ruby", workflow.split("  deliver:", 1)[0])
+        self.assertIn("ruby/setup-ruby", workflow.split("  deliver:", 1)[1])
         self.assertIn("BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile", workflow)
         self.assertNotIn("BUNDLE_PATH: ${{ runner.temp }}", workflow.split("jobs:", 1)[0])
         self.assertIn('echo "BUNDLE_PATH=$RUNNER_TEMP/fastlane-bundle" >> "$GITHUB_ENV"', workflow)

@@ -44,7 +44,7 @@ index 049294f..0a95460 100644
 +    sed -i '1i #define HAS_STD_TO_CHARS_FP 0' "$gitdir/src/convert.cc"
 +    sed -i 's/= has_std_from_chars_impl<T>::value;/= !std::is_floating_point_v<T> \&\& has_std_from_chars_impl<T>::value;/' "$gitdir/src/convert.cc"
 +  fi
-@@ -456,0 +462,40 @@ cross_build_ffmpeg() {
+@@ -456,0 +462,42 @@ cross_build_ffmpeg() {
 +  # The Tizen 6 sysroot's kernel headers predate V4L2 EOS and HEVC.
 +  # Overlay only the userspace V4L2 declarations. Runtime ioctls still probe
 +  # the actual driver and libavcodec declines unsupported formats.
@@ -61,7 +61,9 @@ index 049294f..0a95460 100644
 +        v4l2-common.h) source_sha=d8f299f7aa92ad182d82ba721cc546e4a93421259bc1c19fbd676d4c6f6de47d; transport_sha=19bde839032005e3791a404b1fdbbabf62a0a31cb581ec9623e8aee9b7754632 ;;
 +        v4l2-controls.h) source_sha=85b0478bd5cf72c8c83b3f73d47ba4378b49738ac2302762320a8fa3122e3824; transport_sha=aaf000dcc20bdd987013598f863e16d885b55150cc797335297ef391e2f297f2 ;;
 +      esac
-+      if ! curl -fsSL --retry 2 --retry-delay 1 -o "$raw" "$source_url" || \
++      if [[ -n "${PLEAZYNG_TV_SOURCES:-}" && -f "$PLEAZYNG_TV_SOURCES/$source_sha" ]]; then
++        cp "$PLEAZYNG_TV_SOURCES/$source_sha" "$raw"
++      elif ! curl -fsSL --retry 2 --retry-delay 1 -o "$raw" "$source_url" || \
 +         ! printf '%s  %s\n' "$source_sha" "$raw" | sha256sum --check --status; then
 +        rm -f "$raw"
 +        encoded="$raw.base64"

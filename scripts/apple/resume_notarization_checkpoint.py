@@ -21,19 +21,20 @@ def gh_json(path: str) -> dict:
 
 
 def restore(output: Path, *, run_id: int, current_attempt: int, source_sha: str, product_source_sha: str,
-            api=gh_json, run=subprocess.run) -> dict | None:
-    if (run_id < 1 or current_attempt < 2 or not re.fullmatch(r'[0-9a-f]{40}', source_sha)
+            include_current=False, api=gh_json, run=subprocess.run) -> dict | None:
+    if (run_id < 1 or current_attempt < (1 if include_current else 2) or not re.fullmatch(r'[0-9a-f]{40}', source_sha)
             or not re.fullmatch(r'[0-9a-f]{40}', product_source_sha)):
         raise ValueError('Notarization resume requires an exact source and a later workflow attempt')
-    inventory = api(f'actions/runs/{run_id}/artifacts?per_page=100').get('artifacts')
-    if not isinstance(inventory, list):
-        raise ValueError('GitHub returned an incomplete notarization artifact inventory')
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from release_job_inventory import inventory as collect
+    inventory = collect(f'actions/runs/{run_id}/artifacts', 'artifacts', api)
     candidates = []
     prefix = f'macos-notarization-checkpoint-{run_id}-'
     for artifact in inventory:
         name = artifact.get('name', '')
         match = re.fullmatch(re.escape(prefix) + r'([1-9][0-9]*)', name)
-        if not match or int(match.group(1)) >= current_attempt:
+        if not match or int(match.group(1)) > current_attempt - (0 if include_current else 1):
             continue
         identity = artifact.get('workflow_run') or {}
         if (artifact.get('expired') is False and identity.get('id') == run_id
@@ -74,7 +75,7 @@ def restore(output: Path, *, run_id: int, current_attempt: int, source_sha: str,
                 or receipt.get('run_id') != run_id
                 or type(receipt.get('run_attempt')) is not int
                 or not 1 <= receipt['run_attempt'] <= attempt
-                or receipt.get('checkpoint_attempt', receipt['run_attempt']) != attempt):
+                or receipt.get('checkpoint_attempt', attempt if receipt.get('status') == 'Accepted' else receipt['run_attempt']) != attempt):
             raise ValueError('Notarization checkpoint receipt belongs to another source or attempt')
         output_archive = output / 'notarization.zip'
         output_receipt = output / 'notarization-checkpoint.json'
@@ -98,13 +99,16 @@ def restore(output: Path, *, run_id: int, current_attempt: int, source_sha: str,
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--include-current', action='store_true', help='Require the latest signed submission through this attempt')
     args = parser.parse_args()
     result = restore(args.output, run_id=int(os.environ['GITHUB_RUN_ID']),
-                     current_attempt=int(os.environ['GITHUB_RUN_ATTEMPT']),
+                     current_attempt=int(os.environ['GITHUB_RUN_ATTEMPT']), include_current=args.include_current,
                      source_sha=os.environ['GITHUB_SHA'],
                      product_source_sha=os.environ.get('COMPILE_SOURCE_SHA', os.environ['GITHUB_SHA']))
     with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
         if result is None:
+            if args.include_current:
+                raise ValueError('Signed macOS checkpoint is unavailable; replay its signing producer')
             output.write('restored=false\n')
             return 0
         output.write('restored=true\n')

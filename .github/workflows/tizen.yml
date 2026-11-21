@@ -282,8 +282,16 @@ jobs:
           python3 scripts/tizen/build_milkrust.py --arch "$PACKAGE_ARCH" --toolchain "$toolchain" --output "$bundle"
           digest=$(python3 -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest())' "$bundle/milkrust-native.json")
           printf 'PLEZY_TIZEN_MILKRUST_BUNDLE=%s\nPLEZY_TIZEN_MILKRUST_MANIFEST_SHA256=%s\n' "$bundle" "$digest" >> "$GITHUB_ENV"
+      - name: Restore locked TV native libraries
+        id: tv-native-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ runner.temp }}/tv-native
+          key: trusted-build-v1-tv-native-v1-tizen-${{ inputs.architecture }}-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/tv_mpv/**', 'tools/webos/compatibility.json', 'scripts/tizen/sdk-linux-arm.json', 'scripts/tizen/toolchain.json', 'scripts/tizen/bootstrap_linux.py') }}
+
       - name: Build and inspect signed TV package
         env:
+          PLEAZYNG_TV_MPV_CACHE: ${{ runner.temp }}/tv-native
           STORE_BUILD: ${{ inputs.store_build }}
           SAMSUNG_DPI_APP_ID: ${{ secrets.SAMSUNG_DPI_APP_ID }}
           SAMSUNG_DPI_SECURITY_KEY: ${{ secrets.SAMSUNG_DPI_SECURITY_KEY }}
@@ -300,6 +308,19 @@ jobs:
             --visualizer-manifest-sha256 "$PLEZY_TIZEN_MILKRUST_MANIFEST_SHA256" \
             --output build/tizen-release "${options[@]}"
           cp scripts/tizen/package.py scripts/tizen/toolchain.json docs/maintainers/tizen-tester.md build/tizen-release/
+      - name: Save verified TV native libraries
+        if: ${{ !cancelled() && steps.tv-native-cache.outputs.cache-hit != 'true' }}
+        shell: bash
+        run: |
+          if find "$RUNNER_TEMP/tv-native" -name checksums.json -type f -print -quit | grep -q .; then
+            echo "TV_NATIVE_VERIFIED=true" >> "$GITHUB_ENV"
+          fi
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        if: ${{ !cancelled() && env.TV_NATIVE_VERIFIED == 'true' }}
+        with:
+          path: ${{ runner.temp }}/tv-native
+          key: trusted-build-v1-tv-native-v1-tizen-${{ inputs.architecture }}-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/tv_mpv/**', 'tools/webos/compatibility.json', 'scripts/tizen/sdk-linux-arm.json', 'scripts/tizen/toolchain.json', 'scripts/tizen/bootstrap_linux.py') }}
+
       - name: Preserve a failed Tizen package for diagnosis
         if: ${{ failure() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
