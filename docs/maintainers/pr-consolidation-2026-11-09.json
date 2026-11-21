@@ -845,7 +845,7 @@
     "open_code_scanning": 0,
     "open_secret_scanning": 0,
     "resolved_dependabot_alert": 57,
-    "codeql_execution": "disabled per owner directive"
+    "codeql_execution": "not run at the time; the disable was withdrawn on 2026-11-21 and CodeQL is allowed"
   },
   "legacy_feed_tag": {
     "tag": "appcast",

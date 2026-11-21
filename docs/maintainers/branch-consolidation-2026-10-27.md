@@ -26,7 +26,8 @@ a branch name therefore does not remove its original commits or prevent recovery
   which uses compatible GitHub-hosted runners by default and reserves private
   JIT for task-specific private requirements. Keep the latest main build-only
   action and webOS validation/redistribution gates together. CI and native
-  validation remain manually dispatched; CodeQL is disabled across Snapetech.
+  validation remain manually dispatched. (The CodeQL disable in force at that
+  time was withdrawn on 2026-11-21; CodeQL is allowed.)
   Existing release-published package jobs are retained.
 - Keep the current comic-inclusive product artwork and branding. Merge individual
   UI focus, accessibility, text-scaling and navigation fixes, resolving overlapping
