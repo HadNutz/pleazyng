@@ -39,7 +39,21 @@ class MacPackagingProofTests(unittest.TestCase):
         self.recovered={'id':100,'name':'build-macos','conclusion':'success','steps':[{'name':n,'conclusion':'success'} for n in names]}
         self.changed_contract=False
 
-    def prove(self):
+    def prove(self, *, fresh_rebuild=False):
+        if fresh_rebuild:
+            self.native['display_title'] = 'action:release:pool:public:tag:v3.0.3:recovery:source:42:macos'
+            self.original_mac['steps'] = [
+                {'name': 'Build macOS', 'conclusion': 'success'},
+                {'name': 'Create portable unsigned macOS compilation checkpoint', 'conclusion': 'failure'},
+            ]
+            self.recovered['steps'] = [
+                {'name': name, 'conclusion': 'success'} for name in (
+                    'Build macOS', 'Create portable unsigned macOS compilation checkpoint',
+                    'Attest portable macOS compilation checkpoint', 'Upload portable macOS compilation checkpoint',
+                    'Create DMG', 'Sign DMG for Sparkle (EdDSA)', 'Write macOS signature metadata',
+                    'Attest macOS DMG', 'Upload macOS DMG',
+                )
+            ]
         def api(path):
             if path.endswith('/runs/42'):return self.source
             if path.endswith('/runs/43'):return self.native
@@ -54,7 +68,12 @@ class MacPackagingProofTests(unittest.TestCase):
                 return {**self.compilation_checkpoint,'workflow_run':{'id':42,'head_sha':'a'*40}}
             raise AssertionError(path)
         def collection(path,key):
-            if path.endswith('/runs/42/artifacts'):return [self.compilation_checkpoint]
+            if path.endswith('/runs/42/artifacts'):
+                return [] if fresh_rebuild else [self.compilation_checkpoint]
+            if path.endswith('/runs/43/artifacts'):
+                return [{'id': 551, 'name': 'macos-dmg', 'expired': False,
+                         'digest': 'sha256:' + 'e' * 64,
+                         'workflow_run': {'id': 43, 'head_sha': 'b' * 40}}]
             return self.jobs if '/runs/42/' in path else [self.recovered]
         with patch.object(recovery,'api',side_effect=api),patch.object(recovery,'collection',side_effect=collection),\
              patch.object(recovery,'ci_proof',return_value={'ci_run_id':23}):
@@ -67,6 +86,11 @@ class MacPackagingProofTests(unittest.TestCase):
         self.assertIn('Build WebOS TV package (ARMv7)',proof['reused_jobs'])
         self.assertEqual(proof['android_source']['source_run_id'],42)
         self.assertEqual(proof['macos_source']['source_run_id'],43)
+
+    def test_fresh_mac_rebuild_can_replace_missing_checkpoint_for_assembly(self):
+        proof = self.prove(fresh_rebuild=True)
+        self.assertFalse(proof['macos_source']['compilation_reused'])
+        self.assertEqual(proof['compiled_macos_job'], 100)
 
     def test_other_platform_failure_cannot_be_hidden(self):
         for name in ['build-ios','build-android','Build WebOS TV package (ARMv7)','Build Windows (arm64)']:
@@ -134,37 +158,43 @@ class MacPackagingProofTests(unittest.TestCase):
             self.assertEqual(verify.call_args.kwargs['macos_run'],43)
             self.assertEqual(verify.call_args.kwargs['webos_run'],42)
             fields=dispatch.call_args.args[3]
+            self.assertEqual(dispatch.call_args.kwargs['expected_title'],
+                'action:release:pool:public:tag:v3.0.3:assembly:source:42:macos:43')
             self.assertEqual(fields['reuse_macos_package_run_id'],'43')
             self.assertEqual(fields['reuse_android_run_id'],'42')
             self.assertEqual(fields['include_webos_build'],'true')
             self.assertEqual(fields['include_webos_release'],'true')
 
     def test_download_uses_replacement_mac_and_original_android_webos(self):
-        proof=self.prove()
-        receipt={'compiled_source':'a'*40,'compiled_run':42,'compiled_job':99,'packaging_workflow_source':'b'*40,
-                 'version':'3.0.3+162','application_inputs_unchanged':True,'compilation_reused':True,'recovered_app_tree_sha256':'d'*64}
-        archives={}
-        for identity,files in [(1,{'macos-compilation-recovery.json':json.dumps(receipt),'pleazyng-macos.dmg':'signed-dmg'}),
-                               (2,{'android.apk':'signed-apk'}),(3,{'package.ipk':'verified-ipk'})]:
-            data=io.BytesIO()
-            with zipfile.ZipFile(data,'w') as archive:
-                for name,body in files.items():archive.writestr(name,body)
-            archives[identity]=data.getvalue()
-        def artifact(identity,name,run,sha):
-            return {'id':identity,'name':name,'expired':False,'digest':'sha256:'+hashlib.sha256(archives[identity]).hexdigest(),
-                    'workflow_run':{'id':run,'head_sha':sha}}
-        original=[artifact(2,'android-apk',42,'a'*40),artifact(3,'webos-ipk',42,'a'*40)]
-        native=[artifact(1,'macos-dmg',43,'b'*40)]
-        def collection(path,key):return native if '/runs/43/' in path else original
-        def download(command,stdout):
-            stdout.write(archives[int(command[-1].split('/')[-2])])
-            return SimpleNamespace(returncode=0)
-        with tempfile.TemporaryDirectory(prefix='pleazyng-mac-artifact-') as directory,\
-             patch.object(recovery,'ARTIFACTS',{'macos-dmg':'macos-dmg'}),\
-             patch.object(recovery,'collection',side_effect=collection),patch.object(recovery.subprocess,'run',side_effect=download):
-            result=recovery.download_platforms(proof,Path(directory))
-            sources={item['name']:item['source_run_id'] for item in result['artifacts']}
-            self.assertEqual(sources,{'macos-dmg':43,'android-apk':42,'webos-ipk':42})
+        for fresh_rebuild in (False, True):
+            with self.subTest(fresh_rebuild=fresh_rebuild):
+                proof=self.prove(fresh_rebuild=fresh_rebuild)
+                receipt={'compiled_source':'a'*40,'compiled_run':42,'compiled_job':99,'packaging_workflow_source':'b'*40,
+                         'version':'3.0.3+162','application_inputs_unchanged':True,'compilation_reused':True,'recovered_app_tree_sha256':'d'*64}
+                mac_files={'pleazyng-macos.dmg':'signed-dmg'}
+                if not fresh_rebuild:
+                    mac_files['macos-compilation-recovery.json']=json.dumps(receipt)
+                archives={}
+                for identity,files in [(1,mac_files),(2,{'android.apk':'signed-apk'}),(3,{'package.ipk':'verified-ipk'})]:
+                    data=io.BytesIO()
+                    with zipfile.ZipFile(data,'w') as archive:
+                        for name,body in files.items():archive.writestr(name,body)
+                    archives[identity]=data.getvalue()
+                def artifact(identity,name,run,sha):
+                    return {'id':identity,'name':name,'expired':False,'digest':'sha256:'+hashlib.sha256(archives[identity]).hexdigest(),
+                            'workflow_run':{'id':run,'head_sha':sha}}
+                original=[artifact(2,'android-apk',42,'a'*40),artifact(3,'webos-ipk',42,'a'*40)]
+                native=[artifact(1,'macos-dmg',43,'b'*40)]
+                def collection(path,key):return native if '/runs/43/' in path else original
+                def download(command,stdout):
+                    stdout.write(archives[int(command[-1].split('/')[-2])])
+                    return SimpleNamespace(returncode=0)
+                with tempfile.TemporaryDirectory(prefix='pleazyng-mac-artifact-') as directory,\
+                     patch.object(recovery,'ARTIFACTS',{'macos-dmg':'macos-dmg'}),\
+                     patch.object(recovery,'collection',side_effect=collection),patch.object(recovery.subprocess,'run',side_effect=download):
+                    result=recovery.download_platforms(proof,Path(directory))
+                    sources={item['name']:item['source_run_id'] for item in result['artifacts']}
+                    self.assertEqual(sources,{'macos-dmg':43,'android-apk':42,'webos-ipk':42})
 
 
 if __name__=='__main__':unittest.main()

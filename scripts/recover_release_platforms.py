@@ -1114,22 +1114,27 @@ def verify_macos_packaging_recovery(run_id, macos_run, head_sha, version, reposi
     mac = api(f"repos/{repository}/actions/jobs/{macs[0]['id']}")
     if not any(s.get("name") == "Build macOS" and s.get("conclusion") == "success" for s in mac.get("steps", [])):
         raise RecoveryError("The original native application compilation did not succeed.")
-    checkpoint_name = f'macos-compiled-app-{run_id}-{mac.get("run_attempt")}'
     checkpoint_inventory = collection(f'repos/{repository}/actions/runs/{run_id}/artifacts', 'artifacts')
+    checkpoint_name = f'macos-compiled-app-{run_id}-{mac.get("run_attempt")}'
     checkpoint_matches = [item for item in checkpoint_inventory
                           if item.get('name') == checkpoint_name and item.get('expired') is False]
-    if (len(checkpoint_matches) != 1
-            or not re.fullmatch(r'sha256:[0-9a-f]{64}', str(checkpoint_matches[0].get('digest', '')))
-            or (checkpoint_matches[0].get('workflow_run') or {}).get('head_sha') != source_sha):
-        raise RecoveryError('Original Mac compilation lacks its durable digest-bound app checkpoint.')
-    checkpoint_metadata = api(f'repos/{repository}/actions/artifacts/{checkpoint_matches[0]["id"]}')
-    if (checkpoint_metadata.get('id') != checkpoint_matches[0]['id']
-            or checkpoint_metadata.get('name') != checkpoint_name
-            or checkpoint_metadata.get('expired') is not False
-            or checkpoint_metadata.get('digest') != checkpoint_matches[0]['digest']
-            or (checkpoint_metadata.get('workflow_run') or {}).get('id') != run_id
-            or (checkpoint_metadata.get('workflow_run') or {}).get('head_sha') != source_sha):
-        raise RecoveryError('Durable Mac compilation checkpoint metadata changed after selection.')
+    compilation_reused = bool(checkpoint_matches)
+    if compilation_reused:
+        if (len(checkpoint_matches) != 1
+                or not re.fullmatch(r'sha256:[0-9a-f]{64}', str(checkpoint_matches[0].get('digest', '')))
+                or (checkpoint_matches[0].get('workflow_run') or {}).get('head_sha') != source_sha):
+            raise RecoveryError('Original Mac compilation checkpoint is ambiguous or has an invalid digest.')
+        checkpoint_metadata = api(f'repos/{repository}/actions/artifacts/{checkpoint_matches[0]["id"]}')
+        if (checkpoint_metadata.get('id') != checkpoint_matches[0]['id']
+                or checkpoint_metadata.get('name') != checkpoint_name
+                or checkpoint_metadata.get('expired') is not False
+                or checkpoint_metadata.get('digest') != checkpoint_matches[0]['digest']
+                or (checkpoint_metadata.get('workflow_run') or {}).get('id') != run_id
+                or (checkpoint_metadata.get('workflow_run') or {}).get('head_sha') != source_sha):
+            raise RecoveryError('Durable Mac compilation checkpoint metadata changed after selection.')
+    elif not any(s.get('name') == 'Create portable unsigned macOS compilation checkpoint'
+                 and s.get('conclusion') == 'failure' for s in mac.get('steps', [])):
+        raise RecoveryError('Original Mac failure did not occur while creating its app checkpoint.')
     if any(j.get("conclusion") in {"failure", "cancelled", "timed_out"} and j.get("name") != "build-macos" for j in jobs):
         raise RecoveryError("Another original platform failed; do not assemble a partial release.")
     if any(j.get("name") == "create-release" and j.get("conclusion") != "skipped" for j in jobs):
@@ -1139,20 +1144,39 @@ def verify_macos_packaging_recovery(run_id, macos_run, head_sha, version, reposi
     if len(recovered) != 1:
         raise RecoveryError("Mac replacement job is missing or ambiguous.")
     recovered_job = api(f"repos/{repository}/actions/jobs/{recovered[0]['id']}")
-    required_steps = ("Recover verified native macOS compilation", "Import Code Signing Certificate",
-                      "Sign Application", "Verify Signature", "Notarize Application",
-                      "Wait for notarization acceptance",
-                      "Verify Gatekeeper acceptance for Homebrew Cask", "Sign DMG for Sparkle (EdDSA)",
-                      "Attest macOS DMG", "Attest recovered macOS compilation provenance", "Upload macOS DMG")
+    if compilation_reused:
+        required_steps = ("Recover verified native macOS compilation", "Import Code Signing Certificate",
+                          "Sign Application", "Verify Signature", "Notarize Application",
+                          "Wait for notarization acceptance",
+                          "Verify Gatekeeper acceptance for Homebrew Cask", "Sign DMG for Sparkle (EdDSA)",
+                          "Attest macOS DMG", "Attest recovered macOS compilation provenance", "Upload macOS DMG")
+    else:
+        expected_title = f"action:release:pool:public:tag:v{version}:recovery:source:{run_id}:macos"
+        if native.get('display_title') != expected_title:
+            raise RecoveryError('A fresh Mac rebuild must have the distinct recovery run identity.')
+        required_steps = ("Build macOS", "Create portable unsigned macOS compilation checkpoint",
+                          "Attest portable macOS compilation checkpoint", "Upload portable macOS compilation checkpoint",
+                          "Create DMG", "Sign DMG for Sparkle (EdDSA)", "Write macOS signature metadata",
+                          "Attest macOS DMG", "Upload macOS DMG")
     for name in required_steps:
         if not any(s.get("name") == name and s.get("conclusion") == "success" for s in recovered_job.get("steps", [])):
             raise RecoveryError(f"Recovered Mac package lacks successful qualification: {name}")
+    if not compilation_reused:
+        native_artifacts = collection(f"repos/{repository}/actions/runs/{macos_run}/artifacts", "artifacts")
+        dmg_artifacts = [item for item in native_artifacts if item.get('name') == 'macos-dmg'
+                         and item.get('expired') is False]
+        if (len(dmg_artifacts) != 1
+                or not re.fullmatch(r'sha256:[0-9a-f]{64}', str(dmg_artifacts[0].get('digest', '')))
+                or (dmg_artifacts[0].get('workflow_run') or {}).get('id') != macos_run
+                or (dmg_artifacts[0].get('workflow_run') or {}).get('head_sha') != native['head_sha']):
+            raise RecoveryError('Fresh Mac rebuild lacks its unique digest-bound DMG artifact.')
     return {"profile": "macos-packaging", "source_run_id": int(run_id), "source_sha": source_sha,
             "head_sha": head_sha, "version": version, "reused_jobs": list(required),
             "rebuilt_jobs": [], "recovered_jobs": ["build-macos"], "platforms_complete": True,
-            "pending_jobs": [], "excluded_optional_jobs": [], "compiled_macos_job": mac["id"],
+            "pending_jobs": [], "excluded_optional_jobs": [],
+            "compiled_macos_job": mac["id"] if compilation_reused else recovered_job["id"],
             "macos_source": {"source_run_id": int(macos_run), "source_sha": native["head_sha"],
-                             "job_id": recovered_job["id"]},
+                             "job_id": recovered_job["id"], "compilation_reused": compilation_reused},
             "android_source": {"source_run_id": int(run_id), "source_sha": source_sha},
             **ci_proof(repository, source_sha, version, source_run=run_id)}
 
@@ -1838,7 +1862,8 @@ def download_platforms(proof, destination, repository=REPOSITORY):
                 source['package_sha256'] = verify_ios_package_attestations(destination / folder, source, repository)
             if name == 'ios-ipa' and proof.get('ios_developer_source'):
                 source['package_sha256'] = verify_unsigned_ios_attestation(destination / folder, source, repository)
-            if name == "macos-dmg" and proof.get("macos_source"):
+            if (name == "macos-dmg" and proof.get("macos_source")
+                    and proof["macos_source"].get("compilation_reused")):
                 verify_macos_receipt(json.loads((destination / folder / "macos-compilation-recovery.json").read_text()), proof)
         records.append({"name": name, "artifact_id": item["id"], "digest": digest,
                         "source_run_id": artifact_run, "source_sha": source["source_sha"],

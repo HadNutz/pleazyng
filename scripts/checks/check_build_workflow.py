@@ -1368,6 +1368,7 @@ require(
     and "needs.capture-candidate.result == 'success'" in trusted_gate
     and "needs: capture-candidate" in captured_ci
     and "needs.freeze-qualified-source.result == 'success'" in job("create-release")
+    and "inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.freeze-qualified-source.result == 'skipped'" in job("create-release")
     and "--create-tag" in freeze_source
     and "python3 scripts/verify_embedded_release_ci.py" in trusted_gate
     and "python3 scripts/verify_release_ci.py" in trusted_gate,
@@ -1378,6 +1379,7 @@ require(
     and "inputs.candidate_ref == ''" in named_step(trusted_gate, "Require successful CI for this commit")
     and "release_commit: ${{ steps.release-tag.outputs.commit || github.sha }}" in trusted_gate
     and "needs.freeze-qualified-source.result == 'success'" in job("create-release")
+    and "inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.freeze-qualified-source.result == 'skipped'" in job("create-release")
     and "needs: [freeze-qualified-source," in job("create-release"),
     "Candidate artifacts may overlap CI, but release assembly must still wait for the stable-tag qualification gate",
 )
@@ -1777,6 +1779,8 @@ require(
     and "format('action:{0}:pool:{1}:tag:v{2}'" in run_name_expression
     and "inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos" in run_name_expression
     and "inputs.reuse_platform_run_id != '' && inputs.rebuild_macos" in run_name_expression
+    and "inputs.reuse_platform_run_id != '' && inputs.reuse_macos_package_run_id != '' && !inputs.rebuild_macos" in run_name_expression
+    and "format('action:{0}:pool:{1}:tag:v{2}:assembly:source:{3}:macos:{4}'" in run_name_expression
     and "format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:macos'" in run_name_expression
     and "format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:tvos'" in run_name_expression
     and "recovery:source:{3}:webos" not in run_name_expression

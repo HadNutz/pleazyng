@@ -474,7 +474,12 @@ sys.exit(1 if len(calls) <= int(os.environ['FAIL_UNTIL']) else 0)
                 changed = self._workflow().replace(original, "REMOVED", 1)
                 result = self._run(changed)
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn("platform artifact recovery must verify", result.stderr)
+                expected = (
+                    "Stable tags and platform builds must remain gated"
+                    if original == "needs.validate-trusted-ref.outputs.reuse_source_sha != ''"
+                    else "platform artifact recovery must verify"
+                )
+                self.assertIn(expected, result.stderr)
 
     def test_apple_release_jobs_require_utf8_locale(self) -> None:
         workflow = self._workflow()

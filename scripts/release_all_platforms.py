@@ -1809,6 +1809,8 @@ def ensure_release(
         tvos_runner_pool = "private"
     elif not repair and reuse_platform_run_id and rebuild_macos:
         run_title += f":recovery:source:{reuse_platform_run_id}:macos"
+    elif not repair and reuse_platform_run_id and reuse_macos_run_id:
+        run_title += f":assembly:source:{reuse_platform_run_id}:macos:{reuse_macos_run_id}"
     elif not repair and reuse_platform_run_id and rebuild_tvos:
         run_title += f":recovery:source:{reuse_platform_run_id}:tvos"
     if reuse_tvos_run_id and (not repair or rebuild_tvos or reuse_repaired_run_id):
