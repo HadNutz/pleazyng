@@ -95,7 +95,7 @@ class PlezyFlutterViewController: FlutterViewController {
     duoChannel.invokeMethod("stateChanged", arguments: state)
   }
 
-  private func currentState() -> NSDictionary {
+  func currentState() -> NSDictionary {
     #if compiler(>=6.4) && canImport(UIKit, _version: 9127.0.85)
       guard #available(iOS 27.1, *) else { return [:] }
       var state: [String: Any] = [:]

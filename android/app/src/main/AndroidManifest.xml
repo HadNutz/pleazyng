@@ -49,7 +49,7 @@
         android:fullBackupContent="@xml/credential_backup_rules"
         android:dataExtractionRules="@xml/credential_data_extraction_rules"
         android:usesCleartextTraffic="true">
-        <property android:name="android.window.PROPERTY_COMPAT_ALLOW_SMALL_COVER_SCREEN" android:value="true" />
+        <property android:name="android.window.PROPERTY_COMPAT_ALLOW_SMALL_COVER_SCREEN" android:value="1" />
         <!-- Android Auto projection belongs in the phone manifest. The AAOS build uses
              src/automotiveMedia/AndroidManifest.xml, which declares automotive hardware. -->
         <meta-data android:name="com.google.android.gms.car.application" android:resource="@xml/automotive_app_desc" />

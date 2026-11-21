@@ -396,6 +396,14 @@ runs:
         fi
         exit "$test_status"
 
+    - name: Launch the same iOS app on an older phone runtime
+      if: inputs.platform == 'iOS' && runner.environment == 'github-hosted'
+      env:
+        PRODUCTS: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}/Build/Products/Debug-iphonesimulator
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: python3 scripts/apple/smoke_older_iphone.py "$PRODUCTS"
+
     - name: Build macOS application and XCTest bundle
       if: inputs.platform == 'macOS'
       env:

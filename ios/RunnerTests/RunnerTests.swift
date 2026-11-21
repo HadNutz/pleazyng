@@ -1153,3 +1153,31 @@ final class DownloadBackupPolicyTests: XCTestCase {
     XCTAssertEqual(try downloads.resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup, true)
   }
 }
+
+
+@MainActor
+final class AdaptivePhoneSceneTests: XCTestCase {
+  func testActivePhoneScenePublishesWindowGeometry() async throws {
+    guard #available(iOS 27.1, *) else { throw XCTSkip("Duo geometry requires the iOS 27.1 runtime") }
+    let app = try XCTUnwrap(UIApplication.shared.delegate as? AppDelegate)
+    var controller: PlezyFlutterViewController?
+    for _ in 0..<50 {
+      controller = app.musicEngine?.viewController as? PlezyFlutterViewController
+      if controller?.viewIfLoaded?.window != nil { break }
+      try await Task.sleep(nanoseconds: 100_000_000)
+    }
+    let phone = try XCTUnwrap(controller)
+    XCTAssertNotNil(phone.viewIfLoaded?.window)
+    let state = phone.currentState()
+    for key in ["folds", "occlusions"] {
+      let rectangles = try XCTUnwrap(state[key] as? [[String: Double]])
+      for rect in rectangles {
+        for field in ["x", "y", "width", "height"] {
+          XCTAssertTrue(try XCTUnwrap(rect[field]).isFinite)
+        }
+        XCTAssertGreaterThanOrEqual(try XCTUnwrap(rect["width"]), 0)
+        XCTAssertGreaterThanOrEqual(try XCTUnwrap(rect["height"]), 0)
+      }
+    }
+  }
+}

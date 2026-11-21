@@ -453,7 +453,11 @@ final class AppleMusicKitPlugin: NSObject, FlutterPlugin {
 /// authentication and background-download plugins retain their existing hooks.
 @objc(MusicPhoneSceneDelegate)
 final class MusicPhoneSceneDelegate: UIResponder, UIWindowSceneDelegate, FlutterSceneLifeCycleProvider {
-  var sceneLifeCycleDelegate = FlutterPluginSceneLifeCycleDelegate()
+  // Share the lifecycle adapter with Flutter's UIKit state-restoration delegate.
+  // It is the adapter to which the view registers its engine on attachment.
+  lazy var sceneLifeCycleDelegate: FlutterPluginSceneLifeCycleDelegate = {
+    (restorationDelegate as? FlutterSceneLifeCycleProvider)?.sceneLifeCycleDelegate ?? FlutterPluginSceneLifeCycleDelegate()
+  }()
   var window: UIWindow?
   private var companion = false
   private let restorationDelegate: UIWindowSceneDelegate = FlutterSceneDelegate()

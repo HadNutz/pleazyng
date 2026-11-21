@@ -1223,7 +1223,7 @@ class MediaContextMenuState extends State<MediaContextMenu> {
     item.kind == MediaKind.season ? item.parentId : item.grandparentId,
     (context, series) async {
       final target = mediaDetailNavigationTargetFor(item, metadataOverride: series);
-      final navigator = FoldBrowserScope.of(context)?.detail?.call() ?? Navigator.of(context);
+      final navigator = FoldBrowserScope.detailNavigator(context);
       await navigator.push(
         mediaDetailRoute(
           metadata: target.metadata,

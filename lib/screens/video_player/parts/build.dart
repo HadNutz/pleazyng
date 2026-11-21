@@ -209,7 +209,7 @@ extension _VideoPlayerBuildMethods on VideoPlayerScreenState {
       body: FoldRegionBuilder(
         builder: (context, regions) {
           final usable = regions.usable(width: 220, height: 150);
-          final separated = isMobile && !forWorkspace && usable.length >= 2;
+          final separated = !PlatformDetector.isTV() && !forWorkspace && usable.length >= 2;
           final picture = separated ? usable.first : regions.largest;
           final transport = separated ? usable.last : picture;
           if (_chromeController.isHeld(PlayerChromeHold.foldControls) != separated) {

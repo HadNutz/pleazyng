@@ -10,6 +10,8 @@ class FoldBrowserScope extends InheritedWidget {
   final NavigatorState owner;
 
   static FoldBrowserScope? of(BuildContext context) => context.getInheritedWidgetOfExactType<FoldBrowserScope>();
+  static NavigatorState detailNavigator(BuildContext context) => of(context)?.detail?.call() ?? Navigator.of(context);
+
   @override
   bool updateShouldNotify(FoldBrowserScope oldWidget) => owner != oldWidget.owner || detail != oldWidget.detail;
 }
@@ -40,15 +42,18 @@ class FoldBrowserState extends State<FoldBrowser> {
       final panes = regions.usable(width: 260, height: 240);
       final split = panes.length >= 2 && panes.first.top == panes.last.top;
       final owner = Navigator.of(context);
+      // A fold can arrive in the very frame in which a detail was pushed,
+      // before the navigator has delivered its navigation notification.
+      final open = _navigator.currentState?.canPop() ?? _detailOpen;
       return Stack(
         children: [
           regions.place(
             context,
             split ? panes.first : regions.largest,
             ExcludeFocus(
-              excluding: _detailOpen && !split,
+              excluding: open && !split,
               child: ExcludeSemantics(
-                excluding: _detailOpen && !split,
+                excluding: open && !split,
                 child: FoldBrowserScope(
                   owner: owner,
                   detail: split ? () => _navigator.currentState : null,
@@ -57,7 +62,7 @@ class FoldBrowserState extends State<FoldBrowser> {
               ),
             ),
           ),
-          if (split || _detailOpen)
+          if (split || open)
             regions.place(
               context,
               split ? panes.last : regions.largest,

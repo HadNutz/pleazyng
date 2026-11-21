@@ -49,3 +49,5 @@ The live playback route owns the decoder across pane changes. The Flutter geomet
 | Windows foldable | Resize, span and unspan, test touch and keyboard, and verify the physical video rectangle and audible session. |
 
 Record the commit, device model, OS, player backend, content mode, starting posture, final posture, observed position, audio and focus. An unrecorded case is unqualified. Native HarmonyOS NEXT requires a separately buildable application package and media integrations.
+
+The iOS native reliability job runs the phone-scene contract on the Duo simulator. On a hosted runner it also installs the built simulator app on an iOS 26 phone and checks that its process remains alive after launch. For Android, dispatch **Android foldable qualification** with the release workflow run ID. It installs that run's x86_64 APK on a Pixel Fold emulator and verifies the resumed activity and process identity across the supported closed, open and half-open states. Neither launch check substitutes for a media playback run on hardware.
