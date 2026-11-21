@@ -2,10 +2,12 @@
 
 ## [Unreleased]
 
-- Prepare configured app-store listings for manual review submission after the verified 3.0.45 binaries are uploaded.
+- Prepare configured app-store listings for manual review submission after verified 3.0.45 binaries and refreshed release facts are available.
+- Revalidate macOS packaging recovery receipts against live source runs and artifact inventories when refreshing published release facts.
 
 ## [3.0.45] - 2026-11-21
 
+- Revalidate macOS packaging recovery receipts against live source runs and artifact inventories when refreshing published release facts.
 - Align the pinned x64 and ARM64 WebKit helper packages with Ubuntu 24.04's current updates archive, keeping Linux release artifacts and package-channel repackaging byte-matched.
 - Complete the explicit fresh-install onboarding choice in native aerynOS release qualification before connecting its Jellyfin fixture.
 - Retry truncated Jellyfin startup responses and support shallow core checkout ancestry in the aerynOS source pipeline.

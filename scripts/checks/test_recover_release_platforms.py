@@ -102,6 +102,14 @@ class ArtifactPreflightTests(unittest.TestCase):
         self.assertEqual(by_name['macos-dmg']['source_run_id'], mac_run)
         self.assertEqual(by_name['webos-ipk']['source_run_id'], self.run_id)
 
+        profile_proof = {**self.proof, 'profile': 'macos-packaging',
+                         'macos_source': {'source_run_id': mac_run, 'source_sha': mac_sha}}
+        with patch.object(recovery, 'collection', side_effect=collection), \
+                patch.object(recovery, 'api', side_effect=metadata):
+            profile_records = recovery.preflight_platform_artifacts(profile_proof)
+        profile_by_name = {item['name']: item for item in profile_records}
+        self.assertEqual(profile_by_name['webos-ipk']['source_run_id'], self.run_id)
+
 
 class SourceProofTests(unittest.TestCase):
     def setUp(self):

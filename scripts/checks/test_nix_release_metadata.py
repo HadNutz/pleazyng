@@ -265,6 +265,44 @@ class NixMetadataTests(unittest.TestCase):
                 self.prepare()
 
 
+    def test_macos_packaging_recovery_reauthenticates_source_and_artifact_inventory(self):
+        import recover_release_platforms
+
+        source_run, macos_run = 441, 442
+        workflow = "f" * 40
+        artifact_records = [{"name": "linux-x64", "artifact_id": 7,
+                             "source_run_id": source_run, "source_sha": self.commit,
+                             "digest": "sha256:" + "a" * 64,
+                             "workflow_source_sha": self.commit}]
+        proof = {
+            "profile": "macos-packaging", "source_run_id": source_run,
+            "source_sha": self.commit, "head_sha": workflow, "version": "3.0.33",
+            "reused_jobs": ["Build Linux (x64)"], "rebuilt_jobs": [],
+            "recovered_jobs": ["build-macos"], "platforms_complete": True,
+            "pending_jobs": [], "excluded_optional_jobs": [],
+            "compiled_macos_job": 9,
+            "macos_source": {"source_run_id": macos_run, "source_sha": workflow,
+                             "job_id": 8, "compilation_reused": True},
+        }
+        receipt = {**proof, "artifacts": artifact_records}
+        with patch.object(recover_release_platforms, "verify_macos_packaging_recovery",
+                          return_value=proof) as verify, \
+             patch.object(recover_release_platforms, "preflight_platform_artifacts",
+                          return_value=artifact_records) as preflight:
+            self.assertEqual(nix.verify_macos_packaging_recovery(
+                receipt, self.commit, "v3.0.33"), workflow)
+        verify.assert_called_once_with(source_run, macos_run, workflow, "3.0.33", nix.REPOSITORY)
+        preflight.assert_called_once_with(proof, nix.REPOSITORY)
+
+        altered = copy.deepcopy(receipt)
+        altered["artifacts"][0]["digest"] = "sha256:" + "b" * 64
+        with patch.object(recover_release_platforms, "verify_macos_packaging_recovery",
+                          return_value=proof), \
+             patch.object(recover_release_platforms, "preflight_platform_artifacts",
+                          return_value=artifact_records):
+            with self.assertRaisesRegex(ValueError, "artifact IDs or digests"):
+                nix.verify_macos_packaging_recovery(altered, self.commit, "v3.0.33")
+
     def test_publication_and_coverage_fail_closed_before_network(self):
         for kind in ("draft", "prerelease", "incomplete"):
             with self.subTest(kind=kind):

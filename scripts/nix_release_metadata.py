@@ -206,6 +206,55 @@ def verify_ordinary_recovery(receipt: dict, product_commit: str, tag: str, githu
     return head_sha
 
 
+def verify_macos_packaging_recovery(receipt: dict, product_commit: str, tag: str) -> str:
+    """Reauthenticate a receipt that replaces only Mac packaging."""
+    import recover_release_platforms
+
+    if (not isinstance(receipt, dict) or receipt.get("profile") != "macos-packaging"
+            or receipt.get("source_sha") != product_commit
+            or receipt.get("version") != tag[1:]
+            or receipt.get("platforms_complete") is not True
+            or receipt.get("pending_jobs") != []):
+        raise ValueError("Mac packaging receipt differs from the published source or version")
+    source_run = receipt.get("source_run_id")
+    macos_source = receipt.get("macos_source")
+    head_sha = receipt.get("head_sha")
+    if (type(source_run) is not int or source_run < 1
+            or not isinstance(macos_source, dict)
+            or type(macos_source.get("source_run_id")) is not int
+            or macos_source["source_run_id"] < 1
+            or not isinstance(head_sha, str)
+            or re.fullmatch(r"[0-9a-f]{40}", head_sha) is None):
+        raise ValueError("Mac packaging receipt has invalid run or workflow identities")
+
+    proof = recover_release_platforms.verify_macos_packaging_recovery(
+        source_run, macos_source["source_run_id"], head_sha, tag[1:], REPOSITORY,
+    )
+    if any(receipt.get(key) != value for key, value in proof.items()):
+        raise ValueError("Mac packaging receipt differs from independently verified run evidence")
+    artifacts = receipt.get("artifacts")
+    if not isinstance(artifacts, list) or not artifacts:
+        raise ValueError("Mac packaging receipt has no bound source artifacts")
+    verified_artifacts = recover_release_platforms.preflight_platform_artifacts(proof, REPOSITORY)
+    expected_by_name = {record["name"]: record for record in verified_artifacts}
+    actual_by_name = {record.get("name"): record for record in artifacts
+                      if isinstance(record, dict)}
+    if (len(artifacts) != len(verified_artifacts)
+            or len(actual_by_name) != len(artifacts)
+            or set(actual_by_name) != set(expected_by_name)):
+        raise ValueError("Mac packaging artifact inventory differs from live GitHub evidence")
+    for name, expected in expected_by_name.items():
+        record = actual_by_name[name]
+        workflow_sha = (proof["macos_source"]["source_sha"]
+                        if expected["name"] == "macos-dmg" else expected["source_sha"])
+        if (not isinstance(record, dict)
+                or set(record) != set(expected) | {"workflow_source_sha"}
+                or any(record.get(key) != value for key, value in expected.items())
+                or record.get("workflow_source_sha") != workflow_sha):
+            raise ValueError("Mac packaging artifact IDs or digests differ from live GitHub evidence")
+    return head_sha
+
+
 def recovery_source(directory: str, assets: dict, manifest: str, product_commit: str,
                     tag: str, github) -> tuple[str, dict | None]:
     """Read an attestation-bound recovery receipt, if this release has one."""
@@ -228,6 +277,9 @@ def recovery_source(directory: str, assets: dict, manifest: str, product_commit:
     receipt = json.loads(raw)
     if not isinstance(receipt, dict):
         raise ValueError("Recovery receipt must be a JSON object")
+    if receipt.get("profile") == "macos-packaging":
+        workflow_commit = verify_macos_packaging_recovery(receipt, product_commit, tag)
+        return workflow_commit, receipt
     if FROZEN_REPAIR_RECEIPT_FIELDS.intersection(receipt):
         workflow_commit = receipt.get("workflow_source_sha")
         if (receipt.get("product_source_sha") != product_commit

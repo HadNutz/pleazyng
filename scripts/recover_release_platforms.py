@@ -1716,6 +1716,11 @@ def preflight_platform_artifacts(proof, repository=REPOSITORY):
                     or proof.get('ios_developer_source') and name == 'ios-ipa'):
                 continue
             wanted[name] = proof
+        if proof.get('profile') == 'macos-packaging':
+            # This profile independently requires every original platform job
+            # to succeed; retain the original run's webOS artifact in the
+            # preflight inventory just like the assembler does.
+            wanted['webos-ipk'] = proof
         if proof.get('android_source'):
             wanted['android-apk'] = proof['android_source']
         if proof.get('webos_source'):
