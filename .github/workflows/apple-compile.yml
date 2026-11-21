@@ -1,7 +1,7 @@
 name: Unsigned Apple compile
 on:
   push:
-    branches: [main, 'integration/upstream-*']
+    branches: [main]
     paths:
       - 'ios/**'
       - 'macos/**'

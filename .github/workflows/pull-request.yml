@@ -3,8 +3,6 @@
 name: Pull request checks
 
 on:
-  push:
-    branches: ['integration/upstream-*']
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened, ready_for_review]
@@ -14,9 +12,9 @@ permissions:
   contents: read
 
 concurrency:
-  # Preserve the suite for each published integration checkpoint. Duplicate events
-  # for the same reviewed head share a group and ordinary PRs still supersede old runs.
-  group: pull-request-${{ github.head_ref || github.ref_name }}-${{ startsWith(github.head_ref || github.ref_name, 'integration/upstream-') && (github.event.pull_request.head.sha || github.sha) || 'latest' }}
+  # A PR update supersedes its previous candidate. Deliberate frozen-checkpoint
+  # qualification uses upstream-qualification.yml instead of a second full PR suite.
+  group: pull-request-${{ github.event.pull_request.number || github.ref_name }}-${{ github.event_name == 'workflow_dispatch' && github.sha || 'latest' }}
   cancel-in-progress: true
 
 env:

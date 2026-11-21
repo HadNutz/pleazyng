@@ -3,7 +3,7 @@ on:
   pull_request:
     paths: ['scripts/tv_mpv/**', 'native/visualizer/**', 'mpv-build.lock.json', 'scripts/checks/check_native_patch_stacks.py', '.github/workflows/native-patches.yml']
   push:
-    branches: [main, 'integration/upstream-*']
+    branches: [main]
     paths: ['scripts/tv_mpv/**', 'native/visualizer/**', 'mpv-build.lock.json', 'scripts/checks/check_native_patch_stacks.py', '.github/workflows/native-patches.yml']
   workflow_dispatch:
 permissions:

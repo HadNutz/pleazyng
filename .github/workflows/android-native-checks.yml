@@ -3,7 +3,7 @@ on:
   pull_request:
     paths: ['android/**', 'packages/**/android/**', '.github/workflows/android-native-checks.yml', 'scripts/prepare_android_*.py']
   push:
-    branches: [main, 'integration/upstream-*']
+    branches: [main]
     paths: ['android/**', 'packages/**/android/**', '.github/workflows/android-native-checks.yml', 'scripts/prepare_android_*.py']
   workflow_dispatch:
 permissions:
