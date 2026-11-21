@@ -298,14 +298,42 @@ jobs:
       build_linux_packages: true
       # Signed App Store releases explicitly reserve the Apple Silicon JIT for
       # exact-source native qualification; unsigned and ordinary CI stay hosted.
-      apple_runner_pool: ${{ inputs.include_apple_store_build && inputs.tvos_runner_pool == 'private' && 'private' || 'hosted' }}
+      apple_runner_pool: ${{ vars.APPLE_NATIVE_CI_RUNNER_POOL == 'private' && !inputs.private_apple_signing_unavailable && 'private' || 'hosted' }}
       # Explicitly document that the early signing preflight is independent;
       # its result gates only build-ios below.
 
-  freeze-qualified-source:
-    name: Freeze qualified source
+  record-qualified-source:
+    name: Record qualified source
     needs: [capture-candidate, release-ci]
     if: ${{ needs.capture-candidate.result == 'success' && needs.release-ci.result == 'success' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Require every exact-source CI job before creating the stable tag
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          COMMIT_SHA: ${{ github.sha }}
+          RELEASE_TAG: v${{ inputs.build_version }}
+          CANDIDATE_REF: ${{ inputs.candidate_ref }}
+        run: python3 scripts/verify_embedded_release_ci.py --qualification-only --proof "$RUNNER_TEMP/release-source-qualification.json"
+      - name: Retain exact-source qualification proof
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: release-source-qualification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/release-source-qualification.json
+          if-no-files-found: error
+
+  freeze-qualified-source:
+    name: Freeze qualified source
+    needs: record-qualified-source
+    if: ${{ needs.record-qualified-source.result == 'success' }}
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -322,13 +350,7 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
           RELEASE_TAG: v${{ inputs.build_version }}
           CANDIDATE_REF: ${{ inputs.candidate_ref }}
-        run: python3 scripts/verify_embedded_release_ci.py --create-tag --proof "$RUNNER_TEMP/release-source-qualification.json"
-      - name: Retain exact-source qualification proof
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: release-source-qualification-${{ github.run_id }}
-          path: ${{ runner.temp }}/release-source-qualification.json
-          if-no-files-found: error
+        run: python3 scripts/verify_embedded_release_ci.py --create-tag
 
   validate-trusted-ref:
     name: Validate release request
@@ -865,7 +887,8 @@ jobs:
           echo "This manual run builds only the macOS app and checks signing, notarization, and Gatekeeper."
           echo "No draft release is created."
 
-  build-android:
+  android-variant:
+    name: Android release (${{ matrix.variant }})
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && inputs.reuse_android_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') }}
     needs: validate-trusted-ref
     timeout-minutes: 360
@@ -876,6 +899,10 @@ jobs:
       id-token: write
       attestations: write
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: ${{ fromJSON(needs.validate-trusted-ref.outputs.mode == 'android-validation' && '["firetv","automotive"]' || '["developer","play","firetv","automotive"]') }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -1013,18 +1040,18 @@ jobs:
           echo "configured=true" >> "$GITHUB_OUTPUT"
 
       - name: Build APKs
-        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' }}
+        if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release') && (matrix.variant == 'developer') }}
         run: python3 scripts/run_android_build.py flutter --verbose build apk --release --split-per-abi ${{ env.RELEASE_DART_DEFINES }} --obfuscate --split-debug-info=debug-info/android-apk --extra-gen-snapshot-options=--save-obfuscation-map=debug-info/android-apk/obfuscation.map.json
 
       - name: Package APKs
-        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' }}
+        if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release') && (matrix.variant == 'developer') }}
         run: |
           tar -czf pleazyng-android-arm64-v8a.tar.gz -C build/app/outputs/flutter-apk app-arm64-v8a-release.apk --transform 's/app-arm64-v8a-release.apk/pleazyng.apk/'
           tar -czf pleazyng-android-armeabi-v7a.tar.gz -C build/app/outputs/flutter-apk app-armeabi-v7a-release.apk --transform 's/app-armeabi-v7a-release.apk/pleazyng.apk/'
           tar -czf pleazyng-android-x86_64.tar.gz -C build/app/outputs/flutter-apk app-x86_64-release.apk --transform 's/app-x86_64-release.apk/pleazyng.apk/'
 
       - name: Package pinned Moonlight corresponding source
-        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' }}
+        if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release') && (matrix.variant == 'developer') }}
         env:
           APPLICATION_COMMIT: ${{ inputs.recovery_source_sha || github.sha }}
           RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.release_tag }}
@@ -1038,7 +1065,7 @@ jobs:
       - name: Build signed Android App Bundle
         env:
           REVIEW_ACCESS_PUBLIC_KEY: ${{ vars.REVIEW_ACCESS_PUBLIC_KEY }}
-        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' && steps.android-signing.outputs.configured == 'true' }}
+        if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release' && steps.android-signing.outputs.configured == 'true') && (matrix.variant == 'play') }}
         run: |
           python3 scripts/run_android_build.py flutter --verbose build appbundle --release ${{ env.RELEASE_DART_DEFINES }} --dart-define=SUPPORTER_MODE=iap --dart-define=REVIEW_ACCESS_PUBLIC_KEY="$REVIEW_ACCESS_PUBLIC_KEY" --obfuscate --split-debug-info=debug-info/android-play
           cp build/app/outputs/bundle/release/app-release.aab pleazyng-android-play.aab
@@ -1046,12 +1073,13 @@ jobs:
       - name: Build signed Amazon Appstore APK
         env:
           REVIEW_ACCESS_PUBLIC_KEY: ${{ vars.REVIEW_ACCESS_PUBLIC_KEY }}
-        if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') && steps.android-signing.outputs.configured == 'true' }}
+        if: ${{ ((needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') && steps.android-signing.outputs.configured == 'true') && (matrix.variant == 'firetv') }}
         run: |
           AMAZON=1 ORG_GRADLE_PROJECT_openiapStore=amazon python3 scripts/run_android_build.py flutter --verbose build apk --release --target-platform android-arm,android-arm64,android-x64 ${{ env.RELEASE_DART_DEFINES }} --dart-define=SUPPORTER_MODE=iap --dart-define=AMAZON_STORE=true --dart-define=REVIEW_ACCESS_PUBLIC_KEY="$REVIEW_ACCESS_PUBLIC_KEY" --dart-define=LIFETIME_UNLOCK_PRODUCT_ID=pleazyng_lifetime_unlock --obfuscate --split-debug-info=debug-info/android-amazon
           cp build/app/outputs/flutter-apk/app-release.apk pleazyng-amazon-firetv.apk
 
       - name: Verify signed Fire TV release APK
+        if: matrix.variant == 'firetv'
         run: >-
           python3 scripts/verify_firetv_apk.py pleazyng-amazon-firetv.apk
           --build-tools "$ANDROID_HOME/build-tools/36.1.0"
@@ -1075,7 +1103,7 @@ jobs:
           fi
 
       - name: Build signed Automotive audio App Bundle
-        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' && steps.android-signing.outputs.configured == 'true' }}
+        if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release' && steps.android-signing.outputs.configured == 'true') && (matrix.variant == 'automotive') }}
         env:
           ORG_GRADLE_PROJECT_pleazyngAutomotiveMedia: 'true'
           REVIEW_ACCESS_PUBLIC_KEY: ${{ vars.REVIEW_ACCESS_PUBLIC_KEY }}
@@ -1084,6 +1112,7 @@ jobs:
           cp build/app/outputs/bundle/release/app-release.aab pleazyng-automotive-play.aab
 
       - name: Build and verify Automotive audio APK
+        if: matrix.variant == 'automotive'
         env:
           ORG_GRADLE_PROJECT_pleazyngAutomotiveMedia: 'true'
         run: |
@@ -1101,6 +1130,121 @@ jobs:
         if: ${{ always() && (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') }}
         run: rm -f android/app/upload-keystore.jks android/key.properties
 
+      - name: Retain failed Fire TV APK for diagnosis
+        if: ${{ (failure()) && (matrix.variant == 'firetv') }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: amazon-firetv-diagnostics
+          path: |
+            pleazyng-amazon-firetv.apk
+            pleazyng-amazon-firetv-provenance.json
+          if-no-files-found: ignore
+
+      - name: Retain developer outputs
+        if: matrix.variant == 'developer'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: android-variant-developer
+          path: |
+            pleazyng-android-arm64-v8a.tar.gz
+            pleazyng-android-armeabi-v7a.tar.gz
+            pleazyng-android-x86_64.tar.gz
+            pleazyng-moonlight-android-source.tar.gz
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+      - name: Retain play outputs
+        if: matrix.variant == 'play'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: android-variant-play
+          path: |
+            pleazyng-android-play.aab
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+      - name: Retain firetv outputs
+        if: matrix.variant == 'firetv'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: android-variant-firetv
+          path: |
+            pleazyng-amazon-firetv.apk
+            pleazyng-amazon-firetv-provenance.json
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+      - name: Retain Automotive validation APK
+        if: matrix.variant == 'automotive' && needs.validate-trusted-ref.outputs.mode == 'android-validation'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: android-variant-automotive
+          path: |
+            pleazyng-automotive-music.apk
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+      - name: Retain automotive outputs
+        if: matrix.variant == 'automotive' && needs.validate-trusted-ref.outputs.mode == 'release'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: android-variant-automotive
+          path: |
+            pleazyng-automotive-play.aab
+            pleazyng-automotive-music.apk
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+  build-android:
+    if: ${{ always() && !cancelled() && needs.android-variant.result == 'success' && needs.validate-trusted-ref.result == 'success' && inputs.reuse_android_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') }}
+    needs: [validate-trusted-ref, android-variant]
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.recovery_source_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Download verified Android variants
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: android-variant-*
+          path: .
+          merge-multiple: true
+
+      - name: Verify required package outputs
+        if: needs.validate-trusted-ref.outputs.mode == 'release'
+        shell: bash
+        run: |
+          set -eu
+          test -s pleazyng-android-arm64-v8a.tar.gz
+          test -s pleazyng-android-armeabi-v7a.tar.gz
+          test -s pleazyng-android-x86_64.tar.gz
+          test -s pleazyng-moonlight-android-source.tar.gz
+          test -s pleazyng-android-play.aab
+          test -s pleazyng-amazon-firetv.apk
+          test -s pleazyng-amazon-firetv-provenance.json
+          test -s pleazyng-automotive-play.aab
+          test -s pleazyng-automotive-music.apk
+
+      - name: Verify validation outputs
+        if: needs.validate-trusted-ref.outputs.mode == 'android-validation'
+        shell: bash
+        run: |
+          set -eu
+          test -s pleazyng-amazon-firetv.apk
+          test -s pleazyng-amazon-firetv-provenance.json
+          test -s pleazyng-automotive-music.apk
+
       - name: Attest APKs
         if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' }}
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
@@ -1113,7 +1257,7 @@ jobs:
             pleazyng-moonlight-android-source.tar.gz
 
       - name: Attest Android App Bundle
-        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' && steps.android-signing.outputs.configured == 'true' }}
+        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' }}
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: |
@@ -1126,16 +1270,6 @@ jobs:
           subject-path: |
             pleazyng-amazon-firetv.apk
             pleazyng-amazon-firetv-provenance.json
-
-      - name: Retain failed Fire TV APK for diagnosis
-        if: failure()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: amazon-firetv-diagnostics
-          path: |
-            pleazyng-amazon-firetv.apk
-            pleazyng-amazon-firetv-provenance.json
-          if-no-files-found: ignore
 
       - name: Upload APKs
         if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') }}
@@ -1152,7 +1286,8 @@ jobs:
             pleazyng-automotive-play.aab
             pleazyng-amazon-firetv.apk
             pleazyng-amazon-firetv-provenance.json
-          if-no-files-found: warn
+          if-no-files-found: error
+          overwrite: true
 
   prepare-webos-dav1d-source:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.mode == 'webos-validation' || (needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_webos_build == 'true')) && inputs.reuse_webos_run_id == '' && inputs.reuse_macos_package_run_id == '' }}
@@ -3314,10 +3449,10 @@ jobs:
           name: windows-chocolatey
           path: release-packages/pleazyng.*.nupkg
 
-  build-linux:
+  linux-bundle:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: validate-trusted-ref
-    name: Build Linux (${{ matrix.arch }})
+    name: Compile Linux (${{ matrix.arch }})
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     permissions:
       id-token: write
@@ -3446,9 +3581,7 @@ jobs:
           command -v zstd >/dev/null 2>&1 || { sudo apt-get update && sudo apt-get install -y --no-install-recommends zstd; }
           python3 scripts/fetch_linux_libmpv.py --dest libmpv-prefix
 
-      - name: Install fpm
-        shell: bash
-        run: sudo gem install fpm --version 1.17.0 --no-document
+
 
       - name: Install dependencies
         shell: bash
@@ -3554,10 +3687,68 @@ jobs:
         shell: bash
         run: python3 linux/packaging/check-bundle-host-deps.py "$BUNDLE_DIR"
 
-      # Last, from the fully resolved tree above. The host-dependency guard is
-      # skipped because the named step above just ran it against this same
-      # bundle; the internal run exists for by-hand packaging outside CI.
+      - name: Archive verified Linux bundle
+        shell: bash
+        run: tar -C "$BUNDLE_DIR" -cf linux-bundle.tar .
+      - name: Retain Linux bundle
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: linux-bundle-${{ matrix.arch }}
+          path: |
+            linux-bundle.tar
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+  linux-format:
+    if: ${{ always() && !cancelled() && needs.linux-bundle.result == 'success' && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: [validate-trusted-ref, linux-bundle]
+    name: Package Linux (${{ matrix.arch }}, ${{ matrix.format }})
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        format: [distro, flatpak, snap, portable]
+        include:
+          - arch: x64
+            snap_arch: amd64
+          - arch: arm64
+            snap_arch: arm64
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.recovery_source_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Restore verified bundle
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: linux-bundle-${{ matrix.arch }}
+          path: .
+
+      - name: Extract bundle with its executable modes and symlinks
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/linux-bundle"
+          tar -xf linux-bundle.tar -C "$RUNNER_TEMP/linux-bundle"
+          echo "BUNDLE_DIR=$RUNNER_TEMP/linux-bundle" >> "$GITHUB_ENV"
+
+      - name: Install native package tools
+        if: matrix.format == 'distro'
+        shell: bash
+        run: sudo apt-get update && sudo apt-get install -y ruby-dev rpm libarchive-tools zstd
+      - name: Install fpm
+        if: matrix.format == 'distro'
+        shell: bash
+        run: sudo gem install fpm --version 1.17.0 --no-document
+
       - name: Build Linux Packages
+        if: matrix.format == 'distro'
         shell: bash
         run: |
           BUILD_DIR="$BUNDLE_DIR" \
@@ -3570,11 +3761,27 @@ jobs:
       # they arrived. Same script the smoke build runs, so the two jobs cannot
       # drift on what counts as declared - and unlike the smoke build, this one
       # covers arm64 and the artifacts users actually install.
+
       - name: Verify the declared dependencies reached the package metadata
+        if: matrix.format == 'distro'
         shell: bash
         run: python3 linux/packaging/check-package-deps.py "$GITHUB_WORKSPACE" --arch ${{ matrix.arch }}
 
+      - name: Retain distro packages
+        if: matrix.format == 'distro'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: linux-format-${{ matrix.arch }}-distro
+          path: |
+            pleazyng-linux-${{ matrix.arch }}.deb
+            pleazyng-linux-${{ matrix.arch }}.rpm
+            pleazyng-linux-${{ matrix.arch }}.pkg.tar.zst
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
       - name: Install Flatpak packaging dependencies
+        if: matrix.format == 'flatpak'
         shell: bash
         run: |
           sudo apt-get update
@@ -3583,10 +3790,30 @@ jobs:
           python3 scripts/retry_flatpak.py install --user --noninteractive -y flathub org.freedesktop.Platform//25.08 org.freedesktop.Sdk//25.08
 
       - name: Build Flatpak bundle
+        if: matrix.format == 'flatpak'
         shell: bash
         run: python3 linux/packaging/build-flatpak.py --bundle "$BUNDLE_DIR" --arch ${{ matrix.arch }} --output "$GITHUB_WORKSPACE"
 
+      - name: Verify installed Flatpak runtime dependencies
+        if: matrix.format == 'flatpak'
+        shell: bash
+        run: |
+          flatpak install --user --noninteractive "pleazyng-linux-${{ matrix.arch }}.flatpak"
+          dbus-run-session -- python3 linux/packaging/check-flatpak.py --arch ${{ matrix.arch }}
+
+      - name: Retain flatpak packages
+        if: matrix.format == 'flatpak'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: linux-format-${{ matrix.arch }}-flatpak
+          path: |
+            pleazyng-linux-${{ matrix.arch }}.flatpak
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
       - name: Prepare Snap package inputs
+        if: matrix.format == 'snap'
         shell: bash
         env:
           RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.version }}
@@ -3602,6 +3829,7 @@ jobs:
           sed -i "s/^version: .*/version: '$RELEASE_TAG'/" "$snap_dir/snapcraft.yaml"
 
       - name: Build Snap package
+        if: matrix.format == 'snap'
         id: snap
         shell: bash
         run: bash scripts/build_snap.sh '${{ matrix.snap_arch }}'
@@ -3609,14 +3837,38 @@ jobs:
           PLEZYNG_ALLOW_PUBLIC_SNAP: ${{ needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' && 'true' || 'false' }}
 
       - name: Name Snap artifact
+        if: matrix.format == 'snap'
         env:
           SNAP_PATH: ${{ steps.snap.outputs.snap }}
           ARCH: ${{ matrix.arch }}
         shell: bash
         run: cp "$SNAP_PATH" "pleazyng-linux-${ARCH}.snap"
 
+      - name: Retain snap packages
+        if: matrix.format == 'snap'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: linux-format-${{ matrix.arch }}-snap
+          path: |
+            pleazyng-linux-${{ matrix.arch }}.snap
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+      - name: Include standalone app icon in portable bundle
+        if: matrix.format == 'portable'
+        shell: bash
+        run: cp assets/pleazyng.png "$BUNDLE_DIR/pleazyng.png"
+
+      - name: Create tarball
+        if: matrix.format == 'portable'
+        shell: bash
+        run: |
+          cd "$BUNDLE_DIR"
+          tar -czf "$GITHUB_WORKSPACE/pleazyng-linux-${{ matrix.arch }}.tar.gz" *
+
       - name: Build x64 AppImage
-        if: matrix.arch == 'x64'
+        if: ${{ (matrix.arch == 'x64') && (matrix.format == 'portable') }}
         shell: bash
         env:
           RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.version }}
@@ -3630,28 +3882,81 @@ jobs:
           bash scripts/build_appimage.sh "$BUNDLE_DIR" "$GITHUB_WORKSPACE" "$RELEASE_TAG" "$GITHUB_REPOSITORY"
 
       - name: Attest x64 AppImage
-        if: matrix.arch == 'x64'
+        if: ${{ (matrix.arch == 'x64') && (matrix.format == 'portable') }}
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: |
             pleazyng-linux-x86_64.AppImage
             pleazyng-linux-x86_64.AppImage.zsync
 
-      - name: Verify installed Flatpak runtime dependencies
+      - name: Retain portable packages
+        if: matrix.format == 'portable'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: linux-format-${{ matrix.arch }}-portable
+          path: |
+            pleazyng-linux-${{ matrix.arch }}.tar.gz
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+      - name: Upload x64 AppImage artifact
+        if: ${{ (matrix.arch == 'x64') && (matrix.format == 'portable') }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          overwrite: true
+          name: linux-x64-appimage
+          path: |
+            pleazyng-linux-x86_64.AppImage
+            pleazyng-linux-x86_64.AppImage.zsync
+
+  build-linux:
+    if: ${{ always() && !cancelled() && needs.linux-format.result == 'success' && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: [validate-trusted-ref, linux-format]
+    name: Build Linux (${{ matrix.arch }})
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            flutter_channel: stable
+            pkg_config_arch: x86_64-linux-gnu
+            snap_arch: amd64
+          - arch: arm64
+            flutter_channel: master
+            pkg_config_arch: aarch64-linux-gnu
+            snap_arch: arm64
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PLEAZYNG_DESKTOP_NEURAL_MODEL_ROOT: ${{ github.workspace }}/build/desktop-neural-models
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.recovery_source_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Collect verified Linux formats
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: linux-format-${{ matrix.arch }}-*
+          path: .
+          merge-multiple: true
+
+      - name: Verify required package outputs
         shell: bash
         run: |
-          flatpak install --user --noninteractive "pleazyng-linux-${{ matrix.arch }}.flatpak"
-          dbus-run-session -- python3 linux/packaging/check-flatpak.py --arch ${{ matrix.arch }}
-
-      - name: Include standalone app icon in portable bundle
-        shell: bash
-        run: cp assets/pleazyng.png "$BUNDLE_DIR/pleazyng.png"
-
-      - name: Create tarball
-        shell: bash
-        run: |
-          cd "$BUNDLE_DIR"
-          tar -czf "$GITHUB_WORKSPACE/pleazyng-linux-${{ matrix.arch }}.tar.gz" *
+          set -eu
+          test -s pleazyng-linux-${{ matrix.arch }}.deb
+          test -s pleazyng-linux-${{ matrix.arch }}.rpm
+          test -s pleazyng-linux-${{ matrix.arch }}.pkg.tar.zst
+          test -s pleazyng-linux-${{ matrix.arch }}.flatpak
+          test -s pleazyng-linux-${{ matrix.arch }}.snap
+          test -s pleazyng-linux-${{ matrix.arch }}.tar.gz
 
       - name: Attest Linux ${{ matrix.arch }} artifacts
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
@@ -3667,6 +3972,7 @@ jobs:
       - name: Upload Linux ${{ matrix.arch }} artifacts
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
+          overwrite: true
           name: linux-${{ matrix.arch }}
           path: |
             pleazyng-linux-${{ matrix.arch }}.tar.gz
@@ -3675,15 +3981,6 @@ jobs:
             pleazyng-linux-${{ matrix.arch }}.pkg.tar.zst
             pleazyng-linux-${{ matrix.arch }}.flatpak
             pleazyng-linux-${{ matrix.arch }}.snap
-
-      - name: Upload x64 AppImage artifact
-        if: matrix.arch == 'x64'
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: linux-x64-appimage
-          path: |
-            pleazyng-linux-x86_64.AppImage
-            pleazyng-linux-x86_64.AppImage.zsync
 
   create-release:
     needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, build-windows, package-windows, build-linux]

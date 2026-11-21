@@ -191,6 +191,7 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument('--candidate-only', action='store_true')
     mode.add_argument('--create-tag', action='store_true')
+    mode.add_argument('--qualification-only', action='store_true')
     parser.add_argument('--proof', type=Path)
     args = parser.parse_args()
     token, repository, sha, _ = _required_environment()
@@ -206,7 +207,7 @@ def main():
     proof = verify_jobs(run, jobs, sha, run_id, attempt, _manifest_gate()['requiredJobs'])
     if args.create_tag:
         create_stable_tag(token, tag, sha)
-    elif resolve_ref(tag, token) != sha:
+    elif not args.qualification_only and resolve_ref(tag, token) != sha:
         raise GateError('Stable tag does not match the qualified source.')
     proof.update({'tag': tag, 'candidate_ref': candidate})
     if args.proof:

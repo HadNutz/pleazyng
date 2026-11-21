@@ -197,8 +197,12 @@ jobs:
             exit 1
           fi
 
-  test:
-    name: Unit Tests
+  test-shards:
+    name: Flutter unit and widget tests (${{ matrix.shard }}/3)
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     if: ${{ inputs.execution_profile == 'hybrid' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
     runs-on: ubuntu-24.04
     permissions:
@@ -244,14 +248,55 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: python3 scripts/prepare_native_downloads.py --sqlite-platform linux --arch x64
 
-      - name: Run tests
+      - name: Run Flutter test shard
+        run: python3 scripts/ci/flutter_test_shard.py ${{ matrix.shard }}
+
+  test-extras:
+    name: Media, browser and plugin tests
+    if: ${{ inputs.execution_profile == 'hybrid' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Load pinned Flutter SDK
+        shell: bash
+        run: python3 scripts/flutter/load_sdk_pin.py --github-env
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: "stable"
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          pub-cache: false
+
+      - name: Cache Pub dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-v3-${{ hashFiles('**/pubspec.yaml', '**/pubspec.lock') }}
+
+      - name: Install unit test system dependencies
         run: |
-          if [ -d "test" ] && [ "$(find test -name '*_test.dart' | wc -l)" -gt 0 ]; then
-            # Drift-backed tests can exceed package:test's 30s default on busy hosted workers.
-            scripts/run_tests.sh -j 2 --timeout=120s
-          else
-            echo "No tests found, skipping test execution"
-          fi
+          sudo python3 scripts/configure_hosted_apt.py '${{ runner.environment }}'
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang build-essential ffmpeg
+
+      - name: Install dependencies
+        run: |
+          flutter clean
+          flutter pub get --enforce-lockfile
+
+      - name: Prefetch checksum-pinned host native libraries
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/prepare_native_downloads.py --sqlite-platform linux --arch x64
 
       - name: Decode fault-injected manual recordings
         run: dart scripts/checks/verify_manual_capture_recovery.dart
@@ -311,6 +356,18 @@ jobs:
           for pkg in shared_preferences_linux shared_preferences_windows; do
             (cd "packages/$pkg" && flutter pub get --enforce-lockfile && flutter test)
           done
+
+  test:
+    name: Unit Tests
+    needs: [test-shards, test-extras]
+    if: always()
+    runs-on: ubuntu-24.04
+    permissions: {}
+    steps:
+      - run: test "$SHARDS" = success && test "$EXTRAS" = success
+        env:
+          SHARDS: ${{ needs.test-shards.result }}
+          EXTRAS: ${{ needs.test-extras.result }}
 
   android-test:
     name: Android JVM and Native Tests

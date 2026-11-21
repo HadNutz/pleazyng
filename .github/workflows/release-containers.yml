@@ -31,6 +31,9 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.image.outputs.digest }}
+      version: ${{ steps.release.outputs.version }}
     timeout-minutes: 30
     steps:
       - name: Require the default branch for manual retries
@@ -92,6 +95,7 @@ jobs:
           password: ${{ github.token }}
 
       - name: Build and publish GHCR image
+        id: image
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
         with:
           context: server
@@ -127,6 +131,14 @@ jobs:
             [.manifests[].platform | select(.os == "linux") | .architecture] | sort == ["amd64", "arm64"]
           '
 
+  mirror:
+    runs-on: ubuntu-24.04
+    needs: publish
+    permissions:
+      packages: read
+      contents: read
+    timeout-minutes: 15
+    steps:
       - name: Check Docker Hub credentials
         id: dockerhub
         env:
@@ -147,39 +159,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and publish Docker Hub mirror
+      - name: Mirror verified multi-architecture image
         if: steps.dockerhub.outputs.available == 'true'
-        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
-        with:
-          context: server
-          file: server/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: true
-          build-args: |
-            HTTP_PROXY=${{ steps.proxy.outputs.url }}
-            HTTPS_PROXY=${{ steps.proxy.outputs.url }}
-            http_proxy=${{ steps.proxy.outputs.url }}
-            https_proxy=${{ steps.proxy.outputs.url }}
-            VERSION=${{ steps.release.outputs.version }}
-            REVISION=${{ steps.release.outputs.commit }}
-            BUILD_DATE=${{ steps.build-metadata.outputs.build_date }}
-          tags: |
-            snapetech/pleazyng-relay:${{ steps.release.outputs.version }}
-            snapetech/pleazyng-relay:latest
-          labels: |
-            org.opencontainers.image.title=Pleazyng Relay
-            org.opencontainers.image.description=Pleazyng authentication and artifact relay service
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
-            org.opencontainers.image.version=${{ steps.release.outputs.version }}
-            org.opencontainers.image.revision=${{ steps.release.outputs.commit }}
-          cache-from: type=gha,scope=pleazyng-relay
-
-      - name: Verify Docker Hub architecture manifest
-        if: steps.dockerhub.outputs.available == 'true'
+        shell: bash
         env:
-          IMAGE: snapetech/pleazyng-relay:${{ steps.release.outputs.version }}
+          DIGEST: ${{ needs.publish.outputs.digest }}
+          VERSION: ${{ needs.publish.outputs.version }}
         run: |
           set -euo pipefail
-          docker buildx imagetools inspect "$IMAGE" --raw | jq -e '
-            [.manifests[].platform | select(.os == "linux") | .architecture] | sort == ["amd64", "arm64"]
-          '
+          [[ "$DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]]
+          sudo apt-get update && sudo apt-get install -y skopeo
+          src=ghcr.io/snapetech-org/pleazyng-relay
+          dst=docker.io/snapetech/pleazyng-relay
+          for tag in "$VERSION" latest; do
+            skopeo copy --authfile "$HOME/.docker/config.json" --all --preserve-digests "docker://$src@$DIGEST" "docker://$dst:$tag"
+            actual=$(skopeo inspect --raw "docker://$dst:$tag" | sha256sum)
+            test "${actual%% *}" = "${DIGEST#sha256:}"
+          done

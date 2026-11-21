@@ -71,7 +71,10 @@ def restore(output: Path, *, run_id: int, current_attempt: int, source_sha: str,
             receipt = json.loads(package.read(by_name['notarization-checkpoint.json']))
         if (receipt.get('source_sha') != source_sha or receipt.get('workflow_source_sha') != source_sha
                 or receipt.get('product_source_sha') != product_source_sha
-                or receipt.get('run_id') != run_id or receipt.get('run_attempt') != attempt):
+                or receipt.get('run_id') != run_id
+                or type(receipt.get('run_attempt')) is not int
+                or not 1 <= receipt['run_attempt'] <= attempt
+                or receipt.get('checkpoint_attempt', receipt['run_attempt']) != attempt):
             raise ValueError('Notarization checkpoint receipt belongs to another source or attempt')
         output_archive = output / 'notarization.zip'
         output_receipt = output / 'notarization-checkpoint.json'

@@ -26,6 +26,15 @@ class ResumeReleaseTests(unittest.TestCase):
                            'digest': 'sha256:'+'e'*64,
                            'workflow_run': {'id':77,'head_sha':'a'*40}}]
 
+        self.artifacts.append({**self.artifacts[0], 'name': 'ios-ipa'})
+
+    def test_missing_output_is_visible_before_dispatch(self):
+        self.artifacts.pop()
+        plan = resume(77, get=self.api, plan_only=True, command=self.fail, output=lambda _: None)
+        self.assertEqual(plan['missing_outputs'], {'ios-ipa': 'build-ios'})
+        with self.assertRaisesRegex(GateError, 'ios-ipa'):
+            resume(77, get=self.api, command=self.fail, output=lambda _: None)
+
     def api(self, path):
         if path == 'actions/runs/77':
             return self.run

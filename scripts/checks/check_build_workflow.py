@@ -1360,8 +1360,10 @@ require(
     "Captured release CI must reuse the exact local suite on validated main with minimal permissions",
 )
 require(
-    "needs: [capture-candidate, release-ci]" in freeze_source
-    and "needs.release-ci.result == 'success'" in freeze_source
+    "needs: [capture-candidate, release-ci]" in job("record-qualified-source")
+    and "--qualification-only --proof" in job("record-qualified-source")
+    and "needs: record-qualified-source" in freeze_source
+    and "needs.record-qualified-source.result == 'success'" in freeze_source
     and "--create-tag" in freeze_source
     and "contents: write" in freeze_source
     and "COMMIT_SHA: ${{ github.sha }}" in freeze_source

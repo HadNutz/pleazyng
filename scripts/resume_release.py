@@ -16,7 +16,7 @@ MAX_ATTEMPTS = 100
 ARTIFACT_PRODUCERS = {
     'android-apk': {'build-android'},
     'webos-ipk': {'Build WebOS TV package (ARMv7)'},
-    'pleazyng-tizen-arm-experimental': {'Build Samsung Tizen TV package (ARM)'},
+    'pleazyng-tizen-arm-experimental': {'Build Samsung Tizen TV package (ARM) / package'},
     'ios-ipa': {'build-ios'},
     'tvos-ipa': {'Build tvOS developer package (arm64)'},
     'macos-dmg': {'build-macos'},
@@ -81,17 +81,34 @@ def inspect_run(run_id: int, *, get=api):
         if (identity.get('id') != run_id or identity.get('head_sha') != run['head_sha']
                 or not re.fullmatch(r'sha256:[0-9a-f]{64}', str(artifact.get('digest', '')))):
             raise GateError(f"Artifact source or digest is invalid: {artifact.get('name', '<unnamed>')}")
+    # A skipped optional upload is expected when its channel is disabled.
+    optional_steps = {
+        'windows-store-x64-build': 'Upload Microsoft Store x64 payload',
+        'windows-store-arm64-build': 'Upload Microsoft Store arm64 payload',
+        'windows-msix': 'Upload Microsoft Store bundle',
+        'windows-chocolatey': 'Upload Chocolatey package',
+    }
     retained = sorted(a['name'] for a in artifacts if a.get('expired') is False)
     expired = sorted(a['name'] for a in artifacts if a.get('expired') is True)
-    failed_set = set(failed)
+    missing = {}
+    for name, producers in ARTIFACT_PRODUCERS.items():
+        for job in newest:
+            if job['name'] not in producers or job.get('conclusion') != 'success':
+                continue
+            if name in optional_steps and not any(
+                    step['name'] == optional_steps[name] and step.get('conclusion') == 'success'
+                    for step in job.get('steps', [])):
+                continue
+            if name not in retained:
+                missing[name] = job['name']
     blocked = sorted(name for name in expired if name in ARTIFACT_PRODUCERS
-                     and not (ARTIFACT_PRODUCERS[name] & failed_set))
+                     and not (ARTIFACT_PRODUCERS[name] & set(failed)))
     return {'run': run, 'attempt': attempt, 'jobs': newest, 'failed_jobs': failed,
             'retained_artifacts': retained, 'expired_artifacts': expired,
-            'blocking_expired_artifacts': blocked}
+            'missing_outputs': missing, 'blocking_expired_artifacts': blocked}
 
 
-def resume(run_id: int, *, get=api, command=subprocess.run, output=print):
+def resume(run_id: int, *, plan_only=False, get=api, command=subprocess.run, output=print):
     plan = inspect_run(run_id, get=get)
     output(f"Candidate {run_id} at {plan['run']['head_sha']} (attempt {plan['attempt']})")
     output('Passing jobs retained: ' + ', '.join(sorted(
@@ -101,9 +118,14 @@ def resume(run_id: int, *, get=api, command=subprocess.run, output=print):
     if plan['expired_artifacts']:
         output('Expired artifacts: ' + ', '.join(plan['expired_artifacts']))
     output(f'https://github.com/{REPOSITORY}/actions/runs/{run_id}')
-    if plan['blocking_expired_artifacts']:
-        raise GateError('Required artifacts from passing jobs expired; rebuild their producer lanes instead of retrying assembly: '
-                        + ', '.join(plan['blocking_expired_artifacts']))
+    for name, producer in sorted(plan['missing_outputs'].items()):
+        state = 'expired' if name in plan['expired_artifacts'] else 'missing'
+        output(f'{name}: {state}; replay producer {producer} before release assembly.')
+    if plan_only:
+        return plan
+    if plan['missing_outputs'] or plan['blocking_expired_artifacts']:
+        raise GateError('Required artifacts unavailable; rebuild their producer lanes instead of retrying assembly: '
+                        + ', '.join(sorted(set(plan['blocking_expired_artifacts']) | set(plan['missing_outputs']))))
     command(['gh', 'run', 'rerun', '--failed', str(run_id), '--repo', REPOSITORY], check=True)
     return plan
 
@@ -111,9 +133,10 @@ def resume(run_id: int, *, get=api, command=subprocess.run, output=print):
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('run_id', type=int, help='Completed failed release workflow run')
+    parser.add_argument('--plan', action='store_true', help='Inspect retry targets without dispatching')
     args = parser.parse_args()
     try:
-        resume(args.run_id)
+        resume(args.run_id, plan_only=args.plan)
     except (GateError, subprocess.CalledProcessError) as error:
         print(f'Release resume failed: {error}', file=sys.stderr)
         return 1

@@ -1260,6 +1260,55 @@ def _write_receipt(path: Path, receipt: dict) -> None:
     path.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
 
 
+def deliver_package(output, release_tag, source_commit, stage):
+    report_path = output / "pleazyng-macos-appstore.json"
+    report = json.loads(report_path.read_text())
+    package_path = output / "pleazyng-macos-appstore.pkg"
+    if (report.get("source_commit") != source_commit or report.get("workflow_commit") != os.environ["GITHUB_SHA"]
+            or report.get("candidate_state") != "signed-awaiting-upload"
+            or hashlib.sha256(package_path.read_bytes()).hexdigest() != report["package"]["sha256"]):
+        raise ValueError("Signed package differs from the verified immutable release")
+    api_key_id = os.environ.get("APPLE_API_KEY_ID", "")
+    issuer_id = os.environ.get("APPLE_API_ISSUER_ID", "")
+    private_key = os.environ.get("APPLE_API_PRIVATE_KEY", "")
+    if (not re.fullmatch(r"[A-Z0-9]{10}", api_key_id)
+            or not re.fullmatch(r"[0-9a-fA-F-]{36}", issuer_id)
+            or not private_key.startswith("-----BEGIN PRIVATE KEY-----")):
+        raise ValueError("App Store Connect upload API credentials are missing or invalid")
+    private_keys = stage / "private_keys"
+    private_keys.mkdir(mode=0o700)
+    auth_key_path = private_keys / f"AuthKey_{api_key_id}.p8"
+    write_private_file(auth_key_path, private_key.encode())
+    previous_private_keys_dir = os.environ.get("API_PRIVATE_KEYS_DIR")
+    os.environ["API_PRIVATE_KEYS_DIR"] = str(private_keys)
+    try:
+        env = os.environ.copy()
+        env.pop("APPLE_API_PRIVATE_KEY", None)
+        env.pop("APPLE_CERTIFICATE_PASSWORD", None)
+        env["APPLE_API_KEY_FILE"] = str(auth_key_path)
+        env["APPLE_MACOS_PKG_PATH"] = str(package_path)
+        env["APPLE_MACOS_APP_INFO_PATH"] = str(output / "signed-app-info.plist")
+        env["APPLE_RELEASE_TAG"] = release_tag
+        env["APPLE_SOURCE_COMMIT"] = source_commit
+        env["APPLE_PROCESSING_RECEIPT_PATH"] = str(report_path)
+        subprocess.run(["bundle", "exec", "fastlane", "upload_macos_appstore_build"],
+                       cwd=ROOT, env=env, check=True)
+        processing = json.loads(report_path.read_text(encoding="utf-8"))
+        report.update(processing)
+        report["candidate_state"] = "app-store-connect-processed"
+        report["qualification"].update(
+            upload_to_app_store_connect=True,
+            app_store_connect_processed=True,
+        )
+        _write_receipt(report_path, report)
+    finally:
+        auth_key_path.unlink(missing_ok=True)
+        if previous_private_keys_dir is None:
+            os.environ.pop("API_PRIVATE_KEYS_DIR", None)
+        else:
+            os.environ["API_PRIVATE_KEYS_DIR"] = previous_private_keys_dir
+
+
 def run_build(args: argparse.Namespace) -> int:
     report_path = args.output_dir / "pleazyng-macos-appstore.json"
     report: dict = {"schema_version": 1, "channel": "Mac App Store", "candidate_state": "not-built"}
@@ -1345,45 +1394,11 @@ def run_build(args: argparse.Namespace) -> int:
                 report["candidate_state"] = "signed-awaiting-upload"
                 _write_receipt(report_path, report)
 
-                api_key_id = os.environ.get("APPLE_API_KEY_ID", "")
-                issuer_id = os.environ.get("APPLE_API_ISSUER_ID", "")
-                private_key = os.environ.get("APPLE_API_PRIVATE_KEY", "")
-                if (not re.fullmatch(r"[A-Z0-9]{10}", api_key_id)
-                        or not re.fullmatch(r"[0-9a-fA-F-]{36}", issuer_id)
-                        or not private_key.startswith("-----BEGIN PRIVATE KEY-----")):
-                    raise ValueError("App Store Connect upload API credentials are missing or invalid")
-                private_keys = stage / "private_keys"
-                private_keys.mkdir(mode=0o700)
-                auth_key_path = private_keys / f"AuthKey_{api_key_id}.p8"
-                write_private_file(auth_key_path, private_key.encode())
-                previous_private_keys_dir = os.environ.get("API_PRIVATE_KEYS_DIR")
-                os.environ["API_PRIVATE_KEYS_DIR"] = str(private_keys)
-                try:
-                    env = os.environ.copy()
-                    env.pop("APPLE_API_PRIVATE_KEY", None)
-                    env.pop("APPLE_CERTIFICATE_PASSWORD", None)
-                    env["APPLE_API_KEY_FILE"] = str(auth_key_path)
-                    env["APPLE_MACOS_PKG_PATH"] = str(package_path)
-                    env["APPLE_MACOS_APP_INFO_PATH"] = str(args.archive_path / ARCHIVE_APP_SUFFIX / "Contents/Info.plist")
-                    env["APPLE_RELEASE_TAG"] = args.release_tag
-                    env["APPLE_SOURCE_COMMIT"] = source["source_commit"]
-                    env["APPLE_PROCESSING_RECEIPT_PATH"] = str(report_path)
-                    subprocess.run(["bundle", "exec", "fastlane", "upload_macos_appstore_build"],
-                                   cwd=ROOT, env=env, check=True)
-                    processing = json.loads(report_path.read_text(encoding="utf-8"))
-                    report.update(processing)
-                    report["candidate_state"] = "app-store-connect-processed"
-                    report["qualification"].update(
-                        upload_to_app_store_connect=True,
-                        app_store_connect_processed=True,
-                    )
-                    _write_receipt(report_path, report)
-                finally:
-                    auth_key_path.unlink(missing_ok=True)
-                    if previous_private_keys_dir is None:
-                        os.environ.pop("API_PRIVATE_KEYS_DIR", None)
-                    else:
-                        os.environ["API_PRIVATE_KEYS_DIR"] = previous_private_keys_dir
+                plist = args.output_dir / "signed-app-info.plist"
+                shutil.copyfile(args.archive_path / ARCHIVE_APP_SUFFIX / "Contents/Info.plist", plist)
+                if args.export_only:
+                    return 0
+                deliver_package(args.output_dir, args.release_tag, source["source_commit"], stage)
         print(f"Uploaded signed Mac App Store build for {args.release_tag}; processing receipt: {report_path}")
         return 0
     except (RuntimeError, ValueError, OSError, KeyError, plistlib.InvalidFileException,
@@ -1401,6 +1416,8 @@ def run_build(args: argparse.Namespace) -> int:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--export-only", action="store_true")
+    parser.add_argument("--deliver-only", action="store_true")
     parser.add_argument("--release-tag", required=True, help="immutable annotated version tag, such as v3.0.36")
     parser.add_argument("--source-dir", type=Path, required=True, help="separate checkout of the immutable tagged source")
     parser.add_argument("--main-commit", help="canonical main commit whose ancestry must include the release tag")
@@ -1436,6 +1453,9 @@ def parse_args() -> argparse.Namespace:
     elif args.profile_inspection_only:
         if not args.output_dir:
             parser.error("--output-dir is required with --profile-inspection-only")
+    elif args.deliver_only:
+        if not args.output_dir or args.export_only:
+            parser.error("delivery requires a signed output directory")
     elif not all((args.output_dir, args.archive_path, args.derived_data)):
         parser.error("--output-dir, --archive-path, and --derived-data are required for signing")
     return args
@@ -1443,6 +1463,11 @@ def parse_args() -> argparse.Namespace:
 
 if __name__ == "__main__":
     arguments = parse_args()
+    if arguments.deliver_only:
+        source = validate_release_source(arguments.source_dir, arguments.release_tag, os.environ['GITHUB_SHA'])
+        with tempfile.TemporaryDirectory() as temp:
+            deliver_package(arguments.output_dir, arguments.release_tag, source['source_commit'], Path(temp))
+        raise SystemExit(0)
     if arguments.validate_source_only:
         source = validate_release_source(arguments.source_dir, arguments.release_tag, arguments.main_commit)
         print(json.dumps(source, sort_keys=True))
