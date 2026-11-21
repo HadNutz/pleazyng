@@ -90,11 +90,12 @@ jobs:
             ffmpeg python3-pil python3-numpy tesseract-ocr
           test -e /dev/kvm || { echo 'A KVM-compatible hosted runner is required'; exit 1; }
           df -h . "$RUNNER_TEMP"
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.cache/pleazyng-aerynos/iso
           key: aerynos-iso-e348b88da07e5876d1e0fc50e156f0a062c58251ab6deb2a897155980fa6c419
       - name: Fetch checksum-pinned official ISO
+        id: fetch-iso
         run: |
           mkdir -p "$HOME/.cache/pleazyng-aerynos/iso"
           iso="$HOME/.cache/pleazyng-aerynos/iso/aerynOS-2026.11-GNOME-live-x86_64.iso"
@@ -102,6 +103,12 @@ jobs:
             curl -fL --retry 5 --retry-all-errors https://cdn.aerynos.dev/isos/aerynOS-2026.11-GNOME-live-x86_64.iso -o "$iso"
           fi
           echo "e348b88da07e5876d1e0fc50e156f0a062c58251ab6deb2a897155980fa6c419  $iso" | sha256sum --check
+      - name: Save verified aerynOS ISO for retry
+        if: ${{ steps.fetch-iso.outcome == 'success' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.cache/pleazyng-aerynos/iso
+          key: aerynos-iso-e348b88da07e5876d1e0fc50e156f0a062c58251ab6deb2a897155980fa6c419
       - name: Native build install and visible release playback
         env:
           PACKAGE_RELEASE: ${{ inputs.release }}
