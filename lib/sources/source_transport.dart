@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
@@ -197,12 +198,12 @@ class SourceTransport {
       await response.stream.listen(null).cancel();
       check(response.statusCode);
     }
-    final bytes = <int>[];
+    final bytes = BytesBuilder(copy: false);
     await for (final chunk in response.stream.timeout(const Duration(seconds: 30))) {
       if (bytes.length + chunk.length > limit) throw const SourceException(SourceFailure.invalidData);
-      bytes.addAll(chunk);
+      bytes.add(chunk);
     }
-    return (body: utf8.decode(bytes), uri: response.request!.url);
+    return (body: utf8.decode(bytes.takeBytes()), uri: response.request!.url);
   }
 
   Future<Object?> jsonValue(String method, Uri uri, {Map<String, String> headers = const {}, Object? body}) async =>

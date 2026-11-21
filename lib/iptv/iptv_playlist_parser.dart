@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
@@ -68,8 +69,9 @@ class IptvPlaylistParseResult {
 /// playback presentation headers. Playlist-supplied auth headers, commands,
 /// player properties and local paths are ignored.
 class IptvPlaylistParser {
-  static const maxCharacters = 8 * 1024 * 1024;
-  static const maxEntries = 20_000;
+  static const maxCharacters = 96 * 1024 * 1024;
+  static const maxUploadedBytes = 50 * 1024 * 1024;
+  static const maxEntries = 50_000;
   static const maxLineLength = 16 * 1024;
   static final _secretQueryKey = RegExp(
     r'(token|password|signature|credential|authorization|secret|api[_-]?key|^auth$|^key$|^code$|x-amz-|x-goog-|^(expires|expiry|expiration|policy|key-pair-id|sig|se|sp|sv|sr|st|skoid|sktid|skt|ske|sks|skv|rscc|rscd|rsct)$)',
@@ -94,22 +96,53 @@ class IptvPlaylistParser {
     return 'feed-${sha256.convert(utf8.encode(jsonEncode(identity)))}';
   }
 
-  static IptvPlaylistParseResult parse(String body, {required Uri base, required bool allowHttp}) {
-    if (body.length > maxCharacters) throw const SourceException(SourceFailure.invalidData);
-    final lines = body.replaceFirst('\uFEFF', '').replaceAll('\r\n', '\n').replaceAll('\r', '\n').split('\n');
-    if (lines.any((line) => line.length > maxLineLength)) throw const SourceException(SourceFailure.invalidData);
-    if (lines.any((line) => line.trimLeft().toUpperCase().startsWith('#EXT-X-'))) {
-      return const IptvPlaylistParseResult(entries: [], skipped: 0, isHls: true);
-    }
-    Uri? guideUri;
-    String? header;
-    for (final line in lines) {
-      final candidate = line.trim();
-      if (candidate.toUpperCase().startsWith('#EXTM3U')) {
-        header = candidate;
-        break;
+  static Future<IptvPlaylistParseResult> load(
+    String body, {
+    required Uri base,
+    required bool allowHttp,
+    int byteLimit = maxCharacters,
+  }) async {
+    if (body.length < 256 * 1024) return parse(body, base: base, allowHttp: allowHttp, byteLimit: byteLimit);
+    return Isolate.run(() => parse(body, base: base, allowHttp: allowHttp, byteLimit: byteLimit));
+  }
+
+  static IptvPlaylistParseResult parse(
+    String body, {
+    required Uri base,
+    required bool allowHttp,
+    int byteLimit = maxCharacters,
+  }) {
+    if (body.length > byteLimit) throw const SourceException(SourceFailure.invalidData);
+    // Each UTF-16 code unit produces at most three UTF-8 bytes. Only large
+    // inputs need a byte count, and counting avoids another playlist-sized copy.
+    if (body.length > byteLimit ~/ 3) {
+      var bytes = 0;
+      for (final rune in body.runes) {
+        bytes += switch (rune) {
+          <= 0x7f => 1,
+          <= 0x7ff => 2,
+          <= 0xffff => 3,
+          _ => 4,
+        };
+        if (bytes > byteLimit) throw const SourceException(SourceFailure.invalidData);
       }
     }
+    final begin = body.startsWith('\uFEFF') ? 1 : 0;
+    final lines = LineSplitter.split(body, begin);
+    Uri? guideUri;
+    String? header;
+    var declared = 0;
+    var hls = false;
+    for (final raw in lines) {
+      if (raw.length > maxLineLength) throw const SourceException(SourceFailure.invalidData);
+      final line = raw.trimLeft();
+      if (!line.startsWith('#') || line.length < 7) continue;
+      final directive = line.substring(0, 7).toUpperCase();
+      if (directive == '#EXT-X-') hls = true;
+      if (directive == '#EXTM3U') header ??= line;
+      if (directive == '#EXTINF' && ++declared > maxEntries) throw const SourceException(SourceFailure.invalidData);
+    }
+    if (hls) return const IptvPlaylistParseResult(entries: [], skipped: 0, isHls: true);
     if (header != null) {
       final guideAddress = _first(_parseAttributes(header.substring(7)), const ['url-tvg', 'x-tvg-url', 'tvg-url']);
       if (guideAddress != null) {

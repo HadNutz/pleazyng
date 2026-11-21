@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Import provider playlists up to 96 MiB and 50,000 stations and local files up to 50 MiB. Large playlists parse off the UI isolate. Relative guide and stream links follow a provider’s final playlist URL after redirects. These limits follow the [v49 provider settings](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/settings.py) from [Zachary Schmook](https://github.com/zschmook) and the M3U Web Picker contributors.
 - Schedule recurring IPTV programmes on this device from the native guide and manage the rules in Recordings. The scheduler matches guide updates, avoids duplicate episodes and preserves one-off or active captures when a rule is removed. Independently implemented from the [M3U Web Picker DVR](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/dvr.py) behavior by [Zachary Schmook](https://github.com/zschmook) and contributors.
 
 - Browse upcoming guide-listed sports fixtures, choose among simultaneous feeds and follow teams per profile. Organize stations into overlapping custom groups, filter by provider group or low bandwidth, and export matching unlocked channels. Choose ordered backup sources for live playback. Recovery matches station IDs or compatible full names and opens each backup with its own playback headers. Inspired by [M3U Web Picker v49](https://github.com/zschmook/m3u-web-picker/tree/8822e68538ac91ab25bf805a74fa6bacdc2b7897) by [Zachary Schmook](https://github.com/zschmook) and contributors.

@@ -8,6 +8,8 @@ The PR list comes from explicit “Squash of upstream” commit records and the 
 
 ## M3U Web Picker
 
+[Zachary Schmook (@zschmook)](https://github.com/zschmook) and contributors established the [provider limits](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/settings.py) and [channel-count validation](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/core.py). Pleazyng independently implements these limits using its Dart importer and original boundary fixtures.
+
 [M3U Web Picker v49](https://github.com/zschmook/m3u-web-picker/tree/8822e68538ac91ab25bf805a74fa6bacdc2b7897), created by [Zachary Schmook (@zschmook)](https://github.com/zschmook) and contributors, inspired Pleazyng's native local playlist import, provider and custom group selection, independent channel order, M3U/XMLTV export, interval-based guide merging, profile-owned backup-source selection and the native guide-based sports browser. The public U.S. preview lineup comes from [IPTV-org](https://github.com/iptv-org/iptv). Pleazyng implements these behaviors independently. Upstream's [provider operations](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/api/providers.py) and [guide merge](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/sports/guide.py) are the behavior references. Pleazyng’s on-device series scheduling also draws on the upstream [DVR series rules](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/dvr.py). The [native feature status](docs/features/native-iptv-parity.md) records implemented and outstanding workflows.
 
 

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
@@ -43,6 +44,7 @@ class IptvSourceRepository {
   late final seriesRules = IptvSeriesRules(_database, (profile, source) => channels(profile, sourceId: source));
   static const _uuid = Uuid();
   static const maxPlaylistBytes = IptvPlaylistParser.maxCharacters;
+  static const maxUploadedBytes = IptvPlaylistParser.maxUploadedBytes;
   static const maxXmltvBytes = IptvXmltvParser.maxCharacters;
 
   Future<String> createSource({
@@ -105,12 +107,17 @@ class IptvSourceRepository {
 
   Future<String?> _protectPlaylist(IptvSourceConfiguration config, String? contents) async {
     if (contents == null) return null;
-    if (config.kind != IptvInputKind.m3uFile || utf8.encode(contents).length > maxPlaylistBytes) {
+    if (config.kind != IptvInputKind.m3uFile || contents.length > maxUploadedBytes) {
       throw const IptvImportException('source_invalid');
     }
     late final IptvPlaylistParseResult parsed;
     try {
-      parsed = IptvPlaylistParser.parse(contents, base: config.playlistUri(), allowHttp: config.allowHttp);
+      parsed = await IptvPlaylistParser.load(
+        contents,
+        base: config.playlistUri(),
+        allowHttp: config.allowHttp,
+        byteLimit: maxUploadedBytes,
+      );
     } on SourceException catch (error) {
       throw IptvImportException(_iptvCodeForSourceFailure(error));
     }
@@ -2083,6 +2090,7 @@ class IptvSourceRepository {
       } else {
         playlistUri = config.playlistUri();
         final String playlistBody;
+        var documentUri = playlistUri;
         if (config.kind == IptvInputKind.m3uFile) {
           final row = await _database
               .customSelect(
@@ -2097,15 +2105,17 @@ class IptvSourceRepository {
           playlistBody = contents;
         } else {
           transport.validate(playlistUri);
-          playlistBody = await transport.text(
+          final document = await transport.textDocument(
             'GET',
             playlistUri,
             limit: maxPlaylistBytes,
             redirects: true,
             headers: const {'Accept': 'audio/x-mpegurl, application/vnd.apple.mpegurl, text/plain, */*'},
           );
+          documentUri = document.uri;
+          playlistBody = document.body;
         }
-        final playlist = IptvPlaylistParser.parse(playlistBody, base: playlistUri, allowHttp: config.allowHttp);
+        final playlist = await IptvPlaylistParser.load(playlistBody, base: documentUri, allowHttp: config.allowHttp);
         if (playlist.isHls) {
           throw const IptvImportException('playlist_is_stream');
         }
@@ -2268,6 +2278,12 @@ class IptvSourceRepository {
           variables: [Variable(sourceId)],
         )
         .get();
+    if (rows.isEmpty) {
+      for (final feed in feeds) {
+        result.putIfAbsent(feed.id, () => feed.id);
+      }
+      return result;
+    }
     String metadata(String? tvg, String title, String? number, String? group) =>
         jsonEncode([tvg, title.trim().toLowerCase(), number, group]);
     final byMetadata = <String, List<QueryRow>>{};
@@ -2739,12 +2755,12 @@ class IptvSourceRepository {
     final body = await transport.text(
       'GET',
       uri,
-      limit: 32 * 1024 * 1024,
+      limit: maxPlaylistBytes,
       redirects: true,
       headers: const {'Accept': 'application/json, text/plain, */*'},
     );
     try {
-      return jsonDecode(body);
+      return body.length < 256 * 1024 ? jsonDecode(body) : await Isolate.run(() => jsonDecode(body));
     } on FormatException {
       throw const IptvImportException('invalid_data');
     }
