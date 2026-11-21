@@ -144,6 +144,8 @@ import 'utils/dialogs.dart';
 import 'widgets/dialog_action_button.dart';
 import 'widgets/startup_failure_view.dart';
 
+part 'app/root_deep_link_profile.dart';
+
 const bool _enableSentry = bool.fromEnvironment('ENABLE_SENTRY', defaultValue: false);
 const String _sentryDsn = String.fromEnvironment('SENTRY_DSN');
 const String gitCommit = String.fromEnvironment('GIT_COMMIT');
@@ -1619,36 +1621,6 @@ Future<String?> _rootPinPrompt(Profile profile, {String? errorMessage}) {
     return Future.value(null);
   }
   return showPinEntryDialog(ctx, profile.displayName, errorMessage: errorMessage);
-}
-
-/// Applies the profile a deep link names once the app is running, from the
-/// root navigator so the PIN dialog and the switch outlive the profile
-/// session they replace.
-class _RootDeepLinkProfileHost implements DeepLinkProfileHost {
-  const _RootDeepLinkProfileHost();
-
-  BuildContext? get _context => rootNavigatorKey.currentState?.overlay?.context;
-
-  @override
-  List<Profile> get profiles => _context?.read<ActiveProfileProvider>().profiles ?? const [];
-
-  @override
-  String? get activeProfileId => _context?.read<ActiveProfileProvider>().activeId;
-
-  @override
-  Future<bool> switchTo(Profile profile) async {
-    // Playback leaves first so its final progress report still carries the
-    // outgoing profile's token.
-    final coordinator = PlaybackCoordinator.instance;
-    if (!await coordinator.stopVideoAndExit()) {
-      await coordinator.shutdownVideo();
-    }
-    final context = _context;
-    if (context == null || !context.mounted) {
-      return false;
-    }
-    return switchProfileFromUi(context, profile);
-  }
 }
 
 class MainApp extends StatefulWidget {
