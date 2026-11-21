@@ -2,15 +2,19 @@
 
 ## [Unreleased]
 
+- Prepare configured app-store listings for manual review submission after the verified 3.0.45 binaries are uploaded.
+
+## [3.0.45] - 2026-11-21
+
 - Align the pinned x64 and ARM64 WebKit helper packages with Ubuntu 24.04's current updates archive, keeping Linux release artifacts and package-channel repackaging byte-matched.
 - Complete the explicit fresh-install onboarding choice in native aerynOS release qualification before connecting its Jellyfin fixture.
+- Retry truncated Jellyfin startup responses and support shallow core checkout ancestry in the aerynOS source pipeline.
 - Match Apple native test dependency-cache paths to the normalized platform slugs on all runner types.
 - Keep the unsigned iOS developer IPA build available when the separate Store signing preflight fails.
 - Recognize the split Apple native CI job when cleaning its task-owned source workspace.
 - Keep the complete unsigned Apple core release moving when Store signing preflight or packaging fails, and report the blocked Apple Store channel separately.
-- Scope release concurrency to the immutable candidate so a superseded run cannot hold newer release work behind its queue.
+- Scope release concurrency to the immutable candidate so a superseded run cannot hold newer release work behind its queue, and correct platform recovery identities and artifact preservation.
 - Reuse verified Android artifacts during platform recovery, give macOS recovery and assembly runs distinct identities, accept documentation-only guidance updates when validating reusable artifacts, and assemble from a verified fresh macOS rebuild when the original checkpoint could not be uploaded.
-- Prepare any configured app-store listings that require a separate manual review submission after the verified 3.0.44 binaries are uploaded.
 
 ## [3.0.44] - 2026-11-20
 
