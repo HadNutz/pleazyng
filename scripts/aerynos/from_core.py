@@ -28,6 +28,27 @@ def api(path):
     return json.loads(run(['gh', 'api', path], capture_output=True, text=True).stdout)
 
 
+def ensure_source_commit(tooling_path, source_sha):
+    check = ['git', '-C', tooling_path, 'cat-file', '-e', source_sha + '^{commit}']
+    try:
+        run(check)
+    except subprocess.CalledProcessError:
+        # The checkout is intentionally shallow. Fetch only the immutable
+        # published source commit needed for show/archive operations.
+        run(['git', '-C', tooling_path, 'fetch', '--quiet', '--no-tags', '--depth=1',
+             'origin', source_sha])
+        run(check)
+
+
+def require_canonical_ancestor(source_sha):
+    comparison = api(f'repos/{REPOSITORY}/compare/{source_sha}...main')
+    if (comparison.get('status') not in ('ahead', 'identical')
+            or comparison.get('base_commit', {}).get('sha') != source_sha
+            or comparison.get('merge_base_commit', {}).get('sha') != source_sha
+            or comparison.get('behind_by') != 0):
+        raise ValueError('Approved core source is not an ancestor of canonical main')
+
+
 def digest(path):
     with path.open('rb') as stream:
         return hashlib.file_digest(stream, 'sha256').hexdigest()
@@ -88,12 +109,9 @@ def stage(tooling, source_sha, producer_run_id, bundle, output):
         raise ValueError('Full immutable source SHA and core producer run ID are required')
     tooling_path, bundle, output = tooling.resolve(), bundle.resolve(), output.resolve()
     tooling_sha = run(['git', '-C', tooling_path, 'rev-parse', 'HEAD'], capture_output=True, text=True).stdout.strip()
-    run(['git', '-C', tooling_path, 'cat-file', '-e', source_sha + '^{commit}'])
-    run(['git', '-C', tooling_path, 'merge-base', '--is-ancestor', source_sha, tooling_sha])
+    ensure_source_commit(tooling_path, source_sha)
     require_repository_identity(REPOSITORY)
-    comparison = api(f'repos/{REPOSITORY}/compare/{source_sha}...main')
-    if comparison['status'] not in ('ahead', 'identical'):
-        raise ValueError('Approved core source is not on canonical main')
+    require_canonical_ancestor(source_sha)
     producer = api(f'repos/{REPOSITORY}/actions/runs/{producer_run_id}')
     jobs = api(f'repos/{REPOSITORY}/actions/runs/{producer_run_id}/jobs?per_page=100')['jobs']
     artifacts = api(f'repos/{REPOSITORY}/actions/runs/{producer_run_id}/artifacts?per_page=100')['artifacts']

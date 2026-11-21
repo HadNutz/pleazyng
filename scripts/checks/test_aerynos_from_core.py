@@ -2,10 +2,12 @@
 import copy
 import io
 from pathlib import Path
+import subprocess
 import sys
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'aerynos'))
 import from_core
@@ -51,6 +53,29 @@ class CoreHandoffTests(unittest.TestCase):
             wrong['verificationResult']['signature']['certificate'][key] = value
             with self.subTest(key=key), self.assertRaises(ValueError):
                 from_core.verify_run_binding([wrong], self.sha, 42)
+
+    def test_shallow_tooling_checkout_fetches_only_the_exact_missing_source_commit(self):
+        tooling = Path('/tmp/tooling')
+        with patch.object(from_core, 'run', side_effect=[
+                subprocess.CalledProcessError(128, ['git', 'cat-file']), None, None]) as run:
+            from_core.ensure_source_commit(tooling, self.sha)
+        self.assertEqual(run.call_count, 3)
+        self.assertEqual(run.call_args_list[1].args[0], [
+            'git', '-C', tooling, 'fetch', '--quiet', '--no-tags', '--depth=1', 'origin', self.sha])
+
+    def test_canonical_ancestry_uses_github_compare_not_shallow_local_history(self):
+        ahead = {'status': 'ahead', 'base_commit': {'sha': self.sha},
+                 'merge_base_commit': {'sha': self.sha}, 'behind_by': 0}
+        with patch.object(from_core, 'api', return_value=ahead) as api:
+            from_core.require_canonical_ancestor(self.sha)
+        api.assert_called_once_with(
+            f'repos/{from_core.REPOSITORY}/compare/{self.sha}...main')
+        for change in ({'status': 'diverged'}, {'base_commit': {'sha': 'b' * 40}},
+                       {'merge_base_commit': {'sha': 'b' * 40}}, {'behind_by': 1}):
+            with self.subTest(change=change), patch.object(
+                    from_core, 'api', return_value={**ahead, **change}), \
+                    self.assertRaisesRegex(ValueError, 'ancestor of canonical main'):
+                from_core.require_canonical_ancestor(self.sha)
 
     def bundle(self, path, machine=62, extra=None):
         header = bytearray(20)
