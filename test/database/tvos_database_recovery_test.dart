@@ -386,6 +386,24 @@ void main() {
     expect(await _criticalRows(rejected.database), everyElement(isEmpty));
   });
 
+  test('a committed identity image from before IPTV feed aliases still restores', () async {
+    final initial = await open();
+    await ProfileRegistry(initial.database).upsert(_profile('existing-profile'));
+    final identity = jsonDecode(prefs.getString(TvosDatabaseRecoveryStore.identityKey)!) as Map<String, dynamic>;
+    final rows = identity['rows'] as Map<String, dynamic>;
+    expect(rows.containsKey('iptvFeedAliases'), isTrue);
+    rows.remove('iptvFeedAliases');
+    final olderImage = jsonEncode(identity);
+    final manifest = jsonDecode(prefs.getString(TvosDatabaseRecoveryStore.manifestKey)!) as Map<String, dynamic>;
+    manifest['identityDigest'] = sha256.convert(utf8.encode(olderImage)).toString();
+    await prefs.setString(TvosDatabaseRecoveryStore.identityKey, olderImage);
+    await prefs.setString(TvosDatabaseRecoveryStore.manifestKey, jsonEncode(manifest));
+    await closeAndDelete();
+    final recovered = await open();
+    expect(recovered.recoveryOutcome, TvosDatabaseRecoveryOutcome.restored);
+    expect(await _hasProfile(recovered.database, 'existing-profile'), isTrue);
+  });
+
   for (final failurePhase in ['mutation', 'row read']) {
     test('$failurePhase failure does not poison later durable mutations', () async {
       final store = TvosDatabaseRecoveryStore(prefs, isTvos: true);

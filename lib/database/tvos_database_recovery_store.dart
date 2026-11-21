@@ -389,7 +389,7 @@ final class TvosDatabaseRecoveryStore {
       final identity = _decodePayload(
         identityRaw,
         _identityRowKeys,
-        compatibleKeys: [_previousIdentityRowKeys, _legacyIdentityRowKeys],
+        compatibleKeys: [_identityRowsBeforeFeedAliases, _previousIdentityRowKeys, _legacyIdentityRowKeys],
       );
       final pending = _decodePayload(pendingRaw, _pendingRowKeys);
       if (identity == null || pending == null) return null;
@@ -511,7 +511,8 @@ final class TvosDatabaseRecoveryStore {
     );
   }
 
-  static const Set<String> _identityRowKeys = {
+  static const _identityRowKeys = {..._identityRowsBeforeFeedAliases, 'iptvFeedAliases'};
+  static const Set<String> _identityRowsBeforeFeedAliases = {
     'connections',
     'profiles',
     'profileConnections',
