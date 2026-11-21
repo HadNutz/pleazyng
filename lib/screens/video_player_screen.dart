@@ -1800,7 +1800,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       try {
         _watchTogetherProvider = context.read<WatchTogetherProvider?>();
       } catch (_) {
-        // Watch Together lives in the profile session; a player outside it
+        // best-effort: Watch Together lives in the profile session; a player outside it
         // plays on its own.
       }
       _wtRoomOpen = widget.watchTogetherCopy != null;
@@ -2434,7 +2434,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       try {
         workspace = context.read<MultiviewWorkspaceController>();
       } catch (_) {
-        // Standalone player tests and embedders may not mount the profile shell.
+        // best-effort: Standalone player tests and embedders may not mount the profile shell.
       }
       final retainsMusic = workspace?.hasSessionOfKind(MultiviewMediaKind.music) ?? false;
       if (widget.launchObserver != null && context.read<MusicPlaybackService>().currentTrack != null && !retainsMusic) {

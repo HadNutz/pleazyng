@@ -374,12 +374,12 @@ class RommStorage extends ChangeNotifier {
           try {
             await lock.unlock();
           } catch (_) {
-            /* Closing also releases the lock. */
+            /* best-effort: Closing also releases the lock. */
           }
           try {
             await lock.close();
           } catch (_) {
-            /* Preserve the registry result. */
+            /* best-effort: Preserve the registry result. */
           }
         }
       }
@@ -928,7 +928,7 @@ class RommStorage extends ChangeNotifier {
       try {
         await sync(id);
       } catch (_) {
-        /* Each version retains its failure and bytes. */
+        /* best-effort: Each version retains its failure and bytes. */
       }
     }
   }

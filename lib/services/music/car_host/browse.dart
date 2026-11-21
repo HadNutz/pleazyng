@@ -1128,7 +1128,7 @@ extension _MusicCarBrowse on _MusicCarHostState {
             }
           }
         } catch (_) {
-          /* Keep matches from the other servers and downloads. */
+          /* best-effort: Keep matches from the other servers and downloads. */
         }
       }
     }

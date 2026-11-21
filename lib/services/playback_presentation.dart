@@ -81,6 +81,7 @@ class PlaybackPresentation extends ChangeNotifier {
       final v = await player.getProperty(property);
       return v == null || v.isEmpty || v == 'unavailable' ? null : v;
     } catch (_) {
+      // best-effort: Optional player telemetry can be absent on the active backend.
       return null;
     }
   }

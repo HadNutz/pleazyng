@@ -35,6 +35,7 @@ class PinAttemptGuard {
       await prefs.remove(key);
       return true;
     } catch (_) {
+      // best-effort: Deny verification when the PIN attempt state cannot be checked or persisted.
       return false;
     } finally {
       _busy.remove(profileId);

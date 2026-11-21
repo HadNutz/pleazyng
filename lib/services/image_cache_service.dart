@@ -292,7 +292,7 @@ void _cancelUnclaimedBody(Stream<List<int>> stream) {
     final subscription = stream.listen((_) {}, onError: (_, _) {});
     unawaited(subscription.cancel().catchError((_) {}));
   } catch (_) {
-    // The body may already have terminated while the timeout callback ran.
+    // best-effort: The body may already have terminated while the timeout callback ran.
   }
 }
 

@@ -619,6 +619,7 @@ class JsonPref<T> extends Pref<T> {
     try {
       return decode(json.decode(s));
     } catch (_) {
+      // best-effort: A missing or incompatible stored preference uses its declared default.
       return defaultValue;
     }
   }

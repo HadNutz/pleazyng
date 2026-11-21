@@ -23,7 +23,7 @@ Future<void> playExtra(BuildContext context, ExtrasSession session, ExtraEntry e
     try {
       await session.store.recordProgress(entry.id, seconds: seconds);
     } catch (_) {
-      /* Playback does not require saved progress. */
+      /* best-effort: Playback does not require saved progress. */
     }
     if (!context.mounted || !session.allows(entry)) return;
     await navigateToVideoPlayer(
@@ -117,7 +117,7 @@ class _ExtraPlaybackScreenState extends State<ExtraPlaybackScreen> with WidgetsB
     try {
       progress = await widget.session.store.progress(widget.entry.id);
     } catch (_) {
-      /* Playback does not require saved progress. */
+      /* best-effort: Playback does not require saved progress. */
     }
     if (mounted && !_embedded) setState(() => _position = widget.start ?? (progress['seconds'] as int? ?? 0));
   }
@@ -137,7 +137,7 @@ class _ExtraPlaybackScreenState extends State<ExtraPlaybackScreen> with WidgetsB
     try {
       launched = await launchUrl(_watchUrl, mode: LaunchMode.externalApplication);
     } catch (_) {
-      /* QR remains available */
+      /* best-effort: QR remains available */
     }
     if (launched) {
       _startupTimer?.cancel();
@@ -145,7 +145,7 @@ class _ExtraPlaybackScreenState extends State<ExtraPlaybackScreen> with WidgetsB
       try {
         await widget.session.store.recordProgress(widget.entry.id);
       } catch (_) {
-        /* Handoff already succeeded. */
+        /* best-effort: Handoff already succeeded. */
       }
     }
     if (mounted) {
@@ -232,7 +232,7 @@ class _ExtraPlaybackScreenState extends State<ExtraPlaybackScreen> with WidgetsB
                     completed: kind == 'ended',
                   );
                 } catch (_) {
-                  /* Player remains usable without persistence. */
+                  /* best-effort: Player remains usable without persistence. */
                 }
               }
               return null;

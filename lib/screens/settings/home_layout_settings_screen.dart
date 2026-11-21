@@ -182,7 +182,7 @@ class _HomeLayoutSettingsScreenState extends State<HomeLayoutSettingsScreen> {
     try {
       collections = (await multiServer.aggregationService.getCollectionsFromAllServers()).collections;
     } catch (_) {
-      // The editor remains usable when a server is temporarily offline.
+      // best-effort: The editor remains usable when a server is temporarily offline.
     }
     final managedRows = <String, List<PlexManagedHub>>{};
 

@@ -143,6 +143,7 @@ final class SubtitleAiService {
       }
       return true;
     } catch (_) {
+      // best-effort: Report the model as installed only after checking its installation files.
       return false;
     }
   }

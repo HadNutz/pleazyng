@@ -2121,7 +2121,7 @@ class SettingsService extends BaseSharedPreferencesService {
         return HotKey(key: key, modifiers: modifiers.isNotEmpty ? modifiers : null);
       }
     } catch (_) {
-      // Ignore deserialization errors.
+      // best-effort: Ignore deserialization errors.
     }
     return null;
   }

@@ -407,7 +407,7 @@ class PlexHomeService {
       try {
         await _reloadStorageCacheIfNeeded(storage);
       } catch (_) {
-        // A later refresh retries the durable reload before inspecting cache.
+        // best-effort: A later refresh retries the durable reload before inspecting cache.
       }
       rethrow;
     }

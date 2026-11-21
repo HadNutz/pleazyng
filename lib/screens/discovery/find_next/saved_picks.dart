@@ -390,6 +390,7 @@ class _SavedPicksScreenState extends State<_SavedPicksScreen> {
         return !hidden.contains(key) && libraries.any((library) => library.globalKey == key);
       }).firstOrNull;
     } catch (_) {
+      // best-effort: Keep the saved pick available if its library copy cannot be located.
       return null;
     }
   }

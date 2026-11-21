@@ -147,7 +147,7 @@ class _SyncRuleTileState extends State<_SyncRuleTile> {
         setState(() => _stationTitle = document?['title'] as String?);
       }
     } catch (_) {
-      // Missing/deleted station documents keep a removable rule visible.
+      // best-effort: Missing/deleted station documents keep a removable rule visible.
     }
   }
 

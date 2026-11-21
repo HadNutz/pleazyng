@@ -67,6 +67,7 @@ extension _CarVideo on _MusicCarHostState {
                 {..._item(item), 'video': true, 'elapsed': item.viewOffsetMs ?? 0, 'duration': item.durationMs ?? 0},
           ];
         } catch (_) {
+          // best-effort: Missing video rows leave the car browser usable.
           return <Map<String, Object?>>[];
         }
       }),
@@ -216,6 +217,7 @@ extension _CarVideo on _MusicCarHostState {
               true &&
           current();
     } catch (_) {
+      // best-effort: Signal that the video handoff failed so the current session can be retained.
       return false;
     }
   }

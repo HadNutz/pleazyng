@@ -1026,7 +1026,7 @@ class PlayerNative extends PlayerBase
           ? await super.invoke<String>('getProperty', {'name': 'playlist-pos'})
           : await getProperty('playlist-pos');
     } catch (_) {
-      // Unknown state — fall through to the remove, never close the fd.
+      // best-effort: Unknown state — fall through to the remove, never close the fd.
     }
     if (pos == '1') {
       appLogger.d('MPV-audio: clear requested but armed entry already playing');
@@ -1259,7 +1259,7 @@ class PlayerNative extends PlayerBase
       try {
         await _clearArmedNext(adoptIfRolledIn: false, duringDispose: true);
       } catch (_) {
-        // Leak on doubt.
+        // best-effort: Leak on doubt.
       }
     }
     await _audioStateTail;

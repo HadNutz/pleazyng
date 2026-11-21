@@ -27,7 +27,7 @@ Future<BulkWatchResult> markBulkWatched(
     try {
       outcome = await mark(item);
     } catch (_) {
-      // The UI reports counts, never raw server responses or credentials.
+      // best-effort: The UI reports counts, never raw server responses or credentials.
     }
     if (!isCurrent()) return BulkWatchResult(succeeded: succeeded, failed: failed, cancelled: true);
     if (outcome == WatchMarkOutcome.marked) {

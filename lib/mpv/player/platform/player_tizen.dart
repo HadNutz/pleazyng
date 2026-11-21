@@ -100,6 +100,7 @@ class PlayerTizen extends PlayerBase
     try {
       return await controller.subtitlePcmCaptureAvailable();
     } catch (_) {
+      // best-effort: Offer subtitle capture only after the platform confirms support.
       return false;
     }
   }
@@ -297,7 +298,7 @@ class PlayerTizen extends PlayerBase
       await open(media);
       if (!disposed && !_closing && generation + 1 == _generation) trackTransitionController.add(media.uri);
     } catch (_) {
-      // open emitted the sanitized source failure.
+      // best-effort: open emitted the sanitized source failure.
     }
   }
 

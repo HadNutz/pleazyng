@@ -347,7 +347,7 @@ class CalderaNativeHost {
         },
       );
     } catch (_) {
-      /* The peer disconnected during upgrade. */
+      /* best-effort: The peer disconnected during upgrade. */
     }
   }
 

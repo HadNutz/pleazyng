@@ -1649,7 +1649,7 @@ abstract class PlayerBase
       try {
         await _applyAudioFilters();
       } catch (_) {
-        // Keep the optional analysis failure away from normal playback.
+        // best-effort: Keep the optional analysis failure away from normal playback.
       }
       return false;
     }

@@ -157,7 +157,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
         );
       });
     } catch (_) {
-      // Failed identity lookup must not interrupt reading.
+      // best-effort: Failed identity lookup must not interrupt reading.
     }
   }
 
@@ -1061,7 +1061,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
       try {
         await _js('stopSpeech');
       } catch (_) {
-        // A closed browser has already stopped speech and retired its socket.
+        // best-effort: A closed browser has already stopped speech and retired its socket.
       }
     }
     if (mounted && !_disposed && _speaking) {
@@ -1193,7 +1193,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
           await session.stop();
         }
       } catch (_) {
-        // Native retirement failure must not retain a reader capability.
+        // best-effort: Native retirement failure must not retain a reader capability.
       } finally {
         await server?.close();
       }

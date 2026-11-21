@@ -238,6 +238,7 @@ class StorageService extends BaseSharedPreferencesService {
       final entry = all[globalKey];
       return entry is Map ? Map<String, dynamic>.from(entry) : const {};
     } catch (_) {
+      // best-effort: Use ordinary track selection when a saved show preference is unreadable.
       return const {};
     }
   }

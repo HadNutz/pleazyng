@@ -335,6 +335,7 @@ Map<String, dynamic>? tryDecodeJsonFrame(dynamic frame) {
     final decoded = jsonDecode(frame);
     return decoded is Map<String, dynamic> ? decoded : null;
   } catch (_) {
+    // best-effort: Ignore invalid frames before passing messages to the peer protocol.
     return null;
   }
 }

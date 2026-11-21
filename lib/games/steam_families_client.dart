@@ -290,7 +290,7 @@ class SteamFamiliesClient {
     try {
       if (_session != null) await _request({'operation': 'close'}, retiring: true);
     } catch (_) {
-      /* Bounded server expiry remains in force. */
+      /* best-effort: Bounded server expiry remains in force. */
     } finally {
       _session = null;
       _http.close();

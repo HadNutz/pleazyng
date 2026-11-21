@@ -228,7 +228,7 @@ class _PodcastsScreenState extends State<PodcastsScreen> {
     try {
       current = await sources.hydrate(entry);
     } catch (_) {
-      /* Cached offline episode. */
+      /* best-effort: Cached offline episode. */
     }
     sources.requireSession(epoch);
     if (!mounted) {

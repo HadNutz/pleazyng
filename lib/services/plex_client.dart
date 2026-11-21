@@ -1314,6 +1314,7 @@ class PlexClient
         _ => HealthStatus.offline,
       };
     } catch (_) {
+      // best-effort: An unsuccessful probe marks this server offline for this health check.
       return HealthStatus.offline;
     }
   }

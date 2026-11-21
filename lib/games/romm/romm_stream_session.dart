@@ -248,7 +248,7 @@ class RommStreamSession extends ChangeNotifier {
     try {
       await cleanup.json('DELETE', _path, query: _params);
     } catch (_) {
-      /* Server heartbeat expiry remains the final recovery path. */
+      /* best-effort: Server heartbeat expiry remains the final recovery path. */
     } finally {
       cleanup.close();
     }

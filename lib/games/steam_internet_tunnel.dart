@@ -567,6 +567,7 @@ Future<bool> steamHostReachable(GameHost host) async {
     socket.send(SteamDiscoveryCodec.query(Random.secure().nextInt(0x7fffffff) + 1), addresses.first, host.port);
     return await done.future.timeout(const Duration(milliseconds: 900), onTimeout: () => false);
   } catch (_) {
+    // best-effort: Offer the route only after the Steam host responds to the reachability probe.
     return false;
   } finally {
     await subscription?.cancel();

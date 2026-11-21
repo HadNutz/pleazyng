@@ -112,7 +112,7 @@ class CloudSettingsBackupService {
     try {
       appVersion = (await PackageInfo.fromPlatform()).version;
     } catch (_) {
-      // Version is informational and unavailable on some test or desktop hosts.
+      // best-effort: Version is informational and unavailable on some test or desktop hosts.
     }
     if (!_sameOwner(storage, expectedProfileId, expectedOwner, isCurrentSession: isCurrentSession)) {
       throw const CloudSettingsBackupException('The active profile changed before the backup was sent.');

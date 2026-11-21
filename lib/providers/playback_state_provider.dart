@@ -307,6 +307,7 @@ class PlaybackStateProvider with ChangeNotifier, DisposableChangeNotifierMixin {
       safeNotifyListeners();
       return _findLoadedIndex(centerPlayQueueItemID) != -1;
     } catch (_) {
+      // best-effort: Keep the current queue window until its replacement is available.
       return false;
     }
   }

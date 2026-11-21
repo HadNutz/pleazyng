@@ -97,7 +97,7 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
     try {
       displayEdge = View.of(context).display.size.longestSide;
     } catch (_) {
-      // No display information on this platform.
+      // best-effort: No display information on this platform.
     }
     return math.max(windowEdge, displayEdge).ceil();
   }

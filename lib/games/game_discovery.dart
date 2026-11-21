@@ -86,7 +86,7 @@ class GameDiscovery {
                               ),
                             );
                           } catch (_) {
-                            /* Ignore malformed beacons. */
+                            /* best-effort: Ignore malformed beacons. */
                           }
                         }, onError: (Object _) {}),
                   );
@@ -128,7 +128,7 @@ class GameDiscovery {
                 ),
               );
             } catch (_) {
-              /* Untrusted LAN advertisement. */
+              /* best-effort: Untrusted LAN advertisement. */
             }
           }
         }, onError: (Object _) {}),
@@ -139,7 +139,7 @@ class GameDiscovery {
         27036,
       );
     } catch (_) {
-      /* Steam may own the port. Manual/client discovery remains available. */
+      /* best-effort: Steam may own the port. Manual/client discovery remains available. */
     }
     final remaining = deadline.difference(DateTime.now());
     if (remaining > Duration.zero) await Future<void>.delayed(remaining);

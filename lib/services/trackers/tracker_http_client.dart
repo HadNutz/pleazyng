@@ -119,6 +119,7 @@ class TrackerHttpClient {
     try {
       return json.decode(body);
     } catch (_) {
+      // best-effort: An unreadable tracker response has no decoded payload.
       return null;
     }
   }

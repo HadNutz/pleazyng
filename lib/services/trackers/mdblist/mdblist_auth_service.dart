@@ -120,6 +120,7 @@ class MdblistAuthService extends DeviceCodeAuthServiceBase {
       final decoded = json.decode(body);
       return decoded is Map<String, dynamic> ? decoded : const {};
     } catch (_) {
+      // best-effort: Use the caller's ordinary failure handling when an authentication response has no JSON details.
       return const {};
     }
   }

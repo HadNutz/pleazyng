@@ -80,6 +80,7 @@ class RecentTagsService {
             },
       };
     } catch (_) {
+      // best-effort: Begin with an empty recent-tags list when its saved data cannot be read.
       return {};
     }
   }

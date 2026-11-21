@@ -85,6 +85,7 @@ mixin MemoryPressureBreadcrumbs on PaintingBinding {
     try {
       return {key: readBytes() >> 20};
     } catch (_) {
+      // best-effort: Omit an unavailable memory metric from the diagnostic event.
       return null;
     }
   }

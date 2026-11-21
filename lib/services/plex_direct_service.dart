@@ -132,6 +132,7 @@ Map<String, dynamic>? _tryParseJson(String body) {
   try {
     return jsonDecode(body) as Map<String, dynamic>?;
   } catch (_) {
+    // best-effort: Omit the optional response object when the body is not valid JSON.
     return null;
   }
 }

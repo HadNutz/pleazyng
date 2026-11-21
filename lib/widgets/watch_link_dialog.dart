@@ -27,7 +27,7 @@ Future<void> showWatchLinkDialog(BuildContext context, MediaItem item) async {
       try {
         externalIds = await client.fetchExternalIds(item.id);
       } catch (_) {
-        // A server-specific link remains useful when the external-id lookup
+        // best-effort: A server-specific link remains useful when the external-id lookup
         // is unavailable.
       }
     }

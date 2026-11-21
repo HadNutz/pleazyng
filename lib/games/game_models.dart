@@ -330,7 +330,7 @@ class GameLibrary {
         final host = GameHost.fromJson(Map<String, dynamic>.from(row as Map));
         hosts[host.key] = host;
       } catch (_) {
-        /* Recover other entries. */
+        /* best-effort: Recover other entries. */
       }
     }
     for (final row in _rows(data['games']).take(2000)) {
@@ -338,7 +338,7 @@ class GameLibrary {
         final game = StreamGame.fromJson(Map<String, dynamic>.from(row as Map));
         if (hosts.containsKey(game.hostKey)) games[game.key] = game;
       } catch (_) {
-        /* Recover other entries. */
+        /* best-effort: Recover other entries. */
       }
     }
     final rawSteamId = data['steamAccountId'];
@@ -349,7 +349,7 @@ class GameLibrary {
         final game = SteamCatalogGame.fromJson(Map<String, dynamic>.from(row as Map));
         steamCatalog[game.key] = game;
       } catch (_) {
-        /* Recover other entries. */
+        /* best-effort: Recover other entries. */
       }
     }
     final inventories = <SteamHostInventory>[];
@@ -364,7 +364,7 @@ class GameLibrary {
         inventories.add(inventory);
         inventoryBudget -= inventory.games.length;
       } catch (_) {
-        /* Recover other computers. */
+        /* best-effort: Recover other computers. */
       }
     }
     final rawCredential = data['steamCatalogCredential'];

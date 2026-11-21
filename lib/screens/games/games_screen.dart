@@ -478,7 +478,7 @@ class _GamesScreenState extends State<GamesScreen> with FocusableTab, TabVisibil
               await proxy.revokeSteamCatalog(credential);
             }
           } catch (_) {
-            /* Local unlink succeeds offline; server grants expire. */
+            /* best-effort: Local unlink succeeds offline; server grants expire. */
           } finally {
             proxy.dispose();
           }
@@ -495,7 +495,7 @@ class _GamesScreenState extends State<GamesScreen> with FocusableTab, TabVisibil
     try {
       await c.scan();
     } catch (_) {
-      /* Manual entry remains available. */
+      /* best-effort: Manual entry remains available. */
     }
   }
 

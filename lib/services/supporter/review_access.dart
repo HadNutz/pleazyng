@@ -36,6 +36,7 @@ class ReviewAccess {
       final expiry = DateTime.fromMillisecondsSinceEpoch((payload['expires'] as int) * 1000, isUtc: true);
       return expiry.isAfter((now ?? DateTime.now()).toUtc()) ? expiry : null;
     } catch (_) {
+      // best-effort: Reject review tokens whose encoding or signature cannot be verified.
       return null;
     }
   }

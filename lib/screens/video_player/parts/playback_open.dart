@@ -250,6 +250,7 @@ extension _VideoPlayerOpenMethods on VideoPlayerScreenState {
         return activeProfile.activeId == activeProfileId &&
             identical(accountPreferences.activePreferences, profileSettings);
       } catch (_) {
+        // best-effort: Continue opening the video without an automatically fetched subtitle.
         return false;
       }
     }

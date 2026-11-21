@@ -688,6 +688,7 @@ class _SearchScreenState extends State<SearchScreen>
     } on SourceException catch (error) {
       return (entries: const <SourceEntry>[], available: false, failed: error.reason != SourceFailure.cancelled);
     } catch (_) {
+      // best-effort: Mark the index unavailable so callers can distinguish failure from an empty search.
       return (entries: const <SourceEntry>[], available: false, failed: true);
     }
   }

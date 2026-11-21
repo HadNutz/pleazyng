@@ -49,7 +49,7 @@ class _ReviewAccessDialogState extends State<_ReviewAccessDialog> {
     try {
       accepted = await widget.service.redeemReviewAccess(_controller.text);
     } catch (_) {
-      // Never log the grant, signature, or store credentials.
+      // best-effort: Never log the grant, signature, or store credentials.
     }
     if (!mounted) return;
     if (accepted) {

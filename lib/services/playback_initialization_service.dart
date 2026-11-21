@@ -363,6 +363,7 @@ class PlaybackInitializationService {
       )..where((tbl) => tbl.globalKey.equals(buildGlobalKey(ServerId(serverId), metadata.id)))).getSingleOrNull();
       return row?.clientScopeId ?? serverId;
     } catch (_) {
+      // best-effort: Use the original server identity when its cache alias is unavailable.
       return serverId;
     }
   }

@@ -106,7 +106,7 @@ class RommController extends ChangeNotifier {
           connections.add(connection);
         }
       } catch (_) {
-        /* Malformed persisted connection is not usable. */
+        /* best-effort: Malformed persisted connection is not usable. */
       }
     }
     final ids = connections.map((s) => s.id).toSet();
@@ -231,7 +231,7 @@ class RommController extends ChangeNotifier {
       try {
         credential = await CredentialVault.protect(token);
       } catch (_) {
-        /* Unsupported vault: keep this session's token only. */
+        /* best-effort: Unsupported vault: keep this session's token only. */
       }
       checkAttempt();
       if (replaceId != null && (!identical(replaced, connection(replaceId)) || _players.containsValue(replaceId))) {
@@ -509,6 +509,7 @@ class RommController extends ChangeNotifier {
         final bytes = await (await client(game.connectionId)).asset(game.cover, maximum: 2 * 1024 * 1024);
         return current ? bytes : null;
       } catch (_) {
+        // best-effort: Missing cover art leaves the item available with its placeholder.
         return null;
       }
     });

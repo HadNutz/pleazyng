@@ -893,7 +893,7 @@ class _FindNextScreenState extends State<FindNextScreen> {
             }
           }
         } catch (_) {
-          // Catalog rows are an optional discovery source.
+          // best-effort: Catalog rows are an optional discovery source.
         }
       }
 
@@ -950,7 +950,7 @@ class _FindNextScreenState extends State<FindNextScreen> {
                   appendCatalogItem(item);
                 }
               } catch (_) {
-                // An unavailable provider does not block the remaining deck.
+                // best-effort: An unavailable provider does not block the remaining deck.
               }
             }(),
         ]);
@@ -1244,7 +1244,7 @@ class _FindNextScreenState extends State<FindNextScreen> {
           isEstimate = speed != 1;
         }
       } catch (_) {
-        // Missing or stale reading progress only removes the chapter hint.
+        // best-effort: Missing or stale reading progress only removes the chapter hint.
       }
     }
     final subtitle = [
@@ -1348,7 +1348,7 @@ class _FindNextScreenState extends State<FindNextScreen> {
           );
         }
       } catch (_) {
-        // Live TV is an optional source. A guide failure does not block the deck.
+        // best-effort: Live TV is an optional source. A guide failure does not block the deck.
       }
     }
     return result;
@@ -1999,6 +1999,7 @@ class _FindNextScreenState extends State<FindNextScreen> {
       }
       return choice.withPortableIds(ids.toJson().map((key, value) => MapEntry(key, '$value')));
     } catch (_) {
+      // best-effort: Keep the original choice when portable identifiers cannot be resolved.
       return choice;
     }
   }
@@ -2271,7 +2272,7 @@ class _FindNextScreenState extends State<FindNextScreen> {
           try {
             entry = await sources.hydrate(entry);
           } catch (_) {
-            // Cached details remain usable when the source is temporarily offline.
+            // best-effort: Cached details remain usable when the source is temporarily offline.
           }
         }
         sources.requireSession(_sourceGeneration);

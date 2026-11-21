@@ -92,7 +92,7 @@ class LiveTimelineReportQueue {
           try {
             await previous;
           } catch (_) {
-            // A failed heartbeat must not prevent the final stop attempt.
+            // best-effort: A failed heartbeat must not prevent the final stop attempt.
           }
         }
         await report();

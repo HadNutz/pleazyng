@@ -387,6 +387,7 @@ class SettingsExportService {
       SettingsService.validateEditableValue(pref, value);
       return true;
     } catch (_) {
+      // best-effort: Reject an import value that its preference type cannot decode.
       return false;
     }
   }

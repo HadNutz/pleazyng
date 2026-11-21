@@ -969,6 +969,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         seriesId: _useSeriesGlossary ? widget.seriesKey : null,
       );
     } catch (_) {
+      // best-effort: Translation can proceed without a readable glossary for this language pair.
       return const <String, String>{};
     }
   }
@@ -1200,6 +1201,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
     try {
       return context.read<ActiveProfileProvider>().activeId;
     } catch (_) {
+      // best-effort: Profile-scoped settings are unavailable without an active profile owner.
       return null;
     }
   }
@@ -1545,7 +1547,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
         setState(() => _speechLanguageCode = code);
       }
     } catch (_) {
-      // A corrupt or stale preference should not block subtitle generation.
+      // best-effort: A corrupt or stale preference should not block subtitle generation.
     }
   }
 

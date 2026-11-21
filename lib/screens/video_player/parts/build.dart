@@ -299,7 +299,7 @@ extension _VideoPlayerBuildMethods on VideoPlayerScreenState {
                                 );
                               });
                         } catch (_) {
-                          // Watch Together is optional outside the main app shell.
+                          // best-effort: Watch Together is optional outside the main app shell.
                         }
                         if (_lastMediaControlAuthority != authority) {
                           _lastMediaControlAuthority = authority;

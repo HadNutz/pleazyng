@@ -1561,6 +1561,7 @@ class SourceController extends ChangeNotifier {
         requireSession(epoch);
         return await saveCover(entry, Uint8List.fromList(bytes), profile: profile);
       } catch (_) {
+        // best-effort: Missing cover art leaves the item available with its placeholder.
         return null;
       }
     });
@@ -1638,7 +1639,7 @@ class SourceController extends ChangeNotifier {
           rethrow;
         }
       } catch (_) {
-        /* Durable local progress remains usable offline. */
+        /* best-effort: Durable local progress remains usable offline. */
       }
       requireSession(epoch);
     }
@@ -1690,7 +1691,7 @@ class SourceController extends ChangeNotifier {
             rethrow;
           }
         } catch (_) {
-          /* Offline local state remains authoritative until reconnection. */
+          /* best-effort: Offline local state remains authoritative until reconnection. */
         }
       }
     }

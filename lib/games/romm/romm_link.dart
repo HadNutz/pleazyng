@@ -65,6 +65,7 @@ class RommLink {
       }
       return RommLink(server, id, copy.toLowerCase(), platform: platform, igdbId: igdb);
     } catch (_) {
+      // best-effort: Ignore malformed ROM links before selecting a game.
       return null;
     }
   }

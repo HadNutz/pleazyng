@@ -306,7 +306,7 @@ List<PlexMetadataDto> _hubItemsFromJson(Object? raw) {
     try {
       items.add(PlexMetadataDto.fromJsonWithImages(item as Map<String, dynamic>));
     } catch (_) {
-      // Skip hub entries that fail to parse; Plex hubs can mix item shapes.
+      // best-effort: Skip hub entries that fail to parse; Plex hubs can mix item shapes.
     }
   }
   return items;

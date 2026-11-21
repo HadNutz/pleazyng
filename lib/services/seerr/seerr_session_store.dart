@@ -33,6 +33,7 @@ class SeerrSessionStore {
     try {
       decoded = SeerrSession.decode(clear);
     } catch (_) {
+      // best-effort: An unreadable stored session cannot authorize a request.
       return null;
     }
     final session = decoded.secret.isEmpty

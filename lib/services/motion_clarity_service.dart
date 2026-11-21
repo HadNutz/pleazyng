@@ -879,6 +879,7 @@ class MotionClarityService {
     try {
       return await _player.getProperty(name);
     } catch (_) {
+      // best-effort: Display unavailable player properties as unknown.
       return null;
     }
   }

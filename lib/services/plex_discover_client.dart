@@ -409,6 +409,7 @@ class PlexDiscoverClient {
       final error = decoded is Map<String, dynamic> ? firstFlexibleMap(decoded['Error']) : null;
       return error?['message']?.toString() ?? error?['error']?.toString() ?? 'Request failed';
     } catch (_) {
+      // best-effort: Present a generic request failure when the response has no readable detail.
       return 'Request failed';
     }
   }

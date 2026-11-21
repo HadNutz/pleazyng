@@ -477,14 +477,14 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
         try {
           await partial.delete();
         } catch (_) {
-          // A stale recording partial is safer than disrupting playback teardown.
+          // best-effort: A stale recording partial is safer than disrupting playback teardown.
         }
       }
       if (backup != null && await backup.exists() && !await target.exists()) {
         try {
           await backup.rename(target.path);
         } catch (_) {
-          // Keep the backup in place if the destination cannot be restored.
+          // best-effort: Keep the backup in place if the destination cannot be restored.
         }
       }
       rethrow;
@@ -2296,7 +2296,7 @@ class SourcePlayback extends ChangeNotifier with WidgetsBindingObserver {
       _rebuildChapters();
       _notify();
     } catch (_) {
-      /* A container without chapter metadata still has file navigation. */
+      /* best-effort: A container without chapter metadata still has file navigation. */
     }
   }
 

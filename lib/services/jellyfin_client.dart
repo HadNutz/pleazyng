@@ -763,6 +763,7 @@ class JellyfinClient
     } on MediaServerHttpException catch (e) {
       return _refusalHealth(e.statusCode) ?? HealthStatus.offline;
     } catch (_) {
+      // best-effort: An unsuccessful probe marks this server offline for this health check.
       return HealthStatus.offline;
     }
   }

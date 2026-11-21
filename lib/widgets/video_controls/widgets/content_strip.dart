@@ -170,6 +170,7 @@ class ContentStripState extends State<ContentStrip> {
       final idx = items.indexWhere((item) => playbackState.playQueueItemIdFor(item) == currentItemID);
       return idx >= 0 ? idx : null;
     } catch (_) {
+      // best-effort: Leave queue navigation unset when the active item cannot be located.
       return null;
     }
   }

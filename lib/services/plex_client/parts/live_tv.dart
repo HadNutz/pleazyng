@@ -418,6 +418,7 @@ mixin _PlexLiveTvClientMethods on _PlexClientInternals implements LiveTvSupport,
       ).copyWith(serverId: serverId, serverName: serverName, providerIdentifier: providerIdentifier);
       return LiveTvHubEntry(metadata: metadata, program: program);
     } catch (_) {
+      // best-effort: Ignore malformed guide entries without losing the rest of the Live TV hub.
       return null;
     }
   }

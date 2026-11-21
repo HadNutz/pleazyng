@@ -595,7 +595,7 @@ class LgPaymentwallClient {
       final decoded = jsonDecode(utf8.decode(bytes));
       if (decoded is Map<String, dynamic>) return decoded;
     } catch (_) {
-      // Return the same non-sensitive failure used for every malformed proof.
+      // best-effort: Return the same non-sensitive failure used for every malformed proof.
     }
     throw const LgPaymentwallFailure(LgPaymentwallFailureKind.invalidProof);
   }

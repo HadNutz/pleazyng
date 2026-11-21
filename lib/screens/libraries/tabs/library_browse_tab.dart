@@ -2042,6 +2042,7 @@ class _LibraryBrowseTabState extends BaseLibraryTabState<MediaItem, LibraryBrows
       }
       return (visibleCount * 3).clamp(100, 500).toInt();
     } catch (_) {
+      // best-effort: Use the active page size when viewport measurement is unavailable.
       return _activeFetchSize;
     }
   }

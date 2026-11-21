@@ -33,6 +33,7 @@ extension PlexMusicAnalysis on PlexClient {
         _ => PlexMusicAnalysisStatus.unavailable,
       };
     } catch (_) {
+      // best-effort: Expose music analysis as unavailable when the server request fails.
       return PlexMusicAnalysisStatus.unavailable;
     }
   }
@@ -79,6 +80,7 @@ extension PlexMusicAnalysis on PlexClient {
       if (!authorized() || error.statusCode == 401 || error.statusCode == 403) return PlexMusicAnalysisStatus.forbidden;
       return PlexMusicAnalysisStatus.unavailable;
     } catch (_) {
+      // best-effort: Expose music analysis as unavailable when the server request fails.
       return PlexMusicAnalysisStatus.unavailable;
     }
   }

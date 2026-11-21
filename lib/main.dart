@@ -1439,6 +1439,7 @@ FutureOr<SentryEvent?> _beforeSend(SentryEvent event, Hint _) {
   try {
     return SentryEvent.fromJson(LogRedactionManager.redactStructured(event.toJson()) as Map<String, dynamic>);
   } catch (_) {
+    // best-effort: Discard telemetry when its redacted representation cannot be constructed.
     return null;
   }
 }

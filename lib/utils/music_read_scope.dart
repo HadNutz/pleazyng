@@ -148,6 +148,7 @@ class MusicReadScope {
     try {
       await hidden?.ensureInitialized();
     } catch (_) {
+      // best-effort: Withhold the item when its hidden-library scope cannot be evaluated.
       return null;
     }
     if (!scope._actorCurrent || !scope._visible(item)) return null;

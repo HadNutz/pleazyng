@@ -504,6 +504,7 @@ class PlayLinkResolver {
               ? const PlayLinkFailure(PlayLinkFailureReason.notFound)
               : PlayLinkMusic(item, playable, shuffle: mode == PlayMode.shuffle);
         } catch (_) {
+          // best-effort: Represent lookup failure as a recoverable server-unavailable link result.
           return const PlayLinkFailure(PlayLinkFailureReason.serverUnavailable);
         }
       case MediaKind.movie || MediaKind.episode || MediaKind.clip:

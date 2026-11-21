@@ -336,6 +336,7 @@ class SteamGameWorkspaceSession {
       final granted = await channel.invokeMethod<bool>('requestMicrophonePermission');
       return granted == true && current && _channel == channel;
     } catch (_) {
+      // best-effort: Leave microphone input disabled without confirmed permission.
       return false;
     }
   }
@@ -397,7 +398,7 @@ class SteamGameWorkspaceSession {
         await Future<void>.delayed(const Duration(milliseconds: 100));
       }
     } catch (_) {
-      // Recording is never retried automatically after uncertain delivery.
+      // best-effort: Recording is never retried automatically after uncertain delivery.
     }
     if (live()) muteMicrophone();
     try {
@@ -440,6 +441,7 @@ class SteamGameWorkspaceSession {
           .timeout(const Duration(seconds: 3));
       return sent == true && _canInput && _channel == channel && _mappingEpoch == epoch;
     } catch (_) {
+      // best-effort: Report unsuccessful delivery so the UI does not acknowledge the input.
       return false;
     }
   }
@@ -468,6 +470,7 @@ class SteamGameWorkspaceSession {
       await Future<void>.delayed(const Duration(milliseconds: 60));
       return _canInput && _channel == channel && epoch == _mappingEpoch;
     } catch (_) {
+      // best-effort: Report unsuccessful delivery so the UI does not acknowledge the input.
       return false;
     } finally {
       for (final key in pressed.reversed) {
@@ -476,7 +479,7 @@ class SteamGameWorkspaceSession {
               .invokeMethod<void>('inputKey', {'usage': key.$1, 'key': key.$2, 'down': false})
               .timeout(const Duration(seconds: 2));
         } catch (_) {
-          /* Native teardown/reset also releases every held key. */
+          /* best-effort: Native teardown/reset also releases every held key. */
         }
       }
       _shortcutBusy = false;
@@ -564,6 +567,7 @@ class SteamGameWorkspaceSession {
       if (_disposed || _channel != channel || data == null) return null;
       return SteamStreamMetrics.fromNative(data);
     } catch (_) {
+      // best-effort: Missing streaming metrics leave playback running.
       return null;
     }
   }
@@ -606,7 +610,7 @@ class SteamGameWorkspaceSession {
         channelNameForViewId(id),
       ).invokeMethod<void>('disconnect').timeout(const Duration(seconds: 6));
     } catch (_) {
-      // Native shutdown continues; this ID is never reused by this owner.
+      // best-effort: Native shutdown continues; this ID is never reused by this owner.
     }
   }
 

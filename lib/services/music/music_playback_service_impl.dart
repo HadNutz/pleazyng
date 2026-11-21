@@ -857,6 +857,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     try {
       source = await _cachedSource(await _resolver.resolve(track));
     } catch (_) {
+      // best-effort: Keep playback on the current device when the transfer source is unavailable.
       return null;
     }
     bool valid() =>
@@ -912,6 +913,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       final file = await cache.lookup(source.url, source.headers, current: _cacheAuthority(source));
       return file == null ? source : source.prefetched(file.uri.toString());
     } catch (_) {
+      // best-effort: Use the resolved source directly when a cached copy cannot be opened.
       return source;
     }
   }

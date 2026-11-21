@@ -312,6 +312,7 @@ class TrackerIdResolver {
         episodeNumber: episodeNumber,
       );
     } catch (_) {
+      // best-effort: Leave optional anime associations unset when the external lookup fails.
       return null;
     }
   }
@@ -320,6 +321,7 @@ class TrackerIdResolver {
     try {
       return await _animeLists.lookupAnimeIdsForSeason(tvdbId: external.tvdb, tmdbId: external.tmdb, season: season);
     } catch (_) {
+      // best-effort: Leave optional anime associations unset when the external lookup fails.
       return const <int>{};
     }
   }
@@ -328,6 +330,7 @@ class TrackerIdResolver {
     try {
       return await _animeLists.lookupAnimeIdsForShow(tvdbId: external.tvdb, tmdbId: external.tmdb);
     } catch (_) {
+      // best-effort: Leave optional anime associations unset when the external lookup fails.
       return const <int>{};
     }
   }

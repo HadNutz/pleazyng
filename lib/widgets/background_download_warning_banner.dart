@@ -238,7 +238,7 @@ Future<void> _openDontKillMyApp(BuildContext context, {Future<bool> Function(Uri
     final uri = Uri.parse(_dontKillMyAppUrl);
     opened = await (launcher?.call(uri) ?? launchUrl(uri, mode: LaunchMode.externalApplication));
   } catch (_) {
-    // Reported below using the same user-facing fallback as a false result.
+    // best-effort: Reported below using the same user-facing fallback as a false result.
   }
   if (!opened && context.mounted) {
     showErrorSnackBar(context, t.downloads.backgroundWarning.linkUnavailable);

@@ -75,7 +75,7 @@ class _LyricsViewState extends State<LyricsView> {
       setState(() => _offsetMs = offset is int ? offset.clamp(-30000, 30000) : 0);
       _onPosition(context.read<MusicPlaybackService>().position, animate: false);
     } catch (_) {
-      // A damaged optional timing preference must not hide the lyrics.
+      // best-effort: A damaged optional timing preference must not hide the lyrics.
     }
   }
 
@@ -85,7 +85,7 @@ class _LyricsViewState extends State<LyricsView> {
     try {
       await _experience?.store.saveDocument('lyricTiming', key, {'version': 1, 'offsetMs': _offsetMs});
     } catch (_) {
-      // Keep the current adjustment usable if local storage is unavailable.
+      // best-effort: Keep the current adjustment usable if local storage is unavailable.
     }
   }
 

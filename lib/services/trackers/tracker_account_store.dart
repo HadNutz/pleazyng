@@ -49,6 +49,7 @@ class TrackerAccountStore {
     try {
       session = TrackerSession.decode(clear, service: service);
     } catch (_) {
+      // best-effort: An unreadable stored session cannot authorize a request.
       return null;
     }
     if (CredentialVault.needsMigration(raw)) {

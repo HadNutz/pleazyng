@@ -69,6 +69,7 @@ final class SubtitleFetchAttempt {
     try {
       return _sourceCurrent();
     } catch (_) {
+      // best-effort: Stop this fetch when the source identity can no longer be confirmed.
       return false;
     }
   }

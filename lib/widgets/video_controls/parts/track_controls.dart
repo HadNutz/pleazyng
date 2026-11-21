@@ -237,6 +237,7 @@ extension _PlexVideoControlsTrackMethods on _PlexVideoControlsState {
       final c = manager.getClient(ServerId(serverId));
       return c?.capabilities.externalSubtitleSearch ?? false;
     } catch (_) {
+      // best-effort: Offer subtitle search only when the active server supports it.
       return false;
     }
   }

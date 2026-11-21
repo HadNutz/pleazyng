@@ -1356,7 +1356,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
           '/Users/${_segment(connection.userId)}/Items/${_segment(itemId)}',
         );
       } catch (_) {
-        // Single-file and live sessions can be reported without metadata.
+        // best-effort: Single-file and live sessions can be reported without metadata.
       }
       final sources = raw?['MediaSources'];
       if (raw != null && raw[jellyfinAdditionalPartDetails] is List && sources is List) {

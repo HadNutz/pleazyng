@@ -1373,7 +1373,7 @@ class TrackSelectionService {
             .first
             .namedTimeout(const Duration(seconds: 10), operation: 'track loading');
       } catch (_) {
-        // Timeout or stream closed — proceed with whatever state we have
+        // best-effort: Timeout or stream closed — proceed with whatever state we have
       }
     }
 

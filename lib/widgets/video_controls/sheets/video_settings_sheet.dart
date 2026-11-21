@@ -1631,7 +1631,7 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
         sourceFps = parsedRate;
       }
     } catch (_) {
-      // Container frame-rate metadata is optional and unavailable on some streams.
+      // best-effort: Container frame-rate metadata is optional and unavailable on some streams.
     }
     if (mounted) {
       setState(() {
@@ -2273,7 +2273,7 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
       final session = context.read<WatchTogetherProvider>();
       if (session.syncOwnsRate) return session.roomRate ?? playerRate;
     } catch (_) {
-      // No session provider above this sheet.
+      // best-effort: No session provider above this sheet.
     }
     return playerRate;
   }

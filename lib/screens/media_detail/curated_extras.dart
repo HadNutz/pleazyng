@@ -50,7 +50,7 @@ extension _DetailCuratedExtras on _MediaDetailScreenState {
         ]);
       }
     } catch (_) {
-      /* Missing offline metadata leaves an empty native selection. */
+      /* best-effort: Missing offline metadata leaves an empty native selection. */
     }
     if (current.active && currentGeneration()) await current.refresh();
   }

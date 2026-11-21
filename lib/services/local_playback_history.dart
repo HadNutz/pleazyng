@@ -59,6 +59,7 @@ class LocalPlaybackHistory {
       // infer T = FutureOr and trip UNAWAITED_RETURN_IN_TRY_BLOCK; read is sync.
       return settings.read<Map<String, int>>(SettingsService.localLastPlayedAt);
     } catch (_) {
+      // best-effort: Missing local history leaves the caller with an empty snapshot.
       return const {};
     }
   }

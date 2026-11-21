@@ -210,7 +210,7 @@ class CompanionRemoteProvider with ChangeNotifier, DisposableChangeNotifierMixin
         changed: safeNotifyListeners,
       );
     } catch (_) {
-      // LAN receiving remains available if optional relay configuration fails.
+      // best-effort: LAN receiving remains available if optional relay configuration fails.
     } finally {
       safeNotifyListeners();
     }
@@ -559,7 +559,7 @@ class CompanionRemoteProvider with ChangeNotifier, DisposableChangeNotifierMixin
         unawaited(tunnel.done.then((_) => _steamInternetReceivers.remove(tunnel)));
         return tunnel;
       } catch (_) {
-        /* A different profile identity may own this pairing. */
+        /* best-effort: A different profile identity may own this pairing. */
       }
     }
     throw StateError('Steam internet unavailable');

@@ -238,13 +238,13 @@ class RommPlayerProxy {
       try {
         request.response.statusCode = 502;
       } catch (_) {
-        /* Headers already sent. */
+        /* best-effort: Headers already sent. */
       }
     } finally {
       try {
         await request.response.close();
       } catch (_) {
-        /* Player already gone. */
+        /* best-effort: Player already gone. */
       }
     }
   }

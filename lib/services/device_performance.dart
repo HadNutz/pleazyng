@@ -140,6 +140,7 @@ class DevicePerformance {
     try {
       return PlatformDispatcher.instance.implicitView?.display.size.shortestSide;
     } catch (_) {
+      // best-effort: Fall back to the layout path for an unknown display size.
       return null;
     }
   }
