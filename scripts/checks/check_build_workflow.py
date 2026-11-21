@@ -1644,6 +1644,7 @@ require(
     "timeout-minutes: 360" in apple_native
     and "75m xcodebuild test" in mobile_apple_test
     and "matrix.slug == 'ios' && '27.1' || '26.5'" in apple_native
+    and job("build-ios").count("hosted-xcode-version:") == 1
     and "require-duo-sdk: 'true'" in job("build-ios")
     and "verify_duo_sdk.py pleazyng-ios-unsigned.ipa" in job("build-ios")
     and 'test "$(uname -m)" = arm64' in named_step(apple_native, "Require native Apple Silicon host")
