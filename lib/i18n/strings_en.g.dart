@@ -130,6 +130,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$musicExperience$en musicExperience = Translations$musicExperience$en.internal(_root);
 	late final Translations$musicTools$en musicTools = Translations$musicTools$en.internal(_root);
 	late final Translations$musicDevices$en musicDevices = Translations$musicDevices$en.internal(_root);
+	late final Translations$bookmarkMigration$en bookmarkMigration = Translations$bookmarkMigration$en.internal(_root);
 }
 
 // Path: mediaConveniences
@@ -7785,6 +7786,9 @@ class Translations$metadataEdit$en {
 
 	/// en: 'Metadata updated'
 	String get metadataUpdated => 'Metadata updated';
+
+	/// en: 'Another editor changed the same field. Reopen the editor to review the latest values before saving.'
+	String get metadataConflict => 'Another editor changed the same field. Reopen the editor to review the latest values before saving.';
 
 	/// en: 'Failed to update metadata'
 	String get metadataUpdateFailed => 'Failed to update metadata';
@@ -15658,6 +15662,21 @@ class Translations$musicDevices$en {
 	String get relayInvalid => 'Enter an HTTPS relay address.';
 }
 
+// Path: bookmarkMigration
+class Translations$bookmarkMigration$en {
+	Translations$bookmarkMigration$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Bookmarks from an unidentified version'
+	String get unassigned => 'Bookmarks from an unidentified version';
+
+	/// en: 'Assign to this version'
+	String get assignToVersion => 'Assign to this version';
+}
+
 // Path: appIcon.names
 class Translations$appIcon$names$en {
 	Translations$appIcon$names$en.internal(this._root);
@@ -21273,6 +21292,7 @@ extension on Translations {
 			'metadataEdit.enterImageUrl' => 'Enter image URL',
 			'metadataEdit.imageUrl' => 'Image URL',
 			'metadataEdit.metadataUpdated' => 'Metadata updated',
+			'metadataEdit.metadataConflict' => 'Another editor changed the same field. Reopen the editor to review the latest values before saving.',
 			'metadataEdit.metadataUpdateFailed' => 'Failed to update metadata',
 			'metadataEdit.artworkUpdated' => 'Artwork updated',
 			'metadataEdit.artworkUpdateFailed' => 'Failed to update artwork',
@@ -21336,9 +21356,9 @@ extension on Translations {
 			'matchScreen.search' => 'Search',
 			'matchScreen.noMatchesFound' => 'No matches found',
 			'matchScreen.plexDiscover' => 'Plex Discover',
-			'matchScreen.plexLibrary' => 'Plex library',
 			_ => null,
 		} ?? switch (path) {
+			'matchScreen.plexLibrary' => 'Plex library',
 			'matchScreen.jellyfinLibrary' => 'Jellyfin library',
 			'matchScreen.embyLibrary' => 'Emby library',
 			'serverTasks.title' => 'Server Tasks',
@@ -21850,9 +21870,9 @@ extension on Translations {
 			'universalMedia.shortcutHelp' => 'Play a link, playlist, or file for this session.',
 			'universalMedia.intro' => 'Open a link, playlist, or file. Playback uses Pleazyng’s standard player and does not add history to your library.',
 			'universalMedia.openWhat' => 'What would you like to open?',
-			'universalMedia.stream' => 'Stream address',
 			_ => null,
 		} ?? switch (path) {
+			'universalMedia.stream' => 'Stream address',
 			'universalMedia.playlist' => 'Playlist',
 			'universalMedia.files' => 'Device files',
 			'universalMedia.favorites' => 'Saved stream favorites',
@@ -22364,9 +22384,9 @@ extension on Translations {
 			'sourceSetup.openSubtitles' => 'OpenSubtitles',
 			'sourceSetup.subtitleSetup' => 'Optional subtitle search for standalone videos.',
 			'sourceSetup.apiKey' => 'API key',
-			'sourceSetup.optionalUsername' => 'Account username (optional)',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.optionalUsername' => 'Account username (optional)',
 			'sourceSetup.optionalPassword' => 'Account password (optional)',
 			'sourceSetup.subtitlePrivacy' => 'Get an API key from opensubtitles.com. Search sends the video title and available IMDb/TMDB IDs, never the video file. The key and optional account credentials are encrypted with this source.',
 			'sourceSetup.automaticMetadata' => 'Automatic online video metadata',
@@ -22878,9 +22898,9 @@ extension on Translations {
 			'podcasts.importOpml' => 'Import subscriptions (OPML)',
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
 			'podcasts.imported' => 'Subscriptions imported.',
-			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
 			_ => null,
 		} ?? switch (path) {
+			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
 			'podcasts.serverHelp' => 'Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.',
 			'podcasts.viewAll' => 'Show more episodes',
 			'podcasts.inLibrary' => 'Open podcast',
@@ -23392,9 +23412,9 @@ extension on Translations {
 			'karaokeUi.pitchMIDIPracticeOnly' => ({required Object value1}) => 'Pitch MIDI ${value1} · practice only',
 			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',
 			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',
-			'karaokeUi.phoneInputRequiresSecureContext' => 'A trusted HTTPS connection is required.',
 			_ => null,
 		} ?? switch (path) {
+			'karaokeUi.phoneInputRequiresSecureContext' => 'A trusted HTTPS connection is required.',
 			'karaokeUi.phoneInputRequires16kHzCapture' => 'This browser cannot supply the required 16 kHz capture path.',
 			'karaokeUi.phoneInputNeedsActivePerformance' => 'Return to an active performance before enabling capture.',
 			'karaokeUi.phoneCaptureRequiresTrustedHTTPS' => 'Phone capture requires the host HTTPS room with a certificate trusted by this phone. The ordinary LAN songbook remains available.',
@@ -23826,6 +23846,8 @@ extension on Translations {
 			'musicDevices.relay' => 'Music relay URL',
 			'musicDevices.relayHint' => 'Enable this on the receiving device, then pair once on the same network. Keep Pleazyng open. The relay carries encrypted music controls and sees network addresses. Each player streams from its own media server.',
 			'musicDevices.relayInvalid' => 'Enter an HTTPS relay address.',
+			'bookmarkMigration.unassigned' => 'Bookmarks from an unidentified version',
+			'bookmarkMigration.assignToVersion' => 'Assign to this version',
 			_ => null,
 		};
 	}

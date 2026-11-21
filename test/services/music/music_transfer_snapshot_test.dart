@@ -38,6 +38,30 @@ void main() {
     playContext: const MusicPlayContext(title: 'A mix', kind: MusicPlayContextKind.mix),
   );
 
+  test('radio continuation preserves its own catalog identity only for compatible receivers', () {
+    final seed = first.copyWith(kind: MediaKind.album, serverId: 'original-server', parentId: 'album');
+    final radio = MusicTransferSnapshot(
+      queue: queue,
+      position: Duration.zero,
+      playing: true,
+      radio: MusicRadioContinuation(seed, albumRadio: true, distance: .4),
+    );
+    expect(radio.toJson(), isNot(contains('radio')));
+    final payload = radio.toJson(withRadio: true);
+    expect(payload.toString(), isNot(contains('secret')));
+    final recipe = MusicTransferSnapshot.tryParse(payload)!.radio!;
+    expect(recipe.seed.serverId, 'original-server');
+    expect(recipe.seed.kind, MediaKind.album);
+    expect(recipe.seed.title, first.title);
+    expect(recipe.albumRadio, true);
+    expect(recipe.distance, .4);
+    final invalid = {
+      ...payload,
+      'radio': {...payload['radio'] as Map, 'albumDistance': -1},
+    };
+    expect(MusicTransferSnapshot.tryParse(invalid), isNull);
+  });
+
   test('round trips canonical order, duplicates, cursor, modes and playhead without credentials', () {
     final payload = snapshot.toJson();
     expect(payload.toString(), isNot(contains('secret')));

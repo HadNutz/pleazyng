@@ -6,11 +6,20 @@ import 'music_transfer_snapshot.dart';
 
 /// State for an app that controls an independently playing receiver.
 class MusicDeviceState {
-  const MusicDeviceState({required this.revision, required this.snapshot, required this.volume});
+  const MusicDeviceState({
+    required this.revision,
+    required this.snapshot,
+    required this.volume,
+    this.sleepTimerEndOfTrack = false,
+    this.sleepTimerDuration,
+    this.continuationEnabled = false,
+  });
 
   final String revision;
   final MusicTransferSnapshot? snapshot;
   final double volume;
+  final bool sleepTimerEndOfTrack, continuationEnabled;
+  final Duration? sleepTimerDuration;
 
   int get index => snapshot?.queue.cursor ?? -1;
   MediaItem? get track {
@@ -28,6 +37,15 @@ class MusicDeviceState {
     final volume = value['volume'];
     final position = value['position'];
     final playing = value['playing'];
+    final timerMs = value['sleepMs'];
+    final endOfTrack = value['sleepEnd'] ?? false;
+    final continuation = value['continuation'] ?? false;
+    if (endOfTrack is! bool ||
+        continuation is! bool ||
+        (timerMs != null &&
+            (timerMs is! int || timerMs <= 0 || timerMs > const Duration(days: 1).inMilliseconds || endOfTrack))) {
+      return null;
+    }
     if (revision is! String ||
         revision.length > 100 ||
         volume is! num ||
@@ -50,6 +68,9 @@ class MusicDeviceState {
       revision: revision,
       snapshot: snapshot?.at(Duration(milliseconds: position), playing: playing),
       volume: volume.toDouble(),
+      sleepTimerDuration: timerMs == null ? null : Duration(milliseconds: timerMs as int),
+      sleepTimerEndOfTrack: endOfTrack,
+      continuationEnabled: continuation,
     );
   }
 }
@@ -60,7 +81,7 @@ abstract interface class MusicDevicePlayback implements Listenable {
   bool get connected;
 
   Future<void> control(String action, [Map<String, dynamic> args = const {}]);
-  Future<bool> playSnapshot(MusicTransferSnapshot snapshot);
+  Future<bool> playSnapshot(MusicTransferSnapshot snapshot, {bool Function()? current});
 }
 
 typedef PreparedMusicDeviceTransfer = Future<bool> Function(Duration position, bool play);

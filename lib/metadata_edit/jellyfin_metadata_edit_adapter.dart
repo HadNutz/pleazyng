@@ -4,6 +4,7 @@ import '../media/media_kind.dart';
 import '../media/media_server_client.dart';
 import '../services/jellyfin_client.dart';
 import '../utils/jellyfin_time.dart';
+import '../utils/serial_future_queue.dart';
 import 'metadata_edit_models.dart';
 
 class JellyfinMetadataEditAdapter extends MetadataEditAdapter {
@@ -49,14 +50,35 @@ class JellyfinMetadataEditAdapter extends MetadataEditAdapter {
     ];
   }
 
+  static final _pendingWrites = Expando<SerialFutureQueue>();
+
   @override
-  Future<bool> save(MetadataEditDraft draft) async {
+  Future<bool> save(MetadataEditDraft draft) =>
+      (_pendingWrites[client] ??= SerialFutureQueue()).run(() => _saveLatest(draft));
+
+  Future<bool> _saveLatest(MetadataEditDraft draft) async {
     if (draft.sourceItem.kind == MediaKind.collection && draft.fieldChanged('title')) {
       final title = draft.value<String>('title')?.trim() ?? '';
       if (title.isEmpty || title.runes.length > 255) return false;
     }
-    final raw = draft.extras['raw'];
-    if (raw is! Map<String, dynamic>) return false;
+    final original = draft.extras['raw'];
+    if (original is! Map<String, dynamic>) return false;
+    // Both MediaBrowser servers replace the full DTO. Merge edited fields
+    // onto a fresh read, rejecting conflicting changes to the same field.
+    final raw = await client.fetchEditableMetadataItem(draft.sourceItem.id);
+    if (raw == null) return false;
+    final before = <String, Object?>{}, current = <String, Object?>{};
+    _writeCommonValues(before, original, null);
+    _writeCommonValues(current, raw, null);
+    for (final field in schemaFor(draft).expand((section) => section.fields)) {
+      if (!metadataEditFieldChanged(draft, field) || !current.containsKey(field.id)) continue;
+      final equals = field.type == MetadataEditFieldType.stringList
+          ? metadataEditStringListEquals
+          : metadataEditValueEquals;
+      if (!equals(before[field.id], current[field.id]) && !equals(current[field.id], draft.values[field.id])) {
+        throw const MetadataEditConflict();
+      }
+    }
     final dto = Map<String, dynamic>.from(raw);
 
     dto['ProviderIds'] = _stringMap(dto['ProviderIds']);
@@ -123,6 +145,7 @@ class JellyfinMetadataEditAdapter extends MetadataEditAdapter {
     final success = await client.updateMetadataItem(draft.sourceItem.id, dto);
     if (success) {
       draft.extras['raw'] = dto;
+      _writeCommonValues(draft.values, dto, null);
       draft.acceptChanges();
     }
     return success;
@@ -194,19 +217,19 @@ class JellyfinMetadataEditAdapter extends MetadataEditAdapter {
     _writeArtworkValues(draft.values, item);
   }
 
-  void _writeCommonValues(Map<String, Object?> values, Map<String, dynamic> raw, MediaItem item) {
-    values['title'] = raw['Name'] as String? ?? item.title ?? '';
+  void _writeCommonValues(Map<String, Object?> values, Map<String, dynamic> raw, MediaItem? item) {
+    values['title'] = raw['Name'] as String? ?? item?.title ?? '';
     values['titleSort'] = raw['ForcedSortName'] as String? ?? '';
-    values['originalTitle'] = raw['OriginalTitle'] as String? ?? item.originalTitle ?? '';
+    values['originalTitle'] = raw['OriginalTitle'] as String? ?? item?.originalTitle ?? '';
     values['originallyAvailableAt'] =
-        jellyfinIsoToYmd(raw['PremiereDate'] as String?) ?? item.originallyAvailableAt ?? '';
-    values['contentRating'] = raw['OfficialRating'] as String? ?? item.contentRating ?? '';
+        jellyfinIsoToYmd(raw['PremiereDate'] as String?) ?? item?.originallyAvailableAt ?? '';
+    values['contentRating'] = raw['OfficialRating'] as String? ?? item?.contentRating ?? '';
     final studios = _nameList(raw['Studios']);
-    values['studio'] = studios.isNotEmpty ? studios : metadataStringList(item.studio);
+    values['studio'] = studios.isNotEmpty ? studios : metadataStringList(item?.studio);
     values['tagline'] = metadataFirstString(raw['Taglines']).isNotEmpty
         ? metadataFirstString(raw['Taglines'])
-        : item.tagline ?? '';
-    values['summary'] = raw['Overview'] as String? ?? item.summary ?? '';
+        : item?.tagline ?? '';
+    values['summary'] = raw['Overview'] as String? ?? item?.summary ?? '';
     values['genre'] = _namedStringList(raw, 'Genres', 'GenreItems');
     values['director'] = _peopleByType(raw['People'], 'Director');
     values['writer'] = _peopleByType(raw['People'], 'Writer');

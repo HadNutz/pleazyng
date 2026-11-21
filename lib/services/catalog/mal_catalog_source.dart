@@ -438,17 +438,20 @@ class MalCatalogSource with CatalogWatchlistMachinery implements CatalogSource, 
   @override
   Future<void> performWatchlistMutation(MediaKind kind, CatalogItemIds ids, {required bool add}) async {
     final malId = ids.mal!;
+    final entry = await _client.getWatchlistEntry(malId);
     if (add) {
-      await _client.updateMyListStatus(malId, const {'status': _planToWatch});
+      if (entry == null) {
+        await _client.updateMyListStatus(malId, const {'status': _planToWatch});
+      } else if (entry.status != _planToWatch) {
+        throw StateError('Adding to Plan to Watch would replace the existing MAL list status');
+      }
       return;
     }
-    // MAL can only delete the whole list entry — progress, score, dates and
-    // rewatches with it — so remove it only while it is still Plan to Watch.
-    // One that has moved on is already off the watchlist; leave it be.
-    if (await _client.getMyListStatusName(malId) != _planToWatch) {
+    if (entry == null || entry.status != _planToWatch) {
       reloadWatchlistSnapshot();
       return;
     }
+    if (entry.hasHistory) throw StateError('Removing this MAL list entry would delete its history');
     await _deleteEntry(malId);
   }
 

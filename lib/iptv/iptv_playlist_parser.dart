@@ -407,14 +407,38 @@ class IptvXmltvParser {
 
     final programmes = <IptvXmltvProgramme>[];
     var skipped = 0;
-    for (final node in document.rootElement.findElements('programme')) {
+    final nodes = document.rootElement.findElements('programme');
+    final inferredStops = <(String, int), int>{};
+    if (nodes.any((node) => node.getAttribute('stop') == null)) {
+      // XMLTV does not require programme order or stop times. Use only the
+      // next distinct start on this same channel to bound an open airing.
+      final byChannel = <String, Set<int>>{};
+      for (final node in nodes) {
+        final channel = node.getAttribute('channel')?.trim();
+        final start = _xmltvEpoch(node.getAttribute('start'));
+        if (channel != null && start != null) (byChannel[channel] ??= {}).add(start);
+      }
+      for (final entry in byChannel.entries) {
+        final starts = entry.value.toList()..sort();
+        for (var i = 1; i < starts.length; i++) {
+          inferredStops[(entry.key, starts[i - 1])] = starts[i];
+        }
+      }
+    }
+    for (final node in nodes) {
       if (programmes.length >= maxProgrammes) throw const SourceException(SourceFailure.invalidData);
       final channelId = node.getAttribute('channel')?.trim();
       final beginsAt = _xmltvEpoch(node.getAttribute('start'));
-      final endsAt = _xmltvEpoch(node.getAttribute('stop'));
+      final stop = node.getAttribute('stop');
+      final endsAt = stop == null ? inferredStops[(channelId, beginsAt)] : _xmltvEpoch(stop);
       final title = _cleanXml(node.findElements('title').firstOrNull?.innerText ?? '', 240);
       final icon = node.findElements('icon').firstOrNull?.getAttribute('src');
-      if (channelId == null || beginsAt == null || endsAt == null || endsAt <= beginsAt || title.isEmpty) {
+      if (channelId == null ||
+          channelId.isEmpty ||
+          beginsAt == null ||
+          endsAt == null ||
+          endsAt <= beginsAt ||
+          title.isEmpty) {
         skipped++;
         continue;
       }
@@ -438,11 +462,17 @@ class IptvXmltvParser {
     );
   }
 
+  static final _xmltvDate = RegExp(
+    r'^(\d{4}(?:\d{2}){0,5})(?:\s*(?:([+-])(\d{2})(\d{2})|(UTC|GMT|BST)))?$',
+    caseSensitive: false,
+  );
+
   static int? _xmltvEpoch(String? value) {
     if (value == null) return null;
-    final match = RegExp(r'^(\d{14})(?:\s*([+-])(\d{2})(\d{2}))?$').firstMatch(value.trim());
+    final match = _xmltvDate.firstMatch(value.trim());
     if (match == null) return null;
-    final raw = match.group(1)!;
+    final prefix = match.group(1)!;
+    final raw = prefix + '00000101000000'.substring(prefix.length);
     final year = int.parse(raw.substring(0, 4));
     final month = int.parse(raw.substring(4, 6));
     final day = int.parse(raw.substring(6, 8));
@@ -457,7 +487,10 @@ class IptvXmltvParser {
     // That would silently place a malformed guide entry at a different time.
     if (wall.year != year || wall.month != month || wall.day != day) return null;
     final sign = match.group(2);
-    if (sign == null) return wall.millisecondsSinceEpoch ~/ 1000;
+    if (sign == null) {
+      final offset = match.group(5)?.toUpperCase() == 'BST' ? 3600 : 0;
+      return wall.millisecondsSinceEpoch ~/ 1000 - offset;
+    }
     final offsetHours = int.parse(match.group(3)!);
     final offsetMinutes = int.parse(match.group(4)!);
     if (offsetHours > 23 || offsetMinutes > 59) return null;

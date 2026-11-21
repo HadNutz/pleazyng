@@ -85,6 +85,10 @@ class MetadataArtworkOption {
   });
 }
 
+class MetadataEditConflict implements Exception {
+  const MetadataEditConflict();
+}
+
 class MetadataEditDraft {
   final MediaItem sourceItem;
   MediaItem currentItem;

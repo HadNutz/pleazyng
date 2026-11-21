@@ -132,7 +132,7 @@ extension ResumableOrphanScan on OrphanDownloadCleanupService {
         if (descend && await state.isWithinRoot(full)) stack.add({'path': relative, 'after': ''});
       } else if (type == FileSystemEntityType.file && segments.length >= 3) {
         final tag =
-            _extractTag(path.basenameWithoutExtension(name)) ??
+            OrphanDownloadCleanupService.tagForStoredFile(name) ??
             OrphanDownloadCleanupService._subtitleDirectoryTag.firstMatch(segments[segments.length - 2])?.group(1);
         if (tag != null && !protectedTags.contains(tag)) {
           final file = OrphanDownloadFile(

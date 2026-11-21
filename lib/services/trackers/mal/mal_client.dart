@@ -67,16 +67,28 @@ class MalClient implements DisposableTrackerClient {
     await _request('DELETE', '/anime/$animeId/my_list_status');
   }
 
-  /// The viewer's list status for an anime — `plan_to_watch`, `watching`,
-  /// `completed`, `on_hold` or `dropped` — or null when it is not on their list.
-  Future<String?> getMyListStatusName(int animeId) async {
+  /// MAL uses one entry for both Plan to Watch and the user's viewing history.
+  Future<({String status, bool hasHistory})?> getWatchlistEntry(int animeId) async {
     try {
       final res = await _request('GET', '/anime/$animeId?fields=my_list_status');
-      if (res is! Map) return null;
-      final myListStatus = res['my_list_status'];
-      if (myListStatus is! Map) return null;
-      final status = myListStatus['status'];
-      return status is String ? status : null;
+      if (res is! Map) throw const FormatException('Invalid MAL list response');
+      final entry = res['my_list_status'];
+      if (entry == null) return null;
+      if (entry is! Map || entry['status'] is! String) throw const FormatException('Invalid MAL list status');
+      final hasHistory =
+          [
+            'score',
+            'num_episodes_watched',
+            'num_watched_episodes',
+            'num_times_rewatched',
+          ].any((field) => (flexibleInt(entry[field]) ?? 0) > 0) ||
+          flexibleBool(entry['is_rewatching']) ||
+          [
+            'start_date',
+            'finish_date',
+            'comments',
+          ].any((field) => entry[field] is String && (entry[field] as String).isNotEmpty);
+      return (status: entry['status'] as String, hasHistory: hasHistory);
     } on TrackerApiException catch (e) {
       if (e.statusCode == 404) return null;
       rethrow;

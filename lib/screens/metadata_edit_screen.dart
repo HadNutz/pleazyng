@@ -141,8 +141,11 @@ class _MetadataEditScreenState extends State<MetadataEditScreen> {
           field.id: added,
     };
     bool success = false;
+    bool conflict = false;
     try {
       success = await adapter.save(draft);
+    } on MetadataEditConflict {
+      conflict = true;
     } catch (e, st) {
       appLogger.e('Failed to update metadata', error: e, stackTrace: st);
     }
@@ -169,7 +172,7 @@ class _MetadataEditScreenState extends State<MetadataEditScreen> {
       showSuccessSnackBar(context, t.metadataEdit.metadataUpdated);
       Navigator.pop(context, true);
     } else {
-      showErrorSnackBar(context, t.metadataEdit.metadataUpdateFailed);
+      showErrorSnackBar(context, conflict ? t.metadataEdit.metadataConflict : t.metadataEdit.metadataUpdateFailed);
     }
   }
 

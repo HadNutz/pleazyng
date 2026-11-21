@@ -1060,13 +1060,15 @@ class IptvSourceRepository {
     final channelId = channel.iptvChannelId;
     final startsAt = program.beginsAt;
     final endsAt = program.endsAt;
-    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     if (sourceId == null ||
         channelId == null ||
         startsAt == null ||
         endsAt == null ||
-        endsAt <= now ||
-        endsAt <= startsAt) {
+        !IptvLocalRecordingSchedule.canSchedule(
+          start: DateTime.fromMillisecondsSinceEpoch(startsAt * 1000),
+          end: DateTime.fromMillisecondsSinceEpoch(endsAt * 1000),
+          now: DateTime.now(),
+        )) {
       throw const IptvImportException('recording_schedule_invalid');
     }
     if (await _source(profileId, sourceId) == null) {
@@ -1359,12 +1361,39 @@ class IptvSourceRepository {
   }
 
   Future<void> deleteLocalRecording(String profileId, String recordingId) async {
-    await _database.runIdentityMutation(
-      () => _database.customStatement('DELETE FROM iptv_recordings WHERE profile_id=? AND id=?', [
-        profileId,
-        recordingId,
-      ]),
+    final row = await _database
+        .customSelect(
+          'SELECT file_path FROM iptv_recordings WHERE profile_id=? AND id=?',
+          variables: [Variable(profileId), Variable(recordingId)],
+        )
+        .getSingleOrNull();
+    if (row == null) return;
+    final path = row.read<String>('file_path');
+    final support = await getApplicationSupportDirectory();
+    await IptvHlsArchive.deleteRecordingFiles(
+      root: Directory(p.join(support.path, 'iptv-recordings')),
+      profileFolders: {iptvRecordingSlug(profileId), iptvManualRecordingFolder(profileId)},
+      manifest: File(path),
+      recordingId: recordingId,
     );
+    // A concurrent recorder may have published its final path in the meantime.
+    // Keep that catalog entry available to the next cleanup attempt.
+    final removed = await _database.runIdentityMutation(
+      () => _database.customUpdate(
+        'DELETE FROM iptv_recordings WHERE profile_id=? AND id=? AND file_path=?',
+        variables: [Variable(profileId), Variable(recordingId), Variable(path)],
+      ),
+    );
+    if (removed == 0 &&
+        await _database
+                .customSelect(
+                  'SELECT 1 FROM iptv_recordings WHERE profile_id=? AND id=?',
+                  variables: [Variable(profileId), Variable(recordingId)],
+                )
+                .getSingleOrNull() !=
+            null) {
+      throw const IptvImportException('recording_changed');
+    }
   }
 
   Future<List<IptvDispatcharrRecording>> dispatcharrRecordings(String profileId) async {
@@ -1736,36 +1765,26 @@ class IptvSourceRepository {
   }
 
   Future<void> deleteProfile(String profileId) async {
-    List<IptvLocalRecording> recordings = const [];
-    try {
-      recordings = await localRecordings(profileId);
-    } on Object {
-      // Profile removal can continue if the recording catalog is unavailable.
-    }
-    await _database.runIdentityMutation(() async {
-      await _database.customStatement('DELETE FROM iptv_recordings WHERE profile_id=?', [profileId]);
-      await _database.customUpdate('DELETE FROM iptv_sources WHERE profile_id=?', variables: [Variable(profileId)]);
-    });
-    try {
-      final appSupport = await getApplicationSupportDirectory();
-      final recordingRoot = p.normalize(p.join(appSupport.path, 'iptv-recordings'));
-      for (final recording in recordings) {
-        final path = p.normalize(recording.filePath);
-        if (!p.isWithin(recordingRoot, path)) {
-          continue;
-        }
-        try {
-          final file = File(path);
-          if (await file.exists()) {
-            await file.delete();
-          }
-        } on Object {
-          // A stale file is safer than blocking profile removal.
-        }
+    final recordings = await localRecordings(profileId);
+    Object? failure;
+    for (final recording in recordings) {
+      try {
+        await deleteLocalRecording(profileId, recording.id);
+      } on Object catch (error) {
+        // Keep the row (including its path) so a retry can finish cleanup.
+        failure ??= error;
       }
-    } on Object {
-      // The user can still remove orphaned storage outside this profile.
     }
+    if (failure != null) throw failure;
+    await _database.runIdentityMutation(
+      () => _database.transaction(() async {
+        final remaining = await _database
+            .customSelect('SELECT 1 FROM iptv_recordings WHERE profile_id=? LIMIT 1', variables: [Variable(profileId)])
+            .getSingleOrNull();
+        if (remaining != null) throw const IptvImportException('recording_changed');
+        await _database.customUpdate('DELETE FROM iptv_sources WHERE profile_id=?', variables: [Variable(profileId)]);
+      }),
+    );
   }
 
   Future<int> refresh(String profileId, String sourceId) async {
@@ -1832,6 +1851,7 @@ class IptvSourceRepository {
       final freshGuides = <String, IptvXmltvParseResult>{};
       final guideKeys = <String>{};
       var guideFailed = false;
+      var retainPublished = false;
       void mergeGuide(IptvXmltvParseResult guide) {
         programmes.addAll(guide.programmes);
         for (final entry in guide.channelLogos.entries) {
@@ -1844,14 +1864,17 @@ class IptvSourceRepository {
         guideKeys.add(key);
         try {
           final guide = await IptvXmltvParser.fetch(transport, guideUri);
-          if (programmes.length + guide.programmes.length > IptvXmltvParser.maxProgrammes) {
+          if ((guide.programmes.isEmpty && guide.skipped != 0) ||
+              programmes.length + guide.programmes.length > IptvXmltvParser.maxProgrammes) {
             throw const IptvImportException('invalid_data');
           }
           freshGuides[key] = guide;
           mergeGuide(guide);
         } on Object {
           guideFailed = true;
-          mergeGuide(await _cachedGuide(source.id, key, IptvXmltvParser.maxProgrammes - programmes.length));
+          final cached = await _cachedGuide(source.id, key, IptvXmltvParser.maxProgrammes - programmes.length);
+          if (cached.programmes.isEmpty) retainPublished = true;
+          mergeGuide(cached);
         }
       }
       if (guideFailed) {
@@ -1886,7 +1909,15 @@ class IptvSourceRepository {
           if (channel.logoUrl == null)
             if (guideLogos[effectiveTvgIds[channel.id]] case final String logo) channel.id: logo,
       };
-      await _publishGuide(expected, mappedPrograms, guideKeys, freshGuides, fallbackLogos, guideFailed);
+      await _publishGuide(
+        expected,
+        mappedPrograms,
+        guideKeys,
+        freshGuides,
+        fallbackLogos,
+        guideFailed,
+        retainPublished,
+      );
       return channels.length;
     } on IptvImportException catch (error) {
       await _recordError(expected, error.code);
@@ -2225,6 +2256,7 @@ class IptvSourceRepository {
     Map<String, IptvXmltvParseResult> freshGuides,
     Map<String, String> fallbackLogos,
     bool guideFailed,
+    bool retainPublished,
   ) async {
     await _database.runIdentityMutation(
       () => _database.transaction(() async {
@@ -2233,7 +2265,20 @@ class IptvSourceRepository {
           throw const IptvImportException('source_changed');
         }
         await _publishGuideCache(expected.id, guideKeys, freshGuides);
-        await _database.customStatement('DELETE FROM iptv_programmes WHERE source_id=?', [expected.id]);
+        if (retainPublished) {
+          // A failed feed has no per-feed snapshot. Retain existing listings
+          // outside known coverage without resurrecting airings replaced there.
+          await _database.batch((batch) {
+            for (final item in programmes) {
+              batch.customStatement(
+                'DELETE FROM iptv_programmes WHERE source_id=? AND channel_id=? AND begins_at>=? AND begins_at<?',
+                [expected.id, item.channelId, item.beginsAt, item.endsAt],
+              );
+            }
+          });
+        } else {
+          await _database.customStatement('DELETE FROM iptv_programmes WHERE source_id=?', [expected.id]);
+        }
         final programmeRows = [
           for (final item in programmes)
             [

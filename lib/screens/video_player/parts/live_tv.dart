@@ -691,11 +691,7 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
     BufferedIptvCapture? buffered;
     try {
       final folder = Directory(
-        p.join(
-          (await getApplicationSupportDirectory()).path,
-          'iptv-recordings',
-          profileId.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_'),
-        ),
+        p.join((await getApplicationSupportDirectory()).path, 'iptv-recordings', iptvManualRecordingFolder(profileId)),
       );
       final recordingTarget = File(
         p.join(
@@ -1011,6 +1007,7 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
       channel: channel,
       fromEpoch: from,
       toEpoch: now + 6 * 3600,
+      nowEpoch: now,
       fetch: (from, to) {
         if (iptvSourceId != null && profileId != null) {
           return context.read<IptvSourceRepository>().schedule(

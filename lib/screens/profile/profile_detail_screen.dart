@@ -183,18 +183,8 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> with Controll
     final endedOwner = scope.active.activeId == _profile.id ? _profile.id : null;
 
     await withEndedProfileSession(scope, endedOwner, () async {
-      // Release downloads only for servers the profile actually loses — the
-      // same server can stay reachable through another connection (a second
-      // Plex account sharing the server, another Jellyfin user).
-      final retainedServerIds = await _retainedServerIds(
-        excludingConnectionId: conn.id,
-        profileConnections: scope.profileConnections,
-        connections: scope.connections,
-      );
-      await scope.downloads.releaseDownloadsForProfileServers(
-        _profile.id,
-        _serverIdsForConnection(conn).difference(retainedServerIds),
-      );
+      final lostServers = await scope.cleanup.downloadServersLostByProfile(profileId: _profile.id, connection: conn);
+      await scope.downloads.releaseDownloadsForProfileServers(_profile.id, lostServers);
       await scope.cleanup.removeProfileConnection(profileId: _profile.id, connection: conn);
       await scope.hiddenLibraries?.refresh();
       // Deliberately not `resumeFreshSystemShelf`: a rebind failure on the
@@ -208,33 +198,6 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> with Controll
     });
   }
 
-  /// Server ids the profile keeps after removing [excludingConnectionId]:
-  /// its other join rows plus, for Plex Home profiles, the implicit parent
-  /// account. Raw ids, matching the download keys this is differenced
-  /// against; `_serverIdsForProfile` in profile_connection_cleanup.dart is
-  /// ServerId-typed and ignores the parent, so the two are not the same
-  /// projection.
-  Future<Set<String>> _retainedServerIds({
-    required String excludingConnectionId,
-    required ProfileConnectionRegistry profileConnections,
-    required ConnectionRegistry connections,
-  }) async {
-    final rows = await profileConnections.listForProfile(_profile.id);
-    final byId = {for (final c in await connections.list()) c.id: c};
-    final retained = <String>{};
-    for (final row in rows) {
-      if (row.connectionId == excludingConnectionId) continue;
-      final other = byId[row.connectionId];
-      if (other != null) retained.addAll(_serverIdsForConnection(other));
-    }
-    final parentId = _profile.isPlexHome ? _profile.parentConnectionId : null;
-    if (parentId != null && parentId != excludingConnectionId) {
-      final parent = byId[parentId];
-      if (parent != null) retained.addAll(_serverIdsForConnection(parent));
-    }
-    return retained;
-  }
-
   Future<void> _editConnection(Connection conn) async {
     if (conn is! JellyfinConnection) return;
     final changed = await Navigator.of(
@@ -243,17 +206,6 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> with Controll
     if (changed != true || !mounted) return;
     setState(() {});
     unawaited(context.read<ActiveProfileBinder>().rebindIfActive(_profile.id));
-  }
-
-  // Raw machine ids rather than the ServerId-typed twin in
-  // profile_connection_cleanup.dart: these are differenced against retained
-  // ids and matched to download global keys, which carry the unparsed id.
-  Set<String> _serverIdsForConnection(Connection conn) {
-    return switch (conn) {
-      PlexAccountConnection(:final servers) => servers.map((s) => s.clientIdentifier).toSet(),
-      PlexDirectConnection(:final serverMachineId) => {serverMachineId},
-      JellyfinConnection(:final serverMachineId) => {serverMachineId},
-    };
   }
 
   /// Sign out of this virtual profile's parent Plex account. The profile

@@ -12,9 +12,37 @@ import 'package:plezy/metadata_edit/metadata_edit_models.dart';
 import 'package:plezy/services/jellyfin_client.dart';
 import 'package:plezy/utils/media_image_helper.dart';
 import '../test_helpers/backend_client_fixtures.dart';
+import '../test_helpers/http_fixtures.dart';
 import '../test_helpers/media_items.dart';
 
 void main() {
+  test('concurrent and stale forms preserve independent edits and reject same-field conflicts', () async {
+    var stored = _editableMovie();
+    var writes = 0;
+    final client = testJellyfinClient(
+      handler: (request) async {
+        if (request.method == 'GET') return jsonResponse(stored);
+        stored = jsonDecode(request.body) as Map<String, dynamic>;
+        writes++;
+        return http.Response('', 204);
+      },
+    );
+    addTearDown(client.close);
+    final editor = JellyfinMetadataEditAdapter(client);
+    final item = testMediaItem(id: 'item-1', backend: MediaBackend.jellyfin);
+    final synopsis = await editor.load(item), title = await editor.load(item), stale = await editor.load(item);
+    synopsis.setValue('summary', 'Revised synopsis');
+    title.setValue('title', 'New title');
+    expect(await Future.wait([editor.save(synopsis), JellyfinMetadataEditAdapter(client).save(title)]), [true, true]);
+    expect(stored['Overview'], 'Revised synopsis');
+    expect(stored['Name'], 'New title');
+    expect(title.values['summary'], 'Revised synopsis');
+    stale.setValue('summary', 'Competing synopsis');
+    await expectLater(editor.save(stale), throwsA(isA<MetadataEditConflict>()));
+    expect(writes, 2);
+    expect(stale.fieldChanged('summary'), isTrue);
+  });
+
   test('load fails when the full editable Jellyfin DTO is unavailable', () async {
     final client = JellyfinClient.forTesting(
       connection: _connection(),

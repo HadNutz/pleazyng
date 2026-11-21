@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+- Protect shared episode downloads when deleting media or signing out of Plex. Retain failed cleanup for retry, remove cancelled multipart downloads, and release local HLS archives when a profile is removed.
+- Preserve existing anime tracker entries when toggling watchlists, merge independent Jellyfin metadata edits, and keep video bookmarks with their editions. Older bookmarks can be assigned to a version explicitly.
+- Preserve manually grouped audiobooks through rescans. Sync reading progress, EPUB completion and WebDAV bookmark changes without letting a single invalid progress record block other titles.
+- Keep the previous TV guide after an unusable refresh, honor schedule corrections and recording windows, and check recording duration before accepting a timer.
+- Route mixes, radio and sleep timers to the selected music receiver, count listening once, and keep a paused queue paused when removing its current song. Restore Jellyfin audio playlist removal and collection pagination on capped servers.
+- Preserve non-ASCII settings in WebDAV restores, overlapping TV subtitles and delayed Samsung captions. Discard cancelled virtual-keyboard edits and retain selected lyrics when importing MIDI karaoke.
+
 - Apply MPV smoothing toggles and Motion clarity preset changes during eligible Linux and Windows playback, including titles started with smoothing off.
 
 - Fix a webOS MPV crash when the Flutter renderer requests a retired video texture. Apply the OLED motion preset to eligible TV MPV sources and retry playback without smoothing if the first filtered frame fails.

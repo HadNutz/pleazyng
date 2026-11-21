@@ -7,10 +7,38 @@ import 'package:plezy/mpv/mpv.dart';
 import 'package:plezy/widgets/overlay_sheet.dart';
 import 'package:plezy/widgets/video_controls/sheets/chapter_sheet.dart';
 
+import 'package:plezy/services/media_bookmark_service.dart';
+import 'package:plezy/services/settings_service.dart';
+import '../test_helpers/prefs.dart';
 import '../test_helpers/theme.dart';
 
 void main() {
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.en));
+
+  testWidgets('unassigned bookmarks can be recovered on known and indistinguishable cuts', (tester) async {
+    resetSharedPreferencesForTest();
+    SettingsService.resetForTesting();
+    await SettingsService.getInstance();
+    for (final version in ['extended', null]) {
+      final mark = await MediaBookmarkService.add('item', 'Original mark', 1000);
+      final player = _FakePlayer();
+      await _pumpSheet(tester, player: player, canControl: true, legacyKey: 'item', versionKey: version);
+      expect(find.text(t.bookmarkMigration.unassigned), findsOneWidget);
+      await tester.tap(find.text('Original mark'));
+      await tester.pumpAndSettle();
+      expect(player.seeks, isEmpty);
+      if (version != null) {
+        expect(MediaBookmarkService.forMedia(version).single.id, mark.id);
+      } else {
+        expect(MediaBookmarkService.forMedia('item').single.id, mark.id);
+        await tester.tap(find.byTooltip(t.videoControls.deleteBookmark));
+        await tester.pumpAndSettle();
+      }
+      expect(MediaBookmarkService.forMedia('item'), isEmpty);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpAndSettle();
+    }
+  });
 
   testWidgets('denied chapter tile stays open and cannot seek by pointer or select', (tester) async {
     final player = _FakePlayer();
@@ -43,6 +71,8 @@ Future<void> _pumpSheet(
   required _FakePlayer player,
   required bool canControl,
   ValueChanged<Duration>? onCompleted,
+  String? legacyKey,
+  String? versionKey,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
@@ -57,6 +87,8 @@ Future<void> _pumpSheet(
                   chapters: [MediaChapter(id: 1, startTimeOffset: 10000, title: 'Chapter One')],
                   chaptersLoaded: true,
                   canControl: canControl,
+                  legacyBookmarkKey: legacyKey,
+                  bookmarkMediaKey: versionKey,
                   onSeekCompleted: onCompleted,
                 ),
               ),

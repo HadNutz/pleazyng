@@ -150,6 +150,14 @@ class DownloadsScreenState extends State<DownloadsScreen>
     if (unavailable) showErrorSnackBar(context, t.errors.connectionFailed);
   }
 
+  Future<void> _removeDownload(Future<void> operation) async {
+    try {
+      await operation;
+    } catch (error) {
+      if (mounted) showErrorSnackBar(context, t.messages.errorLoading(error: error.toString()));
+    }
+  }
+
   Future<void> _reviewOrphanDownloads() => reviewOrphanDownloads(context, context.read<DownloadProvider>());
 
   /// Focus the top of the currently active tab — its chips bar on
@@ -431,8 +439,8 @@ class DownloadsScreenState extends State<DownloadsScreen>
                               },
                               onRetry: (globalKey) => _retryDownloads([globalKey]),
                               onRetryAll: _retryDownloads,
-                              onCancel: downloadProvider.cancelDownload,
-                              onDelete: downloadProvider.deleteDownload,
+                              onCancel: (key) => _removeDownload(downloadProvider.cancelDownload(key)),
+                              onDelete: (key) => _removeDownload(downloadProvider.deleteDownload(key)),
                               onNavigateLeft: () => MainScreenFocusScope.focusSidebarOf(context),
                               onBack: focusTabBar,
                               suppressAutoFocus: suppressAutoFocus,

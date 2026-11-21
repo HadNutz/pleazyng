@@ -256,6 +256,55 @@ void main() {
     expect(await harness.connections.get(account.id), isNotNull);
   });
 
+  testWidgets('Plex sign-out preserves a download on a server the borrower keeps through another account', (
+    tester,
+  ) async {
+    final events = <String>[];
+    final harness = await _pumpHarness(tester, events: events, channel: channel);
+    addTearDown(harness.dispose);
+    final removed = _plexAccount();
+    final retained = removed.copyWith(id: 'second-account', accountToken: 'second-token');
+    Future<void> link(PlexAccountConnection account) async {
+      await harness.connections.upsert(account);
+      await harness.profileConnections.upsert(
+        ProfileConnection(
+          profileId: 'active',
+          connectionId: account.id,
+          userIdentifier: 'user',
+          userToken: account.accountToken,
+        ),
+      );
+    }
+
+    // Downloads on the shared server predate this account being removed.
+    await link(retained);
+    await harness.database.addDownloadOwner(profileId: 'active', globalKey: 'plex-machine:from-second-account');
+    await link(removed);
+    final cancel = confirmAndSignOutPlexAccount(harness.context, accountConnectionId: removed.id);
+    await tester.pumpAndSettle();
+    expect(find.byType(SwitchListTile), findsNothing);
+    await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+    await tester.pumpAndSettle();
+    expect(await cancel, isFalse);
+
+    // Opening a destructive confirmation before the second connection is
+    // relinked must still use the surviving access at the time of removal.
+    await harness.profileConnections.remove('active', retained.id);
+    final signOut = confirmAndSignOutPlexAccount(harness.context, accountConnectionId: removed.id);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(SwitchListTile));
+    await tester.pump();
+    await link(retained);
+    await tester.tap(find.byType(FilledButton));
+    await tester.pumpAndSettle();
+    expect(await signOut, isTrue);
+
+    expect(events.where((event) => event.startsWith('release-downloads:')), isEmpty);
+    expect(await harness.database.getDownloadOwnerKeysForProfile('active'), {'plex-machine:from-second-account'});
+    expect(await harness.connections.get(removed.id), isNull);
+    expect(await harness.profileConnections.get('active', retained.id), isNotNull);
+  });
+
   testWidgets('full logout clears shelf before companion, identity, or credential teardown', (tester) async {
     final events = <String>[];
     final harness = await _pumpHarness(tester, events: events, channel: channel);

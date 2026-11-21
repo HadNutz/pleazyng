@@ -178,7 +178,7 @@ class CloudSettingsBackupService {
 
     final Object? decoded;
     try {
-      decoded = jsonDecode(response.body);
+      decoded = jsonDecode(utf8.decode(response.bodyBytes));
     } on FormatException {
       throw const CloudSettingsBackupException('The remote file is not a valid settings backup.');
     }

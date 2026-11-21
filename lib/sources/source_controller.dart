@@ -1931,18 +1931,22 @@ class SourceController extends ChangeNotifier {
           }
           final notes = await provider.readAnnotations(syncEntry, local ?? initial);
           requireSession(epoch);
-          final existing = await repository.annotations(profile, entry.key);
-          for (final note in notes) {
-            if (existing.any(
-              (a) =>
-                  a.edition == note.edition &&
-                  a.mode == note.mode &&
-                  a.positionMs == note.positionMs &&
-                  a.locator?.cfi == note.locator?.cfi,
-            )) {
-              continue;
+          if (provider is WebDavSourceAdapter) {
+            await repository.mergeProviderAnnotations(profile, entry.key, notes);
+          } else {
+            final existing = await repository.annotations(profile, entry.key);
+            for (final note in notes) {
+              if (existing.any(
+                (a) =>
+                    a.edition == note.edition &&
+                    a.mode == note.mode &&
+                    a.positionMs == note.positionMs &&
+                    a.locator?.cfi == note.locator?.cfi,
+              )) {
+                continue;
+              }
+              await repository.importAnnotation(profile, note);
             }
-            await repository.importAnnotation(profile, note);
           }
         } on SourceException catch (e) {
           if (e.reason == SourceFailure.cancelled || e.reason == SourceFailure.invalidData) {
@@ -2167,6 +2171,7 @@ class SourceController extends ChangeNotifier {
     final book = SourceEntry(
       sourceId: folder.sourceId,
       id: 'group:${folder.id}',
+      identifiers: {'groupedAudioFolder': folder.id},
       title: title,
       kind: SourceItemKind.audiobook,
       parentId: folder.id,

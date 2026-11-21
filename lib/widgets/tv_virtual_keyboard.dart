@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -47,14 +45,14 @@ void warmUpTvVirtualKeyboardText(BuildContext context) {
 
 /// Handle to a TV virtual keyboard pushed by [showTvVirtualKeyboard].
 class TvVirtualKeyboardHandle {
-  TvVirtualKeyboardHandle._(this._navigator, this._route);
+  TvVirtualKeyboardHandle._(this._navigator, this._route, this.closed);
 
   final NavigatorState _navigator;
-  final DialogRoute<void> _route;
+  final DialogRoute<bool> _route;
 
   /// Completes when the keyboard leaves the navigator — submit, cancel,
   /// barrier/back dismiss, or [close].
-  Future<void> get closed => _route.popped;
+  final Future<void> closed;
 
   /// Dismiss the keyboard if it is still up. No-ops once the route is gone
   /// or the navigator is being torn down.
@@ -90,7 +88,9 @@ TvVirtualKeyboardHandle? showTvVirtualKeyboard({
   // navigator so profile-owned keyboards are disposed with their profile
   // session.
   final navigator = Navigator.of(context);
-  final route = DialogRoute<void>(
+  var original = controller.value;
+  TextEditingValue? lastEdit;
+  final route = DialogRoute<bool>(
     context: context,
     barrierDismissible: true,
     barrierColor: Colors.black.withValues(alpha: 0.1),
@@ -99,6 +99,12 @@ TvVirtualKeyboardHandle? showTvVirtualKeyboard({
     traversalEdgeBehavior: TraversalEdgeBehavior.closedLoop,
     builder: (context) => _TvVirtualKeyboardDialog(
       controller: controller,
+      onEditing: (next) {
+        // A companion or owning field can replace the value while this
+        // dialog is open. Undo only edits made since that replacement.
+        if (controller.value != lastEdit) original = controller.value;
+        lastEdit = next;
+      },
       hintText: hintText,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
@@ -111,8 +117,13 @@ TvVirtualKeyboardHandle? showTvVirtualKeyboard({
       onAction: onAction,
     ),
   );
-  unawaited(navigator.push(route));
-  return TvVirtualKeyboardHandle._(navigator, route);
+  final closed = navigator.push(route).then<void>((submitted) {
+    if (submitted == true || !context.mounted || controller.value != lastEdit || controller.value == original) return;
+    final textChanged = controller.text != original.text;
+    controller.value = original;
+    if (textChanged) onChanged?.call(original.text);
+  });
+  return TvVirtualKeyboardHandle._(navigator, route, closed);
 }
 
 enum _TvKeyType { spacer, character, shift, symbols, space, newline, backspace, clear, cancel, done }
@@ -132,6 +143,7 @@ typedef _TvKeyboardSelection = ({int row, int column});
 
 class _TvVirtualKeyboardDialog extends StatefulWidget {
   final TextEditingController controller;
+  final ValueChanged<TextEditingValue> onEditing;
   final String? hintText;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
@@ -145,6 +157,7 @@ class _TvVirtualKeyboardDialog extends StatefulWidget {
 
   const _TvVirtualKeyboardDialog({
     required this.controller,
+    required this.onEditing,
     this.hintText,
     this.keyboardType,
     this.textInputAction,
@@ -459,7 +472,7 @@ class _TvVirtualKeyboardDialogState extends State<_TvVirtualKeyboardDialog> {
   }
 
   void _dismissForPhysicalKeyboardInput() {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(true);
   }
 
   void _moveHorizontal(int delta) {
@@ -562,7 +575,7 @@ class _TvVirtualKeyboardDialogState extends State<_TvVirtualKeyboardDialog> {
     final text = widget.controller.text;
     final onSubmitted = widget.onSubmitted;
     final onAction = widget.onAction;
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (onSubmitted != null) {
         onSubmitted(text);
@@ -642,6 +655,7 @@ class _TvVirtualKeyboardDialogState extends State<_TvVirtualKeyboardDialog> {
     for (final formatter in formatters) {
       formattedValue = formatter.formatEditUpdate(previousValue, formattedValue);
     }
+    widget.onEditing(formattedValue);
     widget.controller.value = formattedValue;
     if (formattedValue.text != previousValue.text) {
       widget.onChanged?.call(formattedValue.text);

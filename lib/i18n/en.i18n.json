@@ -3264,6 +3264,7 @@
     "enterImageUrl": "Enter image URL",
     "imageUrl": "Image URL",
     "metadataUpdated": "Metadata updated",
+    "metadataConflict": "Another editor changed the same field. Reopen the editor to review the latest values before saving.",
     "metadataUpdateFailed": "Failed to update metadata",
     "artworkUpdated": "Artwork updated",
     "artworkUpdateFailed": "Failed to update artwork",
@@ -5919,5 +5920,9 @@
     "relay": "Music relay URL",
     "relayHint": "Enable this on the receiving device, then pair once on the same network. Keep Pleazyng open. The relay carries encrypted music controls and sees network addresses. Each player streams from its own media server.",
     "relayInvalid": "Enter an HTTPS relay address."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Bookmarks from an unidentified version",
+    "assignToVersion": "Assign to this version"
   }
 }

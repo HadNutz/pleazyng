@@ -144,7 +144,63 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
     await tester.sendKeyEvent(LogicalKeyboardKey.select);
     await tester.pump();
-    expect(controller.text, '20');
+    expect(controller.text, '0');
+  });
+
+  for (final dismissal in ['Cancel', 'Back', 'barrier', 'close', 'OK']) {
+    testWidgets('prefilled TV field and live callbacks follow $dismissal', (tester) async {
+      const initial = TextEditingValue(
+        text: 'https://media.example',
+        selection: TextSelection(baseOffset: 8, extentOffset: 13),
+        composing: TextRange(start: 8, end: 13),
+      );
+      final controller = TextEditingController.fromValue(initial);
+      addTearDown(controller.dispose);
+      final changes = <String>[];
+      final submissions = <String>[];
+      final keyboard = await _pumpKeyboard(
+        tester,
+        controller: controller,
+        onChanged: changes.add,
+        onSubmitted: submissions.add,
+      );
+      await tester.tap(find.bySemanticsLabel('Clear'));
+      await tester.pump();
+      expect(changes, ['']);
+      switch (dismissal) {
+        case 'Cancel':
+        case 'OK':
+          await tester.tap(find.bySemanticsLabel(dismissal));
+        case 'Back':
+          await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        case 'barrier':
+          await tester.tapAt(const Offset(20, 20));
+        case 'close':
+          keyboard.close();
+      }
+      await tester.pumpAndSettle();
+      await keyboard.closed;
+      if (dismissal == 'OK') {
+        expect(controller.text, isEmpty);
+        expect(changes, ['']);
+        expect(submissions, ['']);
+      } else {
+        expect(controller.value, initial);
+        expect(changes, ['', initial.text]);
+        expect(submissions, isEmpty);
+      }
+    });
+  }
+
+  testWidgets('dismissing the keyboard preserves a newer external edit', (tester) async {
+    final controller = TextEditingController(text: 'initial');
+    addTearDown(controller.dispose);
+    final keyboard = await _pumpKeyboard(tester, controller: controller);
+    await tester.tap(find.bySemanticsLabel('Clear'));
+    controller.text = 'companion update';
+    keyboard.close();
+    await tester.pumpAndSettle();
+    expect(controller.text, 'companion update');
   });
 
   testWidgets('external controller changes rebuild the preview', (tester) async {
@@ -353,7 +409,7 @@ void main() {
   });
 }
 
-Future<void> _pumpKeyboard(
+Future<TvVirtualKeyboardHandle> _pumpKeyboard(
   WidgetTester tester, {
   required TextEditingController controller,
   TextInputType? keyboardType,
@@ -379,7 +435,7 @@ Future<void> _pumpKeyboard(
     ),
   );
 
-  showTvVirtualKeyboard(
+  final keyboard = showTvVirtualKeyboard(
     context: context,
     controller: controller,
     keyboardType: keyboardType,
@@ -388,8 +444,9 @@ Future<void> _pumpKeyboard(
     maxLength: maxLength,
     onChanged: onChanged,
     onSubmitted: onSubmitted,
-  );
+  )!;
   await tester.pumpAndSettle();
+  return keyboard;
 }
 
 KeyEventResult _dispatchKey(KeyEvent event) {

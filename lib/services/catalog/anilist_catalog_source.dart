@@ -461,13 +461,21 @@ class AnilistCatalogSource with CatalogWatchlistMachinery implements CatalogSour
   @override
   Future<void> performWatchlistMutation(MediaKind kind, CatalogItemIds ids, {required bool add}) async {
     final anilistId = ids.anilist!;
+    final entry = await _client.getWatchlistEntry(anilistId);
     if (add) {
-      await _client.setMediaListStatus(mediaId: anilistId, status: 'PLANNING');
-    } else if (!await _client.deletePlanningMediaListEntry(anilistId)) {
-      // Nothing on Planning to remove: the entry moved on or went away since
-      // the snapshot loaded, and is already off the watchlist.
-      reloadWatchlistSnapshot();
+      if (entry == null) {
+        await _client.setMediaListStatus(mediaId: anilistId, status: 'PLANNING');
+      } else if (entry.status != 'PLANNING') {
+        throw StateError('Adding to Planning would replace the existing AniList status');
+      }
+      return;
     }
+    if (entry == null || entry.status != 'PLANNING') {
+      reloadWatchlistSnapshot();
+      return;
+    }
+    if (entry.hasHistory) throw StateError('Removing this AniList entry would delete its history');
+    await _client.deleteMediaListEntry(entry.id);
   }
 
   @override

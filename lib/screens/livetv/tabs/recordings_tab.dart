@@ -11,7 +11,6 @@ import '../../../focus/focusable_wrapper.dart';
 import '../../../i18n/strings.g.dart';
 import '../../../iptv/dispatcharr_dvr_client.dart';
 import '../../../iptv/iptv_models.dart';
-import '../../../iptv/iptv_hls_archive.dart';
 import '../../../iptv/iptv_source_repository.dart';
 import '../../../media/media_server_client.dart';
 import '../../../models/livetv_program.dart';
@@ -355,10 +354,6 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
     if (!confirmed || !mounted) return;
     final repository = context.read<IptvSourceRepository>();
     try {
-      final file = File(recording.filePath);
-      final archive = await IptvHlsArchive.mediaDirectory(file);
-      if (archive != null) await archive.delete(recursive: true);
-      if (await file.exists()) await file.delete();
       await repository.deleteLocalRecording(recording.profileId, recording.id);
       if (!mounted) return;
       showSnackBar(context, t.iptv.recordingDeleted);

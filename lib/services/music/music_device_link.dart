@@ -37,7 +37,7 @@ class MusicDeviceLink extends ChangeNotifier implements MusicDevicePlayback {
     if (_closed || !isConnected() || _refreshing) return false;
     _refreshing = true;
     try {
-      final reply = await request({'op': 'state', if (!full) 'revision': _state?.revision});
+      final reply = await request({'op': 'state', 'radio': true, if (!full) 'revision': _state?.revision});
       if (_closed || !isConnected() || reply?['ok'] != true) {
         _responsive = false;
         if (!_closed) notifyListeners();
@@ -110,7 +110,13 @@ class MusicDeviceLink extends ChangeNotifier implements MusicDevicePlayback {
   @override
   Future<void> control(String action, [Map<String, dynamic> args = const {}]) => _commands.run(() async {
     if (!connected || _moving) throw StateError('Music device is disconnected or switching');
-    final reply = await request({'op': 'control', 'revision': _state?.revision, 'action': action, 'args': args});
+    final reply = await request({
+      'op': 'control',
+      'radio': true,
+      'revision': _state?.revision,
+      'action': action,
+      'args': args,
+    });
     if (!connected) return;
     final value = reply?['state'];
     if (value is Map<String, dynamic>) {
@@ -127,14 +133,18 @@ class MusicDeviceLink extends ChangeNotifier implements MusicDevicePlayback {
   });
 
   @override
-  Future<bool> playSnapshot(MusicTransferSnapshot snapshot) => _commands.run(() async {
-    if (!connected || _moving) return false;
+  Future<bool> playSnapshot(MusicTransferSnapshot snapshot, {bool Function()? current}) => _commands.run(() async {
+    if (!connected || _moving || current?.call() == false) return false;
     final ready = await request({
       'op': 'prepare',
-      'queue': snapshot.toJson(itemLimit: MusicTransferSnapshot.maxTransferItems),
+      'queue': snapshot.toJson(itemLimit: MusicTransferSnapshot.maxTransferItems, withRadio: true),
     });
     final ticket = ready?['ticket'];
     if (ready?['ok'] != true || !isMusicConnectId(ticket)) return false;
+    if (!connected || _moving || current?.call() == false) {
+      await request({'op': 'cancel', 'ticket': ticket});
+      return false;
+    }
     final reply = await request({
       'op': 'commit',
       'ticket': ticket,

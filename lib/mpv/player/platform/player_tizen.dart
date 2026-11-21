@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
@@ -7,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:video_player_videohole/video_player.dart' as samsung;
 
 import '../../../models/audio_channel_limit.dart';
+import '../../../services/scoped_player_prefs.dart';
 import '../../../utils/serial_future_queue.dart';
 import '../../../utils/app_logger.dart';
 import '../../../utils/codec_utils.dart';
@@ -14,6 +16,7 @@ import '../../models.dart';
 import '../audio_rendering_mode.dart';
 import '../player_base.dart';
 import '../subtitle_pcm_capture_source.dart';
+import 'subtitle_cue_timeline.dart';
 import 'webos_media_proxy.dart';
 import 'native_tv_playback_metadata.dart';
 import 'webos_video_layout.dart';
@@ -23,7 +26,7 @@ import 'native_tv_video_framing.dart';
 /// transport controls and watch progress; no browser-hosted UI is involved.
 class PlayerTizen extends PlayerBase
     with NativeTvVideoFraming
-    implements SubtitlePcmCaptureSource, NativeVisualizationAudioSource {
+    implements SubtitlePcmCaptureSource, NativeVisualizationAudioSource, SubtitleAdvanceCapability {
   PlayerTizen({this.audioOnly = false}) : super(listenToNativeEvents: false);
   static const _visualizer = MethodChannel('com.plezy/mpv_audio_player');
 
@@ -41,7 +44,11 @@ class PlayerTizen extends PlayerBase
   Media? _media;
   Media? _nextMedia;
   List<SubtitleTrack> _externalSubtitles = const [];
-  samsung.ClosedCaptionFile? _captions;
+  SubtitleCueTimeline? _captions;
+  final _embeddedCaptions = ListQueue<samsung.Caption>();
+  samsung.Caption? _lastNativeCaption;
+  @override
+  bool get supportsSubtitleAdvance => _captions != null;
   int _generation = 0;
   bool _isLivePlayback = false;
   int _subtitleGeneration = 0;
@@ -382,6 +389,7 @@ class PlayerTizen extends PlayerBase
     _nativeAudioMetadata.clear();
     _lastLoggedAudioMetadata = null;
     _subtitleGeneration++;
+    _resetEmbeddedCaptions(null);
     _captions = null;
     _subtitlesVisible = false;
     caption.value = '';
@@ -450,7 +458,15 @@ class PlayerTizen extends PlayerBase
     await runSeek(position, () async {
       if (rate != 1) await controller.setPlaybackSpeed(1);
       try {
-        if (_current(generation)) await controller.seekTo(target);
+        if (_current(generation)) {
+          final previousCaption = controller.value.caption;
+          final selection = _subtitleGeneration;
+          await controller.seekTo(target);
+          if (_current(generation) && selection == _subtitleGeneration) {
+            _resetEmbeddedCaptions(previousCaption);
+            _updateCaption();
+          }
+        }
       } finally {
         if (_current(generation) && rate != 1) await controller.setPlaybackSpeed(rate);
       }
@@ -478,13 +494,14 @@ class PlayerTizen extends PlayerBase
     if (disposed || _closing || controller == null) return;
     final generation = _generation;
     final selection = ++_subtitleGeneration;
+    final previousCaption = controller.value.caption;
     if (track.id == SubtitleTrack.off.id || track.id == 'auto') {
       _captions = null;
       _subtitlesVisible = false;
     } else if (track.uri != null) {
       final parsed = await _readCaptions(track);
       if (!_current(generation) || selection != _subtitleGeneration) return;
-      _captions = parsed;
+      _captions = SubtitleCueTimeline(parsed.captions.map((cue) => (start: cue.start, end: cue.end, text: cue.text)));
       _subtitlesVisible = true;
     } else {
       final id = int.tryParse(track.id);
@@ -499,6 +516,7 @@ class PlayerTizen extends PlayerBase
       _captions = null;
       _subtitlesVisible = true;
     }
+    if (track.id != state.track.subtitle?.id) _resetEmbeddedCaptions(previousCaption);
     _updateCaption();
     updateSelectedSubtitleTrack(_subtitlesVisible ? track.id : SubtitleTrack.off.id);
   }
@@ -556,18 +574,42 @@ class PlayerTizen extends PlayerBase
     }
   }
 
+  void _resetEmbeddedCaptions(samsung.Caption? current) {
+    _embeddedCaptions.clear();
+    _lastNativeCaption = current;
+  }
+
   void _updateCaption() {
     final value = _controller?.value;
     var text = '';
-    if (_subtitlesVisible && value != null) {
-      final position = value.position - _subtitleDelay;
-      final cues = _captions?.captions ?? [value.caption];
-      for (final cue in cues) {
-        if (position >= cue.start && position < cue.end) {
-          text = cue.text;
+    if (value != null && _captions == null) {
+      // Samsung replaces value.caption on delivery. Keep cues available for
+      // the full adjustable delay, even if the viewer changes it mid-cue.
+      if (value.position < _lastObservedPosition) _embeddedCaptions.clear();
+      if (!identical(value.caption, _lastNativeCaption)) {
+        _lastNativeCaption = value.caption;
+        if (_embeddedCaptions.isNotEmpty && _embeddedCaptions.last.start == value.caption.start) {
+          _embeddedCaptions.removeLast();
+        }
+        _embeddedCaptions.addLast(value.caption);
+      }
+      final cutoff = value.position - const Duration(milliseconds: ScopedPlayerPrefs.maximumSyncOffsetMs);
+      while (_embeddedCaptions.isNotEmpty &&
+          (_embeddedCaptions.first.end <= cutoff ||
+              (_embeddedCaptions.length > 1 && _embeddedCaptions.elementAt(1).start <= cutoff))) {
+        _embeddedCaptions.removeFirst();
+      }
+      if (_subtitlesVisible) {
+        final position = _subtitleDelay.isNegative ? value.position : value.position - _subtitleDelay;
+        for (var i = _embeddedCaptions.length - 1; i >= 0; i--) {
+          final cue = _embeddedCaptions.elementAt(i);
+          if (cue.start > position) continue;
+          if (position < cue.end) text = cue.text;
           break;
         }
       }
+    } else if (_subtitlesVisible && value != null) {
+      text = _captions!.at(value.position - _subtitleDelay);
     }
     if (caption.value != text) caption.value = text;
   }

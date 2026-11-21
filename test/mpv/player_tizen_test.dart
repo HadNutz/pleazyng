@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/mpv/models.dart';
 import 'package:plezy/mpv/player/platform/player_tizen.dart';
+import 'package:plezy/services/player_sync_offsets.dart';
 import 'package:video_player_videohole/video_player.dart' as samsung;
 import 'package:video_player_videohole/video_player_platform_interface.dart' as native;
 
@@ -231,6 +232,67 @@ void main() {
     await expectLater(player.selectSubtitleTrack(const SubtitleTrack(id: '7')), throwsA(isA<PlatformException>()));
     expect(player.state.track.subtitle?.id, 'no');
     expect(player.caption.value, isEmpty);
+  });
+
+  test('embedded captions survive later delivery until their delayed window ends and clear on seek', () async {
+    await player.open(Media('/movie.mp4'));
+    await player.selectSubtitleTrack(const SubtitleTrack(id: '7'));
+    final offsets = PlayerSyncOffsets.of(player);
+    offsets.recordApplied(PlayerSyncOffsets.subtitleProperty, -1000);
+    expect(offsets.minimumSubtitleMs, 0);
+    expect(offsets.subtitleMs, 0);
+    await player.setProperty('sub-delay', '-1');
+
+    Future<void> advance(int milliseconds) async {
+      backend.position = Duration(milliseconds: milliseconds);
+      await Future<void>.delayed(const Duration(milliseconds: 650));
+    }
+
+    Future<void> deliver(String text) async {
+      backend.events[1]!.add(
+        native.VideoEvent(
+          eventType: native.VideoEventType.subtitleUpdate,
+          text: text,
+          duration: native.DurationRange(Duration.zero, const Duration(seconds: 1)),
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+    }
+
+    await advance(1000);
+    await deliver('First');
+    expect(player.caption.value, 'First');
+    await player.setProperty('sub-delay', '2');
+    await advance(2000);
+    await deliver('Second');
+    expect(player.caption.value, isEmpty);
+    await advance(3250);
+    expect(player.caption.value, 'First');
+    await advance(4250);
+    expect(player.caption.value, 'Second');
+    await player.seek(const Duration(milliseconds: 3500));
+    expect(player.caption.value, isEmpty);
+  });
+
+  test('overlapping Samsung sidecar cues follow the clock and can be advanced', () async {
+    final directory = await Directory.systemTemp.createTemp('pleazyng-subtitles-');
+    addTearDown(() => directory.delete(recursive: true));
+    final file = await File(
+      '${directory.path}/overlap.srt',
+    ).writeAsString('1\n00:00:01,000 --> 00:00:04,000\nStation\n\n2\n00:00:02,000 --> 00:00:03,000\nAll aboard!\n');
+    await player.open(Media('/movie.mp4'));
+    await player.selectSubtitleTrack(SubtitleTrack.uri(file.uri.toString(), codec: 'srt'));
+    final offsets = PlayerSyncOffsets.of(player);
+    expect(offsets.minimumSubtitleMs, lessThan(0));
+    offsets.recordApplied(PlayerSyncOffsets.subtitleProperty, -1000);
+    expect(offsets.subtitleMs, -1000);
+    await player.setProperty('sub-delay', '-1');
+    await player.seek(const Duration(milliseconds: 1500));
+    expect(player.caption.value, 'Station\nAll aboard!');
+    await player.seek(const Duration(seconds: 2));
+    expect(player.caption.value, 'Station');
+    await player.seek(const Duration(milliseconds: 1500));
+    expect(player.caption.value, 'Station\nAll aboard!');
   });
 
   test('native captions can be hidden without enabling a different track', () async {
