@@ -924,7 +924,11 @@ class MpvPlayerCore private constructor(
   // Foldables may reuse display 0 for a cover with a different mode list.
   private fun panelIdentity(): Triple<Int, Int, Int>? = currentDisplay()?.let { display ->
     val mode = display.supportedModes.maxByOrNull { it.physicalWidth.toLong() * it.physicalHeight } ?: display.mode
-    Triple(display.displayId, minOf(mode.physicalWidth, mode.physicalHeight), maxOf(mode.physicalWidth, mode.physicalHeight))
+    Triple(
+      display.displayId,
+      minOf(mode.physicalWidth, mode.physicalHeight),
+      maxOf(mode.physicalWidth, mode.physicalHeight)
+    )
   }
 
   private var outputPanel: Triple<Int, Int, Int>? = null

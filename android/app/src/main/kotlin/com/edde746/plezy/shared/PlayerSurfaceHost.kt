@@ -25,8 +25,9 @@ internal object PlayerSurfaceHost {
   fun pipSourceRect(activity: Activity): Rect? {
     val content = activity.findViewById<ViewGroup>(android.R.id.content) ?: return null
     val panes = (0 until content.childCount).map { content.getChildAt(it) }.filterIsInstance<VideoPane>()
-    val pane = panes.singleOrNull { it.isShown && it.width > 0 && it.height > 0 } ?: return null
-    return Rect().takeIf { pane.getGlobalVisibleRect(it) && !it.isEmpty }
+    return panes.singleOrNull { it.isShown && it.width > 0 && it.height > 0 }?.let { pane ->
+      Rect().takeIf { pane.getGlobalVisibleRect(it) && !it.isEmpty }
+    }
   }
 
   fun createContainer(activity: Activity, clipChildren: Boolean = false): FrameLayout = VideoPane(activity).apply {
