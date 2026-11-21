@@ -361,6 +361,13 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Report upstream decisions before release
+        if: inputs.action == 'release'
+        continue-on-error: true
+        run: |
+          git fetch --no-tags https://github.com/edde746/plezy.git main
+          python3 scripts/checks/upstream_drift.py FETCH_HEAD | tee -a "$GITHUB_STEP_SUMMARY"
+
       - name: Verify approved frozen packaging checkout
         id: frozen-repair
         if: inputs.recovery_source_sha != '' || inputs.recovery_product_sha != ''

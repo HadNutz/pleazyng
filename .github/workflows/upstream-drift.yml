@@ -1,0 +1,19 @@
+name: Upstream Plezy drift
+on:
+  schedule:
+    - cron: '0 15 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  report:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Report new and undecided upstream commits
+        run: |
+          git fetch --no-tags https://github.com/edde746/plezy.git main
+          python3 scripts/checks/upstream_drift.py FETCH_HEAD | tee -a "$GITHUB_STEP_SUMMARY"
