@@ -3478,7 +3478,8 @@ jobs:
             $signtoolCommand = Get-Command signtool.exe -ErrorAction SilentlyContinue
             $signtoolPath = if ($null -ne $signtoolCommand) { $signtoolCommand.Source } else { $null }
             if ($null -eq $signtoolPath) {
-              $signtoolFile = Get-ChildItem "$env:ProgramFiles(x86)\Windows Kits\10\bin" -Filter signtool.exe -Recurse -ErrorAction Stop |
+              $sdkBin = Join-Path (${env:ProgramFiles(x86)}) 'Windows Kits\10\bin'
+              $signtoolFile = Get-ChildItem $sdkBin -Filter signtool.exe -Recurse -ErrorAction Stop |
                 Where-Object { $_.FullName -match '\\x64\\signtool\.exe$' } |
                 Sort-Object FullName -Descending |
                 Select-Object -First 1
