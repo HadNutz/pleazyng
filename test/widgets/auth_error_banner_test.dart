@@ -6,6 +6,7 @@ import 'package:plezy/models/trackers/device_code.dart';
 import 'package:plezy/providers/multi_server_provider.dart';
 import 'package:plezy/providers/trackers_provider.dart';
 import 'package:plezy/services/multi_server_manager.dart';
+import 'package:plezy/services/trackers/oauth_proxy_client.dart';
 import 'package:plezy/services/trackers/tracker_constants.dart';
 import 'package:plezy/widgets/auth_error_banner.dart';
 import 'package:provider/provider.dart';
@@ -143,6 +144,12 @@ class _TestTrackersProvider extends TrackersProvider {
 
   @override
   bool isConnecting(TrackerService service) => connecting == service;
+
+  @override
+  Future<bool> connectTraktWithBrowser({required void Function(OAuthProxyStart start) onCodeReady}) async {
+    traktConnections++;
+    return false;
+  }
 
   @override
   Future<bool> connectTrakt({required void Function(DeviceCode code) onCodeReady}) async {
