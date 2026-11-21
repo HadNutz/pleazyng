@@ -15,3 +15,11 @@ Run `python3 scripts/checks/worktree_inventory.py` from the authoritative clone 
 7. Handle registered worktrees below `.dart_tool/` and the former build scratch directory before considering their parent for cleanup. Check build ownership, active users and archives again, and use a fresh task-scoped build location. Keep the active main checkout, release-bump changes, TV patches, reflogs and unreachable objects intact. Avoid explicit pruning or aggressive GC.
 
 Create new detached task checkouts under a sibling `task-worktrees/` directory. Keep task checkpoints as commits and preserve their tip until integrated or archived. At task completion run the inventory and retire only the verified task-owned checkout. Configure any instruction-sync tool on its owning host to exclude registered linked checkouts, after identifying the actual writer from its configuration or logs.
+
+Once checkout owners have frozen the source host, run the archive verifier from that clone:
+
+```sh
+python3 scripts/checks/archive_worktrees.py --repo "$PWD" --destination /durable/pleazyng/worktrees-2026-11-21
+```
+
+The destination must be new. The final `sha256.json` is written after offline restoration. The helper checks the index, separate patches, file bytes and modes, link targets, and stashes with their staged and untracked parents. Linked checkouts nested within a parent have separate inventory rows. A dirty submodule, unresolved index or unregistered embedded repository needs its own recovery before removal. An incomplete archive is retained for diagnosis. Inventory and hash checks complement the host process and ownership checks above.
