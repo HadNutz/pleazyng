@@ -1776,6 +1776,8 @@ require(
     all(field in run_name_expression for field in ("inputs.action", "inputs.runner_pool", "inputs.build_version"))
     and "format('action:{0}:pool:{1}:tag:v{2}'" in run_name_expression
     and "inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos" in run_name_expression
+    and "inputs.reuse_platform_run_id != '' && inputs.rebuild_macos" in run_name_expression
+    and "format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:macos'" in run_name_expression
     and "format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:tvos'" in run_name_expression
     and "recovery:source:{3}:webos" not in run_name_expression
     and "inputs.action == 'build' && inputs.mode == 'release' && inputs.build_version != ''" in run_name_expression

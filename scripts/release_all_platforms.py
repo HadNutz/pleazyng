@@ -1755,6 +1755,10 @@ def ensure_release(
     allow_private_apple_retry: bool = False,
 ) -> dict:
     reuse_repaired_run_id = parse_repaired_run_reference(reuse_repaired_run_id)
+    if reuse_platform_run_id and reuse_android_run_id is None:
+        # A platform recovery reuses Android from the same verified source run
+        # unless a caller explicitly selects a different verified Android run.
+        reuse_android_run_id = reuse_platform_run_id
     if reuse_platform_run_id and not rebuild_webos:
         # A complete versioned release must include WebOS. The reuse run ID
         # prevents a rebuild; keep the release-coverage input enabled.
@@ -1803,6 +1807,8 @@ def ensure_release(
             raise ReleaseError("A full runner-acquisition retry requires one exact failed release run.")
         run_title += f":runner-retry-of:{runner_acquisition_retry_of}"
         tvos_runner_pool = "private"
+    elif not repair and reuse_platform_run_id and rebuild_macos:
+        run_title += f":recovery:source:{reuse_platform_run_id}:macos"
     elif not repair and reuse_platform_run_id and rebuild_tvos:
         run_title += f":recovery:source:{reuse_platform_run_id}:tvos"
     if reuse_tvos_run_id and (not repair or rebuild_tvos or reuse_repaired_run_id):

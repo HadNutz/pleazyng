@@ -70,6 +70,7 @@ class SigningOptionsTests(unittest.TestCase):
                 release.ensure_release("v3.0.1", "a" * 40, include_webos_release=True,
                                        reuse_platform_run_id=42, prepare_homebrew_cask=True)
             verify.assert_called_once_with(42, "a" * 40, "3.0.1", webos_run=42,
+                                           android_run=42,
                                            require_homebrew_cask=True)
             matching.assert_not_called()
             dispatch.assert_not_called()
