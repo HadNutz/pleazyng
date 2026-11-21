@@ -138,6 +138,32 @@ void main() {
       expect(find.byType(MobileVideoControls), findsNothing, reason: reason);
     }
 
+    testWidgets('mounted controls follow rotation changes without reading the view during startup', (tester) async {
+      TvDetectionService.debugSetAppleTVOverride(false);
+      TvDetectionService.debugSetAutomotiveOverride(false);
+      addTearDown(() => TvDetectionService.debugSetAutomotiveOverride(null));
+      final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      final orientations = <Object?>[];
+      messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+        if (call.method == 'SystemChrome.setPreferredOrientations') orientations.add(call.arguments);
+        return null;
+      });
+      addTearDown(() => messenger.setMockMethodCallHandler(SystemChannels.platform, null));
+
+      await pumpControls(tester);
+      expect(tester.takeException(), isNull);
+      expect(orientations, isEmpty);
+      final settings = SettingsService.instance;
+      final original = settings.read(SettingsService.rotationLocked);
+      await settings.write(SettingsService.rotationLocked, !original);
+      await tester.pump();
+      expect(orientations, hasLength(1));
+      await settings.write(SettingsService.rotationLocked, original);
+      await tester.pump();
+      expect(orientations, hasLength(2));
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
     testWidgets('a hidden start never mounts the OSD while loading or once the picture arrives', (tester) async {
       await pumpControls(tester);
 
