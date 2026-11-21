@@ -98,14 +98,8 @@ class MpvPlayerCore: MpvPlayerCoreBase {
         // Fold, resize and PiP callbacks still carry the phone pane. Keep
         // that rectangle for the return trip to the phone.
         containerView.frame = external.bounds
-      } else if let frame {
-        containerView.frame = frame
-      } else if let requestedVideoFrame {
-        containerView.frame = requestedVideoFrame
-      } else if let superview = containerView.superview {
-        containerView.frame = superview.bounds
-      } else if let window {
-        containerView.frame = window.bounds
+      } else if let pane = frame ?? requestedVideoFrame ?? containerView.superview?.bounds ?? window?.bounds {
+        containerView.frame = pane
       }
       fitVideoLayer(videoLayer, in: containerView)
       dvBackend?.setFrame(containerView.bounds)
@@ -298,11 +292,8 @@ class MpvPlayerCore: MpvPlayerCoreBase {
     #if os(iOS)
       guard let videoLayer else { return }
 
-      let output = containerView?.window?.windowScene?.screen
-      var canPresentEDR = true
-      if #available(iOS 16.0, *), let output, !isPipActive && !isPipStarting {
-        canPresentEDR = output.potentialEDRHeadroom > 1
-      }
+      let canPresentEDR = ExternalDisplayManager.canPresentEDR(
+        on: containerView?.window?.windowScene?.screen, pictureInPicture: isPipActive || isPipStarting)
       let shouldEnableEDR = hdrEnabled && sigPeak > 1.0 && canPresentEDR
       if #available(iOS 26.0, *) {
         withoutLayerAnimations {

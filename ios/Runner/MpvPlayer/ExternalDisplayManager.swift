@@ -10,6 +10,13 @@ final class ExternalDisplayManager {
 
   private init() {}
 
+  #if os(iOS)
+    static func canPresentEDR(on screen: UIScreen?, pictureInPicture: Bool) -> Bool {
+      guard #available(iOS 16.0, *), let screen, !pictureInPicture else { return true }
+      return screen.potentialEDRHeadroom > 1
+    }
+  #endif
+
   static func isExternalDisplayRole(_ role: UISceneSession.Role) -> Bool {
     role.rawValue == "UIWindowSceneSessionRoleExternalDisplay"
       || role.rawValue == "UIWindowSceneSessionRoleExternalDisplayNonInteractive"

@@ -28,6 +28,7 @@ jobs:
         run: |
           base="${PR_BASE:-${PUSH_BASE:-HEAD^}}"
           if [[ "$GITHUB_REF" == refs/heads/integration/upstream-* || "$base" =~ ^0+$ ]]; then base=origin/main; fi
+          python3 scripts/checks/test_native_ratchet.py
           python3 scripts/checks/native_ratchet.py "$(git merge-base HEAD "$base")"
       - name: Load detekt
         if: matrix.language == 'kotlin'
@@ -77,7 +78,9 @@ jobs:
         if: matrix.engine == 'steam'
         run: |
           sudo apt-get update -o Acquire::Retries=3
-          sudo apt-get install -y --no-install-recommends -o Acquire::Retries=3 libvulkan-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev python3-jinja2
+          sudo apt-get install -y --no-install-recommends -o Acquire::Retries=3 \
+            libvulkan-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev python3-jinja2 \
+            gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-libav
           python3 scripts/games/prepare_steam.py
       - name: Configure target and tests
         env:

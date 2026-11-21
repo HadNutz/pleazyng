@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Require native test counts to hold and diagnostic allowlists to shrink."""
 import argparse
-from collections import Counter
+from bisect import bisect_left
+from collections import Counter, defaultdict
 import json
 from pathlib import Path, PurePosixPath
+import re
 import subprocess
 import xml.etree.ElementTree as ET
 
@@ -27,6 +29,40 @@ def issues(filename, data):
                     finding["reason"], item["text"].strip())
         return Counter(key(item) for item in json.loads(data))
     return Counter(tuple(item) for item in json.loads(data))
+
+
+def new_findings(filename, current, previous):
+    added = current - previous
+    if filename != "swiftlint.json":
+        return added
+
+    # SwiftLint includes the measured line count in its finding identity.
+    # Match a smaller count only to the same declaration, rule and threshold.
+    def length(finding):
+        path, rule, severity, reason, source = finding
+        if rule not in {"type_body_length", "file_length"}:
+            return None
+        match = re.fullmatch(r"(.+currently (?:contains|spans) )(\d+)( lines)?", reason)
+        if match:
+            return (path, rule, severity, match[1], match[3], source), int(match[2])
+        return None
+
+    budgets = defaultdict(list)
+    for finding in (previous - current).elements():
+        if metric := length(finding):
+            identity, size = metric
+            budgets[identity].append(size)
+    for sizes in budgets.values():
+        sizes.sort()
+    for finding in list(added.elements()):
+        if metric := length(finding):
+            identity, size = metric
+            sizes = budgets[identity]
+            index = bisect_left(sizes, size)
+            if index < len(sizes):
+                sizes.pop(index)
+                added[finding] -= 1
+    return +added
 
 
 def test_counts(paths):
@@ -67,7 +103,7 @@ def main():
         current = issues(name, Path(path).read_bytes())
         if path in old_paths:
             previous = issues(name, git("show", args.base + ":" + path))
-            for finding, count in (current - previous).items():
+            for finding, count in new_findings(name, current, previous).items():
                 errors.append(f"{name}: {count} new baseline entries for {finding}")
     print("Native test files:", dict(sorted(new_counts.items())))
     if errors:

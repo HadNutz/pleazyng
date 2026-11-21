@@ -256,17 +256,14 @@ final class MpvPlayerContractTests: XCTestCase {
       window.isHidden = true
     }
     core.setVisible(true)
-    func command(_ args: [String]) throws -> Int64? {
-      let accepted = expectation(description: args[0])
-      var result: Result<Int64?, Error>?
-      core.commandAsync(args) { reply in
-        result = reply
-        accepted.fulfill()
-      }
-      wait(for: [accepted], timeout: nativeCompletionTimeout)
-      return try XCTUnwrap(result).get()
+    let loaded = expectation(description: "loadfile")
+    var loadResult: Result<Int64?, Error>?
+    core.commandAsync(["loadfile", clip.path]) { reply in
+      loadResult = reply
+      loaded.fulfill()
     }
-    _ = try command(["loadfile", clip.path])
+    wait(for: [loaded], timeout: nativeCompletionTimeout)
+    _ = try XCTUnwrap(loadResult).get()
     XCTAssertSuccess(awaitProperty(core, name: "pause", value: "no"))
     let readyBy = Date().addingTimeInterval(nativeCompletionTimeout)
     while Date() < readyBy && ((try? timePos(core)) ?? 0) < 0.1 { pump(0.05) }
