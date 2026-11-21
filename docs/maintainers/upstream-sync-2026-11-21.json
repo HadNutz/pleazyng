@@ -375,8 +375,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "fix(profiles): ask for a profile on resume while the TV hosts the companion remote server",
-      "disposition": "pending",
-      "evidence": "The fork’s resume decision reads isInSession. Hosting a companion server can therefore suppress the profile prompt. Exempt only a device driving another as a remote, including a reconnecting controller. Test the TV hosting with and without a paired phone, plus the controlling phone. [main_screen.dart L1344](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/main_screen.dart#L1344) · [companion_remote_provider.dart L646](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/providers/companion_remote_provider.dart#L646)",
+      "disposition": "adapted",
+      "evidence": "Prompt on resume when a TV hosts the companion remote, while allowing its connected or reconnecting controller to resume normally.",
       "files": [
         "lib/providers/companion_remote_provider.dart",
         "lib/screens/main_screen.dart",
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "pending": 15,
+    "pending": 14,
     "deferred": 1,
-    "adapted": 11,
+    "adapted": 12,
     "retained": 2
   }
 }
