@@ -4313,6 +4313,51 @@ class Translations$iptv$en {
 
 	// Translations
 
+	/// en: 'This playlist includes stream addresses and may contain your provider credentials. Save it in a private location.'
+	String get exportPrivate => 'This playlist includes stream addresses and may contain your provider credentials. Save it in a private location.';
+
+	/// en: 'This portal creates a new link each time you play a channel. Its guide can be exported.'
+	String get dynamicStreamExport => 'This portal creates a new link each time you play a channel. Its guide can be exported.';
+
+	/// en: 'Channel order'
+	String get lineupOrder => 'Channel order';
+
+	/// en: 'Move channel up'
+	String get moveUp => 'Move channel up';
+
+	/// en: 'Move channel down'
+	String get moveDown => 'Move channel down';
+
+	/// en: 'The lineup changed. Review the current order and try again.'
+	String get orderChanged => 'The lineup changed. Review the current order and try again.';
+
+	/// en: 'Channels affected: ${count}'
+	String affectedChannels({required Object count}) => 'Channels affected: ${count}';
+
+	/// en: 'M3U file'
+	String get localPlaylist => 'M3U file';
+
+	/// en: 'Paste playlist text'
+	String get pastePlaylist => 'Paste playlist text';
+
+	/// en: 'Choose a playlist file'
+	String get choosePlaylist => 'Choose a playlist file';
+
+	/// en: 'Base URL for relative entries (optional)'
+	String get playlistBase => 'Base URL for relative entries (optional)';
+
+	/// en: 'Import a private copy of an M3U or M3U8 channel list. Choose another file here to replace it.'
+	String get localPlaylistHelp => 'Import a private copy of an M3U or M3U8 channel list. Choose another file here to replace it.';
+
+	/// en: 'Show matching channels'
+	String get showMatches => 'Show matching channels';
+
+	/// en: 'Hide matching channels'
+	String get hideMatches => 'Hide matching channels';
+
+	/// en: 'Lineup curation and guide merging inspired by M3U Web Picker by Zachary Schmook and contributors.'
+	String get pickerCredit => 'Lineup curation and guide merging inspired by M3U Web Picker by Zachary Schmook and contributors.';
+
 	/// en: 'Add IPTV source'
 	String get addSource => 'Add IPTV source';
 
@@ -19685,6 +19730,21 @@ extension on Translations {
 			'connections.signInAgain' => 'Sign in again',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} connection',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Add or remove URLs for ${serverName}. Pleazyng will use the reachable URL with the lowest latency.',
+			'iptv.exportPrivate' => 'This playlist includes stream addresses and may contain your provider credentials. Save it in a private location.',
+			'iptv.dynamicStreamExport' => 'This portal creates a new link each time you play a channel. Its guide can be exported.',
+			'iptv.lineupOrder' => 'Channel order',
+			'iptv.moveUp' => 'Move channel up',
+			'iptv.moveDown' => 'Move channel down',
+			'iptv.orderChanged' => 'The lineup changed. Review the current order and try again.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Channels affected: ${count}',
+			'iptv.localPlaylist' => 'M3U file',
+			'iptv.pastePlaylist' => 'Paste playlist text',
+			'iptv.choosePlaylist' => 'Choose a playlist file',
+			'iptv.playlistBase' => 'Base URL for relative entries (optional)',
+			'iptv.localPlaylistHelp' => 'Import a private copy of an M3U or M3U8 channel list. Choose another file here to replace it.',
+			'iptv.showMatches' => 'Show matching channels',
+			'iptv.hideMatches' => 'Hide matching channels',
+			'iptv.pickerCredit' => 'Lineup curation and guide merging inspired by M3U Web Picker by Zachary Schmook and contributors.',
 			'iptv.addSource' => 'Add IPTV source',
 			'iptv.addSourceDescription' => 'Add an M3U or Xtream feed, including Tunerr and Dispatcharr playlist outputs.',
 			'iptv.sourcesTitle' => 'IPTV sources',
@@ -19793,6 +19853,8 @@ extension on Translations {
 			'iptv.localRecordings' => 'Local recordings',
 			'iptv.recordingInProgressLocal' => 'Recording',
 			'iptv.recordingInterrupted' => 'Interrupted',
+			_ => null,
+		} ?? switch (path) {
 			'iptv.recordingMissed' => 'Missed',
 			'iptv.recordingAppClosed' => 'Pleazyng closed before recording started or finished.',
 			'iptv.recordingEncryptedHls' => 'This provider uses an unsupported HLS encryption mode.',
@@ -19808,8 +19870,6 @@ extension on Translations {
 			'iptv.localRecordingScheduled' => 'Local recording scheduled. Pleazyng must be running when it starts.',
 			'iptv.localRecordingAlreadyScheduled' => 'This program is already scheduled for local recording.',
 			'iptv.localRecordingSchedules' => 'Local recording schedule',
-			_ => null,
-		} ?? switch (path) {
 			'iptv.scheduledOnThisDevice' => 'Scheduled on this device',
 			'iptv.cancelLocalRecording' => 'Cancel local recording?',
 			'iptv.cancelLocalRecordingConfirm' => ({required Object programme}) => 'Cancel the local recording of ${programme}?',
@@ -20307,6 +20367,8 @@ extension on Translations {
 			'explore.rows.trendingShows' => 'Trending Shows',
 			'explore.rows.popularMovies' => 'Popular Movies',
 			'explore.rows.popularShows' => 'Popular Shows',
+			_ => null,
+		} ?? switch (path) {
 			'explore.rows.trendingAnime' => 'Trending Anime',
 			'explore.rows.suggestedAnime' => 'Suggested Anime',
 			'explore.rows.airingAnime' => 'Top Airing Anime',
@@ -20322,8 +20384,6 @@ extension on Translations {
 			'explore.cast' => 'Cast',
 			'explore.characters' => 'Characters',
 			'explore.addToWatchlist' => 'Add to Watchlist',
-			_ => null,
-		} ?? switch (path) {
 			'explore.removeFromWatchlist' => 'Remove from Watchlist',
 			'explore.addedToWatchlist' => 'Added to watchlist',
 			'explore.removedFromWatchlist' => 'Removed from watchlist',
@@ -20821,6 +20881,8 @@ extension on Translations {
 			'downloads.pauseAll' => 'Pause all',
 			'downloads.resumeAll' => 'Resume all',
 			'downloads.retryAll' => 'Retry all',
+			_ => null,
+		} ?? switch (path) {
 			'downloads.retryFailed' => 'Retry failed downloads',
 			'downloads.deleteAll' => 'Delete all',
 			'downloads.selectVersion' => 'Select Version',
@@ -20836,8 +20898,6 @@ extension on Translations {
 			'downloads.keepSynced' => 'Keep synced',
 			'downloads.downloadOnce' => 'Download once',
 			'downloads.keepNUnwatched' => ({required Object count}) => 'Keep ${count} unwatched',
-			_ => null,
-		} ?? switch (path) {
 			'downloads.editSyncRule' => 'Edit sync rule',
 			'downloads.removeSyncRule' => 'Remove sync rule',
 			'downloads.removeSyncRuleConfirm' => ({required Object title}) => 'Stop syncing "${title}"? Downloaded episodes will be kept.',
@@ -21335,6 +21395,8 @@ extension on Translations {
 			'metadataEdit.label' => 'Label',
 			'metadataEdit.quickTag' => 'Quick Tag...',
 			'metadataEdit.imageUploadLimits' => '≤ 10 MiB · ≤ 64 MP',
+			_ => null,
+		} ?? switch (path) {
 			'matchScreen.match' => 'Match...',
 			'matchScreen.fixMatch' => 'Fix Match...',
 			'matchScreen.unmatch' => 'Unmatch',
@@ -21350,8 +21412,6 @@ extension on Translations {
 			'matchScreen.plexDiscover' => 'Plex Discover',
 			'matchScreen.plexLibrary' => 'Plex library',
 			'matchScreen.jellyfinLibrary' => 'Jellyfin library',
-			_ => null,
-		} ?? switch (path) {
 			'matchScreen.embyLibrary' => 'Emby library',
 			'serverTasks.title' => 'Server Tasks',
 			'serverTasks.failedToLoad' => 'Failed to load tasks',
@@ -21849,6 +21909,8 @@ extension on Translations {
 			'homeLayout.pressAgainToDelete' => 'Press again to delete',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
 			'homeLayout.on' => 'On',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.resetHeroButtonDescription' => 'Turns off every row\'s hero setting and brings back the single rotating banner at the top, like before hero rows existed. Row order is kept.',
 			'homeLayout.tapHeroCardDescription' => 'Choose whether tapping or selecting a Hero card starts playback or opens its details.',
 			'homeLayout.heroTapPlayDescription' => 'Start the selected item right away.',
@@ -21864,8 +21926,6 @@ extension on Translations {
 			'universalMedia.stream' => 'Stream address',
 			'universalMedia.playlist' => 'Playlist',
 			'universalMedia.files' => 'Device files',
-			_ => null,
-		} ?? switch (path) {
 			'universalMedia.favorites' => 'Saved stream favorites',
 			'universalMedia.address' => 'Media address',
 			'universalMedia.addressHelp' => 'HTTPS is preferred. URLs with recognized credential or signature parameters are used only for this session and cannot be saved as favorites.',
@@ -22363,6 +22423,8 @@ extension on Translations {
 			'sourceSetup.savedIdentity' => 'A saved client identity will be used.',
 			'sourceSetup.replaceIdentity' => 'Replace saved client identity',
 			'sourceSetup.chooseIdentity' => 'Choose PKCS#12 client identity',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.identityPassphrase' => 'Client identity passphrase',
 			'sourceSetup.identityPassphraseHelp' => 'Leave blank if the file has no passphrase.',
 			'sourceSetup.removeIdentity' => 'Remove any saved client identity',
@@ -22378,8 +22440,6 @@ extension on Translations {
 			'sourceSetup.optionalUsername' => 'Account username (optional)',
 			'sourceSetup.optionalPassword' => 'Account password (optional)',
 			'sourceSetup.subtitlePrivacy' => 'Get an API key from opensubtitles.com. Search sends the video title and available IMDb/TMDB IDs, never the video file. The key and optional account credentials are encrypted with this source.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.automaticMetadata' => 'Automatic online video metadata',
 			'sourceSetup.metadataPrivacy' => 'Sends only filename title/year and episode numbers or an NFO ID, never media or credentials. NFO fields stay authoritative.',
 			'sourceSetup.nfsEncryptionFailure' => 'For encrypted NFS, check RFC 9289 and TLS 1.3 support on both NAS services, the certificate name, and the export UID/GID. Pleazyng will not retry this connection without encryption.',
@@ -22877,6 +22937,8 @@ extension on Translations {
 			'podcasts.newest' => 'Newest first',
 			'podcasts.oldest' => 'Oldest first',
 			'podcasts.explicit' => 'Explicit',
+			_ => null,
+		} ?? switch (path) {
 			'podcasts.trending' => 'Trending',
 			'podcasts.indexSetup' => 'Podcast Index settings',
 			'podcasts.indexHelp' => 'Use your own Podcast Index API key and secret. They are encrypted for this profile. Apple Podcasts discovery works without them.',
@@ -22892,8 +22954,6 @@ extension on Translations {
 			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.',
 			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
 			'podcasts.serverHelp' => 'Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.',
-			_ => null,
-		} ?? switch (path) {
 			'podcasts.viewAll' => 'Show more episodes',
 			'podcasts.inLibrary' => 'Open podcast',
 			'podcasts.rateLimited' => 'Wait a few seconds before searching again.',
@@ -23391,6 +23451,8 @@ extension on Translations {
 			'karaokeUi.pitchFeedbackAndDryRecordingUseYourSelectedMicrophone' => 'Pitch feedback and dry recording use your selected microphone. Use an external mixer for amplification.',
 			'karaokeUi.tvMicrophoneCaptureUnavailable' => 'Microphone capture is unavailable in this TV build. Use the karaoke phone companion for mic capture, or connect a microphone to an external mixer for stage amplification.',
 			'karaokeUi.enableMicrophone' => 'Enable microphone',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.muteMicrophone' => 'Mute microphone',
 			'karaokeUi.recordPrivateTake' => 'Record private take',
 			'karaokeUi.savePrivateTake' => 'Save private take',
@@ -23406,8 +23468,6 @@ extension on Translations {
 			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',
 			'karaokeUi.phoneInputRequiresSecureContext' => 'A trusted HTTPS connection is required.',
 			'karaokeUi.phoneInputRequires16kHzCapture' => 'This browser cannot supply the required 16 kHz capture path.',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.phoneInputNeedsActivePerformance' => 'Return to an active performance before enabling capture.',
 			'karaokeUi.phoneCaptureRequiresTrustedHTTPS' => 'Phone capture requires the host HTTPS room with a certificate trusted by this phone. The ordinary LAN songbook remains available.',
 			'karaokeUi.phoneInputNeedsAssignedSinger' => 'The host must start a request assigned to your singer before you enable input.',

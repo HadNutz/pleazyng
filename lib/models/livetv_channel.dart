@@ -86,6 +86,8 @@ class LiveTvChannel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   final bool iptvRadio;
   @JsonKey(includeFromJson: false, includeToJson: false)
+  final int? iptvLineupOrder;
+  @JsonKey(includeFromJson: false, includeToJson: false)
   final String? iptvGroupTitle;
   @JsonKey(includeFromJson: false, includeToJson: false)
   final bool iptvFavorite;
@@ -117,6 +119,7 @@ class LiveTvChannel {
     this.iptvSourceId,
     this.iptvChannelId,
     this.iptvRadio = false,
+    this.iptvLineupOrder,
     this.iptvGroupTitle,
     this.iptvFavorite = false,
     this.iptvCatchupAvailable = false,
@@ -163,6 +166,7 @@ class LiveTvChannel {
       iptvSourceId: iptvSourceId ?? this.iptvSourceId,
       iptvChannelId: iptvChannelId ?? this.iptvChannelId,
       iptvRadio: iptvRadio ?? this.iptvRadio,
+      iptvLineupOrder: iptvLineupOrder,
       iptvGroupTitle: iptvGroupTitle ?? this.iptvGroupTitle,
       iptvFavorite: iptvFavorite ?? this.iptvFavorite,
       iptvCatchupAvailable: iptvCatchupAvailable ?? this.iptvCatchupAvailable,

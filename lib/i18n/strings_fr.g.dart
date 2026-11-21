@@ -1653,6 +1653,21 @@ class Translations$iptv$fr extends Translations$iptv$en {
 	final TranslationsFr _root; // ignore: unused_field
 
 	// Translations
+	@override String get lineupOrder => 'Ordre des chaînes';
+	@override String get orderChanged => 'L’ordre des chaînes a changé. Vérifiez-le et réessayez.';
+	@override String get localPlaylist => 'Fichier M3U';
+	@override String get pastePlaylist => 'Coller le texte de la liste';
+	@override String get playlistBase => 'URL de base pour les liens relatifs (facultatif)';
+	@override String get localPlaylistHelp => 'Importez une copie privée d’une liste de chaînes M3U ou M3U8. Vous pouvez la remplacer par un autre fichier.';
+	@override String get showMatches => 'Afficher les chaînes correspondantes';
+	@override String get hideMatches => 'Masquer les chaînes correspondantes';
+	@override String get pickerCredit => 'Inspiré de · M3U Web Picker · Zachary Schmook (@zschmook) et des contributeurs';
+	@override String get exportPrivate => 'Les adresses des flux peuvent contenir vos identifiants. Enregistrez la liste dans un emplacement privé.';
+	@override String get dynamicStreamExport => 'Le portail crée un nouveau lien à chaque lecture. Vous pouvez exporter le guide.';
+	@override String get moveUp => 'Mouvement en haut';
+	@override String get moveDown => 'Mouvez-vous en bas';
+	@override String get choosePlaylist => 'Choisissez le fichier playlist';
+	@override String affectedChannels({required Object count}) => 'Chaînes · ${count}';
 	@override String get parentalPinRequired => 'Le verrouillage des chaînes nécessite un profil local protégé par un code PIN. Ajoutez un code PIN dans Profils pour utiliser le contrôle parental.';
 	@override String get allowHttp => 'Autoriser le HTTP non chiffré';
 	@override String get allowHttpDescription => 'À utiliser uniquement sur un réseau local de confiance. Préférez HTTPS lorsqu’il est disponible.';
@@ -7060,6 +7075,21 @@ extension on TranslationsFr {
 			'connections.signInAgain' => 'Se reconnecter',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Modifier la connexion ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Ajoutez ou retirez des URL pour ${serverName}. Pleazyng utilisera l\'URL joignable avec la latence la plus faible.',
+			'iptv.lineupOrder' => 'Ordre des chaînes',
+			'iptv.orderChanged' => 'L’ordre des chaînes a changé. Vérifiez-le et réessayez.',
+			'iptv.localPlaylist' => 'Fichier M3U',
+			'iptv.pastePlaylist' => 'Coller le texte de la liste',
+			'iptv.playlistBase' => 'URL de base pour les liens relatifs (facultatif)',
+			'iptv.localPlaylistHelp' => 'Importez une copie privée d’une liste de chaînes M3U ou M3U8. Vous pouvez la remplacer par un autre fichier.',
+			'iptv.showMatches' => 'Afficher les chaînes correspondantes',
+			'iptv.hideMatches' => 'Masquer les chaînes correspondantes',
+			'iptv.pickerCredit' => 'Inspiré de · M3U Web Picker · Zachary Schmook (@zschmook) et des contributeurs',
+			'iptv.exportPrivate' => 'Les adresses des flux peuvent contenir vos identifiants. Enregistrez la liste dans un emplacement privé.',
+			'iptv.dynamicStreamExport' => 'Le portail crée un nouveau lien à chaque lecture. Vous pouvez exporter le guide.',
+			'iptv.moveUp' => 'Mouvement en haut',
+			'iptv.moveDown' => 'Mouvez-vous en bas',
+			'iptv.choosePlaylist' => 'Choisissez le fichier playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'Chaînes · ${count}',
 			'iptv.parentalPinRequired' => 'Le verrouillage des chaînes nécessite un profil local protégé par un code PIN. Ajoutez un code PIN dans Profils pour utiliser le contrôle parental.',
 			'iptv.allowHttp' => 'Autoriser le HTTP non chiffré',
 			'iptv.allowHttpDescription' => 'À utiliser uniquement sur un réseau local de confiance. Préférez HTTPS lorsqu’il est disponible.',
@@ -7216,6 +7246,8 @@ extension on TranslationsFr {
 			'discover.findNext.savedFeedback' => 'Ajouté aux sélections enregistrées',
 			'discover.findNext.skippedFeedback' => 'Ignoré pour le moment',
 			'discover.findNext.releaseToConfirm' => 'Relâchez pour confirmer',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.remoteHint' => 'Couverture sélectionnée : ← / → choisir · Sélectionner : détails · ↑ / ↓ : déplacer la sélection',
 			'discover.studio' => 'Studio',
 			'discover.rating' => 'Évaluation',
@@ -7231,8 +7263,6 @@ extension on TranslationsFr {
 			'discover.person.birthplace' => 'Lieu de naissance',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age} ans)',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (à ${age} ans)',
-			_ => null,
-		} ?? switch (path) {
 			'errors.searchFailed' => ({required Object error}) => 'Échec de la recherche : ${error}',
 			'errors.searchUnavailable' => 'La recherche n\'a pu atteindre aucun serveur multimédia.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Délai d\'attente de connexion dépassé pendant le chargement ${context}',
@@ -7730,6 +7760,8 @@ extension on TranslationsFr {
 			'collections.enterCollectionName' => 'Entrez le nom de la collection',
 			'collections.addedToCollection' => 'Ajouté à la collection',
 			'collections.errorAddingToCollection' => 'Échec de l\'ajout à la collection',
+			_ => null,
+		} ?? switch (path) {
 			'collections.created' => 'Collection créée',
 			'collections.removeFromCollection' => 'Supprimer de la collection',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Retirer "${title}" de cette collection ?',
@@ -7745,8 +7777,6 @@ extension on TranslationsFr {
 			'playlists.enterPlaylistName' => 'Saisissez le nom de la playlist',
 			'playlists.delete' => 'Supprimer la playlist',
 			'playlists.removeItem' => 'Retirer de la playlist',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.smartPlaylist' => 'Playlist intelligente',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} élément', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} éléments', ), 
 			'playlists.emptyPlaylist' => 'Cette playlist est vide',
@@ -8244,6 +8274,8 @@ extension on TranslationsFr {
 			'performanceOverlay.tunneling' => 'Tunnel',
 			'performanceOverlay.passthrough' => 'Transmission directe',
 			'performanceOverlay.aspect' => 'Format',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.rotation' => 'Rotation',
 			'performanceOverlay.dvSource' => 'Source DV',
 			'performanceOverlay.dvPath' => 'Chemin DV',
@@ -8259,8 +8291,6 @@ extension on TranslationsFr {
 			'performanceOverlay.sampleRate' => 'Fréquence d’échantillonnage',
 			'performanceOverlay.pixelFormat' => 'Fmt pixel',
 			'performanceOverlay.hwFormat' => 'Fmt HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.matrix' => 'Matrice',
 			'performanceOverlay.primaries' => 'Primaires',
 			'performanceOverlay.transfer' => 'Transfert',
@@ -8758,6 +8788,8 @@ extension on TranslationsFr {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Résultats de la ${library}',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continuez à regarder + ${n} lignes: mouvement, Bibliothèque, Maison, Héroe, Slide automatique',
 			'homeLayout.renderAsHero' => 'Render comme une carte héros',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.heroOnlySingleCollection' => 'Disponible uniquement lorsque cette ligne se résout aux titres réels d\'une seule collection',
 			'homeLayout.hero' => 'Héroe',
 			'homeLayout.autoSlide' => 'Autoslire',
@@ -8773,8 +8805,6 @@ extension on TranslationsFr {
 			'homeLayout.continueWatchingLibraryDescription' => 'La suite de la bibliothèque de la suite',
 			'homeLayout.continueWatchingHomeDescription' => 'Le nouveau progrès de la ligne montrée sur Home',
 			'homeLayout.nextUpHomeDescription' => 'La prochaine série de l\'épisode non vu diffusée séparément sur Home',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.library' => 'Bibliothèque',
 			'homeLayout.showInRecommended' => 'Présentation dans la bibliothèque recommandée',
 			'homeLayout.customPlexRow' => 'Résultats de la Plex',
@@ -9272,6 +9302,8 @@ extension on TranslationsFr {
 			'audiobook.speedHelp' => 'Choisissez une vitesse de 0,25× à 4×.',
 			'audiobook.apply' => 'Appliquer',
 			'audiobook.customSleep' => 'Temps de sommeil personnalisé',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sleepMinutes' => 'Démonstrations (1 à 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Arrêt après ${count} chapitres',
 			'audiobook.extendSleep' => 'Ajoutez 5 minutes',
@@ -9287,8 +9319,6 @@ extension on TranslationsFr {
 			'audiobook.statusAll' => 'Tous les livres',
 			'audiobook.statusNew' => 'Pas commencé',
 			'audiobook.statusProgress' => 'Au progrès',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.statusFinished' => 'terminé',
 			'audiobook.goToTime' => 'Aller dans le temps',
 			'audiobook.timeHelp' => 'Hores : minutes : secondes ou minutes : secondes',
@@ -9786,6 +9816,8 @@ extension on TranslationsFr {
 			'musicExperience.normalization' => 'Normalisation',
 			'musicExperience.equalizer' => 'Égaliseur',
 			'musicExperience.fades' => 'Fondus de volume',
+			_ => null,
+		} ?? switch (path) {
 			'musicExperience.outputUnknown' => 'Le format de sortie matériel n’a pas été mesuré.',
 			'musicExperience.download' => 'Télécharger la sélection',
 			'musicExperience.ready' => 'Prêt',
@@ -9801,8 +9833,6 @@ extension on TranslationsFr {
 			'musicExperience.routeHint' => 'Le système de la voiture décide si l’application peut s’afficher automatiquement.',
 			'musicExperience.bluetoothDriving' => 'Sorties Bluetooth pour la conduite',
 			'musicExperience.bluetoothDrivingHint' => 'Choisissez les sorties Bluetooth connectées qui ouvrent automatiquement la vue conduite.',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.loudnessMissing' => 'Aucune donnée de sonie renvoyée',
 			'musicTools.loudnessRequested' => 'Demande d’analyse envoyée',
 			'musicTools.loudnessUnsupported' => 'Cette version du serveur ne prend pas en charge les demandes d’analyse',

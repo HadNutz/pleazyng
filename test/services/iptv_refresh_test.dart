@@ -51,8 +51,11 @@ void main() {
       } else {
         final primary = r.uri.path == '/primary';
         final slot = primary ? '12' : '13';
+        final overlap = primary
+            ? ''
+            : '<programme channel="news" start="20261121115000 +0000" stop="20261121121500 +0000"><title>Overlapping fallback</title></programme>';
         final xml =
-            '<tv><programme channel="news" start="20261121${slot}0000 +0000" stop="20261121${slot}3000 +0000"><title>${primary ? label : 'Secondary'}</title></programme></tv>';
+            '<tv>$overlap<programme channel="news" start="20261121${slot}0000 +0000" stop="20261121${slot}3000 +0000"><title>${primary ? label : 'Secondary'}</title></programme></tv>';
         if (primary) {
           r.response.write(xml);
         } else {
@@ -134,6 +137,70 @@ void main() {
           .read<String>('title'),
       'East',
     );
+  });
+
+  test('file lineup survives refresh and profile-local edits without opening a playlist server', () async {
+    resetSharedPreferencesForTest();
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final repo = IptvSourceRepository(db);
+    const list =
+        '#EXTM3U\n#EXTINF:-1 tvg-chno="5",East\nhttps://streams.example/e?token=private\n'
+        '#EXTINF:-1 tvg-chno="6",West\nhttps://streams.example/w';
+    final source = await repo.createSource(
+      profileId: 'p',
+      displayName: 'Home',
+      kind: IptvInputKind.m3uFile,
+      endpoint: '',
+      playlistContents: list,
+    );
+    expect(await repo.refresh('p', source), 2);
+    final stored = await db.customSelect('SELECT playlist_ciphertext FROM iptv_sources').getSingle();
+    expect(stored.read<String>('playlist_ciphertext'), isNot(contains('streams.example')));
+    final channels = await repo.editableChannels('p', source);
+    final original = channels.map((item) => item.id).toList();
+    final edited = original.reversed.toList();
+    await repo.saveLineupOrder('p', source, original, edited);
+    await expectLater(repo.saveLineupOrder('p', source, original, original), throwsA(isA<IptvImportException>()));
+    await expectLater(repo.setChannelsHidden('other', source, original, true), throwsA(isA<IptvImportException>()));
+    await repo.setChannelsHidden('p', source, [edited.first], true);
+    expect((await repo.channels('p')).map((item) => item.title), ['East']);
+    final exported = await repo.exportLineup('p', source, original.toSet(), guide: false);
+    final exportedList = IptvPlaylistParser.parse(exported, base: Uri(), allowHttp: false);
+    expect(exportedList.entries.map((e) => e.title), ['East']);
+    expect(exported, contains('?token=private'));
+    final xml = await repo.exportLineup('p', source, original.toSet(), guide: true);
+    expect(xml, contains('<display-name>East</display-name>'));
+    expect(xml, isNot(contains('West')));
+    expect(xml, isNot(contains('token')));
+    await expectLater(
+      repo.exportLineup('other', source, original.toSet(), guide: false),
+      throwsA(isA<IptvImportException>()),
+    );
+    await repo.setChannelsHidden('p', source, [edited.first], false);
+    await repo.saveChannelPresentation(
+      profileId: 'p',
+      sourceId: source,
+      channelId: edited.first,
+      hidden: false,
+      customTitle: null,
+      groupOverride: null,
+      guideIdOverride: null,
+      parentalLocked: true,
+    );
+    expect(await repo.exportLineup('p', source, {edited.first}, guide: false), '#EXTM3U\n');
+    final config = (await repo.configuration('p', source))!;
+    await repo.updateSource(config);
+    await repo.refresh('p', source);
+    expect((await repo.channels('p')).map((item) => item.title), ['West', 'East']);
+    await expectLater(
+      repo.updateSource(config, playlistContents: '#EXTM3U\n#EXT-X-TARGETDURATION:5'),
+      throwsA(isA<IptvImportException>()),
+    );
+    expect(await repo.refresh('p', source), 2);
+    await repo.updateSource(config, playlistContents: '#EXTM3U\n#EXTINF:-1,South\nhttps://streams.example/s');
+    expect(await repo.refresh('p', source), 1);
+    expect((await repo.channels('p')).single.title, 'South');
   });
 
   test('a raw gzip guide cannot exceed the decoded guide limit', () async {

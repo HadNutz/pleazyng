@@ -66,6 +66,7 @@ class TranslationsJa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$ja dialog = _Translations$dialog$ja._(_root);
 	@override late final _Translations$profiles$ja profiles = _Translations$profiles$ja._(_root);
 	@override late final _Translations$connections$ja connections = _Translations$connections$ja._(_root);
+	@override late final _Translations$iptv$ja iptv = _Translations$iptv$ja._(_root);
 	@override late final _Translations$accountPreferences$ja accountPreferences = _Translations$accountPreferences$ja._(_root);
 	@override late final _Translations$discover$ja discover = _Translations$discover$ja._(_root);
 	@override late final _Translations$errors$ja errors = _Translations$errors$ja._(_root);
@@ -1639,6 +1640,30 @@ class _Translations$connections$ja extends Translations$connections$en {
 	@override String get signInAgain => '再度サインイン';
 	@override String editMediaBrowserTitle({required Object product}) => '${product}接続を編集';
 	@override String editMediaBrowserIntro({required Object serverName}) => '${serverName}のURLを追加または削除します。Plezyは到達可能なURLのうち、レイテンシーが最も低いものを使用します。';
+}
+
+// Path: iptv
+class _Translations$iptv$ja extends Translations$iptv$en {
+	_Translations$iptv$ja._(TranslationsJa root) : this._root = root, super.internal(root);
+
+	final TranslationsJa _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'チャンネルの順序';
+	@override String get orderChanged => 'チャンネルの順序が変更されました。確認してからもう一度お試しください。';
+	@override String get localPlaylist => 'M3Uファイル';
+	@override String get pastePlaylist => 'プレイリストのテキストを貼り付け';
+	@override String get playlistBase => '相対リンクの基準URL（任意）';
+	@override String get localPlaylistHelp => 'M3UまたはM3U8形式のチャンネルリストを非公開のコピーとして取り込みます。別のファイルで置き換えられます。';
+	@override String get showMatches => '一致するチャンネルを表示';
+	@override String get hideMatches => '一致するチャンネルを非表示';
+	@override String get pickerCredit => '着想元 · M3U Web Picker · Zachary Schmook (@zschmook) ほか貢献者';
+	@override String get exportPrivate => '配信URLにはプロバイダーの認証情報が含まれる場合があります。リストは非公開の場所に保存してください。';
+	@override String get dynamicStreamExport => 'このポータルは再生ごとに新しいリンクを作成します。番組表は書き出せます。';
+	@override String get moveUp => '移動アップ';
+	@override String get moveDown => 'ダウン移動';
+	@override String get choosePlaylist => 'プレイリストファイルを選択';
+	@override String affectedChannels({required Object count}) => 'チャンネル · ${count}';
 }
 
 // Path: accountPreferences
@@ -7011,6 +7036,21 @@ extension on TranslationsJa {
 			'connections.signInAgain' => '再度サインイン',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product}接続を編集',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName}のURLを追加または削除します。Plezyは到達可能なURLのうち、レイテンシーが最も低いものを使用します。',
+			'iptv.lineupOrder' => 'チャンネルの順序',
+			'iptv.orderChanged' => 'チャンネルの順序が変更されました。確認してからもう一度お試しください。',
+			'iptv.localPlaylist' => 'M3Uファイル',
+			'iptv.pastePlaylist' => 'プレイリストのテキストを貼り付け',
+			'iptv.playlistBase' => '相対リンクの基準URL（任意）',
+			'iptv.localPlaylistHelp' => 'M3UまたはM3U8形式のチャンネルリストを非公開のコピーとして取り込みます。別のファイルで置き換えられます。',
+			'iptv.showMatches' => '一致するチャンネルを表示',
+			'iptv.hideMatches' => '一致するチャンネルを非表示',
+			'iptv.pickerCredit' => '着想元 · M3U Web Picker · Zachary Schmook (@zschmook) ほか貢献者',
+			'iptv.exportPrivate' => '配信URLにはプロバイダーの認証情報が含まれる場合があります。リストは非公開の場所に保存してください。',
+			'iptv.dynamicStreamExport' => 'このポータルは再生ごとに新しいリンクを作成します。番組表は書き出せます。',
+			'iptv.moveUp' => '移動アップ',
+			'iptv.moveDown' => 'ダウン移動',
+			'iptv.choosePlaylist' => 'プレイリストファイルを選択',
+			'iptv.affectedChannels' => ({required Object count}) => 'チャンネル · ${count}',
 			'accountPreferences.sectionTitle' => 'アカウント設定',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '音声・字幕・ライブラリのオプションは${account}に保存されています',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '音声・字幕・ライブラリのオプションは${count}個のアカウントに保存されています',
@@ -7167,6 +7207,8 @@ extension on TranslationsJa {
 			'discover.directors' => '監督',
 			'discover.movie' => '映画',
 			'discover.tvShow' => 'テレビ番組',
+			_ => null,
+		} ?? switch (path) {
 			'discover.minutesLeft' => ({required Object minutes}) => '残り${minutes}分',
 			'discover.moreLikeThis' => '似ている作品',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} タイトル', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)}作品', ), 
@@ -7182,8 +7224,6 @@ extension on TranslationsJa {
 			'errors.unableToLoad' => ({required Object context}) => '${context}を読み込めませんでした。もう一度お試しください。',
 			'errors.noClientAvailable' => 'クライアントが利用できません',
 			'errors.pleaseEnterToken' => 'トークンを入力してください',
-			_ => null,
-		} ?? switch (path) {
 			'errors.invalidToken' => '無効なトークン',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'トークンの検証に失敗しました: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName}への切替に失敗しました',
@@ -7681,6 +7721,8 @@ extension on TranslationsJa {
 			'collections.removeFromCollectionFailed' => 'コレクションからの削除に失敗しました',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'コレクションからの削除エラー: ${error}',
 			'collections.searchCollections' => 'コレクションを検索…',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.title' => 'プレイリスト',
 			'playlists.playlist' => 'プレイリスト',
 			'playlists.noPlaylists' => 'プレイリストが見つかりません',
@@ -7696,8 +7738,6 @@ extension on TranslationsJa {
 			'playlists.deleteMessage' => ({required Object name}) => '「${name}」を削除しますか？',
 			'playlists.created' => 'プレイリストを作成しました',
 			'playlists.deleted' => 'プレイリストを削除しました',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemAdded' => 'プレイリストに追加しました',
 			'playlists.itemRemoved' => 'プレイリストから削除しました',
 			'playlists.selectPlaylist' => 'プレイリストを選択',
@@ -8195,6 +8235,8 @@ extension on TranslationsJa {
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision デコーダー（P7→8.1）',
 			'performanceOverlay.dvRouteBaseLayer' => 'ベースレイヤー',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ベースレイヤー',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG ベースレイヤー',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR ベースレイヤー',
 			'performanceOverlay.dvRouteReshaped' => 'RPU リシェイプ（gpu-next）',
@@ -8210,8 +8252,6 @@ extension on TranslationsJa {
 			'performanceOverlay.displayFps' => '表示 FPS',
 			'performanceOverlay.avSync' => 'A/V 同期',
 			'performanceOverlay.dropped' => 'ドロップ',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU 平均',
 			'performanceOverlay.dvSampleAverage' => 'DV サンプル平均',
@@ -8709,6 +8749,8 @@ extension on TranslationsJa {
 			'homeLayout.autoSlideEditDescription' => 'スライドは数秒ごとに自体でスライドします。 オフ: 矢をクリックする場合(PC)または遠隔(TV)の左/右を押す場合のみ動きます。',
 			'homeLayout.enableHeroFirst' => '英雄を最初に',
 			'homeLayout.showOnHome' => 'ホームスクリーンで表示',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.home' => 'ホーム',
 			'homeLayout.removeFromHome' => '家から取り除く',
 			'homeLayout.selectRowsFirst' => 'まずは下のホームラインを選択します。',
@@ -8724,8 +8766,6 @@ extension on TranslationsJa {
 			'homeLayout.heroNeedsSurface' => '図書館またはホームをチェックするには、まず、ヒーローがどこかで表示する必要があります。',
 			'homeLayout.removeHub' => 'ハブを削除',
 			'homeLayout.noPlexRows' => '番号 Plex 管理行がこの図書館に戻りました。',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.openDetails' => 'オープン 詳細',
 			'homeLayout.heroCards' => 'ヒーローカード',
 			'homeLayout.tapHeroCard' => 'ヒーローカードを打ち出す',
@@ -9223,6 +9263,8 @@ extension on TranslationsJa {
 			'audiobook.sortTitle' => 'タイトル',
 			'audiobook.sortAuthor' => '著者',
 			'audiobook.sortNarrator' => '講演者',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortSeries' => 'シリーズオーダー',
 			'audiobook.sortRecent' => '最近オープン',
 			'audiobook.statusFilter' => '読書状態',
@@ -9238,8 +9280,6 @@ extension on TranslationsJa {
 			'audiobook.recoveryImportConfirm' => 'この暗号化された回復ファイルを現在の読み込みポジションとノートと組み合わせますか? 既存の歴史が保存されます. 共有図書館およびアイテムIDは含まれていません。',
 			'audiobook.recoveryExported' => '暗号化されたリハビリファイルが保存されました。',
 			'audiobook.recoveryImported' => 'リハビリデータが合併。',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'ご自身のBookOrbitアカウントにサインインすると、本を閲覧して再生できます。未登録タイトルのリクエストは、接続済みのSeerrNGインスタンスを通じて送信されます。',
 			'sourceSetup.bookorbitOpen' => 'BookOrbitで開く',
 			'sourceSetup.bookorbitDetailHelp' => 'このタイトルをBookOrbitで表示して、ライブラリの詳細やPleazyngで開けない形式を管理できます。再生位置はBookOrbitアカウントと同期されます。',
@@ -9737,6 +9777,8 @@ extension on TranslationsJa {
 			'musicTools.charts' => '再生ランキング',
 			'musicTools.rediscover' => '再発見',
 			'musicTools.stations' => 'ミュージックステーション',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.prompt' => '説明からプレイリスト',
 			'musicTools.provider' => 'プロバイダーの生成URL',
 			'musicTools.model' => 'モデル名',
@@ -9752,8 +9794,6 @@ extension on TranslationsJa {
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '分',
 			'musicTools.rules' => 'フィルター',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => '排他オーディオ出力',
 			'musicTools.preamp' => 'プリアンプ',
 			'musicTools.ratingPending' => 'この端末に保存済み・同期待ち',

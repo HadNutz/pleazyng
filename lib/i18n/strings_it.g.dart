@@ -66,6 +66,7 @@ class TranslationsIt extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$it dialog = _Translations$dialog$it._(_root);
 	@override late final _Translations$profiles$it profiles = _Translations$profiles$it._(_root);
 	@override late final _Translations$connections$it connections = _Translations$connections$it._(_root);
+	@override late final _Translations$iptv$it iptv = _Translations$iptv$it._(_root);
 	@override late final _Translations$accountPreferences$it accountPreferences = _Translations$accountPreferences$it._(_root);
 	@override late final _Translations$discover$it discover = _Translations$discover$it._(_root);
 	@override late final _Translations$errors$it errors = _Translations$errors$it._(_root);
@@ -1643,6 +1644,30 @@ class _Translations$connections$it extends Translations$connections$en {
 	@override String get signInAgain => 'Accedi di nuovo';
 	@override String editMediaBrowserTitle({required Object product}) => 'Modifica connessione ${product}';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Aggiungi o rimuovi gli URL per ${serverName}. Pleazyng userà l\'URL raggiungibile con la latenza più bassa.';
+}
+
+// Path: iptv
+class _Translations$iptv$it extends Translations$iptv$en {
+	_Translations$iptv$it._(TranslationsIt root) : this._root = root, super.internal(root);
+
+	final TranslationsIt _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'Ordine dei canali';
+	@override String get orderChanged => 'L’ordine dei canali è cambiato. Controllalo e riprova.';
+	@override String get localPlaylist => 'File M3U';
+	@override String get pastePlaylist => 'Incolla il testo della playlist';
+	@override String get playlistBase => 'URL di base per i collegamenti relativi (facoltativo)';
+	@override String get localPlaylistHelp => 'Importa una copia privata di un elenco di canali M3U o M3U8. Puoi sostituirla con un altro file.';
+	@override String get showMatches => 'Mostra i canali corrispondenti';
+	@override String get hideMatches => 'Nascondi i canali corrispondenti';
+	@override String get pickerCredit => 'Ispirato a · M3U Web Picker · Zachary Schmook (@zschmook) e collaboratori';
+	@override String get exportPrivate => 'Gli indirizzi dei flussi potrebbero includere le credenziali del fornitore. Salva l’elenco in un luogo privato.';
+	@override String get dynamicStreamExport => 'Il portale crea un nuovo collegamento a ogni riproduzione. Puoi esportare la guida.';
+	@override String get moveUp => 'Move in alto';
+	@override String get moveDown => 'Move verso il basso';
+	@override String get choosePlaylist => 'Scegli il file di playlist';
+	@override String affectedChannels({required Object count}) => 'Canali · ${count}';
 }
 
 // Path: accountPreferences
@@ -7023,6 +7048,21 @@ extension on TranslationsIt {
 			'connections.signInAgain' => 'Accedi di nuovo',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Modifica connessione ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Aggiungi o rimuovi gli URL per ${serverName}. Pleazyng userà l\'URL raggiungibile con la latenza più bassa.',
+			'iptv.lineupOrder' => 'Ordine dei canali',
+			'iptv.orderChanged' => 'L’ordine dei canali è cambiato. Controllalo e riprova.',
+			'iptv.localPlaylist' => 'File M3U',
+			'iptv.pastePlaylist' => 'Incolla il testo della playlist',
+			'iptv.playlistBase' => 'URL di base per i collegamenti relativi (facoltativo)',
+			'iptv.localPlaylistHelp' => 'Importa una copia privata di un elenco di canali M3U o M3U8. Puoi sostituirla con un altro file.',
+			'iptv.showMatches' => 'Mostra i canali corrispondenti',
+			'iptv.hideMatches' => 'Nascondi i canali corrispondenti',
+			'iptv.pickerCredit' => 'Ispirato a · M3U Web Picker · Zachary Schmook (@zschmook) e collaboratori',
+			'iptv.exportPrivate' => 'Gli indirizzi dei flussi potrebbero includere le credenziali del fornitore. Salva l’elenco in un luogo privato.',
+			'iptv.dynamicStreamExport' => 'Il portale crea un nuovo collegamento a ogni riproduzione. Puoi esportare la guida.',
+			'iptv.moveUp' => 'Move in alto',
+			'iptv.moveDown' => 'Move verso il basso',
+			'iptv.choosePlaylist' => 'Scegli il file di playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'Canali · ${count}',
 			'accountPreferences.sectionTitle' => 'Preferenze dell\'account',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Opzioni di audio, sottotitoli e libreria salvate su ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Opzioni di audio, sottotitoli e libreria salvate su ${count} account',
@@ -7179,6 +7219,8 @@ extension on TranslationsIt {
 			'discover.directors' => 'Registi',
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'Serie TV',
+			_ => null,
+		} ?? switch (path) {
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} minuti rimanenti',
 			'discover.moreLikeThis' => 'Altri contenuti simili',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('it'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titolo', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titoli', ), 
@@ -7194,8 +7236,6 @@ extension on TranslationsIt {
 			'errors.unableToLoad' => ({required Object context}) => 'Impossibile caricare ${context}. Riprova.',
 			'errors.noClientAvailable' => 'Nessun client disponibile',
 			'errors.pleaseEnterToken' => 'Inserisci un token',
-			_ => null,
-		} ?? switch (path) {
 			'errors.invalidToken' => 'Token non valido',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Impossibile verificare il token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Impossibile passare a ${displayName}',
@@ -7693,6 +7733,8 @@ extension on TranslationsIt {
 			'collections.removeFromCollectionFailed' => 'Impossibile rimuovere dalla raccolta',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Errore durante la rimozione dell\'elemento dalla raccolta: ${error}',
 			'collections.searchCollections' => 'Cerca raccolte...',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.title' => 'Playlist',
 			'playlists.playlist' => 'Playlist',
 			'playlists.noPlaylists' => 'Nessuna playlist trovata',
@@ -7708,8 +7750,6 @@ extension on TranslationsIt {
 			'playlists.deleteMessage' => ({required Object name}) => 'Sei sicuro di voler eliminare "${name}"?',
 			'playlists.created' => 'Playlist creata',
 			'playlists.deleted' => 'Playlist eliminata',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemAdded' => 'Aggiunto alla playlist',
 			'playlists.itemRemoved' => 'Rimosso dalla playlist',
 			'playlists.selectPlaylist' => 'Seleziona playlist',
@@ -8207,6 +8247,8 @@ extension on TranslationsIt {
 			'performanceOverlay.dvRouteDecoderP81' => 'Decoder Dolby Vision (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Livello base',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Livello base HDR10',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Livello base HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'Livello base SDR',
 			'performanceOverlay.dvRouteReshaped' => 'Rimodellato con RPU (gpu-next)',
@@ -8222,8 +8264,6 @@ extension on TranslationsIt {
 			'performanceOverlay.displayFps' => 'FPS display',
 			'performanceOverlay.avSync' => 'Sync A/V',
 			'performanceOverlay.dropped' => 'Scartati',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'Media DV RPU',
 			'performanceOverlay.dvSampleAverage' => 'Media camp. DV',
@@ -8721,6 +8761,8 @@ extension on TranslationsIt {
 			'homeLayout.autoSlideEditDescription' => 'Spegne: si muove solo quando si fa clic su una pistola (PC) o premere sinistra/diretta sul remote (TV).',
 			'homeLayout.enableHeroFirst' => 'Permettere il primo eroe',
 			'homeLayout.showOnHome' => 'Mostra su Home Screen',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.home' => 'Home',
 			'homeLayout.removeFromHome' => 'Rimuovere da casa',
 			'homeLayout.selectRowsFirst' => 'Selezionare le linee di casa sotto prima.',
@@ -8736,8 +8778,6 @@ extension on TranslationsIt {
 			'homeLayout.heroNeedsSurface' => 'Scopri la biblioteca o la casa prima - il protagonista ha bisogno di qualche parte per mostrare',
 			'homeLayout.removeHub' => 'Rimuovere Hub',
 			'homeLayout.noPlexRows' => 'N. Plex rami gestiti restituiti per questa biblioteca.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.openDetails' => 'Dettagli aperti',
 			'homeLayout.heroCards' => 'Carte di eroe',
 			'homeLayout.tapHeroCard' => 'Scopri una carta di eroe',
@@ -9235,6 +9275,8 @@ extension on TranslationsIt {
 			'audiobook.sortTitle' => 'Titolo',
 			'audiobook.sortAuthor' => 'Autore',
 			'audiobook.sortNarrator' => 'Narratore',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortSeries' => 'Ordine della serie',
 			'audiobook.sortRecent' => 'Aperti di recente',
 			'audiobook.statusFilter' => 'Stato di lettura',
@@ -9250,8 +9292,6 @@ extension on TranslationsIt {
 			'audiobook.recoveryImportConfirm' => 'Combinare questo file di recupero crittografato con posizioni di lettura corrente e note? Storia esistente sarà conservata. ID della biblioteca condivisa e degli articoli non sono inclusi; impostare ID corrispondenti su ogni dispositivo prima dell\'importazione.',
 			'audiobook.recoveryExported' => 'Il file di recupero crittografato salvato.',
 			'audiobook.recoveryImported' => 'I dati di recupero sono misti.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Accedi con il tuo account BookOrbit per sfogliare e riprodurre i suoi libri. Le richieste per i titoli mancanti passano comunque dall\'istanza SeerrNG collegata.',
 			'sourceSetup.bookorbitOpen' => 'Apri in BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Visualizza questo titolo in BookOrbit per gestire i dettagli della libreria e i formati che Pleazyng non può aprire. I progressi di ascolto si sincronizzano con il tuo account BookOrbit.',
@@ -9749,6 +9789,8 @@ extension on TranslationsIt {
 			'musicTools.charts' => 'Classifiche di ascolto',
 			'musicTools.rediscover' => 'Riscopri',
 			'musicTools.stations' => 'Stazioni musicali',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.prompt' => 'Playlist da descrizione',
 			'musicTools.provider' => 'URL di generazione del fornitore',
 			'musicTools.model' => 'Nome del modello',
@@ -9764,8 +9806,6 @@ extension on TranslationsIt {
 			'musicTools.missing' => 'N/D',
 			'musicTools.minutes' => 'Minuti',
 			'musicTools.rules' => 'Filtri',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Uscita audio esclusiva',
 			'musicTools.preamp' => 'Preamplificazione',
 			'musicTools.ratingPending' => 'Salvato sul dispositivo; sincronizzazione in attesa',

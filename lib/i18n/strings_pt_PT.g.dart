@@ -41,6 +41,7 @@ class TranslationsPtPt extends TranslationsPt with BaseTranslations<AppLocale, T
 	TranslationsPtPt $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsPtPt(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final Translations$iptv$pt_PT iptv = Translations$iptv$pt_PT.internal(_root);
 	@override late final Translations$appIcon$pt_PT appIcon = Translations$appIcon$pt_PT.internal(_root);
 	@override late final Translations$auth$pt_PT auth = Translations$auth$pt_PT.internal(_root);
 	@override late final Translations$common$pt_PT common = Translations$common$pt_PT.internal(_root);
@@ -90,6 +91,30 @@ class TranslationsPtPt extends TranslationsPt with BaseTranslations<AppLocale, T
 	@override late final Translations$musicTools$pt_PT musicTools = Translations$musicTools$pt_PT.internal(_root);
 	@override late final Translations$musicExperience$pt_PT musicExperience = Translations$musicExperience$pt_PT.internal(_root);
 	@override late final Translations$subtitleAiUi$pt_PT subtitleAiUi = Translations$subtitleAiUi$pt_PT.internal(_root);
+}
+
+// Path: iptv
+class Translations$iptv$pt_PT extends Translations$iptv$pt {
+	Translations$iptv$pt_PT.internal(TranslationsPtPt root) : this._root = root, super.internal(root);
+
+	final TranslationsPtPt _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'Ordem dos canais';
+	@override String get orderChanged => 'A ordem dos canais mudou. Verifique e tente novamente.';
+	@override String get localPlaylist => 'Ficheiro M3U';
+	@override String get pastePlaylist => 'Colar o texto da lista de reprodução';
+	@override String get playlistBase => 'URL base para ligações relativas (opcional)';
+	@override String get localPlaylistHelp => 'Importe uma cópia privada de uma lista de canais M3U ou M3U8. Pode substituí-la por outro ficheiro.';
+	@override String get showMatches => 'Mostrar canais correspondentes';
+	@override String get hideMatches => 'Ocultar canais correspondentes';
+	@override String get pickerCredit => 'Inspirado em · M3U Web Picker · Zachary Schmook (@zschmook) e colaboradores';
+	@override String get exportPrivate => 'Os endereços das transmissões podem incluir credenciais do fornecedor. Guarde a lista num local privado.';
+	@override String get dynamicStreamExport => 'O portal cria uma nova ligação em cada reprodução. Pode exportar o guia.';
+	@override String get moveUp => 'Move em cima';
+	@override String get moveDown => 'Move abaixo';
+	@override String get choosePlaylist => 'Escolha o arquivo de playlist';
+	@override String affectedChannels({required Object count}) => 'Canais · ${count}';
 }
 
 // Path: appIcon
@@ -1381,6 +1406,21 @@ class Translations$services$libraryFilter$pt_PT extends Translations$services$li
 extension on TranslationsPtPt {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'iptv.lineupOrder' => 'Ordem dos canais',
+			'iptv.orderChanged' => 'A ordem dos canais mudou. Verifique e tente novamente.',
+			'iptv.localPlaylist' => 'Ficheiro M3U',
+			'iptv.pastePlaylist' => 'Colar o texto da lista de reprodução',
+			'iptv.playlistBase' => 'URL base para ligações relativas (opcional)',
+			'iptv.localPlaylistHelp' => 'Importe uma cópia privada de uma lista de canais M3U ou M3U8. Pode substituí-la por outro ficheiro.',
+			'iptv.showMatches' => 'Mostrar canais correspondentes',
+			'iptv.hideMatches' => 'Ocultar canais correspondentes',
+			'iptv.pickerCredit' => 'Inspirado em · M3U Web Picker · Zachary Schmook (@zschmook) e colaboradores',
+			'iptv.exportPrivate' => 'Os endereços das transmissões podem incluir credenciais do fornecedor. Guarde a lista num local privado.',
+			'iptv.dynamicStreamExport' => 'O portal cria uma nova ligação em cada reprodução. Pode exportar o guia.',
+			'iptv.moveUp' => 'Move em cima',
+			'iptv.moveDown' => 'Move abaixo',
+			'iptv.choosePlaylist' => 'Escolha o arquivo de playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'Canais · ${count}',
 			'appIcon.defaultIcon' => 'Predefinição',
 			'auth.quickConnect' => 'Ligação rápida',
 			'auth.useQuickConnect' => 'Utilizar Ligação rápida',
@@ -1878,6 +1918,8 @@ extension on TranslationsPtPt {
 			'romm.refreshBeforePlay' => 'Refresh this library to check available players.',
 			'romm.missing' => 'This copy has no game files on the server.',
 			'romm.noRoute' => 'No compatible in-app player is available for this copy.',
+			_ => null,
+		} ?? switch (path) {
 			'romm.firmware' => 'Firmware',
 			'romm.firmwareHelp' => 'Some systems need firmware. Manage it in RomM; the selected emulator reports any missing requirements at launch.',
 			'romm.achievements' => 'RetroAchievements',
@@ -1893,8 +1935,6 @@ extension on TranslationsPtPt {
 			'romm.slot' => 'Save slot',
 			'romm.core' => 'Core identity',
 			'romm.compatibilityHelp' => 'Save states require the same emulator and compatible core version. Choose the exact game copy before importing.',
-			_ => null,
-		} ?? switch (path) {
 			'romm.saveConflict' => 'Both copies changed. Keep both versions, use the server copy, or explicitly replace it.',
 			'romm.keepBoth' => 'Keep both',
 			'romm.useServer' => 'Use server copy',

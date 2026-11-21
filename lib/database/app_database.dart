@@ -91,7 +91,7 @@ final class LegacyDesktopDatabasePreview {
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  static const int currentSchemaVersion = 39;
+  static const int currentSchemaVersion = 40;
 
   /// Resolves the current app-owned database path for first-run migration UI.
   /// This never scans or adopts another application's files.
@@ -392,7 +392,7 @@ class AppDatabase extends _$AppDatabase {
       profileConnections,
     )..orderBy([(t) => OrderingTerm.asc(t.profileId), (t) => OrderingTerm.asc(t.connectionId)])).get();
     final iptvSourcesRows = await customSelect('''
-      SELECT id, profile_id, display_name, kind, config_ciphertext, revision, generation,
+      SELECT id, profile_id, display_name, kind, config_ciphertext, playlist_ciphertext, revision, generation,
              created_at, last_success_at, last_error_code
       FROM iptv_sources ORDER BY id
     ''').get();
@@ -402,7 +402,7 @@ class AppDatabase extends _$AppDatabase {
       'SELECT source_id,feed_key,channel_id FROM iptv_feed_identities WHERE feed_key != channel_id ORDER BY source_id,feed_key',
     ).get();
     final iptvOverrideRows = await customSelect('''
-      SELECT profile_id, source_id, channel_id, favorite, favorite_order, hidden, custom_title, group_override, guide_id_override, parental_locked
+      SELECT profile_id, source_id, channel_id, favorite, favorite_order, hidden, custom_title, group_override, guide_id_override, parental_locked, lineup_order
       FROM iptv_channel_overrides ORDER BY profile_id, source_id, channel_id
     ''').get();
     final iptvGroupLockRows = await customSelect('''
@@ -438,6 +438,7 @@ class AppDatabase extends _$AppDatabase {
             'displayName': row.data['display_name'],
             'kind': row.data['kind'],
             'configCiphertext': row.data['config_ciphertext'],
+            'playlistCiphertext': row.data['playlist_ciphertext'],
             'revision': row.data['revision'],
             'generation': row.data['generation'],
             'createdAt': row.data['created_at'],
@@ -457,6 +458,7 @@ class AppDatabase extends _$AppDatabase {
             'channelId': row.data['channel_id'],
             'favorite': row.data['favorite'] == 1,
             'favoriteOrder': row.data['favorite_order'],
+            'lineupOrder': row.data['lineup_order'],
             'hidden': row.data['hidden'] == 1,
             'customTitle': row.data['custom_title'],
             'groupOverride': row.data['group_override'],
@@ -675,13 +677,14 @@ class AppDatabase extends _$AppDatabase {
       }
       for (final row in iptvSourcesRows) {
         await customStatement(
-          'INSERT INTO iptv_sources(id, profile_id, display_name, kind, config_ciphertext, revision, generation, created_at, last_success_at, last_error_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          'INSERT INTO iptv_sources(id, profile_id, display_name, kind, config_ciphertext, playlist_ciphertext, revision, generation, created_at, last_success_at, last_error_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
           [
             row['id'],
             row['profileId'],
             row['displayName'],
             row['kind'],
             row['configCiphertext'],
+            row['playlistCiphertext'],
             row['revision'],
             row['generation'],
             row['createdAt'],
@@ -699,7 +702,7 @@ class AppDatabase extends _$AppDatabase {
       }
       for (final row in iptvOverrideRows) {
         await customStatement(
-          'INSERT INTO iptv_channel_overrides(profile_id, source_id, channel_id, favorite, favorite_order, hidden, custom_title, group_override, guide_id_override, parental_locked) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          'INSERT INTO iptv_channel_overrides(profile_id, source_id, channel_id, favorite, favorite_order, hidden, custom_title, group_override, guide_id_override, parental_locked, lineup_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
           [
             row['profileId'],
             row['sourceId'],
@@ -711,6 +714,7 @@ class AppDatabase extends _$AppDatabase {
             row['groupOverride'],
             row['guideIdOverride'],
             row['parentalLocked'] == true ? 1 : 0,
+            row['lineupOrder'],
           ],
         );
       }
@@ -1164,6 +1168,16 @@ class AppDatabase extends _$AppDatabase {
               ON o.source_id=c.source_id AND o.channel_id=c.channel_id
             WHERE c.logo_url IS NOT NULL AND COALESCE(NULLIF(o.guide_id_override,''),c.tvg_id) IS NOT NULL''');
         }
+        if (from < 40) {
+          final overrides = await customSelect('PRAGMA table_info(iptv_channel_overrides)').get();
+          if (!overrides.any((row) => row.read<String>('name') == 'lineup_order')) {
+            await customStatement('ALTER TABLE iptv_channel_overrides ADD COLUMN lineup_order INTEGER');
+          }
+          final columns = await customSelect('PRAGMA table_info(iptv_sources)').get();
+          if (!columns.any((row) => row.read<String>('name') == 'playlist_ciphertext')) {
+            await customStatement('ALTER TABLE iptv_sources ADD COLUMN playlist_ciphertext TEXT');
+          }
+        }
         if (from < 39) {
           await createDownloadConversionTable(this);
           await _ignoreAlreadyExists(
@@ -1484,6 +1498,7 @@ class AppDatabase extends _$AppDatabase {
         display_name TEXT NOT NULL,
         kind TEXT NOT NULL,
         config_ciphertext TEXT NOT NULL,
+        playlist_ciphertext TEXT,
         revision INTEGER NOT NULL DEFAULT 1,
         generation INTEGER NOT NULL DEFAULT 0,
         created_at INTEGER NOT NULL,
@@ -1545,6 +1560,7 @@ class AppDatabase extends _$AppDatabase {
         channel_id TEXT NOT NULL,
         favorite INTEGER NOT NULL DEFAULT 0,
         favorite_order INTEGER NOT NULL DEFAULT 0,
+        lineup_order INTEGER,
         hidden INTEGER NOT NULL DEFAULT 0,
         custom_title TEXT,
         group_override TEXT,

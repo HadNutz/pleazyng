@@ -66,6 +66,7 @@ class TranslationsHe extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$he dialog = _Translations$dialog$he._(_root);
 	@override late final _Translations$profiles$he profiles = _Translations$profiles$he._(_root);
 	@override late final _Translations$connections$he connections = _Translations$connections$he._(_root);
+	@override late final _Translations$iptv$he iptv = _Translations$iptv$he._(_root);
 	@override late final _Translations$accountPreferences$he accountPreferences = _Translations$accountPreferences$he._(_root);
 	@override late final _Translations$discover$he discover = _Translations$discover$he._(_root);
 	@override late final _Translations$errors$he errors = _Translations$errors$he._(_root);
@@ -1643,6 +1644,30 @@ class _Translations$connections$he extends Translations$connections$en {
 	@override String get signInAgain => 'הצטרפו שוב';
 	@override String editMediaBrowserTitle({required Object product}) => 'תגית: Edit ${product} connection';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'הוספת או הסרת כתובת URL עבור ${serverName}. Pleazyng ישתמש כתובת URL הנגיעה עם הריבית הנמוכה ביותר.';
+}
+
+// Path: iptv
+class _Translations$iptv$he extends Translations$iptv$en {
+	_Translations$iptv$he._(TranslationsHe root) : this._root = root, super.internal(root);
+
+	final TranslationsHe _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'סדר הערוצים';
+	@override String get orderChanged => 'סדר הערוצים השתנה. יש לבדוק אותו ולנסות שוב.';
+	@override String get localPlaylist => 'קובץ M3U';
+	@override String get pastePlaylist => 'הדבקת טקסט של רשימת השמעה';
+	@override String get playlistBase => 'כתובת בסיס לקישורים יחסיים (רשות)';
+	@override String get localPlaylistHelp => 'ייבוא עותק פרטי של רשימת ערוצי M3U או M3U8. אפשר להחליף אותה בקובץ אחר.';
+	@override String get showMatches => 'הצגת ערוצים תואמים';
+	@override String get hideMatches => 'הסתרת ערוצים תואמים';
+	@override String get pickerCredit => 'בהשראת · M3U Web Picker · Zachary Schmook (@zschmook) ושאר התורמים';
+	@override String get exportPrivate => 'כתובות השידורים עשויות להכיל פרטי כניסה לספק. יש לשמור את הרשימה במקום פרטי.';
+	@override String get dynamicStreamExport => 'הפורטל יוצר קישור חדש בכל הפעלה. ניתן לייצא את מדריך השידורים.';
+	@override String get moveUp => 'תנועות למעלה';
+	@override String get moveDown => 'תנו למטה';
+	@override String get choosePlaylist => 'בחר קובץ playlist';
+	@override String affectedChannels({required Object count}) => 'ערוצים · ${count}';
 }
 
 // Path: accountPreferences
@@ -7024,6 +7049,21 @@ extension on TranslationsHe {
 			'connections.signInAgain' => 'הצטרפו שוב',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'תגית: Edit ${product} connection',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'הוספת או הסרת כתובת URL עבור ${serverName}. Pleazyng ישתמש כתובת URL הנגיעה עם הריבית הנמוכה ביותר.',
+			'iptv.lineupOrder' => 'סדר הערוצים',
+			'iptv.orderChanged' => 'סדר הערוצים השתנה. יש לבדוק אותו ולנסות שוב.',
+			'iptv.localPlaylist' => 'קובץ M3U',
+			'iptv.pastePlaylist' => 'הדבקת טקסט של רשימת השמעה',
+			'iptv.playlistBase' => 'כתובת בסיס לקישורים יחסיים (רשות)',
+			'iptv.localPlaylistHelp' => 'ייבוא עותק פרטי של רשימת ערוצי M3U או M3U8. אפשר להחליף אותה בקובץ אחר.',
+			'iptv.showMatches' => 'הצגת ערוצים תואמים',
+			'iptv.hideMatches' => 'הסתרת ערוצים תואמים',
+			'iptv.pickerCredit' => 'בהשראת · M3U Web Picker · Zachary Schmook (@zschmook) ושאר התורמים',
+			'iptv.exportPrivate' => 'כתובות השידורים עשויות להכיל פרטי כניסה לספק. יש לשמור את הרשימה במקום פרטי.',
+			'iptv.dynamicStreamExport' => 'הפורטל יוצר קישור חדש בכל הפעלה. ניתן לייצא את מדריך השידורים.',
+			'iptv.moveUp' => 'תנועות למעלה',
+			'iptv.moveDown' => 'תנו למטה',
+			'iptv.choosePlaylist' => 'בחר קובץ playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'ערוצים · ${count}',
 			'accountPreferences.sectionTitle' => 'העדפות חשבון',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'אפשרויות אודיו, תת-כותרת וספריה נשמרו ב- ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'אפשרויות אודיו, תת-כותרת וספריה מאוחסנות על ${count} חשבונות',
@@ -7180,6 +7220,8 @@ extension on TranslationsHe {
 			'discover.directors' => 'במאים',
 			'discover.movie' => 'סרט',
 			'discover.tvShow' => 'תוכנית טלוויזיה',
+			_ => null,
+		} ?? switch (path) {
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} דקות נותרה',
 			'discover.moreLikeThis' => 'עוד כמו זה',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} כותרת', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} כותרות', ), 
@@ -7195,8 +7237,6 @@ extension on TranslationsHe {
 			'errors.unableToLoad' => ({required Object context}) => 'אין אפשרות להעלות ${context}.',
 			'errors.noClientAvailable' => 'אין לקוחות זמינים',
 			'errors.pleaseEnterToken' => 'אנא הקלד טוקן',
-			_ => null,
-		} ?? switch (path) {
 			'errors.invalidToken' => 'טוקיו חסר תועלת',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'לא ניתן לבדוק טוקן: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'לא הצלחתי לעבור ל- ${displayName}',
@@ -7694,6 +7734,8 @@ extension on TranslationsHe {
 			'collections.removeFromCollectionFailed' => 'לא הצליחו להסיר מהאוסף',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'שגיאה להסרת מתוך הקולקציה: ${error}',
 			'collections.searchCollections' => 'חיפוש אוסף...',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.title' => 'רשימות נגינה',
 			'playlists.playlist' => 'רשימת ניגון',
 			'playlists.noPlaylists' => 'לא נמצאו רשימות משחקים',
@@ -7709,8 +7751,6 @@ extension on TranslationsHe {
 			'playlists.deleteMessage' => ({required Object name}) => 'האם אתה בטוח שאתה רוצה למחוק את "${name}"?',
 			'playlists.created' => 'Playlist שנוצר',
 			'playlists.deleted' => 'Playlist מוחלף',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemAdded' => 'הוספת ל playlist',
 			'playlists.itemRemoved' => 'הוסרו מהפלאי',
 			'playlists.selectPlaylist' => 'בחר Playlist',
@@ -8208,6 +8248,8 @@ extension on TranslationsHe {
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision דקודר (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'מבנה בסיס',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 שכבת בסיס',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'מדרגות בסיס HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR מסגרת בסיס',
 			'performanceOverlay.dvRouteReshaped' => 'RPU מחדש (gpu-next)',
@@ -8223,8 +8265,6 @@ extension on TranslationsHe {
 			'performanceOverlay.displayFps' => 'תצוגה FPS',
 			'performanceOverlay.avSync' => 'A/V סינכרון',
 			'performanceOverlay.dropped' => 'נופל',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'דב RPU',
 			'performanceOverlay.dvRpuAverage' => 'ה-RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'דוגמאות AVG',
@@ -8722,6 +8762,8 @@ extension on TranslationsHe {
 			'homeLayout.autoSlideEditDescription' => 'הוא גם זורם בעצמו כל כמה שניות. off: זורם רק כאשר אתה לוחץ על אקדח (מחשב) או לחץ שמאל / ימין על הרחוק (טלוויזיה).',
 			'homeLayout.enableHeroFirst' => 'תנו לגיבור ראשון',
 			'homeLayout.showOnHome' => 'הצג על המסך הבית',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.home' => 'בית',
 			'homeLayout.removeFromHome' => 'להסיר מהבית',
 			'homeLayout.selectRowsFirst' => 'בחר את שורות הבית למטה קודם.',
@@ -8737,8 +8779,6 @@ extension on TranslationsHe {
 			'homeLayout.heroNeedsSurface' => 'ראשית בדוק את הספרייה או הבית – גיבור צריך איפשהו להראות',
 			'homeLayout.removeHub' => 'להסיר Hub',
 			'homeLayout.noPlexRows' => 'מספר Plex שורות המנוהלות חזרה לספריה זו.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.openDetails' => 'פרטים פתוחים',
 			'homeLayout.heroCards' => 'כרטיסי גיבור',
 			'homeLayout.tapHeroCard' => 'להדביק כרטיס גיבור',
@@ -9236,6 +9276,8 @@ extension on TranslationsHe {
 			'audiobook.sortTitle' => 'כותרת',
 			'audiobook.sortAuthor' => 'סופר',
 			'audiobook.sortNarrator' => 'סיפורי',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortSeries' => 'סדרת הוראות',
 			'audiobook.sortRecent' => 'נפתח לאחרונה',
 			'audiobook.statusFilter' => 'מצב קריאה',
@@ -9251,8 +9293,6 @@ extension on TranslationsHe {
 			'audiobook.recoveryImportConfirm' => 'שילוב זה קובץ ההחזרה מוצפן עם עמדות הקריאה הנוכחיות והערות? ההיסטוריה הקיימת תישמר. ספרייה משותפת ו- פריטים מזהים אינם נכללים; הגדרת מזהים מתאימים על כל מכשיר לפני ייבוא.',
 			'audiobook.recoveryExported' => 'קובץ ההחזרה מוצפן נשמר.',
 			'audiobook.recoveryImported' => 'נתוני ההחזרה מתמזגים.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'יש להתחבר לחשבון BookOrbit האישי שלך כדי לעיין בספרים ולנגן אותם. בקשות לכותרות חסרות עדיין עוברות דרך מופע SeerrNG המחובר שלך.',
 			'sourceSetup.bookorbitOpen' => 'פתיחה ב-BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'אפשר לצפות בכותר הזה ב-BookOrbit כדי לנהל את פרטי הספרייה ואת הפורמטים ש-Pleazyng לא יכול לפתוח. התקדמות ההאזנה מסתנכרנת עם חשבון BookOrbit שלך.',
@@ -9750,6 +9790,8 @@ extension on TranslationsHe {
 			'musicTools.charts' => 'דירוגי האזנה',
 			'musicTools.rediscover' => 'לגלות מחדש',
 			'musicTools.stations' => 'תחנות מוזיקה',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.prompt' => 'רשימה מתיאור',
 			'musicTools.provider' => 'כתובת היצירה של הספק',
 			'musicTools.model' => 'שם המודל',
@@ -9765,8 +9807,6 @@ extension on TranslationsHe {
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'דקות',
 			'musicTools.rules' => 'מסננים',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'פלט שמע בלעדי',
 			'musicTools.preamp' => 'קדם־הגברה',
 			'musicTools.ratingPending' => 'נשמר במכשיר הזה; ממתין לסנכרון',

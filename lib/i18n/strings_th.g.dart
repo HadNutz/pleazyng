@@ -66,6 +66,7 @@ class TranslationsTh extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$th dialog = _Translations$dialog$th._(_root);
 	@override late final _Translations$profiles$th profiles = _Translations$profiles$th._(_root);
 	@override late final _Translations$connections$th connections = _Translations$connections$th._(_root);
+	@override late final _Translations$iptv$th iptv = _Translations$iptv$th._(_root);
 	@override late final _Translations$accountPreferences$th accountPreferences = _Translations$accountPreferences$th._(_root);
 	@override late final _Translations$discover$th discover = _Translations$discover$th._(_root);
 	@override late final _Translations$errors$th errors = _Translations$errors$th._(_root);
@@ -1634,6 +1635,30 @@ class _Translations$connections$th extends Translations$connections$en {
 	@override String get signInAgain => 'ลงทะเบียนอีกครั้ง';
 	@override String editMediaBrowserTitle({required Object product}) => 'Edit ${product} การเชื่อมต่อ';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'เพิ่มหรือลบ URL สําหรับ ${serverName}. Pleazyng จะใช้ URL ที่สามารถเข้าถึงได้ด้วย latency ที่ต่ําสุด';
+}
+
+// Path: iptv
+class _Translations$iptv$th extends Translations$iptv$en {
+	_Translations$iptv$th._(TranslationsTh root) : this._root = root, super.internal(root);
+
+	final TranslationsTh _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'ลำดับช่อง';
+	@override String get orderChanged => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง';
+	@override String get localPlaylist => 'ไฟล์ M3U';
+	@override String get pastePlaylist => 'วางข้อความเพลย์ลิสต์';
+	@override String get playlistBase => 'URL ฐานสำหรับลิงก์สัมพัทธ์ (ไม่บังคับ)';
+	@override String get localPlaylistHelp => 'นำเข้าสำเนาส่วนตัวของรายการช่อง M3U หรือ M3U8 คุณสามารถเลือกไฟล์อื่นมาแทนที่ได้';
+	@override String get showMatches => 'แสดงช่องที่ตรงกัน';
+	@override String get hideMatches => 'ซ่อนช่องที่ตรงกัน';
+	@override String get pickerCredit => 'ได้รับแรงบันดาลใจจาก · M3U Web Picker · Zachary Schmook (@zschmook) และผู้ร่วมพัฒนา';
+	@override String get exportPrivate => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว';
+	@override String get dynamicStreamExport => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้';
+	@override String get moveUp => 'ขึ้นไป';
+	@override String get moveDown => 'การเคลื่อนไหวลง';
+	@override String get choosePlaylist => 'เลือกไฟล์ Playlist';
+	@override String affectedChannels({required Object count}) => 'ช่อง · ${count}';
 }
 
 // Path: accountPreferences
@@ -6991,6 +7016,21 @@ extension on TranslationsTh {
 			'connections.signInAgain' => 'ลงทะเบียนอีกครั้ง',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} การเชื่อมต่อ',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'เพิ่มหรือลบ URL สําหรับ ${serverName}. Pleazyng จะใช้ URL ที่สามารถเข้าถึงได้ด้วย latency ที่ต่ําสุด',
+			'iptv.lineupOrder' => 'ลำดับช่อง',
+			'iptv.orderChanged' => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง',
+			'iptv.localPlaylist' => 'ไฟล์ M3U',
+			'iptv.pastePlaylist' => 'วางข้อความเพลย์ลิสต์',
+			'iptv.playlistBase' => 'URL ฐานสำหรับลิงก์สัมพัทธ์ (ไม่บังคับ)',
+			'iptv.localPlaylistHelp' => 'นำเข้าสำเนาส่วนตัวของรายการช่อง M3U หรือ M3U8 คุณสามารถเลือกไฟล์อื่นมาแทนที่ได้',
+			'iptv.showMatches' => 'แสดงช่องที่ตรงกัน',
+			'iptv.hideMatches' => 'ซ่อนช่องที่ตรงกัน',
+			'iptv.pickerCredit' => 'ได้รับแรงบันดาลใจจาก · M3U Web Picker · Zachary Schmook (@zschmook) และผู้ร่วมพัฒนา',
+			'iptv.exportPrivate' => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว',
+			'iptv.dynamicStreamExport' => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้',
+			'iptv.moveUp' => 'ขึ้นไป',
+			'iptv.moveDown' => 'การเคลื่อนไหวลง',
+			'iptv.choosePlaylist' => 'เลือกไฟล์ Playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'ช่อง · ${count}',
 			'accountPreferences.sectionTitle' => 'การตั้งค่าบัญชี',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'ออฟต์แวร์เสียงและตัวเลือกห้องสมุดที่บันทึกไว้บน ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'ออฟต์แวร์อัตโนมัติและตัวเลือกห้องสมุดที่บันทึกไว้ในบัญชี ${count}',
@@ -7147,6 +7187,8 @@ extension on TranslationsTh {
 			'discover.directors' => 'ผู้กำกับ',
 			'discover.movie' => 'ภาพยนตร์',
 			'discover.tvShow' => 'แสดงทีวี',
+			_ => null,
+		} ?? switch (path) {
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} นาที left',
 			'discover.moreLikeThis' => 'มากกว่าเช่นนี้',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('th'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} หัวข้อ', ), 
@@ -7162,8 +7204,6 @@ extension on TranslationsTh {
 			'errors.unableToLoad' => ({required Object context}) => 'ไม่สามารถโหลด ${context} โปรดลองอีกครั้ง',
 			'errors.noClientAvailable' => 'ไม่มีลูกค้า',
 			'errors.pleaseEnterToken' => 'กรุณาใส่ token',
-			_ => null,
-		} ?? switch (path) {
 			'errors.invalidToken' => 'โค้นที่ผิดพลาด',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'ไม่สามารถตรวจสอบ token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'ไม่สามารถเปลี่ยนไป ${displayName}',
@@ -7661,6 +7701,8 @@ extension on TranslationsTh {
 			'collections.removeFromCollectionFailed' => 'ไม่สามารถถอดออกจากการเก็บรวบรวม',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'ความผิดพลาดในการลบจากการเก็บรวบรวม: ${error}',
 			'collections.searchCollections' => 'ค้นหาคอลเลกชัน',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.title' => 'เพลย์ลิสต์',
 			'playlists.playlist' => 'เพลย์ลิสต์',
 			'playlists.noPlaylists' => 'ไม่พบรายการเล่น',
@@ -7676,8 +7718,6 @@ extension on TranslationsTh {
 			'playlists.deleteMessage' => ({required Object name}) => 'คุณแน่ใจว่าคุณต้องการลบ "${name}"',
 			'playlists.created' => 'Playlist สร้างขึ้น',
 			'playlists.deleted' => 'Playlist ลบ',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemAdded' => 'เพิ่มขึ้นใน Playlist',
 			'playlists.itemRemoved' => 'ลบออกจาก Playlist',
 			'playlists.selectPlaylist' => 'เลือก Playlist',
@@ -8175,6 +8215,8 @@ extension on TranslationsTh {
 			'performanceOverlay.dvRouteDecoderP81' => 'ตัวถอดรหัส Dolby Vision (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'ฐานชั้น',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ชั้นฐาน',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG ฐานชั้น',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR ฐานชั้น',
 			'performanceOverlay.dvRouteReshaped' => 'RPU แก้ไข (gpu-next)',
@@ -8190,8 +8232,6 @@ extension on TranslationsTh {
 			'performanceOverlay.displayFps' => 'แสดง FPS',
 			'performanceOverlay.avSync' => 'A / V Sync',
 			'performanceOverlay.dropped' => 'ละลาย',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPUs',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'DV ตัวอย่าง Avg',
@@ -8689,6 +8729,8 @@ extension on TranslationsTh {
 			'homeLayout.autoSlideEditDescription' => 'นอกจากนี้ยังสไลด์ด้วยตัวเองทุกวินาที ปิด: เท่านั้นเคลื่อนที่เมื่อคุณคลิกปืน (พีซี) หรือกดซ้าย / ขวาบนระยะไกล (ทีวี) สไลด์และ d-pad ทํางานเสมอในทางใด ๆ',
 			'homeLayout.enableHeroFirst' => 'อนุญาตให้ฮีโร่แรก',
 			'homeLayout.showOnHome' => 'แสดงบนหน้าจอบ้าน',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.home' => 'บ้าน',
 			'homeLayout.removeFromHome' => 'เอาจากบ้าน',
 			'homeLayout.selectRowsFirst' => 'เลือกเส้นบ้านด้านล่างแรก',
@@ -8704,8 +8746,6 @@ extension on TranslationsTh {
 			'homeLayout.heroNeedsSurface' => 'ตรวจสอบห้องสมุดหรือบ้านแรก — สัตว์ประหลาดต้องการที่ไหนที่จะแสดง',
 			'homeLayout.removeHub' => 'ลบ Hub',
 			'homeLayout.noPlexRows' => 'หมายเลข Plex-จัดการสายกลับสําหรับห้องสมุดนี้',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.openDetails' => 'รายละเอียดเปิด',
 			'homeLayout.heroCards' => 'บัตรฮีโร่',
 			'homeLayout.tapHeroCard' => 'การสูญเสียการ์ดฮีโร่',
@@ -9203,6 +9243,8 @@ extension on TranslationsTh {
 			'audiobook.sortTitle' => 'ชื่อ',
 			'audiobook.sortAuthor' => 'ผู้เขียน',
 			'audiobook.sortNarrator' => 'พูดคุย',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortSeries' => 'ชุดคําสั่ง',
 			'audiobook.sortRecent' => 'กุมภาพันธ์',
 			'audiobook.statusFilter' => 'การอ่านสถานะ',
@@ -9218,8 +9260,6 @@ extension on TranslationsTh {
 			'audiobook.recoveryImportConfirm' => 'ผสมไฟล์การกู้คืนที่เข้ารหัสนี้กับตําแหน่งอ่านปัจจุบันและบันทึก? ประวัติศาสตร์ที่มีอยู่จะถูกเก็บไว้. หมายเลขห้องสมุดร่วมกันและรายการไม่รวม; การตั้งค่าหมายเลขที่เกี่ยวข้องในแต่ละอุปกรณ์ก่อนที่จะนําเข้า',
 			'audiobook.recoveryExported' => 'ไฟล์การกู้คืนที่เข้ารหัสถูกบันทึก',
 			'audiobook.recoveryImported' => 'ข้อมูลการกู้คืนรวม',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'ลงชื่อเข้าใช้บัญชี BookOrbit ของคุณเพื่อเรียกดูและเล่นหนังสือ คำขอสำหรับเรื่องที่ไม่มีให้บริการยังคงส่งผ่าน SeerrNG ที่เชื่อมต่อไว้',
 			'sourceSetup.bookorbitOpen' => 'เปิดใน BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'ดูเรื่องนี้ใน BookOrbit เพื่อจัดการรายละเอียดในคลังและรูปแบบไฟล์ที่ Pleazyng เปิดไม่ได้ ความคืบหน้าในการฟังจะซิงค์กับบัญชี BookOrbit ของคุณ',
@@ -9717,6 +9757,8 @@ extension on TranslationsTh {
 			'musicTools.charts' => 'อันดับการฟัง',
 			'musicTools.rediscover' => 'ค้นพบอีกครั้ง',
 			'musicTools.stations' => 'สถานีเพลง',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.prompt' => 'เพลย์ลิสต์จากคำอธิบาย',
 			'musicTools.provider' => 'URL สร้างรายการของผู้ให้บริการ',
 			'musicTools.model' => 'ชื่อโมเดล',
@@ -9732,8 +9774,6 @@ extension on TranslationsTh {
 			'musicTools.missing' => 'หมายเลขรุ่น: A',
 			'musicTools.minutes' => 'นาที',
 			'musicTools.rules' => 'ฟิล์ม',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'เอาต์พุตเสียงแบบเอกสิทธิ์',
 			'musicTools.preamp' => 'ปรีแอมป์',
 			'musicTools.ratingPending' => 'บันทึกบนอุปกรณ์นี้แล้ว รอซิงค์',

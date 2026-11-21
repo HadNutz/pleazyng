@@ -66,6 +66,7 @@ class TranslationsBn extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$bn dialog = _Translations$dialog$bn._(_root);
 	@override late final _Translations$profiles$bn profiles = _Translations$profiles$bn._(_root);
 	@override late final _Translations$connections$bn connections = _Translations$connections$bn._(_root);
+	@override late final _Translations$iptv$bn iptv = _Translations$iptv$bn._(_root);
 	@override late final _Translations$accountPreferences$bn accountPreferences = _Translations$accountPreferences$bn._(_root);
 	@override late final _Translations$discover$bn discover = _Translations$discover$bn._(_root);
 	@override late final _Translations$errors$bn errors = _Translations$errors$bn._(_root);
@@ -1641,6 +1642,30 @@ class _Translations$connections$bn extends Translations$connections$en {
 	@override String get signInAgain => 'আবার লিখুন';
 	@override String editMediaBrowserTitle({required Object product}) => 'Edit ${product} সংযোগ';
 	@override String editMediaBrowserIntro({required Object serverName}) => '${serverName} এর জন্য URLগুলি যোগ করুন বা মুছে ফেলুন. Pleazyng সবচেয়ে কম ল্যাটিংসের সাথে পৌঁছাতে পারে URLগুলি ব্যবহার করবে।';
+}
+
+// Path: iptv
+class _Translations$iptv$bn extends Translations$iptv$en {
+	_Translations$iptv$bn._(TranslationsBn root) : this._root = root, super.internal(root);
+
+	final TranslationsBn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'চ্যানেলের ক্রম';
+	@override String get orderChanged => 'চ্যানেলের ক্রম বদলেছে। যাচাই করে আবার চেষ্টা করুন।';
+	@override String get localPlaylist => 'M3U ফাইল';
+	@override String get pastePlaylist => 'প্লেলিস্টের লেখা পেস্ট করুন';
+	@override String get playlistBase => 'আপেক্ষিক লিঙ্কের মূল URL (ঐচ্ছিক)';
+	@override String get localPlaylistHelp => 'M3U বা M3U8 চ্যানেল তালিকার ব্যক্তিগত কপি আমদানি করুন। অন্য ফাইল দিয়ে এটি বদলাতে পারবেন।';
+	@override String get showMatches => 'মিলে যাওয়া চ্যানেল দেখান';
+	@override String get hideMatches => 'মিলে যাওয়া চ্যানেল লুকান';
+	@override String get pickerCredit => 'অনুপ্রেরণা · M3U Web Picker · Zachary Schmook (@zschmook) ও অবদানকারীরা';
+	@override String get exportPrivate => 'স্ট্রিমের ঠিকানায় পরিষেবার লগইন তথ্য থাকতে পারে। তালিকাটি ব্যক্তিগত স্থানে রাখুন।';
+	@override String get dynamicStreamExport => 'প্রতিবার চালালে পোর্টাল নতুন লিঙ্ক তৈরি করে। অনুষ্ঠানসূচি রপ্তানি করতে পারবেন।';
+	@override String get moveUp => 'উড়ে উঠে';
+	@override String get moveDown => 'নিচে গিয়ে';
+	@override String get choosePlaylist => 'Playlist ফাইল নির্বাচন করুন';
+	@override String affectedChannels({required Object count}) => 'চ্যানেলগুলো · ${count}';
 }
 
 // Path: accountPreferences
@@ -7016,6 +7041,21 @@ extension on TranslationsBn {
 			'connections.signInAgain' => 'আবার লিখুন',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} সংযোগ',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} এর জন্য URLগুলি যোগ করুন বা মুছে ফেলুন. Pleazyng সবচেয়ে কম ল্যাটিংসের সাথে পৌঁছাতে পারে URLগুলি ব্যবহার করবে।',
+			'iptv.lineupOrder' => 'চ্যানেলের ক্রম',
+			'iptv.orderChanged' => 'চ্যানেলের ক্রম বদলেছে। যাচাই করে আবার চেষ্টা করুন।',
+			'iptv.localPlaylist' => 'M3U ফাইল',
+			'iptv.pastePlaylist' => 'প্লেলিস্টের লেখা পেস্ট করুন',
+			'iptv.playlistBase' => 'আপেক্ষিক লিঙ্কের মূল URL (ঐচ্ছিক)',
+			'iptv.localPlaylistHelp' => 'M3U বা M3U8 চ্যানেল তালিকার ব্যক্তিগত কপি আমদানি করুন। অন্য ফাইল দিয়ে এটি বদলাতে পারবেন।',
+			'iptv.showMatches' => 'মিলে যাওয়া চ্যানেল দেখান',
+			'iptv.hideMatches' => 'মিলে যাওয়া চ্যানেল লুকান',
+			'iptv.pickerCredit' => 'অনুপ্রেরণা · M3U Web Picker · Zachary Schmook (@zschmook) ও অবদানকারীরা',
+			'iptv.exportPrivate' => 'স্ট্রিমের ঠিকানায় পরিষেবার লগইন তথ্য থাকতে পারে। তালিকাটি ব্যক্তিগত স্থানে রাখুন।',
+			'iptv.dynamicStreamExport' => 'প্রতিবার চালালে পোর্টাল নতুন লিঙ্ক তৈরি করে। অনুষ্ঠানসূচি রপ্তানি করতে পারবেন।',
+			'iptv.moveUp' => 'উড়ে উঠে',
+			'iptv.moveDown' => 'নিচে গিয়ে',
+			'iptv.choosePlaylist' => 'Playlist ফাইল নির্বাচন করুন',
+			'iptv.affectedChannels' => ({required Object count}) => 'চ্যানেলগুলো · ${count}',
 			'accountPreferences.sectionTitle' => 'অ্যাকাউন্ট পছন্দ',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'অডিও, সাবটাইট এবং লাইব্রেরি বিকল্পগুলি ${account} এ সংরক্ষিত',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'অডিও, সাবটাইট এবং লাইব্রেরি বিকল্পগুলি ${count} অ্যাকাউন্টগুলিতে সংরক্ষিত',
@@ -7172,6 +7212,8 @@ extension on TranslationsBn {
 			'discover.directors' => 'পরিচালকবৃন্দ',
 			'discover.movie' => 'চলচ্চিত্র',
 			'discover.tvShow' => 'টেলিভিশন প্রদর্শন',
+			_ => null,
+		} ?? switch (path) {
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} মিনিট left',
 			'discover.moreLikeThis' => 'এ ধরনের আরও',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bn'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} নাম', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} টাইম', ), 
@@ -7187,8 +7229,6 @@ extension on TranslationsBn {
 			'errors.unableToLoad' => ({required Object context}) => '${context} পুনরায় চেষ্টা করুন।',
 			'errors.noClientAvailable' => 'কোন গ্রাহক পাওয়া যায় না',
 			'errors.pleaseEnterToken' => 'দয়া করে একটি টকেন লিখুন',
-			_ => null,
-		} ?? switch (path) {
 			'errors.invalidToken' => 'অসুবিধা টকেন',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'টকেন সনাক্ত করতে পারিনি: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'পাশাপাশি পাশাপাশি পাশাপাশি ${displayName}',
@@ -7686,6 +7726,8 @@ extension on TranslationsBn {
 			'collections.removeFromCollectionFailed' => 'সংগ্রহ থেকে বের করা যায়নি',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'সংগ্রহ থেকে তুলনা ভুল: ${error}',
 			'collections.searchCollections' => 'খুঁজে পাওয়া সংগ্রহ...',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.title' => 'খেলোয়াড়',
 			'playlists.playlist' => 'প্লেলিস্ট',
 			'playlists.noPlaylists' => 'খেলোয়াড় পাওয়া যায়নি',
@@ -7701,8 +7743,6 @@ extension on TranslationsBn {
 			'playlists.deleteMessage' => ({required Object name}) => 'আপনি কি নিশ্চিত যে আপনি "${name}" মুছে ফেলতে চান?',
 			'playlists.created' => 'Playlist তৈরি',
 			'playlists.deleted' => 'Playlist 삭제',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemAdded' => 'Playlist এ যোগ করা',
 			'playlists.itemRemoved' => 'Playlist থেকে মুছে ফেলুন',
 			'playlists.selectPlaylist' => 'Playlist নির্বাচন করুন',
@@ -8200,6 +8240,8 @@ extension on TranslationsBn {
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision ডকোডার (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Base স্তর',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ভিত্তিক স্তর',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG Base ল্যাগ',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR ভিত্তিক স্তর',
 			'performanceOverlay.dvRouteReshaped' => 'RPU রেসিপি (GPU পরবর্তী)',
@@ -8215,8 +8257,6 @@ extension on TranslationsBn {
 			'performanceOverlay.displayFps' => 'ফিপিএস প্রদর্শন',
 			'performanceOverlay.avSync' => 'A/V সিন্ক',
 			'performanceOverlay.dropped' => 'ধ্বংস',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'ডিপিএল',
 			'performanceOverlay.dvRpuAverage' => 'ডিপিএল এভগ',
 			'performanceOverlay.dvSampleAverage' => 'ডিএসএইচএইচএইচ',
@@ -8714,6 +8754,8 @@ extension on TranslationsBn {
 			'homeLayout.autoSlideEditDescription' => 'এছাড়াও প্রতি কয়েক সেকেন্ডে নিজে থেকে স্লাইড করে. অটো: শুধুমাত্র একটি প্লাইড (PC) ক্লিক করে বা দূরে (TV) বাম / ডান চাপ করে যখন移動 করে. প্লাইড এবং d-প্যাড সবসময় উভয়ভাবে কাজ করে।',
 			'homeLayout.enableHeroFirst' => 'প্রথমে হেরো',
 			'homeLayout.showOnHome' => 'Home Screen দেখুন',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.home' => 'বাড়ি',
 			'homeLayout.removeFromHome' => 'বাড়ি থেকে বের করা',
 			'homeLayout.selectRowsFirst' => 'প্রথমে নিচে হোম রানগুলি নির্বাচন করুন।',
@@ -8729,8 +8771,6 @@ extension on TranslationsBn {
 			'homeLayout.heroNeedsSurface' => 'প্রথমে লাইব্রেরি বা হোম দেখুন — হেরো দেখার জন্য কোথাও প্রয়োজন',
 			'homeLayout.removeHub' => 'হাব থেকে বের করুন',
 			'homeLayout.noPlexRows' => 'নম্বর Plex পরিচালিত লাইন এই লাইব্রেরি জন্য ফিরে এসেছে।',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.openDetails' => 'খোলা বিস্তারিত',
 			'homeLayout.heroCards' => 'হেরো কার্ড',
 			'homeLayout.tapHeroCard' => 'হ্যারিয়ার কার্ড খুঁজে বের',
@@ -9228,6 +9268,8 @@ extension on TranslationsBn {
 			'audiobook.sortTitle' => 'Title নাম',
 			'audiobook.sortAuthor' => 'লেখক',
 			'audiobook.sortNarrator' => 'ন্যায়ক',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortSeries' => 'সিরিজ আদেশ',
 			'audiobook.sortRecent' => 'সম্প্রতি খোলা',
 			'audiobook.statusFilter' => 'পড়ার অবস্থা',
@@ -9243,8 +9285,6 @@ extension on TranslationsBn {
 			'audiobook.recoveryImportConfirm' => 'এই এনক্রিপ্ট করা পুনরুদ্ধার ফাইলটি বর্তমান পড়ার অবস্থান ও নোটের সঙ্গে মেশাবেন? আগের ইতিহাস থাকবে। শেয়ার করা লাইব্রেরি ও আইটেম ID এতে নেই; আমদানির আগে প্রতিটি ডিভাইসে একই ID সেট করুন।',
 			'audiobook.recoveryExported' => 'সক্রিপ্ট ফাইল পুনরায় সংরক্ষণ করা হয়েছে।',
 			'audiobook.recoveryImported' => 'রেকর্ড ডেটা একত্রিত।',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'বইগুলো দেখতে ও পড়তে আপনার নিজের BookOrbit অ্যাকাউন্টে সাইন ইন করুন। অনুপস্থিত শিরোনামের অনুরোধ এখনও আপনার সংযুক্ত SeerrNG ইনস্ট্যান্সের মাধ্যমেই যাবে।',
 			'sourceSetup.bookorbitOpen' => 'BookOrbit-এ খুলুন',
 			'sourceSetup.bookorbitDetailHelp' => 'লাইব্রেরির বিবরণ এবং Pleazyng যে ফরম্যাট খুলতে পারে না সেগুলো পরিচালনা করতে BookOrbit-এ এই শিরোনামটি দেখুন। শোনার অগ্রগতি আপনার BookOrbit অ্যাকাউন্টের সঙ্গে সিঙ্ক হয়।',
@@ -9742,6 +9782,8 @@ extension on TranslationsBn {
 			'musicTools.charts' => 'শোনার তালিকা',
 			'musicTools.rediscover' => 'আবার আবিষ্কার করুন',
 			'musicTools.stations' => 'মিউজিক স্টেশন',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.prompt' => 'বর্ণনা থেকে প্লেলিস্ট',
 			'musicTools.provider' => 'প্রদানকারীর তৈরির URL',
 			'musicTools.model' => 'মডেলের নাম',
@@ -9757,8 +9799,6 @@ extension on TranslationsBn {
 			'musicTools.missing' => 'ন/এ',
 			'musicTools.minutes' => 'মিনিট',
 			'musicTools.rules' => 'ফিল্টারগুলি',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'একচেটিয়া অডিও আউটপুট',
 			'musicTools.preamp' => 'প্রিঅ্যাম্প',
 			'musicTools.ratingPending' => 'এই ডিভাইসে সংরক্ষিত; সিঙ্কের অপেক্ষায়',

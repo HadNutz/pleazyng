@@ -66,6 +66,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$dialog$es dialog = Translations$dialog$es.internal(_root);
 	@override late final Translations$profiles$es profiles = Translations$profiles$es.internal(_root);
 	@override late final Translations$connections$es connections = Translations$connections$es.internal(_root);
+	@override late final Translations$iptv$es iptv = Translations$iptv$es.internal(_root);
 	@override late final Translations$accountPreferences$es accountPreferences = Translations$accountPreferences$es.internal(_root);
 	@override late final Translations$discover$es discover = Translations$discover$es.internal(_root);
 	@override late final Translations$errors$es errors = Translations$errors$es.internal(_root);
@@ -1647,6 +1648,30 @@ class Translations$connections$es extends Translations$connections$en {
 	@override String get signInAgain => 'Iniciar sesión de nuevo';
 	@override String editMediaBrowserTitle({required Object product}) => 'Editar conexión de ${product}';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Añade o elimina URL para ${serverName}. Pleazyng usará la URL accesible con menor latencia.';
+}
+
+// Path: iptv
+class Translations$iptv$es extends Translations$iptv$en {
+	Translations$iptv$es.internal(TranslationsEs root) : this._root = root, super.internal(root);
+
+	final TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'Orden de canales';
+	@override String get orderChanged => 'El orden ha cambiado. Revísalo e inténtalo de nuevo.';
+	@override String get localPlaylist => 'Archivo M3U';
+	@override String get pastePlaylist => 'Pegar el texto de la lista';
+	@override String get playlistBase => 'URL base para enlaces relativos (opcional)';
+	@override String get localPlaylistHelp => 'Importa una copia privada de una lista de canales M3U o M3U8. Puedes reemplazarla con otro archivo.';
+	@override String get showMatches => 'Mostrar canales coincidentes';
+	@override String get hideMatches => 'Ocultar canales coincidentes';
+	@override String get pickerCredit => 'Inspirado en · M3U Web Picker · Zachary Schmook (@zschmook) y colaboradores';
+	@override String get exportPrivate => 'Las direcciones de las emisiones pueden incluir tus credenciales del proveedor. Guarda la lista en un lugar privado.';
+	@override String get dynamicStreamExport => 'El portal crea un enlace nuevo en cada reproducción. Puedes exportar la guía.';
+	@override String get moveUp => 'Moverse arriba';
+	@override String get moveDown => 'Moverse hacia abajo';
+	@override String get choosePlaylist => 'Elegir el archivo de playlist';
+	@override String affectedChannels({required Object count}) => 'Canales · ${count}';
 }
 
 // Path: accountPreferences
@@ -7143,6 +7168,21 @@ extension on TranslationsEs {
 			'connections.signInAgain' => 'Iniciar sesión de nuevo',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Editar conexión de ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Añade o elimina URL para ${serverName}. Pleazyng usará la URL accesible con menor latencia.',
+			'iptv.lineupOrder' => 'Orden de canales',
+			'iptv.orderChanged' => 'El orden ha cambiado. Revísalo e inténtalo de nuevo.',
+			'iptv.localPlaylist' => 'Archivo M3U',
+			'iptv.pastePlaylist' => 'Pegar el texto de la lista',
+			'iptv.playlistBase' => 'URL base para enlaces relativos (opcional)',
+			'iptv.localPlaylistHelp' => 'Importa una copia privada de una lista de canales M3U o M3U8. Puedes reemplazarla con otro archivo.',
+			'iptv.showMatches' => 'Mostrar canales coincidentes',
+			'iptv.hideMatches' => 'Ocultar canales coincidentes',
+			'iptv.pickerCredit' => 'Inspirado en · M3U Web Picker · Zachary Schmook (@zschmook) y colaboradores',
+			'iptv.exportPrivate' => 'Las direcciones de las emisiones pueden incluir tus credenciales del proveedor. Guarda la lista en un lugar privado.',
+			'iptv.dynamicStreamExport' => 'El portal crea un enlace nuevo en cada reproducción. Puedes exportar la guía.',
+			'iptv.moveUp' => 'Moverse arriba',
+			'iptv.moveDown' => 'Moverse hacia abajo',
+			'iptv.choosePlaylist' => 'Elegir el archivo de playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'Canales · ${count}',
 			'accountPreferences.sectionTitle' => 'Preferencias de cuenta',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Opciones de audio, subtítulos y biblioteca guardadas en ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Opciones de audio, subtítulos y biblioteca guardadas en ${count} cuentas',
@@ -7296,6 +7336,8 @@ extension on TranslationsEs {
 			'discover.findNext.openFailed' => 'Esta opción ya no está disponible. Actualiza para comprobarlo de nuevo.',
 			'discover.findNext.changeFailed' => 'No se pudo guardar el cambio. Inténtalo de nuevo.',
 			'discover.findNext.savedLimit' => 'La lista de sugerencias guardadas está llena. Quita una para guardar otra.',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.chooseHint' => 'Abre un título, guárdalo para después o pasa al siguiente.',
 			'discover.findNext.howItWorks' => 'Cómo funciona',
 			'discover.findNext.notNowHelp' => 'Omite este título por ahora. Seguirá en tu biblioteca.',
@@ -7311,8 +7353,6 @@ extension on TranslationsEs {
 			'discover.studio' => 'Estudio',
 			'discover.rating' => 'Valoración',
 			'discover.director' => 'Director',
-			_ => null,
-		} ?? switch (path) {
 			'discover.directors' => 'Directores',
 			'discover.movie' => 'Película',
 			'discover.tvShow' => 'Serie de TV',
@@ -7810,6 +7850,8 @@ extension on TranslationsEs {
 			'liveTv.playbackStartFailed' => ({required Object reason}) => 'No se pudo iniciar el canal: ${reason}',
 			'liveTv.channelSwitchFailed' => ({required Object reason}) => 'No se pudo cambiar de canal: ${reason}',
 			'collections.title' => 'Colecciones',
+			_ => null,
+		} ?? switch (path) {
 			'collections.collection' => 'Colección',
 			'collections.empty' => 'La colección está vacía',
 			'collections.deleteCollection' => 'Eliminar colección',
@@ -7825,8 +7867,6 @@ extension on TranslationsEs {
 			'collections.created' => 'Colección creada',
 			'collections.removeFromCollection' => 'Eliminar de la colección',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '¿Eliminar "${title}" de esta colección?',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removedFromCollection' => 'Eliminado de la colección',
 			'collections.removeFromCollectionFailed' => 'Error al eliminar de la colección',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Error al eliminar de la colección: ${error}',
@@ -8324,6 +8364,8 @@ extension on TranslationsEs {
 			'videoSettings.audioPitchDescription' => 'Cambiar la pista sin cambiar la velocidad. MPV La construcción debe incluir Rubber Band.',
 			'videoSettings.audioEffectUnavailable' => 'Este efecto no está disponible para esta pista o MPV La construcción.',
 			'videoSettings.backgroundVideoAudio' => 'Video Audio de fondo',
+			_ => null,
+		} ?? switch (path) {
 			'videoSettings.backgroundVideoAudioDescription' => 'Mantenga el audio de video cuando abandona el reproductor; la imagen está oculta hasta que vuelva. Android utiliza una notificación de reproducción de medios.',
 			'videoSettings.audioNormalization' => 'Normalizar volumen',
 			'videoSettings.audioNormalizationDisablesPassthrough' => 'Decodifica el audio a PCM; la transferencia directa está desactivada mientras esta opción esté activa',
@@ -8339,8 +8381,6 @@ extension on TranslationsEs {
 			'performanceOverlay.rotation' => 'Rotación',
 			'performanceOverlay.dvSource' => 'Origen DV',
 			'performanceOverlay.dvPath' => 'Ruta DV',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteDecoder' => 'Decodificador Dolby Vision',
 			'performanceOverlay.dvRouteDecoderP81' => 'Decodificador Dolby Vision (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Capa base',
@@ -8838,6 +8878,8 @@ extension on TranslationsEs {
 			'watchLink.copy' => 'Copia',
 			'watchLink.copied' => 'Link copiado',
 			'homeLayout.title' => 'Home Layout',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.resetToast' => 'Home Reset a la versión original de la versión Pleazyng',
 			'homeLayout.resetHeroTitle' => '¿Recuperar el layout de héroe a la stock Pleazyng?',
 			'homeLayout.resetHeroBody' => 'Desvia el ajuste de la hermana de cada ronda y retorna el único banner de rotación en la parte superior de la casa, como antes de que las líneas de la hermano existieran.',
@@ -8853,8 +8895,6 @@ extension on TranslationsEs {
 			'homeLayout.managePlexRowsDescription' => 'Abierto a organizar las líneas seleccionadas por el hogar',
 			'homeLayout.organizeHomeRows' => 'Organizar las rutas domésticas',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} líneas: movimiento, Hero, Auto-slide, eliminación',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organizar ${library} líneas',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continuar Vea + ${n} líneas: movimiento, Biblioteca, Casa, Héroe, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render como una tarjeta de héroe',
@@ -9352,6 +9392,8 @@ extension on TranslationsEs {
 			'audiobook.syncSourceDisconnect' => 'Eliminar esta fuente dejará de leer y escuchar la sincronización aquí. los archivos de sincronización encriptados permanecerán en el proveedor.',
 			'audiobook.syncReconnect' => 'Reconectar la cuenta de almacenamiento',
 			'audiobook.lastSynced' => ({required Object time}) => 'Última sincronización en ${time}',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.syncPrivacy' => 'La sincronización en la nube guarda datos cifrados de progreso, finalización, marcadores y notas en archivos de sincronización de la aplicación. Los archivos multimedia nunca se suben, sustituyen, renombran ni eliminan. Los tokens de cuenta y las contraseñas no se suben. Google Drive y OneDrive usan el almacenamiento de la aplicación; Dropbox usa Pleazyng Sync; WebDAV y S3 usan la carpeta o el prefijo elegidos. Activar la sincronización puede requerir permiso de escritura del proveedor, pero la aplicación solo escribe esos archivos de estado. La sincronización en la nube y la sincronización compatible de progreso y marcadores con el servidor funcionan de forma independiente, con reintentos separados. Los conflictos se muestran para que los resuelvas. Desactivar la sincronización conserva el historial local y el estado remoto.',
 			'audiobook.syncConflicts' => 'Elegir dónde volver',
 			'audiobook.conflictHelp' => 'Estas modificaciones se hicieron de forma independiente. escoge la posición o la versión de la marca para mantener. Un timestamp posterior o un porcentaje superior no gana automáticamente.',
@@ -9367,8 +9409,6 @@ extension on TranslationsEs {
 			'audiobook.unknownRemaining' => 'Tiempo completo disponible a medida que se juegan partes',
 			'audiobook.undoSeek' => 'La última búsqueda',
 			'audiobook.customSpeed' => 'Velocidad de reproducción personalizada',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.speedHelp' => 'Seleccione una velocidad de 0.25× a 4×.',
 			'audiobook.apply' => 'Aplique',
 			'audiobook.customSleep' => 'Calendario de sueño personalizado',
@@ -9866,6 +9906,8 @@ extension on TranslationsEs {
 			'bonusExtras.serviceToken' => 'Token de acceso al servicio de descubrimiento',
 			'bonusExtras.aiMode' => 'Asistencia con IA',
 			'bonusExtras.aiOff' => 'Desactivada',
+			_ => null,
+		} ?? switch (path) {
 			'bonusExtras.aiDevice' => 'En este dispositivo',
 			'bonusExtras.aiServer' => 'En mi servidor',
 			'bonusExtras.aiCloud' => 'En la nube',
@@ -9881,8 +9923,6 @@ extension on TranslationsEs {
 			'bonusExtras.partial' => 'Algunas fuentes en línea no están disponibles. Se muestran los resultados disponibles.',
 			'bonusExtras.linkTitle' => 'Título del extra',
 			'bonusExtras.linkUrl' => 'Enlace de YouTube o Vimeo',
-			_ => null,
-		} ?? switch (path) {
 			'bonusExtras.invalidLink' => 'Introduce un título y un enlace HTTPS válido a un vídeo de YouTube o Vimeo.',
 			'bonusExtras.showHidden' => 'Restablecer extras y editores ocultos',
 			'bonusExtras.clearCache' => 'Borrar la caché de descubrimiento',

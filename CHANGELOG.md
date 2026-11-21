@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Import or paste local M3U playlists, curate filtered channel sets, reorder the lineup independently of favorites, and export visible, unlocked channels as M3U and XMLTV. Higher-priority XMLTV sources own the full airing window. Independently implemented in Pleazyng, inspired by [M3U Web Picker](https://github.com/zschmook/m3u-web-picker/tree/8822e68538ac91ab25bf805a74fa6bacdc2b7897) by [Zachary Schmook (@zschmook)](https://github.com/zschmook) and contributors.
+
 - Provision the matching Samsung SDK for x64 emulator tester builds and link host build tools with the host compiler.
 - Restore an interrupted mobile movie or episode from OS-saved state, including its position, edition and pause intent, after checking access for the active profile. A normal Back or replacement discards the old playback task.
 

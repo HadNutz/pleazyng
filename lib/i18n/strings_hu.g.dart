@@ -66,6 +66,7 @@ class TranslationsHu extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$hu dialog = _Translations$dialog$hu._(_root);
 	@override late final _Translations$profiles$hu profiles = _Translations$profiles$hu._(_root);
 	@override late final _Translations$connections$hu connections = _Translations$connections$hu._(_root);
+	@override late final _Translations$iptv$hu iptv = _Translations$iptv$hu._(_root);
 	@override late final _Translations$accountPreferences$hu accountPreferences = _Translations$accountPreferences$hu._(_root);
 	@override late final _Translations$discover$hu discover = _Translations$discover$hu._(_root);
 	@override late final _Translations$errors$hu errors = _Translations$errors$hu._(_root);
@@ -1641,6 +1642,30 @@ class _Translations$connections$hu extends Translations$connections$en {
 	@override String get signInAgain => 'Bejelentkezés újra';
 	@override String editMediaBrowserTitle({required Object product}) => 'A(z) ${product} kapcsolat szerkesztése';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Adjon hozzá vagy távolítson el URL-eket a(z) ${serverName} esetén. A Pleazyng a legkisebb késleltetésű, elérhető URL-t fogja használni.';
+}
+
+// Path: iptv
+class _Translations$iptv$hu extends Translations$iptv$en {
+	_Translations$iptv$hu._(TranslationsHu root) : this._root = root, super.internal(root);
+
+	final TranslationsHu _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'Csatornasorrend';
+	@override String get orderChanged => 'A csatornasorrend megváltozott. Ellenőrizze, majd próbálja újra.';
+	@override String get localPlaylist => 'M3U-fájl';
+	@override String get pastePlaylist => 'Lejátszási lista szövegének beillesztése';
+	@override String get playlistBase => 'Alap URL a relatív hivatkozásokhoz (opcionális)';
+	@override String get localPlaylistHelp => 'Importálja egy M3U vagy M3U8 csatornalista saját példányát. Egy másik fájllal lecserélheti.';
+	@override String get showMatches => 'Egyező csatornák megjelenítése';
+	@override String get hideMatches => 'Egyező csatornák elrejtése';
+	@override String get pickerCredit => 'Ihletforrás · M3U Web Picker · Zachary Schmook (@zschmook) és a közreműködők';
+	@override String get exportPrivate => 'A streamcímek tartalmazhatják a szolgáltatói bejelentkezési adatokat. A listát privát helyre mentse.';
+	@override String get dynamicStreamExport => 'A portál minden lejátszáskor új hivatkozást készít. A műsorújság exportálható.';
+	@override String get moveUp => 'mozgatni fel';
+	@override String get moveDown => 'Mozgás le';
+	@override String get choosePlaylist => 'Válassza ki a Playlist fájlt';
+	@override String affectedChannels({required Object count}) => 'Csatornák · ${count}';
 }
 
 // Path: accountPreferences
@@ -7016,6 +7041,21 @@ extension on TranslationsHu {
 			'connections.signInAgain' => 'Bejelentkezés újra',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'A(z) ${product} kapcsolat szerkesztése',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Adjon hozzá vagy távolítson el URL-eket a(z) ${serverName} esetén. A Pleazyng a legkisebb késleltetésű, elérhető URL-t fogja használni.',
+			'iptv.lineupOrder' => 'Csatornasorrend',
+			'iptv.orderChanged' => 'A csatornasorrend megváltozott. Ellenőrizze, majd próbálja újra.',
+			'iptv.localPlaylist' => 'M3U-fájl',
+			'iptv.pastePlaylist' => 'Lejátszási lista szövegének beillesztése',
+			'iptv.playlistBase' => 'Alap URL a relatív hivatkozásokhoz (opcionális)',
+			'iptv.localPlaylistHelp' => 'Importálja egy M3U vagy M3U8 csatornalista saját példányát. Egy másik fájllal lecserélheti.',
+			'iptv.showMatches' => 'Egyező csatornák megjelenítése',
+			'iptv.hideMatches' => 'Egyező csatornák elrejtése',
+			'iptv.pickerCredit' => 'Ihletforrás · M3U Web Picker · Zachary Schmook (@zschmook) és a közreműködők',
+			'iptv.exportPrivate' => 'A streamcímek tartalmazhatják a szolgáltatói bejelentkezési adatokat. A listát privát helyre mentse.',
+			'iptv.dynamicStreamExport' => 'A portál minden lejátszáskor új hivatkozást készít. A műsorújság exportálható.',
+			'iptv.moveUp' => 'mozgatni fel',
+			'iptv.moveDown' => 'Mozgás le',
+			'iptv.choosePlaylist' => 'Válassza ki a Playlist fájlt',
+			'iptv.affectedChannels' => ({required Object count}) => 'Csatornák · ${count}',
 			'accountPreferences.sectionTitle' => 'Fiókbeállítások',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Hang-, felirat- és könyvtárbeállítások mentve a(z) ${account} fiókra',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Hang-, felirat- és könyvtárbeállítások mentve ${count} fiókra',
@@ -7172,6 +7212,8 @@ extension on TranslationsHu {
 			'discover.directors' => 'Rendezők',
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'TV-sorozat',
+			_ => null,
+		} ?? switch (path) {
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} perc van hátra',
 			'discover.moreLikeThis' => 'Hasonló tartalmak',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hu'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} cím', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} cím', ), 
@@ -7187,8 +7229,6 @@ extension on TranslationsHu {
 			'errors.unableToLoad' => ({required Object context}) => 'Nem sikerült betölteni a következőt: ${context}. Próbáld újra.',
 			'errors.noClientAvailable' => 'Nincs elérhető kliens',
 			'errors.pleaseEnterToken' => 'Adj meg egy tokent',
-			_ => null,
-		} ?? switch (path) {
 			'errors.invalidToken' => 'Érvénytelen token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Nem sikerült a token ellenőrzése: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Nem sikerült átváltani a következő profilra: ${displayName}',
@@ -7686,6 +7726,8 @@ extension on TranslationsHu {
 			'collections.removeFromCollectionFailed' => 'Nem sikerült az eltávolítás a gyűjteményből',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Hiba a gyűjteményből való eltávolításkor: ${error}',
 			'collections.searchCollections' => 'Gyűjtemények keresése...',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.title' => 'Lejátszási listák',
 			'playlists.playlist' => 'Lejátszási lista',
 			'playlists.noPlaylists' => 'Nem találhatók lejátszási listák',
@@ -7701,8 +7743,6 @@ extension on TranslationsHu {
 			'playlists.deleteMessage' => ({required Object name}) => 'Biztosan törölni szeretnéd a következőt: "${name}"?',
 			'playlists.created' => 'Lejátszási lista létrehozva',
 			'playlists.deleted' => 'Lejátszási lista törölve',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemAdded' => 'Hozzáadva a lejátszási listához',
 			'playlists.itemRemoved' => 'Eltávolítva a lejátszási listáról',
 			'playlists.selectPlaylist' => 'Lejátszási lista kiválasztása',
@@ -8200,6 +8240,8 @@ extension on TranslationsHu {
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-dekóder (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Alapréteg',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-alapréteg',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-alapréteg',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR-alapréteg',
 			'performanceOverlay.dvRouteReshaped' => 'RPU-átformálás (gpu-next)',
@@ -8215,8 +8257,6 @@ extension on TranslationsHu {
 			'performanceOverlay.displayFps' => 'Kijelző-FPS',
 			'performanceOverlay.avSync' => 'A/V-szinkron',
 			'performanceOverlay.dropped' => 'Eldobva',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU-k',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU-átlag',
 			'performanceOverlay.dvSampleAverage' => 'DV-mintaátlag',
@@ -8714,6 +8754,8 @@ extension on TranslationsHu {
 			'homeLayout.autoSlideEditDescription' => 'A csúszás is önmagában néhány másodpercenként. kikapcsolva: csak akkor mozog, ha egy lövedéket (PC) kattintson vagy balra/jobbra nyomja a távoli (TV) oldalon.',
 			'homeLayout.enableHeroFirst' => 'Először a hős',
 			'homeLayout.showOnHome' => 'Show on Home képernyőn',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.home' => 'Kezdőlap',
 			'homeLayout.removeFromHome' => 'eltávolítása otthonról',
 			'homeLayout.selectRowsFirst' => 'Válassza ki az első helyen található házsorozatokat.',
@@ -8729,8 +8771,6 @@ extension on TranslationsHu {
 			'homeLayout.heroNeedsSurface' => 'Kezdőlap / Könyvtár / Kezdőlapi könyvtár / A hősnek valahol kell megmutatnia',
 			'homeLayout.removeHub' => 'Hulladék Hub',
 			'homeLayout.noPlexRows' => 'A Plex-es irányított sorok visszatértek erre a könyvtárra.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.openDetails' => 'Nyitott részletek',
 			'homeLayout.heroCards' => 'Hős kártyák',
 			'homeLayout.tapHeroCard' => 'Hős kártyát kap',
@@ -9228,6 +9268,8 @@ extension on TranslationsHu {
 			'audiobook.sortTitle' => 'címek',
 			'audiobook.sortAuthor' => 'Szerző',
 			'audiobook.sortNarrator' => 'Történész',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortSeries' => 'sorozatrendelés',
 			'audiobook.sortRecent' => 'Nemrégiben megnyitott',
 			'audiobook.statusFilter' => 'Olvasási állapot',
@@ -9243,8 +9285,6 @@ extension on TranslationsHu {
 			'audiobook.recoveryImportConfirm' => 'Ez a titkosított helyreállítási fájl összekapcsolja az aktuális olvasási pozíciókkal és jegyzetekkel? A meglévő történelem megmarad. Megosztott könyvtár és elem azonosítók nem szerepelnek; beállítja az egyes eszközök megfelelő azonosítóját az import előtt.',
 			'audiobook.recoveryExported' => 'A titkosított helyreállítási fájl mentett.',
 			'audiobook.recoveryImported' => 'A helyreállítási adatok összegyűltek.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Jelentkezz be a saját BookOrbit-fiókoddal a könyvek böngészéséhez és lejátszásához. A hiányzó címek igénylései továbbra is a csatlakoztatott SeerrNG-példányodon keresztül történnek.',
 			'sourceSetup.bookorbitOpen' => 'Megnyitás a BookOrbitban',
 			'sourceSetup.bookorbitDetailHelp' => 'A könyvtár adatainak és a Pleazyng által meg nem nyitható formátumok kezeléséhez tekintsd meg ezt a címet a BookOrbitban. A hallgatási folyamat szinkronizálódik a BookOrbit-fiókoddal.',
@@ -9742,6 +9782,8 @@ extension on TranslationsHu {
 			'musicTools.charts' => 'Hallgatási toplisták',
 			'musicTools.rediscover' => 'Újrafelfedezés',
 			'musicTools.stations' => 'Zenei állomások',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.prompt' => 'Lejátszási lista leírásból',
 			'musicTools.provider' => 'Szolgáltató generálási URL-je',
 			'musicTools.model' => 'Modell neve',
@@ -9757,8 +9799,6 @@ extension on TranslationsHu {
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Perc',
 			'musicTools.rules' => 'Szűrők',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Kizárólagos hangkimenet',
 			'musicTools.preamp' => 'Előerősítés',
 			'musicTools.ratingPending' => 'Ezen az eszközön mentve; szinkronizálásra vár',

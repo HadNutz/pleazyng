@@ -66,6 +66,7 @@ class TranslationsNb extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$nb dialog = _Translations$dialog$nb._(_root);
 	@override late final _Translations$profiles$nb profiles = _Translations$profiles$nb._(_root);
 	@override late final _Translations$connections$nb connections = _Translations$connections$nb._(_root);
+	@override late final _Translations$iptv$nb iptv = _Translations$iptv$nb._(_root);
 	@override late final _Translations$accountPreferences$nb accountPreferences = _Translations$accountPreferences$nb._(_root);
 	@override late final _Translations$discover$nb discover = _Translations$discover$nb._(_root);
 	@override late final _Translations$errors$nb errors = _Translations$errors$nb._(_root);
@@ -1641,6 +1642,30 @@ class _Translations$connections$nb extends Translations$connections$en {
 	@override String get signInAgain => 'Logg inn igjen';
 	@override String editMediaBrowserTitle({required Object product}) => 'Rediger ${product}-tilkobling';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Legg til eller fjern URL-er for ${serverName}. Pleazyng vil bruke den nåbare URL-en med lavest ventetid.';
+}
+
+// Path: iptv
+class _Translations$iptv$nb extends Translations$iptv$en {
+	_Translations$iptv$nb._(TranslationsNb root) : this._root = root, super.internal(root);
+
+	final TranslationsNb _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'Kanalrekkefølge';
+	@override String get orderChanged => 'Kanalrekkefølgen er endret. Se gjennom den og prøv igjen.';
+	@override String get localPlaylist => 'M3U-fil';
+	@override String get pastePlaylist => 'Lim inn spillelistetekst';
+	@override String get playlistBase => 'Basisadresse for relative lenker (valgfritt)';
+	@override String get localPlaylistHelp => 'Importer en privat kopi av en M3U- eller M3U8-kanalliste. Velg en annen fil for å erstatte den.';
+	@override String get showMatches => 'Vis samsvarende kanaler';
+	@override String get hideMatches => 'Skjul samsvarende kanaler';
+	@override String get pickerCredit => 'Inspirert av · M3U Web Picker · Zachary Schmook (@zschmook) og bidragsytere';
+	@override String get exportPrivate => 'Strømmeadressene kan inneholde påloggingsinformasjon. Lagre listen på et privat sted.';
+	@override String get dynamicStreamExport => 'Portalen oppretter en ny lenke ved hver avspilling. Programguiden kan eksporteres.';
+	@override String get moveUp => 'Flytt opp';
+	@override String get moveDown => 'Flytt ned';
+	@override String get choosePlaylist => 'Velg Playlist filer';
+	@override String affectedChannels({required Object count}) => 'Kanaler · ${count}';
 }
 
 // Path: accountPreferences
@@ -7016,6 +7041,21 @@ extension on TranslationsNb {
 			'connections.signInAgain' => 'Logg inn igjen',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Rediger ${product}-tilkobling',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Legg til eller fjern URL-er for ${serverName}. Pleazyng vil bruke den nåbare URL-en med lavest ventetid.',
+			'iptv.lineupOrder' => 'Kanalrekkefølge',
+			'iptv.orderChanged' => 'Kanalrekkefølgen er endret. Se gjennom den og prøv igjen.',
+			'iptv.localPlaylist' => 'M3U-fil',
+			'iptv.pastePlaylist' => 'Lim inn spillelistetekst',
+			'iptv.playlistBase' => 'Basisadresse for relative lenker (valgfritt)',
+			'iptv.localPlaylistHelp' => 'Importer en privat kopi av en M3U- eller M3U8-kanalliste. Velg en annen fil for å erstatte den.',
+			'iptv.showMatches' => 'Vis samsvarende kanaler',
+			'iptv.hideMatches' => 'Skjul samsvarende kanaler',
+			'iptv.pickerCredit' => 'Inspirert av · M3U Web Picker · Zachary Schmook (@zschmook) og bidragsytere',
+			'iptv.exportPrivate' => 'Strømmeadressene kan inneholde påloggingsinformasjon. Lagre listen på et privat sted.',
+			'iptv.dynamicStreamExport' => 'Portalen oppretter en ny lenke ved hver avspilling. Programguiden kan eksporteres.',
+			'iptv.moveUp' => 'Flytt opp',
+			'iptv.moveDown' => 'Flytt ned',
+			'iptv.choosePlaylist' => 'Velg Playlist filer',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanaler · ${count}',
 			'accountPreferences.sectionTitle' => 'Kontoinnstillinger',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Lyd-, undertekst- og bibliotekalternativer lagret på ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Lyd-, undertekst- og bibliotekalternativer lagret på ${count} kontoer',
@@ -7172,6 +7212,8 @@ extension on TranslationsNb {
 			'discover.directors' => 'Regissører',
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'TV-serie',
+			_ => null,
+		} ?? switch (path) {
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min igjen',
 			'discover.moreLikeThis' => 'Mer som dette',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('nb'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} tittel', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titler', ), 
@@ -7187,8 +7229,6 @@ extension on TranslationsNb {
 			'errors.unableToLoad' => ({required Object context}) => 'Kunne ikke laste ${context}. Prøv igjen.',
 			'errors.noClientAvailable' => 'Ingen klient tilgjengelig',
 			'errors.pleaseEnterToken' => 'Vennligst skriv inn et token',
-			_ => null,
-		} ?? switch (path) {
 			'errors.invalidToken' => 'Ugyldig token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Kunne ikke verifisere token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Kunne ikke bytte til ${displayName}',
@@ -7686,6 +7726,8 @@ extension on TranslationsNb {
 			'collections.removeFromCollectionFailed' => 'Kunne ikke fjerne fra samling',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Feil ved fjerning fra samling: ${error}',
 			'collections.searchCollections' => 'Søk i samlinger...',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.title' => 'Spillelister',
 			'playlists.playlist' => 'Spilleliste',
 			'playlists.noPlaylists' => 'Ingen spillelister funnet',
@@ -7701,8 +7743,6 @@ extension on TranslationsNb {
 			'playlists.deleteMessage' => ({required Object name}) => 'Er du sikker på at du vil slette "${name}"?',
 			'playlists.created' => 'Spilleliste opprettet',
 			'playlists.deleted' => 'Spilleliste slettet',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemAdded' => 'Lagt til i spilleliste',
 			'playlists.itemRemoved' => 'Fjernet fra spilleliste',
 			'playlists.selectPlaylist' => 'Velg spilleliste',
@@ -8200,6 +8240,8 @@ extension on TranslationsNb {
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-dekoder (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Basislag',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-basislag',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-basislag',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR-basislag',
 			'performanceOverlay.dvRouteReshaped' => 'RPU-omformet (gpu-next)',
@@ -8215,8 +8257,6 @@ extension on TranslationsNb {
 			'performanceOverlay.displayFps' => 'Skjerm-FPS',
 			'performanceOverlay.avSync' => 'A/V-synk',
 			'performanceOverlay.dropped' => 'Tapte',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU-er',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU snitt',
 			'performanceOverlay.dvSampleAverage' => 'DV-sample snitt',
@@ -8714,6 +8754,8 @@ extension on TranslationsNb {
 			'homeLayout.autoSlideEditDescription' => 'Slides også på egen hånd hvert få sekunder. Av: bare beveger seg når du klikker på en pil (PC) eller trykker venstre/høyre på fjern (TV).',
 			'homeLayout.enableHeroFirst' => 'Oppmuntre til å helte først',
 			'homeLayout.showOnHome' => 'Show på hjemskjermen',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.home' => 'Hjem',
 			'homeLayout.removeFromHome' => 'Fjern fra hjemmet',
 			'homeLayout.selectRowsFirst' => 'Velg hjem ruter nedenfor først.',
@@ -8729,8 +8771,6 @@ extension on TranslationsNb {
 			'homeLayout.heroNeedsSurface' => 'Sjekk biblioteket eller hjemmet først – Hero trenger noe å vise',
 			'homeLayout.removeHub' => 'Fjern Hub',
 			'homeLayout.noPlexRows' => 'No. Plex-styrt rader returnerte for denne biblioteket.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.openDetails' => 'Åpne detaljer',
 			'homeLayout.heroCards' => 'Hero kort',
 			'homeLayout.tapHeroCard' => 'Tapping av en helte kort',
@@ -9228,6 +9268,8 @@ extension on TranslationsNb {
 			'audiobook.sortTitle' => 'Tittel',
 			'audiobook.sortAuthor' => 'Forfatter',
 			'audiobook.sortNarrator' => 'Narratør',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortSeries' => 'Serien ordre',
 			'audiobook.sortRecent' => 'Nylig åpnet',
 			'audiobook.statusFilter' => 'Lesing status',
@@ -9243,8 +9285,6 @@ extension on TranslationsNb {
 			'audiobook.recoveryImportConfirm' => 'Kombiner denne krypterte gjenoppretting filen med aktuelle lesing posisjoner og notater? eksisterende historie vil bli bevaret. delt bibliotek og element IDs er ikke inkludert; sette matching IDs på hver enhet før import.',
 			'audiobook.recoveryExported' => 'Kryptert gjenoppretting fil lagret.',
 			'audiobook.recoveryImported' => 'Data om gjenoppretting sammensatt.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Logg på med din egen BookOrbit-konto for å bla gjennom og spille av bøkene der. Forespørsler om titler som mangler, sendes fortsatt via den tilkoblede SeerrNG-instansen.',
 			'sourceSetup.bookorbitOpen' => 'Åpne i BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Vis denne tittelen i BookOrbit for å administrere bibliotekdetaljer og formater Pleazyng ikke kan åpne. Lyttefremdriften synkroniseres med BookOrbit-kontoen din.',
@@ -9742,6 +9782,8 @@ extension on TranslationsNb {
 			'musicTools.charts' => 'Lyttestatistikk',
 			'musicTools.rediscover' => 'Gjenoppdag',
 			'musicTools.stations' => 'Musikkstasjoner',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.prompt' => 'Spilleliste fra beskrivelse',
 			'musicTools.provider' => 'Leverandørens genererings-URL',
 			'musicTools.model' => 'Modellnavn',
@@ -9757,8 +9799,6 @@ extension on TranslationsNb {
 			'musicTools.missing' => 'I/T',
 			'musicTools.minutes' => 'Minutter',
 			'musicTools.rules' => 'Filtre',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Eksklusiv lydutgang',
 			'musicTools.preamp' => 'Forforsterkning',
 			'musicTools.ratingPending' => 'Lagret på denne enheten; venter på synkronisering',

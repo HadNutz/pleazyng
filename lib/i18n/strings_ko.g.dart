@@ -66,6 +66,7 @@ class TranslationsKo extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$ko dialog = _Translations$dialog$ko._(_root);
 	@override late final _Translations$profiles$ko profiles = _Translations$profiles$ko._(_root);
 	@override late final _Translations$connections$ko connections = _Translations$connections$ko._(_root);
+	@override late final _Translations$iptv$ko iptv = _Translations$iptv$ko._(_root);
 	@override late final _Translations$accountPreferences$ko accountPreferences = _Translations$accountPreferences$ko._(_root);
 	@override late final _Translations$discover$ko discover = _Translations$discover$ko._(_root);
 	@override late final _Translations$errors$ko errors = _Translations$errors$ko._(_root);
@@ -1639,6 +1640,30 @@ class _Translations$connections$ko extends Translations$connections$en {
 	@override String get signInAgain => '다시 로그인';
 	@override String editMediaBrowserTitle({required Object product}) => '${product} 연결 편집';
 	@override String editMediaBrowserIntro({required Object serverName}) => '${serverName}의 URL을 추가하거나 제거하세요. Plezy는 연결 가능한 URL 중 지연 시간이 가장 낮은 URL을 사용합니다.';
+}
+
+// Path: iptv
+class _Translations$iptv$ko extends Translations$iptv$en {
+	_Translations$iptv$ko._(TranslationsKo root) : this._root = root, super.internal(root);
+
+	final TranslationsKo _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => '채널 순서';
+	@override String get orderChanged => '채널 순서가 바뀌었습니다. 확인하고 다시 시도하세요.';
+	@override String get localPlaylist => 'M3U 파일';
+	@override String get pastePlaylist => '재생목록 텍스트 붙여넣기';
+	@override String get playlistBase => '상대 링크의 기본 URL(선택 사항)';
+	@override String get localPlaylistHelp => 'M3U 또는 M3U8 채널 목록을 비공개 사본으로 가져옵니다. 다른 파일로 교체할 수 있습니다.';
+	@override String get showMatches => '일치하는 채널 표시';
+	@override String get hideMatches => '일치하는 채널 숨기기';
+	@override String get pickerCredit => '아이디어 출처 · M3U Web Picker · Zachary Schmook (@zschmook) 외 기여자';
+	@override String get exportPrivate => '스트림 주소에 공급자 로그인 정보가 들어 있을 수 있습니다. 목록을 비공개 위치에 저장하세요.';
+	@override String get dynamicStreamExport => '이 포털은 재생할 때마다 새 링크를 만듭니다. 편성표는 내보낼 수 있습니다.';
+	@override String get moveUp => '움직이기 위하여';
+	@override String get moveDown => '아래로 이동';
+	@override String get choosePlaylist => '플레이리스트 파일 선택';
+	@override String affectedChannels({required Object count}) => '채널 · ${count}';
 }
 
 // Path: accountPreferences
@@ -7011,6 +7036,21 @@ extension on TranslationsKo {
 			'connections.signInAgain' => '다시 로그인',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} 연결 편집',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName}의 URL을 추가하거나 제거하세요. Plezy는 연결 가능한 URL 중 지연 시간이 가장 낮은 URL을 사용합니다.',
+			'iptv.lineupOrder' => '채널 순서',
+			'iptv.orderChanged' => '채널 순서가 바뀌었습니다. 확인하고 다시 시도하세요.',
+			'iptv.localPlaylist' => 'M3U 파일',
+			'iptv.pastePlaylist' => '재생목록 텍스트 붙여넣기',
+			'iptv.playlistBase' => '상대 링크의 기본 URL(선택 사항)',
+			'iptv.localPlaylistHelp' => 'M3U 또는 M3U8 채널 목록을 비공개 사본으로 가져옵니다. 다른 파일로 교체할 수 있습니다.',
+			'iptv.showMatches' => '일치하는 채널 표시',
+			'iptv.hideMatches' => '일치하는 채널 숨기기',
+			'iptv.pickerCredit' => '아이디어 출처 · M3U Web Picker · Zachary Schmook (@zschmook) 외 기여자',
+			'iptv.exportPrivate' => '스트림 주소에 공급자 로그인 정보가 들어 있을 수 있습니다. 목록을 비공개 위치에 저장하세요.',
+			'iptv.dynamicStreamExport' => '이 포털은 재생할 때마다 새 링크를 만듭니다. 편성표는 내보낼 수 있습니다.',
+			'iptv.moveUp' => '움직이기 위하여',
+			'iptv.moveDown' => '아래로 이동',
+			'iptv.choosePlaylist' => '플레이리스트 파일 선택',
+			'iptv.affectedChannels' => ({required Object count}) => '채널 · ${count}',
 			'accountPreferences.sectionTitle' => '계정 기본 설정',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '${account}에 저장된 오디오, 자막 및 라이브러리 옵션',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '${count}개 계정에 저장된 오디오, 자막 및 라이브러리 옵션',
@@ -7167,6 +7207,8 @@ extension on TranslationsKo {
 			'discover.directors' => '감독',
 			'discover.movie' => '영화',
 			'discover.tvShow' => 'TV 시리즈',
+			_ => null,
+		} ?? switch (path) {
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes}분 남음',
 			'discover.moreLikeThis' => '비슷한 콘텐츠',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} 제목', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)}개 타이틀', ), 
@@ -7182,8 +7224,6 @@ extension on TranslationsKo {
 			'errors.unableToLoad' => ({required Object context}) => '${context}을(를) 불러올 수 없습니다. 다시 시도하세요.',
 			'errors.noClientAvailable' => '사용 가능한 클라이언트가 없습니다',
 			'errors.pleaseEnterToken' => '토큰을 입력해 주세요',
-			_ => null,
-		} ?? switch (path) {
 			'errors.invalidToken' => '토큰이 유효하지 않습니다',
 			'errors.failedToVerifyToken' => ({required Object error}) => '토큰을 확인할 수 없습니다: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName}으로 전환할 수 없습니다',
@@ -7681,6 +7721,8 @@ extension on TranslationsKo {
 			'collections.removeFromCollectionFailed' => '컬렉션에서 제거 실패',
 			'collections.removeFromCollectionError' => ({required Object error}) => '컬렉션에서 제거 중 오류 발생: ${error}',
 			'collections.searchCollections' => '컬렉션 검색...',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.title' => '플레이리스트',
 			'playlists.playlist' => '재생 목록',
 			'playlists.noPlaylists' => '재생 목록을 찾을 수 없습니다',
@@ -7696,8 +7738,6 @@ extension on TranslationsKo {
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}"을(를) 삭제하시겠습니까?',
 			'playlists.created' => '재생 목록이 생성되었습니다',
 			'playlists.deleted' => '재생 목록이 삭제되었습니다',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemAdded' => '재생 목록에 추가되었습니다',
 			'playlists.itemRemoved' => '재생 목록에서 제거됨',
 			'playlists.selectPlaylist' => '재생 목록 선택',
@@ -8195,6 +8235,8 @@ extension on TranslationsKo {
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision 디코더 (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => '베이스 레이어',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 베이스 레이어',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG 베이스 레이어',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR 베이스 레이어',
 			'performanceOverlay.dvRouteReshaped' => 'RPU 리셰이핑 (gpu-next)',
@@ -8210,8 +8252,6 @@ extension on TranslationsKo {
 			'performanceOverlay.displayFps' => '디스플레이 FPS',
 			'performanceOverlay.avSync' => 'A/V 동기화',
 			'performanceOverlay.dropped' => '드롭됨',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU 평균',
 			'performanceOverlay.dvSampleAverage' => 'DV 샘플 평균',
@@ -8709,6 +8749,8 @@ extension on TranslationsKo {
 			'homeLayout.autoSlideEditDescription' => '또한 몇 초마다 스스로 슬라이드합니다. 끄기 : 펜 (PC)을 클릭하거나 원격 (TV)에서 왼쪽/오른쪽을 누르면 움직입니다.',
 			'homeLayout.enableHeroFirst' => '영웅을 먼저 할 수 있습니다.',
 			'homeLayout.showOnHome' => 'Home 스크린에 표시',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.home' => '홈',
 			'homeLayout.removeFromHome' => '집에서 제거',
 			'homeLayout.selectRowsFirst' => '먼저 아래의 홈 라인을 선택합니다.',
@@ -8724,8 +8766,6 @@ extension on TranslationsKo {
 			'homeLayout.heroNeedsSurface' => '도서관 또는 홈을 먼저 확인하십시오 - 영웅은 어디서나 보여야합니다.',
 			'homeLayout.removeHub' => 'Hub 삭제',
 			'homeLayout.noPlexRows' => 'No. Plex 관리 라인이 이 도서관에 반환되었습니다.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.openDetails' => '개방된 세부 사항',
 			'homeLayout.heroCards' => '영웅 카드',
 			'homeLayout.tapHeroCard' => '히어로 카드를 탭할 때',
@@ -9223,6 +9263,8 @@ extension on TranslationsKo {
 			'audiobook.sortTitle' => '제목',
 			'audiobook.sortAuthor' => '작가',
 			'audiobook.sortNarrator' => '연설자',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortSeries' => '시리즈 명령',
 			'audiobook.sortRecent' => '최근에 열렸다',
 			'audiobook.statusFilter' => '읽기 상태',
@@ -9238,8 +9280,6 @@ extension on TranslationsKo {
 			'audiobook.recoveryImportConfirm' => '이 암호화 된 복구 파일을 현재 읽기 위치 및 노트와 결합하십시오? 기존 역사는 유지됩니다. 공유 라이브러리 및 항목 ID는 포함되지 않습니다; 수입하기 전에 각 장치에 해당 ID를 설정합니다.',
 			'audiobook.recoveryExported' => '암호화 된 복구 파일이 저장되었습니다.',
 			'audiobook.recoveryImported' => '복구 데이터가 합쳐졌습니다.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'BookOrbit 도서를 둘러보고 재생하려면 본인 BookOrbit 계정으로 로그인하세요. 없는 작품의 요청은 계속 연결된 SeerrNG 인스턴스를 통해 전송됩니다.',
 			'sourceSetup.bookorbitOpen' => 'BookOrbit에서 열기',
 			'sourceSetup.bookorbitDetailHelp' => '라이브러리 세부 정보와 Pleazyng에서 열 수 없는 형식을 관리하려면 BookOrbit에서 이 작품을 확인하세요. 청취 진행 상황은 BookOrbit 계정과 동기화됩니다.',
@@ -9737,6 +9777,8 @@ extension on TranslationsKo {
 			'musicTools.charts' => '청취 순위',
 			'musicTools.rediscover' => '다시 발견',
 			'musicTools.stations' => '음악 스테이션',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.prompt' => '설명으로 재생목록 만들기',
 			'musicTools.provider' => '공급자 생성 URL',
 			'musicTools.model' => '모델 이름',
@@ -9752,8 +9794,6 @@ extension on TranslationsKo {
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '분',
 			'musicTools.rules' => '필터',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => '독점 오디오 출력',
 			'musicTools.preamp' => '프리앰프',
 			'musicTools.ratingPending' => '이 기기에 저장됨; 동기화 대기 중',

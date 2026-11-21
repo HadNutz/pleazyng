@@ -534,6 +534,20 @@ class _LiveTvScreenState extends State<LiveTvScreen>
         return aNum.compareTo(bNum);
       });
 
+      // Respect custom order inside each IPTV lineup while retaining the slots
+      // occupied by Plex, Jellyfin and other sources in the merged guide.
+      final orderedSources = {
+        for (final channel in iptvChannels)
+          if (channel.iptvLineupOrder != null) ?channel.iptvSourceId,
+      };
+      final queues = <String, Iterator<LiveTvChannel>>{
+        for (final source in orderedSources)
+          source: iptvChannels.where((channel) => channel.iptvSourceId == source).iterator,
+      };
+      for (var i = 0; i < allChannels.length; i++) {
+        final queue = queues[allChannels[i].iptvSourceId];
+        if (queue != null && queue.moveNext()) allChannels[i] = queue.current;
+      }
       if (!mounted || context.read<ActiveProfileProvider>().activeId != activeProfileId) return;
 
       appLogger.d('Live TV: loaded ${allChannels.length} channels');

@@ -66,6 +66,7 @@ class TranslationsBg extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$bg dialog = _Translations$dialog$bg._(_root);
 	@override late final _Translations$profiles$bg profiles = _Translations$profiles$bg._(_root);
 	@override late final _Translations$connections$bg connections = _Translations$connections$bg._(_root);
+	@override late final _Translations$iptv$bg iptv = _Translations$iptv$bg._(_root);
 	@override late final _Translations$accountPreferences$bg accountPreferences = _Translations$accountPreferences$bg._(_root);
 	@override late final _Translations$discover$bg discover = _Translations$discover$bg._(_root);
 	@override late final _Translations$errors$bg errors = _Translations$errors$bg._(_root);
@@ -1641,6 +1642,30 @@ class _Translations$connections$bg extends Translations$connections$en {
 	@override String get signInAgain => 'Влез отново';
 	@override String editMediaBrowserTitle({required Object product}) => 'Редактирай връзката с ${product}';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Добавете или премахнете URL адреси за ${serverName}. Pleazyng ще използва достъпния URL адрес с най-ниска латентност.';
+}
+
+// Path: iptv
+class _Translations$iptv$bg extends Translations$iptv$en {
+	_Translations$iptv$bg._(TranslationsBg root) : this._root = root, super.internal(root);
+
+	final TranslationsBg _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'Ред на каналите';
+	@override String get orderChanged => 'Редът на каналите е променен. Проверете го и опитайте отново.';
+	@override String get localPlaylist => 'M3U файл';
+	@override String get pastePlaylist => 'Поставяне на текста на плейлиста';
+	@override String get playlistBase => 'Основен URL за относителни връзки (по избор)';
+	@override String get localPlaylistHelp => 'Импортирайте лично копие на списък с канали M3U или M3U8. Можете да го замените с друг файл.';
+	@override String get showMatches => 'Показване на съответстващите канали';
+	@override String get hideMatches => 'Скриване на съответстващите канали';
+	@override String get pickerCredit => 'Вдъхновено от · M3U Web Picker · Zachary Schmook (@zschmook) и сътрудници';
+	@override String get exportPrivate => 'Адресите на потоците може да съдържат данните ви за вход. Запазете списъка на лично място.';
+	@override String get dynamicStreamExport => 'Порталът създава нова връзка при всяко пускане. Можете да експортирате програмата.';
+	@override String get moveUp => 'Подвижване нагоре';
+	@override String get moveDown => 'Направете надолу';
+	@override String get choosePlaylist => 'Изберете Playlist файлове';
+	@override String affectedChannels({required Object count}) => 'Канали · ${count}';
 }
 
 // Path: accountPreferences
@@ -7016,6 +7041,21 @@ extension on TranslationsBg {
 			'connections.signInAgain' => 'Влез отново',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Редактирай връзката с ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Добавете или премахнете URL адреси за ${serverName}. Pleazyng ще използва достъпния URL адрес с най-ниска латентност.',
+			'iptv.lineupOrder' => 'Ред на каналите',
+			'iptv.orderChanged' => 'Редът на каналите е променен. Проверете го и опитайте отново.',
+			'iptv.localPlaylist' => 'M3U файл',
+			'iptv.pastePlaylist' => 'Поставяне на текста на плейлиста',
+			'iptv.playlistBase' => 'Основен URL за относителни връзки (по избор)',
+			'iptv.localPlaylistHelp' => 'Импортирайте лично копие на списък с канали M3U или M3U8. Можете да го замените с друг файл.',
+			'iptv.showMatches' => 'Показване на съответстващите канали',
+			'iptv.hideMatches' => 'Скриване на съответстващите канали',
+			'iptv.pickerCredit' => 'Вдъхновено от · M3U Web Picker · Zachary Schmook (@zschmook) и сътрудници',
+			'iptv.exportPrivate' => 'Адресите на потоците може да съдържат данните ви за вход. Запазете списъка на лично място.',
+			'iptv.dynamicStreamExport' => 'Порталът създава нова връзка при всяко пускане. Можете да експортирате програмата.',
+			'iptv.moveUp' => 'Подвижване нагоре',
+			'iptv.moveDown' => 'Направете надолу',
+			'iptv.choosePlaylist' => 'Изберете Playlist файлове',
+			'iptv.affectedChannels' => ({required Object count}) => 'Канали · ${count}',
 			'accountPreferences.sectionTitle' => 'Предпочитания на акаунта',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Опции за аудио, субтитри и библиотека, запазени на ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Опции за аудио, субтитри и библиотека, запазени на ${count} акаунта',
@@ -7172,6 +7212,8 @@ extension on TranslationsBg {
 			'discover.directors' => 'Режисьори',
 			'discover.movie' => 'Филм',
 			'discover.tvShow' => 'ТВ сериал',
+			_ => null,
+		} ?? switch (path) {
 			'discover.minutesLeft' => ({required Object minutes}) => 'Остават ${minutes} мин',
 			'discover.moreLikeThis' => 'Подобно на това',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bg'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} заглавие', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} заглавия', ), 
@@ -7187,8 +7229,6 @@ extension on TranslationsBg {
 			'errors.unableToLoad' => ({required Object context}) => 'Не може да се зареди ${context}. Опитайте отново.',
 			'errors.noClientAvailable' => 'Няма наличен клиент',
 			'errors.pleaseEnterToken' => 'Моля, въведете токен',
-			_ => null,
-		} ?? switch (path) {
 			'errors.invalidToken' => 'Невалиден токен',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Неуспешна проверка на токена: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Неуспешна смяна към ${displayName}',
@@ -7686,6 +7726,8 @@ extension on TranslationsBg {
 			'collections.removeFromCollectionFailed' => 'Неуспешно премахване от колекция',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Грешка при премахване от колекция: ${error}',
 			'collections.searchCollections' => 'Търсене на колекции...',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.title' => 'Плейлисти',
 			'playlists.playlist' => 'Плейлист',
 			'playlists.noPlaylists' => 'Не са намерени плейлисти',
@@ -7701,8 +7743,6 @@ extension on TranslationsBg {
 			'playlists.deleteMessage' => ({required Object name}) => 'Сигурни ли сте, че искате да изтриете "${name}"?',
 			'playlists.created' => 'Плейлистът е създаден',
 			'playlists.deleted' => 'Плейлистът е изтрит',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemAdded' => 'Добавено към плейлист',
 			'playlists.itemRemoved' => 'Премахнато от плейлист',
 			'playlists.selectPlaylist' => 'Избери плейлист',
@@ -8200,6 +8240,8 @@ extension on TranslationsBg {
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision декодер (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Базов слой',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Базов слой HDR10',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Базов слой HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'Базов слой SDR',
 			'performanceOverlay.dvRouteReshaped' => 'Преоформено с RPU (gpu-next)',
@@ -8215,8 +8257,6 @@ extension on TranslationsBg {
 			'performanceOverlay.displayFps' => 'FPS на дисплея',
 			'performanceOverlay.avSync' => 'A/V синхр.',
 			'performanceOverlay.dropped' => 'Пропуснати кадри',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'Средно DV RPU',
 			'performanceOverlay.dvSampleAverage' => 'Средно DV семпл',
@@ -8714,6 +8754,8 @@ extension on TranslationsBg {
 			'homeLayout.autoSlideEditDescription' => 'Отключва се: се движи само когато кликнете върху стрела (PC) или натиснете ляво/десно на отдалеченото (TV).',
 			'homeLayout.enableHeroFirst' => 'Първо да се възползвате от героя',
 			'homeLayout.showOnHome' => 'Показване на домашен екран',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.home' => 'Начало',
 			'homeLayout.removeFromHome' => 'Изтегляне от дома',
 			'homeLayout.selectRowsFirst' => 'Изберете домашни редове по-долу първо.',
@@ -8729,8 +8771,6 @@ extension on TranslationsBg {
 			'homeLayout.heroNeedsSurface' => 'Проверете Библиотеката или Дома първо — Героя трябва някъде да покаже',
 			'homeLayout.removeHub' => 'Изтегляне на Hub',
 			'homeLayout.noPlexRows' => 'No Plex управлявани редове се връщат за тази библиотека.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.openDetails' => 'Отворени детайли',
 			'homeLayout.heroCards' => 'Герои карти',
 			'homeLayout.tapHeroCard' => 'Изтегляне на карта на герой',
@@ -9228,6 +9268,8 @@ extension on TranslationsBg {
 			'audiobook.sortTitle' => 'Заглавие',
 			'audiobook.sortAuthor' => 'Авторът',
 			'audiobook.sortNarrator' => 'Приказка',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortSeries' => 'Серия на поръчката',
 			'audiobook.sortRecent' => 'Неотдавна отворен',
 			'audiobook.statusFilter' => 'Статус на четене',
@@ -9243,8 +9285,6 @@ extension on TranslationsBg {
 			'audiobook.recoveryImportConfirm' => 'Комбинирайте този криптиран файл за възстановяване с текущи позиции за четене и бележки? съществуващата история ще бъде запазена. споделена библиотека и идентификатори на елементи не са включени; зададете съответстващите идентификации на всяко устройство, преди да импортирате.',
 			'audiobook.recoveryExported' => 'Закритирани файлове за възстановяване са спасени.',
 			'audiobook.recoveryImported' => 'Данните за възстановяване се сливат.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Влезте със собствения си акаунт в BookOrbit, за да разглеждате и четете книгите му. Заявките за липсващи заглавия продължават да минават през свързания ви екземпляр на SeerrNG.',
 			'sourceSetup.bookorbitOpen' => 'Отвори в BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Прегледайте това заглавие в BookOrbit, за да управлявате подробностите за библиотеката и форматите, които Pleazyng не може да отвори. Напредъкът при слушане се синхронизира с акаунта ви в BookOrbit.',
@@ -9742,6 +9782,8 @@ extension on TranslationsBg {
 			'musicTools.charts' => 'Класации на слушане',
 			'musicTools.rediscover' => 'Преоткрийте',
 			'musicTools.stations' => 'Музикални станции',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.prompt' => 'Плейлист по описание',
 			'musicTools.provider' => 'Адрес за генериране на доставчика',
 			'musicTools.model' => 'Име на модела',
@@ -9757,8 +9799,6 @@ extension on TranslationsBg {
 			'musicTools.missing' => 'Н/Д',
 			'musicTools.minutes' => 'Минути',
 			'musicTools.rules' => 'Филтри',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Изключителен аудиоизход',
 			'musicTools.preamp' => 'Предусилване',
 			'musicTools.ratingPending' => 'Запазено на това устройство; чака синхронизиране',

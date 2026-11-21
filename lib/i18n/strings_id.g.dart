@@ -66,6 +66,7 @@ class TranslationsId extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$id dialog = _Translations$dialog$id._(_root);
 	@override late final _Translations$profiles$id profiles = _Translations$profiles$id._(_root);
 	@override late final _Translations$connections$id connections = _Translations$connections$id._(_root);
+	@override late final _Translations$iptv$id iptv = _Translations$iptv$id._(_root);
 	@override late final _Translations$accountPreferences$id accountPreferences = _Translations$accountPreferences$id._(_root);
 	@override late final _Translations$discover$id discover = _Translations$discover$id._(_root);
 	@override late final _Translations$errors$id errors = _Translations$errors$id._(_root);
@@ -1634,6 +1635,30 @@ class _Translations$connections$id extends Translations$connections$en {
 	@override String get signInAgain => 'Menandatangani lagi';
 	@override String editMediaBrowserTitle({required Object product}) => 'Mengedit ${product} koneksi';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Menambahkan atau menghapus URL untuk ${serverName}. Pleazyng akan menggunakan URL yang dapat diakses dengan latensi terendah.';
+}
+
+// Path: iptv
+class _Translations$iptv$id extends Translations$iptv$en {
+	_Translations$iptv$id._(TranslationsId root) : this._root = root, super.internal(root);
+
+	final TranslationsId _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'Urutan saluran';
+	@override String get orderChanged => 'Urutan saluran berubah. Periksa lalu coba lagi.';
+	@override String get localPlaylist => 'Berkas M3U';
+	@override String get pastePlaylist => 'Tempel teks daftar putar';
+	@override String get playlistBase => 'URL dasar untuk tautan relatif (opsional)';
+	@override String get localPlaylistHelp => 'Impor salinan pribadi daftar saluran M3U atau M3U8. Ganti dengan berkas lain jika perlu.';
+	@override String get showMatches => 'Tampilkan saluran yang cocok';
+	@override String get hideMatches => 'Sembunyikan saluran yang cocok';
+	@override String get pickerCredit => 'Terinspirasi oleh · M3U Web Picker · Zachary Schmook (@zschmook) dan para kontributor';
+	@override String get exportPrivate => 'Alamat siaran mungkin memuat kredensial penyedia Anda. Simpan daftar di lokasi pribadi.';
+	@override String get dynamicStreamExport => 'Portal membuat tautan baru setiap kali diputar. Panduan acara dapat diekspor.';
+	@override String get moveUp => 'bergerak ke atas';
+	@override String get moveDown => 'Memuat turun';
+	@override String get choosePlaylist => 'Pilih file playlist';
+	@override String affectedChannels({required Object count}) => 'Saluran · ${count}';
 }
 
 // Path: accountPreferences
@@ -6991,6 +7016,21 @@ extension on TranslationsId {
 			'connections.signInAgain' => 'Menandatangani lagi',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Mengedit ${product} koneksi',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Menambahkan atau menghapus URL untuk ${serverName}. Pleazyng akan menggunakan URL yang dapat diakses dengan latensi terendah.',
+			'iptv.lineupOrder' => 'Urutan saluran',
+			'iptv.orderChanged' => 'Urutan saluran berubah. Periksa lalu coba lagi.',
+			'iptv.localPlaylist' => 'Berkas M3U',
+			'iptv.pastePlaylist' => 'Tempel teks daftar putar',
+			'iptv.playlistBase' => 'URL dasar untuk tautan relatif (opsional)',
+			'iptv.localPlaylistHelp' => 'Impor salinan pribadi daftar saluran M3U atau M3U8. Ganti dengan berkas lain jika perlu.',
+			'iptv.showMatches' => 'Tampilkan saluran yang cocok',
+			'iptv.hideMatches' => 'Sembunyikan saluran yang cocok',
+			'iptv.pickerCredit' => 'Terinspirasi oleh · M3U Web Picker · Zachary Schmook (@zschmook) dan para kontributor',
+			'iptv.exportPrivate' => 'Alamat siaran mungkin memuat kredensial penyedia Anda. Simpan daftar di lokasi pribadi.',
+			'iptv.dynamicStreamExport' => 'Portal membuat tautan baru setiap kali diputar. Panduan acara dapat diekspor.',
+			'iptv.moveUp' => 'bergerak ke atas',
+			'iptv.moveDown' => 'Memuat turun',
+			'iptv.choosePlaylist' => 'Pilih file playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'Saluran · ${count}',
 			'accountPreferences.sectionTitle' => 'Keutamaan Akun',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Audio, subtitle, dan pilihan perpustakaan disimpan pada ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Audio, subtitle, dan pilihan perpustakaan disimpan pada ${count} akun',
@@ -7147,6 +7187,8 @@ extension on TranslationsId {
 			'discover.directors' => 'Direktur',
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'televisi show',
+			_ => null,
+		} ?? switch (path) {
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min dibatasi',
 			'discover.moreLikeThis' => 'Lainnya Seperti Ini',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('id'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} judul', ), 
@@ -7162,8 +7204,6 @@ extension on TranslationsId {
 			'errors.unableToLoad' => ({required Object context}) => 'Tidak dapat mengisi ${context}. silakan coba lagi.',
 			'errors.noClientAvailable' => 'Tidak ada klien yang tersedia',
 			'errors.pleaseEnterToken' => 'Silakan masukkan token',
-			_ => null,
-		} ?? switch (path) {
 			'errors.invalidToken' => 'Token tidak valid',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Tidak dapat mengkonfirmasi token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Tidak dapat beralih ke ${displayName}',
@@ -7661,6 +7701,8 @@ extension on TranslationsId {
 			'collections.removeFromCollectionFailed' => 'Tidak berhasil keluar dari koleksi',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Kesalahan penghapusan dari koleksi: ${error}',
 			'collections.searchCollections' => 'Koleksi pencarian...',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.title' => 'Daftar putar',
 			'playlists.playlist' => 'Daftar Putar',
 			'playlists.noPlaylists' => 'Tidak ditemukan playlist',
@@ -7676,8 +7718,6 @@ extension on TranslationsId {
 			'playlists.deleteMessage' => ({required Object name}) => 'Apakah Anda yakin Anda ingin menghapus "${name}"?',
 			'playlists.created' => 'Playlist yang diciptakan',
 			'playlists.deleted' => 'Playlist dihapus',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemAdded' => 'Ditambahkan ke playlist',
 			'playlists.itemRemoved' => 'Menghapus dari playlist',
 			'playlists.selectPlaylist' => 'Pilih Playlist',
@@ -8175,6 +8215,8 @@ extension on TranslationsId {
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision decoder (P7 → 8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Lantai dasar',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 lapisan dasar',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Lantai dasar HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'Lantai dasar SDR',
 			'performanceOverlay.dvRouteReshaped' => 'RPU yang dihapus kembali (gpu-next)',
@@ -8190,8 +8232,6 @@ extension on TranslationsId {
 			'performanceOverlay.displayFps' => 'Tampilan FPS',
 			'performanceOverlay.avSync' => 'A / V Sync',
 			'performanceOverlay.dropped' => 'pecah',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'RPU yang',
 			'performanceOverlay.dvRpuAverage' => 'RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'Sebutkan Sample Avg',
@@ -8689,6 +8729,8 @@ extension on TranslationsId {
 			'homeLayout.autoSlideEditDescription' => 'Selain itu, ia juga meluncur sendiri setiap beberapa detik. Off: hanya bergerak ketika Anda mengklik pistol (PC) atau tekan kiri/kanan pada remote (TV). Arrow dan d-pad selalu bekerja sama.',
 			'homeLayout.enableHeroFirst' => 'Memungkinkan Hero Pertama',
 			'homeLayout.showOnHome' => 'Tampilkan pada Home Screen',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.home' => 'rumah',
 			'homeLayout.removeFromHome' => 'Menghilangkan dari rumah',
 			'homeLayout.selectRowsFirst' => 'Pilih rumah baris di bawah pertama.',
@@ -8704,8 +8746,6 @@ extension on TranslationsId {
 			'homeLayout.heroNeedsSurface' => 'Periksa Perpustakaan atau Rumah terlebih dahulu — Hero perlu di suatu tempat untuk menunjukkan',
 			'homeLayout.removeHub' => 'Menghapus Hub',
 			'homeLayout.noPlexRows' => 'No. Plex baris yang dikelola kembali untuk perpustakaan ini.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.openDetails' => 'Detail Terbuka',
 			'homeLayout.heroCards' => 'Kartu Hero',
 			'homeLayout.tapHeroCard' => 'Menangkap Kartu Pahlawan',
@@ -9203,6 +9243,8 @@ extension on TranslationsId {
 			'audiobook.sortTitle' => 'Judul',
 			'audiobook.sortAuthor' => 'Penulis',
 			'audiobook.sortNarrator' => 'narator',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortSeries' => 'Serangkaian perintah',
 			'audiobook.sortRecent' => 'Baru-baru ini dibuka',
 			'audiobook.statusFilter' => 'Status bacaan',
@@ -9218,8 +9260,6 @@ extension on TranslationsId {
 			'audiobook.recoveryImportConfirm' => 'Menggabungkan file pemulihan yang disulitkan ini dengan posisi bacaan dan catatan saat ini? sejarah yang ada akan disimpan. perpustakaan berbagi dan ID item tidak termasuk; menetapkan ID yang sepadan pada setiap perangkat sebelum mengimpor.',
 			'audiobook.recoveryExported' => 'File pemulihan yang disulitkan disimpan.',
 			'audiobook.recoveryImported' => 'Data pemulihan digabungkan.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Masuk dengan akun BookOrbit Anda sendiri untuk menelusuri dan memutar buku. Permintaan untuk judul yang tidak tersedia tetap dikirim melalui instans SeerrNG yang terhubung.',
 			'sourceSetup.bookorbitOpen' => 'Buka di BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Lihat judul ini di BookOrbit untuk mengelola detail pustaka dan format yang tidak dapat dibuka Pleazyng. Progres mendengarkan disinkronkan dengan akun BookOrbit Anda.',
@@ -9717,6 +9757,8 @@ extension on TranslationsId {
 			'musicTools.charts' => 'Peringkat pendengaran',
 			'musicTools.rediscover' => 'Temukan kembali',
 			'musicTools.stations' => 'Stasiun musik',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.prompt' => 'Daftar putar dari deskripsi',
 			'musicTools.provider' => 'URL pembuatan penyedia',
 			'musicTools.model' => 'Nama model',
@@ -9732,8 +9774,6 @@ extension on TranslationsId {
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'Minit',
 			'musicTools.rules' => 'Filter',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Keluaran audio eksklusif',
 			'musicTools.preamp' => 'Prapenguatan',
 			'musicTools.ratingPending' => 'Disimpan di perangkat ini; menunggu sinkronisasi',

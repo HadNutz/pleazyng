@@ -66,6 +66,7 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$vi dialog = _Translations$dialog$vi._(_root);
 	@override late final _Translations$profiles$vi profiles = _Translations$profiles$vi._(_root);
 	@override late final _Translations$connections$vi connections = _Translations$connections$vi._(_root);
+	@override late final _Translations$iptv$vi iptv = _Translations$iptv$vi._(_root);
 	@override late final _Translations$accountPreferences$vi accountPreferences = _Translations$accountPreferences$vi._(_root);
 	@override late final _Translations$discover$vi discover = _Translations$discover$vi._(_root);
 	@override late final _Translations$errors$vi errors = _Translations$errors$vi._(_root);
@@ -1634,6 +1635,30 @@ class _Translations$connections$vi extends Translations$connections$en {
 	@override String get signInAgain => 'Đăng ký lại';
 	@override String editMediaBrowserTitle({required Object product}) => 'Edit ${product} kết nối';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Thêm hoặc xóa URL cho ${serverName}. Pleazyng sẽ sử dụng URL có thể truy cập với độ chậm thấp nhất.';
+}
+
+// Path: iptv
+class _Translations$iptv$vi extends Translations$iptv$en {
+	_Translations$iptv$vi._(TranslationsVi root) : this._root = root, super.internal(root);
+
+	final TranslationsVi _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'Thứ tự kênh';
+	@override String get orderChanged => 'Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.';
+	@override String get localPlaylist => 'Tệp M3U';
+	@override String get pastePlaylist => 'Dán văn bản danh sách phát';
+	@override String get playlistBase => 'URL cơ sở cho liên kết tương đối (không bắt buộc)';
+	@override String get localPlaylistHelp => 'Nhập bản sao riêng của danh sách kênh M3U hoặc M3U8. Bạn có thể thay thế bằng tệp khác.';
+	@override String get showMatches => 'Hiện kênh phù hợp';
+	@override String get hideMatches => 'Ẩn kênh phù hợp';
+	@override String get pickerCredit => 'Lấy cảm hứng từ · M3U Web Picker · Zachary Schmook (@zschmook) và những người đóng góp';
+	@override String get exportPrivate => 'Địa chỉ luồng có thể chứa thông tin đăng nhập của nhà cung cấp. Hãy lưu danh sách ở nơi riêng tư.';
+	@override String get dynamicStreamExport => 'Cổng tạo liên kết mới mỗi lần phát. Bạn có thể xuất lịch chương trình.';
+	@override String get moveUp => 'chuyển lên';
+	@override String get moveDown => 'di chuyển xuống';
+	@override String get choosePlaylist => 'Chọn playlist file';
+	@override String affectedChannels({required Object count}) => 'Kênh · ${count}';
 }
 
 // Path: accountPreferences
@@ -6991,6 +7016,21 @@ extension on TranslationsVi {
 			'connections.signInAgain' => 'Đăng ký lại',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} kết nối',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Thêm hoặc xóa URL cho ${serverName}. Pleazyng sẽ sử dụng URL có thể truy cập với độ chậm thấp nhất.',
+			'iptv.lineupOrder' => 'Thứ tự kênh',
+			'iptv.orderChanged' => 'Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.',
+			'iptv.localPlaylist' => 'Tệp M3U',
+			'iptv.pastePlaylist' => 'Dán văn bản danh sách phát',
+			'iptv.playlistBase' => 'URL cơ sở cho liên kết tương đối (không bắt buộc)',
+			'iptv.localPlaylistHelp' => 'Nhập bản sao riêng của danh sách kênh M3U hoặc M3U8. Bạn có thể thay thế bằng tệp khác.',
+			'iptv.showMatches' => 'Hiện kênh phù hợp',
+			'iptv.hideMatches' => 'Ẩn kênh phù hợp',
+			'iptv.pickerCredit' => 'Lấy cảm hứng từ · M3U Web Picker · Zachary Schmook (@zschmook) và những người đóng góp',
+			'iptv.exportPrivate' => 'Địa chỉ luồng có thể chứa thông tin đăng nhập của nhà cung cấp. Hãy lưu danh sách ở nơi riêng tư.',
+			'iptv.dynamicStreamExport' => 'Cổng tạo liên kết mới mỗi lần phát. Bạn có thể xuất lịch chương trình.',
+			'iptv.moveUp' => 'chuyển lên',
+			'iptv.moveDown' => 'di chuyển xuống',
+			'iptv.choosePlaylist' => 'Chọn playlist file',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kênh · ${count}',
 			'accountPreferences.sectionTitle' => 'Kế toán ưu tiên',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Audio, subtitle và thư viện tùy chọn được lưu trên ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Audio, subtitle và thư viện tùy chọn được lưu trên ${count} tài khoản',
@@ -7147,6 +7187,8 @@ extension on TranslationsVi {
 			'discover.directors' => 'Đạo Diễn',
 			'discover.movie' => 'Phim',
 			'discover.tvShow' => 'chương trình TV',
+			_ => null,
+		} ?? switch (path) {
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} phút left',
 			'discover.moreLikeThis' => 'Nội Dung Tương Tự',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('vi'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} danh sách', ), 
@@ -7162,8 +7204,6 @@ extension on TranslationsVi {
 			'errors.unableToLoad' => ({required Object context}) => 'Không thể tải ${context}. xin vui lòng thử lại.',
 			'errors.noClientAvailable' => 'Không có khách hàng',
 			'errors.pleaseEnterToken' => 'Vui lòng nhập token',
-			_ => null,
-		} ?? switch (path) {
 			'errors.invalidToken' => 'Mã xác thực không hợp lệ',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Không xác minh token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Không thể chuyển sang ${displayName}',
@@ -7661,6 +7701,8 @@ extension on TranslationsVi {
 			'collections.removeFromCollectionFailed' => 'Không thể loại bỏ khỏi bộ sưu tập',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Sai lầm xóa khỏi bộ sưu tập: ${error}',
 			'collections.searchCollections' => 'Tìm kiếm bộ sưu tập',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.title' => 'Danh sách phát',
 			'playlists.playlist' => 'Danh sách phát',
 			'playlists.noPlaylists' => 'Không tìm thấy playlist',
@@ -7676,8 +7718,6 @@ extension on TranslationsVi {
 			'playlists.deleteMessage' => ({required Object name}) => 'Bạn có chắc chắn bạn muốn xóa "${name}" không?',
 			'playlists.created' => 'Playlist tạo ra',
 			'playlists.deleted' => 'Playlist xóa',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemAdded' => 'Thêm vào playlist',
 			'playlists.itemRemoved' => 'Xóa khỏi playlist',
 			'playlists.selectPlaylist' => 'Chọn Playlist',
@@ -8175,6 +8215,8 @@ extension on TranslationsVi {
 			'performanceOverlay.dvRouteDecoderP81' => 'Bộ giải mã Dolby Vision (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Lớp cơ sở',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 lớp cơ sở',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG cơ sở lớp',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR cơ sở',
 			'performanceOverlay.dvRouteReshaped' => 'RPU tái tạo (gpu-next)',
@@ -8190,8 +8232,6 @@ extension on TranslationsVi {
 			'performanceOverlay.displayFps' => 'Hiển thị FPS',
 			'performanceOverlay.avSync' => 'A/V đồng bộ',
 			'performanceOverlay.dropped' => 'bị rơi',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'Đánh giá RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'Đánh giá DV Sample Avg',
@@ -8689,6 +8729,8 @@ extension on TranslationsVi {
 			'homeLayout.autoSlideEditDescription' => 'Ngoài ra, nó tự nhảy mỗi vài giây. tắt: chỉ di chuyển khi bạn nhấp vào một mũi tên (PC) hoặc nhấn trái / phải trên từ xa (TV).',
 			'homeLayout.enableHeroFirst' => 'Khả năng Hero đầu tiên',
 			'homeLayout.showOnHome' => 'Hiển thị trên màn hình Home',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.home' => 'Trang chủ',
 			'homeLayout.removeFromHome' => 'Xóa khỏi nhà',
 			'homeLayout.selectRowsFirst' => 'Chọn dòng Home bên dưới trước.',
@@ -8704,8 +8746,6 @@ extension on TranslationsVi {
 			'homeLayout.heroNeedsSurface' => 'Kiểm tra Thư viện hoặc Nhà đầu tiên — Anh hùng cần một nơi nào đó để hiển thị',
 			'homeLayout.removeHub' => 'Xóa Hub',
 			'homeLayout.noPlexRows' => 'Số Plex hàng quản lý đã trở lại cho thư viện này.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.openDetails' => 'chi tiết mở',
 			'homeLayout.heroCards' => 'thẻ anh hùng',
 			'homeLayout.tapHeroCard' => 'Tải thẻ anh hùng',
@@ -9203,6 +9243,8 @@ extension on TranslationsVi {
 			'audiobook.sortTitle' => 'Tiêu đề',
 			'audiobook.sortAuthor' => 'Tác giả',
 			'audiobook.sortNarrator' => 'Nữ diễn viên',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortSeries' => 'Lệnh Series',
 			'audiobook.sortRecent' => 'Gần đây mở',
 			'audiobook.statusFilter' => 'Đọc Status',
@@ -9218,8 +9260,6 @@ extension on TranslationsVi {
 			'audiobook.recoveryImportConfirm' => 'Kết hợp tệp phục hồi mã hóa này với các vị trí đọc và ghi chú hiện tại? Lịch sử hiện có sẽ được giữ lại. Thư viện chia sẻ và ID mục không bao gồm; thiết lập ID phù hợp trên mỗi thiết bị trước khi nhập khẩu.',
 			'audiobook.recoveryExported' => 'Tệp phục hồi mã hóa đã được lưu.',
 			'audiobook.recoveryImported' => 'Dữ liệu phục hồi kết hợp.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Đăng nhập bằng tài khoản BookOrbit của riêng bạn để duyệt và phát sách. Yêu cầu các tựa sách còn thiếu vẫn được gửi qua phiên bản SeerrNG đã kết nối.',
 			'sourceSetup.bookorbitOpen' => 'Mở trong BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Xem tựa sách này trong BookOrbit để quản lý thông tin thư viện và các định dạng Pleazyng không thể mở. Tiến độ nghe được đồng bộ với tài khoản BookOrbit của bạn.',
@@ -9717,6 +9757,8 @@ extension on TranslationsVi {
 			'musicTools.charts' => 'Bảng xếp hạng nghe',
 			'musicTools.rediscover' => 'Khám phá lại',
 			'musicTools.stations' => 'Đài âm nhạc',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.prompt' => 'Danh sách từ mô tả',
 			'musicTools.provider' => 'URL tạo của nhà cung cấp',
 			'musicTools.model' => 'Tên mô hình',
@@ -9732,8 +9774,6 @@ extension on TranslationsVi {
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'phút',
 			'musicTools.rules' => 'Bộ lọc',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Đầu ra âm thanh độc quyền',
 			'musicTools.preamp' => 'Tiền khuếch đại',
 			'musicTools.ratingPending' => 'Đã lưu trên thiết bị này; đang chờ đồng bộ',
