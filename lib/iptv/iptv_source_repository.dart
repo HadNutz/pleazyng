@@ -30,6 +30,7 @@ import 'iptv_playlist_parser.dart';
 
 part 'source_repository/stored_source.dart';
 part 'source_repository/lineup.dart';
+part 'source_repository/vod_catalog.dart';
 
 class IptvImportException implements Exception {
   const IptvImportException(this.code);
