@@ -12,6 +12,7 @@ import '../mpv/player/player.dart';
 import '../mpv/player/platform/player_system.dart';
 import '../mpv/player/player_native.dart';
 import 'android_anvil_provider_status.dart';
+import 'motion_clarity_service.dart';
 import 'neural_model_pack_service.dart';
 import 'power_source_service.dart';
 import 'settings_service.dart';
@@ -292,7 +293,12 @@ abstract final class MotionProcessingService {
           allowSelectedTrackFallback: !selectionChanged,
         );
         if (interlaced != true && !(selectionChanged && interlaced == null)) return;
-        if (!_hasActiveMotionProcessing(player) || _interlacedTrackSuppressed[player] == true) return;
+        if (_interlacedTrackSuppressed[player] == true) return;
+        if (!_hasActiveMotionProcessing(player)) {
+          // A desktop title started in Off can still enable interpolation later.
+          if (_isDesktopPmePlatform) _interlacedTrackSuppressed[player] = true;
+          return;
+        }
         await _suspendMotionForUnsupportedTrack(player);
       });
     } catch (error, stackTrace) {
@@ -399,8 +405,18 @@ abstract final class MotionProcessingService {
   /// in-session option changes safe. Live streams stay excluded. Neural preset
   /// changes are live only for an already-active supported provider session.
   static bool canChangeLive(Player player, {required MotionProcessingMode mode, bool isLive = false}) {
-    if (isLive || !supportsPlayer(player) || _interpolationBufferReady[player] != true) return false;
+    if (isLive || !supportsPlayer(player)) return false;
     if (mode != MotionProcessingMode.off && _interlacedTrackSuppressed[player] == true) return false;
+    if (mode.usesMpvInterpolation && player.playerType == 'mpv' && _isDesktopPmePlatform) {
+      final version = _sessionSelectedVersion[player];
+      return (_interpolationBufferReady[player] == true ||
+              MotionClarityService.forPlayer(player).desktopFramePoolPrepared) &&
+          _sessionIsLive[player] == false &&
+          _sessionIsTranscoding[player] == false &&
+          version != null &&
+          _supportsMotionSource(version, allowDynamicRange: true);
+    }
+    if (_interpolationBufferReady[player] != true) return false;
     if (mode.usesNeuralInterpolation && _isDesktopPmePlatform) {
       return _desktopPmeActive[player] == true &&
           _desktopPmePreset[player] != null &&
@@ -780,6 +796,15 @@ abstract final class MotionProcessingService {
       return;
     }
 
+    final currentVideoOutput = _isDesktopPmePlatform && mode.usesMpvInterpolation
+        ? await _videoOutputForConfiguration(player)
+        : null;
+    if (mode.usesMpvInterpolation &&
+        _isDesktopPmePlatform &&
+        (currentVideoOutput == null || !_supportsVideoOutput(currentVideoOutput))) {
+      throw UnsupportedError('The active video output does not support MPV interpolation.');
+    }
+
     if (_isDesktopPmePlatform) {
       if (mode.usesNeuralInterpolation) {
         if (_desktopPmeActive[player] == true) {
@@ -813,7 +838,6 @@ abstract final class MotionProcessingService {
       await _restoreAndroidMotionPath(player);
     }
 
-    final currentVideoOutput = Platform.isAndroid ? await _videoOutputForConfiguration(player) : null;
     final resolution = resolveForPlayer(player, mode, currentVideoOutput: currentVideoOutput);
     if (!resolution.usesMpvInterpolation) {
       final original = _originals[player];
