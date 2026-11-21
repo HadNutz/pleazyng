@@ -536,7 +536,8 @@
       "state": "open",
       "title": "feat(subtitles): support regional languages and prioritize exact matches (#3001)",
       "decision": "Adapted in Pleazyng. Prefer exact regional audio and subtitle matches before language-only and cross-region fallback, and carry regional preferences through Plex account settings and subtitle search with localized language names.",
-      "upstream_head": "01f375662f485627405c3b31960ba4ee284c226f"
+      "upstream_head": "01f375662f485627405c3b31960ba4ee284c226f",
+      "disposition": "adapted"
     },
     {
       "number": 3008,
@@ -545,7 +546,8 @@
       "state": "open",
       "title": "fix(player): restore video visibility when returning from pip on macos",
       "decision": "Adapted in Pleazyng. Reconcile the macOS video layer with actual window visibility after PiP closes. Preserve explicitly hidden, sleeping and occluded states and restore playback activity only for visible playing video.",
-      "upstream_head": "3e81882c8d8306c7ff33a936c20851d6e03e7f87"
+      "upstream_head": "3e81882c8d8306c7ff33a936c20851d6e03e7f87",
+      "disposition": "adapted"
     },
     {
       "number": 3012,
@@ -553,7 +555,11 @@
       "author": "mkaflowski",
       "state": "open",
       "title": "feat(android): add app title to Android TV launcher banner",
-      "decision": "Keep the fork’s launcher banner and brand assets."
+      "decision": "Retained in Pleazyng. Retain the Pleazyng launcher artwork and alternate banners. See `android/app/src/main/res/drawable-xhdpi/tv_banner.png`.",
+      "disposition": "retained",
+      "evidence_files": [
+        "android/app/src/main/res/drawable-xhdpi/tv_banner.png"
+      ]
     },
     {
       "number": 3017,
@@ -570,7 +576,8 @@
       "state": "open",
       "title": "fix(photos): open albums as containers and show photos in a full-screen viewer",
       "decision": "Adapted in Pleazyng. Open individual Plex and Jellyfin photos full-screen and browse nested photo albums with pagination. The viewer bounds decoded images and uses the profile navigator’s Back handling.",
-      "upstream_head": "bb2a07021f929b0e72110fcb79c4764017464e47"
+      "upstream_head": "bb2a07021f929b0e72110fcb79c4764017464e47",
+      "disposition": "adapted"
     },
     {
       "number": 3026,
@@ -578,7 +585,11 @@
       "author": "infixlabs",
       "state": "open",
       "title": "feat(subtitles): opt-in always-on subtitles",
-      "decision": "The fork already has alwaysShowSubtitlesOnDevice. Keep that path and compare only uncovered behavior."
+      "decision": "Retained in Pleazyng. Retain the existing per-device subtitle setting and track-selection override. See `lib/services/track_selection_service.dart`.",
+      "disposition": "retained",
+      "evidence_files": [
+        "lib/services/track_selection_service.dart"
+      ]
     },
     {
       "number": 3027,
@@ -586,7 +597,11 @@
       "author": "infixlabs",
       "state": "open",
       "title": "feat(subtitles): auto-download a Plex subtitle when the item has none",
-      "decision": "The fork already supports autoDownloadPreferredSubtitle. Retain its provider selection and download guards."
+      "decision": "Retained in Pleazyng. Retain provider-scoped automatic preferred-subtitle downloads and their playback guards. See `lib/services/playback_subtitle_resolver.dart`.",
+      "disposition": "retained",
+      "evidence_files": [
+        "lib/services/playback_subtitle_resolver.dart"
+      ]
     },
     {
       "number": 3028,
@@ -594,7 +609,11 @@
       "author": "infixlabs",
       "state": "open",
       "title": "feat(settings): live subtitle styling preview",
-      "decision": "The fork already has a live style-preview overlay. Skip a duplicate implementation."
+      "decision": "Retained in Pleazyng. Retain the existing player subtitle preview and its per-track settings. See `lib/services/playback_track_preview.dart`.",
+      "disposition": "retained",
+      "evidence_files": [
+        "lib/services/playback_track_preview.dart"
+      ]
     },
     {
       "number": 3032,
@@ -643,7 +662,8 @@
       "state": "open",
       "title": "Show reconnect banners after tracker session invalidation",
       "decision": "Adapted in Pleazyng. Show a profile-scoped reconnect notice for permanently invalidated tracker sessions. Keep the encrypted vault and ordered credential writes, and clear the warning on sign-in or intentional disconnect.",
-      "upstream_head": "f7220c5396dd6e802a90bd672656c351ac7f9486"
+      "upstream_head": "f7220c5396dd6e802a90bd672656c351ac7f9486",
+      "disposition": "adapted"
     },
     {
       "number": 3067,
@@ -660,7 +680,8 @@
       "state": "open",
       "title": "feat(player): make the finish time optional",
       "decision": "Adapted in Pleazyng. Allow the finish clock next to remaining time to be hidden independently on desktop, touch and remote controls. Existing users keep their visible finish clock.",
-      "upstream_head": "35768bde7272435605f2d9cf25564577498e573a"
+      "upstream_head": "35768bde7272435605f2d9cf25564577498e573a",
+      "disposition": "adapted"
     },
     {
       "number": 3077,
@@ -733,7 +754,8 @@
       "state": "open",
       "title": "fix(tv): let the description use the full width in TV layout",
       "decision": "Adapted in Pleazyng. Give long TV summaries the available width while keeping titles, metadata, actions and the fork’s directional layout in their existing columns.",
-      "upstream_head": "631d90e8248c339caa3d36b85f500b9a9d8891fa"
+      "upstream_head": "631d90e8248c339caa3d36b85f500b9a9d8891fa",
+      "disposition": "adapted"
     },
     {
       "number": 3092,
@@ -742,7 +764,8 @@
       "state": "open",
       "title": "feat(tvos): allow disabling dynamic Top Shelf content",
       "decision": "Adapted in Pleazyng. Apple TV users can choose static Top Shelf artwork for every profile. The extension and publisher honor the device setting alongside existing PIN and profile restrictions.",
-      "upstream_head": "c2804f803bb5c3aad9bdc5442394e3412eb86b2c"
+      "upstream_head": "c2804f803bb5c3aad9bdc5442394e3412eb86b2c",
+      "disposition": "adapted"
     },
     {
       "number": 3095,
@@ -751,7 +774,8 @@
       "state": "open",
       "title": "feat(settings): choose screenshot save location",
       "decision": "Adapted in Pleazyng. Desktop users can select or reset the screenshot folder. macOS remembers the user-approved folder with a security-scoped bookmark, and mpv retains its Pictures default.",
-      "upstream_head": "28f7c7aaddaabffa40f2aa33fb0f38facbcd429d"
+      "upstream_head": "28f7c7aaddaabffa40f2aa33fb0f38facbcd429d",
+      "disposition": "adapted"
     },
     {
       "number": 3101,
@@ -768,7 +792,8 @@
       "state": "open",
       "title": "feat(seerr): \"My requests\" in Explore, with delete and remove actions",
       "decision": "Adapted in Pleazyng. Allow users to withdraw their own pending film or TV request. The client rechecks the request, owner, title and edition before deleting the request record. Library files remain under the server administrator’s control.",
-      "upstream_head": "24ddcf66eb8a4823dbe537673d330f89be95f8c1"
+      "upstream_head": "24ddcf66eb8a4823dbe537673d330f89be95f8c1",
+      "disposition": "adapted"
     },
     {
       "number": 3118,
@@ -777,7 +802,8 @@
       "state": "open",
       "title": "feat(metadata): add refresh metadata context menu item",
       "decision": "Adapted in Pleazyng. Allow authorized Plex owners to refresh one item. Cache invalidation and detail updates check the selected server, session and settled item ID.",
-      "upstream_head": "8d2167d296e03218582d61174fc53ae96f10d297"
+      "upstream_head": "8d2167d296e03218582d61174fc53ae96f10d297",
+      "disposition": "adapted"
     },
     {
       "number": 3119,
@@ -785,7 +811,11 @@
       "author": "jpdexter101-lang",
       "state": "open",
       "title": "feat(home): merge Recently Added rows across libraries (#1652)",
-      "decision": "The fork already aggregates sources for merged Recently Added rows (#1652). Check ordering/deduplication tests before importing anything."
+      "decision": "Retained in Pleazyng. Retain fork aggregation. The merged Home row interleaves items across libraries by addedAt. See `test/utils/home_section_builder_test.dart`.",
+      "disposition": "retained",
+      "evidence_files": [
+        "test/utils/home_section_builder_test.dart"
+      ]
     },
     {
       "number": 3130,
@@ -794,7 +824,8 @@
       "state": "open",
       "title": "feat(deep-links): play and shuffle video playlists from plezy:// links",
       "decision": "Adapted in Pleazyng. Play ordered or shuffled video playlists from fork links while retaining server and active profile ownership and the existing music routes.",
-      "upstream_head": "d5746336934859c292edaa9bf54c2326a98c18b1"
+      "upstream_head": "d5746336934859c292edaa9bf54c2326a98c18b1",
+      "disposition": "adapted"
     }
   ],
   "disposition_counts": {
