@@ -1504,6 +1504,7 @@
     "editMediaBrowserIntro": "為 ${serverName} 新增或移除 URL。Pleazyng 將使用延遲最低且可連線的 URL。"
   },
   "iptv": {
+    "backupFeeds": "依播放順序排列的備用來源",
     "lineupOrder": "頻道順序",
     "orderChanged": "頻道順序已變更。請檢查後再試一次。",
     "localPlaylist": "M3U 檔案",

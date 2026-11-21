@@ -1499,6 +1499,7 @@
     "editMediaBrowserIntro": "Thêm hoặc xóa URL cho ${serverName}. Pleazyng sẽ sử dụng URL có thể truy cập với độ chậm thấp nhất."
   },
   "iptv": {
+    "backupFeeds": "Nguồn dự phòng theo thứ tự phát",
     "lineupOrder": "Thứ tự kênh",
     "orderChanged": "Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.",
     "localPlaylist": "Tệp M3U",

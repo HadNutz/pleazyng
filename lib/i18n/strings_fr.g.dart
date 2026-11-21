@@ -1659,6 +1659,7 @@ class Translations$iptv$fr extends Translations$iptv$en {
 	final TranslationsFr _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Sources de secours par ordre de lecture';
 	@override String get lineupOrder => 'Ordre des chaînes';
 	@override String get orderChanged => 'L’ordre des chaînes a changé. Vérifiez-le et réessayez.';
 	@override String get localPlaylist => 'Fichier M3U';
@@ -7090,6 +7091,7 @@ extension on TranslationsFr {
 			'connections.signInAgain' => 'Se reconnecter',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Modifier la connexion ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Ajoutez ou retirez des URL pour ${serverName}. Pleazyng utilisera l\'URL joignable avec la latence la plus faible.',
+			'iptv.backupFeeds' => 'Sources de secours par ordre de lecture',
 			'iptv.lineupOrder' => 'Ordre des chaînes',
 			'iptv.orderChanged' => 'L’ordre des chaînes a changé. Vérifiez-le et réessayez.',
 			'iptv.localPlaylist' => 'Fichier M3U',
@@ -7253,9 +7255,9 @@ extension on TranslationsFr {
 			'discover.findNext.chooseHint' => 'Ouvrez un titre, gardez-le pour plus tard ou passez au suivant.',
 			'discover.findNext.howItWorks' => 'Comment ça marche',
 			'discover.findNext.notNowHelp' => 'Passez ce titre pour le moment. Il reste dans votre bibliothèque.',
-			'discover.findNext.saveHelp' => 'Gardez-le dans les sélections enregistrées de ce profil sur cet appareil. Cela ne le télécharge pas.',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.saveHelp' => 'Gardez-le dans les sélections enregistrées de ce profil sur cet appareil. Cela ne le télécharge pas.',
 			'discover.findNext.openHelp' => 'Sélectionnez la couverture pour afficher les détails. Utilisez l’action principale pour lancer, lire ou ouvrir le titre.',
 			'discover.findNext.controlsHelp' => 'Clavier ou télécommande : sélectionnez un bouton, puis appuyez sur Entrée ou Sélectionner. Annuler rétablit votre dernier choix.',
 			'discover.findNext.artworkLoading' => 'Chargement de l’illustration…',
@@ -7767,9 +7769,9 @@ extension on TranslationsFr {
 			'collections.empty' => 'La collection est vide',
 			'collections.deleteCollection' => 'Supprimer la collection',
 			'collections.deleteConfirm' => ({required Object title}) => 'Supprimer "${title}" ? Action irréversible.',
-			'collections.deleted' => 'Collection supprimée',
 			_ => null,
 		} ?? switch (path) {
+			'collections.deleted' => 'Collection supprimée',
 			'collections.deleteFailed' => 'Échec de la suppression de la collection',
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Échec de la suppression de la collection : ${error}',
 			'collections.selectCollection' => 'Sélectionner une collection',
@@ -8281,9 +8283,9 @@ extension on TranslationsFr {
 			'videoSettings.audioNormalization' => 'Normaliser le volume',
 			'videoSettings.audioNormalizationDisablesPassthrough' => 'Décode l’audio en PCM ; la transmission directe est désactivée tant que cette option est active',
 			'performanceOverlay.color' => 'Couleur',
-			'performanceOverlay.performance' => 'Performances',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.performance' => 'Performances',
 			'performanceOverlay.buffer' => 'Tampon',
 			'performanceOverlay.app' => 'Application',
 			'performanceOverlay.decoder' => 'Décodeur',
@@ -8795,9 +8797,9 @@ extension on TranslationsFr {
 			'homeLayout.syncAccountTitle' => 'Synchroniser le layout avec votre compte Plex',
 			'homeLayout.syncAccountOn' => 'Sur : ce dispositif partage la commande de la ligne, les lignes, le héros et l\'automatisation avec vos autres appareils.',
 			'homeLayout.syncAccountOff' => 'Off : ce dispositif maintient son propre layout.',
-			'homeLayout.syncNow' => 'Synchronisation maintenant',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.syncNow' => 'Synchronisation maintenant',
 			'homeLayout.plexHomeManager' => 'Plex Gestion de la maison',
 			'homeLayout.managePlexRows' => 'Gérer Plex rangs dans Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Ouvert pour organiser les lignes sélectionnées à domicile',
@@ -9309,9 +9311,9 @@ extension on TranslationsFr {
 			'audiobook.finished' => 'terminé',
 			'audiobook.readingPosition' => ({required Object percent}) => 'Lire · ${percent}%',
 			'audiobook.chapterTimeline' => 'Chapitre Progrès',
-			'audiobook.bookTimeline' => 'L\'ensemble du livre progrès',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.bookTimeline' => 'L\'ensemble du livre progrès',
 			'audiobook.bookRemaining' => ({required Object time}) => 'Le temps restant dans ce livre: ${time}',
 			'audiobook.chapterRemaining' => ({required Object time}) => 'Le temps restant dans ce chapitre: ${time}',
 			'audiobook.unknownRemaining' => 'Temps total disponible lorsque les parties sont jouées',
@@ -9823,9 +9825,9 @@ extension on TranslationsFr {
 			'musicExperience.exitDriving' => 'Quitter le mode conduite',
 			'musicExperience.signalPath' => 'Parcours du signal audio',
 			'musicExperience.source' => 'source',
-			'musicExperience.local' => 'Audio téléchargé',
 			_ => null,
 		} ?? switch (path) {
+			'musicExperience.local' => 'Audio téléchargé',
 			'musicExperience.network' => 'Audio du serveur',
 			'musicExperience.engine' => 'Moteur de lecture',
 			'musicExperience.codec' => 'Codec source',

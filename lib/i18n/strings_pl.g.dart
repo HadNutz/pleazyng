@@ -1671,6 +1671,7 @@ class _Translations$iptv$pl extends Translations$iptv$en {
 	final TranslationsPl _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Zapasowe źródła w kolejności odtwarzania';
 	@override String get lineupOrder => 'Kolejność kanałów';
 	@override String get orderChanged => 'Kolejność kanałów uległa zmianie. Sprawdź ją i spróbuj ponownie.';
 	@override String get localPlaylist => 'Plik M3U';
@@ -7106,6 +7107,7 @@ extension on TranslationsPl {
 			'connections.signInAgain' => 'Zaloguj się ponownie',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edytuj połączenie z ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Dodaj lub usuń adresy URL dla ${serverName}. Pleazyng będzie używać osiągalnego adresu URL o najniższym opóźnieniu.',
+			'iptv.backupFeeds' => 'Zapasowe źródła w kolejności odtwarzania',
 			'iptv.lineupOrder' => 'Kolejność kanałów',
 			'iptv.orderChanged' => 'Kolejność kanałów uległa zmianie. Sprawdź ją i spróbuj ponownie.',
 			'iptv.localPlaylist' => 'Plik M3U',
@@ -7269,9 +7271,9 @@ extension on TranslationsPl {
 			'discover.findNext.artworkUnavailable' => 'Grafika niedostępna',
 			'discover.findNext.savedFeedback' => 'Dodano do zapisanych propozycji',
 			'discover.findNext.skippedFeedback' => 'Na razie pominięto',
-			'discover.findNext.releaseToConfirm' => 'Puść, aby potwierdzić',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Puść, aby potwierdzić',
 			'discover.findNext.remoteHint' => 'Okładka zaznaczona: ← / → wybór · Wybierz: szczegóły · ↑ / ↓ zmiana fokusu',
 			'discover.studio' => 'Studio',
 			'discover.rating' => 'Ocena',
@@ -7783,9 +7785,9 @@ extension on TranslationsPl {
 			'collections.collectionName' => 'Nazwa kolekcji',
 			'collections.enterCollectionName' => 'Wprowadź nazwę kolekcji',
 			'collections.addedToCollection' => 'Dodano do kolekcji',
-			'collections.errorAddingToCollection' => 'Nie udało się dodać do kolekcji',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'Nie udało się dodać do kolekcji',
 			'collections.created' => 'Kolekcja utworzona',
 			'collections.removeFromCollection' => 'Usuń z kolekcji',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Usunąć "${title}" z tej kolekcji?',
@@ -8297,9 +8299,9 @@ extension on TranslationsPl {
 			'performanceOverlay.rawDecoder' => 'Surowy dekoder',
 			'performanceOverlay.tunneling' => 'Tunelowanie',
 			'performanceOverlay.passthrough' => 'Przekazywanie',
-			'performanceOverlay.aspect' => 'Proporcje',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Proporcje',
 			'performanceOverlay.rotation' => 'Obrót',
 			'performanceOverlay.dvSource' => 'Źródło DV',
 			'performanceOverlay.dvPath' => 'Ścieżka DV',
@@ -8811,9 +8813,9 @@ extension on TranslationsPl {
 			'homeLayout.organizeHomeRows' => 'Organizuj domowe rzędy',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rzędy: poruszanie się, Hero, Auto-slide, usunięcie',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Zorganizuj ${library} rzędy',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Kontynuuj oglądanie + ${n} rzędy: ruch, Biblioteka, Dom, Bohater, Auto-slide',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Kontynuuj oglądanie + ${n} rzędy: ruch, Biblioteka, Dom, Bohater, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render jako karta bohatera',
 			'homeLayout.heroOnlySingleCollection' => 'Dostępne tylko wtedy, gdy ta kolejka rozstrzyga się na prawdziwe tytuły jednej kolekcji',
 			'homeLayout.hero' => 'bohater',
@@ -9325,9 +9327,9 @@ extension on TranslationsPl {
 			'audiobook.speedHelp' => 'Wybierz prędkość od 0,25× do 4×.',
 			'audiobook.apply' => 'Aplikuj',
 			'audiobook.customSleep' => 'Standardowy czas snu',
-			'audiobook.sleepMinutes' => 'minuty (1 – 1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'minuty (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Zatrzymaj się po rozdziałach ${count}',
 			'audiobook.extendSleep' => 'Dodaj 5 minut',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Czas spania: ${time}',
@@ -9839,9 +9841,9 @@ extension on TranslationsPl {
 			'musicTools.loudnessMissing' => 'Nie zwrócono danych o głośności',
 			'musicTools.loudnessRequested' => 'Wysłano żądanie analizy',
 			'musicTools.loudnessUnsupported' => 'Ta wersja serwera nie obsługuje żądań analizy',
-			'musicTools.serverHistory' => 'Historia odtwarzania na serwerze',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'Historia odtwarzania na serwerze',
 			'musicTools.nfcWrite' => 'Zapisz tag NFC',
 			'musicTools.nfcRead' => 'Skanuj tag NFC',
 			'musicTools.nfcPrompt' => 'Przyłóż zapisywalny tag NFC do telefonu.',

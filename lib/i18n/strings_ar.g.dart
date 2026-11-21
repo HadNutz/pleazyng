@@ -1685,6 +1685,7 @@ class _Translations$iptv$ar extends Translations$iptv$en {
 	final TranslationsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'المصادر الاحتياطية بترتيب التشغيل';
 	@override String get lineupOrder => 'ترتيب القنوات';
 	@override String get orderChanged => 'تغيّر ترتيب القنوات. راجعه وحاول مجددًا.';
 	@override String get localPlaylist => 'ملف M3U';
@@ -7156,6 +7157,7 @@ extension on TranslationsAr {
 			'connections.signInAgain' => 'اكتب مرة أخرى',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'تحرير ${product} الاتصال',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'إضافة أو إزالة عناوين URL لـ ${serverName}. Pleazyng سوف تستخدم عناوين URL المتاحة مع أدنى تأخير.',
+			'iptv.backupFeeds' => 'المصادر الاحتياطية بترتيب التشغيل',
 			'iptv.lineupOrder' => 'ترتيب القنوات',
 			'iptv.orderChanged' => 'تغيّر ترتيب القنوات. راجعه وحاول مجددًا.',
 			'iptv.localPlaylist' => 'ملف M3U',
@@ -7319,9 +7321,9 @@ extension on TranslationsAr {
 			'discover.findNext.artworkUnavailable' => 'الصورة غير متاحة',
 			'discover.findNext.savedFeedback' => 'أُضيف إلى الاختيارات المحفوظة',
 			'discover.findNext.skippedFeedback' => 'تم التخطي حاليًا',
-			'discover.findNext.releaseToConfirm' => 'أفلت للتأكيد',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'أفلت للتأكيد',
 			'discover.findNext.remoteHint' => 'عندما يكون التركيز على الغلاف: ← / → للاختيار · زر التحديد للتفاصيل · ↑ / ↓ لنقل التركيز',
 			'discover.studio' => 'الاستوديو',
 			'discover.rating' => 'تصنيف',
@@ -7833,9 +7835,9 @@ extension on TranslationsAr {
 			'collections.collectionName' => 'اسم جمع',
 			'collections.enterCollectionName' => 'إدخال اسم مجموعة',
 			'collections.addedToCollection' => 'إضافة إلى مجموعة',
-			'collections.errorAddingToCollection' => 'فشل في إضافة إلى المجموعة',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'فشل في إضافة إلى المجموعة',
 			'collections.created' => 'مجموعة تم إنشاءها',
 			'collections.removeFromCollection' => 'إزالة من المجموعة',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'هل تريد إزالة «${title}» من هذه المجموعة؟',
@@ -8347,9 +8349,9 @@ extension on TranslationsAr {
 			'performanceOverlay.rawDecoder' => 'أدوات التخفيف',
 			'performanceOverlay.tunneling' => 'النفقات',
 			'performanceOverlay.passthrough' => 'كسارة',
-			'performanceOverlay.aspect' => 'وجهة نظر',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'وجهة نظر',
 			'performanceOverlay.rotation' => 'الدوران',
 			'performanceOverlay.dvSource' => 'مصدر DV',
 			'performanceOverlay.dvPath' => 'الطريق DV',
@@ -8861,9 +8863,9 @@ extension on TranslationsAr {
 			'homeLayout.organizeHomeRows' => 'تنظيم صفوف الصفحة الرئيسية',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} صفوف: نقل، بطاقة بارزة، تنقّل تلقائي، إزالة',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'تنظيم صفوف ${library}',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'متابعة المشاهدة و${n} صفوف: نقل، مكتبة، رئيسية، بطاقة بارزة، تنقّل تلقائي',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'متابعة المشاهدة و${n} صفوف: نقل، مكتبة، رئيسية، بطاقة بارزة، تنقّل تلقائي',
 			'homeLayout.renderAsHero' => 'عرض كبطاقة بارزة',
 			'homeLayout.heroOnlySingleCollection' => 'متاح فقط عندما يعرض هذا الصف عناوين مجموعة واحدة مباشرةً',
 			'homeLayout.hero' => 'بطاقة بارزة',
@@ -9375,9 +9377,9 @@ extension on TranslationsAr {
 			'audiobook.speedHelp' => 'اختر سرعة تتراوح بين 0.25 × إلى 4 ×.',
 			'audiobook.apply' => 'تطبيق',
 			'audiobook.customSleep' => 'ساعات النوم المخصصة',
-			'audiobook.sleepMinutes' => 'الدقائق (1 – 1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'الدقائق (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'توقف بعد ${count} الفصول',
 			'audiobook.extendSleep' => 'إضافة 5 دقائق',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'موعد النوم: ${time}',
@@ -9889,9 +9891,9 @@ extension on TranslationsAr {
 			'musicTools.loudnessMissing' => 'لم يُرجع الخادم بيانات مستوى الصوت',
 			'musicTools.loudnessRequested' => 'تم إرسال طلب التحليل',
 			'musicTools.loudnessUnsupported' => 'إصدار الخادم لا يدعم طلب التحليل',
-			'musicTools.serverHistory' => 'سجل التشغيل على الخادم',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'سجل التشغيل على الخادم',
 			'musicTools.nfcWrite' => 'كتابة علامة NFC',
 			'musicTools.nfcRead' => 'مسح علامة NFC',
 			'musicTools.nfcPrompt' => 'قرّب علامة NFC قابلة للكتابة من هاتفك.',

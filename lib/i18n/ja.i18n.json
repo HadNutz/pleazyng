@@ -1504,6 +1504,7 @@
     "editMediaBrowserIntro": "${serverName}のURLを追加または削除します。Plezyは到達可能なURLのうち、レイテンシーが最も低いものを使用します。"
   },
   "iptv": {
+    "backupFeeds": "再生時に使用する予備ソースの順序",
     "lineupOrder": "チャンネルの順序",
     "orderChanged": "チャンネルの順序が変更されました。確認してからもう一度お試しください。",
     "localPlaylist": "M3Uファイル",

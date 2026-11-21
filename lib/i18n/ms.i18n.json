@@ -1499,6 +1499,7 @@
     "editMediaBrowserIntro": "Menambah atau menghapuskan URL untuk ${serverName}. Pleazyng akan menggunakan URL yang boleh dicapai dengan latensi terendah."
   },
   "iptv": {
+    "backupFeeds": "Sumber sandaran mengikut turutan main balik",
     "lineupOrder": "Susunan saluran",
     "orderChanged": "Susunan saluran telah berubah. Semak dan cuba lagi.",
     "localPlaylist": "Fail M3U",

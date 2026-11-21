@@ -100,6 +100,7 @@ class _Translations$iptv$fr_CA extends Translations$iptv$fr {
 	final TranslationsFrCa _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Sources de secours par ordre de lecture';
 	@override String get lineupOrder => 'Ordre des chaînes';
 	@override String get orderChanged => 'L’ordre des chaînes a changé. Vérifiez-le et réessayez.';
 	@override String get localPlaylist => 'Fichier M3U';
@@ -1371,6 +1372,7 @@ class _Translations$services$libraryFilter$fr_CA extends Translations$services$l
 extension on TranslationsFrCa {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'iptv.backupFeeds' => 'Sources de secours par ordre de lecture',
 			'iptv.lineupOrder' => 'Ordre des chaînes',
 			'iptv.orderChanged' => 'L’ordre des chaînes a changé. Vérifiez-le et réessayez.',
 			'iptv.localPlaylist' => 'Fichier M3U',
@@ -1882,9 +1884,9 @@ extension on TranslationsFrCa {
 			'romm.kContinue' => 'Continue',
 			'romm.saveState' => 'Save state',
 			'romm.loadState' => 'Load state',
-			'romm.saveAndExit' => 'Save and exit',
 			_ => null,
 		} ?? switch (path) {
+			'romm.saveAndExit' => 'Save and exit',
 			'romm.exitWithoutSaving' => 'Exit without saving',
 			'romm.exitConfirm' => 'Finish this game session?',
 			'romm.saveExitHelp' => 'Save your progress before leaving. Keep this screen open until saving finishes.',

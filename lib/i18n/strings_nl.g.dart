@@ -1657,6 +1657,7 @@ class _Translations$iptv$nl extends Translations$iptv$en {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Reservebronnen in afspeelvolgorde';
 	@override String get lineupOrder => 'Kanaalvolgorde';
 	@override String get orderChanged => 'De kanaalvolgorde is gewijzigd. Controleer deze en probeer het opnieuw.';
 	@override String get localPlaylist => 'M3U-bestand';
@@ -7056,6 +7057,7 @@ extension on TranslationsNl {
 			'connections.signInAgain' => 'Opnieuw aanmelden',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product}-verbinding bewerken',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Voeg URL\'s toe aan ${serverName} of verwijder ze. Pleazyng gebruikt de bereikbare URL met de laagste latentie.',
+			'iptv.backupFeeds' => 'Reservebronnen in afspeelvolgorde',
 			'iptv.lineupOrder' => 'Kanaalvolgorde',
 			'iptv.orderChanged' => 'De kanaalvolgorde is gewijzigd. Controleer deze en probeer het opnieuw.',
 			'iptv.localPlaylist' => 'M3U-bestand',
@@ -7219,9 +7221,9 @@ extension on TranslationsNl {
 			'discover.findNext.artworkUnavailable' => 'Afbeelding niet beschikbaar',
 			'discover.findNext.savedFeedback' => 'Toegevoegd aan opgeslagen keuzes',
 			'discover.findNext.skippedFeedback' => 'Voorlopig overgeslagen',
-			'discover.findNext.releaseToConfirm' => 'Laat los om te bevestigen',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Laat los om te bevestigen',
 			'discover.findNext.remoteHint' => 'Omslag geselecteerd: ← / → kiezen · Selecteren: details · ↑ / ↓ focus verplaatsen',
 			'discover.studio' => 'Studio',
 			'discover.rating' => 'Beoordeling',
@@ -7733,9 +7735,9 @@ extension on TranslationsNl {
 			'collections.collectionName' => 'Collectienaam',
 			'collections.enterCollectionName' => 'Voer een collectienaam in',
 			'collections.addedToCollection' => 'Toegevoegd aan collectie',
-			'collections.errorAddingToCollection' => 'Fout bij toevoegen aan collectie',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'Fout bij toevoegen aan collectie',
 			'collections.created' => 'Collectie gemaakt',
 			'collections.removeFromCollection' => 'Verwijderen uit collectie',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '"${title}" uit deze collectie verwijderen?',
@@ -8247,9 +8249,9 @@ extension on TranslationsNl {
 			'performanceOverlay.rawDecoder' => 'Raw-decoder',
 			'performanceOverlay.tunneling' => 'Tunneling',
 			'performanceOverlay.passthrough' => 'Doorvoer',
-			'performanceOverlay.aspect' => 'Verhouding',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Verhouding',
 			'performanceOverlay.rotation' => 'Rotatie',
 			'performanceOverlay.dvSource' => 'DV-bron',
 			'performanceOverlay.dvPath' => 'DV-pad',
@@ -8761,9 +8763,9 @@ extension on TranslationsNl {
 			'homeLayout.organizeHomeRows' => 'Home Ronden organiseren',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rijen: bewegen, Hero, Auto-slide, verwijderen',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organiseren ${library} rijen',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} rijen: beweging, bibliotheek, Home, Hero, Auto-slide',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} rijen: beweging, bibliotheek, Home, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render als een heldkaart',
 			'homeLayout.heroOnlySingleCollection' => 'Alleen beschikbaar wanneer deze rij opgelost wordt aan de werkelijke titels van een enkele collectie',
 			'homeLayout.hero' => 'Held',
@@ -9275,9 +9277,9 @@ extension on TranslationsNl {
 			'audiobook.speedHelp' => 'Kies een snelheid van 0,25× tot 4×.',
 			'audiobook.apply' => 'Aanvragen',
 			'audiobook.customSleep' => 'Custom slaaptijd',
-			'audiobook.sleepMinutes' => 'Minuten (1 tot 1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'Minuten (1 tot 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Stop na ${count} hoofdstukken',
 			'audiobook.extendSleep' => '5 minuten toevoegen',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Slaaptijd: ${time}',
@@ -9789,9 +9791,9 @@ extension on TranslationsNl {
 			'musicTools.loudnessMissing' => 'Geen luidheidsgegevens ontvangen',
 			'musicTools.loudnessRequested' => 'Analyseverzoek verzonden',
 			'musicTools.loudnessUnsupported' => 'Deze serverversie ondersteunt geen analyseverzoeken',
-			'musicTools.serverHistory' => 'Afspeelgeschiedenis van de server',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'Afspeelgeschiedenis van de server',
 			'musicTools.nfcWrite' => 'NFC-tag schrijven',
 			'musicTools.nfcRead' => 'NFC-tag scannen',
 			'musicTools.nfcPrompt' => 'Houd een beschrijfbare NFC-tag bij je telefoon.',

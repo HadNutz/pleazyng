@@ -1656,6 +1656,7 @@ class _Translations$iptv$zh_Hant extends Translations$iptv$zh {
 	final TranslationsZhHant _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => '依播放順序排列的備用來源';
 	@override String get lineupOrder => '頻道順序';
 	@override String get orderChanged => '頻道順序已變更。請檢查後再試一次。';
 	@override String get localPlaylist => 'M3U 檔案';
@@ -7052,6 +7053,7 @@ extension on TranslationsZhHant {
 			'connections.signInAgain' => '重新登入',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '編輯 ${product} 連線',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '為 ${serverName} 新增或移除 URL。Pleazyng 將使用延遲最低且可連線的 URL。',
+			'iptv.backupFeeds' => '依播放順序排列的備用來源',
 			'iptv.lineupOrder' => '頻道順序',
 			'iptv.orderChanged' => '頻道順序已變更。請檢查後再試一次。',
 			'iptv.localPlaylist' => 'M3U 檔案',
@@ -7215,9 +7217,9 @@ extension on TranslationsZhHant {
 			'discover.findNext.artworkUnavailable' => '圖片無法使用',
 			'discover.findNext.savedFeedback' => '已加入儲存的推薦',
 			'discover.findNext.skippedFeedback' => '已暫時略過',
-			'discover.findNext.releaseToConfirm' => '放開以確認',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => '放開以確認',
 			'discover.findNext.remoteHint' => '封面取得焦點時：← / → 選擇 · 選取鍵查看詳細資訊 · ↑ / ↓ 移動焦點',
 			'discover.studio' => '製作商',
 			'discover.rating' => '分級',
@@ -7729,9 +7731,9 @@ extension on TranslationsZhHant {
 			'collections.collectionName' => '收藏集名稱',
 			'collections.enterCollectionName' => '輸入收藏集名稱',
 			'collections.addedToCollection' => '已新增至收藏集',
-			'collections.errorAddingToCollection' => '新增至收藏集失敗',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => '新增至收藏集失敗',
 			'collections.created' => '已建立收藏集',
 			'collections.removeFromCollection' => '從收藏集移除',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '將「${title}」從此收藏集移除？',
@@ -8243,9 +8245,9 @@ extension on TranslationsZhHant {
 			'performanceOverlay.rawDecoder' => '原始解碼器',
 			'performanceOverlay.tunneling' => '通道模式',
 			'performanceOverlay.passthrough' => '直通',
-			'performanceOverlay.aspect' => '寬高比',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => '寬高比',
 			'performanceOverlay.rotation' => '旋轉角度',
 			'performanceOverlay.dvSource' => 'DV 來源',
 			'performanceOverlay.dvPath' => 'DV 路徑',
@@ -8757,9 +8759,9 @@ extension on TranslationsZhHant {
 			'homeLayout.organizeHomeRows' => '安排家居行',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} 行: 移動, 英雄, 自動滑動, 移除',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '組織 ${library} 行',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '繼續觀看 + ${n} 行: 移動, 圖書館, 家, 英雄, 自動滑板',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '繼續觀看 + ${n} 行: 移動, 圖書館, 家, 英雄, 自動滑板',
 			'homeLayout.renderAsHero' => '顯示為焦點橫幅',
 			'homeLayout.heroOnlySingleCollection' => '只有當此行解決到單一集合的實際標題時才可用',
 			'homeLayout.hero' => '焦點橫幅',
@@ -9271,9 +9273,9 @@ extension on TranslationsZhHant {
 			'audiobook.speedHelp' => '選擇速度從 0.25× 到 4×。',
 			'audiobook.apply' => '應用',
 			'audiobook.customSleep' => '定製睡眠時間',
-			'audiobook.sleepMinutes' => '時間(1 - 1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => '時間(1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '播放完${count}章後停止',
 			'audiobook.extendSleep' => '新增5分鐘',
 			'audiobook.sleepRemaining' => ({required Object time}) => '睡眠時間: ${time}',
@@ -9785,9 +9787,9 @@ extension on TranslationsZhHant {
 			'musicTools.loudnessMissing' => '未傳回響度資料',
 			'musicTools.loudnessRequested' => '已送出分析要求',
 			'musicTools.loudnessUnsupported' => '此伺服器版本不支援分析要求',
-			'musicTools.serverHistory' => '伺服器播放記錄',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => '伺服器播放記錄',
 			'musicTools.nfcWrite' => '寫入 NFC 標籤',
 			'musicTools.nfcRead' => '掃描 NFC 標籤',
 			'musicTools.nfcPrompt' => '請將可寫入的 NFC 標籤靠近手機。',

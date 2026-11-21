@@ -1657,6 +1657,7 @@ class _Translations$iptv$tr extends Translations$iptv$en {
 	final TranslationsTr _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Oynatma sırasına göre yedek kaynaklar';
 	@override String get lineupOrder => 'Kanal sırası';
 	@override String get orderChanged => 'Kanal sırası değişti. Gözden geçirip yeniden deneyin.';
 	@override String get localPlaylist => 'M3U dosyası';
@@ -7056,6 +7057,7 @@ extension on TranslationsTr {
 			'connections.signInAgain' => 'Tekrar giriş yap',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} bağlantısını düzenle',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} için URL ekleyin veya kaldırın. Pleazyng, erişilebilir olan en düşük gecikmeli URL\'yi kullanacak.',
+			'iptv.backupFeeds' => 'Oynatma sırasına göre yedek kaynaklar',
 			'iptv.lineupOrder' => 'Kanal sırası',
 			'iptv.orderChanged' => 'Kanal sırası değişti. Gözden geçirip yeniden deneyin.',
 			'iptv.localPlaylist' => 'M3U dosyası',
@@ -7219,9 +7221,9 @@ extension on TranslationsTr {
 			'discover.findNext.artworkUnavailable' => 'Görsel kullanılamıyor',
 			'discover.findNext.savedFeedback' => 'Kayıtlı seçimlere eklendi',
 			'discover.findNext.skippedFeedback' => 'Şimdilik atlandı',
-			'discover.findNext.releaseToConfirm' => 'Onaylamak için bırakın',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Onaylamak için bırakın',
 			'discover.findNext.remoteHint' => 'Kapak odakta: ← / → seç · Seç tuşu: ayrıntılar · ↑ / ↓ odağı taşı',
 			'discover.studio' => 'Stüdyo',
 			'discover.rating' => 'Derecelendirme',
@@ -7733,9 +7735,9 @@ extension on TranslationsTr {
 			'collections.collectionName' => 'Koleksiyon Adı',
 			'collections.enterCollectionName' => 'Koleksiyon adını girin',
 			'collections.addedToCollection' => 'Koleksiyona eklendi',
-			'collections.errorAddingToCollection' => 'Koleksiyona eklenemedi',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'Koleksiyona eklenemedi',
 			'collections.created' => 'Koleksiyon oluşturuldu',
 			'collections.removeFromCollection' => 'Koleksiyondan kaldır',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '"${title}" bu koleksiyondan kaldırılsın mı?',
@@ -8247,9 +8249,9 @@ extension on TranslationsTr {
 			'performanceOverlay.rawDecoder' => 'Ham Çözücü',
 			'performanceOverlay.tunneling' => 'Tünelleme',
 			'performanceOverlay.passthrough' => 'Doğrudan geçiş',
-			'performanceOverlay.aspect' => 'Oran',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Oran',
 			'performanceOverlay.rotation' => 'Döndürme',
 			'performanceOverlay.dvSource' => 'DV Kaynağı',
 			'performanceOverlay.dvPath' => 'DV Yolu',
@@ -8761,9 +8763,9 @@ extension on TranslationsTr {
 			'homeLayout.organizeHomeRows' => 'Home Routes düzenlemek',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} satırları: hareket, kahraman, otomatik kaydırma, kaldırma',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} satırları düzenleyin',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Devamını oku + ${n} satırları: hareket, Kütüphane, Ev, Kahraman, Otomatik slide',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Devamını oku + ${n} satırları: hareket, Kütüphane, Ev, Kahraman, Otomatik slide',
 			'homeLayout.renderAsHero' => 'Bir kahraman kartı olarak',
 			'homeLayout.heroOnlySingleCollection' => 'Sadece bu satır tek bir koleksiyonun gerçek başlıklarına çözüldüğünde mevcuttur',
 			'homeLayout.hero' => 'kahraman',
@@ -9275,9 +9277,9 @@ extension on TranslationsTr {
 			'audiobook.speedHelp' => '0.25× ile 4× arasında bir hız seçin.',
 			'audiobook.apply' => 'Uygulama',
 			'audiobook.customSleep' => 'Özel uyku saatleri',
-			'audiobook.sleepMinutes' => 'Dakikalar (1 - 1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'Dakikalar (1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} bölümlerinden sonra durun',
 			'audiobook.extendSleep' => '5 dakika ekleyin',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Uyku Zamanlayıcısı: ${time}',
@@ -9789,9 +9791,9 @@ extension on TranslationsTr {
 			'musicTools.loudnessMissing' => 'Ses yüksekliği verisi alınmadı',
 			'musicTools.loudnessRequested' => 'Analiz isteği gönderildi',
 			'musicTools.loudnessUnsupported' => 'Bu sunucu sürümü analiz isteklerini desteklemiyor',
-			'musicTools.serverHistory' => 'Sunucudaki oynatma geçmişi',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'Sunucudaki oynatma geçmişi',
 			'musicTools.nfcWrite' => 'NFC etiketi yaz',
 			'musicTools.nfcRead' => 'NFC etiketini tara',
 			'musicTools.nfcPrompt' => 'Yazılabilir bir NFC etiketini telefonunuza yaklaştırın.',

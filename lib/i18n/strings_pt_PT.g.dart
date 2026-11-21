@@ -116,6 +116,7 @@ class Translations$iptv$pt_PT extends Translations$iptv$pt {
 	final TranslationsPtPt _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Fontes alternativas por ordem de reprodução';
 	@override String get lineupOrder => 'Ordem dos canais';
 	@override String get orderChanged => 'A ordem dos canais mudou. Verifique e tente novamente.';
 	@override String get localPlaylist => 'Ficheiro M3U';
@@ -3747,6 +3748,7 @@ class Translations$services$pendingAuth$pt_PT extends Translations$services$pend
 extension on TranslationsPtPt {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'iptv.backupFeeds' => 'Fontes alternativas por ordem de reprodução',
 			'iptv.lineupOrder' => 'Ordem dos canais',
 			'iptv.orderChanged' => 'A ordem dos canais mudou. Verifique e tente novamente.',
 			'iptv.localPlaylist' => 'Ficheiro M3U',
@@ -4258,9 +4260,9 @@ extension on TranslationsPtPt {
 			'themeEditor.previewSwitch' => 'Reprodução automática',
 			'themeEditor.previewMutedText' => 'O texto secundário fica assim',
 			'search.people' => 'Pessoas',
-			'search.hint' => 'Pesquisar filmes, séries, músicas...',
 			_ => null,
 		} ?? switch (path) {
+			'search.hint' => 'Pesquisar filmes, séries, músicas...',
 			'search.tryDifferentTerm' => 'Tente um termo de pesquisa diferente',
 			'search.searchYourMedia' => 'Pesquisar o seu conteúdo multimédia',
 			'search.enterTitleActorOrKeyword' => 'Introduza um título, ator ou palavra-chave',
@@ -4772,9 +4774,9 @@ extension on TranslationsPtPt {
 			'accountPreferences.subtitleModes.onlyForced' => 'Apenas legendas forçadas',
 			'accountPreferences.subtitleModes.onlyForcedDescription' => 'Carregar apenas as faixas marcadas como forçadas.',
 			'accountPreferences.subtitleModes.smart' => 'Mostrar com áudio estrangeiro',
-			'accountPreferences.subtitleModes.smartDescription' => 'Ativar legendas apenas quando o áudio estiver noutro idioma.',
 			_ => null,
 		} ?? switch (path) {
+			'accountPreferences.subtitleModes.smartDescription' => 'Ativar legendas apenas quando o áudio estiver noutro idioma.',
 			'accountPreferences.subtitleAccessibility' => 'Legendas SDH',
 			'accountPreferences.subtitleAccessibilityOptions.preferNonSdh' => 'Preferir legendas não SDH',
 			'accountPreferences.subtitleAccessibilityOptions.preferSdh' => 'Preferir legendas SDH',
@@ -5286,9 +5288,9 @@ extension on TranslationsPtPt {
 			'watchTogether.relayPublic' => 'As salas usam os servidores de retransmissão públicos do Open Watch Party.',
 			'watchTogether.relayCustom' => ({required Object url}) => 'As salas usam o seu servidor de retransmissão em ${url}.',
 			'watchTogether.recentRooms' => 'Salas recentes',
-			'watchTogether.roomActions' => 'Ações da sala',
 			_ => null,
 		} ?? switch (path) {
+			'watchTogether.roomActions' => 'Ações da sala',
 			'watchTogether.renameRoom' => 'Renomear sala',
 			'watchTogether.enterRoomCode' => 'Introduza o código de 6 caracteres do anfitrião.',
 			'watchTogether.roomCode' => 'Código da sala',
@@ -5800,9 +5802,9 @@ extension on TranslationsPtPt {
 			'seerr.connectTitle' => 'Ligar ao Seerr',
 			'seerr.serverUrl' => 'URL do servidor',
 			'seerr.serverUrlHelper' => 'O endereço da sua instância do Seerr',
-			'seerr.checkServer' => 'Continuar',
 			_ => null,
 		} ?? switch (path) {
+			'seerr.checkServer' => 'Continuar',
 			'seerr.signInWithJellyfin' => 'Iniciar sessão com o Jellyfin',
 			'seerr.signInWithEmby' => 'Iniciar sessão com o Emby',
 			'seerr.signInWithLocal' => 'Usar uma conta local',

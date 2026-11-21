@@ -348,6 +348,32 @@ final class TvosDatabaseRecoveryStore {
     var replacements = <String, String>{...committedPayloads, manifestKey: _encodeManifest(committedManifest)};
     var pendingTruncated = false;
 
+    // A local M3U file may exceed the entire tvOS preferences recovery
+    // budget. Preserve account and lineup identity first. After a cache purge
+    // the source editor can replace just the file while retaining its channel IDs.
+    if (!_candidateFits(replacements) && committedPayloads.containsKey(identityKey)) {
+      final envelope = jsonDecode(committedPayloads[identityKey]!) as Map<String, dynamic>;
+      final rows = envelope['rows'] as Map<String, dynamic>;
+      final sources =
+          (rows['iptvSources'] as List?)
+              ?.whereType<Map<String, dynamic>>()
+              .where((source) => source['playlistCiphertext'] is String)
+              .toList() ??
+          [];
+      sources.sort(
+        (a, b) => (b['playlistCiphertext'] as String).length.compareTo((a['playlistCiphertext'] as String).length),
+      );
+      for (final source in sources) {
+        source['playlistCiphertext'] = null;
+        source['lastErrorCode'] = 'playlist_missing';
+        final payload = jsonEncode(envelope);
+        committedPayloads[identityKey] = payload;
+        committedManifest = committedManifest.copyWith(identityDigest: _digest(payload));
+        replacements = {...committedPayloads, manifestKey: _encodeManifest(committedManifest)};
+        if (_candidateFits(replacements)) break;
+      }
+    }
+
     if (!_candidateFits(replacements)) {
       final emptyPendingPayload = _encodePayload(_emptyPendingRows);
       committedPayloads[pendingKey] = emptyPendingPayload;
@@ -389,8 +415,13 @@ final class TvosDatabaseRecoveryStore {
 
       final identity = _decodePayload(
         identityRaw,
-        const {..._identityRowsBeforeFeedAliases, 'iptvFeedAliases'},
-        compatibleKeys: [_identityRowsBeforeFeedAliases, _previousIdentityRowKeys, _legacyIdentityRowKeys],
+        _identityRowKeys,
+        compatibleKeys: [
+          _identityRowKeys.difference({'iptvLineupGroups'}),
+          _identityRowKeys.difference({'iptvFeedAliases', 'iptvLineupGroups'}),
+          _previousIdentityRowKeys,
+          _legacyIdentityRowKeys,
+        ],
       );
       final pending = _decodePayload(pendingRaw, _pendingRowKeys);
       if (identity == null || pending == null) return null;
@@ -513,12 +544,14 @@ final class TvosDatabaseRecoveryStore {
     );
   }
 
-  static const Set<String> _identityRowsBeforeFeedAliases = {
+  static const Set<String> _identityRowKeys = {
     'connections',
     'profiles',
     'profileConnections',
     'iptvSources',
     'iptvChannelOverrides',
+    'iptvFeedAliases',
+    'iptvLineupGroups',
     'iptvGroupLocks',
     'iptvVodProgress',
     'iptvRecordingSchedules',

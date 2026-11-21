@@ -8,6 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/connection/connection.dart';
 import 'package:plezy/connection/connection_registry.dart';
 import 'package:plezy/database/app_database.dart';
+import 'package:plezy/iptv/iptv_models.dart';
+import 'package:plezy/iptv/iptv_source_repository.dart';
 import 'package:plezy/database/download_operations.dart';
 import 'package:plezy/database/tvos_database_recovery_store.dart';
 import 'package:plezy/media/ids.dart';
@@ -225,6 +227,30 @@ void main() {
     await tempDir.delete(recursive: true);
   });
 
+  test('cache loss restores a private playlist, channel order and overlapping group memberships', () async {
+    final app = await open();
+    final repo = IptvSourceRepository(app.database);
+    final id = await repo.createSource(
+      profileId: 'p',
+      displayName: 'My lineup',
+      kind: IptvInputKind.m3uFile,
+      endpoint: '',
+      playlistContents:
+          '#EXTM3U\n#EXTINF:-1 tvg-id="a",Alpha\nhttps://example.org/a?token=secret\n#EXTINF:-1 tvg-id="b",Beta\nhttps://example.org/b',
+    );
+    await repo.refresh('p', id);
+    final ids = (await repo.editableChannels('p', id)).map((c) => c.id).toList();
+    await repo.saveLineupOrder('p', id, ids, ids.reversed.toList());
+    await repo.editLineupGroup('p', id, name: 'Evening', add: ids.toSet());
+    await closeAndDelete();
+    final reopened = await open();
+    expect(reopened.recoveryOutcome, TvosDatabaseRecoveryOutcome.restored);
+    final restored = IptvSourceRepository(reopened.database);
+    expect(await restored.refresh('p', id), 2);
+    expect((await restored.channels('p')).map((c) => c.title), ['Beta', 'Alpha']);
+    expect((await restored.lineupGroups('p', id)).single.members, ids.toSet());
+  });
+
   test('restores exact four critical groups and excludes reconstructible tables', () async {
     final first = await open();
     expect(first.recoveryOutcome, TvosDatabaseRecoveryOutcome.fresh);
@@ -386,23 +412,30 @@ void main() {
     expect(await _criticalRows(rejected.database), everyElement(isEmpty));
   });
 
-  test('a committed identity image from before IPTV feed aliases still restores', () async {
-    final initial = await open();
-    await ProfileRegistry(initial.database).upsert(_profile('existing-profile'));
-    final identity = jsonDecode(prefs.getString(TvosDatabaseRecoveryStore.identityKey)!) as Map<String, dynamic>;
-    final rows = identity['rows'] as Map<String, dynamic>;
-    expect(rows.containsKey('iptvFeedAliases'), isTrue);
-    rows.remove('iptvFeedAliases');
-    final olderImage = jsonEncode(identity);
-    final manifest = jsonDecode(prefs.getString(TvosDatabaseRecoveryStore.manifestKey)!) as Map<String, dynamic>;
-    manifest['identityDigest'] = sha256.convert(utf8.encode(olderImage)).toString();
-    await prefs.setString(TvosDatabaseRecoveryStore.identityKey, olderImage);
-    await prefs.setString(TvosDatabaseRecoveryStore.manifestKey, jsonEncode(manifest));
-    await closeAndDelete();
-    final recovered = await open();
-    expect(recovered.recoveryOutcome, TvosDatabaseRecoveryOutcome.restored);
-    expect(await _hasProfile(recovered.database, 'existing-profile'), isTrue);
-  });
+  for (final missingKeys in [
+    ['iptvLineupGroups'],
+    ['iptvLineupGroups', 'iptvFeedAliases'],
+  ]) {
+    test('a committed identity image predating ${missingKeys.join(" and ")} still restores', () async {
+      final initial = await open();
+      await ProfileRegistry(initial.database).upsert(_profile('existing-profile'));
+      final identity = jsonDecode(prefs.getString(TvosDatabaseRecoveryStore.identityKey)!) as Map<String, dynamic>;
+      final rows = identity['rows'] as Map<String, dynamic>;
+      for (final key in missingKeys) {
+        expect(rows.containsKey(key), isTrue);
+        rows.remove(key);
+      }
+      final olderImage = jsonEncode(identity);
+      final manifest = jsonDecode(prefs.getString(TvosDatabaseRecoveryStore.manifestKey)!) as Map<String, dynamic>;
+      manifest['identityDigest'] = sha256.convert(utf8.encode(olderImage)).toString();
+      await prefs.setString(TvosDatabaseRecoveryStore.identityKey, olderImage);
+      await prefs.setString(TvosDatabaseRecoveryStore.manifestKey, jsonEncode(manifest));
+      await closeAndDelete();
+      final recovered = await open();
+      expect(recovered.recoveryOutcome, TvosDatabaseRecoveryOutcome.restored);
+      expect(await _hasProfile(recovered.database, 'existing-profile'), isTrue);
+    });
+  }
 
   for (final failurePhase in ['mutation', 'row read']) {
     test('$failurePhase failure does not poison later durable mutations', () async {

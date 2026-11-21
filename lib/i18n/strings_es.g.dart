@@ -1663,6 +1663,7 @@ class Translations$iptv$es extends Translations$iptv$en {
 	final TranslationsEs _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Fuentes de respaldo en orden de reproducción';
 	@override String get lineupOrder => 'Orden de canales';
 	@override String get orderChanged => 'El orden ha cambiado. Revísalo e inténtalo de nuevo.';
 	@override String get localPlaylist => 'Archivo M3U';
@@ -7183,6 +7184,7 @@ extension on TranslationsEs {
 			'connections.signInAgain' => 'Iniciar sesión de nuevo',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Editar conexión de ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Añade o elimina URL para ${serverName}. Pleazyng usará la URL accesible con menor latencia.',
+			'iptv.backupFeeds' => 'Fuentes de respaldo en orden de reproducción',
 			'iptv.lineupOrder' => 'Orden de canales',
 			'iptv.orderChanged' => 'El orden ha cambiado. Revísalo e inténtalo de nuevo.',
 			'iptv.localPlaylist' => 'Archivo M3U',
@@ -7343,9 +7345,9 @@ extension on TranslationsEs {
 			'discover.findNext.filterAnything' => 'Cualquier tipo',
 			'discover.findNext.filterWatch' => 'Ver',
 			'discover.findNext.filterListen' => 'Escuchar',
-			'discover.findNext.filterRead' => 'Leer',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.filterRead' => 'Leer',
 			'discover.findNext.twentyMinutes' => '20 min',
 			'discover.findNext.fortyFiveMinutes' => '45 min',
 			'discover.findNext.ninetyMinutes' => '90 min',
@@ -7857,9 +7859,9 @@ extension on TranslationsEs {
 			'liveTv.recordSettings.skipInLibrary' => 'Omitir episodios que ya están en la biblioteca',
 			'liveTv.recordSettings.keepUpTo' => 'Episodios que conservar',
 			'liveTv.recordSettings.keepUpToHint' => '0 conserva todos los episodios',
-			'liveTv.startingInMinutes' => ({required Object minutes}) => 'Empieza en ${minutes} min',
 			_ => null,
 		} ?? switch (path) {
+			'liveTv.startingInMinutes' => ({required Object minutes}) => 'Empieza en ${minutes} min',
 			'liveTv.dayAtTime' => ({required Object day, required Object time}) => '${day} a las ${time}',
 			'liveTv.invalidPlaybackData' => ({required Object product}) => '${product} devolvió datos de reproducción de TV en vivo no válidos',
 			'liveTv.failedToStartChannel' => 'No se pudo iniciar el canal en vivo',
@@ -8371,9 +8373,9 @@ extension on TranslationsEs {
 			'videoSettings.audioEqualizerFlat' => 'Plano',
 			'videoSettings.audioEqualizerActive' => 'Personalizado',
 			'videoSettings.audioEqualizerSaveFailed' => 'No podría salvar la configuración de audio equalizer.',
-			'videoSettings.audioEffectsDescription' => 'Los efectos utilizan audio descifrado, por lo que los ajustes se vuelven. el ambiente de la habitación y la ampliación estereó depende del MPV Construir y rastrear.',
 			_ => null,
 		} ?? switch (path) {
+			'videoSettings.audioEffectsDescription' => 'Los efectos utilizan audio descifrado, por lo que los ajustes se vuelven. el ambiente de la habitación y la ampliación estereó depende del MPV Construir y rastrear.',
 			'videoSettings.audioStereoWidth' => 'Stereo extendido',
 			'videoSettings.audioSpatializer' => 'ambientes de la habitación',
 			'videoSettings.audioSpatializerDescription' => 'Añade reflexiones de la sala tranquila.',
@@ -8885,9 +8887,9 @@ extension on TranslationsEs {
 			'watchLink.serverUnavailable' => 'No podía llegar a un servidor Plex para este enlace.',
 			'watchLink.notFound' => 'No podría encontrar este espectáculo o película en sus servidores Plex.',
 			'watchLink.ambiguous' => 'Este enlace se ajusta a los elementos en más de un servidor.Añadir un servidor al enlace.',
-			'watchLink.plexOnly' => 'Los enlaces de seguimiento actualmente solo soportan los servidores Plex.',
 			_ => null,
 		} ?? switch (path) {
+			'watchLink.plexOnly' => 'Los enlaces de seguimiento actualmente solo soportan los servidores Plex.',
 			'watchLink.unsupportedItem' => 'Las ligazones de visualización sólo pueden abrir un espectáculo o una película.',
 			'watchLink.menuItem' => 'Ver el enlace',
 			'watchLink.dialogTitle' => 'Ver el link',
@@ -9399,9 +9401,9 @@ extension on TranslationsEs {
 			'audiobook.syncDestination' => 'Conta de almacenamiento de sincronización',
 			'audiobook.syncFolder' => 'Sincronización de la pasta o prefixo',
 			'audiobook.syncFolderHelp' => 'Elige una carpeta WebDAV existente y separada o un prefijo S3 exclusivo para los archivos de estado de la aplicación. Los archivos multimedia nunca se suben, sustituyen, renombran ni eliminan.',
-			'audiobook.syncCode' => 'Código de sincronización privada',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.syncCode' => 'Código de sincronización privada',
 			'audiobook.syncCodeHelp' => 'Crea un código en tu primer dispositivo, luego introduzca ese código en tus otros dispositivos. Mantiene una copia privada: es la clave para tu estado cifrado. Utilice un código diferente para cada persona.',
 			'audiobook.showCode' => 'Mostrar o ocultar el código de sincronización',
 			'audiobook.newSyncCode' => 'Crear un nuevo código de sincronización',
@@ -9913,9 +9915,9 @@ extension on TranslationsEs {
 			'bonusExtras.external' => 'En línea',
 			'bonusExtras.library' => 'En tu biblioteca',
 			'bonusExtras.personal' => 'Enlace personal',
-			'bonusExtras.unknownLanguage' => 'Idioma no especificado',
 			_ => null,
 		} ?? switch (path) {
+			'bonusExtras.unknownLanguage' => 'Idioma no especificado',
 			'bonusExtras.spoilers' => 'Mostrar extras que pueden contener spoilers',
 			'bonusExtras.spoilerHint' => 'Los títulos que no has visto ocultan los extras, salvo que se haya verificado si contienen spoilers.',
 			'bonusExtras.externalEnabled' => 'Descubrir extras verificados en línea',

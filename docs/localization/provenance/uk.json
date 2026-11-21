@@ -1,7 +1,7 @@
 {
   "locale": "uk",
   "inherits": null,
-  "catalogSha256": "5d26deef4825d4b36a92e13dbea9edd51f640e2c986c62f464f17f5cda546038",
+  "catalogSha256": "dbfeba85026fcf652b536533959b89978632f296588193abf559e79314fee42e",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3706,7 +3706,8 @@
     "iptv.pastePlaylist": "fork-authored",
     "iptv.pickerCredit": "fork-authored",
     "iptv.playlistBase": "fork-authored",
-    "iptv.showMatches": "fork-authored"
+    "iptv.showMatches": "fork-authored",
+    "iptv.backupFeeds": "fork-authored"
   },
   "beforeIndependentQaCorrection": {
     "auth.localDataRecoveryRequired": "m2m100-draft",

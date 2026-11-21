@@ -1655,6 +1655,7 @@ class _Translations$iptv$ja extends Translations$iptv$en {
 	final TranslationsJa _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => '再生時に使用する予備ソースの順序';
 	@override String get lineupOrder => 'チャンネルの順序';
 	@override String get orderChanged => 'チャンネルの順序が変更されました。確認してからもう一度お試しください。';
 	@override String get localPlaylist => 'M3Uファイル';
@@ -7051,6 +7052,7 @@ extension on TranslationsJa {
 			'connections.signInAgain' => '再度サインイン',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product}接続を編集',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName}のURLを追加または削除します。Plezyは到達可能なURLのうち、レイテンシーが最も低いものを使用します。',
+			'iptv.backupFeeds' => '再生時に使用する予備ソースの順序',
 			'iptv.lineupOrder' => 'チャンネルの順序',
 			'iptv.orderChanged' => 'チャンネルの順序が変更されました。確認してからもう一度お試しください。',
 			'iptv.localPlaylist' => 'M3Uファイル',
@@ -7214,9 +7216,9 @@ extension on TranslationsJa {
 			'discover.findNext.artworkUnavailable' => '画像を表示できません',
 			'discover.findNext.savedFeedback' => '保存済み候補に追加しました',
 			'discover.findNext.skippedFeedback' => 'いったんスキップしました',
-			'discover.findNext.releaseToConfirm' => '離して確定',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => '離して確定',
 			'discover.findNext.remoteHint' => '表紙にフォーカス：← / → で選択・決定で詳細・↑ / ↓ でフォーカス移動',
 			'discover.studio' => 'スタジオ',
 			'discover.rating' => '評価',
@@ -7728,9 +7730,9 @@ extension on TranslationsJa {
 			'collections.collectionName' => 'コレクション名',
 			'collections.enterCollectionName' => 'コレクション名を入力',
 			'collections.addedToCollection' => 'コレクションに追加しました',
-			'collections.errorAddingToCollection' => 'コレクションへの追加に失敗しました',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'コレクションへの追加に失敗しました',
 			'collections.created' => 'コレクションを作成しました',
 			'collections.removeFromCollection' => 'コレクションから削除',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '「${title}」をこのコレクションから削除しますか？',
@@ -8242,9 +8244,9 @@ extension on TranslationsJa {
 			'performanceOverlay.rawDecoder' => 'Raw デコーダー',
 			'performanceOverlay.tunneling' => 'トンネリング',
 			'performanceOverlay.passthrough' => 'パススルー',
-			'performanceOverlay.aspect' => 'アスペクト',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'アスペクト',
 			'performanceOverlay.rotation' => '回転',
 			'performanceOverlay.dvSource' => 'DV ソース',
 			'performanceOverlay.dvPath' => 'DV パス',
@@ -8756,9 +8758,9 @@ extension on TranslationsJa {
 			'homeLayout.organizeHomeRows' => 'ホーム ラウンドの整理',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ライン: 移動、 ヒーロー、 自動スライド、 削除',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '組織 ${library} ライン',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '続きを見る + ${n} 行: 移動, 図書館, ホーム, ヒーロー, 自動スライド',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '続きを見る + ${n} 行: 移動, 図書館, ホーム, ヒーロー, 自動スライド',
 			'homeLayout.renderAsHero' => 'ヒーローカードとしての出張',
 			'homeLayout.heroOnlySingleCollection' => 'この行が単一のコレクションの実際のタイトルに解決する場合にのみ利用可能',
 			'homeLayout.hero' => 'ヒーロー',
@@ -9270,9 +9272,9 @@ extension on TranslationsJa {
 			'audiobook.speedHelp' => '0.25×から4×までのスピードを選択します。',
 			'audiobook.apply' => '応募',
 			'audiobook.customSleep' => 'カスタム睡眠時間',
-			'audiobook.sleepMinutes' => '時間(1～1440分)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => '時間(1～1440分)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} 章の後停止',
 			'audiobook.extendSleep' => '追加5分',
 			'audiobook.sleepRemaining' => ({required Object time}) => '睡眠タイマー: ${time}',
@@ -9784,9 +9786,9 @@ extension on TranslationsJa {
 			'musicTools.loudnessMissing' => 'ラウドネスデータが返されませんでした',
 			'musicTools.loudnessRequested' => '解析リクエストを送信しました',
 			'musicTools.loudnessUnsupported' => 'このサーバーバージョンは解析リクエストに対応していません',
-			'musicTools.serverHistory' => 'サーバーの再生履歴',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'サーバーの再生履歴',
 			'musicTools.nfcWrite' => 'NFCタグに書き込む',
 			'musicTools.nfcRead' => 'NFCタグをスキャン',
 			'musicTools.nfcPrompt' => '書き込み可能なNFCタグをスマートフォンに近づけてください。',

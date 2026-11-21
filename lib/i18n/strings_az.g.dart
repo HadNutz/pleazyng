@@ -1657,6 +1657,7 @@ class _Translations$iptv$az extends Translations$iptv$en {
 	final TranslationsAz _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Oxutma sırasına görə ehtiyat mənbələr';
 	@override String get lineupOrder => 'Kanalların sırası';
 	@override String get orderChanged => 'Kanal sırası dəyişib. Yoxlayıb yenidən cəhd edin.';
 	@override String get localPlaylist => 'M3U faylı';
@@ -7056,6 +7057,7 @@ extension on TranslationsAz {
 			'connections.signInAgain' => 'Yenidən daxil ol',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} qoşulmasını düzəliş et',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} üçün URL-lər əlavə edin və ya silin. Pleazyng əlçatan olan ən aşağı gecikməli URL-i istifadə edəcək.',
+			'iptv.backupFeeds' => 'Oxutma sırasına görə ehtiyat mənbələr',
 			'iptv.lineupOrder' => 'Kanalların sırası',
 			'iptv.orderChanged' => 'Kanal sırası dəyişib. Yoxlayıb yenidən cəhd edin.',
 			'iptv.localPlaylist' => 'M3U faylı',
@@ -7219,9 +7221,9 @@ extension on TranslationsAz {
 			'discover.findNext.artworkUnavailable' => 'Şəkil mövcud deyil',
 			'discover.findNext.savedFeedback' => 'Saxlanmış seçimlərə əlavə edildi',
 			'discover.findNext.skippedFeedback' => 'Hələlik keçildi',
-			'discover.findNext.releaseToConfirm' => 'Təsdiqləmək üçün buraxın',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Təsdiqləmək üçün buraxın',
 			'discover.findNext.remoteHint' => 'Üz qabığı fokusda: ← / → seçin · Seçim düyməsi: təfərrüatlar · ↑ / ↓ fokusu dəyişin',
 			'discover.studio' => 'Studiya',
 			'discover.rating' => 'Reytinq',
@@ -7733,9 +7735,9 @@ extension on TranslationsAz {
 			'collections.collectionName' => 'Kolleksiya adı',
 			'collections.enterCollectionName' => 'Kolleksiya adını daxil edin',
 			'collections.addedToCollection' => 'Kolleksiyaya əlavə edildi',
-			'collections.errorAddingToCollection' => 'Kolleksiyaya əlavə edilə bilmədi',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'Kolleksiyaya əlavə edilə bilmədi',
 			'collections.created' => 'Kolleksiya yaradıldı',
 			'collections.removeFromCollection' => 'Kolleksiyadan sil',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '"${title}" bu kolleksiyadan silinsin?',
@@ -8247,9 +8249,9 @@ extension on TranslationsAz {
 			'performanceOverlay.rawDecoder' => 'Xam çözücü',
 			'performanceOverlay.tunneling' => 'Tünelləmə',
 			'performanceOverlay.passthrough' => 'Birbaşa ötürmə',
-			'performanceOverlay.aspect' => 'Nisbət',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Nisbət',
 			'performanceOverlay.rotation' => 'Dönmə',
 			'performanceOverlay.dvSource' => 'DV mənbəyi',
 			'performanceOverlay.dvPath' => 'DV yolu',
@@ -8761,9 +8763,9 @@ extension on TranslationsAz {
 			'homeLayout.organizeHomeRows' => 'Evdə qalıb',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} sıra: Moving, Hero, Auto-slide, kaldırma',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} yolları organizə edin',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Qiyamış + ${n} sıra: Moving, Library, Home, Hero, Auto-slide',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Qiyamış + ${n} sıra: Moving, Library, Home, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Bir kahramanın kartı kimi',
 			'homeLayout.heroOnlySingleCollection' => 'Bu sayı yalnız bir koleksiyonun gerçek başlıklarına çözüldüğünde mevcutdır.',
 			'homeLayout.hero' => 'Heroya',
@@ -9275,9 +9277,9 @@ extension on TranslationsAz {
 			'audiobook.speedHelp' => 'İndərlik: 0.25 x 4 x arasında seçilir.',
 			'audiobook.apply' => 'İhtiyaç',
 			'audiobook.customSleep' => 'Qadın uyku saatləri',
-			'audiobook.sleepMinutes' => '1 min və 1440 min arası',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => '1 min və 1440 min arası',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} qapıdan sonra durun',
 			'audiobook.extendSleep' => '5 dəqiqə',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Uyku vaxtı: ${time}',
@@ -9789,9 +9791,9 @@ extension on TranslationsAz {
 			'musicTools.loudnessMissing' => 'Səs ucalığı məlumatı qaytarılmadı',
 			'musicTools.loudnessRequested' => 'Analiz sorğusu göndərildi',
 			'musicTools.loudnessUnsupported' => 'Bu server versiyası analiz sorğusunu dəstəkləmir',
-			'musicTools.serverHistory' => 'Serverdə oxutma tarixçəsi',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'Serverdə oxutma tarixçəsi',
 			'musicTools.nfcWrite' => 'NFC etiketinə yaz',
 			'musicTools.nfcRead' => 'NFC etiketini skan et',
 			'musicTools.nfcPrompt' => 'Yazıla bilən NFC etiketini telefonunuza yaxın tutun.',

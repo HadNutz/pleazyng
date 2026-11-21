@@ -1508,6 +1508,7 @@
     "editMediaBrowserIntro": "Añade o elimina URL para ${serverName}. Pleazyng usará la URL accesible con menor latencia."
   },
   "iptv": {
+    "backupFeeds": "Fuentes de respaldo en orden de reproducción",
     "lineupOrder": "Orden de canales",
     "orderChanged": "El orden ha cambiado. Revísalo e inténtalo de nuevo.",
     "localPlaylist": "Archivo M3U",

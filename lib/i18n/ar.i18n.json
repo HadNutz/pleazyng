@@ -1534,6 +1534,7 @@
     "editMediaBrowserIntro": "إضافة أو إزالة عناوين URL لـ ${serverName}. Pleazyng سوف تستخدم عناوين URL المتاحة مع أدنى تأخير."
   },
   "iptv": {
+    "backupFeeds": "المصادر الاحتياطية بترتيب التشغيل",
     "lineupOrder": "ترتيب القنوات",
     "orderChanged": "تغيّر ترتيب القنوات. راجعه وحاول مجددًا.",
     "localPlaylist": "ملف M3U",

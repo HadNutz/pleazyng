@@ -1657,6 +1657,7 @@ class _Translations$iptv$uz extends Translations$iptv$en {
 	final TranslationsUz _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Ijro tartibidagi zaxira manbalar';
 	@override String get lineupOrder => 'Kanallar tartibi';
 	@override String get orderChanged => 'Kanallar tartibi o‘zgardi. Tekshirib, qayta urinib ko‘ring.';
 	@override String get localPlaylist => 'M3U fayli';
@@ -7056,6 +7057,7 @@ extension on TranslationsUz {
 			'connections.signInAgain' => 'Qaytadan kirish',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} ulanishini tahrirlash',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} uchun URL-larni qoʻshing yoki olib tashlang. Pleazyng eng kam kechikishga ega boʻlgan mavjud URL-dan foydalanadi.',
+			'iptv.backupFeeds' => 'Ijro tartibidagi zaxira manbalar',
 			'iptv.lineupOrder' => 'Kanallar tartibi',
 			'iptv.orderChanged' => 'Kanallar tartibi o‘zgardi. Tekshirib, qayta urinib ko‘ring.',
 			'iptv.localPlaylist' => 'M3U fayli',
@@ -7219,9 +7221,9 @@ extension on TranslationsUz {
 			'discover.findNext.artworkUnavailable' => 'Rasm mavjud emas',
 			'discover.findNext.savedFeedback' => 'Saqlangan tanlovlarga qo‘shildi',
 			'discover.findNext.skippedFeedback' => 'Hozircha o‘tkazib yuborildi',
-			'discover.findNext.releaseToConfirm' => 'Tasdiqlash uchun qo‘yib yuboring',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Tasdiqlash uchun qo‘yib yuboring',
 			'discover.findNext.remoteHint' => 'Muqova fokusda bo‘lganda: ← / → tanlash · Tanlash tugmasi: tafsilotlar · ↑ / ↓ fokusni ko‘chirish',
 			'discover.studio' => 'Studiya',
 			'discover.rating' => 'Reyting',
@@ -7733,9 +7735,9 @@ extension on TranslationsUz {
 			'collections.collectionName' => 'Toʻplam nomi',
 			'collections.enterCollectionName' => 'Toʻplam nomini kiriting',
 			'collections.addedToCollection' => 'Toʻplamga qoʻshildi',
-			'collections.errorAddingToCollection' => 'Toʻplamga qoʻshib boʻlmadi',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'Toʻplamga qoʻshib boʻlmadi',
 			'collections.created' => 'Toʻplam yaratildi',
 			'collections.removeFromCollection' => 'Toʻplamdan oʻchirish',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '"${title}" ushbu toʻplamdan oʻchirilsinmi?',
@@ -8247,9 +8249,9 @@ extension on TranslationsUz {
 			'performanceOverlay.rawDecoder' => 'Ishlov berilmagan dekoder',
 			'performanceOverlay.tunneling' => 'Tunnellash',
 			'performanceOverlay.passthrough' => 'Toʻgʻridan-toʻgʻri oʻtkazish',
-			'performanceOverlay.aspect' => 'Nisbat',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Nisbat',
 			'performanceOverlay.rotation' => 'Aylanish',
 			'performanceOverlay.dvSource' => 'DV manbasi',
 			'performanceOverlay.dvPath' => 'DV yoʻli',
@@ -8761,9 +8763,9 @@ extension on TranslationsUz {
 			'homeLayout.organizeHomeRows' => 'Home Riyadhlar',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ruzlar: Moving, Hero, Auto-slide, xifida',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} qaytlarlar',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '+ ${n} riylar: Moving, Library, Home, Hero, Auto-slide',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '+ ${n} riylar: Moving, Library, Home, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Bir kartatda bir kahraman.',
 			'homeLayout.heroOnlySingleCollection' => 'Bu o‘ziz o‘z o‘z q‘z o’z o‘q‘z o\'z o‘y o‘z bu‘z o`z o‘s o‘z',
 			'homeLayout.hero' => 'Asosiy banner',
@@ -9275,9 +9277,9 @@ extension on TranslationsUz {
 			'audiobook.speedHelp' => 'Siz 0.25 x 4 x o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z',
 			'audiobook.apply' => 'Diggadi',
 			'audiobook.customSleep' => 'Custom uyumalar',
-			'audiobook.sleepMinutes' => '1 – 440 min)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => '1 – 440 min)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} kapitallardan sonra durga',
 			'audiobook.extendSleep' => '5 dakikadi',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'U\'qiziziz: ${time}',
@@ -9789,9 +9791,9 @@ extension on TranslationsUz {
 			'musicTools.loudnessMissing' => 'Ovoz balandligi ma’lumotlari qaytarilmadi',
 			'musicTools.loudnessRequested' => 'Tahlil so‘rovi yuborildi',
 			'musicTools.loudnessUnsupported' => 'Serverning bu versiyasi tahlil so‘rovlarini qo‘llamaydi',
-			'musicTools.serverHistory' => 'Serverdagi ijro tarixi',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'Serverdagi ijro tarixi',
 			'musicTools.nfcWrite' => 'NFC tegiga yozish',
 			'musicTools.nfcRead' => 'NFC tegini skanerlash',
 			'musicTools.nfcPrompt' => 'Yoziladigan NFC tegini telefoningizga yaqin tuting.',

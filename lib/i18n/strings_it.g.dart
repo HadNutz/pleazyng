@@ -1659,6 +1659,7 @@ class _Translations$iptv$it extends Translations$iptv$en {
 	final TranslationsIt _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Fonti di riserva in ordine di riproduzione';
 	@override String get lineupOrder => 'Ordine dei canali';
 	@override String get orderChanged => 'L’ordine dei canali è cambiato. Controllalo e riprova.';
 	@override String get localPlaylist => 'File M3U';
@@ -7063,6 +7064,7 @@ extension on TranslationsIt {
 			'connections.signInAgain' => 'Accedi di nuovo',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Modifica connessione ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Aggiungi o rimuovi gli URL per ${serverName}. Pleazyng userà l\'URL raggiungibile con la latenza più bassa.',
+			'iptv.backupFeeds' => 'Fonti di riserva in ordine di riproduzione',
 			'iptv.lineupOrder' => 'Ordine dei canali',
 			'iptv.orderChanged' => 'L’ordine dei canali è cambiato. Controllalo e riprova.',
 			'iptv.localPlaylist' => 'File M3U',
@@ -7226,9 +7228,9 @@ extension on TranslationsIt {
 			'discover.findNext.artworkUnavailable' => 'Immagine non disponibile',
 			'discover.findNext.savedFeedback' => 'Aggiunto alle scelte salvate',
 			'discover.findNext.skippedFeedback' => 'Saltato per ora',
-			'discover.findNext.releaseToConfirm' => 'Rilascia per confermare',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Rilascia per confermare',
 			'discover.findNext.remoteHint' => 'Copertina selezionata: ← / → scegli · Seleziona: dettagli · ↑ / ↓ sposta il focus',
 			'discover.studio' => 'Studio',
 			'discover.rating' => 'Valutazione',
@@ -7740,9 +7742,9 @@ extension on TranslationsIt {
 			'collections.collectionName' => 'Nome raccolta',
 			'collections.enterCollectionName' => 'Inserisci nome raccolta',
 			'collections.addedToCollection' => 'Elemento aggiunto alla raccolta',
-			'collections.errorAddingToCollection' => 'Impossibile aggiungere l\'elemento alla raccolta',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'Impossibile aggiungere l\'elemento alla raccolta',
 			'collections.created' => 'Raccolta creata',
 			'collections.removeFromCollection' => 'Rimuovi dalla raccolta',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Rimuovere "${title}" da questa raccolta?',
@@ -8254,9 +8256,9 @@ extension on TranslationsIt {
 			'performanceOverlay.rawDecoder' => 'Decoder raw',
 			'performanceOverlay.tunneling' => 'Tunneling',
 			'performanceOverlay.passthrough' => 'Passthrough',
-			'performanceOverlay.aspect' => 'Proporzioni',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Proporzioni',
 			'performanceOverlay.rotation' => 'Rotazione',
 			'performanceOverlay.dvSource' => 'Sorgente DV',
 			'performanceOverlay.dvPath' => 'Percorso DV',
@@ -8768,9 +8770,9 @@ extension on TranslationsIt {
 			'homeLayout.organizeHomeRows' => 'Organizzare le linee di casa',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} righe: movimento, eroe, auto-slide, rimozione',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organizzare ${library} righe',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continua a guardare + ${n} righe: movimento, Biblioteca, Home, Eroe, Auto-slide',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continua a guardare + ${n} righe: movimento, Biblioteca, Home, Eroe, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render come carta di eroe',
 			'homeLayout.heroOnlySingleCollection' => 'Disponibile solo quando questa fila si risolve ai titoli reali di una singola collezione',
 			'homeLayout.hero' => 'Eroe',
@@ -9282,9 +9284,9 @@ extension on TranslationsIt {
 			'audiobook.speedHelp' => 'Scegli una velocità da 0,25× a 4×.',
 			'audiobook.apply' => 'Applica',
 			'audiobook.customSleep' => 'Timer di arresto personalizzato',
-			'audiobook.sleepMinutes' => 'Minuti (1–1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'Minuti (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Capitoli prima dell’arresto: ${count}',
 			'audiobook.extendSleep' => 'Aggiungi 5 minuti',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Timer di arresto: ${time}',
@@ -9796,9 +9798,9 @@ extension on TranslationsIt {
 			'musicTools.loudnessMissing' => 'Nessun dato sulla sonorità restituito',
 			'musicTools.loudnessRequested' => 'Richiesta di analisi inviata',
 			'musicTools.loudnessUnsupported' => 'Questa versione del server non supporta le richieste di analisi',
-			'musicTools.serverHistory' => 'Cronologia di riproduzione del server',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'Cronologia di riproduzione del server',
 			'musicTools.nfcWrite' => 'Scrivi tag NFC',
 			'musicTools.nfcRead' => 'Scansiona tag NFC',
 			'musicTools.nfcPrompt' => 'Avvicina un tag NFC scrivibile al telefono.',

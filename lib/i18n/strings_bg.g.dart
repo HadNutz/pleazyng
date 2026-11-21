@@ -1657,6 +1657,7 @@ class _Translations$iptv$bg extends Translations$iptv$en {
 	final TranslationsBg _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Резервни източници по ред на възпроизвеждане';
 	@override String get lineupOrder => 'Ред на каналите';
 	@override String get orderChanged => 'Редът на каналите е променен. Проверете го и опитайте отново.';
 	@override String get localPlaylist => 'M3U файл';
@@ -7056,6 +7057,7 @@ extension on TranslationsBg {
 			'connections.signInAgain' => 'Влез отново',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Редактирай връзката с ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Добавете или премахнете URL адреси за ${serverName}. Pleazyng ще използва достъпния URL адрес с най-ниска латентност.',
+			'iptv.backupFeeds' => 'Резервни източници по ред на възпроизвеждане',
 			'iptv.lineupOrder' => 'Ред на каналите',
 			'iptv.orderChanged' => 'Редът на каналите е променен. Проверете го и опитайте отново.',
 			'iptv.localPlaylist' => 'M3U файл',
@@ -7219,9 +7221,9 @@ extension on TranslationsBg {
 			'discover.findNext.artworkUnavailable' => 'Изображението не е налично',
 			'discover.findNext.savedFeedback' => 'Добавено към запазените предложения',
 			'discover.findNext.skippedFeedback' => 'Пропуснато засега',
-			'discover.findNext.releaseToConfirm' => 'Пуснете, за да потвърдите',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Пуснете, за да потвърдите',
 			'discover.findNext.remoteHint' => 'Когато корицата е на фокус: ← / → избор · Избор: подробности · ↑ / ↓ премества фокуса',
 			'discover.studio' => 'Студио',
 			'discover.rating' => 'Рейтинг',
@@ -7733,9 +7735,9 @@ extension on TranslationsBg {
 			'collections.collectionName' => 'Име на колекция',
 			'collections.enterCollectionName' => 'Въведете име на колекция',
 			'collections.addedToCollection' => 'Добавено към колекция',
-			'collections.errorAddingToCollection' => 'Неуспешно добавяне към колекция',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'Неуспешно добавяне към колекция',
 			'collections.created' => 'Колекцията е създадена',
 			'collections.removeFromCollection' => 'Премахни от колекция',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Да се премахне ли "${title}" от тази колекция?',
@@ -8247,9 +8249,9 @@ extension on TranslationsBg {
 			'performanceOverlay.rawDecoder' => 'Суров декодер',
 			'performanceOverlay.tunneling' => 'Тунелиране',
 			'performanceOverlay.passthrough' => 'Директно предаване',
-			'performanceOverlay.aspect' => 'Съотношение',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Съотношение',
 			'performanceOverlay.rotation' => 'Завъртане',
 			'performanceOverlay.dvSource' => 'DV източник',
 			'performanceOverlay.dvPath' => 'DV път',
@@ -8761,9 +8763,9 @@ extension on TranslationsBg {
 			'homeLayout.organizeHomeRows' => 'Организиране на домашни редове',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} редове: движение, герой, Авто-слайд, премахване',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Организирайте ${library} редове',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} реда: движение, Библиотека, Дома, Герой, Авто-Слайд',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} реда: движение, Библиотека, Дома, Герой, Авто-Слайд',
 			'homeLayout.renderAsHero' => 'Да се изкачи като герой',
 			'homeLayout.heroOnlySingleCollection' => 'Достъпна само когато тази линия се разрешава на действителните заглавия на една колекция',
 			'homeLayout.hero' => 'Геройът',
@@ -9275,9 +9277,9 @@ extension on TranslationsBg {
 			'audiobook.speedHelp' => 'Изберете скорост от 0.25× до 4×.',
 			'audiobook.apply' => 'Прилагане',
 			'audiobook.customSleep' => 'Часовник за сън',
-			'audiobook.sleepMinutes' => 'Минути (1 до 1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'Минути (1 до 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Прекъсване след ${count} глави',
 			'audiobook.extendSleep' => 'Добавете 5 минути',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Време за сън: ${time}',
@@ -9789,9 +9791,9 @@ extension on TranslationsBg {
 			'musicTools.loudnessMissing' => 'Няма получени данни за силата на звука',
 			'musicTools.loudnessRequested' => 'Заявката за анализ е изпратена',
 			'musicTools.loudnessUnsupported' => 'Тази версия на сървъра не поддържа заявки за анализ',
-			'musicTools.serverHistory' => 'История на възпроизвеждане от сървъра',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'История на възпроизвеждане от сървъра',
 			'musicTools.nfcWrite' => 'Запис на NFC етикет',
 			'musicTools.nfcRead' => 'Сканиране на NFC етикет',
 			'musicTools.nfcPrompt' => 'Дръжте NFC етикет с възможност за запис близо до телефона.',

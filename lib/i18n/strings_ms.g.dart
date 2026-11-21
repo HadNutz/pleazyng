@@ -1650,6 +1650,7 @@ class _Translations$iptv$ms extends Translations$iptv$en {
 	final TranslationsMs _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Sumber sandaran mengikut turutan main balik';
 	@override String get lineupOrder => 'Susunan saluran';
 	@override String get orderChanged => 'Susunan saluran telah berubah. Semak dan cuba lagi.';
 	@override String get localPlaylist => 'Fail M3U';
@@ -7031,6 +7032,7 @@ extension on TranslationsMs {
 			'connections.signInAgain' => 'Menandatangani lagi',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} sambungan',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Menambah atau menghapuskan URL untuk ${serverName}. Pleazyng akan menggunakan URL yang boleh dicapai dengan latensi terendah.',
+			'iptv.backupFeeds' => 'Sumber sandaran mengikut turutan main balik',
 			'iptv.lineupOrder' => 'Susunan saluran',
 			'iptv.orderChanged' => 'Susunan saluran telah berubah. Semak dan cuba lagi.',
 			'iptv.localPlaylist' => 'Fail M3U',
@@ -7194,9 +7196,9 @@ extension on TranslationsMs {
 			'discover.findNext.artworkUnavailable' => 'Imej tidak tersedia',
 			'discover.findNext.savedFeedback' => 'Ditambah ke pilihan tersimpan',
 			'discover.findNext.skippedFeedback' => 'Dilangkau buat masa ini',
-			'discover.findNext.releaseToConfirm' => 'Lepaskan untuk mengesahkan',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Lepaskan untuk mengesahkan',
 			'discover.findNext.remoteHint' => 'Kulit dalam fokus: ← / → pilih · Pilih: butiran · ↑ / ↓ alih fokus',
 			'discover.studio' => 'Pengajian',
 			'discover.rating' => 'Penilaian',
@@ -7708,9 +7710,9 @@ extension on TranslationsMs {
 			'collections.collectionName' => 'Nama Koleksi',
 			'collections.enterCollectionName' => 'Masukkan nama koleksi',
 			'collections.addedToCollection' => 'Ditambah kepada koleksi',
-			'collections.errorAddingToCollection' => 'gagal untuk menambah kepada koleksi',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'gagal untuk menambah kepada koleksi',
 			'collections.created' => 'Koleksi yang dibuat',
 			'collections.removeFromCollection' => 'Keluar daripada koleksi',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Alih keluar “${title}” daripada koleksi ini?',
@@ -8222,9 +8224,9 @@ extension on TranslationsMs {
 			'performanceOverlay.rawDecoder' => 'Rujukan Decoder',
 			'performanceOverlay.tunneling' => 'tunel',
 			'performanceOverlay.passthrough' => 'Pasukan',
-			'performanceOverlay.aspect' => 'Aspek',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Aspek',
 			'performanceOverlay.rotation' => 'Rotasi',
 			'performanceOverlay.dvSource' => 'D. Sumber',
 			'performanceOverlay.dvPath' => 'Laluan DV',
@@ -8736,9 +8738,9 @@ extension on TranslationsMs {
 			'homeLayout.organizeHomeRows' => 'Mengatur rangkaian rumah',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} baris: bergerak, Hero, Auto-slide, menghapuskan',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Mengatur ${library} baris',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Teruskan Menonton + ${n} baris: bergerak, Perpustakaan, Rumah, Hero, Auto-slide',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Teruskan Menonton + ${n} baris: bergerak, Perpustakaan, Rumah, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render sebagai kad pahlawan',
 			'homeLayout.heroOnlySingleCollection' => 'Hanya boleh didapati apabila baris ini diselesaikan kepada tajuk sebenar satu koleksi',
 			'homeLayout.hero' => 'Sepanduk utama',
@@ -9250,9 +9252,9 @@ extension on TranslationsMs {
 			'audiobook.speedHelp' => 'Pilih kelajuan daripada 0.25× kepada 4×.',
 			'audiobook.apply' => 'Permohonan',
 			'audiobook.customSleep' => 'Tarikh Tidur Khas',
-			'audiobook.sleepMinutes' => 'Jadual : 1 - 1440',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'Jadual : 1 - 1440',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Berhenti selepas ${count} bab',
 			'audiobook.extendSleep' => 'Tambah 5 minit',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Jadual tidur : ${time}',
@@ -9764,9 +9766,9 @@ extension on TranslationsMs {
 			'musicTools.loudnessMissing' => 'Tiada data kelantangan diterima',
 			'musicTools.loudnessRequested' => 'Permintaan analisis dihantar',
 			'musicTools.loudnessUnsupported' => 'Versi pelayan ini tidak menyokong permintaan analisis',
-			'musicTools.serverHistory' => 'Sejarah main balik pelayan',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'Sejarah main balik pelayan',
 			'musicTools.nfcWrite' => 'Tulis tag NFC',
 			'musicTools.nfcRead' => 'Imbas tag NFC',
 			'musicTools.nfcPrompt' => 'Dekatkan tag NFC yang boleh ditulis pada telefon anda.',

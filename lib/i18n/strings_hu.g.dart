@@ -1657,6 +1657,7 @@ class _Translations$iptv$hu extends Translations$iptv$en {
 	final TranslationsHu _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Tartalék források lejátszási sorrendben';
 	@override String get lineupOrder => 'Csatornasorrend';
 	@override String get orderChanged => 'A csatornasorrend megváltozott. Ellenőrizze, majd próbálja újra.';
 	@override String get localPlaylist => 'M3U-fájl';
@@ -7056,6 +7057,7 @@ extension on TranslationsHu {
 			'connections.signInAgain' => 'Bejelentkezés újra',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'A(z) ${product} kapcsolat szerkesztése',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Adjon hozzá vagy távolítson el URL-eket a(z) ${serverName} esetén. A Pleazyng a legkisebb késleltetésű, elérhető URL-t fogja használni.',
+			'iptv.backupFeeds' => 'Tartalék források lejátszási sorrendben',
 			'iptv.lineupOrder' => 'Csatornasorrend',
 			'iptv.orderChanged' => 'A csatornasorrend megváltozott. Ellenőrizze, majd próbálja újra.',
 			'iptv.localPlaylist' => 'M3U-fájl',
@@ -7219,9 +7221,9 @@ extension on TranslationsHu {
 			'discover.findNext.artworkUnavailable' => 'A kép nem érhető el',
 			'discover.findNext.savedFeedback' => 'Hozzáadva a mentett ajánlatokhoz',
 			'discover.findNext.skippedFeedback' => 'Most kihagyva',
-			'discover.findNext.releaseToConfirm' => 'Engedd el a megerősítéshez',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Engedd el a megerősítéshez',
 			'discover.findNext.remoteHint' => 'Borító kijelölve: ← / → választás · Kiválasztás: részletek · ↑ / ↓ fókusz mozgatása',
 			'discover.studio' => 'Stúdió',
 			'discover.rating' => 'Értékelés',
@@ -7733,9 +7735,9 @@ extension on TranslationsHu {
 			'collections.collectionName' => 'Gyűjtemény neve',
 			'collections.enterCollectionName' => 'Add meg a gyűjtemény nevét',
 			'collections.addedToCollection' => 'Hozzáadva a gyűjteményhez',
-			'collections.errorAddingToCollection' => 'Nem sikerült a gyűjteményhez adni',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'Nem sikerült a gyűjteményhez adni',
 			'collections.created' => 'Gyűjtemény létrehozva',
 			'collections.removeFromCollection' => 'Eltávolítás a gyűjteményből',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Eltávolítod a következőt: "${title}" ebből a gyűjteményből?',
@@ -8247,9 +8249,9 @@ extension on TranslationsHu {
 			'performanceOverlay.rawDecoder' => 'Nyers dekóder',
 			'performanceOverlay.tunneling' => 'Alagutazás',
 			'performanceOverlay.passthrough' => 'Passthrough',
-			'performanceOverlay.aspect' => 'Méretarány',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Méretarány',
 			'performanceOverlay.rotation' => 'Forgatás',
 			'performanceOverlay.dvSource' => 'DV-forrás',
 			'performanceOverlay.dvPath' => 'DV-útvonal',
@@ -8761,9 +8763,9 @@ extension on TranslationsHu {
 			'homeLayout.organizeHomeRows' => 'Szervezze a házirendeket',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} sorok: mozog, Hős, Auto-slide, eltávolítása',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Szervezés ${library} sorok',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Folytatás Nézd + ${n} sorok: mozog, Könyvtár, Ház, Hős, Autó-szalag',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Folytatás Nézd + ${n} sorok: mozog, Könyvtár, Ház, Hős, Autó-szalag',
 			'homeLayout.renderAsHero' => 'Hősként válogatott kártyát',
 			'homeLayout.heroOnlySingleCollection' => 'Csak akkor érhető el, ha ez a sor egy gyűjtemény valós címére oldódik meg',
 			'homeLayout.hero' => 'Hősök',
@@ -9275,9 +9277,9 @@ extension on TranslationsHu {
 			'audiobook.speedHelp' => 'Válasszon egy sebességet 0,25× és 4× között.',
 			'audiobook.apply' => 'alkalmazás',
 			'audiobook.customSleep' => 'Alvási időszámítás',
-			'audiobook.sleepMinutes' => 'percek (1–1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'percek (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} fejezetek után',
 			'audiobook.extendSleep' => 'Add hozzá 5 percet',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Alvás időzítő: ${time}',
@@ -9789,9 +9791,9 @@ extension on TranslationsHu {
 			'musicTools.loudnessMissing' => 'Nem érkeztek hangerőadatok',
 			'musicTools.loudnessRequested' => 'Az elemzési kérés elküldve',
 			'musicTools.loudnessUnsupported' => 'Ez a kiszolgálóverzió nem támogatja az elemzési kéréseket',
-			'musicTools.serverHistory' => 'Szerver lejátszási előzményei',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'Szerver lejátszási előzményei',
 			'musicTools.nfcWrite' => 'NFC-címke írása',
 			'musicTools.nfcRead' => 'NFC-címke beolvasása',
 			'musicTools.nfcPrompt' => 'Tartson egy írható NFC-címkét a telefon közelébe.',

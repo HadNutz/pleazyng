@@ -100,6 +100,7 @@ class _Translations$iptv$es_419 extends Translations$iptv$es {
 	final TranslationsEs419 _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Fuentes de respaldo en orden de reproducción';
 	@override String get lineupOrder => 'Orden de canales';
 	@override String get orderChanged => 'El orden ha cambiado. Revísalo e inténtalo de nuevo.';
 	@override String get localPlaylist => 'Archivo M3U';
@@ -1400,6 +1401,7 @@ class _Translations$services$libraryFilter$es_419 extends Translations$services$
 extension on TranslationsEs419 {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'iptv.backupFeeds' => 'Fuentes de respaldo en orden de reproducción',
 			'iptv.lineupOrder' => 'Orden de canales',
 			'iptv.orderChanged' => 'El orden ha cambiado. Revísalo e inténtalo de nuevo.',
 			'iptv.localPlaylist' => 'Archivo M3U',
@@ -1911,9 +1913,9 @@ extension on TranslationsEs419 {
 			'romm.screenshots' => 'Screenshots',
 			'romm.manual' => 'Manual',
 			'romm.importSave' => 'Import save',
-			'romm.exportSave' => 'Export',
 			_ => null,
 		} ?? switch (path) {
+			'romm.exportSave' => 'Export',
 			'romm.importState' => 'Import state',
 			'romm.saveImported' => 'Save imported',
 			'romm.saveExported' => 'Save exported',

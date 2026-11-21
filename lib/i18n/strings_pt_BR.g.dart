@@ -102,6 +102,7 @@ class Translations$iptv$pt_BR extends Translations$iptv$pt {
 	final TranslationsPtBr _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Fontes alternativas por ordem de reprodução';
 	@override String get lineupOrder => 'Ordem dos canais';
 	@override String get orderChanged => 'A ordem dos canais mudou. Confira e tente novamente.';
 	@override String get localPlaylist => 'Arquivo M3U';
@@ -1443,6 +1444,7 @@ class Translations$services$libraryFilter$pt_BR extends Translations$services$li
 extension on TranslationsPtBr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'iptv.backupFeeds' => 'Fontes alternativas por ordem de reprodução',
 			'iptv.lineupOrder' => 'Ordem dos canais',
 			'iptv.orderChanged' => 'A ordem dos canais mudou. Confira e tente novamente.',
 			'iptv.localPlaylist' => 'Arquivo M3U',
@@ -1954,9 +1956,9 @@ extension on TranslationsPtBr {
 			'romm.offline' => 'Available offline',
 			'romm.downloadProgress' => 'Downloading…',
 			'romm.cancelDownload' => 'Cancel download',
-			'romm.removeOffline' => 'Remove offline copy',
 			_ => null,
 		} ?? switch (path) {
+			'romm.removeOffline' => 'Remove offline copy',
 			'romm.storage' => 'Offline storage',
 			'romm.storageLimit' => 'Storage limit (GiB)',
 			'romm.browser' => 'In-app browser player',

@@ -1671,6 +1671,7 @@ class _Translations$iptv$ru extends Translations$iptv$en {
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Резервные источники в порядке воспроизведения';
 	@override String get lineupOrder => 'Порядок каналов';
 	@override String get orderChanged => 'Порядок каналов изменился. Проверьте его и повторите попытку.';
 	@override String get localPlaylist => 'Файл M3U';
@@ -7106,6 +7107,7 @@ extension on TranslationsRu {
 			'connections.signInAgain' => 'Войти снова',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Изменить подключение ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Добавьте или удалите URL-адреса для ${serverName}. Pleazyng будет использовать доступный URL с наименьшей задержкой.',
+			'iptv.backupFeeds' => 'Резервные источники в порядке воспроизведения',
 			'iptv.lineupOrder' => 'Порядок каналов',
 			'iptv.orderChanged' => 'Порядок каналов изменился. Проверьте его и повторите попытку.',
 			'iptv.localPlaylist' => 'Файл M3U',
@@ -7269,9 +7271,9 @@ extension on TranslationsRu {
 			'discover.findNext.artworkUnavailable' => 'Обложка недоступна',
 			'discover.findNext.savedFeedback' => 'Добавлено в сохранённые подборки',
 			'discover.findNext.skippedFeedback' => 'Пока пропущено',
-			'discover.findNext.releaseToConfirm' => 'Отпустите для подтверждения',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Отпустите для подтверждения',
 			'discover.findNext.remoteHint' => 'Фокус на обложке: ← / → выбор · Кнопка выбора: подробности · ↑ / ↓ перемещение фокуса',
 			'discover.studio' => 'Студия',
 			'discover.rating' => 'Рейтинг',
@@ -7783,9 +7785,9 @@ extension on TranslationsRu {
 			'collections.collectionName' => 'Название коллекции',
 			'collections.enterCollectionName' => 'Введите название коллекции',
 			'collections.addedToCollection' => 'Добавлено в коллекцию',
-			'collections.errorAddingToCollection' => 'Не удалось добавить в коллекцию',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'Не удалось добавить в коллекцию',
 			'collections.created' => 'Коллекция создана',
 			'collections.removeFromCollection' => 'Удалить из коллекции',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Удалить "${title}" из этой коллекции?',
@@ -8297,9 +8299,9 @@ extension on TranslationsRu {
 			'performanceOverlay.rawDecoder' => 'Raw-декодер',
 			'performanceOverlay.tunneling' => 'Туннелирование',
 			'performanceOverlay.passthrough' => 'Сквозной вывод',
-			'performanceOverlay.aspect' => 'Соотношение',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Соотношение',
 			'performanceOverlay.rotation' => 'Поворот',
 			'performanceOverlay.dvSource' => 'Источник DV',
 			'performanceOverlay.dvPath' => 'Путь DV',
@@ -8811,9 +8813,9 @@ extension on TranslationsRu {
 			'homeLayout.organizeHomeRows' => 'Организуйте домашние рельефы',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} строки: перемещение, Герой, Авто-слайд, удаление',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Организация ${library} рядов',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Продолжайте смотреть + ${n} строки: движение, Библиотека, Дома, Герой, Авто-Слайд',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Продолжайте смотреть + ${n} строки: движение, Библиотека, Дома, Герой, Авто-Слайд',
 			'homeLayout.renderAsHero' => 'Уход как герой карты',
 			'homeLayout.heroOnlySingleCollection' => 'Доступны только тогда, когда эта строка разрешается на реальные заголовки одной коллекции',
 			'homeLayout.hero' => 'Герой',
@@ -9325,9 +9327,9 @@ extension on TranslationsRu {
 			'audiobook.speedHelp' => 'Выберите скорость от 0,25× до 4×.',
 			'audiobook.apply' => 'Применить',
 			'audiobook.customSleep' => 'Часовник спящего',
-			'audiobook.sleepMinutes' => 'Минуты (1–1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'Минуты (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Остановиться после ${count} главы',
 			'audiobook.extendSleep' => 'Добавить 5 минут',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Время сна: ${time}',
@@ -9839,9 +9841,9 @@ extension on TranslationsRu {
 			'musicTools.loudnessMissing' => 'Данные о громкости не получены',
 			'musicTools.loudnessRequested' => 'Запрос на анализ отправлен',
 			'musicTools.loudnessUnsupported' => 'Эта версия сервера не поддерживает запросы на анализ',
-			'musicTools.serverHistory' => 'История воспроизведения на сервере',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'История воспроизведения на сервере',
 			'musicTools.nfcWrite' => 'Записать NFC-метку',
 			'musicTools.nfcRead' => 'Сканировать NFC-метку',
 			'musicTools.nfcPrompt' => 'Поднесите доступную для записи NFC-метку к телефону.',

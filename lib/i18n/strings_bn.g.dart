@@ -1657,6 +1657,7 @@ class _Translations$iptv$bn extends Translations$iptv$en {
 	final TranslationsBn _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'চালানোর ক্রম অনুযায়ী বিকল্প উৎস';
 	@override String get lineupOrder => 'চ্যানেলের ক্রম';
 	@override String get orderChanged => 'চ্যানেলের ক্রম বদলেছে। যাচাই করে আবার চেষ্টা করুন।';
 	@override String get localPlaylist => 'M3U ফাইল';
@@ -7056,6 +7057,7 @@ extension on TranslationsBn {
 			'connections.signInAgain' => 'আবার লিখুন',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} সংযোগ',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} এর জন্য URLগুলি যোগ করুন বা মুছে ফেলুন. Pleazyng সবচেয়ে কম ল্যাটিংসের সাথে পৌঁছাতে পারে URLগুলি ব্যবহার করবে।',
+			'iptv.backupFeeds' => 'চালানোর ক্রম অনুযায়ী বিকল্প উৎস',
 			'iptv.lineupOrder' => 'চ্যানেলের ক্রম',
 			'iptv.orderChanged' => 'চ্যানেলের ক্রম বদলেছে। যাচাই করে আবার চেষ্টা করুন।',
 			'iptv.localPlaylist' => 'M3U ফাইল',
@@ -7219,9 +7221,9 @@ extension on TranslationsBn {
 			'discover.findNext.artworkUnavailable' => 'ছবি উপলব্ধ নয়',
 			'discover.findNext.savedFeedback' => 'সংরক্ষিত পছন্দে যোগ করা হয়েছে',
 			'discover.findNext.skippedFeedback' => 'আপাতত এড়িয়ে যাওয়া হয়েছে',
-			'discover.findNext.releaseToConfirm' => 'নিশ্চিত করতে ছেড়ে দিন',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'নিশ্চিত করতে ছেড়ে দিন',
 			'discover.findNext.remoteHint' => 'প্রচ্ছদে ফোকাস: ← / → বেছে নিন · নির্বাচন বোতাম: বিস্তারিত · ↑ / ↓ ফোকাস বদলান',
 			'discover.studio' => 'স্টুডিও',
 			'discover.rating' => 'রেটিং',
@@ -7733,9 +7735,9 @@ extension on TranslationsBn {
 			'collections.collectionName' => 'সংগ্রহ নাম',
 			'collections.enterCollectionName' => 'সংগ্রহ নাম লিখুন',
 			'collections.addedToCollection' => 'সংগ্রহে যোগ করা',
-			'collections.errorAddingToCollection' => 'সংগ্রহে যোগ করতে পারিনি',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'সংগ্রহে যোগ করতে পারিনি',
 			'collections.created' => 'সংগ্রহ তৈরি',
 			'collections.removeFromCollection' => 'সংগ্রহ থেকে বের করুন',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'এই সংগ্রহ থেকে "${title}" মুছে ফেলুন?',
@@ -8247,9 +8249,9 @@ extension on TranslationsBn {
 			'performanceOverlay.rawDecoder' => 'ডেকডার',
 			'performanceOverlay.tunneling' => 'টুইটার',
 			'performanceOverlay.passthrough' => 'পাস্টরো',
-			'performanceOverlay.aspect' => 'দৃষ্টি',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'দৃষ্টি',
 			'performanceOverlay.rotation' => 'রোটেশন',
 			'performanceOverlay.dvSource' => 'ডি উৎস',
 			'performanceOverlay.dvPath' => 'ডি পথ',
@@ -8761,9 +8763,9 @@ extension on TranslationsBn {
 			'homeLayout.organizeHomeRows' => 'Home রানার সংগঠন',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} লাইন: গাড়ি, হেরো, অটো-স্লাইড, মুছে ফেলুন',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'সংগঠন ${library} লাইন',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} লাইন: গাড়ি, লাইব্রেরি, বাড়ি, হেরো, অটো-স্লাইড',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} লাইন: গাড়ি, লাইব্রেরি, বাড়ি, হেরো, অটো-স্লাইড',
 			'homeLayout.renderAsHero' => 'কার্ডের হেয়ার হিসাবে রেন্ডার',
 			'homeLayout.heroOnlySingleCollection' => 'শুধুমাত্র এই পর্যায়ে একক সংগ্রহের বাস্তব টাইমগুলিতে সমাধান করা হয়',
 			'homeLayout.hero' => 'হেরো',
@@ -9275,9 +9277,9 @@ extension on TranslationsBn {
 			'audiobook.speedHelp' => '0.25× থেকে 4× পর্যন্ত গতি নির্বাচন করুন।',
 			'audiobook.apply' => 'প্রয়োগ করুন',
 			'audiobook.customSleep' => 'কাস্টম Sleep Timer',
-			'audiobook.sleepMinutes' => 'মিনিট (1–1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'মিনিট (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} বিভাগের পর বন্ধ',
 			'audiobook.extendSleep' => '৫ মিনিট যোগ করুন',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'ঘুম টাইমার: ${time}',
@@ -9789,9 +9791,9 @@ extension on TranslationsBn {
 			'musicTools.loudnessMissing' => 'শব্দের মাত্রার তথ্য ফেরত আসেনি',
 			'musicTools.loudnessRequested' => 'বিশ্লেষণের অনুরোধ পাঠানো হয়েছে',
 			'musicTools.loudnessUnsupported' => 'সার্ভারের এই সংস্করণ বিশ্লেষণের অনুরোধ সমর্থন করে না',
-			'musicTools.serverHistory' => 'সার্ভারের প্লেব্যাক ইতিহাস',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'সার্ভারের প্লেব্যাক ইতিহাস',
 			'musicTools.nfcWrite' => 'NFC ট্যাগে লিখুন',
 			'musicTools.nfcRead' => 'NFC ট্যাগ স্ক্যান করুন',
 			'musicTools.nfcPrompt' => 'লেখার উপযোগী NFC ট্যাগটি ফোনের কাছে ধরুন।',

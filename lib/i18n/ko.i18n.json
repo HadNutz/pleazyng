@@ -1504,6 +1504,7 @@
     "editMediaBrowserIntro": "${serverName}의 URL을 추가하거나 제거하세요. Plezy는 연결 가능한 URL 중 지연 시간이 가장 낮은 URL을 사용합니다."
   },
   "iptv": {
+    "backupFeeds": "재생 순서에 따른 예비 소스",
     "lineupOrder": "채널 순서",
     "orderChanged": "채널 순서가 바뀌었습니다. 확인하고 다시 시도하세요.",
     "localPlaylist": "M3U 파일",

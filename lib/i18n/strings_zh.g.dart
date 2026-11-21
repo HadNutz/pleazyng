@@ -1655,6 +1655,7 @@ class Translations$iptv$zh extends Translations$iptv$en {
 	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => '按播放顺序排列的备用来源';
 	@override String get lineupOrder => '频道顺序';
 	@override String get orderChanged => '频道顺序已更改。请检查后重试。';
 	@override String get localPlaylist => 'M3U 文件';
@@ -7051,6 +7052,7 @@ extension on TranslationsZh {
 			'connections.signInAgain' => '重新登录',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '编辑 ${product} 连接',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '为 ${serverName} 添加或移除 URL。Pleazyng 会使用延迟最低且可访问的 URL。',
+			'iptv.backupFeeds' => '按播放顺序排列的备用来源',
 			'iptv.lineupOrder' => '频道顺序',
 			'iptv.orderChanged' => '频道顺序已更改。请检查后重试。',
 			'iptv.localPlaylist' => 'M3U 文件',
@@ -7214,9 +7216,9 @@ extension on TranslationsZh {
 			'discover.findNext.artworkUnavailable' => '图片不可用',
 			'discover.findNext.savedFeedback' => '已加入保存的推荐',
 			'discover.findNext.skippedFeedback' => '已暂时跳过',
-			'discover.findNext.releaseToConfirm' => '松开以确认',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => '松开以确认',
 			'discover.findNext.remoteHint' => '封面获得焦点时：← / → 选择 · 选择键查看详情 · ↑ / ↓ 移动焦点',
 			'discover.studio' => '制作公司',
 			'discover.rating' => '年龄分级',
@@ -7728,9 +7730,9 @@ extension on TranslationsZh {
 			'collections.collectionName' => '合集名称',
 			'collections.enterCollectionName' => '输入合集名称',
 			'collections.addedToCollection' => '已添加到合集',
-			'collections.errorAddingToCollection' => '添加到合集失败',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => '添加到合集失败',
 			'collections.created' => '已创建合集',
 			'collections.removeFromCollection' => '从合集移除',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '将“${title}”从此合集移除？',
@@ -8242,9 +8244,9 @@ extension on TranslationsZh {
 			'performanceOverlay.rawDecoder' => '原始解码器',
 			'performanceOverlay.tunneling' => '隧道',
 			'performanceOverlay.passthrough' => '直通',
-			'performanceOverlay.aspect' => '宽高比',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => '宽高比',
 			'performanceOverlay.rotation' => '旋转',
 			'performanceOverlay.dvSource' => 'DV 来源',
 			'performanceOverlay.dvPath' => 'DV 路径',
@@ -8756,9 +8758,9 @@ extension on TranslationsZh {
 			'homeLayout.organizeHomeRows' => '安排家居行',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} 行: 移动, 英雄, 自动滑动, 移除',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '组织 ${library} 行',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '继续观看 + ${n} 行: 移动, 图书馆, 家, 英雄, 自动滑板',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '继续观看 + ${n} 行: 移动, 图书馆, 家, 英雄, 自动滑板',
 			'homeLayout.renderAsHero' => '显示为焦点横幅',
 			'homeLayout.heroOnlySingleCollection' => '只有当此行解决到单一集合的实际标题时才可用',
 			'homeLayout.hero' => '焦点横幅',
@@ -9270,9 +9272,9 @@ extension on TranslationsZh {
 			'audiobook.speedHelp' => '选择速度从 0.25× 到 4×。',
 			'audiobook.apply' => '應用',
 			'audiobook.customSleep' => '定制睡眠时间',
-			'audiobook.sleepMinutes' => '时间(1 - 1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => '时间(1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '播放完${count}章后停止',
 			'audiobook.extendSleep' => '添加5分钟',
 			'audiobook.sleepRemaining' => ({required Object time}) => '睡眠时间: ${time}',
@@ -9784,9 +9786,9 @@ extension on TranslationsZh {
 			'musicTools.loudnessMissing' => '未返回响度数据',
 			'musicTools.loudnessRequested' => '已发送分析请求',
 			'musicTools.loudnessUnsupported' => '此服务器版本不支持分析请求',
-			'musicTools.serverHistory' => '服务器播放历史',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => '服务器播放历史',
 			'musicTools.nfcWrite' => '写入 NFC 标签',
 			'musicTools.nfcRead' => '扫描 NFC 标签',
 			'musicTools.nfcPrompt' => '请将可写入的 NFC 标签靠近手机。',

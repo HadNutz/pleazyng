@@ -1657,6 +1657,7 @@ class _Translations$iptv$nb extends Translations$iptv$en {
 	final TranslationsNb _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Reservekilder i avspillingsrekkefølge';
 	@override String get lineupOrder => 'Kanalrekkefølge';
 	@override String get orderChanged => 'Kanalrekkefølgen er endret. Se gjennom den og prøv igjen.';
 	@override String get localPlaylist => 'M3U-fil';
@@ -7056,6 +7057,7 @@ extension on TranslationsNb {
 			'connections.signInAgain' => 'Logg inn igjen',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Rediger ${product}-tilkobling',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Legg til eller fjern URL-er for ${serverName}. Pleazyng vil bruke den nåbare URL-en med lavest ventetid.',
+			'iptv.backupFeeds' => 'Reservekilder i avspillingsrekkefølge',
 			'iptv.lineupOrder' => 'Kanalrekkefølge',
 			'iptv.orderChanged' => 'Kanalrekkefølgen er endret. Se gjennom den og prøv igjen.',
 			'iptv.localPlaylist' => 'M3U-fil',
@@ -7219,9 +7221,9 @@ extension on TranslationsNb {
 			'discover.findNext.artworkUnavailable' => 'Bilde utilgjengelig',
 			'discover.findNext.savedFeedback' => 'Lagt til i lagrede valg',
 			'discover.findNext.skippedFeedback' => 'Hoppet over foreløpig',
-			'discover.findNext.releaseToConfirm' => 'Slipp for å bekrefte',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Slipp for å bekrefte',
 			'discover.findNext.remoteHint' => 'Omslag i fokus: ← / → velg · Velg: detaljer · ↑ / ↓ flytt fokus',
 			'discover.studio' => 'Studio',
 			'discover.rating' => 'Vurdering',
@@ -7733,9 +7735,9 @@ extension on TranslationsNb {
 			'collections.collectionName' => 'Samlingsnavn',
 			'collections.enterCollectionName' => 'Skriv inn samlingsnavn',
 			'collections.addedToCollection' => 'Lagt til i samling',
-			'collections.errorAddingToCollection' => 'Kunne ikke legge til i samling',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'Kunne ikke legge til i samling',
 			'collections.created' => 'Samling opprettet',
 			'collections.removeFromCollection' => 'Fjern fra samling',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Fjerne "${title}" fra denne samlingen?',
@@ -8247,9 +8249,9 @@ extension on TranslationsNb {
 			'performanceOverlay.rawDecoder' => 'Rå dekoder',
 			'performanceOverlay.tunneling' => 'Tunneling',
 			'performanceOverlay.passthrough' => 'Direkte utgang',
-			'performanceOverlay.aspect' => 'Format',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Format',
 			'performanceOverlay.rotation' => 'Rotasjon',
 			'performanceOverlay.dvSource' => 'DV-kilde',
 			'performanceOverlay.dvPath' => 'DV-sti',
@@ -8761,9 +8763,9 @@ extension on TranslationsNb {
 			'homeLayout.organizeHomeRows' => 'Organisere hjemmelavede rader',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rader: bevegelse, Hero, Auto-slide, fjerne',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organisere ${library} rader',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Fortsett å se + ${n} rader: bevegelse, Biblioteket, Hjem, Hero, Auto-slide',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Fortsett å se + ${n} rader: bevegelse, Biblioteket, Hjem, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render som en helt kort',
 			'homeLayout.heroOnlySingleCollection' => 'Kun tilgjengelig når denne raden løses til en enkelt samlings virkelige titler',
 			'homeLayout.hero' => 'Hjernen',
@@ -9275,9 +9277,9 @@ extension on TranslationsNb {
 			'audiobook.speedHelp' => 'Velg en hastighet fra 0.25× til 4×.',
 			'audiobook.apply' => 'Anvendt',
 			'audiobook.customSleep' => 'Personlig søvn timer',
-			'audiobook.sleepMinutes' => 'Minutter (1 til 1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'Minutter (1 til 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Stopp etter ${count} kapittel',
 			'audiobook.extendSleep' => 'Legg til 5 minutter',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Søvn timer: ${time}',
@@ -9789,9 +9791,9 @@ extension on TranslationsNb {
 			'musicTools.loudnessMissing' => 'Ingen lydstyrkedata ble returnert',
 			'musicTools.loudnessRequested' => 'Analyseforespørsel sendt',
 			'musicTools.loudnessUnsupported' => 'Denne serverversjonen støtter ikke analyseforespørsler',
-			'musicTools.serverHistory' => 'Avspillingshistorikk på serveren',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'Avspillingshistorikk på serveren',
 			'musicTools.nfcWrite' => 'Skriv NFC-brikke',
 			'musicTools.nfcRead' => 'Skann NFC-brikke',
 			'musicTools.nfcPrompt' => 'Hold en skrivbar NFC-brikke nær telefonen.',

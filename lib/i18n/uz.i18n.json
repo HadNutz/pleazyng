@@ -1506,6 +1506,7 @@
     "editMediaBrowserIntro": "${serverName} uchun URL-larni qoʻshing yoki olib tashlang. Pleazyng eng kam kechikishga ega boʻlgan mavjud URL-dan foydalanadi."
   },
   "iptv": {
+    "backupFeeds": "Ijro tartibidagi zaxira manbalar",
     "lineupOrder": "Kanallar tartibi",
     "orderChanged": "Kanallar tartibi o‘zgardi. Tekshirib, qayta urinib ko‘ring.",
     "localPlaylist": "M3U fayli",

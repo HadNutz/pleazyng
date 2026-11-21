@@ -1657,6 +1657,7 @@ class _Translations$iptv$fa extends Translations$iptv$en {
 	final TranslationsFa _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'منابع پشتیبان به ترتیب پخش';
 	@override String get lineupOrder => 'ترتیب کانال‌ها';
 	@override String get orderChanged => 'ترتیب کانال‌ها تغییر کرده است. آن را بررسی کنید و دوباره تلاش کنید.';
 	@override String get localPlaylist => 'فایل M3U';
@@ -7056,6 +7057,7 @@ extension on TranslationsFa {
 			'connections.signInAgain' => 'دوباره وارد شوید',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'ویرایش ${product} اتصال',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'اضافه کردن یا حذف URL برای ${serverName}. Pleazyng از URL قابل دسترسی با پایین ترین تاخیر استفاده می کند.',
+			'iptv.backupFeeds' => 'منابع پشتیبان به ترتیب پخش',
 			'iptv.lineupOrder' => 'ترتیب کانال‌ها',
 			'iptv.orderChanged' => 'ترتیب کانال‌ها تغییر کرده است. آن را بررسی کنید و دوباره تلاش کنید.',
 			'iptv.localPlaylist' => 'فایل M3U',
@@ -7219,9 +7221,9 @@ extension on TranslationsFa {
 			'discover.findNext.artworkUnavailable' => 'تصویر در دسترس نیست',
 			'discover.findNext.savedFeedback' => 'به انتخاب‌های ذخیره‌شده افزوده شد',
 			'discover.findNext.skippedFeedback' => 'فعلاً رد شد',
-			'discover.findNext.releaseToConfirm' => 'برای تأیید رها کنید',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'برای تأیید رها کنید',
 			'discover.findNext.remoteHint' => 'با تمرکز روی جلد: ← / → انتخاب · دکمه انتخاب: جزئیات · ↑ / ↓ جابه‌جایی تمرکز',
 			'discover.studio' => 'استودیو',
 			'discover.rating' => 'رتبه بندی',
@@ -7733,9 +7735,9 @@ extension on TranslationsFa {
 			'collections.collectionName' => 'نام جمع آوری',
 			'collections.enterCollectionName' => 'نام مجموعه را وارد کنید',
 			'collections.addedToCollection' => 'اضافه شده به مجموعه',
-			'collections.errorAddingToCollection' => 'عدم اضافه شدن به جمع آوری',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'عدم اضافه شدن به جمع آوری',
 			'collections.created' => 'جمع آوری ساخته شده',
 			'collections.removeFromCollection' => 'حذف از مجموعه',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '«${title}» از این مجموعه حذف شود؟',
@@ -8247,9 +8249,9 @@ extension on TranslationsFa {
 			'performanceOverlay.rawDecoder' => 'دکوراسیون خام',
 			'performanceOverlay.tunneling' => 'تونل',
 			'performanceOverlay.passthrough' => 'پازل',
-			'performanceOverlay.aspect' => 'دیدگاه',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'دیدگاه',
 			'performanceOverlay.rotation' => 'چرخش',
 			'performanceOverlay.dvSource' => 'منبع DV',
 			'performanceOverlay.dvPath' => 'راه دو',
@@ -8761,9 +8763,9 @@ extension on TranslationsFa {
 			'homeLayout.organizeHomeRows' => 'سازماندهی خطوط خانگی',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ردیف: حرکت، قهرمان، اتوماتیک، حذف',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'سازماندهی ${library} خطوط',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'ادامه تماشای + ${n} خطوط: حرکت, کتابخانه, خانه, قهرمان, اسلاید خودکار',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'ادامه تماشای + ${n} خطوط: حرکت, کتابخانه, خانه, قهرمان, اسلاید خودکار',
 			'homeLayout.renderAsHero' => 'به عنوان یک کارت قهرمان',
 			'homeLayout.heroOnlySingleCollection' => 'تنها زمانی در دسترس است که این ردیف به عنوان واقعی یک مجموعه حل می شود.',
 			'homeLayout.hero' => 'قهرمان',
@@ -9275,9 +9277,9 @@ extension on TranslationsFa {
 			'audiobook.speedHelp' => 'سرعت را از 0.25× تا 4× انتخاب کنید.',
 			'audiobook.apply' => 'اعمال',
 			'audiobook.customSleep' => 'زمان خواب شخصی',
-			'audiobook.sleepMinutes' => '۱ تا ۱۴۴۰ دقیقه',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => '۱ تا ۱۴۴۰ دقیقه',
 			'audiobook.sleepChapters' => ({required Object count}) => 'دانلود بازی ${count}',
 			'audiobook.extendSleep' => 'اضافه کردن 5 دقیقه',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'زمان خواب: ${time}',
@@ -9789,9 +9791,9 @@ extension on TranslationsFa {
 			'musicTools.loudnessMissing' => 'داده‌ای درباره بلندی صدا دریافت نشد',
 			'musicTools.loudnessRequested' => 'درخواست تحلیل ارسال شد',
 			'musicTools.loudnessUnsupported' => 'این نسخهٔ سرور از درخواست تحلیل پشتیبانی نمی‌کند',
-			'musicTools.serverHistory' => 'سابقهٔ پخش سرور',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'سابقهٔ پخش سرور',
 			'musicTools.nfcWrite' => 'نوشتن برچسب NFC',
 			'musicTools.nfcRead' => 'اسکن برچسب NFC',
 			'musicTools.nfcPrompt' => 'یک برچسب NFC قابل نوشتن را نزدیک تلفن نگه دارید.',

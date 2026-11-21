@@ -1657,6 +1657,7 @@ class _Translations$iptv$kk extends Translations$iptv$en {
 	final TranslationsKk _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Ойнату ретімен қосалқы көздер';
 	@override String get lineupOrder => 'Арналар реті';
 	@override String get orderChanged => 'Арналар реті өзгерді. Тексеріп, қайталап көріңіз.';
 	@override String get localPlaylist => 'M3U файлы';
@@ -7056,6 +7057,7 @@ extension on TranslationsKk {
 			'connections.signInAgain' => 'Қайтадан кіру',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} қосылымын өңдеу',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} үшін URL мекенжайларды қосыңыз немесе өшіріңіз. Pleazyng ең төмен кідірісі бар қолжетімді URL мекенжайды пайдаланады.',
+			'iptv.backupFeeds' => 'Ойнату ретімен қосалқы көздер',
 			'iptv.lineupOrder' => 'Арналар реті',
 			'iptv.orderChanged' => 'Арналар реті өзгерді. Тексеріп, қайталап көріңіз.',
 			'iptv.localPlaylist' => 'M3U файлы',
@@ -7219,9 +7221,9 @@ extension on TranslationsKk {
 			'discover.findNext.artworkUnavailable' => 'Сурет қолжетімсіз',
 			'discover.findNext.savedFeedback' => 'Сақталған таңдауларға қосылды',
 			'discover.findNext.skippedFeedback' => 'Әзірге өткізіліп жіберілді',
-			'discover.findNext.releaseToConfirm' => 'Растау үшін жіберіңіз',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Растау үшін жіберіңіз',
 			'discover.findNext.remoteHint' => 'Мұқаба таңдалғанда: ← / → таңдау · Таңдау түймесі: мәліметтер · ↑ / ↓ фокусты жылжыту',
 			'discover.studio' => 'Студия',
 			'discover.rating' => 'Рейтинг',
@@ -7733,9 +7735,9 @@ extension on TranslationsKk {
 			'collections.collectionName' => 'Топтама атауы',
 			'collections.enterCollectionName' => 'Топтама атауын енгізіңіз',
 			'collections.addedToCollection' => 'Топтамаға қосылды',
-			'collections.errorAddingToCollection' => 'Топтамаға қосу мүмкін болмады',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'Топтамаға қосу мүмкін болмады',
 			'collections.created' => 'Топтама жасалды',
 			'collections.removeFromCollection' => 'Топтамадан өшіру',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '"${title}" осы топтамадан өшірілсін бе?',
@@ -8247,9 +8249,9 @@ extension on TranslationsKk {
 			'performanceOverlay.rawDecoder' => 'Өңделмеген декодер',
 			'performanceOverlay.tunneling' => 'Туннельдеу',
 			'performanceOverlay.passthrough' => 'Тікелей өткізу',
-			'performanceOverlay.aspect' => 'Қатынас',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Қатынас',
 			'performanceOverlay.rotation' => 'Бұрылыс',
 			'performanceOverlay.dvSource' => 'DV дереккөзі',
 			'performanceOverlay.dvPath' => 'DV жолы',
@@ -8761,9 +8763,9 @@ extension on TranslationsKk {
 			'homeLayout.organizeHomeRows' => 'Өнімдермен өңдеу',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} қатар: жылжыту, баннер, автоматты ауысу, жою',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Қаланың тұрақты тұрғындарының саны ${library}',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Өзінің қабырғасы + ${n} қабырғалары: қараша, Библиотека, Доминика, Героя, Авто-Слайд',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Өзінің қабырғасы + ${n} қабырғалары: қараша, Библиотека, Доминика, Героя, Авто-Слайд',
 			'homeLayout.renderAsHero' => 'Бұл үшін карталық карталық карта',
 			'homeLayout.heroOnlySingleCollection' => 'Бұл жануарлардың бір-бірімен бір-бірін бір-бірин бір-біректің бір-біремен бір-биректің бір',
 			'homeLayout.hero' => 'Әлемдік',
@@ -9275,9 +9277,9 @@ extension on TranslationsKk {
 			'audiobook.speedHelp' => 'Қазіргі уақытта 0.25× – 4× жылға дейін ұсынады.',
 			'audiobook.apply' => 'Қатысушы',
 			'audiobook.customSleep' => 'Сондай-ақ сағат',
-			'audiobook.sleepMinutes' => 'Қазіргі уақытта (1–1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'Қазіргі уақытта (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Қазіргі уақытта ${count} қағидалары',
 			'audiobook.extendSleep' => '5 минут',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Өздіктер: ${time}',
@@ -9789,9 +9791,9 @@ extension on TranslationsKk {
 			'musicTools.loudnessMissing' => 'Дыбыс қаттылығы туралы дерек алынбады',
 			'musicTools.loudnessRequested' => 'Талдау сұрауы жіберілді',
 			'musicTools.loudnessUnsupported' => 'Сервердің бұл нұсқасы талдау сұрауларын қолдамайды',
-			'musicTools.serverHistory' => 'Сервердегі ойнату тарихы',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'Сервердегі ойнату тарихы',
 			'musicTools.nfcWrite' => 'NFC тегіне жазу',
 			'musicTools.nfcRead' => 'NFC тегін сканерлеу',
 			'musicTools.nfcPrompt' => 'Жазылатын NFC тегін телефонға жақын ұстаңыз.',

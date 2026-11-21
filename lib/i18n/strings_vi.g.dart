@@ -1650,6 +1650,7 @@ class _Translations$iptv$vi extends Translations$iptv$en {
 	final TranslationsVi _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Nguồn dự phòng theo thứ tự phát';
 	@override String get lineupOrder => 'Thứ tự kênh';
 	@override String get orderChanged => 'Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.';
 	@override String get localPlaylist => 'Tệp M3U';
@@ -7031,6 +7032,7 @@ extension on TranslationsVi {
 			'connections.signInAgain' => 'Đăng ký lại',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} kết nối',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Thêm hoặc xóa URL cho ${serverName}. Pleazyng sẽ sử dụng URL có thể truy cập với độ chậm thấp nhất.',
+			'iptv.backupFeeds' => 'Nguồn dự phòng theo thứ tự phát',
 			'iptv.lineupOrder' => 'Thứ tự kênh',
 			'iptv.orderChanged' => 'Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.',
 			'iptv.localPlaylist' => 'Tệp M3U',
@@ -7194,9 +7196,9 @@ extension on TranslationsVi {
 			'discover.findNext.artworkUnavailable' => 'Không có ảnh',
 			'discover.findNext.savedFeedback' => 'Đã thêm vào các lựa chọn đã lưu',
 			'discover.findNext.skippedFeedback' => 'Đã tạm bỏ qua',
-			'discover.findNext.releaseToConfirm' => 'Thả để xác nhận',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Thả để xác nhận',
 			'discover.findNext.remoteHint' => 'Khi chọn ảnh bìa: ← / → chọn · Nút Chọn: chi tiết · ↑ / ↓ chuyển tiêu điểm',
 			'discover.studio' => 'Hãng phim',
 			'discover.rating' => 'Đánh giá',
@@ -7708,9 +7710,9 @@ extension on TranslationsVi {
 			'collections.collectionName' => 'Collection Tên',
 			'collections.enterCollectionName' => 'Nhập tên bộ sưu tập',
 			'collections.addedToCollection' => 'Thêm vào Collection',
-			'collections.errorAddingToCollection' => 'Không thể thêm vào bộ sưu tập',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'Không thể thêm vào bộ sưu tập',
 			'collections.created' => 'Bộ sưu tập được tạo ra',
 			'collections.removeFromCollection' => 'Xóa khỏi bộ sưu tập',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Xóa “${title}” khỏi bộ sưu tập này?',
@@ -8222,9 +8224,9 @@ extension on TranslationsVi {
 			'performanceOverlay.rawDecoder' => 'Mã Decoder',
 			'performanceOverlay.tunneling' => 'đường hầm',
 			'performanceOverlay.passthrough' => 'Truyền thẳng',
-			'performanceOverlay.aspect' => 'Khía cạnh',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Khía cạnh',
 			'performanceOverlay.rotation' => 'Xoay',
 			'performanceOverlay.dvSource' => 'Nguồn DV',
 			'performanceOverlay.dvPath' => 'Đường DV',
@@ -8736,9 +8738,9 @@ extension on TranslationsVi {
 			'homeLayout.organizeHomeRows' => 'Tổ chức Home Rows',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} hàng: di chuyển, Anh hùng, Auto-slide, loại bỏ',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Tổ chức ${library} hàng',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Tiếp tục xem + ${n} hàng: di chuyển, Thư viện, Nhà, Anh hùng, tự động-slide',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Tiếp tục xem + ${n} hàng: di chuyển, Thư viện, Nhà, Anh hùng, tự động-slide',
 			'homeLayout.renderAsHero' => 'Render như một thẻ anh hùng',
 			'homeLayout.heroOnlySingleCollection' => 'Chỉ có sẵn khi hàng này được giải quyết cho các tiêu đề thực tế của một bộ sưu tập duy nhất',
 			'homeLayout.hero' => 'Anh hùng',
@@ -9250,9 +9252,9 @@ extension on TranslationsVi {
 			'audiobook.speedHelp' => 'Chọn tốc độ từ 0.25× đến 4×.',
 			'audiobook.apply' => 'Ứng dụng',
 			'audiobook.customSleep' => 'Thời gian giấc ngủ tùy chỉnh',
-			'audiobook.sleepMinutes' => 'Thời gian (1 – 1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'Thời gian (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Ngừng sau các chương ${count}',
 			'audiobook.extendSleep' => 'Thêm 5 phút',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Thời gian ngủ: ${time}',
@@ -9764,9 +9766,9 @@ extension on TranslationsVi {
 			'musicTools.loudnessMissing' => 'Không nhận được dữ liệu độ lớn âm thanh',
 			'musicTools.loudnessRequested' => 'Đã gửi yêu cầu phân tích',
 			'musicTools.loudnessUnsupported' => 'Phiên bản máy chủ này không hỗ trợ yêu cầu phân tích',
-			'musicTools.serverHistory' => 'Lịch sử phát trên máy chủ',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'Lịch sử phát trên máy chủ',
 			'musicTools.nfcWrite' => 'Ghi thẻ NFC',
 			'musicTools.nfcRead' => 'Quét thẻ NFC',
 			'musicTools.nfcPrompt' => 'Đưa thẻ NFC có thể ghi lại gần điện thoại.',

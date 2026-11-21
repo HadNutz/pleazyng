@@ -1655,6 +1655,7 @@ class _Translations$iptv$ko extends Translations$iptv$en {
 	final TranslationsKo _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => '재생 순서에 따른 예비 소스';
 	@override String get lineupOrder => '채널 순서';
 	@override String get orderChanged => '채널 순서가 바뀌었습니다. 확인하고 다시 시도하세요.';
 	@override String get localPlaylist => 'M3U 파일';
@@ -7051,6 +7052,7 @@ extension on TranslationsKo {
 			'connections.signInAgain' => '다시 로그인',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} 연결 편집',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName}의 URL을 추가하거나 제거하세요. Plezy는 연결 가능한 URL 중 지연 시간이 가장 낮은 URL을 사용합니다.',
+			'iptv.backupFeeds' => '재생 순서에 따른 예비 소스',
 			'iptv.lineupOrder' => '채널 순서',
 			'iptv.orderChanged' => '채널 순서가 바뀌었습니다. 확인하고 다시 시도하세요.',
 			'iptv.localPlaylist' => 'M3U 파일',
@@ -7214,9 +7216,9 @@ extension on TranslationsKo {
 			'discover.findNext.artworkUnavailable' => '이미지를 표시할 수 없음',
 			'discover.findNext.savedFeedback' => '저장된 추천에 추가됨',
 			'discover.findNext.skippedFeedback' => '지금은 건너뜀',
-			'discover.findNext.releaseToConfirm' => '놓아서 확인',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => '놓아서 확인',
 			'discover.findNext.remoteHint' => '표지에 초점: ← / → 선택 · 선택 버튼: 상세 정보 · ↑ / ↓ 초점 이동',
 			'discover.studio' => '제작사',
 			'discover.rating' => '연령 등급',
@@ -7728,9 +7730,9 @@ extension on TranslationsKo {
 			'collections.collectionName' => '컬렉션 이름',
 			'collections.enterCollectionName' => '컬렉션 이름 입력',
 			'collections.addedToCollection' => '컬렉션에 추가됨',
-			'collections.errorAddingToCollection' => '컬렉션에 추가 실패',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => '컬렉션에 추가 실패',
 			'collections.created' => '컬렉션 생성됨',
 			'collections.removeFromCollection' => '컬렉션에서 제거',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '${title}을(를) 이 컬렉션에서 제거하시겠습니까?',
@@ -8242,9 +8244,9 @@ extension on TranslationsKo {
 			'performanceOverlay.rawDecoder' => '원본 디코더',
 			'performanceOverlay.tunneling' => '터널링',
 			'performanceOverlay.passthrough' => '패스스루',
-			'performanceOverlay.aspect' => '화면비',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => '화면비',
 			'performanceOverlay.rotation' => '회전',
 			'performanceOverlay.dvSource' => 'DV 소스',
 			'performanceOverlay.dvPath' => 'DV 경로',
@@ -8756,9 +8758,9 @@ extension on TranslationsKo {
 			'homeLayout.organizeHomeRows' => '홈 라인 조직',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} 라인: 이동, 영웅, 자동 슬라이드, 제거',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} 라인을 조직',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '계속 보기 + ${n} 라인: 이동, 도서관, 홈, 영웅, 자동 슬라이드',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '계속 보기 + ${n} 라인: 이동, 도서관, 홈, 영웅, 자동 슬라이드',
 			'homeLayout.renderAsHero' => '영웅 카드로 렌더',
 			'homeLayout.heroOnlySingleCollection' => '이 순서가 단일 컬렉션의 실제 제목에 해결되면만 사용할 수 있습니다.',
 			'homeLayout.hero' => '히어로',
@@ -9270,9 +9272,9 @@ extension on TranslationsKo {
 			'audiobook.speedHelp' => '0.25×에서 4×까지의 속도를 선택합니다.',
 			'audiobook.apply' => '응용',
 			'audiobook.customSleep' => '사용자 지정 수면 시간',
-			'audiobook.sleepMinutes' => '1 분 (1 - 1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => '1 분 (1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} 장 후 중지',
 			'audiobook.extendSleep' => '추가 5 분',
 			'audiobook.sleepRemaining' => ({required Object time}) => '잠자리 타이머: ${time}',
@@ -9784,9 +9786,9 @@ extension on TranslationsKo {
 			'musicTools.loudnessMissing' => '음량 데이터가 반환되지 않았습니다',
 			'musicTools.loudnessRequested' => '분석 요청을 보냈습니다',
 			'musicTools.loudnessUnsupported' => '이 서버 버전은 분석 요청을 지원하지 않습니다',
-			'musicTools.serverHistory' => '서버 재생 기록',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => '서버 재생 기록',
 			'musicTools.nfcWrite' => 'NFC 태그 쓰기',
 			'musicTools.nfcRead' => 'NFC 태그 스캔',
 			'musicTools.nfcPrompt' => '쓰기 가능한 NFC 태그를 휴대전화 가까이에 대세요.',

@@ -91,7 +91,7 @@ final class LegacyDesktopDatabasePreview {
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  static const int currentSchemaVersion = 40;
+  static const int currentSchemaVersion = 41;
 
   /// Resolves the current app-owned database path for first-run migration UI.
   /// This never scans or adopts another application's files.
@@ -148,6 +148,7 @@ class AppDatabase extends _$AppDatabase {
         if (versionValue >= 36) required.addAll({'music_queue_entries', 'music_recipes'});
         if (versionValue >= 37) required.addAll({'music_listens', 'music_documents'});
         if (versionValue >= 38) required.add('retained_download_owners');
+        if (versionValue >= 41) required.add('iptv_lineup_groups');
         if (versionValue >= 38) required.addAll({'iptv_guide_programmes', 'iptv_guide_logos', 'iptv_feed_identities'});
         if (!tables.containsAll(required)) {
           final missing = required.difference(tables).toList()..sort();
@@ -193,6 +194,7 @@ class AppDatabase extends _$AppDatabase {
     'iptv_guide_logos',
     'iptv_channel_overrides',
     'iptv_group_locks',
+    'iptv_lineup_groups',
     'iptv_recording_schedules',
     'iptv_vod_categories',
     'iptv_vod_items',
@@ -405,6 +407,9 @@ class AppDatabase extends _$AppDatabase {
       SELECT profile_id, source_id, channel_id, favorite, favorite_order, hidden, custom_title, group_override, guide_id_override, parental_locked, lineup_order
       FROM iptv_channel_overrides ORDER BY profile_id, source_id, channel_id
     ''').get();
+    final lineupGroups = await customSelect(
+      'SELECT id,source_id,name,members,revision FROM iptv_lineup_groups ORDER BY id',
+    ).get();
     final iptvGroupLockRows = await customSelect('''
       SELECT profile_id, source_id, group_key, group_title
       FROM iptv_group_locks ORDER BY profile_id, source_id, group_key
@@ -464,6 +469,16 @@ class AppDatabase extends _$AppDatabase {
             'groupOverride': row.data['group_override'],
             'guideIdOverride': row.data['guide_id_override'],
             'parentalLocked': row.data['parental_locked'] == 1,
+          },
+      ],
+      'iptvLineupGroups': [
+        for (final group in lineupGroups)
+          {
+            'id': group.data['id'],
+            'sourceId': group.data['source_id'],
+            'name': group.data['name'],
+            'members': group.data['members'],
+            'revision': group.data['revision'],
           },
       ],
       'iptvGroupLocks': [
@@ -544,6 +559,7 @@ class AppDatabase extends _$AppDatabase {
       'displayName',
       'kind',
       'configCiphertext',
+      'playlistCiphertext',
       'revision',
       'generation',
       'createdAt',
@@ -561,11 +577,19 @@ class AppDatabase extends _$AppDatabase {
       'channelId',
       'favorite',
       'favoriteOrder',
+      'lineupOrder',
       'hidden',
       'customTitle',
       'groupOverride',
       'guideIdOverride',
       'parentalLocked',
+    });
+    final lineupGroups = _decodeIptvRecoveryRowsIfPresent(snapshot.identity, 'iptvLineupGroups', const {
+      'id',
+      'sourceId',
+      'name',
+      'members',
+      'revision',
     });
     final iptvGroupLockRows = _decodeIptvRecoveryRowsIfPresent(snapshot.identity, 'iptvGroupLocks', const {
       'profileId',
@@ -654,6 +678,7 @@ class AppDatabase extends _$AppDatabase {
       await delete(profileConnections).go();
       await customStatement('DELETE FROM iptv_channel_overrides');
       await customStatement('DELETE FROM iptv_group_locks');
+      await customStatement('DELETE FROM iptv_lineup_groups');
       await customStatement('DELETE FROM iptv_vod_progress');
       await customStatement('DELETE FROM iptv_recording_schedules');
       await customStatement('DELETE FROM iptv_recordings');
@@ -717,6 +742,15 @@ class AppDatabase extends _$AppDatabase {
             row['lineupOrder'],
           ],
         );
+      }
+      for (final group in lineupGroups) {
+        await customStatement('INSERT INTO iptv_lineup_groups(id,source_id,name,members,revision) VALUES (?,?,?,?,?)', [
+          group['id'],
+          group['sourceId'],
+          group['name'],
+          group['members'],
+          group['revision'],
+        ]);
       }
       for (final row in iptvGroupLockRows) {
         await customStatement(
@@ -841,7 +875,11 @@ class AppDatabase extends _$AppDatabase {
       if (raw is! Map<String, dynamic>) {
         throw _invalidRecoveryImage;
       }
-      final rawColumns = raw.keys.toSet();
+      final normalized = Map<String, dynamic>.from(raw);
+      // Nullable fields added in v40 were absent in earlier recovery images.
+      if (key == 'iptvSources') normalized.putIfAbsent('playlistCiphertext', () => null);
+      if (key == 'iptvChannelOverrides') normalized.putIfAbsent('lineupOrder', () => null);
+      final rawColumns = normalized.keys.toSet();
       final legacyOverrideColumns = columns.difference(const {'guideIdOverride', 'parentalLocked'});
       final legacyIptvOverrides =
           key == 'iptvChannelOverrides' &&
@@ -851,7 +889,6 @@ class AppDatabase extends _$AppDatabase {
           (columns.difference(rawColumns).isNotEmpty && !legacyIptvOverrides)) {
         throw _invalidRecoveryImage;
       }
-      final normalized = Map<String, dynamic>.from(raw);
       if (legacyIptvOverrides) {
         normalized.putIfAbsent('guideIdOverride', () => null);
         normalized.putIfAbsent('parentalLocked', () => false);
@@ -862,6 +899,9 @@ class AppDatabase extends _$AppDatabase {
             normalized['displayName'] is! String ||
             normalized['kind'] is! String ||
             normalized['configCiphertext'] is! String ||
+            (normalized['playlistCiphertext'] != null &&
+                (normalized['playlistCiphertext'] is! String ||
+                    !CredentialVault.isProtected(normalized['playlistCiphertext'] as String))) ||
             normalized['revision'] is! int ||
             normalized['generation'] is! int ||
             normalized['createdAt'] is! int ||
@@ -883,7 +923,20 @@ class AppDatabase extends _$AppDatabase {
             (normalized['guideIdOverride'] != null && normalized['guideIdOverride'] is! String)) {
           throw _invalidRecoveryImage;
         }
-        if (normalized['parentalLocked'] is! bool) throw _invalidRecoveryImage;
+        if (normalized['parentalLocked'] is! bool ||
+            (normalized['lineupOrder'] != null && normalized['lineupOrder'] is! int)) {
+          throw _invalidRecoveryImage;
+        }
+      } else if (key == 'iptvLineupGroups') {
+        if (normalized['id'] is! String ||
+            normalized['sourceId'] is! String ||
+            normalized['name'] is! String ||
+            normalized['revision'] is! int ||
+            normalized['members'] is! String) {
+          throw _invalidRecoveryImage;
+        }
+        final members = jsonDecode(normalized['members'] as String);
+        if (members is! List || members.any((member) => member is! String)) throw _invalidRecoveryImage;
       } else if (key == 'iptvGroupLocks') {
         if (normalized['profileId'] is! String ||
             normalized['sourceId'] is! String ||
@@ -984,6 +1037,7 @@ class AppDatabase extends _$AppDatabase {
         await createDownloadConversionTable(this);
         await _createIptvTables();
         await _createIptvGuideCache();
+        await _createIptvLineupGroups();
         await _createRetainedDownloadOwners();
         await _createIptvExtensionTables();
         await _createIptvParentalTables();
@@ -1168,6 +1222,7 @@ class AppDatabase extends _$AppDatabase {
               ON o.source_id=c.source_id AND o.channel_id=c.channel_id
             WHERE c.logo_url IS NOT NULL AND COALESCE(NULLIF(o.guide_id_override,''),c.tvg_id) IS NOT NULL''');
         }
+        if (from < 41) await _createIptvLineupGroups();
         if (from < 40) {
           final overrides = await customSelect('PRAGMA table_info(iptv_channel_overrides)').get();
           if (!overrides.any((row) => row.read<String>('name') == 'lineup_order')) {
@@ -1489,6 +1544,13 @@ class AppDatabase extends _$AppDatabase {
     'global_key TEXT NOT NULL REFERENCES downloaded_media(global_key) ON DELETE CASCADE, '
     'owner_id TEXT NOT NULL, backend TEXT, client_scope_id TEXT, PRIMARY KEY (global_key, owner_id))',
   );
+
+  Future<void> _createIptvLineupGroups() => customStatement("""
+    CREATE TABLE IF NOT EXISTS iptv_lineup_groups (
+      id TEXT PRIMARY KEY NOT NULL, source_id TEXT NOT NULL REFERENCES iptv_sources(id) ON DELETE CASCADE,
+      name TEXT NOT NULL COLLATE NOCASE, members TEXT NOT NULL DEFAULT '[]', revision INTEGER NOT NULL DEFAULT 1,
+      UNIQUE(source_id,name))
+    """);
 
   Future<void> _createIptvTables() async {
     await customStatement('''

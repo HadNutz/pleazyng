@@ -1650,6 +1650,7 @@ class _Translations$iptv$th extends Translations$iptv$en {
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'แหล่งสำรองตามลำดับการเล่น';
 	@override String get lineupOrder => 'ลำดับช่อง';
 	@override String get orderChanged => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง';
 	@override String get localPlaylist => 'ไฟล์ M3U';
@@ -7031,6 +7032,7 @@ extension on TranslationsTh {
 			'connections.signInAgain' => 'ลงทะเบียนอีกครั้ง',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} การเชื่อมต่อ',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'เพิ่มหรือลบ URL สําหรับ ${serverName}. Pleazyng จะใช้ URL ที่สามารถเข้าถึงได้ด้วย latency ที่ต่ําสุด',
+			'iptv.backupFeeds' => 'แหล่งสำรองตามลำดับการเล่น',
 			'iptv.lineupOrder' => 'ลำดับช่อง',
 			'iptv.orderChanged' => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง',
 			'iptv.localPlaylist' => 'ไฟล์ M3U',
@@ -7194,9 +7196,9 @@ extension on TranslationsTh {
 			'discover.findNext.artworkUnavailable' => 'ไม่มีภาพ',
 			'discover.findNext.savedFeedback' => 'เพิ่มในรายการที่บันทึกแล้ว',
 			'discover.findNext.skippedFeedback' => 'ข้ามไปก่อนแล้ว',
-			'discover.findNext.releaseToConfirm' => 'ปล่อยเพื่อยืนยัน',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'ปล่อยเพื่อยืนยัน',
 			'discover.findNext.remoteHint' => 'เมื่อโฟกัสภาพปก: ← / → เลือก · ปุ่มเลือก: รายละเอียด · ↑ / ↓ ย้ายโฟกัส',
 			'discover.studio' => 'สตูดิโอ',
 			'discover.rating' => 'คะแนน',
@@ -7708,9 +7710,9 @@ extension on TranslationsTh {
 			'collections.collectionName' => 'ชื่อการเก็บเกี่ยว',
 			'collections.enterCollectionName' => 'ระบุชื่อการเก็บรวบรวม',
 			'collections.addedToCollection' => 'เพิ่มเข้าสู่การเก็บเกี่ยว',
-			'collections.errorAddingToCollection' => 'ไม่สามารถเพิ่มเข้าสู่การเก็บเกี่ยว',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'ไม่สามารถเพิ่มเข้าสู่การเก็บเกี่ยว',
 			'collections.created' => 'การเก็บรวบรวม',
 			'collections.removeFromCollection' => 'การกําจัดจากการเก็บรวบรวม',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'นำ “${title}” ออกจากคอลเลกชันนี้หรือไม่',
@@ -8222,9 +8224,9 @@ extension on TranslationsTh {
 			'performanceOverlay.rawDecoder' => 'วัตถุประสงค์',
 			'performanceOverlay.tunneling' => 'ทนเลอร์',
 			'performanceOverlay.passthrough' => 'โพสต์',
-			'performanceOverlay.aspect' => 'ความเห็น',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'ความเห็น',
 			'performanceOverlay.rotation' => 'การหมุน',
 			'performanceOverlay.dvSource' => 'หลักฐาน',
 			'performanceOverlay.dvPath' => 'สองเส้นทาง',
@@ -8736,9 +8738,9 @@ extension on TranslationsTh {
 			'homeLayout.organizeHomeRows' => 'การจัดเรียงสายบ้าน',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} เถว: การเคลื่อนไหว, สัตว์ประหลาด, การลบอัตโนมัติ, ลบ',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'จัดการ ${library} เถว',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} เกรด: การเคลื่อนไหว, ห้องสมุด, บ้าน, พระมหากษัตริย์, Auto-slide',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} เกรด: การเคลื่อนไหว, ห้องสมุด, บ้าน, พระมหากษัตริย์, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render ในฐานะที่เป็นการ์ดฮีโร่',
 			'homeLayout.heroOnlySingleCollection' => 'เท่านั้นสามารถใช้ได้เมื่อแถวนี้ได้รับการแก้ไขกับชื่อจริงของชุดเดียว',
 			'homeLayout.hero' => 'สัตว์เลี้ยง',
@@ -9250,9 +9252,9 @@ extension on TranslationsTh {
 			'audiobook.speedHelp' => 'เลือกความเร็วจาก 0.25× ถึง 4×',
 			'audiobook.apply' => 'ใบสมัคร',
 			'audiobook.customSleep' => 'ช่วงเวลาการนอนหลับ',
-			'audiobook.sleepMinutes' => 'นาที (1 - 1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'นาที (1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'หยุดหลังจาก ${count} ประเภท',
 			'audiobook.extendSleep' => 'เพิ่ม 5 นาที',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'เวลานอน: ${time}',
@@ -9764,9 +9766,9 @@ extension on TranslationsTh {
 			'musicTools.loudnessMissing' => 'ไม่ได้รับข้อมูลความดัง',
 			'musicTools.loudnessRequested' => 'ส่งคำขอวิเคราะห์แล้ว',
 			'musicTools.loudnessUnsupported' => 'เซิร์ฟเวอร์เวอร์ชันนี้ไม่รองรับคำขอวิเคราะห์',
-			'musicTools.serverHistory' => 'ประวัติการเล่นบนเซิร์ฟเวอร์',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'ประวัติการเล่นบนเซิร์ฟเวอร์',
 			'musicTools.nfcWrite' => 'เขียนแท็ก NFC',
 			'musicTools.nfcRead' => 'สแกนแท็ก NFC',
 			'musicTools.nfcPrompt' => 'นำแท็ก NFC ที่เขียนได้มาไว้ใกล้โทรศัพท์',

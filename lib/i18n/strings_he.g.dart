@@ -1659,6 +1659,7 @@ class _Translations$iptv$he extends Translations$iptv$en {
 	final TranslationsHe _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'מקורות גיבוי לפי סדר הפעלה';
 	@override String get lineupOrder => 'סדר הערוצים';
 	@override String get orderChanged => 'סדר הערוצים השתנה. יש לבדוק אותו ולנסות שוב.';
 	@override String get localPlaylist => 'קובץ M3U';
@@ -7064,6 +7065,7 @@ extension on TranslationsHe {
 			'connections.signInAgain' => 'הצטרפו שוב',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'תגית: Edit ${product} connection',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'הוספת או הסרת כתובת URL עבור ${serverName}. Pleazyng ישתמש כתובת URL הנגיעה עם הריבית הנמוכה ביותר.',
+			'iptv.backupFeeds' => 'מקורות גיבוי לפי סדר הפעלה',
 			'iptv.lineupOrder' => 'סדר הערוצים',
 			'iptv.orderChanged' => 'סדר הערוצים השתנה. יש לבדוק אותו ולנסות שוב.',
 			'iptv.localPlaylist' => 'קובץ M3U',
@@ -7227,9 +7229,9 @@ extension on TranslationsHe {
 			'discover.findNext.artworkUnavailable' => 'התמונה אינה זמינה',
 			'discover.findNext.savedFeedback' => 'נוסף לבחירות השמורות',
 			'discover.findNext.skippedFeedback' => 'דולג לעת עתה',
-			'discover.findNext.releaseToConfirm' => 'שחררו לאישור',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'שחררו לאישור',
 			'discover.findNext.remoteHint' => 'כשהעטיפה במיקוד: ← / → בחירה · לחצן בחירה: פרטים · ↑ / ↓ העברת מיקוד',
 			'discover.studio' => 'סטודיו',
 			'discover.rating' => 'דירוג',
@@ -7741,9 +7743,9 @@ extension on TranslationsHe {
 			'collections.collectionName' => 'שם האוסף',
 			'collections.enterCollectionName' => 'כניסת שם האוסף',
 			'collections.addedToCollection' => 'הוספת לקהילה',
-			'collections.errorAddingToCollection' => 'לא הצלחתי להוסיף לאוסף',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'לא הצלחתי להוסיף לאוסף',
 			'collections.created' => 'אוסף שנוצר',
 			'collections.removeFromCollection' => 'הסר מאוספים',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'להסיר את „${title}” מהאוסף הזה?',
@@ -8255,9 +8257,9 @@ extension on TranslationsHe {
 			'performanceOverlay.rawDecoder' => 'דקורטיבי Raw',
 			'performanceOverlay.tunneling' => 'טונל',
 			'performanceOverlay.passthrough' => 'פסטהרו',
-			'performanceOverlay.aspect' => 'מבט',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'מבט',
 			'performanceOverlay.rotation' => 'סיבוב',
 			'performanceOverlay.dvSource' => 'מקור DV',
 			'performanceOverlay.dvPath' => 'דרכים DV',
@@ -8769,9 +8771,9 @@ extension on TranslationsHe {
 			'homeLayout.organizeHomeRows' => 'ארגון שורות בית',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} שורות: זז, גיבור, אוטומטית, להסיר',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'ארגון ${library} שורות',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'המשך צפייה + ${n} שורות: תנועה, ספרייה, בית, גיבור, אוטומטית',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'המשך צפייה + ${n} שורות: תנועה, ספרייה, בית, גיבור, אוטומטית',
 			'homeLayout.renderAsHero' => 'רנדה ככרטיס גיבור',
 			'homeLayout.heroOnlySingleCollection' => 'זמין רק כאשר שורה זו מתפתחת לכותרות אמיתיות של אוסף יחיד',
 			'homeLayout.hero' => 'גיבור',
@@ -9283,9 +9285,9 @@ extension on TranslationsHe {
 			'audiobook.speedHelp' => 'בחר מהירות של 0.25× עד 4×.',
 			'audiobook.apply' => 'יישום',
 			'audiobook.customSleep' => 'שעות שינה מותאמות אישית',
-			'audiobook.sleepMinutes' => 'דקות (1 – 1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'דקות (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'עקבו אחרי ${count}',
 			'audiobook.extendSleep' => 'להוסיף 5 דקות',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'זמן שינה: ${time}',
@@ -9797,9 +9799,9 @@ extension on TranslationsHe {
 			'musicTools.loudnessMissing' => 'לא התקבלו נתוני עוצמת קול',
 			'musicTools.loudnessRequested' => 'בקשת ניתוח נשלחה',
 			'musicTools.loudnessUnsupported' => 'גרסת השרת הזו אינה תומכת בבקשות ניתוח',
-			'musicTools.serverHistory' => 'היסטוריית ניגון בשרת',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'היסטוריית ניגון בשרת',
 			'musicTools.nfcWrite' => 'כתיבה לתג NFC',
 			'musicTools.nfcRead' => 'סריקת תג NFC',
 			'musicTools.nfcPrompt' => 'יש להחזיק תג NFC הניתן לכתיבה ליד הטלפון.',

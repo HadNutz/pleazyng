@@ -1669,6 +1669,7 @@ class _Translations$iptv$uk extends Translations$iptv$en {
 	final TranslationsUk _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Резервні джерела в порядку відтворення';
 	@override String get lineupOrder => 'Порядок каналів';
 	@override String get orderChanged => 'Порядок каналів змінився. Перегляньте його та спробуйте знову.';
 	@override String get localPlaylist => 'Файл M3U';
@@ -7100,6 +7101,7 @@ extension on TranslationsUk {
 			'connections.signInAgain' => 'Підписуйтесь знову',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Реєстрація ${product} зв\'язок',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Додати або видалити URL-адреси для ${serverName}. Pleazyng буде використовувати доступний URL з найнижчою затримкою.',
+			'iptv.backupFeeds' => 'Резервні джерела в порядку відтворення',
 			'iptv.lineupOrder' => 'Порядок каналів',
 			'iptv.orderChanged' => 'Порядок каналів змінився. Перегляньте його та спробуйте знову.',
 			'iptv.localPlaylist' => 'Файл M3U',
@@ -7263,9 +7265,9 @@ extension on TranslationsUk {
 			'discover.findNext.artworkUnavailable' => 'Обкладинка недоступна',
 			'discover.findNext.savedFeedback' => 'Додано до збережених добірок',
 			'discover.findNext.skippedFeedback' => 'Наразі пропущено',
-			'discover.findNext.releaseToConfirm' => 'Відпустіть для підтвердження',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Відпустіть для підтвердження',
 			'discover.findNext.remoteHint' => 'Фокус на обкладинці: ← / → вибір · Кнопка вибору: подробиці · ↑ / ↓ переміщення фокусу',
 			'discover.studio' => 'Студія',
 			'discover.rating' => 'Рейтинг',
@@ -7777,9 +7779,9 @@ extension on TranslationsUk {
 			'collections.collectionName' => 'Колекційне ім\'я',
 			'collections.enterCollectionName' => 'Введіть колекційне ім\'я',
 			'collections.addedToCollection' => 'Додано до колекції',
-			'collections.errorAddingToCollection' => 'Не вдалося додати до колекції',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'Не вдалося додати до колекції',
 			'collections.created' => 'Колекція створена',
 			'collections.removeFromCollection' => 'Вилучити з колекції',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Вилучити «${title}» із цієї колекції?',
@@ -8291,9 +8293,9 @@ extension on TranslationsUk {
 			'performanceOverlay.rawDecoder' => 'РОЙ ДЕКОДЕР',
 			'performanceOverlay.tunneling' => 'тунелі',
 			'performanceOverlay.passthrough' => 'Пастирський',
-			'performanceOverlay.aspect' => 'Погляд',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'Погляд',
 			'performanceOverlay.rotation' => 'Обертання',
 			'performanceOverlay.dvSource' => 'ДВ джерела',
 			'performanceOverlay.dvPath' => 'ДВ ПУТ',
@@ -8805,9 +8807,9 @@ extension on TranslationsUk {
 			'homeLayout.organizeHomeRows' => 'Організуйте домашній ряд',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} рядки: переміщення, Герої, Авто-Слайд, видалення',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Організуйте ${library} рядки',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Продовжуйте дивитися + ${n} рядки: переміщення, Бібліотека, Домашній, Герої, Авто-Слайд',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Продовжуйте дивитися + ${n} рядки: переміщення, Бібліотека, Домашній, Герої, Авто-Слайд',
 			'homeLayout.renderAsHero' => 'Повернення як героїчна картка',
 			'homeLayout.heroOnlySingleCollection' => 'Доступно тільки тоді, коли ця рядка вирішується на реальні заголовки однієї колекції',
 			'homeLayout.hero' => 'Герой',
@@ -9319,9 +9321,9 @@ extension on TranslationsUk {
 			'audiobook.speedHelp' => 'Виберіть швидкість від 0,25× до 4×.',
 			'audiobook.apply' => 'Заявка',
 			'audiobook.customSleep' => 'Кваліфікований час сну',
-			'audiobook.sleepMinutes' => '1 хвилини (1 – 1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => '1 хвилини (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Залишився після розділів ${count}',
 			'audiobook.extendSleep' => 'Додайте 5 хвилин',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Тимпер сну: ${time}',
@@ -9833,9 +9835,9 @@ extension on TranslationsUk {
 			'musicTools.loudnessMissing' => 'Дані про гучність не отримано',
 			'musicTools.loudnessRequested' => 'Запит на аналіз надіслано',
 			'musicTools.loudnessUnsupported' => 'Ця версія сервера не підтримує запити на аналіз',
-			'musicTools.serverHistory' => 'Історія відтворення на сервері',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'Історія відтворення на сервері',
 			'musicTools.nfcWrite' => 'Записати NFC-мітку',
 			'musicTools.nfcRead' => 'Сканувати NFC-мітку',
 			'musicTools.nfcPrompt' => 'Піднесіть доступну для запису NFC-мітку до телефона.',

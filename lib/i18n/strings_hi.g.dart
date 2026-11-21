@@ -1657,6 +1657,7 @@ class _Translations$iptv$hi extends Translations$iptv$en {
 	final TranslationsHi _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'प्लेबैक क्रम में वैकल्पिक स्रोत';
 	@override String get lineupOrder => 'चैनलों का क्रम';
 	@override String get orderChanged => 'चैनलों का क्रम बदल गया है। जाँचकर फिर से कोशिश करें।';
 	@override String get localPlaylist => 'M3U फ़ाइल';
@@ -7056,6 +7057,7 @@ extension on TranslationsHi {
 			'connections.signInAgain' => 'फिर से हस्ताक्षर करें',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'संपादित करें ${product} कनेक्शन',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} के लिए URL जोड़ें या हटा दें. Pleazyng सबसे कम देरी के साथ पहुंचने योग्य URL का उपयोग करेगा.',
+			'iptv.backupFeeds' => 'प्लेबैक क्रम में वैकल्पिक स्रोत',
 			'iptv.lineupOrder' => 'चैनलों का क्रम',
 			'iptv.orderChanged' => 'चैनलों का क्रम बदल गया है। जाँचकर फिर से कोशिश करें।',
 			'iptv.localPlaylist' => 'M3U फ़ाइल',
@@ -7219,9 +7221,9 @@ extension on TranslationsHi {
 			'discover.findNext.artworkUnavailable' => 'चित्र उपलब्ध नहीं है',
 			'discover.findNext.savedFeedback' => 'सहेजे गए विकल्पों में जोड़ा गया',
 			'discover.findNext.skippedFeedback' => 'अभी छोड़ दिया गया',
-			'discover.findNext.releaseToConfirm' => 'पुष्टि के लिए छोड़ें',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'पुष्टि के लिए छोड़ें',
 			'discover.findNext.remoteHint' => 'कवर पर फ़ोकस: ← / → चुनें · चयन बटन: जानकारी · ↑ / ↓ फ़ोकस बदलें',
 			'discover.studio' => 'स्टूडियो',
 			'discover.rating' => 'रेटिंग',
@@ -7733,9 +7735,9 @@ extension on TranslationsHi {
 			'collections.collectionName' => 'संग्रह का नाम',
 			'collections.enterCollectionName' => 'संग्रह का नाम दर्ज करें',
 			'collections.addedToCollection' => 'संग्रह में जोड़ा',
-			'collections.errorAddingToCollection' => 'संग्रह में जोड़ने में विफल',
 			_ => null,
 		} ?? switch (path) {
+			'collections.errorAddingToCollection' => 'संग्रह में जोड़ने में विफल',
 			'collections.created' => 'संग्रह बनाया',
 			'collections.removeFromCollection' => 'संग्रह से हटाएँ',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'इस संग्रह से “${title}” हटाएँ?',
@@ -8247,9 +8249,9 @@ extension on TranslationsHi {
 			'performanceOverlay.rawDecoder' => 'रेड डिकोडर',
 			'performanceOverlay.tunneling' => 'टनल',
 			'performanceOverlay.passthrough' => 'पश्चाताप',
-			'performanceOverlay.aspect' => 'दृष्टि',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.aspect' => 'दृष्टि',
 			'performanceOverlay.rotation' => 'रोटेशन',
 			'performanceOverlay.dvSource' => 'डीवी स्रोत',
 			'performanceOverlay.dvPath' => 'डीवी मार्ग',
@@ -8761,9 +8763,9 @@ extension on TranslationsHi {
 			'homeLayout.organizeHomeRows' => 'Home रैखों का आयोजन',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} पंक्तियां: आंदोलन, नायक, स्वचालित स्लाइड, हटाने',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} पंक्तियों का आयोजन करें',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'जारी रखें + ${n} पंक्तियां: चलना, लाइब्रेरी, होम, नायक, ऑटो-स्लाइड',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'जारी रखें + ${n} पंक्तियां: चलना, लाइब्रेरी, होम, नायक, ऑटो-स्लाइड',
 			'homeLayout.renderAsHero' => 'एक नायक कार्ड के रूप में रेंडर',
 			'homeLayout.heroOnlySingleCollection' => 'केवल तब उपलब्ध है जब यह पंक्ति एकल संग्रह के वास्तविक शीर्षकों के लिए हल हो जाती है',
 			'homeLayout.hero' => 'नायक',
@@ -9275,9 +9277,9 @@ extension on TranslationsHi {
 			'audiobook.speedHelp' => '0.25× से 4× तक की गति का चयन करें।',
 			'audiobook.apply' => 'आवेदन करें',
 			'audiobook.customSleep' => 'कस्टम नींद टाइमर',
-			'audiobook.sleepMinutes' => 'मिनट (1–1440)',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sleepMinutes' => 'मिनट (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} अध्याय के बाद रुकें',
 			'audiobook.extendSleep' => '5 मिनट जोड़ें',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'नींद टाइमर: ${time}',
@@ -9789,9 +9791,9 @@ extension on TranslationsHi {
 			'musicTools.loudnessMissing' => 'ध्वनि की तीव्रता का डेटा नहीं मिला',
 			'musicTools.loudnessRequested' => 'विश्लेषण का अनुरोध भेजा गया',
 			'musicTools.loudnessUnsupported' => 'सर्वर का यह संस्करण विश्लेषण अनुरोधों का समर्थन नहीं करता',
-			'musicTools.serverHistory' => 'सर्वर का प्लेबैक इतिहास',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.serverHistory' => 'सर्वर का प्लेबैक इतिहास',
 			'musicTools.nfcWrite' => 'NFC टैग लिखें',
 			'musicTools.nfcRead' => 'NFC टैग स्कैन करें',
 			'musicTools.nfcPrompt' => 'लिखने योग्य NFC टैग को अपने फ़ोन के पास रखें।',

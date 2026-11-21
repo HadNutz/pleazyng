@@ -1,5 +1,6 @@
 {
   "iptv": {
+    "backupFeeds": "Fontes alternativas por ordem de reprodução",
     "lineupOrder": "Ordem dos canais",
     "orderChanged": "A ordem dos canais mudou. Confira e tente novamente.",
     "localPlaylist": "Arquivo M3U",
