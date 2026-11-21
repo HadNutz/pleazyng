@@ -211,7 +211,7 @@ void main() {
       await gateway.close();
       adapter.close();
     });
-    const file = PublicationFile(id: 'video', name: 'video.mp4', size: 3);
+    const file = PublicationFile(id: 'video', name: 'video.mp4', mimeType: 'video/mp4', size: 3);
     final local = await gateway.register(adapter, file);
     final remote = await gateway.registerUri(Uri.parse('https://example.com/movie.mp4'));
     active = false;
