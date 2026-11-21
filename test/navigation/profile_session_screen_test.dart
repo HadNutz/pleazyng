@@ -30,18 +30,39 @@ import 'package:provider/provider.dart';
 import '../test_helpers/io_fakes.dart';
 import '../test_helpers/multi_server_fixtures.dart';
 import '../test_helpers/prefs.dart';
+import '../test_helpers/pump.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late _SessionGraph graph;
+  const audioRoutes = MethodChannel('com.pleazyng/music_audio_route/events');
+  final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
   setUp(() async {
     resetSharedPreferencesForTest();
     await SettingsService.getInstance();
     SystemShelfService().debugReset();
+    messenger.setMockMethodCallHandler(audioRoutes, (_) async => null);
+    addTearDown(() => messenger.setMockMethodCallHandler(audioRoutes, null));
     graph = await _SessionGraph.create();
   });
-  tearDown(() => graph.dispose());
+
+  void profileSessionTest(String description, WidgetTesterCallback body) {
+    testWidgets(description, (tester) async {
+      try {
+        await body(tester);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        // Drift completes outstanding widget-owned stream callbacks on their
+        // originating clock. Keep pumping until every resource has closed.
+        var disposed = false;
+        final cleanup = graph.dispose().whenComplete(() => disposed = true);
+        await pumpUntil(tester, () => disposed, describe: () => 'profile-session resources have not closed');
+        await cleanup;
+      }
+    });
+  }
 
   group('launcher shelf during profile selection', () {
     late SettingsService settings;
@@ -63,7 +84,7 @@ void main() {
     });
     tearDown(() => SystemShelfService.debugOverrideInstance(null));
 
-    testWidgets('a PIN-protected profile stays off the launcher shelf while startup asks for a profile', (
+    profileSessionTest('a PIN-protected profile stays off the launcher shelf while startup asks for a profile', (
       tester,
     ) async {
       const channel = MethodChannel('test/profile_session_shelf');
@@ -106,7 +127,7 @@ void main() {
     });
   });
 
-  testWidgets('profile switch disposes the profile navigator, routes, and providers', (tester) async {
+  profileSessionTest('profile switch disposes the profile navigator, routes, and providers', (tester) async {
     final discoverProviders = <DiscoverProvider>[];
     final hiddenProviders = <HiddenLibrariesProvider>[];
     final trackerProviders = <TrackersProvider>[];
@@ -121,11 +142,6 @@ void main() {
       trackerHttpClients.add(client);
       return client;
     }
-
-    addTearDown(() async {
-      await tester.pumpWidget(const SizedBox.shrink());
-      await tester.pumpAndSettle();
-    });
 
     final owner = Profile.local(id: 'local-owner', displayName: 'Owner', createdAt: DateTime(2026, 1, 1));
     final kids = Profile.local(id: 'local-kids', displayName: 'Kids', createdAt: DateTime(2026, 1, 2));
@@ -216,7 +232,7 @@ void main() {
     _expectCloseCount(trackerHttpClients, 1);
   });
 
-  testWidgets(
+  profileSessionTest(
     'a root-navigator route over the session blocks focus steals below it and hands focus back on pop (#2239)',
     (tester) async {
       final rootNavigator = GlobalKey<NavigatorState>();
@@ -224,9 +240,7 @@ void main() {
       final sidebar = FocusNode(debugLabel: 'SessionSidebar');
       final picker = FocusNode(debugLabel: 'RootPicker');
 
-      addTearDown(() async {
-        await tester.pumpWidget(const SizedBox.shrink());
-        await tester.pumpAndSettle();
+      addTearDown(() {
         content.dispose();
         sidebar.dispose();
         picker.dispose();
@@ -278,7 +292,7 @@ void main() {
     },
   );
 
-  testWidgets('switching profiles under the root picker hands the new session its first focus on pop (#2817)', (
+  profileSessionTest('switching profiles under the root picker hands the new session its first focus on pop (#2817)', (
     tester,
   ) async {
     final session = await _CoveredSession.pump(tester, graph);
@@ -301,28 +315,29 @@ void main() {
     expect(session.contentScopes[_kids.id]!.hasPrimaryFocus, isTrue);
   });
 
-  testWidgets('a session remounted twice under the root picker (bind rollback) still gets its first focus on pop', (
-    tester,
-  ) async {
-    final session = await _CoveredSession.pump(tester, graph);
-    // The chosen profile's bind fails and the switch rolls back: two keyed
-    // remounts under the picker, each claiming first focus while covered.
-    session.gateFor(_kids.id).complete();
-    for (final profile in [_kids, _owner]) {
-      expect(await tester.runAsync(() => session.graph.activeProfile.activate(profile)), isTrue);
-      await tester.pump();
-      await tester.pump();
-    }
-    expect(session.picker.hasPrimaryFocus, isTrue, reason: 'claims below the picker must not steal it');
+  profileSessionTest(
+    'a session remounted twice under the root picker (bind rollback) still gets its first focus on pop',
+    (tester) async {
+      final session = await _CoveredSession.pump(tester, graph);
+      // The chosen profile's bind fails and the switch rolls back: two keyed
+      // remounts under the picker, each claiming first focus while covered.
+      session.gateFor(_kids.id).complete();
+      for (final profile in [_kids, _owner]) {
+        expect(await tester.runAsync(() => session.graph.activeProfile.activate(profile)), isTrue);
+        await tester.pump();
+        await tester.pump();
+      }
+      expect(session.picker.hasPrimaryFocus, isTrue, reason: 'claims below the picker must not steal it');
 
-    // Choosing the rolled-back profile again neither remounts nor rebinds:
-    // the picker just pops.
-    session.rootNavigator.currentState!.pop();
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
+      // Choosing the rolled-back profile again neither remounts nor rebinds:
+      // the picker just pops.
+      session.rootNavigator.currentState!.pop();
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
 
-    expect(session.contentScopes[_owner.id]!.hasPrimaryFocus, isTrue);
-  });
+      expect(session.contentScopes[_owner.id]!.hasPrimaryFocus, isTrue);
+    },
+  );
 }
 
 final _owner = Profile.local(id: 'local-owner', displayName: 'Owner', createdAt: DateTime(2026, 1, 1));
@@ -344,11 +359,7 @@ class _CoveredSession {
 
   static Future<_CoveredSession> pump(WidgetTester tester, _SessionGraph graph) async {
     final session = _CoveredSession._(graph);
-    addTearDown(() async {
-      await tester.pumpWidget(const SizedBox.shrink());
-      await tester.pumpAndSettle();
-      session.picker.dispose();
-    });
+    addTearDown(session.picker.dispose);
 
     await tester.runAsync(() async {
       await graph.profileRegistry.upsert(_owner);
@@ -526,6 +537,8 @@ class _SessionGraph {
     serverManager.dispose();
     await plexHome.dispose();
     offlineWatch.dispose();
+    // The mini-player may have started a session restore before it was unmounted.
+    await db.transaction(() async {});
     await db.close();
   }
 }
