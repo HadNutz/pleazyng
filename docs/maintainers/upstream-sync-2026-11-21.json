@@ -233,8 +233,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "fix(plex): keep a server's client when it reconnects from offline",
-      "disposition": "pending",
-      "evidence": "The fork closes the old client and swaps in a new one after an offline reconnect. Consumers already holding the prior client can lose progress reporting, transcode keepalives or recording refresh. Reuse the registered client only when account/token and profile scope match, retarget its endpoint, and retain replacement for a real identity change. Pair with cold-start recovery but test independently. [multi_server_manager.dart L1597](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/multi_server_manager.dart#L1597)",
+      "disposition": "adapted",
+      "evidence": "Reuse the registered Plex client when a server returns with the same authentication and profile scope, so active playback keeps reporting progress.",
       "files": [
         "lib/services/multi_server_manager.dart",
         "test/profiles/active_profile_binder_test.dart"
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "pending": 16,
+    "pending": 15,
     "deferred": 1,
-    "adapted": 10,
+    "adapted": 11,
     "retained": 2
   }
 }

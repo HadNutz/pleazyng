@@ -1,5 +1,7 @@
 # Upstream source attribution
 
+- Reuse the registered Plex client when a server returns with the same authentication and profile scope, so active playback keeps reporting progress. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/b179440450941150da98623e3a4fe3d2aebe900e) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
 - Retry sleeping Plex servers after profile binding and resume with bounded, profile-aware backoff. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/4640404ce3c79d3a73271392cc6d5d18ca8ebedc) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 
 This ledger credits upstream reports, feature requests, implementation sources, and project documentation that informed Pleazyng.
