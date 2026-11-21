@@ -156,12 +156,13 @@ class MacPackagingProofTests(unittest.TestCase):
             controller.ensure_release('v3.0.3','c'*40,include_webos_release=True,execution_profile='hybrid',
                 prepare_homebrew_cask=True,reuse_platform_run_id=42,reuse_android_run_id=42,reuse_macos_run_id=43)
             self.assertEqual(verify.call_args.kwargs['macos_run'],43)
-            self.assertEqual(verify.call_args.kwargs['webos_run'],42)
+            self.assertNotIn('webos_run', verify.call_args.kwargs)
             fields=dispatch.call_args.args[3]
             self.assertEqual(dispatch.call_args.kwargs['expected_title'],
                 'action:release:pool:public:tag:v3.0.3:assembly:source:42:macos:43')
             self.assertEqual(fields['reuse_macos_package_run_id'],'43')
             self.assertEqual(fields['reuse_android_run_id'],'42')
+            self.assertNotIn('reuse_webos_run_id', fields)
             self.assertEqual(fields['include_webos_build'],'true')
             self.assertEqual(fields['include_webos_release'],'true')
 

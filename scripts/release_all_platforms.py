@@ -1759,7 +1759,7 @@ def ensure_release(
         # A platform recovery reuses Android from the same verified source run
         # unless a caller explicitly selects a different verified Android run.
         reuse_android_run_id = reuse_platform_run_id
-    if reuse_platform_run_id and not rebuild_webos:
+    if reuse_platform_run_id and not rebuild_webos and not reuse_macos_run_id:
         # A complete versioned release must include WebOS. The reuse run ID
         # prevents a rebuild; keep the release-coverage input enabled.
         include_webos_build = True
