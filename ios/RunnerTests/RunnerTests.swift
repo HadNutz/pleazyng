@@ -249,6 +249,8 @@ final class MpvPlayerContractTests: XCTestCase {
     let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 180))
     window.isHidden = false
     let core = MpvPlayerCore()
+    // Select the MPV output that owns the AVFoundation motion options.
+    core.experimentalDolbyVisionRequested = false
     XCTAssertTrue(core.initialize(in: window))
     defer {
       core.dispose()
@@ -269,7 +271,11 @@ final class MpvPlayerContractTests: XCTestCase {
     _ = try command(["loadfile", clip.path])
     XCTAssertSuccess(awaitProperty(core, name: "pause", value: "no"))
     let readyBy = Date().addingTimeInterval(nativeCompletionTimeout)
-    while Date() < readyBy && ((try? timePos(core)) ?? 0) < 0.1 { pump(0.05) }
+    while Date() < readyBy {
+      if let raw = try? awaitGetProperty(core, name: "time-pos").get(), let seconds = Double(raw), seconds >= 0.1 { break }
+      pump(0.05)
+    }
+    XCTAssertGreaterThan(try timePos(core), 0)
     XCTAssertEqual(try awaitGetProperty(core, name: "current-vo").get(), "avfoundation")
     let entry = try XCTUnwrap(try awaitGetProperty(core, name: "playlist/0/id").get())
     for preset in ["performance", "quality"] {
