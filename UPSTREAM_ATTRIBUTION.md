@@ -1,5 +1,7 @@
 # Upstream source attribution
 
+- Avoid starting unused built-in mpv scripts on Android while keeping explicit video-core configuration overrides. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/4c3c25b8233bb887d7224b3844f3763a88b720c5) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
 - Batch demuxer refills only for uncached app-owned downloads, respecting custom mpv options and resetting the property on subsequent opens. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/3bf8c2752739a83cb5038fef9287bd6aac7d1e19) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 
 - Prefer precise 50/59.94/60 Hz modes for matching 25/29.97/30 fps video while preserving the existing frame-rate setting and motion-generated output path. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/e883c3ca5e170c2d5810c98d68803c586a97a270) to upstream Plezy. Pleazyng integrated the behavior for this fork.

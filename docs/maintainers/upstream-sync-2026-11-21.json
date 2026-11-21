@@ -29,8 +29,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "perf(player): leave mpv's unused builtin scripts unloaded on Android (#3035)",
-      "disposition": "pending",
-      "evidence": "The fork disables ytdl at initialization. Upstream also disables seven unused built-in Lua scripts. Retain explicit custom-config overrides and verify the pinned fork AAR’s options on both video and secondary cores. The upstream CPU, thread and memory savings were device-specific. [MpvPlayerCore.kt L1159](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/android/app/src/main/kotlin/com/edde746/plezy/mpv/MpvPlayerCore.kt#L1159)",
+      "disposition": "adapted",
+      "evidence": "Avoid starting unused built-in mpv scripts on Android while keeping explicit video-core configuration overrides.",
       "files": [
         "android/app/src/main/kotlin/com/edde746/plezy/mpv/MpvPlayerCore.kt"
       ]
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "pending": 10,
+    "pending": 9,
+    "adapted": 17,
     "deferred": 1,
-    "adapted": 16,
     "retained": 2
   }
 }
