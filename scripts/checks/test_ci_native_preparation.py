@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Guard the prerequisite order that caused exact-head native CI failures."""
 from pathlib import Path
+import os
 import re
 import shlex
 import subprocess
@@ -133,8 +134,7 @@ class NativePreparationOrderTests(unittest.TestCase):
             xcrun() { [[ "$*" == "--sdk $EXPECTED_SDK --show-sdk-version" ]] && echo "$SDK_VERSION"; }
             bash() { [[ "$1" == scripts/prepare_apple_jit_scratch.sh ]]; }
         """
-        for platform, sdk, slug in [('iOS', 'iphonesimulator', 'ios'),
-                                    ('macOS', 'macosx', 'macos'),
+        for platform, sdk, slug in [('macOS', 'macosx', 'macos'),
                                     ('tvOS', 'appletvsimulator', 'tvos')]:
             for runner, xcode, actual_sdk, ok in [
                 ('self-hosted', '27.0', '27.0', True),
@@ -149,6 +149,25 @@ class NativePreparationOrderTests(unittest.TestCase):
                     result = subprocess.run(['bash', '-euo', 'pipefail', '-c', probes + prepare],
                                             env=env, capture_output=True, text=True)
                     self.assertEqual(result.returncode == 0, ok, result.stderr)
+
+    def test_iphone_setup_checks_both_sdks_before_native_qualification(self):
+        config = yaml.safe_load((ROOT / '.github/actions/setup-flutter-apple/action.yml').read_text())
+        step = next(s for s in config['runs']['steps'] if s['name'] == 'Verify iPhone Duo SDK for device and simulator')
+        self.assertEqual(step['if'], "inputs.require-duo-sdk == 'true'")
+        probes = """
+            xcrun() {
+                case "$2" in
+                    iphoneos) echo "$DEVICE_SDK" ;;
+                    iphonesimulator) echo "$SIM_SDK" ;;
+                    *) return 1 ;;
+                esac
+            }
+        """
+        for device, simulator, ok in [('27.1', '27.1', True), ('27.0', '27.1', False), ('27.1', '27.0', False)]:
+            with self.subTest(device=device, simulator=simulator):
+                env = dict(os.environ, RUNNER_ENVIRONMENT='github-hosted', DEVICE_SDK=device, SIM_SDK=simulator)
+                result = subprocess.run(['bash', '-c', probes + step['run']], env=env, capture_output=True, text=True)
+                self.assertEqual(result.returncode == 0, ok, result.stderr)
 
     def test_private_checkout_and_cleanup_preserve_scratch_ownership(self):
         steps = {s['name']: s for s in yaml.safe_load(APPLE_SUITE.read_text())['runs']['steps']}
