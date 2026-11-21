@@ -1257,7 +1257,12 @@ android {
   lint {
     // Enforce the app-owned minSdk boundary without auditing upstream AndroidX.
     checkDependencies = false
-    checkOnly += setOf("NewApi")
+    if (providers.gradleProperty("pleazyngFullAndroidLint").isPresent) {
+      warningsAsErrors = true
+      baseline = file("lint-baseline.xml")
+    } else {
+      checkOnly += setOf("NewApi")
+    }
   }
 
   // Keep each build type's matching core source/receipt beside its libraries.

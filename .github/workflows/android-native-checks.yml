@@ -13,6 +13,11 @@ concurrency:
   cancel-in-progress: true
 jobs:
   android:
+    name: Android native (${{ matrix.check }})
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [tests, lint]
     runs-on: ubuntu-24.04
     timeout-minutes: 100
     steps:
@@ -44,14 +49,35 @@ jobs:
           flutter pub get --enforce-lockfile
           printf 'flutter.sdk=%s\nsdk.dir=%s\n' "$FLUTTER_ROOT" "$ANDROID_HOME" > android/local.properties
       - name: Compile and exercise app-owned native C and C++ logic
+        if: matrix.check == 'tests'
         run: |
           cmake -S android/app/src/test/cpp -B "$RUNNER_TEMP/native-test" -DCMAKE_BUILD_TYPE=Debug
           cmake --build "$RUNNER_TEMP/native-test" --parallel 2
           ctest --test-dir "$RUNNER_TEMP/native-test" --output-on-failure --no-tests=error
       - name: Compile Android and exercise decoder, HDR and storage paths
+        if: matrix.check == 'tests'
         working-directory: android
         run: ./gradlew :app:testDebugUnitTest :saf_util:testDebugUnitTest :libass:testDebugUnitTest -x :app:compileFlutterBuildDebug --continue --console=plain
       - name: Enforce the platform API boundary
-        if: ${{ !cancelled() }}
+        if: matrix.check == 'lint'
         working-directory: android
         run: ./gradlew :app:lintDebug -x :app:compileFlutterBuildDebug --console=plain
+      - name: Check app-owned Android warnings against the reviewed baseline
+        if: matrix.check == 'lint'
+        working-directory: android
+        run: |
+          if test -f app/lint-baseline.xml; then
+            ./gradlew -PpleazyngFullAndroidLint :app:lintDebug -x :app:compileFlutterBuildDebug --console=plain
+          else
+            ./gradlew -PpleazyngFullAndroidLint :app:updateLintBaseline -x :app:compileFlutterBuildDebug --console=plain
+            test -s app/lint-baseline.xml
+          fi
+      - name: Preserve the measured Android lint results
+        if: ${{ !cancelled() && matrix.check == 'lint' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: android-lint-${{ github.sha }}
+          path: |
+            android/app/lint-baseline.xml
+            build/app/reports/lint-results-debug.xml
+          if-no-files-found: error
