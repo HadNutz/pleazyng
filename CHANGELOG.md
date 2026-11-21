@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Rearm a storage-stopped queue only once per explicit download request, skip blocked sync-rule passes, and keep in-flight retries from clearing the storage error. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/54f135fe46f1aed4edc36a04241152fc9cac7bf5) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
 - Constrain long multi-server subtitles inside the compact library picker while preserving full library choices. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/e0a2a8e9f34872920d8a60394cc1bca9827f75d7) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 
 - Use a nonthrowing version resolver for room identity and wire metadata, preserving the Pleazyng client name and existing Jellyfin onboarding fallback. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/d78b6d806e3ebf60881999564def7cad969722b5) to upstream Plezy. Pleazyng integrated the behavior for this fork.

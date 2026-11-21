@@ -1961,6 +1961,7 @@ class DownloadManagerService {
     int mediaIndex = 0,
     TranscodeQualityPreset? downloadQuality,
     bool userInitiated = true,
+    bool beginUserRequest = true,
   }) async {
     if (_skipDownloadsUnsupported('queue download')) return metadata;
     if (!userInitiated && _queueBlockedByStorageFailure) return null;
@@ -1971,7 +1972,7 @@ class DownloadManagerService {
         downloadQuality ??
         SettingsService.instanceOrNull?.read(SettingsService.downloadQualityPreset) ??
         TranscodeQualityPreset.original;
-    if (userInitiated) _rearmQueueForUserAction('new download');
+    if (userInitiated && beginUserRequest) beginUserDownloadRequest();
 
     final globalKey = metadata.globalKey;
 
@@ -3077,6 +3078,12 @@ class DownloadManagerService {
     _queueBlockedByStorageFailure = false;
   }
 
+  /// Re-arms the queue for an explicit download request. Call once per
+  /// request, before its items are queued: automatic enqueues (sync rules)
+  /// must not lift a storage stop, or every pass would retry the refused
+  /// file and stop all downloads again.
+  void beginUserDownloadRequest() => _rearmQueueForUserAction('new download');
+
   Future<void> _handleStorageFullFailure(String globalKey, String taskId, {String? message}) async {
     _queueBlockedByStorageFailure = true;
     for (final timer in [..._autoRetryTimers.values, ..._serverConversionTimers.values]) {
@@ -3288,9 +3295,12 @@ class DownloadManagerService {
       // Download was cancelled/deleted/retried by user during the delay
       return;
     }
+    // Stopping for storage cancels the retry timers, not a retry already past them.
+    if (_queueBlockedByStorageFailure) return;
 
     appLogger.i('Auto-retrying download for $globalKey');
     await _cleanupStaleDownload(globalKey);
+    if (_queueBlockedByStorageFailure) return;
     // The retry delay already throttles preparation failures; do not let the
     // immediate queue circuit breaker suppress the next scheduled attempt.
     _consecutiveQueueFailures = 0;

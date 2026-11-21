@@ -502,8 +502,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "fix(downloads): stop sync rules from restarting downloads after a storage stop",
-      "disposition": "pending",
-      "evidence": "Sync-rule enqueues already carry userInitiated=false and recheck the storage stop after awaits. The user path still rearms per child inside queueDownload, and an auto-retry already running can get past timer cancellation and requeue. Rearm once at the explicit top-level request. Fence in-flight retries before altering stored failure state or queue membership. [download_provider.dart L2698](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/providers/download_provider.dart#L2698) · [download_manager_service.dart L1974](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/download_manager_service.dart#L1974) · [download_manager_service.dart L3278](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/download_manager_service.dart#L3278) · [8352046a9](https://github.com/snapetech-org/pleazyng/commit/8352046a99f2b453dab9d042355133086dc57680)",
+      "disposition": "adapted",
+      "evidence": "Rearm a storage-stopped queue only once per explicit download request, skip blocked sync-rule passes, and keep in-flight retries from clearing the storage error.",
       "files": [
         "lib/providers/download_provider.dart",
         "lib/services/download_manager_service.dart",
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "adapted": 20,
+    "adapted": 21,
     "deferred": 1,
     "retained": 2,
-    "pending": 6
+    "pending": 5
   }
 }
