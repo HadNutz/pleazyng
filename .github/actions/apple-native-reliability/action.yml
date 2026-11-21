@@ -4,6 +4,10 @@ inputs:
   platform:
     description: iOS, macOS or tvOS.
     required: true
+  build-only:
+    description: Compile the app and XCTest targets without launching a simulator.
+    required: false
+    default: 'false'
 runs:
   using: composite
   steps:
@@ -316,6 +320,7 @@ runs:
           --resolved-package tvos/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
     - name: Select Apple test destination
+      if: inputs.build-only != 'true'
       id: destination
       env:
         SIMULATOR_RUNTIME: ${{ steps.scratch.outputs.runtime }}
@@ -354,7 +359,7 @@ runs:
         }
 
     - name: Run Apple native reliability tests
-      if: inputs.platform != 'macOS'
+      if: inputs.platform != 'macOS' && inputs.build-only != 'true'
       env:
         APPLE_LOCAL_BUILD_DIR: ${{ steps.scratch.outputs.APPLE_LOCAL_BUILD_DIR }}
         APPLE_DERIVED_DATA_PATH: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}
@@ -395,13 +400,13 @@ runs:
         fi
         exit "$test_status"
 
-    - name: Build macOS application and XCTest bundle
-      if: inputs.platform == 'macOS'
+    - name: Build application and XCTest bundle
+      if: inputs.platform == 'macOS' || inputs.build-only == 'true'
       env:
         APPLE_DERIVED_DATA_PATH: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}
         APPLE_SOURCE_PACKAGES_DIR: ${{ steps.scratch.outputs.APPLE_SOURCE_PACKAGES_DIR }}
         NATIVE_WORKSPACE: ${{ steps.scratch.outputs.project }}/Runner.xcworkspace
-        APPLE_TEST_DESTINATION: ${{ steps.destination.outputs.APPLE_TEST_DESTINATION }}
+        APPLE_TEST_DESTINATION: ${{ steps.destination.outputs.APPLE_TEST_DESTINATION || steps.scratch.outputs.destination || format('generic/platform={0} Simulator', inputs.platform) }}
       shell: bash
       working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
       run: |
@@ -429,7 +434,7 @@ runs:
         if-no-files-found: warn
 
     - name: Remove job-owned Apple test simulator
-      if: always() && steps.scratch.outcome == 'success' && inputs.platform != 'macOS'
+      if: always() && steps.scratch.outcome == 'success' && inputs.platform != 'macOS' && inputs.build-only != 'true'
       shell: bash
       env:
         SIMULATOR_RUNTIME: ${{ steps.scratch.outputs.runtime }}
