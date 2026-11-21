@@ -160,7 +160,7 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
       }
       await _load();
     } catch (_) {
-      if (mounted) showErrorSnackBar(context, t.iptv.providerUnavailable);
+      if (mounted) showErrorSnackBar(context, t.iptv.providerUnavailable); // Keep the current lineup on failure.
     } finally {
       if (mounted) setState(() => _savingChannelId = null);
     }

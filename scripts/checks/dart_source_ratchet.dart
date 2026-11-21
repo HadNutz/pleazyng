@@ -66,16 +66,34 @@ String git(List<String> args) {
   return result.stdout as String;
 }
 
+// During adoption, main can accept source edits before it receives this policy.
+// Account only for their net line delta since the common ancestor of both tips.
+Map<String, int> concurrentLineChanges(String rolloutCommit, String target) {
+  final ancestor = git(['merge-base', rolloutCommit, target]).trim();
+  if (ancestor == target) return {};
+  final result = <String, int>{};
+  final rows = git(['diff', '--numstat', '--no-renames', '-z', ancestor, target, '--', 'lib']).split('\x00');
+  for (final row in rows.where((row) => row.isNotEmpty)) {
+    final match = RegExp(r'^(\d+)\t(\d+)\t([\s\S]+)$').firstMatch(row);
+    if (match == null || !maintained(match[3]!)) continue;
+    result[match[3]!] = int.parse(match[1]!) - int.parse(match[2]!);
+  }
+  return result;
+}
+
 void main(List<String> args) {
   if (args.length != 1) throw ArgumentError('Expected the comparison commit');
   var base = git(['merge-base', 'HEAD', args.single]).trim();
   Map<String, dynamic>? rolloutSizes;
+  var acceptedChanges = <String, int>{};
   // The initial integration brings in source from several parents. Its checked-in
   // rollout records the post-migration starting point. Later branches use their base.
   if (Process.runSync('git', ['cat-file', '-e', '$base:$rollout']).exitCode != 0) {
     final bootstrap = git(['log', '--first-parent', '--diff-filter=A', '--format=%H', 'HEAD', '--', rollout]).trim();
     if (bootstrap.isNotEmpty) {
-      base = bootstrap.split('\n').last;
+      final rolloutCommit = bootstrap.split('\n').last;
+      acceptedChanges = concurrentLineChanges(rolloutCommit, base);
+      base = rolloutCommit;
       final snapshot = jsonDecode(git(['show', '$base:$rollout'])) as Map<String, dynamic>;
       rolloutSizes = snapshot['lineCounts'] as Map<String, dynamic>;
     }
@@ -98,7 +116,9 @@ void main(List<String> args) {
     if (status == 'D' || !maintained(path)) continue;
     final text = File(path).readAsStringSync();
     final initialLimit = rolloutSizes?[oldPath] as int?;
-    final limit = hadSource ? initialLimit ?? const LineSplitter().convert(previous).length : 1500;
+    final preexisting = initialLimit ?? const LineSplitter().convert(previous).length;
+    final accepted = acceptedChanges[path] ?? 0;
+    final limit = hadSource ? preexisting + accepted : (accepted > 1500 ? accepted : 1500);
     final lines = const LineSplitter().convert(text).length;
     if (lines > limit) {
       stderr.writeln('$path has $lines lines (limit $limit).');
