@@ -29,9 +29,16 @@ import '../models/track_controls_state.dart';
 
 @visibleForTesting
 String resolveSubtitleSearchLanguageCode({String? savedLanguageCode, required Locale systemLocale}) {
-  return LanguageCodes.getIso6391Code(savedLanguageCode ?? '') ??
-      LanguageCodes.getIso6391Code(systemLocale.languageCode) ??
-      'en';
+  final saved = LanguageCodes.normalizeCode(savedLanguageCode);
+  if (saved != null) return saved;
+
+  final tag = systemLocale.toLanguageTag();
+  final regionalFromLocale = LanguageCodes.normalizeCode(tag);
+  if (regionalFromLocale != null && regionalFromLocale.contains('-')) {
+    return regionalFromLocale;
+  }
+
+  return LanguageCodes.getIso6391Code(systemLocale.languageCode) ?? 'en';
 }
 
 class SubtitleSearchSheet extends StatefulWidget {
@@ -92,8 +99,7 @@ class _SubtitleSearchSheetState extends State<SubtitleSearchSheet> with Controll
       savedLanguageCode: SettingsService.instanceOrNull?.read(SettingsService.subtitleSearchLanguage),
       systemLocale: WidgetsBinding.instance.platformDispatcher.locale,
     );
-    final name = LanguageCodes.getLanguageName(code);
-    if (name == null) return;
+    final name = LanguageCodes.getDisplayName(code);
     _languageCode = code;
     _languageName = name;
   }
@@ -612,7 +618,7 @@ class _LanguagePickerViewState extends State<_LanguagePickerView> with Controlle
   @override
   void initState() {
     super.initState();
-    _allLanguages = LanguageCodes.getAllLanguages();
+    _allLanguages = LanguageCodes.getAllLanguages(includeRegional: true);
     _filteredLanguages = _allLanguages;
   }
 

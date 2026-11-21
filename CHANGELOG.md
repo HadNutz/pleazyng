@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Prefer exact regional audio and subtitle matches before language-only and cross-region fallback, and carry regional preferences through Plex account settings and subtitle search with localized language names. [strata-scribe](https://github.com/strata-scribe) proposed [Plezy PR #3005](https://github.com/edde746/plezy/pull/3005).
+
 - Allow authorized Plex owners to refresh one item. Cache invalidation and detail updates check the selected server, session and settled item ID. [denizt](https://github.com/denizt) proposed [Plezy PR #3118](https://github.com/edde746/plezy/pull/3118).
 
 - Apple TV users can choose static Top Shelf artwork for every profile. The extension and publisher honor the device setting alongside existing PIN and profile restrictions. [veresvit](https://github.com/veresvit) proposed [Plezy PR #3092](https://github.com/edde746/plezy/pull/3092).

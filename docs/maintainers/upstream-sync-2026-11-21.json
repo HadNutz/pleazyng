@@ -535,7 +535,8 @@
       "author": "strata-scribe",
       "state": "open",
       "title": "feat(subtitles): support regional languages and prioritize exact matches (#3001)",
-      "decision": "Compare regional subtitle matching with the fork’s existing track-selection and subtitle-download paths. Worth examining for exact-language fallback."
+      "decision": "Adapted in Pleazyng. Prefer exact regional audio and subtitle matches before language-only and cross-region fallback, and carry regional preferences through Plex account settings and subtitle search with localized language names.",
+      "upstream_head": "01f375662f485627405c3b31960ba4ee284c226f"
     },
     {
       "number": 3008,

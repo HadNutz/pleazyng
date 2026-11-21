@@ -38,7 +38,7 @@ Reviewed upstream range `738e18fdc552ace910dedabf6e689ab74e1dae58` through `8310
 
 | PR | Author | Upstream state | Decision |
 |---|---|---|---|
-| [#3005](https://github.com/edde746/plezy/pull/3005) | [@strata-scribe](https://github.com/strata-scribe) | open | Compare regional subtitle matching with the fork’s existing track-selection and subtitle-download paths. Worth examining for exact-language fallback. |
+| [#3005](https://github.com/edde746/plezy/pull/3005) | [@strata-scribe](https://github.com/strata-scribe) | open | Adapted in Pleazyng. Prefer exact regional audio and subtitle matches before language-only and cross-region fallback, and carry regional preferences through Plex account settings and subtitle search with localized language names. |
 | [#3008](https://github.com/edde746/plezy/pull/3008) | [@wthueb](https://github.com/wthueb) | open | Investigate on macOS if returning from PiP leaves video hidden in the fork. A device reproduction would establish value. |
 | [#3012](https://github.com/edde746/plezy/pull/3012) | [@mkaflowski](https://github.com/mkaflowski) | open | Keep the fork’s launcher banner and brand assets. |
 | [#3017](https://github.com/edde746/plezy/pull/3017) | [@a-j-jones](https://github.com/a-j-jones) | merged | Included in the main-branch commit ledger above. |
