@@ -281,8 +281,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "feat(player): switch 25/30 fps content to 50/60 Hz instead of 25/30 Hz",
-      "disposition": "pending",
-      "evidence": "Android still prioritizes a matching 1× mode, then higher multiples. Desktop also retains older expectations. Adopt precise 25→50, 29.97→59.94 and 30→60 policy where available. Preserve an already-active precise multiple, the only precise fallback, normal film-rate selection, and the fork’s hardware and output guards. Cover Android and desktop separately. [DisplayModeSelector.kt L81](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/android/app/src/main/kotlin/com/edde746/plezy/shared/DisplayModeSelector.kt#L81) · [display_mode_service.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/display_mode_service.dart) · [display_mode_service_test.dart L164](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/test/services/display_mode_service_test.dart#L164)",
+      "disposition": "adapted",
+      "evidence": "Prefer precise 50/59.94/60 Hz modes for matching 25/29.97/30 fps video while preserving the existing frame-rate setting and motion-generated output path.",
       "files": [
         "android/app/src/main/kotlin/com/edde746/plezy/shared/DisplayModeSelector.kt",
         "android/app/src/test/kotlin/com/edde746/plezy/shared/DisplayModeSelectorTest.kt",
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "pending": 12,
+    "pending": 11,
     "deferred": 1,
-    "adapted": 14,
+    "adapted": 15,
     "retained": 2
   }
 }
