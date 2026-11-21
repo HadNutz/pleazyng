@@ -832,5 +832,11 @@
     "adapted": 26,
     "deferred": 1,
     "retained": 2
+  },
+  "qualification_checkpoints": {
+    "Fence Plex deletion permission to the current Home session": "Downloads and profile correctness",
+    "Integrate upstream European Portuguese into the regional catalog": "Cadence, player UX and localization",
+    "Browse nested photo albums and view screen-sized photos across Plex and Jellyfin": "Open upstream proposals",
+    "Pin profile revocation, source retry, queue transitions and detail refresh ownership before extraction": "Before structural moves"
   }
 }
