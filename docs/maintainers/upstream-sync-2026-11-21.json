@@ -392,8 +392,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "fix(ios): show video only on external displays in iOS 27 SDK builds",
-      "disposition": "pending",
-      "evidence": "The fork has the scene delegate and external-window manager plus Duo code. Its root controller does not register the iOS 27 noninteractive external-display scene accessory. Adopt the guarded registration and retain previous-SDK behavior. Test video on the external screen with controls on the phone, plus route removal and ending playback. [PlezyFlutterViewController.swift L24](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/ios/Runner/PlezyFlutterViewController.swift#L24) · [ExternalDisplayManager.swift L144](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/ios/Runner/MpvPlayer/ExternalDisplayManager.swift#L144)",
+      "disposition": "adapted",
+      "evidence": "Register the video-only external display scene on supported iOS 27 SDKs and preserve the older scene-delegate path.",
       "files": [
         "ios/Runner/MpvPlayer/ExternalDisplayManager.swift",
         "ios/Runner/PlezyFlutterViewController.swift",
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "pending": 13,
+    "pending": 12,
     "deferred": 1,
-    "adapted": 13,
+    "adapted": 14,
     "retained": 2
   }
 }

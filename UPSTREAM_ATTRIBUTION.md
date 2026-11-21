@@ -1,5 +1,7 @@
 # Upstream source attribution
 
+- Register the video-only external display scene on supported iOS 27 SDKs and preserve the older scene-delegate path. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/23778fade45fc046cdd77d274d501dd0a0643e07) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
 - Keep the TV profile menu, Retry and sidebar reachable when Home has no server rows, including the fork’s cloud-only rail. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/8310991fa14f0cbac9c71cfb494d028d4314c7ff) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 
 - Prompt on resume when a TV hosts the companion remote, while allowing its connected or reconnecting controller to resume normally. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/5d5f03c00c82da91c86e900dbe931516262b23f9) to upstream Plezy. Pleazyng integrated the behavior for this fork.
