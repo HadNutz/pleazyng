@@ -3391,6 +3391,12 @@ void main() {
       await settleDetail(tester);
       expect(client.itemReads, readsBefore);
 
+      LibraryContentNotifier().notifyChanged(
+        LibraryChangeEvent(serverId: ServerId('other_server'), itemsUpdated: true, updatedItemIds: {movie.id}),
+      );
+      await settleDetail(tester);
+      expect(client.itemReads, readsBefore, reason: 'two servers may issue the same item ID');
+
       // Matching updatedItemIds refreshes the displayed item in place.
       client.show = movie.copyWith(title: 'Refreshed Movie Title');
       LibraryContentNotifier().notifyChanged(
