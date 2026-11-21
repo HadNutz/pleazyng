@@ -976,7 +976,7 @@ require(
 )
 
 
-package_windows = job("package-windows")
+package_windows = job("package-windows") + job("windows-msix") + job("windows-chocolatey")
 validate_windows_signing(package_windows)
 require(
     "needs: [validate-trusted-ref, build-windows]" in package_windows,
@@ -1829,7 +1829,7 @@ for action_pool_job in (
 
 release = job("create-release")
 require(
-    "needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, finish-notarization, build-windows, package-windows, build-linux, assemble-linux-arm64]"
+    "needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, finish-notarization, build-windows, package-windows, windows-msix, windows-chocolatey, build-linux, assemble-linux-arm64]"
     in release,
     "release dependencies must include the trust gate, all platform builds, and Windows packaging",
 )

@@ -37,6 +37,11 @@ env:
 permissions:
   contents: read
 
+concurrency:
+  group: snap-channel-${{ inputs.channel || 'stable' }}
+  cancel-in-progress: false
+  queue: max
+
 jobs:
   resolve-release:
     name: Resolve published release

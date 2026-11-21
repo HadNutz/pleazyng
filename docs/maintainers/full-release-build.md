@@ -118,10 +118,24 @@ The candidate uses its actual x64 package checks for Linux smoke evidence.
 Standalone CI retains its Linux smoke build. Flutter tests run across three
 duration-weighted shards.
 
+Windows direct and Microsoft Store payloads compile in independent x64 and
+ARM64 jobs. The MSIX job consumes both Store payloads. The installer job
+consumes the direct x64 build, and Chocolatey consumes the resulting signed
+installer. GitHub retains each job's named artifacts for downstream retries.
+
 Channel delivery runs up to four independent destinations at once, records the
 dispatched run IDs in the release driver's evidence directory, and serializes
-Google Play uploads. A retry can deliver the retained Mac App Store package or
-mirror the existing GHCR digest to Docker Hub.
+Google Play uploads. Reusing that evidence directory reconnects the controller
+to the specific provider run. A retry can deliver the retained Mac App Store
+package or mirror the existing GHCR digest to Docker Hub. Relay images build
+on native AMD64 and ARM64 runners. A small manifest job combines their digests
+before either registry's latest tag is updated.
+
+The required pull-request check always reports a result. Editorial-only changes
+run changelog and change-scope validation. Relay-only changes run Go and edge
+tests. Changes that span the app and relay, or touch CI configuration, run both.
+Read-only feature validations discard superseded push runs; manual validations
+and publication requests keep their place.
 
 ## Apple native qualification
 

@@ -28,12 +28,20 @@ permissions:
   contents: read
   packages: write
 
+concurrency:
+  group: relay-build-${{ inputs.release_tag }}
+  cancel-in-progress: false
+  queue: max
+
 jobs:
-  publish:
+  resolve:
     runs-on: ubuntu-24.04
     outputs:
-      digest: ${{ steps.image.outputs.digest }}
       version: ${{ steps.release.outputs.version }}
+      commit: ${{ steps.release.outputs.commit }}
+      published: ${{ steps.release.outputs.published }}
+    permissions:
+      contents: read
     timeout-minutes: 30
     steps:
       - name: Require the default branch for manual retries
@@ -73,20 +81,28 @@ jobs:
             echo "tag=$tag"
             echo "commit=$commit"
             echo "version=$version"
+            echo "published=$(jq -r .publishedAt <<<"$metadata")"
           } >> "$GITHUB_OUTPUT"
 
+  platform:
+    name: Build relay (${{ matrix.arch }})
+    needs: resolve
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ steps.release.outputs.tag }}
+          ref: ${{ needs.resolve.outputs.commit }}
           persist-credentials: false
-
-      - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-
-      - name: Set OCI build date
-        id: build-metadata
-        run: echo "build_date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
-
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
@@ -94,37 +110,85 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - name: Build and publish GHCR image
+      - name: Push native platform image by digest
         id: image
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
         with:
           context: server
           file: server/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: true
+          platforms: linux/${{ matrix.arch }}
+          outputs: type=image,name=ghcr.io/snapetech-org/pleazyng-relay,push-by-digest=true,name-canonical=true,push=true
           build-args: |
-            VERSION=${{ steps.release.outputs.version }}
-            REVISION=${{ steps.release.outputs.commit }}
-            BUILD_DATE=${{ steps.build-metadata.outputs.build_date }}
-          tags: |
-            ghcr.io/snapetech-org/pleazyng-relay:${{ steps.release.outputs.version }}
+            VERSION=${{ needs.resolve.outputs.version }}
+            REVISION=${{ needs.resolve.outputs.commit }}
+            BUILD_DATE=${{ needs.resolve.outputs.published }}
           labels: |
             org.opencontainers.image.title=Pleazyng Relay
             org.opencontainers.image.description=Pleazyng authentication and artifact relay service
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
-            org.opencontainers.image.version=${{ steps.release.outputs.version }}
-            org.opencontainers.image.revision=${{ steps.release.outputs.commit }}
-          cache-from: type=gha,scope=pleazyng-relay
-          cache-to: type=gha,scope=pleazyng-relay,mode=max
+            org.opencontainers.image.version=${{ needs.resolve.outputs.version }}
+            org.opencontainers.image.revision=${{ needs.resolve.outputs.commit }}
+          cache-from: type=gha,scope=pleazyng-relay-${{ matrix.arch }}
+          cache-to: type=gha,scope=pleazyng-relay-${{ matrix.arch }},mode=max
 
-      - name: Verify GHCR architecture manifest
+      - name: Checkpoint platform digest
         env:
-          IMAGE: ghcr.io/snapetech-org/pleazyng-relay@${{ steps.image.outputs.digest }}
+          DIGEST: ${{ steps.image.outputs.digest }}
+          ARCH: ${{ matrix.arch }}
         run: |
           set -euo pipefail
-          docker buildx imagetools inspect "$IMAGE" --raw | jq -e '
+          [[ "$DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]]
+          printf '%s\n' "$DIGEST" > "$RUNNER_TEMP/$ARCH.digest"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: relay-digest-${{ matrix.arch }}
+          path: ${{ runner.temp }}/${{ matrix.arch }}.digest
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 30
+
+  publish:
+    name: Publish multi-architecture relay manifest
+    needs: [resolve, platform]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      digest: ${{ steps.manifest.outputs.digest }}
+      version: ${{ needs.resolve.outputs.version }}
+    steps:
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          pattern: relay-digest-*
+          merge-multiple: true
+          path: digests
+      - name: Assemble and verify native platform digests
+        id: manifest
+        env:
+          IMAGE: ghcr.io/snapetech-org/pleazyng-relay
+          VERSION: ${{ needs.resolve.outputs.version }}
+        run: |
+          set -euo pipefail
+          sources=()
+          for arch in amd64 arm64; do
+            digest=$(cat "digests/$arch.digest")
+            [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
+            sources+=("$IMAGE@$digest")
+          done
+          docker buildx imagetools create --metadata-file manifest.json --tag "$IMAGE:$VERSION" "${sources[@]}"
+          digest=$(jq -er '."containerimage.descriptor".digest' manifest.json)
+          [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
+          docker buildx imagetools inspect "$IMAGE@$digest" --raw | jq -e '
             [.manifests[].platform | select(.os == "linux") | .architecture] | sort == ["amd64", "arm64"]
           '
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
   mirror:
     runs-on: ubuntu-24.04

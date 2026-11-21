@@ -374,6 +374,7 @@ jobs:
     name: Validate release request
     needs: capture-candidate
     if: ${{ always() && inputs.runner_pool == 'public' && (inputs.action == 'build' || inputs.action == 'release') && (inputs.candidate_ref == '' || needs.capture-candidate.result == 'success') }}
+    timeout-minutes: 30
     runs-on: ubuntu-24.04
     outputs:
       action: ${{ steps.request.outputs.action }}
@@ -1222,6 +1223,7 @@ jobs:
   build-android:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.android-variant.result == 'success' && inputs.reuse_android_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') }}
     needs: [validate-trusted-ref, android-variant]
+    timeout-minutes: 30
     runs-on: ubuntu-24.04
     permissions:
       id-token: write
@@ -3059,6 +3061,7 @@ jobs:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && inputs.reuse_platform_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: validate-trusted-ref
     name: Build Windows (${{ matrix.arch }})
+    timeout-minutes: 180
     runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-vs2026-arm' || 'windows-2025' }}
     env:
       GH_TOKEN: ${{ github.token }}
@@ -3069,7 +3072,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' && '{"include":[{"arch":"x64","flutter_setup":"action","native_cache_path":"build/windows/x64/_deps"},{"arch":"arm64","flutter_setup":"git","native_cache_path":"build/windows/arm64/_deps"}]}' || '{"include":[{"arch":"x64","flutter_setup":"action","native_cache_path":"build/windows/x64/_deps"}]}') }}
-    steps:
+    steps: &windows-build-steps
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.recovery_source_sha || github.sha }}
@@ -3239,6 +3242,7 @@ jobs:
         run: python scripts/motion/prepare_desktop_neural_models.py --destination "$env:PLEAZYNG_DESKTOP_NEURAL_MODEL_ROOT"
 
       - name: Build Windows ${{ matrix.arch }}
+        if: github.job == 'build-windows'
         id: windows-build
         shell: pwsh
         env:
@@ -3269,6 +3273,7 @@ jobs:
           Write-Host "Verbose CMake install retry exit code: $installExit"
 
       - name: Verify Windows bundle contents
+        if: github.job == 'build-windows'
         shell: pwsh
         run: |
           $bundleDir = "build/windows/${{ matrix.arch }}/runner/Release"
@@ -3358,6 +3363,7 @@ jobs:
           }
 
       - name: Upload ${{ matrix.arch }} build
+        if: github.job == 'build-windows'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: windows-${{ matrix.arch }}-build
@@ -3365,7 +3371,7 @@ jobs:
           path: build/windows/${{ matrix.arch }}/runner/Release/
 
       - name: Build separate Microsoft Store trial and unlock payload
-        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
+        if: ${{ (vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '') && github.job == 'windows-store-native' }}
         shell: pwsh
         env:
           MSSTORE_LIFETIME_PRODUCT_ID: ${{ vars.MSSTORE_LIFETIME_PRODUCT_ID }}
@@ -3374,7 +3380,7 @@ jobs:
         run: python scripts/build_microsoft_store.py --arch "${{ matrix.arch }}"
 
       - name: Upload Microsoft Store ${{ matrix.arch }} payload
-        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
+        if: ${{ (vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '') && github.job == 'windows-store-native' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: windows-store-${{ matrix.arch }}-build
@@ -3382,9 +3388,27 @@ jobs:
           path: build/windows/${{ matrix.arch }}/runner/Release/
           if-no-files-found: error
 
+  windows-store-native:
+    if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' && always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && inputs.reuse_platform_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: validate-trusted-ref
+    name: Build Windows Store (${{ matrix.arch }})
+    timeout-minutes: 180
+    runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-vs2026-arm' || 'windows-2025' }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PLEZYNG_ALLOW_DIRECT_DOWNLOADS: ${{ needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' && '1' || '0' }}
+      PLEAZYNG_DESKTOP_NEURAL_MODEL_ROOT: ${{ github.workspace }}/build/desktop-neural-models
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' && '{"include":[{"arch":"x64","flutter_setup":"action","native_cache_path":"build/windows/x64/_deps"},{"arch":"arm64","flutter_setup":"git","native_cache_path":"build/windows/arm64/_deps"}]}' || '{"include":[{"arch":"x64","flutter_setup":"action","native_cache_path":"build/windows/x64/_deps"}]}') }}
+    steps: *windows-build-steps
+
   package-windows:
     if: ${{ inputs.reuse_platform_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: [validate-trusted-ref, build-windows]
+    timeout-minutes: 60
     runs-on: windows-2025
     permissions:
       id-token: write
@@ -3434,39 +3458,6 @@ jobs:
       - name: Build installer and portables
         run: .\windows\build-installer.ps1 -X64BuildDir "build-x64" -Version "${{ steps.version.outputs.version }}"
 
-      - name: Download Microsoft Store x64 payload
-        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
-        with:
-          name: windows-store-x64-build
-          path: build-store-x64
-
-      - name: Download Microsoft Store arm64 payload
-        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
-        with:
-          name: windows-store-arm64-build
-          path: build-store-arm64
-
-      - name: Build Microsoft Store MSIX bundle
-        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
-        env:
-          MSSTORE_PACKAGE_NAME: ${{ vars.MSSTORE_PACKAGE_NAME }}
-          MSSTORE_PUBLISHER: ${{ vars.MSSTORE_PUBLISHER }}
-          MSSTORE_PUBLISHER_DISPLAY_NAME: ${{ vars.MSSTORE_PUBLISHER_DISPLAY_NAME }}
-          MSSTORE_LIFETIME_PRODUCT_ID: ${{ vars.MSSTORE_LIFETIME_PRODUCT_ID }}
-          RELEASE_VERSION: ${{ steps.version.outputs.version }}
-        shell: pwsh
-        run: |
-          .\windows\build-msix.ps1 `
-            -X64BuildDir "build-store-x64" `
-            -Arm64BuildDir "build-store-arm64" `
-            -LifetimeProductId $env:MSSTORE_LIFETIME_PRODUCT_ID `
-            -Version $env:RELEASE_VERSION `
-            -IdentityName $env:MSSTORE_PACKAGE_NAME `
-            -Publisher $env:MSSTORE_PUBLISHER `
-            -PublisherDisplayName $env:MSSTORE_PUBLISHER_DISPLAY_NAME
-
       - name: Sign installer for Microsoft Store submissions
         env:
           WINDOWS_SIGNING_CERTIFICATE_BASE64: ${{ secrets.WINDOWS_SIGNING_CERTIFICATE_BASE64 }}
@@ -3501,6 +3492,169 @@ jobs:
           } finally {
             Remove-Item -Path $pfxPath -Force -ErrorAction SilentlyContinue
           }
+
+      - name: Check Sparkle signing key
+        id: sparkle-signing
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:SPARKLE_PRIVATE_KEY)) {
+            "available=false" >> $env:GITHUB_OUTPUT
+          } else {
+            "available=true" >> $env:GITHUB_OUTPUT
+          }
+
+      - name: Sign installer for WinSparkle (EdDSA)
+        if: steps.sparkle-signing.outputs.available == 'true'
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        shell: pwsh
+        run: |
+          $keyPath = Join-Path $env:RUNNER_TEMP "plezy-winsparkle-ed25519.pem"
+          try {
+            Set-Content -Path $keyPath -Value $env:SPARKLE_PRIVATE_KEY -Encoding ascii -NoNewline
+            $output = & dart run auto_updater:sign_update pleazyng-windows-installer.exe $keyPath
+            if ($LASTEXITCODE -ne 0) {
+              throw "WinSparkle signer failed with exit code $LASTEXITCODE"
+            }
+            $match = [regex]::Match($output, 'edSignature="([^"]*)"')
+            if (-not $match.Success) {
+              throw "WinSparkle signer returned no EdDSA signature"
+            }
+            Set-Content -Path win-ed-signature.txt -Value $match.Groups[1].Value -Encoding ascii -NoNewline
+            Set-Content -Path win-installer-size.txt -Value (Get-Item pleazyng-windows-installer.exe).Length.ToString() -Encoding ascii -NoNewline
+          } finally {
+            Remove-Item -Path $keyPath -Force -ErrorAction SilentlyContinue
+          }
+
+      - name: Attest Windows artifacts
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: |
+            pleazyng-windows-x64-portable.7z
+            pleazyng-windows-installer.exe
+
+      - name: Upload x64 portable
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: windows-x64-portable
+          overwrite: true
+          path: pleazyng-windows-x64-portable.7z
+
+      - name: Upload installer
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: windows-installer
+          overwrite: true
+          path: |
+            pleazyng-windows-installer.exe
+            win-ed-signature.txt
+            win-installer-size.txt
+
+  windows-msix:
+    name: Package Windows MSIX
+    if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' && inputs.reuse_platform_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: [validate-trusted-ref, windows-store-native]
+    timeout-minutes: 45
+    runs-on: windows-2025
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.recovery_source_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Read version from pubspec
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(python3 scripts/pubspec_version.py pubspec.yaml)
+          echo "version=${VERSION%%+*}" >> "$GITHUB_OUTPUT"
+
+      - name: Download Microsoft Store x64 payload
+        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: windows-store-x64-build
+          path: build-store-x64
+
+      - name: Download Microsoft Store arm64 payload
+        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: windows-store-arm64-build
+          path: build-store-arm64
+
+      - name: Build Microsoft Store MSIX bundle
+        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
+        env:
+          MSSTORE_PACKAGE_NAME: ${{ vars.MSSTORE_PACKAGE_NAME }}
+          MSSTORE_PUBLISHER: ${{ vars.MSSTORE_PUBLISHER }}
+          MSSTORE_PUBLISHER_DISPLAY_NAME: ${{ vars.MSSTORE_PUBLISHER_DISPLAY_NAME }}
+          MSSTORE_LIFETIME_PRODUCT_ID: ${{ vars.MSSTORE_LIFETIME_PRODUCT_ID }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        shell: pwsh
+        run: |
+          .\windows\build-msix.ps1 `
+            -X64BuildDir "build-store-x64" `
+            -Arm64BuildDir "build-store-arm64" `
+            -LifetimeProductId $env:MSSTORE_LIFETIME_PRODUCT_ID `
+            -Version $env:RELEASE_VERSION `
+            -IdentityName $env:MSSTORE_PACKAGE_NAME `
+            -Publisher $env:MSSTORE_PUBLISHER `
+            -PublisherDisplayName $env:MSSTORE_PUBLISHER_DISPLAY_NAME
+
+      - name: Attest Microsoft Store bundle
+        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: pleazyng-windows.msixbundle
+
+      - name: Upload Microsoft Store bundle
+        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: windows-msix
+          overwrite: true
+          path: pleazyng-windows.msixbundle
+
+  windows-chocolatey:
+    name: Package Windows Chocolatey
+    continue-on-error: true
+    if: ${{ inputs.reuse_platform_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: [validate-trusted-ref, package-windows]
+    timeout-minutes: 30
+    runs-on: windows-2025
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.recovery_source_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Restore signed installer for Chocolatey
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: windows-installer
+          path: .
+
+      - name: Read version from pubspec
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(python3 scripts/pubspec_version.py pubspec.yaml)
+          echo "version=${VERSION%%+*}" >> "$GITHUB_OUTPUT"
 
       - name: Package Chocolatey release
         id: chocolatey-package
@@ -3558,85 +3712,12 @@ jobs:
           $package = Get-Item "release-packages\pleazyng.$env:PACKAGE_VERSION.nupkg"
           if ($null -eq $package) { throw 'Chocolatey package was not created.' }
 
-      - name: Check Sparkle signing key
-        id: sparkle-signing
-        env:
-          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
-        shell: pwsh
-        run: |
-          if ([string]::IsNullOrWhiteSpace($env:SPARKLE_PRIVATE_KEY)) {
-            "available=false" >> $env:GITHUB_OUTPUT
-          } else {
-            "available=true" >> $env:GITHUB_OUTPUT
-          }
-
-      - name: Sign installer for WinSparkle (EdDSA)
-        if: steps.sparkle-signing.outputs.available == 'true'
-        env:
-          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
-        shell: pwsh
-        run: |
-          $keyPath = Join-Path $env:RUNNER_TEMP "plezy-winsparkle-ed25519.pem"
-          try {
-            Set-Content -Path $keyPath -Value $env:SPARKLE_PRIVATE_KEY -Encoding ascii -NoNewline
-            $output = & dart run auto_updater:sign_update pleazyng-windows-installer.exe $keyPath
-            if ($LASTEXITCODE -ne 0) {
-              throw "WinSparkle signer failed with exit code $LASTEXITCODE"
-            }
-            $match = [regex]::Match($output, 'edSignature="([^"]*)"')
-            if (-not $match.Success) {
-              throw "WinSparkle signer returned no EdDSA signature"
-            }
-            Set-Content -Path win-ed-signature.txt -Value $match.Groups[1].Value -Encoding ascii -NoNewline
-            Set-Content -Path win-installer-size.txt -Value (Get-Item pleazyng-windows-installer.exe).Length.ToString() -Encoding ascii -NoNewline
-          } finally {
-            Remove-Item -Path $keyPath -Force -ErrorAction SilentlyContinue
-          }
-
-      - name: Attest Windows artifacts
-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
-        with:
-          subject-path: |
-            pleazyng-windows-x64-portable.7z
-            pleazyng-windows-installer.exe
-
-      - name: Attest Microsoft Store bundle
-        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
-        with:
-          subject-path: pleazyng-windows.msixbundle
-
       - name: Attest Chocolatey package
         if: steps.chocolatey-package.outcome == 'success'
         continue-on-error: true
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: release-packages/pleazyng.${{ steps.version.outputs.version }}.nupkg
-
-      - name: Upload x64 portable
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: windows-x64-portable
-          overwrite: true
-          path: pleazyng-windows-x64-portable.7z
-
-      - name: Upload installer
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: windows-installer
-          overwrite: true
-          path: |
-            pleazyng-windows-installer.exe
-            win-ed-signature.txt
-            win-installer-size.txt
-
-      - name: Upload Microsoft Store bundle
-        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: windows-msix
-          overwrite: true
-          path: pleazyng-windows.msixbundle
 
       - name: Upload Chocolatey package
         if: steps.chocolatey-package.outcome == 'success'
@@ -3651,6 +3732,7 @@ jobs:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: validate-trusted-ref
     name: Compile Linux (${{ matrix.arch }})
+    timeout-minutes: 150
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     permissions:
       id-token: write
@@ -3883,13 +3965,13 @@ jobs:
 
       - name: Archive verified Linux bundle
         shell: bash
-        run: tar -C "$BUNDLE_DIR" -cf linux-bundle.tar .
+        run: tar -C "$BUNDLE_DIR" -I "zstd -T2 -1" -cf linux-bundle.tar.zst .
       - name: Retain Linux bundle
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: linux-bundle-${{ matrix.arch }}
           path: |
-            linux-bundle.tar
+            linux-bundle.tar.zst
           if-no-files-found: error
           overwrite: true
           compression-level: 0
@@ -3898,6 +3980,7 @@ jobs:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: validate-trusted-ref
     name: Compile Linux (${{ matrix.arch }})
+    timeout-minutes: 150
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     permissions:
       id-token: write
@@ -3920,6 +4003,7 @@ jobs:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.linux-bundle.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: [validate-trusted-ref, linux-bundle]
     name: Package Linux (${{ matrix.arch }}, ${{ matrix.format }})
+    timeout-minutes: 100
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     permissions:
       id-token: write
@@ -3949,7 +4033,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p "$RUNNER_TEMP/linux-bundle"
-          tar -xf linux-bundle.tar -C "$RUNNER_TEMP/linux-bundle"
+          tar --zstd -xf linux-bundle.tar.zst -C "$RUNNER_TEMP/linux-bundle"
           echo "BUNDLE_DIR=$RUNNER_TEMP/linux-bundle" >> "$GITHUB_ENV"
 
       - name: Install native package tools
@@ -4128,6 +4212,7 @@ jobs:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.linux-bundle-arm64.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: [validate-trusted-ref, linux-bundle-arm64]
     name: Package Linux (${{ matrix.arch }}, ${{ matrix.format }})
+    timeout-minutes: 100
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     permissions:
       id-token: write
@@ -4147,6 +4232,7 @@ jobs:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.linux-format.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: [validate-trusted-ref, linux-format]
     name: Build Linux (${{ matrix.arch }})
+    timeout-minutes: 30
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     permissions:
       id-token: write
@@ -4215,6 +4301,7 @@ jobs:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.linux-format-arm64.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: [validate-trusted-ref, linux-format-arm64]
     name: Build Linux (${{ matrix.arch }})
+    timeout-minutes: 30
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     permissions:
       id-token: write
@@ -4234,8 +4321,9 @@ jobs:
     steps: *build-linux-steps
 
   create-release:
-    needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, finish-notarization, build-windows, package-windows, build-linux, assemble-linux-arm64]
+    needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, finish-notarization, build-windows, package-windows, windows-msix, windows-chocolatey, build-linux, assemble-linux-arm64]
     if: ${{ always() && (needs.freeze-qualified-source.result == 'success' || (inputs.candidate_ref == '' && inputs.reuse_platform_run_id == '' && needs.freeze-qualified-source.result == 'skipped' && needs.validate-trusted-ref.outputs.qualified_tag_commit != '' && needs.validate-trusted-ref.outputs.qualified_tag_commit == needs.validate-trusted-ref.outputs.release_commit) || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.freeze-qualified-source.result == 'skipped')) && inputs.runner_pool != '' && inputs.action == 'release' && needs.validate-trusted-ref.outputs.runner_pool == 'public' && needs.validate-trusted-ref.outputs.action == 'release' && needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.result == 'success' && (needs.build-android.result == 'success' || (inputs.reuse_android_run_id != '' && needs.validate-trusted-ref.outputs.android_source_sha != '' && needs.build-android.result == 'skipped')) && ((inputs.reuse_platform_run_id == '' && needs.build-ios.result == 'success' && needs.build-tvos.result == 'success' && needs.build-macos.result == 'success' && needs.build-windows.result == 'success' && needs.package-windows.result == 'success' && needs.build-linux.result == 'success' && (needs.build-webos.result == 'success' || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && (needs.build-tizen.result == 'success' || (needs.validate-trusted-ref.outputs.include_tizen_build != 'true' && needs.build-tizen.result == 'skipped'))) || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && ((inputs.rebuild_ios && needs.build-ios.result == 'success') || (!inputs.rebuild_ios && needs.build-ios.result == 'skipped')) && ((inputs.rebuild_tvos && needs.build-tvos.result == 'success') || (!inputs.rebuild_tvos && needs.build-tvos.result == 'skipped')) && ((inputs.rebuild_macos && needs.build-macos.result == 'success') || (!inputs.rebuild_macos && needs.build-macos.result == 'skipped')) && needs.build-windows.result == 'skipped' && needs.package-windows.result == 'skipped' && ((inputs.rebuild_linux && needs.build-linux.result == 'success') || (!inputs.rebuild_linux && needs.build-linux.result == 'skipped')) && (needs.build-webos.result == 'success' || (inputs.reuse_webos_run_id != '' && needs.validate-trusted-ref.outputs.webos_source_sha != '' && needs.build-webos.result == 'skipped') || (inputs.reuse_macos_package_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.build-webos.result == 'skipped') || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && ((inputs.reuse_repaired_run_id == 'tizen-rebuild' && needs.build-tizen.result == 'success') || (inputs.reuse_repaired_run_id != 'tizen-rebuild' && needs.build-tizen.result == 'skipped')))) && (needs.build-macos.result == 'skipped' || needs.validate-trusted-ref.outputs.prepare_homebrew_cask != 'true' || needs.finish-notarization.result == 'success') && needs.assemble-linux-arm64.result == needs.build-linux.result && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
+    timeout-minutes: 75
     runs-on: ubuntu-24.04
     permissions:
       contents: write

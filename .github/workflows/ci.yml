@@ -69,6 +69,7 @@ jobs:
   analyze:
     name: Code Analysis
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    timeout-minutes: 60
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -204,6 +205,7 @@ jobs:
       matrix:
         shard: [1, 2, 3]
     if: ${{ inputs.execution_profile == 'hybrid' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
+    timeout-minutes: 80
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -252,8 +254,9 @@ jobs:
         run: python3 scripts/ci/flutter_test_shard.py ${{ matrix.shard }}
 
   test-extras:
-    name: Media, browser and plugin tests
+    name: Media and plugin tests
     if: ${{ inputs.execution_profile == 'hybrid' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
+    timeout-minutes: 60
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -312,23 +315,6 @@ jobs:
             test/services/webos_jellyfin_playback_test.dart \
             test/games/game_catalog_screen_test.dart
 
-      - name: Setup Node for reader browser checks
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: "24"
-          cache: npm
-          cache-dependency-path: tools/reader-tests/package-lock.json
-
-      - name: Install reader browser dependencies
-        working-directory: tools/reader-tests
-        run: |
-          npm ci --ignore-scripts
-          npm exec -- playwright install --with-deps chromium
-
-      - name: Run real reader browser checks
-        working-directory: tools/reader-tests
-        run: npm test
-
       - name: Install wakelock_plus test dependencies
         working-directory: packages/wakelock_plus
         run: flutter pub get --enforce-lockfile
@@ -357,21 +343,51 @@ jobs:
             (cd "packages/$pkg" && flutter pub get --enforce-lockfile && flutter test)
           done
 
+  reader-browser:
+    name: Reader browser tests
+    if: ${{ inputs.execution_profile == 'hybrid' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Setup Node for reader browser checks
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: tools/reader-tests/package-lock.json
+
+      - name: Install reader browser dependencies
+        working-directory: tools/reader-tests
+        run: |
+          npm ci --ignore-scripts
+          npm exec -- playwright install --with-deps chromium
+
+      - name: Run real reader browser checks
+        working-directory: tools/reader-tests
+        run: npm test
+
   test:
     name: Unit Tests
-    needs: [test-shards, test-extras]
+    needs: [test-shards, test-extras, reader-browser]
     if: always()
     runs-on: ubuntu-24.04
     permissions: {}
     steps:
-      - run: test "$SHARDS" = success && test "$EXTRAS" = success
+      - run: test "$SHARDS" = success && test "$EXTRAS" = success && test "$BROWSER" = success
         env:
           SHARDS: ${{ needs.test-shards.result }}
           EXTRAS: ${{ needs.test-extras.result }}
+          BROWSER: ${{ needs.reader-browser.result }}
 
   android-test:
     name: Android JVM and Native Tests
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (inputs.execution_profile != 'hybrid' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
+    timeout-minutes: 150
     runs-on: ubuntu-24.04
     permissions:
       actions: read
@@ -577,6 +593,7 @@ jobs:
   native-format:
     name: Native Formatting
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (inputs.execution_profile != 'hybrid' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
+    timeout-minutes: 20
     runs-on: macos-26-intel
     permissions:
       contents: read
@@ -601,6 +618,7 @@ jobs:
   linux-native-test:
     name: Linux native reliability (${{ matrix.sanitizer }})
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (inputs.execution_profile != 'hybrid' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
+    timeout-minutes: 60
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -819,6 +837,7 @@ jobs:
   windows-native-test:
     name: Windows native reliability (${{ matrix.arch }})
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (inputs.execution_profile != 'hybrid' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
+    timeout-minutes: 100
     runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-vs2026-arm' || 'windows-2025' }}
     env:
       PLEZYNG_ALLOW_DIRECT_DOWNLOADS: ${{ inputs.execution_profile == 'hybrid' && '1' || '0' }}
@@ -970,6 +989,7 @@ jobs:
   dependency-check:
     name: Dependency Validation
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (inputs.execution_profile != 'hybrid' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
+    timeout-minutes: 30
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -1020,6 +1040,7 @@ jobs:
   server:
     name: Server checks
     if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (inputs.execution_profile != 'hybrid' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
+    timeout-minutes: 30
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -1052,6 +1073,7 @@ jobs:
   linux-packages:
     name: Linux package smoke build
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.build_linux_packages && (inputs.execution_profile != 'hybrid' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
+    timeout-minutes: 100
     runs-on: ubuntu-24.04
     permissions:
       contents: read

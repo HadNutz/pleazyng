@@ -31,9 +31,11 @@ permissions:
 concurrency:
   group: pleazyng-copr-delivery
   cancel-in-progress: false
+  queue: max
 
 jobs:
   publish:
+    timeout-minutes: 90
     runs-on: ubuntu-24.04
     steps:
       - name: Require main for manual publication

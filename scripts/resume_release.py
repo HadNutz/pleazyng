@@ -88,6 +88,11 @@ def inspect_run(run_id: int, *, get=api):
     jobs_by_name = {j['name']: j for j in newest}
     if FINISH_MAC in jobs_by_name and jobs_by_name[FINISH_MAC].get('conclusion') != 'skipped':
         producers_by_output['macos-dmg'] = {FINISH_MAC}
+    for output, lane in [('windows-msix', 'Package Windows MSIX'), ('windows-chocolatey', 'Package Windows Chocolatey'),
+                         ('windows-store-x64-build', 'Build Windows Store (x64)'),
+                         ('windows-store-arm64-build', 'Build Windows Store (arm64)')]:
+        if lane in jobs_by_name:
+            producers_by_output[output] = {lane}
     def needs_replay(job, output):
         return job in jobs_by_name and (output not in retained or jobs_by_name[job].get('conclusion') != 'success')
 
@@ -122,7 +127,8 @@ def inspect_run(run_id: int, *, get=api):
             if name not in retained:
                 missing[name] = job['name']
     blocked = sorted(name for name in expired if name in ARTIFACT_PRODUCERS
-                     and not (ARTIFACT_PRODUCERS[name] & set(failed)))
+                     and not (producers_by_output[name] & set(failed))
+                     and (name in missing or not (producers_by_output[name] & jobs_by_name.keys())))
     return {'run': run, 'attempt': attempt, 'jobs': newest, 'failed_jobs': failed,
             'retained_artifacts': retained, 'expired_artifacts': expired,
             'missing_outputs': missing, 'blocking_expired_artifacts': blocked}

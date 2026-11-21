@@ -128,12 +128,16 @@ def build(target, arch, out, webos_ndk=None):
     def checksums(directory):
         return {name: hashlib.sha256((directory / name).read_bytes()).hexdigest() for name in names}
 
-    if receipt.is_file() and all((cache / name).is_file() for name in names):
-        if json.loads(receipt.read_text()) == checksums(cache):
-            out.mkdir(parents=True, exist_ok=True)
-            for name in names:
-                shutil.copyfile(cache / name, out / name)
-            return
+    try:
+        cached = json.loads(receipt.read_text())
+        verified = cached == checksums(cache)
+    except (OSError, ValueError):
+        verified = False
+    if verified:
+        out.mkdir(parents=True, exist_ok=True)
+        for name in names:
+            shutil.copyfile(cache / name, out / name)
+        return
     compile_bundle(target, arch, out, webos_ndk)
     cache.mkdir(parents=True, exist_ok=True)
     for name in names:

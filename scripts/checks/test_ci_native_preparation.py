@@ -179,13 +179,13 @@ class NativePreparationOrderTests(unittest.TestCase):
     def test_unit_job_is_the_only_full_application_suite(self):
         workflow = WORKFLOW.read_text()
         analysis = job(workflow, 'analyze')
-        unit = job(workflow, 'test-extras')
+        unit = job(workflow, 'test-extras') + job(workflow, 'reader-browser')
         shards = job(workflow, 'test-shards')
         self.assertNotRegex(analysis, r'flutter test\b|scripts/run_tests\.sh\b')
         self.assertIn('dart run scripts/checks/check_analyzer.dart', step(analysis, 'Analyze code'))
         self.assertEqual(workflow.count('scripts/ci/flutter_test_shard.py'), 1)
         self.assertIn('matrix.shard', step(shards, 'Run Flutter test shard'))
-        self.assertIn('needs: [test-shards, test-extras]', job(workflow, 'test'))
+        self.assertIn('needs: [test-shards, test-extras, reader-browser]', job(workflow, 'test'))
         # These independent suites are intentional coverage, not duplicates.
         for name in (
             'Run real reader browser checks',
