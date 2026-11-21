@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Fix Linux Neural falling back to CPU on systems where the bundled WebGPU provider can run the model.
+
 - Protect shared episode downloads when deleting media or signing out of Plex. Retain failed cleanup for retry, remove cancelled multipart downloads, and release local HLS archives when a profile is removed.
 - Preserve existing anime tracker entries when toggling watchlists, merge independent Jellyfin metadata edits, and keep video bookmarks with their editions. Older bookmarks can be assigned to a version explicitly.
 - Preserve manually grouped audiobooks through rescans. Sync reading progress, EPUB completion and WebDAV bookmark changes without letting a single invalid progress record block other titles.
