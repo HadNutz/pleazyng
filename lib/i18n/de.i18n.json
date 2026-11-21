@@ -1056,11 +1056,11 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng konnte nicht prüfen, welche Dateien dadurch entfernt werden. Es könnte also mehr gelöscht werden als das oben genannte Element. Brich ab und versuche es erneut, oder lösche trotzdem.",
     "deleteScopeUnverifiedNoFileInfo": "Dein Server hat für dieses Element keine Dateidetails bereitgestellt, daher kann Pleazyng nicht prüfen, welche Dateien entfernt werden. Es könnte mehr gelöscht werden als das oben genannte Element.",
     "mediaDeletedSuccessfully": "Medienelement gelöscht",
+    "mediaDeletionDisabledOnServer": "Das Löschen von Medien ist auf diesem Server deaktiviert. Erlaube das Löschen von Medien in den Bibliothekseinstellungen des Servers.",
     "mediaFailedToDelete": "Medienelement konnte nicht gelöscht werden",
     "rate": "Bewerten",
     "playFromBeginning": "Von Anfang an abspielen",
-    "playVersion": "Version abspielen …",
-    "mediaDeletionDisabledOnServer": "Das Löschen von Medien ist auf diesem Server deaktiviert. Erlaube das Löschen von Medien in den Bibliothekseinstellungen des Servers."
+    "playVersion": "Version abspielen …"
   },
   "rateSheet": {
     "title": "Bewerten",

@@ -1058,11 +1058,11 @@
     "deleteScopeUnverifiedProbeFailed": "O Pleazyng não conseguiu verificar quais arquivos serão removidos, então pode excluir mais do que o item acima. Cancele e tente novamente, ou exclua mesmo assim.",
     "deleteScopeUnverifiedNoFileInfo": "Seu servidor não forneceu detalhes do arquivo para este item, então o Pleazyng não pode verificar quais arquivos serão removidos. Pode excluir mais do que o item acima.",
     "mediaDeletedSuccessfully": "Item de mídia excluído com sucesso",
+    "mediaDeletionDisabledOnServer": "A exclusão de mídia está desativada neste servidor. Permita a exclusão de mídia nas configurações de biblioteca do servidor.",
     "mediaFailedToDelete": "Falha ao excluir item de mídia",
     "rate": "Avaliar",
     "playFromBeginning": "Reproduzir do início",
-    "playVersion": "Reproduzir versão...",
-    "mediaDeletionDisabledOnServer": "A exclusão de mídia está desativada neste servidor. Permita a exclusão de mídia nas configurações de biblioteca do servidor."
+    "playVersion": "Reproduzir versão..."
   },
   "rateSheet": {
     "title": "Avaliar",

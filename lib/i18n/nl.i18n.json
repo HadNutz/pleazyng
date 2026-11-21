@@ -1056,11 +1056,11 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng kon niet controleren welke bestanden hiermee worden verwijderd, dus het kan meer verwijderen dan het hierboven genoemde item. Annuleer en probeer het opnieuw, of verwijder toch.",
     "deleteScopeUnverifiedNoFileInfo": "Je server heeft geen bestandsgegevens voor dit item verstrekt, dus Pleazyng kan niet controleren welke bestanden hiermee worden verwijderd. Het kan meer verwijderen dan het hierboven genoemde item.",
     "mediaDeletedSuccessfully": "Media-item succesvol verwijderd",
+    "mediaDeletionDisabledOnServer": "Het verwijderen van media is op deze server uitgeschakeld. Sta het verwijderen van media toe in de bibliotheekinstellingen van de server.",
     "mediaFailedToDelete": "Verwijderen van media-item mislukt",
     "rate": "Beoordelen",
     "playFromBeginning": "Afspelen vanaf het begin",
-    "playVersion": "Versie afspelen...",
-    "mediaDeletionDisabledOnServer": "Het verwijderen van media is op deze server uitgeschakeld. Sta het verwijderen van media toe in de bibliotheekinstellingen van de server."
+    "playVersion": "Versie afspelen..."
   },
   "rateSheet": {
     "title": "Beoordelen",

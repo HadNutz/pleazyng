@@ -1146,11 +1146,11 @@ class _Translations$mediaMenu$bg extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng не успя да провери кои файлове ще бъдат премахнати, така че може да изтрие повече от посочения по-горе елемент. Откажете и опитайте отново, или изтрийте въпреки това.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Сървърът ви не предостави данни за файловете на този елемент, така че Pleazyng не може да провери кои файлове ще бъдат премахнати. Може да изтрие повече от посочения по-горе елемент.';
 	@override String get mediaDeletedSuccessfully => 'Елементът е изтрит успешно';
+	@override String get mediaDeletionDisabledOnServer => 'Изтриването на медия е изключено на този сървър. Включете разрешението за изтриване на медия в настройките на библиотеката на сървъра.';
 	@override String get mediaFailedToDelete => 'Неуспешно изтриване на елемента';
 	@override String get rate => 'Оцени';
 	@override String get playFromBeginning => 'Пусни от началото';
 	@override String get playVersion => 'Пусни версия...';
-	@override String get mediaDeletionDisabledOnServer => 'Изтриването на медия е изключено на този сървър. Включете разрешението за изтриване на медия в настройките на библиотеката на сървъра.';
 }
 
 // Path: rateSheet
@@ -6603,11 +6603,11 @@ extension on TranslationsBg {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng не успя да провери кои файлове ще бъдат премахнати, така че може да изтрие повече от посочения по-горе елемент. Откажете и опитайте отново, или изтрийте въпреки това.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Сървърът ви не предостави данни за файловете на този елемент, така че Pleazyng не може да провери кои файлове ще бъдат премахнати. Може да изтрие повече от посочения по-горе елемент.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Елементът е изтрит успешно',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Изтриването на медия е изключено на този сървър. Включете разрешението за изтриване на медия в настройките на библиотеката на сървъра.',
 			'mediaMenu.mediaFailedToDelete' => 'Неуспешно изтриване на елемента',
 			'mediaMenu.rate' => 'Оцени',
 			'mediaMenu.playFromBeginning' => 'Пусни от началото',
 			'mediaMenu.playVersion' => 'Пусни версия...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'Изтриването на медия е изключено на този сървър. Включете разрешението за изтриване на медия в настройките на библиотеката на сървъра.',
 			'rateSheet.title' => 'Оцени',
 			'rateSheet.server' => 'Сървър',
 			'rateSheet.favorite' => 'Добави в любими',

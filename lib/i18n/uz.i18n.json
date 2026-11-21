@@ -1056,11 +1056,11 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng qaysi fayllar olib tashlanishini tekshira olmadi, shuning uchun u yuqorida koʻrsatilgan elementdan koʻproq narsani oʻchirishi mumkin. Bekor qilib qaytadan urining yoki baribir oʻchiring.",
     "deleteScopeUnverifiedNoFileInfo": "Serveringiz ushbu element uchun fayl tafsilotlarini taqdim etmadi, shuning uchun Pleazyng qaysi fayllar olib tashlanishini tekshira olmaydi. U yuqorida koʻrsatilgan elementdan koʻproq narsani oʻchirishi mumkin.",
     "mediaDeletedSuccessfully": "Media elementi muvaffaqiyatli oʻchirildi",
+    "mediaDeletionDisabledOnServer": "Bu serverda media fayllarni oʻchirish oʻchirilgan. Server kutubxonasi sozlamalarida media fayllarni oʻchirishga ruxsat bering.",
     "mediaFailedToDelete": "Media elementini oʻchirib boʻlmadi",
     "rate": "Baho berish",
     "playFromBeginning": "Boshidan ijro etish",
-    "playVersion": "Versiyani ijro etish...",
-    "mediaDeletionDisabledOnServer": "Bu serverda media fayllarni oʻchirish oʻchirilgan. Server kutubxonasi sozlamalarida media fayllarni oʻchirishga ruxsat bering."
+    "playVersion": "Versiyani ijro etish..."
   },
   "rateSheet": {
     "title": "Baho berish",

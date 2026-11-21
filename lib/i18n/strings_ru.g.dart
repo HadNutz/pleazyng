@@ -1156,11 +1156,11 @@ class _Translations$mediaMenu$ru extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng не смог проверить, какие файлы будут удалены, поэтому может быть удалено больше, чем указанный выше элемент. Отмените и попробуйте снова либо удалите в любом случае.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Ваш сервер не предоставил сведения о файлах для этого элемента, поэтому Pleazyng не может проверить, какие файлы будут удалены. Может быть удалено больше, чем указанный выше элемент.';
 	@override String get mediaDeletedSuccessfully => 'Медиаэлемент успешно удалён';
+	@override String get mediaDeletionDisabledOnServer => 'Удаление медиафайлов на этом сервере отключено. Разрешите удаление медиафайлов в настройках библиотеки сервера.';
 	@override String get mediaFailedToDelete => 'Не удалось удалить медиаэлемент';
 	@override String get rate => 'Оценить';
 	@override String get playFromBeginning => 'Воспроизвести сначала';
 	@override String get playVersion => 'Воспроизвести версию...';
-	@override String get mediaDeletionDisabledOnServer => 'Удаление медиафайлов на этом сервере отключено. Разрешите удаление медиафайлов в настройках библиотеки сервера.';
 }
 
 // Path: rateSheet
@@ -6653,11 +6653,11 @@ extension on TranslationsRu {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng не смог проверить, какие файлы будут удалены, поэтому может быть удалено больше, чем указанный выше элемент. Отмените и попробуйте снова либо удалите в любом случае.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Ваш сервер не предоставил сведения о файлах для этого элемента, поэтому Pleazyng не может проверить, какие файлы будут удалены. Может быть удалено больше, чем указанный выше элемент.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Медиаэлемент успешно удалён',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Удаление медиафайлов на этом сервере отключено. Разрешите удаление медиафайлов в настройках библиотеки сервера.',
 			'mediaMenu.mediaFailedToDelete' => 'Не удалось удалить медиаэлемент',
 			'mediaMenu.rate' => 'Оценить',
 			'mediaMenu.playFromBeginning' => 'Воспроизвести сначала',
 			'mediaMenu.playVersion' => 'Воспроизвести версию...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'Удаление медиафайлов на этом сервере отключено. Разрешите удаление медиафайлов в настройках библиотеки сервера.',
 			'rateSheet.title' => 'Оценить',
 			'rateSheet.server' => 'Сервер',
 			'rateSheet.favorite' => 'Добавить в избранное',

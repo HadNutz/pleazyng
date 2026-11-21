@@ -1054,11 +1054,11 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng 无法确认此操作会删除哪些文件，因此删除范围可能超出上面提到的项目。请取消后重试，或仍然删除。",
     "deleteScopeUnverifiedNoFileInfo": "你的服务器没有提供此项目的文件详情，因此 Pleazyng 无法确认此操作会删除哪些文件。删除范围可能超出上面提到的项目。",
     "mediaDeletedSuccessfully": "媒体项已成功删除",
+    "mediaDeletionDisabledOnServer": "此服务器已关闭媒体删除功能。请在服务器的媒体库设置中允许删除媒体。",
     "mediaFailedToDelete": "删除媒体项失败",
     "rate": "评分",
     "playFromBeginning": "从头播放",
-    "playVersion": "播放版本…",
-    "mediaDeletionDisabledOnServer": "此服务器已关闭媒体删除功能。请在服务器的媒体库设置中允许删除媒体。"
+    "playVersion": "播放版本…"
   },
   "rateSheet": {
     "title": "评分",

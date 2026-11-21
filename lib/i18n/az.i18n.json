@@ -1056,11 +1056,11 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng bunun hansı faylları siləcəyini yoxlaya bilmədi, ona görə də yuxarıda adı çəkilən elementdən daha çoxunu silə bilər. Ləğv edib təzədən cəhd edin və ya yenə də silin.",
     "deleteScopeUnverifiedNoFileInfo": "Serveriniz bu element üçün fayl təfərrüatlarını təqdim etmədi, ona görə Pleazyng bunun hansı faylları siləcəyini yoxlaya bilmir. Yuxarıda adı çəkilən elementdən daha çoxunu silə bilər.",
     "mediaDeletedSuccessfully": "Media elementi uğurla silindi",
+    "mediaDeletionDisabledOnServer": "Bu serverdə media silmək deaktiv edilib. Serverin kitabxana ayarlarında media silməyə icazə verin.",
     "mediaFailedToDelete": "Media elementi silinə bilmədi",
     "rate": "Qiymətləndir",
     "playFromBeginning": "Əvvəldən oynat",
-    "playVersion": "Versiyanı oynat...",
-    "mediaDeletionDisabledOnServer": "Bu serverdə media silmək deaktiv edilib. Serverin kitabxana ayarlarında media silməyə icazə verin."
+    "playVersion": "Versiyanı oynat..."
   },
   "rateSheet": {
     "title": "Qiymətləndir",

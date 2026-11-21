@@ -1058,11 +1058,11 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng לא הצליח לבדוק אילו קבצים יימחקו, ולכן ייתכן שיימחקו קבצים נוספים מעבר לפריט שצוין למעלה. אפשר לבטל ולנסות שוב, או למחוק בכל זאת.",
     "deleteScopeUnverifiedNoFileInfo": "השרת לא סיפק פרטי קבצים עבור הפריט הזה, ולכן Pleazyng לא יכול לבדוק אילו קבצים יימחקו. ייתכן שיימחקו קבצים נוספים מעבר לפריט שצוין למעלה.",
     "mediaDeletedSuccessfully": "התקשורת הוסרה בהצלחה",
+    "mediaDeletionDisabledOnServer": "מחיקת מדיה מושבתת בשרת הזה. יש לאפשר מחיקת מדיה בהגדרות הספרייה של השרת.",
     "mediaFailedToDelete": "לא הצלחתי למחוק את התקשורת",
     "rate": "דירוג",
     "playFromBeginning": "נגן מהתחלה",
-    "playVersion": "לשחק גרסה...",
-    "mediaDeletionDisabledOnServer": "מחיקת מדיה מושבתת בשרת הזה. יש לאפשר מחיקת מדיה בהגדרות הספרייה של השרת."
+    "playVersion": "לשחק גרסה..."
   },
   "rateSheet": {
     "title": "דירוג",

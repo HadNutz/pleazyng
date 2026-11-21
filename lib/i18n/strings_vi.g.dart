@@ -1141,11 +1141,11 @@ class _Translations$mediaMenu$vi extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng không thể xác định những tệp sẽ bị xóa, nên có thể xóa nhiều hơn mục nêu trên. Hãy hủy và thử lại, hoặc vẫn xóa.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Máy chủ không cung cấp thông tin tệp cho mục này, nên Pleazyng không thể xác định những tệp sẽ bị xóa. Có thể xóa nhiều hơn mục nêu trên.';
 	@override String get mediaDeletedSuccessfully => 'Media item đã bị xóa thành công';
+	@override String get mediaDeletionDisabledOnServer => 'Tính năng xóa nội dung đã tắt trên máy chủ này. Hãy cho phép xóa nội dung trong phần cài đặt thư viện của máy chủ.';
 	@override String get mediaFailedToDelete => 'Không xóa các mục phương tiện truyền thông';
 	@override String get rate => 'Đánh giá';
 	@override String get playFromBeginning => 'Phát từ đầu';
 	@override String get playVersion => 'Game phiên bản...';
-	@override String get mediaDeletionDisabledOnServer => 'Tính năng xóa nội dung đã tắt trên máy chủ này. Hãy cho phép xóa nội dung trong phần cài đặt thư viện của máy chủ.';
 }
 
 // Path: rateSheet
@@ -6578,11 +6578,11 @@ extension on TranslationsVi {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng không thể xác định những tệp sẽ bị xóa, nên có thể xóa nhiều hơn mục nêu trên. Hãy hủy và thử lại, hoặc vẫn xóa.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Máy chủ không cung cấp thông tin tệp cho mục này, nên Pleazyng không thể xác định những tệp sẽ bị xóa. Có thể xóa nhiều hơn mục nêu trên.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Media item đã bị xóa thành công',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Tính năng xóa nội dung đã tắt trên máy chủ này. Hãy cho phép xóa nội dung trong phần cài đặt thư viện của máy chủ.',
 			'mediaMenu.mediaFailedToDelete' => 'Không xóa các mục phương tiện truyền thông',
 			'mediaMenu.rate' => 'Đánh giá',
 			'mediaMenu.playFromBeginning' => 'Phát từ đầu',
 			'mediaMenu.playVersion' => 'Game phiên bản...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'Tính năng xóa nội dung đã tắt trên máy chủ này. Hãy cho phép xóa nội dung trong phần cài đặt thư viện của máy chủ.',
 			'rateSheet.title' => 'Đánh giá',
 			'rateSheet.server' => 'Máy chủ',
 			'rateSheet.favorite' => 'Yêu thích',

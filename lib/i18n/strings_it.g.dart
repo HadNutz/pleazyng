@@ -1148,11 +1148,11 @@ class _Translations$mediaMenu$it extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng non ha potuto verificare quali file rimuoverà, quindi potrebbe eliminare più di quanto indicato sopra. Annulla e riprova, oppure elimina comunque.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Il tuo server non ha fornito i dettagli del file per questo elemento, quindi Pleazyng non può verificare quali file rimuoverà. Potrebbe eliminare più di quanto indicato sopra.';
 	@override String get mediaDeletedSuccessfully => 'Elemento multimediale eliminato correttamente';
+	@override String get mediaDeletionDisabledOnServer => 'L’eliminazione dei contenuti è disattivata su questo server. Consentila nelle impostazioni della libreria del server.';
 	@override String get mediaFailedToDelete => 'Impossibile eliminare l\'elemento multimediale';
 	@override String get rate => 'Valuta';
 	@override String get playFromBeginning => 'Riproduci dall\'inizio';
 	@override String get playVersion => 'Riproduci versione...';
-	@override String get mediaDeletionDisabledOnServer => 'L’eliminazione dei contenuti è disattivata su questo server. Consentila nelle impostazioni della libreria del server.';
 }
 
 // Path: rateSheet
@@ -6610,11 +6610,11 @@ extension on TranslationsIt {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng non ha potuto verificare quali file rimuoverà, quindi potrebbe eliminare più di quanto indicato sopra. Annulla e riprova, oppure elimina comunque.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Il tuo server non ha fornito i dettagli del file per questo elemento, quindi Pleazyng non può verificare quali file rimuoverà. Potrebbe eliminare più di quanto indicato sopra.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Elemento multimediale eliminato correttamente',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'L’eliminazione dei contenuti è disattivata su questo server. Consentila nelle impostazioni della libreria del server.',
 			'mediaMenu.mediaFailedToDelete' => 'Impossibile eliminare l\'elemento multimediale',
 			'mediaMenu.rate' => 'Valuta',
 			'mediaMenu.playFromBeginning' => 'Riproduci dall\'inizio',
 			'mediaMenu.playVersion' => 'Riproduci versione...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'L’eliminazione dei contenuti è disattivata su questo server. Consentila nelle impostazioni della libreria del server.',
 			'rateSheet.title' => 'Valuta',
 			'rateSheet.server' => 'Server',
 			'rateSheet.favorite' => 'Preferito',

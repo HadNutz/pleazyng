@@ -1146,11 +1146,11 @@ class _Translations$mediaMenu$bn extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng কোন ফাইলটি মুছে ফেলবে তা নিশ্চিত করতে পারেন না, তাই এটি উপরে নামিত পণ্যের চেয়ে বেশি মুছে ফেলতে পারে. বাতিল করুন এবং আবারও চেষ্টা করুন, অথবা কোনওভাবে মুছে ফেলুন।';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'আপনার সার্ভার এই আইটেমের ফাইলের বিবরণ দেয়নি, তাই Pleazyng কোন ফাইলগুলি মুছে যাবে তা পরীক্ষা করতে পারছে না। উপরে উল্লেখ করা আইটেম ছাড়াও আরও কিছু মুছে যেতে পারে।';
 	@override String get mediaDeletedSuccessfully => 'সফলভাবে মুছে ফেলেন মিডিয়া';
+	@override String get mediaDeletionDisabledOnServer => 'এই সার্ভারে মিডিয়া মুছে ফেলা বন্ধ আছে। সার্ভারের লাইব্রেরি সেটিংসে মিডিয়া মুছে ফেলার অনুমতি চালু করুন।';
 	@override String get mediaFailedToDelete => 'মিডিয়া পণ্য মুছে ফেলে না';
 	@override String get rate => 'রাত';
 	@override String get playFromBeginning => 'শুরু থেকে খেলা';
 	@override String get playVersion => 'গেম সংস্করণ...';
-	@override String get mediaDeletionDisabledOnServer => 'এই সার্ভারে মিডিয়া মুছে ফেলা বন্ধ আছে। সার্ভারের লাইব্রেরি সেটিংসে মিডিয়া মুছে ফেলার অনুমতি চালু করুন।';
 }
 
 // Path: rateSheet
@@ -6603,11 +6603,11 @@ extension on TranslationsBn {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng কোন ফাইলটি মুছে ফেলবে তা নিশ্চিত করতে পারেন না, তাই এটি উপরে নামিত পণ্যের চেয়ে বেশি মুছে ফেলতে পারে. বাতিল করুন এবং আবারও চেষ্টা করুন, অথবা কোনওভাবে মুছে ফেলুন।',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'আপনার সার্ভার এই আইটেমের ফাইলের বিবরণ দেয়নি, তাই Pleazyng কোন ফাইলগুলি মুছে যাবে তা পরীক্ষা করতে পারছে না। উপরে উল্লেখ করা আইটেম ছাড়াও আরও কিছু মুছে যেতে পারে।',
 			'mediaMenu.mediaDeletedSuccessfully' => 'সফলভাবে মুছে ফেলেন মিডিয়া',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'এই সার্ভারে মিডিয়া মুছে ফেলা বন্ধ আছে। সার্ভারের লাইব্রেরি সেটিংসে মিডিয়া মুছে ফেলার অনুমতি চালু করুন।',
 			'mediaMenu.mediaFailedToDelete' => 'মিডিয়া পণ্য মুছে ফেলে না',
 			'mediaMenu.rate' => 'রাত',
 			'mediaMenu.playFromBeginning' => 'শুরু থেকে খেলা',
 			'mediaMenu.playVersion' => 'গেম সংস্করণ...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'এই সার্ভারে মিডিয়া মুছে ফেলা বন্ধ আছে। সার্ভারের লাইব্রেরি সেটিংসে মিডিয়া মুছে ফেলার অনুমতি চালু করুন।',
 			'rateSheet.title' => 'রাত',
 			'rateSheet.server' => 'সার্ভার',
 			'rateSheet.favorite' => 'পছন্দ',

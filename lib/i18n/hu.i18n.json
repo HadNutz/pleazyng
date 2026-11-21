@@ -1056,11 +1056,11 @@
     "deleteScopeUnverifiedProbeFailed": "A Pleazyng nem tudta ellenőrizni, mely fájlokat távolítja el ez, ezért a fent nevezett elemnél többet is törölhet. Szakítsa meg és próbálja újra, vagy töröljön mindenképp.",
     "deleteScopeUnverifiedNoFileInfo": "A szerver nem szolgáltatott fájladatokat ehhez az elemhez, ezért a Pleazyng nem tudja ellenőrizni, mely fájlokat távolít el. A fent nevezett elemnél többet is törölhet.",
     "mediaDeletedSuccessfully": "Médiaelem sikeresen törölve",
+    "mediaDeletionDisabledOnServer": "A médiatartalmak törlése le van tiltva ezen a szerveren. Engedélyezd a törlést a szerver könyvtárbeállításaiban.",
     "mediaFailedToDelete": "Nem sikerült a médiaelem törlése",
     "rate": "Értékelés",
     "playFromBeginning": "Lejátszás az elejétől",
-    "playVersion": "Verzió lejátszása...",
-    "mediaDeletionDisabledOnServer": "A médiatartalmak törlése le van tiltva ezen a szerveren. Engedélyezd a törlést a szerver könyvtárbeállításaiban."
+    "playVersion": "Verzió lejátszása..."
   },
   "rateSheet": {
     "title": "Értékelés",

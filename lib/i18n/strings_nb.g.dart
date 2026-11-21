@@ -1146,11 +1146,11 @@ class _Translations$mediaMenu$nb extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng kunne ikke sjekke hvilke filer dette vil fjerne, så det kan slette mer enn elementet som er nevnt ovenfor. Avbryt og prøv igjen, eller slett likevel.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Serveren din ga ikke fildetaljer for dette elementet, så Pleazyng kan ikke sjekke hvilke filer dette vil fjerne. Det kan slette mer enn elementet som er nevnt ovenfor.';
 	@override String get mediaDeletedSuccessfully => 'Medieelement slettet';
+	@override String get mediaDeletionDisabledOnServer => 'Sletting av medier er slått av på denne serveren. Tillat sletting av medier i serverens bibliotekinnstillinger.';
 	@override String get mediaFailedToDelete => 'Kunne ikke slette medieelement';
 	@override String get rate => 'Vurder';
 	@override String get playFromBeginning => 'Spill fra begynnelsen';
 	@override String get playVersion => 'Spill av versjon...';
-	@override String get mediaDeletionDisabledOnServer => 'Sletting av medier er slått av på denne serveren. Tillat sletting av medier i serverens bibliotekinnstillinger.';
 }
 
 // Path: rateSheet
@@ -6603,11 +6603,11 @@ extension on TranslationsNb {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng kunne ikke sjekke hvilke filer dette vil fjerne, så det kan slette mer enn elementet som er nevnt ovenfor. Avbryt og prøv igjen, eller slett likevel.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Serveren din ga ikke fildetaljer for dette elementet, så Pleazyng kan ikke sjekke hvilke filer dette vil fjerne. Det kan slette mer enn elementet som er nevnt ovenfor.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Medieelement slettet',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Sletting av medier er slått av på denne serveren. Tillat sletting av medier i serverens bibliotekinnstillinger.',
 			'mediaMenu.mediaFailedToDelete' => 'Kunne ikke slette medieelement',
 			'mediaMenu.rate' => 'Vurder',
 			'mediaMenu.playFromBeginning' => 'Spill fra begynnelsen',
 			'mediaMenu.playVersion' => 'Spill av versjon...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'Sletting av medier er slått av på denne serveren. Tillat sletting av medier i serverens bibliotekinnstillinger.',
 			'rateSheet.title' => 'Vurder',
 			'rateSheet.server' => 'Server',
 			'rateSheet.favorite' => 'Favoritt',

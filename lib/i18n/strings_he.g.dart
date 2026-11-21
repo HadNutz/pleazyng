@@ -1148,11 +1148,11 @@ class _Translations$mediaMenu$he extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng לא הצליח לבדוק אילו קבצים יימחקו, ולכן ייתכן שיימחקו קבצים נוספים מעבר לפריט שצוין למעלה. אפשר לבטל ולנסות שוב, או למחוק בכל זאת.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'השרת לא סיפק פרטי קבצים עבור הפריט הזה, ולכן Pleazyng לא יכול לבדוק אילו קבצים יימחקו. ייתכן שיימחקו קבצים נוספים מעבר לפריט שצוין למעלה.';
 	@override String get mediaDeletedSuccessfully => 'התקשורת הוסרה בהצלחה';
+	@override String get mediaDeletionDisabledOnServer => 'מחיקת מדיה מושבתת בשרת הזה. יש לאפשר מחיקת מדיה בהגדרות הספרייה של השרת.';
 	@override String get mediaFailedToDelete => 'לא הצלחתי למחוק את התקשורת';
 	@override String get rate => 'דירוג';
 	@override String get playFromBeginning => 'נגן מהתחלה';
 	@override String get playVersion => 'לשחק גרסה...';
-	@override String get mediaDeletionDisabledOnServer => 'מחיקת מדיה מושבתת בשרת הזה. יש לאפשר מחיקת מדיה בהגדרות הספרייה של השרת.';
 }
 
 // Path: rateSheet
@@ -6611,11 +6611,11 @@ extension on TranslationsHe {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng לא הצליח לבדוק אילו קבצים יימחקו, ולכן ייתכן שיימחקו קבצים נוספים מעבר לפריט שצוין למעלה. אפשר לבטל ולנסות שוב, או למחוק בכל זאת.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'השרת לא סיפק פרטי קבצים עבור הפריט הזה, ולכן Pleazyng לא יכול לבדוק אילו קבצים יימחקו. ייתכן שיימחקו קבצים נוספים מעבר לפריט שצוין למעלה.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'התקשורת הוסרה בהצלחה',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'מחיקת מדיה מושבתת בשרת הזה. יש לאפשר מחיקת מדיה בהגדרות הספרייה של השרת.',
 			'mediaMenu.mediaFailedToDelete' => 'לא הצלחתי למחוק את התקשורת',
 			'mediaMenu.rate' => 'דירוג',
 			'mediaMenu.playFromBeginning' => 'נגן מהתחלה',
 			'mediaMenu.playVersion' => 'לשחק גרסה...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'מחיקת מדיה מושבתת בשרת הזה. יש לאפשר מחיקת מדיה בהגדרות הספרייה של השרת.',
 			'rateSheet.title' => 'דירוג',
 			'rateSheet.server' => 'שרת',
 			'rateSheet.favorite' => 'מועדף',

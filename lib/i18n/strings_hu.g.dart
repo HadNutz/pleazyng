@@ -1146,11 +1146,11 @@ class _Translations$mediaMenu$hu extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'A Pleazyng nem tudta ellenőrizni, mely fájlokat távolítja el ez, ezért a fent nevezett elemnél többet is törölhet. Szakítsa meg és próbálja újra, vagy töröljön mindenképp.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'A szerver nem szolgáltatott fájladatokat ehhez az elemhez, ezért a Pleazyng nem tudja ellenőrizni, mely fájlokat távolít el. A fent nevezett elemnél többet is törölhet.';
 	@override String get mediaDeletedSuccessfully => 'Médiaelem sikeresen törölve';
+	@override String get mediaDeletionDisabledOnServer => 'A médiatartalmak törlése le van tiltva ezen a szerveren. Engedélyezd a törlést a szerver könyvtárbeállításaiban.';
 	@override String get mediaFailedToDelete => 'Nem sikerült a médiaelem törlése';
 	@override String get rate => 'Értékelés';
 	@override String get playFromBeginning => 'Lejátszás az elejétől';
 	@override String get playVersion => 'Verzió lejátszása...';
-	@override String get mediaDeletionDisabledOnServer => 'A médiatartalmak törlése le van tiltva ezen a szerveren. Engedélyezd a törlést a szerver könyvtárbeállításaiban.';
 }
 
 // Path: rateSheet
@@ -6603,11 +6603,11 @@ extension on TranslationsHu {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'A Pleazyng nem tudta ellenőrizni, mely fájlokat távolítja el ez, ezért a fent nevezett elemnél többet is törölhet. Szakítsa meg és próbálja újra, vagy töröljön mindenképp.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'A szerver nem szolgáltatott fájladatokat ehhez az elemhez, ezért a Pleazyng nem tudja ellenőrizni, mely fájlokat távolít el. A fent nevezett elemnél többet is törölhet.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Médiaelem sikeresen törölve',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'A médiatartalmak törlése le van tiltva ezen a szerveren. Engedélyezd a törlést a szerver könyvtárbeállításaiban.',
 			'mediaMenu.mediaFailedToDelete' => 'Nem sikerült a médiaelem törlése',
 			'mediaMenu.rate' => 'Értékelés',
 			'mediaMenu.playFromBeginning' => 'Lejátszás az elejétől',
 			'mediaMenu.playVersion' => 'Verzió lejátszása...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'A médiatartalmak törlése le van tiltva ezen a szerveren. Engedélyezd a törlést a szerver könyvtárbeállításaiban.',
 			'rateSheet.title' => 'Értékelés',
 			'rateSheet.server' => 'Szerver',
 			'rateSheet.favorite' => 'Kedvenc',

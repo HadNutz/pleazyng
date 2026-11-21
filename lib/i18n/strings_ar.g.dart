@@ -1166,11 +1166,11 @@ class _Translations$mediaMenu$ar extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'تعذّر على Pleazyng التحقق من الملفات التي سيحذفها هذا الإجراء، لذلك قد يحذف أكثر من العنصر المذكور أعلاه. ألغِ الإجراء وحاول مجددًا، أو اختر الحذف على أي حال.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'لم يقدّم خادمك تفاصيل ملفات هذا العنصر، لذلك لا يستطيع Pleazyng التحقق من الملفات التي سيحذفها هذا الإجراء. قد تُحذف ملفات تتجاوز العنصر المذكور أعلاه.';
 	@override String get mediaDeletedSuccessfully => 'تم حذف منتجات وسائل الإعلام بنجاح';
+	@override String get mediaDeletionDisabledOnServer => 'حذف الوسائط معطّل على هذا الخادم. فعّل «السماح بحذف الوسائط» في إعدادات مكتبة الخادم.';
 	@override String get mediaFailedToDelete => 'فشل في حذف موضوع وسائل الإعلام';
 	@override String get rate => 'المعدل';
 	@override String get playFromBeginning => 'تشغيل من البداية';
 	@override String get playVersion => 'اللعب نسخة...';
-	@override String get mediaDeletionDisabledOnServer => 'حذف الوسائط معطّل على هذا الخادم. فعّل «السماح بحذف الوسائط» في إعدادات مكتبة الخادم.';
 }
 
 // Path: rateSheet
@@ -6703,11 +6703,11 @@ extension on TranslationsAr {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'تعذّر على Pleazyng التحقق من الملفات التي سيحذفها هذا الإجراء، لذلك قد يحذف أكثر من العنصر المذكور أعلاه. ألغِ الإجراء وحاول مجددًا، أو اختر الحذف على أي حال.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'لم يقدّم خادمك تفاصيل ملفات هذا العنصر، لذلك لا يستطيع Pleazyng التحقق من الملفات التي سيحذفها هذا الإجراء. قد تُحذف ملفات تتجاوز العنصر المذكور أعلاه.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'تم حذف منتجات وسائل الإعلام بنجاح',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'حذف الوسائط معطّل على هذا الخادم. فعّل «السماح بحذف الوسائط» في إعدادات مكتبة الخادم.',
 			'mediaMenu.mediaFailedToDelete' => 'فشل في حذف موضوع وسائل الإعلام',
 			'mediaMenu.rate' => 'المعدل',
 			'mediaMenu.playFromBeginning' => 'تشغيل من البداية',
 			'mediaMenu.playVersion' => 'اللعب نسخة...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'حذف الوسائط معطّل على هذا الخادم. فعّل «السماح بحذف الوسائط» في إعدادات مكتبة الخادم.',
 			'rateSheet.title' => 'المعدل',
 			'rateSheet.server' => 'الخادم',
 			'rateSheet.favorite' => 'مفضل',

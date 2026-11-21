@@ -1066,11 +1066,11 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng nie mogło sprawdzić, które pliki zostaną usunięte, więc może usunąć więcej niż element wymieniony powyżej. Anuluj i spróbuj ponownie albo usuń mimo to.",
     "deleteScopeUnverifiedNoFileInfo": "Twój serwer nie podał informacji o plikach tego elementu, więc Pleazyng nie może sprawdzić, które pliki zostaną usunięte. Może usunąć więcej niż element wymieniony powyżej.",
     "mediaDeletedSuccessfully": "Usunięto element multimedialny",
+    "mediaDeletionDisabledOnServer": "Usuwanie multimediów na tym serwerze jest wyłączone. Zezwól na usuwanie multimediów w ustawieniach biblioteki serwera.",
     "mediaFailedToDelete": "Nie udało się usunąć elementu multimedialnego",
     "rate": "Oceń",
     "playFromBeginning": "Odtwórz od początku",
-    "playVersion": "Odtwórz wersję...",
-    "mediaDeletionDisabledOnServer": "Usuwanie multimediów na tym serwerze jest wyłączone. Zezwól na usuwanie multimediów w ustawieniach biblioteki serwera."
+    "playVersion": "Odtwórz wersję..."
   },
   "rateSheet": {
     "title": "Oceń",

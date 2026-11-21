@@ -1152,11 +1152,11 @@ class Translations$mediaMenu$es extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng no pudo comprobar qué archivos se eliminarán, por lo que podría borrar más de lo indicado arriba. Cancela y vuelve a intentarlo, o elimina de todos modos.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Tu servidor no proporcionó los detalles del archivo de este elemento, por lo que Pleazyng no puede comprobar qué archivos se eliminarán. Podría borrar más de lo indicado arriba.';
 	@override String get mediaDeletedSuccessfully => 'Elemento multimedia eliminado con éxito';
+	@override String get mediaDeletionDisabledOnServer => 'La eliminación de contenido está desactivada en este servidor. Permítela en los ajustes de biblioteca del servidor.';
 	@override String get mediaFailedToDelete => 'Error al eliminar el elemento multimedia';
 	@override String get rate => 'Calificar';
 	@override String get playFromBeginning => 'Reproducir desde el inicio';
 	@override String get playVersion => 'Reproducir versión...';
-	@override String get mediaDeletionDisabledOnServer => 'La eliminación de contenido está desactivada en este servidor. Permítela en los ajustes de biblioteca del servidor.';
 }
 
 // Path: rateSheet
@@ -6730,11 +6730,11 @@ extension on TranslationsEs {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng no pudo comprobar qué archivos se eliminarán, por lo que podría borrar más de lo indicado arriba. Cancela y vuelve a intentarlo, o elimina de todos modos.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Tu servidor no proporcionó los detalles del archivo de este elemento, por lo que Pleazyng no puede comprobar qué archivos se eliminarán. Podría borrar más de lo indicado arriba.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Elemento multimedia eliminado con éxito',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'La eliminación de contenido está desactivada en este servidor. Permítela en los ajustes de biblioteca del servidor.',
 			'mediaMenu.mediaFailedToDelete' => 'Error al eliminar el elemento multimedia',
 			'mediaMenu.rate' => 'Calificar',
 			'mediaMenu.playFromBeginning' => 'Reproducir desde el inicio',
 			'mediaMenu.playVersion' => 'Reproducir versión...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'La eliminación de contenido está desactivada en este servidor. Permítela en los ajustes de biblioteca del servidor.',
 			'rateSheet.title' => 'Calificar',
 			'rateSheet.server' => 'Servidor',
 			'rateSheet.favorite' => 'Favorito',

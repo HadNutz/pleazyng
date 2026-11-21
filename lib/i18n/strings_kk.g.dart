@@ -1146,11 +1146,11 @@ class _Translations$mediaMenu$kk extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng қандай файлдар өшірілетінін тексере алмады, сондықтан ол жоғарыда аталған элементтен артық өшіруі мүмкін. Бас тартып, қайталап көріңіз немесе бәрібір өшіріңіз.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Серверіңіз бұл элемент үшін файл мәліметтерін ұсынбады, сондықтан Pleazyng қандай файлдар өшірілетінін тексере алмайды. Ол жоғарыда аталған элементтен артық өшіруі мүмкін.';
 	@override String get mediaDeletedSuccessfully => 'Медиа элементі сәтті өшірілді';
+	@override String get mediaDeletionDisabledOnServer => 'Бұл серверде медианы жою өшірілген. Сервердің кітапхана баптауларында медианы жоюға рұқсат беріңіз.';
 	@override String get mediaFailedToDelete => 'Медиа элементін өшіру мүмкін болмады';
 	@override String get rate => 'Бағалау';
 	@override String get playFromBeginning => 'Басынан бастап ойнату';
 	@override String get playVersion => 'Нұсқаны ойнату...';
-	@override String get mediaDeletionDisabledOnServer => 'Бұл серверде медианы жою өшірілген. Сервердің кітапхана баптауларында медианы жоюға рұқсат беріңіз.';
 }
 
 // Path: rateSheet
@@ -6603,11 +6603,11 @@ extension on TranslationsKk {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng қандай файлдар өшірілетінін тексере алмады, сондықтан ол жоғарыда аталған элементтен артық өшіруі мүмкін. Бас тартып, қайталап көріңіз немесе бәрібір өшіріңіз.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Серверіңіз бұл элемент үшін файл мәліметтерін ұсынбады, сондықтан Pleazyng қандай файлдар өшірілетінін тексере алмайды. Ол жоғарыда аталған элементтен артық өшіруі мүмкін.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Медиа элементі сәтті өшірілді',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Бұл серверде медианы жою өшірілген. Сервердің кітапхана баптауларында медианы жоюға рұқсат беріңіз.',
 			'mediaMenu.mediaFailedToDelete' => 'Медиа элементін өшіру мүмкін болмады',
 			'mediaMenu.rate' => 'Бағалау',
 			'mediaMenu.playFromBeginning' => 'Басынан бастап ойнату',
 			'mediaMenu.playVersion' => 'Нұсқаны ойнату...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'Бұл серверде медианы жою өшірілген. Сервердің кітапхана баптауларында медианы жоюға рұқсат беріңіз.',
 			'rateSheet.title' => 'Бағалау',
 			'rateSheet.server' => 'Сервер',
 			'rateSheet.favorite' => 'Таңдаулы',

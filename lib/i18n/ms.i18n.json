@@ -1051,11 +1051,11 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng tidak dapat memeriksa fail yang akan dipadamkan, jadi lebih daripada item yang dinyatakan di atas mungkin dipadamkan. Batalkan dan cuba lagi, atau padamkan juga.",
     "deleteScopeUnverifiedNoFileInfo": "Pelayan anda tidak memberikan butiran fail untuk item ini, jadi Pleazyng tidak dapat memeriksa fail yang akan dipadamkan. Lebih daripada item yang dinyatakan di atas mungkin dipadamkan.",
     "mediaDeletedSuccessfully": "Media item dihapuskan dengan berjaya",
+    "mediaDeletionDisabledOnServer": "Pemadaman media dinyahdayakan pada pelayan ini. Benarkan pemadaman media dalam tetapan pustaka pelayan.",
     "mediaFailedToDelete": "gagal menghapuskan item media",
     "rate": "Kadar",
     "playFromBeginning": "Bermain dari awal",
-    "playVersion": "Bermain versi ...",
-    "mediaDeletionDisabledOnServer": "Pemadaman media dinyahdayakan pada pelayan ini. Benarkan pemadaman media dalam tetapan pustaka pelayan."
+    "playVersion": "Bermain versi ..."
   },
   "rateSheet": {
     "title": "Kadar",

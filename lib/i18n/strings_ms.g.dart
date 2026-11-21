@@ -1141,11 +1141,11 @@ class _Translations$mediaMenu$ms extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng tidak dapat memeriksa fail yang akan dipadamkan, jadi lebih daripada item yang dinyatakan di atas mungkin dipadamkan. Batalkan dan cuba lagi, atau padamkan juga.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Pelayan anda tidak memberikan butiran fail untuk item ini, jadi Pleazyng tidak dapat memeriksa fail yang akan dipadamkan. Lebih daripada item yang dinyatakan di atas mungkin dipadamkan.';
 	@override String get mediaDeletedSuccessfully => 'Media item dihapuskan dengan berjaya';
+	@override String get mediaDeletionDisabledOnServer => 'Pemadaman media dinyahdayakan pada pelayan ini. Benarkan pemadaman media dalam tetapan pustaka pelayan.';
 	@override String get mediaFailedToDelete => 'gagal menghapuskan item media';
 	@override String get rate => 'Kadar';
 	@override String get playFromBeginning => 'Bermain dari awal';
 	@override String get playVersion => 'Bermain versi ...';
-	@override String get mediaDeletionDisabledOnServer => 'Pemadaman media dinyahdayakan pada pelayan ini. Benarkan pemadaman media dalam tetapan pustaka pelayan.';
 }
 
 // Path: rateSheet
@@ -6578,11 +6578,11 @@ extension on TranslationsMs {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng tidak dapat memeriksa fail yang akan dipadamkan, jadi lebih daripada item yang dinyatakan di atas mungkin dipadamkan. Batalkan dan cuba lagi, atau padamkan juga.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Pelayan anda tidak memberikan butiran fail untuk item ini, jadi Pleazyng tidak dapat memeriksa fail yang akan dipadamkan. Lebih daripada item yang dinyatakan di atas mungkin dipadamkan.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Media item dihapuskan dengan berjaya',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Pemadaman media dinyahdayakan pada pelayan ini. Benarkan pemadaman media dalam tetapan pustaka pelayan.',
 			'mediaMenu.mediaFailedToDelete' => 'gagal menghapuskan item media',
 			'mediaMenu.rate' => 'Kadar',
 			'mediaMenu.playFromBeginning' => 'Bermain dari awal',
 			'mediaMenu.playVersion' => 'Bermain versi ...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'Pemadaman media dinyahdayakan pada pelayan ini. Benarkan pemadaman media dalam tetapan pustaka pelayan.',
 			'rateSheet.title' => 'Kadar',
 			'rateSheet.server' => 'Pelayan',
 			'rateSheet.favorite' => 'Kegemaran',

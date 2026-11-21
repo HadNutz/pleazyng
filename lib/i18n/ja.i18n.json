@@ -1054,11 +1054,11 @@
     "deleteScopeUnverifiedProbeFailed": "Plezyは削除対象のファイルを確認できなかったため、上記のアイテム以上に削除される可能性があります。キャンセルして再試行するか、それでも削除してください。",
     "deleteScopeUnverifiedNoFileInfo": "サーバーがこのアイテムのファイル情報を提供しなかったため、Plezyは削除対象のファイルを確認できません。上記のアイテム以上に削除される可能性があります。",
     "mediaDeletedSuccessfully": "メディアアイテムを正常に削除しました",
+    "mediaDeletionDisabledOnServer": "このサーバーではメディアの削除が無効です。サーバーのライブラリ設定でメディアの削除を許可してください。",
     "mediaFailedToDelete": "メディアアイテムの削除に失敗しました",
     "rate": "評価",
     "playFromBeginning": "最初から再生",
-    "playVersion": "バージョンを選んで再生…",
-    "mediaDeletionDisabledOnServer": "このサーバーではメディアの削除が無効です。サーバーのライブラリ設定でメディアの削除を許可してください。"
+    "playVersion": "バージョンを選んで再生…"
   },
   "rateSheet": {
     "title": "評価",

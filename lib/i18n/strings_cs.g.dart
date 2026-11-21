@@ -1156,11 +1156,11 @@ class _Translations$mediaMenu$cs extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng nedokázalo ověřit, které soubory budou odstraněny, takže může smazat více než výše uvedenou položku. Akci zrušte a zkuste to znovu, nebo pokračujte ve smazání.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Server neposkytl podrobnosti o souborech této položky, takže Pleazyng nemůže ověřit, které soubory budou odstraněny. Může být smazáno více než výše uvedená položka.';
 	@override String get mediaDeletedSuccessfully => 'Media objekt byl úspěšně odstraněn';
+	@override String get mediaDeletionDisabledOnServer => 'Na tomto serveru je mazání médií vypnuté. Povolte mazání médií v nastavení knihovny serveru.';
 	@override String get mediaFailedToDelete => 'Nedokázal odstranit mediální položku';
 	@override String get rate => 'Hodnocení';
 	@override String get playFromBeginning => 'Přehrát od začátku';
 	@override String get playVersion => 'Hrajte verzi...';
-	@override String get mediaDeletionDisabledOnServer => 'Na tomto serveru je mazání médií vypnuté. Povolte mazání médií v nastavení knihovny serveru.';
 }
 
 // Path: rateSheet
@@ -6647,11 +6647,11 @@ extension on TranslationsCs {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng nedokázalo ověřit, které soubory budou odstraněny, takže může smazat více než výše uvedenou položku. Akci zrušte a zkuste to znovu, nebo pokračujte ve smazání.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Server neposkytl podrobnosti o souborech této položky, takže Pleazyng nemůže ověřit, které soubory budou odstraněny. Může být smazáno více než výše uvedená položka.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Media objekt byl úspěšně odstraněn',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Na tomto serveru je mazání médií vypnuté. Povolte mazání médií v nastavení knihovny serveru.',
 			'mediaMenu.mediaFailedToDelete' => 'Nedokázal odstranit mediální položku',
 			'mediaMenu.rate' => 'Hodnocení',
 			'mediaMenu.playFromBeginning' => 'Přehrát od začátku',
 			'mediaMenu.playVersion' => 'Hrajte verzi...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'Na tomto serveru je mazání médií vypnuté. Povolte mazání médií v nastavení knihovny serveru.',
 			'rateSheet.title' => 'Hodnocení',
 			'rateSheet.server' => 'servery',
 			'rateSheet.favorite' => 'Oblíbené',

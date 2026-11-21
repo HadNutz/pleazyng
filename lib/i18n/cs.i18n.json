@@ -1066,11 +1066,11 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng nedokázalo ověřit, které soubory budou odstraněny, takže může smazat více než výše uvedenou položku. Akci zrušte a zkuste to znovu, nebo pokračujte ve smazání.",
     "deleteScopeUnverifiedNoFileInfo": "Server neposkytl podrobnosti o souborech této položky, takže Pleazyng nemůže ověřit, které soubory budou odstraněny. Může být smazáno více než výše uvedená položka.",
     "mediaDeletedSuccessfully": "Media objekt byl úspěšně odstraněn",
+    "mediaDeletionDisabledOnServer": "Na tomto serveru je mazání médií vypnuté. Povolte mazání médií v nastavení knihovny serveru.",
     "mediaFailedToDelete": "Nedokázal odstranit mediální položku",
     "rate": "Hodnocení",
     "playFromBeginning": "Přehrát od začátku",
-    "playVersion": "Hrajte verzi...",
-    "mediaDeletionDisabledOnServer": "Na tomto serveru je mazání médií vypnuté. Povolte mazání médií v nastavení knihovny serveru."
+    "playVersion": "Hrajte verzi..."
   },
   "rateSheet": {
     "title": "Hodnocení",

@@ -1146,11 +1146,11 @@ class _Translations$mediaMenu$tr extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng bunun hangi dosyaları sileceğini kontrol edemedi, bu yüzden yukarıda adı geçen ögeden daha fazlasını silebilir. İptal edip tekrar deneyin veya yine de silin.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Sunucunuz bu öge için dosya ayrıntıları sağlamadı, bu yüzden Pleazyng bunun hangi dosyaları sileceğini kontrol edemiyor. Yukarıda adı geçen ögeden daha fazlasını silebilir.';
 	@override String get mediaDeletedSuccessfully => 'Medya ögesi başarıyla silindi';
+	@override String get mediaDeletionDisabledOnServer => 'Bu sunucuda medya silme kapalı. Sunucunun kitaplık ayarlarında medya silmeye izin verin.';
 	@override String get mediaFailedToDelete => 'Medya ögesi silinemedi';
 	@override String get rate => 'Oyla';
 	@override String get playFromBeginning => 'Baştan Oynat';
 	@override String get playVersion => 'Sürümü Oynat...';
-	@override String get mediaDeletionDisabledOnServer => 'Bu sunucuda medya silme kapalı. Sunucunun kitaplık ayarlarında medya silmeye izin verin.';
 }
 
 // Path: rateSheet
@@ -6603,11 +6603,11 @@ extension on TranslationsTr {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng bunun hangi dosyaları sileceğini kontrol edemedi, bu yüzden yukarıda adı geçen ögeden daha fazlasını silebilir. İptal edip tekrar deneyin veya yine de silin.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Sunucunuz bu öge için dosya ayrıntıları sağlamadı, bu yüzden Pleazyng bunun hangi dosyaları sileceğini kontrol edemiyor. Yukarıda adı geçen ögeden daha fazlasını silebilir.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Medya ögesi başarıyla silindi',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Bu sunucuda medya silme kapalı. Sunucunun kitaplık ayarlarında medya silmeye izin verin.',
 			'mediaMenu.mediaFailedToDelete' => 'Medya ögesi silinemedi',
 			'mediaMenu.rate' => 'Oyla',
 			'mediaMenu.playFromBeginning' => 'Baştan Oynat',
 			'mediaMenu.playVersion' => 'Sürümü Oynat...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'Bu sunucuda medya silme kapalı. Sunucunun kitaplık ayarlarında medya silmeye izin verin.',
 			'rateSheet.title' => 'Oyla',
 			'rateSheet.server' => 'Sunucu',
 			'rateSheet.favorite' => 'Favori',

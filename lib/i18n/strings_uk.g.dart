@@ -1156,11 +1156,11 @@ class _Translations$mediaMenu$uk extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng не вдалося перевірити, які файли буде видалено, тому може бути видалено більше, ніж зазначений вище елемент. Скасуйте дію та спробуйте знову або видаліть попри це.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Сервер не надав відомостей про файли цього елемента, тому Pleazyng не може перевірити, які файли буде видалено. Може бути видалено більше, ніж зазначений вище елемент.';
 	@override String get mediaDeletedSuccessfully => 'Медіа-елементи успішно видалені';
+	@override String get mediaDeletionDisabledOnServer => 'Видалення медіафайлів на цьому сервері вимкнено. Дозвольте видалення медіафайлів у налаштуваннях бібліотеки сервера.';
 	@override String get mediaFailedToDelete => 'Не вдалося видалити медіа';
 	@override String get rate => 'Оцінити';
 	@override String get playFromBeginning => 'Грати з початку';
 	@override String get playVersion => 'Грати в версію...';
-	@override String get mediaDeletionDisabledOnServer => 'Видалення медіафайлів на цьому сервері вимкнено. Дозвольте видалення медіафайлів у налаштуваннях бібліотеки сервера.';
 }
 
 // Path: rateSheet
@@ -6647,11 +6647,11 @@ extension on TranslationsUk {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng не вдалося перевірити, які файли буде видалено, тому може бути видалено більше, ніж зазначений вище елемент. Скасуйте дію та спробуйте знову або видаліть попри це.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Сервер не надав відомостей про файли цього елемента, тому Pleazyng не може перевірити, які файли буде видалено. Може бути видалено більше, ніж зазначений вище елемент.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Медіа-елементи успішно видалені',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Видалення медіафайлів на цьому сервері вимкнено. Дозвольте видалення медіафайлів у налаштуваннях бібліотеки сервера.',
 			'mediaMenu.mediaFailedToDelete' => 'Не вдалося видалити медіа',
 			'mediaMenu.rate' => 'Оцінити',
 			'mediaMenu.playFromBeginning' => 'Грати з початку',
 			'mediaMenu.playVersion' => 'Грати в версію...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'Видалення медіафайлів на цьому сервері вимкнено. Дозвольте видалення медіафайлів у налаштуваннях бібліотеки сервера.',
 			'rateSheet.title' => 'Оцінити',
 			'rateSheet.server' => 'Сервер',
 			'rateSheet.favorite' => 'Обране',

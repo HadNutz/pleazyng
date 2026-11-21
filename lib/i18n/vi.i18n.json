@@ -1051,11 +1051,11 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng không thể xác định những tệp sẽ bị xóa, nên có thể xóa nhiều hơn mục nêu trên. Hãy hủy và thử lại, hoặc vẫn xóa.",
     "deleteScopeUnverifiedNoFileInfo": "Máy chủ không cung cấp thông tin tệp cho mục này, nên Pleazyng không thể xác định những tệp sẽ bị xóa. Có thể xóa nhiều hơn mục nêu trên.",
     "mediaDeletedSuccessfully": "Media item đã bị xóa thành công",
+    "mediaDeletionDisabledOnServer": "Tính năng xóa nội dung đã tắt trên máy chủ này. Hãy cho phép xóa nội dung trong phần cài đặt thư viện của máy chủ.",
     "mediaFailedToDelete": "Không xóa các mục phương tiện truyền thông",
     "rate": "Đánh giá",
     "playFromBeginning": "Phát từ đầu",
-    "playVersion": "Game phiên bản...",
-    "mediaDeletionDisabledOnServer": "Tính năng xóa nội dung đã tắt trên máy chủ này. Hãy cho phép xóa nội dung trong phần cài đặt thư viện của máy chủ."
+    "playVersion": "Game phiên bản..."
   },
   "rateSheet": {
     "title": "Đánh giá",

@@ -1144,11 +1144,11 @@ class _Translations$mediaMenu$ja extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Plezyは削除対象のファイルを確認できなかったため、上記のアイテム以上に削除される可能性があります。キャンセルして再試行するか、それでも削除してください。';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'サーバーがこのアイテムのファイル情報を提供しなかったため、Plezyは削除対象のファイルを確認できません。上記のアイテム以上に削除される可能性があります。';
 	@override String get mediaDeletedSuccessfully => 'メディアアイテムを正常に削除しました';
+	@override String get mediaDeletionDisabledOnServer => 'このサーバーではメディアの削除が無効です。サーバーのライブラリ設定でメディアの削除を許可してください。';
 	@override String get mediaFailedToDelete => 'メディアアイテムの削除に失敗しました';
 	@override String get rate => '評価';
 	@override String get playFromBeginning => '最初から再生';
 	@override String get playVersion => 'バージョンを選んで再生…';
-	@override String get mediaDeletionDisabledOnServer => 'このサーバーではメディアの削除が無効です。サーバーのライブラリ設定でメディアの削除を許可してください。';
 }
 
 // Path: rateSheet
@@ -6598,11 +6598,11 @@ extension on TranslationsJa {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Plezyは削除対象のファイルを確認できなかったため、上記のアイテム以上に削除される可能性があります。キャンセルして再試行するか、それでも削除してください。',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'サーバーがこのアイテムのファイル情報を提供しなかったため、Plezyは削除対象のファイルを確認できません。上記のアイテム以上に削除される可能性があります。',
 			'mediaMenu.mediaDeletedSuccessfully' => 'メディアアイテムを正常に削除しました',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'このサーバーではメディアの削除が無効です。サーバーのライブラリ設定でメディアの削除を許可してください。',
 			'mediaMenu.mediaFailedToDelete' => 'メディアアイテムの削除に失敗しました',
 			'mediaMenu.rate' => '評価',
 			'mediaMenu.playFromBeginning' => '最初から再生',
 			'mediaMenu.playVersion' => 'バージョンを選んで再生…',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'このサーバーではメディアの削除が無効です。サーバーのライブラリ設定でメディアの削除を許可してください。',
 			'rateSheet.title' => '評価',
 			'rateSheet.server' => 'サーバー',
 			'rateSheet.favorite' => 'お気に入り',

@@ -1144,11 +1144,11 @@ class _Translations$mediaMenu$ko extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Plezy가 어떤 파일이 삭제될지 확인하지 못해 위 항목보다 더 많은 파일이 삭제될 수 있습니다. 취소하고 다시 시도하거나 그래도 삭제하세요.';
 	@override String get deleteScopeUnverifiedNoFileInfo => '서버가 이 항목의 파일 정보를 제공하지 않아 Plezy가 어떤 파일이 삭제될지 확인할 수 없습니다. 위 항목보다 더 많은 파일이 삭제될 수 있습니다.';
 	@override String get mediaDeletedSuccessfully => '미디어 항목이 성공적으로 삭제되었습니다';
+	@override String get mediaDeletionDisabledOnServer => '이 서버에서는 미디어 삭제가 비활성화되어 있습니다. 서버의 라이브러리 설정에서 미디어 삭제를 허용하세요.';
 	@override String get mediaFailedToDelete => '미디어 항목 삭제 실패';
 	@override String get rate => '평가';
 	@override String get playFromBeginning => '처음부터 재생';
 	@override String get playVersion => '버전 재생...';
-	@override String get mediaDeletionDisabledOnServer => '이 서버에서는 미디어 삭제가 비활성화되어 있습니다. 서버의 라이브러리 설정에서 미디어 삭제를 허용하세요.';
 }
 
 // Path: rateSheet
@@ -6598,11 +6598,11 @@ extension on TranslationsKo {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Plezy가 어떤 파일이 삭제될지 확인하지 못해 위 항목보다 더 많은 파일이 삭제될 수 있습니다. 취소하고 다시 시도하거나 그래도 삭제하세요.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => '서버가 이 항목의 파일 정보를 제공하지 않아 Plezy가 어떤 파일이 삭제될지 확인할 수 없습니다. 위 항목보다 더 많은 파일이 삭제될 수 있습니다.',
 			'mediaMenu.mediaDeletedSuccessfully' => '미디어 항목이 성공적으로 삭제되었습니다',
+			'mediaMenu.mediaDeletionDisabledOnServer' => '이 서버에서는 미디어 삭제가 비활성화되어 있습니다. 서버의 라이브러리 설정에서 미디어 삭제를 허용하세요.',
 			'mediaMenu.mediaFailedToDelete' => '미디어 항목 삭제 실패',
 			'mediaMenu.rate' => '평가',
 			'mediaMenu.playFromBeginning' => '처음부터 재생',
 			'mediaMenu.playVersion' => '버전 재생...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => '이 서버에서는 미디어 삭제가 비활성화되어 있습니다. 서버의 라이브러리 설정에서 미디어 삭제를 허용하세요.',
 			'rateSheet.title' => '평가',
 			'rateSheet.server' => '서버',
 			'rateSheet.favorite' => '즐겨찾기',

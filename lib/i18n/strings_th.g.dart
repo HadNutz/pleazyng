@@ -1141,11 +1141,11 @@ class _Translations$mediaMenu$th extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng ตรวจสอบไม่ได้ว่าจะลบไฟล์ใดบ้าง จึงอาจลบมากกว่ารายการที่ระบุข้างต้น ยกเลิกแล้วลองอีกครั้ง หรือเลือกที่จะลบต่อไป';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'เซิร์ฟเวอร์ของคุณไม่ให้ข้อมูลไฟล์สําหรับรายการนี้ดังนั้น Pleazyng ไม่สามารถตรวจสอบไฟล์ใดที่จะลบได้ มันอาจลบมากกว่ารายการที่ระบุไว้ข้างต้น';
 	@override String get mediaDeletedSuccessfully => 'รายการสื่อลบอย่างประสบความสําเร็จ';
+	@override String get mediaDeletionDisabledOnServer => 'เซิร์ฟเวอร์นี้ปิดการลบสื่อไว้ โปรดอนุญาตให้ลบสื่อในการตั้งค่าคลังของเซิร์ฟเวอร์';
 	@override String get mediaFailedToDelete => 'ไม่สามารถลบรายการสื่อ';
 	@override String get rate => 'อัตรา';
 	@override String get playFromBeginning => 'เล่นจากเริ่มต้น';
 	@override String get playVersion => 'เล่นเวอร์ชัน';
-	@override String get mediaDeletionDisabledOnServer => 'เซิร์ฟเวอร์นี้ปิดการลบสื่อไว้ โปรดอนุญาตให้ลบสื่อในการตั้งค่าคลังของเซิร์ฟเวอร์';
 }
 
 // Path: rateSheet
@@ -6578,11 +6578,11 @@ extension on TranslationsTh {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng ตรวจสอบไม่ได้ว่าจะลบไฟล์ใดบ้าง จึงอาจลบมากกว่ารายการที่ระบุข้างต้น ยกเลิกแล้วลองอีกครั้ง หรือเลือกที่จะลบต่อไป',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'เซิร์ฟเวอร์ของคุณไม่ให้ข้อมูลไฟล์สําหรับรายการนี้ดังนั้น Pleazyng ไม่สามารถตรวจสอบไฟล์ใดที่จะลบได้ มันอาจลบมากกว่ารายการที่ระบุไว้ข้างต้น',
 			'mediaMenu.mediaDeletedSuccessfully' => 'รายการสื่อลบอย่างประสบความสําเร็จ',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'เซิร์ฟเวอร์นี้ปิดการลบสื่อไว้ โปรดอนุญาตให้ลบสื่อในการตั้งค่าคลังของเซิร์ฟเวอร์',
 			'mediaMenu.mediaFailedToDelete' => 'ไม่สามารถลบรายการสื่อ',
 			'mediaMenu.rate' => 'อัตรา',
 			'mediaMenu.playFromBeginning' => 'เล่นจากเริ่มต้น',
 			'mediaMenu.playVersion' => 'เล่นเวอร์ชัน',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'เซิร์ฟเวอร์นี้ปิดการลบสื่อไว้ โปรดอนุญาตให้ลบสื่อในการตั้งค่าคลังของเซิร์ฟเวอร์',
 			'rateSheet.title' => 'อัตรา',
 			'rateSheet.server' => 'เซิร์ฟเวอร์',
 			'rateSheet.favorite' => 'รายการโปรด',

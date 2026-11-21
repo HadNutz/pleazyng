@@ -1146,11 +1146,11 @@ class _Translations$mediaMenu$hi extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng यह जांच नहीं कर सकता है कि यह कौन से फ़ाइलों को हटा देगा, इसलिए यह ऊपर नामित आइटम से अधिक हटा सकता है. रद्द करें और फिर से कोशिश करें, या किसी भी तरह से हटा दें.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'आपके सर्वर ने इस आइटम के लिए फ़ाइल विवरण प्रदान नहीं किया है, इसलिए Pleazyng यह जांच नहीं कर सकता है कि यह किस फ़ाइल को हटा देगा. यह ऊपर नामित आइटम से अधिक हटा सकता है.';
 	@override String get mediaDeletedSuccessfully => 'मीडिया के आइटम को सफलतापूर्वक हटा दिया गया';
+	@override String get mediaDeletionDisabledOnServer => 'इस सर्वर पर मीडिया हटाना बंद है। सर्वर की लाइब्रेरी सेटिंग में मीडिया हटाने की अनुमति चालू करें।';
 	@override String get mediaFailedToDelete => 'मीडिया आइटम को हटाने में विफलता';
 	@override String get rate => 'दरें';
 	@override String get playFromBeginning => 'शुरुआत से खेलना';
 	@override String get playVersion => 'खेल संस्करण ...';
-	@override String get mediaDeletionDisabledOnServer => 'इस सर्वर पर मीडिया हटाना बंद है। सर्वर की लाइब्रेरी सेटिंग में मीडिया हटाने की अनुमति चालू करें।';
 }
 
 // Path: rateSheet
@@ -6603,11 +6603,11 @@ extension on TranslationsHi {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng यह जांच नहीं कर सकता है कि यह कौन से फ़ाइलों को हटा देगा, इसलिए यह ऊपर नामित आइटम से अधिक हटा सकता है. रद्द करें और फिर से कोशिश करें, या किसी भी तरह से हटा दें.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'आपके सर्वर ने इस आइटम के लिए फ़ाइल विवरण प्रदान नहीं किया है, इसलिए Pleazyng यह जांच नहीं कर सकता है कि यह किस फ़ाइल को हटा देगा. यह ऊपर नामित आइटम से अधिक हटा सकता है.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'मीडिया के आइटम को सफलतापूर्वक हटा दिया गया',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'इस सर्वर पर मीडिया हटाना बंद है। सर्वर की लाइब्रेरी सेटिंग में मीडिया हटाने की अनुमति चालू करें।',
 			'mediaMenu.mediaFailedToDelete' => 'मीडिया आइटम को हटाने में विफलता',
 			'mediaMenu.rate' => 'दरें',
 			'mediaMenu.playFromBeginning' => 'शुरुआत से खेलना',
 			'mediaMenu.playVersion' => 'खेल संस्करण ...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'इस सर्वर पर मीडिया हटाना बंद है। सर्वर की लाइब्रेरी सेटिंग में मीडिया हटाने की अनुमति चालू करें।',
 			'rateSheet.title' => 'दरें',
 			'rateSheet.server' => 'सर्वर',
 			'rateSheet.favorite' => 'पसंद',

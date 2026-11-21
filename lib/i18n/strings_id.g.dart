@@ -1141,11 +1141,11 @@ class _Translations$mediaMenu$id extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng tidak dapat memeriksa berkas mana yang akan dihapus, sehingga mungkin menghapus lebih dari item yang disebutkan di atas. Batalkan dan coba lagi, atau tetap hapus.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Server tidak memberikan rincian berkas untuk item ini, sehingga Pleazyng tidak dapat memeriksa berkas mana yang akan dihapus. Penghapusan mungkin mencakup lebih dari item yang disebutkan di atas.';
 	@override String get mediaDeletedSuccessfully => 'Media item dihapus dengan sukses';
+	@override String get mediaDeletionDisabledOnServer => 'Penghapusan media dinonaktifkan di server ini. Izinkan penghapusan media di pengaturan pustaka server.';
 	@override String get mediaFailedToDelete => 'gagal menghapus media item';
 	@override String get rate => 'Rating';
 	@override String get playFromBeginning => 'Mainkan dari awal';
 	@override String get playVersion => 'Bermain versi...';
-	@override String get mediaDeletionDisabledOnServer => 'Penghapusan media dinonaktifkan di server ini. Izinkan penghapusan media di pengaturan pustaka server.';
 }
 
 // Path: rateSheet
@@ -6578,11 +6578,11 @@ extension on TranslationsId {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng tidak dapat memeriksa berkas mana yang akan dihapus, sehingga mungkin menghapus lebih dari item yang disebutkan di atas. Batalkan dan coba lagi, atau tetap hapus.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Server tidak memberikan rincian berkas untuk item ini, sehingga Pleazyng tidak dapat memeriksa berkas mana yang akan dihapus. Penghapusan mungkin mencakup lebih dari item yang disebutkan di atas.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Media item dihapus dengan sukses',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Penghapusan media dinonaktifkan di server ini. Izinkan penghapusan media di pengaturan pustaka server.',
 			'mediaMenu.mediaFailedToDelete' => 'gagal menghapus media item',
 			'mediaMenu.rate' => 'Rating',
 			'mediaMenu.playFromBeginning' => 'Mainkan dari awal',
 			'mediaMenu.playVersion' => 'Bermain versi...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'Penghapusan media dinonaktifkan di server ini. Izinkan penghapusan media di pengaturan pustaka server.',
 			'rateSheet.title' => 'Rating',
 			'rateSheet.server' => 'Server yang',
 			'rateSheet.favorite' => 'Favorit',

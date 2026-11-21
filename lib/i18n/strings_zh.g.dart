@@ -1144,11 +1144,11 @@ class Translations$mediaMenu$zh extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng 无法确认此操作会删除哪些文件，因此删除范围可能超出上面提到的项目。请取消后重试，或仍然删除。';
 	@override String get deleteScopeUnverifiedNoFileInfo => '你的服务器没有提供此项目的文件详情，因此 Pleazyng 无法确认此操作会删除哪些文件。删除范围可能超出上面提到的项目。';
 	@override String get mediaDeletedSuccessfully => '媒体项已成功删除';
+	@override String get mediaDeletionDisabledOnServer => '此服务器已关闭媒体删除功能。请在服务器的媒体库设置中允许删除媒体。';
 	@override String get mediaFailedToDelete => '删除媒体项失败';
 	@override String get rate => '评分';
 	@override String get playFromBeginning => '从头播放';
 	@override String get playVersion => '播放版本…';
-	@override String get mediaDeletionDisabledOnServer => '此服务器已关闭媒体删除功能。请在服务器的媒体库设置中允许删除媒体。';
 }
 
 // Path: rateSheet
@@ -6598,11 +6598,11 @@ extension on TranslationsZh {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng 无法确认此操作会删除哪些文件，因此删除范围可能超出上面提到的项目。请取消后重试，或仍然删除。',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => '你的服务器没有提供此项目的文件详情，因此 Pleazyng 无法确认此操作会删除哪些文件。删除范围可能超出上面提到的项目。',
 			'mediaMenu.mediaDeletedSuccessfully' => '媒体项已成功删除',
+			'mediaMenu.mediaDeletionDisabledOnServer' => '此服务器已关闭媒体删除功能。请在服务器的媒体库设置中允许删除媒体。',
 			'mediaMenu.mediaFailedToDelete' => '删除媒体项失败',
 			'mediaMenu.rate' => '评分',
 			'mediaMenu.playFromBeginning' => '从头播放',
 			'mediaMenu.playVersion' => '播放版本…',
-			'mediaMenu.mediaDeletionDisabledOnServer' => '此服务器已关闭媒体删除功能。请在服务器的媒体库设置中允许删除媒体。',
 			'rateSheet.title' => '评分',
 			'rateSheet.server' => '服务器',
 			'rateSheet.favorite' => '收藏',

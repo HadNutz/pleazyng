@@ -1058,11 +1058,11 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng non ha potuto verificare quali file rimuoverà, quindi potrebbe eliminare più di quanto indicato sopra. Annulla e riprova, oppure elimina comunque.",
     "deleteScopeUnverifiedNoFileInfo": "Il tuo server non ha fornito i dettagli del file per questo elemento, quindi Pleazyng non può verificare quali file rimuoverà. Potrebbe eliminare più di quanto indicato sopra.",
     "mediaDeletedSuccessfully": "Elemento multimediale eliminato correttamente",
+    "mediaDeletionDisabledOnServer": "L’eliminazione dei contenuti è disattivata su questo server. Consentila nelle impostazioni della libreria del server.",
     "mediaFailedToDelete": "Impossibile eliminare l'elemento multimediale",
     "rate": "Valuta",
     "playFromBeginning": "Riproduci dall'inizio",
-    "playVersion": "Riproduci versione...",
-    "mediaDeletionDisabledOnServer": "L’eliminazione dei contenuti è disattivata su questo server. Consentila nelle impostazioni della libreria del server."
+    "playVersion": "Riproduci versione..."
   },
   "rateSheet": {
     "title": "Valuta",

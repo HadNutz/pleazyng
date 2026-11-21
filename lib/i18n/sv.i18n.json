@@ -1056,11 +1056,11 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng kunde inte kontrollera vilka filer detta tar bort, så det kan ta bort mer än objektet ovan. Avbryt och försök igen, eller ta bort ändå.",
     "deleteScopeUnverifiedNoFileInfo": "Din server tillhandahöll inte filinformation för detta objekt, så Pleazyng kan inte kontrollera vilka filer detta tar bort. Det kan ta bort mer än objektet ovan.",
     "mediaDeletedSuccessfully": "Medieobjektet har tagits bort",
+    "mediaDeletionDisabledOnServer": "Radering av medier är avstängd på den här servern. Tillåt radering av medier i serverns biblioteksinställningar.",
     "mediaFailedToDelete": "Det gick inte att ta bort medieobjektet",
     "rate": "Betygsätt",
     "playFromBeginning": "Spela från början",
-    "playVersion": "Spela version...",
-    "mediaDeletionDisabledOnServer": "Radering av medier är avstängd på den här servern. Tillåt radering av medier i serverns biblioteksinställningar."
+    "playVersion": "Spela version..."
   },
   "rateSheet": {
     "title": "Betygsätt",

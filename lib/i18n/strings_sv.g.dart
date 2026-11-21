@@ -1146,11 +1146,11 @@ class _Translations$mediaMenu$sv extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng kunde inte kontrollera vilka filer detta tar bort, så det kan ta bort mer än objektet ovan. Avbryt och försök igen, eller ta bort ändå.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Din server tillhandahöll inte filinformation för detta objekt, så Pleazyng kan inte kontrollera vilka filer detta tar bort. Det kan ta bort mer än objektet ovan.';
 	@override String get mediaDeletedSuccessfully => 'Medieobjektet har tagits bort';
+	@override String get mediaDeletionDisabledOnServer => 'Radering av medier är avstängd på den här servern. Tillåt radering av medier i serverns biblioteksinställningar.';
 	@override String get mediaFailedToDelete => 'Det gick inte att ta bort medieobjektet';
 	@override String get rate => 'Betygsätt';
 	@override String get playFromBeginning => 'Spela från början';
 	@override String get playVersion => 'Spela version...';
-	@override String get mediaDeletionDisabledOnServer => 'Radering av medier är avstängd på den här servern. Tillåt radering av medier i serverns biblioteksinställningar.';
 }
 
 // Path: rateSheet
@@ -6603,11 +6603,11 @@ extension on TranslationsSv {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng kunde inte kontrollera vilka filer detta tar bort, så det kan ta bort mer än objektet ovan. Avbryt och försök igen, eller ta bort ändå.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Din server tillhandahöll inte filinformation för detta objekt, så Pleazyng kan inte kontrollera vilka filer detta tar bort. Det kan ta bort mer än objektet ovan.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Medieobjektet har tagits bort',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Radering av medier är avstängd på den här servern. Tillåt radering av medier i serverns biblioteksinställningar.',
 			'mediaMenu.mediaFailedToDelete' => 'Det gick inte att ta bort medieobjektet',
 			'mediaMenu.rate' => 'Betygsätt',
 			'mediaMenu.playFromBeginning' => 'Spela från början',
 			'mediaMenu.playVersion' => 'Spela version...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'Radering av medier är avstängd på den här servern. Tillåt radering av medier i serverns biblioteksinställningar.',
 			'rateSheet.title' => 'Betygsätt',
 			'rateSheet.server' => 'Server',
 			'rateSheet.favorite' => 'Favorit',

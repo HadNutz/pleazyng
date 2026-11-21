@@ -1146,11 +1146,11 @@ class _Translations$mediaMenu$fa extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng نتوانست بررسی کند کدام فایل‌ها حذف می‌شوند؛ بنابراین ممکن است مواردی بیش از مورد بالا حذف شوند. لغو کنید و دوباره تلاش کنید، یا در هر صورت حذف کنید.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'سرور شما جزئیات فایل‌های این مورد را ارائه نکرده است، بنابراین Pleazyng نمی‌تواند بررسی کند کدام فایل‌ها حذف می‌شوند. ممکن است مواردی بیش از مورد بالا حذف شوند.';
 	@override String get mediaDeletedSuccessfully => 'موضوع رسانه ها با موفقیت حذف شد';
+	@override String get mediaDeletionDisabledOnServer => 'حذف رسانه در این سرور غیرفعال است. در تنظیمات کتابخانهٔ سرور، اجازهٔ حذف رسانه را فعال کنید.';
 	@override String get mediaFailedToDelete => 'ناپدید شدن حذف رسانه ها';
 	@override String get rate => 'ارزیابی کن';
 	@override String get playFromBeginning => 'از ابتدا اجرا کن';
 	@override String get playVersion => 'بازی نسخه...';
-	@override String get mediaDeletionDisabledOnServer => 'حذف رسانه در این سرور غیرفعال است. در تنظیمات کتابخانهٔ سرور، اجازهٔ حذف رسانه را فعال کنید.';
 }
 
 // Path: rateSheet
@@ -6603,11 +6603,11 @@ extension on TranslationsFa {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng نتوانست بررسی کند کدام فایل‌ها حذف می‌شوند؛ بنابراین ممکن است مواردی بیش از مورد بالا حذف شوند. لغو کنید و دوباره تلاش کنید، یا در هر صورت حذف کنید.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'سرور شما جزئیات فایل‌های این مورد را ارائه نکرده است، بنابراین Pleazyng نمی‌تواند بررسی کند کدام فایل‌ها حذف می‌شوند. ممکن است مواردی بیش از مورد بالا حذف شوند.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'موضوع رسانه ها با موفقیت حذف شد',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'حذف رسانه در این سرور غیرفعال است. در تنظیمات کتابخانهٔ سرور، اجازهٔ حذف رسانه را فعال کنید.',
 			'mediaMenu.mediaFailedToDelete' => 'ناپدید شدن حذف رسانه ها',
 			'mediaMenu.rate' => 'ارزیابی کن',
 			'mediaMenu.playFromBeginning' => 'از ابتدا اجرا کن',
 			'mediaMenu.playVersion' => 'بازی نسخه...',
-			'mediaMenu.mediaDeletionDisabledOnServer' => 'حذف رسانه در این سرور غیرفعال است. در تنظیمات کتابخانهٔ سرور، اجازهٔ حذف رسانه را فعال کنید.',
 			'rateSheet.title' => 'ارزیابی کن',
 			'rateSheet.server' => 'سرور',
 			'rateSheet.favorite' => 'مورد علاقه',

@@ -1056,11 +1056,11 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng kunne ikke kontrollere, hvilke filer dette vil fjerne, så det kan slette mere end det ovennævnte emne. Annuller og prøv igen, eller slet alligevel.",
     "deleteScopeUnverifiedNoFileInfo": "Din server leverede ikke filoplysninger for dette emne, så Pleazyng kan ikke kontrollere, hvilke filer dette vil fjerne. Det kan slette mere end det ovennævnte emne.",
     "mediaDeletedSuccessfully": "Mediet blev slettet",
+    "mediaDeletionDisabledOnServer": "Sletning af medier er slået fra på denne server. Tillad sletning af medier i serverens biblioteksindstillinger.",
     "mediaFailedToDelete": "Mediet kunne ikke slettes",
     "rate": "Bedøm",
     "playFromBeginning": "Afspil fra begyndelsen",
-    "playVersion": "Afspil version...",
-    "mediaDeletionDisabledOnServer": "Sletning af medier er slået fra på denne server. Tillad sletning af medier i serverens biblioteksindstillinger."
+    "playVersion": "Afspil version..."
   },
   "rateSheet": {
     "title": "Bedøm",
