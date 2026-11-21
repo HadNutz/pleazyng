@@ -30,14 +30,6 @@ Public pull-request code runs without secrets and with minimal permissions.
 Use GitHub-hosted disposable execution for untrusted code; never widen trusted
 runner-group access to admit it.
 
-## CodeQL
-
-The owner-directed organization policy dated 2026-10-30 disables CodeQL across
-all `snapetech-org` repositories, including this public fork. Do not enable
-CodeQL default setup or add or restore CodeQL workflow invocations unless the
-owner explicitly reverses that direction. Keep the other approved security
-scans and checks in place; this instruction applies specifically to CodeQL.
-
 ## Release coverage — owner directive, 2026-11-05
 
 Versioned GitHub releases include Android, Linux x64/arm64, Windows x64/arm64,
