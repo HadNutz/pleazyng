@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Provision the matching Samsung SDK for x64 emulator tester builds.
+
 - Add an iPhone simulator regression test for changing motion presets and turning smoothing off during AVFoundation playback.
 
 - Fix Linux Neural falling back to CPU on systems where the bundled WebGPU provider can run the model.
