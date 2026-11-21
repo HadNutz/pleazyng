@@ -43,6 +43,7 @@ import 'package:plezy/theme/mono_theme.dart';
 import 'package:plezy/utils/layout_constants.dart';
 import 'package:plezy/utils/platform_detector.dart';
 import 'package:plezy/watch_together/watch_together.dart';
+import 'package:plezy/widgets/app_menu.dart';
 import 'package:plezy/widgets/rasterized_gradient.dart';
 import 'package:plezy/widgets/side_navigation_rail.dart';
 import 'package:plezy/widgets/tv_browse_rail.dart';
@@ -880,20 +881,25 @@ void main() {
 
   testWidgets('the profile menu is reachable with the D-pad from an empty TV Home (#3117)', (tester) async {
     await _pumpGatedDiscover(tester);
-    final lastAction = tester.widget<FocusableActionBar>(find.byType(FocusableActionBar)).actions.length - 1;
+    final actions = tester.widget<FocusableActionBar>(find.byType(FocusableActionBar)).actions;
+    final profileAction = actions.indexWhere((action) {
+      final button = action.child;
+      return button is AppMenuButton<String> && button.tooltip == t.profiles.sectionTitle;
+    });
+    expect(profileAction, greaterThanOrEqualTo(0));
     expect(FocusManager.instance.primaryFocus?.debugLabel, 'ActionBar[0]');
 
-    for (var i = 0; i < lastAction; i++) {
+    for (var i = 0; i < profileAction; i++) {
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
       await tester.pump();
     }
-    expect(FocusManager.instance.primaryFocus?.debugLabel, 'ActionBar[$lastAction]');
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'ActionBar[$profileAction]');
 
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.pump();
     expect(
       FocusManager.instance.primaryFocus?.debugLabel,
-      'ActionBar[$lastAction]',
+      'ActionBar[$profileAction]',
       reason: 'with no rail below, Down must not drop focus',
     );
 
