@@ -12,6 +12,32 @@ from scripts.tv_mpv.build import rewrite_webos_source_mirrors
 
 
 class TvMpvSourceMirrorTests(unittest.TestCase):
+    def test_tizen_kernel_headers_have_checksum_verified_fallback(self) -> None:
+        patch = (ROOT / "scripts/tv_mpv/video.patch").read_text(encoding="utf-8")
+        headers = {
+            "videodev2.h": (
+                "8161dd789a5ac4cd622285ff56dc3f497bdad689e32ac609d5dc8c481e44227c",
+                "7ac9946d6f6db9dc2275d16ace300245fc8ef3491a1a9f756e476f6fbd5da97d",
+            ),
+            "v4l2-common.h": (
+                "d8f299f7aa92ad182d82ba721cc546e4a93421259bc1c19fbd676d4c6f6de47d",
+                "19bde839032005e3791a404b1fdbbabf62a0a31cb581ec9623e8aee9b7754632",
+            ),
+            "v4l2-controls.h": (
+                "85b0478bd5cf72c8c83b3f73d47ba4378b49738ac2302762320a8fa3122e3824",
+                "aaf000dcc20bdd987013598f863e16d885b55150cc797335297ef391e2f297f2",
+            ),
+        }
+        for name, (source_sha, encoded_sha) in headers.items():
+            with self.subTest(header=name):
+                self.assertIn(f"source_sha={source_sha}", patch)
+                self.assertIn(f"transport_sha={encoded_sha}", patch)
+                self.assertIn(f"linux/$name?format=TEXT", patch)
+        self.assertIn('verify_source "$source_url" "$raw"', patch)
+        self.assertIn('curl -fsSL --retry 2 --retry-delay 1', patch)
+        self.assertIn('base64 --decode "$encoded" > "$raw"', patch)
+        self.assertIn('sha256sum --check --status', patch)
+
     def _recipe(self, root: Path, *, libpng_digest: str = "d80dd2a38a37f803cb9b6ac7b14bd6e74ddc3b654780a8380bdf93523fdb4389") -> Path:
         scripts = root / "scripts"
         (scripts / "shared").mkdir(parents=True)

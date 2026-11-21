@@ -44,17 +44,35 @@ index 049294f..0a95460 100644
 +    sed -i '1i #define HAS_STD_TO_CHARS_FP 0' "$gitdir/src/convert.cc"
 +    sed -i 's/= has_std_from_chars_impl<T>::value;/= !std::is_floating_point_v<T> \&\& has_std_from_chars_impl<T>::value;/' "$gitdir/src/convert.cc"
 +  fi
-@@ -456,0 +462,22 @@ cross_build_ffmpeg() {
+@@ -456,0 +462,40 @@ cross_build_ffmpeg() {
 +  # The Tizen 6 sysroot's kernel headers predate V4L2 EOS and HEVC.
 +  # Overlay only the userspace V4L2 declarations. Runtime ioctls still probe
 +  # the actual driver and libavcodec declines unsupported formats.
 +  local -a video_uapi=()
 +  if [[ "$platform" == tizen ]]; then
-+    local uapi="$CROSS_BUILD_DIR/video-uapi" name raw
++    local uapi="$CROSS_BUILD_DIR/video-uapi" name raw encoded source_sha transport_sha source_url mirror_url
 +    mkdir -p "$uapi/linux"
 +    for name in videodev2.h v4l2-common.h v4l2-controls.h; do
 +      raw="$CROSS_BUILD_DIR/src/linux-6.12-$name"
-+      download "https://raw.githubusercontent.com/torvalds/linux/adc218676eef25575469234709c2d87185ca223a/include/uapi/linux/$name" "$raw"
++      source_url="https://raw.githubusercontent.com/torvalds/linux/adc218676eef25575469234709c2d87185ca223a/include/uapi/linux/$name"
++      mirror_url="https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux/+/adc218676eef25575469234709c2d87185ca223a/include/uapi/linux/$name?format=TEXT"
++      case "$name" in
++        videodev2.h) source_sha=8161dd789a5ac4cd622285ff56dc3f497bdad689e32ac609d5dc8c481e44227c; transport_sha=7ac9946d6f6db9dc2275d16ace300245fc8ef3491a1a9f756e476f6fbd5da97d ;;
++        v4l2-common.h) source_sha=d8f299f7aa92ad182d82ba721cc546e4a93421259bc1c19fbd676d4c6f6de47d; transport_sha=19bde839032005e3791a404b1fdbbabf62a0a31cb581ec9623e8aee9b7754632 ;;
++        v4l2-controls.h) source_sha=85b0478bd5cf72c8c83b3f73d47ba4378b49738ac2302762320a8fa3122e3824; transport_sha=aaf000dcc20bdd987013598f863e16d885b55150cc797335297ef391e2f297f2 ;;
++      esac
++      if ! curl -fsSL --retry 2 --retry-delay 1 -o "$raw" "$source_url" || \
++         ! printf '%s  %s\n' "$source_sha" "$raw" | sha256sum --check --status; then
++        rm -f "$raw"
++        encoded="$raw.base64"
++        curl -fsSL --retry 2 --retry-delay 1 -o "$encoded" "$mirror_url"
++        printf '%s  %s\n' "$transport_sha" "$encoded" | sha256sum --check --status || {
++          echo "Tizen kernel UAPI transport checksum mismatch for $name" >&2; exit 1;
++        }
++        base64 --decode "$encoded" > "$raw"
++        rm -f "$encoded"
++      fi
++      verify_source "$source_url" "$raw"
 +      sed '/^#include <linux\/compiler\.h>$/d; s/\<__user\>//g' "$raw" > "$uapi/linux/$name"
 +    done
 +    video_uapi=("--extra-cflags=-I$uapi")
@@ -67,10 +85,10 @@ index 049294f..0a95460 100644
 +    --prefix "$CROSS_PREFIX_DIR" --libdir lib --default-library=static \
 +    -Db_staticpic=true -Denable_tools=false -Denable_tests=false
 +  ninja -C "$dav_build" -j"$JOBS" install
-@@ -466 +493 @@ cross_build_ffmpeg() {
+@@ -466 +511 @@ cross_build_ffmpeg() {
 -    "$@"
 +    "$@" "${video_uapi[@]}"
-@@ -483,0 +511,4 @@ cross_mpv_source() {
+@@ -483,0 +529,4 @@ cross_mpv_source() {
 +  (cd "$CROSS_MPV_DIR" && patch --batch --fuzz=0 -p1 -i "$PLEAZYNG_TV_MPV_SOURCE/sw-subtitles.patch")
 +  if [[ "${NDK_TRIPLE:-}" == "arm-webosmllib32-linux-gnueabi" ]]; then
 +    python3 "$PLEAZYNG_TV_MPV_SOURCE/install_ndl.py" "$CROSS_MPV_DIR"
