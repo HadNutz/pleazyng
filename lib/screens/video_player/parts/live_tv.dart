@@ -447,7 +447,7 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
     bool applyOptions = true,
     bool Function()? isCurrent,
     bool timeShifted = false,
-    IptvLiveTvPlaybackSession? iptvSession,
+    LiveTvPlaybackSession? openingSession,
     bool? enableLocalTimeShift,
     void Function()? onOpenStarted,
   }) async {
@@ -461,10 +461,13 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
     _live.streamGeneration++;
     final streamGeneration = _live.streamGeneration;
     bool ownsStream() => ownsOpen() && streamGeneration == _live.streamGeneration;
-    final activeIptvSession =
-        iptvSession ??
-        (_live.session is IptvLiveTvPlaybackSession ? _live.session! as IptvLiveTvPlaybackSession : null);
-    final media = Media(streamUrl, headers: {'Accept-Language': 'en', ...?activeIptvSession?.streamHeaders});
+    final session = openingSession ?? _live.session;
+    final activeIptvSession = session is IptvLiveTvPlaybackSession ? session : null;
+    final media = Media(
+      streamUrl,
+      headers: {'Accept-Language': 'en', ...?activeIptvSession?.streamHeaders},
+      mediaBrowserAuthentication: session is MediaBrowserLiveTvPlaybackSession,
+    );
     final playNow = play ?? automotivePlaybackAllowedNow();
     if (targetEpoch == null || player is! PlayerNative) {
       if (applyOptions) {
@@ -478,13 +481,10 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
       if (ownsStream() && targetEpoch != null) {
         _live.estimateUnidentifiedStream(targetEpoch, player.currentPosition);
       }
-      final localSession =
-          iptvSession ??
-          (_live.session is IptvLiveTvPlaybackSession ? _live.session! as IptvLiveTvPlaybackSession : null);
-      if (ownsStream() && localSession != null) {
+      if (ownsStream() && activeIptvSession != null) {
         final position = player.currentPosition;
         _live.estimateUnidentifiedStream(DateTime.now().millisecondsSinceEpoch / 1000.0, position);
-        _updateIptvLocalTimeShift(player, position, session: localSession);
+        _updateIptvLocalTimeShift(player, position, session: activeIptvSession);
       }
       return ownsStream();
     }
@@ -1133,7 +1133,7 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
             awaitClock: currentPlayer is PlayerNative,
             isCurrent: isCurrent,
             timeShifted: targetEpochSeconds != null,
-            iptvSession: session is IptvLiveTvPlaybackSession ? session : null,
+            openingSession: session,
             enableLocalTimeShift: session is IptvLiveTvPlaybackSession ? session.localTimeShiftEnabled : false,
           );
           return opened;
@@ -1223,7 +1223,7 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
       currentPlayer,
       streamUrl,
       targetEpoch: _live.captureBuffer == null ? null : _live.streamStartEpoch,
-      iptvSession: session is IptvLiveTvPlaybackSession ? session : null,
+      openingSession: session,
       enableLocalTimeShift: session is IptvLiveTvPlaybackSession ? session.localTimeShiftEnabled : false,
       isCurrent: () => _transitionGate.owns(lease) && identical(_live.session, session),
     );
@@ -1397,7 +1397,7 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
         currentPlayer,
         streamUrl,
         targetEpoch: targetEpoch,
-        iptvSession: session is IptvLiveTvPlaybackSession ? session : null,
+        openingSession: session,
         enableLocalTimeShift: session is IptvLiveTvPlaybackSession ? session.localTimeShiftEnabled : false,
         play: (frameRatePlan?.holdPlaybackStart ?? false) ? false : null,
         onOpenStarted: () {

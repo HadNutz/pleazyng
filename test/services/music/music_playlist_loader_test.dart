@@ -14,6 +14,32 @@ class PlaylistClient extends ExperienceClient {
 }
 
 void main() {
+  test('selected page can start first, then fills every gap without refetching the playing window', () async {
+    final requests = <int>[];
+    final client = PlaylistClient()
+      ..playlist = (offset) async {
+        requests.add(offset);
+        return LibraryPage(items: [musicTrack('t$offset')], totalCount: 6, offset: offset);
+      };
+    final read = MusicPlaylistRead(client, 'list', current: () => true);
+    await read.window(0, active: () => true);
+    final selected = await read.window(4, active: () => true);
+    expect(selected.items.single.id, 't4');
+    expect(requests, [0, 4]);
+    final tracks = await read.all(active: () => true);
+    expect(requests, [0, 4, 1, 2, 3, 5]);
+    expect(tracks.map((t) => t.id), ['t0', 't1', 't2', 't3', 't4', 't5']);
+  });
+
+  test('changing playlist length rejects the pending expansion', () async {
+    final client = PlaylistClient()
+      ..playlist = (offset) async =>
+          LibraryPage(items: [musicTrack('t$offset')], totalCount: offset == 0 ? 3 : 4, offset: offset);
+    final read = MusicPlaylistRead(client, 'list', current: () => true);
+    await read.window(0, active: () => true);
+    await expectLater(read.all(active: () => true), throwsFormatException);
+  });
+
   test('native playlist expansion preserves every occurrence and server identity', () async {
     final client = PlaylistClient()
       ..playlist = (offset) async => LibraryPage(

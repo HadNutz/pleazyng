@@ -379,6 +379,12 @@ const char* ffi_drain_subtitle_pcm_capture(int64_t player_id) {
   return strdup(player->DrainSubtitlePcmCaptureJson().c_str());
 }
 
+int ffi_set_source_crop(int64_t player_id, double x, double y, double width,
+                        double height) {
+  auto player = video_player_videohole_tizen::GetPlayer(player_id);
+  return player ? player->SetSourceCrop(x, y, width, height) : -1;
+}
+
 int ffi_set_display_geometry(int64_t player_id, int32_t x, int32_t y,
                              int32_t width, int32_t height) {
   auto player = video_player_videohole_tizen::GetPlayer(player_id);

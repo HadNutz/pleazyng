@@ -581,7 +581,7 @@ class _Translations$settings$bg extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Парола';
 	@override String get cloudBackupSaved => 'Забранено е Cloud Backup дестинация';
 	@override String get cloudBackupNow => 'Върнете се сега';
-	@override String get cloudBackupComplete => 'Задължително изтегляне на резервни копия';
+	@override String cloudBackupComplete({required Object action}) => 'Резервното копие е качено. Запазете този адрес. След нова инсталация го въведете в раздела за архивиране в облака и изберете „${action}“.';
 	@override String get cloudBackupRestore => 'Възстановяване на резервни копии';
 	@override String get cloudBackupRestoreConfirm => 'Това ще замени съответстващите преносими настройки на това устройство.';
 	@override String get cloudBackupRestored => 'Реставрация на настройките от Cloud Backup';
@@ -1421,7 +1421,7 @@ class _Translations$messages$bg extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Опресняване на метаданни за "${title}"...';
 	@override String metadataRefreshStarted({required Object title}) => 'Опресняването на метаданни е стартирано за "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'Неуспешно опресняване на метаданни: ${error}';
-	@override String get logoutConfirm => 'Сигурни ли сте, че искате да излезете?';
+	@override String get logoutConfirm => 'Искате ли да излезете от всички профили на това устройство?';
 	@override String get noSeasonsFound => 'Не са намерени сезони';
 	@override String get seasonsLoadFailed => 'Неуспешно зареждане на сезони';
 	@override String get noEpisodesFound => 'Не са намерени епизоди в първия сезон';
@@ -6039,7 +6039,7 @@ extension on TranslationsBg {
 			'settings.cloudBackupPassword' => 'Парола',
 			'settings.cloudBackupSaved' => 'Забранено е Cloud Backup дестинация',
 			'settings.cloudBackupNow' => 'Върнете се сега',
-			'settings.cloudBackupComplete' => 'Задължително изтегляне на резервни копия',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Резервното копие е качено. Запазете този адрес. След нова инсталация го въведете в раздела за архивиране в облака и изберете „${action}“.',
 			'settings.cloudBackupRestore' => 'Възстановяване на резервни копии',
 			'settings.cloudBackupRestoreConfirm' => 'Това ще замени съответстващите преносими настройки на това устройство.',
 			'settings.cloudBackupRestored' => 'Реставрация на настройките от Cloud Backup',
@@ -6818,7 +6818,7 @@ extension on TranslationsBg {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Опресняване на метаданни за "${title}"...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Опресняването на метаданни е стартирано за "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Неуспешно опресняване на метаданни: ${error}',
-			'messages.logoutConfirm' => 'Сигурни ли сте, че искате да излезете?',
+			'messages.logoutConfirm' => 'Искате ли да излезете от всички профили на това устройство?',
 			'messages.noSeasonsFound' => 'Не са намерени сезони',
 			'messages.seasonsLoadFailed' => 'Неуспешно зареждане на сезони',
 			'messages.noEpisodesFound' => 'Не са намерени епизоди в първия сезон',

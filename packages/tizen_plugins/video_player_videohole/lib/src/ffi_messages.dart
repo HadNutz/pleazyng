@@ -209,6 +209,9 @@ typedef _FFIDrainSubtitlePcmDart = ffi.Pointer<ffi.Char> Function(int);
 typedef _FFISetDisplayGeometryNative = ffi.Int32 Function(ffi.Int64, ffi.Int32, ffi.Int32, ffi.Int32, ffi.Int32);
 typedef _FFISetDisplayGeometryDart = int Function(int, int, int, int, int);
 
+typedef _FFISetSourceCropNative = ffi.Int32 Function(ffi.Int64, ffi.Double, ffi.Double, ffi.Double, ffi.Double);
+typedef _FFISetSourceCropDart = int Function(int, double, double, double, double);
+
 typedef _FFISetDisplayRotateNative = ffi.Int32 Function(ffi.Int64, ffi.Int32);
 typedef _FFISetDisplayRotateDart = int Function(int, int);
 
@@ -273,6 +276,7 @@ class VideoPlayerFFIBindings {
   late int Function(int, bool) _ffiSetSubtitlePcmCaptureEnabled;
   late ffi.Pointer<ffi.Char> Function(int) _ffiDrainSubtitlePcmCapture;
   late int Function(int, int, int, int, int) _ffiSetDisplayGeometry;
+  late _FFISetSourceCropDart _ffiSetSourceCrop;
   late int Function(int, int) _ffiSetDisplayRotate;
   late int Function(int) _ffiSuspend;
   late int Function(int, ffi.Pointer<ffi.Char>, int) _ffiRestore;
@@ -354,6 +358,10 @@ class VideoPlayerFFIBindings {
             'ffi_drain_subtitle_pcm_capture',
           )
           .asFunction<_FFIDrainSubtitlePcmDart>();
+
+      _ffiSetSourceCrop = _lib!
+          .lookup<ffi.NativeFunction<_FFISetSourceCropNative>>('ffi_set_source_crop')
+          .asFunction<_FFISetSourceCropDart>();
 
       _ffiSetDisplayGeometry = _lib!
           .lookup<ffi.NativeFunction<_FFISetDisplayGeometryNative>>('ffi_set_display_geometry')
@@ -552,6 +560,12 @@ class VideoPlayerVideoholeFFIApi {
       bindings.load();
     }
     return bindings._ffiSetLooping(playerId, isLooping);
+  }
+
+  int setSourceCrop(int playerId, double x, double y, double width, double height) {
+    final bindings = VideoPlayerFFIBindings.instance;
+    if (!bindings.isLoaded) bindings.load();
+    return bindings._ffiSetSourceCrop(playerId, x, y, width, height);
   }
 
   /// Sets the display geometry (position and size) for the player.

@@ -581,7 +581,7 @@ class _Translations$settings$tr extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Şifre';
 	@override String get cloudBackupSaved => 'Cloud Backup Destiny Kurtarıldı';
 	@override String get cloudBackupNow => 'Şimdi geri';
-	@override String get cloudBackupComplete => 'Settings backup yüklendi';
+	@override String cloudBackupComplete({required Object action}) => 'Yedek yüklendi. Bu URL’yi saklayın. Yeni bir kurulumdan sonra URL’yi bulut yedekleme bölümüne girip “${action}” seçeneğini seçin.';
 	@override String get cloudBackupRestore => 'Backup Yöntemleri';
 	@override String get cloudBackupRestoreConfirm => 'Bu cihazda uyumlu taşınabilir ayarları değiştirecektir. devamı?';
 	@override String get cloudBackupRestored => 'Cloud Backup\'tan kurtarılan ayarlar';
@@ -1421,7 +1421,7 @@ class _Translations$messages$tr extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => '"${title}" için meta veriler yenileniyor...';
 	@override String metadataRefreshStarted({required Object title}) => '"${title}" için meta veri yenilemesi başladı';
 	@override String metadataRefreshFailed({required Object error}) => 'Meta veriler yenilenemedi: ${error}';
-	@override String get logoutConfirm => 'Çıkış yapmak istediğinizden emin misiniz?';
+	@override String get logoutConfirm => 'Bu cihazdaki tüm profillerden çıkış yapılsın mı?';
 	@override String get noSeasonsFound => 'Sezon bulunamadı';
 	@override String get seasonsLoadFailed => 'Sezonlar yüklenemedi';
 	@override String get noEpisodesFound => 'İlk sezonda bölüm bulunamadı';
@@ -6039,7 +6039,7 @@ extension on TranslationsTr {
 			'settings.cloudBackupPassword' => 'Şifre',
 			'settings.cloudBackupSaved' => 'Cloud Backup Destiny Kurtarıldı',
 			'settings.cloudBackupNow' => 'Şimdi geri',
-			'settings.cloudBackupComplete' => 'Settings backup yüklendi',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Yedek yüklendi. Bu URL’yi saklayın. Yeni bir kurulumdan sonra URL’yi bulut yedekleme bölümüne girip “${action}” seçeneğini seçin.',
 			'settings.cloudBackupRestore' => 'Backup Yöntemleri',
 			'settings.cloudBackupRestoreConfirm' => 'Bu cihazda uyumlu taşınabilir ayarları değiştirecektir. devamı?',
 			'settings.cloudBackupRestored' => 'Cloud Backup\'tan kurtarılan ayarlar',
@@ -6818,7 +6818,7 @@ extension on TranslationsTr {
 			'messages.metadataRefreshing' => ({required Object title}) => '"${title}" için meta veriler yenileniyor...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => '"${title}" için meta veri yenilemesi başladı',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Meta veriler yenilenemedi: ${error}',
-			'messages.logoutConfirm' => 'Çıkış yapmak istediğinizden emin misiniz?',
+			'messages.logoutConfirm' => 'Bu cihazdaki tüm profillerden çıkış yapılsın mı?',
 			'messages.noSeasonsFound' => 'Sezon bulunamadı',
 			'messages.seasonsLoadFailed' => 'Sezonlar yüklenemedi',
 			'messages.noEpisodesFound' => 'İlk sezonda bölüm bulunamadı',

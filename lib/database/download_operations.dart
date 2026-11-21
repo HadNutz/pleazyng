@@ -82,7 +82,14 @@ extension DownloadDatabaseOperations on AppDatabase {
           return createdAtComparison != 0 ? createdAtComparison : a.profileId.compareTo(b.profileId);
         });
       if (remainingOwners.isEmpty) {
-        return (removedOwner: null, hasRemainingOwner: false);
+        // A co-owner signed out of this device still owns the physical file.
+        final retained = await customSelect(
+          "SELECT 1 FROM retained_download_owners WHERE global_key=? AND owner_id<>'' AND owner_id<>? LIMIT 1",
+          variables: [Variable(globalKey), Variable(profileId)],
+        ).getSingleOrNull();
+        if (retained == null) return (removedOwner: null, hasRemainingOwner: false);
+        if (departingOwner != null) await removeDownloadOwner(profileId: profileId, globalKey: globalKey);
+        return (removedOwner: departingOwner, hasRemainingOwner: true);
       }
 
       if (departingOwner != null) {
@@ -182,26 +189,23 @@ extension DownloadDatabaseOperations on AppDatabase {
         .toList(growable: false);
   }
 
-  /// Claim pre-v17 shared download rows for [profileId]. Rows that already
-  /// have any valid owner are left untouched so later profiles do not
-  /// inherit them.
-  ///
-  /// Runs on every profile switch — validity context is computed once and
-  /// applied in memory instead of a per-download full-table rescan through
-  /// `_validDownloadOwnerRows`.
+  /// Recover legacy files only when their persisted scope names this profile
+  /// or one of its authenticated server users. Unsigned files require a live
+  /// entitlement check when explicitly downloaded again.
   Future<void> adoptLegacyDownloadsForProfile(String profileId, {bool Function()? isStillActive}) async {
     if (profileId.isEmpty) return;
     if (isStillActive != null && !isStillActive()) return;
-    final rows = await select(downloadedMedia).get();
+    final rows =
+        await (select(downloadedMedia)..where(
+              (t) =>
+                  const CustomExpression<bool>('global_key NOT IN (SELECT global_key FROM retained_download_owners)'),
+            ))
+            .get();
     if (rows.isEmpty) return;
 
     final owners = await select(downloadOwners).get();
-    final localProfileIds = (await select(profiles).get()).map((row) => row.id).toSet();
     final connectionRows = await select(connections).get();
-    final connectionIds = connectionRows.map((row) => row.id).toSet();
-    final connectionKindsById = {for (final row in connectionRows) row.id: row.kind};
     final mediaBrowserIdentities = <String, ({String machineId, String? userId, String backendId})>{};
-    final mediaBrowserMachineIds = <String>{};
     // `Connections.kind` is the authoritative dialect discriminator; both
     // MediaBrowser kinds use the same compound machine/user scope shape.
     for (final connection in connectionRows.where(
@@ -213,7 +217,6 @@ extension DownloadDatabaseOperations on AppDatabase {
         userId: identity.userId,
         backendId: connection.kind,
       );
-      mediaBrowserMachineIds.add(identity.machineId);
     }
     final mediaBrowserScopesByProfileAndMachine = <String, Map<String, Set<({String scopeId, String backendId})>>>{};
     for (final binding in await select(profileConnections).get()) {
@@ -225,23 +228,18 @@ extension DownloadDatabaseOperations on AppDatabase {
           .putIfAbsent(identity.machineId, () => <({String scopeId, String backendId})>{})
           .add((scopeId: '${identity.machineId}/${binding.userIdentifier}', backendId: identity.backendId));
     }
-    final ownedKeys = <String>{
-      for (final owner in owners)
-        if (_isValidDownloadOwner(owner, localProfileIds: localProfileIds, connectionIds: connectionIds))
-          owner.globalKey,
-    };
+    final ownedKeys = {for (final owner in owners) owner.globalKey};
     for (final row in rows) {
       if (!ownedKeys.contains(row.globalKey)) {
         if (isStillActive != null && !isStillActive()) return;
         final scopeId = row.clientScopeId;
         final plexScope = PlexProfileScopeId.tryParse(scopeId ?? '');
         final transferScope = PlexTransferScopeId.tryParse(scopeId ?? '');
-        // A scoped Plex row already identifies the Plezy profile whose token
-        // and cache namespace produced it. Logout first moves preserved rows
-        // through a sanitized transfer namespace so a new profile can adopt
-        // the physical file without inheriting the old profile's watch state.
+        // Old transfer rows have no provable owner. Only an explicit,
+        // authorized download can reclaim them after upgrading.
+        if (transferScope != null) continue;
         if (plexScope != null && plexScope.profileId != profileId) continue;
-        if (plexScope != null || transferScope != null) {
+        if (plexScope != null) {
           await addDownloadOwner(
             profileId: profileId,
             globalKey: row.globalKey,
@@ -254,36 +252,16 @@ extension DownloadDatabaseOperations on AppDatabase {
         final mediaBrowserScopes =
             mediaBrowserScopesByProfileAndMachine[profileId]?[row.serverId] ??
             const <({String scopeId, String backendId})>{};
-        if (mediaBrowserScopes.length == 1) {
-          final adopting = mediaBrowserScopes.single;
-          await transaction(() async {
-            if (isStillActive != null && !isStillActive()) return;
-            await updateDownloadedMediaClientScope(row.globalKey, adopting.scopeId);
-            await addDownloadOwner(
-              profileId: profileId,
-              globalKey: row.globalKey,
-              backendId: adopting.backendId,
-              clientScopeId: adopting.scopeId,
-            );
-          });
-          continue;
+        for (final adopting in mediaBrowserScopes) {
+          if (adopting.scopeId != scopeId) continue;
+          await addDownloadOwner(
+            profileId: profileId,
+            globalKey: row.globalKey,
+            backendId: adopting.backendId,
+            clientScopeId: adopting.scopeId,
+          );
+          break;
         }
-
-        // A compound non-Plex scope is a legacy MediaBrowser user namespace.
-        // Never attach it to another profile unless that profile has exactly
-        // one matching MediaBrowser binding. The same applies when persisted
-        // MediaBrowser connections identify the machine but the profile has
-        // zero or multiple possible users.
-        final hasLegacyMediaBrowserScope = scopeId?.startsWith('${row.serverId}/') ?? false;
-        if (hasLegacyMediaBrowserScope || mediaBrowserMachineIds.contains(row.serverId)) continue;
-
-        final backendId = connectionKindsById[scopeId];
-        await addDownloadOwner(
-          profileId: profileId,
-          globalKey: row.globalKey,
-          backendId: backendId,
-          clientScopeId: scopeId,
-        );
       }
     }
   }
@@ -774,6 +752,12 @@ extension DownloadDatabaseOperations on AppDatabase {
       return column.isNull() | column.equals('');
     }
     return column.equals(clientScopeId);
+  }
+
+  Future<void> useOriginalDownloadQuality(String globalKey) async {
+    await (update(
+      downloadedMedia,
+    )..where((t) => t.globalKey.equals(globalKey))).write(const DownloadedMediaCompanion(downloadQuality: Value(null)));
   }
 
   Future<void> updateBgTaskId(String globalKey, String? taskId) async {

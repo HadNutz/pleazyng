@@ -21,6 +21,10 @@ import 'package:plezy/media/ids.dart';
 import 'package:plezy/media/media_kind.dart';
 import 'package:plezy/providers/download_provider.dart';
 import 'package:plezy/profiles/active_profile_provider.dart';
+import 'package:plezy/i18n/strings.g.dart';
+import 'package:plezy/sources/source_controller.dart';
+import 'package:plezy/sources/source_database.dart';
+import 'package:plezy/sources/source_models.dart';
 import 'package:plezy/services/music/music_car_host.dart';
 import 'package:plezy/services/music/music_discovery.dart';
 import 'package:plezy/services/music/music_station.dart';
@@ -29,6 +33,7 @@ import 'package:plezy/services/music/music_queue_items.dart';
 import 'package:plezy/services/playback_launch_observer.dart';
 import 'package:plezy/media/media_backend.dart';
 import 'package:plezy/media/media_library.dart';
+import 'package:plezy/media/media_playlist.dart';
 import 'package:plezy/media/library_query.dart';
 import 'package:plezy/providers/hidden_libraries_provider.dart';
 import 'package:plezy/providers/libraries_provider.dart';
@@ -55,6 +60,24 @@ class Profiles extends ChangeNotifier implements ActiveProfileProvider {
   bool get isBinding => binding;
   @override
   bool get lastBindingSucceeded => succeeded;
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _VoiceSources extends ChangeNotifier implements SourceController {
+  _VoiceSources(this.repository, this.sources);
+  @override
+  final SourceRepository repository;
+  @override
+  final List<FileSource> sources;
+  @override
+  String get profileId => 'one';
+  @override
+  bool get blocked => false;
+  @override
+  int get generation => 1;
+  @override
+  bool current(int epoch) => epoch == generation;
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -223,6 +246,41 @@ class CatalogClient extends ExperienceClient {
   }
 }
 
+class PagedPlaylistClient extends CatalogClient {
+  final readsAt = <int>[];
+  final tailRequested = Completer<void>();
+  final tail = Completer<void>();
+
+  @override
+  Future<LibraryPage<MediaPlaylist>> fetchPlaylistsPage({
+    String playlistType = 'video',
+    bool? smart,
+    int? start,
+    int? size,
+    AbortController? abort,
+  }) async => LibraryPage(
+    items: [MediaPlaylist(id: 'drive', backend: backend, title: 'Drive', playlistType: 'audio', serverId: 's')],
+    totalCount: 1,
+  );
+
+  @override
+  Future<LibraryPage<MediaItem>> fetchPlaylistPage(String id, {int? start, int? size, AbortController? abort}) async {
+    final offset = start ?? 0;
+    readsAt.add(offset);
+    if (offset > 0) {
+      tailRequested.complete();
+      await tail.future;
+    }
+    return LibraryPage(
+      items: [
+        MediaItem.fromJson({...musicTrack('repeat').toJson(), 'playlistItemId': 40 + offset}),
+      ],
+      offset: offset,
+      totalCount: 2,
+    );
+  }
+}
+
 class MediaBrowserCatalogClient extends CatalogClient {
   MediaBrowserCatalogClient(this.backend);
   @override
@@ -369,23 +427,26 @@ void main() {
     Music music,
     Profiles profiles, {
     CatalogDownloads? downloads,
+    SourceController? sources,
     AppDatabase? database,
     MultiServerProvider? servers,
     CatalogHidden? hidden,
     CatalogLibraries? libraries,
     MusicDrivingRoutes? drivingRoutes,
     void Function(MethodCall)? onNative,
+    bool? acceptCarRequest,
   }) async {
     final navigator = GlobalKey<NavigatorState>();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async {
       onNative?.call(call);
-      return null;
+      return call.method == 'acceptCarRequest' ? acceptCarRequest : null;
     });
     await tester.pumpWidget(
       MultiProvider(
         providers: [
           ChangeNotifierProvider<MusicPlaybackService>.value(value: music),
           ChangeNotifierProvider<ActiveProfileProvider>.value(value: profiles),
+          if (sources != null) ChangeNotifierProvider<SourceController>.value(value: sources),
           if (downloads != null) ChangeNotifierProvider<DownloadProvider>.value(value: downloads),
           if (database != null) Provider<AppDatabase>.value(value: database),
           if (servers != null) ChangeNotifierProvider<MultiServerProvider>.value(value: servers),
@@ -498,6 +559,47 @@ void main() {
       libraries.dispose();
     });
   }
+
+  testWidgets('ordinary French podcast-show intents disambiguate subscribed shows using their own episodes', (
+    tester,
+  ) async {
+    final database = SourceDatabase(NativeDatabase.memory());
+    final repository = SourceRepository(database);
+    final feeds = [
+      for (final id in ['paris', 'lyon'])
+        FileSource(id: id, profileId: 'one', kind: FileSourceKind.podcastRss, name: 'Histoires du soir'),
+    ];
+    final sources = _VoiceSources(repository, feeds);
+    final profiles = Profiles(), music = Music();
+    addTearDown(() => LocaleSettings.setLocale(AppLocale.en));
+    await tester.runAsync(() async {
+      await LocaleSettings.setLocale(AppLocale.fr);
+      await repository.cacheEntries('one', [
+        for (final feed in feeds)
+          SourceEntry(
+            sourceId: feed.id,
+            id: 'one',
+            title: 'Épisode de ${feed.id}',
+            series: feed.name,
+            kind: SourceItemKind.music,
+            identifiers: const {'podcast': 'episode'},
+            files: const [PublicationFile(id: 'audio', name: 'episode.mp3', mimeType: 'audio/mpeg')],
+          ),
+      ]);
+    });
+    await mount(tester, music, profiles, sources: sources);
+    await tester.runAsync(() async {
+      final choices = await native('resolveVoice', {'kind': 'show', 'query': 'Histoires du soir'}) as List;
+      expect(choices.map((row) => row['title']), unorderedEquals(['Épisode de paris', 'Épisode de lyon']));
+      expect(choices.map((row) => row['id']).toSet(), hasLength(2));
+      expect(choices.every((row) => row['kind'] == 'podcast' && row['playable'] == true), isTrue);
+    });
+    await tester.pumpWidget(const SizedBox());
+    sources.dispose();
+    music.dispose();
+    profiles.dispose();
+    await tester.runAsync(database.close);
+  });
 
   testWidgets('voice can resolve server radio without exposing its key', (tester) async {
     final music = ServerRadioMusic(), profiles = Profiles(), hidden = CatalogHidden(), libraries = CatalogLibraries();
@@ -942,6 +1044,54 @@ void main() {
     hidden.dispose();
     libraries.dispose();
   });
+
+  for (final accepted in [true, false]) {
+    testWidgets('car playlist enqueue claims before its second page and appends intact only once: $accepted', (
+      tester,
+    ) async {
+      final music = ServerRadioMusic(), profiles = Profiles(), client = PagedPlaylistClient();
+      final hidden = CatalogHidden(), libraries = CatalogLibraries();
+      final servers = testMultiServer(clients: [client]);
+      var claims = 0;
+      await mount(
+        tester,
+        music,
+        profiles,
+        servers: servers.provider,
+        hidden: hidden,
+        libraries: libraries,
+        acceptCarRequest: accepted,
+        onNative: (call) {
+          if (call.method == 'acceptCarRequest') {
+            expect(client.readsAt, [0]);
+            claims++;
+          }
+        },
+      );
+      final playlists = await native('browse', {'id': 'playlists:s'}) as List;
+      final pending = native('playItem', {'id': playlists.single['id'], 'queue': 'next', 'carRequest': 'native-id'});
+      if (accepted) {
+        // A premature native rejection must fail the test immediately, without
+        // waiting forever for a page the host will never request.
+        final reachedTail = await Future.any([
+          client.tailRequested.future.then((_) => true),
+          pending.then((_) => false),
+        ]);
+        expect(reachedTail, isTrue);
+        expect(music.enqueued, isEmpty);
+        client.tail.complete();
+      }
+      expect(await pending, accepted);
+      expect(claims, 1);
+      expect(client.readsAt, accepted ? [0, 1] : [0]);
+      expect(music.enqueued.map((item) => item.playlistItemId), accepted ? [40, 41] : isEmpty);
+      await tester.pumpWidget(const SizedBox());
+      music.dispose();
+      profiles.dispose();
+      hidden.dispose();
+      libraries.dispose();
+    });
+  }
 
   testWidgets('native artist pages retire when their library disappears during the read', (tester) async {
     final music = Music(), profiles = Profiles(), client = CatalogClient();

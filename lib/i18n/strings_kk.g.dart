@@ -581,7 +581,7 @@ class _Translations$settings$kk extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Құпия сөз';
 	@override String get cloudBackupSaved => 'Ауыздылықлықлық тазалық тазаның';
 	@override String get cloudBackupNow => 'Қазір қайтарып';
-	@override String get cloudBackupComplete => 'Басқасы қанаққалы';
+	@override String cloudBackupComplete({required Object action}) => 'Сақтық көшірме жүктеп салынды. Осы URL мекенжайын сақтаңыз. Қолданбаны қайта орнатқаннан кейін оны бұлттық сақтық көшірме бөлімінде енгізіп, «${action}» тармағын таңдаңыз.';
 	@override String get cloudBackupRestore => 'Бақырлық';
 	@override String get cloudBackupRestoreConfirm => 'Бұл үшін бұл қосымшалар мен қосымшалармен қосымшалар бар.';
 	@override String get cloudBackupRestored => '«Аяқтар» АҚШ-ның «Now Backup» АҚШ';
@@ -1421,7 +1421,7 @@ class _Translations$messages$kk extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => '"${title}" үшін метадеректер жаңартылуда...';
 	@override String metadataRefreshStarted({required Object title}) => '"${title}" үшін метадеректерді жаңарту басталды';
 	@override String metadataRefreshFailed({required Object error}) => 'Метадеректерді жаңарту мүмкін болмады: ${error}';
-	@override String get logoutConfirm => 'Шынымен шыққыңыз келе ме?';
+	@override String get logoutConfirm => 'Осы құрылғыдағы барлық профильден шыққыңыз келе ме?';
 	@override String get noSeasonsFound => 'Маусымдар табылмады';
 	@override String get seasonsLoadFailed => 'Маусымдарды жүктеу мүмкін болмады';
 	@override String get noEpisodesFound => 'Бірінші маусымда бөлімдер табылмады';
@@ -6039,7 +6039,7 @@ extension on TranslationsKk {
 			'settings.cloudBackupPassword' => 'Құпия сөз',
 			'settings.cloudBackupSaved' => 'Ауыздылықлықлық тазалық тазаның',
 			'settings.cloudBackupNow' => 'Қазір қайтарып',
-			'settings.cloudBackupComplete' => 'Басқасы қанаққалы',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Сақтық көшірме жүктеп салынды. Осы URL мекенжайын сақтаңыз. Қолданбаны қайта орнатқаннан кейін оны бұлттық сақтық көшірме бөлімінде енгізіп, «${action}» тармағын таңдаңыз.',
 			'settings.cloudBackupRestore' => 'Бақырлық',
 			'settings.cloudBackupRestoreConfirm' => 'Бұл үшін бұл қосымшалар мен қосымшалармен қосымшалар бар.',
 			'settings.cloudBackupRestored' => '«Аяқтар» АҚШ-ның «Now Backup» АҚШ',
@@ -6818,7 +6818,7 @@ extension on TranslationsKk {
 			'messages.metadataRefreshing' => ({required Object title}) => '"${title}" үшін метадеректер жаңартылуда...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => '"${title}" үшін метадеректерді жаңарту басталды',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Метадеректерді жаңарту мүмкін болмады: ${error}',
-			'messages.logoutConfirm' => 'Шынымен шыққыңыз келе ме?',
+			'messages.logoutConfirm' => 'Осы құрылғыдағы барлық профильден шыққыңыз келе ме?',
 			'messages.noSeasonsFound' => 'Маусымдар табылмады',
 			'messages.seasonsLoadFailed' => 'Маусымдарды жүктеу мүмкін болмады',
 			'messages.noEpisodesFound' => 'Бірінші маусымда бөлімдер табылмады',

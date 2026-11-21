@@ -196,6 +196,7 @@ class IptvRecordingScheduler with WidgetsBindingObserver {
         outputFile: recordingPartial,
         archiveDirectory: Directory(p.join(folder.path, '.$id.media')),
         endsAt: schedule.endsAt,
+        requestedStart: schedule.startsAt.isAfter(schedule.createdAt) ? schedule.startsAt : schedule.createdAt,
       );
       recorder = capture;
       _active[schedule.id] = capture;
@@ -205,6 +206,7 @@ class IptvRecordingScheduler with WidgetsBindingObserver {
       if (_disposed) {
         throw const IptvImportException('recording_interrupted');
       }
+      if (!capture.capturedThroughDeadline) throw const IptvImportException('recording_interrupted');
       if (!await recordingPartial.exists() || await recordingPartial.length() == 0) {
         throw const IptvImportException('recording_empty');
       }
@@ -228,7 +230,7 @@ class IptvRecordingScheduler with WidgetsBindingObserver {
         profileId: schedule.profileId,
         recordingId: id,
         completed: true,
-        durationSeconds: DateTime.now().difference(now).inSeconds,
+        durationSeconds: (capture.capturedMediaDuration ?? DateTime.now().difference(now)).inSeconds,
         sizeBytes: size,
       );
       await _repository.updateLocalRecordingSchedule(schedule.id, state: 'completed', recordingId: id);
@@ -269,7 +271,9 @@ class IptvRecordingScheduler with WidgetsBindingObserver {
             profileId: profileId,
             recordingId: recordingId,
             completed: false,
-            durationSeconds: startedAt == null ? null : DateTime.now().difference(startedAt).inSeconds,
+            durationSeconds:
+                recorder?.capturedMediaDuration?.inSeconds ??
+                (startedAt == null ? null : DateTime.now().difference(startedAt).inSeconds),
             sizeBytes: retainedSize,
             errorCode: errorCode,
           );

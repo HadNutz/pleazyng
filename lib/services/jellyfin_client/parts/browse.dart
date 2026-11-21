@@ -859,7 +859,10 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
     return fetchItem(id);
   }
 
-  Future<MediaItem?> _fetchItemOnce(String id) async {
+  @override
+  Future<MediaItem?> fetchAuthorizedDownloadItem(String id) => _fetchItemOnce(id, allowCacheFallback: false);
+
+  Future<MediaItem?> _fetchItemOnce(String id, {bool allowCacheFallback = true}) async {
     final endpoint = '/Users/${_segment(connection.userId)}/Items/${_segment(id)}';
     // Contract:
     //   - 200 with parseable Map → MediaItem
@@ -872,6 +875,7 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
     //   - Pure transport errors (no HTTP response) → fall back to cached row
     //     when present, otherwise rethrow.
     if (isOfflineMode) {
+      if (!allowCacheFallback) return null;
       final cached = await cache.get(ServerId(cacheServerId), endpoint);
       if (cached is Map<String, dynamic>) return _mapItem(cached);
       return null;
@@ -894,12 +898,13 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
       // timeout) carry no status code — and the HTTP layer wraps them into
       // [MediaServerHttpException], so they arrive here rather than in the
       // generic catch below. Apply the documented cache fallback (#1867).
-      if (e.statusCode != null || e.isCancellation) rethrow;
+      if (!allowCacheFallback || e.statusCode != null || e.isCancellation) rethrow;
       appLogger.w('JellyfinClient.fetchItem network call failed', error: e);
       final cached = await _cachedItemFallback(endpoint);
       if (cached != null) return cached;
       rethrow;
     } catch (e) {
+      if (!allowCacheFallback) rethrow;
       // Non-HTTP failure while handling the response (e.g. mapping). Same
       // best-effort fallback before surfacing.
       appLogger.w('JellyfinClient.fetchItem network call failed', error: e);
@@ -1743,9 +1748,8 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
   Future<List<MediaItem>> _keepMatchesWithSeason(List<MediaItem> items, int seasonIndex) async {
     final kept = await Future.wait([
       for (final item in items)
-        fetchChildren(
-          item.id,
-        ).then((children) => children.any((child) => child.kind == MediaKind.season && child.index == seasonIndex)),
+        fetchChildren(item.id)
+            .then((children) => children.any((child) => child.kind == MediaKind.season && child.index == seasonIndex)),
     ]);
     return [
       for (var index = 0; index < items.length; index++)

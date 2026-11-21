@@ -57,6 +57,32 @@ void main() {
       service.saveConfiguration(url: url, username: 'dummy-user', password: 'dummy-password');
   Future<double?> volume() async => (await SettingsService.getInstance()).prefs.getDouble('volume');
 
+  test('the recovery URL shown after backup imports into a new local profile', () async {
+    final files = <Uri, String>{};
+    final service = CloudSettingsBackupService(
+      httpClient: MockClient((request) async {
+        if (request.method == 'PUT') {
+          files[request.url] = request.body;
+          return http.Response('', 201);
+        }
+        return http.Response(files[request.url] ?? '', files.containsKey(request.url) ? 200 : 404);
+      }),
+    );
+    addTearDown(service.dispose);
+    await configure(service, 'https://backup.test/settings.json');
+    final receipt = await service.backUp(expectedProfileId: 'audit-local', expectedOwner: 'audit-local');
+
+    resetSharedPreferencesForTest();
+    final cleanStorage = await StorageService.getInstance();
+    expect(cleanStorage.getActiveProfileId(), isNull);
+    await cleanStorage.setActiveProfileId('new-local');
+    expect((await service.loadConfiguration()).url, isEmpty);
+    expect(await volume(), isNull);
+    await configure(service, receipt.toString());
+    await service.restore(expectedProfileId: 'new-local', expectedOwner: 'new-local', importPortableFile: true);
+    expect(await volume(), 31.0);
+  });
+
   test('header timeout aborts and cancels an injected late response', () async {
     final client = _LateBackupClient();
     final service = CloudSettingsBackupService(httpClient: client, requestTimeout: const Duration(milliseconds: 20));

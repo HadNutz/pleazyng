@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'package:uuid/uuid.dart';
 
 import 'package:drift/drift.dart' show Variable, TableUpdate, TableUpdateQuery;
+import 'package:flutter/foundation.dart' show listEquals;
+import 'package:uuid/uuid.dart';
 
 import '../../database/app_database.dart';
 import '../../media/media_item.dart';
@@ -178,12 +179,23 @@ class MusicLibraryStore {
         final old = await document('offlinePlaylist', key);
         const size = 256;
         final pages = (rows.length + size - 1) ~/ size;
+        final identity = musicIdentity(playlist).toJson();
+        var changed =
+            old?['version'] != 2 ||
+            old?['accountScope'] != account ||
+            old?['count'] != rows.length ||
+            old?['pages'] != pages ||
+            jsonEncode(old?['playlist']) != jsonEncode(identity);
         for (var n = 0; n < pages; n++) {
           final end = ((n + 1) * size).clamp(0, rows.length);
-          await saveDocument('offlinePlaylistPage', jsonEncode([key, n]), {
-            'ids': [for (var i = n * size; i < end; i++) rows[i].id],
-          });
+          final pageKey = jsonEncode([key, n]);
+          final ids = [for (var i = n * size; i < end; i++) rows[i].id];
+          final oldIds = (await document('offlinePlaylistPage', pageKey))?['ids'];
+          if (oldIds is List && listEquals<Object?>(oldIds, ids)) continue;
+          await saveDocument('offlinePlaylistPage', pageKey, {'ids': ids});
+          changed = true;
         }
+        if (!changed) return;
         final previous = old?['pages'];
         if (previous is int) {
           for (var n = pages; n < previous; n++) {
@@ -194,7 +206,7 @@ class MusicLibraryStore {
           'version': 2,
           'revision': const Uuid().v4(),
           'accountScope': account,
-          'playlist': musicIdentity(playlist).toJson(),
+          'playlist': identity,
           'pages': pages,
           'count': rows.length,
         });

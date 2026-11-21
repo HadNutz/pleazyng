@@ -25,6 +25,9 @@ void main() {
           request.response.done.ignore();
           await request.response.flush();
           return;
+        } else if (request.uri.path == '/service.m3u8') {
+          request.response.headers.contentType = ContentType('application', 'vnd.apple.mpegurl');
+          request.response.write('#EXTM3U\n#EXTINF:2,\nsegment.ts?keep=1&apikey=service-key&keep=2\n');
         } else if (request.uri.path == '/playlist.m3u8') {
           request.response.headers.contentType = ContentType('application', 'vnd.apple.mpegurl');
           request.response.write(
@@ -75,6 +78,50 @@ void main() {
       expect(requests.single.headers.value(HttpHeaders.rangeHeader), 'bytes=0-3');
     });
 
+    test('provider URL retains signed bytes and repeated query parameters', () async {
+      const signed = 'part=one&api_key=a%2Bb%2F%3D&part=two&apikey=second&sig=I%2FII%2B';
+      final source = Uri.parse('http://127.0.0.1:${origin.port}/segment.ts?$signed');
+      final local = proxy.register(source);
+      final response = await client.getUrl(local).then((request) => request.close());
+      await response.drain<void>();
+      expect(requests.single.uri.query, signed);
+      expect(requests.single.headers.value('X-Emby-Token'), isNull);
+    });
+
+    test('MediaBrowser root and same-origin children move API keys to the server header', () async {
+      final root = Uri.parse('http://127.0.0.1:${origin.port}/service.m3u8?keep=1&api_key=service-key&keep=2');
+      final local = proxy.register(root, mediaBrowserAuthentication: true);
+      final response = await client.getUrl(local).then((request) => request.close());
+      final playlist = await utf8.decodeStream(response);
+      expect(playlist, isNot(contains('service-key')));
+      final segment = Uri.parse(playlist.split('\n').firstWhere((line) => line.startsWith('http://')));
+      await (await client.getUrl(segment).then((request) => request.close())).drain<void>();
+      expect(requests.map((request) => request.uri.path), ['/service.m3u8', '/segment.ts']);
+      for (final request in requests) {
+        expect(request.uri.query, 'keep=1&keep=2');
+        expect(request.headers.value('X-Emby-Token'), 'service-key');
+      }
+    });
+
+    test('identical roots with different authentication policies keep distinct children', () async {
+      final root = Uri.parse('http://127.0.0.1:${origin.port}/service.m3u8');
+      final external = proxy.register(root);
+      final server = proxy.register(root, mediaBrowserAuthentication: true);
+      expect(external, isNot(server));
+      for (final local in [server, external]) {
+        final response = await client.getUrl(local).then((request) => request.close());
+        final playlist = await utf8.decodeStream(response);
+        final segment = Uri.parse(playlist.split('\n').firstWhere((line) => line.startsWith('http://')));
+        await (await client.getUrl(segment).then((request) => request.close())).drain<void>();
+      }
+      final children = requests.where((request) => request.uri.path == '/segment.ts').toList();
+      expect(children, hasLength(2));
+      expect(children.first.uri.query, 'keep=1&keep=2');
+      expect(children.first.headers.value('X-Emby-Token'), 'service-key');
+      expect(children.last.uri.query, 'keep=1&apikey=service-key&keep=2');
+      expect(children.last.headers.value('X-Emby-Token'), isNull);
+    });
+
     test('rewrites HLS keys and segments to opaque local resources', () async {
       final source = Uri.parse('http://127.0.0.1:${origin.port}/playlist.m3u8?X-Plex-Token=query-secret');
       final local = proxy.register(source);
@@ -83,9 +130,10 @@ void main() {
 
       expect(playlist, contains('#EXTM3U'));
       expect(playlist, isNot(contains('query-secret')));
-      final localResources = RegExp(
-        r'URI="(http://127\.0\.0\.1:\d+/r/[^"]+)"',
-      ).allMatches(playlist).map((match) => Uri.parse(match.group(1)!)).toList();
+      final localResources = RegExp(r'URI="(http://127\.0\.0\.1:\d+/r/[^"]+)"')
+          .allMatches(playlist)
+          .map((match) => Uri.parse(match.group(1)!))
+          .toList();
       final segment = playlist
           .split('\n')
           .firstWhere((line) => line.startsWith('http://127.0.0.1:') && !line.startsWith('#'));

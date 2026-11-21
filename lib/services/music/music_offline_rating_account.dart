@@ -54,12 +54,12 @@ class MusicOfflineRatingAccounts {
       } else if (connection is PlexDirectConnection &&
           item.backend == MediaBackend.plex &&
           connection.serverMachineId == item.serverId &&
-          connection.accessToken.isNotEmpty) {
+          binding.hasToken) {
         candidates.add((
           scope: plexMusicAccountScope(
             server: buildPlexProfileScopeId(serverId: ServerId(item.serverId!), profileId: store.profileId),
             account: connection.id,
-            token: connection.accessToken,
+            token: binding.userToken!,
           ),
           capabilities: ServerCapabilities.plex,
         ));

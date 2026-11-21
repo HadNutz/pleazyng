@@ -167,6 +167,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
         MusicAlbumRadioControls,
         MusicStationRadioControls,
         MusicServerRadioControls,
+        MusicPlaylistWindowPlayback,
         MusicAudioControls,
         MusicCacheControls,
         MusicSignalPathService,
@@ -1719,7 +1720,15 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
       if (!authority() || !output.available) return false;
       final source = await output.resolve(track);
       if (!current() || !authority() || !output.available) return false;
-      await candidate.open(Media(source.url, headers: source.headers, start: playhead), play: false);
+      await candidate.open(
+        Media(
+          source.url,
+          headers: source.headers,
+          start: playhead,
+          mediaBrowserAuthentication: source.reportingClient?.backend.usesMediaBrowserApi == true,
+        ),
+        play: false,
+      );
       if (!current() || !authority() || !output.available) return false;
       final previous = _player!;
       _cancelOverlap();
@@ -2246,6 +2255,63 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
   // ---------------------------------------------------------------------
   // Session start
   // ---------------------------------------------------------------------
+
+  @override
+  bool get canPlayPlaylistWindow => !_disposed && _musicDeviceOutput == null;
+
+  @override
+  Future<bool> playPlaylistWindow({
+    required List<MediaItem> tracks,
+    required int offset,
+    required int index,
+    required bool shuffle,
+    required MusicPlayContext playContext,
+    required bool Function() sourceCurrent,
+    required Future<List<MediaItem>> Function(bool Function() active) loadComplete,
+  }) async {
+    if (!canPlayPlaylistWindow || !sourceCurrent()) return false;
+    final opening = _startQueue(
+      tracks: tracks,
+      occurrence: index,
+      shuffle: shuffle,
+      playContext: playContext,
+      sourceCurrent: sourceCurrent,
+    );
+    final intent = _playIntentGeneration, initialEdit = _queueEditRevision;
+    await opening;
+    if (!isPlayIntentCurrent(intent) ||
+        !sourceCurrent() ||
+        !identical(_playContext, playContext) ||
+        status == MusicPlaybackStatus.error ||
+        status == MusicPlaybackStatus.idle) {
+      return false;
+    }
+    // An edit made while the player was opening already belongs to the user.
+    if (_queueEditRevision != initialEdit) return true;
+    final session = queueSessionRevision;
+    final window = _queue.queue;
+    bool active() =>
+        isPlayIntentCurrent(intent) &&
+        sourceCurrent() &&
+        canPlayPlaylistWindow &&
+        session == queueSessionRevision &&
+        identical(window, _queue.queue);
+    Future<void> expand() async {
+      try {
+        final complete = await loadComplete(active);
+        if (!active()) return;
+        _queue.completePlaylistWindow(complete, offset);
+        _afterQueueEdit();
+      } catch (error, stackTrace) {
+        if (!active()) return;
+        appLogger.w('Could not finish loading the playing playlist', error: error, stackTrace: stackTrace);
+        _errorsController.add(error);
+      }
+    }
+
+    unawaited(expand());
+    return true;
+  }
 
   @override
   Future<void> playFromOccurrence({
@@ -2807,6 +2873,7 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
   Media _musicMedia(MusicSource source, {Duration? start, ReplayGainSettings? replayGain}) => Media(
     source.url,
     headers: source.headers,
+    mediaBrowserAuthentication: source.reportingClient?.backend.usesMediaBrowserApi == true,
     start: start,
     replayGain: _playbackOutput == null ? (replayGain ?? _replayGainFor(source)) : null,
   );

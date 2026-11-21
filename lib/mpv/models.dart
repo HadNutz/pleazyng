@@ -277,6 +277,9 @@ sealed class Media with _$Media {
     Duration? start,
     ReplayGainSettings? replayGain,
     String? container,
+
+    /// The media server uses Jellyfin/Emby query authentication for its origin.
+    @Default(false) bool mediaBrowserAuthentication,
   }) = _Media;
 }
 

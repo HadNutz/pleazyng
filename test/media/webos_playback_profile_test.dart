@@ -26,12 +26,19 @@ void main() {
     expect(carried.sampleRate, 48000);
     expect(carried.bitrate, 4000000);
   });
+  test('native codec status works without English firmware text', () {
+    expect(webosMediaErrorRejectsVideo('201 비디오'), isTrue);
+    expect(webosMediaErrorRejectsAudio('201 비디오'), isFalse);
+    expect(webosMediaErrorRejectsVideo('300 연결 오류'), isFalse);
+    expect(webosMediaErrorRejectsAudio('300 연결 오류'), isFalse);
+  });
   test('only explicit audio-format rejection permits conversion fallback', () {
     for (final error in [
       'Unsupported audio codec DTS',
       'DTS is not supported',
       'audio format TrueHD not supported',
       'AUDIO_CODEC_NOT_SUPPORTED',
+      '200',
     ]) {
       expect(webosMediaErrorRejectsAudio(error), isTrue, reason: error);
     }

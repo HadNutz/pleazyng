@@ -581,7 +581,7 @@ class _Translations$settings$nl extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Wachtwoord';
 	@override String get cloudBackupSaved => 'Cloud backup bestemming gered';
 	@override String get cloudBackupNow => 'terug naar nu';
-	@override String get cloudBackupComplete => 'Settings backup geüpload';
+	@override String cloudBackupComplete({required Object action}) => 'De back-up is geüpload. Bewaar deze URL. Voer de URL na een nieuwe installatie in bij de cloudback-up en kies ‘${action}’.';
 	@override String get cloudBackupRestore => 'Herstel backup';
 	@override String get cloudBackupRestoreConfirm => 'Dit zal de overeenkomstige portable instellingen op deze apparaat vervangen.';
 	@override String get cloudBackupRestored => 'Instellingen hersteld van cloud backup';
@@ -1421,7 +1421,7 @@ class _Translations$messages$nl extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Metadata voor "${title}" vernieuwen...';
 	@override String metadataRefreshStarted({required Object title}) => 'Vernieuwen van metadata gestart voor "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'Metadata vernieuwen mislukt: ${error}';
-	@override String get logoutConfirm => 'Weet je zeker dat je wilt uitloggen?';
+	@override String get logoutConfirm => 'Wil je alle profielen op dit apparaat uitloggen?';
 	@override String get noSeasonsFound => 'Geen seizoenen gevonden';
 	@override String get seasonsLoadFailed => 'Kan seizoenen niet laden';
 	@override String get noEpisodesFound => 'Geen afleveringen gevonden in eerste seizoen';
@@ -6039,7 +6039,7 @@ extension on TranslationsNl {
 			'settings.cloudBackupPassword' => 'Wachtwoord',
 			'settings.cloudBackupSaved' => 'Cloud backup bestemming gered',
 			'settings.cloudBackupNow' => 'terug naar nu',
-			'settings.cloudBackupComplete' => 'Settings backup geüpload',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'De back-up is geüpload. Bewaar deze URL. Voer de URL na een nieuwe installatie in bij de cloudback-up en kies ‘${action}’.',
 			'settings.cloudBackupRestore' => 'Herstel backup',
 			'settings.cloudBackupRestoreConfirm' => 'Dit zal de overeenkomstige portable instellingen op deze apparaat vervangen.',
 			'settings.cloudBackupRestored' => 'Instellingen hersteld van cloud backup',
@@ -6818,7 +6818,7 @@ extension on TranslationsNl {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Metadata voor "${title}" vernieuwen...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Vernieuwen van metadata gestart voor "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Metadata vernieuwen mislukt: ${error}',
-			'messages.logoutConfirm' => 'Weet je zeker dat je wilt uitloggen?',
+			'messages.logoutConfirm' => 'Wil je alle profielen op dit apparaat uitloggen?',
 			'messages.noSeasonsFound' => 'Geen seizoenen gevonden',
 			'messages.seasonsLoadFailed' => 'Kan seizoenen niet laden',
 			'messages.noEpisodesFound' => 'Geen afleveringen gevonden in eerste seizoen',

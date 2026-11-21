@@ -352,13 +352,20 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
     final preset = options.qualityPreset;
     final audioPreset = options.audioQualityPreset ?? AudioQualityPreset.original;
     final wantsOriginal = isTrack ? audioPreset.isOriginal : preset.isOriginal;
-    final forceCompatibleDolbyVisionTranscode = !isTrack && options.requestsCompatibleDolbyVisionRendition(mediaInfo);
-    final sourceCodec = bundle.availableVersions.isEmpty
+    final forceCompatibleDolbyVisionTranscode =
+        !isTrack && options.requestsCompatibleDolbyVisionRendition(mediaInfo, container: bundle.container);
+    final selectedVersion = bundle.availableVersions.isEmpty
         ? null
-        : bundle.availableVersions[bundle.selectedSourceIndex.clamp(0, bundle.availableVersions.length - 1)].videoCodec;
+        : bundle.availableVersions[bundle.selectedSourceIndex.clamp(0, bundle.availableVersions.length - 1)];
+    final sourceCodec = selectedVersion?.videoCodec;
+    final exceedsDimensions = preset.exceedsDimensions(
+      mediaInfo.displayCriteria?.width ?? selectedVersion?.width,
+      mediaInfo.displayCriteria?.height ?? selectedVersion?.height,
+    );
     final forceVideoConversion =
         !isTrack &&
         (options.forceVideoConversion ||
+            exceedsDimensions ||
             await VideoDecodeCapabilities.sourceFormatUnavailable(
               sourceCodec,
               mediaInfo.displayCriteria,
@@ -445,6 +452,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
       negotiation = await getPlaybackInfo(
         metadata.id,
         maxStreamingBitrate: maxStreamingBitrate,
+        videoQuality: isTrack ? null : preset,
         mediaSourceId: bundle.selectedSourceId,
         startTimeTicks: transcodeStartTimeTicks,
         audioStreamIndex: needsCompatibleAudio ? audioStreamForConversion : requestedAudioStreamId,
@@ -525,7 +533,10 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
       }
     }
 
-    if ((requiresConversion || chosenSource?['SupportsDirectPlay'] == false) && !isTranscoding) {
+    final exceedsNegotiatedDimensions =
+        !isTrack && preset.exceedsDimensions(mediaInfo.displayCriteria?.width, mediaInfo.displayCriteria?.height);
+    if ((requiresConversion || exceedsNegotiatedDimensions || chosenSource?['SupportsDirectPlay'] == false) &&
+        !isTranscoding) {
       throw PlaybackException(t.messages.playbackFailed, reason: PlaybackFailureReason.noPlayableSource);
     }
 
@@ -1069,6 +1080,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
   Future<Map<String, dynamic>> getPlaybackInfo(
     String itemId, {
     int? maxStreamingBitrate = 100_000_000,
+    TranscodeQualityPreset? videoQuality,
     String? mediaSourceId,
     String? liveStreamId,
     int? startTimeTicks,
@@ -1092,6 +1104,29 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
   }) async {
     // The same negotiation fields go out stringified in the query string and
     // typed in the body.
+    final width = videoQuality?.resolutionWidth;
+    final height = videoQuality?.resolutionHeight;
+    final videoConditions = <Map<String, Object?>>[
+      if (width != null && height != null)
+        {
+          'Type': 'Video',
+          // Empty Codec applies these ceilings to every source and target codec.
+          'Codec': '',
+          'Conditions': [
+            {'Condition': 'LessThanEqual', 'Property': 'Width', 'Value': '$width', 'IsRequired': true},
+            {'Condition': 'LessThanEqual', 'Property': 'Height', 'Value': '$height', 'IsRequired': true},
+          ],
+        },
+      if (requireSdrOutput)
+        {
+          'Type': 'Video',
+          'Codec': _jellyfinTranscodeVideoCodecs(dialect),
+          'Conditions': [
+            {'Condition': 'Equals', 'Property': 'VideoRangeType', 'Value': 'SDR', 'IsRequired': true},
+          ],
+          'ApplyConditions': const <Map<String, Object?>>[],
+        },
+    ];
     final negotiation = <String, Object>{
       if (receiverAc3) 'MaxAudioChannels': 6,
       'MaxStreamingBitrate': ?maxStreamingBitrate,
@@ -1131,18 +1166,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
           // the selected output codec and forwards VideoRangeType as a
           // transcode target constraint. The server still needs a working DV /
           // HDR tone-mapping path for the selected source profile.
-          'CodecProfiles': requireSdrOutput
-              ? <Map<String, Object?>>[
-                  {
-                    'Type': 'Video',
-                    'Codec': _jellyfinTranscodeVideoCodecs(dialect),
-                    'Conditions': <Map<String, Object?>>[
-                      {'Condition': 'Equals', 'Property': 'VideoRangeType', 'Value': 'SDR', 'IsRequired': true},
-                    ],
-                    'ApplyConditions': const <Map<String, Object?>>[],
-                  },
-                ]
-              : const <Map<String, Object?>>[],
+          'CodecProfiles': videoConditions,
           // fMP4 segments instead of MPEG-TS (#2131): ts cannot carry AV1,
           // so a server with an AV1 hardware encoder could never pick it.
           // Every mpv backend already consumes fMP4 HLS — the Plex VOD
@@ -1258,6 +1282,7 @@ mixin _JellyfinPlaybackMethods on _JellyfinClientInternals {
             ...tizenPlaybackProfile(
               audio: audioProfile,
               burnSubtitles: burnSubtitles,
+              videoConditions: videoConditions,
               refusedVideo: {
                 for (final c in RankedVideoCodec.values)
                   if (VideoDecodeCapabilities.isRefusedByUser(c)) c.id,

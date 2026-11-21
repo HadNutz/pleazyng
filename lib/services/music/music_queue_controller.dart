@@ -182,6 +182,42 @@ class MusicQueueController {
     });
   }
 
+  /// Expand the exact page already playing, preserving its cursor, published
+  /// occurrence IDs and shuffled playback history without reopening the player.
+  void completePlaylistWindow(List<MediaItem> complete, int offset) {
+    RangeError.checkValidRange(offset, offset + _items.length, complete.length);
+    if (_cursor < 0) throw StateError('No active playlist window');
+    for (var i = 0; i < _items.length; i++) {
+      final original = _items[i], resolved = complete[offset + i];
+      if (original.backend != resolved.backend ||
+          original.globalKey != resolved.globalKey ||
+          original.playlistItemId != resolved.playlistItemId) {
+        throw StateError('Playlist occurrence changed during loading');
+      }
+    }
+    _withStorageRollback(() {
+      final window = _items.snapshot();
+      final played = _shuffled ? [for (var i = 0; i <= _cursor; i++) offset + _order[i]] : const <int>[];
+      _items.replaceWith(complete);
+      _items.keepWindowOccurrences(offset, window);
+      _order.resetIdentity(complete.length);
+      if (_shuffled) {
+        // Preserve the small played prefix. The unplayed portion, including
+        // every occurrence outside the starting page, shares one permutation.
+        final moved = <int, int>{};
+        for (var i = 0; i < played.length; i++) {
+          final from = moved[played[i]] ?? played[i];
+          moved[_order[i]] = from;
+          _order.swap(i, from);
+        }
+        _order.shuffleFrom(played.length, _random);
+      } else {
+        _cursor += offset;
+      }
+      _queueSnapshot = null;
+    });
+  }
+
   MusicQueueItemsSnapshot prepareItems(Iterable<MediaItem> items) => _items.prepareSnapshot(items);
 
   void trimDecodedMetadata() => _items.trimDecodedMetadata();
@@ -391,6 +427,8 @@ class MusicQueueController {
   /// Drop everything after the current entry (playback order), including
   /// the underlying canonical items.
   void clearUpcoming() {
+    // Even the last visible entry may belong to a page still being expanded.
+    _queueSnapshot = null;
     if (_cursor < 0 || _cursor >= _order.length - 1) return;
     _withStorageRollback(() {
       _queueSnapshot = null;

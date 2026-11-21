@@ -2,10 +2,12 @@ import 'dart:math';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+
 import '../media/ids.dart';
 
 import '../database/app_database.dart';
 import '../media/media_item.dart';
+import '../media/media_kind.dart';
 import '../media/media_server_client.dart';
 import '../models/download_models.dart';
 import '../models/transcode_quality_preset.dart';
@@ -107,6 +109,7 @@ class SyncRuleExecutor {
     required DeleteSyncRuleDownload deleteSyncRuleDownload,
     required bool isOffline,
     bool force = false,
+    bool Function()? sourceCurrent,
   }) async {
     if (_isExecuting) {
       appLogger.d('Sync rule execution already in progress, skipping');
@@ -151,6 +154,7 @@ class SyncRuleExecutor {
         try {
           final result = await _executeRule(
             rule: rule,
+            sourceCurrent: sourceCurrent,
             serverManager: serverManager,
             downloads: downloads,
             metadata: metadata,
@@ -186,6 +190,7 @@ class SyncRuleExecutor {
     required QueueSyncRuleDownload queueSingleDownload,
     required DeleteSyncRuleDownload deleteSyncRuleDownload,
     required bool isOffline,
+    bool Function()? sourceCurrent,
   }) async {
     if (_isExecuting) {
       appLogger.d('Sync rule execution already in progress, skipping single-rule run for $globalKey');
@@ -211,6 +216,7 @@ class SyncRuleExecutor {
 
       return await _executeRule(
         rule: rule,
+        sourceCurrent: sourceCurrent,
         serverManager: serverManager,
         downloads: downloads,
         metadata: metadata,
@@ -265,6 +271,7 @@ class SyncRuleExecutor {
 
   Future<SyncRuleResult?> _executeRule({
     required SyncRuleItem rule,
+    bool Function()? sourceCurrent,
     required MultiServerManager serverManager,
     required Map<String, DownloadProgress> downloads,
     required Map<String, MediaItem> metadata,
@@ -320,7 +327,6 @@ class SyncRuleExecutor {
         return _executeEpisodeRule(
           rule: rule,
           client: client,
-          clientScopeId: _clientScopeIdFor(client, ServerId(rule.serverId)),
           profileId: rule.profileId,
           downloads: downloads,
           metadata: resolvedMetadata,
@@ -332,7 +338,10 @@ class SyncRuleExecutor {
         return _executeListRule(
           rule: rule,
           client: client,
-          clientScopeId: _clientScopeIdFor(client, ServerId(rule.serverId)),
+          sourceCurrent: () =>
+              (sourceCurrent?.call() ?? true) &&
+              serverManager.isServerVisible(client.serverId) &&
+              identical(serverManager.getClient(client.serverId), client),
           profileId: rule.profileId,
           downloads: downloads,
           metadata: resolvedMetadata,
@@ -489,7 +498,6 @@ class SyncRuleExecutor {
   Future<SyncRuleResult?> _executeEpisodeRule({
     required SyncRuleItem rule,
     required MediaServerClient client,
-    required String? clientScopeId,
     required String profileId,
     required Map<String, DownloadProgress> downloads,
     required Map<String, MediaItem> metadata,
@@ -512,12 +520,7 @@ class SyncRuleExecutor {
     );
 
     final candidates = unwatchedOnly
-        ? await _excludeLocallyWatched(
-            episodes: fromServer,
-            serverId: ServerId(rule.serverId),
-            profileId: profileId,
-            clientScopeId: clientScopeId,
-          )
+        ? await excludeLocallyWatched(episodes: fromServer, client: client, profileId: profileId)
         : fromServer;
 
     if (candidates.isEmpty) {
@@ -665,22 +668,34 @@ class SyncRuleExecutor {
   Future<SyncRuleResult?> _executeListRule({
     required SyncRuleItem rule,
     required MediaServerClient client,
-    required String? clientScopeId,
+    required bool Function() sourceCurrent,
     required String profileId,
     required Map<String, DownloadProgress> downloads,
     required Map<String, MediaItem> metadata,
     required AssociateSyncRuleDownload associateDownload,
     required QueueSyncRuleDownload queueSingleDownload,
   }) async {
-    final List<MediaItem> membership;
-    try {
-      membership = await _resolveListRuleItems(rule: rule, client: client, metadata: metadata);
-    } catch (e) {
-      appLogger.w('Sync rule ${rule.globalKey}: failed to fetch list items: $e');
-      return null;
+    final isPlaylist = rule.targetType == ContentTypes.playlist;
+    final store = isPlaylist ? MusicLibraryStore(_database, profileId) : null;
+    final authentication = isPlaylist ? client.authenticationSessionId : null;
+    final account = isPlaylist ? musicAccountScope(client) : null;
+    bool current() =>
+        sourceCurrent() &&
+        (store == null ||
+            store.active &&
+                identical(authentication, client.authenticationSessionId) &&
+                account == musicAccountScope(client));
+    if (!current()) return null;
+    final membership = await _resolveListRuleItems(rule: rule, client: client, metadata: metadata);
+    if (!current()) return null;
+    if (membership.any(
+      (item) => item.backend != client.backend || (item.serverId != null && item.serverId != rule.serverId),
+    )) {
+      throw StateError('List membership contains a different source');
     }
 
     for (final item in membership) {
+      if (!current()) return null;
       final globalKey = buildGlobalKey(ServerId(rule.serverId), item.id);
       if (_isActiveDownload(downloads[globalKey])) {
         await associateDownload(rule, globalKey);
@@ -688,16 +703,42 @@ class SyncRuleExecutor {
     }
 
     final candidates = rule.downloadFilter == SyncRuleFilter.unwatched
-        ? await _excludeLocallyWatched(
+        ? await excludeLocallyWatched(
             episodes: membership.where((item) => item.isUnwatchedOrInProgress).toList(),
-            serverId: ServerId(rule.serverId),
+            client: client,
             profileId: profileId,
-            clientScopeId: clientScopeId,
           )
         : membership;
 
+    if (store != null && current()) {
+      final globalKey = buildGlobalKey(ServerId(rule.serverId), rule.ratingKey);
+      await _database.transaction(() async {
+        final existing = await store.document('offlinePlaylist', globalKey);
+        if (!current() || existing != null && existing['accountScope'] != account) return;
+        final active = await _database.getSyncRule(rule.globalKey);
+        if (!current() || active?.id != rule.id || active?.enabled != true) return;
+        final allTracks = membership.every((item) => item.kind == MediaKind.track);
+        // An empty playlist can replace an existing snapshot. A mixed or
+        // video playlist is never advertised as an offline music playlist.
+        if ((!allTracks || membership.isEmpty) && existing == null) return;
+        final savedPlaylist = existing?['playlist'];
+        final playlist =
+            metadata[rule.globalKey] ??
+            metadata[globalKey] ??
+            (savedPlaylist is Map<String, dynamic> ? MediaItem.fromJson(savedPlaylist) : null) ??
+            MediaItem(id: rule.ratingKey, kind: MediaKind.playlist, backend: client.backend, serverId: rule.serverId);
+        await store.saveOfflinePlaylist(
+          playlist.copyWith(serverId: rule.serverId),
+          allTracks ? candidates : [],
+          account!,
+        );
+        if (!current()) throw StateError('Playlist source changed during offline refresh');
+      });
+    }
+
     int queued = 0;
     for (final item in candidates) {
+      if (!current()) return null;
       final gk = buildGlobalKey(ServerId(rule.serverId), item.id);
       if (_isActiveDownload(downloads[gk])) continue;
 
@@ -746,7 +787,7 @@ class SyncRuleExecutor {
 
   /// Page through every item in a playlist using the shared playlist page size.
   Future<List<MediaItem>> _fetchAllPlaylistItems(MediaServerClient client, String playlistId) async {
-    return fetchAllPlaylistItems(client, playlistId);
+    return fetchAllPlaylistItems(client, playlistId, requireComplete: true);
   }
 
   /// Page through every item in a collection. Plex requires
@@ -768,13 +809,14 @@ class SyncRuleExecutor {
   /// drains the OfflineWatchProgress queue, which can be many seconds away.
   /// Without this filter, sync rules immediately re-queue an episode the
   /// user just marked watched on a downloaded-detail screen.
-  Future<List<MediaItem>> _excludeLocallyWatched({
+  Future<List<MediaItem>> excludeLocallyWatched({
     required List<MediaItem> episodes,
-    required ServerId serverId,
+    required MediaServerClient client,
     required String profileId,
-    String? clientScopeId,
   }) async {
     if (episodes.isEmpty) return episodes;
+    final serverId = client.serverId;
+    final clientScopeId = _clientScopeIdFor(client, serverId);
     final keys = episodes.map((ep) => buildGlobalKey(ServerId(serverId), ep.id)).toSet();
     final actions = await _database.getLatestWatchActionsForKeys(
       keys,

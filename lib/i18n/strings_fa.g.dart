@@ -301,7 +301,7 @@ class _Translations$common$fa extends Translations$common$en {
 	@override String get submit => 'تایید';
 	@override String get confirm => 'تایید';
 	@override String get retry => 'تلاش مجدد';
-	@override String get logout => 'ثبت نام کنید';
+	@override String get logout => 'خروج از حساب';
 	@override String get unknown => 'ناشناخته';
 	@override String get refresh => 'به‌روز‌رسانی';
 	@override String get yes => 'بلی';
@@ -581,7 +581,7 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'گذرواژه';
 	@override String get cloudBackupSaved => 'Cloud Backup مقصد نجات یافته است';
 	@override String get cloudBackupNow => 'بازگشت به حال';
-	@override String get cloudBackupComplete => 'تنظیمات پشتیبان بارگذاری شده';
+	@override String cloudBackupComplete({required Object action}) => 'نسخهٔ پشتیبان بارگذاری شد. این نشانی را ذخیره کنید. پس از نصب دوباره، آن را در بخش پشتیبان‌گیری ابری وارد کنید و «${action}» را انتخاب کنید.';
 	@override String get cloudBackupRestore => 'بازگرداندن Backup';
 	@override String get cloudBackupRestoreConfirm => 'این جایگزین تنظیمات قابل حمل مطابقت در این دستگاه خواهد بود.';
 	@override String get cloudBackupRestored => 'تنظیمات بازگردانده شده از پشتیبان ابر';
@@ -1421,7 +1421,7 @@ class _Translations$messages$fa extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'فتوشاپ با «${title}»';
 	@override String metadataRefreshStarted({required Object title}) => 'بازسازی داده های متا برای "${title}" آغاز شد';
 	@override String metadataRefreshFailed({required Object error}) => 'عدم بازسازی داده های متا: ${error}';
-	@override String get logoutConfirm => 'آیا مطمئن هستید که می خواهید خارج شوید؟';
+	@override String get logoutConfirm => 'آیا می‌خواهید از همهٔ نمایه‌ها در این دستگاه خارج شوید؟';
 	@override String get noSeasonsFound => 'هیچ فصل یافت نشد';
 	@override String get seasonsLoadFailed => 'نمی توان فصل ها را بارگذاری کرد';
 	@override String get noEpisodesFound => 'هیچ قسمت در فصل اول یافت نشد';
@@ -2370,14 +2370,14 @@ class _Translations$downloads$fa extends Translations$downloads$en {
 	@override String get noDownloadsDescription => 'محتوای دانلود شده برای مشاهده آفلاین در اینجا ظاهر خواهد شد.';
 	@override String get downloadNow => 'بارگیری';
 	@override String get deleteDownload => 'حذف دانلود';
-	@override String get retryDownload => 'دانلود Retry';
+	@override String get retryDownload => 'تلاش دوباره برای دانلود';
 	@override String get downloadQueued => 'دانلود به صف اضافه شد.';
 	@override String get downloadResumed => 'دانلود مجدد';
 	@override String get serverErrorBitrate => 'خطای سرور: فایل ها می توانند حد بیتی از راه دور را فراتر ببرند';
 	@override String get storageFull => 'دانلود ها برای محافظت از ذخیره سازی در دسترس متوقف شده است. برخی از فضای را آزاد کنید یا محل دانلود دیگری را انتخاب کنید، سپس عقب نشینی کنید.';
 	@override String get storageUnavailable => 'دانلود ها متوقف شد زیرا ذخیره سازی در دسترس نمی تواند بررسی شود.نگاه کنید به محل دانلود، سپس عقب نشینی.';
 	@override String episodesQueued({required Object count}) => '${count} قسمت برای دانلود';
-	@override String get downloadDeleted => 'دانلود حذف شده';
+	@override String get downloadDeleted => 'دانلود حذف شد';
 	@override String deleteConfirm({required Object title}) => 'حذف "${title}" از این دستگاه؟';
 	@override String get deleteCollectionDownloads => 'حذف دانلود ها';
 	@override String deleteCollectionDownloadsConfirm({required Object title}) => 'همهٔ دانلودهای «${title}» از این دستگاه پاک شوند؟';
@@ -5769,7 +5769,7 @@ extension on TranslationsFa {
 			'common.submit' => 'تایید',
 			'common.confirm' => 'تایید',
 			'common.retry' => 'تلاش مجدد',
-			'common.logout' => 'ثبت نام کنید',
+			'common.logout' => 'خروج از حساب',
 			'common.unknown' => 'ناشناخته',
 			'common.refresh' => 'به‌روز‌رسانی',
 			'common.yes' => 'بلی',
@@ -6039,7 +6039,7 @@ extension on TranslationsFa {
 			'settings.cloudBackupPassword' => 'گذرواژه',
 			'settings.cloudBackupSaved' => 'Cloud Backup مقصد نجات یافته است',
 			'settings.cloudBackupNow' => 'بازگشت به حال',
-			'settings.cloudBackupComplete' => 'تنظیمات پشتیبان بارگذاری شده',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'نسخهٔ پشتیبان بارگذاری شد. این نشانی را ذخیره کنید. پس از نصب دوباره، آن را در بخش پشتیبان‌گیری ابری وارد کنید و «${action}» را انتخاب کنید.',
 			'settings.cloudBackupRestore' => 'بازگرداندن Backup',
 			'settings.cloudBackupRestoreConfirm' => 'این جایگزین تنظیمات قابل حمل مطابقت در این دستگاه خواهد بود.',
 			'settings.cloudBackupRestored' => 'تنظیمات بازگردانده شده از پشتیبان ابر',
@@ -6818,7 +6818,7 @@ extension on TranslationsFa {
 			'messages.metadataRefreshing' => ({required Object title}) => 'فتوشاپ با «${title}»',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'بازسازی داده های متا برای "${title}" آغاز شد',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'عدم بازسازی داده های متا: ${error}',
-			'messages.logoutConfirm' => 'آیا مطمئن هستید که می خواهید خارج شوید؟',
+			'messages.logoutConfirm' => 'آیا می‌خواهید از همهٔ نمایه‌ها در این دستگاه خارج شوید؟',
 			'messages.noSeasonsFound' => 'هیچ فصل یافت نشد',
 			'messages.seasonsLoadFailed' => 'نمی توان فصل ها را بارگذاری کرد',
 			'messages.noEpisodesFound' => 'هیچ قسمت در فصل اول یافت نشد',
@@ -7897,14 +7897,14 @@ extension on TranslationsFa {
 			'downloads.noDownloadsDescription' => 'محتوای دانلود شده برای مشاهده آفلاین در اینجا ظاهر خواهد شد.',
 			'downloads.downloadNow' => 'بارگیری',
 			'downloads.deleteDownload' => 'حذف دانلود',
-			'downloads.retryDownload' => 'دانلود Retry',
+			'downloads.retryDownload' => 'تلاش دوباره برای دانلود',
 			'downloads.downloadQueued' => 'دانلود به صف اضافه شد.',
 			'downloads.downloadResumed' => 'دانلود مجدد',
 			'downloads.serverErrorBitrate' => 'خطای سرور: فایل ها می توانند حد بیتی از راه دور را فراتر ببرند',
 			'downloads.storageFull' => 'دانلود ها برای محافظت از ذخیره سازی در دسترس متوقف شده است. برخی از فضای را آزاد کنید یا محل دانلود دیگری را انتخاب کنید، سپس عقب نشینی کنید.',
 			'downloads.storageUnavailable' => 'دانلود ها متوقف شد زیرا ذخیره سازی در دسترس نمی تواند بررسی شود.نگاه کنید به محل دانلود، سپس عقب نشینی.',
 			'downloads.episodesQueued' => ({required Object count}) => '${count} قسمت برای دانلود',
-			'downloads.downloadDeleted' => 'دانلود حذف شده',
+			'downloads.downloadDeleted' => 'دانلود حذف شد',
 			'downloads.deleteConfirm' => ({required Object title}) => 'حذف "${title}" از این دستگاه؟',
 			'downloads.deleteCollectionDownloads' => 'حذف دانلود ها',
 			'downloads.deleteCollectionDownloadsConfirm' => ({required Object title}) => 'همهٔ دانلودهای «${title}» از این دستگاه پاک شوند؟',

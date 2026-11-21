@@ -301,7 +301,7 @@ class _Translations$common$bn extends Translations$common$en {
 	@override String get submit => 'জমা দিন';
 	@override String get confirm => 'নিশ্চিত করুন';
 	@override String get retry => 'ফেরত';
-	@override String get logout => 'ডাউনলোড করুন';
+	@override String get logout => 'লগ আউট করুন';
 	@override String get unknown => 'অজানা';
 	@override String get refresh => 'ফ্রিজ করুন';
 	@override String get yes => 'হ্যাঁ';
@@ -581,7 +581,7 @@ class _Translations$settings$bn extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'পাসওয়ার্ড';
 	@override String get cloudBackupSaved => 'Cloud Backup ডিজিটাল সংরক্ষিত';
 	@override String get cloudBackupNow => 'ফিরে আসুন এখন';
-	@override String get cloudBackupComplete => 'আপলোড করা Backup Settings';
+	@override String cloudBackupComplete({required Object action}) => 'ব্যাকআপ আপলোড হয়েছে। এই URL সংরক্ষণ করুন। নতুন করে ইনস্টল করার পর ক্লাউড ব্যাকআপে URL লিখে “${action}” বেছে নিন।';
 	@override String get cloudBackupRestore => 'Backup পুনরাবৃত্তি';
 	@override String get cloudBackupRestoreConfirm => 'এই ডিভাইসের পোর্টেবল সিস্টেমগুলি সমাধান করবে. চলুন?';
 	@override String get cloudBackupRestored => 'Cloud Backup থেকে পুনরাবৃত্তি';
@@ -1421,7 +1421,7 @@ class _Translations$messages$bn extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => '“${title}” এর জন্য ফ্রেসিং মেটাদেট...';
 	@override String metadataRefreshStarted({required Object title}) => 'মেটা ডেটা ফ্রিজ শুরু হয় "${title}" জন্য';
 	@override String metadataRefreshFailed({required Object error}) => 'ম্যাটা ডেটা আপডেট করতে পারিনি: ${error}';
-	@override String get logoutConfirm => 'আপনি কি নিশ্চিত যে আপনি ডাউনলোড করতে চান?';
+	@override String get logoutConfirm => 'এই ডিভাইসের সব প্রোফাইল থেকে লগ আউট করতে চান?';
 	@override String get noSeasonsFound => 'কোন季節 পাওয়া যায় না';
 	@override String get seasonsLoadFailed => 'সপ্তাহের লোড করতে পারবেন না';
 	@override String get noEpisodesFound => 'প্রথম সপ্তাহে কোন ঘটনা পাওয়া যায়নি।';
@@ -2369,15 +2369,15 @@ class _Translations$downloads$bn extends Translations$downloads$en {
 	@override String get noDownloads => 'এখনো ডাউনলোড নেই';
 	@override String get noDownloadsDescription => 'ডাউনলোড করা বিষয়বস্তু এখানে অফলি দেখার জন্য দেখা যাবে';
 	@override String get downloadNow => 'ডাউনলোড';
-	@override String get deleteDownload => 'ডাউনলোড করুন';
-	@override String get retryDownload => 'ডাউনলোড করুন';
+	@override String get deleteDownload => 'ডাউনলোড মুছুন';
+	@override String get retryDownload => 'আবার ডাউনলোডের চেষ্টা করুন';
 	@override String get downloadQueued => 'ডাউনলোড করি';
 	@override String get downloadResumed => 'ডাউনলোড আবার';
 	@override String get serverErrorBitrate => 'সার্ভার ভুল: ফাইলটি দূরবর্তী বিট্রেটের সীমাবদ্ধতা অতিক্রম করতে পারে';
 	@override String get storageFull => 'ডাউনলোডগুলি সংরক্ষণ করার জন্য বন্ধ হয়ে যায়. কিছু স্থান বিনামূল্যে বা অন্য ডাউনলোড অবস্থান নির্বাচন করুন, তারপর ফেরত।';
 	@override String get storageUnavailable => 'ডাউনলোড বন্ধ হয়ে গেছে কারণ उपलब्ध স্টোরেজ চেক করা যাবে না. ডাউনলোড অবস্থান চেক করুন, তারপর ফেরত।';
 	@override String episodesQueued({required Object count}) => '${count} পরিসংখ্যানগুলি ডাউনলোড করার জন্য';
-	@override String get downloadDeleted => 'ডাউনলোড 삭제';
+	@override String get downloadDeleted => 'ডাউনলোড মুছে ফেলা হয়েছে';
 	@override String deleteConfirm({required Object title}) => 'এই ডিভাইস থেকে "${title}" মুছে ফেলুন?';
 	@override String get deleteCollectionDownloads => 'ডাউনলোড করুন';
 	@override String deleteCollectionDownloadsConfirm({required Object title}) => 'এই ডিভাইস থেকে "${title}" এর প্রতিটি ডাউনলোড মুছে ফেলুন?';
@@ -5769,7 +5769,7 @@ extension on TranslationsBn {
 			'common.submit' => 'জমা দিন',
 			'common.confirm' => 'নিশ্চিত করুন',
 			'common.retry' => 'ফেরত',
-			'common.logout' => 'ডাউনলোড করুন',
+			'common.logout' => 'লগ আউট করুন',
 			'common.unknown' => 'অজানা',
 			'common.refresh' => 'ফ্রিজ করুন',
 			'common.yes' => 'হ্যাঁ',
@@ -6039,7 +6039,7 @@ extension on TranslationsBn {
 			'settings.cloudBackupPassword' => 'পাসওয়ার্ড',
 			'settings.cloudBackupSaved' => 'Cloud Backup ডিজিটাল সংরক্ষিত',
 			'settings.cloudBackupNow' => 'ফিরে আসুন এখন',
-			'settings.cloudBackupComplete' => 'আপলোড করা Backup Settings',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'ব্যাকআপ আপলোড হয়েছে। এই URL সংরক্ষণ করুন। নতুন করে ইনস্টল করার পর ক্লাউড ব্যাকআপে URL লিখে “${action}” বেছে নিন।',
 			'settings.cloudBackupRestore' => 'Backup পুনরাবৃত্তি',
 			'settings.cloudBackupRestoreConfirm' => 'এই ডিভাইসের পোর্টেবল সিস্টেমগুলি সমাধান করবে. চলুন?',
 			'settings.cloudBackupRestored' => 'Cloud Backup থেকে পুনরাবৃত্তি',
@@ -6818,7 +6818,7 @@ extension on TranslationsBn {
 			'messages.metadataRefreshing' => ({required Object title}) => '“${title}” এর জন্য ফ্রেসিং মেটাদেট...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'মেটা ডেটা ফ্রিজ শুরু হয় "${title}" জন্য',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'ম্যাটা ডেটা আপডেট করতে পারিনি: ${error}',
-			'messages.logoutConfirm' => 'আপনি কি নিশ্চিত যে আপনি ডাউনলোড করতে চান?',
+			'messages.logoutConfirm' => 'এই ডিভাইসের সব প্রোফাইল থেকে লগ আউট করতে চান?',
 			'messages.noSeasonsFound' => 'কোন季節 পাওয়া যায় না',
 			'messages.seasonsLoadFailed' => 'সপ্তাহের লোড করতে পারবেন না',
 			'messages.noEpisodesFound' => 'প্রথম সপ্তাহে কোন ঘটনা পাওয়া যায়নি।',
@@ -7896,15 +7896,15 @@ extension on TranslationsBn {
 			'downloads.noDownloads' => 'এখনো ডাউনলোড নেই',
 			'downloads.noDownloadsDescription' => 'ডাউনলোড করা বিষয়বস্তু এখানে অফলি দেখার জন্য দেখা যাবে',
 			'downloads.downloadNow' => 'ডাউনলোড',
-			'downloads.deleteDownload' => 'ডাউনলোড করুন',
-			'downloads.retryDownload' => 'ডাউনলোড করুন',
+			'downloads.deleteDownload' => 'ডাউনলোড মুছুন',
+			'downloads.retryDownload' => 'আবার ডাউনলোডের চেষ্টা করুন',
 			'downloads.downloadQueued' => 'ডাউনলোড করি',
 			'downloads.downloadResumed' => 'ডাউনলোড আবার',
 			'downloads.serverErrorBitrate' => 'সার্ভার ভুল: ফাইলটি দূরবর্তী বিট্রেটের সীমাবদ্ধতা অতিক্রম করতে পারে',
 			'downloads.storageFull' => 'ডাউনলোডগুলি সংরক্ষণ করার জন্য বন্ধ হয়ে যায়. কিছু স্থান বিনামূল্যে বা অন্য ডাউনলোড অবস্থান নির্বাচন করুন, তারপর ফেরত।',
 			'downloads.storageUnavailable' => 'ডাউনলোড বন্ধ হয়ে গেছে কারণ उपलब्ध স্টোরেজ চেক করা যাবে না. ডাউনলোড অবস্থান চেক করুন, তারপর ফেরত।',
 			'downloads.episodesQueued' => ({required Object count}) => '${count} পরিসংখ্যানগুলি ডাউনলোড করার জন্য',
-			'downloads.downloadDeleted' => 'ডাউনলোড 삭제',
+			'downloads.downloadDeleted' => 'ডাউনলোড মুছে ফেলা হয়েছে',
 			'downloads.deleteConfirm' => ({required Object title}) => 'এই ডিভাইস থেকে "${title}" মুছে ফেলুন?',
 			'downloads.deleteCollectionDownloads' => 'ডাউনলোড করুন',
 			'downloads.deleteCollectionDownloadsConfirm' => ({required Object title}) => 'এই ডিভাইস থেকে "${title}" এর প্রতিটি ডাউনলোড মুছে ফেলুন?',

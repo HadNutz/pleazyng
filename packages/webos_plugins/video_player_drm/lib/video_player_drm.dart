@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'video_player_platform_interface.dart';
 import 'src/messages.g.dart';
 import 'src/hole.dart';
+import 'src/video_crop.dart';
 
 /////////////////////////////////////////////////////////////////////
 ////                        Widget                               ////
@@ -24,6 +25,18 @@ class _VideoWidget extends StatefulWidget {
 
 class _VideoWidgetState extends State<_VideoWidget> {
   final GlobalKey _videoBoxKey = GlobalKey();
+
+  Rect _crop = const Rect.fromLTWH(0, 0, 1, 1);
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final crop = VideoCrop.of(context);
+    if (crop == _crop) return;
+    _crop = crop;
+    _resetRect(true);
+    _exported = false;
+  }
 
   @override
   void initState() {
@@ -80,6 +93,17 @@ class _VideoWidgetState extends State<_VideoWidget> {
   }
 
   @override
+  void didUpdateWidget(_VideoWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _widgetStates.remove(oldWidget);
+    _widgetStates[widget] = this;
+    if (oldWidget.textureId != widget.textureId) {
+      _resetRect(true);
+      _exported = false;
+    }
+  }
+
+  @override
   void dispose() {
     _resetRect(true);
     _widgetStates.remove(widget);
@@ -131,7 +155,7 @@ class _VideoWidgetState extends State<_VideoWidget> {
     if (!_exported) {
       _timerStage = TimerStage.setRect;
       _exported = true;
-      widget.player.viewRect(widget.textureId, _x, _y, _w, _h);
+      widget.player.viewRect(widget.textureId, _x, _y, _w, _h, _crop);
     }
     setState(() {});
 
@@ -143,7 +167,7 @@ class _VideoWidgetState extends State<_VideoWidget> {
         if (_timerStage != TimerStage.setRect) {
           _timerStage = TimerStage.setRect;
           _exported = true;
-          widget.player.viewRect(widget.textureId, _x, _y, _w, _h);
+          widget.player.viewRect(widget.textureId, _x, _y, _w, _h, _crop);
         } else {
           _resetRect(false);
           setState(() {});
@@ -547,11 +571,11 @@ class VideoPlayerWebOs extends VideoPlayerPlatform {
     return EventChannel('flutter.io/videoPlayer/videoEvents$textureId');
   }
 
-  Future<void> viewRect(int textureId, double x, double y, double w, double h) {
+  Future<void> viewRect(int textureId, double x, double y, double w, double h, Rect crop) {
     var windowId = _windowIds[textureId] ?? 'invalid';
-    var size = _windowSizes[textureId] ?? Size(0, 0);
+    final Size size = _windowSizes[textureId] ?? Size.zero;
 
-    if (size.width == 0 && size.height == 0) {
+    if (size.isEmpty) {
       return _windowChannel.invokeMethod<void>('resize', {
         'windowId': windowId,
         'srcRect': [x.round(), y.round(), w.round(), h.round()],
@@ -560,7 +584,7 @@ class VideoPlayerWebOs extends VideoPlayerPlatform {
 
     return _windowChannel.invokeMethod<void>('resize', {
       'windowId': windowId,
-      'srcRect': [0, 0, size.width.round(), size.height.round()],
+      'srcRect': VideoCrop.pixels(crop, size),
       'dstRect': [x.round(), y.round(), w.round(), h.round()],
     });
   }

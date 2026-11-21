@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'dart:convert';
+
 import 'package:plezy/media/ids.dart';
+
 import 'dart:io';
 
 import 'package:background_downloader/background_downloader.dart';
@@ -848,7 +850,14 @@ void main() {
         clientResolver: (_, {clientScopeId}) => null,
       );
 
-      await manager.preparePlexMetadataForLogoutTransfer();
+      // Fixture left by older releases after a partial logout.
+      await PlexApiCache.instance.copyPinnedMetadata(
+        sourceServerId: profileScope.cacheServerId,
+        destinationServerId: transferScope.cacheServerId,
+        ratingKey: 'item-1',
+        stripProfileState: true,
+      );
+      await db.updateDownloadedMediaClientScope('plex-machine:item-1', transferScope);
 
       expect((await db.getDownloadedMedia('plex-machine:item-1'))?.clientScopeId, transferScope);
       expect(
@@ -873,7 +882,7 @@ void main() {
       );
     });
 
-    test('missing Plex leaf survives full logout and rehydrates after replacement adoption', () async {
+    test('retained legacy Plex leaf needs authorized ownership before rehydration', () async {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
       PlexApiCache.initialize(db);
       JellyfinApiCache.initialize(db);
@@ -924,7 +933,7 @@ void main() {
         storageService: DownloadStorageService.instance,
         clientResolver: (_, {clientScopeId}) => null,
       );
-      await transferManager.preparePlexMetadataForLogoutTransfer();
+      await db.updateDownloadedMediaClientScope(globalKey, transferScope);
 
       expect((await db.getDownloadedMedia(globalKey))?.clientScopeId, transferScope);
       expect((await db.getDownloadOwner(profileId: 'profile-a', globalKey: globalKey))?.clientScopeId, originalScope);
@@ -933,6 +942,13 @@ void main() {
       await db.clearAllDownloadOwners();
       expect(await db.getValidDownloadOwnersForKey(globalKey), isEmpty);
       await db.adoptLegacyDownloadsForProfile('profile-b');
+      expect(await db.getDownloadOwner(profileId: 'profile-b', globalKey: globalKey), isNull);
+      await db.addDownloadOwner(
+        profileId: 'profile-b',
+        globalKey: globalKey,
+        backendId: 'plex',
+        clientScopeId: destinationScope,
+      );
       await transferManager.adoptTransferredPlexMetadataForProfile('profile-b');
 
       final adopted = (await db.getDownloadedMedia(globalKey))!;
@@ -1063,7 +1079,7 @@ void main() {
           );
       await db.insertDownload(
         serverId: ServerId('jf-machine'),
-        clientScopeId: 'jf-machine/user-a',
+        clientScopeId: 'jf-machine/user-b',
         ratingKey: 'item-1',
         globalKey: 'jf-machine:item-1',
         type: 'movie',

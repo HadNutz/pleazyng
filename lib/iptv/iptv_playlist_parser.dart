@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:xml/xml.dart';
 
 import '../sources/source_models.dart';
+import '../sources/source_transport.dart';
 import '../sources/universal_media_input.dart';
 
 class IptvPlaylistEntry {
@@ -36,6 +39,20 @@ class IptvPlaylistEntry {
   /// IPTV players are retained. Authentication and arbitrary headers from a
   /// playlist are deliberately ignored.
   final Map<String, String> streamHeaders;
+
+  IptvPlaylistEntry withId(String channelId) => IptvPlaylistEntry(
+    id: channelId,
+    title: title,
+    streamUrl: streamUrl,
+    tvgId: tvgId,
+    number: number,
+    groupTitle: groupTitle,
+    logoUrl: logoUrl,
+    catchupSource: catchupSource,
+    catchupDays: catchupDays,
+    streamHeaders: streamHeaders,
+    radio: radio,
+  );
 }
 
 class IptvPlaylistParseResult {
@@ -58,6 +75,24 @@ class IptvPlaylistParser {
     r'(token|password|signature|credential|authorization|secret|api[_-]?key|^auth$|^key$|^code$|x-amz-|x-goog-|^(expires|expiry|expiration|policy|key-pair-id|sig|se|sp|sv|sr|st|skoid|sktid|skt|ske|sks|skv|rscc|rscd|rsct)$)',
     caseSensitive: false,
   );
+
+  // XMLTV identifiers join programme listings and are often shared by several
+  // different feeds. A stream address can rotate its credentials every refresh.
+  static String feedId(Uri uri, String title, String? tvgId, String? number, String? group) {
+    final keys = uri.queryParametersAll.keys.where((key) => !_secretQueryKey.hasMatch(key)).toList()..sort();
+    final identity = [
+      tvgId,
+      title.trim().toLowerCase(),
+      number,
+      group,
+      uri.scheme,
+      uri.host.toLowerCase(),
+      uri.port,
+      uri.path,
+      for (final key in keys) [key, ...uri.queryParametersAll[key]!],
+    ];
+    return 'feed-${sha256.convert(utf8.encode(jsonEncode(identity)))}';
+  }
 
   static IptvPlaylistParseResult parse(String body, {required Uri base, required bool allowHttp}) {
     if (body.length > maxCharacters) throw const SourceException(SourceFailure.invalidData);
@@ -93,7 +128,7 @@ class IptvPlaylistParser {
     double? durationSeconds;
     var pending = false;
     final streamHeaders = <String, String>{};
-    final duplicateIds = <String, int>{};
+    final feedIds = <String>{};
 
     for (final raw in lines) {
       final line = raw.trim();
@@ -158,18 +193,11 @@ class IptvPlaylistParser {
         final number = _cleanNullable(_first(attributes, const ['tvg-chno', 'channel-number']), 32);
         final group = _cleanNullable(_first(attributes, const ['group-title', 'group']), 120);
         final logo = _safeLogo(_first(attributes, const ['tvg-logo', 'logo']), base, allowHttp);
-        final identity =
-            tvgId?.toLowerCase() ??
-            [
-              number?.toLowerCase() ?? '',
-              group?.toLowerCase() ?? '',
-              displayTitle.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), ' ').trim(),
-              uri.host.toLowerCase(),
-              uri.path.toLowerCase(),
-            ].join('|');
-        final baseId = tvgId ?? 'local-${sha256.convert(identity.codeUnits).toString().substring(0, 24)}';
-        final duplicateIndex = duplicateIds.update(baseId, (value) => value + 1, ifAbsent: () => 0);
-        final id = duplicateIndex == 0 ? baseId : '$baseId#$duplicateIndex';
+        final id = feedId(uri, displayTitle, tvgId, number, group);
+        if (!feedIds.add(id)) {
+          skipped++;
+          continue;
+        }
         final radio =
             _first(attributes, const ['radio'])?.toLowerCase() == 'true' ||
             _first(attributes, const ['radio']) == '1' ||
@@ -189,12 +217,12 @@ class IptvPlaylistParser {
             streamHeaders: Map.unmodifiable(streamHeaders),
           ),
         );
-        if (result.length > maxEntries) throw const SourceException(SourceFailure.invalidData);
       } on SourceException {
         skipped++;
       } on FormatException {
         skipped++;
       }
+      if (result.length > maxEntries) throw const SourceException(SourceFailure.invalidData);
       attributes = <String, String>{};
       streamHeaders.clear();
       title = '';
@@ -322,6 +350,35 @@ class IptvXmltvProgramme {
 class IptvXmltvParser {
   static const maxCharacters = 16 * 1024 * 1024;
   static const maxProgrammes = 300_000;
+
+  static Future<IptvXmltvParseResult> fetch(SourceTransport transport, Uri address) async {
+    final response = await transport.send('GET', address, redirects: true);
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      await response.stream.listen(null).cancel();
+      SourceTransport.check(response.statusCode);
+    }
+    final data = await _bounded(response.stream);
+    final compressed = data.length >= 2 && data[0] == 0x1f && data[1] == 0x8b;
+    // Limit input chunks to the inflater too. A single HTTP chunk can otherwise
+    // expand well beyond the decoded-size bound before a listener can reject it.
+    Stream<List<int>> chunks() async* {
+      for (var start = 0; start < data.length; start += 4096) {
+        yield Uint8List.sublistView(data, start, (start + 4096).clamp(0, data.length));
+      }
+    }
+
+    final bytes = compressed ? await _bounded(gzip.decoder.bind(chunks())) : data;
+    return parse(utf8.decode(bytes), base: response.request?.url ?? address, allowHttp: transport.allowHttp);
+  }
+
+  static Future<Uint8List> _bounded(Stream<List<int>> input) async {
+    final bytes = BytesBuilder(copy: false);
+    await for (final chunk in input) {
+      if (bytes.length + chunk.length > maxCharacters) throw const SourceException(SourceFailure.invalidData);
+      bytes.add(chunk);
+    }
+    return bytes.takeBytes();
+  }
 
   static IptvXmltvParseResult parse(String body, {required Uri base, required bool allowHttp}) {
     if (body.length > maxCharacters || RegExp(r'<!\s*(DOCTYPE|ENTITY)', caseSensitive: false).hasMatch(body)) {

@@ -271,6 +271,10 @@ abstract class MediaServerClient {
   /// success.
   Future<MediaItem?> fetchItem(String id);
 
+  /// Live authorization for reclaiming a retained offline file. An offline
+  /// cache hit is insufficient to establish the current account's entitlement.
+  Future<MediaItem?> fetchAuthorizedDownloadItem(String id) => Future.value(null);
+
   /// Fetch a single item *and* its on-deck episode (the next unwatched /
   /// in-progress episode). The item follows [fetchItem]'s error contract: an
   /// online HTTP 404 returns both nullable fields as `null`, while every other

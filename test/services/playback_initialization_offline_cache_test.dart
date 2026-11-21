@@ -1,8 +1,10 @@
 import 'dart:convert';
+
 import 'package:plezy/media/ids.dart';
+
 import 'dart:io';
 
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
@@ -144,6 +146,23 @@ void main() {
       expect(second.isOffline, isTrue);
       expect(second.videoUrl, 'content://offline/movie-1 - part2');
       expect(second.mediaInfo?.partTimeline?.current.start, const Duration(minutes: 50));
+    });
+
+    test('resumes a converted split movie at item time in the single downloaded file', () async {
+      await _insertDownloaded(
+        db,
+        serverId: ServerId('srv-1'),
+        ratingKey: 'movie-1',
+        videoFilePath: 'content://offline/converted',
+        downloadQuality: 'p1080_8mbps',
+      );
+      for (final minutes in [10, 55]) {
+        final resumed = await playFrom(Duration(minutes: minutes));
+        expect(resumed.isOffline, isTrue);
+        expect(resumed.videoUrl, 'content://offline/converted');
+        expect(resumed.mediaInfo?.partTimeline, isNull);
+        expect(resumed.mediaInfo?.displayCriteria, isNull);
+      }
     });
 
     test('a copy holding only the first file streams the rest, or fails when it must stay offline', () async {
@@ -748,6 +767,7 @@ Future<void> _insertDownloaded(
   required String ratingKey,
   required String videoFilePath,
   List<String>? additionalPartPaths,
+  String? downloadQuality,
   String type = 'movie',
   int mediaIndex = 0,
   String? mediaSourceId,
@@ -764,6 +784,7 @@ Future<void> _insertDownloaded(
           status: DownloadStatus.completed.index,
           videoFilePath: Value(videoFilePath),
           additionalPartPaths: Value(encodeAdditionalPartPaths(additionalPartPaths)),
+          downloadQuality: Value(downloadQuality),
           mediaIndex: Value(mediaIndex),
           mediaSourceId: Value(mediaSourceId),
         ),

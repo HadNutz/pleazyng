@@ -301,7 +301,7 @@ class _Translations$common$cs extends Translations$common$en {
 	@override String get submit => 'Odeslat';
 	@override String get confirm => 'Potvrzení';
 	@override String get retry => 'Zkusit znovu';
-	@override String get logout => 'Přihlaste se';
+	@override String get logout => 'Odhlásit se';
 	@override String get unknown => 'Neznámý';
 	@override String get refresh => 'Aktualizovat';
 	@override String get yes => 'Ano';
@@ -585,7 +585,7 @@ class _Translations$settings$cs extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Heslo';
 	@override String get cloudBackupSaved => 'Cloud backup destinace zachráněna';
 	@override String get cloudBackupNow => 'Zpět nyní';
-	@override String get cloudBackupComplete => 'Nastavení zálohování nahráno';
+	@override String cloudBackupComplete({required Object action}) => 'Záloha byla nahrána. Uložte si tuto adresu URL. Po nové instalaci ji zadejte v nastavení cloudové zálohy a vyberte „${action}“.';
 	@override String get cloudBackupRestore => 'Obnovit zálohu';
 	@override String get cloudBackupRestoreConfirm => 'To nahradí odpovídající přenosné nastavení na tomto zařízení.';
 	@override String get cloudBackupRestored => 'Nastavení obnovené z cloud backup';
@@ -1433,7 +1433,7 @@ class _Translations$messages$cs extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Znovuzavírací metadata pro "${title}..."';
 	@override String metadataRefreshStarted({required Object title}) => 'Aktualizace metadata začíná pro "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'Nepodařilo se aktualizovat metadata: ${error}';
-	@override String get logoutConfirm => 'Jste si jisti, že se chcete přihlásit?';
+	@override String get logoutConfirm => 'Odhlásit všechny profily na tomto zařízení?';
 	@override String get noSeasonsFound => 'Žádné sezóny nenajdeme';
 	@override String get seasonsLoadFailed => 'Nemohla by se stahovat sezóny';
 	@override String get noEpisodesFound => 'V první sezoně nebyly nalezeny žádné epizody';
@@ -2395,15 +2395,15 @@ class _Translations$downloads$cs extends Translations$downloads$en {
 	@override String get noDownloads => 'Zatím žádné stahování';
 	@override String get noDownloadsDescription => 'Stáhnutý obsah se zde objeví pro offline prohlížení';
 	@override String get downloadNow => 'Stáhnout';
-	@override String get deleteDownload => 'Odstranit download';
-	@override String get retryDownload => 'Zpět ke stažení';
+	@override String get deleteDownload => 'Odstranit stažený soubor';
+	@override String get retryDownload => 'Zkusit stáhnout znovu';
 	@override String get downloadQueued => 'Stažení zařazeno.';
 	@override String get downloadResumed => 'Stáhnout znovu';
 	@override String get serverErrorBitrate => 'Serverová chyba: soubor může překročit limit vzdálené bitrate';
 	@override String get storageFull => 'Stáhnout se zastavil, aby chránil dostupné skladování. Zvolit nějaký prostor nebo si vybrat další místo stahování, pak se vrátit.';
 	@override String get storageUnavailable => 'Stáhnout se zastavil, protože dostupné úložiště nemohlo být kontrolováno. zkontrolovat umístění stahování, pak se vrátit.';
 	@override String episodesQueued({required Object count}) => '${count} epizody ke stažení';
-	@override String get downloadDeleted => 'Stáhnout odstraněno';
+	@override String get downloadDeleted => 'Stažený soubor byl odstraněn';
 	@override String deleteConfirm({required Object title}) => 'Odstranit "${title}" z tohoto zařízení?';
 	@override String get deleteCollectionDownloads => 'Odstranit downloads';
 	@override String deleteCollectionDownloadsConfirm({required Object title}) => 'Smazat všechna stažení v kolekci „${title}“ z tohoto zařízení?';
@@ -5813,7 +5813,7 @@ extension on TranslationsCs {
 			'common.submit' => 'Odeslat',
 			'common.confirm' => 'Potvrzení',
 			'common.retry' => 'Zkusit znovu',
-			'common.logout' => 'Přihlaste se',
+			'common.logout' => 'Odhlásit se',
 			'common.unknown' => 'Neznámý',
 			'common.refresh' => 'Aktualizovat',
 			'common.yes' => 'Ano',
@@ -6083,7 +6083,7 @@ extension on TranslationsCs {
 			'settings.cloudBackupPassword' => 'Heslo',
 			'settings.cloudBackupSaved' => 'Cloud backup destinace zachráněna',
 			'settings.cloudBackupNow' => 'Zpět nyní',
-			'settings.cloudBackupComplete' => 'Nastavení zálohování nahráno',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Záloha byla nahrána. Uložte si tuto adresu URL. Po nové instalaci ji zadejte v nastavení cloudové zálohy a vyberte „${action}“.',
 			'settings.cloudBackupRestore' => 'Obnovit zálohu',
 			'settings.cloudBackupRestoreConfirm' => 'To nahradí odpovídající přenosné nastavení na tomto zařízení.',
 			'settings.cloudBackupRestored' => 'Nastavení obnovené z cloud backup',
@@ -6862,7 +6862,7 @@ extension on TranslationsCs {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Znovuzavírací metadata pro "${title}..."',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Aktualizace metadata začíná pro "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Nepodařilo se aktualizovat metadata: ${error}',
-			'messages.logoutConfirm' => 'Jste si jisti, že se chcete přihlásit?',
+			'messages.logoutConfirm' => 'Odhlásit všechny profily na tomto zařízení?',
 			'messages.noSeasonsFound' => 'Žádné sezóny nenajdeme',
 			'messages.seasonsLoadFailed' => 'Nemohla by se stahovat sezóny',
 			'messages.noEpisodesFound' => 'V první sezoně nebyly nalezeny žádné epizody',
@@ -7940,15 +7940,15 @@ extension on TranslationsCs {
 			'downloads.noDownloads' => 'Zatím žádné stahování',
 			'downloads.noDownloadsDescription' => 'Stáhnutý obsah se zde objeví pro offline prohlížení',
 			'downloads.downloadNow' => 'Stáhnout',
-			'downloads.deleteDownload' => 'Odstranit download',
-			'downloads.retryDownload' => 'Zpět ke stažení',
+			'downloads.deleteDownload' => 'Odstranit stažený soubor',
+			'downloads.retryDownload' => 'Zkusit stáhnout znovu',
 			'downloads.downloadQueued' => 'Stažení zařazeno.',
 			'downloads.downloadResumed' => 'Stáhnout znovu',
 			'downloads.serverErrorBitrate' => 'Serverová chyba: soubor může překročit limit vzdálené bitrate',
 			'downloads.storageFull' => 'Stáhnout se zastavil, aby chránil dostupné skladování. Zvolit nějaký prostor nebo si vybrat další místo stahování, pak se vrátit.',
 			'downloads.storageUnavailable' => 'Stáhnout se zastavil, protože dostupné úložiště nemohlo být kontrolováno. zkontrolovat umístění stahování, pak se vrátit.',
 			'downloads.episodesQueued' => ({required Object count}) => '${count} epizody ke stažení',
-			'downloads.downloadDeleted' => 'Stáhnout odstraněno',
+			'downloads.downloadDeleted' => 'Stažený soubor byl odstraněn',
 			'downloads.deleteConfirm' => ({required Object title}) => 'Odstranit "${title}" z tohoto zařízení?',
 			'downloads.deleteCollectionDownloads' => 'Odstranit downloads',
 			'downloads.deleteCollectionDownloadsConfirm' => ({required Object title}) => 'Smazat všechna stažení v kolekci „${title}“ z tohoto zařízení?',

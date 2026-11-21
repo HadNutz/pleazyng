@@ -583,7 +583,7 @@ class _Translations$settings$it extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Password';
 	@override String get cloudBackupSaved => 'Cloud backup destinazione salvata';
 	@override String get cloudBackupNow => 'Ritorno adesso';
-	@override String get cloudBackupComplete => 'Settings Backup upload';
+	@override String cloudBackupComplete({required Object action}) => 'Backup caricato. Conserva questo URL. Dopo una nuova installazione, inseriscilo nella sezione del backup su cloud e scegli «${action}».';
 	@override String get cloudBackupRestore => 'Ristrutturazione Backup';
 	@override String get cloudBackupRestoreConfirm => 'Questo sostituirà le impostazioni portatili in questo dispositivo.';
 	@override String get cloudBackupRestored => 'Impostazioni ripristinate dal cloud backup';
@@ -1423,7 +1423,7 @@ class _Translations$messages$it extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Aggiornamento dei metadati di "${title}"...';
 	@override String metadataRefreshStarted({required Object title}) => 'Aggiornamento dei metadati avviato per "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'Impossibile aggiornare i metadati: ${error}';
-	@override String get logoutConfirm => 'Vuoi uscire dall\'account?';
+	@override String get logoutConfirm => 'Vuoi uscire da tutti i profili su questo dispositivo?';
 	@override String get noSeasonsFound => 'Nessuna stagione trovata';
 	@override String get seasonsLoadFailed => 'Impossibile caricare le stagioni';
 	@override String get noEpisodesFound => 'Nessun episodio trovato nella prima stagione';
@@ -6046,7 +6046,7 @@ extension on TranslationsIt {
 			'settings.cloudBackupPassword' => 'Password',
 			'settings.cloudBackupSaved' => 'Cloud backup destinazione salvata',
 			'settings.cloudBackupNow' => 'Ritorno adesso',
-			'settings.cloudBackupComplete' => 'Settings Backup upload',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Backup caricato. Conserva questo URL. Dopo una nuova installazione, inseriscilo nella sezione del backup su cloud e scegli «${action}».',
 			'settings.cloudBackupRestore' => 'Ristrutturazione Backup',
 			'settings.cloudBackupRestoreConfirm' => 'Questo sostituirà le impostazioni portatili in questo dispositivo.',
 			'settings.cloudBackupRestored' => 'Impostazioni ripristinate dal cloud backup',
@@ -6825,7 +6825,7 @@ extension on TranslationsIt {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Aggiornamento dei metadati di "${title}"...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Aggiornamento dei metadati avviato per "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Impossibile aggiornare i metadati: ${error}',
-			'messages.logoutConfirm' => 'Vuoi uscire dall\'account?',
+			'messages.logoutConfirm' => 'Vuoi uscire da tutti i profili su questo dispositivo?',
 			'messages.noSeasonsFound' => 'Nessuna stagione trovata',
 			'messages.seasonsLoadFailed' => 'Impossibile caricare le stagioni',
 			'messages.noEpisodesFound' => 'Nessun episodio trovato nella prima stagione',

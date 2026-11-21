@@ -1340,8 +1340,8 @@ class Translations$settings$en {
 	/// en: 'Back Up Now'
 	String get cloudBackupNow => 'Back Up Now';
 
-	/// en: 'Settings backup uploaded'
-	String get cloudBackupComplete => 'Settings backup uploaded';
+	/// en: 'Backup uploaded. Save this URL. On a new installation, enter it in Cloud Backup and choose “${action}”.'
+	String cloudBackupComplete({required Object action}) => 'Backup uploaded. Save this URL. On a new installation, enter it in Cloud Backup and choose “${action}”.';
 
 	/// en: 'Restore Backup'
 	String get cloudBackupRestore => 'Restore Backup';
@@ -3735,8 +3735,8 @@ class Translations$messages$en {
 	/// en: 'Failed to refresh metadata: ${error}'
 	String metadataRefreshFailed({required Object error}) => 'Failed to refresh metadata: ${error}';
 
-	/// en: 'Are you sure you want to log out?'
-	String get logoutConfirm => 'Are you sure you want to log out?';
+	/// en: 'Log out of all profiles on this device?'
+	String get logoutConfirm => 'Log out of all profiles on this device?';
 
 	/// en: 'No seasons found'
 	String get noSeasonsFound => 'No seasons found';
@@ -18660,7 +18660,7 @@ extension on Translations {
 			'settings.cloudBackupPassword' => 'Password',
 			'settings.cloudBackupSaved' => 'Cloud backup destination saved',
 			'settings.cloudBackupNow' => 'Back Up Now',
-			'settings.cloudBackupComplete' => 'Settings backup uploaded',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Backup uploaded. Save this URL. On a new installation, enter it in Cloud Backup and choose “${action}”.',
 			'settings.cloudBackupRestore' => 'Restore Backup',
 			'settings.cloudBackupRestoreConfirm' => 'This will replace matching portable settings on this device. Continue?',
 			'settings.cloudBackupRestored' => 'Settings restored from cloud backup',
@@ -19476,7 +19476,7 @@ extension on Translations {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Refreshing metadata for "${title}"...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Metadata refresh started for "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Failed to refresh metadata: ${error}',
-			'messages.logoutConfirm' => 'Are you sure you want to log out?',
+			'messages.logoutConfirm' => 'Log out of all profiles on this device?',
 			'messages.noSeasonsFound' => 'No seasons found',
 			'messages.seasonsLoadFailed' => 'Couldn\'t load seasons',
 			'messages.noEpisodesFound' => 'No episodes found in first season',

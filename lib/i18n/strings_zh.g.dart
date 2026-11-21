@@ -579,7 +579,7 @@ class Translations$settings$zh extends Translations$settings$en {
 	@override String get cloudBackupPassword => '密码';
 	@override String get cloudBackupSaved => '云备份目的地保存';
 	@override String get cloudBackupNow => '回归现在';
-	@override String get cloudBackupComplete => '设置备份上传';
+	@override String cloudBackupComplete({required Object action}) => '备份已上传。请保存此网址。重新安装后，在云备份中输入此网址，然后选择“${action}”。';
 	@override String get cloudBackupRestore => '恢复备份';
 	@override String get cloudBackupRestoreConfirm => '此将取代该设备上的相匹配移动设置。';
 	@override String get cloudBackupRestored => '從雲端儲備恢復的設定';
@@ -1419,7 +1419,7 @@ class Translations$messages$zh extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => '正在刷新“${title}”的元数据…';
 	@override String metadataRefreshStarted({required Object title}) => '已开始刷新“${title}”的元数据';
 	@override String metadataRefreshFailed({required Object error}) => '无法刷新元数据：${error}';
-	@override String get logoutConfirm => '确定要退出登录吗？';
+	@override String get logoutConfirm => '要退出此设备上的所有个人资料吗？';
 	@override String get noSeasonsFound => '未找到季';
 	@override String get seasonsLoadFailed => '无法加载季';
 	@override String get noEpisodesFound => '在第一季中未找到剧集';
@@ -6034,7 +6034,7 @@ extension on TranslationsZh {
 			'settings.cloudBackupPassword' => '密码',
 			'settings.cloudBackupSaved' => '云备份目的地保存',
 			'settings.cloudBackupNow' => '回归现在',
-			'settings.cloudBackupComplete' => '设置备份上传',
+			'settings.cloudBackupComplete' => ({required Object action}) => '备份已上传。请保存此网址。重新安装后，在云备份中输入此网址，然后选择“${action}”。',
 			'settings.cloudBackupRestore' => '恢复备份',
 			'settings.cloudBackupRestoreConfirm' => '此将取代该设备上的相匹配移动设置。',
 			'settings.cloudBackupRestored' => '從雲端儲備恢復的設定',
@@ -6813,7 +6813,7 @@ extension on TranslationsZh {
 			'messages.metadataRefreshing' => ({required Object title}) => '正在刷新“${title}”的元数据…',
 			'messages.metadataRefreshStarted' => ({required Object title}) => '已开始刷新“${title}”的元数据',
 			'messages.metadataRefreshFailed' => ({required Object error}) => '无法刷新元数据：${error}',
-			'messages.logoutConfirm' => '确定要退出登录吗？',
+			'messages.logoutConfirm' => '要退出此设备上的所有个人资料吗？',
 			'messages.noSeasonsFound' => '未找到季',
 			'messages.seasonsLoadFailed' => '无法加载季',
 			'messages.noEpisodesFound' => '在第一季中未找到剧集',

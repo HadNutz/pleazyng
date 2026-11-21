@@ -3,6 +3,7 @@ import 'dart:io';
 import '../database/app_database.dart';
 import '../database/download_operations.dart';
 import '../models/download_models.dart';
+import '../models/transcode_quality_preset.dart';
 import '../utils/app_logger.dart';
 import '../utils/downloaded_version_match.dart';
 import 'download_storage_service.dart';
@@ -11,7 +12,7 @@ import 'saf_storage_service.dart';
 /// A downloaded copy resolved to a playable location, plus the version that is
 /// actually on disk — which can differ from the requested one when
 /// [resolveDownloadedVideoSource] was allowed to fall back.
-typedef DownloadedVideoSource = ({String path, int mediaIndex, String? mediaSourceId});
+typedef DownloadedVideoSource = ({String path, int mediaIndex, String? mediaSourceId, bool converted});
 
 /// Single source of truth for "where is the playable copy of this downloaded
 /// row, and is it the version that was asked for".
@@ -92,5 +93,11 @@ Future<DownloadedVideoSource?> resolveDownloadedVideoSource(
   }
 
   appLogger.d('Found offline video: $readablePath');
-  return (path: readablePath, mediaIndex: row.mediaIndex, mediaSourceId: row.mediaSourceId);
+  final preset = TranscodeQualityPreset.values.asNameMap()[row.downloadQuality];
+  return (
+    path: readablePath,
+    mediaIndex: row.mediaIndex,
+    mediaSourceId: row.mediaSourceId,
+    converted: preset != null && !preset.isOriginal && row.partCount == 1,
+  );
 }

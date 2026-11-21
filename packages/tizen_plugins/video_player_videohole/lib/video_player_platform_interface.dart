@@ -165,6 +165,10 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setMixWithOthers() has not been implemented.');
   }
 
+  /// Selects a normalized region of the decoded picture on the overlay plane.
+  Future<void> setSourceCrop(int playerId, Rect crop) =>
+      throw UnimplementedError('setSourceCrop() has not been implemented.');
+
   /// Sets the video display geometry.
   Future<void> setDisplayGeometry(
     int playerId,

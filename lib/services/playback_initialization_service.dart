@@ -1,7 +1,9 @@
 import 'dart:io';
+
 import '../media/ids.dart';
 
 import 'package:path/path.dart' as p;
+
 import '../i18n/strings.g.dart';
 
 import '../database/app_database.dart';
@@ -144,8 +146,29 @@ class PlaybackInitializationService {
     // Downloaded playback must not wait on a live server. Cached media info
     // preserves track labels where available; the local file is enough to play.
     if (offlineSource != null) {
-      final mediaInfo = await _cachedMediaInfo(metadata, offlineSource.mediaIndex, position: options.startPosition);
-      if (options.requestsCompatibleDolbyVisionRendition(mediaInfo)) {
+      final original = await _cachedMediaInfo(
+        metadata,
+        offlineSource.mediaIndex,
+        position: offlineSource.converted ? Duration.zero : options.startPosition,
+      );
+      // The converted file has its own tracks, range and one item-relative clock.
+      // Preserve descriptive chapter and sidecar metadata without handing original
+      // stream IDs, partial timelines or DV flags to the new decoder.
+      final mediaInfo = original != null && offlineSource.converted
+          ? MediaSourceInfo(
+              videoUrl: offlineSource.path,
+              mediaIndex: offlineSource.mediaIndex,
+              mediaSourceId: offlineSource.mediaSourceId,
+              originalLanguage: original.originalLanguage,
+              audioTracks: const [],
+              subtitleTracks: original.subtitleTracks.where((track) => track.isExternalFile).toList(),
+              chapters: original.chapters,
+            )
+          : original;
+      if (options.requestsCompatibleDolbyVisionRendition(
+        mediaInfo,
+        container: p.extension(Uri.tryParse(offlineSource.path)?.path ?? offlineSource.path).replaceFirst('.', ''),
+      )) {
         // A local copy can still carry an unsupported DV profile. When the
         // server is available, skip the download and negotiate its SDR
         // rendition before opening a decoder that may render wrong colors.

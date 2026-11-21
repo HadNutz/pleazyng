@@ -581,7 +581,7 @@ class _Translations$settings$az extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Şifrə';
 	@override String get cloudBackupSaved => 'Cloud backup destinasyonu qurulmuşdur';
 	@override String get cloudBackupNow => 'Şimdilik geri';
-	@override String get cloudBackupComplete => 'Backup yüklənlər';
+	@override String cloudBackupComplete({required Object action}) => 'Ehtiyat nüsxə yükləndi. Bu URL-i saxlayın. Tətbiqi yenidən quraşdırdıqdan sonra URL-i bulud ehtiyat nüsxəsi bölməsinə daxil edin və “${action}” seçin.';
 	@override String get cloudBackupRestore => 'Backup qayıtmaq';
 	@override String get cloudBackupRestoreConfirm => 'Bu, bu cihazda uyumlu mobil ayarların yerini alacaq.';
 	@override String get cloudBackupRestored => '“Cloud Backup”dan qayıtılmış ayarlar';
@@ -1421,7 +1421,7 @@ class _Translations$messages$az extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => '"${title}" üçün meta-məlumatlar yenilənir...';
 	@override String metadataRefreshStarted({required Object title}) => '"${title}" üçün meta-məlumat yenilənməsi başladı';
 	@override String metadataRefreshFailed({required Object error}) => 'Meta-məlumatlar yenilənə bilmədi: ${error}';
-	@override String get logoutConfirm => 'Çıxış etmək istədiyinizdən əminsiniz?';
+	@override String get logoutConfirm => 'Bu cihazdakı bütün profillərdən çıxmaq istəyirsiniz?';
 	@override String get noSeasonsFound => 'Mövsüm tapılmadı';
 	@override String get seasonsLoadFailed => 'Mövsümlər yüklənə bilmədi';
 	@override String get noEpisodesFound => 'Birinci mövsümdə seriya tapılmadı';
@@ -6039,7 +6039,7 @@ extension on TranslationsAz {
 			'settings.cloudBackupPassword' => 'Şifrə',
 			'settings.cloudBackupSaved' => 'Cloud backup destinasyonu qurulmuşdur',
 			'settings.cloudBackupNow' => 'Şimdilik geri',
-			'settings.cloudBackupComplete' => 'Backup yüklənlər',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Ehtiyat nüsxə yükləndi. Bu URL-i saxlayın. Tətbiqi yenidən quraşdırdıqdan sonra URL-i bulud ehtiyat nüsxəsi bölməsinə daxil edin və “${action}” seçin.',
 			'settings.cloudBackupRestore' => 'Backup qayıtmaq',
 			'settings.cloudBackupRestoreConfirm' => 'Bu, bu cihazda uyumlu mobil ayarların yerini alacaq.',
 			'settings.cloudBackupRestored' => '“Cloud Backup”dan qayıtılmış ayarlar',
@@ -6818,7 +6818,7 @@ extension on TranslationsAz {
 			'messages.metadataRefreshing' => ({required Object title}) => '"${title}" üçün meta-məlumatlar yenilənir...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => '"${title}" üçün meta-məlumat yenilənməsi başladı',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Meta-məlumatlar yenilənə bilmədi: ${error}',
-			'messages.logoutConfirm' => 'Çıxış etmək istədiyinizdən əminsiniz?',
+			'messages.logoutConfirm' => 'Bu cihazdakı bütün profillərdən çıxmaq istəyirsiniz?',
 			'messages.noSeasonsFound' => 'Mövsüm tapılmadı',
 			'messages.seasonsLoadFailed' => 'Mövsümlər yüklənə bilmədi',
 			'messages.noEpisodesFound' => 'Birinci mövsümdə seriya tapılmadı',

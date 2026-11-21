@@ -176,6 +176,7 @@ mixin _JellyfinClientInternals on MediaServerCacheMixin {
   Future<Map<String, dynamic>> getPlaybackInfo(
     String itemId, {
     int? maxStreamingBitrate = 100_000_000,
+    TranscodeQualityPreset? videoQuality,
     String? mediaSourceId,
     String? liveStreamId,
     int? startTimeTicks,

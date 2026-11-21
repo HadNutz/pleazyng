@@ -52,5 +52,31 @@ class MacRequestTests(unittest.TestCase):
                 self.assertIn('mode=macos-validation',output.read_text())
                 self.assertIn('prepare_homebrew_cask=true',output.read_text())
 
+    def test_desktop_whisper_builds_accept_only_trusted_full_builds(self):
+        workflow = yaml.safe_load((ROOT / ".github/workflows/build.yml").read_text())
+        steps = workflow["jobs"]["validate-trusted-ref"]["steps"]
+        step = next(s for s in steps if s.get("name") == "Resolve release request")
+        env = {key: "" for key in step["env"]}
+        env.update(ACTION_INPUT="build", RUNNER_POOL_INPUT="public", EXECUTION_PROFILE_INPUT="hybrid",
+                   MODE_INPUT="release", BUILD_VERSION_INPUT="3.0.1", REF_TYPE="branch", REF_NAME="main",
+                   INCLUDE_WEBOS_BUILD_INPUT="true", INCLUDE_WEBOS_RELEASE_INPUT="true",
+                   INCLUDE_APPLE_STORE_BUILD_INPUT="false", PREPARE_HOMEBREW_CASK_INPUT="false",
+                   PRIVATE_APPLE_SIGNING_UNAVAILABLE_INPUT="false", TVOS_RUNNER_POOL_INPUT="hosted")
+        for backend in ("cpu", "vulkan", "cuda"):
+            for overrides, success in (
+                ({}, True),
+                ({"REF_NAME": "feature-branch"}, False),
+                ({"ACTION_INPUT": "release"}, backend == "cpu"),
+                ({"MODE_INPUT": "android-validation"}, backend == "cpu"),
+            ):
+                with self.subTest(backend=backend, overrides=overrides), tempfile.TemporaryDirectory() as directory:
+                    result = subprocess.run(
+                        ["bash", "-c", step["run"]], cwd=ROOT, text=True, capture_output=True,
+                        env={**os.environ, **env, **overrides, "SUBTITLE_GPU_BACKEND_INPUT": backend,
+                             "GITHUB_OUTPUT": str(Path(directory) / "outputs")},
+                    )
+                    self.assertEqual(result.returncode == 0, success, result.stderr)
+        self.assertIn("format(':whisper:{0}', inputs.subtitle_gpu_backend)", workflow["run-name"])
+
 
 if __name__=='__main__':unittest.main()

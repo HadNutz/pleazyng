@@ -1,8 +1,11 @@
 import 'package:plezy/i18n/presentation_formats.dart';
 import 'package:flutter/material.dart';
+
 import '../media/ids.dart';
+
 import 'package:plezy/widgets/app_icon.dart';
 import 'package:material_symbols_icons/symbols.dart';
+
 import '../focus/focusable_wrapper.dart';
 import '../i18n/strings.g.dart';
 import '../media/media_item.dart';
@@ -49,7 +52,7 @@ class DownloadTreeNode {
   }
 }
 
-enum DownloadNodeType { show, season, episode, movie, album, track }
+enum DownloadNodeType { show, season, episode, movie, album, track, file }
 
 /// Hierarchical tree view for downloads
 /// Groups TV shows by show -> season -> episode and music by album -> track
@@ -58,6 +61,7 @@ class DownloadTreeView extends StatefulWidget {
   final Map<String, DownloadProgress> downloads;
   final Map<String, MediaItem> metadata;
   final Map<String, int> downloadSizes; // globalKey → measured bytes on disk
+  final void Function(String globalKey)? onMissingMetadata;
   final void Function(String globalKey)? onPause;
   final void Function(String globalKey)? onResume;
   final void Function(String globalKey)? onRetry;
@@ -75,6 +79,7 @@ class DownloadTreeView extends StatefulWidget {
     required this.downloads,
     required this.metadata,
     this.downloadSizes = const {},
+    this.onMissingMetadata,
     this.onPause,
     this.onResume,
     this.onRetry,
@@ -113,6 +118,9 @@ class _DownloadTreeViewState extends State<DownloadTreeView> with UnsuppressFocu
       itemCount: flattenedNodes.length,
       itemBuilder: (context, index) {
         final item = flattenedNodes[index];
+        if (item.node.metadata == null && item.node.downloadProgress != null) {
+          widget.onMissingMetadata?.call(item.node.key);
+        }
         return _buildTreeItem(item.node, item.depth, isFirst: index == 0);
       },
     );
@@ -128,7 +136,21 @@ class _DownloadTreeViewState extends State<DownloadTreeView> with UnsuppressFocu
       final download = entry.value;
       final meta = widget.metadata[globalKey];
 
-      if (meta == null) continue;
+      if (meta == null) {
+        final id = parseGlobalKey(globalKey)?.ratingKey ?? globalKey;
+        movies.add(
+          DownloadTreeNode(
+            key: globalKey,
+            title: '${t.common.unknown} ($id)',
+            type: DownloadNodeType.file,
+            progress: download.progressPercent,
+            status: download.status,
+            downloadProgress: download,
+            sizeBytes: _leafSize(globalKey, download),
+          ),
+        );
+        continue;
+      }
 
       if (meta.isEpisode) {
         final showKey = meta.grandparentId ?? 'unknown';
@@ -472,6 +494,7 @@ String? resolveDownloadContainerGlobalKey(DownloadTreeNode node, Map<String, Med
       final parentRatingKey = firstLeafMeta!.parentId;
       if (parentRatingKey == null) return null;
       return buildGlobalKey(ServerId(serverId), parentRatingKey);
+    case DownloadNodeType.file:
     case DownloadNodeType.episode:
     case DownloadNodeType.movie:
     case DownloadNodeType.track:
@@ -578,6 +601,7 @@ class _DownloadTreeItem extends StatefulWidget {
   final int depth;
   final bool isExpanded;
   final VoidCallback onToggleExpansion;
+  final void Function(String globalKey)? onMissingMetadata;
   final void Function(String globalKey)? onPause;
   final void Function(String globalKey)? onResume;
   final void Function(String globalKey)? onRetry;
@@ -597,6 +621,7 @@ class _DownloadTreeItem extends StatefulWidget {
     required this.depth,
     required this.isExpanded,
     required this.onToggleExpansion,
+    this.onMissingMetadata,
     this.onPause,
     this.onResume,
     this.onRetry,

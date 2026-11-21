@@ -1,7 +1,7 @@
 {
   "locale": "zh-Hant",
   "inherits": null,
-  "catalogSha256": "fc11e8c65638ed18694f2e1921dbb2a942bfbdb72bb177443a9437689fccddf0",
+  "catalogSha256": "2fab36ea118ef39f1d44f8d548522a98f4541a7ca857cff1ede07c0a02d24282",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -369,7 +369,7 @@
     "settings.cloudBackupPassword": "translation-memory",
     "settings.cloudBackupSaved": "m2m100-draft+opencc-s2twp",
     "settings.cloudBackupNow": "m2m100-draft+opencc-s2twp",
-    "settings.cloudBackupComplete": "m2m100-draft+opencc-s2twp",
+    "settings.cloudBackupComplete": "assistant-semantic-review-2026-11-21",
     "settings.cloudBackupRestore": "m2m100-draft+opencc-s2twp",
     "settings.cloudBackupRestoreConfirm": "m2m100-draft+opencc-s2twp",
     "settings.cloudBackupRestored": "m2m100-draft",
@@ -1024,7 +1024,7 @@
     "messages.metadataRefreshing": "existing",
     "messages.metadataRefreshStarted": "existing",
     "messages.metadataRefreshFailed": "existing",
-    "messages.logoutConfirm": "existing",
+    "messages.logoutConfirm": "assistant-semantic-review-2026-11-21",
     "messages.noSeasonsFound": "existing",
     "messages.seasonsLoadFailed": "existing",
     "messages.noEpisodesFound": "existing",

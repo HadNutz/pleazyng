@@ -5,7 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player_drm/video_player.dart' as captions;
 import 'package:video_player_drm/webos_video_plane.dart';
+
 import '../../../utils/platform_detector.dart';
+
 import 'package:video_player_win/video_player_win.dart' as win;
 
 import '../../../models/audio_channel_limit.dart';
@@ -15,12 +17,16 @@ import '../player_base.dart';
 import '../video_rect_support.dart';
 import '../subtitle_pcm_capture_source.dart';
 import 'webos_media_proxy.dart';
+import 'native_tv_video_framing.dart';
+import 'webos_video_layout.dart';
 import 'system_subtitles.dart';
 import '../../font_loader.dart';
 
 /// One native session per source. Its ID also identifies the video surface:
 /// a delayed prepare, poll or dispose cannot target a replacement source.
-class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity, VideoRectSupport {
+class PlayerSystem extends PlayerBase
+    with NativeTvVideoFraming
+    implements PlayerMediaSessionIdentity, VideoRectSupport {
   PlayerSystem(this.playerType, {this.hardwareDecoding = true}) : super(listenToNativeEvents: false);
 
   @override
@@ -47,6 +53,7 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity, Vid
   int _subtitleSelection = 0;
   Duration _subtitleDelay = Duration.zero;
   bool _subtitlesVisible = true;
+  @override
   final surfaceRevision = ValueNotifier<int>(0);
   final _sources = SerialFutureQueue();
   static int _nextId = 0;
@@ -148,19 +155,40 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity, Vid
             );
       return IgnorePointer(child: view);
     }
-    if (_texture == -2 && _window != null && !_size.isEmpty) {
-      return Center(
-        child: AspectRatio(
-          aspectRatio: _size.aspectRatio,
-          child: Stack(
-            fit: StackFit.expand,
+    if (playerType == 'tvmpv' && !_size.isEmpty) {
+      final plane = _texture == -2 && _window != null;
+      final texture = _texture;
+      if (!plane && (texture == null || texture < 0)) return const SizedBox.expand();
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final frame = nativeTvVideoLayout(constraints.biggest, _size.aspectRatio, cover: coverVideo, zoom: videoZoom);
+          return Stack(
+            clipBehavior: Clip.hardEdge,
             children: [
-              WebOSVideoPlane(key: ValueKey(_window), window: _window!, source: _size, onError: () => _fail(id)),
-              if (_overlayTexture case final texture? when texture >= 0)
-                IgnorePointer(child: Texture(textureId: texture)),
+              if (plane)
+                Positioned.fromRect(
+                  rect: frame.destination,
+                  child: WebOSVideoPlane(
+                    key: ValueKey(_window),
+                    window: _window!,
+                    source: _size,
+                    crop: frame.source,
+                    onError: () => _fail(id),
+                  ),
+                )
+              else
+                Positioned.fromRect(
+                  rect: frame.fullPicture,
+                  child: Texture(textureId: texture!),
+                ),
+              if (plane && _overlayTexture != null && _overlayTexture! >= 0)
+                Positioned.fromRect(
+                  rect: frame.fullPicture,
+                  child: IgnorePointer(child: Texture(textureId: _overlayTexture!)),
+                ),
             ],
-          ),
-        ),
+          );
+        },
       );
     }
     final texture = _texture;
@@ -204,9 +232,14 @@ class PlayerSystem extends PlayerBase implements PlayerMediaSessionIdentity, Vid
       handlePlayerEvent('start-file', {'sourceId': id});
       try {
         var uri = File(media.uri).isAbsolute ? File(media.uri).uri : Uri.parse(media.uri);
-        if ((uri.scheme == 'http' || uri.scheme == 'https') && (media.headers?.isNotEmpty ?? false)) {
+        if ((uri.scheme == 'http' || uri.scheme == 'https') &&
+            (media.mediaBrowserAuthentication || (media.headers?.isNotEmpty ?? false))) {
           final proxy = _proxy = await WebOSMediaProxy.bind();
-          uri = proxy.register(uri, headers: media.headers);
+          uri = proxy.register(
+            uri,
+            headers: media.headers,
+            mediaBrowserAuthentication: media.mediaBrowserAuthentication,
+          );
         }
         if (!_current(generation)) return;
         if (playerType == 'mediafoundation') {

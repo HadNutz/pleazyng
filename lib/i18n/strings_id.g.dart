@@ -301,7 +301,7 @@ class _Translations$common$id extends Translations$common$en {
 	@override String get submit => 'Kirim';
 	@override String get confirm => 'mengkonfirmasi';
 	@override String get retry => 'Coba Lagi';
-	@override String get logout => 'Log keluar';
+	@override String get logout => 'Keluar';
 	@override String get unknown => 'Tidak Dikenal';
 	@override String get refresh => 'Segarkan';
 	@override String get yes => 'Ya';
@@ -579,7 +579,7 @@ class _Translations$settings$id extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Kata sandi';
 	@override String get cloudBackupSaved => 'Cloud Backup Destinasi disimpan';
 	@override String get cloudBackupNow => 'Kembali ke sekarang';
-	@override String get cloudBackupComplete => 'Settings backup upload';
+	@override String cloudBackupComplete({required Object action}) => 'Cadangan telah diunggah. Simpan URL ini. Setelah memasang ulang aplikasi, masukkan URL ini di bagian pencadangan cloud dan pilih “${action}”.';
 	@override String get cloudBackupRestore => 'Restorasi Backup';
 	@override String get cloudBackupRestoreConfirm => 'Ini akan menggantikan pengaturan portabel yang sepadan pada perangkat ini.';
 	@override String get cloudBackupRestored => 'Pengaturan yang dikembalikan dari cloud backup';
@@ -1414,7 +1414,7 @@ class _Translations$messages$id extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Metadata yang diperbaharui untuk "${title}..."';
 	@override String metadataRefreshStarted({required Object title}) => 'Metadata pembaharuan dimulai untuk "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'Tidak dapat memperbarui metadata: ${error}';
-	@override String get logoutConfirm => 'Apakah Anda yakin Anda ingin keluar?';
+	@override String get logoutConfirm => 'Keluar dari semua profil di perangkat ini?';
 	@override String get noSeasonsFound => 'Tidak ada musim ditemukan';
 	@override String get seasonsLoadFailed => 'Tidak bisa mengisi musim';
 	@override String get noEpisodesFound => 'Tidak ada episode yang ditemukan di musim pertama';
@@ -2354,15 +2354,15 @@ class _Translations$downloads$id extends Translations$downloads$en {
 	@override String get noDownloads => 'Belum ada download';
 	@override String get noDownloadsDescription => 'Konten yang dimuat turun akan muncul di sini untuk menonton offline';
 	@override String get downloadNow => 'Unduh';
-	@override String get deleteDownload => 'Menghapus download';
-	@override String get retryDownload => 'Kembali ke download';
+	@override String get deleteDownload => 'Hapus unduhan';
+	@override String get retryDownload => 'Coba unduh lagi';
 	@override String get downloadQueued => 'Download Dijadwalkan.';
 	@override String get downloadResumed => 'Download kembali';
 	@override String get serverErrorBitrate => 'Kesalahan server: file mungkin melebihi batas bitrate remote';
 	@override String get storageFull => 'Download berhenti untuk melindungi penyimpanan yang tersedia.Bebaskan beberapa ruang atau pilih lokasi download lain, kemudian retry.';
 	@override String get storageUnavailable => 'Download berhenti karena penyimpanan yang tersedia tidak dapat diperiksa. periksa lokasi download, kemudian retry.';
 	@override String episodesQueued({required Object count}) => '${count} episode yang dikeluarkan untuk download';
-	@override String get downloadDeleted => 'Download dihapus';
+	@override String get downloadDeleted => 'Unduhan dihapus';
 	@override String deleteConfirm({required Object title}) => 'Menghapus "${title}" dari perangkat ini?';
 	@override String get deleteCollectionDownloads => 'Menghapus Downloads';
 	@override String deleteCollectionDownloadsConfirm({required Object title}) => 'Hapus semua unduhan dalam “${title}” dari perangkat ini?';
@@ -5744,7 +5744,7 @@ extension on TranslationsId {
 			'common.submit' => 'Kirim',
 			'common.confirm' => 'mengkonfirmasi',
 			'common.retry' => 'Coba Lagi',
-			'common.logout' => 'Log keluar',
+			'common.logout' => 'Keluar',
 			'common.unknown' => 'Tidak Dikenal',
 			'common.refresh' => 'Segarkan',
 			'common.yes' => 'Ya',
@@ -6014,7 +6014,7 @@ extension on TranslationsId {
 			'settings.cloudBackupPassword' => 'Kata sandi',
 			'settings.cloudBackupSaved' => 'Cloud Backup Destinasi disimpan',
 			'settings.cloudBackupNow' => 'Kembali ke sekarang',
-			'settings.cloudBackupComplete' => 'Settings backup upload',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Cadangan telah diunggah. Simpan URL ini. Setelah memasang ulang aplikasi, masukkan URL ini di bagian pencadangan cloud dan pilih “${action}”.',
 			'settings.cloudBackupRestore' => 'Restorasi Backup',
 			'settings.cloudBackupRestoreConfirm' => 'Ini akan menggantikan pengaturan portabel yang sepadan pada perangkat ini.',
 			'settings.cloudBackupRestored' => 'Pengaturan yang dikembalikan dari cloud backup',
@@ -6793,7 +6793,7 @@ extension on TranslationsId {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Metadata yang diperbaharui untuk "${title}..."',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Metadata pembaharuan dimulai untuk "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Tidak dapat memperbarui metadata: ${error}',
-			'messages.logoutConfirm' => 'Apakah Anda yakin Anda ingin keluar?',
+			'messages.logoutConfirm' => 'Keluar dari semua profil di perangkat ini?',
 			'messages.noSeasonsFound' => 'Tidak ada musim ditemukan',
 			'messages.seasonsLoadFailed' => 'Tidak bisa mengisi musim',
 			'messages.noEpisodesFound' => 'Tidak ada episode yang ditemukan di musim pertama',
@@ -7871,15 +7871,15 @@ extension on TranslationsId {
 			'downloads.noDownloads' => 'Belum ada download',
 			'downloads.noDownloadsDescription' => 'Konten yang dimuat turun akan muncul di sini untuk menonton offline',
 			'downloads.downloadNow' => 'Unduh',
-			'downloads.deleteDownload' => 'Menghapus download',
-			'downloads.retryDownload' => 'Kembali ke download',
+			'downloads.deleteDownload' => 'Hapus unduhan',
+			'downloads.retryDownload' => 'Coba unduh lagi',
 			'downloads.downloadQueued' => 'Download Dijadwalkan.',
 			'downloads.downloadResumed' => 'Download kembali',
 			'downloads.serverErrorBitrate' => 'Kesalahan server: file mungkin melebihi batas bitrate remote',
 			'downloads.storageFull' => 'Download berhenti untuk melindungi penyimpanan yang tersedia.Bebaskan beberapa ruang atau pilih lokasi download lain, kemudian retry.',
 			'downloads.storageUnavailable' => 'Download berhenti karena penyimpanan yang tersedia tidak dapat diperiksa. periksa lokasi download, kemudian retry.',
 			'downloads.episodesQueued' => ({required Object count}) => '${count} episode yang dikeluarkan untuk download',
-			'downloads.downloadDeleted' => 'Download dihapus',
+			'downloads.downloadDeleted' => 'Unduhan dihapus',
 			'downloads.deleteConfirm' => ({required Object title}) => 'Menghapus "${title}" dari perangkat ini?',
 			'downloads.deleteCollectionDownloads' => 'Menghapus Downloads',
 			'downloads.deleteCollectionDownloadsConfirm' => ({required Object title}) => 'Hapus semua unduhan dalam “${title}” dari perangkat ini?',

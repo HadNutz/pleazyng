@@ -118,7 +118,7 @@ window.addEventListener('publication-event',({detail:d})=>{
     if(d.type==='readerSetting')settings[d.key]=d.value;
     if(d.type==='notes')notes=d.annotations;
     if(d.type==='location'){locationState=d;selection=null;status.textContent=percent.format(d.fraction);}
-    if(d.type==='selection')selection=d;
+    if(d.type==='selection')selection=d.cfi?d:null;
     if(d.type==='annotation')showNotes();
 });
 socket.addEventListener('close',()=>{speechSynthesis.cancel();document.body.classList.add('disconnected');status.textContent=labels.disconnected??'Return to PlezyNG';for(const b of Object.values(buttons))b.disabled=true;});

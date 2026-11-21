@@ -2331,6 +2331,12 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
               // makes the decision before local decoding can produce a valid
               // open with invalid colors.
               requestCompatibleDolbyVisionRendition: true,
+              webosDolbyVision: !SettingsService.instance.read(SettingsService.disableDolbyVision)
+                  ? VideoDecodeCapabilities.webosNativeDolbyVision(videoEngine)
+                  : false,
+              webosHdr10:
+                  !SettingsService.instance.read(SettingsService.disableDolbyVision) &&
+                  VideoDecodeCapabilities.webosNativeHdr10(videoEngine),
               supportedNativeDolbyVisionProfiles: VideoDecodeCapabilities.supportedNativeDolbyVisionProfiles,
               allowExperimentalDolbyVisionProfile7:
                   videoEngine == 'mpv' &&
