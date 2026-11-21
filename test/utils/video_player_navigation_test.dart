@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -368,6 +369,7 @@ void main() {
 
     late List<String> externalLaunches;
     late _ExternalUrlClient client;
+    late AppDatabase database;
 
     setUp(() async {
       resetSharedPreferencesForTest();
@@ -376,6 +378,8 @@ void main() {
       await (await SettingsService.getInstance()).write(SettingsService.useExternalPlayer, true);
       externalLaunches = [];
       client = _ExternalUrlClient();
+      database = AppDatabase.forTesting(NativeDatabase.memory());
+      await database.into(database.downloadedMedia).insert(downloadedRow);
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(urlLauncherChannel, (
         call,
       ) async {
@@ -385,7 +389,8 @@ void main() {
       });
     });
 
-    tearDown(() {
+    tearDown(() async {
+      await database.close();
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
         urlLauncherChannel,
         null,
@@ -403,6 +408,7 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [
+            Provider<AppDatabase>.value(value: database),
             ChangeNotifierProvider<MultiServerProvider>.value(value: servers.provider),
             ChangeNotifierProvider<DownloadProvider>.value(value: downloads),
             ChangeNotifierProvider<OfflineWatchSyncService>.value(value: offlineWatch),
