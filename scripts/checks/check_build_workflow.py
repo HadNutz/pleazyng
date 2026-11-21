@@ -1015,13 +1015,10 @@ require(
     is not None,
     "manual workflow must expose required release and webOS validation modes",
 )
-hybrid_validation_mode_guard = (
-    '"$MODE" != "release" && "$MODE" != "webos-validation" && '
-    '"$MODE" != "android-validation" && "$MODE" != "macos-validation"'
-)
 require(
-    text.count(hybrid_validation_mode_guard) == 1,
-    "webOS-only validation must be accepted by the hybrid-profile check",
+    '"$MODE" != "release" && "$MODE" != "webos-validation" && "$MODE" != "macos-validation" && "$MODE" != "android-validation"'
+    in named_step(job("validate-trusted-ref"), "Resolve release request"),
+    "Release request validation must accept all four supported build modes",
 )
 require(
     re.search(
@@ -1374,7 +1371,7 @@ require(
     and "needs.freeze-qualified-source.result == 'success'" in job("create-release")
     and "inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.freeze-qualified-source.result == 'skipped'" in job("create-release")
     and "--create-tag" in freeze_source
-    and "python3 scripts/verify_embedded_release_ci.py" in trusted_gate
+    and "python3 scripts/verify_embedded_release_ci.py --candidate-only" in capture_request
     and "python3 scripts/verify_release_ci.py" in trusted_gate,
     "Stable tags and platform builds must remain gated by verified exact-source reusable CI",
 )
@@ -1385,7 +1382,7 @@ require(
     and "needs.freeze-qualified-source.result == 'success'" in job("create-release")
     and "inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.freeze-qualified-source.result == 'skipped'" in job("create-release")
     and "needs: [freeze-qualified-source," in job("create-release"),
-    "Candidate artifacts may overlap CI, but release assembly must still wait for the stable-tag qualification gate",
+    "Release assembly requires a qualified candidate, verified standalone tag CI or verified recovery",
 )
 macos_restore = named_step(job("build-macos"), "Restore prior notarization submission checkpoint")
 require(

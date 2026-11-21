@@ -584,7 +584,7 @@ class Translations$settings$fr extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Mot de passe';
 	@override String get cloudBackupSaved => 'Cloud Backup Destination sauvée';
 	@override String get cloudBackupNow => 'Retour à présent';
-	@override String get cloudBackupComplete => 'Settings Backup envoyé';
+	@override String cloudBackupComplete({required Object action}) => 'Sauvegarde envoyée. Conservez cette URL. Après une nouvelle installation, saisissez-la dans la rubrique de sauvegarde en ligne et choisissez « ${action} ».';
 	@override String get cloudBackupRestore => 'Récupérer Backup';
 	@override String get cloudBackupRestoreConfirm => 'Cela remplacera les paramètres portables correspondants sur ce dispositif.';
 	@override String get cloudBackupRestored => 'Récupération de la récupération de la sauvegarde cloud';
@@ -1425,7 +1425,7 @@ class Translations$messages$fr extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Actualisation des métadonnées de « ${title} »…';
 	@override String metadataRefreshStarted({required Object title}) => 'Actualisation des métadonnées lancée pour « ${title} »';
 	@override String metadataRefreshFailed({required Object error}) => 'Échec de l’actualisation des métadonnées : ${error}';
-	@override String get logoutConfirm => 'Êtes-vous sûr de vouloir vous déconnecter ?';
+	@override String get logoutConfirm => 'Voulez-vous déconnecter tous les profils sur cet appareil ?';
 	@override String get noSeasonsFound => 'Aucune saison trouvée';
 	@override String get seasonsLoadFailed => 'Impossible de charger les saisons';
 	@override String get noEpisodesFound => 'Aucun épisode trouvé dans la première saison';
@@ -6084,7 +6084,7 @@ extension on TranslationsFr {
 			'settings.cloudBackupPassword' => 'Mot de passe',
 			'settings.cloudBackupSaved' => 'Cloud Backup Destination sauvée',
 			'settings.cloudBackupNow' => 'Retour à présent',
-			'settings.cloudBackupComplete' => 'Settings Backup envoyé',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Sauvegarde envoyée. Conservez cette URL. Après une nouvelle installation, saisissez-la dans la rubrique de sauvegarde en ligne et choisissez « ${action} ».',
 			'settings.cloudBackupRestore' => 'Récupérer Backup',
 			'settings.cloudBackupRestoreConfirm' => 'Cela remplacera les paramètres portables correspondants sur ce dispositif.',
 			'settings.cloudBackupRestored' => 'Récupération de la récupération de la sauvegarde cloud',
@@ -6864,7 +6864,7 @@ extension on TranslationsFr {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Actualisation des métadonnées de « ${title} »…',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Actualisation des métadonnées lancée pour « ${title} »',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Échec de l’actualisation des métadonnées : ${error}',
-			'messages.logoutConfirm' => 'Êtes-vous sûr de vouloir vous déconnecter ?',
+			'messages.logoutConfirm' => 'Voulez-vous déconnecter tous les profils sur cet appareil ?',
 			'messages.noSeasonsFound' => 'Aucune saison trouvée',
 			'messages.seasonsLoadFailed' => 'Impossible de charger les saisons',
 			'messages.noEpisodesFound' => 'Aucun épisode trouvé dans la première saison',

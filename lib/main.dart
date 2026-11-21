@@ -1,5 +1,6 @@
 import 'services/music/music_background_frames.dart';
 import 'services/music/music_endpoint_mode.dart';
+
 import 'dart:async';
 import 'dart:io' show Directory, File, Platform, ProcessInfo, stderr;
 import 'dart:ui' show AppExitResponse, FlutterView;
@@ -63,7 +64,9 @@ import 'widgets/projector_viewport.dart';
 import 'services/discord_rpc_service.dart';
 
 import 'package:path_provider/path_provider.dart';
+
 import 'utils/persistent_diagnostic_log.dart';
+
 import 'package:path/path.dart' as p;
 
 import 'services/image_cache_service.dart';
@@ -2210,7 +2213,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
                 // A launch link that names another profile replaces this bind.
                 final linkProfileId = DeepLinkService.instance.startupProfileId;
                 if (linkProfileId != null) {
-                  return profile.id != linkProfileId;
+                  return DeepLinkService.instance.needsStartupActivation(profile.id);
                 }
                 final settings = await SettingsService.getInstance();
                 return activeProfile.requiresSelectionOnOpen(settings);
@@ -2807,8 +2810,8 @@ class _SetupScreenState extends State<SetupScreen> with MountedSetStateMixin {
       return;
     }
     final linkProfile = deepLinks.claimStartupProfile(activeProfile.profiles);
-    final linkSwitches = linkProfile != null && linkProfile.id != activeProfile.activeId;
-    var linkApplied = linkProfile != null && !linkSwitches;
+    final needsLinkActivation = linkProfile != null && deepLinks.needsStartupActivation(activeProfile.activeId);
+    var linkApplied = linkProfile != null && !needsLinkActivation;
     try {
       // Start only after the active profile snapshot is hydrated. Without a
       // network the initial bind stays PIN-free: plex.tv cannot verify a PIN,
@@ -2816,7 +2819,7 @@ class _SetupScreenState extends State<SetupScreen> with MountedSetStateMixin {
       AndroidExitDiagnostics.markStartupPhase(AndroidStartupPhase.bindingStarted);
       binder.start(allowInitialPinPrompt: hasNetwork);
 
-      if (linkSwitches) {
+      if (needsLinkActivation) {
         // Waits for the profile's bind, like the picker's switch.
         linkApplied = await switchProfileFromUi(context, linkProfile);
         if (!mounted) {
@@ -2836,18 +2839,17 @@ class _SetupScreenState extends State<SetupScreen> with MountedSetStateMixin {
       }
       final hasNoActive = activeProfile.active == null && activeProfile.profiles.isNotEmpty;
       final shouldPrompt =
-          !linkApplied && (linkSwitches || hasNoActive || activeProfile.requiresSelectionOnOpen(settings));
+          !linkApplied && (needsLinkActivation || hasNoActive || activeProfile.requiresSelectionOnOpen(settings));
 
       var bindingSucceeded = activeProfile.lastBindingSucceeded;
       if (shouldPrompt) {
-        await Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (_) => const ProfileSwitchScreen(requireSelection: true)));
+        await Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => const ProfileSwitchScreen(requireSelection: true)));
         if (!mounted) {
           return;
         }
         bindingSucceeded = activeProfile.active != null && activeProfile.lastBindingSucceeded;
-      } else if (!linkSwitches) {
+      } else if (!needsLinkActivation) {
         // Now wait for the binder to settle. This is the media-server client
         // race: per-server status flips on the splash list as each client comes
         // online, and we don't push MainScreen until they're all done (success
@@ -2866,16 +2868,7 @@ class _SetupScreenState extends State<SetupScreen> with MountedSetStateMixin {
         hasOnlineServers: _serverManagerFromContext().onlineServerIds.isNotEmpty,
       )) {
         appLogger.w('Setup: no servers online after startup bind; starting offline mode');
-        await _enterOfflineMode(initialPromptHandled: linkApplied);
-        return;
-      }
-
-      // Repopulate metadata for downloaded items now that per-backend caches
-      // are resolvable (the Connections row + live MediaBrowser client are in
-      // place). Without this the downloads list and sync-rule titles render
-      // empty until something forces a later refresh.
-      await downloadProvider.refreshMetadataFromCache();
-      if (!mounted) {
+        await _enterOfflineMode(initialPromptHandled: shouldPrompt || linkApplied);
         return;
       }
 
@@ -2886,6 +2879,15 @@ class _SetupScreenState extends State<SetupScreen> with MountedSetStateMixin {
           fadeRoute(ProfileSessionScreen(initialPromptHandled: shouldPrompt || linkApplied)),
         ),
       );
+      // Render the session first. Repairing missing posters and metadata may
+      // require a round trip for every downloaded episode on a slow server.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(
+          downloadProvider.refreshMetadataFromCache().catchError((Object error, StackTrace stack) {
+            appLogger.w('Failed to refresh download metadata after startup', error: error, stackTrace: stack);
+          }),
+        );
+      });
     } finally {
       deepLinks.settleStartupProfile(applied: linkApplied);
     }

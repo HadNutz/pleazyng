@@ -301,7 +301,7 @@ class _Translations$common$uk extends Translations$common$en {
 	@override String get submit => 'Підтвердити';
 	@override String get confirm => 'підтверджує';
 	@override String get retry => 'Повторити';
-	@override String get logout => 'Зареєструйтеся';
+	@override String get logout => 'Вийти';
 	@override String get unknown => 'Невідоме';
 	@override String get refresh => 'Оновити';
 	@override String get yes => 'Так';
@@ -585,7 +585,7 @@ class _Translations$settings$uk extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Пароль';
 	@override String get cloudBackupSaved => 'Облачна резервна резервна дестинація збережена';
 	@override String get cloudBackupNow => 'Повернутись зараз';
-	@override String get cloudBackupComplete => 'Завантажити Backup';
+	@override String cloudBackupComplete({required Object action}) => 'Резервну копію завантажено до хмари. Збережіть цю URL-адресу. Після нового встановлення введіть її в розділі хмарного резервного копіювання й виберіть «${action}».';
 	@override String get cloudBackupRestore => 'Відновлення резервного коду';
 	@override String get cloudBackupRestoreConfirm => 'Це замінить відповідні портативні налаштування на цьому пристрої.';
 	@override String get cloudBackupRestored => 'Налаштування відновлено з облачної резервної копії';
@@ -1434,7 +1434,7 @@ class _Translations$messages$uk extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Повторні метадані для «${title}»';
 	@override String metadataRefreshStarted({required Object title}) => 'Початок оновлення метаданів для «${title}»';
 	@override String metadataRefreshFailed({required Object error}) => 'Не вдалося оновити метаданни: ${error}';
-	@override String get logoutConfirm => 'Ви впевнені, що хочете вийти?';
+	@override String get logoutConfirm => 'Вийти з усіх профілів на цьому пристрої?';
 	@override String get noSeasonsFound => 'Сезон не знайдено';
 	@override String get seasonsLoadFailed => 'Не можна завантажувати сезони';
 	@override String get noEpisodesFound => 'У першому сезоні не знайдено жодних епізодів';
@@ -2396,15 +2396,15 @@ class _Translations$downloads$uk extends Translations$downloads$en {
 	@override String get noDownloads => 'Досі немає завантажень';
 	@override String get noDownloadsDescription => 'Завантажений контент з\'явиться тут для офлайн перегляду';
 	@override String get downloadNow => 'Завантажити';
-	@override String get deleteDownload => 'Завантажити Download';
-	@override String get retryDownload => 'Завантажити Retry';
+	@override String get deleteDownload => 'Видалити завантаження';
+	@override String get retryDownload => 'Повторити завантаження';
 	@override String get downloadQueued => 'Завантаження в черзі.';
 	@override String get downloadResumed => 'Завантажити відновлено';
 	@override String get serverErrorBitrate => 'Помилка сервера: файл може перевищувати ліміт віддаленого бітрату';
 	@override String get storageFull => 'Завантаження зупинилися, щоб захистити доступне зберігання. Завантажити деякий простір або вибрати інше місце завантаження, а потім відмовитися.';
 	@override String get storageUnavailable => 'Завантаження зупинилися, тому що доступне зберігання не може бути перевірено. перевірте місце завантаження, а потім відкликайте.';
 	@override String episodesQueued({required Object count}) => '${count} Епізоди, що переглядаються для завантаження';
-	@override String get downloadDeleted => 'Завантажити видалено';
+	@override String get downloadDeleted => 'Завантаження видалено';
 	@override String deleteConfirm({required Object title}) => 'Видалити «${title}» з цього пристрою?';
 	@override String get deleteCollectionDownloads => 'Зняти завантаження';
 	@override String deleteCollectionDownloadsConfirm({required Object title}) => 'Видаляти кожну завантаження в розділі «${title}» з цього пристрою?';
@@ -5814,7 +5814,7 @@ extension on TranslationsUk {
 			'common.submit' => 'Підтвердити',
 			'common.confirm' => 'підтверджує',
 			'common.retry' => 'Повторити',
-			'common.logout' => 'Зареєструйтеся',
+			'common.logout' => 'Вийти',
 			'common.unknown' => 'Невідоме',
 			'common.refresh' => 'Оновити',
 			'common.yes' => 'Так',
@@ -6084,7 +6084,7 @@ extension on TranslationsUk {
 			'settings.cloudBackupPassword' => 'Пароль',
 			'settings.cloudBackupSaved' => 'Облачна резервна резервна дестинація збережена',
 			'settings.cloudBackupNow' => 'Повернутись зараз',
-			'settings.cloudBackupComplete' => 'Завантажити Backup',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Резервну копію завантажено до хмари. Збережіть цю URL-адресу. Після нового встановлення введіть її в розділі хмарного резервного копіювання й виберіть «${action}».',
 			'settings.cloudBackupRestore' => 'Відновлення резервного коду',
 			'settings.cloudBackupRestoreConfirm' => 'Це замінить відповідні портативні налаштування на цьому пристрої.',
 			'settings.cloudBackupRestored' => 'Налаштування відновлено з облачної резервної копії',
@@ -6864,7 +6864,7 @@ extension on TranslationsUk {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Повторні метадані для «${title}»',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Початок оновлення метаданів для «${title}»',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Не вдалося оновити метаданни: ${error}',
-			'messages.logoutConfirm' => 'Ви впевнені, що хочете вийти?',
+			'messages.logoutConfirm' => 'Вийти з усіх профілів на цьому пристрої?',
 			'messages.noSeasonsFound' => 'Сезон не знайдено',
 			'messages.seasonsLoadFailed' => 'Не можна завантажувати сезони',
 			'messages.noEpisodesFound' => 'У першому сезоні не знайдено жодних епізодів',
@@ -7942,15 +7942,15 @@ extension on TranslationsUk {
 			'downloads.noDownloads' => 'Досі немає завантажень',
 			'downloads.noDownloadsDescription' => 'Завантажений контент з\'явиться тут для офлайн перегляду',
 			'downloads.downloadNow' => 'Завантажити',
-			'downloads.deleteDownload' => 'Завантажити Download',
-			'downloads.retryDownload' => 'Завантажити Retry',
+			'downloads.deleteDownload' => 'Видалити завантаження',
+			'downloads.retryDownload' => 'Повторити завантаження',
 			'downloads.downloadQueued' => 'Завантаження в черзі.',
 			'downloads.downloadResumed' => 'Завантажити відновлено',
 			'downloads.serverErrorBitrate' => 'Помилка сервера: файл може перевищувати ліміт віддаленого бітрату',
 			'downloads.storageFull' => 'Завантаження зупинилися, щоб захистити доступне зберігання. Завантажити деякий простір або вибрати інше місце завантаження, а потім відмовитися.',
 			'downloads.storageUnavailable' => 'Завантаження зупинилися, тому що доступне зберігання не може бути перевірено. перевірте місце завантаження, а потім відкликайте.',
 			'downloads.episodesQueued' => ({required Object count}) => '${count} Епізоди, що переглядаються для завантаження',
-			'downloads.downloadDeleted' => 'Завантажити видалено',
+			'downloads.downloadDeleted' => 'Завантаження видалено',
 			'downloads.deleteConfirm' => ({required Object title}) => 'Видалити «${title}» з цього пристрою?',
 			'downloads.deleteCollectionDownloads' => 'Зняти завантаження',
 			'downloads.deleteCollectionDownloadsConfirm' => ({required Object title}) => 'Видаляти кожну завантаження в розділі «${title}» з цього пристрою?',

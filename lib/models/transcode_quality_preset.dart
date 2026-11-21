@@ -22,6 +22,12 @@ enum TranscodeQualityPreset {
   final String? videoResolution;
   final int? videoQuality;
 
+  int? get resolutionWidth => int.tryParse(videoResolution?.split('x').first ?? '');
+
+  bool exceedsDimensions(int? width, int? height) =>
+      (resolutionWidth != null && (width ?? 0) > resolutionWidth!) ||
+      (resolutionHeight != null && (height ?? 0) > resolutionHeight!);
+
   bool get isOriginal => this == TranscodeQualityPreset.original;
 
   /// Resolution height (e.g. 720, 1080) parsed from [videoResolution]. Null for original.

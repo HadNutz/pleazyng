@@ -36,6 +36,7 @@ void main() {
       'bad',
       'damaged',
     ]);
+    await before.customStatement('ALTER TABLE entries DROP COLUMN search_title');
     await before.customStatement('PRAGMA user_version=11');
     await before.close();
     final after = SourceDatabase(NativeDatabase(file));

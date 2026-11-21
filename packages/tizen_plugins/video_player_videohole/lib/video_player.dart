@@ -989,7 +989,9 @@ class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
 /// Widget that displays the video controlled by [controller].
 class VideoPlayer extends StatefulWidget {
   /// Uses the given [controller] for all video rendered in this widget.
-  const VideoPlayer(this.controller, {super.key});
+  const VideoPlayer(this.controller, {super.key, this.sourceCrop = const Rect.fromLTWH(0, 0, 1, 1)});
+
+  final Rect sourceCrop;
 
   /// The [VideoPlayerController] responsible for the video being rendered in
   /// this widget.
@@ -1006,6 +1008,8 @@ class _VideoPlayerState extends State<VideoPlayer> {
       if (newPlayerId != _playerId) {
         setState(() {
           _playerId = newPlayerId;
+          _playerRect = Rect.zero;
+          _appliedCrop = const Rect.fromLTWH(0, 0, 1, 1);
         });
       }
     };
@@ -1019,6 +1023,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   final GlobalKey _videoBoxKey = GlobalKey();
   Rect _playerRect = Rect.zero;
+  Rect _appliedCrop = const Rect.fromLTWH(0, 0, 1, 1);
 
   Orientation? _playerOrientation;
 
@@ -1036,6 +1041,13 @@ class _VideoPlayerState extends State<VideoPlayer> {
   void _afterFrameLayout(Duration _) {
     if (!mounted) return;
     if (widget.controller.value.isInitialized) {
+      final crop = widget.sourceCrop;
+      if (crop != _appliedCrop) {
+        _appliedCrop = crop;
+        _videoPlayerPlatform.setSourceCrop(_playerId, crop).catchError((Object error, StackTrace stack) {
+          FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stack, library: 'video_player_videohole'));
+        });
+      }
       final Rect currentRect = _getCurrentRect();
       if (currentRect != Rect.zero && _playerRect != currentRect) {
         _videoPlayerPlatform.setDisplayGeometry(
@@ -1068,6 +1080,10 @@ class _VideoPlayerState extends State<VideoPlayer> {
   void didUpdateWidget(VideoPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
     oldWidget.controller.removeListener(_listener);
+    if (_playerId != widget.controller.playerId) {
+      _playerRect = Rect.zero;
+      _appliedCrop = const Rect.fromLTWH(0, 0, 1, 1);
+    }
     _playerId = widget.controller.playerId;
     widget.controller.addListener(_listener);
   }

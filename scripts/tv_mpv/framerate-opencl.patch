@@ -1,0 +1,55 @@
+--- a/libavfilter/framerate.h
++++ b/libavfilter/framerate.h
+@@ -19,6 +19,7 @@
+ #ifndef AVFILTER_FRAMERATE_H
+ #define AVFILTER_FRAMERATE_H
+
++#include "tv_opencl_blend.h"
+ #include "scene_sad.h"
+ #include "avfilter.h"
+
+@@ -65,6 +66,8 @@
+     int64_t start_pts;                  ///< pts of the first output frame
+     int64_t n;                          ///< output frame counter
+
++    TvBlend tv_blend;
++    const char *tv_provider;
+     blend_func blend;
+ } FrameRateContext;
+
+--- a/libavfilter/vf_framerate.c
++++ b/libavfilter/vf_framerate.c
+@@ -144,7 +144,15 @@
+         av_frame_copy_props(s->work, s->f0);
+
+         ff_dlog(ctx, "blend_frames() INTERPOLATE to create work frame\n");
+-        ff_filter_execute(ctx, filter_slice, &td, NULL,
++        int gpu = s->bitdepth == 8;
++        for (int i = 0; gpu && i < 4 && s->work->data[i]; ++i)
++            gpu = tv_blend_plane(&s->tv_blend, s->f0->data[i], s->f0->linesize[i],
++                                 s->f1->data[i], s->f1->linesize[i],
++                                 s->work->data[i], s->work->linesize[i],
++                                 s->line_size[i], s->height[i], interpolate);
++        s->tv_provider = gpu ? s->tv_blend.provider : "FFmpeg CPU";
++        if (!gpu)
++            ff_filter_execute(ctx, filter_slice, &td, NULL,
+                           FFMIN(FFMAX(1, outlink->h >> 2), ff_filter_get_nb_threads(ctx)));
+         return 1;
+     }
+@@ -195,6 +203,8 @@
+     if (!s->work)
+         return AVERROR(ENOMEM);
+
++    if (s->tv_provider)
++        av_dict_set(&s->work->metadata, "pleazyng-motion-provider", s->tv_provider, 0);
+     s->work->pts = work_pts;
+     s->n++;
+
+@@ -211,6 +221,7 @@
+ static av_cold void uninit(AVFilterContext *ctx)
+ {
+     FrameRateContext *s = ctx->priv;
++    tv_blend_close(&s->tv_blend);
+     av_frame_free(&s->f0);
+     av_frame_free(&s->f1);
+ }

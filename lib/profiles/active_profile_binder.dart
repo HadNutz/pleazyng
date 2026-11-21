@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import '../media/ids.dart';
 
 import 'package:flutter/foundation.dart';
@@ -665,7 +666,15 @@ class ActiveProfileBinder {
           );
         case PlexDirectConnection():
           expected.add(conn.serverMachineId);
-          futures.add(_bindDirectPlexServer(conn, profileId: profile.id, generation: generation));
+          // The server record is shared by every profile. An empty token
+          // represents an explicitly unauthenticated LAN connection.
+          futures.add(
+            _bindDirectPlexServer(
+              conn.copyWith(accessToken: pc.userToken ?? ''),
+              profileId: profile.id,
+              generation: generation,
+            ),
+          );
         case JellyfinConnection():
           expected.add(conn.serverMachineId);
           futures.add(_bindMediaBrowser(conn, profileId: profile.id, generation: generation));

@@ -498,12 +498,15 @@ class _AppDatabaseTestSuite {
             await reopenedAgain.adoptLegacyDownloadsForProfile('profile-a');
             await reopenedAgain.adoptLegacyDownloadsForProfile('profile-b');
 
-            final owners = await reopenedAgain.select(reopenedAgain.downloadOwners).get();
-            expect(owners, hasLength(1));
-            expect(owners.single.profileId, 'profile-a');
-            expect(owners.single.globalKey, 'plex-server:leaf');
-            expect(owners.single.backend, 'plex');
-            expect(owners.single.clientScopeId, transferScope);
+            expect(await reopenedAgain.select(reopenedAgain.downloadOwners).get(), isEmpty);
+            // Simulate an explicit download after the server has confirmed
+            // that this account can access the historical retained item.
+            await reopenedAgain.addDownloadOwner(
+              profileId: 'profile-a',
+              globalKey: 'plex-server:leaf',
+              backendId: 'plex',
+              clientScopeId: transferScope,
+            );
             expect((await reopenedAgain.getDownloadedMedia('plex-server:leaf'))?.clientScopeId, transferScope);
             PlexApiCache.initialize(reopenedAgain);
             testHttp = MediaServerHttpClient(client: IOClient());
@@ -1676,68 +1679,64 @@ class _AppDatabaseTestSuite {
         expect((await db.getDownloadedMedia('srv1:completed-shared'))?.clientScopeId, 'srv1/plex-profile/profile-a');
       });
 
-      test('adoptLegacyDownloadsForProfile claims only ownerless physical rows', () async {
+      test('legacy physical rows with no known identity require fresh authorization', () async {
         await insertMovie(ratingKey: '1', status: DownloadStatus.completed.index);
         await insertMovie(ratingKey: '2', status: DownloadStatus.completed.index);
         await db.addDownloadOwner(profileId: 'profile-existing', globalKey: 'srv1:2');
 
         await db.adoptLegacyDownloadsForProfile('profile-a');
 
-        expect(await db.getDownloadOwnerKeysForProfile('profile-a'), {'srv1:1'});
+        expect(await db.getDownloadOwnerKeysForProfile('profile-a'), isEmpty);
         expect(await db.getDownloadOwnerKeysForProfile('profile-existing'), {'srv1:2'});
       });
 
-      test(
-        'ownerless Jellyfin download adopts the profile connection scope instead of the removed user scope',
-        () async {
-          final now = DateTime.now().millisecondsSinceEpoch;
-          await db
-              .into(db.profiles)
-              .insert(
-                ProfilesCompanion.insert(
-                  id: 'profile-b',
-                  kind: 'local',
-                  displayName: 'Profile B',
-                  configJson: '{}',
-                  createdAt: now,
-                ),
-              );
-          await db
-              .into(db.connections)
-              .insert(
-                ConnectionsCompanion.insert(
-                  id: 'jf-machine/user-b',
-                  kind: 'jellyfin',
-                  displayName: 'User B',
-                  configJson: jsonEncode({'serverMachineId': 'jf-machine', 'userId': 'user-b'}),
-                  createdAt: now,
-                ),
-              );
-          await db
-              .into(db.profileConnections)
-              .insert(
-                ProfileConnectionsCompanion.insert(
-                  profileId: 'profile-b',
-                  connectionId: 'jf-machine/user-b',
-                  userIdentifier: 'user-b',
-                ),
-              );
-          await insertMovie(
-            serverId: 'jf-machine',
-            clientScopeId: 'jf-machine/user-a',
-            ratingKey: 'ownerless',
-            status: DownloadStatus.completed.index,
-          );
+      test('ownerless Jellyfin download stays bound to its original server user', () async {
+        final now = DateTime.now().millisecondsSinceEpoch;
+        await db
+            .into(db.profiles)
+            .insert(
+              ProfilesCompanion.insert(
+                id: 'profile-b',
+                kind: 'local',
+                displayName: 'Profile B',
+                configJson: '{}',
+                createdAt: now,
+              ),
+            );
+        await db
+            .into(db.connections)
+            .insert(
+              ConnectionsCompanion.insert(
+                id: 'jf-machine/user-b',
+                kind: 'jellyfin',
+                displayName: 'User B',
+                configJson: jsonEncode({'serverMachineId': 'jf-machine', 'userId': 'user-b'}),
+                createdAt: now,
+              ),
+            );
+        await db
+            .into(db.profileConnections)
+            .insert(
+              ProfileConnectionsCompanion.insert(
+                profileId: 'profile-b',
+                connectionId: 'jf-machine/user-b',
+                userIdentifier: 'user-b',
+              ),
+            );
+        await insertMovie(
+          serverId: 'jf-machine',
+          clientScopeId: 'jf-machine/user-a',
+          ratingKey: 'ownerless',
+          status: DownloadStatus.completed.index,
+        );
 
-          await db.adoptLegacyDownloadsForProfile('profile-b');
+        await db.adoptLegacyDownloadsForProfile('profile-b');
 
-          final row = await db.getDownloadedMedia('jf-machine:ownerless');
-          final owner = await db.getDownloadOwner(profileId: 'profile-b', globalKey: 'jf-machine:ownerless');
-          expect(row?.clientScopeId, 'jf-machine/user-b');
-          expect(owner?.backend, 'jellyfin');
-          expect(owner?.clientScopeId, 'jf-machine/user-b');
-        },
-      );
+        final row = await db.getDownloadedMedia('jf-machine:ownerless');
+        final owner = await db.getDownloadOwner(profileId: 'profile-b', globalKey: 'jf-machine:ownerless');
+        expect(row?.clientScopeId, 'jf-machine/user-a');
+        expect(owner, isNull);
+      });
 
       test('ownerless Jellyfin download defers adoption when the profile has multiple user scopes', () async {
         final now = DateTime.now().millisecondsSinceEpoch;

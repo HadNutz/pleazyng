@@ -395,6 +395,20 @@ void MediaPlayer::Dispose() {
   StopAndDestroy();
 }
 
+int MediaPlayer::SetSourceCrop(double x, double y, double width, double height) {
+  if (!player_ || audio_only_) return PLAYER_ERROR_INVALID_OPERATION;
+  const int result = player_set_video_roi_area(player_, x, y, width, height);
+  if (result == PLAYER_ERROR_NONE) {
+    crop_x_ = x;
+    crop_y_ = y;
+    crop_width_ = width;
+    crop_height_ = height;
+  } else {
+    LOG_ERROR("[MediaPlayer] player_set_video_roi_area failed: %s.", get_error_message(result));
+  }
+  return result;
+}
+
 void MediaPlayer::SetDisplayRoi(int32_t x, int32_t y, int32_t width,
                                 int32_t height) {
   int ret = player_set_display_roi_area(player_, x, y, width, height);
@@ -1147,6 +1161,9 @@ void MediaPlayer::OnPrepared(void *user_data) {
   }
 
   if (self->is_restored_) {
+    if (!self->audio_only_ && (self->crop_width_ != 1 || self->crop_height_ != 1)) {
+      self->SetSourceCrop(self->crop_x_, self->crop_y_, self->crop_width_, self->crop_height_);
+    }
     self->ResetEventDispatchState();
     LOG_INFO("[MediaPlayer] Event dispatch state reset for restored player.");
     self->OnRestoreCompleted();

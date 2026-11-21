@@ -15,6 +15,7 @@ class IptvScheduledStreamRecorder {
     this.headers = const {},
     required this.outputFile,
     required this.endsAt,
+    this.requestedStart,
     DateTime Function()? now,
     this.archiveDirectory,
   }) : _now = now ?? DateTime.now;
@@ -25,6 +26,7 @@ class IptvScheduledStreamRecorder {
   final Map<String, String> headers;
   final File outputFile;
   DateTime endsAt;
+  final DateTime? requestedStart;
   void Function()? _onDeadline;
   bool _finished = false;
 
@@ -46,6 +48,8 @@ class IptvScheduledStreamRecorder {
 
   final Directory? archiveDirectory;
   IptvHlsArchive? _archive;
+  bool get capturedThroughDeadline => _archive?.complete ?? true;
+  Duration? get capturedMediaDuration => _archive?.capturedDuration;
   int get archivedMediaBytes => _archive?.mediaBytes ?? 0;
 
   SourceTransport? _transport;
@@ -180,6 +184,7 @@ class IptvScheduledStreamRecorder {
       output: outputFile,
       directory: archiveDirectory ?? Directory('${outputFile.path}.media'),
       endsAt: endsAt,
+      requestedStart: requestedStart,
       now: _now,
     );
     _archive = archive;

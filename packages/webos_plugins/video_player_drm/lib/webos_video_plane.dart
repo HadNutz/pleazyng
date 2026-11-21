@@ -2,13 +2,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'src/hole.dart';
+import 'src/video_crop.dart';
 
 /// Displays an LG hardware video plane underneath the controls. The exported
 /// window uses logical destination coordinates and full-resolution source pixels.
 class WebOSVideoPlane extends StatefulWidget {
-  const WebOSVideoPlane({super.key, required this.window, required this.source, required this.onError});
+  const WebOSVideoPlane({super.key, required this.window, required this.source, this.crop = const Rect.fromLTWH(0, 0, 1, 1), required this.onError});
   final String window;
   final Size source;
+  final Rect crop;
   final VoidCallback onError;
 
   static const windows = MethodChannel('webos/exported_windows');
@@ -34,12 +36,12 @@ class _WebOSVideoPlaneState extends State<WebOSVideoPlane> {
       final offset = box.localToGlobal(Offset.zero);
       if (offset.dx.isFinite && offset.dy.isFinite) {
         final rect = (offset.dx.round(), offset.dy.round(), box.size.width.round(), box.size.height.round());
-        final key = (widget.window, widget.source, rect);
+        final key = (widget.window, widget.source, widget.crop, rect);
         if (_last != key) {
           _last = key;
           WebOSVideoPlane.windows.invokeMethod<void>('resize', {
             'windowId': widget.window,
-            'srcRect': [0, 0, widget.source.width.round(), widget.source.height.round()],
+            'srcRect': VideoCrop.pixels(widget.crop, widget.source),
             'dstRect': [rect.$1, rect.$2, rect.$3, rect.$4],
           }).then((_) {
             if (mounted && _last == key && !_positioned) setState(() => _positioned = true);

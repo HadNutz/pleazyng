@@ -3922,6 +3922,10 @@ class PlexClient
     }
   }
 
+  @override
+  Future<MediaItem?> fetchAuthorizedDownloadItem(String id) =>
+      isOfflineMode ? Future.value(null) : fetchEditableItem(id);
+
   /// The item's current server-side metadata for the metadata editor. Unlike
   /// [fetchItem] it never falls back to the API cache: the editor diffs tag
   /// edits against these values, so a stale copy would re-add or drop tags.
@@ -4522,7 +4526,10 @@ class PlexClient
                 data.mediaInfo?.displayCriteria,
                 container: selectedVersion?.container,
               ));
-      final forceCompatibleDolbyVisionTranscode = options.requestsCompatibleDolbyVisionRendition(data.mediaInfo);
+      final forceCompatibleDolbyVisionTranscode = options.requestsCompatibleDolbyVisionRendition(
+        data.mediaInfo,
+        container: _selectedVersion(data)?.container,
+      );
       if (forceCompatibleDolbyVisionTranscode &&
           !options.hasServerDolbyVisionSdrRoute(data.mediaInfo, backend: DolbyVisionSdrBackend.plex)) {
         final profile = data.mediaInfo?.displayCriteria?.doviProfile;
@@ -4762,7 +4769,7 @@ class PlexClient
     if (audioCodecRefused ||
         _sourceCodecRefused(data) ||
         _usesSamsungVideoPlane ||
-        options.requestsCompatibleDolbyVisionRendition(data.mediaInfo)) {
+        options.requestsCompatibleDolbyVisionRendition(data.mediaInfo, container: _selectedVersion(data)?.container)) {
       throw PlaybackException(t.messages.playbackFailed, reason: PlaybackFailureReason.noPlayableSource);
     }
     final fallbackReason = outcome == TranscodeDecisionOutcome.directPlayOnly

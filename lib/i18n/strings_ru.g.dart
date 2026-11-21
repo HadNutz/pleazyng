@@ -585,7 +585,7 @@ class _Translations$settings$ru extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Пароль';
 	@override String get cloudBackupSaved => 'Облачные резервные резервы спасены';
 	@override String get cloudBackupNow => 'Вернуться сейчас';
-	@override String get cloudBackupComplete => 'Настройки резервного копирования загружены';
+	@override String cloudBackupComplete({required Object action}) => 'Резервная копия загружена. Сохраните этот URL. После новой установки введите его в разделе резервного копирования в облаке и выберите «${action}».';
 	@override String get cloudBackupRestore => 'восстановление резервного копирования';
 	@override String get cloudBackupRestoreConfirm => 'Это заменит соответствующие портативные настройки на этом устройстве.';
 	@override String get cloudBackupRestored => 'Настройки восстановлены из облачной резервной копии';
@@ -1436,7 +1436,7 @@ class _Translations$messages$ru extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Обновление метаданных "${title}"...';
 	@override String metadataRefreshStarted({required Object title}) => 'Обновление метаданных начато для "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'Не удалось обновить метаданные: ${error}';
-	@override String get logoutConfirm => 'Вы уверены, что хотите выйти?';
+	@override String get logoutConfirm => 'Выйти из всех профилей на этом устройстве?';
 	@override String get noSeasonsFound => 'Сезоны не найдены';
 	@override String get seasonsLoadFailed => 'Не удалось загрузить сезоны';
 	@override String get noEpisodesFound => 'Эпизоды в первом сезоне не найдены';
@@ -6090,7 +6090,7 @@ extension on TranslationsRu {
 			'settings.cloudBackupPassword' => 'Пароль',
 			'settings.cloudBackupSaved' => 'Облачные резервные резервы спасены',
 			'settings.cloudBackupNow' => 'Вернуться сейчас',
-			'settings.cloudBackupComplete' => 'Настройки резервного копирования загружены',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Резервная копия загружена. Сохраните этот URL. После новой установки введите его в разделе резервного копирования в облаке и выберите «${action}».',
 			'settings.cloudBackupRestore' => 'восстановление резервного копирования',
 			'settings.cloudBackupRestoreConfirm' => 'Это заменит соответствующие портативные настройки на этом устройстве.',
 			'settings.cloudBackupRestored' => 'Настройки восстановлены из облачной резервной копии',
@@ -6870,7 +6870,7 @@ extension on TranslationsRu {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Обновление метаданных "${title}"...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Обновление метаданных начато для "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Не удалось обновить метаданные: ${error}',
-			'messages.logoutConfirm' => 'Вы уверены, что хотите выйти?',
+			'messages.logoutConfirm' => 'Выйти из всех профилей на этом устройстве?',
 			'messages.noSeasonsFound' => 'Сезоны не найдены',
 			'messages.seasonsLoadFailed' => 'Не удалось загрузить сезоны',
 			'messages.noEpisodesFound' => 'Эпизоды в первом сезоне не найдены',

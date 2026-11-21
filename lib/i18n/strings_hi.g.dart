@@ -301,7 +301,7 @@ class _Translations$common$hi extends Translations$common$en {
 	@override String get submit => 'प्रस्तुत करें';
 	@override String get confirm => 'पुष्टि करें';
 	@override String get retry => 'वापसी';
-	@override String get logout => 'लॉग बाहर';
+	@override String get logout => 'लॉग आउट करें';
 	@override String get unknown => 'अज्ञात';
 	@override String get refresh => 'ताज़ा';
 	@override String get yes => 'हाँ';
@@ -581,7 +581,7 @@ class _Translations$settings$hi extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'पासवर्ड';
 	@override String get cloudBackupSaved => 'क्लाउड बैकअप डिज़ाइन बचाया';
 	@override String get cloudBackupNow => 'अब वापस';
-	@override String get cloudBackupComplete => 'Settings Backup अपलोड करें';
+	@override String cloudBackupComplete({required Object action}) => 'बैकअप अपलोड हो गया है। यह URL सहेज लें। नई स्थापना के बाद इसे क्लाउड बैकअप में दर्ज करें और “${action}” चुनें।';
 	@override String get cloudBackupRestore => 'बैकअप पुनर्स्थापित करें';
 	@override String get cloudBackupRestoreConfirm => 'यह इस डिवाइस पर फिट पोर्टेबल सेटिंग्स को प्रतिस्थापित करेगा. आगे?';
 	@override String get cloudBackupRestored => 'Cloud Backup से पुनर्स्थापित सेटिंग्स';
@@ -1422,7 +1422,7 @@ class _Translations$messages$hi extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => '"${title}" के लिए ताज़ा मेटाडेटा ...';
 	@override String metadataRefreshStarted({required Object title}) => '"${title}" के लिए मेटाडेटा रिफ्रेश शुरू हुआ';
 	@override String metadataRefreshFailed({required Object error}) => 'मेटाडेटा को पुनर्जीवित करने में विफलता: ${error}';
-	@override String get logoutConfirm => 'क्या आप निश्चित हैं कि आप लॉग इन करना चाहते हैं?';
+	@override String get logoutConfirm => 'क्या आप इस डिवाइस की सभी प्रोफ़ाइलों से लॉग आउट करना चाहते हैं?';
 	@override String get noSeasonsFound => 'कोई मौसम नहीं मिला';
 	@override String get seasonsLoadFailed => 'मौसम नहीं ले सकते';
 	@override String get noEpisodesFound => 'पहली सीजन में कोई घटना नहीं मिली';
@@ -2370,15 +2370,15 @@ class _Translations$downloads$hi extends Translations$downloads$en {
 	@override String get noDownloads => 'अभी तक डाउनलोड नहीं';
 	@override String get noDownloadsDescription => 'डाउनलोड की गई सामग्री ऑफ़लाइन देखने के लिए यहां दिखाई देगी';
 	@override String get downloadNow => 'डाउनलोड करें';
-	@override String get deleteDownload => 'डाउनलोड करें';
-	@override String get retryDownload => 'रिट्री डाउनलोड';
+	@override String get deleteDownload => 'डाउनलोड मिटाएँ';
+	@override String get retryDownload => 'डाउनलोड का फिर से प्रयास करें';
 	@override String get downloadQueued => 'डाउनलोड करने के लिए Queued';
 	@override String get downloadResumed => 'डाउनलोड करें पुनः';
 	@override String get serverErrorBitrate => 'सर्वर त्रुटि: फ़ाइल रिमोट बिट्रेट सीमा से अधिक हो सकती है';
 	@override String get storageFull => 'डाउनलोड उपलब्ध भंडारण की रक्षा करने के लिए बंद कर दिया. कुछ स्थान मुक्त करें या डाउनलोड स्थान का चयन करें, फिर रिटर्न करें.';
 	@override String get storageUnavailable => 'डाउनलोड बंद हो गए क्योंकि उपलब्ध भंडारण की जांच नहीं की जा सकती थी. डाउनलोड स्थान की जांच करें, फिर वापस जाएं.';
 	@override String episodesQueued({required Object count}) => '${count} एपिसोड डाउनलोड करने के लिए जोड़े गए';
-	@override String get downloadDeleted => 'डाउनलोड करें हटाया';
+	@override String get downloadDeleted => 'डाउनलोड मिटा दिया गया';
 	@override String deleteConfirm({required Object title}) => 'इस डिवाइस से "${title}" को हटा दें?';
 	@override String get deleteCollectionDownloads => 'डाउनलोड करें';
 	@override String deleteCollectionDownloadsConfirm({required Object title}) => 'इस डिवाइस से “${title}” के सभी डाउनलोड मिटाएँ?';
@@ -5770,7 +5770,7 @@ extension on TranslationsHi {
 			'common.submit' => 'प्रस्तुत करें',
 			'common.confirm' => 'पुष्टि करें',
 			'common.retry' => 'वापसी',
-			'common.logout' => 'लॉग बाहर',
+			'common.logout' => 'लॉग आउट करें',
 			'common.unknown' => 'अज्ञात',
 			'common.refresh' => 'ताज़ा',
 			'common.yes' => 'हाँ',
@@ -6040,7 +6040,7 @@ extension on TranslationsHi {
 			'settings.cloudBackupPassword' => 'पासवर्ड',
 			'settings.cloudBackupSaved' => 'क्लाउड बैकअप डिज़ाइन बचाया',
 			'settings.cloudBackupNow' => 'अब वापस',
-			'settings.cloudBackupComplete' => 'Settings Backup अपलोड करें',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'बैकअप अपलोड हो गया है। यह URL सहेज लें। नई स्थापना के बाद इसे क्लाउड बैकअप में दर्ज करें और “${action}” चुनें।',
 			'settings.cloudBackupRestore' => 'बैकअप पुनर्स्थापित करें',
 			'settings.cloudBackupRestoreConfirm' => 'यह इस डिवाइस पर फिट पोर्टेबल सेटिंग्स को प्रतिस्थापित करेगा. आगे?',
 			'settings.cloudBackupRestored' => 'Cloud Backup से पुनर्स्थापित सेटिंग्स',
@@ -6820,7 +6820,7 @@ extension on TranslationsHi {
 			'messages.metadataRefreshing' => ({required Object title}) => '"${title}" के लिए ताज़ा मेटाडेटा ...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => '"${title}" के लिए मेटाडेटा रिफ्रेश शुरू हुआ',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'मेटाडेटा को पुनर्जीवित करने में विफलता: ${error}',
-			'messages.logoutConfirm' => 'क्या आप निश्चित हैं कि आप लॉग इन करना चाहते हैं?',
+			'messages.logoutConfirm' => 'क्या आप इस डिवाइस की सभी प्रोफ़ाइलों से लॉग आउट करना चाहते हैं?',
 			'messages.noSeasonsFound' => 'कोई मौसम नहीं मिला',
 			'messages.seasonsLoadFailed' => 'मौसम नहीं ले सकते',
 			'messages.noEpisodesFound' => 'पहली सीजन में कोई घटना नहीं मिली',
@@ -7898,15 +7898,15 @@ extension on TranslationsHi {
 			'downloads.noDownloads' => 'अभी तक डाउनलोड नहीं',
 			'downloads.noDownloadsDescription' => 'डाउनलोड की गई सामग्री ऑफ़लाइन देखने के लिए यहां दिखाई देगी',
 			'downloads.downloadNow' => 'डाउनलोड करें',
-			'downloads.deleteDownload' => 'डाउनलोड करें',
-			'downloads.retryDownload' => 'रिट्री डाउनलोड',
+			'downloads.deleteDownload' => 'डाउनलोड मिटाएँ',
+			'downloads.retryDownload' => 'डाउनलोड का फिर से प्रयास करें',
 			'downloads.downloadQueued' => 'डाउनलोड करने के लिए Queued',
 			'downloads.downloadResumed' => 'डाउनलोड करें पुनः',
 			'downloads.serverErrorBitrate' => 'सर्वर त्रुटि: फ़ाइल रिमोट बिट्रेट सीमा से अधिक हो सकती है',
 			'downloads.storageFull' => 'डाउनलोड उपलब्ध भंडारण की रक्षा करने के लिए बंद कर दिया. कुछ स्थान मुक्त करें या डाउनलोड स्थान का चयन करें, फिर रिटर्न करें.',
 			'downloads.storageUnavailable' => 'डाउनलोड बंद हो गए क्योंकि उपलब्ध भंडारण की जांच नहीं की जा सकती थी. डाउनलोड स्थान की जांच करें, फिर वापस जाएं.',
 			'downloads.episodesQueued' => ({required Object count}) => '${count} एपिसोड डाउनलोड करने के लिए जोड़े गए',
-			'downloads.downloadDeleted' => 'डाउनलोड करें हटाया',
+			'downloads.downloadDeleted' => 'डाउनलोड मिटा दिया गया',
 			'downloads.deleteConfirm' => ({required Object title}) => 'इस डिवाइस से "${title}" को हटा दें?',
 			'downloads.deleteCollectionDownloads' => 'डाउनलोड करें',
 			'downloads.deleteCollectionDownloadsConfirm' => ({required Object title}) => 'इस डिवाइस से “${title}” के सभी डाउनलोड मिटाएँ?',

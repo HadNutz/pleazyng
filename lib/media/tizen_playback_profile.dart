@@ -27,6 +27,7 @@ Map<String, Object?> tizenPlaybackProfile({
   required bool audio,
   required bool burnSubtitles,
   Set<String> refusedVideo = const {},
+  List<Map<String, Object?>> videoConditions = const [],
 }) => {
   'Name': 'Pleazyng Samsung TV',
   'TranscodingProfiles': [
@@ -52,6 +53,7 @@ Map<String, Object?> tizenPlaybackProfile({
     if (audio) {'Type': 'Audio', 'Container': 'mp3,aac,m4a,m4b', 'AudioCodec': 'mp3,aac'},
   ],
   'CodecProfiles': [
+    ...videoConditions,
     {
       'Type': 'Video',
       'Codec': 'h264',

@@ -301,7 +301,7 @@ class _Translations$common$th extends Translations$common$en {
 	@override String get submit => 'ส่ง';
 	@override String get confirm => 'การยืนยัน';
 	@override String get retry => 'การคืนเงิน';
-	@override String get logout => 'ปล่อยออก';
+	@override String get logout => 'ออกจากระบบ';
 	@override String get unknown => 'ที่เก็บข้อมูลไม่รู้จัก';
 	@override String get refresh => 'การทําความเย็น';
 	@override String get yes => 'ใช่';
@@ -579,7 +579,7 @@ class _Translations$settings$th extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'คู่มือ';
 	@override String get cloudBackupSaved => 'Cloud Backup destination ที่บันทึก';
 	@override String get cloudBackupNow => 'กลับขึ้นตอนนี้';
-	@override String get cloudBackupComplete => 'การตั้งค่า Backup upload';
+	@override String cloudBackupComplete({required Object action}) => 'อัปโหลดข้อมูลสำรองแล้ว โปรดเก็บ URL นี้ไว้ หลังจากติดตั้งแอปใหม่ ให้ป้อน URL นี้ในหน้าสำรองข้อมูลบนคลาวด์ แล้วเลือก “${action}”';
 	@override String get cloudBackupRestore => 'การกู้คืน Backup';
 	@override String get cloudBackupRestoreConfirm => 'สิ่งนี้จะแทนที่การตั้งค่าแบบพกพาที่ตรงกับอุปกรณ์นี้. ต่อไป?';
 	@override String get cloudBackupRestored => 'การตั้งค่าที่ได้รับการกู้คืนจาก Cloud Backup';
@@ -1415,7 +1415,7 @@ class _Translations$messages$th extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'ข้อมูลจําเพาะสําหรับ "${title}"';
 	@override String metadataRefreshStarted({required Object title}) => 'การฟื้นฟู Metadata เริ่มต้นสําหรับ "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'ไม่สามารถปรับปรุงข้อมูลโลหะได้: ${error}';
-	@override String get logoutConfirm => 'คุณแน่ใจว่าคุณต้องการที่จะลงทะเบียนออกหรือไม่';
+	@override String get logoutConfirm => 'ต้องการออกจากระบบทุกโปรไฟล์บนอุปกรณ์นี้ไหม';
 	@override String get noSeasonsFound => 'ไม่มีฤดูกาลที่พบ';
 	@override String get seasonsLoadFailed => 'ไม่สามารถโหลดฤดูกาล';
 	@override String get noEpisodesFound => 'ไม่พบ episodes ในฤดูกาลแรก';
@@ -2355,15 +2355,15 @@ class _Translations$downloads$th extends Translations$downloads$en {
 	@override String get noDownloads => 'ไม่มีดาวน์โหลด';
 	@override String get noDownloadsDescription => 'เนื้อหาที่ดาวน์โหลดจะปรากฏที่นี่สําหรับการดู offline';
 	@override String get downloadNow => 'ดาวน์โหลด';
-	@override String get deleteDownload => 'ดาวน์โหลด';
-	@override String get retryDownload => 'ดาวน์โหลด';
+	@override String get deleteDownload => 'ลบรายการที่ดาวน์โหลด';
+	@override String get retryDownload => 'ลองดาวน์โหลดอีกครั้ง';
 	@override String get downloadQueued => 'ดาวน์โหลด Queued';
 	@override String get downloadResumed => 'ดาวน์โหลดใหม่';
 	@override String get serverErrorBitrate => 'ข้อผิดพลาดเซิร์ฟเวอร์: ไฟล์อาจเกินขีด จํากัด bitrate จากระยะไกล';
 	@override String get storageFull => 'ดาวน์โหลดหยุดเพื่อปกป้องจัดเก็บที่อยู่ ฟรีพื้นที่บางอย่างหรือเลือกสถานที่ดาวน์โหลดอื่นแล้วรีด';
 	@override String get storageUnavailable => 'ดาวน์โหลดหยุดเพราะการจัดเก็บที่พร้อมใช้งานไม่สามารถตรวจสอบได้ ตรวจสอบตําแหน่งดาวน์โหลดแล้วรีด';
 	@override String episodesQueued({required Object count}) => '${count} episodes queued สําหรับดาวน์โหลด';
-	@override String get downloadDeleted => 'ดาวน์โหลดลบ';
+	@override String get downloadDeleted => 'ลบรายการที่ดาวน์โหลดแล้ว';
 	@override String deleteConfirm({required Object title}) => 'ลบ "${title}" จากอุปกรณ์นี้?';
 	@override String get deleteCollectionDownloads => 'ลบดาวน์โหลด';
 	@override String deleteCollectionDownloadsConfirm({required Object title}) => 'ลบไฟล์ที่ดาวน์โหลดทั้งหมดใน “${title}” ออกจากอุปกรณ์นี้หรือไม่';
@@ -5745,7 +5745,7 @@ extension on TranslationsTh {
 			'common.submit' => 'ส่ง',
 			'common.confirm' => 'การยืนยัน',
 			'common.retry' => 'การคืนเงิน',
-			'common.logout' => 'ปล่อยออก',
+			'common.logout' => 'ออกจากระบบ',
 			'common.unknown' => 'ที่เก็บข้อมูลไม่รู้จัก',
 			'common.refresh' => 'การทําความเย็น',
 			'common.yes' => 'ใช่',
@@ -6015,7 +6015,7 @@ extension on TranslationsTh {
 			'settings.cloudBackupPassword' => 'คู่มือ',
 			'settings.cloudBackupSaved' => 'Cloud Backup destination ที่บันทึก',
 			'settings.cloudBackupNow' => 'กลับขึ้นตอนนี้',
-			'settings.cloudBackupComplete' => 'การตั้งค่า Backup upload',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'อัปโหลดข้อมูลสำรองแล้ว โปรดเก็บ URL นี้ไว้ หลังจากติดตั้งแอปใหม่ ให้ป้อน URL นี้ในหน้าสำรองข้อมูลบนคลาวด์ แล้วเลือก “${action}”',
 			'settings.cloudBackupRestore' => 'การกู้คืน Backup',
 			'settings.cloudBackupRestoreConfirm' => 'สิ่งนี้จะแทนที่การตั้งค่าแบบพกพาที่ตรงกับอุปกรณ์นี้. ต่อไป?',
 			'settings.cloudBackupRestored' => 'การตั้งค่าที่ได้รับการกู้คืนจาก Cloud Backup',
@@ -6795,7 +6795,7 @@ extension on TranslationsTh {
 			'messages.metadataRefreshing' => ({required Object title}) => 'ข้อมูลจําเพาะสําหรับ "${title}"',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'การฟื้นฟู Metadata เริ่มต้นสําหรับ "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'ไม่สามารถปรับปรุงข้อมูลโลหะได้: ${error}',
-			'messages.logoutConfirm' => 'คุณแน่ใจว่าคุณต้องการที่จะลงทะเบียนออกหรือไม่',
+			'messages.logoutConfirm' => 'ต้องการออกจากระบบทุกโปรไฟล์บนอุปกรณ์นี้ไหม',
 			'messages.noSeasonsFound' => 'ไม่มีฤดูกาลที่พบ',
 			'messages.seasonsLoadFailed' => 'ไม่สามารถโหลดฤดูกาล',
 			'messages.noEpisodesFound' => 'ไม่พบ episodes ในฤดูกาลแรก',
@@ -7873,15 +7873,15 @@ extension on TranslationsTh {
 			'downloads.noDownloads' => 'ไม่มีดาวน์โหลด',
 			'downloads.noDownloadsDescription' => 'เนื้อหาที่ดาวน์โหลดจะปรากฏที่นี่สําหรับการดู offline',
 			'downloads.downloadNow' => 'ดาวน์โหลด',
-			'downloads.deleteDownload' => 'ดาวน์โหลด',
-			'downloads.retryDownload' => 'ดาวน์โหลด',
+			'downloads.deleteDownload' => 'ลบรายการที่ดาวน์โหลด',
+			'downloads.retryDownload' => 'ลองดาวน์โหลดอีกครั้ง',
 			'downloads.downloadQueued' => 'ดาวน์โหลด Queued',
 			'downloads.downloadResumed' => 'ดาวน์โหลดใหม่',
 			'downloads.serverErrorBitrate' => 'ข้อผิดพลาดเซิร์ฟเวอร์: ไฟล์อาจเกินขีด จํากัด bitrate จากระยะไกล',
 			'downloads.storageFull' => 'ดาวน์โหลดหยุดเพื่อปกป้องจัดเก็บที่อยู่ ฟรีพื้นที่บางอย่างหรือเลือกสถานที่ดาวน์โหลดอื่นแล้วรีด',
 			'downloads.storageUnavailable' => 'ดาวน์โหลดหยุดเพราะการจัดเก็บที่พร้อมใช้งานไม่สามารถตรวจสอบได้ ตรวจสอบตําแหน่งดาวน์โหลดแล้วรีด',
 			'downloads.episodesQueued' => ({required Object count}) => '${count} episodes queued สําหรับดาวน์โหลด',
-			'downloads.downloadDeleted' => 'ดาวน์โหลดลบ',
+			'downloads.downloadDeleted' => 'ลบรายการที่ดาวน์โหลดแล้ว',
 			'downloads.deleteConfirm' => ({required Object title}) => 'ลบ "${title}" จากอุปกรณ์นี้?',
 			'downloads.deleteCollectionDownloads' => 'ลบดาวน์โหลด',
 			'downloads.deleteCollectionDownloadsConfirm' => ({required Object title}) => 'ลบไฟล์ที่ดาวน์โหลดทั้งหมดใน “${title}” ออกจากอุปกรณ์นี้หรือไม่',

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:plezy/database/app_database.dart';
+import 'package:plezy/focus/focusable_text_field.dart';
 import 'package:plezy/i18n/strings.g.dart';
 import 'package:plezy/media/ids.dart';
 import 'package:plezy/providers/multi_server_provider.dart';
@@ -59,6 +60,11 @@ void main() {
 
       // No MultiServerProvider, so the search resolves to no client and the
       // results area is empty. A shrink-wrapping body would collapse here.
+      expect(
+        tester.widget<FocusableTextField>(find.byType(FocusableTextField)).tvTextInputPresentation,
+        TvTextInputPresentation.automatic,
+        reason: 'retain native input methods for remote-only title search',
+      );
       final emptyHeight = _sheetHeight(tester);
       final fieldTop = tester.getTopLeft(find.byType(TextField)).dy;
       expect(emptyHeight, 720, reason: 'search surface fills the windowed height ceiling');
@@ -69,6 +75,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(_sheetHeight(tester), emptyHeight);
 
+      expect(
+        tester.widget<FocusableTextField>(find.byType(FocusableTextField)).tvTextInputPresentation,
+        TvTextInputPresentation.automatic,
+        reason: 'retain native input methods for language filtering',
+      );
       await tester.enterText(find.byType(TextField), 'zulu');
       await tester.pumpAndSettle();
       expect(find.text('Zulu'), findsOneWidget);

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import '../../../media/ids.dart';
 
 import 'package:flutter/material.dart';
@@ -407,7 +408,6 @@ class _SubtitleSearchSheetState extends State<SubtitleSearchSheet> with Controll
                   child: FocusableTextField(
                     controller: _titleController,
                     focusNode: _titleFocusNode,
-                    tvTextInputPresentation: TvTextInputPresentation.flutterOverlay,
                     decoration: pillInputDecoration(
                       context,
                       hintText: widget.mediaTitle ?? t.metadataEdit.title,
@@ -667,7 +667,6 @@ class _LanguagePickerViewState extends State<_LanguagePickerView> with Controlle
             child: FocusableTextField(
               controller: _filterController,
               focusNode: _filterFocusNode,
-              tvTextInputPresentation: TvTextInputPresentation.flutterOverlay,
               autofocus: true,
               decoration: pillInputDecoration(
                 context,

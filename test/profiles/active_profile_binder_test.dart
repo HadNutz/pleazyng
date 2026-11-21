@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:plezy/media/ids.dart';
+
 import 'dart:convert';
 
 import 'package:drift/native.dart';
@@ -114,6 +116,45 @@ void main() {
     await activeProfile.initialize();
     return profile;
   }
+
+  test('direct Plex binding always uses the selected profile credential, including tokenless LAN', () async {
+    binder.dispose();
+    multiServerProvider.dispose();
+    final captured = _DirectPlexBindingManager();
+    manager = captured;
+    multiServerProvider = testMultiServerProvider(manager);
+    binder = ActiveProfileBinder(
+      activeProfile: activeProfile,
+      connections: connections,
+      profileConnections: profileConnections,
+      serverManager: manager,
+      multiServerProvider: multiServerProvider,
+      pinPrompt: (_, {String? errorMessage}) async => null,
+    );
+    final owner = await createActiveLocalProfile('local-a');
+    final other = Profile.local(id: 'local-b', displayName: 'Other', createdAt: DateTime(2026));
+    await profiles.upsert(other);
+    final server = PlexDirectConnection(
+      id: 'plex-direct-srv',
+      baseUrl: 'https://example.invalid',
+      serverName: 'Shared',
+      serverMachineId: 'srv',
+      clientIdentifier: 'device',
+      accessToken: 'last-saved-account',
+      createdAt: DateTime(2026),
+    );
+    await connections.upsert(server);
+    for (final (profile, token) in [(owner, 'only-a'), (other, '')]) {
+      await profileConnections.upsert(
+        ProfileConnection(profileId: profile.id, connectionId: server.id, userToken: token, userIdentifier: 'srv'),
+      );
+    }
+    for (final (profile, expected) in [(owner, 'only-a'), (other, ''), (owner, 'only-a')]) {
+      await activeProfile.activate(profile);
+      await binder.rebindActive();
+      expect(captured.bindings.last, (profile.id, expected));
+    }
+  });
 
   test('local profile with no connections binds successfully with empty visibility', () async {
     final profile = Profile.local(id: 'local-owner', displayName: 'Owner', createdAt: DateTime(2026, 1, 1));
@@ -1640,6 +1681,15 @@ class _CountingFailingJellyfinManager extends MultiServerManager {
     calls++;
     updateServerStatus(ServerId(connection.serverMachineId), false);
     return false;
+  }
+}
+
+class _DirectPlexBindingManager extends MultiServerManager {
+  final bindings = <(String?, String)>[];
+  @override
+  Future<bool> addDirectPlexConnection(PlexDirectConnection connection, {String? profileId}) async {
+    bindings.add((profileId, connection.accessToken));
+    return true;
   }
 }
 

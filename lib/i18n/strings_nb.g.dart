@@ -581,7 +581,7 @@ class _Translations$settings$nb extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Passord';
 	@override String get cloudBackupSaved => 'Cloud backup destinasjon reddet';
 	@override String get cloudBackupNow => 'Tilbake nå';
-	@override String get cloudBackupComplete => 'Oppdatering av Backup upload';
+	@override String cloudBackupComplete({required Object action}) => 'Sikkerhetskopien er lastet opp. Ta vare på denne nettadressen. Etter en ny installasjon skriver du den inn under sikkerhetskopiering i skyen og velger «${action}».';
 	@override String get cloudBackupRestore => 'Åpne backup';
 	@override String get cloudBackupRestoreConfirm => 'Dette vil erstatte matching bærbare innstillinger på denne enheten.';
 	@override String get cloudBackupRestored => 'Innstillinger gjenopprettet fra cloud backup';
@@ -1422,7 +1422,7 @@ class _Translations$messages$nb extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Oppdaterer metadata for "${title}"...';
 	@override String metadataRefreshStarted({required Object title}) => 'Metadataoppdatering startet for "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'Kunne ikke oppdatere metadata: ${error}';
-	@override String get logoutConfirm => 'Er du sikker på at du vil logge ut?';
+	@override String get logoutConfirm => 'Vil du logge ut av alle profiler på denne enheten?';
 	@override String get noSeasonsFound => 'Ingen sesonger funnet';
 	@override String get seasonsLoadFailed => 'Kunne ikke laste sesonger';
 	@override String get noEpisodesFound => 'Ingen episoder funnet i første sesong';
@@ -6040,7 +6040,7 @@ extension on TranslationsNb {
 			'settings.cloudBackupPassword' => 'Passord',
 			'settings.cloudBackupSaved' => 'Cloud backup destinasjon reddet',
 			'settings.cloudBackupNow' => 'Tilbake nå',
-			'settings.cloudBackupComplete' => 'Oppdatering av Backup upload',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Sikkerhetskopien er lastet opp. Ta vare på denne nettadressen. Etter en ny installasjon skriver du den inn under sikkerhetskopiering i skyen og velger «${action}».',
 			'settings.cloudBackupRestore' => 'Åpne backup',
 			'settings.cloudBackupRestoreConfirm' => 'Dette vil erstatte matching bærbare innstillinger på denne enheten.',
 			'settings.cloudBackupRestored' => 'Innstillinger gjenopprettet fra cloud backup',
@@ -6820,7 +6820,7 @@ extension on TranslationsNb {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Oppdaterer metadata for "${title}"...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Metadataoppdatering startet for "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Kunne ikke oppdatere metadata: ${error}',
-			'messages.logoutConfirm' => 'Er du sikker på at du vil logge ut?',
+			'messages.logoutConfirm' => 'Vil du logge ut av alle profiler på denne enheten?',
 			'messages.noSeasonsFound' => 'Ingen sesonger funnet',
 			'messages.seasonsLoadFailed' => 'Kunne ikke laste sesonger',
 			'messages.noEpisodesFound' => 'Ingen episoder funnet i første sesong',

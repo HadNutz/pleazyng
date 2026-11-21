@@ -115,6 +115,22 @@ const { chromium } = require(process.env.PLEZY_PLAYWRIGHT_PATH || '../../../tool
         if(!target.doc.getSelection()?.toString().toLowerCase().includes('lighthouse'))throw Error('Fixed-layout CFI selection did not select its text range');
         return {search:search.length,initial,second:view.lastLocation.cfi};
       }
+      const selectionEvents=[];
+      window.addEventListener('publication-event',({detail})=>{
+        if(detail.type==='selection')selectionEvents.push(detail);
+      });
+      const doc=view.renderer.getContents()[0].doc;
+      for(const type of ['pointerup','keyup']){
+        const range=doc.createRange();
+        range.selectNodeContents(doc.querySelector('p'));
+        doc.getSelection().removeAllRanges();doc.getSelection().addRange(range);
+        doc.dispatchEvent(new Event(type));
+        await new Promise(resolve=>setTimeout(resolve,50));
+        if(!selectionEvents.at(-1)?.cfi)throw Error('Reader did not report selection on '+type);
+        doc.getSelection().removeAllRanges();doc.dispatchEvent(new Event(type));
+        await new Promise(resolve=>setTimeout(resolve,50));
+        if(selectionEvents.at(-1)?.cfi!==null)throw Error('Reader kept a stale selection after '+type);
+      }
       await publication.goTo('EPUB/two.xhtml');
       const second=view.lastLocation.cfi;
       if(initial===second)throw Error('Chapter navigation did not move');

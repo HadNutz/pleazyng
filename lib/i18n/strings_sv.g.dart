@@ -581,7 +581,7 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Lösenord';
 	@override String get cloudBackupSaved => 'Cloud backup destination sparas';
 	@override String get cloudBackupNow => 'tillbaka nu';
-	@override String get cloudBackupComplete => 'Säkerhetskopian av inställningarna har laddats upp';
+	@override String cloudBackupComplete({required Object action}) => 'Säkerhetskopian har laddats upp. Spara den här webbadressen. Efter en ny installation anger du den under molnsäkerhetskopiering och väljer ”${action}”.';
 	@override String get cloudBackupRestore => 'Återställ backup';
 	@override String get cloudBackupRestoreConfirm => 'Detta kommer att ersätta matchande bärbara inställningar på denna enhet.';
 	@override String get cloudBackupRestored => 'Inställningar återställda från moln backup';
@@ -1422,7 +1422,7 @@ class _Translations$messages$sv extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Uppdaterar metadata för "${title}"...';
 	@override String metadataRefreshStarted({required Object title}) => 'Metadatauppdateringen har startat för "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'Det gick inte att uppdatera metadata: ${error}';
-	@override String get logoutConfirm => 'Är du säker på att du vill logga ut?';
+	@override String get logoutConfirm => 'Vill du logga ut från alla profiler på den här enheten?';
 	@override String get noSeasonsFound => 'Inga säsonger hittades';
 	@override String get seasonsLoadFailed => 'Det gick inte att läsa in säsonger';
 	@override String get noEpisodesFound => 'Inga avsnitt hittades i första säsongen';
@@ -6040,7 +6040,7 @@ extension on TranslationsSv {
 			'settings.cloudBackupPassword' => 'Lösenord',
 			'settings.cloudBackupSaved' => 'Cloud backup destination sparas',
 			'settings.cloudBackupNow' => 'tillbaka nu',
-			'settings.cloudBackupComplete' => 'Säkerhetskopian av inställningarna har laddats upp',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Säkerhetskopian har laddats upp. Spara den här webbadressen. Efter en ny installation anger du den under molnsäkerhetskopiering och väljer ”${action}”.',
 			'settings.cloudBackupRestore' => 'Återställ backup',
 			'settings.cloudBackupRestoreConfirm' => 'Detta kommer att ersätta matchande bärbara inställningar på denna enhet.',
 			'settings.cloudBackupRestored' => 'Inställningar återställda från moln backup',
@@ -6820,7 +6820,7 @@ extension on TranslationsSv {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Uppdaterar metadata för "${title}"...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Metadatauppdateringen har startat för "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Det gick inte att uppdatera metadata: ${error}',
-			'messages.logoutConfirm' => 'Är du säker på att du vill logga ut?',
+			'messages.logoutConfirm' => 'Vill du logga ut från alla profiler på den här enheten?',
 			'messages.noSeasonsFound' => 'Inga säsonger hittades',
 			'messages.seasonsLoadFailed' => 'Det gick inte att läsa in säsonger',
 			'messages.noEpisodesFound' => 'Inga avsnitt hittades i första säsongen',

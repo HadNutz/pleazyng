@@ -50,6 +50,8 @@ FLUTTER_PLUGIN_EXPORT int ffi_set_subtitle_pcm_capture_enabled(
     int64_t player_id, bool enabled);
 FLUTTER_PLUGIN_EXPORT const char* ffi_drain_subtitle_pcm_capture(
     int64_t player_id);
+FLUTTER_PLUGIN_EXPORT int ffi_set_source_crop(int64_t player_id, double x,
+                                              double y, double width, double height);
 FLUTTER_PLUGIN_EXPORT int ffi_set_display_geometry(int64_t player_id, int32_t x,
                                                    int32_t y, int32_t width,
                                                    int32_t height);

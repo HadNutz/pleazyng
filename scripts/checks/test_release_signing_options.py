@@ -15,6 +15,24 @@ import release_all_platforms as release
 
 
 class SigningOptionsTests(unittest.TestCase):
+    def test_android_store_payloads_leave_updates_to_the_store(self):
+        import yaml
+        workflow = yaml.safe_load((Path(__file__).resolve().parents[2] / ".github/workflows/build.yml").read_text())
+        shared = workflow["env"]["RELEASE_DART_DEFINES"]
+        commands = {s.get("name"): s.get("run", "") for s in workflow["jobs"]["build-android"]["steps"]}
+        channel_options = {
+            "Build APKs": "true",
+            "Build and verify Automotive audio APK": "true",
+            "Build signed Android App Bundle": "false",
+            "Build signed Amazon Appstore APK": "false",
+            "Build signed Automotive audio App Bundle": "false",
+        }
+        for step, enabled in channel_options.items():
+            with self.subTest(build=step):
+                command = commands[step].replace("${{ env.RELEASE_DART_DEFINES }}", shared)
+                flags = [arg for arg in command.split() if arg.startswith("--dart-define=ENABLE_UPDATE_CHECK=")]
+                self.assertEqual(flags, [f"--dart-define=ENABLE_UPDATE_CHECK={enabled}"])
+
     def test_cli_defaults_and_github_only_override(self):
         for flags, expected in (([], False), (["--include-apple-store-build", "--prepare-homebrew-cask", "--publish-github-only"], True)):
             with self.subTest(flags=flags), patch.object(sys, "argv", ["release", "--version", "3.0.1", *flags]):

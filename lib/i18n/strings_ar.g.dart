@@ -589,7 +589,7 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'كلمة المرور';
 	@override String get cloudBackupSaved => 'سحابة النسخ الاحتياطي المستهدفة';
 	@override String get cloudBackupNow => 'العودة الآن';
-	@override String get cloudBackupComplete => 'إعدادات النسخ الاحتياطي تحميل';
+	@override String cloudBackupComplete({required Object action}) => 'رُفعت النسخة الاحتياطية. احفظ هذا الرابط. بعد تثبيت التطبيق من جديد، أدخله في إعدادات النسخ الاحتياطي السحابي واختر «${action}».';
 	@override String get cloudBackupRestore => 'استعادة النسخ الاحتياطي';
 	@override String get cloudBackupRestoreConfirm => 'هذا سوف يحل محل إعدادات المحمول المقابلة على هذا الجهاز.';
 	@override String get cloudBackupRestored => 'إعدادات استعادة من النسخ الاحتياطي السحابية';
@@ -1450,7 +1450,7 @@ class _Translations$messages$ar extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'إعادة تدوير البيانات الميتاتية لـ "${title}" ...';
 	@override String metadataRefreshStarted({required Object title}) => 'بدأ تحديث البيانات الميتة لـ "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'لا يمكن تحديث البيانات الميتا: ${error}';
-	@override String get logoutConfirm => 'هل أنت متأكد من أنك تريد الانسحاب؟';
+	@override String get logoutConfirm => 'هل تريد تسجيل الخروج من جميع الملفات الشخصية على هذا الجهاز؟';
 	@override String get noSeasonsFound => 'لا توجد مواسم';
 	@override String get seasonsLoadFailed => 'لا أستطيع تحميل الموسم';
 	@override String get noEpisodesFound => 'لا توجد أحداث في الموسم الأول';
@@ -2430,15 +2430,15 @@ class _Translations$downloads$ar extends Translations$downloads$en {
 	@override String get noDownloads => 'لا تنزيل بعد';
 	@override String get noDownloadsDescription => 'سيتم عرض المحتوى الذي تم تنزيله هنا لمشاهدة خارج الإنترنت';
 	@override String get downloadNow => 'تنزيل';
-	@override String get deleteDownload => 'حذف download';
-	@override String get retryDownload => 'Retry تحميل';
+	@override String get deleteDownload => 'حذف التنزيل';
+	@override String get retryDownload => 'إعادة محاولة التنزيل';
 	@override String get downloadQueued => 'تم وضع التنزيل في قائمة الانتظار.';
 	@override String get downloadResumed => 'تحميل مجدد';
 	@override String get serverErrorBitrate => 'خطأ الخادم: قد يتجاوز الملف الحد الأقصى لمعدل النقاط عن بعد';
 	@override String get storageFull => 'توقف التحميلات لحماية التخزين المتاحة.إعفاء بعض المساحة أو اختيار موقع آخر للتحميل، ثم الانسحاب.';
 	@override String get storageUnavailable => 'توقفت التحميلات لأن التخزين المتاح لم يكن قادرا على التحقق.تحقق من موقع التحميل، ثم الانسحاب.';
 	@override String episodesQueued({required Object count}) => '${count} الحلقة التي تم إرسالها للتنزيل';
-	@override String get downloadDeleted => 'تحميل حذف';
+	@override String get downloadDeleted => 'تم حذف التنزيل';
 	@override String deleteConfirm({required Object title}) => 'هل يمكن إزالة "${title}" من هذا الجهاز؟';
 	@override String get deleteCollectionDownloads => 'حذف Downloads';
 	@override String deleteCollectionDownloadsConfirm({required Object title}) => 'هل تريد حذف جميع التنزيلات في «${title}» من هذا الجهاز؟';
@@ -6140,7 +6140,7 @@ extension on TranslationsAr {
 			'settings.cloudBackupPassword' => 'كلمة المرور',
 			'settings.cloudBackupSaved' => 'سحابة النسخ الاحتياطي المستهدفة',
 			'settings.cloudBackupNow' => 'العودة الآن',
-			'settings.cloudBackupComplete' => 'إعدادات النسخ الاحتياطي تحميل',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'رُفعت النسخة الاحتياطية. احفظ هذا الرابط. بعد تثبيت التطبيق من جديد، أدخله في إعدادات النسخ الاحتياطي السحابي واختر «${action}».',
 			'settings.cloudBackupRestore' => 'استعادة النسخ الاحتياطي',
 			'settings.cloudBackupRestoreConfirm' => 'هذا سوف يحل محل إعدادات المحمول المقابلة على هذا الجهاز.',
 			'settings.cloudBackupRestored' => 'إعدادات استعادة من النسخ الاحتياطي السحابية',
@@ -6920,7 +6920,7 @@ extension on TranslationsAr {
 			'messages.metadataRefreshing' => ({required Object title}) => 'إعادة تدوير البيانات الميتاتية لـ "${title}" ...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'بدأ تحديث البيانات الميتة لـ "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'لا يمكن تحديث البيانات الميتا: ${error}',
-			'messages.logoutConfirm' => 'هل أنت متأكد من أنك تريد الانسحاب؟',
+			'messages.logoutConfirm' => 'هل تريد تسجيل الخروج من جميع الملفات الشخصية على هذا الجهاز؟',
 			'messages.noSeasonsFound' => 'لا توجد مواسم',
 			'messages.seasonsLoadFailed' => 'لا أستطيع تحميل الموسم',
 			'messages.noEpisodesFound' => 'لا توجد أحداث في الموسم الأول',
@@ -7998,15 +7998,15 @@ extension on TranslationsAr {
 			'downloads.noDownloads' => 'لا تنزيل بعد',
 			'downloads.noDownloadsDescription' => 'سيتم عرض المحتوى الذي تم تنزيله هنا لمشاهدة خارج الإنترنت',
 			'downloads.downloadNow' => 'تنزيل',
-			'downloads.deleteDownload' => 'حذف download',
-			'downloads.retryDownload' => 'Retry تحميل',
+			'downloads.deleteDownload' => 'حذف التنزيل',
+			'downloads.retryDownload' => 'إعادة محاولة التنزيل',
 			'downloads.downloadQueued' => 'تم وضع التنزيل في قائمة الانتظار.',
 			'downloads.downloadResumed' => 'تحميل مجدد',
 			'downloads.serverErrorBitrate' => 'خطأ الخادم: قد يتجاوز الملف الحد الأقصى لمعدل النقاط عن بعد',
 			'downloads.storageFull' => 'توقف التحميلات لحماية التخزين المتاحة.إعفاء بعض المساحة أو اختيار موقع آخر للتحميل، ثم الانسحاب.',
 			'downloads.storageUnavailable' => 'توقفت التحميلات لأن التخزين المتاح لم يكن قادرا على التحقق.تحقق من موقع التحميل، ثم الانسحاب.',
 			'downloads.episodesQueued' => ({required Object count}) => '${count} الحلقة التي تم إرسالها للتنزيل',
-			'downloads.downloadDeleted' => 'تحميل حذف',
+			'downloads.downloadDeleted' => 'تم حذف التنزيل',
 			'downloads.deleteConfirm' => ({required Object title}) => 'هل يمكن إزالة "${title}" من هذا الجهاز؟',
 			'downloads.deleteCollectionDownloads' => 'حذف Downloads',
 			'downloads.deleteCollectionDownloadsConfirm' => ({required Object title}) => 'هل تريد حذف جميع التنزيلات في «${title}» من هذا الجهاز؟',

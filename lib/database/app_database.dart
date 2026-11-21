@@ -90,7 +90,7 @@ final class LegacyDesktopDatabasePreview {
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  static const int currentSchemaVersion = 37;
+  static const int currentSchemaVersion = 38;
 
   /// Resolves the current app-owned database path for first-run migration UI.
   /// This never scans or adopts another application's files.
@@ -146,6 +146,8 @@ class AppDatabase extends _$AppDatabase {
         if (versionValue >= 34) required.add('iptv_recording_schedules');
         if (versionValue >= 36) required.addAll({'music_queue_entries', 'music_recipes'});
         if (versionValue >= 37) required.addAll({'music_listens', 'music_documents'});
+        if (versionValue >= 38) required.add('retained_download_owners');
+        if (versionValue >= 38) required.addAll({'iptv_guide_programmes', 'iptv_guide_logos', 'iptv_feed_identities'});
         if (!tables.containsAll(required)) {
           final missing = required.difference(tables).toList()..sort();
           throw FormatException('Legacy database is missing expected tables: ${missing.join(', ')}');
@@ -185,6 +187,9 @@ class AppDatabase extends _$AppDatabase {
     'iptv_sources',
     'iptv_channels',
     'iptv_programmes',
+    'iptv_feed_identities',
+    'iptv_guide_programmes',
+    'iptv_guide_logos',
     'iptv_channel_overrides',
     'iptv_group_locks',
     'iptv_recording_schedules',
@@ -196,6 +201,7 @@ class AppDatabase extends _$AppDatabase {
     'music_recipes',
     'music_listens',
     'music_documents',
+    'retained_download_owners',
   ];
 
   /// Resolves and opens the production database, removing orphaned WAL/SHM
@@ -388,6 +394,11 @@ class AppDatabase extends _$AppDatabase {
              created_at, last_success_at, last_error_code
       FROM iptv_sources ORDER BY id
     ''').get();
+    // Native IDs are deterministic. Only aliases are needed to restore older
+    // favorites and recording timers when tvOS purges the rebuildable lineup.
+    final feedAliases = await customSelect(
+      'SELECT source_id,feed_key,channel_id FROM iptv_feed_identities WHERE feed_key != channel_id ORDER BY source_id,feed_key',
+    ).get();
     final iptvOverrideRows = await customSelect('''
       SELECT profile_id, source_id, channel_id, favorite, favorite_order, hidden, custom_title, group_override, guide_id_override, parental_locked
       FROM iptv_channel_overrides ORDER BY profile_id, source_id, channel_id
@@ -431,6 +442,10 @@ class AppDatabase extends _$AppDatabase {
             'lastSuccessAt': row.data['last_success_at'],
             'lastErrorCode': row.data['last_error_code'],
           },
+      ],
+      'iptvFeedAliases': [
+        for (final row in feedAliases)
+          {'sourceId': row.data['source_id'], 'feedKey': row.data['feed_key'], 'channelId': row.data['channel_id']},
       ],
       'iptvChannelOverrides': [
         for (final row in iptvOverrideRows)
@@ -530,6 +545,11 @@ class AppDatabase extends _$AppDatabase {
       'createdAt',
       'lastSuccessAt',
       'lastErrorCode',
+    });
+    final feedAliases = _decodeIptvRecoveryRowsIfPresent(snapshot.identity, 'iptvFeedAliases', const {
+      'sourceId',
+      'feedKey',
+      'channelId',
     });
     final iptvOverrideRows = _decodeIptvRecoveryRowsIfPresent(snapshot.identity, 'iptvChannelOverrides', const {
       'profileId',
@@ -667,6 +687,13 @@ class AppDatabase extends _$AppDatabase {
             row['lastErrorCode'],
           ],
         );
+      }
+      for (final alias in feedAliases) {
+        await customStatement('INSERT INTO iptv_feed_identities(source_id,feed_key,channel_id) VALUES(?,?,?)', [
+          alias['sourceId'],
+          alias['feedKey'],
+          alias['channelId'],
+        ]);
       }
       for (final row in iptvOverrideRows) {
         await customStatement(
@@ -836,6 +863,8 @@ class AppDatabase extends _$AppDatabase {
             (normalized['lastErrorCode'] != null && normalized['lastErrorCode'] is! String)) {
           throw _invalidRecoveryImage;
         }
+      } else if (key == 'iptvFeedAliases') {
+        if (normalized.values.any((value) => value is! String || value.isEmpty)) throw _invalidRecoveryImage;
       } else if (key == 'iptvChannelOverrides') {
         if (normalized['profileId'] is! String ||
             normalized['sourceId'] is! String ||
@@ -947,6 +976,8 @@ class AppDatabase extends _$AppDatabase {
       onCreate: (Migrator m) async {
         await m.createAll();
         await _createIptvTables();
+        await _createIptvGuideCache();
+        await _createRetainedDownloadOwners();
         await _createIptvExtensionTables();
         await _createIptvParentalTables();
         await _createIptvRecordingSchedules();
@@ -1111,6 +1142,24 @@ class AppDatabase extends _$AppDatabase {
         }
         if (from < 37) {
           await _createMusicExperienceTables();
+        }
+        if (from < 38) {
+          await _createRetainedDownloadOwners();
+          await _createIptvGuideCache();
+          // Older releases stored only the merged guide. Retain it at lowest
+          // priority until all configured feeds have refreshed successfully.
+          await customStatement('''INSERT OR IGNORE INTO iptv_guide_programmes
+            SELECT p.source_id, '', COALESCE(NULLIF(o.guide_id_override,''),c.tvg_id),
+              p.begins_at,p.ends_at,p.title,p.summary,p.category,p.episode_id,p.thumb_url
+            FROM iptv_programmes p JOIN iptv_channels c
+              ON c.source_id=p.source_id AND c.channel_id=p.channel_id
+            LEFT JOIN iptv_channel_overrides o ON o.source_id=c.source_id AND o.channel_id=c.channel_id
+            WHERE COALESCE(NULLIF(o.guide_id_override,''),c.tvg_id) IS NOT NULL''');
+          await customStatement('''INSERT OR IGNORE INTO iptv_guide_logos
+            SELECT c.source_id, '', COALESCE(NULLIF(o.guide_id_override,''),c.tvg_id), c.logo_url
+            FROM iptv_channels c LEFT JOIN iptv_channel_overrides o
+              ON o.source_id=c.source_id AND o.channel_id=c.channel_id
+            WHERE c.logo_url IS NOT NULL AND COALESCE(NULLIF(o.guide_id_override,''),c.tvg_id) IS NOT NULL''');
         }
         if (from < 35) {
           appLogger.i('Adding protected IPTV playback headers (v35 migration)');
@@ -1391,6 +1440,30 @@ class AppDatabase extends _$AppDatabase {
       },
     );
   }
+
+  Future<void> _createIptvGuideCache() async {
+    await customStatement('''CREATE TABLE IF NOT EXISTS iptv_feed_identities (
+      source_id TEXT NOT NULL REFERENCES iptv_sources(id) ON DELETE CASCADE,
+      feed_key TEXT NOT NULL, channel_id TEXT NOT NULL, PRIMARY KEY(source_id, feed_key)
+    )''');
+    await customStatement('''CREATE TABLE IF NOT EXISTS iptv_guide_programmes (
+      source_id TEXT NOT NULL REFERENCES iptv_sources(id) ON DELETE CASCADE,
+      guide_key TEXT NOT NULL, tvg_id TEXT NOT NULL, begins_at INTEGER NOT NULL,
+      ends_at INTEGER NOT NULL, title TEXT NOT NULL, summary TEXT, category TEXT,
+      episode_id TEXT, thumb_url TEXT, PRIMARY KEY(source_id, guide_key, tvg_id, begins_at)
+    )''');
+    await customStatement('''CREATE TABLE IF NOT EXISTS iptv_guide_logos (
+      source_id TEXT NOT NULL REFERENCES iptv_sources(id) ON DELETE CASCADE,
+      guide_key TEXT NOT NULL, tvg_id TEXT NOT NULL, logo_url TEXT NOT NULL,
+      PRIMARY KEY(source_id, guide_key, tvg_id)
+    )''');
+  }
+
+  Future<void> _createRetainedDownloadOwners() => customStatement(
+    'CREATE TABLE IF NOT EXISTS retained_download_owners ('
+    'global_key TEXT NOT NULL REFERENCES downloaded_media(global_key) ON DELETE CASCADE, '
+    'owner_id TEXT NOT NULL, backend TEXT, client_scope_id TEXT, PRIMARY KEY (global_key, owner_id))',
+  );
 
   Future<void> _createIptvTables() async {
     await customStatement('''
@@ -2101,6 +2174,31 @@ class AppDatabase extends _$AppDatabase {
                   t.targetType.isIn(const [ContentTypes.show, ContentTypes.season])),
         ))
         .get();
+  }
+
+  /// During a legacy rule's first refresh, its member links may be incomplete.
+  /// Defer watched cleanup on that server until membership can be determined.
+  Future<bool> hasRetainingListRule(String profileId, String serverId, String downloadGlobalKey) async {
+    final query = selectOnly(syncRules).join([
+      leftOuterJoin(
+        syncRuleDownloads,
+        syncRuleDownloads.syncRuleId.equalsExp(syncRules.id) &
+            syncRuleDownloads.profileId.equals(profileId) &
+            syncRuleDownloads.downloadGlobalKey.equals(downloadGlobalKey),
+      ),
+    ]);
+    query
+      ..addColumns([syncRules.id])
+      ..where(
+        syncRules.profileId.equals(profileId) &
+            syncRules.serverId.equals(serverId) &
+            syncRules.enabled.equals(true) &
+            syncRules.downloadFilter.equals('all') &
+            syncRules.targetType.isIn(const [ContentTypes.collection, ContentTypes.playlist]) &
+            (syncRules.downloadLinksInitialized.equals(false) | syncRuleDownloads.syncRuleId.isNotNull()),
+      )
+      ..limit(1);
+    return await query.getSingleOrNull() != null;
   }
 
   Future<List<SyncRuleDownloadItem>> getSyncRuleDownloadLinks(int syncRuleId) {

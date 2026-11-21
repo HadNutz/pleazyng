@@ -581,7 +581,7 @@ class _Translations$settings$da extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Adgangskode';
 	@override String get cloudBackupSaved => 'Cloud backup destination gemt';
 	@override String get cloudBackupNow => 'Tilbage nu';
-	@override String get cloudBackupComplete => 'Settings backup uploadet';
+	@override String cloudBackupComplete({required Object action}) => 'Sikkerhedskopien er uploadet. Gem denne URL. Indtast den under sikkerhedskopiering i skyen efter en ny installation, og vælg »${action}«.';
 	@override String get cloudBackupRestore => 'Giv backup tilbage';
 	@override String get cloudBackupRestoreConfirm => 'Dette vil erstatte matching bærbare indstillinger på denne enhed.';
 	@override String get cloudBackupRestored => 'Indstillinger tilbagevendt fra cloud backup';
@@ -1422,7 +1422,7 @@ class _Translations$messages$da extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Opdaterer metadata for "${title}"...';
 	@override String metadataRefreshStarted({required Object title}) => 'Metadataopdatering startet for "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'Kunne ikke opdatere metadata: ${error}';
-	@override String get logoutConfirm => 'Er du sikker på, at du vil logge ud?';
+	@override String get logoutConfirm => 'Vil du logge ud af alle profiler på denne enhed?';
 	@override String get noSeasonsFound => 'Ingen sæsoner fundet';
 	@override String get seasonsLoadFailed => 'Kunne ikke indlæse sæsoner';
 	@override String get noEpisodesFound => 'Ingen episoder fundet i første sæson';
@@ -6040,7 +6040,7 @@ extension on TranslationsDa {
 			'settings.cloudBackupPassword' => 'Adgangskode',
 			'settings.cloudBackupSaved' => 'Cloud backup destination gemt',
 			'settings.cloudBackupNow' => 'Tilbage nu',
-			'settings.cloudBackupComplete' => 'Settings backup uploadet',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Sikkerhedskopien er uploadet. Gem denne URL. Indtast den under sikkerhedskopiering i skyen efter en ny installation, og vælg »${action}«.',
 			'settings.cloudBackupRestore' => 'Giv backup tilbage',
 			'settings.cloudBackupRestoreConfirm' => 'Dette vil erstatte matching bærbare indstillinger på denne enhed.',
 			'settings.cloudBackupRestored' => 'Indstillinger tilbagevendt fra cloud backup',
@@ -6820,7 +6820,7 @@ extension on TranslationsDa {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Opdaterer metadata for "${title}"...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Metadataopdatering startet for "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Kunne ikke opdatere metadata: ${error}',
-			'messages.logoutConfirm' => 'Er du sikker på, at du vil logge ud?',
+			'messages.logoutConfirm' => 'Vil du logge ud af alle profiler på denne enhed?',
 			'messages.noSeasonsFound' => 'Ingen sæsoner fundet',
 			'messages.seasonsLoadFailed' => 'Kunne ikke indlæse sæsoner',
 			'messages.noEpisodesFound' => 'Ingen episoder fundet i første sæson',

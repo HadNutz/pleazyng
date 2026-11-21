@@ -1,59 +1,103 @@
+import 'dart:math' as math;
+
+import '../../media/library_query.dart';
 import '../../media/media_item.dart';
 import '../../media/media_kind.dart';
 import '../../media/media_server_client.dart';
 import 'music_account_scope.dart';
 import 'music_queue_items.dart';
 
-/// Native/voice selection preserves the complete ordered playlist in a bounded
-/// metadata window. Duplicate occurrences remain distinct; a retired or invalid
-/// page fails before playback ownership changes.
+/// A single authorized playlist read. Pages can be fetched around a selected
+/// occurrence before the rest of the ordered playlist is materialized.
+class MusicPlaylistRead {
+  MusicPlaylistRead(this.client, this.id, {required this.current, this.acceptsItem, this.maxItems = 100000})
+    : _authentication = client.authenticationSessionId,
+      _account = musicAccountScope(client) {
+    if (maxItems < 1 || maxItems > 100000) throw ArgumentError('Invalid playlist bound');
+  }
+
+  final MediaServerClient client;
+  final String id;
+  final bool Function() current;
+  final bool Function(MediaItem)? acceptsItem;
+  final int maxItems;
+  final Object? _authentication;
+  final String? _account;
+  int? _count;
+  final _windows = <int, LibraryPage<MediaItem>>{};
+
+  void _check(bool Function() active) {
+    if (!active() ||
+        !current() ||
+        !identical(_authentication, client.authenticationSessionId) ||
+        _account != musicAccountScope(client)) {
+      throw StateError('Music playlist authorization changed');
+    }
+  }
+
+  Future<LibraryPage<MediaItem>> window(int offset, {required bool Function() active}) async {
+    final value = await _page(offset, active, 200);
+    _windows[offset] = value;
+    return value;
+  }
+
+  Future<LibraryPage<MediaItem>> _page(int offset, bool Function() active, int size) async {
+    _check(active);
+    final page = await client.fetchPlaylistPage(id, start: offset, size: size);
+    _check(active);
+    if (offset + page.items.length > maxItems || page.totalCount > maxItems) {
+      throw StateError('Music playlist exceeds native selection budget');
+    }
+    if (page.offset != offset ||
+        page.items.length > size ||
+        page.totalCount < offset + page.items.length ||
+        (page.items.isEmpty && page.totalCount > offset) ||
+        (_count != null && page.totalCount != _count)) {
+      throw const FormatException('Invalid native music playlist page');
+    }
+    if (page.items.any(
+      (item) =>
+          item.id.isEmpty ||
+          item.kind != MediaKind.track ||
+          item.backend != client.backend ||
+          item.serverId != client.serverId.value ||
+          acceptsItem?.call(item) == false,
+    )) {
+      throw StateError('Native music playlist contains an unauthorized track');
+    }
+    _count = page.totalCount;
+    return page;
+  }
+
+  Future<List<MediaItem>> all({required bool Function() active}) async {
+    final tracks = MusicQueueItems(spill: true);
+    try {
+      var offset = 0;
+      do {
+        _check(active);
+        LibraryPage<MediaItem>? existing;
+        var size = 200;
+        for (final page in _windows.values) {
+          if (page.offset == offset) existing = page;
+          if (page.offset > offset) size = math.min(size, page.offset - offset);
+        }
+        final next = existing ?? await _page(offset, active, size);
+        _check(active);
+        tracks.addAll(next.items);
+        offset += next.items.length;
+      } while (offset < _count!);
+      return tracks.snapshot();
+    } finally {
+      tracks.clear();
+    }
+  }
+}
+
 Future<List<MediaItem>> loadMusicPlaylist(
   MediaServerClient client,
   String id, {
   required bool Function() current,
   bool Function(MediaItem)? acceptsItem,
   int maxItems = 100000,
-}) async {
-  if (maxItems < 1 || maxItems > 100000) throw ArgumentError('Invalid playlist bound');
-  final authentication = client.authenticationSessionId, account = musicAccountScope(client);
-  void check() {
-    if (!current() ||
-        !identical(authentication, client.authenticationSessionId) ||
-        account != musicAccountScope(client)) {
-      throw StateError('Music playlist authorization changed');
-    }
-  }
-
-  final tracks = MusicQueueItems(spill: true);
-  var offset = 0;
-  try {
-    while (true) {
-      check();
-      final page = await client.fetchPlaylistPage(id, start: offset, size: 200);
-      check();
-      if (offset + page.items.length > maxItems || page.totalCount > maxItems) {
-        throw StateError('Music playlist exceeds native selection budget');
-      }
-      if (page.offset != offset ||
-          page.items.length > 200 ||
-          page.totalCount < offset + page.items.length ||
-          page.items.isEmpty && page.totalCount > offset) {
-        throw const FormatException('Invalid native music playlist page');
-      }
-      if (page.items.any(
-        (item) =>
-            item.kind != MediaKind.track ||
-            item.backend != client.backend ||
-            item.serverId != client.serverId.value ||
-            acceptsItem?.call(item) == false,
-      )) {
-        throw StateError('Native music playlist contains an unauthorized track');
-      }
-      tracks.addAll(page.items);
-      offset += page.items.length;
-      if (page.items.isEmpty || offset >= page.totalCount) return tracks.snapshot();
-    }
-  } finally {
-    tracks.clear();
-  }
-}
+}) =>
+    MusicPlaylistRead(client, id, current: current, acceptsItem: acceptsItem, maxItems: maxItems).all(active: current);

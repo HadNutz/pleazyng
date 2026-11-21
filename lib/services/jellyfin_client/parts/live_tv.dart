@@ -254,6 +254,7 @@ class _JellyfinLiveTvSupport implements LiveTvSupport {
             // 100 Mbps negotiation ceiling: it stays above the server's 40 Mbps
             // unknown-live estimate without inheriting that implicit 8 Mbps cap.
             maxStreamingBitrate: quality.isOriginal ? 100_000_000 : (quality.videoBitrateKbps ?? 100_000) * 1000,
+            videoQuality: quality,
             autoOpenLiveStream: true,
             enableDirectPlay: wantsDirect,
             enableDirectStream: wantsDirect,
@@ -312,7 +313,14 @@ class _JellyfinLiveTvSupport implements LiveTvSupport {
       );
     }
 
-    if (wantsDirect && container != null && source['SupportsDirectPlay'] == true) {
+    final criteria = quality.isOriginal ? null : jellyfinMediaSourceToMediaSourceInfo(source).displayCriteria;
+    final directFits =
+        wantsDirect &&
+        !quality.exceedsDimensions(
+          criteria?.width ?? flexibleInt(source['Width']),
+          criteria?.height ?? flexibleInt(source['Height']),
+        );
+    if (directFits && container != null && source['SupportsDirectPlay'] == true) {
       return directResolution(container, 'DirectPlay');
     }
 
@@ -332,7 +340,7 @@ class _JellyfinLiveTvSupport implements LiveTvSupport {
       );
     }
 
-    if (wantsDirect && container != null && source['SupportsDirectStream'] == true) {
+    if (directFits && container != null && source['SupportsDirectStream'] == true) {
       return directResolution(container, 'DirectStream');
     }
 
@@ -465,7 +473,7 @@ class _JellyfinLiveTvSupport implements LiveTvSupport {
 /// play, direct stream, or HLS transcode — plus `/Sessions/Playing*`
 /// heartbeats via [JellyfinLiveSessionTracker]. No program-scoped session and
 /// no time-shift.
-class _JellyfinLiveTvPlaybackSession implements LiveTvPlaybackSession {
+class _JellyfinLiveTvPlaybackSession implements MediaBrowserLiveTvPlaybackSession {
   final JellyfinClient _client;
   final String _channelKey;
   final TranscodeQualityPreset _quality;

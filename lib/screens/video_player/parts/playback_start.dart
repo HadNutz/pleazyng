@@ -110,7 +110,7 @@ extension _VideoPlayerPlaybackStartMethods on VideoPlayerScreenState {
           currentPlayer,
           streamUrl,
           targetEpoch: targetEpoch,
-          iptvSession: session is IptvLiveTvPlaybackSession ? session : null,
+          openingSession: session,
           enableLocalTimeShift: session is IptvLiveTvPlaybackSession ? session.localTimeShiftEnabled : false,
           play: !holdPlaybackStart && !PlatformDetector.isAutomotive(),
           isCurrent: () => attempt.isCurrent && identical(_live.session, session),
@@ -224,6 +224,12 @@ extension _VideoPlayerPlaybackStartMethods on VideoPlayerScreenState {
             transcodeSessionId: _playbackTranscodeSessionId,
             startPosition: startPosition,
             requestCompatibleDolbyVisionRendition: true,
+            webosDolbyVision: !SettingsService.instance.read(SettingsService.disableDolbyVision)
+                ? VideoDecodeCapabilities.webosNativeDolbyVision(currentPlayer.playerType)
+                : false,
+            webosHdr10:
+                !SettingsService.instance.read(SettingsService.disableDolbyVision) &&
+                VideoDecodeCapabilities.webosNativeHdr10(currentPlayer.playerType),
             supportedNativeDolbyVisionProfiles: VideoDecodeCapabilities.supportedNativeDolbyVisionProfiles,
             allowExperimentalDolbyVisionProfile7:
                 (currentPlayer.playerType == 'mpv') &&
@@ -424,6 +430,22 @@ extension _VideoPlayerPlaybackStartMethods on VideoPlayerScreenState {
       if (attempt.isCurrent && mounted) _reportStartFailure(e.message, primaryMediaOpened: primaryMediaOpened);
     } catch (e, st) {
       if (e is PlatformException && const {'system-video-open', 'tizen-playback'}.contains(e.code)) rethrow;
+      // LG may report a format rejection both on its stream and by failing
+      // initialize(). Let the bounded compatibility retry own the open.
+      if (attempt.isCurrent &&
+          currentPlayer.playerType == 'webos' &&
+          e is PlatformException &&
+          const {PlayerError.videoCodecUnsupported, PlayerError.audioCodecUnsupported}.contains(e.code)) {
+        if (_audioCompatibilityFallbackInFlight ||
+            _videoCompatibilityFallbackInFlight ||
+            _dolbyVisionCompatibilityFallbackInFlight) {
+          return;
+        }
+        final failure = PlayerError(e.message ?? t.messages.playbackFailed, cause: e.code);
+        if (_tryAutomaticAudioCompatibilityFallback(failure) || _tryAutomaticVideoCompatibilityFallback(failure)) {
+          return;
+        }
+      }
       if (attempt.isCurrent) widget.launchObserver?.mark('failed', failure: 'playbackFailed');
       appLogger.e('Failed to start playback', error: e, stackTrace: st);
       if (attempt.isCurrent && mounted) {

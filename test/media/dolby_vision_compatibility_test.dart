@@ -65,6 +65,25 @@ void main() {
     expect(shouldRequestCompatibleDolbyVisionRendition(requested: true, source: null), isFalse);
   });
 
+  test('LG negotiates validated native DV containers and compatible HDR10 base layers', () {
+    bool convert(int profile, String container, {bool? dv, bool hdr10 = false, int? compatibility}) =>
+        shouldRequestCompatibleDolbyVisionRendition(
+          requested: true,
+          source: MediaDisplayCriteria(doviProfile: profile, doviCompatibilityId: compatibility),
+          webosDolbyVision: dv,
+          webosHdr10: hdr10,
+          container: container,
+        );
+    expect(convert(5, 'mp4', dv: true), isFalse);
+    expect(convert(8, 'mpegts', dv: true), isFalse);
+    expect(convert(5, 'mkv', dv: true), isTrue);
+    expect(convert(5, 'mp4'), isTrue);
+    expect(convert(5, 'mp4', dv: false, hdr10: true), isTrue);
+    expect(convert(7, 'mkv', hdr10: true, compatibility: 6), isFalse);
+    expect(convert(8, 'mkv', hdr10: true, compatibility: 1), isFalse);
+    expect(convert(8, 'mkv', hdr10: true, compatibility: 4), isTrue);
+  });
+
   test('server SDR routes are profile- and backend-specific', () {
     const profile5 = MediaDisplayCriteria(doviProfile: 5, doviBaseLayerPresent: false);
     const profile7Hdr10 = MediaDisplayCriteria(doviProfile: 7, doviCompatibilityId: 6, doviBaseLayerPresent: true);

@@ -579,7 +579,7 @@ class _Translations$settings$ko extends Translations$settings$en {
 	@override String get cloudBackupPassword => '비밀번호';
 	@override String get cloudBackupSaved => '구름 백업 목적지 저장';
 	@override String get cloudBackupNow => '지금 다시 올라';
-	@override String get cloudBackupComplete => '설정 백업 업로드';
+	@override String cloudBackupComplete({required Object action}) => '백업을 업로드했습니다. 이 URL을 보관하세요. 앱을 새로 설치한 후 클라우드 백업에 이 URL을 입력하고 ‘${action}’을 선택하세요.';
 	@override String get cloudBackupRestore => 'Backup 복구';
 	@override String get cloudBackupRestoreConfirm => '이 장치에서 해당 휴대용 설정을 대체합니다.';
 	@override String get cloudBackupRestored => 'Cloud Backup에서 복구된 설정';
@@ -1420,7 +1420,7 @@ class _Translations$messages$ko extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => '"${title}" 메타데이터 새로고침 중...';
 	@override String metadataRefreshStarted({required Object title}) => '"${title}" 메타데이터 새로고침 시작됨';
 	@override String metadataRefreshFailed({required Object error}) => '메타데이터 새로고침 실패: ${error}';
-	@override String get logoutConfirm => '로그아웃하시겠습니까?';
+	@override String get logoutConfirm => '이 기기의 모든 프로필에서 로그아웃할까요?';
 	@override String get noSeasonsFound => '시즌을 찾을 수 없음';
 	@override String get seasonsLoadFailed => '시즌을 불러오지 못했습니다';
 	@override String get noEpisodesFound => '시즌 1에서 에피소드를 찾을 수 없습니다';
@@ -6035,7 +6035,7 @@ extension on TranslationsKo {
 			'settings.cloudBackupPassword' => '비밀번호',
 			'settings.cloudBackupSaved' => '구름 백업 목적지 저장',
 			'settings.cloudBackupNow' => '지금 다시 올라',
-			'settings.cloudBackupComplete' => '설정 백업 업로드',
+			'settings.cloudBackupComplete' => ({required Object action}) => '백업을 업로드했습니다. 이 URL을 보관하세요. 앱을 새로 설치한 후 클라우드 백업에 이 URL을 입력하고 ‘${action}’을 선택하세요.',
 			'settings.cloudBackupRestore' => 'Backup 복구',
 			'settings.cloudBackupRestoreConfirm' => '이 장치에서 해당 휴대용 설정을 대체합니다.',
 			'settings.cloudBackupRestored' => 'Cloud Backup에서 복구된 설정',
@@ -6815,7 +6815,7 @@ extension on TranslationsKo {
 			'messages.metadataRefreshing' => ({required Object title}) => '"${title}" 메타데이터 새로고침 중...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => '"${title}" 메타데이터 새로고침 시작됨',
 			'messages.metadataRefreshFailed' => ({required Object error}) => '메타데이터 새로고침 실패: ${error}',
-			'messages.logoutConfirm' => '로그아웃하시겠습니까?',
+			'messages.logoutConfirm' => '이 기기의 모든 프로필에서 로그아웃할까요?',
 			'messages.noSeasonsFound' => '시즌을 찾을 수 없음',
 			'messages.seasonsLoadFailed' => '시즌을 불러오지 못했습니다',
 			'messages.noEpisodesFound' => '시즌 1에서 에피소드를 찾을 수 없습니다',

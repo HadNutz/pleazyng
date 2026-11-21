@@ -579,7 +579,7 @@ class _Translations$settings$ms extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'kata laluan';
 	@override String get cloudBackupSaved => 'Cloud backup destinasi disimpan';
 	@override String get cloudBackupNow => 'Kembali ke sekarang';
-	@override String get cloudBackupComplete => 'Setup backup diunggah';
+	@override String cloudBackupComplete({required Object action}) => 'Sandaran telah dimuat naik. Simpan URL ini. Selepas pemasangan baharu, masukkan URL ini dalam bahagian sandaran awan dan pilih “${action}”.';
 	@override String get cloudBackupRestore => 'Memulihkan Backup';
 	@override String get cloudBackupRestoreConfirm => 'Ini akan menggantikan tetapan mudah alih yang sepadan pada peranti ini.';
 	@override String get cloudBackupRestored => 'Seting yang dipulihkan daripada Cloud Backup';
@@ -1415,7 +1415,7 @@ class _Translations$messages$ms extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Mengemaskini metadata untuk "${title}" ...';
 	@override String metadataRefreshStarted({required Object title}) => 'Metadata pembaharuan bermula untuk "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'Tidak dapat memperbaharui metadata: ${error}';
-	@override String get logoutConfirm => 'Adakah anda pasti anda mahu log keluar?';
+	@override String get logoutConfirm => 'Log keluar daripada semua profil pada peranti ini?';
 	@override String get noSeasonsFound => 'Tiada musim yang ditemui';
 	@override String get seasonsLoadFailed => 'Tidak boleh mengisi musim';
 	@override String get noEpisodesFound => 'Tiada episod yang ditemui pada musim pertama';
@@ -2355,15 +2355,15 @@ class _Translations$downloads$ms extends Translations$downloads$en {
 	@override String get noDownloads => 'Tiada muat turun';
 	@override String get noDownloadsDescription => 'Kandungan yang dimuat turun akan muncul di sini untuk pandangan offline';
 	@override String get downloadNow => 'Muat turun';
-	@override String get deleteDownload => 'Menghapus download';
-	@override String get retryDownload => 'Kembali ke download';
+	@override String get deleteDownload => 'Padam muat turun';
+	@override String get retryDownload => 'Cuba muat turun semula';
 	@override String get downloadQueued => 'Download yang dikemukakan';
 	@override String get downloadResumed => 'muat turun semula';
 	@override String get serverErrorBitrate => 'Kesilapan pelayan: fail boleh melebihi had bitrate jauh';
 	@override String get storageFull => 'Muat turun berhenti untuk melindungi penyimpanan yang tersedia.Bebaskan beberapa ruang atau pilih lokasi muat turun lain, kemudian keluar.';
 	@override String get storageUnavailable => 'Muat turun berhenti kerana penyimpanan yang tersedia tidak boleh disemak. semak lokasi muat turun, kemudian keluar.';
 	@override String episodesQueued({required Object count}) => '${count} episod yang dikeluarkan untuk muat turun';
-	@override String get downloadDeleted => 'Download dihapuskan';
+	@override String get downloadDeleted => 'Muat turun telah dipadamkan';
 	@override String deleteConfirm({required Object title}) => 'Menghapus "${title}" daripada peranti ini?';
 	@override String get deleteCollectionDownloads => 'Menghapuskan Downloads';
 	@override String deleteCollectionDownloadsConfirm({required Object title}) => 'Padam semua muat turun dalam “${title}” daripada peranti ini?';
@@ -6015,7 +6015,7 @@ extension on TranslationsMs {
 			'settings.cloudBackupPassword' => 'kata laluan',
 			'settings.cloudBackupSaved' => 'Cloud backup destinasi disimpan',
 			'settings.cloudBackupNow' => 'Kembali ke sekarang',
-			'settings.cloudBackupComplete' => 'Setup backup diunggah',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Sandaran telah dimuat naik. Simpan URL ini. Selepas pemasangan baharu, masukkan URL ini dalam bahagian sandaran awan dan pilih “${action}”.',
 			'settings.cloudBackupRestore' => 'Memulihkan Backup',
 			'settings.cloudBackupRestoreConfirm' => 'Ini akan menggantikan tetapan mudah alih yang sepadan pada peranti ini.',
 			'settings.cloudBackupRestored' => 'Seting yang dipulihkan daripada Cloud Backup',
@@ -6795,7 +6795,7 @@ extension on TranslationsMs {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Mengemaskini metadata untuk "${title}" ...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Metadata pembaharuan bermula untuk "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Tidak dapat memperbaharui metadata: ${error}',
-			'messages.logoutConfirm' => 'Adakah anda pasti anda mahu log keluar?',
+			'messages.logoutConfirm' => 'Log keluar daripada semua profil pada peranti ini?',
 			'messages.noSeasonsFound' => 'Tiada musim yang ditemui',
 			'messages.seasonsLoadFailed' => 'Tidak boleh mengisi musim',
 			'messages.noEpisodesFound' => 'Tiada episod yang ditemui pada musim pertama',
@@ -7873,15 +7873,15 @@ extension on TranslationsMs {
 			'downloads.noDownloads' => 'Tiada muat turun',
 			'downloads.noDownloadsDescription' => 'Kandungan yang dimuat turun akan muncul di sini untuk pandangan offline',
 			'downloads.downloadNow' => 'Muat turun',
-			'downloads.deleteDownload' => 'Menghapus download',
-			'downloads.retryDownload' => 'Kembali ke download',
+			'downloads.deleteDownload' => 'Padam muat turun',
+			'downloads.retryDownload' => 'Cuba muat turun semula',
 			'downloads.downloadQueued' => 'Download yang dikemukakan',
 			'downloads.downloadResumed' => 'muat turun semula',
 			'downloads.serverErrorBitrate' => 'Kesilapan pelayan: fail boleh melebihi had bitrate jauh',
 			'downloads.storageFull' => 'Muat turun berhenti untuk melindungi penyimpanan yang tersedia.Bebaskan beberapa ruang atau pilih lokasi muat turun lain, kemudian keluar.',
 			'downloads.storageUnavailable' => 'Muat turun berhenti kerana penyimpanan yang tersedia tidak boleh disemak. semak lokasi muat turun, kemudian keluar.',
 			'downloads.episodesQueued' => ({required Object count}) => '${count} episod yang dikeluarkan untuk muat turun',
-			'downloads.downloadDeleted' => 'Download dihapuskan',
+			'downloads.downloadDeleted' => 'Muat turun telah dipadamkan',
 			'downloads.deleteConfirm' => ({required Object title}) => 'Menghapus "${title}" daripada peranti ini?',
 			'downloads.deleteCollectionDownloads' => 'Menghapuskan Downloads',
 			'downloads.deleteCollectionDownloadsConfirm' => ({required Object title}) => 'Padam semua muat turun dalam “${title}” daripada peranti ini?',

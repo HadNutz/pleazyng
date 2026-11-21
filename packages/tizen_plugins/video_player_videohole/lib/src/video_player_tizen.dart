@@ -470,6 +470,14 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> setSourceCrop(int playerId, Rect crop) async {
+    final result = _ffiApi.setSourceCrop(playerId, crop.left, crop.top, crop.width, crop.height);
+    if (result != 0) {
+      throw PlatformException(code: 'FFI_SET_SOURCE_CROP_FAILED', message: 'Tizen rejected the source crop ($result)');
+    }
+  }
+
+  @override
   Future<void> setDisplayGeometry(
     int playerId,
     int x,

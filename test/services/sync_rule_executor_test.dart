@@ -13,10 +13,13 @@ import 'package:plezy/media/media_kind.dart';
 import 'package:plezy/media/media_server_client.dart';
 import 'package:plezy/media/server_capabilities.dart';
 import 'package:plezy/models/download_models.dart';
+import 'package:plezy/models/transcode_quality_preset.dart';
 import 'package:plezy/services/jellyfin_api_cache.dart';
 import 'package:plezy/services/jellyfin_client.dart';
 import 'package:plezy/services/multi_server_manager.dart';
 import 'package:plezy/services/sync_rule_executor.dart';
+import 'package:plezy/services/music/music_library_store.dart';
+import 'package:plezy/services/music/music_account_scope.dart';
 
 import '../test_helpers/backend_client_fixtures.dart';
 import '../test_helpers/prefs.dart';
@@ -404,6 +407,70 @@ void main() {
     expect((await db.getSyncRule(ruleKey))!.downloadLinksInitialized, isTrue);
   });
 
+  test('offline playlist follows full ordered membership including duplicates and refuses incomplete pages', () async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    final manager = MultiServerManager();
+    addTearDown(() async {
+      manager.dispose();
+      await db.close();
+    });
+    final client = _PlaylistPagingClient();
+    manager.debugRegisterClientForTesting(client);
+    const ruleKey = 'profile-a|jf-machine:playlist-1';
+    final store = MusicLibraryStore(db, 'profile-a');
+    final account = musicAccountScope(client);
+    final playlist = testMediaItem(
+      id: 'playlist-1',
+      kind: MediaKind.playlist,
+      backend: client.backend,
+      serverId: client.serverId,
+    );
+    final library = [
+      for (final id in ['a', 'b', 'c'])
+        testMediaItem(id: id, kind: MediaKind.track, backend: client.backend, serverId: client.serverId),
+    ];
+    await db.insertSyncRule(
+      profileId: 'profile-a',
+      serverId: client.serverId,
+      ratingKey: playlist.id,
+      globalKey: ruleKey,
+      targetType: 'playlist',
+      episodeCount: 0,
+      downloadFilter: 'all',
+    );
+    await store.saveOfflinePlaylist(playlist, library.take(2).toList(), account);
+    final executor = SyncRuleExecutor(database: db);
+    Future<List<SyncRuleResult>> sync() => executor.executeSyncRules(
+      profileId: 'profile-a',
+      serverManager: manager,
+      downloads: {
+        for (final track in library)
+          track.globalKey: DownloadProgress(globalKey: track.globalKey, status: DownloadStatus.completed),
+      },
+      metadata: {ruleKey: playlist},
+      associateDownload: (_, _) async {},
+      queueSingleDownload: (_, _, {int mediaIndex = 0, Object? downloadQuality}) async => true,
+      deleteSyncRuleDownload: (_) async {},
+      isOffline: false,
+      force: true,
+    );
+    client.items = [library[2], library[1], library[2]];
+    await sync();
+    Future<List<String>> offline() async =>
+        (await store.ownedPlaylistTracks(playlist, library, account)).map((e) => e.id).toList();
+    expect(await offline(), ['c', 'b', 'c']);
+    final revision = (await store.document('offlinePlaylist', playlist.globalKey))!['revision'];
+    await sync();
+    expect((await store.document('offlinePlaylist', playlist.globalKey))!['revision'], revision);
+    client.items = [];
+    client.totalCount = 10;
+    expect((await sync()).single.failed, isTrue);
+    expect(await offline(), ['c', 'b', 'c']);
+    client.totalCount = 0;
+    await sync();
+    expect(await offline(), isEmpty);
+  });
+
   test('collection sync rule pages through collection API instead of metadata children', () async {
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     final manager = MultiServerManager();
@@ -432,6 +499,7 @@ void main() {
       targetType: 'collection',
       episodeCount: 0,
       downloadFilter: SyncRuleFilter.all,
+      downloadQuality: TranscodeQualityPreset.p1080_20mbps.name,
     );
 
     final queued = <MediaItem>[];
@@ -444,6 +512,7 @@ void main() {
       metadata: {ruleKey: collection},
       associateDownload: (_, globalKey) async => associated.add(globalKey),
       queueSingleDownload: (item, client, {int mediaIndex = 0, Object? downloadQuality}) async {
+        expect(downloadQuality, TranscodeQualityPreset.p1080_20mbps);
         queued.add(item);
         return true;
       },
@@ -705,6 +774,12 @@ class _PlayableDescendantsClient implements MediaServerClient {
 }
 
 class _PlaylistPagingClient implements MediaServerClient {
+  @override
+  final Object authenticationSessionId = Object();
+  int? totalCount;
+  List<MediaItem> items = [
+    testMediaItem(id: 'episode-1', backend: MediaBackend.jellyfin, kind: MediaKind.episode, title: 'Episode'),
+  ];
   final playlistPageCalls = <({int? start, int? size})>[];
 
   @override
@@ -732,13 +807,7 @@ class _PlaylistPagingClient implements MediaServerClient {
   Future<LibraryPage<MediaItem>> fetchPlaylistPage(String id, {int? start, int? size, abort}) async {
     playlistPageCalls.add((start: start, size: size));
     expect(id, 'playlist-1');
-    return LibraryPage(
-      items: [
-        testMediaItem(id: 'episode-1', backend: MediaBackend.jellyfin, kind: MediaKind.episode, title: 'Episode'),
-      ],
-      totalCount: 1,
-      offset: start ?? 0,
-    );
+    return LibraryPage(items: items, totalCount: totalCount ?? items.length, offset: start ?? 0);
   }
 
   @override

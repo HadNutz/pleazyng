@@ -8,8 +8,10 @@ import 'package:plezy/connection/connection.dart';
 import 'package:plezy/database/app_database.dart';
 import 'package:plezy/exceptions/media_server_exceptions.dart';
 import 'package:plezy/media/media_backend.dart';
+import 'package:plezy/media/ids.dart';
 import 'package:plezy/media/media_item.dart';
 import 'package:plezy/media/media_kind.dart';
+import 'package:plezy/media/media_server_client.dart';
 import 'package:plezy/utils/app_logger.dart';
 import 'package:plezy/services/jellyfin_api_cache.dart';
 import 'package:plezy/services/jellyfin_client.dart';
@@ -119,6 +121,19 @@ void main() {
       expect(await client.fetchItem('any'), isNull);
       client.close();
     });
+  });
+
+  test('an offline metadata cache hit cannot authorize a retained download', () async {
+    final client = _withMock(MockClient((_) async => throw StateError('offline')));
+    addTearDown(client.close);
+    await JellyfinApiCache.instance.put(ServerId(client.cacheServerId), '/Users/${_conn().userId}/Items/private', {
+      'Id': 'private',
+      'Name': 'Cached movie',
+      'Type': 'Movie',
+    });
+    client.setOfflineMode(true);
+    expect((await client.fetchItem('private'))?.id, 'private');
+    expect(await client.fetchAuthorizedDownloadItem('private'), isNull);
   });
 
   group('JellyfinClient.fetchChildren failure modes', () {

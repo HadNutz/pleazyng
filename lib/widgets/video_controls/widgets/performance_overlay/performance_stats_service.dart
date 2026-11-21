@@ -498,7 +498,9 @@ class PerformanceStatsService {
         Platform.isLinux ? player.getProperty('plezyng-dv-renderer') : Future.value(null), // 14
         player.getProperty('video-sync'), // 15
         player.getProperty('interpolation'), // 16
-        (Platform.isIOS || Platform.isMacOS) ? player.getProperty('video-out-interpolation') : Future.value(null), // 17
+        (Platform.isIOS || Platform.isMacOS || player.playerType == 'tvmpv')
+            ? player.getProperty('video-out-interpolation')
+            : Future.value(null), // 17
         hasPmeMetadata ? _optionalPlayerProperty('vf-metadata/plezy-pme/provider') : Future.value(null), // 18
         hasPmeMetadata ? _optionalPlayerProperty('vf-metadata/plezy-pme/active') : Future.value(null), // 19
         hasPmeMetadata ? _optionalPlayerProperty('vf-metadata/plezy-pme/inference-p95-ms') : Future.value(null), // 20
@@ -549,7 +551,12 @@ class PerformanceStatsService {
       demuxChannelCount: results[20],
     );
 
-    final nativeInterpolationStatus = videoResults?[17];
+    final appleGpuOutput = MotionProcessingService.appleGpuOutputObserved(
+      player,
+      _parseDouble(results[3]),
+      _parseDouble(results[4]),
+    );
+    final nativeInterpolationStatus = appleGpuOutput ? 'libplacebo GPU' : videoResults?[17];
     final metadataProvider = videoResults?[18];
     final metadataProviderVendor = videoResults?[25];
     final metadataDeviceKind = videoResults?[26];
@@ -611,7 +618,7 @@ class PerformanceStatsService {
       renderedFps: _parseDouble(results[4]),
       droppedFrames: _parseInt(results[15]),
       decoderDroppedFrames: _parseInt(results[16]),
-      rendererInterpolationActive: _parseBool(videoResults?[16]),
+      rendererInterpolationActive: appleGpuOutput ? true : _parseBool(videoResults?[16]),
       nativeInterpolationStatus: nativeInterpolationStatus,
       thermalStatus: playbackPlayerType == 'mpv' && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
           ? MotionProcessingService.thermalStatusForPlayer(player)
@@ -668,8 +675,8 @@ class PerformanceStatsService {
       displayFps: _parseDouble(videoResults?.first),
       currentVideoOutput: reportedVideoOutput,
       videoSync: videoResults?[15],
-      motionInterpolationActive: _parseBool(videoResults?[16]),
-      motionProviderStatus: videoResults?[17],
+      motionInterpolationActive: appleGpuOutput ? true : _parseBool(videoResults?[16]),
+      motionProviderStatus: nativeInterpolationStatus,
       neuralProvider: neuralProvider,
       neuralProviderVendor: metadataProviderVendor,
       neuralInferenceP95Ms: _parseDouble(videoResults?[20]),
@@ -678,7 +685,7 @@ class PerformanceStatsService {
       neuralDeadlineMisses: _parseInt(videoResults?[23]),
       motionProcessingResolution: _resolveMotionProcessing(
         currentVideoOutput: reportedVideoOutput,
-        nativeInterpolationStatus: videoResults?[17],
+        nativeInterpolationStatus: nativeInterpolationStatus,
         neuralProviderStatus: neuralProvider,
         capabilityReport: capabilityReport,
       ),
@@ -799,7 +806,8 @@ class PerformanceStatsService {
   bool _isNeuralProviderReady(String? provider, {required bool outputObserved}) {
     final normalized = provider?.trim().toLowerCase();
     if (normalized == null || normalized.isEmpty) return false;
-    if (MotionProcessingService.isCpuOnlyNeuralProviderStatus(normalized)) return false;
+    if (MotionProcessingService.isNeuralBypassStatus(normalized)) return false;
+    if (MotionProcessingService.isCpuOnlyNeuralProviderStatus(normalized)) return outputObserved;
     if (const {'ready', 'active'}.contains(normalized) || normalized.endsWith('-ready')) return true;
     if (RegExp(r'^qnn-htp-v\d+(-ready)?$').hasMatch(normalized)) {
       // ANVIL reports `qnn-htp-vN-ready` after asynchronous context setup and

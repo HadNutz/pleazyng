@@ -643,6 +643,12 @@ extension _VideoPlayerReloadMethods on VideoPlayerScreenState {
               transcodeSessionId: _playbackTranscodeSessionId,
               startPosition: openResumePosition,
               requestCompatibleDolbyVisionRendition: true,
+              webosDolbyVision: !SettingsService.instance.read(SettingsService.disableDolbyVision)
+                  ? VideoDecodeCapabilities.webosNativeDolbyVision(currentPlayer.playerType)
+                  : false,
+              webosHdr10:
+                  !SettingsService.instance.read(SettingsService.disableDolbyVision) &&
+                  VideoDecodeCapabilities.webosNativeHdr10(currentPlayer.playerType),
               supportedNativeDolbyVisionProfiles: forceServerPlayback && !targetForceAudioConversion
                   ? const {}
                   : VideoDecodeCapabilities.supportedNativeDolbyVisionProfiles,

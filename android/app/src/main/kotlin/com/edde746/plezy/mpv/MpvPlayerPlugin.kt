@@ -707,10 +707,9 @@ open class MpvPlayerPlugin(
 
     try {
       val capabilities = getAndroidMotionRuntimeCapabilities(context)
-      val gpuAvailable = capabilities["litertGpuAvailable"] == true
       val npuProviders = capabilities["litertNpuProviders"] as? List<*> ?: emptyList<Any>()
-      if (!gpuAvailable && npuProviders.isEmpty()) {
-        result.error("MOTION_RUNTIME_UNAVAILABLE", "No LiteRT hardware provider is packaged", capabilities)
+      if (capabilities["litertAvailable"] != true) {
+        result.error("MOTION_RUNTIME_UNAVAILABLE", "LiteRT is unavailable for this ABI", capabilities)
         return
       }
 
@@ -776,7 +775,8 @@ open class MpvPlayerPlugin(
       } else {
         null
       }
-      val gpuRecord = if (gpuAvailable) providers.optJSONObject("gpu") else null
+      // The float model also runs on the explicit CPU fallback.
+      val gpuRecord = providers.optJSONObject("gpu")
       val gpuModel = if (gpuRecord != null) {
         installLiteRtModelAsset(context, gpuRecord, directory)
       } else {
@@ -788,7 +788,7 @@ open class MpvPlayerPlugin(
         }
         if (gpuRecord != null && gpuModel == null) gpuRecord.optString("file").takeIf(String::isNotBlank)?.let(::add)
       }
-      if (pendingModelFiles.isNotEmpty()) {
+      if (pendingModelFiles.isNotEmpty() && npuModel == null && gpuModel == null) {
         result.success(
           mapOf(
             "modelId" to modelId,

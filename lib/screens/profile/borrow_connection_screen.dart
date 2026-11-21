@@ -368,7 +368,7 @@ class _BorrowConnectionScreenState extends State<BorrowConnectionScreen> {
       ProfileConnection(
         profileId: widget.targetProfile.id,
         connectionId: direct.id,
-        userToken: cand.pc.hasToken ? cand.pc.userToken : direct.accessToken,
+        userToken: cand.pc.userToken ?? '',
         userIdentifier: cand.pc.userIdentifier.isNotEmpty ? cand.pc.userIdentifier : direct.serverMachineId,
         tokenAcquiredAt: DateTime.now(),
       ),

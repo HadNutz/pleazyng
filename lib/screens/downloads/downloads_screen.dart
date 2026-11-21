@@ -421,6 +421,7 @@ class DownloadsScreenState extends State<DownloadsScreen>
                               downloads: downloadProvider.downloads,
                               metadata: downloadProvider.metadata,
                               downloadSizes: downloadProvider.downloadSizes,
+                              onMissingMetadata: downloadProvider.prioritizeDownloadMetadata,
                               onPause: downloadProvider.pauseDownload,
                               onResume: (globalKey) {
                                 final client = _clientForDownload(globalKey);

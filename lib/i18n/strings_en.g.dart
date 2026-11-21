@@ -1340,8 +1340,8 @@ class Translations$settings$en {
 	/// en: 'Back Up Now'
 	String get cloudBackupNow => 'Back Up Now';
 
-	/// en: 'Settings backup uploaded'
-	String get cloudBackupComplete => 'Settings backup uploaded';
+	/// en: 'Backup uploaded. Save this URL. On a new installation, enter it in Cloud Backup and choose “${action}”.'
+	String cloudBackupComplete({required Object action}) => 'Backup uploaded. Save this URL. On a new installation, enter it in Cloud Backup and choose “${action}”.';
 
 	/// en: 'Restore Backup'
 	String get cloudBackupRestore => 'Restore Backup';
@@ -1679,11 +1679,11 @@ class Translations$settings$en {
 	/// en: 'Motion smoothing'
 	String get motionSmoothing => 'Motion smoothing';
 
-	/// en: 'Display-synchronized frame resampling on supported MPV GPU outputs; fast motion can look soft or show artifacts.'
-	String get motionSmoothingDescription => 'Display-synchronized frame resampling on supported MPV GPU outputs; fast motion can look soft or show artifacts.';
+	/// en: 'Smooth motion on compatible video. Fast movement can look soft or show artifacts.'
+	String get motionSmoothingDescription => 'Smooth motion on compatible video. Fast movement can look soft or show artifacts.';
 
-	/// en: 'If this player has no display-synchronized GPU renderer, MPV smoothing is skipped and playback continues normally.'
-	String get motionSmoothingUnavailableDescription => 'If this player has no display-synchronized GPU renderer, MPV smoothing is skipped and playback continues normally.';
+	/// en: 'Motion smoothing is unavailable on this playback path.'
+	String get motionSmoothingUnavailableDescription => 'Motion smoothing is unavailable on this playback path.';
 
 	/// en: 'The player could not apply motion smoothing. Playback will continue unchanged.'
 	String get motionSmoothingApplyFailed => 'The player could not apply motion smoothing. Playback will continue unchanged.';
@@ -1706,8 +1706,8 @@ class Translations$settings$en {
 	/// en: 'MPV'
 	String get motionSmoothingMpv => 'MPV';
 
-	/// en: 'Use MPV’s display-synchronized temporal interpolation. On Android, eligible SDR 24/30 fps video uses the GPU renderer while keeping the decoder setting. This does not generate motion with a neural model.'
-	String get motionSmoothingMpvDescription => 'Use MPV’s display-synchronized temporal interpolation. On Android, eligible SDR 24/30 fps video uses the GPU renderer while keeping the decoder setting. This does not generate motion with a neural model.';
+	/// en: 'Use temporal interpolation on compatible MPV outputs. On LG and Samsung TVs, the MPV player blends progressive SDR 24/30 fps video up to 1080p using a compatible OpenCL device, with a software fallback.'
+	String get motionSmoothingMpvDescription => 'Use temporal interpolation on compatible MPV outputs. On LG and Samsung TVs, the MPV player blends progressive SDR 24/30 fps video up to 1080p using a compatible OpenCL device, with a software fallback.';
 
 	/// en: 'Neural interpolation'
 	String get neuralInterpolation => 'Neural interpolation';
@@ -1718,8 +1718,8 @@ class Translations$settings$en {
 	/// en: 'Neural unavailable'
 	String get neuralInterpolationUnavailable => 'Neural unavailable';
 
-	/// en: 'Generate intermediate frames on the device. Apple uses VideoToolbox; Android tries Qualcomm HTP, then LiteRT NPU or GPU; Windows and Linux use the Pleazyng Motion Engine with a matching model and runtime. On Android and desktop, model packs download the first time Neural is selected and are verified before use; that playback uses the available MPV or normal playback path while they download. Playback diagnostics show the provider that actually ran. Choose Performance, Balanced, or Quality.'
-	String get neuralInterpolationUnavailableDescription => 'Generate intermediate frames on the device. Apple uses VideoToolbox; Android tries Qualcomm HTP, then LiteRT NPU or GPU; Windows and Linux use the Pleazyng Motion Engine with a matching model and runtime. On Android and desktop, model packs download the first time Neural is selected and are verified before use; that playback uses the available MPV or normal playback path while they download. Playback diagnostics show the provider that actually ran. Choose Performance, Balanced, or Quality.';
+	/// en: 'Generate intermediate frames on the device. Apple uses VideoToolbox. Android and Fire OS try compatible hardware through Qualcomm HTP or LiteRT. Windows and Linux use the Pleazyng Motion Engine. Android and desktop can use CPU inference when accelerators cannot run the model. On LG and Samsung TVs, select the MPV player for temporal blending when neural processing is unavailable. Playback diagnostics show which provider ran.'
+	String get neuralInterpolationUnavailableDescription => 'Generate intermediate frames on the device. Apple uses VideoToolbox. Android and Fire OS try compatible hardware through Qualcomm HTP or LiteRT. Windows and Linux use the Pleazyng Motion Engine. Android and desktop can use CPU inference when accelerators cannot run the model. On LG and Samsung TVs, select the MPV player for temporal blending when neural processing is unavailable. Playback diagnostics show which provider ran.';
 
 	/// en: 'Performance'
 	String get neuralInterpolationPresetPerformance => 'Performance';
@@ -3738,8 +3738,8 @@ class Translations$messages$en {
 	/// en: 'Failed to refresh metadata: ${error}'
 	String metadataRefreshFailed({required Object error}) => 'Failed to refresh metadata: ${error}';
 
-	/// en: 'Are you sure you want to log out?'
-	String get logoutConfirm => 'Are you sure you want to log out?';
+	/// en: 'Log out of all profiles on this device?'
+	String get logoutConfirm => 'Log out of all profiles on this device?';
 
 	/// en: 'No seasons found'
 	String get noSeasonsFound => 'No seasons found';
@@ -18663,7 +18663,7 @@ extension on Translations {
 			'settings.cloudBackupPassword' => 'Password',
 			'settings.cloudBackupSaved' => 'Cloud backup destination saved',
 			'settings.cloudBackupNow' => 'Back Up Now',
-			'settings.cloudBackupComplete' => 'Settings backup uploaded',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Backup uploaded. Save this URL. On a new installation, enter it in Cloud Backup and choose “${action}”.',
 			'settings.cloudBackupRestore' => 'Restore Backup',
 			'settings.cloudBackupRestoreConfirm' => 'This will replace matching portable settings on this device. Continue?',
 			'settings.cloudBackupRestored' => 'Settings restored from cloud backup',
@@ -18778,8 +18778,8 @@ extension on Translations {
 			'settings.matchRefreshRateDescription' => 'Match display refresh rate in fullscreen',
 			'settings.motionProcessing' => 'Motion processing',
 			'settings.motionSmoothing' => 'Motion smoothing',
-			'settings.motionSmoothingDescription' => 'Display-synchronized frame resampling on supported MPV GPU outputs; fast motion can look soft or show artifacts.',
-			'settings.motionSmoothingUnavailableDescription' => 'If this player has no display-synchronized GPU renderer, MPV smoothing is skipped and playback continues normally.',
+			'settings.motionSmoothingDescription' => 'Smooth motion on compatible video. Fast movement can look soft or show artifacts.',
+			'settings.motionSmoothingUnavailableDescription' => 'Motion smoothing is unavailable on this playback path.',
 			'settings.motionSmoothingApplyFailed' => 'The player could not apply motion smoothing. Playback will continue unchanged.',
 			'settings.motionSmoothingLiveUnavailableDescription' => 'Motion smoothing is disabled for live playback to preserve stream timing.',
 			'settings.motionSmoothingNotActiveDescription' => 'MPV has not activated display-synchronized interpolation for this session.',
@@ -18787,11 +18787,11 @@ extension on Translations {
 			'settings.motionSmoothingOff' => 'Off',
 			'settings.motionSmoothingOffDescription' => 'Keep the player’s existing display and frame cadence.',
 			'settings.motionSmoothingMpv' => 'MPV',
-			'settings.motionSmoothingMpvDescription' => 'Use MPV’s display-synchronized temporal interpolation. On Android, eligible SDR 24/30 fps video uses the GPU renderer while keeping the decoder setting. This does not generate motion with a neural model.',
+			'settings.motionSmoothingMpvDescription' => 'Use temporal interpolation on compatible MPV outputs. On LG and Samsung TVs, the MPV player blends progressive SDR 24/30 fps video up to 1080p using a compatible OpenCL device, with a software fallback.',
 			'settings.neuralInterpolation' => 'Neural interpolation',
 			'settings.neuralInterpolationPresets' => 'Presets',
 			'settings.neuralInterpolationUnavailable' => 'Neural unavailable',
-			'settings.neuralInterpolationUnavailableDescription' => 'Generate intermediate frames on the device. Apple uses VideoToolbox; Android tries Qualcomm HTP, then LiteRT NPU or GPU; Windows and Linux use the Pleazyng Motion Engine with a matching model and runtime. On Android and desktop, model packs download the first time Neural is selected and are verified before use; that playback uses the available MPV or normal playback path while they download. Playback diagnostics show the provider that actually ran. Choose Performance, Balanced, or Quality.',
+			'settings.neuralInterpolationUnavailableDescription' => 'Generate intermediate frames on the device. Apple uses VideoToolbox. Android and Fire OS try compatible hardware through Qualcomm HTP or LiteRT. Windows and Linux use the Pleazyng Motion Engine. Android and desktop can use CPU inference when accelerators cannot run the model. On LG and Samsung TVs, select the MPV player for temporal blending when neural processing is unavailable. Playback diagnostics show which provider ran.',
 			'settings.neuralInterpolationPresetPerformance' => 'Performance',
 			'settings.neuralInterpolationPresetBalanced' => 'Balanced',
 			'settings.neuralInterpolationPresetQuality' => 'Quality',
@@ -19480,7 +19480,7 @@ extension on Translations {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Refreshing metadata for "${title}"...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Metadata refresh started for "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Failed to refresh metadata: ${error}',
-			'messages.logoutConfirm' => 'Are you sure you want to log out?',
+			'messages.logoutConfirm' => 'Log out of all profiles on this device?',
 			'messages.noSeasonsFound' => 'No seasons found',
 			'messages.seasonsLoadFailed' => 'Couldn\'t load seasons',
 			'messages.noEpisodesFound' => 'No episodes found in first season',

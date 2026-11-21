@@ -71,6 +71,9 @@ class LiveTvSeekRequest {
   const LiveTvSeekRequest({required this.url, this.effectiveTargetEpoch, this.localPosition});
 }
 
+/// A session whose upstream manifest and segments use MediaBrowser authentication.
+abstract interface class MediaBrowserLiveTvPlaybackSession implements LiveTvPlaybackSession {}
+
 /// One live-TV playback session, produced by [LiveTvSupport.startPlayback].
 ///
 /// This is the backend-neutral handle the player drives; the

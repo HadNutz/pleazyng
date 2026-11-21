@@ -581,7 +581,7 @@ class _Translations$settings$uz extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Parol';
 	@override String get cloudBackupSaved => 'Bulutli zaxira nusxasi saqlanadigan manzil saqlandi';
 	@override String get cloudBackupNow => 'Tadi qaytadi';
-	@override String get cloudBackupComplete => 'Yatlarlarlarlar yatlarlar';
+	@override String cloudBackupComplete({required Object action}) => 'Zaxira nusxasi yuklandi. Ushbu URL manzilini saqlang. Ilovani qayta oʻrnatgach, uni bulutga zaxiralash boʻlimiga kiriting va “${action}” bandini tanlang.';
 	@override String get cloudBackupRestore => 'Backup qaytarga';
 	@override String get cloudBackupRestoreConfirm => 'Bu ayarlar bu cihazda uyumlanga mobil ayarlar qaytadi.';
 	@override String get cloudBackupRestored => 'Uqqqqlarlar bilan qaytarga qotlar.';
@@ -1422,7 +1422,7 @@ class _Translations$messages$uz extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => '"${title}" uchun metamaʼlumotlar yangilanmoqda...';
 	@override String metadataRefreshStarted({required Object title}) => '"${title}" uchun metamaʼlumotlarni yangilash boshlandi';
 	@override String metadataRefreshFailed({required Object error}) => 'Metamaʼlumotlarni yangilab boʻlmadi: ${error}';
-	@override String get logoutConfirm => 'Haqiqatan ham chiqmoqchimisiz?';
+	@override String get logoutConfirm => 'Bu qurilmadagi barcha profillardan chiqmoqchimisiz?';
 	@override String get noSeasonsFound => 'Mavsumlar topilmadi';
 	@override String get seasonsLoadFailed => 'Mavsumlarni yuklab boʻlmadi';
 	@override String get noEpisodesFound => 'Birinchi mavsumda qismlar topilmadi';
@@ -6040,7 +6040,7 @@ extension on TranslationsUz {
 			'settings.cloudBackupPassword' => 'Parol',
 			'settings.cloudBackupSaved' => 'Bulutli zaxira nusxasi saqlanadigan manzil saqlandi',
 			'settings.cloudBackupNow' => 'Tadi qaytadi',
-			'settings.cloudBackupComplete' => 'Yatlarlarlarlar yatlarlar',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Zaxira nusxasi yuklandi. Ushbu URL manzilini saqlang. Ilovani qayta oʻrnatgach, uni bulutga zaxiralash boʻlimiga kiriting va “${action}” bandini tanlang.',
 			'settings.cloudBackupRestore' => 'Backup qaytarga',
 			'settings.cloudBackupRestoreConfirm' => 'Bu ayarlar bu cihazda uyumlanga mobil ayarlar qaytadi.',
 			'settings.cloudBackupRestored' => 'Uqqqqlarlar bilan qaytarga qotlar.',
@@ -6820,7 +6820,7 @@ extension on TranslationsUz {
 			'messages.metadataRefreshing' => ({required Object title}) => '"${title}" uchun metamaʼlumotlar yangilanmoqda...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => '"${title}" uchun metamaʼlumotlarni yangilash boshlandi',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Metamaʼlumotlarni yangilab boʻlmadi: ${error}',
-			'messages.logoutConfirm' => 'Haqiqatan ham chiqmoqchimisiz?',
+			'messages.logoutConfirm' => 'Bu qurilmadagi barcha profillardan chiqmoqchimisiz?',
 			'messages.noSeasonsFound' => 'Mavsumlar topilmadi',
 			'messages.seasonsLoadFailed' => 'Mavsumlarni yuklab boʻlmadi',
 			'messages.noEpisodesFound' => 'Birinchi mavsumda qismlar topilmadi',

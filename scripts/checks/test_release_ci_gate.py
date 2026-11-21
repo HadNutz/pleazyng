@@ -867,6 +867,36 @@ class ImmutableReleaseTagTests(unittest.TestCase):
         tag = next(i for i, step in enumerate(steps) if step.get("id") == "release-tag")
         self.assertLess(tag, steps.index(gate))
 
+    def test_standalone_ci_only_exports_verified_commit(self) -> None:
+        import yaml
+        jobs = yaml.safe_load((ROOT / ".github/workflows/build.yml").read_text())["jobs"]
+        validator = jobs["validate-trusted-ref"]
+        gate = next(step for step in validator["steps"] if step.get("id") == "standalone-ci")
+        self.assertEqual(validator["outputs"]["qualified_tag_commit"], "${{ steps.standalone-ci.outputs.qualified_tag_commit }}")
+        for status in (0, 1):
+            with self.subTest(status=status), tempfile.TemporaryDirectory() as directory:
+                directory = Path(directory)
+                verifier = directory / "scripts/verify_release_ci.py"
+                verifier.parent.mkdir()
+                verifier.write_text(f"raise SystemExit({status})\n")
+                output = directory / "outputs"
+                output.touch()
+                result = subprocess.run(
+                    ["bash", "-c", gate["run"]], cwd=directory, capture_output=True,
+                    env={**os.environ, "COMMIT_SHA": self.tag_commit, "GITHUB_OUTPUT": str(output)},
+                )
+                self.assertEqual(result.returncode, status)
+                expected = f"qualified_tag_commit={self.tag_commit}\n" if status == 0 else ""
+                self.assertEqual(output.read_text(), expected)
+        condition = jobs["create-release"]["if"]
+        self.assertIn(
+            "(inputs.candidate_ref == '' && inputs.reuse_platform_run_id == '' && "
+            "needs.freeze-qualified-source.result == 'skipped' && "
+            "needs.validate-trusted-ref.outputs.qualified_tag_commit != '' && "
+            "needs.validate-trusted-ref.outputs.qualified_tag_commit == needs.validate-trusted-ref.outputs.release_commit)",
+            condition,
+        )
+
     def test_rejects_application_changes_without_moving_the_tag(self) -> None:
         self.commit_file("CHANGELOG.md", "## [Unreleased]\n\n- Release infrastructure update.\n")
         main_commit = self.commit_file("lib/main.dart", "void main() { print('changed'); }\n")

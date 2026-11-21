@@ -1107,6 +1107,51 @@ void main() {
 
   tearDown(() => h.dispose());
 
+  for (final outcome in ['complete', 'new intent', 'new queue', 'expired source', 'edited']) {
+    test('the first playlist window plays before the remaining pages finish: $outcome', () async {
+      final complete = Completer<List<MediaItem>>();
+      late bool Function() stillCurrent;
+      var authorized = true;
+      final started = await h.service.playPlaylistWindow(
+        tracks: [t2, t2],
+        offset: 1,
+        index: 1,
+        shuffle: false,
+        playContext: const MusicPlayContext(title: 'Drive', kind: MusicPlayContextKind.playlist),
+        sourceCurrent: () => authorized,
+        loadComplete: (current) {
+          stillCurrent = current;
+          return complete.future;
+        },
+      );
+      expect(started, isTrue);
+      expect(h.service.currentIndex, 1);
+      expect(h.service.queue.map((track) => track.id), [t2.id, t2.id]);
+      final opened = List.of(h.player.openedUris);
+      if (outcome == 'new intent') h.service.beginPlayIntent();
+      if (outcome == 'new queue') {
+        await h.service.playFromList(
+          tracks: [t3],
+          playContext: const MusicPlayContext(title: 'Next', kind: MusicPlayContextKind.tracks),
+        );
+      }
+      if (outcome == 'expired source') authorized = false;
+      if (outcome == 'edited') h.service.clearUpcoming();
+      expect(stillCurrent(), outcome == 'complete');
+      complete.complete([t1, t2, t2, t3]);
+      await pumpEventQueue();
+      if (outcome == 'complete') {
+        expect(h.service.queue.map((track) => track.id), [t1.id, t2.id, t2.id, t3.id]);
+        expect(h.service.currentIndex, 2);
+        expect(h.player.openedUris, opened);
+      } else if (outcome == 'new queue') {
+        expect(h.service.queue.map((track) => track.id), [t3.id]);
+      } else {
+        expect(h.service.queue.map((track) => track.id), [t2.id, t2.id]);
+      }
+    });
+  }
+
   test('native PCM uses the shared audio owner and never reports a synthetic library listen', () async {
     await h.playTracks([t1, t2]);
     final old = h.player;

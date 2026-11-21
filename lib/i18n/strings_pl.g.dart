@@ -585,7 +585,7 @@ class _Translations$settings$pl extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Hasło';
 	@override String get cloudBackupSaved => 'Cloud Backup Destination Zbawiony';
 	@override String get cloudBackupNow => 'Wróć do Now';
-	@override String get cloudBackupComplete => 'Ustawienia Backup uploaded';
+	@override String cloudBackupComplete({required Object action}) => 'Przesłano kopię zapasową. Zachowaj ten adres URL. Po ponownej instalacji wpisz go w ustawieniach kopii zapasowej w chmurze i wybierz „${action}”.';
 	@override String get cloudBackupRestore => 'Odzyskiwanie backup';
 	@override String get cloudBackupRestoreConfirm => 'To zastąpi dopasowane ustawienia przenośne na tym urządzeniu.';
 	@override String get cloudBackupRestored => 'Ustawienia przywróciły się z kopii zapasowej w chmurze';
@@ -1436,7 +1436,7 @@ class _Translations$messages$pl extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Odświeżanie metadanych "${title}"...';
 	@override String metadataRefreshStarted({required Object title}) => 'Rozpoczęto odświeżanie metadanych "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'Nie udało się odświeżyć metadanych: ${error}';
-	@override String get logoutConfirm => 'Czy na pewno chcesz się wylogować?';
+	@override String get logoutConfirm => 'Wylogować wszystkie profile na tym urządzeniu?';
 	@override String get noSeasonsFound => 'Nie znaleziono sezonów';
 	@override String get seasonsLoadFailed => 'Nie udało się załadować sezonów';
 	@override String get noEpisodesFound => 'Nie znaleziono odcinków w pierwszym sezonie';
@@ -6090,7 +6090,7 @@ extension on TranslationsPl {
 			'settings.cloudBackupPassword' => 'Hasło',
 			'settings.cloudBackupSaved' => 'Cloud Backup Destination Zbawiony',
 			'settings.cloudBackupNow' => 'Wróć do Now',
-			'settings.cloudBackupComplete' => 'Ustawienia Backup uploaded',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Przesłano kopię zapasową. Zachowaj ten adres URL. Po ponownej instalacji wpisz go w ustawieniach kopii zapasowej w chmurze i wybierz „${action}”.',
 			'settings.cloudBackupRestore' => 'Odzyskiwanie backup',
 			'settings.cloudBackupRestoreConfirm' => 'To zastąpi dopasowane ustawienia przenośne na tym urządzeniu.',
 			'settings.cloudBackupRestored' => 'Ustawienia przywróciły się z kopii zapasowej w chmurze',
@@ -6870,7 +6870,7 @@ extension on TranslationsPl {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Odświeżanie metadanych "${title}"...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Rozpoczęto odświeżanie metadanych "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Nie udało się odświeżyć metadanych: ${error}',
-			'messages.logoutConfirm' => 'Czy na pewno chcesz się wylogować?',
+			'messages.logoutConfirm' => 'Wylogować wszystkie profile na tym urządzeniu?',
 			'messages.noSeasonsFound' => 'Nie znaleziono sezonów',
 			'messages.seasonsLoadFailed' => 'Nie udało się załadować sezonów',
 			'messages.noEpisodesFound' => 'Nie znaleziono odcinków w pierwszym sezonie',

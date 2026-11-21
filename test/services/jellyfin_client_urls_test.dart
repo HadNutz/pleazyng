@@ -1289,6 +1289,57 @@ void main() {
       expect(uri.queryParameters['Container'], 'mp4');
     });
 
+    for (final emby in [false, true]) {
+      test('1080p cap requires conversion of a low-bitrate 4K source (Emby: $emby)', () async {
+        final source = {
+          'Id': 'src-1',
+          'Container': 'mp4',
+          'Bitrate': 6000000,
+          'MediaStreams': [
+            {'Index': 0, 'Type': 'Video', 'Codec': 'h264', 'Width': 3840, 'Height': 2160},
+          ],
+        };
+        final client = _clientWithPlaybackInfo(
+          (request) async {
+            final body = jsonDecode(request.body) as Map<String, dynamic>;
+            expect(body['MaxStreamingBitrate'], 8000000);
+            expect(body['AllowVideoStreamCopy'], false);
+            expect(body['EnableDirectPlay'], false);
+            final profiles = (body['DeviceProfile']['CodecProfiles'] as List).cast<Map>();
+            final conditions = (profiles.firstWhere((p) => p['Codec'] == '')['Conditions'] as List).cast<Map>();
+            expect(
+              {for (final condition in conditions) condition['Property']: condition['Value']},
+              {'Width': '1920', 'Height': '1080'},
+            );
+            return jsonResponse({
+              'MediaSources': [
+                {...source, 'SupportsDirectPlay': true},
+              ],
+            });
+          },
+          itemSources: [source],
+          emby: emby,
+        );
+        addTearDown(client.close);
+        // A server ignoring the required encode must not silently serve 2160p.
+        await expectLater(
+          client.getPlaybackInitialization(
+            PlaybackInitializationOptions(
+              metadata: testMediaItem(
+                id: 'item-1',
+                backend: emby ? MediaBackend.emby : MediaBackend.jellyfin,
+                kind: MediaKind.movie,
+                serverId: 'srv-1',
+              ),
+              selectedMediaIndex: 0,
+              qualityPreset: TranscodeQualityPreset.p1080_8mbps,
+            ),
+          ),
+          throwsA(isA<PlaybackException>()),
+        );
+      });
+    }
+
     test('getPlaybackInitialization sends resume ticks without rewriting TranscodingUrl', () async {
       final playbackInfoUris = <Uri>[];
       final playbackInfoBodies = <String>[];
@@ -3598,6 +3649,30 @@ void main() {
       expect(heartbeatBody['MediaSourceId'], 'source-1');
       expect(heartbeatBody['LiveStreamId'], 'open-stream-1');
       expect(heartbeatBody['PlayMethod'], 'Transcode');
+    });
+
+    test('live TV uses the capped HLS offer when an oversized source also advertises direct play', () async {
+      final scoped = JellyfinClient.forTesting(
+        connection: _conn(),
+        httpClient: MockClient(
+          (request) async => jsonResponse({
+            'MediaSources': [
+              {
+                'Id': 'source-4k',
+                'Container': 'ts',
+                'SupportsDirectPlay': true,
+                'MediaStreams': [
+                  {'Type': 'Video', 'Index': 0, 'Width': 3840, 'Height': 2160},
+                ],
+                'TranscodingUrl': '/Videos/channel-1/live.m3u8?PlaySessionId=live-session-1',
+              },
+            ],
+          }),
+        ),
+      );
+      addTearDown(scoped.close);
+      final session = await scoped.liveTv.startPlayback('channel-1', quality: TranscodeQualityPreset.p1080_8mbps);
+      expect(Uri.parse((await session!.streamUrlAt())!).path, '/Videos/channel-1/live.m3u8');
     });
 
     test('live TV playback start recovers identity from a negotiated HLS URL', () async {

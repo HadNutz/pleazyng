@@ -668,7 +668,16 @@ class SourceController extends ChangeNotifier {
     if (query.trim().isEmpty) {
       return const [];
     }
-    final page = await repository.entriesPage(profileId!, query: query, limit: limit);
+    final page = await repository.entriesPage(
+      profileId!,
+      query: query,
+      limit: limit,
+      searchableSources: {for (final source in sources) source.id},
+      remoteCloudSources: {
+        for (final source in sources)
+          if (source.kind == FileSourceKind.remoteCloud) source.id,
+      },
+    );
     requireSession(epoch);
     final configured = {for (final source in sources) source.id};
     return [
@@ -684,9 +693,9 @@ class SourceController extends ChangeNotifier {
     await ready;
     requireSession();
     final epoch = generation, profile = profileId!;
-    final result = (await repository.sources(
-      profile,
-    )).where((source) => source.profileId == profile).toList(growable: false);
+    final result = (await repository.sources(profile))
+        .where((source) => source.profileId == profile)
+        .toList(growable: false);
     if (!current(epoch)) {
       return;
     }

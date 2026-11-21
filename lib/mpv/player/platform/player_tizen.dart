@@ -17,10 +17,13 @@ import '../subtitle_pcm_capture_source.dart';
 import 'webos_media_proxy.dart';
 import 'native_tv_playback_metadata.dart';
 import 'webos_video_layout.dart';
+import 'native_tv_video_framing.dart';
 
 /// Samsung's native media plane. The existing app supplies browsing, focus,
 /// transport controls and watch progress; no browser-hosted UI is involved.
-class PlayerTizen extends PlayerBase implements SubtitlePcmCaptureSource, NativeVisualizationAudioSource {
+class PlayerTizen extends PlayerBase
+    with NativeTvVideoFraming
+    implements SubtitlePcmCaptureSource, NativeVisualizationAudioSource {
   PlayerTizen({this.audioOnly = false}) : super(listenToNativeEvents: false);
   static const _visualizer = MethodChannel('com.plezy/mpv_audio_player');
 
@@ -29,6 +32,7 @@ class PlayerTizen extends PlayerBase implements SubtitlePcmCaptureSource, Native
   @override
   bool get nativeVisualizationAudioReady =>
       audioOnly && _visualizerBound && !disposed && !_closing && (_controller?.value.isInitialized ?? false);
+  @override
   final ValueNotifier<int> surfaceRevision = ValueNotifier(0);
   final ValueNotifier<String> caption = ValueNotifier('');
   final SerialFutureQueue _sources = SerialFutureQueue();
@@ -120,32 +124,33 @@ class PlayerTizen extends PlayerBase implements SubtitlePcmCaptureSource, Native
           builder: (context, value, child) {
             final aspectRatio = value.aspectRatio;
             final hasVideoSize = value.isInitialized && aspectRatio.isFinite && aspectRatio > 0;
-            final fittedSize = hasVideoSize ? webOsAspectFitSize(viewport, aspectRatio) : viewport;
+            final frame = nativeTvVideoLayout(
+              viewport,
+              hasVideoSize ? aspectRatio : viewport.aspectRatio,
+              cover: coverVideo,
+              zoom: videoZoom,
+            );
             return Stack(
               fit: StackFit.expand,
               children: [
                 const ColoredBox(color: Color(0xff000000)),
-                Center(
-                  child: SizedBox.fromSize(
-                    size: fittedSize,
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        samsung.VideoPlayer(controller),
-                        IgnorePointer(
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(32, 16, 32, 36),
-                              child: ValueListenableBuilder<String>(
-                                valueListenable: caption,
-                                builder: (context, text, child) =>
-                                    text.isEmpty ? const SizedBox.shrink() : samsung.ClosedCaption(text: text),
-                              ),
-                            ),
-                          ),
+                Positioned.fromRect(
+                  rect: frame.destination,
+                  child: samsung.VideoPlayer(controller, sourceCrop: frame.source),
+                ),
+                Positioned.fromRect(
+                  rect: frame.destination,
+                  child: IgnorePointer(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(32, 16, 32, 36),
+                        child: ValueListenableBuilder<String>(
+                          valueListenable: caption,
+                          builder: (context, text, child) =>
+                              text.isEmpty ? const SizedBox.shrink() : samsung.ClosedCaption(text: text),
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -198,7 +203,11 @@ class PlayerTizen extends PlayerBase implements SubtitlePcmCaptureSource, Native
           _proxy = proxy;
           // Samsung only forwards Cookie/User-Agent. The loopback bridge
           // forwards authenticated byte ranges and same-origin HLS children.
-          final local = proxy.register(uri, headers: media.headers);
+          final local = proxy.register(
+            uri,
+            headers: media.headers,
+            mediaBrowserAuthentication: media.mediaBrowserAuthentication,
+          );
           controller = samsung.VideoPlayerController.network(
             local.toString(),
             playerOptions: {'plezyAudioOnly': audioOnly},
@@ -528,7 +537,11 @@ class PlayerTizen extends PlayerBase implements SubtitlePcmCaptureSource, Native
       if (uri.scheme != 'http' && uri.scheme != 'https') throw const FormatException('Subtitle URL requires HTTP(S)');
       final proxy = _proxy;
       if (proxy == null) throw StateError('No authenticated subtitle transport');
-      final local = proxy.register(uri, headers: source?.origin == uri.origin ? _media?.headers : null);
+      final local = proxy.register(
+        uri,
+        headers: source?.origin == uri.origin ? _media?.headers : null,
+        mediaBrowserAuthentication: source?.origin == uri.origin && _media?.mediaBrowserAuthentication == true,
+      );
       final response = await (await client.getUrl(local)).close().timeout(const Duration(seconds: 15));
       if (response.statusCode != 200) throw const HttpException('Subtitle download failed');
       final bytes = <int>[];

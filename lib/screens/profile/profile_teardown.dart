@@ -385,12 +385,12 @@ Future<void> logoutAllProfiles(BuildContext context) async {
     await sources.stopPlayback?.call();
     await HardcoverAccountStore(sources.repository).clearAllProfiles();
   }
+
+  await scope.active.clearActiveProfile();
+  // Record authenticated owners before removing their connection credentials.
+  await scope.downloads.detachDownloadsForLogout();
   await scope.storage.clearUserData();
   accountPreferences.repository.clear();
-  // Downloads are device-local data, not credentials. Keep their physical
-  // files and pinned metadata, but detach profile ownership before deleting
-  // the profiles so the next selected profile can adopt them.
-  await scope.downloads.detachDownloadsForLogout();
   scope.multiServer.clearAllConnections();
   // Drop the profile/connection rows so the next sign-in starts clean and
   // doesn't bind to stale tokens or orphaned profile rows.

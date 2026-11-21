@@ -56,9 +56,9 @@ class WebOSMediaProxy {
   }
 
   /// Registers a server URL and returns an opaque loopback URL for NDL media.
-  Uri register(Uri source, {Map<String, String>? headers}) {
+  Uri register(Uri source, {Map<String, String>? headers, bool mediaBrowserAuthentication = false}) {
     if (_closed) throw StateError('The webOS media proxy is closed');
-    final key = _register(source, headers ?? const {}, 0);
+    final key = _register(source, headers ?? const {}, 0, mediaBrowserAuthentication);
     _roots.add(key);
     return _local(key);
   }
@@ -66,17 +66,17 @@ class WebOSMediaProxy {
   Uri _local(String key) =>
       Uri(scheme: 'http', host: InternetAddress.loopbackIPv4.address, port: port, pathSegments: ['r', key]);
 
-  String _register(Uri source, Map<String, String> headers, int templateSlots) {
-    final normalized = _normalizeSource(source, headers);
+  String _register(Uri source, Map<String, String> headers, int templateSlots, bool mediaBrowserAuthentication) {
+    final normalized = _normalizeSource(source, headers, mediaBrowserAuthentication);
     final uri = normalized.uri;
     if (!_isHttp(uri)) throw const FormatException('Media URL must use HTTP or HTTPS');
-    final cacheKey = '$templateSlots:${_cacheKey(uri, normalized.headers)}';
+    final cacheKey = '$mediaBrowserAuthentication:$templateSlots:${_cacheKey(uri, normalized.headers)}';
     return _resourceKeys.putIfAbsent(cacheKey, () {
       if (_resources.length >= 3 * _maxResources) {
         throw StateError('The media playlist contains too many live resources');
       }
       final key = _randomToken();
-      _resources[key] = _ProxyResource(uri, normalized.headers, uri.origin, templateSlots);
+      _resources[key] = _ProxyResource(uri, normalized.headers, uri.origin, templateSlots, mediaBrowserAuthentication);
       return key;
     });
   }
@@ -208,7 +208,7 @@ class WebOSMediaProxy {
         if (!_isHttp(source) || source.origin != resource.origin || source.userInfo.isNotEmpty) {
           throw const FormatException('Playlist reference left the authenticated source origin');
         }
-        final key = _register(source, resource.headers, slots.length);
+        final key = _register(source, resource.headers, slots.length, resource.mediaBrowserAuthentication);
         if (playlist) _resources[key]!.hls = true;
         children.add(key);
         if (children.length > _maxResources) throw const FormatException('Playlist is too large');
@@ -322,7 +322,7 @@ class WebOSMediaProxy {
 
   bool _isHttp(Uri uri) => (uri.scheme == 'http' || uri.scheme == 'https') && uri.host.isNotEmpty;
 
-  _NormalizedSource _normalizeSource(Uri source, Map<String, String> inputHeaders) {
+  _NormalizedSource _normalizeSource(Uri source, Map<String, String> inputHeaders, bool mediaBrowserAuthentication) {
     final headers = <String, String>{};
     for (final entry in inputHeaders.entries) {
       final name = entry.key.trim();
@@ -351,7 +351,7 @@ class WebOSMediaProxy {
       final key = entry.key.toLowerCase();
       final targetHeader = switch (key) {
         'x-plex-token' => 'X-Plex-Token',
-        'api_key' || 'apikey' => 'X-Emby-Token',
+        'api_key' || 'apikey' when mediaBrowserAuthentication => 'X-Emby-Token',
         'x-emby-token' => 'X-Emby-Token',
         'x-mediabrowser-token' => 'X-MediaBrowser-Token',
         _ => null,
@@ -379,7 +379,8 @@ class _NormalizedSource {
 }
 
 class _ProxyResource {
-  _ProxyResource(this.uri, this.headers, this.origin, this.templateSlots);
+  _ProxyResource(this.uri, this.headers, this.origin, this.templateSlots, this.mediaBrowserAuthentication);
+  final bool mediaBrowserAuthentication;
   final int templateSlots;
   Set<String> current = const {}, previous = const {};
   static final _number = RegExp(r'^[0-9a-fA-F]{1,32}$');
@@ -418,7 +419,7 @@ class _ProxyResource {
       target = target.replaceAll(dashSlot(i), values[i]);
     }
     final expanded = Uri.parse(target);
-    return expanded.origin == origin ? _ProxyResource(expanded, headers, origin, 0) : null;
+    return expanded.origin == origin ? _ProxyResource(expanded, headers, origin, 0, mediaBrowserAuthentication) : null;
   }
 
   final Uri uri;

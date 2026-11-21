@@ -20,6 +20,7 @@ import '../utils/download_version_utils.dart';
 import '../database/app_database.dart';
 import '../database/download_collection_operations.dart';
 import '../database/download_operations.dart';
+import '../database/retained_download_ownership.dart';
 import '../services/background_work_diagnostics_service.dart';
 import '../services/download_manager_service.dart';
 import '../services/orphan_download_cleanup_service.dart';
@@ -165,6 +166,9 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
   String? _activeProfileId;
   int _profileGeneration = 0;
   Future<void>? _profileScopedReloadFuture;
+  Future<void>? _metadataRefresh;
+  int? _metadataRefreshGeneration;
+  final Set<String> _visibleMetadataRequests = {};
 
   _QueueOwnership _captureQueueOwnership() => (profileId: _requireActiveProfileId(), generation: _profileGeneration);
 
@@ -247,6 +251,7 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     if (_activeProfileId == profileId) return;
     _profileGeneration++;
     _queueing.clear();
+    _visibleMetadataRequests.clear();
     _ownedDownloadKeys.clear();
     _syncRules.clear();
     _collections.clear();
@@ -345,9 +350,7 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     await _releaseDownloadsForProfileWhere(profileId, (_) => true);
   }
 
-  /// Preserve physical downloads across a full logout while detaching them
-  /// from profiles that are about to be deleted. The next selected profile
-  /// adopts the ownerless rows through [_loadDownloadOwners].
+  /// Keep physical files bound to their original household identities after logout.
   Future<void> detachDownloadsForLogout() async {
     // Invalidate any in-flight profile reload before waiting for it: an old
     // reload may still finish its DB adoption, but cannot repopulate the
@@ -357,8 +360,8 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     _profileGeneration++;
     await _initFuture;
     await _profileScopedReloadFuture;
-    await _downloadManager.preparePlexMetadataForLogoutTransfer();
-    await _database.clearAllDownloadOwners();
+    await _database.retainDownloadOwnershipForLogout();
+    _metadata.clear();
     _ownedDownloadKeys.clear();
     _syncRules.clear();
     _collections.clear();
@@ -1627,6 +1630,7 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     DownloadVersionConfig? versionConfig,
     DownloadFilter filter = DownloadFilter.all,
     int? maxCount,
+    bool maintainTarget = false,
     bool random = false,
     bool includeSpecials = true,
     TranscodeQualityPreset? downloadQuality,
@@ -1684,7 +1688,8 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
             versionConfig: config,
             filter: filter,
             maxCount: maxCount,
-            skipExisting: false,
+            maintainTarget: maintainTarget,
+            skipExisting: maintainTarget,
             random: random,
             includeSpecials: includeSpecials,
             downloadQuality: downloadQuality,
@@ -1739,6 +1744,7 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     MediaServerClient client, {
     DownloadFilter filter = DownloadFilter.all,
     SyncRuleItem? syncRule,
+    TranscodeQualityPreset? downloadQuality,
     MediaItem? playlist,
     bool Function()? sourceCurrent,
   }) async {
@@ -1812,6 +1818,7 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
         client,
         ownership: ownership,
         relatedContext: relatedContext,
+        downloadQuality: downloadQuality,
         sourceCurrent: sourceCurrent,
       );
       if (!current()) return count;
@@ -1845,7 +1852,11 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     if (!_downloadManager.downloadsSupported) return false;
     if (!userInitiated && _downloadManager.isWaitingForStorageRecovery) return false;
 
-    bool sourceIsCurrent() => _isQueueOwnershipCurrent(ownership) && (sourceCurrent?.call() ?? true);
+    Object? entitlementSession;
+    bool sourceIsCurrent() =>
+        _isQueueOwnershipCurrent(ownership) &&
+        (sourceCurrent?.call() ?? true) &&
+        (entitlementSession == null || identical(entitlementSession, client.authenticationSessionId));
     if (!sourceIsCurrent()) return false;
     var metadataToStore = metadata.serverId == null ? metadata.copyWith(serverId: client.serverId) : metadata;
     final globalKey = metadataToStore.globalKey;
@@ -1853,7 +1864,17 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     // Don't duplicate the physical download. If another profile already owns
     // the shared row, claiming it makes it visible for the owning profile.
     if (_downloads.containsKey(globalKey)) {
-      final existing = _downloads[globalKey]!;
+      if (!_ownedDownloadKeys.contains(globalKey) && await _database.requiresFreshDownloadAuthorization(globalKey)) {
+        if (!sourceIsCurrent() || metadataToStore.serverId != client.serverId) return false;
+        entitlementSession = client.authenticationSessionId;
+        final authorized = await client.fetchAuthorizedDownloadItem(metadata.id);
+        if (authorized == null || authorized.id != metadata.id || !sourceIsCurrent()) return false;
+        metadataToStore = _ensureServerId(authorized, client.serverId);
+        if (metadataToStore.globalKey != globalKey) return false;
+      }
+      if (!sourceIsCurrent()) return false;
+      final existing = _downloads[globalKey];
+      if (existing == null) return false;
       if (existing.status == DownloadStatus.downloading ||
           existing.status == DownloadStatus.completed ||
           existing.status == DownloadStatus.queued ||
@@ -2169,6 +2190,7 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     required DownloadFilter filter,
     required int? maxCount,
     required bool skipExisting,
+    bool maintainTarget = false,
     bool random = false,
     bool includeSpecials = true,
     TranscodeQualityPreset? downloadQuality,
@@ -2179,16 +2201,34 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     final effectiveIncludeSpecials =
         includeSpecials || (container.kind == MediaKind.season && isSpecialSeasonNumber(container.index));
     final relatedContext = _RelatedMetadataDownloadContext();
-    final episodes = <MediaItem>[];
+    final fromServer = <MediaItem>[];
     await collectEpisodes(
       client,
       container.id,
       unwatchedOnly: unwatchedOnly,
-      out: episodes,
+      out: fromServer,
       fallback: container,
       includeSpecials: effectiveIncludeSpecials,
     );
     if (!_isQueueOwnershipCurrent(ownership)) return 0;
+
+    final episodes = maintainTarget && unwatchedOnly
+        ? await _syncRuleExecutor.excludeLocallyWatched(
+            episodes: fromServer,
+            client: client,
+            profileId: ownership.profileId,
+          )
+        : fromServer;
+    if (!_isQueueOwnershipCurrent(ownership)) return 0;
+
+    // A persistent quota includes every eligible episode already owned by
+    // this profile, including paused and in-flight copies.
+    final ownedCount = maintainTarget && maxCount != null
+        ? episodes
+              .where((episode) => _hasActiveOwnedDownload(_ensureServerId(episode, container.serverId).globalKey))
+              .length
+        : 0;
+    final newDownloadLimit = maxCount == null ? null : maxCount - ownedCount;
 
     // Random selection: shuffle the candidate pool so the [maxCount] slice
     // below picks a random subset instead of release order. Only meaningful
@@ -2200,20 +2240,11 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     int count = 0;
     for (final episode in episodes) {
       if (!_isQueueOwnershipCurrent(ownership)) return count;
-      if (maxCount != null && count >= maxCount) break;
+      if (newDownloadLimit != null && count >= newDownloadLimit) break;
 
       final episodeWithServer = _ensureServerId(episode, container.serverId);
 
-      if (skipExisting) {
-        final progress = _downloads[episodeWithServer.globalKey];
-        if (progress != null &&
-            _ownsDownloadKey(episodeWithServer.globalKey) &&
-            (progress.status == DownloadStatus.completed ||
-                progress.status == DownloadStatus.downloading ||
-                progress.status == DownloadStatus.queued)) {
-          continue;
-        }
-      }
+      if (skipExisting && _hasActiveOwnedDownload(episodeWithServer.globalKey)) continue;
 
       final queued = await _queueSingleDownload(
         episodeWithServer,
@@ -2489,8 +2520,24 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
   ///
   /// This is more lightweight than full refresh() - only updates metadata
   /// without reloading download progress from database.
-  Future<void> refreshMetadataFromCache() async {
-    final profileGeneration = _profileGeneration;
+  Future<void> refreshMetadataFromCache() {
+    final generation = _profileGeneration;
+    final pending = _metadataRefresh;
+    if (_metadataRefreshGeneration == generation && pending != null) return pending;
+    _metadataRefreshGeneration = generation;
+    late final Future<void> refresh;
+    refresh = _refreshMetadataFromCache(generation).whenComplete(() {
+      if (identical(refresh, _metadataRefresh)) _metadataRefresh = null;
+    });
+    return _metadataRefresh = refresh;
+  }
+
+  /// Missing metadata for rows Flutter is building takes the next worker slot.
+  void prioritizeDownloadMetadata(String globalKey) {
+    if (_ownsDownloadKey(globalKey) && !_metadata.containsKey(globalKey)) _visibleMetadataRequests.add(globalKey);
+  }
+
+  Future<void> _refreshMetadataFromCache(int profileGeneration) async {
     bool isStale() => isDisposed || profileGeneration != _profileGeneration;
     // The initial load runs in the constructor and may still be in flight
     // when callers (e.g. `onServersConnected`) trigger this. Wait for it so
@@ -2515,21 +2562,32 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     int networkFills = 0;
     int misses = 0;
 
-    for (final globalKey in keys) {
-      try {
-        final result = await _hydrateDownloadMetadata(globalKey, pinned, fetchOnMiss: true, isStale: isStale);
-        if (result.stale) return;
-        if (result.metadata == null) {
-          misses++;
-        } else if (result.networkFilled) {
-          networkFills++;
-        } else {
-          cacheHits++;
+    Future<void> hydrate() async {
+      while (keys.isNotEmpty && !isStale()) {
+        final priority = _visibleMetadataRequests.where(keys.contains).firstOrNull;
+        final globalKey = priority ?? keys.first;
+        keys.remove(globalKey);
+        _visibleMetadataRequests.remove(globalKey);
+        try {
+          final result = await _hydrateDownloadMetadata(globalKey, pinned, fetchOnMiss: true, isStale: isStale);
+          if (result.stale) return;
+          if (result.metadata == null) {
+            misses++;
+          } else if (result.networkFilled) {
+            networkFills++;
+            // First results render while slow rows are still in flight.
+            if (networkFills == 1 || networkFills % 8 == 0 || priority != null) safeNotifyListeners();
+          } else {
+            cacheHits++;
+          }
+        } catch (e) {
+          appLogger.d('Failed to refresh metadata for $globalKey: $e');
         }
-      } catch (e) {
-        appLogger.d('Failed to refresh metadata for $globalKey: $e');
       }
     }
+
+    await Future.wait(List.generate(keys.length.clamp(1, 3).toInt(), (_) => hydrate()));
+    if (isStale()) return;
     await _loadDownloadCollections(pinned);
     if (isStale()) return;
 
@@ -2557,10 +2615,18 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
   /// metadata, while [OfflineWatchProvider] fires right after a local
   /// mark-watched that metadata cannot reflect yet.
   Future<String?> deleteWatchedDownloadCandidate(String globalKey, {required String logContext}) async {
+    final profile = _activeProfileId, generation = _profileGeneration;
     final meta = _resolvedMetadata(globalKey);
-    if (meta == null) return null;
+    if (profile == null || meta == null || !_ownsDownloadKey(globalKey)) return null;
     if (!meta.isEpisode && !meta.isMovie) return null;
     if (_downloads[globalKey]?.status != DownloadStatus.completed) return null;
+
+    final serverId = meta.serverId ?? parseGlobalKey(globalKey)?.serverId;
+    if (_isKeptByAnyFilterRule(meta) ||
+        serverId != null && await _database.hasRetainingListRule(profile, serverId, globalKey)) {
+      return null;
+    }
+    if (generation != _profileGeneration || !_ownsDownloadKey(globalKey)) return null;
 
     appLogger.i('Auto-deleting $logContext download: ${meta.title} ($globalKey)');
     await deleteDownload(globalKey);
@@ -2597,11 +2663,6 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
 
       // Don't delete the episode that's currently playing
       if (activeGlobalKey != null && meta.globalKey == activeGlobalKey) continue;
-
-      // Episodes owned by a "download any" sync rule are intentionally kept
-      // regardless of watched state, so the watched-cleanup must skip them —
-      // otherwise the rule would re-download what we just deleted.
-      if (_isKeptByAnyFilterRule(meta)) continue;
 
       try {
         final title = await deleteWatchedDownloadCandidate(globalKey, logContext: 'watched');
@@ -3092,6 +3153,7 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     final relatedContext = _RelatedMetadataDownloadContext();
     return _syncRuleExecutor.executeSyncRules(
       profileId: profileId,
+      sourceCurrent: () => _isQueueOwnershipCurrent(ownership),
       serverManager: serverManager,
       downloads: downloads,
       metadata: Map.unmodifiable(_metadata),
@@ -3208,6 +3270,7 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     final relatedContext = _RelatedMetadataDownloadContext();
     return _syncRuleExecutor.executeSingleRule(
       profileId: profileId,
+      sourceCurrent: () => _isQueueOwnershipCurrent(ownership),
       globalKey: globalKey,
       serverManager: serverManager,
       downloads: downloads,
@@ -3258,6 +3321,7 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
         return;
       }
       bool isStillActive() => _activeProfileId == profileId && _profileGeneration == generation;
+      await _database.restoreRetainedDownloads(profileId, isCurrent: isStillActive);
       await _database.adoptLegacyDownloadsForProfile(profileId, isStillActive: isStillActive);
       await _downloadManager.adoptTransferredPlexMetadataForProfile(profileId, isStillActive: isStillActive);
       if (!isStillActive()) return;

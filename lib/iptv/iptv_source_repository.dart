@@ -1289,12 +1289,13 @@ class IptvSourceRepository {
             }
           }
           final size = await IptvHlsArchive.retainedBytes(file);
+          final mediaDuration = archive == null ? null : await IptvHlsArchive.retainedDuration(file);
           await _database.runIdentityMutation(
             () => _database.customStatement(
-              "UPDATE iptv_recordings SET file_path=?, size_bytes=?, "
+              "UPDATE iptv_recordings SET file_path=?, size_bytes=?, duration_seconds=COALESCE(?,duration_seconds), "
               "error_code=CASE WHEN error_code IN ('recovery_io_failed','recovery_data_invalid') "
               "THEN 'app_interrupted' ELSE error_code END WHERE profile_id=? AND id=? AND state='interrupted'",
-              [file.path, size, profile, id],
+              [file.path, size, mediaDuration?.inSeconds, profile, id],
             ),
           );
         }
@@ -1768,6 +1769,7 @@ class IptvSourceRepository {
       throw const IptvImportException('source_missing');
     }
 
+    var expected = source;
     final transport = SourceTransport(allowHttp: config.allowHttp);
     StalkerPortalClient? stalker;
     try {
@@ -1796,6 +1798,15 @@ class IptvSourceRepository {
         playlistGuideUri = playlist.guideUri;
       }
 
+      final identities = config.kind == IptvInputKind.stalker
+          ? <String, String>{}
+          : await _feedIdentities(source.id, playlistEntries);
+      final channels = [for (final entry in playlistEntries) entry.withId(identities[entry.id] ?? entry.id)];
+
+      // Make tuning URLs usable immediately. A slow guide may still be loading
+      // when another client or the recording scheduler opens a channel.
+      expected = await _publishLineup(source, channels, identities);
+
       final guideUris = <Uri>[];
       final primaryGuideUri = config.guideUri() ?? playlistGuideUri;
       if (primaryGuideUri != null) {
@@ -1809,19 +1820,36 @@ class IptvSourceRepository {
       }
       final programmes = <IptvXmltvProgramme>[];
       final guideLogos = <String, String>{};
-      for (final guideUri in guideUris) {
-        transport.validate(guideUri);
-        final guideBody = await transport.text('GET', guideUri, limit: maxXmltvBytes, redirects: true);
-        final guide = IptvXmltvParser.parse(guideBody, base: guideUri, allowHttp: config.allowHttp);
-        if (programmes.length + guide.programmes.length > IptvXmltvParser.maxProgrammes) {
-          throw const IptvImportException('invalid_data');
-        }
+      final freshGuides = <String, IptvXmltvParseResult>{};
+      final guideKeys = <String>{};
+      var guideFailed = false;
+      void mergeGuide(IptvXmltvParseResult guide) {
         programmes.addAll(guide.programmes);
         for (final entry in guide.channelLogos.entries) {
           guideLogos.putIfAbsent(entry.key, () => entry.value);
         }
       }
 
+      for (final guideUri in guideUris) {
+        final key = sha256.convert(utf8.encode(guideUri.toString())).toString();
+        guideKeys.add(key);
+        try {
+          final guide = await IptvXmltvParser.fetch(transport, guideUri);
+          if (programmes.length + guide.programmes.length > IptvXmltvParser.maxProgrammes) {
+            throw const IptvImportException('invalid_data');
+          }
+          freshGuides[key] = guide;
+          mergeGuide(guide);
+        } on Object {
+          guideFailed = true;
+          mergeGuide(await _cachedGuide(source.id, key, IptvXmltvParser.maxProgrammes - programmes.length));
+        }
+      }
+      if (guideFailed) {
+        // v37 stored a single merged snapshot without the original feed ID.
+        guideKeys.add('');
+        mergeGuide(await _cachedGuide(source.id, '', IptvXmltvParser.maxProgrammes - programmes.length));
+      }
       final overrideRows = await _database
           .customSelect(
             'SELECT channel_id, guide_id_override FROM iptv_channel_overrides WHERE profile_id=? AND source_id=?',
@@ -1833,38 +1861,26 @@ class IptvSourceRepository {
           row.read<String>('channel_id'): row.readNullable<String>('guide_id_override')?.trim(),
       };
       final effectiveTvgIds = <String, String?>{
-        for (final channel in playlistEntries)
+        for (final channel in channels)
           channel.id: guideIdOverrides[channel.id]?.isNotEmpty == true ? guideIdOverrides[channel.id] : channel.tvgId,
       };
       final tvgToChannelIds = <String, List<String>>{};
-      for (final channel in playlistEntries) {
+      for (final channel in channels) {
         final tvgId = effectiveTvgIds[channel.id];
         if (tvgId != null) {
           tvgToChannelIds.putIfAbsent(tvgId, () => []).add(channel.id);
         }
       }
       final mappedPrograms = _mapGuideProgrammes(programmes, tvgToChannelIds);
-      final entries = [
-        for (final channel in playlistEntries)
-          IptvPlaylistEntry(
-            id: channel.id,
-            title: channel.title,
-            streamUrl: channel.streamUrl,
-            tvgId: channel.tvgId,
-            number: channel.number,
-            groupTitle: channel.groupTitle,
-            logoUrl:
-                channel.logoUrl ??
-                (effectiveTvgIds[channel.id] == null ? null : guideLogos[effectiveTvgIds[channel.id]!]),
-            radio: channel.radio,
-            catchupSource: channel.catchupSource,
-            catchupDays: channel.catchupDays,
-            streamHeaders: channel.streamHeaders,
-          ),
-      ];
-      return await _replaceSnapshot(source, entries, mappedPrograms);
+      final fallbackLogos = <String, String>{
+        for (final channel in channels)
+          if (channel.logoUrl == null)
+            if (guideLogos[effectiveTvgIds[channel.id]] case final String logo) channel.id: logo,
+      };
+      await _publishGuide(expected, mappedPrograms, guideKeys, freshGuides, fallbackLogos, guideFailed);
+      return channels.length;
     } on IptvImportException catch (error) {
-      await _recordError(source, error.code);
+      await _recordError(expected, error.code);
       rethrow;
     } on SourceException catch (error) {
       final code = switch (error.reason) {
@@ -1874,14 +1890,199 @@ class IptvSourceRepository {
         SourceFailure.cancelled => 'cancelled',
         _ => 'provider_unavailable',
       };
-      await _recordError(source, code);
+      await _recordError(expected, code);
       throw IptvImportException(code);
     } on Object {
-      await _recordError(source, 'provider_unavailable');
+      await _recordError(expected, 'provider_unavailable');
       throw const IptvImportException('provider_unavailable');
     } finally {
       stalker?.close();
       transport.close();
+    }
+  }
+
+  // Reuse each previously published channel ID when its feed can be matched.
+  // Existing favorites, locks, recents, and pending timers then need no rewrite.
+  Future<Map<String, String>> _feedIdentities(String sourceId, List<IptvPlaylistEntry> feeds) async {
+    final stored = await _database
+        .customSelect(
+          'SELECT feed_key,channel_id FROM iptv_feed_identities WHERE source_id=?',
+          variables: [Variable(sourceId)],
+        )
+        .get();
+    final known = {for (final row in stored) row.read<String>('feed_key'): row.read<String>('channel_id')};
+    final result = <String, String>{};
+    final used = <String>{};
+    // A canonical ID takes precedence over a historical alias if both return.
+    for (final feed in feeds) {
+      if (known[feed.id] == feed.id) {
+        result[feed.id] = feed.id;
+        used.add(feed.id);
+      }
+    }
+    final aliases = <String, List<String>>{};
+    for (final feed in feeds) {
+      final id = known[feed.id];
+      if (id != null && !used.contains(id)) (aliases[id] ??= []).add(feed.id);
+    }
+    for (final alias in aliases.entries) {
+      // If two historical variants reappear together, use the last actual
+      // lineup below to decide which still owns the old ordinal.
+      if (alias.value.length != 1) continue;
+      used.add(alias.key);
+      result[alias.value.single] = alias.key;
+    }
+    if (result.length == feeds.length) return result;
+    final rows = await _database
+        .customSelect(
+          'SELECT channel_id,tvg_id,title,number,group_title,stream_url_ciphertext FROM iptv_channels WHERE source_id=?',
+          variables: [Variable(sourceId)],
+        )
+        .get();
+    String metadata(String? tvg, String title, String? number, String? group) =>
+        jsonEncode([tvg, title.trim().toLowerCase(), number, group]);
+    final byMetadata = <String, List<QueryRow>>{};
+    for (final row in rows) {
+      if (used.contains(row.read<String>('channel_id'))) continue;
+      final key = metadata(
+        row.readNullable<String>('tvg_id'),
+        row.read<String>('title'),
+        row.readNullable<String>('number'),
+        row.readNullable<String>('group_title'),
+      );
+      (byMetadata[key] ??= []).add(row);
+    }
+    final candidates = <String, List<IptvPlaylistEntry>>{};
+    for (final feed in feeds.where((f) => !result.containsKey(f.id))) {
+      (candidates[metadata(feed.tvgId, feed.title, feed.number, feed.groupTitle)] ??= []).add(feed);
+    }
+    for (final group in candidates.entries) {
+      final old = byMetadata[group.key] ?? const <QueryRow>[];
+      final incoming = group.value;
+      if (old.length == 1 && incoming.length == 1) {
+        result[incoming.single.id] = old.single.read<String>('channel_id');
+        continue;
+      }
+      if (old.isEmpty) continue;
+      final exact = {for (final feed in incoming) feed.id};
+      for (final row in old) {
+        final value = await CredentialVault.reveal(row.read<String>('stream_url_ciphertext'));
+        if (value == null) throw const IptvImportException('credential_unavailable');
+        final uri = Uri.tryParse(value);
+        if (uri == null) continue;
+        final first = incoming.first;
+        final key = IptvPlaylistParser.feedId(uri, first.title, first.tvgId, first.number, first.groupTitle);
+        if (exact.remove(key)) result[key] = row.read<String>('channel_id');
+      }
+    }
+    // A provider can rename or renumber a channel while retaining its
+    // address. Require a unique address on each side before reusing its ID.
+    final byAddress = <String, List<IptvPlaylistEntry>>{};
+    final unmatchedGroups = <String?>{};
+    for (final feed in feeds.where((f) => !result.containsKey(f.id))) {
+      unmatchedGroups.add(feed.tvgId);
+      final key = IptvPlaylistParser.feedId(Uri.parse(feed.streamUrl), '', feed.tvgId, null, null);
+      (byAddress[key] ??= []).add(feed);
+    }
+    if (byAddress.isNotEmpty) {
+      final occupied = result.values.toSet();
+      final prior = <String, List<String>>{};
+      for (final row in rows) {
+        final id = row.read<String>('channel_id');
+        final group = row.readNullable<String>('tvg_id');
+        if (occupied.contains(id) || !unmatchedGroups.contains(group)) continue;
+        final value = await CredentialVault.reveal(row.read<String>('stream_url_ciphertext'));
+        if (value == null) throw const IptvImportException('credential_unavailable');
+        final uri = Uri.tryParse(value);
+        if (uri == null) continue;
+        final key = IptvPlaylistParser.feedId(uri, '', group, null, null);
+        if (byAddress.containsKey(key)) (prior[key] ??= []).add(id);
+      }
+      for (final priorRow in prior.entries) {
+        final incoming = byAddress[priorRow.key]!;
+        if (priorRow.value.length == 1 && incoming.length == 1) result[incoming.single.id] = priorRow.value.single;
+      }
+    }
+    for (final feed in feeds) {
+      result.putIfAbsent(feed.id, () => feed.id);
+    }
+    return result;
+  }
+
+  Future<IptvXmltvParseResult> _cachedGuide(String sourceId, String key, int limit) async {
+    final args = [Variable(sourceId), Variable(key)];
+    final rows = await _database
+        .customSelect(
+          'SELECT * FROM iptv_guide_programmes WHERE source_id=? AND guide_key=? LIMIT ?',
+          variables: [...args, Variable(limit)],
+        )
+        .get();
+    final logos = await _database
+        .customSelect('SELECT tvg_id,logo_url FROM iptv_guide_logos WHERE source_id=? AND guide_key=?', variables: args)
+        .get();
+    return IptvXmltvParseResult(
+      skipped: 0,
+      channelLogos: {for (final row in logos) row.read<String>('tvg_id'): row.read<String>('logo_url')},
+      programmes: [
+        for (final row in rows)
+          IptvXmltvProgramme(
+            channelTvgId: row.read<String>('tvg_id'),
+            beginsAt: row.read<int>('begins_at'),
+            endsAt: row.read<int>('ends_at'),
+            title: row.read<String>('title'),
+            summary: row.readNullable<String>('summary'),
+            category: row.readNullable<String>('category'),
+            episodeId: row.readNullable<String>('episode_id'),
+            thumb: row.readNullable<String>('thumb_url'),
+          ),
+      ],
+    );
+  }
+
+  Future<void> _publishGuideCache(String source, Set<String> keys, Map<String, IptvXmltvParseResult> fresh) async {
+    for (final table in ['iptv_guide_logos', 'iptv_guide_programmes']) {
+      final remaining = keys.difference(fresh.keys.toSet());
+      final keep = remaining.isEmpty ? '' : ' AND guide_key NOT IN (${List.filled(remaining.length, "?").join(",")})';
+      await _database.customStatement('DELETE FROM $table WHERE source_id=?$keep', [source, ...remaining]);
+    }
+    for (final entry in fresh.entries) {
+      await _insertRows(
+        table: 'iptv_guide_programmes',
+        columns: const [
+          'source_id',
+          'guide_key',
+          'tvg_id',
+          'begins_at',
+          'ends_at',
+          'title',
+          'summary',
+          'category',
+          'episode_id',
+          'thumb_url',
+        ],
+        rows: [
+          for (final p in entry.value.programmes)
+            [
+              source,
+              entry.key,
+              p.channelTvgId,
+              p.beginsAt,
+              p.endsAt,
+              p.title,
+              p.summary,
+              p.category,
+              p.episodeId,
+              p.thumb,
+            ],
+        ],
+      );
+      await _insertRows(
+        table: 'iptv_guide_logos',
+        columns: const ['source_id', 'guide_key', 'tvg_id', 'logo_url'],
+        rows: [
+          for (final logo in entry.value.channelLogos.entries) [source, entry.key, logo.key, logo.value],
+        ],
+      );
     }
   }
 
@@ -1914,10 +2115,10 @@ class IptvSourceRepository {
     return mapped;
   }
 
-  Future<int> _replaceSnapshot(
+  Future<_StoredIptvSource> _publishLineup(
     _StoredIptvSource expected,
     List<IptvPlaylistEntry> entries,
-    List<IptvProgrammeSnapshot> programmes,
+    Map<String, String> identities,
   ) async {
     final protectedStreams = await _mapInBatches(entries, (entry) => CredentialVault.protect(entry.streamUrl));
     final protectedCatchup = await _mapInBatches(
@@ -1932,13 +2133,20 @@ class IptvSourceRepository {
           : CredentialVault.protect(jsonEncode(entry.streamHeaders)),
     );
     final now = DateTime.now().millisecondsSinceEpoch;
-    await _database.runIdentityMutation(
+    return _database.runIdentityMutation(
       () => _database.transaction(() async {
         final current = await _source(expected.profileId, expected.id);
         if (current == null || current.revision != expected.revision || current.generation != expected.generation) {
           throw const IptvImportException('source_changed');
         }
-        await _database.customStatement('DELETE FROM iptv_programmes WHERE source_id=?', [expected.id]);
+        await _insertRows(
+          table: 'iptv_feed_identities',
+          replace: true,
+          columns: const ['source_id', 'feed_key', 'channel_id'],
+          rows: [
+            for (final row in identities.entries) [expected.id, row.key, row.value],
+          ],
+        );
         await _database.customStatement('DELETE FROM iptv_channels WHERE source_id=?', [expected.id]);
         final channelRows = <List<Object?>>[];
         for (var index = 0; index < entries.length; index++) {
@@ -1978,6 +2186,45 @@ class IptvSourceRepository {
           ],
           rows: channelRows,
         );
+        await _database.customStatement(
+          '''
+        DELETE FROM iptv_channel_overrides
+        WHERE source_id=? AND profile_id=?
+          AND channel_id NOT IN (SELECT channel_id FROM iptv_channels WHERE source_id=?)
+          AND channel_id NOT IN (SELECT channel_id FROM iptv_feed_identities WHERE source_id=?)
+      ''',
+          [expected.id, expected.profileId, expected.id, expected.id],
+        );
+        await _database.customStatement(
+          '''DELETE FROM iptv_programmes WHERE source_id=?
+           AND channel_id NOT IN (SELECT channel_id FROM iptv_channels WHERE source_id=?)''',
+          [expected.id, expected.id],
+        );
+        await _database.customStatement(
+          'UPDATE iptv_sources SET generation=generation+1,last_success_at=?,last_error_code=NULL WHERE id=?',
+          [now, expected.id],
+        );
+        return (await _source(expected.profileId, expected.id))!;
+      }),
+    );
+  }
+
+  Future<void> _publishGuide(
+    _StoredIptvSource expected,
+    List<IptvProgrammeSnapshot> programmes,
+    Set<String> guideKeys,
+    Map<String, IptvXmltvParseResult> freshGuides,
+    Map<String, String> fallbackLogos,
+    bool guideFailed,
+  ) async {
+    await _database.runIdentityMutation(
+      () => _database.transaction(() async {
+        final current = await _source(expected.profileId, expected.id);
+        if (current == null || current.revision != expected.revision || current.generation != expected.generation) {
+          throw const IptvImportException('source_changed');
+        }
+        await _publishGuideCache(expected.id, guideKeys, freshGuides);
+        await _database.customStatement('DELETE FROM iptv_programmes WHERE source_id=?', [expected.id]);
         final programmeRows = [
           for (final item in programmes)
             [
@@ -2007,30 +2254,29 @@ class IptvSourceRepository {
           ],
           rows: programmeRows,
         );
-        await _database.customStatement(
-          '''
-        DELETE FROM iptv_channel_overrides
-        WHERE source_id=? AND profile_id=?
-          AND channel_id NOT IN (SELECT channel_id FROM iptv_channels WHERE source_id=?)
-      ''',
-          [expected.id, expected.profileId, expected.id],
-        );
-        await _database.customStatement(
-          '''
-        UPDATE iptv_sources SET generation=generation+1, last_success_at=?, last_error_code=NULL
-        WHERE id=? AND profile_id=? AND revision=? AND generation=?
-      ''',
-          [now, expected.id, expected.profileId, expected.revision, expected.generation],
-        );
+        if (fallbackLogos.isNotEmpty) {
+          await _database.batch((batch) {
+            for (final entry in fallbackLogos.entries) {
+              batch.customStatement(
+                'UPDATE iptv_channels SET logo_url=? WHERE source_id=? AND channel_id=? AND logo_url IS NULL',
+                [entry.value, expected.id, entry.key],
+              );
+            }
+          });
+        }
+        await _database.customStatement('UPDATE iptv_sources SET last_error_code=? WHERE id=?', [
+          guideFailed ? 'guide_unavailable' : null,
+          expected.id,
+        ]);
       }),
     );
-    return entries.length;
   }
 
   Future<void> _insertRows({
     required String table,
     required List<String> columns,
     required List<List<Object?>> rows,
+    bool replace = false,
   }) async {
     if (rows.isEmpty) {
       return;
@@ -2042,7 +2288,7 @@ class IptvSourceRepository {
       final valuesClause = List.filled(chunk.length, rowPlaceholder).join(', ');
       final values = <Object?>[for (final row in chunk) ...row];
       await _database.customStatement(
-        'INSERT OR IGNORE INTO $table(${columns.join(', ')}) VALUES $valuesClause',
+        "INSERT OR ${replace ? 'REPLACE' : 'IGNORE'} INTO $table(${columns.join(', ')}) VALUES $valuesClause",
         values,
       );
     }
