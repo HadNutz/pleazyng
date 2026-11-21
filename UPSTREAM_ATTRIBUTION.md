@@ -1,5 +1,7 @@
 # Upstream source attribution
 
+- Give long TV summaries the available width while keeping titles, metadata, actions and the fork’s directional layout in their existing columns. [smee2018](https://github.com/smee2018) proposed [Plezy PR #3087](https://github.com/edde746/plezy/pull/3087).
+
 - Reconcile the macOS video layer with actual window visibility after PiP closes. Preserve explicitly hidden, sleeping and occluded states and restore playback activity only for visible playing video. [wthueb](https://github.com/wthueb) proposed [Plezy PR #3008](https://github.com/edde746/plezy/pull/3008).
 
 - Allow users to withdraw their own pending film or TV request. The client rechecks the request, owner, title and edition before deleting the request record. Library files remain under the server administrator’s control. [wetpas](https://github.com/wetpas) proposed [Plezy PR #3111](https://github.com/edde746/plezy/pull/3111).

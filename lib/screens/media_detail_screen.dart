@@ -4109,14 +4109,21 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
       children: [
         Positioned(
           left: spotlightLeft,
-          right: size.width * 0.40,
+          // The summary spans the full width; the logo, metadata and actions
+          // keep the hero's 60% text column via columnWidth (#3069).
+          right: spotlightLeft,
           top: spotlightTop,
           bottom: foregroundBottom,
           child: buildHiddenContent
               ? ListenableBuilder(
                   listenable: _tvDetailForegroundListenable,
-                  builder: (context, _) =>
-                      _buildTvDetailForeground(context, metadata, hideSpoilers: hideSpoilers, scale: detailScale),
+                  builder: (context, _) => _buildTvDetailForeground(
+                    context,
+                    metadata,
+                    hideSpoilers: hideSpoilers,
+                    scale: detailScale,
+                    columnWidth: size.width * 0.60 - spotlightLeft,
+                  ),
                 )
               : const SizedBox.shrink(),
         ),
@@ -4238,6 +4245,7 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
     MediaItem metadata, {
     required bool hideSpoilers,
     required double scale,
+    required double columnWidth,
   }) {
     final theme = Theme.of(context);
     final description = _tvDetailDescription(metadata, hideSpoilers: hideSpoilers);
@@ -4251,6 +4259,8 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxHeight <= 0 || constraints.maxWidth <= 0) return const SizedBox.shrink();
+
+        final columnMaxWidth = math.max(0.0, math.min(columnWidth, constraints.maxWidth));
 
         final availableHeight = constraints.maxHeight.isFinite ? constraints.maxHeight : 264.0;
         final desiredLogoHeight = 220 * scale;
@@ -4300,7 +4310,7 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
             descriptionHeight +
             actionGap +
             actionHeight;
-        final logoWidth = desiredLogoWidth < constraints.maxWidth ? desiredLogoWidth : constraints.maxWidth;
+        final logoWidth = desiredLogoWidth < columnMaxWidth ? desiredLogoWidth : columnMaxWidth;
 
         void openDetails() => _openTvDetailsSheet(context, metadata, hideSpoilers: hideSpoilers);
 
@@ -4337,7 +4347,7 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
                                 metadata,
                                 width: logoWidth,
                                 height: logoHeight,
-                                availableWidth: constraints.maxWidth,
+                                availableWidth: columnMaxWidth,
                                 titleBuilder: (context, title) => _buildDetailTitle(
                                   context,
                                   title,
@@ -4373,6 +4383,7 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
                                   children: [
                                     if (hasEpisodeTitle) ...[
                                       SizedBox(
+                                        width: columnMaxWidth,
                                         height: episodeTitleLineHeight,
                                         child: Align(
                                           alignment: .centerLeft,
@@ -4393,6 +4404,7 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
                                       SizedBox(height: episodeTitleGap),
                                     ],
                                     SizedBox(
+                                      width: columnMaxWidth,
                                       height: metadataLineHeight,
                                       child: Align(
                                         alignment: .centerLeft,
@@ -4424,7 +4436,7 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
                       ),
                     ),
                     SizedBox(height: actionGap),
-                    SizedBox(height: actionHeight, child: _buildActionButtons(metadata)),
+                    SizedBox(width: columnMaxWidth, height: actionHeight, child: _buildActionButtons(metadata)),
                   ],
                 ),
               ),

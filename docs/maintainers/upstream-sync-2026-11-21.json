@@ -730,7 +730,8 @@
       "author": "smee2018",
       "state": "open",
       "title": "fix(tv): let the description use the full width in TV layout",
-      "decision": "Check genuinely truncated TV descriptions at the fork’s widths and text scales before changing layout."
+      "decision": "Adapted in Pleazyng. Give long TV summaries the available width while keeping titles, metadata, actions and the fork’s directional layout in their existing columns.",
+      "upstream_head": "631d90e8248c339caa3d36b85f500b9a9d8891fa"
     },
     {
       "number": 3092,
