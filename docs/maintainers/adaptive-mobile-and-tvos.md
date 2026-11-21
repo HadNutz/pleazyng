@@ -67,3 +67,14 @@ Use `--states` with a comma-separated list of supported IDs on emulators or devi
 On Windows, span embedded panels, move the window until only one panel is visible, and repeat at different DPI and orientations. For a continuous internal panel, select the physical hinge direction under Settings → Playback → Foldable display hinge. Automatic uses the actual embedded-panel layout. On a spanned window or a detached mini-player, check that HDR and refresh-rate matching apply to the monitor containing the video and that both monitors recover their original settings. Normal external monitors and mirrored clones should not add hinges.
 
 For cold recovery, background a paused tuner or catch-up programme, allow the OS to save the task, then terminate the background process (on Android use `adb shell am kill org.snapetech.pleazyng`). Reopen from Recents. Verify the same channel, broadcast time and pause intent. Repeat after the broadcast has fallen outside the available buffer. A fresh tuner can only seek within its newly reported window. A memory-only buffer that died with the process falls back to live. Repeat with a locked Watch Together room as both host and guest, then after changing the profile, leaving the room or letting its server-side reconnect lease expire. Record room member identity and host control without recording the reconnect token.
+
+### Checks run on November 21, 2026
+
+| Candidate check | Observed result |
+|---|---|
+| Flutter live TV and Watch Together | 113 tests passed across saved video tasks, live playback sessions, accumulated seeks and room membership. A local upstream Go relay accepted a new host client and a new guest client back into the same locked room with their original peer IDs and authority. |
+| Flutter pane and decoder continuity | Eight tests passed with bundled test assets, including Windows panel coordinates, two hinges, RTL, editable content and one paused native-player instance through Duo posture changes. The native player channels were simulated. |
+| Windows native code | The Win32 runner, embedded-panel enumeration and MPV plug-in compiled for x64. The display-mode manager passed a Windows-target syntax check. Full application installation and display output await Windows hardware. |
+| Android native code | The shared playback surface and PiP source-rectangle code compiled against the Android 37 SDK. Use the ADB procedure above to qualify playback on each OEM. |
+| HarmonyOS NEXT | The API 21 SDK produced an unsigned Stage HAP with compiled ArkTS and the launchable EntryAbility. The native pane algorithm passed tabletop, dual-crease and off-window checks. Device signing and playback are pending. |
+| Apple | The three Duo SDK archive-checker fixture tests passed. An Xcode archive and physical playback remain unverified for this candidate. |
