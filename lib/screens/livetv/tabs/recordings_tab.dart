@@ -418,8 +418,7 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
       await context.read<IptvSourceRepository>().seriesRules.remove(rule.profileId, rule.id);
       if (mounted) await _load();
     } catch (_) {
-      if (mounted)
-        showErrorSnackBar(context, t.iptv.recordingActionFailed); // Keep the rule visible when removal fails.
+      if (mounted) showErrorSnackBar(context, t.iptv.recordingActionFailed); // Keep the existing rule.
     }
   }
 

@@ -611,8 +611,7 @@ class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> with
       final protected = await CredentialVault.protect(data);
       if (mounted && !restorePending && _lastMembership == data) _savedRoom.value = protected;
     } catch (_) {
-      if (mounted && !restorePending && _lastMembership == data)
-        _savedRoom.value = null; // Never persist unprotected room credentials.
+      if (mounted && !restorePending && _lastMembership == data) _savedRoom.value = null; // Discard unsealed tokens.
     }
   }
 
