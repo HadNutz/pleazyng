@@ -1644,6 +1644,7 @@ class _Translations$iptv$id extends Translations$iptv$en {
 	final TranslationsId _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Sumber cadangan menurut urutan pemutaran';
 	@override String get lineupOrder => 'Urutan saluran';
 	@override String get orderChanged => 'Urutan saluran berubah. Periksa lalu coba lagi.';
 	@override String get localPlaylist => 'Berkas M3U';
@@ -7016,6 +7017,7 @@ extension on TranslationsId {
 			'connections.signInAgain' => 'Menandatangani lagi',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Mengedit ${product} koneksi',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Menambahkan atau menghapus URL untuk ${serverName}. Pleazyng akan menggunakan URL yang dapat diakses dengan latensi terendah.',
+			'iptv.backupFeeds' => 'Sumber cadangan menurut urutan pemutaran',
 			'iptv.lineupOrder' => 'Urutan saluran',
 			'iptv.orderChanged' => 'Urutan saluran berubah. Periksa lalu coba lagi.',
 			'iptv.localPlaylist' => 'Berkas M3U',
@@ -7186,9 +7188,9 @@ extension on TranslationsId {
 			'discover.director' => 'Direktur',
 			'discover.directors' => 'Direktur',
 			'discover.movie' => 'Film',
-			'discover.tvShow' => 'televisi show',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'televisi show',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min dibatasi',
 			'discover.moreLikeThis' => 'Lainnya Seperti Ini',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('id'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} judul', ), 
@@ -7700,9 +7702,9 @@ extension on TranslationsId {
 			'collections.removedFromCollection' => 'Menghapus dari Koleksi',
 			'collections.removeFromCollectionFailed' => 'Tidak berhasil keluar dari koleksi',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Kesalahan penghapusan dari koleksi: ${error}',
-			'collections.searchCollections' => 'Koleksi pencarian...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'Koleksi pencarian...',
 			'playlists.title' => 'Daftar putar',
 			'playlists.playlist' => 'Daftar Putar',
 			'playlists.noPlaylists' => 'Tidak ditemukan playlist',
@@ -8214,9 +8216,9 @@ extension on TranslationsId {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision penghapusan',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision decoder (P7 → 8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Lantai dasar',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 lapisan dasar',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 lapisan dasar',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Lantai dasar HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'Lantai dasar SDR',
 			'performanceOverlay.dvRouteReshaped' => 'RPU yang dihapus kembali (gpu-next)',
@@ -8728,9 +8730,9 @@ extension on TranslationsId {
 			'homeLayout.autoSlideDescription' => 'Arrows (PC) dan d-pad (TV) selalu bekerja dan memulai kembali timer.',
 			'homeLayout.autoSlideEditDescription' => 'Selain itu, ia juga meluncur sendiri setiap beberapa detik. Off: hanya bergerak ketika Anda mengklik pistol (PC) atau tekan kiri/kanan pada remote (TV). Arrow dan d-pad selalu bekerja sama.',
 			'homeLayout.enableHeroFirst' => 'Memungkinkan Hero Pertama',
-			'homeLayout.showOnHome' => 'Tampilkan pada Home Screen',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Tampilkan pada Home Screen',
 			'homeLayout.home' => 'rumah',
 			'homeLayout.removeFromHome' => 'Menghilangkan dari rumah',
 			'homeLayout.selectRowsFirst' => 'Pilih rumah baris di bawah pertama.',
@@ -9242,9 +9244,9 @@ extension on TranslationsId {
 			'audiobook.librarySort' => 'Berbagai Buku',
 			'audiobook.sortTitle' => 'Judul',
 			'audiobook.sortAuthor' => 'Penulis',
-			'audiobook.sortNarrator' => 'narator',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'narator',
 			'audiobook.sortSeries' => 'Serangkaian perintah',
 			'audiobook.sortRecent' => 'Baru-baru ini dibuka',
 			'audiobook.statusFilter' => 'Status bacaan',
@@ -9756,9 +9758,9 @@ extension on TranslationsId {
 			'musicTools.guestDj' => 'DJ tamu',
 			'musicTools.charts' => 'Peringkat pendengaran',
 			'musicTools.rediscover' => 'Temukan kembali',
-			'musicTools.stations' => 'Stasiun musik',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'Stasiun musik',
 			'musicTools.prompt' => 'Daftar putar dari deskripsi',
 			'musicTools.provider' => 'URL pembuatan penyedia',
 			'musicTools.model' => 'Nama model',

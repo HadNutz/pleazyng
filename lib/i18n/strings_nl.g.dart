@@ -1651,6 +1651,7 @@ class _Translations$iptv$nl extends Translations$iptv$en {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Reservebronnen in afspeelvolgorde';
 	@override String get lineupOrder => 'Kanaalvolgorde';
 	@override String get orderChanged => 'De kanaalvolgorde is gewijzigd. Controleer deze en probeer het opnieuw.';
 	@override String get localPlaylist => 'M3U-bestand';
@@ -7041,6 +7042,7 @@ extension on TranslationsNl {
 			'connections.signInAgain' => 'Opnieuw aanmelden',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product}-verbinding bewerken',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Voeg URL\'s toe aan ${serverName} of verwijder ze. Pleazyng gebruikt de bereikbare URL met de laagste latentie.',
+			'iptv.backupFeeds' => 'Reservebronnen in afspeelvolgorde',
 			'iptv.lineupOrder' => 'Kanaalvolgorde',
 			'iptv.orderChanged' => 'De kanaalvolgorde is gewijzigd. Controleer deze en probeer het opnieuw.',
 			'iptv.localPlaylist' => 'M3U-bestand',
@@ -7211,9 +7213,9 @@ extension on TranslationsNl {
 			'discover.director' => 'Regisseur',
 			'discover.directors' => 'Regisseurs',
 			'discover.movie' => 'Film',
-			'discover.tvShow' => 'Tv-serie',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'Tv-serie',
 			'discover.minutesLeft' => ({required Object minutes}) => 'nog ${minutes} min',
 			'discover.moreLikeThis' => 'Meer zoals dit',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('nl'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titel', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titels', ), 
@@ -7725,9 +7727,9 @@ extension on TranslationsNl {
 			'collections.removedFromCollection' => 'Uit collectie verwijderd',
 			'collections.removeFromCollectionFailed' => 'Verwijderen uit collectie mislukt',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Fout bij verwijderen uit collectie: ${error}',
-			'collections.searchCollections' => 'Collecties zoeken...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'Collecties zoeken...',
 			'playlists.title' => 'Afspeellijsten',
 			'playlists.playlist' => 'Afspeellijst',
 			'playlists.noPlaylists' => 'Geen afspeellijsten gevonden',
@@ -8239,9 +8241,9 @@ extension on TranslationsNl {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision-decoder',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-decoder (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Basislaag',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-basislaag',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-basislaag',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-basislaag',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR-basislaag',
 			'performanceOverlay.dvRouteReshaped' => 'RPU-reshaping (gpu-next)',
@@ -8753,9 +8755,9 @@ extension on TranslationsNl {
 			'homeLayout.autoSlideDescription' => 'Ook slides op zichzelf elke paar seconden. Arrows (PC) en d-pad (TV) werken altijd en herstarten de timer.',
 			'homeLayout.autoSlideEditDescription' => 'Ook slides op zichzelf elke paar seconden. Off: bewegt alleen wanneer u een pijl (PC) klikt of links/rijk op de afstand (TV) druk.',
 			'homeLayout.enableHeroFirst' => 'Helden eerst mogelijk maken',
-			'homeLayout.showOnHome' => 'Show op Home Screen',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Show op Home Screen',
 			'homeLayout.home' => 'Home →',
 			'homeLayout.removeFromHome' => 'Verwijder van huis',
 			'homeLayout.selectRowsFirst' => 'Kies de Home Rijen onder de eerste.',
@@ -9267,9 +9269,9 @@ extension on TranslationsNl {
 			'audiobook.librarySort' => 'Sorte boeken',
 			'audiobook.sortTitle' => 'Titel',
 			'audiobook.sortAuthor' => 'Schrijver',
-			'audiobook.sortNarrator' => 'De narrator',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'De narrator',
 			'audiobook.sortSeries' => 'Serie bevel',
 			'audiobook.sortRecent' => 'Onlangs geopend',
 			'audiobook.statusFilter' => 'Status lezen',
@@ -9781,9 +9783,9 @@ extension on TranslationsNl {
 			'musicTools.guestDj' => 'Gast-dj',
 			'musicTools.charts' => 'Luisterlijsten',
 			'musicTools.rediscover' => 'Herontdekken',
-			'musicTools.stations' => 'Muziekstations',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'Muziekstations',
 			'musicTools.prompt' => 'Afspeellijst uit beschrijving',
 			'musicTools.provider' => 'Generatie-URL van aanbieder',
 			'musicTools.model' => 'Modelnaam',

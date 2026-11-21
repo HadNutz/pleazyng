@@ -6,6 +6,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/database/app_database.dart';
 import 'package:plezy/iptv/iptv_models.dart';
+import 'package:plezy/iptv/iptv_live_tv_session.dart';
 import 'package:plezy/iptv/iptv_playlist_parser.dart';
 import 'package:plezy/iptv/iptv_source_repository.dart';
 import 'package:plezy/sources/source_models.dart';
@@ -159,12 +160,26 @@ void main() {
     expect(stored.read<String>('playlist_ciphertext'), isNot(contains('streams.example')));
     final channels = await repo.editableChannels('p', source);
     final original = channels.map((item) => item.id).toList();
+    await repo.editLineupGroup('p', source, name: 'Family', add: original.toSet());
+    await repo.editLineupGroup('p', source, name: 'News', add: {original.first});
+    expect((await repo.lineupGroups('p', source)).where((g) => g.members.contains(original.first)), hasLength(2));
+    expect(await repo.lineupGroups('other', source), isEmpty);
+    final group = (await repo.lineupGroups('p', source)).first;
+    await repo.editLineupGroup('p', source, original: group, name: 'Evening', remove: {original.last});
+    await expectLater(
+      repo.editLineupGroup('p', source, original: group, name: 'Stale'),
+      throwsA(isA<IptvImportException>()),
+    );
     final edited = original.reversed.toList();
     await repo.saveLineupOrder('p', source, original, edited);
     await expectLater(repo.saveLineupOrder('p', source, original, original), throwsA(isA<IptvImportException>()));
     await expectLater(repo.setChannelsHidden('other', source, original, true), throwsA(isA<IptvImportException>()));
     await repo.setChannelsHidden('p', source, [edited.first], true);
     expect((await repo.channels('p')).map((item) => item.title), ['East']);
+    await expectLater(
+      repo.setChannelsHidden('p', source, edited, true, expectedHidden: false),
+      throwsA(isA<IptvImportException>()),
+    );
     final exported = await repo.exportLineup('p', source, original.toSet(), guide: false);
     final exportedList = IptvPlaylistParser.parse(exported, base: Uri(), allowHttp: false);
     expect(exportedList.entries.map((e) => e.title), ['East']);
@@ -203,6 +218,48 @@ void main() {
     expect((await repo.channels('p')).single.title, 'South');
   });
 
+  test('session recovery selects a compatible unlocked backup with its own headers', () async {
+    resetSharedPreferencesForTest();
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final repo = IptvSourceRepository(db);
+    Future<String> add(String title, String id, {String profile = 'home', List<String> backup = const []}) async {
+      final source = await repo.createSource(
+        profileId: profile,
+        displayName: title,
+        kind: IptvInputKind.m3uFile,
+        endpoint: '',
+        backupSourceIds: backup,
+        playlistContents:
+            '#EXTM3U\n#EXTINF:-1 tvg-id="$id",Evening News\n#EXTVLCOPT:http-user-agent=$title\nhttps://example.org/$title',
+      );
+      await repo.refresh(profile, source);
+      return source;
+    }
+
+    final other = await add('foreign', 'station', profile: 'other');
+    final wrong = await add('other-affiliate', 'other-station');
+    final locked = await add('protected', 'station');
+    await repo.saveChannelPresentation(
+      profileId: 'home',
+      sourceId: locked,
+      channelId: 'station',
+      hidden: false,
+      customTitle: null,
+      groupOverride: null,
+      guideIdOverride: null,
+      parentalLocked: true,
+    );
+    final alternate = await add('backup', 'station');
+    final primary = await add('primary', 'station', backup: [other, wrong, locked, alternate]);
+    final first = (await repo.startPlayback('home', primary, 'station'))!;
+    expect(await first.streamUrlAt(), endsWith('/primary'));
+    final recovered = (await first.recover(directStream: true, directStreamAudio: true))! as IptvLiveTvPlaybackSession;
+    expect(await recovered.streamUrlAt(), endsWith('/backup'));
+    expect(recovered.streamHeaders['User-Agent'], 'backup');
+    await recovered.discard();
+    expect(await recovered.recover(directStream: true, directStreamAudio: true), isNull);
+  });
   test('a raw gzip guide cannot exceed the decoded guide limit', () async {
     final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     final transport = SourceTransport(allowHttp: true);

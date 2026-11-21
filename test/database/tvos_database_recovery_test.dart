@@ -8,6 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/connection/connection.dart';
 import 'package:plezy/connection/connection_registry.dart';
 import 'package:plezy/database/app_database.dart';
+import 'package:plezy/iptv/iptv_models.dart';
+import 'package:plezy/iptv/iptv_source_repository.dart';
 import 'package:plezy/database/download_operations.dart';
 import 'package:plezy/database/tvos_database_recovery_store.dart';
 import 'package:plezy/media/ids.dart';
@@ -223,6 +225,30 @@ void main() {
   tearDown(() async {
     await database?.close();
     await tempDir.delete(recursive: true);
+  });
+
+  test('cache loss restores a private playlist, channel order and overlapping group memberships', () async {
+    final app = await open();
+    final repo = IptvSourceRepository(app.database);
+    final id = await repo.createSource(
+      profileId: 'p',
+      displayName: 'My lineup',
+      kind: IptvInputKind.m3uFile,
+      endpoint: '',
+      playlistContents:
+          '#EXTM3U\n#EXTINF:-1 tvg-id="a",Alpha\nhttps://example.org/a?token=secret\n#EXTINF:-1 tvg-id="b",Beta\nhttps://example.org/b',
+    );
+    await repo.refresh('p', id);
+    final ids = (await repo.editableChannels('p', id)).map((c) => c.id).toList();
+    await repo.saveLineupOrder('p', id, ids, ids.reversed.toList());
+    await repo.editLineupGroup('p', id, name: 'Evening', add: ids.toSet());
+    await closeAndDelete();
+    final reopened = await open();
+    expect(reopened.recoveryOutcome, TvosDatabaseRecoveryOutcome.restored);
+    final restored = IptvSourceRepository(reopened.database);
+    expect(await restored.refresh('p', id), 2);
+    expect((await restored.channels('p')).map((c) => c.title), ['Beta', 'Alpha']);
+    expect((await restored.lineupGroups('p', id)).single.members, ids.toSet());
   });
 
   test('restores exact four critical groups and excludes reconstructible tables', () async {

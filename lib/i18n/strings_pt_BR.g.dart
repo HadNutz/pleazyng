@@ -101,6 +101,7 @@ class Translations$iptv$pt_BR extends Translations$iptv$pt {
 	final TranslationsPtBr _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Fontes alternativas por ordem de reprodução';
 	@override String get lineupOrder => 'Ordem dos canais';
 	@override String get orderChanged => 'A ordem dos canais mudou. Confira e tente novamente.';
 	@override String get localPlaylist => 'Arquivo M3U';
@@ -1422,6 +1423,7 @@ class Translations$services$libraryFilter$pt_BR extends Translations$services$li
 extension on TranslationsPtBr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'iptv.backupFeeds' => 'Fontes alternativas por ordem de reprodução',
 			'iptv.lineupOrder' => 'Ordem dos canais',
 			'iptv.orderChanged' => 'A ordem dos canais mudou. Confira e tente novamente.',
 			'iptv.localPlaylist' => 'Arquivo M3U',
@@ -1933,9 +1935,9 @@ extension on TranslationsPtBr {
 			'romm.emulatorJs' => 'EmulatorJS',
 			'romm.ruffle' => 'Ruffle',
 			'romm.jsDos' => 'js-dos',
-			'romm.pico8' => 'PICO-8',
 			_ => null,
 		} ?? switch (path) {
+			'romm.pico8' => 'PICO-8',
 			'romm.easyRpg' => 'EasyRPG',
 			'romm.browserUnavailable' => 'An embedded browser player is not available in this build.',
 			'romm.nativeUnavailable' => 'The native emulator core is not installed in this build.',

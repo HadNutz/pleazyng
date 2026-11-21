@@ -1657,6 +1657,7 @@ class Translations$iptv$es extends Translations$iptv$en {
 	final TranslationsEs _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Fuentes de respaldo en orden de reproducción';
 	@override String get lineupOrder => 'Orden de canales';
 	@override String get orderChanged => 'El orden ha cambiado. Revísalo e inténtalo de nuevo.';
 	@override String get localPlaylist => 'Archivo M3U';
@@ -7168,6 +7169,7 @@ extension on TranslationsEs {
 			'connections.signInAgain' => 'Iniciar sesión de nuevo',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Editar conexión de ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Añade o elimina URL para ${serverName}. Pleazyng usará la URL accesible con menor latencia.',
+			'iptv.backupFeeds' => 'Fuentes de respaldo en orden de reproducción',
 			'iptv.lineupOrder' => 'Orden de canales',
 			'iptv.orderChanged' => 'El orden ha cambiado. Revísalo e inténtalo de nuevo.',
 			'iptv.localPlaylist' => 'Archivo M3U',
@@ -7335,9 +7337,9 @@ extension on TranslationsEs {
 			'discover.findNext.apply' => 'Aplicar',
 			'discover.findNext.openFailed' => 'Esta opción ya no está disponible. Actualiza para comprobarlo de nuevo.',
 			'discover.findNext.changeFailed' => 'No se pudo guardar el cambio. Inténtalo de nuevo.',
-			'discover.findNext.savedLimit' => 'La lista de sugerencias guardadas está llena. Quita una para guardar otra.',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedLimit' => 'La lista de sugerencias guardadas está llena. Quita una para guardar otra.',
 			'discover.findNext.chooseHint' => 'Abre un título, guárdalo para después o pasa al siguiente.',
 			'discover.findNext.howItWorks' => 'Cómo funciona',
 			'discover.findNext.notNowHelp' => 'Omite este título por ahora. Seguirá en tu biblioteca.',
@@ -7849,9 +7851,9 @@ extension on TranslationsEs {
 			'liveTv.failedToBuildStreamUrl' => 'No se pudo generar la URL de transmisión',
 			'liveTv.playbackStartFailed' => ({required Object reason}) => 'No se pudo iniciar el canal: ${reason}',
 			'liveTv.channelSwitchFailed' => ({required Object reason}) => 'No se pudo cambiar de canal: ${reason}',
-			'collections.title' => 'Colecciones',
 			_ => null,
 		} ?? switch (path) {
+			'collections.title' => 'Colecciones',
 			'collections.collection' => 'Colección',
 			'collections.empty' => 'La colección está vacía',
 			'collections.deleteCollection' => 'Eliminar colección',
@@ -8363,9 +8365,9 @@ extension on TranslationsEs {
 			'videoSettings.audioPitch' => 'Cambios de Pitch',
 			'videoSettings.audioPitchDescription' => 'Cambiar la pista sin cambiar la velocidad. MPV La construcción debe incluir Rubber Band.',
 			'videoSettings.audioEffectUnavailable' => 'Este efecto no está disponible para esta pista o MPV La construcción.',
-			'videoSettings.backgroundVideoAudio' => 'Video Audio de fondo',
 			_ => null,
 		} ?? switch (path) {
+			'videoSettings.backgroundVideoAudio' => 'Video Audio de fondo',
 			'videoSettings.backgroundVideoAudioDescription' => 'Mantenga el audio de video cuando abandona el reproductor; la imagen está oculta hasta que vuelva. Android utiliza una notificación de reproducción de medios.',
 			'videoSettings.audioNormalization' => 'Normalizar volumen',
 			'videoSettings.audioNormalizationDisablesPassthrough' => 'Decodifica el audio a PCM; la transferencia directa está desactivada mientras esta opción esté activa',
@@ -8877,9 +8879,9 @@ extension on TranslationsEs {
 			'watchLink.dialogMovieHint' => 'Abriendo este enlace juega la película.',
 			'watchLink.copy' => 'Copia',
 			'watchLink.copied' => 'Link copiado',
-			'homeLayout.title' => 'Home Layout',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.title' => 'Home Layout',
 			'homeLayout.resetToast' => 'Home Reset a la versión original de la versión Pleazyng',
 			'homeLayout.resetHeroTitle' => '¿Recuperar el layout de héroe a la stock Pleazyng?',
 			'homeLayout.resetHeroBody' => 'Desvia el ajuste de la hermana de cada ronda y retorna el único banner de rotación en la parte superior de la casa, como antes de que las líneas de la hermano existieran.',
@@ -9391,9 +9393,9 @@ extension on TranslationsEs {
 			'audiobook.disableSync' => 'Desactivar la sincronización en este dispositivo',
 			'audiobook.syncSourceDisconnect' => 'Eliminar esta fuente dejará de leer y escuchar la sincronización aquí. los archivos de sincronización encriptados permanecerán en el proveedor.',
 			'audiobook.syncReconnect' => 'Reconectar la cuenta de almacenamiento',
-			'audiobook.lastSynced' => ({required Object time}) => 'Última sincronización en ${time}',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.lastSynced' => ({required Object time}) => 'Última sincronización en ${time}',
 			'audiobook.syncPrivacy' => 'La sincronización en la nube guarda datos cifrados de progreso, finalización, marcadores y notas en archivos de sincronización de la aplicación. Los archivos multimedia nunca se suben, sustituyen, renombran ni eliminan. Los tokens de cuenta y las contraseñas no se suben. Google Drive y OneDrive usan el almacenamiento de la aplicación; Dropbox usa Pleazyng Sync; WebDAV y S3 usan la carpeta o el prefijo elegidos. Activar la sincronización puede requerir permiso de escritura del proveedor, pero la aplicación solo escribe esos archivos de estado. La sincronización en la nube y la sincronización compatible de progreso y marcadores con el servidor funcionan de forma independiente, con reintentos separados. Los conflictos se muestran para que los resuelvas. Desactivar la sincronización conserva el historial local y el estado remoto.',
 			'audiobook.syncConflicts' => 'Elegir dónde volver',
 			'audiobook.conflictHelp' => 'Estas modificaciones se hicieron de forma independiente. escoge la posición o la versión de la marca para mantener. Un timestamp posterior o un porcentaje superior no gana automáticamente.',
@@ -9905,9 +9907,9 @@ extension on TranslationsEs {
 			'bonusExtras.serviceUrl' => 'Dirección del servidor de descubrimiento',
 			'bonusExtras.serviceToken' => 'Token de acceso al servicio de descubrimiento',
 			'bonusExtras.aiMode' => 'Asistencia con IA',
-			'bonusExtras.aiOff' => 'Desactivada',
 			_ => null,
 		} ?? switch (path) {
+			'bonusExtras.aiOff' => 'Desactivada',
 			'bonusExtras.aiDevice' => 'En este dispositivo',
 			'bonusExtras.aiServer' => 'En mi servidor',
 			'bonusExtras.aiCloud' => 'En la nube',

@@ -1500,6 +1500,7 @@
     "editMediaBrowserIntro": "Adjon hozzá vagy távolítson el URL-eket a(z) ${serverName} esetén. A Pleazyng a legkisebb késleltetésű, elérhető URL-t fogja használni."
   },
   "iptv": {
+    "backupFeeds": "Tartalék források lejátszási sorrendben",
     "lineupOrder": "Csatornasorrend",
     "orderChanged": "A csatornasorrend megváltozott. Ellenőrizze, majd próbálja újra.",
     "localPlaylist": "M3U-fájl",

@@ -1651,6 +1651,7 @@ class _Translations$iptv$uz extends Translations$iptv$en {
 	final TranslationsUz _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Ijro tartibidagi zaxira manbalar';
 	@override String get lineupOrder => 'Kanallar tartibi';
 	@override String get orderChanged => 'Kanallar tartibi o‘zgardi. Tekshirib, qayta urinib ko‘ring.';
 	@override String get localPlaylist => 'M3U fayli';
@@ -7041,6 +7042,7 @@ extension on TranslationsUz {
 			'connections.signInAgain' => 'Qaytadan kirish',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} ulanishini tahrirlash',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} uchun URL-larni qoʻshing yoki olib tashlang. Pleazyng eng kam kechikishga ega boʻlgan mavjud URL-dan foydalanadi.',
+			'iptv.backupFeeds' => 'Ijro tartibidagi zaxira manbalar',
 			'iptv.lineupOrder' => 'Kanallar tartibi',
 			'iptv.orderChanged' => 'Kanallar tartibi o‘zgardi. Tekshirib, qayta urinib ko‘ring.',
 			'iptv.localPlaylist' => 'M3U fayli',
@@ -7211,9 +7213,9 @@ extension on TranslationsUz {
 			'discover.director' => 'Rejissyor',
 			'discover.directors' => 'Rejissyorlar',
 			'discover.movie' => 'Film',
-			'discover.tvShow' => 'TV Shou',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'TV Shou',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} daq qoldi',
 			'discover.moreLikeThis' => 'Oʻxshashlar',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ta nom', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} ta nom', ), 
@@ -7725,9 +7727,9 @@ extension on TranslationsUz {
 			'collections.removedFromCollection' => 'Toʻplamdan oʻchirildi',
 			'collections.removeFromCollectionFailed' => 'Toʻplamdan oʻchirib boʻlmadi',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Oʻchirish xatoligi: ${error}',
-			'collections.searchCollections' => 'Toʻplamlardan qidirish...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'Toʻplamlardan qidirish...',
 			'playlists.title' => 'Ijro roʻyxatlari',
 			'playlists.playlist' => 'Ijro roʻyxati',
 			'playlists.noPlaylists' => 'Ijro roʻyxatlari topilmadi',
@@ -8239,9 +8241,9 @@ extension on TranslationsUz {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision dekoderi',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision dekoderi (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Asosiy qatlam',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 asosiy qatlami',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 asosiy qatlami',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG asosiy qatlami',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR asosiy qatlami',
 			'performanceOverlay.dvRouteReshaped' => 'RPU orqali qayta shakllantirilgan (gpu-next)',
@@ -8753,9 +8755,9 @@ extension on TranslationsUz {
 			'homeLayout.autoSlideDescription' => 'U\'zizga (PC) və d-pad (TV) qotlarga çalışmaygan, timiyarni qaytarmaygan.',
 			'homeLayout.autoSlideEditDescription' => 'O‘shayni o‘shaydi o‘shahdi o‘s. Off: o‘shaya‘ga bir pul (PC) o‘shakla‘ga sol/dishayni o’shayni (TV). Arrows and d-pad always work either way.',
 			'homeLayout.enableHeroFirst' => 'Birinci kahramanlar',
-			'homeLayout.showOnHome' => 'Show on Home screen.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Show on Home screen.',
 			'homeLayout.home' => 'Bosh sahifa',
 			'homeLayout.removeFromHome' => 'Home‘dan qaytadi',
 			'homeLayout.selectRowsFirst' => 'U\'ziz, siz sizni ilk aşağıda qaytadi.',
@@ -9267,9 +9269,9 @@ extension on TranslationsUz {
 			'audiobook.librarySort' => 'Kitajlar',
 			'audiobook.sortTitle' => 'Tadiya',
 			'audiobook.sortAuthor' => 'Avtor',
-			'audiobook.sortNarrator' => 'Hikmatlar',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'Hikmatlar',
 			'audiobook.sortSeries' => 'Seriyadi',
 			'audiobook.sortRecent' => 'U‘zʻzʻzʻzʻzʻzʻzʻ',
 			'audiobook.statusFilter' => 'Okumaya status',
@@ -9781,9 +9783,9 @@ extension on TranslationsUz {
 			'musicTools.guestDj' => 'Mehmon DJ',
 			'musicTools.charts' => 'Tinglash reytingi',
 			'musicTools.rediscover' => 'Qayta kashf etish',
-			'musicTools.stations' => 'Musiqa stansiyalari',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'Musiqa stansiyalari',
 			'musicTools.prompt' => 'Tavsifdan pleylist',
 			'musicTools.provider' => 'Provayder yaratish manzili',
 			'musicTools.model' => 'Model nomi',

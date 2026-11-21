@@ -1507,6 +1507,7 @@
     "editMediaBrowserIntro": "Add or remove URLs for ${serverName}. Pleazyng will use the reachable URL with the lowest latency."
   },
   "iptv": {
+    "backupFeeds": "Backup sources in playback order",
     "exportPrivate": "This playlist includes stream addresses and may contain your provider credentials. Save it in a private location.",
     "dynamicStreamExport": "This portal creates a new link each time you play a channel. Its guide can be exported.",
     "lineupOrder": "Channel order",

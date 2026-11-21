@@ -1500,6 +1500,7 @@
     "editMediaBrowserIntro": "${serverName} için URL ekleyin veya kaldırın. Pleazyng, erişilebilir olan en düşük gecikmeli URL'yi kullanacak."
   },
   "iptv": {
+    "backupFeeds": "Oynatma sırasına göre yedek kaynaklar",
     "lineupOrder": "Kanal sırası",
     "orderChanged": "Kanal sırası değişti. Gözden geçirip yeniden deneyin.",
     "localPlaylist": "M3U dosyası",

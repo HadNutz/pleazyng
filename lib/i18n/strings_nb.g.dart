@@ -1651,6 +1651,7 @@ class _Translations$iptv$nb extends Translations$iptv$en {
 	final TranslationsNb _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Reservekilder i avspillingsrekkefølge';
 	@override String get lineupOrder => 'Kanalrekkefølge';
 	@override String get orderChanged => 'Kanalrekkefølgen er endret. Se gjennom den og prøv igjen.';
 	@override String get localPlaylist => 'M3U-fil';
@@ -7041,6 +7042,7 @@ extension on TranslationsNb {
 			'connections.signInAgain' => 'Logg inn igjen',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Rediger ${product}-tilkobling',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Legg til eller fjern URL-er for ${serverName}. Pleazyng vil bruke den nåbare URL-en med lavest ventetid.',
+			'iptv.backupFeeds' => 'Reservekilder i avspillingsrekkefølge',
 			'iptv.lineupOrder' => 'Kanalrekkefølge',
 			'iptv.orderChanged' => 'Kanalrekkefølgen er endret. Se gjennom den og prøv igjen.',
 			'iptv.localPlaylist' => 'M3U-fil',
@@ -7211,9 +7213,9 @@ extension on TranslationsNb {
 			'discover.director' => 'Regissør',
 			'discover.directors' => 'Regissører',
 			'discover.movie' => 'Film',
-			'discover.tvShow' => 'TV-serie',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'TV-serie',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min igjen',
 			'discover.moreLikeThis' => 'Mer som dette',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('nb'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} tittel', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titler', ), 
@@ -7725,9 +7727,9 @@ extension on TranslationsNb {
 			'collections.removedFromCollection' => 'Fjernet fra samling',
 			'collections.removeFromCollectionFailed' => 'Kunne ikke fjerne fra samling',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Feil ved fjerning fra samling: ${error}',
-			'collections.searchCollections' => 'Søk i samlinger...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'Søk i samlinger...',
 			'playlists.title' => 'Spillelister',
 			'playlists.playlist' => 'Spilleliste',
 			'playlists.noPlaylists' => 'Ingen spillelister funnet',
@@ -8239,9 +8241,9 @@ extension on TranslationsNb {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision-dekoder',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-dekoder (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Basislag',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-basislag',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-basislag',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-basislag',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR-basislag',
 			'performanceOverlay.dvRouteReshaped' => 'RPU-omformet (gpu-next)',
@@ -8753,9 +8755,9 @@ extension on TranslationsNb {
 			'homeLayout.autoSlideDescription' => 'Arrows (PC) og d-pad (TV) fungerer alltid og starter timeret på nytt.',
 			'homeLayout.autoSlideEditDescription' => 'Slides også på egen hånd hvert få sekunder. Av: bare beveger seg når du klikker på en pil (PC) eller trykker venstre/høyre på fjern (TV).',
 			'homeLayout.enableHeroFirst' => 'Oppmuntre til å helte først',
-			'homeLayout.showOnHome' => 'Show på hjemskjermen',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Show på hjemskjermen',
 			'homeLayout.home' => 'Hjem',
 			'homeLayout.removeFromHome' => 'Fjern fra hjemmet',
 			'homeLayout.selectRowsFirst' => 'Velg hjem ruter nedenfor først.',
@@ -9267,9 +9269,9 @@ extension on TranslationsNb {
 			'audiobook.librarySort' => 'Sort bøker',
 			'audiobook.sortTitle' => 'Tittel',
 			'audiobook.sortAuthor' => 'Forfatter',
-			'audiobook.sortNarrator' => 'Narratør',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'Narratør',
 			'audiobook.sortSeries' => 'Serien ordre',
 			'audiobook.sortRecent' => 'Nylig åpnet',
 			'audiobook.statusFilter' => 'Lesing status',
@@ -9781,9 +9783,9 @@ extension on TranslationsNb {
 			'musicTools.guestDj' => 'Gjeste-DJ',
 			'musicTools.charts' => 'Lyttestatistikk',
 			'musicTools.rediscover' => 'Gjenoppdag',
-			'musicTools.stations' => 'Musikkstasjoner',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'Musikkstasjoner',
 			'musicTools.prompt' => 'Spilleliste fra beskrivelse',
 			'musicTools.provider' => 'Leverandørens genererings-URL',
 			'musicTools.model' => 'Modellnavn',

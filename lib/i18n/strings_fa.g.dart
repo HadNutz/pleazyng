@@ -1651,6 +1651,7 @@ class _Translations$iptv$fa extends Translations$iptv$en {
 	final TranslationsFa _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'منابع پشتیبان به ترتیب پخش';
 	@override String get lineupOrder => 'ترتیب کانال‌ها';
 	@override String get orderChanged => 'ترتیب کانال‌ها تغییر کرده است. آن را بررسی کنید و دوباره تلاش کنید.';
 	@override String get localPlaylist => 'فایل M3U';
@@ -7041,6 +7042,7 @@ extension on TranslationsFa {
 			'connections.signInAgain' => 'دوباره وارد شوید',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'ویرایش ${product} اتصال',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'اضافه کردن یا حذف URL برای ${serverName}. Pleazyng از URL قابل دسترسی با پایین ترین تاخیر استفاده می کند.',
+			'iptv.backupFeeds' => 'منابع پشتیبان به ترتیب پخش',
 			'iptv.lineupOrder' => 'ترتیب کانال‌ها',
 			'iptv.orderChanged' => 'ترتیب کانال‌ها تغییر کرده است. آن را بررسی کنید و دوباره تلاش کنید.',
 			'iptv.localPlaylist' => 'فایل M3U',
@@ -7211,9 +7213,9 @@ extension on TranslationsFa {
 			'discover.director' => 'کارگردان',
 			'discover.directors' => 'کارگردانان',
 			'discover.movie' => 'فیلم',
-			'discover.tvShow' => 'نمایش تلویزیونی',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'نمایش تلویزیونی',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} دقیقه باقی مانده',
 			'discover.moreLikeThis' => 'موارد مشابه با این',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fa'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} عنوان', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} عنوان ها', ), 
@@ -7725,9 +7727,9 @@ extension on TranslationsFa {
 			'collections.removedFromCollection' => 'حذف از جمع آوری',
 			'collections.removeFromCollectionFailed' => 'از جمع آوری خارج نشود',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'خطای حذف از مجموعه: ${error}',
-			'collections.searchCollections' => 'جمع آوری جستجو...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'جمع آوری جستجو...',
 			'playlists.title' => 'لیست‌های پخش',
 			'playlists.playlist' => 'لیست پخش',
 			'playlists.noPlaylists' => 'هیچ بازیگر یافت نشد',
@@ -8239,9 +8241,9 @@ extension on TranslationsFa {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision دکوراسیون',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision دکوراسیون (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'لایه پایه',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 لایه پایه',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 لایه پایه',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'لایه پایه HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR لایه پایه',
 			'performanceOverlay.dvRouteReshaped' => 'RPU بازسازی شده (gpu-next)',
@@ -8753,9 +8755,9 @@ extension on TranslationsFa {
 			'homeLayout.autoSlideDescription' => 'همچنین هر چند ثانیه به خودی خود اسلاید می کند. Arrows (PC) و d-pad (TV) همیشه کار می کنند و تایمر را دوباره راه اندازی می کنند.',
 			'homeLayout.autoSlideEditDescription' => 'همچنین هر چند ثانیه به خودی خود اسلاید می کند. خاموش: فقط زمانی که بر روی یک شلیک (PC) کلیک کنید یا چپ / راست را روی دوربین (TV) فشار دهید حرکت می کند.',
 			'homeLayout.enableHeroFirst' => 'قهرمانان اول',
-			'homeLayout.showOnHome' => 'نمایش در صفحه اصلی',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'نمایش در صفحه اصلی',
 			'homeLayout.home' => 'خانه',
 			'homeLayout.removeFromHome' => 'حذف از خانه',
 			'homeLayout.selectRowsFirst' => 'گزینه های زیر را انتخاب کنید.',
@@ -9267,9 +9269,9 @@ extension on TranslationsFa {
 			'audiobook.librarySort' => 'انواع کتاب ها',
 			'audiobook.sortTitle' => 'عنوان',
 			'audiobook.sortAuthor' => 'نویسنده',
-			'audiobook.sortNarrator' => 'سخنران',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'سخنران',
 			'audiobook.sortSeries' => 'سری سفارش',
 			'audiobook.sortRecent' => 'اخیرا باز شد',
 			'audiobook.statusFilter' => 'وضعیت خواندن',
@@ -9781,9 +9783,9 @@ extension on TranslationsFa {
 			'musicTools.guestDj' => 'دی‌جی مهمان',
 			'musicTools.charts' => 'آمار شنیدن',
 			'musicTools.rediscover' => 'کشف دوباره',
-			'musicTools.stations' => 'ایستگاه‌های موسیقی',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'ایستگاه‌های موسیقی',
 			'musicTools.prompt' => 'فهرست پخش از توضیح',
 			'musicTools.provider' => 'نشانی تولید ارائه‌دهنده',
 			'musicTools.model' => 'نام مدل',

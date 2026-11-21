@@ -22,6 +22,7 @@ class IptvSourceConfiguration {
     required this.endpoint,
     this.guideEndpoint = '',
     this.additionalGuideEndpoints = const [],
+    this.backupSourceIds = const [],
     this.username = '',
     this.password = '',
     this.macAddress = '',
@@ -38,6 +39,7 @@ class IptvSourceConfiguration {
   final String endpoint;
   final String guideEndpoint;
   final List<String> additionalGuideEndpoints;
+  final List<String> backupSourceIds;
   final String username;
   final String password;
   final String macAddress;
@@ -54,6 +56,7 @@ class IptvSourceConfiguration {
     'endpoint': endpoint,
     'guideEndpoint': guideEndpoint,
     'additionalGuideEndpoints': additionalGuideEndpoints,
+    'backupSourceIds': backupSourceIds,
     'username': username,
     'password': password,
     'macAddress': macAddress,
@@ -72,6 +75,7 @@ class IptvSourceConfiguration {
     guideEndpoint: json['guideEndpoint'] as String? ?? '',
     additionalGuideEndpoints:
         (json['additionalGuideEndpoints'] as List<dynamic>?)?.whereType<String>().toList() ?? const [],
+    backupSourceIds: (json['backupSourceIds'] as List?)?.whereType<String>().toSet().toList() ?? const [],
     username: json['username'] as String? ?? '',
     password: json['password'] as String? ?? '',
     macAddress: json['macAddress'] as String? ?? '',
@@ -189,6 +193,8 @@ class IptvSourceSummary {
   final DateTime? lastSuccessAt;
   final String? lastErrorCode;
 }
+
+typedef IptvLineupGroup = ({String id, String name, Set<String> members, int revision});
 
 class IptvEditableChannel {
   const IptvEditableChannel({

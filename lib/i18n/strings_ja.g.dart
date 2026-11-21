@@ -1649,6 +1649,7 @@ class _Translations$iptv$ja extends Translations$iptv$en {
 	final TranslationsJa _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => '再生時に使用する予備ソースの順序';
 	@override String get lineupOrder => 'チャンネルの順序';
 	@override String get orderChanged => 'チャンネルの順序が変更されました。確認してからもう一度お試しください。';
 	@override String get localPlaylist => 'M3Uファイル';
@@ -7036,6 +7037,7 @@ extension on TranslationsJa {
 			'connections.signInAgain' => '再度サインイン',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product}接続を編集',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName}のURLを追加または削除します。Plezyは到達可能なURLのうち、レイテンシーが最も低いものを使用します。',
+			'iptv.backupFeeds' => '再生時に使用する予備ソースの順序',
 			'iptv.lineupOrder' => 'チャンネルの順序',
 			'iptv.orderChanged' => 'チャンネルの順序が変更されました。確認してからもう一度お試しください。',
 			'iptv.localPlaylist' => 'M3Uファイル',
@@ -7206,9 +7208,9 @@ extension on TranslationsJa {
 			'discover.director' => '監督',
 			'discover.directors' => '監督',
 			'discover.movie' => '映画',
-			'discover.tvShow' => 'テレビ番組',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'テレビ番組',
 			'discover.minutesLeft' => ({required Object minutes}) => '残り${minutes}分',
 			'discover.moreLikeThis' => '似ている作品',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} タイトル', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)}作品', ), 
@@ -7720,9 +7722,9 @@ extension on TranslationsJa {
 			'collections.removedFromCollection' => 'コレクションから削除しました',
 			'collections.removeFromCollectionFailed' => 'コレクションからの削除に失敗しました',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'コレクションからの削除エラー: ${error}',
-			'collections.searchCollections' => 'コレクションを検索…',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'コレクションを検索…',
 			'playlists.title' => 'プレイリスト',
 			'playlists.playlist' => 'プレイリスト',
 			'playlists.noPlaylists' => 'プレイリストが見つかりません',
@@ -8234,9 +8236,9 @@ extension on TranslationsJa {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision デコーダー',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision デコーダー（P7→8.1）',
 			'performanceOverlay.dvRouteBaseLayer' => 'ベースレイヤー',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ベースレイヤー',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ベースレイヤー',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG ベースレイヤー',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR ベースレイヤー',
 			'performanceOverlay.dvRouteReshaped' => 'RPU リシェイプ（gpu-next）',
@@ -8748,9 +8750,9 @@ extension on TranslationsJa {
 			'homeLayout.autoSlideDescription' => 'ラウンド(PC)とdパッド(TV)は常に動作し、タイマーを再起動します。',
 			'homeLayout.autoSlideEditDescription' => 'スライドは数秒ごとに自体でスライドします。 オフ: 矢をクリックする場合(PC)または遠隔(TV)の左/右を押す場合のみ動きます。',
 			'homeLayout.enableHeroFirst' => '英雄を最初に',
-			'homeLayout.showOnHome' => 'ホームスクリーンで表示',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'ホームスクリーンで表示',
 			'homeLayout.home' => 'ホーム',
 			'homeLayout.removeFromHome' => '家から取り除く',
 			'homeLayout.selectRowsFirst' => 'まずは下のホームラインを選択します。',
@@ -9262,9 +9264,9 @@ extension on TranslationsJa {
 			'audiobook.librarySort' => '色の本',
 			'audiobook.sortTitle' => 'タイトル',
 			'audiobook.sortAuthor' => '著者',
-			'audiobook.sortNarrator' => '講演者',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => '講演者',
 			'audiobook.sortSeries' => 'シリーズオーダー',
 			'audiobook.sortRecent' => '最近オープン',
 			'audiobook.statusFilter' => '読書状態',
@@ -9776,9 +9778,9 @@ extension on TranslationsJa {
 			'musicTools.guestDj' => 'ゲストDJ',
 			'musicTools.charts' => '再生ランキング',
 			'musicTools.rediscover' => '再発見',
-			'musicTools.stations' => 'ミュージックステーション',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'ミュージックステーション',
 			'musicTools.prompt' => '説明からプレイリスト',
 			'musicTools.provider' => 'プロバイダーの生成URL',
 			'musicTools.model' => 'モデル名',

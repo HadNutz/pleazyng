@@ -1644,6 +1644,7 @@ class _Translations$iptv$vi extends Translations$iptv$en {
 	final TranslationsVi _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Nguồn dự phòng theo thứ tự phát';
 	@override String get lineupOrder => 'Thứ tự kênh';
 	@override String get orderChanged => 'Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.';
 	@override String get localPlaylist => 'Tệp M3U';
@@ -7016,6 +7017,7 @@ extension on TranslationsVi {
 			'connections.signInAgain' => 'Đăng ký lại',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} kết nối',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Thêm hoặc xóa URL cho ${serverName}. Pleazyng sẽ sử dụng URL có thể truy cập với độ chậm thấp nhất.',
+			'iptv.backupFeeds' => 'Nguồn dự phòng theo thứ tự phát',
 			'iptv.lineupOrder' => 'Thứ tự kênh',
 			'iptv.orderChanged' => 'Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.',
 			'iptv.localPlaylist' => 'Tệp M3U',
@@ -7186,9 +7188,9 @@ extension on TranslationsVi {
 			'discover.director' => 'Đạo Diễn',
 			'discover.directors' => 'Đạo Diễn',
 			'discover.movie' => 'Phim',
-			'discover.tvShow' => 'chương trình TV',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'chương trình TV',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} phút left',
 			'discover.moreLikeThis' => 'Nội Dung Tương Tự',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('vi'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} danh sách', ), 
@@ -7700,9 +7702,9 @@ extension on TranslationsVi {
 			'collections.removedFromCollection' => 'Loại bỏ từ bộ sưu tập',
 			'collections.removeFromCollectionFailed' => 'Không thể loại bỏ khỏi bộ sưu tập',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Sai lầm xóa khỏi bộ sưu tập: ${error}',
-			'collections.searchCollections' => 'Tìm kiếm bộ sưu tập',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'Tìm kiếm bộ sưu tập',
 			'playlists.title' => 'Danh sách phát',
 			'playlists.playlist' => 'Danh sách phát',
 			'playlists.noPlaylists' => 'Không tìm thấy playlist',
@@ -8214,9 +8216,9 @@ extension on TranslationsVi {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision Bộ xử lý',
 			'performanceOverlay.dvRouteDecoderP81' => 'Bộ giải mã Dolby Vision (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Lớp cơ sở',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 lớp cơ sở',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 lớp cơ sở',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG cơ sở lớp',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR cơ sở',
 			'performanceOverlay.dvRouteReshaped' => 'RPU tái tạo (gpu-next)',
@@ -8728,9 +8730,9 @@ extension on TranslationsVi {
 			'homeLayout.autoSlideDescription' => 'Lấy (PC) và d-pad (TV) luôn hoạt động và khởi động lại đồng hồ.',
 			'homeLayout.autoSlideEditDescription' => 'Ngoài ra, nó tự nhảy mỗi vài giây. tắt: chỉ di chuyển khi bạn nhấp vào một mũi tên (PC) hoặc nhấn trái / phải trên từ xa (TV).',
 			'homeLayout.enableHeroFirst' => 'Khả năng Hero đầu tiên',
-			'homeLayout.showOnHome' => 'Hiển thị trên màn hình Home',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Hiển thị trên màn hình Home',
 			'homeLayout.home' => 'Trang chủ',
 			'homeLayout.removeFromHome' => 'Xóa khỏi nhà',
 			'homeLayout.selectRowsFirst' => 'Chọn dòng Home bên dưới trước.',
@@ -9242,9 +9244,9 @@ extension on TranslationsVi {
 			'audiobook.librarySort' => 'sort sách',
 			'audiobook.sortTitle' => 'Tiêu đề',
 			'audiobook.sortAuthor' => 'Tác giả',
-			'audiobook.sortNarrator' => 'Nữ diễn viên',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'Nữ diễn viên',
 			'audiobook.sortSeries' => 'Lệnh Series',
 			'audiobook.sortRecent' => 'Gần đây mở',
 			'audiobook.statusFilter' => 'Đọc Status',
@@ -9756,9 +9758,9 @@ extension on TranslationsVi {
 			'musicTools.guestDj' => 'DJ khách mời',
 			'musicTools.charts' => 'Bảng xếp hạng nghe',
 			'musicTools.rediscover' => 'Khám phá lại',
-			'musicTools.stations' => 'Đài âm nhạc',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'Đài âm nhạc',
 			'musicTools.prompt' => 'Danh sách từ mô tả',
 			'musicTools.provider' => 'URL tạo của nhà cung cấp',
 			'musicTools.model' => 'Tên mô hình',

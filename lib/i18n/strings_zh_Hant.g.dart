@@ -1650,6 +1650,7 @@ class _Translations$iptv$zh_Hant extends Translations$iptv$zh {
 	final TranslationsZhHant _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => '依播放順序排列的備用來源';
 	@override String get lineupOrder => '頻道順序';
 	@override String get orderChanged => '頻道順序已變更。請檢查後再試一次。';
 	@override String get localPlaylist => 'M3U 檔案';
@@ -7037,6 +7038,7 @@ extension on TranslationsZhHant {
 			'connections.signInAgain' => '重新登入',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '編輯 ${product} 連線',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '為 ${serverName} 新增或移除 URL。Pleazyng 將使用延遲最低且可連線的 URL。',
+			'iptv.backupFeeds' => '依播放順序排列的備用來源',
 			'iptv.lineupOrder' => '頻道順序',
 			'iptv.orderChanged' => '頻道順序已變更。請檢查後再試一次。',
 			'iptv.localPlaylist' => 'M3U 檔案',
@@ -7207,9 +7209,9 @@ extension on TranslationsZhHant {
 			'discover.director' => '導演',
 			'discover.directors' => '導演',
 			'discover.movie' => '電影',
-			'discover.tvShow' => '影集',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => '影集',
 			'discover.minutesLeft' => ({required Object minutes}) => '剩餘 ${minutes} 分鐘',
 			'discover.moreLikeThis' => '更多類似內容',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(n, one: '第${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)}章', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} 部作品', ), 
@@ -7721,9 +7723,9 @@ extension on TranslationsZhHant {
 			'collections.removedFromCollection' => '已從收藏集移除',
 			'collections.removeFromCollectionFailed' => '從收藏集移除失敗',
 			'collections.removeFromCollectionError' => ({required Object error}) => '從收藏集移除時發生錯誤：${error}',
-			'collections.searchCollections' => '搜尋收藏集…',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => '搜尋收藏集…',
 			'playlists.title' => '播放清單',
 			'playlists.playlist' => '播放清單',
 			'playlists.noPlaylists' => '找不到播放清單',
@@ -8235,9 +8237,9 @@ extension on TranslationsZhHant {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision 解碼器',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision 解碼器（P7→8.1）',
 			'performanceOverlay.dvRouteBaseLayer' => '基礎層',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 基礎層',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 基礎層',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG 基礎層',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR 基礎層',
 			'performanceOverlay.dvRouteReshaped' => 'RPU 重塑（gpu-next）',
@@ -8749,9 +8751,9 @@ extension on TranslationsZhHant {
 			'homeLayout.autoSlideDescription' => '每隔幾秒也會自動切換。電腦上的箭頭按鈕和電視遙控器的方向鍵始終可用，使用後會重新開始計時。',
 			'homeLayout.autoSlideEditDescription' => '每隔幾秒也會自動切換。關閉時，僅在點選電腦上的箭頭按鈕或按電視遙控器的左右方向鍵時切換。無論此設定是否開啟，箭頭按鈕和方向鍵都可用。',
 			'homeLayout.enableHeroFirst' => '英雄第一',
-			'homeLayout.showOnHome' => '顯示在主螢幕上',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => '顯示在主螢幕上',
 			'homeLayout.home' => '首頁',
 			'homeLayout.removeFromHome' => '離開家',
 			'homeLayout.selectRowsFirst' => '首先,選擇下面的主行。',
@@ -9263,9 +9265,9 @@ extension on TranslationsZhHant {
 			'audiobook.librarySort' => '各式各樣的書籍',
 			'audiobook.sortTitle' => '標題',
 			'audiobook.sortAuthor' => '作者',
-			'audiobook.sortNarrator' => '講話者',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => '講話者',
 			'audiobook.sortSeries' => '系列命令',
 			'audiobook.sortRecent' => '最近開放',
 			'audiobook.statusFilter' => '閱讀狀態',
@@ -9777,9 +9779,9 @@ extension on TranslationsZhHant {
 			'musicTools.guestDj' => '客座 DJ',
 			'musicTools.charts' => '聆聽排行',
 			'musicTools.rediscover' => '重新發現',
-			'musicTools.stations' => '音樂電台',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => '音樂電台',
 			'musicTools.prompt' => '描述產生播放清單',
 			'musicTools.provider' => '供應商產生位址',
 			'musicTools.model' => '模型名稱',

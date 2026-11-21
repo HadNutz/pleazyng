@@ -100,6 +100,7 @@ class Translations$iptv$pt_PT extends Translations$iptv$pt {
 	final TranslationsPtPt _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Fontes alternativas por ordem de reprodução';
 	@override String get lineupOrder => 'Ordem dos canais';
 	@override String get orderChanged => 'A ordem dos canais mudou. Verifique e tente novamente.';
 	@override String get localPlaylist => 'Ficheiro M3U';
@@ -1406,6 +1407,7 @@ class Translations$services$libraryFilter$pt_PT extends Translations$services$li
 extension on TranslationsPtPt {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'iptv.backupFeeds' => 'Fontes alternativas por ordem de reprodução',
 			'iptv.lineupOrder' => 'Ordem dos canais',
 			'iptv.orderChanged' => 'A ordem dos canais mudou. Verifique e tente novamente.',
 			'iptv.localPlaylist' => 'Ficheiro M3U',
@@ -1917,9 +1919,9 @@ extension on TranslationsPtPt {
 			'romm.nativeUnavailable' => 'The native emulator core is not installed in this build.',
 			'romm.refreshBeforePlay' => 'Refresh this library to check available players.',
 			'romm.missing' => 'This copy has no game files on the server.',
-			'romm.noRoute' => 'No compatible in-app player is available for this copy.',
 			_ => null,
 		} ?? switch (path) {
+			'romm.noRoute' => 'No compatible in-app player is available for this copy.',
 			'romm.firmware' => 'Firmware',
 			'romm.firmwareHelp' => 'Some systems need firmware. Manage it in RomM; the selected emulator reports any missing requirements at launch.',
 			'romm.achievements' => 'RetroAchievements',

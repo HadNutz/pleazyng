@@ -1651,6 +1651,7 @@ class _Translations$iptv$hu extends Translations$iptv$en {
 	final TranslationsHu _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Tartalék források lejátszási sorrendben';
 	@override String get lineupOrder => 'Csatornasorrend';
 	@override String get orderChanged => 'A csatornasorrend megváltozott. Ellenőrizze, majd próbálja újra.';
 	@override String get localPlaylist => 'M3U-fájl';
@@ -7041,6 +7042,7 @@ extension on TranslationsHu {
 			'connections.signInAgain' => 'Bejelentkezés újra',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'A(z) ${product} kapcsolat szerkesztése',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Adjon hozzá vagy távolítson el URL-eket a(z) ${serverName} esetén. A Pleazyng a legkisebb késleltetésű, elérhető URL-t fogja használni.',
+			'iptv.backupFeeds' => 'Tartalék források lejátszási sorrendben',
 			'iptv.lineupOrder' => 'Csatornasorrend',
 			'iptv.orderChanged' => 'A csatornasorrend megváltozott. Ellenőrizze, majd próbálja újra.',
 			'iptv.localPlaylist' => 'M3U-fájl',
@@ -7211,9 +7213,9 @@ extension on TranslationsHu {
 			'discover.director' => 'Rendező',
 			'discover.directors' => 'Rendezők',
 			'discover.movie' => 'Film',
-			'discover.tvShow' => 'TV-sorozat',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'TV-sorozat',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} perc van hátra',
 			'discover.moreLikeThis' => 'Hasonló tartalmak',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hu'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} cím', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} cím', ), 
@@ -7725,9 +7727,9 @@ extension on TranslationsHu {
 			'collections.removedFromCollection' => 'Eltávolítva a gyűjteményből',
 			'collections.removeFromCollectionFailed' => 'Nem sikerült az eltávolítás a gyűjteményből',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Hiba a gyűjteményből való eltávolításkor: ${error}',
-			'collections.searchCollections' => 'Gyűjtemények keresése...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'Gyűjtemények keresése...',
 			'playlists.title' => 'Lejátszási listák',
 			'playlists.playlist' => 'Lejátszási lista',
 			'playlists.noPlaylists' => 'Nem találhatók lejátszási listák',
@@ -8239,9 +8241,9 @@ extension on TranslationsHu {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision-dekóder',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-dekóder (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Alapréteg',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-alapréteg',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-alapréteg',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-alapréteg',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR-alapréteg',
 			'performanceOverlay.dvRouteReshaped' => 'RPU-átformálás (gpu-next)',
@@ -8753,9 +8755,9 @@ extension on TranslationsHu {
 			'homeLayout.autoSlideDescription' => 'A bejutások (PC) és a d-pad (TV) mindig működnek és újraindítják a időzítőt.',
 			'homeLayout.autoSlideEditDescription' => 'A csúszás is önmagában néhány másodpercenként. kikapcsolva: csak akkor mozog, ha egy lövedéket (PC) kattintson vagy balra/jobbra nyomja a távoli (TV) oldalon.',
 			'homeLayout.enableHeroFirst' => 'Először a hős',
-			'homeLayout.showOnHome' => 'Show on Home képernyőn',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Show on Home képernyőn',
 			'homeLayout.home' => 'Kezdőlap',
 			'homeLayout.removeFromHome' => 'eltávolítása otthonról',
 			'homeLayout.selectRowsFirst' => 'Válassza ki az első helyen található házsorozatokat.',
@@ -9267,9 +9269,9 @@ extension on TranslationsHu {
 			'audiobook.librarySort' => 'Színes könyvek',
 			'audiobook.sortTitle' => 'címek',
 			'audiobook.sortAuthor' => 'Szerző',
-			'audiobook.sortNarrator' => 'Történész',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'Történész',
 			'audiobook.sortSeries' => 'sorozatrendelés',
 			'audiobook.sortRecent' => 'Nemrégiben megnyitott',
 			'audiobook.statusFilter' => 'Olvasási állapot',
@@ -9781,9 +9783,9 @@ extension on TranslationsHu {
 			'musicTools.guestDj' => 'Vendég DJ',
 			'musicTools.charts' => 'Hallgatási toplisták',
 			'musicTools.rediscover' => 'Újrafelfedezés',
-			'musicTools.stations' => 'Zenei állomások',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'Zenei állomások',
 			'musicTools.prompt' => 'Lejátszási lista leírásból',
 			'musicTools.provider' => 'Szolgáltató generálási URL-je',
 			'musicTools.model' => 'Modell neve',

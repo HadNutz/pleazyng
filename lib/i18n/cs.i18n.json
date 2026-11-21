@@ -1512,6 +1512,7 @@
     "editMediaBrowserIntro": "Přidat nebo odstranit URL pro ${serverName}. Pleazyng bude používat přístupné URL s nejnižší latencí."
   },
   "iptv": {
+    "backupFeeds": "Záložní zdroje v pořadí přehrávání",
     "lineupOrder": "Pořadí kanálů",
     "orderChanged": "Pořadí kanálů se změnilo. Zkontrolujte ho a zkuste to znovu.",
     "localPlaylist": "Soubor M3U",

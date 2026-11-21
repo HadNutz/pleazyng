@@ -1651,6 +1651,7 @@ class _Translations$iptv$sv extends Translations$iptv$en {
 	final TranslationsSv _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Reservkällor i uppspelningsordning';
 	@override String get lineupOrder => 'Kanalordning';
 	@override String get orderChanged => 'Kanalordningen har ändrats. Granska den och försök igen.';
 	@override String get localPlaylist => 'M3U-fil';
@@ -7041,6 +7042,7 @@ extension on TranslationsSv {
 			'connections.signInAgain' => 'Logga in igen',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Redigera ${product}-anslutning',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Lägg till eller ta bort URL:er för ${serverName}. Pleazyng använder den nåbara URL:en med lägst latens.',
+			'iptv.backupFeeds' => 'Reservkällor i uppspelningsordning',
 			'iptv.lineupOrder' => 'Kanalordning',
 			'iptv.orderChanged' => 'Kanalordningen har ändrats. Granska den och försök igen.',
 			'iptv.localPlaylist' => 'M3U-fil',
@@ -7211,9 +7213,9 @@ extension on TranslationsSv {
 			'discover.director' => 'Regissör',
 			'discover.directors' => 'Regissörer',
 			'discover.movie' => 'Film',
-			'discover.tvShow' => 'TV-serie',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'TV-serie',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min kvar',
 			'discover.moreLikeThis' => 'Mer liknande innehåll',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sv'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titel', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titlar', ), 
@@ -7725,9 +7727,9 @@ extension on TranslationsSv {
 			'collections.removedFromCollection' => 'Objektet har tagits bort från samlingen',
 			'collections.removeFromCollectionFailed' => 'Det gick inte att ta bort objektet från samlingen',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Fel när objektet skulle tas bort från samlingen: ${error}',
-			'collections.searchCollections' => 'Sök samlingar...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'Sök samlingar...',
 			'playlists.title' => 'Spellistor',
 			'playlists.playlist' => 'Spellista',
 			'playlists.noPlaylists' => 'Inga spellistor hittades',
@@ -8239,9 +8241,9 @@ extension on TranslationsSv {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision-dekoder',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-dekoder (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Baslager',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-baslager',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-baslager',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-baslager',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR-baslager',
 			'performanceOverlay.dvRouteReshaped' => 'RPU-omformad (gpu-next)',
@@ -8753,9 +8755,9 @@ extension on TranslationsSv {
 			'homeLayout.autoSlideDescription' => 'Låtar (PC) och d-pad (TV) fungerar alltid och startar timern om.',
 			'homeLayout.autoSlideEditDescription' => 'Slides också på egen hand varje några sekunder. Off: rör sig endast när du klickar på en pil (PC) eller trycker vänster/rät mot fjärr (TV).',
 			'homeLayout.enableHeroFirst' => 'Hjälten först',
-			'homeLayout.showOnHome' => 'Visa på hemskärmen',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Visa på hemskärmen',
 			'homeLayout.home' => 'Hem',
 			'homeLayout.removeFromHome' => 'Ta bort från hemmet',
 			'homeLayout.selectRowsFirst' => 'Välj hem rader nedanför först.',
@@ -9267,9 +9269,9 @@ extension on TranslationsSv {
 			'audiobook.librarySort' => 'Sorterade böcker',
 			'audiobook.sortTitle' => 'Titeln',
 			'audiobook.sortAuthor' => 'Författare',
-			'audiobook.sortNarrator' => 'berättare',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'berättare',
 			'audiobook.sortSeries' => 'Serien order',
 			'audiobook.sortRecent' => 'Nyligen öppnade',
 			'audiobook.statusFilter' => 'Läsa status',
@@ -9781,9 +9783,9 @@ extension on TranslationsSv {
 			'musicTools.guestDj' => 'Gäst-DJ',
 			'musicTools.charts' => 'Lyssningslistor',
 			'musicTools.rediscover' => 'Återupptäck',
-			'musicTools.stations' => 'Musikstationer',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'Musikstationer',
 			'musicTools.prompt' => 'Spellista från beskrivning',
 			'musicTools.provider' => 'Leverantörens genererings-URL',
 			'musicTools.model' => 'Modellnamn',

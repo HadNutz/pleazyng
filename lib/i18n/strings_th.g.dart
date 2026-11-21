@@ -1644,6 +1644,7 @@ class _Translations$iptv$th extends Translations$iptv$en {
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'แหล่งสำรองตามลำดับการเล่น';
 	@override String get lineupOrder => 'ลำดับช่อง';
 	@override String get orderChanged => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง';
 	@override String get localPlaylist => 'ไฟล์ M3U';
@@ -7016,6 +7017,7 @@ extension on TranslationsTh {
 			'connections.signInAgain' => 'ลงทะเบียนอีกครั้ง',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} การเชื่อมต่อ',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'เพิ่มหรือลบ URL สําหรับ ${serverName}. Pleazyng จะใช้ URL ที่สามารถเข้าถึงได้ด้วย latency ที่ต่ําสุด',
+			'iptv.backupFeeds' => 'แหล่งสำรองตามลำดับการเล่น',
 			'iptv.lineupOrder' => 'ลำดับช่อง',
 			'iptv.orderChanged' => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง',
 			'iptv.localPlaylist' => 'ไฟล์ M3U',
@@ -7186,9 +7188,9 @@ extension on TranslationsTh {
 			'discover.director' => 'ผู้กำกับ',
 			'discover.directors' => 'ผู้กำกับ',
 			'discover.movie' => 'ภาพยนตร์',
-			'discover.tvShow' => 'แสดงทีวี',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'แสดงทีวี',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} นาที left',
 			'discover.moreLikeThis' => 'มากกว่าเช่นนี้',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('th'))(n, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} หัวข้อ', ), 
@@ -7700,9 +7702,9 @@ extension on TranslationsTh {
 			'collections.removedFromCollection' => 'การกําจัดจากการเก็บรวบรวม',
 			'collections.removeFromCollectionFailed' => 'ไม่สามารถถอดออกจากการเก็บรวบรวม',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'ความผิดพลาดในการลบจากการเก็บรวบรวม: ${error}',
-			'collections.searchCollections' => 'ค้นหาคอลเลกชัน',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'ค้นหาคอลเลกชัน',
 			'playlists.title' => 'เพลย์ลิสต์',
 			'playlists.playlist' => 'เพลย์ลิสต์',
 			'playlists.noPlaylists' => 'ไม่พบรายการเล่น',
@@ -8214,9 +8216,9 @@ extension on TranslationsTh {
 			'performanceOverlay.dvRouteDecoder' => 'ตัวถอดรหัส Dolby Vision',
 			'performanceOverlay.dvRouteDecoderP81' => 'ตัวถอดรหัส Dolby Vision (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'ฐานชั้น',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ชั้นฐาน',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ชั้นฐาน',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG ฐานชั้น',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR ฐานชั้น',
 			'performanceOverlay.dvRouteReshaped' => 'RPU แก้ไข (gpu-next)',
@@ -8728,9 +8730,9 @@ extension on TranslationsTh {
 			'homeLayout.autoSlideDescription' => 'นอกจากนี้ยังสไลด์ด้วยตัวเองทุกวินาที Arrows (PC) และ d-pad (TV) ทํางานเสมอและเปิดตัวใหม่ชั่วโมง',
 			'homeLayout.autoSlideEditDescription' => 'นอกจากนี้ยังสไลด์ด้วยตัวเองทุกวินาที ปิด: เท่านั้นเคลื่อนที่เมื่อคุณคลิกปืน (พีซี) หรือกดซ้าย / ขวาบนระยะไกล (ทีวี) สไลด์และ d-pad ทํางานเสมอในทางใด ๆ',
 			'homeLayout.enableHeroFirst' => 'อนุญาตให้ฮีโร่แรก',
-			'homeLayout.showOnHome' => 'แสดงบนหน้าจอบ้าน',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'แสดงบนหน้าจอบ้าน',
 			'homeLayout.home' => 'บ้าน',
 			'homeLayout.removeFromHome' => 'เอาจากบ้าน',
 			'homeLayout.selectRowsFirst' => 'เลือกเส้นบ้านด้านล่างแรก',
@@ -9242,9 +9244,9 @@ extension on TranslationsTh {
 			'audiobook.librarySort' => 'โคตรหนังสือ',
 			'audiobook.sortTitle' => 'ชื่อ',
 			'audiobook.sortAuthor' => 'ผู้เขียน',
-			'audiobook.sortNarrator' => 'พูดคุย',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'พูดคุย',
 			'audiobook.sortSeries' => 'ชุดคําสั่ง',
 			'audiobook.sortRecent' => 'กุมภาพันธ์',
 			'audiobook.statusFilter' => 'การอ่านสถานะ',
@@ -9756,9 +9758,9 @@ extension on TranslationsTh {
 			'musicTools.guestDj' => 'ดีเจรับเชิญ',
 			'musicTools.charts' => 'อันดับการฟัง',
 			'musicTools.rediscover' => 'ค้นพบอีกครั้ง',
-			'musicTools.stations' => 'สถานีเพลง',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'สถานีเพลง',
 			'musicTools.prompt' => 'เพลย์ลิสต์จากคำอธิบาย',
 			'musicTools.provider' => 'URL สร้างรายการของผู้ให้บริการ',
 			'musicTools.model' => 'ชื่อโมเดล',

@@ -1651,6 +1651,7 @@ class _Translations$iptv$az extends Translations$iptv$en {
 	final TranslationsAz _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Oxutma sırasına görə ehtiyat mənbələr';
 	@override String get lineupOrder => 'Kanalların sırası';
 	@override String get orderChanged => 'Kanal sırası dəyişib. Yoxlayıb yenidən cəhd edin.';
 	@override String get localPlaylist => 'M3U faylı';
@@ -7041,6 +7042,7 @@ extension on TranslationsAz {
 			'connections.signInAgain' => 'Yenidən daxil ol',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} qoşulmasını düzəliş et',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} üçün URL-lər əlavə edin və ya silin. Pleazyng əlçatan olan ən aşağı gecikməli URL-i istifadə edəcək.',
+			'iptv.backupFeeds' => 'Oxutma sırasına görə ehtiyat mənbələr',
 			'iptv.lineupOrder' => 'Kanalların sırası',
 			'iptv.orderChanged' => 'Kanal sırası dəyişib. Yoxlayıb yenidən cəhd edin.',
 			'iptv.localPlaylist' => 'M3U faylı',
@@ -7211,9 +7213,9 @@ extension on TranslationsAz {
 			'discover.director' => 'Rejissor',
 			'discover.directors' => 'Rejissorlar',
 			'discover.movie' => 'Kino',
-			'discover.tvShow' => 'TV Şou',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'TV Şou',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} dəq qaldı',
 			'discover.moreLikeThis' => 'Buna bənzərlər',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('az'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} başlıq', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} başlıq', ), 
@@ -7725,9 +7727,9 @@ extension on TranslationsAz {
 			'collections.removedFromCollection' => 'Kolleksiyadan silindi',
 			'collections.removeFromCollectionFailed' => 'Kolleksiyadan silinə bilmədi',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Kolleksiyadan silinərkən xəta: ${error}',
-			'collections.searchCollections' => 'Kolleksiyalarda axtar...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'Kolleksiyalarda axtar...',
 			'playlists.title' => 'Oynatma siyahıları',
 			'playlists.playlist' => 'Oynatma siyahısı',
 			'playlists.noPlaylists' => 'Oynatma siyahısı tapılmadı',
@@ -8239,9 +8241,9 @@ extension on TranslationsAz {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision çözücüsü',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision çözücüsü (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Baza təbəqə',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 baza təbəqə',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 baza təbəqə',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG baza təbəqə',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR baza təbəqə',
 			'performanceOverlay.dvRouteReshaped' => 'RPU ilə yenidən formalaşdırılıb (gpu-next)',
@@ -8753,9 +8755,9 @@ extension on TranslationsAz {
 			'homeLayout.autoSlideDescription' => 'Qadınlar (PC) və d-pad (TV) hər zaman çalışır və zamanlayıcının yeniden başlatılmasıdır.',
 			'homeLayout.autoSlideEditDescription' => 'Bu, hər bir saniye özünə çıxır. Off: yalnız bir pul (PC) tıklayınca və ya televizyonda sol/sağ basınca hareket edir.',
 			'homeLayout.enableHeroFirst' => 'Birincisi Hero.',
-			'homeLayout.showOnHome' => 'Ev ekranında görünür',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Ev ekranında görünür',
 			'homeLayout.home' => 'Ana səhifə',
 			'homeLayout.removeFromHome' => 'Evdən çıxmaq',
 			'homeLayout.selectRowsFirst' => 'İlk dəfə aşağıda yerləşdirilmiş yerlər seçilir.',
@@ -9267,9 +9269,9 @@ extension on TranslationsAz {
 			'audiobook.librarySort' => 'Kitaplar',
 			'audiobook.sortTitle' => 'Başlık',
 			'audiobook.sortAuthor' => 'Yazarın',
-			'audiobook.sortNarrator' => 'Öykənlər',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'Öykənlər',
 			'audiobook.sortSeries' => 'Seriyalı komandalar',
 			'audiobook.sortRecent' => 'Son zamanlarda açıldı',
 			'audiobook.statusFilter' => 'Okuma statusu',
@@ -9781,9 +9783,9 @@ extension on TranslationsAz {
 			'musicTools.guestDj' => 'Qonaq DJ',
 			'musicTools.charts' => 'Dinləmə reytinqləri',
 			'musicTools.rediscover' => 'Yenidən kəşf et',
-			'musicTools.stations' => 'Musiqi stansiyaları',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'Musiqi stansiyaları',
 			'musicTools.prompt' => 'Təsvirdən pleylist',
 			'musicTools.provider' => 'Provayderin generasiya URL-i',
 			'musicTools.model' => 'Modelin adı',

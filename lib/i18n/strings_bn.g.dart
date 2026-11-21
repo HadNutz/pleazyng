@@ -1651,6 +1651,7 @@ class _Translations$iptv$bn extends Translations$iptv$en {
 	final TranslationsBn _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'চালানোর ক্রম অনুযায়ী বিকল্প উৎস';
 	@override String get lineupOrder => 'চ্যানেলের ক্রম';
 	@override String get orderChanged => 'চ্যানেলের ক্রম বদলেছে। যাচাই করে আবার চেষ্টা করুন।';
 	@override String get localPlaylist => 'M3U ফাইল';
@@ -7041,6 +7042,7 @@ extension on TranslationsBn {
 			'connections.signInAgain' => 'আবার লিখুন',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} সংযোগ',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} এর জন্য URLগুলি যোগ করুন বা মুছে ফেলুন. Pleazyng সবচেয়ে কম ল্যাটিংসের সাথে পৌঁছাতে পারে URLগুলি ব্যবহার করবে।',
+			'iptv.backupFeeds' => 'চালানোর ক্রম অনুযায়ী বিকল্প উৎস',
 			'iptv.lineupOrder' => 'চ্যানেলের ক্রম',
 			'iptv.orderChanged' => 'চ্যানেলের ক্রম বদলেছে। যাচাই করে আবার চেষ্টা করুন।',
 			'iptv.localPlaylist' => 'M3U ফাইল',
@@ -7211,9 +7213,9 @@ extension on TranslationsBn {
 			'discover.director' => 'পরিচালক',
 			'discover.directors' => 'পরিচালকবৃন্দ',
 			'discover.movie' => 'চলচ্চিত্র',
-			'discover.tvShow' => 'টেলিভিশন প্রদর্শন',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'টেলিভিশন প্রদর্শন',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} মিনিট left',
 			'discover.moreLikeThis' => 'এ ধরনের আরও',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bn'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} নাম', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} টাইম', ), 
@@ -7725,9 +7727,9 @@ extension on TranslationsBn {
 			'collections.removedFromCollection' => 'সংগ্রহ থেকে বের করা',
 			'collections.removeFromCollectionFailed' => 'সংগ্রহ থেকে বের করা যায়নি',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'সংগ্রহ থেকে তুলনা ভুল: ${error}',
-			'collections.searchCollections' => 'খুঁজে পাওয়া সংগ্রহ...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'খুঁজে পাওয়া সংগ্রহ...',
 			'playlists.title' => 'খেলোয়াড়',
 			'playlists.playlist' => 'প্লেলিস্ট',
 			'playlists.noPlaylists' => 'খেলোয়াড় পাওয়া যায়নি',
@@ -8239,9 +8241,9 @@ extension on TranslationsBn {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision ডকোডার',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision ডকোডার (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Base স্তর',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ভিত্তিক স্তর',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ভিত্তিক স্তর',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG Base ল্যাগ',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR ভিত্তিক স্তর',
 			'performanceOverlay.dvRouteReshaped' => 'RPU রেসিপি (GPU পরবর্তী)',
@@ -8753,9 +8755,9 @@ extension on TranslationsBn {
 			'homeLayout.autoSlideDescription' => 'এছাড়াও প্রতি কয়েক সেকেন্ডে নিজেদের সাথে স্লাইড করে. লোড (PC) এবং ড-প্যাড (TV) সবসময় কাজ করে এবং টাইমারটি পুনরায় চালু করে।',
 			'homeLayout.autoSlideEditDescription' => 'এছাড়াও প্রতি কয়েক সেকেন্ডে নিজে থেকে স্লাইড করে. অটো: শুধুমাত্র একটি প্লাইড (PC) ক্লিক করে বা দূরে (TV) বাম / ডান চাপ করে যখন移動 করে. প্লাইড এবং d-প্যাড সবসময় উভয়ভাবে কাজ করে।',
 			'homeLayout.enableHeroFirst' => 'প্রথমে হেরো',
-			'homeLayout.showOnHome' => 'Home Screen দেখুন',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Home Screen দেখুন',
 			'homeLayout.home' => 'বাড়ি',
 			'homeLayout.removeFromHome' => 'বাড়ি থেকে বের করা',
 			'homeLayout.selectRowsFirst' => 'প্রথমে নিচে হোম রানগুলি নির্বাচন করুন।',
@@ -9267,9 +9269,9 @@ extension on TranslationsBn {
 			'audiobook.librarySort' => 'কঠিন বই',
 			'audiobook.sortTitle' => 'Title নাম',
 			'audiobook.sortAuthor' => 'লেখক',
-			'audiobook.sortNarrator' => 'ন্যায়ক',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'ন্যায়ক',
 			'audiobook.sortSeries' => 'সিরিজ আদেশ',
 			'audiobook.sortRecent' => 'সম্প্রতি খোলা',
 			'audiobook.statusFilter' => 'পড়ার অবস্থা',
@@ -9781,9 +9783,9 @@ extension on TranslationsBn {
 			'musicTools.guestDj' => 'অতিথি ডিজে',
 			'musicTools.charts' => 'শোনার তালিকা',
 			'musicTools.rediscover' => 'আবার আবিষ্কার করুন',
-			'musicTools.stations' => 'মিউজিক স্টেশন',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'মিউজিক স্টেশন',
 			'musicTools.prompt' => 'বর্ণনা থেকে প্লেলিস্ট',
 			'musicTools.provider' => 'প্রদানকারীর তৈরির URL',
 			'musicTools.model' => 'মডেলের নাম',

@@ -4313,6 +4313,9 @@ class Translations$iptv$en {
 
 	// Translations
 
+	/// en: 'Backup sources in playback order'
+	String get backupFeeds => 'Backup sources in playback order';
+
 	/// en: 'This playlist includes stream addresses and may contain your provider credentials. Save it in a private location.'
 	String get exportPrivate => 'This playlist includes stream addresses and may contain your provider credentials. Save it in a private location.';
 
@@ -19730,6 +19733,7 @@ extension on Translations {
 			'connections.signInAgain' => 'Sign in again',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} connection',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Add or remove URLs for ${serverName}. Pleazyng will use the reachable URL with the lowest latency.',
+			'iptv.backupFeeds' => 'Backup sources in playback order',
 			'iptv.exportPrivate' => 'This playlist includes stream addresses and may contain your provider credentials. Save it in a private location.',
 			'iptv.dynamicStreamExport' => 'This portal creates a new link each time you play a channel. Its guide can be exported.',
 			'iptv.lineupOrder' => 'Channel order',
@@ -19852,9 +19856,9 @@ extension on Translations {
 			'iptv.specials' => 'Specials',
 			'iptv.localRecordings' => 'Local recordings',
 			'iptv.recordingInProgressLocal' => 'Recording',
-			'iptv.recordingInterrupted' => 'Interrupted',
 			_ => null,
 		} ?? switch (path) {
+			'iptv.recordingInterrupted' => 'Interrupted',
 			'iptv.recordingMissed' => 'Missed',
 			'iptv.recordingAppClosed' => 'Pleazyng closed before recording started or finished.',
 			'iptv.recordingEncryptedHls' => 'This provider uses an unsupported HLS encryption mode.',
@@ -20366,9 +20370,9 @@ extension on Translations {
 			'explore.rows.trendingMovies' => 'Trending Movies',
 			'explore.rows.trendingShows' => 'Trending Shows',
 			'explore.rows.popularMovies' => 'Popular Movies',
-			'explore.rows.popularShows' => 'Popular Shows',
 			_ => null,
 		} ?? switch (path) {
+			'explore.rows.popularShows' => 'Popular Shows',
 			'explore.rows.trendingAnime' => 'Trending Anime',
 			'explore.rows.suggestedAnime' => 'Suggested Anime',
 			'explore.rows.airingAnime' => 'Top Airing Anime',
@@ -20880,9 +20884,9 @@ extension on Translations {
 			'downloads.noDownloadsTree' => 'No downloads',
 			'downloads.pauseAll' => 'Pause all',
 			'downloads.resumeAll' => 'Resume all',
-			'downloads.retryAll' => 'Retry all',
 			_ => null,
 		} ?? switch (path) {
+			'downloads.retryAll' => 'Retry all',
 			'downloads.retryFailed' => 'Retry failed downloads',
 			'downloads.deleteAll' => 'Delete all',
 			'downloads.selectVersion' => 'Select Version',
@@ -21394,9 +21398,9 @@ extension on Translations {
 			'metadataEdit.collection' => 'Collection',
 			'metadataEdit.label' => 'Label',
 			'metadataEdit.quickTag' => 'Quick Tag...',
-			'metadataEdit.imageUploadLimits' => '≤ 10 MiB · ≤ 64 MP',
 			_ => null,
 		} ?? switch (path) {
+			'metadataEdit.imageUploadLimits' => '≤ 10 MiB · ≤ 64 MP',
 			'matchScreen.match' => 'Match...',
 			'matchScreen.fixMatch' => 'Fix Match...',
 			'matchScreen.unmatch' => 'Unmatch',
@@ -21908,9 +21912,9 @@ extension on Translations {
 			'homeLayout.libraryResumeRow' => 'This library\'s resume row',
 			'homeLayout.pressAgainToDelete' => 'Press again to delete',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
-			'homeLayout.on' => 'On',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.on' => 'On',
 			'homeLayout.resetHeroButtonDescription' => 'Turns off every row\'s hero setting and brings back the single rotating banner at the top, like before hero rows existed. Row order is kept.',
 			'homeLayout.tapHeroCardDescription' => 'Choose whether tapping or selecting a Hero card starts playback or opens its details.',
 			'homeLayout.heroTapPlayDescription' => 'Start the selected item right away.',
@@ -22422,9 +22426,9 @@ extension on Translations {
 			'sourceSetup.clientCertificateHelp' => 'Lets the NAS authenticate this client; AUTH_SYS IDs still depend on NAS export policy.',
 			'sourceSetup.savedIdentity' => 'A saved client identity will be used.',
 			'sourceSetup.replaceIdentity' => 'Replace saved client identity',
-			'sourceSetup.chooseIdentity' => 'Choose PKCS#12 client identity',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.chooseIdentity' => 'Choose PKCS#12 client identity',
 			'sourceSetup.identityPassphrase' => 'Client identity passphrase',
 			'sourceSetup.identityPassphraseHelp' => 'Leave blank if the file has no passphrase.',
 			'sourceSetup.removeIdentity' => 'Remove any saved client identity',
@@ -22936,9 +22940,9 @@ extension on Translations {
 			'podcasts.noResults' => 'No matching podcasts.',
 			'podcasts.newest' => 'Newest first',
 			'podcasts.oldest' => 'Oldest first',
-			'podcasts.explicit' => 'Explicit',
 			_ => null,
 		} ?? switch (path) {
+			'podcasts.explicit' => 'Explicit',
 			'podcasts.trending' => 'Trending',
 			'podcasts.indexSetup' => 'Podcast Index settings',
 			'podcasts.indexHelp' => 'Use your own Podcast Index API key and secret. They are encrypted for this profile. Apple Podcasts discovery works without them.',
@@ -23450,9 +23454,9 @@ extension on Translations {
 			'karaokeUi.microphoneAndPrivateTake' => 'Microphone and private take',
 			'karaokeUi.pitchFeedbackAndDryRecordingUseYourSelectedMicrophone' => 'Pitch feedback and dry recording use your selected microphone. Use an external mixer for amplification.',
 			'karaokeUi.tvMicrophoneCaptureUnavailable' => 'Microphone capture is unavailable in this TV build. Use the karaoke phone companion for mic capture, or connect a microphone to an external mixer for stage amplification.',
-			'karaokeUi.enableMicrophone' => 'Enable microphone',
 			_ => null,
 		} ?? switch (path) {
+			'karaokeUi.enableMicrophone' => 'Enable microphone',
 			'karaokeUi.muteMicrophone' => 'Mute microphone',
 			'karaokeUi.recordPrivateTake' => 'Record private take',
 			'karaokeUi.savePrivateTake' => 'Save private take',

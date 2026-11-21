@@ -1651,6 +1651,7 @@ class _Translations$iptv$kk extends Translations$iptv$en {
 	final TranslationsKk _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Ойнату ретімен қосалқы көздер';
 	@override String get lineupOrder => 'Арналар реті';
 	@override String get orderChanged => 'Арналар реті өзгерді. Тексеріп, қайталап көріңіз.';
 	@override String get localPlaylist => 'M3U файлы';
@@ -7041,6 +7042,7 @@ extension on TranslationsKk {
 			'connections.signInAgain' => 'Қайтадан кіру',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} қосылымын өңдеу',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} үшін URL мекенжайларды қосыңыз немесе өшіріңіз. Pleazyng ең төмен кідірісі бар қолжетімді URL мекенжайды пайдаланады.',
+			'iptv.backupFeeds' => 'Ойнату ретімен қосалқы көздер',
 			'iptv.lineupOrder' => 'Арналар реті',
 			'iptv.orderChanged' => 'Арналар реті өзгерді. Тексеріп, қайталап көріңіз.',
 			'iptv.localPlaylist' => 'M3U файлы',
@@ -7211,9 +7213,9 @@ extension on TranslationsKk {
 			'discover.director' => 'Режиссер',
 			'discover.directors' => 'Режиссерлер',
 			'discover.movie' => 'Фильм',
-			'discover.tvShow' => 'TV Шоу',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'TV Шоу',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} мин қалды',
 			'discover.moreLikeThis' => 'Ұқсастар',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('kk'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} атау', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} атау', ), 
@@ -7725,9 +7727,9 @@ extension on TranslationsKk {
 			'collections.removedFromCollection' => 'Топтамадан өшірілді',
 			'collections.removeFromCollectionFailed' => 'Топтамадан өшіру мүмкін болмады',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Өшіру қатесі: ${error}',
-			'collections.searchCollections' => 'Топтамалардан іздеу...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'Топтамалардан іздеу...',
 			'playlists.title' => 'Ойнату тізімдері',
 			'playlists.playlist' => 'Ойнату тізімі',
 			'playlists.noPlaylists' => 'Ойнату тізімдері табылмады',
@@ -8239,9 +8241,9 @@ extension on TranslationsKk {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision декодері',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision декодері (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Негізгі қабат',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 негізгі қабаты',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 негізгі қабаты',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG негізгі қабаты',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR негізгі қабаты',
 			'performanceOverlay.dvRouteReshaped' => 'RPU арқылы қайта пішінделген (gpu-next)',
@@ -8753,9 +8755,9 @@ extension on TranslationsKk {
 			'homeLayout.autoSlideDescription' => 'Бұл үшін, бұл жерде де ұзақ уақытқа дейін ұзақ уақыт бойы жасылған.',
 			'homeLayout.autoSlideEditDescription' => 'Бұл үшін, бұл жерде де ұзақ уақытқа дейін ұзақ уақыт бойы жасылған.Ап: бұл жерде ұзақ уақыттан дейін ұзақ жылдан дейін ұзақ уақытта ұзақ уақытға дейін ұзақ мерзімде (PC) немесе ұзақ мерзімі (TV) ұзақ мерзі (TV) жасылғанды.',
 			'homeLayout.enableHeroFirst' => 'Бұл үшін Герояның',
-			'homeLayout.showOnHome' => 'Home Screen қауымда',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Home Screen қауымда',
 			'homeLayout.home' => 'Басты бет',
 			'homeLayout.removeFromHome' => 'Өйткені қайтарып',
 			'homeLayout.selectRowsFirst' => 'Қаланың ең айқын көрмесі еркелеткенімен де.',
@@ -9267,9 +9269,9 @@ extension on TranslationsKk {
 			'audiobook.librarySort' => 'Бібліотекасы',
 			'audiobook.sortTitle' => 'Қатысушылардың',
 			'audiobook.sortAuthor' => 'Алдыңғы',
-			'audiobook.sortNarrator' => 'Жарысқа',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'Жарысқа',
 			'audiobook.sortSeries' => 'Сериялық ордер',
 			'audiobook.sortRecent' => 'Ауыз ішінен',
 			'audiobook.statusFilter' => 'Статутқа қараңыз',
@@ -9781,9 +9783,9 @@ extension on TranslationsKk {
 			'musicTools.guestDj' => 'Қонақ диджей',
 			'musicTools.charts' => 'Тыңдау рейтингі',
 			'musicTools.rediscover' => 'Қайта ашу',
-			'musicTools.stations' => 'Музыка станциялары',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'Музыка станциялары',
 			'musicTools.prompt' => 'Сипаттамадан ойнату тізімі',
 			'musicTools.provider' => 'Провайдердің жасау мекенжайы',
 			'musicTools.model' => 'Модель атауы',

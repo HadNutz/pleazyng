@@ -1663,6 +1663,7 @@ class _Translations$iptv$uk extends Translations$iptv$en {
 	final TranslationsUk _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Резервні джерела в порядку відтворення';
 	@override String get lineupOrder => 'Порядок каналів';
 	@override String get orderChanged => 'Порядок каналів змінився. Перегляньте його та спробуйте знову.';
 	@override String get localPlaylist => 'Файл M3U';
@@ -7085,6 +7086,7 @@ extension on TranslationsUk {
 			'connections.signInAgain' => 'Підписуйтесь знову',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Реєстрація ${product} зв\'язок',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Додати або видалити URL-адреси для ${serverName}. Pleazyng буде використовувати доступний URL з найнижчою затримкою.',
+			'iptv.backupFeeds' => 'Резервні джерела в порядку відтворення',
 			'iptv.lineupOrder' => 'Порядок каналів',
 			'iptv.orderChanged' => 'Порядок каналів змінився. Перегляньте його та спробуйте знову.',
 			'iptv.localPlaylist' => 'Файл M3U',
@@ -7255,9 +7257,9 @@ extension on TranslationsUk {
 			'discover.director' => 'Режисер',
 			'discover.directors' => 'Режисери',
 			'discover.movie' => 'Фільми',
-			'discover.tvShow' => 'Телевізійне шоу',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'Телевізійне шоу',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} хвилини',
 			'discover.moreLikeThis' => 'Подібні до цього',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uk'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} назва', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} назви', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} назв', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} назви', ), 
@@ -7769,9 +7771,9 @@ extension on TranslationsUk {
 			'collections.removedFromCollection' => 'Вилучено з колекції',
 			'collections.removeFromCollectionFailed' => 'Не вдалося зняти з колекції',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Помилка у видаленні з колекції: ${error}',
-			'collections.searchCollections' => 'Пошук колекцій...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'Пошук колекцій...',
 			'playlists.title' => 'Плейлисти',
 			'playlists.playlist' => 'Плейлист',
 			'playlists.noPlaylists' => 'Не знайдено гравців',
@@ -8283,9 +8285,9 @@ extension on TranslationsUk {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision Декодер',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision декодер (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Базовий шар',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 базовий шар',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 базовий шар',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG базовий шар',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'СДР базовий шар',
 			'performanceOverlay.dvRouteReshaped' => 'РПУ відновлено (gpu-next)',
@@ -8797,9 +8799,9 @@ extension on TranslationsUk {
 			'homeLayout.autoSlideDescription' => 'Пристрій (PC) і d-pad (TV) завжди працюють і відновлюють час.',
 			'homeLayout.autoSlideEditDescription' => 'Вимкніть: рухається тільки тоді, коли натискаєте стрілку (ПК) або натискаєте ліво/право на віддаленому (ТВ).',
 			'homeLayout.enableHeroFirst' => 'Перший герой',
-			'homeLayout.showOnHome' => 'Показати на домашньому екрані',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Показати на домашньому екрані',
 			'homeLayout.home' => 'Головна',
 			'homeLayout.removeFromHome' => 'Зняти з дому',
 			'homeLayout.selectRowsFirst' => 'Виберіть домашній ряд нижче першого.',
@@ -9311,9 +9313,9 @@ extension on TranslationsUk {
 			'audiobook.librarySort' => 'Сорт книг',
 			'audiobook.sortTitle' => 'Заголовок',
 			'audiobook.sortAuthor' => 'Автор',
-			'audiobook.sortNarrator' => 'Назавжди',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'Назавжди',
 			'audiobook.sortSeries' => 'Серія замовлення',
 			'audiobook.sortRecent' => 'Нещодавно відкрито',
 			'audiobook.statusFilter' => 'Статус читання',
@@ -9825,9 +9827,9 @@ extension on TranslationsUk {
 			'musicTools.guestDj' => 'Запрошений діджей',
 			'musicTools.charts' => 'Статистика прослуховувань',
 			'musicTools.rediscover' => 'Відкрити знову',
-			'musicTools.stations' => 'Музичні станції',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'Музичні станції',
 			'musicTools.prompt' => 'Плейлист за описом',
 			'musicTools.provider' => 'Адреса генерації постачальника',
 			'musicTools.model' => 'Назва моделі',

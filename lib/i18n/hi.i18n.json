@@ -1500,6 +1500,7 @@
     "editMediaBrowserIntro": "${serverName} के लिए URL जोड़ें या हटा दें. Pleazyng सबसे कम देरी के साथ पहुंचने योग्य URL का उपयोग करेगा."
   },
   "iptv": {
+    "backupFeeds": "प्लेबैक क्रम में वैकल्पिक स्रोत",
     "lineupOrder": "चैनलों का क्रम",
     "orderChanged": "चैनलों का क्रम बदल गया है। जाँचकर फिर से कोशिश करें।",
     "localPlaylist": "M3U फ़ाइल",

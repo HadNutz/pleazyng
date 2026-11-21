@@ -1649,6 +1649,7 @@ class _Translations$iptv$ko extends Translations$iptv$en {
 	final TranslationsKo _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => '재생 순서에 따른 예비 소스';
 	@override String get lineupOrder => '채널 순서';
 	@override String get orderChanged => '채널 순서가 바뀌었습니다. 확인하고 다시 시도하세요.';
 	@override String get localPlaylist => 'M3U 파일';
@@ -7036,6 +7037,7 @@ extension on TranslationsKo {
 			'connections.signInAgain' => '다시 로그인',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} 연결 편집',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName}의 URL을 추가하거나 제거하세요. Plezy는 연결 가능한 URL 중 지연 시간이 가장 낮은 URL을 사용합니다.',
+			'iptv.backupFeeds' => '재생 순서에 따른 예비 소스',
 			'iptv.lineupOrder' => '채널 순서',
 			'iptv.orderChanged' => '채널 순서가 바뀌었습니다. 확인하고 다시 시도하세요.',
 			'iptv.localPlaylist' => 'M3U 파일',
@@ -7206,9 +7208,9 @@ extension on TranslationsKo {
 			'discover.director' => '감독',
 			'discover.directors' => '감독',
 			'discover.movie' => '영화',
-			'discover.tvShow' => 'TV 시리즈',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'TV 시리즈',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes}분 남음',
 			'discover.moreLikeThis' => '비슷한 콘텐츠',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} 제목', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)}개 타이틀', ), 
@@ -7720,9 +7722,9 @@ extension on TranslationsKo {
 			'collections.removedFromCollection' => '컬렉션에서 제거됨',
 			'collections.removeFromCollectionFailed' => '컬렉션에서 제거 실패',
 			'collections.removeFromCollectionError' => ({required Object error}) => '컬렉션에서 제거 중 오류 발생: ${error}',
-			'collections.searchCollections' => '컬렉션 검색...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => '컬렉션 검색...',
 			'playlists.title' => '플레이리스트',
 			'playlists.playlist' => '재생 목록',
 			'playlists.noPlaylists' => '재생 목록을 찾을 수 없습니다',
@@ -8234,9 +8236,9 @@ extension on TranslationsKo {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision 디코더',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision 디코더 (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => '베이스 레이어',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 베이스 레이어',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 베이스 레이어',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG 베이스 레이어',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR 베이스 레이어',
 			'performanceOverlay.dvRouteReshaped' => 'RPU 리셰이핑 (gpu-next)',
@@ -8748,9 +8750,9 @@ extension on TranslationsKo {
 			'homeLayout.autoSlideDescription' => '또한 몇 초마다 스스로 슬라이드합니다. 링 (PC) 및 d-pad (TV)는 항상 작동하고 타이머를 다시 시작합니다.',
 			'homeLayout.autoSlideEditDescription' => '또한 몇 초마다 스스로 슬라이드합니다. 끄기 : 펜 (PC)을 클릭하거나 원격 (TV)에서 왼쪽/오른쪽을 누르면 움직입니다.',
 			'homeLayout.enableHeroFirst' => '영웅을 먼저 할 수 있습니다.',
-			'homeLayout.showOnHome' => 'Home 스크린에 표시',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Home 스크린에 표시',
 			'homeLayout.home' => '홈',
 			'homeLayout.removeFromHome' => '집에서 제거',
 			'homeLayout.selectRowsFirst' => '먼저 아래의 홈 라인을 선택합니다.',
@@ -9262,9 +9264,9 @@ extension on TranslationsKo {
 			'audiobook.librarySort' => '다양한 책들',
 			'audiobook.sortTitle' => '제목',
 			'audiobook.sortAuthor' => '작가',
-			'audiobook.sortNarrator' => '연설자',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => '연설자',
 			'audiobook.sortSeries' => '시리즈 명령',
 			'audiobook.sortRecent' => '최근에 열렸다',
 			'audiobook.statusFilter' => '읽기 상태',
@@ -9776,9 +9778,9 @@ extension on TranslationsKo {
 			'musicTools.guestDj' => '게스트 DJ',
 			'musicTools.charts' => '청취 순위',
 			'musicTools.rediscover' => '다시 발견',
-			'musicTools.stations' => '음악 스테이션',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => '음악 스테이션',
 			'musicTools.prompt' => '설명으로 재생목록 만들기',
 			'musicTools.provider' => '공급자 생성 URL',
 			'musicTools.model' => '모델 이름',

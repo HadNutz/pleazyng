@@ -1649,6 +1649,7 @@ class Translations$iptv$zh extends Translations$iptv$en {
 	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => '按播放顺序排列的备用来源';
 	@override String get lineupOrder => '频道顺序';
 	@override String get orderChanged => '频道顺序已更改。请检查后重试。';
 	@override String get localPlaylist => 'M3U 文件';
@@ -7036,6 +7037,7 @@ extension on TranslationsZh {
 			'connections.signInAgain' => '重新登录',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '编辑 ${product} 连接',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '为 ${serverName} 添加或移除 URL。Pleazyng 会使用延迟最低且可访问的 URL。',
+			'iptv.backupFeeds' => '按播放顺序排列的备用来源',
 			'iptv.lineupOrder' => '频道顺序',
 			'iptv.orderChanged' => '频道顺序已更改。请检查后重试。',
 			'iptv.localPlaylist' => 'M3U 文件',
@@ -7206,9 +7208,9 @@ extension on TranslationsZh {
 			'discover.director' => '导演',
 			'discover.directors' => '导演',
 			'discover.movie' => '电影',
-			'discover.tvShow' => '电视剧',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => '电视剧',
 			'discover.minutesLeft' => ({required Object minutes}) => '剩余 ${minutes} 分钟',
 			'discover.moreLikeThis' => '更多类似内容',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(n, one: '第${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)}章', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} 个标题', ), 
@@ -7720,9 +7722,9 @@ extension on TranslationsZh {
 			'collections.removedFromCollection' => '已从合集移除',
 			'collections.removeFromCollectionFailed' => '从合集移除失败',
 			'collections.removeFromCollectionError' => ({required Object error}) => '从合集移除时出错：${error}',
-			'collections.searchCollections' => '搜索合集…',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => '搜索合集…',
 			'playlists.title' => '播放列表',
 			'playlists.playlist' => '播放列表',
 			'playlists.noPlaylists' => '未找到播放列表',
@@ -8234,9 +8236,9 @@ extension on TranslationsZh {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision 解码器',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision 解码器（P7→8.1）',
 			'performanceOverlay.dvRouteBaseLayer' => '基础层',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 基础层',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 基础层',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG 基础层',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR 基础层',
 			'performanceOverlay.dvRouteReshaped' => 'RPU 重塑（gpu-next）',
@@ -8748,9 +8750,9 @@ extension on TranslationsZh {
 			'homeLayout.autoSlideDescription' => '每隔几秒也会自动切换。电脑上的箭头按钮和电视遥控器的方向键始终可用，使用后会重新开始计时。',
 			'homeLayout.autoSlideEditDescription' => '每隔几秒也会自动切换。关闭时，仅在点击电脑上的箭头按钮或按电视遥控器的左右方向键时切换。无论此设置是否开启，箭头按钮和方向键都可用。',
 			'homeLayout.enableHeroFirst' => '英雄第一',
-			'homeLayout.showOnHome' => '显示在主屏幕上',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => '显示在主屏幕上',
 			'homeLayout.home' => '首页',
 			'homeLayout.removeFromHome' => '离开家',
 			'homeLayout.selectRowsFirst' => '首先,选择下面的主行。',
@@ -9262,9 +9264,9 @@ extension on TranslationsZh {
 			'audiobook.librarySort' => '各式各样的书籍',
 			'audiobook.sortTitle' => '标题',
 			'audiobook.sortAuthor' => '作者',
-			'audiobook.sortNarrator' => '讲话者',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => '讲话者',
 			'audiobook.sortSeries' => '系列命令',
 			'audiobook.sortRecent' => '最近开放',
 			'audiobook.statusFilter' => '阅读状态',
@@ -9776,9 +9778,9 @@ extension on TranslationsZh {
 			'musicTools.guestDj' => '客座 DJ',
 			'musicTools.charts' => '收听排行',
 			'musicTools.rediscover' => '重新发现',
-			'musicTools.stations' => '音乐电台',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => '音乐电台',
 			'musicTools.prompt' => '描述生成歌单',
 			'musicTools.provider' => '提供商生成地址',
 			'musicTools.model' => '模型名称',

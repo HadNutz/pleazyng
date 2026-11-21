@@ -1653,6 +1653,7 @@ class _Translations$iptv$he extends Translations$iptv$en {
 	final TranslationsHe _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'מקורות גיבוי לפי סדר הפעלה';
 	@override String get lineupOrder => 'סדר הערוצים';
 	@override String get orderChanged => 'סדר הערוצים השתנה. יש לבדוק אותו ולנסות שוב.';
 	@override String get localPlaylist => 'קובץ M3U';
@@ -7049,6 +7050,7 @@ extension on TranslationsHe {
 			'connections.signInAgain' => 'הצטרפו שוב',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'תגית: Edit ${product} connection',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'הוספת או הסרת כתובת URL עבור ${serverName}. Pleazyng ישתמש כתובת URL הנגיעה עם הריבית הנמוכה ביותר.',
+			'iptv.backupFeeds' => 'מקורות גיבוי לפי סדר הפעלה',
 			'iptv.lineupOrder' => 'סדר הערוצים',
 			'iptv.orderChanged' => 'סדר הערוצים השתנה. יש לבדוק אותו ולנסות שוב.',
 			'iptv.localPlaylist' => 'קובץ M3U',
@@ -7219,9 +7221,9 @@ extension on TranslationsHe {
 			'discover.director' => 'במאי',
 			'discover.directors' => 'במאים',
 			'discover.movie' => 'סרט',
-			'discover.tvShow' => 'תוכנית טלוויזיה',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'תוכנית טלוויזיה',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} דקות נותרה',
 			'discover.moreLikeThis' => 'עוד כמו זה',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} כותרת', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} כותרות', ), 
@@ -7733,9 +7735,9 @@ extension on TranslationsHe {
 			'collections.removedFromCollection' => 'הוסר מהאוסף',
 			'collections.removeFromCollectionFailed' => 'לא הצליחו להסיר מהאוסף',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'שגיאה להסרת מתוך הקולקציה: ${error}',
-			'collections.searchCollections' => 'חיפוש אוסף...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'חיפוש אוסף...',
 			'playlists.title' => 'רשימות נגינה',
 			'playlists.playlist' => 'רשימת ניגון',
 			'playlists.noPlaylists' => 'לא נמצאו רשימות משחקים',
@@ -8247,9 +8249,9 @@ extension on TranslationsHe {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision דקודר',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision דקודר (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'מבנה בסיס',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 שכבת בסיס',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 שכבת בסיס',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'מדרגות בסיס HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR מסגרת בסיס',
 			'performanceOverlay.dvRouteReshaped' => 'RPU מחדש (gpu-next)',
@@ -8761,9 +8763,9 @@ extension on TranslationsHe {
 			'homeLayout.autoSlideDescription' => 'גם סליטה על עצמה בכל כמה שניות.Arrows (PC) ו-d-pad (TV) תמיד עובדים ומתחילים מחדש את השעון.',
 			'homeLayout.autoSlideEditDescription' => 'הוא גם זורם בעצמו כל כמה שניות. off: זורם רק כאשר אתה לוחץ על אקדח (מחשב) או לחץ שמאל / ימין על הרחוק (טלוויזיה).',
 			'homeLayout.enableHeroFirst' => 'תנו לגיבור ראשון',
-			'homeLayout.showOnHome' => 'הצג על המסך הבית',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'הצג על המסך הבית',
 			'homeLayout.home' => 'בית',
 			'homeLayout.removeFromHome' => 'להסיר מהבית',
 			'homeLayout.selectRowsFirst' => 'בחר את שורות הבית למטה קודם.',
@@ -9275,9 +9277,9 @@ extension on TranslationsHe {
 			'audiobook.librarySort' => 'ספרים מגוונים',
 			'audiobook.sortTitle' => 'כותרת',
 			'audiobook.sortAuthor' => 'סופר',
-			'audiobook.sortNarrator' => 'סיפורי',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'סיפורי',
 			'audiobook.sortSeries' => 'סדרת הוראות',
 			'audiobook.sortRecent' => 'נפתח לאחרונה',
 			'audiobook.statusFilter' => 'מצב קריאה',
@@ -9789,9 +9791,9 @@ extension on TranslationsHe {
 			'musicTools.guestDj' => 'תקליטן אורח',
 			'musicTools.charts' => 'דירוגי האזנה',
 			'musicTools.rediscover' => 'לגלות מחדש',
-			'musicTools.stations' => 'תחנות מוזיקה',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'תחנות מוזיקה',
 			'musicTools.prompt' => 'רשימה מתיאור',
 			'musicTools.provider' => 'כתובת היצירה של הספק',
 			'musicTools.model' => 'שם המודל',

@@ -1663,6 +1663,7 @@ class _Translations$iptv$cs extends Translations$iptv$en {
 	final TranslationsCs _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Záložní zdroje v pořadí přehrávání';
 	@override String get lineupOrder => 'Pořadí kanálů';
 	@override String get orderChanged => 'Pořadí kanálů se změnilo. Zkontrolujte ho a zkuste to znovu.';
 	@override String get localPlaylist => 'Soubor M3U';
@@ -7085,6 +7086,7 @@ extension on TranslationsCs {
 			'connections.signInAgain' => 'Podepisujte se znovu',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} připojení',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Přidat nebo odstranit URL pro ${serverName}. Pleazyng bude používat přístupné URL s nejnižší latencí.',
+			'iptv.backupFeeds' => 'Záložní zdroje v pořadí přehrávání',
 			'iptv.lineupOrder' => 'Pořadí kanálů',
 			'iptv.orderChanged' => 'Pořadí kanálů se změnilo. Zkontrolujte ho a zkuste to znovu.',
 			'iptv.localPlaylist' => 'Soubor M3U',
@@ -7255,9 +7257,9 @@ extension on TranslationsCs {
 			'discover.director' => 'Režisér',
 			'discover.directors' => 'Režiséři',
 			'discover.movie' => 'Film',
-			'discover.tvShow' => 'TV show',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'TV show',
 			'discover.minutesLeft' => ({required Object minutes}) => 'Zbývá ${minutes} min',
 			'discover.moreLikeThis' => 'Podobné položky',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('cs'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titul', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} tituly', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titulu', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titulů', ), 
@@ -7769,9 +7771,9 @@ extension on TranslationsCs {
 			'collections.removedFromCollection' => 'Odstranění z kolekce',
 			'collections.removeFromCollectionFailed' => 'Neschopnost odstranit ze sbírky',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Odstranění chyb z sběru: ${error}',
-			'collections.searchCollections' => 'Vyhledávací sbírky...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'Vyhledávací sbírky...',
 			'playlists.title' => 'Seznamy skladeb',
 			'playlists.playlist' => 'Seznam skladeb',
 			'playlists.noPlaylists' => 'Žádné playlisty nenajdeme',
@@ -8283,9 +8285,9 @@ extension on TranslationsCs {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision dekódování',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision dekodér (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Základní vrstva',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 základní vrstva',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 základní vrstva',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG základní vrstva',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR základní vrstva',
 			'performanceOverlay.dvRouteReshaped' => 'RPU obnovené (gpu-next)',
@@ -8797,9 +8799,9 @@ extension on TranslationsCs {
 			'homeLayout.autoSlideDescription' => 'Přístupy (PC) a d-pad (TV) vždy fungují a časovač znovu spouští.',
 			'homeLayout.autoSlideEditDescription' => 'Odstraní: pouze se pohybuje, když kliknete na šípku (PC) nebo stisknete levou / pravou na dálku (TV).',
 			'homeLayout.enableHeroFirst' => 'První hrdina',
-			'homeLayout.showOnHome' => 'Zobrazit na domácím obrazovce',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Zobrazit na domácím obrazovce',
 			'homeLayout.home' => 'Domovská obrazovka',
 			'homeLayout.removeFromHome' => 'Odstranit z domova',
 			'homeLayout.selectRowsFirst' => 'Vyberte domácí řádky níže první.',
@@ -9311,9 +9313,9 @@ extension on TranslationsCs {
 			'audiobook.librarySort' => 'Černé knihy',
 			'audiobook.sortTitle' => 'Název',
 			'audiobook.sortAuthor' => 'Autorka',
-			'audiobook.sortNarrator' => 'Příběh',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'Příběh',
 			'audiobook.sortSeries' => 'Seriálový příkaz',
 			'audiobook.sortRecent' => 'Nedávno otevřeno',
 			'audiobook.statusFilter' => 'Status čtení',
@@ -9825,9 +9827,9 @@ extension on TranslationsCs {
 			'musicTools.guestDj' => 'Hostující DJ',
 			'musicTools.charts' => 'Žebříčky poslechu',
 			'musicTools.rediscover' => 'Znovu objevit',
-			'musicTools.stations' => 'Hudební stanice',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'Hudební stanice',
 			'musicTools.prompt' => 'Seznam podle popisu',
 			'musicTools.provider' => 'URL generování poskytovatele',
 			'musicTools.model' => 'Název modelu',

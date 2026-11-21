@@ -1502,6 +1502,7 @@
     "editMediaBrowserIntro": "הוספת או הסרת כתובת URL עבור ${serverName}. Pleazyng ישתמש כתובת URL הנגיעה עם הריבית הנמוכה ביותר."
   },
   "iptv": {
+    "backupFeeds": "מקורות גיבוי לפי סדר הפעלה",
     "lineupOrder": "סדר הערוצים",
     "orderChanged": "סדר הערוצים השתנה. יש לבדוק אותו ולנסות שוב.",
     "localPlaylist": "קובץ M3U",

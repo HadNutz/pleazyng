@@ -1651,6 +1651,7 @@ class _Translations$iptv$tr extends Translations$iptv$en {
 	final TranslationsTr _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Oynatma sırasına göre yedek kaynaklar';
 	@override String get lineupOrder => 'Kanal sırası';
 	@override String get orderChanged => 'Kanal sırası değişti. Gözden geçirip yeniden deneyin.';
 	@override String get localPlaylist => 'M3U dosyası';
@@ -7041,6 +7042,7 @@ extension on TranslationsTr {
 			'connections.signInAgain' => 'Tekrar giriş yap',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} bağlantısını düzenle',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} için URL ekleyin veya kaldırın. Pleazyng, erişilebilir olan en düşük gecikmeli URL\'yi kullanacak.',
+			'iptv.backupFeeds' => 'Oynatma sırasına göre yedek kaynaklar',
 			'iptv.lineupOrder' => 'Kanal sırası',
 			'iptv.orderChanged' => 'Kanal sırası değişti. Gözden geçirip yeniden deneyin.',
 			'iptv.localPlaylist' => 'M3U dosyası',
@@ -7211,9 +7213,9 @@ extension on TranslationsTr {
 			'discover.director' => 'Yönetmen',
 			'discover.directors' => 'Yönetmenler',
 			'discover.movie' => 'Film',
-			'discover.tvShow' => 'TV Dizisi',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'TV Dizisi',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} dk kaldı',
 			'discover.moreLikeThis' => 'Buna Benzerler',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('tr'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} başlık', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} başlık', ), 
@@ -7725,9 +7727,9 @@ extension on TranslationsTr {
 			'collections.removedFromCollection' => 'Koleksiyondan kaldırıldı',
 			'collections.removeFromCollectionFailed' => 'Koleksiyondan kaldırılamadı',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Koleksiyondan kaldırılırken hata: ${error}',
-			'collections.searchCollections' => 'Koleksiyonlarda ara...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'Koleksiyonlarda ara...',
 			'playlists.title' => 'Oynatma Listeleri',
 			'playlists.playlist' => 'Oynatma Listesi',
 			'playlists.noPlaylists' => 'Oynatma listesi bulunamadı',
@@ -8239,9 +8241,9 @@ extension on TranslationsTr {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision çözücüsü',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision çözücüsü (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Temel katman',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 temel katmanı',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 temel katmanı',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG temel katmanı',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR temel katmanı',
 			'performanceOverlay.dvRouteReshaped' => 'RPU ile yeniden şekillendirilmiş (gpu-next)',
@@ -8753,9 +8755,9 @@ extension on TranslationsTr {
 			'homeLayout.autoSlideDescription' => 'Arrows (PC) ve d-pad (TV) her zaman çalışır ve zamanlayıcı yeniden başlatılır.',
 			'homeLayout.autoSlideEditDescription' => 'Ayrıca, birkaç saniye boyunca kendi başına kaydırır. kapatır: sadece bir mermi (PC) tıklayarak veya uzaktan (TV) sol/sağ basarak hareket eder.',
 			'homeLayout.enableHeroFirst' => 'Önce kahraman yapabilir',
-			'homeLayout.showOnHome' => 'Home ekran görüntüleme',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Home ekran görüntüleme',
 			'homeLayout.home' => 'Ana Sayfa',
 			'homeLayout.removeFromHome' => 'Evden çıkarın',
 			'homeLayout.selectRowsFirst' => 'Öncelikle aşağıdaki ev satırlarını seçin.',
@@ -9267,9 +9269,9 @@ extension on TranslationsTr {
 			'audiobook.librarySort' => 'Çeşitli kitaplar',
 			'audiobook.sortTitle' => 'Başlık',
 			'audiobook.sortAuthor' => 'Yazar',
-			'audiobook.sortNarrator' => 'Anlatıcı',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'Anlatıcı',
 			'audiobook.sortSeries' => 'Serisi Siparişi',
 			'audiobook.sortRecent' => 'Son zamanlarda açıldı',
 			'audiobook.statusFilter' => 'Okuma Durumu',
@@ -9781,9 +9783,9 @@ extension on TranslationsTr {
 			'musicTools.guestDj' => 'Konuk DJ',
 			'musicTools.charts' => 'Dinleme listeleri',
 			'musicTools.rediscover' => 'Yeniden keşfet',
-			'musicTools.stations' => 'Müzik istasyonları',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'Müzik istasyonları',
 			'musicTools.prompt' => 'Açıklamadan çalma listesi',
 			'musicTools.provider' => 'Sağlayıcı üretim URL’si',
 			'musicTools.model' => 'Model adı',

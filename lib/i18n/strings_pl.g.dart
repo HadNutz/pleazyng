@@ -1665,6 +1665,7 @@ class _Translations$iptv$pl extends Translations$iptv$en {
 	final TranslationsPl _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Zapasowe źródła w kolejności odtwarzania';
 	@override String get lineupOrder => 'Kolejność kanałów';
 	@override String get orderChanged => 'Kolejność kanałów uległa zmianie. Sprawdź ją i spróbuj ponownie.';
 	@override String get localPlaylist => 'Plik M3U';
@@ -7091,6 +7092,7 @@ extension on TranslationsPl {
 			'connections.signInAgain' => 'Zaloguj się ponownie',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edytuj połączenie z ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Dodaj lub usuń adresy URL dla ${serverName}. Pleazyng będzie używać osiągalnego adresu URL o najniższym opóźnieniu.',
+			'iptv.backupFeeds' => 'Zapasowe źródła w kolejności odtwarzania',
 			'iptv.lineupOrder' => 'Kolejność kanałów',
 			'iptv.orderChanged' => 'Kolejność kanałów uległa zmianie. Sprawdź ją i spróbuj ponownie.',
 			'iptv.localPlaylist' => 'Plik M3U',
@@ -7261,9 +7263,9 @@ extension on TranslationsPl {
 			'discover.director' => 'Reżyser',
 			'discover.directors' => 'Reżyserzy',
 			'discover.movie' => 'Film',
-			'discover.tvShow' => 'Serial TV',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'Serial TV',
 			'discover.minutesLeft' => ({required Object minutes}) => 'Pozostało ${minutes} min',
 			'discover.moreLikeThis' => 'Więcej podobnych',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pl'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} tytuł', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} tytuły', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} tytułów', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} tytułu', ), 
@@ -7775,9 +7777,9 @@ extension on TranslationsPl {
 			'collections.removedFromCollection' => 'Usunięto z kolekcji',
 			'collections.removeFromCollectionFailed' => 'Nie udało się usunąć z kolekcji',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Błąd usuwania z kolekcji: ${error}',
-			'collections.searchCollections' => 'Szukaj kolekcji...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'Szukaj kolekcji...',
 			'playlists.title' => 'Playlisty',
 			'playlists.playlist' => 'Playlista',
 			'playlists.noPlaylists' => 'Nie znaleziono playlist',
@@ -8289,9 +8291,9 @@ extension on TranslationsPl {
 			'performanceOverlay.dvRouteDecoder' => 'Dekoder Dolby Vision',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dekoder Dolby Vision (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Warstwa bazowa',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Warstwa bazowa HDR10',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Warstwa bazowa HDR10',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Warstwa bazowa HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'Warstwa bazowa SDR',
 			'performanceOverlay.dvRouteReshaped' => 'Przekształcenie RPU (gpu-next)',
@@ -8803,9 +8805,9 @@ extension on TranslationsPl {
 			'homeLayout.autoSlideDescription' => 'Wstępy (PC) i d-pad (TV) zawsze działają i ponownie uruchamiają timer.',
 			'homeLayout.autoSlideEditDescription' => 'Wyłącz: porusza się tylko wtedy, gdy klikniesz strzałkę (PC) lub naciśnij lewą/prawną stronę na odległej (TV).',
 			'homeLayout.enableHeroFirst' => 'Zacznij od bohatera',
-			'homeLayout.showOnHome' => 'Wyświetlanie na ekranie domowym',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Wyświetlanie na ekranie domowym',
 			'homeLayout.home' => 'Start',
 			'homeLayout.removeFromHome' => 'Usuwanie z domu',
 			'homeLayout.selectRowsFirst' => 'Wybierz linie domowe poniżej.',
@@ -9317,9 +9319,9 @@ extension on TranslationsPl {
 			'audiobook.librarySort' => 'Rodzaje książek',
 			'audiobook.sortTitle' => 'Tytuł',
 			'audiobook.sortAuthor' => 'Autorzy',
-			'audiobook.sortNarrator' => 'narrator',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'narrator',
 			'audiobook.sortSeries' => 'Seria Porządek',
 			'audiobook.sortRecent' => 'Niedawno otwarte',
 			'audiobook.statusFilter' => 'Status czytania',
@@ -9831,9 +9833,9 @@ extension on TranslationsPl {
 			'musicTools.guestDj' => 'Gościnny DJ',
 			'musicTools.charts' => 'Statystyki słuchania',
 			'musicTools.rediscover' => 'Odkryj ponownie',
-			'musicTools.stations' => 'Stacje muzyczne',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'Stacje muzyczne',
 			'musicTools.prompt' => 'Playlista z opisu',
 			'musicTools.provider' => 'Adres generowania dostawcy',
 			'musicTools.model' => 'Nazwa modelu',

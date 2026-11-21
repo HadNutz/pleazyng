@@ -99,6 +99,7 @@ class _Translations$iptv$fr_CA extends Translations$iptv$fr {
 	final TranslationsFrCa _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'Sources de secours par ordre de lecture';
 	@override String get lineupOrder => 'Ordre des chaînes';
 	@override String get orderChanged => 'L’ordre des chaînes a changé. Vérifiez-le et réessayez.';
 	@override String get localPlaylist => 'Fichier M3U';
@@ -1350,6 +1351,7 @@ class _Translations$services$libraryFilter$fr_CA extends Translations$services$l
 extension on TranslationsFrCa {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'iptv.backupFeeds' => 'Sources de secours par ordre de lecture',
 			'iptv.lineupOrder' => 'Ordre des chaînes',
 			'iptv.orderChanged' => 'L’ordre des chaînes a changé. Vérifiez-le et réessayez.',
 			'iptv.localPlaylist' => 'Fichier M3U',
@@ -1861,9 +1863,9 @@ extension on TranslationsFrCa {
 			'romm.busy' => 'The streaming computer is occupied.',
 			'romm.streamEnded' => 'The streaming session ended.',
 			'romm.retry' => 'Try again',
-			'romm.disc' => 'Change disc',
 			_ => null,
 		} ?? switch (path) {
+			'romm.disc' => 'Change disc',
 			'romm.memoryCard' => 'Memory card',
 			'romm.multiplayer' => 'Allow players to join',
 			'romm.join' => 'Join game',

@@ -49,40 +49,39 @@ String xmltvLineup(List<LiveTvChannel> channels, Iterable<LiveTvProgram> program
     return '${utc.toIso8601String().substring(0, 19).replaceAll(RegExp(r'[-T:]'), '')} +0000';
   }
 
+  // The guide can contain hundreds of thousands of airings. Flush one XML
+  // element at a time so the complete document never exists as a second DOM.
+  final output = StringBuffer('<?xml version="1.0" encoding="UTF-8"?><tv generator-info-name="Pleazyng">');
   final xml = XmlBuilder();
-  xml.processing('xml', 'version="1.0" encoding="UTF-8"');
-  xml.element(
-    'tv',
-    attributes: {'generator-info-name': 'Pleazyng'},
-    nest: () {
-      for (final entry in byGuideId.entries) {
-        final channel = entry.value;
-        xml.element(
-          'channel',
-          attributes: {'id': _oneLine(entry.key)},
-          nest: () {
-            xml.element('display-name', nest: _oneLine(channel.title ?? channel.key));
-            if (channel.thumb case final String logo) xml.element('icon', attributes: {'src': _oneLine(logo)});
-          },
-        );
-      }
-      for (final p in programmes) {
-        final id = byKey[p.channelIdentifier];
-        final start = p.beginsAt, end = p.endsAt;
-        if (id == null || start == null || end == null || end <= start) continue;
-        xml.element(
-          'programme',
-          attributes: {'channel': _oneLine(id), 'start': timestamp(start), 'stop': timestamp(end)},
-          nest: () {
-            xml.element('title', nest: _oneLine(p.title));
-            if (p.summary case final String description) xml.element('desc', nest: _oneLine(description));
-            if (p.type case final String category) xml.element('category', nest: _oneLine(category));
-            if (p.guid case final String episode) xml.element('episode-num', nest: _oneLine(episode));
-            if (p.thumb case final String url) xml.element('icon', attributes: {'src': _oneLine(url)});
-          },
-        );
-      }
-    },
-  );
-  return xml.buildDocument().toXmlString();
+  for (final entry in byGuideId.entries) {
+    final channel = entry.value;
+    xml.element(
+      'channel',
+      attributes: {'id': _oneLine(entry.key)},
+      nest: () {
+        xml.element('display-name', nest: _oneLine(channel.title ?? channel.key));
+        if (channel.thumb case final String logo) xml.element('icon', attributes: {'src': _oneLine(logo)});
+      },
+    );
+    output.write(xml.buildFragment().toXmlString());
+  }
+  for (final p in programmes) {
+    final id = byKey[p.channelIdentifier];
+    final start = p.beginsAt, end = p.endsAt;
+    if (id == null || start == null || end == null || end <= start) continue;
+    xml.element(
+      'programme',
+      attributes: {'channel': _oneLine(id), 'start': timestamp(start), 'stop': timestamp(end)},
+      nest: () {
+        xml.element('title', nest: _oneLine(p.title));
+        if (p.summary case final String description) xml.element('desc', nest: _oneLine(description));
+        if (p.type case final String category) xml.element('category', nest: _oneLine(category));
+        if (p.guid case final String episode) xml.element('episode-num', nest: _oneLine(episode));
+        if (p.thumb case final String url) xml.element('icon', attributes: {'src': _oneLine(url)});
+      },
+    );
+    output.write(xml.buildFragment().toXmlString());
+  }
+  output.write('</tv>');
+  return output.toString();
 }

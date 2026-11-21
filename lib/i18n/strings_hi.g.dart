@@ -1651,6 +1651,7 @@ class _Translations$iptv$hi extends Translations$iptv$en {
 	final TranslationsHi _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'प्लेबैक क्रम में वैकल्पिक स्रोत';
 	@override String get lineupOrder => 'चैनलों का क्रम';
 	@override String get orderChanged => 'चैनलों का क्रम बदल गया है। जाँचकर फिर से कोशिश करें।';
 	@override String get localPlaylist => 'M3U फ़ाइल';
@@ -7041,6 +7042,7 @@ extension on TranslationsHi {
 			'connections.signInAgain' => 'फिर से हस्ताक्षर करें',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'संपादित करें ${product} कनेक्शन',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} के लिए URL जोड़ें या हटा दें. Pleazyng सबसे कम देरी के साथ पहुंचने योग्य URL का उपयोग करेगा.',
+			'iptv.backupFeeds' => 'प्लेबैक क्रम में वैकल्पिक स्रोत',
 			'iptv.lineupOrder' => 'चैनलों का क्रम',
 			'iptv.orderChanged' => 'चैनलों का क्रम बदल गया है। जाँचकर फिर से कोशिश करें।',
 			'iptv.localPlaylist' => 'M3U फ़ाइल',
@@ -7211,9 +7213,9 @@ extension on TranslationsHi {
 			'discover.director' => 'निर्देशक',
 			'discover.directors' => 'निर्देशक',
 			'discover.movie' => 'फिल्में',
-			'discover.tvShow' => 'टीवी शो',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'टीवी शो',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} मिनट छोड़ दिया',
 			'discover.moreLikeThis' => 'इस तरह से अधिक',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hi'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} पदों की सूची', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} पदों की सूची', ), 
@@ -7725,9 +7727,9 @@ extension on TranslationsHi {
 			'collections.removedFromCollection' => 'संग्रह से हटाए गए',
 			'collections.removeFromCollectionFailed' => 'संग्रह से बाहर निकलने में विफलता',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'संग्रह से त्रुटि हटाने: ${error}',
-			'collections.searchCollections' => 'खोज संग्रह...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'खोज संग्रह...',
 			'playlists.title' => 'प्लेलिस्ट',
 			'playlists.playlist' => 'प्लेलिस्ट',
 			'playlists.noPlaylists' => 'कोई प्लेलिस्ट नहीं मिला',
@@ -8239,9 +8241,9 @@ extension on TranslationsHi {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision डिकोडर',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision डिकोडर (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'बेस लेयर',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 आधार परत',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 आधार परत',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG आधार परत',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'एसडीआर आधार परत',
 			'performanceOverlay.dvRouteReshaped' => 'आरपीयू पुनर्प्राप्त (जीपीयू-अगला)',
@@ -8753,9 +8755,9 @@ extension on TranslationsHi {
 			'homeLayout.autoSlideDescription' => 'लोड (पीसी) और डी-पैड (टीवी) हमेशा काम करते हैं और टाइमर को पुनरारंभ करते हैं।',
 			'homeLayout.autoSlideEditDescription' => 'इसके अलावा, यह हर कुछ सेकंड में खुद पर स्लाइड करता है. बंद: केवल जब आप एक पंख (पीसी) पर क्लिक करते हैं या दूरस्थ (टीवी) पर बाईं ओर / दाईं ओर दबाते हैं तो चलता है. लहरें और डी-पैड हमेशा किसी भी तरह से काम करते हैं.',
 			'homeLayout.enableHeroFirst' => 'पहले नायक को सक्षम करें',
-			'homeLayout.showOnHome' => 'Home Screen पर दिखाएँ',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'Home Screen पर दिखाएँ',
 			'homeLayout.home' => 'घर',
 			'homeLayout.removeFromHome' => 'घर से हटाना',
 			'homeLayout.selectRowsFirst' => 'सबसे पहले नीचे दिए गए होम लाइनों का चयन करें।',
@@ -9267,9 +9269,9 @@ extension on TranslationsHi {
 			'audiobook.librarySort' => 'विभिन्न किताबें',
 			'audiobook.sortTitle' => 'शीर्षक',
 			'audiobook.sortAuthor' => 'लेखक',
-			'audiobook.sortNarrator' => 'कथाकार',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'कथाकार',
 			'audiobook.sortSeries' => 'श्रृंखला आदेश',
 			'audiobook.sortRecent' => 'हाल ही में खोला गया',
 			'audiobook.statusFilter' => 'पढ़ने की स्थिति',
@@ -9781,9 +9783,9 @@ extension on TranslationsHi {
 			'musicTools.guestDj' => 'अतिथि डीजे',
 			'musicTools.charts' => 'सुनने की रैंकिंग',
 			'musicTools.rediscover' => 'फिर खोजें',
-			'musicTools.stations' => 'संगीत स्टेशन',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'संगीत स्टेशन',
 			'musicTools.prompt' => 'विवरण से प्लेलिस्ट',
 			'musicTools.provider' => 'प्रदाता का जनरेशन URL',
 			'musicTools.model' => 'मॉडल का नाम',

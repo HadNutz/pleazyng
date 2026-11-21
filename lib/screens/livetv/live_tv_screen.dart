@@ -39,6 +39,8 @@ import 'tabs/guide_tab.dart';
 import 'tabs/recordings_tab.dart';
 import 'tabs/whats_on_tab.dart';
 import '../iptv/iptv_vod_screen.dart';
+import '../iptv/iptv_sports_screen.dart';
+import '../../iptv/iptv_sports_guide.dart';
 
 typedef _FavoriteScope = ({String source, String storeKey, FavoriteChannelPersistenceMode mode});
 
@@ -924,6 +926,22 @@ class _LiveTvScreenState extends State<LiveTvScreen>
               // guide-only action would be unmounted before focus could ever
               // reach it. Selecting a result switches back to the guide tab.
               FocusableAction(icon: Symbols.search_rounded, tooltip: t.liveTv.searchGuide, onPressed: _showGuideSearch),
+              if (_hasIptvSources)
+                FocusableAction(
+                  icon: Symbols.sports_rounded,
+                  tooltip: t.videoSettings.motionClaritySports,
+                  onPressed: () async {
+                    final profile = context.read<ActiveProfileProvider>().activeId;
+                    if (profile == null) return;
+                    final feed = await Navigator.of(
+                      context,
+                    ).push<IptvSportsFeed>(MaterialPageRoute(builder: (_) => IptvSportsScreen(profileId: profile)));
+                    if (!context.mounted || feed == null || context.read<ActiveProfileProvider>().activeId != profile) {
+                      return;
+                    }
+                    _jumpToGuideChannel(feed.channel, program: feed.program);
+                  },
+                ),
               if (_hasIptvVodSources)
                 FocusableAction(
                   icon: Symbols.movie_rounded,

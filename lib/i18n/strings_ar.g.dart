@@ -1679,6 +1679,7 @@ class _Translations$iptv$ar extends Translations$iptv$en {
 	final TranslationsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get backupFeeds => 'المصادر الاحتياطية بترتيب التشغيل';
 	@override String get lineupOrder => 'ترتيب القنوات';
 	@override String get orderChanged => 'تغيّر ترتيب القنوات. راجعه وحاول مجددًا.';
 	@override String get localPlaylist => 'ملف M3U';
@@ -7141,6 +7142,7 @@ extension on TranslationsAr {
 			'connections.signInAgain' => 'اكتب مرة أخرى',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'تحرير ${product} الاتصال',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'إضافة أو إزالة عناوين URL لـ ${serverName}. Pleazyng سوف تستخدم عناوين URL المتاحة مع أدنى تأخير.',
+			'iptv.backupFeeds' => 'المصادر الاحتياطية بترتيب التشغيل',
 			'iptv.lineupOrder' => 'ترتيب القنوات',
 			'iptv.orderChanged' => 'تغيّر ترتيب القنوات. راجعه وحاول مجددًا.',
 			'iptv.localPlaylist' => 'ملف M3U',
@@ -7311,9 +7313,9 @@ extension on TranslationsAr {
 			'discover.director' => 'المخرج',
 			'discover.directors' => 'المخرجون',
 			'discover.movie' => 'فيلم',
-			'discover.tvShow' => 'عرض التلفزيون',
 			_ => null,
 		} ?? switch (path) {
+			'discover.tvShow' => 'عرض التلفزيون',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} دقيقة متبقية',
 			'discover.moreLikeThis' => 'مشابه لهذا',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} عنوان', one: 'عنوان واحد', two: 'عنوانان', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} عناوين', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} عنوان', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} عنوان', ), 
@@ -7825,9 +7827,9 @@ extension on TranslationsAr {
 			'collections.removedFromCollection' => 'إزالة من المجموعة',
 			'collections.removeFromCollectionFailed' => 'فشل في إزالتها من المجموعة',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'أخطاء إزالة من المجموعة: ${error}',
-			'collections.searchCollections' => 'البحث عن مجموعات...',
 			_ => null,
 		} ?? switch (path) {
+			'collections.searchCollections' => 'البحث عن مجموعات...',
 			'playlists.title' => 'قوائم التشغيل',
 			'playlists.playlist' => 'قائمة التشغيل',
 			'playlists.noPlaylists' => 'لا توجد لعبة',
@@ -8339,9 +8341,9 @@ extension on TranslationsAr {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision الخصم',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision التخزين (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'طبقة قاعدة',
-			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 طبقة أساسية',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 طبقة أساسية',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'طبقة قاعدة HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR طبقة أساسية',
 			'performanceOverlay.dvRouteReshaped' => 'إعادة تدوير RPU (gpu-next)',
@@ -8853,9 +8855,9 @@ extension on TranslationsAr {
 			'homeLayout.autoSlideDescription' => 'ينتقل أيضًا تلقائيًا كل بضع ثوانٍ. تعمل الأسهم على الكمبيوتر وأزرار الاتجاهات على التلفزيون دائمًا، وتعيد بدء المؤقّت.',
 			'homeLayout.autoSlideEditDescription' => 'ينتقل أيضًا تلقائيًا كل بضع ثوانٍ. عند الإيقاف، يتنقّل فقط عند النقر على سهم في الكمبيوتر أو الضغط على اليمين أو اليسار في جهاز التحكم. تعمل الأسهم وأزرار الاتجاهات في الحالتين.',
 			'homeLayout.enableHeroFirst' => 'فعّل البطاقة البارزة أولًا',
-			'homeLayout.showOnHome' => 'إظهار في الصفحة الرئيسية',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showOnHome' => 'إظهار في الصفحة الرئيسية',
 			'homeLayout.home' => 'الرئيسية',
 			'homeLayout.removeFromHome' => 'إزالة من الصفحة الرئيسية',
 			'homeLayout.selectRowsFirst' => 'اختر صفوف الصفحة الرئيسية أدناه أولًا.',
@@ -9367,9 +9369,9 @@ extension on TranslationsAr {
 			'audiobook.librarySort' => 'الكتب المختلفة',
 			'audiobook.sortTitle' => 'العنوان',
 			'audiobook.sortAuthor' => 'الكاتب',
-			'audiobook.sortNarrator' => 'القارئ',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortNarrator' => 'القارئ',
 			'audiobook.sortSeries' => 'سلسلة الأوامر',
 			'audiobook.sortRecent' => 'افتتح مؤخرا',
 			'audiobook.statusFilter' => 'حالة القراءة',
@@ -9881,9 +9883,9 @@ extension on TranslationsAr {
 			'musicTools.guestDj' => 'منسق موسيقى ضيف',
 			'musicTools.charts' => 'إحصاءات الاستماع',
 			'musicTools.rediscover' => 'إعادة الاكتشاف',
-			'musicTools.stations' => 'محطات موسيقية',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.stations' => 'محطات موسيقية',
 			'musicTools.prompt' => 'قائمة من وصف',
 			'musicTools.provider' => 'رابط التوليد لدى المزود',
 			'musicTools.model' => 'اسم النموذج',

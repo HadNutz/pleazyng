@@ -47,6 +47,8 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
   bool _hasSavedFile = false;
   bool _allowHttp = false;
   bool _localTimeShiftEnabled = true;
+  List<IptvSourceSummary> _availableSources = const [];
+  List<String> _backupIds = [];
   bool _busy = false;
   bool _loading = false;
   bool _loaded = false;
@@ -63,9 +65,20 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
     _loaded = true;
     _boundProfileId = widget.profileId ?? widget.targetProfile?.id ?? context.read<ActiveProfileProvider>().activeId;
     _sourceId = widget.sourceId;
+    final bound = _boundProfileId;
+    if (bound != null) _loadBackupChoices(bound);
     if (_sourceId != null) {
       _loading = true;
       _loadExisting();
+    }
+  }
+
+  Future<void> _loadBackupChoices(String profileId) async {
+    try {
+      final available = await context.read<IptvSourceRepository>().sources(profileId);
+      if (mounted) setState(() => _availableSources = available.where((s) => s.id != _sourceId).toList());
+    } on Object {
+      /* Primary source editing stays available offline. */
     }
   }
 
@@ -90,6 +103,7 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
         _dispatcharrApiKey.text = config.dispatcharrApiKey;
         _localTimeShiftEnabled = config.localTimeShiftEnabled;
         _allowHttp = config.allowHttp;
+        _backupIds = [...config.backupSourceIds];
         _loading = false;
       });
     } catch (error) {
@@ -134,6 +148,7 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
       'permission' => t.iptv.permission,
       'invalid_data' => t.iptv.invalidData,
       'playlist_is_stream' => t.iptv.playlistIsStream,
+      'playlist_missing' => t.iptv.choosePlaylist,
       'source_changed' => t.iptv.sourceChanged,
       'credential_unavailable' => t.iptv.credentialUnavailable,
       'source_missing' => t.iptv.sourceMissing,
@@ -212,6 +227,7 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
           dispatcharrApiEndpoint: _dispatcharrApiEndpoint.text,
           dispatcharrApiKey: _dispatcharrApiKey.text,
           localTimeShiftEnabled: _localTimeShiftEnabled,
+          backupSourceIds: _backupIds,
           allowHttp: _allowHttp,
         );
       } else {
@@ -234,6 +250,7 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
             dispatcharrApiEndpoint: _dispatcharrApiEndpoint.text,
             dispatcharrApiKey: _dispatcharrApiKey.text.trim(),
             localTimeShiftEnabled: _localTimeShiftEnabled,
+            backupSourceIds: _backupIds,
             allowHttp: _allowHttp,
           ),
           playlistContents: _kind == IptvInputKind.m3uFile ? _playlistContents : null,
@@ -342,6 +359,20 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
                       ),
                     ],
                     const SizedBox(height: 14),
+                    if (_sourceId == null && _kind == IptvInputKind.m3u && _endpoint.text.isEmpty)
+                      Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: TextButton.icon(
+                          icon: const Icon(Icons.live_tv),
+                          label: Text('${t.common.preview} · IPTV-org (US)'),
+                          onPressed: _busy
+                              ? null
+                              : () => setState(() {
+                                  _endpoint.text = 'https://iptv-org.github.io/iptv/countries/us.m3u';
+                                  if (_name.text.trim().isEmpty) _name.text = 'IPTV-org (US)';
+                                }),
+                        ),
+                      ),
                     if (_kind == IptvInputKind.m3uFile) ...[
                       OutlinedButton.icon(
                         onPressed: _busy || _saved ? null : _choosePlaylist,
@@ -442,6 +473,25 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
                         decoration: InputDecoration(labelText: t.iptv.dispatcharrApiKey),
                       ),
                     ],
+                    if (_availableSources.isNotEmpty)
+                      ExpansionTile(
+                        title: Text(t.iptv.backupFeeds),
+                        children: [
+                          for (final id in {..._backupIds, ..._availableSources.map((s) => s.id)})
+                            if (_availableSources.where((s) => s.id == id).firstOrNull case final source?)
+                              CheckboxListTile(
+                                title: Text(source.displayName),
+                                secondary: _backupIds.contains(id) ? Text('${_backupIds.indexOf(id) + 1}') : null,
+                                value: _backupIds.contains(id),
+                                onChanged: _busy || _saved
+                                    ? null
+                                    : (selected) => setState(() {
+                                        _backupIds.remove(id);
+                                        if (selected == true) _backupIds.add(id);
+                                      }),
+                              ),
+                        ],
+                      ),
                     SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
                       title: Text(t.iptv.localTimeShift),
