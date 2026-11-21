@@ -27,6 +27,7 @@ jobs:
           PUSH_BASE: ${{ github.event.before }}
         run: |
           base="${PR_BASE:-${PUSH_BASE:-HEAD^}}"
+          if [[ "$GITHUB_REF" == refs/heads/integration/upstream-* || "$base" =~ ^0+$ ]]; then base=origin/main; fi
           python3 scripts/checks/native_ratchet.py "$(git merge-base HEAD "$base")"
       - name: Load detekt
         if: matrix.language == 'kotlin'
