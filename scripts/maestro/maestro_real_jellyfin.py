@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import http.client
 import json
 import os
 from pathlib import Path
@@ -359,9 +360,21 @@ class JellyfinApi:
         request = urllib.request.Request(self.base_url + path, data=data, method=method, headers=request_headers)
         try:
             with safe_urlopen(request, timeout=timeout) as response:
-                return response.status, response.read()
+                try:
+                    body = response.read()
+                except http.client.IncompleteRead as error:
+                    raise OSError("Jellyfin response body was truncated") from error
+                return response.status, body
         except urllib.error.HTTPError as error:
-            return error.code, error.read()
+            try:
+                body = error.read()
+            except http.client.IncompleteRead as incomplete:
+                # During startup Jellyfin can close a 503 response while its
+                # container is becoming ready. Callers use the status to
+                # retry; reading the optional error body must not abort that
+                # bounded retry loop.
+                body = incomplete.partial
+            return error.code, body
 
     def json(self, method: str, path: str, **kwargs: Any) -> Any:
         status, body = self.request(method, path, **kwargs)

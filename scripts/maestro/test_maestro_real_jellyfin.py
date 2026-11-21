@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import hashlib
+import http.client
 import io
 
 from pathlib import Path
@@ -8,6 +9,7 @@ import sys
 import tempfile
 from unittest.mock import patch
 import unittest
+import urllib.error
 import xml.etree.ElementTree as ET
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -160,6 +162,53 @@ class PrepareMediaTests(unittest.TestCase):
                 prepare_media(output, None, False)
 
             self.assertEqual(sentinel.read_text(encoding="utf-8"), "user data")
+
+
+class JellyfinApiTests(unittest.TestCase):
+    def test_truncated_503_body_preserves_status_for_startup_retry(self) -> None:
+        class IncompleteReader:
+            def read(self, *_args: object) -> bytes:
+                raise http.client.IncompleteRead(b"starting", 64)
+
+            def close(self) -> None:
+                return None
+
+        error = urllib.error.HTTPError(
+            "http://127.0.0.1:8096/Startup/Configuration",
+            503,
+            "Service Unavailable",
+            {},
+            IncompleteReader(),
+        )
+        with patch.object(real_jellyfin, "safe_urlopen", side_effect=error):
+            status, body = real_jellyfin.JellyfinApi("http://127.0.0.1:8096").request(
+                "POST",
+                "/Startup/Configuration",
+                payload={"UICulture": "en-US"},
+            )
+
+        self.assertEqual(status, 503)
+        self.assertEqual(body, b"starting")
+        error.close()
+
+    def test_truncated_success_body_becomes_retryable_transport_error(self) -> None:
+        class IncompleteResponse:
+            status = 200
+
+            def __enter__(self) -> "IncompleteResponse":
+                return self
+
+            def __exit__(self, *_args: object) -> None:
+                return None
+
+            def read(self) -> bytes:
+                raise http.client.IncompleteRead(b"{", 32)
+
+        with patch.object(real_jellyfin, "safe_urlopen", return_value=IncompleteResponse()):
+            with self.assertRaisesRegex(OSError, "response body was truncated"):
+                real_jellyfin.JellyfinApi("http://127.0.0.1:8096").request(
+                    "GET", "/System/Info/Public"
+                )
 
 
 if __name__ == "__main__":
