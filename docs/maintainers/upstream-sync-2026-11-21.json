@@ -746,7 +746,8 @@
       "author": "NoahBK",
       "state": "open",
       "title": "feat(settings): choose screenshot save location",
-      "decision": "Reasonable low-priority desktop preference. Keep the existing default and sandbox permissions."
+      "decision": "Adapted in Pleazyng. Desktop users can select or reset the screenshot folder. macOS remembers the user-approved folder with a security-scoped bookmark, and mpv retains its Pictures default.",
+      "upstream_head": "28f7c7aaddaabffa40f2aa33fb0f38facbcd429d"
     },
     {
       "number": 3101,

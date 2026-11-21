@@ -1,5 +1,7 @@
 # Upstream source attribution
 
+- Desktop users can select or reset the screenshot folder. macOS remembers the user-approved folder with a security-scoped bookmark, and mpv retains its Pictures default. [NoahBK](https://github.com/NoahBK) proposed [Plezy PR #3095](https://github.com/edde746/plezy/pull/3095).
+
 - Prefer exact regional audio and subtitle matches before language-only and cross-region fallback, and carry regional preferences through Plex account settings and subtitle search with localized language names. [strata-scribe](https://github.com/strata-scribe) proposed [Plezy PR #3005](https://github.com/edde746/plezy/pull/3005).
 
 - Allow authorized Plex owners to refresh one item. Cache invalidation and detail updates check the selected server, session and settled item ID. [denizt](https://github.com/denizt) proposed [Plezy PR #3118](https://github.com/edde746/plezy/pull/3118).

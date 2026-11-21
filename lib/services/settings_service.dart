@@ -25,6 +25,7 @@ import 'sensitive_prefs.dart';
 import 'device_performance.dart';
 import 'shortcut_action.dart';
 import 'system_shelf_service.dart';
+import 'desktop_screenshot_directory.dart';
 
 export 'base_shared_preferences_service.dart'
     show
@@ -1062,6 +1063,9 @@ class SettingsService extends BaseSharedPreferencesService {
   static const introPattern = StringPref('intro_pattern', defaultValue: defaultIntroPattern);
   static const creditsPattern = StringPref('credits_pattern', defaultValue: defaultCreditsPattern);
   static const customDownloadPathType = NullableStringPref('custom_download_path_type');
+
+  /// Custom desktop screenshot directory. Null keeps the existing `~/Pictures` default.
+  static const screenshotDirectory = NullableStringPref('screenshot_directory');
   static const downloadOnWifiOnly = BoolPref('download_on_wifi_only');
   static const autoRemoveWatchedDownloads = BoolPref('auto_remove_watched_downloads');
 
@@ -2467,6 +2471,7 @@ class SettingsService extends BaseSharedPreferencesService {
     dvExperimentDiagnostics,
     showTopShelfContent,
     customDownloadPathType,
+    screenshotDirectory,
     mediaVersionPreferences,
     localLastPlayedAt,
     customDownloadPath,
@@ -2580,6 +2585,7 @@ class SettingsService extends BaseSharedPreferencesService {
   }
 
   Future<void> resetAllSettings() async {
+    if (read(screenshotDirectory) != null) await DesktopScreenshotDirectory.reset();
     // Materialize an unread legacy choice before retiring its old key, just as
     // if it had already been read — but only where the new preference survives
     // the reset (the portable-only marker modes); the rest are reset anyway.

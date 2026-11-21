@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import '../services/desktop_screenshot_directory.dart';
 import '../services/playback_launch_observer.dart';
 import '../services/playback_presentation.dart';
 import '../media/ids.dart';
@@ -2742,7 +2743,11 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       }
 
       if (PlatformDetector.isDesktopOS()) {
-        await currentPlayer.setProperty('screenshot-directory', '~/Pictures');
+        // Retain the existing Pictures location unless the user chose another folder.
+        final screenshotDirectory = await DesktopScreenshotDirectory.resolve(
+          settingsService.read(SettingsService.screenshotDirectory),
+        );
+        await currentPlayer.setProperty('screenshot-directory', screenshotDirectory);
       }
 
       // Before custom mpv.conf, so an `audio-device` line there still wins.
