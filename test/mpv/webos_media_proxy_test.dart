@@ -130,10 +130,9 @@ void main() {
 
       expect(playlist, contains('#EXTM3U'));
       expect(playlist, isNot(contains('query-secret')));
-      final localResources = RegExp(r'URI="(http://127\.0\.0\.1:\d+/r/[^"]+)"')
-          .allMatches(playlist)
-          .map((match) => Uri.parse(match.group(1)!))
-          .toList();
+      final localResources = RegExp(
+        r'URI="(http://127\.0\.0\.1:\d+/r/[^"]+)"',
+      ).allMatches(playlist).map((match) => Uri.parse(match.group(1)!)).toList();
       final segment = playlist
           .split('\n')
           .firstWhere((line) => line.startsWith('http://127.0.0.1:') && !line.startsWith('#'));

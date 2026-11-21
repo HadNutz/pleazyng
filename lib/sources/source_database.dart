@@ -1441,40 +1441,43 @@ class SourceRepository {
 
   /// The caller carries the last committed revision. An old screen cannot
   /// overwrite a newer session or an explicit reset when its final tick lands.
-  Future<PublicationProgress> saveProgress(String profile, PublicationProgress value, {String kind = 'position'}) =>
-      database.transaction(() async {
-        _writable(profile);
-        final current = await progress(profile, value.key);
-        if (current != null && current.revision != value.revision) {
-          throw const SourceException(SourceFailure.conflict);
-        }
-        final next = value.copyWith(
-          revision: (current?.revision ?? 0) + 1,
-          updatedAt: DateTime.now().millisecondsSinceEpoch,
-        );
-        final payload = jsonEncode(next.toJson());
-        await database.customStatement(
-          'INSERT INTO progress(profile,key,payload,revision,pending,entry) VALUES (?,?,?,?,1,?) '
-          'ON CONFLICT(profile,key) DO UPDATE SET payload=excluded.payload,revision=excluded.revision,pending=1,entry=excluded.entry',
-          [profile, next.key, payload, next.revision, next.entryKey],
-        );
-        await database.customStatement('INSERT INTO events VALUES (?,?,?,?,?,?,1)', [
-          profile,
-          _uuid.v4(),
-          next.key,
-          payload,
-          kind,
-          next.updatedAt,
-        ]);
-        // The latest absolute snapshot is sufficient for replay. Preserve a
-        // bounded undo history without growing one row every five seconds forever.
-        await database.customStatement(
-          'DELETE FROM events WHERE profile=? AND key=? AND kind != ? AND rowid NOT IN '
-          '(SELECT rowid FROM events WHERE profile=? AND key=? AND kind != ? ORDER BY rowid DESC LIMIT 100)',
-          [profile, next.key, 'annotation', profile, next.key, 'annotation'],
-        );
-        return next;
-      });
+  Future<PublicationProgress> saveProgress(
+    String profile,
+    PublicationProgress value, {
+    String kind = 'position',
+  }) => database.transaction(() async {
+    _writable(profile);
+    final current = await progress(profile, value.key);
+    if (current != null && current.revision != value.revision) {
+      throw const SourceException(SourceFailure.conflict);
+    }
+    final next = value.copyWith(
+      revision: (current?.revision ?? 0) + 1,
+      updatedAt: DateTime.now().millisecondsSinceEpoch,
+    );
+    final payload = jsonEncode(next.toJson());
+    await database.customStatement(
+      'INSERT INTO progress(profile,key,payload,revision,pending,entry) VALUES (?,?,?,?,1,?) '
+      'ON CONFLICT(profile,key) DO UPDATE SET payload=excluded.payload,revision=excluded.revision,pending=1,entry=excluded.entry',
+      [profile, next.key, payload, next.revision, next.entryKey],
+    );
+    await database.customStatement('INSERT INTO events VALUES (?,?,?,?,?,?,1)', [
+      profile,
+      _uuid.v4(),
+      next.key,
+      payload,
+      kind,
+      next.updatedAt,
+    ]);
+    // The latest absolute snapshot is sufficient for replay. Preserve a
+    // bounded undo history without growing one row every five seconds forever.
+    await database.customStatement(
+      'DELETE FROM events WHERE profile=? AND key=? AND kind != ? AND rowid NOT IN '
+      '(SELECT rowid FROM events WHERE profile=? AND key=? AND kind != ? ORDER BY rowid DESC LIMIT 100)',
+      [profile, next.key, 'annotation', profile, next.key, 'annotation'],
+    );
+    return next;
+  });
 
   Future<void> acknowledge(String profile, String key, int revision) => database.transaction(() async {
     await database.customStatement(
