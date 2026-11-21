@@ -32,6 +32,17 @@ class PlayerSystem extends PlayerBase
   @override
   final String playerType;
   final bool hardwareDecoding;
+  bool _nextTvMotion = false;
+  String? _motionProvider;
+
+  void prepareTvMotion(bool eligible) => _nextTvMotion = eligible;
+
+  Future<void> disableTvMotion() async {
+    _nextTvMotion = false;
+    await _control('disableMotion');
+    _motionProvider = null;
+  }
+
   String? _window;
   String? _output, _decoder, _displayMode;
   int? _outputWidth, _outputHeight;
@@ -211,6 +222,8 @@ class PlayerSystem extends PlayerBase
     Duration timelineOffset = Duration.zero,
   }) {
     final generation = _newGeneration();
+    final motion = _nextTvMotion && !isLive;
+    _nextTvMotion = false;
     return _sources.run(() async {
       if (!_current(generation)) return;
       await _release();
@@ -271,14 +284,14 @@ class PlayerSystem extends PlayerBase
             if (identical(_opening, interrupted)) _opening = null;
           }
         } else {
-          if (playerType == 'tvmpv' && hardwareDecoding && PlatformDetector.isWebOSBuild()) {
+          if (playerType == 'tvmpv' && !motion && hardwareDecoding && PlatformDetector.isWebOSBuild()) {
             try {
               _window = await WebOSVideoPlane.windows.invokeMethod<String>('create', {});
             } on PlatformException {
               /* An unavailable plane can still use a texture. */
             }
           }
-          await _create(id, uri);
+          await _create(id, uri, motion: motion);
         }
         if (!_current(generation)) return;
         try {
@@ -311,10 +324,11 @@ class PlayerSystem extends PlayerBase
     });
   }
 
-  Future<void> _create(int id, Uri uri, {bool nativeSurface = true}) async {
+  Future<void> _create(int id, Uri uri, {bool nativeSurface = true, bool motion = false}) async {
     final fonts = playerType == 'tvmpv' ? await SubtitleFontLoader.loadSubtitleFont() : null;
     _texture = await methodChannel.invokeMethod<int>('create', {
       'id': id,
+      if (motion) 'motion': true,
       'nativeSurface': nativeSurface,
       'uri': uri.toString(),
       'hardwareDecoding': hardwareDecoding,
@@ -411,6 +425,7 @@ class PlayerSystem extends PlayerBase
       _desktopPlane = plane;
       surfaceRevision.value++;
     }
+    _motionProvider = info['motionProvider'] as String?;
     _output = info['output'] as String?;
     _decoder = info['hardwareDecoder'] as String?;
     _displayMode = info['displayMode'] as String?;
@@ -569,6 +584,8 @@ class PlayerSystem extends PlayerBase
     'current-vo' => [_output ?? playerType, if (_displayMode?.isNotEmpty == true) _displayMode!].join(' · '),
     'video-params/w' => _size.width > 0 ? _size.width.round().toString() : null,
     'video-params/h' => _size.height > 0 ? _size.height.round().toString() : null,
+    'interpolation' when playerType == 'tvmpv' => _motionProvider?.isNotEmpty == true ? 'yes' : 'no',
+    'video-out-interpolation' when playerType == 'tvmpv' => _motionProvider,
     'hwdec-current' => _decoder,
     'width' || 'dwidth' => _size.width.toInt().toString(),
     'height' || 'dheight' => _size.height.toInt().toString(),
@@ -639,7 +656,7 @@ class PlayerSystem extends PlayerBase
     _overlayTexture = null;
     _trackRevision = null;
     _size = Size.zero;
-    _decoder = _output = _displayMode = null;
+    _motionProvider = _decoder = _output = _displayMode = null;
     _outputWidth = _outputHeight = null;
     final windows = _windows;
     _windows = null;

@@ -1679,11 +1679,11 @@ class Translations$settings$en {
 	/// en: 'Motion smoothing'
 	String get motionSmoothing => 'Motion smoothing';
 
-	/// en: 'Display-synchronized frame resampling on supported MPV GPU outputs; fast motion can look soft or show artifacts.'
-	String get motionSmoothingDescription => 'Display-synchronized frame resampling on supported MPV GPU outputs; fast motion can look soft or show artifacts.';
+	/// en: 'Smooth motion on compatible video. Fast movement can look soft or show artifacts.'
+	String get motionSmoothingDescription => 'Smooth motion on compatible video. Fast movement can look soft or show artifacts.';
 
-	/// en: 'If this player has no display-synchronized GPU renderer, MPV smoothing is skipped and playback continues normally.'
-	String get motionSmoothingUnavailableDescription => 'If this player has no display-synchronized GPU renderer, MPV smoothing is skipped and playback continues normally.';
+	/// en: 'Motion smoothing is unavailable on this playback path.'
+	String get motionSmoothingUnavailableDescription => 'Motion smoothing is unavailable on this playback path.';
 
 	/// en: 'The player could not apply motion smoothing. Playback will continue unchanged.'
 	String get motionSmoothingApplyFailed => 'The player could not apply motion smoothing. Playback will continue unchanged.';
@@ -1706,8 +1706,8 @@ class Translations$settings$en {
 	/// en: 'MPV'
 	String get motionSmoothingMpv => 'MPV';
 
-	/// en: 'Use MPV’s display-synchronized temporal interpolation. On Android, eligible SDR 24/30 fps video uses the GPU renderer while keeping the decoder setting. This does not generate motion with a neural model.'
-	String get motionSmoothingMpvDescription => 'Use MPV’s display-synchronized temporal interpolation. On Android, eligible SDR 24/30 fps video uses the GPU renderer while keeping the decoder setting. This does not generate motion with a neural model.';
+	/// en: 'Use temporal interpolation on compatible MPV outputs. On LG and Samsung TVs, the MPV player blends progressive SDR 24/30 fps video up to 1080p using a compatible OpenCL device, with a software fallback.'
+	String get motionSmoothingMpvDescription => 'Use temporal interpolation on compatible MPV outputs. On LG and Samsung TVs, the MPV player blends progressive SDR 24/30 fps video up to 1080p using a compatible OpenCL device, with a software fallback.';
 
 	/// en: 'Neural interpolation'
 	String get neuralInterpolation => 'Neural interpolation';
@@ -1718,8 +1718,8 @@ class Translations$settings$en {
 	/// en: 'Neural unavailable'
 	String get neuralInterpolationUnavailable => 'Neural unavailable';
 
-	/// en: 'Generate intermediate frames on the device. Apple uses VideoToolbox; Android tries Qualcomm HTP, then LiteRT NPU or GPU; Windows and Linux use the Pleazyng Motion Engine with a matching model and runtime. On Android and desktop, model packs download the first time Neural is selected and are verified before use; that playback uses the available MPV or normal playback path while they download. Playback diagnostics show the provider that actually ran. Choose Performance, Balanced, or Quality.'
-	String get neuralInterpolationUnavailableDescription => 'Generate intermediate frames on the device. Apple uses VideoToolbox; Android tries Qualcomm HTP, then LiteRT NPU or GPU; Windows and Linux use the Pleazyng Motion Engine with a matching model and runtime. On Android and desktop, model packs download the first time Neural is selected and are verified before use; that playback uses the available MPV or normal playback path while they download. Playback diagnostics show the provider that actually ran. Choose Performance, Balanced, or Quality.';
+	/// en: 'Generate intermediate frames on the device. Apple uses VideoToolbox. Android and Fire OS try compatible hardware through Qualcomm HTP or LiteRT. Windows and Linux use the Pleazyng Motion Engine. Android and desktop can use CPU inference when accelerators cannot run the model. On LG and Samsung TVs, select the MPV player for temporal blending when neural processing is unavailable. Playback diagnostics show which provider ran.'
+	String get neuralInterpolationUnavailableDescription => 'Generate intermediate frames on the device. Apple uses VideoToolbox. Android and Fire OS try compatible hardware through Qualcomm HTP or LiteRT. Windows and Linux use the Pleazyng Motion Engine. Android and desktop can use CPU inference when accelerators cannot run the model. On LG and Samsung TVs, select the MPV player for temporal blending when neural processing is unavailable. Playback diagnostics show which provider ran.';
 
 	/// en: 'Performance'
 	String get neuralInterpolationPresetPerformance => 'Performance';
@@ -18775,8 +18775,8 @@ extension on Translations {
 			'settings.matchRefreshRateDescription' => 'Match display refresh rate in fullscreen',
 			'settings.motionProcessing' => 'Motion processing',
 			'settings.motionSmoothing' => 'Motion smoothing',
-			'settings.motionSmoothingDescription' => 'Display-synchronized frame resampling on supported MPV GPU outputs; fast motion can look soft or show artifacts.',
-			'settings.motionSmoothingUnavailableDescription' => 'If this player has no display-synchronized GPU renderer, MPV smoothing is skipped and playback continues normally.',
+			'settings.motionSmoothingDescription' => 'Smooth motion on compatible video. Fast movement can look soft or show artifacts.',
+			'settings.motionSmoothingUnavailableDescription' => 'Motion smoothing is unavailable on this playback path.',
 			'settings.motionSmoothingApplyFailed' => 'The player could not apply motion smoothing. Playback will continue unchanged.',
 			'settings.motionSmoothingLiveUnavailableDescription' => 'Motion smoothing is disabled for live playback to preserve stream timing.',
 			'settings.motionSmoothingNotActiveDescription' => 'MPV has not activated display-synchronized interpolation for this session.',
@@ -18784,11 +18784,11 @@ extension on Translations {
 			'settings.motionSmoothingOff' => 'Off',
 			'settings.motionSmoothingOffDescription' => 'Keep the player’s existing display and frame cadence.',
 			'settings.motionSmoothingMpv' => 'MPV',
-			'settings.motionSmoothingMpvDescription' => 'Use MPV’s display-synchronized temporal interpolation. On Android, eligible SDR 24/30 fps video uses the GPU renderer while keeping the decoder setting. This does not generate motion with a neural model.',
+			'settings.motionSmoothingMpvDescription' => 'Use temporal interpolation on compatible MPV outputs. On LG and Samsung TVs, the MPV player blends progressive SDR 24/30 fps video up to 1080p using a compatible OpenCL device, with a software fallback.',
 			'settings.neuralInterpolation' => 'Neural interpolation',
 			'settings.neuralInterpolationPresets' => 'Presets',
 			'settings.neuralInterpolationUnavailable' => 'Neural unavailable',
-			'settings.neuralInterpolationUnavailableDescription' => 'Generate intermediate frames on the device. Apple uses VideoToolbox; Android tries Qualcomm HTP, then LiteRT NPU or GPU; Windows and Linux use the Pleazyng Motion Engine with a matching model and runtime. On Android and desktop, model packs download the first time Neural is selected and are verified before use; that playback uses the available MPV or normal playback path while they download. Playback diagnostics show the provider that actually ran. Choose Performance, Balanced, or Quality.',
+			'settings.neuralInterpolationUnavailableDescription' => 'Generate intermediate frames on the device. Apple uses VideoToolbox. Android and Fire OS try compatible hardware through Qualcomm HTP or LiteRT. Windows and Linux use the Pleazyng Motion Engine. Android and desktop can use CPU inference when accelerators cannot run the model. On LG and Samsung TVs, select the MPV player for temporal blending when neural processing is unavailable. Playback diagnostics show which provider ran.',
 			'settings.neuralInterpolationPresetPerformance' => 'Performance',
 			'settings.neuralInterpolationPresetBalanced' => 'Balanced',
 			'settings.neuralInterpolationPresetQuality' => 'Quality',

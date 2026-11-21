@@ -24,6 +24,7 @@
 
 #include "include/mpv/client.h"
 #include "include/mpv/render.h"
+#include "opencl_devices.h"
 
 namespace pleazyng_tv {
 using Value = flutter::EncodableValue;
@@ -129,10 +130,11 @@ class Session {
 #endif
     }
   }
-  int64_t open(const std::string& uri, const std::string& window, bool hardware, const std::string& fonts = {}) {
+  int64_t open(
+      const std::string& uri, const std::string& window, bool hardware, const std::string& fonts, bool motion) {
     core_ = api_.create();
     if (!core_) throw std::runtime_error("mpv create failed");
-    plane_ = hardware && !window.empty() && api_.ndl_acquire && api_.ndl_status && api_.ndl_release &&
+    plane_ = !motion && hardware && !window.empty() && api_.ndl_acquire && api_.ndl_status && api_.ndl_release &&
              api_.ndl_overlay && api_.ndl_acquire(window.c_str());
     for (const auto& option : std::map<std::string, std::string>{
              {"vo", plane_ ? "webos-ndl" : "libmpv"},
@@ -157,6 +159,20 @@ class Session {
       check(api_.set_option_string(core_, "hr-seek", "no"));
     }
     check(api_.initialize(core_));
+    if (motion) {
+      const char* filter = "@plezy-motion:lavfi=[framerate=fps=60]";
+#ifndef PLEAZYNG_TIZEN_EMBEDDER
+      // The C6's software RGBA surface sustained 60 fps at 640x360. Resizing
+      // before the mixer bounds both the GPU transfers and the CPU readback.
+      if (tv_has_two_core_g510()) {
+        filter =
+            "@plezy-motion:lavfi=[scale=w='min(iw,640)':h='min(ih,360)':force_original_aspect_ratio=decrease:"
+            "force_divisible_by=2:flags=fast_bilinear,framerate=fps=60]";
+      }
+#endif
+      const char* args[] = {"vf", "add", filter, nullptr};
+      motion_filter_ = api_.command(core_, args) >= 0;
+    }
     registerTexture();
     if (plane_) api_.ndl_overlay(&publishOverlay, this);
     const char* command[] = {"loadfile", uri.c_str(), nullptr};
@@ -229,6 +245,8 @@ class Session {
         {Value("output"), Value(plane_ ? "webos-ndl" : "libmpv-texture")},
         {Value("hardwareDecoder"),
          Value(rendered_.load() ? (plane_ ? std::string("webos-ndl") : prop("hwdec-current")) : std::string())},
+        {Value("motionProvider"),
+         Value(motion_filter_ ? prop("vf-metadata/plezy-motion/pleazyng-motion-provider") : std::string())},
         {Value("outputWidth"), Value(plane_ ? w : width_)},
         {Value("outputHeight"), Value(plane_ ? h : height_)},
         {Value("width"), Value(w)},
@@ -258,6 +276,12 @@ class Session {
     return rows;
   }
   void set(const char* name, const std::string& value) { check(api_.set_property_string(core_, name, value.c_str())); }
+  void disableMotion() {
+    if (!motion_filter_) return;
+    const char* args[] = {"vf", "remove", "@plezy-motion", nullptr};
+    check(api_.command(core_, args));
+    motion_filter_ = false;
+  }
   void seek(double seconds) {
     auto target = std::to_string(seconds);
     const char* args[] = {"seek", target.c_str(), plane_ ? "absolute+keyframes" : "absolute+exact", nullptr};
@@ -268,6 +292,7 @@ class Session {
   flutter::TextureRegistrar* registrar_;
   Api& api_;
   bool synchronous_upload_;
+  bool motion_filter_ = false;
   mpv_handle* core_ = nullptr;
   mpv_render_context* render_ = nullptr;
   int64_t texture_id_ = -1;
@@ -392,11 +417,13 @@ class TvMpvPlugin : public flutter::Plugin {
           const auto window = map.find(Value("windowId"));
           const auto fonts = map.find(Value("fontDir"));
           const auto hardware = map.find(Value("hardwareDecoding"));
+          const auto motion = map.find(Value("motion"));
           auto texture = session->open(
               std::get<std::string>(map.at(Value("uri"))),
               window == map.end() ? std::string() : std::get<std::string>(window->second),
               hardware == map.end() || std::get<bool>(hardware->second),
-              fonts == map.end() ? std::string() : std::get<std::string>(fonts->second));
+              fonts == map.end() ? std::string() : std::get<std::string>(fonts->second),
+              motion != map.end() && std::get<bool>(motion->second));
           sessions_[id] = std::move(session);
           result->Success(Value(texture));
           return;
@@ -415,7 +442,9 @@ class TvMpvPlugin : public flutter::Plugin {
           result->Success(Value(s.tracks()));
           return;
         }
-        if (method == "play" || method == "pause")
+        if (method == "disableMotion")
+          s.disableMotion();
+        else if (method == "play" || method == "pause")
           s.set("pause", method == "pause" ? "yes" : "no");
         else {
           const auto& value = map.at(Value("value"));

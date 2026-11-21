@@ -6,6 +6,9 @@ AndroidAnvilProviderState androidAnvilProviderState(String? provider) {
     return AndroidAnvilProviderState.initializing;
   }
 
+  if (status == 'litert-cpu-ready') return AndroidAnvilProviderState.ready;
+  if (status == 'litert-cpu') return AndroidAnvilProviderState.active;
+
   if (const {'off', 'unavailable', 'failed', 'error', 'cpu', 'cpu-fallback', 'cpuexecutionprovider'}.contains(status) ||
       status.endsWith('-unavailable') ||
       status.endsWith('-failed') ||

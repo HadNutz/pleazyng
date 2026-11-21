@@ -29,6 +29,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../mpv/mpv.dart';
 import '../models/video_backend.dart';
+import '../models/motion_processing_mode.dart';
 import '../mpv/player/platform/player_android.dart';
 import '../services/subtitle_playback_transcription_service.dart';
 import '../mpv/player/subtitle_pcm_capture_source.dart';
@@ -2239,7 +2240,15 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       final debugLoggingEnabled =
           settingsService.read(SettingsService.enableDebugLogging) ||
           settingsService.read(SettingsService.dvExperimentDiagnostics);
-      final backend = overrideBackend ?? SettingsService.preferredVideoBackend;
+      final useTvMotionPlayer =
+          PlatformDetector.usesNativeTvMedia() &&
+          !widget.isLive &&
+          !settingsService.prefs.containsKey(SettingsService.tvVideoBackend.key) &&
+          settingsService.read(SettingsService.motionProcessingMode) != MotionProcessingMode.off &&
+          MotionProcessingService.supportsTvMotionSource(
+            _currentMetadata.mediaVersions?.elementAtOrNull(_effectiveSelectedMediaIndex),
+          );
+      final backend = overrideBackend ?? (useTvMotionPlayer ? VideoBackend.mpv : SettingsService.preferredVideoBackend);
       final videoEngine = VideoHost.current.resolve(backend);
       final useExoPlayer = videoEngine == 'exoplayer';
 

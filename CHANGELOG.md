@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add hardware-probed motion blending to the LG webOS and Samsung Tizen MPV players, with software fallback and provider diagnostics. Add a libplacebo GPU route for Apple MPV smoothing and for devices without VideoToolbox interpolation support. Try software neural inference after eligible hardware providers on Android, Fire OS, Windows and Linux.
+
 - Keep manual app-store review submissions tracked separately from successful artifact uploads.
 
 ## [3.0.47] - 2026-11-21

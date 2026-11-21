@@ -81,6 +81,11 @@
             android:stopWithTask="true" />
 
         <uses-library android:name="android.car" android:required="false" />
+        <!-- LiteRT can load the vendor OpenCL runtime on Android and Fire OS. -->
+        <uses-native-library android:name="libOpenCL.so" android:required="false" />
+        <uses-native-library android:name="libOpenCL-car.so" android:required="false" />
+        <uses-native-library android:name="libOpenCL-pixel.so" android:required="false" />
+        <uses-native-library android:name="libvndksupport.so" android:required="false" />
         <!-- Qualcomm DSP RPC is a vendor library used by the optional QNN HTP runtime. -->
         <uses-native-library android:name="libcdsprpc.so" android:required="false" />
         <!-- The activity itself has no launcher entry: the launcher components are the aliases

@@ -356,10 +356,20 @@ class PerformanceStats {
     final neuralRequest = resolution.requestedPreset == null
         ? t.settings.neuralInterpolation
         : '${t.settings.neuralInterpolation} · ${_neuralPresetLabel(resolution.requestedPreset!)}';
+    if ((playbackCapabilityReport?.playerType == 'tvmpv' || motionProviderStatus == 'libplacebo GPU') &&
+        resolution.usesMpvInterpolation &&
+        motionInterpolationActive == true &&
+        motionProviderStatus?.isNotEmpty == true) {
+      final request = resolution.requested == MotionProcessingMode.neural
+          ? neuralRequest
+          : t.settings.motionSmoothingMpv;
+      return '$request → $motionProviderStatus';
+    }
     final isActive = motionInterpolationActive == true && videoSync == 'display-resample';
     final modelDownloadReceived = playbackCapabilityReport?.neuralModelDownloadBytesReceived;
     final modelDownloadTotal = playbackCapabilityReport?.neuralModelDownloadBytesTotal;
     if (resolution.requested == MotionProcessingMode.neural &&
+        playbackCapabilityReport?.hasObservedNeuralOutput != true &&
         modelDownloadReceived != null &&
         modelDownloadTotal != null &&
         modelDownloadTotal > 0) {
@@ -524,6 +534,8 @@ class PerformanceStats {
       'qnn-gpu' => 'QNN · GPU',
       'litert-npu' => 'LiteRT · NPU',
       'litert-gpu' => 'LiteRT · GPU',
+      'litert-cpu' => 'LiteRT · CPU',
+      'cpu' => 'ONNX Runtime · CPU',
       'openvino-npu' => 'OpenVINO NPU',
       'openvino-gpu' => 'OpenVINO GPU',
       'openvino-cpu' => 'OpenVINO CPU',

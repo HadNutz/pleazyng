@@ -562,10 +562,6 @@ bool read_provider_manifest(const char* path, std::vector<ManifestProvider>* pro
     *error = "Could not read motion provider manifest";
     return false;
   }
-  if (providers->empty()) {
-    *error = "Motion provider manifest does not contain any providers";
-    return false;
-  }
   return true;
 }
 
@@ -1711,6 +1707,10 @@ extern "C" PME_RUNTIME_API int pme_runtime_open(
     std::vector<size_t> provider_order;
     provider_order.reserve(config->provider_count);
     for (size_t i = 0; i < config->provider_count; ++i) provider_order.push_back(i);
+    std::stable_partition(provider_order.begin(), provider_order.end(), [&](size_t i) {
+      const auto& candidate = config->providers[i];
+      return candidate.struct_size >= sizeof(pme_provider_candidate) && candidate.device_kind == PME_DEVICE_NPU;
+    });
 #if defined(_WIN32)
     if (session->rx_7900_xt_target_required) {
       const auto is_builtin_dml_at = [&](size_t index) {
@@ -1754,15 +1754,6 @@ extern "C" PME_RUNTIME_API int pme_runtime_open(
       const bool builtin_dml = candidate.provider_name && candidate.provider_library_path &&
                                std::strcmp(candidate.provider_name, "DmlExecutionProvider") == 0 &&
                                std::strcmp(candidate.provider_library_path, "builtin-dml") == 0;
-#if defined(_WIN32)
-      if (session->rx_7900_xt_target_required && candidate.device_kind == PME_DEVICE_GPU && !builtin_dml) {
-        if (last_provider_error.empty()) {
-          last_provider_error = std::string(candidate.provider_name ? candidate.provider_name : "GPU provider") +
-                                ": skipped to keep PME compute on the RX 7900 XT";
-        }
-        continue;
-      }
-#endif
       const bool builtin_vitisai = candidate.provider_name && candidate.provider_library_path &&
                                    std::strcmp(candidate.provider_name, "VitisAIExecutionProvider") == 0 &&
                                    std::strcmp(candidate.provider_library_path, "builtin-vitisai") == 0;
