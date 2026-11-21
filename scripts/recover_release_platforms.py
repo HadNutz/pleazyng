@@ -1725,7 +1725,7 @@ def preflight_platform_artifacts(proof, repository=REPOSITORY):
         if proof.get('tvos_source'):
             wanted['tvos-ipa'] = proof['tvos_source']
         if proof.get('macos_source'):
-            wanted['webos-ipk'] = proof['macos_source']
+            wanted['macos-dmg'] = proof['macos_source']
         if proof.get('repaired_source'):
             for name in ('linux-x64', 'linux-arm64', 'linux-x64-appimage', 'macos-dmg'):
                 if name in wanted:

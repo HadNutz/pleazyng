@@ -67,6 +67,41 @@ class ArtifactPreflightTests(unittest.TestCase):
         with self.assertRaisesRegex(recovery.RecoveryError, 'metadata changed'):
             self.preflight(metadata_change=lambda item: item.update(digest='sha256:' + 'f' * 64))
 
+    def test_mac_recovery_preflights_dmg_from_recovery_run_and_webos_from_source(self):
+        mac_run = 88
+        mac_sha = 'b' * 40
+        proof = {**self.proof,
+                 'webos_source': {'source_run_id': self.run_id, 'source_sha': self.sha},
+                 'macos_source': {'source_run_id': mac_run, 'source_sha': mac_sha}}
+        mac_artifact = {'id': 900, 'name': 'macos-dmg', 'expired': False,
+                        'digest': 'sha256:' + '9' * 64,
+                        'workflow_run': {'id': mac_run, 'head_sha': mac_sha}}
+        source_inventory = [item for item in self.inventory if item['name'] != 'macos-dmg']
+        source_inventory.append({
+            'id': 1000, 'name': 'webos-ipk', 'expired': False,
+            'digest': 'sha256:' + 'a' * 64,
+            'workflow_run': {'id': self.run_id, 'head_sha': self.sha},
+        })
+        inventories = {self.run_id: source_inventory, mac_run: [mac_artifact]}
+
+        def collection(path, key):
+            run_id = int(path.split('/runs/')[1].split('/')[0])
+            return inventories[run_id]
+
+        def metadata(path):
+            artifact_id = int(path.rsplit('/', 1)[-1])
+            artifact = next(item for inventory in inventories.values()
+                            for item in inventory if item['id'] == artifact_id)
+            return {**artifact, 'workflow_run': dict(artifact['workflow_run'])}
+
+        with patch.object(recovery, 'collection', side_effect=collection), \
+                patch.object(recovery, 'api', side_effect=metadata):
+            records = recovery.preflight_platform_artifacts(proof)
+
+        by_name = {item['name']: item for item in records}
+        self.assertEqual(by_name['macos-dmg']['source_run_id'], mac_run)
+        self.assertEqual(by_name['webos-ipk']['source_run_id'], self.run_id)
+
 
 class SourceProofTests(unittest.TestCase):
     def setUp(self):
