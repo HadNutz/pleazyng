@@ -258,6 +258,9 @@ class Translations$settings$pt_BR extends Translations$settings$pt {
 		other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutos',
 		many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutos',
 	);
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continuar assistindo';
+	@override String get showTopShelfContentDescription => 'Desative para mostrar apenas a imagem do Pleazyng em todos os perfis.';
+	@override String get topShelfUpdateFailed => 'Não foi possível atualizar o Top Shelf. Tente novamente.';
 }
 
 // Path: themeEditor
@@ -1505,6 +1508,9 @@ extension on TranslationsPtBr {
 			'settings.scopeAspectRatio' => 'Proporção da tela',
 			'settings.secondsUnit' => ({required num seconds}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(seconds, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(seconds)} segundo', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(seconds)} segundos', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(seconds)} segundos', ), 
 			'settings.minutesUnit' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(minutes, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minuto', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutos', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutos', ), 
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continuar assistindo',
+			'settings.showTopShelfContentDescription' => 'Desative para mostrar apenas a imagem do Pleazyng em todos os perfis.',
+			'settings.topShelfUpdateFailed' => 'Não foi possível atualizar o Top Shelf. Tente novamente.',
 			'themeEditor.custom' => 'Personalizado',
 			'themeEditor.preview' => 'Prévia',
 			'themeEditor.slots.text' => 'Texto',
@@ -1918,11 +1924,11 @@ extension on TranslationsPtBr {
 			'romm.firmwareHelp' => 'Some systems need firmware. Manage it in RomM; the selected emulator reports any missing requirements at launch.',
 			'romm.achievements' => 'RetroAchievements',
 			'romm.achievementsHelp' => 'Achievement information comes from RomM. The browser player does not earn new achievements.',
+			_ => null,
+		} ?? switch (path) {
 			'romm.screenshots' => 'Screenshots',
 			'romm.manual' => 'Manual',
 			'romm.importSave' => 'Import save',
-			_ => null,
-		} ?? switch (path) {
 			'romm.exportSave' => 'Export',
 			'romm.importState' => 'Import state',
 			'romm.saveImported' => 'Save imported',

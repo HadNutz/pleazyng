@@ -788,7 +788,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "ขนาด Buffer: ${size} MiB"
+    "streamBufferSizeMiB": "ขนาด Buffer: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · ดูต่อ",
+    "showTopShelfContentDescription": "ปิดเพื่อแสดงเฉพาะภาพของ Pleazyng สำหรับทุกโปรไฟล์",
+    "topShelfUpdateFailed": "อัปเดต Top Shelf ไม่สำเร็จ โปรดลองอีกครั้ง"
   },
   "themeEditor": {
     "builtIn": "โครงสร้าง",

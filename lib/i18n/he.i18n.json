@@ -792,7 +792,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "גודל בופר: ${size} MiB"
+    "streamBufferSizeMiB": "גודל בופר: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · המשך צפייה",
+    "showTopShelfContentDescription": "כשהאפשרות כבויה, בכל הפרופילים תוצג רק התמונה של Pleazyng.",
+    "topShelfUpdateFailed": "עדכון Top Shelf נכשל. אפשר לנסות שוב."
   },
   "themeEditor": {
     "builtIn": "בנוי",

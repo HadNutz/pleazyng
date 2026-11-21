@@ -891,6 +891,9 @@ class _Translations$settings$ms extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Tunggu ini banyak minit tanpa input sebelum menunjukkan screensaver artwork.';
 	@override String get videoCodecOptionDescription => 'Membolehkan pemutaran langsung untuk kodek ini apabila disokong. kodek yang tidak disemak disulitkan oleh pelayan media.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Saiz Buffer: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Menyambung tontonan';
+	@override String get showTopShelfContentDescription => 'Matikan untuk memaparkan gambar Pleazyng sahaja bagi semua profil.';
+	@override String get topShelfUpdateFailed => 'Top Shelf tidak dapat dikemas kini. Cuba lagi.';
 }
 
 // Path: themeEditor
@@ -6332,6 +6335,9 @@ extension on TranslationsMs {
 			'settings.contentScreensaverDelayOptionDescription' => 'Tunggu ini banyak minit tanpa input sebelum menunjukkan screensaver artwork.',
 			'settings.videoCodecOptionDescription' => 'Membolehkan pemutaran langsung untuk kodek ini apabila disokong. kodek yang tidak disemak disulitkan oleh pelayan media.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Saiz Buffer: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Menyambung tontonan',
+			'settings.showTopShelfContentDescription' => 'Matikan untuk memaparkan gambar Pleazyng sahaja bagi semua profil.',
+			'settings.topShelfUpdateFailed' => 'Top Shelf tidak dapat dikemas kini. Cuba lagi.',
 			'themeEditor.builtIn' => 'dibina dalam',
 			'themeEditor.presets' => 'Persembahan',
 			'themeEditor.custom' => 'Khas',
@@ -6631,11 +6637,11 @@ extension on TranslationsMs {
 			'accessibility.boldTextHint' => 'Gunakan berat yang lebih berat untuk label antara muka dan mesej untuk memudahkan mereka untuk membezakan.',
 			'tooltips.shufflePlay' => 'Permainan Shuffle',
 			'tooltips.playTrailer' => 'Bermain Trailer',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Mark yang dilihat',
 			'tooltips.markAsUnwatched' => 'Tag: tidak dipantau',
 			'audioTracks.track' => ({required Object n}) => 'Perbincangan:Audio Track ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.audioLabel' => 'Audio yang',
 			'videoControls.subtitlesLabel' => 'Sari kata',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
@@ -7145,11 +7151,11 @@ extension on TranslationsMs {
 			'errors.connectionTimeout' => ({required Object context}) => 'Sambungan timeout semasa muat ${context}',
 			'errors.connectionFailed' => 'Tidak dapat menyambung ke server media',
 			'errors.unableToLoad' => ({required Object context}) => 'Tidak boleh memuatkan ${context}. sila cuba lagi.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Tiada pelanggan yang tersedia',
 			'errors.pleaseEnterToken' => 'Sila masukkan token',
 			'errors.invalidToken' => 'Token yang tidak sah',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Token yang gagal disahkan: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Kegagalan untuk menukar kepada ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Tidak boleh dipadamkan ${displayName}',
@@ -7659,11 +7665,11 @@ extension on TranslationsMs {
 			'playlists.emptyPlaylist' => 'Senarai permainan ini kosong',
 			'playlists.deleteConfirm' => 'Menghapuskan Playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Adakah anda pasti anda mahu memadamkan "${name}"?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Playlist yang dibuat',
 			'playlists.deleted' => 'Playlist telah dihapuskan',
 			'playlists.itemAdded' => 'Ditambah ke playlist',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemRemoved' => 'Menghapus daripada playlist',
 			'playlists.selectPlaylist' => 'Pilih Playlist',
 			'playlists.searchPlaylists' => 'Mencari senarai permainan...',
@@ -8173,11 +8179,11 @@ extension on TranslationsMs {
 			'performanceOverlay.transfer' => 'Penghantaran',
 			'performanceOverlay.renderFps' => 'Penghantaran FPS',
 			'performanceOverlay.displayFps' => 'Pemandangan FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A / V Sinkron',
 			'performanceOverlay.dropped' => 'pecah',
 			'performanceOverlay.dvRpus' => 'RPU yang',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpuAverage' => 'Perbezaan RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'Perbezaan sampel AVG',
 			'performanceOverlay.maxLuma' => 'Tag: Max Luma',
@@ -8687,11 +8693,11 @@ extension on TranslationsMs {
 			'homeLayout.customPlexRow' => 'Perbezaan Plex baris',
 			'homeLayout.heroNeedsLibrary' => 'Periksa Perpustakaan Pertama — Hero Perlu Di Mana-mana Untuk Tunjukkan',
 			'homeLayout.heroNeedsSurface' => 'Periksa Perpustakaan atau Rumah terlebih dahulu — Hero perlu di mana-mana untuk menunjukkan',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Menghilangkan Hub',
 			'homeLayout.noPlexRows' => 'Nombor Plex baris yang dikendalikan dikembalikan untuk perpustakaan ini.',
 			'homeLayout.openDetails' => 'Maklumat Terbuka',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroCards' => 'Pemenang Kartu',
 			'homeLayout.tapHeroCard' => 'Menangkap Kad Pahlawan',
 			'homeLayout.tvPlayFocus' => 'Remote TV: menonjolkan butang Play',
@@ -9201,11 +9207,11 @@ extension on TranslationsMs {
 			'audiobook.recoveryExport' => 'Mengeksport fail pemulihan yang disulitkan',
 			'audiobook.recoveryImport' => 'Import fail pemulihan yang disulitkan',
 			'audiobook.recoveryImportConfirm' => 'Menggabungkan fail pemulihan yang disulitkan ini dengan kedudukan bacaan semasa dan nota? sejarah yang sedia ada akan dikekalkan. perpustakaan berkongsi dan ID item tidak termasuk; tetapkan ID yang sepadan pada setiap peranti sebelum mengimport.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Fail pemulihan yang disulitkan disimpan.',
 			'audiobook.recoveryImported' => 'Data pemulihan telah digabungkan.',
 			'sourceSetup.bookorbitHelp' => 'Log masuk dengan akaun BookOrbit anda sendiri untuk melayari dan memainkan bukunya. Permintaan untuk judul yang tiada tetap dihantar melalui tika SeerrNG yang disambungkan.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitOpen' => 'Buka dalam BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Lihat judul ini dalam BookOrbit untuk mengurus butiran pustaka dan format yang tidak dapat dibuka oleh Pleazyng. Kemajuan pendengaran disegerakkan dengan akaun BookOrbit anda.',
 			'sourceSetup.savedCertificate' => 'Sijil pelayan yang disimpan',
@@ -9715,11 +9721,11 @@ extension on TranslationsMs {
 			'musicTools.apiKey' => 'Kunci API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'Minit',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Penapis',
 			'musicTools.exclusiveOutput' => 'Output audio eksklusif',
 			'musicTools.preamp' => 'Prapenguat',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.ratingPending' => 'Disimpan pada peranti ini; menunggu penyegerakan',
 			'musicTools.lyricsOffset' => 'Anjakan masa lirik',
 			'musicTools.anniversaries' => 'Ulang tahun album',

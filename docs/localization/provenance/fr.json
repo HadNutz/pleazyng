@@ -1,7 +1,7 @@
 {
   "locale": "fr",
   "inherits": null,
-  "catalogSha256": "7cfda37f0edcd682c11ff59bfd42b428ba7d9e974193cd257426479dc7fb2995",
+  "catalogSha256": "ff6945d2e3217c39d4f8a6ee8ecf2ed70dfb9043dfa9b63af929c105f84faabd",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3705,7 +3705,10 @@
     "subtitleAiUi.subtitleEncodingNoCues": "assistant-generated-draft",
     "subtitleAiUi.subtitleEncodingDecodeFailed": "assistant-generated-draft",
     "subtitleAiUi.subtitleEncodingUsePreview": "assistant-generated-draft",
-    "mediaMenu.mediaDeletionDisabledOnServer": "assistant-generated-draft"
+    "mediaMenu.mediaDeletionDisabledOnServer": "assistant-generated-draft",
+    "settings.showTopShelfContent": "assistant-generated-draft",
+    "settings.showTopShelfContentDescription": "assistant-generated-draft",
+    "settings.topShelfUpdateFailed": "assistant-generated-draft"
   },
   "beforeIndependentQaCorrection": {
     "accessibility.reduceMotionHint": "m2m100-draft",

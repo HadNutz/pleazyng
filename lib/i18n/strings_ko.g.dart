@@ -891,6 +891,9 @@ class _Translations$settings$ko extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => '스크린 저장 예술 작품을 보여주기 전에 입력없이 많은 분을 기다리십시오.';
 	@override String get videoCodecOptionDescription => '이 코덱을 지원할 때 직접 재생할 수 있습니다.Unchecked codecs are transcoded by the media server.';
 	@override String streamBufferSizeMiB({required Object size}) => '부퍼 크기: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · 계속 시청';
+	@override String get showTopShelfContentDescription => '끄면 모든 프로필에 Pleazyng 이미지만 표시됩니다.';
+	@override String get topShelfUpdateFailed => 'Top Shelf를 업데이트할 수 없습니다. 다시 시도하세요.';
 }
 
 // Path: themeEditor
@@ -6352,6 +6355,9 @@ extension on TranslationsKo {
 			'settings.contentScreensaverDelayOptionDescription' => '스크린 저장 예술 작품을 보여주기 전에 입력없이 많은 분을 기다리십시오.',
 			'settings.videoCodecOptionDescription' => '이 코덱을 지원할 때 직접 재생할 수 있습니다.Unchecked codecs are transcoded by the media server.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => '부퍼 크기: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · 계속 시청',
+			'settings.showTopShelfContentDescription' => '끄면 모든 프로필에 Pleazyng 이미지만 표시됩니다.',
+			'settings.topShelfUpdateFailed' => 'Top Shelf를 업데이트할 수 없습니다. 다시 시도하세요.',
 			'themeEditor.builtIn' => '기본 제공',
 			'themeEditor.presets' => '프리셋',
 			'themeEditor.custom' => '사용자 지정',
@@ -6651,11 +6657,11 @@ extension on TranslationsKo {
 			'accessibility.boldTextHint' => '인터페이스 라벨과 메시지에 더 무거운 무게를 사용하여 구별하기 쉽습니다.',
 			'tooltips.shufflePlay' => '무작위 재생',
 			'tooltips.playTrailer' => '예고편 재생',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => '시청 완료로 표시',
 			'tooltips.markAsUnwatched' => '미시청으로 표시',
 			'audioTracks.track' => ({required Object n}) => '오디오 트랙 ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.audioLabel' => '오디오',
 			'videoControls.subtitlesLabel' => '자막',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
@@ -7165,11 +7171,11 @@ extension on TranslationsKo {
 			'errors.connectionTimeout' => ({required Object context}) => '${context} 로드 중 연결 시간 초과',
 			'errors.connectionFailed' => '미디어 서버에 연결할 수 없습니다',
 			'errors.unableToLoad' => ({required Object context}) => '${context}을(를) 불러올 수 없습니다. 다시 시도하세요.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => '사용 가능한 클라이언트가 없습니다',
 			'errors.pleaseEnterToken' => '토큰을 입력해 주세요',
 			'errors.invalidToken' => '토큰이 유효하지 않습니다',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToVerifyToken' => ({required Object error}) => '토큰을 확인할 수 없습니다: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName}으로 전환할 수 없습니다',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName}을(를) 삭제할 수 없습니다',
@@ -7679,11 +7685,11 @@ extension on TranslationsKo {
 			'playlists.emptyPlaylist' => '이 재생 목록은 비어 있습니다',
 			'playlists.deleteConfirm' => '재생 목록을 삭제하시겠습니까?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}"을(를) 삭제하시겠습니까?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => '재생 목록이 생성되었습니다',
 			'playlists.deleted' => '재생 목록이 삭제되었습니다',
 			'playlists.itemAdded' => '재생 목록에 추가되었습니다',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemRemoved' => '재생 목록에서 제거됨',
 			'playlists.selectPlaylist' => '재생 목록 선택',
 			'playlists.searchPlaylists' => '재생 목록 검색...',
@@ -8193,11 +8199,11 @@ extension on TranslationsKo {
 			'performanceOverlay.transfer' => '전송',
 			'performanceOverlay.renderFps' => '렌더 FPS',
 			'performanceOverlay.displayFps' => '디스플레이 FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V 동기화',
 			'performanceOverlay.dropped' => '드롭됨',
 			'performanceOverlay.dvRpus' => 'DV RPU',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpuAverage' => 'DV RPU 평균',
 			'performanceOverlay.dvSampleAverage' => 'DV 샘플 평균',
 			'performanceOverlay.maxLuma' => '최대 휘도',
@@ -8707,11 +8713,11 @@ extension on TranslationsKo {
 			'homeLayout.customPlexRow' => '사용자 정의 Plex 라인',
 			'homeLayout.heroNeedsLibrary' => '도서관을 먼저 확인하십시오 - 영웅은 어디서나 보여줄 필요가 있습니다.',
 			'homeLayout.heroNeedsSurface' => '도서관 또는 홈을 먼저 확인하십시오 - 영웅은 어디서나 보여야합니다.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Hub 삭제',
 			'homeLayout.noPlexRows' => 'No. Plex 관리 라인이 이 도서관에 반환되었습니다.',
 			'homeLayout.openDetails' => '개방된 세부 사항',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroCards' => '영웅 카드',
 			'homeLayout.tapHeroCard' => '히어로 카드를 탭할 때',
 			'homeLayout.tvPlayFocus' => 'TV 원격: 히틀러 플레이 버튼',
@@ -9221,11 +9227,11 @@ extension on TranslationsKo {
 			'audiobook.recoveryExport' => '수출 암호화 된 복구 파일',
 			'audiobook.recoveryImport' => '암호화된 복구 파일 수입',
 			'audiobook.recoveryImportConfirm' => '이 암호화 된 복구 파일을 현재 읽기 위치 및 노트와 결합하십시오? 기존 역사는 유지됩니다. 공유 라이브러리 및 항목 ID는 포함되지 않습니다; 수입하기 전에 각 장치에 해당 ID를 설정합니다.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => '암호화 된 복구 파일이 저장되었습니다.',
 			'audiobook.recoveryImported' => '복구 데이터가 합쳐졌습니다.',
 			'sourceSetup.bookorbitHelp' => 'BookOrbit 도서를 둘러보고 재생하려면 본인 BookOrbit 계정으로 로그인하세요. 없는 작품의 요청은 계속 연결된 SeerrNG 인스턴스를 통해 전송됩니다.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitOpen' => 'BookOrbit에서 열기',
 			'sourceSetup.bookorbitDetailHelp' => '라이브러리 세부 정보와 Pleazyng에서 열 수 없는 형식을 관리하려면 BookOrbit에서 이 작품을 확인하세요. 청취 진행 상황은 BookOrbit 계정과 동기화됩니다.',
 			'sourceSetup.savedCertificate' => '저장된 서버 인증서',
@@ -9735,11 +9741,11 @@ extension on TranslationsKo {
 			'musicTools.apiKey' => 'API 키',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '분',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => '필터',
 			'musicTools.exclusiveOutput' => '독점 오디오 출력',
 			'musicTools.preamp' => '프리앰프',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.ratingPending' => '이 기기에 저장됨; 동기화 대기 중',
 			'musicTools.lyricsOffset' => '가사 타이밍 조정',
 			'musicTools.anniversaries' => '앨범 발매 기념일',

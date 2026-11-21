@@ -790,7 +790,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "حجم بوفری: ${size} MiB"
+    "streamBufferSizeMiB": "حجم بوفری: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · ادامه تماشا",
+    "showTopShelfContentDescription": "با خاموش کردن این گزینه، برای همهٔ نمایه‌ها فقط تصویر Pleazyng نمایش داده می‌شود.",
+    "topShelfUpdateFailed": "به‌روزرسانی Top Shelf انجام نشد. دوباره تلاش کنید."
   },
   "themeEditor": {
     "builtIn": "ساخته شده",

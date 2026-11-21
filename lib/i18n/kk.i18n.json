@@ -790,7 +790,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Баукерлік: ${size} MiB"
+    "streamBufferSizeMiB": "Баукерлік: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Көруді жалғастыру",
+    "showTopShelfContentDescription": "Өшіргенде барлық профильде тек Pleazyng суреті көрсетіледі.",
+    "topShelfUpdateFailed": "Top Shelf жаңартылмады. Қайталап көріңіз."
   },
   "themeEditor": {
     "builtIn": "Кірістірілген",

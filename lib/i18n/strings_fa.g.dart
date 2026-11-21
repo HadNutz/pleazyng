@@ -893,6 +893,9 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'منتظر این چند دقیقه بدون ورودی قبل از نمایش کار هنری ذخیره صفحه نمایش باشید.';
 	@override String get videoCodecOptionDescription => 'اجازه پخش مستقیم برای این کدک زمانی که پشتیبانی می شود. کدک های غیر چک شده توسط سرور رسانه ها رمزگذاری می شوند.';
 	@override String streamBufferSizeMiB({required Object size}) => 'حجم بوفری: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · ادامه تماشا';
+	@override String get showTopShelfContentDescription => 'با خاموش کردن این گزینه، برای همهٔ نمایه‌ها فقط تصویر Pleazyng نمایش داده می‌شود.';
+	@override String get topShelfUpdateFailed => 'به‌روزرسانی Top Shelf انجام نشد. دوباره تلاش کنید.';
 }
 
 // Path: themeEditor
@@ -6357,6 +6360,9 @@ extension on TranslationsFa {
 			'settings.contentScreensaverDelayOptionDescription' => 'منتظر این چند دقیقه بدون ورودی قبل از نمایش کار هنری ذخیره صفحه نمایش باشید.',
 			'settings.videoCodecOptionDescription' => 'اجازه پخش مستقیم برای این کدک زمانی که پشتیبانی می شود. کدک های غیر چک شده توسط سرور رسانه ها رمزگذاری می شوند.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'حجم بوفری: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · ادامه تماشا',
+			'settings.showTopShelfContentDescription' => 'با خاموش کردن این گزینه، برای همهٔ نمایه‌ها فقط تصویر Pleazyng نمایش داده می‌شود.',
+			'settings.topShelfUpdateFailed' => 'به‌روزرسانی Top Shelf انجام نشد. دوباره تلاش کنید.',
 			'themeEditor.builtIn' => 'ساخته شده',
 			'themeEditor.presets' => 'پیشگویی',
 			'themeEditor.custom' => 'سفارشی',
@@ -6656,11 +6662,11 @@ extension on TranslationsFa {
 			'accessibility.boldTextHint' => 'از یک وزن سنگین تر برای برچسب های رابط و پیام ها استفاده کنید تا آنها را آسان تر تشخیص دهند.',
 			'tooltips.shufflePlay' => 'بازی شوفلی',
 			'tooltips.playTrailer' => 'بازی تریلر',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'مارک به نظر می رسد',
 			'tooltips.markAsUnwatched' => 'مارک ناشناخته',
 			'audioTracks.track' => ({required Object n}) => 'ترافیک صوتی ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.audioLabel' => 'صدا',
 			'videoControls.subtitlesLabel' => 'زیرنویس‌ها',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
@@ -7170,11 +7176,11 @@ extension on TranslationsFa {
 			'errors.connectionTimeout' => ({required Object context}) => 'زمان اتصال در هنگام بارگذاری ${context}',
 			'errors.connectionFailed' => 'عدم امکان اتصال به سرورهای رسانه ای',
 			'errors.unableToLoad' => ({required Object context}) => 'قابل بارگذاری نیست ${context}.لطفا دوباره امتحان کنید.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'هیچ مشتری در دسترس نیست',
 			'errors.pleaseEnterToken' => 'لطفا یک توکن وارد کنید.',
 			'errors.invalidToken' => 'توکین نادرست',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToVerifyToken' => ({required Object error}) => 'عدم تایید توکن: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'عدم تغییر به ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'حذف ناپذیر ${displayName}',
@@ -7684,11 +7690,11 @@ extension on TranslationsFa {
 			'playlists.emptyPlaylist' => 'این لیست خالی است',
 			'playlists.deleteConfirm' => 'لیست بازی را حذف کنید؟',
 			'playlists.deleteMessage' => ({required Object name}) => 'آیا مطمئن هستید که می خواهید "${name}" را حذف کنید؟',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Playlist ایجاد شده',
 			'playlists.deleted' => 'Playlist حذف شده',
 			'playlists.itemAdded' => 'اضافه شده به playlist',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemRemoved' => 'حذف از Playlist',
 			'playlists.selectPlaylist' => 'Playlist انتخاب کنید',
 			'playlists.searchPlaylists' => 'جستجو برای بازی ها...',
@@ -8198,11 +8204,11 @@ extension on TranslationsFa {
 			'performanceOverlay.transfer' => 'انتقال',
 			'performanceOverlay.renderFps' => 'رندر FPS',
 			'performanceOverlay.displayFps' => 'نمایش FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A / V همگام سازی',
 			'performanceOverlay.dropped' => 'سقوط',
 			'performanceOverlay.dvRpus' => 'DV RPU',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpuAverage' => 'آرشیو برچسب: AVG',
 			'performanceOverlay.dvSampleAverage' => 'نمونه های AVG',
 			'performanceOverlay.maxLuma' => 'مکس لوما',
@@ -8712,11 +8718,11 @@ extension on TranslationsFa {
 			'homeLayout.customPlexRow' => 'مشخصات Plex خط',
 			'homeLayout.heroNeedsLibrary' => 'نگاهی به کتابخانه اول – قهرمان نیاز به جایی برای نشان دادن',
 			'homeLayout.heroNeedsSurface' => 'کتابخانه یا خانه را اول ببینید – قهرمان باید جایی برای نشان دادن',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'حذف هاب',
 			'homeLayout.noPlexRows' => 'شماره Plex ردیف های مدیریت شده برای این کتابخانه بازگردانده شده است.',
 			'homeLayout.openDetails' => 'جزئیات باز',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroCards' => 'کارت های قهرمان',
 			'homeLayout.tapHeroCard' => 'دانلود کارت قهرمان',
 			'homeLayout.tvPlayFocus' => 'تلویزیون از راه دور: برجسته دکمه بازی',
@@ -9226,11 +9232,11 @@ extension on TranslationsFa {
 			'audiobook.recoveryExport' => 'صادرات رمزگذاری شده بازگرداندن فایل',
 			'audiobook.recoveryImport' => 'واردات فایل های رمزگذاری شده',
 			'audiobook.recoveryImportConfirm' => 'آیا این فایل بازگرداندن رمزگذاری شده با موقعیت های خواندن فعلی و یادداشت ها ترکیب می شود؟ تاریخچه موجود حفظ خواهد شد. کتابخانه به اشتراک گذاشته شده و شناسه آیتم شامل نمی شود؛ قبل از واردات، شناسه های مطابقت را بر روی هر دستگاه تنظیم کنید.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'فایل بازگرداندن رمزگذاری شده ذخیره شده است.',
 			'audiobook.recoveryImported' => 'بازگرداندن اطلاعات جمع آوری شده است.',
 			'sourceSetup.bookorbitHelp' => 'برای مرور و پخش کتاب‌های BookOrbit، با حساب شخصی خود وارد شوید. درخواست عنوان‌های موجودنبود همچنان از نمونهٔ متصل SeerrNG شما انجام می‌شود.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitOpen' => 'باز کردن در BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'برای مدیریت جزئیات کتابخانه و قالب‌هایی که Pleazyng نمی‌تواند باز کند، این عنوان را در BookOrbit ببینید. پیشرفت شنیدن با حساب BookOrbit شما همگام می‌شود.',
 			'sourceSetup.savedCertificate' => 'گواهی ذخیره‌شدهٔ سرور',
@@ -9740,11 +9746,11 @@ extension on TranslationsFa {
 			'musicTools.apiKey' => 'کلید API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'دقیقه ها',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'صافی‌ها',
 			'musicTools.exclusiveOutput' => 'خروجی صدای انحصاری',
 			'musicTools.preamp' => 'پیش‌تقویت',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.ratingPending' => 'در این دستگاه ذخیره شد؛ در انتظار همگام‌سازی',
 			'musicTools.lyricsOffset' => 'جابجایی زمان متن آهنگ',
 			'musicTools.anniversaries' => 'سالگرد انتشار آلبوم‌ها',

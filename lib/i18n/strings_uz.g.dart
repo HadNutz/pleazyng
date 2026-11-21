@@ -893,6 +893,9 @@ class _Translations$settings$uz extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'U\'qizga bu mullayni o‘zizga, ekrensaver artwork ko‘shish.';
 	@override String get videoCodecOptionDescription => 'Bu codec\'nin doğrudan playback ko‘dadi. Unchecked codeclar media server tarafından transcodir.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Buffer siz: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Tomoshani davom ettirish';
+	@override String get showTopShelfContentDescription => 'Oʻchirilganda barcha profillarda faqat Pleazyng rasmi koʻrsatiladi.';
+	@override String get topShelfUpdateFailed => 'Top Shelf yangilanmadi. Qayta urinib koʻring.';
 }
 
 // Path: themeEditor
@@ -6357,6 +6360,9 @@ extension on TranslationsUz {
 			'settings.contentScreensaverDelayOptionDescription' => 'U\'qizga bu mullayni o‘zizga, ekrensaver artwork ko‘shish.',
 			'settings.videoCodecOptionDescription' => 'Bu codec\'nin doğrudan playback ko‘dadi. Unchecked codeclar media server tarafından transcodir.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer siz: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Tomoshani davom ettirish',
+			'settings.showTopShelfContentDescription' => 'Oʻchirilganda barcha profillarda faqat Pleazyng rasmi koʻrsatiladi.',
+			'settings.topShelfUpdateFailed' => 'Top Shelf yangilanmadi. Qayta urinib koʻring.',
 			'themeEditor.builtIn' => 'Oʻrnatilgan',
 			'themeEditor.presets' => 'Tayyor mavzular',
 			'themeEditor.custom' => 'Shaxsiy',
@@ -6656,11 +6662,11 @@ extension on TranslationsUz {
 			'accessibility.boldTextHint' => 'Interface etiketleri ve mesajlar için daha ağır bir ağır kullanın, onları ayırt etmek daha kolaydır.',
 			'tooltips.shufflePlay' => 'Aralashtirib ijro etish',
 			'tooltips.playTrailer' => 'Treylerni koʻrish',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Koʻrilgan deb belgilash',
 			'tooltips.markAsUnwatched' => 'Koʻrilmagan deb belgilash',
 			'audioTracks.track' => ({required Object n}) => 'Audio yoʻlak ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.audioLabel' => 'Ovoz',
 			'videoControls.subtitlesLabel' => 'Subtitr',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
@@ -7170,11 +7176,11 @@ extension on TranslationsUz {
 			'errors.connectionTimeout' => ({required Object context}) => '${context} yuklanish vaqti tugadi',
 			'errors.connectionFailed' => 'Media serveriga ulanib boʻlmadi',
 			'errors.unableToLoad' => ({required Object context}) => '${context} yuklab boʻlmadi.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Mavjud mijoz yoʻq',
 			'errors.pleaseEnterToken' => 'Tokenni kiriting',
 			'errors.invalidToken' => 'Notoʻgʻri token',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Tokenni tekshirib boʻlmadi: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName} profiliga oʻtib boʻlmadi',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName} profilini oʻchirib boʻlmadi',
@@ -7684,11 +7690,11 @@ extension on TranslationsUz {
 			'playlists.emptyPlaylist' => 'Ushbu roʻyxat boʻsh',
 			'playlists.deleteConfirm' => 'Ijro roʻyxati oʻchirilsinmi?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}" oʻchirilsinmi?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Ijro roʻyxati yaratildi',
 			'playlists.deleted' => 'Ijro roʻyxati oʻchirildi',
 			'playlists.itemAdded' => 'Roʻyxatga qoʻshildi',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemRemoved' => 'Roʻyxatdan oʻchirildi',
 			'playlists.selectPlaylist' => 'Roʻyxatni tanlash',
 			'playlists.searchPlaylists' => 'Ijro roʻyxatlaridan qidirish...',
@@ -8198,11 +8204,11 @@ extension on TranslationsUz {
 			'performanceOverlay.transfer' => 'Uzatish',
 			'performanceOverlay.renderFps' => 'Render FPS',
 			'performanceOverlay.displayFps' => 'Displey FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V sinxronlash',
 			'performanceOverlay.dropped' => 'Tushirib qoldirilgan kadrlar',
 			'performanceOverlay.dvRpus' => 'DV RPU-lar',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpuAverage' => 'DV RPU Oʻrt.',
 			'performanceOverlay.dvSampleAverage' => 'DV Namuna Oʻrt.',
 			'performanceOverlay.maxLuma' => 'Maks Luma',
@@ -8712,11 +8718,11 @@ extension on TranslationsUz {
 			'homeLayout.customPlexRow' => 'Maxsus Plex qatori',
 			'homeLayout.heroNeedsLibrary' => 'Avval “Kutubxona” bandini belgilang — asosiy banner ko‘rsatiladigan joy kerak',
 			'homeLayout.heroNeedsSurface' => 'Birincisi Library o Home ko‘shayt — Hero\'s need somewhere to show',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Hub qiziziz',
 			'homeLayout.noPlexRows' => 'No Plex-manadi ruzlar bu librariyaya qaytardi.',
 			'homeLayout.openDetails' => 'Detaylar',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroCards' => 'Karta qiziziz',
 			'homeLayout.tapHeroCard' => 'Bir kahraman kartta bo‘yadi',
 			'homeLayout.tvPlayFocus' => 'TV remote: Play button qiziziziz',
@@ -9226,11 +9232,11 @@ extension on TranslationsUz {
 			'audiobook.recoveryExport' => 'Filiya qaytarga xifratsiya',
 			'audiobook.recoveryImport' => 'İthalat xifratni qaytarga faili',
 			'audiobook.recoveryImportConfirm' => 'Ushbu shifrlangan tiklash faylini joriy o‘qish joylari va qaydlar bilan birlashtirasizmi? Mavjud tarix saqlanadi. Umumiy kutubxona va element IDlari kiritilmagan; importdan oldin har bir qurilmada mos IDlarni o‘rnating.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Filiya qaytarga saladi.',
 			'audiobook.recoveryImported' => 'Recovery data qaytadi.',
 			'sourceSetup.bookorbitHelp' => 'Kitoblaringizni ko‘rish va tinglash uchun o‘z BookOrbit hisobingizga kiring. Mavjud bo‘lmagan nomlar uchun so‘rovlar ulangan SeerrNG nusxangiz orqali yuboriladi.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitOpen' => 'BookOrbit’da ochish',
 			'sourceSetup.bookorbitDetailHelp' => 'Kutubxona tafsilotlari va Pleazyng ocholmaydigan formatlarni boshqarish uchun bu nomni BookOrbit’da ko‘ring. Tinglash jarayoni BookOrbit hisobingiz bilan sinxronlanadi.',
 			'sourceSetup.savedCertificate' => 'Saqlangan server sertifikati',
@@ -9740,11 +9746,11 @@ extension on TranslationsUz {
 			'musicTools.apiKey' => 'API kaliti',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Daqiqa',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Filtrlar',
 			'musicTools.exclusiveOutput' => 'Eksklyuziv audio chiqish',
 			'musicTools.preamp' => 'Oldindan kuchaytirish',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.ratingPending' => 'Ushbu qurilmada saqlandi; sinxronlash kutilmoqda',
 			'musicTools.lyricsOffset' => 'Qo‘shiq matni vaqt siljishi',
 			'musicTools.anniversaries' => 'Albom yubileylari',

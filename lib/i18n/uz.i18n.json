@@ -790,7 +790,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer siz: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer siz: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Tomoshani davom ettirish",
+    "showTopShelfContentDescription": "Oʻchirilganda barcha profillarda faqat Pleazyng rasmi koʻrsatiladi.",
+    "topShelfUpdateFailed": "Top Shelf yangilanmadi. Qayta urinib koʻring."
   },
   "themeEditor": {
     "builtIn": "Oʻrnatilgan",

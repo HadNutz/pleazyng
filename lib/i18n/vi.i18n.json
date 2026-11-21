@@ -788,7 +788,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer kích thước: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer kích thước: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Tiếp tục xem",
+    "showTopShelfContentDescription": "Tắt để chỉ hiển thị hình ảnh Pleazyng cho tất cả hồ sơ.",
+    "topShelfUpdateFailed": "Không thể cập nhật Top Shelf. Hãy thử lại."
   },
   "themeEditor": {
     "builtIn": "xây dựng",

@@ -794,7 +794,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer velikost: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer velikost: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Pokračovat ve sledování",
+    "showTopShelfContentDescription": "Po vypnutí se u všech profilů zobrazí pouze obrázek Pleazyng.",
+    "topShelfUpdateFailed": "Top Shelf se nepodařilo aktualizovat. Zkuste to znovu."
   },
   "themeEditor": {
     "builtIn": "stavět-in",

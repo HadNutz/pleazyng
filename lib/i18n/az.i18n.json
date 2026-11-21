@@ -790,7 +790,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer ölçüsü: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer ölçüsü: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · İzləməyə davam et",
+    "showTopShelfContentDescription": "Söndürdükdə bütün profillər üçün yalnız Pleazyng şəkli görünür.",
+    "topShelfUpdateFailed": "Top Shelf yenilənmədi. Yenidən cəhd edin."
   },
   "themeEditor": {
     "builtIn": "Daxili",

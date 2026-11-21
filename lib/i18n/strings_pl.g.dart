@@ -897,6 +897,9 @@ class _Translations$settings$pl extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Poczekaj na to wiele minut bez wejścia przed wyświetleniem ekranu pamięci artystycznej.';
 	@override String get videoCodecOptionDescription => 'Umożliwia bezpośrednie odtwarzanie tego kodeka, gdy jest obsługiwany. nie sprawdzone kodeki są przekodowane przez serwer medialny.';
 	@override String streamBufferSizeMiB({required Object size}) => 'rozmiar buffer: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Kontynuuj oglądanie';
+	@override String get showTopShelfContentDescription => 'Po wyłączeniu wszystkie profile będą widzieć tylko grafikę Pleazyng.';
+	@override String get topShelfUpdateFailed => 'Nie udało się zaktualizować Top Shelf. Spróbuj ponownie.';
 }
 
 // Path: themeEditor
@@ -6407,6 +6410,9 @@ extension on TranslationsPl {
 			'settings.contentScreensaverDelayOptionDescription' => 'Poczekaj na to wiele minut bez wejścia przed wyświetleniem ekranu pamięci artystycznej.',
 			'settings.videoCodecOptionDescription' => 'Umożliwia bezpośrednie odtwarzanie tego kodeka, gdy jest obsługiwany. nie sprawdzone kodeki są przekodowane przez serwer medialny.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'rozmiar buffer: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Kontynuuj oglądanie',
+			'settings.showTopShelfContentDescription' => 'Po wyłączeniu wszystkie profile będą widzieć tylko grafikę Pleazyng.',
+			'settings.topShelfUpdateFailed' => 'Nie udało się zaktualizować Top Shelf. Spróbuj ponownie.',
 			'themeEditor.builtIn' => 'Wbudowane',
 			'themeEditor.presets' => 'Gotowe motywy',
 			'themeEditor.custom' => 'Własny',
@@ -6706,11 +6712,11 @@ extension on TranslationsPl {
 			'accessibility.boldTextHint' => 'Użyj cięższej masy dla etykiet interfejsu i wiadomości, aby ułatwić im rozróżnienie.',
 			'tooltips.shufflePlay' => 'Odtwarzanie losowe',
 			'tooltips.playTrailer' => 'Odtwórz zwiastun',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Oznacz jako obejrzane',
 			'tooltips.markAsUnwatched' => 'Oznacz jako nieobejrzane',
 			'audioTracks.track' => ({required Object n}) => 'Ścieżka audio ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.audioLabel' => 'Audio',
 			'videoControls.subtitlesLabel' => 'Napisy',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
@@ -7220,11 +7226,11 @@ extension on TranslationsPl {
 			'errors.connectionTimeout' => ({required Object context}) => 'Limit czasu połączenia przy ładowaniu ${context}',
 			'errors.connectionFailed' => 'Nie można połączyć się z serwerem multimediów',
 			'errors.unableToLoad' => ({required Object context}) => 'Nie udało się załadować ${context}. Spróbuj ponownie.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Brak dostępnego klienta',
 			'errors.pleaseEnterToken' => 'Wprowadź token',
 			'errors.invalidToken' => 'Nieprawidłowy token',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Nie udało się zweryfikować tokena: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Nie udało się przełączyć na ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Nie udało się usunąć ${displayName}',
@@ -7734,11 +7740,11 @@ extension on TranslationsPl {
 			'playlists.emptyPlaylist' => 'Ta playlista jest pusta',
 			'playlists.deleteConfirm' => 'Usunąć playlistę?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Czy na pewno chcesz usunąć "${name}"?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Playlista utworzona',
 			'playlists.deleted' => 'Playlista usunięta',
 			'playlists.itemAdded' => 'Dodano do playlisty',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemRemoved' => 'Usunięto z playlisty',
 			'playlists.selectPlaylist' => 'Wybierz playlistę',
 			'playlists.searchPlaylists' => 'Szukaj playlist...',
@@ -8248,11 +8254,11 @@ extension on TranslationsPl {
 			'performanceOverlay.transfer' => 'Charakterystyka przenoszenia',
 			'performanceOverlay.renderFps' => 'FPS renderowania',
 			'performanceOverlay.displayFps' => 'FPS ekranu',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'Synchronizacja A/V',
 			'performanceOverlay.dropped' => 'Pominięte',
 			'performanceOverlay.dvRpus' => 'DV RPU',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpuAverage' => 'Śr. DV RPU',
 			'performanceOverlay.dvSampleAverage' => 'Śr. próbki DV',
 			'performanceOverlay.maxLuma' => 'Maks. luma',
@@ -8762,11 +8768,11 @@ extension on TranslationsPl {
 			'homeLayout.customPlexRow' => 'Zestawienie Plex',
 			'homeLayout.heroNeedsLibrary' => 'Przeczytaj bibliotekę najpierw – bohater musi gdzieś pokazać',
 			'homeLayout.heroNeedsSurface' => 'Przeczytaj bibliotekę lub dom najpierw — Hero potrzebuje gdzieś, aby pokazać',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Usuń Hub',
 			'homeLayout.noPlexRows' => 'Nr Plex rzędy zarządzane powróciły do tej biblioteki.',
 			'homeLayout.openDetails' => 'Szczegóły otwarte',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroCards' => 'Karta bohatera',
 			'homeLayout.tapHeroCard' => 'Złapanie karty bohatera',
 			'homeLayout.tvPlayFocus' => 'Telewizja zdalna: podniesienie przycisku Play',
@@ -9276,11 +9282,11 @@ extension on TranslationsPl {
 			'audiobook.recoveryExport' => 'Eksportowanie szyfrowanego pliku odzyskiwania',
 			'audiobook.recoveryImport' => 'Importowanie szyfrowanego pliku odzyskiwania',
 			'audiobook.recoveryImportConfirm' => 'Połączenie tego szyfrowanego pliku odzyskiwania z bieżących pozycji czytania i notatek? istniejąca historia zostanie zachowana. udostępniona biblioteka i identyfikatory elementów nie są włączone; ustawić identyfikator odpowiadający na każdym urządzeniu przed importowaniem.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Szyfrowane pliki odzyskiwania zostały zapisane.',
 			'audiobook.recoveryImported' => 'Dane odzyskiwania połączenia.',
 			'sourceSetup.bookorbitHelp' => 'Zaloguj się na własne konto BookOrbit, aby przeglądać i odtwarzać zawarte w nim książki. Zamówienia niedostępnych tytułów nadal są wysyłane przez połączoną instancję SeerrNG.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitOpen' => 'Otwórz w BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Wyświetl ten tytuł w BookOrbit, aby zarządzać szczegółami biblioteki i formatami, których Pleazyng nie może otworzyć. Postęp słuchania synchronizuje się z kontem BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Zapisany certyfikat serwera',
@@ -9790,11 +9796,11 @@ extension on TranslationsPl {
 			'musicTools.apiKey' => 'Klucz API',
 			'musicTools.missing' => 'N/D',
 			'musicTools.minutes' => 'Minuty',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Filtry',
 			'musicTools.exclusiveOutput' => 'Wyłączne wyjście audio',
 			'musicTools.preamp' => 'Wzmocnienie wstępne',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.ratingPending' => 'Zapisano na tym urządzeniu; oczekuje na synchronizację',
 			'musicTools.lyricsOffset' => 'Przesunięcie czasu tekstu',
 			'musicTools.anniversaries' => 'Rocznice albumów',

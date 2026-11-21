@@ -896,6 +896,9 @@ class Translations$settings$fr extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Attendre de nombreuses minutes sans entrées avant d\'afficher l\'œuvre d\'art screensaver.';
 	@override String get videoCodecOptionDescription => 'Permettre la reproduction directe de ce codec lorsqu\'il est supporté. les codecs non vérifiés sont transcodés par le serveur des médias.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Le buffer: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continuer à regarder';
+	@override String get showTopShelfContentDescription => 'Désactivez cette option pour afficher uniquement l’image de Pleazyng pour tous les profils.';
+	@override String get topShelfUpdateFailed => 'Impossible de mettre à jour Top Shelf. Réessayez.';
 }
 
 // Path: themeEditor
@@ -6401,6 +6404,9 @@ extension on TranslationsFr {
 			'settings.contentScreensaverDelayOptionDescription' => 'Attendre de nombreuses minutes sans entrées avant d\'afficher l\'œuvre d\'art screensaver.',
 			'settings.videoCodecOptionDescription' => 'Permettre la reproduction directe de ce codec lorsqu\'il est supporté. les codecs non vérifiés sont transcodés par le serveur des médias.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Le buffer: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continuer à regarder',
+			'settings.showTopShelfContentDescription' => 'Désactivez cette option pour afficher uniquement l’image de Pleazyng pour tous les profils.',
+			'settings.topShelfUpdateFailed' => 'Impossible de mettre à jour Top Shelf. Réessayez.',
 			'themeEditor.builtIn' => 'Intégrés',
 			'themeEditor.presets' => 'Prédéfinis',
 			'themeEditor.custom' => 'Personnalisé',
@@ -6700,11 +6706,11 @@ extension on TranslationsFr {
 			'accessibility.boldTextHint' => 'Utilisez un poids plus lourd pour les étiquettes et les messages d’interface afin de les rendre plus faciles à distinguer.',
 			'tooltips.shufflePlay' => 'Lecture aléatoire',
 			'tooltips.playTrailer' => 'Lire la bande-annonce',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Marquer comme vu',
 			'tooltips.markAsUnwatched' => 'Marquer comme non vu',
 			'audioTracks.track' => ({required Object n}) => 'Piste audio ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.audioLabel' => 'Audio',
 			'videoControls.subtitlesLabel' => 'Sous-titres',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
@@ -7214,11 +7220,11 @@ extension on TranslationsFr {
 			'discover.person.born' => 'Naissance',
 			'discover.person.died' => 'Décès',
 			'discover.person.birthplace' => 'Lieu de naissance',
+			_ => null,
+		} ?? switch (path) {
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age} ans)',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (à ${age} ans)',
 			'errors.searchFailed' => ({required Object error}) => 'Échec de la recherche : ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.searchUnavailable' => 'La recherche n\'a pu atteindre aucun serveur multimédia.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Délai d\'attente de connexion dépassé pendant le chargement ${context}',
 			'errors.connectionFailed' => 'Impossible de se connecter au serveur multimédia',
@@ -7728,11 +7734,11 @@ extension on TranslationsFr {
 			'playlists.create' => 'Créer une playlist',
 			'playlists.playlistName' => 'Nom de playlist',
 			'playlists.enterPlaylistName' => 'Saisissez le nom de la playlist',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.delete' => 'Supprimer la playlist',
 			'playlists.removeItem' => 'Retirer de la playlist',
 			'playlists.smartPlaylist' => 'Playlist intelligente',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} élément', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} éléments', ), 
 			'playlists.emptyPlaylist' => 'Cette playlist est vide',
 			'playlists.deleteConfirm' => 'Supprimer la playlist ?',
@@ -8242,11 +8248,11 @@ extension on TranslationsFr {
 			'performanceOverlay.dvRouteFelGraphActive' => 'Graphique expérimental P7 FEL (non qualifié)',
 			'performanceOverlay.p7Conversion' => 'Conv. P7',
 			'performanceOverlay.sampleRate' => 'Fréquence d’échantillonnage',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.pixelFormat' => 'Fmt pixel',
 			'performanceOverlay.hwFormat' => 'Fmt HW',
 			'performanceOverlay.matrix' => 'Matrice',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.primaries' => 'Primaires',
 			'performanceOverlay.transfer' => 'Transfert',
 			'performanceOverlay.renderFps' => 'FPS rendu',
@@ -8756,11 +8762,11 @@ extension on TranslationsFr {
 			'homeLayout.plexManagedRows' => ({required Object n}) => '${n} Plex rangées gérées',
 			'homeLayout.continueWatching' => 'Continuer à regarder',
 			'homeLayout.continueWatchingLibraryDescription' => 'La suite de la bibliothèque de la suite',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.continueWatchingHomeDescription' => 'Le nouveau progrès de la ligne montrée sur Home',
 			'homeLayout.nextUpHomeDescription' => 'La prochaine série de l\'épisode non vu diffusée séparément sur Home',
 			'homeLayout.library' => 'Bibliothèque',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.showInRecommended' => 'Présentation dans la bibliothèque recommandée',
 			'homeLayout.customPlexRow' => 'Résultats de la Plex',
 			'homeLayout.heroNeedsLibrary' => 'Vérifier la bibliothèque d\'abord - Le héros a besoin d\'un endroit où il faut montrer',
@@ -9270,11 +9276,11 @@ extension on TranslationsFr {
 			'audiobook.sortRecent' => 'récemment ouvert',
 			'audiobook.statusFilter' => 'Le statut de lecture',
 			'audiobook.statusAll' => 'Tous les livres',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.statusNew' => 'Pas commencé',
 			'audiobook.statusProgress' => 'Au progrès',
 			'audiobook.statusFinished' => 'terminé',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.goToTime' => 'Aller dans le temps',
 			'audiobook.timeHelp' => 'Hores : minutes : secondes ou minutes : secondes',
 			'audiobook.recoveryHelp' => 'Exporter une récente copie cryptée avant de déplacer ou de réparer les données synchronisées. Les importations se fusionnent avec l\'état actuel; elles ne remplacent jamais l\'historique locale de la syncation.',
@@ -9784,11 +9790,11 @@ extension on TranslationsFr {
 			'musicExperience.autoDriving' => 'Ouvrir le mode conduite à la connexion à une voiture',
 			'musicExperience.routeHint' => 'Le système de la voiture décide si l’application peut s’afficher automatiquement.',
 			'musicExperience.bluetoothDriving' => 'Sorties Bluetooth pour la conduite',
+			_ => null,
+		} ?? switch (path) {
 			'musicExperience.bluetoothDrivingHint' => 'Choisissez les sorties Bluetooth connectées qui ouvrent automatiquement la vue conduite.',
 			'musicTools.loudnessMissing' => 'Aucune donnée de sonie renvoyée',
 			'musicTools.loudnessRequested' => 'Demande d’analyse envoyée',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Cette version du serveur ne prend pas en charge les demandes d’analyse',
 			'musicTools.serverHistory' => 'Historique de lecture du serveur',
 			'musicTools.nfcWrite' => 'Écrire un tag NFC',

@@ -788,7 +788,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Ukuran Buffer: ${size} MiB"
+    "streamBufferSizeMiB": "Ukuran Buffer: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Lanjutkan menonton",
+    "showTopShelfContentDescription": "Nonaktifkan untuk hanya menampilkan gambar Pleazyng bagi semua profil.",
+    "topShelfUpdateFailed": "Top Shelf tidak dapat diperbarui. Coba lagi."
   },
   "themeEditor": {
     "builtIn": "dibangun",

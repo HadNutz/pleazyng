@@ -897,6 +897,9 @@ class _Translations$settings$uk extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Чекайте на це багато хвилин без входу, перш ніж показати екран-захисник художньої роботи.';
 	@override String get videoCodecOptionDescription => 'Дозвольте безпосередній відтворення цього кодек, коли він підтримується.Неперевірені кодек перешифруються медіа-сервером.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Буффер розмір: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Продовжити перегляд';
+	@override String get showTopShelfContentDescription => 'Якщо вимкнути цей параметр, усі профілі бачитимуть лише зображення Pleazyng.';
+	@override String get topShelfUpdateFailed => 'Не вдалося оновити Top Shelf. Спробуйте ще раз.';
 }
 
 // Path: themeEditor
@@ -6401,6 +6404,9 @@ extension on TranslationsUk {
 			'settings.contentScreensaverDelayOptionDescription' => 'Чекайте на це багато хвилин без входу, перш ніж показати екран-захисник художньої роботи.',
 			'settings.videoCodecOptionDescription' => 'Дозвольте безпосередній відтворення цього кодек, коли він підтримується.Неперевірені кодек перешифруються медіа-сервером.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Буффер розмір: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Продовжити перегляд',
+			'settings.showTopShelfContentDescription' => 'Якщо вимкнути цей параметр, усі профілі бачитимуть лише зображення Pleazyng.',
+			'settings.topShelfUpdateFailed' => 'Не вдалося оновити Top Shelf. Спробуйте ще раз.',
 			'themeEditor.builtIn' => 'Будівництво',
 			'themeEditor.presets' => 'Президи',
 			'themeEditor.custom' => 'Користувацький',
@@ -6700,11 +6706,11 @@ extension on TranslationsUk {
 			'accessibility.boldTextHint' => 'Використовуйте більш важку вагу для етикетки інтерфейсу та повідомлень, щоб зробити їх простіше розрізняти.',
 			'tooltips.shufflePlay' => 'Шуффлей грає',
 			'tooltips.playTrailer' => 'Грати в трейлер',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Марк як спостерігається',
 			'tooltips.markAsUnwatched' => 'Марк як невідомий',
 			'audioTracks.track' => ({required Object n}) => 'Анонс звуку ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.audioLabel' => 'Аудіо',
 			'videoControls.subtitlesLabel' => 'Субтитри',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
@@ -7214,11 +7220,11 @@ extension on TranslationsUk {
 			'errors.connectionTimeout' => ({required Object context}) => 'Час очікування з’єднання вичерпано під час завантаження ${context}',
 			'errors.connectionFailed' => 'Неможливість підключення до медіа-сервера',
 			'errors.unableToLoad' => ({required Object context}) => 'Не можна завантажувати ${context}. будь ласка, спробуйте знову.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Клієнт не доступний',
 			'errors.pleaseEnterToken' => 'Будь ласка, введіть токен',
 			'errors.invalidToken' => 'Недійсний токен',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Невідомий токен: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Не вдалося перейти до ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Не вдалося видалити ${displayName}',
@@ -7728,11 +7734,11 @@ extension on TranslationsUk {
 			'playlists.emptyPlaylist' => 'Цей перелік залишається порожнім',
 			'playlists.deleteConfirm' => 'Використання Playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Ви впевнені, що ви хочете видалити "${name}"?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Створення Playlist',
 			'playlists.deleted' => 'Завантажити Playlist',
 			'playlists.itemAdded' => 'Додано до Playlist',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemRemoved' => 'Вилучено з Playlist',
 			'playlists.selectPlaylist' => 'Виберіть Playlist',
 			'playlists.searchPlaylists' => 'Пошук гравців...',
@@ -8242,11 +8248,11 @@ extension on TranslationsUk {
 			'performanceOverlay.transfer' => 'Трансфер',
 			'performanceOverlay.renderFps' => 'Рендер ФПС',
 			'performanceOverlay.displayFps' => 'Дисплей FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'А/В синхронізація',
 			'performanceOverlay.dropped' => 'розбито',
 			'performanceOverlay.dvRpus' => 'ДВ РПУ',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpuAverage' => 'ДВ РПУ АВГ',
 			'performanceOverlay.dvSampleAverage' => 'ДВ Семп Avg',
 			'performanceOverlay.maxLuma' => 'Макс Люма',
@@ -8756,11 +8762,11 @@ extension on TranslationsUk {
 			'homeLayout.customPlexRow' => 'Кваліфікований Plex ряд',
 			'homeLayout.heroNeedsLibrary' => 'Перевірте Бібліотеку спочатку — Герою потрібно десь показати',
 			'homeLayout.heroNeedsSurface' => 'Перевірте Бібліотеку або Дому спочатку — Герою потрібно десь показати',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Видалення Hub',
 			'homeLayout.noPlexRows' => 'No Plex-управлені рядки повернулися для цієї бібліотеки.',
 			'homeLayout.openDetails' => 'Відкриті деталі',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroCards' => 'Герої картки',
 			'homeLayout.tapHeroCard' => 'Завантажити картку героя',
 			'homeLayout.tvPlayFocus' => 'Телевізор віддалений: підкреслює кнопку Play',
@@ -9270,11 +9276,11 @@ extension on TranslationsUk {
 			'audiobook.recoveryExport' => 'Експорт криптовалютних файлів відновлення',
 			'audiobook.recoveryImport' => 'Ввезення шифрованих файлів відновлення',
 			'audiobook.recoveryImportConfirm' => 'З\'єднуйте цей зашифрований файл відновлення з поточними позиціями читання та записами? існуюча історія буде збережена. поділена бібліотека і ідентифікатори елементів не включаються; на кожному пристрої перед імпортуванням встановлюється відповідний ідентифікат.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Зашифрований файл відновлення збережений.',
 			'audiobook.recoveryImported' => 'Відновлення даних поєднуються.',
 			'sourceSetup.bookorbitHelp' => 'Увійдіть у власний обліковий запис BookOrbit, щоб переглядати й відтворювати свої книжки. Запити на відсутні книжки й надалі надсилатимуться через підключений екземпляр SeerrNG.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitOpen' => 'Відкрити в BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Перегляньте цю книжку в BookOrbit, щоб керувати відомостями бібліотеки та форматами, які Pleazyng не може відкрити. Прогрес прослуховування синхронізується з вашим обліковим записом BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Збережений сертифікат сервера',
@@ -9784,11 +9790,11 @@ extension on TranslationsUk {
 			'musicTools.apiKey' => 'Ключ API',
 			'musicTools.missing' => 'Н / А',
 			'musicTools.minutes' => 'хвилин',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Фільтри',
 			'musicTools.exclusiveOutput' => 'Монопольний аудіовихід',
 			'musicTools.preamp' => 'Попереднє підсилення',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.ratingPending' => 'Збережено на пристрої; очікує синхронізації',
 			'musicTools.lyricsOffset' => 'Зсув тексту пісні',
 			'musicTools.anniversaries' => 'Річниці альбомів',

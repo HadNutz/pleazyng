@@ -788,7 +788,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "부퍼 크기: ${size} MiB"
+    "streamBufferSizeMiB": "부퍼 크기: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · 계속 시청",
+    "showTopShelfContentDescription": "끄면 모든 프로필에 Pleazyng 이미지만 표시됩니다.",
+    "topShelfUpdateFailed": "Top Shelf를 업데이트할 수 없습니다. 다시 시도하세요."
   },
   "themeEditor": {
     "builtIn": "기본 제공",

@@ -2376,6 +2376,15 @@ class Translations$settings$en {
 
 	/// en: 'Buffer Size: ${size} MiB'
 	String streamBufferSizeMiB({required Object size}) => 'Buffer Size: ${size} MiB';
+
+	/// en: 'Apple TV Top Shelf · Continue Watching'
+	String get showTopShelfContent => 'Apple TV Top Shelf · Continue Watching';
+
+	/// en: 'Turn off to show only Pleazyng artwork for all profiles.'
+	String get showTopShelfContentDescription => 'Turn off to show only Pleazyng artwork for all profiles.';
+
+	/// en: 'Could not update Apple TV Top Shelf. Try again.'
+	String get topShelfUpdateFailed => 'Could not update Apple TV Top Shelf. Try again.';
 }
 
 // Path: themeEditor
@@ -19014,6 +19023,9 @@ extension on Translations {
 			'settings.dvOfflineHdr10' => 'HDR10 · 10-bit HEVC',
 			'settings.dvOfflineSdr' => 'SDR · H.264',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer Size: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continue Watching',
+			'settings.showTopShelfContentDescription' => 'Turn off to show only Pleazyng artwork for all profiles.',
+			'settings.topShelfUpdateFailed' => 'Could not update Apple TV Top Shelf. Try again.',
 			'themeEditor.builtIn' => 'Built-in',
 			'themeEditor.presets' => 'Presets',
 			'themeEditor.custom' => 'Custom',
@@ -19269,11 +19281,11 @@ extension on Translations {
 			'accessibility.mediaCardUnwatched' => 'unwatched',
 			'accessibility.tapToPlay' => 'Tap to play',
 			'accessibility.decrease' => 'Decrease',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.increase' => 'Increase',
 			'accessibility.decreaseValue' => ({required Object label}) => 'Decrease ${label}',
 			'accessibility.increaseValue' => ({required Object label}) => 'Increase ${label}',
-			_ => null,
-		} ?? switch (path) {
 			'accessibility.hue' => 'Hue',
 			'accessibility.saturation' => 'Saturation',
 			'accessibility.brightness' => 'Brightness',
@@ -19783,11 +19795,11 @@ extension on Translations {
 			'iptv.recordingScheduled' => 'Recording scheduled on Dispatcharr.',
 			'iptv.scheduleRecordingOnDevice' => 'Schedule local recording',
 			'iptv.localRecordingScheduled' => 'Local recording scheduled. Pleazyng must be running when it starts.',
+			_ => null,
+		} ?? switch (path) {
 			'iptv.localRecordingAlreadyScheduled' => 'This program is already scheduled for local recording.',
 			'iptv.localRecordingSchedules' => 'Local recording schedule',
 			'iptv.scheduledOnThisDevice' => 'Scheduled on this device',
-			_ => null,
-		} ?? switch (path) {
 			'iptv.cancelLocalRecording' => 'Cancel local recording?',
 			'iptv.cancelLocalRecordingConfirm' => ({required Object programme}) => 'Cancel the local recording of ${programme}?',
 			'iptv.cancelSchedule' => 'Cancel schedule',
@@ -20297,11 +20309,11 @@ extension on Translations {
 			'explore.status.upcoming' => 'Upcoming',
 			'explore.episodeCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episode', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episodes', ), 
 			'explore.cast' => 'Cast',
+			_ => null,
+		} ?? switch (path) {
 			'explore.characters' => 'Characters',
 			'explore.addToWatchlist' => 'Add to Watchlist',
 			'explore.removeFromWatchlist' => 'Remove from Watchlist',
-			_ => null,
-		} ?? switch (path) {
 			'explore.addedToWatchlist' => 'Added to watchlist',
 			'explore.removedFromWatchlist' => 'Removed from watchlist',
 			'explore.watchlistUpdateFailed' => 'Couldn\'t update watchlist',
@@ -20811,11 +20823,11 @@ extension on Translations {
 			'downloads.howManyEpisodes' => 'How many episodes?',
 			'downloads.invalidEpisodeCount' => 'Enter a valid episode count.',
 			'downloads.keepSynced' => 'Keep synced',
+			_ => null,
+		} ?? switch (path) {
 			'downloads.downloadOnce' => 'Download once',
 			'downloads.keepNUnwatched' => ({required Object count}) => 'Keep ${count} unwatched',
 			'downloads.editSyncRule' => 'Edit sync rule',
-			_ => null,
-		} ?? switch (path) {
 			'downloads.removeSyncRule' => 'Remove sync rule',
 			'downloads.removeSyncRuleConfirm' => ({required Object title}) => 'Stop syncing "${title}"? Downloaded episodes will be kept.',
 			'downloads.removeListSyncRuleConfirm' => ({required Object title}) => 'Stop syncing "${title}"?',
@@ -21325,11 +21337,11 @@ extension on Translations {
 			'matchScreen.noMatchesFound' => 'No matches found',
 			'matchScreen.plexDiscover' => 'Plex Discover',
 			'matchScreen.plexLibrary' => 'Plex library',
+			_ => null,
+		} ?? switch (path) {
 			'matchScreen.jellyfinLibrary' => 'Jellyfin library',
 			'matchScreen.embyLibrary' => 'Emby library',
 			'serverTasks.title' => 'Server Tasks',
-			_ => null,
-		} ?? switch (path) {
 			'serverTasks.failedToLoad' => 'Failed to load tasks',
 			'serverTasks.noTasks' => 'No tasks running',
 			'trakt.title' => 'Trakt',
@@ -21839,11 +21851,11 @@ extension on Translations {
 			'universalMedia.intro' => 'Open a link, playlist, or file. Playback uses Pleazyng’s standard player and does not add history to your library.',
 			'universalMedia.openWhat' => 'What would you like to open?',
 			'universalMedia.stream' => 'Stream address',
+			_ => null,
+		} ?? switch (path) {
 			'universalMedia.playlist' => 'Playlist',
 			'universalMedia.files' => 'Device files',
 			'universalMedia.favorites' => 'Saved stream favorites',
-			_ => null,
-		} ?? switch (path) {
 			'universalMedia.address' => 'Media address',
 			'universalMedia.addressHelp' => 'HTTPS is preferred. URLs with recognized credential or signature parameters are used only for this session and cannot be saved as favorites.',
 			'universalMedia.displayName' => 'Display name (optional)',
@@ -22353,11 +22365,11 @@ extension on Translations {
 			'sourceSetup.subtitleSetup' => 'Optional subtitle search for standalone videos.',
 			'sourceSetup.apiKey' => 'API key',
 			'sourceSetup.optionalUsername' => 'Account username (optional)',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.optionalPassword' => 'Account password (optional)',
 			'sourceSetup.subtitlePrivacy' => 'Get an API key from opensubtitles.com. Search sends the video title and available IMDb/TMDB IDs, never the video file. The key and optional account credentials are encrypted with this source.',
 			'sourceSetup.automaticMetadata' => 'Automatic online video metadata',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.metadataPrivacy' => 'Sends only filename title/year and episode numbers or an NFO ID, never media or credentials. NFO fields stay authoritative.',
 			'sourceSetup.nfsEncryptionFailure' => 'For encrypted NFS, check RFC 9289 and TLS 1.3 support on both NAS services, the certificate name, and the export UID/GID. Pleazyng will not retry this connection without encryption.',
 			'sourceSetup.sourceConnecting' => 'Connecting to source',
@@ -22867,11 +22879,11 @@ extension on Translations {
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
 			'podcasts.imported' => 'Subscriptions imported.',
 			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
+			_ => null,
+		} ?? switch (path) {
 			'podcasts.serverHelp' => 'Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.',
 			'podcasts.viewAll' => 'Show more episodes',
 			'podcasts.inLibrary' => 'Open podcast',
-			_ => null,
-		} ?? switch (path) {
 			'podcasts.rateLimited' => 'Wait a few seconds before searching again.',
 			'podcasts.syncConnect' => 'gpodder-compatible sync',
 			'podcasts.syncPrivacy' => 'This server receives subscription and episode URLs, which may contain private membership tokens, and listening positions. Credentials and sync checkpoints are encrypted on this device. Subscription removal is synchronized; existing downloads and history are retained.',
@@ -23381,11 +23393,11 @@ extension on Translations {
 			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',
 			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',
 			'karaokeUi.phoneInputRequiresSecureContext' => 'A trusted HTTPS connection is required.',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.phoneInputRequires16kHzCapture' => 'This browser cannot supply the required 16 kHz capture path.',
 			'karaokeUi.phoneInputNeedsActivePerformance' => 'Return to an active performance before enabling capture.',
 			'karaokeUi.phoneCaptureRequiresTrustedHTTPS' => 'Phone capture requires the host HTTPS room with a certificate trusted by this phone. The ordinary LAN songbook remains available.',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.phoneInputNeedsAssignedSinger' => 'The host must start a request assigned to your singer before you enable input.',
 			'karaokeUi.phoneInputUncalibratedPracticeOnly' => 'Phone timing is uncalibrated. Feedback is for practice and does not enter competitive leaderboards.',
 			'karaokeUi.pitchMIDI' => ({required Object value1}) => 'Pitch: MIDI ${value1}',

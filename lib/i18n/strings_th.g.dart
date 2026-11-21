@@ -891,6 +891,9 @@ class _Translations$settings$th extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'รอนี้หลายนาทีโดยไม่มีการเข้าสู่ระบบก่อนที่จะแสดงงานศิลปะ screensaver';
 	@override String get videoCodecOptionDescription => 'ให้การเล่นโดยตรงสําหรับโค้ดนี้เมื่อได้รับการสนับสนุน การเข้ารหัสที่ไม่ได้ตรวจสอบจะถูกรหัสผ่านจากเซิร์ฟเวอร์สื่อ';
 	@override String streamBufferSizeMiB({required Object size}) => 'ขนาด Buffer: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · ดูต่อ';
+	@override String get showTopShelfContentDescription => 'ปิดเพื่อแสดงเฉพาะภาพของ Pleazyng สำหรับทุกโปรไฟล์';
+	@override String get topShelfUpdateFailed => 'อัปเดต Top Shelf ไม่สำเร็จ โปรดลองอีกครั้ง';
 }
 
 // Path: themeEditor
@@ -6332,6 +6335,9 @@ extension on TranslationsTh {
 			'settings.contentScreensaverDelayOptionDescription' => 'รอนี้หลายนาทีโดยไม่มีการเข้าสู่ระบบก่อนที่จะแสดงงานศิลปะ screensaver',
 			'settings.videoCodecOptionDescription' => 'ให้การเล่นโดยตรงสําหรับโค้ดนี้เมื่อได้รับการสนับสนุน การเข้ารหัสที่ไม่ได้ตรวจสอบจะถูกรหัสผ่านจากเซิร์ฟเวอร์สื่อ',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'ขนาด Buffer: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · ดูต่อ',
+			'settings.showTopShelfContentDescription' => 'ปิดเพื่อแสดงเฉพาะภาพของ Pleazyng สำหรับทุกโปรไฟล์',
+			'settings.topShelfUpdateFailed' => 'อัปเดต Top Shelf ไม่สำเร็จ โปรดลองอีกครั้ง',
 			'themeEditor.builtIn' => 'โครงสร้าง',
 			'themeEditor.presets' => 'โพสต์',
 			'themeEditor.custom' => 'คู่มือ',
@@ -6631,11 +6637,11 @@ extension on TranslationsTh {
 			'accessibility.boldTextHint' => 'ใช้น้ําหนักที่หนักขึ้นสําหรับแท็กอินเตอร์เฟซและข้อความเพื่อให้ง่ายต่อการแยกต่างหาก',
 			'tooltips.shufflePlay' => 'เล่น Shuffle',
 			'tooltips.playTrailer' => 'เล่น Trailer',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Mark ตามที่มองเห็น',
 			'tooltips.markAsUnwatched' => 'หมายเลขรุ่น: Unwatched',
 			'audioTracks.track' => ({required Object n}) => 'ลวดเสียง ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.audioLabel' => 'เสียง',
 			'videoControls.subtitlesLabel' => 'คำบรรยาย',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
@@ -7145,11 +7151,11 @@ extension on TranslationsTh {
 			'errors.connectionTimeout' => ({required Object context}) => 'เวลาการเชื่อมต่อเมื่อโหลด ${context}',
 			'errors.connectionFailed' => 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์สื่อ',
 			'errors.unableToLoad' => ({required Object context}) => 'ไม่สามารถโหลด ${context} โปรดลองอีกครั้ง',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'ไม่มีลูกค้า',
 			'errors.pleaseEnterToken' => 'กรุณาใส่ token',
 			'errors.invalidToken' => 'โค้นที่ผิดพลาด',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToVerifyToken' => ({required Object error}) => 'ไม่สามารถตรวจสอบ token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'ไม่สามารถเปลี่ยนไป ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'ไม่สามารถลบได้ ${displayName}',
@@ -7659,11 +7665,11 @@ extension on TranslationsTh {
 			'playlists.emptyPlaylist' => 'รายการเล่นนี้ว่างเปล่า',
 			'playlists.deleteConfirm' => 'ลบ Playlist',
 			'playlists.deleteMessage' => ({required Object name}) => 'คุณแน่ใจว่าคุณต้องการลบ "${name}"',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Playlist สร้างขึ้น',
 			'playlists.deleted' => 'Playlist ลบ',
 			'playlists.itemAdded' => 'เพิ่มขึ้นใน Playlist',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemRemoved' => 'ลบออกจาก Playlist',
 			'playlists.selectPlaylist' => 'เลือก Playlist',
 			'playlists.searchPlaylists' => 'ค้นหารายการเล่น',
@@ -8173,11 +8179,11 @@ extension on TranslationsTh {
 			'performanceOverlay.transfer' => 'การถ่ายโอน',
 			'performanceOverlay.renderFps' => 'ฟิล์ม',
 			'performanceOverlay.displayFps' => 'แสดง FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A / V Sync',
 			'performanceOverlay.dropped' => 'ละลาย',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpuAverage' => 'DV RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'DV ตัวอย่าง Avg',
 			'performanceOverlay.maxLuma' => 'แม็กซ์ Luma',
@@ -8687,11 +8693,11 @@ extension on TranslationsTh {
 			'homeLayout.customPlexRow' => 'คู่มือ Plex รอบ',
 			'homeLayout.heroNeedsLibrary' => 'ตรวจสอบห้องสมุดแรก — Hero ต้องการที่ไหนที่จะแสดง',
 			'homeLayout.heroNeedsSurface' => 'ตรวจสอบห้องสมุดหรือบ้านแรก — สัตว์ประหลาดต้องการที่ไหนที่จะแสดง',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'ลบ Hub',
 			'homeLayout.noPlexRows' => 'หมายเลข Plex-จัดการสายกลับสําหรับห้องสมุดนี้',
 			'homeLayout.openDetails' => 'รายละเอียดเปิด',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroCards' => 'บัตรฮีโร่',
 			'homeLayout.tapHeroCard' => 'การสูญเสียการ์ดฮีโร่',
 			'homeLayout.tvPlayFocus' => 'โทรทัศน์ระยะไกล: ปุ่ม Play',
@@ -9201,11 +9207,11 @@ extension on TranslationsTh {
 			'audiobook.recoveryExport' => 'การส่งออกไฟล์การกู้คืนที่เข้ารหัส',
 			'audiobook.recoveryImport' => 'นําเข้าไฟล์การกู้คืนที่เข้ารหัส',
 			'audiobook.recoveryImportConfirm' => 'ผสมไฟล์การกู้คืนที่เข้ารหัสนี้กับตําแหน่งอ่านปัจจุบันและบันทึก? ประวัติศาสตร์ที่มีอยู่จะถูกเก็บไว้. หมายเลขห้องสมุดร่วมกันและรายการไม่รวม; การตั้งค่าหมายเลขที่เกี่ยวข้องในแต่ละอุปกรณ์ก่อนที่จะนําเข้า',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'ไฟล์การกู้คืนที่เข้ารหัสถูกบันทึก',
 			'audiobook.recoveryImported' => 'ข้อมูลการกู้คืนรวม',
 			'sourceSetup.bookorbitHelp' => 'ลงชื่อเข้าใช้บัญชี BookOrbit ของคุณเพื่อเรียกดูและเล่นหนังสือ คำขอสำหรับเรื่องที่ไม่มีให้บริการยังคงส่งผ่าน SeerrNG ที่เชื่อมต่อไว้',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitOpen' => 'เปิดใน BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'ดูเรื่องนี้ใน BookOrbit เพื่อจัดการรายละเอียดในคลังและรูปแบบไฟล์ที่ Pleazyng เปิดไม่ได้ ความคืบหน้าในการฟังจะซิงค์กับบัญชี BookOrbit ของคุณ',
 			'sourceSetup.savedCertificate' => 'ใบรับรองเซิร์ฟเวอร์ที่บันทึกไว้',
@@ -9715,11 +9721,11 @@ extension on TranslationsTh {
 			'musicTools.apiKey' => 'คีย์ API',
 			'musicTools.missing' => 'หมายเลขรุ่น: A',
 			'musicTools.minutes' => 'นาที',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'ฟิล์ม',
 			'musicTools.exclusiveOutput' => 'เอาต์พุตเสียงแบบเอกสิทธิ์',
 			'musicTools.preamp' => 'ปรีแอมป์',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.ratingPending' => 'บันทึกบนอุปกรณ์นี้แล้ว รอซิงค์',
 			'musicTools.lyricsOffset' => 'ปรับเวลาเนื้อเพลง',
 			'musicTools.anniversaries' => 'ครบรอบการออกอัลบั้ม',

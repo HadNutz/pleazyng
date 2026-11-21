@@ -219,6 +219,9 @@ class _Translations$settings$es_419 extends Translations$settings$es {
 		one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minuto',
 		many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutos',
 	);
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continuar viendo';
+	@override String get showTopShelfContentDescription => 'Desactívalo para mostrar solo la imagen de Pleazyng en todos los perfiles.';
+	@override String get topShelfUpdateFailed => 'No se pudo actualizar Top Shelf. Vuelve a intentarlo.';
 }
 
 // Path: themeEditor
@@ -1442,6 +1445,9 @@ extension on TranslationsEs419 {
 			'settings.scopeAspectRatio' => 'Relación de aspecto',
 			'settings.secondsUnit' => ({required num seconds}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(seconds, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(seconds)} segundos', one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(seconds)} segundo', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(seconds)} segundos', ), 
 			'settings.minutesUnit' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(minutes, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutos', one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minuto', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutos', ), 
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continuar viendo',
+			'settings.showTopShelfContentDescription' => 'Desactívalo para mostrar solo la imagen de Pleazyng en todos los perfiles.',
+			'settings.topShelfUpdateFailed' => 'No se pudo actualizar Top Shelf. Vuelve a intentarlo.',
 			'themeEditor.custom' => 'Personalizado',
 			'themeEditor.preview' => 'Vista previa',
 			'themeEditor.slots.text' => 'Texto',
@@ -1875,11 +1881,11 @@ extension on TranslationsEs419 {
 			'romm.saveState' => 'Save state',
 			'romm.loadState' => 'Load state',
 			'romm.saveAndExit' => 'Save and exit',
+			_ => null,
+		} ?? switch (path) {
 			'romm.exitWithoutSaving' => 'Exit without saving',
 			'romm.exitConfirm' => 'Finish this game session?',
 			'romm.saveExitHelp' => 'Save your progress before leaving. Keep this screen open until saving finishes.',
-			_ => null,
-		} ?? switch (path) {
 			'romm.starting' => 'Starting game…',
 			'romm.connecting' => 'Connecting…',
 			'romm.busy' => 'The streaming computer is occupied.',

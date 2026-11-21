@@ -891,6 +891,9 @@ class _Translations$settings$vi extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Đợi nhiều phút này mà không cần nhập trước khi hiển thị màn hình bảo vệ nghệ thuật.';
 	@override String get videoCodecOptionDescription => 'Cho phép phát trực tiếp cho codec này khi được hỗ trợ. codec không kiểm tra được chuyển mã bởi máy chủ truyền thông.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Buffer kích thước: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Tiếp tục xem';
+	@override String get showTopShelfContentDescription => 'Tắt để chỉ hiển thị hình ảnh Pleazyng cho tất cả hồ sơ.';
+	@override String get topShelfUpdateFailed => 'Không thể cập nhật Top Shelf. Hãy thử lại.';
 }
 
 // Path: themeEditor
@@ -6332,6 +6335,9 @@ extension on TranslationsVi {
 			'settings.contentScreensaverDelayOptionDescription' => 'Đợi nhiều phút này mà không cần nhập trước khi hiển thị màn hình bảo vệ nghệ thuật.',
 			'settings.videoCodecOptionDescription' => 'Cho phép phát trực tiếp cho codec này khi được hỗ trợ. codec không kiểm tra được chuyển mã bởi máy chủ truyền thông.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer kích thước: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Tiếp tục xem',
+			'settings.showTopShelfContentDescription' => 'Tắt để chỉ hiển thị hình ảnh Pleazyng cho tất cả hồ sơ.',
+			'settings.topShelfUpdateFailed' => 'Không thể cập nhật Top Shelf. Hãy thử lại.',
 			'themeEditor.builtIn' => 'xây dựng',
 			'themeEditor.presets' => 'Lời bài hát',
 			'themeEditor.custom' => 'Tùy chọn',
@@ -6631,11 +6637,11 @@ extension on TranslationsVi {
 			'accessibility.boldTextHint' => 'Sử dụng trọng lượng nặng hơn cho các nhãn giao diện và tin nhắn để làm cho chúng dễ dàng phân biệt.',
 			'tooltips.shufflePlay' => 'Shuffle chơi',
 			'tooltips.playTrailer' => 'Trò chơi Trailer',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Mark theo dõi',
 			'tooltips.markAsUnwatched' => 'Mark như không được xem',
 			'audioTracks.track' => ({required Object n}) => 'Âm thanh Track ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.audioLabel' => 'Âm thanh',
 			'videoControls.subtitlesLabel' => 'Phụ đề',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
@@ -7145,11 +7151,11 @@ extension on TranslationsVi {
 			'errors.connectionTimeout' => ({required Object context}) => 'Thời gian kết nối trong khi tải ${context}',
 			'errors.connectionFailed' => 'Không thể kết nối với Media Server',
 			'errors.unableToLoad' => ({required Object context}) => 'Không thể tải ${context}. xin vui lòng thử lại.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Không có khách hàng',
 			'errors.pleaseEnterToken' => 'Vui lòng nhập token',
 			'errors.invalidToken' => 'Mã xác thực không hợp lệ',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Không xác minh token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Không thể chuyển sang ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Không xóa ${displayName}',
@@ -7659,11 +7665,11 @@ extension on TranslationsVi {
 			'playlists.emptyPlaylist' => 'Danh sách game này trống',
 			'playlists.deleteConfirm' => 'xóa playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Bạn có chắc chắn bạn muốn xóa "${name}" không?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Playlist tạo ra',
 			'playlists.deleted' => 'Playlist xóa',
 			'playlists.itemAdded' => 'Thêm vào playlist',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemRemoved' => 'Xóa khỏi playlist',
 			'playlists.selectPlaylist' => 'Chọn Playlist',
 			'playlists.searchPlaylists' => 'Tìm kiếm playlists',
@@ -8173,11 +8179,11 @@ extension on TranslationsVi {
 			'performanceOverlay.transfer' => 'Chuyển đổi',
 			'performanceOverlay.renderFps' => 'Đánh giá FPS',
 			'performanceOverlay.displayFps' => 'Hiển thị FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V đồng bộ',
 			'performanceOverlay.dropped' => 'bị rơi',
 			'performanceOverlay.dvRpus' => 'DV RPU',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpuAverage' => 'Đánh giá RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'Đánh giá DV Sample Avg',
 			'performanceOverlay.maxLuma' => 'Độ chói tối đa',
@@ -8687,11 +8693,11 @@ extension on TranslationsVi {
 			'homeLayout.customPlexRow' => 'Tính năng: Plex',
 			'homeLayout.heroNeedsLibrary' => 'Kiểm tra Thư viện đầu tiên — Hero cần một nơi nào đó để hiển thị',
 			'homeLayout.heroNeedsSurface' => 'Kiểm tra Thư viện hoặc Nhà đầu tiên — Anh hùng cần một nơi nào đó để hiển thị',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Xóa Hub',
 			'homeLayout.noPlexRows' => 'Số Plex hàng quản lý đã trở lại cho thư viện này.',
 			'homeLayout.openDetails' => 'chi tiết mở',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroCards' => 'thẻ anh hùng',
 			'homeLayout.tapHeroCard' => 'Tải thẻ anh hùng',
 			'homeLayout.tvPlayFocus' => 'TV từ xa: nhấn nút Play',
@@ -9201,11 +9207,11 @@ extension on TranslationsVi {
 			'audiobook.recoveryExport' => 'Xuất khẩu file recovery mã hóa',
 			'audiobook.recoveryImport' => 'nhập file recovery mã hóa',
 			'audiobook.recoveryImportConfirm' => 'Kết hợp tệp phục hồi mã hóa này với các vị trí đọc và ghi chú hiện tại? Lịch sử hiện có sẽ được giữ lại. Thư viện chia sẻ và ID mục không bao gồm; thiết lập ID phù hợp trên mỗi thiết bị trước khi nhập khẩu.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Tệp phục hồi mã hóa đã được lưu.',
 			'audiobook.recoveryImported' => 'Dữ liệu phục hồi kết hợp.',
 			'sourceSetup.bookorbitHelp' => 'Đăng nhập bằng tài khoản BookOrbit của riêng bạn để duyệt và phát sách. Yêu cầu các tựa sách còn thiếu vẫn được gửi qua phiên bản SeerrNG đã kết nối.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitOpen' => 'Mở trong BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Xem tựa sách này trong BookOrbit để quản lý thông tin thư viện và các định dạng Pleazyng không thể mở. Tiến độ nghe được đồng bộ với tài khoản BookOrbit của bạn.',
 			'sourceSetup.savedCertificate' => 'Chứng chỉ máy chủ đã lưu',
@@ -9715,11 +9721,11 @@ extension on TranslationsVi {
 			'musicTools.apiKey' => 'Khóa API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'phút',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Bộ lọc',
 			'musicTools.exclusiveOutput' => 'Đầu ra âm thanh độc quyền',
 			'musicTools.preamp' => 'Tiền khuếch đại',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.ratingPending' => 'Đã lưu trên thiết bị này; đang chờ đồng bộ',
 			'musicTools.lyricsOffset' => 'Độ lệch thời gian lời bài hát',
 			'musicTools.anniversaries' => 'Kỷ niệm phát hành album',

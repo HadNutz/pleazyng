@@ -788,7 +788,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "布格大小: ${size} MiB"
+    "streamBufferSizeMiB": "布格大小: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · 繼續觀看",
+    "showTopShelfContentDescription": "關閉後，所有使用者設定檔都只會顯示 Pleazyng 圖片。",
+    "topShelfUpdateFailed": "無法更新 Top Shelf。請再試一次。"
   },
   "themeEditor": {
     "builtIn": "內建",

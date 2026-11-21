@@ -24,6 +24,7 @@ import 'base_shared_preferences_service.dart';
 import 'sensitive_prefs.dart';
 import 'device_performance.dart';
 import 'shortcut_action.dart';
+import 'system_shelf_service.dart';
 
 export 'base_shared_preferences_service.dart'
     show
@@ -1356,6 +1357,9 @@ class SettingsService extends BaseSharedPreferencesService {
   static const showNavBarLabels = BoolPref('show_nav_bar_labels', defaultValue: true);
   static const globalShaderPreset = StringPref('global_shader_preset', defaultValue: 'none');
   static const requireProfileSelectionOnOpen = BoolPref('require_profile_selection_on_open');
+
+  /// Device-wide: the Apple TV Home Screen is shared by all profiles.
+  static const showTopShelfContent = BoolPref('show_top_shelf_content', defaultValue: true);
   static const useExternalPlayer = _UseExternalPlayerPref();
   static const forceTvMode = BoolPref('force_tv_mode');
   static const visualEffects = EnumPref<VisualEffectsSetting>(
@@ -1912,6 +1916,7 @@ class SettingsService extends BaseSharedPreferencesService {
     // dropped rather than carried over, and nothing reads the old key.
     await prefs.remove(_legacyUseExoPlayerKey);
     await _resetGlobalsOfKeyedPlayerScopes();
+    await SystemShelfService().setTopShelfEnabled(read(showTopShelfContent));
 
     // The custom relay of Plezy's former Watch Together protocol: no Open
     // Watch Party relay answers there.
@@ -2460,6 +2465,7 @@ class SettingsService extends BaseSharedPreferencesService {
     experimentalDolbyVision,
     dvCompatibilityFallback,
     dvExperimentDiagnostics,
+    showTopShelfContent,
     customDownloadPathType,
     mediaVersionPreferences,
     localLastPlayedAt,
@@ -2496,6 +2502,7 @@ class SettingsService extends BaseSharedPreferencesService {
           pref != globalShaderPreset)
         pref,
     crashReporting,
+    showTopShelfContent,
     mpvConfigText,
     userRelayBaseUrl,
     watchPartyRelayUrl,

@@ -790,7 +790,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer méret: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer méret: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Folytatás",
+    "showTopShelfContentDescription": "Kikapcsolva minden profilnál csak a Pleazyng képe jelenik meg.",
+    "topShelfUpdateFailed": "A Top Shelf frissítése sikertelen. Próbáld újra."
   },
   "themeEditor": {
     "builtIn": "Beépített",

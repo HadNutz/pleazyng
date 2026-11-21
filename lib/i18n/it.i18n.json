@@ -792,7 +792,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Dimensioni Buffer: ${size} MiB"
+    "streamBufferSizeMiB": "Dimensioni Buffer: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Continua a guardare",
+    "showTopShelfContentDescription": "Disattiva per mostrare solo l’immagine di Pleazyng per tutti i profili.",
+    "topShelfUpdateFailed": "Impossibile aggiornare Top Shelf. Riprova."
   },
   "themeEditor": {
     "builtIn": "Integrati",

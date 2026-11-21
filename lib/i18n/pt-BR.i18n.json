@@ -128,7 +128,10 @@
     "dvOfflineInvalid": "",
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
-    "dvOfflineSdr": ""
+    "dvOfflineSdr": "",
+    "showTopShelfContent": "Apple TV Top Shelf · Continuar assistindo",
+    "showTopShelfContentDescription": "Desative para mostrar apenas a imagem do Pleazyng em todos os perfis.",
+    "topShelfUpdateFailed": "Não foi possível atualizar o Top Shelf. Tente novamente."
   },
   "themeEditor": {
     "custom": "Personalizado",

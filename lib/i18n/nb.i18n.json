@@ -790,7 +790,10 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer størrelse: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer størrelse: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Fortsett å se",
+    "showTopShelfContentDescription": "Slå av for å vise bare Pleazyng-bildet for alle profiler.",
+    "topShelfUpdateFailed": "Kunne ikke oppdatere Top Shelf. Prøv igjen."
   },
   "themeEditor": {
     "builtIn": "Innebygde",

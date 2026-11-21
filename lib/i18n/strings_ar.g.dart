@@ -901,6 +901,9 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'انتظر هذه دقائق عديدة دون إدخال قبل عرض عمل شاشة التخزين الفني.';
 	@override String get videoCodecOptionDescription => 'السماح للتشغيل المباشر لهذا الكوديك عند دعمها.يتم نقل الكوديات غير التي تم فحصها من قبل خادم الوسائط.';
 	@override String streamBufferSizeMiB({required Object size}) => 'حجم البوفر: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · متابعة المشاهدة';
+	@override String get showTopShelfContentDescription => 'عند إيقاف هذا الخيار، تظهر صورة Pleazyng فقط لجميع الملفات الشخصية.';
+	@override String get topShelfUpdateFailed => 'تعذّر تحديث Top Shelf. حاول مرة أخرى.';
 }
 
 // Path: themeEditor
@@ -6457,6 +6460,9 @@ extension on TranslationsAr {
 			'settings.contentScreensaverDelayOptionDescription' => 'انتظر هذه دقائق عديدة دون إدخال قبل عرض عمل شاشة التخزين الفني.',
 			'settings.videoCodecOptionDescription' => 'السماح للتشغيل المباشر لهذا الكوديك عند دعمها.يتم نقل الكوديات غير التي تم فحصها من قبل خادم الوسائط.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'حجم البوفر: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · متابعة المشاهدة',
+			'settings.showTopShelfContentDescription' => 'عند إيقاف هذا الخيار، تظهر صورة Pleazyng فقط لجميع الملفات الشخصية.',
+			'settings.topShelfUpdateFailed' => 'تعذّر تحديث Top Shelf. حاول مرة أخرى.',
 			'themeEditor.builtIn' => 'بناء في',
 			'themeEditor.presets' => 'الكهنوت',
 			'themeEditor.custom' => 'مخصص',
@@ -6756,11 +6762,11 @@ extension on TranslationsAr {
 			'accessibility.boldTextHint' => 'استخدم وزنًا أثقل لعلامات الواجهة والرسائل لجعلها أسهل في التمييز.',
 			'tooltips.shufflePlay' => 'لعبة Shuffle',
 			'tooltips.playTrailer' => 'لعبة تريلر',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'مارك كما شاهدت',
 			'tooltips.markAsUnwatched' => 'مارك غير ملاحظة',
 			'audioTracks.track' => ({required Object n}) => 'سياق الصوت ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.audioLabel' => 'الصوت',
 			'videoControls.subtitlesLabel' => 'الترجمة',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
@@ -7270,11 +7276,11 @@ extension on TranslationsAr {
 			'errors.connectionTimeout' => ({required Object context}) => 'اتصال الوقت أثناء التحميل ${context}',
 			'errors.connectionFailed' => 'عدم القدرة على الاتصال بـ Media Server',
 			'errors.unableToLoad' => ({required Object context}) => 'لا يمكن تحميل ${context}. يرجى المحاولة مرة أخرى.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'لا يوجد عميل متاح',
 			'errors.pleaseEnterToken' => 'يرجى إدخال علامة',
 			'errors.invalidToken' => 'الرموز المعاقبة',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToVerifyToken' => ({required Object error}) => 'عدم التحقق من الرموز: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'لم يتم تحويلها إلى ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'لم يتم حذف ${displayName}',
@@ -7784,11 +7790,11 @@ extension on TranslationsAr {
 			'playlists.emptyPlaylist' => 'هذه القائمة فارغة',
 			'playlists.deleteConfirm' => 'إلغاء اللعب؟',
 			'playlists.deleteMessage' => ({required Object name}) => 'هل أنت متأكد من أنك تريد إزالة "${name}"؟',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'لعبة تم إنشاءها',
 			'playlists.deleted' => 'Playlist حذف',
 			'playlists.itemAdded' => 'إضافة إلى playlist',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemRemoved' => 'إزالة من قائمة اللعب',
 			'playlists.selectPlaylist' => 'اختيار Playlist',
 			'playlists.searchPlaylists' => 'البحث عن ألعاب...',
@@ -8298,11 +8304,11 @@ extension on TranslationsAr {
 			'performanceOverlay.transfer' => 'نقل',
 			'performanceOverlay.renderFps' => 'رينجر FPS',
 			'performanceOverlay.displayFps' => 'عرض FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A / V التزامن',
 			'performanceOverlay.dropped' => 'انقطاع',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpuAverage' => 'رويترز RPU Avg',
 			'performanceOverlay.dvSampleAverage' => 'DV نموذج Avg',
 			'performanceOverlay.maxLuma' => 'ماكس لوما',
@@ -8812,11 +8818,11 @@ extension on TranslationsAr {
 			'homeLayout.customPlexRow' => 'صف Plex مخصّص',
 			'homeLayout.heroNeedsLibrary' => 'حدّد المكتبة أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
 			'homeLayout.heroNeedsSurface' => 'حدّد المكتبة أو الصفحة الرئيسية أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'إزالة قسم المحتوى',
 			'homeLayout.noPlexRows' => 'لم يُرجع Plex أي صفوف يديرها لهذه المكتبة.',
 			'homeLayout.openDetails' => 'فتح التفاصيل',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroCards' => 'البطاقات البارزة',
 			'homeLayout.tapHeroCard' => 'عند النقر على بطاقة بارزة',
 			'homeLayout.tvPlayFocus' => 'جهاز التحكم: الانتقال إلى زر التشغيل',
@@ -9326,11 +9332,11 @@ extension on TranslationsAr {
 			'audiobook.recoveryExport' => 'تصدير ملف استرداد مشفرة',
 			'audiobook.recoveryImport' => 'استيراد ملف إعادة التدوير المشفرة',
 			'audiobook.recoveryImportConfirm' => 'هل يجمع هذا ملف إعادة التأهيل المشفر مع مواقف القراءة الحالية والملاحظات؟ سيتم الحفاظ على التاريخ الحالي. لا يتم تضمين المكتبة المشتركة ومعارف العناصر؛ قم بتعيين المعارف المقابلة على كل جهاز قبل الاستيراد.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'تم حفظ ملف الاسترداد المشفر.',
 			'audiobook.recoveryImported' => 'استرداد البيانات مترابطة.',
 			'sourceSetup.bookorbitHelp' => 'سجّل الدخول باستخدام حساب BookOrbit الخاص بك لتصفح كتبه وتشغيلها. تظل طلبات العناوين غير المتوفرة تمر عبر مثيل SeerrNG المتصل بك.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitOpen' => 'افتح في BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'اعرض هذا العنوان في BookOrbit لإدارة تفاصيله في مكتبتك وأي تنسيقات لا يستطيع Pleazyng فتحها. تتم مزامنة تقدم الاستماع مع حسابك في BookOrbit.',
 			'sourceSetup.savedCertificate' => 'شهادة الخادم المحفوظة',
@@ -9840,11 +9846,11 @@ extension on TranslationsAr {
 			'musicTools.apiKey' => 'مفتاح API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'دقائق',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'الفلاتر',
 			'musicTools.exclusiveOutput' => 'إخراج صوت حصري',
 			'musicTools.preamp' => 'التضخيم المسبق',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.ratingPending' => 'حُفظ على هذا الجهاز؛ بانتظار المزامنة',
 			'musicTools.lyricsOffset' => 'إزاحة توقيت الكلمات',
 			'musicTools.anniversaries' => 'ذكرى إصدار الألبومات',

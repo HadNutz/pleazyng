@@ -220,6 +220,9 @@ class _Translations$settings$fr_CA extends Translations$settings$fr {
 		other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutes',
 		many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutes',
 	);
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continuer à visionner';
+	@override String get showTopShelfContentDescription => 'Désactivez cette option pour afficher uniquement l’image de Pleazyng pour tous les profils.';
+	@override String get topShelfUpdateFailed => 'Impossible de mettre à jour Top Shelf. Réessayez.';
 }
 
 // Path: themeEditor
@@ -1411,6 +1414,9 @@ extension on TranslationsFrCa {
 			'settings.scopeAspectRatio' => 'Format de l\'image',
 			'settings.secondsUnit' => ({required num seconds}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(seconds, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(seconds)} seconde', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(seconds)} secondes', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(seconds)} secondes', ), 
 			'settings.minutesUnit' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(minutes, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minute', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutes', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutes', ), 
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continuer à visionner',
+			'settings.showTopShelfContentDescription' => 'Désactivez cette option pour afficher uniquement l’image de Pleazyng pour tous les profils.',
+			'settings.topShelfUpdateFailed' => 'Impossible de mettre à jour Top Shelf. Réessayez.',
 			'themeEditor.custom' => 'Personnalisation',
 			'themeEditor.preview' => 'Prévisualisation',
 			'themeEditor.slots.text' => 'Texte',
@@ -1846,11 +1852,11 @@ extension on TranslationsFrCa {
 			'romm.copyMismatch' => 'This link identifies a different copy. Choose the intended game from your library.',
 			'romm.requestStatus' => 'Library indexing',
 			'romm.notIndexed' => 'The requested game is not indexed in this library yet.',
+			_ => null,
+		} ?? switch (path) {
 			'romm.touchControls' => 'Touch controls',
 			'romm.controls' => 'Controls',
 			'romm.resetControls' => 'Reset controls',
-			_ => null,
-		} ?? switch (path) {
 			'romm.playerOne' => 'Player 1',
 			'romm.select' => 'Select',
 			'romm.start' => 'Start',

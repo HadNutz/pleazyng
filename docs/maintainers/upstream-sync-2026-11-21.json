@@ -736,7 +736,8 @@
       "author": "veresvit",
       "state": "open",
       "title": "feat(tvos): allow disabling dynamic Top Shelf content",
-      "decision": "Worth considering. An explicit static Top Shelf option also serves users with unlocked profiles."
+      "decision": "Adapted in Pleazyng. Apple TV users can choose static Top Shelf artwork for every profile. The extension and publisher honor the device setting alongside existing PIN and profile restrictions.",
+      "upstream_head": "c2804f803bb5c3aad9bdc5442394e3412eb86b2c"
     },
     {
       "number": 3095,

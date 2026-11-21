@@ -891,6 +891,9 @@ class Translations$settings$zh extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => '在显示屏保存艺术作品之前等待这些无输入的几分钟。';
 	@override String get videoCodecOptionDescription => '允许在支持时直接播放此代码器. 未经检查的代码被媒体服务器编码。';
 	@override String streamBufferSizeMiB({required Object size}) => '布格大小: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · 继续观看';
+	@override String get showTopShelfContentDescription => '关闭后，所有个人资料都只会显示 Pleazyng 图片。';
+	@override String get topShelfUpdateFailed => '无法更新 Top Shelf。请重试。';
 }
 
 // Path: themeEditor
@@ -6352,6 +6355,9 @@ extension on TranslationsZh {
 			'settings.contentScreensaverDelayOptionDescription' => '在显示屏保存艺术作品之前等待这些无输入的几分钟。',
 			'settings.videoCodecOptionDescription' => '允许在支持时直接播放此代码器. 未经检查的代码被媒体服务器编码。',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => '布格大小: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · 继续观看',
+			'settings.showTopShelfContentDescription' => '关闭后，所有个人资料都只会显示 Pleazyng 图片。',
+			'settings.topShelfUpdateFailed' => '无法更新 Top Shelf。请重试。',
 			'themeEditor.builtIn' => '内置',
 			'themeEditor.presets' => '预设',
 			'themeEditor.custom' => '自定义',
@@ -6651,11 +6657,11 @@ extension on TranslationsZh {
 			'accessibility.boldTextHint' => '加粗界面标签和消息的字重，让它们更容易辨认。',
 			'tooltips.shufflePlay' => '随机播放',
 			'tooltips.playTrailer' => '播放预告片',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => '标记为已观看',
 			'tooltips.markAsUnwatched' => '标记为未观看',
 			'audioTracks.track' => ({required Object n}) => '音轨 ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.audioLabel' => '音频',
 			'videoControls.subtitlesLabel' => '字幕',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
@@ -7165,11 +7171,11 @@ extension on TranslationsZh {
 			'errors.connectionTimeout' => ({required Object context}) => '加载 ${context} 时连接超时',
 			'errors.connectionFailed' => '无法连接到媒体服务器',
 			'errors.unableToLoad' => ({required Object context}) => '无法加载${context}。请重试。',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => '没有可用客户端',
 			'errors.pleaseEnterToken' => '请输入一个令牌',
 			'errors.invalidToken' => '令牌无效',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToVerifyToken' => ({required Object error}) => '无法验证令牌：${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '无法切换到 ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '无法删除 ${displayName}',
@@ -7679,11 +7685,11 @@ extension on TranslationsZh {
 			'playlists.emptyPlaylist' => '此播放列表为空',
 			'playlists.deleteConfirm' => '删除播放列表？',
 			'playlists.deleteMessage' => ({required Object name}) => '确定要删除“${name}”吗？',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => '播放列表已创建',
 			'playlists.deleted' => '播放列表已删除',
 			'playlists.itemAdded' => '已添加到播放列表',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemRemoved' => '已从播放列表中移除',
 			'playlists.selectPlaylist' => '选择播放列表',
 			'playlists.searchPlaylists' => '搜索播放列表…',
@@ -8193,11 +8199,11 @@ extension on TranslationsZh {
 			'performanceOverlay.transfer' => '传递特性',
 			'performanceOverlay.renderFps' => '渲染 FPS',
 			'performanceOverlay.displayFps' => '显示 FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V 同步',
 			'performanceOverlay.dropped' => '丢帧',
 			'performanceOverlay.dvRpus' => 'DV RPU',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpuAverage' => 'DV RPU 平均',
 			'performanceOverlay.dvSampleAverage' => 'DV 采样平均',
 			'performanceOverlay.maxLuma' => '最大亮度',
@@ -8707,11 +8713,11 @@ extension on TranslationsZh {
 			'homeLayout.customPlexRow' => '定制 Plex 行',
 			'homeLayout.heroNeedsLibrary' => '查看图书馆首先 - 英雄需要在某处展示',
 			'homeLayout.heroNeedsSurface' => '查看图书馆或家先 - 英雄需要在某处展示',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => '取消 Hub',
 			'homeLayout.noPlexRows' => '第Plex号管理行返回此图书馆。',
 			'homeLayout.openDetails' => '开放细节',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroCards' => '英雄卡',
 			'homeLayout.tapHeroCard' => '打破英雄卡',
 			'homeLayout.tvPlayFocus' => '电视远程:突出点击播放按钮',
@@ -9221,11 +9227,11 @@ extension on TranslationsZh {
 			'audiobook.recoveryExport' => '输出加密恢复文件',
 			'audiobook.recoveryImport' => '输入加密恢复文件',
 			'audiobook.recoveryImportConfirm' => '将此加密恢复文件与当前阅读位置和笔记相结合吗?现有历史记录将被保留. 共享图书馆和项目 ID 不包含; 在进口之前,在每个设备上设置匹配 ID。',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => '加密恢复文件保存。',
 			'audiobook.recoveryImported' => '恢复数据合并。',
 			'sourceSetup.bookorbitHelp' => '使用你自己的 BookOrbit 账户登录，即可浏览和播放书籍。缺少的书名仍会通过已连接的 SeerrNG 实例提交请求。',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitOpen' => '在 BookOrbit 中打开',
 			'sourceSetup.bookorbitDetailHelp' => '在 BookOrbit 中查看此书，以管理书库详情和 Pleazyng 无法打开的格式。收听进度会与您的 BookOrbit 账户同步。',
 			'sourceSetup.savedCertificate' => '已保存的服务器证书',
@@ -9735,11 +9741,11 @@ extension on TranslationsZh {
 			'musicTools.apiKey' => 'API 密钥',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '分钟',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => '筛选',
 			'musicTools.exclusiveOutput' => '独占音频输出',
 			'musicTools.preamp' => '前置放大',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.ratingPending' => '已保存在此设备；等待同步',
 			'musicTools.lyricsOffset' => '歌词时间偏移',
 			'musicTools.anniversaries' => '专辑发行纪念日',

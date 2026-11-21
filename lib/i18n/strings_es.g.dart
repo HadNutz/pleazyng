@@ -899,6 +899,9 @@ class Translations$settings$es extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Esperar estos muchos minutos sin entrada antes de mostrar la pantalla de almacenamiento artwork.';
 	@override String get videoCodecOptionDescription => 'Permite reproducción directa para este codec cuando se apoya. los codecs no verificados son transcodados por el servidor de medios.';
 	@override String streamBufferSizeMiB({required Object size}) => 'El tamaño de buffer: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Seguir viendo';
+	@override String get showTopShelfContentDescription => 'Desactívalo para mostrar solo la imagen de Pleazyng en todos los perfiles.';
+	@override String get topShelfUpdateFailed => 'No se pudo actualizar Top Shelf. Vuelve a intentarlo.';
 }
 
 // Path: themeEditor
@@ -6484,6 +6487,9 @@ extension on TranslationsEs {
 			'settings.contentScreensaverDelayOptionDescription' => 'Esperar estos muchos minutos sin entrada antes de mostrar la pantalla de almacenamiento artwork.',
 			'settings.videoCodecOptionDescription' => 'Permite reproducción directa para este codec cuando se apoya. los codecs no verificados son transcodados por el servidor de medios.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'El tamaño de buffer: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Seguir viendo',
+			'settings.showTopShelfContentDescription' => 'Desactívalo para mostrar solo la imagen de Pleazyng en todos los perfiles.',
+			'settings.topShelfUpdateFailed' => 'No se pudo actualizar Top Shelf. Vuelve a intentarlo.',
 			'themeEditor.builtIn' => 'Integrados',
 			'themeEditor.presets' => 'Predefinidos',
 			'themeEditor.custom' => 'Personalizado',
@@ -6780,11 +6786,11 @@ extension on TranslationsEs {
 			'accessibility.largeTargetsHint' => 'Dale controles compartidos más espacio para el toque y la navegación asistiva.',
 			'accessibility.navigationHint' => 'Usa Tab y Shift+Tab para moverte entre los controles, Enter o la barra espaciadora para activarlos y Escape o Atrás para cerrar. El zoom y las preferencias de lectura están disponibles cuando hay un libro abierto.',
 			'accessibility.textSizeDescription' => 'Escala el texto de la interfaz en Pleazyng además de la configuración de tamaño del texto del sistema de su dispositivo.',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.boldTextHint' => 'Utilice un peso más pesado para las etiquetas de interfaz y los mensajes para que sean más fáciles de distinguir.',
 			'tooltips.shufflePlay' => 'Reproducción aleatoria',
 			'tooltips.playTrailer' => 'Reproducir tráiler',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Marcar como visto',
 			'tooltips.markAsUnwatched' => 'Marcar como no visto',
 			'audioTracks.track' => ({required Object n}) => 'Pista de audio ${n}',
@@ -7294,11 +7300,11 @@ extension on TranslationsEs {
 			'discover.findNext.releaseToConfirm' => 'Suelta para confirmar',
 			'discover.findNext.remoteHint' => 'Portada enfocada: ← / → elegir · Seleccionar: detalles · ↑ / ↓ mover el foco',
 			'discover.studio' => 'Estudio',
+			_ => null,
+		} ?? switch (path) {
 			'discover.rating' => 'Valoración',
 			'discover.director' => 'Director',
 			'discover.directors' => 'Directores',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Película',
 			'discover.tvShow' => 'Serie de TV',
 			'discover.minutesLeft' => ({required Object minutes}) => 'quedan ${minutes} min',
@@ -7808,11 +7814,11 @@ extension on TranslationsEs {
 			'collections.addedToCollection' => 'Añadido a la colección',
 			'collections.errorAddingToCollection' => 'Error al añadir a la colección',
 			'collections.created' => 'Colección creada',
+			_ => null,
+		} ?? switch (path) {
 			'collections.removeFromCollection' => 'Eliminar de la colección',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '¿Eliminar "${title}" de esta colección?',
 			'collections.removedFromCollection' => 'Eliminado de la colección',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionFailed' => 'Error al eliminar de la colección',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Error al eliminar de la colección: ${error}',
 			'collections.searchCollections' => 'Buscar colecciones...',
@@ -8322,11 +8328,11 @@ extension on TranslationsEs {
 			'performanceOverlay.passthrough' => 'Transferencia directa',
 			'performanceOverlay.aspect' => 'Aspecto',
 			'performanceOverlay.rotation' => 'Rotación',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvSource' => 'Origen DV',
 			'performanceOverlay.dvPath' => 'Ruta DV',
 			'performanceOverlay.dvRouteDecoder' => 'Decodificador Dolby Vision',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteDecoderP81' => 'Decodificador Dolby Vision (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Capa base',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Capa base HDR10',
@@ -8836,11 +8842,11 @@ extension on TranslationsEs {
 			'homeLayout.plexHomeManager' => 'Plex Director de la casa',
 			'homeLayout.managePlexRows' => 'Gestión Plex líneas en Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Abierto a organizar las líneas seleccionadas por el hogar',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeHomeRows' => 'Organizar las rutas domésticas',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} líneas: movimiento, Hero, Auto-slide, eliminación',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organizar ${library} líneas',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continuar Vea + ${n} líneas: movimiento, Biblioteca, Casa, Héroe, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render como una tarjeta de héroe',
 			'homeLayout.heroOnlySingleCollection' => 'Sólo disponible cuando esta línea se resuelva a los títulos reales de una sola colección',
@@ -9350,11 +9356,11 @@ extension on TranslationsEs {
 			'audiobook.bookRemaining' => ({required Object time}) => 'El tiempo que queda en este libro: ${time}',
 			'audiobook.chapterRemaining' => ({required Object time}) => 'Tiempo restante en este capítulo: ${time}',
 			'audiobook.unknownRemaining' => 'Tiempo completo disponible a medida que se juegan partes',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.undoSeek' => 'La última búsqueda',
 			'audiobook.customSpeed' => 'Velocidad de reproducción personalizada',
 			'audiobook.speedHelp' => 'Seleccione una velocidad de 0.25× a 4×.',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.apply' => 'Aplique',
 			'audiobook.customSleep' => 'Calendario de sueño personalizado',
 			'audiobook.sleepMinutes' => 'Minutos (1 a 1440)',
@@ -9864,11 +9870,11 @@ extension on TranslationsEs {
 			'bonusExtras.failed' => 'No se pudieron actualizar los extras. Los extras disponibles en tu biblioteca siguen siendo accesibles.',
 			'bonusExtras.partial' => 'Algunas fuentes en línea no están disponibles. Se muestran los resultados disponibles.',
 			'bonusExtras.linkTitle' => 'Título del extra',
+			_ => null,
+		} ?? switch (path) {
 			'bonusExtras.linkUrl' => 'Enlace de YouTube o Vimeo',
 			'bonusExtras.invalidLink' => 'Introduce un título y un enlace HTTPS válido a un vídeo de YouTube o Vimeo.',
 			'bonusExtras.showHidden' => 'Restablecer extras y editores ocultos',
-			_ => null,
-		} ?? switch (path) {
 			'bonusExtras.clearCache' => 'Borrar la caché de descubrimiento',
 			'bonusExtras.transcript' => 'Buscar en la transcripción',
 			'bonusExtras.importTranscript' => 'Importar transcripción SRT o VTT',

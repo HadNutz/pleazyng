@@ -893,6 +893,9 @@ class _Translations$settings$nb extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Vent dette mange minutter uten inngang før du viser skjermbeskyttelse kunstverk.';
 	@override String get videoCodecOptionDescription => 'Tillat direkte spill for denne kodeksen når den støttes. Unchecked codecs transcodes av media serveren.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Buffer størrelse: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Fortsett å se';
+	@override String get showTopShelfContentDescription => 'Slå av for å vise bare Pleazyng-bildet for alle profiler.';
+	@override String get topShelfUpdateFailed => 'Kunne ikke oppdatere Top Shelf. Prøv igjen.';
 }
 
 // Path: themeEditor
@@ -6357,6 +6360,9 @@ extension on TranslationsNb {
 			'settings.contentScreensaverDelayOptionDescription' => 'Vent dette mange minutter uten inngang før du viser skjermbeskyttelse kunstverk.',
 			'settings.videoCodecOptionDescription' => 'Tillat direkte spill for denne kodeksen når den støttes. Unchecked codecs transcodes av media serveren.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer størrelse: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Fortsett å se',
+			'settings.showTopShelfContentDescription' => 'Slå av for å vise bare Pleazyng-bildet for alle profiler.',
+			'settings.topShelfUpdateFailed' => 'Kunne ikke oppdatere Top Shelf. Prøv igjen.',
 			'themeEditor.builtIn' => 'Innebygde',
 			'themeEditor.presets' => 'Forhåndsinnstillinger',
 			'themeEditor.custom' => 'Egendefinert',
@@ -6656,11 +6662,11 @@ extension on TranslationsNb {
 			'accessibility.boldTextHint' => 'Bruk en tyngre vekt for grensesnitt etiketter og meldinger for å gjøre dem enklere å skille mellom.',
 			'tooltips.shufflePlay' => 'Tilfeldig avspilling',
 			'tooltips.playTrailer' => 'Spill trailer',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Merk som sett',
 			'tooltips.markAsUnwatched' => 'Merk som usett',
 			'audioTracks.track' => ({required Object n}) => 'Lydspor ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.audioLabel' => 'Lyd',
 			'videoControls.subtitlesLabel' => 'Undertekster',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
@@ -7170,11 +7176,11 @@ extension on TranslationsNb {
 			'errors.connectionTimeout' => ({required Object context}) => 'Tidsavbrudd ved lasting av ${context}',
 			'errors.connectionFailed' => 'Kan ikke koble til medieserver',
 			'errors.unableToLoad' => ({required Object context}) => 'Kunne ikke laste ${context}. Prøv igjen.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Ingen klient tilgjengelig',
 			'errors.pleaseEnterToken' => 'Vennligst skriv inn et token',
 			'errors.invalidToken' => 'Ugyldig token',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Kunne ikke verifisere token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Kunne ikke bytte til ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Kunne ikke slette ${displayName}',
@@ -7684,11 +7690,11 @@ extension on TranslationsNb {
 			'playlists.emptyPlaylist' => 'Denne spillelisten er tom',
 			'playlists.deleteConfirm' => 'Slett spilleliste?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Er du sikker på at du vil slette "${name}"?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Spilleliste opprettet',
 			'playlists.deleted' => 'Spilleliste slettet',
 			'playlists.itemAdded' => 'Lagt til i spilleliste',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemRemoved' => 'Fjernet fra spilleliste',
 			'playlists.selectPlaylist' => 'Velg spilleliste',
 			'playlists.searchPlaylists' => 'Søk i spillelister...',
@@ -8198,11 +8204,11 @@ extension on TranslationsNb {
 			'performanceOverlay.transfer' => 'Overføring',
 			'performanceOverlay.renderFps' => 'Gjengivelses-FPS',
 			'performanceOverlay.displayFps' => 'Skjerm-FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V-synk',
 			'performanceOverlay.dropped' => 'Tapte',
 			'performanceOverlay.dvRpus' => 'DV RPU-er',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpuAverage' => 'DV RPU snitt',
 			'performanceOverlay.dvSampleAverage' => 'DV-sample snitt',
 			'performanceOverlay.maxLuma' => 'Maks luma',
@@ -8712,11 +8718,11 @@ extension on TranslationsNb {
 			'homeLayout.customPlexRow' => 'Tilpasset Plex rad',
 			'homeLayout.heroNeedsLibrary' => 'Sjekk biblioteket først – Hero trenger noe å vise',
 			'homeLayout.heroNeedsSurface' => 'Sjekk biblioteket eller hjemmet først – Hero trenger noe å vise',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Fjern Hub',
 			'homeLayout.noPlexRows' => 'No. Plex-styrt rader returnerte for denne biblioteket.',
 			'homeLayout.openDetails' => 'Åpne detaljer',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroCards' => 'Hero kort',
 			'homeLayout.tapHeroCard' => 'Tapping av en helte kort',
 			'homeLayout.tvPlayFocus' => 'TV fjern: Highlight Play-knappen',
@@ -9226,11 +9232,11 @@ extension on TranslationsNb {
 			'audiobook.recoveryExport' => 'Eksport kryptert gjenoppretting filer',
 			'audiobook.recoveryImport' => 'Import kryptert gjenoppretting filer',
 			'audiobook.recoveryImportConfirm' => 'Kombiner denne krypterte gjenoppretting filen med aktuelle lesing posisjoner og notater? eksisterende historie vil bli bevaret. delt bibliotek og element IDs er ikke inkludert; sette matching IDs på hver enhet før import.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Kryptert gjenoppretting fil lagret.',
 			'audiobook.recoveryImported' => 'Data om gjenoppretting sammensatt.',
 			'sourceSetup.bookorbitHelp' => 'Logg på med din egen BookOrbit-konto for å bla gjennom og spille av bøkene der. Forespørsler om titler som mangler, sendes fortsatt via den tilkoblede SeerrNG-instansen.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitOpen' => 'Åpne i BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Vis denne tittelen i BookOrbit for å administrere bibliotekdetaljer og formater Pleazyng ikke kan åpne. Lyttefremdriften synkroniseres med BookOrbit-kontoen din.',
 			'sourceSetup.savedCertificate' => 'Lagret serversertifikat',
@@ -9740,11 +9746,11 @@ extension on TranslationsNb {
 			'musicTools.apiKey' => 'API-nøkkel',
 			'musicTools.missing' => 'I/T',
 			'musicTools.minutes' => 'Minutter',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Filtre',
 			'musicTools.exclusiveOutput' => 'Eksklusiv lydutgang',
 			'musicTools.preamp' => 'Forforsterkning',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.ratingPending' => 'Lagret på denne enheten; venter på synkronisering',
 			'musicTools.lyricsOffset' => 'Tidsforskyvning for sangtekst',
 			'musicTools.anniversaries' => 'Albumjubileer',

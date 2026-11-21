@@ -797,7 +797,10 @@
     "dvOfflineNewOutput": "Choose a new .mkv filename. Existing media and reports are preserved.",
     "dvOfflineHdr10": "HDR10 · 10-bit HEVC",
     "dvOfflineSdr": "SDR · H.264",
-    "streamBufferSizeMiB": "Buffer Size: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer Size: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Continue Watching",
+    "showTopShelfContentDescription": "Turn off to show only Pleazyng artwork for all profiles.",
+    "topShelfUpdateFailed": "Could not update Apple TV Top Shelf. Try again."
   },
   "themeEditor": {
     "builtIn": "Built-in",

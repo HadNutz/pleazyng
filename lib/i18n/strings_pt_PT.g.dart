@@ -577,6 +577,9 @@ class Translations$settings$pt_PT extends Translations$settings$pt {
 	@override String get playerScopeGlobal => 'Em todo o lado';
 	@override String get playerScopeLibrary => 'Por biblioteca';
 	@override String get playerScopeTitle => 'Por série ou filme';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continuar a ver';
+	@override String get showTopShelfContentDescription => 'Desative para apresentar apenas a imagem do Pleazyng em todos os perfis.';
+	@override String get topShelfUpdateFailed => 'Não foi possível atualizar o Top Shelf. Tente novamente.';
 }
 
 // Path: themeEditor
@@ -4167,6 +4170,9 @@ extension on TranslationsPtPt {
 			'settings.playerScopeGlobal' => 'Em todo o lado',
 			'settings.playerScopeLibrary' => 'Por biblioteca',
 			'settings.playerScopeTitle' => 'Por série ou filme',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continuar a ver',
+			'settings.showTopShelfContentDescription' => 'Desative para apresentar apenas a imagem do Pleazyng em todos os perfis.',
+			'settings.topShelfUpdateFailed' => 'Não foi possível atualizar o Top Shelf. Tente novamente.',
 			'themeEditor.custom' => 'Personalizado',
 			'themeEditor.preview' => 'Antevisão',
 			'themeEditor.slots.text' => 'Texto',
@@ -4222,11 +4228,11 @@ extension on TranslationsPtPt {
 			'hotkeys.actions.audioTrackNext' => 'Próxima faixa de áudio',
 			'hotkeys.actions.subtitleTrackNext' => 'Próxima faixa de legenda',
 			'hotkeys.actions.episodePrevious' => 'Episódio anterior',
+			_ => null,
+		} ?? switch (path) {
 			'hotkeys.actions.speedIncrease' => 'Aumentar velocidade',
 			'hotkeys.actions.speedDecrease' => 'Diminuir velocidade',
 			'hotkeys.actions.speedReset' => 'Repor velocidade',
-			_ => null,
-		} ?? switch (path) {
 			'hotkeys.actions.zoomIn' => 'Aumentar zoom',
 			'hotkeys.actions.zoomOut' => 'Diminuir zoom',
 			'hotkeys.actions.zoomReset' => 'Repor zoom',
@@ -4736,11 +4742,11 @@ extension on TranslationsPtPt {
 			'accountPreferences.displayCollectionsView' => 'Mostrar a vista de Coleções',
 			'accountPreferences.displayCollectionsViewDescription' => 'Oferecer a vista de Coleções do servidor juntamente com as suas bibliotecas.',
 			'accountPreferences.rewatchingInNextUp' => 'Manter em A seguir as séries que está a rever',
+			_ => null,
+		} ?? switch (path) {
 			'accountPreferences.rewatchingInNextUpDescription' => 'Ao terminar uma série, comece a vê-la de novo e A seguir acompanha a nova visualização em vez de remover a série.',
 			'accountPreferences.watchedIndicator' => 'Indicadores de visto',
 			'accountPreferences.mediaReviewsVisibility' => 'Avaliações e críticas',
-			_ => null,
-		} ?? switch (path) {
 			'accountPreferences.mediaReviewsOptions.usersAndCritics' => 'Utilizadores e críticos',
 			'accountPreferences.mediaReviewsOptions.usersOnly' => 'Apenas utilizadores',
 			'accountPreferences.mediaReviewsOptions.criticsOnly' => 'Apenas críticos',
@@ -5250,11 +5256,11 @@ extension on TranslationsPtPt {
 			'watchTogether.youAreHost' => 'É o anfitrião',
 			'watchTogether.hostedBy' => ({required Object name}) => 'Anfitrião: ${name}',
 			'watchTogether.hostControlsPlayback' => 'O anfitrião controla a reprodução',
+			_ => null,
+		} ?? switch (path) {
 			'watchTogether.anyoneCanControl' => 'Qualquer pessoa pode controlar a reprodução',
 			'watchTogether.roomLocked' => 'Sala bloqueada',
 			'watchTogether.nowPlaying' => 'A reproduzir agora',
-			_ => null,
-		} ?? switch (path) {
 			'watchTogether.nothingPlaying' => 'Nada em reprodução',
 			'watchTogether.nothingPlayingHost' => 'Reproduza algo de qualquer biblioteca para partilhar com a sala.',
 			'watchTogether.nothingPlayingGuest' => 'Quando o anfitrião reproduzir algo, o conteúdo será aberto aqui.',
@@ -5764,11 +5770,11 @@ extension on TranslationsPtPt {
 			'seerr.animeNote' => 'Esta série é um anime.',
 			'seerr.requestSubmitted' => 'Pedido enviado',
 			'seerr.requestFailed' => ({required Object error}) => 'Falha no pedido: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'seerr.requestsLoadFailed' => 'Não foi possível carregar as opções de pedido',
 			'seerr.nothingToRequest' => 'Tudo já está disponível ou foi pedido.',
 			'seerr.statusPartiallyAvailable' => 'Parcialmente disponível',
-			_ => null,
-		} ?? switch (path) {
 			'seerr.statusRequested' => 'Pedido',
 			'seerr.statusProcessing' => 'A processar',
 			'seerr.statusBlocklisted' => 'Na lista de bloqueio',

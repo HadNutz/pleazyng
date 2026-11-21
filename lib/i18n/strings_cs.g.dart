@@ -897,6 +897,9 @@ class _Translations$settings$cs extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Počkejte na to mnoho minut bez vstupu, než se zobrazí obrazovkový záložní umělecké dílo.';
 	@override String get videoCodecOptionDescription => 'Umožňujte přímé přehrávání pro tento kodek, když je podporován. nekontrolované kodeky jsou transkódovány mediálním serverem.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Buffer velikost: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Pokračovat ve sledování';
+	@override String get showTopShelfContentDescription => 'Po vypnutí se u všech profilů zobrazí pouze obrázek Pleazyng.';
+	@override String get topShelfUpdateFailed => 'Top Shelf se nepodařilo aktualizovat. Zkuste to znovu.';
 }
 
 // Path: themeEditor
@@ -6401,6 +6404,9 @@ extension on TranslationsCs {
 			'settings.contentScreensaverDelayOptionDescription' => 'Počkejte na to mnoho minut bez vstupu, než se zobrazí obrazovkový záložní umělecké dílo.',
 			'settings.videoCodecOptionDescription' => 'Umožňujte přímé přehrávání pro tento kodek, když je podporován. nekontrolované kodeky jsou transkódovány mediálním serverem.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer velikost: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Pokračovat ve sledování',
+			'settings.showTopShelfContentDescription' => 'Po vypnutí se u všech profilů zobrazí pouze obrázek Pleazyng.',
+			'settings.topShelfUpdateFailed' => 'Top Shelf se nepodařilo aktualizovat. Zkuste to znovu.',
 			'themeEditor.builtIn' => 'stavět-in',
 			'themeEditor.presets' => 'přednášky',
 			'themeEditor.custom' => 'Vlastní',
@@ -6700,11 +6706,11 @@ extension on TranslationsCs {
 			'accessibility.boldTextHint' => 'Použijte těžší váhu pro rozhraní etikety a zprávy, aby je jednodušší rozlišovat.',
 			'tooltips.shufflePlay' => 'Shuffle hraje',
 			'tooltips.playTrailer' => 'Hrajte trailer',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Mark jako sledovaný',
 			'tooltips.markAsUnwatched' => 'Mark jako nepozorovaný',
 			'audioTracks.track' => ({required Object n}) => 'Zvukový pás ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.audioLabel' => 'Zvuk',
 			'videoControls.subtitlesLabel' => 'Titulky',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
@@ -7214,11 +7220,11 @@ extension on TranslationsCs {
 			'errors.connectionTimeout' => ({required Object context}) => 'Připojení do času při nabíjení ${context}',
 			'errors.connectionFailed' => 'Neschopnost připojit se k mediálnímu serveru',
 			'errors.unableToLoad' => ({required Object context}) => 'Není možné nabíjet ${context}. prosím zkuste znovu.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Žádný zákazník k dispozici',
 			'errors.pleaseEnterToken' => 'Vložte prosím token',
 			'errors.invalidToken' => 'Invalidní token',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Neuvěřený token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Přepínání na ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Neuspěl odstranit ${displayName}',
@@ -7728,11 +7734,11 @@ extension on TranslationsCs {
 			'playlists.emptyPlaylist' => 'Tento playlist je prázdný',
 			'playlists.deleteConfirm' => 'Vymažte si playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Jste si jisti, že chcete odstranit „${name}“?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Playlist vytvořený',
 			'playlists.deleted' => 'Playlist vymazané',
 			'playlists.itemAdded' => 'Přidáno do playlist',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.itemRemoved' => 'Odstranění z playlist',
 			'playlists.selectPlaylist' => 'Vyberte Playlist',
 			'playlists.searchPlaylists' => 'Vyhledávání playlistů...',
@@ -8242,11 +8248,11 @@ extension on TranslationsCs {
 			'performanceOverlay.transfer' => 'Převod',
 			'performanceOverlay.renderFps' => 'FPS vykreslování',
 			'performanceOverlay.displayFps' => 'Zobrazit FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V synchronizace',
 			'performanceOverlay.dropped' => 'roztrhané',
 			'performanceOverlay.dvRpus' => 'DV RPU',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRpuAverage' => 'Dv RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'DV vzorec AVG',
 			'performanceOverlay.maxLuma' => 'Max. jas',
@@ -8756,11 +8762,11 @@ extension on TranslationsCs {
 			'homeLayout.customPlexRow' => 'Přizpůsobený Plex řádek',
 			'homeLayout.heroNeedsLibrary' => 'Prohlédněte si knihovnu nejprve – Hero potřebuje někde ukázat',
 			'homeLayout.heroNeedsSurface' => 'Zkontrolujte knihovnu nebo domov nejprve – Hero potřebuje někde ukázat',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Odstranění Hub',
 			'homeLayout.noPlexRows' => 'Číslo Plex řízené řádky se vrátily pro tuto knihovnu.',
 			'homeLayout.openDetails' => 'Otevřené detaily',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroCards' => 'Hrdinové karty',
 			'homeLayout.tapHeroCard' => 'Ztráta hrdinské karty',
 			'homeLayout.tvPlayFocus' => 'TV Remote: tlačítko Play',
@@ -9270,11 +9276,11 @@ extension on TranslationsCs {
 			'audiobook.recoveryExport' => 'Export šifrované obnovení souborů',
 			'audiobook.recoveryImport' => 'Import šifrované obnovení souborů',
 			'audiobook.recoveryImportConfirm' => 'Spojte tento šifrovaný obnovení soubor s aktuálními čtení pozic a poznámky? existující historie bude zachována. sdílená knihovna a ID položky nejsou zahrnuty; nastavit odpovídající ID na každém zařízení před dovozem.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Šifrované obnovení souboru je uloženo.',
 			'audiobook.recoveryImported' => 'Údaje o obnově se smítají.',
 			'sourceSetup.bookorbitHelp' => 'Přihlaste se ke svému účtu BookOrbit a procházejte jeho knihy nebo je přehrávejte. Žádosti o chybějící tituly nadále zpracovává vaše připojená instance SeerrNG.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitOpen' => 'Otevřít v BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Zobrazte tento titul v BookOrbit a spravujte podrobnosti knihovny i formáty, které Pleazyng nedokáže otevřít. Průběh poslechu se synchronizuje s vaším účtem BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Uložený certifikát serveru',
@@ -9784,11 +9790,11 @@ extension on TranslationsCs {
 			'musicTools.apiKey' => 'Klíč API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'minuty',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Filtry',
 			'musicTools.exclusiveOutput' => 'Výhradní zvukový výstup',
 			'musicTools.preamp' => 'Předzesílení',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.ratingPending' => 'Uloženo v tomto zařízení; čeká na synchronizaci',
 			'musicTools.lyricsOffset' => 'Časový posun textu',
 			'musicTools.anniversaries' => 'Výročí alb',
