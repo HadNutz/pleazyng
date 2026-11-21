@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Preserve the saved per-show audio and subtitle choices when their stored data is unreadable. Playback continues and reports the unsuccessful preference write.
+
 - Provision the matching Samsung SDK for x64 emulator tester builds.
 
 - Add an iPhone simulator regression test for changing motion presets and turning smoothing off during AVFoundation playback.

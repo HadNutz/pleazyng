@@ -252,16 +252,18 @@ class StorageService extends BaseSharedPreferencesService {
     required Map<String, dynamic> preference,
   }) async {
     final storageKey = '$_userPrefix$_keyShowTrackPreferences';
-    Map<String, dynamic> all = {};
     final raw = readNullableString(storageKey);
-    if (raw != null) {
-      try {
-        all = Map<String, dynamic>.from(json.decode(raw) as Map);
-      } catch (_) {
-        all = {};
-      }
+    dynamic decoded;
+    try {
+      decoded = raw == null ? <String, dynamic>{} : json.decode(raw);
+    } on FormatException {
+      throw const FormatException('Unreadable show track preferences');
     }
-    final item = all[globalKey] is Map ? Map<String, dynamic>.from(all[globalKey] as Map) : <String, dynamic>{};
+    if (decoded is! Map<String, dynamic>) throw const FormatException('Unrecognized show track preferences');
+    final all = decoded;
+    final saved = all[globalKey];
+    if (saved != null && saved is! Map<String, dynamic>) throw const FormatException('Unrecognized show track choice');
+    final item = saved as Map<String, dynamic>? ?? <String, dynamic>{};
     item[trackType] = preference;
     all[globalKey] = item;
     await prefs.setString(storageKey, json.encode(all));

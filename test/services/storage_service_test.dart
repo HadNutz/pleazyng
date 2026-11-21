@@ -25,6 +25,32 @@ class _GatedPreferencesService extends BaseSharedPreferencesService {
 void main() {
   setUp(resetSharedPreferencesForTest);
 
+  group('show track preference writes', () {
+    for (final raw in ['{"incomplete":', '[]', '{"series":"future format","other":{"audio":{"language":"de"}}}']) {
+      test('preserves unreadable saved choices: $raw', () async {
+        final storage = await StorageService.getInstance();
+        await storage.prefs.setString('show_track_preferences', raw);
+        await expectLater(
+          storage.saveShowTrackPreference('series', trackType: 'audio', preference: {'language': 'en'}),
+          throwsFormatException,
+        );
+        expect(storage.prefs.getString('show_track_preferences'), raw);
+      });
+    }
+
+    test('saving another track preserves sibling shows and other track types', () async {
+      final storage = await StorageService.getInstance();
+      await storage.saveShowTrackPreference('other', trackType: 'audio', preference: {'language': 'de'});
+      await storage.saveShowTrackPreference('series', trackType: 'subtitle', preference: {'language': 'pt'});
+      await storage.saveShowTrackPreference('series', trackType: 'audio', preference: {'language': 'en'});
+      expect(storage.getShowTrackPreference('other')['audio'], {'language': 'de'});
+      expect(storage.getShowTrackPreference('series'), {
+        'subtitle': {'language': 'pt'},
+        'audio': {'language': 'en'},
+      });
+    });
+  });
+
   group('StorageService.getInstance', () {
     test('returns same singleton instance', () async {
       final a = await StorageService.getInstance();
