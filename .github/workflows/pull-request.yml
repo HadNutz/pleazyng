@@ -80,6 +80,11 @@ jobs:
       - name: Verify generated files
         run: scripts/codegen.sh --check
 
+      - name: Check Dart file growth and wildcard error handling
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: dart run scripts/checks/dart_source_ratchet.dart "${BASE_SHA:-HEAD^}"
+
       - name: Verify translation hygiene
         run: |
           python3 scripts/checks/clean_translations.py --check --strict
