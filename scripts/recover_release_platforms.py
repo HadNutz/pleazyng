@@ -1962,11 +1962,10 @@ def main():
         parser.error('Frozen packaging requires both packaging and workflow identities')
     if args.packaging_source_sha and (args.macos_run or args.repaired_run):
         parser.error('Frozen packaging cannot substitute unrelated signing or repair runs')
-    if args.rebuild_tizen and (args.packaging_source_sha or args.include_apple_store_build
-                               or args.macos_run or args.repaired_run or args.rebuild_linux
-                               or args.rebuild_macos or args.rebuild_tvos or args.rebuild_ios
-                               or args.require_homebrew_cask):
-        parser.error('Tizen recovery cannot be combined with signed Apple or unrelated rebuild modes')
+    if args.rebuild_tizen and (
+            args.packaging_source_sha or args.macos_run or args.repaired_run or args.rebuild_linux
+            or args.rebuild_macos or args.rebuild_tvos or args.rebuild_ios):
+        parser.error('Tizen recovery cannot be combined with frozen packaging or unrelated rebuild modes')
     if args.tvos_run and (not args.packaging_source_sha or args.repaired_run or args.macos_run or args.rebuild_tvos):
         parser.error('TV reuse requires approved frozen iOS-only packaging recovery')
     if args.ios_run and (not args.tvos_run or args.rebuild_ios or args.rebuild_tvos):
@@ -1979,12 +1978,14 @@ def main():
             or not args.include_apple_store_build or args.rebuild_ios or args.rebuild_tvos
             or args.tvos_run or args.ios_run):
         parser.error('built tvOS reuse requires approved frozen Apple packaging and cannot rebuild or append siblings')
-    frozen_options = ({'packaging_source_sha': args.packaging_source_sha,
-                       'workflow_source_sha': args.workflow_source_sha,
-                       'include_apple_store_build': args.include_apple_store_build,
-                       **({'tvos_run': args.tvos_run} if args.tvos_run else {}),
-                       **({'built_tvos_run': args.built_tvos_run} if args.built_tvos_run is not None else {})}
-                      if args.packaging_source_sha else {})
+    frozen_options = {'include_apple_store_build': args.include_apple_store_build}
+    if args.packaging_source_sha:
+        frozen_options.update(packaging_source_sha=args.packaging_source_sha,
+                              workflow_source_sha=args.workflow_source_sha)
+        if args.tvos_run:
+            frozen_options['tvos_run'] = args.tvos_run
+        if args.built_tvos_run is not None:
+            frozen_options['built_tvos_run'] = args.built_tvos_run
     if args.ios_run:
         frozen_options['ios_run'] = args.ios_run
     proof = (verify_macos_packaging_recovery(args.source_run, args.macos_run, args.head_sha, args.version)

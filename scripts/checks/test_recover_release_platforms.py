@@ -395,6 +395,24 @@ class SourceProofTests(unittest.TestCase):
             self.prove(rebuild_tizen=True, include_apple_store_build=True,
                        require_homebrew_cask=True)
 
+    def test_tizen_recovery_cli_accepts_and_verifies_qualified_apple_outputs(self):
+        proof = {"source_sha": "a" * 40, "ci_run_id": 44907167387}
+        args = ["recover_release_platforms.py", "44907167387", "--head-sha", "a" * 40,
+                "--version", "3.0.46", "--allow-building", "--rebuild-tizen",
+                "--include-apple-store-build", "--require-homebrew-cask"]
+        with patch.object(sys, "argv", args), \
+             patch.object(recovery, "verify_source_run", return_value=proof) as verify, \
+             patch.object(recovery, "compose_proof", return_value=proof), \
+             patch.dict(recovery.os.environ, {"GITHUB_OUTPUT": ""}):
+            recovery.main()
+
+        verify.assert_called_once_with(
+            "44907167387", "a" * 40, "3.0.46", allow_pending=True,
+            rebuild_linux=False, rebuild_macos=False, rebuild_tvos=False, rebuild_ios=False,
+            rebuild_tizen=True, repaired_run=None, require_homebrew_cask=True,
+            include_apple_store_build=True, ios_developer_run=None,
+        )
+
     def test_reused_tvos_requires_runtime_receipt_production_and_attestation_steps(self):
         tvos = next(job for job in self.jobs if job['name'] == 'Build tvOS developer package (arm64)')
         self.assertTrue(self.prove()['runtime_dependency_receipt_required'])
