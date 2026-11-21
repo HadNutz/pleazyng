@@ -96,6 +96,9 @@ jobs:
           export GEM_HOME="$RUNNER_TEMP/cocoapods-gems" GEM_PATH="$gem_path"
           export PATH="$RUNNER_TEMP/cocoapods-bin:/opt/homebrew/bin:$PATH"
           pod --version
+      - name: Test Dolby Vision runtime preparation and compatibility fallback
+        if: matrix.slug == 'macos'
+        run: swift test --package-path shared/apple/DVRuntimeAPI --scratch-path "$RUNNER_TEMP/dv-runtime-api"
       - name: Compile Apple application and tests
         uses: ./.github/actions/apple-native-reliability
         timeout-minutes: 110

@@ -181,6 +181,25 @@ class DvBitstreamSanitizerTest {
   }
 
   @Test
+  fun slicedAccessUnitKeepsTheAdjacentPacketsAndParentCursor() {
+    val picture = annexBNal(1, byteArrayOf(0x17, 0x22))
+    val unit = concat(hdr10PlusSei(), picture)
+    val prefix = byteArrayOf(11, 12, 13)
+    val suffix = byteArrayOf(21, 22)
+    val parent = bufferOf(prefix, unit, suffix)
+    parent.position(prefix.size)
+    parent.limit(prefix.size + unit.size)
+    val window = parent.slice()
+
+    assertEquals(1, sanitizer.sanitize(window, stripHdr10PlusSei = true, stripDvRpu = false))
+    assertArrayEquals(picture, remainingBytes(window))
+    assertEquals(prefix.size, parent.position())
+    assertEquals(prefix.size + unit.size, parent.limit())
+    assertArrayEquals(prefix, parent.array().copyOfRange(0, prefix.size))
+    assertArrayEquals(suffix, parent.array().copyOfRange(parent.limit(), parent.capacity()))
+  }
+
+  @Test
   fun emptyBufferIsNoOp() {
     val buffer = ByteBuffer.allocate(0)
 
