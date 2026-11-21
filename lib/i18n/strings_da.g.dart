@@ -123,6 +123,7 @@ class TranslationsDa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$da musicExperience = _Translations$musicExperience$da._(_root);
 	@override late final _Translations$musicTools$da musicTools = _Translations$musicTools$da._(_root);
 	@override late final _Translations$musicDevices$da musicDevices = _Translations$musicDevices$da._(_root);
+	@override late final _Translations$bookmarkMigration$da bookmarkMigration = _Translations$bookmarkMigration$da._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$da extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Indtast billed-URL';
 	@override String get imageUrl => 'Billed-URL';
 	@override String get metadataUpdated => 'Metadata opdateret';
+	@override String get metadataConflict => 'En anden har ændret det samme felt. Åbn editoren igen, og gennemgå de seneste værdier, før du gemmer.';
 	@override String get metadataUpdateFailed => 'Kunne ikke opdatere metadata';
 	@override String get artworkUpdated => 'Grafik opdateret';
 	@override String get artworkUpdateFailed => 'Kunne ikke opdatere grafik';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$da extends Translations$musicDevices$en {
 	@override String get relay => 'URL til musikrelæ';
 	@override String get relayHint => 'Aktivér på modtageren, og par én gang på samme netværk. Hold Pleazyng åben. Relæet sender krypteret musikstyring og ser netværksadresser. Hver afspiller streamer fra sin egen medieserver.';
 	@override String get relayInvalid => 'Indtast en HTTPS-adresse til relæet.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$da extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$da._(TranslationsDa root) : this._root = root, super.internal(root);
+
+	final TranslationsDa _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Bogmærker fra en ukendt version';
+	@override String get assignToVersion => 'Knyt til denne version';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsDa {
 			'metadataEdit.enterImageUrl' => 'Indtast billed-URL',
 			'metadataEdit.imageUrl' => 'Billed-URL',
 			'metadataEdit.metadataUpdated' => 'Metadata opdateret',
+			'metadataEdit.metadataConflict' => 'En anden har ændret det samme felt. Åbn editoren igen, og gennemgå de seneste værdier, før du gemmer.',
 			'metadataEdit.metadataUpdateFailed' => 'Kunne ikke opdatere metadata',
 			'metadataEdit.artworkUpdated' => 'Grafik opdateret',
 			'metadataEdit.artworkUpdateFailed' => 'Kunne ikke opdatere grafik',
@@ -8722,9 +8736,9 @@ extension on TranslationsDa {
 			'homeLayout.continueWatching' => 'Fortsæt med at se',
 			'homeLayout.continueWatchingLibraryDescription' => 'Denne biblioteks egen genopbygning-progres rækkefølge',
 			'homeLayout.continueWatchingHomeDescription' => 'Den genoprettede fremskridt rækkevidde vist på Hjemme',
-			'homeLayout.nextUpHomeDescription' => 'Næste uviste episode række vist separat på Hjem',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'Næste uviste episode række vist separat på Hjem',
 			'homeLayout.library' => 'Bibliotek',
 			'homeLayout.showInRecommended' => 'Udstilling i biblioteket anbefalet',
 			'homeLayout.customPlexRow' => 'Tilpasset Plex række',
@@ -9236,9 +9250,9 @@ extension on TranslationsDa {
 			'audiobook.statusNew' => 'Ikke begyndt',
 			'audiobook.statusProgress' => 'I fremskridt',
 			'audiobook.statusFinished' => 'afslutter',
-			'audiobook.goToTime' => 'Gå til tiden',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'Gå til tiden',
 			'audiobook.timeHelp' => 'timer: minutter: sekunder eller minutter: sekunder',
 			'audiobook.recoveryHelp' => 'Eksporter en nylig krypteret kopi, før du flytter eller reparerer synkroniseringsdata. Importer fusioneres med den aktuelle tilstand; de erstattes aldrig lokal synkroniseringshistorie. Hold synkronkoden adskilt.',
 			'audiobook.recoveryExport' => 'Eksport krypteret genopretning filer',
@@ -9750,9 +9764,9 @@ extension on TranslationsDa {
 			'musicTools.noHistory' => 'Ingen musik at vise endnu',
 			'musicTools.historyHint' => 'Afspilningshistorik for denne profil',
 			'musicTools.days' => 'Dage',
-			'musicTools.albumBlocks' => 'Hold hele album samlet',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'Hold hele album samlet',
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Senest afspillet',
 			'musicTools.apiKey' => 'API-nøgle',
@@ -9813,6 +9827,8 @@ extension on TranslationsDa {
 			'musicDevices.relay' => 'URL til musikrelæ',
 			'musicDevices.relayHint' => 'Aktivér på modtageren, og par én gang på samme netværk. Hold Pleazyng åben. Relæet sender krypteret musikstyring og ser netværksadresser. Hver afspiller streamer fra sin egen medieserver.',
 			'musicDevices.relayInvalid' => 'Indtast en HTTPS-adresse til relæet.',
+			'bookmarkMigration.unassigned' => 'Bogmærker fra en ukendt version',
+			'bookmarkMigration.assignToVersion' => 'Knyt til denne version',
 			_ => null,
 		};
 	}

@@ -561,7 +561,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3261,6 +3260,7 @@
     "enterImageUrl": "Şəkil URL-i daxil edin",
     "imageUrl": "Şəkil URL-i",
     "metadataUpdated": "Meta-məlumatlar yeniləndi",
+    "metadataConflict": "Başqa redaktor eyni sahəni dəyişib. Yadda saxlamazdan əvvəl son dəyərlərə baxmaq üçün redaktoru yenidən açın.",
     "metadataUpdateFailed": "Meta-məlumatlar yenilənə bilmədi",
     "artworkUpdated": "Şəkillər yeniləndi",
     "artworkUpdateFailed": "Şəkillər yenilənə bilmədi",
@@ -5710,5 +5710,9 @@
     "relay": "Musiqi rele ünvanı",
     "relayHint": "Qəbul edən cihazda aktivləşdirin, sonra eyni şəbəkədə bir dəfə qoşalaşdırın. Pleazyng açıq qalsın. Rele şifrələnmiş musiqi əmrlərini ötürür və şəbəkə ünvanlarını görür. Hər pleyer öz media serverindən yayımlayır.",
     "relayInvalid": "HTTPS rele ünvanı daxil edin."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Naməlum versiyadan əlfəcinlər",
+    "assignToVersion": "Bu versiyaya təyin et"
   }
 }

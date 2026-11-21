@@ -1,7 +1,7 @@
 {
   "locale": "de",
   "inherits": null,
-  "catalogSha256": "c614462ad13e4fee9e9a3768165d08dc34dbe86542829a6904ae8167ca16ec31",
+  "catalogSha256": "e80faebe87c340633b34da8272f68003bfa2b60f477272f8357662ffa1be21ec",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3684,7 +3684,10 @@
     "seerr.withdrawRequest": "assistant-generated-draft",
     "settings.showFinishTime": "assistant-generated-draft",
     "settings.showFinishTimeDescription": "assistant-generated-draft",
-    "common.mediaKind.photoAlbum": "assistant-generated-draft"
+    "common.mediaKind.photoAlbum": "assistant-generated-draft",
+    "metadataEdit.metadataConflict": "assistant-generated-draft",
+    "bookmarkMigration.unassigned": "assistant-generated-draft",
+    "bookmarkMigration.assignToVersion": "assistant-generated-draft"
   },
   "beforeIndependentQaCorrection": {
     "accessibility.reduceMotionHint": "m2m100-draft",

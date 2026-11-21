@@ -123,6 +123,7 @@ class TranslationsDe extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$de musicExperience = _Translations$musicExperience$de._(_root);
 	@override late final _Translations$musicTools$de musicTools = _Translations$musicTools$de._(_root);
 	@override late final _Translations$musicDevices$de musicDevices = _Translations$musicDevices$de._(_root);
+	@override late final _Translations$bookmarkMigration$de bookmarkMigration = _Translations$bookmarkMigration$de._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$de extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Bild-URL eingeben';
 	@override String get imageUrl => 'Bild-URL';
 	@override String get metadataUpdated => 'Metadaten aktualisiert';
+	@override String get metadataConflict => 'Das gleiche Feld wurde zwischenzeitlich geändert. Öffne den Editor erneut und prüfe vor dem Speichern die aktuellen Werte.';
 	@override String get metadataUpdateFailed => 'Metadaten konnten nicht aktualisiert werden';
 	@override String get artworkUpdated => 'Grafiken aktualisiert';
 	@override String get artworkUpdateFailed => 'Grafiken konnten nicht aktualisiert werden';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$de extends Translations$musicDevices$en {
 	@override String get relay => 'URL des Musik-Relays';
 	@override String get relayHint => 'Auf dem Empfangsgerät aktivieren und einmal im selben Netzwerk koppeln. Pleazyng geöffnet lassen. Das Relay überträgt verschlüsselte Musikbefehle und sieht Netzwerkadressen. Jeder Player streamt vom eigenen Medienserver.';
 	@override String get relayInvalid => 'Eine HTTPS-Adresse für das Relay eingeben.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$de extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$de._(TranslationsDe root) : this._root = root, super.internal(root);
+
+	final TranslationsDe _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Lesezeichen aus einer unbekannten Version';
+	@override String get assignToVersion => 'Dieser Version zuordnen';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsDe {
 			'metadataEdit.enterImageUrl' => 'Bild-URL eingeben',
 			'metadataEdit.imageUrl' => 'Bild-URL',
 			'metadataEdit.metadataUpdated' => 'Metadaten aktualisiert',
+			'metadataEdit.metadataConflict' => 'Das gleiche Feld wurde zwischenzeitlich geändert. Öffne den Editor erneut und prüfe vor dem Speichern die aktuellen Werte.',
 			'metadataEdit.metadataUpdateFailed' => 'Metadaten konnten nicht aktualisiert werden',
 			'metadataEdit.artworkUpdated' => 'Grafiken aktualisiert',
 			'metadataEdit.artworkUpdateFailed' => 'Grafiken konnten nicht aktualisiert werden',
@@ -8722,9 +8736,9 @@ extension on TranslationsDe {
 			'homeLayout.continueWatching' => 'Weiterschauen',
 			'homeLayout.continueWatchingLibraryDescription' => 'Diese eigene Bibliothek-Rehmen-Vorgang-Reihe',
 			'homeLayout.continueWatchingHomeDescription' => 'Die Wiederholung-Vorgang-Reihe auf Home angezeigt',
-			'homeLayout.nextUpHomeDescription' => 'Die nächste unbeobachtete Episode-Reihe separat auf Home angezeigt',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'Die nächste unbeobachtete Episode-Reihe separat auf Home angezeigt',
 			'homeLayout.library' => 'Mediathek',
 			'homeLayout.showInRecommended' => 'Show in der Bibliothek empfohlen',
 			'homeLayout.customPlexRow' => 'Anpassung Plex Runde',
@@ -9236,9 +9250,9 @@ extension on TranslationsDe {
 			'audiobook.statusNew' => 'nicht begonnen',
 			'audiobook.statusProgress' => 'Im Fortschritt',
 			'audiobook.statusFinished' => 'abgeschlossen',
-			'audiobook.goToTime' => 'Gehen Sie zur Zeit',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'Gehen Sie zur Zeit',
 			'audiobook.timeHelp' => 'Stunden: Minuten: Sekunden oder Minuten: Sekunden',
 			'audiobook.recoveryHelp' => 'Exportieren Sie eine kürzlich verschlüsselte Kopie, bevor Sie Sync-Daten bewegen oder reparieren.Importe fusionieren mit dem aktuellen Zustand; sie ersetzen niemals die lokale Sync Geschichte.',
 			'audiobook.recoveryExport' => 'Export verschlüsselte Recovery Datei',
@@ -9750,9 +9764,9 @@ extension on TranslationsDe {
 			'musicTools.noHistory' => 'Noch keine Musik verfügbar',
 			'musicTools.historyHint' => 'Wiedergabeverlauf für dieses Profil',
 			'musicTools.days' => 'Tage',
-			'musicTools.albumBlocks' => 'Vollständige Alben zusammenhalten',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'Vollständige Alben zusammenhalten',
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Zuletzt gespielt',
 			'musicTools.apiKey' => 'API-Schlüssel',
@@ -9813,6 +9827,8 @@ extension on TranslationsDe {
 			'musicDevices.relay' => 'URL des Musik-Relays',
 			'musicDevices.relayHint' => 'Auf dem Empfangsgerät aktivieren und einmal im selben Netzwerk koppeln. Pleazyng geöffnet lassen. Das Relay überträgt verschlüsselte Musikbefehle und sieht Netzwerkadressen. Jeder Player streamt vom eigenen Medienserver.',
 			'musicDevices.relayInvalid' => 'Eine HTTPS-Adresse für das Relay eingeben.',
+			'bookmarkMigration.unassigned' => 'Lesezeichen aus einer unbekannten Version',
+			'bookmarkMigration.assignToVersion' => 'Dieser Version zuordnen',
 			_ => null,
 		};
 	}

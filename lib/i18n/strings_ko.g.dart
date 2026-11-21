@@ -123,6 +123,7 @@ class TranslationsKo extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ko musicExperience = _Translations$musicExperience$ko._(_root);
 	@override late final _Translations$musicTools$ko musicTools = _Translations$musicTools$ko._(_root);
 	@override late final _Translations$musicDevices$ko musicDevices = _Translations$musicDevices$ko._(_root);
+	@override late final _Translations$bookmarkMigration$ko bookmarkMigration = _Translations$bookmarkMigration$ko._(_root);
 }
 
 // Path: mediaConveniences
@@ -2723,6 +2724,7 @@ class _Translations$metadataEdit$ko extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => '이미지 URL 입력';
 	@override String get imageUrl => '이미지 URL';
 	@override String get metadataUpdated => '메타데이터가 업데이트되었습니다';
+	@override String get metadataConflict => '다른 편집자가 같은 필드를 변경했습니다. 저장하기 전에 편집기를 다시 열어 최신 값을 확인하세요.';
 	@override String get metadataUpdateFailed => '메타데이터 업데이트 실패';
 	@override String get artworkUpdated => '아트워크가 업데이트되었습니다';
 	@override String get artworkUpdateFailed => '아트워크 업데이트 실패';
@@ -4518,6 +4520,17 @@ class _Translations$musicDevices$ko extends Translations$musicDevices$en {
 	@override String get relay => '음악 릴레이 URL';
 	@override String get relayHint => '수신 기기에서 활성화한 다음 같은 네트워크에서 한 번 페어링하세요. Pleazyng을 열어 두세요. 릴레이는 암호화된 음악 제어를 전달하며 네트워크 주소를 볼 수 있습니다. 각 플레이어는 자체 미디어 서버에서 스트리밍합니다.';
 	@override String get relayInvalid => 'HTTPS 릴레이 주소를 입력하세요.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$ko extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$ko._(TranslationsKo root) : this._root = root, super.internal(root);
+
+	final TranslationsKo _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => '버전을 알 수 없는 북마크';
+	@override String get assignToVersion => '이 버전에 할당';
 }
 
 // Path: appIcon.names
@@ -8286,6 +8299,7 @@ extension on TranslationsKo {
 			'metadataEdit.enterImageUrl' => '이미지 URL 입력',
 			'metadataEdit.imageUrl' => '이미지 URL',
 			'metadataEdit.metadataUpdated' => '메타데이터가 업데이트되었습니다',
+			'metadataEdit.metadataConflict' => '다른 편집자가 같은 필드를 변경했습니다. 저장하기 전에 편집기를 다시 열어 최신 값을 확인하세요.',
 			'metadataEdit.metadataUpdateFailed' => '메타데이터 업데이트 실패',
 			'metadataEdit.artworkUpdated' => '아트워크가 업데이트되었습니다',
 			'metadataEdit.artworkUpdateFailed' => '아트워크 업데이트 실패',
@@ -8717,9 +8731,9 @@ extension on TranslationsKo {
 			'homeLayout.continueWatching' => '계속 시청',
 			'homeLayout.continueWatchingLibraryDescription' => '이 도서관의 자체 재구성-진보 순서',
 			'homeLayout.continueWatchingHomeDescription' => 'Home에 표시된 재현 진행 순서',
-			'homeLayout.nextUpHomeDescription' => '다음 무시된 에피소드 순서가 집에서 별도로 표시됩니다.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => '다음 무시된 에피소드 순서가 집에서 별도로 표시됩니다.',
 			'homeLayout.library' => '라이브러리',
 			'homeLayout.showInRecommended' => '추천 도서관에서 제공하는',
 			'homeLayout.customPlexRow' => '사용자 정의 Plex 라인',
@@ -9231,9 +9245,9 @@ extension on TranslationsKo {
 			'audiobook.statusNew' => '시작하지 않음',
 			'audiobook.statusProgress' => '진행 중에',
 			'audiobook.statusFinished' => '마무리',
-			'audiobook.goToTime' => '시간에 가라',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => '시간에 가라',
 			'audiobook.timeHelp' => '시간:분:초 또는 분:초',
 			'audiobook.recoveryHelp' => '동기화 데이터를 이동하거나 복구하기 전에 최근 암호화 된 복사본을 수출합니다.수입은 현재 상태와 결합됩니다; 그들은 결코 지역 동기 역사를 대체하지 않습니다.',
 			'audiobook.recoveryExport' => '수출 암호화 된 복구 파일',
@@ -9745,9 +9759,9 @@ extension on TranslationsKo {
 			'musicTools.noHistory' => '아직 표시할 음악이 없습니다',
 			'musicTools.historyHint' => '이 프로필의 재생 기록',
 			'musicTools.days' => '일',
-			'musicTools.albumBlocks' => '앨범 전체를 함께 유지',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => '앨범 전체를 함께 유지',
 			'musicTools.home' => '음악',
 			'musicTools.recent' => '최근 재생한 음악',
 			'musicTools.apiKey' => 'API 키',
@@ -9808,6 +9822,8 @@ extension on TranslationsKo {
 			'musicDevices.relay' => '음악 릴레이 URL',
 			'musicDevices.relayHint' => '수신 기기에서 활성화한 다음 같은 네트워크에서 한 번 페어링하세요. Pleazyng을 열어 두세요. 릴레이는 암호화된 음악 제어를 전달하며 네트워크 주소를 볼 수 있습니다. 각 플레이어는 자체 미디어 서버에서 스트리밍합니다.',
 			'musicDevices.relayInvalid' => 'HTTPS 릴레이 주소를 입력하세요.',
+			'bookmarkMigration.unassigned' => '버전을 알 수 없는 북마크',
+			'bookmarkMigration.assignToVersion' => '이 버전에 할당',
 			_ => null,
 		};
 	}

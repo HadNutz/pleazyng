@@ -502,7 +502,8 @@
     "writer": "Escritor",
     "producer": "Produtor",
     "collection": "Coleção",
-    "imageUploadLimits": "≤ 10 MiB · ≤ 64 MP"
+    "imageUploadLimits": "≤ 10 MiB · ≤ 64 MP",
+    "metadataConflict": "Outra pessoa alterou o mesmo campo. Abra o editor novamente e confira os valores atuais antes de salvar."
   },
   "matchScreen": {
     "titleHint": "Título",
@@ -989,5 +990,9 @@
     "preferThisVersion": "",
     "clearPreferredVersion": "",
     "preferredVersion": ""
+  },
+  "bookmarkMigration": {
+    "unassigned": "Marcadores de uma versão não identificada",
+    "assignToVersion": "Atribuir a esta versão"
   }
 }

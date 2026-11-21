@@ -124,6 +124,7 @@ class TranslationsZhHant extends TranslationsZh with BaseTranslations<AppLocale,
 	@override late final _Translations$musicExperience$zh_Hant musicExperience = _Translations$musicExperience$zh_Hant._(_root);
 	@override late final _Translations$musicTools$zh_Hant musicTools = _Translations$musicTools$zh_Hant._(_root);
 	@override late final _Translations$musicDevices$zh_Hant musicDevices = _Translations$musicDevices$zh_Hant._(_root);
+	@override late final _Translations$bookmarkMigration$zh_Hant bookmarkMigration = _Translations$bookmarkMigration$zh_Hant._(_root);
 }
 
 // Path: mediaConveniences
@@ -2724,6 +2725,7 @@ class _Translations$metadataEdit$zh_Hant extends Translations$metadataEdit$zh {
 	@override String get enterImageUrl => '輸入圖片 URL';
 	@override String get imageUrl => '圖片 URL';
 	@override String get metadataUpdated => '中繼資料已更新';
+	@override String get metadataConflict => '其他編輯者已變更同一個欄位。請重新開啟編輯器，檢查最新值後再儲存。';
 	@override String get metadataUpdateFailed => '中繼資料更新失敗';
 	@override String get artworkUpdated => '封面圖片已更新';
 	@override String get artworkUpdateFailed => '封面圖片更新失敗';
@@ -4519,6 +4521,17 @@ class _Translations$musicDevices$zh_Hant extends Translations$musicDevices$zh {
 	@override String get relay => '音樂中繼 URL';
 	@override String get relayHint => '在接收裝置上啟用，然後在同一網路中配對一次。保持 Pleazyng 開啟。中繼傳遞加密的音樂控制，並能看到網路位址。每個播放器從自己的媒體伺服器串流。';
 	@override String get relayInvalid => '請輸入 HTTPS 中繼位址。';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$zh_Hant extends Translations$bookmarkMigration$zh {
+	_Translations$bookmarkMigration$zh_Hant._(TranslationsZhHant root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHant _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => '來自未知版本的書籤';
+	@override String get assignToVersion => '指派給此版本';
 }
 
 // Path: appIcon.names
@@ -8287,6 +8300,7 @@ extension on TranslationsZhHant {
 			'metadataEdit.enterImageUrl' => '輸入圖片 URL',
 			'metadataEdit.imageUrl' => '圖片 URL',
 			'metadataEdit.metadataUpdated' => '中繼資料已更新',
+			'metadataEdit.metadataConflict' => '其他編輯者已變更同一個欄位。請重新開啟編輯器，檢查最新值後再儲存。',
 			'metadataEdit.metadataUpdateFailed' => '中繼資料更新失敗',
 			'metadataEdit.artworkUpdated' => '封面圖片已更新',
 			'metadataEdit.artworkUpdateFailed' => '封面圖片更新失敗',
@@ -8718,9 +8732,9 @@ extension on TranslationsZhHant {
 			'homeLayout.continueWatching' => '繼續觀看',
 			'homeLayout.continueWatchingLibraryDescription' => '圖書館的本質重建進展順序',
 			'homeLayout.continueWatchingHomeDescription' => '重新進展序列顯示在家',
-			'homeLayout.nextUpHomeDescription' => '下一篇 未觀看的集合序列在主頁上單獨顯示',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => '下一篇 未觀看的集合序列在主頁上單獨顯示',
 			'homeLayout.library' => '媒體庫',
 			'homeLayout.showInRecommended' => '圖書館推薦',
 			'homeLayout.customPlexRow' => '定製 Plex 行',
@@ -9232,9 +9246,9 @@ extension on TranslationsZhHant {
 			'audiobook.statusNew' => '沒有開始',
 			'audiobook.statusProgress' => '進展',
 			'audiobook.statusFinished' => '結束',
-			'audiobook.goToTime' => '走到時間',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => '走到時間',
 			'audiobook.timeHelp' => '時間: 分鐘: 秒或 分鐘: 秒',
 			'audiobook.recoveryHelp' => '移動或修復同步資料前，請先匯出近期的加密備份。匯入資料會與目前狀態合併，不會取代本機同步記錄。請另外保存同步代碼。',
 			'audiobook.recoveryExport' => '輸出加密恢復檔案',
@@ -9746,9 +9760,9 @@ extension on TranslationsZhHant {
 			'musicTools.noHistory' => '尚無可顯示的音樂',
 			'musicTools.historyHint' => '此個人檔案的播放記錄',
 			'musicTools.days' => '天',
-			'musicTools.albumBlocks' => '保持專輯完整',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => '保持專輯完整',
 			'musicTools.home' => '音樂',
 			'musicTools.recent' => '最近播放',
 			'musicTools.apiKey' => 'API 金鑰',
@@ -9809,6 +9823,8 @@ extension on TranslationsZhHant {
 			'musicDevices.relay' => '音樂中繼 URL',
 			'musicDevices.relayHint' => '在接收裝置上啟用，然後在同一網路中配對一次。保持 Pleazyng 開啟。中繼傳遞加密的音樂控制，並能看到網路位址。每個播放器從自己的媒體伺服器串流。',
 			'musicDevices.relayInvalid' => '請輸入 HTTPS 中繼位址。',
+			'bookmarkMigration.unassigned' => '來自未知版本的書籤',
+			'bookmarkMigration.assignToVersion' => '指派給此版本',
 			_ => null,
 		};
 	}

@@ -123,6 +123,7 @@ class TranslationsZh extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$zh musicExperience = Translations$musicExperience$zh.internal(_root);
 	@override late final Translations$musicTools$zh musicTools = Translations$musicTools$zh.internal(_root);
 	@override late final Translations$musicDevices$zh musicDevices = Translations$musicDevices$zh.internal(_root);
+	@override late final Translations$bookmarkMigration$zh bookmarkMigration = Translations$bookmarkMigration$zh.internal(_root);
 }
 
 // Path: mediaConveniences
@@ -2723,6 +2724,7 @@ class Translations$metadataEdit$zh extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => '输入图片 URL';
 	@override String get imageUrl => '图片 URL';
 	@override String get metadataUpdated => '元数据已更新';
+	@override String get metadataConflict => '其他编辑者更改了同一字段。请重新打开编辑器，检查最新值后再保存。';
 	@override String get metadataUpdateFailed => '元数据更新失败';
 	@override String get artworkUpdated => '封面图片已更新';
 	@override String get artworkUpdateFailed => '封面图片更新失败';
@@ -4518,6 +4520,17 @@ class Translations$musicDevices$zh extends Translations$musicDevices$en {
 	@override String get relay => '音乐中继 URL';
 	@override String get relayHint => '在接收设备上启用，然后在同一网络中配对一次。保持 Pleazyng 打开。中继传递加密的音乐控制，并能看到网络地址。每个播放器从自己的媒体服务器串流。';
 	@override String get relayInvalid => '请输入 HTTPS 中继地址。';
+}
+
+// Path: bookmarkMigration
+class Translations$bookmarkMigration$zh extends Translations$bookmarkMigration$en {
+	Translations$bookmarkMigration$zh.internal(TranslationsZh root) : this._root = root, super.internal(root);
+
+	final TranslationsZh _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => '来自未知版本的书签';
+	@override String get assignToVersion => '分配给此版本';
 }
 
 // Path: appIcon.names
@@ -8286,6 +8299,7 @@ extension on TranslationsZh {
 			'metadataEdit.enterImageUrl' => '输入图片 URL',
 			'metadataEdit.imageUrl' => '图片 URL',
 			'metadataEdit.metadataUpdated' => '元数据已更新',
+			'metadataEdit.metadataConflict' => '其他编辑者更改了同一字段。请重新打开编辑器，检查最新值后再保存。',
 			'metadataEdit.metadataUpdateFailed' => '元数据更新失败',
 			'metadataEdit.artworkUpdated' => '封面图片已更新',
 			'metadataEdit.artworkUpdateFailed' => '封面图片更新失败',
@@ -8717,9 +8731,9 @@ extension on TranslationsZh {
 			'homeLayout.continueWatching' => '继续观看',
 			'homeLayout.continueWatchingLibraryDescription' => '图书馆的本质重建进展顺序',
 			'homeLayout.continueWatchingHomeDescription' => '重新进展序列显示在家',
-			'homeLayout.nextUpHomeDescription' => '下一篇 未观看的集合序列在主页上单独显示',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => '下一篇 未观看的集合序列在主页上单独显示',
 			'homeLayout.library' => '媒体库',
 			'homeLayout.showInRecommended' => '图书馆推荐',
 			'homeLayout.customPlexRow' => '定制 Plex 行',
@@ -9231,9 +9245,9 @@ extension on TranslationsZh {
 			'audiobook.statusNew' => '没有开始',
 			'audiobook.statusProgress' => '进展',
 			'audiobook.statusFinished' => '结束',
-			'audiobook.goToTime' => '走到时间',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => '走到时间',
 			'audiobook.timeHelp' => '时间: 分钟: 秒或 分钟: 秒',
 			'audiobook.recoveryHelp' => '移动或修复同步数据前，请先导出近期的加密备份。导入内容会与当前状态合并，不会覆盖本地同步历史。请另行保存同步代码。',
 			'audiobook.recoveryExport' => '输出加密恢复文件',
@@ -9745,9 +9759,9 @@ extension on TranslationsZh {
 			'musicTools.noHistory' => '暂无可显示的音乐',
 			'musicTools.historyHint' => '此个人资料的播放历史',
 			'musicTools.days' => '天',
-			'musicTools.albumBlocks' => '保持专辑完整',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => '保持专辑完整',
 			'musicTools.home' => '音乐',
 			'musicTools.recent' => '最近播放',
 			'musicTools.apiKey' => 'API 密钥',
@@ -9808,6 +9822,8 @@ extension on TranslationsZh {
 			'musicDevices.relay' => '音乐中继 URL',
 			'musicDevices.relayHint' => '在接收设备上启用，然后在同一网络中配对一次。保持 Pleazyng 打开。中继传递加密的音乐控制，并能看到网络地址。每个播放器从自己的媒体服务器串流。',
 			'musicDevices.relayInvalid' => '请输入 HTTPS 中继地址。',
+			'bookmarkMigration.unassigned' => '来自未知版本的书签',
+			'bookmarkMigration.assignToVersion' => '分配给此版本',
 			_ => null,
 		};
 	}

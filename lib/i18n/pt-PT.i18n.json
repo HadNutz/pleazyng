@@ -2182,7 +2182,8 @@
     "addTag": "Adicionar tag",
     "country": "País",
     "label": "Etiqueta",
-    "quickTag": "Tag rápida..."
+    "quickTag": "Tag rápida...",
+    "metadataConflict": "Outra pessoa alterou o mesmo campo. Abra novamente o editor e verifique os valores atuais antes de guardar."
   },
   "matchScreen": {
     "titleHint": "Título",
@@ -2965,5 +2966,9 @@
     "openAsProfile": "Abrir como ${name}",
     "copy": "Copiar",
     "copied": "Link copiado"
+  },
+  "bookmarkMigration": {
+    "unassigned": "Marcadores de uma versão não identificada",
+    "assignToVersion": "Atribuir a esta versão"
   }
 }

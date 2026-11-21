@@ -89,6 +89,7 @@ class TranslationsFrCa extends TranslationsFr with BaseTranslations<AppLocale, T
 	@override late final _Translations$musicTools$fr_CA musicTools = _Translations$musicTools$fr_CA._(_root);
 	@override late final _Translations$musicExperience$fr_CA musicExperience = _Translations$musicExperience$fr_CA._(_root);
 	@override late final _Translations$subtitleAiUi$fr_CA subtitleAiUi = _Translations$subtitleAiUi$fr_CA._(_root);
+	@override late final _Translations$bookmarkMigration$fr_CA bookmarkMigration = _Translations$bookmarkMigration$fr_CA._(_root);
 }
 
 // Path: appIcon
@@ -664,6 +665,7 @@ class _Translations$metadataEdit$fr_CA extends Translations$metadataEdit$fr {
 	@override String get writer => 'Scénariste';
 	@override String get producer => 'Producteur';
 	@override String get imageUploadLimits => '≤ 10 MiB · ≤ 64 MP';
+	@override String get metadataConflict => 'Le même champ a été modifié ailleurs. Rouvrez l’éditeur et vérifiez les dernières valeurs avant d’enregistrer.';
 }
 
 // Path: matchScreen
@@ -1062,6 +1064,17 @@ class _Translations$subtitleAiUi$fr_CA extends Translations$subtitleAiUi$fr {
 	// Translations
 	@override String get liveCaptureStart => 'Démarrer les sous-titres en direct';
 	@override String get liveCaptureStop => 'Arrêter les sous-titres en direct';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$fr_CA extends Translations$bookmarkMigration$fr {
+	_Translations$bookmarkMigration$fr_CA._(TranslationsFrCa root) : this._root = root, super.internal(root);
+
+	final TranslationsFrCa _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Signets d’une version non identifiée';
+	@override String get assignToVersion => 'Attribuer à cette version';
 }
 
 // Path: common.mediaKind
@@ -1660,6 +1673,7 @@ extension on TranslationsFrCa {
 			'metadataEdit.writer' => 'Scénariste',
 			'metadataEdit.producer' => 'Producteur',
 			'metadataEdit.imageUploadLimits' => '≤ 10 MiB · ≤ 64 MP',
+			'metadataEdit.metadataConflict' => 'Le même champ a été modifié ailleurs. Rouvrez l’éditeur et vérifiez les dernières valeurs avant d’enregistrer.',
 			'matchScreen.titleHint' => 'Titre',
 			'matchScreen.yearHint' => 'Année',
 			'matchScreen.search' => 'Rechercher',
@@ -1844,9 +1858,9 @@ extension on TranslationsFrCa {
 			'romm.copyLink' => 'Copy game link',
 			'romm.linkCopied' => 'Game link copied',
 			'romm.openLink' => 'Open game link',
-			'romm.linkHelp' => 'Paste a Pleazyng game link. Connect the matching RomM server before opening it.',
 			_ => null,
 		} ?? switch (path) {
+			'romm.linkHelp' => 'Paste a Pleazyng game link. Connect the matching RomM server before opening it.',
 			'romm.copyMismatch' => 'This link identifies a different copy. Choose the intended game from your library.',
 			'romm.requestStatus' => 'Library indexing',
 			'romm.notIndexed' => 'The requested game is not indexed in this library yet.',
@@ -1931,6 +1945,8 @@ extension on TranslationsFrCa {
 			'musicExperience.bluetoothDrivingHint' => 'Choisissez les sorties Bluetooth connectées qui ouvrent automatiquement la vue conduite.',
 			'subtitleAiUi.liveCaptureStart' => 'Démarrer les sous-titres en direct',
 			'subtitleAiUi.liveCaptureStop' => 'Arrêter les sous-titres en direct',
+			'bookmarkMigration.unassigned' => 'Signets d’une version non identifiée',
+			'bookmarkMigration.assignToVersion' => 'Attribuer à cette version',
 			_ => null,
 		};
 	}

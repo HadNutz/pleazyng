@@ -559,7 +559,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3240,6 +3239,7 @@
     "enterImageUrl": "Nhập hình ảnh URL",
     "imageUrl": "Ảnh URL",
     "metadataUpdated": "Metadata cập nhật",
+    "metadataConflict": "Một người khác đã sửa cùng trường này. Hãy mở lại trình chỉnh sửa và kiểm tra các giá trị mới nhất trước khi lưu.",
     "metadataUpdateFailed": "Không cập nhật metadata",
     "artworkUpdated": "Artwork cập nhật",
     "artworkUpdateFailed": "Không cập nhật tác phẩm nghệ thuật",
@@ -5683,5 +5683,9 @@
     "relay": "URL chuyển tiếp nhạc",
     "relayHint": "Bật trên thiết bị nhận rồi ghép đôi một lần trên cùng mạng. Giữ Pleazyng mở. Máy chuyển tiếp truyền lệnh nhạc được mã hóa và thấy địa chỉ mạng. Mỗi trình phát truyền từ máy chủ phương tiện riêng.",
     "relayInvalid": "Nhập địa chỉ chuyển tiếp HTTPS."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Dấu trang từ phiên bản chưa xác định",
+    "assignToVersion": "Gán cho phiên bản này"
   }
 }

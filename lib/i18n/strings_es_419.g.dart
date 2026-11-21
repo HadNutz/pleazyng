@@ -89,6 +89,7 @@ class TranslationsEs419 extends TranslationsEs with BaseTranslations<AppLocale, 
 	@override late final _Translations$musicTools$es_419 musicTools = _Translations$musicTools$es_419._(_root);
 	@override late final _Translations$musicExperience$es_419 musicExperience = _Translations$musicExperience$es_419._(_root);
 	@override late final _Translations$subtitleAiUi$es_419 subtitleAiUi = _Translations$subtitleAiUi$es_419._(_root);
+	@override late final _Translations$bookmarkMigration$es_419 bookmarkMigration = _Translations$bookmarkMigration$es_419._(_root);
 }
 
 // Path: appIcon
@@ -675,6 +676,7 @@ class _Translations$metadataEdit$es_419 extends Translations$metadataEdit$es {
 	@override String get producer => 'Productor';
 	@override String get collection => 'Colección';
 	@override String get imageUploadLimits => '≤ 10 MiB · ≤ 64 MP';
+	@override String get metadataConflict => 'Otra persona ha cambiado el mismo campo. Vuelve a abrir el editor y revisa los valores actuales antes de guardar.';
 }
 
 // Path: matchScreen
@@ -1075,6 +1077,17 @@ class _Translations$subtitleAiUi$es_419 extends Translations$subtitleAiUi$es {
 	// Translations
 	@override String get liveCaptureStart => 'Iniciar subtítulos en vivo';
 	@override String get liveCaptureStop => 'Detener subtítulos en vivo';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$es_419 extends Translations$bookmarkMigration$es {
+	_Translations$bookmarkMigration$es_419._(TranslationsEs419 root) : this._root = root, super.internal(root);
+
+	final TranslationsEs419 _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Marcadores de una versión sin identificar';
+	@override String get assignToVersion => 'Asignar a esta versión';
 }
 
 // Path: common.mediaKind
@@ -1705,6 +1718,7 @@ extension on TranslationsEs419 {
 			'metadataEdit.producer' => 'Productor',
 			'metadataEdit.collection' => 'Colección',
 			'metadataEdit.imageUploadLimits' => '≤ 10 MiB · ≤ 64 MP',
+			'metadataEdit.metadataConflict' => 'Otra persona ha cambiado el mismo campo. Vuelve a abrir el editor y revisa los valores actuales antes de guardar.',
 			'matchScreen.titleHint' => 'Título',
 			'matchScreen.yearHint' => 'Año',
 			'matchScreen.search' => 'Buscar',
@@ -1873,9 +1887,9 @@ extension on TranslationsEs419 {
 			'romm.sync' => 'Sync saves',
 			'romm.savedLocally' => 'Progress kept on this device; upload is pending.',
 			'romm.pause' => 'Pause',
-			'romm.kContinue' => 'Continue',
 			_ => null,
 		} ?? switch (path) {
+			'romm.kContinue' => 'Continue',
 			'romm.saveState' => 'Save state',
 			'romm.loadState' => 'Load state',
 			'romm.saveAndExit' => 'Save and exit',
@@ -1979,6 +1993,8 @@ extension on TranslationsEs419 {
 			'musicExperience.bluetoothDrivingHint' => 'Elige las salidas Bluetooth conectadas que abren automáticamente la vista de conducción.',
 			'subtitleAiUi.liveCaptureStart' => 'Iniciar subtítulos en vivo',
 			'subtitleAiUi.liveCaptureStop' => 'Detener subtítulos en vivo',
+			'bookmarkMigration.unassigned' => 'Marcadores de una versión sin identificar',
+			'bookmarkMigration.assignToVersion' => 'Asignar a esta versión',
 			_ => null,
 		};
 	}

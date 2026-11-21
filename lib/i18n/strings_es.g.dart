@@ -124,6 +124,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$es musicExperience = Translations$musicExperience$es.internal(_root);
 	@override late final Translations$musicTools$es musicTools = Translations$musicTools$es.internal(_root);
 	@override late final Translations$musicDevices$es musicDevices = Translations$musicDevices$es.internal(_root);
+	@override late final Translations$bookmarkMigration$es bookmarkMigration = Translations$bookmarkMigration$es.internal(_root);
 }
 
 // Path: mediaConveniences
@@ -2735,6 +2736,7 @@ class Translations$metadataEdit$es extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Introducir URL de imagen';
 	@override String get imageUrl => 'URL de imagen';
 	@override String get metadataUpdated => 'Metadatos actualizados';
+	@override String get metadataConflict => 'Otra persona ha cambiado el mismo campo. Vuelve a abrir el editor y revisa los valores actuales antes de guardar.';
 	@override String get metadataUpdateFailed => 'Error al actualizar los metadatos';
 	@override String get artworkUpdated => 'Imágenes actualizadas';
 	@override String get artworkUpdateFailed => 'Error al actualizar las imágenes';
@@ -4613,6 +4615,17 @@ class Translations$musicDevices$es extends Translations$musicDevices$en {
 	@override String get relay => 'URL del relé de música';
 	@override String get relayHint => 'Actívalo en el dispositivo receptor y vincula una vez en la misma red. Mantén Pleazyng abierto. El relé transmite controles de música cifrados y ve las direcciones de red. Cada reproductor transmite desde su propio servidor multimedia.';
 	@override String get relayInvalid => 'Introduce una dirección HTTPS del relé.';
+}
+
+// Path: bookmarkMigration
+class Translations$bookmarkMigration$es extends Translations$bookmarkMigration$en {
+	Translations$bookmarkMigration$es.internal(TranslationsEs root) : this._root = root, super.internal(root);
+
+	final TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Marcadores de una versión sin identificar';
+	@override String get assignToVersion => 'Asignar a esta versión';
 }
 
 // Path: appIcon.names
@@ -8434,6 +8447,7 @@ extension on TranslationsEs {
 			'metadataEdit.enterImageUrl' => 'Introducir URL de imagen',
 			'metadataEdit.imageUrl' => 'URL de imagen',
 			'metadataEdit.metadataUpdated' => 'Metadatos actualizados',
+			'metadataEdit.metadataConflict' => 'Otra persona ha cambiado el mismo campo. Vuelve a abrir el editor y revisa los valores actuales antes de guardar.',
 			'metadataEdit.metadataUpdateFailed' => 'Error al actualizar los metadatos',
 			'metadataEdit.artworkUpdated' => 'Imágenes actualizadas',
 			'metadataEdit.artworkUpdateFailed' => 'Error al actualizar las imágenes',
@@ -8846,9 +8860,9 @@ extension on TranslationsEs {
 			'homeLayout.removeRowBody' => ({required Object title}) => '${title} se eliminará. no puede ser negado.',
 			'homeLayout.sync' => 'Síntomas',
 			'homeLayout.syncAccountTitle' => 'Síntese el diseño con tu cuenta Plex',
-			'homeLayout.syncAccountOn' => 'En: este dispositivo comparte orden de línea, líneas, Hero y Auto-slide con sus otros dispositivos.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.syncAccountOn' => 'En: este dispositivo comparte orden de línea, líneas, Hero y Auto-slide con sus otros dispositivos.',
 			'homeLayout.syncAccountOff' => 'Desactivado: este dispositivo mantiene su propio layout.',
 			'homeLayout.syncNow' => 'Síntomas ahora',
 			'homeLayout.plexHomeManager' => 'Plex Director de la casa',
@@ -9360,9 +9374,9 @@ extension on TranslationsEs {
 			'audiobook.syncUnknownDevice' => 'Dispositivo desconocido',
 			'audiobook.deletedBookmark' => 'Bookmark eliminado',
 			'audiobook.finished' => 'Finalizado',
-			'audiobook.readingPosition' => ({required Object percent}) => 'Leer · ${percent}%',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.readingPosition' => ({required Object percent}) => 'Leer · ${percent}%',
 			'audiobook.chapterTimeline' => 'Capítulo Progreso',
 			'audiobook.bookTimeline' => 'Todo el libro Progreso',
 			'audiobook.bookRemaining' => ({required Object time}) => 'El tiempo que queda en este libro: ${time}',
@@ -9874,9 +9888,9 @@ extension on TranslationsEs {
 			'bonusExtras.aiToken' => 'Token de acceso a la IA',
 			'bonusExtras.aiNotice' => 'La IA recibe tu pregunta y los fragmentos permitidos de la transcripción solo cuando buscas. Al desactivarla, la búsqueda normal por tema y en la transcripción sigue disponible.',
 			'bonusExtras.deviceNotice' => 'La opción «En este dispositivo» requiere un entorno de ejecución compatible con OpenAI instalado en localhost.',
-			'bonusExtras.save' => 'Guardar',
 			_ => null,
 		} ?? switch (path) {
+			'bonusExtras.save' => 'Guardar',
 			'bonusExtras.cancel' => 'Cancelar',
 			'bonusExtras.invalidSettings' => 'Comprueba las direcciones de los servidores y el nombre del modelo. El modo en la nube requiere HTTPS; el modo en este dispositivo requiere localhost.',
 			'bonusExtras.failed' => 'No se pudieron actualizar los extras. Los extras disponibles en tu biblioteca siguen siendo accesibles.',
@@ -10037,6 +10051,8 @@ extension on TranslationsEs {
 			'musicDevices.relay' => 'URL del relé de música',
 			'musicDevices.relayHint' => 'Actívalo en el dispositivo receptor y vincula una vez en la misma red. Mantén Pleazyng abierto. El relé transmite controles de música cifrados y ve las direcciones de red. Cada reproductor transmite desde su propio servidor multimedia.',
 			'musicDevices.relayInvalid' => 'Introduce una dirección HTTPS del relé.',
+			'bookmarkMigration.unassigned' => 'Marcadores de una versión sin identificar',
+			'bookmarkMigration.assignToVersion' => 'Asignar a esta versión',
 			_ => null,
 		};
 	}

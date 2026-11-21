@@ -123,6 +123,7 @@ class TranslationsBg extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$bg musicExperience = _Translations$musicExperience$bg._(_root);
 	@override late final _Translations$musicTools$bg musicTools = _Translations$musicTools$bg._(_root);
 	@override late final _Translations$musicDevices$bg musicDevices = _Translations$musicDevices$bg._(_root);
+	@override late final _Translations$bookmarkMigration$bg bookmarkMigration = _Translations$bookmarkMigration$bg._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$bg extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Въведете URL на изображение';
 	@override String get imageUrl => 'URL на изображение';
 	@override String get metadataUpdated => 'Метаданните са обновени';
+	@override String get metadataConflict => 'Друг редактор промени същото поле. Отворете редактора отново, за да прегледате последните стойности преди запис.';
 	@override String get metadataUpdateFailed => 'Неуспешно обновяване на метаданни';
 	@override String get artworkUpdated => 'Обложката е обновена';
 	@override String get artworkUpdateFailed => 'Неуспешно обновяване на обложката';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$bg extends Translations$musicDevices$en {
 	@override String get relay => 'Адрес на музикалния ретранслатор';
 	@override String get relayHint => 'Включете на приемащото устройство и сдвоете веднъж в една и съща мрежа. Оставете Pleazyng отворен. Ретранслаторът пренася шифровани музикални команди и вижда мрежовите адреси. Всеки плейър използва своя медиен сървър.';
 	@override String get relayInvalid => 'Въведете HTTPS адрес на ретранслатор.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$bg extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$bg._(TranslationsBg root) : this._root = root, super.internal(root);
+
+	final TranslationsBg _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Отметки от неустановена версия';
+	@override String get assignToVersion => 'Присвояване на тази версия';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsBg {
 			'metadataEdit.enterImageUrl' => 'Въведете URL на изображение',
 			'metadataEdit.imageUrl' => 'URL на изображение',
 			'metadataEdit.metadataUpdated' => 'Метаданните са обновени',
+			'metadataEdit.metadataConflict' => 'Друг редактор промени същото поле. Отворете редактора отново, за да прегледате последните стойности преди запис.',
 			'metadataEdit.metadataUpdateFailed' => 'Неуспешно обновяване на метаданни',
 			'metadataEdit.artworkUpdated' => 'Обложката е обновена',
 			'metadataEdit.artworkUpdateFailed' => 'Неуспешно обновяване на обложката',
@@ -8722,9 +8736,9 @@ extension on TranslationsBg {
 			'homeLayout.continueWatching' => 'Продължи гледането',
 			'homeLayout.continueWatchingLibraryDescription' => 'Тази библиотека има своя собствена рецидив-прогрес',
 			'homeLayout.continueWatchingHomeDescription' => 'Ревюта на напредъка, показана на дома',
-			'homeLayout.nextUpHomeDescription' => 'Следващата незабелязана серия от епизоди, поканени отделно на Home',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'Следващата незабелязана серия от епизоди, поканени отделно на Home',
 			'homeLayout.library' => 'Библиотека',
 			'homeLayout.showInRecommended' => 'Препоръчителна библиотека в библиотеката',
 			'homeLayout.customPlexRow' => 'Използвайте Plex ред',
@@ -9236,9 +9250,9 @@ extension on TranslationsBg {
 			'audiobook.statusNew' => 'Не започна',
 			'audiobook.statusProgress' => 'В напредъка',
 			'audiobook.statusFinished' => 'Завършен',
-			'audiobook.goToTime' => 'Отидете в времето',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'Отидете в времето',
 			'audiobook.timeHelp' => 'Време: минути: секунди или минути: секунди',
 			'audiobook.recoveryHelp' => 'Експортирайте неотдавна шифрована копие, преди да преместите или поправите данни за синхронизиране. Импортират се с текущото състояние; те никога не заместват местната история на синхронността.',
 			'audiobook.recoveryExport' => 'Износ на криптирани файлове за възстановяване',
@@ -9750,9 +9764,9 @@ extension on TranslationsBg {
 			'musicTools.noHistory' => 'Все още няма музика за показване',
 			'musicTools.historyHint' => 'История на възпроизвеждане за този профил',
 			'musicTools.days' => 'Дни',
-			'musicTools.albumBlocks' => 'Запазване на целите албуми заедно',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'Запазване на целите албуми заедно',
 			'musicTools.home' => 'Музика',
 			'musicTools.recent' => 'Наскоро слушани',
 			'musicTools.apiKey' => 'API ключ',
@@ -9813,6 +9827,8 @@ extension on TranslationsBg {
 			'musicDevices.relay' => 'Адрес на музикалния ретранслатор',
 			'musicDevices.relayHint' => 'Включете на приемащото устройство и сдвоете веднъж в една и съща мрежа. Оставете Pleazyng отворен. Ретранслаторът пренася шифровани музикални команди и вижда мрежовите адреси. Всеки плейър използва своя медиен сървър.',
 			'musicDevices.relayInvalid' => 'Въведете HTTPS адрес на ретранслатор.',
+			'bookmarkMigration.unassigned' => 'Отметки от неустановена версия',
+			'bookmarkMigration.assignToVersion' => 'Присвояване на тази версия',
 			_ => null,
 		};
 	}

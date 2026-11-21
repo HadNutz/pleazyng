@@ -123,6 +123,7 @@ class TranslationsSv extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$sv musicExperience = _Translations$musicExperience$sv._(_root);
 	@override late final _Translations$musicTools$sv musicTools = _Translations$musicTools$sv._(_root);
 	@override late final _Translations$musicDevices$sv musicDevices = _Translations$musicDevices$sv._(_root);
+	@override late final _Translations$bookmarkMigration$sv bookmarkMigration = _Translations$bookmarkMigration$sv._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$sv extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Ange bild-URL';
 	@override String get imageUrl => 'Bild-URL';
 	@override String get metadataUpdated => 'Metadata har uppdaterats';
+	@override String get metadataConflict => 'Någon annan har ändrat samma fält. Öppna redigeraren igen och kontrollera de senaste värdena innan du sparar.';
 	@override String get metadataUpdateFailed => 'Det gick inte att uppdatera metadata';
 	@override String get artworkUpdated => 'Bildmaterialet har uppdaterats';
 	@override String get artworkUpdateFailed => 'Det gick inte att uppdatera bildmaterialet';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$sv extends Translations$musicDevices$en {
 	@override String get relay => 'URL till musikrelä';
 	@override String get relayHint => 'Aktivera på mottagaren och parkoppla en gång på samma nätverk. Håll Pleazyng öppet. Reläet skickar krypterade musikkommandon och ser nätverksadresser. Varje spelare strömmar från sin egen medieserver.';
 	@override String get relayInvalid => 'Ange en HTTPS-adress till reläet.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$sv extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$sv._(TranslationsSv root) : this._root = root, super.internal(root);
+
+	final TranslationsSv _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Bokmärken från en okänd version';
+	@override String get assignToVersion => 'Koppla till den här versionen';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsSv {
 			'metadataEdit.enterImageUrl' => 'Ange bild-URL',
 			'metadataEdit.imageUrl' => 'Bild-URL',
 			'metadataEdit.metadataUpdated' => 'Metadata har uppdaterats',
+			'metadataEdit.metadataConflict' => 'Någon annan har ändrat samma fält. Öppna redigeraren igen och kontrollera de senaste värdena innan du sparar.',
 			'metadataEdit.metadataUpdateFailed' => 'Det gick inte att uppdatera metadata',
 			'metadataEdit.artworkUpdated' => 'Bildmaterialet har uppdaterats',
 			'metadataEdit.artworkUpdateFailed' => 'Det gick inte att uppdatera bildmaterialet',
@@ -8722,9 +8736,9 @@ extension on TranslationsSv {
 			'homeLayout.continueWatching' => 'Fortsätt titta',
 			'homeLayout.continueWatchingLibraryDescription' => 'Denna biblioteks egna resume-progress rad',
 			'homeLayout.continueWatchingHomeDescription' => 'Den återkommande framsteg raden visas på hemmet',
-			'homeLayout.nextUpHomeDescription' => 'Nästa oövervakas episod rad visas separat på Home',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'Nästa oövervakas episod rad visas separat på Home',
 			'homeLayout.library' => 'Bibliotek',
 			'homeLayout.showInRecommended' => 'Utställning i biblioteket rekommenderas',
 			'homeLayout.customPlexRow' => 'Anpassad Plex rad',
@@ -9236,9 +9250,9 @@ extension on TranslationsSv {
 			'audiobook.statusNew' => 'inte startat',
 			'audiobook.statusProgress' => 'I framsteg',
 			'audiobook.statusFinished' => 'Avslutad',
-			'audiobook.goToTime' => 'Gå till tiden',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'Gå till tiden',
 			'audiobook.timeHelp' => 'Klockor: minuter: sekunder eller minuter: sekunder',
 			'audiobook.recoveryHelp' => 'Exportera en nyligen krypterad kopia innan du flyttar eller reparerar synkroniseringsdata. Importer går ihop med den aktuella tillståndet; de ersätter aldrig lokal synkroniseringshistoria. Håll synkronkoden separat.',
 			'audiobook.recoveryExport' => 'Export krypterad återhämtningsfil',
@@ -9750,9 +9764,9 @@ extension on TranslationsSv {
 			'musicTools.noHistory' => 'Ingen musik att visa ännu',
 			'musicTools.historyHint' => 'Uppspelningshistorik för den här profilen',
 			'musicTools.days' => 'Dagar',
-			'musicTools.albumBlocks' => 'Håll hela album samman',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'Håll hela album samman',
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Senast spelat',
 			'musicTools.apiKey' => 'API-nyckel',
@@ -9813,6 +9827,8 @@ extension on TranslationsSv {
 			'musicDevices.relay' => 'URL till musikrelä',
 			'musicDevices.relayHint' => 'Aktivera på mottagaren och parkoppla en gång på samma nätverk. Håll Pleazyng öppet. Reläet skickar krypterade musikkommandon och ser nätverksadresser. Varje spelare strömmar från sin egen medieserver.',
 			'musicDevices.relayInvalid' => 'Ange en HTTPS-adress till reläet.',
+			'bookmarkMigration.unassigned' => 'Bokmärken från en okänd version',
+			'bookmarkMigration.assignToVersion' => 'Koppla till den här versionen',
 			_ => null,
 		};
 	}

@@ -459,7 +459,8 @@
     "director": "Réalisateur",
     "writer": "Scénariste",
     "producer": "Producteur",
-    "imageUploadLimits": "≤ 10 MiB · ≤ 64 MP"
+    "imageUploadLimits": "≤ 10 MiB · ≤ 64 MP",
+    "metadataConflict": "Le même champ a été modifié ailleurs. Rouvrez l’éditeur et vérifiez les dernières valeurs avant d’enregistrer."
   },
   "matchScreen": {
     "titleHint": "Titre",
@@ -941,5 +942,9 @@
     "preferThisVersion": "",
     "clearPreferredVersion": "",
     "preferredVersion": ""
+  },
+  "bookmarkMigration": {
+    "unassigned": "Signets d’une version non identifiée",
+    "assignToVersion": "Attribuer à cette version"
   }
 }

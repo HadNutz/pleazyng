@@ -123,6 +123,7 @@ class TranslationsCs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$cs musicExperience = _Translations$musicExperience$cs._(_root);
 	@override late final _Translations$musicTools$cs musicTools = _Translations$musicTools$cs._(_root);
 	@override late final _Translations$musicDevices$cs musicDevices = _Translations$musicDevices$cs._(_root);
+	@override late final _Translations$bookmarkMigration$cs bookmarkMigration = _Translations$bookmarkMigration$cs._(_root);
 }
 
 // Path: mediaConveniences
@@ -2761,6 +2762,7 @@ class _Translations$metadataEdit$cs extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Vložte obrázek URL';
 	@override String get imageUrl => 'obrázek URL';
 	@override String get metadataUpdated => 'Aktualizované metadata';
+	@override String get metadataConflict => 'Jiný editor změnil stejné pole. Před uložením znovu otevřete editor a zkontrolujte aktuální hodnoty.';
 	@override String get metadataUpdateFailed => 'Nedokázal aktualizovat metadata';
 	@override String get artworkUpdated => 'Umělecká aktualizace';
 	@override String get artworkUpdateFailed => 'Nedokázal aktualizovat umělecké dílo';
@@ -4565,6 +4567,17 @@ class _Translations$musicDevices$cs extends Translations$musicDevices$en {
 	@override String get relay => 'URL hudebního relé';
 	@override String get relayHint => 'Zapněte na přijímajícím zařízení a jednou spárujte ve stejné síti. Nechte Pleazyng otevřený. Relé přenáší šifrované ovládání hudby a vidí síťové adresy. Každý přehrávač streamuje z vlastního mediálního serveru.';
 	@override String get relayInvalid => 'Zadejte HTTPS adresu relé.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$cs extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$cs._(TranslationsCs root) : this._root = root, super.internal(root);
+
+	final TranslationsCs _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Záložky z neznámé verze';
+	@override String get assignToVersion => 'Přiřadit k této verzi';
 }
 
 // Path: appIcon.names
@@ -8335,6 +8348,7 @@ extension on TranslationsCs {
 			'metadataEdit.enterImageUrl' => 'Vložte obrázek URL',
 			'metadataEdit.imageUrl' => 'obrázek URL',
 			'metadataEdit.metadataUpdated' => 'Aktualizované metadata',
+			'metadataEdit.metadataConflict' => 'Jiný editor změnil stejné pole. Před uložením znovu otevřete editor a zkontrolujte aktuální hodnoty.',
 			'metadataEdit.metadataUpdateFailed' => 'Nedokázal aktualizovat metadata',
 			'metadataEdit.artworkUpdated' => 'Umělecká aktualizace',
 			'metadataEdit.artworkUpdateFailed' => 'Nedokázal aktualizovat umělecké dílo',
@@ -8766,9 +8780,9 @@ extension on TranslationsCs {
 			'homeLayout.continueWatching' => 'Pokračovat ve sledování',
 			'homeLayout.continueWatchingLibraryDescription' => 'Tato knihovna má vlastní pokračovací řadu',
 			'homeLayout.continueWatchingHomeDescription' => 'Zpětná řada pokroku zobrazená na Home',
-			'homeLayout.nextUpHomeDescription' => 'Následující nedohlédnutý epizodový řádek zobrazen samostatně na Domů',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'Následující nedohlédnutý epizodový řádek zobrazen samostatně na Domů',
 			'homeLayout.library' => 'Knihovna',
 			'homeLayout.showInRecommended' => 'Představení v knihovně doporučeno',
 			'homeLayout.customPlexRow' => 'Přizpůsobený Plex řádek',
@@ -9280,9 +9294,9 @@ extension on TranslationsCs {
 			'audiobook.statusNew' => 'Nezačíná',
 			'audiobook.statusProgress' => 'V pokroku',
 			'audiobook.statusFinished' => 'Dokončené',
-			'audiobook.goToTime' => 'Jděte do času',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'Jděte do času',
 			'audiobook.timeHelp' => 'Hodiny: minuty: sekundy nebo minuty: sekundy',
 			'audiobook.recoveryHelp' => 'Exportujte nedávnou šifrovanou kopii před přenesením nebo opravou synchronizačních dat. Importy se spojí s aktuálním stavem; nikdy nenahrazují místní historii synchromu.',
 			'audiobook.recoveryExport' => 'Export šifrované obnovení souborů',
@@ -9794,9 +9808,9 @@ extension on TranslationsCs {
 			'musicTools.noHistory' => 'Zatím není co zobrazit',
 			'musicTools.historyHint' => 'Historie přehrávání tohoto profilu',
 			'musicTools.days' => 'Dny',
-			'musicTools.albumBlocks' => 'Ponechat celá alba pohromadě',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'Ponechat celá alba pohromadě',
 			'musicTools.home' => 'Hudba',
 			'musicTools.recent' => 'Nedávno přehrané',
 			'musicTools.apiKey' => 'Klíč API',
@@ -9857,6 +9871,8 @@ extension on TranslationsCs {
 			'musicDevices.relay' => 'URL hudebního relé',
 			'musicDevices.relayHint' => 'Zapněte na přijímajícím zařízení a jednou spárujte ve stejné síti. Nechte Pleazyng otevřený. Relé přenáší šifrované ovládání hudby a vidí síťové adresy. Každý přehrávač streamuje z vlastního mediálního serveru.',
 			'musicDevices.relayInvalid' => 'Zadejte HTTPS adresu relé.',
+			'bookmarkMigration.unassigned' => 'Záložky z neznámé verze',
+			'bookmarkMigration.assignToVersion' => 'Přiřadit k této verzi',
 			_ => null,
 		};
 	}

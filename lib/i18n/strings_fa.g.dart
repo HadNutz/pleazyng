@@ -123,6 +123,7 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$fa musicExperience = _Translations$musicExperience$fa._(_root);
 	@override late final _Translations$musicTools$fa musicTools = _Translations$musicTools$fa._(_root);
 	@override late final _Translations$musicDevices$fa musicDevices = _Translations$musicDevices$fa._(_root);
+	@override late final _Translations$bookmarkMigration$fa bookmarkMigration = _Translations$bookmarkMigration$fa._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$fa extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'URL تصویر را وارد کنید';
 	@override String get imageUrl => 'تصویر URL';
 	@override String get metadataUpdated => 'Metadata به روز شده';
+	@override String get metadataConflict => 'ویرایشگر دیگری همین فیلد را تغییر داده است. پیش از ذخیره، ویرایشگر را دوباره باز کنید و آخرین مقادیر را بررسی کنید.';
 	@override String get metadataUpdateFailed => 'عدم به روز رسانی متا';
 	@override String get artworkUpdated => 'هنر به روز شده';
 	@override String get artworkUpdateFailed => 'به روز رسانی هنرهای هنری';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$fa extends Translations$musicDevices$en {
 	@override String get relay => 'نشانی رلهٔ موسیقی';
 	@override String get relayHint => 'در دستگاه گیرنده فعال کنید و یک بار در همان شبکه جفت کنید. Pleazyng را باز نگه دارید. رله فرمان‌های رمزگذاری‌شدهٔ موسیقی را منتقل می‌کند و نشانی‌های شبکه را می‌بیند. هر پخش‌کننده از سرور رسانهٔ خودش پخش می‌کند.';
 	@override String get relayInvalid => 'نشانی HTTPS رله را وارد کنید.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$fa extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'نشانک‌های نسخه‌ای ناشناخته';
+	@override String get assignToVersion => 'اختصاص به این نسخه';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsFa {
 			'metadataEdit.enterImageUrl' => 'URL تصویر را وارد کنید',
 			'metadataEdit.imageUrl' => 'تصویر URL',
 			'metadataEdit.metadataUpdated' => 'Metadata به روز شده',
+			'metadataEdit.metadataConflict' => 'ویرایشگر دیگری همین فیلد را تغییر داده است. پیش از ذخیره، ویرایشگر را دوباره باز کنید و آخرین مقادیر را بررسی کنید.',
 			'metadataEdit.metadataUpdateFailed' => 'عدم به روز رسانی متا',
 			'metadataEdit.artworkUpdated' => 'هنر به روز شده',
 			'metadataEdit.artworkUpdateFailed' => 'به روز رسانی هنرهای هنری',
@@ -8722,9 +8736,9 @@ extension on TranslationsFa {
 			'homeLayout.continueWatching' => 'ادامه تماشا',
 			'homeLayout.continueWatchingLibraryDescription' => 'این کتابخانه در حال پیشرفت است.',
 			'homeLayout.continueWatchingHomeDescription' => 'روند پیشرفت مجدد نشان داده شده در خانه',
-			'homeLayout.nextUpHomeDescription' => 'قسمت بعدی ناشناخته سریال به صورت جداگانه در خانه نمایش داده می شود',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'قسمت بعدی ناشناخته سریال به صورت جداگانه در خانه نمایش داده می شود',
 			'homeLayout.library' => 'کتابخانه',
 			'homeLayout.showInRecommended' => 'نمایش در کتابخانه توصیه شده',
 			'homeLayout.customPlexRow' => 'مشخصات Plex خط',
@@ -9236,9 +9250,9 @@ extension on TranslationsFa {
 			'audiobook.statusNew' => 'شروع نمی شود',
 			'audiobook.statusProgress' => 'در پیشرفت',
 			'audiobook.statusFinished' => 'به پایان رسید',
-			'audiobook.goToTime' => 'به زمان برو',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'به زمان برو',
 			'audiobook.timeHelp' => 'ساعت: دقیقه ها: ثانیه ها یا دقیقه ها: ثانیه ها',
 			'audiobook.recoveryHelp' => 'یک کپی رمزگذاری شده اخیر را قبل از حرکت یا اصلاح داده های همگام سازی صادر کنید. واردات با وضعیت فعلی ادغام می شود؛ آنها هرگز تاریخچه همگامه محلی را جایگزین نمی کنند.',
 			'audiobook.recoveryExport' => 'صادرات رمزگذاری شده بازگرداندن فایل',
@@ -9750,9 +9764,9 @@ extension on TranslationsFa {
 			'musicTools.noHistory' => 'هنوز موسیقی‌ای برای نمایش نیست',
 			'musicTools.historyHint' => 'سابقهٔ پخش این نمایه',
 			'musicTools.days' => 'روزها',
-			'musicTools.albumBlocks' => 'آلبوم‌ها را کامل نگه دار',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'آلبوم‌ها را کامل نگه دار',
 			'musicTools.home' => 'موسیقی‌ها',
 			'musicTools.recent' => 'اخیراً پخش‌شده',
 			'musicTools.apiKey' => 'کلید API',
@@ -9813,6 +9827,8 @@ extension on TranslationsFa {
 			'musicDevices.relay' => 'نشانی رلهٔ موسیقی',
 			'musicDevices.relayHint' => 'در دستگاه گیرنده فعال کنید و یک بار در همان شبکه جفت کنید. Pleazyng را باز نگه دارید. رله فرمان‌های رمزگذاری‌شدهٔ موسیقی را منتقل می‌کند و نشانی‌های شبکه را می‌بیند. هر پخش‌کننده از سرور رسانهٔ خودش پخش می‌کند.',
 			'musicDevices.relayInvalid' => 'نشانی HTTPS رله را وارد کنید.',
+			'bookmarkMigration.unassigned' => 'نشانک‌های نسخه‌ای ناشناخته',
+			'bookmarkMigration.assignToVersion' => 'اختصاص به این نسخه',
 			_ => null,
 		};
 	}

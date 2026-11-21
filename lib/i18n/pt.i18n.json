@@ -563,7 +563,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3264,6 +3263,7 @@
     "enterImageUrl": "Insira a URL da imagem",
     "imageUrl": "URL da Imagem",
     "metadataUpdated": "Metadados atualizados",
+    "metadataConflict": "Outra pessoa alterou o mesmo campo. Abra novamente o editor e verifique os valores atuais antes de guardar.",
     "metadataUpdateFailed": "Falha ao atualizar metadados",
     "artworkUpdated": "Arte atualizada",
     "artworkUpdateFailed": "Falha ao atualizar arte",
@@ -5719,5 +5719,9 @@
     "relay": "URL do relay de música",
     "relayHint": "Ative no dispositivo recetor e emparelhe uma vez na mesma rede. Mantenha o Pleazyng aberto. O relay transmite comandos de música encriptados e vê os endereços de rede. Cada leitor transmite do seu próprio servidor multimédia.",
     "relayInvalid": "Introduza um endereço HTTPS do relay."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Marcadores de uma versão não identificada",
+    "assignToVersion": "Atribuir a esta versão"
   }
 }

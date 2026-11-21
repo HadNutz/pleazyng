@@ -559,7 +559,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3240,6 +3239,7 @@
     "enterImageUrl": "Masukkan URL imej",
     "imageUrl": "imej URL",
     "metadataUpdated": "Metadata dikemaskini",
+    "metadataConflict": "Penyunting lain telah mengubah medan yang sama. Buka semula penyunting untuk menyemak nilai terkini sebelum menyimpan.",
     "metadataUpdateFailed": "Kegagalan Mengemas kini Metadata",
     "artworkUpdated": "Seni yang dikemaskini",
     "artworkUpdateFailed": "Kegagalan untuk mengemas kini karya seni",
@@ -5683,5 +5683,9 @@
     "relay": "URL geganti muzik",
     "relayHint": "Aktifkan pada peranti penerima, kemudian pasangkan sekali pada rangkaian yang sama. Biarkan Pleazyng terbuka. Geganti menghantar kawalan muzik yang disulitkan dan melihat alamat rangkaian. Setiap pemain menstrim daripada pelayan medianya sendiri.",
     "relayInvalid": "Masukkan alamat geganti HTTPS."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Penanda buku daripada versi yang tidak dikenal pasti",
+    "assignToVersion": "Tetapkan kepada versi ini"
   }
 }

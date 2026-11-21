@@ -123,6 +123,7 @@ class TranslationsNb extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$nb musicExperience = _Translations$musicExperience$nb._(_root);
 	@override late final _Translations$musicTools$nb musicTools = _Translations$musicTools$nb._(_root);
 	@override late final _Translations$musicDevices$nb musicDevices = _Translations$musicDevices$nb._(_root);
+	@override late final _Translations$bookmarkMigration$nb bookmarkMigration = _Translations$bookmarkMigration$nb._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$nb extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Skriv inn bilde-URL';
 	@override String get imageUrl => 'Bilde-URL';
 	@override String get metadataUpdated => 'Metadata oppdatert';
+	@override String get metadataConflict => 'En annen har endret det samme feltet. Åpne redigeringsvinduet på nytt og kontroller de nyeste verdiene før du lagrer.';
 	@override String get metadataUpdateFailed => 'Kunne ikke oppdatere metadata';
 	@override String get artworkUpdated => 'Grafikk oppdatert';
 	@override String get artworkUpdateFailed => 'Kunne ikke oppdatere grafikken';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$nb extends Translations$musicDevices$en {
 	@override String get relay => 'URL til musikkrelé';
 	@override String get relayHint => 'Aktiver på mottakeren, og par én gang på samme nettverk. Hold Pleazyng åpen. Reléet overfører krypterte musikkkommandoer og ser nettverksadresser. Hver spiller strømmer fra sin egen medieserver.';
 	@override String get relayInvalid => 'Skriv inn en HTTPS-adresse til reléet.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$nb extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$nb._(TranslationsNb root) : this._root = root, super.internal(root);
+
+	final TranslationsNb _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Bokmerker fra en ukjent versjon';
+	@override String get assignToVersion => 'Knytt til denne versjonen';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsNb {
 			'metadataEdit.enterImageUrl' => 'Skriv inn bilde-URL',
 			'metadataEdit.imageUrl' => 'Bilde-URL',
 			'metadataEdit.metadataUpdated' => 'Metadata oppdatert',
+			'metadataEdit.metadataConflict' => 'En annen har endret det samme feltet. Åpne redigeringsvinduet på nytt og kontroller de nyeste verdiene før du lagrer.',
 			'metadataEdit.metadataUpdateFailed' => 'Kunne ikke oppdatere metadata',
 			'metadataEdit.artworkUpdated' => 'Grafikk oppdatert',
 			'metadataEdit.artworkUpdateFailed' => 'Kunne ikke oppdatere grafikken',
@@ -8722,9 +8736,9 @@ extension on TranslationsNb {
 			'homeLayout.continueWatching' => 'Fortsett å se',
 			'homeLayout.continueWatchingLibraryDescription' => 'Denne bibliotekets egen resume-progress-runde',
 			'homeLayout.continueWatchingHomeDescription' => 'Den gjenoppgående fremskritt rad vist på Hjem',
-			'homeLayout.nextUpHomeDescription' => 'Neste uoppdaget episode ser ut separat på Home',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'Neste uoppdaget episode ser ut separat på Home',
 			'homeLayout.library' => 'Bibliotek',
 			'homeLayout.showInRecommended' => 'Utstilling i biblioteket anbefales',
 			'homeLayout.customPlexRow' => 'Tilpasset Plex rad',
@@ -9236,9 +9250,9 @@ extension on TranslationsNb {
 			'audiobook.statusNew' => 'Ikke startet',
 			'audiobook.statusProgress' => 'I fremskritt',
 			'audiobook.statusFinished' => 'Avslutter',
-			'audiobook.goToTime' => 'Gå til tid',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'Gå til tid',
 			'audiobook.timeHelp' => 'Tider: minutter: sekunder eller minutter: sekunder',
 			'audiobook.recoveryHelp' => 'Eksport en nylig kryptert kopi før du flytter eller reparerer synkronisering data. Importerer fusjon med nåværende tilstand; de erstattes aldri lokal synkroniseringshistorie.',
 			'audiobook.recoveryExport' => 'Eksport kryptert gjenoppretting filer',
@@ -9750,9 +9764,9 @@ extension on TranslationsNb {
 			'musicTools.noHistory' => 'Ingen musikk å vise ennå',
 			'musicTools.historyHint' => 'Avspillingshistorikk for denne profilen',
 			'musicTools.days' => 'Dager',
-			'musicTools.albumBlocks' => 'Hold hele album samlet',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'Hold hele album samlet',
 			'musicTools.home' => 'Musikk',
 			'musicTools.recent' => 'Nylig spilt',
 			'musicTools.apiKey' => 'API-nøkkel',
@@ -9813,6 +9827,8 @@ extension on TranslationsNb {
 			'musicDevices.relay' => 'URL til musikkrelé',
 			'musicDevices.relayHint' => 'Aktiver på mottakeren, og par én gang på samme nettverk. Hold Pleazyng åpen. Reléet overfører krypterte musikkkommandoer og ser nettverksadresser. Hver spiller strømmer fra sin egen medieserver.',
 			'musicDevices.relayInvalid' => 'Skriv inn en HTTPS-adresse til reléet.',
+			'bookmarkMigration.unassigned' => 'Bokmerker fra en ukjent versjon',
+			'bookmarkMigration.assignToVersion' => 'Knytt til denne versjonen',
 			_ => null,
 		};
 	}

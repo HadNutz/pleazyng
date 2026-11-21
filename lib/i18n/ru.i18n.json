@@ -565,7 +565,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3303,6 +3302,7 @@
     "enterImageUrl": "Введите URL изображения",
     "imageUrl": "URL изображения",
     "metadataUpdated": "Метаданные обновлены",
+    "metadataConflict": "Другой редактор изменил то же поле. Перед сохранением снова откройте редактор и проверьте актуальные значения.",
     "metadataUpdateFailed": "Не удалось обновить метаданные",
     "artworkUpdated": "Обложка обновлена",
     "artworkUpdateFailed": "Не удалось обновить обложку",
@@ -5764,5 +5764,9 @@
     "relay": "URL музыкального ретранслятора",
     "relayHint": "Включите на принимающем устройстве и один раз выполните сопряжение в одной сети. Оставьте Pleazyng открытым. Ретранслятор передаёт зашифрованные команды и видит сетевые адреса. Каждый плеер использует свой медиасервер.",
     "relayInvalid": "Введите HTTPS-адрес ретранслятора."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Закладки из неопознанной версии",
+    "assignToVersion": "Привязать к этой версии"
   }
 }

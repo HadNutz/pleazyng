@@ -1701,9 +1701,6 @@ class Translations$settings$en {
 	/// en: 'MPV has not activated display-synchronized interpolation for this session.'
 	String get motionSmoothingNotActiveDescription => 'MPV has not activated display-synchronized interpolation for this session.';
 
-	/// en: 'Saved for the next video. The player prepares its motion processor when playback starts.'
-	String get motionSmoothingNextPlayback => 'Saved for the next video. The player prepares its motion processor when playback starts.';
-
 	/// en: 'Off'
 	String get motionSmoothingOff => 'Off';
 
@@ -18829,7 +18826,6 @@ extension on Translations {
 			'settings.motionSmoothingApplyFailed' => 'The player could not apply motion smoothing. Playback will continue unchanged.',
 			'settings.motionSmoothingLiveUnavailableDescription' => 'Motion smoothing is disabled for live playback to preserve stream timing.',
 			'settings.motionSmoothingNotActiveDescription' => 'MPV has not activated display-synchronized interpolation for this session.',
-			'settings.motionSmoothingNextPlayback' => 'Saved for the next video. The player prepares its motion processor when playback starts.',
 			'settings.motionSmoothingOff' => 'Off',
 			'settings.motionSmoothingOffDescription' => 'Keep the player’s existing display and frame cadence.',
 			'settings.motionSmoothingMpv' => 'MPV',
@@ -19315,9 +19311,9 @@ extension on Translations {
 			'accessibility.mediaCardShow' => ({required Object title}) => '${title}, TV show',
 			'accessibility.mediaCardEpisode' => ({required Object title, required Object episodeInfo}) => '${title}, ${episodeInfo}',
 			'accessibility.mediaCardSeason' => ({required Object title, required Object seasonInfo}) => '${title}, ${seasonInfo}',
+			'accessibility.mediaCardWatched' => 'watched',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.mediaCardWatched' => 'watched',
 			'accessibility.mediaCardPartiallyWatched' => ({required Object percent}) => '${percent} percent watched',
 			'accessibility.mediaCardUnwatched' => 'unwatched',
 			'accessibility.tapToPlay' => 'Tap to play',
@@ -19829,9 +19825,9 @@ extension on Translations {
 			'iptv.deleteRecording' => 'Delete recording',
 			'iptv.deleteRecordingConfirm' => 'Delete this recording and its file from this device?',
 			'iptv.deleteDispatcharrRecordingConfirm' => 'Delete this recording and its file from the Dispatcharr server?',
+			'iptv.stopRecording' => 'Stop recording',
 			_ => null,
 		} ?? switch (path) {
-			'iptv.stopRecording' => 'Stop recording',
 			'iptv.recordingDeleted' => 'Recording deleted.',
 			'iptv.recordingScheduled' => 'Recording scheduled on Dispatcharr.',
 			'iptv.scheduleRecordingOnDevice' => 'Schedule local recording',
@@ -20343,9 +20339,9 @@ extension on Translations {
 			'explore.rows.upcomingMovies' => 'Upcoming Movies',
 			'explore.rows.upcomingShows' => 'Upcoming Shows',
 			'explore.status.airing' => 'Airing',
+			'explore.status.ended' => 'Ended',
 			_ => null,
 		} ?? switch (path) {
-			'explore.status.ended' => 'Ended',
 			'explore.status.canceled' => 'Canceled',
 			'explore.status.upcoming' => 'Upcoming',
 			'explore.episodeCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episode', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episodes', ), 
@@ -20857,9 +20853,9 @@ extension on Translations {
 			'downloads.nextNUnwatched' => ({required Object count}) => 'Next ${count} unwatched',
 			'downloads.customAmount' => 'Custom amount...',
 			'downloads.customAmountAny' => 'Custom amount (any)...',
+			'downloads.randomEpisodes' => 'Random episodes',
 			_ => null,
 		} ?? switch (path) {
-			'downloads.randomEpisodes' => 'Random episodes',
 			'downloads.includeSpecials' => 'Include Specials',
 			'downloads.howManyEpisodes' => 'How many episodes?',
 			'downloads.invalidEpisodeCount' => 'Enter a valid episode count.',
@@ -21371,9 +21367,9 @@ extension on Translations {
 			'matchScreen.unmatchFailed' => 'Failed to unmatch item',
 			'matchScreen.matchApplied' => 'Match applied',
 			'matchScreen.matchFailed' => 'Failed to apply match',
+			'matchScreen.titleHint' => 'Title',
 			_ => null,
 		} ?? switch (path) {
-			'matchScreen.titleHint' => 'Title',
 			'matchScreen.yearHint' => 'Year',
 			'matchScreen.search' => 'Search',
 			'matchScreen.noMatchesFound' => 'No matches found',
@@ -21885,9 +21881,9 @@ extension on Translations {
 			'platform.localNetworkPermission' => 'Pleazyng connects to your media servers and playback devices on your local network.',
 			'platform.locationPermission' => 'Pleazyng uses location access when iOS requires it to detect your local network and connect to your media servers.',
 			'platform.photoLibraryPermission' => 'Choose images from your photo library to use as media artwork.',
+			'platform.cameraPermission' => 'Scan QR codes to pair a Companion Remote.',
 			_ => null,
 		} ?? switch (path) {
-			'platform.cameraPermission' => 'Scan QR codes to pair a Companion Remote.',
 			'universalMedia.title' => 'Open media',
 			'universalMedia.shortcutHelp' => 'Play a link, playlist, or file for this session.',
 			'universalMedia.intro' => 'Open a link, playlist, or file. Playback uses Pleazyng’s standard player and does not add history to your library.',
@@ -22399,9 +22395,9 @@ extension on Translations {
 			'sourceSetup.nfsLimitations' => 'Read-only NFSv3 over TCP. Without RPC-with-TLS, NFS traffic is unencrypted. The NAS must allow the selected AUTH_SYS IDs and unprivileged client ports (often called the “insecure” export option). NFSv4 and UDP are not supported.',
 			'sourceSetup.nfsSetupHelp' => 'NFS setup help',
 			'sourceSetup.nfsSetupHint' => 'Check these settings if the connection does not open.',
+			'sourceSetup.nfsSetupDetails' => 'Use an NFSv3 TCP export. The NFS service and mount service must both support RPC-with-TLS when encryption is required. Leave the custom certificate blank for a server certificate trusted by this device, or add the NAS CA/self-signed certificate. The certificate name must match the host in the endpoint. If the NAS asks for mutual TLS, add its PKCS#12 client identity. Finally, confirm the export allows the configured AUTH_SYS UID/GID and the client port policy.',
 			_ => null,
 		} ?? switch (path) {
-			'sourceSetup.nfsSetupDetails' => 'Use an NFSv3 TCP export. The NFS service and mount service must both support RPC-with-TLS when encryption is required. Leave the custom certificate blank for a server certificate trusted by this device, or add the NAS CA/self-signed certificate. The certificate name must match the host in the endpoint. If the NAS asks for mutual TLS, add its PKCS#12 client identity. Finally, confirm the export allows the configured AUTH_SYS UID/GID and the client port policy.',
 			'sourceSetup.ftpHelp' => 'FTP uses passive mode. Use ftp:// for plain FTP, ftpes:// for explicit TLS, or ftps:// for TLS (implicit on port 990; explicit on other ports).',
 			'sourceSetup.openSubtitles' => 'OpenSubtitles',
 			'sourceSetup.subtitleSetup' => 'Optional subtitle search for standalone videos.',
@@ -22913,9 +22909,9 @@ extension on Translations {
 			'podcasts.indexSecret' => 'API secret',
 			'podcasts.country' => 'Country (two-letter code)',
 			'podcasts.directoryLink' => 'Open directory listing',
+			'podcasts.feedAdded' => 'Podcast added.',
 			_ => null,
 		} ?? switch (path) {
-			'podcasts.feedAdded' => 'Podcast added.',
 			'podcasts.refreshPartial' => 'Some feeds could not refresh. Cached episodes remain available.',
 			'podcasts.importOpml' => 'Import subscriptions (OPML)',
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
@@ -23427,9 +23423,9 @@ extension on Translations {
 			'karaokeUi.phonePitchAndPrivateRecording' => 'Phone pitch and private recording',
 			'karaokeUi.phoneMicrophoneInputHelp' => 'Use headphones. This input provides pitch feedback and an optional private dry recording on the host. It does not amplify your voice through the stage speakers.',
 			'karaokeUi.sendRawVocalAudioForPrivateTake' => 'Send raw vocal audio to save a private take on the host',
+			'karaokeUi.enablePhoneMicrophone' => 'Enable phone microphone',
 			_ => null,
 		} ?? switch (path) {
-			'karaokeUi.enablePhoneMicrophone' => 'Enable phone microphone',
 			'karaokeUi.muteAndSavePhoneInput' => 'Mute and save',
 			'karaokeUi.pitchMIDIPracticeOnly' => ({required Object value1}) => 'Pitch MIDI ${value1} · practice only',
 			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',

@@ -123,6 +123,7 @@ class TranslationsJa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ja musicExperience = _Translations$musicExperience$ja._(_root);
 	@override late final _Translations$musicTools$ja musicTools = _Translations$musicTools$ja._(_root);
 	@override late final _Translations$musicDevices$ja musicDevices = _Translations$musicDevices$ja._(_root);
+	@override late final _Translations$bookmarkMigration$ja bookmarkMigration = _Translations$bookmarkMigration$ja._(_root);
 }
 
 // Path: mediaConveniences
@@ -2723,6 +2724,7 @@ class _Translations$metadataEdit$ja extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => '画像URLを入力';
 	@override String get imageUrl => '画像URL';
 	@override String get metadataUpdated => 'メタデータを更新しました';
+	@override String get metadataConflict => '同じ項目が別の編集者によって変更されました。保存する前に編集画面を開き直し、最新の値を確認してください。';
 	@override String get metadataUpdateFailed => 'メタデータの更新に失敗しました';
 	@override String get artworkUpdated => 'アートワークを更新しました';
 	@override String get artworkUpdateFailed => 'アートワークの更新に失敗しました';
@@ -4518,6 +4520,17 @@ class _Translations$musicDevices$ja extends Translations$musicDevices$en {
 	@override String get relay => '音楽リレーのURL';
 	@override String get relayHint => '受信デバイスで有効にし、同じネットワークで一度ペアリングしてください。Pleazyngを開いたままにします。リレーは暗号化された音楽操作を転送し、ネットワークアドレスを参照します。各プレーヤーは自身のメディアサーバーから再生します。';
 	@override String get relayInvalid => 'リレーのHTTPSアドレスを入力してください。';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$ja extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$ja._(TranslationsJa root) : this._root = root, super.internal(root);
+
+	final TranslationsJa _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'バージョン不明のブックマーク';
+	@override String get assignToVersion => 'このバージョンに割り当てる';
 }
 
 // Path: appIcon.names
@@ -8286,6 +8299,7 @@ extension on TranslationsJa {
 			'metadataEdit.enterImageUrl' => '画像URLを入力',
 			'metadataEdit.imageUrl' => '画像URL',
 			'metadataEdit.metadataUpdated' => 'メタデータを更新しました',
+			'metadataEdit.metadataConflict' => '同じ項目が別の編集者によって変更されました。保存する前に編集画面を開き直し、最新の値を確認してください。',
 			'metadataEdit.metadataUpdateFailed' => 'メタデータの更新に失敗しました',
 			'metadataEdit.artworkUpdated' => 'アートワークを更新しました',
 			'metadataEdit.artworkUpdateFailed' => 'アートワークの更新に失敗しました',
@@ -8717,9 +8731,9 @@ extension on TranslationsJa {
 			'homeLayout.continueWatching' => '視聴を続ける',
 			'homeLayout.continueWatchingLibraryDescription' => 'この図書館のリサイクル・進歩の順番',
 			'homeLayout.continueWatchingHomeDescription' => 'ホーム で表示される再生進歩の順番',
-			'homeLayout.nextUpHomeDescription' => '次の未見のエピソードの順番がホームで別々に表示されます。',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => '次の未見のエピソードの順番がホームで別々に表示されます。',
 			'homeLayout.library' => 'ライブラリ',
 			'homeLayout.showInRecommended' => '図書館で紹介される',
 			'homeLayout.customPlexRow' => '定制 Plex ライン',
@@ -9231,9 +9245,9 @@ extension on TranslationsJa {
 			'audiobook.statusNew' => '始まらない',
 			'audiobook.statusProgress' => '進歩中',
 			'audiobook.statusFinished' => '終了',
-			'audiobook.goToTime' => '時間へ行く',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => '時間へ行く',
 			'audiobook.timeHelp' => '時間:分:秒、または分:秒',
 			'audiobook.recoveryHelp' => '同期データを移動または修正する前に、最近暗号化されたコピーを輸出します. インポートは現在の状態と合併し、現地の同期史を決して置き換えることはありません。',
 			'audiobook.recoveryExport' => 'エクスポート暗号化回復ファイル',
@@ -9745,9 +9759,9 @@ extension on TranslationsJa {
 			'musicTools.noHistory' => '表示する音楽はまだありません',
 			'musicTools.historyHint' => 'このプロフィールの再生履歴',
 			'musicTools.days' => '日',
-			'musicTools.albumBlocks' => 'アルバム全体をまとめる',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'アルバム全体をまとめる',
 			'musicTools.home' => '音楽',
 			'musicTools.recent' => '最近再生した曲',
 			'musicTools.apiKey' => 'API キー',
@@ -9808,6 +9822,8 @@ extension on TranslationsJa {
 			'musicDevices.relay' => '音楽リレーのURL',
 			'musicDevices.relayHint' => '受信デバイスで有効にし、同じネットワークで一度ペアリングしてください。Pleazyngを開いたままにします。リレーは暗号化された音楽操作を転送し、ネットワークアドレスを参照します。各プレーヤーは自身のメディアサーバーから再生します。',
 			'musicDevices.relayInvalid' => 'リレーのHTTPSアドレスを入力してください。',
+			'bookmarkMigration.unassigned' => 'バージョン不明のブックマーク',
+			'bookmarkMigration.assignToVersion' => 'このバージョンに割り当てる',
 			_ => null,
 		};
 	}

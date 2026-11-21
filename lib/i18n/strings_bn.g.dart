@@ -123,6 +123,7 @@ class TranslationsBn extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$bn musicExperience = _Translations$musicExperience$bn._(_root);
 	@override late final _Translations$musicTools$bn musicTools = _Translations$musicTools$bn._(_root);
 	@override late final _Translations$musicDevices$bn musicDevices = _Translations$musicDevices$bn._(_root);
+	@override late final _Translations$bookmarkMigration$bn bookmarkMigration = _Translations$bookmarkMigration$bn._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$bn extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'ইমেজ URL লিখুন';
 	@override String get imageUrl => 'ইমেজ URL';
 	@override String get metadataUpdated => 'মেটাদাডেট আপডেট';
+	@override String get metadataConflict => 'অন্য একজন সম্পাদক একই ক্ষেত্রটি পরিবর্তন করেছেন। সংরক্ষণের আগে সর্বশেষ মানগুলি দেখতে সম্পাদকটি আবার খুলুন।';
 	@override String get metadataUpdateFailed => 'মেটাদাটা আপডেট করতে পারেনি';
 	@override String get artworkUpdated => 'অ্যাকাউন্ট আপডেট';
 	@override String get artworkUpdateFailed => 'শিল্প কাজ আপডেট করতে পারিনি';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$bn extends Translations$musicDevices$en {
 	@override String get relay => 'মিউজিক রিলে URL';
 	@override String get relayHint => 'গ্রহণকারী ডিভাইসে চালু করুন, তারপর একই নেটওয়ার্কে একবার পেয়ার করুন। Pleazyng খোলা রাখুন। রিলে এনক্রিপ্ট করা সঙ্গীত নিয়ন্ত্রণ পাঠায় এবং নেটওয়ার্ক ঠিকানা দেখতে পায়। প্রতিটি প্লেয়ার নিজস্ব মিডিয়া সার্ভার থেকে স্ট্রিম করে।';
 	@override String get relayInvalid => 'একটি HTTPS রিলে ঠিকানা লিখুন।';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$bn extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$bn._(TranslationsBn root) : this._root = root, super.internal(root);
+
+	final TranslationsBn _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'অজানা সংস্করণের বুকমার্ক';
+	@override String get assignToVersion => 'এই সংস্করণে যুক্ত করুন';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsBn {
 			'metadataEdit.enterImageUrl' => 'ইমেজ URL লিখুন',
 			'metadataEdit.imageUrl' => 'ইমেজ URL',
 			'metadataEdit.metadataUpdated' => 'মেটাদাডেট আপডেট',
+			'metadataEdit.metadataConflict' => 'অন্য একজন সম্পাদক একই ক্ষেত্রটি পরিবর্তন করেছেন। সংরক্ষণের আগে সর্বশেষ মানগুলি দেখতে সম্পাদকটি আবার খুলুন।',
 			'metadataEdit.metadataUpdateFailed' => 'মেটাদাটা আপডেট করতে পারেনি',
 			'metadataEdit.artworkUpdated' => 'অ্যাকাউন্ট আপডেট',
 			'metadataEdit.artworkUpdateFailed' => 'শিল্প কাজ আপডেট করতে পারিনি',
@@ -8722,9 +8736,9 @@ extension on TranslationsBn {
 			'homeLayout.continueWatching' => 'দেখা অব্যাহত রাখুন',
 			'homeLayout.continueWatchingLibraryDescription' => 'এই লাইব্রেরির নিজস্ব পুনরাবৃত্তি-প্রগ্রেস লাইন',
 			'homeLayout.continueWatchingHomeDescription' => 'বাড়িতে প্রদর্শনিত পুনরাবৃত্তি-প্রদর্শন পর্যায়ে',
-			'homeLayout.nextUpHomeDescription' => 'Next Unwatched Episode পরবর্তী পরিস্থিতি নির্দিষ্টভাবে দেখানো হয় Home',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'Next Unwatched Episode পরবর্তী পরিস্থিতি নির্দিষ্টভাবে দেখানো হয় Home',
 			'homeLayout.library' => 'লাইব্রেরি',
 			'homeLayout.showInRecommended' => 'লাইব্রেরিতে প্রদর্শন করা উচিত',
 			'homeLayout.customPlexRow' => 'কাস্টম Plex রান',
@@ -9236,9 +9250,9 @@ extension on TranslationsBn {
 			'audiobook.statusNew' => 'শুরু না',
 			'audiobook.statusProgress' => 'প্রদর্শন',
 			'audiobook.statusFinished' => 'শেষ',
-			'audiobook.goToTime' => 'সময় নিয়ে যান',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'সময় নিয়ে যান',
 			'audiobook.timeHelp' => 'ঘণ্টা : মিনিট : সেকেন্ড বা মিনিট : সেকেন্ড',
 			'audiobook.recoveryHelp' => 'সিঙ্ক ডেটা সরানোর বা মেরামত করার আগে সাম্প্রতিক এনক্রিপ্ট করা কপি রপ্তানি করুন। আমদানি করলে বর্তমান অবস্থার সঙ্গে ডেটা মিশে যাবে; স্থানীয় সিঙ্ক ইতিহাস কখনো প্রতিস্থাপিত হবে না। সিঙ্ক কোড আলাদা করে রাখুন।',
 			'audiobook.recoveryExport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
@@ -9750,9 +9764,9 @@ extension on TranslationsBn {
 			'musicTools.noHistory' => 'এখনও দেখানোর মতো সঙ্গীত নেই',
 			'musicTools.historyHint' => 'এই প্রোফাইলের প্লেব্যাক ইতিহাস',
 			'musicTools.days' => 'দিন',
-			'musicTools.albumBlocks' => 'সম্পূর্ণ অ্যালবাম একসাথে রাখুন',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'সম্পূর্ণ অ্যালবাম একসাথে রাখুন',
 			'musicTools.home' => 'সঙ্গীত',
 			'musicTools.recent' => 'সম্প্রতি শোনা',
 			'musicTools.apiKey' => 'API কী',
@@ -9813,6 +9827,8 @@ extension on TranslationsBn {
 			'musicDevices.relay' => 'মিউজিক রিলে URL',
 			'musicDevices.relayHint' => 'গ্রহণকারী ডিভাইসে চালু করুন, তারপর একই নেটওয়ার্কে একবার পেয়ার করুন। Pleazyng খোলা রাখুন। রিলে এনক্রিপ্ট করা সঙ্গীত নিয়ন্ত্রণ পাঠায় এবং নেটওয়ার্ক ঠিকানা দেখতে পায়। প্রতিটি প্লেয়ার নিজস্ব মিডিয়া সার্ভার থেকে স্ট্রিম করে।',
 			'musicDevices.relayInvalid' => 'একটি HTTPS রিলে ঠিকানা লিখুন।',
+			'bookmarkMigration.unassigned' => 'অজানা সংস্করণের বুকমার্ক',
+			'bookmarkMigration.assignToVersion' => 'এই সংস্করণে যুক্ত করুন',
 			_ => null,
 		};
 	}

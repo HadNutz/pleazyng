@@ -105,6 +105,7 @@ class TranslationsPtPt extends TranslationsPt with BaseTranslations<AppLocale, T
 	@override late final Translations$serverTasks$pt_PT serverTasks = Translations$serverTasks$pt_PT.internal(_root);
 	@override late final Translations$trakt$pt_PT trakt = Translations$trakt$pt_PT.internal(_root);
 	@override late final Translations$deepLinks$pt_PT deepLinks = Translations$deepLinks$pt_PT.internal(_root);
+	@override late final Translations$bookmarkMigration$pt_PT bookmarkMigration = Translations$bookmarkMigration$pt_PT.internal(_root);
 }
 
 // Path: appIcon
@@ -1998,6 +1999,7 @@ class Translations$metadataEdit$pt_PT extends Translations$metadataEdit$pt {
 	@override String get country => 'País';
 	@override String get label => 'Etiqueta';
 	@override String get quickTag => 'Tag rápida...';
+	@override String get metadataConflict => 'Outra pessoa alterou o mesmo campo. Abra novamente o editor e verifique os valores atuais antes de guardar.';
 }
 
 // Path: matchScreen
@@ -2778,6 +2780,17 @@ class Translations$deepLinks$pt_PT extends Translations$deepLinks$pt {
 	@override String openAsProfile({required Object name}) => 'Abrir como ${name}';
 	@override String get copy => 'Copiar';
 	@override String get copied => 'Link copiado';
+}
+
+// Path: bookmarkMigration
+class Translations$bookmarkMigration$pt_PT extends Translations$bookmarkMigration$pt {
+	Translations$bookmarkMigration$pt_PT.internal(TranslationsPtPt root) : this._root = root, super.internal(root);
+
+	final TranslationsPtPt _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Marcadores de uma versão não identificada';
+	@override String get assignToVersion => 'Atribuir a esta versão';
 }
 
 // Path: appIcon.names
@@ -5719,6 +5732,7 @@ extension on TranslationsPtPt {
 			'metadataEdit.country' => 'País',
 			'metadataEdit.label' => 'Etiqueta',
 			'metadataEdit.quickTag' => 'Tag rápida...',
+			'metadataEdit.metadataConflict' => 'Outra pessoa alterou o mesmo campo. Abra novamente o editor e verifique os valores atuais antes de guardar.',
 			'matchScreen.titleHint' => 'Título',
 			'matchScreen.yearHint' => 'Ano',
 			'matchScreen.search' => 'Pesquisar',
@@ -5762,9 +5776,9 @@ extension on TranslationsPtPt {
 			'seerr.languageProfile' => 'Perfil de idioma',
 			'seerr.noTags' => 'Sem etiquetas',
 			'seerr.defaultOption' => ({required Object name}) => '${name} (predefinido)',
-			'seerr.animeNote' => 'Esta série é um anime.',
 			_ => null,
 		} ?? switch (path) {
+			'seerr.animeNote' => 'Esta série é um anime.',
 			'seerr.requestSubmitted' => 'Pedido enviado',
 			'seerr.requestFailed' => ({required Object error}) => 'Falha no pedido: ${error}',
 			'seerr.requestsLoadFailed' => 'Não foi possível carregar as opções de pedido',
@@ -6249,6 +6263,8 @@ extension on TranslationsPtPt {
 			'deepLinks.openAsProfile' => ({required Object name}) => 'Abrir como ${name}',
 			'deepLinks.copy' => 'Copiar',
 			'deepLinks.copied' => 'Link copiado',
+			'bookmarkMigration.unassigned' => 'Marcadores de uma versão não identificada',
+			'bookmarkMigration.assignToVersion' => 'Atribuir a esta versão',
 			_ => null,
 		};
 	}

@@ -123,6 +123,7 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$vi musicExperience = _Translations$musicExperience$vi._(_root);
 	@override late final _Translations$musicTools$vi musicTools = _Translations$musicTools$vi._(_root);
 	@override late final _Translations$musicDevices$vi musicDevices = _Translations$musicDevices$vi._(_root);
+	@override late final _Translations$bookmarkMigration$vi bookmarkMigration = _Translations$bookmarkMigration$vi._(_root);
 }
 
 // Path: mediaConveniences
@@ -2708,6 +2709,7 @@ class _Translations$metadataEdit$vi extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Nhập hình ảnh URL';
 	@override String get imageUrl => 'Ảnh URL';
 	@override String get metadataUpdated => 'Metadata cập nhật';
+	@override String get metadataConflict => 'Một người khác đã sửa cùng trường này. Hãy mở lại trình chỉnh sửa và kiểm tra các giá trị mới nhất trước khi lưu.';
 	@override String get metadataUpdateFailed => 'Không cập nhật metadata';
 	@override String get artworkUpdated => 'Artwork cập nhật';
 	@override String get artworkUpdateFailed => 'Không cập nhật tác phẩm nghệ thuật';
@@ -4500,6 +4502,17 @@ class _Translations$musicDevices$vi extends Translations$musicDevices$en {
 	@override String get relay => 'URL chuyển tiếp nhạc';
 	@override String get relayHint => 'Bật trên thiết bị nhận rồi ghép đôi một lần trên cùng mạng. Giữ Pleazyng mở. Máy chuyển tiếp truyền lệnh nhạc được mã hóa và thấy địa chỉ mạng. Mỗi trình phát truyền từ máy chủ phương tiện riêng.';
 	@override String get relayInvalid => 'Nhập địa chỉ chuyển tiếp HTTPS.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$vi extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$vi._(TranslationsVi root) : this._root = root, super.internal(root);
+
+	final TranslationsVi _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Dấu trang từ phiên bản chưa xác định';
+	@override String get assignToVersion => 'Gán cho phiên bản này';
 }
 
 // Path: appIcon.names
@@ -8266,6 +8279,7 @@ extension on TranslationsVi {
 			'metadataEdit.enterImageUrl' => 'Nhập hình ảnh URL',
 			'metadataEdit.imageUrl' => 'Ảnh URL',
 			'metadataEdit.metadataUpdated' => 'Metadata cập nhật',
+			'metadataEdit.metadataConflict' => 'Một người khác đã sửa cùng trường này. Hãy mở lại trình chỉnh sửa và kiểm tra các giá trị mới nhất trước khi lưu.',
 			'metadataEdit.metadataUpdateFailed' => 'Không cập nhật metadata',
 			'metadataEdit.artworkUpdated' => 'Artwork cập nhật',
 			'metadataEdit.artworkUpdateFailed' => 'Không cập nhật tác phẩm nghệ thuật',
@@ -8697,9 +8711,9 @@ extension on TranslationsVi {
 			'homeLayout.continueWatching' => 'Tiếp tục xem',
 			'homeLayout.continueWatchingLibraryDescription' => 'Thư viện bản thân của dòng tiến bộ',
 			'homeLayout.continueWatchingHomeDescription' => 'Lời bài hát: The Resume-Progress Trail Showed On Home',
-			'homeLayout.nextUpHomeDescription' => 'Next Unwatched episode series hiển thị riêng biệt trên Home',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'Next Unwatched episode series hiển thị riêng biệt trên Home',
 			'homeLayout.library' => 'Thư viện',
 			'homeLayout.showInRecommended' => 'Hiển thị trong Thư viện khuyến cáo',
 			'homeLayout.customPlexRow' => 'Tính năng: Plex',
@@ -9211,9 +9225,9 @@ extension on TranslationsVi {
 			'audiobook.statusNew' => 'Không bắt đầu',
 			'audiobook.statusProgress' => 'trong tiến bộ',
 			'audiobook.statusFinished' => 'Kết thúc',
-			'audiobook.goToTime' => 'Đi đến thời gian',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'Đi đến thời gian',
 			'audiobook.timeHelp' => 'Thời gian: phút: giây, hoặc phút: giây',
 			'audiobook.recoveryHelp' => 'Xuất một bản sao được mã hóa gần đây trước khi di chuyển hoặc sửa chữa dữ liệu đồng bộ. nhập khẩu kết hợp với trạng thái hiện tại; họ không bao giờ thay thế lịch sử đồng bộ địa phương. Giữ mã đồng bộ riêng biệt.',
 			'audiobook.recoveryExport' => 'Xuất khẩu file recovery mã hóa',
@@ -9725,9 +9739,9 @@ extension on TranslationsVi {
 			'musicTools.noHistory' => 'Chưa có nhạc để hiển thị',
 			'musicTools.historyHint' => 'Lịch sử phát của hồ sơ này',
 			'musicTools.days' => 'Ngày',
-			'musicTools.albumBlocks' => 'Giữ nguyên album',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'Giữ nguyên album',
 			'musicTools.home' => 'Nhạc',
 			'musicTools.recent' => 'Đã phát gần đây',
 			'musicTools.apiKey' => 'Khóa API',
@@ -9788,6 +9802,8 @@ extension on TranslationsVi {
 			'musicDevices.relay' => 'URL chuyển tiếp nhạc',
 			'musicDevices.relayHint' => 'Bật trên thiết bị nhận rồi ghép đôi một lần trên cùng mạng. Giữ Pleazyng mở. Máy chuyển tiếp truyền lệnh nhạc được mã hóa và thấy địa chỉ mạng. Mỗi trình phát truyền từ máy chủ phương tiện riêng.',
 			'musicDevices.relayInvalid' => 'Nhập địa chỉ chuyển tiếp HTTPS.',
+			'bookmarkMigration.unassigned' => 'Dấu trang từ phiên bản chưa xác định',
+			'bookmarkMigration.assignToVersion' => 'Gán cho phiên bản này',
 			_ => null,
 		};
 	}

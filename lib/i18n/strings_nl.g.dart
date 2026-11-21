@@ -123,6 +123,7 @@ class TranslationsNl extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$nl musicExperience = _Translations$musicExperience$nl._(_root);
 	@override late final _Translations$musicTools$nl musicTools = _Translations$musicTools$nl._(_root);
 	@override late final _Translations$musicDevices$nl musicDevices = _Translations$musicDevices$nl._(_root);
+	@override late final _Translations$bookmarkMigration$nl bookmarkMigration = _Translations$bookmarkMigration$nl._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$nl extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Voer de afbeeldings-URL in';
 	@override String get imageUrl => 'Afbeeldings-URL';
 	@override String get metadataUpdated => 'Metadata bijgewerkt';
+	@override String get metadataConflict => 'Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw en controleer de nieuwste waarden voordat je opslaat.';
 	@override String get metadataUpdateFailed => 'Metadata bijwerken mislukt';
 	@override String get artworkUpdated => 'Illustraties bijgewerkt';
 	@override String get artworkUpdateFailed => 'Illustraties bijwerken mislukt';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$nl extends Translations$musicDevices$en {
 	@override String get relay => 'URL van muziekrelais';
 	@override String get relayHint => 'Schakel in op het ontvangende apparaat en koppel eenmaal op hetzelfde netwerk. Houd Pleazyng open. Het relais verstuurt versleutelde muziekbediening en ziet netwerkadressen. Elke speler streamt vanaf zijn eigen mediaserver.';
 	@override String get relayInvalid => 'Voer een HTTPS-adres voor het relais in.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$nl extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$nl._(TranslationsNl root) : this._root = root, super.internal(root);
+
+	final TranslationsNl _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Bladwijzers uit een onbekende versie';
+	@override String get assignToVersion => 'Aan deze versie toewijzen';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsNl {
 			'metadataEdit.enterImageUrl' => 'Voer de afbeeldings-URL in',
 			'metadataEdit.imageUrl' => 'Afbeeldings-URL',
 			'metadataEdit.metadataUpdated' => 'Metadata bijgewerkt',
+			'metadataEdit.metadataConflict' => 'Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw en controleer de nieuwste waarden voordat je opslaat.',
 			'metadataEdit.metadataUpdateFailed' => 'Metadata bijwerken mislukt',
 			'metadataEdit.artworkUpdated' => 'Illustraties bijgewerkt',
 			'metadataEdit.artworkUpdateFailed' => 'Illustraties bijwerken mislukt',
@@ -8722,9 +8736,9 @@ extension on TranslationsNl {
 			'homeLayout.continueWatching' => 'Verder kijken',
 			'homeLayout.continueWatchingLibraryDescription' => 'De eigen resume-progress-rond van deze bibliotheek',
 			'homeLayout.continueWatchingHomeDescription' => 'De herhaling-progress-lijn getoond op Home',
-			'homeLayout.nextUpHomeDescription' => 'De volgende onbewaarde episode rij verschijnt afzonderlijk op Home',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'De volgende onbewaarde episode rij verschijnt afzonderlijk op Home',
 			'homeLayout.library' => 'Bibliotheek',
 			'homeLayout.showInRecommended' => 'In de bibliotheek aanbevolen',
 			'homeLayout.customPlexRow' => 'Kijk naar Plex',
@@ -9236,9 +9250,9 @@ extension on TranslationsNl {
 			'audiobook.statusNew' => 'Niet begonnen',
 			'audiobook.statusProgress' => 'In vooruitgang',
 			'audiobook.statusFinished' => 'Afgerond',
-			'audiobook.goToTime' => 'Ga naar de tijd',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'Ga naar de tijd',
 			'audiobook.timeHelp' => 'uur: minuten: seconden of minuten: seconden',
 			'audiobook.recoveryHelp' => 'Exporteer een recente versleutelde kopie voor het verplaatsen of repareren van synchronisatiegegevens.Importeren verschijnt met de huidige toestand; ze vervangen nooit de lokale sync-geschiedenis.',
 			'audiobook.recoveryExport' => 'Export versleutelde herstel bestanden',
@@ -9750,9 +9764,9 @@ extension on TranslationsNl {
 			'musicTools.noHistory' => 'Nog geen muziek om te tonen',
 			'musicTools.historyHint' => 'Afspeelgeschiedenis voor dit profiel',
 			'musicTools.days' => 'Dagen',
-			'musicTools.albumBlocks' => 'Volledige albums bij elkaar houden',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'Volledige albums bij elkaar houden',
 			'musicTools.home' => 'Muziek',
 			'musicTools.recent' => 'Onlangs afgespeeld',
 			'musicTools.apiKey' => 'API-sleutel',
@@ -9813,6 +9827,8 @@ extension on TranslationsNl {
 			'musicDevices.relay' => 'URL van muziekrelais',
 			'musicDevices.relayHint' => 'Schakel in op het ontvangende apparaat en koppel eenmaal op hetzelfde netwerk. Houd Pleazyng open. Het relais verstuurt versleutelde muziekbediening en ziet netwerkadressen. Elke speler streamt vanaf zijn eigen mediaserver.',
 			'musicDevices.relayInvalid' => 'Voer een HTTPS-adres voor het relais in.',
+			'bookmarkMigration.unassigned' => 'Bladwijzers uit een onbekende versie',
+			'bookmarkMigration.assignToVersion' => 'Aan deze versie toewijzen',
 			_ => null,
 		};
 	}

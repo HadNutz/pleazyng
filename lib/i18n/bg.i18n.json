@@ -561,7 +561,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3261,6 +3260,7 @@
     "enterImageUrl": "Въведете URL на изображение",
     "imageUrl": "URL на изображение",
     "metadataUpdated": "Метаданните са обновени",
+    "metadataConflict": "Друг редактор промени същото поле. Отворете редактора отново, за да прегледате последните стойности преди запис.",
     "metadataUpdateFailed": "Неуспешно обновяване на метаданни",
     "artworkUpdated": "Обложката е обновена",
     "artworkUpdateFailed": "Неуспешно обновяване на обложката",
@@ -5710,5 +5710,9 @@
     "relay": "Адрес на музикалния ретранслатор",
     "relayHint": "Включете на приемащото устройство и сдвоете веднъж в една и съща мрежа. Оставете Pleazyng отворен. Ретранслаторът пренася шифровани музикални команди и вижда мрежовите адреси. Всеки плейър използва своя медиен сървър.",
     "relayInvalid": "Въведете HTTPS адрес на ретранслатор."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Отметки от неустановена версия",
+    "assignToVersion": "Присвояване на тази версия"
   }
 }

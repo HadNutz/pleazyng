@@ -561,7 +561,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3261,6 +3260,7 @@
     "enterImageUrl": "URL تصویر را وارد کنید",
     "imageUrl": "تصویر URL",
     "metadataUpdated": "Metadata به روز شده",
+    "metadataConflict": "ویرایشگر دیگری همین فیلد را تغییر داده است. پیش از ذخیره، ویرایشگر را دوباره باز کنید و آخرین مقادیر را بررسی کنید.",
     "metadataUpdateFailed": "عدم به روز رسانی متا",
     "artworkUpdated": "هنر به روز شده",
     "artworkUpdateFailed": "به روز رسانی هنرهای هنری",
@@ -5710,5 +5710,9 @@
     "relay": "نشانی رلهٔ موسیقی",
     "relayHint": "در دستگاه گیرنده فعال کنید و یک بار در همان شبکه جفت کنید. Pleazyng را باز نگه دارید. رله فرمان‌های رمزگذاری‌شدهٔ موسیقی را منتقل می‌کند و نشانی‌های شبکه را می‌بیند. هر پخش‌کننده از سرور رسانهٔ خودش پخش می‌کند.",
     "relayInvalid": "نشانی HTTPS رله را وارد کنید."
+  },
+  "bookmarkMigration": {
+    "unassigned": "نشانک‌های نسخه‌ای ناشناخته",
+    "assignToVersion": "اختصاص به این نسخه"
   }
 }

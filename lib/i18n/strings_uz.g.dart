@@ -123,6 +123,7 @@ class TranslationsUz extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$uz musicExperience = _Translations$musicExperience$uz._(_root);
 	@override late final _Translations$musicTools$uz musicTools = _Translations$musicTools$uz._(_root);
 	@override late final _Translations$musicDevices$uz musicDevices = _Translations$musicDevices$uz._(_root);
+	@override late final _Translations$bookmarkMigration$uz bookmarkMigration = _Translations$bookmarkMigration$uz._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$uz extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Rasm URL-manzilini kiriting';
 	@override String get imageUrl => 'Rasm URL-manzili';
 	@override String get metadataUpdated => 'Metamaʼlumotlar yangilandi';
+	@override String get metadataConflict => 'Boshqa muharrir ayni maydonni o‘zgartirdi. Saqlashdan oldin oxirgi qiymatlarni tekshirish uchun muharrirni qayta oching.';
 	@override String get metadataUpdateFailed => 'Metamaʼlumotlarni yangilab boʻlmadi';
 	@override String get artworkUpdated => 'Rasmlar yangilandi';
 	@override String get artworkUpdateFailed => 'Rasmlarni yangilab boʻlmadi';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$uz extends Translations$musicDevices$en {
 	@override String get relay => 'Musiqa relesi URL manzili';
 	@override String get relayHint => 'Qabul qiluvchi qurilmada yoqing, so‘ng bir tarmoqda bir marta juftlang. Pleazyng ochiq tursin. Rele shifrlangan musiqa buyruqlarini uzatadi va tarmoq manzillarini ko‘radi. Har bir pleyer o‘z media serveridan uzatadi.';
 	@override String get relayInvalid => 'HTTPS rele manzilini kiriting.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$uz extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$uz._(TranslationsUz root) : this._root = root, super.internal(root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Noma’lum versiyadagi xatcho‘plar';
+	@override String get assignToVersion => 'Shu versiyaga biriktirish';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsUz {
 			'metadataEdit.enterImageUrl' => 'Rasm URL-manzilini kiriting',
 			'metadataEdit.imageUrl' => 'Rasm URL-manzili',
 			'metadataEdit.metadataUpdated' => 'Metamaʼlumotlar yangilandi',
+			'metadataEdit.metadataConflict' => 'Boshqa muharrir ayni maydonni o‘zgartirdi. Saqlashdan oldin oxirgi qiymatlarni tekshirish uchun muharrirni qayta oching.',
 			'metadataEdit.metadataUpdateFailed' => 'Metamaʼlumotlarni yangilab boʻlmadi',
 			'metadataEdit.artworkUpdated' => 'Rasmlar yangilandi',
 			'metadataEdit.artworkUpdateFailed' => 'Rasmlarni yangilab boʻlmadi',
@@ -8722,9 +8736,9 @@ extension on TranslationsUz {
 			'homeLayout.continueWatching' => 'Tomoshani davom ettirish',
 			'homeLayout.continueWatchingLibraryDescription' => 'Ushbu kutubxonada tomoshani to‘xtagan joydan davom ettirish qatori',
 			'homeLayout.continueWatchingHomeDescription' => 'Bosh sahifada ko‘rsatiladigan, tomoshani to‘xtagan joydan davom ettirish qatori',
-			'homeLayout.nextUpHomeDescription' => 'Next Unwatched epizod riyadi sizlikliklik Home\'da o‘zizliklikliklikdi',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'Next Unwatched epizod riyadi sizlikliklik Home\'da o‘zizliklikliklikdi',
 			'homeLayout.library' => 'Kutubxona',
 			'homeLayout.showInRecommended' => 'Librarikda qaytadi qaytadi.',
 			'homeLayout.customPlexRow' => 'Maxsus Plex qatori',
@@ -9236,9 +9250,9 @@ extension on TranslationsUz {
 			'audiobook.statusNew' => 'Başlamad',
 			'audiobook.statusProgress' => 'Tadiqadi',
 			'audiobook.statusFinished' => 'Konni',
-			'audiobook.goToTime' => 'O‘zadi.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'O‘zadi.',
 			'audiobook.timeHelp' => 'Hours:minuts:seconds, o minutlar:seconds',
 			'audiobook.recoveryHelp' => 'Sinklik data\'ni transfer o‘yadi.Sinkliklar ko‘yad qo‘yingiz, lokal sinklik tarihini qaytarmaymazlar.Sinqlik kodini separata tutan.',
 			'audiobook.recoveryExport' => 'Filiya qaytarga xifratsiya',
@@ -9750,9 +9764,9 @@ extension on TranslationsUz {
 			'musicTools.noHistory' => 'Hozircha ko‘rsatiladigan musiqa yo‘q',
 			'musicTools.historyHint' => 'Ushbu profilning tinglash tarixi',
 			'musicTools.days' => 'Kunlar',
-			'musicTools.albumBlocks' => 'Albomlarni butun saqlash',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'Albomlarni butun saqlash',
 			'musicTools.home' => 'Musiqa',
 			'musicTools.recent' => 'Yaqinda ijro etilgan',
 			'musicTools.apiKey' => 'API kaliti',
@@ -9813,6 +9827,8 @@ extension on TranslationsUz {
 			'musicDevices.relay' => 'Musiqa relesi URL manzili',
 			'musicDevices.relayHint' => 'Qabul qiluvchi qurilmada yoqing, so‘ng bir tarmoqda bir marta juftlang. Pleazyng ochiq tursin. Rele shifrlangan musiqa buyruqlarini uzatadi va tarmoq manzillarini ko‘radi. Har bir pleyer o‘z media serveridan uzatadi.',
 			'musicDevices.relayInvalid' => 'HTTPS rele manzilini kiriting.',
+			'bookmarkMigration.unassigned' => 'Noma’lum versiyadagi xatcho‘plar',
+			'bookmarkMigration.assignToVersion' => 'Shu versiyaga biriktirish',
 			_ => null,
 		};
 	}

@@ -123,6 +123,7 @@ class TranslationsHi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$hi musicExperience = _Translations$musicExperience$hi._(_root);
 	@override late final _Translations$musicTools$hi musicTools = _Translations$musicTools$hi._(_root);
 	@override late final _Translations$musicDevices$hi musicDevices = _Translations$musicDevices$hi._(_root);
+	@override late final _Translations$bookmarkMigration$hi bookmarkMigration = _Translations$bookmarkMigration$hi._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$hi extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'इमेज URL';
 	@override String get imageUrl => 'इमेज URL';
 	@override String get metadataUpdated => 'मेटाडेटा अपडेट';
+	@override String get metadataConflict => 'किसी दूसरे संपादक ने यही फ़ील्ड बदल दिया है। सहेजने से पहले नवीनतम मान देखने के लिए संपादक फिर से खोलें।';
 	@override String get metadataUpdateFailed => 'मेटाडेटा अपडेट करने में असफल';
 	@override String get artworkUpdated => 'Artwork अद्यतन';
 	@override String get artworkUpdateFailed => 'कला के काम को अपडेट करने में विफलता';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$hi extends Translations$musicDevices$en {
 	@override String get relay => 'संगीत रिले URL';
 	@override String get relayHint => 'प्राप्त करने वाले डिवाइस पर चालू करें, फिर एक ही नेटवर्क पर एक बार पेयर करें। Pleazyng खुला रखें। रिले एन्क्रिप्टेड संगीत नियंत्रण भेजता है और नेटवर्क पते देखता है। हर प्लेयर अपने मीडिया सर्वर से स्ट्रीम करता है।';
 	@override String get relayInvalid => 'HTTPS रिले पता दर्ज करें।';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$hi extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$hi._(TranslationsHi root) : this._root = root, super.internal(root);
+
+	final TranslationsHi _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'अज्ञात संस्करण के बुकमार्क';
+	@override String get assignToVersion => 'इस संस्करण से जोड़ें';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsHi {
 			'metadataEdit.enterImageUrl' => 'इमेज URL',
 			'metadataEdit.imageUrl' => 'इमेज URL',
 			'metadataEdit.metadataUpdated' => 'मेटाडेटा अपडेट',
+			'metadataEdit.metadataConflict' => 'किसी दूसरे संपादक ने यही फ़ील्ड बदल दिया है। सहेजने से पहले नवीनतम मान देखने के लिए संपादक फिर से खोलें।',
 			'metadataEdit.metadataUpdateFailed' => 'मेटाडेटा अपडेट करने में असफल',
 			'metadataEdit.artworkUpdated' => 'Artwork अद्यतन',
 			'metadataEdit.artworkUpdateFailed' => 'कला के काम को अपडेट करने में विफलता',
@@ -8722,9 +8736,9 @@ extension on TranslationsHi {
 			'homeLayout.continueWatching' => 'देखना जारी रखें',
 			'homeLayout.continueWatchingLibraryDescription' => 'इस पुस्तकालय के स्वयं के पुनरावृत्ति-प्रगति क्रम',
 			'homeLayout.continueWatchingHomeDescription' => 'Home पर दिखाए गए पुनरावृत्ति-प्रगति की पंक्ति',
-			'homeLayout.nextUpHomeDescription' => 'अगला अनदेखा किए गए एपिसोड की पंक्ति अलग से दिखाई देती है होम',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'अगला अनदेखा किए गए एपिसोड की पंक्ति अलग से दिखाई देती है होम',
 			'homeLayout.library' => 'लाइब्रेरी',
 			'homeLayout.showInRecommended' => 'पुस्तकालय में प्रदर्शित की सिफारिश',
 			'homeLayout.customPlexRow' => 'कस्टम Plex पंक्ति',
@@ -9236,9 +9250,9 @@ extension on TranslationsHi {
 			'audiobook.statusNew' => 'शुरू नहीं हुआ',
 			'audiobook.statusProgress' => 'प्रगति में',
 			'audiobook.statusFinished' => 'समाप्त',
-			'audiobook.goToTime' => 'समय के लिए जाओ',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'समय के लिए जाओ',
 			'audiobook.timeHelp' => 'घंटे: मिनट: सेकंड, या मिनट: सेकंड',
 			'audiobook.recoveryHelp' => 'सिंक डेटा को स्थानांतरित या ठीक करने से पहले हाल की एन्क्रिप्टेड कॉपी निर्यात करें। आयात मौजूदा स्थिति के साथ मिलते हैं; वे स्थानीय सिंक इतिहास को कभी नहीं बदलते। सिंक कोड अलग से रखें।',
 			'audiobook.recoveryExport' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइलों का निर्यात',
@@ -9750,9 +9764,9 @@ extension on TranslationsHi {
 			'musicTools.noHistory' => 'अभी दिखाने के लिए संगीत नहीं है',
 			'musicTools.historyHint' => 'इस प्रोफ़ाइल का प्लेबैक इतिहास',
 			'musicTools.days' => 'दिन',
-			'musicTools.albumBlocks' => 'पूरे एल्बम साथ रखें',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'पूरे एल्बम साथ रखें',
 			'musicTools.home' => 'संगीत',
 			'musicTools.recent' => 'हाल ही में सुने गए',
 			'musicTools.apiKey' => 'API कुंजी',
@@ -9813,6 +9827,8 @@ extension on TranslationsHi {
 			'musicDevices.relay' => 'संगीत रिले URL',
 			'musicDevices.relayHint' => 'प्राप्त करने वाले डिवाइस पर चालू करें, फिर एक ही नेटवर्क पर एक बार पेयर करें। Pleazyng खुला रखें। रिले एन्क्रिप्टेड संगीत नियंत्रण भेजता है और नेटवर्क पते देखता है। हर प्लेयर अपने मीडिया सर्वर से स्ट्रीम करता है।',
 			'musicDevices.relayInvalid' => 'HTTPS रिले पता दर्ज करें।',
+			'bookmarkMigration.unassigned' => 'अज्ञात संस्करण के बुकमार्क',
+			'bookmarkMigration.assignToVersion' => 'इस संस्करण से जोड़ें',
 			_ => null,
 		};
 	}

@@ -561,7 +561,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3261,6 +3260,7 @@
     "enterImageUrl": "इमेज URL",
     "imageUrl": "इमेज URL",
     "metadataUpdated": "मेटाडेटा अपडेट",
+    "metadataConflict": "किसी दूसरे संपादक ने यही फ़ील्ड बदल दिया है। सहेजने से पहले नवीनतम मान देखने के लिए संपादक फिर से खोलें।",
     "metadataUpdateFailed": "मेटाडेटा अपडेट करने में असफल",
     "artworkUpdated": "Artwork अद्यतन",
     "artworkUpdateFailed": "कला के काम को अपडेट करने में विफलता",
@@ -5710,5 +5710,9 @@
     "relay": "संगीत रिले URL",
     "relayHint": "प्राप्त करने वाले डिवाइस पर चालू करें, फिर एक ही नेटवर्क पर एक बार पेयर करें। Pleazyng खुला रखें। रिले एन्क्रिप्टेड संगीत नियंत्रण भेजता है और नेटवर्क पते देखता है। हर प्लेयर अपने मीडिया सर्वर से स्ट्रीम करता है।",
     "relayInvalid": "HTTPS रिले पता दर्ज करें।"
+  },
+  "bookmarkMigration": {
+    "unassigned": "अज्ञात संस्करण के बुकमार्क",
+    "assignToVersion": "इस संस्करण से जोड़ें"
   }
 }

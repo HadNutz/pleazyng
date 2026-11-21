@@ -561,7 +561,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3261,6 +3260,7 @@
     "enterImageUrl": "Indtast billed-URL",
     "imageUrl": "Billed-URL",
     "metadataUpdated": "Metadata opdateret",
+    "metadataConflict": "En anden har ændret det samme felt. Åbn editoren igen, og gennemgå de seneste værdier, før du gemmer.",
     "metadataUpdateFailed": "Kunne ikke opdatere metadata",
     "artworkUpdated": "Grafik opdateret",
     "artworkUpdateFailed": "Kunne ikke opdatere grafik",
@@ -5710,5 +5710,9 @@
     "relay": "URL til musikrelæ",
     "relayHint": "Aktivér på modtageren, og par én gang på samme netværk. Hold Pleazyng åben. Relæet sender krypteret musikstyring og ser netværksadresser. Hver afspiller streamer fra sin egen medieserver.",
     "relayInvalid": "Indtast en HTTPS-adresse til relæet."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Bogmærker fra en ukendt version",
+    "assignToVersion": "Knyt til denne version"
   }
 }

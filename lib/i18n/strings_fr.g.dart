@@ -124,6 +124,7 @@ class TranslationsFr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$fr musicExperience = Translations$musicExperience$fr.internal(_root);
 	@override late final Translations$musicTools$fr musicTools = Translations$musicTools$fr.internal(_root);
 	@override late final Translations$musicDevices$fr musicDevices = Translations$musicDevices$fr.internal(_root);
+	@override late final Translations$bookmarkMigration$fr bookmarkMigration = Translations$bookmarkMigration$fr.internal(_root);
 }
 
 // Path: mediaConveniences
@@ -2744,6 +2745,7 @@ class Translations$metadataEdit$fr extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Entrer l\'URL de l\'image';
 	@override String get imageUrl => 'URL de l\'image';
 	@override String get metadataUpdated => 'Métadonnées mises à jour';
+	@override String get metadataConflict => 'Le même champ a été modifié ailleurs. Rouvrez l’éditeur et vérifiez les dernières valeurs avant d’enregistrer.';
 	@override String get metadataUpdateFailed => 'Échec de la mise à jour des métadonnées';
 	@override String get artworkUpdated => 'Illustrations mises à jour';
 	@override String get artworkUpdateFailed => 'Échec de la mise à jour des illustrations';
@@ -4564,6 +4566,17 @@ class Translations$musicDevices$fr extends Translations$musicDevices$en {
 	@override String get relay => 'URL du relais musical';
 	@override String get relayHint => 'Activez sur l’appareil récepteur, puis associez une fois sur le même réseau. Gardez Pleazyng ouvert. Le relais transmet les commandes musicales chiffrées et voit les adresses réseau. Chaque lecteur utilise son propre serveur multimédia.';
 	@override String get relayInvalid => 'Saisissez une adresse HTTPS pour le relais.';
+}
+
+// Path: bookmarkMigration
+class Translations$bookmarkMigration$fr extends Translations$bookmarkMigration$en {
+	Translations$bookmarkMigration$fr.internal(TranslationsFr root) : this._root = root, super.internal(root);
+
+	final TranslationsFr _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Signets d’une version non identifiée';
+	@override String get assignToVersion => 'Attribuer à cette version';
 }
 
 // Path: appIcon.names
@@ -8342,6 +8355,7 @@ extension on TranslationsFr {
 			'metadataEdit.enterImageUrl' => 'Entrer l\'URL de l\'image',
 			'metadataEdit.imageUrl' => 'URL de l\'image',
 			'metadataEdit.metadataUpdated' => 'Métadonnées mises à jour',
+			'metadataEdit.metadataConflict' => 'Le même champ a été modifié ailleurs. Rouvrez l’éditeur et vérifiez les dernières valeurs avant d’enregistrer.',
 			'metadataEdit.metadataUpdateFailed' => 'Échec de la mise à jour des métadonnées',
 			'metadataEdit.artworkUpdated' => 'Illustrations mises à jour',
 			'metadataEdit.artworkUpdateFailed' => 'Échec de la mise à jour des illustrations',
@@ -8766,9 +8780,9 @@ extension on TranslationsFr {
 			'homeLayout.autoSlideEditDescription' => 'Il se décline : il ne se déplace que lorsque vous cliquez sur une armoire (PC) ou pressez la gauche/droite sur la télévision (TV).',
 			'homeLayout.enableHeroFirst' => 'Un héros en premier',
 			'homeLayout.showOnHome' => 'Afficher sur l\'écran de maison',
-			'homeLayout.home' => 'Accueil',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.home' => 'Accueil',
 			'homeLayout.removeFromHome' => 'Retirez de chez vous',
 			'homeLayout.selectRowsFirst' => 'Sélectionnez les lignes de maison ci-dessous d\'abord.',
 			'homeLayout.plexManagedRows' => ({required Object n}) => '${n} Plex rangées gérées',
@@ -9280,9 +9294,9 @@ extension on TranslationsFr {
 			'audiobook.useDefaults' => 'Utilisez ces contrôles d\'écoute pour de nouveaux livres',
 			'audiobook.librarySort' => 'Les livres sortants',
 			'audiobook.sortTitle' => 'Titre',
-			'audiobook.sortAuthor' => 'Auteur',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortAuthor' => 'Auteur',
 			'audiobook.sortNarrator' => 'Narrateur',
 			'audiobook.sortSeries' => 'Commande série',
 			'audiobook.sortRecent' => 'récemment ouvert',
@@ -9794,9 +9808,9 @@ extension on TranslationsFr {
 			'musicExperience.next' => 'Lire ensuite',
 			'musicExperience.error' => 'La demande musicale a échoué',
 			'musicExperience.on' => 'sur',
-			'musicExperience.off' => 'Désactivé',
 			_ => null,
 		} ?? switch (path) {
+			'musicExperience.off' => 'Désactivé',
 			'musicExperience.unknown' => 'Inconnu',
 			'musicExperience.routeLost' => 'Sortie audio déconnectée. Lecture en pause.',
 			'musicExperience.autoDriving' => 'Ouvrir le mode conduite à la connexion à une voiture',
@@ -9884,6 +9898,8 @@ extension on TranslationsFr {
 			'musicDevices.relay' => 'URL du relais musical',
 			'musicDevices.relayHint' => 'Activez sur l’appareil récepteur, puis associez une fois sur le même réseau. Gardez Pleazyng ouvert. Le relais transmet les commandes musicales chiffrées et voit les adresses réseau. Chaque lecteur utilise son propre serveur multimédia.',
 			'musicDevices.relayInvalid' => 'Saisissez une adresse HTTPS pour le relais.',
+			'bookmarkMigration.unassigned' => 'Signets d’une version non identifiée',
+			'bookmarkMigration.assignToVersion' => 'Attribuer à cette version',
 			_ => null,
 		};
 	}

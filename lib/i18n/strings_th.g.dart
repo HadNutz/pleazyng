@@ -123,6 +123,7 @@ class TranslationsTh extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$th musicExperience = _Translations$musicExperience$th._(_root);
 	@override late final _Translations$musicTools$th musicTools = _Translations$musicTools$th._(_root);
 	@override late final _Translations$musicDevices$th musicDevices = _Translations$musicDevices$th._(_root);
+	@override late final _Translations$bookmarkMigration$th bookmarkMigration = _Translations$bookmarkMigration$th._(_root);
 }
 
 // Path: mediaConveniences
@@ -2708,6 +2709,7 @@ class _Translations$metadataEdit$th extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'หมายเลข URL';
 	@override String get imageUrl => 'ภาพ URL';
 	@override String get metadataUpdated => 'ข้อมูลอัปเดต';
+	@override String get metadataConflict => 'ผู้แก้ไขรายอื่นเปลี่ยนช่องเดียวกันนี้ เปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก';
 	@override String get metadataUpdateFailed => 'ไม่สามารถปรับปรุงข้อมูล metadata';
 	@override String get artworkUpdated => 'อัพเดทศิลปะ';
 	@override String get artworkUpdateFailed => 'ไม่สามารถปรับปรุงงานศิลปะได้';
@@ -4500,6 +4502,17 @@ class _Translations$musicDevices$th extends Translations$musicDevices$en {
 	@override String get relay => 'URL รีเลย์เพลง';
 	@override String get relayHint => 'เปิดใช้งานบนอุปกรณ์รับ แล้วจับคู่ครั้งเดียวบนเครือข่ายเดียวกัน เปิด Pleazyng ค้างไว้ รีเลย์ส่งคำสั่งเพลงที่เข้ารหัสและเห็นที่อยู่เครือข่ายได้ เครื่องเล่นแต่ละเครื่องสตรีมจากเซิร์ฟเวอร์สื่อของตนเอง';
 	@override String get relayInvalid => 'ป้อนที่อยู่รีเลย์ HTTPS';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$th extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$th._(TranslationsTh root) : this._root = root, super.internal(root);
+
+	final TranslationsTh _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'บุ๊กมาร์กจากเวอร์ชันที่ไม่ทราบ';
+	@override String get assignToVersion => 'กำหนดให้เวอร์ชันนี้';
 }
 
 // Path: appIcon.names
@@ -8266,6 +8279,7 @@ extension on TranslationsTh {
 			'metadataEdit.enterImageUrl' => 'หมายเลข URL',
 			'metadataEdit.imageUrl' => 'ภาพ URL',
 			'metadataEdit.metadataUpdated' => 'ข้อมูลอัปเดต',
+			'metadataEdit.metadataConflict' => 'ผู้แก้ไขรายอื่นเปลี่ยนช่องเดียวกันนี้ เปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก',
 			'metadataEdit.metadataUpdateFailed' => 'ไม่สามารถปรับปรุงข้อมูล metadata',
 			'metadataEdit.artworkUpdated' => 'อัพเดทศิลปะ',
 			'metadataEdit.artworkUpdateFailed' => 'ไม่สามารถปรับปรุงงานศิลปะได้',
@@ -8697,9 +8711,9 @@ extension on TranslationsTh {
 			'homeLayout.continueWatching' => 'ดูต่อ',
 			'homeLayout.continueWatchingLibraryDescription' => 'เถื่อนขั้นสูงของห้องสมุดนี้เอง',
 			'homeLayout.continueWatchingHomeDescription' => 'เถื่อนขั้นตอนที่แสดงไว้ในบ้าน',
-			'homeLayout.nextUpHomeDescription' => 'ต่อไปไม่ได้รับการสังเกต episod sequence แสดงแยกต่างหากใน Home',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'ต่อไปไม่ได้รับการสังเกต episod sequence แสดงแยกต่างหากใน Home',
 			'homeLayout.library' => 'คลังสื่อ',
 			'homeLayout.showInRecommended' => 'แสดงในห้องสมุดแนะนํา',
 			'homeLayout.customPlexRow' => 'คู่มือ Plex รอบ',
@@ -9211,9 +9225,9 @@ extension on TranslationsTh {
 			'audiobook.statusNew' => 'ไม่เริ่มต้น',
 			'audiobook.statusProgress' => 'ในขั้นตอน',
 			'audiobook.statusFinished' => 'เสร็จ',
-			'audiobook.goToTime' => 'ไปยัง เวลา',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'ไปยัง เวลา',
 			'audiobook.timeHelp' => 'ชั่วโมง:นาที:วินาทีหรือนาที:วินาที',
 			'audiobook.recoveryHelp' => 'Export a recent encrypted copy before moving or repairing sync data. นําเข้ามาพร้อมกับสถานะปัจจุบัน พวกเขาไม่เคยแทนที่ประวัติการซิงค์ในท้องถิ่น ให้รหัสซิงโครแยกกัน',
 			'audiobook.recoveryExport' => 'การส่งออกไฟล์การกู้คืนที่เข้ารหัส',
@@ -9725,9 +9739,9 @@ extension on TranslationsTh {
 			'musicTools.noHistory' => 'ยังไม่มีเพลงให้แสดง',
 			'musicTools.historyHint' => 'ประวัติการเล่นของโปรไฟล์นี้',
 			'musicTools.days' => 'วัน',
-			'musicTools.albumBlocks' => 'เก็บอัลบั้มทั้งชุดไว้ด้วยกัน',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'เก็บอัลบั้มทั้งชุดไว้ด้วยกัน',
 			'musicTools.home' => 'เพลง',
 			'musicTools.recent' => 'เล่นล่าสุด',
 			'musicTools.apiKey' => 'คีย์ API',
@@ -9788,6 +9802,8 @@ extension on TranslationsTh {
 			'musicDevices.relay' => 'URL รีเลย์เพลง',
 			'musicDevices.relayHint' => 'เปิดใช้งานบนอุปกรณ์รับ แล้วจับคู่ครั้งเดียวบนเครือข่ายเดียวกัน เปิด Pleazyng ค้างไว้ รีเลย์ส่งคำสั่งเพลงที่เข้ารหัสและเห็นที่อยู่เครือข่ายได้ เครื่องเล่นแต่ละเครื่องสตรีมจากเซิร์ฟเวอร์สื่อของตนเอง',
 			'musicDevices.relayInvalid' => 'ป้อนที่อยู่รีเลย์ HTTPS',
+			'bookmarkMigration.unassigned' => 'บุ๊กมาร์กจากเวอร์ชันที่ไม่ทราบ',
+			'bookmarkMigration.assignToVersion' => 'กำหนดให้เวอร์ชันนี้',
 			_ => null,
 		};
 	}

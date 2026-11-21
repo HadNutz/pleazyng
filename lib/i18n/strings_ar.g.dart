@@ -123,6 +123,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ar musicExperience = _Translations$musicExperience$ar._(_root);
 	@override late final _Translations$musicTools$ar musicTools = _Translations$musicTools$ar._(_root);
 	@override late final _Translations$musicDevices$ar musicDevices = _Translations$musicDevices$ar._(_root);
+	@override late final _Translations$bookmarkMigration$ar bookmarkMigration = _Translations$bookmarkMigration$ar._(_root);
 }
 
 // Path: mediaConveniences
@@ -2803,6 +2804,7 @@ class _Translations$metadataEdit$ar extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'إدخال صورة URL';
 	@override String get imageUrl => 'صورة URL';
 	@override String get metadataUpdated => 'متاجدات تحديثات';
+	@override String get metadataConflict => 'غيّر محرر آخر الحقل نفسه. أعد فتح المحرر لمراجعة أحدث القيم قبل الحفظ.';
 	@override String get metadataUpdateFailed => 'فشل في تحديث البيانات الميتا';
 	@override String get artworkUpdated => 'الفنون المحدثة';
 	@override String get artworkUpdateFailed => 'فشل في تحديث أعمال الفن';
@@ -4615,6 +4617,17 @@ class _Translations$musicDevices$ar extends Translations$musicDevices$en {
 	@override String get relay => 'عنوان مرحّل الموسيقى';
 	@override String get relayHint => 'فعّل هذا على جهاز الاستقبال، ثم أقرن الجهازين مرة واحدة على الشبكة نفسها. أبقِ Pleazyng مفتوحًا. ينقل المرحّل أوامر الموسيقى المشفّرة ويرى عناوين الشبكة. يبث كل مشغّل من خادم الوسائط الخاص به.';
 	@override String get relayInvalid => 'أدخل عنوان مرحّل يستخدم HTTPS.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$ar extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$ar._(TranslationsAr root) : this._root = root, super.internal(root);
+
+	final TranslationsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'إشارات مرجعية من إصدار غير معروف';
+	@override String get assignToVersion => 'إسناد إلى هذا الإصدار';
 }
 
 // Path: appIcon.names
@@ -8391,6 +8404,7 @@ extension on TranslationsAr {
 			'metadataEdit.enterImageUrl' => 'إدخال صورة URL',
 			'metadataEdit.imageUrl' => 'صورة URL',
 			'metadataEdit.metadataUpdated' => 'متاجدات تحديثات',
+			'metadataEdit.metadataConflict' => 'غيّر محرر آخر الحقل نفسه. أعد فتح المحرر لمراجعة أحدث القيم قبل الحفظ.',
 			'metadataEdit.metadataUpdateFailed' => 'فشل في تحديث البيانات الميتا',
 			'metadataEdit.artworkUpdated' => 'الفنون المحدثة',
 			'metadataEdit.artworkUpdateFailed' => 'فشل في تحديث أعمال الفن',
@@ -8822,9 +8836,9 @@ extension on TranslationsAr {
 			'homeLayout.continueWatching' => 'متابعة المشاهدة',
 			'homeLayout.continueWatchingLibraryDescription' => 'صف استئناف المشاهدة الخاص بهذه المكتبة',
 			'homeLayout.continueWatchingHomeDescription' => 'صف استئناف المشاهدة المعروض في الصفحة الرئيسية',
-			'homeLayout.nextUpHomeDescription' => 'صف الحلقة التالية غير المشاهدة، ويظهر بشكل منفصل في الصفحة الرئيسية',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'صف الحلقة التالية غير المشاهدة، ويظهر بشكل منفصل في الصفحة الرئيسية',
 			'homeLayout.library' => 'المكتبة',
 			'homeLayout.showInRecommended' => 'إظهار ضمن توصيات المكتبة',
 			'homeLayout.customPlexRow' => 'صف Plex مخصّص',
@@ -9336,9 +9350,9 @@ extension on TranslationsAr {
 			'audiobook.statusNew' => 'لم يبدأ',
 			'audiobook.statusProgress' => 'في التقدم',
 			'audiobook.statusFinished' => 'الانتهاء',
-			'audiobook.goToTime' => 'اذهب إلى الزمن',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'اذهب إلى الزمن',
 			'audiobook.timeHelp' => 'ساعات: دقائق: ثواني، أو دقائق: ثواني',
 			'audiobook.recoveryHelp' => 'تصدير نسخة مشفرة مؤخرا قبل نقل أو إصلاح بيانات المزامنة.يتم دمج الواردات مع الحالة الحالية؛ أنها لا تحل محل تاريخ المزامن المحلي.',
 			'audiobook.recoveryExport' => 'تصدير ملف استرداد مشفرة',
@@ -9850,9 +9864,9 @@ extension on TranslationsAr {
 			'musicTools.noHistory' => 'لا توجد موسيقى لعرضها بعد',
 			'musicTools.historyHint' => 'سجل التشغيل لهذا الملف الشخصي',
 			'musicTools.days' => 'أيام',
-			'musicTools.albumBlocks' => 'إبقاء الألبومات كاملة معًا',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'إبقاء الألبومات كاملة معًا',
 			'musicTools.home' => 'الموسيقى',
 			'musicTools.recent' => 'تم تشغيلها مؤخرًا',
 			'musicTools.apiKey' => 'مفتاح API',
@@ -9913,6 +9927,8 @@ extension on TranslationsAr {
 			'musicDevices.relay' => 'عنوان مرحّل الموسيقى',
 			'musicDevices.relayHint' => 'فعّل هذا على جهاز الاستقبال، ثم أقرن الجهازين مرة واحدة على الشبكة نفسها. أبقِ Pleazyng مفتوحًا. ينقل المرحّل أوامر الموسيقى المشفّرة ويرى عناوين الشبكة. يبث كل مشغّل من خادم الوسائط الخاص به.',
 			'musicDevices.relayInvalid' => 'أدخل عنوان مرحّل يستخدم HTTPS.',
+			'bookmarkMigration.unassigned' => 'إشارات مرجعية من إصدار غير معروف',
+			'bookmarkMigration.assignToVersion' => 'إسناد إلى هذا الإصدار',
 			_ => null,
 		};
 	}

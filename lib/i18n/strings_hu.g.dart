@@ -123,6 +123,7 @@ class TranslationsHu extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$hu musicExperience = _Translations$musicExperience$hu._(_root);
 	@override late final _Translations$musicTools$hu musicTools = _Translations$musicTools$hu._(_root);
 	@override late final _Translations$musicDevices$hu musicDevices = _Translations$musicDevices$hu._(_root);
+	@override late final _Translations$bookmarkMigration$hu bookmarkMigration = _Translations$bookmarkMigration$hu._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$hu extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Add meg a kép URL-címét';
 	@override String get imageUrl => 'Kép URL-címe';
 	@override String get metadataUpdated => 'Metaadatok frissítve';
+	@override String get metadataConflict => 'Valaki más is módosította ezt a mezőt. Mentés előtt nyissa meg újra a szerkesztőt, és ellenőrizze az aktuális értékeket.';
 	@override String get metadataUpdateFailed => 'Nem sikerült a metaadatok frissítése';
 	@override String get artworkUpdated => 'Képek frissítve';
 	@override String get artworkUpdateFailed => 'Nem sikerült a képek frissítése';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$hu extends Translations$musicDevices$en {
 	@override String get relay => 'Zenei közvetítő URL-címe';
 	@override String get relayHint => 'Engedélyezze a fogadó eszközön, majd párosítsa egyszer ugyanazon a hálózaton. Tartsa nyitva a Pleazyng alkalmazást. A közvetítő titkosított zenevezérlést továbbít és látja a hálózati címeket. Minden lejátszó a saját médiaszerveréről streamel.';
 	@override String get relayInvalid => 'Adja meg a közvetítő HTTPS-címét.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$hu extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$hu._(TranslationsHu root) : this._root = root, super.internal(root);
+
+	final TranslationsHu _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Azonosítatlan verzióból származó könyvjelzők';
+	@override String get assignToVersion => 'Hozzárendelés ehhez a verzióhoz';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsHu {
 			'metadataEdit.enterImageUrl' => 'Add meg a kép URL-címét',
 			'metadataEdit.imageUrl' => 'Kép URL-címe',
 			'metadataEdit.metadataUpdated' => 'Metaadatok frissítve',
+			'metadataEdit.metadataConflict' => 'Valaki más is módosította ezt a mezőt. Mentés előtt nyissa meg újra a szerkesztőt, és ellenőrizze az aktuális értékeket.',
 			'metadataEdit.metadataUpdateFailed' => 'Nem sikerült a metaadatok frissítése',
 			'metadataEdit.artworkUpdated' => 'Képek frissítve',
 			'metadataEdit.artworkUpdateFailed' => 'Nem sikerült a képek frissítése',
@@ -8722,9 +8736,9 @@ extension on TranslationsHu {
 			'homeLayout.continueWatching' => 'Folytatás',
 			'homeLayout.continueWatchingLibraryDescription' => 'A könyvtár saját újjáépítésének sorrendje',
 			'homeLayout.continueWatchingHomeDescription' => 'A folyamatos folyamatok újbóli sorát mutatják be otthon',
-			'homeLayout.nextUpHomeDescription' => 'A következő nem figyelt epizód sorozatot külön-külön mutatott a Home',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'A következő nem figyelt epizód sorozatot külön-külön mutatott a Home',
 			'homeLayout.library' => 'Könyvtár',
 			'homeLayout.showInRecommended' => 'A könyvtárban ajánlott',
 			'homeLayout.customPlexRow' => 'Személyes Plex sor',
@@ -9236,9 +9250,9 @@ extension on TranslationsHu {
 			'audiobook.statusNew' => 'Nem kezdődött',
 			'audiobook.statusProgress' => 'előrehaladás',
 			'audiobook.statusFinished' => 'befejezett',
-			'audiobook.goToTime' => 'Menj az időbe',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'Menj az időbe',
 			'audiobook.timeHelp' => 'Idők: percek: másodpercek, vagy percek: másodpercek',
 			'audiobook.recoveryHelp' => 'A szinkronizációs adatok áthelyezése vagy javítása előtt exportáljon egy nemrégiben titkosított másolatot. Az importok összeolvadnak a jelenlegi állapotgal; soha nem helyettesítik a helyi szinkrálás történetét.',
 			'audiobook.recoveryExport' => 'Export titkosított helyreállítási fájl',
@@ -9750,9 +9764,9 @@ extension on TranslationsHu {
 			'musicTools.noHistory' => 'Még nincs megjeleníthető zene',
 			'musicTools.historyHint' => 'A profil lejátszási előzményei',
 			'musicTools.days' => 'Napok',
-			'musicTools.albumBlocks' => 'Teljes albumok együtt tartása',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'Teljes albumok együtt tartása',
 			'musicTools.home' => 'Zene',
 			'musicTools.recent' => 'Legutóbb lejátszott',
 			'musicTools.apiKey' => 'API-kulcs',
@@ -9813,6 +9827,8 @@ extension on TranslationsHu {
 			'musicDevices.relay' => 'Zenei közvetítő URL-címe',
 			'musicDevices.relayHint' => 'Engedélyezze a fogadó eszközön, majd párosítsa egyszer ugyanazon a hálózaton. Tartsa nyitva a Pleazyng alkalmazást. A közvetítő titkosított zenevezérlést továbbít és látja a hálózati címeket. Minden lejátszó a saját médiaszerveréről streamel.',
 			'musicDevices.relayInvalid' => 'Adja meg a közvetítő HTTPS-címét.',
+			'bookmarkMigration.unassigned' => 'Azonosítatlan verzióból származó könyvjelzők',
+			'bookmarkMigration.assignToVersion' => 'Hozzárendelés ehhez a verzióhoz',
 			_ => null,
 		};
 	}

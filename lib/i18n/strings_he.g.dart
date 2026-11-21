@@ -123,6 +123,7 @@ class TranslationsHe extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$he musicExperience = _Translations$musicExperience$he._(_root);
 	@override late final _Translations$musicTools$he musicTools = _Translations$musicTools$he._(_root);
 	@override late final _Translations$musicDevices$he musicDevices = _Translations$musicDevices$he._(_root);
+	@override late final _Translations$bookmarkMigration$he bookmarkMigration = _Translations$bookmarkMigration$he._(_root);
 }
 
 // Path: mediaConveniences
@@ -2731,6 +2732,7 @@ class _Translations$metadataEdit$he extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'כניסת תמונה URL';
 	@override String get imageUrl => 'תמונה URL';
 	@override String get metadataUpdated => 'נתונים מתעדכנים';
+	@override String get metadataConflict => 'עורך אחר שינה את אותו שדה. יש לפתוח שוב את העורך ולבדוק את הערכים העדכניים לפני השמירה.';
 	@override String get metadataUpdateFailed => 'לא הצלחתי לעדכן את הנתונים';
 	@override String get artworkUpdated => 'ארכיון עדכונים';
 	@override String get artworkUpdateFailed => 'לא הצלחתי לעדכן את האמנות';
@@ -4531,6 +4533,17 @@ class _Translations$musicDevices$he extends Translations$musicDevices$en {
 	@override String get relay => 'כתובת ממסר המוזיקה';
 	@override String get relayHint => 'יש להפעיל במכשיר המקבל ולצמד פעם אחת באותה רשת. יש להשאיר את Pleazyng פתוח. הממסר מעביר פקודות מוזיקה מוצפנות ורואה כתובות רשת. כל נגן מזרים משרת המדיה שלו.';
 	@override String get relayInvalid => 'יש להזין כתובת HTTPS של הממסר.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$he extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$he._(TranslationsHe root) : this._root = root, super.internal(root);
+
+	final TranslationsHe _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'סימניות מגרסה לא מזוהה';
+	@override String get assignToVersion => 'שיוך לגרסה זו';
 }
 
 // Path: appIcon.names
@@ -8299,6 +8312,7 @@ extension on TranslationsHe {
 			'metadataEdit.enterImageUrl' => 'כניסת תמונה URL',
 			'metadataEdit.imageUrl' => 'תמונה URL',
 			'metadataEdit.metadataUpdated' => 'נתונים מתעדכנים',
+			'metadataEdit.metadataConflict' => 'עורך אחר שינה את אותו שדה. יש לפתוח שוב את העורך ולבדוק את הערכים העדכניים לפני השמירה.',
 			'metadataEdit.metadataUpdateFailed' => 'לא הצלחתי לעדכן את הנתונים',
 			'metadataEdit.artworkUpdated' => 'ארכיון עדכונים',
 			'metadataEdit.artworkUpdateFailed' => 'לא הצלחתי לעדכן את האמנות',
@@ -8730,9 +8744,9 @@ extension on TranslationsHe {
 			'homeLayout.continueWatching' => 'המשך צפייה',
 			'homeLayout.continueWatchingLibraryDescription' => 'ספריית התקדמות עצמית של הספרייה',
 			'homeLayout.continueWatchingHomeDescription' => 'רצועת ההתקדמות המוצגת בבית',
-			'homeLayout.nextUpHomeDescription' => 'השורה הבאה של הפרק לא נצפה הוצגה בנפרד בבית',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'השורה הבאה של הפרק לא נצפה הוצגה בנפרד בבית',
 			'homeLayout.library' => 'ספרייה',
 			'homeLayout.showInRecommended' => 'תגית: הספרייה המומלצת',
 			'homeLayout.customPlexRow' => 'אישית Plex שורה',
@@ -9244,9 +9258,9 @@ extension on TranslationsHe {
 			'audiobook.statusNew' => 'לא התחיל',
 			'audiobook.statusProgress' => 'התקדמות',
 			'audiobook.statusFinished' => 'הסתיימה',
-			'audiobook.goToTime' => 'ללכת בזמן',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'ללכת בזמן',
 			'audiobook.timeHelp' => 'שעות: דקות: שניות או דקות: שניות',
 			'audiobook.recoveryHelp' => 'ייצוא עותק מוצפן לאחרונה לפני העברת או תיקון נתוני סינכרון.יבואים מתמזגים עם המצב הנוכחי; הם לעולם לא מחליפים היסטוריה מקומית של סינן.',
 			'audiobook.recoveryExport' => 'ייצוא קובץ ההחזרה מוצפן',
@@ -9758,9 +9772,9 @@ extension on TranslationsHe {
 			'musicTools.noHistory' => 'עדיין אין מוזיקה להצגה',
 			'musicTools.historyHint' => 'היסטוריית ההשמעה של הפרופיל הזה',
 			'musicTools.days' => 'ימים',
-			'musicTools.albumBlocks' => 'שמירה על אלבומים שלמים ביחד',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'שמירה על אלבומים שלמים ביחד',
 			'musicTools.home' => 'מוסיקה',
 			'musicTools.recent' => 'הושמעו לאחרונה',
 			'musicTools.apiKey' => 'מפתח API',
@@ -9821,6 +9835,8 @@ extension on TranslationsHe {
 			'musicDevices.relay' => 'כתובת ממסר המוזיקה',
 			'musicDevices.relayHint' => 'יש להפעיל במכשיר המקבל ולצמד פעם אחת באותה רשת. יש להשאיר את Pleazyng פתוח. הממסר מעביר פקודות מוזיקה מוצפנות ורואה כתובות רשת. כל נגן מזרים משרת המדיה שלו.',
 			'musicDevices.relayInvalid' => 'יש להזין כתובת HTTPS של הממסר.',
+			'bookmarkMigration.unassigned' => 'סימניות מגרסה לא מזוהה',
+			'bookmarkMigration.assignToVersion' => 'שיוך לגרסה זו',
 			_ => null,
 		};
 	}

@@ -123,6 +123,7 @@ class TranslationsTr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$tr musicExperience = _Translations$musicExperience$tr._(_root);
 	@override late final _Translations$musicTools$tr musicTools = _Translations$musicTools$tr._(_root);
 	@override late final _Translations$musicDevices$tr musicDevices = _Translations$musicDevices$tr._(_root);
+	@override late final _Translations$bookmarkMigration$tr bookmarkMigration = _Translations$bookmarkMigration$tr._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$tr extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Görsel URL\'si girin';
 	@override String get imageUrl => 'Görsel URL\'si';
 	@override String get metadataUpdated => 'Meta veriler güncellendi';
+	@override String get metadataConflict => 'Başka bir düzenleyici aynı alanı değiştirdi. Kaydetmeden önce güncel değerleri kontrol etmek için düzenleyiciyi yeniden açın.';
 	@override String get metadataUpdateFailed => 'Meta veriler güncellenemedi';
 	@override String get artworkUpdated => 'Görseller güncellendi';
 	@override String get artworkUpdateFailed => 'Görseller güncellenemedi';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$tr extends Translations$musicDevices$en {
 	@override String get relay => 'Müzik rölesi URL’si';
 	@override String get relayHint => 'Alıcı cihazda etkinleştirin, ardından aynı ağda bir kez eşleştirin. Pleazyng açık kalsın. Röle şifreli müzik denetimlerini iletir ve ağ adreslerini görür. Her oynatıcı kendi medya sunucusundan yayın yapar.';
 	@override String get relayInvalid => 'Bir HTTPS röle adresi girin.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$tr extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$tr._(TranslationsTr root) : this._root = root, super.internal(root);
+
+	final TranslationsTr _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Sürümü belirlenemeyen yer imleri';
+	@override String get assignToVersion => 'Bu sürüme ata';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsTr {
 			'metadataEdit.enterImageUrl' => 'Görsel URL\'si girin',
 			'metadataEdit.imageUrl' => 'Görsel URL\'si',
 			'metadataEdit.metadataUpdated' => 'Meta veriler güncellendi',
+			'metadataEdit.metadataConflict' => 'Başka bir düzenleyici aynı alanı değiştirdi. Kaydetmeden önce güncel değerleri kontrol etmek için düzenleyiciyi yeniden açın.',
 			'metadataEdit.metadataUpdateFailed' => 'Meta veriler güncellenemedi',
 			'metadataEdit.artworkUpdated' => 'Görseller güncellendi',
 			'metadataEdit.artworkUpdateFailed' => 'Görseller güncellenemedi',
@@ -8722,9 +8736,9 @@ extension on TranslationsTr {
 			'homeLayout.continueWatching' => 'İzlemeye Devam Et',
 			'homeLayout.continueWatchingLibraryDescription' => 'Bu kütüphanenin kendi yeniden ilerleme sırası',
 			'homeLayout.continueWatchingHomeDescription' => 'Home > Gelişmiş Gelişme > Evde Gösterilen Gelişmeler',
-			'homeLayout.nextUpHomeDescription' => 'Sonraki izlenmemiş bölüm sırası ayrı olarak gösterildi',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'Sonraki izlenmemiş bölüm sırası ayrı olarak gösterildi',
 			'homeLayout.library' => 'Kitaplık',
 			'homeLayout.showInRecommended' => 'Kütüphane önerilen',
 			'homeLayout.customPlexRow' => 'Özel Plex satır',
@@ -9236,9 +9250,9 @@ extension on TranslationsTr {
 			'audiobook.statusNew' => 'Başlamadı',
 			'audiobook.statusProgress' => 'Gelişmiş',
 			'audiobook.statusFinished' => 'bitmiş',
-			'audiobook.goToTime' => 'Zamanına gidin',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'Zamanına gidin',
 			'audiobook.timeHelp' => 'Saatler: dakikalar: saniye veya dakikalar: saniye',
 			'audiobook.recoveryHelp' => 'Son zamanlarda şifrelenmiş bir kopyasını aktarmadan önce veya senkronizasyon verilerini düzeltmeden önce ihraç edin. ithalat mevcut durumla birleşir; yerel senkrona geçmişi asla değiştirmezler. senkronu ayrı tutun.',
 			'audiobook.recoveryExport' => 'İhracat şifreli kurtarma dosyası',
@@ -9750,9 +9764,9 @@ extension on TranslationsTr {
 			'musicTools.noHistory' => 'Henüz gösterilecek müzik yok',
 			'musicTools.historyHint' => 'Bu profilin dinleme geçmişi',
 			'musicTools.days' => 'Günler',
-			'musicTools.albumBlocks' => 'Albümleri bütün olarak tut',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'Albümleri bütün olarak tut',
 			'musicTools.home' => 'Müzik',
 			'musicTools.recent' => 'Son çalınanlar',
 			'musicTools.apiKey' => 'API anahtarı',
@@ -9813,6 +9827,8 @@ extension on TranslationsTr {
 			'musicDevices.relay' => 'Müzik rölesi URL’si',
 			'musicDevices.relayHint' => 'Alıcı cihazda etkinleştirin, ardından aynı ağda bir kez eşleştirin. Pleazyng açık kalsın. Röle şifreli müzik denetimlerini iletir ve ağ adreslerini görür. Her oynatıcı kendi medya sunucusundan yayın yapar.',
 			'musicDevices.relayInvalid' => 'Bir HTTPS röle adresi girin.',
+			'bookmarkMigration.unassigned' => 'Sürümü belirlenemeyen yer imleri',
+			'bookmarkMigration.assignToVersion' => 'Bu sürüme ata',
 			_ => null,
 		};
 	}

@@ -561,7 +561,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3261,6 +3260,7 @@
     "enterImageUrl": "ইমেজ URL লিখুন",
     "imageUrl": "ইমেজ URL",
     "metadataUpdated": "মেটাদাডেট আপডেট",
+    "metadataConflict": "অন্য একজন সম্পাদক একই ক্ষেত্রটি পরিবর্তন করেছেন। সংরক্ষণের আগে সর্বশেষ মানগুলি দেখতে সম্পাদকটি আবার খুলুন।",
     "metadataUpdateFailed": "মেটাদাটা আপডেট করতে পারেনি",
     "artworkUpdated": "অ্যাকাউন্ট আপডেট",
     "artworkUpdateFailed": "শিল্প কাজ আপডেট করতে পারিনি",
@@ -5710,5 +5710,9 @@
     "relay": "মিউজিক রিলে URL",
     "relayHint": "গ্রহণকারী ডিভাইসে চালু করুন, তারপর একই নেটওয়ার্কে একবার পেয়ার করুন। Pleazyng খোলা রাখুন। রিলে এনক্রিপ্ট করা সঙ্গীত নিয়ন্ত্রণ পাঠায় এবং নেটওয়ার্ক ঠিকানা দেখতে পায়। প্রতিটি প্লেয়ার নিজস্ব মিডিয়া সার্ভার থেকে স্ট্রিম করে।",
     "relayInvalid": "একটি HTTPS রিলে ঠিকানা লিখুন।"
+  },
+  "bookmarkMigration": {
+    "unassigned": "অজানা সংস্করণের বুকমার্ক",
+    "assignToVersion": "এই সংস্করণে যুক্ত করুন"
   }
 }

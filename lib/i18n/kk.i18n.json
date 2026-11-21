@@ -561,7 +561,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3261,6 +3260,7 @@
     "enterImageUrl": "Сурет URL-ін енгізіңіз",
     "imageUrl": "Сурет URL-і",
     "metadataUpdated": "Метадеректер жаңартылды",
+    "metadataConflict": "Басқа редактор осы өрісті өзгертті. Сақтау алдында соңғы мәндерді тексеру үшін редакторды қайта ашыңыз.",
     "metadataUpdateFailed": "Метадеректерді жаңарту мүмкін болмады",
     "artworkUpdated": "Суреттер жаңартылды",
     "artworkUpdateFailed": "Суреттерді жаңарту мүмкін болмады",
@@ -5710,5 +5710,9 @@
     "relay": "Музыка релесінің URL мекенжайы",
     "relayHint": "Қабылдаушы құрылғыда қосып, бір желіде бір рет жұптастырыңыз. Pleazyng ашық тұрсын. Реле шифрланған музыка пәрмендерін тасымалдайды және желі мекенжайларын көреді. Әр ойнатқыш өз медиа серверінен ағын алады.",
     "relayInvalid": "Реленің HTTPS мекенжайын енгізіңіз."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Анықталмаған нұсқадағы бетбелгілер",
+    "assignToVersion": "Осы нұсқаға тағайындау"
   }
 }

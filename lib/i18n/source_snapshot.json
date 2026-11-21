@@ -537,7 +537,6 @@
   "settings.motionSmoothingApplyFailed": "ab15fc73bfae1cf5",
   "settings.motionSmoothingLiveUnavailableDescription": "4861685676d4efcc",
   "settings.motionSmoothingNotActiveDescription": "05b42e853c17d29a",
-  "settings.motionSmoothingNextPlayback": "04bee03f34a451c5",
   "settings.motionSmoothingOff": "50accd740fa2e736",
   "settings.motionSmoothingOffDescription": "25536806d5c955f7",
   "settings.motionSmoothingMpv": "423fc785fee5d84a",
@@ -3012,6 +3011,7 @@
   "metadataEdit.enterImageUrl": "d01f722ce4acfa07",
   "metadataEdit.imageUrl": "22c56afeee4685af",
   "metadataEdit.metadataUpdated": "5aec9e50710c2cef",
+  "metadataEdit.metadataConflict": "ef4fa82d750bb420",
   "metadataEdit.metadataUpdateFailed": "d0e51ed7888becf5",
   "metadataEdit.artworkUpdated": "6dce79293c8bd9df",
   "metadataEdit.artworkUpdateFailed": "a453c0c5fa4ed044",
@@ -5554,5 +5554,7 @@
   "musicDevices.away": "cb111660c7e9ef41",
   "musicDevices.relay": "dcc60f3bfb59b66d",
   "musicDevices.relayHint": "04b45d9a183d3957",
-  "musicDevices.relayInvalid": "ac9aa40be144e464"
+  "musicDevices.relayInvalid": "ac9aa40be144e464",
+  "bookmarkMigration.unassigned": "43daea990dccc44e",
+  "bookmarkMigration.assignToVersion": "5086b04351b89a49"
 }

@@ -559,7 +559,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3240,6 +3239,7 @@
     "enterImageUrl": "Masukkan URL gambar",
     "imageUrl": "Gambar URL",
     "metadataUpdated": "Metadata yang diperbarui",
+    "metadataConflict": "Editor lain telah mengubah kolom yang sama. Buka kembali editor untuk memeriksa nilai terbaru sebelum menyimpan.",
     "metadataUpdateFailed": "Tidak dapat mengemas kini metadata",
     "artworkUpdated": "Artwork dikemas kini",
     "artworkUpdateFailed": "gagal memperbarui karya seni",
@@ -5683,5 +5683,9 @@
     "relay": "URL relai musik",
     "relayHint": "Aktifkan di perangkat penerima, lalu pasangkan sekali di jaringan yang sama. Biarkan Pleazyng terbuka. Relai meneruskan kontrol musik terenkripsi dan melihat alamat jaringan. Setiap pemutar melakukan streaming dari server medianya sendiri.",
     "relayInvalid": "Masukkan alamat relai HTTPS."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Markah dari versi yang tidak dikenal",
+    "assignToVersion": "Tetapkan ke versi ini"
   }
 }

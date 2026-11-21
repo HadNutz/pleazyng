@@ -123,6 +123,7 @@ class TranslationsAz extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$az musicExperience = _Translations$musicExperience$az._(_root);
 	@override late final _Translations$musicTools$az musicTools = _Translations$musicTools$az._(_root);
 	@override late final _Translations$musicDevices$az musicDevices = _Translations$musicDevices$az._(_root);
+	@override late final _Translations$bookmarkMigration$az bookmarkMigration = _Translations$bookmarkMigration$az._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$az extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Şəkil URL-i daxil edin';
 	@override String get imageUrl => 'Şəkil URL-i';
 	@override String get metadataUpdated => 'Meta-məlumatlar yeniləndi';
+	@override String get metadataConflict => 'Başqa redaktor eyni sahəni dəyişib. Yadda saxlamazdan əvvəl son dəyərlərə baxmaq üçün redaktoru yenidən açın.';
 	@override String get metadataUpdateFailed => 'Meta-məlumatlar yenilənə bilmədi';
 	@override String get artworkUpdated => 'Şəkillər yeniləndi';
 	@override String get artworkUpdateFailed => 'Şəkillər yenilənə bilmədi';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$az extends Translations$musicDevices$en {
 	@override String get relay => 'Musiqi rele ünvanı';
 	@override String get relayHint => 'Qəbul edən cihazda aktivləşdirin, sonra eyni şəbəkədə bir dəfə qoşalaşdırın. Pleazyng açıq qalsın. Rele şifrələnmiş musiqi əmrlərini ötürür və şəbəkə ünvanlarını görür. Hər pleyer öz media serverindən yayımlayır.';
 	@override String get relayInvalid => 'HTTPS rele ünvanı daxil edin.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$az extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$az._(TranslationsAz root) : this._root = root, super.internal(root);
+
+	final TranslationsAz _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Naməlum versiyadan əlfəcinlər';
+	@override String get assignToVersion => 'Bu versiyaya təyin et';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsAz {
 			'metadataEdit.enterImageUrl' => 'Şəkil URL-i daxil edin',
 			'metadataEdit.imageUrl' => 'Şəkil URL-i',
 			'metadataEdit.metadataUpdated' => 'Meta-məlumatlar yeniləndi',
+			'metadataEdit.metadataConflict' => 'Başqa redaktor eyni sahəni dəyişib. Yadda saxlamazdan əvvəl son dəyərlərə baxmaq üçün redaktoru yenidən açın.',
 			'metadataEdit.metadataUpdateFailed' => 'Meta-məlumatlar yenilənə bilmədi',
 			'metadataEdit.artworkUpdated' => 'Şəkillər yeniləndi',
 			'metadataEdit.artworkUpdateFailed' => 'Şəkillər yenilənə bilmədi',
@@ -8722,9 +8736,9 @@ extension on TranslationsAz {
 			'homeLayout.continueWatching' => 'İzləməyə davam et',
 			'homeLayout.continueWatchingLibraryDescription' => 'Bu kütüphaneye öz-düzgün-gelişmiş yol',
 			'homeLayout.continueWatchingHomeDescription' => 'Evdə göstərilmiş olan “Gözlük”',
-			'homeLayout.nextUpHomeDescription' => 'Sonraki İçerikDünyanın ən azı yerləri evdə',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => 'Sonraki İçerikDünyanın ən azı yerləri evdə',
 			'homeLayout.library' => 'Kitabxana',
 			'homeLayout.showInRecommended' => 'İnternet-kitabətdə danışılanlar',
 			'homeLayout.customPlexRow' => 'Xərimlər Plex',
@@ -9236,9 +9250,9 @@ extension on TranslationsAz {
 			'audiobook.statusNew' => 'Başlamadı',
 			'audiobook.statusProgress' => 'Gəlimdə',
 			'audiobook.statusFinished' => 'Hazırda',
-			'audiobook.goToTime' => 'Zamanla gəlin',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'Zamanla gəlin',
 			'audiobook.timeHelp' => 'Saatlar:minutlar:saniyələr və ya minutlar:saniyələr',
 			'audiobook.recoveryHelp' => 'Son zamanlarda şifrə edilmiş bir kopyayı ithal etmədən əvvəl və ya sinqlər verilerini düzeltmək. İthalatlar mevcut durumla birleşir; yerel sinq tarihini asılmazlar. Sinq kodunu ayrı tutun.',
 			'audiobook.recoveryExport' => 'Şifrelə qayıtma dosyası',
@@ -9750,9 +9764,9 @@ extension on TranslationsAz {
 			'musicTools.noHistory' => 'Hələ göstəriləcək musiqi yoxdur',
 			'musicTools.historyHint' => 'Bu profilin dinləmə tarixçəsi',
 			'musicTools.days' => 'Günlər',
-			'musicTools.albumBlocks' => 'Albomları bütöv saxla',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'Albomları bütöv saxla',
 			'musicTools.home' => 'Musiqi',
 			'musicTools.recent' => 'Son dinlənilənlər',
 			'musicTools.apiKey' => 'API açarı',
@@ -9813,6 +9827,8 @@ extension on TranslationsAz {
 			'musicDevices.relay' => 'Musiqi rele ünvanı',
 			'musicDevices.relayHint' => 'Qəbul edən cihazda aktivləşdirin, sonra eyni şəbəkədə bir dəfə qoşalaşdırın. Pleazyng açıq qalsın. Rele şifrələnmiş musiqi əmrlərini ötürür və şəbəkə ünvanlarını görür. Hər pleyer öz media serverindən yayımlayır.',
 			'musicDevices.relayInvalid' => 'HTTPS rele ünvanı daxil edin.',
+			'bookmarkMigration.unassigned' => 'Naməlum versiyadan əlfəcinlər',
+			'bookmarkMigration.assignToVersion' => 'Bu versiyaya təyin et',
 			_ => null,
 		};
 	}

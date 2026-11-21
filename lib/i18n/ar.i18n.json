@@ -569,7 +569,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3345,6 +3344,7 @@
     "enterImageUrl": "إدخال صورة URL",
     "imageUrl": "صورة URL",
     "metadataUpdated": "متاجدات تحديثات",
+    "metadataConflict": "غيّر محرر آخر الحقل نفسه. أعد فتح المحرر لمراجعة أحدث القيم قبل الحفظ.",
     "metadataUpdateFailed": "فشل في تحديث البيانات الميتا",
     "artworkUpdated": "الفنون المحدثة",
     "artworkUpdateFailed": "فشل في تحديث أعمال الفن",
@@ -5818,5 +5818,9 @@
     "relay": "عنوان مرحّل الموسيقى",
     "relayHint": "فعّل هذا على جهاز الاستقبال، ثم أقرن الجهازين مرة واحدة على الشبكة نفسها. أبقِ Pleazyng مفتوحًا. ينقل المرحّل أوامر الموسيقى المشفّرة ويرى عناوين الشبكة. يبث كل مشغّل من خادم الوسائط الخاص به.",
     "relayInvalid": "أدخل عنوان مرحّل يستخدم HTTPS."
+  },
+  "bookmarkMigration": {
+    "unassigned": "إشارات مرجعية من إصدار غير معروف",
+    "assignToVersion": "إسناد إلى هذا الإصدار"
   }
 }

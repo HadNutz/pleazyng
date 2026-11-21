@@ -565,7 +565,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3297,6 +3296,7 @@
     "enterImageUrl": "Vložte obrázek URL",
     "imageUrl": "obrázek URL",
     "metadataUpdated": "Aktualizované metadata",
+    "metadataConflict": "Jiný editor změnil stejné pole. Před uložením znovu otevřete editor a zkontrolujte aktuální hodnoty.",
     "metadataUpdateFailed": "Nedokázal aktualizovat metadata",
     "artworkUpdated": "Umělecká aktualizace",
     "artworkUpdateFailed": "Nedokázal aktualizovat umělecké dílo",
@@ -5758,5 +5758,9 @@
     "relay": "URL hudebního relé",
     "relayHint": "Zapněte na přijímajícím zařízení a jednou spárujte ve stejné síti. Nechte Pleazyng otevřený. Relé přenáší šifrované ovládání hudby a vidí síťové adresy. Každý přehrávač streamuje z vlastního mediálního serveru.",
     "relayInvalid": "Zadejte HTTPS adresu relé."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Záložky z neznámé verze",
+    "assignToVersion": "Přiřadit k této verzi"
   }
 }

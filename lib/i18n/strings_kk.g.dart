@@ -123,6 +123,7 @@ class TranslationsKk extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$kk musicExperience = _Translations$musicExperience$kk._(_root);
 	@override late final _Translations$musicTools$kk musicTools = _Translations$musicTools$kk._(_root);
 	@override late final _Translations$musicDevices$kk musicDevices = _Translations$musicDevices$kk._(_root);
+	@override late final _Translations$bookmarkMigration$kk bookmarkMigration = _Translations$bookmarkMigration$kk._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$kk extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Сурет URL-ін енгізіңіз';
 	@override String get imageUrl => 'Сурет URL-і';
 	@override String get metadataUpdated => 'Метадеректер жаңартылды';
+	@override String get metadataConflict => 'Басқа редактор осы өрісті өзгертті. Сақтау алдында соңғы мәндерді тексеру үшін редакторды қайта ашыңыз.';
 	@override String get metadataUpdateFailed => 'Метадеректерді жаңарту мүмкін болмады';
 	@override String get artworkUpdated => 'Суреттер жаңартылды';
 	@override String get artworkUpdateFailed => 'Суреттерді жаңарту мүмкін болмады';
@@ -4523,6 +4525,17 @@ class _Translations$musicDevices$kk extends Translations$musicDevices$en {
 	@override String get relay => 'Музыка релесінің URL мекенжайы';
 	@override String get relayHint => 'Қабылдаушы құрылғыда қосып, бір желіде бір рет жұптастырыңыз. Pleazyng ашық тұрсын. Реле шифрланған музыка пәрмендерін тасымалдайды және желі мекенжайларын көреді. Әр ойнатқыш өз медиа серверінен ағын алады.';
 	@override String get relayInvalid => 'Реленің HTTPS мекенжайын енгізіңіз.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$kk extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$kk._(TranslationsKk root) : this._root = root, super.internal(root);
+
+	final TranslationsKk _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Анықталмаған нұсқадағы бетбелгілер';
+	@override String get assignToVersion => 'Осы нұсқаға тағайындау';
 }
 
 // Path: appIcon.names
@@ -8291,6 +8304,7 @@ extension on TranslationsKk {
 			'metadataEdit.enterImageUrl' => 'Сурет URL-ін енгізіңіз',
 			'metadataEdit.imageUrl' => 'Сурет URL-і',
 			'metadataEdit.metadataUpdated' => 'Метадеректер жаңартылды',
+			'metadataEdit.metadataConflict' => 'Басқа редактор осы өрісті өзгертті. Сақтау алдында соңғы мәндерді тексеру үшін редакторды қайта ашыңыз.',
 			'metadataEdit.metadataUpdateFailed' => 'Метадеректерді жаңарту мүмкін болмады',
 			'metadataEdit.artworkUpdated' => 'Суреттер жаңартылды',
 			'metadataEdit.artworkUpdateFailed' => 'Суреттерді жаңарту мүмкін болмады',
@@ -8722,9 +8736,9 @@ extension on TranslationsKk {
 			'homeLayout.continueWatching' => 'Көруді жалғастыру',
 			'homeLayout.continueWatchingLibraryDescription' => 'Бұл библиотекасының өзара-қатынас',
 			'homeLayout.continueWatchingHomeDescription' => 'Өнімдермен көшiрiнiң өнерінің өнерімен',
-			'homeLayout.nextUpHomeDescription' => '«Аяқтар» АҚШ-ның «Аяға» АҚШ бағдарламасының өзарамен таныстыратын',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.nextUpHomeDescription' => '«Аяқтар» АҚШ-ның «Аяға» АҚШ бағдарламасының өзарамен таныстыратын',
 			'homeLayout.library' => 'Кітапхана',
 			'homeLayout.showInRecommended' => 'Библиотеканың тұрақтанды',
 			'homeLayout.customPlexRow' => 'Қазір Plex қаңтар',
@@ -9236,9 +9250,9 @@ extension on TranslationsKk {
 			'audiobook.statusNew' => 'Жұқа қабаттар',
 			'audiobook.statusProgress' => 'Өйткені',
 			'audiobook.statusFinished' => 'Өткен',
-			'audiobook.goToTime' => 'Қазіргі уақытта',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'Қазіргі уақытта',
 			'audiobook.timeHelp' => 'Өнімдер: 1 минут, 1 минут, 1 секунды',
 			'audiobook.recoveryHelp' => 'Қаланың тұрақты тұрғындарының саны 10 адамды құрайды және 1 адамды қағидалардан тұрады.',
 			'audiobook.recoveryExport' => 'Експортдық криптовалюттік файл',
@@ -9750,9 +9764,9 @@ extension on TranslationsKk {
 			'musicTools.noHistory' => 'Әзірге көрсетілетін музыка жоқ',
 			'musicTools.historyHint' => 'Осы профильдің тыңдау тарихы',
 			'musicTools.days' => 'Күндер',
-			'musicTools.albumBlocks' => 'Альбомдарды тұтас сақтау',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.albumBlocks' => 'Альбомдарды тұтас сақтау',
 			'musicTools.home' => 'Музыка',
 			'musicTools.recent' => 'Жақында тыңдалған',
 			'musicTools.apiKey' => 'API кілті',
@@ -9813,6 +9827,8 @@ extension on TranslationsKk {
 			'musicDevices.relay' => 'Музыка релесінің URL мекенжайы',
 			'musicDevices.relayHint' => 'Қабылдаушы құрылғыда қосып, бір желіде бір рет жұптастырыңыз. Pleazyng ашық тұрсын. Реле шифрланған музыка пәрмендерін тасымалдайды және желі мекенжайларын көреді. Әр ойнатқыш өз медиа серверінен ағын алады.',
 			'musicDevices.relayInvalid' => 'Реленің HTTPS мекенжайын енгізіңіз.',
+			'bookmarkMigration.unassigned' => 'Анықталмаған нұсқадағы бетбелгілер',
+			'bookmarkMigration.assignToVersion' => 'Осы нұсқаға тағайындау',
 			_ => null,
 		};
 	}

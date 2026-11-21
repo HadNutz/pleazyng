@@ -561,7 +561,6 @@
     "motionSmoothingApplyFailed": "",
     "motionSmoothingLiveUnavailableDescription": "",
     "motionSmoothingNotActiveDescription": "",
-    "motionSmoothingNextPlayback": "",
     "motionSmoothingOff": "",
     "motionSmoothingOffDescription": "",
     "motionSmoothingMpv": "",
@@ -3261,6 +3260,7 @@
     "enterImageUrl": "Görsel URL'si girin",
     "imageUrl": "Görsel URL'si",
     "metadataUpdated": "Meta veriler güncellendi",
+    "metadataConflict": "Başka bir düzenleyici aynı alanı değiştirdi. Kaydetmeden önce güncel değerleri kontrol etmek için düzenleyiciyi yeniden açın.",
     "metadataUpdateFailed": "Meta veriler güncellenemedi",
     "artworkUpdated": "Görseller güncellendi",
     "artworkUpdateFailed": "Görseller güncellenemedi",
@@ -5710,5 +5710,9 @@
     "relay": "Müzik rölesi URL’si",
     "relayHint": "Alıcı cihazda etkinleştirin, ardından aynı ağda bir kez eşleştirin. Pleazyng açık kalsın. Röle şifreli müzik denetimlerini iletir ve ağ adreslerini görür. Her oynatıcı kendi medya sunucusundan yayın yapar.",
     "relayInvalid": "Bir HTTPS röle adresi girin."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Sürümü belirlenemeyen yer imleri",
+    "assignToVersion": "Bu sürüme ata"
   }
 }
