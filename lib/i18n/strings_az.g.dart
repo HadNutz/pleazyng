@@ -2903,6 +2903,7 @@ class _Translations$seerr$az extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Yenidən daxil olduqdan sonra sessiya rədd edildi';
 	@override String get permissionDenied => 'Seerr bu əməliyyatı rədd etdi: hesabınızda artıq tələb olunan icazə yoxdur';
 	@override String get permissionRevoked => 'Bunu sorğulamaq üçün artıq icazəniz yoxdur';
+	@override String get withdrawRequest => 'Sorğunu geri götür';
 }
 
 // Path: services
@@ -8425,6 +8426,7 @@ extension on TranslationsAz {
 			'seerr.sessionRejectedAfterReauth' => 'Yenidən daxil olduqdan sonra sessiya rədd edildi',
 			'seerr.permissionDenied' => 'Seerr bu əməliyyatı rədd etdi: hesabınızda artıq tələb olunan icazə yoxdur',
 			'seerr.permissionRevoked' => 'Bunu sorğulamaq üçün artıq icazəniz yoxdur',
+			'seerr.withdrawRequest' => 'Sorğunu geri götür',
 			'services.title' => 'Xidmətlər',
 			'services.hubSubtitle' => 'İzləmə tərəqqisini eyniləşdirin və yeni başlıqlar sorğulayın.',
 			'services.integrations' => 'İnteqrasiyalar',
@@ -8717,9 +8719,9 @@ extension on TranslationsAz {
 			'homeLayout.showInRecommended' => 'İnternet-kitabətdə danışılanlar',
 			'homeLayout.customPlexRow' => 'Xərimlər Plex',
 			'homeLayout.heroNeedsLibrary' => 'Birincisi, “Bibliothèque” – “Hero”ın bir yerə baxması lazımdır.',
-			'homeLayout.heroNeedsSurface' => 'Birincisi kütüphanə və ya evə baxın — Hero bir yerə göstərmək lazımdır',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Birincisi kütüphanə və ya evə baxın — Hero bir yerə göstərmək lazımdır',
 			'homeLayout.removeHub' => 'Həkimə qalıb',
 			'homeLayout.noPlexRows' => 'Bu kütüphane üçün Plex-managed sıra qayıtılıb.',
 			'homeLayout.openDetails' => 'Açıklama Detayları',
@@ -9231,9 +9233,9 @@ extension on TranslationsAz {
 			'audiobook.recoveryHelp' => 'Son zamanlarda şifrə edilmiş bir kopyayı ithal etmədən əvvəl və ya sinqlər verilerini düzeltmək. İthalatlar mevcut durumla birleşir; yerel sinq tarihini asılmazlar. Sinq kodunu ayrı tutun.',
 			'audiobook.recoveryExport' => 'Şifrelə qayıtma dosyası',
 			'audiobook.recoveryImport' => 'Şifrelə qayıtma dosyası',
-			'audiobook.recoveryImportConfirm' => 'Bu şifrə edilmiş qaytarma dosyasını günümüzdeki okuma pozisyonları və notlarla birleştirir? mevcut geçmişi tutulur. Paylaşılmış kütüphane və element kimlikləri içermez; ithal etmeden əvvəl hər cihazda eşitsiz kimliklər ayarlayın.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Bu şifrə edilmiş qaytarma dosyasını günümüzdeki okuma pozisyonları və notlarla birleştirir? mevcut geçmişi tutulur. Paylaşılmış kütüphane və element kimlikləri içermez; ithal etmeden əvvəl hər cihazda eşitsiz kimliklər ayarlayın.',
 			'audiobook.recoveryExported' => 'Şifrelə qayıtma dosyası qurulmuşdur.',
 			'audiobook.recoveryImported' => 'İtraf verileri birləşmişdir.',
 			'sourceSetup.bookorbitHelp' => 'Kitablarına baxmaq və onları oxutmaq üçün öz BookOrbit hesabınızla daxil olun. Çatışmayan başlıqlar üçün sorğular yenə də qoşulmuş SeerrNG instansiyanız vasitəsilə göndərilir.',
@@ -9745,9 +9747,9 @@ extension on TranslationsAz {
 			'musicTools.recent' => 'Son dinlənilənlər',
 			'musicTools.apiKey' => 'API açarı',
 			'musicTools.missing' => 'Yoxdur',
-			'musicTools.minutes' => 'Dəqiqə',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Dəqiqə',
 			'musicTools.rules' => 'Filtrlər',
 			'musicTools.exclusiveOutput' => 'Eksklüziv səs çıxışı',
 			'musicTools.preamp' => 'Ön gücləndirmə',

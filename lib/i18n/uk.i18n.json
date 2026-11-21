@@ -3461,7 +3461,8 @@
     "noUserInformation": "Seerr не повернула інформацію користувача",
     "sessionRejectedAfterReauth": "Засідання було відхилено після повторного підписання.",
     "permissionDenied": "Seerr відмовився від цієї дії: Ваш обліковий запис більше не має необхідного дозволу",
-    "permissionRevoked": "Ви більше не маєте права вимагати цього."
+    "permissionRevoked": "Ви більше не маєте права вимагати цього.",
+    "withdrawRequest": "Відкликати запит"
   },
   "services": {
     "title": "Сервіси",

@@ -2911,6 +2911,7 @@ class Translations$seerr$es extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'La sesión fue rechazada después de volver a iniciar sesión';
 	@override String get permissionDenied => 'Seerr denegó esta acción: tu cuenta ya no tiene el permiso necesario';
 	@override String get permissionRevoked => 'Ya no tienes permiso para solicitar esto';
+	@override String get withdrawRequest => 'Retirar solicitud';
 }
 
 // Path: services
@@ -8568,6 +8569,7 @@ extension on TranslationsEs {
 			'seerr.sessionRejectedAfterReauth' => 'La sesión fue rechazada después de volver a iniciar sesión',
 			'seerr.permissionDenied' => 'Seerr denegó esta acción: tu cuenta ya no tiene el permiso necesario',
 			'seerr.permissionRevoked' => 'Ya no tienes permiso para solicitar esto',
+			'seerr.withdrawRequest' => 'Retirar solicitud',
 			'services.title' => 'Servicios',
 			'services.hubSubtitle' => 'Sincroniza tu progreso de visualización y solicita nuevos títulos.',
 			'services.integrations' => 'Integraciones',
@@ -8841,9 +8843,9 @@ extension on TranslationsEs {
 			'homeLayout.syncNow' => 'Síntomas ahora',
 			'homeLayout.plexHomeManager' => 'Plex Director de la casa',
 			'homeLayout.managePlexRows' => 'Gestión Plex líneas en Pleazyng',
-			'homeLayout.managePlexRowsDescription' => 'Abierto a organizar las líneas seleccionadas por el hogar',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.managePlexRowsDescription' => 'Abierto a organizar las líneas seleccionadas por el hogar',
 			'homeLayout.organizeHomeRows' => 'Organizar las rutas domésticas',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} líneas: movimiento, Hero, Auto-slide, eliminación',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organizar ${library} líneas',
@@ -9355,9 +9357,9 @@ extension on TranslationsEs {
 			'audiobook.bookTimeline' => 'Todo el libro Progreso',
 			'audiobook.bookRemaining' => ({required Object time}) => 'El tiempo que queda en este libro: ${time}',
 			'audiobook.chapterRemaining' => ({required Object time}) => 'Tiempo restante en este capítulo: ${time}',
-			'audiobook.unknownRemaining' => 'Tiempo completo disponible a medida que se juegan partes',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.unknownRemaining' => 'Tiempo completo disponible a medida que se juegan partes',
 			'audiobook.undoSeek' => 'La última búsqueda',
 			'audiobook.customSpeed' => 'Velocidad de reproducción personalizada',
 			'audiobook.speedHelp' => 'Seleccione una velocidad de 0.25× a 4×.',
@@ -9869,9 +9871,9 @@ extension on TranslationsEs {
 			'bonusExtras.invalidSettings' => 'Comprueba las direcciones de los servidores y el nombre del modelo. El modo en la nube requiere HTTPS; el modo en este dispositivo requiere localhost.',
 			'bonusExtras.failed' => 'No se pudieron actualizar los extras. Los extras disponibles en tu biblioteca siguen siendo accesibles.',
 			'bonusExtras.partial' => 'Algunas fuentes en línea no están disponibles. Se muestran los resultados disponibles.',
-			'bonusExtras.linkTitle' => 'Título del extra',
 			_ => null,
 		} ?? switch (path) {
+			'bonusExtras.linkTitle' => 'Título del extra',
 			'bonusExtras.linkUrl' => 'Enlace de YouTube o Vimeo',
 			'bonusExtras.invalidLink' => 'Introduce un título y un enlace HTTPS válido a un vídeo de YouTube o Vimeo.',
 			'bonusExtras.showHidden' => 'Restablecer extras y editores ocultos',

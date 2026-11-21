@@ -3404,7 +3404,8 @@
     "noUserInformation": "Seerr ไม่ได้คืนข้อมูลผู้ใช้",
     "sessionRejectedAfterReauth": "การประชุมถูกปฏิเสธหลังจากการลงทะเบียนอีกครั้ง",
     "permissionDenied": "Seerr ไม่ยอมรับการกระทํานี้: บัญชีของคุณไม่ได้รับอนุญาตที่ต้องการ",
-    "permissionRevoked": "คุณไม่สามารถร้องขอได้อีกต่อไป"
+    "permissionRevoked": "คุณไม่สามารถร้องขอได้อีกต่อไป",
+    "withdrawRequest": "ถอนคำขอ"
   },
   "services": {
     "title": "บริการ",

@@ -3425,7 +3425,8 @@
     "noUserInformation": "Seerr ने उपयोगकर्ता जानकारी वापस नहीं की",
     "sessionRejectedAfterReauth": "फिर से हस्ताक्षर करने के बाद बैठक को अस्वीकार कर दिया गया",
     "permissionDenied": "Seerr ने इस कार्रवाई को अस्वीकार कर दिया: आपके खाते में अब आवश्यक अनुमति नहीं है",
-    "permissionRevoked": "अब आपके पास यह अनुरोध करने की अनुमति नहीं है"
+    "permissionRevoked": "अब आपके पास यह अनुरोध करने की अनुमति नहीं है",
+    "withdrawRequest": "अनुरोध वापस लें"
   },
   "services": {
     "title": "सेवाएं",

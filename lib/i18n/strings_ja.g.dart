@@ -2899,6 +2899,7 @@ class _Translations$seerr$ja extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => '再サインイン後にセッションが拒否されました';
 	@override String get permissionDenied => 'Seerrがこの操作を拒否しました: アカウントに必要な権限がありません';
 	@override String get permissionRevoked => 'これをリクエストする権限がなくなりました';
+	@override String get withdrawRequest => 'リクエストを取り消す';
 }
 
 // Path: services
@@ -8420,6 +8421,7 @@ extension on TranslationsJa {
 			'seerr.sessionRejectedAfterReauth' => '再サインイン後にセッションが拒否されました',
 			'seerr.permissionDenied' => 'Seerrがこの操作を拒否しました: アカウントに必要な権限がありません',
 			'seerr.permissionRevoked' => 'これをリクエストする権限がなくなりました',
+			'seerr.withdrawRequest' => 'リクエストを取り消す',
 			'services.title' => 'サービス',
 			'services.hubSubtitle' => '視聴の進捗を同期して、新しいタイトルをリクエストします。',
 			'services.integrations' => 'インテグレーション',
@@ -8712,9 +8714,9 @@ extension on TranslationsJa {
 			'homeLayout.showInRecommended' => '図書館で紹介される',
 			'homeLayout.customPlexRow' => '定制 Plex ライン',
 			'homeLayout.heroNeedsLibrary' => '図書館をチェックするには、まずヒーローがどこかで表示する必要があります。',
-			'homeLayout.heroNeedsSurface' => '図書館またはホームをチェックするには、まず、ヒーローがどこかで表示する必要があります。',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => '図書館またはホームをチェックするには、まず、ヒーローがどこかで表示する必要があります。',
 			'homeLayout.removeHub' => 'ハブを削除',
 			'homeLayout.noPlexRows' => '番号 Plex 管理行がこの図書館に戻りました。',
 			'homeLayout.openDetails' => 'オープン 詳細',
@@ -9226,9 +9228,9 @@ extension on TranslationsJa {
 			'audiobook.recoveryHelp' => '同期データを移動または修正する前に、最近暗号化されたコピーを輸出します. インポートは現在の状態と合併し、現地の同期史を決して置き換えることはありません。',
 			'audiobook.recoveryExport' => 'エクスポート暗号化回復ファイル',
 			'audiobook.recoveryImport' => '暗号化された復元ファイルの輸入',
-			'audiobook.recoveryImportConfirm' => 'この暗号化された回復ファイルを現在の読み込みポジションとノートと組み合わせますか? 既存の歴史が保存されます. 共有図書館およびアイテムIDは含まれていません。',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'この暗号化された回復ファイルを現在の読み込みポジションとノートと組み合わせますか? 既存の歴史が保存されます. 共有図書館およびアイテムIDは含まれていません。',
 			'audiobook.recoveryExported' => '暗号化されたリハビリファイルが保存されました。',
 			'audiobook.recoveryImported' => 'リハビリデータが合併。',
 			'sourceSetup.bookorbitHelp' => 'ご自身のBookOrbitアカウントにサインインすると、本を閲覧して再生できます。未登録タイトルのリクエストは、接続済みのSeerrNGインスタンスを通じて送信されます。',
@@ -9740,9 +9742,9 @@ extension on TranslationsJa {
 			'musicTools.recent' => '最近再生した曲',
 			'musicTools.apiKey' => 'API キー',
 			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => '分',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => '分',
 			'musicTools.rules' => 'フィルター',
 			'musicTools.exclusiveOutput' => '排他オーディオ出力',
 			'musicTools.preamp' => 'プリアンプ',

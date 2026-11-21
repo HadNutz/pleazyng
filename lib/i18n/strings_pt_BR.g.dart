@@ -754,6 +754,7 @@ class Translations$seerr$pt_BR extends Translations$seerr$pt {
 	@override String get notificationsEnabled => 'Avisaremos quando estiver disponível';
 	@override String get notificationsDisabled => 'Alerta de disponibilidade desativado';
 	@override String get notificationFailed => 'Não foi possível atualizar o alerta de disponibilidade';
+	@override String get withdrawRequest => 'Cancelar solicitação';
 }
 
 // Path: services
@@ -1788,6 +1789,7 @@ extension on TranslationsPtBr {
 			'seerr.notificationsEnabled' => 'Avisaremos quando estiver disponível',
 			'seerr.notificationsDisabled' => 'Alerta de disponibilidade desativado',
 			'seerr.notificationFailed' => 'Não foi possível atualizar o alerta de disponibilidade',
+			'seerr.withdrawRequest' => 'Cancelar solicitação',
 			'services.libraryFilter.modeBlacklist' => 'Lista negra',
 			'services.libraryFilter.modeWhitelist' => 'Lista branca',
 			'services.libraryFilter.libraries' => 'Bibliotecas',
@@ -1923,9 +1925,9 @@ extension on TranslationsPtBr {
 			'romm.firmware' => 'Firmware',
 			'romm.firmwareHelp' => 'Some systems need firmware. Manage it in RomM; the selected emulator reports any missing requirements at launch.',
 			'romm.achievements' => 'RetroAchievements',
-			'romm.achievementsHelp' => 'Achievement information comes from RomM. The browser player does not earn new achievements.',
 			_ => null,
 		} ?? switch (path) {
+			'romm.achievementsHelp' => 'Achievement information comes from RomM. The browser player does not earn new achievements.',
 			'romm.screenshots' => 'Screenshots',
 			'romm.manual' => 'Manual',
 			'romm.importSave' => 'Import save',

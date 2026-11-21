@@ -3425,7 +3425,8 @@
     "noUserInformation": "Seerr foydalanuvchi maʼlumotlarini qaytarmadi",
     "sessionRejectedAfterReauth": "Qayta kirilgandan keyin seans rad etildi",
     "permissionDenied": "Seerr bu amalni rad etdi: hisobingizda endi kerakli ruxsat yoʻq",
-    "permissionRevoked": "Buni soʻrash uchun endi ruxsatingiz yoʻq"
+    "permissionRevoked": "Buni soʻrash uchun endi ruxsatingiz yoʻq",
+    "withdrawRequest": "Soʻrovni qaytarib olish"
   },
   "services": {
     "title": "Xizmatlar",

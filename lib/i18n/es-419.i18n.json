@@ -494,7 +494,8 @@
     "notificationsOn": "Aviso de disponibilidad activado",
     "notificationsEnabled": "Te avisaremos cuando esté disponible",
     "notificationsDisabled": "Aviso de disponibilidad desactivado",
-    "notificationFailed": "No se pudo actualizar el aviso de disponibilidad"
+    "notificationFailed": "No se pudo actualizar el aviso de disponibilidad",
+    "withdrawRequest": "Retirar solicitud"
   },
   "services": {
     "libraryFilter": {

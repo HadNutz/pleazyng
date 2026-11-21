@@ -2903,6 +2903,7 @@ class _Translations$seerr$hu extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'A munkamenetet az újbóli bejelentkezés után elutasították';
 	@override String get permissionDenied => 'A Seerr elutasította ezt a műveletet: a fiókod már nem rendelkezik a szükséges jogosultsággal';
 	@override String get permissionRevoked => 'Már nincs jogosultságod ennek az igényléséhez';
+	@override String get withdrawRequest => 'Kérés visszavonása';
 }
 
 // Path: services
@@ -8425,6 +8426,7 @@ extension on TranslationsHu {
 			'seerr.sessionRejectedAfterReauth' => 'A munkamenetet az újbóli bejelentkezés után elutasították',
 			'seerr.permissionDenied' => 'A Seerr elutasította ezt a műveletet: a fiókod már nem rendelkezik a szükséges jogosultsággal',
 			'seerr.permissionRevoked' => 'Már nincs jogosultságod ennek az igényléséhez',
+			'seerr.withdrawRequest' => 'Kérés visszavonása',
 			'services.title' => 'Szolgáltatások',
 			'services.hubSubtitle' => 'Megtekintési haladás szinkronizálása és új tartalmak igénylése.',
 			'services.integrations' => 'Integrációk',
@@ -8717,9 +8719,9 @@ extension on TranslationsHu {
 			'homeLayout.showInRecommended' => 'A könyvtárban ajánlott',
 			'homeLayout.customPlexRow' => 'Személyes Plex sor',
 			'homeLayout.heroNeedsLibrary' => 'Kövesse a könyvtárat először – Hero kell valahol megmutatni',
-			'homeLayout.heroNeedsSurface' => 'Kezdőlap / Könyvtár / Kezdőlapi könyvtár / A hősnek valahol kell megmutatnia',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Kezdőlap / Könyvtár / Kezdőlapi könyvtár / A hősnek valahol kell megmutatnia',
 			'homeLayout.removeHub' => 'Hulladék Hub',
 			'homeLayout.noPlexRows' => 'A Plex-es irányított sorok visszatértek erre a könyvtárra.',
 			'homeLayout.openDetails' => 'Nyitott részletek',
@@ -9231,9 +9233,9 @@ extension on TranslationsHu {
 			'audiobook.recoveryHelp' => 'A szinkronizációs adatok áthelyezése vagy javítása előtt exportáljon egy nemrégiben titkosított másolatot. Az importok összeolvadnak a jelenlegi állapotgal; soha nem helyettesítik a helyi szinkrálás történetét.',
 			'audiobook.recoveryExport' => 'Export titkosított helyreállítási fájl',
 			'audiobook.recoveryImport' => 'Import titkosított helyreállítási fájl',
-			'audiobook.recoveryImportConfirm' => 'Ez a titkosított helyreállítási fájl összekapcsolja az aktuális olvasási pozíciókkal és jegyzetekkel? A meglévő történelem megmarad. Megosztott könyvtár és elem azonosítók nem szerepelnek; beállítja az egyes eszközök megfelelő azonosítóját az import előtt.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Ez a titkosított helyreállítási fájl összekapcsolja az aktuális olvasási pozíciókkal és jegyzetekkel? A meglévő történelem megmarad. Megosztott könyvtár és elem azonosítók nem szerepelnek; beállítja az egyes eszközök megfelelő azonosítóját az import előtt.',
 			'audiobook.recoveryExported' => 'A titkosított helyreállítási fájl mentett.',
 			'audiobook.recoveryImported' => 'A helyreállítási adatok összegyűltek.',
 			'sourceSetup.bookorbitHelp' => 'Jelentkezz be a saját BookOrbit-fiókoddal a könyvek böngészéséhez és lejátszásához. A hiányzó címek igénylései továbbra is a csatlakoztatott SeerrNG-példányodon keresztül történnek.',
@@ -9745,9 +9747,9 @@ extension on TranslationsHu {
 			'musicTools.recent' => 'Legutóbb lejátszott',
 			'musicTools.apiKey' => 'API-kulcs',
 			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => 'Perc',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Perc',
 			'musicTools.rules' => 'Szűrők',
 			'musicTools.exclusiveOutput' => 'Kizárólagos hangkimenet',
 			'musicTools.preamp' => 'Előerősítés',

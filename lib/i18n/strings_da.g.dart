@@ -2903,6 +2903,7 @@ class _Translations$seerr$da extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Sessionen blev afvist efter at være logget ind igen';
 	@override String get permissionDenied => 'Seerr afviste denne handling: din konto har ikke længere den nødvendige tilladelse';
 	@override String get permissionRevoked => 'Du har ikke længere tilladelse til at anmode om dette';
+	@override String get withdrawRequest => 'Træk anmodningen tilbage';
 }
 
 // Path: services
@@ -8425,6 +8426,7 @@ extension on TranslationsDa {
 			'seerr.sessionRejectedAfterReauth' => 'Sessionen blev afvist efter at være logget ind igen',
 			'seerr.permissionDenied' => 'Seerr afviste denne handling: din konto har ikke længere den nødvendige tilladelse',
 			'seerr.permissionRevoked' => 'Du har ikke længere tilladelse til at anmode om dette',
+			'seerr.withdrawRequest' => 'Træk anmodningen tilbage',
 			'services.title' => 'Tjenester',
 			'services.hubSubtitle' => 'Synkroniser dit visningsfremskridt, og anmod om nye titler.',
 			'services.integrations' => 'Integrationer',
@@ -8717,9 +8719,9 @@ extension on TranslationsDa {
 			'homeLayout.showInRecommended' => 'Udstilling i biblioteket anbefalet',
 			'homeLayout.customPlexRow' => 'Tilpasset Plex række',
 			'homeLayout.heroNeedsLibrary' => 'Se biblioteket først – Hero har brug for et sted at vise',
-			'homeLayout.heroNeedsSurface' => 'Se biblioteket eller hjemmet først – Hero har brug for et sted at vise',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Se biblioteket eller hjemmet først – Hero har brug for et sted at vise',
 			'homeLayout.removeHub' => 'Fjern Hub',
 			'homeLayout.noPlexRows' => 'Plex-forvaltet række tilbage til denne bibliotek.',
 			'homeLayout.openDetails' => 'Åbne detaljer',
@@ -9231,9 +9233,9 @@ extension on TranslationsDa {
 			'audiobook.recoveryHelp' => 'Eksporter en nylig krypteret kopi, før du flytter eller reparerer synkroniseringsdata. Importer fusioneres med den aktuelle tilstand; de erstattes aldrig lokal synkroniseringshistorie. Hold synkronkoden adskilt.',
 			'audiobook.recoveryExport' => 'Eksport krypteret genopretning filer',
 			'audiobook.recoveryImport' => 'Import krypteret genopretning filer',
-			'audiobook.recoveryImportConfirm' => 'Kombinere denne krypterede genopretning fil med nuværende læsningspositioner og noter? eksisterende historie vil blive bevaret. Delte bibliotek og element ID\'er er ikke inkluderet; indstille matching ID\'erne på hver enhed før import.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Kombinere denne krypterede genopretning fil med nuværende læsningspositioner og noter? eksisterende historie vil blive bevaret. Delte bibliotek og element ID\'er er ikke inkluderet; indstille matching ID\'erne på hver enhed før import.',
 			'audiobook.recoveryExported' => 'Den krypterede genopretningsfil er gemt.',
 			'audiobook.recoveryImported' => 'Genopretning af data sammensat.',
 			'sourceSetup.bookorbitHelp' => 'Log ind med din egen BookOrbit-konto for at gennemse og afspille dens bøger. Anmodninger om manglende titler går stadig gennem din tilsluttede SeerrNG-instans.',
@@ -9745,9 +9747,9 @@ extension on TranslationsDa {
 			'musicTools.recent' => 'Senest afspillet',
 			'musicTools.apiKey' => 'API-nøgle',
 			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => 'Minutter',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Minutter',
 			'musicTools.rules' => 'Filtre',
 			'musicTools.exclusiveOutput' => 'Eksklusiv lydudgang',
 			'musicTools.preamp' => 'Forforstærkning',

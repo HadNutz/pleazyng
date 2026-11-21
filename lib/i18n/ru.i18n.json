@@ -3467,7 +3467,8 @@
     "noUserInformation": "Seerr не вернул сведения о пользователе",
     "sessionRejectedAfterReauth": "Сеанс был отклонён после повторного входа",
     "permissionDenied": "Seerr отклонил это действие: у вашей учётной записи больше нет необходимого разрешения",
-    "permissionRevoked": "У вас больше нет разрешения запрашивать это"
+    "permissionRevoked": "У вас больше нет разрешения запрашивать это",
+    "withdrawRequest": "Отозвать запрос"
   },
   "services": {
     "title": "Сервисы",

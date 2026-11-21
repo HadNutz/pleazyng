@@ -3425,7 +3425,8 @@
     "noUserInformation": "Seerr istifadəçi məlumatlarını qaytarmadı",
     "sessionRejectedAfterReauth": "Yenidən daxil olduqdan sonra sessiya rədd edildi",
     "permissionDenied": "Seerr bu əməliyyatı rədd etdi: hesabınızda artıq tələb olunan icazə yoxdur",
-    "permissionRevoked": "Bunu sorğulamaq üçün artıq icazəniz yoxdur"
+    "permissionRevoked": "Bunu sorğulamaq üçün artıq icazəniz yoxdur",
+    "withdrawRequest": "Sorğunu geri götür"
   },
   "services": {
     "title": "Xidmətlər",

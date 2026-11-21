@@ -2900,6 +2900,7 @@ class _Translations$seerr$zh_Hant extends Translations$seerr$zh {
 	@override String get sessionRejectedAfterReauth => '重新登入後，工作階段遭到拒絕';
 	@override String get permissionDenied => 'Seerr 拒絕了此操作：您的帳戶不再具備所需權限';
 	@override String get permissionRevoked => '您不再具有請求此內容的權限';
+	@override String get withdrawRequest => '撤回請求';
 }
 
 // Path: services
@@ -8421,6 +8422,7 @@ extension on TranslationsZhHant {
 			'seerr.sessionRejectedAfterReauth' => '重新登入後，工作階段遭到拒絕',
 			'seerr.permissionDenied' => 'Seerr 拒絕了此操作：您的帳戶不再具備所需權限',
 			'seerr.permissionRevoked' => '您不再具有請求此內容的權限',
+			'seerr.withdrawRequest' => '撤回請求',
 			'services.title' => '外部服務',
 			'services.hubSubtitle' => '同步觀看進度並請求新內容。',
 			'services.integrations' => '整合',
@@ -8713,9 +8715,9 @@ extension on TranslationsZhHant {
 			'homeLayout.showInRecommended' => '圖書館推薦',
 			'homeLayout.customPlexRow' => '定製 Plex 行',
 			'homeLayout.heroNeedsLibrary' => '檢視圖書館首先 - 英雄需要在某處展示',
-			'homeLayout.heroNeedsSurface' => '檢視圖書館或家先 - 英雄需要在某處展示',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => '檢視圖書館或家先 - 英雄需要在某處展示',
 			'homeLayout.removeHub' => '取消 Hub',
 			'homeLayout.noPlexRows' => '第Plex號管理行返回此圖書館。',
 			'homeLayout.openDetails' => '開放細節',
@@ -9227,9 +9229,9 @@ extension on TranslationsZhHant {
 			'audiobook.recoveryHelp' => '移動或修復同步資料前，請先匯出近期的加密備份。匯入資料會與目前狀態合併，不會取代本機同步記錄。請另外保存同步代碼。',
 			'audiobook.recoveryExport' => '輸出加密恢復檔案',
 			'audiobook.recoveryImport' => '輸入加密恢復檔案',
-			'audiobook.recoveryImportConfirm' => '將此加密恢復檔案與當前閱讀位置和筆記相結合嗎?現有歷史記錄將被保留. 共享圖書館和專案 ID 不包含; 在進口之前,在每個裝置上設定匹配 ID。',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => '將此加密恢復檔案與當前閱讀位置和筆記相結合嗎?現有歷史記錄將被保留. 共享圖書館和專案 ID 不包含; 在進口之前,在每個裝置上設定匹配 ID。',
 			'audiobook.recoveryExported' => '加密恢復檔案儲存。',
 			'audiobook.recoveryImported' => '恢復資料合併。',
 			'sourceSetup.bookorbitHelp' => '使用您自己的 BookOrbit 帳戶登入，即可瀏覽及播放書籍。缺少的書名仍會透過已連線的 SeerrNG 執行個體提出請求。',
@@ -9741,9 +9743,9 @@ extension on TranslationsZhHant {
 			'musicTools.recent' => '最近播放',
 			'musicTools.apiKey' => 'API 金鑰',
 			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => '分鐘',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => '分鐘',
 			'musicTools.rules' => '篩選器',
 			'musicTools.exclusiveOutput' => '獨佔音訊輸出',
 			'musicTools.preamp' => '前置放大',

@@ -3425,7 +3425,8 @@
     "noUserInformation": "Seerr اطلاعات کاربر را بازگرداند",
     "sessionRejectedAfterReauth": "جلسه پس از امضای مجدد رد شد.",
     "permissionDenied": "Seerr این اقدام را رد کرد: حساب شما دیگر مجوز مورد نیاز را ندارد",
-    "permissionRevoked": "شما دیگر اجازه درخواست این کار را ندارید."
+    "permissionRevoked": "شما دیگر اجازه درخواست این کار را ندارید.",
+    "withdrawRequest": "پس گرفتن درخواست"
   },
   "services": {
     "title": "خدمات",

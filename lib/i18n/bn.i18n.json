@@ -3425,7 +3425,8 @@
     "noUserInformation": "Seerr ব্যবহারকারীর তথ্য ফিরিয়ে দেয়নি",
     "sessionRejectedAfterReauth": "পুনরাবৃত্তি পরে চিঠি বাতিল করা হয়।",
     "permissionDenied": "Seerr এই পদক্ষেপটি প্রত্যাখ্যান করেছে: আপনার অ্যাকাউন্টের প্রয়োজনীয় অনুমতি নেই",
-    "permissionRevoked": "আপনি এখন আর এ ব্যাপারে অনুরোধ করার অনুমতি নেই।"
+    "permissionRevoked": "আপনি এখন আর এ ব্যাপারে অনুরোধ করার অনুমতি নেই।",
+    "withdrawRequest": "অনুরোধ প্রত্যাহার করুন"
   },
   "services": {
     "title": "পরিষেবা",

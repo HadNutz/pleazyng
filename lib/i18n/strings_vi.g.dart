@@ -2884,6 +2884,7 @@ class _Translations$seerr$vi extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Cuộc họp đã bị từ chối sau khi ký lại';
 	@override String get permissionDenied => 'Seerr từ chối hành động này: Tài khoản của bạn không còn được phép yêu cầu';
 	@override String get permissionRevoked => 'Bạn không còn được phép yêu cầu điều này';
+	@override String get withdrawRequest => 'Rút lại yêu cầu';
 }
 
 // Path: services
@@ -8400,6 +8401,7 @@ extension on TranslationsVi {
 			'seerr.sessionRejectedAfterReauth' => 'Cuộc họp đã bị từ chối sau khi ký lại',
 			'seerr.permissionDenied' => 'Seerr từ chối hành động này: Tài khoản của bạn không còn được phép yêu cầu',
 			'seerr.permissionRevoked' => 'Bạn không còn được phép yêu cầu điều này',
+			'seerr.withdrawRequest' => 'Rút lại yêu cầu',
 			'services.title' => 'Dịch vụ',
 			'services.hubSubtitle' => 'Sync theo dõi tiến bộ và yêu cầu các tiêu đề mới.',
 			'services.integrations' => 'Integration',
@@ -8692,9 +8694,9 @@ extension on TranslationsVi {
 			'homeLayout.showInRecommended' => 'Hiển thị trong Thư viện khuyến cáo',
 			'homeLayout.customPlexRow' => 'Tính năng: Plex',
 			'homeLayout.heroNeedsLibrary' => 'Kiểm tra Thư viện đầu tiên — Hero cần một nơi nào đó để hiển thị',
-			'homeLayout.heroNeedsSurface' => 'Kiểm tra Thư viện hoặc Nhà đầu tiên — Anh hùng cần một nơi nào đó để hiển thị',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Kiểm tra Thư viện hoặc Nhà đầu tiên — Anh hùng cần một nơi nào đó để hiển thị',
 			'homeLayout.removeHub' => 'Xóa Hub',
 			'homeLayout.noPlexRows' => 'Số Plex hàng quản lý đã trở lại cho thư viện này.',
 			'homeLayout.openDetails' => 'chi tiết mở',
@@ -9206,9 +9208,9 @@ extension on TranslationsVi {
 			'audiobook.recoveryHelp' => 'Xuất một bản sao được mã hóa gần đây trước khi di chuyển hoặc sửa chữa dữ liệu đồng bộ. nhập khẩu kết hợp với trạng thái hiện tại; họ không bao giờ thay thế lịch sử đồng bộ địa phương. Giữ mã đồng bộ riêng biệt.',
 			'audiobook.recoveryExport' => 'Xuất khẩu file recovery mã hóa',
 			'audiobook.recoveryImport' => 'nhập file recovery mã hóa',
-			'audiobook.recoveryImportConfirm' => 'Kết hợp tệp phục hồi mã hóa này với các vị trí đọc và ghi chú hiện tại? Lịch sử hiện có sẽ được giữ lại. Thư viện chia sẻ và ID mục không bao gồm; thiết lập ID phù hợp trên mỗi thiết bị trước khi nhập khẩu.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Kết hợp tệp phục hồi mã hóa này với các vị trí đọc và ghi chú hiện tại? Lịch sử hiện có sẽ được giữ lại. Thư viện chia sẻ và ID mục không bao gồm; thiết lập ID phù hợp trên mỗi thiết bị trước khi nhập khẩu.',
 			'audiobook.recoveryExported' => 'Tệp phục hồi mã hóa đã được lưu.',
 			'audiobook.recoveryImported' => 'Dữ liệu phục hồi kết hợp.',
 			'sourceSetup.bookorbitHelp' => 'Đăng nhập bằng tài khoản BookOrbit của riêng bạn để duyệt và phát sách. Yêu cầu các tựa sách còn thiếu vẫn được gửi qua phiên bản SeerrNG đã kết nối.',
@@ -9720,9 +9722,9 @@ extension on TranslationsVi {
 			'musicTools.recent' => 'Đã phát gần đây',
 			'musicTools.apiKey' => 'Khóa API',
 			'musicTools.missing' => 'N / A',
-			'musicTools.minutes' => 'phút',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'phút',
 			'musicTools.rules' => 'Bộ lọc',
 			'musicTools.exclusiveOutput' => 'Đầu ra âm thanh độc quyền',
 			'musicTools.preamp' => 'Tiền khuếch đại',

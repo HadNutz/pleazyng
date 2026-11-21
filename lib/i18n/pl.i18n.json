@@ -3467,7 +3467,8 @@
     "noUserInformation": "Seerr nie zwrócił informacji o użytkowniku",
     "sessionRejectedAfterReauth": "Sesja została odrzucona po ponownym zalogowaniu",
     "permissionDenied": "Seerr odrzucił tę akcję: Twoje konto nie ma już wymaganych uprawnień",
-    "permissionRevoked": "Nie masz już uprawnień, aby to zamówić"
+    "permissionRevoked": "Nie masz już uprawnień, aby to zamówić",
+    "withdrawRequest": "Wycofaj prośbę"
   },
   "services": {
     "title": "Usługi",

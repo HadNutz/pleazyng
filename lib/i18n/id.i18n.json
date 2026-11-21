@@ -3404,7 +3404,8 @@
     "noUserInformation": "Seerr tidak mengembalikan informasi pengguna",
     "sessionRejectedAfterReauth": "Perjanjian itu ditolak setelah ditandatangani lagi.",
     "permissionDenied": "Seerr menolak tindakan ini: akun Anda tidak lagi memiliki izin yang diperlukan",
-    "permissionRevoked": "Anda tidak lagi memiliki izin untuk meminta ini"
+    "permissionRevoked": "Anda tidak lagi memiliki izin untuk meminta ini",
+    "withdrawRequest": "Tarik permintaan"
   },
   "services": {
     "title": "Layanan",

@@ -3425,7 +3425,8 @@
     "noUserInformation": "Seerr hat keine Benutzerinformationen zurückgegeben",
     "sessionRejectedAfterReauth": "Die Sitzung wurde nach der erneuten Anmeldung abgelehnt",
     "permissionDenied": "Seerr hat diese Aktion abgelehnt: Dein Konto hat nicht mehr die erforderliche Berechtigung",
-    "permissionRevoked": "Du hast keine Berechtigung mehr, dies anzufragen"
+    "permissionRevoked": "Du hast keine Berechtigung mehr, dies anzufragen",
+    "withdrawRequest": "Anfrage zurückziehen"
   },
   "services": {
     "title": "Dienste",

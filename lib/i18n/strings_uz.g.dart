@@ -2903,6 +2903,7 @@ class _Translations$seerr$uz extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Qayta kirilgandan keyin seans rad etildi';
 	@override String get permissionDenied => 'Seerr bu amalni rad etdi: hisobingizda endi kerakli ruxsat yoʻq';
 	@override String get permissionRevoked => 'Buni soʻrash uchun endi ruxsatingiz yoʻq';
+	@override String get withdrawRequest => 'Soʻrovni qaytarib olish';
 }
 
 // Path: services
@@ -8425,6 +8426,7 @@ extension on TranslationsUz {
 			'seerr.sessionRejectedAfterReauth' => 'Qayta kirilgandan keyin seans rad etildi',
 			'seerr.permissionDenied' => 'Seerr bu amalni rad etdi: hisobingizda endi kerakli ruxsat yoʻq',
 			'seerr.permissionRevoked' => 'Buni soʻrash uchun endi ruxsatingiz yoʻq',
+			'seerr.withdrawRequest' => 'Soʻrovni qaytarib olish',
 			'services.title' => 'Xizmatlar',
 			'services.hubSubtitle' => 'Koʻrish jarayonini sinxronlang va yangi kontent soʻrang.',
 			'services.integrations' => 'Integratsiyalar',
@@ -8717,9 +8719,9 @@ extension on TranslationsUz {
 			'homeLayout.showInRecommended' => 'Librarikda qaytadi qaytadi.',
 			'homeLayout.customPlexRow' => 'Maxsus Plex qatori',
 			'homeLayout.heroNeedsLibrary' => 'Avval “Kutubxona” bandini belgilang — asosiy banner ko‘rsatiladigan joy kerak',
-			'homeLayout.heroNeedsSurface' => 'Birincisi Library o Home ko‘shayt — Hero\'s need somewhere to show',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Birincisi Library o Home ko‘shayt — Hero\'s need somewhere to show',
 			'homeLayout.removeHub' => 'Hub qiziziz',
 			'homeLayout.noPlexRows' => 'No Plex-manadi ruzlar bu librariyaya qaytardi.',
 			'homeLayout.openDetails' => 'Detaylar',
@@ -9231,9 +9233,9 @@ extension on TranslationsUz {
 			'audiobook.recoveryHelp' => 'Sinklik data\'ni transfer o‘yadi.Sinkliklar ko‘yad qo‘yingiz, lokal sinklik tarihini qaytarmaymazlar.Sinqlik kodini separata tutan.',
 			'audiobook.recoveryExport' => 'Filiya qaytarga xifratsiya',
 			'audiobook.recoveryImport' => 'İthalat xifratni qaytarga faili',
-			'audiobook.recoveryImportConfirm' => 'Ushbu shifrlangan tiklash faylini joriy o‘qish joylari va qaydlar bilan birlashtirasizmi? Mavjud tarix saqlanadi. Umumiy kutubxona va element IDlari kiritilmagan; importdan oldin har bir qurilmada mos IDlarni o‘rnating.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Ushbu shifrlangan tiklash faylini joriy o‘qish joylari va qaydlar bilan birlashtirasizmi? Mavjud tarix saqlanadi. Umumiy kutubxona va element IDlari kiritilmagan; importdan oldin har bir qurilmada mos IDlarni o‘rnating.',
 			'audiobook.recoveryExported' => 'Filiya qaytarga saladi.',
 			'audiobook.recoveryImported' => 'Recovery data qaytadi.',
 			'sourceSetup.bookorbitHelp' => 'Kitoblaringizni ko‘rish va tinglash uchun o‘z BookOrbit hisobingizga kiring. Mavjud bo‘lmagan nomlar uchun so‘rovlar ulangan SeerrNG nusxangiz orqali yuboriladi.',
@@ -9745,9 +9747,9 @@ extension on TranslationsUz {
 			'musicTools.recent' => 'Yaqinda ijro etilgan',
 			'musicTools.apiKey' => 'API kaliti',
 			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => 'Daqiqa',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Daqiqa',
 			'musicTools.rules' => 'Filtrlar',
 			'musicTools.exclusiveOutput' => 'Eksklyuziv audio chiqish',
 			'musicTools.preamp' => 'Oldindan kuchaytirish',

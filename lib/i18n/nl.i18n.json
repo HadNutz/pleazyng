@@ -3425,7 +3425,8 @@
     "noUserInformation": "Seerr heeft geen gebruikersgegevens geretourneerd",
     "sessionRejectedAfterReauth": "De sessie is na het opnieuw inloggen geweigerd",
     "permissionDenied": "Seerr heeft deze actie geweigerd: je account heeft niet langer de vereiste machtiging",
-    "permissionRevoked": "Je hebt geen toestemming meer om dit aan te vragen"
+    "permissionRevoked": "Je hebt geen toestemming meer om dit aan te vragen",
+    "withdrawRequest": "Verzoek intrekken"
   },
   "services": {
     "title": "Diensten",

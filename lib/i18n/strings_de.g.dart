@@ -2903,6 +2903,7 @@ class _Translations$seerr$de extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Die Sitzung wurde nach der erneuten Anmeldung abgelehnt';
 	@override String get permissionDenied => 'Seerr hat diese Aktion abgelehnt: Dein Konto hat nicht mehr die erforderliche Berechtigung';
 	@override String get permissionRevoked => 'Du hast keine Berechtigung mehr, dies anzufragen';
+	@override String get withdrawRequest => 'Anfrage zurückziehen';
 }
 
 // Path: services
@@ -8425,6 +8426,7 @@ extension on TranslationsDe {
 			'seerr.sessionRejectedAfterReauth' => 'Die Sitzung wurde nach der erneuten Anmeldung abgelehnt',
 			'seerr.permissionDenied' => 'Seerr hat diese Aktion abgelehnt: Dein Konto hat nicht mehr die erforderliche Berechtigung',
 			'seerr.permissionRevoked' => 'Du hast keine Berechtigung mehr, dies anzufragen',
+			'seerr.withdrawRequest' => 'Anfrage zurückziehen',
 			'services.title' => 'Dienste',
 			'services.hubSubtitle' => 'Wiedergabefortschritt synchronisieren und neue Titel anfragen.',
 			'services.integrations' => 'Integrationen',
@@ -8717,9 +8719,9 @@ extension on TranslationsDe {
 			'homeLayout.showInRecommended' => 'Show in der Bibliothek empfohlen',
 			'homeLayout.customPlexRow' => 'Anpassung Plex Runde',
 			'homeLayout.heroNeedsLibrary' => 'Schauen Sie sich die Bibliothek zuerst an – Hero braucht irgendwo zu zeigen',
-			'homeLayout.heroNeedsSurface' => 'Schauen Sie sich die Bibliothek oder Home zuerst an – Hero braucht irgendwo zu zeigen',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Schauen Sie sich die Bibliothek oder Home zuerst an – Hero braucht irgendwo zu zeigen',
 			'homeLayout.removeHub' => 'Hub entfernen',
 			'homeLayout.noPlexRows' => 'Nr. Plex-verwaltete Zeilen zurückkehren für diese Bibliothek.',
 			'homeLayout.openDetails' => 'Offene Details',
@@ -9231,9 +9233,9 @@ extension on TranslationsDe {
 			'audiobook.recoveryHelp' => 'Exportieren Sie eine kürzlich verschlüsselte Kopie, bevor Sie Sync-Daten bewegen oder reparieren.Importe fusionieren mit dem aktuellen Zustand; sie ersetzen niemals die lokale Sync Geschichte.',
 			'audiobook.recoveryExport' => 'Export verschlüsselte Recovery Datei',
 			'audiobook.recoveryImport' => 'Import verschlüsselte Recovery-Datei',
-			'audiobook.recoveryImportConfirm' => 'Kombinieren Sie diese verschlüsselte Recovery-Datei mit aktuellen Lesepositionen und Notizen? bestehende Geschichte wird beibehalten. gemeinsame Bibliothek und Element-IDs sind nicht enthalten; Set matching IDs on each device before importing.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Kombinieren Sie diese verschlüsselte Recovery-Datei mit aktuellen Lesepositionen und Notizen? bestehende Geschichte wird beibehalten. gemeinsame Bibliothek und Element-IDs sind nicht enthalten; Set matching IDs on each device before importing.',
 			'audiobook.recoveryExported' => 'Verschlüsselte Recovery-Datei wurde gespeichert.',
 			'audiobook.recoveryImported' => 'Wiederherstellungsdaten sind zusammengefasst.',
 			'sourceSetup.bookorbitHelp' => 'Melde dich mit deinem eigenen BookOrbit-Konto an, um die Bücher zu durchstöbern und abzuspielen. Anfragen für fehlende Titel laufen weiterhin über deine verbundene SeerrNG-Instanz.',
@@ -9745,9 +9747,9 @@ extension on TranslationsDe {
 			'musicTools.recent' => 'Zuletzt gespielt',
 			'musicTools.apiKey' => 'API-Schlüssel',
 			'musicTools.missing' => 'N. v.',
-			'musicTools.minutes' => 'Minuten',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Minuten',
 			'musicTools.rules' => 'Filter',
 			'musicTools.exclusiveOutput' => 'Exklusive Audioausgabe',
 			'musicTools.preamp' => 'Vorverstärkung',

@@ -2091,6 +2091,7 @@ class Translations$seerr$pt_PT extends Translations$seerr$pt {
 	@override String get sessionRejectedAfterReauth => 'A sessão foi rejeitada depois de voltar a iniciar sessão';
 	@override String get permissionDenied => 'O Seerr negou esta ação: a sua conta já não tem a permissão necessária';
 	@override String get permissionRevoked => 'Já não tem permissão para pedir isto';
+	@override String get withdrawRequest => 'Retirar pedido';
 }
 
 // Path: services
@@ -5792,6 +5793,7 @@ extension on TranslationsPtPt {
 			'seerr.sessionRejectedAfterReauth' => 'A sessão foi rejeitada depois de voltar a iniciar sessão',
 			'seerr.permissionDenied' => 'O Seerr negou esta ação: a sua conta já não tem a permissão necessária',
 			'seerr.permissionRevoked' => 'Já não tem permissão para pedir isto',
+			'seerr.withdrawRequest' => 'Retirar pedido',
 			'services.libraryFilter.modeBlacklist' => 'Lista de bloqueios',
 			'services.libraryFilter.modeWhitelist' => 'Lista de permissões',
 			'services.libraryFilter.libraries' => 'Bibliotecas',

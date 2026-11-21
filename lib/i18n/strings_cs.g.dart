@@ -2937,6 +2937,7 @@ class _Translations$seerr$cs extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Zasedání bylo po opětovném podepsání zamítnuto.';
 	@override String get permissionDenied => 'Seerr tuto akci odmítl: Váš účet již nemá požadované povolení';
 	@override String get permissionRevoked => 'Už nemáte právo na to požádat';
+	@override String get withdrawRequest => 'Stáhnout požadavek';
 }
 
 // Path: services
@@ -8469,6 +8470,7 @@ extension on TranslationsCs {
 			'seerr.sessionRejectedAfterReauth' => 'Zasedání bylo po opětovném podepsání zamítnuto.',
 			'seerr.permissionDenied' => 'Seerr tuto akci odmítl: Váš účet již nemá požadované povolení',
 			'seerr.permissionRevoked' => 'Už nemáte právo na to požádat',
+			'seerr.withdrawRequest' => 'Stáhnout požadavek',
 			'services.title' => 'Služby',
 			'services.hubSubtitle' => 'Sync sleduje pokrok a žádá o nové tituly.',
 			'services.integrations' => 'integrace',
@@ -8761,9 +8763,9 @@ extension on TranslationsCs {
 			'homeLayout.showInRecommended' => 'Představení v knihovně doporučeno',
 			'homeLayout.customPlexRow' => 'Přizpůsobený Plex řádek',
 			'homeLayout.heroNeedsLibrary' => 'Prohlédněte si knihovnu nejprve – Hero potřebuje někde ukázat',
-			'homeLayout.heroNeedsSurface' => 'Zkontrolujte knihovnu nebo domov nejprve – Hero potřebuje někde ukázat',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Zkontrolujte knihovnu nebo domov nejprve – Hero potřebuje někde ukázat',
 			'homeLayout.removeHub' => 'Odstranění Hub',
 			'homeLayout.noPlexRows' => 'Číslo Plex řízené řádky se vrátily pro tuto knihovnu.',
 			'homeLayout.openDetails' => 'Otevřené detaily',
@@ -9275,9 +9277,9 @@ extension on TranslationsCs {
 			'audiobook.recoveryHelp' => 'Exportujte nedávnou šifrovanou kopii před přenesením nebo opravou synchronizačních dat. Importy se spojí s aktuálním stavem; nikdy nenahrazují místní historii synchromu.',
 			'audiobook.recoveryExport' => 'Export šifrované obnovení souborů',
 			'audiobook.recoveryImport' => 'Import šifrované obnovení souborů',
-			'audiobook.recoveryImportConfirm' => 'Spojte tento šifrovaný obnovení soubor s aktuálními čtení pozic a poznámky? existující historie bude zachována. sdílená knihovna a ID položky nejsou zahrnuty; nastavit odpovídající ID na každém zařízení před dovozem.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Spojte tento šifrovaný obnovení soubor s aktuálními čtení pozic a poznámky? existující historie bude zachována. sdílená knihovna a ID položky nejsou zahrnuty; nastavit odpovídající ID na každém zařízení před dovozem.',
 			'audiobook.recoveryExported' => 'Šifrované obnovení souboru je uloženo.',
 			'audiobook.recoveryImported' => 'Údaje o obnově se smítají.',
 			'sourceSetup.bookorbitHelp' => 'Přihlaste se ke svému účtu BookOrbit a procházejte jeho knihy nebo je přehrávejte. Žádosti o chybějící tituly nadále zpracovává vaše připojená instance SeerrNG.',
@@ -9789,9 +9791,9 @@ extension on TranslationsCs {
 			'musicTools.recent' => 'Nedávno přehrané',
 			'musicTools.apiKey' => 'Klíč API',
 			'musicTools.missing' => 'N / A',
-			'musicTools.minutes' => 'minuty',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'minuty',
 			'musicTools.rules' => 'Filtry',
 			'musicTools.exclusiveOutput' => 'Výhradní zvukový výstup',
 			'musicTools.preamp' => 'Předzesílení',

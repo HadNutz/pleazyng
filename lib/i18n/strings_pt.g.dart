@@ -2906,6 +2906,7 @@ class Translations$seerr$pt extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'A sessão foi rejeitada após entrar novamente';
 	@override String get permissionDenied => 'O Seerr negou esta ação: sua conta não tem mais a permissão necessária';
 	@override String get permissionRevoked => 'Você não tem mais permissão para solicitar isso';
+	@override String get withdrawRequest => 'Cancelar solicitação';
 }
 
 // Path: services
@@ -8432,6 +8433,7 @@ extension on TranslationsPt {
 			'seerr.sessionRejectedAfterReauth' => 'A sessão foi rejeitada após entrar novamente',
 			'seerr.permissionDenied' => 'O Seerr negou esta ação: sua conta não tem mais a permissão necessária',
 			'seerr.permissionRevoked' => 'Você não tem mais permissão para solicitar isso',
+			'seerr.withdrawRequest' => 'Cancelar solicitação',
 			'services.title' => 'Serviços',
 			'services.hubSubtitle' => 'Sincronize o progresso de exibição e solicite novos títulos.',
 			'services.integrations' => 'Integrações',
@@ -8724,9 +8726,9 @@ extension on TranslationsPt {
 			'homeLayout.showInRecommended' => 'Exposição em Biblioteca Recomendada',
 			'homeLayout.customPlexRow' => 'Cadeia de Cadeia Plex',
 			'homeLayout.heroNeedsLibrary' => 'Veja a Biblioteca primeiro – Hero precisa de algum lugar para mostrar',
-			'homeLayout.heroNeedsSurface' => 'Veja a Biblioteca ou a Casa primeiro — Hero precisa de algum lugar para mostrar',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Veja a Biblioteca ou a Casa primeiro — Hero precisa de algum lugar para mostrar',
 			'homeLayout.removeHub' => 'Remover o Hub',
 			'homeLayout.noPlexRows' => 'No Plex linhas gerenciadas retornou para esta biblioteca.',
 			'homeLayout.openDetails' => 'Detalhes abertos',
@@ -9238,9 +9240,9 @@ extension on TranslationsPt {
 			'audiobook.recoveryHelp' => 'Exportar uma cópia recentemente criptografada antes de mover ou reparar dados de sincronização. Importações se misturam com o estado atual; eles nunca substituem a história local da sincronización.',
 			'audiobook.recoveryExport' => 'Exportação de arquivos de recuperação criptografados',
 			'audiobook.recoveryImport' => 'Importar arquivo de recuperação criptografado',
-			'audiobook.recoveryImportConfirm' => 'Combine este arquivo de recuperação criptografado com as posições e notas de leitura atuais? História existente será mantida. bibliotecas compartilhadas e IDs de itens não são incluídos; definir IDs correspondentes em cada dispositivo antes da importação.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Combine este arquivo de recuperação criptografado com as posições e notas de leitura atuais? História existente será mantida. bibliotecas compartilhadas e IDs de itens não são incluídos; definir IDs correspondentes em cada dispositivo antes da importação.',
 			'audiobook.recoveryExported' => 'arquivo de recuperação criptografado salvo.',
 			'audiobook.recoveryImported' => 'Dados de recuperação combinados.',
 			'sourceSetup.bookorbitHelp' => 'Entre com sua própria conta BookOrbit para navegar e reproduzir seus livros. Pedidos de títulos ausentes continuam passando pela sua instância SeerrNG conectada.',
@@ -9752,9 +9754,9 @@ extension on TranslationsPt {
 			'musicTools.recent' => 'Reproduzidas recentemente',
 			'musicTools.apiKey' => 'Chave API',
 			'musicTools.missing' => 'N/D',
-			'musicTools.minutes' => 'Minutos',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Minutos',
 			'musicTools.rules' => 'Filtros',
 			'musicTools.exclusiveOutput' => 'Saída de áudio exclusiva',
 			'musicTools.preamp' => 'Pré-amplificação',

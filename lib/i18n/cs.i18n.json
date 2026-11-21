@@ -3461,7 +3461,8 @@
     "noUserInformation": "Seerr nevrátil uživatelské informace",
     "sessionRejectedAfterReauth": "Zasedání bylo po opětovném podepsání zamítnuto.",
     "permissionDenied": "Seerr tuto akci odmítl: Váš účet již nemá požadované povolení",
-    "permissionRevoked": "Už nemáte právo na to požádat"
+    "permissionRevoked": "Už nemáte právo na to požádat",
+    "withdrawRequest": "Stáhnout požadavek"
   },
   "services": {
     "title": "Služby",

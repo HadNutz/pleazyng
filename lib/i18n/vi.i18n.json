@@ -3404,7 +3404,8 @@
     "noUserInformation": "Seerr không trả lại thông tin người dùng",
     "sessionRejectedAfterReauth": "Cuộc họp đã bị từ chối sau khi ký lại",
     "permissionDenied": "Seerr từ chối hành động này: Tài khoản của bạn không còn được phép yêu cầu",
-    "permissionRevoked": "Bạn không còn được phép yêu cầu điều này"
+    "permissionRevoked": "Bạn không còn được phép yêu cầu điều này",
+    "withdrawRequest": "Rút lại yêu cầu"
   },
   "services": {
     "title": "Dịch vụ",

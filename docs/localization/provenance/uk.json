@@ -1,7 +1,7 @@
 {
   "locale": "uk",
   "inherits": null,
-  "catalogSha256": "0cdf7741cb263c7f0b03d5759d5074eea226298ba9851973b50075315d2fa26c",
+  "catalogSha256": "abfa28d33e6f4c7fbed0dbbe3b63eb0622cac51c52105706092b4858b082bfa1",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3686,7 +3686,8 @@
     "mediaMenu.mediaDeletionDisabledOnServer": "assistant-generated-draft",
     "settings.showTopShelfContent": "assistant-generated-draft",
     "settings.showTopShelfContentDescription": "assistant-generated-draft",
-    "settings.topShelfUpdateFailed": "assistant-generated-draft"
+    "settings.topShelfUpdateFailed": "assistant-generated-draft",
+    "seerr.withdrawRequest": "assistant-generated-draft"
   },
   "beforeIndependentQaCorrection": {
     "auth.localDataRecoveryRequired": "m2m100-draft",

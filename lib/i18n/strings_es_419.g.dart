@@ -716,6 +716,7 @@ class _Translations$seerr$es_419 extends Translations$seerr$es {
 	@override String get notificationsEnabled => 'Te avisaremos cuando esté disponible';
 	@override String get notificationsDisabled => 'Aviso de disponibilidad desactivado';
 	@override String get notificationFailed => 'No se pudo actualizar el aviso de disponibilidad';
+	@override String get withdrawRequest => 'Retirar solicitud';
 }
 
 // Path: services
@@ -1724,6 +1725,7 @@ extension on TranslationsEs419 {
 			'seerr.notificationsEnabled' => 'Te avisaremos cuando esté disponible',
 			'seerr.notificationsDisabled' => 'Aviso de disponibilidad desactivado',
 			'seerr.notificationFailed' => 'No se pudo actualizar el aviso de disponibilidad',
+			'seerr.withdrawRequest' => 'Retirar solicitud',
 			'services.libraryFilter.modeBlacklist' => 'Lista negra',
 			'services.libraryFilter.modeWhitelist' => 'Lista blanca',
 			'services.libraryFilter.libraries' => 'Bibliotecas',
@@ -1880,9 +1882,9 @@ extension on TranslationsEs419 {
 			'romm.kContinue' => 'Continue',
 			'romm.saveState' => 'Save state',
 			'romm.loadState' => 'Load state',
-			'romm.saveAndExit' => 'Save and exit',
 			_ => null,
 		} ?? switch (path) {
+			'romm.saveAndExit' => 'Save and exit',
 			'romm.exitWithoutSaving' => 'Exit without saving',
 			'romm.exitConfirm' => 'Finish this game session?',
 			'romm.saveExitHelp' => 'Save your progress before leaving. Keep this screen open until saving finishes.',

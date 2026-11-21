@@ -28,6 +28,8 @@ class SeerrRequestItem {
   final String overview;
   final Map<String, dynamic> mediaInfo;
   final int? requestStatus;
+  final int? requestId;
+  final int? requestedBy;
   final bool is4k;
 
   const SeerrRequestItem({
@@ -37,6 +39,8 @@ class SeerrRequestItem {
     this.overview = '',
     this.mediaInfo = const {},
     this.requestStatus,
+    this.requestId,
+    this.requestedBy,
     this.is4k = false,
   });
 
@@ -44,6 +48,8 @@ class SeerrRequestItem {
     Map<String, dynamic> json,
     SeerrRequestCategory category, {
     int? requestStatus,
+    int? requestId,
+    int? requestedBy,
     bool is4k = false,
   }) {
     final id = json['id'];
@@ -55,6 +61,8 @@ class SeerrRequestItem {
       overview: (json['overview'] ?? json['description'] ?? '') as String,
       mediaInfo: json['mediaInfo'] is Map<String, dynamic> ? json['mediaInfo'] as Map<String, dynamic> : const {},
       requestStatus: requestStatus,
+      requestId: requestId,
+      requestedBy: requestedBy,
       is4k: is4k,
     );
   }

@@ -2903,6 +2903,7 @@ class _Translations$seerr$nl extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'De sessie is na het opnieuw inloggen geweigerd';
 	@override String get permissionDenied => 'Seerr heeft deze actie geweigerd: je account heeft niet langer de vereiste machtiging';
 	@override String get permissionRevoked => 'Je hebt geen toestemming meer om dit aan te vragen';
+	@override String get withdrawRequest => 'Verzoek intrekken';
 }
 
 // Path: services
@@ -8425,6 +8426,7 @@ extension on TranslationsNl {
 			'seerr.sessionRejectedAfterReauth' => 'De sessie is na het opnieuw inloggen geweigerd',
 			'seerr.permissionDenied' => 'Seerr heeft deze actie geweigerd: je account heeft niet langer de vereiste machtiging',
 			'seerr.permissionRevoked' => 'Je hebt geen toestemming meer om dit aan te vragen',
+			'seerr.withdrawRequest' => 'Verzoek intrekken',
 			'services.title' => 'Diensten',
 			'services.hubSubtitle' => 'Synchroniseer kijkvoortgang en vraag nieuwe titels aan.',
 			'services.integrations' => 'Integraties',
@@ -8717,9 +8719,9 @@ extension on TranslationsNl {
 			'homeLayout.showInRecommended' => 'In de bibliotheek aanbevolen',
 			'homeLayout.customPlexRow' => 'Kijk naar Plex',
 			'homeLayout.heroNeedsLibrary' => 'Check Library first — Hero heeft ergens nodig om te tonen',
-			'homeLayout.heroNeedsSurface' => 'Check Library or Home first — Hero heeft ergens nodig om te tonen',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Check Library or Home first — Hero heeft ergens nodig om te tonen',
 			'homeLayout.removeHub' => 'Verwijder Hub',
 			'homeLayout.noPlexRows' => 'Nr. Plex-geheerd rijen teruggekeerd voor deze bibliotheek.',
 			'homeLayout.openDetails' => 'Open details',
@@ -9231,9 +9233,9 @@ extension on TranslationsNl {
 			'audiobook.recoveryHelp' => 'Exporteer een recente versleutelde kopie voor het verplaatsen of repareren van synchronisatiegegevens.Importeren verschijnt met de huidige toestand; ze vervangen nooit de lokale sync-geschiedenis.',
 			'audiobook.recoveryExport' => 'Export versleutelde herstel bestanden',
 			'audiobook.recoveryImport' => 'Geïmporteerde versleutelde herstelbestanden',
-			'audiobook.recoveryImportConfirm' => 'Combineer deze versleutelde herstelbestand met de huidige leesposities en noten? bestaande geschiedenis zal worden bewaard. gedeelde bibliotheek en item-ID\'s zijn niet opgenomen; set matching ID\'s on each device before importing.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Combineer deze versleutelde herstelbestand met de huidige leesposities en noten? bestaande geschiedenis zal worden bewaard. gedeelde bibliotheek en item-ID\'s zijn niet opgenomen; set matching ID\'s on each device before importing.',
 			'audiobook.recoveryExported' => 'Encrypt herstel bestand is opgeslagen.',
 			'audiobook.recoveryImported' => 'Recovery data samengesteld.',
 			'sourceSetup.bookorbitHelp' => 'Meld je aan met je eigen BookOrbit-account om de boeken daar te bekijken en af te spelen. Aanvragen voor ontbrekende titels worden nog steeds via je gekoppelde SeerrNG-instantie verstuurd.',
@@ -9745,9 +9747,9 @@ extension on TranslationsNl {
 			'musicTools.recent' => 'Onlangs afgespeeld',
 			'musicTools.apiKey' => 'API-sleutel',
 			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => 'Minuten',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Minuten',
 			'musicTools.rules' => 'Filters',
 			'musicTools.exclusiveOutput' => 'Exclusieve audio-uitvoer',
 			'musicTools.preamp' => 'Voorversterking',

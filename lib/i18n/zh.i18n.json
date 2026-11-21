@@ -3421,7 +3421,8 @@
     "noUserInformation": "Seerr 未返回用户信息",
     "sessionRejectedAfterReauth": "重新登录后会话被拒绝",
     "permissionDenied": "Seerr 拒绝了此操作：你的账户不再拥有所需权限",
-    "permissionRevoked": "你不再拥有请求此内容的权限"
+    "permissionRevoked": "你不再拥有请求此内容的权限",
+    "withdrawRequest": "撤回请求"
   },
   "services": {
     "title": "服务",

@@ -2920,6 +2920,7 @@ class Translations$seerr$fr extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'La session a été refusée après la reconnexion';
 	@override String get permissionDenied => 'Seerr a refusé cette action : votre compte ne dispose plus de la permission requise';
 	@override String get permissionRevoked => 'Vous n’avez plus la permission de faire cette demande';
+	@override String get withdrawRequest => 'Retirer la demande';
 }
 
 // Path: services
@@ -8476,6 +8477,7 @@ extension on TranslationsFr {
 			'seerr.sessionRejectedAfterReauth' => 'La session a été refusée après la reconnexion',
 			'seerr.permissionDenied' => 'Seerr a refusé cette action : votre compte ne dispose plus de la permission requise',
 			'seerr.permissionRevoked' => 'Vous n’avez plus la permission de faire cette demande',
+			'seerr.withdrawRequest' => 'Retirer la demande',
 			'services.title' => 'Services',
 			'services.hubSubtitle' => 'Synchronisez votre progression et demandez de nouveaux titres.',
 			'services.integrations' => 'Intégrations',
@@ -8761,9 +8763,9 @@ extension on TranslationsFr {
 			'homeLayout.selectRowsFirst' => 'Sélectionnez les lignes de maison ci-dessous d\'abord.',
 			'homeLayout.plexManagedRows' => ({required Object n}) => '${n} Plex rangées gérées',
 			'homeLayout.continueWatching' => 'Continuer à regarder',
-			'homeLayout.continueWatchingLibraryDescription' => 'La suite de la bibliothèque de la suite',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.continueWatchingLibraryDescription' => 'La suite de la bibliothèque de la suite',
 			'homeLayout.continueWatchingHomeDescription' => 'Le nouveau progrès de la ligne montrée sur Home',
 			'homeLayout.nextUpHomeDescription' => 'La prochaine série de l\'épisode non vu diffusée séparément sur Home',
 			'homeLayout.library' => 'Bibliothèque',
@@ -9275,9 +9277,9 @@ extension on TranslationsFr {
 			'audiobook.sortSeries' => 'Commande série',
 			'audiobook.sortRecent' => 'récemment ouvert',
 			'audiobook.statusFilter' => 'Le statut de lecture',
-			'audiobook.statusAll' => 'Tous les livres',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.statusAll' => 'Tous les livres',
 			'audiobook.statusNew' => 'Pas commencé',
 			'audiobook.statusProgress' => 'Au progrès',
 			'audiobook.statusFinished' => 'terminé',
@@ -9789,9 +9791,9 @@ extension on TranslationsFr {
 			'musicExperience.routeLost' => 'Sortie audio déconnectée. Lecture en pause.',
 			'musicExperience.autoDriving' => 'Ouvrir le mode conduite à la connexion à une voiture',
 			'musicExperience.routeHint' => 'Le système de la voiture décide si l’application peut s’afficher automatiquement.',
-			'musicExperience.bluetoothDriving' => 'Sorties Bluetooth pour la conduite',
 			_ => null,
 		} ?? switch (path) {
+			'musicExperience.bluetoothDriving' => 'Sorties Bluetooth pour la conduite',
 			'musicExperience.bluetoothDrivingHint' => 'Choisissez les sorties Bluetooth connectées qui ouvrent automatiquement la vue conduite.',
 			'musicTools.loudnessMissing' => 'Aucune donnée de sonie renvoyée',
 			'musicTools.loudnessRequested' => 'Demande d’analyse envoyée',

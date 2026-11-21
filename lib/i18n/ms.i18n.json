@@ -3404,7 +3404,8 @@
     "noUserInformation": "Seerr tidak mengembalikan maklumat pengguna",
     "sessionRejectedAfterReauth": "Mesyuarat itu ditolak selepas penandatanganan semula.",
     "permissionDenied": "Seerr menafikan tindakan ini: akaun anda tidak lagi mempunyai kebenaran yang diperlukan",
-    "permissionRevoked": "Anda tidak lagi mempunyai keizinan untuk meminta ini"
+    "permissionRevoked": "Anda tidak lagi mempunyai keizinan untuk meminta ini",
+    "withdrawRequest": "Tarik balik permintaan"
   },
   "services": {
     "title": "Perkhidmatan",

@@ -3428,7 +3428,8 @@
     "noUserInformation": "Seerr non ha restituito le informazioni sull'utente",
     "sessionRejectedAfterReauth": "La sessione è stata rifiutata dopo aver effettuato nuovamente l'accesso",
     "permissionDenied": "Seerr ha negato questa azione: il tuo account non dispone più dell'autorizzazione richiesta",
-    "permissionRevoked": "Non hai più l'autorizzazione per richiederlo"
+    "permissionRevoked": "Non hai più l'autorizzazione per richiederlo",
+    "withdrawRequest": "Ritira richiesta"
   },
   "services": {
     "title": "Servizi",

@@ -2941,6 +2941,7 @@ class _Translations$seerr$pl extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Sesja została odrzucona po ponownym zalogowaniu';
 	@override String get permissionDenied => 'Seerr odrzucił tę akcję: Twoje konto nie ma już wymaganych uprawnień';
 	@override String get permissionRevoked => 'Nie masz już uprawnień, aby to zamówić';
+	@override String get withdrawRequest => 'Wycofaj prośbę';
 }
 
 // Path: services
@@ -8475,6 +8476,7 @@ extension on TranslationsPl {
 			'seerr.sessionRejectedAfterReauth' => 'Sesja została odrzucona po ponownym zalogowaniu',
 			'seerr.permissionDenied' => 'Seerr odrzucił tę akcję: Twoje konto nie ma już wymaganych uprawnień',
 			'seerr.permissionRevoked' => 'Nie masz już uprawnień, aby to zamówić',
+			'seerr.withdrawRequest' => 'Wycofaj prośbę',
 			'services.title' => 'Usługi',
 			'services.hubSubtitle' => 'Synchronizuj postęp oglądania i zamawiaj nowe tytuły.',
 			'services.integrations' => 'Integracje',
@@ -8767,9 +8769,9 @@ extension on TranslationsPl {
 			'homeLayout.showInRecommended' => 'W bibliotece zalecane',
 			'homeLayout.customPlexRow' => 'Zestawienie Plex',
 			'homeLayout.heroNeedsLibrary' => 'Przeczytaj bibliotekę najpierw – bohater musi gdzieś pokazać',
-			'homeLayout.heroNeedsSurface' => 'Przeczytaj bibliotekę lub dom najpierw — Hero potrzebuje gdzieś, aby pokazać',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Przeczytaj bibliotekę lub dom najpierw — Hero potrzebuje gdzieś, aby pokazać',
 			'homeLayout.removeHub' => 'Usuń Hub',
 			'homeLayout.noPlexRows' => 'Nr Plex rzędy zarządzane powróciły do tej biblioteki.',
 			'homeLayout.openDetails' => 'Szczegóły otwarte',
@@ -9281,9 +9283,9 @@ extension on TranslationsPl {
 			'audiobook.recoveryHelp' => 'Eksportuj niedawno szyfrowaną kopię przed przeniesieniem lub naprawą danych synchronizacyjnych.Importy spotykają się z bieżącym stanem; nigdy nie zastępują lokalnej historii synchrowania.',
 			'audiobook.recoveryExport' => 'Eksportowanie szyfrowanego pliku odzyskiwania',
 			'audiobook.recoveryImport' => 'Importowanie szyfrowanego pliku odzyskiwania',
-			'audiobook.recoveryImportConfirm' => 'Połączenie tego szyfrowanego pliku odzyskiwania z bieżących pozycji czytania i notatek? istniejąca historia zostanie zachowana. udostępniona biblioteka i identyfikatory elementów nie są włączone; ustawić identyfikator odpowiadający na każdym urządzeniu przed importowaniem.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Połączenie tego szyfrowanego pliku odzyskiwania z bieżących pozycji czytania i notatek? istniejąca historia zostanie zachowana. udostępniona biblioteka i identyfikatory elementów nie są włączone; ustawić identyfikator odpowiadający na każdym urządzeniu przed importowaniem.',
 			'audiobook.recoveryExported' => 'Szyfrowane pliki odzyskiwania zostały zapisane.',
 			'audiobook.recoveryImported' => 'Dane odzyskiwania połączenia.',
 			'sourceSetup.bookorbitHelp' => 'Zaloguj się na własne konto BookOrbit, aby przeglądać i odtwarzać zawarte w nim książki. Zamówienia niedostępnych tytułów nadal są wysyłane przez połączoną instancję SeerrNG.',
@@ -9795,9 +9797,9 @@ extension on TranslationsPl {
 			'musicTools.recent' => 'Ostatnio odtwarzane',
 			'musicTools.apiKey' => 'Klucz API',
 			'musicTools.missing' => 'N/D',
-			'musicTools.minutes' => 'Minuty',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Minuty',
 			'musicTools.rules' => 'Filtry',
 			'musicTools.exclusiveOutput' => 'Wyłączne wyjście audio',
 			'musicTools.preamp' => 'Wzmocnienie wstępne',

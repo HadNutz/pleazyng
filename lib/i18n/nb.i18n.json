@@ -3425,7 +3425,8 @@
     "noUserInformation": "Seerr returnerte ingen brukerinformasjon",
     "sessionRejectedAfterReauth": "Økten ble avvist etter ny innlogging",
     "permissionDenied": "Seerr avviste denne handlingen: kontoen din har ikke lenger den nødvendige tillatelsen",
-    "permissionRevoked": "Du har ikke lenger tillatelse til å be om dette"
+    "permissionRevoked": "Du har ikke lenger tillatelse til å be om dette",
+    "withdrawRequest": "Trekk tilbake forespørselen"
   },
   "services": {
     "title": "Tjenester",

@@ -519,7 +519,8 @@
     "notificationsOn": "Alerta de disponibilidade ativado",
     "notificationsEnabled": "Avisaremos quando estiver disponível",
     "notificationsDisabled": "Alerta de disponibilidade desativado",
-    "notificationFailed": "Não foi possível atualizar o alerta de disponibilidade"
+    "notificationFailed": "Não foi possível atualizar o alerta de disponibilidade",
+    "withdrawRequest": "Cancelar solicitação"
   },
   "services": {
     "libraryFilter": {

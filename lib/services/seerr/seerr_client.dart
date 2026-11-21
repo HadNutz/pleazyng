@@ -358,6 +358,8 @@ class SeerrClient {
             {...details, 'id': id, 'mediaInfo': media},
             category,
             requestStatus: request['status'] as int?,
+            requestId: request['id'] as int?,
+            requestedBy: session.userId,
             is4k: request['is4k'] == true,
           ),
         );
@@ -384,7 +386,39 @@ class SeerrClient {
       '/${item.category.mediaType}/${Uri.encodeComponent('${item.id}')}',
       data as Map<String, dynamic>,
     );
-    return SeerrRequestItem.fromJson(data, item.category, requestStatus: item.requestStatus, is4k: item.is4k);
+    return SeerrRequestItem.fromJson(
+      data,
+      item.category,
+      requestStatus: item.requestStatus,
+      requestId: item.requestId,
+      requestedBy: item.requestedBy,
+      is4k: item.is4k,
+    );
+  }
+
+  bool canWithdrawRequest(SeerrRequestItem item) =>
+      !item.category.isBook &&
+      item.requestId != null &&
+      item.requestId! > 0 &&
+      item.requestStatus == 1 &&
+      item.requestedBy == session.userId;
+
+  Future<void> withdrawRequest(SeerrRequestItem item) async {
+    _ensureActive();
+    if (!canWithdrawRequest(item)) throw StateError('Request is not eligible for withdrawal');
+    final path = '/request/${item.requestId}';
+    final fresh = await _request('GET', path);
+    _ensureActive();
+    if (fresh is! Map ||
+        fresh['id'] != item.requestId ||
+        fresh['status'] != 1 ||
+        fresh['type'] != item.category.mediaType ||
+        (fresh['is4k'] == true) != item.is4k ||
+        (fresh['requestedBy'] as Map?)?['id'] != session.userId ||
+        (fresh['media'] as Map?)?['tmdbId'] != item.id) {
+      throw StateError('Request changed before withdrawal');
+    }
+    await _request('DELETE', path);
   }
 
   Future<void> requestBook(SeerrRequestItem item) async {

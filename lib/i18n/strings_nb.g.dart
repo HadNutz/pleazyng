@@ -2903,6 +2903,7 @@ class _Translations$seerr$nb extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Økten ble avvist etter ny innlogging';
 	@override String get permissionDenied => 'Seerr avviste denne handlingen: kontoen din har ikke lenger den nødvendige tillatelsen';
 	@override String get permissionRevoked => 'Du har ikke lenger tillatelse til å be om dette';
+	@override String get withdrawRequest => 'Trekk tilbake forespørselen';
 }
 
 // Path: services
@@ -8425,6 +8426,7 @@ extension on TranslationsNb {
 			'seerr.sessionRejectedAfterReauth' => 'Økten ble avvist etter ny innlogging',
 			'seerr.permissionDenied' => 'Seerr avviste denne handlingen: kontoen din har ikke lenger den nødvendige tillatelsen',
 			'seerr.permissionRevoked' => 'Du har ikke lenger tillatelse til å be om dette',
+			'seerr.withdrawRequest' => 'Trekk tilbake forespørselen',
 			'services.title' => 'Tjenester',
 			'services.hubSubtitle' => 'Synkroniser fremdrift og forespør nye titler.',
 			'services.integrations' => 'Integrasjoner',
@@ -8717,9 +8719,9 @@ extension on TranslationsNb {
 			'homeLayout.showInRecommended' => 'Utstilling i biblioteket anbefales',
 			'homeLayout.customPlexRow' => 'Tilpasset Plex rad',
 			'homeLayout.heroNeedsLibrary' => 'Sjekk biblioteket først – Hero trenger noe å vise',
-			'homeLayout.heroNeedsSurface' => 'Sjekk biblioteket eller hjemmet først – Hero trenger noe å vise',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Sjekk biblioteket eller hjemmet først – Hero trenger noe å vise',
 			'homeLayout.removeHub' => 'Fjern Hub',
 			'homeLayout.noPlexRows' => 'No. Plex-styrt rader returnerte for denne biblioteket.',
 			'homeLayout.openDetails' => 'Åpne detaljer',
@@ -9231,9 +9233,9 @@ extension on TranslationsNb {
 			'audiobook.recoveryHelp' => 'Eksport en nylig kryptert kopi før du flytter eller reparerer synkronisering data. Importerer fusjon med nåværende tilstand; de erstattes aldri lokal synkroniseringshistorie.',
 			'audiobook.recoveryExport' => 'Eksport kryptert gjenoppretting filer',
 			'audiobook.recoveryImport' => 'Import kryptert gjenoppretting filer',
-			'audiobook.recoveryImportConfirm' => 'Kombiner denne krypterte gjenoppretting filen med aktuelle lesing posisjoner og notater? eksisterende historie vil bli bevaret. delt bibliotek og element IDs er ikke inkludert; sette matching IDs på hver enhet før import.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Kombiner denne krypterte gjenoppretting filen med aktuelle lesing posisjoner og notater? eksisterende historie vil bli bevaret. delt bibliotek og element IDs er ikke inkludert; sette matching IDs på hver enhet før import.',
 			'audiobook.recoveryExported' => 'Kryptert gjenoppretting fil lagret.',
 			'audiobook.recoveryImported' => 'Data om gjenoppretting sammensatt.',
 			'sourceSetup.bookorbitHelp' => 'Logg på med din egen BookOrbit-konto for å bla gjennom og spille av bøkene der. Forespørsler om titler som mangler, sendes fortsatt via den tilkoblede SeerrNG-instansen.',
@@ -9745,9 +9747,9 @@ extension on TranslationsNb {
 			'musicTools.recent' => 'Nylig spilt',
 			'musicTools.apiKey' => 'API-nøkkel',
 			'musicTools.missing' => 'I/T',
-			'musicTools.minutes' => 'Minutter',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Minutter',
 			'musicTools.rules' => 'Filtre',
 			'musicTools.exclusiveOutput' => 'Eksklusiv lydutgang',
 			'musicTools.preamp' => 'Forforsterkning',

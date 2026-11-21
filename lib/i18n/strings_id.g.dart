@@ -2884,6 +2884,7 @@ class _Translations$seerr$id extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Perjanjian itu ditolak setelah ditandatangani lagi.';
 	@override String get permissionDenied => 'Seerr menolak tindakan ini: akun Anda tidak lagi memiliki izin yang diperlukan';
 	@override String get permissionRevoked => 'Anda tidak lagi memiliki izin untuk meminta ini';
+	@override String get withdrawRequest => 'Tarik permintaan';
 }
 
 // Path: services
@@ -8400,6 +8401,7 @@ extension on TranslationsId {
 			'seerr.sessionRejectedAfterReauth' => 'Perjanjian itu ditolak setelah ditandatangani lagi.',
 			'seerr.permissionDenied' => 'Seerr menolak tindakan ini: akun Anda tidak lagi memiliki izin yang diperlukan',
 			'seerr.permissionRevoked' => 'Anda tidak lagi memiliki izin untuk meminta ini',
+			'seerr.withdrawRequest' => 'Tarik permintaan',
 			'services.title' => 'Layanan',
 			'services.hubSubtitle' => 'Sync menonton kemajuan dan meminta judul baru.',
 			'services.integrations' => 'Integrasi',
@@ -8692,9 +8694,9 @@ extension on TranslationsId {
 			'homeLayout.showInRecommended' => 'Perpustakaan yang disarankan',
 			'homeLayout.customPlexRow' => 'Keterampilan Plex baris',
 			'homeLayout.heroNeedsLibrary' => 'Periksa perpustakaan pertama — Hero perlu di suatu tempat untuk menunjukkan',
-			'homeLayout.heroNeedsSurface' => 'Periksa Perpustakaan atau Rumah terlebih dahulu — Hero perlu di suatu tempat untuk menunjukkan',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Periksa Perpustakaan atau Rumah terlebih dahulu — Hero perlu di suatu tempat untuk menunjukkan',
 			'homeLayout.removeHub' => 'Menghapus Hub',
 			'homeLayout.noPlexRows' => 'No. Plex baris yang dikelola kembali untuk perpustakaan ini.',
 			'homeLayout.openDetails' => 'Detail Terbuka',
@@ -9206,9 +9208,9 @@ extension on TranslationsId {
 			'audiobook.recoveryHelp' => 'Ekspor salinan yang disulitkan baru-baru ini sebelum memindahkan atau memperbaiki data sink. Import bergabung dengan keadaan saat ini; mereka tidak pernah mengganti sejarah sink lokal.',
 			'audiobook.recoveryExport' => 'Mengekspor file pemulihan yang disulitkan',
 			'audiobook.recoveryImport' => 'Mengimport file pemulihan yang disulitkan',
-			'audiobook.recoveryImportConfirm' => 'Menggabungkan file pemulihan yang disulitkan ini dengan posisi bacaan dan catatan saat ini? sejarah yang ada akan disimpan. perpustakaan berbagi dan ID item tidak termasuk; menetapkan ID yang sepadan pada setiap perangkat sebelum mengimpor.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Menggabungkan file pemulihan yang disulitkan ini dengan posisi bacaan dan catatan saat ini? sejarah yang ada akan disimpan. perpustakaan berbagi dan ID item tidak termasuk; menetapkan ID yang sepadan pada setiap perangkat sebelum mengimpor.',
 			'audiobook.recoveryExported' => 'File pemulihan yang disulitkan disimpan.',
 			'audiobook.recoveryImported' => 'Data pemulihan digabungkan.',
 			'sourceSetup.bookorbitHelp' => 'Masuk dengan akun BookOrbit Anda sendiri untuk menelusuri dan memutar buku. Permintaan untuk judul yang tidak tersedia tetap dikirim melalui instans SeerrNG yang terhubung.',
@@ -9720,9 +9722,9 @@ extension on TranslationsId {
 			'musicTools.recent' => 'Baru diputar',
 			'musicTools.apiKey' => 'Kunci API',
 			'musicTools.missing' => 'N / A',
-			'musicTools.minutes' => 'Minit',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Minit',
 			'musicTools.rules' => 'Filter',
 			'musicTools.exclusiveOutput' => 'Keluaran audio eksklusif',
 			'musicTools.preamp' => 'Prapenguatan',

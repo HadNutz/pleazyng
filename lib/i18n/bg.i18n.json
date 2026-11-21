@@ -3425,7 +3425,8 @@
     "noUserInformation": "Seerr не върна информация за потребителя",
     "sessionRejectedAfterReauth": "Сесията беше отхвърлена след повторния вход",
     "permissionDenied": "Seerr отказа това действие: акаунтът ви вече няма необходимото разрешение",
-    "permissionRevoked": "Вече нямате разрешение да заявявате това"
+    "permissionRevoked": "Вече нямате разрешение да заявявате това",
+    "withdrawRequest": "Оттегляне на заявката"
   },
   "services": {
     "title": "Услуги",

@@ -2884,6 +2884,7 @@ class _Translations$seerr$th extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'การประชุมถูกปฏิเสธหลังจากการลงทะเบียนอีกครั้ง';
 	@override String get permissionDenied => 'Seerr ไม่ยอมรับการกระทํานี้: บัญชีของคุณไม่ได้รับอนุญาตที่ต้องการ';
 	@override String get permissionRevoked => 'คุณไม่สามารถร้องขอได้อีกต่อไป';
+	@override String get withdrawRequest => 'ถอนคำขอ';
 }
 
 // Path: services
@@ -8400,6 +8401,7 @@ extension on TranslationsTh {
 			'seerr.sessionRejectedAfterReauth' => 'การประชุมถูกปฏิเสธหลังจากการลงทะเบียนอีกครั้ง',
 			'seerr.permissionDenied' => 'Seerr ไม่ยอมรับการกระทํานี้: บัญชีของคุณไม่ได้รับอนุญาตที่ต้องการ',
 			'seerr.permissionRevoked' => 'คุณไม่สามารถร้องขอได้อีกต่อไป',
+			'seerr.withdrawRequest' => 'ถอนคำขอ',
 			'services.title' => 'บริการ',
 			'services.hubSubtitle' => 'Sync ดูการพัฒนาและขอชื่อใหม่',
 			'services.integrations' => 'การรวมกัน',
@@ -8692,9 +8694,9 @@ extension on TranslationsTh {
 			'homeLayout.showInRecommended' => 'แสดงในห้องสมุดแนะนํา',
 			'homeLayout.customPlexRow' => 'คู่มือ Plex รอบ',
 			'homeLayout.heroNeedsLibrary' => 'ตรวจสอบห้องสมุดแรก — Hero ต้องการที่ไหนที่จะแสดง',
-			'homeLayout.heroNeedsSurface' => 'ตรวจสอบห้องสมุดหรือบ้านแรก — สัตว์ประหลาดต้องการที่ไหนที่จะแสดง',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'ตรวจสอบห้องสมุดหรือบ้านแรก — สัตว์ประหลาดต้องการที่ไหนที่จะแสดง',
 			'homeLayout.removeHub' => 'ลบ Hub',
 			'homeLayout.noPlexRows' => 'หมายเลข Plex-จัดการสายกลับสําหรับห้องสมุดนี้',
 			'homeLayout.openDetails' => 'รายละเอียดเปิด',
@@ -9206,9 +9208,9 @@ extension on TranslationsTh {
 			'audiobook.recoveryHelp' => 'Export a recent encrypted copy before moving or repairing sync data. นําเข้ามาพร้อมกับสถานะปัจจุบัน พวกเขาไม่เคยแทนที่ประวัติการซิงค์ในท้องถิ่น ให้รหัสซิงโครแยกกัน',
 			'audiobook.recoveryExport' => 'การส่งออกไฟล์การกู้คืนที่เข้ารหัส',
 			'audiobook.recoveryImport' => 'นําเข้าไฟล์การกู้คืนที่เข้ารหัส',
-			'audiobook.recoveryImportConfirm' => 'ผสมไฟล์การกู้คืนที่เข้ารหัสนี้กับตําแหน่งอ่านปัจจุบันและบันทึก? ประวัติศาสตร์ที่มีอยู่จะถูกเก็บไว้. หมายเลขห้องสมุดร่วมกันและรายการไม่รวม; การตั้งค่าหมายเลขที่เกี่ยวข้องในแต่ละอุปกรณ์ก่อนที่จะนําเข้า',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'ผสมไฟล์การกู้คืนที่เข้ารหัสนี้กับตําแหน่งอ่านปัจจุบันและบันทึก? ประวัติศาสตร์ที่มีอยู่จะถูกเก็บไว้. หมายเลขห้องสมุดร่วมกันและรายการไม่รวม; การตั้งค่าหมายเลขที่เกี่ยวข้องในแต่ละอุปกรณ์ก่อนที่จะนําเข้า',
 			'audiobook.recoveryExported' => 'ไฟล์การกู้คืนที่เข้ารหัสถูกบันทึก',
 			'audiobook.recoveryImported' => 'ข้อมูลการกู้คืนรวม',
 			'sourceSetup.bookorbitHelp' => 'ลงชื่อเข้าใช้บัญชี BookOrbit ของคุณเพื่อเรียกดูและเล่นหนังสือ คำขอสำหรับเรื่องที่ไม่มีให้บริการยังคงส่งผ่าน SeerrNG ที่เชื่อมต่อไว้',
@@ -9720,9 +9722,9 @@ extension on TranslationsTh {
 			'musicTools.recent' => 'เล่นล่าสุด',
 			'musicTools.apiKey' => 'คีย์ API',
 			'musicTools.missing' => 'หมายเลขรุ่น: A',
-			'musicTools.minutes' => 'นาที',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'นาที',
 			'musicTools.rules' => 'ฟิล์ม',
 			'musicTools.exclusiveOutput' => 'เอาต์พุตเสียงแบบเอกสิทธิ์',
 			'musicTools.preamp' => 'ปรีแอมป์',

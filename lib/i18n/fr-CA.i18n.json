@@ -476,7 +476,8 @@
     "notificationsOn": "Alerte de disponibilité activée",
     "notificationsEnabled": "Nous vous préviendrons dès que ce sera disponible",
     "notificationsDisabled": "Alerte de disponibilité désactivée",
-    "notificationFailed": "Impossible de mettre à jour l’alerte de disponibilité"
+    "notificationFailed": "Impossible de mettre à jour l’alerte de disponibilité",
+    "withdrawRequest": "Retirer la demande"
   },
   "services": {
     "libraryFilter": {

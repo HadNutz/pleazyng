@@ -8307,6 +8307,9 @@ class Translations$seerr$en {
 
 	/// en: 'You no longer have permission to request this'
 	String get permissionRevoked => 'You no longer have permission to request this';
+
+	/// en: 'Withdraw request'
+	String get withdrawRequest => 'Withdraw request';
 }
 
 // Path: services
@@ -21437,6 +21440,7 @@ extension on Translations {
 			'seerr.sessionRejectedAfterReauth' => 'The session was rejected after signing in again',
 			'seerr.permissionDenied' => 'Seerr denied this action: your account no longer has the required permission',
 			'seerr.permissionRevoked' => 'You no longer have permission to request this',
+			'seerr.withdrawRequest' => 'Withdraw request',
 			'services.title' => 'Services',
 			'services.hubSubtitle' => 'Sync watch progress and request new titles.',
 			'services.integrations' => 'Integrations',
@@ -21850,9 +21854,9 @@ extension on Translations {
 			'universalMedia.shortcutHelp' => 'Play a link, playlist, or file for this session.',
 			'universalMedia.intro' => 'Open a link, playlist, or file. Playback uses Pleazyng’s standard player and does not add history to your library.',
 			'universalMedia.openWhat' => 'What would you like to open?',
-			'universalMedia.stream' => 'Stream address',
 			_ => null,
 		} ?? switch (path) {
+			'universalMedia.stream' => 'Stream address',
 			'universalMedia.playlist' => 'Playlist',
 			'universalMedia.files' => 'Device files',
 			'universalMedia.favorites' => 'Saved stream favorites',
@@ -22364,9 +22368,9 @@ extension on Translations {
 			'sourceSetup.openSubtitles' => 'OpenSubtitles',
 			'sourceSetup.subtitleSetup' => 'Optional subtitle search for standalone videos.',
 			'sourceSetup.apiKey' => 'API key',
-			'sourceSetup.optionalUsername' => 'Account username (optional)',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.optionalUsername' => 'Account username (optional)',
 			'sourceSetup.optionalPassword' => 'Account password (optional)',
 			'sourceSetup.subtitlePrivacy' => 'Get an API key from opensubtitles.com. Search sends the video title and available IMDb/TMDB IDs, never the video file. The key and optional account credentials are encrypted with this source.',
 			'sourceSetup.automaticMetadata' => 'Automatic online video metadata',
@@ -22878,9 +22882,9 @@ extension on Translations {
 			'podcasts.importOpml' => 'Import subscriptions (OPML)',
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
 			'podcasts.imported' => 'Subscriptions imported.',
-			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
 			_ => null,
 		} ?? switch (path) {
+			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
 			'podcasts.serverHelp' => 'Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.',
 			'podcasts.viewAll' => 'Show more episodes',
 			'podcasts.inLibrary' => 'Open podcast',
@@ -23392,9 +23396,9 @@ extension on Translations {
 			'karaokeUi.pitchMIDIPracticeOnly' => ({required Object value1}) => 'Pitch MIDI ${value1} · practice only',
 			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',
 			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',
-			'karaokeUi.phoneInputRequiresSecureContext' => 'A trusted HTTPS connection is required.',
 			_ => null,
 		} ?? switch (path) {
+			'karaokeUi.phoneInputRequiresSecureContext' => 'A trusted HTTPS connection is required.',
 			'karaokeUi.phoneInputRequires16kHzCapture' => 'This browser cannot supply the required 16 kHz capture path.',
 			'karaokeUi.phoneInputNeedsActivePerformance' => 'Return to an active performance before enabling capture.',
 			'karaokeUi.phoneCaptureRequiresTrustedHTTPS' => 'Phone capture requires the host HTTPS room with a certificate trusted by this phone. The ordinary LAN songbook remains available.',

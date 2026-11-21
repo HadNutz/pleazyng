@@ -2903,6 +2903,7 @@ class _Translations$seerr$hi extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'फिर से हस्ताक्षर करने के बाद बैठक को अस्वीकार कर दिया गया';
 	@override String get permissionDenied => 'Seerr ने इस कार्रवाई को अस्वीकार कर दिया: आपके खाते में अब आवश्यक अनुमति नहीं है';
 	@override String get permissionRevoked => 'अब आपके पास यह अनुरोध करने की अनुमति नहीं है';
+	@override String get withdrawRequest => 'अनुरोध वापस लें';
 }
 
 // Path: services
@@ -8425,6 +8426,7 @@ extension on TranslationsHi {
 			'seerr.sessionRejectedAfterReauth' => 'फिर से हस्ताक्षर करने के बाद बैठक को अस्वीकार कर दिया गया',
 			'seerr.permissionDenied' => 'Seerr ने इस कार्रवाई को अस्वीकार कर दिया: आपके खाते में अब आवश्यक अनुमति नहीं है',
 			'seerr.permissionRevoked' => 'अब आपके पास यह अनुरोध करने की अनुमति नहीं है',
+			'seerr.withdrawRequest' => 'अनुरोध वापस लें',
 			'services.title' => 'सेवाएं',
 			'services.hubSubtitle' => 'सिंक्रनाइज़ेशन प्रगति की निगरानी करता है और नए शीर्षकों की मांग करता है।',
 			'services.integrations' => 'एकीकरण',
@@ -8717,9 +8719,9 @@ extension on TranslationsHi {
 			'homeLayout.showInRecommended' => 'पुस्तकालय में प्रदर्शित की सिफारिश',
 			'homeLayout.customPlexRow' => 'कस्टम Plex पंक्ति',
 			'homeLayout.heroNeedsLibrary' => 'पहले पुस्तकालय की जांच करें - नायक को कहीं दिखाने की जरूरत है',
-			'homeLayout.heroNeedsSurface' => 'पहले पुस्तकालय या होम की जांच करें — नायक को कहीं दिखाने की जरूरत है',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'पहले पुस्तकालय या होम की जांच करें — नायक को कहीं दिखाने की जरूरत है',
 			'homeLayout.removeHub' => 'Hub को हटाने के लिए',
 			'homeLayout.noPlexRows' => 'नंबर Plex-प्रबंधित पंक्तियां इस पुस्तकालय के लिए वापस आ गई हैं।',
 			'homeLayout.openDetails' => 'खुले विवरण',
@@ -9231,9 +9233,9 @@ extension on TranslationsHi {
 			'audiobook.recoveryHelp' => 'सिंक डेटा को स्थानांतरित या ठीक करने से पहले हाल की एन्क्रिप्टेड कॉपी निर्यात करें। आयात मौजूदा स्थिति के साथ मिलते हैं; वे स्थानीय सिंक इतिहास को कभी नहीं बदलते। सिंक कोड अलग से रखें।',
 			'audiobook.recoveryExport' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइलों का निर्यात',
 			'audiobook.recoveryImport' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइल आयात',
-			'audiobook.recoveryImportConfirm' => 'मौजूदा इतिहास बनाए रखा जाएगा. साझा पुस्तकालय और आइटम आईडी शामिल नहीं हैं; आयात करने से पहले प्रत्येक डिवाइस पर फिट आईडी सेट करें.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'मौजूदा इतिहास बनाए रखा जाएगा. साझा पुस्तकालय और आइटम आईडी शामिल नहीं हैं; आयात करने से पहले प्रत्येक डिवाइस पर फिट आईडी सेट करें.',
 			'audiobook.recoveryExported' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइल बचाया गया है।',
 			'audiobook.recoveryImported' => 'पुनर्प्राप्ति डेटा मिश्रित है।',
 			'sourceSetup.bookorbitHelp' => 'अपनी BookOrbit पुस्तकों को ब्राउज़ करने और चलाने के लिए अपने BookOrbit खाते से साइन इन करें। अनुपलब्ध शीर्षकों के अनुरोध फिर भी आपके कनेक्ट किए गए SeerrNG इंस्टेंस से भेजे जाते हैं।',
@@ -9745,9 +9747,9 @@ extension on TranslationsHi {
 			'musicTools.recent' => 'हाल ही में सुने गए',
 			'musicTools.apiKey' => 'API कुंजी',
 			'musicTools.missing' => 'ए / ए',
-			'musicTools.minutes' => 'मिनट',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'मिनट',
 			'musicTools.rules' => 'फ़िल्टर',
 			'musicTools.exclusiveOutput' => 'विशेष ऑडियो आउटपुट',
 			'musicTools.preamp' => 'प्रीएम्प',

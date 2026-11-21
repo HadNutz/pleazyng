@@ -2903,6 +2903,7 @@ class _Translations$seerr$tr extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Yeniden giriş yapıldıktan sonra oturum reddedildi';
 	@override String get permissionDenied => 'Seerr bu eylemi reddetti: hesabınız artık gerekli izne sahip değil';
 	@override String get permissionRevoked => 'Bunu isteme izniniz artık yok';
+	@override String get withdrawRequest => 'İsteği geri çek';
 }
 
 // Path: services
@@ -8425,6 +8426,7 @@ extension on TranslationsTr {
 			'seerr.sessionRejectedAfterReauth' => 'Yeniden giriş yapıldıktan sonra oturum reddedildi',
 			'seerr.permissionDenied' => 'Seerr bu eylemi reddetti: hesabınız artık gerekli izne sahip değil',
 			'seerr.permissionRevoked' => 'Bunu isteme izniniz artık yok',
+			'seerr.withdrawRequest' => 'İsteği geri çek',
 			'services.title' => 'Servisler',
 			'services.hubSubtitle' => 'İzleme ilerlemesini eşitleyin ve yeni başlıklar isteyin.',
 			'services.integrations' => 'Entegrasyonlar',
@@ -8717,9 +8719,9 @@ extension on TranslationsTr {
 			'homeLayout.showInRecommended' => 'Kütüphane önerilen',
 			'homeLayout.customPlexRow' => 'Özel Plex satır',
 			'homeLayout.heroNeedsLibrary' => 'İlk Kütüphaneyi Kontrol Edin - Kahramanın Gösterilmesi Gereken Bir Yer',
-			'homeLayout.heroNeedsSurface' => 'İlk önce Kütüphane veya Ev\'i kontrol edin - Kahramanın göstermesi gereken bir yer var',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'İlk önce Kütüphane veya Ev\'i kontrol edin - Kahramanın göstermesi gereken bir yer var',
 			'homeLayout.removeHub' => 'Hub kaldırma',
 			'homeLayout.noPlexRows' => 'Plex yönetilen satırlar bu kütüphane için geri döndü.',
 			'homeLayout.openDetails' => 'Açılış Detaylar',
@@ -9231,9 +9233,9 @@ extension on TranslationsTr {
 			'audiobook.recoveryHelp' => 'Son zamanlarda şifrelenmiş bir kopyasını aktarmadan önce veya senkronizasyon verilerini düzeltmeden önce ihraç edin. ithalat mevcut durumla birleşir; yerel senkrona geçmişi asla değiştirmezler. senkronu ayrı tutun.',
 			'audiobook.recoveryExport' => 'İhracat şifreli kurtarma dosyası',
 			'audiobook.recoveryImport' => 'İthalat Şifreli Kurtarma Dosyası',
-			'audiobook.recoveryImportConfirm' => 'Bu şifreli kurtarma dosyasını mevcut okuma pozisyonları ve notları ile birleştirin? Mevcut geçmişi muhafaza edilecektir. Paylaşılan kütüphane ve öğe kimlikleri dahil değildir; ithal etmeden önce her cihazda eşleşen kimlikler ayarlayın.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Bu şifreli kurtarma dosyasını mevcut okuma pozisyonları ve notları ile birleştirin? Mevcut geçmişi muhafaza edilecektir. Paylaşılan kütüphane ve öğe kimlikleri dahil değildir; ithal etmeden önce her cihazda eşleşen kimlikler ayarlayın.',
 			'audiobook.recoveryExported' => 'Şifreli kurtarma dosyası kaydedildi.',
 			'audiobook.recoveryImported' => 'Kurtarma verileri birleşti.',
 			'sourceSetup.bookorbitHelp' => 'Kitaplarınıza göz atmak ve oynatmak için kendi BookOrbit hesabınızla giriş yapın. Eksik içerik istekleri bağlı SeerrNG örneğiniz üzerinden gönderilmeye devam eder.',
@@ -9745,9 +9747,9 @@ extension on TranslationsTr {
 			'musicTools.recent' => 'Son çalınanlar',
 			'musicTools.apiKey' => 'API anahtarı',
 			'musicTools.missing' => 'Yok',
-			'musicTools.minutes' => 'Dakika',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Dakika',
 			'musicTools.rules' => 'Filtreler',
 			'musicTools.exclusiveOutput' => 'Özel ses çıkışı',
 			'musicTools.preamp' => 'Ön yükseltme',

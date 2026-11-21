@@ -2907,6 +2907,7 @@ class _Translations$seerr$he extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'ההרשמה נדחתה לאחר חתימה נוספת.';
 	@override String get permissionDenied => 'Seerr הכחישה את הפעולה הזאת: החשבון שלך כבר אין את הרשאה הנדרשת';
 	@override String get permissionRevoked => 'אין לך יותר רשות לבקש זאת.';
+	@override String get withdrawRequest => 'ביטול הבקשה';
 }
 
 // Path: services
@@ -8433,6 +8434,7 @@ extension on TranslationsHe {
 			'seerr.sessionRejectedAfterReauth' => 'ההרשמה נדחתה לאחר חתימה נוספת.',
 			'seerr.permissionDenied' => 'Seerr הכחישה את הפעולה הזאת: החשבון שלך כבר אין את הרשאה הנדרשת',
 			'seerr.permissionRevoked' => 'אין לך יותר רשות לבקש זאת.',
+			'seerr.withdrawRequest' => 'ביטול הבקשה',
 			'services.title' => 'שירותים',
 			'services.hubSubtitle' => 'סינכרון עוקב אחר ההתקדמות ולבקש כותרות חדשות.',
 			'services.integrations' => 'אינטגרציה',
@@ -8725,9 +8727,9 @@ extension on TranslationsHe {
 			'homeLayout.showInRecommended' => 'תגית: הספרייה המומלצת',
 			'homeLayout.customPlexRow' => 'אישית Plex שורה',
 			'homeLayout.heroNeedsLibrary' => 'ראשית, בדוק את הספרייה – גיבור צריך איפשהו להראות',
-			'homeLayout.heroNeedsSurface' => 'ראשית בדוק את הספרייה או הבית – גיבור צריך איפשהו להראות',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'ראשית בדוק את הספרייה או הבית – גיבור צריך איפשהו להראות',
 			'homeLayout.removeHub' => 'להסיר Hub',
 			'homeLayout.noPlexRows' => 'מספר Plex שורות המנוהלות חזרה לספריה זו.',
 			'homeLayout.openDetails' => 'פרטים פתוחים',
@@ -9239,9 +9241,9 @@ extension on TranslationsHe {
 			'audiobook.recoveryHelp' => 'ייצוא עותק מוצפן לאחרונה לפני העברת או תיקון נתוני סינכרון.יבואים מתמזגים עם המצב הנוכחי; הם לעולם לא מחליפים היסטוריה מקומית של סינן.',
 			'audiobook.recoveryExport' => 'ייצוא קובץ ההחזרה מוצפן',
 			'audiobook.recoveryImport' => 'ייבוא קובץ ההחזרה מוצפן',
-			'audiobook.recoveryImportConfirm' => 'שילוב זה קובץ ההחזרה מוצפן עם עמדות הקריאה הנוכחיות והערות? ההיסטוריה הקיימת תישמר. ספרייה משותפת ו- פריטים מזהים אינם נכללים; הגדרת מזהים מתאימים על כל מכשיר לפני ייבוא.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'שילוב זה קובץ ההחזרה מוצפן עם עמדות הקריאה הנוכחיות והערות? ההיסטוריה הקיימת תישמר. ספרייה משותפת ו- פריטים מזהים אינם נכללים; הגדרת מזהים מתאימים על כל מכשיר לפני ייבוא.',
 			'audiobook.recoveryExported' => 'קובץ ההחזרה מוצפן נשמר.',
 			'audiobook.recoveryImported' => 'נתוני ההחזרה מתמזגים.',
 			'sourceSetup.bookorbitHelp' => 'יש להתחבר לחשבון BookOrbit האישי שלך כדי לעיין בספרים ולנגן אותם. בקשות לכותרות חסרות עדיין עוברות דרך מופע SeerrNG המחובר שלך.',
@@ -9753,9 +9755,9 @@ extension on TranslationsHe {
 			'musicTools.recent' => 'הושמעו לאחרונה',
 			'musicTools.apiKey' => 'מפתח API',
 			'musicTools.missing' => 'N / A',
-			'musicTools.minutes' => 'דקות',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'דקות',
 			'musicTools.rules' => 'מסננים',
 			'musicTools.exclusiveOutput' => 'פלט שמע בלעדי',
 			'musicTools.preamp' => 'קדם־הגברה',

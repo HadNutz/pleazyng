@@ -705,6 +705,7 @@ class _Translations$seerr$fr_CA extends Translations$seerr$fr {
 	@override String get notificationsEnabled => 'Nous vous préviendrons dès que ce sera disponible';
 	@override String get notificationsDisabled => 'Alerte de disponibilité désactivée';
 	@override String get notificationFailed => 'Impossible de mettre à jour l’alerte de disponibilité';
+	@override String get withdrawRequest => 'Retirer la demande';
 }
 
 // Path: services
@@ -1679,6 +1680,7 @@ extension on TranslationsFrCa {
 			'seerr.notificationsEnabled' => 'Nous vous préviendrons dès que ce sera disponible',
 			'seerr.notificationsDisabled' => 'Alerte de disponibilité désactivée',
 			'seerr.notificationFailed' => 'Impossible de mettre à jour l’alerte de disponibilité',
+			'seerr.withdrawRequest' => 'Retirer la demande',
 			'services.libraryFilter.modeBlacklist' => 'Liste noire',
 			'services.libraryFilter.libraries' => 'Médiathèques',
 			'addServer.username' => 'Nom d\'utilisateur',
@@ -1851,9 +1853,9 @@ extension on TranslationsFrCa {
 			'romm.linkHelp' => 'Paste a Pleazyng game link. Connect the matching RomM server before opening it.',
 			'romm.copyMismatch' => 'This link identifies a different copy. Choose the intended game from your library.',
 			'romm.requestStatus' => 'Library indexing',
-			'romm.notIndexed' => 'The requested game is not indexed in this library yet.',
 			_ => null,
 		} ?? switch (path) {
+			'romm.notIndexed' => 'The requested game is not indexed in this library yet.',
 			'romm.touchControls' => 'Touch controls',
 			'romm.controls' => 'Controls',
 			'romm.resetControls' => 'Reset controls',

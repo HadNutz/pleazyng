@@ -3425,7 +3425,8 @@
     "noUserInformation": "Seerr пайдаланушы туралы мәліметтерді қайтармады",
     "sessionRejectedAfterReauth": "Қайта кіргеннен кейін сеанс қабылданбады",
     "permissionDenied": "Seerr бұл әрекетті қабылдамады: тіркелгіңізде енді қажетті рұқсат жоқ",
-    "permissionRevoked": "Мұны сұрауға енді рұқсатыңыз жоқ"
+    "permissionRevoked": "Мұны сұрауға енді рұқсатыңыз жоқ",
+    "withdrawRequest": "Сұрауды кері қайтару"
   },
   "services": {
     "title": "Қызметтер",

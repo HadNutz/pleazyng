@@ -2903,6 +2903,7 @@ class _Translations$seerr$kk extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Қайта кіргеннен кейін сеанс қабылданбады';
 	@override String get permissionDenied => 'Seerr бұл әрекетті қабылдамады: тіркелгіңізде енді қажетті рұқсат жоқ';
 	@override String get permissionRevoked => 'Мұны сұрауға енді рұқсатыңыз жоқ';
+	@override String get withdrawRequest => 'Сұрауды кері қайтару';
 }
 
 // Path: services
@@ -8425,6 +8426,7 @@ extension on TranslationsKk {
 			'seerr.sessionRejectedAfterReauth' => 'Қайта кіргеннен кейін сеанс қабылданбады',
 			'seerr.permissionDenied' => 'Seerr бұл әрекетті қабылдамады: тіркелгіңізде енді қажетті рұқсат жоқ',
 			'seerr.permissionRevoked' => 'Мұны сұрауға енді рұқсатыңыз жоқ',
+			'seerr.withdrawRequest' => 'Сұрауды кері қайтару',
 			'services.title' => 'Қызметтер',
 			'services.hubSubtitle' => 'Көру барысын синхрондаңыз және жаңа мазмұн сұраңыз.',
 			'services.integrations' => 'Интеграциялар',
@@ -8717,9 +8719,9 @@ extension on TranslationsKk {
 			'homeLayout.showInRecommended' => 'Библиотеканың тұрақтанды',
 			'homeLayout.customPlexRow' => 'Қазір Plex қаңтар',
 			'homeLayout.heroNeedsLibrary' => '«Жеңіске үлес қосқандар» деген әйгілі әндердің авторы.',
-			'homeLayout.heroNeedsSurface' => '«Жеңіске» және «Жектесі» деген әйгілі әндер шыққан әндер шырқалып, биленді.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => '«Жеңіске» және «Жектесі» деген әйгілі әндер шыққан әндер шырқалып, биленді.',
 			'homeLayout.removeHub' => 'Өткен қағал',
 			'homeLayout.noPlexRows' => 'Бұл кітапхана үшін Plex басқаратын қатарлар табылмады.',
 			'homeLayout.openDetails' => 'Одандық детайл',
@@ -9231,9 +9233,9 @@ extension on TranslationsKk {
 			'audiobook.recoveryHelp' => 'Қаланың тұрақты тұрғындарының саны 10 адамды құрайды және 1 адамды қағидалардан тұрады.',
 			'audiobook.recoveryExport' => 'Експортдық криптовалюттік файл',
 			'audiobook.recoveryImport' => 'Қандай-ақ криптовалюталық дағдарыс',
-			'audiobook.recoveryImportConfirm' => 'Бұл криптовалюталық дағдарыстағы қанағаттанды және жабдықтармен көруге болады? іс-әрекеттің историю бар. Жабдықтау библиотекасы және элементтік ID-дер не пайдаланылады; екеуінде импортируға дейін әртүрлі айналысатын идентификатордан қабылдайды.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Бұл криптовалюталық дағдарыстағы қанағаттанды және жабдықтармен көруге болады? іс-әрекеттің историю бар. Жабдықтау библиотекасы және элементтік ID-дер не пайдаланылады; екеуінде импортируға дейін әртүрлі айналысатын идентификатордан қабылдайды.',
 			'audiobook.recoveryExported' => 'Қазіргі уақытта өңдеуге кеңінен танымал.',
 			'audiobook.recoveryImported' => 'Ауыздан дағдарыста.',
 			'sourceSetup.bookorbitHelp' => 'Кітаптарды қарау және ойнату үшін өз BookOrbit тіркелгіңізге кіріңіз. Жоқ тақырыптарға арналған сұраулар әлі де қосылған SeerrNG данасы арқылы жіберіледі.',
@@ -9745,9 +9747,9 @@ extension on TranslationsKk {
 			'musicTools.recent' => 'Жақында тыңдалған',
 			'musicTools.apiKey' => 'API кілті',
 			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => 'Минут',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Минут',
 			'musicTools.rules' => 'Фильтрлер',
 			'musicTools.exclusiveOutput' => 'Эксклюзивті аудио шығыс',
 			'musicTools.preamp' => 'Алдын ала күшейту',

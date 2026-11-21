@@ -1,7 +1,7 @@
 {
   "locale": "th",
   "inherits": null,
-  "catalogSha256": "08d91167b5e6fbab68364f3fd4a45ada5cec94bcdb88e2673dc1313a19507f94",
+  "catalogSha256": "180335323d1acbd8b1a2a7d3c4c050d7d44c265448a6276f63a1ee1b93e0e102",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3683,7 +3683,8 @@
     "mediaMenu.mediaDeletionDisabledOnServer": "assistant-generated-draft",
     "settings.showTopShelfContent": "assistant-generated-draft",
     "settings.showTopShelfContentDescription": "assistant-generated-draft",
-    "settings.topShelfUpdateFailed": "assistant-generated-draft"
+    "settings.topShelfUpdateFailed": "assistant-generated-draft",
+    "seerr.withdrawRequest": "assistant-generated-draft"
   },
   "beforeIndependentQaCorrection": {
     "themeEditor.discardMessage": "m2m100-draft",

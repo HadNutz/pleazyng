@@ -2903,6 +2903,7 @@ class _Translations$seerr$sv extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Sessionen avvisades efter den nya inloggningen';
 	@override String get permissionDenied => 'Seerr nekade åtgärden: ditt konto har inte längre den behörighet som krävs';
 	@override String get permissionRevoked => 'Du har inte längre behörighet att begära detta';
+	@override String get withdrawRequest => 'Dra tillbaka begäran';
 }
 
 // Path: services
@@ -8425,6 +8426,7 @@ extension on TranslationsSv {
 			'seerr.sessionRejectedAfterReauth' => 'Sessionen avvisades efter den nya inloggningen',
 			'seerr.permissionDenied' => 'Seerr nekade åtgärden: ditt konto har inte längre den behörighet som krävs',
 			'seerr.permissionRevoked' => 'Du har inte längre behörighet att begära detta',
+			'seerr.withdrawRequest' => 'Dra tillbaka begäran',
 			'services.title' => 'Tjänster',
 			'services.hubSubtitle' => 'Synkronisera visningsstatus och begär nya titlar.',
 			'services.integrations' => 'Integrationer',
@@ -8717,9 +8719,9 @@ extension on TranslationsSv {
 			'homeLayout.showInRecommended' => 'Utställning i biblioteket rekommenderas',
 			'homeLayout.customPlexRow' => 'Anpassad Plex rad',
 			'homeLayout.heroNeedsLibrary' => 'Kolla biblioteket först – Hero behöver någonstans att visa',
-			'homeLayout.heroNeedsSurface' => 'Kolla biblioteket eller hemmet först – Hero behöver någonstans att visa',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Kolla biblioteket eller hemmet först – Hero behöver någonstans att visa',
 			'homeLayout.removeHub' => 'Ta bort Hub',
 			'homeLayout.noPlexRows' => 'Nr Plex-hanterade rader återvände till denna bibliotek.',
 			'homeLayout.openDetails' => 'Öppna detaljer',
@@ -9231,9 +9233,9 @@ extension on TranslationsSv {
 			'audiobook.recoveryHelp' => 'Exportera en nyligen krypterad kopia innan du flyttar eller reparerar synkroniseringsdata. Importer går ihop med den aktuella tillståndet; de ersätter aldrig lokal synkroniseringshistoria. Håll synkronkoden separat.',
 			'audiobook.recoveryExport' => 'Export krypterad återhämtningsfil',
 			'audiobook.recoveryImport' => 'Import krypterad återhämtningsfil',
-			'audiobook.recoveryImportConfirm' => 'Kombinera denna krypterade återställningsfil med aktuella läsplatser och anteckningar? befintlig historia kommer att behållas. Delade bibliotek och objekt ID ingår inte; ställa in matchande ID på varje enhet innan import.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Kombinera denna krypterade återställningsfil med aktuella läsplatser och anteckningar? befintlig historia kommer att behållas. Delade bibliotek och objekt ID ingår inte; ställa in matchande ID på varje enhet innan import.',
 			'audiobook.recoveryExported' => 'Den krypterade återhämtningsfilen sparas.',
 			'audiobook.recoveryImported' => 'Data återhämtning sammansatt.',
 			'sourceSetup.bookorbitHelp' => 'Logga in med ditt eget BookOrbit-konto för att bläddra bland och spela upp dina böcker. Begäranden om saknade titlar går fortfarande via din anslutna SeerrNG-instans.',
@@ -9745,9 +9747,9 @@ extension on TranslationsSv {
 			'musicTools.recent' => 'Senast spelat',
 			'musicTools.apiKey' => 'API-nyckel',
 			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => 'Minuter',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Minuter',
 			'musicTools.rules' => 'Filter',
 			'musicTools.exclusiveOutput' => 'Exklusiv ljudutgång',
 			'musicTools.preamp' => 'Förförstärkning',

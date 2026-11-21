@@ -2979,6 +2979,7 @@ class _Translations$seerr$ar extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'تم رفض الجلسة بعد التوقيع مرة أخرى';
 	@override String get permissionDenied => 'رفضت شركة Seerr هذا الإجراء: لم يعد حسابك لديه إذن مطلوب';
 	@override String get permissionRevoked => 'لم يعد لديك إذن لطلب هذا';
+	@override String get withdrawRequest => 'سحب الطلب';
 }
 
 // Path: services
@@ -8525,6 +8526,7 @@ extension on TranslationsAr {
 			'seerr.sessionRejectedAfterReauth' => 'تم رفض الجلسة بعد التوقيع مرة أخرى',
 			'seerr.permissionDenied' => 'رفضت شركة Seerr هذا الإجراء: لم يعد حسابك لديه إذن مطلوب',
 			'seerr.permissionRevoked' => 'لم يعد لديك إذن لطلب هذا',
+			'seerr.withdrawRequest' => 'سحب الطلب',
 			'services.title' => 'الخدمات',
 			'services.hubSubtitle' => 'يراقب Sync التقدم و يطلب عناوين جديدة.',
 			'services.integrations' => 'الاندماج',
@@ -8817,9 +8819,9 @@ extension on TranslationsAr {
 			'homeLayout.showInRecommended' => 'إظهار ضمن توصيات المكتبة',
 			'homeLayout.customPlexRow' => 'صف Plex مخصّص',
 			'homeLayout.heroNeedsLibrary' => 'حدّد المكتبة أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
-			'homeLayout.heroNeedsSurface' => 'حدّد المكتبة أو الصفحة الرئيسية أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'حدّد المكتبة أو الصفحة الرئيسية أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
 			'homeLayout.removeHub' => 'إزالة قسم المحتوى',
 			'homeLayout.noPlexRows' => 'لم يُرجع Plex أي صفوف يديرها لهذه المكتبة.',
 			'homeLayout.openDetails' => 'فتح التفاصيل',
@@ -9331,9 +9333,9 @@ extension on TranslationsAr {
 			'audiobook.recoveryHelp' => 'تصدير نسخة مشفرة مؤخرا قبل نقل أو إصلاح بيانات المزامنة.يتم دمج الواردات مع الحالة الحالية؛ أنها لا تحل محل تاريخ المزامن المحلي.',
 			'audiobook.recoveryExport' => 'تصدير ملف استرداد مشفرة',
 			'audiobook.recoveryImport' => 'استيراد ملف إعادة التدوير المشفرة',
-			'audiobook.recoveryImportConfirm' => 'هل يجمع هذا ملف إعادة التأهيل المشفر مع مواقف القراءة الحالية والملاحظات؟ سيتم الحفاظ على التاريخ الحالي. لا يتم تضمين المكتبة المشتركة ومعارف العناصر؛ قم بتعيين المعارف المقابلة على كل جهاز قبل الاستيراد.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'هل يجمع هذا ملف إعادة التأهيل المشفر مع مواقف القراءة الحالية والملاحظات؟ سيتم الحفاظ على التاريخ الحالي. لا يتم تضمين المكتبة المشتركة ومعارف العناصر؛ قم بتعيين المعارف المقابلة على كل جهاز قبل الاستيراد.',
 			'audiobook.recoveryExported' => 'تم حفظ ملف الاسترداد المشفر.',
 			'audiobook.recoveryImported' => 'استرداد البيانات مترابطة.',
 			'sourceSetup.bookorbitHelp' => 'سجّل الدخول باستخدام حساب BookOrbit الخاص بك لتصفح كتبه وتشغيلها. تظل طلبات العناوين غير المتوفرة تمر عبر مثيل SeerrNG المتصل بك.',
@@ -9845,9 +9847,9 @@ extension on TranslationsAr {
 			'musicTools.recent' => 'تم تشغيلها مؤخرًا',
 			'musicTools.apiKey' => 'مفتاح API',
 			'musicTools.missing' => 'N / A',
-			'musicTools.minutes' => 'دقائق',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'دقائق',
 			'musicTools.rules' => 'الفلاتر',
 			'musicTools.exclusiveOutput' => 'إخراج صوت حصري',
 			'musicTools.preamp' => 'التضخيم المسبق',

@@ -763,7 +763,8 @@
       "author": "wetpas",
       "state": "open",
       "title": "feat(seerr): \"My requests\" in Explore, with delete and remove actions",
-      "decision": "Pleazyng already has a Requests screen and user-scoped request browsing. Compare owner-authorized withdrawal/removal and surface only any missing actions."
+      "decision": "Adapted in Pleazyng. Allow users to withdraw their own pending film or TV request. The client rechecks the request, owner, title and edition before deleting the request record. Library files remain under the server administrator’s control.",
+      "upstream_head": "24ddcf66eb8a4823dbe537673d330f89be95f8c1"
     },
     {
       "number": 3118,

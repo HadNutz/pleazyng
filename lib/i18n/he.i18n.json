@@ -3429,7 +3429,8 @@
     "noUserInformation": "Seerr לא החזיר מידע משתמש",
     "sessionRejectedAfterReauth": "ההרשמה נדחתה לאחר חתימה נוספת.",
     "permissionDenied": "Seerr הכחישה את הפעולה הזאת: החשבון שלך כבר אין את הרשאה הנדרשת",
-    "permissionRevoked": "אין לך יותר רשות לבקש זאת."
+    "permissionRevoked": "אין לך יותר רשות לבקש זאת.",
+    "withdrawRequest": "ביטול הבקשה"
   },
   "services": {
     "title": "שירותים",

@@ -1,7 +1,7 @@
 {
   "locale": "pt-BR",
   "inherits": "pt",
-  "catalogSha256": "c0431692929bf25b409fb8f1052fad93c51066aa9accfb1afd91ddee7b750c70",
+  "catalogSha256": "29ba50fc5e16250bf18ffabe68f693b7910245d70a5a88afa8260d7644b9acc1",
   "nativeSpeakerReviewed": false,
   "messages": {
     "cast.subtitle": "jellyfin-web:Subtitles",
@@ -401,7 +401,8 @@
     "mediaMenu.mediaDeletionDisabledOnServer": "assistant-generated-draft",
     "settings.showTopShelfContent": "assistant-generated-draft",
     "settings.showTopShelfContentDescription": "assistant-generated-draft",
-    "settings.topShelfUpdateFailed": "assistant-generated-draft"
+    "settings.topShelfUpdateFailed": "assistant-generated-draft",
+    "seerr.withdrawRequest": "assistant-generated-draft"
   },
   "integrationAiQaReport": "../LANGUAGE_QA_INTEGRATION.md",
   "beforeMainMergeReview": {

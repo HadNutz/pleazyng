@@ -3425,7 +3425,8 @@
     "noUserInformation": "A Seerr nem adott vissza felhasználói adatokat",
     "sessionRejectedAfterReauth": "A munkamenetet az újbóli bejelentkezés után elutasították",
     "permissionDenied": "A Seerr elutasította ezt a műveletet: a fiókod már nem rendelkezik a szükséges jogosultsággal",
-    "permissionRevoked": "Már nincs jogosultságod ennek az igényléséhez"
+    "permissionRevoked": "Már nincs jogosultságod ennek az igényléséhez",
+    "withdrawRequest": "Kérés visszavonása"
   },
   "services": {
     "title": "Szolgáltatások",

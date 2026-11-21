@@ -2903,6 +2903,7 @@ class _Translations$seerr$fa extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'جلسه پس از امضای مجدد رد شد.';
 	@override String get permissionDenied => 'Seerr این اقدام را رد کرد: حساب شما دیگر مجوز مورد نیاز را ندارد';
 	@override String get permissionRevoked => 'شما دیگر اجازه درخواست این کار را ندارید.';
+	@override String get withdrawRequest => 'پس گرفتن درخواست';
 }
 
 // Path: services
@@ -8425,6 +8426,7 @@ extension on TranslationsFa {
 			'seerr.sessionRejectedAfterReauth' => 'جلسه پس از امضای مجدد رد شد.',
 			'seerr.permissionDenied' => 'Seerr این اقدام را رد کرد: حساب شما دیگر مجوز مورد نیاز را ندارد',
 			'seerr.permissionRevoked' => 'شما دیگر اجازه درخواست این کار را ندارید.',
+			'seerr.withdrawRequest' => 'پس گرفتن درخواست',
 			'services.title' => 'خدمات',
 			'services.hubSubtitle' => 'Sync پیشرفت را مشاهده می کند و از عنوان های جدید درخواست می کند.',
 			'services.integrations' => 'ادغام',
@@ -8717,9 +8719,9 @@ extension on TranslationsFa {
 			'homeLayout.showInRecommended' => 'نمایش در کتابخانه توصیه شده',
 			'homeLayout.customPlexRow' => 'مشخصات Plex خط',
 			'homeLayout.heroNeedsLibrary' => 'نگاهی به کتابخانه اول – قهرمان نیاز به جایی برای نشان دادن',
-			'homeLayout.heroNeedsSurface' => 'کتابخانه یا خانه را اول ببینید – قهرمان باید جایی برای نشان دادن',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'کتابخانه یا خانه را اول ببینید – قهرمان باید جایی برای نشان دادن',
 			'homeLayout.removeHub' => 'حذف هاب',
 			'homeLayout.noPlexRows' => 'شماره Plex ردیف های مدیریت شده برای این کتابخانه بازگردانده شده است.',
 			'homeLayout.openDetails' => 'جزئیات باز',
@@ -9231,9 +9233,9 @@ extension on TranslationsFa {
 			'audiobook.recoveryHelp' => 'یک کپی رمزگذاری شده اخیر را قبل از حرکت یا اصلاح داده های همگام سازی صادر کنید. واردات با وضعیت فعلی ادغام می شود؛ آنها هرگز تاریخچه همگامه محلی را جایگزین نمی کنند.',
 			'audiobook.recoveryExport' => 'صادرات رمزگذاری شده بازگرداندن فایل',
 			'audiobook.recoveryImport' => 'واردات فایل های رمزگذاری شده',
-			'audiobook.recoveryImportConfirm' => 'آیا این فایل بازگرداندن رمزگذاری شده با موقعیت های خواندن فعلی و یادداشت ها ترکیب می شود؟ تاریخچه موجود حفظ خواهد شد. کتابخانه به اشتراک گذاشته شده و شناسه آیتم شامل نمی شود؛ قبل از واردات، شناسه های مطابقت را بر روی هر دستگاه تنظیم کنید.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'آیا این فایل بازگرداندن رمزگذاری شده با موقعیت های خواندن فعلی و یادداشت ها ترکیب می شود؟ تاریخچه موجود حفظ خواهد شد. کتابخانه به اشتراک گذاشته شده و شناسه آیتم شامل نمی شود؛ قبل از واردات، شناسه های مطابقت را بر روی هر دستگاه تنظیم کنید.',
 			'audiobook.recoveryExported' => 'فایل بازگرداندن رمزگذاری شده ذخیره شده است.',
 			'audiobook.recoveryImported' => 'بازگرداندن اطلاعات جمع آوری شده است.',
 			'sourceSetup.bookorbitHelp' => 'برای مرور و پخش کتاب‌های BookOrbit، با حساب شخصی خود وارد شوید. درخواست عنوان‌های موجودنبود همچنان از نمونهٔ متصل SeerrNG شما انجام می‌شود.',
@@ -9745,9 +9747,9 @@ extension on TranslationsFa {
 			'musicTools.recent' => 'اخیراً پخش‌شده',
 			'musicTools.apiKey' => 'کلید API',
 			'musicTools.missing' => 'N / A',
-			'musicTools.minutes' => 'دقیقه ها',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'دقیقه ها',
 			'musicTools.rules' => 'صافی‌ها',
 			'musicTools.exclusiveOutput' => 'خروجی صدای انحصاری',
 			'musicTools.preamp' => 'پیش‌تقویت',

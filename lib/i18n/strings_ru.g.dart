@@ -2941,6 +2941,7 @@ class _Translations$seerr$ru extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Сеанс был отклонён после повторного входа';
 	@override String get permissionDenied => 'Seerr отклонил это действие: у вашей учётной записи больше нет необходимого разрешения';
 	@override String get permissionRevoked => 'У вас больше нет разрешения запрашивать это';
+	@override String get withdrawRequest => 'Отозвать запрос';
 }
 
 // Path: services
@@ -8475,6 +8476,7 @@ extension on TranslationsRu {
 			'seerr.sessionRejectedAfterReauth' => 'Сеанс был отклонён после повторного входа',
 			'seerr.permissionDenied' => 'Seerr отклонил это действие: у вашей учётной записи больше нет необходимого разрешения',
 			'seerr.permissionRevoked' => 'У вас больше нет разрешения запрашивать это',
+			'seerr.withdrawRequest' => 'Отозвать запрос',
 			'services.title' => 'Сервисы',
 			'services.hubSubtitle' => 'Синхронизируйте прогресс просмотра и запрашивайте новые фильмы и сериалы.',
 			'services.integrations' => 'Интеграции',
@@ -8767,9 +8769,9 @@ extension on TranslationsRu {
 			'homeLayout.showInRecommended' => 'Показать в библиотеке рекомендуется',
 			'homeLayout.customPlexRow' => 'Собственный Plex ряд',
 			'homeLayout.heroNeedsLibrary' => 'Проверьте библиотеку сначала — Герою нужно где-то показать',
-			'homeLayout.heroNeedsSurface' => 'Проверьте библиотеку или дом сначала — Герою нужно где-то показать',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Проверьте библиотеку или дом сначала — Герою нужно где-то показать',
 			'homeLayout.removeHub' => 'Удаление Hub',
 			'homeLayout.noPlexRows' => 'No Plex управляемые строки возвращены для этой библиотеки.',
 			'homeLayout.openDetails' => 'Открытые детали',
@@ -9281,9 +9283,9 @@ extension on TranslationsRu {
 			'audiobook.recoveryHelp' => 'Экспортируйте недавно зашифрованную копию перед перемещением или восстановлением данных синхронизации. Импорты сливаются с текущим состоянием; они никогда не замещают историю локальной синхронности.',
 			'audiobook.recoveryExport' => 'Экспорт шифрованных файлов восстановления',
 			'audiobook.recoveryImport' => 'Импорт шифрованных файлов восстановления',
-			'audiobook.recoveryImportConfirm' => 'Сочетает этот зашифрованный файл восстановления с текущими позициями чтения и записями? существующая история будет сохранена. совместная библиотека и идентификаторы элементов не включены; установите соответствующие идентификационные данные на каждом устройстве до импорта.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Сочетает этот зашифрованный файл восстановления с текущими позициями чтения и записями? существующая история будет сохранена. совместная библиотека и идентификаторы элементов не включены; установите соответствующие идентификационные данные на каждом устройстве до импорта.',
 			'audiobook.recoveryExported' => 'Зашифрованный файл восстановления сохранился.',
 			'audiobook.recoveryImported' => 'Данные о восстановлении объединены.',
 			'sourceSetup.bookorbitHelp' => 'Войдите в собственную учётную запись BookOrbit, чтобы просматривать и воспроизводить книги. Запросы отсутствующих книг по-прежнему отправляются через подключённый экземпляр SeerrNG.',
@@ -9795,9 +9797,9 @@ extension on TranslationsRu {
 			'musicTools.recent' => 'Недавно прослушанные',
 			'musicTools.apiKey' => 'Ключ API',
 			'musicTools.missing' => 'Н/Д',
-			'musicTools.minutes' => 'Минуты',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'Минуты',
 			'musicTools.rules' => 'Фильтры',
 			'musicTools.exclusiveOutput' => 'Монопольный аудиовыход',
 			'musicTools.preamp' => 'Предусиление',

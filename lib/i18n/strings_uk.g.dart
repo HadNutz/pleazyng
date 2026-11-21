@@ -2937,6 +2937,7 @@ class _Translations$seerr$uk extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Засідання було відхилено після повторного підписання.';
 	@override String get permissionDenied => 'Seerr відмовився від цієї дії: Ваш обліковий запис більше не має необхідного дозволу';
 	@override String get permissionRevoked => 'Ви більше не маєте права вимагати цього.';
+	@override String get withdrawRequest => 'Відкликати запит';
 }
 
 // Path: services
@@ -8469,6 +8470,7 @@ extension on TranslationsUk {
 			'seerr.sessionRejectedAfterReauth' => 'Засідання було відхилено після повторного підписання.',
 			'seerr.permissionDenied' => 'Seerr відмовився від цієї дії: Ваш обліковий запис більше не має необхідного дозволу',
 			'seerr.permissionRevoked' => 'Ви більше не маєте права вимагати цього.',
+			'seerr.withdrawRequest' => 'Відкликати запит',
 			'services.title' => 'Сервіси',
 			'services.hubSubtitle' => 'Sync спостерігає за прогресом і запитує нові заголовки.',
 			'services.integrations' => 'Інтеграції',
@@ -8761,9 +8763,9 @@ extension on TranslationsUk {
 			'homeLayout.showInRecommended' => 'Показати в бібліотеці Рекомендовано',
 			'homeLayout.customPlexRow' => 'Кваліфікований Plex ряд',
 			'homeLayout.heroNeedsLibrary' => 'Перевірте Бібліотеку спочатку — Герою потрібно десь показати',
-			'homeLayout.heroNeedsSurface' => 'Перевірте Бібліотеку або Дому спочатку — Герою потрібно десь показати',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Перевірте Бібліотеку або Дому спочатку — Герою потрібно десь показати',
 			'homeLayout.removeHub' => 'Видалення Hub',
 			'homeLayout.noPlexRows' => 'No Plex-управлені рядки повернулися для цієї бібліотеки.',
 			'homeLayout.openDetails' => 'Відкриті деталі',
@@ -9275,9 +9277,9 @@ extension on TranslationsUk {
 			'audiobook.recoveryHelp' => 'Експортуйте недавно зашифровану копію, перш ніж переміщати або відновлювати дані синхронізації. імпорт поєднується з поточним станом; вони ніколи не замінюють місцеву історію синхронності.',
 			'audiobook.recoveryExport' => 'Експорт криптовалютних файлів відновлення',
 			'audiobook.recoveryImport' => 'Ввезення шифрованих файлів відновлення',
-			'audiobook.recoveryImportConfirm' => 'З\'єднуйте цей зашифрований файл відновлення з поточними позиціями читання та записами? існуюча історія буде збережена. поділена бібліотека і ідентифікатори елементів не включаються; на кожному пристрої перед імпортуванням встановлюється відповідний ідентифікат.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'З\'єднуйте цей зашифрований файл відновлення з поточними позиціями читання та записами? існуюча історія буде збережена. поділена бібліотека і ідентифікатори елементів не включаються; на кожному пристрої перед імпортуванням встановлюється відповідний ідентифікат.',
 			'audiobook.recoveryExported' => 'Зашифрований файл відновлення збережений.',
 			'audiobook.recoveryImported' => 'Відновлення даних поєднуються.',
 			'sourceSetup.bookorbitHelp' => 'Увійдіть у власний обліковий запис BookOrbit, щоб переглядати й відтворювати свої книжки. Запити на відсутні книжки й надалі надсилатимуться через підключений екземпляр SeerrNG.',
@@ -9789,9 +9791,9 @@ extension on TranslationsUk {
 			'musicTools.recent' => 'Нещодавно прослухані',
 			'musicTools.apiKey' => 'Ключ API',
 			'musicTools.missing' => 'Н / А',
-			'musicTools.minutes' => 'хвилин',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'хвилин',
 			'musicTools.rules' => 'Фільтри',
 			'musicTools.exclusiveOutput' => 'Монопольний аудіовихід',
 			'musicTools.preamp' => 'Попереднє підсилення',

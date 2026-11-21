@@ -2899,6 +2899,7 @@ class _Translations$seerr$ko extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => '다시 로그인한 후 세션이 거부되었습니다';
 	@override String get permissionDenied => 'Seerr가 이 작업을 거부했습니다: 계정에 필요한 권한이 더 이상 없습니다';
 	@override String get permissionRevoked => '이 항목을 요청할 권한이 더 이상 없습니다';
+	@override String get withdrawRequest => '요청 철회';
 }
 
 // Path: services
@@ -8420,6 +8421,7 @@ extension on TranslationsKo {
 			'seerr.sessionRejectedAfterReauth' => '다시 로그인한 후 세션이 거부되었습니다',
 			'seerr.permissionDenied' => 'Seerr가 이 작업을 거부했습니다: 계정에 필요한 권한이 더 이상 없습니다',
 			'seerr.permissionRevoked' => '이 항목을 요청할 권한이 더 이상 없습니다',
+			'seerr.withdrawRequest' => '요청 철회',
 			'services.title' => '서비스',
 			'services.hubSubtitle' => '시청 진행률을 동기화하고 새 작품을 요청하세요.',
 			'services.integrations' => '연동',
@@ -8712,9 +8714,9 @@ extension on TranslationsKo {
 			'homeLayout.showInRecommended' => '추천 도서관에서 제공하는',
 			'homeLayout.customPlexRow' => '사용자 정의 Plex 라인',
 			'homeLayout.heroNeedsLibrary' => '도서관을 먼저 확인하십시오 - 영웅은 어디서나 보여줄 필요가 있습니다.',
-			'homeLayout.heroNeedsSurface' => '도서관 또는 홈을 먼저 확인하십시오 - 영웅은 어디서나 보여야합니다.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => '도서관 또는 홈을 먼저 확인하십시오 - 영웅은 어디서나 보여야합니다.',
 			'homeLayout.removeHub' => 'Hub 삭제',
 			'homeLayout.noPlexRows' => 'No. Plex 관리 라인이 이 도서관에 반환되었습니다.',
 			'homeLayout.openDetails' => '개방된 세부 사항',
@@ -9226,9 +9228,9 @@ extension on TranslationsKo {
 			'audiobook.recoveryHelp' => '동기화 데이터를 이동하거나 복구하기 전에 최근 암호화 된 복사본을 수출합니다.수입은 현재 상태와 결합됩니다; 그들은 결코 지역 동기 역사를 대체하지 않습니다.',
 			'audiobook.recoveryExport' => '수출 암호화 된 복구 파일',
 			'audiobook.recoveryImport' => '암호화된 복구 파일 수입',
-			'audiobook.recoveryImportConfirm' => '이 암호화 된 복구 파일을 현재 읽기 위치 및 노트와 결합하십시오? 기존 역사는 유지됩니다. 공유 라이브러리 및 항목 ID는 포함되지 않습니다; 수입하기 전에 각 장치에 해당 ID를 설정합니다.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => '이 암호화 된 복구 파일을 현재 읽기 위치 및 노트와 결합하십시오? 기존 역사는 유지됩니다. 공유 라이브러리 및 항목 ID는 포함되지 않습니다; 수입하기 전에 각 장치에 해당 ID를 설정합니다.',
 			'audiobook.recoveryExported' => '암호화 된 복구 파일이 저장되었습니다.',
 			'audiobook.recoveryImported' => '복구 데이터가 합쳐졌습니다.',
 			'sourceSetup.bookorbitHelp' => 'BookOrbit 도서를 둘러보고 재생하려면 본인 BookOrbit 계정으로 로그인하세요. 없는 작품의 요청은 계속 연결된 SeerrNG 인스턴스를 통해 전송됩니다.',
@@ -9740,9 +9742,9 @@ extension on TranslationsKo {
 			'musicTools.recent' => '최근 재생한 음악',
 			'musicTools.apiKey' => 'API 키',
 			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => '분',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => '분',
 			'musicTools.rules' => '필터',
 			'musicTools.exclusiveOutput' => '독점 오디오 출력',
 			'musicTools.preamp' => '프리앰프',

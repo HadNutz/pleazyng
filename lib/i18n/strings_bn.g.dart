@@ -2903,6 +2903,7 @@ class _Translations$seerr$bn extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'পুনরাবৃত্তি পরে চিঠি বাতিল করা হয়।';
 	@override String get permissionDenied => 'Seerr এই পদক্ষেপটি প্রত্যাখ্যান করেছে: আপনার অ্যাকাউন্টের প্রয়োজনীয় অনুমতি নেই';
 	@override String get permissionRevoked => 'আপনি এখন আর এ ব্যাপারে অনুরোধ করার অনুমতি নেই।';
+	@override String get withdrawRequest => 'অনুরোধ প্রত্যাহার করুন';
 }
 
 // Path: services
@@ -8425,6 +8426,7 @@ extension on TranslationsBn {
 			'seerr.sessionRejectedAfterReauth' => 'পুনরাবৃত্তি পরে চিঠি বাতিল করা হয়।',
 			'seerr.permissionDenied' => 'Seerr এই পদক্ষেপটি প্রত্যাখ্যান করেছে: আপনার অ্যাকাউন্টের প্রয়োজনীয় অনুমতি নেই',
 			'seerr.permissionRevoked' => 'আপনি এখন আর এ ব্যাপারে অনুরোধ করার অনুমতি নেই।',
+			'seerr.withdrawRequest' => 'অনুরোধ প্রত্যাহার করুন',
 			'services.title' => 'পরিষেবা',
 			'services.hubSubtitle' => 'সিনক উন্নয়ন দেখুন এবং নতুন টাইমের জন্য অনুরোধ করুন।',
 			'services.integrations' => 'ইন্টারফেস',
@@ -8717,9 +8719,9 @@ extension on TranslationsBn {
 			'homeLayout.showInRecommended' => 'লাইব্রেরিতে প্রদর্শন করা উচিত',
 			'homeLayout.customPlexRow' => 'কাস্টম Plex রান',
 			'homeLayout.heroNeedsLibrary' => 'প্রথমে লাইব্রেরি চেক করুন — হ্যারো দেখার জন্য কোথাও প্রয়োজন',
-			'homeLayout.heroNeedsSurface' => 'প্রথমে লাইব্রেরি বা হোম দেখুন — হেরো দেখার জন্য কোথাও প্রয়োজন',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'প্রথমে লাইব্রেরি বা হোম দেখুন — হেরো দেখার জন্য কোথাও প্রয়োজন',
 			'homeLayout.removeHub' => 'হাব থেকে বের করুন',
 			'homeLayout.noPlexRows' => 'নম্বর Plex পরিচালিত লাইন এই লাইব্রেরি জন্য ফিরে এসেছে।',
 			'homeLayout.openDetails' => 'খোলা বিস্তারিত',
@@ -9231,9 +9233,9 @@ extension on TranslationsBn {
 			'audiobook.recoveryHelp' => 'সিঙ্ক ডেটা সরানোর বা মেরামত করার আগে সাম্প্রতিক এনক্রিপ্ট করা কপি রপ্তানি করুন। আমদানি করলে বর্তমান অবস্থার সঙ্গে ডেটা মিশে যাবে; স্থানীয় সিঙ্ক ইতিহাস কখনো প্রতিস্থাপিত হবে না। সিঙ্ক কোড আলাদা করে রাখুন।',
 			'audiobook.recoveryExport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
 			'audiobook.recoveryImport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
-			'audiobook.recoveryImportConfirm' => 'এই এনক্রিপ্ট করা পুনরুদ্ধার ফাইলটি বর্তমান পড়ার অবস্থান ও নোটের সঙ্গে মেশাবেন? আগের ইতিহাস থাকবে। শেয়ার করা লাইব্রেরি ও আইটেম ID এতে নেই; আমদানির আগে প্রতিটি ডিভাইসে একই ID সেট করুন।',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'এই এনক্রিপ্ট করা পুনরুদ্ধার ফাইলটি বর্তমান পড়ার অবস্থান ও নোটের সঙ্গে মেশাবেন? আগের ইতিহাস থাকবে। শেয়ার করা লাইব্রেরি ও আইটেম ID এতে নেই; আমদানির আগে প্রতিটি ডিভাইসে একই ID সেট করুন।',
 			'audiobook.recoveryExported' => 'সক্রিপ্ট ফাইল পুনরায় সংরক্ষণ করা হয়েছে।',
 			'audiobook.recoveryImported' => 'রেকর্ড ডেটা একত্রিত।',
 			'sourceSetup.bookorbitHelp' => 'বইগুলো দেখতে ও পড়তে আপনার নিজের BookOrbit অ্যাকাউন্টে সাইন ইন করুন। অনুপস্থিত শিরোনামের অনুরোধ এখনও আপনার সংযুক্ত SeerrNG ইনস্ট্যান্সের মাধ্যমেই যাবে।',
@@ -9745,9 +9747,9 @@ extension on TranslationsBn {
 			'musicTools.recent' => 'সম্প্রতি শোনা',
 			'musicTools.apiKey' => 'API কী',
 			'musicTools.missing' => 'ন/এ',
-			'musicTools.minutes' => 'মিনিট',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.minutes' => 'মিনিট',
 			'musicTools.rules' => 'ফিল্টারগুলি',
 			'musicTools.exclusiveOutput' => 'একচেটিয়া অডিও আউটপুট',
 			'musicTools.preamp' => 'প্রিঅ্যাম্প',

@@ -3433,7 +3433,8 @@
     "noUserInformation": "Seerr did not return user information",
     "sessionRejectedAfterReauth": "The session was rejected after signing in again",
     "permissionDenied": "Seerr denied this action: your account no longer has the required permission",
-    "permissionRevoked": "You no longer have permission to request this"
+    "permissionRevoked": "You no longer have permission to request this",
+    "withdrawRequest": "Withdraw request"
   },
   "services": {
     "title": "Services",

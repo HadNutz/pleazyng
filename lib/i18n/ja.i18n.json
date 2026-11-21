@@ -3421,7 +3421,8 @@
     "noUserInformation": "Seerrからユーザー情報が返されませんでした",
     "sessionRejectedAfterReauth": "再サインイン後にセッションが拒否されました",
     "permissionDenied": "Seerrがこの操作を拒否しました: アカウントに必要な権限がありません",
-    "permissionRevoked": "これをリクエストする権限がなくなりました"
+    "permissionRevoked": "これをリクエストする権限がなくなりました",
+    "withdrawRequest": "リクエストを取り消す"
   },
   "services": {
     "title": "サービス",

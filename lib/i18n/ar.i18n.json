@@ -3509,7 +3509,8 @@
     "noUserInformation": "لم تعيد شركة Seerr معلومات المستخدم",
     "sessionRejectedAfterReauth": "تم رفض الجلسة بعد التوقيع مرة أخرى",
     "permissionDenied": "رفضت شركة Seerr هذا الإجراء: لم يعد حسابك لديه إذن مطلوب",
-    "permissionRevoked": "لم يعد لديك إذن لطلب هذا"
+    "permissionRevoked": "لم يعد لديك إذن لطلب هذا",
+    "withdrawRequest": "سحب الطلب"
   },
   "services": {
     "title": "الخدمات",

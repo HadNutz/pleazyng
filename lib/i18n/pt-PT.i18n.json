@@ -2251,7 +2251,8 @@
     "noUserInformation": "O Seerr não devolveu informações do utilizador",
     "sessionRejectedAfterReauth": "A sessão foi rejeitada depois de voltar a iniciar sessão",
     "permissionDenied": "O Seerr negou esta ação: a sua conta já não tem a permissão necessária",
-    "permissionRevoked": "Já não tem permissão para pedir isto"
+    "permissionRevoked": "Já não tem permissão para pedir isto",
+    "withdrawRequest": "Retirar pedido"
   },
   "services": {
     "libraryFilter": {

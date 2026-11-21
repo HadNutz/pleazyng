@@ -1,7 +1,7 @@
 {
   "locale": "en",
   "inherits": null,
-  "catalogSha256": "e47103e458598bbe6e0a64533d023748e87a8a36dac914f7a70de498452cb33c",
+  "catalogSha256": "f7c231483f57d8b8c56e0de8d2764df7d15942a762475599a6bfaec765547a12",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "source-english",
@@ -3687,7 +3687,8 @@
     "subtitleAiUi.subtitleEncodingUsePreview": "source-english",
     "settings.showTopShelfContent": "fork-authored",
     "settings.showTopShelfContentDescription": "fork-authored",
-    "settings.topShelfUpdateFailed": "fork-authored"
+    "settings.topShelfUpdateFailed": "fork-authored",
+    "seerr.withdrawRequest": "fork-authored"
   },
   "beforeIndependentQaCorrection": {
     "mediaMenu.deleteEpisodeCountWarning": "source-english"

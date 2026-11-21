@@ -38,6 +38,75 @@ SeerrClient clientFor(
 http.Response json(Object data) => http.Response(jsonEncode(data), 200, headers: {'content-type': 'application/json'});
 
 void main() {
+  group('withdraw own pending request', () {
+    const item = SeerrRequestItem(
+      id: 42,
+      title: 'Film',
+      category: SeerrRequestCategory.movies,
+      requestId: 17,
+      requestedBy: 7,
+      requestStatus: 1,
+    );
+    final current = {
+      'id': 17,
+      'type': 'movie',
+      'status': 1,
+      'is4k': false,
+      'requestedBy': {'id': 7},
+      'media': {'tmdbId': 42},
+    };
+
+    test('uses the request id, checks ownership and never deletes the title', () async {
+      final calls = <String>[];
+      final client = clientFor((request) async {
+        calls.add('${request.method} ${request.url.path}');
+        return request.method == 'GET' ? http.Response(jsonEncode(current), 200) : http.Response('', 204);
+      });
+      await client.withdrawRequest(item);
+      expect(calls, ['GET /api/v1/request/17', 'DELETE /api/v1/request/17']);
+    });
+
+    test('a changed owner, status, media or edition prevents a write', () async {
+      for (final override in [
+        {
+          'requestedBy': {'id': 8},
+        },
+        {'status': 2},
+        {
+          'media': {'tmdbId': 41},
+        },
+        {'is4k': true},
+      ]) {
+        final client = clientFor((request) async {
+          expect(request.method, 'GET');
+          return http.Response(jsonEncode({...current, ...override}), 200);
+        });
+        await expectLater(client.withdrawRequest(item), throwsStateError);
+      }
+    });
+
+    test('discovery rows and book records cannot withdraw video requests', () {
+      final client = clientFor((_) async => fail('unexpected network request'));
+      expect(
+        client.canWithdrawRequest(const SeerrRequestItem(id: 42, title: 'Film', category: SeerrRequestCategory.movies)),
+        isFalse,
+      );
+      expect(
+        client.canWithdrawRequest(
+          const SeerrRequestItem(
+            id: 42,
+            title: 'Book',
+            category: SeerrRequestCategory.ebooks,
+            requestId: 17,
+            requestedBy: 7,
+            requestStatus: 1,
+          ),
+        ),
+        isFalse,
+      );
+    });
+  });
+
   for (final category in SeerrRequestCategory.values) {
     test('discovers and searches ${category.name} through the signed-in instance', () async {
       final calls = <http.Request>[];
