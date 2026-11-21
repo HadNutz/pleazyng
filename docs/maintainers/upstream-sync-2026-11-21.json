@@ -170,8 +170,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "fix(plex): retry a server that was unreachable at launch instead of waiting for Reconnect",
-      "disposition": "pending",
-      "evidence": "The fork reconnects on several events, including resume, but a failed first bind with no usable client lacks the bounded timed retry. Start network monitoring even when all binds fail. Schedule cancelable retries at 2, 4, 8, 15 and 30 seconds, skip access refusals, and invalidate work on profile change or disposal. Keep MediaBrowser’s own recovery. [multi_server_manager.dart L1235](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/multi_server_manager.dart#L1235) · [active_profile_binder.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/profiles/active_profile_binder.dart) · [main.dart L2088](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/main.dart#L2088)",
+      "disposition": "adapted",
+      "evidence": "Retry sleeping Plex servers after profile binding and resume with bounded, profile-aware backoff.",
       "files": [
         "lib/main.dart",
         "lib/profiles/active_profile_binder.dart",
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "pending": 17,
+    "pending": 16,
     "deferred": 1,
-    "adapted": 9,
+    "adapted": 10,
     "retained": 2
   }
 }

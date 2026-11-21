@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Retry sleeping Plex servers after profile binding and resume with bounded, profile-aware backoff. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/4640404ce3c79d3a73271392cc6d5d18ca8ebedc) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
 - Keep manual app-store review submissions tracked separately from successful artifact uploads.
 
 ## [3.0.47] - 2026-11-21
