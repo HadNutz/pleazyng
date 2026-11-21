@@ -25,6 +25,7 @@
 - Enable motion processing during eligible playback on Android and Fire OS, desktop MPV, and LG and Samsung TV MPV. Change TV mixer strength while watching. On LG, the original hardware plane keeps playing while the filtered texture prepares.
 
 - Add an experimental direct-URL motion player for Amazon Vega OS with WebGL and CPU blending. Vega device playback still needs verification.
+- Apply decoder motion-vector settings before switching decoders when changing Neural during Android or desktop playback.
 - Include FFmpeg motion-compensated interpolation in the bundled Linux, Android and Apple playback engines for eligible motion presets.
 - Apply MPV smoothing toggles and Motion clarity preset changes during eligible Linux and Windows playback, including titles started with smoothing off.
 - Adapt video, music, Steam streaming, browsing and reading to separating folds and physical hinges. Keep the active player and detail view during live window resizing. Add compact cover controls and a Samsung Flex Window music widget.

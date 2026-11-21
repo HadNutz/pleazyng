@@ -1319,9 +1319,10 @@ abstract final class MotionProcessingService {
       // The filter requires FFmpeg motion-vector side data and CPU-readable
       // YUV420P frames. auto-copy may retain a hardware decoder that does not
       // export those vectors, so this route deliberately selects software
-      // decode for the Neural session.
-      await player.setProperty('hwdec', 'no');
+      // decode for the Neural session. Set the codec flags before changing
+      // hwdec because MPV can reopen the decoder during that write.
       await player.setProperty('vd-lavc-o', _withExportMotionVectors(original.decoderOptions ?? ''));
+      await player.setProperty('hwdec', 'no');
       final filterOptions = <String, String>{
         'model': model.path,
         'runtime': runtime.ortLibrary,
@@ -1460,8 +1461,8 @@ abstract final class MotionProcessingService {
     if (original == null) return;
     if (_desktopPmeActive[player] == true) await _removeDesktopPmeFilter(player);
     for (final (property, value) in <(String, String?)>[
-      ('hwdec', original.hwdec),
       ('vd-lavc-o', original.decoderOptions),
+      ('hwdec', original.hwdec),
     ]) {
       if (value == null) continue;
       try {
@@ -2011,8 +2012,8 @@ abstract final class MotionProcessingService {
       _androidAnvilPreset[player] = null;
     }
 
-    await player.setProperty('hwdec', 'no');
     await player.setProperty('vd-lavc-o', _withExportMotionVectors(original.decoderOptions ?? ''));
+    await player.setProperty('hwdec', 'no');
     final rendererInstalled = await player.setAndroidMotionProcessingRenderer('gpu-next');
     if (!rendererInstalled) {
       await _restoreAndroidMotionPath(player);
@@ -2084,8 +2085,8 @@ abstract final class MotionProcessingService {
       _androidAnvilActive[player] = false;
       _androidAnvilPreset[player] = null;
     }
-    await player.setProperty('hwdec', 'no');
     await player.setProperty('vd-lavc-o', _withExportMotionVectors(original.decoderOptions ?? ''));
+    await player.setProperty('hwdec', 'no');
     final rendererInstalled = await player.setAndroidMotionProcessingRenderer('gpu-next');
     if (!rendererInstalled) {
       await _restoreAndroidMotionPath(player);
@@ -2232,7 +2233,7 @@ abstract final class MotionProcessingService {
       _androidAnvilActive[player] = false;
       return;
     }
-    final restore = <(String, String?)>[('hwdec', original.hwdec), ('vd-lavc-o', original.decoderOptions)];
+    final restore = <(String, String?)>[('vd-lavc-o', original.decoderOptions), ('hwdec', original.hwdec)];
     for (final (property, value) in restore) {
       if (value == null) continue;
       try {
