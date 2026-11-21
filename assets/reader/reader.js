@@ -41,19 +41,29 @@ const clean = async (data, type) => {
 };
 const flatTOC = (items, depth=0) => items.flatMap(i => [{title:i.label ?? '',href:i.href,depth},...flatTOC(i.subitems ?? [],depth+1)]);
 view.addEventListener('external-link', e => {e.preventDefault(); send('externalLink');});
-view.addEventListener('relocate', ({detail:d}) => send('location', {
-    cfi:d.cfi, href:d.tocItem?.href ?? '', title:d.tocItem?.label ?? '',
-    fraction:Number.isFinite(d.fraction) ? d.fraction : 0,
-    section:d.section?.current ?? 0, sections:d.section?.total ?? book.sections.length,
-    text:d.range?.toString().slice(0,500) ?? ''
-}));
+let locationGeneration = 0;
+view.addEventListener('relocate', ({detail:d}) => {
+    locationGeneration++;
+    send('location', {
+        cfi:d.cfi, href:d.tocItem?.href ?? '', title:d.tocItem?.label ?? '',
+        fraction:Number.isFinite(d.fraction) ? d.fraction : 0,
+        section:d.section?.current ?? 0, sections:d.section?.total ?? book.sections.length,
+        text:d.range?.toString().slice(0,500) ?? ''
+    });
+});
 view.addEventListener('load', ({detail:{doc,index}}) => {
     const selection = () => {
         const selected=doc.getSelection();
-        if (!selected?.rangeCount || selected.isCollapsed) return;
+        if (!selected?.rangeCount || selected.isCollapsed) {
+            send('selection',{cfi:null,quote:null});
+            return;
+        }
         send('selection',{cfi:view.getCFI(index, selected.getRangeAt(0)),quote:selected.toString().slice(0,10000)});
     };
-    doc.addEventListener('pointerup',()=>setTimeout(selection,30));
+    doc.addEventListener('pointerup',()=>{
+        const generation=locationGeneration;
+        setTimeout(()=>{if(generation===locationGeneration)selection();},30);
+    });
     doc.addEventListener('keyup',selection);
     doc.addEventListener('keydown',readerKey);
     doc.addEventListener('wheel',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();window.publication.zoom(e.deltaY<0?'in':'out');}},{passive:false});

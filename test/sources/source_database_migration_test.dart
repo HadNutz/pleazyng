@@ -91,6 +91,7 @@ void main() {
     final file = File('${directory.path}/publications.sqlite');
     final old = _Version14Database(NativeDatabase(file));
     await old.customSelect('SELECT 1').getSingle();
+    await old.customStatement('ALTER TABLE entries DROP COLUMN search_title');
     await old.close();
 
     final database = SourceDatabase(NativeDatabase(file));
@@ -117,6 +118,7 @@ void main() {
       'VALUES(?,?,?,?,?,?,?,?)',
       ['a' * 64, '00000000-0000-4000-8000-000000000001', 'b' * 64, '', 'interrupted', 'worker', 1, 1],
     );
+    await old.customStatement('ALTER TABLE entries DROP COLUMN search_title');
     await old.close();
 
     final database = SourceDatabase(NativeDatabase(file));
@@ -170,11 +172,14 @@ void main() {
     }
     await old.customStatement('DROP INDEX entries_podcast_sync_identity');
     await old.customStatement('PRAGMA user_version=9');
+    await old.customStatement('ALTER TABLE entries DROP COLUMN search_title');
     await old.close();
     final database = SourceDatabase(NativeDatabase(file));
     addTearDown(database.close);
     final repository = SourceRepository(database);
     expect((await repository.entriesPage('alice', query: 'better title')).items.single.id, 'film');
+    final restoredTitle = await database.customSelect('SELECT search_title FROM entries').getSingle();
+    expect(restoredTitle.read<String>('search_title'), 'a better title');
     expect((await repository.entriesPage('bob', query: 'better title')).items, isEmpty);
     expect((await repository.progress('alice', progress.key))!.positionMs, 42000);
     expect((await repository.entryById('alice', 'nas', 'film'))!.title, 'film-123.mkv');
@@ -188,6 +193,7 @@ void main() {
     await SourceRepository(oldDatabase).cacheEntries('alice', const [
       SourceEntry(sourceId: 'drive', id: 'book', title: 'Original title', kind: SourceItemKind.ebook),
     ]);
+    await oldDatabase.customStatement('ALTER TABLE entries DROP COLUMN search_title');
     await oldDatabase.close();
 
     final database = SourceDatabase(NativeDatabase(file));

@@ -34,6 +34,13 @@ void main() {
         locale.isRightToLeft ? TextDirection.rtl : TextDirection.ltr,
         reason: locale.languageTag,
       );
+      // These actions previously shared a translation in several catalogs,
+      // including a full logout labeled as signing in.
+      expect(
+        {t.common.logout, t.fileSources.signIn, t.downloads.deleteDownload, t.downloads.retryDownload},
+        hasLength(4),
+        reason: '${locale.languageTag} must distinguish sign-in, full logout, deletion and retry',
+      );
       expect(t.platform.cameraPermission, isNotEmpty);
       expect(t.homeLayout.title, isNotEmpty);
       expect(LanguageCodes.getDisplayName('zh-Hant-TW'), isNotEmpty);

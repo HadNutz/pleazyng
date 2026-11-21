@@ -175,6 +175,13 @@ class DeepLinkService {
   /// first bind binds this profile only.
   String? get startupProfileId => _startupProfile?.id;
 
+  /// A saved profile ID selects a destination. A protected cold-start
+  /// destination still needs a fresh unlock, including when it was last active.
+  bool needsStartupActivation(String? activeProfileId) {
+    final profile = _startupProfile;
+    return profile != null && (profile.id != activeProfileId || profile.isPinProtected);
+  }
+
   /// Startup made the claimed profile active ([applied]), or could not
   /// (the viewer backed out of its PIN), which drops the link.
   void settleStartupProfile({required bool applied}) {

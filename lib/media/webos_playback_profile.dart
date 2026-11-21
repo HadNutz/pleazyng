@@ -33,6 +33,9 @@ const webosTranscodeAudioCodecs = 'eac3,ac3,aac,mp3';
 bool webosMediaErrorRejectsAudio(Object? error) {
   if (error == null) return false;
   final message = error.toString().toLowerCase().replaceAll(RegExp(r'[_-]'), ' ');
+  // NDL prefixes controller errors with its numeric MediaPipelineStatus.
+  // 200 is SMP_AUDIO_CODEC_NOT_SUPPORTED even when the firmware localizes the text.
+  if (RegExp(r'^200(?:\s|$)').hasMatch(message)) return true;
   return RegExp(
     r'(?:unsupported|not supported).{0,48}(?:audio codec|audio format|dts|truehd)'
     r'|(?:audio codec|audio format|dts|truehd).{0,48}(?:unsupported|not supported)',
@@ -42,8 +45,10 @@ bool webosMediaErrorRejectsAudio(Object? error) {
 bool webosMediaErrorRejectsVideo(Object? error) {
   if (error == null) return false;
   final message = error.toString().toLowerCase().replaceAll(RegExp(r'[_-]'), ' ');
+  // 201 is SMP_VIDEO_CODEC_NOT_SUPPORTED.
+  if (RegExp(r'^201(?:\s|$)').hasMatch(message)) return true;
   return RegExp(
-    r'(?:unsupported|not supported).{0,48}(?:video codec|video format)'
-    r'|(?:video codec|video format).{0,48}(?:unsupported|not supported)',
+    r'(?:unsupported|not supported).{0,48}(?:video codec|video format|dolby vision)'
+    r'|(?:video codec|video format|dolby vision).{0,48}(?:unsupported|not supported)',
   ).hasMatch(message);
 }

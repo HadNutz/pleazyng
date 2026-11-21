@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'dart:async';
 import 'dart:typed_data';
 
@@ -8,6 +9,39 @@ import 'package:plezy/iptv/iptv_scheduled_stream_recorder.dart';
 import 'package:pointycastle/export.dart';
 
 void main() {
+  test('a frozen HLS feed retains only received duration and is incomplete', () async {
+    final directory = await Directory.systemTemp.createTemp('plezy-frozen-hls-');
+    final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    addTearDown(() async {
+      await server.close(force: true);
+      await directory.delete(recursive: true);
+    });
+    final start = DateTime.utc(2026, 11, 21);
+    var clock = start;
+    var polls = 0;
+    server.listen((request) async {
+      if (request.uri.path.endsWith('.m3u8')) {
+        if (++polls == 3) clock = start.add(const Duration(seconds: 20));
+        request.response.write('#EXTM3U\n#EXT-X-TARGETDURATION:1\n#EXT-X-MEDIA-SEQUENCE:4\n#EXTINF:1,\nsegment.ts\n');
+      } else {
+        request.response.add(List.filled(188, 0x47));
+      }
+      await request.response.close();
+    });
+    final recorder = IptvScheduledStreamRecorder(
+      uri: Uri.parse('http://127.0.0.1:${server.port}/live.m3u8'),
+      allowHttp: true,
+      outputFile: File('${directory.path}/entry.m3u8'),
+      now: () => clock,
+      endsAt: start.add(const Duration(seconds: 20)),
+    );
+    await recorder.record();
+    expect(recorder.capturedThroughDeadline, isFalse);
+    expect(recorder.capturedMediaDuration, const Duration(seconds: 1));
+    final checkpoint = jsonDecode(await File('${directory.path}/entry.m3u8.media/recording.json').readAsString());
+    expect(checkpoint['complete'], isFalse);
+    expect(checkpoint['durationMs'], 1000);
+  });
   test('an archive master without its payload directory has no retained media', () async {
     final directory = await Directory.systemTemp.createTemp('plezy-missing-hls-media-');
     addTearDown(() => directory.delete(recursive: true));
@@ -77,6 +111,7 @@ void main() {
     now = endsAt.add(const Duration(milliseconds: 1));
     release.complete();
     await recording;
+    expect(recorder.capturedThroughDeadline, isTrue);
     final media = await IptvHlsArchive.mediaDirectory(output);
     expect(await File('${media!.path}/video-segment-0.bin').readAsBytes(), plaintext);
   });

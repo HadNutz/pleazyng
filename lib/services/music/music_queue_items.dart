@@ -272,6 +272,23 @@ class MusicQueueItems extends ListBase<MediaItem> {
       .._spool = null;
   }
 
+  /// Preserve identities already published for a window when the full canonical
+  /// playlist replaces it. Metadata outside that window keeps its fresh IDs.
+  void keepWindowOccurrences(int start, MusicQueueItemsSnapshot window) {
+    RangeError.checkValidRange(start, start + window.length, length);
+    final index = _index == null ? null : _writableIndex();
+    for (var i = 0; i < window.length; i++) {
+      final position = start + i;
+      final key = window.occurrenceAt(i);
+      if (index == null) {
+        _entries[position] = _Entry.memory(_entries[position].item, key);
+      } else {
+        final row = index.read(position);
+        index.write(position, _QueueIndexRecord(row.offset, row.size, key));
+      }
+    }
+  }
+
   /// Keep the canonical items referenced by [order], compacting both the
   /// queue and playback order without allocating per-item heap objects.
   void retainInPlaybackOrder(MusicQueueOrder order) {

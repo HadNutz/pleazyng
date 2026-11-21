@@ -67,9 +67,8 @@ class PlexApiCache extends ApiCache {
 
   /// Copy one pinned item between cache namespaces.
   ///
-  /// Full logout uses [stripProfileState] while moving metadata into the
-  /// ownerless transfer namespace. The next profile copies that sanitized
-  /// payload into its private namespace before the download is exposed.
+  /// Historical transfer data is copied only after ownership is established.
+  /// [stripProfileState] removes user-specific fields when staging legacy data.
   Future<bool> copyPinnedMetadata({
     required ServerId sourceServerId,
     required ServerId destinationServerId,

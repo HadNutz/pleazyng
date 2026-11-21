@@ -48,6 +48,27 @@ MediaItem _episodeMeta({
 );
 
 void main() {
+  testWidgets('visible downloads with missing metadata request priority immediately', (tester) async {
+    final requested = <String>{};
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DownloadTreeView(
+            downloads: {
+              for (var i = 0; i < 200; i++)
+                'srv:$i': DownloadProgress(globalKey: 'srv:$i', status: DownloadStatus.completed),
+            },
+            metadata: const {},
+            onMissingMetadata: requested.add,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(requested, contains('srv:0'));
+    expect(requested.length, lessThan(200));
+  });
+
   group('resolveDownloadContainerGlobalKey', () {
     test('show node: builds globalKey from leaf serverId + grandparentId', () {
       final ep = _episodeNode('plex1:ep100');

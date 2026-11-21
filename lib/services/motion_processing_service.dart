@@ -9,6 +9,7 @@ import '../models/motion_processing_mode.dart';
 import '../models/playback_capability_report.dart';
 import '../mpv/models.dart';
 import '../mpv/player/player.dart';
+import '../mpv/player/platform/player_system.dart';
 import '../mpv/player/player_native.dart';
 import 'android_anvil_provider_status.dart';
 import 'neural_model_pack_service.dart';
@@ -24,6 +25,9 @@ import '../utils/app_logger.dart';
 abstract final class MotionProcessingService {
   static final Expando<_OriginalMotionProperties> _originals = Expando('motion-processing-originals');
   static final Expando<_OriginalAppleMotionOptions> _appleOriginals = Expando('motion-processing-apple-originals');
+  static final Expando<StreamSubscription<void>> _appleLoadSubscriptions = Expando('apple-motion-file-loads');
+  static final Expando<bool> _appleFileLoaded = Expando('apple-motion-file-loaded');
+  static final Expando<String> _appleGpuOriginalHwdec = Expando('apple-motion-hwdec');
   static final Expando<bool> _appleNeuralEligible = Expando('motion-processing-apple-neural-eligible');
   static final Expando<NeuralInterpolationPreset> _appleNeuralPreset = Expando('motion-processing-apple-neural-preset');
   static final Expando<_OriginalAndroidMotionOptions> _androidOriginals = Expando(
@@ -77,11 +81,10 @@ abstract final class MotionProcessingService {
 
   static bool get _isDesktopPmePlatform => Platform.isWindows || Platform.isLinux;
 
-  static bool supportsPlayer(Player player) => isMpvPlatformSupported && player.playerType == 'mpv';
+  static bool supportsPlayer(Player player) =>
+      player.playerType == 'tvmpv' || (isMpvPlatformSupported && player.playerType == 'mpv');
 
-  /// CPU-only inference is diagnostic-only until a target proves it can meet
-  /// the playback deadline. A loaded or productive CPU session alone does not
-  /// make it eligible for the real-time Neural playback mode.
+  /// A CPU session only qualifies after the filter reports generated frames.
   static bool isCpuOnlyNeuralProviderStatus(String? providerStatus) {
     final normalized = providerStatus?.trim().toLowerCase();
     if (normalized == null || normalized.isEmpty) return false;
@@ -95,6 +98,9 @@ abstract final class MotionProcessingService {
         provider.endsWith(':cpu') ||
         provider.endsWith(':cpuexecutionprovider');
   }
+
+  static bool isNeuralBypassStatus(String? status) =>
+      const {'cpu-fallback', 'cpu-fallback-ready'}.contains(status?.trim().toLowerCase());
 
   /// Resolves a request to a provider available on this player's output path.
   /// Apple Neural mode is available only while the AVFoundation VideoToolbox
@@ -113,12 +119,17 @@ abstract final class MotionProcessingService {
     final rendererAvailable =
         supportsPlayer(player) &&
         !appleOutput &&
-        (currentVideoOutput == null ? capabilityReport == null : _supportsVideoOutput(currentVideoOutput)) &&
+        (currentVideoOutput == null
+            ? capabilityReport == null
+            : player.playerType == 'tvmpv'
+            ? currentVideoOutput == 'libmpv-texture'
+            : _supportsVideoOutput(currentVideoOutput)) &&
         (capabilityReport == null || capabilityReport.rendererInterpolationActive == true);
     final providerStatus = capabilityReport?.neuralProvider ?? neuralProviderStatus;
     final normalizedProviderStatus = neuralProviderStatus?.trim().toLowerCase();
     final providerReady =
-        !isCpuOnlyNeuralProviderStatus(providerStatus) &&
+        !isNeuralBypassStatus(providerStatus) &&
+        (!isCpuOnlyNeuralProviderStatus(providerStatus) || capabilityReport?.hasObservedNeuralOutput == true) &&
         (capabilityReport?.neuralProviderReady ??
             (normalizedProviderStatus != null &&
                 RegExp(
@@ -140,7 +151,8 @@ abstract final class MotionProcessingService {
         !_isDesktopPmePlatform || capabilityReport == null || const {'cfr-24', 'cfr-30'}.contains(desktopCadenceStatus);
     return resolveMotionProcessing(
       requested: requested,
-      mpvRendererAvailable: rendererAvailable && streamSupported,
+      mpvRendererAvailable:
+          (rendererAvailable || (appleOutput && nativeInterpolationStatus == 'libplacebo GPU')) && streamSupported,
       neuralProviderAvailable: nativeProviderReady && streamSupported && desktopCadenceConfirmed,
       neuralStreamSupported: neuralStreamFallback == null,
       neuralStreamFallback: neuralStreamFallback ?? MotionProcessingFallback.unsupportedStream,
@@ -153,6 +165,8 @@ abstract final class MotionProcessingService {
       neuralPreset: neuralPreset,
     );
   }
+
+  static bool supportsTvMotionSource(MediaVersion? version) => version != null && _supportsMotionSource(version);
 
   /// Active stream facts can invalidate a previously configured renderer path
   /// after a track or file transition. Missing facts remain unknown; positive
@@ -294,6 +308,7 @@ abstract final class MotionProcessingService {
       _desktopPmeActive[player] == true ||
       _androidAnvilActive[player] == true ||
       _androidMpvOutputActive[player] == true ||
+      _appleGpuOriginalHwdec[player] != null ||
       _appleNeuralPreset[player] != null ||
       (_originals[player] != null && _interpolationBufferReady[player] == true);
 
@@ -313,6 +328,7 @@ abstract final class MotionProcessingService {
         _androidAnvilPreset[player] = null;
       }
     }
+    if (_appleGpuOriginalHwdec[player] != null) await _setAppleGpuInterpolation(player, false);
     if (_appleNeuralPreset[player] != null) {
       await player.setProperty('avfoundation-motion-interpolation', 'no');
       _appleNeuralPreset[player] = null;
@@ -455,6 +471,12 @@ abstract final class MotionProcessingService {
     NeuralInterpolationPreset neuralPreset = NeuralInterpolationPreset.balanced,
   }) async {
     if (!supportsPlayer(player)) return;
+    if (player is PlayerSystem && player.playerType == 'tvmpv') {
+      player.prepareTvMotion(
+        mode != MotionProcessingMode.off && !isLive && !isTranscoding && supportsTvMotionSource(selectedVersion),
+      );
+      return;
+    }
     _powerSuspendedForSession[player] = false;
     final powerLimited = await _preparePowerPolicy(player, mode);
     final thermalLimited = await _prepareThermalPolicy(player, mode);
@@ -500,12 +522,14 @@ abstract final class MotionProcessingService {
     _lastVideoTrackSelection[player] = null;
     _watchVideoTrackChanges(player);
     if (_isApplePlatform) {
+      _appleFileLoaded[player] = false;
+      _appleLoadSubscriptions[player] ??= player.streams.fileLoaded.listen((_) => _appleFileLoaded[player] = true);
       final output = await _videoOutputForConfiguration(player);
       final avfoundationOutput = output == null || output == 'avfoundation';
       final sourceEligible =
           avfoundationOutput && !isLive && selectedVersion != null && _supportsMotionSource(selectedVersion);
       _appleNeuralEligible[player] = sourceEligible;
-      await _applyAppleInterpolation(player, sourceEligible && mode.usesNeuralInterpolation, neuralPreset);
+      await _configureAppleMotion(player, sourceEligible ? mode : MotionProcessingMode.off, neuralPreset);
       _interpolationBufferReady[player] = avfoundationOutput;
       return;
     }
@@ -710,6 +734,10 @@ abstract final class MotionProcessingService {
     NeuralInterpolationPreset neuralPreset = NeuralInterpolationPreset.balanced,
   }) async {
     if (!supportsPlayer(player)) throw UnsupportedError('MPV motion interpolation is unavailable on this player.');
+    if (player is PlayerSystem && player.playerType == 'tvmpv') {
+      if (mode == MotionProcessingMode.off) await player.disableTvMotion();
+      return;
+    }
     if (mode != MotionProcessingMode.off && _interlacedTrackSuppressed[player] == true) {
       appLogger.i(
         'MotionProcessingService: motion processing remains disabled for this video track until the next media open.',
@@ -743,9 +771,9 @@ abstract final class MotionProcessingService {
     if (_isApplePlatform) {
       final output = await _videoOutputForConfiguration(player);
       final avfoundationOutput = output == null || output == 'avfoundation';
-      await _applyAppleInterpolation(
+      await _configureAppleMotion(
         player,
-        avfoundationOutput && _appleNeuralEligible[player] == true && mode.usesNeuralInterpolation,
+        avfoundationOutput && _appleNeuralEligible[player] == true ? mode : MotionProcessingMode.off,
         neuralPreset,
       );
       _interpolationBufferReady[player] = avfoundationOutput;
@@ -802,6 +830,55 @@ abstract final class MotionProcessingService {
       );
     }
   }
+
+  static Future<void> _configureAppleMotion(
+    Player player,
+    MotionProcessingMode mode,
+    NeuralInterpolationPreset preset,
+  ) async {
+    final neural = mode.usesNeuralInterpolation && await player.getProperty('pleazyng-vt-motion-supported') != 'no';
+    final useGpu = mode != MotionProcessingMode.off && !neural;
+    if (!useGpu) await _setAppleGpuInterpolation(player, false);
+    await _applyAppleInterpolation(player, neural, preset);
+    if (useGpu) await _setAppleGpuInterpolation(player, true);
+  }
+
+  /// The AVFoundation VO can present CPU-readable YUV from libplacebo. The
+  /// filter uploads to Vulkan (MoltenVK on Apple) and mixes at output cadence.
+  static Future<void> _setAppleGpuInterpolation(Player player, bool enable) async {
+    final original = _appleGpuOriginalHwdec[player];
+    if (enable == (original != null)) return;
+    if (!enable) {
+      try {
+        await player.command(['vf', 'remove', '@plezy-apple-motion']);
+      } finally {
+        await player.setProperty('hwdec', original!);
+        _appleGpuOriginalHwdec[player] = null;
+      }
+      return;
+    }
+    final hwdec = await player.getProperty('hwdec') ?? 'auto';
+    try {
+      if (hwdec != 'no') await player.setProperty('hwdec', 'videotoolbox-copy');
+      await player.command([
+        'vf',
+        'add',
+        '@plezy-apple-motion:lavfi=[libplacebo=fps=60:frame_mixer=oversample:format=yuv420p]',
+      ]);
+      _appleGpuOriginalHwdec[player] = hwdec;
+    } catch (error) {
+      await player.setProperty('hwdec', hwdec);
+      appLogger.w('MotionProcessingService: Apple GPU frame mixing unavailable', error: error);
+    }
+  }
+
+  static bool appleGpuOutputObserved(Player player, double? inputFps, double? outputFps) =>
+      _appleGpuOriginalHwdec[player] != null &&
+      inputFps != null &&
+      inputFps > 0 &&
+      inputFps <= 30.1 &&
+      outputFps != null &&
+      (outputFps - 60).abs() <= 1;
 
   static Future<void> _applyAppleInterpolation(Player player, bool enabled, NeuralInterpolationPreset preset) async {
     var original = _appleOriginals[player];
@@ -951,6 +1028,30 @@ abstract final class MotionProcessingService {
           return;
         }
         _thermalStatus[player] = status;
+        if (_isApplePlatform &&
+            !_thermalStatusRequiresFallback(status) &&
+            _appleFileLoaded[player] == true &&
+            _appleNeuralPreset[player] != null &&
+            player.state.playing) {
+          final session = _motionSessionGeneration[player];
+          await _serializePlayerOperation(player, () async {
+            if (player.disposed ||
+                _thermalGeneration[player] != generation ||
+                _motionSessionGeneration[player] != session ||
+                _appleNeuralPreset[player] == null ||
+                _powerLimited[player] == true ||
+                _interlacedTrackSuppressed[player] == true) {
+              return;
+            }
+            if (await player.getProperty('video-out-interpolation') != 'unavailable') return;
+            // VideoToolbox can advertise a processor but reject this frame size or format.
+            // Require observed SDR before routing decoded pixels through an 8-bit mix.
+            final transfer = await player.getProperty('video-params/gamma');
+            if (!const {'bt.1886', 'srgb', 'gamma2.2', 'gamma2.4'}.contains(transfer)) return;
+            await _applyAppleInterpolation(player, false, NeuralInterpolationPreset.performance);
+            await _setAppleGpuInterpolation(player, true);
+          });
+        }
         if (Platform.isAndroid && _androidAnvilActive[player] != true) {
           await _stopThermalMonitoring(player);
           return;
@@ -1003,6 +1104,7 @@ abstract final class MotionProcessingService {
     try {
       var fallbackReady = true;
       if (_isApplePlatform) {
+        await _setAppleGpuInterpolation(player, false);
         await player.setProperty('avfoundation-motion-interpolation', 'no');
       } else {
         if (_androidAnvilActive[player] == true) {
@@ -1096,6 +1198,7 @@ abstract final class MotionProcessingService {
     _powerSuspendedForSession[player] = true;
     try {
       if (_isApplePlatform) {
+        await _setAppleGpuInterpolation(player, false);
         await player.setProperty('avfoundation-motion-interpolation', 'no');
       } else if (_isDesktopPmePlatform && _desktopPmeActive[player] == true) {
         if (!await _removeDesktopPmeFilter(player)) return false;
@@ -1148,6 +1251,9 @@ abstract final class MotionProcessingService {
   static Future<void> _stopPowerSourceMonitoring(Player player) async {
     _videoTrackMonitorGeneration[player] = (_videoTrackMonitorGeneration[player] ?? 0) + 1;
     _motionSessionGeneration[player] = (_motionSessionGeneration[player] ?? 0) + 1;
+    final appleLoadSubscription = _appleLoadSubscriptions[player];
+    _appleLoadSubscriptions[player] = null;
+    await appleLoadSubscription?.cancel();
     final trackSubscription = _videoTrackSubscriptions[player];
     _videoTrackSubscriptions[player] = null;
     await trackSubscription?.cancel();
@@ -1245,7 +1351,7 @@ abstract final class MotionProcessingService {
         'providers': runtime.providerManifest,
         'pme-library': runtime.pmeLibrary,
         'preset': neuralPreset.name,
-        'allow-cpu': 'no',
+        'allow-cpu': 'yes',
         'require-neural': 'yes',
       }.entries.map((entry) => '${entry.key}=${_escapeMpvFilterValue(entry.value)}').join(':');
       await player.command(['vf', 'add', '@plezy-pme:plezy-pme=$filterOptions']);
@@ -1970,9 +2076,7 @@ abstract final class MotionProcessingService {
     required MediaVersion selectedVersion,
     required NeuralInterpolationPreset neuralPreset,
   }) async {
-    final npuAvailable = capabilities['litertNpuAvailable'] == true;
-    final gpuAvailable = capabilities['litertGpuAvailable'] == true;
-    if (!npuAvailable && !gpuAvailable) return false;
+    if (capabilities['litertAvailable'] != true) return false;
 
     final resolution = selectedVersion.width == 1280 ? '720p' : '1080p';
     if (!_supportsAndroidAnvilSource(selectedVersion, resolution)) return false;

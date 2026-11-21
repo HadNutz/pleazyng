@@ -21,6 +21,7 @@ class IptvHlsArchive {
     required this.output,
     required this.directory,
     required this.endsAt,
+    this.requestedStart,
     DateTime Function()? now,
     this.maximumBytes = 64 * 1024 * 1024 * 1024,
   }) : _now = now ?? DateTime.now;
@@ -32,11 +33,21 @@ class IptvHlsArchive {
   final File output;
   final Directory directory;
   DateTime endsAt;
+  final DateTime? requestedStart;
   final int maximumBytes;
   SourceTransport? _transport;
   bool _stopped = false;
   bool get capturing => !_stopped;
   int mediaBytes = 0;
+  bool complete = false;
+  final _tracks = <_ArchiveTrack>[];
+
+  // Separate audio and video must both span the reported playback interval.
+  Duration get capturedDuration {
+    if (_tracks.isEmpty) return Duration.zero;
+    return Duration(microseconds: _tracks.map((track) => track.durationUs).reduce((a, b) => a < b ? a : b));
+  }
+
   final Map<String, Uint8List> _keys = {};
 
   Future<void> stop() async {
@@ -64,8 +75,8 @@ class IptvHlsArchive {
   Future<void> record() async {
     final transport = SourceTransport(allowHttp: allowHttp);
     _transport = transport;
-    final tracks = <_ArchiveTrack>[];
-    var succeeded = false;
+    final tracks = _tracks;
+    final startedAt = requestedStart ?? _now();
     await directory.create(recursive: true);
     try {
       final initial = await _playlist(transport, uri);
@@ -96,7 +107,19 @@ class IptvHlsArchive {
       if (tracks.any((track) => track.segments.isEmpty)) {
         throw const FileSystemException('No media received for an HLS recording track');
       }
-      succeeded = true;
+      final now = _now();
+      complete =
+          !_stopped &&
+          tracks.every((track) {
+            // TARGETDURATION is an upper bound and can be much greater than
+            // the segments a frozen playlist actually delivered.
+            final segment = Duration(microseconds: (track.segments.last.duration * 1000000).round());
+            return !track.hasGap &&
+                track.lastProgressAt != null &&
+                now.difference(track.lastProgressAt!) <= segment * 2 &&
+                capturedDuration + segment >= endsAt.difference(startedAt) &&
+                !now.add(segment).isBefore(endsAt);
+          });
     } finally {
       _stopped = true;
       _keys.clear();
@@ -107,7 +130,7 @@ class IptvHlsArchive {
       for (final track in tracks) {
         await _writeTrack(track, complete: true);
       }
-      await _checkpoint(tracks, complete: succeeded && !_stopped);
+      await _checkpoint(tracks, complete: complete);
     }
   }
 
@@ -158,7 +181,12 @@ class IptvHlsArchive {
         discontinuity:
             segment.discontinuity || (track.lastSequence != null && track.lastSequence! + 1 != segment.sequence),
       ));
+      if (parsed.sequenced && track.lastSequence != null && segment.sequence != track.lastSequence! + 1) {
+        track.hasGap = true;
+      }
       track.lastSequence = segment.sequence;
+      track.durationUs += (segment.duration * 1000000).round();
+      track.lastProgressAt = _now();
       if (segment.duration.ceil() > track.targetDuration) track.targetDuration = segment.duration.ceil();
       track.seen.add(identity);
       if (track.segments.length == 1 || _now().difference(track.lastPublishedAt) >= const Duration(seconds: 2)) {
@@ -284,6 +312,7 @@ class IptvHlsArchive {
       'version': 1,
       'mediaBytes': mediaBytes,
       'complete': complete,
+      'durationMs': capturedDuration.inMilliseconds,
       'tracks': {for (final track in tracks) track.name: track.segments.length},
     }),
   );
@@ -335,6 +364,29 @@ class IptvHlsArchive {
       if (file is File && p.extension(file.path) == '.bin') bytes += await file.length();
     }
     return bytes;
+  }
+
+  /// Derive recovered duration from the playlists that were actually published.
+  /// A process can terminate after a track is flushed but before its checkpoint.
+  static Future<Duration?> retainedDuration(File manifest) async {
+    final directory = await mediaDirectory(manifest);
+    if (directory == null) return null;
+    final durations = <Duration>[];
+    for (final name in const ['video', 'audio']) {
+      final playlist = File(p.join(directory.path, '$name.m3u8'));
+      if (!await playlist.exists()) continue;
+      if (await playlist.length() > 16 * 1024 * 1024) throw const FormatException('Invalid HLS capture');
+      var microseconds = 0;
+      for (final line in const LineSplitter().convert(await playlist.readAsString())) {
+        if (!line.startsWith('#EXTINF:')) continue;
+        final value = double.tryParse(line.substring(8).split(',').first);
+        if (value == null || !value.isFinite || value <= 0 || value > 120)
+          throw const FormatException('Invalid HLS duration');
+        microseconds += (value * 1000000).round();
+      }
+      durations.add(Duration(microseconds: microseconds));
+    }
+    return durations.isEmpty ? Duration.zero : durations.reduce((a, b) => a < b ? a : b);
   }
 
   static Future<void> finalizeInterrupted(File manifest) async {
@@ -526,6 +578,9 @@ class _ArchiveTrack {
   int targetDuration = 4;
   bool ended = false;
   int? lastSequence;
+  int durationUs = 0;
+  bool hasGap = false;
+  DateTime? lastProgressAt;
   DateTime lastPublishedAt = DateTime.fromMillisecondsSinceEpoch(0);
   final seen = <String>{};
   final maps = <String, String>{};

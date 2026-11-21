@@ -18,6 +18,30 @@ void main() {
 
   MusicQueueController controller({int seed = 42}) => MusicQueueController(random: Random(seed));
 
+  for (final shuffle in [false, true]) {
+    test('expanding a playlist window preserves duplicate occurrences and canonical order with shuffle=$shuffle', () {
+      final complete = List.generate(1100, (i) => _track('t${i % 7}'));
+      final q = MusicQueueController(random: Random(17), spillLargeQueues: true)
+        ..load(complete.sublist(700, 710), startIndex: 4, shuffle: shuffle);
+      final prior = [for (var i = 0; i < 10; i++) q.occurrenceAt(i)];
+      final previousState = q.captureState();
+      q.jumpTo(2);
+      final active = q.occurrenceAt(2);
+      q.completePlaylistWindow(complete, 700);
+      expect(q.queue.length, complete.length);
+      expect(q.occurrenceAt(q.cursor), active);
+      if (shuffle) {
+        expect([for (var i = 0; i <= 2; i++) q.occurrenceAt(i)], prior.take(3));
+        q.toggleShuffle();
+      }
+      expect(_ids(q.queue), _ids(complete));
+      for (var i = 0; i < prior.length; i++) {
+        expect(q.occurrenceAt(700 + previousState.order[i]), prior[i]);
+      }
+      q.clear();
+    });
+  }
+
   test('album fade protection requires sequential track metadata from one source', () {
     MediaItem track(String id, int disc, int number, {String server = 'srv'}) => testMediaItem(
       id: id,

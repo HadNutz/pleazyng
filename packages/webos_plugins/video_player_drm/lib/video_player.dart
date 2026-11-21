@@ -12,6 +12,7 @@ import 'video_player_platform_interface.dart';
 
 import 'src/closed_caption_file.dart';
 import 'src/drm_configs.dart';
+import 'src/video_crop.dart';
 
 export 'package:video_player_drm/video_player_platform_interface.dart'
     show
@@ -907,7 +908,9 @@ class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
 /// Widget that displays the video controlled by [controller].
 class VideoPlayer extends StatefulWidget {
   /// Uses the given [controller] for all video rendered in this widget.
-  const VideoPlayer(this.controller, {super.key});
+  const VideoPlayer(this.controller, {super.key, this.sourceCrop = const Rect.fromLTWH(0, 0, 1, 1)});
+
+  final Rect sourceCrop;
 
   /// The [VideoPlayerController] responsible for the video being rendered in
   /// this widget.
@@ -962,7 +965,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
         ? Container()
         : _VideoPlayerWithRotation(
             rotation: widget.controller.value.rotationCorrection,
-            child: _videoPlayerPlatform.buildView(_textureId),
+            child: VideoCrop(source: widget.sourceCrop, child: _videoPlayerPlatform.buildView(_textureId)),
           );
   }
 }

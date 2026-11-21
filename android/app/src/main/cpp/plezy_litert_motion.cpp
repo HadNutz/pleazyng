@@ -293,10 +293,11 @@ bool CreateCompiledModel(
   if (!Check(create_status, "LiteRtCreateCompiledModel")) return false;
 
   bool fully_hardware = false;
-  if (!Check(
-          LiteRtCompiledModelIsNonCpuFullyAccelerated(session->compiled, &fully_hardware),
-          "LiteRtCompiledModelIsNonCpuFullyAccelerated") ||
-      !fully_hardware) {
+  if (accelerator != kLiteRtHwAcceleratorCpu &&
+      (!Check(
+           LiteRtCompiledModelIsNonCpuFullyAccelerated(session->compiled, &fully_hardware),
+           "LiteRtCompiledModelIsNonCpuFullyAccelerated") ||
+       !fully_hardware)) {
     __android_log_print(
         ANDROID_LOG_INFO, kLogTag, "LiteRT rejected %s session because it would use a CPU subgraph",
         accelerator == kLiteRtHwAcceleratorNpu ? "NPU" : "GPU");
@@ -383,7 +384,17 @@ bool CreateCompiledModel(
   if (session->output_element == kLiteRtElementTypeInt8 || session->output_element == kLiteRtElementTypeUInt8) {
     if (!GetQuantization(output_tensor, &session->output_quant)) return false;
   }
-  session->provider = accelerator == kLiteRtHwAcceleratorNpu ? "litert-npu" : "litert-gpu";
+  switch (accelerator) {
+    case kLiteRtHwAcceleratorNpu:
+      session->provider = "litert-npu";
+      break;
+    case kLiteRtHwAcceleratorGpu:
+      session->provider = "litert-gpu";
+      break;
+    default:
+      session->provider = "litert-cpu";
+      break;
+  }
   __android_log_print(ANDROID_LOG_INFO, kLogTag, "ANVIL model opened with %s", session->provider.c_str());
   return true;
 }
@@ -478,6 +489,7 @@ void* plezy_litert_motion_open(
     // undocumented provider conversion or CPU subgraph fallback.
     opened = try_provider(gpu_model_path, kLiteRtHwAcceleratorGpu);
   }
+  if (!opened) opened = try_provider(gpu_model_path, kLiteRtHwAcceleratorCpu);
   if (!opened) {
     DestroySession(session);
     return nullptr;

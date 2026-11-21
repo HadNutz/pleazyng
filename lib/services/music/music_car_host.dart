@@ -9,9 +9,11 @@ import '../../karaoke/karaoke_room_server.dart';
 import 'music_experience.dart';
 import 'music_driving_routes.dart';
 import 'music_system_audio_route_monitor.dart';
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -76,6 +78,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
   final Object _identity = Object();
   final String _itemScope = const Uuid().v4();
   int _itemSequence = 0;
+  int _playlistGeneration = 0;
   late final MusicPlaybackService _music;
   late final String? _profileId;
   late final ActiveProfileProvider _profiles;
@@ -864,6 +867,10 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
 
   Future<Object?> _handle(MethodCall call) async {
     if (!mounted || !_current || _profileId == null) throw PlatformException(code: 'profile_unavailable');
+    if (call.method == 'playItem' || call.method == 'playSearch' || call.method == 'jump') {
+      _playlistGeneration++;
+    }
+    final playlistGeneration = _playlistGeneration;
     final requestGeneration = _profiles.identityMutationGeneration;
     bool requestCurrent() => _current && requestGeneration == _profiles.identityMutationGeneration;
     final args = call.arguments is Map ? Map<String, dynamic>.from(call.arguments as Map) : <String, dynamic>{};
@@ -949,6 +956,40 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         final album = _voiceName(args['album'] as String? ?? '');
         final kind = args['kind'] as String?;
         if (title.isEmpty || title.length > 200) return [];
+        const latestPrefix = 'latest unplayed episode of ';
+        final raw = (args['query'] as String? ?? '').trim();
+        final englishLatest =
+            LocaleSettings.currentLocale.languageCode == 'en' && raw.toLowerCase().startsWith(latestPrefix);
+        if (kind == 'show' || englishLatest && (kind == null || kind == 'podcast') && artist.isEmpty && album.isEmpty) {
+          final showName = englishLatest ? raw.substring(latestPrefix.length).trim() : raw;
+          final sources = _sourceController;
+          if (showName.isEmpty || sources == null || sources.blocked || sources.profileId != _profileId) return [];
+          final epoch = sources.generation;
+          bool current() => mounted && requestCurrent() && sources.current(epoch);
+          final shows = await sources.repository.podcastShows(
+            _profileId,
+            title: showName,
+            sourceIds: {for (final source in sources.sources) source.id},
+            limit: 10,
+          );
+          final choices = <Map<String, Object?>>[];
+          for (final show in shows) {
+            if (!current()) return [];
+            if (!sources.sources.any((s) => s.id == show.source)) continue;
+            final episode = await sources.repository.podcastEpisodeForShow(
+              _profileId,
+              source: show.source,
+              parent: show.parent,
+              latestUnplayed: englishLatest || args['latest'] == true,
+              current: current,
+            );
+            if (!current()) return [];
+            if (episode != null && sources.sources.any((s) => s.id == show.source)) {
+              choices.add(_audiobookItem(episode));
+            }
+          }
+          return current() ? choices : [];
+        }
         if (kind == 'genre') {
           final query = args['query'] as String;
           return [
@@ -982,35 +1023,6 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
                 'playable': true,
               },
             ];
-          }
-          final prefix = 'latest unplayed episode of ';
-          final raw = (args['query'] as String? ?? '').trim();
-          final showName = english && raw.toLowerCase().startsWith(prefix)
-              ? raw.substring(prefix.length).trim()
-              : kind == 'show' && args['latest'] == true
-              ? raw
-              : '';
-          final sources = _sourceController;
-          if (showName.isNotEmpty && sources != null && !sources.blocked && sources.profileId == _profileId) {
-            final epoch = sources.generation;
-            final shows = await sources.repository.podcastShows(_profileId, title: showName, limit: 10);
-            final choices = <Map<String, Object?>>[];
-            for (final show in shows) {
-              if (!requestCurrent() || !sources.current(epoch)) return [];
-              if (!sources.sources.any((s) => s.id == show.source)) continue;
-              final episodes = await sources.repository.podcastEntries(
-                _profileId,
-                source: show.source,
-                parent: show.parent.isEmpty ? null : show.parent,
-                unplayedOnly: true,
-                limit: 1,
-              );
-              if (!requestCurrent() || !sources.current(epoch)) return [];
-              if (episodes.isNotEmpty && !episodes.first.unavailable && episodes.first.audio.isNotEmpty) {
-                choices.add(_audiobookItem(episodes.first));
-              }
-            }
-            return choices;
           }
         }
         if ((kind == null || kind == 'playlist') &&
@@ -1453,7 +1465,25 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
           );
           bool current() => _catalogItemCurrent(id) && _music.isPlayIntentCurrent(intent) && scope?.current == true;
           if (!current()) return false;
-          final playable = scope!.offline
+          if (!scope!.offline && item.kind == MediaKind.playlist) {
+            final started = await _playOnlinePlaylist(
+              item: item,
+              selected: selected,
+              start: parent?.index,
+              scope: scope,
+              args: args,
+              sourceCurrent: () =>
+                  _playlistGeneration == playlistGeneration && _catalogItemCurrent(id) && scope.current,
+              intent: intent,
+              commit: commit,
+            );
+            if (started && args['queue'] == null) {
+              if (args['repeat'] == 'one') _music.setRepeatMode(MusicRepeatMode.one);
+              if (args['repeat'] == 'all') _music.setRepeatMode(MusicRepeatMode.all);
+            }
+            return started;
+          }
+          final playable = scope.offline
               ? scope.offlineTracks
               : item.kind == MediaKind.track
               ? [item]
@@ -1466,8 +1496,6 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
                   current: current,
                   acceptsItem: scope.ownsTrack,
                 )
-              : item.kind == MediaKind.playlist
-              ? await loadMusicPlaylist(client!, item.id, current: current, acceptsItem: scope.ownsTrack)
               : <MediaItem>[];
           if (!current() || playable.isEmpty) return false;
           final start = parent?.index;
@@ -1559,6 +1587,7 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         final connected = args['connected'] == true;
         _videoCapable = connected && args['video'] == true && Platform.isIOS;
         if (!connected) {
+          _playlistGeneration++;
           ++_videoIntent;
           await _stopCarVideo();
           if (!mounted || !requestCurrent()) return false;
@@ -1580,6 +1609,65 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
       default:
         throw MissingPluginException();
     }
+  }
+
+  Future<bool> _playOnlinePlaylist({
+    required MediaItem item,
+    required MediaItem selected,
+    required int? start,
+    required MusicReadScope scope,
+    required Map<String, dynamic> args,
+    required bool Function() sourceCurrent,
+    required int intent,
+    required Future<bool> Function() commit,
+  }) async {
+    bool pending() => sourceCurrent() && _music.isPlayIntentCurrent(intent);
+    final read = MusicPlaylistRead(scope.client!, item.id, current: sourceCurrent, acceptsItem: scope.ownsTrack);
+    final first = await read.window(0, active: pending);
+    if (!pending() || first.items.isEmpty || !await commit() || !pending()) return false;
+    final player = _music;
+    final windowPlayer = player is MusicPlaylistWindowPlayback ? player as MusicPlaylistWindowPlayback : null;
+    final queuing = args['queue'] == 'next' || args['queue'] == 'later';
+    final expandWindow =
+        !queuing && first.items.length < first.totalCount && windowPlayer?.canPlayPlaylistWindow == true;
+    final shuffle = start == null && args['shuffle'] == true;
+    final index = start ?? (expandWindow && shuffle ? math.Random().nextInt(first.totalCount) : 0);
+    if (index < 0 || index >= first.totalCount) return false;
+    final window = index < first.items.length ? first : await read.window(index, active: pending);
+    if (!pending()) return false;
+    final localIndex = index - window.offset;
+    final target = window.items[localIndex];
+    if (start != null &&
+        (target.globalKey != selected.globalKey ||
+            target.backend != selected.backend ||
+            target.playlistItemId != selected.playlistItemId)) {
+      return false;
+    }
+
+    final playContext = MusicPlayContext(title: item.displayTitle, kind: MusicPlayContextKind.playlist);
+    if (expandWindow) {
+      return windowPlayer!.playPlaylistWindow(
+        tracks: window.items,
+        offset: window.offset,
+        index: localIndex,
+        shuffle: shuffle,
+        playContext: playContext,
+        sourceCurrent: sourceCurrent,
+        loadComplete: (active) => read.all(active: active),
+      );
+    }
+
+    // Queue edits and remote output require an atomic ordered list. The native
+    // owner has already accepted the request, so later pages can finish safely.
+    final complete = first.items.length == first.totalCount ? first.items : await read.all(active: pending);
+    if (!pending()) return false;
+    if (_enqueueRequested(complete, args)) return true;
+    if (start != null) {
+      await player.playFromOccurrence(tracks: complete, index: index, playContext: playContext);
+    } else {
+      await player.playFromList(tracks: complete, playContext: playContext, shuffle: shuffle);
+    }
+    return player.isPlaying;
   }
 
   bool _enqueueRequested(List<MediaItem> tracks, Map<String, dynamic> args) {

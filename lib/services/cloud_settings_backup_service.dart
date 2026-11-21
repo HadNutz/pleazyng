@@ -92,7 +92,7 @@ class CloudSettingsBackupService {
     return base.replace(pathSegments: [...segments, '$stem.$key.json']);
   }
 
-  Future<void> backUp({
+  Future<Uri> backUp({
     required String? expectedProfileId,
     required String? expectedOwner,
     bool Function()? isCurrentSession,
@@ -140,6 +140,7 @@ class CloudSettingsBackupService {
     if (response.statusCode != 200 && response.statusCode != 201 && response.statusCode != 204) {
       throw CloudSettingsBackupException('The WebDAV server rejected the backup (HTTP ${response.statusCode}).');
     }
+    return uri;
   }
 
   Future<ImportResult> restore({

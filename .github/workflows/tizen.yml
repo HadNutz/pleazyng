@@ -287,7 +287,7 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ runner.temp }}/tv-native
-          key: trusted-build-v1-tv-native-v1-tizen-${{ inputs.architecture }}-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/tv_mpv/*.py', 'scripts/tv_mpv/*.c', 'scripts/tv_mpv/*.sh', 'scripts/tv_mpv/*.patch', 'scripts/tv_mpv/dav1d-COPYING', 'tools/webos/compatibility.json', 'scripts/tizen/sdk-linux-arm.json', 'scripts/tizen/toolchain.json', 'scripts/tizen/bootstrap_linux.py') }}
+          key: trusted-build-v1-tv-native-v1-tizen-${{ inputs.architecture }}-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/tv_mpv/*.py', 'scripts/tv_mpv/*.c', 'scripts/tv_mpv/*.h', 'shared/tv_mpv/**', 'scripts/tv_mpv/*.sh', 'scripts/tv_mpv/*.patch', 'scripts/tv_mpv/dav1d-COPYING', 'tools/webos/compatibility.json', 'scripts/tizen/sdk-linux-arm.json', 'scripts/tizen/toolchain.json', 'scripts/tizen/bootstrap_linux.py') }}
 
       - name: Build and inspect signed TV package
         env:
@@ -319,7 +319,7 @@ jobs:
         if: ${{ !cancelled() && env.TV_NATIVE_VERIFIED == 'true' }}
         with:
           path: ${{ runner.temp }}/tv-native
-          key: trusted-build-v1-tv-native-v1-tizen-${{ inputs.architecture }}-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/tv_mpv/*.py', 'scripts/tv_mpv/*.c', 'scripts/tv_mpv/*.sh', 'scripts/tv_mpv/*.patch', 'scripts/tv_mpv/dav1d-COPYING', 'tools/webos/compatibility.json', 'scripts/tizen/sdk-linux-arm.json', 'scripts/tizen/toolchain.json', 'scripts/tizen/bootstrap_linux.py') }}
+          key: trusted-build-v1-tv-native-v1-tizen-${{ inputs.architecture }}-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/tv_mpv/*.py', 'scripts/tv_mpv/*.c', 'scripts/tv_mpv/*.h', 'shared/tv_mpv/**', 'scripts/tv_mpv/*.sh', 'scripts/tv_mpv/*.patch', 'scripts/tv_mpv/dav1d-COPYING', 'tools/webos/compatibility.json', 'scripts/tizen/sdk-linux-arm.json', 'scripts/tizen/toolchain.json', 'scripts/tizen/bootstrap_linux.py') }}
 
       - name: Preserve a failed Tizen package for diagnosis
         if: ${{ failure() }}

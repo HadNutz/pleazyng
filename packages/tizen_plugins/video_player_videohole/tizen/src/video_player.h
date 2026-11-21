@@ -44,6 +44,7 @@ class VideoPlayer {
   virtual int Prepare() = 0;
   virtual void Dispose() = 0;
 
+  virtual int SetSourceCrop(double x, double y, double width, double height) = 0;
   virtual void SetDisplayRoi(int32_t x, int32_t y, int32_t width,
                              int32_t height) = 0;
   virtual bool Play() = 0;

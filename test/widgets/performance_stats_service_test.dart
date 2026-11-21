@@ -459,6 +459,31 @@ void main() {
   });
 
   group('PerformanceStatsService WebGPU provider reporting', () {
+    test('a CPU session must produce frames before resolving Neural', () async {
+      final player = _PropertyPlayer(const {});
+      for (final (provider, generated, effective) in [
+        ('cpu', 0, MotionProcessingProvider.mpv),
+        ('cpu', 3, MotionProcessingProvider.neural),
+        ('cpu-fallback', 3, MotionProcessingProvider.mpv),
+      ]) {
+        final report = PlaybackCapabilityReport(
+          playerType: 'mpv',
+          rendererInterpolationActive: true,
+          neuralProvider: provider,
+          neuralProviderReady: true,
+          sourceCadenceStatus: 'cfr-24',
+          neuralGeneratedFrames: generated,
+        );
+        final resolution = MotionProcessingService.resolveForPlayer(
+          player,
+          MotionProcessingMode.neural,
+          currentVideoOutput: Platform.isWindows ? 'gpu-next' : 'libmpv',
+          capabilityReport: report,
+        );
+        expect(resolution.provider, effective);
+      }
+    }, skip: !(Platform.isLinux || Platform.isWindows));
+
     test('normalizes the PME provider and marks it ready after generated output', () async {
       final stats = await _firstStats(
         _PropertyPlayer({

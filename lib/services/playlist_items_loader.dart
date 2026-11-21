@@ -15,14 +15,25 @@ Future<List<MediaItem>> fetchAllPlaylistItems(
   bool Function()? sourceCurrent,
   bool Function(MediaItem)? acceptsItem,
   bool spoolMetadata = false,
+  bool requireComplete = false,
 }) async {
   final buffer = spoolMetadata ? MusicQueueItems(spill: true) : null;
+  int? expectedTotal;
   try {
     final items = await drainPages<MediaItem>(
       (start, size) async {
         if (sourceCurrent?.call() == false) throw StateError('Playlist source retired');
         final page = await client.fetchPlaylistPage(playlistId, start: start, size: size, abort: abort);
         if (sourceCurrent?.call() == false) throw StateError('Playlist source retired');
+        if (requireComplete) {
+          expectedTotal ??= page.totalCount;
+          if (page.offset != start ||
+              page.totalCount != expectedTotal ||
+              start + page.items.length > page.totalCount ||
+              (page.items.isEmpty && start < page.totalCount)) {
+            throw const FormatException('Incomplete playlist membership');
+          }
+        }
         if (acceptsItem != null && page.items.any((item) => !acceptsItem(item))) {
           throw StateError('Playlist page contains an unauthorized item');
         }

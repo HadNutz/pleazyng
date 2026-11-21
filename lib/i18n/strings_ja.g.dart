@@ -579,7 +579,7 @@ class _Translations$settings$ja extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'パスワード';
 	@override String get cloudBackupSaved => 'クラウドバックアップ 目的地保存';
 	@override String get cloudBackupNow => '復帰今';
-	@override String get cloudBackupComplete => 'バックアップアップアップロード';
+	@override String cloudBackupComplete({required Object action}) => 'バックアップをアップロードしました。このURLを保存してください。再インストール後、クラウドバックアップ画面にこのURLを入力し、「${action}」を選んでください。';
 	@override String get cloudBackupRestore => 'バックアップ復元';
 	@override String get cloudBackupRestoreConfirm => 'これは、このデバイス上の適合する携帯設定を置き換えるでしょう。';
 	@override String get cloudBackupRestored => '設定は、Cloud Backup から復元';
@@ -1419,7 +1419,7 @@ class _Translations$messages$ja extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => '「${title}」のメタデータを更新中…';
 	@override String metadataRefreshStarted({required Object title}) => '"${title}"のメタデータ更新を開始しました';
 	@override String metadataRefreshFailed({required Object error}) => 'メタデータの更新に失敗しました: ${error}';
-	@override String get logoutConfirm => 'ログアウトしてもよろしいですか？';
+	@override String get logoutConfirm => 'この端末のすべてのプロフィールからログアウトしますか？';
 	@override String get noSeasonsFound => 'シーズンが見つかりません';
 	@override String get seasonsLoadFailed => 'シーズンを読み込めませんでした';
 	@override String get noEpisodesFound => '最初のシーズンにエピソードが見つかりません';
@@ -6034,7 +6034,7 @@ extension on TranslationsJa {
 			'settings.cloudBackupPassword' => 'パスワード',
 			'settings.cloudBackupSaved' => 'クラウドバックアップ 目的地保存',
 			'settings.cloudBackupNow' => '復帰今',
-			'settings.cloudBackupComplete' => 'バックアップアップアップロード',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'バックアップをアップロードしました。このURLを保存してください。再インストール後、クラウドバックアップ画面にこのURLを入力し、「${action}」を選んでください。',
 			'settings.cloudBackupRestore' => 'バックアップ復元',
 			'settings.cloudBackupRestoreConfirm' => 'これは、このデバイス上の適合する携帯設定を置き換えるでしょう。',
 			'settings.cloudBackupRestored' => '設定は、Cloud Backup から復元',
@@ -6813,7 +6813,7 @@ extension on TranslationsJa {
 			'messages.metadataRefreshing' => ({required Object title}) => '「${title}」のメタデータを更新中…',
 			'messages.metadataRefreshStarted' => ({required Object title}) => '"${title}"のメタデータ更新を開始しました',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'メタデータの更新に失敗しました: ${error}',
-			'messages.logoutConfirm' => 'ログアウトしてもよろしいですか？',
+			'messages.logoutConfirm' => 'この端末のすべてのプロフィールからログアウトしますか？',
 			'messages.noSeasonsFound' => 'シーズンが見つかりません',
 			'messages.seasonsLoadFailed' => 'シーズンを読み込めませんでした',
 			'messages.noEpisodesFound' => '最初のシーズンにエピソードが見つかりません',

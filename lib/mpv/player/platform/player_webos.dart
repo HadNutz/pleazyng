@@ -23,12 +23,15 @@ import 'native_tv_playback_metadata.dart';
 import 'webos_soloud_player.dart';
 import 'webos_pgs_overlay.dart';
 import 'webos_video_layout.dart';
+import 'native_tv_video_framing.dart';
 
 /// LG's webOS media pipeline. Video and unsupported audio use LG's player;
 /// bounded supported music files may use Pleazyng's app-owned SoLoud route.
 /// webOS reports itself as Linux through `dart:io`, so select this before the
 /// generic Linux MPV backend.
-class PlayerWebOS extends PlayerBase implements NativeVisualizationAudioSource, PlayerMediaSessionIdentity {
+class PlayerWebOS extends PlayerBase
+    with NativeTvVideoFraming
+    implements NativeVisualizationAudioSource, PlayerMediaSessionIdentity {
   PlayerWebOS({this.audioOnly = false}) : super(listenToNativeEvents: false);
 
   static const _methodChannel = MethodChannel('com.plezy/webos_media');
@@ -62,6 +65,7 @@ class PlayerWebOS extends PlayerBase implements NativeVisualizationAudioSource, 
   bool get needsDecoderRefreshAfterDisplaySwitch => false;
 
   final bool audioOnly;
+  @override
   final ValueNotifier<int> surfaceRevision = ValueNotifier(0);
   webos_media.VideoPlayerController? _controller;
   WebOSSoLoudPlayer? _audioPlayer;
@@ -141,33 +145,37 @@ class PlayerWebOS extends PlayerBase implements NativeVisualizationAudioSource, 
           builder: (context, value, child) {
             final aspectRatio = value.aspectRatio;
             final hasVideoSize = value.isInitialized && aspectRatio.isFinite && aspectRatio > 0;
-            final fittedSize = hasVideoSize ? webOsAspectFitSize(viewport, aspectRatio) : viewport;
+            final frame = nativeTvVideoLayout(
+              viewport,
+              hasVideoSize ? aspectRatio : viewport.aspectRatio,
+              cover: coverVideo,
+              zoom: videoZoom,
+            );
             return Stack(
               fit: StackFit.expand,
               children: [
                 const ColoredBox(color: Color(0xff000000)),
-                Center(
-                  child: SizedBox.fromSize(
-                    size: fittedSize,
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        webos_media.VideoPlayer(controller),
-                        WebOSPgsOverlay(cue: pgsCue),
-                        IgnorePointer(
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(32, 16, 32, 36),
-                              child: ValueListenableBuilder<String>(
-                                valueListenable: caption,
-                                builder: (context, text, child) =>
-                                    text.isEmpty ? const SizedBox.shrink() : webos_media.ClosedCaption(text: text),
-                              ),
-                            ),
-                          ),
+                Positioned.fromRect(
+                  rect: frame.destination,
+                  child: webos_media.VideoPlayer(controller, sourceCrop: frame.source),
+                ),
+                Positioned.fromRect(
+                  rect: frame.fullPicture,
+                  child: WebOSPgsOverlay(cue: pgsCue),
+                ),
+                Positioned.fromRect(
+                  rect: frame.destination,
+                  child: IgnorePointer(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(32, 16, 32, 36),
+                        child: ValueListenableBuilder<String>(
+                          valueListenable: caption,
+                          builder: (context, text, child) =>
+                              text.isEmpty ? const SizedBox.shrink() : webos_media.ClosedCaption(text: text),
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -237,7 +245,11 @@ class PlayerWebOS extends PlayerBase implements NativeVisualizationAudioSource, 
           await proxy.close();
           return;
         }
-        playerUri = proxy.register(sourceUri, headers: media.headers);
+        playerUri = proxy.register(
+          sourceUri,
+          headers: media.headers,
+          mediaBrowserAuthentication: media.mediaBrowserAuthentication,
+        );
       } else if (sourceUri.scheme == 'file') {
         playerUri = sourceUri;
       } else if (sourceUri.scheme.isEmpty && media.uri.startsWith('/')) {
@@ -312,9 +324,11 @@ class PlayerWebOS extends PlayerBase implements NativeVisualizationAudioSource, 
       }
       // A native exception can contain the original authenticated media URL.
       throw PlatformException(
-        code: error is PlatformException && RegExp(r'^[\w.-]{1,80}$').hasMatch(error.code)
-            ? error.code
-            : 'webos-media-open',
+        code:
+            _codecFailureCause(error) ??
+            (error is PlatformException && RegExp(r'^[\w.-]{1,80}$').hasMatch(error.code)
+                ? error.code
+                : 'webos-media-open'),
         message: 'The webOS media player could not load this stream.',
         details: _safeFailureDescription(error),
       );
@@ -681,6 +695,13 @@ class PlayerWebOS extends PlayerBase implements NativeVisualizationAudioSource, 
     return value is String && value.trim().isNotEmpty ? value.trim() : null;
   }
 
+  String? _codecFailureCause(Object? error) {
+    final nativeError = error is PlatformException ? '${error.code} ${error.message ?? ''}' : error;
+    if (webosMediaErrorRejectsVideo(nativeError)) return PlayerError.videoCodecUnsupported;
+    if (webosMediaErrorRejectsAudio(nativeError)) return PlayerError.audioCodecUnsupported;
+    return null;
+  }
+
   void _emitFailure(int sourceId, {Object? error}) {
     if (_errorSent || disposed) {
       return;
@@ -692,8 +713,7 @@ class PlayerWebOS extends PlayerBase implements NativeVisualizationAudioSource, 
     handlePlayerEvent('end-file', {
       'sourceId': sourceId,
       'reason': 'error',
-      if (webosMediaErrorRejectsAudio(error)) 'cause': PlayerError.audioCodecUnsupported,
-      if (webosMediaErrorRejectsVideo(error)) 'cause': PlayerError.videoCodecUnsupported,
+      'cause': ?_codecFailureCause(error),
       // Native error text can include a media URI. Never surface it to logs.
       'message': 'The webOS media player could not load this stream.',
     });

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+
 import '../media/ids.dart';
+
 import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
+
 import '../focus/focusable_action_bar.dart';
 import '../i18n/strings.g.dart';
 import '../media/media_item.dart';
@@ -240,6 +243,7 @@ Future<DownloadResult?> showDownloadOptionsAndQueue(
     versionConfig: versionConfig,
     filter: filter,
     maxCount: maxCount,
+    maintainTarget: keepSynced,
     random: randomEpisodes,
     includeSpecials: includeSpecials,
     downloadQuality: syncQuality ?? oneTimeQuality,
@@ -321,6 +325,16 @@ Future<DownloadResult?> showListDownloadOptionsAndQueue(
   final syncChoice = allowSync ? await _showSyncChoiceDialog(context) : _SyncChoice.downloadOnce;
   if (syncChoice == null || !context.mounted || !current()) return null;
 
+  final hasVideo = items.any(
+    (item) => item.kind.isVideo || item.kind == MediaKind.show || item.kind == MediaKind.season,
+  );
+  final asksEachTime = SettingsService.instanceOrNull?.read(SettingsService.askDownloadQualityEachTime) ?? false;
+  TranscodeQualityPreset? batchQuality;
+  if (hasVideo && (asksEachTime || syncChoice == _SyncChoice.keepSynced)) {
+    batchQuality = await showQualityPickerDialog(context, title: t.settings.downloadQuality);
+    if (batchQuality == null || !context.mounted || !current()) return null;
+  }
+
   final serverId = rootMetadata.serverId ?? client.serverId;
   final filterString = selectedFilter == DownloadFilter.unwatched ? SyncRuleFilter.unwatched : SyncRuleFilter.all;
 
@@ -331,7 +345,11 @@ Future<DownloadResult?> showListDownloadOptionsAndQueue(
   if (syncChoice == _SyncChoice.keepSynced) {
     final ruleKey = downloadProvider.syncRuleKeyFor(ServerId(serverId), rootMetadata.id);
     if (downloadProvider.hasSyncRule(ruleKey)) {
-      await downloadProvider.updateSyncRuleOptions(ruleKey, downloadFilter: filterString);
+      await downloadProvider.updateSyncRuleOptions(
+        ruleKey,
+        downloadFilter: filterString,
+        downloadQuality: batchQuality?.name,
+      );
       if (!context.mounted || !current()) return null;
       syncRuleUpdated = true;
     } else {
@@ -343,6 +361,7 @@ Future<DownloadResult?> showListDownloadOptionsAndQueue(
         mediaIndex: 0,
         downloadFilter: filterString,
         targetMetadata: rootMetadata,
+        downloadQuality: batchQuality?.name,
       );
       if (!context.mounted || !current()) return null;
       syncRuleCreated = true;
@@ -356,6 +375,7 @@ Future<DownloadResult?> showListDownloadOptionsAndQueue(
     client,
     filter: selectedFilter,
     syncRule: syncRule,
+    downloadQuality: batchQuality,
     playlist: targetType == ContentTypes.playlist ? rootMetadata : null,
     sourceCurrent: current,
   );

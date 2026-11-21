@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +9,7 @@ import '../../profiles/active_profile_provider.dart';
 import '../../services/cloud_settings_backup_service.dart';
 import '../../services/storage_service.dart';
 import '../../utils/app_logger.dart';
+import '../../utils/snackbar_helper.dart';
 import '../../widgets/app_icon.dart';
 import '../../widgets/dialog_action_button.dart';
 
@@ -34,6 +36,7 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
   bool _loading = true;
   bool _working = false;
   String? _message;
+  Uri? _recoveryUrl;
 
   @override
   void initState() {
@@ -92,12 +95,13 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
         password: _password.text,
         isCurrentSession: _formOwner,
       );
-      await _backup.backUp(
+      final recoveryUrl = await _backup.backUp(
         expectedProfileId: owner.profileId,
         expectedOwner: owner.owner,
         isCurrentSession: owner.isCurrent,
       );
-      return t.settings.cloudBackupComplete;
+      if (mounted && owner.isCurrent()) _recoveryUrl = recoveryUrl;
+      return t.settings.cloudBackupComplete(action: t.settings.importSettings);
     });
   }
 
@@ -156,6 +160,7 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
     setState(() {
       _working = true;
       _message = null;
+      _recoveryUrl = null;
     });
     try {
       if (_formOwner?.call() != true) {
@@ -235,6 +240,18 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
                     Align(
                       alignment: AlignmentDirectional.centerStart,
                       child: Semantics(liveRegion: true, child: Text(_message!)),
+                    ),
+                  ],
+                  if (_recoveryUrl case final uri? when _formOwner?.call() == true) ...[
+                    const SizedBox(height: 8),
+                    SelectableText(uri.toString(), textDirection: TextDirection.ltr),
+                    TextButton.icon(
+                      icon: const AppIcon(Symbols.content_copy_rounded),
+                      label: Text(MaterialLocalizations.of(context).copyButtonLabel),
+                      onPressed: () async {
+                        await Clipboard.setData(ClipboardData(text: uri.toString()));
+                        if (context.mounted) showAppSnackBar(context, t.services.pendingAuth.urlCopied);
+                      },
                     ),
                   ],
                   if (_working) ...[const SizedBox(height: 12), const LinearProgressIndicator()],

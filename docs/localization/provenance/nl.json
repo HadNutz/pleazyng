@@ -1,7 +1,7 @@
 {
   "locale": "nl",
   "inherits": null,
-  "catalogSha256": "5851f19526f3d79fe5e26b175d257f67b155bf2bda24ca23dce3ad806baf75e0",
+  "catalogSha256": "92c8ca961ca0a7f6e1a85477c58c0196ba5d592c99bf3ad16bd4c1476dd3ccd0",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -369,7 +369,7 @@
     "settings.cloudBackupPassword": "translation-memory",
     "settings.cloudBackupSaved": "m2m100-draft",
     "settings.cloudBackupNow": "m2m100-draft",
-    "settings.cloudBackupComplete": "m2m100-draft",
+    "settings.cloudBackupComplete": "assistant-semantic-review-2026-11-21",
     "settings.cloudBackupRestore": "m2m100-draft",
     "settings.cloudBackupRestoreConfirm": "m2m100-draft",
     "settings.cloudBackupRestored": "m2m100-draft",
@@ -1021,7 +1021,7 @@
     "messages.metadataRefreshing": "existing",
     "messages.metadataRefreshStarted": "existing",
     "messages.metadataRefreshFailed": "existing",
-    "messages.logoutConfirm": "existing",
+    "messages.logoutConfirm": "assistant-semantic-review-2026-11-21",
     "messages.noSeasonsFound": "existing",
     "messages.seasonsLoadFailed": "existing",
     "messages.noEpisodesFound": "existing",

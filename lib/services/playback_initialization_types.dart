@@ -77,17 +77,17 @@ class PlaybackInitializationOptions {
   /// [MediaSourceInfo.partTimeline]. Null starts from the first file.
   final Duration? startPosition;
 
-  /// Ask the server for a video encode when the selected source is identified
-  /// as Dolby Vision when its profile is not reported by the local native
-  /// playback path. This is decided before opening the video so a decoder that
-  /// accepts a stream but displays wrong colors cannot bypass compatibility
-  /// routing. The HLS output still needs server-side tone mapping.
+  /// Request a server rendition when the selected source is Dolby Vision
+  /// and no compatible local playback route is available.
   final bool requestCompatibleDolbyVisionRendition;
 
-  /// Exact Dolby Vision profiles the active platform path reports as
-  /// supported. An empty set is deliberately conservative and sends known DV
-  /// sources through the server's SDR compatibility route.
+  /// Exact Dolby Vision profiles reported by the active platform.
   final Set<int> supportedNativeDolbyVisionProfiles;
+
+  /// LG's native player exposes panel capabilities separately from profiles.
+  /// A null DV flag means the firmware did not report that capability.
+  final bool? webosDolbyVision;
+  final bool webosHdr10;
 
   /// Keep Profile 7 local while automatic DV/FEL routing is enabled on an
   /// implemented player backend. A forced video-compatibility retry overrides
@@ -99,14 +99,19 @@ class PlaybackInitializationOptions {
   /// takes precedence and never sets this flag.
   final bool forceServerPlayback;
 
-  bool requestsCompatibleDolbyVisionRendition(MediaSourceInfo? source) => shouldRequestCompatibleDolbyVisionRendition(
-    requested: requestCompatibleDolbyVisionRendition,
-    source: source?.displayCriteria,
-    supportedNativeProfiles: forceServerPlayback && !forceAudioConversion
-        ? const {}
-        : supportedNativeDolbyVisionProfiles,
-    allowExperimentalProfile7: allowExperimentalDolbyVisionProfile7 && !(forceServerPlayback && !forceAudioConversion),
-  );
+  bool requestsCompatibleDolbyVisionRendition(MediaSourceInfo? source, {String? container}) =>
+      shouldRequestCompatibleDolbyVisionRendition(
+        requested: requestCompatibleDolbyVisionRendition,
+        container: container,
+        webosDolbyVision: forceServerPlayback && !forceAudioConversion ? null : webosDolbyVision,
+        webosHdr10: webosHdr10 && !(forceServerPlayback && !forceAudioConversion),
+        source: source?.displayCriteria,
+        supportedNativeProfiles: forceServerPlayback && !forceAudioConversion
+            ? const {}
+            : supportedNativeDolbyVisionProfiles,
+        allowExperimentalProfile7:
+            allowExperimentalDolbyVisionProfile7 && !(forceServerPlayback && !forceAudioConversion),
+      );
 
   bool hasServerDolbyVisionSdrRoute(MediaSourceInfo? source, {required DolbyVisionSdrBackend backend}) =>
       serverHasDolbyVisionSdrRoute(backend: backend, source: source?.displayCriteria);
@@ -144,6 +149,8 @@ class PlaybackInitializationOptions {
     this.startPosition,
     this.requestCompatibleDolbyVisionRendition = false,
     this.supportedNativeDolbyVisionProfiles = const {},
+    this.webosDolbyVision,
+    this.webosHdr10 = false,
     this.allowExperimentalDolbyVisionProfile7 = false,
     this.forceServerPlayback = false,
     this.forceTranscode = false,

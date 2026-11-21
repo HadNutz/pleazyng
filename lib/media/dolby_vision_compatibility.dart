@@ -15,12 +15,30 @@ bool shouldRequestCompatibleDolbyVisionRendition({
   required MediaDisplayCriteria? source,
   Set<int> supportedNativeProfiles = const {},
   bool allowExperimentalProfile7 = false,
+  bool? webosDolbyVision,
+  bool webosHdr10 = false,
+  String? container,
 }) {
   if (!requested || source?.hasDolbyVision != true) return false;
 
   final profile = source!.doviProfile;
   if (profile != null && supportedNativeProfiles.contains(profile)) return false;
   if (profile == 7 && allowExperimentalProfile7) return false;
+  // LG's device API measures the set's DV capability, not individual
+  // profiles. Limit the native trial to the LG media player's DV containers.
+  // Its P7 base layer can be ordinary HDR10; never imply FEL composition.
+  final format = container?.toLowerCase();
+  if (webosDolbyVision == true &&
+      const {'mp4', 'm4v', 'mov', 'ts', 'mpegts', 'm2ts', 'mts'}.contains(format) &&
+      (profile == 5 || profile == 8)) {
+    return false;
+  }
+  if (webosHdr10 &&
+      source.doviBaseLayerPresent != false &&
+      const {'mkv', 'mp4', 'm4v', 'mov', 'ts', 'mpegts', 'mts', 'm2ts'}.contains(format) &&
+      ((profile == 7 && source.doviCompatibilityId == 6) || (profile == 8 && source.doviCompatibilityId == 1))) {
+    return false;
+  }
   return true;
 }
 

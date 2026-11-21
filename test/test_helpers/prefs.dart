@@ -41,5 +41,6 @@ void resetSharedPreferencesForTest({Map<String, Object> initialAsync = const {}}
   SharedPreferencesAsyncPlatform.instance = initialAsync.isEmpty
       ? InMemorySharedPreferencesAsync.empty()
       : InMemorySharedPreferencesAsync.withData(initialAsync);
+  SettingsService.resetForTesting();
   BaseSharedPreferencesService.resetForTesting();
 }

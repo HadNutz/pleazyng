@@ -2,6 +2,7 @@ import AVFoundation
 import Foundation
 import Libmpv
 import QuartzCore
+import VideoToolbox
 import PlezyNGDVRuntimeAPI
 
 #if os(iOS) || os(tvOS)
@@ -1064,6 +1065,23 @@ class MpvPlayerCoreBase: NSObject {
       completeOnMain { completion(.failure(self.lifecycleUnavailableError())) }
       return
     }
+    if name == "pleazyng-vt-motion-supported" {
+      var supported = false
+      #if !targetEnvironment(simulator) && compiler(>=6.2)
+        #if (os(iOS) && !targetEnvironment(macCatalyst)) || os(macOS)
+          if #available(iOS 26, macOS 15.4, *) {
+            supported = VTFrameRateConversionConfiguration.isSupported
+          }
+        #endif
+        if #available(iOS 26, macOS 26, tvOS 26, *) {
+          supported = supported || VTLowLatencyFrameInterpolationConfiguration.isSupported
+        }
+      #endif
+      let value = supported ? "yes" : "no"
+      completeOnMain { completion(.success(value)) }
+      return
+    }
+
     if name == "dv-conversion-mode" {
       completeOnMain { completion(.success(self.getDvConversionMode())) }
       return

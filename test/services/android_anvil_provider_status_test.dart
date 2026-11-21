@@ -17,6 +17,8 @@ void main() {
       expect(androidAnvilProviderState('qnn-htp-v73'), AndroidAnvilProviderState.active);
       expect(androidAnvilProviderState('litert-npu'), AndroidAnvilProviderState.active);
       expect(androidAnvilProviderState('litert-gpu'), AndroidAnvilProviderState.active);
+      expect(androidAnvilProviderState('litert-cpu-ready'), AndroidAnvilProviderState.ready);
+      expect(androidAnvilProviderState('litert-cpu'), AndroidAnvilProviderState.active);
     });
 
     test('recognizes terminal failures and CPU fallback', () {

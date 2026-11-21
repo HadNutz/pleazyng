@@ -581,7 +581,7 @@ class _Translations$settings$hu extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Jelszó';
 	@override String get cloudBackupSaved => 'Cloud Backup cél mentett';
 	@override String get cloudBackupNow => 'Vissza most';
-	@override String get cloudBackupComplete => 'Backup beállítások feltöltve';
+	@override String cloudBackupComplete({required Object action}) => 'A biztonsági mentés feltöltve. Mentsd el ezt az URL-t. Új telepítés után add meg a felhőalapú mentésnél, majd válaszd ezt: „${action}”.';
 	@override String get cloudBackupRestore => 'Backup visszaállítása';
 	@override String get cloudBackupRestoreConfirm => 'Ez helyettesíti a hordozható beállítások megfelelését ezen a készüléken.';
 	@override String get cloudBackupRestored => 'A felhő biztonsági mentéséből helyreállított beállítások';
@@ -1421,7 +1421,7 @@ class _Translations$messages$hu extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Metaadatok frissítése a következőhöz: "${title}"...';
 	@override String metadataRefreshStarted({required Object title}) => 'Metaadatok frissítése elindítva a következőhöz: "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'Nem sikerült a metaadatok frissítése: ${error}';
-	@override String get logoutConfirm => 'Biztosan ki szeretnél jelentkezni?';
+	@override String get logoutConfirm => 'Kijelentkezel az összes profilból ezen az eszközön?';
 	@override String get noSeasonsFound => 'Nem találhatók évadok';
 	@override String get seasonsLoadFailed => 'Nem sikerült az évadok betöltése';
 	@override String get noEpisodesFound => 'Nem találhatók epizódok az első évadban';
@@ -6039,7 +6039,7 @@ extension on TranslationsHu {
 			'settings.cloudBackupPassword' => 'Jelszó',
 			'settings.cloudBackupSaved' => 'Cloud Backup cél mentett',
 			'settings.cloudBackupNow' => 'Vissza most',
-			'settings.cloudBackupComplete' => 'Backup beállítások feltöltve',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'A biztonsági mentés feltöltve. Mentsd el ezt az URL-t. Új telepítés után add meg a felhőalapú mentésnél, majd válaszd ezt: „${action}”.',
 			'settings.cloudBackupRestore' => 'Backup visszaállítása',
 			'settings.cloudBackupRestoreConfirm' => 'Ez helyettesíti a hordozható beállítások megfelelését ezen a készüléken.',
 			'settings.cloudBackupRestored' => 'A felhő biztonsági mentéséből helyreállított beállítások',
@@ -6818,7 +6818,7 @@ extension on TranslationsHu {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Metaadatok frissítése a következőhöz: "${title}"...',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Metaadatok frissítése elindítva a következőhöz: "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Nem sikerült a metaadatok frissítése: ${error}',
-			'messages.logoutConfirm' => 'Biztosan ki szeretnél jelentkezni?',
+			'messages.logoutConfirm' => 'Kijelentkezel az összes profilból ezen az eszközön?',
 			'messages.noSeasonsFound' => 'Nem találhatók évadok',
 			'messages.seasonsLoadFailed' => 'Nem sikerült az évadok betöltése',
 			'messages.noEpisodesFound' => 'Nem találhatók epizódok az első évadban',

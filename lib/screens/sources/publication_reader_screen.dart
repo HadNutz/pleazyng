@@ -643,6 +643,8 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
         ).take(100000).map(sourceMap).where((m) => _server!.archive.files.containsKey(m['audio'])).toList();
         _markReaderReady();
       case 'location':
+        _selectedCFI = null;
+        _selectedText = null;
         if (_progress == null) return;
         _spreadPages = sourceList(
           message['spreadPages'],
@@ -770,17 +772,19 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
 
   Future<void> _addNote({BookAnnotation? existing, String? quote}) async {
     if (!valid || _progress == null || _previewOnly) return;
-    final selected = quote ?? _selectedText ?? existing?.quote ?? '';
+    final selected = existing?.quote ?? quote ?? _selectedText ?? '';
+    final cfi = existing?.locator?.cfi ?? _selectedCFI ?? _progress!.locator?.cfi;
+    final locator =
+        existing?.locator ??
+        ReadingLocator(
+          cfi: cfi,
+          href: _progress!.locator?.href ?? '',
+          page: _progress!.locator?.page,
+          progression: _progress!.fraction,
+          text: selected,
+        );
     final note = await editSourceNote(context, initial: existing?.note ?? '', quote: selected);
     if (note == null || !valid) return;
-    final cfi = existing?.locator?.cfi ?? _selectedCFI ?? _progress!.locator?.cfi;
-    final locator = ReadingLocator(
-      cfi: cfi,
-      href: _progress!.locator?.href ?? '',
-      page: _progress!.locator?.page,
-      progression: _progress!.fraction,
-      text: selected,
-    );
     final annotation = BookAnnotation(
       id: existing?.id ?? const Uuid().v4(),
       entryKey: widget.entry.key,

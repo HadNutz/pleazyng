@@ -184,6 +184,7 @@ void main() {
 
       expect(service.claimStartupProfile([_parents, _kids]), _kids);
       expect(service.startupProfileId, 'kids');
+      expect(service.needsStartupActivation('kids'), isFalse);
 
       service.settleStartupProfile(applied: true);
       expect(service.startupProfileId, isNull);
@@ -192,6 +193,24 @@ void main() {
       await pumpEventQueue();
       expect(host.switches, isEmpty);
       expect(session.launched, hasLength(1));
+    });
+
+    test('the persisted protected launch target must be unlocked before the link can be delivered', () async {
+      final protected = Profile.local(
+        id: 'parents',
+        displayName: 'Parents',
+        pinHash: 'stored-hash',
+        createdAt: DateTime(2026),
+      );
+      service.host = _FakeHost(activeProfileId: 'parents');
+      service.receive('pleazyng://play?server=s1&id=1&profile=parents');
+      expect(service.claimStartupProfile([protected, _kids]), protected);
+      expect(service.needsStartupActivation('parents'), isTrue);
+      service.settleStartupProfile(applied: false);
+      final session = _Session('parents');
+      service.attach(session.session);
+      await pumpEventQueue();
+      expect(session.launched, isEmpty);
     });
 
     test('a profile startup could not apply drops the link', () async {

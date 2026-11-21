@@ -2,7 +2,7 @@
 # Public GitHub-hosted runners are required for all compatible jobs; only
 # requested Apple signing and the verified webOS storage overflow use JIT.
 name: Pleazyng Release
-run-name: ${{ format('{0}{1}', inputs.private_apple_signing_unavailable && 'apple-signing-unavailable:' || '', inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos && inputs.reuse_platform_run_id == '' && inputs.action == 'build' && format('action:{0}:pool:{1}:mode:{2}:version:{3}:runner-retry-of:{4}', inputs.action, inputs.runner_pool, inputs.mode, inputs.build_version, inputs.reuse_repaired_run_id) || inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos && inputs.reuse_platform_run_id == '' && inputs.action == 'release' && format('action:{0}:pool:{1}:tag:v{2}:runner-retry-of:{3}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_repaired_run_id) || inputs.recovery_source_sha != '' && startsWith(inputs.reuse_repaired_run_id, 'assembly-tvos:') && format('action:{0}:pool:{1}:tag:v{2}:repair:{3}:{4}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.recovery_source_sha, inputs.reuse_repaired_run_id) || inputs.recovery_source_sha != '' && format('action:{0}:pool:{1}:tag:v{2}:repair:{3}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.recovery_source_sha) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.reuse_macos_package_run_id != '' && !inputs.rebuild_macos && format('action:{0}:pool:{1}:tag:v{2}:assembly:source:{3}:macos:{4}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id, inputs.reuse_macos_package_run_id) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.rebuild_macos && format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:macos', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.rebuild_tvos && format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:tvos', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.reuse_repaired_run_id == 'tizen-rebuild' && format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:tizen', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id) || inputs.action == 'release' && format('action:{0}:pool:{1}:tag:v{2}', inputs.action, inputs.runner_pool, inputs.build_version) || inputs.action == 'build' && inputs.mode == 'release' && inputs.build_version != '' && format('action:{0}:pool:{1}:mode:{2}:version:{3}', inputs.action, inputs.runner_pool, inputs.mode, inputs.build_version) || format('action:{0}:pool:{1}', inputs.action, inputs.runner_pool)) }}
+run-name: ${{ format('{0}{1}{2}', inputs.private_apple_signing_unavailable && 'apple-signing-unavailable:' || '', inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos && inputs.reuse_platform_run_id == '' && inputs.action == 'build' && format('action:{0}:pool:{1}:mode:{2}:version:{3}:runner-retry-of:{4}', inputs.action, inputs.runner_pool, inputs.mode, inputs.build_version, inputs.reuse_repaired_run_id) || inputs.reuse_repaired_run_id != '' && inputs.rebuild_tvos && inputs.reuse_platform_run_id == '' && inputs.action == 'release' && format('action:{0}:pool:{1}:tag:v{2}:runner-retry-of:{3}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_repaired_run_id) || inputs.recovery_source_sha != '' && startsWith(inputs.reuse_repaired_run_id, 'assembly-tvos:') && format('action:{0}:pool:{1}:tag:v{2}:repair:{3}:{4}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.recovery_source_sha, inputs.reuse_repaired_run_id) || inputs.recovery_source_sha != '' && format('action:{0}:pool:{1}:tag:v{2}:repair:{3}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.recovery_source_sha) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.reuse_macos_package_run_id != '' && !inputs.rebuild_macos && format('action:{0}:pool:{1}:tag:v{2}:assembly:source:{3}:macos:{4}', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id, inputs.reuse_macos_package_run_id) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.rebuild_macos && format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:macos', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.rebuild_tvos && format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:tvos', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id) || inputs.action == 'release' && inputs.reuse_platform_run_id != '' && inputs.reuse_repaired_run_id == 'tizen-rebuild' && format('action:{0}:pool:{1}:tag:v{2}:recovery:source:{3}:tizen', inputs.action, inputs.runner_pool, inputs.build_version, inputs.reuse_platform_run_id) || inputs.action == 'release' && format('action:{0}:pool:{1}:tag:v{2}', inputs.action, inputs.runner_pool, inputs.build_version) || inputs.action == 'build' && inputs.mode == 'release' && inputs.build_version != '' && format('action:{0}:pool:{1}:mode:{2}:version:{3}', inputs.action, inputs.runner_pool, inputs.mode, inputs.build_version) || format('action:{0}:pool:{1}', inputs.action, inputs.runner_pool), inputs.action == 'build' && (inputs.subtitle_gpu_backend == 'vulkan' || inputs.subtitle_gpu_backend == 'cuda') && format(':whisper:{0}', inputs.subtitle_gpu_backend) || '') }}
 
 on:
   workflow_dispatch:
@@ -147,10 +147,9 @@ env:
   FLUTTER_SUPPRESS_ANALYTICS: "true"
   # Each setup step loads the immutable SDK manifest after checkout.
   TVOS_FLUTTER_VERSION: "3.47.1" # Pinned custom tvOS engine has this ABI.
-  # Shared by every release build command.
+  # Shared build metadata. Each distribution selects its own update channel.
   COMPILE_SOURCE_SHA: ${{ inputs.recovery_source_sha || github.sha }}
   RELEASE_DART_DEFINES: >-
-    --dart-define=ENABLE_UPDATE_CHECK=true
     --dart-define=GIT_COMMIT=${{ inputs.recovery_product_sha || github.sha }}
     --dart-define=PLEAZYNG_DISCORD_APPLICATION_ID=${{ vars.PLEAZYNG_DISCORD_APPLICATION_ID }}
   TRUSTED_BUILD_CACHE_VERSION: trusted-build-v1
@@ -383,6 +382,7 @@ jobs:
       mode: ${{ steps.request.outputs.mode }}
       release_tag: ${{ steps.request.outputs.release_tag }}
       release_commit: ${{ steps.release-tag.outputs.commit || github.sha }}
+      qualified_tag_commit: ${{ steps.standalone-ci.outputs.qualified_tag_commit }}
       reuse_source_sha: ${{ steps.reuse-platforms.outputs.source_sha }}
       android_source_sha: ${{ steps.reuse-platforms.outputs.android_source_sha }}
       webos_source_sha: ${{ steps.reuse-platforms.outputs.webos_source_sha }}
@@ -557,7 +557,7 @@ jobs:
             fi
             VERSION="$RELEASE_TAG"
           fi
-          if [[ "$EXECUTION_PROFILE" == "hybrid" && ( ( ( "$REF_TYPE" != "branch" || "$REF_NAME" != "main" ) && ( "$ACTION" != "release" || "$REF_TYPE" != "tag" || "$REF_NAME" != "$RELEASE_TAG" ) ) || ( "$MODE" != "release" && "$MODE" != "webos-validation" && "$MODE" != "android-validation" && "$MODE" != "macos-validation" ) || "$SUBTITLE_GPU_BACKEND" != "cpu" ) ]]; then
+          if [[ ( "$REF_TYPE" != "branch" || "$REF_NAME" != "main" ) && ( "$ACTION" != "release" || "$REF_TYPE" != "tag" || "$REF_NAME" != "$RELEASE_TAG" ) ]]; then
             echo "The hybrid execution profile requires trusted main or the exact immutable release tag." >&2
             exit 1
           fi
@@ -871,20 +871,18 @@ jobs:
           python3 scripts/recover_release_platforms.py "$SOURCE_RUN" --head-sha "$HEAD_SHA" --version "$VERSION" --allow-building "${options[@]}"
 
       - name: Require successful CI for this commit
+        id: standalone-ci
         if: ${{ steps.request.outputs.mode == 'release' && steps.request.outputs.action == 'release' && inputs.candidate_ref == '' && inputs.reuse_platform_run_id == '' }}
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           COMMIT_SHA: ${{ steps.release-tag.outputs.commit }}
           REPOSITORY: ${{ github.repository }}
-          RELEASE_TAG: ${{ (inputs.candidate_ref != '' || github.ref_type == 'tag') && steps.request.outputs.release_tag || '' }}
-          CANDIDATE_REF: ${{ inputs.candidate_ref }}
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && steps.request.outputs.release_tag || '' }}
         run: |
-          if [[ -n "$CANDIDATE_REF" ]]; then
-            python3 scripts/verify_embedded_release_ci.py
-          else
-            python3 scripts/verify_release_ci.py
-          fi
+          set -euo pipefail
+          python3 scripts/verify_release_ci.py
+          printf 'qualified_tag_commit=%s\n' "$COMMIT_SHA" >> "$GITHUB_OUTPUT"
 
       - name: Validate webOS package metadata
         if: ${{ steps.request.outputs.mode == 'release' }}
@@ -1061,7 +1059,7 @@ jobs:
 
       - name: Build APKs
         if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release') && (matrix.variant == 'developer') }}
-        run: python3 scripts/run_android_build.py flutter --verbose build apk --release --split-per-abi ${{ env.RELEASE_DART_DEFINES }} --obfuscate --split-debug-info=debug-info/android-apk --extra-gen-snapshot-options=--save-obfuscation-map=debug-info/android-apk/obfuscation.map.json
+        run: python3 scripts/run_android_build.py flutter --verbose build apk --release --split-per-abi ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=true --obfuscate --split-debug-info=debug-info/android-apk --extra-gen-snapshot-options=--save-obfuscation-map=debug-info/android-apk/obfuscation.map.json
 
       - name: Package APKs
         if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release') && (matrix.variant == 'developer') }}
@@ -1087,7 +1085,7 @@ jobs:
           REVIEW_ACCESS_PUBLIC_KEY: ${{ vars.REVIEW_ACCESS_PUBLIC_KEY }}
         if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release' && steps.android-signing.outputs.configured == 'true') && (matrix.variant == 'play') }}
         run: |
-          python3 scripts/run_android_build.py flutter --verbose build appbundle --release ${{ env.RELEASE_DART_DEFINES }} --dart-define=SUPPORTER_MODE=iap --dart-define=REVIEW_ACCESS_PUBLIC_KEY="$REVIEW_ACCESS_PUBLIC_KEY" --obfuscate --split-debug-info=debug-info/android-play
+          python3 scripts/run_android_build.py flutter --verbose build appbundle --release ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=false --dart-define=SUPPORTER_MODE=iap --dart-define=REVIEW_ACCESS_PUBLIC_KEY="$REVIEW_ACCESS_PUBLIC_KEY" --obfuscate --split-debug-info=debug-info/android-play
           cp build/app/outputs/bundle/release/app-release.aab pleazyng-android-play.aab
 
       - name: Build signed Amazon Appstore APK
@@ -1095,7 +1093,7 @@ jobs:
           REVIEW_ACCESS_PUBLIC_KEY: ${{ vars.REVIEW_ACCESS_PUBLIC_KEY }}
         if: ${{ ((needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') && steps.android-signing.outputs.configured == 'true') && (matrix.variant == 'firetv') }}
         run: |
-          AMAZON=1 ORG_GRADLE_PROJECT_openiapStore=amazon python3 scripts/run_android_build.py flutter --verbose build apk --release --target-platform android-arm,android-arm64,android-x64 ${{ env.RELEASE_DART_DEFINES }} --dart-define=SUPPORTER_MODE=iap --dart-define=AMAZON_STORE=true --dart-define=REVIEW_ACCESS_PUBLIC_KEY="$REVIEW_ACCESS_PUBLIC_KEY" --dart-define=LIFETIME_UNLOCK_PRODUCT_ID=pleazyng_lifetime_unlock --obfuscate --split-debug-info=debug-info/android-amazon
+          AMAZON=1 ORG_GRADLE_PROJECT_openiapStore=amazon python3 scripts/run_android_build.py flutter --verbose build apk --release --target-platform android-arm,android-arm64,android-x64 ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=false --dart-define=SUPPORTER_MODE=iap --dart-define=AMAZON_STORE=true --dart-define=REVIEW_ACCESS_PUBLIC_KEY="$REVIEW_ACCESS_PUBLIC_KEY" --dart-define=LIFETIME_UNLOCK_PRODUCT_ID=pleazyng_lifetime_unlock --obfuscate --split-debug-info=debug-info/android-amazon
           cp build/app/outputs/flutter-apk/app-release.apk pleazyng-amazon-firetv.apk
 
       - name: Verify signed Fire TV release APK
@@ -1128,7 +1126,7 @@ jobs:
           ORG_GRADLE_PROJECT_pleazyngAutomotiveMedia: 'true'
           REVIEW_ACCESS_PUBLIC_KEY: ${{ vars.REVIEW_ACCESS_PUBLIC_KEY }}
         run: |
-          python3 scripts/run_android_build.py flutter --verbose build appbundle --release ${{ env.RELEASE_DART_DEFINES }} --dart-define=SUPPORTER_MODE=iap --dart-define=REVIEW_ACCESS_PUBLIC_KEY="$REVIEW_ACCESS_PUBLIC_KEY" --obfuscate --split-debug-info=debug-info/automotive-play
+          python3 scripts/run_android_build.py flutter --verbose build appbundle --release ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=false --dart-define=SUPPORTER_MODE=iap --dart-define=REVIEW_ACCESS_PUBLIC_KEY="$REVIEW_ACCESS_PUBLIC_KEY" --obfuscate --split-debug-info=debug-info/automotive-play
           cp build/app/outputs/bundle/release/app-release.aab pleazyng-automotive-play.aab
 
       - name: Build and verify Automotive audio APK
@@ -1136,7 +1134,7 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_pleazyngAutomotiveMedia: 'true'
         run: |
-          python3 scripts/run_android_build.py flutter --verbose build apk --release ${{ env.RELEASE_DART_DEFINES }} --split-debug-info=debug-info/automotive
+          python3 scripts/run_android_build.py flutter --verbose build apk --release ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=true --split-debug-info=debug-info/automotive
           cp build/app/outputs/flutter-apk/app-release.apk pleazyng-automotive-music.apk
           tools="$ANDROID_HOME/build-tools/36.1.0"
           "$tools/apksigner" verify pleazyng-automotive-music.apk
@@ -1447,7 +1445,7 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ runner.temp }}/tv-native
-          key: ${{ env.TRUSTED_BUILD_CACHE_VERSION }}-tv-native-v1-webos-armv7l-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/tv_mpv/*.py', 'scripts/tv_mpv/*.c', 'scripts/tv_mpv/*.sh', 'scripts/tv_mpv/*.patch', 'scripts/tv_mpv/dav1d-COPYING', 'tools/webos/compatibility.json', 'scripts/tizen/sdk-linux-arm.json', 'scripts/tizen/toolchain.json', 'scripts/tizen/bootstrap_linux.py') }}
+          key: ${{ env.TRUSTED_BUILD_CACHE_VERSION }}-tv-native-v1-webos-armv7l-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/tv_mpv/*.py', 'scripts/tv_mpv/*.c', 'scripts/tv_mpv/*.h', 'shared/tv_mpv/**', 'scripts/tv_mpv/*.sh', 'scripts/tv_mpv/*.patch', 'scripts/tv_mpv/dav1d-COPYING', 'tools/webos/compatibility.json', 'scripts/tizen/sdk-linux-arm.json', 'scripts/tizen/toolchain.json', 'scripts/tizen/bootstrap_linux.py') }}
 
       - name: Build and verify the WebOS ARM package
         id: webos-build
@@ -1470,7 +1468,7 @@ jobs:
         if: ${{ !cancelled() && env.TV_NATIVE_VERIFIED == 'true' }}
         with:
           path: ${{ runner.temp }}/tv-native
-          key: ${{ env.TRUSTED_BUILD_CACHE_VERSION }}-tv-native-v1-webos-armv7l-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/tv_mpv/*.py', 'scripts/tv_mpv/*.c', 'scripts/tv_mpv/*.sh', 'scripts/tv_mpv/*.patch', 'scripts/tv_mpv/dav1d-COPYING', 'tools/webos/compatibility.json', 'scripts/tizen/sdk-linux-arm.json', 'scripts/tizen/toolchain.json', 'scripts/tizen/bootstrap_linux.py') }}
+          key: ${{ env.TRUSTED_BUILD_CACHE_VERSION }}-tv-native-v1-webos-armv7l-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/tv_mpv/*.py', 'scripts/tv_mpv/*.c', 'scripts/tv_mpv/*.h', 'shared/tv_mpv/**', 'scripts/tv_mpv/*.sh', 'scripts/tv_mpv/*.patch', 'scripts/tv_mpv/dav1d-COPYING', 'tools/webos/compatibility.json', 'scripts/tizen/sdk-linux-arm.json', 'scripts/tizen/toolchain.json', 'scripts/tizen/bootstrap_linux.py') }}
 
       - name: Retain verified WebOS candidate for private device testing
         env:
@@ -1805,7 +1803,7 @@ jobs:
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         run: |
           set -euo pipefail
-          flutter build ios --release --no-codesign --config-only ${{ env.RELEASE_DART_DEFINES }} --split-debug-info=debug-info/ios
+          flutter build ios --release --no-codesign --config-only ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=true --split-debug-info=debug-info/ios
           (cd ios && pod install --deployment)
           digest=$(python3 "$GITHUB_WORKSPACE/scripts/apple/worker_cache_key.py")
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
@@ -1872,7 +1870,7 @@ jobs:
 
       - name: Build iOS (no codesign)
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
-        run: flutter build ios --release --no-codesign --no-pub --verbose ${{ env.RELEASE_DART_DEFINES }} --split-debug-info=debug-info/ios
+        run: flutter build ios --release --no-codesign --no-pub --verbose ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=true --split-debug-info=debug-info/ios
 
       - name: Create unsigned developer IPA
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
@@ -2605,7 +2603,7 @@ jobs:
           FLUTTER_XCODE_CODE_SIGNING_REQUIRED: "NO"
           FLUTTER_XCODE_CODE_SIGNING_IDENTITY: ""
         # Verbose bypasses the pinned SDK's quadratic filter on long nested Xcode output.
-        run: flutter build macos --release --verbose ${{ env.RELEASE_DART_DEFINES }} ${{ env.NATIVE_UPDATER_DEFINE }} --dart-define=SUPPORTER_MODE=unlocked --split-debug-info=debug-info/macos
+        run: flutter build macos --release --verbose ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=true ${{ env.NATIVE_UPDATER_DEFINE }} --dart-define=SUPPORTER_MODE=unlocked --split-debug-info=debug-info/macos
 
       - name: Verify universal macOS executable
         if: ${{ steps.restore-notarization.outputs.restored != 'true' }}
@@ -3245,7 +3243,7 @@ jobs:
         shell: pwsh
         env:
           FLUTTER_WHISPER_GPU_BACKEND: ${{ inputs.subtitle_gpu_backend == 'vulkan' && matrix.arch == 'x64' && 'VULKAN' || inputs.subtitle_gpu_backend == 'cuda' && matrix.arch == 'x64' && 'CUDA' || 'CPU' }}
-        run: flutter build windows --release ${{ env.RELEASE_DART_DEFINES }} ${{ env.NATIVE_UPDATER_DEFINE }} --dart-define=SUPPORTER_MODE=unlocked --split-debug-info=debug-info/windows-${{ matrix.arch }}
+        run: flutter build windows --release ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=true ${{ env.NATIVE_UPDATER_DEFINE }} --dart-define=SUPPORTER_MODE=unlocked --split-debug-info=debug-info/windows-${{ matrix.arch }}
 
       - name: Diagnose failed Windows CMake installation
         if: ${{ failure() && steps.windows-build.outcome == 'failure' }}
@@ -3810,7 +3808,7 @@ jobs:
           if [[ -n ${VULKAN_SDK:-} ]]; then
             export PKG_CONFIG_PATH="$VULKAN_SDK/share/pkgconfig:$VULKAN_SDK/lib/pkgconfig:$PKG_CONFIG_PATH"
           fi
-          flutter build linux --release ${{ env.RELEASE_DART_DEFINES }} --dart-define=SUPPORTER_MODE=unlocked --split-debug-info=debug-info/linux-${{ matrix.arch }}
+          flutter build linux --release ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=true --dart-define=SUPPORTER_MODE=unlocked --split-debug-info=debug-info/linux-${{ matrix.arch }}
         env:
           FLUTTER_WHISPER_GPU_BACKEND: ${{ inputs.subtitle_gpu_backend == 'vulkan' && matrix.arch == 'x64' && 'VULKAN' || 'CPU' }}
           PKG_CONFIG_PATH: ${{ github.workspace }}/libmpv-prefix/lib/pkgconfig:${{ github.workspace }}/libmpv-prefix/lib/${{ matrix.pkg_config_arch }}/pkgconfig
@@ -4237,7 +4235,7 @@ jobs:
 
   create-release:
     needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, finish-notarization, build-windows, package-windows, build-linux, assemble-linux-arm64]
-    if: ${{ always() && (needs.freeze-qualified-source.result == 'success' || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.freeze-qualified-source.result == 'skipped')) && inputs.runner_pool != '' && inputs.action == 'release' && needs.validate-trusted-ref.outputs.runner_pool == 'public' && needs.validate-trusted-ref.outputs.action == 'release' && needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.result == 'success' && (needs.build-android.result == 'success' || (inputs.reuse_android_run_id != '' && needs.validate-trusted-ref.outputs.android_source_sha != '' && needs.build-android.result == 'skipped')) && ((inputs.reuse_platform_run_id == '' && needs.build-ios.result == 'success' && needs.build-tvos.result == 'success' && needs.build-macos.result == 'success' && needs.build-windows.result == 'success' && needs.package-windows.result == 'success' && needs.build-linux.result == 'success' && (needs.build-webos.result == 'success' || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && (needs.build-tizen.result == 'success' || (needs.validate-trusted-ref.outputs.include_tizen_build != 'true' && needs.build-tizen.result == 'skipped'))) || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && ((inputs.rebuild_ios && needs.build-ios.result == 'success') || (!inputs.rebuild_ios && needs.build-ios.result == 'skipped')) && ((inputs.rebuild_tvos && needs.build-tvos.result == 'success') || (!inputs.rebuild_tvos && needs.build-tvos.result == 'skipped')) && ((inputs.rebuild_macos && needs.build-macos.result == 'success') || (!inputs.rebuild_macos && needs.build-macos.result == 'skipped')) && needs.build-windows.result == 'skipped' && needs.package-windows.result == 'skipped' && ((inputs.rebuild_linux && needs.build-linux.result == 'success') || (!inputs.rebuild_linux && needs.build-linux.result == 'skipped')) && (needs.build-webos.result == 'success' || (inputs.reuse_webos_run_id != '' && needs.validate-trusted-ref.outputs.webos_source_sha != '' && needs.build-webos.result == 'skipped') || (inputs.reuse_macos_package_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.build-webos.result == 'skipped') || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && ((inputs.reuse_repaired_run_id == 'tizen-rebuild' && needs.build-tizen.result == 'success') || (inputs.reuse_repaired_run_id != 'tizen-rebuild' && needs.build-tizen.result == 'skipped')))) && (needs.build-macos.result == 'skipped' || needs.validate-trusted-ref.outputs.prepare_homebrew_cask != 'true' || needs.finish-notarization.result == 'success') && needs.assemble-linux-arm64.result == needs.build-linux.result && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
+    if: ${{ always() && (needs.freeze-qualified-source.result == 'success' || (inputs.candidate_ref == '' && inputs.reuse_platform_run_id == '' && needs.freeze-qualified-source.result == 'skipped' && needs.validate-trusted-ref.outputs.qualified_tag_commit != '' && needs.validate-trusted-ref.outputs.qualified_tag_commit == needs.validate-trusted-ref.outputs.release_commit) || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.freeze-qualified-source.result == 'skipped')) && inputs.runner_pool != '' && inputs.action == 'release' && needs.validate-trusted-ref.outputs.runner_pool == 'public' && needs.validate-trusted-ref.outputs.action == 'release' && needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.result == 'success' && (needs.build-android.result == 'success' || (inputs.reuse_android_run_id != '' && needs.validate-trusted-ref.outputs.android_source_sha != '' && needs.build-android.result == 'skipped')) && ((inputs.reuse_platform_run_id == '' && needs.build-ios.result == 'success' && needs.build-tvos.result == 'success' && needs.build-macos.result == 'success' && needs.build-windows.result == 'success' && needs.package-windows.result == 'success' && needs.build-linux.result == 'success' && (needs.build-webos.result == 'success' || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && (needs.build-tizen.result == 'success' || (needs.validate-trusted-ref.outputs.include_tizen_build != 'true' && needs.build-tizen.result == 'skipped'))) || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && ((inputs.rebuild_ios && needs.build-ios.result == 'success') || (!inputs.rebuild_ios && needs.build-ios.result == 'skipped')) && ((inputs.rebuild_tvos && needs.build-tvos.result == 'success') || (!inputs.rebuild_tvos && needs.build-tvos.result == 'skipped')) && ((inputs.rebuild_macos && needs.build-macos.result == 'success') || (!inputs.rebuild_macos && needs.build-macos.result == 'skipped')) && needs.build-windows.result == 'skipped' && needs.package-windows.result == 'skipped' && ((inputs.rebuild_linux && needs.build-linux.result == 'success') || (!inputs.rebuild_linux && needs.build-linux.result == 'skipped')) && (needs.build-webos.result == 'success' || (inputs.reuse_webos_run_id != '' && needs.validate-trusted-ref.outputs.webos_source_sha != '' && needs.build-webos.result == 'skipped') || (inputs.reuse_macos_package_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.build-webos.result == 'skipped') || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && ((inputs.reuse_repaired_run_id == 'tizen-rebuild' && needs.build-tizen.result == 'success') || (inputs.reuse_repaired_run_id != 'tizen-rebuild' && needs.build-tizen.result == 'skipped')))) && (needs.build-macos.result == 'skipped' || needs.validate-trusted-ref.outputs.prepare_homebrew_cask != 'true' || needs.finish-notarization.result == 'success') && needs.assemble-linux-arm64.result == needs.build-linux.result && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
     runs-on: ubuntu-24.04
     permissions:
       contents: write

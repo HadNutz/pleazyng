@@ -62,6 +62,22 @@ class MusicPlayContext {
   const MusicPlayContext({required this.title, required this.kind});
 }
 
+/// Local queue ownership permits expanding a page in place. Remote devices
+/// receive the complete immutable snapshot through their existing transport.
+abstract interface class MusicPlaylistWindowPlayback {
+  bool get canPlayPlaylistWindow;
+
+  Future<bool> playPlaylistWindow({
+    required List<MediaItem> tracks,
+    required int offset,
+    required int index,
+    required bool shuffle,
+    required MusicPlayContext playContext,
+    required bool Function() sourceCurrent,
+    required Future<List<MediaItem>> Function(bool Function() active) loadComplete,
+  });
+}
+
 /// Server-authored radio is owned by the same queue and player as all music.
 abstract interface class MusicServerRadioControls {
   Future<InstantMixOutcome> playServerRadio(ServerMusicRadio radio, {bool shuffle = false});

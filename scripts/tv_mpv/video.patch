@@ -15,7 +15,7 @@ index 825168d..c6a4de2 100644
 +++ b/scripts/shared/_audio_only.sh
 @@ -754,0 +755 @@ ${_small_flag}
 +--enable-libdav1d
-@@ -974,7 +975,8 @@ verify_ffmpeg_config() {
+@@ -974,7 +975,9 @@ verify_ffmpeg_config() {
 -  # Audio-only invariant: the 4 most common video decoders MUST be off.
 -  # If one is present, the binary is at least 30% larger than necessary
 -  # (and the audio-only branding is a lie).
@@ -24,6 +24,7 @@ index 825168d..c6a4de2 100644
 -  assert_define "$cmp" "CONFIG_VP9_DECODER"  "0"
 -  assert_define "$cmp" "CONFIG_AV1_DECODER"  "0"
 +  # The TV renderer needs both the compatibility decoders and hardware wrappers.
++  assert_define "$cmp" "CONFIG_FRAMERATE_FILTER" "1"
 +  assert_define "$cmp" "CONFIG_H264_V4L2M2M_DECODER" "1"
 +  assert_define "$cmp" "CONFIG_HEVC_V4L2M2M_DECODER" "1"
 +  assert_define "$cmp" "CONFIG_LIBDAV1D_DECODER" "1"
@@ -87,10 +88,14 @@ index 049294f..0a95460 100644
 +    --prefix "$CROSS_PREFIX_DIR" --libdir lib --default-library=static \
 +    -Db_staticpic=true -Denable_tools=false -Denable_tests=false
 +  ninja -C "$dav_build" -j"$JOBS" install
-@@ -466 +511 @@ cross_build_ffmpeg() {
+@@ -459,0 +505,3 @@ cross_build_ffmpeg() {
++  cp "$PLEAZYNG_TV_MPV_SOURCE/../../shared/tv_mpv/opencl_devices.h" "$dir/libavfilter/opencl_devices.h"
++  cp "$PLEAZYNG_TV_MPV_SOURCE/opencl_blend.h" "$dir/libavfilter/tv_opencl_blend.h"
++  (cd "$dir" && patch --batch --fuzz=0 -p1 -i "$PLEAZYNG_TV_MPV_SOURCE/framerate-opencl.patch")
+@@ -466 +513 @@ cross_build_ffmpeg() {
 -    "$@"
 +    "$@" "${video_uapi[@]}"
-@@ -483,0 +529,4 @@ cross_mpv_source() {
+@@ -483,0 +531,4 @@ cross_mpv_source() {
 +  (cd "$CROSS_MPV_DIR" && patch --batch --fuzz=0 -p1 -i "$PLEAZYNG_TV_MPV_SOURCE/sw-subtitles.patch")
 +  if [[ "${NDK_TRIPLE:-}" == "arm-webosmllib32-linux-gnueabi" ]]; then
 +    python3 "$PLEAZYNG_TV_MPV_SOURCE/install_ndl.py" "$CROSS_MPV_DIR"

@@ -63,7 +63,7 @@ class SourceDatabase extends GeneratedDatabase {
   }
 
   @override
-  int get schemaVersion => 17;
+  int get schemaVersion => 18;
   @override
   Iterable<TableInfo<Table, Object?>> get allTables => const [];
   @override
@@ -71,7 +71,7 @@ class SourceDatabase extends GeneratedDatabase {
     onCreate: (_) async {
       for (final sql in [
         'CREATE TABLE sources (profile TEXT NOT NULL, id TEXT NOT NULL, config TEXT NOT NULL, credentials TEXT NOT NULL, PRIMARY KEY(profile,id))',
-        'CREATE TABLE entries (profile TEXT NOT NULL, source TEXT NOT NULL, id TEXT NOT NULL, parent TEXT, payload TEXT NOT NULL, scan_generation INTEGER NOT NULL DEFAULT 0, search TEXT NOT NULL DEFAULT \'\', entry_key TEXT NOT NULL DEFAULT \'\', PRIMARY KEY(profile,source,id))',
+        'CREATE TABLE entries (profile TEXT NOT NULL, source TEXT NOT NULL, id TEXT NOT NULL, parent TEXT, payload TEXT NOT NULL, scan_generation INTEGER NOT NULL DEFAULT 0, search_title TEXT NOT NULL DEFAULT \'\', search TEXT NOT NULL DEFAULT \'\', entry_key TEXT NOT NULL DEFAULT \'\', PRIMARY KEY(profile,source,id))',
         'CREATE INDEX entries_profile_source_parent ON entries(profile,source,parent)',
         'CREATE INDEX entries_profile_entry_key ON entries(profile,entry_key)',
         'CREATE INDEX entries_profile_rowid ON entries(profile)',
@@ -221,6 +221,10 @@ class SourceDatabase extends GeneratedDatabase {
         await customStatement("ALTER TABLE canonical_copies ADD COLUMN scan_generation TEXT NOT NULL DEFAULT ''");
       }
       if (from < 17) await _createCueListenSchema();
+      if (from < 18) {
+        await customStatement("ALTER TABLE entries ADD COLUMN search_title TEXT NOT NULL DEFAULT ''");
+        await _refreshEntrySearchText(titlesOnly: true);
+      }
       if (from < 15) {
         await _createSubtitleCaptureJobSchema();
       } else if (from < 16) {
@@ -290,7 +294,7 @@ class SourceDatabase extends GeneratedDatabase {
 
   /// Refresh only the derived search text. Page by rowid so upgrading a large
   /// index does not decode the entire catalogue into memory at startup.
-  Future<void> _refreshEntrySearchText() async {
+  Future<void> _refreshEntrySearchText({bool titlesOnly = false}) async {
     var after = 0;
     while (true) {
       final rows = await customSelect(
@@ -309,7 +313,14 @@ class SourceDatabase extends GeneratedDatabase {
           // Preserve a damaged cache row for the existing recovery path.
           continue;
         }
-        await customStatement('UPDATE entries SET search=? WHERE rowid=?', [_entrySearchText(entry), after]);
+        if (titlesOnly) {
+          await customStatement('UPDATE entries SET search_title=? WHERE rowid=?', [
+            entry.displayTitle.trim().toLowerCase(),
+            after,
+          ]);
+        } else {
+          await customStatement('UPDATE entries SET search=? WHERE rowid=?', [_entrySearchText(entry), after]);
+        }
       }
     }
   }
@@ -591,8 +602,8 @@ class SourceRepository {
         await CanonicalLibrary(database).recordSource(profile, entry);
       }
       await database.customStatement(
-        'INSERT INTO entries (profile,source,id,parent,payload,search,entry_key) VALUES (?,?,?,?,?,?,?) '
-        'ON CONFLICT(profile,source,id) DO UPDATE SET parent=excluded.parent,payload=excluded.payload,search=excluded.search,entry_key=excluded.entry_key',
+        'INSERT INTO entries (profile,source,id,parent,payload,search,entry_key,search_title) VALUES (?,?,?,?,?,?,?,?) '
+        'ON CONFLICT(profile,source,id) DO UPDATE SET parent=excluded.parent,payload=excluded.payload,search=excluded.search,entry_key=excluded.entry_key,search_title=excluded.search_title',
         [
           profile,
           entry.sourceId,
@@ -601,6 +612,7 @@ class SourceRepository {
           jsonEncode(entry.toJson()),
           _entrySearchText(entry),
           entry.key,
+          entry.displayTitle.trim().toLowerCase(),
         ],
       );
       await database.customStatement('DELETE FROM entry_shelves WHERE profile=? AND source=? AND id=?', [
@@ -803,6 +815,7 @@ class SourceRepository {
     int offset = 0,
     int limit = 99,
     String? title,
+    Set<String>? sourceIds,
   }) async {
     final rows = await database
         .customSelect(
@@ -810,10 +823,17 @@ class SourceRepository {
           "COALESCE(NULLIF(MAX(json_extract(e.payload,'\$.series')),''),NULLIF(json_extract(parent.payload,'\$.title'),''),'') AS show_title "
           "FROM entries e LEFT JOIN entries parent ON parent.profile=e.profile AND parent.source=e.source AND parent.id=e.parent "
           "WHERE e.profile=? AND json_extract(e.payload,'\$.kind')!='folder' AND (json_extract(e.payload,'\$.identifiers.podcast')='episode' OR json_extract(e.payload,'\$.identifiers.feed') IS NOT NULL) "
+          "${sourceIds == null ? '' : 'AND e.source IN (SELECT value FROM json_each(?)) '} "
           "GROUP BY e.source,e.parent "
           "${title == null ? '' : 'HAVING show_title = ? COLLATE NOCASE '} "
           "ORDER BY show_title COLLATE NOCASE,e.source,e.parent LIMIT ? OFFSET ?",
-          variables: [Variable(profile), if (title != null) Variable(title), Variable(limit), Variable(offset)],
+          variables: [
+            Variable(profile),
+            if (sourceIds != null) Variable(jsonEncode(sourceIds.toList())),
+            if (title != null) Variable(title),
+            Variable(limit),
+            Variable(offset),
+          ],
         )
         .get();
     return rows
@@ -837,6 +857,7 @@ class SourceRepository {
     bool downloadedOnly = false,
     bool unplayedOnly = false,
     bool inProgressOnly = false,
+    bool recentlyPlayedFirst = false,
   }) async {
     const recent =
         "SELECT p.payload FROM progress p WHERE p.profile=e.profile AND p.entry=e.entry_key AND json_extract(p.payload,'\$.mode')='listening' ORDER BY CAST(json_extract(p.payload,'\$.updatedAt') AS INTEGER) DESC,p.rowid DESC LIMIT 1";
@@ -852,9 +873,11 @@ class SourceRepository {
           '$state'
           "${downloadedOnly ? 'AND ${_hasDownloadedFile('e')} ' : ''}"
           '${source == null ? '' : 'AND e.source=? '}'
-          '${parent == null ? '' : 'AND e.parent=? '}'
+          '${parent == null ? '' : "AND COALESCE(e.parent,'')=? "}'
           '${query.trim().isEmpty ? '' : 'AND instr(e.search,?)>0 '}'
-          "ORDER BY CAST(json_extract(e.payload,'\$.identifiers.publishedAt') AS INTEGER) "
+          "ORDER BY "
+          "${recentlyPlayedFirst ? "CAST(json_extract(($recent),'\$.updatedAt') AS INTEGER) DESC, " : ''}"
+          "CAST(json_extract(e.payload,'\$.identifiers.publishedAt') AS INTEGER) "
           '${oldestFirst ? 'ASC' : 'DESC'}, e.entry_key '
           'LIMIT ? OFFSET ?',
           variables: [
@@ -868,6 +891,42 @@ class SourceRepository {
         )
         .get();
     return rows.map((row) => SourceEntry.fromJson(sourceMap(jsonDecode(row.read<String>('payload'))))).toList();
+  }
+
+  /// Spoken requests for a series resume the last active episode, then choose
+  /// the newest unplayed episode. A request for the latest unplayed episode
+  /// only considers unplayed rows.
+  Future<SourceEntry?> podcastEpisodeForShow(
+    String profile, {
+    required String source,
+    required String parent,
+    required bool latestUnplayed,
+    required bool Function() current,
+  }) async {
+    Future<SourceEntry?> firstPlayable({bool inProgress = false, bool unplayed = false}) async {
+      const size = 32;
+      for (var offset = 0; current(); offset += size) {
+        final rows = await podcastEntries(
+          profile,
+          source: source,
+          parent: parent,
+          offset: offset,
+          limit: size,
+          inProgressOnly: inProgress,
+          recentlyPlayedFirst: inProgress,
+          unplayedOnly: unplayed,
+        );
+        if (!current()) return null;
+        for (final entry in rows) {
+          if (!entry.unavailable && entry.audio.isNotEmpty) return entry;
+        }
+        if (rows.length < size) break;
+      }
+      return null;
+    }
+
+    if (latestUnplayed) return firstPlayable(unplayed: true);
+    return await firstPlayable(inProgress: true) ?? await firstPlayable(unplayed: true) ?? await firstPlayable();
   }
 
   Future<List<SourceEntry>> entries(
@@ -1023,6 +1082,8 @@ class SourceRepository {
     String? cursor,
     int limit = 200,
     bool downloadedOnly = false,
+    Set<String>? searchableSources,
+    Set<String> remoteCloudSources = const {},
   }) async {
     final safeLimit = limit.clamp(1, 500).toInt();
     final predicates = <String>['profile=?', if (downloadedOnly) _hasDownloadedFile('entries')];
@@ -1046,9 +1107,29 @@ class SourceRepository {
       variables.add(Variable(shelf.name));
     }
     final normalizedQuery = query?.trim().toLowerCase() ?? '';
+    final ranked = searchableSources != null && normalizedQuery.isNotEmpty;
+    if (searchableSources != null) {
+      if (searchableSources.isEmpty) return (items: <SourceEntry>[], cursor: null);
+      predicates.add('source IN (SELECT value FROM json_each(?))');
+      variables.add(Variable(jsonEncode(searchableSources.toList())));
+      predicates.add("json_extract(payload,'\$.kind') NOT IN ('folder','unknown')");
+      if (remoteCloudSources.isNotEmpty) {
+        predicates.add(
+          "(COALESCE(json_extract(payload,'\$.unavailable'),0)=0 OR source NOT IN (SELECT value FROM json_each(?)))",
+        );
+        variables.add(Variable(jsonEncode(remoteCloudSources.toList())));
+      }
+    }
     final useFts = normalizedQuery.runes.length >= 3 && await _hasFullTextSearch();
-    final after = cursor == null ? 0 : int.tryParse(cursor);
-    if (after == null || after < 0) {
+    final parts = cursor?.split(':');
+    final after = cursor == null ? 0 : int.tryParse(parts!.last);
+    final afterRank = ranked && parts != null ? int.tryParse(parts.first) : 0;
+    if (parts != null && parts.length != (ranked ? 2 : 1) ||
+        after == null ||
+        after < 0 ||
+        afterRank == null ||
+        afterRank < 0 ||
+        afterRank > 3) {
       throw const SourceException(SourceFailure.invalidData);
     }
     Future<List<QueryRow>> fetch(bool fts) {
@@ -1066,6 +1147,27 @@ class SourceRepository {
           pagePredicates.add('instr(search,?)>0');
           pageVariables.add(Variable(normalizedQuery));
         }
+      }
+      if (ranked) {
+        // Rank across all eligible matches before the display cap. Keyset pagination
+        // keeps equal-rank rows stable when a caller requests the next page.
+        const score =
+            "CASE WHEN search_title=? OR json_extract(payload,'\$.title')=? COLLATE NOCASE THEN 0 "
+            "WHEN instr(search_title,?)=1 THEN 1 WHEN instr(search_title,?)>0 THEN 2 ELSE 3 END";
+        return database
+            .customSelect(
+              'SELECT page_id,payload,match_rank FROM (SELECT rowid AS page_id,payload,$score AS match_rank '
+              "FROM entries WHERE ${pagePredicates.join(' AND ')}) "
+              'WHERE (match_rank,page_id)>(?,?) ORDER BY match_rank,page_id LIMIT ?',
+              variables: [
+                for (var i = 0; i < 4; i++) Variable(normalizedQuery),
+                ...pageVariables,
+                Variable(afterRank),
+                Variable(after),
+                Variable(safeLimit + 1),
+              ],
+            )
+            .get();
       }
       pagePredicates.add('rowid>?');
       pageVariables.add(Variable(after));
@@ -1094,7 +1196,10 @@ class SourceRepository {
     final items = selected
         .map((row) => SourceEntry.fromJson(sourceMap(jsonDecode(row.read<String>('payload')))))
         .toList(growable: false);
-    return (items: items, cursor: hasMore && selected.isNotEmpty ? '${selected.last.read<int>('page_id')}' : null);
+    if (!hasMore || selected.isEmpty) return (items: items, cursor: null);
+    final last = selected.last;
+    final rowId = last.read<int>('page_id');
+    return (items: items, cursor: ranked ? "${last.read<int>('match_rank')}:$rowId" : '$rowId');
   }
 
   /// A small recent-state slice keeps the Files root's Continue rows useful
@@ -1336,43 +1441,40 @@ class SourceRepository {
 
   /// The caller carries the last committed revision. An old screen cannot
   /// overwrite a newer session or an explicit reset when its final tick lands.
-  Future<PublicationProgress> saveProgress(
-    String profile,
-    PublicationProgress value, {
-    String kind = 'position',
-  }) => database.transaction(() async {
-    _writable(profile);
-    final current = await progress(profile, value.key);
-    if (current != null && current.revision != value.revision) {
-      throw const SourceException(SourceFailure.conflict);
-    }
-    final next = value.copyWith(
-      revision: (current?.revision ?? 0) + 1,
-      updatedAt: DateTime.now().millisecondsSinceEpoch,
-    );
-    final payload = jsonEncode(next.toJson());
-    await database.customStatement(
-      'INSERT INTO progress(profile,key,payload,revision,pending,entry) VALUES (?,?,?,?,1,?) '
-      'ON CONFLICT(profile,key) DO UPDATE SET payload=excluded.payload,revision=excluded.revision,pending=1,entry=excluded.entry',
-      [profile, next.key, payload, next.revision, next.entryKey],
-    );
-    await database.customStatement('INSERT INTO events VALUES (?,?,?,?,?,?,1)', [
-      profile,
-      _uuid.v4(),
-      next.key,
-      payload,
-      kind,
-      next.updatedAt,
-    ]);
-    // The latest absolute snapshot is sufficient for replay. Preserve a
-    // bounded undo history without growing one row every five seconds forever.
-    await database.customStatement(
-      'DELETE FROM events WHERE profile=? AND key=? AND kind != ? AND rowid NOT IN '
-      '(SELECT rowid FROM events WHERE profile=? AND key=? AND kind != ? ORDER BY rowid DESC LIMIT 100)',
-      [profile, next.key, 'annotation', profile, next.key, 'annotation'],
-    );
-    return next;
-  });
+  Future<PublicationProgress> saveProgress(String profile, PublicationProgress value, {String kind = 'position'}) =>
+      database.transaction(() async {
+        _writable(profile);
+        final current = await progress(profile, value.key);
+        if (current != null && current.revision != value.revision) {
+          throw const SourceException(SourceFailure.conflict);
+        }
+        final next = value.copyWith(
+          revision: (current?.revision ?? 0) + 1,
+          updatedAt: DateTime.now().millisecondsSinceEpoch,
+        );
+        final payload = jsonEncode(next.toJson());
+        await database.customStatement(
+          'INSERT INTO progress(profile,key,payload,revision,pending,entry) VALUES (?,?,?,?,1,?) '
+          'ON CONFLICT(profile,key) DO UPDATE SET payload=excluded.payload,revision=excluded.revision,pending=1,entry=excluded.entry',
+          [profile, next.key, payload, next.revision, next.entryKey],
+        );
+        await database.customStatement('INSERT INTO events VALUES (?,?,?,?,?,?,1)', [
+          profile,
+          _uuid.v4(),
+          next.key,
+          payload,
+          kind,
+          next.updatedAt,
+        ]);
+        // The latest absolute snapshot is sufficient for replay. Preserve a
+        // bounded undo history without growing one row every five seconds forever.
+        await database.customStatement(
+          'DELETE FROM events WHERE profile=? AND key=? AND kind != ? AND rowid NOT IN '
+          '(SELECT rowid FROM events WHERE profile=? AND key=? AND kind != ? ORDER BY rowid DESC LIMIT 100)',
+          [profile, next.key, 'annotation', profile, next.key, 'annotation'],
+        );
+        return next;
+      });
 
   Future<void> acknowledge(String profile, String key, int revision) => database.transaction(() async {
     await database.customStatement(

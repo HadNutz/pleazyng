@@ -301,7 +301,7 @@ class _Translations$common$vi extends Translations$common$en {
 	@override String get submit => 'Gửi đi';
 	@override String get confirm => 'xác nhận';
 	@override String get retry => 'Thử lại';
-	@override String get logout => 'Đăng nhập';
+	@override String get logout => 'Đăng xuất';
 	@override String get unknown => 'Không rõ';
 	@override String get refresh => 'Làm mới';
 	@override String get yes => 'Đúng';
@@ -579,7 +579,7 @@ class _Translations$settings$vi extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'Mật Khẩu';
 	@override String get cloudBackupSaved => 'Cloud Backup Destination được tiết kiệm';
 	@override String get cloudBackupNow => 'Back Up Nay';
-	@override String get cloudBackupComplete => 'Cài đặt backup uploaded';
+	@override String cloudBackupComplete({required Object action}) => 'Đã tải bản sao lưu lên. Hãy lưu URL này. Sau khi cài đặt lại, nhập URL này vào mục sao lưu đám mây rồi chọn “${action}”.';
 	@override String get cloudBackupRestore => 'khôi phục backup';
 	@override String get cloudBackupRestoreConfirm => 'Điều này sẽ thay thế các cài đặt di động phù hợp trên thiết bị này.';
 	@override String get cloudBackupRestored => 'Cài đặt khôi phục từ Cloud Backup';
@@ -1414,7 +1414,7 @@ class _Translations$messages$vi extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'Tải về các thông tin mới cho "${title}"';
 	@override String metadataRefreshStarted({required Object title}) => 'Metadata update bắt đầu cho "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'Không cập nhật dữ liệu siêu dữ liệu: ${error}';
-	@override String get logoutConfirm => 'Bạn có chắc chắn bạn muốn đăng nhập không?';
+	@override String get logoutConfirm => 'Đăng xuất khỏi tất cả hồ sơ trên thiết bị này?';
 	@override String get noSeasonsFound => 'Không tìm thấy mùa';
 	@override String get seasonsLoadFailed => 'Không thể tải mùa';
 	@override String get noEpisodesFound => 'Không có sự kiện nào được tìm thấy trong mùa giải đầu tiên';
@@ -2354,15 +2354,15 @@ class _Translations$downloads$vi extends Translations$downloads$en {
 	@override String get noDownloads => 'Không tải xuống';
 	@override String get noDownloadsDescription => 'Nội dung tải xuống sẽ xuất hiện ở đây để xem offline';
 	@override String get downloadNow => 'Tải về';
-	@override String get deleteDownload => 'Tải Download';
-	@override String get retryDownload => 'Retry tải xuống';
+	@override String get deleteDownload => 'Xóa bản tải xuống';
+	@override String get retryDownload => 'Thử tải xuống lại';
 	@override String get downloadQueued => 'Tải xuống đã được xếp hàng đợi.';
 	@override String get downloadResumed => 'Download Đổi lại';
 	@override String get serverErrorBitrate => 'lỗi máy chủ: file có thể vượt quá giới hạn bitrate từ xa';
 	@override String get storageFull => 'Tải xuống dừng lại để bảo vệ lưu trữ có sẵn.Tự do một số không gian hoặc chọn một vị trí tải xuống khác, sau đó rút lại.';
 	@override String get storageUnavailable => 'Tải xuống dừng lại vì lưu trữ có sẵn không thể được kiểm tra. kiểm tra vị trí tải xuống, sau đó rút lại.';
 	@override String episodesQueued({required Object count}) => '${count} episodes quoted for download (liên kết  sửa đổi)';
-	@override String get downloadDeleted => 'Download đã xóa';
+	@override String get downloadDeleted => 'Đã xóa bản tải xuống';
 	@override String deleteConfirm({required Object title}) => 'Xóa "${title}" từ thiết bị này?';
 	@override String get deleteCollectionDownloads => 'Xóa Downloads';
 	@override String deleteCollectionDownloadsConfirm({required Object title}) => 'Xóa mọi tệp đã tải xuống trong “${title}” khỏi thiết bị này?';
@@ -5744,7 +5744,7 @@ extension on TranslationsVi {
 			'common.submit' => 'Gửi đi',
 			'common.confirm' => 'xác nhận',
 			'common.retry' => 'Thử lại',
-			'common.logout' => 'Đăng nhập',
+			'common.logout' => 'Đăng xuất',
 			'common.unknown' => 'Không rõ',
 			'common.refresh' => 'Làm mới',
 			'common.yes' => 'Đúng',
@@ -6014,7 +6014,7 @@ extension on TranslationsVi {
 			'settings.cloudBackupPassword' => 'Mật Khẩu',
 			'settings.cloudBackupSaved' => 'Cloud Backup Destination được tiết kiệm',
 			'settings.cloudBackupNow' => 'Back Up Nay',
-			'settings.cloudBackupComplete' => 'Cài đặt backup uploaded',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'Đã tải bản sao lưu lên. Hãy lưu URL này. Sau khi cài đặt lại, nhập URL này vào mục sao lưu đám mây rồi chọn “${action}”.',
 			'settings.cloudBackupRestore' => 'khôi phục backup',
 			'settings.cloudBackupRestoreConfirm' => 'Điều này sẽ thay thế các cài đặt di động phù hợp trên thiết bị này.',
 			'settings.cloudBackupRestored' => 'Cài đặt khôi phục từ Cloud Backup',
@@ -6793,7 +6793,7 @@ extension on TranslationsVi {
 			'messages.metadataRefreshing' => ({required Object title}) => 'Tải về các thông tin mới cho "${title}"',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'Metadata update bắt đầu cho "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'Không cập nhật dữ liệu siêu dữ liệu: ${error}',
-			'messages.logoutConfirm' => 'Bạn có chắc chắn bạn muốn đăng nhập không?',
+			'messages.logoutConfirm' => 'Đăng xuất khỏi tất cả hồ sơ trên thiết bị này?',
 			'messages.noSeasonsFound' => 'Không tìm thấy mùa',
 			'messages.seasonsLoadFailed' => 'Không thể tải mùa',
 			'messages.noEpisodesFound' => 'Không có sự kiện nào được tìm thấy trong mùa giải đầu tiên',
@@ -7871,15 +7871,15 @@ extension on TranslationsVi {
 			'downloads.noDownloads' => 'Không tải xuống',
 			'downloads.noDownloadsDescription' => 'Nội dung tải xuống sẽ xuất hiện ở đây để xem offline',
 			'downloads.downloadNow' => 'Tải về',
-			'downloads.deleteDownload' => 'Tải Download',
-			'downloads.retryDownload' => 'Retry tải xuống',
+			'downloads.deleteDownload' => 'Xóa bản tải xuống',
+			'downloads.retryDownload' => 'Thử tải xuống lại',
 			'downloads.downloadQueued' => 'Tải xuống đã được xếp hàng đợi.',
 			'downloads.downloadResumed' => 'Download Đổi lại',
 			'downloads.serverErrorBitrate' => 'lỗi máy chủ: file có thể vượt quá giới hạn bitrate từ xa',
 			'downloads.storageFull' => 'Tải xuống dừng lại để bảo vệ lưu trữ có sẵn.Tự do một số không gian hoặc chọn một vị trí tải xuống khác, sau đó rút lại.',
 			'downloads.storageUnavailable' => 'Tải xuống dừng lại vì lưu trữ có sẵn không thể được kiểm tra. kiểm tra vị trí tải xuống, sau đó rút lại.',
 			'downloads.episodesQueued' => ({required Object count}) => '${count} episodes quoted for download (liên kết  sửa đổi)',
-			'downloads.downloadDeleted' => 'Download đã xóa',
+			'downloads.downloadDeleted' => 'Đã xóa bản tải xuống',
 			'downloads.deleteConfirm' => ({required Object title}) => 'Xóa "${title}" từ thiết bị này?',
 			'downloads.deleteCollectionDownloads' => 'Xóa Downloads',
 			'downloads.deleteCollectionDownloadsConfirm' => ({required Object title}) => 'Xóa mọi tệp đã tải xuống trong “${title}” khỏi thiết bị này?',

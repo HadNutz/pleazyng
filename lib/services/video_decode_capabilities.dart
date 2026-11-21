@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:device_info_plus/device_info_plus.dart';
+import 'package:device_info_plus_webos/device_info_plus_webos.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -61,6 +61,8 @@ class VideoDecodeCapabilities {
   Set<String> _systemContainers = const {'mp4'};
   bool? _webosUhd;
   int? _webosSdkMajor;
+  bool? _webosDolbyVision;
+  bool? _webosHdr10;
   Set<int> _nativeDolbyVisionProfiles = const {};
   bool _dolbyVisionProfilesReported = false;
 
@@ -83,10 +85,13 @@ class VideoDecodeCapabilities {
     }
     if (PlatformDetector.isWebOSBuild()) {
       try {
-        final info = (await DeviceInfoPlugin().deviceInfo).data;
-        final uhd = info['uhd'];
-        if (uhd is bool) _webosUhd = uhd;
-        _webosSdkMajor = int.tryParse(info['sdkVersion']?.toString().split('.').first ?? '');
+        // webOS reports Linux to dart:io. The generic Linux getter casts
+        // this plugin's WebOSDeviceInfo to LinuxDeviceInfo.
+        final info = await DeviceInfoWebOSPlugin().webosInfo;
+        _webosDolbyVision = info.dolbyVision;
+        _webosHdr10 = info.hdr10;
+        _webosUhd = info.uhd ?? _webosUhd;
+        _webosSdkMajor = int.tryParse(info.sdkVersion?.split('.').first ?? '');
       } on MissingPluginException {
         // Keep the compatibility profile until firmware supplies device info.
       } on PlatformException {
@@ -183,6 +188,10 @@ class VideoDecodeCapabilities {
       : PlatformDetector.isWebOSBuild()
       ? 'webos'
       : RuntimePlaybackCapabilities.negotiationEngine;
+
+  static bool? webosNativeDolbyVision(String engine) =>
+      engine == 'webos' ? _singleton.instance?._webosDolbyVision : null;
+  static bool webosNativeHdr10(String engine) => engine == 'webos' && _singleton.instance?._webosHdr10 == true;
 
   static bool get _webosModernUhd =>
       _singleton.instance?._webosUhd == true && (_singleton.instance?._webosSdkMajor ?? 0) >= 9;
@@ -310,6 +319,9 @@ class VideoDecodeCapabilities {
   /// Distinguishes a measured empty profile set from a missing/failed probe.
   static String describeDolbyVisionProfilesSync() {
     final instance = _singleton.instance;
+    if (videoEngine == 'webos') {
+      return 'profiles unreported, native DV capability: ${webosNativeDolbyVision(videoEngine) ?? 'unknown'}';
+    }
     if (instance == null || !instance._dolbyVisionProfilesReported) return 'unreported';
     final profiles = instance._nativeDolbyVisionProfiles.toList()..sort();
     return profiles.isEmpty ? 'none' : profiles.join(',');

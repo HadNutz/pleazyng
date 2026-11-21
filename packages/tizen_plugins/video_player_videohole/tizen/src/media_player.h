@@ -35,6 +35,7 @@ class MediaPlayer : public VideoPlayer {
   int Prepare() override;
   void Dispose() override;
 
+  int SetSourceCrop(double x, double y, double width, double height) override;
   void SetDisplayRoi(int32_t x, int32_t y, int32_t width,
                      int32_t height) override;
   bool Play() override;
@@ -97,6 +98,7 @@ class MediaPlayer : public VideoPlayer {
   CreateMessage create_message_;
   player_state_e pre_state_;
   int64_t pre_playing_time_;
+  double crop_x_ = 0, crop_y_ = 0, crop_width_ = 1, crop_height_ = 1;
   int32_t pre_display_roi_x_ = 0;
   int32_t pre_display_roi_y_ = 0;
   int32_t pre_display_roi_width_ = 1;

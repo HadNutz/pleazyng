@@ -301,7 +301,7 @@ class _Translations$common$he extends Translations$common$en {
 	@override String get submit => 'שלח';
 	@override String get confirm => 'אישור';
 	@override String get retry => 'נסה שנית';
-	@override String get logout => 'להירשם';
+	@override String get logout => 'יציאה מהחשבון';
 	@override String get unknown => 'לא ידוע';
 	@override String get refresh => 'רענון';
 	@override String get yes => 'כן';
@@ -583,7 +583,7 @@ class _Translations$settings$he extends Translations$settings$en {
 	@override String get cloudBackupPassword => 'סיסמה';
 	@override String get cloudBackupSaved => 'Cloud Backup Destination נשמר';
 	@override String get cloudBackupNow => 'בחזרה עכשיו';
-	@override String get cloudBackupComplete => 'הגדרות גיבוי הועלה';
+	@override String cloudBackupComplete({required Object action}) => 'הגיבוי הועלה. יש לשמור את הכתובת הזו. לאחר התקנה חדשה, יש להזין אותה במסך הגיבוי בענן ולבחור באפשרות „${action}”.';
 	@override String get cloudBackupRestore => 'לשחזר גיבוי';
 	@override String get cloudBackupRestoreConfirm => 'זה יחליף את ההגדרות הניידות המתאימות במכשיר זה.';
 	@override String get cloudBackupRestored => 'הגדרות שחוזרות מענן גיבוי';
@@ -1423,7 +1423,7 @@ class _Translations$messages$he extends Translations$messages$en {
 	@override String metadataRefreshing({required Object title}) => 'נתונים מטא-נתונים עבור "${title}..."';
 	@override String metadataRefreshStarted({required Object title}) => 'מחדש נתונים מתחיל עבור "${title}"';
 	@override String metadataRefreshFailed({required Object error}) => 'לא הצליח לשחזר נתונים מטאוגרפיים: ${error}';
-	@override String get logoutConfirm => 'אתה בטוח שאתה רוצה להיכנס?';
+	@override String get logoutConfirm => 'לצאת מכל הפרופילים במכשיר הזה?';
 	@override String get noSeasonsFound => 'לא נמצאו עונות';
 	@override String get seasonsLoadFailed => 'לא יכול להיות עונות';
 	@override String get noEpisodesFound => 'לא נמצאו פרקים בעונה הראשונה';
@@ -2373,15 +2373,15 @@ class _Translations$downloads$he extends Translations$downloads$en {
 	@override String get noDownloads => 'עדיין לא הורד';
 	@override String get noDownloadsDescription => 'התוכן שנרשם יופיע כאן לצפייה לא מקוונת';
 	@override String get downloadNow => 'הורדה';
-	@override String get deleteDownload => 'הורד Download';
-	@override String get retryDownload => 'הורד Retry';
+	@override String get deleteDownload => 'מחיקת ההורדה';
+	@override String get retryDownload => 'ניסיון הורדה חוזר';
 	@override String get downloadQueued => 'הורדה נוספה לתור.';
 	@override String get downloadResumed => 'הורד מחדש';
 	@override String get serverErrorBitrate => 'שגיאה בשרת: קובץ עשוי לעבור את הגבול של שיעור ביט מרחוק';
 	@override String get storageFull => 'הורדות נעצרו כדי להגן על אחסון זמין.חופשי קצת שטח או בחר מיקום הורדה אחר, ולאחר מכן להחזיר.';
 	@override String get storageUnavailable => 'הורדות נעצרו כי לא ניתן לבדוק את אחסון הזמינות.בדוק את מיקום ההורדה, ולאחר מכן לחזור.';
 	@override String episodesQueued({required Object count}) => '${count} פרקים שנרשמו להורדה';
-	@override String get downloadDeleted => 'הורדה מוחלפת';
+	@override String get downloadDeleted => 'ההורדה נמחקה';
 	@override String deleteConfirm({required Object title}) => 'האם ניתן למחוק את "${title}" מהמכשיר הזה?';
 	@override String get deleteCollectionDownloads => 'הורדת הורדות';
 	@override String deleteCollectionDownloadsConfirm({required Object title}) => 'למחוק מהמכשיר הזה את כל ההורדות שב„${title}”?';
@@ -5777,7 +5777,7 @@ extension on TranslationsHe {
 			'common.submit' => 'שלח',
 			'common.confirm' => 'אישור',
 			'common.retry' => 'נסה שנית',
-			'common.logout' => 'להירשם',
+			'common.logout' => 'יציאה מהחשבון',
 			'common.unknown' => 'לא ידוע',
 			'common.refresh' => 'רענון',
 			'common.yes' => 'כן',
@@ -6047,7 +6047,7 @@ extension on TranslationsHe {
 			'settings.cloudBackupPassword' => 'סיסמה',
 			'settings.cloudBackupSaved' => 'Cloud Backup Destination נשמר',
 			'settings.cloudBackupNow' => 'בחזרה עכשיו',
-			'settings.cloudBackupComplete' => 'הגדרות גיבוי הועלה',
+			'settings.cloudBackupComplete' => ({required Object action}) => 'הגיבוי הועלה. יש לשמור את הכתובת הזו. לאחר התקנה חדשה, יש להזין אותה במסך הגיבוי בענן ולבחור באפשרות „${action}”.',
 			'settings.cloudBackupRestore' => 'לשחזר גיבוי',
 			'settings.cloudBackupRestoreConfirm' => 'זה יחליף את ההגדרות הניידות המתאימות במכשיר זה.',
 			'settings.cloudBackupRestored' => 'הגדרות שחוזרות מענן גיבוי',
@@ -6826,7 +6826,7 @@ extension on TranslationsHe {
 			'messages.metadataRefreshing' => ({required Object title}) => 'נתונים מטא-נתונים עבור "${title}..."',
 			'messages.metadataRefreshStarted' => ({required Object title}) => 'מחדש נתונים מתחיל עבור "${title}"',
 			'messages.metadataRefreshFailed' => ({required Object error}) => 'לא הצליח לשחזר נתונים מטאוגרפיים: ${error}',
-			'messages.logoutConfirm' => 'אתה בטוח שאתה רוצה להיכנס?',
+			'messages.logoutConfirm' => 'לצאת מכל הפרופילים במכשיר הזה?',
 			'messages.noSeasonsFound' => 'לא נמצאו עונות',
 			'messages.seasonsLoadFailed' => 'לא יכול להיות עונות',
 			'messages.noEpisodesFound' => 'לא נמצאו פרקים בעונה הראשונה',
@@ -7904,15 +7904,15 @@ extension on TranslationsHe {
 			'downloads.noDownloads' => 'עדיין לא הורד',
 			'downloads.noDownloadsDescription' => 'התוכן שנרשם יופיע כאן לצפייה לא מקוונת',
 			'downloads.downloadNow' => 'הורדה',
-			'downloads.deleteDownload' => 'הורד Download',
-			'downloads.retryDownload' => 'הורד Retry',
+			'downloads.deleteDownload' => 'מחיקת ההורדה',
+			'downloads.retryDownload' => 'ניסיון הורדה חוזר',
 			'downloads.downloadQueued' => 'הורדה נוספה לתור.',
 			'downloads.downloadResumed' => 'הורד מחדש',
 			'downloads.serverErrorBitrate' => 'שגיאה בשרת: קובץ עשוי לעבור את הגבול של שיעור ביט מרחוק',
 			'downloads.storageFull' => 'הורדות נעצרו כדי להגן על אחסון זמין.חופשי קצת שטח או בחר מיקום הורדה אחר, ולאחר מכן להחזיר.',
 			'downloads.storageUnavailable' => 'הורדות נעצרו כי לא ניתן לבדוק את אחסון הזמינות.בדוק את מיקום ההורדה, ולאחר מכן לחזור.',
 			'downloads.episodesQueued' => ({required Object count}) => '${count} פרקים שנרשמו להורדה',
-			'downloads.downloadDeleted' => 'הורדה מוחלפת',
+			'downloads.downloadDeleted' => 'ההורדה נמחקה',
 			'downloads.deleteConfirm' => ({required Object title}) => 'האם ניתן למחוק את "${title}" מהמכשיר הזה?',
 			'downloads.deleteCollectionDownloads' => 'הורדת הורדות',
 			'downloads.deleteCollectionDownloadsConfirm' => ({required Object title}) => 'למחוק מהמכשיר הזה את כל ההורדות שב„${title}”?',

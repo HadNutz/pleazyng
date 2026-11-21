@@ -101,6 +101,39 @@ void main() {
     }
   });
 
+  test('TV motion applies to one prepared VOD source and never carries into live playback', () async {
+    final creates = <Map<dynamic, dynamic>>[];
+    var disabled = false;
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      switch (call.method) {
+        case 'create':
+          creates.add(call.arguments as Map);
+          return 1;
+        case 'state':
+          return {'ready': true, 'output': 'libmpv-texture'};
+        case 'tracks':
+          return [];
+        case 'disableMotion':
+          disabled = true;
+      }
+      return null;
+    });
+    final player = PlayerSystem('tvmpv');
+    try {
+      player.prepareTvMotion(true);
+      await player.open(Media('file:///eligible.mp4'));
+      await player.disableTvMotion();
+      expect(disabled, isTrue);
+      player.prepareTvMotion(true);
+      await player.open(Media('file:///live.ts'), isLive: true);
+      await player.open(Media('file:///next.mp4'));
+      expect(creates.map((args) => args['motion']), [true, null, null]);
+    } finally {
+      await player.dispose();
+      messenger.setMockMethodCallHandler(channel, null);
+    }
+  });
+
   test('a superseded prepare cannot start the old source', () async {
     final began = Completer<void>();
     final release = Completer<void>();

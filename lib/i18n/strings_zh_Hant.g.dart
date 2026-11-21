@@ -580,7 +580,7 @@ class _Translations$settings$zh_Hant extends Translations$settings$zh {
 	@override String get cloudBackupPassword => '密碼';
 	@override String get cloudBackupSaved => '雲備份目的地儲存';
 	@override String get cloudBackupNow => '迴歸現在';
-	@override String get cloudBackupComplete => '設定備份上傳';
+	@override String cloudBackupComplete({required Object action}) => '備份已上傳。請儲存這個網址。重新安裝後，在雲端備份中輸入這個網址，再選擇「${action}」。';
 	@override String get cloudBackupRestore => '恢復備份';
 	@override String get cloudBackupRestoreConfirm => '此將取代該裝置上的相匹配移動設定。';
 	@override String get cloudBackupRestored => '從雲端儲備恢復的設定';
@@ -1420,7 +1420,7 @@ class _Translations$messages$zh_Hant extends Translations$messages$zh {
 	@override String metadataRefreshing({required Object title}) => '正在重新整理「${title}」的中繼資料…';
 	@override String metadataRefreshStarted({required Object title}) => '已開始重新整理「${title}」的中繼資料';
 	@override String metadataRefreshFailed({required Object error}) => '無法重新整理中繼資料：${error}';
-	@override String get logoutConfirm => '您確定要登出嗎？';
+	@override String get logoutConfirm => '要登出這部裝置上的所有使用者設定檔嗎？';
 	@override String get noSeasonsFound => '找不到季數';
 	@override String get seasonsLoadFailed => '無法載入季數';
 	@override String get noEpisodesFound => '在第一季中找不到單集';
@@ -6035,7 +6035,7 @@ extension on TranslationsZhHant {
 			'settings.cloudBackupPassword' => '密碼',
 			'settings.cloudBackupSaved' => '雲備份目的地儲存',
 			'settings.cloudBackupNow' => '迴歸現在',
-			'settings.cloudBackupComplete' => '設定備份上傳',
+			'settings.cloudBackupComplete' => ({required Object action}) => '備份已上傳。請儲存這個網址。重新安裝後，在雲端備份中輸入這個網址，再選擇「${action}」。',
 			'settings.cloudBackupRestore' => '恢復備份',
 			'settings.cloudBackupRestoreConfirm' => '此將取代該裝置上的相匹配移動設定。',
 			'settings.cloudBackupRestored' => '從雲端儲備恢復的設定',
@@ -6814,7 +6814,7 @@ extension on TranslationsZhHant {
 			'messages.metadataRefreshing' => ({required Object title}) => '正在重新整理「${title}」的中繼資料…',
 			'messages.metadataRefreshStarted' => ({required Object title}) => '已開始重新整理「${title}」的中繼資料',
 			'messages.metadataRefreshFailed' => ({required Object error}) => '無法重新整理中繼資料：${error}',
-			'messages.logoutConfirm' => '您確定要登出嗎？',
+			'messages.logoutConfirm' => '要登出這部裝置上的所有使用者設定檔嗎？',
 			'messages.noSeasonsFound' => '找不到季數',
 			'messages.seasonsLoadFailed' => '無法載入季數',
 			'messages.noEpisodesFound' => '在第一季中找不到單集',
