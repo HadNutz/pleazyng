@@ -1,0 +1,55 @@
+name: Native static analysis
+on:
+  pull_request:
+    paths: ['**/*.kt', '**/*.swift', 'native/**', 'scripts/tv_mpv/**', 'docs/maintainers/native-lint/**', 'scripts/checks/native_*.py', '.github/workflows/native-lint.yml']
+  push:
+    branches: [main]
+    paths: ['**/*.kt', '**/*.swift', 'native/**', 'scripts/tv_mpv/**', 'docs/maintainers/native-lint/**', 'scripts/checks/native_*.py', '.github/workflows/native-lint.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [kotlin, swift, clang]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify findings and test-count ratchets
+        if: matrix.language == 'kotlin'
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE: ${{ github.event.before }}
+        run: |
+          base="${PR_BASE:-${PUSH_BASE:-HEAD^}}"
+          python3 scripts/checks/native_ratchet.py "$(git merge-base HEAD "$base")"
+      - name: Load detekt
+        if: matrix.language == 'kotlin'
+        run: |
+          curl -fLsS --retry 3 https://github.com/detekt/detekt/releases/download/v1.23.8/detekt-cli-1.23.8-all.jar -o "$RUNNER_TEMP/detekt.jar"
+          echo "2ce2ff952e150baf28a29cda70a363b0340b3e81a55f43e51ec5edffc3d066c1  $RUNNER_TEMP/detekt.jar" | sha256sum -c -
+          echo "LINTER=$RUNNER_TEMP/detekt.jar" >> "$GITHUB_ENV"
+      - name: Load SwiftLint
+        if: matrix.language == 'swift'
+        run: |
+          curl -fLsS --retry 3 https://github.com/realm/SwiftLint/releases/download/0.65.1/swiftlint_linux_amd64.zip -o "$RUNNER_TEMP/swiftlint.zip"
+          echo "caeed6f4a679c35539ffaf124f6c4ab4a8416917f7d8796279dc52b74026059d  $RUNNER_TEMP/swiftlint.zip" | sha256sum -c -
+          unzip -j "$RUNNER_TEMP/swiftlint.zip" '*swiftlint-static' -d "$RUNNER_TEMP/swiftlint"
+          chmod +x "$RUNNER_TEMP/swiftlint/swiftlint-static"
+          echo "LINTER=$RUNNER_TEMP/swiftlint/swiftlint-static" >> "$GITHUB_ENV"
+      - name: Load clang-tidy
+        if: matrix.language == 'clang'
+        run: |
+          echo 'clang-tidy==19.1.0.1 --hash=sha256:511fb73f2c8d86a3b34eee7c4a91306bdb17fc6f9565a662dd5ffa7b4836891d' > "$RUNNER_TEMP/clang.txt"
+          python3 -m venv "$RUNNER_TEMP/clang"
+          "$RUNNER_TEMP/clang/bin/pip" install --no-deps --require-hashes -r "$RUNNER_TEMP/clang.txt"
+          echo "LINTER=$RUNNER_TEMP/clang/bin/clang-tidy" >> "$GITHUB_ENV"
+      - name: Analyze native sources
+        env:
+          LANGUAGE: ${{ matrix.language }}
+        run: python3 scripts/checks/native_lint.py "$LANGUAGE" --tool "$LINTER"
