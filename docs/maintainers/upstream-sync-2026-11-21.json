@@ -137,8 +137,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "fix(watch-together): create and join rooms when the package version is unreadable",
-      "disposition": "pending",
-      "evidence": "Fork room creation uses PackageInfo.fromPlatform() directly. An empty value produces Pleazyng/ and an exception can abort creation or joining. Add a shared nonthrowing version resolver, retain the fork identity, and preserve “unknown” as a separate state for update comparisons. Audit Plex/Jellyfin/Simkl headers and diagnostic labels using the same source. [watch_together_provider.dart L130](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/watch_together/providers/watch_together_provider.dart#L130) · [update_service.dart L140](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/update_service.dart#L140)",
+      "disposition": "adapted",
+      "evidence": "Use a nonthrowing version resolver for room identity and wire metadata, preserving the Pleazyng client name and existing Jellyfin onboarding fallback.",
       "files": [
         "lib/main.dart",
         "lib/models/plex/plex_config.dart",
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "adapted": 18,
+    "adapted": 19,
     "deferred": 1,
-    "pending": 8,
-    "retained": 2
+    "retained": 2,
+    "pending": 7
   }
 }

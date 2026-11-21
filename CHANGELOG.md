@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Use a nonthrowing version resolver for room identity and wire metadata, preserving the Pleazyng client name and existing Jellyfin onboarding fallback. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/d78b6d806e3ebf60881999564def7cad969722b5) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
 - Rasterize the Discover backdrop gradient while retaining the fork’s responsive artwork and theme stops. [a-j-jones](https://github.com/a-j-jones) contributed [the original change](https://github.com/edde746/plezy/commit/77f11b86f06a3cd7ec73072dfc9c60bb6c985eb5) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 
 - Avoid starting unused built-in mpv scripts on Android while keeping explicit video-core configuration overrides. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/4c3c25b8233bb887d7224b3844f3763a88b720c5) to upstream Plezy. Pleazyng integrated the behavior for this fork.

@@ -129,9 +129,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'utils/navigation_transitions.dart';
 import 'utils/native_primary_view.dart';
 import 'utils/log_redaction_manager.dart';
-
-import 'package:package_info_plus/package_info_plus.dart';
-
+import 'utils/app_version.dart';
 import 'utils/android_exit_diagnostics.dart';
 import 'utils/tvos_startup_probe.dart';
 import 'utils/storage_failure.dart';
@@ -501,20 +499,15 @@ const startupBootstrapProgressKey = Key('startup-bootstrap-progress');
 /// path by [_primeDiagnosticsVersion].
 String _diagnosticsVersion = gitCommit.isEmpty ? 'unknown' : gitCommit.substring(0, gitCommit.length.clamp(0, 7));
 
-/// Resolves the package version for diagnostics without putting it in the gate.
+/// Resolves the app version for diagnostics without putting it in the gate.
 ///
-/// `PackageInfo.fromPlatform()` reads the executable's Win32 version resource
-/// and throws `WindowsException`/`ArgumentError` when that read fails (a UNC
-/// launch, antivirus interception). It used to run inside the startup gate for
-/// a value only Sentry consumed; here a failure just leaves the commit label.
+/// It used to run inside the startup gate for a value only Sentry consumed. A
+/// version the platform can't report leaves the commit label.
 Future<void> _primeDiagnosticsVersion() async {
-  try {
-    final info = await PackageInfo.fromPlatform();
-    final commit = gitCommit.isEmpty ? '' : ' (${gitCommit.substring(0, gitCommit.length.clamp(0, 7))})';
-    _diagnosticsVersion = '${info.version}+${info.buildNumber}$commit';
-  } catch (error, stackTrace) {
-    appLogger.d('Could not resolve the package version for diagnostics', error: error, stackTrace: stackTrace);
-  }
+  final appVersion = await AppVersion.current();
+  if (appVersion.version == null) return;
+  final commit = gitCommit.isEmpty ? '' : ' (${gitCommit.substring(0, gitCommit.length.clamp(0, 7))})';
+  _diagnosticsVersion = '${appVersion.label}$commit';
 }
 
 /// Platform label for a failure record. Deliberately coarse — enough to
@@ -1296,7 +1289,7 @@ void _startNonessentialInitialization(SettingsService settings) {
 }
 
 Future<void> _logEnvironmentDiagnostics() async {
-  final packageInfo = await PackageInfo.fromPlatform();
+  final appVersion = await AppVersion.current();
   final commitSuffix = gitCommit.isNotEmpty ? ' (${gitCommit.substring(0, 7)})' : '';
   String renderer = '';
   if (Platform.isAndroid) {
@@ -1305,7 +1298,7 @@ Future<void> _logEnvironmentDiagnostics() async {
     await Future.sync(() => Sentry.configureScope((scope) => scope.setTag('renderer', rendererName ?? 'unknown')));
   }
   appLogger.i(
-    'Pleazyng v${packageInfo.version}+${packageInfo.buildNumber}$commitSuffix$renderer'
+    'Pleazyng v${appVersion.label}$commitSuffix$renderer'
     ' [effects: ${DevicePerformance.describeSync()}]',
   );
   appLogger.i('Display: ${DevicePerformance.describeDisplay()}');

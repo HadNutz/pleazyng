@@ -23,6 +23,7 @@ import '../../services/jellyfin_endpoint_discovery.dart';
 import '../../services/jellyfin_lan_discovery_service.dart';
 import '../../services/storage_service.dart';
 import '../../utils/app_logger.dart';
+import '../../utils/app_version.dart';
 import '../../utils/device_identity.dart';
 import '../../utils/error_message_utils.dart';
 import '../../utils/platform_detector.dart';
@@ -38,20 +39,8 @@ import 'quick_connect_flow_mixin.dart';
 
 @visibleForTesting
 Future<String> resolveJellyfinClientVersion({Future<PackageInfo> Function()? packageInfoLoader}) async {
-  const fallbackVersion = '1.0';
-  try {
-    final packageInfo = await (packageInfoLoader == null ? PackageInfo.fromPlatform() : packageInfoLoader());
-    final version = packageInfo.version.trim();
-    if (version.isNotEmpty) return version;
-    appLogger.w('Package version is empty; using Jellyfin client version $fallbackVersion');
-  } catch (error, stackTrace) {
-    appLogger.w(
-      'Failed to resolve package version; using Jellyfin client version $fallbackVersion',
-      error: error,
-      stackTrace: stackTrace,
-    );
-  }
-  return fallbackVersion;
+  final info = packageInfoLoader == null ? await AppVersion.current() : await AppVersion.read(packageInfoLoader);
+  return info.version ?? '1.0';
 }
 
 /// Three-step form to add a Jellyfin or Emby server:
