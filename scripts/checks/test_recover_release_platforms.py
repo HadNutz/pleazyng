@@ -101,6 +101,7 @@ class SourceProofTests(unittest.TestCase):
             "scripts/checks/test_recover_release_platforms.py",
             "scripts/checks/test_release_ci_gate.py",
             "scripts/checks/test_release_signing_options.py",
+            "AGENTS.md",
             "scripts/tv_mpv/build.py",
             "scripts/checks/test_tv_mpv_build.py",
             ".github/release-packaging-repairs.json",
