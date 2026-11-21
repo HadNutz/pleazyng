@@ -9,9 +9,15 @@ import xml.etree.ElementTree as ET
 
 DIRECTORY = "docs/maintainers/native-lint/"
 FILES = ("detekt.xml", "swiftlint.json", "clang-tidy.json")
+ANDROID_BASELINE = "android/app/lint-baseline.xml"
 
 
 def issues(filename, data):
+    if filename == "lint-baseline.xml":
+        def android_key(issue):
+            files = tuple(location.get("file") for location in issue.findall("location"))
+            return (issue.get("id"), issue.get("message"), files, issue.get("errorLine1", "").strip())
+        return Counter(android_key(issue) for issue in ET.fromstring(data).findall("issue"))
     if filename == "detekt.xml":
         return Counter(element.text for element in ET.fromstring(data).iter("ID"))
     if filename == "swiftlint.json":
@@ -50,8 +56,14 @@ def main():
     old_counts, new_counts = test_counts(old_paths), test_counts(new_paths)
     errors = [f"{lang} native test files dropped from {count} to {new_counts[lang]}"
               for lang, count in old_counts.items() if new_counts[lang] < count]
-    for name in FILES:
-        path = DIRECTORY + name
+    baselines = [DIRECTORY + name for name in FILES]
+    if ANDROID_BASELINE in new_paths or ANDROID_BASELINE in old_paths:
+        baselines.append(ANDROID_BASELINE)
+    for path in baselines:
+        name = PurePosixPath(path).name
+        if not Path(path).is_file():
+            errors.append(f"Missing reviewed baseline: {path}")
+            continue
         current = issues(name, Path(path).read_bytes())
         if path in old_paths:
             previous = issues(name, git("show", args.base + ":" + path))
