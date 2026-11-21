@@ -227,13 +227,14 @@ void main() {
       var boxIndexRequests = 0;
       Future<http.Response> respond(http.Request r) async {
         final q = r.url.queryParameters;
-        if (r.url.path.endsWith('/Views'))
+        if (r.url.path.endsWith('/Views')) {
           return _json({
             'Items': [
               for (final id in ['hidden', 'movies', 'tv'])
                 {'Id': id, 'Name': id, 'Type': 'CollectionFolder', 'CollectionType': id == 'tv' ? 'tvshows' : 'movies'},
             ],
           });
+        }
         if (q['IncludeItemTypes'] == 'BoxSet') {
           boxIndexRequests++;
           return _json({
@@ -243,18 +244,20 @@ void main() {
             'TotalRecordCount': 2,
           });
         }
-        if (r.url.path.endsWith('/Ancestors'))
+        if (r.url.path.endsWith('/Ancestors')) {
           return _json([
             {'Type': 'CollectionFolder', 'Id': 'tv', 'Name': 'TV'},
           ]);
-        if (q['ParentId'] == 'private')
+        }
+        if (q['ParentId'] == 'private') {
           return _json({
             'Items': [
               {'Id': 'private-movie', 'Type': 'Movie', 'ParentId': 'hidden'},
             ],
             'TotalRecordCount': 1,
           });
-        if (q['ParentId'] == 'mixed')
+        }
+        if (q['ParentId'] == 'mixed') {
           return _json({
             'Items': [
               {'Id': 'movie', 'Type': 'Movie', 'ParentId': 'movies'},
@@ -262,6 +265,7 @@ void main() {
             ],
             'TotalRecordCount': 2,
           });
+        }
         fail('Unexpected request: ${r.url}');
       }
 
