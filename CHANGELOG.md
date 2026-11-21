@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Fix a player-controls startup assertion when reading the active display and hinge before Flutter finishes mounting the controls.
+
 - Preserve the saved per-show audio and subtitle choices when their stored data is unreadable. Playback continues and reports the unsuccessful preference write.
 
 - Schedule recurring IPTV programmes on this device from the native guide and manage the rules in Recordings. The scheduler matches guide updates, avoids duplicate episodes and preserves one-off or active captures when a rule is removed. Independently implemented from the [M3U Web Picker DVR](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/dvr.py) behavior by [Zachary Schmook](https://github.com/zschmook) and contributors.
