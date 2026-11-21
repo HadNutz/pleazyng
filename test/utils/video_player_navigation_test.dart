@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plezy/database/app_database.dart';
 import 'package:plezy/media/ids.dart';
 import 'package:plezy/media/media_backend.dart';
@@ -18,6 +20,7 @@ import 'package:plezy/models/transcode_quality_preset.dart';
 import 'package:plezy/mpv/player/player_native.dart';
 import 'package:plezy/providers/download_provider.dart';
 import 'package:plezy/providers/multi_server_provider.dart';
+import 'package:plezy/services/download_storage_service.dart';
 import 'package:plezy/services/downloaded_video_source.dart';
 import 'package:plezy/services/offline_watch_sync_service.dart';
 import 'package:plezy/services/playback_initialization_types.dart';
@@ -29,6 +32,7 @@ import 'package:plezy/watch_together/models/watch_copy.dart';
 import 'package:plezy/watch_together/providers/watch_together_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../test_helpers/io_fakes.dart';
 import '../test_helpers/prefs.dart';
 import '../test_helpers/media_items.dart';
 import '../test_helpers/mock_player_channels.dart';
@@ -370,10 +374,16 @@ void main() {
     late List<String> externalLaunches;
     late _ExternalUrlClient client;
     late AppDatabase database;
+    late Directory storageRoot;
+    late PathProviderPlatform previousPaths;
 
     setUp(() async {
       resetSharedPreferencesForTest();
       SettingsService.resetForTesting();
+      storageRoot = await Directory.systemTemp.createTemp('download-handoff-');
+      previousPaths = PathProviderPlatform.instance;
+      PathProviderPlatform.instance = FakePathProvider(storageRoot);
+      DownloadStorageService.resetForTesting();
       SafStorageService.setOpsForTesting(FakeSafStorage());
       await (await SettingsService.getInstance()).write(SettingsService.useExternalPlayer, true);
       externalLaunches = [];
@@ -391,6 +401,9 @@ void main() {
 
     tearDown(() async {
       await database.close();
+      DownloadStorageService.resetForTesting();
+      PathProviderPlatform.instance = previousPaths;
+      await storageRoot.delete(recursive: true);
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
         urlLauncherChannel,
         null,
@@ -416,16 +429,16 @@ void main() {
           child: const MaterialApp(home: Scaffold(body: Text('Detail'))),
         ),
       );
-      unawaited(
-        navigateToVideoPlayer(
-          tester.element(find.text('Detail')),
+      final context = tester.element(find.text('Detail'));
+      await tester.runAsync(() async {
+        await navigateToVideoPlayer(
+          context,
           metadata: movie,
           selectedMediaIndex: selectedMediaIndex,
           selectedMediaSourceId: selectedMediaSourceId,
           resolveWatchState: false,
-        ),
-      );
-      await pumpUntil(tester, () => externalLaunches.isNotEmpty, describe: () => 'no external player launch');
+        ).timeout(const Duration(seconds: 10));
+      });
     }
 
     testWidgets('plain Play hands the external player the downloaded copy', (tester) async {
