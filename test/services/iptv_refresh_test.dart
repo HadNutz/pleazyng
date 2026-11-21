@@ -184,7 +184,18 @@ void main() {
     final exportedList = IptvPlaylistParser.parse(exported, base: Uri(), allowHttp: false);
     expect(exportedList.entries.map((e) => e.title), ['East']);
     expect(exported, contains('?token=private'));
+    final begins = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    for (final station in channels) {
+      await db.customStatement(
+        'INSERT INTO iptv_programmes(source_id,channel_id,begins_at,ends_at,title) VALUES(?,?,?,?,?)',
+        [source, station.id, begins, begins + 60, '${station.title} & headlines'],
+      );
+    }
     final xml = await repo.exportLineup('p', source, original.toSet(), guide: true);
+    final parsedGuide = IptvXmltvParser.parse(xml, base: Uri(), allowHttp: false);
+    expect(parsedGuide.programmes.single.title, 'East & headlines');
+    expect(parsedGuide.programmes.single.beginsAt, begins);
+    expect(parsedGuide.programmes.single.channelTvgId, exportedList.entries.single.tvgId);
     expect(xml, contains('<display-name>East</display-name>'));
     expect(xml, isNot(contains('West')));
     expect(xml, isNot(contains('token')));
@@ -243,7 +254,7 @@ void main() {
     await repo.saveChannelPresentation(
       profileId: 'home',
       sourceId: locked,
-      channelId: 'station',
+      channelId: (await repo.channels('home', sourceId: locked)).single.iptvChannelId!,
       hidden: false,
       customTitle: null,
       groupOverride: null,
@@ -252,13 +263,66 @@ void main() {
     );
     final alternate = await add('backup', 'station');
     final primary = await add('primary', 'station', backup: [other, wrong, locked, alternate]);
-    final first = (await repo.startPlayback('home', primary, 'station'))!;
+    final first = (await repo.startPlayback(
+      'home',
+      primary,
+      (await repo.channels('home', sourceId: primary)).single.iptvChannelId!,
+    ))!;
     expect(await first.streamUrlAt(), endsWith('/primary'));
     final recovered = (await first.recover(directStream: true, directStreamAudio: true))! as IptvLiveTvPlaybackSession;
     expect(await recovered.streamUrlAt(), endsWith('/backup'));
     expect(recovered.streamHeaders['User-Agent'], 'backup');
     await recovered.discard();
     expect(await recovered.recover(directStream: true, directStreamAudio: true), isNull);
+  });
+  test('native series rules deduplicate episodes, preserve one-off timers and reconcile guide updates', () async {
+    resetSharedPreferencesForTest();
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final repo = IptvSourceRepository(db);
+    final source = await repo.createSource(
+      profileId: 'home',
+      kind: IptvInputKind.m3uFile,
+      displayName: 'Home',
+      endpoint: '',
+      playlistContents: '#EXTM3U\n#EXTINF:-1 tvg-id="news",News\nhttps://example.org/n',
+    );
+    await repo.refresh('home', source);
+    final channel = (await repo.channels('home', sourceId: source)).single.iptvChannelId!;
+    final now = DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
+    final start = ((now ~/ 86400) + 1) * 86400 + 23 * 3600 + 55 * 60;
+    Future<void> programme(int begins, String? episode) => db.customStatement(
+      'INSERT INTO iptv_programmes(source_id,channel_id,begins_at,ends_at,title,episode_id) VALUES(?,?,?,?,?,?)',
+      [source, channel, begins, begins + 1800, 'Night News', episode],
+    );
+    await programme(start, 'ep1');
+    await programme(start + 86400, 'ep1');
+    await programme(start + 172800 + 1200, null);
+    await programme(start + 259200 - 5 * 3600, null);
+    await repo.seriesRules.add('home', source, channel, 'Night News', start);
+    expect(
+      (await repo.localRecordingSchedules(
+        profileId: 'home',
+      )).map((s) => s.startsAt.toUtc().millisecondsSinceEpoch ~/ 1000).toSet(),
+      {start, start + 172800 + 1200},
+    );
+    expect(await repo.seriesRules.list('other'), isEmpty);
+    final rule = (await repo.seriesRules.list('home')).single;
+    await repo.seriesRules.remove('other', rule.id);
+    await programme(start + 345600, 'ep2');
+    await db.transaction(() => repo.seriesRules.reconcile('home', source));
+    expect(await repo.localRecordingSchedules(profileId: 'home'), hasLength(3));
+    await db.customStatement("UPDATE iptv_recording_schedules SET state='recording' WHERE starts_at=?", [start]);
+    await db.customStatement(
+      "INSERT INTO iptv_recording_schedules(id,profile_id,source_id,channel_id,title,starts_at,ends_at,state,created_at,updated_at) VALUES('one','home',?,'news','Manual',?,?,'scheduled',0,0)",
+      [source, start + 60, start + 120],
+    );
+    await repo.seriesRules.remove('home', rule.id);
+    expect((await repo.localRecordingSchedules(profileId: 'home')).map((s) => s.state).toSet(), {
+      'scheduled',
+      'recording',
+    });
+    expect(await repo.seriesRules.list('home'), isEmpty);
   });
   test('a raw gzip guide cannot exceed the decoded guide limit', () async {
     final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);

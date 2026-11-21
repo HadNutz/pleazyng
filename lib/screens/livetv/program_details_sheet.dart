@@ -39,6 +39,7 @@ void showProgramDetailsSheet(
   VoidCallback? onCatchupProgram,
   Future<bool> Function()? onDispatcharrRecordProgram,
   Future<bool> Function()? onLocalIptvRecordProgram,
+  Future<bool> Function()? onLocalSeries,
   MediaServerClient? client,
   ValueChanged<bool>? onRecordingStateChanged,
 }) {
@@ -54,6 +55,7 @@ void showProgramDetailsSheet(
         onCatchupProgram: onCatchupProgram,
         onDispatcharrRecordProgram: onDispatcharrRecordProgram,
         onLocalIptvRecordProgram: onLocalIptvRecordProgram,
+        onLocalSeries: onLocalSeries,
         client: client,
         onRecordingStateChanged: onRecordingStateChanged,
       );
@@ -85,6 +87,7 @@ class _ProgramDetailsSheetContent extends StatefulWidget {
   final VoidCallback? onCatchupProgram;
   final Future<bool> Function()? onDispatcharrRecordProgram;
   final Future<bool> Function()? onLocalIptvRecordProgram;
+  final Future<bool> Function()? onLocalSeries;
   final MediaServerClient? client;
   final ValueChanged<bool>? onRecordingStateChanged;
 
@@ -96,6 +99,7 @@ class _ProgramDetailsSheetContent extends StatefulWidget {
     required this.onCatchupProgram,
     required this.onDispatcharrRecordProgram,
     required this.onLocalIptvRecordProgram,
+    required this.onLocalSeries,
     required this.client,
     required this.onRecordingStateChanged,
   });
@@ -263,6 +267,18 @@ class _ProgramDetailsSheetContentState extends State<_ProgramDetailsSheetContent
           onPressed: () async {
             final scheduled = await widget.onLocalIptvRecordProgram!();
             if (scheduled && mounted) _closeSheet();
+          },
+        ),
+      );
+    }
+
+    if (widget.onLocalSeries case final schedule?) {
+      actions.add(
+        _SheetAction(
+          label: t.liveTv.recordSeries,
+          icon: Symbols.video_library_rounded,
+          onPressed: () async {
+            if (await schedule() && mounted) _closeSheet();
           },
         ),
       );

@@ -91,7 +91,7 @@ final class LegacyDesktopDatabasePreview {
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  static const int currentSchemaVersion = 41;
+  static const int currentSchemaVersion = 42;
 
   /// Resolves the current app-owned database path for first-run migration UI.
   /// This never scans or adopts another application's files.
@@ -148,6 +148,7 @@ class AppDatabase extends _$AppDatabase {
         if (versionValue >= 36) required.addAll({'music_queue_entries', 'music_recipes'});
         if (versionValue >= 37) required.addAll({'music_listens', 'music_documents'});
         if (versionValue >= 38) required.add('retained_download_owners');
+        if (versionValue >= 42) required.addAll({'iptv_series_rules', 'iptv_series_airings'});
         if (versionValue >= 41) required.add('iptv_lineup_groups');
         if (versionValue >= 38) required.addAll({'iptv_guide_programmes', 'iptv_guide_logos', 'iptv_feed_identities'});
         if (!tables.containsAll(required)) {
@@ -195,6 +196,8 @@ class AppDatabase extends _$AppDatabase {
     'iptv_channel_overrides',
     'iptv_group_locks',
     'iptv_lineup_groups',
+    'iptv_series_rules',
+    'iptv_series_airings',
     'iptv_recording_schedules',
     'iptv_vod_categories',
     'iptv_vod_items',
@@ -407,6 +410,12 @@ class AppDatabase extends _$AppDatabase {
       SELECT profile_id, source_id, channel_id, favorite, favorite_order, hidden, custom_title, group_override, guide_id_override, parental_locked, lineup_order
       FROM iptv_channel_overrides ORDER BY profile_id, source_id, channel_id
     ''').get();
+    final series = await customSelect(
+      'SELECT id,source_id,channel_id,title,title_key,anchor FROM iptv_series_rules ORDER BY id',
+    ).get();
+    final airings = await customSelect(
+      'SELECT rule_id,schedule_id,episode_key FROM iptv_series_airings ORDER BY rule_id,schedule_id',
+    ).get();
     final lineupGroups = await customSelect(
       'SELECT id,source_id,name,members,revision FROM iptv_lineup_groups ORDER BY id',
     ).get();
@@ -471,6 +480,8 @@ class AppDatabase extends _$AppDatabase {
             'parentalLocked': row.data['parental_locked'] == 1,
           },
       ],
+      'iptvSeriesRules': [for (final row in series) row.data],
+      'iptvSeriesAirings': [for (final row in airings) row.data],
       'iptvLineupGroups': [
         for (final group in lineupGroups)
           {
@@ -584,6 +595,19 @@ class AppDatabase extends _$AppDatabase {
       'guideIdOverride',
       'parentalLocked',
     });
+    final series = _decodeIptvRecoveryRowsIfPresent(snapshot.identity, 'iptvSeriesRules', const {
+      'id',
+      'source_id',
+      'channel_id',
+      'title',
+      'title_key',
+      'anchor',
+    });
+    final airings = _decodeIptvRecoveryRowsIfPresent(snapshot.identity, 'iptvSeriesAirings', const {
+      'rule_id',
+      'schedule_id',
+      'episode_key',
+    });
     final lineupGroups = _decodeIptvRecoveryRowsIfPresent(snapshot.identity, 'iptvLineupGroups', const {
       'id',
       'sourceId',
@@ -678,6 +702,8 @@ class AppDatabase extends _$AppDatabase {
       await delete(profileConnections).go();
       await customStatement('DELETE FROM iptv_channel_overrides');
       await customStatement('DELETE FROM iptv_group_locks');
+      await customStatement('DELETE FROM iptv_series_airings');
+      await customStatement('DELETE FROM iptv_series_rules');
       await customStatement('DELETE FROM iptv_lineup_groups');
       await customStatement('DELETE FROM iptv_vod_progress');
       await customStatement('DELETE FROM iptv_recording_schedules');
@@ -800,6 +826,19 @@ class AppDatabase extends _$AppDatabase {
             row['updatedAt'],
           ],
         );
+      }
+      for (final row in series) {
+        await customStatement(
+          'INSERT INTO iptv_series_rules(id,source_id,channel_id,title,title_key,anchor) VALUES(?,?,?,?,?,?)',
+          [row['id'], row['source_id'], row['channel_id'], row['title'], row['title_key'], row['anchor']],
+        );
+      }
+      for (final row in airings) {
+        await customStatement('INSERT INTO iptv_series_airings(rule_id,schedule_id,episode_key) VALUES(?,?,?)', [
+          row['rule_id'],
+          row['schedule_id'],
+          row['episode_key'],
+        ]);
       }
       for (final row in iptvRecordingRows) {
         await customStatement(
@@ -927,6 +966,21 @@ class AppDatabase extends _$AppDatabase {
             (normalized['lineupOrder'] != null && normalized['lineupOrder'] is! int)) {
           throw _invalidRecoveryImage;
         }
+      } else if (key == 'iptvSeriesRules') {
+        if (raw['id'] is! String ||
+            raw['source_id'] is! String ||
+            raw['channel_id'] is! String ||
+            raw['title'] is! String ||
+            raw['title_key'] is! String ||
+            raw['anchor'] is! int) {
+          throw _invalidRecoveryImage;
+        }
+      } else if (key == 'iptvSeriesAirings') {
+        if (raw['rule_id'] is! String ||
+            raw['schedule_id'] is! String ||
+            (raw['episode_key'] != null && raw['episode_key'] is! String)) {
+          throw _invalidRecoveryImage;
+        }
       } else if (key == 'iptvLineupGroups') {
         if (normalized['id'] is! String ||
             normalized['sourceId'] is! String ||
@@ -1042,6 +1096,7 @@ class AppDatabase extends _$AppDatabase {
         await _createIptvExtensionTables();
         await _createIptvParentalTables();
         await _createIptvRecordingSchedules();
+        await _createIptvSeriesTables();
         await _createMusicCatalogTables();
         await _createMusicExperienceTables();
       },
@@ -1222,6 +1277,7 @@ class AppDatabase extends _$AppDatabase {
               ON o.source_id=c.source_id AND o.channel_id=c.channel_id
             WHERE c.logo_url IS NOT NULL AND COALESCE(NULLIF(o.guide_id_override,''),c.tvg_id) IS NOT NULL''');
         }
+        if (from < 42) await _createIptvSeriesTables();
         if (from < 41) await _createIptvLineupGroups();
         if (from < 40) {
           final overrides = await customSelect('PRAGMA table_info(iptv_channel_overrides)').get();
@@ -1544,6 +1600,18 @@ class AppDatabase extends _$AppDatabase {
     'global_key TEXT NOT NULL REFERENCES downloaded_media(global_key) ON DELETE CASCADE, '
     'owner_id TEXT NOT NULL, backend TEXT, client_scope_id TEXT, PRIMARY KEY (global_key, owner_id))',
   );
+
+  Future<void> _createIptvSeriesTables() async {
+    await customStatement(
+      'CREATE TABLE IF NOT EXISTS iptv_series_rules(id TEXT PRIMARY KEY NOT NULL,source_id TEXT NOT NULL REFERENCES iptv_sources(id) ON DELETE CASCADE,channel_id TEXT NOT NULL,title TEXT NOT NULL,title_key TEXT NOT NULL,anchor INTEGER NOT NULL,UNIQUE(source_id,channel_id,title_key))',
+    );
+    await customStatement(
+      'CREATE TABLE IF NOT EXISTS iptv_series_airings(rule_id TEXT NOT NULL REFERENCES iptv_series_rules(id) ON DELETE CASCADE,schedule_id TEXT PRIMARY KEY NOT NULL REFERENCES iptv_recording_schedules(id) ON DELETE CASCADE,episode_key TEXT)',
+    );
+    await customStatement(
+      'CREATE INDEX IF NOT EXISTS idx_iptv_series_airings_rule ON iptv_series_airings(rule_id,episode_key)',
+    );
+  }
 
   Future<void> _createIptvLineupGroups() => customStatement("""
     CREATE TABLE IF NOT EXISTS iptv_lineup_groups (

@@ -63,7 +63,7 @@ String xmltvLineup(List<LiveTvChannel> channels, Iterable<LiveTvProgram> program
         if (channel.thumb case final String logo) xml.element('icon', attributes: {'src': _oneLine(logo)});
       },
     );
-    output.write(xml.buildFragment().toXmlString());
+    output.write(xml.buildFragment().children.single.toXmlString());
   }
   for (final p in programmes) {
     final id = byKey[p.channelIdentifier];
@@ -80,7 +80,7 @@ String xmltvLineup(List<LiveTvChannel> channels, Iterable<LiveTvProgram> program
         if (p.thumb case final String url) xml.element('icon', attributes: {'src': _oneLine(url)});
       },
     );
-    output.write(xml.buildFragment().toXmlString());
+    output.write(xml.buildFragment().children.single.toXmlString());
   }
   output.write('</tv>');
   return output.toString();

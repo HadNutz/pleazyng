@@ -695,7 +695,7 @@ class GuideTabState extends State<GuideTab>
       final hasCategories = group.channels.any(
         (channel) => channel.iptvSourceId != null && (channel.iptvGroupTitle?.trim().isNotEmpty ?? false),
       );
-      if (!isIptvSource || !hasCategories) {
+      if (!isIptvSource || !hasCategories || group.channels.any((channel) => channel.iptvLineupOrder != null)) {
         if (showSourceNames) rows.add(_GuideSourceHeaderRow(label: group.label));
         rows.addAll([
           for (final channel in group.channels)

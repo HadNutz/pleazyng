@@ -89,6 +89,7 @@ mixin LiveTvActionsMixin<T extends StatefulWidget> on State<T> {
 
     Future<bool> Function()? onDispatcharrRecordProgram;
     Future<bool> Function()? onLocalIptvRecordProgram;
+    Future<bool> Function()? onLocalSeries;
     final sourceId = channel?.iptvSourceId;
     final profileId = effectiveContext.read<ActiveProfileProvider>().activeId;
     if (sourceId != null && channel?.iptvChannelId != null && profileId != null) {
@@ -101,6 +102,27 @@ mixin LiveTvActionsMixin<T extends StatefulWidget> on State<T> {
             end: DateTime.fromMillisecondsSinceEpoch(end * 1000),
             now: DateTime.now(),
           )) {
+        if (channel?.iptvParentalLocked != true) {
+          onLocalSeries = () async {
+            if (!effectiveContext.mounted || effectiveContext.read<ActiveProfileProvider>().activeId != profileId) {
+              return false;
+            }
+            try {
+              await repository.seriesRules.add(
+                profileId,
+                sourceId,
+                channel!.iptvChannelId!,
+                program.title,
+                programStart,
+              );
+              if (effectiveContext.mounted) showSnackBar(effectiveContext, t.iptv.localRecordingScheduled);
+              return true;
+            } catch (_) {
+              if (effectiveContext.mounted) showErrorSnackBar(effectiveContext, t.iptv.recordingActionFailed);
+              return false;
+            }
+          };
+        }
         onLocalIptvRecordProgram = () async {
           try {
             await repository.scheduleLocalRecording(profileId, channel!, program);
@@ -158,6 +180,7 @@ mixin LiveTvActionsMixin<T extends StatefulWidget> on State<T> {
       onRecordingStateChanged: onRecordingStateChanged,
       onDispatcharrRecordProgram: onDispatcharrRecordProgram,
       onLocalIptvRecordProgram: onLocalIptvRecordProgram,
+      onLocalSeries: onLocalSeries,
     );
   }
 }

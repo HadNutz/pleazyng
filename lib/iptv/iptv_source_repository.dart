@@ -18,6 +18,7 @@ import '../sources/universal_media_input.dart';
 import 'iptv_guide_merge.dart';
 import 'iptv_backup_match.dart';
 import 'iptv_lineup_export.dart';
+import 'iptv_series_rules.dart';
 import 'iptv_live_tv_session.dart';
 import 'dispatcharr_dvr_client.dart';
 import 'stalker_portal_client.dart';
@@ -39,6 +40,7 @@ class IptvSourceRepository {
   IptvSourceRepository(this._database);
 
   final AppDatabase _database;
+  late final seriesRules = IptvSeriesRules(_database, (profile, source) => channels(profile, sourceId: source));
   static const _uuid = Uuid();
   static const maxPlaylistBytes = IptvPlaylistParser.maxCharacters;
   static const maxXmltvBytes = IptvXmltvParser.maxCharacters;
@@ -2605,6 +2607,7 @@ class IptvSourceRepository {
             }
           });
         }
+        await seriesRules.reconcile(expected.profileId, expected.id);
         await _database.customStatement('UPDATE iptv_sources SET last_error_code=? WHERE id=?', [
           guideFailed ? 'guide_unavailable' : null,
           expected.id,
