@@ -267,8 +267,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "ci(ios): build the GitHub IPA with Xcode 27.1 so it is optimized for iPhone Duo",
-      "disposition": "pending",
-      "evidence": "The public build-ios path uses macos-26-intel and the composite action defaults to Xcode 26.5. The fork already has SDK-gated Duo code. Require a compatible iOS 27.1+ SDK for the shipping IPA, retain the fork’s signed/private and public build paths, and inspect the SDK baked into each produced artifact. The actual private runner SDK is unverified here. [build.yml L1434](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/.github/workflows/build.yml#L1434) · [action.yml L7](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/.github/actions/setup-flutter-apple/action.yml#L7) · [PlezyFlutterViewController.swift L24](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/ios/Runner/PlezyFlutterViewController.swift#L24)",
+      "disposition": "adapted",
+      "evidence": "Build hosted iOS release IPAs on the Xcode 27 image and check the effective iOS SDK on both hosted and selected signing runners.",
       "files": [
         ".github/workflows/build.yml"
       ]
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "adapted": 23,
+    "adapted": 24,
     "deferred": 1,
     "retained": 2,
-    "pending": 3
+    "pending": 2
   }
 }

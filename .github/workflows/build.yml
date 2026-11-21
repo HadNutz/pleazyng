@@ -1430,7 +1430,7 @@ jobs:
     timeout-minutes: 240
     outputs:
       ios_store_package_available: ${{ steps.ios-store-package.outcome == 'success' }}
-    runs-on: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.preflight-ios-store-signing.outputs.ios_store_signing_ready == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-build-ios"]}}', github.run_id)) || 'macos-26-intel' }}
+    runs-on: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.preflight-ios-store-signing.outputs.ios_store_signing_ready == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-build-ios"]}}', github.run_id)) || 'xcode-27' }}
     permissions:
       id-token: write
       attestations: write
@@ -1452,6 +1452,17 @@ jobs:
         uses: ./.github/actions/setup-flutter-apple
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
+          hosted-xcode-version: '27.2'
+
+      - name: Verify iOS SDK supports iPhone Duo
+        shell: bash
+        run: |
+          python3 - <<'PYTHON'
+          import subprocess
+          version = subprocess.check_output(['xcrun', '--sdk', 'iphoneos', '--show-sdk-version'], text=True).strip()
+          if tuple(map(int, version.split('.')[:2])) < (27, 1):
+              raise SystemExit(f'iOS release artifacts require SDK 27.1 or later, found {version}')
+          PYTHON
 
       - name: Cache Pub dependencies
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
