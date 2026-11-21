@@ -2652,9 +2652,9 @@
       "detail": "provenance/pt-BR.json"
     },
     "pt-PT": {
-      "messagesInFile": 400,
+      "messagesInFile": 2717,
       "inherits": "pt",
-      "catalogSha256": "a924cc08fcb61d11fecd2819a01828adf4cbef6a6731dba716da6bb40def0cd8",
+      "catalogSha256": "de5e2ce5f3c5d1a6912c58c32f35f34eef36fa23047847d70a58b8c29f99051d",
       "sourceCounts": {
         "existing": 3,
         "independent-ai-reviewed-main-swipe-hint": 1,
@@ -2899,7 +2899,8 @@
         "jellyfin-web:Yes": 2,
         "nonlinguistic": 1,
         "retained-main:9a17bbd0bff73071079c8b1bc4d85b77557b42fe": 12,
-        "unicode-cldr-generated": 4
+        "unicode-cldr-generated": 4,
+        "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01": 1901
       },
       "detail": "provenance/pt-PT.json"
     },

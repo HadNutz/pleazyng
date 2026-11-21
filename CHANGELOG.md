@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Integrated 1,901 applicable European Portuguese translations and CLDR regional routing while preserving fork translations and the separate Brazilian catalog. [luismiguelopes](https://github.com/luismiguelopes) contributed [the original change](https://github.com/edde746/plezy/commit/88bd8467ff4051be3a25794ff95ccb31c8b27a01) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
 - Build hosted iOS release IPAs on the Xcode 27 image and check the effective iOS SDK on both hosted and selected signing runners. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/36f9ae3e31f580c642640dc67e7686215fd054ae) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 
 - Use volume-specific reclaimable capacity near the storage floor on iOS and macOS, with bounded sampling and the existing guarded write and staging paths. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/18a6637ce2cf978dff30422252d524dd2c2fda4f) to upstream Plezy. Pleazyng integrated the behavior for this fork.

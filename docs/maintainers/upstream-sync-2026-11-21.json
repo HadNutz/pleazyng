@@ -333,8 +333,8 @@
         "url": "https://github.com/luismiguelopes"
       },
       "subject": "feat(i18n): add European Portuguese (pt-PT) locale (#3067)",
-      "disposition": "pending",
-      "evidence": "pt-PT already exists in Pleazyng. Its regional JSON has 824 leaves and a base-pt fallback. Upstream has 2,342 regional leaves. Of the shared app keys lacking a fork regional override, 966 have a fork base-pt value different from the upstream pt-PT value. These are translation review candidates. Also adapt region mapping for tags such as pt-AO and pt-MZ. Preserve the fork’s distinct pt-BR and Portuguese catalogs. [pt-PT.i18n.json](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/i18n/pt-PT.i18n.json) · [locale_catalog.json](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/i18n/locale_catalog.json) · [app_locale_utils.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/i18n/app_locale_utils.dart)",
+      "disposition": "adapted",
+      "evidence": "Integrated 1,901 applicable European Portuguese translations and CLDR regional routing while preserving fork translations and the separate Brazilian catalog.",
       "files": [
         "lib/i18n/app_locale_utils.dart",
         "lib/i18n/pt-PT.i18n.json",
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "adapted": 24,
+    "adapted": 25,
     "deferred": 1,
     "retained": 2,
-    "pending": 2
+    "pending": 1
   }
 }

@@ -34,6 +34,12 @@ AppLocale resolvePreferredAppLocale(Iterable<Locale> preferredLocales) {
 }
 
 AppLocale _resolveRegionalLocale(Locale locale) {
+  // CLDR parents these regional locales to European Portuguese. The
+  // explicit Brazilian catalog and the user's saved locale keep precedence.
+  const europeanPortuguese = {'PT', 'AO', 'MZ', 'CV', 'GW', 'ST', 'TL', 'MO', 'GQ', 'LU', 'CH'};
+  if (locale.languageCode == 'pt' && europeanPortuguese.contains(locale.countryCode?.toUpperCase())) {
+    return AppLocale.ptPt;
+  }
   // Latin American Spanish has one regional catalog, not one copy per
   // country. Spain and unspecified Spanish retain the language-only catalog.
   const latinAmerica = {
