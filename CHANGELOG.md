@@ -16,7 +16,7 @@
 
 - Build hosted iOS release IPAs on the Xcode 27 image and check the effective iOS SDK on both hosted and selected signing runners. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/36f9ae3e31f580c642640dc67e7686215fd054ae) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 
-- Use volume-specific reclaimable capacity near the storage floor on iOS and macOS, with bounded sampling and the existing guarded write and staging paths. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/18a6637ce2cf978dff30422252d524dd2c2fda4f) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+- Use volume-specific reclaimable capacity near the storage floor on iOS and macOS, with bounded sampling and the existing guarded write and staging paths. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/18a6637ce2cf978dff30422252d524dd2c2fda4f) to upstream Plezy. Pleazyng integrated the behavior for this fork. The vendored implementation also adapts [edde746’s downloader commit](https://github.com/edde746/background_downloader/commit/4f361e91f3cb79b7e48486b6397e43974b6e0452).
 
 - Read Plex’s live deletion capability from the server root and reject confirmation when the active authentication session changes during the request. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/ad4518e66efd2609ce2272811af624039d127f84) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 
