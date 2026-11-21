@@ -428,8 +428,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.view.resetPhysicalSize);
 
-    await tester.pumpWidget(MaterialApp(theme: monoTheme(MonoPalette.dark), home: const PlaybackSettingsScreen()));
-    await tester.pumpAndSettle();
+    await _pumpPlaybackSettings(tester);
 
     final title = find.text('Show "Ends at" time');
     await tester.scrollUntilVisible(title, 500, scrollable: find.byType(Scrollable).first);
