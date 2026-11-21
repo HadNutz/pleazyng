@@ -54,3 +54,48 @@ jobs:
         env:
           LANGUAGE: ${{ matrix.language }}
         run: python3 scripts/checks/native_lint.py "$LANGUAGE" --tool "$LINTER"
+  native-targets:
+    name: C++ target (${{ matrix.engine }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [romm, steam]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Load clang-tidy
+        run: |
+          echo 'clang-tidy==19.1.0.1 --hash=sha256:511fb73f2c8d86a3b34eee7c4a91306bdb17fc6f9565a662dd5ffa7b4836891d' > "$RUNNER_TEMP/clang.txt"
+          python3 -m venv "$RUNNER_TEMP/clang"
+          "$RUNNER_TEMP/clang/bin/pip" install --no-deps --require-hashes -r "$RUNNER_TEMP/clang.txt"
+          echo "LINTER=$RUNNER_TEMP/clang/bin/clang-tidy" >> "$GITHUB_ENV"
+      - name: Prepare Steam native dependencies
+        if: matrix.engine == 'steam'
+        run: |
+          sudo apt-get update -o Acquire::Retries=3
+          sudo apt-get install -y --no-install-recommends -o Acquire::Retries=3 libvulkan-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev python3-jinja2
+          python3 scripts/games/prepare_steam.py
+      - name: Configure target and tests
+        env:
+          ENGINE: ${{ matrix.engine }}
+        run: |
+          args=()
+          case "$ENGINE" in
+            romm) args=(-DPLEZY_ROMM_BUILD_CORES=OFF -DPLEZY_ROMM_ISOLATED=ON -DPLEZY_ROMM_NATIVE_TESTS=ON);;
+            steam) args=(-DPLEZY_STEAM_GSTREAMER=ON -DPLEZY_STEAM_TESTS=ON);;
+          esac
+          cmake -S "native/games/$ENGINE" -B "$RUNNER_TEMP/engine" -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "${args[@]}"
+          cmake --build "$RUNNER_TEMP/engine" --parallel 2
+      - name: Check changed native implementation and header lines with target flags
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          base="${BASE:-HEAD^}"
+          if [[ "$GITHUB_REF" == refs/heads/integration/upstream-* || "$base" =~ ^0+$ ]]; then base=origin/main; fi
+          python3 scripts/checks/native_lint.py clang --tool "$LINTER" --database "$RUNNER_TEMP/engine" --changed-lines "$base"
+      - name: Run native target tests
+        run: ctest --test-dir "$RUNNER_TEMP/engine" --output-on-failure --no-tests=error

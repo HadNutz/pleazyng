@@ -28,7 +28,29 @@ def tracked(glob):
     return sorted(os.fsdecode(x) for x in subprocess.check_output(["git", "ls-files", "-z", glob]).split(b"\0") if x)
 
 
-def clang(tool, database):
+def changed_ranges(base):
+    """Map maintained native files to added lines in a zero-context Git diff."""
+    merge_base = subprocess.check_output(["git", "merge-base", "HEAD", base], text=True).strip()
+    paths = subprocess.check_output(
+        ["git", "diff", "--name-only", "--diff-filter=ACMRT", "-z", merge_base, "HEAD", "--", "native", "scripts/tv_mpv"]
+    ).split(b"\0")
+    changes = {}
+    for raw in filter(None, paths):
+        path = os.fsdecode(raw)
+        if Path(path).suffix.lower() not in {".c", ".cc", ".cpp", ".h", ".hpp", ".m", ".mm"}:
+            continue
+        diff = subprocess.check_output(["git", "diff", "--no-ext-diff", "--unified=0", merge_base, "HEAD", "--", path], text=True)
+        spans = []
+        for start, count in re.findall(r"^@@ -[0-9,]+ \+(\d+)(?:,(\d+))? @@", diff, re.MULTILINE):
+            size = int(count or "1")
+            if size:
+                spans.append([int(start), int(start) + size - 1])
+        if spans:
+            changes[path] = spans
+    return changes
+
+
+def clang(tool, database, changes=None):
     issues = []
     if database:
         units = {}
@@ -43,8 +65,15 @@ def clang(tool, database):
         units = HOST_UNITS
     if not units:
         raise SystemExit("No app-owned native translation units in the compilation database")
+    header_changed = changes is not None and any(Path(path).suffix in {".h", ".hpp"} for path in changes)
     for name, flags in sorted(units.items()):
+        if changes is not None and not header_changed and name not in changes:
+            continue
         command = [tool, "--quiet", "--checks=-*,bugprone-*,performance-*,clang-analyzer-*", name]
+        if changes is not None:
+            allowed = [{"name": str(ROOT / path), "lines": spans} for path, spans in changes.items()]
+            command.extend(["--header-filter=" + re.escape(str(ROOT)) + "/(native|scripts/tv_mpv)/",
+                            "--line-filter=" + json.dumps(allowed)])
         command.extend(["-p", str(database)] if database else ["--", *flags])
         result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         if result.returncode:
@@ -65,6 +94,7 @@ def main():
     parser.add_argument("language", choices=["kotlin", "swift", "clang"])
     parser.add_argument("--tool", required=True, help="detekt CLI jar, SwiftLint or clang-tidy executable")
     parser.add_argument("--database", type=Path, help="clang compilation database directory for additional targets")
+    parser.add_argument("--changed-lines", metavar="BASE", help="check changed implementation and header lines in a target compilation database")
     parser.add_argument("--write-clang-baseline", action="store_true")
     args = parser.parse_args()
     os.chdir(ROOT)
@@ -76,7 +106,10 @@ def main():
                         str(BASE / "swiftlint.json"), *tracked("*.swift")], check=True)
     else:
         path = BASE / "clang-tidy.json"
-        issues = clang(args.tool, args.database.resolve() if args.database else None)
+        if args.changed_lines and (not args.database or args.write_clang_baseline):
+            parser.error("--changed-lines needs a target database and cannot write a baseline")
+        changes = changed_ranges(args.changed_lines) if args.changed_lines else None
+        issues = clang(args.tool, args.database.resolve() if args.database else None, changes)
         if args.write_clang_baseline:
             if args.database:
                 parser.error("Generate the portable baseline using the complete host target set")
