@@ -69,11 +69,16 @@ String git(List<String> args) {
 void main(List<String> args) {
   if (args.length != 1) throw ArgumentError('Expected the comparison commit');
   var base = git(['merge-base', 'HEAD', args.single]).trim();
+  Map<String, dynamic>? rolloutSizes;
   // The initial integration brings in source from several parents. Its checked-in
   // rollout records the post-migration starting point. Later branches use their base.
   if (Process.runSync('git', ['cat-file', '-e', '$base:$rollout']).exitCode != 0) {
     final bootstrap = git(['log', '--first-parent', '--diff-filter=A', '--format=%H', 'HEAD', '--', rollout]).trim();
-    if (bootstrap.isNotEmpty) base = bootstrap.split('\n').last;
+    if (bootstrap.isNotEmpty) {
+      base = bootstrap.split('\n').last;
+      final snapshot = jsonDecode(git(['show', '$base:$rollout'])) as Map<String, dynamic>;
+      rolloutSizes = snapshot['lineCounts'] as Map<String, dynamic>;
+    }
   }
   final delta = git(['diff', '--name-status', '--find-renames=80%', '-z', base, '--', 'lib']).split('\x00');
   var failures = 0;
@@ -92,7 +97,8 @@ void main(List<String> args) {
     }
     if (status == 'D' || !maintained(path)) continue;
     final text = File(path).readAsStringSync();
-    final limit = hadSource ? const LineSplitter().convert(previous).length : 1500;
+    final initialLimit = rolloutSizes?[oldPath] as int?;
+    final limit = hadSource ? initialLimit ?? const LineSplitter().convert(previous).length : 1500;
     final lines = const LineSplitter().convert(text).length;
     if (lines > limit) {
       stderr.writeln('$path has $lines lines (limit $limit).');
