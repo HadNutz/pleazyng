@@ -1933,7 +1933,7 @@ def ensure_release(
         return retry_after_unassigned_tvos(existing)
 
     if reuse_platform_run_id:
-        if execution_profile != "hybrid" or (include_apple_store_build and not repair):
+        if execution_profile != "hybrid" or (include_apple_store_build and not (repair or rebuild_tizen)):
             raise ReleaseError("Platform recovery requires the hybrid GitHub-only release profile without fresh Apple or Homebrew qualification.")
         options = {}
         if rebuild_linux:
@@ -1944,6 +1944,8 @@ def ensure_release(
             options["rebuild_tvos"] = True
         if rebuild_tizen:
             options["rebuild_tizen"] = True
+            if include_apple_store_build:
+                options["include_apple_store_build"] = True
         if rebuild_ios:
             options["rebuild_ios"] = True
         if built_tvos_run_id is not None:
@@ -2137,8 +2139,8 @@ def verify_platform_recovery(run_id: int, commit_sha: str, version: str, *,
     if (rebuild_tvos or rebuild_ios or rebuild_tizen) and (macos_run or repaired_run):
         raise ReleaseError("Platform rebuilding requires ordinary verified platform recovery")
     if rebuild_tizen and (rebuild_linux or rebuild_macos or rebuild_tvos or rebuild_ios
-                          or packaging_source_sha or include_apple_store_build or require_homebrew_cask):
-        raise ReleaseError("Tizen recovery cannot be combined with Apple signing or unrelated rebuild modes")
+                          or packaging_source_sha or workflow_source_sha):
+        raise ReleaseError("Tizen recovery cannot be combined with frozen packaging or unrelated rebuild modes")
     if built_tvos_run is not None:
         if (not packaging_source_sha or not workflow_source_sha or not include_apple_store_build
                 or rebuild_tvos or rebuild_ios or rebuild_linux or rebuild_macos
@@ -2169,6 +2171,8 @@ def verify_platform_recovery(run_id: int, commit_sha: str, version: str, *,
         options["rebuild_ios"] = True
     if rebuild_tizen:
         options["rebuild_tizen"] = True
+        if include_apple_store_build:
+            options["include_apple_store_build"] = True
     if repaired_run:
         options["repaired_run"] = repaired_run
     if require_homebrew_cask:
@@ -2176,7 +2180,7 @@ def verify_platform_recovery(run_id: int, commit_sha: str, version: str, *,
     if packaging_source_sha is not None:
         options.update(packaging_source_sha=packaging_source_sha, workflow_source_sha=workflow_source_sha,
                        include_apple_store_build=include_apple_store_build)
-    elif workflow_source_sha is not None or include_apple_store_build:
+    elif workflow_source_sha is not None or (include_apple_store_build and not rebuild_tizen):
         raise ReleaseError("Signed packaging recovery requires an approved packaging source.")
     try:
         source = (verify_macos_packaging_recovery(run_id, macos_run, commit_sha, version) if macos_run else
@@ -3197,6 +3201,13 @@ def main() -> int:
         args.publish and not packaging_repair
         and not args.include_apple_store_build and not args.prepare_homebrew_cask
     )
+    tizen_channel_recovery = bool(
+        args.reuse_platform_run and args.rebuild_tizen and not packaging_repair
+        and not any((args.rebuild_linux, args.rebuild_macos, args.rebuild_tvos,
+                     args.rebuild_ios, args.rebuild_webos, args.reuse_macos_run,
+                     repaired_platform_run, built_tvos_run, args.reuse_tvos_run,
+                     args.reuse_ios_run, args.reuse_ios_developer_run))
+    )
     if args.reuse_tvos_run and (args.reuse_tvos_run < 1 or not packaging_repair
                                or (not args.rebuild_ios and not args.reuse_ios_run)
                                or args.rebuild_tvos or args.reuse_repaired_run or args.reuse_macos_run):
@@ -3221,7 +3232,8 @@ def main() -> int:
     if args.reuse_platform_run and (
         args.reuse_platform_run < 1
         or ((args.publish or args.include_apple_store_build)
-            and not packaging_repair and not ordinary_unsigned_channel_recovery)
+            and not packaging_repair and not ordinary_unsigned_channel_recovery
+            and not tizen_channel_recovery)
         or args.execution_profile != "hybrid"
     ):
         raise ReleaseError(
@@ -3240,8 +3252,8 @@ def main() -> int:
     if args.rebuild_tizen and (not args.reuse_platform_run or args.reuse_macos_run or args.reuse_repaired_run
                                or packaging_repair or args.rebuild_linux or args.rebuild_macos
                                or args.rebuild_tvos or args.rebuild_ios or args.rebuild_webos
-                               or args.include_apple_store_build or args.prepare_homebrew_cask):
-        raise ReleaseError("Tizen rebuilding requires ordinary unsigned platform recovery by itself")
+                               or args.reuse_tvos_run or args.reuse_ios_run or args.reuse_ios_developer_run):
+        raise ReleaseError("Tizen rebuilding requires ordinary verified platform recovery by itself")
     if args.rebuild_macos and (not args.reuse_platform_run or args.reuse_macos_run):
         raise ReleaseError("Fresh Mac rebuilding requires ordinary verified platform recovery")
     if args.rebuild_linux and (not args.reuse_platform_run or args.reuse_macos_run):

@@ -369,6 +369,32 @@ class SourceProofTests(unittest.TestCase):
         with self.assertRaises(recovery.RecoveryError):
             self.prove(rebuild_tizen=True)
 
+    def test_tizen_recovery_can_reuse_qualified_signed_apple_and_notarized_mac_outputs(self):
+        package = next(job for job in self.jobs if job["name"] == recovery.TIZEN_PACKAGE_JOB)
+        package["conclusion"] = "failure"
+        self.source["conclusion"] = "failure"
+        ios = next(job for job in self.jobs if job["name"] == "build-ios")
+        ios["steps"] = [{"name": "Build signed iOS App Store IPA", "status": "completed",
+                          "conclusion": "success"}]
+        tvos = next(job for job in self.jobs if job["name"] == "Build tvOS developer package (arm64)")
+        tvos["steps"].append({"name": "Build signed tvOS App Store IPA", "status": "completed",
+                               "conclusion": "success"})
+        macos = next(job for job in self.jobs if job["name"] == "build-macos")
+        macos["steps"] = [{"name": name, "status": "completed", "conclusion": "success"}
+                          for name in ("Notarize Application", "Wait for notarization acceptance",
+                                       "Verify Gatekeeper acceptance for Homebrew Cask")]
+        proof = self.prove(rebuild_tizen=True, include_apple_store_build=True,
+                           require_homebrew_cask=True)
+        self.assertTrue(proof["rebuild_tizen"])
+        self.assertTrue(proof["macos_cask_qualified"])
+        self.assertIn("build-ios", proof["reused_jobs"])
+        self.assertIn("Build tvOS developer package (arm64)", proof["reused_jobs"])
+        tvos["steps"] = [step for step in tvos["steps"]
+                          if step["name"] != "Build signed tvOS App Store IPA"]
+        with self.assertRaisesRegex(recovery.RecoveryError, "signed Store qualification"):
+            self.prove(rebuild_tizen=True, include_apple_store_build=True,
+                       require_homebrew_cask=True)
+
     def test_reused_tvos_requires_runtime_receipt_production_and_attestation_steps(self):
         tvos = next(job for job in self.jobs if job['name'] == 'Build tvOS developer package (arm64)')
         self.assertTrue(self.prove()['runtime_dependency_receipt_required'])
@@ -1756,12 +1782,16 @@ class ControllerTests(unittest.TestCase):
     @patch.object(controller, "dispatch")
     def test_tizen_only_recovery_reuses_successful_platform_outputs(self, dispatch, _main, _matching, verify):
         controller.ensure_release("v3.0.46", "b" * 40, include_webos_release=True,
+                                  include_apple_store_build=True, prepare_homebrew_cask=True,
                                   reuse_platform_run_id=44907167387, rebuild_tizen=True)
         verify.assert_called_once_with(44907167387, "b" * 40, "3.0.46", rebuild_tizen=True,
+                                       include_apple_store_build=True, require_homebrew_cask=True,
                                        webos_run=44907167387, android_run=44907167387)
         fields = dispatch.call_args.args[3]
         self.assertEqual(fields["reuse_repaired_run_id"], "tizen-rebuild")
         self.assertEqual(fields["reuse_platform_run_id"], "44907167387")
+        self.assertEqual(fields["include_apple_store_build"], "true")
+        self.assertEqual(fields["prepare_homebrew_cask"], "true")
         self.assertNotIn("rebuild_android", fields)
         self.assertNotIn("rebuild_linux", fields)
 

@@ -920,10 +920,10 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
                 'reused_jobs': [*proof['reused_jobs'], 'Build tvOS developer package (arm64)']}
     if (rebuild_tvos or rebuild_ios) and repaired_run:
         raise RecoveryError("Apple device rebuilding cannot substitute repaired Linux/Mac outputs")
-    if rebuild_tizen and (packaging_source_sha or workflow_source_sha or include_apple_store_build
+    if rebuild_tizen and (packaging_source_sha or workflow_source_sha
                           or rebuild_linux or rebuild_macos or rebuild_tvos or rebuild_ios
-                          or repaired_run or require_homebrew_cask or append_apple_only):
-        raise RecoveryError("Tizen packaging recovery cannot be combined with signed Apple or unrelated rebuild modes")
+                          or repaired_run or append_apple_only):
+        raise RecoveryError("Tizen packaging recovery cannot be combined with frozen packaging or unrelated rebuild modes")
     if repository != REPOSITORY or not str(run_id).isdigit() or not re.fullmatch(r"[0-9a-f]{40}", head_sha):
         raise RecoveryError("Recovery requires the Pleazyng repository and exact run/commit identities.")
     source = api(f"repos/{repository}/actions/runs/{run_id}")
@@ -952,7 +952,7 @@ def verify_source_run(run_id, head_sha, version, repository=REPOSITORY, *, allow
             frozen_repair = verify_frozen_packaging_repair(source_sha, head_sha, workflow_source_sha, api, repository=repository)
         except (ValueError, RuntimeError) as error:
             raise RecoveryError(f"Frozen packaging approval failed: {error}") from error
-    elif include_apple_store_build:
+    elif include_apple_store_build and not rebuild_tizen:
         raise RecoveryError("Signed Apple recovery requires an explicitly approved frozen packaging source")
     blocked = sorted({path for entry in changed
                       for path in (entry.get("filename"), entry.get("previous_filename"))
