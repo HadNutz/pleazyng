@@ -124,6 +124,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$es musicExperience = Translations$musicExperience$es.internal(_root);
 	@override late final Translations$musicTools$es musicTools = Translations$musicTools$es.internal(_root);
 	@override late final Translations$musicDevices$es musicDevices = Translations$musicDevices$es.internal(_root);
+	@override late final Translations$bookmarkMigration$es bookmarkMigration = Translations$bookmarkMigration$es.internal(_root);
 }
 
 // Path: mediaConveniences
@@ -2731,6 +2732,7 @@ class Translations$metadataEdit$es extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Introducir URL de imagen';
 	@override String get imageUrl => 'URL de imagen';
 	@override String get metadataUpdated => 'Metadatos actualizados';
+	@override String get metadataConflict => 'Otra persona ha modificado el mismo campo. Vuelve a abrir el editor para revisar los valores actuales antes de guardar.';
 	@override String get metadataUpdateFailed => 'Error al actualizar los metadatos';
 	@override String get artworkUpdated => 'Imágenes actualizadas';
 	@override String get artworkUpdateFailed => 'Error al actualizar las imágenes';
@@ -4124,6 +4126,7 @@ class Translations$podcasts$es extends Translations$podcasts$en {
 	final TranslationsEs _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Suscripciones importadas: ${imported}. Duplicadas: ${duplicates}. Omitidas: ${skipped}.';
 	@override String get autoDownloadLatest => 'Descargar automáticamente los episodios más recientes';
 	@override String get removeFinishedAfter => 'Eliminar las descargas terminadas después de';
 }
@@ -4609,6 +4612,17 @@ class Translations$musicDevices$es extends Translations$musicDevices$en {
 	@override String get relay => 'URL del relé de música';
 	@override String get relayHint => 'Actívalo en el dispositivo receptor y vincula una vez en la misma red. Mantén Pleazyng abierto. El relé transmite controles de música cifrados y ve las direcciones de red. Cada reproductor transmite desde su propio servidor multimedia.';
 	@override String get relayInvalid => 'Introduce una dirección HTTPS del relé.';
+}
+
+// Path: bookmarkMigration
+class Translations$bookmarkMigration$es extends Translations$bookmarkMigration$en {
+	Translations$bookmarkMigration$es.internal(TranslationsEs root) : this._root = root, super.internal(root);
+
+	final TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Marcadores de una versión sin identificar';
+	@override String get assignToVersion => 'Asignar a esta versión';
 }
 
 // Path: appIcon.names
@@ -8424,6 +8438,7 @@ extension on TranslationsEs {
 			'metadataEdit.enterImageUrl' => 'Introducir URL de imagen',
 			'metadataEdit.imageUrl' => 'URL de imagen',
 			'metadataEdit.metadataUpdated' => 'Metadatos actualizados',
+			'metadataEdit.metadataConflict' => 'Otra persona ha modificado el mismo campo. Vuelve a abrir el editor para revisar los valores actuales antes de guardar.',
 			'metadataEdit.metadataUpdateFailed' => 'Error al actualizar los metadatos',
 			'metadataEdit.artworkUpdated' => 'Imágenes actualizadas',
 			'metadataEdit.artworkUpdateFailed' => 'Error al actualizar las imágenes',
@@ -8841,9 +8856,9 @@ extension on TranslationsEs {
 			'homeLayout.syncNow' => 'Síntomas ahora',
 			'homeLayout.plexHomeManager' => 'Plex Director de la casa',
 			'homeLayout.managePlexRows' => 'Gestión Plex líneas en Pleazyng',
-			'homeLayout.managePlexRowsDescription' => 'Abierto a organizar las líneas seleccionadas por el hogar',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.managePlexRowsDescription' => 'Abierto a organizar las líneas seleccionadas por el hogar',
 			'homeLayout.organizeHomeRows' => 'Organizar las rutas domésticas',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} líneas: movimiento, Hero, Auto-slide, eliminación',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organizar ${library} líneas',
@@ -9355,9 +9370,9 @@ extension on TranslationsEs {
 			'audiobook.bookTimeline' => 'Todo el libro Progreso',
 			'audiobook.bookRemaining' => ({required Object time}) => 'El tiempo que queda en este libro: ${time}',
 			'audiobook.chapterRemaining' => ({required Object time}) => 'Tiempo restante en este capítulo: ${time}',
-			'audiobook.unknownRemaining' => 'Tiempo completo disponible a medida que se juegan partes',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.unknownRemaining' => 'Tiempo completo disponible a medida que se juegan partes',
 			'audiobook.undoSeek' => 'La última búsqueda',
 			'audiobook.customSpeed' => 'Velocidad de reproducción personalizada',
 			'audiobook.speedHelp' => 'Seleccione una velocidad de 0.25× a 4×.',
@@ -9603,6 +9618,7 @@ extension on TranslationsEs {
 			'issueReport.privacy' => 'El borrador incluye la versión de la aplicación, la plataforma y el número de conexiones. No incluye direcciones de servidores, nombres de cuentas o perfiles, títulos ni rutas de archivos.',
 			'issueReport.logPrivacy' => 'Los registros son opcionales. Revísalos antes de subirlos. Su ID se añade al borrador, que podría ser público.',
 			'issueReport.openDraft' => 'Abrir borrador de GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Suscripciones importadas: ${imported}. Duplicadas: ${duplicates}. Omitidas: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Descargar automáticamente los episodios más recientes',
 			'podcasts.removeFinishedAfter' => 'Eliminar las descargas terminadas después de',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Vista previa de la codificación de subtítulos',
@@ -9868,10 +9884,10 @@ extension on TranslationsEs {
 			'bonusExtras.cancel' => 'Cancelar',
 			'bonusExtras.invalidSettings' => 'Comprueba las direcciones de los servidores y el nombre del modelo. El modo en la nube requiere HTTPS; el modo en este dispositivo requiere localhost.',
 			'bonusExtras.failed' => 'No se pudieron actualizar los extras. Los extras disponibles en tu biblioteca siguen siendo accesibles.',
-			'bonusExtras.partial' => 'Algunas fuentes en línea no están disponibles. Se muestran los resultados disponibles.',
-			'bonusExtras.linkTitle' => 'Título del extra',
 			_ => null,
 		} ?? switch (path) {
+			'bonusExtras.partial' => 'Algunas fuentes en línea no están disponibles. Se muestran los resultados disponibles.',
+			'bonusExtras.linkTitle' => 'Título del extra',
 			'bonusExtras.linkUrl' => 'Enlace de YouTube o Vimeo',
 			'bonusExtras.invalidLink' => 'Introduce un título y un enlace HTTPS válido a un vídeo de YouTube o Vimeo.',
 			'bonusExtras.showHidden' => 'Restablecer extras y editores ocultos',
@@ -10027,6 +10043,8 @@ extension on TranslationsEs {
 			'musicDevices.relay' => 'URL del relé de música',
 			'musicDevices.relayHint' => 'Actívalo en el dispositivo receptor y vincula una vez en la misma red. Mantén Pleazyng abierto. El relé transmite controles de música cifrados y ve las direcciones de red. Cada reproductor transmite desde su propio servidor multimedia.',
 			'musicDevices.relayInvalid' => 'Introduce una dirección HTTPS del relé.',
+			'bookmarkMigration.unassigned' => 'Marcadores de una versión sin identificar',
+			'bookmarkMigration.assignToVersion' => 'Asignar a esta versión',
 			_ => null,
 		};
 	}

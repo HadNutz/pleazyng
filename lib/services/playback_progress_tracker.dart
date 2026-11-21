@@ -15,6 +15,7 @@ import 'settings_service.dart';
 import 'track_selection_service.dart';
 import '../utils/app_logger.dart';
 import '../utils/watch_state_notifier.dart';
+import '../utils/serial_future_queue.dart';
 
 /// Tracks playback progress and reports it to the active media server.
 ///
@@ -216,6 +217,11 @@ class PlaybackProgressTracker {
 
   Duration? _lastProgressNotifiedPosition;
   Duration? _lastReportablePosition;
+  final _localWrites = SerialFutureQueue();
+  QueuedOfflineWatchAction? _checkpoint;
+  QueuedOfflineWatchAction? _owedCompletion;
+  late final int? _playbackGeneration;
+  bool _recordedSessionCompletion = false;
 
   static const Duration _progressNotifyDelta = Duration(seconds: 30);
 
@@ -245,6 +251,9 @@ class PlaybackProgressTracker {
        assert(!localOnly || offlineWatchService != null, 'offlineWatchService is required for local-only progress'),
        assert(localOnly || isOffline || client != null, 'client is required when reporting is online'),
        assert(!localOnly || client == null, 'local-only progress must not report to a server session') {
+    _playbackGeneration = isOffline || localOnly || queueOnOnlineFailure
+        ? offlineWatchService?.playbackProfileGeneration
+        : null;
     final reportingClient = client;
     _reportSession = isOffline || localOnly || reportingClient == null
         ? null
@@ -254,6 +263,7 @@ class PlaybackProgressTracker {
             playSessionId: playSessionId,
             playMethod: playMethod,
             onDelivered: _onReportDelivered,
+            writeReport: queueOnOnlineFailure && offlineWatchService != null ? _writeWithFallback : null,
           );
   }
 
@@ -426,8 +436,6 @@ class PlaybackProgressTracker {
   }
 
   Future<void> _sendProgress(String state, {Duration? positionOverride, Duration? durationOverride}) async {
-    Duration? attemptedPosition;
-    Duration? attemptedDuration;
     try {
       // After a server-side termination the session stays closed through
       // buffered playback: a playing heartbeat re-opening it would undo the
@@ -453,8 +461,6 @@ class PlaybackProgressTracker {
       final position = _clampPosition(positionSource, duration);
       if (canReport && hasRenderedOutput) _lastReportablePosition = position;
       final canCommitStoppedProgress = hasRenderedOutput && (!isSuppressedStop || _lastReportablePosition != null);
-      attemptedPosition = position;
-      attemptedDuration = duration;
 
       // Don't send progress if no duration (not ready)
       if (duration.inMilliseconds == 0) {
@@ -513,17 +519,12 @@ class PlaybackProgressTracker {
                   return;
                 }
                 _recordProgressFailure(e);
-                unawaited(_queueOnlineFailureProgress(position, duration));
               }),
         );
       }
     } catch (e) {
       if (!isOffline && !localOnly) {
         _recordProgressFailure(e);
-        await _queueOnlineFailureProgress(
-          attemptedPosition ?? player.state.position,
-          attemptedDuration ?? player.state.duration,
-        );
       } else {
         appLogger.d('Failed to send progress update (non-critical)', error: e);
       }
@@ -537,14 +538,52 @@ class PlaybackProgressTracker {
     return position;
   }
 
-  Future<void> _queueOnlineFailureProgress(Duration position, Duration duration) async {
-    if (!queueOnOnlineFailure || offlineWatchService == null) return;
-    if (duration.inMilliseconds == 0) return;
-    try {
-      await _sendOfflineProgress(_clampPosition(position, duration), duration);
-    } catch (e) {
-      appLogger.d('Failed to queue fallback progress after online report failure', error: e);
-    }
+  Future<T> _writeWithFallback<T>(PlaybackReportSnapshot snapshot, Future<T> Function() send) {
+    final service = offlineWatchService!;
+    return service.serializeWatchWrite(metadata.globalKey, () async {
+      late final T result;
+      try {
+        result = await send();
+      } on PlaybackSessionTerminatedException {
+        rethrow;
+      } catch (error) {
+        try {
+          await _sendOfflineProgress(snapshot.position, snapshot.duration);
+        } catch (queueError) {
+          appLogger.w('Could not queue failed playback report', error: queueError);
+        }
+        rethrow;
+      }
+      final acknowledged = snapshot.isStopped
+          ? _stoppedProgressServerAcknowledged
+          : _deliveredProgressAcknowledgements[snapshot] == true;
+      final checkpoint = _checkpoint;
+      if (acknowledged && checkpoint != null) {
+        try {
+          final completion = _owedCompletion;
+          final watched = service.isWatchedByProgress(
+            snapshot.position.inMilliseconds,
+            snapshot.duration.inMilliseconds,
+            serverId: client!.serverId,
+          );
+          if (completion != null && !watched && await service.checkpointIsPending(completion)) {
+            // Replaying the still-owed completion clears the server bookmark.
+            // Restore this newer position immediately after it in the queue.
+            await _sendOfflineProgress(snapshot.position, snapshot.duration);
+          } else {
+            if (completion != null && completion != checkpoint && watched) {
+              await service.acknowledgePlaybackCheckpoint(completion);
+            }
+            await service.acknowledgePlaybackCheckpoint(checkpoint);
+            _checkpoint = null;
+            _owedCompletion = null;
+          }
+        } catch (error) {
+          appLogger.w('Could not settle delivered playback checkpoint', error: error);
+        }
+      }
+      return result;
+    });
   }
 
   void _recordProgressFailure(Object e) {
@@ -888,25 +927,39 @@ class PlaybackProgressTracker {
   }
 
   /// Queue progress update locally (offline mode)
-  Future<void> _sendOfflineProgress(Duration position, Duration duration) async {
+  Future<void> _sendOfflineProgress(Duration position, Duration duration) => _localWrites.run(() async {
     final serverId = metadata.serverId;
     if (serverId == null) {
       appLogger.w('Cannot queue offline progress: serverId is null');
       return;
     }
 
-    await offlineWatchService!.queueProgressUpdate(
+    final service = offlineWatchService!;
+    final completed = service.isWatchedByProgress(
+      position.inMilliseconds,
+      duration.inMilliseconds,
+      serverId: ServerId(serverId),
+    );
+    if (completed && _recordedSessionCompletion) return;
+    _checkpoint = await service.queueProgressUpdate(
       serverId: ServerId(serverId),
       itemId: metadata.id,
       viewOffset: position.inMilliseconds,
       duration: duration.inMilliseconds,
+      sessionRowId: _checkpoint?.rowId,
+      startSession: _checkpoint == null,
+      playbackGeneration: _playbackGeneration,
     );
+    if (completed) {
+      _owedCompletion = _checkpoint;
+      _recordedSessionCompletion = true;
+    }
 
     final percent = (position.inMilliseconds / duration.inMilliseconds * 100);
     appLogger.d(
       'Offline progress queued: ${position.inSeconds}s / ${duration.inSeconds}s (${percent.toStringAsFixed(1)}%)',
     );
-  }
+  });
 
   void dispose() {
     stopTracking();

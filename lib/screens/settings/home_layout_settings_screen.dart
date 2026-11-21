@@ -12,6 +12,7 @@ import '../../media/media_kind.dart';
 import '../../media/media_backend.dart';
 import '../../media/ids.dart';
 import '../../media/media_library.dart';
+import '../../providers/hidden_libraries_provider.dart';
 import '../../providers/libraries_provider.dart';
 import '../../providers/multi_server_provider.dart';
 import '../../services/settings_service.dart';
@@ -43,7 +44,6 @@ class HomeLayoutSettingsScreen extends StatefulWidget {
 class _HomeLayoutSettingsScreenState extends State<HomeLayoutSettingsScreen> {
   List<HomeSectionConfig> _sections = [];
   bool _loaded = false;
-  List<MediaItem> _collections = const [];
   Map<String, List<PlexManagedHub>> _managedRows = {};
   Map<String, ManagedHubHeroOverride> _heroOverrides = {};
   List<String> _rowOrder = [];
@@ -177,12 +177,6 @@ class _HomeLayoutSettingsScreenState extends State<HomeLayoutSettingsScreen> {
     final settings = await SettingsService.getInstance();
     final sections = List.of(settings.read(SettingsService.homeSections));
     final rowOrder = List.of(settings.read(SettingsService.homeRowOrder));
-    List<MediaItem> collections = const [];
-    try {
-      collections = (await multiServer.aggregationService.getCollectionsFromAllServers()).collections;
-    } catch (_) {
-      // The editor remains usable when a server is temporarily offline.
-    }
     final managedRows = <String, List<PlexManagedHub>>{};
 
     if (!libraryProvider.hasLibraries) await libraryProvider.loadLibraries();
@@ -216,7 +210,6 @@ class _HomeLayoutSettingsScreenState extends State<HomeLayoutSettingsScreen> {
     if (!mounted) return;
     setState(() {
       _sections = sections;
-      _collections = collections;
       _managedRows = managedRows;
       _heroOverrides = settings.read(SettingsService.managedHubHeroOverrides);
       _rowOrder = normalizedOrder;
@@ -292,12 +285,58 @@ class _HomeLayoutSettingsScreenState extends State<HomeLayoutSettingsScreen> {
     }
   }
 
-  Future<void> _editSection(HomeSectionConfig current) async {
-    final libraries = context.read<LibrariesProvider>().libraries.where((l) => !l.hidden).toList();
-    final result = await showDialog<HomeSectionConfig>(
+  Future<HomeSectionConfig?> _openSectionEditor([HomeSectionConfig? initial]) {
+    final libraries = context.read<LibrariesProvider>();
+    final hidden = context.read<HiddenLibrariesProvider?>();
+    final multiServer = context.read<MultiServerProvider>();
+    final sources = Listenable.merge([libraries, hidden, multiServer]);
+    Set<String>? previousHidden;
+    Map<String, Object>? previousSessions;
+    Future<List<MediaItem>>? collectionRequest;
+    return showDialog<HomeSectionConfig>(
       context: context,
-      builder: (_) => _HomeSectionDialog(libraries: libraries, collections: _collections, initial: current),
+      builder: (_) => ListenableBuilder(
+        listenable: sources,
+        builder: (context, _) {
+          final hiddenKeys = hidden?.hiddenLibraryKeys ?? const <String>{};
+          final sessions = <String, Object>{
+            for (final entry in multiServer.serverManager.visibleOnlineClients.entries)
+              entry.key: (entry.value, entry.value.authenticationSessionId),
+          };
+          final initialized = hidden?.isInitialized ?? true;
+          if (initialized && (!setEquals(previousHidden, hiddenKeys) || !mapEquals(previousSessions, sessions))) {
+            previousHidden = hiddenKeys;
+            previousSessions = sessions;
+            collectionRequest = multiServer.aggregationService
+                .getCollectionsFromAllServers(hiddenLibraryKeys: hiddenKeys)
+                .then((result) => result.collections);
+          }
+          return FutureBuilder<List<MediaItem>>(
+            future: collectionRequest,
+            builder: (context, snapshot) {
+              final ready = snapshot.connectionState == ConnectionState.done;
+              return _HomeSectionDialog(
+                initial: initial,
+                loadingCollections: !ready,
+                libraries: [
+                  if (initialized)
+                    for (final library in libraries.libraries)
+                      if (!library.hidden &&
+                          sessions.containsKey(library.serverId) &&
+                          !hiddenKeys.contains(library.globalKey))
+                        library,
+                ],
+                collections: ready ? snapshot.data ?? const [] : const [],
+              );
+            },
+          );
+        },
+      ),
     );
+  }
+
+  Future<void> _editSection(HomeSectionConfig current) async {
+    final result = await _openSectionEditor(current);
     if (result != null) {
       final updated = _sections.map((s) => s.id == current.id ? result : s).toList();
       await _save(updated);
@@ -305,11 +344,7 @@ class _HomeLayoutSettingsScreenState extends State<HomeLayoutSettingsScreen> {
   }
 
   Future<void> _addSection() async {
-    final libraries = context.read<LibrariesProvider>().libraries.where((l) => !l.hidden).toList();
-    final result = await showDialog<HomeSectionConfig>(
-      context: context,
-      builder: (_) => _HomeSectionDialog(libraries: libraries, collections: _collections),
-    );
+    final result = await _openSectionEditor();
     if (result == null) return;
     await _save([..._sections, result]);
     if (result.showOnHome) await _moveTokenToTop('custom:${result.id}');
@@ -1419,7 +1454,14 @@ String _label(HomeSectionKind kind) => switch (kind) {
 };
 
 class _HomeSectionDialog extends StatefulWidget {
-  const _HomeSectionDialog({required this.libraries, required this.collections, this.initial});
+  final bool loadingCollections;
+
+  const _HomeSectionDialog({
+    required this.loadingCollections,
+    required this.libraries,
+    required this.collections,
+    this.initial,
+  });
   final List<MediaLibrary> libraries;
   final List<MediaItem> collections;
   final HomeSectionConfig? initial;
@@ -1468,16 +1510,18 @@ class _HomeSectionDialogState extends State<_HomeSectionDialog> {
     }
   }
 
-  List<MediaItem> _filteredCollections() => widget.collections.where((item) {
-    final isMovie = widget.libraries.any(
-      (library) => library.globalKey == item.libraryGlobalKey && library.kind == MediaKind.movie,
-    );
-    final isShow = widget.libraries.any(
-      (library) => library.globalKey == item.libraryGlobalKey && library.kind == MediaKind.show,
-    );
-    final matchesKind = _kind == HomeSectionKind.movieCollections ? isMovie : isShow;
-    return matchesKind && (_selected.isEmpty || _selected.contains(item.libraryGlobalKey));
-  }).toList();
+  List<MediaItem> _filteredCollections() {
+    final libraries = {
+      for (final library in widget.libraries)
+        if (library.kind == _kind.collectionKind && (_selected.isEmpty || _selected.contains(library.globalKey)))
+          library.globalKey,
+    };
+    final seen = <String>{};
+    return [
+      for (final item in widget.collections)
+        if (libraries.contains(item.libraryGlobalKey) && seen.add(item.globalKey)) item,
+    ];
+  }
 
   @override
   Widget build(BuildContext context) => AlertDialog(
@@ -1603,6 +1647,7 @@ class _HomeSectionDialogState extends State<_HomeSectionDialog> {
                 if (_allCollections) _selectedCollections.clear();
               }),
             ),
+            if (widget.loadingCollections) const LinearProgressIndicator(),
             for (final collection in _filteredCollections())
               CheckboxListTile(
                 dense: true,

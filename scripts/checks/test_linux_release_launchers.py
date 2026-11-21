@@ -2,12 +2,14 @@
 """Exercise release staging and installed launchers against packaging templates."""
 
 import ast
+import base64
 import json
 import os
 from pathlib import Path
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import textwrap
 import unittest
@@ -104,6 +106,83 @@ class LinuxReleaseLauncherTests(unittest.TestCase):
         self.assertNotEqual(failed.returncode, 0)
         self.assertEqual(Path(actual['path']).read_bytes(), previous)
         self.assertEqual(len(list((self.root / 'cache/pleazyng/gtk-im').iterdir())), 1)
+
+    @unittest.skipUnless(sys.platform.startswith("linux"), "native GdkPixbuf requires Linux")
+    def test_relocated_portable_and_read_only_appimage_decode_with_bundled_modules(self):
+        # On Debian the native query lives outside PATH, next to the ABI directory.
+        query = shutil.which("gdk-pixbuf-query-loaders")
+        if not query:
+            query = next(Path("/usr/lib").glob("*/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders"), None)
+        if not query:
+            self.skipTest("native gdk-pixbuf-query-loaders is required")
+        system_modules = Path(query).parent / "2.10.0/loaders"
+        if not system_modules.is_dir() and shutil.which("pkg-config"):
+            result = subprocess.run(["pkg-config", "--variable=gdk_pixbuf_moduledir", "gdk-pixbuf-2.0"],
+                                    capture_output=True, text=True)
+            if result.returncode == 0 and result.stdout.strip():
+                system_modules = Path(result.stdout.strip())
+        modules = self.bundle / "lib/gdk-pixbuf-2.0/2.10.0/loaders"
+        modules.mkdir(parents=True)
+        for ext in ("svg", "gif"):
+            native = next(system_modules.glob(f"*{ext}.so"), None)
+            if native is None:
+                self.skipTest(f"native {ext} loader is required")
+            shutil.copy2(native, modules / native.name)
+        subprocess.run([sys.executable, self.packaging / "rebuild-pixbuf-cache.py",
+                        self.bundle, "--query-tool", query, "--runtime-prefix", "/opt/pleazyng"], check=True)
+        self.stage_release()
+        (self.bundle / "image.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg" width="2" height="2"/>')
+        (self.bundle / "image.gif").write_bytes(base64.b64decode("R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="))
+        (self.bundle / "pleazyng").write_text(
+            "#!/usr/bin/env python3\nimport ctypes as c, os, pathlib\n"
+            "if os.environ.get('VERIFY_READ_ONLY_MOUNT'):\n"
+            "    assert os.statvfs(__file__).f_flag & os.ST_RDONLY\n"
+            "lib = c.CDLL('libgdk_pixbuf-2.0.so.0')\n"
+            "lib.gdk_pixbuf_new_from_file.argtypes = [c.c_char_p, c.c_void_p]\n"
+            "lib.gdk_pixbuf_new_from_file.restype = c.c_void_p\n"
+            "for name in ('image.svg', 'image.gif'):\n"
+            "    assert lib.gdk_pixbuf_new_from_file(os.fsencode(pathlib.Path(__file__).with_name(name)), None), name\n"
+            "print(os.environ['GDK_PIXBUF_MODULE_FILE'])\n")
+        packaged_cache = modules.parent / "loaders.cache"
+        original = packaged_cache.read_bytes()
+        portable = self.root / 'portable "copy"'
+        self.bundle.rename(portable)
+        app = self.root / "mounted.AppDir"
+        shutil.copytree(portable, app / "opt/pleazyng")
+        shutil.copy2(self.packaging / "appimage/AppRun", app / "AppRun")
+        (app / "AppRun").chmod(0o755)
+        for path in [*app.rglob("*"), app]:
+            path.chmod(path.stat().st_mode & ~0o222)
+
+        environment = {**os.environ, "XDG_CACHE_HOME": str(self.root / "cache")}
+        for entry, bundle in ((portable / "pleazyng.sh", portable), (app / "AppRun", app / "opt/pleazyng")):
+            with self.subTest(entry=entry):
+                command = [entry]
+                env = dict(environment)
+                if entry == app / "AppRun" and shutil.which("unshare") and shutil.which("mount"):
+                    # The namespace dies with the probe. Environments that disallow
+                    # unprivileged mounts still exercise the non-writable AppDir.
+                    namespace = ["unshare", "--user", "--map-root-user", "--mount", "--propagation", "private"]
+                    bind = 'mount --bind "$1" "$1" && mount -o remount,bind,ro "$1"'
+                    if subprocess.run([*namespace, "sh", "-ec", bind, "sh", app], capture_output=True).returncode == 0:
+                        command = [*namespace, "sh", "-ec", bind + ' && exec "$2"', "sh", app, entry]
+                        env["VERIFY_READ_ONLY_MOUNT"] = "1"
+                result = subprocess.run(command, env=env, check=True, capture_output=True, text=True)
+                relocated = Path(result.stdout.strip())
+                self.assertTrue(relocated.is_relative_to(self.root / "cache"))
+                self.assertEqual((bundle / packaged_cache.relative_to(self.bundle)).read_bytes(), original)
+                for line in relocated.read_text().splitlines():
+                    if line.startswith('"') and line.endswith('.so"'):
+                        self.assertTrue(Path(ast.literal_eval(line)).is_relative_to(bundle))
+
+    def test_empty_pixbuf_cache_is_rejected_before_startup(self):
+        self.stage_release()
+        modules = self.bundle / "lib/gdk-pixbuf-2.0/2.10.0/loaders"
+        modules.mkdir(parents=True)
+        (modules.parent / "loaders.cache").write_text("# no registered loaders\n")
+        result = subprocess.run([self.bundle / "pleazyng.sh"], capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Missing module records", result.stderr)
 
     def test_appimage_entrypoint_executes_staged_bundle_launcher(self):
         self.stage_release()

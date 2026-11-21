@@ -123,6 +123,7 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$fa musicExperience = _Translations$musicExperience$fa._(_root);
 	@override late final _Translations$musicTools$fa musicTools = _Translations$musicTools$fa._(_root);
 	@override late final _Translations$musicDevices$fa musicDevices = _Translations$musicDevices$fa._(_root);
+	@override late final _Translations$bookmarkMigration$fa bookmarkMigration = _Translations$bookmarkMigration$fa._(_root);
 }
 
 // Path: mediaConveniences
@@ -2723,6 +2724,7 @@ class _Translations$metadataEdit$fa extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'URL تصویر را وارد کنید';
 	@override String get imageUrl => 'تصویر URL';
 	@override String get metadataUpdated => 'Metadata به روز شده';
+	@override String get metadataConflict => 'ویرایشگر دیگری همین فیلد را تغییر داده است. پیش از ذخیره، ویرایشگر را دوباره باز کنید تا آخرین مقادیر را بررسی کنید.';
 	@override String get metadataUpdateFailed => 'عدم به روز رسانی متا';
 	@override String get artworkUpdated => 'هنر به روز شده';
 	@override String get artworkUpdateFailed => 'به روز رسانی هنرهای هنری';
@@ -4107,6 +4109,7 @@ class _Translations$podcasts$fa extends Translations$podcasts$en {
 	final TranslationsFa _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'اشتراک‌های واردشده: ${imported}، تکراری: ${duplicates}، ردشده: ${skipped}.';
 	@override String get autoDownloadLatest => 'بارگیری خودکار تازه‌ترین قسمت‌ها';
 	@override String get removeFinishedAfter => 'حذف بارگیری‌های تمام‌شده پس از';
 }
@@ -4519,6 +4522,17 @@ class _Translations$musicDevices$fa extends Translations$musicDevices$en {
 	@override String get relay => 'نشانی رلهٔ موسیقی';
 	@override String get relayHint => 'در دستگاه گیرنده فعال کنید و یک بار در همان شبکه جفت کنید. Pleazyng را باز نگه دارید. رله فرمان‌های رمزگذاری‌شدهٔ موسیقی را منتقل می‌کند و نشانی‌های شبکه را می‌بیند. هر پخش‌کننده از سرور رسانهٔ خودش پخش می‌کند.';
 	@override String get relayInvalid => 'نشانی HTTPS رله را وارد کنید.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$fa extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'نشانک‌های نسخه‌ای ناشناخته';
+	@override String get assignToVersion => 'اختصاص به این نسخه';
 }
 
 // Path: appIcon.names
@@ -8281,6 +8295,7 @@ extension on TranslationsFa {
 			'metadataEdit.enterImageUrl' => 'URL تصویر را وارد کنید',
 			'metadataEdit.imageUrl' => 'تصویر URL',
 			'metadataEdit.metadataUpdated' => 'Metadata به روز شده',
+			'metadataEdit.metadataConflict' => 'ویرایشگر دیگری همین فیلد را تغییر داده است. پیش از ذخیره، ویرایشگر را دوباره باز کنید تا آخرین مقادیر را بررسی کنید.',
 			'metadataEdit.metadataUpdateFailed' => 'عدم به روز رسانی متا',
 			'metadataEdit.artworkUpdated' => 'هنر به روز شده',
 			'metadataEdit.artworkUpdateFailed' => 'به روز رسانی هنرهای هنری',
@@ -8717,9 +8732,9 @@ extension on TranslationsFa {
 			'homeLayout.showInRecommended' => 'نمایش در کتابخانه توصیه شده',
 			'homeLayout.customPlexRow' => 'مشخصات Plex خط',
 			'homeLayout.heroNeedsLibrary' => 'نگاهی به کتابخانه اول – قهرمان نیاز به جایی برای نشان دادن',
-			'homeLayout.heroNeedsSurface' => 'کتابخانه یا خانه را اول ببینید – قهرمان باید جایی برای نشان دادن',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'کتابخانه یا خانه را اول ببینید – قهرمان باید جایی برای نشان دادن',
 			'homeLayout.removeHub' => 'حذف هاب',
 			'homeLayout.noPlexRows' => 'شماره Plex ردیف های مدیریت شده برای این کتابخانه بازگردانده شده است.',
 			'homeLayout.openDetails' => 'جزئیات باز',
@@ -9231,9 +9246,9 @@ extension on TranslationsFa {
 			'audiobook.recoveryHelp' => 'یک کپی رمزگذاری شده اخیر را قبل از حرکت یا اصلاح داده های همگام سازی صادر کنید. واردات با وضعیت فعلی ادغام می شود؛ آنها هرگز تاریخچه همگامه محلی را جایگزین نمی کنند.',
 			'audiobook.recoveryExport' => 'صادرات رمزگذاری شده بازگرداندن فایل',
 			'audiobook.recoveryImport' => 'واردات فایل های رمزگذاری شده',
-			'audiobook.recoveryImportConfirm' => 'آیا این فایل بازگرداندن رمزگذاری شده با موقعیت های خواندن فعلی و یادداشت ها ترکیب می شود؟ تاریخچه موجود حفظ خواهد شد. کتابخانه به اشتراک گذاشته شده و شناسه آیتم شامل نمی شود؛ قبل از واردات، شناسه های مطابقت را بر روی هر دستگاه تنظیم کنید.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'آیا این فایل بازگرداندن رمزگذاری شده با موقعیت های خواندن فعلی و یادداشت ها ترکیب می شود؟ تاریخچه موجود حفظ خواهد شد. کتابخانه به اشتراک گذاشته شده و شناسه آیتم شامل نمی شود؛ قبل از واردات، شناسه های مطابقت را بر روی هر دستگاه تنظیم کنید.',
 			'audiobook.recoveryExported' => 'فایل بازگرداندن رمزگذاری شده ذخیره شده است.',
 			'audiobook.recoveryImported' => 'بازگرداندن اطلاعات جمع آوری شده است.',
 			'sourceSetup.bookorbitHelp' => 'برای مرور و پخش کتاب‌های BookOrbit، با حساب شخصی خود وارد شوید. درخواست عنوان‌های موجودنبود همچنان از نمونهٔ متصل SeerrNG شما انجام می‌شود.',
@@ -9452,6 +9467,7 @@ extension on TranslationsFa {
 			'issueReport.privacy' => 'پیش‌نویس نسخه برنامه، پلتفرم و تعداد اتصال‌ها را دارد. نشانی سرورها، نام حساب‌ها و پروفایل‌ها، عنوان رسانه‌ها و مسیر فایل‌ها در آن نیست.',
 			'issueReport.logPrivacy' => 'گزارش‌ها اختیاری‌اند. پیش از بارگذاری آن‌ها را بررسی کنید. شناسه گزارش به پیش‌نویس اضافه می‌شود و ممکن است عمومی باشد.',
 			'issueReport.openDraft' => 'باز کردن پیش‌نویس GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'اشتراک‌های واردشده: ${imported}، تکراری: ${duplicates}، ردشده: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'بارگیری خودکار تازه‌ترین قسمت‌ها',
 			'podcasts.removeFinishedAfter' => 'حذف بارگیری‌های تمام‌شده پس از',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'پیش‌نمایش کدگذاری زیرنویس',
@@ -9744,10 +9760,10 @@ extension on TranslationsFa {
 			'musicTools.home' => 'موسیقی‌ها',
 			'musicTools.recent' => 'اخیراً پخش‌شده',
 			'musicTools.apiKey' => 'کلید API',
-			'musicTools.missing' => 'N / A',
-			'musicTools.minutes' => 'دقیقه ها',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'N / A',
+			'musicTools.minutes' => 'دقیقه ها',
 			'musicTools.rules' => 'صافی‌ها',
 			'musicTools.exclusiveOutput' => 'خروجی صدای انحصاری',
 			'musicTools.preamp' => 'پیش‌تقویت',
@@ -9803,6 +9819,8 @@ extension on TranslationsFa {
 			'musicDevices.relay' => 'نشانی رلهٔ موسیقی',
 			'musicDevices.relayHint' => 'در دستگاه گیرنده فعال کنید و یک بار در همان شبکه جفت کنید. Pleazyng را باز نگه دارید. رله فرمان‌های رمزگذاری‌شدهٔ موسیقی را منتقل می‌کند و نشانی‌های شبکه را می‌بیند. هر پخش‌کننده از سرور رسانهٔ خودش پخش می‌کند.',
 			'musicDevices.relayInvalid' => 'نشانی HTTPS رله را وارد کنید.',
+			'bookmarkMigration.unassigned' => 'نشانک‌های نسخه‌ای ناشناخته',
+			'bookmarkMigration.assignToVersion' => 'اختصاص به این نسخه',
 			_ => null,
 		};
 	}

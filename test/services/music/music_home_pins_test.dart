@@ -5,6 +5,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/database/app_database.dart';
 import 'package:plezy/media/media_item.dart';
+import 'package:plezy/media/ids.dart';
 import 'package:plezy/media/media_kind.dart';
 import 'package:plezy/services/music/music_home_pins.dart';
 import 'package:plezy/services/music/music_library_store.dart';
@@ -16,6 +17,11 @@ class _Client extends ExperienceClient {
   Future<MediaItem?> Function(String)? fetch;
   @override
   Future<MediaItem?> fetchItem(String id) async => fetch == null ? remote : await fetch!(id);
+}
+
+class _OtherServer extends _Client {
+  @override
+  ServerId get serverId => ServerId('other');
 }
 
 void main() {
@@ -201,6 +207,28 @@ void main() {
     await pins.save(musicTrack('track-0'));
     expect(await pins.load(), hasLength(100));
     expect((await pins.load()).first.item.title, 'Updated');
+  });
+
+  test('shelf and editor retain pins from all visible accounts beyond the per-account quota', () async {
+    final other = _OtherServer()..scopedServerId = 'other/user';
+    final both = MusicHomePins(store: store, clientFor: (item) => item.serverId == 's' ? client : other);
+    addTearDown(both.dispose);
+    await database.transaction(() async {
+      for (var i = 0; i < MusicHomePins.limit; i++) {
+        final item = musicTrack('track-$i');
+        final pin = MusicHomePin(id: MusicHomePin.key('s/user', item), account: 's/user', item: item, order: i);
+        await store.saveDocument('homePin', pin.id, pin.toJson());
+      }
+    });
+    other.remote = musicTrack('new', server: 'other');
+    final added = await both.save(other.remote);
+    final all = await both.load();
+    expect(all, hasLength(MusicHomePins.limit + 1));
+    expect(all.last.id, added.id);
+    await both.reorder([added, ...all.take(MusicHomePins.limit)]);
+    expect((await both.load()).first.id, added.id);
+    await both.remove(added);
+    expect(await both.load(), hasLength(MusicHomePins.limit));
   });
 
   test('queued mutations are bounded and a failure does not poison subsequent saves', () async {

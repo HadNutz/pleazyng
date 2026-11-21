@@ -12740,6 +12740,9 @@ class Translations$podcasts$en {
 	/// en: 'Subscriptions imported.'
 	String get imported => 'Subscriptions imported.';
 
+	/// en: 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.'
+	String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.';
+
 	/// en: 'The export contains feed URLs, including private membership links. Keep it private.'
 	String get exportHelp => 'The export contains feed URLs, including private membership links. Keep it private.';
 
@@ -22900,6 +22903,7 @@ extension on Translations {
 			'podcasts.imported' => 'Subscriptions imported.',
 			_ => null,
 		} ?? switch (path) {
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.',
 			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
 			'podcasts.serverHelp' => 'Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.',
 			'podcasts.viewAll' => 'Show more episodes',
@@ -23411,9 +23415,9 @@ extension on Translations {
 			'karaokeUi.muteAndSavePhoneInput' => 'Mute and save',
 			'karaokeUi.pitchMIDIPracticeOnly' => ({required Object value1}) => 'Pitch MIDI ${value1} · practice only',
 			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',
-			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',
 			_ => null,
 		} ?? switch (path) {
+			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',
 			'karaokeUi.phoneInputRequiresSecureContext' => 'A trusted HTTPS connection is required.',
 			'karaokeUi.phoneInputRequires16kHzCapture' => 'This browser cannot supply the required 16 kHz capture path.',
 			'karaokeUi.phoneInputNeedsActivePerformance' => 'Return to an active performance before enabling capture.',

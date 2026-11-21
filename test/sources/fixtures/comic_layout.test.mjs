@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {comicTurns,comicLocator,parseComicLocator} from '../../../assets/reader/comic-layout.js';
+import {comicTurns,comicLocator,parseComicLocator,comicReadingPosition} from '../../../assets/reader/comic-layout.js';
 const pages=Array.from({length:7},()=>({width:800,height:1200}));
 const indices=turns=>turns.map(t=>t.map(p=>p.index));
 test('cover, odd final page and right-to-left pairing',()=>{
@@ -65,4 +65,16 @@ test('narrow book posture pairs RTL pages while preserving single mode and physi
     const closed=comicTurns(pages,{...settings,foldPane:0},320,800);
     assert.equal(closed.find(t=>t.some(p=>p.index===parseComicLocator(locator).index))[0].index,3);
     assert.equal(comicTurns(pages,{...settings,spread:'single'},658,800).length,7);
+});
+
+test('reordered ComicInfo issues preserve old image, half and offset locators',()=>{
+    const reordered=[{archiveIndex:2},{archiveIndex:0},{archiveIndex:3}];
+    assert.equal(comicReadingPosition(reordered).index,0); // Open on the declared cover.
+    const saved=comicLocator(0,1,.35);
+    assert.deepEqual(comicReadingPosition(reordered,saved),{index:1,half:1,offset:.35});
+    assert.equal(comicReadingPosition(reordered,'epubcfi(/6/2)').index,1);
+    assert.equal(comicReadingPosition(reordered,null,1).index,1);
+    // Image 1 was removed. Its old bookmark goes to the next surviving image (2).
+    assert.deepEqual(comicReadingPosition(reordered,comicLocator(1,0,.8)),{index:0,offset:0});
+    assert.deepEqual(comicReadingPosition(reordered,comicLocator(10)),{index:2,offset:0});
 });

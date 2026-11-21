@@ -3256,6 +3256,7 @@
     "enterImageUrl": "Bild-URL eingeben",
     "imageUrl": "Bild-URL",
     "metadataUpdated": "Metadaten aktualisiert",
+    "metadataConflict": "Jemand anderes hat dasselbe Feld geändert. Öffne den Editor erneut, um die aktuellen Werte vor dem Speichern zu prüfen.",
     "metadataUpdateFailed": "Metadaten konnten nicht aktualisiert werden",
     "artworkUpdated": "Grafiken aktualisiert",
     "artworkUpdateFailed": "Grafiken konnten nicht aktualisiert werden",
@@ -4891,6 +4892,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Importierte Abonnements: ${imported}. Duplikate: ${duplicates}. Übersprungen: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5707,9 @@
     "relay": "URL des Musik-Relays",
     "relayHint": "Auf dem Empfangsgerät aktivieren und einmal im selben Netzwerk koppeln. Pleazyng geöffnet lassen. Das Relay überträgt verschlüsselte Musikbefehle und sieht Netzwerkadressen. Jeder Player streamt vom eigenen Medienserver.",
     "relayInvalid": "Eine HTTPS-Adresse für das Relay eingeben."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Lesezeichen aus einer unbekannten Version",
+    "assignToVersion": "Dieser Version zuordnen"
   }
 }

@@ -1,4 +1,4 @@
-import {comicTurns, comicLocator, parseComicLocator, comicPanelBounds} from './comic-layout.js';
+import {comicTurns, comicLocator, comicReadingPosition, comicPanelBounds} from './comic-layout.js';
 
 // The existing reader shell owns chrome, localization, notes and persistence.
 // This element owns image layout and keeps only nearby images resident.
@@ -102,7 +102,7 @@ export class ComicReader extends HTMLElement {
         this.options=options;this.send=send;this.resource=resource;this.defaultDirection=document.direction;
         this.numbers=new Intl.NumberFormat(options.formattingLocale??options.interfaceLocale,{useGrouping:false});
         this.viewport.setAttribute('aria-label',options.title);
-        const location=parseComicLocator(options.cfi, Math.max(0,(options.page??1)-1));
+        const location=comicReadingPosition(this.pages,options.cfi,options.page);
         this.index=Math.min(this.pages.length-1,Math.max(0,location.index));this.half=location.half;this.panel=location.panel;this.overview=false;this.offset=location.offset;
         this.configure(options.settings);
         this.viewport.focus({preventScroll:true});
@@ -130,7 +130,7 @@ export class ComicReader extends HTMLElement {
         const fraction=panel===undefined ? Math.min(1,Math.max(0,end/this.pages.length)) :
             (this.index+(panel+1)/section.frames.length)/this.pages.length;
         const title=section.bookmark || this.pageLabel(this.index);
-        this.send('location',{cfi:comicLocator(this.index,this.half,this.offset,panel),href:section.name,title,
+        this.send('location',{cfi:comicLocator(section.archiveIndex??this.index,this.half,this.offset,panel),href:section.name,title,
             fraction,section:this.index,spreadPages: turn.length > 1 ? turn.map(p=>p.index) :
                 turn.filter(p=>this.settings.soloPages?.includes(p.index)).map(p=>p.index),sections:this.pages.length,text:''});
         this.status.textContent=title;
@@ -273,7 +273,7 @@ export class ComicReader extends HTMLElement {
     page(number){this.index=Math.min(this.pages.length-1,Math.max(0,Math.round(Number(number)||1)-1));this.half=undefined;this.panel=undefined;this.overview=false;this.offset=0;this.render();}
     goTo(target){
         const known=this.pages.findIndex(p=>p.name===target);
-        const location=parseComicLocator(target,known<0?0:known);
+        const location=known>=0?{index:known,offset:0}:comicReadingPosition(this.pages,target);
         this.index=Math.min(this.pages.length-1,location.index);this.half=location.half;this.panel=location.panel;this.overview=false;this.offset=location.offset;this.render();
     }
     get scale(){return Number(this.stage.children[this.settings.comicMode==='webtoon'?this.index:0]?.dataset.scale)||1;}

@@ -123,6 +123,7 @@ class TranslationsCs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$cs musicExperience = _Translations$musicExperience$cs._(_root);
 	@override late final _Translations$musicTools$cs musicTools = _Translations$musicTools$cs._(_root);
 	@override late final _Translations$musicDevices$cs musicDevices = _Translations$musicDevices$cs._(_root);
+	@override late final _Translations$bookmarkMigration$cs bookmarkMigration = _Translations$bookmarkMigration$cs._(_root);
 }
 
 // Path: mediaConveniences
@@ -2757,6 +2758,7 @@ class _Translations$metadataEdit$cs extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Vložte obrázek URL';
 	@override String get imageUrl => 'obrázek URL';
 	@override String get metadataUpdated => 'Aktualizované metadata';
+	@override String get metadataConflict => 'Stejné pole upravil někdo jiný. Před uložením znovu otevřete editor a zkontrolujte aktuální hodnoty.';
 	@override String get metadataUpdateFailed => 'Nedokázal aktualizovat metadata';
 	@override String get artworkUpdated => 'Umělecká aktualizace';
 	@override String get artworkUpdateFailed => 'Nedokázal aktualizovat umělecké dílo';
@@ -4149,6 +4151,7 @@ class _Translations$podcasts$cs extends Translations$podcasts$en {
 	final TranslationsCs _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Importovaná předplatná: ${imported}. Duplicitní: ${duplicates}. Přeskočená: ${skipped}.';
 	@override String get autoDownloadLatest => 'Automaticky stahovat nejnovější epizody';
 	@override String get removeFinishedAfter => 'Odstranit dokončená stažení po';
 }
@@ -4561,6 +4564,17 @@ class _Translations$musicDevices$cs extends Translations$musicDevices$en {
 	@override String get relay => 'URL hudebního relé';
 	@override String get relayHint => 'Zapněte na přijímajícím zařízení a jednou spárujte ve stejné síti. Nechte Pleazyng otevřený. Relé přenáší šifrované ovládání hudby a vidí síťové adresy. Každý přehrávač streamuje z vlastního mediálního serveru.';
 	@override String get relayInvalid => 'Zadejte HTTPS adresu relé.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$cs extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$cs._(TranslationsCs root) : this._root = root, super.internal(root);
+
+	final TranslationsCs _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Záložky z neurčené verze';
+	@override String get assignToVersion => 'Přiřadit k této verzi';
 }
 
 // Path: appIcon.names
@@ -8325,6 +8339,7 @@ extension on TranslationsCs {
 			'metadataEdit.enterImageUrl' => 'Vložte obrázek URL',
 			'metadataEdit.imageUrl' => 'obrázek URL',
 			'metadataEdit.metadataUpdated' => 'Aktualizované metadata',
+			'metadataEdit.metadataConflict' => 'Stejné pole upravil někdo jiný. Před uložením znovu otevřete editor a zkontrolujte aktuální hodnoty.',
 			'metadataEdit.metadataUpdateFailed' => 'Nedokázal aktualizovat metadata',
 			'metadataEdit.artworkUpdated' => 'Umělecká aktualizace',
 			'metadataEdit.artworkUpdateFailed' => 'Nedokázal aktualizovat umělecké dílo',
@@ -8761,9 +8776,9 @@ extension on TranslationsCs {
 			'homeLayout.showInRecommended' => 'Představení v knihovně doporučeno',
 			'homeLayout.customPlexRow' => 'Přizpůsobený Plex řádek',
 			'homeLayout.heroNeedsLibrary' => 'Prohlédněte si knihovnu nejprve – Hero potřebuje někde ukázat',
-			'homeLayout.heroNeedsSurface' => 'Zkontrolujte knihovnu nebo domov nejprve – Hero potřebuje někde ukázat',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Zkontrolujte knihovnu nebo domov nejprve – Hero potřebuje někde ukázat',
 			'homeLayout.removeHub' => 'Odstranění Hub',
 			'homeLayout.noPlexRows' => 'Číslo Plex řízené řádky se vrátily pro tuto knihovnu.',
 			'homeLayout.openDetails' => 'Otevřené detaily',
@@ -9275,9 +9290,9 @@ extension on TranslationsCs {
 			'audiobook.recoveryHelp' => 'Exportujte nedávnou šifrovanou kopii před přenesením nebo opravou synchronizačních dat. Importy se spojí s aktuálním stavem; nikdy nenahrazují místní historii synchromu.',
 			'audiobook.recoveryExport' => 'Export šifrované obnovení souborů',
 			'audiobook.recoveryImport' => 'Import šifrované obnovení souborů',
-			'audiobook.recoveryImportConfirm' => 'Spojte tento šifrovaný obnovení soubor s aktuálními čtení pozic a poznámky? existující historie bude zachována. sdílená knihovna a ID položky nejsou zahrnuty; nastavit odpovídající ID na každém zařízení před dovozem.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Spojte tento šifrovaný obnovení soubor s aktuálními čtení pozic a poznámky? existující historie bude zachována. sdílená knihovna a ID položky nejsou zahrnuty; nastavit odpovídající ID na každém zařízení před dovozem.',
 			'audiobook.recoveryExported' => 'Šifrované obnovení souboru je uloženo.',
 			'audiobook.recoveryImported' => 'Údaje o obnově se smítají.',
 			'sourceSetup.bookorbitHelp' => 'Přihlaste se ke svému účtu BookOrbit a procházejte jeho knihy nebo je přehrávejte. Žádosti o chybějící tituly nadále zpracovává vaše připojená instance SeerrNG.',
@@ -9496,6 +9511,7 @@ extension on TranslationsCs {
 			'issueReport.privacy' => 'Návrh obsahuje verzi aplikace, platformu a počty připojení. Neobsahuje adresy serverů, názvy účtů a profilů, názvy médií ani cesty k souborům.',
 			'issueReport.logPrivacy' => 'Protokoly jsou volitelné. Před nahráním je zkontrolujte. Jejich ID se přidá do návrhu, který může být veřejný.',
 			'issueReport.openDraft' => 'Otevřít návrh na GitHubu',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Importovaná předplatná: ${imported}. Duplicitní: ${duplicates}. Přeskočená: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Automaticky stahovat nejnovější epizody',
 			'podcasts.removeFinishedAfter' => 'Odstranit dokončená stažení po',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Náhled kódování titulků',
@@ -9788,10 +9804,10 @@ extension on TranslationsCs {
 			'musicTools.home' => 'Hudba',
 			'musicTools.recent' => 'Nedávno přehrané',
 			'musicTools.apiKey' => 'Klíč API',
-			'musicTools.missing' => 'N / A',
-			'musicTools.minutes' => 'minuty',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'N / A',
+			'musicTools.minutes' => 'minuty',
 			'musicTools.rules' => 'Filtry',
 			'musicTools.exclusiveOutput' => 'Výhradní zvukový výstup',
 			'musicTools.preamp' => 'Předzesílení',
@@ -9847,6 +9863,8 @@ extension on TranslationsCs {
 			'musicDevices.relay' => 'URL hudebního relé',
 			'musicDevices.relayHint' => 'Zapněte na přijímajícím zařízení a jednou spárujte ve stejné síti. Nechte Pleazyng otevřený. Relé přenáší šifrované ovládání hudby a vidí síťové adresy. Každý přehrávač streamuje z vlastního mediálního serveru.',
 			'musicDevices.relayInvalid' => 'Zadejte HTTPS adresu relé.',
+			'bookmarkMigration.unassigned' => 'Záložky z neurčené verze',
+			'bookmarkMigration.assignToVersion' => 'Přiřadit k této verzi',
 			_ => null,
 		};
 	}

@@ -3259,6 +3259,7 @@
     "enterImageUrl": "Entrer l'URL de l'image",
     "imageUrl": "URL de l'image",
     "metadataUpdated": "Métadonnées mises à jour",
+    "metadataConflict": "Une autre personne a modifié le même champ. Rouvrez l’éditeur pour vérifier les valeurs actuelles avant d’enregistrer.",
     "metadataUpdateFailed": "Échec de la mise à jour des métadonnées",
     "artworkUpdated": "Illustrations mises à jour",
     "artworkUpdateFailed": "Échec de la mise à jour des illustrations",
@@ -4900,6 +4901,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Abonnements importés : ${imported}. Doublons : ${duplicates}. Ignorés : ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5714,5 +5716,9 @@
     "relay": "URL du relais musical",
     "relayHint": "Activez sur l’appareil récepteur, puis associez une fois sur le même réseau. Gardez Pleazyng ouvert. Le relais transmet les commandes musicales chiffrées et voit les adresses réseau. Chaque lecteur utilise son propre serveur multimédia.",
     "relayInvalid": "Saisissez une adresse HTTPS pour le relais."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Signets d’une version non identifiée",
+    "assignToVersion": "Associer à cette version"
   }
 }

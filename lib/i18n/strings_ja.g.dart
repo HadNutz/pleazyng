@@ -123,6 +123,7 @@ class TranslationsJa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ja musicExperience = _Translations$musicExperience$ja._(_root);
 	@override late final _Translations$musicTools$ja musicTools = _Translations$musicTools$ja._(_root);
 	@override late final _Translations$musicDevices$ja musicDevices = _Translations$musicDevices$ja._(_root);
+	@override late final _Translations$bookmarkMigration$ja bookmarkMigration = _Translations$bookmarkMigration$ja._(_root);
 }
 
 // Path: mediaConveniences
@@ -2719,6 +2720,7 @@ class _Translations$metadataEdit$ja extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => '画像URLを入力';
 	@override String get imageUrl => '画像URL';
 	@override String get metadataUpdated => 'メタデータを更新しました';
+	@override String get metadataConflict => '同じ項目が他のユーザーによって変更されました。保存する前に編集画面を開き直し、最新の値を確認してください。';
 	@override String get metadataUpdateFailed => 'メタデータの更新に失敗しました';
 	@override String get artworkUpdated => 'アートワークを更新しました';
 	@override String get artworkUpdateFailed => 'アートワークの更新に失敗しました';
@@ -4102,6 +4104,7 @@ class _Translations$podcasts$ja extends Translations$podcasts$en {
 	final TranslationsJa _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => '読み込んだ購読件数：${imported}、重複：${duplicates}、スキップ：${skipped}。';
 	@override String get autoDownloadLatest => '最新のエピソードを自動ダウンロード';
 	@override String get removeFinishedAfter => '再生済みのダウンロードを削除するまでの期間';
 }
@@ -4514,6 +4517,17 @@ class _Translations$musicDevices$ja extends Translations$musicDevices$en {
 	@override String get relay => '音楽リレーのURL';
 	@override String get relayHint => '受信デバイスで有効にし、同じネットワークで一度ペアリングしてください。Pleazyngを開いたままにします。リレーは暗号化された音楽操作を転送し、ネットワークアドレスを参照します。各プレーヤーは自身のメディアサーバーから再生します。';
 	@override String get relayInvalid => 'リレーのHTTPSアドレスを入力してください。';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$ja extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$ja._(TranslationsJa root) : this._root = root, super.internal(root);
+
+	final TranslationsJa _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'バージョン不明のブックマーク';
+	@override String get assignToVersion => 'このバージョンに割り当てる';
 }
 
 // Path: appIcon.names
@@ -8276,6 +8290,7 @@ extension on TranslationsJa {
 			'metadataEdit.enterImageUrl' => '画像URLを入力',
 			'metadataEdit.imageUrl' => '画像URL',
 			'metadataEdit.metadataUpdated' => 'メタデータを更新しました',
+			'metadataEdit.metadataConflict' => '同じ項目が他のユーザーによって変更されました。保存する前に編集画面を開き直し、最新の値を確認してください。',
 			'metadataEdit.metadataUpdateFailed' => 'メタデータの更新に失敗しました',
 			'metadataEdit.artworkUpdated' => 'アートワークを更新しました',
 			'metadataEdit.artworkUpdateFailed' => 'アートワークの更新に失敗しました',
@@ -8712,9 +8727,9 @@ extension on TranslationsJa {
 			'homeLayout.showInRecommended' => '図書館で紹介される',
 			'homeLayout.customPlexRow' => '定制 Plex ライン',
 			'homeLayout.heroNeedsLibrary' => '図書館をチェックするには、まずヒーローがどこかで表示する必要があります。',
-			'homeLayout.heroNeedsSurface' => '図書館またはホームをチェックするには、まず、ヒーローがどこかで表示する必要があります。',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => '図書館またはホームをチェックするには、まず、ヒーローがどこかで表示する必要があります。',
 			'homeLayout.removeHub' => 'ハブを削除',
 			'homeLayout.noPlexRows' => '番号 Plex 管理行がこの図書館に戻りました。',
 			'homeLayout.openDetails' => 'オープン 詳細',
@@ -9226,9 +9241,9 @@ extension on TranslationsJa {
 			'audiobook.recoveryHelp' => '同期データを移動または修正する前に、最近暗号化されたコピーを輸出します. インポートは現在の状態と合併し、現地の同期史を決して置き換えることはありません。',
 			'audiobook.recoveryExport' => 'エクスポート暗号化回復ファイル',
 			'audiobook.recoveryImport' => '暗号化された復元ファイルの輸入',
-			'audiobook.recoveryImportConfirm' => 'この暗号化された回復ファイルを現在の読み込みポジションとノートと組み合わせますか? 既存の歴史が保存されます. 共有図書館およびアイテムIDは含まれていません。',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'この暗号化された回復ファイルを現在の読み込みポジションとノートと組み合わせますか? 既存の歴史が保存されます. 共有図書館およびアイテムIDは含まれていません。',
 			'audiobook.recoveryExported' => '暗号化されたリハビリファイルが保存されました。',
 			'audiobook.recoveryImported' => 'リハビリデータが合併。',
 			'sourceSetup.bookorbitHelp' => 'ご自身のBookOrbitアカウントにサインインすると、本を閲覧して再生できます。未登録タイトルのリクエストは、接続済みのSeerrNGインスタンスを通じて送信されます。',
@@ -9447,6 +9462,7 @@ extension on TranslationsJa {
 			'issueReport.privacy' => '下書きに含まれるのはアプリのバージョン、プラットフォーム、接続数が含まれます。サーバーアドレス、アカウント名やプロフィール名、メディア名、ファイルパスは含まれません。',
 			'issueReport.logPrivacy' => 'ログは任意です。アップロード前に確認してください。ログIDは公開される可能性のある下書きに追加されます。',
 			'issueReport.openDraft' => 'GitHubの下書きを開く',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => '読み込んだ購読件数：${imported}、重複：${duplicates}、スキップ：${skipped}。',
 			'podcasts.autoDownloadLatest' => '最新のエピソードを自動ダウンロード',
 			'podcasts.removeFinishedAfter' => '再生済みのダウンロードを削除するまでの期間',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => '字幕エンコーディングのプレビュー',
@@ -9739,10 +9755,10 @@ extension on TranslationsJa {
 			'musicTools.home' => '音楽',
 			'musicTools.recent' => '最近再生した曲',
 			'musicTools.apiKey' => 'API キー',
-			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => '分',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'N/A',
+			'musicTools.minutes' => '分',
 			'musicTools.rules' => 'フィルター',
 			'musicTools.exclusiveOutput' => '排他オーディオ出力',
 			'musicTools.preamp' => 'プリアンプ',
@@ -9798,6 +9814,8 @@ extension on TranslationsJa {
 			'musicDevices.relay' => '音楽リレーのURL',
 			'musicDevices.relayHint' => '受信デバイスで有効にし、同じネットワークで一度ペアリングしてください。Pleazyngを開いたままにします。リレーは暗号化された音楽操作を転送し、ネットワークアドレスを参照します。各プレーヤーは自身のメディアサーバーから再生します。',
 			'musicDevices.relayInvalid' => 'リレーのHTTPSアドレスを入力してください。',
+			'bookmarkMigration.unassigned' => 'バージョン不明のブックマーク',
+			'bookmarkMigration.assignToVersion' => 'このバージョンに割り当てる',
 			_ => null,
 		};
 	}

@@ -3260,6 +3260,7 @@
     "enterImageUrl": "Introducir URL de imagen",
     "imageUrl": "URL de imagen",
     "metadataUpdated": "Metadatos actualizados",
+    "metadataConflict": "Otra persona ha modificado el mismo campo. Vuelve a abrir el editor para revisar los valores actuales antes de guardar.",
     "metadataUpdateFailed": "Error al actualizar los metadatos",
     "artworkUpdated": "Imágenes actualizadas",
     "artworkUpdateFailed": "Error al actualizar las imágenes",
@@ -4896,6 +4897,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Suscripciones importadas: ${imported}. Duplicadas: ${duplicates}. Omitidas: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5787,5 +5789,9 @@
     "relay": "URL del relé de música",
     "relayHint": "Actívalo en el dispositivo receptor y vincula una vez en la misma red. Mantén Pleazyng abierto. El relé transmite controles de música cifrados y ve las direcciones de red. Cada reproductor transmite desde su propio servidor multimedia.",
     "relayInvalid": "Introduce una dirección HTTPS del relé."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Marcadores de una versión sin identificar",
+    "assignToVersion": "Asignar a esta versión"
   }
 }

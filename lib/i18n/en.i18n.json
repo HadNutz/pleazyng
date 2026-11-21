@@ -4948,6 +4948,7 @@
     "importOpml": "Import subscriptions (OPML)",
     "exportOpml": "Export subscriptions (OPML)",
     "imported": "Subscriptions imported.",
+    "importSummary": "Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.",
     "exportHelp": "The export contains feed URLs, including private membership links. Keep it private.",
     "serverHelp": "Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.",
     "viewAll": "Show more episodes",

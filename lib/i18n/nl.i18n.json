@@ -3256,6 +3256,7 @@
     "enterImageUrl": "Voer de afbeeldings-URL in",
     "imageUrl": "Afbeeldings-URL",
     "metadataUpdated": "Metadata bijgewerkt",
+    "metadataConflict": "Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw om de meest recente waarden te controleren voordat je opslaat.",
     "metadataUpdateFailed": "Metadata bijwerken mislukt",
     "artworkUpdated": "Illustraties bijgewerkt",
     "artworkUpdateFailed": "Illustraties bijwerken mislukt",
@@ -4891,6 +4892,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Geïmporteerde abonnementen: ${imported}. Duplicaten: ${duplicates}. Overgeslagen: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5707,9 @@
     "relay": "URL van muziekrelais",
     "relayHint": "Schakel in op het ontvangende apparaat en koppel eenmaal op hetzelfde netwerk. Houd Pleazyng open. Het relais verstuurt versleutelde muziekbediening en ziet netwerkadressen. Elke speler streamt vanaf zijn eigen mediaserver.",
     "relayInvalid": "Voer een HTTPS-adres voor het relais in."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Bladwijzers uit een onbekende versie",
+    "assignToVersion": "Aan deze versie koppelen"
   }
 }

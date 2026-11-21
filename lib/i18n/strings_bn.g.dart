@@ -123,6 +123,7 @@ class TranslationsBn extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$bn musicExperience = _Translations$musicExperience$bn._(_root);
 	@override late final _Translations$musicTools$bn musicTools = _Translations$musicTools$bn._(_root);
 	@override late final _Translations$musicDevices$bn musicDevices = _Translations$musicDevices$bn._(_root);
+	@override late final _Translations$bookmarkMigration$bn bookmarkMigration = _Translations$bookmarkMigration$bn._(_root);
 }
 
 // Path: mediaConveniences
@@ -2723,6 +2724,7 @@ class _Translations$metadataEdit$bn extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'ইমেজ URL লিখুন';
 	@override String get imageUrl => 'ইমেজ URL';
 	@override String get metadataUpdated => 'মেটাদাডেট আপডেট';
+	@override String get metadataConflict => 'অন্য একজন সম্পাদক একই ক্ষেত্র পরিবর্তন করেছেন। সংরক্ষণের আগে সর্বশেষ মানগুলি দেখতে সম্পাদকটি আবার খুলুন।';
 	@override String get metadataUpdateFailed => 'মেটাদাটা আপডেট করতে পারেনি';
 	@override String get artworkUpdated => 'অ্যাকাউন্ট আপডেট';
 	@override String get artworkUpdateFailed => 'শিল্প কাজ আপডেট করতে পারিনি';
@@ -4107,6 +4109,7 @@ class _Translations$podcasts$bn extends Translations$podcasts$en {
 	final TranslationsBn _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'আমদানি করা সাবস্ক্রিপশন: ${imported}। সদৃশ: ${duplicates}। বাদ দেওয়া হয়েছে: ${skipped}।';
 	@override String get autoDownloadLatest => 'সর্বশেষ পর্বগুলো স্বয়ংক্রিয়ভাবে ডাউনলোড করুন';
 	@override String get removeFinishedAfter => 'শেষ করা ডাউনলোডগুলো এই সময় পরে সরান';
 }
@@ -4519,6 +4522,17 @@ class _Translations$musicDevices$bn extends Translations$musicDevices$en {
 	@override String get relay => 'মিউজিক রিলে URL';
 	@override String get relayHint => 'গ্রহণকারী ডিভাইসে চালু করুন, তারপর একই নেটওয়ার্কে একবার পেয়ার করুন। Pleazyng খোলা রাখুন। রিলে এনক্রিপ্ট করা সঙ্গীত নিয়ন্ত্রণ পাঠায় এবং নেটওয়ার্ক ঠিকানা দেখতে পায়। প্রতিটি প্লেয়ার নিজস্ব মিডিয়া সার্ভার থেকে স্ট্রিম করে।';
 	@override String get relayInvalid => 'একটি HTTPS রিলে ঠিকানা লিখুন।';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$bn extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$bn._(TranslationsBn root) : this._root = root, super.internal(root);
+
+	final TranslationsBn _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'অজানা সংস্করণের বুকমার্ক';
+	@override String get assignToVersion => 'এই সংস্করণের সঙ্গে যুক্ত করুন';
 }
 
 // Path: appIcon.names
@@ -8281,6 +8295,7 @@ extension on TranslationsBn {
 			'metadataEdit.enterImageUrl' => 'ইমেজ URL লিখুন',
 			'metadataEdit.imageUrl' => 'ইমেজ URL',
 			'metadataEdit.metadataUpdated' => 'মেটাদাডেট আপডেট',
+			'metadataEdit.metadataConflict' => 'অন্য একজন সম্পাদক একই ক্ষেত্র পরিবর্তন করেছেন। সংরক্ষণের আগে সর্বশেষ মানগুলি দেখতে সম্পাদকটি আবার খুলুন।',
 			'metadataEdit.metadataUpdateFailed' => 'মেটাদাটা আপডেট করতে পারেনি',
 			'metadataEdit.artworkUpdated' => 'অ্যাকাউন্ট আপডেট',
 			'metadataEdit.artworkUpdateFailed' => 'শিল্প কাজ আপডেট করতে পারিনি',
@@ -8717,9 +8732,9 @@ extension on TranslationsBn {
 			'homeLayout.showInRecommended' => 'লাইব্রেরিতে প্রদর্শন করা উচিত',
 			'homeLayout.customPlexRow' => 'কাস্টম Plex রান',
 			'homeLayout.heroNeedsLibrary' => 'প্রথমে লাইব্রেরি চেক করুন — হ্যারো দেখার জন্য কোথাও প্রয়োজন',
-			'homeLayout.heroNeedsSurface' => 'প্রথমে লাইব্রেরি বা হোম দেখুন — হেরো দেখার জন্য কোথাও প্রয়োজন',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'প্রথমে লাইব্রেরি বা হোম দেখুন — হেরো দেখার জন্য কোথাও প্রয়োজন',
 			'homeLayout.removeHub' => 'হাব থেকে বের করুন',
 			'homeLayout.noPlexRows' => 'নম্বর Plex পরিচালিত লাইন এই লাইব্রেরি জন্য ফিরে এসেছে।',
 			'homeLayout.openDetails' => 'খোলা বিস্তারিত',
@@ -9231,9 +9246,9 @@ extension on TranslationsBn {
 			'audiobook.recoveryHelp' => 'সিঙ্ক ডেটা সরানোর বা মেরামত করার আগে সাম্প্রতিক এনক্রিপ্ট করা কপি রপ্তানি করুন। আমদানি করলে বর্তমান অবস্থার সঙ্গে ডেটা মিশে যাবে; স্থানীয় সিঙ্ক ইতিহাস কখনো প্রতিস্থাপিত হবে না। সিঙ্ক কোড আলাদা করে রাখুন।',
 			'audiobook.recoveryExport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
 			'audiobook.recoveryImport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
-			'audiobook.recoveryImportConfirm' => 'এই এনক্রিপ্ট করা পুনরুদ্ধার ফাইলটি বর্তমান পড়ার অবস্থান ও নোটের সঙ্গে মেশাবেন? আগের ইতিহাস থাকবে। শেয়ার করা লাইব্রেরি ও আইটেম ID এতে নেই; আমদানির আগে প্রতিটি ডিভাইসে একই ID সেট করুন।',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'এই এনক্রিপ্ট করা পুনরুদ্ধার ফাইলটি বর্তমান পড়ার অবস্থান ও নোটের সঙ্গে মেশাবেন? আগের ইতিহাস থাকবে। শেয়ার করা লাইব্রেরি ও আইটেম ID এতে নেই; আমদানির আগে প্রতিটি ডিভাইসে একই ID সেট করুন।',
 			'audiobook.recoveryExported' => 'সক্রিপ্ট ফাইল পুনরায় সংরক্ষণ করা হয়েছে।',
 			'audiobook.recoveryImported' => 'রেকর্ড ডেটা একত্রিত।',
 			'sourceSetup.bookorbitHelp' => 'বইগুলো দেখতে ও পড়তে আপনার নিজের BookOrbit অ্যাকাউন্টে সাইন ইন করুন। অনুপস্থিত শিরোনামের অনুরোধ এখনও আপনার সংযুক্ত SeerrNG ইনস্ট্যান্সের মাধ্যমেই যাবে।',
@@ -9452,6 +9467,7 @@ extension on TranslationsBn {
 			'issueReport.privacy' => 'খসড়ায় অ্যাপের সংস্করণ, প্ল্যাটফর্ম ও সংযোগের সংখ্যা থাকে। সার্ভারের ঠিকানা, অ্যাকাউন্ট বা প্রোফাইলের নাম, মিডিয়ার শিরোনাম ও ফাইলের পথ থাকে না।',
 			'issueReport.logPrivacy' => 'লগ ঐচ্ছিক। আপলোডের আগে দেখে নিন। লগ আইডি খসড়ায় যোগ হবে, যা সবার জন্য দৃশ্যমান হতে পারে।',
 			'issueReport.openDraft' => 'GitHub খসড়া খুলুন',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'আমদানি করা সাবস্ক্রিপশন: ${imported}। সদৃশ: ${duplicates}। বাদ দেওয়া হয়েছে: ${skipped}।',
 			'podcasts.autoDownloadLatest' => 'সর্বশেষ পর্বগুলো স্বয়ংক্রিয়ভাবে ডাউনলোড করুন',
 			'podcasts.removeFinishedAfter' => 'শেষ করা ডাউনলোডগুলো এই সময় পরে সরান',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'সাবটাইটেল এনকোডিং প্রিভিউ',
@@ -9744,10 +9760,10 @@ extension on TranslationsBn {
 			'musicTools.home' => 'সঙ্গীত',
 			'musicTools.recent' => 'সম্প্রতি শোনা',
 			'musicTools.apiKey' => 'API কী',
-			'musicTools.missing' => 'ন/এ',
-			'musicTools.minutes' => 'মিনিট',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'ন/এ',
+			'musicTools.minutes' => 'মিনিট',
 			'musicTools.rules' => 'ফিল্টারগুলি',
 			'musicTools.exclusiveOutput' => 'একচেটিয়া অডিও আউটপুট',
 			'musicTools.preamp' => 'প্রিঅ্যাম্প',
@@ -9803,6 +9819,8 @@ extension on TranslationsBn {
 			'musicDevices.relay' => 'মিউজিক রিলে URL',
 			'musicDevices.relayHint' => 'গ্রহণকারী ডিভাইসে চালু করুন, তারপর একই নেটওয়ার্কে একবার পেয়ার করুন। Pleazyng খোলা রাখুন। রিলে এনক্রিপ্ট করা সঙ্গীত নিয়ন্ত্রণ পাঠায় এবং নেটওয়ার্ক ঠিকানা দেখতে পায়। প্রতিটি প্লেয়ার নিজস্ব মিডিয়া সার্ভার থেকে স্ট্রিম করে।',
 			'musicDevices.relayInvalid' => 'একটি HTTPS রিলে ঠিকানা লিখুন।',
+			'bookmarkMigration.unassigned' => 'অজানা সংস্করণের বুকমার্ক',
+			'bookmarkMigration.assignToVersion' => 'এই সংস্করণের সঙ্গে যুক্ত করুন',
 			_ => null,
 		};
 	}

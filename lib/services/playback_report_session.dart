@@ -65,6 +65,7 @@ class PlaybackReportSession {
     this.playMethod,
     this.liveStreamId,
     this.onDelivered,
+    this.writeReport,
   });
 
   final MediaServerClient client;
@@ -82,6 +83,10 @@ class PlaybackReportSession {
   /// its future, so callers that need to know what the server saw — such as
   /// watched-threshold crossing detection — must key on this instead.
   final void Function(PlaybackReportSnapshot snapshot)? onDelivered;
+  final Future<T> Function<T>(PlaybackReportSnapshot snapshot, Future<T> Function() send)? writeReport;
+
+  Future<T> _write<T>(PlaybackReportSnapshot snapshot, Future<T> Function() send) =>
+      writeReport?.call(snapshot, send) ?? send();
 
   _PlaybackReportState _state = _PlaybackReportState.idle;
   PlaybackReportSnapshot? _startSnapshot;
@@ -184,7 +189,7 @@ class PlaybackReportSession {
     try {
       final start = _startSnapshot;
       if (start != null) {
-        await _sendStarted(start);
+        await _write(start, () => _sendStarted(start));
         _startSnapshot = null;
         if (_state == _PlaybackReportState.starting) {
           _state = _PlaybackReportState.started;
@@ -196,7 +201,7 @@ class PlaybackReportSession {
         if (progress == null) break;
         _pendingProgress = null;
         try {
-          progress.complete(await _sendProgress(progress.snapshot));
+          progress.complete(await _write(progress.snapshot, () => _sendProgress(progress.snapshot)));
         } catch (e, st) {
           progress.completeError(e, st);
           rethrow;
@@ -224,7 +229,7 @@ class PlaybackReportSession {
           // must not prevent the final stopped position from being reported.
         }
       }
-      await _sendStopped(snapshot);
+      await _write(snapshot, () => _sendStopped(snapshot));
       stopSucceeded = true;
     } finally {
       final shouldReset = _resetAfterStopRequested;

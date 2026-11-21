@@ -8,6 +8,7 @@ import '../media/media_hub.dart';
 import '../media/library_change_event.dart';
 import '../media/media_item.dart';
 import '../media/media_kind.dart';
+import '../media/media_backend.dart';
 import '../models/home_section_config.dart';
 import '../media/media_server_client.dart';
 import '../mixins/disposable_change_notifier_mixin.dart';
@@ -122,6 +123,12 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     // discover the same way they refresh libraries. Removed in [dispose] so a
     // profile switch can't leave a stale listener on the app-global provider.
     _multiServer.addOnlineServersListener(syncToOnlineServers);
+    _collectionVisibilitySubscription = _multiServer.serverManager.visibilityChanges.listen((_) {
+      if (isDisposed) return;
+      _filterCurrentContentForHiddenLibraries();
+      safeNotifyListeners();
+      unawaited(load());
+    });
     _hiddenLibraries.addListener(_onHiddenLibrariesChanged);
     _lastSeenLibraryOrderKeys = _libraryOrderKeys();
     _libraries.addListener(_onLibrariesChanged);
@@ -186,6 +193,7 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
   final Duration libraryEventCooldown;
 
   static bool _neverBlocked() => false;
+  late final StreamSubscription<void> _collectionVisibilitySubscription;
   StreamSubscription<LibraryChangeEvent>? _libraryEventSubscription;
   StreamSubscription<String>? _shelfPublicationSubscription;
   late final RefreshPacer _libraryEventPacer;
@@ -536,13 +544,31 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
         includePlaybackHubs: false,
         additionalLibraryHubKinds: needsRecentHubsPerLibrary ? const {MediaKind.movie, MediaKind.show} : const {},
       );
-      final collectionsFuture = homeSections.any((s) => s.isCollectionRow)
-          ? aggregation.getCollectionsFromAllServers(hiddenLibraryKeys: _hiddenLibraries.hiddenLibraryKeys)
-          : null;
-      // A collection row scoped to exactly one collection is more useful as
-      // that collection's actual contents than as a single folder tile —
-      // fetch those contents up front so the builder can inline them.
-      final singleCollectionFuture = _fetchSingleCollectionContents(homeSections);
+      final collectionSections = homeSections.where((s) => s.enabled && s.showOnHome && s.isCollectionRow).toList();
+      final collectionClients = {
+        if (collectionSections.isNotEmpty)
+          for (final entry in _multiServer.serverManager.visibleOnlineClients.entries)
+            entry.key: (client: entry.value, authentication: entry.value.authenticationSessionId),
+      };
+      bool collectionSourceCurrent(String? id) {
+        final binding = collectionClients[id];
+        if (id == null || binding == null || isDisposed || isProfileBinding()) return false;
+        final manager = _multiServer.serverManager;
+        final server = ServerId(id);
+        return manager.isServerVisible(server) &&
+            manager.isClientOnline(server) &&
+            identical(manager.getClient(server), binding.client) &&
+            identical(binding.client.authenticationSessionId, binding.authentication);
+      }
+
+      final collectionsFuture = collectionSections.isEmpty
+          ? null
+          : aggregation.getCollectionsFromAllServers(
+              hiddenLibraryKeys: _hiddenLibraries.hiddenLibraryKeys,
+              collectionKeys: collectionSections.every((section) => section.collectionKeys.isNotEmpty)
+                  ? collectionSections.expand((section) => section.collectionKeys).toSet()
+                  : null,
+            );
 
       // A pass in which zero servers succeeded is never authoritative: it
       // must not wipe existing content, and it may only commit "loaded,
@@ -617,14 +643,29 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
       }
 
       final fetchedCollections = collectionsFuture == null ? null : await collectionsFuture;
-      final singleCollectionContents = await singleCollectionFuture;
+      bool visibleCollection(MediaItem item) =>
+          collectionSourceCurrent(item.serverId) &&
+          item.libraryGlobalKey != null &&
+          !_hiddenLibraries.isLibraryHidden(item.libraryGlobalKey!);
+      final libraryKinds = fetchedCollections?.libraryKinds ?? const <String, MediaKind>{};
+      final collections = fetchedCollections?.collections ?? const <MediaItem>[];
+      final singleCollectionContents = await _fetchSingleCollectionContents(
+        collectionSections,
+        collections.where(visibleCollection).toList(),
+        libraryKinds,
+        collectionSourceCurrent,
+      );
+      if (isDisposed || isProfileBinding()) return;
       final filteredHubs = buildConfiguredHomeSections(
         sourceHubs: _filterDiscoverHubs(fetchedHubs.hubs),
-        collections: fetchedCollections?.collections ?? const [],
+        collections: collections.where(visibleCollection).toList(),
         sections: homeSections,
         rowOrder: settings.read(SettingsService.homeRowOrder),
-        collectionLibraryKinds: {for (final library in _libraries.libraries) library.globalKey: library.kind},
-        singleCollectionContents: singleCollectionContents,
+        collectionLibraryKinds: libraryKinds,
+        singleCollectionContents: {
+          for (final entry in singleCollectionContents.entries)
+            entry.key: entry.value.where(visibleCollection).toList(),
+        },
         managedHubHeroOverrides: settings.read(SettingsService.managedHubHeroOverrides),
         continueWatchingHub: settings.read(SettingsService.continueWatchingOnHome) ? _continueWatchingHub : null,
         nextUpHub: settings.read(SettingsService.nextUpOnHome) ? _nextUpHub : null,
@@ -634,7 +675,7 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
           ? withoutWatchedItems(filteredHubs)
           : filteredHubs;
       appLogger.d('DiscoverProvider: ${_onDeck.length} on-deck items, ${visibleHubs.length} hubs');
-      _replaceHubs(visibleHubs);
+      _replaceHubs(_hubsWithoutHiddenLibraries(visibleHubs, _hiddenLibraries.hiddenLibraryKeys));
       ++expectedCommitRevision;
       _hubsState = DiscoverLoadState.loaded;
       _loadedHubServerIds = _authoritativeSucceededServerIds(
@@ -809,22 +850,51 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     }
   }
 
-  /// Playback-progress hubs duplicate the top Continue Watching row.
-  Future<Map<String, List<MediaItem>>> _fetchSingleCollectionContents(List<HomeSectionConfig> sections) async {
-    final singleCollectionSections = sections.where((s) => s.isCollectionRow && s.collectionKeys.length == 1);
-    if (singleCollectionSections.isEmpty) return const {};
+  Future<Map<String, List<MediaItem>>> _fetchSingleCollectionContents(
+    List<HomeSectionConfig> sections,
+    List<MediaItem> collections,
+    Map<String, MediaKind> libraryKinds,
+    bool Function(String?) sourceCurrent,
+  ) async {
     final result = <String, List<MediaItem>>{};
     await Future.wait(
-      singleCollectionSections.map((section) async {
-        final parsed = parseGlobalKey(section.collectionKeys.single);
-        if (parsed == null) return;
-        final client = _multiServer.getClientForServer(parsed.serverId);
-        if (client == null) return;
+      sections.where((section) => section.collectionKeys.length == 1).map((section) async {
+        final matches = matchingHomeCollections(section, collections, libraryKinds);
+        if (matches.isEmpty) return;
+        final collection = matches.first;
+        final server = serverIdOrNull(collection.serverId);
+        if (server == null || !sourceCurrent(server)) return;
+        final client = _multiServer.getClientForServer(server)!;
+        final scopes = {for (final match in matches) match.libraryGlobalKey!};
+        bool current() => sourceCurrent(server) && scopes.any((key) => !_hiddenLibraries.isLibraryHidden(key));
+        final knownLibraryIds = {for (final match in matches) match.libraryId!};
+        final children = <MediaItem>[];
+        var offset = 0;
         try {
-          final page = await client.fetchCollectionPage(parsed.ratingKey, start: 0, size: 50);
-          result[section.id] = page.items;
+          while (children.length < 50 && current()) {
+            final page = await client.fetchCollectionPage(collection.id, start: offset, size: 50);
+            for (final member in page.items) {
+              if (!current()) return;
+              var child = await resolveCollectionMemberLibrary(client, member, knownLibraryIds);
+              // Plex collections are section-scoped. Some children omit the
+              // section in their DTO; the collection index verified their owner.
+              if (child.libraryId == null && client.backend == MediaBackend.plex && matches.length == 1) {
+                child = child.copyWith(libraryId: collection.libraryId, libraryTitle: collection.libraryTitle);
+              }
+              final libraryKey = child.libraryGlobalKey;
+              if (child.serverId == server &&
+                  scopes.contains(libraryKey) &&
+                  !_hiddenLibraries.isLibraryHidden(libraryKey!)) {
+                children.add(child);
+                if (children.length == 50) break;
+              }
+            }
+            offset += page.items.length;
+            if (page.items.isEmpty || offset >= page.totalCount) break;
+          }
+          if (current()) result[section.id] = children;
         } catch (e) {
-          appLogger.w('Failed to fetch contents for single-collection row "${section.title}"', error: e);
+          appLogger.w('Failed to fetch contents for Home collection ${collection.id}', error: e);
         }
       }),
     );
@@ -865,13 +935,14 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
   }
 
   List<MediaHub> _hubsWithoutHiddenLibraries(List<MediaHub> hubs, Set<String> hiddenLibraryKeys) {
-    if (hiddenLibraryKeys.isEmpty) return hubs;
+    if (hiddenLibraryKeys.isEmpty && _multiServer.serverManager.visibleServerIds == null) return hubs;
     final filteredHubs = <MediaHub>[];
     for (final hub in hubs) {
       final filteredItems = hub.items.where((item) {
         var libraryKey = item.libraryGlobalKey;
         final libraryId = item.libraryId;
         final serverId = item.serverId ?? hub.serverId;
+        if (serverId != null && !_multiServer.serverManager.isServerVisible(ServerId(serverId))) return false;
         if (libraryKey == null && libraryId != null && serverId != null) {
           libraryKey = buildGlobalKey(ServerId(serverId), libraryId);
         }
@@ -1287,6 +1358,8 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
       return;
     }
     _lastSeenHiddenKeys = Set.of(currentKeys);
+    _filterCurrentContentForHiddenLibraries();
+    safeNotifyListeners();
     unawaited(load());
   }
 
@@ -1397,6 +1470,7 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
   @override
   void dispose() {
     _multiServer.removeOnlineServersListener(syncToOnlineServers);
+    _collectionVisibilitySubscription.cancel();
     _hiddenLibraries.removeListener(_onHiddenLibrariesChanged);
     _libraries.removeListener(_onLibrariesChanged);
     _homeLayoutListenable?.removeListener(_onHomeLayoutChanged);

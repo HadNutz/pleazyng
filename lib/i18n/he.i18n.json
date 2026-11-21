@@ -3260,6 +3260,7 @@
     "enterImageUrl": "כניסת תמונה URL",
     "imageUrl": "תמונה URL",
     "metadataUpdated": "נתונים מתעדכנים",
+    "metadataConflict": "אותו שדה שונה בעריכה אחרת. יש לפתוח מחדש את העורך ולבדוק את הערכים העדכניים לפני השמירה.",
     "metadataUpdateFailed": "לא הצלחתי לעדכן את הנתונים",
     "artworkUpdated": "ארכיון עדכונים",
     "artworkUpdateFailed": "לא הצלחתי לעדכן את האמנות",
@@ -4901,6 +4902,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "מינויים שיובאו: ${imported}. כפילויות: ${duplicates}. רשומות שדולגו: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5715,5 +5717,9 @@
     "relay": "כתובת ממסר המוזיקה",
     "relayHint": "יש להפעיל במכשיר המקבל ולצמד פעם אחת באותה רשת. יש להשאיר את Pleazyng פתוח. הממסר מעביר פקודות מוזיקה מוצפנות ורואה כתובות רשת. כל נגן מזרים משרת המדיה שלו.",
     "relayInvalid": "יש להזין כתובת HTTPS של הממסר."
+  },
+  "bookmarkMigration": {
+    "unassigned": "סימניות מגרסה לא מזוהה",
+    "assignToVersion": "שיוך לגרסה זו"
   }
 }

@@ -57,13 +57,18 @@ class WatchStateResolver {
   }
 
   static WatchStateSnapshot fromActions(Iterable<OfflineWatchProgressItem> actions) {
-    OfflineWatchProgressItem? latest;
+    OfflineWatchProgressItem? latest, latestMark;
+    bool newer(OfflineWatchProgressItem row, OfflineWatchProgressItem? prior) =>
+        prior == null || row.updatedAt > prior.updatedAt || (row.updatedAt == prior.updatedAt && row.id > prior.id);
 
     for (final action in actions) {
       if (action.actionType != 'watched' && action.actionType != 'unwatched' && action.actionType != 'progress') {
         continue;
       }
-      if (latest == null || action.updatedAt > latest.updatedAt) latest = action;
+      if (newer(action, latest)) latest = action;
+      if ((action.actionType != 'progress' || action.shouldMarkWatched) && newer(action, latestMark)) {
+        latestMark = action;
+      }
     }
 
     return switch (latest?.actionType) {
@@ -72,7 +77,11 @@ class WatchStateResolver {
       'progress' =>
         latest!.shouldMarkWatched
             ? const WatchStateSnapshot(isWatched: true, hasViewOffsetMs: true, viewOffsetMs: 0)
-            : WatchStateSnapshot(hasViewOffsetMs: latest.viewOffset != null, viewOffsetMs: latest.viewOffset),
+            : WatchStateSnapshot(
+                isWatched: latestMark == null ? null : latestMark.actionType != 'unwatched',
+                hasViewOffsetMs: latest.viewOffset != null,
+                viewOffsetMs: latest.viewOffset,
+              ),
       _ => const WatchStateSnapshot(),
     };
   }

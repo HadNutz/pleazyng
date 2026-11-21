@@ -124,6 +124,7 @@ class TranslationsZhHant extends TranslationsZh with BaseTranslations<AppLocale,
 	@override late final _Translations$musicExperience$zh_Hant musicExperience = _Translations$musicExperience$zh_Hant._(_root);
 	@override late final _Translations$musicTools$zh_Hant musicTools = _Translations$musicTools$zh_Hant._(_root);
 	@override late final _Translations$musicDevices$zh_Hant musicDevices = _Translations$musicDevices$zh_Hant._(_root);
+	@override late final _Translations$bookmarkMigration$zh_Hant bookmarkMigration = _Translations$bookmarkMigration$zh_Hant._(_root);
 }
 
 // Path: mediaConveniences
@@ -2720,6 +2721,7 @@ class _Translations$metadataEdit$zh_Hant extends Translations$metadataEdit$zh {
 	@override String get enterImageUrl => '輸入圖片 URL';
 	@override String get imageUrl => '圖片 URL';
 	@override String get metadataUpdated => '中繼資料已更新';
+	@override String get metadataConflict => '其他人已修改了同一欄位。請重新開啟編輯器，確認最新的值後再儲存。';
 	@override String get metadataUpdateFailed => '中繼資料更新失敗';
 	@override String get artworkUpdated => '封面圖片已更新';
 	@override String get artworkUpdateFailed => '封面圖片更新失敗';
@@ -4103,6 +4105,7 @@ class _Translations$podcasts$zh_Hant extends Translations$podcasts$zh {
 	final TranslationsZhHant _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => '已匯入訂閱：${imported}。重複：${duplicates}。已略過：${skipped}。';
 	@override String get autoDownloadLatest => '自動下載最新單集';
 	@override String get removeFinishedAfter => '在以下時間後移除已聽完的下載';
 }
@@ -4515,6 +4518,17 @@ class _Translations$musicDevices$zh_Hant extends Translations$musicDevices$zh {
 	@override String get relay => '音樂中繼 URL';
 	@override String get relayHint => '在接收裝置上啟用，然後在同一網路中配對一次。保持 Pleazyng 開啟。中繼傳遞加密的音樂控制，並能看到網路位址。每個播放器從自己的媒體伺服器串流。';
 	@override String get relayInvalid => '請輸入 HTTPS 中繼位址。';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$zh_Hant extends Translations$bookmarkMigration$zh {
+	_Translations$bookmarkMigration$zh_Hant._(TranslationsZhHant root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHant _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => '來自不明版本的書籤';
+	@override String get assignToVersion => '指派給此版本';
 }
 
 // Path: appIcon.names
@@ -8277,6 +8291,7 @@ extension on TranslationsZhHant {
 			'metadataEdit.enterImageUrl' => '輸入圖片 URL',
 			'metadataEdit.imageUrl' => '圖片 URL',
 			'metadataEdit.metadataUpdated' => '中繼資料已更新',
+			'metadataEdit.metadataConflict' => '其他人已修改了同一欄位。請重新開啟編輯器，確認最新的值後再儲存。',
 			'metadataEdit.metadataUpdateFailed' => '中繼資料更新失敗',
 			'metadataEdit.artworkUpdated' => '封面圖片已更新',
 			'metadataEdit.artworkUpdateFailed' => '封面圖片更新失敗',
@@ -8713,9 +8728,9 @@ extension on TranslationsZhHant {
 			'homeLayout.showInRecommended' => '圖書館推薦',
 			'homeLayout.customPlexRow' => '定製 Plex 行',
 			'homeLayout.heroNeedsLibrary' => '檢視圖書館首先 - 英雄需要在某處展示',
-			'homeLayout.heroNeedsSurface' => '檢視圖書館或家先 - 英雄需要在某處展示',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => '檢視圖書館或家先 - 英雄需要在某處展示',
 			'homeLayout.removeHub' => '取消 Hub',
 			'homeLayout.noPlexRows' => '第Plex號管理行返回此圖書館。',
 			'homeLayout.openDetails' => '開放細節',
@@ -9227,9 +9242,9 @@ extension on TranslationsZhHant {
 			'audiobook.recoveryHelp' => '移動或修復同步資料前，請先匯出近期的加密備份。匯入資料會與目前狀態合併，不會取代本機同步記錄。請另外保存同步代碼。',
 			'audiobook.recoveryExport' => '輸出加密恢復檔案',
 			'audiobook.recoveryImport' => '輸入加密恢復檔案',
-			'audiobook.recoveryImportConfirm' => '將此加密恢復檔案與當前閱讀位置和筆記相結合嗎?現有歷史記錄將被保留. 共享圖書館和專案 ID 不包含; 在進口之前,在每個裝置上設定匹配 ID。',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => '將此加密恢復檔案與當前閱讀位置和筆記相結合嗎?現有歷史記錄將被保留. 共享圖書館和專案 ID 不包含; 在進口之前,在每個裝置上設定匹配 ID。',
 			'audiobook.recoveryExported' => '加密恢復檔案儲存。',
 			'audiobook.recoveryImported' => '恢復資料合併。',
 			'sourceSetup.bookorbitHelp' => '使用您自己的 BookOrbit 帳戶登入，即可瀏覽及播放書籍。缺少的書名仍會透過已連線的 SeerrNG 執行個體提出請求。',
@@ -9448,6 +9463,7 @@ extension on TranslationsZhHant {
 			'issueReport.privacy' => '草稿包含應用程式版本、平台和連線數量，不包含伺服器位址、帳戶或個人資料名稱、媒體標題及檔案路徑。',
 			'issueReport.logPrivacy' => '記錄檔為選填。上傳前請先檢查。記錄檔 ID 會加入草稿，而問題可能是公開的。',
 			'issueReport.openDraft' => '開啟 GitHub 草稿',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => '已匯入訂閱：${imported}。重複：${duplicates}。已略過：${skipped}。',
 			'podcasts.autoDownloadLatest' => '自動下載最新單集',
 			'podcasts.removeFinishedAfter' => '在以下時間後移除已聽完的下載',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => '預覽字幕編碼',
@@ -9740,10 +9756,10 @@ extension on TranslationsZhHant {
 			'musicTools.home' => '音樂',
 			'musicTools.recent' => '最近播放',
 			'musicTools.apiKey' => 'API 金鑰',
-			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => '分鐘',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'N/A',
+			'musicTools.minutes' => '分鐘',
 			'musicTools.rules' => '篩選器',
 			'musicTools.exclusiveOutput' => '獨佔音訊輸出',
 			'musicTools.preamp' => '前置放大',
@@ -9799,6 +9815,8 @@ extension on TranslationsZhHant {
 			'musicDevices.relay' => '音樂中繼 URL',
 			'musicDevices.relayHint' => '在接收裝置上啟用，然後在同一網路中配對一次。保持 Pleazyng 開啟。中繼傳遞加密的音樂控制，並能看到網路位址。每個播放器從自己的媒體伺服器串流。',
 			'musicDevices.relayInvalid' => '請輸入 HTTPS 中繼位址。',
+			'bookmarkMigration.unassigned' => '來自不明版本的書籤',
+			'bookmarkMigration.assignToVersion' => '指派給此版本',
 			_ => null,
 		};
 	}

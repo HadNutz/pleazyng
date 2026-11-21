@@ -3235,6 +3235,7 @@
     "enterImageUrl": "หมายเลข URL",
     "imageUrl": "ภาพ URL",
     "metadataUpdated": "ข้อมูลอัปเดต",
+    "metadataConflict": "มีผู้อื่นแก้ไขช่องเดียวกัน โปรดเปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก",
     "metadataUpdateFailed": "ไม่สามารถปรับปรุงข้อมูล metadata",
     "artworkUpdated": "อัพเดทศิลปะ",
     "artworkUpdateFailed": "ไม่สามารถปรับปรุงงานศิลปะได้",
@@ -4864,6 +4865,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "นำเข้าการติดตามแล้ว ${imported} รายการ ซ้ำ ${duplicates} รายการ ข้าม ${skipped} รายการ",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5678,5 +5680,9 @@
     "relay": "URL รีเลย์เพลง",
     "relayHint": "เปิดใช้งานบนอุปกรณ์รับ แล้วจับคู่ครั้งเดียวบนเครือข่ายเดียวกัน เปิด Pleazyng ค้างไว้ รีเลย์ส่งคำสั่งเพลงที่เข้ารหัสและเห็นที่อยู่เครือข่ายได้ เครื่องเล่นแต่ละเครื่องสตรีมจากเซิร์ฟเวอร์สื่อของตนเอง",
     "relayInvalid": "ป้อนที่อยู่รีเลย์ HTTPS"
+  },
+  "bookmarkMigration": {
+    "unassigned": "บุ๊กมาร์กจากเวอร์ชันที่ระบุไม่ได้",
+    "assignToVersion": "เชื่อมโยงกับเวอร์ชันนี้"
   }
 }

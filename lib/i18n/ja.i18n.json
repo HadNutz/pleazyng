@@ -3252,6 +3252,7 @@
     "enterImageUrl": "画像URLを入力",
     "imageUrl": "画像URL",
     "metadataUpdated": "メタデータを更新しました",
+    "metadataConflict": "同じ項目が他のユーザーによって変更されました。保存する前に編集画面を開き直し、最新の値を確認してください。",
     "metadataUpdateFailed": "メタデータの更新に失敗しました",
     "artworkUpdated": "アートワークを更新しました",
     "artworkUpdateFailed": "アートワークの更新に失敗しました",
@@ -4886,6 +4887,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "読み込んだ購読件数：${imported}、重複：${duplicates}、スキップ：${skipped}。",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5700,5 +5702,9 @@
     "relay": "音楽リレーのURL",
     "relayHint": "受信デバイスで有効にし、同じネットワークで一度ペアリングしてください。Pleazyngを開いたままにします。リレーは暗号化された音楽操作を転送し、ネットワークアドレスを参照します。各プレーヤーは自身のメディアサーバーから再生します。",
     "relayInvalid": "リレーのHTTPSアドレスを入力してください。"
+  },
+  "bookmarkMigration": {
+    "unassigned": "バージョン不明のブックマーク",
+    "assignToVersion": "このバージョンに割り当てる"
   }
 }

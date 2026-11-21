@@ -123,6 +123,7 @@ class TranslationsHe extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$he musicExperience = _Translations$musicExperience$he._(_root);
 	@override late final _Translations$musicTools$he musicTools = _Translations$musicTools$he._(_root);
 	@override late final _Translations$musicDevices$he musicDevices = _Translations$musicDevices$he._(_root);
+	@override late final _Translations$bookmarkMigration$he bookmarkMigration = _Translations$bookmarkMigration$he._(_root);
 }
 
 // Path: mediaConveniences
@@ -2727,6 +2728,7 @@ class _Translations$metadataEdit$he extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'כניסת תמונה URL';
 	@override String get imageUrl => 'תמונה URL';
 	@override String get metadataUpdated => 'נתונים מתעדכנים';
+	@override String get metadataConflict => 'אותו שדה שונה בעריכה אחרת. יש לפתוח מחדש את העורך ולבדוק את הערכים העדכניים לפני השמירה.';
 	@override String get metadataUpdateFailed => 'לא הצלחתי לעדכן את הנתונים';
 	@override String get artworkUpdated => 'ארכיון עדכונים';
 	@override String get artworkUpdateFailed => 'לא הצלחתי לעדכן את האמנות';
@@ -4115,6 +4117,7 @@ class _Translations$podcasts$he extends Translations$podcasts$en {
 	final TranslationsHe _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'מינויים שיובאו: ${imported}. כפילויות: ${duplicates}. רשומות שדולגו: ${skipped}.';
 	@override String get autoDownloadLatest => 'הורדה אוטומטית של הפרקים האחרונים';
 	@override String get removeFinishedAfter => 'הסרת הורדות שהושלמו לאחר';
 }
@@ -4527,6 +4530,17 @@ class _Translations$musicDevices$he extends Translations$musicDevices$en {
 	@override String get relay => 'כתובת ממסר המוזיקה';
 	@override String get relayHint => 'יש להפעיל במכשיר המקבל ולצמד פעם אחת באותה רשת. יש להשאיר את Pleazyng פתוח. הממסר מעביר פקודות מוזיקה מוצפנות ורואה כתובות רשת. כל נגן מזרים משרת המדיה שלו.';
 	@override String get relayInvalid => 'יש להזין כתובת HTTPS של הממסר.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$he extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$he._(TranslationsHe root) : this._root = root, super.internal(root);
+
+	final TranslationsHe _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'סימניות מגרסה לא מזוהה';
+	@override String get assignToVersion => 'שיוך לגרסה זו';
 }
 
 // Path: appIcon.names
@@ -8289,6 +8303,7 @@ extension on TranslationsHe {
 			'metadataEdit.enterImageUrl' => 'כניסת תמונה URL',
 			'metadataEdit.imageUrl' => 'תמונה URL',
 			'metadataEdit.metadataUpdated' => 'נתונים מתעדכנים',
+			'metadataEdit.metadataConflict' => 'אותו שדה שונה בעריכה אחרת. יש לפתוח מחדש את העורך ולבדוק את הערכים העדכניים לפני השמירה.',
 			'metadataEdit.metadataUpdateFailed' => 'לא הצלחתי לעדכן את הנתונים',
 			'metadataEdit.artworkUpdated' => 'ארכיון עדכונים',
 			'metadataEdit.artworkUpdateFailed' => 'לא הצלחתי לעדכן את האמנות',
@@ -8725,9 +8740,9 @@ extension on TranslationsHe {
 			'homeLayout.showInRecommended' => 'תגית: הספרייה המומלצת',
 			'homeLayout.customPlexRow' => 'אישית Plex שורה',
 			'homeLayout.heroNeedsLibrary' => 'ראשית, בדוק את הספרייה – גיבור צריך איפשהו להראות',
-			'homeLayout.heroNeedsSurface' => 'ראשית בדוק את הספרייה או הבית – גיבור צריך איפשהו להראות',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'ראשית בדוק את הספרייה או הבית – גיבור צריך איפשהו להראות',
 			'homeLayout.removeHub' => 'להסיר Hub',
 			'homeLayout.noPlexRows' => 'מספר Plex שורות המנוהלות חזרה לספריה זו.',
 			'homeLayout.openDetails' => 'פרטים פתוחים',
@@ -9239,9 +9254,9 @@ extension on TranslationsHe {
 			'audiobook.recoveryHelp' => 'ייצוא עותק מוצפן לאחרונה לפני העברת או תיקון נתוני סינכרון.יבואים מתמזגים עם המצב הנוכחי; הם לעולם לא מחליפים היסטוריה מקומית של סינן.',
 			'audiobook.recoveryExport' => 'ייצוא קובץ ההחזרה מוצפן',
 			'audiobook.recoveryImport' => 'ייבוא קובץ ההחזרה מוצפן',
-			'audiobook.recoveryImportConfirm' => 'שילוב זה קובץ ההחזרה מוצפן עם עמדות הקריאה הנוכחיות והערות? ההיסטוריה הקיימת תישמר. ספרייה משותפת ו- פריטים מזהים אינם נכללים; הגדרת מזהים מתאימים על כל מכשיר לפני ייבוא.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'שילוב זה קובץ ההחזרה מוצפן עם עמדות הקריאה הנוכחיות והערות? ההיסטוריה הקיימת תישמר. ספרייה משותפת ו- פריטים מזהים אינם נכללים; הגדרת מזהים מתאימים על כל מכשיר לפני ייבוא.',
 			'audiobook.recoveryExported' => 'קובץ ההחזרה מוצפן נשמר.',
 			'audiobook.recoveryImported' => 'נתוני ההחזרה מתמזגים.',
 			'sourceSetup.bookorbitHelp' => 'יש להתחבר לחשבון BookOrbit האישי שלך כדי לעיין בספרים ולנגן אותם. בקשות לכותרות חסרות עדיין עוברות דרך מופע SeerrNG המחובר שלך.',
@@ -9460,6 +9475,7 @@ extension on TranslationsHe {
 			'issueReport.privacy' => 'הטיוטה כוללת את גרסת האפליקציה, הפלטפורמה ומספר החיבורים. היא אינה כוללת כתובות שרתים, שמות חשבונות ופרופילים, שמות מדיה או נתיבי קבצים.',
 			'issueReport.logPrivacy' => 'יומנים הם אפשרות בלבד. בדקו אותם לפני ההעלאה. המזהה שלהם נוסף לטיוטה, שעשויה להיות ציבורית.',
 			'issueReport.openDraft' => 'פתיחת טיוטה ב-GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'מינויים שיובאו: ${imported}. כפילויות: ${duplicates}. רשומות שדולגו: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'הורדה אוטומטית של הפרקים האחרונים',
 			'podcasts.removeFinishedAfter' => 'הסרת הורדות שהושלמו לאחר',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'תצוגה מקדימה של קידוד הכתוביות',
@@ -9752,10 +9768,10 @@ extension on TranslationsHe {
 			'musicTools.home' => 'מוסיקה',
 			'musicTools.recent' => 'הושמעו לאחרונה',
 			'musicTools.apiKey' => 'מפתח API',
-			'musicTools.missing' => 'N / A',
-			'musicTools.minutes' => 'דקות',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'N / A',
+			'musicTools.minutes' => 'דקות',
 			'musicTools.rules' => 'מסננים',
 			'musicTools.exclusiveOutput' => 'פלט שמע בלעדי',
 			'musicTools.preamp' => 'קדם־הגברה',
@@ -9811,6 +9827,8 @@ extension on TranslationsHe {
 			'musicDevices.relay' => 'כתובת ממסר המוזיקה',
 			'musicDevices.relayHint' => 'יש להפעיל במכשיר המקבל ולצמד פעם אחת באותה רשת. יש להשאיר את Pleazyng פתוח. הממסר מעביר פקודות מוזיקה מוצפנות ורואה כתובות רשת. כל נגן מזרים משרת המדיה שלו.',
 			'musicDevices.relayInvalid' => 'יש להזין כתובת HTTPS של הממסר.',
+			'bookmarkMigration.unassigned' => 'סימניות מגרסה לא מזוהה',
+			'bookmarkMigration.assignToVersion' => 'שיוך לגרסה זו',
 			_ => null,
 		};
 	}

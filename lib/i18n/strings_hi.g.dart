@@ -123,6 +123,7 @@ class TranslationsHi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$hi musicExperience = _Translations$musicExperience$hi._(_root);
 	@override late final _Translations$musicTools$hi musicTools = _Translations$musicTools$hi._(_root);
 	@override late final _Translations$musicDevices$hi musicDevices = _Translations$musicDevices$hi._(_root);
+	@override late final _Translations$bookmarkMigration$hi bookmarkMigration = _Translations$bookmarkMigration$hi._(_root);
 }
 
 // Path: mediaConveniences
@@ -2723,6 +2724,7 @@ class _Translations$metadataEdit$hi extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'इमेज URL';
 	@override String get imageUrl => 'इमेज URL';
 	@override String get metadataUpdated => 'मेटाडेटा अपडेट';
+	@override String get metadataConflict => 'किसी और ने इसी फ़ील्ड को बदला है। सहेजने से पहले नवीनतम मान देखने के लिए संपादक फिर से खोलें।';
 	@override String get metadataUpdateFailed => 'मेटाडेटा अपडेट करने में असफल';
 	@override String get artworkUpdated => 'Artwork अद्यतन';
 	@override String get artworkUpdateFailed => 'कला के काम को अपडेट करने में विफलता';
@@ -4107,6 +4109,7 @@ class _Translations$podcasts$hi extends Translations$podcasts$en {
 	final TranslationsHi _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'आयात की गई सदस्यताएँ: ${imported}। डुप्लिकेट: ${duplicates}। छोड़ी गईं: ${skipped}।';
 	@override String get autoDownloadLatest => 'नवीनतम एपिसोड अपने आप डाउनलोड करें';
 	@override String get removeFinishedAfter => 'पूरे सुने गए डाउनलोड इतने समय बाद हटाएँ';
 }
@@ -4519,6 +4522,17 @@ class _Translations$musicDevices$hi extends Translations$musicDevices$en {
 	@override String get relay => 'संगीत रिले URL';
 	@override String get relayHint => 'प्राप्त करने वाले डिवाइस पर चालू करें, फिर एक ही नेटवर्क पर एक बार पेयर करें। Pleazyng खुला रखें। रिले एन्क्रिप्टेड संगीत नियंत्रण भेजता है और नेटवर्क पते देखता है। हर प्लेयर अपने मीडिया सर्वर से स्ट्रीम करता है।';
 	@override String get relayInvalid => 'HTTPS रिले पता दर्ज करें।';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$hi extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$hi._(TranslationsHi root) : this._root = root, super.internal(root);
+
+	final TranslationsHi _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'अज्ञात संस्करण के बुकमार्क';
+	@override String get assignToVersion => 'इस संस्करण से जोड़ें';
 }
 
 // Path: appIcon.names
@@ -8281,6 +8295,7 @@ extension on TranslationsHi {
 			'metadataEdit.enterImageUrl' => 'इमेज URL',
 			'metadataEdit.imageUrl' => 'इमेज URL',
 			'metadataEdit.metadataUpdated' => 'मेटाडेटा अपडेट',
+			'metadataEdit.metadataConflict' => 'किसी और ने इसी फ़ील्ड को बदला है। सहेजने से पहले नवीनतम मान देखने के लिए संपादक फिर से खोलें।',
 			'metadataEdit.metadataUpdateFailed' => 'मेटाडेटा अपडेट करने में असफल',
 			'metadataEdit.artworkUpdated' => 'Artwork अद्यतन',
 			'metadataEdit.artworkUpdateFailed' => 'कला के काम को अपडेट करने में विफलता',
@@ -8717,9 +8732,9 @@ extension on TranslationsHi {
 			'homeLayout.showInRecommended' => 'पुस्तकालय में प्रदर्शित की सिफारिश',
 			'homeLayout.customPlexRow' => 'कस्टम Plex पंक्ति',
 			'homeLayout.heroNeedsLibrary' => 'पहले पुस्तकालय की जांच करें - नायक को कहीं दिखाने की जरूरत है',
-			'homeLayout.heroNeedsSurface' => 'पहले पुस्तकालय या होम की जांच करें — नायक को कहीं दिखाने की जरूरत है',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'पहले पुस्तकालय या होम की जांच करें — नायक को कहीं दिखाने की जरूरत है',
 			'homeLayout.removeHub' => 'Hub को हटाने के लिए',
 			'homeLayout.noPlexRows' => 'नंबर Plex-प्रबंधित पंक्तियां इस पुस्तकालय के लिए वापस आ गई हैं।',
 			'homeLayout.openDetails' => 'खुले विवरण',
@@ -9231,9 +9246,9 @@ extension on TranslationsHi {
 			'audiobook.recoveryHelp' => 'सिंक डेटा को स्थानांतरित या ठीक करने से पहले हाल की एन्क्रिप्टेड कॉपी निर्यात करें। आयात मौजूदा स्थिति के साथ मिलते हैं; वे स्थानीय सिंक इतिहास को कभी नहीं बदलते। सिंक कोड अलग से रखें।',
 			'audiobook.recoveryExport' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइलों का निर्यात',
 			'audiobook.recoveryImport' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइल आयात',
-			'audiobook.recoveryImportConfirm' => 'मौजूदा इतिहास बनाए रखा जाएगा. साझा पुस्तकालय और आइटम आईडी शामिल नहीं हैं; आयात करने से पहले प्रत्येक डिवाइस पर फिट आईडी सेट करें.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'मौजूदा इतिहास बनाए रखा जाएगा. साझा पुस्तकालय और आइटम आईडी शामिल नहीं हैं; आयात करने से पहले प्रत्येक डिवाइस पर फिट आईडी सेट करें.',
 			'audiobook.recoveryExported' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइल बचाया गया है।',
 			'audiobook.recoveryImported' => 'पुनर्प्राप्ति डेटा मिश्रित है।',
 			'sourceSetup.bookorbitHelp' => 'अपनी BookOrbit पुस्तकों को ब्राउज़ करने और चलाने के लिए अपने BookOrbit खाते से साइन इन करें। अनुपलब्ध शीर्षकों के अनुरोध फिर भी आपके कनेक्ट किए गए SeerrNG इंस्टेंस से भेजे जाते हैं।',
@@ -9452,6 +9467,7 @@ extension on TranslationsHi {
 			'issueReport.privacy' => 'ड्राफ़्ट में ऐप संस्करण, प्लेटफ़ॉर्म और कनेक्शन की संख्या होती है। इसमें सर्वर पते, खाते या प्रोफ़ाइल के नाम, मीडिया शीर्षक या फ़ाइल पथ शामिल नहीं होते।',
 			'issueReport.logPrivacy' => 'लॉग वैकल्पिक हैं। अपलोड करने से पहले उन्हें देखें। उनका ID ड्राफ़्ट में जुड़ता है, जो सार्वजनिक हो सकता है।',
 			'issueReport.openDraft' => 'GitHub ड्राफ़्ट खोलें',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'आयात की गई सदस्यताएँ: ${imported}। डुप्लिकेट: ${duplicates}। छोड़ी गईं: ${skipped}।',
 			'podcasts.autoDownloadLatest' => 'नवीनतम एपिसोड अपने आप डाउनलोड करें',
 			'podcasts.removeFinishedAfter' => 'पूरे सुने गए डाउनलोड इतने समय बाद हटाएँ',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'सबटाइटल एन्कोडिंग का पूर्वावलोकन',
@@ -9744,10 +9760,10 @@ extension on TranslationsHi {
 			'musicTools.home' => 'संगीत',
 			'musicTools.recent' => 'हाल ही में सुने गए',
 			'musicTools.apiKey' => 'API कुंजी',
-			'musicTools.missing' => 'ए / ए',
-			'musicTools.minutes' => 'मिनट',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'ए / ए',
+			'musicTools.minutes' => 'मिनट',
 			'musicTools.rules' => 'फ़िल्टर',
 			'musicTools.exclusiveOutput' => 'विशेष ऑडियो आउटपुट',
 			'musicTools.preamp' => 'प्रीएम्प',
@@ -9803,6 +9819,8 @@ extension on TranslationsHi {
 			'musicDevices.relay' => 'संगीत रिले URL',
 			'musicDevices.relayHint' => 'प्राप्त करने वाले डिवाइस पर चालू करें, फिर एक ही नेटवर्क पर एक बार पेयर करें। Pleazyng खुला रखें। रिले एन्क्रिप्टेड संगीत नियंत्रण भेजता है और नेटवर्क पते देखता है। हर प्लेयर अपने मीडिया सर्वर से स्ट्रीम करता है।',
 			'musicDevices.relayInvalid' => 'HTTPS रिले पता दर्ज करें।',
+			'bookmarkMigration.unassigned' => 'अज्ञात संस्करण के बुकमार्क',
+			'bookmarkMigration.assignToVersion' => 'इस संस्करण से जोड़ें',
 			_ => null,
 		};
 	}

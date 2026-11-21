@@ -11,6 +11,7 @@ import '../providers/offline_watch_provider.dart';
 import '../utils/provider_extensions.dart';
 import '../utils/watch_state_notifier.dart';
 import 'trackers/tracker_coordinator.dart';
+import 'offline_watch_sync_service.dart';
 
 enum WatchMarkOutcome {
   /// Queued for later sync (offline). The offline provider emitted the event.
@@ -59,21 +60,27 @@ class WatchActions {
     if (client == null) return WatchMarkOutcome.skipped;
 
     final authentication = client.authenticationSessionId;
-    if (watched) {
+    bool isCurrent() =>
+        context.mounted &&
+        identical(client.authenticationSessionId, authentication) &&
+        identical(context.tryGetMediaClientForServer(ServerId(serverId)), client);
+    final sync = context.read<OfflineWatchSyncService?>();
+    if (sync != null) {
+      if (!await sync.writeOnlineMark(client, item, watched: watched, isCurrent: isCurrent)) {
+        return WatchMarkOutcome.skipped;
+      }
+    } else if (watched) {
       await client.markWatched(item);
     } else {
       await client.markUnwatched(item);
     }
-    if (!context.mounted ||
-        !identical(client.authenticationSessionId, authentication) ||
-        !identical(context.tryGetMediaClientForServer(ServerId(serverId)), client)) {
-      return WatchMarkOutcome.skipped;
-    }
+    if (!isCurrent()) return WatchMarkOutcome.skipped;
     WatchStateNotifier().notifyWatched(
       item: item,
       isNowWatched: watched,
       cacheServerId: client.cacheServerId,
       serverAcknowledged: true,
+      pendingActionsReconciled: sync != null,
     );
     unawaited(
       watched

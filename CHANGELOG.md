@@ -5,6 +5,13 @@
 - Provision the matching Samsung SDK for x64 emulator tester builds and link host build tools with the host compiler.
 - Restore an interrupted mobile movie or episode from OS-saved state, including its position, edition and pause intent, after checking access for the active profile. A normal Back or replacement discards the old playback task.
 
+- Keep Watch Together invitations in the initiating profile, honor Stop during a pending selection, and close the guest player when reconnecting to a room the host cleared.
+- Preserve completed plays and explicit watch choices across reconnects. Keep RomM checkpoints and automatic cloud resume on the newest save when older conflicts or uploads are retried.
+- Respect library and server visibility in saved Home collections, assign Jellyfin collections to their members’ libraries, and show music pins from every eligible account.
+- Honor Pause during phone interruptions, show playable downloads on Android Auto, and clear stale Linux track artwork and metadata. Restore cached cloud folders, open videos in large Premiumize folders and honor ComicInfo page order and deletion flags.
+- Keep WebVTT word timestamps and adjacent cues aligned through subtitle corrections. Apply LRC offsets throughout the song and let users approve individual HTTP podcast subscriptions during OPML restore.
+- Cancel settings imports when their initiating profile changes, relocate Linux image loaders with a portable installation, and show skipped releases when checking for updates manually.
+
 - Add an iPhone simulator regression test for changing motion presets and turning smoothing off during AVFoundation playback.
 
 - Fix Linux Neural falling back to CPU on systems where the bundled WebGPU provider can run the model.

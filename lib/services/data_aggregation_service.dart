@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import '../media/ids.dart';
+import '../media/library_query.dart';
 
 import '../media/media_hub.dart';
 import '../media/media_item.dart';
@@ -67,6 +68,7 @@ typedef LibraryAggregationResult = ({
 
 typedef CollectionAggregationResult = ({
   List<MediaItem> collections,
+  Map<String, MediaKind> libraryKinds,
   Set<String> succeededServerIds,
   Set<String> cancelledServerIds,
   Set<String> failedServerIds,
@@ -154,6 +156,19 @@ Set<String> _hiddenLibraryIdsOn(String serverId, Set<String>? hiddenLibraryKeys)
   return ids;
 }
 
+/// A MediaBrowser item can be directly under a known library, or under a
+/// season, show or other folder whose library the server names in Ancestors.
+Future<MediaItem> resolveCollectionMemberLibrary(
+  MediaServerClient client,
+  MediaItem item,
+  Set<String> libraryIds,
+) async {
+  if (item.libraryId != null || !client.backend.usesMediaBrowserApi) return item;
+  final parent = item.raw?['ParentId'];
+  if (parent is String && libraryIds.contains(parent)) return item.copyWith(libraryId: parent);
+  return client.stampLibrary(item);
+}
+
 /// Cross-server aggregation: fans calls out to every online client and
 /// merges the results. Single-server operations now go through the
 /// [MediaServerClient] interface directly (resolved via
@@ -169,9 +184,22 @@ class DataAggregationService {
   Future<CollectionAggregationResult> getCollectionsFromAllServers({
     Set<String>? hiddenLibraryKeys,
     Set<String>? serverIds,
+    Set<String>? collectionKeys,
   }) async {
-    final clients = _clientsFor(serverIds);
-    final libraries = await getMediaLibrariesFromAllServers(serverIds: serverIds);
+    final clients = {
+      for (final entry in _serverManager.visibleOnlineClients.entries)
+        if (serverIds == null || serverIds.contains(entry.key)) entry.key: entry.value,
+    };
+    final sessions = {for (final entry in clients.entries) entry.key: entry.value.authenticationSessionId};
+    bool current(String id, MediaServerClient client) {
+      final server = ServerId(id);
+      return _serverManager.isServerVisible(server) &&
+          _serverManager.isClientOnline(server) &&
+          identical(_serverManager.getClient(server), client) &&
+          identical(client.authenticationSessionId, sessions[id]);
+    }
+
+    final libraries = await getMediaLibrariesFromAllServers(serverIds: clients.keys.toSet());
     final byServer = <String, List<MediaLibrary>>{};
     for (final library in libraries.libraries) {
       if (library.hidden || hiddenLibraryKeys?.contains(library.globalKey) == true) {
@@ -189,34 +217,87 @@ class DataAggregationService {
       clients,
       failureMessage: (serverId) => 'Failed to fetch collections from server $serverId',
       fetch: (serverId, client) async {
-        final result = <MediaItem>[];
-        for (final library in byServer[serverId] ?? const <MediaLibrary>[]) {
-          final items = <MediaItem>[];
-          var start = 0;
-          while (true) {
-            final page = await client.fetchCollectionsPage(library.id, start: start, size: 200);
-            items.addAll(page.items);
-            start += page.items.length;
-            if (page.items.isEmpty || start >= page.totalCount) {
-              break;
+        final eligible = byServer[serverId] ?? const <MediaLibrary>[];
+        if (eligible.isEmpty || !current(serverId, client)) return [];
+        if (client.backend.usesMediaBrowserApi) {
+          // BoxSets share one user-wide index. Only a member in a real
+          // library establishes that its collection belongs to that library.
+          final index = await drainPages(
+            (start, size) => client.fetchCollectionsPage('', start: start, size: size),
+            pageSize: 200,
+          );
+          final eligibleById = {for (final library in eligible) library.id: library};
+          final knownLibraries = {
+            for (final library in libraries.libraries)
+              if (library.serverId == serverId) library.id,
+          };
+          final memberLibraries = <String, String?>{};
+          final result = <MediaItem>[];
+          for (final collection in index) {
+            if (!current(serverId, client)) return [];
+            if (collectionKeys != null && !collectionKeys.contains(collection.globalKey)) continue;
+            final matched = <String>{};
+            var offset = 0;
+            while (matched.length < eligible.length) {
+              if (!current(serverId, client)) return [];
+              final page = await client.fetchCollectionPage(collection.id, start: offset, size: 100);
+              for (final member in page.items) {
+                if (!current(serverId, client)) return [];
+                if (!memberLibraries.containsKey(member.id)) {
+                  final scoped = await resolveCollectionMemberLibrary(client, member, knownLibraries);
+                  memberLibraries[member.id] = scoped.libraryId;
+                }
+                final library = eligibleById[memberLibraries[member.id]];
+                if (library != null && matched.add(library.id)) {
+                  result.add(
+                    collection.copyWith(
+                      libraryId: library.id,
+                      libraryTitle: library.title,
+                      serverId: serverId,
+                      serverName: library.serverName,
+                    ),
+                  );
+                  if (matched.length == eligible.length) break;
+                }
+              }
+              offset += page.items.length;
+              if (page.items.isEmpty || offset >= page.totalCount) break;
             }
           }
+          return result;
+        }
+        final result = <MediaItem>[];
+        for (final library in eligible) {
+          if (!current(serverId, client)) return [];
+          final items = await drainPages(
+            (start, size) => client.fetchCollectionsPage(library.id, start: start, size: size),
+            pageSize: 200,
+          );
           result.addAll(
-            items.map(
-              (item) => item.copyWith(
-                libraryId: library.id,
-                libraryTitle: library.title,
-                serverId: serverId,
-                serverName: library.serverName,
-              ),
-            ),
+            items
+                .where((item) => collectionKeys == null || collectionKeys.contains(item.globalKey))
+                .map(
+                  (item) => item.copyWith(
+                    libraryId: library.id,
+                    libraryTitle: library.title,
+                    serverId: serverId,
+                    serverName: library.serverName,
+                  ),
+                ),
           );
         }
         return result;
       },
     );
     return (
-      collections: fetched.items,
+      collections: [
+        for (final item in fetched.items)
+          if (item.serverId case final id? when clients[id] != null && current(id, clients[id]!)) item,
+      ],
+      libraryKinds: {
+        for (final libraries in byServer.values)
+          for (final library in libraries) library.globalKey: library.kind,
+      },
       succeededServerIds: fetched.succeededServerIds.intersection(libraries.succeededServerIds),
       cancelledServerIds: {...fetched.cancelledServerIds, ...libraries.cancelledServerIds},
       failedServerIds: {...fetched.failedServerIds, ...libraries.failedServerIds},

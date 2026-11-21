@@ -3256,6 +3256,7 @@
     "enterImageUrl": "Rasm URL-manzilini kiriting",
     "imageUrl": "Rasm URL-manzili",
     "metadataUpdated": "Metamaʼlumotlar yangilandi",
+    "metadataConflict": "Boshqa muharrir shu maydonni o‘zgartirdi. Saqlashdan oldin so‘nggi qiymatlarni tekshirish uchun muharrirni qayta oching.",
     "metadataUpdateFailed": "Metamaʼlumotlarni yangilab boʻlmadi",
     "artworkUpdated": "Rasmlar yangilandi",
     "artworkUpdateFailed": "Rasmlarni yangilab boʻlmadi",
@@ -4891,6 +4892,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Import qilingan obunalar: ${imported}. Takroriylari: ${duplicates}. O‘tkazib yuborilganlari: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5707,9 @@
     "relay": "Musiqa relesi URL manzili",
     "relayHint": "Qabul qiluvchi qurilmada yoqing, so‘ng bir tarmoqda bir marta juftlang. Pleazyng ochiq tursin. Rele shifrlangan musiqa buyruqlarini uzatadi va tarmoq manzillarini ko‘radi. Har bir pleyer o‘z media serveridan uzatadi.",
     "relayInvalid": "HTTPS rele manzilini kiriting."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Qaysi versiyaga tegishli ekani noma’lum xatcho‘plar",
+    "assignToVersion": "Shu versiyaga biriktirish"
   }
 }

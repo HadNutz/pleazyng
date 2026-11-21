@@ -123,6 +123,7 @@ class TranslationsTh extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$th musicExperience = _Translations$musicExperience$th._(_root);
 	@override late final _Translations$musicTools$th musicTools = _Translations$musicTools$th._(_root);
 	@override late final _Translations$musicDevices$th musicDevices = _Translations$musicDevices$th._(_root);
+	@override late final _Translations$bookmarkMigration$th bookmarkMigration = _Translations$bookmarkMigration$th._(_root);
 }
 
 // Path: mediaConveniences
@@ -2704,6 +2705,7 @@ class _Translations$metadataEdit$th extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'หมายเลข URL';
 	@override String get imageUrl => 'ภาพ URL';
 	@override String get metadataUpdated => 'ข้อมูลอัปเดต';
+	@override String get metadataConflict => 'มีผู้อื่นแก้ไขช่องเดียวกัน โปรดเปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก';
 	@override String get metadataUpdateFailed => 'ไม่สามารถปรับปรุงข้อมูล metadata';
 	@override String get artworkUpdated => 'อัพเดทศิลปะ';
 	@override String get artworkUpdateFailed => 'ไม่สามารถปรับปรุงงานศิลปะได้';
@@ -4084,6 +4086,7 @@ class _Translations$podcasts$th extends Translations$podcasts$en {
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'นำเข้าการติดตามแล้ว ${imported} รายการ ซ้ำ ${duplicates} รายการ ข้าม ${skipped} รายการ';
 	@override String get autoDownloadLatest => 'ดาวน์โหลดตอนล่าสุดโดยอัตโนมัติ';
 	@override String get removeFinishedAfter => 'ลบไฟล์ดาวน์โหลดที่ฟังจบแล้วหลังจาก';
 }
@@ -4496,6 +4499,17 @@ class _Translations$musicDevices$th extends Translations$musicDevices$en {
 	@override String get relay => 'URL รีเลย์เพลง';
 	@override String get relayHint => 'เปิดใช้งานบนอุปกรณ์รับ แล้วจับคู่ครั้งเดียวบนเครือข่ายเดียวกัน เปิด Pleazyng ค้างไว้ รีเลย์ส่งคำสั่งเพลงที่เข้ารหัสและเห็นที่อยู่เครือข่ายได้ เครื่องเล่นแต่ละเครื่องสตรีมจากเซิร์ฟเวอร์สื่อของตนเอง';
 	@override String get relayInvalid => 'ป้อนที่อยู่รีเลย์ HTTPS';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$th extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$th._(TranslationsTh root) : this._root = root, super.internal(root);
+
+	final TranslationsTh _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'บุ๊กมาร์กจากเวอร์ชันที่ระบุไม่ได้';
+	@override String get assignToVersion => 'เชื่อมโยงกับเวอร์ชันนี้';
 }
 
 // Path: appIcon.names
@@ -8256,6 +8270,7 @@ extension on TranslationsTh {
 			'metadataEdit.enterImageUrl' => 'หมายเลข URL',
 			'metadataEdit.imageUrl' => 'ภาพ URL',
 			'metadataEdit.metadataUpdated' => 'ข้อมูลอัปเดต',
+			'metadataEdit.metadataConflict' => 'มีผู้อื่นแก้ไขช่องเดียวกัน โปรดเปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก',
 			'metadataEdit.metadataUpdateFailed' => 'ไม่สามารถปรับปรุงข้อมูล metadata',
 			'metadataEdit.artworkUpdated' => 'อัพเดทศิลปะ',
 			'metadataEdit.artworkUpdateFailed' => 'ไม่สามารถปรับปรุงงานศิลปะได้',
@@ -8692,9 +8707,9 @@ extension on TranslationsTh {
 			'homeLayout.showInRecommended' => 'แสดงในห้องสมุดแนะนํา',
 			'homeLayout.customPlexRow' => 'คู่มือ Plex รอบ',
 			'homeLayout.heroNeedsLibrary' => 'ตรวจสอบห้องสมุดแรก — Hero ต้องการที่ไหนที่จะแสดง',
-			'homeLayout.heroNeedsSurface' => 'ตรวจสอบห้องสมุดหรือบ้านแรก — สัตว์ประหลาดต้องการที่ไหนที่จะแสดง',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'ตรวจสอบห้องสมุดหรือบ้านแรก — สัตว์ประหลาดต้องการที่ไหนที่จะแสดง',
 			'homeLayout.removeHub' => 'ลบ Hub',
 			'homeLayout.noPlexRows' => 'หมายเลข Plex-จัดการสายกลับสําหรับห้องสมุดนี้',
 			'homeLayout.openDetails' => 'รายละเอียดเปิด',
@@ -9206,9 +9221,9 @@ extension on TranslationsTh {
 			'audiobook.recoveryHelp' => 'Export a recent encrypted copy before moving or repairing sync data. นําเข้ามาพร้อมกับสถานะปัจจุบัน พวกเขาไม่เคยแทนที่ประวัติการซิงค์ในท้องถิ่น ให้รหัสซิงโครแยกกัน',
 			'audiobook.recoveryExport' => 'การส่งออกไฟล์การกู้คืนที่เข้ารหัส',
 			'audiobook.recoveryImport' => 'นําเข้าไฟล์การกู้คืนที่เข้ารหัส',
-			'audiobook.recoveryImportConfirm' => 'ผสมไฟล์การกู้คืนที่เข้ารหัสนี้กับตําแหน่งอ่านปัจจุบันและบันทึก? ประวัติศาสตร์ที่มีอยู่จะถูกเก็บไว้. หมายเลขห้องสมุดร่วมกันและรายการไม่รวม; การตั้งค่าหมายเลขที่เกี่ยวข้องในแต่ละอุปกรณ์ก่อนที่จะนําเข้า',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'ผสมไฟล์การกู้คืนที่เข้ารหัสนี้กับตําแหน่งอ่านปัจจุบันและบันทึก? ประวัติศาสตร์ที่มีอยู่จะถูกเก็บไว้. หมายเลขห้องสมุดร่วมกันและรายการไม่รวม; การตั้งค่าหมายเลขที่เกี่ยวข้องในแต่ละอุปกรณ์ก่อนที่จะนําเข้า',
 			'audiobook.recoveryExported' => 'ไฟล์การกู้คืนที่เข้ารหัสถูกบันทึก',
 			'audiobook.recoveryImported' => 'ข้อมูลการกู้คืนรวม',
 			'sourceSetup.bookorbitHelp' => 'ลงชื่อเข้าใช้บัญชี BookOrbit ของคุณเพื่อเรียกดูและเล่นหนังสือ คำขอสำหรับเรื่องที่ไม่มีให้บริการยังคงส่งผ่าน SeerrNG ที่เชื่อมต่อไว้',
@@ -9427,6 +9442,7 @@ extension on TranslationsTh {
 			'issueReport.privacy' => 'ฉบับร่างมีเวอร์ชันแอป แพลตฟอร์ม และจำนวนการเชื่อมต่อ โดยไม่รวมที่อยู่เซิร์ฟเวอร์ ชื่อบัญชีหรือโปรไฟล์ ชื่อสื่อ หรือเส้นทางไฟล์',
 			'issueReport.logPrivacy' => 'บันทึกเป็นทางเลือก โปรดตรวจสอบก่อนอัปโหลด ID ของบันทึกจะเพิ่มลงในฉบับร่าง ซึ่งอาจเปิดเผยต่อสาธารณะ',
 			'issueReport.openDraft' => 'เปิดฉบับร่าง GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'นำเข้าการติดตามแล้ว ${imported} รายการ ซ้ำ ${duplicates} รายการ ข้าม ${skipped} รายการ',
 			'podcasts.autoDownloadLatest' => 'ดาวน์โหลดตอนล่าสุดโดยอัตโนมัติ',
 			'podcasts.removeFinishedAfter' => 'ลบไฟล์ดาวน์โหลดที่ฟังจบแล้วหลังจาก',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'ตัวอย่างการเข้ารหัสคำบรรยาย',
@@ -9719,10 +9735,10 @@ extension on TranslationsTh {
 			'musicTools.home' => 'เพลง',
 			'musicTools.recent' => 'เล่นล่าสุด',
 			'musicTools.apiKey' => 'คีย์ API',
-			'musicTools.missing' => 'หมายเลขรุ่น: A',
-			'musicTools.minutes' => 'นาที',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'หมายเลขรุ่น: A',
+			'musicTools.minutes' => 'นาที',
 			'musicTools.rules' => 'ฟิล์ม',
 			'musicTools.exclusiveOutput' => 'เอาต์พุตเสียงแบบเอกสิทธิ์',
 			'musicTools.preamp' => 'ปรีแอมป์',
@@ -9778,6 +9794,8 @@ extension on TranslationsTh {
 			'musicDevices.relay' => 'URL รีเลย์เพลง',
 			'musicDevices.relayHint' => 'เปิดใช้งานบนอุปกรณ์รับ แล้วจับคู่ครั้งเดียวบนเครือข่ายเดียวกัน เปิด Pleazyng ค้างไว้ รีเลย์ส่งคำสั่งเพลงที่เข้ารหัสและเห็นที่อยู่เครือข่ายได้ เครื่องเล่นแต่ละเครื่องสตรีมจากเซิร์ฟเวอร์สื่อของตนเอง',
 			'musicDevices.relayInvalid' => 'ป้อนที่อยู่รีเลย์ HTTPS',
+			'bookmarkMigration.unassigned' => 'บุ๊กมาร์กจากเวอร์ชันที่ระบุไม่ได้',
+			'bookmarkMigration.assignToVersion' => 'เชื่อมโยงกับเวอร์ชันนี้',
 			_ => null,
 		};
 	}

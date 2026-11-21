@@ -123,6 +123,7 @@ class TranslationsPl extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$pl musicExperience = _Translations$musicExperience$pl._(_root);
 	@override late final _Translations$musicTools$pl musicTools = _Translations$musicTools$pl._(_root);
 	@override late final _Translations$musicDevices$pl musicDevices = _Translations$musicDevices$pl._(_root);
+	@override late final _Translations$bookmarkMigration$pl bookmarkMigration = _Translations$bookmarkMigration$pl._(_root);
 }
 
 // Path: mediaConveniences
@@ -2761,6 +2762,7 @@ class _Translations$metadataEdit$pl extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Wprowadź URL obrazu';
 	@override String get imageUrl => 'URL obrazu';
 	@override String get metadataUpdated => 'Metadane zaktualizowane';
+	@override String get metadataConflict => 'Ktoś inny zmienił to samo pole. Przed zapisaniem ponownie otwórz edytor i sprawdź aktualne wartości.';
 	@override String get metadataUpdateFailed => 'Nie udało się zaktualizować metadanych';
 	@override String get artworkUpdated => 'Grafika zaktualizowana';
 	@override String get artworkUpdateFailed => 'Nie udało się zaktualizować grafiki';
@@ -4153,6 +4155,7 @@ class _Translations$podcasts$pl extends Translations$podcasts$en {
 	final TranslationsPl _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Zaimportowane subskrypcje: ${imported}. Duplikaty: ${duplicates}. Pominięte: ${skipped}.';
 	@override String get autoDownloadLatest => 'Automatycznie pobieraj najnowsze odcinki';
 	@override String get removeFinishedAfter => 'Usuwaj ukończone pobrania po';
 }
@@ -4565,6 +4568,17 @@ class _Translations$musicDevices$pl extends Translations$musicDevices$en {
 	@override String get relay => 'URL przekaźnika muzyki';
 	@override String get relayHint => 'Włącz na urządzeniu odbierającym i sparuj raz w tej samej sieci. Pozostaw Pleazyng otwarty. Przekaźnik przesyła zaszyfrowane polecenia muzyczne i widzi adresy sieciowe. Każdy odtwarzacz korzysta ze swojego serwera multimediów.';
 	@override String get relayInvalid => 'Wpisz adres HTTPS przekaźnika.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$pl extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$pl._(TranslationsPl root) : this._root = root, super.internal(root);
+
+	final TranslationsPl _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Zakładki z niezidentyfikowanej wersji';
+	@override String get assignToVersion => 'Przypisz do tej wersji';
 }
 
 // Path: appIcon.names
@@ -8331,6 +8345,7 @@ extension on TranslationsPl {
 			'metadataEdit.enterImageUrl' => 'Wprowadź URL obrazu',
 			'metadataEdit.imageUrl' => 'URL obrazu',
 			'metadataEdit.metadataUpdated' => 'Metadane zaktualizowane',
+			'metadataEdit.metadataConflict' => 'Ktoś inny zmienił to samo pole. Przed zapisaniem ponownie otwórz edytor i sprawdź aktualne wartości.',
 			'metadataEdit.metadataUpdateFailed' => 'Nie udało się zaktualizować metadanych',
 			'metadataEdit.artworkUpdated' => 'Grafika zaktualizowana',
 			'metadataEdit.artworkUpdateFailed' => 'Nie udało się zaktualizować grafiki',
@@ -8767,9 +8782,9 @@ extension on TranslationsPl {
 			'homeLayout.showInRecommended' => 'W bibliotece zalecane',
 			'homeLayout.customPlexRow' => 'Zestawienie Plex',
 			'homeLayout.heroNeedsLibrary' => 'Przeczytaj bibliotekę najpierw – bohater musi gdzieś pokazać',
-			'homeLayout.heroNeedsSurface' => 'Przeczytaj bibliotekę lub dom najpierw — Hero potrzebuje gdzieś, aby pokazać',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Przeczytaj bibliotekę lub dom najpierw — Hero potrzebuje gdzieś, aby pokazać',
 			'homeLayout.removeHub' => 'Usuń Hub',
 			'homeLayout.noPlexRows' => 'Nr Plex rzędy zarządzane powróciły do tej biblioteki.',
 			'homeLayout.openDetails' => 'Szczegóły otwarte',
@@ -9281,9 +9296,9 @@ extension on TranslationsPl {
 			'audiobook.recoveryHelp' => 'Eksportuj niedawno szyfrowaną kopię przed przeniesieniem lub naprawą danych synchronizacyjnych.Importy spotykają się z bieżącym stanem; nigdy nie zastępują lokalnej historii synchrowania.',
 			'audiobook.recoveryExport' => 'Eksportowanie szyfrowanego pliku odzyskiwania',
 			'audiobook.recoveryImport' => 'Importowanie szyfrowanego pliku odzyskiwania',
-			'audiobook.recoveryImportConfirm' => 'Połączenie tego szyfrowanego pliku odzyskiwania z bieżących pozycji czytania i notatek? istniejąca historia zostanie zachowana. udostępniona biblioteka i identyfikatory elementów nie są włączone; ustawić identyfikator odpowiadający na każdym urządzeniu przed importowaniem.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Połączenie tego szyfrowanego pliku odzyskiwania z bieżących pozycji czytania i notatek? istniejąca historia zostanie zachowana. udostępniona biblioteka i identyfikatory elementów nie są włączone; ustawić identyfikator odpowiadający na każdym urządzeniu przed importowaniem.',
 			'audiobook.recoveryExported' => 'Szyfrowane pliki odzyskiwania zostały zapisane.',
 			'audiobook.recoveryImported' => 'Dane odzyskiwania połączenia.',
 			'sourceSetup.bookorbitHelp' => 'Zaloguj się na własne konto BookOrbit, aby przeglądać i odtwarzać zawarte w nim książki. Zamówienia niedostępnych tytułów nadal są wysyłane przez połączoną instancję SeerrNG.',
@@ -9502,6 +9517,7 @@ extension on TranslationsPl {
 			'issueReport.privacy' => 'Szkic zawiera wersję aplikacji, platformę i liczbę połączeń. Nie zawiera adresów serwerów, nazw kont i profili, tytułów multimediów ani ścieżek plików.',
 			'issueReport.logPrivacy' => 'Logi są opcjonalne. Przejrzyj je przed przesłaniem. Ich identyfikator zostanie dodany do szkicu, który może być publiczny.',
 			'issueReport.openDraft' => 'Otwórz szkic GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Zaimportowane subskrypcje: ${imported}. Duplikaty: ${duplicates}. Pominięte: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Automatycznie pobieraj najnowsze odcinki',
 			'podcasts.removeFinishedAfter' => 'Usuwaj ukończone pobrania po',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Podgląd kodowania napisów',
@@ -9794,10 +9810,10 @@ extension on TranslationsPl {
 			'musicTools.home' => 'Muzyka',
 			'musicTools.recent' => 'Ostatnio odtwarzane',
 			'musicTools.apiKey' => 'Klucz API',
-			'musicTools.missing' => 'N/D',
-			'musicTools.minutes' => 'Minuty',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'N/D',
+			'musicTools.minutes' => 'Minuty',
 			'musicTools.rules' => 'Filtry',
 			'musicTools.exclusiveOutput' => 'Wyłączne wyjście audio',
 			'musicTools.preamp' => 'Wzmocnienie wstępne',
@@ -9853,6 +9869,8 @@ extension on TranslationsPl {
 			'musicDevices.relay' => 'URL przekaźnika muzyki',
 			'musicDevices.relayHint' => 'Włącz na urządzeniu odbierającym i sparuj raz w tej samej sieci. Pozostaw Pleazyng otwarty. Przekaźnik przesyła zaszyfrowane polecenia muzyczne i widzi adresy sieciowe. Każdy odtwarzacz korzysta ze swojego serwera multimediów.',
 			'musicDevices.relayInvalid' => 'Wpisz adres HTTPS przekaźnika.',
+			'bookmarkMigration.unassigned' => 'Zakładki z niezidentyfikowanej wersji',
+			'bookmarkMigration.assignToVersion' => 'Przypisz do tej wersji',
 			_ => null,
 		};
 	}

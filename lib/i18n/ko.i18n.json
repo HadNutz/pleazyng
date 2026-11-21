@@ -3252,6 +3252,7 @@
     "enterImageUrl": "이미지 URL 입력",
     "imageUrl": "이미지 URL",
     "metadataUpdated": "메타데이터가 업데이트되었습니다",
+    "metadataConflict": "다른 사용자가 같은 필드를 수정했습니다. 저장하기 전에 편집기를 다시 열어 최신 값을 확인하세요.",
     "metadataUpdateFailed": "메타데이터 업데이트 실패",
     "artworkUpdated": "아트워크가 업데이트되었습니다",
     "artworkUpdateFailed": "아트워크 업데이트 실패",
@@ -4886,6 +4887,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "가져온 구독: ${imported}개. 중복: ${duplicates}개. 건너뜀: ${skipped}개.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5700,5 +5702,9 @@
     "relay": "음악 릴레이 URL",
     "relayHint": "수신 기기에서 활성화한 다음 같은 네트워크에서 한 번 페어링하세요. Pleazyng을 열어 두세요. 릴레이는 암호화된 음악 제어를 전달하며 네트워크 주소를 볼 수 있습니다. 각 플레이어는 자체 미디어 서버에서 스트리밍합니다.",
     "relayInvalid": "HTTPS 릴레이 주소를 입력하세요."
+  },
+  "bookmarkMigration": {
+    "unassigned": "버전을 확인할 수 없는 북마크",
+    "assignToVersion": "이 버전에 할당"
   }
 }

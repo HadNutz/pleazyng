@@ -123,6 +123,7 @@ class TranslationsSv extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$sv musicExperience = _Translations$musicExperience$sv._(_root);
 	@override late final _Translations$musicTools$sv musicTools = _Translations$musicTools$sv._(_root);
 	@override late final _Translations$musicDevices$sv musicDevices = _Translations$musicDevices$sv._(_root);
+	@override late final _Translations$bookmarkMigration$sv bookmarkMigration = _Translations$bookmarkMigration$sv._(_root);
 }
 
 // Path: mediaConveniences
@@ -2723,6 +2724,7 @@ class _Translations$metadataEdit$sv extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Ange bild-URL';
 	@override String get imageUrl => 'Bild-URL';
 	@override String get metadataUpdated => 'Metadata har uppdaterats';
+	@override String get metadataConflict => 'Någon annan har ändrat samma fält. Öppna redigeraren igen och kontrollera de senaste värdena innan du sparar.';
 	@override String get metadataUpdateFailed => 'Det gick inte att uppdatera metadata';
 	@override String get artworkUpdated => 'Bildmaterialet har uppdaterats';
 	@override String get artworkUpdateFailed => 'Det gick inte att uppdatera bildmaterialet';
@@ -4107,6 +4109,7 @@ class _Translations$podcasts$sv extends Translations$podcasts$en {
 	final TranslationsSv _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Importerade prenumerationer: ${imported}. Dubbletter: ${duplicates}. Överhoppade: ${skipped}.';
 	@override String get autoDownloadLatest => 'Ladda ned de senaste avsnitten automatiskt';
 	@override String get removeFinishedAfter => 'Ta bort färdiglyssnade nedladdningar efter';
 }
@@ -4519,6 +4522,17 @@ class _Translations$musicDevices$sv extends Translations$musicDevices$en {
 	@override String get relay => 'URL till musikrelä';
 	@override String get relayHint => 'Aktivera på mottagaren och parkoppla en gång på samma nätverk. Håll Pleazyng öppet. Reläet skickar krypterade musikkommandon och ser nätverksadresser. Varje spelare strömmar från sin egen medieserver.';
 	@override String get relayInvalid => 'Ange en HTTPS-adress till reläet.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$sv extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$sv._(TranslationsSv root) : this._root = root, super.internal(root);
+
+	final TranslationsSv _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Bokmärken från en okänd version';
+	@override String get assignToVersion => 'Koppla till den här versionen';
 }
 
 // Path: appIcon.names
@@ -8281,6 +8295,7 @@ extension on TranslationsSv {
 			'metadataEdit.enterImageUrl' => 'Ange bild-URL',
 			'metadataEdit.imageUrl' => 'Bild-URL',
 			'metadataEdit.metadataUpdated' => 'Metadata har uppdaterats',
+			'metadataEdit.metadataConflict' => 'Någon annan har ändrat samma fält. Öppna redigeraren igen och kontrollera de senaste värdena innan du sparar.',
 			'metadataEdit.metadataUpdateFailed' => 'Det gick inte att uppdatera metadata',
 			'metadataEdit.artworkUpdated' => 'Bildmaterialet har uppdaterats',
 			'metadataEdit.artworkUpdateFailed' => 'Det gick inte att uppdatera bildmaterialet',
@@ -8717,9 +8732,9 @@ extension on TranslationsSv {
 			'homeLayout.showInRecommended' => 'Utställning i biblioteket rekommenderas',
 			'homeLayout.customPlexRow' => 'Anpassad Plex rad',
 			'homeLayout.heroNeedsLibrary' => 'Kolla biblioteket först – Hero behöver någonstans att visa',
-			'homeLayout.heroNeedsSurface' => 'Kolla biblioteket eller hemmet först – Hero behöver någonstans att visa',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Kolla biblioteket eller hemmet först – Hero behöver någonstans att visa',
 			'homeLayout.removeHub' => 'Ta bort Hub',
 			'homeLayout.noPlexRows' => 'Nr Plex-hanterade rader återvände till denna bibliotek.',
 			'homeLayout.openDetails' => 'Öppna detaljer',
@@ -9231,9 +9246,9 @@ extension on TranslationsSv {
 			'audiobook.recoveryHelp' => 'Exportera en nyligen krypterad kopia innan du flyttar eller reparerar synkroniseringsdata. Importer går ihop med den aktuella tillståndet; de ersätter aldrig lokal synkroniseringshistoria. Håll synkronkoden separat.',
 			'audiobook.recoveryExport' => 'Export krypterad återhämtningsfil',
 			'audiobook.recoveryImport' => 'Import krypterad återhämtningsfil',
-			'audiobook.recoveryImportConfirm' => 'Kombinera denna krypterade återställningsfil med aktuella läsplatser och anteckningar? befintlig historia kommer att behållas. Delade bibliotek och objekt ID ingår inte; ställa in matchande ID på varje enhet innan import.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Kombinera denna krypterade återställningsfil med aktuella läsplatser och anteckningar? befintlig historia kommer att behållas. Delade bibliotek och objekt ID ingår inte; ställa in matchande ID på varje enhet innan import.',
 			'audiobook.recoveryExported' => 'Den krypterade återhämtningsfilen sparas.',
 			'audiobook.recoveryImported' => 'Data återhämtning sammansatt.',
 			'sourceSetup.bookorbitHelp' => 'Logga in med ditt eget BookOrbit-konto för att bläddra bland och spela upp dina böcker. Begäranden om saknade titlar går fortfarande via din anslutna SeerrNG-instans.',
@@ -9452,6 +9467,7 @@ extension on TranslationsSv {
 			'issueReport.privacy' => 'Utkastet innehåller appversion, plattform och antal anslutningar. Serveradresser, konto- och profilnamn, medietitlar och filsökvägar utelämnas.',
 			'issueReport.logPrivacy' => 'Loggar är valfria. Granska dem före uppladdning. Deras ID läggs till i utkastet, som kan vara offentligt.',
 			'issueReport.openDraft' => 'Öppna GitHub-utkast',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Importerade prenumerationer: ${imported}. Dubbletter: ${duplicates}. Överhoppade: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Ladda ned de senaste avsnitten automatiskt',
 			'podcasts.removeFinishedAfter' => 'Ta bort färdiglyssnade nedladdningar efter',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Förhandsgranska undertextkodning',
@@ -9744,10 +9760,10 @@ extension on TranslationsSv {
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Senast spelat',
 			'musicTools.apiKey' => 'API-nyckel',
-			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => 'Minuter',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'N/A',
+			'musicTools.minutes' => 'Minuter',
 			'musicTools.rules' => 'Filter',
 			'musicTools.exclusiveOutput' => 'Exklusiv ljudutgång',
 			'musicTools.preamp' => 'Förförstärkning',
@@ -9803,6 +9819,8 @@ extension on TranslationsSv {
 			'musicDevices.relay' => 'URL till musikrelä',
 			'musicDevices.relayHint' => 'Aktivera på mottagaren och parkoppla en gång på samma nätverk. Håll Pleazyng öppet. Reläet skickar krypterade musikkommandon och ser nätverksadresser. Varje spelare strömmar från sin egen medieserver.',
 			'musicDevices.relayInvalid' => 'Ange en HTTPS-adress till reläet.',
+			'bookmarkMigration.unassigned' => 'Bokmärken från en okänd version',
+			'bookmarkMigration.assignToVersion' => 'Koppla till den här versionen',
 			_ => null,
 		};
 	}

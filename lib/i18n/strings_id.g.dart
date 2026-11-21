@@ -123,6 +123,7 @@ class TranslationsId extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$id musicExperience = _Translations$musicExperience$id._(_root);
 	@override late final _Translations$musicTools$id musicTools = _Translations$musicTools$id._(_root);
 	@override late final _Translations$musicDevices$id musicDevices = _Translations$musicDevices$id._(_root);
+	@override late final _Translations$bookmarkMigration$id bookmarkMigration = _Translations$bookmarkMigration$id._(_root);
 }
 
 // Path: mediaConveniences
@@ -2704,6 +2705,7 @@ class _Translations$metadataEdit$id extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Masukkan URL gambar';
 	@override String get imageUrl => 'Gambar URL';
 	@override String get metadataUpdated => 'Metadata yang diperbarui';
+	@override String get metadataConflict => 'Orang lain telah mengubah kolom yang sama. Buka kembali editor untuk memeriksa nilai terbaru sebelum menyimpan.';
 	@override String get metadataUpdateFailed => 'Tidak dapat mengemas kini metadata';
 	@override String get artworkUpdated => 'Artwork dikemas kini';
 	@override String get artworkUpdateFailed => 'gagal memperbarui karya seni';
@@ -4084,6 +4086,7 @@ class _Translations$podcasts$id extends Translations$podcasts$en {
 	final TranslationsId _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Langganan yang diimpor: ${imported}. Duplikat: ${duplicates}. Dilewati: ${skipped}.';
 	@override String get autoDownloadLatest => 'Unduh episode terbaru secara otomatis';
 	@override String get removeFinishedAfter => 'Hapus unduhan yang selesai setelah';
 }
@@ -4496,6 +4499,17 @@ class _Translations$musicDevices$id extends Translations$musicDevices$en {
 	@override String get relay => 'URL relai musik';
 	@override String get relayHint => 'Aktifkan di perangkat penerima, lalu pasangkan sekali di jaringan yang sama. Biarkan Pleazyng terbuka. Relai meneruskan kontrol musik terenkripsi dan melihat alamat jaringan. Setiap pemutar melakukan streaming dari server medianya sendiri.';
 	@override String get relayInvalid => 'Masukkan alamat relai HTTPS.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$id extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$id._(TranslationsId root) : this._root = root, super.internal(root);
+
+	final TranslationsId _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Markah dari versi yang belum teridentifikasi';
+	@override String get assignToVersion => 'Kaitkan dengan versi ini';
 }
 
 // Path: appIcon.names
@@ -8256,6 +8270,7 @@ extension on TranslationsId {
 			'metadataEdit.enterImageUrl' => 'Masukkan URL gambar',
 			'metadataEdit.imageUrl' => 'Gambar URL',
 			'metadataEdit.metadataUpdated' => 'Metadata yang diperbarui',
+			'metadataEdit.metadataConflict' => 'Orang lain telah mengubah kolom yang sama. Buka kembali editor untuk memeriksa nilai terbaru sebelum menyimpan.',
 			'metadataEdit.metadataUpdateFailed' => 'Tidak dapat mengemas kini metadata',
 			'metadataEdit.artworkUpdated' => 'Artwork dikemas kini',
 			'metadataEdit.artworkUpdateFailed' => 'gagal memperbarui karya seni',
@@ -8692,9 +8707,9 @@ extension on TranslationsId {
 			'homeLayout.showInRecommended' => 'Perpustakaan yang disarankan',
 			'homeLayout.customPlexRow' => 'Keterampilan Plex baris',
 			'homeLayout.heroNeedsLibrary' => 'Periksa perpustakaan pertama — Hero perlu di suatu tempat untuk menunjukkan',
-			'homeLayout.heroNeedsSurface' => 'Periksa Perpustakaan atau Rumah terlebih dahulu — Hero perlu di suatu tempat untuk menunjukkan',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Periksa Perpustakaan atau Rumah terlebih dahulu — Hero perlu di suatu tempat untuk menunjukkan',
 			'homeLayout.removeHub' => 'Menghapus Hub',
 			'homeLayout.noPlexRows' => 'No. Plex baris yang dikelola kembali untuk perpustakaan ini.',
 			'homeLayout.openDetails' => 'Detail Terbuka',
@@ -9206,9 +9221,9 @@ extension on TranslationsId {
 			'audiobook.recoveryHelp' => 'Ekspor salinan yang disulitkan baru-baru ini sebelum memindahkan atau memperbaiki data sink. Import bergabung dengan keadaan saat ini; mereka tidak pernah mengganti sejarah sink lokal.',
 			'audiobook.recoveryExport' => 'Mengekspor file pemulihan yang disulitkan',
 			'audiobook.recoveryImport' => 'Mengimport file pemulihan yang disulitkan',
-			'audiobook.recoveryImportConfirm' => 'Menggabungkan file pemulihan yang disulitkan ini dengan posisi bacaan dan catatan saat ini? sejarah yang ada akan disimpan. perpustakaan berbagi dan ID item tidak termasuk; menetapkan ID yang sepadan pada setiap perangkat sebelum mengimpor.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Menggabungkan file pemulihan yang disulitkan ini dengan posisi bacaan dan catatan saat ini? sejarah yang ada akan disimpan. perpustakaan berbagi dan ID item tidak termasuk; menetapkan ID yang sepadan pada setiap perangkat sebelum mengimpor.',
 			'audiobook.recoveryExported' => 'File pemulihan yang disulitkan disimpan.',
 			'audiobook.recoveryImported' => 'Data pemulihan digabungkan.',
 			'sourceSetup.bookorbitHelp' => 'Masuk dengan akun BookOrbit Anda sendiri untuk menelusuri dan memutar buku. Permintaan untuk judul yang tidak tersedia tetap dikirim melalui instans SeerrNG yang terhubung.',
@@ -9427,6 +9442,7 @@ extension on TranslationsId {
 			'issueReport.privacy' => 'Draf memuat versi aplikasi, platform, dan jumlah koneksi. Alamat server, nama akun dan profil, judul media, serta lokasi berkas tidak disertakan.',
 			'issueReport.logPrivacy' => 'Log bersifat opsional. Tinjau sebelum mengunggah. ID log ditambahkan ke draf, yang mungkin bersifat publik.',
 			'issueReport.openDraft' => 'Buka draf GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Langganan yang diimpor: ${imported}. Duplikat: ${duplicates}. Dilewati: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Unduh episode terbaru secara otomatis',
 			'podcasts.removeFinishedAfter' => 'Hapus unduhan yang selesai setelah',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Pratinjau enkode subtitle',
@@ -9719,10 +9735,10 @@ extension on TranslationsId {
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Baru diputar',
 			'musicTools.apiKey' => 'Kunci API',
-			'musicTools.missing' => 'N / A',
-			'musicTools.minutes' => 'Minit',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'N / A',
+			'musicTools.minutes' => 'Minit',
 			'musicTools.rules' => 'Filter',
 			'musicTools.exclusiveOutput' => 'Keluaran audio eksklusif',
 			'musicTools.preamp' => 'Prapenguatan',
@@ -9778,6 +9794,8 @@ extension on TranslationsId {
 			'musicDevices.relay' => 'URL relai musik',
 			'musicDevices.relayHint' => 'Aktifkan di perangkat penerima, lalu pasangkan sekali di jaringan yang sama. Biarkan Pleazyng terbuka. Relai meneruskan kontrol musik terenkripsi dan melihat alamat jaringan. Setiap pemutar melakukan streaming dari server medianya sendiri.',
 			'musicDevices.relayInvalid' => 'Masukkan alamat relai HTTPS.',
+			'bookmarkMigration.unassigned' => 'Markah dari versi yang belum teridentifikasi',
+			'bookmarkMigration.assignToVersion' => 'Kaitkan dengan versi ini',
 			_ => null,
 		};
 	}

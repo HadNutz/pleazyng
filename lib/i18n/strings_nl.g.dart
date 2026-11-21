@@ -123,6 +123,7 @@ class TranslationsNl extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$nl musicExperience = _Translations$musicExperience$nl._(_root);
 	@override late final _Translations$musicTools$nl musicTools = _Translations$musicTools$nl._(_root);
 	@override late final _Translations$musicDevices$nl musicDevices = _Translations$musicDevices$nl._(_root);
+	@override late final _Translations$bookmarkMigration$nl bookmarkMigration = _Translations$bookmarkMigration$nl._(_root);
 }
 
 // Path: mediaConveniences
@@ -2723,6 +2724,7 @@ class _Translations$metadataEdit$nl extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Voer de afbeeldings-URL in';
 	@override String get imageUrl => 'Afbeeldings-URL';
 	@override String get metadataUpdated => 'Metadata bijgewerkt';
+	@override String get metadataConflict => 'Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw om de meest recente waarden te controleren voordat je opslaat.';
 	@override String get metadataUpdateFailed => 'Metadata bijwerken mislukt';
 	@override String get artworkUpdated => 'Illustraties bijgewerkt';
 	@override String get artworkUpdateFailed => 'Illustraties bijwerken mislukt';
@@ -4107,6 +4109,7 @@ class _Translations$podcasts$nl extends Translations$podcasts$en {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Geïmporteerde abonnementen: ${imported}. Duplicaten: ${duplicates}. Overgeslagen: ${skipped}.';
 	@override String get autoDownloadLatest => 'Nieuwste afleveringen automatisch downloaden';
 	@override String get removeFinishedAfter => 'Voltooide downloads verwijderen na';
 }
@@ -4519,6 +4522,17 @@ class _Translations$musicDevices$nl extends Translations$musicDevices$en {
 	@override String get relay => 'URL van muziekrelais';
 	@override String get relayHint => 'Schakel in op het ontvangende apparaat en koppel eenmaal op hetzelfde netwerk. Houd Pleazyng open. Het relais verstuurt versleutelde muziekbediening en ziet netwerkadressen. Elke speler streamt vanaf zijn eigen mediaserver.';
 	@override String get relayInvalid => 'Voer een HTTPS-adres voor het relais in.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$nl extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$nl._(TranslationsNl root) : this._root = root, super.internal(root);
+
+	final TranslationsNl _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Bladwijzers uit een onbekende versie';
+	@override String get assignToVersion => 'Aan deze versie koppelen';
 }
 
 // Path: appIcon.names
@@ -8281,6 +8295,7 @@ extension on TranslationsNl {
 			'metadataEdit.enterImageUrl' => 'Voer de afbeeldings-URL in',
 			'metadataEdit.imageUrl' => 'Afbeeldings-URL',
 			'metadataEdit.metadataUpdated' => 'Metadata bijgewerkt',
+			'metadataEdit.metadataConflict' => 'Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw om de meest recente waarden te controleren voordat je opslaat.',
 			'metadataEdit.metadataUpdateFailed' => 'Metadata bijwerken mislukt',
 			'metadataEdit.artworkUpdated' => 'Illustraties bijgewerkt',
 			'metadataEdit.artworkUpdateFailed' => 'Illustraties bijwerken mislukt',
@@ -8717,9 +8732,9 @@ extension on TranslationsNl {
 			'homeLayout.showInRecommended' => 'In de bibliotheek aanbevolen',
 			'homeLayout.customPlexRow' => 'Kijk naar Plex',
 			'homeLayout.heroNeedsLibrary' => 'Check Library first — Hero heeft ergens nodig om te tonen',
-			'homeLayout.heroNeedsSurface' => 'Check Library or Home first — Hero heeft ergens nodig om te tonen',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Check Library or Home first — Hero heeft ergens nodig om te tonen',
 			'homeLayout.removeHub' => 'Verwijder Hub',
 			'homeLayout.noPlexRows' => 'Nr. Plex-geheerd rijen teruggekeerd voor deze bibliotheek.',
 			'homeLayout.openDetails' => 'Open details',
@@ -9231,9 +9246,9 @@ extension on TranslationsNl {
 			'audiobook.recoveryHelp' => 'Exporteer een recente versleutelde kopie voor het verplaatsen of repareren van synchronisatiegegevens.Importeren verschijnt met de huidige toestand; ze vervangen nooit de lokale sync-geschiedenis.',
 			'audiobook.recoveryExport' => 'Export versleutelde herstel bestanden',
 			'audiobook.recoveryImport' => 'Geïmporteerde versleutelde herstelbestanden',
-			'audiobook.recoveryImportConfirm' => 'Combineer deze versleutelde herstelbestand met de huidige leesposities en noten? bestaande geschiedenis zal worden bewaard. gedeelde bibliotheek en item-ID\'s zijn niet opgenomen; set matching ID\'s on each device before importing.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Combineer deze versleutelde herstelbestand met de huidige leesposities en noten? bestaande geschiedenis zal worden bewaard. gedeelde bibliotheek en item-ID\'s zijn niet opgenomen; set matching ID\'s on each device before importing.',
 			'audiobook.recoveryExported' => 'Encrypt herstel bestand is opgeslagen.',
 			'audiobook.recoveryImported' => 'Recovery data samengesteld.',
 			'sourceSetup.bookorbitHelp' => 'Meld je aan met je eigen BookOrbit-account om de boeken daar te bekijken en af te spelen. Aanvragen voor ontbrekende titels worden nog steeds via je gekoppelde SeerrNG-instantie verstuurd.',
@@ -9452,6 +9467,7 @@ extension on TranslationsNl {
 			'issueReport.privacy' => 'Het concept bevat de appversie, het platform en het aantal verbindingen. Serveradressen, account- en profielnamen, mediatitels en bestandspaden worden weggelaten.',
 			'issueReport.logPrivacy' => 'Logboeken zijn optioneel. Controleer ze voordat je ze uploadt. Hun ID wordt toegevoegd aan het concept, dat openbaar kan zijn.',
 			'issueReport.openDraft' => 'GitHub-concept openen',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Geïmporteerde abonnementen: ${imported}. Duplicaten: ${duplicates}. Overgeslagen: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Nieuwste afleveringen automatisch downloaden',
 			'podcasts.removeFinishedAfter' => 'Voltooide downloads verwijderen na',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Voorbeeld van ondertitelcodering',
@@ -9744,10 +9760,10 @@ extension on TranslationsNl {
 			'musicTools.home' => 'Muziek',
 			'musicTools.recent' => 'Onlangs afgespeeld',
 			'musicTools.apiKey' => 'API-sleutel',
-			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => 'Minuten',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'N/A',
+			'musicTools.minutes' => 'Minuten',
 			'musicTools.rules' => 'Filters',
 			'musicTools.exclusiveOutput' => 'Exclusieve audio-uitvoer',
 			'musicTools.preamp' => 'Voorversterking',
@@ -9803,6 +9819,8 @@ extension on TranslationsNl {
 			'musicDevices.relay' => 'URL van muziekrelais',
 			'musicDevices.relayHint' => 'Schakel in op het ontvangende apparaat en koppel eenmaal op hetzelfde netwerk. Houd Pleazyng open. Het relais verstuurt versleutelde muziekbediening en ziet netwerkadressen. Elke speler streamt vanaf zijn eigen mediaserver.',
 			'musicDevices.relayInvalid' => 'Voer een HTTPS-adres voor het relais in.',
+			'bookmarkMigration.unassigned' => 'Bladwijzers uit een onbekende versie',
+			'bookmarkMigration.assignToVersion' => 'Aan deze versie koppelen',
 			_ => null,
 		};
 	}

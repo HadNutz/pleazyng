@@ -123,6 +123,7 @@ class TranslationsUz extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$uz musicExperience = _Translations$musicExperience$uz._(_root);
 	@override late final _Translations$musicTools$uz musicTools = _Translations$musicTools$uz._(_root);
 	@override late final _Translations$musicDevices$uz musicDevices = _Translations$musicDevices$uz._(_root);
+	@override late final _Translations$bookmarkMigration$uz bookmarkMigration = _Translations$bookmarkMigration$uz._(_root);
 }
 
 // Path: mediaConveniences
@@ -2723,6 +2724,7 @@ class _Translations$metadataEdit$uz extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Rasm URL-manzilini kiriting';
 	@override String get imageUrl => 'Rasm URL-manzili';
 	@override String get metadataUpdated => 'Metamaʼlumotlar yangilandi';
+	@override String get metadataConflict => 'Boshqa muharrir shu maydonni o‘zgartirdi. Saqlashdan oldin so‘nggi qiymatlarni tekshirish uchun muharrirni qayta oching.';
 	@override String get metadataUpdateFailed => 'Metamaʼlumotlarni yangilab boʻlmadi';
 	@override String get artworkUpdated => 'Rasmlar yangilandi';
 	@override String get artworkUpdateFailed => 'Rasmlarni yangilab boʻlmadi';
@@ -4107,6 +4109,7 @@ class _Translations$podcasts$uz extends Translations$podcasts$en {
 	final TranslationsUz _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Import qilingan obunalar: ${imported}. Takroriylari: ${duplicates}. O‘tkazib yuborilganlari: ${skipped}.';
 	@override String get autoDownloadLatest => 'Soʻnggi qismlarni avtomatik yuklab olish';
 	@override String get removeFinishedAfter => 'Tugallangan yuklamalarni quyidagi muddatdan soʻng oʻchirish';
 }
@@ -4519,6 +4522,17 @@ class _Translations$musicDevices$uz extends Translations$musicDevices$en {
 	@override String get relay => 'Musiqa relesi URL manzili';
 	@override String get relayHint => 'Qabul qiluvchi qurilmada yoqing, so‘ng bir tarmoqda bir marta juftlang. Pleazyng ochiq tursin. Rele shifrlangan musiqa buyruqlarini uzatadi va tarmoq manzillarini ko‘radi. Har bir pleyer o‘z media serveridan uzatadi.';
 	@override String get relayInvalid => 'HTTPS rele manzilini kiriting.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$uz extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$uz._(TranslationsUz root) : this._root = root, super.internal(root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Qaysi versiyaga tegishli ekani noma’lum xatcho‘plar';
+	@override String get assignToVersion => 'Shu versiyaga biriktirish';
 }
 
 // Path: appIcon.names
@@ -8281,6 +8295,7 @@ extension on TranslationsUz {
 			'metadataEdit.enterImageUrl' => 'Rasm URL-manzilini kiriting',
 			'metadataEdit.imageUrl' => 'Rasm URL-manzili',
 			'metadataEdit.metadataUpdated' => 'Metamaʼlumotlar yangilandi',
+			'metadataEdit.metadataConflict' => 'Boshqa muharrir shu maydonni o‘zgartirdi. Saqlashdan oldin so‘nggi qiymatlarni tekshirish uchun muharrirni qayta oching.',
 			'metadataEdit.metadataUpdateFailed' => 'Metamaʼlumotlarni yangilab boʻlmadi',
 			'metadataEdit.artworkUpdated' => 'Rasmlar yangilandi',
 			'metadataEdit.artworkUpdateFailed' => 'Rasmlarni yangilab boʻlmadi',
@@ -8717,9 +8732,9 @@ extension on TranslationsUz {
 			'homeLayout.showInRecommended' => 'Librarikda qaytadi qaytadi.',
 			'homeLayout.customPlexRow' => 'Maxsus Plex qatori',
 			'homeLayout.heroNeedsLibrary' => 'Avval “Kutubxona” bandini belgilang — asosiy banner ko‘rsatiladigan joy kerak',
-			'homeLayout.heroNeedsSurface' => 'Birincisi Library o Home ko‘shayt — Hero\'s need somewhere to show',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Birincisi Library o Home ko‘shayt — Hero\'s need somewhere to show',
 			'homeLayout.removeHub' => 'Hub qiziziz',
 			'homeLayout.noPlexRows' => 'No Plex-manadi ruzlar bu librariyaya qaytardi.',
 			'homeLayout.openDetails' => 'Detaylar',
@@ -9231,9 +9246,9 @@ extension on TranslationsUz {
 			'audiobook.recoveryHelp' => 'Sinklik data\'ni transfer o‘yadi.Sinkliklar ko‘yad qo‘yingiz, lokal sinklik tarihini qaytarmaymazlar.Sinqlik kodini separata tutan.',
 			'audiobook.recoveryExport' => 'Filiya qaytarga xifratsiya',
 			'audiobook.recoveryImport' => 'İthalat xifratni qaytarga faili',
-			'audiobook.recoveryImportConfirm' => 'Ushbu shifrlangan tiklash faylini joriy o‘qish joylari va qaydlar bilan birlashtirasizmi? Mavjud tarix saqlanadi. Umumiy kutubxona va element IDlari kiritilmagan; importdan oldin har bir qurilmada mos IDlarni o‘rnating.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Ushbu shifrlangan tiklash faylini joriy o‘qish joylari va qaydlar bilan birlashtirasizmi? Mavjud tarix saqlanadi. Umumiy kutubxona va element IDlari kiritilmagan; importdan oldin har bir qurilmada mos IDlarni o‘rnating.',
 			'audiobook.recoveryExported' => 'Filiya qaytarga saladi.',
 			'audiobook.recoveryImported' => 'Recovery data qaytadi.',
 			'sourceSetup.bookorbitHelp' => 'Kitoblaringizni ko‘rish va tinglash uchun o‘z BookOrbit hisobingizga kiring. Mavjud bo‘lmagan nomlar uchun so‘rovlar ulangan SeerrNG nusxangiz orqali yuboriladi.',
@@ -9452,6 +9467,7 @@ extension on TranslationsUz {
 			'issueReport.privacy' => 'Qoralamada ilova versiyasi, platforma va ulanishlar soni bo‘ladi. Server manzillari, hisob va profil nomlari, media sarlavhalari hamda fayl yo‘llari kiritilmaydi.',
 			'issueReport.logPrivacy' => 'Jurnallar ixtiyoriy. Yuklashdan oldin ko‘rib chiqing. Ularning ID raqami ommaviy bo‘lishi mumkin bo‘lgan qoralamaga qo‘shiladi.',
 			'issueReport.openDraft' => 'GitHub qoralamasini ochish',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Import qilingan obunalar: ${imported}. Takroriylari: ${duplicates}. O‘tkazib yuborilganlari: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Soʻnggi qismlarni avtomatik yuklab olish',
 			'podcasts.removeFinishedAfter' => 'Tugallangan yuklamalarni quyidagi muddatdan soʻng oʻchirish',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Subtitr kodlashini oldindan ko‘rish',
@@ -9744,10 +9760,10 @@ extension on TranslationsUz {
 			'musicTools.home' => 'Musiqa',
 			'musicTools.recent' => 'Yaqinda ijro etilgan',
 			'musicTools.apiKey' => 'API kaliti',
-			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => 'Daqiqa',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'N/A',
+			'musicTools.minutes' => 'Daqiqa',
 			'musicTools.rules' => 'Filtrlar',
 			'musicTools.exclusiveOutput' => 'Eksklyuziv audio chiqish',
 			'musicTools.preamp' => 'Oldindan kuchaytirish',
@@ -9803,6 +9819,8 @@ extension on TranslationsUz {
 			'musicDevices.relay' => 'Musiqa relesi URL manzili',
 			'musicDevices.relayHint' => 'Qabul qiluvchi qurilmada yoqing, so‘ng bir tarmoqda bir marta juftlang. Pleazyng ochiq tursin. Rele shifrlangan musiqa buyruqlarini uzatadi va tarmoq manzillarini ko‘radi. Har bir pleyer o‘z media serveridan uzatadi.',
 			'musicDevices.relayInvalid' => 'HTTPS rele manzilini kiriting.',
+			'bookmarkMigration.unassigned' => 'Qaysi versiyaga tegishli ekani noma’lum xatcho‘plar',
+			'bookmarkMigration.assignToVersion' => 'Shu versiyaga biriktirish',
 			_ => null,
 		};
 	}

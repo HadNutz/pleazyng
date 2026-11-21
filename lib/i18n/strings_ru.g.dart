@@ -123,6 +123,7 @@ class TranslationsRu extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ru musicExperience = _Translations$musicExperience$ru._(_root);
 	@override late final _Translations$musicTools$ru musicTools = _Translations$musicTools$ru._(_root);
 	@override late final _Translations$musicDevices$ru musicDevices = _Translations$musicDevices$ru._(_root);
+	@override late final _Translations$bookmarkMigration$ru bookmarkMigration = _Translations$bookmarkMigration$ru._(_root);
 }
 
 // Path: mediaConveniences
@@ -2761,6 +2762,7 @@ class _Translations$metadataEdit$ru extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Введите URL изображения';
 	@override String get imageUrl => 'URL изображения';
 	@override String get metadataUpdated => 'Метаданные обновлены';
+	@override String get metadataConflict => 'Кто-то ещё изменил это же поле. Перед сохранением откройте редактор заново и проверьте актуальные значения.';
 	@override String get metadataUpdateFailed => 'Не удалось обновить метаданные';
 	@override String get artworkUpdated => 'Обложка обновлена';
 	@override String get artworkUpdateFailed => 'Не удалось обновить обложку';
@@ -4153,6 +4155,7 @@ class _Translations$podcasts$ru extends Translations$podcasts$en {
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Импортировано подписок: ${imported}. Дубликатов: ${duplicates}. Пропущено: ${skipped}.';
 	@override String get autoDownloadLatest => 'Автоматически скачивать последние выпуски';
 	@override String get removeFinishedAfter => 'Удалять завершённые загрузки через';
 }
@@ -4565,6 +4568,17 @@ class _Translations$musicDevices$ru extends Translations$musicDevices$en {
 	@override String get relay => 'URL музыкального ретранслятора';
 	@override String get relayHint => 'Включите на принимающем устройстве и один раз выполните сопряжение в одной сети. Оставьте Pleazyng открытым. Ретранслятор передаёт зашифрованные команды и видит сетевые адреса. Каждый плеер использует свой медиасервер.';
 	@override String get relayInvalid => 'Введите HTTPS-адрес ретранслятора.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$ru extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$ru._(TranslationsRu root) : this._root = root, super.internal(root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Закладки из неопределённой версии';
+	@override String get assignToVersion => 'Привязать к этой версии';
 }
 
 // Path: appIcon.names
@@ -8331,6 +8345,7 @@ extension on TranslationsRu {
 			'metadataEdit.enterImageUrl' => 'Введите URL изображения',
 			'metadataEdit.imageUrl' => 'URL изображения',
 			'metadataEdit.metadataUpdated' => 'Метаданные обновлены',
+			'metadataEdit.metadataConflict' => 'Кто-то ещё изменил это же поле. Перед сохранением откройте редактор заново и проверьте актуальные значения.',
 			'metadataEdit.metadataUpdateFailed' => 'Не удалось обновить метаданные',
 			'metadataEdit.artworkUpdated' => 'Обложка обновлена',
 			'metadataEdit.artworkUpdateFailed' => 'Не удалось обновить обложку',
@@ -8767,9 +8782,9 @@ extension on TranslationsRu {
 			'homeLayout.showInRecommended' => 'Показать в библиотеке рекомендуется',
 			'homeLayout.customPlexRow' => 'Собственный Plex ряд',
 			'homeLayout.heroNeedsLibrary' => 'Проверьте библиотеку сначала — Герою нужно где-то показать',
-			'homeLayout.heroNeedsSurface' => 'Проверьте библиотеку или дом сначала — Герою нужно где-то показать',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Проверьте библиотеку или дом сначала — Герою нужно где-то показать',
 			'homeLayout.removeHub' => 'Удаление Hub',
 			'homeLayout.noPlexRows' => 'No Plex управляемые строки возвращены для этой библиотеки.',
 			'homeLayout.openDetails' => 'Открытые детали',
@@ -9281,9 +9296,9 @@ extension on TranslationsRu {
 			'audiobook.recoveryHelp' => 'Экспортируйте недавно зашифрованную копию перед перемещением или восстановлением данных синхронизации. Импорты сливаются с текущим состоянием; они никогда не замещают историю локальной синхронности.',
 			'audiobook.recoveryExport' => 'Экспорт шифрованных файлов восстановления',
 			'audiobook.recoveryImport' => 'Импорт шифрованных файлов восстановления',
-			'audiobook.recoveryImportConfirm' => 'Сочетает этот зашифрованный файл восстановления с текущими позициями чтения и записями? существующая история будет сохранена. совместная библиотека и идентификаторы элементов не включены; установите соответствующие идентификационные данные на каждом устройстве до импорта.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Сочетает этот зашифрованный файл восстановления с текущими позициями чтения и записями? существующая история будет сохранена. совместная библиотека и идентификаторы элементов не включены; установите соответствующие идентификационные данные на каждом устройстве до импорта.',
 			'audiobook.recoveryExported' => 'Зашифрованный файл восстановления сохранился.',
 			'audiobook.recoveryImported' => 'Данные о восстановлении объединены.',
 			'sourceSetup.bookorbitHelp' => 'Войдите в собственную учётную запись BookOrbit, чтобы просматривать и воспроизводить книги. Запросы отсутствующих книг по-прежнему отправляются через подключённый экземпляр SeerrNG.',
@@ -9502,6 +9517,7 @@ extension on TranslationsRu {
 			'issueReport.privacy' => 'Черновик включает версию приложения, платформу и число подключений. Адреса серверов, имена аккаунтов и профилей, названия медиа и пути к файлам не добавляются.',
 			'issueReport.logPrivacy' => 'Журналы необязательны. Проверьте их перед загрузкой. Их ID добавляется в черновик, который может быть общедоступным.',
 			'issueReport.openDraft' => 'Открыть черновик GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Импортировано подписок: ${imported}. Дубликатов: ${duplicates}. Пропущено: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Автоматически скачивать последние выпуски',
 			'podcasts.removeFinishedAfter' => 'Удалять завершённые загрузки через',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Предпросмотр кодировки субтитров',
@@ -9794,10 +9810,10 @@ extension on TranslationsRu {
 			'musicTools.home' => 'Музыка',
 			'musicTools.recent' => 'Недавно прослушанные',
 			'musicTools.apiKey' => 'Ключ API',
-			'musicTools.missing' => 'Н/Д',
-			'musicTools.minutes' => 'Минуты',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'Н/Д',
+			'musicTools.minutes' => 'Минуты',
 			'musicTools.rules' => 'Фильтры',
 			'musicTools.exclusiveOutput' => 'Монопольный аудиовыход',
 			'musicTools.preamp' => 'Предусиление',
@@ -9853,6 +9869,8 @@ extension on TranslationsRu {
 			'musicDevices.relay' => 'URL музыкального ретранслятора',
 			'musicDevices.relayHint' => 'Включите на принимающем устройстве и один раз выполните сопряжение в одной сети. Оставьте Pleazyng открытым. Ретранслятор передаёт зашифрованные команды и видит сетевые адреса. Каждый плеер использует свой медиасервер.',
 			'musicDevices.relayInvalid' => 'Введите HTTPS-адрес ретранслятора.',
+			'bookmarkMigration.unassigned' => 'Закладки из неопределённой версии',
+			'bookmarkMigration.assignToVersion' => 'Привязать к этой версии',
 			_ => null,
 		};
 	}

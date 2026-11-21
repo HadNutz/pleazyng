@@ -153,6 +153,13 @@ class FileSource {
   final String endpoint;
   final String root;
 
+  /// The provider parent stored for children listed at this source's top level.
+  String? get indexedRootParent => switch (kind) {
+    FileSourceKind.googleDrive => root.isEmpty ? 'root' : root,
+    FileSourceKind.oneDrive || FileSourceKind.dropbox => root.isEmpty ? null : root,
+    _ => null,
+  };
+
   /// Public configuration only. Credentials are a separate encrypted record.
   final Map<String, String> options;
 

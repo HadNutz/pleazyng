@@ -123,6 +123,7 @@ class TranslationsPt extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$pt musicExperience = Translations$musicExperience$pt.internal(_root);
 	@override late final Translations$musicTools$pt musicTools = Translations$musicTools$pt.internal(_root);
 	@override late final Translations$musicDevices$pt musicDevices = Translations$musicDevices$pt.internal(_root);
+	@override late final Translations$bookmarkMigration$pt bookmarkMigration = Translations$bookmarkMigration$pt.internal(_root);
 }
 
 // Path: mediaConveniences
@@ -2726,6 +2727,7 @@ class Translations$metadataEdit$pt extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Insira a URL da imagem';
 	@override String get imageUrl => 'URL da Imagem';
 	@override String get metadataUpdated => 'Metadados atualizados';
+	@override String get metadataConflict => 'Outra pessoa alterou o mesmo campo. Reabra o editor para verificar os valores atuais antes de guardar as alterações.';
 	@override String get metadataUpdateFailed => 'Falha ao atualizar metadados';
 	@override String get artworkUpdated => 'Arte atualizada';
 	@override String get artworkUpdateFailed => 'Falha ao atualizar arte';
@@ -4114,6 +4116,7 @@ class Translations$podcasts$pt extends Translations$podcasts$en {
 	final TranslationsPt _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Assinaturas importadas: ${imported}. Duplicadas: ${duplicates}. Ignoradas: ${skipped}.';
 	@override String get autoDownloadLatest => 'Transferir automaticamente os episódios mais recentes';
 	@override String get removeFinishedAfter => 'Remover transferências concluídas após';
 }
@@ -4526,6 +4529,17 @@ class Translations$musicDevices$pt extends Translations$musicDevices$en {
 	@override String get relay => 'URL do relay de música';
 	@override String get relayHint => 'Ative no dispositivo recetor e emparelhe uma vez na mesma rede. Mantenha o Pleazyng aberto. O relay transmite comandos de música encriptados e vê os endereços de rede. Cada leitor transmite do seu próprio servidor multimédia.';
 	@override String get relayInvalid => 'Introduza um endereço HTTPS do relay.';
+}
+
+// Path: bookmarkMigration
+class Translations$bookmarkMigration$pt extends Translations$bookmarkMigration$en {
+	Translations$bookmarkMigration$pt.internal(TranslationsPt root) : this._root = root, super.internal(root);
+
+	final TranslationsPt _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Marcadores de uma versão não identificada';
+	@override String get assignToVersion => 'Associar a esta versão';
 }
 
 // Path: appIcon.names
@@ -8288,6 +8302,7 @@ extension on TranslationsPt {
 			'metadataEdit.enterImageUrl' => 'Insira a URL da imagem',
 			'metadataEdit.imageUrl' => 'URL da Imagem',
 			'metadataEdit.metadataUpdated' => 'Metadados atualizados',
+			'metadataEdit.metadataConflict' => 'Outra pessoa alterou o mesmo campo. Reabra o editor para verificar os valores atuais antes de guardar as alterações.',
 			'metadataEdit.metadataUpdateFailed' => 'Falha ao atualizar metadados',
 			'metadataEdit.artworkUpdated' => 'Arte atualizada',
 			'metadataEdit.artworkUpdateFailed' => 'Falha ao atualizar arte',
@@ -8724,9 +8739,9 @@ extension on TranslationsPt {
 			'homeLayout.showInRecommended' => 'Exposição em Biblioteca Recomendada',
 			'homeLayout.customPlexRow' => 'Cadeia de Cadeia Plex',
 			'homeLayout.heroNeedsLibrary' => 'Veja a Biblioteca primeiro – Hero precisa de algum lugar para mostrar',
-			'homeLayout.heroNeedsSurface' => 'Veja a Biblioteca ou a Casa primeiro — Hero precisa de algum lugar para mostrar',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'Veja a Biblioteca ou a Casa primeiro — Hero precisa de algum lugar para mostrar',
 			'homeLayout.removeHub' => 'Remover o Hub',
 			'homeLayout.noPlexRows' => 'No Plex linhas gerenciadas retornou para esta biblioteca.',
 			'homeLayout.openDetails' => 'Detalhes abertos',
@@ -9238,9 +9253,9 @@ extension on TranslationsPt {
 			'audiobook.recoveryHelp' => 'Exportar uma cópia recentemente criptografada antes de mover ou reparar dados de sincronização. Importações se misturam com o estado atual; eles nunca substituem a história local da sincronización.',
 			'audiobook.recoveryExport' => 'Exportação de arquivos de recuperação criptografados',
 			'audiobook.recoveryImport' => 'Importar arquivo de recuperação criptografado',
-			'audiobook.recoveryImportConfirm' => 'Combine este arquivo de recuperação criptografado com as posições e notas de leitura atuais? História existente será mantida. bibliotecas compartilhadas e IDs de itens não são incluídos; definir IDs correspondentes em cada dispositivo antes da importação.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Combine este arquivo de recuperação criptografado com as posições e notas de leitura atuais? História existente será mantida. bibliotecas compartilhadas e IDs de itens não são incluídos; definir IDs correspondentes em cada dispositivo antes da importação.',
 			'audiobook.recoveryExported' => 'arquivo de recuperação criptografado salvo.',
 			'audiobook.recoveryImported' => 'Dados de recuperação combinados.',
 			'sourceSetup.bookorbitHelp' => 'Entre com sua própria conta BookOrbit para navegar e reproduzir seus livros. Pedidos de títulos ausentes continuam passando pela sua instância SeerrNG conectada.',
@@ -9459,6 +9474,7 @@ extension on TranslationsPt {
 			'issueReport.privacy' => 'O rascunho inclui a versão da aplicação, a plataforma e o número de ligações. Exclui endereços de servidores, nomes de contas e perfis, títulos e caminhos de ficheiros.',
 			'issueReport.logPrivacy' => 'Os registos são opcionais. Reveja-os antes de os carregar. O respetivo ID é adicionado ao rascunho, que pode ser público.',
 			'issueReport.openDraft' => 'Abrir rascunho do GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Assinaturas importadas: ${imported}. Duplicadas: ${duplicates}. Ignoradas: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Transferir automaticamente os episódios mais recentes',
 			'podcasts.removeFinishedAfter' => 'Remover transferências concluídas após',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Pré-visualização da codificação das legendas',
@@ -9751,10 +9767,10 @@ extension on TranslationsPt {
 			'musicTools.home' => 'Música',
 			'musicTools.recent' => 'Reproduzidas recentemente',
 			'musicTools.apiKey' => 'Chave API',
-			'musicTools.missing' => 'N/D',
-			'musicTools.minutes' => 'Minutos',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'N/D',
+			'musicTools.minutes' => 'Minutos',
 			'musicTools.rules' => 'Filtros',
 			'musicTools.exclusiveOutput' => 'Saída de áudio exclusiva',
 			'musicTools.preamp' => 'Pré-amplificação',
@@ -9810,6 +9826,8 @@ extension on TranslationsPt {
 			'musicDevices.relay' => 'URL do relay de música',
 			'musicDevices.relayHint' => 'Ative no dispositivo recetor e emparelhe uma vez na mesma rede. Mantenha o Pleazyng aberto. O relay transmite comandos de música encriptados e vê os endereços de rede. Cada leitor transmite do seu próprio servidor multimédia.',
 			'musicDevices.relayInvalid' => 'Introduza um endereço HTTPS do relay.',
+			'bookmarkMigration.unassigned' => 'Marcadores de uma versão não identificada',
+			'bookmarkMigration.assignToVersion' => 'Associar a esta versão',
 			_ => null,
 		};
 	}

@@ -36,6 +36,20 @@ void main() {
     expect(doc.pages.single.doublePage, isTrue);
     expect(doc.pages.single.width, 1600);
   });
+  test('ComicInfo orders declared scans, skips deleted scans, and preserves archive identities', () {
+    final doc = ComicDocument.fromFiles(
+      ['03.png', '01.png', '04.png', '00.png', '02.png'],
+      comicInfo:
+          '<ComicInfo><Pages>'
+          '<Page Image="2" Type="FrontCover" Bookmark="Cover"/>'
+          '<Page Image="0" Bookmark="Opening"/><Page Image="8"/>'
+          '<Page Image="3" Bookmark="Ending"/><Page Image="1" Type="Delete"/>'
+          '<Page Image="2" Bookmark="Duplicate"/></Pages></ComicInfo>',
+    );
+    expect(doc.pages.map((page) => page.name), ['02.png', '00.png', '03.png', '04.png']);
+    expect(doc.pages.map((page) => page.toJson()['archiveIndex']), [2, 0, 3, 4]);
+    expect(doc.pages.map((page) => page.bookmark), ['Cover', 'Opening', 'Ending', '']);
+  });
   test('broken and entity-bearing metadata fall back to readable pages', () {
     for (final xml in ['<broken', '<!DOCTYPE x [<!ENTITY x "secret">]><ComicInfo><Title>&x;</Title></ComicInfo>']) {
       final doc = ComicDocument.fromFiles(['1.png'], comicInfo: xml);

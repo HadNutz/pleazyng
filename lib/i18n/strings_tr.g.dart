@@ -123,6 +123,7 @@ class TranslationsTr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$tr musicExperience = _Translations$musicExperience$tr._(_root);
 	@override late final _Translations$musicTools$tr musicTools = _Translations$musicTools$tr._(_root);
 	@override late final _Translations$musicDevices$tr musicDevices = _Translations$musicDevices$tr._(_root);
+	@override late final _Translations$bookmarkMigration$tr bookmarkMigration = _Translations$bookmarkMigration$tr._(_root);
 }
 
 // Path: mediaConveniences
@@ -2723,6 +2724,7 @@ class _Translations$metadataEdit$tr extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Görsel URL\'si girin';
 	@override String get imageUrl => 'Görsel URL\'si';
 	@override String get metadataUpdated => 'Meta veriler güncellendi';
+	@override String get metadataConflict => 'Aynı alanı başka biri değiştirdi. Kaydetmeden önce güncel değerleri gözden geçirmek için düzenleyiciyi yeniden açın.';
 	@override String get metadataUpdateFailed => 'Meta veriler güncellenemedi';
 	@override String get artworkUpdated => 'Görseller güncellendi';
 	@override String get artworkUpdateFailed => 'Görseller güncellenemedi';
@@ -4107,6 +4109,7 @@ class _Translations$podcasts$tr extends Translations$podcasts$en {
 	final TranslationsTr _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'İçe aktarılan abonelikler: ${imported}. Yinelenenler: ${duplicates}. Atlananlar: ${skipped}.';
 	@override String get autoDownloadLatest => 'En yeni bölümleri otomatik indir';
 	@override String get removeFinishedAfter => 'Bitirilen indirmeleri şu süreden sonra kaldır';
 }
@@ -4519,6 +4522,17 @@ class _Translations$musicDevices$tr extends Translations$musicDevices$en {
 	@override String get relay => 'Müzik rölesi URL’si';
 	@override String get relayHint => 'Alıcı cihazda etkinleştirin, ardından aynı ağda bir kez eşleştirin. Pleazyng açık kalsın. Röle şifreli müzik denetimlerini iletir ve ağ adreslerini görür. Her oynatıcı kendi medya sunucusundan yayın yapar.';
 	@override String get relayInvalid => 'Bir HTTPS röle adresi girin.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$tr extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$tr._(TranslationsTr root) : this._root = root, super.internal(root);
+
+	final TranslationsTr _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Sürümü belirlenemeyen yer imleri';
+	@override String get assignToVersion => 'Bu sürüme ata';
 }
 
 // Path: appIcon.names
@@ -8281,6 +8295,7 @@ extension on TranslationsTr {
 			'metadataEdit.enterImageUrl' => 'Görsel URL\'si girin',
 			'metadataEdit.imageUrl' => 'Görsel URL\'si',
 			'metadataEdit.metadataUpdated' => 'Meta veriler güncellendi',
+			'metadataEdit.metadataConflict' => 'Aynı alanı başka biri değiştirdi. Kaydetmeden önce güncel değerleri gözden geçirmek için düzenleyiciyi yeniden açın.',
 			'metadataEdit.metadataUpdateFailed' => 'Meta veriler güncellenemedi',
 			'metadataEdit.artworkUpdated' => 'Görseller güncellendi',
 			'metadataEdit.artworkUpdateFailed' => 'Görseller güncellenemedi',
@@ -8717,9 +8732,9 @@ extension on TranslationsTr {
 			'homeLayout.showInRecommended' => 'Kütüphane önerilen',
 			'homeLayout.customPlexRow' => 'Özel Plex satır',
 			'homeLayout.heroNeedsLibrary' => 'İlk Kütüphaneyi Kontrol Edin - Kahramanın Gösterilmesi Gereken Bir Yer',
-			'homeLayout.heroNeedsSurface' => 'İlk önce Kütüphane veya Ev\'i kontrol edin - Kahramanın göstermesi gereken bir yer var',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => 'İlk önce Kütüphane veya Ev\'i kontrol edin - Kahramanın göstermesi gereken bir yer var',
 			'homeLayout.removeHub' => 'Hub kaldırma',
 			'homeLayout.noPlexRows' => 'Plex yönetilen satırlar bu kütüphane için geri döndü.',
 			'homeLayout.openDetails' => 'Açılış Detaylar',
@@ -9231,9 +9246,9 @@ extension on TranslationsTr {
 			'audiobook.recoveryHelp' => 'Son zamanlarda şifrelenmiş bir kopyasını aktarmadan önce veya senkronizasyon verilerini düzeltmeden önce ihraç edin. ithalat mevcut durumla birleşir; yerel senkrona geçmişi asla değiştirmezler. senkronu ayrı tutun.',
 			'audiobook.recoveryExport' => 'İhracat şifreli kurtarma dosyası',
 			'audiobook.recoveryImport' => 'İthalat Şifreli Kurtarma Dosyası',
-			'audiobook.recoveryImportConfirm' => 'Bu şifreli kurtarma dosyasını mevcut okuma pozisyonları ve notları ile birleştirin? Mevcut geçmişi muhafaza edilecektir. Paylaşılan kütüphane ve öğe kimlikleri dahil değildir; ithal etmeden önce her cihazda eşleşen kimlikler ayarlayın.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Bu şifreli kurtarma dosyasını mevcut okuma pozisyonları ve notları ile birleştirin? Mevcut geçmişi muhafaza edilecektir. Paylaşılan kütüphane ve öğe kimlikleri dahil değildir; ithal etmeden önce her cihazda eşleşen kimlikler ayarlayın.',
 			'audiobook.recoveryExported' => 'Şifreli kurtarma dosyası kaydedildi.',
 			'audiobook.recoveryImported' => 'Kurtarma verileri birleşti.',
 			'sourceSetup.bookorbitHelp' => 'Kitaplarınıza göz atmak ve oynatmak için kendi BookOrbit hesabınızla giriş yapın. Eksik içerik istekleri bağlı SeerrNG örneğiniz üzerinden gönderilmeye devam eder.',
@@ -9452,6 +9467,7 @@ extension on TranslationsTr {
 			'issueReport.privacy' => 'Taslakta uygulama sürümü, platform ve bağlantı sayısı bulunur. Sunucu adresleri, hesap ve profil adları, medya başlıkları ve dosya yolları eklenmez.',
 			'issueReport.logPrivacy' => 'Günlükler isteğe bağlıdır. Yüklemeden önce inceleyin. Günlük kimliği herkese açık olabilecek taslağa eklenir.',
 			'issueReport.openDraft' => 'GitHub taslağını aç',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'İçe aktarılan abonelikler: ${imported}. Yinelenenler: ${duplicates}. Atlananlar: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'En yeni bölümleri otomatik indir',
 			'podcasts.removeFinishedAfter' => 'Bitirilen indirmeleri şu süreden sonra kaldır',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Altyazı kodlaması önizlemesi',
@@ -9744,10 +9760,10 @@ extension on TranslationsTr {
 			'musicTools.home' => 'Müzik',
 			'musicTools.recent' => 'Son çalınanlar',
 			'musicTools.apiKey' => 'API anahtarı',
-			'musicTools.missing' => 'Yok',
-			'musicTools.minutes' => 'Dakika',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'Yok',
+			'musicTools.minutes' => 'Dakika',
 			'musicTools.rules' => 'Filtreler',
 			'musicTools.exclusiveOutput' => 'Özel ses çıkışı',
 			'musicTools.preamp' => 'Ön yükseltme',
@@ -9803,6 +9819,8 @@ extension on TranslationsTr {
 			'musicDevices.relay' => 'Müzik rölesi URL’si',
 			'musicDevices.relayHint' => 'Alıcı cihazda etkinleştirin, ardından aynı ağda bir kez eşleştirin. Pleazyng açık kalsın. Röle şifreli müzik denetimlerini iletir ve ağ adreslerini görür. Her oynatıcı kendi medya sunucusundan yayın yapar.',
 			'musicDevices.relayInvalid' => 'Bir HTTPS röle adresi girin.',
+			'bookmarkMigration.unassigned' => 'Sürümü belirlenemeyen yer imleri',
+			'bookmarkMigration.assignToVersion' => 'Bu sürüme ata',
 			_ => null,
 		};
 	}

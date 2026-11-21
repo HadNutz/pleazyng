@@ -123,6 +123,7 @@ class TranslationsKo extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ko musicExperience = _Translations$musicExperience$ko._(_root);
 	@override late final _Translations$musicTools$ko musicTools = _Translations$musicTools$ko._(_root);
 	@override late final _Translations$musicDevices$ko musicDevices = _Translations$musicDevices$ko._(_root);
+	@override late final _Translations$bookmarkMigration$ko bookmarkMigration = _Translations$bookmarkMigration$ko._(_root);
 }
 
 // Path: mediaConveniences
@@ -2719,6 +2720,7 @@ class _Translations$metadataEdit$ko extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => '이미지 URL 입력';
 	@override String get imageUrl => '이미지 URL';
 	@override String get metadataUpdated => '메타데이터가 업데이트되었습니다';
+	@override String get metadataConflict => '다른 사용자가 같은 필드를 수정했습니다. 저장하기 전에 편집기를 다시 열어 최신 값을 확인하세요.';
 	@override String get metadataUpdateFailed => '메타데이터 업데이트 실패';
 	@override String get artworkUpdated => '아트워크가 업데이트되었습니다';
 	@override String get artworkUpdateFailed => '아트워크 업데이트 실패';
@@ -4102,6 +4104,7 @@ class _Translations$podcasts$ko extends Translations$podcasts$en {
 	final TranslationsKo _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => '가져온 구독: ${imported}개. 중복: ${duplicates}개. 건너뜀: ${skipped}개.';
 	@override String get autoDownloadLatest => '최신 에피소드 자동 다운로드';
 	@override String get removeFinishedAfter => '완료한 다운로드를 다음 기간 후 삭제';
 }
@@ -4514,6 +4517,17 @@ class _Translations$musicDevices$ko extends Translations$musicDevices$en {
 	@override String get relay => '음악 릴레이 URL';
 	@override String get relayHint => '수신 기기에서 활성화한 다음 같은 네트워크에서 한 번 페어링하세요. Pleazyng을 열어 두세요. 릴레이는 암호화된 음악 제어를 전달하며 네트워크 주소를 볼 수 있습니다. 각 플레이어는 자체 미디어 서버에서 스트리밍합니다.';
 	@override String get relayInvalid => 'HTTPS 릴레이 주소를 입력하세요.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$ko extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$ko._(TranslationsKo root) : this._root = root, super.internal(root);
+
+	final TranslationsKo _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => '버전을 확인할 수 없는 북마크';
+	@override String get assignToVersion => '이 버전에 할당';
 }
 
 // Path: appIcon.names
@@ -8276,6 +8290,7 @@ extension on TranslationsKo {
 			'metadataEdit.enterImageUrl' => '이미지 URL 입력',
 			'metadataEdit.imageUrl' => '이미지 URL',
 			'metadataEdit.metadataUpdated' => '메타데이터가 업데이트되었습니다',
+			'metadataEdit.metadataConflict' => '다른 사용자가 같은 필드를 수정했습니다. 저장하기 전에 편집기를 다시 열어 최신 값을 확인하세요.',
 			'metadataEdit.metadataUpdateFailed' => '메타데이터 업데이트 실패',
 			'metadataEdit.artworkUpdated' => '아트워크가 업데이트되었습니다',
 			'metadataEdit.artworkUpdateFailed' => '아트워크 업데이트 실패',
@@ -8712,9 +8727,9 @@ extension on TranslationsKo {
 			'homeLayout.showInRecommended' => '추천 도서관에서 제공하는',
 			'homeLayout.customPlexRow' => '사용자 정의 Plex 라인',
 			'homeLayout.heroNeedsLibrary' => '도서관을 먼저 확인하십시오 - 영웅은 어디서나 보여줄 필요가 있습니다.',
-			'homeLayout.heroNeedsSurface' => '도서관 또는 홈을 먼저 확인하십시오 - 영웅은 어디서나 보여야합니다.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => '도서관 또는 홈을 먼저 확인하십시오 - 영웅은 어디서나 보여야합니다.',
 			'homeLayout.removeHub' => 'Hub 삭제',
 			'homeLayout.noPlexRows' => 'No. Plex 관리 라인이 이 도서관에 반환되었습니다.',
 			'homeLayout.openDetails' => '개방된 세부 사항',
@@ -9226,9 +9241,9 @@ extension on TranslationsKo {
 			'audiobook.recoveryHelp' => '동기화 데이터를 이동하거나 복구하기 전에 최근 암호화 된 복사본을 수출합니다.수입은 현재 상태와 결합됩니다; 그들은 결코 지역 동기 역사를 대체하지 않습니다.',
 			'audiobook.recoveryExport' => '수출 암호화 된 복구 파일',
 			'audiobook.recoveryImport' => '암호화된 복구 파일 수입',
-			'audiobook.recoveryImportConfirm' => '이 암호화 된 복구 파일을 현재 읽기 위치 및 노트와 결합하십시오? 기존 역사는 유지됩니다. 공유 라이브러리 및 항목 ID는 포함되지 않습니다; 수입하기 전에 각 장치에 해당 ID를 설정합니다.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => '이 암호화 된 복구 파일을 현재 읽기 위치 및 노트와 결합하십시오? 기존 역사는 유지됩니다. 공유 라이브러리 및 항목 ID는 포함되지 않습니다; 수입하기 전에 각 장치에 해당 ID를 설정합니다.',
 			'audiobook.recoveryExported' => '암호화 된 복구 파일이 저장되었습니다.',
 			'audiobook.recoveryImported' => '복구 데이터가 합쳐졌습니다.',
 			'sourceSetup.bookorbitHelp' => 'BookOrbit 도서를 둘러보고 재생하려면 본인 BookOrbit 계정으로 로그인하세요. 없는 작품의 요청은 계속 연결된 SeerrNG 인스턴스를 통해 전송됩니다.',
@@ -9447,6 +9462,7 @@ extension on TranslationsKo {
 			'issueReport.privacy' => '초안에는 앱 버전, 플랫폼, 연결 수가 포함됩니다. 서버 주소, 계정 및 프로필 이름, 미디어 제목, 파일 경로는 포함되지 않습니다.',
 			'issueReport.logPrivacy' => '로그 첨부는 선택 사항입니다. 업로드 전에 확인하세요. 로그 ID는 공개될 수 있는 초안에 추가됩니다.',
 			'issueReport.openDraft' => 'GitHub 초안 열기',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => '가져온 구독: ${imported}개. 중복: ${duplicates}개. 건너뜀: ${skipped}개.',
 			'podcasts.autoDownloadLatest' => '최신 에피소드 자동 다운로드',
 			'podcasts.removeFinishedAfter' => '완료한 다운로드를 다음 기간 후 삭제',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => '자막 인코딩 미리보기',
@@ -9739,10 +9755,10 @@ extension on TranslationsKo {
 			'musicTools.home' => '음악',
 			'musicTools.recent' => '최근 재생한 음악',
 			'musicTools.apiKey' => 'API 키',
-			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => '분',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'N/A',
+			'musicTools.minutes' => '분',
 			'musicTools.rules' => '필터',
 			'musicTools.exclusiveOutput' => '독점 오디오 출력',
 			'musicTools.preamp' => '프리앰프',
@@ -9798,6 +9814,8 @@ extension on TranslationsKo {
 			'musicDevices.relay' => '음악 릴레이 URL',
 			'musicDevices.relayHint' => '수신 기기에서 활성화한 다음 같은 네트워크에서 한 번 페어링하세요. Pleazyng을 열어 두세요. 릴레이는 암호화된 음악 제어를 전달하며 네트워크 주소를 볼 수 있습니다. 각 플레이어는 자체 미디어 서버에서 스트리밍합니다.',
 			'musicDevices.relayInvalid' => 'HTTPS 릴레이 주소를 입력하세요.',
+			'bookmarkMigration.unassigned' => '버전을 확인할 수 없는 북마크',
+			'bookmarkMigration.assignToVersion' => '이 버전에 할당',
 			_ => null,
 		};
 	}

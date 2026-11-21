@@ -3256,6 +3256,7 @@
     "enterImageUrl": "Ange bild-URL",
     "imageUrl": "Bild-URL",
     "metadataUpdated": "Metadata har uppdaterats",
+    "metadataConflict": "Någon annan har ändrat samma fält. Öppna redigeraren igen och kontrollera de senaste värdena innan du sparar.",
     "metadataUpdateFailed": "Det gick inte att uppdatera metadata",
     "artworkUpdated": "Bildmaterialet har uppdaterats",
     "artworkUpdateFailed": "Det gick inte att uppdatera bildmaterialet",
@@ -4891,6 +4892,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Importerade prenumerationer: ${imported}. Dubbletter: ${duplicates}. Överhoppade: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5707,9 @@
     "relay": "URL till musikrelä",
     "relayHint": "Aktivera på mottagaren och parkoppla en gång på samma nätverk. Håll Pleazyng öppet. Reläet skickar krypterade musikkommandon och ser nätverksadresser. Varje spelare strömmar från sin egen medieserver.",
     "relayInvalid": "Ange en HTTPS-adress till reläet."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Bokmärken från en okänd version",
+    "assignToVersion": "Koppla till den här versionen"
   }
 }

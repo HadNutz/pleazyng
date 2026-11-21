@@ -3292,6 +3292,7 @@
     "enterImageUrl": "Vložte obrázek URL",
     "imageUrl": "obrázek URL",
     "metadataUpdated": "Aktualizované metadata",
+    "metadataConflict": "Stejné pole upravil někdo jiný. Před uložením znovu otevřete editor a zkontrolujte aktuální hodnoty.",
     "metadataUpdateFailed": "Nedokázal aktualizovat metadata",
     "artworkUpdated": "Umělecká aktualizace",
     "artworkUpdateFailed": "Nedokázal aktualizovat umělecké dílo",
@@ -4939,6 +4940,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Importovaná předplatná: ${imported}. Duplicitní: ${duplicates}. Přeskočená: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5753,5 +5755,9 @@
     "relay": "URL hudebního relé",
     "relayHint": "Zapněte na přijímajícím zařízení a jednou spárujte ve stejné síti. Nechte Pleazyng otevřený. Relé přenáší šifrované ovládání hudby a vidí síťové adresy. Každý přehrávač streamuje z vlastního mediálního serveru.",
     "relayInvalid": "Zadejte HTTPS adresu relé."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Záložky z neurčené verze",
+    "assignToVersion": "Přiřadit k této verzi"
   }
 }

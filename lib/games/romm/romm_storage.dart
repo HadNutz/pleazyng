@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../utils/serial_future_queue.dart';
 import 'romm_client.dart';
 import 'romm_models.dart';
 
@@ -26,6 +27,7 @@ class RommStorage extends ChangeNotifier {
   final _active = <String, RommClient>{};
   final _syncing = <String>{};
   final _syncLineages = <String, Future<void>>{};
+  final _nativeWrites = SerialFutureQueue();
   final _saveReservations = <String, int>{};
   final _downloadLocks = <String>{};
   final _uploadedHashes = <String, String>{};
@@ -680,6 +682,7 @@ class RommStorage extends ChangeNotifier {
     String slot = 'autosave',
     String baseHash = '',
     String nativeFileHash = '',
+    String? nativeCheckpoint,
   }) => _track(
     _enqueue(
       game: game,
@@ -690,6 +693,7 @@ class RommStorage extends ChangeNotifier {
       slot: slot,
       baseHash: baseHash,
       nativeFileHash: nativeFileHash,
+      nativeCheckpoint: nativeCheckpoint,
     ),
   );
   Future<String> _enqueue({
@@ -701,6 +705,7 @@ class RommStorage extends ChangeNotifier {
     required String slot,
     required String baseHash,
     required String nativeFileHash,
+    required String? nativeCheckpoint,
   }) async {
     check();
     if (bytes.isEmpty ||
@@ -734,6 +739,7 @@ class RommStorage extends ChangeNotifier {
         'core': core,
         'state': state,
         if (nativeFileHash.isNotEmpty) 'nativeFileHash': nativeFileHash,
+        'nativeCheckpoint': ?nativeCheckpoint,
         'slot': slot,
         'baseHash': _uploadedHashes['${game.key}:$emulator:$slot'] ?? baseHash,
         'hash': sha256.convert(bytes).toString(),
@@ -787,18 +793,105 @@ class RommStorage extends ChangeNotifier {
       }
       if (useServer && rommHash(row['nativeFileHash'], 40).isNotEmpty) {
         final game = RommGame.fromJson(rommString(row['connectionId']), rommMap(row['game']));
-        final key = '${game.key}:${game.identity}:${row['nativeFileHash']}:${row['core']}';
-        for (final suffix in ['sram', 'state', 'progress']) {
-          final cached = File(_path(key, suffix));
-          if (await cached.exists()) {
-            await cached.delete();
+        final key = _nativeKey(game, rommString(row['core']), rommString(row['nativeFileHash']));
+        await _nativeWrites.run(() async {
+          final cached = File(_path(key, 'progress'));
+          if (!await _ownsNativeCheckpoint(id, row, game, key, cached)) return;
+          for (final suffix in ['sram', 'state', 'progress']) {
+            final file = File(_path(key, suffix));
+            if (await file.exists()) await file.delete();
           }
-        }
+        });
       }
       await _retirePending(id);
       changed();
     } finally {
       _syncing.remove(id);
+    }
+  }
+
+  Future<bool> _ownsNativeCheckpoint(
+    String id,
+    Map<String, dynamic> row,
+    RommGame game,
+    String key,
+    File cached,
+  ) async {
+    if (await cached.exists()) {
+      final input = await cached.open();
+      late final Uint8List header;
+      try {
+        header = await input.read(56);
+      } finally {
+        await input.close();
+      }
+      if (String.fromCharCodes(header.take(8)) == 'PLZYPRG3') {
+        return header.length == 56 && String.fromCharCodes(header.skip(20)) == row['nativeCheckpoint'];
+      }
+    }
+    // Before checkpoints carried IDs, capture was flushed before the pending
+    // row was created. A newer file or sibling makes the attribution ambiguous.
+    final created = DateTime.tryParse(rommString(row['created']));
+    if (created == null || row['nativeCheckpoint'] != null) return false;
+    for (final other in pending.values) {
+      if (other['id'] != id &&
+          other['connectionId'] == row['connectionId'] &&
+          other['identity'] == row['identity'] &&
+          other['core'] == row['core'] &&
+          other['nativeFileHash'] == row['nativeFileHash'] &&
+          rommMap(other['game'])['id'] == game.id &&
+          rommString(other['created']).compareTo(rommString(row['created'])) >= 0) {
+        return false;
+      }
+    }
+    final files = await cached.exists() ? [cached] : [File(_path(key, 'sram')), File(_path(key, 'state'))];
+    var predatesRow = true;
+    for (final file in files) {
+      if (!await file.exists()) continue;
+      final modified = (await file.lastModified()).millisecondsSinceEpoch;
+      if (modified > created.millisecondsSinceEpoch) return false;
+      if (modified == created.millisecondsSinceEpoch) predatesRow = false;
+    }
+    final local = await nativeSnapshot(game, rommString(row['core']), fileHash: rommString(row['nativeFileHash']));
+    final bytes = await pendingBytes(id);
+    final marker = row['state'] == true ? 'PLZYRETRO1\n' : 'PLZYRAM1\n';
+    if (String.fromCharCodes(bytes.take(marker.length)) != marker) {
+      return row['state'] != true &&
+          listEquals(local.sram, bytes) &&
+          local.rtc == null &&
+          (local.state == null || predatesRow);
+    }
+    final end = bytes.indexOf(10, marker.length);
+    if (end < marker.length || end > marker.length + 10) return false;
+    final length = int.tryParse(String.fromCharCodes(bytes.sublist(marker.length, end)));
+    if (length == null || length <= 0 || length > 8192 || end + 1 + length >= bytes.length) return false;
+    try {
+      final header = rommMap(jsonDecode(utf8.decode(bytes.sublist(end + 1, end + 1 + length))));
+      if (header['core'] != row['core'] ||
+          header['rom'] != game.identity ||
+          header['file'] != 'sha1:${row['nativeFileHash']}') {
+        return false;
+      }
+      final payload = Uint8List.sublistView(bytes, end + 1 + length);
+      if (header['format'] == 'plezy-libretro-state-v2') {
+        return listEquals(local.state, payload) && (predatesRow || local.sram == null && local.rtc == null);
+      }
+      int pos = 0;
+      bool matches(String field, Uint8List? channel) {
+        final size = rommInt(header[field], -1);
+        if (size < 0 || pos + size > payload.length) return false;
+        if (size == 0) return channel == null || predatesRow;
+        final start = pos;
+        pos += size;
+        return listEquals(channel, Uint8List.sublistView(payload, start, pos));
+      }
+
+      return matches('sram', local.sram) &&
+          matches('state', local.state) &&
+          matches('rtc', local.rtc) &&
+          pos == payload.length;
+    } on FormatException {
+      return false;
     }
   }
 
@@ -868,9 +961,11 @@ class RommStorage extends ChangeNotifier {
       final bytes = await pendingBytes(id);
       check();
       final slot = keepBoth ? 'plezy-$id' : rommString(row['slot'], 255);
+      final capturedAt = DateTime.tryParse(rommString(row['created']))?.toUtc().microsecondsSinceEpoch;
+      final filename = capturedAt == null ? 'plezy-$id' : 'plezy-$capturedAt-$id';
       final uploaded = await api.uploadSave(
         romId: game.id,
-        name: 'plezy-$id.${state ? 'state' : 'srm'}',
+        name: '$filename.${state ? 'state' : 'srm'}',
         bytes: bytes,
         emulator: rommString(row['emulator'], 100),
         core: rommString(row['core'], 100),
@@ -978,16 +1073,21 @@ class RommStorage extends ChangeNotifier {
     Uint8List bytes, {
     bool state = false,
     String fileHash = '',
-  }) => keepNativeSnapshot(game, core, sram: state ? null : bytes, state: state ? bytes : null, fileHash: fileHash);
-  Future<void> keepNativeSnapshot(
+  }) async {
+    await keepNativeSnapshot(game, core, sram: state ? null : bytes, state: state ? bytes : null, fileHash: fileHash);
+  }
+
+  Future<String> keepNativeSnapshot(
     RommGame game,
     String core, {
     Uint8List? sram,
     Uint8List? state,
     Uint8List? rtc,
     String fileHash = '',
-  }) => _track(_keepNativeSnapshot(game, core, sram: sram, state: state, rtc: rtc, fileHash: fileHash));
-  Future<void> _keepNativeSnapshot(
+  }) => _track(
+    _nativeWrites.run(() => _keepNativeSnapshot(game, core, sram: sram, state: state, rtc: rtc, fileHash: fileHash)),
+  );
+  Future<String> _keepNativeSnapshot(
     RommGame game,
     String core, {
     Uint8List? sram,
@@ -1001,7 +1101,10 @@ class RommStorage extends ChangeNotifier {
       throw const RommFailure('romm.invalidFile');
     }
     final path = _path(_nativeKey(game, core, fileHash), 'progress'), temp = File('$path.next');
-    final header = Uint8List(20)..setAll(0, ascii.encode('PLZYPRG2'));
+    final generation = const Uuid().v4();
+    final header = Uint8List(56)
+      ..setAll(0, ascii.encode('PLZYPRG3'))
+      ..setAll(20, ascii.encode(generation));
     ByteData.sublistView(header)
       ..setUint32(8, a)
       ..setUint32(12, b)
@@ -1024,6 +1127,7 @@ class RommStorage extends ChangeNotifier {
     }
     check();
     await temp.rename(path); // SRAM, state and cartridge clock from the same emulated frame.
+    return generation;
   }
 
   Future<({Uint8List? sram, Uint8List? state, Uint8List? rtc})> nativeSnapshot(
@@ -1050,7 +1154,7 @@ class RommStorage extends ChangeNotifier {
       return (sram: await legacy('sram'), state: await legacy('state'), rtc: null);
     }
     final size = await file.length();
-    if (size < 16 || size > 257 * 1024 * 1024 + 20) {
+    if (size < 16 || size > 257 * 1024 * 1024 + 56) {
       throw const RommFailure('romm.invalidFile');
     }
     final bytes = await file.readAsBytes();
@@ -1059,16 +1163,17 @@ class RommStorage extends ChangeNotifier {
       throw const RommFailure('romm.invalidFile');
     }
     final magic = ascii.decode(bytes.sublist(0, 8), allowInvalid: true);
-    final offset = magic == 'PLZYPRG1'
-        ? 16
-        : magic == 'PLZYPRG2'
-        ? 20
-        : 0;
+    final offset = switch (magic) {
+      'PLZYPRG1' => 16,
+      'PLZYPRG2' => 20,
+      'PLZYPRG3' => 56,
+      _ => 0,
+    };
     if (offset == 0 || size < offset) {
       throw const RommFailure('romm.invalidFile');
     }
     final header = ByteData.sublistView(bytes), a = header.getUint32(8), b = header.getUint32(12);
-    final c = offset == 20 ? header.getUint32(16) : 0;
+    final c = offset >= 20 ? header.getUint32(16) : 0;
     if (a + b + c == 0 ||
         a > 128 * 1024 * 1024 ||
         b > 128 * 1024 * 1024 ||

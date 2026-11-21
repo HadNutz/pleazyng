@@ -3256,6 +3256,7 @@
     "enterImageUrl": "Add meg a kép URL-címét",
     "imageUrl": "Kép URL-címe",
     "metadataUpdated": "Metaadatok frissítve",
+    "metadataConflict": "Valaki más módosította ugyanezt a mezőt. Mentés előtt nyisd meg újra a szerkesztőt, és ellenőrizd a legfrissebb értékeket.",
     "metadataUpdateFailed": "Nem sikerült a metaadatok frissítése",
     "artworkUpdated": "Képek frissítve",
     "artworkUpdateFailed": "Nem sikerült a képek frissítése",
@@ -4891,6 +4892,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Importált feliratkozások: ${imported}. Ismétlődések: ${duplicates}. Kihagyva: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5707,9 @@
     "relay": "Zenei közvetítő URL-címe",
     "relayHint": "Engedélyezze a fogadó eszközön, majd párosítsa egyszer ugyanazon a hálózaton. Tartsa nyitva a Pleazyng alkalmazást. A közvetítő titkosított zenevezérlést továbbít és látja a hálózati címeket. Minden lejátszó a saját médiaszerveréről streamel.",
     "relayInvalid": "Adja meg a közvetítő HTTPS-címét."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Azonosítatlan verzióból származó könyvjelzők",
+    "assignToVersion": "Hozzárendelés ehhez a verzióhoz"
   }
 }

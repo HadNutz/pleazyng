@@ -3256,6 +3256,7 @@
     "enterImageUrl": "Görsel URL'si girin",
     "imageUrl": "Görsel URL'si",
     "metadataUpdated": "Meta veriler güncellendi",
+    "metadataConflict": "Aynı alanı başka biri değiştirdi. Kaydetmeden önce güncel değerleri gözden geçirmek için düzenleyiciyi yeniden açın.",
     "metadataUpdateFailed": "Meta veriler güncellenemedi",
     "artworkUpdated": "Görseller güncellendi",
     "artworkUpdateFailed": "Görseller güncellenemedi",
@@ -4891,6 +4892,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "İçe aktarılan abonelikler: ${imported}. Yinelenenler: ${duplicates}. Atlananlar: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5707,9 @@
     "relay": "Müzik rölesi URL’si",
     "relayHint": "Alıcı cihazda etkinleştirin, ardından aynı ağda bir kez eşleştirin. Pleazyng açık kalsın. Röle şifreli müzik denetimlerini iletir ve ağ adreslerini görür. Her oynatıcı kendi medya sunucusundan yayın yapar.",
     "relayInvalid": "Bir HTTPS röle adresi girin."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Sürümü belirlenemeyen yer imleri",
+    "assignToVersion": "Bu sürüme ata"
   }
 }

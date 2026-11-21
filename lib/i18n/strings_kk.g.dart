@@ -123,6 +123,7 @@ class TranslationsKk extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$kk musicExperience = _Translations$musicExperience$kk._(_root);
 	@override late final _Translations$musicTools$kk musicTools = _Translations$musicTools$kk._(_root);
 	@override late final _Translations$musicDevices$kk musicDevices = _Translations$musicDevices$kk._(_root);
+	@override late final _Translations$bookmarkMigration$kk bookmarkMigration = _Translations$bookmarkMigration$kk._(_root);
 }
 
 // Path: mediaConveniences
@@ -2723,6 +2724,7 @@ class _Translations$metadataEdit$kk extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Сурет URL-ін енгізіңіз';
 	@override String get imageUrl => 'Сурет URL-і';
 	@override String get metadataUpdated => 'Метадеректер жаңартылды';
+	@override String get metadataConflict => 'Басқа редактор осы өрісті өзгертті. Сақтау алдында соңғы мәндерді тексеру үшін редакторды қайта ашыңыз.';
 	@override String get metadataUpdateFailed => 'Метадеректерді жаңарту мүмкін болмады';
 	@override String get artworkUpdated => 'Суреттер жаңартылды';
 	@override String get artworkUpdateFailed => 'Суреттерді жаңарту мүмкін болмады';
@@ -4107,6 +4109,7 @@ class _Translations$podcasts$kk extends Translations$podcasts$en {
 	final TranslationsKk _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Импортталған жазылымдар: ${imported}. Қайталанатындары: ${duplicates}. Өткізіп жіберілгендері: ${skipped}.';
 	@override String get autoDownloadLatest => 'Соңғы эпизодтарды автоматты түрде жүктеп алу';
 	@override String get removeFinishedAfter => 'Аяқталған жүктеулерді кейін жою';
 }
@@ -4519,6 +4522,17 @@ class _Translations$musicDevices$kk extends Translations$musicDevices$en {
 	@override String get relay => 'Музыка релесінің URL мекенжайы';
 	@override String get relayHint => 'Қабылдаушы құрылғыда қосып, бір желіде бір рет жұптастырыңыз. Pleazyng ашық тұрсын. Реле шифрланған музыка пәрмендерін тасымалдайды және желі мекенжайларын көреді. Әр ойнатқыш өз медиа серверінен ағын алады.';
 	@override String get relayInvalid => 'Реленің HTTPS мекенжайын енгізіңіз.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$kk extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$kk._(TranslationsKk root) : this._root = root, super.internal(root);
+
+	final TranslationsKk _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Белгісіз нұсқадағы бетбелгілер';
+	@override String get assignToVersion => 'Осы нұсқаға байланыстыру';
 }
 
 // Path: appIcon.names
@@ -8281,6 +8295,7 @@ extension on TranslationsKk {
 			'metadataEdit.enterImageUrl' => 'Сурет URL-ін енгізіңіз',
 			'metadataEdit.imageUrl' => 'Сурет URL-і',
 			'metadataEdit.metadataUpdated' => 'Метадеректер жаңартылды',
+			'metadataEdit.metadataConflict' => 'Басқа редактор осы өрісті өзгертті. Сақтау алдында соңғы мәндерді тексеру үшін редакторды қайта ашыңыз.',
 			'metadataEdit.metadataUpdateFailed' => 'Метадеректерді жаңарту мүмкін болмады',
 			'metadataEdit.artworkUpdated' => 'Суреттер жаңартылды',
 			'metadataEdit.artworkUpdateFailed' => 'Суреттерді жаңарту мүмкін болмады',
@@ -8717,9 +8732,9 @@ extension on TranslationsKk {
 			'homeLayout.showInRecommended' => 'Библиотеканың тұрақтанды',
 			'homeLayout.customPlexRow' => 'Қазір Plex қаңтар',
 			'homeLayout.heroNeedsLibrary' => '«Жеңіске үлес қосқандар» деген әйгілі әндердің авторы.',
-			'homeLayout.heroNeedsSurface' => '«Жеңіске» және «Жектесі» деген әйгілі әндер шыққан әндер шырқалып, биленді.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroNeedsSurface' => '«Жеңіске» және «Жектесі» деген әйгілі әндер шыққан әндер шырқалып, биленді.',
 			'homeLayout.removeHub' => 'Өткен қағал',
 			'homeLayout.noPlexRows' => 'Бұл кітапхана үшін Plex басқаратын қатарлар табылмады.',
 			'homeLayout.openDetails' => 'Одандық детайл',
@@ -9231,9 +9246,9 @@ extension on TranslationsKk {
 			'audiobook.recoveryHelp' => 'Қаланың тұрақты тұрғындарының саны 10 адамды құрайды және 1 адамды қағидалардан тұрады.',
 			'audiobook.recoveryExport' => 'Експортдық криптовалюттік файл',
 			'audiobook.recoveryImport' => 'Қандай-ақ криптовалюталық дағдарыс',
-			'audiobook.recoveryImportConfirm' => 'Бұл криптовалюталық дағдарыстағы қанағаттанды және жабдықтармен көруге болады? іс-әрекеттің историю бар. Жабдықтау библиотекасы және элементтік ID-дер не пайдаланылады; екеуінде импортируға дейін әртүрлі айналысатын идентификатордан қабылдайды.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryImportConfirm' => 'Бұл криптовалюталық дағдарыстағы қанағаттанды және жабдықтармен көруге болады? іс-әрекеттің историю бар. Жабдықтау библиотекасы және элементтік ID-дер не пайдаланылады; екеуінде импортируға дейін әртүрлі айналысатын идентификатордан қабылдайды.',
 			'audiobook.recoveryExported' => 'Қазіргі уақытта өңдеуге кеңінен танымал.',
 			'audiobook.recoveryImported' => 'Ауыздан дағдарыста.',
 			'sourceSetup.bookorbitHelp' => 'Кітаптарды қарау және ойнату үшін өз BookOrbit тіркелгіңізге кіріңіз. Жоқ тақырыптарға арналған сұраулар әлі де қосылған SeerrNG данасы арқылы жіберіледі.',
@@ -9452,6 +9467,7 @@ extension on TranslationsKk {
 			'issueReport.privacy' => 'Жобада қолданба нұсқасы, платформа және байланыстар саны болады. Сервер мекенжайлары, тіркелгі мен профиль атаулары, медиа атаулары және файл жолдары қосылмайды.',
 			'issueReport.logPrivacy' => 'Журналдар міндетті емес. Жүктемес бұрын тексеріңіз. Олардың ID-і ашық болуы мүмкін жобаға қосылады.',
 			'issueReport.openDraft' => 'GitHub жобасын ашу',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Импортталған жазылымдар: ${imported}. Қайталанатындары: ${duplicates}. Өткізіп жіберілгендері: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Соңғы эпизодтарды автоматты түрде жүктеп алу',
 			'podcasts.removeFinishedAfter' => 'Аяқталған жүктеулерді кейін жою',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Субтитр кодтамасын алдын ала қарау',
@@ -9744,10 +9760,10 @@ extension on TranslationsKk {
 			'musicTools.home' => 'Музыка',
 			'musicTools.recent' => 'Жақында тыңдалған',
 			'musicTools.apiKey' => 'API кілті',
-			'musicTools.missing' => 'N/A',
-			'musicTools.minutes' => 'Минут',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.missing' => 'N/A',
+			'musicTools.minutes' => 'Минут',
 			'musicTools.rules' => 'Фильтрлер',
 			'musicTools.exclusiveOutput' => 'Эксклюзивті аудио шығыс',
 			'musicTools.preamp' => 'Алдын ала күшейту',
@@ -9803,6 +9819,8 @@ extension on TranslationsKk {
 			'musicDevices.relay' => 'Музыка релесінің URL мекенжайы',
 			'musicDevices.relayHint' => 'Қабылдаушы құрылғыда қосып, бір желіде бір рет жұптастырыңыз. Pleazyng ашық тұрсын. Реле шифрланған музыка пәрмендерін тасымалдайды және желі мекенжайларын көреді. Әр ойнатқыш өз медиа серверінен ағын алады.',
 			'musicDevices.relayInvalid' => 'Реленің HTTPS мекенжайын енгізіңіз.',
+			'bookmarkMigration.unassigned' => 'Белгісіз нұсқадағы бетбелгілер',
+			'bookmarkMigration.assignToVersion' => 'Осы нұсқаға байланыстыру',
 			_ => null,
 		};
 	}

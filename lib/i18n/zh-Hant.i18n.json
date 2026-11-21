@@ -3252,6 +3252,7 @@
     "enterImageUrl": "輸入圖片 URL",
     "imageUrl": "圖片 URL",
     "metadataUpdated": "中繼資料已更新",
+    "metadataConflict": "其他人已修改了同一欄位。請重新開啟編輯器，確認最新的值後再儲存。",
     "metadataUpdateFailed": "中繼資料更新失敗",
     "artworkUpdated": "封面圖片已更新",
     "artworkUpdateFailed": "封面圖片更新失敗",
@@ -4886,6 +4887,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "已匯入訂閱：${imported}。重複：${duplicates}。已略過：${skipped}。",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5700,5 +5702,9 @@
     "relay": "音樂中繼 URL",
     "relayHint": "在接收裝置上啟用，然後在同一網路中配對一次。保持 Pleazyng 開啟。中繼傳遞加密的音樂控制，並能看到網路位址。每個播放器從自己的媒體伺服器串流。",
     "relayInvalid": "請輸入 HTTPS 中繼位址。"
+  },
+  "bookmarkMigration": {
+    "unassigned": "來自不明版本的書籤",
+    "assignToVersion": "指派給此版本"
   }
 }
