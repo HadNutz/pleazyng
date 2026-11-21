@@ -388,14 +388,14 @@ final class TvosDatabaseRecoveryStore {
 
       final identity = _decodePayload(
         identityRaw,
-        _identityRowKeys,
+        const {..._identityRowsBeforeFeedAliases, 'iptvFeedAliases'},
         compatibleKeys: [_identityRowsBeforeFeedAliases, _previousIdentityRowKeys, _legacyIdentityRowKeys],
       );
       final pending = _decodePayload(pendingRaw, _pendingRowKeys);
       if (identity == null || pending == null) return null;
       return TvosDatabaseRecoverySnapshot(identity: identity, pending: pending);
     } catch (_) {
-      return null;
+      return null; // best-effort: an unreadable snapshot leaves recovery pending for the next valid image.
     }
   }
 
@@ -511,7 +511,6 @@ final class TvosDatabaseRecoveryStore {
     );
   }
 
-  static const _identityRowKeys = {..._identityRowsBeforeFeedAliases, 'iptvFeedAliases'};
   static const Set<String> _identityRowsBeforeFeedAliases = {
     'connections',
     'profiles',
