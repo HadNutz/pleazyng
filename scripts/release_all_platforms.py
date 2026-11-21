@@ -66,6 +66,8 @@ DOWNLOAD_RETRY_INITIAL_DELAY_SECONDS = 1
 HOSTED_RECOVERY_GRACE_SECONDS = 15 * 60
 HOSTED_RECOVERY_WORKFLOW_HEAD_START_SECONDS = 60
 NATIVE_FAILED_RUN_QUEUE_TIMEOUT_SECONDS = 15 * 60
+DISCORD_DISPATCH_ATTEMPTS = 3
+DISCORD_DISPATCH_RETRY_DELAY_SECONDS = 2
 APPLE_JIT_EVIDENCE_ROOT: Path | None = None
 APPLE_JIT_SSH_TARGET = os.environ.get("APPLE_JIT_SSH_TARGET", "keith@100.64.0.3")
 RELEASE_TAG_REUSE_ALLOWLIST = frozenset({
@@ -2607,6 +2609,24 @@ def dispatch_aerynos_delivery(tag: str) -> dict:
             "state": "dispatched"}
 
 
+def dispatch_discord_announcement(tag: str) -> None:
+    """Retry transient workflow-dispatch errors for the idempotent Discord sender."""
+    args = ["gh", "workflow", "run", "discord-release.yml", "--repo", PLEZY_REPO,
+            "--ref", "main", "-f", "action=announce-release", "-f", "runner_pool=hosted",
+            "-f", f"release_tag={tag}"]
+    for attempt in range(DISCORD_DISPATCH_ATTEMPTS):
+        try:
+            command(args)
+            return
+        except Exception:
+            if attempt + 1 == DISCORD_DISPATCH_ATTEMPTS:
+                raise
+            delay = DISCORD_DISPATCH_RETRY_DELAY_SECONDS * (2 ** attempt)
+            print(f"Discord workflow dispatch failed; retrying in {delay}s "
+                  f"({attempt + 2}/{DISCORD_DISPATCH_ATTEMPTS}).", flush=True)
+            time.sleep(delay)
+
+
 def post_release_actions(tag: str, version: str, *, release_sha: str,
                          include_webos_release: bool, publish_channels: bool,
                          notify_discord: bool = True, scratch_dir: Path | None = None) -> dict:
@@ -2628,9 +2648,7 @@ def post_release_actions(tag: str, version: str, *, release_sha: str,
     # Tag serialization and persisted receipts make a repeated dispatch safe.
     if notify_discord:
         try:
-            command(["gh", "workflow", "run", "discord-release.yml", "--repo", PLEZY_REPO,
-                     "--ref", "main", "-f", "action=announce-release", "-f", "runner_pool=hosted",
-                     "-f", f"release_tag={tag}"])
+            dispatch_discord_announcement(tag)
         except Exception as error:
             result["notification_failures"].append(str(error))
     if publish_channels:

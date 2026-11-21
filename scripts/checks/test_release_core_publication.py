@@ -132,12 +132,31 @@ class CorePublicationTests(unittest.TestCase):
     def test_notification_and_channel_failures_are_separate_results(self):
         for fail in (False, True):
             with self.subTest(exception=fail), patch.object(release, "command", side_effect=release.ReleaseError("notice offline")), \
+                 patch.object(release.time, "sleep"), \
                  patch.object(release, "publish_configured_channels", side_effect=release.ReleaseError("store configuration") if fail else None,
                               return_value=([], [], ["store upload refused"])):
                 result = release.post_release_actions("v3.0.1", "3.0.1", release_sha="a" * 40,
                     include_webos_release=True, publish_channels=True)
                 self.assertEqual(result["notification_failures"], ["notice offline"])
                 self.assertTrue(result["channel_failures"])
+
+    def test_discord_dispatch_retries_transient_failure(self):
+        attempts = []
+
+        def dispatch(args):
+            attempts.append(args)
+            if len(attempts) == 1:
+                raise release.ReleaseError("workflow dispatch temporarily unavailable")
+            return subprocess.CompletedProcess(args, 0, "", "")
+
+        with patch.object(release, "command", side_effect=dispatch), patch.object(release.time, "sleep") as sleep:
+            result = release.post_release_actions("v3.0.46", "3.0.46", release_sha="a" * 40,
+                include_webos_release=True, publish_channels=False)
+
+        self.assertEqual(len(attempts), 2)
+        self.assertEqual(attempts[0], attempts[1])
+        self.assertEqual(result["notification_failures"], [])
+        sleep.assert_called_once_with(release.DISCORD_DISPATCH_RETRY_DELAY_SECONDS)
 
     def test_skipping_manual_notification_preserves_package_and_store_delivery(self):
         with patch.object(release, 'command') as command, \
