@@ -10,6 +10,7 @@
 - Adapt Android PiP transitions and HDR decisions to the active pane, keep iPhone external playback on its own screen, and recognize embedded Windows display panels. A Windows playback setting lets owners identify a continuous folding panel’s hinge direction.
 - Add a native HarmonyOS NEXT player for local files, direct media URLs and direct-play Plex, Jellyfin and Emby libraries. It supports fold and tri-fold layouts and system picture in picture.
 
+- Try the next available OpenCL device when a TV motion kernel fails during playback, then use software if the remaining devices fail.
 - Provision the matching Samsung SDK for x64 emulator tester builds and link host build tools with the host compiler.
 - Restore an interrupted mobile movie or episode from OS-saved state, including its position, edition and pause intent, after checking access for the active profile. A normal Back or replacement discards the old playback task.
 

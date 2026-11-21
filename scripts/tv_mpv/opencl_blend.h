@@ -10,6 +10,7 @@
 
 typedef struct TvBlend {
   int attempted;
+  unsigned next_device;
   const char* provider;
   void *library, *context, *queue, *program, *kernel, *buffers[3];
   size_t capacity;
@@ -89,6 +90,10 @@ static int tv_blend_open(TvBlend* b) {
       unsigned n = 0;
       if (b->get_devices(platforms[i], device_types[t], 16, devices, &n)) continue;
       for (unsigned j = 0; j < n && j < 16; ++j) {
+        // Keep the cursor bounded even if a driver changes its enumeration after a failure.
+        unsigned slot = (t * TV_CL_LIMIT + i) * 16 + j;
+        if (slot < b->next_device) continue;
+        b->next_device = slot + 1;
         void* device = devices[j];
         b->context = b->create_context(NULL, 1, &device, NULL, NULL, NULL);
         if (!b->context) continue;
@@ -112,21 +117,17 @@ fail:
   return 0;
 }
 
-static int tv_blend_plane(
+static int tv_blend_current_plane(
     TvBlend* b, const uint8_t* a, int a_pitch, const uint8_t* c, int c_pitch, uint8_t* dst, int dst_pitch, int width,
     int height, int weight) {
   const size_t origin[3] = {0, 0, 0};
-  if (width <= 0 || height <= 0 || width > a_pitch || width > c_pitch || width > dst_pitch ||
-      (size_t)width > SIZE_MAX / (size_t)height)
-    return 0;
-  if (!b->kernel && (b->attempted || !tv_blend_open(b))) return 0;
   const size_t region[3] = {(size_t)width, (size_t)height, 1};
   const size_t bytes = region[0] * region[1];
   if (bytes > b->capacity) {
     for (int i = 0; i < 3; ++i) {
       if (b->buffers[i]) b->release_buffer(b->buffers[i]);
       b->buffers[i] = b->create_buffer(b->context, 1 /* CL_MEM_READ_WRITE */, bytes, NULL, NULL);
-      if (!b->buffers[i] || b->set_arg(b->kernel, i, sizeof(void*), &b->buffers[i])) goto fail;
+      if (!b->buffers[i] || b->set_arg(b->kernel, i, sizeof(void*), &b->buffers[i])) return 0;
     }
     b->capacity = bytes;
   }
@@ -135,9 +136,23 @@ static int tv_blend_plane(
       b->set_arg(b->kernel, 3, sizeof(weight), &weight) ||
       b->enqueue(b->queue, b->kernel, 1, NULL, &bytes, NULL, 0, NULL, NULL) ||
       b->read_rect(b->queue, b->buffers[2], 1, origin, origin, region, 0, 0, dst_pitch, 0, dst, 0, NULL, NULL))
-    goto fail;
+    return 0;
   return 1;
-fail:
-  tv_blend_close(b);
+}
+
+static int tv_blend_plane(
+    TvBlend* b, const uint8_t* a, int a_pitch, const uint8_t* c, int c_pitch, uint8_t* dst, int dst_pitch, int width,
+    int height, int weight) {
+  if (width <= 0 || height <= 0 || width > a_pitch || width > c_pitch || width > dst_pitch ||
+      (size_t)width > SIZE_MAX / (size_t)height)
+    return 0;
+  while (b->kernel || (!b->attempted && tv_blend_open(b))) {
+    if (tv_blend_current_plane(b, a, a_pitch, c, c_pitch, dst, dst_pitch, width, height, weight)) return 1;
+    // A compiled kernel can still fail to allocate a buffer, submit work, or read pixels.
+    unsigned next_device = b->next_device;
+    tv_blend_close(b);
+    b->next_device = next_device;
+    b->attempted = 0;
+  }
   return 0;
 }
