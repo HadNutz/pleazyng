@@ -1,0 +1,795 @@
+{
+  "schema_version": 1,
+  "upstream_repository": "edde746/plezy",
+  "fork_repository": "snapetech-org/pleazyng",
+  "merge_base": "738e18fdc552ace910dedabf6e689ab74e1dae58",
+  "reviewed_snapshot": "8310991fa14f0cbac9c71cfb494d028d4314c7ff",
+  "license_blob": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7",
+  "entries": [
+    {
+      "sha": "77f11b86f06a3cd7ec73072dfc9c60bb6c985eb5",
+      "source_url": "https://github.com/edde746/plezy/commit/77f11b86f06a3cd7ec73072dfc9c60bb6c985eb5",
+      "author": {
+        "login": "a-j-jones",
+        "url": "https://github.com/a-j-jones"
+      },
+      "subject": "perf(discover): rasterise the hero scrim gradient (#3017)",
+      "disposition": "pending",
+      "evidence": "The fork still draws a full-height gradient over scrolling artwork. Use the rasterized gradient widget the fork already uses on detail screens. Preserve the fork’s theme colors, stops and reduced-motion behavior. The upstream Linux measurements justify profiling this screen here. [discover_screen.dart L1578](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/discover_screen.dart#L1578) · [rasterized_gradient.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/widgets/rasterized_gradient.dart)",
+      "files": [
+        "lib/screens/discover_screen.dart",
+        "test/screens/discover_screen_test.dart"
+      ]
+    },
+    {
+      "sha": "4c3c25b8233bb887d7224b3844f3763a88b720c5",
+      "source_url": "https://github.com/edde746/plezy/commit/4c3c25b8233bb887d7224b3844f3763a88b720c5",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "perf(player): leave mpv's unused builtin scripts unloaded on Android (#3035)",
+      "disposition": "pending",
+      "evidence": "The fork disables ytdl at initialization. Upstream also disables seven unused built-in Lua scripts. Retain explicit custom-config overrides and verify the pinned fork AAR’s options on both video and secondary cores. The upstream CPU, thread and memory savings were device-specific. [MpvPlayerCore.kt L1159](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/android/app/src/main/kotlin/com/edde746/plezy/mpv/MpvPlayerCore.kt#L1159)",
+      "files": [
+        "android/app/src/main/kotlin/com/edde746/plezy/mpv/MpvPlayerCore.kt"
+      ]
+    },
+    {
+      "sha": "e8074c45267dd86894b936f203722d13be1dd543",
+      "source_url": "https://github.com/edde746/plezy/commit/e8074c45267dd86894b936f203722d13be1dd543",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "perf(ios): activate the audio session while the video core is created (#3034)",
+      "disposition": "deferred",
+      "evidence": "Pleazyng configures the session at launch and has separate music, PiP and car-session ownership. Early activation can interrupt another app as soon as the video screen opens. Upstream’s 25–42 ms gain was estimated in a benchmark app. Revisit after measuring first frame and testing failed opens, silent video and simultaneous music on hardware. [AppDelegate.swift L97](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/ios/Runner/AppDelegate.swift#L97) · [MpvAudioPlayerPlugin.swift](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/shared/apple/MpvPlayer/MpvAudioPlayerPlugin.swift)",
+      "files": [
+        "ios/Runner/AppDelegate.swift",
+        "ios/RunnerTests/RunnerTests.swift",
+        "shared/apple/MpvPlayer/MpvPlayerCoreBase.swift"
+      ]
+    },
+    {
+      "sha": "3bf8c2752739a83cb5038fef9287bd6aac7d1e19",
+      "source_url": "https://github.com/edde746/plezy/commit/3bf8c2752739a83cb5038fef9287bd6aac7d1e19",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "perf(player): give downloads in app storage a demuxer read-ahead hysteresis (#3033)",
+      "disposition": "pending",
+      "evidence": "Add 0.5 s demuxer refill hysteresis only for eligible uncached app-owned downloads. Respect explicit mpv settings, avoid SAF/network/cloud streams, and reset the option when reusing a player. Keep the fork’s existing stream-ring and buffer budgets. [playback_open.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/video_player/parts/playback_open.dart) · [stream_buffer_sizing.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/utils/stream_buffer_sizing.dart)",
+      "files": [
+        "lib/screens/video_player/parts/playback_open.dart",
+        "lib/screens/video_player_screen.dart",
+        "lib/utils/stream_buffer_sizing.dart",
+        "test/utils/stream_buffer_sizing_test.dart"
+      ]
+    },
+    {
+      "sha": "847842c3d075b56d686409850e12fa1cca0b19d9",
+      "source_url": "https://github.com/edde746/plezy/commit/847842c3d075b56d686409850e12fa1cca0b19d9",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "perf(player): give mpv a constant title on iOS and tvOS (#3032)",
+      "disposition": "adapted",
+      "evidence": "The fork already sets title=mpv before initialization for the Apple mobile path. Keep the macOS window-title behavior. [c298fe38d](https://github.com/snapetech-org/pleazyng/commit/c298fe38d38e1413e91c2d18a5e5c2b2c9a09653) · [MpvPlayerCoreBase.swift L696](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/shared/apple/MpvPlayer/MpvPlayerCoreBase.swift#L696)",
+      "files": [
+        "ios/RunnerTests/RunnerTests.swift",
+        "shared/apple/MpvPlayer/MpvPlayerCoreBase.swift",
+        "tvos/RunnerTests/MpvPlayerContractTests.swift"
+      ]
+    },
+    {
+      "sha": "10bcdf38f327ecbdaef4896b96916ac846a0db64",
+      "source_url": "https://github.com/edde746/plezy/commit/10bcdf38f327ecbdaef4896b96916ac846a0db64",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(livetv): re-check Live TV access after a Plex Home profile switch",
+      "disposition": "adapted",
+      "evidence": "The probe records both the server client and authentication session. A switch on the same physical server triggers a fresh access decision and stale probe results are discarded. [7efe93c05](https://github.com/snapetech-org/pleazyng/commit/7efe93c0561dcb6a6f4d8614d9fb5fd22d79950f) · [multi_server_provider.dart L305](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/providers/multi_server_provider.dart#L305)",
+      "files": [
+        "lib/providers/multi_server_provider.dart",
+        "test/providers/multi_server_provider_test.dart"
+      ]
+    },
+    {
+      "sha": "8cda18705d99ea3b394f883600aa19ce4d1522c7",
+      "source_url": "https://github.com/edde746/plezy/commit/8cda18705d99ea3b394f883600aa19ce4d1522c7",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(ios): start Picture in Picture on a tap that also creates its controller",
+      "disposition": "adapted",
+      "evidence": "The fork already defers a start issued by the same tap that constructed the AVKit controller and invalidates stale attempts. [e4847dbe2](https://github.com/snapetech-org/pleazyng/commit/e4847dbe2cbbf4fdebf614f14ecb551a2a6108ca) · [MpvPipController.swift L76](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/ios/Runner/MpvPlayer/MpvPipController.swift#L76)",
+      "files": [
+        "ios/Runner/MpvPlayer/MpvPipController.swift",
+        "ios/RunnerTests/RunnerTests.swift"
+      ]
+    },
+    {
+      "sha": "ca916ebb2470166f4e0d2bc884e424af698e38f4",
+      "source_url": "https://github.com/edde746/plezy/commit/ca916ebb2470166f4e0d2bc884e424af698e38f4",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(player): arm auto-PiP when a Live TV channel starts",
+      "disposition": "adapted",
+      "evidence": "The fork arms PiP on both live and standard start paths. This is distinct from the native first-tap fix in the preceding row. [e4847dbe2](https://github.com/snapetech-org/pleazyng/commit/e4847dbe2cbbf4fdebf614f14ecb551a2a6108ca) · [playback_start.dart L129](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/video_player/parts/playback_start.dart#L129)",
+      "files": [
+        "lib/screens/video_player/parts/pip.dart",
+        "lib/screens/video_player/parts/playback_start.dart"
+      ]
+    },
+    {
+      "sha": "d78b6d806e3ebf60881999564def7cad969722b5",
+      "source_url": "https://github.com/edde746/plezy/commit/d78b6d806e3ebf60881999564def7cad969722b5",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(watch-together): create and join rooms when the package version is unreadable",
+      "disposition": "pending",
+      "evidence": "Fork room creation uses PackageInfo.fromPlatform() directly. An empty value produces Pleazyng/ and an exception can abort creation or joining. Add a shared nonthrowing version resolver, retain the fork identity, and preserve “unknown” as a separate state for update comparisons. Audit Plex/Jellyfin/Simkl headers and diagnostic labels using the same source. [watch_together_provider.dart L130](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/watch_together/providers/watch_together_provider.dart#L130) · [update_service.dart L140](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/update_service.dart#L140)",
+      "files": [
+        "lib/main.dart",
+        "lib/models/plex/plex_config.dart",
+        "lib/screens/settings/about_screen.dart",
+        "lib/screens/settings/add_jellyfin_screen.dart",
+        "lib/screens/settings/logs_screen.dart",
+        "lib/services/jellyfin_client.dart",
+        "lib/services/plex_auth_service.dart",
+        "lib/services/settings_export_service.dart",
+        "lib/services/trackers/simkl/simkl_auth_service.dart",
+        "lib/services/trackers/simkl/simkl_client.dart",
+        "lib/services/trackers/simkl/simkl_constants.dart",
+        "lib/services/update_service.dart",
+        "lib/utils/app_version.dart",
+        "lib/watch_together/providers/watch_together_provider.dart",
+        "test/screens/settings/add_jellyfin_screen_test.dart",
+        "test/services/catalog/simkl_catalog_source_test.dart",
+        "test/services/trackers/simkl_auth_service_test.dart",
+        "test/services/trackers/simkl_client_test.dart",
+        "test/utils/app_version_test.dart",
+        "test/watch_together/watch_together_provider_test.dart"
+      ]
+    },
+    {
+      "sha": "4640404ce3c79d3a73271392cc6d5d18ca8ebedc",
+      "source_url": "https://github.com/edde746/plezy/commit/4640404ce3c79d3a73271392cc6d5d18ca8ebedc",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(plex): retry a server that was unreachable at launch instead of waiting for Reconnect",
+      "disposition": "pending",
+      "evidence": "The fork reconnects on several events, including resume, but a failed first bind with no usable client lacks the bounded timed retry. Start network monitoring even when all binds fail. Schedule cancelable retries at 2, 4, 8, 15 and 30 seconds, skip access refusals, and invalidate work on profile change or disposal. Keep MediaBrowser’s own recovery. [multi_server_manager.dart L1235](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/multi_server_manager.dart#L1235) · [active_profile_binder.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/profiles/active_profile_binder.dart) · [main.dart L2088](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/main.dart#L2088)",
+      "files": [
+        "lib/main.dart",
+        "lib/profiles/active_profile_binder.dart",
+        "lib/services/multi_server_manager.dart",
+        "test/profiles/active_profile_binder_test.dart",
+        "test/services/multi_server_manager_test.dart"
+      ]
+    },
+    {
+      "sha": "a4f1b4f313ee166afa0e0339ff7c1ebab7dc1bd6",
+      "source_url": "https://github.com/edde746/plezy/commit/a4f1b4f313ee166afa0e0339ff7c1ebab7dc1bd6",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(player): strip every Samsung HDR10+ message before the Fire TV DV decoder",
+      "disposition": "adapted",
+      "evidence": "The Samsung application-4 filter accepts variant oriented codes, including 0x0010. Existing fork native tests cover the variants. Reapplying the patch conflicts in both implementation and tests. [aaf06aea6](https://github.com/snapetech-org/pleazyng/commit/aaf06aea64812b0ea7ffa7f22ccf585e60828aca) · [DvBitstreamSanitizer.kt L130](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/android/app/src/main/kotlin/com/edde746/plezy/exoplayer/DvBitstreamSanitizer.kt#L130)",
+      "files": [
+        "android/app/src/main/kotlin/com/edde746/plezy/exoplayer/DvBitstreamSanitizer.kt",
+        "android/app/src/test/kotlin/com/edde746/plezy/exoplayer/DvBitstreamSanitizerTest.kt"
+      ]
+    },
+    {
+      "sha": "a597bcbee228e1f519b5f2a527bc239981fd0672",
+      "source_url": "https://github.com/edde746/plezy/commit/a597bcbee228e1f519b5f2a527bc239981fd0672",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(search): rank an artist's albums above titles that merely contain the artist",
+      "disposition": "adapted",
+      "evidence": "Pleazyng already weights an album’s artist at 0.9. Keep its broader ranking and its regression test. [b5d0ba92b](https://github.com/snapetech-org/pleazyng/commit/b5d0ba92bcdb09a171ced9b957c28ec70630e1b6) · [search_relevance.dart L95](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/utils/search_relevance.dart#L95)",
+      "files": [
+        "lib/utils/search_relevance.dart",
+        "test/utils/search_relevance_test.dart"
+      ]
+    },
+    {
+      "sha": "8916000299dc0106614deede5ca7476d714984c7",
+      "source_url": "https://github.com/edde746/plezy/commit/8916000299dc0106614deede5ca7476d714984c7",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(paging): stop re-requesting the end of a library whose count outruns its items",
+      "disposition": "adapted",
+      "evidence": "The loader advances past the loaded prefix and clamps the end on an empty response even when the server claims more items exist. [64e7fb50b](https://github.com/snapetech-org/pleazyng/commit/64e7fb50b07e9e5b2100f7a5fd68544926be7c9f) · [paginated_item_loader.dart L325](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/mixins/paginated_item_loader.dart#L325)",
+      "files": [
+        "lib/mixins/paginated_item_loader.dart",
+        "test/mixins/paginated_item_loader_test.dart"
+      ]
+    },
+    {
+      "sha": "b179440450941150da98623e3a4fe3d2aebe900e",
+      "source_url": "https://github.com/edde746/plezy/commit/b179440450941150da98623e3a4fe3d2aebe900e",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(plex): keep a server's client when it reconnects from offline",
+      "disposition": "pending",
+      "evidence": "The fork closes the old client and swaps in a new one after an offline reconnect. Consumers already holding the prior client can lose progress reporting, transcode keepalives or recording refresh. Reuse the registered client only when account/token and profile scope match, retarget its endpoint, and retain replacement for a real identity change. Pair with cold-start recovery but test independently. [multi_server_manager.dart L1597](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/multi_server_manager.dart#L1597)",
+      "files": [
+        "lib/services/multi_server_manager.dart",
+        "test/profiles/active_profile_binder_test.dart"
+      ]
+    },
+    {
+      "sha": "b478fbc7cd80e6f26485a00125a4ed431c6ea92b",
+      "source_url": "https://github.com/edde746/plezy/commit/b478fbc7cd80e6f26485a00125a4ed431c6ea92b",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "chore(release): install the macOS app from the official Homebrew cask",
+      "disposition": "retained",
+      "evidence": "Upstream’s official cask and tap migration identify Plezy. Pleazyng has its own signed distribution and snapetech-pleazyng cask. Importing the migration would direct fork users to the wrong product. Keep the fork’s release workflow, README and tap. [homebrew-cask.md](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/docs/maintainers/homebrew-cask.md) · [38fbd8c9d](https://github.com/snapetech-org/pleazyng/commit/38fbd8c9d618bfa2365c1c405ab9fb2d75ad900f)",
+      "files": [
+        ".github/workflows/update-packages.yml",
+        "Casks/plezy.rb",
+        "README.md",
+        "scripts/checks/check_update_packages_workflow.py",
+        "scripts/release/deploy.py",
+        "tap_migrations.json"
+      ]
+    },
+    {
+      "sha": "36f9ae3e31f580c642640dc67e7686215fd054ae",
+      "source_url": "https://github.com/edde746/plezy/commit/36f9ae3e31f580c642640dc67e7686215fd054ae",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "ci(ios): build the GitHub IPA with Xcode 27.1 so it is optimized for iPhone Duo",
+      "disposition": "pending",
+      "evidence": "The public build-ios path uses macos-26-intel and the composite action defaults to Xcode 26.5. The fork already has SDK-gated Duo code. Require a compatible iOS 27.1+ SDK for the shipping IPA, retain the fork’s signed/private and public build paths, and inspect the SDK baked into each produced artifact. The actual private runner SDK is unverified here. [build.yml L1434](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/.github/workflows/build.yml#L1434) · [action.yml L7](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/.github/actions/setup-flutter-apple/action.yml#L7) · [PlezyFlutterViewController.swift L24](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/ios/Runner/PlezyFlutterViewController.swift#L24)",
+      "files": [
+        ".github/workflows/build.yml"
+      ]
+    },
+    {
+      "sha": "e883c3ca5e170c2d5810c98d68803c586a97a270",
+      "source_url": "https://github.com/edde746/plezy/commit/e883c3ca5e170c2d5810c98d68803c586a97a270",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "feat(player): switch 25/30 fps content to 50/60 Hz instead of 25/30 Hz",
+      "disposition": "pending",
+      "evidence": "Android still prioritizes a matching 1× mode, then higher multiples. Desktop also retains older expectations. Adopt precise 25→50, 29.97→59.94 and 30→60 policy where available. Preserve an already-active precise multiple, the only precise fallback, normal film-rate selection, and the fork’s hardware and output guards. Cover Android and desktop separately. [DisplayModeSelector.kt L81](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/android/app/src/main/kotlin/com/edde746/plezy/shared/DisplayModeSelector.kt#L81) · [display_mode_service.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/display_mode_service.dart) · [display_mode_service_test.dart L164](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/test/services/display_mode_service_test.dart#L164)",
+      "files": [
+        "android/app/src/main/kotlin/com/edde746/plezy/shared/DisplayModeSelector.kt",
+        "android/app/src/test/kotlin/com/edde746/plezy/shared/DisplayModeSelectorTest.kt",
+        "lib/services/display_mode_service.dart",
+        "test/services/display_mode_service_test.dart"
+      ]
+    },
+    {
+      "sha": "408da1ab83b552e8b155aef7dd5f3e4d6892d91b",
+      "source_url": "https://github.com/edde746/plezy/commit/408da1ab83b552e8b155aef7dd5f3e4d6892d91b",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(player): keep the remote working when a reload unmounts the focused control",
+      "disposition": "adapted",
+      "evidence": "The controls own the focus scope and recover surface/Play–Pause focus when the focused transport unmounts. This fixes the paused-player reload case. The empty Home case is a separate path. [fc30a441e](https://github.com/snapetech-org/pleazyng/commit/fc30a441e6bb6e1d17729db78d081bc31885846e) · [visibility.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/widgets/video_controls/parts/visibility.dart)",
+      "files": [
+        "lib/widgets/video_controls/parts/visibility.dart",
+        "lib/widgets/video_controls/video_controls.dart",
+        "test/widgets/video_controls_select_key_test.dart"
+      ]
+    },
+    {
+      "sha": "02eeba69723b33f28e6b8ae9dab2ce1c02a1c3cd",
+      "source_url": "https://github.com/edde746/plezy/commit/02eeba69723b33f28e6b8ae9dab2ce1c02a1c3cd",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(profiles): keep PIN-protected profiles off the TV home screen shelf while asking for a profile on open",
+      "disposition": "adapted",
+      "evidence": "The fork already withholds protected content when profile selection is required, clears published content and republishes after policy changes. Covers the applicable system shelf path. [44c61f67b](https://github.com/snapetech-org/pleazyng/commit/44c61f67b432302734369c86012287a7851b19be) · [profile_selection_policy.dart L17](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/profiles/profile_selection_policy.dart#L17) · [system_shelf_service.dart L107](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/system_shelf_service.dart#L107)",
+      "files": [
+        "lib/navigation/profile_session_screen.dart",
+        "lib/profiles/profile_selection_policy.dart",
+        "lib/providers/discover_provider.dart",
+        "lib/services/system_shelf_service.dart",
+        "test/navigation/profile_session_screen_test.dart",
+        "test/services/system_shelf_service_test.dart"
+      ]
+    },
+    {
+      "sha": "88bd8467ff4051be3a25794ff95ccb31c8b27a01",
+      "source_url": "https://github.com/edde746/plezy/commit/88bd8467ff4051be3a25794ff95ccb31c8b27a01",
+      "author": {
+        "login": "luismiguelopes",
+        "url": "https://github.com/luismiguelopes"
+      },
+      "subject": "feat(i18n): add European Portuguese (pt-PT) locale (#3067)",
+      "disposition": "pending",
+      "evidence": "pt-PT already exists in Pleazyng. Its regional JSON has 824 leaves and a base-pt fallback. Upstream has 2,342 regional leaves. Of the shared app keys lacking a fork regional override, 966 have a fork base-pt value different from the upstream pt-PT value. These are translation review candidates. Also adapt region mapping for tags such as pt-AO and pt-MZ. Preserve the fork’s distinct pt-BR and Portuguese catalogs. [pt-PT.i18n.json](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/i18n/pt-PT.i18n.json) · [locale_catalog.json](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/i18n/locale_catalog.json) · [app_locale_utils.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/i18n/app_locale_utils.dart)",
+      "files": [
+        "lib/i18n/app_locale_utils.dart",
+        "lib/i18n/pt-PT.i18n.json",
+        "lib/i18n/strings.g.dart",
+        "lib/i18n/strings_pt.g.dart",
+        "lib/i18n/strings_pt_PT.g.dart",
+        "lib/screens/settings/general_settings_screen.dart",
+        "test/i18n/app_locale_utils_test.dart",
+        "test/services/settings_service_test.dart",
+        "test/utils/formatters_test.dart"
+      ]
+    },
+    {
+      "sha": "b5144834d19b695cb5e0334e3dfdfb820269b9cd",
+      "source_url": "https://github.com/edde746/plezy/commit/b5144834d19b695cb5e0334e3dfdfb820269b9cd",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "chore(i18n): tidy pt-PT shortcut casing, picker ordering and locale tests",
+      "disposition": "pending",
+      "evidence": "Review the shared shortcut translations and group variants next to their base language. The fork iterates the generated enum, with regional variants at the end. Retain fork endonyms, keys, provenance and tests for its additional locales. Regenerate locally from sources. [general_settings_screen.dart L131](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/settings/general_settings_screen.dart#L131) · [strings.g.dart L65](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/i18n/strings.g.dart#L65) · [locale_names.g.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/i18n/locale_names.g.dart)",
+      "files": [
+        "lib/i18n/app_locale_utils.dart",
+        "lib/i18n/pt-PT.i18n.json",
+        "lib/i18n/strings_pt_PT.g.dart",
+        "scripts/checks/hardcoded_strings_allowlist.json",
+        "test/i18n/app_locale_utils_test.dart",
+        "test/services/settings_service_test.dart",
+        "test/utils/formatters_test.dart"
+      ]
+    },
+    {
+      "sha": "5d5f03c00c82da91c86e900dbe931516262b23f9",
+      "source_url": "https://github.com/edde746/plezy/commit/5d5f03c00c82da91c86e900dbe931516262b23f9",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(profiles): ask for a profile on resume while the TV hosts the companion remote server",
+      "disposition": "pending",
+      "evidence": "The fork’s resume decision reads isInSession. Hosting a companion server can therefore suppress the profile prompt. Exempt only a device driving another as a remote, including a reconnecting controller. Test the TV hosting with and without a paired phone, plus the controlling phone. [main_screen.dart L1344](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/main_screen.dart#L1344) · [companion_remote_provider.dart L646](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/providers/companion_remote_provider.dart#L646)",
+      "files": [
+        "lib/providers/companion_remote_provider.dart",
+        "lib/screens/main_screen.dart",
+        "test/providers/companion_remote_provider_test.dart",
+        "test/screens/main_screen_layout_test.dart"
+      ]
+    },
+    {
+      "sha": "23778fade45fc046cdd77d274d501dd0a0643e07",
+      "source_url": "https://github.com/edde746/plezy/commit/23778fade45fc046cdd77d274d501dd0a0643e07",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(ios): show video only on external displays in iOS 27 SDK builds",
+      "disposition": "pending",
+      "evidence": "The fork has the scene delegate and external-window manager plus Duo code. Its root controller does not register the iOS 27 noninteractive external-display scene accessory. Adopt the guarded registration and retain previous-SDK behavior. Test video on the external screen with controls on the phone, plus route removal and ending playback. [PlezyFlutterViewController.swift L24](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/ios/Runner/PlezyFlutterViewController.swift#L24) · [ExternalDisplayManager.swift L144](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/ios/Runner/MpvPlayer/ExternalDisplayManager.swift#L144)",
+      "files": [
+        "ios/Runner/MpvPlayer/ExternalDisplayManager.swift",
+        "ios/Runner/PlezyFlutterViewController.swift",
+        "ios/RunnerTests/RunnerTests.swift"
+      ]
+    },
+    {
+      "sha": "e0a2a8e9f34872920d8a60394cc1bca9827f75d7",
+      "source_url": "https://github.com/edde746/plezy/commit/e0a2a8e9f34872920d8a60394cc1bca9827f75d7",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(libraries): ellipsize long library names in the phone library picker",
+      "disposition": "pending",
+      "evidence": "The library title is already inside Flexible with ellipsis. The multi-server subtitle still constructs LibraryServerLabel without constrainText. Its nested Row leaves the text child unconstrained by default. Pass the existing constraint flag and cover a long server name on a narrow phone. [libraries_screen.dart L949](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/libraries/libraries_screen.dart#L949) · [library_server_label.dart L57](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/libraries/library_server_label.dart#L57)",
+      "files": [
+        "lib/screens/libraries/libraries_screen.dart",
+        "test/screens/libraries/libraries_screen_test.dart"
+      ]
+    },
+    {
+      "sha": "06598fe202259c70311f65a43fe76eac8c5f1e90",
+      "source_url": "https://github.com/edde746/plezy/commit/06598fe202259c70311f65a43fe76eac8c5f1e90",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(libraries): move manage and refresh into a menu on narrow phones",
+      "disposition": "retained",
+      "evidence": "Below 600 logical pixels the fork already puts its larger action set in an adaptive overflow menu, including karaoke, sources and Find Next. Upstream keeps Options and Shuffle direct and groups Manage/Refresh. Keep the fork’s compact approach. Borrow direct-action/empty-library focus tests if those user interactions change. [libraries_screen.dart L1140](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/libraries/libraries_screen.dart#L1140)",
+      "files": [
+        "lib/screens/libraries/libraries_screen.dart",
+        "test/screens/libraries/libraries_screen_test.dart"
+      ]
+    },
+    {
+      "sha": "ad4518e66efd2609ce2272811af624039d127f84",
+      "source_url": "https://github.com/edde746/plezy/commit/ad4518e66efd2609ce2272811af624039d127f84",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(plex): check the server's Allow media deletion switch before deleting media",
+      "disposition": "pending",
+      "evidence": "The fork already checks owner/admin in the UI, probes the preference, rechecks before DELETE and fails closed on uncertainty. It uses /:/prefs and lacks the post-await authentication-session identity check. Use the root capability, refuse if the session changed, and explain a disabled switch distinctly in the menu feedback. Preserve the fork’s delete-impact confirmation and existing Jellyfin/Emby logic. [plex_client.dart L2632](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/plex_client.dart#L2632) · [media_context_menu.dart L2234](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/widgets/media_context_menu.dart#L2234) · [plex_delete_permission_test.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/test/services/plex_delete_permission_test.dart)",
+      "files": [
+        "lib/exceptions/media_server_exceptions.dart",
+        "lib/i18n/az.i18n.json",
+        "lib/i18n/bg.i18n.json",
+        "lib/i18n/da.i18n.json",
+        "lib/i18n/de.i18n.json",
+        "lib/i18n/en.i18n.json",
+        "lib/i18n/es.i18n.json",
+        "lib/i18n/fr.i18n.json",
+        "lib/i18n/hu.i18n.json",
+        "lib/i18n/it.i18n.json",
+        "lib/i18n/ja.i18n.json",
+        "lib/i18n/kk.i18n.json",
+        "lib/i18n/ko.i18n.json",
+        "lib/i18n/nb.i18n.json",
+        "lib/i18n/nl.i18n.json",
+        "lib/i18n/pl.i18n.json",
+        "lib/i18n/pt-PT.i18n.json",
+        "lib/i18n/pt.i18n.json",
+        "lib/i18n/ru.i18n.json",
+        "lib/i18n/strings.g.dart",
+        "lib/i18n/strings_en.g.dart",
+        "lib/i18n/sv.i18n.json",
+        "lib/i18n/tr.i18n.json",
+        "lib/i18n/uz.i18n.json",
+        "lib/i18n/zh-Hant.i18n.json",
+        "lib/i18n/zh.i18n.json",
+        "lib/media/media_server_client.dart",
+        "lib/services/jellyfin_client/parts/collections.dart",
+        "lib/services/multi_server_manager.dart",
+        "lib/services/plex_client.dart",
+        "lib/utils/media_server_timeouts.dart",
+        "lib/widgets/media_context_menu.dart",
+        "test/services/jellyfin_delete_permission_test.dart",
+        "test/services/plex_delete_permission_test.dart",
+        "test/utils/delete_impact_test.dart",
+        "test/widgets/media_context_menu_test.dart"
+      ]
+    },
+    {
+      "sha": "18a6637ce2cf978dff30422252d524dd2c2fda4f",
+      "source_url": "https://github.com/edde746/plezy/commit/18a6637ce2cf978dff30422252d524dd2c2fda4f",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(downloads): count purgeable space on iOS and macOS before refusing a download",
+      "disposition": "pending",
+      "evidence": "The vendored fork already checks important-usage capacity on iOS. Its macOS path uses statfs available blocks. Port a volume-aware important-usage fallback into the vendored desktop path. On iOS consider the upstream near-floor/30-second sampling approach and diagnostic byte counts. Preserve staging/destination checks and existing reserve policy. [StorageCapacity.swift L37](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/packages/background_downloader/ios/background_downloader/Sources/background_downloader/StorageCapacity.swift#L37) · [storage_space.dart L185](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/packages/background_downloader/lib/src/desktop/storage_space.dart#L185) · [8352046a9](https://github.com/snapetech-org/pleazyng/commit/8352046a99f2b453dab9d042355133086dc57680)",
+      "files": [
+        "pubspec.lock",
+        "pubspec.yaml"
+      ]
+    },
+    {
+      "sha": "54f135fe46f1aed4edc36a04241152fc9cac7bf5",
+      "source_url": "https://github.com/edde746/plezy/commit/54f135fe46f1aed4edc36a04241152fc9cac7bf5",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(downloads): stop sync rules from restarting downloads after a storage stop",
+      "disposition": "pending",
+      "evidence": "Sync-rule enqueues already carry userInitiated=false and recheck the storage stop after awaits. The user path still rearms per child inside queueDownload, and an auto-retry already running can get past timer cancellation and requeue. Rearm once at the explicit top-level request. Fence in-flight retries before altering stored failure state or queue membership. [download_provider.dart L2698](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/providers/download_provider.dart#L2698) · [download_manager_service.dart L1974](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/download_manager_service.dart#L1974) · [download_manager_service.dart L3278](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/download_manager_service.dart#L3278) · [8352046a9](https://github.com/snapetech-org/pleazyng/commit/8352046a99f2b453dab9d042355133086dc57680)",
+      "files": [
+        "lib/providers/download_provider.dart",
+        "lib/services/download_manager_service.dart",
+        "test/providers/download_provider_test.dart",
+        "test/services/download_manager_service_test.dart"
+      ]
+    },
+    {
+      "sha": "8310991fa14f0cbac9c71cfb494d028d4314c7ff",
+      "source_url": "https://github.com/edde746/plezy/commit/8310991fa14f0cbac9c71cfb494d028d4314c7ff",
+      "author": {
+        "login": "edde746",
+        "url": "https://github.com/edde746"
+      },
+      "subject": "fix(tv): reach the profile menu from an empty Home with the D-pad",
+      "disposition": "pending",
+      "evidence": "The fork has some toolbar/cloud-rail fallbacks, but a pending rail claim still returns on empty hubs and the TV error view wires Retry directly to load. Port the missing Retry/toolbar/sidebar transitions and cancellation when the user opens the profile menu. Test initial empty, error, and late data with fork-specific rails present and absent. [discover_screen.dart L298](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/discover_screen.dart#L298) · [discover_screen.dart L1333](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/discover_screen.dart#L1333) · [discover_screen_test.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/test/screens/discover_screen_test.dart)",
+      "files": [
+        "lib/focus/focusable_action_bar.dart",
+        "lib/screens/discover_screen.dart",
+        "test/screens/discover_screen_test.dart"
+      ]
+    }
+  ],
+  "pull_requests": [
+    {
+      "number": 3005,
+      "source_url": "https://github.com/edde746/plezy/pull/3005",
+      "author": "strata-scribe",
+      "state": "open",
+      "title": "feat(subtitles): support regional languages and prioritize exact matches (#3001)",
+      "decision": "Compare regional subtitle matching with the fork’s existing track-selection and subtitle-download paths. Worth examining for exact-language fallback."
+    },
+    {
+      "number": 3008,
+      "source_url": "https://github.com/edde746/plezy/pull/3008",
+      "author": "wthueb",
+      "state": "open",
+      "title": "fix(player): restore video visibility when returning from pip on macos",
+      "decision": "Investigate on macOS if returning from PiP leaves video hidden in the fork. A device reproduction would establish value."
+    },
+    {
+      "number": 3012,
+      "source_url": "https://github.com/edde746/plezy/pull/3012",
+      "author": "mkaflowski",
+      "state": "open",
+      "title": "feat(android): add app title to Android TV launcher banner",
+      "decision": "Keep the fork’s launcher banner and brand assets."
+    },
+    {
+      "number": 3017,
+      "source_url": "https://github.com/edde746/plezy/pull/3017",
+      "author": "a-j-jones",
+      "state": "merged",
+      "title": "perf(discover): rasterise the hero scrim gradient",
+      "decision": "Included in the main-branch commit ledger above."
+    },
+    {
+      "number": 3020,
+      "source_url": "https://github.com/edde746/plezy/pull/3020",
+      "author": "jmtagarro",
+      "state": "open",
+      "title": "fix(photos): open albums as containers and show photos in a full-screen viewer",
+      "decision": "Worth a separate photo UX review. Check album navigation and full-resolution display on supported backends before selecting a port."
+    },
+    {
+      "number": 3026,
+      "source_url": "https://github.com/edde746/plezy/pull/3026",
+      "author": "infixlabs",
+      "state": "open",
+      "title": "feat(subtitles): opt-in always-on subtitles",
+      "decision": "The fork already has alwaysShowSubtitlesOnDevice. Keep that path and compare only uncovered behavior."
+    },
+    {
+      "number": 3027,
+      "source_url": "https://github.com/edde746/plezy/pull/3027",
+      "author": "infixlabs",
+      "state": "open",
+      "title": "feat(subtitles): auto-download a Plex subtitle when the item has none",
+      "decision": "The fork already supports autoDownloadPreferredSubtitle. Retain its provider selection and download guards."
+    },
+    {
+      "number": 3028,
+      "source_url": "https://github.com/edde746/plezy/pull/3028",
+      "author": "infixlabs",
+      "state": "open",
+      "title": "feat(settings): live subtitle styling preview",
+      "decision": "The fork already has a live style-preview overlay. Skip a duplicate implementation."
+    },
+    {
+      "number": 3032,
+      "source_url": "https://github.com/edde746/plezy/pull/3032",
+      "author": "edde746",
+      "state": "merged",
+      "title": "perf(player): give mpv a constant title on iOS and tvOS",
+      "decision": "Included in the main-branch commit ledger above."
+    },
+    {
+      "number": 3033,
+      "source_url": "https://github.com/edde746/plezy/pull/3033",
+      "author": "edde746",
+      "state": "merged",
+      "title": "perf(player): give downloads in app storage a demuxer read-ahead hysteresis",
+      "decision": "Included in the main-branch commit ledger above."
+    },
+    {
+      "number": 3034,
+      "source_url": "https://github.com/edde746/plezy/pull/3034",
+      "author": "edde746",
+      "state": "merged",
+      "title": "perf(ios): activate the audio session while the video core is created",
+      "decision": "Included in the main-branch commit ledger above."
+    },
+    {
+      "number": 3035,
+      "source_url": "https://github.com/edde746/plezy/pull/3035",
+      "author": "edde746",
+      "state": "merged",
+      "title": "perf(player): leave mpv's unused builtin scripts unloaded on Android",
+      "decision": "Included in the main-branch commit ledger above."
+    },
+    {
+      "number": 3036,
+      "source_url": "https://github.com/edde746/plezy/pull/3036",
+      "author": "edde746",
+      "state": "closed",
+      "title": "perf(player): run MediaCodec asynchronously on two devices verified below API 31",
+      "decision": "Defer device-specific asynchronous MediaCodec changes. Two pre-API-31 models do not establish general support."
+    },
+    {
+      "number": 3058,
+      "source_url": "https://github.com/edde746/plezy/pull/3058",
+      "author": "NoahBK",
+      "state": "open",
+      "title": "Show reconnect banners after tracker session invalidation",
+      "decision": "Worth adapting if tracker sign-in expires silently. Keep reconnect notices profile-scoped and clear them on successful sign-in."
+    },
+    {
+      "number": 3067,
+      "source_url": "https://github.com/edde746/plezy/pull/3067",
+      "author": "luismiguelopes",
+      "state": "merged",
+      "title": "feat(i18n): add European Portuguese (pt-PT) locale",
+      "decision": "Included in the main-branch commit ledger above."
+    },
+    {
+      "number": 3070,
+      "source_url": "https://github.com/edde746/plezy/pull/3070",
+      "author": "jtlopezdev",
+      "state": "open",
+      "title": "feat(player): make the finish time optional",
+      "decision": "Optional. A user preference to hide finish time is independent of playback correctness."
+    },
+    {
+      "number": 3077,
+      "source_url": "https://github.com/edde746/plezy/pull/3077",
+      "author": "JackDanger",
+      "state": "closed",
+      "title": "feat(music): Radio and Shuffle for a music library, and Radio that keeps playing",
+      "decision": "Separate music-product decision. Compare continuous server radio with the fork’s existing music queues before adopting."
+    },
+    {
+      "number": 3078,
+      "source_url": "https://github.com/edde746/plezy/pull/3078",
+      "author": "JackDanger",
+      "state": "closed",
+      "title": "feat(music): play to Sonos and other speakers through Music Assistant",
+      "decision": "Music Assistant speaker output merits separate consideration if wanted. A new output integration has its own pairing and routing work."
+    },
+    {
+      "number": 3079,
+      "source_url": "https://github.com/edde746/plezy/pull/3079",
+      "author": "JackDanger",
+      "state": "closed",
+      "title": "feat(watch): an Apple Watch app that plays your Plex music",
+      "decision": "Standalone watchOS playback is a separate product and packaging commitment."
+    },
+    {
+      "number": 3080,
+      "source_url": "https://github.com/edde746/plezy/pull/3080",
+      "author": "JackDanger",
+      "state": "closed",
+      "title": "fix(search): stop a field's weight from overturning a stronger match",
+      "decision": "Keep as a source of ranking edge cases. The specific artist-album ranking fix already landed on both mains."
+    },
+    {
+      "number": 3081,
+      "source_url": "https://github.com/edde746/plezy/pull/3081",
+      "author": "JackDanger",
+      "state": "closed",
+      "title": "fix(playback): resolve the reporting client when reporting, not when playback opened",
+      "decision": "A useful consumer-side test case for Plex reconnection. Prefer the selected server-client lifetime fix first."
+    },
+    {
+      "number": 3082,
+      "source_url": "https://github.com/edde746/plezy/pull/3082",
+      "author": "JackDanger",
+      "state": "closed",
+      "title": "fix(home): give row titles room, and a second line for card titles",
+      "decision": "Review only for reproducible clipping at fork card sizes, TV distances and accessibility scales."
+    },
+    {
+      "number": 3083,
+      "source_url": "https://github.com/edde746/plezy/pull/3083",
+      "author": "JackDanger",
+      "state": "closed",
+      "title": "fix(paging): survive a library that changes while it is being read",
+      "decision": "Useful additional cases for moving or shrinking libraries. The missing-tail regression is already covered on both mains."
+    },
+    {
+      "number": 3084,
+      "source_url": "https://github.com/edde746/plezy/pull/3084",
+      "author": "JackDanger",
+      "state": "closed",
+      "title": "feat(logging): keep the session's log in a file you can pull off the device",
+      "decision": "Consider persistent session logs only alongside the fork’s redaction, retention and support-export behavior."
+    },
+    {
+      "number": 3087,
+      "source_url": "https://github.com/edde746/plezy/pull/3087",
+      "author": "smee2018",
+      "state": "open",
+      "title": "fix(tv): let the description use the full width in TV layout",
+      "decision": "Check genuinely truncated TV descriptions at the fork’s widths and text scales before changing layout."
+    },
+    {
+      "number": 3092,
+      "source_url": "https://github.com/edde746/plezy/pull/3092",
+      "author": "veresvit",
+      "state": "open",
+      "title": "feat(tvos): allow disabling dynamic Top Shelf content",
+      "decision": "Worth considering. An explicit static Top Shelf option also serves users with unlocked profiles."
+    },
+    {
+      "number": 3095,
+      "source_url": "https://github.com/edde746/plezy/pull/3095",
+      "author": "NoahBK",
+      "state": "open",
+      "title": "feat(settings): choose screenshot save location",
+      "decision": "Reasonable low-priority desktop preference. Keep the existing default and sandbox permissions."
+    },
+    {
+      "number": 3101,
+      "source_url": "https://github.com/edde746/plezy/pull/3101",
+      "author": "Ugoyo",
+      "state": "closed",
+      "title": "feat(android): install updates from the GitHub release in the app",
+      "decision": "Skip the generic Android in-app updater for parity. Any future direct-APK updater should be scoped to that distribution channel."
+    },
+    {
+      "number": 3111,
+      "source_url": "https://github.com/edde746/plezy/pull/3111",
+      "author": "wetpas",
+      "state": "open",
+      "title": "feat(seerr): \"My requests\" in Explore, with delete and remove actions",
+      "decision": "Pleazyng already has a Requests screen and user-scoped request browsing. Compare owner-authorized withdrawal/removal and surface only any missing actions."
+    },
+    {
+      "number": 3118,
+      "source_url": "https://github.com/edde746/plezy/pull/3118",
+      "author": "denizt",
+      "state": "open",
+      "title": "feat(metadata): add refresh metadata context menu item",
+      "decision": "Worth considering. A permission-aware per-item metadata refresh is distinct from metadata editing and library-wide refresh."
+    },
+    {
+      "number": 3119,
+      "source_url": "https://github.com/edde746/plezy/pull/3119",
+      "author": "jpdexter101-lang",
+      "state": "open",
+      "title": "feat(home): merge Recently Added rows across libraries (#1652)",
+      "decision": "The fork already aggregates sources for merged Recently Added rows (#1652). Check ordering/deduplication tests before importing anything."
+    },
+    {
+      "number": 3130,
+      "source_url": "https://github.com/edde746/plezy/pull/3130",
+      "author": "davidmarcantonio",
+      "state": "open",
+      "title": "feat(deep-links): play and shuffle video playlists from plezy:// links",
+      "decision": "Strong optional candidate. Fork links already resolve several media kinds and shuffle shows. Add a distinct video-playlist resolution and handoff for ordered and shuffled play while preserving profile/server identity."
+    }
+  ],
+  "disposition_counts": {
+    "pending": 17,
+    "deferred": 1,
+    "adapted": 9,
+    "retained": 2
+  }
+}
