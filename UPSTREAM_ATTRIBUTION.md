@@ -1,5 +1,7 @@
 # Upstream source attribution
 
+- Reconcile the macOS video layer with actual window visibility after PiP closes. Preserve explicitly hidden, sleeping and occluded states and restore playback activity only for visible playing video. [wthueb](https://github.com/wthueb) proposed [Plezy PR #3008](https://github.com/edde746/plezy/pull/3008).
+
 - Allow users to withdraw their own pending film or TV request. The client rechecks the request, owner, title and edition before deleting the request record. Library files remain under the server administrator’s control. [wetpas](https://github.com/wetpas) proposed [Plezy PR #3111](https://github.com/edde746/plezy/pull/3111).
 
 - Desktop users can select or reset the screenshot folder. macOS remembers the user-approved folder with a security-scoped bookmark, and mpv retains its Pictures default. [NoahBK](https://github.com/NoahBK) proposed [Plezy PR #3095](https://github.com/edde746/plezy/pull/3095).

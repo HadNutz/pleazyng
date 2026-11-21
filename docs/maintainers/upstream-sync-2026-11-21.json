@@ -544,7 +544,8 @@
       "author": "wthueb",
       "state": "open",
       "title": "fix(player): restore video visibility when returning from pip on macos",
-      "decision": "Investigate on macOS if returning from PiP leaves video hidden in the fork. A device reproduction would establish value."
+      "decision": "Adapted in Pleazyng. Reconcile the macOS video layer with actual window visibility after PiP closes. Preserve explicitly hidden, sleeping and occluded states and restore playback activity only for visible playing video.",
+      "upstream_head": "3e81882c8d8306c7ff33a936c20851d6e03e7f87"
     },
     {
       "number": 3012,
