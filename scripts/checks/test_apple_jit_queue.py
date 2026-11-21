@@ -147,6 +147,18 @@ class AppleQueueTests(unittest.TestCase):
         self.assertEqual(read.call_count, 2)
         sleep.assert_called_once_with(2)
 
+    def test_truncated_github_json_response_retries_before_abandoning_apple_queue(self):
+        responses = (
+            subprocess.CompletedProcess([], 1, '', 'gh: unexpected end of JSON input'),
+            subprocess.CompletedProcess([], 0, '{', ''),
+            subprocess.CompletedProcess([], 0, '{"jobs": []}', ''),
+        )
+        with patch.object(queue.subprocess, 'run', side_effect=responses) as read, \
+                patch.object(queue.time, 'sleep') as sleep:
+            self.assertEqual(queue.gh_json('api', 'repos/example/actions/jobs'), {'jobs': []})
+        self.assertEqual(read.call_count, 3)
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [2, 4])
+
     def test_inventory_outage_retries_are_bounded_and_auth_failures_are_immediate(self):
         for status, attempts in ((503, 4), (403, 1)):
             failed = subprocess.CompletedProcess([], 1, '', f'gh: Server Error (HTTP {status})')

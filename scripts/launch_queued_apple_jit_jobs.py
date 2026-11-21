@@ -53,17 +53,26 @@ def gh_json(*args: str) -> dict:
             stderr=subprocess.PIPE,
             text=True,
         )
-        transient = re.search(r"\(HTTP (?:500|502|503|504)\)", result.stderr)
-        if not result.returncode or not transient or attempt == 3:
-            break
-        time.sleep(2 ** (attempt + 1))
-    if result.returncode:
-        detail = result.stderr.strip() or "GitHub CLI returned an error."
-        raise QueueError(detail)
-    try:
-        value = json.loads(result.stdout)
-    except json.JSONDecodeError as error:
-        raise QueueError("GitHub CLI returned invalid JSON.") from error
+        detail = result.stderr.strip()
+        transient_error = bool(re.search(
+            r"\(HTTP (?:500|502|503|504)\)|unexpected end of JSON input|unexpected end of input|unexpected EOF",
+            detail, re.IGNORECASE,
+        ))
+        if result.returncode:
+            if transient_error and attempt < 3:
+                time.sleep(2 ** (attempt + 1))
+                continue
+            raise QueueError(detail or "GitHub CLI returned an error.")
+        try:
+            value = json.loads(result.stdout)
+        except json.JSONDecodeError as error:
+            truncated = (error.pos >= max(0, len(result.stdout.rstrip()) - 1)
+                         or not result.stdout.strip())
+            if truncated and attempt < 3:
+                time.sleep(2 ** (attempt + 1))
+                continue
+            raise QueueError("GitHub CLI returned invalid JSON.") from error
+        break
     if not isinstance(value, dict):
         raise QueueError("GitHub CLI returned an unexpected response.")
     return value
