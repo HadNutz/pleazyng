@@ -266,24 +266,25 @@ final class MpvPlayerContractTests: XCTestCase {
       wait(for: [accepted], timeout: nativeCompletionTimeout)
       return try XCTUnwrap(result).get()
     }
-    let entry = try XCTUnwrap(command(["loadfile", clip.path]))
+    _ = try command(["loadfile", clip.path])
     XCTAssertSuccess(awaitProperty(core, name: "pause", value: "no"))
     let readyBy = Date().addingTimeInterval(nativeCompletionTimeout)
     while Date() < readyBy && ((try? timePos(core)) ?? 0) < 0.1 { pump(0.05) }
     XCTAssertEqual(try awaitGetProperty(core, name: "current-vo").get(), "avfoundation")
+    let entry = try XCTUnwrap(try awaitGetProperty(core, name: "playlist/0/id").get())
     for preset in ["performance", "quality"] {
       let before = try timePos(core)
       XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-preset", value: preset))
       XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "yes"))
       pump(0.35)
       XCTAssertGreaterThan(try timePos(core), before)
-      XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), String(entry))
+      XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
     }
     XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "no"))
     let before = try timePos(core)
     pump(0.35)
     XCTAssertGreaterThan(try timePos(core), before)
-    XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), String(entry))
+    XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
   }
 
   func testRealSetPropertyValidInvalidNonexistentAndPauseCache() {

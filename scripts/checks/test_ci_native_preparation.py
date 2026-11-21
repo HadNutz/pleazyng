@@ -121,6 +121,15 @@ class NativePreparationOrderTests(unittest.TestCase):
             if name != 'ios-motion':
                 self.assertIn("inputs.action != 'ios-motion'", config['if'], name)
 
+    def test_motion_selector_names_an_existing_iphone_test(self):
+        selector = re.search(r'-only-testing:RunnerTests/(\w+)/(\w+)', APPLE_SUITE.read_text())
+        self.assertIsNotNone(selector)
+        suite, method = selector.groups()
+        source = (ROOT / 'ios/RunnerTests/RunnerTests.swift').read_text()
+        declaration = re.search(rf'^final class {suite}: XCTestCase \{{.*?^\}}', source, re.M | re.S)
+        self.assertIsNotNone(declaration, suite)
+        self.assertIn(f'func {method}()', declaration.group())
+
     def test_apple_native_job_installs_required_runtime_generators(self):
         body = job(WORKFLOW.read_text(), 'apple-native-suite')
         tools = step(body, 'Ensure CMake for the embedded Steam receiver')
