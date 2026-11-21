@@ -14,7 +14,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: pull-request-${{ github.head_ref || github.ref_name }}
+  # Preserve the suite for each published integration checkpoint. Duplicate events
+  # for the same reviewed head share a group and ordinary PRs still supersede old runs.
+  group: pull-request-${{ github.head_ref || github.ref_name }}-${{ startsWith(github.head_ref || github.ref_name, 'integration/upstream-') && (github.event.pull_request.head.sha || github.sha) || 'latest' }}
   cancel-in-progress: true
 
 env:
@@ -76,13 +78,16 @@ jobs:
         run: python3 scripts/prepare_native_downloads.py --sqlite-platform linux --arch x64
 
       - name: Install wakelock_plus development dependencies
+        id: prepared
         working-directory: packages/wakelock_plus
         run: flutter pub get --enforce-lockfile --no-example
 
       - name: Verify generated files
+        if: ${{ !cancelled() && steps.prepared.outcome == 'success' }}
         run: scripts/codegen.sh --check
 
       - name: Check Dart file growth and wildcard error handling
+        if: ${{ !cancelled() && steps.prepared.outcome == 'success' }}
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: |
@@ -91,6 +96,7 @@ jobs:
           dart run scripts/checks/dart_source_ratchet.dart "$base"
 
       - name: Verify translation hygiene
+        if: ${{ !cancelled() && steps.prepared.outcome == 'success' }}
         run: |
           python3 scripts/checks/clean_translations.py --check --strict
           python3 scripts/checks/check_localizations.py
@@ -98,18 +104,23 @@ jobs:
           python3 scripts/codegen/generate_platform_locales.py --check
 
       - name: Verify workflow and script guards
+        if: ${{ !cancelled() && steps.prepared.outcome == 'success' }}
         run: bash scripts/ci_guard_checks.sh
 
       - name: Verify formatting
+        if: ${{ !cancelled() && steps.prepared.outcome == 'success' }}
         run: bash scripts/format_dart.sh --check
 
       - name: Verify icon consistency
+        if: ${{ !cancelled() && steps.prepared.outcome == 'success' }}
         run: dart run scripts/checks/check_icon_consistency.dart
 
       - name: Analyze code
+        if: ${{ !cancelled() && steps.prepared.outcome == 'success' }}
         run: dart run scripts/checks/check_analyzer.dart
 
       - name: Check for unused code and files
+        if: ${{ !cancelled() && steps.prepared.outcome == 'success' }}
         run: |
           set -euo pipefail
           dart run dart_code_linter:metrics check-unused-code lib 2>&1 | tee unused_code.txt
