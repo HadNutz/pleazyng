@@ -66,12 +66,8 @@ jobs:
         if: matrix.check == 'lint'
         working-directory: android
         run: |
-          if test -f app/lint-baseline.xml; then
-            ./gradlew -PpleazyngFullAndroidLint :app:lintDebug -x :app:compileFlutterBuildDebug --console=plain
-          else
-            ./gradlew -PpleazyngFullAndroidLint :app:updateLintBaseline -x :app:compileFlutterBuildDebug --console=plain
-            test -s app/lint-baseline.xml
-          fi
+          test -s app/lint-baseline.xml
+          ./gradlew -PpleazyngFullAndroidLint :app:lintDebug -x :app:compileFlutterBuildDebug --console=plain
       - name: Preserve the measured Android lint results
         if: ${{ !cancelled() && matrix.check == 'lint' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
