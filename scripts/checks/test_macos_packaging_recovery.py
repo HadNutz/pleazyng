@@ -77,7 +77,8 @@ class MacPackagingProofTests(unittest.TestCase):
             return self.jobs if '/runs/42/' in path else [self.recovered]
         with patch.object(recovery,'api',side_effect=api),patch.object(recovery,'collection',side_effect=collection),\
              patch.object(recovery,'ci_proof',return_value={'ci_run_id':23}):
-            return recovery.verify_macos_packaging_recovery(42,43,'c'*40,'3.0.3')
+            run_id, macos_run = ('42', '43') if fresh_rebuild else (42, 43)
+            return recovery.verify_macos_packaging_recovery(run_id,macos_run,'c'*40,'3.0.3')
 
     def test_all_original_platforms_and_qualified_mac_form_complete_proof(self):
         proof=self.prove()

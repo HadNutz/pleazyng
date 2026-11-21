@@ -1076,6 +1076,8 @@ def verify_macos_packaging_recovery(run_id, macos_run, head_sha, version, reposi
     from recover_macos_app import build_contract
     if repository != REPOSITORY or not all(str(v).isdigit() for v in (run_id, macos_run)) or not re.fullmatch(r"[0-9a-f]{40}", head_sha):
         raise RecoveryError("Mac recovery requires exact trusted run and source identities.")
+    run_id = int(run_id)
+    macos_run = int(macos_run)
     source = api(f"repos/{repository}/actions/runs/{run_id}")
     native = api(f"repos/{repository}/actions/runs/{macos_run}")
     for run in (source, native):
