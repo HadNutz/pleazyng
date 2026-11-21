@@ -430,7 +430,7 @@ void main() {
 
     await _pumpPlaybackSettings(tester);
 
-    final title = find.text('Show "Ends at" time');
+    final title = find.text(t.settings.showFinishTime);
     await tester.scrollUntilVisible(title, 500, scrollable: find.byType(Scrollable).first);
     await tester.ensureVisible(title);
     await tester.pumpAndSettle();
