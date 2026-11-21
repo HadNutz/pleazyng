@@ -36,6 +36,7 @@ void main() {
 
   setUp(() async {
     resetSharedPreferencesForTest();
+    await SettingsService.getInstance();
     SystemShelfService().debugReset();
   });
 
