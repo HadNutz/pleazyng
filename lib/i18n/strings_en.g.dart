@@ -3010,6 +3010,9 @@ class Translations$mediaMenu$en {
 	/// en: 'Media item deleted successfully'
 	String get mediaDeletedSuccessfully => 'Media item deleted successfully';
 
+	/// en: 'Media deletion is turned off on this server. Turn on "Allow media deletion" in the server's Library settings.'
+	String get mediaDeletionDisabledOnServer => 'Media deletion is turned off on this server. Turn on "Allow media deletion" in the server\'s Library settings.';
+
 	/// en: 'Failed to delete media item'
 	String get mediaFailedToDelete => 'Failed to delete media item';
 
@@ -19245,6 +19248,7 @@ extension on Translations {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng could not check which files this will remove, so it may delete more than the item named above. Cancel and try again, or delete anyway.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Your server did not provide file details for this item, so Pleazyng cannot check which files this will remove. It may delete more than the item named above.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Media item deleted successfully',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Media deletion is turned off on this server. Turn on "Allow media deletion" in the server\'s Library settings.',
 			'mediaMenu.mediaFailedToDelete' => 'Failed to delete media item',
 			'mediaMenu.rate' => 'Rate',
 			'mediaMenu.playFromBeginning' => 'Play from Beginning',
@@ -19268,9 +19272,9 @@ extension on Translations {
 			'accessibility.increase' => 'Increase',
 			'accessibility.decreaseValue' => ({required Object label}) => 'Decrease ${label}',
 			'accessibility.increaseValue' => ({required Object label}) => 'Increase ${label}',
-			'accessibility.hue' => 'Hue',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.hue' => 'Hue',
 			'accessibility.saturation' => 'Saturation',
 			'accessibility.brightness' => 'Brightness',
 			'accessibility.hexColor' => 'Hex color',
@@ -19782,9 +19786,9 @@ extension on Translations {
 			'iptv.localRecordingAlreadyScheduled' => 'This program is already scheduled for local recording.',
 			'iptv.localRecordingSchedules' => 'Local recording schedule',
 			'iptv.scheduledOnThisDevice' => 'Scheduled on this device',
-			'iptv.cancelLocalRecording' => 'Cancel local recording?',
 			_ => null,
 		} ?? switch (path) {
+			'iptv.cancelLocalRecording' => 'Cancel local recording?',
 			'iptv.cancelLocalRecordingConfirm' => ({required Object programme}) => 'Cancel the local recording of ${programme}?',
 			'iptv.cancelSchedule' => 'Cancel schedule',
 			'iptv.localRecordingCancelled' => 'Local recording schedule cancelled.',
@@ -20296,9 +20300,9 @@ extension on Translations {
 			'explore.characters' => 'Characters',
 			'explore.addToWatchlist' => 'Add to Watchlist',
 			'explore.removeFromWatchlist' => 'Remove from Watchlist',
-			'explore.addedToWatchlist' => 'Added to watchlist',
 			_ => null,
 		} ?? switch (path) {
+			'explore.addedToWatchlist' => 'Added to watchlist',
 			'explore.removedFromWatchlist' => 'Removed from watchlist',
 			'explore.watchlistUpdateFailed' => 'Couldn\'t update watchlist',
 			'explore.watchlistNoMatch' => 'Couldn\'t match this item to a watchlist',
@@ -20810,9 +20814,9 @@ extension on Translations {
 			'downloads.downloadOnce' => 'Download once',
 			'downloads.keepNUnwatched' => ({required Object count}) => 'Keep ${count} unwatched',
 			'downloads.editSyncRule' => 'Edit sync rule',
-			'downloads.removeSyncRule' => 'Remove sync rule',
 			_ => null,
 		} ?? switch (path) {
+			'downloads.removeSyncRule' => 'Remove sync rule',
 			'downloads.removeSyncRuleConfirm' => ({required Object title}) => 'Stop syncing "${title}"? Downloaded episodes will be kept.',
 			'downloads.removeListSyncRuleConfirm' => ({required Object title}) => 'Stop syncing "${title}"?',
 			'downloads.deleteSyncRuleDownloads' => 'Also delete associated downloads',
@@ -21324,9 +21328,9 @@ extension on Translations {
 			'matchScreen.jellyfinLibrary' => 'Jellyfin library',
 			'matchScreen.embyLibrary' => 'Emby library',
 			'serverTasks.title' => 'Server Tasks',
-			'serverTasks.failedToLoad' => 'Failed to load tasks',
 			_ => null,
 		} ?? switch (path) {
+			'serverTasks.failedToLoad' => 'Failed to load tasks',
 			'serverTasks.noTasks' => 'No tasks running',
 			'trakt.title' => 'Trakt',
 			'trakt.connected' => 'Connected',
@@ -21838,9 +21842,9 @@ extension on Translations {
 			'universalMedia.playlist' => 'Playlist',
 			'universalMedia.files' => 'Device files',
 			'universalMedia.favorites' => 'Saved stream favorites',
-			'universalMedia.address' => 'Media address',
 			_ => null,
 		} ?? switch (path) {
+			'universalMedia.address' => 'Media address',
 			'universalMedia.addressHelp' => 'HTTPS is preferred. URLs with recognized credential or signature parameters are used only for this session and cannot be saved as favorites.',
 			'universalMedia.displayName' => 'Display name (optional)',
 			'universalMedia.displayNameHelp' => 'Choose a short name for the player and system media controls.',
@@ -22352,9 +22356,9 @@ extension on Translations {
 			'sourceSetup.optionalPassword' => 'Account password (optional)',
 			'sourceSetup.subtitlePrivacy' => 'Get an API key from opensubtitles.com. Search sends the video title and available IMDb/TMDB IDs, never the video file. The key and optional account credentials are encrypted with this source.',
 			'sourceSetup.automaticMetadata' => 'Automatic online video metadata',
-			'sourceSetup.metadataPrivacy' => 'Sends only filename title/year and episode numbers or an NFO ID, never media or credentials. NFO fields stay authoritative.',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.metadataPrivacy' => 'Sends only filename title/year and episode numbers or an NFO ID, never media or credentials. NFO fields stay authoritative.',
 			'sourceSetup.nfsEncryptionFailure' => 'For encrypted NFS, check RFC 9289 and TLS 1.3 support on both NAS services, the certificate name, and the export UID/GID. Pleazyng will not retry this connection without encryption.',
 			'sourceSetup.sourceConnecting' => 'Connecting to source',
 			'sourceSetup.metadataSearchPrivacy' => 'This title search goes to Trakt. It sends the title you enter, not the video or source credentials.',
@@ -22866,9 +22870,9 @@ extension on Translations {
 			'podcasts.serverHelp' => 'Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.',
 			'podcasts.viewAll' => 'Show more episodes',
 			'podcasts.inLibrary' => 'Open podcast',
-			'podcasts.rateLimited' => 'Wait a few seconds before searching again.',
 			_ => null,
 		} ?? switch (path) {
+			'podcasts.rateLimited' => 'Wait a few seconds before searching again.',
 			'podcasts.syncConnect' => 'gpodder-compatible sync',
 			'podcasts.syncPrivacy' => 'This server receives subscription and episode URLs, which may contain private membership tokens, and listening positions. Credentials and sync checkpoints are encrypted on this device. Subscription removal is synchronized; existing downloads and history are retained.',
 			'podcasts.syncConsent' => 'Share podcast URLs and listening progress with this server',
@@ -23380,9 +23384,9 @@ extension on Translations {
 			'karaokeUi.phoneInputRequires16kHzCapture' => 'This browser cannot supply the required 16 kHz capture path.',
 			'karaokeUi.phoneInputNeedsActivePerformance' => 'Return to an active performance before enabling capture.',
 			'karaokeUi.phoneCaptureRequiresTrustedHTTPS' => 'Phone capture requires the host HTTPS room with a certificate trusted by this phone. The ordinary LAN songbook remains available.',
-			'karaokeUi.phoneInputNeedsAssignedSinger' => 'The host must start a request assigned to your singer before you enable input.',
 			_ => null,
 		} ?? switch (path) {
+			'karaokeUi.phoneInputNeedsAssignedSinger' => 'The host must start a request assigned to your singer before you enable input.',
 			'karaokeUi.phoneInputUncalibratedPracticeOnly' => 'Phone timing is uncalibrated. Feedback is for practice and does not enter competitive leaderboards.',
 			'karaokeUi.pitchMIDI' => ({required Object value1}) => 'Pitch: MIDI ${value1}',
 			'karaokeUi.performanceScore' => ({required Object value1, required Object value2}) => 'Score: ${value1} / 10000 · ${value2}',

@@ -156,13 +156,9 @@ void main() {
   test('deletes only the resolved episode rating key', () async {
     final plex = plexClient(
       (path) async => switch (path) {
-        '/:/prefs' => http.Response(
+        '/' => http.Response(
           jsonEncode({
-            'MediaContainer': {
-              'Setting': [
-                {'id': 'allowMediaDeletion', 'value': true},
-              ],
-            },
+            'MediaContainer': {'allowMediaDeletion': true},
           }),
           200,
           headers: {'content-type': 'application/json'},
@@ -182,7 +178,7 @@ void main() {
 
     expect(plex.deleted, ['ep-2'], reason: 'a shared file must not widen the DELETE to its siblings');
     expect(plex.paths, contains('/library/metadata/ep-2'));
-    expect(plex.paths, contains('/:/prefs'));
+    expect(plex.paths, contains('/'));
   });
 
   test('an episode alone in its file resolves as exclusive', () async {

@@ -2630,7 +2630,10 @@ class PlexClient
   /// Returns true if deletion was successful, false otherwise
   @override
   Future<bool> deleteMediaItem(MediaItem item) async {
-    if (await fetchDeletePermission(item) != true) return false;
+    final session = _authenticationSessionId;
+    final allowed = await fetchDeletePermission(item);
+    if (!identical(session, _authenticationSessionId) || allowed == null) return false;
+    if (!allowed) throw const MediaDeletionRefusedException('Media deletion is disabled on this server');
     return _wrapBoolApiCall(() => _http.delete('/library/metadata/${item.id}'), 'Failed to delete media item');
   }
 
@@ -2643,18 +2646,15 @@ class PlexClient
     final abort = AbortController();
     try {
       final response = await _http
-          .get(
-            '/:/prefs',
-            timeout: MediaServerTimeouts.plexDeletePermission,
-            abort: abort,
-            allowEndpointFailover: false,
-          )
+          .get('/', timeout: MediaServerTimeouts.plexDeletePermission, abort: abort, allowEndpointFailover: false)
           .namedTimeout(MediaServerTimeouts.plexDeletePermission, operation: 'plex delete permission');
       throwIfHttpError(response);
-      final value = _parseSettingsMap(response)['allowMediaDeletion'];
+      final container = _getMediaContainer(response);
+      if (container == null) return null;
+      final value = container['allowMediaDeletion'];
       return switch (value) {
         true || 1 || '1' || 'true' => true,
-        false || 0 || '0' || 'false' => false,
+        false || 0 || '0' || 'false' || null => false,
         _ => null,
       };
     } on TimeoutException {

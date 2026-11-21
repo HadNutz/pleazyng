@@ -1,5 +1,7 @@
 # Upstream source attribution
 
+- Read Plex’s live deletion capability from the server root and reject confirmation when the active authentication session changes during the request. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/ad4518e66efd2609ce2272811af624039d127f84) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
 - Rearm a storage-stopped queue only once per explicit download request, skip blocked sync-rule passes, and keep in-flight retries from clearing the storage error. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/54f135fe46f1aed4edc36a04241152fc9cac7bf5) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 
 - Constrain long multi-server subtitles inside the compact library picker while preserving full library choices. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/e0a2a8e9f34872920d8a60394cc1bca9827f75d7) to upstream Plezy. Pleazyng integrated the behavior for this fork.

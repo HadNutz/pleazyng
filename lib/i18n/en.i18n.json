@@ -1057,6 +1057,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng could not check which files this will remove, so it may delete more than the item named above. Cancel and try again, or delete anyway.",
     "deleteScopeUnverifiedNoFileInfo": "Your server did not provide file details for this item, so Pleazyng cannot check which files this will remove. It may delete more than the item named above.",
     "mediaDeletedSuccessfully": "Media item deleted successfully",
+    "mediaDeletionDisabledOnServer": "Media deletion is turned off on this server. Turn on \"Allow media deletion\" in the server's Library settings.",
     "mediaFailedToDelete": "Failed to delete media item",
     "rate": "Rate",
     "playFromBeginning": "Play from Beginning",

@@ -438,8 +438,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "fix(plex): check the server's Allow media deletion switch before deleting media",
-      "disposition": "pending",
-      "evidence": "The fork already checks owner/admin in the UI, probes the preference, rechecks before DELETE and fails closed on uncertainty. It uses /:/prefs and lacks the post-await authentication-session identity check. Use the root capability, refuse if the session changed, and explain a disabled switch distinctly in the menu feedback. Preserve the fork’s delete-impact confirmation and existing Jellyfin/Emby logic. [plex_client.dart L2632](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/services/plex_client.dart#L2632) · [media_context_menu.dart L2234](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/widgets/media_context_menu.dart#L2234) · [plex_delete_permission_test.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/test/services/plex_delete_permission_test.dart)",
+      "disposition": "adapted",
+      "evidence": "Read Plex’s live deletion capability from the server root and reject confirmation when the active authentication session changes during the request.",
       "files": [
         "lib/exceptions/media_server_exceptions.dart",
         "lib/i18n/az.i18n.json",
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "adapted": 21,
+    "adapted": 22,
     "deferred": 1,
     "retained": 2,
-    "pending": 5
+    "pending": 4
   }
 }

@@ -26,6 +26,7 @@ import '../services/watch_actions.dart';
 import '../services/deep_links/item_links.dart';
 import '../services/catalog/library_watchlist_candidates.dart';
 import '../utils/content_utils.dart';
+import '../exceptions/media_server_exceptions.dart';
 import '../utils/delete_impact.dart';
 import '../utils/download_utils.dart';
 import '../utils/download_deletion_confirmation.dart';
@@ -2249,6 +2250,8 @@ class MediaContextMenuState extends State<MediaContextMenu> {
           showErrorSnackBar(context, t.mediaMenu.mediaFailedToDelete);
         }
       }
+    } on MediaDeletionRefusedException {
+      if (context.mounted) showErrorSnackBar(context, t.mediaMenu.mediaDeletionDisabledOnServer);
     } catch (e) {
       appLogger.e(t.mediaMenu.mediaFailedToDelete, error: e);
       if (context.mounted) {
