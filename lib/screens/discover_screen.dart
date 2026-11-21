@@ -37,6 +37,7 @@ import '../utils/video_player_navigation.dart';
 import '../widgets/clickable_cursor.dart';
 import '../widgets/fitting_title_text.dart';
 import '../widgets/optimized_media_image.dart' show ClearLogoImage, blurArtwork;
+import '../widgets/rasterized_gradient.dart';
 import '../widgets/toolbar_scrim.dart';
 import '../widgets/system_clock.dart';
 import '../providers/discover_provider.dart';
@@ -1619,7 +1620,7 @@ class _DiscoverScreenState extends State<DiscoverScreen>
               ),
             ),
           ),
-          // Gradient Overlay - blends into scaffold background
+          // Rasterize the artwork scrim once per gradient configuration.
           PositionedDirectional(
             top: 0,
             start: 0,
@@ -1628,17 +1629,15 @@ class _DiscoverScreenState extends State<DiscoverScreen>
             child: Builder(
               builder: (context) {
                 final bgColor = Theme.of(context).scaffoldBackgroundColor;
-                return Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      // Reach full bg before the bottom edge so the hero
-                      // blends seamlessly into the content below and the
-                      // page dots sit on a solid band.
-                      colors: [bgColor.withValues(alpha: 0), bgColor.withValues(alpha: 0.9), bgColor, bgColor],
-                      stops: isTv ? const [0.25, 0.78, 0.94, 1.0] : const [0.5, 0.85, 0.94, 1.0],
-                    ),
+                return RasterizedGradient(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    // Reach full bg before the bottom edge so the hero
+                    // blends seamlessly into the content below and the
+                    // page dots sit on a solid band.
+                    colors: [bgColor.withValues(alpha: 0), bgColor.withValues(alpha: 0.9), bgColor, bgColor],
+                    stops: isTv ? const [0.25, 0.78, 0.94, 1.0] : const [0.5, 0.85, 0.94, 1.0],
                   ),
                 );
               },

@@ -14,8 +14,8 @@
         "url": "https://github.com/a-j-jones"
       },
       "subject": "perf(discover): rasterise the hero scrim gradient (#3017)",
-      "disposition": "pending",
-      "evidence": "The fork still draws a full-height gradient over scrolling artwork. Use the rasterized gradient widget the fork already uses on detail screens. Preserve the fork’s theme colors, stops and reduced-motion behavior. The upstream Linux measurements justify profiling this screen here. [discover_screen.dart L1578](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/discover_screen.dart#L1578) · [rasterized_gradient.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/widgets/rasterized_gradient.dart)",
+      "disposition": "adapted",
+      "evidence": "Rasterize the Discover backdrop gradient while retaining the fork’s responsive artwork and theme stops.",
       "files": [
         "lib/screens/discover_screen.dart",
         "test/screens/discover_screen_test.dart"
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "pending": 9,
-    "adapted": 17,
+    "adapted": 18,
     "deferred": 1,
+    "pending": 8,
     "retained": 2
   }
 }

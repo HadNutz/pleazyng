@@ -1,5 +1,7 @@
 # Upstream source attribution
 
+- Rasterize the Discover backdrop gradient while retaining the fork’s responsive artwork and theme stops. [a-j-jones](https://github.com/a-j-jones) contributed [the original change](https://github.com/edde746/plezy/commit/77f11b86f06a3cd7ec73072dfc9c60bb6c985eb5) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
 - Avoid starting unused built-in mpv scripts on Android while keeping explicit video-core configuration overrides. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/4c3c25b8233bb887d7224b3844f3763a88b720c5) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 
 - Batch demuxer refills only for uncached app-owned downloads, respecting custom mpv options and resetting the property on subsequent opens. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/3bf8c2752739a83cb5038fef9287bd6aac7d1e19) to upstream Plezy. Pleazyng integrated the behavior for this fork.
