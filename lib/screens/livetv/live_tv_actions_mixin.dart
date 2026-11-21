@@ -119,7 +119,7 @@ mixin LiveTvActionsMixin<T extends StatefulWidget> on State<T> {
               return true;
             } catch (_) {
               if (effectiveContext.mounted) showErrorSnackBar(effectiveContext, t.iptv.recordingActionFailed);
-              return false;
+              return false; // Leave the guide action available for another attempt.
             }
           };
         }
