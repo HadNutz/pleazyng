@@ -1143,6 +1143,7 @@ class Translations$mediaMenu$zh extends Translations$mediaMenu$en {
 	@override String get rate => '评分';
 	@override String get playFromBeginning => '从头播放';
 	@override String get playVersion => '播放版本…';
+	@override String get mediaDeletionDisabledOnServer => '此服务器已关闭媒体删除功能。请在服务器的媒体库设置中允许删除媒体。';
 }
 
 // Path: rateSheet
@@ -6588,6 +6589,7 @@ extension on TranslationsZh {
 			'mediaMenu.rate' => '评分',
 			'mediaMenu.playFromBeginning' => '从头播放',
 			'mediaMenu.playVersion' => '播放版本…',
+			'mediaMenu.mediaDeletionDisabledOnServer' => '此服务器已关闭媒体删除功能。请在服务器的媒体库设置中允许删除媒体。',
 			'rateSheet.title' => '评分',
 			'rateSheet.server' => '服务器',
 			'rateSheet.favorite' => '收藏',
@@ -6652,9 +6654,9 @@ extension on TranslationsZh {
 			'tooltips.markAsWatched' => '标记为已观看',
 			'tooltips.markAsUnwatched' => '标记为未观看',
 			'audioTracks.track' => ({required Object n}) => '音轨 ${n}',
-			'videoControls.audioLabel' => '音频',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => '音频',
 			'videoControls.subtitlesLabel' => '字幕',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => '黑边模式',
@@ -7166,9 +7168,9 @@ extension on TranslationsZh {
 			'errors.noClientAvailable' => '没有可用客户端',
 			'errors.pleaseEnterToken' => '请输入一个令牌',
 			'errors.invalidToken' => '令牌无效',
-			'errors.failedToVerifyToken' => ({required Object error}) => '无法验证令牌：${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => '无法验证令牌：${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '无法切换到 ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '无法删除 ${displayName}',
 			'errors.failedToRate' => '无法更新评分',
@@ -7680,9 +7682,9 @@ extension on TranslationsZh {
 			'playlists.created' => '播放列表已创建',
 			'playlists.deleted' => '播放列表已删除',
 			'playlists.itemAdded' => '已添加到播放列表',
-			'playlists.itemRemoved' => '已从播放列表中移除',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => '已从播放列表中移除',
 			'playlists.selectPlaylist' => '选择播放列表',
 			'playlists.searchPlaylists' => '搜索播放列表…',
 			'playlists.errorCreating' => '创建播放列表失败',
@@ -8194,9 +8196,9 @@ extension on TranslationsZh {
 			'performanceOverlay.avSync' => 'A/V 同步',
 			'performanceOverlay.dropped' => '丢帧',
 			'performanceOverlay.dvRpus' => 'DV RPU',
-			'performanceOverlay.dvRpuAverage' => 'DV RPU 平均',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'DV RPU 平均',
 			'performanceOverlay.dvSampleAverage' => 'DV 采样平均',
 			'performanceOverlay.maxLuma' => '最大亮度',
 			'performanceOverlay.minLuma' => '最小亮度',
@@ -8708,9 +8710,9 @@ extension on TranslationsZh {
 			'homeLayout.removeHub' => '取消 Hub',
 			'homeLayout.noPlexRows' => '第Plex号管理行返回此图书馆。',
 			'homeLayout.openDetails' => '开放细节',
-			'homeLayout.heroCards' => '英雄卡',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => '英雄卡',
 			'homeLayout.tapHeroCard' => '打破英雄卡',
 			'homeLayout.tvPlayFocus' => '电视远程:突出点击播放按钮',
 			'homeLayout.tvPlayFocusDescription' => '按方向键下键时，焦点会先停在播放按钮上，再移到下一行。关闭时会直接跳到下一行。',
@@ -9222,9 +9224,9 @@ extension on TranslationsZh {
 			'audiobook.recoveryExported' => '加密恢复文件保存。',
 			'audiobook.recoveryImported' => '恢复数据合并。',
 			'sourceSetup.bookorbitHelp' => '使用你自己的 BookOrbit 账户登录，即可浏览和播放书籍。缺少的书名仍会通过已连接的 SeerrNG 实例提交请求。',
-			'sourceSetup.bookorbitOpen' => '在 BookOrbit 中打开',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => '在 BookOrbit 中打开',
 			'sourceSetup.bookorbitDetailHelp' => '在 BookOrbit 中查看此书，以管理书库详情和 Pleazyng 无法打开的格式。收听进度会与您的 BookOrbit 账户同步。',
 			'sourceSetup.savedCertificate' => '已保存的服务器证书',
 			'sourceSetup.nfsEndpointInvalid' => '请输入 NFS 地址，例如 nfs://nas:2049/export。',
@@ -9736,9 +9738,9 @@ extension on TranslationsZh {
 			'musicTools.rules' => '筛选',
 			'musicTools.exclusiveOutput' => '独占音频输出',
 			'musicTools.preamp' => '前置放大',
-			'musicTools.ratingPending' => '已保存在此设备；等待同步',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => '已保存在此设备；等待同步',
 			'musicTools.lyricsOffset' => '歌词时间偏移',
 			'musicTools.anniversaries' => '专辑发行纪念日',
 			'musicTools.outputPreset' => '此输出的均衡器',

@@ -1053,7 +1053,8 @@
     "mediaFailedToDelete": "ناپدید شدن حذف رسانه ها",
     "rate": "ارزیابی کن",
     "playFromBeginning": "از ابتدا اجرا کن",
-    "playVersion": "بازی نسخه..."
+    "playVersion": "بازی نسخه...",
+    "mediaDeletionDisabledOnServer": "حذف رسانه در این سرور غیرفعال است. در تنظیمات کتابخانهٔ سرور، اجازهٔ حذف رسانه را فعال کنید."
   },
   "rateSheet": {
     "title": "ارزیابی کن",

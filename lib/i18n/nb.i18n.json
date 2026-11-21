@@ -1053,7 +1053,8 @@
     "mediaFailedToDelete": "Kunne ikke slette medieelement",
     "rate": "Vurder",
     "playFromBeginning": "Spill fra begynnelsen",
-    "playVersion": "Spill av versjon..."
+    "playVersion": "Spill av versjon...",
+    "mediaDeletionDisabledOnServer": "Sletting av medier er slått av på denne serveren. Tillat sletting av medier i serverens bibliotekinnstillinger."
   },
   "rateSheet": {
     "title": "Vurder",

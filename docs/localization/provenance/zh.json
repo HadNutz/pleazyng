@@ -1,7 +1,7 @@
 {
   "locale": "zh",
   "inherits": null,
-  "catalogSha256": "92232a235c3d82b53025ef9b40b9cdfba2f2c8eb250c7d083610e6795a75a0ea",
+  "catalogSha256": "641873fa9eeb6c861bd447154612f6d34139d6afc1ddd8ad3fa455be17a250df",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3706,7 +3706,8 @@
     "subtitleAiUi.subtitleEncodingPreviewCueCount": "assistant-generated-draft",
     "subtitleAiUi.subtitleEncodingNoCues": "assistant-generated-draft",
     "subtitleAiUi.subtitleEncodingDecodeFailed": "assistant-generated-draft",
-    "subtitleAiUi.subtitleEncodingUsePreview": "assistant-generated-draft"
+    "subtitleAiUi.subtitleEncodingUsePreview": "assistant-generated-draft",
+    "mediaMenu.mediaDeletionDisabledOnServer": "assistant-generated-draft"
   },
   "beforeIndependentQaCorrection": {
     "settings.cloudBackupDescription": "m2m100-draft",

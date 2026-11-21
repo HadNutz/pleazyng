@@ -1053,7 +1053,8 @@
     "mediaFailedToDelete": "Media elementini oʻchirib boʻlmadi",
     "rate": "Baho berish",
     "playFromBeginning": "Boshidan ijro etish",
-    "playVersion": "Versiyani ijro etish..."
+    "playVersion": "Versiyani ijro etish...",
+    "mediaDeletionDisabledOnServer": "Bu serverda media fayllarni oʻchirish oʻchirilgan. Server kutubxonasi sozlamalarida media fayllarni oʻchirishga ruxsat bering."
   },
   "rateSheet": {
     "title": "Baho berish",

@@ -717,7 +717,8 @@
     "deleteMultipleWarning": "Isto inclui todos os episódios e os respetivos ficheiros.",
     "mediaDeletedSuccessfully": "Item multimédia eliminado com sucesso",
     "mediaFailedToDelete": "Falha ao eliminar o item multimédia",
-    "playVersion": "Reproduzir versão..."
+    "playVersion": "Reproduzir versão...",
+    "mediaDeletionDisabledOnServer": "A eliminação de conteúdos está desativada neste servidor. Permita a eliminação de conteúdos nas definições da biblioteca do servidor."
   },
   "rateSheet": {
     "title": "Classificar",

@@ -1145,6 +1145,7 @@ class _Translations$mediaMenu$tr extends Translations$mediaMenu$en {
 	@override String get rate => 'Oyla';
 	@override String get playFromBeginning => 'Baştan Oynat';
 	@override String get playVersion => 'Sürümü Oynat...';
+	@override String get mediaDeletionDisabledOnServer => 'Bu sunucuda medya silme kapalı. Sunucunun kitaplık ayarlarında medya silmeye izin verin.';
 }
 
 // Path: rateSheet
@@ -6593,6 +6594,7 @@ extension on TranslationsTr {
 			'mediaMenu.rate' => 'Oyla',
 			'mediaMenu.playFromBeginning' => 'Baştan Oynat',
 			'mediaMenu.playVersion' => 'Sürümü Oynat...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Bu sunucuda medya silme kapalı. Sunucunun kitaplık ayarlarında medya silmeye izin verin.',
 			'rateSheet.title' => 'Oyla',
 			'rateSheet.server' => 'Sunucu',
 			'rateSheet.favorite' => 'Favori',
@@ -6657,9 +6659,9 @@ extension on TranslationsTr {
 			'tooltips.markAsWatched' => 'İzlendi olarak işaretle',
 			'tooltips.markAsUnwatched' => 'İzlenmedi olarak işaretle',
 			'audioTracks.track' => ({required Object n}) => 'Ses Parçası ${n}',
-			'videoControls.audioLabel' => 'Ses',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'Ses',
 			'videoControls.subtitlesLabel' => 'Altyazı',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Geniş Ekran (Letterbox)',
@@ -7171,9 +7173,9 @@ extension on TranslationsTr {
 			'errors.noClientAvailable' => 'Kullanılabilir istemci yok',
 			'errors.pleaseEnterToken' => 'Lütfen bir belirteç (token) girin',
 			'errors.invalidToken' => 'Geçersiz belirteç',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'Belirteç doğrulanamadı: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'Belirteç doğrulanamadı: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName} profiline geçilemedi',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName} profili silinemedi',
 			'errors.failedToRate' => 'Puan güncellenemedi',
@@ -7685,9 +7687,9 @@ extension on TranslationsTr {
 			'playlists.created' => 'Oynatma listesi oluşturuldu',
 			'playlists.deleted' => 'Oynatma listesi silindi',
 			'playlists.itemAdded' => 'Oynatma listesine eklendi',
-			'playlists.itemRemoved' => 'Oynatma listesinden kaldırıldı',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'Oynatma listesinden kaldırıldı',
 			'playlists.selectPlaylist' => 'Oynatma Listesi Seç',
 			'playlists.searchPlaylists' => 'Oynatma listelerinde ara...',
 			'playlists.errorCreating' => 'Oynatma listesi oluşturulamadı',
@@ -8199,9 +8201,9 @@ extension on TranslationsTr {
 			'performanceOverlay.avSync' => 'A/V Eşitleme',
 			'performanceOverlay.dropped' => 'Kare Kaybı',
 			'performanceOverlay.dvRpus' => 'DV RPU\'ları',
-			'performanceOverlay.dvRpuAverage' => 'DV RPU Ort.',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'DV RPU Ort.',
 			'performanceOverlay.dvSampleAverage' => 'DV Örnek Ort.',
 			'performanceOverlay.maxLuma' => 'Maks Luma',
 			'performanceOverlay.minLuma' => 'Min Luma',
@@ -8713,9 +8715,9 @@ extension on TranslationsTr {
 			'homeLayout.removeHub' => 'Hub kaldırma',
 			'homeLayout.noPlexRows' => 'Plex yönetilen satırlar bu kütüphane için geri döndü.',
 			'homeLayout.openDetails' => 'Açılış Detaylar',
-			'homeLayout.heroCards' => 'kahraman kartları',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'kahraman kartları',
 			'homeLayout.tapHeroCard' => 'Bir kahraman kartı çalınan',
 			'homeLayout.tvPlayFocus' => 'TV uzaktan: vurgulama Play düğmesi',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad aşağı, bir sonraki satırda ilerlemeden önce Play düğmesinde durur.',
@@ -9227,9 +9229,9 @@ extension on TranslationsTr {
 			'audiobook.recoveryExported' => 'Şifreli kurtarma dosyası kaydedildi.',
 			'audiobook.recoveryImported' => 'Kurtarma verileri birleşti.',
 			'sourceSetup.bookorbitHelp' => 'Kitaplarınıza göz atmak ve oynatmak için kendi BookOrbit hesabınızla giriş yapın. Eksik içerik istekleri bağlı SeerrNG örneğiniz üzerinden gönderilmeye devam eder.',
-			'sourceSetup.bookorbitOpen' => 'BookOrbit’te aç',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'BookOrbit’te aç',
 			'sourceSetup.bookorbitDetailHelp' => 'Kitaplık ayrıntılarını ve Pleazyng’in açamadığı biçimleri yönetmek için bu içeriği BookOrbit’te görüntüleyin. Dinleme ilerlemesi BookOrbit hesabınızla eşitlenir.',
 			'sourceSetup.savedCertificate' => 'Kaydedilmiş sunucu sertifikası',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export gibi bir NFS URL’si girin.',
@@ -9741,9 +9743,9 @@ extension on TranslationsTr {
 			'musicTools.rules' => 'Filtreler',
 			'musicTools.exclusiveOutput' => 'Özel ses çıkışı',
 			'musicTools.preamp' => 'Ön yükseltme',
-			'musicTools.ratingPending' => 'Bu cihaza kaydedildi; eşitleme bekleniyor',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'Bu cihaza kaydedildi; eşitleme bekleniyor',
 			'musicTools.lyricsOffset' => 'Şarkı sözü zaman kaydırması',
 			'musicTools.anniversaries' => 'Albüm yıl dönümleri',
 			'musicTools.outputPreset' => 'Bu çıkış için ekolayzer',

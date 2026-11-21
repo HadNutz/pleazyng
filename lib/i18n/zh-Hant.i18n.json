@@ -1051,7 +1051,8 @@
     "mediaFailedToDelete": "刪除媒體失敗",
     "rate": "評分",
     "playFromBeginning": "從頭播放",
-    "playVersion": "播放版本…"
+    "playVersion": "播放版本…",
+    "mediaDeletionDisabledOnServer": "此伺服器已關閉媒體刪除功能。請在伺服器的媒體庫設定中允許刪除媒體。"
   },
   "rateSheet": {
     "title": "評分",

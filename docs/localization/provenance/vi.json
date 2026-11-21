@@ -1,7 +1,7 @@
 {
   "locale": "vi",
   "inherits": null,
-  "catalogSha256": "6a8aa3825d29c47530b7fb6d1919ee9d215c2a34de70f266f579e59a553ff52c",
+  "catalogSha256": "9109ff8ddda4ec7b6fa3ad7e64e01c4acb0490d255cdbb45c5a37f414ffd0c99",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3679,7 +3679,8 @@
     "subtitleAiUi.subtitleEncodingPreviewCueCount": "assistant-generated-draft",
     "subtitleAiUi.subtitleEncodingNoCues": "assistant-generated-draft",
     "subtitleAiUi.subtitleEncodingDecodeFailed": "assistant-generated-draft",
-    "subtitleAiUi.subtitleEncodingUsePreview": "assistant-generated-draft"
+    "subtitleAiUi.subtitleEncodingUsePreview": "assistant-generated-draft",
+    "mediaMenu.mediaDeletionDisabledOnServer": "assistant-generated-draft"
   },
   "beforeIndependentQaCorrection": {
     "auth.localDataRecoveryRequired": "m2m100-draft",

@@ -1,7 +1,7 @@
 {
   "locale": "pt-PT",
   "inherits": "pt",
-  "catalogSha256": "a13e717b33b0bb423b43c7e20b4fe27272c413a379ff3c14fe738819f383ed62",
+  "catalogSha256": "2c8135a27c1538150f19534f00941bc6b7f8b9ea909ea695bef084ed5c4fd857",
   "nativeSpeakerReviewed": false,
   "messages": {
     "cast.subtitle": "jellyfin-web:Subtitles",
@@ -2304,7 +2304,8 @@
     "deepLinks.profileHint": "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01",
     "deepLinks.openAsProfile": "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01",
     "deepLinks.copy": "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01",
-    "deepLinks.copied": "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01"
+    "deepLinks.copied": "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01",
+    "mediaMenu.mediaDeletionDisabledOnServer": "assistant-generated-draft"
   },
   "integrationAiQaReport": "../LANGUAGE_QA_INTEGRATION.md",
   "beforeMainMergeReview": {

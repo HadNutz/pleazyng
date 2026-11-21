@@ -1147,6 +1147,7 @@ class _Translations$mediaMenu$he extends Translations$mediaMenu$en {
 	@override String get rate => 'דירוג';
 	@override String get playFromBeginning => 'נגן מהתחלה';
 	@override String get playVersion => 'לשחק גרסה...';
+	@override String get mediaDeletionDisabledOnServer => 'מחיקת מדיה מושבתת בשרת הזה. יש לאפשר מחיקת מדיה בהגדרות הספרייה של השרת.';
 }
 
 // Path: rateSheet
@@ -6601,6 +6602,7 @@ extension on TranslationsHe {
 			'mediaMenu.rate' => 'דירוג',
 			'mediaMenu.playFromBeginning' => 'נגן מהתחלה',
 			'mediaMenu.playVersion' => 'לשחק גרסה...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'מחיקת מדיה מושבתת בשרת הזה. יש לאפשר מחיקת מדיה בהגדרות הספרייה של השרת.',
 			'rateSheet.title' => 'דירוג',
 			'rateSheet.server' => 'שרת',
 			'rateSheet.favorite' => 'מועדף',
@@ -6665,9 +6667,9 @@ extension on TranslationsHe {
 			'tooltips.markAsWatched' => 'מארק כפי שנצפה',
 			'tooltips.markAsUnwatched' => 'מארק כבלתי צפוי',
 			'audioTracks.track' => ({required Object n}) => 'אודיו טרק ${n}',
-			'videoControls.audioLabel' => 'שמע',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'שמע',
 			'videoControls.subtitlesLabel' => 'כתוביות',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'תיבת הדואר',
@@ -7179,9 +7181,9 @@ extension on TranslationsHe {
 			'errors.noClientAvailable' => 'אין לקוחות זמינים',
 			'errors.pleaseEnterToken' => 'אנא הקלד טוקן',
 			'errors.invalidToken' => 'טוקיו חסר תועלת',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'לא ניתן לבדוק טוקן: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'לא ניתן לבדוק טוקן: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'לא הצלחתי לעבור ל- ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'לא הצלחתי למחוק ${displayName}',
 			'errors.failedToRate' => 'לא ניתן לשדרג את הדירוג',
@@ -7693,9 +7695,9 @@ extension on TranslationsHe {
 			'playlists.created' => 'Playlist שנוצר',
 			'playlists.deleted' => 'Playlist מוחלף',
 			'playlists.itemAdded' => 'הוספת ל playlist',
-			'playlists.itemRemoved' => 'הוסרו מהפלאי',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'הוסרו מהפלאי',
 			'playlists.selectPlaylist' => 'בחר Playlist',
 			'playlists.searchPlaylists' => 'מחפשים רשימת משחקים',
 			'playlists.errorCreating' => 'לא הצלחתי ליצור רשימת משחקים',
@@ -8207,9 +8209,9 @@ extension on TranslationsHe {
 			'performanceOverlay.avSync' => 'A/V סינכרון',
 			'performanceOverlay.dropped' => 'נופל',
 			'performanceOverlay.dvRpus' => 'דב RPU',
-			'performanceOverlay.dvRpuAverage' => 'ה-RPU AVG',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'ה-RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'דוגמאות AVG',
 			'performanceOverlay.maxLuma' => 'מקס לומה',
 			'performanceOverlay.minLuma' => 'לומא',
@@ -8721,9 +8723,9 @@ extension on TranslationsHe {
 			'homeLayout.removeHub' => 'להסיר Hub',
 			'homeLayout.noPlexRows' => 'מספר Plex שורות המנוהלות חזרה לספריה זו.',
 			'homeLayout.openDetails' => 'פרטים פתוחים',
-			'homeLayout.heroCards' => 'כרטיסי גיבור',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'כרטיסי גיבור',
 			'homeLayout.tapHeroCard' => 'להדביק כרטיס גיבור',
 			'homeLayout.tvPlayFocus' => 'טלוויזיה מרחוק: כפתור Play',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad למטה עוצר על כפתור המשחק לפני העברת השורה הבאה.',
@@ -9235,9 +9237,9 @@ extension on TranslationsHe {
 			'audiobook.recoveryExported' => 'קובץ ההחזרה מוצפן נשמר.',
 			'audiobook.recoveryImported' => 'נתוני ההחזרה מתמזגים.',
 			'sourceSetup.bookorbitHelp' => 'יש להתחבר לחשבון BookOrbit האישי שלך כדי לעיין בספרים ולנגן אותם. בקשות לכותרות חסרות עדיין עוברות דרך מופע SeerrNG המחובר שלך.',
-			'sourceSetup.bookorbitOpen' => 'פתיחה ב-BookOrbit',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'פתיחה ב-BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'אפשר לצפות בכותר הזה ב-BookOrbit כדי לנהל את פרטי הספרייה ואת הפורמטים ש-Pleazyng לא יכול לפתוח. התקדמות ההאזנה מסתנכרנת עם חשבון BookOrbit שלך.',
 			'sourceSetup.savedCertificate' => 'אישור השרת השמור',
 			'sourceSetup.nfsEndpointInvalid' => 'יש להזין כתובת NFS, למשל nfs://nas:2049/export.',
@@ -9749,9 +9751,9 @@ extension on TranslationsHe {
 			'musicTools.rules' => 'מסננים',
 			'musicTools.exclusiveOutput' => 'פלט שמע בלעדי',
 			'musicTools.preamp' => 'קדם־הגברה',
-			'musicTools.ratingPending' => 'נשמר במכשיר הזה; ממתין לסנכרון',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'נשמר במכשיר הזה; ממתין לסנכרון',
 			'musicTools.lyricsOffset' => 'היסט תזמון המילים',
 			'musicTools.anniversaries' => 'ימי שנה לאלבומים',
 			'musicTools.outputPreset' => 'אקולייזר לפלט הזה',

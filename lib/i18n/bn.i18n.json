@@ -1053,7 +1053,8 @@
     "mediaFailedToDelete": "মিডিয়া পণ্য মুছে ফেলে না",
     "rate": "রাত",
     "playFromBeginning": "শুরু থেকে খেলা",
-    "playVersion": "গেম সংস্করণ..."
+    "playVersion": "গেম সংস্করণ...",
+    "mediaDeletionDisabledOnServer": "এই সার্ভারে মিডিয়া মুছে ফেলা বন্ধ আছে। সার্ভারের লাইব্রেরি সেটিংসে মিডিয়া মুছে ফেলার অনুমতি চালু করুন।"
   },
   "rateSheet": {
     "title": "রাত",

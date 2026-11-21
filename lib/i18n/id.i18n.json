@@ -1048,7 +1048,8 @@
     "mediaFailedToDelete": "gagal menghapus media item",
     "rate": "Rating",
     "playFromBeginning": "Mainkan dari awal",
-    "playVersion": "Bermain versi..."
+    "playVersion": "Bermain versi...",
+    "mediaDeletionDisabledOnServer": "Penghapusan media dinonaktifkan di server ini. Izinkan penghapusan media di pengaturan pustaka server."
   },
   "rateSheet": {
     "title": "Rating",

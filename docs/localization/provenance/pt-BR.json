@@ -1,7 +1,7 @@
 {
   "locale": "pt-BR",
   "inherits": "pt",
-  "catalogSha256": "867ae198b8d1ef143c5032fe309dcef20f7a31d3c7c68df5813c3656629360c8",
+  "catalogSha256": "935e6d92cf57991de2d850b74a66cae2cccaa25fecbc1ab4868af32d46670cc2",
   "nativeSpeakerReviewed": false,
   "messages": {
     "cast.subtitle": "jellyfin-web:Subtitles",
@@ -397,7 +397,8 @@
     "discover.findNext.savedFeedback": "retained-main:9a17bbd0bff73071079c8b1bc4d85b77557b42fe",
     "discover.findNext.skippedFeedback": "retained-main:9a17bbd0bff73071079c8b1bc4d85b77557b42fe",
     "discover.findNext.releaseToConfirm": "retained-main:9a17bbd0bff73071079c8b1bc4d85b77557b42fe",
-    "discover.findNext.remoteHint": "retained-main:9a17bbd0bff73071079c8b1bc4d85b77557b42fe"
+    "discover.findNext.remoteHint": "retained-main:9a17bbd0bff73071079c8b1bc4d85b77557b42fe",
+    "mediaMenu.mediaDeletionDisabledOnServer": "assistant-generated-draft"
   },
   "integrationAiQaReport": "../LANGUAGE_QA_INTEGRATION.md",
   "beforeMainMergeReview": {

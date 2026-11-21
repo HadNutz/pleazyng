@@ -1155,6 +1155,7 @@ class _Translations$mediaMenu$pl extends Translations$mediaMenu$en {
 	@override String get rate => 'Oceń';
 	@override String get playFromBeginning => 'Odtwórz od początku';
 	@override String get playVersion => 'Odtwórz wersję...';
+	@override String get mediaDeletionDisabledOnServer => 'Usuwanie multimediów na tym serwerze jest wyłączone. Zezwól na usuwanie multimediów w ustawieniach biblioteki serwera.';
 }
 
 // Path: rateSheet
@@ -6643,6 +6644,7 @@ extension on TranslationsPl {
 			'mediaMenu.rate' => 'Oceń',
 			'mediaMenu.playFromBeginning' => 'Odtwórz od początku',
 			'mediaMenu.playVersion' => 'Odtwórz wersję...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Usuwanie multimediów na tym serwerze jest wyłączone. Zezwól na usuwanie multimediów w ustawieniach biblioteki serwera.',
 			'rateSheet.title' => 'Oceń',
 			'rateSheet.server' => 'Serwer',
 			'rateSheet.favorite' => 'Dodaj do ulubionych',
@@ -6707,9 +6709,9 @@ extension on TranslationsPl {
 			'tooltips.markAsWatched' => 'Oznacz jako obejrzane',
 			'tooltips.markAsUnwatched' => 'Oznacz jako nieobejrzane',
 			'audioTracks.track' => ({required Object n}) => 'Ścieżka audio ${n}',
-			'videoControls.audioLabel' => 'Audio',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'Audio',
 			'videoControls.subtitlesLabel' => 'Napisy',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Pasy wokół obrazu',
@@ -7221,9 +7223,9 @@ extension on TranslationsPl {
 			'errors.noClientAvailable' => 'Brak dostępnego klienta',
 			'errors.pleaseEnterToken' => 'Wprowadź token',
 			'errors.invalidToken' => 'Nieprawidłowy token',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'Nie udało się zweryfikować tokena: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'Nie udało się zweryfikować tokena: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Nie udało się przełączyć na ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Nie udało się usunąć ${displayName}',
 			'errors.failedToRate' => 'Nie udało się zaktualizować oceny',
@@ -7735,9 +7737,9 @@ extension on TranslationsPl {
 			'playlists.created' => 'Playlista utworzona',
 			'playlists.deleted' => 'Playlista usunięta',
 			'playlists.itemAdded' => 'Dodano do playlisty',
-			'playlists.itemRemoved' => 'Usunięto z playlisty',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'Usunięto z playlisty',
 			'playlists.selectPlaylist' => 'Wybierz playlistę',
 			'playlists.searchPlaylists' => 'Szukaj playlist...',
 			'playlists.errorCreating' => 'Nie udało się utworzyć playlisty',
@@ -8249,9 +8251,9 @@ extension on TranslationsPl {
 			'performanceOverlay.avSync' => 'Synchronizacja A/V',
 			'performanceOverlay.dropped' => 'Pominięte',
 			'performanceOverlay.dvRpus' => 'DV RPU',
-			'performanceOverlay.dvRpuAverage' => 'Śr. DV RPU',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'Śr. DV RPU',
 			'performanceOverlay.dvSampleAverage' => 'Śr. próbki DV',
 			'performanceOverlay.maxLuma' => 'Maks. luma',
 			'performanceOverlay.minLuma' => 'Min. luma',
@@ -8763,9 +8765,9 @@ extension on TranslationsPl {
 			'homeLayout.removeHub' => 'Usuń Hub',
 			'homeLayout.noPlexRows' => 'Nr Plex rzędy zarządzane powróciły do tej biblioteki.',
 			'homeLayout.openDetails' => 'Szczegóły otwarte',
-			'homeLayout.heroCards' => 'Karta bohatera',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'Karta bohatera',
 			'homeLayout.tapHeroCard' => 'Złapanie karty bohatera',
 			'homeLayout.tvPlayFocus' => 'Telewizja zdalna: podniesienie przycisku Play',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad w dół zatrzymuje się na przycisku Play przed przejściem do następnego rzędu.',
@@ -9277,9 +9279,9 @@ extension on TranslationsPl {
 			'audiobook.recoveryExported' => 'Szyfrowane pliki odzyskiwania zostały zapisane.',
 			'audiobook.recoveryImported' => 'Dane odzyskiwania połączenia.',
 			'sourceSetup.bookorbitHelp' => 'Zaloguj się na własne konto BookOrbit, aby przeglądać i odtwarzać zawarte w nim książki. Zamówienia niedostępnych tytułów nadal są wysyłane przez połączoną instancję SeerrNG.',
-			'sourceSetup.bookorbitOpen' => 'Otwórz w BookOrbit',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'Otwórz w BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Wyświetl ten tytuł w BookOrbit, aby zarządzać szczegółami biblioteki i formatami, których Pleazyng nie może otworzyć. Postęp słuchania synchronizuje się z kontem BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Zapisany certyfikat serwera',
 			'sourceSetup.nfsEndpointInvalid' => 'Wprowadź adres NFS, np. nfs://nas:2049/export.',
@@ -9791,9 +9793,9 @@ extension on TranslationsPl {
 			'musicTools.rules' => 'Filtry',
 			'musicTools.exclusiveOutput' => 'Wyłączne wyjście audio',
 			'musicTools.preamp' => 'Wzmocnienie wstępne',
-			'musicTools.ratingPending' => 'Zapisano na tym urządzeniu; oczekuje na synchronizację',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'Zapisano na tym urządzeniu; oczekuje na synchronizację',
 			'musicTools.lyricsOffset' => 'Przesunięcie czasu tekstu',
 			'musicTools.anniversaries' => 'Rocznice albumów',
 			'musicTools.outputPreset' => 'Korektor dla tego wyjścia',

@@ -1051,7 +1051,8 @@
     "mediaFailedToDelete": "미디어 항목 삭제 실패",
     "rate": "평가",
     "playFromBeginning": "처음부터 재생",
-    "playVersion": "버전 재생..."
+    "playVersion": "버전 재생...",
+    "mediaDeletionDisabledOnServer": "이 서버에서는 미디어 삭제가 비활성화되어 있습니다. 서버의 라이브러리 설정에서 미디어 삭제를 허용하세요."
   },
   "rateSheet": {
     "title": "평가",

@@ -1145,6 +1145,7 @@ class _Translations$mediaMenu$nl extends Translations$mediaMenu$en {
 	@override String get rate => 'Beoordelen';
 	@override String get playFromBeginning => 'Afspelen vanaf het begin';
 	@override String get playVersion => 'Versie afspelen...';
+	@override String get mediaDeletionDisabledOnServer => 'Het verwijderen van media is op deze server uitgeschakeld. Sta het verwijderen van media toe in de bibliotheekinstellingen van de server.';
 }
 
 // Path: rateSheet
@@ -6593,6 +6594,7 @@ extension on TranslationsNl {
 			'mediaMenu.rate' => 'Beoordelen',
 			'mediaMenu.playFromBeginning' => 'Afspelen vanaf het begin',
 			'mediaMenu.playVersion' => 'Versie afspelen...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Het verwijderen van media is op deze server uitgeschakeld. Sta het verwijderen van media toe in de bibliotheekinstellingen van de server.',
 			'rateSheet.title' => 'Beoordelen',
 			'rateSheet.server' => 'Server',
 			'rateSheet.favorite' => 'Favoriet',
@@ -6657,9 +6659,9 @@ extension on TranslationsNl {
 			'tooltips.markAsWatched' => 'Als bekeken markeren',
 			'tooltips.markAsUnwatched' => 'Als ongekeken markeren',
 			'audioTracks.track' => ({required Object n}) => 'Audiospoor ${n}',
-			'videoControls.audioLabel' => 'Audio',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'Audio',
 			'videoControls.subtitlesLabel' => 'Ondertitels',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Letterbox',
@@ -7171,9 +7173,9 @@ extension on TranslationsNl {
 			'errors.noClientAvailable' => 'Geen client beschikbaar',
 			'errors.pleaseEnterToken' => 'Voer een token in',
 			'errors.invalidToken' => 'Ongeldig token',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'Kon token niet verifiëren: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'Kon token niet verifiëren: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Kon niet wisselen naar ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Kon ${displayName} niet verwijderen',
 			'errors.failedToRate' => 'Beoordeling kon niet worden bijgewerkt',
@@ -7685,9 +7687,9 @@ extension on TranslationsNl {
 			'playlists.created' => 'Afspeellijst gemaakt',
 			'playlists.deleted' => 'Afspeellijst verwijderd',
 			'playlists.itemAdded' => 'Toegevoegd aan afspeellijst',
-			'playlists.itemRemoved' => 'Verwijderd uit afspeellijst',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'Verwijderd uit afspeellijst',
 			'playlists.selectPlaylist' => 'Afspeellijst selecteren',
 			'playlists.searchPlaylists' => 'Afspeellijsten zoeken...',
 			'playlists.errorCreating' => 'Afspeellijst maken mislukt',
@@ -8199,9 +8201,9 @@ extension on TranslationsNl {
 			'performanceOverlay.avSync' => 'A/V-sync',
 			'performanceOverlay.dropped' => 'Gedropt',
 			'performanceOverlay.dvRpus' => 'DV RPU’s',
-			'performanceOverlay.dvRpuAverage' => 'DV RPU gem.',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'DV RPU gem.',
 			'performanceOverlay.dvSampleAverage' => 'DV-sample gem.',
 			'performanceOverlay.maxLuma' => 'Max luma',
 			'performanceOverlay.minLuma' => 'Min luma',
@@ -8713,9 +8715,9 @@ extension on TranslationsNl {
 			'homeLayout.removeHub' => 'Verwijder Hub',
 			'homeLayout.noPlexRows' => 'Nr. Plex-geheerd rijen teruggekeerd voor deze bibliotheek.',
 			'homeLayout.openDetails' => 'Open details',
-			'homeLayout.heroCards' => 'Hero kaartjes',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'Hero kaartjes',
 			'homeLayout.tapHeroCard' => 'Een heldenkaart te verliezen',
 			'homeLayout.tvPlayFocus' => 'Televisie op afstand: de hoogtepunt Play-knop',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad down stopt op de Play-knop voordat u naar de volgende rij gaat.',
@@ -9227,9 +9229,9 @@ extension on TranslationsNl {
 			'audiobook.recoveryExported' => 'Encrypt herstel bestand is opgeslagen.',
 			'audiobook.recoveryImported' => 'Recovery data samengesteld.',
 			'sourceSetup.bookorbitHelp' => 'Meld je aan met je eigen BookOrbit-account om de boeken daar te bekijken en af te spelen. Aanvragen voor ontbrekende titels worden nog steeds via je gekoppelde SeerrNG-instantie verstuurd.',
-			'sourceSetup.bookorbitOpen' => 'Openen in BookOrbit',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'Openen in BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Bekijk deze titel in BookOrbit om bibliotheekgegevens en indelingen te beheren die Pleazyng niet kan openen. Je luistervoortgang wordt gesynchroniseerd met je BookOrbit-account.',
 			'sourceSetup.savedCertificate' => 'Opgeslagen servercertificaat',
 			'sourceSetup.nfsEndpointInvalid' => 'Voer een NFS-URL in, zoals nfs://nas:2049/export.',
@@ -9741,9 +9743,9 @@ extension on TranslationsNl {
 			'musicTools.rules' => 'Filters',
 			'musicTools.exclusiveOutput' => 'Exclusieve audio-uitvoer',
 			'musicTools.preamp' => 'Voorversterking',
-			'musicTools.ratingPending' => 'Op dit apparaat opgeslagen; wacht op synchronisatie',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'Op dit apparaat opgeslagen; wacht op synchronisatie',
 			'musicTools.lyricsOffset' => 'Tijdsverschuiving songtekst',
 			'musicTools.anniversaries' => 'Albumjubilea',
 			'musicTools.outputPreset' => 'EQ voor deze uitgang',

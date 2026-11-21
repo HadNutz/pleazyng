@@ -1155,6 +1155,7 @@ class _Translations$mediaMenu$ru extends Translations$mediaMenu$en {
 	@override String get rate => 'Оценить';
 	@override String get playFromBeginning => 'Воспроизвести сначала';
 	@override String get playVersion => 'Воспроизвести версию...';
+	@override String get mediaDeletionDisabledOnServer => 'Удаление медиафайлов на этом сервере отключено. Разрешите удаление медиафайлов в настройках библиотеки сервера.';
 }
 
 // Path: rateSheet
@@ -6643,6 +6644,7 @@ extension on TranslationsRu {
 			'mediaMenu.rate' => 'Оценить',
 			'mediaMenu.playFromBeginning' => 'Воспроизвести сначала',
 			'mediaMenu.playVersion' => 'Воспроизвести версию...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Удаление медиафайлов на этом сервере отключено. Разрешите удаление медиафайлов в настройках библиотеки сервера.',
 			'rateSheet.title' => 'Оценить',
 			'rateSheet.server' => 'Сервер',
 			'rateSheet.favorite' => 'Добавить в избранное',
@@ -6707,9 +6709,9 @@ extension on TranslationsRu {
 			'tooltips.markAsWatched' => 'Отметить как просмотренное',
 			'tooltips.markAsUnwatched' => 'Отметить как непросмотренное',
 			'audioTracks.track' => ({required Object n}) => 'Аудиодорожка ${n}',
-			'videoControls.audioLabel' => 'Аудио',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'Аудио',
 			'videoControls.subtitlesLabel' => 'Субтитры',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Вписать в экран',
@@ -7221,9 +7223,9 @@ extension on TranslationsRu {
 			'errors.noClientAvailable' => 'Клиент недоступен',
 			'errors.pleaseEnterToken' => 'Введите токен',
 			'errors.invalidToken' => 'Недействительный токен',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'Не удалось проверить токен: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'Не удалось проверить токен: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Не удалось переключиться на ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Не удалось удалить ${displayName}',
 			'errors.failedToRate' => 'Не удалось обновить оценку',
@@ -7735,9 +7737,9 @@ extension on TranslationsRu {
 			'playlists.created' => 'Плейлист создан',
 			'playlists.deleted' => 'Плейлист удалён',
 			'playlists.itemAdded' => 'Добавлено в плейлист',
-			'playlists.itemRemoved' => 'Удалено из плейлиста',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'Удалено из плейлиста',
 			'playlists.selectPlaylist' => 'Выбрать плейлист',
 			'playlists.searchPlaylists' => 'Поиск плейлистов...',
 			'playlists.errorCreating' => 'Не удалось создать плейлист',
@@ -8249,9 +8251,9 @@ extension on TranslationsRu {
 			'performanceOverlay.avSync' => 'A/V синхр.',
 			'performanceOverlay.dropped' => 'Пропущено',
 			'performanceOverlay.dvRpus' => 'DV RPU',
-			'performanceOverlay.dvRpuAverage' => 'Сред. DV RPU',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'Сред. DV RPU',
 			'performanceOverlay.dvSampleAverage' => 'Сред. сэмпл DV',
 			'performanceOverlay.maxLuma' => 'Макс. яркость',
 			'performanceOverlay.minLuma' => 'Мин. яркость',
@@ -8763,9 +8765,9 @@ extension on TranslationsRu {
 			'homeLayout.removeHub' => 'Удаление Hub',
 			'homeLayout.noPlexRows' => 'No Plex управляемые строки возвращены для этой библиотеки.',
 			'homeLayout.openDetails' => 'Открытые детали',
-			'homeLayout.heroCards' => 'Герои карты',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'Герои карты',
 			'homeLayout.tapHeroCard' => 'Подарить карту героя',
 			'homeLayout.tvPlayFocus' => 'Телевизор удаленный: подчеркивает кнопку Play',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad down останавливается на кнопке Play, прежде чем переходить в следующий ряд.',
@@ -9277,9 +9279,9 @@ extension on TranslationsRu {
 			'audiobook.recoveryExported' => 'Зашифрованный файл восстановления сохранился.',
 			'audiobook.recoveryImported' => 'Данные о восстановлении объединены.',
 			'sourceSetup.bookorbitHelp' => 'Войдите в собственную учётную запись BookOrbit, чтобы просматривать и воспроизводить книги. Запросы отсутствующих книг по-прежнему отправляются через подключённый экземпляр SeerrNG.',
-			'sourceSetup.bookorbitOpen' => 'Открыть в BookOrbit',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'Открыть в BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Откройте эту книгу в BookOrbit, чтобы управлять сведениями библиотеки и форматами, которые Pleazyng не может открыть. Прогресс прослушивания синхронизируется с вашей учётной записью BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Сохранённый сертификат сервера',
 			'sourceSetup.nfsEndpointInvalid' => 'Введите URL NFS, например nfs://nas:2049/export.',
@@ -9791,9 +9793,9 @@ extension on TranslationsRu {
 			'musicTools.rules' => 'Фильтры',
 			'musicTools.exclusiveOutput' => 'Монопольный аудиовыход',
 			'musicTools.preamp' => 'Предусиление',
-			'musicTools.ratingPending' => 'Сохранено на устройстве; ожидает синхронизации',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'Сохранено на устройстве; ожидает синхронизации',
 			'musicTools.lyricsOffset' => 'Смещение текста песни',
 			'musicTools.anniversaries' => 'Годовщины альбомов',
 			'musicTools.outputPreset' => 'Эквалайзер для этого выхода',

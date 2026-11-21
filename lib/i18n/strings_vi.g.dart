@@ -1140,6 +1140,7 @@ class _Translations$mediaMenu$vi extends Translations$mediaMenu$en {
 	@override String get rate => 'Đánh giá';
 	@override String get playFromBeginning => 'Phát từ đầu';
 	@override String get playVersion => 'Game phiên bản...';
+	@override String get mediaDeletionDisabledOnServer => 'Tính năng xóa nội dung đã tắt trên máy chủ này. Hãy cho phép xóa nội dung trong phần cài đặt thư viện của máy chủ.';
 }
 
 // Path: rateSheet
@@ -6568,6 +6569,7 @@ extension on TranslationsVi {
 			'mediaMenu.rate' => 'Đánh giá',
 			'mediaMenu.playFromBeginning' => 'Phát từ đầu',
 			'mediaMenu.playVersion' => 'Game phiên bản...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Tính năng xóa nội dung đã tắt trên máy chủ này. Hãy cho phép xóa nội dung trong phần cài đặt thư viện của máy chủ.',
 			'rateSheet.title' => 'Đánh giá',
 			'rateSheet.server' => 'Máy chủ',
 			'rateSheet.favorite' => 'Yêu thích',
@@ -6632,9 +6634,9 @@ extension on TranslationsVi {
 			'tooltips.markAsWatched' => 'Mark theo dõi',
 			'tooltips.markAsUnwatched' => 'Mark như không được xem',
 			'audioTracks.track' => ({required Object n}) => 'Âm thanh Track ${n}',
-			'videoControls.audioLabel' => 'Âm thanh',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'Âm thanh',
 			'videoControls.subtitlesLabel' => 'Phụ đề',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Bảng Letterbox',
@@ -7146,9 +7148,9 @@ extension on TranslationsVi {
 			'errors.noClientAvailable' => 'Không có khách hàng',
 			'errors.pleaseEnterToken' => 'Vui lòng nhập token',
 			'errors.invalidToken' => 'Mã xác thực không hợp lệ',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'Không xác minh token: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'Không xác minh token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Không thể chuyển sang ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Không xóa ${displayName}',
 			'errors.failedToRate' => 'Không thể update rating',
@@ -7660,9 +7662,9 @@ extension on TranslationsVi {
 			'playlists.created' => 'Playlist tạo ra',
 			'playlists.deleted' => 'Playlist xóa',
 			'playlists.itemAdded' => 'Thêm vào playlist',
-			'playlists.itemRemoved' => 'Xóa khỏi playlist',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'Xóa khỏi playlist',
 			'playlists.selectPlaylist' => 'Chọn Playlist',
 			'playlists.searchPlaylists' => 'Tìm kiếm playlists',
 			'playlists.errorCreating' => 'Không thể tạo playlist',
@@ -8174,9 +8176,9 @@ extension on TranslationsVi {
 			'performanceOverlay.avSync' => 'A/V đồng bộ',
 			'performanceOverlay.dropped' => 'bị rơi',
 			'performanceOverlay.dvRpus' => 'DV RPU',
-			'performanceOverlay.dvRpuAverage' => 'Đánh giá RPU AVG',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'Đánh giá RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'Đánh giá DV Sample Avg',
 			'performanceOverlay.maxLuma' => 'Độ chói tối đa',
 			'performanceOverlay.minLuma' => 'Lúa Lúa',
@@ -8688,9 +8690,9 @@ extension on TranslationsVi {
 			'homeLayout.removeHub' => 'Xóa Hub',
 			'homeLayout.noPlexRows' => 'Số Plex hàng quản lý đã trở lại cho thư viện này.',
 			'homeLayout.openDetails' => 'chi tiết mở',
-			'homeLayout.heroCards' => 'thẻ anh hùng',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'thẻ anh hùng',
 			'homeLayout.tapHeroCard' => 'Tải thẻ anh hùng',
 			'homeLayout.tvPlayFocus' => 'TV từ xa: nhấn nút Play',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad xuống dừng lại trên nút Play trước khi di chuyển đến hàng tiếp theo.',
@@ -9202,9 +9204,9 @@ extension on TranslationsVi {
 			'audiobook.recoveryExported' => 'Tệp phục hồi mã hóa đã được lưu.',
 			'audiobook.recoveryImported' => 'Dữ liệu phục hồi kết hợp.',
 			'sourceSetup.bookorbitHelp' => 'Đăng nhập bằng tài khoản BookOrbit của riêng bạn để duyệt và phát sách. Yêu cầu các tựa sách còn thiếu vẫn được gửi qua phiên bản SeerrNG đã kết nối.',
-			'sourceSetup.bookorbitOpen' => 'Mở trong BookOrbit',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'Mở trong BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Xem tựa sách này trong BookOrbit để quản lý thông tin thư viện và các định dạng Pleazyng không thể mở. Tiến độ nghe được đồng bộ với tài khoản BookOrbit của bạn.',
 			'sourceSetup.savedCertificate' => 'Chứng chỉ máy chủ đã lưu',
 			'sourceSetup.nfsEndpointInvalid' => 'Nhập URL NFS, chẳng hạn nfs://nas:2049/export.',
@@ -9716,9 +9718,9 @@ extension on TranslationsVi {
 			'musicTools.rules' => 'Bộ lọc',
 			'musicTools.exclusiveOutput' => 'Đầu ra âm thanh độc quyền',
 			'musicTools.preamp' => 'Tiền khuếch đại',
-			'musicTools.ratingPending' => 'Đã lưu trên thiết bị này; đang chờ đồng bộ',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'Đã lưu trên thiết bị này; đang chờ đồng bộ',
 			'musicTools.lyricsOffset' => 'Độ lệch thời gian lời bài hát',
 			'musicTools.anniversaries' => 'Kỷ niệm phát hành album',
 			'musicTools.outputPreset' => 'EQ cho đầu ra này',

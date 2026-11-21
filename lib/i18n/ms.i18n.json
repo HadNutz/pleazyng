@@ -1048,7 +1048,8 @@
     "mediaFailedToDelete": "gagal menghapuskan item media",
     "rate": "Kadar",
     "playFromBeginning": "Bermain dari awal",
-    "playVersion": "Bermain versi ..."
+    "playVersion": "Bermain versi ...",
+    "mediaDeletionDisabledOnServer": "Pemadaman media dinyahdayakan pada pelayan ini. Benarkan pemadaman media dalam tetapan pustaka pelayan."
   },
   "rateSheet": {
     "title": "Kadar",

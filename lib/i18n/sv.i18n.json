@@ -1053,7 +1053,8 @@
     "mediaFailedToDelete": "Det gick inte att ta bort medieobjektet",
     "rate": "Betygsätt",
     "playFromBeginning": "Spela från början",
-    "playVersion": "Spela version..."
+    "playVersion": "Spela version...",
+    "mediaDeletionDisabledOnServer": "Radering av medier är avstängd på den här servern. Tillåt radering av medier i serverns biblioteksinställningar."
   },
   "rateSheet": {
     "title": "Betygsätt",

@@ -1063,7 +1063,8 @@
     "mediaFailedToDelete": "Nie udało się usunąć elementu multimedialnego",
     "rate": "Oceń",
     "playFromBeginning": "Odtwórz od początku",
-    "playVersion": "Odtwórz wersję..."
+    "playVersion": "Odtwórz wersję...",
+    "mediaDeletionDisabledOnServer": "Usuwanie multimediów na tym serwerze jest wyłączone. Zezwól na usuwanie multimediów w ustawieniach biblioteki serwera."
   },
   "rateSheet": {
     "title": "Oceń",

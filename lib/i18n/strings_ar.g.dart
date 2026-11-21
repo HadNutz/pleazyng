@@ -1165,6 +1165,7 @@ class _Translations$mediaMenu$ar extends Translations$mediaMenu$en {
 	@override String get rate => 'المعدل';
 	@override String get playFromBeginning => 'تشغيل من البداية';
 	@override String get playVersion => 'اللعب نسخة...';
+	@override String get mediaDeletionDisabledOnServer => 'حذف الوسائط معطّل على هذا الخادم. فعّل «السماح بحذف الوسائط» في إعدادات مكتبة الخادم.';
 }
 
 // Path: rateSheet
@@ -6693,6 +6694,7 @@ extension on TranslationsAr {
 			'mediaMenu.rate' => 'المعدل',
 			'mediaMenu.playFromBeginning' => 'تشغيل من البداية',
 			'mediaMenu.playVersion' => 'اللعب نسخة...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'حذف الوسائط معطّل على هذا الخادم. فعّل «السماح بحذف الوسائط» في إعدادات مكتبة الخادم.',
 			'rateSheet.title' => 'المعدل',
 			'rateSheet.server' => 'الخادم',
 			'rateSheet.favorite' => 'مفضل',
@@ -6757,9 +6759,9 @@ extension on TranslationsAr {
 			'tooltips.markAsWatched' => 'مارك كما شاهدت',
 			'tooltips.markAsUnwatched' => 'مارك غير ملاحظة',
 			'audioTracks.track' => ({required Object n}) => 'سياق الصوت ${n}',
-			'videoControls.audioLabel' => 'الصوت',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'الصوت',
 			'videoControls.subtitlesLabel' => 'الترجمة',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'الكتب',
@@ -7271,9 +7273,9 @@ extension on TranslationsAr {
 			'errors.noClientAvailable' => 'لا يوجد عميل متاح',
 			'errors.pleaseEnterToken' => 'يرجى إدخال علامة',
 			'errors.invalidToken' => 'الرموز المعاقبة',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'عدم التحقق من الرموز: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'عدم التحقق من الرموز: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'لم يتم تحويلها إلى ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'لم يتم حذف ${displayName}',
 			'errors.failedToRate' => 'لا يمكن تحديث التصنيف',
@@ -7785,9 +7787,9 @@ extension on TranslationsAr {
 			'playlists.created' => 'لعبة تم إنشاءها',
 			'playlists.deleted' => 'Playlist حذف',
 			'playlists.itemAdded' => 'إضافة إلى playlist',
-			'playlists.itemRemoved' => 'إزالة من قائمة اللعب',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'إزالة من قائمة اللعب',
 			'playlists.selectPlaylist' => 'اختيار Playlist',
 			'playlists.searchPlaylists' => 'البحث عن ألعاب...',
 			'playlists.errorCreating' => 'فشل في إنشاء قائمة اللعب',
@@ -8299,9 +8301,9 @@ extension on TranslationsAr {
 			'performanceOverlay.avSync' => 'A / V التزامن',
 			'performanceOverlay.dropped' => 'انقطاع',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
-			'performanceOverlay.dvRpuAverage' => 'رويترز RPU Avg',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'رويترز RPU Avg',
 			'performanceOverlay.dvSampleAverage' => 'DV نموذج Avg',
 			'performanceOverlay.maxLuma' => 'ماكس لوما',
 			'performanceOverlay.minLuma' => 'لوميا',
@@ -8813,9 +8815,9 @@ extension on TranslationsAr {
 			'homeLayout.removeHub' => 'إزالة قسم المحتوى',
 			'homeLayout.noPlexRows' => 'لم يُرجع Plex أي صفوف يديرها لهذه المكتبة.',
 			'homeLayout.openDetails' => 'فتح التفاصيل',
-			'homeLayout.heroCards' => 'البطاقات البارزة',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'البطاقات البارزة',
 			'homeLayout.tapHeroCard' => 'عند النقر على بطاقة بارزة',
 			'homeLayout.tvPlayFocus' => 'جهاز التحكم: الانتقال إلى زر التشغيل',
 			'homeLayout.tvPlayFocusDescription' => 'يتوقف التنقّل إلى الأسفل على زر التشغيل قبل الانتقال إلى الصف التالي. عند الإيقاف، ينتقل مباشرةً إلى الصف التالي.',
@@ -9327,9 +9329,9 @@ extension on TranslationsAr {
 			'audiobook.recoveryExported' => 'تم حفظ ملف الاسترداد المشفر.',
 			'audiobook.recoveryImported' => 'استرداد البيانات مترابطة.',
 			'sourceSetup.bookorbitHelp' => 'سجّل الدخول باستخدام حساب BookOrbit الخاص بك لتصفح كتبه وتشغيلها. تظل طلبات العناوين غير المتوفرة تمر عبر مثيل SeerrNG المتصل بك.',
-			'sourceSetup.bookorbitOpen' => 'افتح في BookOrbit',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'افتح في BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'اعرض هذا العنوان في BookOrbit لإدارة تفاصيله في مكتبتك وأي تنسيقات لا يستطيع Pleazyng فتحها. تتم مزامنة تقدم الاستماع مع حسابك في BookOrbit.',
 			'sourceSetup.savedCertificate' => 'شهادة الخادم المحفوظة',
 			'sourceSetup.nfsEndpointInvalid' => 'أدخل عنوان NFS مثل nfs://nas:2049/export.',
@@ -9841,9 +9843,9 @@ extension on TranslationsAr {
 			'musicTools.rules' => 'الفلاتر',
 			'musicTools.exclusiveOutput' => 'إخراج صوت حصري',
 			'musicTools.preamp' => 'التضخيم المسبق',
-			'musicTools.ratingPending' => 'حُفظ على هذا الجهاز؛ بانتظار المزامنة',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'حُفظ على هذا الجهاز؛ بانتظار المزامنة',
 			'musicTools.lyricsOffset' => 'إزاحة توقيت الكلمات',
 			'musicTools.anniversaries' => 'ذكرى إصدار الألبومات',
 			'musicTools.outputPreset' => 'معادل الصوت لهذا المخرج',

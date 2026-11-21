@@ -1140,6 +1140,7 @@ class _Translations$mediaMenu$id extends Translations$mediaMenu$en {
 	@override String get rate => 'Rating';
 	@override String get playFromBeginning => 'Mainkan dari awal';
 	@override String get playVersion => 'Bermain versi...';
+	@override String get mediaDeletionDisabledOnServer => 'Penghapusan media dinonaktifkan di server ini. Izinkan penghapusan media di pengaturan pustaka server.';
 }
 
 // Path: rateSheet
@@ -6568,6 +6569,7 @@ extension on TranslationsId {
 			'mediaMenu.rate' => 'Rating',
 			'mediaMenu.playFromBeginning' => 'Mainkan dari awal',
 			'mediaMenu.playVersion' => 'Bermain versi...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Penghapusan media dinonaktifkan di server ini. Izinkan penghapusan media di pengaturan pustaka server.',
 			'rateSheet.title' => 'Rating',
 			'rateSheet.server' => 'Server yang',
 			'rateSheet.favorite' => 'Favorit',
@@ -6632,9 +6634,9 @@ extension on TranslationsId {
 			'tooltips.markAsWatched' => 'Mark yang ditonton',
 			'tooltips.markAsUnwatched' => 'Mark yang tidak diperhatikan',
 			'audioTracks.track' => ({required Object n}) => 'Trek audio ${n}',
-			'videoControls.audioLabel' => 'Audio yang',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'Audio yang',
 			'videoControls.subtitlesLabel' => 'Subtitel',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Surat Kotak',
@@ -7146,9 +7148,9 @@ extension on TranslationsId {
 			'errors.noClientAvailable' => 'Tidak ada klien yang tersedia',
 			'errors.pleaseEnterToken' => 'Silakan masukkan token',
 			'errors.invalidToken' => 'Token tidak valid',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'Tidak dapat mengkonfirmasi token: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'Tidak dapat mengkonfirmasi token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Tidak dapat beralih ke ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Tidak dapat dihapus ${displayName}',
 			'errors.failedToRate' => 'Tidak bisa update rating',
@@ -7660,9 +7662,9 @@ extension on TranslationsId {
 			'playlists.created' => 'Playlist yang diciptakan',
 			'playlists.deleted' => 'Playlist dihapus',
 			'playlists.itemAdded' => 'Ditambahkan ke playlist',
-			'playlists.itemRemoved' => 'Menghapus dari playlist',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'Menghapus dari playlist',
 			'playlists.selectPlaylist' => 'Pilih Playlist',
 			'playlists.searchPlaylists' => 'Mencari playlist...',
 			'playlists.errorCreating' => 'gagal membuat playlist',
@@ -8174,9 +8176,9 @@ extension on TranslationsId {
 			'performanceOverlay.avSync' => 'A / V Sync',
 			'performanceOverlay.dropped' => 'pecah',
 			'performanceOverlay.dvRpus' => 'RPU yang',
-			'performanceOverlay.dvRpuAverage' => 'RPU AVG',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'Sebutkan Sample Avg',
 			'performanceOverlay.maxLuma' => 'Luma maks.',
 			'performanceOverlay.minLuma' => 'Luma min.',
@@ -8688,9 +8690,9 @@ extension on TranslationsId {
 			'homeLayout.removeHub' => 'Menghapus Hub',
 			'homeLayout.noPlexRows' => 'No. Plex baris yang dikelola kembali untuk perpustakaan ini.',
 			'homeLayout.openDetails' => 'Detail Terbuka',
-			'homeLayout.heroCards' => 'Kartu Hero',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'Kartu Hero',
 			'homeLayout.tapHeroCard' => 'Menangkap Kartu Pahlawan',
 			'homeLayout.tvPlayFocus' => 'TV Remote: Meningkatkan tombol Play',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad ke bawah berhenti pada tombol Play sebelum bergerak ke baris berikutnya.',
@@ -9202,9 +9204,9 @@ extension on TranslationsId {
 			'audiobook.recoveryExported' => 'File pemulihan yang disulitkan disimpan.',
 			'audiobook.recoveryImported' => 'Data pemulihan digabungkan.',
 			'sourceSetup.bookorbitHelp' => 'Masuk dengan akun BookOrbit Anda sendiri untuk menelusuri dan memutar buku. Permintaan untuk judul yang tidak tersedia tetap dikirim melalui instans SeerrNG yang terhubung.',
-			'sourceSetup.bookorbitOpen' => 'Buka di BookOrbit',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'Buka di BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Lihat judul ini di BookOrbit untuk mengelola detail pustaka dan format yang tidak dapat dibuka Pleazyng. Progres mendengarkan disinkronkan dengan akun BookOrbit Anda.',
 			'sourceSetup.savedCertificate' => 'Sertifikat server tersimpan',
 			'sourceSetup.nfsEndpointInvalid' => 'Masukkan URL NFS, misalnya nfs://nas:2049/export.',
@@ -9716,9 +9718,9 @@ extension on TranslationsId {
 			'musicTools.rules' => 'Filter',
 			'musicTools.exclusiveOutput' => 'Keluaran audio eksklusif',
 			'musicTools.preamp' => 'Prapenguatan',
-			'musicTools.ratingPending' => 'Disimpan di perangkat ini; menunggu sinkronisasi',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'Disimpan di perangkat ini; menunggu sinkronisasi',
 			'musicTools.lyricsOffset' => 'Pergeseran waktu lirik',
 			'musicTools.anniversaries' => 'Ulang tahun album',
 			'musicTools.outputPreset' => 'EQ untuk keluaran ini',

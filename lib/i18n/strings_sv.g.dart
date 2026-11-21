@@ -1145,6 +1145,7 @@ class _Translations$mediaMenu$sv extends Translations$mediaMenu$en {
 	@override String get rate => 'Betygsätt';
 	@override String get playFromBeginning => 'Spela från början';
 	@override String get playVersion => 'Spela version...';
+	@override String get mediaDeletionDisabledOnServer => 'Radering av medier är avstängd på den här servern. Tillåt radering av medier i serverns biblioteksinställningar.';
 }
 
 // Path: rateSheet
@@ -6593,6 +6594,7 @@ extension on TranslationsSv {
 			'mediaMenu.rate' => 'Betygsätt',
 			'mediaMenu.playFromBeginning' => 'Spela från början',
 			'mediaMenu.playVersion' => 'Spela version...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Radering av medier är avstängd på den här servern. Tillåt radering av medier i serverns biblioteksinställningar.',
 			'rateSheet.title' => 'Betygsätt',
 			'rateSheet.server' => 'Server',
 			'rateSheet.favorite' => 'Favorit',
@@ -6657,9 +6659,9 @@ extension on TranslationsSv {
 			'tooltips.markAsWatched' => 'Markera som sedd',
 			'tooltips.markAsUnwatched' => 'Markera som osedd',
 			'audioTracks.track' => ({required Object n}) => 'Ljudspår ${n}',
-			'videoControls.audioLabel' => 'Ljud',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'Ljud',
 			'videoControls.subtitlesLabel' => 'Undertexter',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Brevlådeformat',
@@ -7171,9 +7173,9 @@ extension on TranslationsSv {
 			'errors.noClientAvailable' => 'Ingen klient är tillgänglig',
 			'errors.pleaseEnterToken' => 'Ange en token',
 			'errors.invalidToken' => 'Ogiltig token',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'Det gick inte att verifiera token: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'Det gick inte att verifiera token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Det gick inte att byta till ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Det gick inte att ta bort ${displayName}',
 			'errors.failedToRate' => 'Det gick inte att uppdatera betyget',
@@ -7685,9 +7687,9 @@ extension on TranslationsSv {
 			'playlists.created' => 'Spellistan har skapats',
 			'playlists.deleted' => 'Spellistan har tagits bort',
 			'playlists.itemAdded' => 'Objektet har lagts till i spellistan',
-			'playlists.itemRemoved' => 'Objektet har tagits bort från spellistan',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'Objektet har tagits bort från spellistan',
 			'playlists.selectPlaylist' => 'Välj spellista',
 			'playlists.searchPlaylists' => 'Sök i spellistor...',
 			'playlists.errorCreating' => 'Det gick inte att skapa spellistan',
@@ -8199,9 +8201,9 @@ extension on TranslationsSv {
 			'performanceOverlay.avSync' => 'A/V-synk',
 			'performanceOverlay.dropped' => 'Tappade bildrutor',
 			'performanceOverlay.dvRpus' => 'DV-RPU:er',
-			'performanceOverlay.dvRpuAverage' => 'DV-RPU, genomsnitt',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'DV-RPU, genomsnitt',
 			'performanceOverlay.dvSampleAverage' => 'DV-sampling, genomsnitt',
 			'performanceOverlay.maxLuma' => 'Max luma',
 			'performanceOverlay.minLuma' => 'Min luma',
@@ -8713,9 +8715,9 @@ extension on TranslationsSv {
 			'homeLayout.removeHub' => 'Ta bort Hub',
 			'homeLayout.noPlexRows' => 'Nr Plex-hanterade rader återvände till denna bibliotek.',
 			'homeLayout.openDetails' => 'Öppna detaljer',
-			'homeLayout.heroCards' => 'hjältar kort',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'hjältar kort',
 			'homeLayout.tapHeroCard' => 'Att ta ett hjälte kort',
 			'homeLayout.tvPlayFocus' => 'TV fjärr: Highlight Play knappen',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad ned stoppar på Play-knappen innan du flyttar till nästa rad.',
@@ -9227,9 +9229,9 @@ extension on TranslationsSv {
 			'audiobook.recoveryExported' => 'Den krypterade återhämtningsfilen sparas.',
 			'audiobook.recoveryImported' => 'Data återhämtning sammansatt.',
 			'sourceSetup.bookorbitHelp' => 'Logga in med ditt eget BookOrbit-konto för att bläddra bland och spela upp dina böcker. Begäranden om saknade titlar går fortfarande via din anslutna SeerrNG-instans.',
-			'sourceSetup.bookorbitOpen' => 'Öppna i BookOrbit',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'Öppna i BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Visa den här titeln i BookOrbit för att hantera biblioteksuppgifter och format som Pleazyng inte kan öppna. Lyssningsförloppet synkroniseras med ditt BookOrbit-konto.',
 			'sourceSetup.savedCertificate' => 'Sparat servercertifikat',
 			'sourceSetup.nfsEndpointInvalid' => 'Ange en NFS-URL, till exempel nfs://nas:2049/export.',
@@ -9741,9 +9743,9 @@ extension on TranslationsSv {
 			'musicTools.rules' => 'Filter',
 			'musicTools.exclusiveOutput' => 'Exklusiv ljudutgång',
 			'musicTools.preamp' => 'Förförstärkning',
-			'musicTools.ratingPending' => 'Sparat på den här enheten; väntar på synkronisering',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'Sparat på den här enheten; väntar på synkronisering',
 			'musicTools.lyricsOffset' => 'Tidsförskjutning för sångtext',
 			'musicTools.anniversaries' => 'Albumjubileer',
 			'musicTools.outputPreset' => 'EQ för denna utgång',

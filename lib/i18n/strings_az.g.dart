@@ -1145,6 +1145,7 @@ class _Translations$mediaMenu$az extends Translations$mediaMenu$en {
 	@override String get rate => 'Qiymətləndir';
 	@override String get playFromBeginning => 'Əvvəldən oynat';
 	@override String get playVersion => 'Versiyanı oynat...';
+	@override String get mediaDeletionDisabledOnServer => 'Bu serverdə media silmək deaktiv edilib. Serverin kitabxana ayarlarında media silməyə icazə verin.';
 }
 
 // Path: rateSheet
@@ -6593,6 +6594,7 @@ extension on TranslationsAz {
 			'mediaMenu.rate' => 'Qiymətləndir',
 			'mediaMenu.playFromBeginning' => 'Əvvəldən oynat',
 			'mediaMenu.playVersion' => 'Versiyanı oynat...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Bu serverdə media silmək deaktiv edilib. Serverin kitabxana ayarlarında media silməyə icazə verin.',
 			'rateSheet.title' => 'Qiymətləndir',
 			'rateSheet.server' => 'Server',
 			'rateSheet.favorite' => 'Sevimli',
@@ -6657,9 +6659,9 @@ extension on TranslationsAz {
 			'tooltips.markAsWatched' => 'Baxıldı olaraq işarələ',
 			'tooltips.markAsUnwatched' => 'Baxılmadı olaraq işarələ',
 			'audioTracks.track' => ({required Object n}) => 'Səs zolağı ${n}',
-			'videoControls.audioLabel' => 'Səs',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'Səs',
 			'videoControls.subtitlesLabel' => 'Altyazı',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Geniş ekran (Letterbox)',
@@ -7171,9 +7173,9 @@ extension on TranslationsAz {
 			'errors.noClientAvailable' => 'Əlçatan klient yoxdur',
 			'errors.pleaseEnterToken' => 'Lütfən token daxil edin',
 			'errors.invalidToken' => 'Yanlış token',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'Token təsdiqlənə bilmədi: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'Token təsdiqlənə bilmədi: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName} profilinə keçilə bilmədi',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName} profili silinə bilmədi',
 			'errors.failedToRate' => 'Reytinq yenilənə bilmədi',
@@ -7685,9 +7687,9 @@ extension on TranslationsAz {
 			'playlists.created' => 'Oynatma siyahısı yaradıldı',
 			'playlists.deleted' => 'Oynatma siyahısı silindi',
 			'playlists.itemAdded' => 'Oynatma siyahısına əlavə edildi',
-			'playlists.itemRemoved' => 'Oynatma siyahısından silindi',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'Oynatma siyahısından silindi',
 			'playlists.selectPlaylist' => 'Oynatma siyahısı seç',
 			'playlists.searchPlaylists' => 'Oynatma siyahılarında axtar...',
 			'playlists.errorCreating' => 'Oynatma siyahısı yaradıla bilmədi',
@@ -8199,9 +8201,9 @@ extension on TranslationsAz {
 			'performanceOverlay.avSync' => 'A/V Eyniləşdirilməsi',
 			'performanceOverlay.dropped' => 'İtirilmiş kadrlar',
 			'performanceOverlay.dvRpus' => 'DV RPU-ları',
-			'performanceOverlay.dvRpuAverage' => 'DV RPU Ort.',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'DV RPU Ort.',
 			'performanceOverlay.dvSampleAverage' => 'DV Nümunə Ort.',
 			'performanceOverlay.maxLuma' => 'Maks Luma',
 			'performanceOverlay.minLuma' => 'Min Luma',
@@ -8713,9 +8715,9 @@ extension on TranslationsAz {
 			'homeLayout.removeHub' => 'Həkimə qalıb',
 			'homeLayout.noPlexRows' => 'Bu kütüphane üçün Plex-managed sıra qayıtılıb.',
 			'homeLayout.openDetails' => 'Açıklama Detayları',
-			'homeLayout.heroCards' => 'Hero kartları',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'Hero kartları',
 			'homeLayout.tapHeroCard' => 'Bir kahramanın kartı',
 			'homeLayout.tvPlayFocus' => 'Televiziyası: Play düğmesi',
 			'homeLayout.tvPlayFocusDescription' => 'D-Pad aşağı durur, bir sonraki sıraya çıxmadan önce Play düğmesine.',
@@ -9227,9 +9229,9 @@ extension on TranslationsAz {
 			'audiobook.recoveryExported' => 'Şifrelə qayıtma dosyası qurulmuşdur.',
 			'audiobook.recoveryImported' => 'İtraf verileri birləşmişdir.',
 			'sourceSetup.bookorbitHelp' => 'Kitablarına baxmaq və onları oxutmaq üçün öz BookOrbit hesabınızla daxil olun. Çatışmayan başlıqlar üçün sorğular yenə də qoşulmuş SeerrNG instansiyanız vasitəsilə göndərilir.',
-			'sourceSetup.bookorbitOpen' => 'BookOrbit-də aç',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'BookOrbit-də aç',
 			'sourceSetup.bookorbitDetailHelp' => 'Kitabxana təfərrüatlarını və Pleazyng-in aça bilmədiyi formatları idarə etmək üçün bu başlığı BookOrbit-də açın. Dinləmə irəliləyişi BookOrbit hesabınızla sinxronlaşdırılır.',
 			'sourceSetup.savedCertificate' => 'Yadda saxlanmış server sertifikatı',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export kimi NFS URL-i daxil edin.',
@@ -9741,9 +9743,9 @@ extension on TranslationsAz {
 			'musicTools.rules' => 'Filtrlər',
 			'musicTools.exclusiveOutput' => 'Eksklüziv səs çıxışı',
 			'musicTools.preamp' => 'Ön gücləndirmə',
-			'musicTools.ratingPending' => 'Bu cihazda saxlanıldı; sinxronizasiya gözlənilir',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'Bu cihazda saxlanıldı; sinxronizasiya gözlənilir',
 			'musicTools.lyricsOffset' => 'Mahnı sözlərinin vaxt fərqi',
 			'musicTools.anniversaries' => 'Albomların ildönümləri',
 			'musicTools.outputPreset' => 'Bu çıxış üçün ekvalayzer',

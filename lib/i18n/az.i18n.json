@@ -1053,7 +1053,8 @@
     "mediaFailedToDelete": "Media elementi silinə bilmədi",
     "rate": "Qiymətləndir",
     "playFromBeginning": "Əvvəldən oynat",
-    "playVersion": "Versiyanı oynat..."
+    "playVersion": "Versiyanı oynat...",
+    "mediaDeletionDisabledOnServer": "Bu serverdə media silmək deaktiv edilib. Serverin kitabxana ayarlarında media silməyə icazə verin."
   },
   "rateSheet": {
     "title": "Qiymətləndir",

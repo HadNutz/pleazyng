@@ -1053,7 +1053,8 @@
     "mediaFailedToDelete": "Medya ögesi silinemedi",
     "rate": "Oyla",
     "playFromBeginning": "Baştan Oynat",
-    "playVersion": "Sürümü Oynat..."
+    "playVersion": "Sürümü Oynat...",
+    "mediaDeletionDisabledOnServer": "Bu sunucuda medya silme kapalı. Sunucunun kitaplık ayarlarında medya silmeye izin verin."
   },
   "rateSheet": {
     "title": "Oyla",

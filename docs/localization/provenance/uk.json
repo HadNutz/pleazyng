@@ -1,7 +1,7 @@
 {
   "locale": "uk",
   "inherits": null,
-  "catalogSha256": "0b879b82a0e1c090367e4b9bb9e97b06b2e71cd524300f7a8a8355534e718732",
+  "catalogSha256": "ae137be79cb56448b5c3442095a4041dfef0d59adaeaad4e0c5fd4c934ba71f9",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3682,7 +3682,8 @@
     "subtitleAiUi.subtitleEncodingPreviewCueCount": "assistant-generated-draft",
     "subtitleAiUi.subtitleEncodingNoCues": "assistant-generated-draft",
     "subtitleAiUi.subtitleEncodingDecodeFailed": "assistant-generated-draft",
-    "subtitleAiUi.subtitleEncodingUsePreview": "assistant-generated-draft"
+    "subtitleAiUi.subtitleEncodingUsePreview": "assistant-generated-draft",
+    "mediaMenu.mediaDeletionDisabledOnServer": "assistant-generated-draft"
   },
   "beforeIndependentQaCorrection": {
     "auth.localDataRecoveryRequired": "m2m100-draft",

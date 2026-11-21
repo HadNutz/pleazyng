@@ -343,6 +343,7 @@ class Translations$mediaMenu$pt_BR extends Translations$mediaMenu$pt {
 	@override String get deleteEpisodeConfirm => 'Excluir episódio';
 	@override String get rate => 'Avaliação';
 	@override String get playFromBeginning => 'Reproduzir do início';
+	@override String get mediaDeletionDisabledOnServer => 'A exclusão de mídia está desativada neste servidor. Permita a exclusão de mídia nas configurações de biblioteca do servidor.';
 }
 
 // Path: rateSheet
@@ -1546,6 +1547,7 @@ extension on TranslationsPtBr {
 			'mediaMenu.deleteEpisodeConfirm' => 'Excluir episódio',
 			'mediaMenu.rate' => 'Avaliação',
 			'mediaMenu.playFromBeginning' => 'Reproduzir do início',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'A exclusão de mídia está desativada neste servidor. Permita a exclusão de mídia nas configurações de biblioteca do servidor.',
 			'rateSheet.title' => 'Avaliação',
 			'rateSheet.server' => 'Servidor',
 			'rateSheet.favorite' => 'Favorito',
@@ -1919,9 +1921,9 @@ extension on TranslationsPtBr {
 			'romm.screenshots' => 'Screenshots',
 			'romm.manual' => 'Manual',
 			'romm.importSave' => 'Import save',
-			'romm.exportSave' => 'Export',
 			_ => null,
 		} ?? switch (path) {
+			'romm.exportSave' => 'Export',
 			'romm.importState' => 'Import state',
 			'romm.saveImported' => 'Save imported',
 			'romm.saveExported' => 'Save exported',

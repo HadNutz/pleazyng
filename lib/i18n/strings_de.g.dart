@@ -1145,6 +1145,7 @@ class _Translations$mediaMenu$de extends Translations$mediaMenu$en {
 	@override String get rate => 'Bewerten';
 	@override String get playFromBeginning => 'Von Anfang an abspielen';
 	@override String get playVersion => 'Version abspielen …';
+	@override String get mediaDeletionDisabledOnServer => 'Das Löschen von Medien ist auf diesem Server deaktiviert. Erlaube das Löschen von Medien in den Bibliothekseinstellungen des Servers.';
 }
 
 // Path: rateSheet
@@ -6593,6 +6594,7 @@ extension on TranslationsDe {
 			'mediaMenu.rate' => 'Bewerten',
 			'mediaMenu.playFromBeginning' => 'Von Anfang an abspielen',
 			'mediaMenu.playVersion' => 'Version abspielen …',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Das Löschen von Medien ist auf diesem Server deaktiviert. Erlaube das Löschen von Medien in den Bibliothekseinstellungen des Servers.',
 			'rateSheet.title' => 'Bewerten',
 			'rateSheet.server' => 'Server',
 			'rateSheet.favorite' => 'Favorit',
@@ -6657,9 +6659,9 @@ extension on TranslationsDe {
 			'tooltips.markAsWatched' => 'Als gesehen markieren',
 			'tooltips.markAsUnwatched' => 'Als ungesehen markieren',
 			'audioTracks.track' => ({required Object n}) => 'Audiospur ${n}',
-			'videoControls.audioLabel' => 'Audio',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'Audio',
 			'videoControls.subtitlesLabel' => 'Untertitel',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Letterbox',
@@ -7171,9 +7173,9 @@ extension on TranslationsDe {
 			'errors.noClientAvailable' => 'Kein Client verfügbar',
 			'errors.pleaseEnterToken' => 'Bitte Token eingeben',
 			'errors.invalidToken' => 'Ungültiges Token',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'Token-Verifizierung fehlgeschlagen: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'Token-Verifizierung fehlgeschlagen: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Profilwechsel zu ${displayName} fehlgeschlagen',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Löschen von ${displayName} fehlgeschlagen',
 			'errors.failedToRate' => 'Bewertung konnte nicht aktualisiert werden',
@@ -7685,9 +7687,9 @@ extension on TranslationsDe {
 			'playlists.created' => 'Wiedergabeliste erstellt',
 			'playlists.deleted' => 'Wiedergabeliste gelöscht',
 			'playlists.itemAdded' => 'Zur Wiedergabeliste hinzugefügt',
-			'playlists.itemRemoved' => 'Aus Wiedergabeliste entfernt',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'Aus Wiedergabeliste entfernt',
 			'playlists.selectPlaylist' => 'Wiedergabeliste auswählen',
 			'playlists.searchPlaylists' => 'Wiedergabelisten durchsuchen...',
 			'playlists.errorCreating' => 'Wiedergabeliste konnte nicht erstellt werden',
@@ -8199,9 +8201,9 @@ extension on TranslationsDe {
 			'performanceOverlay.avSync' => 'A/V-Sync',
 			'performanceOverlay.dropped' => 'Verworfen',
 			'performanceOverlay.dvRpus' => 'DV-RPUs',
-			'performanceOverlay.dvRpuAverage' => 'DV-RPU Ø',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'DV-RPU Ø',
 			'performanceOverlay.dvSampleAverage' => 'DV-Sample Ø',
 			'performanceOverlay.maxLuma' => 'Max. Luma',
 			'performanceOverlay.minLuma' => 'Min. Luma',
@@ -8713,9 +8715,9 @@ extension on TranslationsDe {
 			'homeLayout.removeHub' => 'Hub entfernen',
 			'homeLayout.noPlexRows' => 'Nr. Plex-verwaltete Zeilen zurückkehren für diese Bibliothek.',
 			'homeLayout.openDetails' => 'Offene Details',
-			'homeLayout.heroCards' => 'Hero Karten',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'Hero Karten',
 			'homeLayout.tapHeroCard' => 'Ein Hero-Karte zu schlagen',
 			'homeLayout.tvPlayFocus' => 'Fernseher: Highlight Play-Button',
 			'homeLayout.tvPlayFocusDescription' => 'D-Pad Down stoppt auf der Play-Taste, bevor Sie in die nächste Reihe gehen.',
@@ -9227,9 +9229,9 @@ extension on TranslationsDe {
 			'audiobook.recoveryExported' => 'Verschlüsselte Recovery-Datei wurde gespeichert.',
 			'audiobook.recoveryImported' => 'Wiederherstellungsdaten sind zusammengefasst.',
 			'sourceSetup.bookorbitHelp' => 'Melde dich mit deinem eigenen BookOrbit-Konto an, um die Bücher zu durchstöbern und abzuspielen. Anfragen für fehlende Titel laufen weiterhin über deine verbundene SeerrNG-Instanz.',
-			'sourceSetup.bookorbitOpen' => 'In BookOrbit öffnen',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'In BookOrbit öffnen',
 			'sourceSetup.bookorbitDetailHelp' => 'Rufe diesen Titel in BookOrbit auf, um Bibliotheksdetails und Formate zu verwalten, die Pleazyng nicht öffnen kann. Der Hörfortschritt wird mit deinem BookOrbit-Konto synchronisiert.',
 			'sourceSetup.savedCertificate' => 'Gespeichertes Serverzertifikat',
 			'sourceSetup.nfsEndpointInvalid' => 'Gib eine NFS-URL wie nfs://nas:2049/export ein.',
@@ -9741,9 +9743,9 @@ extension on TranslationsDe {
 			'musicTools.rules' => 'Filter',
 			'musicTools.exclusiveOutput' => 'Exklusive Audioausgabe',
 			'musicTools.preamp' => 'Vorverstärkung',
-			'musicTools.ratingPending' => 'Auf diesem Gerät gespeichert; Synchronisierung ausstehend',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'Auf diesem Gerät gespeichert; Synchronisierung ausstehend',
 			'musicTools.lyricsOffset' => 'Zeitversatz der Liedtexte',
 			'musicTools.anniversaries' => 'Albumjubiläen',
 			'musicTools.outputPreset' => 'EQ für diesen Ausgang',

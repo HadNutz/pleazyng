@@ -1140,6 +1140,7 @@ class _Translations$mediaMenu$th extends Translations$mediaMenu$en {
 	@override String get rate => 'อัตรา';
 	@override String get playFromBeginning => 'เล่นจากเริ่มต้น';
 	@override String get playVersion => 'เล่นเวอร์ชัน';
+	@override String get mediaDeletionDisabledOnServer => 'เซิร์ฟเวอร์นี้ปิดการลบสื่อไว้ โปรดอนุญาตให้ลบสื่อในการตั้งค่าคลังของเซิร์ฟเวอร์';
 }
 
 // Path: rateSheet
@@ -6568,6 +6569,7 @@ extension on TranslationsTh {
 			'mediaMenu.rate' => 'อัตรา',
 			'mediaMenu.playFromBeginning' => 'เล่นจากเริ่มต้น',
 			'mediaMenu.playVersion' => 'เล่นเวอร์ชัน',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'เซิร์ฟเวอร์นี้ปิดการลบสื่อไว้ โปรดอนุญาตให้ลบสื่อในการตั้งค่าคลังของเซิร์ฟเวอร์',
 			'rateSheet.title' => 'อัตรา',
 			'rateSheet.server' => 'เซิร์ฟเวอร์',
 			'rateSheet.favorite' => 'รายการโปรด',
@@ -6632,9 +6634,9 @@ extension on TranslationsTh {
 			'tooltips.markAsWatched' => 'Mark ตามที่มองเห็น',
 			'tooltips.markAsUnwatched' => 'หมายเลขรุ่น: Unwatched',
 			'audioTracks.track' => ({required Object n}) => 'ลวดเสียง ${n}',
-			'videoControls.audioLabel' => 'เสียง',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'เสียง',
 			'videoControls.subtitlesLabel' => 'คำบรรยาย',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'กล่องข้อความ',
@@ -7146,9 +7148,9 @@ extension on TranslationsTh {
 			'errors.noClientAvailable' => 'ไม่มีลูกค้า',
 			'errors.pleaseEnterToken' => 'กรุณาใส่ token',
 			'errors.invalidToken' => 'โค้นที่ผิดพลาด',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'ไม่สามารถตรวจสอบ token: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'ไม่สามารถตรวจสอบ token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'ไม่สามารถเปลี่ยนไป ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'ไม่สามารถลบได้ ${displayName}',
 			'errors.failedToRate' => 'ไม่สามารถปรับปรุงการรับรอง',
@@ -7660,9 +7662,9 @@ extension on TranslationsTh {
 			'playlists.created' => 'Playlist สร้างขึ้น',
 			'playlists.deleted' => 'Playlist ลบ',
 			'playlists.itemAdded' => 'เพิ่มขึ้นใน Playlist',
-			'playlists.itemRemoved' => 'ลบออกจาก Playlist',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'ลบออกจาก Playlist',
 			'playlists.selectPlaylist' => 'เลือก Playlist',
 			'playlists.searchPlaylists' => 'ค้นหารายการเล่น',
 			'playlists.errorCreating' => 'ไม่ได้สร้าง playlist',
@@ -8174,9 +8176,9 @@ extension on TranslationsTh {
 			'performanceOverlay.avSync' => 'A / V Sync',
 			'performanceOverlay.dropped' => 'ละลาย',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
-			'performanceOverlay.dvRpuAverage' => 'DV RPU AVG',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'DV RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'DV ตัวอย่าง Avg',
 			'performanceOverlay.maxLuma' => 'แม็กซ์ Luma',
 			'performanceOverlay.minLuma' => 'มิน Luma',
@@ -8688,9 +8690,9 @@ extension on TranslationsTh {
 			'homeLayout.removeHub' => 'ลบ Hub',
 			'homeLayout.noPlexRows' => 'หมายเลข Plex-จัดการสายกลับสําหรับห้องสมุดนี้',
 			'homeLayout.openDetails' => 'รายละเอียดเปิด',
-			'homeLayout.heroCards' => 'บัตรฮีโร่',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'บัตรฮีโร่',
 			'homeLayout.tapHeroCard' => 'การสูญเสียการ์ดฮีโร่',
 			'homeLayout.tvPlayFocus' => 'โทรทัศน์ระยะไกล: ปุ่ม Play',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad down stops on the Play button before moving to the next row ปิดสกีตรงไปสู่ row ต่อไป',
@@ -9202,9 +9204,9 @@ extension on TranslationsTh {
 			'audiobook.recoveryExported' => 'ไฟล์การกู้คืนที่เข้ารหัสถูกบันทึก',
 			'audiobook.recoveryImported' => 'ข้อมูลการกู้คืนรวม',
 			'sourceSetup.bookorbitHelp' => 'ลงชื่อเข้าใช้บัญชี BookOrbit ของคุณเพื่อเรียกดูและเล่นหนังสือ คำขอสำหรับเรื่องที่ไม่มีให้บริการยังคงส่งผ่าน SeerrNG ที่เชื่อมต่อไว้',
-			'sourceSetup.bookorbitOpen' => 'เปิดใน BookOrbit',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'เปิดใน BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'ดูเรื่องนี้ใน BookOrbit เพื่อจัดการรายละเอียดในคลังและรูปแบบไฟล์ที่ Pleazyng เปิดไม่ได้ ความคืบหน้าในการฟังจะซิงค์กับบัญชี BookOrbit ของคุณ',
 			'sourceSetup.savedCertificate' => 'ใบรับรองเซิร์ฟเวอร์ที่บันทึกไว้',
 			'sourceSetup.nfsEndpointInvalid' => 'ป้อน URL ของ NFS เช่น nfs://nas:2049/export.',
@@ -9716,9 +9718,9 @@ extension on TranslationsTh {
 			'musicTools.rules' => 'ฟิล์ม',
 			'musicTools.exclusiveOutput' => 'เอาต์พุตเสียงแบบเอกสิทธิ์',
 			'musicTools.preamp' => 'ปรีแอมป์',
-			'musicTools.ratingPending' => 'บันทึกบนอุปกรณ์นี้แล้ว รอซิงค์',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'บันทึกบนอุปกรณ์นี้แล้ว รอซิงค์',
 			'musicTools.lyricsOffset' => 'ปรับเวลาเนื้อเพลง',
 			'musicTools.anniversaries' => 'ครบรอบการออกอัลบั้ม',
 			'musicTools.outputPreset' => 'EQ สำหรับเอาต์พุตนี้',

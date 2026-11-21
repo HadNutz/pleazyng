@@ -157,7 +157,8 @@
   "mediaMenu": {
     "deleteEpisodeConfirm": "Supprimer l’épisode",
     "rate": "Évaluer",
-    "playFromBeginning": "Lire depuis le début"
+    "playFromBeginning": "Lire depuis le début",
+    "mediaDeletionDisabledOnServer": "La suppression des médias est désactivée sur ce serveur. Autorisez-la dans les paramètres de bibliothèque du serveur."
   },
   "rateSheet": {
     "title": "Évaluer",

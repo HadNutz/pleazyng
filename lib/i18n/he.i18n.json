@@ -1055,7 +1055,8 @@
     "mediaFailedToDelete": "לא הצלחתי למחוק את התקשורת",
     "rate": "דירוג",
     "playFromBeginning": "נגן מהתחלה",
-    "playVersion": "לשחק גרסה..."
+    "playVersion": "לשחק גרסה...",
+    "mediaDeletionDisabledOnServer": "מחיקת מדיה מושבתת בשרת הזה. יש לאפשר מחיקת מדיה בהגדרות הספרייה של השרת."
   },
   "rateSheet": {
     "title": "דירוג",

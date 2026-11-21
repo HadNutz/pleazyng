@@ -1051,7 +1051,8 @@
     "mediaFailedToDelete": "メディアアイテムの削除に失敗しました",
     "rate": "評価",
     "playFromBeginning": "最初から再生",
-    "playVersion": "バージョンを選んで再生…"
+    "playVersion": "バージョンを選んで再生…",
+    "mediaDeletionDisabledOnServer": "このサーバーではメディアの削除が無効です。サーバーのライブラリ設定でメディアの削除を許可してください。"
   },
   "rateSheet": {
     "title": "評価",

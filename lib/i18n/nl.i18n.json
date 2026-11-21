@@ -1053,7 +1053,8 @@
     "mediaFailedToDelete": "Verwijderen van media-item mislukt",
     "rate": "Beoordelen",
     "playFromBeginning": "Afspelen vanaf het begin",
-    "playVersion": "Versie afspelen..."
+    "playVersion": "Versie afspelen...",
+    "mediaDeletionDisabledOnServer": "Het verwijderen van media is op deze server uitgeschakeld. Sta het verwijderen van media toe in de bibliotheekinstellingen van de server."
   },
   "rateSheet": {
     "title": "Beoordelen",

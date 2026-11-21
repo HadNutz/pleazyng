@@ -1053,7 +1053,8 @@
     "mediaFailedToDelete": "Medienelement konnte nicht gelöscht werden",
     "rate": "Bewerten",
     "playFromBeginning": "Von Anfang an abspielen",
-    "playVersion": "Version abspielen …"
+    "playVersion": "Version abspielen …",
+    "mediaDeletionDisabledOnServer": "Das Löschen von Medien ist auf diesem Server deaktiviert. Erlaube das Löschen von Medien in den Bibliothekseinstellungen des Servers."
   },
   "rateSheet": {
     "title": "Bewerten",

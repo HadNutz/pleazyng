@@ -1055,7 +1055,8 @@
     "mediaFailedToDelete": "Error al eliminar el elemento multimedia",
     "rate": "Calificar",
     "playFromBeginning": "Reproducir desde el inicio",
-    "playVersion": "Reproducir versión..."
+    "playVersion": "Reproducir versión...",
+    "mediaDeletionDisabledOnServer": "La eliminación de contenido está desactivada en este servidor. Permítela en los ajustes de biblioteca del servidor."
   },
   "rateSheet": {
     "title": "Calificar",

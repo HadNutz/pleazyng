@@ -1145,6 +1145,7 @@ class _Translations$mediaMenu$kk extends Translations$mediaMenu$en {
 	@override String get rate => 'Бағалау';
 	@override String get playFromBeginning => 'Басынан бастап ойнату';
 	@override String get playVersion => 'Нұсқаны ойнату...';
+	@override String get mediaDeletionDisabledOnServer => 'Бұл серверде медианы жою өшірілген. Сервердің кітапхана баптауларында медианы жоюға рұқсат беріңіз.';
 }
 
 // Path: rateSheet
@@ -6593,6 +6594,7 @@ extension on TranslationsKk {
 			'mediaMenu.rate' => 'Бағалау',
 			'mediaMenu.playFromBeginning' => 'Басынан бастап ойнату',
 			'mediaMenu.playVersion' => 'Нұсқаны ойнату...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Бұл серверде медианы жою өшірілген. Сервердің кітапхана баптауларында медианы жоюға рұқсат беріңіз.',
 			'rateSheet.title' => 'Бағалау',
 			'rateSheet.server' => 'Сервер',
 			'rateSheet.favorite' => 'Таңдаулы',
@@ -6657,9 +6659,9 @@ extension on TranslationsKk {
 			'tooltips.markAsWatched' => 'Көрілді деп белгілеу',
 			'tooltips.markAsUnwatched' => 'Көрілмеді деп белгілеу',
 			'audioTracks.track' => ({required Object n}) => 'Аудиожол ${n}',
-			'videoControls.audioLabel' => 'Дыбыс',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'Дыбыс',
 			'videoControls.subtitlesLabel' => 'Субтитр',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Кең экран (Letterbox)',
@@ -7171,9 +7173,9 @@ extension on TranslationsKk {
 			'errors.noClientAvailable' => 'Қолжетімді клиент жоқ',
 			'errors.pleaseEnterToken' => 'Токенді енгізіңіз',
 			'errors.invalidToken' => 'Жарамсыз токен',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'Токенді тексеру мүмкін болмады: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'Токенді тексеру мүмкін болмады: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName} профиліне ауысу мүмкін болмады',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName} профилін өшіру мүмкін болмады',
 			'errors.failedToRate' => 'Рейтингті жаңарту мүмкін болмады',
@@ -7685,9 +7687,9 @@ extension on TranslationsKk {
 			'playlists.created' => 'Ойнату тізімі жасалды',
 			'playlists.deleted' => 'Ойнату тізімі өшірілді',
 			'playlists.itemAdded' => 'Тізімге қосылды',
-			'playlists.itemRemoved' => 'Тізімнен өшірілді',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'Тізімнен өшірілді',
 			'playlists.selectPlaylist' => 'Тізімді таңдау',
 			'playlists.searchPlaylists' => 'Ойнату тізімдерінен іздеу...',
 			'playlists.errorCreating' => 'Тізімді жасау мүмкін болмады',
@@ -8199,9 +8201,9 @@ extension on TranslationsKk {
 			'performanceOverlay.avSync' => 'A/V синхрондау',
 			'performanceOverlay.dropped' => 'Өткізілген кадрлар',
 			'performanceOverlay.dvRpus' => 'DV RPU-лар',
-			'performanceOverlay.dvRpuAverage' => 'DV RPU Орт.',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'DV RPU Орт.',
 			'performanceOverlay.dvSampleAverage' => 'DV Үлгі Орт.',
 			'performanceOverlay.maxLuma' => 'Макс Luma',
 			'performanceOverlay.minLuma' => 'Мин Luma',
@@ -8713,9 +8715,9 @@ extension on TranslationsKk {
 			'homeLayout.removeHub' => 'Өткен қағал',
 			'homeLayout.noPlexRows' => 'Бұл кітапхана үшін Plex басқаратын қатарлар табылмады.',
 			'homeLayout.openDetails' => 'Одандық детайл',
-			'homeLayout.heroCards' => 'Үлкен картасы',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'Үлкен картасы',
 			'homeLayout.tapHeroCard' => 'Жүктесі картасы',
 			'homeLayout.tvPlayFocus' => 'Телевизорда көтеріп: «Жеңір» бутон',
 			'homeLayout.tvPlayFocusDescription' => 'Бұл үшін, «Д-пады» және «Д-пай» және «Сейп» және «Бай» және басқа да «Сейб» және «Аль-Кай» және т.б.',
@@ -9227,9 +9229,9 @@ extension on TranslationsKk {
 			'audiobook.recoveryExported' => 'Қазіргі уақытта өңдеуге кеңінен танымал.',
 			'audiobook.recoveryImported' => 'Ауыздан дағдарыста.',
 			'sourceSetup.bookorbitHelp' => 'Кітаптарды қарау және ойнату үшін өз BookOrbit тіркелгіңізге кіріңіз. Жоқ тақырыптарға арналған сұраулар әлі де қосылған SeerrNG данасы арқылы жіберіледі.',
-			'sourceSetup.bookorbitOpen' => 'BookOrbit ішінде ашу',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'BookOrbit ішінде ашу',
 			'sourceSetup.bookorbitDetailHelp' => 'Кітапхана мәліметтерін және Pleazyng аша алмайтын пішімдерді басқару үшін бұл тақырыпты BookOrbit ішінде қараңыз. Тыңдау барысы BookOrbit тіркелгісімен синхрондалады.',
 			'sourceSetup.savedCertificate' => 'Сақталған сервер сертификаты',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export сияқты NFS URL мекенжайын енгізіңіз.',
@@ -9741,9 +9743,9 @@ extension on TranslationsKk {
 			'musicTools.rules' => 'Фильтрлер',
 			'musicTools.exclusiveOutput' => 'Эксклюзивті аудио шығыс',
 			'musicTools.preamp' => 'Алдын ала күшейту',
-			'musicTools.ratingPending' => 'Осы құрылғыда сақталды; синхрондау күтілуде',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'Осы құрылғыда сақталды; синхрондау күтілуде',
 			'musicTools.lyricsOffset' => 'Ән мәтінінің уақыт ығысуы',
 			'musicTools.anniversaries' => 'Альбом мерейтойлары',
 			'musicTools.outputPreset' => 'Осы шығысқа арналған эквалайзер',

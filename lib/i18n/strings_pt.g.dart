@@ -1147,6 +1147,7 @@ class Translations$mediaMenu$pt extends Translations$mediaMenu$en {
 	@override String get rate => 'Avaliar';
 	@override String get playFromBeginning => 'Reproduzir do início';
 	@override String get playVersion => 'Reproduzir versão...';
+	@override String get mediaDeletionDisabledOnServer => 'A exclusão de mídia está desativada neste servidor. Permita a exclusão de mídia nas configurações de biblioteca do servidor.';
 }
 
 // Path: rateSheet
@@ -6600,6 +6601,7 @@ extension on TranslationsPt {
 			'mediaMenu.rate' => 'Avaliar',
 			'mediaMenu.playFromBeginning' => 'Reproduzir do início',
 			'mediaMenu.playVersion' => 'Reproduzir versão...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'A exclusão de mídia está desativada neste servidor. Permita a exclusão de mídia nas configurações de biblioteca do servidor.',
 			'rateSheet.title' => 'Avaliar',
 			'rateSheet.server' => 'Servidor',
 			'rateSheet.favorite' => 'Favorito',
@@ -6664,9 +6666,9 @@ extension on TranslationsPt {
 			'tooltips.markAsWatched' => 'Marcar como assistido',
 			'tooltips.markAsUnwatched' => 'Marcar como não assistido',
 			'audioTracks.track' => ({required Object n}) => 'Faixa de áudio ${n}',
-			'videoControls.audioLabel' => 'Áudio',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'Áudio',
 			'videoControls.subtitlesLabel' => 'Legendas',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Letterbox',
@@ -7178,9 +7180,9 @@ extension on TranslationsPt {
 			'errors.noClientAvailable' => 'Nenhum cliente disponível',
 			'errors.pleaseEnterToken' => 'Insira um token',
 			'errors.invalidToken' => 'Token inválido',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'Falha ao verificar token: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'Falha ao verificar token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Falha ao trocar para ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Falha ao excluir ${displayName}',
 			'errors.failedToRate' => 'Não foi possível atualizar a classificação',
@@ -7692,9 +7694,9 @@ extension on TranslationsPt {
 			'playlists.created' => 'Playlist criada',
 			'playlists.deleted' => 'Playlist excluída',
 			'playlists.itemAdded' => 'Adicionado à playlist',
-			'playlists.itemRemoved' => 'Removido da playlist',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'Removido da playlist',
 			'playlists.selectPlaylist' => 'Selecionar Playlist',
 			'playlists.searchPlaylists' => 'Pesquisar playlists...',
 			'playlists.errorCreating' => 'Falha ao criar playlist',
@@ -8206,9 +8208,9 @@ extension on TranslationsPt {
 			'performanceOverlay.avSync' => 'Sincronia A/V',
 			'performanceOverlay.dropped' => 'Descartados',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
-			'performanceOverlay.dvRpuAverage' => 'Média DV RPU',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'Média DV RPU',
 			'performanceOverlay.dvSampleAverage' => 'Média amostra DV',
 			'performanceOverlay.maxLuma' => 'Luma máx.',
 			'performanceOverlay.minLuma' => 'Luma mín.',
@@ -8720,9 +8722,9 @@ extension on TranslationsPt {
 			'homeLayout.removeHub' => 'Remover o Hub',
 			'homeLayout.noPlexRows' => 'No Plex linhas gerenciadas retornou para esta biblioteca.',
 			'homeLayout.openDetails' => 'Detalhes abertos',
-			'homeLayout.heroCards' => 'Cartões de herói',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'Cartões de herói',
 			'homeLayout.tapHeroCard' => 'Tapeando um cartão de herói',
 			'homeLayout.tvPlayFocus' => 'TV remoto: botão de gravação',
 			'homeLayout.tvPlayFocusDescription' => 'O D-pad para baixo parou no botão Play antes de se mover para a próxima linha.',
@@ -9234,9 +9236,9 @@ extension on TranslationsPt {
 			'audiobook.recoveryExported' => 'arquivo de recuperação criptografado salvo.',
 			'audiobook.recoveryImported' => 'Dados de recuperação combinados.',
 			'sourceSetup.bookorbitHelp' => 'Entre com sua própria conta BookOrbit para navegar e reproduzir seus livros. Pedidos de títulos ausentes continuam passando pela sua instância SeerrNG conectada.',
-			'sourceSetup.bookorbitOpen' => 'Abrir no BookOrbit',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'Abrir no BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Veja este título no BookOrbit para gerir os detalhes da biblioteca e os formatos que o Pleazyng não consegue abrir. O progresso de audição é sincronizado com a sua conta BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Certificado do servidor salvo',
 			'sourceSetup.nfsEndpointInvalid' => 'Digite uma URL NFS, como nfs://nas:2049/export.',
@@ -9748,9 +9750,9 @@ extension on TranslationsPt {
 			'musicTools.rules' => 'Filtros',
 			'musicTools.exclusiveOutput' => 'Saída de áudio exclusiva',
 			'musicTools.preamp' => 'Pré-amplificação',
-			'musicTools.ratingPending' => 'Salvo neste dispositivo; aguardando sincronização',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'Salvo neste dispositivo; aguardando sincronização',
 			'musicTools.lyricsOffset' => 'Deslocamento da letra',
 			'musicTools.anniversaries' => 'Aniversários de álbuns',
 			'musicTools.outputPreset' => 'Equalizador desta saída',

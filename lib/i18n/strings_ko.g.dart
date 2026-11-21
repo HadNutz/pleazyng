@@ -1143,6 +1143,7 @@ class _Translations$mediaMenu$ko extends Translations$mediaMenu$en {
 	@override String get rate => '평가';
 	@override String get playFromBeginning => '처음부터 재생';
 	@override String get playVersion => '버전 재생...';
+	@override String get mediaDeletionDisabledOnServer => '이 서버에서는 미디어 삭제가 비활성화되어 있습니다. 서버의 라이브러리 설정에서 미디어 삭제를 허용하세요.';
 }
 
 // Path: rateSheet
@@ -6588,6 +6589,7 @@ extension on TranslationsKo {
 			'mediaMenu.rate' => '평가',
 			'mediaMenu.playFromBeginning' => '처음부터 재생',
 			'mediaMenu.playVersion' => '버전 재생...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => '이 서버에서는 미디어 삭제가 비활성화되어 있습니다. 서버의 라이브러리 설정에서 미디어 삭제를 허용하세요.',
 			'rateSheet.title' => '평가',
 			'rateSheet.server' => '서버',
 			'rateSheet.favorite' => '즐겨찾기',
@@ -6652,9 +6654,9 @@ extension on TranslationsKo {
 			'tooltips.markAsWatched' => '시청 완료로 표시',
 			'tooltips.markAsUnwatched' => '미시청으로 표시',
 			'audioTracks.track' => ({required Object n}) => '오디오 트랙 ${n}',
-			'videoControls.audioLabel' => '오디오',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => '오디오',
 			'videoControls.subtitlesLabel' => '자막',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => '레터박스 모드',
@@ -7166,9 +7168,9 @@ extension on TranslationsKo {
 			'errors.noClientAvailable' => '사용 가능한 클라이언트가 없습니다',
 			'errors.pleaseEnterToken' => '토큰을 입력해 주세요',
 			'errors.invalidToken' => '토큰이 유효하지 않습니다',
-			'errors.failedToVerifyToken' => ({required Object error}) => '토큰을 확인할 수 없습니다: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => '토큰을 확인할 수 없습니다: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName}으로 전환할 수 없습니다',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName}을(를) 삭제할 수 없습니다',
 			'errors.failedToRate' => '평점을 업데이트하지 못했습니다',
@@ -7680,9 +7682,9 @@ extension on TranslationsKo {
 			'playlists.created' => '재생 목록이 생성되었습니다',
 			'playlists.deleted' => '재생 목록이 삭제되었습니다',
 			'playlists.itemAdded' => '재생 목록에 추가되었습니다',
-			'playlists.itemRemoved' => '재생 목록에서 제거됨',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => '재생 목록에서 제거됨',
 			'playlists.selectPlaylist' => '재생 목록 선택',
 			'playlists.searchPlaylists' => '재생 목록 검색...',
 			'playlists.errorCreating' => '재생 목록 생성 실패',
@@ -8194,9 +8196,9 @@ extension on TranslationsKo {
 			'performanceOverlay.avSync' => 'A/V 동기화',
 			'performanceOverlay.dropped' => '드롭됨',
 			'performanceOverlay.dvRpus' => 'DV RPU',
-			'performanceOverlay.dvRpuAverage' => 'DV RPU 평균',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'DV RPU 평균',
 			'performanceOverlay.dvSampleAverage' => 'DV 샘플 평균',
 			'performanceOverlay.maxLuma' => '최대 휘도',
 			'performanceOverlay.minLuma' => '최소 휘도',
@@ -8708,9 +8710,9 @@ extension on TranslationsKo {
 			'homeLayout.removeHub' => 'Hub 삭제',
 			'homeLayout.noPlexRows' => 'No. Plex 관리 라인이 이 도서관에 반환되었습니다.',
 			'homeLayout.openDetails' => '개방된 세부 사항',
-			'homeLayout.heroCards' => '영웅 카드',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => '영웅 카드',
 			'homeLayout.tapHeroCard' => '히어로 카드를 탭할 때',
 			'homeLayout.tvPlayFocus' => 'TV 원격: 히틀러 플레이 버튼',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad 아래는 다음 라인으로 이동하기 전에 플레이 버튼을 멈추고 다음 라인에 직접 스키를 끄십시오.',
@@ -9222,9 +9224,9 @@ extension on TranslationsKo {
 			'audiobook.recoveryExported' => '암호화 된 복구 파일이 저장되었습니다.',
 			'audiobook.recoveryImported' => '복구 데이터가 합쳐졌습니다.',
 			'sourceSetup.bookorbitHelp' => 'BookOrbit 도서를 둘러보고 재생하려면 본인 BookOrbit 계정으로 로그인하세요. 없는 작품의 요청은 계속 연결된 SeerrNG 인스턴스를 통해 전송됩니다.',
-			'sourceSetup.bookorbitOpen' => 'BookOrbit에서 열기',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'BookOrbit에서 열기',
 			'sourceSetup.bookorbitDetailHelp' => '라이브러리 세부 정보와 Pleazyng에서 열 수 없는 형식을 관리하려면 BookOrbit에서 이 작품을 확인하세요. 청취 진행 상황은 BookOrbit 계정과 동기화됩니다.',
 			'sourceSetup.savedCertificate' => '저장된 서버 인증서',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export와 같은 NFS URL을 입력하세요.',
@@ -9736,9 +9738,9 @@ extension on TranslationsKo {
 			'musicTools.rules' => '필터',
 			'musicTools.exclusiveOutput' => '독점 오디오 출력',
 			'musicTools.preamp' => '프리앰프',
-			'musicTools.ratingPending' => '이 기기에 저장됨; 동기화 대기 중',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => '이 기기에 저장됨; 동기화 대기 중',
 			'musicTools.lyricsOffset' => '가사 타이밍 조정',
 			'musicTools.anniversaries' => '앨범 발매 기념일',
 			'musicTools.outputPreset' => '이 출력의 EQ',

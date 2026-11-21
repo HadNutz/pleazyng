@@ -1055,7 +1055,8 @@
     "mediaFailedToDelete": "Impossibile eliminare l'elemento multimediale",
     "rate": "Valuta",
     "playFromBeginning": "Riproduci dall'inizio",
-    "playVersion": "Riproduci versione..."
+    "playVersion": "Riproduci versione...",
+    "mediaDeletionDisabledOnServer": "L’eliminazione dei contenuti è disattivata su questo server. Consentila nelle impostazioni della libreria del server."
   },
   "rateSheet": {
     "title": "Valuta",

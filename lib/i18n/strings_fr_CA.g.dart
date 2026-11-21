@@ -304,6 +304,7 @@ class _Translations$mediaMenu$fr_CA extends Translations$mediaMenu$fr {
 	@override String get deleteEpisodeConfirm => 'Supprimer l’épisode';
 	@override String get rate => 'Évaluer';
 	@override String get playFromBeginning => 'Lire depuis le début';
+	@override String get mediaDeletionDisabledOnServer => 'La suppression des médias est désactivée sur ce serveur. Autorisez-la dans les paramètres de bibliothèque du serveur.';
 }
 
 // Path: rateSheet
@@ -1451,6 +1452,7 @@ extension on TranslationsFrCa {
 			'mediaMenu.deleteEpisodeConfirm' => 'Supprimer l’épisode',
 			'mediaMenu.rate' => 'Évaluer',
 			'mediaMenu.playFromBeginning' => 'Lire depuis le début',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'La suppression des médias est désactivée sur ce serveur. Autorisez-la dans les paramètres de bibliothèque du serveur.',
 			'rateSheet.title' => 'Évaluer',
 			'rateSheet.server' => 'Serveur',
 			'rateSheet.favorite' => 'Favori',
@@ -1847,9 +1849,9 @@ extension on TranslationsFrCa {
 			'romm.touchControls' => 'Touch controls',
 			'romm.controls' => 'Controls',
 			'romm.resetControls' => 'Reset controls',
-			'romm.playerOne' => 'Player 1',
 			_ => null,
 		} ?? switch (path) {
+			'romm.playerOne' => 'Player 1',
 			'romm.select' => 'Select',
 			'romm.start' => 'Start',
 			'romm.up' => 'Up',

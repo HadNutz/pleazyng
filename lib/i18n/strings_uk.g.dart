@@ -1155,6 +1155,7 @@ class _Translations$mediaMenu$uk extends Translations$mediaMenu$en {
 	@override String get rate => 'Оцінити';
 	@override String get playFromBeginning => 'Грати з початку';
 	@override String get playVersion => 'Грати в версію...';
+	@override String get mediaDeletionDisabledOnServer => 'Видалення медіафайлів на цьому сервері вимкнено. Дозвольте видалення медіафайлів у налаштуваннях бібліотеки сервера.';
 }
 
 // Path: rateSheet
@@ -6637,6 +6638,7 @@ extension on TranslationsUk {
 			'mediaMenu.rate' => 'Оцінити',
 			'mediaMenu.playFromBeginning' => 'Грати з початку',
 			'mediaMenu.playVersion' => 'Грати в версію...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Видалення медіафайлів на цьому сервері вимкнено. Дозвольте видалення медіафайлів у налаштуваннях бібліотеки сервера.',
 			'rateSheet.title' => 'Оцінити',
 			'rateSheet.server' => 'Сервер',
 			'rateSheet.favorite' => 'Обране',
@@ -6701,9 +6703,9 @@ extension on TranslationsUk {
 			'tooltips.markAsWatched' => 'Марк як спостерігається',
 			'tooltips.markAsUnwatched' => 'Марк як невідомий',
 			'audioTracks.track' => ({required Object n}) => 'Анонс звуку ${n}',
-			'videoControls.audioLabel' => 'Аудіо',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'Аудіо',
 			'videoControls.subtitlesLabel' => 'Субтитри',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Літературний ящик',
@@ -7215,9 +7217,9 @@ extension on TranslationsUk {
 			'errors.noClientAvailable' => 'Клієнт не доступний',
 			'errors.pleaseEnterToken' => 'Будь ласка, введіть токен',
 			'errors.invalidToken' => 'Недійсний токен',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'Невідомий токен: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'Невідомий токен: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Не вдалося перейти до ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Не вдалося видалити ${displayName}',
 			'errors.failedToRate' => 'Не можна оновити рейтинг',
@@ -7729,9 +7731,9 @@ extension on TranslationsUk {
 			'playlists.created' => 'Створення Playlist',
 			'playlists.deleted' => 'Завантажити Playlist',
 			'playlists.itemAdded' => 'Додано до Playlist',
-			'playlists.itemRemoved' => 'Вилучено з Playlist',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'Вилучено з Playlist',
 			'playlists.selectPlaylist' => 'Виберіть Playlist',
 			'playlists.searchPlaylists' => 'Пошук гравців...',
 			'playlists.errorCreating' => 'Не вдалося створити плей-лист',
@@ -8243,9 +8245,9 @@ extension on TranslationsUk {
 			'performanceOverlay.avSync' => 'А/В синхронізація',
 			'performanceOverlay.dropped' => 'розбито',
 			'performanceOverlay.dvRpus' => 'ДВ РПУ',
-			'performanceOverlay.dvRpuAverage' => 'ДВ РПУ АВГ',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'ДВ РПУ АВГ',
 			'performanceOverlay.dvSampleAverage' => 'ДВ Семп Avg',
 			'performanceOverlay.maxLuma' => 'Макс Люма',
 			'performanceOverlay.minLuma' => 'Мінус Лума',
@@ -8757,9 +8759,9 @@ extension on TranslationsUk {
 			'homeLayout.removeHub' => 'Видалення Hub',
 			'homeLayout.noPlexRows' => 'No Plex-управлені рядки повернулися для цієї бібліотеки.',
 			'homeLayout.openDetails' => 'Відкриті деталі',
-			'homeLayout.heroCards' => 'Герої картки',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'Герої картки',
 			'homeLayout.tapHeroCard' => 'Завантажити картку героя',
 			'homeLayout.tvPlayFocus' => 'Телевізор віддалений: підкреслює кнопку Play',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad down зупиняється на кнопці Play, перш ніж перейти до наступного рядка.',
@@ -9271,9 +9273,9 @@ extension on TranslationsUk {
 			'audiobook.recoveryExported' => 'Зашифрований файл відновлення збережений.',
 			'audiobook.recoveryImported' => 'Відновлення даних поєднуються.',
 			'sourceSetup.bookorbitHelp' => 'Увійдіть у власний обліковий запис BookOrbit, щоб переглядати й відтворювати свої книжки. Запити на відсутні книжки й надалі надсилатимуться через підключений екземпляр SeerrNG.',
-			'sourceSetup.bookorbitOpen' => 'Відкрити в BookOrbit',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'Відкрити в BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Перегляньте цю книжку в BookOrbit, щоб керувати відомостями бібліотеки та форматами, які Pleazyng не може відкрити. Прогрес прослуховування синхронізується з вашим обліковим записом BookOrbit.',
 			'sourceSetup.savedCertificate' => 'Збережений сертифікат сервера',
 			'sourceSetup.nfsEndpointInvalid' => 'Введіть URL NFS, наприклад nfs://nas:2049/export.',
@@ -9785,9 +9787,9 @@ extension on TranslationsUk {
 			'musicTools.rules' => 'Фільтри',
 			'musicTools.exclusiveOutput' => 'Монопольний аудіовихід',
 			'musicTools.preamp' => 'Попереднє підсилення',
-			'musicTools.ratingPending' => 'Збережено на пристрої; очікує синхронізації',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'Збережено на пристрої; очікує синхронізації',
 			'musicTools.lyricsOffset' => 'Зсув тексту пісні',
 			'musicTools.anniversaries' => 'Річниці альбомів',
 			'musicTools.outputPreset' => 'Еквалайзер для цього виходу',

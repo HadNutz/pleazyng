@@ -1148,6 +1148,7 @@ class Translations$mediaMenu$fr extends Translations$mediaMenu$en {
 	@override String get rate => 'Noter';
 	@override String get playFromBeginning => 'Lire depuis le début';
 	@override String get playVersion => 'Lire la version...';
+	@override String get mediaDeletionDisabledOnServer => 'La suppression des médias est désactivée sur ce serveur. Autorisez-la dans les paramètres de bibliothèque du serveur.';
 }
 
 // Path: rateSheet
@@ -6637,6 +6638,7 @@ extension on TranslationsFr {
 			'mediaMenu.rate' => 'Noter',
 			'mediaMenu.playFromBeginning' => 'Lire depuis le début',
 			'mediaMenu.playVersion' => 'Lire la version...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'La suppression des médias est désactivée sur ce serveur. Autorisez-la dans les paramètres de bibliothèque du serveur.',
 			'rateSheet.title' => 'Noter',
 			'rateSheet.server' => 'Serveur',
 			'rateSheet.favorite' => 'Favori',
@@ -6701,9 +6703,9 @@ extension on TranslationsFr {
 			'tooltips.markAsWatched' => 'Marquer comme vu',
 			'tooltips.markAsUnwatched' => 'Marquer comme non vu',
 			'audioTracks.track' => ({required Object n}) => 'Piste audio ${n}',
-			'videoControls.audioLabel' => 'Audio',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'Audio',
 			'videoControls.subtitlesLabel' => 'Sous-titres',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Format letterbox',
@@ -7215,9 +7217,9 @@ extension on TranslationsFr {
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age} ans)',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (à ${age} ans)',
 			'errors.searchFailed' => ({required Object error}) => 'Échec de la recherche : ${error}',
-			'errors.searchUnavailable' => 'La recherche n\'a pu atteindre aucun serveur multimédia.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.searchUnavailable' => 'La recherche n\'a pu atteindre aucun serveur multimédia.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Délai d\'attente de connexion dépassé pendant le chargement ${context}',
 			'errors.connectionFailed' => 'Impossible de se connecter au serveur multimédia',
 			'errors.unableToLoad' => ({required Object context}) => 'Impossible de charger ${context}. Réessayez.',
@@ -7729,9 +7731,9 @@ extension on TranslationsFr {
 			'playlists.delete' => 'Supprimer la playlist',
 			'playlists.removeItem' => 'Retirer de la playlist',
 			'playlists.smartPlaylist' => 'Playlist intelligente',
-			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} élément', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} éléments', ), 
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} élément', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} éléments', ), 
 			'playlists.emptyPlaylist' => 'Cette playlist est vide',
 			'playlists.deleteConfirm' => 'Supprimer la playlist ?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Voulez-vous vraiment supprimer « ${name} » ?',
@@ -8243,9 +8245,9 @@ extension on TranslationsFr {
 			'performanceOverlay.pixelFormat' => 'Fmt pixel',
 			'performanceOverlay.hwFormat' => 'Fmt HW',
 			'performanceOverlay.matrix' => 'Matrice',
-			'performanceOverlay.primaries' => 'Primaires',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.primaries' => 'Primaires',
 			'performanceOverlay.transfer' => 'Transfert',
 			'performanceOverlay.renderFps' => 'FPS rendu',
 			'performanceOverlay.displayFps' => 'FPS écran',
@@ -8757,9 +8759,9 @@ extension on TranslationsFr {
 			'homeLayout.continueWatchingHomeDescription' => 'Le nouveau progrès de la ligne montrée sur Home',
 			'homeLayout.nextUpHomeDescription' => 'La prochaine série de l\'épisode non vu diffusée séparément sur Home',
 			'homeLayout.library' => 'Bibliothèque',
-			'homeLayout.showInRecommended' => 'Présentation dans la bibliothèque recommandée',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'Présentation dans la bibliothèque recommandée',
 			'homeLayout.customPlexRow' => 'Résultats de la Plex',
 			'homeLayout.heroNeedsLibrary' => 'Vérifier la bibliothèque d\'abord - Le héros a besoin d\'un endroit où il faut montrer',
 			'homeLayout.heroNeedsSurface' => 'Vérifier la bibliothèque ou la maison d\'abord - Le héros a besoin d\'un endroit où il faut montrer',
@@ -9271,9 +9273,9 @@ extension on TranslationsFr {
 			'audiobook.statusNew' => 'Pas commencé',
 			'audiobook.statusProgress' => 'Au progrès',
 			'audiobook.statusFinished' => 'terminé',
-			'audiobook.goToTime' => 'Aller dans le temps',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.goToTime' => 'Aller dans le temps',
 			'audiobook.timeHelp' => 'Hores : minutes : secondes ou minutes : secondes',
 			'audiobook.recoveryHelp' => 'Exporter une récente copie cryptée avant de déplacer ou de réparer les données synchronisées. Les importations se fusionnent avec l\'état actuel; elles ne remplacent jamais l\'historique locale de la syncation.',
 			'audiobook.recoveryExport' => 'Export de fichiers de récupération cryptés',
@@ -9785,9 +9787,9 @@ extension on TranslationsFr {
 			'musicExperience.bluetoothDrivingHint' => 'Choisissez les sorties Bluetooth connectées qui ouvrent automatiquement la vue conduite.',
 			'musicTools.loudnessMissing' => 'Aucune donnée de sonie renvoyée',
 			'musicTools.loudnessRequested' => 'Demande d’analyse envoyée',
-			'musicTools.loudnessUnsupported' => 'Cette version du serveur ne prend pas en charge les demandes d’analyse',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessUnsupported' => 'Cette version du serveur ne prend pas en charge les demandes d’analyse',
 			'musicTools.serverHistory' => 'Historique de lecture du serveur',
 			'musicTools.nfcWrite' => 'Écrire un tag NFC',
 			'musicTools.nfcRead' => 'Scanner une étiquette NFC',

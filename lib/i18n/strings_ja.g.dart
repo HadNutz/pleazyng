@@ -1143,6 +1143,7 @@ class _Translations$mediaMenu$ja extends Translations$mediaMenu$en {
 	@override String get rate => '評価';
 	@override String get playFromBeginning => '最初から再生';
 	@override String get playVersion => 'バージョンを選んで再生…';
+	@override String get mediaDeletionDisabledOnServer => 'このサーバーではメディアの削除が無効です。サーバーのライブラリ設定でメディアの削除を許可してください。';
 }
 
 // Path: rateSheet
@@ -6588,6 +6589,7 @@ extension on TranslationsJa {
 			'mediaMenu.rate' => '評価',
 			'mediaMenu.playFromBeginning' => '最初から再生',
 			'mediaMenu.playVersion' => 'バージョンを選んで再生…',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'このサーバーではメディアの削除が無効です。サーバーのライブラリ設定でメディアの削除を許可してください。',
 			'rateSheet.title' => '評価',
 			'rateSheet.server' => 'サーバー',
 			'rateSheet.favorite' => 'お気に入り',
@@ -6652,9 +6654,9 @@ extension on TranslationsJa {
 			'tooltips.markAsWatched' => '視聴済みにする',
 			'tooltips.markAsUnwatched' => '未視聴にする',
 			'audioTracks.track' => ({required Object n}) => '音声トラック${n}',
-			'videoControls.audioLabel' => '音声',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => '音声',
 			'videoControls.subtitlesLabel' => '字幕',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'レターボックス',
@@ -7166,9 +7168,9 @@ extension on TranslationsJa {
 			'errors.noClientAvailable' => 'クライアントが利用できません',
 			'errors.pleaseEnterToken' => 'トークンを入力してください',
 			'errors.invalidToken' => '無効なトークン',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'トークンの検証に失敗しました: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'トークンの検証に失敗しました: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName}への切替に失敗しました',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName}の削除に失敗しました',
 			'errors.failedToRate' => '評価を更新できませんでした',
@@ -7680,9 +7682,9 @@ extension on TranslationsJa {
 			'playlists.created' => 'プレイリストを作成しました',
 			'playlists.deleted' => 'プレイリストを削除しました',
 			'playlists.itemAdded' => 'プレイリストに追加しました',
-			'playlists.itemRemoved' => 'プレイリストから削除しました',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'プレイリストから削除しました',
 			'playlists.selectPlaylist' => 'プレイリストを選択',
 			'playlists.searchPlaylists' => 'プレイリストを検索…',
 			'playlists.errorCreating' => 'プレイリストの作成に失敗しました',
@@ -8194,9 +8196,9 @@ extension on TranslationsJa {
 			'performanceOverlay.avSync' => 'A/V 同期',
 			'performanceOverlay.dropped' => 'ドロップ',
 			'performanceOverlay.dvRpus' => 'DV RPU',
-			'performanceOverlay.dvRpuAverage' => 'DV RPU 平均',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'DV RPU 平均',
 			'performanceOverlay.dvSampleAverage' => 'DV サンプル平均',
 			'performanceOverlay.maxLuma' => '最大輝度',
 			'performanceOverlay.minLuma' => '最小輝度',
@@ -8708,9 +8710,9 @@ extension on TranslationsJa {
 			'homeLayout.removeHub' => 'ハブを削除',
 			'homeLayout.noPlexRows' => '番号 Plex 管理行がこの図書館に戻りました。',
 			'homeLayout.openDetails' => 'オープン 詳細',
-			'homeLayout.heroCards' => 'ヒーローカード',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'ヒーローカード',
 			'homeLayout.tapHeroCard' => 'ヒーローカードを打ち出す',
 			'homeLayout.tvPlayFocus' => 'テレビ: リモート: ハイライト Play ボタン',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad down は、次の行に移動する前に Play ボタンで停止します。',
@@ -9222,9 +9224,9 @@ extension on TranslationsJa {
 			'audiobook.recoveryExported' => '暗号化されたリハビリファイルが保存されました。',
 			'audiobook.recoveryImported' => 'リハビリデータが合併。',
 			'sourceSetup.bookorbitHelp' => 'ご自身のBookOrbitアカウントにサインインすると、本を閲覧して再生できます。未登録タイトルのリクエストは、接続済みのSeerrNGインスタンスを通じて送信されます。',
-			'sourceSetup.bookorbitOpen' => 'BookOrbitで開く',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'BookOrbitで開く',
 			'sourceSetup.bookorbitDetailHelp' => 'このタイトルをBookOrbitで表示して、ライブラリの詳細やPleazyngで開けない形式を管理できます。再生位置はBookOrbitアカウントと同期されます。',
 			'sourceSetup.savedCertificate' => '保存済みのサーバー証明書',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export のような NFS URL を入力してください。',
@@ -9736,9 +9738,9 @@ extension on TranslationsJa {
 			'musicTools.rules' => 'フィルター',
 			'musicTools.exclusiveOutput' => '排他オーディオ出力',
 			'musicTools.preamp' => 'プリアンプ',
-			'musicTools.ratingPending' => 'この端末に保存済み・同期待ち',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'この端末に保存済み・同期待ち',
 			'musicTools.lyricsOffset' => '歌詞のタイミング調整',
 			'musicTools.anniversaries' => 'アルバムの発売記念日',
 			'musicTools.outputPreset' => 'この出力のEQ',

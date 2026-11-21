@@ -1145,6 +1145,7 @@ class _Translations$mediaMenu$hi extends Translations$mediaMenu$en {
 	@override String get rate => 'दरें';
 	@override String get playFromBeginning => 'शुरुआत से खेलना';
 	@override String get playVersion => 'खेल संस्करण ...';
+	@override String get mediaDeletionDisabledOnServer => 'इस सर्वर पर मीडिया हटाना बंद है। सर्वर की लाइब्रेरी सेटिंग में मीडिया हटाने की अनुमति चालू करें।';
 }
 
 // Path: rateSheet
@@ -6593,6 +6594,7 @@ extension on TranslationsHi {
 			'mediaMenu.rate' => 'दरें',
 			'mediaMenu.playFromBeginning' => 'शुरुआत से खेलना',
 			'mediaMenu.playVersion' => 'खेल संस्करण ...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'इस सर्वर पर मीडिया हटाना बंद है। सर्वर की लाइब्रेरी सेटिंग में मीडिया हटाने की अनुमति चालू करें।',
 			'rateSheet.title' => 'दरें',
 			'rateSheet.server' => 'सर्वर',
 			'rateSheet.favorite' => 'पसंद',
@@ -6657,9 +6659,9 @@ extension on TranslationsHi {
 			'tooltips.markAsWatched' => 'मार्क देखने के लिए',
 			'tooltips.markAsUnwatched' => 'अनदेखी के रूप में मार्क',
 			'audioTracks.track' => ({required Object n}) => 'ऑडियो ट्रैक ${n}',
-			'videoControls.audioLabel' => 'ऑडियो',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => 'ऑडियो',
 			'videoControls.subtitlesLabel' => 'उपशीर्षक',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'पत्रबॉक्स',
@@ -7171,9 +7173,9 @@ extension on TranslationsHi {
 			'errors.noClientAvailable' => 'कोई ग्राहक उपलब्ध नहीं',
 			'errors.pleaseEnterToken' => 'कृपया एक टोकन दर्ज करें',
 			'errors.invalidToken' => 'अयोग्य टोकन',
-			'errors.failedToVerifyToken' => ({required Object error}) => 'टोकन की पुष्टि नहीं की गई: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => 'टोकन की पुष्टि नहीं की गई: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName} पर स्विच करने में विफल',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName} को हटाने में विफलता',
 			'errors.failedToRate' => 'रेटिंग नहीं कर सकते',
@@ -7685,9 +7687,9 @@ extension on TranslationsHi {
 			'playlists.created' => 'Playlist बनाया गया',
 			'playlists.deleted' => 'Playlist हटा दिया गया',
 			'playlists.itemAdded' => 'Playlist में शामिल',
-			'playlists.itemRemoved' => 'Playlist से हटाए गए',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => 'Playlist से हटाए गए',
 			'playlists.selectPlaylist' => 'Playlist का चयन करें',
 			'playlists.searchPlaylists' => 'खेलों की खोज...',
 			'playlists.errorCreating' => 'Playlist बनाने में असफल',
@@ -8199,9 +8201,9 @@ extension on TranslationsHi {
 			'performanceOverlay.avSync' => 'A/V सिंक्रनाइज़ेशन',
 			'performanceOverlay.dropped' => 'टूट गया',
 			'performanceOverlay.dvRpus' => 'डीवी आरपीयू',
-			'performanceOverlay.dvRpuAverage' => 'डीवी आरपीयू AVG',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'डीवी आरपीयू AVG',
 			'performanceOverlay.dvSampleAverage' => 'डीवी नमूना AVG',
 			'performanceOverlay.maxLuma' => 'मैक्स लूमा',
 			'performanceOverlay.minLuma' => 'लूमा',
@@ -8713,9 +8715,9 @@ extension on TranslationsHi {
 			'homeLayout.removeHub' => 'Hub को हटाने के लिए',
 			'homeLayout.noPlexRows' => 'नंबर Plex-प्रबंधित पंक्तियां इस पुस्तकालय के लिए वापस आ गई हैं।',
 			'homeLayout.openDetails' => 'खुले विवरण',
-			'homeLayout.heroCards' => 'नायक कार्ड',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => 'नायक कार्ड',
 			'homeLayout.tapHeroCard' => 'एक नायक का कार्ड',
 			'homeLayout.tvPlayFocus' => 'टीवी रिमोट: उच्चारण Play बटन',
 			'homeLayout.tvPlayFocusDescription' => 'डी-पैड नीचे खेल बटन पर रुकता है, इससे पहले कि अगले पंक्ति में आगे बढ़ें।',
@@ -9227,9 +9229,9 @@ extension on TranslationsHi {
 			'audiobook.recoveryExported' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइल बचाया गया है।',
 			'audiobook.recoveryImported' => 'पुनर्प्राप्ति डेटा मिश्रित है।',
 			'sourceSetup.bookorbitHelp' => 'अपनी BookOrbit पुस्तकों को ब्राउज़ करने और चलाने के लिए अपने BookOrbit खाते से साइन इन करें। अनुपलब्ध शीर्षकों के अनुरोध फिर भी आपके कनेक्ट किए गए SeerrNG इंस्टेंस से भेजे जाते हैं।',
-			'sourceSetup.bookorbitOpen' => 'BookOrbit में खोलें',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => 'BookOrbit में खोलें',
 			'sourceSetup.bookorbitDetailHelp' => 'लाइब्रेरी का विवरण और वे फ़ॉर्मैट प्रबंधित करने के लिए यह शीर्षक BookOrbit में देखें जिन्हें Pleazyng खोल नहीं सकता। सुनने की प्रगति आपके BookOrbit खाते के साथ सिंक होती है।',
 			'sourceSetup.savedCertificate' => 'सहेजा गया सर्वर प्रमाणपत्र',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export जैसा NFS URL दर्ज करें।',
@@ -9741,9 +9743,9 @@ extension on TranslationsHi {
 			'musicTools.rules' => 'फ़िल्टर',
 			'musicTools.exclusiveOutput' => 'विशेष ऑडियो आउटपुट',
 			'musicTools.preamp' => 'प्रीएम्प',
-			'musicTools.ratingPending' => 'इस डिवाइस पर सहेजा गया; सिंक की प्रतीक्षा में',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => 'इस डिवाइस पर सहेजा गया; सिंक की प्रतीक्षा में',
 			'musicTools.lyricsOffset' => 'गीत के बोल का समय अंतर',
 			'musicTools.anniversaries' => 'एल्बम की वर्षगाँठ',
 			'musicTools.outputPreset' => 'इस आउटपुट का इक्वलाइज़र',

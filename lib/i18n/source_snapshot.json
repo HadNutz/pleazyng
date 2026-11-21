@@ -999,6 +999,7 @@
   "mediaMenu.deleteScopeUnverifiedProbeFailed": "59fb1f1a438dd5bd",
   "mediaMenu.deleteScopeUnverifiedNoFileInfo": "9f54e6b09eba489a",
   "mediaMenu.mediaDeletedSuccessfully": "c58c45ef641eae6b",
+  "mediaMenu.mediaDeletionDisabledOnServer": "732c7e478d46b4f2",
   "mediaMenu.mediaFailedToDelete": "94c3c01d9fc92c86",
   "mediaMenu.rate": "abd6544c587c1bc4",
   "mediaMenu.playFromBeginning": "c854a64e37770a0f",

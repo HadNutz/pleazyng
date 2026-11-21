@@ -802,6 +802,7 @@ class Translations$mediaMenu$pt_PT extends Translations$mediaMenu$pt {
 	@override String get mediaDeletedSuccessfully => 'Item multimédia eliminado com sucesso';
 	@override String get mediaFailedToDelete => 'Falha ao eliminar o item multimédia';
 	@override String get playVersion => 'Reproduzir versão...';
+	@override String get mediaDeletionDisabledOnServer => 'A eliminação de conteúdos está desativada neste servidor. Permita a eliminação de conteúdos nas definições da biblioteca do servidor.';
 }
 
 // Path: rateSheet
@@ -4383,6 +4384,7 @@ extension on TranslationsPtPt {
 			'mediaMenu.mediaDeletedSuccessfully' => 'Item multimédia eliminado com sucesso',
 			'mediaMenu.mediaFailedToDelete' => 'Falha ao eliminar o item multimédia',
 			'mediaMenu.playVersion' => 'Reproduzir versão...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'A eliminação de conteúdos está desativada neste servidor. Permita a eliminação de conteúdos nas definições da biblioteca do servidor.',
 			'rateSheet.title' => 'Classificar',
 			'rateSheet.server' => 'Servidor',
 			'rateSheet.favorite' => 'Favorito',
@@ -4737,9 +4739,9 @@ extension on TranslationsPtPt {
 			'accountPreferences.rewatchingInNextUpDescription' => 'Ao terminar uma série, comece a vê-la de novo e A seguir acompanha a nova visualização em vez de remover a série.',
 			'accountPreferences.watchedIndicator' => 'Indicadores de visto',
 			'accountPreferences.mediaReviewsVisibility' => 'Avaliações e críticas',
-			'accountPreferences.mediaReviewsOptions.usersAndCritics' => 'Utilizadores e críticos',
 			_ => null,
 		} ?? switch (path) {
+			'accountPreferences.mediaReviewsOptions.usersAndCritics' => 'Utilizadores e críticos',
 			'accountPreferences.mediaReviewsOptions.usersOnly' => 'Apenas utilizadores',
 			'accountPreferences.mediaReviewsOptions.criticsOnly' => 'Apenas críticos',
 			'accountPreferences.mediaReviewsOptions.nobody' => 'Oculto',
@@ -5251,9 +5253,9 @@ extension on TranslationsPtPt {
 			'watchTogether.anyoneCanControl' => 'Qualquer pessoa pode controlar a reprodução',
 			'watchTogether.roomLocked' => 'Sala bloqueada',
 			'watchTogether.nowPlaying' => 'A reproduzir agora',
-			'watchTogether.nothingPlaying' => 'Nada em reprodução',
 			_ => null,
 		} ?? switch (path) {
+			'watchTogether.nothingPlaying' => 'Nada em reprodução',
 			'watchTogether.nothingPlayingHost' => 'Reproduza algo de qualquer biblioteca para partilhar com a sala.',
 			'watchTogether.nothingPlayingGuest' => 'Quando o anfitrião reproduzir algo, o conteúdo será aberto aqui.',
 			'watchTogether.notShareable' => 'Este vídeo não corresponde a nenhum item do catálogo, por isso só as pessoas com acesso ao mesmo servidor o podem reproduzir.',
@@ -5765,9 +5767,9 @@ extension on TranslationsPtPt {
 			'seerr.requestsLoadFailed' => 'Não foi possível carregar as opções de pedido',
 			'seerr.nothingToRequest' => 'Tudo já está disponível ou foi pedido.',
 			'seerr.statusPartiallyAvailable' => 'Parcialmente disponível',
-			'seerr.statusRequested' => 'Pedido',
 			_ => null,
 		} ?? switch (path) {
+			'seerr.statusRequested' => 'Pedido',
 			'seerr.statusProcessing' => 'A processar',
 			'seerr.statusBlocklisted' => 'Na lista de bloqueio',
 			'seerr.couldNotReach' => ({required Object url, required Object error}) => 'Não foi possível contactar ${url}: ${error}',

@@ -1151,6 +1151,7 @@ class Translations$mediaMenu$es extends Translations$mediaMenu$en {
 	@override String get rate => 'Calificar';
 	@override String get playFromBeginning => 'Reproducir desde el inicio';
 	@override String get playVersion => 'Reproducir versión...';
+	@override String get mediaDeletionDisabledOnServer => 'La eliminación de contenido está desactivada en este servidor. Permítela en los ajustes de biblioteca del servidor.';
 }
 
 // Path: rateSheet
@@ -6720,6 +6721,7 @@ extension on TranslationsEs {
 			'mediaMenu.rate' => 'Calificar',
 			'mediaMenu.playFromBeginning' => 'Reproducir desde el inicio',
 			'mediaMenu.playVersion' => 'Reproducir versión...',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'La eliminación de contenido está desactivada en este servidor. Permítela en los ajustes de biblioteca del servidor.',
 			'rateSheet.title' => 'Calificar',
 			'rateSheet.server' => 'Servidor',
 			'rateSheet.favorite' => 'Favorito',
@@ -6781,9 +6783,9 @@ extension on TranslationsEs {
 			'accessibility.boldTextHint' => 'Utilice un peso más pesado para las etiquetas de interfaz y los mensajes para que sean más fáciles de distinguir.',
 			'tooltips.shufflePlay' => 'Reproducción aleatoria',
 			'tooltips.playTrailer' => 'Reproducir tráiler',
-			'tooltips.markAsWatched' => 'Marcar como visto',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsWatched' => 'Marcar como visto',
 			'tooltips.markAsUnwatched' => 'Marcar como no visto',
 			'audioTracks.track' => ({required Object n}) => 'Pista de audio ${n}',
 			'videoControls.audioLabel' => 'Audio',
@@ -7295,9 +7297,9 @@ extension on TranslationsEs {
 			'discover.rating' => 'Valoración',
 			'discover.director' => 'Director',
 			'discover.directors' => 'Directores',
-			'discover.movie' => 'Película',
 			_ => null,
 		} ?? switch (path) {
+			'discover.movie' => 'Película',
 			'discover.tvShow' => 'Serie de TV',
 			'discover.minutesLeft' => ({required Object minutes}) => 'quedan ${minutes} min',
 			'discover.moreLikeThis' => 'Más contenido similar',
@@ -7809,9 +7811,9 @@ extension on TranslationsEs {
 			'collections.removeFromCollection' => 'Eliminar de la colección',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '¿Eliminar "${title}" de esta colección?',
 			'collections.removedFromCollection' => 'Eliminado de la colección',
-			'collections.removeFromCollectionFailed' => 'Error al eliminar de la colección',
 			_ => null,
 		} ?? switch (path) {
+			'collections.removeFromCollectionFailed' => 'Error al eliminar de la colección',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Error al eliminar de la colección: ${error}',
 			'collections.searchCollections' => 'Buscar colecciones...',
 			'playlists.title' => 'Listas de reproducción',
@@ -8323,9 +8325,9 @@ extension on TranslationsEs {
 			'performanceOverlay.dvSource' => 'Origen DV',
 			'performanceOverlay.dvPath' => 'Ruta DV',
 			'performanceOverlay.dvRouteDecoder' => 'Decodificador Dolby Vision',
-			'performanceOverlay.dvRouteDecoderP81' => 'Decodificador Dolby Vision (P7→8.1)',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteDecoderP81' => 'Decodificador Dolby Vision (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Capa base',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Capa base HDR10',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Capa base HLG',
@@ -8837,9 +8839,9 @@ extension on TranslationsEs {
 			'homeLayout.organizeHomeRows' => 'Organizar las rutas domésticas',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} líneas: movimiento, Hero, Auto-slide, eliminación',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organizar ${library} líneas',
-			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continuar Vea + ${n} líneas: movimiento, Biblioteca, Casa, Héroe, Auto-slide',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continuar Vea + ${n} líneas: movimiento, Biblioteca, Casa, Héroe, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render como una tarjeta de héroe',
 			'homeLayout.heroOnlySingleCollection' => 'Sólo disponible cuando esta línea se resuelva a los títulos reales de una sola colección',
 			'homeLayout.hero' => 'Hermano',
@@ -9351,9 +9353,9 @@ extension on TranslationsEs {
 			'audiobook.undoSeek' => 'La última búsqueda',
 			'audiobook.customSpeed' => 'Velocidad de reproducción personalizada',
 			'audiobook.speedHelp' => 'Seleccione una velocidad de 0.25× a 4×.',
-			'audiobook.apply' => 'Aplique',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'Aplique',
 			'audiobook.customSleep' => 'Calendario de sueño personalizado',
 			'audiobook.sleepMinutes' => 'Minutos (1 a 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Parar después de ${count} capítulos',
@@ -9865,9 +9867,9 @@ extension on TranslationsEs {
 			'bonusExtras.linkUrl' => 'Enlace de YouTube o Vimeo',
 			'bonusExtras.invalidLink' => 'Introduce un título y un enlace HTTPS válido a un vídeo de YouTube o Vimeo.',
 			'bonusExtras.showHidden' => 'Restablecer extras y editores ocultos',
-			'bonusExtras.clearCache' => 'Borrar la caché de descubrimiento',
 			_ => null,
 		} ?? switch (path) {
+			'bonusExtras.clearCache' => 'Borrar la caché de descubrimiento',
 			'bonusExtras.transcript' => 'Buscar en la transcripción',
 			'bonusExtras.importTranscript' => 'Importar transcripción SRT o VTT',
 			'bonusExtras.transcriptHint' => 'Usa una transcripción que tengas permiso para procesar. Se conserva en este perfil; la IA solo la usa con el modo que hayas seleccionado.',

@@ -1063,7 +1063,8 @@
     "mediaFailedToDelete": "Nedokázal odstranit mediální položku",
     "rate": "Hodnocení",
     "playFromBeginning": "Přehrát od začátku",
-    "playVersion": "Hrajte verzi..."
+    "playVersion": "Hrajte verzi...",
+    "mediaDeletionDisabledOnServer": "Na tomto serveru je mazání médií vypnuté. Povolte mazání médií v nastavení knihovny serveru."
   },
   "rateSheet": {
     "title": "Hodnocení",

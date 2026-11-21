@@ -1073,7 +1073,8 @@
     "mediaFailedToDelete": "فشل في حذف موضوع وسائل الإعلام",
     "rate": "المعدل",
     "playFromBeginning": "تشغيل من البداية",
-    "playVersion": "اللعب نسخة..."
+    "playVersion": "اللعب نسخة...",
+    "mediaDeletionDisabledOnServer": "حذف الوسائط معطّل على هذا الخادم. فعّل «السماح بحذف الوسائط» في إعدادات مكتبة الخادم."
   },
   "rateSheet": {
     "title": "المعدل",

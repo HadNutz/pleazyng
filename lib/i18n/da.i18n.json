@@ -1053,7 +1053,8 @@
     "mediaFailedToDelete": "Mediet kunne ikke slettes",
     "rate": "Bedøm",
     "playFromBeginning": "Afspil fra begyndelsen",
-    "playVersion": "Afspil version..."
+    "playVersion": "Afspil version...",
+    "mediaDeletionDisabledOnServer": "Sletning af medier er slået fra på denne server. Tillad sletning af medier i serverens biblioteksindstillinger."
   },
   "rateSheet": {
     "title": "Bedøm",

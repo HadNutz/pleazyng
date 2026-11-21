@@ -1048,7 +1048,8 @@
     "mediaFailedToDelete": "Không xóa các mục phương tiện truyền thông",
     "rate": "Đánh giá",
     "playFromBeginning": "Phát từ đầu",
-    "playVersion": "Game phiên bản..."
+    "playVersion": "Game phiên bản...",
+    "mediaDeletionDisabledOnServer": "Tính năng xóa nội dung đã tắt trên máy chủ này. Hãy cho phép xóa nội dung trong phần cài đặt thư viện của máy chủ."
   },
   "rateSheet": {
     "title": "Đánh giá",

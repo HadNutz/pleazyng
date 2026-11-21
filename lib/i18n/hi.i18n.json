@@ -1053,7 +1053,8 @@
     "mediaFailedToDelete": "मीडिया आइटम को हटाने में विफलता",
     "rate": "दरें",
     "playFromBeginning": "शुरुआत से खेलना",
-    "playVersion": "खेल संस्करण ..."
+    "playVersion": "खेल संस्करण ...",
+    "mediaDeletionDisabledOnServer": "इस सर्वर पर मीडिया हटाना बंद है। सर्वर की लाइब्रेरी सेटिंग में मीडिया हटाने की अनुमति चालू करें।"
   },
   "rateSheet": {
     "title": "दरें",

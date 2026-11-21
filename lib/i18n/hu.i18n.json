@@ -1053,7 +1053,8 @@
     "mediaFailedToDelete": "Nem sikerült a médiaelem törlése",
     "rate": "Értékelés",
     "playFromBeginning": "Lejátszás az elejétől",
-    "playVersion": "Verzió lejátszása..."
+    "playVersion": "Verzió lejátszása...",
+    "mediaDeletionDisabledOnServer": "A médiatartalmak törlése le van tiltva ezen a szerveren. Engedélyezd a törlést a szerver könyvtárbeállításaiban."
   },
   "rateSheet": {
     "title": "Értékelés",

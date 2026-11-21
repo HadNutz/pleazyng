@@ -1144,6 +1144,7 @@ class _Translations$mediaMenu$zh_Hant extends Translations$mediaMenu$zh {
 	@override String get rate => '評分';
 	@override String get playFromBeginning => '從頭播放';
 	@override String get playVersion => '播放版本…';
+	@override String get mediaDeletionDisabledOnServer => '此伺服器已關閉媒體刪除功能。請在伺服器的媒體庫設定中允許刪除媒體。';
 }
 
 // Path: rateSheet
@@ -6589,6 +6590,7 @@ extension on TranslationsZhHant {
 			'mediaMenu.rate' => '評分',
 			'mediaMenu.playFromBeginning' => '從頭播放',
 			'mediaMenu.playVersion' => '播放版本…',
+			'mediaMenu.mediaDeletionDisabledOnServer' => '此伺服器已關閉媒體刪除功能。請在伺服器的媒體庫設定中允許刪除媒體。',
 			'rateSheet.title' => '評分',
 			'rateSheet.server' => '伺服器',
 			'rateSheet.favorite' => '最愛',
@@ -6653,9 +6655,9 @@ extension on TranslationsZhHant {
 			'tooltips.markAsWatched' => '標記為已觀看',
 			'tooltips.markAsUnwatched' => '標記為未觀看',
 			'audioTracks.track' => ({required Object n}) => '音軌 ${n}',
-			'videoControls.audioLabel' => '音訊',
 			_ => null,
 		} ?? switch (path) {
+			'videoControls.audioLabel' => '音訊',
 			'videoControls.subtitlesLabel' => '字幕',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount} ${unit}',
 			'videoControls.letterbox' => '信箱模式（Letterbox）',
@@ -7167,9 +7169,9 @@ extension on TranslationsZhHant {
 			'errors.noClientAvailable' => '沒有可用用戶端',
 			'errors.pleaseEnterToken' => '請輸入 Token',
 			'errors.invalidToken' => 'Token 無效',
-			'errors.failedToVerifyToken' => ({required Object error}) => '無法驗證 Token：${error}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.failedToVerifyToken' => ({required Object error}) => '無法驗證 Token：${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '無法切換至 ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '無法刪除 ${displayName}',
 			'errors.failedToRate' => '無法更新評分',
@@ -7681,9 +7683,9 @@ extension on TranslationsZhHant {
 			'playlists.created' => '播放清單已建立',
 			'playlists.deleted' => '播放清單已刪除',
 			'playlists.itemAdded' => '已新增至播放清單',
-			'playlists.itemRemoved' => '已從播放清單移除',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.itemRemoved' => '已從播放清單移除',
 			'playlists.selectPlaylist' => '選擇播放清單',
 			'playlists.searchPlaylists' => '搜尋播放清單…',
 			'playlists.errorCreating' => '建立播放清單失敗',
@@ -8195,9 +8197,9 @@ extension on TranslationsZhHant {
 			'performanceOverlay.avSync' => '影音同步（A/V Sync）',
 			'performanceOverlay.dropped' => '丟格數（Dropped）',
 			'performanceOverlay.dvRpus' => 'DV RPU 數',
-			'performanceOverlay.dvRpuAverage' => 'DV RPU 平均',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRpuAverage' => 'DV RPU 平均',
 			'performanceOverlay.dvSampleAverage' => 'DV 取樣平均',
 			'performanceOverlay.maxLuma' => '最大亮度',
 			'performanceOverlay.minLuma' => '最小亮度',
@@ -8709,9 +8711,9 @@ extension on TranslationsZhHant {
 			'homeLayout.removeHub' => '取消 Hub',
 			'homeLayout.noPlexRows' => '第Plex號管理行返回此圖書館。',
 			'homeLayout.openDetails' => '開放細節',
-			'homeLayout.heroCards' => '英雄卡',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.heroCards' => '英雄卡',
 			'homeLayout.tapHeroCard' => '打破英雄卡',
 			'homeLayout.tvPlayFocus' => '電視遠端:突出點選播放按鈕',
 			'homeLayout.tvPlayFocusDescription' => '按方向鍵下鍵時，焦點會先停在播放按鈕上，再移到下一列。關閉時會直接跳到下一列。',
@@ -9223,9 +9225,9 @@ extension on TranslationsZhHant {
 			'audiobook.recoveryExported' => '加密恢復檔案儲存。',
 			'audiobook.recoveryImported' => '恢復資料合併。',
 			'sourceSetup.bookorbitHelp' => '使用您自己的 BookOrbit 帳戶登入，即可瀏覽及播放書籍。缺少的書名仍會透過已連線的 SeerrNG 執行個體提出請求。',
-			'sourceSetup.bookorbitOpen' => '在 BookOrbit 中開啟',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.bookorbitOpen' => '在 BookOrbit 中開啟',
 			'sourceSetup.bookorbitDetailHelp' => '在 BookOrbit 中查看此書，以管理書庫詳細資料和 Pleazyng 無法開啟的格式。聆聽進度會與您的 BookOrbit 帳戶同步。',
 			'sourceSetup.savedCertificate' => '已儲存的伺服器憑證',
 			'sourceSetup.nfsEndpointInvalid' => '請輸入 NFS 網址，例如 nfs://nas:2049/export。',
@@ -9737,9 +9739,9 @@ extension on TranslationsZhHant {
 			'musicTools.rules' => '篩選器',
 			'musicTools.exclusiveOutput' => '獨佔音訊輸出',
 			'musicTools.preamp' => '前置放大',
-			'musicTools.ratingPending' => '已儲存在此裝置；等待同步',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.ratingPending' => '已儲存在此裝置；等待同步',
 			'musicTools.lyricsOffset' => '歌詞時間偏移',
 			'musicTools.anniversaries' => '專輯發行紀念日',
 			'musicTools.outputPreset' => '此輸出的等化器',

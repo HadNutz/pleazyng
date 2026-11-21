@@ -305,6 +305,7 @@ class _Translations$mediaMenu$es_419 extends Translations$mediaMenu$es {
 	@override String get deleteEpisodeConfirm => 'Borrar episodio';
 	@override String get rate => 'Calificación';
 	@override String get playFromBeginning => 'Reproducir desde el inicio';
+	@override String get mediaDeletionDisabledOnServer => 'La eliminación de contenido está desactivada en este servidor. Permítela en los ajustes de biblioteca del servidor.';
 }
 
 // Path: rateSheet
@@ -1484,6 +1485,7 @@ extension on TranslationsEs419 {
 			'mediaMenu.deleteEpisodeConfirm' => 'Borrar episodio',
 			'mediaMenu.rate' => 'Calificación',
 			'mediaMenu.playFromBeginning' => 'Reproducir desde el inicio',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'La eliminación de contenido está desactivada en este servidor. Permítela en los ajustes de biblioteca del servidor.',
 			'rateSheet.title' => 'Calificación',
 			'rateSheet.server' => 'Servidor',
 			'rateSheet.favorite' => 'Favorito',
@@ -1876,9 +1878,9 @@ extension on TranslationsEs419 {
 			'romm.exitWithoutSaving' => 'Exit without saving',
 			'romm.exitConfirm' => 'Finish this game session?',
 			'romm.saveExitHelp' => 'Save your progress before leaving. Keep this screen open until saving finishes.',
-			'romm.starting' => 'Starting game…',
 			_ => null,
 		} ?? switch (path) {
+			'romm.starting' => 'Starting game…',
 			'romm.connecting' => 'Connecting…',
 			'romm.busy' => 'The streaming computer is occupied.',
 			'romm.streamEnded' => 'The streaming session ended.',

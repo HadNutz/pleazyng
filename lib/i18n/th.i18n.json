@@ -1048,7 +1048,8 @@
     "mediaFailedToDelete": "ไม่สามารถลบรายการสื่อ",
     "rate": "อัตรา",
     "playFromBeginning": "เล่นจากเริ่มต้น",
-    "playVersion": "เล่นเวอร์ชัน"
+    "playVersion": "เล่นเวอร์ชัน",
+    "mediaDeletionDisabledOnServer": "เซิร์ฟเวอร์นี้ปิดการลบสื่อไว้ โปรดอนุญาตให้ลบสื่อในการตั้งค่าคลังของเซิร์ฟเวอร์"
   },
   "rateSheet": {
     "title": "อัตรา",

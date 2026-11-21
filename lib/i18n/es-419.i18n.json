@@ -161,7 +161,8 @@
   "mediaMenu": {
     "deleteEpisodeConfirm": "Borrar episodio",
     "rate": "Calificación",
-    "playFromBeginning": "Reproducir desde el inicio"
+    "playFromBeginning": "Reproducir desde el inicio",
+    "mediaDeletionDisabledOnServer": "La eliminación de contenido está desactivada en este servidor. Permítela en los ajustes de biblioteca del servidor."
   },
   "rateSheet": {
     "title": "Calificación",
