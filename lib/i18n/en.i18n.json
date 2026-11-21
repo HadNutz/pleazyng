@@ -216,6 +216,9 @@
     "notAvailable": "N/A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "Symbols",
+    "keyboardLetters": "Letters",
+    "keyboardNewLine": "New line",
     "mediaKind": {
       "movie": "Movie",
       "show": "Show",
@@ -438,6 +441,7 @@
     "importSettingsDescription": "Restore preferences from a file",
     "importSettingsConfirm": "This will replace your current settings. Continue?",
     "importSettingsSuccess": "Settings imported",
+    "importSettingsCounts": "Settings applied: ${applied}. Skipped: ${skipped}.",
     "importSettingsInvalidFile": "This file isn't a valid Pleazyng settings export",
     "importSettingsNoUser": "Sign in before importing settings",
     "cloudBackup": "Cloud Backup",

@@ -209,6 +209,9 @@
     "notAvailable": "N / A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "Symboly",
+    "keyboardLetters": "Písmena",
+    "keyboardNewLine": "Nový řádek",
     "mediaKind": {
       "movie": "Film",
       "show": "představení",
@@ -435,6 +438,7 @@
     "importSettingsDescription": "Obnovte preference z souboru",
     "importSettingsConfirm": "To nahradí vaše aktuální nastavení. pokračovat?",
     "importSettingsSuccess": "Nastavení importované",
+    "importSettingsCounts": "Použitá nastavení: ${applied}. Přeskočená: ${skipped}.",
     "importSettingsInvalidFile": "Tento soubor není platný Pleazyng nastavení export",
     "importSettingsNoUser": "Přihlaste se před dovozem",
     "cloudBackup": "Cloud záloha",

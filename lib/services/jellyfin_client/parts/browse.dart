@@ -849,7 +849,8 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
     final endpoint = '/Users/${_segment(connection.userId)}/Items/${_segment(id)}';
     try {
       final cached = await cache.getIfFresh(ServerId(cacheServerId), endpoint, maxAge: playbackMetadataCacheFreshness);
-      if (cached != null) {
+      if (cached != null &&
+          ((flexibleInt(cached['PartCount']) ?? 1) < 2 || cached[jellyfinAdditionalPartDetails] is List)) {
         final item = _mapItem(cached);
         if (item != null) return item;
       }
@@ -885,12 +886,51 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
       throwIfHttpError(response);
       final data = response.data;
       if (data is! Map<String, dynamic>) return null;
+      final count = flexibleInt(data['PartCount']) ?? 1;
+      if (count > 1) {
+        final listed = await _http.get(
+          '/Videos/${_segment(id)}/AdditionalParts',
+          queryParameters: {'UserId': connection.userId},
+        );
+        if (listed.statusCode == 404) throw const FormatException('Missing additional parts list');
+        throwIfHttpError(listed);
+        final body = listed.data;
+        final entries = body is Map ? body['Items'] : null;
+        if (entries is! List || entries.length != count - 1) throw const FormatException('Incomplete additional parts');
+        final seen = {id};
+        final children = <Map<String, dynamic>>[];
+        for (final entry in entries) {
+          final childId = entry is Map ? entry['Id'] : null;
+          if (childId is! String || childId.isEmpty || !seen.add(childId)) {
+            throw const FormatException('Invalid additional part');
+          }
+          if (entry is Map<String, dynamic> &&
+              entry['MediaSources'] is List &&
+              (entry['MediaSources'] as List).isNotEmpty) {
+            children.add(entry);
+            continue;
+          }
+          final detail = await _http.get(
+            '/Users/${_segment(connection.userId)}/Items/${_segment(childId)}',
+            queryParameters: {'Fields': _detailFields},
+          );
+          if (detail.statusCode == 404) throw const FormatException('Missing additional part');
+          throwIfHttpError(detail);
+          final child = detail.data;
+          if (child is! Map<String, dynamic> || child['Id'] != childId) {
+            throw const FormatException('Missing additional part');
+          }
+          children.add(child);
+        }
+        data[jellyfinAdditionalPartDetails] = children;
+      }
+      final mapped = _mapItem(data);
       try {
         await cache.put(ServerId(cacheServerId), endpoint, data);
       } catch (e, st) {
         appLogger.w('JellyfinClient.fetchItem cache write failed', error: e, stackTrace: st);
       }
-      return _mapItem(data);
+      return mapped;
     } on MediaServerHttpException catch (e) {
       if (e.statusCode == 404) return null;
       // An answered request (401/403/5xx) or a client-side cancellation must
@@ -1748,8 +1788,9 @@ mixin _JellyfinBrowseMethods on _JellyfinClientInternals implements LibraryGenre
   Future<List<MediaItem>> _keepMatchesWithSeason(List<MediaItem> items, int seasonIndex) async {
     final kept = await Future.wait([
       for (final item in items)
-        fetchChildren(item.id)
-            .then((children) => children.any((child) => child.kind == MediaKind.season && child.index == seasonIndex)),
+        fetchChildren(
+          item.id,
+        ).then((children) => children.any((child) => child.kind == MediaKind.season && child.index == seasonIndex)),
     ]);
     return [
       for (var index = 0; index < items.length; index++)

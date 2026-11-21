@@ -118,6 +118,49 @@ void main() {
     expect(owner.acknowledge('one', 2), isFalse);
   });
 
+  test(
+    'a rejected replacement preserves controls and a committed replacement finalizes the original account',
+    () async {
+      final a = CastPlaybackOwnership()..begin('movie-a', () => true);
+      final b = CastPlaybackOwnership()..begin('movie-b', () => true);
+      a.acknowledge('movie-a', 1);
+      final original = a.revision;
+      final finalReports = <String>[];
+      Future<void> finish() async {
+        expect(a.owns('movie-a', 1), isTrue);
+        finalReports.add('movie-a');
+      }
+
+      await expectLater(a.replaceWith(b, finishPrevious: finish, current: () => true), throwsStateError);
+      expect(finalReports, isEmpty);
+      expect(a.revision, original);
+      expect(a.owns('movie-a', 1), isTrue);
+      b.acknowledge('movie-b', 2);
+      await a.replaceWith(b, finishPrevious: finish, current: () => true);
+      expect(finalReports, ['movie-a']);
+      expect(a.revision, greaterThan(original));
+      expect(a.owns('movie-a', 1), isFalse);
+      expect(a.owns('movie-b', 2), isTrue);
+    },
+  );
+
+  test('queue advances accept a new media session only from the same authorized owner', () {
+    var authorized = true;
+    final owner = CastPlaybackOwnership()..begin('movie', () => authorized);
+    owner.acknowledge('movie', 7);
+    final original = owner.revision;
+    expect(owner.acknowledgeQueueItem(null, 8), isFalse);
+    expect(owner.acknowledgeQueueItem('another', 8), isFalse);
+    expect(owner.owns('movie', 7), isTrue);
+    expect(owner.acknowledgeQueueItem('movie', 8), isTrue);
+    expect(owner.owns(null, 7), isFalse);
+    expect(owner.owns(null, 8), isTrue);
+    expect(owner.revision, original);
+    authorized = false;
+    expect(owner.acknowledgeQueueItem('movie', 9), isFalse);
+    expect(owner.owns('movie', 8), isFalse);
+  });
+
   test('a stuck load remains bounded after its receiver acknowledgement', () async {
     final statuses = StreamController<String>.broadcast(sync: true);
     final pending = Completer<void>();

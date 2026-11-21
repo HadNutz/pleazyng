@@ -209,6 +209,9 @@
     "notAvailable": "N / A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "الرموز",
+    "keyboardLetters": "الحروف",
+    "keyboardNewLine": "سطر جديد",
     "mediaKind": {
       "movie": "فيلم",
       "show": "عرض",
@@ -439,6 +442,7 @@
     "importSettingsDescription": "استعادة تفضيلات من ملف",
     "importSettingsConfirm": "هذا سيحل محل إعداداتك الحالية.مواصلة؟",
     "importSettingsSuccess": "الإعدادات المستوردة",
+    "importSettingsCounts": "الإعدادات المطبقة: ${applied}. الإعدادات التي تم تخطيها: ${skipped}.",
     "importSettingsInvalidFile": "هذا الملف غير صالحة Pleazyng إعدادات تصدير",
     "importSettingsNoUser": "تسجيل الدخول قبل استيراد الإعدادات",
     "cloudBackup": "سحابة النسخ الاحتياطي",

@@ -209,6 +209,9 @@
     "notAvailable": "N / A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "סמלים",
+    "keyboardLetters": "אותיות",
+    "keyboardNewLine": "שורה חדשה",
     "mediaKind": {
       "movie": "סרט",
       "show": "תצוגה",
@@ -433,6 +436,7 @@
     "importSettingsDescription": "לשחזר העדפות מתוך קובץ",
     "importSettingsConfirm": "זה יחליף את ההגדרות הנוכחיות שלך.",
     "importSettingsSuccess": "הגדרות ייבוא",
+    "importSettingsCounts": "הגדרות שהוחלו: ${applied}. הגדרות שדולגו: ${skipped}.",
     "importSettingsInvalidFile": "קובץ זה אינו ייצוא של הגדרות Pleazyng בתוקף",
     "importSettingsNoUser": "הקלד לפני ייבוא ההגדרות",
     "cloudBackup": "ענן גיבוי",

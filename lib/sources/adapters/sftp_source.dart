@@ -168,9 +168,7 @@ class SftpSourceAdapter extends SourceAdapter {
                       name: name,
                       mimeType: lookupMimeType(name) ?? '',
                       size: size,
-                      revision: size == null && modified == null
-                          ? null
-                          : '${size?.toString() ?? ''}:${modified?.toString() ?? ''}',
+                      revision: modified == null ? null : '${size ?? ''}:$modified',
                     ),
                   ],
           ),
@@ -273,17 +271,33 @@ class SftpSourceAdapter extends SourceAdapter {
     if (size == null || size < 0 || offset < 0 || length < 0 || offset > size) {
       throw const SourceException(SourceFailure.invalidData);
     }
+    final revision = attrs.modifyTime == null ? null : '$size:${attrs.modifyTime}';
+    // Old listings used a size plus a trailing colon when timestamps were absent.
+    final expected = file.revision == '${file.size}:' ? null : file.revision;
+    if (expected != null && expected != revision || file.size != null && size != file.size) {
+      throw const SourceException(SourceFailure.conflict);
+    }
     final actualLength = length > size - offset ? size - offset : length;
     Stream<List<int>> readRange() async* {
       final remote = await sftp.open(path);
       try {
+        final opened = await remote.stat();
+        if (opened.size != size || attrs.modifyTime != opened.modifyTime) {
+          throw const SourceException(SourceFailure.conflict);
+        }
         yield* remote.read(length: actualLength, offset: offset);
       } finally {
         await remote.close();
       }
     }
 
-    return SourceByteStream(stream: readRange(), size: size, offset: offset, length: actualLength);
+    return SourceByteStream(
+      stream: readRange(),
+      validatedRevision: expected == null ? null : revision,
+      size: size,
+      offset: offset,
+      length: actualLength,
+    );
   }
 
   @override

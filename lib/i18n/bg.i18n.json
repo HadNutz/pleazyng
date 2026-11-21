@@ -209,6 +209,9 @@
     "notAvailable": "Н/Д",
     "url": "URL",
     "letterKeys": "АБВ",
+    "keyboardSymbols": "Символи",
+    "keyboardLetters": "Букви",
+    "keyboardNewLine": "Нов ред",
     "mediaKind": {
       "movie": "Филм",
       "show": "Сериал",
@@ -431,6 +434,7 @@
     "importSettingsDescription": "Възстанови предпочитания от файл",
     "importSettingsConfirm": "Това ще замени текущите ви настройки. Продължавате ли?",
     "importSettingsSuccess": "Настройките са импортирани",
+    "importSettingsCounts": "Приложени настройки: ${applied}. Пропуснати: ${skipped}.",
     "importSettingsInvalidFile": "Този файл не е валиден експорт на настройки от Pleazyng",
     "importSettingsNoUser": "Влезте, преди да импортирате настройки",
     "cloudBackup": "Облачна резервна копие",

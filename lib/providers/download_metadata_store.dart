@@ -127,9 +127,11 @@ class _DownloadMetadataStore extends ChangeNotifier {
 
       final hydrated = <HydratedWatchStatePatch>[];
       for (final entry in actions.entries) {
-        final snapshot = WatchStateResolver.fromActions(entry.value);
+        final visible = await _downloadManager.profileWatchActions(entry.value);
+        if (stale()) return;
+        final snapshot = WatchStateResolver.fromActions(visible);
         if (snapshot.isEmpty) continue;
-        final latest = entry.value.firstWhere(
+        final latest = visible.firstWhere(
           (action) =>
               action.actionType == 'watched' || action.actionType == 'unwatched' || action.actionType == 'progress',
         );

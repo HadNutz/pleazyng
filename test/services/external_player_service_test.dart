@@ -122,6 +122,33 @@ void main() {
     expect(client.stopped, [(positionMs: 5000, durationMs: null)]);
   });
 
+  for (final backend in [MediaBackend.jellyfin, MediaBackend.emby]) {
+    test('unacknowledged $backend external progress survives an accepted stop', () async {
+      final db = AppDatabase.forTesting(NativeDatabase.memory());
+      JellyfinApiCache.initialize(db);
+      final manager = MultiServerManager();
+      final service = OfflineWatchSyncService(database: db, serverManager: manager);
+      addTearDown(() async {
+        service.dispose();
+        manager.dispose();
+        await db.close();
+      });
+      final client = _RecordingClient(backend: backend)..failStart = true;
+      final item = testMediaItem(id: 'item-1', serverId: 'srv', backend: backend, kind: MediaKind.movie);
+      await ExternalPlayerService.reportExternalProgressForTesting(
+        positionMs: 24000,
+        durationMs: 100000,
+        metadata: item,
+        client: client,
+        offlineWatchService: service,
+      );
+      final row = await db.getLatestWatchAction('srv:item-1');
+      expect(row?.viewOffset, 24000);
+      expect(row?.shouldMarkWatched, false);
+      expect(client.stopped, hasLength(1));
+    });
+  }
+
   test('External progress queues unknown-duration resume when no client is available', () async {
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     JellyfinApiCache.initialize(db);

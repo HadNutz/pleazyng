@@ -1,4 +1,5 @@
 import '../media/media_version.dart';
+import 'jellyfin_multipart.dart';
 
 /// Bundle returned by [JellyfinClient.fetchPlaybackBundle].
 ///
@@ -38,7 +39,10 @@ class JellyfinPlaybackBundle {
   /// server hasn't run trickplay extraction for this item.
   final Object? trickplay;
 
+  final JellyfinMultipart? multipart;
+
   const JellyfinPlaybackBundle({
+    this.multipart,
     required this.availableVersions,
     required this.selectedSource,
     required this.chapters,
@@ -47,6 +51,22 @@ class JellyfinPlaybackBundle {
     this.selectedSourceIndex = 0,
     this.trickplay,
   });
+
+  JellyfinPlaybackBundle at(Duration? position) {
+    final stack = multipart;
+    if (stack == null) return this;
+    final file = stack.files[stack.at(position).currentIndex];
+    return JellyfinPlaybackBundle(
+      availableVersions: availableVersions,
+      selectedSource: file.source,
+      chapters: file.item['Chapters'] as List? ?? const [],
+      selectedSourceIndex: selectedSourceIndex,
+      selectedSourceId: file.sourceId,
+      container: file.source['Container'] as String?,
+      multipart: stack,
+      trickplay: file.item['Trickplay'],
+    );
+  }
 
   /// Source id to pin in playback/download URLs, or null when the server did
   /// not name one. Never synthesize an id here: Jellyfin compares

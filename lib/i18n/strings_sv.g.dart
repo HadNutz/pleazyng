@@ -342,6 +342,9 @@ class _Translations$common$sv extends Translations$common$en {
 	@override String get notAvailable => 'N/A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Symboler';
+	@override String get keyboardLetters => 'Bokstäver';
+	@override String get keyboardNewLine => 'Ny rad';
 	@override late final _Translations$common$mediaKind$sv mediaKind = _Translations$common$mediaKind$sv._(_root);
 }
 
@@ -572,6 +575,7 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String get importSettingsDescription => 'Återställ inställningar från en fil';
 	@override String get importSettingsConfirm => 'Detta ersätter dina nuvarande inställningar. Fortsätta?';
 	@override String get importSettingsSuccess => 'Inställningar importerade';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Tillämpade inställningar: ${applied}. Överhoppade: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Filen är inte en giltig export av Pleazyng-inställningar';
 	@override String get importSettingsNoUser => 'Logga in innan du importerar inställningar';
 	@override String get cloudBackup => 'Cloud Backup för';
@@ -5822,6 +5826,9 @@ extension on TranslationsSv {
 			'common.notAvailable' => 'N/A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Symboler',
+			'common.keyboardLetters' => 'Bokstäver',
+			'common.keyboardNewLine' => 'Ny rad',
 			'common.mediaKind.movie' => 'Film',
 			'common.mediaKind.show' => 'Serie',
 			'common.mediaKind.season' => 'Säsong',
@@ -6030,6 +6037,7 @@ extension on TranslationsSv {
 			'settings.importSettingsDescription' => 'Återställ inställningar från en fil',
 			'settings.importSettingsConfirm' => 'Detta ersätter dina nuvarande inställningar. Fortsätta?',
 			'settings.importSettingsSuccess' => 'Inställningar importerade',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Tillämpade inställningar: ${applied}. Överhoppade: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Filen är inte en giltig export av Pleazyng-inställningar',
 			'settings.importSettingsNoUser' => 'Logga in innan du importerar inställningar',
 			'settings.cloudBackup' => 'Cloud Backup för',
@@ -6140,12 +6148,12 @@ extension on TranslationsSv {
 			'settings.manageLibrariesDescription' => 'Ordna om och dölj bibliotek',
 			'settings.companionRemoteServer' => 'Server för fjärrkontroll',
 			'settings.companionRemoteServerDescription' => 'Tillåt att mobila enheter i nätverket styr appen',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Kunde inte starta servern för fjärrkontroll',
 			'settings.companionRemoteServerStopFailed' => 'Kunde inte stoppa servern för fjärrkontroll',
 			'settings.autoPip' => 'Automatisk bild-i-bild',
 			'settings.autoPipDescription' => 'Aktivera bild-i-bild om du lämnar appen under uppspelning',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Matcha innehållets bildfrekvens',
 			'settings.matchContentFrameRateDescription' => 'Matcha skärmens uppdateringsfrekvens med videoinnehållet',
 			'settings.matchContentResolution' => 'Anpassa till innehållets upplösning',
@@ -6654,12 +6662,12 @@ extension on TranslationsSv {
 			'accessibility.boldTextHint' => 'Använd en tyngre vikt för gränssnittets etiketter och meddelanden för att göra dem lättare att skilja.',
 			'tooltips.shufflePlay' => 'Blanda uppspelning',
 			'tooltips.playTrailer' => 'Spela trailer',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Markera som sedd',
 			'tooltips.markAsUnwatched' => 'Markera som osedd',
 			'audioTracks.track' => ({required Object n}) => 'Ljudspår ${n}',
 			'videoControls.audioLabel' => 'Ljud',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Undertexter',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Brevlådeformat',
@@ -7168,12 +7176,12 @@ extension on TranslationsSv {
 			'errors.connectionTimeout' => ({required Object context}) => 'Anslutningen tog för lång tid när ${context} lästes in',
 			'errors.connectionFailed' => 'Det gick inte att ansluta till medieservern',
 			'errors.unableToLoad' => ({required Object context}) => 'Det gick inte att läsa in ${context}. Försök igen.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Ingen klient är tillgänglig',
 			'errors.pleaseEnterToken' => 'Ange en token',
 			'errors.invalidToken' => 'Ogiltig token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Det gick inte att verifiera token: ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Det gick inte att byta till ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Det gick inte att ta bort ${displayName}',
 			'errors.failedToRate' => 'Det gick inte att uppdatera betyget',
@@ -7682,12 +7690,12 @@ extension on TranslationsSv {
 			'playlists.emptyPlaylist' => 'Denna spellista är tom',
 			'playlists.deleteConfirm' => 'Ta bort spellista?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Är du säker på att du vill ta bort "${name}"?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Spellistan har skapats',
 			'playlists.deleted' => 'Spellistan har tagits bort',
 			'playlists.itemAdded' => 'Objektet har lagts till i spellistan',
 			'playlists.itemRemoved' => 'Objektet har tagits bort från spellistan',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Välj spellista',
 			'playlists.searchPlaylists' => 'Sök i spellistor...',
 			'playlists.errorCreating' => 'Det gick inte att skapa spellistan',
@@ -8196,12 +8204,12 @@ extension on TranslationsSv {
 			'performanceOverlay.transfer' => 'Överföring',
 			'performanceOverlay.renderFps' => 'Renderings-FPS',
 			'performanceOverlay.displayFps' => 'Skärm-FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V-synk',
 			'performanceOverlay.dropped' => 'Tappade bildrutor',
 			'performanceOverlay.dvRpus' => 'DV-RPU:er',
 			'performanceOverlay.dvRpuAverage' => 'DV-RPU, genomsnitt',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV-sampling, genomsnitt',
 			'performanceOverlay.maxLuma' => 'Max luma',
 			'performanceOverlay.minLuma' => 'Min luma',
@@ -8710,12 +8718,12 @@ extension on TranslationsSv {
 			'homeLayout.customPlexRow' => 'Anpassad Plex rad',
 			'homeLayout.heroNeedsLibrary' => 'Kolla biblioteket först – Hero behöver någonstans att visa',
 			'homeLayout.heroNeedsSurface' => 'Kolla biblioteket eller hemmet först – Hero behöver någonstans att visa',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Ta bort Hub',
 			'homeLayout.noPlexRows' => 'Nr Plex-hanterade rader återvände till denna bibliotek.',
 			'homeLayout.openDetails' => 'Öppna detaljer',
 			'homeLayout.heroCards' => 'hjältar kort',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Att ta ett hjälte kort',
 			'homeLayout.tvPlayFocus' => 'TV fjärr: Highlight Play knappen',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad ned stoppar på Play-knappen innan du flyttar till nästa rad.',
@@ -9224,12 +9232,12 @@ extension on TranslationsSv {
 			'audiobook.recoveryExport' => 'Export krypterad återhämtningsfil',
 			'audiobook.recoveryImport' => 'Import krypterad återhämtningsfil',
 			'audiobook.recoveryImportConfirm' => 'Kombinera denna krypterade återställningsfil med aktuella läsplatser och anteckningar? befintlig historia kommer att behållas. Delade bibliotek och objekt ID ingår inte; ställa in matchande ID på varje enhet innan import.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Den krypterade återhämtningsfilen sparas.',
 			'audiobook.recoveryImported' => 'Data återhämtning sammansatt.',
 			'sourceSetup.bookorbitHelp' => 'Logga in med ditt eget BookOrbit-konto för att bläddra bland och spela upp dina böcker. Begäranden om saknade titlar går fortfarande via din anslutna SeerrNG-instans.',
 			'sourceSetup.bookorbitOpen' => 'Öppna i BookOrbit',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Visa den här titeln i BookOrbit för att hantera biblioteksuppgifter och format som Pleazyng inte kan öppna. Lyssningsförloppet synkroniseras med ditt BookOrbit-konto.',
 			'sourceSetup.savedCertificate' => 'Sparat servercertifikat',
 			'sourceSetup.nfsEndpointInvalid' => 'Ange en NFS-URL, till exempel nfs://nas:2049/export.',
@@ -9738,12 +9746,12 @@ extension on TranslationsSv {
 			'musicTools.apiKey' => 'API-nyckel',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Minuter',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Filter',
 			'musicTools.exclusiveOutput' => 'Exklusiv ljudutgång',
 			'musicTools.preamp' => 'Förförstärkning',
 			'musicTools.ratingPending' => 'Sparat på den här enheten; väntar på synkronisering',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Tidsförskjutning för sångtext',
 			'musicTools.anniversaries' => 'Albumjubileer',
 			'musicTools.outputPreset' => 'EQ för denna utgång',

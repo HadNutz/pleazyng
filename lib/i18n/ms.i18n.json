@@ -209,6 +209,9 @@
     "notAvailable": "N / A",
     "url": "URL",
     "letterKeys": "Tag : ABC",
+    "keyboardSymbols": "Simbol",
+    "keyboardLetters": "Huruf",
+    "keyboardNewLine": "Baris baharu",
     "mediaKind": {
       "movie": "filem",
       "show": "Pameran",
@@ -429,6 +432,7 @@
     "importSettingsDescription": "Memulihkan keutamaan daripada fail",
     "importSettingsConfirm": "Ini akan menggantikan tetapan semasa anda.Lanjutkan?",
     "importSettingsSuccess": "Seting yang diimport",
+    "importSettingsCounts": "Tetapan digunakan: ${applied}. Dilangkau: ${skipped}.",
     "importSettingsInvalidFile": "Fail ini bukan pengeksportan tetapan Pleazyng yang sah",
     "importSettingsNoUser": "Menandatangani sebelum mengimport tetapan",
     "cloudBackup": "Penyelesaian Cloud Backup",

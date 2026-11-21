@@ -224,7 +224,11 @@ class _TvVirtualKeyboardDialogState extends State<_TvVirtualKeyboardDialog> {
         [
           _TvKey.action(t.common.clear, _TvKeyType.clear, icon: Symbols.clear_all_rounded),
           const _TvKey.character('0'),
-          const _TvKey.action('Del', _TvKeyType.backspace, icon: Symbols.backspace_rounded),
+          _TvKey.action(
+            MaterialLocalizations.of(context).keyboardKeyBackspace,
+            _TvKeyType.backspace,
+            icon: Symbols.backspace_rounded,
+          ),
         ],
         [
           _TvKey.action(t.common.cancel, _TvKeyType.cancel, icon: Symbols.close_rounded),
@@ -235,7 +239,11 @@ class _TvVirtualKeyboardDialogState extends State<_TvVirtualKeyboardDialog> {
     }
 
     final actionRow = [
-      const _TvKey.action('Space', _TvKeyType.space, icon: Symbols.space_bar_rounded),
+      _TvKey.action(
+        MaterialLocalizations.of(context).keyboardKeySpace,
+        _TvKeyType.space,
+        icon: Symbols.space_bar_rounded,
+      ),
       const _TvKey.character('@'),
       const _TvKey.character('#'),
       const _TvKey.character('_'),
@@ -243,7 +251,7 @@ class _TvVirtualKeyboardDialogState extends State<_TvVirtualKeyboardDialog> {
       const _TvKey.character(':'),
       const _TvKey.character('='),
       _isMultiline
-          ? const _TvKey.action('Line', _TvKeyType.newline, icon: Symbols.keyboard_return_rounded)
+          ? _TvKey.action(t.common.keyboardNewLine, _TvKeyType.newline, icon: Symbols.keyboard_return_rounded)
           : const _TvKey.character('&'),
       _TvKey.action(t.common.clear, _TvKeyType.clear, icon: Symbols.clear_all_rounded),
       _TvKey.action(t.common.cancel, _TvKeyType.cancel, icon: Symbols.close_rounded),
@@ -255,10 +263,18 @@ class _TvVirtualKeyboardDialogState extends State<_TvVirtualKeyboardDialog> {
       [const _TvKey.spacer(), ..._characters('qwertyuiop'), const _TvKey.spacer()],
       [const _TvKey.spacer(), ..._characters('asdfghjkl'), const _TvKey.character("'"), const _TvKey.spacer()],
       [
-        const _TvKey.action('', _TvKeyType.symbols, icon: Symbols.functions_rounded),
-        _TvKey.action('Shift', _TvKeyType.shift, icon: Symbols.shift_rounded),
+        _TvKey.action(t.common.keyboardSymbols, _TvKeyType.symbols, icon: Symbols.functions_rounded),
+        _TvKey.action(
+          MaterialLocalizations.of(context).keyboardKeyShift,
+          _TvKeyType.shift,
+          icon: Symbols.shift_rounded,
+        ),
         ..._characters('zxcvbnm.-'),
-        const _TvKey.action('Del', _TvKeyType.backspace, icon: Symbols.backspace_rounded),
+        _TvKey.action(
+          MaterialLocalizations.of(context).keyboardKeyBackspace,
+          _TvKeyType.backspace,
+          icon: Symbols.backspace_rounded,
+        ),
       ],
       [const _TvKey.spacer(), ...actionRow],
     ];
@@ -269,7 +285,11 @@ class _TvVirtualKeyboardDialogState extends State<_TvVirtualKeyboardDialog> {
       [
         _TvKey.action(t.common.letterKeys, _TvKeyType.symbols),
         ..._symbols(['!', '?', r'$', '%', '^', '*', '+', '=', '~']),
-        const _TvKey.action('Del', _TvKeyType.backspace, icon: Symbols.backspace_rounded),
+        _TvKey.action(
+          MaterialLocalizations.of(context).keyboardKeyBackspace,
+          _TvKeyType.backspace,
+          icon: Symbols.backspace_rounded,
+        ),
         const _TvKey.spacer(),
       ],
       [
@@ -287,7 +307,11 @@ class _TvVirtualKeyboardDialogState extends State<_TvVirtualKeyboardDialog> {
       [
         const _TvKey.spacer(),
         const _TvKey.spacer(),
-        const _TvKey.action('Space', _TvKeyType.space, icon: Symbols.space_bar_rounded),
+        _TvKey.action(
+          MaterialLocalizations.of(context).keyboardKeySpace,
+          _TvKeyType.space,
+          icon: Symbols.space_bar_rounded,
+        ),
         const _TvKey.character('@'),
         const _TvKey.character('#'),
         const _TvKey.character('_'),
@@ -643,6 +667,7 @@ class _TvVirtualKeyboardDialogState extends State<_TvVirtualKeyboardDialog> {
       elevation: 0,
       child: Focus(
         focusNode: _focusNode,
+        includeSemantics: false,
         onKeyEvent: _handleKey,
         child: Container(
           key: const Key('tv_virtual_keyboard_panel'),
@@ -773,21 +798,32 @@ class _TvVirtualKeyboardDialogState extends State<_TvVirtualKeyboardDialog> {
             ? colorScheme.onSecondaryContainer
             : colorScheme.onSurface;
 
-        return ClickableCursor(
-          child: GestureDetector(
-            onTap: () {
-              _selection.value = (row: row, column: column);
-              _activate(key);
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 120),
-              width: metrics.keySize,
-              height: metrics.keySize,
-              alignment: .center,
-              decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(metrics.keyRadius)),
-              child: Padding(
-                padding: .symmetric(horizontal: metrics.keySize * 0.04),
-                child: _buildKeyContent(context, key, foreground, metrics),
+        void activate() {
+          _selection.value = (row: row, column: column);
+          _activate(key);
+        }
+
+        return Semantics(
+          button: true,
+          focusable: true,
+          focused: selected,
+          toggled: key.type == _TvKeyType.shift ? _shiftEnabled : null,
+          label: key.type == _TvKeyType.symbols && _symbolsPage ? t.common.keyboardLetters : key.label,
+          onTap: activate,
+          excludeSemantics: true,
+          child: ClickableCursor(
+            child: GestureDetector(
+              onTap: activate,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 120),
+                width: metrics.keySize,
+                height: metrics.keySize,
+                alignment: .center,
+                decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(metrics.keyRadius)),
+                child: Padding(
+                  padding: .symmetric(horizontal: metrics.keySize * 0.04),
+                  child: _buildKeyContent(context, key, foreground, metrics),
+                ),
               ),
             ),
           ),

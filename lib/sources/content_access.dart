@@ -1815,14 +1815,31 @@ class PublicationDownloads {
     cancel.check();
     // Provider streams can resume against the immutable file fingerprint
     // encoded in the partial path. HTTP URLs need a representation validator.
-    final directOffset =
-        offset > 0 && expectedSize != null && offset < expectedSize && adapter.capabilities.rangeRequests ? offset : 0;
-    final directStream = await adapter.openContent(
+    var directOffset =
+        file.revision != null &&
+            offset > 0 &&
+            expectedSize != null &&
+            offset < expectedSize &&
+            adapter.capabilities.rangeRequests
+        ? offset
+        : 0;
+    var directStream = await adapter.openContent(
       file,
       offset: directOffset,
       length: expectedSize == null ? 0 : expectedSize - directOffset,
     );
     cancel.check();
+    if (directStream != null && directOffset > 0 && directStream.validatedRevision != file.revision) {
+      if (directStream.validatedRevision != null) {
+        throw const SourceException(SourceFailure.conflict);
+      }
+      // Without an edition validator, discard the partial to avoid joining
+      // bytes belonging to two different same-sized files.
+      directOffset = 0;
+      directStream = await adapter.openContent(file, offset: 0, length: expectedSize ?? 0);
+      if (directStream == null) throw const SourceException(SourceFailure.conflict);
+      cancel.check();
+    }
     if (directStream != null) {
       if (expectedSize != null && directStream.size != expectedSize) {
         throw const SourceException(SourceFailure.invalidData);
@@ -1835,7 +1852,7 @@ class PublicationDownloads {
         file: file,
         path: partial.path,
         label: label,
-        bytes: offset,
+        bytes: directOffset,
         expected: expectedSize,
       );
       if (directStream.offset != directOffset || directStream.length != directStream.size - directOffset) {
@@ -1991,10 +2008,9 @@ class PublicationDownloads {
           redirects: true,
           abort: cancel.aborted,
         );
-        if (const {401, 403}.contains(response.statusCode)) {
+        if (adapter.shouldRenewLease(response.statusCode)) {
           await response.stream.listen(null).cancel();
-          await adapter.refreshAuthorization();
-          lease = await adapter.resolve(file);
+          lease = await adapter.renewLease(file);
           expectedSize ??= lease.size;
           response = await adapter.transport.send(
             'GET',
@@ -2820,11 +2836,11 @@ class SourceStreamGateway {
         redirects: true,
         abort: _abort.future,
       );
-      if (const {401, 403}.contains(response.statusCode)) {
-        await response.stream.drain<void>();
+      if (ref.adapter.shouldRenewLease(response.statusCode)) {
+        await response.stream.listen(null).cancel();
         _leases.remove(segments[1]);
-        await ref.adapter.refreshAuthorization();
-        lease = await ref.adapter.resolve(ref.file);
+        lease = await ref.adapter.renewLease(ref.file);
+        _leases[segments[1]] = lease;
         response = await ref.adapter.transport.send(
           'GET',
           lease.uri,

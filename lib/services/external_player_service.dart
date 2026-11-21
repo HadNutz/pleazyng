@@ -115,6 +115,13 @@ class ExternalPlayerService {
   /// Only the latest launch can call back; a new launch replaces it.
   static _CallbackSession? _callbackSession;
 
+  /// Resolves the stored file and its own clock before handing it to another
+  /// player. A joined conversion has no part offset; a saved split does.
+  static Future<PlaybackInitializationResult> resolveDownloadedHandoff(
+    PlaybackInitializationService playback,
+    PlaybackInitializationOptions options,
+  ) => playback.getPlaybackData(options, preferOffline: true, requireOffline: true);
+
   /// Launch an external player with either a pre-resolved [videoUrl] (the
   /// local file of a downloaded copy) or by asking [client] to resolve the
   /// stream for [metadata]. Each backend implements `resolveExternalPlayback`
@@ -128,13 +135,20 @@ class ExternalPlayerService {
     OfflineWatchSyncService? offlineWatchService,
     int mediaIndex = 0,
     String? mediaSourceId,
+    Duration? initialPosition,
+    bool allowServerFallback = true,
     String? videoUrl,
     bool Function()? isLaunchCurrent,
     VoidCallback? onHandoffPending,
     VoidCallback? onLaunched,
   }) async {
     if (!PlatformDetector.supportsExternalPlayers()) return false;
-    bool current() => context.mounted && (isLaunchCurrent?.call() ?? true);
+    final profiles = context.read<ActiveProfileProvider?>();
+    final epoch = profiles?.identityMutationGeneration;
+    bool current() =>
+        context.mounted &&
+        (profiles == null || (!profiles.isBinding && profiles.identityMutationGeneration == epoch)) &&
+        (isLaunchCurrent?.call() ?? true);
     if (!current()) return false;
 
     try {
@@ -144,15 +158,35 @@ class ExternalPlayerService {
       // several files that is one part, on that part's clock.
       MediaPartTimeline? partTimeline;
       String? playSessionId;
-      final resume = (metadata?.viewOffsetMs ?? 0) > 0 ? Duration(milliseconds: metadata!.viewOffsetMs!) : null;
+      final resume =
+          initialPosition ??
+          ((metadata?.viewOffsetMs ?? 0) > 0 ? Duration(milliseconds: metadata!.viewOffsetMs!) : null);
 
-      if (videoUrl != null) {
-        resolvedUrl = videoUrl;
-        // A downloaded copy is handed over as its first file.
-        final versions = metadata?.mediaVersions;
-        if (versions != null && mediaIndex >= 0 && mediaIndex < versions.length) {
-          partTimeline = MediaPartTimeline.fromParts(versions[mediaIndex].parts);
+      PlaybackInitializationResult? local;
+      if (videoUrl != null && metadata != null) {
+        if (context.read<DownloadProvider?>()?.isDownloaded(metadata.globalKey) != true) return false;
+        try {
+          local = await resolveDownloadedHandoff(
+            PlaybackInitializationService(client: client, database: context.read<AppDatabase>()),
+            PlaybackInitializationOptions(
+              metadata: metadata,
+              selectedMediaIndex: mediaIndex,
+              selectedMediaSourceId: mediaSourceId,
+              startPosition: resume,
+            ),
+          );
+        } on PlaybackException {
+          if (client == null || client.isOfflineMode || !allowServerFallback) rethrow;
         }
+        if (!current()) return false;
+      }
+      if (local != null && local.videoUrl != null) {
+        resolvedUrl = local.videoUrl!;
+        partTimeline = local.mediaInfo?.partTimeline;
+        mediaSourceId = local.mediaInfo?.mediaSourceId ?? local.selectedMediaSourceId;
+        subtitles = local.externalSubtitles;
+      } else if (videoUrl != null && metadata == null) {
+        resolvedUrl = videoUrl;
       } else if (client != null && metadata != null) {
         final target = await client.resolveExternalPlayback(
           metadata,
@@ -169,6 +203,7 @@ class ExternalPlayerService {
         resolvedUrl = target.url;
         subtitles = target.subtitles;
         partTimeline = target.partTimeline;
+        mediaSourceId = target.mediaInfo?.mediaSourceId ?? mediaSourceId;
         playSessionId = target.playSessionId;
       } else {
         appLogger.e('ExternalPlayerService.launch requires either videoUrl or client+metadata');
@@ -192,17 +227,6 @@ class ExternalPlayerService {
 
       // On Android, always use native intent to avoid url_launcher opening in browser
       if (Platform.isAndroid && context.mounted) {
-        // A downloaded copy's subtitles are the sidecar files saved with it.
-        if (videoUrl != null && metadata != null) {
-          subtitles = await _downloadedSubtitles(
-            context.read<AppDatabase>(),
-            videoUrl,
-            metadata: metadata,
-            client: client,
-            mediaIndex: mediaIndex,
-          );
-          if (!context.mounted || !current()) return false;
-        }
         onHandoffPending?.call();
         final launchResult = await _launchAndroidNative(
           resolvedUrl,
@@ -538,29 +562,6 @@ class ExternalPlayerService {
     return asMs < asSeconds ? 1 : 1000;
   }
 
-  /// Sidecar subtitles saved with the downloaded copy at [videoUrl].
-  /// Best-effort: a copy whose subtitles can't be listed still launches,
-  /// just without them.
-  static Future<List<SubtitleTrack>> _downloadedSubtitles(
-    AppDatabase database,
-    String videoUrl, {
-    required MediaItem metadata,
-    required MediaServerClient? client,
-    required int mediaIndex,
-  }) async {
-    final videoPath = videoUrl.startsWith('file://') ? videoUrl.substring('file://'.length) : videoUrl;
-    try {
-      final sidecars = await PlaybackInitializationService(
-        client: client,
-        database: database,
-      ).discoverDownloadedSubtitles(metadata, videoPath: videoPath, mediaIndex: mediaIndex);
-      return [for (final sidecar in sidecars) sidecar.track];
-    } catch (e, stackTrace) {
-      appLogger.w('Could not list downloaded subtitles for the external player', error: e, stackTrace: stackTrace);
-      return const [];
-    }
-  }
-
   /// Launch a video on Android using native ACTION_VIEW intent.
   /// Handles local files (file://, content://, absolute paths) and remote URLs.
   static Future<_ExternalPlayerLaunchResult> _launchAndroidNative(
@@ -685,6 +686,11 @@ class ExternalPlayerService {
     }
 
     if (!current()) return;
+    final acknowledged = !metadata.backend.usesMediaBrowserApi || startedSucceeded;
+    if (!acknowledged) {
+      await _queueExternalProgress(metadata, offlineWatchService, position: position, duration: duration);
+      if (!current()) return;
+    }
     if (duration == null) return;
 
     WatchStateNotifier().notifyProgress(
@@ -695,14 +701,15 @@ class ExternalPlayerService {
       watchedThreshold: client.watchedThreshold,
       // MediaBrowser persists stopped progress only for a session opened by
       // Started; Plex persists every timeline report independently.
-      serverAcknowledged: !metadata.backend.usesMediaBrowserApi || startedSucceeded,
+      serverAcknowledged: acknowledged,
     );
 
-    if (isWatchedProgress(
-      positionMs: position.inMilliseconds,
-      durationMs: duration.inMilliseconds,
-      threshold: client.watchedThreshold,
-    )) {
+    if (acknowledged &&
+        isWatchedProgress(
+          positionMs: position.inMilliseconds,
+          durationMs: duration.inMilliseconds,
+          threshold: client.watchedThreshold,
+        )) {
       try {
         // reportPlaybackStopped above marks the item played on backends that
         // support it (Jellyfin); markWatchedFromPlaybackStop then only emits the

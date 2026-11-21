@@ -1118,6 +1118,8 @@ class PlayerWebOS extends PlayerBase
           await controller.setSubtitleEnabled(value == 'yes');
         }
         break;
+      case 'audio-delay':
+        throw UnsupportedError('Audio delay is unavailable on $playerType');
       case 'sub-delay':
         final controller = _controller;
         final milliseconds = ((double.tryParse(value) ?? 0) * 1000).round();

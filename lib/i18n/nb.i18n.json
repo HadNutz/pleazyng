@@ -209,6 +209,9 @@
     "notAvailable": "I/T",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "Symboler",
+    "keyboardLetters": "Bokstaver",
+    "keyboardNewLine": "Ny linje",
     "mediaKind": {
       "movie": "Film",
       "show": "Serie",
@@ -431,6 +434,7 @@
     "importSettingsDescription": "Gjenopprett innstillinger fra en fil",
     "importSettingsConfirm": "Dette vil erstatte nåværende innstillinger. Fortsette?",
     "importSettingsSuccess": "Innstillinger importert",
+    "importSettingsCounts": "Innstillinger tatt i bruk: ${applied}. Hoppet over: ${skipped}.",
     "importSettingsInvalidFile": "Denne filen er ikke en gyldig Pleazyng-innstillingseksport",
     "importSettingsNoUser": "Logg inn før import av innstillinger",
     "cloudBackup": "Sikkerhetskopi i skyen",

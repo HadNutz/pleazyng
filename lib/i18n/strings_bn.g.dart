@@ -342,6 +342,9 @@ class _Translations$common$bn extends Translations$common$en {
 	@override String get notAvailable => 'ন/এ';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'প্রতীক';
+	@override String get keyboardLetters => 'অক্ষর';
+	@override String get keyboardNewLine => 'নতুন লাইন';
 	@override late final _Translations$common$mediaKind$bn mediaKind = _Translations$common$mediaKind$bn._(_root);
 }
 
@@ -572,6 +575,7 @@ class _Translations$settings$bn extends Translations$settings$en {
 	@override String get importSettingsDescription => 'একটি ফাইল থেকে পছন্দ ফেরত';
 	@override String get importSettingsConfirm => 'এটাই আপনাকে বর্তমান পরামর্শগুলি বদলে দেবে।';
 	@override String get importSettingsSuccess => 'আউটডোজ করা';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'প্রয়োগ করা সেটিংস: ${applied}। বাদ দেওয়া হয়েছে: ${skipped}।';
 	@override String get importSettingsInvalidFile => 'এই ফাইলটি একটি সঠিক Pleazyng সেটিংগুলি অ্যাক্সেস নয়';
 	@override String get importSettingsNoUser => 'প্রদর্শন করার আগে সাইন করুন';
 	@override String get cloudBackup => 'ক্লাউড সার্ভিস';
@@ -5822,6 +5826,9 @@ extension on TranslationsBn {
 			'common.notAvailable' => 'ন/এ',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'প্রতীক',
+			'common.keyboardLetters' => 'অক্ষর',
+			'common.keyboardNewLine' => 'নতুন লাইন',
 			'common.mediaKind.movie' => 'চলচ্চিত্র',
 			'common.mediaKind.show' => 'প্রদর্শন',
 			'common.mediaKind.season' => 'সপ্তাহ',
@@ -6030,6 +6037,7 @@ extension on TranslationsBn {
 			'settings.importSettingsDescription' => 'একটি ফাইল থেকে পছন্দ ফেরত',
 			'settings.importSettingsConfirm' => 'এটাই আপনাকে বর্তমান পরামর্শগুলি বদলে দেবে।',
 			'settings.importSettingsSuccess' => 'আউটডোজ করা',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'প্রয়োগ করা সেটিংস: ${applied}। বাদ দেওয়া হয়েছে: ${skipped}।',
 			'settings.importSettingsInvalidFile' => 'এই ফাইলটি একটি সঠিক Pleazyng সেটিংগুলি অ্যাক্সেস নয়',
 			'settings.importSettingsNoUser' => 'প্রদর্শন করার আগে সাইন করুন',
 			'settings.cloudBackup' => 'ক্লাউড সার্ভিস',
@@ -6140,12 +6148,12 @@ extension on TranslationsBn {
 			'settings.manageLibrariesDescription' => 'লাইব্রেরি রেকর্ড করুন এবং লুকিয়ে রাখুন',
 			'settings.companionRemoteServer' => 'Remote সার্ভার',
 			'settings.companionRemoteServerDescription' => 'আপনার নেটওয়ার্কের মোবাইল ডিভাইসগুলি এই অ্যাপটি নিয়ন্ত্রণ করার অনুমতি দেয়',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'সার্ভার সার্ভার শুরু করতে পারেনি।',
 			'settings.companionRemoteServerStopFailed' => 'সার্ভার বন্ধ করতে পারত না।',
 			'settings.autoPip' => 'Auto Picture-in-Picture গাড়ি',
 			'settings.autoPipDescription' => 'আপনি Playback সময় অ্যাপটি ছেড়ে যখন স্বয়ংক্রিয়ভাবে ছবি-এ-ফটো প্রবেশ করুন',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'ফ্রেম ফ্রেম ফ্রেম ফ্রেম ফ্রেম',
 			'settings.matchContentFrameRateDescription' => 'ভিডিও প্রদর্শন ফ্রেসিং রেস্টুরেন্ট ফ্রেসিং রেস্টুরেন্ট',
 			'settings.matchContentResolution' => 'Match Content সংশ্লিষ্ট',
@@ -6654,12 +6662,12 @@ extension on TranslationsBn {
 			'accessibility.boldTextHint' => 'ইন্টারফেস ট্যাগ এবং বার্তাগুলির জন্য একটি গভীর ওজন ব্যবহার করুন যা তাদের বিতর্ক করা সহজ করে।',
 			'tooltips.shufflePlay' => 'শফল খেলা',
 			'tooltips.playTrailer' => 'ট্র্যালার খেলুন',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'মার্ক দেখে',
 			'tooltips.markAsUnwatched' => 'মার্ক অবিশ্বাসিত',
 			'audioTracks.track' => ({required Object n}) => 'অডিও ট্র্যাক ${n}',
 			'videoControls.audioLabel' => 'অডিও',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'সাবটাইটেল',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'বাক্স',
@@ -7168,12 +7176,12 @@ extension on TranslationsBn {
 			'errors.connectionTimeout' => ({required Object context}) => 'লোডিং সময়মাত্রা ${context}',
 			'errors.connectionFailed' => 'মিডিয়া সার্ভারের সাথে যোগাযোগ করতে পারবেন না',
 			'errors.unableToLoad' => ({required Object context}) => '${context} পুনরায় চেষ্টা করুন।',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'কোন গ্রাহক পাওয়া যায় না',
 			'errors.pleaseEnterToken' => 'দয়া করে একটি টকেন লিখুন',
 			'errors.invalidToken' => 'অসুবিধা টকেন',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'টকেন সনাক্ত করতে পারিনি: ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'পাশাপাশি পাশাপাশি পাশাপাশি ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'অপসারণ করা হয় না ${displayName}',
 			'errors.failedToRate' => 'Rating আপডেট করতে পারবেন না',
@@ -7682,12 +7690,12 @@ extension on TranslationsBn {
 			'playlists.emptyPlaylist' => 'এই খেলাটি खाली',
 			'playlists.deleteConfirm' => 'Playlist খেলা?',
 			'playlists.deleteMessage' => ({required Object name}) => 'আপনি কি নিশ্চিত যে আপনি "${name}" মুছে ফেলতে চান?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Playlist তৈরি',
 			'playlists.deleted' => 'Playlist 삭제',
 			'playlists.itemAdded' => 'Playlist এ যোগ করা',
 			'playlists.itemRemoved' => 'Playlist থেকে মুছে ফেলুন',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Playlist নির্বাচন করুন',
 			'playlists.searchPlaylists' => 'খেলা খেলা খেলা খেলা...',
 			'playlists.errorCreating' => 'খেলা তালিকা তৈরি করতে পারিনি',
@@ -8196,12 +8204,12 @@ extension on TranslationsBn {
 			'performanceOverlay.transfer' => 'ট্রান্সফার',
 			'performanceOverlay.renderFps' => 'ফিপিএস ফিপিএস',
 			'performanceOverlay.displayFps' => 'ফিপিএস প্রদর্শন',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V সিন্ক',
 			'performanceOverlay.dropped' => 'ধ্বংস',
 			'performanceOverlay.dvRpus' => 'ডিপিএল',
 			'performanceOverlay.dvRpuAverage' => 'ডিপিএল এভগ',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'ডিএসএইচএইচএইচ',
 			'performanceOverlay.maxLuma' => 'ম্যাক্স লুমা',
 			'performanceOverlay.minLuma' => 'মিন লুমা',
@@ -8710,12 +8718,12 @@ extension on TranslationsBn {
 			'homeLayout.customPlexRow' => 'কাস্টম Plex রান',
 			'homeLayout.heroNeedsLibrary' => 'প্রথমে লাইব্রেরি চেক করুন — হ্যারো দেখার জন্য কোথাও প্রয়োজন',
 			'homeLayout.heroNeedsSurface' => 'প্রথমে লাইব্রেরি বা হোম দেখুন — হেরো দেখার জন্য কোথাও প্রয়োজন',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'হাব থেকে বের করুন',
 			'homeLayout.noPlexRows' => 'নম্বর Plex পরিচালিত লাইন এই লাইব্রেরি জন্য ফিরে এসেছে।',
 			'homeLayout.openDetails' => 'খোলা বিস্তারিত',
 			'homeLayout.heroCards' => 'হেরো কার্ড',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'হ্যারিয়ার কার্ড খুঁজে বের',
 			'homeLayout.tvPlayFocus' => 'টেলিভিশন দূরে: উচ্চ আলো Play बटन',
 			'homeLayout.tvPlayFocusDescription' => 'ড-প্যাড ডাউনলোড খেলা বোতামটি বন্ধ করে, পরবর্তী লাইন থেকে চলে যাওয়ার আগে।',
@@ -9224,12 +9232,12 @@ extension on TranslationsBn {
 			'audiobook.recoveryExport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
 			'audiobook.recoveryImport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
 			'audiobook.recoveryImportConfirm' => 'এই এনক্রিপ্ট করা পুনরুদ্ধার ফাইলটি বর্তমান পড়ার অবস্থান ও নোটের সঙ্গে মেশাবেন? আগের ইতিহাস থাকবে। শেয়ার করা লাইব্রেরি ও আইটেম ID এতে নেই; আমদানির আগে প্রতিটি ডিভাইসে একই ID সেট করুন।',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'সক্রিপ্ট ফাইল পুনরায় সংরক্ষণ করা হয়েছে।',
 			'audiobook.recoveryImported' => 'রেকর্ড ডেটা একত্রিত।',
 			'sourceSetup.bookorbitHelp' => 'বইগুলো দেখতে ও পড়তে আপনার নিজের BookOrbit অ্যাকাউন্টে সাইন ইন করুন। অনুপস্থিত শিরোনামের অনুরোধ এখনও আপনার সংযুক্ত SeerrNG ইনস্ট্যান্সের মাধ্যমেই যাবে।',
 			'sourceSetup.bookorbitOpen' => 'BookOrbit-এ খুলুন',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'লাইব্রেরির বিবরণ এবং Pleazyng যে ফরম্যাট খুলতে পারে না সেগুলো পরিচালনা করতে BookOrbit-এ এই শিরোনামটি দেখুন। শোনার অগ্রগতি আপনার BookOrbit অ্যাকাউন্টের সঙ্গে সিঙ্ক হয়।',
 			'sourceSetup.savedCertificate' => 'সংরক্ষিত সার্ভার সার্টিফিকেট',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export-এর মতো একটি NFS URL লিখুন।',
@@ -9738,12 +9746,12 @@ extension on TranslationsBn {
 			'musicTools.apiKey' => 'API কী',
 			'musicTools.missing' => 'ন/এ',
 			'musicTools.minutes' => 'মিনিট',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'ফিল্টারগুলি',
 			'musicTools.exclusiveOutput' => 'একচেটিয়া অডিও আউটপুট',
 			'musicTools.preamp' => 'প্রিঅ্যাম্প',
 			'musicTools.ratingPending' => 'এই ডিভাইসে সংরক্ষিত; সিঙ্কের অপেক্ষায়',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'গানের কথার সময়ের ব্যবধান',
 			'musicTools.anniversaries' => 'অ্যালবামের বর্ষপূর্তি',
 			'musicTools.outputPreset' => 'এই আউটপুটের ইকুয়ালাইজার',

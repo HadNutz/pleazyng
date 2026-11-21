@@ -342,6 +342,9 @@ class _Translations$common$nb extends Translations$common$en {
 	@override String get notAvailable => 'I/T';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Symboler';
+	@override String get keyboardLetters => 'Bokstaver';
+	@override String get keyboardNewLine => 'Ny linje';
 	@override late final _Translations$common$mediaKind$nb mediaKind = _Translations$common$mediaKind$nb._(_root);
 }
 
@@ -572,6 +575,7 @@ class _Translations$settings$nb extends Translations$settings$en {
 	@override String get importSettingsDescription => 'Gjenopprett innstillinger fra en fil';
 	@override String get importSettingsConfirm => 'Dette vil erstatte nåværende innstillinger. Fortsette?';
 	@override String get importSettingsSuccess => 'Innstillinger importert';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Innstillinger tatt i bruk: ${applied}. Hoppet over: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Denne filen er ikke en gyldig Pleazyng-innstillingseksport';
 	@override String get importSettingsNoUser => 'Logg inn før import av innstillinger';
 	@override String get cloudBackup => 'Sikkerhetskopi i skyen';
@@ -5822,6 +5826,9 @@ extension on TranslationsNb {
 			'common.notAvailable' => 'I/T',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Symboler',
+			'common.keyboardLetters' => 'Bokstaver',
+			'common.keyboardNewLine' => 'Ny linje',
 			'common.mediaKind.movie' => 'Film',
 			'common.mediaKind.show' => 'Serie',
 			'common.mediaKind.season' => 'Sesong',
@@ -6030,6 +6037,7 @@ extension on TranslationsNb {
 			'settings.importSettingsDescription' => 'Gjenopprett innstillinger fra en fil',
 			'settings.importSettingsConfirm' => 'Dette vil erstatte nåværende innstillinger. Fortsette?',
 			'settings.importSettingsSuccess' => 'Innstillinger importert',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Innstillinger tatt i bruk: ${applied}. Hoppet over: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Denne filen er ikke en gyldig Pleazyng-innstillingseksport',
 			'settings.importSettingsNoUser' => 'Logg inn før import av innstillinger',
 			'settings.cloudBackup' => 'Sikkerhetskopi i skyen',
@@ -6140,12 +6148,12 @@ extension on TranslationsNb {
 			'settings.manageLibrariesDescription' => 'Omorganiser og skjul biblioteker',
 			'settings.companionRemoteServer' => 'Fjernkontrollserver',
 			'settings.companionRemoteServerDescription' => 'La mobilenheter på nettverket styre denne appen',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Kunne ikke starte fjernkontrollserveren',
 			'settings.companionRemoteServerStopFailed' => 'Kunne ikke stoppe fjernkontrollserveren',
 			'settings.autoPip' => 'Automatisk bilde-i-bilde',
 			'settings.autoPipDescription' => 'Åpne bilde-i-bilde når du forlater appen under avspilling',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Tilpass innholdets bildefrekvens',
 			'settings.matchContentFrameRateDescription' => 'Tilpass skjermens oppdateringsfrekvens til videoinnhold',
 			'settings.matchContentResolution' => 'Tilpass til innholdets oppløsning',
@@ -6654,12 +6662,12 @@ extension on TranslationsNb {
 			'accessibility.boldTextHint' => 'Bruk en tyngre vekt for grensesnitt etiketter og meldinger for å gjøre dem enklere å skille mellom.',
 			'tooltips.shufflePlay' => 'Tilfeldig avspilling',
 			'tooltips.playTrailer' => 'Spill trailer',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Merk som sett',
 			'tooltips.markAsUnwatched' => 'Merk som usett',
 			'audioTracks.track' => ({required Object n}) => 'Lydspor ${n}',
 			'videoControls.audioLabel' => 'Lyd',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Undertekster',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Letterbox',
@@ -7168,12 +7176,12 @@ extension on TranslationsNb {
 			'errors.connectionTimeout' => ({required Object context}) => 'Tidsavbrudd ved lasting av ${context}',
 			'errors.connectionFailed' => 'Kan ikke koble til medieserver',
 			'errors.unableToLoad' => ({required Object context}) => 'Kunne ikke laste ${context}. Prøv igjen.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Ingen klient tilgjengelig',
 			'errors.pleaseEnterToken' => 'Vennligst skriv inn et token',
 			'errors.invalidToken' => 'Ugyldig token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Kunne ikke verifisere token: ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Kunne ikke bytte til ${displayName}',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Kunne ikke slette ${displayName}',
 			'errors.failedToRate' => 'Kunne ikke oppdatere vurderingen',
@@ -7682,12 +7690,12 @@ extension on TranslationsNb {
 			'playlists.emptyPlaylist' => 'Denne spillelisten er tom',
 			'playlists.deleteConfirm' => 'Slett spilleliste?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Er du sikker på at du vil slette "${name}"?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Spilleliste opprettet',
 			'playlists.deleted' => 'Spilleliste slettet',
 			'playlists.itemAdded' => 'Lagt til i spilleliste',
 			'playlists.itemRemoved' => 'Fjernet fra spilleliste',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Velg spilleliste',
 			'playlists.searchPlaylists' => 'Søk i spillelister...',
 			'playlists.errorCreating' => 'Kunne ikke opprette spilleliste',
@@ -8196,12 +8204,12 @@ extension on TranslationsNb {
 			'performanceOverlay.transfer' => 'Overføring',
 			'performanceOverlay.renderFps' => 'Gjengivelses-FPS',
 			'performanceOverlay.displayFps' => 'Skjerm-FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V-synk',
 			'performanceOverlay.dropped' => 'Tapte',
 			'performanceOverlay.dvRpus' => 'DV RPU-er',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU snitt',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV-sample snitt',
 			'performanceOverlay.maxLuma' => 'Maks luma',
 			'performanceOverlay.minLuma' => 'Min luma',
@@ -8710,12 +8718,12 @@ extension on TranslationsNb {
 			'homeLayout.customPlexRow' => 'Tilpasset Plex rad',
 			'homeLayout.heroNeedsLibrary' => 'Sjekk biblioteket først – Hero trenger noe å vise',
 			'homeLayout.heroNeedsSurface' => 'Sjekk biblioteket eller hjemmet først – Hero trenger noe å vise',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Fjern Hub',
 			'homeLayout.noPlexRows' => 'No. Plex-styrt rader returnerte for denne biblioteket.',
 			'homeLayout.openDetails' => 'Åpne detaljer',
 			'homeLayout.heroCards' => 'Hero kort',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Tapping av en helte kort',
 			'homeLayout.tvPlayFocus' => 'TV fjern: Highlight Play-knappen',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad ned stopper på Play-knappen før du går til neste rad.',
@@ -9224,12 +9232,12 @@ extension on TranslationsNb {
 			'audiobook.recoveryExport' => 'Eksport kryptert gjenoppretting filer',
 			'audiobook.recoveryImport' => 'Import kryptert gjenoppretting filer',
 			'audiobook.recoveryImportConfirm' => 'Kombiner denne krypterte gjenoppretting filen med aktuelle lesing posisjoner og notater? eksisterende historie vil bli bevaret. delt bibliotek og element IDs er ikke inkludert; sette matching IDs på hver enhet før import.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Kryptert gjenoppretting fil lagret.',
 			'audiobook.recoveryImported' => 'Data om gjenoppretting sammensatt.',
 			'sourceSetup.bookorbitHelp' => 'Logg på med din egen BookOrbit-konto for å bla gjennom og spille av bøkene der. Forespørsler om titler som mangler, sendes fortsatt via den tilkoblede SeerrNG-instansen.',
 			'sourceSetup.bookorbitOpen' => 'Åpne i BookOrbit',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Vis denne tittelen i BookOrbit for å administrere bibliotekdetaljer og formater Pleazyng ikke kan åpne. Lyttefremdriften synkroniseres med BookOrbit-kontoen din.',
 			'sourceSetup.savedCertificate' => 'Lagret serversertifikat',
 			'sourceSetup.nfsEndpointInvalid' => 'Angi en NFS-URL, for eksempel nfs://nas:2049/export.',
@@ -9738,12 +9746,12 @@ extension on TranslationsNb {
 			'musicTools.apiKey' => 'API-nøkkel',
 			'musicTools.missing' => 'I/T',
 			'musicTools.minutes' => 'Minutter',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Filtre',
 			'musicTools.exclusiveOutput' => 'Eksklusiv lydutgang',
 			'musicTools.preamp' => 'Forforsterkning',
 			'musicTools.ratingPending' => 'Lagret på denne enheten; venter på synkronisering',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Tidsforskyvning for sangtekst',
 			'musicTools.anniversaries' => 'Albumjubileer',
 			'musicTools.outputPreset' => 'EQ for denne utgangen',

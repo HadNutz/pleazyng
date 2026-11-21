@@ -209,6 +209,9 @@
     "notAvailable": "N/A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "Symbolen",
+    "keyboardLetters": "Letters",
+    "keyboardNewLine": "Nieuwe regel",
     "mediaKind": {
       "movie": "Film",
       "show": "Serie",
@@ -431,6 +434,7 @@
     "importSettingsDescription": "Voorkeuren herstellen vanuit een bestand",
     "importSettingsConfirm": "Hiermee worden je huidige instellingen vervangen. Doorgaan?",
     "importSettingsSuccess": "Instellingen geïmporteerd",
+    "importSettingsCounts": "Toegepaste instellingen: ${applied}. Overgeslagen: ${skipped}.",
     "importSettingsInvalidFile": "Dit bestand is geen geldige Pleazyng-export",
     "importSettingsNoUser": "Meld je aan voordat je instellingen importeert",
     "cloudBackup": "Cloudback-up",

@@ -8,6 +8,7 @@ import '../i18n/strings.g.dart';
 
 import '../database/app_database.dart';
 import '../media/media_item.dart';
+import '../media/media_part_timeline.dart';
 import '../media/media_item_types.dart';
 import '../media/media_server_client.dart';
 import '../media/media_source_info.dart';
@@ -146,11 +147,48 @@ class PlaybackInitializationService {
     // Downloaded playback must not wait on a live server. Cached media info
     // preserves track labels where available; the local file is enough to play.
     if (offlineSource != null) {
-      final original = await _cachedMediaInfo(
+      final joined = offlineSource.converted && offlineSource.partCount == 1;
+      var original = await _cachedMediaInfo(
         metadata,
         offlineSource.mediaIndex,
-        position: offlineSource.converted ? Duration.zero : options.startPosition,
+        mediaSourceId: offlineSource.mediaSourceId,
+        position: joined ? Duration.zero : options.startPosition,
       );
+      if (!joined && original?.partTimeline == null) {
+        final versions = metadata.mediaVersions;
+        if (versions != null && offlineSource.mediaIndex < versions.length && offlineSource.mediaIndex >= 0) {
+          final version = versions[offlineSource.mediaIndex];
+          if (offlineSource.mediaSourceId == null || version.id == offlineSource.mediaSourceId) {
+            final layout = MediaPartTimeline.fromParts(version.parts);
+            if (layout != null) {
+              final timeline = MediaPartTimeline.fromParts(
+                version.parts,
+                currentIndex: layout.indexAt(options.startPosition ?? Duration.zero),
+              );
+              original =
+                  (original ??
+                          MediaSourceInfo(
+                            videoUrl: offlineSource.path,
+                            audioTracks: const [],
+                            subtitleTracks: const [],
+                            chapters: const [],
+                            mediaIndex: offlineSource.mediaIndex,
+                            mediaSourceId: offlineSource.mediaSourceId,
+                          ))
+                      .copyWith(partTimeline: timeline);
+            }
+          }
+        }
+      }
+      if (offlineSource.partCount > 1 && original?.partTimeline?.parts.length != offlineSource.partCount) {
+        if (offlineOnly) {
+          throw const PlaybackException(
+            'The downloaded part boundaries are unavailable.',
+            reason: PlaybackFailureReason.noPlayableSource,
+          );
+        }
+        return client!.getPlaybackInitialization(options);
+      }
       // The converted file has its own tracks, range and one item-relative clock.
       // Preserve descriptive chapter and sidecar metadata without handing original
       // stream IDs, partial timelines or DV flags to the new decoder.
@@ -158,7 +196,9 @@ class PlaybackInitializationService {
           ? MediaSourceInfo(
               videoUrl: offlineSource.path,
               mediaIndex: offlineSource.mediaIndex,
-              mediaSourceId: offlineSource.mediaSourceId,
+              mediaSourceId: joined ? offlineSource.mediaSourceId : original.mediaSourceId,
+              partIndex: joined ? null : original.partIndex,
+              partTimeline: joined ? null : original.partTimeline,
               originalLanguage: original.originalLanguage,
               audioTracks: const [],
               subtitleTracks: original.subtitleTracks.where((track) => track.isExternalFile).toList(),
@@ -285,7 +325,12 @@ class PlaybackInitializationService {
     return _discoverSidecarSubtitles(videoPath, metadata: metadata, mediaInfo: mediaInfo);
   }
 
-  Future<MediaSourceInfo?> _cachedMediaInfo(MediaItem metadata, int mediaIndex, {Duration? position}) async {
+  Future<MediaSourceInfo?> _cachedMediaInfo(
+    MediaItem metadata,
+    int mediaIndex, {
+    Duration? position,
+    String? mediaSourceId,
+  }) async {
     try {
       final cacheServerId = await _resolveCacheServerId(metadata);
       if (cacheServerId == null) return null;
@@ -294,6 +339,7 @@ class PlaybackInitializationService {
         cacheServerId: cacheServerId,
         itemId: metadata.id,
         mediaIndex: mediaIndex,
+        mediaSourceId: mediaSourceId,
         position: position,
       );
     } catch (e) {

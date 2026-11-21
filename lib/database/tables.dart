@@ -394,6 +394,10 @@ class OfflineWatchProgress extends Table {
   /// shared by multiple users on the same server.
   TextColumn get clientScopeId => text().nullable()();
 
+  /// Server principal that created this intent. Direct Plex connections use a
+  /// credential fingerprint because a local profile may change server users.
+  TextColumn get accountScope => text().nullable()();
+
   /// Rating key of the media item
   TextColumn get ratingKey => text()();
 

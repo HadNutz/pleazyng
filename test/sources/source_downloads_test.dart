@@ -23,6 +23,32 @@ class DownloadSource extends SourceAdapter {
       ContentLease(Uri.parse('https://files.example/book'), size: 6);
 }
 
+class ChangingDirectFile extends DownloadSource {
+  ChangingDirectFile({required this.verified}) : super(SourceTransport());
+  final bool verified;
+  final offsets = <int>[];
+
+  @override
+  Future<SourceByteStream?> openContent(PublicationFile file, {required int offset, required int length}) async {
+    offsets.add(offset);
+    Stream<List<int>> read() async* {
+      if (offsets.length == 1) {
+        yield 'abc'.codeUnits;
+        throw const SourceException(SourceFailure.unavailable);
+      }
+      yield 'uvwxyz'.substring(offset).codeUnits;
+    }
+
+    return SourceByteStream(
+      stream: read(),
+      size: 6,
+      length: length,
+      offset: offset,
+      validatedRevision: verified ? (offsets.length == 1 ? 'v1' : 'v2') : null,
+    );
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
@@ -56,6 +82,27 @@ void main() {
     await database.close();
     await directory.delete(recursive: true);
   });
+  for (final verified in [true, false]) {
+    test(
+      'interrupted direct stream with ${verified ? "changed" : "unverified"} revision never publishes hybrid bytes',
+      () async {
+        final source = ChangingDirectFile(verified: verified);
+        addTearDown(source.close);
+        await expectLater(downloads.download('p', source, file), throwsA(isA<SourceException>()));
+        if (verified) {
+          await expectLater(
+            downloads.download('p', source, file),
+            throwsA(isA<SourceException>().having((e) => e.reason, 'reason', SourceFailure.conflict)),
+          );
+          expect(await downloads.local('p', 'source', file), isNull);
+        } else {
+          final result = await downloads.download('p', source, file);
+          expect(await result.readAsString(), 'uvwxyz');
+          expect(source.offsets, [0, 3, 0]);
+        }
+      },
+    );
+  }
   test('offline verification rejects deleted, truncated and replaced downloads', () async {
     final source = DownloadSource(SourceTransport(client: MockClient((_) async => http.Response('abcdef', 200))));
     addTearDown(source.close);

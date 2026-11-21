@@ -64,6 +64,36 @@ class CastPlaybackOwnership {
     return true;
   }
 
+  /// Queue advances can acquire a new receiver session ID. Require the original
+  /// queue token again before accepting the new session.
+  bool acknowledgeQueueItem(String? token, int session) {
+    if (session <= 0 || token == null || token != _token || !authorized) return false;
+    _session = session;
+    return true;
+  }
+
+  /// Transfer a verified candidate into the active control handle. Advancing
+  /// its revision invalidates handles from the previous movie.
+  Future<void> replaceWith(
+    CastPlaybackOwnership candidate, {
+    required Future<void> Function() finishPrevious,
+    required bool Function() current,
+  }) async {
+    void ensureAccepted() {
+      if (!current() || !candidate.authorized || candidate._session == null) {
+        throw StateError('Cast replacement is no longer acknowledged');
+      }
+    }
+
+    ensureAccepted();
+    await finishPrevious();
+    ensureAccepted();
+    _revision++;
+    _token = candidate._token;
+    _session = candidate._session;
+    _authorized = candidate._authorized;
+  }
+
   bool owns(String? token, int session) => matches(token, session) && _authorized?.call() == true;
 
   bool matches(String? token, int session) =>

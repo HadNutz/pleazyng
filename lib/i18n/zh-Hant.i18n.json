@@ -209,6 +209,9 @@
     "notAvailable": "N/A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "符號",
+    "keyboardLetters": "字母",
+    "keyboardNewLine": "換行",
     "mediaKind": {
       "movie": "電影",
       "show": "劇集",
@@ -429,6 +432,7 @@
     "importSettingsDescription": "從檔案還原偏好設定",
     "importSettingsConfirm": "這將覆蓋您目前的設定。要繼續嗎？",
     "importSettingsSuccess": "設定已匯入",
+    "importSettingsCounts": "已套用設定：${applied} 項。已略過：${skipped} 項。",
     "importSettingsInvalidFile": "此檔案不是有效的 Pleazyng 設定匯出檔",
     "importSettingsNoUser": "匯入設定前請先登入",
     "cloudBackup": "雲備份",

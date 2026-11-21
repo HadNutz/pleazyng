@@ -293,6 +293,7 @@ class SmbSourceAdapter extends SourceAdapter {
       }
       return SourceByteStream(
         stream: _readRange(pool, path, stat.size, offset, length),
+        validatedRevision: _revision(stat),
         size: stat.size,
         offset: offset,
         length: length,

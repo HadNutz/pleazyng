@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:plezy/services/external_player_service.dart';
 import 'package:plezy/media/ids.dart';
 
 import 'dart:io';
@@ -147,6 +148,35 @@ void main() {
       expect(second.videoUrl, 'content://offline/movie-1 - part2');
       expect(second.mediaInfo?.partTimeline?.current.start, const Duration(minutes: 50));
     });
+
+    for (final joined in [false, true]) {
+      test('external handoff of a converted ${joined ? "joined" : "split"} copy uses the stored clock', () async {
+        await _insertDownloaded(
+          db,
+          serverId: ServerId('srv-1'),
+          ratingKey: 'movie-1',
+          videoFilePath: 'content://offline/file1',
+          additionalPartPaths: joined ? null : ['content://offline/file2'],
+          downloadQuality: 'p1080_8mbps',
+        );
+        final result = await ExternalPlayerService.resolveDownloadedHandoff(
+          PlaybackInitializationService(database: db),
+          PlaybackInitializationOptions(
+            metadata: testMediaItem(
+              id: 'movie-1',
+              backend: MediaBackend.plex,
+              kind: MediaKind.movie,
+              serverId: 'srv-1',
+            ),
+            selectedMediaIndex: 0,
+            startPosition: const Duration(minutes: 55),
+          ),
+        );
+        expect(result.videoUrl, joined ? 'content://offline/file1' : 'content://offline/file2');
+        expect(result.mediaInfo?.partTimeline?.current.start, joined ? null : const Duration(minutes: 50));
+        expect(result.mediaInfo?.displayCriteria, isNull);
+      });
+    }
 
     test('resumes a converted split movie at item time in the single downloaded file', () async {
       await _insertDownloaded(

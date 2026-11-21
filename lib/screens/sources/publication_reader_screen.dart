@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -59,6 +60,8 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
   String? _profile;
   int _generation = 0;
   PublicationProgress? _progress;
+  String? _heldProgressKey;
+  int _locationVersion = 0, _savedLocationVersion = 0;
   List<BookAnnotation> _annotations = [];
   final _pdf = PdfViewerController();
   PdfTextSearcher? _pdfSearch;
@@ -375,6 +378,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
           throw const SourceException(SourceFailure.conflict);
         }
         sources.holdProgress(initial.key);
+        _heldProgressKey = initial.key;
         if (await sources.repository.remoteConflict(_profile!, initial.key) != null) {
           throw const SourceException(SourceFailure.conflict);
         }
@@ -742,6 +746,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
   }
 
   void _scheduleSave() {
+    _locationVersion++;
     _saveTimer?.cancel();
     _saveTimer = Timer(const Duration(milliseconds: 700), () => unawaited(_flush()));
   }
@@ -752,7 +757,9 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
     if (snapshot == null || profile == null || sources == null || _finishSaved || (_finishing && !finish)) {
       return Future.value(false);
     }
+    final locationVersion = _locationVersion;
     return _writes.run(() async {
+      if (!finish && locationVersion <= _savedLocationVersion) return false;
       try {
         final saved = await sources.repository.saveProgress(
           profile,
@@ -760,6 +767,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
         );
         // Preserve cursor changes received while this snapshot was being saved.
         _progress = _progress?.copyWith(revision: saved.revision, updatedAt: saved.updatedAt, finished: saved.finished);
+        _savedLocationVersion = locationVersion;
         if (finish) _finishSaved = true;
         if (valid) sources.scheduleSync();
         return true;
@@ -1033,7 +1041,19 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
       return;
     }
     await _stopSpeech();
-    final names = _overlays.map((o) => o['audio'] as String).toSet().toList();
+    // An omitted clip end runs to the end of the audio resource. Let the
+    // native player measure that file instead of truncating it to an earlier clip.
+    final durations = <String, int?>{};
+    for (final overlay in _overlays) {
+      final name = overlay['audio'] as String;
+      final end = sourceInt(overlay['endMs']);
+      durations.update(
+        name,
+        (previous) => previous == null || end == null ? null : math.max(previous, end),
+        ifAbsent: () => end,
+      );
+    }
+    final names = durations.keys.toList();
     final files = names
         .map(
           (name) => PublicationFile(
@@ -1042,10 +1062,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
             mimeType: 'audio/mp4',
             revision: widget.file.fingerprint,
             size: _server!.archive.files[name],
-            durationMs: _overlays
-                .where((o) => o['audio'] == name)
-                .map((o) => sourceInt(o['endMs']) ?? 0)
-                .fold<int>(0, (a, b) => a > b ? a : b),
+            durationMs: durations[name],
           ),
         )
         .toList();
@@ -1073,14 +1090,10 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
     if (!valid || !_readAlong || _playback?.entry?.key != widget.entry.key) return;
     final file = _playback!.files[_playback!.fileIndex];
     final name = file.name, position = _playback!.player?.currentPosition.inMilliseconds ?? 0;
-    final clip = _overlays
-        .where(
-          (o) =>
-              o['audio'] == name &&
-              position >= (sourceInt(o['beginMs']) ?? 0) &&
-              position < (sourceInt(o['endMs']) ?? 0),
-        )
-        .firstOrNull;
+    final clip = _overlays.where((o) {
+      final end = sourceInt(o['endMs']);
+      return o['audio'] == name && position >= (sourceInt(o['beginMs']) ?? 0) && (end == null || position < end);
+    }).firstOrNull;
     final href = clip?['href'] as String?;
     if (href != null && href != _overlayHref) {
       _overlayHref = href;
@@ -1114,7 +1127,7 @@ class _PublicationReaderScreenState extends State<PublicationReaderScreen> with 
       _workspaceSessionId = null;
       _workspaceDetached = false;
     }
-    final syncSources = _sources, syncKey = _progress?.key;
+    final syncSources = _sources, syncKey = _heldProgressKey;
     if (syncSources != null && syncKey != null) {
       unawaited(
         _flush().then((_) => _writes.settled).whenComplete(() {

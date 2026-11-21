@@ -508,7 +508,15 @@ void handle(FlMethodChannel*, FlMethodCall* call, gpointer data) {
              GST_STATE_CHANGE_FAILURE;
       } else if (method == "volume")
         g_object_set(s.pipeline, "volume", fl_value_get_float(value), nullptr);
-      else if (method == "rate")
+      else if (method == "audioDelay") {
+        // playbin uses positive offsets to advance audio; the player UI uses
+        // positive offsets to delay it. GStreamer times are nanoseconds.
+        const gint64 offset = -fl_value_get_int(value) * static_cast<gint64>(GST_USECOND);
+        g_object_set(s.pipeline, "av-offset", offset, nullptr);
+        gint64 applied = 0;
+        g_object_get(s.pipeline, "av-offset", &applied, nullptr);
+        ok = applied == offset;
+      } else if (method == "rate")
         ok = s.seek(s.position(), fl_value_get_float(value));
       else if (method == "seek")
         ok = s.seek(fl_value_get_int(value) * GST_MSECOND, s.rate);

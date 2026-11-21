@@ -13,6 +13,36 @@ void main() {
     TvDetectionService.debugSetAppleTVOverride(null);
   });
 
+  testWidgets('action names and remote selection reach the semantics tree', (tester) async {
+    final controller = TextEditingController();
+    addTearDown(controller.dispose);
+    await _pumpKeyboard(tester, controller: controller, keyboardType: TextInputType.multiline);
+
+    for (final label in ['Space', 'Symbols', 'Backspace', 'New line', 'Clear', 'Cancel', 'OK']) {
+      final node = tester.getSemantics(find.bySemanticsLabel(label)).getSemanticsData();
+      expect(node.hasAction(ui.SemanticsAction.tap), isTrue, reason: label);
+    }
+    expect(
+      tester.getSemantics(find.bySemanticsLabel('1')).getSemanticsData().flagsCollection.isFocused,
+      ui.Tristate.isTrue,
+    );
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pump();
+    expect(
+      tester.getSemantics(find.bySemanticsLabel('2')).getSemanticsData().flagsCollection.isFocused,
+      ui.Tristate.isTrue,
+    );
+    await tester.tap(find.bySemanticsLabel('Shift'));
+    await tester.pump();
+    expect(
+      tester.getSemantics(find.bySemanticsLabel('Shift')).getSemanticsData().flagsCollection.isToggled,
+      ui.Tristate.isTrue,
+    );
+    await tester.tap(find.bySemanticsLabel('Symbols'));
+    await tester.pump();
+    expect(find.bySemanticsLabel('Letters'), findsOneWidget);
+  });
+
   testWidgets('keyboard enter submits without inserting highlighted key', (tester) async {
     final controller = TextEditingController();
     String? submitted;

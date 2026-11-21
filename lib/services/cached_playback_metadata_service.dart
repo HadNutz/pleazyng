@@ -11,6 +11,7 @@ import 'api_cache.dart';
 import 'jellyfin_api_cache.dart';
 import 'jellyfin_cache_resolver.dart';
 import 'jellyfin_media_info_mapper.dart';
+import 'jellyfin_multipart.dart';
 import 'plex_mappers.dart';
 
 class CachedPlaybackMetadataService {
@@ -23,6 +24,7 @@ class CachedPlaybackMetadataService {
     required String cacheServerId,
     required String itemId,
     int mediaIndex = 0,
+    String? mediaSourceId,
     Duration? position,
   }) async {
     try {
@@ -31,6 +33,7 @@ class CachedPlaybackMetadataService {
           ServerId(cacheServerId),
           itemId,
           mediaIndex: mediaIndex,
+          mediaSourceId: mediaSourceId,
           position: position,
         ),
         MediaBackend.jellyfin || MediaBackend.emby => _fetchJellyfinMediaSourceInfo(
@@ -38,6 +41,8 @@ class CachedPlaybackMetadataService {
           itemId,
           backend: backend,
           mediaIndex: mediaIndex,
+          mediaSourceId: mediaSourceId,
+          position: position,
         ),
       };
     } catch (e) {
@@ -82,6 +87,7 @@ class CachedPlaybackMetadataService {
     ServerId serverId,
     String itemId, {
     required int mediaIndex,
+    String? mediaSourceId,
     Duration? position,
   }) async {
     final metadata = await _plexMetadata(ServerId(serverId), itemId);
@@ -91,6 +97,7 @@ class CachedPlaybackMetadataService {
     final selection = resolvePlexPlaybackSelection(
       metadata,
       mediaIndex: mediaIndex,
+      mediaSourceId: mediaSourceId,
       preferPlayable: false,
       position: position,
     );
@@ -132,20 +139,32 @@ class CachedPlaybackMetadataService {
     String itemId, {
     required MediaBackend backend,
     required int mediaIndex,
+    String? mediaSourceId,
+    Duration? position,
   }) async {
     final resolved = await _jellyfinRawItem(cacheServerId, itemId, backend: backend);
     final raw = resolved.raw;
     final sources = raw['MediaSources'];
     if (sources is! List || sources.isEmpty) return null;
-    final index = mediaIndex >= 0 && mediaIndex < sources.length ? mediaIndex : 0;
+    final byId = mediaSourceId == null ? -1 : sources.indexWhere((s) => s is Map && s['Id'] == mediaSourceId);
+    if (mediaSourceId != null && byId < 0) return null;
+    final index = byId >= 0
+        ? byId
+        : mediaIndex >= 0 && mediaIndex < sources.length
+        ? mediaIndex
+        : 0;
     final selected = sources[index];
     if (selected is! Map<String, dynamic>) return null;
+    final stack = JellyfinMultipart.fromItem(raw, index);
+    final timeline = stack?.at(position);
+    final file = timeline == null ? null : stack!.files[timeline.currentIndex];
+    final item = file?.item ?? raw;
     return jellyfinMediaSourceToMediaSourceInfo(
-      selected,
-      chapters: raw['Chapters'],
-      trickplay: raw['Trickplay'],
+      file?.source ?? selected,
+      chapters: item['Chapters'],
+      trickplay: item['Trickplay'],
       mediaIndex: index,
-    );
+    ).copyWith(partTimeline: timeline);
   }
 
   static Future<PlaybackExtras?> _fetchJellyfinPlaybackExtras(

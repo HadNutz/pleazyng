@@ -323,6 +323,7 @@ Future<bool> confirmAndSignOutPlexAccount(BuildContext context, {required String
         await scope.database.deleteWatchActionsForProfile(profileId);
         await scope.database.deleteMusicSessionForProfile(profileId);
         await scope.database.deleteMusicRecipesForProfile(profileId);
+        await IptvSourceRepository(scope.database).deleteProfile(profileId);
         await scope.sources?.forgetProfile(profileId);
       }
 
@@ -395,6 +396,7 @@ Future<void> logoutAllProfiles(BuildContext context) async {
   // Drop the profile/connection rows so the next sign-in starts clean and
   // doesn't bind to stale tokens or orphaned profile rows.
   await scope.profileConnections.clear();
+  await IptvSourceRepository(scope.database).deleteAllProfiles();
   await scope.profileRegistry.clear();
   await scope.connections.clear();
   await scope.plexHome.clearAll();

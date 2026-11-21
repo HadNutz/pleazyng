@@ -88,6 +88,8 @@ class PlayerAndroid extends PlayerBase implements VideoRectSupport, PlayerAudioF
 
   @override
   String get playerType => 'exoplayer';
+  @override
+  bool get supportsAudioDelay => true;
 
   // ExoPlayerPlugin no-ops a dispose whose instanceId is not the core's
   // creator, so a timed-out ownership wait may still force-dispose.

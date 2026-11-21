@@ -390,6 +390,29 @@ void main() {
     expect(sent.map((item) => item.service), [TrackerService.mal], reason: 'the purged service must not dispatch');
   });
 
+  for (final watched in [false, true]) {
+    test('direct change supersedes a buffered history write (watched=$watched)', () async {
+      final platform = _FailingQueuePreferences();
+      SharedPreferencesAsyncPlatform.instance = platform;
+      BaseSharedPreferencesService.resetForTesting();
+      final queue = TrackerWriteQueue();
+      final ctx = _movie();
+      final key = _historyKey(TrackerService.trakt, ctx);
+      platform.failQueueWrites = true;
+      await queue.enqueue('user-a', _item(ctx: ctx, coalesceKey: key, watched: !watched));
+      platform.failQueueWrites = false;
+      final marker = queue.noteDirectWrite('user-a', key);
+      await queue.invalidate('user-a', {key: null});
+      queue.clearDirectWrite('user-a', key, marker);
+      final sent = <TrackerWriteQueueItem>[];
+      await _flushEach(queue, 'user-a', (item) async {
+        sent.add(item);
+        return TrackerWriteDisposition.done;
+      });
+      expect(sent, isEmpty);
+    });
+  }
+
   test('a persist-failure enqueue racing the disconnect purge cannot resurrect the row', () async {
     final platform = _FailingQueuePreferences();
     SharedPreferencesAsyncPlatform.instance = platform;

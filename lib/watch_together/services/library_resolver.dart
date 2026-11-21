@@ -57,7 +57,9 @@ final class LibraryResolver implements owp.Resolver<WatchCopy> {
     final seen = <WatchCopy>{};
     void addItem(MediaItem item, {String? firstVersionId}) {
       if (item.serverId == null || !_kindMatches(media.kind, item.kind)) return;
-      final versions = [...?item.mediaVersions]..retainWhere((version) => version.isPlayable);
+      final listed = item.mediaVersions ?? const <MediaVersion>[];
+      final versions = listed.where((version) => version.isPlayable).toList();
+      if (listed.isNotEmpty && versions.isEmpty) return;
       if (firstVersionId != null) {
         final first = versions.indexWhere((version) => version.id == firstVersionId);
         if (first > 0) versions.insert(0, versions.removeAt(first));

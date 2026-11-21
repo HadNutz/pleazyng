@@ -342,6 +342,9 @@ class _Translations$common$de extends Translations$common$en {
 	@override String get notAvailable => 'N. v.';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => 'Symbole';
+	@override String get keyboardLetters => 'Buchstaben';
+	@override String get keyboardNewLine => 'Neue Zeile';
 	@override late final _Translations$common$mediaKind$de mediaKind = _Translations$common$mediaKind$de._(_root);
 }
 
@@ -572,6 +575,7 @@ class _Translations$settings$de extends Translations$settings$en {
 	@override String get importSettingsDescription => 'Einstellungen aus einer Datei wiederherstellen';
 	@override String get importSettingsConfirm => 'Dies ersetzt deine aktuellen Einstellungen. Fortfahren?';
 	@override String get importSettingsSuccess => 'Einstellungen importiert';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Angewendete Einstellungen: ${applied}. Übersprungen: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Diese Datei ist kein gültiger Pleazyng-Einstellungsexport';
 	@override String get importSettingsNoUser => 'Vor dem Import bitte anmelden';
 	@override String get cloudBackup => 'Cloud-Sicherung';
@@ -5822,6 +5826,9 @@ extension on TranslationsDe {
 			'common.notAvailable' => 'N. v.',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => 'Symbole',
+			'common.keyboardLetters' => 'Buchstaben',
+			'common.keyboardNewLine' => 'Neue Zeile',
 			'common.mediaKind.movie' => 'Film',
 			'common.mediaKind.show' => 'Serie',
 			'common.mediaKind.season' => 'Staffel',
@@ -6030,6 +6037,7 @@ extension on TranslationsDe {
 			'settings.importSettingsDescription' => 'Einstellungen aus einer Datei wiederherstellen',
 			'settings.importSettingsConfirm' => 'Dies ersetzt deine aktuellen Einstellungen. Fortfahren?',
 			'settings.importSettingsSuccess' => 'Einstellungen importiert',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Angewendete Einstellungen: ${applied}. Übersprungen: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Diese Datei ist kein gültiger Pleazyng-Einstellungsexport',
 			'settings.importSettingsNoUser' => 'Vor dem Import bitte anmelden',
 			'settings.cloudBackup' => 'Cloud-Sicherung',
@@ -6140,12 +6148,12 @@ extension on TranslationsDe {
 			'settings.manageLibrariesDescription' => 'Mediatheken neu anordnen und ausblenden',
 			'settings.companionRemoteServer' => 'Companion-Fernbedienungsserver',
 			'settings.companionRemoteServerDescription' => 'Mobilgeräten in deinem Netzwerk erlauben, diese App zu steuern',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Companion-Fernbedienungsserver konnte nicht gestartet werden',
 			'settings.companionRemoteServerStopFailed' => 'Companion-Fernbedienungsserver konnte nicht gestoppt werden',
 			'settings.autoPip' => 'Automatisches Bild-in-Bild',
 			'settings.autoPipDescription' => 'Beim Verlassen der App während der Wiedergabe automatisch Bild-in-Bild starten',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'Inhalts-Bildrate anpassen',
 			'settings.matchContentFrameRateDescription' => 'Bildwiederholrate des Displays an Videoinhalt anpassen',
 			'settings.matchContentResolution' => 'An Auflösung des Inhalts anpassen',
@@ -6654,12 +6662,12 @@ extension on TranslationsDe {
 			'accessibility.boldTextHint' => 'Verwenden Sie ein schwerer Gewicht für Interface-Label und Nachrichten, um sie leichter zu unterscheiden.',
 			'tooltips.shufflePlay' => 'Zufallswiedergabe',
 			'tooltips.playTrailer' => 'Trailer abspielen',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Als gesehen markieren',
 			'tooltips.markAsUnwatched' => 'Als ungesehen markieren',
 			'audioTracks.track' => ({required Object n}) => 'Audiospur ${n}',
 			'videoControls.audioLabel' => 'Audio',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => 'Untertitel',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'Letterbox',
@@ -7168,12 +7176,12 @@ extension on TranslationsDe {
 			'errors.connectionTimeout' => ({required Object context}) => 'Zeitüberschreitung beim Laden von ${context}',
 			'errors.connectionFailed' => 'Keine Verbindung zum Medienserver möglich',
 			'errors.unableToLoad' => ({required Object context}) => '${context} konnte nicht geladen werden. Bitte erneut versuchen.',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Kein Client verfügbar',
 			'errors.pleaseEnterToken' => 'Bitte Token eingeben',
 			'errors.invalidToken' => 'Ungültiges Token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Token-Verifizierung fehlgeschlagen: ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Profilwechsel zu ${displayName} fehlgeschlagen',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => 'Löschen von ${displayName} fehlgeschlagen',
 			'errors.failedToRate' => 'Bewertung konnte nicht aktualisiert werden',
@@ -7682,12 +7690,12 @@ extension on TranslationsDe {
 			'playlists.emptyPlaylist' => 'Diese Wiedergabeliste ist leer',
 			'playlists.deleteConfirm' => 'Wiedergabeliste löschen?',
 			'playlists.deleteMessage' => ({required Object name}) => '„${name}“ wirklich löschen?',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'Wiedergabeliste erstellt',
 			'playlists.deleted' => 'Wiedergabeliste gelöscht',
 			'playlists.itemAdded' => 'Zur Wiedergabeliste hinzugefügt',
 			'playlists.itemRemoved' => 'Aus Wiedergabeliste entfernt',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'Wiedergabeliste auswählen',
 			'playlists.searchPlaylists' => 'Wiedergabelisten durchsuchen...',
 			'playlists.errorCreating' => 'Wiedergabeliste konnte nicht erstellt werden',
@@ -8196,12 +8204,12 @@ extension on TranslationsDe {
 			'performanceOverlay.transfer' => 'Transfer',
 			'performanceOverlay.renderFps' => 'Render-FPS',
 			'performanceOverlay.displayFps' => 'Display-FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V-Sync',
 			'performanceOverlay.dropped' => 'Verworfen',
 			'performanceOverlay.dvRpus' => 'DV-RPUs',
 			'performanceOverlay.dvRpuAverage' => 'DV-RPU Ø',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV-Sample Ø',
 			'performanceOverlay.maxLuma' => 'Max. Luma',
 			'performanceOverlay.minLuma' => 'Min. Luma',
@@ -8710,12 +8718,12 @@ extension on TranslationsDe {
 			'homeLayout.customPlexRow' => 'Anpassung Plex Runde',
 			'homeLayout.heroNeedsLibrary' => 'Schauen Sie sich die Bibliothek zuerst an – Hero braucht irgendwo zu zeigen',
 			'homeLayout.heroNeedsSurface' => 'Schauen Sie sich die Bibliothek oder Home zuerst an – Hero braucht irgendwo zu zeigen',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Hub entfernen',
 			'homeLayout.noPlexRows' => 'Nr. Plex-verwaltete Zeilen zurückkehren für diese Bibliothek.',
 			'homeLayout.openDetails' => 'Offene Details',
 			'homeLayout.heroCards' => 'Hero Karten',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'Ein Hero-Karte zu schlagen',
 			'homeLayout.tvPlayFocus' => 'Fernseher: Highlight Play-Button',
 			'homeLayout.tvPlayFocusDescription' => 'D-Pad Down stoppt auf der Play-Taste, bevor Sie in die nächste Reihe gehen.',
@@ -9224,12 +9232,12 @@ extension on TranslationsDe {
 			'audiobook.recoveryExport' => 'Export verschlüsselte Recovery Datei',
 			'audiobook.recoveryImport' => 'Import verschlüsselte Recovery-Datei',
 			'audiobook.recoveryImportConfirm' => 'Kombinieren Sie diese verschlüsselte Recovery-Datei mit aktuellen Lesepositionen und Notizen? bestehende Geschichte wird beibehalten. gemeinsame Bibliothek und Element-IDs sind nicht enthalten; Set matching IDs on each device before importing.',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Verschlüsselte Recovery-Datei wurde gespeichert.',
 			'audiobook.recoveryImported' => 'Wiederherstellungsdaten sind zusammengefasst.',
 			'sourceSetup.bookorbitHelp' => 'Melde dich mit deinem eigenen BookOrbit-Konto an, um die Bücher zu durchstöbern und abzuspielen. Anfragen für fehlende Titel laufen weiterhin über deine verbundene SeerrNG-Instanz.',
 			'sourceSetup.bookorbitOpen' => 'In BookOrbit öffnen',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'Rufe diesen Titel in BookOrbit auf, um Bibliotheksdetails und Formate zu verwalten, die Pleazyng nicht öffnen kann. Der Hörfortschritt wird mit deinem BookOrbit-Konto synchronisiert.',
 			'sourceSetup.savedCertificate' => 'Gespeichertes Serverzertifikat',
 			'sourceSetup.nfsEndpointInvalid' => 'Gib eine NFS-URL wie nfs://nas:2049/export ein.',
@@ -9738,12 +9746,12 @@ extension on TranslationsDe {
 			'musicTools.apiKey' => 'API-Schlüssel',
 			'musicTools.missing' => 'N. v.',
 			'musicTools.minutes' => 'Minuten',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'Filter',
 			'musicTools.exclusiveOutput' => 'Exklusive Audioausgabe',
 			'musicTools.preamp' => 'Vorverstärkung',
 			'musicTools.ratingPending' => 'Auf diesem Gerät gespeichert; Synchronisierung ausstehend',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.lyricsOffset' => 'Zeitversatz der Liedtexte',
 			'musicTools.anniversaries' => 'Albumjubiläen',
 			'musicTools.outputPreset' => 'EQ für diesen Ausgang',

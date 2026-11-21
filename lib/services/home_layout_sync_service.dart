@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../utils/app_logger.dart';
+import '../utils/serial_future_queue.dart';
 import 'base_shared_preferences_service.dart';
 import 'plex_auth_service.dart';
 import 'settings_service.dart';
@@ -26,11 +27,15 @@ import 'settings_service.dart';
 class HomeLayoutSyncService with WidgetsBindingObserver {
   HomeLayoutSyncService._();
 
+  @visibleForTesting
+  HomeLayoutSyncService.forTesting(PlexAuthService auth) : _auth = auth;
+
   static final HomeLayoutSyncService instance = HomeLayoutSyncService._();
 
   static const String settingId = 'plezy_home_layout';
   static const String _stateKey = 'home_layout_sync_state';
-  static const String _backupKey = 'home_layout_sync_backup';
+  static const String _ownerKey = 'home_layout_sync_display_owner';
+  static const String _unshared = 'unshared';
   static const String _migratedKey = 'home_layout_sync_enabled_migrated';
   static const Duration _pushDelay = Duration(seconds: 2);
   static const Duration _minPullGap = Duration(seconds: 20);
@@ -97,7 +102,12 @@ class HomeLayoutSyncService with WidgetsBindingObserver {
   PlexAuthService? _auth;
   bool _listening = false;
   bool _applying = false;
-  bool _pulling = false;
+  String? _owner;
+  int _generation = 0;
+  bool _initialized = false;
+  final _operations = SerialFutureQueue();
+  bool _current(int generation) => generation == _generation && _owner != null && enabled;
+
   Timer? _pushTimer;
   Timer? _periodicTimer;
   DateTime? _lastPull;
@@ -133,6 +143,8 @@ class HomeLayoutSyncService with WidgetsBindingObserver {
   /// the account's layout applies if it is newer, otherwise this device's
   /// layout is uploaded.
   Future<void> setEnabled(bool value) async {
+    _generation++;
+    _initialized = false;
     await SettingsService.instance.write(SettingsService.homeLayoutSyncEnabled, value);
     _pushTimer?.cancel();
     _pushTimer = null;
@@ -147,30 +159,60 @@ class HomeLayoutSyncService with WidgetsBindingObserver {
   void _migrateEnabled(SettingsService settings) {
     if (settings.readNullableString(_migratedKey) != null) return;
     unawaited(settings.writeString(_migratedKey, '1'));
-    if (_readState(settings).appliedAt > 0) {
+    if (_readState(settings, _stateKey).appliedAt > 0) {
       unawaited(settings.write(SettingsService.homeLayoutSyncEnabled, true));
     }
   }
 
-  void bind(String? token) {
-    _migrateEnabled(SettingsService.instance);
-    if (!enabled) status.value = 'Off on this device';
-    if (token == null || token.isEmpty) {
-      if (_token != null) appLogger.i('HomeLayoutSync: no Plex account, sync off');
-      _token = null;
-      _periodicTimer?.cancel();
-      _periodicTimer = null;
-      return;
-    }
-    final changed = token != _token;
-    _token = token;
-    if (changed) {
-      appLogger.i('HomeLayoutSync: bound to active Plex account');
-      _trace('bound');
+  void bind(String? token, {String? accountId, String? userUuid, String? localProfileId}) {
+    final settings = SettingsService.instance;
+    _migrateEnabled(settings);
+    final owner = token == null || token.isEmpty || accountId == null || accountId.isEmpty
+        ? (localProfileId == null ? null : 'local_${base64Url.encode(utf8.encode(localProfileId))}')
+        : base64Url.encode(utf8.encode(jsonEncode([accountId, userUuid])));
+    if (_owner == owner && _token == token) return;
+    _generation++;
+    _initialized = false;
+    _owner = owner;
+    _token = owner == null ? null : token;
+    _lastPull = null;
+    _pushTimer?.cancel();
+    _pushTimer = null;
+    _periodicTimer?.cancel();
+    _periodicTimer = null;
+    if (owner == null) return;
+    if (!enabled) {
+      status.value = 'Off on this device';
+      final generation = _generation;
+      unawaited(
+        _operations.run(() async {
+          if (enabled || generation != _generation) return;
+          final displayed = settings.readNullableString(_ownerKey);
+          if (_isDisplayOwner(displayed) && displayed != owner) {
+            await settings.writeString('home_layout_local_$displayed', jsonEncode(_snapshot(settings)));
+            if (generation == _generation && !enabled) await settings.writeString(_ownerKey, _unshared);
+          }
+        }),
+      );
     }
     _startListening();
-    _periodicTimer ??= Timer.periodic(_periodicPull, (_) => unawaited(pull()));
-    if (changed) unawaited(pull(force: true));
+    _periodicTimer = Timer.periodic(_periodicPull, (_) => unawaited(pull()));
+    unawaited(pull(force: true));
+  }
+
+  @visibleForTesting
+  Future<void> get settled => _operations.settled;
+
+  @visibleForTesting
+  void disposeForTesting() {
+    bind(null);
+    if (_listening) {
+      for (final synced in _prefs) {
+        SettingsService.instance.listenableOf(synced.pref).removeListener(_onLocalChange);
+      }
+      WidgetsBinding.instance.removeObserver(this);
+      _listening = false;
+    }
   }
 
   void _startListening() {
@@ -189,7 +231,7 @@ class HomeLayoutSyncService with WidgetsBindingObserver {
   }
 
   void _onLocalChange() {
-    if (_applying || _token == null || !enabled) return;
+    if (_applying || !_initialized || _token == null || !enabled) return;
     _pushTimer?.cancel();
     _pushTimer = Timer(_pushDelay, () {
       _pushTimer = null;
@@ -201,8 +243,8 @@ class HomeLayoutSyncService with WidgetsBindingObserver {
     for (final synced in _prefs) synced.pref.key: synced.encode(settings),
   };
 
-  ({int appliedAt, String snapshot}) _readState(SettingsService settings) {
-    final raw = settings.readNullableString(_stateKey);
+  ({int appliedAt, String snapshot}) _readState(SettingsService settings, String key) {
+    final raw = settings.readNullableString(key);
     if (raw == null) return (appliedAt: 0, snapshot: '');
     try {
       final map = json.decode(raw) as Map<String, dynamic>;
@@ -212,129 +254,194 @@ class HomeLayoutSyncService with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _writeState(SettingsService settings, int appliedAt, String snapshot) =>
-      settings.writeString(_stateKey, json.encode({'appliedAt': appliedAt, 'snapshot': snapshot}));
-
-  bool _isAllDefault(SettingsService settings) => _prefs.every((synced) => synced.isDefault(settings));
+  Future<void> _writeState(SettingsService settings, String owner, int stamp, String snapshot) =>
+      settings.writeString('${_stateKey}_$owner', jsonEncode({'appliedAt': stamp, 'snapshot': snapshot}));
 
   Future<PlexAuthService> _authService() async => _auth ??= await PlexAuthService.create();
 
-  /// Fetch the account's layout and apply it if it is newer than this
-  /// device's. Throttled unless [force].
-  Future<void> pull({bool force = false}) async {
-    final token = _token;
-    if (!enabled) return;
-    if (token == null || _pulling) {
-      _trace('pull skipped (token=${token != null}, pulling=$_pulling)');
-      if (force && token == null) status.value = 'Not signed in to a Plex account';
-      return;
+  Future<void> _applyLayout(SettingsService settings, Map<String, Object?> values, int generation) async {
+    _applying = true;
+    try {
+      for (final synced in _prefs) {
+        if (!_current(generation)) return;
+        final value = values.containsKey(synced.pref.key) ? values[synced.pref.key] : synced._defaultJson;
+        if (jsonEncode(value) != jsonEncode(synced.encode(settings))) await synced.apply(settings, value);
+      }
+    } finally {
+      _applying = false;
     }
+  }
+
+  Future<void> _restore(
+    SettingsService settings,
+    String owner,
+    Map<String, Object?> values,
+    int? stamp,
+    int generation,
+  ) async {
+    // Validate and normalize every field before publishing a restore journal.
+    // Invalid server data cannot leave half a layout saved to preferences.
+    final prefs = {
+      for (final synced in _prefs)
+        synced.pref.key: synced.normalize(
+          values.containsKey(synced.pref.key) ? values[synced.pref.key] : synced._defaultJson,
+        ),
+    };
+    await settings.writeString(_ownerKey, jsonEncode({'owner': owner, 'prefs': prefs, 'stamp': stamp}));
+    if (!_current(generation)) return;
+    await _finishRestore(settings, owner, prefs, stamp, generation);
+  }
+
+  Future<void> _finishRestore(
+    SettingsService settings,
+    String owner,
+    Map<String, Object?> prefs,
+    int? stamp,
+    int generation,
+  ) async {
+    if (owner == _owner) {
+      await _applyLayout(settings, prefs, generation);
+      if (!_current(generation)) return;
+    }
+    final encoded = jsonEncode(prefs);
+    await settings.writeString('home_layout_local_$owner', encoded);
+    if (!_current(generation)) return;
+    if (stamp != null) await _writeState(settings, owner, stamp, encoded);
+    if (!_current(generation) || owner != _owner) return;
+    await settings.writeString(_ownerKey, owner);
+    if (_current(generation)) appliedRevision.value++;
+  }
+
+  Future<void> pull({bool force = false}) {
+    final generation = _generation;
+    return _operations.run(() => _pull(generation, force));
+  }
+
+  bool _isDisplayOwner(String? marker) =>
+      marker != null && marker != 'restoring' && marker != _unshared && !marker.startsWith('{');
+
+  Future<void> _pull(int generation, bool force) async {
+    if (!_current(generation)) return;
+    final owner = _owner!, token = _token;
     final now = DateTime.now();
     if (!force && _lastPull != null && now.difference(_lastPull!) < _minPullGap) return;
     _lastPull = now;
-    _pulling = true;
     try {
       final settings = SettingsService.instance;
-      final entries = await (await _authService()).getUserSettings(token);
-      final entry = entries.firstWhere((e) => e['id'] == settingId, orElse: () => const {});
-      final rawValue = entry['value'];
-
-      if (rawValue is! String || rawValue.isEmpty) {
-        // Nothing on the account yet: seed it from this device, but never
-        // from an untouched default layout (that would wipe a configured
-        // device the next time it pulls).
-        final allDefault = _isAllDefault(settings);
-        appLogger.i(
-          'HomeLayoutSync: no layout on account yet',
-          error: {
-            'entries': entries.length,
-            'seeding': !allDefault,
-            'nonDefault': [
-              for (final synced in _prefs)
-                if (!synced.isDefault(settings)) synced.pref.key,
-            ],
-          },
+      var displayed = settings.readNullableString(_ownerKey);
+      if (displayed != null && displayed.startsWith('{')) {
+        final pending = jsonDecode(displayed) as Map<String, dynamic>;
+        final target = pending['owner'] as String;
+        await _finishRestore(
+          settings,
+          target,
+          pending['prefs'] as Map<String, dynamic>,
+          pending['stamp'] as int?,
+          generation,
         );
-        if (!allDefault) {
-          // Keep this device's own last-change time so a device that changed
-          // something more recently still wins when it pulls next.
-          final state = _readState(settings);
-          await push(force: true, modifiedAt: state.appliedAt > 0 ? state.appliedAt : null);
+        if (!_current(generation)) return;
+        displayed = target == owner ? owner : 'restoring';
+      }
+      final state = _readState(settings, '${_stateKey}_$owner');
+      final firstDeviceLayout = displayed == null && settings.readNullableString(_stateKey) == null;
+      if (displayed != owner && !firstDeviceLayout) {
+        // The display owner is durable even if the device restarted directly
+        // into this profile before the previous owner's pending push ran.
+        if (_isDisplayOwner(displayed)) {
+          await settings.writeString('home_layout_local_$displayed', jsonEncode(_snapshot(settings)));
+          if (!_current(generation)) return;
+        }
+        final saved = settings.readNullableString('home_layout_local_$owner') ?? state.snapshot;
+        await _restore(
+          settings,
+          owner,
+          saved.isEmpty ? {} : jsonDecode(saved) as Map<String, dynamic>,
+          null,
+          generation,
+        );
+        if (!_current(generation)) return;
+      } else if (displayed != owner) {
+        await settings.writeString(_ownerKey, owner);
+        if (!_current(generation)) return;
+      }
+      if (token == null) {
+        _initialized = true;
+        return;
+      }
+      final auth = await _authService();
+      if (!_current(generation)) return;
+      final entries = await auth.getUserSettings(token);
+      if (!_current(generation)) return;
+      final entry = entries.firstWhere((e) => e['id'] == settingId, orElse: () => const {});
+      final raw = entry['value'];
+      final local = _snapshot(settings);
+      final dirty = state.snapshot.isNotEmpty && changedSinceSnapshot(state.snapshot, local);
+      if (raw == null || raw == '') {
+        _initialized = true;
+        if (_prefs.any((p) => !p.isDefault(settings))) {
+          await _push(generation, force: true, modifiedAt: dirty || state.appliedAt == 0 ? null : state.appliedAt);
+        } else if (state.snapshot.isEmpty) {
+          await _writeState(settings, owner, 0, jsonEncode(local));
         }
         return;
       }
-
-      final remote = json.decode(rawValue) as Map<String, dynamic>;
-      final remoteModifiedAt = (remote['modifiedAt'] as num?)?.toInt() ?? 0;
-      final remotePrefs = Map<String, Object?>.from(remote['prefs'] as Map? ?? const {});
-      final state = _readState(settings);
-
-      final local = _snapshot(settings);
-      // Changed here but never uploaded (offline, or app closed first).
-      final localDirty = state.appliedAt > 0 && changedSinceSnapshot(state.snapshot, local);
-      final same = _sameAsRemote(settings, local, remotePrefs);
-      _trace(
-        'pull: remote=$remoteModifiedAt applied=${state.appliedAt} dirty=$localDirty '
-        'pushPending=${_pushTimer != null} same=$same',
-      );
-      if (_pushTimer != null) return; // a newer local change is about to push
-      if (remoteModifiedAt <= state.appliedAt || localDirty) {
-        // This device's layout is the newer one: send it unless the account
-        // already holds the same thing.
-        if (!same) {
-          await push(force: true, modifiedAt: localDirty ? null : state.appliedAt);
+      final remote = jsonDecode(raw as String) as Map<String, dynamic>;
+      final stamp = (remote['modifiedAt'] as num).toInt();
+      final prefs = Map<String, Object?>.from(remote['prefs'] as Map);
+      if (_pushTimer != null) return;
+      if (state.snapshot.isNotEmpty && (dirty || stamp <= state.appliedAt)) {
+        _initialized = true;
+        if (!_sameAsRemote(settings, local, prefs)) {
+          await _push(generation, force: true, modifiedAt: dirty ? null : state.appliedAt);
         } else {
+          // Retire an offline edit another device has independently made. It
+          // must not override later server changes once both sides agree.
+          await _writeState(settings, owner, stamp > state.appliedAt ? stamp : state.appliedAt, jsonEncode(local));
+          if (!_current(generation)) return;
           _trace('up to date', statusText: 'Up to date with your Plex account');
         }
         return;
       }
-
-      if (state.appliedAt == 0 && settings.readNullableString(_backupKey) == null) {
-        // First sync on this device: keep its own layout recoverable.
-        await settings.writeString(_backupKey, json.encode(local));
+      final backupKey = 'home_layout_sync_backup_$owner';
+      if (state.snapshot.isEmpty && settings.readNullableString(backupKey) == null) {
+        await settings.writeString(backupKey, jsonEncode(local));
       }
-
-      _applying = true;
-      try {
-        for (final synced in _prefs) {
-          if (!remotePrefs.containsKey(synced.pref.key)) continue;
-          final value = remotePrefs[synced.pref.key];
-          if (json.encode(value) == json.encode(local[synced.pref.key])) continue;
-          await synced.apply(settings, value);
-        }
-      } finally {
-        _applying = false;
-      }
-      await _writeState(settings, remoteModifiedAt, json.encode(_snapshot(settings)));
-      appLogger.i('HomeLayoutSync: applied layout from Plex account', error: {'modifiedAt': remoteModifiedAt});
-      _trace('applied $remoteModifiedAt', statusText: 'Got the latest layout from your Plex account');
-      appliedRevision.value++;
+      if (!_current(generation)) return;
+      await _restore(settings, owner, prefs, stamp, generation);
+      if (!_current(generation)) return;
+      _initialized = true;
+      _trace('applied $stamp', statusText: 'Got the latest layout from your Plex account');
     } catch (e) {
+      if (!_current(generation)) return;
       appLogger.w('HomeLayoutSync: pull failed', error: e);
       _trace('pull failed: $e', statusText: 'Sync failed ($e)');
-    } finally {
-      _pulling = false;
     }
   }
 
-  /// Upload this device's layout if it differs from what was last synced
-  /// ([force] skips that check). [modifiedAt] defaults to now.
-  Future<void> push({bool force = false, int? modifiedAt}) async {
-    final token = _token;
-    if (token == null || !enabled) return;
+  Future<void> push({bool force = false, int? modifiedAt}) {
+    final generation = _generation;
+    return _operations.run(() => _push(generation, force: force, modifiedAt: modifiedAt));
+  }
+
+  Future<void> _push(int generation, {required bool force, int? modifiedAt}) async {
+    if (!_current(generation) || !_initialized || _token == null) return;
+    final owner = _owner!, token = _token!;
     try {
       final settings = SettingsService.instance;
+      if (settings.readNullableString(_ownerKey) != owner) return;
       final snapshot = _snapshot(settings);
-      final encodedSnapshot = json.encode(snapshot);
-      final state = _readState(settings);
-      if (!force && encodedSnapshot == state.snapshot) return;
+      final encoded = jsonEncode(snapshot);
+      final state = _readState(settings, '${_stateKey}_$owner');
+      if (!force && encoded == state.snapshot) return;
       final stamp = modifiedAt ?? DateTime.now().millisecondsSinceEpoch;
-      final value = json.encode({'v': 1, 'modifiedAt': stamp, 'prefs': snapshot});
-      await (await _authService()).putUserSetting(token, settingId, value);
-      await _writeState(settings, stamp, encodedSnapshot);
-      appLogger.i('HomeLayoutSync: pushed layout to Plex account', error: {'modifiedAt': stamp});
-      _trace('pushed $stamp', statusText: 'Saved your layout to your Plex account');
+      final auth = await _authService();
+      if (!_current(generation)) return;
+      await auth.putUserSetting(token, settingId, jsonEncode({'v': 1, 'modifiedAt': stamp, 'prefs': snapshot}));
+      if (!_current(generation)) return;
+      await _writeState(settings, owner, stamp, encoded);
+      if (_current(generation)) _trace('pushed $stamp', statusText: 'Saved your layout to your Plex account');
     } catch (e) {
+      if (!_current(generation)) return;
       appLogger.w('HomeLayoutSync: push failed', error: e);
       _trace('push failed: $e', statusText: 'Sync failed ($e)');
     }
@@ -364,6 +471,8 @@ class _SyncedPref<T> {
   final Object? _defaultJson;
 
   Object? encode(BaseSharedPreferencesService settings) => _toJson(settings.read(pref));
+
+  Object? normalize(Object? raw) => _toJson(_fromJson(raw));
 
   bool isDefault(BaseSharedPreferencesService settings) => jsonEncode(encode(settings)) == jsonEncode(_defaultJson);
 

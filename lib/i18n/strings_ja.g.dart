@@ -342,6 +342,9 @@ class _Translations$common$ja extends Translations$common$en {
 	@override String get notAvailable => 'N/A';
 	@override String get url => 'URL';
 	@override String get letterKeys => 'ABC';
+	@override String get keyboardSymbols => '記号';
+	@override String get keyboardLetters => '文字';
+	@override String get keyboardNewLine => '改行';
 	@override late final _Translations$common$mediaKind$ja mediaKind = _Translations$common$mediaKind$ja._(_root);
 }
 
@@ -570,6 +573,7 @@ class _Translations$settings$ja extends Translations$settings$en {
 	@override String get importSettingsDescription => 'ファイルから設定を復元';
 	@override String get importSettingsConfirm => '現在の設定を置き換えます。続行しますか？';
 	@override String get importSettingsSuccess => '設定をインポートしました';
+	@override String importSettingsCounts({required Object applied, required Object skipped}) => '適用した設定：${applied}件。スキップ：${skipped}件。';
 	@override String get importSettingsInvalidFile => 'このファイルは有効なPlezyの設定エクスポートではありません';
 	@override String get importSettingsNoUser => '設定をインポートする前にサインインしてください';
 	@override String get cloudBackup => 'クラウドバックアップ';
@@ -5817,6 +5821,9 @@ extension on TranslationsJa {
 			'common.notAvailable' => 'N/A',
 			'common.url' => 'URL',
 			'common.letterKeys' => 'ABC',
+			'common.keyboardSymbols' => '記号',
+			'common.keyboardLetters' => '文字',
+			'common.keyboardNewLine' => '改行',
 			'common.mediaKind.movie' => '映画',
 			'common.mediaKind.show' => 'テレビ番組',
 			'common.mediaKind.season' => 'シーズン',
@@ -6025,6 +6032,7 @@ extension on TranslationsJa {
 			'settings.importSettingsDescription' => 'ファイルから設定を復元',
 			'settings.importSettingsConfirm' => '現在の設定を置き換えます。続行しますか？',
 			'settings.importSettingsSuccess' => '設定をインポートしました',
+			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => '適用した設定：${applied}件。スキップ：${skipped}件。',
 			'settings.importSettingsInvalidFile' => 'このファイルは有効なPlezyの設定エクスポートではありません',
 			'settings.importSettingsNoUser' => '設定をインポートする前にサインインしてください',
 			'settings.cloudBackup' => 'クラウドバックアップ',
@@ -6135,12 +6143,12 @@ extension on TranslationsJa {
 			'settings.manageLibrariesDescription' => 'ライブラリを並べ替えたり非表示にしたりできます',
 			'settings.companionRemoteServer' => 'コンパニオンリモートサーバー',
 			'settings.companionRemoteServerDescription' => 'ネットワーク上のモバイルデバイスからこのアプリを操作できるようにする',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'コンパニオンリモートサーバーを開始できませんでした',
 			'settings.companionRemoteServerStopFailed' => 'コンパニオンリモートサーバーを停止できませんでした',
 			'settings.autoPip' => '自動ピクチャーインピクチャー',
 			'settings.autoPipDescription' => '再生中にアプリを離れると、自動的にピクチャーインピクチャーに切り替えます',
-			_ => null,
-		} ?? switch (path) {
 			'settings.matchContentFrameRate' => 'コンテンツのフレームレートに合わせる',
 			'settings.matchContentFrameRateDescription' => '表示のリフレッシュレートを動画コンテンツに合わせます',
 			'settings.matchContentResolution' => 'コンテンツの解像度に合わせる',
@@ -6649,12 +6657,12 @@ extension on TranslationsJa {
 			'accessibility.boldTextHint' => 'インターフェイスラベルやメッセージに重い重さを使用して、それらを区別しやすくなります。',
 			'tooltips.shufflePlay' => 'シャッフル再生',
 			'tooltips.playTrailer' => '予告編を再生',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.markAsWatched' => '視聴済みにする',
 			'tooltips.markAsUnwatched' => '未視聴にする',
 			'audioTracks.track' => ({required Object n}) => '音声トラック${n}',
 			'videoControls.audioLabel' => '音声',
-			_ => null,
-		} ?? switch (path) {
 			'videoControls.subtitlesLabel' => '字幕',
 			'videoControls.addTime' => ({required Object amount, required Object unit}) => '+${amount}${unit}',
 			'videoControls.letterbox' => 'レターボックス',
@@ -7163,12 +7171,12 @@ extension on TranslationsJa {
 			'errors.connectionTimeout' => ({required Object context}) => '${context}の読み込み中に接続がタイムアウトしました',
 			'errors.connectionFailed' => 'メディアサーバーに接続できません',
 			'errors.unableToLoad' => ({required Object context}) => '${context}を読み込めませんでした。もう一度お試しください。',
+			_ => null,
+		} ?? switch (path) {
 			'errors.noClientAvailable' => 'クライアントが利用できません',
 			'errors.pleaseEnterToken' => 'トークンを入力してください',
 			'errors.invalidToken' => '無効なトークン',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'トークンの検証に失敗しました: ${error}',
-			_ => null,
-		} ?? switch (path) {
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName}への切替に失敗しました',
 			'errors.failedToDeleteProfile' => ({required Object displayName}) => '${displayName}の削除に失敗しました',
 			'errors.failedToRate' => '評価を更新できませんでした',
@@ -7677,12 +7685,12 @@ extension on TranslationsJa {
 			'playlists.emptyPlaylist' => 'このプレイリストは空です',
 			'playlists.deleteConfirm' => 'プレイリストを削除しますか？',
 			'playlists.deleteMessage' => ({required Object name}) => '「${name}」を削除しますか？',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.created' => 'プレイリストを作成しました',
 			'playlists.deleted' => 'プレイリストを削除しました',
 			'playlists.itemAdded' => 'プレイリストに追加しました',
 			'playlists.itemRemoved' => 'プレイリストから削除しました',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.selectPlaylist' => 'プレイリストを選択',
 			'playlists.searchPlaylists' => 'プレイリストを検索…',
 			'playlists.errorCreating' => 'プレイリストの作成に失敗しました',
@@ -8191,12 +8199,12 @@ extension on TranslationsJa {
 			'performanceOverlay.transfer' => '伝達特性',
 			'performanceOverlay.renderFps' => '描画 FPS',
 			'performanceOverlay.displayFps' => '表示 FPS',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V 同期',
 			'performanceOverlay.dropped' => 'ドロップ',
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU 平均',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSampleAverage' => 'DV サンプル平均',
 			'performanceOverlay.maxLuma' => '最大輝度',
 			'performanceOverlay.minLuma' => '最小輝度',
@@ -8705,12 +8713,12 @@ extension on TranslationsJa {
 			'homeLayout.customPlexRow' => '定制 Plex ライン',
 			'homeLayout.heroNeedsLibrary' => '図書館をチェックするには、まずヒーローがどこかで表示する必要があります。',
 			'homeLayout.heroNeedsSurface' => '図書館またはホームをチェックするには、まず、ヒーローがどこかで表示する必要があります。',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.removeHub' => 'ハブを削除',
 			'homeLayout.noPlexRows' => '番号 Plex 管理行がこの図書館に戻りました。',
 			'homeLayout.openDetails' => 'オープン 詳細',
 			'homeLayout.heroCards' => 'ヒーローカード',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.tapHeroCard' => 'ヒーローカードを打ち出す',
 			'homeLayout.tvPlayFocus' => 'テレビ: リモート: ハイライト Play ボタン',
 			'homeLayout.tvPlayFocusDescription' => 'D-pad down は、次の行に移動する前に Play ボタンで停止します。',
@@ -9219,12 +9227,12 @@ extension on TranslationsJa {
 			'audiobook.recoveryExport' => 'エクスポート暗号化回復ファイル',
 			'audiobook.recoveryImport' => '暗号化された復元ファイルの輸入',
 			'audiobook.recoveryImportConfirm' => 'この暗号化された回復ファイルを現在の読み込みポジションとノートと組み合わせますか? 既存の歴史が保存されます. 共有図書館およびアイテムIDは含まれていません。',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.recoveryExported' => '暗号化されたリハビリファイルが保存されました。',
 			'audiobook.recoveryImported' => 'リハビリデータが合併。',
 			'sourceSetup.bookorbitHelp' => 'ご自身のBookOrbitアカウントにサインインすると、本を閲覧して再生できます。未登録タイトルのリクエストは、接続済みのSeerrNGインスタンスを通じて送信されます。',
 			'sourceSetup.bookorbitOpen' => 'BookOrbitで開く',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.bookorbitDetailHelp' => 'このタイトルをBookOrbitで表示して、ライブラリの詳細やPleazyngで開けない形式を管理できます。再生位置はBookOrbitアカウントと同期されます。',
 			'sourceSetup.savedCertificate' => '保存済みのサーバー証明書',
 			'sourceSetup.nfsEndpointInvalid' => 'nfs://nas:2049/export のような NFS URL を入力してください。',
@@ -9733,12 +9741,12 @@ extension on TranslationsJa {
 			'musicTools.apiKey' => 'API キー',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '分',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.rules' => 'フィルター',
 			'musicTools.exclusiveOutput' => '排他オーディオ出力',
 			'musicTools.preamp' => 'プリアンプ',
 			'musicTools.ratingPending' => 'この端末に保存済み・同期待ち',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.lyricsOffset' => '歌詞のタイミング調整',
 			'musicTools.anniversaries' => 'アルバムの発売記念日',
 			'musicTools.outputPreset' => 'この出力のEQ',

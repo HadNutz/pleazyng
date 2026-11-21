@@ -209,6 +209,9 @@
     "notAvailable": "N / A",
     "url": "URL",
     "letterKeys": "ABC",
+    "keyboardSymbols": "نمادها",
+    "keyboardLetters": "حروف",
+    "keyboardNewLine": "خط جدید",
     "mediaKind": {
       "movie": "فیلم",
       "show": "نمایش",
@@ -431,6 +434,7 @@
     "importSettingsDescription": "بازگرداندن ترجیحات از یک فایل",
     "importSettingsConfirm": "این کار جایگزین تنظیمات فعلی شما خواهد شد. ادامه دهید؟",
     "importSettingsSuccess": "تنظیمات وارداتی",
+    "importSettingsCounts": "تنظیمات اعمال‌شده: ${applied}. ردشده: ${skipped}.",
     "importSettingsInvalidFile": "این فایل معتبر نیست Pleazyng تنظیمات صادرات",
     "importSettingsNoUser": "قبل از واردات تنظیمات را وارد کنید",
     "cloudBackup": "Cloud پشتیبان",
