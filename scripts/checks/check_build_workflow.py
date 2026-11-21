@@ -1452,7 +1452,15 @@ require(
     "Apple SwiftPM checkouts must match Flutter's local build/<platform>/SourcePackages path",
 )
 macos_apple_build = named_step(
-    apple_suite, "Build macOS application and XCTest bundle"
+    apple_suite, "Build application and XCTest bundle"
+)
+compile_workflow = (ROOT / ".github/workflows/apple-compile.yml").read_text()
+require(
+    "runs-on: xcode-27" in compile_workflow and "build-only: 'true'" in compile_workflow
+    and "hosted-xcode-version: '27.2'" in compile_workflow and "secrets:" not in compile_workflow
+    and "inputs.build-only == 'true'" in macos_apple_build
+    and "CODE_SIGNING_ALLOWED=NO" in macos_apple_build,
+    "Apple source changes must compile unsigned against the hosted shipping SDK",
 )
 mobile_apple_test = named_step(apple_suite, "Run Apple native reliability tests")
 require(
