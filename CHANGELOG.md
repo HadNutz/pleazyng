@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Avoid duplicate mpv display refresh-rate writes when concurrent display notifications report the same mode, and update the Android test-only Robolectric dependency to 4.18.1.
+
 - Fix a player-controls startup assertion when reading the active display and hinge before Flutter finishes mounting the controls.
 
 - Preserve the saved per-show audio and subtitle choices when their stored data is unreadable. Playback continues and reports the unsuccessful preference write.

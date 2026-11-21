@@ -520,17 +520,6 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of org.robolectric:robolectric than 4.16.1 is available: 4.17"
-        errorLine1="  testImplementation(&quot;org.robolectric:robolectric:4.16.1&quot;)"
-        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="1413"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="GradleDependency"
         message="A newer version of androidx.work:work-testing than 2.11.0 is available: 2.12.0"
         errorLine1="  testImplementation(&quot;androidx.work:work-testing:2.11.0&quot;)"
         errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">

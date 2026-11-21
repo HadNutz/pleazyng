@@ -1410,7 +1410,7 @@ dependencies {
   testImplementation("junit:junit:4.13.2")
   // Real android.util.* implementations for tests exercising media3 classes
   // (MatroskaExtractor uses SparseArray, which is a no-op stub on plain JVM)
-  testImplementation("org.robolectric:robolectric:4.16.1")
+  testImplementation("org.robolectric:robolectric:4.18.1")
   testImplementation("androidx.work:work-testing:2.11.0")
   androidTestImplementation("androidx.test:runner:1.7.0")
   androidTestImplementation("androidx.test.ext:junit:1.3.0")

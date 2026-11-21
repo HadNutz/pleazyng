@@ -903,9 +903,14 @@ class MpvPlayerCore private constructor(
     }
 
     submitMpvOperation(writeOperations, "display rate", { onComplete() }) {
-      writeProperty("display-fps-override", fps)
-      publishedDisplayFpsOverride = fps
-      PlayerDebugLog.d(TAG) { "Updated display-fps-override=$fps ($reason)" }
+      // Multiple display callbacks can queue the same rate before the first
+      // write reaches mpv. Recheck on the serialized queue so those duplicate
+      // requests collapse to one property write.
+      if (fps != publishedDisplayFpsOverride) {
+        writeProperty("display-fps-override", fps)
+        publishedDisplayFpsOverride = fps
+        PlayerDebugLog.d(TAG) { "Updated display-fps-override=$fps ($reason)" }
+      }
     }
   }
 

@@ -58,6 +58,16 @@ jobs:
         if: matrix.check == 'tests'
         working-directory: android
         run: ./gradlew :app:testDebugUnitTest :saf_util:testDebugUnitTest :libass:testDebugUnitTest -x :app:compileFlutterBuildDebug --continue --console=plain
+      - name: Preserve Android unit test reports
+        if: ${{ !cancelled() && matrix.check == 'tests' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: android-tests-${{ github.sha }}
+          path: |
+            build/app/test-results/**/*.xml
+            build/saf_util/test-results/**/*.xml
+            build/libass/test-results/**/*.xml
+          if-no-files-found: warn
       - name: Enforce the platform API boundary
         if: matrix.check == 'lint'
         working-directory: android
@@ -75,5 +85,6 @@ jobs:
           name: android-lint-${{ github.sha }}
           path: |
             android/app/lint-baseline.xml
-            build/app/reports/lint-results-debug.xml
+            build/app/reports/lint-results-debug.html
+            build/app/reports/lint-results-debug.sarif
           if-no-files-found: error
