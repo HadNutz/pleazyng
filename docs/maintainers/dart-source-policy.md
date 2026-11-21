@@ -1,6 +1,6 @@
 # Dart source maintenance
 
-The first revision containing this file establishes the line-count and error-handler baseline after the November 21 upstream ports, concurrent changes from main, and code moves. Subsequent changes compare against their merge base. Git retains the original source for every baseline entry.
+The first revision containing [the measured line counts](dart-source-baseline.json) establishes the line-count and error-handler baseline after the November 21 upstream ports, concurrent changes from main, and code moves. Subsequent changes compare against their merge base. Git retains the original source and catch bodies for every baseline entry. The rollout includes the concurrent mobile task restoration, foldable display and live motion changes.
 
 For each maintained Dart file under `lib/`, keep the line count at or below its previous value. New files have a 1,500-line limit. Generated model and localization files and the three generated data tables are outside this measurement. Move fork-owned declarations into same-library parts when that preserves the upstream comparison. The check matches existing wildcard handlers across moved files and also counts repeated copies.
 

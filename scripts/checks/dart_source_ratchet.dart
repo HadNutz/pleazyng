@@ -6,7 +6,7 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/dart/ast/token.dart';
 
-const rollout = 'docs/maintainers/dart-source-policy.md';
+const rollout = 'docs/maintainers/dart-source-baseline.json';
 const generatedTables = {'lib/data/ducet_order.dart', 'lib/data/hid_key_labels.dart', 'lib/data/iso_639_data.dart'};
 
 bool maintained(String path) =>

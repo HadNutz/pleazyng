@@ -87,7 +87,7 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: |
           base="${BASE_SHA:-HEAD^}"
-          if [[ "$base" =~ ^0+$ ]]; then base=origin/main; fi
+          if [[ "$GITHUB_REF" == refs/heads/integration/upstream-* || "$base" =~ ^0+$ ]]; then base=origin/main; fi
           dart run scripts/checks/dart_source_ratchet.dart "$base"
 
       - name: Verify translation hygiene
