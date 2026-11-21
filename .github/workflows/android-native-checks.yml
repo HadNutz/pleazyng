@@ -1,0 +1,57 @@
+name: Android native checks
+on:
+  pull_request:
+    paths: ['android/**', 'packages/**/android/**', '.github/workflows/android-native-checks.yml', 'scripts/prepare_android_*.py']
+  push:
+    branches: [main, 'integration/upstream-*']
+    paths: ['android/**', 'packages/**/android/**', '.github/workflows/android-native-checks.yml', 'scripts/prepare_android_*.py']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: android-native-checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4
+        with:
+          cmdline-tools-version: '15859902'
+          log-accepted-android-sdk-licenses: false
+      - name: Install pinned Android toolchains
+        run: python3 scripts/prepare_android_sdk.py install --direct-egress
+      - name: Load pinned Flutter SDK
+        run: python3 scripts/flutter/load_sdk_pin.py --github-env
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          pub-cache: false
+      - name: Install build inputs
+        run: |
+          python3 scripts/prepare_gradle_repositories.py
+          python3 scripts/prepare_android_ffmpeg_source.py --direct-egress "$RUNNER_TEMP/pleazyng-ffmpeg-source/ffmpeg-9.0.2.tar.xz"
+          flutter pub get --enforce-lockfile
+          printf 'flutter.sdk=%s\nsdk.dir=%s\n' "$FLUTTER_ROOT" "$ANDROID_HOME" > android/local.properties
+      - name: Compile and exercise app-owned native C and C++ logic
+        run: |
+          cmake -S android/app/src/test/cpp -B "$RUNNER_TEMP/native-test" -DCMAKE_BUILD_TYPE=Debug
+          cmake --build "$RUNNER_TEMP/native-test" --parallel 2
+          ctest --test-dir "$RUNNER_TEMP/native-test" --output-on-failure --no-tests=error
+      - name: Compile Android and exercise decoder, HDR and storage paths
+        working-directory: android
+        run: ./gradlew :app:testDebugUnitTest :saf_util:testDebugUnitTest :libass:testDebugUnitTest -x :app:compileFlutterBuildDebug --continue --console=plain
+      - name: Enforce the platform API boundary
+        if: ${{ !cancelled() }}
+        working-directory: android
+        run: ./gradlew :app:lintDebug -x :app:compileFlutterBuildDebug --console=plain

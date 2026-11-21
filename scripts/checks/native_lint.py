@@ -32,11 +32,12 @@ def clang(tool, database):
     issues = []
     if database:
         units = {}
+        owned = set(tracked("native/**")) | set(tracked("scripts/tv_mpv/**"))
         for entry in json.loads((database / "compile_commands.json").read_text()):
             path = (Path(entry["directory"]) / entry["file"]).resolve()
             if path.is_relative_to(ROOT):
                 name = path.relative_to(ROOT).as_posix()
-                if name in tracked("native/**") or name in tracked("scripts/tv_mpv/**"):
+                if name in owned:
                     units[name] = None
     else:
         units = HOST_UNITS
